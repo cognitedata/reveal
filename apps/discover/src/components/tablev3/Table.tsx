@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   useTable,
@@ -17,6 +17,7 @@ import isEqual from 'lodash/isEqual';
 import { alphanumeric } from 'utils/sort';
 
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
+import { EMPTY_ARRAY, EMPTY_OBJECT } from 'constants/empty';
 import { SortBy } from 'pages/types';
 import { MarginRightSmallContainer } from 'styles/layout';
 
@@ -32,6 +33,7 @@ import {
   FooterWrapper,
 } from './elements';
 import { selectionHook, expansionHook, indentationHook } from './hooks';
+import { TableResults } from './resultTypes';
 import { TableColumnSortIcons } from './TableColumnSortIcons';
 import { CustomRow } from './TableRow';
 import { TableProps } from './types';
@@ -57,10 +59,10 @@ const TableInner = <T extends Object>({
   handleSort,
   options = {},
   selectedIds,
-  expandedIds = {},
-  highlightedIds = {},
-  indeterminateIds = {},
-  disabledRowClickCells = [],
+  expandedIds = EMPTY_OBJECT as TableResults,
+  highlightedIds = EMPTY_OBJECT as TableResults,
+  indeterminateIds = EMPTY_OBJECT as TableResults,
+  disabledRowClickCells = EMPTY_ARRAY,
   hideHeaders,
 }: React.PropsWithChildren<TableProps<T>>) => {
   const [selected, setSelected] = React.useState<T[]>([]);
@@ -193,10 +195,12 @@ const TableInner = <T extends Object>({
 
   const { style, ...rest } = getTableProps();
 
-  const rowOptions = {
-    selectedStyle: options?.rowOptions?.selectedStyle,
-    hoveredStyle: options?.rowOptions?.hoveredStyle,
-  };
+  const rowOptions = useMemo(() => {
+    return {
+      selectedStyle: options?.rowOptions?.selectedStyle,
+      hoveredStyle: options?.rowOptions?.hoveredStyle,
+    };
+  }, [options?.rowOptions?.selectedStyle, options?.rowOptions?.hoveredStyle]);
 
   const showFooterForPaginationButton =
     pagination.enabled && rows.length > pagination.pageSize;
@@ -352,6 +356,7 @@ const TableInner = <T extends Object>({
             renderRowSubComponent={renderRowSubComponent}
             rowOptions={rowOptions}
             expanded={expanded}
+            selected={row.isSelected}
             disabledRowClickCells={disabledRowClickCells}
             renderRowOverlayComponent={renderRowOverlayComponent}
             renderRowHoverComponent={renderRowHoverComponent}

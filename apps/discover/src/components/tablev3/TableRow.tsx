@@ -37,6 +37,7 @@ interface RowProps<T extends Object> {
   rowOptions?: RowOptions;
   hideBorders?: boolean;
   expanded?: boolean;
+  selected: boolean;
   disabledRowClickCells?: string[];
   highlighted?: boolean;
   stickyColumnsIndexes?: number[];
@@ -66,13 +67,15 @@ const CustomRowComp = <T extends Object>({
   );
   const stickyColumnStyles = getStickyColumnCellsStyles(row.cells, columns);
 
-  disabledRowClickCells.push('selection');
+  const disabledRowClickCellsCheck = ['selection', ...disabledRowClickCells];
 
   const handleCellClick = (cell: Cell<T, any>) =>
-    disabledRowClickCells.includes(cell.column.id) ? noop : onHandleClick;
+    disabledRowClickCellsCheck.includes(cell.column.id) ? noop : onHandleClick;
 
   const handleCellDoubleClick = (cell: Cell<T, any>) =>
-    disabledRowClickCells.includes(cell.column.id) ? noop : onHandleDoubleClick;
+    disabledRowClickCellsCheck.includes(cell.column.id)
+      ? noop
+      : onHandleDoubleClick;
 
   const handleRowMouseEnter = () => {
     if (handleMouseEnter) {
