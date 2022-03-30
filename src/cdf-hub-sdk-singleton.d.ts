@@ -1,13 +1,6 @@
 declare module '@cognite/cdf-sdk-singleton' {
   import { CogniteClient } from '@cognite/sdk';
-
-  export declare type Flow =
-    | 'COGNITE_AUTH'
-    | 'AZURE_AD'
-    | 'ADFS'
-    | 'OAUTH_GENERIC'
-    | 'FAKE_IDP'
-    | 'UNKNOWN';
+  import { IDPType } from '@cognite/login-utils';
 
   export declare function logout(): void;
 
@@ -15,8 +8,11 @@ declare module '@cognite/cdf-sdk-singleton' {
     project: string,
     env?: string
   ): Promise<void>;
+
   export declare function getToken(): Promise<string>;
-  export declare function getFlow(): { flow: Flow };
+
+  export declare function getFlow(): { flow: IDPType };
+
   export declare function getUserInformation(): Promise<any>;
 
   declare const sdk: CogniteClient;
