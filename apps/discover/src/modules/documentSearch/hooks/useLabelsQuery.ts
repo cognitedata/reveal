@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 
-import { reportException } from '@cognite/react-errors';
+import { handleServiceError } from 'utils/service/handleServiceError';
 
 import { DOCUMENTS_QUERY_KEY } from 'constants/react-query';
 
@@ -8,7 +8,7 @@ import { getLabels } from '../service';
 import { Labels } from '../types';
 
 export const useLabelsQuery = () => {
-  const { data } = useQuery(DOCUMENTS_QUERY_KEY.LABELS, () =>
+  const { data } = useQuery<Labels>(DOCUMENTS_QUERY_KEY.LABELS, () =>
     getLabels()
       .then((labels) =>
         labels.items.reduce((results, label: any) => {
@@ -18,7 +18,7 @@ export const useLabelsQuery = () => {
           };
         }, {} as Labels)
       )
-      .catch(reportException)
+      .catch((error) => handleServiceError<Labels>(error))
   );
 
   if (!data || 'error' in data) return {};

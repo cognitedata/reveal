@@ -3,11 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { useFavoritesCreateMutate } from 'services/favorites/useFavoritesMutate';
-
-import { reportException } from '@cognite/react-errors';
+import { handleServiceError } from 'utils/service/handleServiceError';
 
 import { NOTIFICATION_MESSAGE } from 'components/add-to-favorite-set-menu/constants';
-import { showErrorMessage, showSuccessMessage } from 'components/toast';
+import { showSuccessMessage } from 'components/toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { hideCreateFavoriteModal } from 'modules/favorite/reducer';
 
@@ -75,10 +74,7 @@ const CreateFavoriteSetModal: React.FC = () => {
           showSuccessMessage(t(NOTIFICATION_MESSAGE));
         }
       })
-      .catch((error) => {
-        reportException(error);
-        showErrorMessage('Something went wrong');
-      });
+      .catch(handleServiceError);
 
     dispatch(hideCreateFavoriteModal());
     clearState();

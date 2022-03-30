@@ -3,8 +3,8 @@ import { useDispatch } from 'react-redux';
 
 import { openDocumentPreviewInNewTab } from 'services/documentPreview/utils';
 import { getPathsFromDoc } from 'utils/getPathsFromDocument';
+import { handleServiceError } from 'utils/service/handleServiceError';
 
-import { reportException } from '@cognite/react-errors';
 import { useTranslation } from '@cognite/react-i18n';
 
 import BasePreviewCard from 'components/card/preview-card/BasePreviewCard';
@@ -61,9 +61,7 @@ export const DocumentPreviewCard: React.FC<{
 
     if (doc && doc.doc.id) {
       openDocumentPreviewInNewTab(doc.doc.id)
-        .catch((error) => {
-          reportException(error);
-        })
+        .catch(handleServiceError)
         .finally(() => {
           setDownloadingPdf(false);
         });

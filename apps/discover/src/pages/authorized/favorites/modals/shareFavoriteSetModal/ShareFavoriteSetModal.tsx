@@ -6,13 +6,12 @@ import {
   useFavoriteRemoveShareMutate,
 } from 'services/favorites/useFavoritesMutate';
 import { useFavoritesGetOneQuery } from 'services/favorites/useFavoritesQuery';
-
-import { reportException } from '@cognite/react-errors';
+import { handleServiceError } from 'utils/service/handleServiceError';
 
 import { BasicShareModal } from 'components/basic-share-modal';
 import { SharedUsersList } from 'components/basic-share-modal/SharedUsersList';
 import { UserOption } from 'components/search-users/SearchUsers';
-import { showErrorMessage, showSuccessMessage } from 'components/toast';
+import { showSuccessMessage } from 'components/toast';
 import {
   REMOVE_SHARE_SUCCESS_TOAST,
   SHARE_FAVORITE_MODAL_TITLE,
@@ -43,10 +42,7 @@ const ShareFavoriteSetModal: React.FC<Props> = (props) => {
         .then(() => {
           showSuccessMessage(t(SHARE_SUCCESS_TOAST));
         })
-        .catch((error) => {
-          showErrorMessage(t('Something went wrong'));
-          reportException(error);
-        });
+        .catch(handleServiceError);
     }
   };
 
@@ -58,10 +54,7 @@ const ShareFavoriteSetModal: React.FC<Props> = (props) => {
       .then(() => {
         showSuccessMessage(t(REMOVE_SHARE_SUCCESS_TOAST));
       })
-      .catch((error) => {
-        showErrorMessage(t('Something went wrong'));
-        reportException(error);
-      });
+      .catch(handleServiceError);
   };
 
   const sharedUsers = useMemo(

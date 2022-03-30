@@ -4,10 +4,9 @@ import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
 import concat from 'lodash/concat';
 import difference from 'lodash/difference';
 import isEmpty from 'lodash/isEmpty';
+import { handleServiceError } from 'utils/service/handleServiceError';
+import { ServiceError } from 'utils/service/types';
 
-// import { reportException } from '@cognite/react-errors';
-
-import { showErrorMessage } from 'components/toast';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useDeepMemo } from 'hooks/useDeep';
 
@@ -66,12 +65,13 @@ export const useWellsCacheQuery = (
           uncachedWells = await getWellsByWellIds(uncachedWellIds);
           uncachedWells = await getWellsWithWellbores(uncachedWells);
         }
-      } catch {
-        showErrorMessage(ERROR_LOADING_WELLS_ERROR);
+      } catch (error) {
         // console.log('Error loading wells:', error);
-        // to add:
-        // reportException(error);
-        return [] as Well[];
+        return handleServiceError<Well[]>(
+          error as ServiceError,
+          [],
+          ERROR_LOADING_WELLS_ERROR
+        );
       }
 
       // console.log('New uncached wells:', uncachedWells);

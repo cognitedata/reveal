@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from 'react-query';
 
 import { useJsonHeaders } from 'services/service';
 import { log } from 'utils/log';
+import { handleServiceError } from 'utils/service/handleServiceError';
 
 import {
   SavedSearchAddShareSchemaBody,
@@ -9,7 +10,6 @@ import {
   SavedSearchSchemaBody,
 } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
-import { reportException } from '@cognite/react-errors';
 
 import { SAVED_SEARCHES_QUERY_KEY } from 'constants/react-query';
 
@@ -32,7 +32,7 @@ export function useSavedSearchAddShareMutate() {
         queryClient.invalidateQueries(SAVED_SEARCHES_QUERY_KEY);
       },
       onError: (error: Error) => {
-        reportException(error);
+        handleServiceError(error);
       },
     }
   );
@@ -82,8 +82,8 @@ export function useSavedSearchCreateMutate() {
     },
     {
       onSuccess: () => queryClient.invalidateQueries(SAVED_SEARCHES_QUERY_KEY),
-      onError: (error) => {
-        reportException(String(error));
+      onError: (error: Error) => {
+        handleServiceError(error);
         return Promise.reject(error);
       },
     }

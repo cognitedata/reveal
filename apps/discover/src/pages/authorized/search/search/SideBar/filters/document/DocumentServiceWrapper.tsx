@@ -6,9 +6,10 @@ import {
 } from 'services/documents/types';
 import { useDocumentCategoryQuery } from 'services/documents/useDocumentQuery';
 import styled from 'styled-components/macro';
+import { handleServiceError } from 'utils/service/handleServiceError';
+import { ServiceError } from 'utils/service/types';
 
 import { DocumentCategories } from '@cognite/discover-api-types';
-import { reportException } from '@cognite/react-errors';
 
 import Skeleton from 'components/skeleton';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
@@ -37,7 +38,7 @@ const Documents: React.FC<
   }
 
   if (!data || error || 'error' in data) {
-    reportException(error as Error);
+    handleServiceError(error as ServiceError);
     return <Wrapper>Something went wrong.</Wrapper>;
   }
 

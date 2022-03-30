@@ -6,9 +6,9 @@ import {
   downloadFileFromUrl,
   openDocumentPreviewInNewTab,
 } from 'services/documentPreview/utils';
+import { handleServiceError } from 'utils/service/handleServiceError';
 
 import { Menu, Dropdown } from '@cognite/cogs.js';
-import { reportException } from '@cognite/react-errors';
 
 import {
   PreviewButton,
@@ -16,11 +16,7 @@ import {
   MoreOptionsButton,
 } from 'components/buttons';
 import DocumentViewModal from 'components/document-preview/DocumentViewModal';
-import {
-  showInfoMessageWithTitle,
-  showErrorMessage,
-  showSuccessMessage,
-} from 'components/toast';
+import { showInfoMessageWithTitle, showSuccessMessage } from 'components/toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { DocumentType } from 'modules/documentSearch/types';
 import { FavouriteRowType } from 'modules/favorite/types';
@@ -89,10 +85,7 @@ export const Actions: React.FC<Props> = ({
     showSuccessMessage(t('Retrieving document'));
 
     if (documentId) {
-      openDocumentPreviewInNewTab(documentId).catch((error) => {
-        showErrorMessage(t('Oops, something went wrong'));
-        reportException(error);
-      });
+      openDocumentPreviewInNewTab(documentId).catch(handleServiceError);
     }
   };
 

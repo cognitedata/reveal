@@ -11,10 +11,10 @@ import {
 } from 'utils/cancellablePromise';
 import { fetchTenantFile } from 'utils/fetchTenantFile';
 import { log } from 'utils/log';
+import { handleServiceError } from 'utils/service/handleServiceError';
 
 import { ProjectConfigMapLayers } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
-import { reportException } from '@cognite/react-errors';
 
 import { setSources, setAssets } from 'modules/map/actions';
 import { useMap } from 'modules/map/selectors';
@@ -99,7 +99,7 @@ export const useMapContent = () => {
           })
           .catch((error) => {
             log('Some layers failed to load');
-            reportException(error);
+            handleServiceError(error);
           });
       } else {
         dispatch(setSources([]));

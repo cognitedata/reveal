@@ -1,8 +1,8 @@
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import { FetchHeaders } from 'utils/fetch';
+import { handleServiceError } from 'utils/service/handleServiceError';
 
-import { reportException } from '@cognite/react-errors';
 import { Geometry, GeoJson } from '@cognite/seismic-sdk-js';
 
 import { discoverAPI } from '../service';
@@ -50,9 +50,7 @@ export const updateCurrentSearch = async (
         headers,
         tenant
       )
-      .catch((error) => {
-        reportException(error);
-      });
+      .catch(handleServiceError);
     return { ...savingResponse, updated_at: new Date().getTime() };
   }
 

@@ -1,7 +1,7 @@
-import { getCogniteSDKClient, doReAuth } from 'utils/getCogniteSDKClient';
+import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 import { mergeUniqueArray } from 'utils/merge';
+import { handleServiceError } from 'utils/service/handleServiceError';
 
-import { reportException } from '@cognite/react-errors';
 import {
   Document,
   DocumentsFilter,
@@ -9,7 +9,6 @@ import {
   ExternalDocumentsSearch,
 } from '@cognite/sdk-playground';
 
-import { showErrorMessage } from 'components/toast';
 import { aggregates } from 'modules/documentSearch/aggregates';
 import { getDocumentSDKClient } from 'modules/documentSearch/sdk';
 import {
@@ -88,25 +87,7 @@ const search = (
         }),
       };
 
-      if (error.status === 401) {
-        doReAuth();
-        showErrorMessage('There has been a service error, please try again');
-        return safeErrorResponse;
-      }
-
-      if (error.status === 400 && error.extra && error.extra.validationError) {
-        const validations = error.extra.validationError;
-
-        Object.keys(validations).forEach((key) => {
-          showErrorMessage(validations[key]);
-        });
-      } else {
-        showErrorMessage('There has been a service error, please try again');
-      }
-
-      reportException(error);
-
-      return safeErrorResponse;
+      return handleServiceError<DocumentResult>(error, safeErrorResponse);
     });
 };
 

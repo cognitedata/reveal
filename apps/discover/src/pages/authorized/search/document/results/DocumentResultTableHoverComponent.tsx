@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 
 import { openDocumentPreviewInNewTab } from 'services/documentPreview/utils';
+import { handleServiceError } from 'utils/service/handleServiceError';
 
 import { Menu, Dropdown } from '@cognite/cogs.js';
-import { reportException } from '@cognite/react-errors';
 
 import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
 import {
@@ -11,7 +11,7 @@ import {
   PreviewButton,
   ViewButton,
 } from 'components/buttons';
-import { showErrorMessage, showSuccessMessage } from 'components/toast';
+import { showSuccessMessage } from 'components/toast';
 import { DocumentType } from 'modules/documentSearch/types';
 import { FlexRow } from 'styles/layout';
 
@@ -40,10 +40,7 @@ export const DocumentResultTableHoverComponent = ({
 
   const onViewHandle = async (doc: DocumentType) => {
     showSuccessMessage(t('Retrieving document'));
-    openDocumentPreviewInNewTab(doc.doc.id).catch((error) => {
-      showErrorMessage(t('Oops, something went wrong'));
-      reportException(error);
-    });
+    openDocumentPreviewInNewTab(doc.doc.id).catch(handleServiceError);
   };
 
   // TODO(PP-2573): check if this can be removed after upgrading the pdf viewer lib

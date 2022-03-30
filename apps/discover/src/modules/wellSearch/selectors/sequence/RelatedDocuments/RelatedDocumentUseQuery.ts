@@ -10,9 +10,9 @@ import { adaptSaveSearchContentToSchemaBody } from 'services/savedSearches/adapt
 import { SavedSearchContent } from 'services/savedSearches/types';
 import { discoverAPI, useJsonHeaders } from 'services/service';
 import { mergeUniqueArray } from 'utils/merge';
+import { handleServiceError } from 'utils/service/handleServiceError';
 
 import { getTenantInfo } from '@cognite/react-container';
-import { reportException } from '@cognite/react-errors';
 import { DocumentsFilter } from '@cognite/sdk-playground';
 
 import {
@@ -236,7 +236,7 @@ export const useMutateRelatedDocumentPatch = () => {
           headers,
           tenant
         )
-        .catch((error) => reportException(String(error)));
+        .catch(handleServiceError);
 
       // if the saved search returns an error, we still need the filters to work properly
       // hence returning a new promise with the filters

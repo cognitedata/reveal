@@ -3,13 +3,12 @@ import { useTranslation } from 'react-i18next';
 
 import { useSavedSearchRemoveShareMutate } from 'services/savedSearches/useSavedSearchesMutate';
 import { useQuerySavedSearcheGetOne } from 'services/savedSearches/useSavedSearchQuery';
-
-import { reportException } from '@cognite/react-errors';
+import { handleServiceError } from 'utils/service/handleServiceError';
 
 import { BasicShareModal } from 'components/basic-share-modal';
 import { SharedUsersList } from 'components/basic-share-modal/SharedUsersList';
 import { UserOption } from 'components/search-users/SearchUsers';
-import { showErrorMessage, showSuccessMessage } from 'components/toast';
+import { showSuccessMessage } from 'components/toast';
 import { REMOVE_SHARE_SUCCESS_TOAST } from 'pages/authorized/favorites/modals/constants';
 
 interface Props {
@@ -45,10 +44,7 @@ export const ShareSavedSearchModal: React.FC<Props> = (props) => {
       .then(() => {
         showSuccessMessage(t(REMOVE_SHARE_SUCCESS_TOAST));
       })
-      .catch((error) => {
-        showErrorMessage(t('Something went wrong'));
-        reportException(error);
-      });
+      .catch(handleServiceError);
   };
 
   return (
