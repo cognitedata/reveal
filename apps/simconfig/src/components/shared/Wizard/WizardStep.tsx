@@ -8,6 +8,7 @@ export interface WizardStepProps extends TabPaneProps {
   title: string;
   icon?: IconType;
   disabled?: boolean;
+  validationErrors?: () => number;
 }
 
 export function WizardStep({

@@ -56,28 +56,34 @@ export function Wizard({
   }) => (
     <WizardProgressContainer>
       <WizardStepIcons iconSize={iconSize} steps={panes.length}>
-        {panes.map(({ key, props: { icon, disabled = false } }, index) => {
-          const isCompleted =
-            panes.findIndex(({ key }) => key === activeKey) > index;
-          return (
-            <WizardStepIcon
-              active={key === activeKey}
-              borderWidth={borderWidth}
-              completed={isCompleted}
-              disabled={disabled}
-              icon={icon ?? 'DotLarge'}
-              iconSize={iconSize}
-              key={key}
-              labeledBy={`${key ?? 'unknown'}-label`}
-              onClick={(event) => {
-                if (disabled) {
-                  return;
-                }
-                onTabClick?.((key ?? 'unknown').toString(), event);
-              }}
-            />
-          );
-        })}
+        {panes.map(
+          (
+            { key, props: { icon, disabled = false, validationErrors } },
+            index
+          ) => {
+            const isCompleted =
+              panes.findIndex(({ key }) => key === activeKey) > index;
+            return (
+              <WizardStepIcon
+                active={key === activeKey}
+                borderWidth={borderWidth}
+                completed={isCompleted}
+                disabled={disabled}
+                icon={icon ?? 'DotLarge'}
+                iconSize={iconSize}
+                key={key}
+                labeledBy={`${key ?? 'unknown'}-label`}
+                validationErrorCount={validationErrors?.() ?? 0}
+                onClick={(event) => {
+                  if (disabled) {
+                    return;
+                  }
+                  onTabClick?.((key ?? 'unknown').toString(), event);
+                }}
+              />
+            );
+          }
+        )}
         <div className="filler" role="none" />
       </WizardStepIcons>
       <WizardStepLabels>

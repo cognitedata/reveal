@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import styled from 'styled-components/macro';
 
 import type { IconType } from '@cognite/cogs.js';
-import { Icon } from '@cognite/cogs.js';
+import { Icon, NotificationDot } from '@cognite/cogs.js';
 
 export interface WizardStepIconProps {
   active: boolean;
@@ -15,6 +15,7 @@ export interface WizardStepIconProps {
   iconSize: number;
   labeledBy: string;
   onClick: MouseEventHandler<HTMLElement>;
+  validationErrorCount?: number;
 }
 
 export function WizardStepIcon({
@@ -26,6 +27,7 @@ export function WizardStepIcon({
   iconSize,
   labeledBy,
   onClick,
+  validationErrorCount = 0,
 }: WizardStepIconProps) {
   return (
     <WizardStepIconContainer
@@ -33,9 +35,14 @@ export function WizardStepIcon({
       className={classnames({ completed, active, disabled })}
       iconSize={iconSize}
     >
-      <button aria-labelledby={labeledBy} type="button" onClick={onClick}>
-        <Icon type={icon} />
-      </button>
+      <NotificationDot
+        hidden={!validationErrorCount}
+        value={validationErrorCount.toString()}
+      >
+        <button aria-labelledby={labeledBy} type="button" onClick={onClick}>
+          <Icon type={icon} />
+        </button>
+      </NotificationDot>
     </WizardStepIconContainer>
   );
 }

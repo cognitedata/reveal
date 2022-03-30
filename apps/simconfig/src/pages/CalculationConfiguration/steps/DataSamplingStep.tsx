@@ -9,7 +9,7 @@ import { Field, useFormikContext } from 'formik';
 import styled from 'styled-components/macro';
 
 import type { OptionType } from '@cognite/cogs.js';
-import { Select, Switch } from '@cognite/cogs.js';
+import { Colors, Icon, Select, Switch } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import type { DatapointAggregate } from '@cognite/sdk';
 import type {
@@ -42,7 +42,7 @@ const DATA_SAMPLING_VALUE_THROTTLE = 1000;
 const SSD_VALUE_THROTTLE = 500;
 
 export function DataSamplingStep() {
-  const { errors, values, setFieldValue, isValid } =
+  const { errors, values, setFieldValue } =
     useFormikContext<CalculationTemplate>();
 
   const validationOffset = useMemo(
@@ -297,9 +297,10 @@ export function DataSamplingStep() {
             </FormRow>
           </div>
           <div className="chart short">
-            {lcTimeseries.data.length >= 2 && isValid
-              ? logicalCheckChart
-              : null}
+            {lcTimeseries.isLoading && <LoaderOverlay />}
+            {values.logicalCheck.externalId &&
+              lcTimeseries.data.length >= 2 &&
+              logicalCheckChart}
           </div>
         </ChartContainer>
       ) : null}
@@ -360,15 +361,29 @@ export function DataSamplingStep() {
             </FormRow>
           </div>
           <div className="chart">
-            {ssdTimeseries.data.length >= 2 && isValid
-              ? steadyStateDetectionChart
-              : null}
+            {ssdTimeseries.isLoading && <LoaderOverlay />}
+            {values.steadyStateDetection.externalId &&
+              ssdTimeseries.data.length >= 2 &&
+              steadyStateDetectionChart}
           </div>
         </ChartContainer>
       ) : null}
     </FormContainer>
   );
 }
+
+const LoaderOverlay = styled(Icon).attrs((props) => ({
+  ...props,
+  type: 'Loader',
+  size: 32,
+}))`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: ${Colors.primary.hex()};
+  opacity: 0.5;
+`;
 
 const SelectContainer = styled.div`
   .title {
@@ -398,6 +413,7 @@ const ChartContainer = styled.div`
     height: 240px;
     flex: 1 1 0;
     overflow: hidden;
+    position: relative;
     &.short {
       height: 180px;
     }
@@ -424,58 +440,69 @@ function useTimeseries({
   const [range, setRange] = useState({ min: 0, max: 1 });
   const [step, setStep] = useState(1);
   const [axisLabel, setAxisLabel] = useState('Process sensor');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     async function getTimeseries() {
-      if (!client) {
+      if (!client || !timeseries) {
         return;
       }
 
       try {
-        const {
-          items: [{ unit, description }],
-        } = await client.timeseries.list({
-          filter: {
-            externalIdPrefix: timeseries,
-          },
-        });
-        setAxisLabel(`${description.substring(0, 25)} (${unit ?? 'n/a'})`);
-      } catch (e) {
-        console.error(
-          'Error while reading time series (missing permissions?)',
-          e
-        );
-        return;
-      }
+        setIsLoading(true);
 
-      try {
-        const [{ datapoints }] = await client.datapoints.retrieve({
-          items: [
-            {
-              externalId: timeseries,
-              start: sub(new Date(), { minutes: window + endOffset }).getTime(),
-              end: sub(new Date(), { minutes: endOffset }),
-              aggregates: [aggregateType],
-              granularity: `${granularity}m`,
-              limit,
+        try {
+          const {
+            items: [{ unit, description }],
+          } = await client.timeseries.list({
+            filter: {
+              externalIdPrefix: timeseries,
             },
-          ],
-        });
+          });
+          setAxisLabel(`${description.substring(0, 25)} (${unit ?? 'n/a'})`);
+        } catch (e) {
+          throw new Error(
+            `Error while reading time series '${timeseries}' (missing permissions?)`
+          );
+        }
 
-        const mappedDatapoints = (datapoints as DatapointAggregate[]).map(
-          (datapoint) => ({
-            timestamp: datapoint.timestamp,
-            value: datapoint[aggregateType] ?? 0,
-          })
-        );
+        try {
+          const [{ datapoints }] = await client.datapoints.retrieve({
+            items: [
+              {
+                externalId: timeseries,
+                start: sub(new Date(), {
+                  minutes: window + endOffset,
+                }).getTime(),
+                end: sub(new Date(), { minutes: endOffset }),
+                aggregates: [aggregateType],
+                granularity: `${granularity}m`,
+                limit,
+              },
+            ],
+          });
 
-        const [min = 0, max = 1] = extent(mappedDatapoints, (dp) => dp.value);
+          const mappedDatapoints = (datapoints as DatapointAggregate[]).map(
+            (datapoint) => ({
+              timestamp: datapoint.timestamp,
+              value: datapoint[aggregateType] ?? 0,
+            })
+          );
 
-        setData(mappedDatapoints);
-        setRange({ min, max });
-        setStep(Math.ceil(min / 100) / 100);
+          const [min = 0, max = 1] = extent(mappedDatapoints, (dp) => dp.value);
+
+          setData(mappedDatapoints);
+          setRange({ min, max });
+          setStep(Math.ceil(min / 100) / 100);
+        } catch (e) {
+          throw new Error(
+            `Error while reading datapoints for timeseries '${timeseries}'`
+          );
+        }
       } catch (e) {
-        console.error('Error while reading datapoints:', e);
+        console.error(e);
+      } finally {
+        setIsLoading(false);
       }
     }
     void getTimeseries();
@@ -496,5 +523,6 @@ function useTimeseries({
     range,
     step,
     axisLabel,
+    isLoading,
   };
 }

@@ -126,6 +126,37 @@ export function CalculationConfiguration() {
     ),
   });
 
+  const getStepValidationErrors =
+    (
+      values: Record<string, unknown>,
+      ...steps: (
+        | 'chokeCurve'
+        | 'dataSampling'
+        | 'estimateBHP'
+        | 'gaugeDepth'
+        | 'inputTimeSeries'
+        | 'logicalCheck'
+        | 'outputTimeSeries'
+        | 'rootFindingSettings'
+        | 'schedule'
+        | 'steadyStateDetection'
+      )[]
+    ) =>
+    () =>
+      steps.reduce((sum, step) => {
+        try {
+          calculationTemplateSchema.validateSyncAt(step, values, {
+            abortEarly: false,
+          });
+        } catch (e) {
+          if (!isYupValidationError(e)) {
+            return sum;
+          }
+          return sum + e.errors.length;
+        }
+        return sum;
+      }, 0);
+
   // Calcuation types with advanced settings
   const calcTypesWtAvcdStps = [
     'ChokeDp',
@@ -190,13 +221,24 @@ export function CalculationConfiguration() {
               }}
               onSubmit={submitForm}
             >
-              <Wizard.Step icon="Calendar" key="schedule" title="Schedule">
+              <Wizard.Step
+                icon="Calendar"
+                key="schedule"
+                title="Schedule"
+                validationErrors={getStepValidationErrors(values, 'schedule')}
+              >
                 <ScheduleStep />
               </Wizard.Step>
               <Wizard.Step
                 icon="DataSource"
                 key="data-sampling"
                 title="Data sampling"
+                validationErrors={getStepValidationErrors(
+                  values,
+                  'dataSampling',
+                  'logicalCheck',
+                  'steadyStateDetection'
+                )}
               >
                 <DataSamplingStep />
               </Wizard.Step>
@@ -205,13 +247,36 @@ export function CalculationConfiguration() {
                 icon="Configure"
                 key="advanced"
                 title="Advanced"
+                validationErrors={getStepValidationErrors(
+                  values,
+                  'chokeCurve',
+                  'estimateBHP',
+                  'gaugeDepth',
+                  'rootFindingSettings'
+                )}
               >
                 <AdvancedStep isEditing={isEditing} />
               </Wizard.Step>
-              <Wizard.Step icon="InputData" key="input" title="Inputs">
+              <Wizard.Step
+                icon="InputData"
+                key="input"
+                title="Inputs"
+                validationErrors={getStepValidationErrors(
+                  values,
+                  'inputTimeSeries'
+                )}
+              >
                 <InputStep isEditing={isEditing} />
               </Wizard.Step>
-              <Wizard.Step icon="OutputData" key="output" title="Outputs">
+              <Wizard.Step
+                icon="OutputData"
+                key="output"
+                title="Outputs"
+                validationErrors={getStepValidationErrors(
+                  values,
+                  'outputTimeSeries'
+                )}
+              >
                 <OutputStep isEditing={isEditing} />
               </Wizard.Step>
               <Wizard.Step icon="Checkmark" key="summary" title="Summary">
@@ -382,161 +447,176 @@ const getCalculationTemplateSchema = ({
   getInputTimeSeries,
 }: {
   getInputTimeSeries?: (values: CalculationTemplate) => InputTimeSeries[];
-}): ObjectSchema<Omit<CalculationTemplate, PresetCalculationTemplateFields>> =>
-  Yup.object({
-    schedule: Yup.object().when(
-      'dataSampling.validationWindow',
-      ([validationWindow]: number[]) =>
-        Yup.object({
-          enabled: Yup.boolean().defined(),
-          start: Yup.number().defined(),
-          repeat: Yup.string()
-            .label('Schedule interval')
-            .defined()
-            .test(
-              'less-than-validation-window',
-              `Schedule interval must be greater than or equal to validation window (${validationWindow} minutes)`,
-              (value) =>
-                !!(
-                  value && getScheduleRepeat(value).minutes >= validationWindow
-                )
-            )
-            .test(
-              'greater-than-15-minutes',
-              'Schedule interval must be more frequent than 15 minutes',
-              (value) => !!(value && getScheduleRepeat(value).minutes >= 15)
-            ),
-        }).defined()
-    ),
-    dataSampling: Yup.object({
-      validationWindow: Yup.number()
-        .defined()
-        .label('Validation window')
-        .min(15)
-        .default(15),
-      samplingWindow: Yup.number()
-        .defined()
-        .label('Sampling window')
-        .lessThan(
-          Yup.ref('validationWindow'),
-          'Sampling window must be less than validation window'
-        )
-        .min(1)
-        .default(1),
-      granularity: Yup.number()
-        .defined()
-        .label('Granularity')
-        .min(0)
-        .default(1),
-      validationEndOffset: Yup.string().defined().label('Validation offset'),
-    }).defined(),
-    logicalCheck: Yup.object({
-      enabled: Yup.boolean().defined(),
-      externalId: Yup.string()
-        .when('enabled', { is: true, then: (schema) => schema.required() })
-        .ensure()
-        .label('Logical check time series'),
-      aggregateType: Yup.string<AggregateType>()
-        .ensure()
-        .when('enabled', {
-          is: true,
-          then: (schema) => schema.required(),
-        })
-        .label('Logical check sampling method'),
-      check: Yup.string<'eq' | 'ge' | 'gt' | 'le' | 'lt' | 'ne'>()
-        .ensure()
-        .when('enabled', { is: true, then: (schema) => schema.required() })
-        .label('Logical check'),
-      value: Yup.number()
-        .default(0)
-        .when('enabled', { is: true, then: (schema) => schema.required() })
-        .label('Logical check value'),
+}): ObjectSchema<
+  Omit<CalculationTemplate, PresetCalculationTemplateFields>
+> => {
+  const schedule = Yup.object().when(
+    'dataSampling.validationWindow',
+    ([validationWindow]: number[]) =>
+      Yup.object({
+        enabled: Yup.boolean().defined(),
+        start: Yup.number().defined(),
+        repeat: Yup.string()
+          .label('Schedule interval')
+          .defined()
+          .test(
+            'less-than-validation-window',
+            `Schedule interval must be greater than or equal to validation window (${validationWindow} minutes)`,
+            (value) =>
+              !!(value && getScheduleRepeat(value).minutes >= validationWindow)
+          )
+          .test(
+            'greater-than-15-minutes',
+            'Schedule interval must be more frequent than 15 minutes',
+            (value) => !!(value && getScheduleRepeat(value).minutes >= 15)
+          ),
+      }).defined()
+  );
+
+  const dataSampling = Yup.object({
+    validationWindow: Yup.number()
+      .defined()
+      .label('Validation window')
+      .min(15)
+      .default(15),
+    samplingWindow: Yup.number()
+      .defined()
+      .label('Sampling window')
+      .lessThan(
+        Yup.ref('validationWindow'),
+        'Sampling window must be less than validation window'
+      )
+      .min(1)
+      .default(1),
+    granularity: Yup.number().defined().label('Granularity').min(0).default(1),
+    validationEndOffset: Yup.string().defined().label('Validation offset'),
+  }).defined();
+
+  const logicalCheck = Yup.object({
+    enabled: Yup.boolean().defined(),
+    externalId: Yup.string()
+      .when('enabled', { is: true, then: (schema) => schema.required() })
+      .ensure()
+      .label('Logical check time series'),
+    aggregateType: Yup.string<AggregateType>()
+      .ensure()
+      .when('enabled', {
+        is: true,
+        then: (schema) => schema.required(),
+      })
+      .label('Logical check sampling method'),
+    check: Yup.string<'eq' | 'ge' | 'gt' | 'le' | 'lt' | 'ne'>()
+      .ensure()
+      .when('enabled', { is: true, then: (schema) => schema.required() })
+      .label('Logical check'),
+    value: Yup.number()
+      .default(0)
+      .when('enabled', { is: true, then: (schema) => schema.required() })
+      .label('Logical check value'),
+  });
+
+  const steadyStateDetection = Yup.object({
+    enabled: Yup.boolean().defined(),
+    externalId: Yup.string()
+      .when('enabled', { is: true, then: (schema) => schema.required() })
+      .ensure()
+      .label('Steady state detection time series'),
+    aggregateType: Yup.string<AggregateType>()
+      .when('enabled', {
+        is: true,
+        then: (schema) => schema.required(),
+      })
+      .ensure()
+      .label('Steady state detection sampling method'),
+    minSectionSize: Yup.number()
+      .when('enabled', { is: true, then: (schema) => schema.required() })
+      .defined()
+      .label('Min. section size')
+      .min(1),
+    varThreshold: Yup.number()
+      .when('enabled', { is: true, then: (schema) => schema.required() })
+      .defined()
+      .label('Var threshold')
+      .min(0),
+    slopeThreshold: Yup.number()
+      .when('enabled', { is: true, then: (schema) => schema.required() })
+      .defined()
+      .label('Slope threshold')
+      .lessThan(0),
+  }).defined();
+
+  const chokeCurve = Yup.object({
+    opening: Yup.array().of(Yup.number().min(0).max(100).required().default(0)),
+    setting: Yup.array().of(Yup.number().required().default(0)),
+  })
+    .optional()
+    .default(undefined);
+
+  const rootFindingSettings = Yup.object({
+    mainSolution: Yup.string<'max' | 'min'>(),
+    rootTolerance: Yup.number().label('Root tolerance').moreThan(0),
+    bracket: Yup.object({
+      lowerBound: Yup.number().label('Lower bound').min(0),
+      upperBound: Yup.number()
+        .label('Upper bound')
+        .moreThan(Yup.ref('lowerBound')),
     }),
-    steadyStateDetection: Yup.object({
-      enabled: Yup.boolean().defined(),
-      externalId: Yup.string()
-        .when('enabled', { is: true, then: (schema) => schema.required() })
-        .ensure()
-        .label('Steady state detection time series'),
-      aggregateType: Yup.string<AggregateType>()
-        .when('enabled', {
-          is: true,
-          then: (schema) => schema.required(),
-        })
-        .ensure()
-        .label('Steady state detection sampling method'),
-      minSectionSize: Yup.number()
-        .when('enabled', { is: true, then: (schema) => schema.required() })
-        .defined()
-        .label('Min. section size')
-        .min(1),
-      varThreshold: Yup.number()
-        .when('enabled', { is: true, then: (schema) => schema.required() })
-        .defined()
-        .label('Var threshold')
-        .min(0),
-      slopeThreshold: Yup.number()
-        .when('enabled', { is: true, then: (schema) => schema.required() })
-        .defined()
-        .label('Slope threshold')
-        .lessThan(0),
-    }).defined(),
-    chokeCurve: Yup.object({
-      opening: Yup.array().of(
-        Yup.number().min(0).max(100).required().default(0)
-      ),
-      setting: Yup.array().of(Yup.number().required().default(0)),
-    })
-      .optional()
-      .default(undefined),
-    rootFindingSettings: Yup.object({
-      mainSolution: Yup.string<'max' | 'min'>(),
-      rootTolerance: Yup.number().label('Root tolerance').moreThan(0),
-      bracket: Yup.object({
-        lowerBound: Yup.number().label('Lower bound').min(0),
-        upperBound: Yup.number()
-          .label('Upper bound')
-          .moreThan(Yup.ref('lowerBound')),
-      }),
-    })
-      .optional()
-      .default(undefined),
-    estimateBHP: Yup.object({
-      enabled: Yup.boolean(),
-      method: Yup.string<
-        'GradientTraverse' | 'LiftCurveGaugeBhp' | 'LiftCurveRate' | 'None'
-      >(),
-      gaugeDepth: Yup.object({
-        value: Yup.number().label('Gauge depth').min(0),
-        unit: Yup.string<LengthUnit>(),
-        unitType: Yup.string<'Length'>(),
-      }),
-    })
-      .optional()
-      .default(undefined),
+  })
+    .optional()
+    .default(undefined);
+
+  const estimateBHP = Yup.object({
+    enabled: Yup.boolean(),
+    method: Yup.string<
+      'GradientTraverse' | 'LiftCurveGaugeBhp' | 'LiftCurveRate' | 'None'
+    >(),
     gaugeDepth: Yup.object({
       value: Yup.number().label('Gauge depth').min(0),
       unit: Yup.string<LengthUnit>(),
       unitType: Yup.string<'Length'>(),
-    })
-      .optional()
-      .default(undefined),
-    inputTimeSeries: Yup.array()
-      .of(
-        Yup.object({
-          name: Yup.string<InputTimeSeries['name']>().required().ensure(),
-          type: Yup.string<InputTimeSeries['type']>().required().ensure(),
-          unit: Yup.string().required().ensure(),
-          unitType: Yup.string<InputTimeSeries['unitType']>().required(),
-          sensorExternalId: Yup.string().required(),
-          aggregateType: Yup.string<AggregateType>().required(),
-          sampleExternalId: Yup.string().required(),
-        }).required()
-      )
-      .ensure()
-      .defined(),
-    outputTimeSeries: Yup.array().ensure().defined(),
+    }),
+  })
+    .optional()
+    .default(undefined);
+
+  const gaugeDepth = Yup.object({
+    value: Yup.number().label('Gauge depth').min(0),
+    unit: Yup.string<LengthUnit>(),
+    unitType: Yup.string<'Length'>(),
+  })
+    .optional()
+    .default(undefined);
+
+  const inputTimeSeries = Yup.array()
+    .of(
+      Yup.object({
+        name: Yup.string<InputTimeSeries['name']>().required().ensure(),
+        type: Yup.string<InputTimeSeries['type']>().required().ensure(),
+        unit: Yup.string().required().ensure(),
+        unitType: Yup.string<InputTimeSeries['unitType']>().required(),
+        sensorExternalId: Yup.string().required(),
+        aggregateType: Yup.string<AggregateType>().required(),
+        sampleExternalId: Yup.string().required(),
+      }).required()
+    )
+    .ensure()
+    .defined();
+
+  const outputTimeSeries = Yup.array().ensure().defined();
+
+  return Yup.object({
+    schedule,
+    dataSampling,
+    logicalCheck,
+    steadyStateDetection,
+    chokeCurve,
+    rootFindingSettings,
+    estimateBHP,
+    gaugeDepth,
+    inputTimeSeries,
+    outputTimeSeries,
   }).transform((values: CalculationTemplate) => ({
     ...values,
     inputTimeSeries: getInputTimeSeries?.(values),
   }));
+};
