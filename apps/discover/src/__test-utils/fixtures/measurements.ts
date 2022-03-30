@@ -229,7 +229,6 @@ export const getMockDepthMeasurementDataWellboreOne = (
       values: [1, 69, 145.0250784],
     },
   ],
-  nextCursor: 'AAAAAAAAAGU=',
   ...extras,
 });
 
@@ -296,7 +295,6 @@ export const getMockDepthMeasurementData = (
   },
   columns: getMockDepthMeasurementDataColumns(),
   rows: getDepthMeasurementRows(),
-  nextCursor: 'AAAAAAAAAGU=',
   ...extras,
 });
 

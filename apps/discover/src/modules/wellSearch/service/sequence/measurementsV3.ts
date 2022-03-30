@@ -8,7 +8,6 @@ import {
 
 import { ProjectConfigWells } from '@cognite/discover-api-types';
 import { reportException } from '@cognite/react-errors';
-import { DepthMeasurement } from '@cognite/sdk-wells-v3';
 
 import { MetricLogger } from 'hooks/useTimeLog';
 import {
@@ -35,24 +34,7 @@ export const getMeasurementsByWellboreIds = async (
     WdlMeasurementType.LOT,
   ]);
 
-  const promiseSettledResults = await Promise.allSettled(
-    depthMeasurementPromises
-  );
-
-  /**
-   * Ignore the failed results and move on with fullfilled ones
-   */
-  const depthMeasurements = promiseSettledResults
-    .map((promiseResult) => {
-      if (promiseResult.status === 'rejected') {
-        reportException(promiseResult.reason);
-        console.error('Error fetching sequence: ', promiseResult.reason);
-      }
-      return promiseResult;
-    })
-    .filter((promiseResult) => promiseResult.status === 'fulfilled')
-    .map((result) => <PromiseFulfilledResult<DepthMeasurement[]>>result)
-    .map((result) => result.value);
+  const depthMeasurements = await depthMeasurementPromises;
 
   const results = ([] as Measurement[]).concat(...depthMeasurements);
 
