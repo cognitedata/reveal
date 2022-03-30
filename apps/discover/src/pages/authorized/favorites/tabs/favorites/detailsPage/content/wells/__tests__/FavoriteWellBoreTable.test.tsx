@@ -1,101 +1,75 @@
 import { fireEvent, screen } from '@testing-library/react';
 
+import { getMockWellbore } from '__test-utils/fixtures/well';
 import { testRendererModal } from '__test-utils/renderer';
-import { useWellboresOfWellById } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
 import { REMOVE_FROM_SET_TEXT } from 'pages/authorized/favorites/constants';
-import { LOADING_TEXT } from 'pages/authorized/search/well/content/constants';
 
+import { NO_WELLBORES_FOUND } from '../../../../../../../search/well/content/constants';
 import { FavoriteWellboreTable, Props } from '../FavoriteWellBoreTable';
 
-jest.mock('react-redux', () => ({
-  useDispatch: jest.fn(),
-}));
-
-jest.mock('modules/wellSearch/hooks/useWellsCacheQuerySelectors', () => ({
-  useWellboresOfWellById: jest.fn(),
-}));
+const wellbores = [
+  getMockWellbore({ id: 'wellboreId1', name: 'test wellbore' }),
+];
+const selectedWellboreIds = ['wellboreId1'];
+const onViewWellbores = jest.fn();
+const onSelectedWellbore = jest.fn();
+const onRemoveWellbores = jest.fn();
 
 describe('Favorite Wellbore table', () => {
-  const defaultTestInit = (viewProps?: Props) =>
-    testRendererModal(FavoriteWellboreTable, undefined, viewProps);
+  const defaultTestInit = (
+    viewProps?: Omit<
+      Props,
+      'onRemoveWellbores' | 'onViewWellbores' | 'onSelectedWellbore'
+    >
+  ) =>
+    testRendererModal(FavoriteWellboreTable, undefined, {
+      onViewWellbores,
+      onSelectedWellbore,
+      onRemoveWellbores,
+      ...viewProps,
+    });
 
   afterEach(async () => jest.clearAllMocks());
 
-  it('should render the loader', async () => {
-    (useWellboresOfWellById as jest.Mock).mockImplementation(() => []);
-
+  it('should render the empty state when there are no wellbores', async () => {
     await defaultTestInit({
-      well: {
-        id: 1,
-        name: 'well',
-        sourceAssets: jest.fn(),
-      },
-      wellboreIds: ['test 1'],
-      removeWell: jest.fn(),
-      setWellboreIds: jest.fn(),
-      selectedWellbores: ['test 1'],
-      favoriteContentWells: { '1': ['test 1', 'test 2'] },
-      favoriteId: '',
+      wellbores: [],
+      selectedWellboreIds: [],
     });
 
-    const emptyState = screen.getByText(LOADING_TEXT);
+    const emptyState = screen.getByText(NO_WELLBORES_FOUND);
 
     expect(emptyState).toBeInTheDocument();
   });
 
-  it('should render table correctly', async () => {
-    (useWellboresOfWellById as jest.Mock).mockImplementation(() => [
-      {
-        id: 'test-id',
-        description: 'test wellbore',
-        name: 'test wellbore',
-      },
-    ]);
-
+  it('should render table and selection correctly', async () => {
     await defaultTestInit({
-      well: {
-        id: 1,
-        name: 'well',
-        sourceAssets: jest.fn(),
-      },
-      wellboreIds: [],
-      removeWell: jest.fn(),
-      setWellboreIds: jest.fn(),
-      selectedWellbores: [],
-      favoriteContentWells: {},
-      favoriteId: '',
+      wellbores,
+      selectedWellboreIds,
     });
 
     expect(screen.getByTitle('test wellbore')).toBeInTheDocument();
     expect(screen.getByText('View')).toBeInTheDocument();
     expect(screen.getByTestId('menu-button')).toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { checked: true })).toBeInTheDocument();
   });
 
-  it('should render wellbore `Remove from set` button', async () => {
-    (useWellboresOfWellById as jest.Mock).mockImplementation(() => [
-      {
-        id: 'test-id-1',
-        description: 'test wellbore',
-        name: 'test wellbore',
-      },
-    ]);
-    const removeWell = jest.fn();
-
+  it('should call correct parent functions', async () => {
     await defaultTestInit({
-      well: {
-        id: 1,
-        name: 'well',
-        sourceAssets: jest.fn(),
-      },
-      wellboreIds: [],
-      removeWell,
-      setWellboreIds: jest.fn(),
-      selectedWellbores: [],
-      favoriteContentWells: { '1': ['test-id-1'] },
-      favoriteId: '',
+      wellbores,
+      selectedWellboreIds,
     });
 
     fireEvent.mouseEnter(screen.getByTestId('menu-button'), { bubbles: true });
-    expect(await screen.findByText(REMOVE_FROM_SET_TEXT)).toBeInTheDocument();
+    fireEvent.click(screen.getByText(REMOVE_FROM_SET_TEXT));
+    fireEvent.click(screen.getByText('Remove'));
+    expect(onRemoveWellbores).toHaveBeenCalledWith(['wellboreId1']);
+
+    fireEvent.click(screen.getByText('View'));
+    expect(onViewWellbores).toHaveBeenCalledWith(['wellboreId1']);
+
+    const checkbox = screen.getByTitle('Toggle Row Selected');
+    fireEvent.click(checkbox);
+    expect(onSelectedWellbore).toHaveBeenCalled();
   });
 });

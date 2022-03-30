@@ -1,23 +1,13 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import flatten from 'lodash/flatten';
 import isEmpty from 'lodash/isEmpty';
-import isEqual from 'lodash/isEqual';
-import omit from 'lodash/omit';
-import pickBy from 'lodash/pickBy';
-import { useFavoriteUpdateContent } from 'services/favorites/useFavoritesMutate';
 
 import { Button } from '@cognite/cogs.js';
 
 import { CloseButton, ViewButton } from 'components/buttons';
 import TableBulkActions from 'components/table-bulk-actions';
-import { useDeepMemo } from 'hooks/useDeep';
 import { FavoriteContentWells } from 'modules/favorite/types';
-import { SelectedMap } from 'modules/filterData/types';
-import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
-import { useWellsByIds } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
-import { WellId } from 'modules/wellSearch/types';
 import { REMOVE_FROM_SET_TEXT } from 'pages/authorized/favorites/constants';
 import { DeleteWellFromSetModal } from 'pages/authorized/favorites/modals';
 import {
@@ -26,48 +16,40 @@ import {
 } from 'pages/authorized/search/well/content/constants';
 
 export interface Props {
-  allWellIds?: number[];
-  selectedWellIdsList: SelectedMap;
+  selectedWellsAndWellbores: FavoriteContentWells;
   deselectAll: () => void;
-  favoriteId: string;
-  favoriteWells: FavoriteContentWells | undefined;
-  selectedWellboresList: FavoriteContentWells;
+  onViewWellbores: () => void;
+  onRemoveWellsAndWellbores: () => void;
 }
 export const FavoriteWellsBulkActions: React.FC<Props> = ({
-  selectedWellIdsList,
-  allWellIds,
+  selectedWellsAndWellbores,
   deselectAll,
-  favoriteId,
-  favoriteWells = {},
-  selectedWellboresList,
+  onViewWellbores,
+  onRemoveWellsAndWellbores,
 }) => {
   const { t } = useTranslation('Search');
-  const navigateToWellInspect = useNavigateToWellInspect();
-  const { mutateAsync: mutateFavoriteContent } = useFavoriteUpdateContent();
-  const wells = useWellsByIds(allWellIds);
   const [isDeleteWellModalOpen, setIsDeleteWellModalOpen] = useState(false);
 
-  const selectedWellIds: WellId[] = useDeepMemo(
-    () => Object.keys(pickBy(selectedWellIdsList)),
-    [selectedWellIdsList]
+  const selectedWellIdsCount = Object.keys(selectedWellsAndWellbores).reduce(
+    (previousValue, currentValue) => {
+      return (
+        previousValue +
+        (isEmpty(selectedWellsAndWellbores[currentValue]) ? 0 : 1)
+      );
+    },
+    0
   );
-
-  const selectedWellboreIds: WellId[] = useDeepMemo(
-    () => flatten(Object.values(selectedWellboresList)),
-    [selectedWellIdsList]
-  );
-
-  const selectedWellIdsCount = selectedWellIds.length;
-  const selectedWellboreIdsCount = selectedWellboreIds.length;
+  const selectedWellboreIdsCount = Object.values(
+    selectedWellsAndWellbores
+  ).reduce((previousValue, currentValue) => {
+    return previousValue + (currentValue?.length || 0);
+  }, 0);
 
   const handleOpenDeleteModal = () => setIsDeleteWellModalOpen(true);
   const handleCloseDeleteModal = () => setIsDeleteWellModalOpen(false);
 
   const handleClickView = () => {
-    navigateToWellInspect({
-      wellIds: selectedWellIds,
-      wellboreIds: selectedWellboreIds,
-    });
+    onViewWellbores();
   };
 
   const bulkActionTitle = `${selectedWellIdsCount} ${
@@ -79,57 +61,8 @@ export const FavoriteWellsBulkActions: React.FC<Props> = ({
   } inside`;
 
   const removeAllWells = (): void => {
-    removeSelectedWellboresAndWells();
-    deselectAll();
-  };
-
-  const removeSelectedWellboresAndWells = (): void => {
-    let newFavoriteWells: FavoriteContentWells = { ...favoriteWells };
-    if (!favoriteWells) return;
-
-    if (
-      isEmpty(selectedWellboresList) &&
-      Object.values(selectedWellIdsList).every((isSelected) => isSelected)
-    ) {
-      newFavoriteWells = {};
-    } else {
-      Object.keys(selectedWellboresList).forEach((wellId) => {
-        // checking favorite well contains all the wellbores(denoted as empty []), then remove selected wellbores
-        if (isEmpty(favoriteWells[wellId])) {
-          newFavoriteWells[wellId] = getRemainingWellboreList(wellId);
-        } else {
-          newFavoriteWells[wellId] = favoriteWells[wellId].filter(
-            (wellboreId) => !selectedWellboresList[wellId].includes(wellboreId)
-          );
-        }
-        // removing well if no wellbore is left after removing wellbores
-        if (isEmpty(newFavoriteWells[wellId])) {
-          newFavoriteWells = omit(newFavoriteWells, wellId);
-        }
-      });
-    }
-
-    removeFromQueryCache(newFavoriteWells);
-  };
-
-  const getRemainingWellboreList = (wellId: WellId): string[] => {
-    return (
-      wells
-        .find((well) => isEqual(String(well.id), wellId))
-        ?.wellbores?.filter(
-          (wellbore) => !selectedWellboresList[wellId].includes(wellbore.id)
-        )
-        .flatMap((wellbore) => String([wellbore.id])) || []
-    );
-  };
-
-  const removeFromQueryCache = (favoriteWells: FavoriteContentWells): void => {
-    mutateFavoriteContent({
-      id: favoriteId,
-      updateData: {
-        wells: favoriteWells,
-      },
-    });
+    onRemoveWellsAndWellbores();
+    handleCloseDeleteModal();
   };
 
   const isVisible = selectedWellIdsCount > 0 || selectedWellboreIdsCount > 0;

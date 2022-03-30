@@ -339,7 +339,7 @@ const TableInner = <T extends Object>({
 
         return (
           <CustomRow<T>
-            key={`table-${row.id || get(row, 'original.id')}`}
+            key={`table-${get(row, 'original.id') || row.id}`}
             columns={columns}
             row={row}
             visibleColumns={visibleColumns}

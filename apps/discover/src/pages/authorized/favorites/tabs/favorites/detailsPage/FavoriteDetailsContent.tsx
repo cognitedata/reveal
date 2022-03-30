@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { Switch, Route, useHistory, useLocation } from 'react-router-dom';
 
-import omit from 'lodash/omit';
-import { useFavoriteUpdateContent } from 'services/favorites/useFavoritesMutate';
-
 import { Badge, Icon, Tabs } from '@cognite/cogs.js';
 import { FavoriteContent } from '@cognite/discover-api-types';
 
@@ -45,7 +42,6 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
   );
   const [showingDocumentPreviewId, setShowingDocumentPreviewId] =
     React.useState<string | undefined>(undefined);
-  const { mutateAsync: mutateFavoriteContent } = useFavoriteUpdateContent();
 
   const { pathname } = useLocation();
   const history = useHistory();
@@ -79,15 +75,6 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
   const handleModalClose = () => {
     metrics.track('click-close-document-preview-button');
     setShowingDocumentPreviewId('');
-  };
-
-  const removeWell = (wellId: number) => {
-    mutateFavoriteContent({
-      id: favoriteId,
-      updateData: {
-        wells: content?.wells ? omit(content.wells, [wellId]) : {},
-      },
-    });
   };
 
   return (
@@ -144,11 +131,7 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
             <Route
               path={navigation.FAVORITE_TAB_WELLS(favoriteId)}
               render={() => (
-                <WellsTable
-                  removeWell={removeWell}
-                  wells={content?.wells}
-                  favoriteId={favoriteId}
-                />
+                <WellsTable wells={content?.wells} favoriteId={favoriteId} />
               )}
             />
           </Switch>
