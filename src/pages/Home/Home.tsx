@@ -7,12 +7,9 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import styled from 'styled-components';
-
 import { Title, Icon, Loader } from '@cognite/cogs.js';
 import { Menu } from 'antd';
-
 import { createLink } from '@cognite/cdf-utilities';
-
 import APIKeys from 'pages/APIKeys';
 import Groups from 'pages/Groups';
 import IDP from 'pages/IDP';

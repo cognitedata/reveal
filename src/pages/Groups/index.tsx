@@ -20,7 +20,13 @@ import { Group } from '@cognite/sdk';
 import { useRouteMatch } from 'react-router';
 import { ColumnType } from 'antd/lib/table';
 
-import { useAuthConfiguration, useGroups, usePermissions } from 'hooks';
+import LegacyServiceAccountsWarning from 'pages/OIDC/LegacyServiceAccountsWarning';
+import {
+  useAuthConfiguration,
+  useGroups,
+  usePermissions,
+  useListServiceAccounts,
+} from 'hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import GroupDrawer from './GroupDrawer';
 import CapabilityTag from './CapabilityTag';
@@ -59,12 +65,7 @@ export default function Groups() {
   );
   const { data: authSettings } = useAuthConfiguration();
   const { data: groups, isFetched: groupsFetched } = useGroups(true);
-
-  const { data: serviceAccounts } = useQuery(
-    ['service-accounts'],
-    () => sdk.serviceAccounts.list(),
-    { enabled: legacyFlow }
-  );
+  const { data: serviceAccounts } = useListServiceAccounts(legacyFlow);
 
   useEffect(() => {
     if (project?.defaultGroupId === localDefaultGroup) {
@@ -280,6 +281,10 @@ export default function Groups() {
 
   return (
     <>
+      {!authSettings?.isLegacyLoginFlowAndApiKeysEnabled &&
+      serviceAccounts?.length ? (
+        <LegacyServiceAccountsWarning accounts={serviceAccounts} />
+      ) : null}
       <Row justify="space-between">
         <Col>
           <Input.Search
