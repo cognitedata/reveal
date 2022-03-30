@@ -8,6 +8,8 @@ import {
   listExtractors,
   listReleases,
 } from './ExtractorDownloadApi';
+import { Colors } from '@cognite/cogs.js';
+import theme from 'styles/theme';
 
 const LinkStyled = styled.a`
   height: 100%;
@@ -158,13 +160,7 @@ const Extractors = () => {
 
   return (
     <StyledExtractorsContainer>
-      <NewHeader
-        title="Extractor downloads"
-        breadcrumbs={[
-          { title: 'Data ingestion', path: '/ingest' },
-          { title: 'Extractors', path: '/extractors' },
-        ]}
-      />
+      <NewHeader title="Extractor downloads" ornamentColor="#21d7ec" />
       <Table
         dataSource={GetExtractors()}
         columns={extractorColumns}
