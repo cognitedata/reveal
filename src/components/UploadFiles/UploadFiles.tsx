@@ -150,7 +150,7 @@ const UploadFiles = ({
             xhr.open('PUT', response.uploadUrl, true);
             xhr.onload = () => {
               const { status } = xhr;
-              if (status === 200) {
+              if (status === 201) {
                 setUploadError(null);
                 message.success('File is uploaded');
                 setIsUploading(false);

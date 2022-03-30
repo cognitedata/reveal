@@ -92,7 +92,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
     docs: DataSet['metadata']['consoleAdditionalDocs']
   ) => {
     return docs.filter(
-      (item) => item.type !== 'file' && isNotNilOrWhitespace(String(item.id))
+      (item) => item.type === 'file' && isNotNilOrWhitespace(String(item.id))
     ).length;
   };
 

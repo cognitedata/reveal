@@ -33,7 +33,7 @@ const DocumentationPage = (props: DocumentationProps): JSX.Element => {
   const [urlList, setUrlList] = useState<{ name: string; id: string }[]>([]);
   const [ownerName, setOwnerName] = useState<string>('');
   const [ownerEmail, setOwnerEmail] = useState<string>('');
-  const [qualityAsessment, setQuality] = useState<boolean>();
+  const [qualityAssessment, setQuality] = useState<boolean>();
 
   useEffect(() => {
     if (props.saveSection) {
@@ -74,7 +74,7 @@ const DocumentationPage = (props: DocumentationProps): JSX.Element => {
               })
           );
         }
-        // quality assesment
+        // quality assessment
         if (props.dataSet.metadata.consoleGoverned !== undefined) {
           setQuality(props.dataSet.metadata.consoleGoverned);
         }
@@ -114,11 +114,11 @@ const DocumentationPage = (props: DocumentationProps): JSX.Element => {
         });
         newDataSet.metadata.consoleAdditionalDocs = documentation;
       }
-      if (qualityAsessment !== undefined) {
-        trackEvent('DataSets.MetadataUsage.Used quality assesment', {
-          governed: qualityAsessment,
+      if (qualityAssessment !== undefined) {
+        trackEvent('DataSets.MetadataUsage.Used quality assessment', {
+          governed: qualityAssessment,
         });
-        newDataSet.metadata.consoleGoverned = qualityAsessment;
+        newDataSet.metadata.consoleGoverned = qualityAssessment;
       }
 
       props.updateDataSet(newDataSet);
@@ -234,7 +234,7 @@ const DocumentationPage = (props: DocumentationProps): JSX.Element => {
           </p>
           <Radio.Group
             style={{ width: '100%' }}
-            value={qualityAsessment}
+            value={qualityAssessment}
             buttonStyle="solid"
             onChange={(e) => {
               setQuality(e.target.value);
