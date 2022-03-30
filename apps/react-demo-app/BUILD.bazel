@@ -3,7 +3,8 @@ load("@npm//@bazel/typescript:index.bzl", "ts_project")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
 load("@npm//@storybook/react:index.bzl", "build_storybook", "start_storybook")
 load("@npm//vite:index.bzl", "vite")
-load("@npm//react-scripts:index.bzl", "react_scripts")
+load("//rules/test:jest.bzl", "jest_test")
+load("@npm//jest:index.bzl", "jest")
 load("@npm//cypress:index.bzl", "cypress")
 load("@com_github_cognitedata_bazel_tools//k8s/kubeval:kubeval.bzl", "kubeval_test")
 load("//rules:baker_bake.bzl", "baker_bake")
@@ -11,7 +12,6 @@ load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
 load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
 load("//rules/publish:publish_fas.bzl", "publish_fas")
 load("//rules/publish:publish_storybook.bzl", "publish_storybook")
-load("//rules/test:react_scripts_test.bzl", "react_scripts_test")
 load("//rules/test:cypress_batch_test.bzl", "cypress_batch_test")
 load("//rules/build_sed:build_sed.bzl", "build_sed")
 load("//rules/container:container_build.bzl", "container_build")
@@ -241,26 +241,29 @@ copy_to_bin(
     srcs = TESTS,
 )
 
-react_scripts_test(
-    name = "test",
-    # folder name to store jest coverage in during CI run
-    app_name = "react-demo-app",
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
-        "@npm//@storybook/addon-essentials",
-        "@npm//@storybook/addon-links",
-        "@npm//@storybook/preset-create-react-app",
-        "@npm//@storybook/react",
-        "copy_test_files",
+jest_test(
+    name = "jest_test",
+    srcs = SOURCES + TESTS + [
+        "//apps:jest.config.js",
+        "//apps:jest.react.config.js",
+        "//apps:babelTransform.js",
+        ":tsconfig.json",
+        "//:tsconfig.json",
     ],
+    jest_args = [],
+    jest_config = "jest.config.js",
+    service_name = "react-demo-app",
+    deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + ["@npm//babel-preset-react-app"],
 )
 
 ### react-scripts test Dev ###
-react_scripts(
+jest(
     name = "jest",
     args = [
         "--node_options=--require=./$(rootpath chdir-workspace.js)",
-        "test",
-        "--watchAll=false",
+        "--config",
+        "jest.config.js",
+        "--runInBand",
     ],
     data = _RUNTIME_DEPS + [
         "chdir-workspace.js",

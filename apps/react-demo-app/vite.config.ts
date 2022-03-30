@@ -1,21 +1,8 @@
-// import path from 'path';
-
-// const { defineConfig } = require('vite');
-// const react = require('@vitejs/plugin-react');
-// const tsconfigPaths = require('vite-tsconfig-paths');
-// const svgr = require('vite-plugin-svgr');
-// const polyfillNode = require('rollup-plugin-polyfill-node');
-// const inject = require('@rollup/plugin-inject');
-// const { viteCommonjs } = require('@originjs/vite-plugin-commonjs');
-// const macrosPlugin = require('vite-plugin-babel-macros');
-// const commonjs = require('rollup-plugin-commonjs');
-
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tsConfigPaths from 'vite-tsconfig-paths';
 import svgr from 'vite-plugin-svgr';
 import macrosPlugin from 'vite-plugin-babel-macros';
-// import polyfillNode from 'rollup-plugin-polyfill-node';
 import inject from '@rollup/plugin-inject';
 
 // https://vitejs.dev/config/
@@ -27,7 +14,6 @@ export default defineConfig({
       projects: ['tsconfig.json', 'apps/react-demo-app/tsconfig.json'],
     }),
     svgr(),
-    // polyfillNode(),
     macrosPlugin(),
   ],
   // Manually export every env variable in process.env, until we can fully migrate to use import.meta.env
@@ -80,10 +66,6 @@ export default defineConfig({
       process.env.REACT_APP_MIXPANEL_DEBUG
     ),
   },
-  // 'process.env': {},
-  // 'process.emitWarning': () => {},
-  // 'process.env.API_KEY': JSON.stringify(process.env.API_KEY),
-  // 'process.env.DEBUG': JSON.stringify(process.env.DEBUG),
   build: {
     // sourcemap: true,
     commonjsOptions: {
