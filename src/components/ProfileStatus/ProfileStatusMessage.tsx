@@ -36,7 +36,7 @@ export const ProfileStatusMessage = ({
         <StyledMessage
           isClosable
           isCompact={isCompact}
-          message="Data profiling partially completed. Only the first million rows of data were processed."
+          message="Data profiling partially completed. Only up to one million rows of data are used for profiling."
           type="warning"
         />
       );
