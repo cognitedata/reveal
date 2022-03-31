@@ -93,11 +93,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
 
   const getDocumentationLength = (
     docs: DataSet['metadata']['consoleAdditionalDocs']
-  ) => {
-    return docs.filter(
-      (item) => item.type !== 'file' && isNotNilOrWhitespace(String(item.id))
-    ).length;
-  };
+  ) => docs.filter((item) => isNotNilOrWhitespace(String(item.id))).length;
 
   const keyToStatusFilledDataSet = (key: string, dataSet: DataSet) => {
     switch (key) {
