@@ -28,7 +28,7 @@ const SidePanelTableList = (): JSX.Element => {
     setSelectedSidePanelDatabase,
     setIsSidePanelOpen,
   } = useContext(RawExplorerContext);
-
+  const { flow } = getFlow();
   const [query, setQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
@@ -37,11 +37,7 @@ const SidePanelTableList = (): JSX.Element => {
     { enabled: !!selectedSidePanelDatabase }
   );
 
-  const { data: hasWriteAccess } = usePermissions(
-    getFlow().flow,
-    'rawAcl',
-    'WRITE'
-  );
+  const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
 
   const [[activeDatabase, activeTable] = []] = useActiveTable();
 

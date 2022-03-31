@@ -19,7 +19,6 @@ CogsTooltip.defaultProps = {
 export default function GlobalStyles(props: { children: React.ReactNode }) {
   useGlobalStyles([cogsStyles, reactTableStyles]);
 
-  // useGlobalStyles([antdStyle, cogsStyles]); // uncomment to add antd
   return (
     <ConfigProvider getPopupContainer={getContainer}>
       <div className={styleScope}>

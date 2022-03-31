@@ -36,13 +36,10 @@ const SidePanelTableListContent = ({
   searchQuery,
   tables,
 }: SidePanelTableListContentProps): JSX.Element => {
+  const { flow } = getFlow();
   const { selectedSidePanelDatabase = '' } = useContext(RawExplorerContext);
 
-  const { data: hasWriteAccess } = usePermissions(
-    getFlow().flow,
-    'rawAcl',
-    'WRITE'
-  );
+  const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
 
   const filteredTableList = useMemo(() => {
     return (

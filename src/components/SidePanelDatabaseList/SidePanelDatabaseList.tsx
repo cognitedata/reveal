@@ -23,16 +23,13 @@ const accessWarningContent = (
 );
 
 const SidePanelDatabaseList = (): JSX.Element => {
+  const { flow } = getFlow();
   const [query, setQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const { data, fetchNextPage, isLoading, hasNextPage } = useDatabases();
 
-  const { data: hasWriteAccess } = usePermissions(
-    getFlow().flow,
-    'rawAcl',
-    'WRITE'
-  );
+  const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
 
   const [[activeDatabase, activeTable] = []] = useActiveTable();
 

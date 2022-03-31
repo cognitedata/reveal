@@ -11,11 +11,8 @@ import DownloadTableModal from 'components/DownloadTableModal/DownloadTableModal
 import { useActiveTableContext } from 'contexts';
 
 export const Menu = (): JSX.Element => {
-  const { data: hasWriteAccess } = usePermissions(
-    getFlow().flow,
-    'rawAcl',
-    'WRITE'
-  );
+  const { flow } = getFlow();
+  const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
   const { rows, isFetched } = useTableData();
   const { database, table } = useActiveTableContext();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
