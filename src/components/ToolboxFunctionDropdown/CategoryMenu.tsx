@@ -54,36 +54,39 @@ const CategoryMenu = ({
         .map(
           ({ category, toolFunctions }) =>
             !!toolFunctions.length && (
-              <Menu.Submenu
-                key={category}
-                visible={selectedCategory === category}
-                trigger={undefined}
-                content={
-                  <Menu style={{ maxHeight: 615, overflowY: 'auto' }}>
-                    <FunctionsList
-                      category={category}
-                      operations={toolFunctions}
-                      onFunctionClick={onFunctionClick}
-                      onInfoButtonClick={onInfoButtonClick}
-                    />
-                  </Menu>
-                }
+              <CategoryItemWrapper
+                tabIndex={0}
+                role="button"
+                onClick={() => setSelectedCategory(category)}
+                onKeyDown={() => setSelectedCategory(category)}
               >
-                <CategoryItem
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => setSelectedCategory(category)}
-                  onKeyDown={() => setSelectedCategory(category)}
-                  style={{ width: '100%', textAlign: 'left' }}
+                <Menu.Submenu
+                  key={category}
+                  visible={selectedCategory === category}
+                  trigger={undefined}
+                  content={
+                    <Menu style={{ maxHeight: 615, overflowY: 'auto' }}>
+                      <FunctionsList
+                        category={category}
+                        operations={toolFunctions}
+                        onFunctionClick={onFunctionClick}
+                        onInfoButtonClick={onInfoButtonClick}
+                      />
+                    </Menu>
+                  }
                 >
-                  {category}
-                </CategoryItem>
-              </Menu.Submenu>
+                  <CategoryItem style={{ width: '100%', textAlign: 'left' }}>
+                    {category}
+                  </CategoryItem>
+                </Menu.Submenu>
+              </CategoryItemWrapper>
             )
         )}
     </Menu>
   );
 };
+
+const CategoryItemWrapper = styled.div``;
 
 const CategoryItem = styled.div`
   height: 100%;

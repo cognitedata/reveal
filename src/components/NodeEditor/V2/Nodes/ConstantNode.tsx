@@ -37,7 +37,7 @@ const ConstantNode = memo(
       onRemoveNode,
       translations: t,
     } = data;
-    const [isInputVisible, setIsInputVisible] = useState<boolean>(false);
+    const [isInputVisible, setIsInputVisible] = useState<boolean>(selected);
     const [localValue, setLocalValue] = useState(String(value));
     const { error } = numberValidator.validate(parseFloat(localValue));
     const isValid = !error;
@@ -45,6 +45,13 @@ const ConstantNode = memo(
     useEffect(() => {
       setLocalValue(String(value));
     }, [value]);
+
+    useEffect(() => {
+      if (!selected) {
+        setIsInputVisible(false);
+        setLocalValue(String(value));
+      }
+    }, [selected, value]);
 
     const handleUpdateValue = useCallback(() => {
       if (isValid) {

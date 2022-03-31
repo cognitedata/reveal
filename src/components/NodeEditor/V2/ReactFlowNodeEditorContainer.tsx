@@ -194,9 +194,9 @@ const ReactFlowNodeEditorContainer = ({
         newNodeId
       );
 
+      setSelectedElements([{ id: newNodeId, type: nodeType }]);
       setLocalWorkflow(updatedWorkflow);
       onUpdateWorkflow(updatedWorkflow, steps, isValid);
-      setSelectedElements([{ id: newNodeId, type: nodeType }]);
     },
     [onUpdateWorkflow, setSelectedElements, localWorkflow, steps, isValid]
   );
@@ -282,6 +282,7 @@ const ReactFlowNodeEditorContainer = ({
   const handleAddFunctionNode = useCallback(
     (position: XYPosition, operation: Operation, version: string) => {
       const nodeId = uuidv4();
+      const nodeType = NodeTypes.FUNCTION;
 
       const selectedOperationVersion = operation.versions.find(
         (operationVersion) => operationVersion.version === version
@@ -289,7 +290,7 @@ const ReactFlowNodeEditorContainer = ({
 
       const newNode: Node<FunctionNodeDataDehydrated> = {
         id: nodeId,
-        type: NodeTypes.FUNCTION,
+        type: nodeType,
         data: {
           selectedOperation: { op: operation.op, version },
           parameterValues: initializeParameterValues(selectedOperationVersion),
@@ -299,29 +300,32 @@ const ReactFlowNodeEditorContainer = ({
 
       const updatedWorkflow = addNodeInFlow(localWorkflow, newNode);
 
+      setSelectedElements([{ id: nodeId, type: nodeType }]);
       setLocalWorkflow(updatedWorkflow);
       onUpdateWorkflow(updatedWorkflow, steps, isValid);
     },
-    [onUpdateWorkflow, localWorkflow, steps, isValid]
+    [onUpdateWorkflow, setSelectedElements, localWorkflow, steps, isValid]
   );
 
   const handleAddConstantNode = useCallback(
     (position: XYPosition) => {
       const nodeId = uuidv4();
+      const nodeType = NodeTypes.CONSTANT;
 
       const newNode: Node<ConstantNodeDataDehydrated> = {
         id: nodeId,
-        type: NodeTypes.CONSTANT,
+        type: nodeType,
         data: { value: 1 },
         position,
       };
 
       const updatedWorkflow = addNodeInFlow(localWorkflow, newNode);
 
+      setSelectedElements([{ id: nodeId, type: nodeType }]);
       setLocalWorkflow(updatedWorkflow);
       onUpdateWorkflow(updatedWorkflow, steps, isValid);
     },
-    [onUpdateWorkflow, localWorkflow, steps, isValid]
+    [onUpdateWorkflow, setSelectedElements, localWorkflow, steps, isValid]
   );
 
   const handleAddOutputNode = useCallback(

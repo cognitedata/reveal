@@ -50,10 +50,12 @@ const FunctionNode = memo(
       translations: t,
     } = data;
 
-    const [areParamsVisible, setAreParamsVisible] = useState<boolean>(false);
+    const [areParamsVisible, setAreParamsVisible] = useState<boolean>(selected);
 
     useEffect(() => {
-      setAreParamsVisible(false);
+      if (!selected) {
+        setAreParamsVisible(false);
+      }
     }, [selected]);
 
     const selectedOperationVersion = operation?.versions.find(

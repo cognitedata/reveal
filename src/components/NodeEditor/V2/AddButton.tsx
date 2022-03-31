@@ -77,25 +77,25 @@ const AddMenu = ({
 
   return (
     <AddDropdownMenu>
-      <Menu.Submenu
-        visible={isSourceMenuOpen}
-        onClickOutside={() => setIsSourceMenuOpen(false)}
-        content={
-          <SourceListDropdown
-            sources={sources}
-            addSourceNode={addSourceNode}
-            translations={translations}
-          />
-        }
+      <MenuItemWrapper
+        onClick={() => setIsSourceMenuOpen((isOpen) => !isOpen)}
+        onKeyDown={() => setIsSourceMenuOpen((isOpen) => !isOpen)}
+        role="button"
       >
-        <SourceItemTextWrapper
-          role="button"
-          onClick={() => setIsSourceMenuOpen((isOpen) => !isOpen)}
-          onKeyDown={() => setIsSourceMenuOpen((isOpen) => !isOpen)}
+        <Menu.Submenu
+          visible={isSourceMenuOpen}
+          onClickOutside={() => setIsSourceMenuOpen(false)}
+          content={
+            <SourceListDropdown
+              sources={sources}
+              addSourceNode={addSourceNode}
+              translations={translations}
+            />
+          }
         >
-          {t.Source}
-        </SourceItemTextWrapper>
-      </Menu.Submenu>
+          <SourceItemTextWrapper>{t.Source}</SourceItemTextWrapper>
+        </Menu.Submenu>
+      </MenuItemWrapper>
       {!!operations.length && (
         <ToolboxFunctionDropdown
           categories={{
@@ -166,6 +166,8 @@ const AddButton = ({
     </AddDropdownContainer>
   );
 };
+
+const MenuItemWrapper = styled.div``;
 
 const AddDropdownContainer = styled.div`
   position: absolute;
