@@ -110,7 +110,8 @@ export class CadModelUpdateHandler {
       map(createDetermineSectorsInput), // Map from array to interface (enables destructuring)
       filter(loadingEnabled), // should we load?
       mergeMap(async x => loadSectors(x)),
-      mergeMap(x => x)
+      mergeMap(x => x),
+      share()
     );
   }
 
