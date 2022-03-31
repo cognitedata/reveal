@@ -9,7 +9,6 @@ import {
   listReleases,
 } from './ExtractorDownloadApi';
 import { Colors } from '@cognite/cogs.js';
-import theme from 'styles/theme';
 
 const LinkStyled = styled.a`
   height: 100%;
@@ -160,7 +159,10 @@ const Extractors = () => {
 
   return (
     <StyledExtractorsContainer>
-      <NewHeader title="Extractor downloads" ornamentColor="#21d7ec" />
+      <NewHeader
+        title="Extractor downloads"
+        ornamentColor={Colors['lightblue']}
+      />
       <Table
         dataSource={GetExtractors()}
         columns={extractorColumns}

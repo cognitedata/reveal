@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import Breadcrumb from 'antd/lib/breadcrumb';
 import Link from 'components/Link';
 import theme from 'styles/theme';
-
 interface BreadcrumbsProps {
   breadcrumbs: { title: string; path?: string }[];
 }
