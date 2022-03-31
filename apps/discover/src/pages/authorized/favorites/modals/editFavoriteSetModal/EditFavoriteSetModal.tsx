@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useFavoritesUpdateMutate } from 'services/favorites/useFavoritesMutate';
-import { handleServiceError } from 'utils/service/handleServiceError';
 
 import { showErrorMessage } from 'components/toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
@@ -39,7 +38,7 @@ const EditFavoriteSetModal: React.FC<Props> = (props) => {
         name: updatedItem.name,
         description: updatedItem.description,
       },
-    }).catch(handleServiceError);
+    });
   };
 
   const handleTextChanged = (

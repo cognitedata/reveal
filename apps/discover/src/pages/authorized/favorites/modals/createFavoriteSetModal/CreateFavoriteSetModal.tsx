@@ -3,18 +3,19 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { useFavoritesCreateMutate } from 'services/favorites/useFavoritesMutate';
-import { handleServiceError } from 'utils/service/handleServiceError';
 
 import { NOTIFICATION_MESSAGE } from 'components/add-to-favorite-set-menu/constants';
 import { showSuccessMessage } from 'components/toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { hideCreateFavoriteModal } from 'modules/favorite/reducer';
-
-import { setItemsToAddOnFavoriteCreation } from '../../../../../modules/favorite/reducer';
+import {
+  hideCreateFavoriteModal,
+  setItemsToAddOnFavoriteCreation,
+} from 'modules/favorite/reducer';
 import {
   useIsCreateFavoriteModalOpenSelector,
   useItemsToAddOnFavoriteCreationSelector,
-} from '../../../../../modules/favorite/selectors';
+} from 'modules/favorite/selectors';
+
 import { CREATE_SET_MODAL_BUTTON_TEXT } from '../../constants';
 import BaseFavoriteCreationModal from '../baseFavoriteCreationModal/BaseFavoriteCreationModal';
 
@@ -67,14 +68,12 @@ const CreateFavoriteSetModal: React.FC = () => {
       name: name.trim(),
       description: description?.trim() || undefined,
       content,
-    })
-      .then(() => {
-        showSuccessMessage('Favorite set created');
-        if (itemsToAddAfterFavoriteCreation) {
-          showSuccessMessage(t(NOTIFICATION_MESSAGE));
-        }
-      })
-      .catch(handleServiceError);
+    }).then(() => {
+      showSuccessMessage('Favorite set created');
+      if (itemsToAddAfterFavoriteCreation) {
+        showSuccessMessage(t(NOTIFICATION_MESSAGE));
+      }
+    });
 
     dispatch(hideCreateFavoriteModal());
     clearState();

@@ -12,6 +12,7 @@ import { ServiceError } from 'utils/service/types';
 import { DocumentCategories } from '@cognite/discover-api-types';
 
 import Skeleton from 'components/skeleton';
+import { SOMETHING_WENT_WRONG } from 'constants/error';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useDocumentQueryFacets } from 'modules/documentSearch/hooks/useDocumentQueryFacets';
 import { sizes } from 'styles/layout';
@@ -39,7 +40,7 @@ const Documents: React.FC<
 
   if (!data || error || 'error' in data) {
     handleServiceError(error as ServiceError);
-    return <Wrapper>Something went wrong.</Wrapper>;
+    return <Wrapper>{SOMETHING_WENT_WRONG}</Wrapper>;
   }
 
   return <>{children(data)}</>;

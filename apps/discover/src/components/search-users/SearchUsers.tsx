@@ -7,6 +7,8 @@ import { userManagement } from 'services/userManagementService/endpoints';
 
 import { AutoComplete, OptionsType, OptionTypeBase } from '@cognite/cogs.js';
 
+import { SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN } from 'constants/error';
+
 import { showErrorMessage } from '../toast';
 
 export interface UserOption {
@@ -39,7 +41,7 @@ export const SearchUsers: React.FC<Props> = (props) => {
           );
         })
         .catch(() => {
-          showErrorMessage('Something went wrong, please try again.');
+          showErrorMessage(SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN);
         });
     }, 300),
     []

@@ -21,6 +21,7 @@ import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 import EmptyState from 'components/emptyState';
 import { Table, Options, TableResults, RowProps } from 'components/tablev3';
 import { COMMENT_NAMESPACE } from 'constants/comments';
+import { SOMETHING_WENT_WRONG_REFRESH_PAGE } from 'constants/error';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';
 import { FIELDS } from 'modules/feedback/constants';
 import { feedbackHelper } from 'modules/feedback/helper';
@@ -272,10 +273,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
 
   if (isError) {
     return (
-      <EmptyState
-        img="Recent"
-        emptyTitle="Something went wrong. Try refreshing the page."
-      />
+      <EmptyState img="Recent" emptyTitle={SOMETHING_WENT_WRONG_REFRESH_PAGE} />
     );
   }
 

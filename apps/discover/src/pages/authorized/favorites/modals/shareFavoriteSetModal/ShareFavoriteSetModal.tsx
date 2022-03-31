@@ -6,7 +6,6 @@ import {
   useFavoriteRemoveShareMutate,
 } from 'services/favorites/useFavoritesMutate';
 import { useFavoritesGetOneQuery } from 'services/favorites/useFavoritesQuery';
-import { handleServiceError } from 'utils/service/handleServiceError';
 
 import { BasicShareModal } from 'components/basic-share-modal';
 import { SharedUsersList } from 'components/basic-share-modal/SharedUsersList';
@@ -38,11 +37,9 @@ const ShareFavoriteSetModal: React.FC<Props> = (props) => {
       shareFavoriteMutate({
         favoriteId,
         userIds: users.map((user) => user.value),
-      })
-        .then(() => {
-          showSuccessMessage(t(SHARE_SUCCESS_TOAST));
-        })
-        .catch(handleServiceError);
+      }).then(() => {
+        showSuccessMessage(t(SHARE_SUCCESS_TOAST));
+      });
     }
   };
 
@@ -50,11 +47,9 @@ const ShareFavoriteSetModal: React.FC<Props> = (props) => {
     removeShareFavoriteMutate({
       favoriteId,
       user: id,
-    })
-      .then(() => {
-        showSuccessMessage(t(REMOVE_SHARE_SUCCESS_TOAST));
-      })
-      .catch(handleServiceError);
+    }).then(() => {
+      showSuccessMessage(t(REMOVE_SHARE_SUCCESS_TOAST));
+    });
   };
 
   const sharedUsers = useMemo(

@@ -21,6 +21,8 @@ import {
   getTVDForMD,
 } from 'modules/wellSearch/utils/nds';
 
+import { SOMETHING_WENT_WRONG_FETCHING_TVD } from '../../../../constants/error';
+
 import { EVENT_LIMIT, EVENT_PER_PAGE, groupEventsByAssetId } from './common';
 
 export function getNdsEventsByWellboreIds(
@@ -137,9 +139,7 @@ export const mapNdsItemsToCogniteEvents = async (
       return groupBy(interpolationItems.items, 'wellboreMatchingId');
     })
     .catch(() => {
-      showErrorMessage(
-        'Something went wrong in getting True Vertical Depth values.'
-      );
+      showErrorMessage(SOMETHING_WENT_WRONG_FETCHING_TVD);
 
       return groupBy(
         getDummyTrueVerticalDepths(ndsEvents),

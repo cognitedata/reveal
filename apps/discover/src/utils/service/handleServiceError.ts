@@ -3,8 +3,8 @@ import { doReAuth } from 'utils/getCogniteSDKClient';
 import { reportException } from '@cognite/react-errors';
 
 import { showErrorMessage } from 'components/toast';
+import { SERVICE_ERROR_MESSAGE } from 'constants/error';
 
-import { SERVICE_ERROR_MESSAGE } from './constants';
 import { ServiceError } from './types';
 
 export const handleServiceError = <ErrorResponseType>(

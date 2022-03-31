@@ -2,15 +2,23 @@ import { useMutation, useQueryClient } from 'react-query';
 
 import { FavoritePostSchema } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
+import { reportException } from '@cognite/react-errors';
 
+import { showErrorMessage } from 'components/toast';
+import { SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN } from 'constants/error';
+import { FAVORITE_KEY } from 'constants/react-query';
 import {
   FavoriteSummary,
   UpdateFavoriteContentData,
   UpdateFavoriteData,
 } from 'modules/favorite/types';
 
-import { FAVORITE_KEY } from '../../constants/react-query';
 import { discoverAPI, useJsonHeaders } from '../service';
+
+const handleErrorResponse = (error: any) => {
+  showErrorMessage(SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN);
+  reportException(error);
+};
 
 export function useFavoritesCreateMutate() {
   const headers = useJsonHeaders({}, true);
@@ -24,6 +32,7 @@ export function useFavoritesCreateMutate() {
       onSuccess: () => {
         return queryClient.invalidateQueries(FAVORITE_KEY.ALL_FAVORITES);
       },
+      onError: handleErrorResponse,
     }
   );
 }
@@ -40,6 +49,7 @@ export function useFavoriteDuplicateMutate() {
       onSuccess: () => {
         return queryClient.invalidateQueries(FAVORITE_KEY.ALL_FAVORITES);
       },
+      onError: handleErrorResponse,
     }
   );
 }
@@ -79,11 +89,12 @@ export function useFavoritesUpdateMutate() {
       onSuccess: () => {
         return queryClient.invalidateQueries(FAVORITE_KEY.ALL_FAVORITES);
       },
-      onError: (_error, variables) => {
+      onError: (error, variables) => {
         queryClient.invalidateQueries([
           ...FAVORITE_KEY.FAVORITES,
           variables.id,
         ]);
+        handleErrorResponse(error);
       },
     }
   );
@@ -110,6 +121,7 @@ export function useFavoriteUpdateContent() {
         ]);
         return queryClient.invalidateQueries(FAVORITE_KEY.ALL_FAVORITES);
       },
+      onError: handleErrorResponse,
     }
   );
 }
@@ -126,6 +138,7 @@ export function useFavoritesDeleteMutate() {
       onSuccess: () => {
         return queryClient.invalidateQueries(FAVORITE_KEY.ALL_FAVORITES);
       },
+      onError: handleErrorResponse,
     }
   );
 }
@@ -153,6 +166,7 @@ export function useFavoriteShareMutate() {
         ]);
         return queryClient.invalidateQueries(FAVORITE_KEY.ALL_FAVORITES);
       },
+      onError: handleErrorResponse,
     }
   );
 }
@@ -179,6 +193,7 @@ export function useFavoriteRemoveShareMutate() {
           variables.favoriteId,
         ]);
       },
+      onError: handleErrorResponse,
     }
   );
 }

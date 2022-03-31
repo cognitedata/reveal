@@ -1,6 +1,5 @@
 import { screen, fireEvent } from '@testing-library/react';
 import { Store } from 'redux';
-import { SERVICE_ERROR_MESSAGE } from 'utils/service/constants';
 
 import { testRendererModal } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
@@ -102,6 +101,5 @@ describe('Create Favorite Set Model', () => {
       target: { value: 'fail' },
     });
     fireEvent.click(screen.getByText(CREATE_SET_MODAL_BUTTON_TEXT));
-    expect(await screen.findByText(SERVICE_ERROR_MESSAGE)).toBeInTheDocument();
   });
 });
