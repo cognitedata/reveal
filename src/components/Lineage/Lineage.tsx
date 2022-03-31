@@ -46,10 +46,13 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
   const [disableTransformations, setDisableTransformations] =
     useState<boolean>(false);
 
-  const isFlagConsumers = useFlag('EXTPIPES_CONSUMERS_allowlist', {
-    fallback: false,
-    forceRerender: true,
-  });
+  const { isEnabled: isFlagConsumers } = useFlag(
+    'EXTPIPES_CONSUMERS_allowlist',
+    {
+      fallback: false,
+      forceRerender: true,
+    }
+  );
   useEffect(() => {
     trackEvent('DataSets.LineageFlow.Enters lineage flow');
   }, []);

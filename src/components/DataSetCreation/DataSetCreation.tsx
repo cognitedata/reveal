@@ -57,10 +57,13 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
   const [isEditing, setIsEditing] = useState<boolean>(true);
   const [saveSections, setSaveSections] = useState<boolean>(false);
   const [writeProtected, setWriteProtected] = useState<boolean>(false);
-  const isFlagExtpipeConsumers = useFlag('EXTPIPES_CONSUMERS_allowlist', {
-    fallback: false,
-    forceRerender: true,
-  });
+  const { isEnabled: isFlagExtpipeConsumers } = useFlag(
+    'EXTPIPES_CONSUMERS_allowlist',
+    {
+      fallback: false,
+      forceRerender: true,
+    }
+  );
 
   const didRemoveNameOrDescription =
     (props.dataSet?.name !== '' && dataSetName === '') ||
