@@ -29,12 +29,16 @@ interface ReactPidProps {
   pidViewer?: React.MutableRefObject<CognitePid | undefined>;
   saveState?: SaveState;
   diagramExternalId?: string;
+  isAutoMode?: boolean;
+  onAutoAnalysisCompleted?: () => void;
 }
 
 export const ReactPid = ({
   pidViewer = useRef<CognitePid>(),
   saveState = SaveState.Ready,
+  isAutoMode = false,
   diagramExternalId,
+  onAutoAnalysisCompleted,
 }: ReactPidProps) => {
   const [hasDocumentLoaded, setHasDocumentLoaded] = useState(false);
 
@@ -291,6 +295,9 @@ export const ReactPid = ({
     setTimeout(() => {
       pidViewer.current!.autoAnalysis(documentMetadata);
       setIsAnalyzing(false);
+      if (isAutoMode && onAutoAnalysisCompleted) {
+        onAutoAnalysisCompleted();
+      }
     }, 0);
   };
 
@@ -318,6 +325,12 @@ export const ReactPid = ({
       }
     }
   }, [file]);
+
+  useEffect(() => {
+    if (isAutoMode) {
+      autoAnalysis();
+    }
+  }, [isAutoMode, hasDocumentLoaded]);
 
   return (
     <ReactPidWrapper>

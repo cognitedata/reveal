@@ -22,12 +22,12 @@ export const LoaderOverlay = styled.div`
 `;
 
 export const HandlerContainer = styled.div`
+  display: grid;
+  grid-template-rows: min-content auto;
   height: 100%;
   overflow: hidden;
 `;
 
 export const HandlerContent = styled.div`
   position: relative;
-  height: calc(100% - 56px);
-  overflow: hidden;
 `;

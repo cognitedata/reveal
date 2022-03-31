@@ -5,6 +5,7 @@ export type DiagramsReducerState = {
   selectedExternalIds: string[];
   currentIndex: number;
   showList: boolean;
+  isAutoMode: boolean;
 };
 
 export enum DiagramsReducerActionTypes {
@@ -13,6 +14,7 @@ export enum DiagramsReducerActionTypes {
   PREVIOUS,
   TOGGLE_SHOW_LIST,
   SET_SELECTION_FOR_PARSING,
+  TOGGLE_AUTO_MODE,
 }
 
 export type DiagramsReducerAction =
@@ -23,13 +25,15 @@ export type DiagramsReducerAction =
     }
   | { type: DiagramsReducerActionTypes.NEXT }
   | { type: DiagramsReducerActionTypes.PREVIOUS }
-  | { type: DiagramsReducerActionTypes.TOGGLE_SHOW_LIST };
+  | { type: DiagramsReducerActionTypes.TOGGLE_SHOW_LIST }
+  | { type: DiagramsReducerActionTypes.TOGGLE_AUTO_MODE };
 
 export const initialState: DiagramsReducerState = {
   files: [],
   selectedExternalIds: [],
   currentIndex: 0,
   showList: false,
+  isAutoMode: false,
 };
 
 const diagramsReducer = (
@@ -44,14 +48,20 @@ const diagramsReducer = (
       return { ...state, files: action.diagrams };
     }
     case DiagramsReducerActionTypes.NEXT: {
-      const newIndex = state.currentIndex + 1;
+      const isOnLastDiagram =
+        state.currentIndex === state.selectedExternalIds.length - 1;
+      const newIndex = isOnLastDiagram
+        ? state.currentIndex
+        : state.currentIndex + 1;
+
       return {
         ...state,
         currentIndex: newIndex,
+        isAutoMode: isOnLastDiagram ? false : state.isAutoMode,
       };
     }
     case DiagramsReducerActionTypes.PREVIOUS: {
-      const newIndex = state.currentIndex - 1;
+      const newIndex = Math.max(state.currentIndex - 1, 0);
       return {
         ...state,
         currentIndex: newIndex,
@@ -62,6 +72,12 @@ const diagramsReducer = (
         ...state,
         selectedExternalIds: action.externalIds,
         currentIndex: 0,
+      };
+    }
+    case DiagramsReducerActionTypes.TOGGLE_AUTO_MODE: {
+      return {
+        ...state,
+        isAutoMode: !state.isAutoMode,
       };
     }
     default:

@@ -23,13 +23,17 @@ const SaveButton = ({ saveState, ...buttonProps }: SaveButtonProps) => {
       );
     case SaveState.Saving:
       return (
-        <Button {...buttonProps} type="ghost" icon="Loader">
+        <Button {...buttonProps} type="ghost" icon="Loader" disabled>
           Saving
         </Button>
       );
     default:
       return (
-        <Button {...buttonProps} icon="Upload">
+        <Button
+          {...buttonProps}
+          icon="Upload"
+          disabled={saveState === SaveState.Computing}
+        >
           Save
         </Button>
       );
@@ -38,18 +42,20 @@ const SaveButton = ({ saveState, ...buttonProps }: SaveButtonProps) => {
 
 interface TopBarProps {
   currentIndex: number;
-  selectedUnparsedDiagrams: string[];
+  selectedExternalIds: string[];
   dispatch: Dispatch<DiagramsReducerAction>;
   saveGraph: () => void;
   saveState: SaveState;
+  isAutoMode: boolean;
 }
 
 const TopBar = ({
   currentIndex,
-  selectedUnparsedDiagrams,
+  selectedExternalIds,
   dispatch,
   saveGraph,
   saveState,
+  isAutoMode,
 }: TopBarProps) => {
   const showDiagramList = () => {
     dispatch({ type: DiagramsReducerActionTypes.TOGGLE_SHOW_LIST });
@@ -59,6 +65,9 @@ const TopBar = ({
   };
   const next = () => {
     dispatch({ type: DiagramsReducerActionTypes.NEXT });
+  };
+  const toggleAutoMode = () => {
+    dispatch({ type: DiagramsReducerActionTypes.TOGGLE_AUTO_MODE });
   };
 
   return (
@@ -72,24 +81,29 @@ const TopBar = ({
           disabled={currentIndex < 1}
           onClick={previous}
         />
-        {selectedUnparsedDiagrams.length > 0 && (
+        {selectedExternalIds.length > 0 && (
           <span>
-            {currentIndex + 1}/{selectedUnparsedDiagrams.length}
+            {currentIndex + 1}/{selectedExternalIds.length}
           </span>
         )}
         <Button
           icon="PushRight"
-          disabled={currentIndex >= selectedUnparsedDiagrams.length - 1}
+          disabled={currentIndex >= selectedExternalIds.length - 1}
           onClick={next}
         />
       </Left>
       <Right>
-        <Button icon="OutputData" disabled>
+        <Button
+          icon="OutputData"
+          onClick={toggleAutoMode}
+          toggled={isAutoMode}
+          disabled={selectedExternalIds.length < 1}
+        >
           Process all files
         </Button>
         <SaveButton
           saveState={saveState}
-          disabled={selectedUnparsedDiagrams.length < 1}
+          disabled={selectedExternalIds.length < 1}
           onClick={saveGraph}
         />
       </Right>

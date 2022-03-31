@@ -8,13 +8,13 @@ import diagramsReducer, {
   DiagramsReducerActionTypes,
   initialState,
 } from './utils/diagramsReducer';
-import useCdfDiagrams from './utils/useCdfDiagrams';
+import useCdfDiagrams, { SaveState } from './utils/useCdfDiagrams';
 
 const DiagramParser = () => {
   const [state, dispatch] = useReducer(diagramsReducer, initialState);
-  const { diagrams, pidViewer, saveGraph, saveState } = useCdfDiagrams();
+  const { selectedExternalIds, currentIndex, isAutoMode } = state;
 
-  const { selectedExternalIds, currentIndex } = state;
+  const { diagrams, pidViewer, saveGraph, saveState } = useCdfDiagrams();
   const diagramExternalId = selectedExternalIds[currentIndex];
 
   useEffect(() => {
@@ -24,21 +24,30 @@ const DiagramParser = () => {
     });
   }, [diagrams]);
 
+  useEffect(() => {
+    if (isAutoMode && saveState === SaveState.Saved) {
+      dispatch({ type: DiagramsReducerActionTypes.NEXT });
+    }
+  }, [isAutoMode, saveState]);
+
   return (
     <HandlerContainer>
       <TopBar
         currentIndex={currentIndex}
-        selectedUnparsedDiagrams={selectedExternalIds}
+        selectedExternalIds={selectedExternalIds}
         dispatch={dispatch}
         saveGraph={saveGraph}
         saveState={saveState}
+        isAutoMode={isAutoMode}
       />
       <HandlerContent>
         <ReactPid
-          key={diagramExternalId ?? 'no_diagram'}
+          isAutoMode={isAutoMode}
+          key={diagramExternalId || 'no_diagram'}
           pidViewer={pidViewer}
           diagramExternalId={diagramExternalId}
           saveState={saveState}
+          onAutoAnalysisCompleted={saveGraph}
         />
         {state.showList && (
           <DiagramList

@@ -1,11 +1,9 @@
 import os
-from python.client import get_client
-from python.contants import DIAGRAM_PARSER_SOURCE
+from py_utils.client import get_client
+from py_utils.contants import DIAGRAM_PARSER_SOURCE
 
 mime_types = {'.json': 'application/json',
               '.pdf': 'application/pdf', '.svg': 'image/svg+xml'}
-
-
 def main():
     client = get_client()
 

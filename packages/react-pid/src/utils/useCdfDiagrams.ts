@@ -8,6 +8,7 @@ import {
 } from '@cognite/pid-tools';
 
 export enum SaveState {
+  Computing,
   Ready,
   Saving,
   Error,
@@ -31,15 +32,14 @@ const useCdfDiagrams = () => {
   }, []);
 
   const saveGraph = () => {
-    setSaveStatus(SaveState.Saving);
+    setSaveStatus(SaveState.Computing);
     if (!pidViewer.current) return;
 
     const graph = pidViewer.current.getGraphDocument();
 
-    if (graph === null) {
-      setSaveStatus(SaveState.Error);
-      throw Error('Could not save document');
-    }
+    if (graph === null) return;
+
+    setSaveStatus(SaveState.Saving);
 
     const externalId = `${getFileNameWithoutExtension(
       graph.documentMetadata.name
