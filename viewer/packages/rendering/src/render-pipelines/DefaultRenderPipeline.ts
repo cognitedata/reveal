@@ -31,6 +31,11 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     target: null,
     autoUpdateSize: true
   };
+  private _currentRendererState: {
+    autoClear: boolean;
+    clearColor: THREE.Color;
+    clearAlpha: number;
+  };
 
   set renderOptions(renderOptions: RenderOptions) {
     const { ssaoRenderParameters } = renderOptions;
@@ -72,6 +77,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     this._cadScene = scene;
     this._renderTargetData = {
       currentRenderSize: new THREE.Vector2(1, 1),
+      backComposition: createRenderTarget(),
       opaqueComposition: createRenderTarget(),
       finalComposition: createRenderTarget(),
       color: createRenderTarget(1, 1, multisampleCount),
@@ -92,7 +98,20 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
 
     yield* this.renderInFront(renderer);
 
-    yield* this.renderCompositeGeometry(renderer);
+    yield* this.renderBack(renderer);
+
+    renderer.setRenderTarget(this._renderTargetData.opaqueComposition);
+    yield this._defaultRenderPipelinePasses.blitOpaque;
+
+    renderer.setClearColor(this._currentRendererState.clearColor);
+    renderer.setClearAlpha(this._currentRendererState.clearAlpha);
+    renderer.setRenderTarget(this._renderTargetData.finalComposition);
+    renderer.clear();
+    yield this._defaultRenderPipelinePasses.blitComposite;
+
+    yield* this.renderCustom(renderer);
+
+    yield* this.renderGhosted(renderer);
 
     yield* this.renderDeferredCustom(renderer);
 
@@ -105,19 +124,8 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
   private *blitToCanvas(renderer: THREE.WebGLRenderer) {
     const blitToOutput = this._defaultRenderPipelinePasses.blitToOutput;
     renderer.setRenderTarget(this._outputRenderTarget.target);
+    renderer.clear();
     yield blitToOutput;
-  }
-
-  private *renderCompositeGeometry(renderer: THREE.WebGLRenderer) {
-    const blitComposite = this._defaultRenderPipelinePasses.blitComposite;
-    yield* this.renderBack(renderer);
-
-    yield* this.renderCustom(renderer);
-
-    yield* this.renderGhosted(renderer);
-
-    renderer.setRenderTarget(this._renderTargetData.finalComposition);
-    yield blitComposite;
   }
 
   private *renderDeferredCustom(renderer: THREE.WebGLRenderer) {
@@ -132,13 +140,13 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     renderer.clear();
     yield geometry;
 
-    renderer.setRenderTarget(this._renderTargetData.opaqueComposition);
+    renderer.setRenderTarget(this._renderTargetData.finalComposition);
     yield blitToComposition;
   }
 
   private *renderCustom(renderer: THREE.WebGLRenderer) {
     const { geometry } = this._defaultRenderPipelinePasses.custom;
-    renderer.setRenderTarget(this._renderTargetData.opaqueComposition);
+    renderer.setRenderTarget(this._renderTargetData.finalComposition);
     yield geometry;
   }
 
@@ -150,14 +158,14 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     renderer.clear();
     yield geometry;
 
-    renderer.setRenderTarget(this._renderTargetData.opaqueComposition);
+    renderer.setRenderTarget(this._renderTargetData.backComposition);
     renderer.clear();
     yield blitToComposition;
 
     renderer.setRenderTarget(this._renderTargetData.ssao);
     yield ssao;
 
-    renderer.setRenderTarget(this._renderTargetData.opaqueComposition);
+    renderer.setRenderTarget(this._renderTargetData.backComposition);
     yield blitSsaoBlur;
 
     if (this._renderOptions.edgeDetectionParameters.enabled) {
@@ -173,7 +181,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     renderer.clear();
     yield geometry;
 
-    renderer.setRenderTarget(this._renderTargetData.finalComposition);
+    renderer.setRenderTarget(this._renderTargetData.opaqueComposition);
     renderer.clear();
     yield blitToComposition;
 
@@ -181,13 +189,23 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
   }
 
   private pipelineTearDown(renderer: THREE.WebGLRenderer) {
-    renderer.autoClear = true;
+    renderer.autoClear = this._currentRendererState.autoClear;
+    renderer.setClearColor(this._currentRendererState.clearColor);
+    renderer.setClearAlpha(this._currentRendererState.clearAlpha);
   }
 
   private pipelineSetup(renderer: THREE.WebGLRenderer) {
+    this._currentRendererState = {
+      autoClear: renderer.autoClear,
+      clearColor: renderer.getClearColor(new THREE.Color()),
+      clearAlpha: renderer.getClearAlpha()
+    };
+
     renderer.sortObjects = false;
     renderer.autoClear = false;
-    // renderer.setClearAlpha(0.0);
+    renderer.setClearColor('#000000');
+    renderer.setClearAlpha(0.0);
+
     this._cadModels?.forEach(identifiedModel => {
       identifiedModel.model.matrixAutoUpdate = false;
     });
@@ -251,10 +269,16 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
       })
     };
 
+    const blitOpaque = new BlitPass({
+      texture: this._renderTargetData.backComposition.texture,
+      depthTexture: this._renderTargetData.backComposition.depthTexture,
+      blendOptions: { blendDestination: THREE.DstAlphaFactor, blendSource: THREE.OneMinusDstAlphaFactor }
+    });
+
     const blitComposite = new BlitPass({
       texture: this._renderTargetData.opaqueComposition.texture,
       depthTexture: this._renderTargetData.opaqueComposition.depthTexture,
-      blendOptions: { blendDestination: THREE.DstAlphaFactor, blendSource: THREE.OneMinusDstAlphaFactor }
+      overrideAlpha: 1
     });
 
     const blitEffect =
@@ -264,11 +288,10 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
 
     const blitToOutput = new BlitPass({
       texture: this._renderTargetData.finalComposition.texture,
-      effect: blitEffect,
-      overrideAlpha: 1.0
+      effect: blitEffect
     });
 
-    return { inFront, back, custom, ghost, blitComposite, blitToOutput };
+    return { inFront, back, custom, ghost, blitOpaque, blitComposite, blitToOutput };
   }
 
   private updateRenderTargetSizes(renderer: THREE.WebGLRenderer): void {
@@ -282,6 +305,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
       return;
     }
 
+    this._renderTargetData.backComposition.setSize(width, height);
     this._renderTargetData.opaqueComposition.setSize(width, height);
     this._renderTargetData.finalComposition.setSize(width, height);
     this._renderTargetData.color.setSize(width, height);

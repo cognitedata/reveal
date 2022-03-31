@@ -9,6 +9,7 @@ import { RenderPass } from '../RenderPass';
 
 export type RenderTargetData = {
   currentRenderSize: THREE.Vector2;
+  backComposition: THREE.WebGLRenderTarget;
   opaqueComposition: THREE.WebGLRenderTarget;
   finalComposition: THREE.WebGLRenderTarget;
   color: THREE.WebGLRenderTarget;
@@ -39,6 +40,7 @@ export type DefaultRenderPipelinePasses = {
     geometry: RenderPass;
     deferred: RenderPass;
   };
+  blitOpaque: RenderPass;
   blitComposite: RenderPass;
   blitToOutput: BlitPass;
 };

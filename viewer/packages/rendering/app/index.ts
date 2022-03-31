@@ -15,7 +15,6 @@ import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
 import { CadModelUpdateHandler, defaultDesktopCadModelBudget } from '@reveal/cad-geometry-loaders';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { ByScreenSizeSectorCuller } from '@reveal/cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
-import { GeometryDepthRenderPipeline } from '../src/render-pipelines/GeometryDepthRenderPipeline';
 import { StepPipelineExecutor } from '../src/pipeline-executors/StepPipelineExecutor';
 
 revealEnv.publicPath = 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.2.0/';
@@ -25,7 +24,7 @@ init();
 async function init() {
   const gui = new dat.GUI();
 
-  const guiData = { drawCalls: 0, steps: 1, backgroundColor: '#444', backgroundAlpha: 1 };
+  const guiData = { drawCalls: 0, steps: 16, canvasColor: '#50728c', clearColor: '#444', clearAlpha: 1 };
   const guiController = gui.add(guiData, 'drawCalls').listen();
 
   const client = await createApplicationSDK('reveal.example.simple', {
@@ -59,21 +58,8 @@ async function init() {
   const cogniteModels = new THREE.Group();
   const customObjects = new THREE.Group();
 
-  const boxGeometry = new THREE.BoxGeometry(10, 10, 30);
-  const boxMaterial = new THREE.MeshBasicMaterial({
-    color: new THREE.Color(1, 0, 0),
-    transparent: true,
-    depthWrite: true,
-    opacity: 0.5
-  });
-
   scene.add(cogniteModels);
   scene.add(customObjects);
-
-  const customBox = new THREE.Mesh(boxGeometry, boxMaterial);
-  customBox.position.set(15, 0, -15);
-
-  customObjects.add(customBox);
 
   const model = await cadManager.addModel(modelIdentifier);
   cogniteModels.add(model);
@@ -87,18 +73,18 @@ async function init() {
 
   const renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setClearColor(guiData.backgroundColor);
-  renderer.setClearAlpha(guiData.backgroundAlpha);
+  renderer.setClearColor(guiData.clearColor);
+  renderer.setClearAlpha(guiData.clearAlpha);
 
   const controlsTest = new TransformControls(camera, renderer.domElement);
   controlsTest.attach(model);
   customObjects.add(controlsTest);
 
   const renderOptions = defaultRenderOptions;
-  renderOptions.multiSampleCountHint = 8;
+  renderOptions.multiSampleCountHint = 4;
 
   const pipelineExecutor = new StepPipelineExecutor(renderer);
-  pipelineExecutor.numberOfSteps = 1;
+  pipelineExecutor.numberOfSteps = guiData.steps;
 
   const defaultRenderPipeline = new DefaultRenderPipeline(
     materialManager,
@@ -109,28 +95,44 @@ async function init() {
   );
   gui.add(guiData, 'steps', 1, pipelineExecutor.calcNumSteps(defaultRenderPipeline), 1).onChange(async () => {
     pipelineExecutor.numberOfSteps = guiData.steps;
+    renderer.setClearColor(guiData.clearColor);
+    renderer.setClearAlpha(guiData.clearAlpha);
     await render();
   });
 
-  gui.addColor(guiData, 'backgroundColor').onChange(async () => {
-    renderer.setClearColor(guiData.backgroundColor);
+  gui.addColor(guiData, 'clearColor').onChange(async () => {
+    renderer.setClearColor(guiData.clearColor);
+    renderer.setClearAlpha(guiData.clearAlpha);
     await render();
   });
 
-  gui.add(guiData, 'backgroundAlpha', 0, 1).onChange(async () => {
-    renderer.setClearAlpha(guiData.backgroundAlpha);
+  gui.add(guiData, 'clearAlpha', 0, 1).onChange(async () => {
+    renderer.setClearColor(guiData.clearColor);
+    renderer.setClearAlpha(guiData.clearAlpha);
     await render();
   });
 
-  const depthRenderPipeline = new GeometryDepthRenderPipeline(materialManager, scene, [
-    { model, modelIdentifier: model.cadModelIdentifier }
-  ]);
+  gui.addColor(guiData, 'canvasColor').onChange(async () => {
+    renderer.domElement.style.backgroundColor = guiData.canvasColor;
+  });
 
   const grid = new THREE.GridHelper(30, 40);
   grid.position.set(14, -1, -14);
   customObjects.add(grid);
 
-  renderer.domElement.style.backgroundColor = '#50728c';
+  const customBox = new THREE.Mesh(
+    new THREE.BoxGeometry(10, 10, 30),
+    new THREE.MeshBasicMaterial({
+      color: new THREE.Color(1, 0, 0),
+      transparent: true,
+      opacity: 0.5
+    })
+  );
+  customBox.position.set(15, 0, -15);
+
+  customObjects.add(customBox);
+
+  renderer.domElement.style.backgroundColor = guiData.canvasColor;
 
   const controls = new OrbitControls(camera, renderer.domElement);
 

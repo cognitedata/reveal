@@ -30,7 +30,7 @@ export class StepPipelineExecutor implements PipelineExecutor {
       const currentRenderTarget = this._renderer.getRenderTarget();
       if (count === this._numSteps && currentRenderTarget !== null) {
         this._renderer.setRenderTarget(null);
-        await new BlitPass({ texture: currentRenderTarget.texture }).render(this._renderer, camera);
+        await new BlitPass({ texture: currentRenderTarget.texture, overrideAlpha: 1 }).render(this._renderer, camera);
         return;
       }
     }

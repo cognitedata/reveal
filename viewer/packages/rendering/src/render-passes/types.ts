@@ -27,7 +27,9 @@ export type BlitOptions = {
 
 export const transparentBlendOptions: BlendOptions = {
   blendDestination: THREE.OneMinusSrcAlphaFactor,
-  blendSource: THREE.SrcAlphaFactor
+  blendSource: THREE.SrcAlphaFactor,
+  blendDestinationAlpha: THREE.OneFactor,
+  blendSourceAlpha: THREE.OneMinusDstAlphaFactor
 };
 
 export const alphaMaskBlendOptions: BlendOptions = {
