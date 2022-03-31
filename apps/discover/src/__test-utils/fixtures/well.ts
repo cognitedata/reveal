@@ -2,6 +2,7 @@ import map from 'lodash/map';
 
 import { Sequence } from '@cognite/sdk';
 
+import { REGION_FIELD_BLOCK } from 'modules/wellSearch/constantsSidebarFilters';
 import {
   SequenceRow,
   Well as OldWellType,
@@ -14,7 +15,6 @@ import {
 } from 'modules/wellSearch/types';
 import { toWellSequence } from 'modules/wellSearch/utils';
 
-import { REGION_FIELD_BLOCK } from '../../../src/modules/wellSearch/constantsSidebarFilters';
 import { StoreState } from '../../core';
 
 import { createdAndLastUpdatedTime } from './log';
@@ -282,6 +282,18 @@ export const mockedWellStateWithSelectedWells: StoreState = {
       category: true,
     },
     goBackNavigationPath: '',
+  },
+};
+
+export const mockedWellStateWithWellInspect = {
+  ...mockedWellStateWithSelectedWells,
+  wellInspect: {
+    selectedWellIds: {
+      'test-well-1': true,
+    },
+    selectedWellboreIds: {
+      'test-well-1': true,
+    },
   },
 };
 

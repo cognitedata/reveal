@@ -50,6 +50,7 @@ export interface FeedbackState {
   isSent?: boolean;
   failed: boolean;
   rowsPerPage: number;
+  item?: FeedbackItem | Record<string, never>;
   feedbackQuery: FeedbackQuery;
   filterStatus: SimpleFilter[];
   filterAssigned: SimpleFilter[];
