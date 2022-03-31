@@ -22,7 +22,8 @@ type DatabaseWithTablesItem = {
 };
 
 interface RawSelectorProps {
-  databaseList: DatabaseWithTablesItem[];
+  databaseList: RawDB[];
+  tableList: DatabaseWithTablesItem[];
   setCreateModal(value: string): void;
   setCreateVisible(value: boolean): void;
   setSelectedDb(value: string): void;
@@ -102,8 +103,8 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
     );
   };
 
-  const allDbTableSelected = (item: DatabaseWithTablesItem) => {
-    return item.tables.every(
+  const allDbTableSelected = (item: RawDB) => {
+    return getDatabaseTables(item.name).every(
       (table) =>
         !!props.selectedTables.find(
           (selectedTable) => selectedTable.tableName === table.name
@@ -111,23 +112,23 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
     );
   };
 
-  const handleCheckboxChange = (item: DatabaseWithTablesItem) => {
+  const handleCheckboxChange = (item: RawDB) => {
     props.setChangesSaved(false);
     if (allDbTableSelected(item)) {
       // unselect all
       props.setSelectedTables(
         props.selectedTables.filter(
-          (selectedItem) => item.database.name !== selectedItem.databaseName
+          (selectedItem) => item.name !== selectedItem.databaseName
         )
       );
     } else {
       props.setSelectedTables([
-        ...item.tables.map((table) => ({
-          databaseName: item.database.name,
+        ...getDatabaseTables(item.name).map((table) => ({
+          databaseName: item.name,
           tableName: table.name,
         })),
         ...props.selectedTables.filter(
-          (rawItem) => rawItem.databaseName !== item.database.name
+          (rawItem) => rawItem.databaseName !== item.name
         ),
       ]);
     }
@@ -137,11 +138,10 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
     if (dbSearch !== '') {
       return props.databaseList
         .filter(
-          (db) =>
-            db.database.name.toUpperCase().search(dbSearch.toUpperCase()) >= 0
+          (db) => db.name.toUpperCase().search(dbSearch.toUpperCase()) >= 0
         )
         .map((item) => (
-          <StyledMenuItem key={item.database.name}>
+          <StyledMenuItem key={item.name}>
             <Tooltip
               title="Select all tables in this database"
               getPopupContainer={getContainer}
@@ -149,21 +149,21 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
               <Checkbox
                 style={{ marginRight: '5px' }}
                 data-testid="raw-database"
-                checked={anyDbTableSelected(item.database.name)}
+                checked={anyDbTableSelected(item.name)}
                 indeterminate={
-                  anyDbTableSelected(item.database.name)
+                  anyDbTableSelected(item.name)
                     ? !allDbTableSelected(item)
                     : undefined
                 }
                 onClick={() => handleCheckboxChange(item)}
               />
             </Tooltip>
-            {item.database.name}
+            {item.name}
           </StyledMenuItem>
         ));
     }
     return props.databaseList.map((item) => (
-      <StyledMenuItem key={item.database.name}>
+      <StyledMenuItem key={item.name}>
         <Tooltip
           title="Select all tables in this database"
           getPopupContainer={getContainer}
@@ -171,24 +171,24 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
           <Checkbox
             style={{ marginRight: '5px' }}
             data-testid="raw-database"
-            checked={anyDbTableSelected(item.database.name)}
+            checked={anyDbTableSelected(item.name)}
             indeterminate={
-              anyDbTableSelected(item.database.name)
+              anyDbTableSelected(item.name)
                 ? !allDbTableSelected(item)
                 : undefined
             }
             onClick={() => handleCheckboxChange(item)}
           />
         </Tooltip>
-        {item.database.name}
+        {item.name}
       </StyledMenuItem>
     ));
   };
 
-  const getDatabaseTables = () => {
+  const getDatabaseTables = (databaseName: string) => {
     let list: RawDBTable[] = [];
-    props.databaseList.forEach((item) => {
-      if (item.database.name === props.selectedDb) {
+    props.tableList.forEach((item) => {
+      if (item.database.name === databaseName) {
         if (tableSearch !== '') {
           list = item.tables.filter(
             (table) =>
@@ -201,6 +201,8 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
     });
     return list;
   };
+
+  const selectedDBTables = getDatabaseTables(props.selectedDb);
 
   return (
     <div>
@@ -265,8 +267,8 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
                     []
                   }
                 >
-                  {getDatabaseTables() && getDatabaseTables().length ? (
-                    getDatabaseTables().map((table, index) => (
+                  {selectedDBTables?.length ? (
+                    selectedDBTables.map((table, index) => (
                       <StyledMenuItem
                         data-testid="raw-table"
                         key={`${props.selectedDb}/${table.name || ''}`}

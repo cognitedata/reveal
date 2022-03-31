@@ -27,10 +27,14 @@ const LinksList = (props: UrlInputProps) => {
   }, [props.value]);
 
   useEffect(() => {
-    if (name || link) props.update({ name, id: link }, props.index);
+    if (
+      (name || link) &&
+      (name !== props.value.name || link !== props.value.id)
+    )
+      props.update({ name, id: link }, props.index);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedName, debouncedLink]);
+  }, [debouncedName, debouncedLink, props.value]);
 
   return (
     <Input.Group compact>
