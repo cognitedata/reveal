@@ -18,6 +18,7 @@ export const GetBidMatrixData = async (
     return {
       columns: [],
       data: [],
+      copy: [],
     };
   }
 
@@ -49,13 +50,16 @@ export const GetBidMatrixData = async (
   ];
 
   // CDF Sequences have a particular format that needs to be transposed and massaged
-  let transposedColumns = sequenceRows.map((row: SequenceRow) => {
-    const accessor = row[0]?.toString().replace('.', '');
-    return { accessor, values: row.slice(1) };
-  });
+  let transposedColumns = sequenceRows.map(
+    (row: SequenceRow, index: number) => {
+      const accessor = row[0]?.toString().replace('.', '');
+      return { accessor, id: index + 1, values: row.slice(1) };
+    }
+  );
   transposedColumns = [
     {
       accessor: 'hour',
+      id: 0,
       values: sequenceRows[0]?.columns
         .slice(1)
         .map((col) => col.name?.replace('1h.', '') as SequenceItem),
@@ -65,6 +69,8 @@ export const GetBidMatrixData = async (
 
   // Create array of table data
   const tableData: TableData[] = [];
+  // Create array of table data with indices to maintain order
+  const copyFormat: TableData[] = [];
   transposedColumns?.forEach((col) => {
     col?.values.forEach((value, index) => {
       if (!tableData[index]) {
@@ -72,16 +78,32 @@ export const GetBidMatrixData = async (
           id: index,
         };
       }
+      if (!copyFormat[index]) {
+        copyFormat[index] = {
+          id: index,
+        };
+      }
       const accessor = `${col?.accessor || 0}`;
+      const id = `${col?.id || 0}`;
       const formattedValue =
         typeof value === 'number' ? `${Math.round(value * 10) / 10}` : value;
       tableData[index][accessor] = formattedValue || 0;
+      // Key is index to maintain order
+      copyFormat[index][id] = formattedValue || 0;
     });
+  });
+  // Create array of strings in copiable format
+  const copyData: string[] = copyFormat.map((row) => {
+    let newrow: { [key: string]: any } = { ...row };
+    delete newrow.id;
+    newrow = Object.values(newrow);
+    return newrow.join('\t');
   });
 
   return {
     columns: columnHeaders as Column<TableData>[],
     data: tableData,
+    copy: copyData,
   };
 };
 

@@ -4,14 +4,14 @@ import { useSticky } from 'react-table-sticky';
 
 import { TableData } from '../../models/sequences';
 
-import { StyledBidMatrixTable } from './elements';
-
 export const BidmatrixTable = ({
   tableHeader,
   tableData,
+  className,
 }: {
   tableHeader: Column<TableData>[];
   tableData: TableData[];
+  className: string;
 }) => {
   const data = useMemo(() => tableData, [tableData]);
   const columns = useMemo(() => tableHeader, [tableHeader]);
@@ -29,7 +29,7 @@ export const BidmatrixTable = ({
   return !tableHeader || !tableData ? (
     <div>No Data</div>
   ) : (
-    <StyledBidMatrixTable {...getTableProps()}>
+    <table className={className} {...getTableProps()}>
       <thead>
         {
           // Loop over the header rows
@@ -39,9 +39,7 @@ export const BidmatrixTable = ({
                 // Loop over the headers in each row
                 headerGroup.headers.map((column) => (
                   <th {...column.getHeaderProps()} key={column.id}>
-                    <div className="th-container">
-                      {column.render('Header')}
-                    </div>
+                    <div>{column.render('Header')}</div>
                   </th>
                 ))
               }
@@ -73,8 +71,21 @@ export const BidmatrixTable = ({
             );
           })
         }
+        {data.length < 25 &&
+          // Empty row at bottom of table for formatting
+          headerGroups.map((headerGroup: any) => (
+            <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
+              {headerGroup.headers.map((column: any) => (
+                <td {...column.getHeaderProps()} key={column.id}>
+                  <div>
+                    <span>&nbsp;</span>
+                  </div>
+                </td>
+              ))}
+            </tr>
+          ))}
       </tbody>
-    </StyledBidMatrixTable>
+    </table>
   );
 };
 
