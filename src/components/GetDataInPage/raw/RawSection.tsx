@@ -50,7 +50,7 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
 
   const hasRawPermissions = hasRawList && hasRawRead;
 
-  const { tables, isLoading } = useRawList();
+  const { databases, tables, isLoading } = useRawList();
 
   const client = useQueryClient();
 
@@ -94,7 +94,7 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
         .catch((err) => {
           message.error(
             err.message ||
-              'Database could not be created, a database with the same name already exists.'
+              'Table could not be created, a table with the same name already exists.'
           );
         });
     }
@@ -141,7 +141,8 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
         </BlockedInformationWrapper>
       ) : (
         <RawSelector
-          databaseList={tables ?? []}
+          databaseList={databases ?? []}
+          tableList={tables ?? []}
           setCreateModal={setCreateModal}
           setCreateVisible={setCreateVisible}
           setSelectedDb={setSelectedDb}
