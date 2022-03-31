@@ -109,9 +109,9 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     renderer.clear();
     yield this._defaultRenderPipelinePasses.blitComposite;
 
-    yield* this.renderCustom(renderer);
-
     yield* this.renderGhosted(renderer);
+
+    yield* this.renderCustom(renderer);
 
     yield* this.renderDeferredCustom(renderer);
 

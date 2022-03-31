@@ -125,7 +125,8 @@ async function init() {
     new THREE.MeshBasicMaterial({
       color: new THREE.Color(1, 0, 0),
       transparent: true,
-      opacity: 0.5
+      opacity: 0.5,
+      depthTest: true
     })
   );
   customBox.position.set(15, 0, -15);
