@@ -37,16 +37,22 @@ console.log(`Run tests with ${RETRIES} retries`);
  * and create a new record in src/routes to map a component to its route
  */
 describe('Reveal visual tests', () => {
-  visualTests.forEach(test => {
-    const { testKey, category, snapshotBlur } = test;
 
-    const snapshotName = `${category}_${testKey}`;
-    const url = `http://localhost:3000/test/${category}/${testKey}`;
-    const blur = snapshotBlur ?? 0;
+  test('dispose disposes WebGL resources', async () => {
+    await Promise.all(visualTests.map(async test => {
+      const { testKey, category, snapshotBlur } = test;
 
-    retry(snapshotName, RETRIES, async () => {
+      if(testKey !== 'default' || category !== 'cad') return;
+  
+      const snapshotName = `${category}_${testKey}`;
+      const url = `http://localhost:3000/test/${category}/${testKey}`;
+      const blur = snapshotBlur ?? 0;
+  
+      // retry(snapshotName, RETRIES, async () => {
       await screenShotTest(url, snapshotName, blur);
-    });
-
+      // });
+  
+    }));
   });
+  
 });

@@ -6,13 +6,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { CadModelFactory } from '../../cad-model/src/CadModelFactory';
-import {
-  AntiAliasingMode,
-  BasicPipelineExecutor,
-  CadMaterialManager,
-  defaultRenderOptions,
-  DefaultRenderPipeline
-} from '@reveal/rendering';
+import { AntiAliasingMode, CadMaterialManager, defaultRenderOptions, DefaultRenderPipeline } from '@reveal/rendering';
 import { CdfModelDataProvider, CdfModelIdentifier, CdfModelMetadataProvider } from '@reveal/modeldata-api';
 import { CadManager } from '../../cad-model/src/CadManager';
 import { NumericRange, revealEnv } from '@reveal/utilities';
@@ -22,6 +16,7 @@ import { CadModelUpdateHandler, defaultDesktopCadModelBudget } from '@reveal/cad
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { ByScreenSizeSectorCuller } from '@reveal/cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
 import { GeometryDepthRenderPipeline } from '../src/render-pipelines/GeometryDepthRenderPipeline';
+import { StepPipelineExecutor } from '../src/pipeline-executors/StepPipelineExecutor';
 
 revealEnv.publicPath = 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.2.0/';
 
@@ -30,7 +25,7 @@ init();
 async function init() {
   const gui = new dat.GUI();
 
-  const guiData = { drawCalls: 0 };
+  const guiData = { drawCalls: 0, steps: 1, backgroundColor: '#444', backgroundAlpha: 1 };
   const guiController = gui.add(guiData, 'drawCalls').listen();
 
   const client = await createApplicationSDK('reveal.example.simple', {
@@ -68,7 +63,7 @@ async function init() {
   const boxMaterial = new THREE.MeshBasicMaterial({
     color: new THREE.Color(1, 0, 0),
     transparent: true,
-    depthWrite: false,
+    depthWrite: true,
     opacity: 0.5
   });
 
@@ -92,6 +87,8 @@ async function init() {
 
   const renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(guiData.backgroundColor);
+  renderer.setClearAlpha(guiData.backgroundAlpha);
 
   const controlsTest = new TransformControls(camera, renderer.domElement);
   controlsTest.attach(model);
@@ -100,7 +97,9 @@ async function init() {
   const renderOptions = defaultRenderOptions;
   renderOptions.multiSampleCountHint = 8;
 
-  const pipelineExecutor = new BasicPipelineExecutor(renderer);
+  const pipelineExecutor = new StepPipelineExecutor(renderer);
+  pipelineExecutor.numberOfSteps = 1;
+
   const defaultRenderPipeline = new DefaultRenderPipeline(
     materialManager,
     scene,
@@ -108,6 +107,20 @@ async function init() {
     [{ model, modelIdentifier: model.cadModelIdentifier }],
     customObjects.children
   );
+  gui.add(guiData, 'steps', 1, pipelineExecutor.calcNumSteps(defaultRenderPipeline), 1).onChange(async () => {
+    pipelineExecutor.numberOfSteps = guiData.steps;
+    await render();
+  });
+
+  gui.addColor(guiData, 'backgroundColor').onChange(async () => {
+    renderer.setClearColor(guiData.backgroundColor);
+    await render();
+  });
+
+  gui.add(guiData, 'backgroundAlpha', 0, 1).onChange(async () => {
+    renderer.setClearAlpha(guiData.backgroundAlpha);
+    await render();
+  });
 
   const depthRenderPipeline = new GeometryDepthRenderPipeline(materialManager, scene, [
     { model, modelIdentifier: model.cadModelIdentifier }
@@ -117,7 +130,7 @@ async function init() {
   grid.position.set(14, -1, -14);
   customObjects.add(grid);
 
-  renderer.domElement.style.backgroundColor = '#000000';
+  renderer.domElement.style.backgroundColor = '#50728c';
 
   const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -143,9 +156,9 @@ async function init() {
     outlineColor: 6
   });
 
-  const updateRenderOptions = () => {
+  const updateRenderOptions = async () => {
     defaultRenderPipeline.renderOptions = renderOptions;
-    render();
+    await render();
   };
 
   const renderOptionsGUI = gui.addFolder('Render Options');
@@ -168,24 +181,24 @@ async function init() {
   ssaoOptionsGui.add(renderOptions.ssaoRenderParameters, 'depthCheckBias', 0, 1).onChange(updateRenderOptions);
   ssaoOptionsGui.open();
 
-  controls.addEventListener('change', () => {
+  controls.addEventListener('change', async () => {
     cadModelUpdateHandler.updateCamera(camera);
-    render();
+    await render();
   });
 
-  const render = () => {
+  const render = async () => {
+    await pipelineExecutor.render(defaultRenderPipeline, camera);
     guiData.drawCalls = renderer.info.render.calls;
-    pipelineExecutor.render(defaultRenderPipeline, camera);
     guiController.updateDisplay();
   };
 
-  renderer.setAnimationLoop(() => {
+  renderer.setAnimationLoop(async () => {
     controls.update();
     if (!cadManager.needsRedraw) {
       return;
     }
 
-    render();
+    await render();
     cadManager.resetRedraw();
   });
 }

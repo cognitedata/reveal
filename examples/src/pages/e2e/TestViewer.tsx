@@ -219,7 +219,7 @@ export function TestViewer(props: Props) {
         }
 
         if (controlsNeedUpdate || revealManager.needsRedraw || needsResize) {
-          revealManager.render(camera);
+          await revealManager.render(camera);
 
           if (testEnv.postRender) {
             testEnv.postRender();

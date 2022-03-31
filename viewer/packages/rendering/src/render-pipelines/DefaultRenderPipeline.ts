@@ -87,7 +87,6 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
   }
 
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
-    renderer.domElement.style.backgroundColor = '#000000';
     this.pipelineSetup(renderer);
     setupGeometryLayers(this._materialManager, this._cadModels, this._customObjects);
 
@@ -188,7 +187,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
   private pipelineSetup(renderer: THREE.WebGLRenderer) {
     renderer.sortObjects = false;
     renderer.autoClear = false;
-    renderer.setClearAlpha(0.0);
+    // renderer.setClearAlpha(0.0);
     this._cadModels?.forEach(identifiedModel => {
       identifiedModel.model.matrixAutoUpdate = false;
     });
