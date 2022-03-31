@@ -19,7 +19,7 @@ import Row from 'antd/lib/row';
 import Col from 'antd/lib/col';
 import Input from 'antd/lib/input';
 import Modal from 'antd/lib/modal';
-import message from 'antd/lib/message';
+import { notification } from 'antd';
 import { useRawList } from 'actions';
 import { useQueryClient } from 'react-query';
 import Spin from 'antd/lib/spin';
@@ -67,15 +67,18 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
           setNameField('');
           setCreateModal('');
           setCreateVisible(false);
-          message.success(`Database ${res[0].name} has been created!`);
+          notification.success({
+            message: `Database ${res[0].name} has been created!`,
+          });
           setSelectedDb(nameField);
           invalidateList();
         })
         .catch((err) => {
-          message.error(
-            err.message ||
-              'Database could not be created, a database with the same name already exists.'
-          );
+          notification.error({
+            message:
+              err.message ||
+              'Database could not be created, a database with the same name already exists.',
+          });
         });
     } else {
       sdk.raw
@@ -88,14 +91,17 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
             ...selectedTables,
             { databaseName: selectedDb, tableName: nameField },
           ]);
-          message.success(`Table ${res[0].name} has been created!`);
+          notification.success({
+            message: `Table ${res[0].name} has been created!`,
+          });
           invalidateList();
         })
         .catch((err) => {
-          message.error(
-            err.message ||
-              'Database could not be created, a database with the same name already exists.'
-          );
+          notification.error({
+            message:
+              err.message ||
+              'Database could not be created, a database with the same name already exists.',
+          });
         });
     }
   };

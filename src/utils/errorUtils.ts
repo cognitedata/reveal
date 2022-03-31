@@ -1,4 +1,4 @@
-import notification from 'antd/lib/notification';
+import { notification } from 'antd';
 import { getContainer } from 'utils/shared';
 import { DataSetError } from 'components/ErrorMessage/ErrorMessage';
 

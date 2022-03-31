@@ -16,7 +16,7 @@ import DocumentationsTab from 'components/DocumentationsTab';
 import AccessControl from 'components/AccessControl';
 import { SeperatorLine, DetailsPane } from 'utils/styledComponents';
 import DataSetEditor from 'pages/DataSetEditor';
-import notification from 'antd/lib/notification';
+import { notification } from 'antd';
 import BasicInfoCard from 'components/BasicInfoCard';
 import { ErrorMessage } from 'components/ErrorMessage/ErrorMessage';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';

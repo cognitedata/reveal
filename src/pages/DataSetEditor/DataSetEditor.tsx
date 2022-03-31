@@ -6,7 +6,7 @@ import { DrawerHeader } from 'utils/styledComponents';
 import DataSetCreation from 'components/DataSetCreation';
 import useDebounce from 'hooks/useDebounce';
 
-import { message } from 'antd';
+import { notification } from 'antd';
 import {
   useCreateDataSetMutation,
   useDataSetOwners,
@@ -55,7 +55,7 @@ const DataSetEditor = ({
 
   useEffect(() => {
     if (datasetCreated) {
-      message.success('Dataset Created!');
+      notification.success({ message: 'Dataset Created!' });
     }
   }, [datasetCreated]);
 
