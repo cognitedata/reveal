@@ -1473,6 +1473,13 @@
   dependencies:
     three "0.137.5"
 
+"@cognite/potree-core@1.5.2":
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.5.2.tgz#09fcd1a3b244fb64743451d5ee08542355ed7b5e"
+  integrity sha512-Lk3HXkDwkvxtxWeKGiHuh0iRbNPJXEy1dTJ87NUUVR5tGRgiFky/RHUfUREMfba/kc+kXTlGF7lYH+ZwuolU6A==
+  dependencies:
+    three "0.138.3"
+
 "@cognite/potree-core@^1.1.6":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.2.0.tgz#29d42606e2dd4b4ef0ad82c97c0a23ca94f0ff65"
