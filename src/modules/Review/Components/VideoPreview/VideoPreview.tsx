@@ -16,6 +16,13 @@ const LoaderContainer = styled.div`
 type FilePreviewProps = {
   fileObj: FileInfo;
   isLoading: (status: boolean) => void;
+  onError: ({
+    message,
+    description,
+  }: {
+    message: string;
+    description: string;
+  }) => void;
 };
 
 const LoaderView = () => {
@@ -52,6 +59,7 @@ export const retrieveDownloadUrl = async (
 export const VideoPreview: React.FC<FilePreviewProps> = ({
   fileObj,
   isLoading,
+  onError,
 }: FilePreviewProps) => {
   const [url, setUrl] = useState('');
 
@@ -71,6 +79,13 @@ export const VideoPreview: React.FC<FilePreviewProps> = ({
       muted
       onReady={() => {
         isLoading(false);
+      }}
+      onError={(_error) => {
+        onError({
+          message: 'Cannot play video',
+          description:
+            'Sorry, this video cannot be played. Codec not supported. Please convert video codec and try again.',
+        });
       }}
     />
   ) : (
