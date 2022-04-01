@@ -204,15 +204,6 @@ type ClippingInput = {
   clippingPlanes: THREE.Plane[] | never[];
 };
 
-function properFilter(array: Array<any>, fun: (x: any) => boolean) {
-  for (let i = 0; i < array.length; i++) {
-    if (!fun) {
-      array.splice(i, 1);
-    }
-  }
-  return array;
-}
-
 function makeSettingsInput([loadingHints, budget]: [CadLoadingHints, CadModelBudget]): SettingsInput {
   return { loadingHints, budget };
 }
