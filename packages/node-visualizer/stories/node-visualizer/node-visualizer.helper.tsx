@@ -14,7 +14,7 @@ import {
   MetadataKeyMapping,
   WellboreMetadata,
   NodeVisualizerProvider,
-} from '@cognite/node-visualizer';
+} from '../../src';
 import styled from 'styled-components';
 import { CogniteGeospatialClient } from '@cognite/geospatial-sdk-js';
 

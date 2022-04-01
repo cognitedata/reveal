@@ -90,12 +90,6 @@ DEV_DEPENDENCIES = [
     "@npm//typescript",
 ]
 
-_RUNTIME_DEPS = [
-    "chdir.js",
-    "copy_static_files",
-    "//:tsconfig",
-]
-
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
     "__tests__": "dist/__tests__",
@@ -254,18 +248,6 @@ package_info(
 )
 
 ## Storybook ##
-_STORYBOOK = [
-    ".storybook/*",
-    "stories/**/*",
-]
-
-STORYBOOK = glob(_STORYBOOK)
-
-copy_to_bin(
-    name = "copy_storybook_files",
-    srcs = STORYBOOK,
-)
-
 start_storybook(
     name = "start-storybook",
     args = [
@@ -273,15 +255,8 @@ start_storybook(
         "-p",
         "6006",
     ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
-        "//packages/node-visualizer",
+    data = [
         "chdir-workspace.js",
-        "copy_storybook_files",
-        "@npm//@types",
-        "@npm//@storybook/addon-essentials",
-        "@npm//@storybook/addon-links",
-        "@npm//@storybook/addon-viewport",
-        "@npm//@storybook/preset-create-react-app",
     ],
     tags = [
         # This tag instructs ibazel to pipe into stdin a event describing actions.

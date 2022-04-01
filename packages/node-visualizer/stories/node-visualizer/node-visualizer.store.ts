@@ -1,9 +1,6 @@
 import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
 import isObject from 'lodash/isObject';
-import {
-  NodeVisualizerReducer,
-  NodeVisualizerMiddleware,
-} from '@cognite/node-visualizer';
+import { NodeVisualizerMiddleware, NodeVisualizerReducer } from '../../src';
 
 const composeEnhancers =
   isObject(window) && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__

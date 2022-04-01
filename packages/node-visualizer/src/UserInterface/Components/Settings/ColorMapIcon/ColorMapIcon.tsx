@@ -1,6 +1,6 @@
 import React from 'react';
-import { ICommonSelectExtraOptionData } from '../../../UserInterface/Components/Settings/Types';
 import styled from 'styled-components';
+import { ICommonSelectExtraOptionData } from '../Types';
 
 export interface ColorMapIconProps {
   readonly colors: string[];
