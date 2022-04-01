@@ -67,6 +67,7 @@ export type ColumnProfile = {
 export type Profile = {
   rowCount: number;
   columns: ColumnProfile[];
+  isComplete: boolean;
 };
 
 export type Count = {
@@ -87,6 +88,7 @@ type RawColumn = {
 export type RawProfile = {
   rowCount: number;
   columns: Record<string, RawColumn>;
+  isComplete: boolean;
 };
 
 function transformStringProfile(
@@ -267,6 +269,7 @@ function transformProfile(p: RawProfile): Profile {
   return {
     rowCount: p.rowCount,
     columns,
+    isComplete: p.isComplete,
   };
 }
 
@@ -396,11 +399,16 @@ export const useProfileResultType = (database: string, table: string) => {
     table,
   });
 
+  const { rowCount = undefined, isComplete = false } = fullProfile.data ?? {};
+  const isPartial =
+    rowCount === FULL_PROFILE_LIMIT || (!isComplete && fullProfile.isFetched);
+
   let profileResultType: ProfileResultType = 'running';
-  if (fullProfile.data?.rowCount === FULL_PROFILE_LIMIT) {
-    profileResultType = 'partial';
-  } else if (fullProfile.isFetched) {
+  if (isComplete) {
     profileResultType = 'complete';
+  }
+  if (isPartial) {
+    profileResultType = 'partial';
   }
 
   return profileResultType;

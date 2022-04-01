@@ -4,6 +4,7 @@ import { Icon } from '@cognite/cogs.js';
 import styled, { keyframes } from 'styled-components';
 
 import {
+  FULL_PROFILE_LIMIT,
   ProfileCoverageType,
   ProfileResultType,
 } from 'hooks/profiling-service';
@@ -12,10 +13,12 @@ import Tooltip from 'components/Tooltip/Tooltip';
 type ProfileCoverageLabelProps = {
   coverageType: ProfileCoverageType;
   resultType: ProfileResultType;
+  nrOfProfiledRows?: number;
 };
 export const ProfileCoverageLabel = ({
   coverageType,
   resultType,
+  nrOfProfiledRows,
 }: ProfileCoverageLabelProps): JSX.Element => {
   switch (resultType) {
     case 'complete':
@@ -23,8 +26,14 @@ export const ProfileCoverageLabel = ({
     case 'running':
       return <StyledLabelRunning>Running</StyledLabelRunning>;
     case 'partial':
+      const nrOfRows =
+        nrOfProfiledRows && nrOfProfiledRows < FULL_PROFILE_LIMIT
+          ? nrOfProfiledRows
+          : 'million';
       return (
-        <Tooltip content="Only the first million rows of data were profiled">
+        <Tooltip
+          content={`Only the first ${nrOfRows} rows of data were profiled`}
+        >
           {coverageType === 'rows' ? (
             <StyledLabelPartial>
               <StyledPartialIcon size={14} type="WarningTriangleFilled" />

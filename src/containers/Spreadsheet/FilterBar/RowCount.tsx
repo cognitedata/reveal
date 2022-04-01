@@ -4,14 +4,23 @@ import { Icon, Colors } from '@cognite/cogs.js';
 
 import Tooltip from 'components/Tooltip/Tooltip';
 import { useActiveTableContext } from 'contexts';
-import { FULL_PROFILE_LIMIT, useFullProfile } from 'hooks/profiling-service';
+import {
+  FULL_PROFILE_LIMIT,
+  useFullProfile,
+  Profile,
+} from 'hooks/profiling-service';
 
 export default function RowCount() {
   const { database, table } = useActiveTableContext();
-  const { data = { rowCount: undefined }, isFetched } = useFullProfile({
+  const { data = {}, isFetched } = useFullProfile({
     database,
     table,
   });
+
+  const { rowCount = undefined, isComplete = false } = data as Profile;
+
+  const isPartialProfiling =
+    rowCount === FULL_PROFILE_LIMIT || (isFetched && !isComplete);
 
   if (!isFetched) {
     return (
@@ -25,22 +34,26 @@ export default function RowCount() {
     );
   }
 
-  if (!Number.isFinite(data.rowCount)) {
+  if (!Number.isFinite(rowCount)) {
     return null;
   }
-  if (data.rowCount === FULL_PROFILE_LIMIT) {
+  if (isPartialProfiling) {
+    const fixedRowCount =
+      rowCount && rowCount < FULL_PROFILE_LIMIT ? rowCount : '1 million';
+    const fixedRowCountAbbreviated = `>
+      ${rowCount && rowCount < FULL_PROFILE_LIMIT ? rowCount : '1M'}`;
     return (
       <Tooltip
         placement="bottom"
-        content="This table contains more than 1 million rows."
+        content={`This table contains more than ${fixedRowCount} rows.`}
       >
-        <>{'>1M'}</>
+        <>{fixedRowCountAbbreviated}</>
       </Tooltip>
     );
   }
   return (
     <>
-      {data.rowCount} row{data.rowCount! === 1 ? '' : 's'}
+      {rowCount} row{rowCount! === 1 ? '' : 's'}
     </>
   );
 }
