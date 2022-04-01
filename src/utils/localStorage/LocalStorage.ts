@@ -16,13 +16,38 @@ import { RootState } from 'src/store/rootReducer';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { validatePersistedState } from 'src/utils/localStorage/validatePersistedState';
 
+const VISION_STATE_NAME = 'visionState';
+const OLD_VISION_STATE_NAME = 'state';
+
 // To invalidate stored state when braking changes are added to the state
 // bump up the version
 export const APP_STATE_VERSION = 1;
 
-export const loadState = (): Partial<RootState> | undefined => {
+const recoverOldState = () => {
   try {
-    const serializedState = localStorage.getItem('state');
+    const serializedOldState = localStorage.getItem(OLD_VISION_STATE_NAME);
+    if (serializedOldState) {
+      const { stateMeta, ...persistedState } = JSON.parse(
+        serializedOldState
+      ) as OfflineState;
+      if (
+        validatePersistedState(stateMeta.project, stateMeta.appStateVersion)
+      ) {
+        saveState(persistedState);
+        localStorage.removeItem(OLD_VISION_STATE_NAME);
+      }
+    }
+  } catch (err) {
+    console.error('Local storage state recover error', err);
+  }
+};
+
+export const loadState = (): Partial<RootState> | undefined => {
+  // recover state from local storage when state name has changed
+  // and clean the old state saved in local storage
+  recoverOldState();
+  try {
+    const serializedState = localStorage.getItem(VISION_STATE_NAME);
     if (serializedState) {
       const { stateMeta, ...persistedState } = JSON.parse(
         serializedState
@@ -41,7 +66,7 @@ export const loadState = (): Partial<RootState> | undefined => {
           },
           explorerReducer: {
             ...explorerReducerInitialState,
-            ...persistedState.explorerSlice,
+            ...persistedState.explorerReducer,
           },
           processSlice: {
             ...processReducerInitialState,
@@ -72,9 +97,9 @@ export const loadState = (): Partial<RootState> | undefined => {
 export const saveState = (state: any): void => {
   try {
     const serializedState = JSON.stringify(getOfflineState(state));
-    localStorage.setItem('state', serializedState);
+    localStorage.setItem(VISION_STATE_NAME, serializedState);
   } catch (err) {
-    console.error('Localstorage state error', err);
+    console.error('Local storage state error', err);
   }
 };
 
@@ -84,7 +109,7 @@ export type OfflineState = {
     'predefinedAnnotations'
   >;
   reviewSlice: Pick<ReviewReducerState, 'fileIds'>;
-  explorerSlice: Pick<
+  explorerReducer: Pick<
     ExplorerState,
     'filter' | 'query' | 'sortMeta' | 'focusedFileId'
   >;
@@ -110,7 +135,7 @@ const getOfflineState = (state: RootState): OfflineState => {
     reviewSlice: {
       fileIds: state.reviewSlice.fileIds,
     },
-    explorerSlice: {
+    explorerReducer: {
       filter: state.explorerReducer.filter,
       query: state.explorerReducer.query,
       sortMeta: state.explorerReducer.sortMeta,

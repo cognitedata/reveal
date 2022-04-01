@@ -68,8 +68,8 @@ export const setExplorerFiles = createAction(
 );
 
 /* eslint-disable no-param-reassign */
-const explorerSlice = createGenericTabularDataSlice({
-  name: 'explorerSlice',
+const explorerReducer = createGenericTabularDataSlice({
+  name: 'explorerReducer',
   initialState: initialState as ExplorerState,
   reducers: {
     setExplorerFileSelectState: (
@@ -224,6 +224,6 @@ export const {
   setIsLoading,
   setPercentageScanned,
   setDefaultTimestampKey,
-} = explorerSlice.actions;
+} = explorerReducer.actions;
 
-export default explorerSlice.reducer;
+export default explorerReducer.reducer;
