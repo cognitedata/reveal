@@ -2,7 +2,7 @@ import { FileInfo } from '@cognite/sdk';
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Title } from '@cognite/cogs.js';
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
-import { Spin } from 'antd';
+import { Spin, notification } from 'antd';
 import React, { ReactText, useEffect, useRef, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -49,6 +49,16 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
   const handleLoad = (status: boolean) => {
     setLoading(status);
     loadingState.current = status;
+  };
+
+  const handleError = ({
+    message,
+    description,
+  }: {
+    message: string;
+    description: string;
+  }) => {
+    notification.error({ message, description });
   };
 
   const onItemClick = (fileId: number) => {
@@ -100,7 +110,11 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
                 </PreviewLoader>
               )}
               {file && isVideo(file) ? (
-                <VideoPreview fileObj={file} isLoading={handleLoad} />
+                <VideoPreview
+                  fileObj={file}
+                  isLoading={handleLoad}
+                  onError={handleError}
+                />
               ) : (
                 <ImagePreview
                   file={file}
