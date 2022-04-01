@@ -83,9 +83,7 @@ describe('EffectRenderManager', () => {
 
     // Assert
     expect(setRenderTargetSpy).toBeCalled();
-    const callWithMultiTarget = setRenderTargetSpy.mock.calls.find(
-      x => x[0] instanceof THREE.WebGLMultisampleRenderTarget
-    );
+    const callWithMultiTarget = setRenderTargetSpy.mock.calls.find(x => x[0] instanceof THREE.WebGLRenderTarget);
 
     expect(callWithMultiTarget).toBeDefined();
   });
