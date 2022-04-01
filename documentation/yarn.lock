@@ -1470,6 +1470,8 @@
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.5.1.tgz#b61bc4ed905757701c8d2074b153890974857bb3"
   integrity sha512-T0+MIDd3ebZDjRbddiLF1KhMeW0JCunbvaxpseZdgAjXx6S/W4EiIFJqjP0g9KXOn09DLSAIS8DVtKKfKtyhAA==
+  dependencies:
+    three "0.137.5"
 
 "@cognite/potree-core@^1.1.6":
   version "1.2.0"
