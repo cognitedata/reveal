@@ -36,7 +36,8 @@ const { Text } = Typography;
 
 export default function Groups() {
   const sdk = useSDK();
-  const legacyFlow = getFlow().flow === 'COGNITE_AUTH';
+  const { flow } = getFlow();
+  const legacyFlow = flow === 'COGNITE_AUTH';
   const client = useQueryClient();
 
   const [showNewGroupDrawer, setShowNew] = useState(false);
