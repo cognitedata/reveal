@@ -1,5 +1,5 @@
 import { getFlow, saveFlow } from '@cognite/auth-utils';
-import TenantSelector from '@cognite/cdf-tenant-selector';
+import TenantSelector from '@cognite/react-project-selector';
 import { SidecarConfig, CDFClusterSet } from '@cognite/sidecar';
 
 import { useCluster } from '../hooks/useCluster';

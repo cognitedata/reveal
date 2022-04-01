@@ -1,10 +1,13 @@
 load("@npm//rollup:index.bzl", "rollup")
 load("@npm//jest:index.bzl", "jest")
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
-load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin", "js_library")
+load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin", "js_library", "pkg_npm")
 load("//rules/test:jest.bzl", "jest_test")
 load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
 load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
+load("//rules/package_json_helpers:module_mappings.bzl", "module_mappings")
+load("//rules/npm:is_published.bzl", "is_published")
+load("//rules/npm:package_info.bzl", "package_info")
 load("//rules/npm:append_deps.bzl", "append_deps")
 
 SOURCES = glob(
@@ -132,7 +135,7 @@ jest_test(
     ],
     jest_args = [],
     jest_config = "jest.config.js",
-    service_name = "cdf-tenant-selector",
+    service_name = "react-project-selector",
     deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
 )
 
@@ -185,7 +188,7 @@ copy_to_bin(
 rollup(
     name = "dist",
     args = [
-        "--banner=//cdf-tenant-selector",
+        "--banner=//react-project-selector",
         "--node_options=--require=./$(execpath //scripts:log.js)",
         "--node_options=--require=./$(execpath chdir.js)",
         "-c",
@@ -205,9 +208,14 @@ rollup(
     output_dir = True,
 )
 
+_mappings = module_mappings(
+    name = "mappings",
+    mappings = mappings_dict,
+)
+
 js_library(
-    name = "cdf-tenant-selector",
-    package_name = "@cognite/cdf-tenant-selector",
+    name = "react-project-selector",
+    package_name = "@cognite/react-project-selector",
     srcs = ["package-json"],
     visibility = ["//visibility:public"],
     deps = DEPENDENCIES + ["dist"],
@@ -218,4 +226,25 @@ append_deps(
     dependencies = DEPENDENCIES,
     dev_dependencies = DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
     package = "package.json",
+)
+
+pkg_npm(
+    name = "npm-package",
+    package_name = "@cognite/react-project-selector",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":dist",
+        "package-json",
+    ] + _mappings,
+)
+
+is_published(
+    name = "is_published",
+    package = ":npm-package",
+)
+
+package_info(
+    name = "package_info",
+    display_name = "react-project-selector",
+    package = ":npm-package",
 )

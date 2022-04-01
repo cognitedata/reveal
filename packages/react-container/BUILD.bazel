@@ -78,7 +78,7 @@ DEPENDENCIES = [
     "//packages/sidecar",
     "//packages/auth-utils",
     "//packages/react-loop-detector",
-    "//packages/cdf-tenant-selector",
+    "//packages/react-project-selector",
 ]
 
 # Type dependencies from package.json
