@@ -31,10 +31,10 @@ export class CadNode extends THREE.Object3D {
   private readonly _materialManager: CadMaterialManager;
   private readonly _instancedMeshManager: InstancedMeshManager;
   private readonly _sectorRepository: SectorRepository;
-  
-  // savokr 01-04-22: These are made non-readonly because they need to be manually deleted when model is removed. 
+
+  // savokr 01-04-22: These are made non-readonly because they need to be manually deleted when model is removed.
   // Can be made back to readonly if all references of the CadNode are removed from memory when model is removed
-  // from the scene. Also possible to make the same thing only inside GeometryBatchingManager and RootSectorNode. 
+  // from the scene. Also possible to make the same thing only inside GeometryBatchingManager and RootSectorNode.
   private _rootSector: RootSectorNode;
   private _sectorScene: SectorScene;
   private _geometryBatchingManager: GeometryBatchingManager;
@@ -177,7 +177,7 @@ export class CadNode extends THREE.Object3D {
   public setCacheSize(sectorCount: number): void {
     this._sectorRepository.setCacheSize(sectorCount);
   }
-  
+
   public dispose(): void {
     this._sectorRepository.clearCache();
     this._materialManager.deleteModelData(this._cadModelMetadata.modelIdentifier);
