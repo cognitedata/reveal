@@ -304,19 +304,18 @@ export class Canvas {
     maxWidth: number,
     lineHeight: number
   ): number {
-    const words = text.split(' ');
+    const characters = text.split('');
     let line = '';
     let height = 0;
     const draw = x >= 0 && y >= 0;
-    for (let index = 0; index < words.length; index++) {
+    for (let index = 0; index < characters.length; index++) {
       let testLine = line;
-      if (line.length > 0) testLine += ' ';
-      testLine += words[index];
+      testLine += characters[index];
       const metrics = context.measureText(testLine);
       const testWidth = metrics.width;
       if (testWidth > maxWidth && index > 0) {
         if (draw) context.fillText(line, x, y + height);
-        line = words[index];
+        line = characters[index];
         height += lineHeight;
       } else line = testLine;
     }

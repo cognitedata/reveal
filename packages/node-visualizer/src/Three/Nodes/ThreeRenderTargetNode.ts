@@ -144,7 +144,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   }
 
   public get miniWindowScene(): THREE.Scene {
-    if (!this._miniWindow) throw Error('Mini window ccene is not set');
+    if (!this._miniWindow) throw Error('Mini window scene is not set');
     return this._miniWindow.scene;
   }
 
