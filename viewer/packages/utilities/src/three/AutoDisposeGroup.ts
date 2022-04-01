@@ -18,7 +18,6 @@ export class AutoDisposeGroup extends THREE.Group {
   reference(): void {
     this.ensureNotDisposed();
     this._referenceCount++;
-    console.log(this._referenceCount, this.id);
   }
 
   dereference(): void {
@@ -29,27 +28,25 @@ export class AutoDisposeGroup extends THREE.Group {
     if (--this._referenceCount === 0) {
       this.dispose();
     }
-    console.log(this._referenceCount, this.id);
   }
 
   private dispose(): void {
     this.ensureNotDisposed();
     this._isDisposed = true;
-    const meshes: THREE.Mesh[] = this.children.filter(x => x instanceof THREE.Mesh).map(x => x as THREE.Mesh);
-    for (let i = 0; i < this.children.length; i++) {
-      const mesh = this.children[i];
-      if (mesh instanceof THREE.Mesh && mesh.geometry !== undefined) {
-        mesh.geometry.dispose();
-        delete mesh.geometry;
+
+    for (const child of this.children) {
+      if (child instanceof THREE.Mesh && child.geometry !== undefined) {
+        child.geometry.dispose();
+
         // // NOTE: Forcefully creating a new reference here to make sure
         // // there are no lingering references to the large geometry buffer
-        //mesh.geometry = emptyGeometry;
+        child.geometry = emptyGeometry;
       }
-      if (mesh instanceof THREE.BufferGeometry) {
-        mesh.dispose();
-        delete this.children[i];
+      if (child instanceof THREE.BufferGeometry) {
+        child.dispose();
       }
     }
+
     this.clear();
   }
 

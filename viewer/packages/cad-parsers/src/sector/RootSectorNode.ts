@@ -27,8 +27,8 @@ export class RootSectorNode extends SectorNode {
     this.setModelTransformation(modelMatrix);
   }
 
-  resetAllNodes(): void {
-    for (const [_,node] of this.sectorNodeMap) {
+  dereferenceAllNodes(): void {
+    for (const [_, node] of this.sectorNodeMap) {
       node.dereference();
     }
   }

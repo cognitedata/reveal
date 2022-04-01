@@ -33,7 +33,7 @@ export class CadModelUpdateHandler {
   private readonly _clippingPlaneSubject: Subject<THREE.Plane[]> = new Subject();
   private readonly _loadingHintsSubject: Subject<CadLoadingHints> = new Subject();
   private readonly _prioritizedLoadingHintsSubject: Subject<void> = new Subject();
-  private readonly _modelSubject: Subject<{ model: CadNode; operation: 'add' | 'remove' } | 'cleanup'> = new Subject();
+  private readonly _modelSubject: Subject<{ model: CadNode; operation: 'add' | 'remove' }> = new Subject();
   private readonly _budgetSubject: Subject<CadModelBudget> = new Subject();
   private readonly _progressSubject: Subject<LoadingState> = new BehaviorSubject<LoadingState>(notLoadingState);
 
@@ -110,13 +110,13 @@ export class CadModelUpdateHandler {
       map(createDetermineSectorsInput), // Map from array to interface (enables destructuring)
       filter(loadingEnabled), // should we load?
       mergeMap(async x => loadSectors(x)),
-      mergeMap(x => x)
+      mergeMap(x => x),
+      share()
     );
   }
 
   dispose(): void {
     delete this._updateObservable;
-    this._modelSubject.next('cleanup');
     this._modelSubject.unsubscribe();
     this._sectorCuller.dispose();
   }
@@ -175,17 +175,17 @@ export class CadModelUpdateHandler {
   private loadingModelObservable() {
     return this._modelSubject.pipe(
       scan((array, next) => {
-        if (next !== 'cleanup') {
-          const { model, operation } = next;
-          switch (operation) {
-            case 'add':
-              array.push(model);
-              return array;
-            case 'remove':
-              return array.filter(x => x.cadModelMetadata.modelIdentifier !== model.cadModelMetadata.modelIdentifier);
-            default:
-              assertNever(operation);
-          }
+        const { model, operation } = next;
+        switch (operation) {
+          case 'add':
+            array.push(model);
+            return array;
+          case 'remove':
+            return array.filter(
+              x => x.cadModelMetadata.modelIdentifier !== model.cadModelMetadata.modelIdentifier
+            );
+          default:
+            assertNever(operation);
         }
       }, [] as CadNode[])
     );
@@ -203,6 +203,15 @@ type CameraInput = {
 type ClippingInput = {
   clippingPlanes: THREE.Plane[] | never[];
 };
+
+function properFilter(array: Array<any>, fun: (x: any) => boolean) {
+  for (let i = 0; i < array.length; i++) {
+    if (!fun) {
+      array.splice(i, 1);
+    }
+  }
+  return array;
+}
 
 function makeSettingsInput([loadingHints, budget]: [CadLoadingHints, CadModelBudget]): SettingsInput {
   return { loadingHints, budget };

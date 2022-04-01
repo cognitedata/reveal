@@ -10,8 +10,8 @@ import { NodeTransformProvider } from './NodeTransformProvider';
 
 export class NodeTransformTextureBuilder {
   private readonly _transformProvider: NodeTransformProvider;
-  private _transformOverrideBuffer: TransformOverrideBuffer;
-  private  _transformOverrideIndexTexture: THREE.DataTexture;
+  private readonly _transformOverrideBuffer: TransformOverrideBuffer;
+  private _transformOverrideIndexTexture: THREE.DataTexture;
   private _needsUpdate = false;
   private readonly _handleTransformChangedBound = this.handleTransformChanged.bind(this);
 

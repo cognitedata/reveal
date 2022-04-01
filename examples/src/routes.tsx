@@ -14,7 +14,6 @@ import { TwoModels } from './pages/TwoModels';
 import { WalkablePath } from './pages/WalkablePath';
 import { visualTests } from './pages/e2e/visualTests';
 import { CustomDataSource } from './pages/CustomDataSource';
-import { SimpleViewer } from './pages/SimpleCognite3DViewer';
 
 const cadTestBasePath = '/test/cad/';
 const pointcloudTestBasePath = '/test/pointcloud/';
@@ -67,14 +66,6 @@ export const exampleRoutes: Array<ExampleRoute> = [
     path: '/clipping',
     menuTitle: 'Clipping planes',
     component: <Clipping />,
-  },
-  {
-    name: 'simple-viewer',
-    path:
-      `/simple-viewer?project=${project}` +
-      `&env=${defaultEnvironmentParam}`,
-    menuTitle: 'Simple Cognite3DViewer',
-    component: <SimpleViewer/>,
   },
   {
     name: 'default',

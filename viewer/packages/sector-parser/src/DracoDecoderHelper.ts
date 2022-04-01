@@ -100,9 +100,7 @@ export class DracoDecoderHelper {
     };
   }
 
-  public clearData(): void {
-    
-  }
+  public clearData(): void {}
 
   private async decodeVertexBuffer(
     module: DecoderModule,

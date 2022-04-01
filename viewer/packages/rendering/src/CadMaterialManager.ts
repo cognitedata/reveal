@@ -189,8 +189,8 @@ export class CadMaterialManager {
   }
 
   clearModelData(modelIdentifier: string): void {
-    const { nodeAppearanceTextureBuilder, nodeTransformTextureBuilder } = this.materialsMap.get(modelIdentifier)
-    
+    const { nodeAppearanceTextureBuilder, nodeTransformTextureBuilder } = this.materialsMap.get(modelIdentifier);
+
     nodeTransformTextureBuilder.dispose();
     nodeAppearanceTextureBuilder.dispose();
   }

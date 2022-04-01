@@ -27,12 +27,12 @@ import { ParsedGeometry } from '@reveal/sector-parser';
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
 export class CadNode extends THREE.Object3D {
-  private readonly _rootSector: RootSectorNode;
   private readonly _cadModelMetadata: CadModelMetadata;
   private readonly _materialManager: CadMaterialManager;
-  private readonly _sectorScene: SectorScene;
   private readonly _instancedMeshManager: InstancedMeshManager;
   private readonly _sectorRepository: SectorRepository;
+  private _rootSector: RootSectorNode;
+  private _sectorScene: SectorScene;
   private _geometryBatchingManager: GeometryBatchingManager;
 
   constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
@@ -176,9 +176,13 @@ export class CadNode extends THREE.Object3D {
 
   public clearCache(): void {
     this._materialManager.clearModelData(this._cadModelMetadata.modelIdentifier);
-
     this._geometryBatchingManager.dispose();
     this._sectorRepository.clearCache();
-    this._rootSector.resetAllNodes();
+    this._rootSector.dereferenceAllNodes();
+    this._rootSector.clear();
+
+    delete this._geometryBatchingManager;
+    delete this._rootSector;
+    delete this._sectorScene;
   }
 }
