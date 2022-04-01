@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { isBox3OnPositiveSideOfPlane } from '@reveal/utilities';
+import { isBox3OnPositiveSideOfPlane } from './isBox3OnPositiveSideOfPlane';
 import * as THREE from 'three';
 
 describe('isBox3OnPositiveSideOfPlane', () => {

@@ -18,8 +18,7 @@ export {
   WellKnownAsprsPointClassCodes,
   PotreeNodeWrapper,
   PotreeGroupWrapper,
-  PointCloudNode,
-  PointCloudMetadata
+  PointCloudNode
 } from '@reveal/pointclouds';
 
 // Utilities
