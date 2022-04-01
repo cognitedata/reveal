@@ -105,8 +105,8 @@ export class CadMaterialManager {
       perModelClippingPlanes: [],
       nodeAppearanceProvider,
       nodeTransformProvider,
-      nodeAppearanceTextureBuilder: nodeAppearanceTextureBuilder,
-      nodeTransformTextureBuilder: nodeTransformTextureBuilder,
+      nodeAppearanceTextureBuilder,
+      nodeTransformTextureBuilder,
       updateMaterialsCallback,
       updateTransformsCallback
     });

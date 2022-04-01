@@ -92,7 +92,7 @@ export class NodeAppearanceTextureBuilder {
   }
 
   clearData(): void {
-    delete this._overrideColorPerTreeIndexTexture.image;
+    delete this._overrideColorPerTreeIndexTexture.source;
     delete this._overrideColorDefaultAppearanceRgba;
   }
 

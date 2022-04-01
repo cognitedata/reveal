@@ -24,8 +24,8 @@ export class NodeTransformTextureBuilder {
   }
 
   clearData(): void {
-    delete this._transformOverrideBuffer.dataTexture.image;
-    delete this._transformOverrideIndexTexture.image;
+    delete this._transformOverrideBuffer.dataTexture.source;
+    delete this._transformOverrideIndexTexture.source;
   }
 
   dispose(): void {
