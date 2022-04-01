@@ -63,8 +63,8 @@ export const sectorShaders = {
     vertex: glsl(require('../glsl/sector/primitives/generalring.vert').default)
   },
   nutPrimitive: {
-    fragment: glsl(require('../glsl/sector/primitives/instanced.frag').default),
-    vertex: glsl(require('../glsl/sector/primitives/instanced.vert').default)
+    fragment: glsl(require('../glsl/sector/instancedMesh.frag').default),
+    vertex: glsl(require('../glsl/sector/instancedMesh.vert').default)
   },
   quadPrimitive: {
     fragment: glsl(require('../glsl/sector/primitives/instanced.frag').default),
