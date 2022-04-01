@@ -1,7 +1,6 @@
 import { Button, Input } from '@cognite/cogs.js';
 import Col from 'antd/lib/col';
 
-import message from 'antd/lib/message';
 import Table from 'antd/lib/table';
 import sdk from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';
@@ -20,6 +19,7 @@ import { trackEvent } from '@cognite/cdf-route-tracker';
 import jetfireIcon from 'assets/jetfireIcon.svg';
 import useInterval from 'hooks/useInterval';
 import { Key } from 'antd/lib/table/interface';
+import { notification } from 'antd';
 
 const jetfire = new JetfireApi(sdk, sdk.project, getJetfireUrl());
 
@@ -179,7 +179,7 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
           )
         );
       } catch (e) {
-        message.error('Invalid search value');
+        notification.error({ message: 'Invalid search value' });
         setSearchValue('');
       }
     } else {

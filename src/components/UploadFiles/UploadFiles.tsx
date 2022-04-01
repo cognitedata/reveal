@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { UploadChangeParam, UploadProps } from 'antd/lib/upload';
-import { Upload } from 'antd';
-import message from 'antd/lib/message';
+import { notification, Upload } from 'antd';
 import List from 'antd/lib/list';
 import Spin from 'antd/lib/spin';
 import { Button, Icon } from '@cognite/cogs.js';
@@ -38,11 +37,12 @@ const updateFileWithDataSet = (fileId: number, dataSetId: number) => {
       },
     })
     .catch((error) => {
-      message.error(
-        error.message ||
+      notification.error({
+        message:
+          error.message ||
           error.errors.map((err: any) => err.message) ||
-          'Something went wrong...'
-      );
+          'Something went wrong...',
+      });
     });
 };
 
@@ -125,9 +125,13 @@ const UploadFiles = ({
       }
       if (status === 'done') {
         // setFileList([{ name: file.name, id: info.file. }, ...fileList]);
-        message.success(`${info.file.name} file uploaded successfully.`);
+        notification.success({
+          message: `${info.file.name} file uploaded successfully.`,
+        });
       } else if (status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
+        notification.error({
+          message: `${info.file.name} file upload failed.`,
+        });
       }
     },
     customRequest: ({ file, onSuccess, onError }) => {
@@ -152,12 +156,12 @@ const UploadFiles = ({
               const { status } = xhr;
               if (status >= 200 && status < 300) {
                 setUploadError(null);
-                message.success('File is uploaded');
+                notification.success({ message: 'File is uploaded' });
                 setIsUploading(false);
                 if (onSuccess) onSuccess('Ok', xhr);
                 setFileList([{ name: fileName, id: fileId }, ...fileList]);
               } else {
-                message.error('Something went wrong!');
+                notification.error({ message: 'Something went wrong!' });
               }
             };
             xhr.setRequestHeader('Content-Type', file.type);

@@ -3,7 +3,7 @@ import NewHeader from 'components/NewHeader';
 import { Button, Icon, Input } from '@cognite/cogs.js';
 import Table from 'antd/lib/table';
 import Tag from 'antd/lib/tag';
-import notification from 'antd/lib/notification';
+import { notification } from 'antd';
 import Checkbox from 'antd/lib/checkbox';
 import DataSetEditor from 'pages/DataSetEditor';
 import { Dropdown, DropdownMenuContent } from 'components/DropdownMenu';

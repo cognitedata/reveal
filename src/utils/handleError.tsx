@@ -1,4 +1,4 @@
-import notification from 'antd/lib/notification';
+import { notification } from 'antd';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import { getContainer } from 'utils/shared';
 

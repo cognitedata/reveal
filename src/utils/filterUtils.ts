@@ -1,4 +1,4 @@
-import message from 'antd/lib/message';
+import { notification } from 'antd';
 import isString from 'lodash/isString';
 import { DataSetWithExtpipes } from 'actions';
 
@@ -45,7 +45,7 @@ const handleDataSetsSearch = (
             ))
       );
     } catch (e) {
-      message.error('Invalid search value');
+      notification.error({ message: 'Invalid search value' });
       setSearchValue('');
       return dataSetsList;
     }

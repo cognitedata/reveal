@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import Checkbox from 'antd/lib/checkbox';
 import { Button, Input } from '@cognite/cogs.js';
+import { notification } from 'antd';
 import Spin from 'antd/lib/spin';
 import Menu from 'antd/lib/menu';
 import styled from 'styled-components';
 import theme from 'styles/theme';
-import message from 'antd/lib/message';
 import { FilterDropdownProps } from 'antd/lib/table/interface';
 
 const StickyFooter = styled.div`
@@ -51,7 +51,7 @@ const SearchableFilters = ({
             )
           );
         } catch (e) {
-          message.error('Invalid search value');
+          notification.error({ message: 'Invalid search value' });
           setSearchValue('');
         }
       }
