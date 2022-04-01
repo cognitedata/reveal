@@ -3,6 +3,9 @@ import { Dimensions, Margins } from './types';
 export const LEGEND_FLOATING_HEIGHT = 95;
 export const CHART_BACKGROUND_COLOR = 'var(--cogs-bg-accent)';
 
+export const AXIS_TITLE_FONT_SIZE = 12;
+export const AXIS_LABEL_FONT_SIZE = 12;
+
 export const DEFAULT_AXIS_TICK_PADDING = 12;
 
 export const X_AXIS_LABELS_HEIGHT = {
@@ -16,10 +19,10 @@ export const DEFAULT_X_AXIS_TICKS = 15;
 export const DEFAULT_X_AXIS_PLACEMENT = 'Top';
 
 export const DEFAULT_MARGINS: Margins = {
-  top: 5,
-  right: 5,
-  bottom: 5,
-  left: 5,
+  top: 10,
+  right: 10,
+  bottom: 10,
+  left: 10,
 };
 
 export const DEFAULT_ZOOM_STEP_SIZE = 100;

@@ -1,4 +1,5 @@
 import { ChartSVG, ChartWithXAxis } from 'components/charts/elements';
+import { FlexColumn } from 'styles/layout';
 
 import { ChartContentWrapper, ChartRowContent } from '../../elements';
 import { Axis, AxisPlacement } from '../Axis';
@@ -87,10 +88,10 @@ export const ChartPlane = ({
         <YAxisTitle title={yAxisTitle} />
 
         <ChartWithXAxis>
-          <div style={{ maxHeight }}>
+          <FlexColumn style={{ maxHeight }}>
             {ChartContent}
             {ChartXAxisSticky}
-          </div>
+          </FlexColumn>
         </ChartWithXAxis>
       </ChartRowContent>
 

@@ -30,8 +30,6 @@ export const NPTDurationGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
         hideBarLabels: true,
         margins: {
           top: -7,
-          right: 10,
-          left: 10,
         },
       }),
       []

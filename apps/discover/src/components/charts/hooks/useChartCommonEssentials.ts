@@ -5,7 +5,7 @@ import isUndefined from 'lodash/isUndefined';
 
 import { useDeepCallback, useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 
-import { AxisPlacement, XAxisPlacement } from '../common/Axis';
+import { AxisPlacement, AxisProps, XAxisPlacement } from '../common/Axis';
 import { LegendCheckboxState, LegendProps } from '../common/Legend';
 import { getLegendInitialCheckboxState } from '../common/Legend/utils';
 import {
@@ -19,18 +19,21 @@ import {
   filterUndefinedValues,
   getDefaultColorConfig,
   getFilteredData,
+  getCalculatedMarginLeft,
 } from '../utils';
 
 export const useChartCommonEssentials = <T>({
   dataOriginal,
   xAxis,
   yAxis,
+  yAxisExtraProps,
   options,
   onUpdate,
 }: {
   dataOriginal: T[];
   xAxis: ChartAxis & XAxisPlacement;
   yAxis: ChartAxis;
+  yAxisExtraProps?: Partial<AxisProps>;
   options: BaseChartOptions<T> & any;
   onUpdate?: () => void;
 }) => {
@@ -43,7 +46,13 @@ export const useChartCommonEssentials = <T>({
     [dataOriginal]
   );
 
-  const margins = { ...DEFAULT_MARGINS, ...options?.margins };
+  const margins = {
+    ...DEFAULT_MARGINS,
+    ...(yAxisExtraProps?.hideAxisTicks
+      ? {}
+      : { left: getCalculatedMarginLeft<T>(data, yAxis) }),
+    ...options?.margins,
+  };
 
   const xAccessor = xAxis.accessor;
   const yAccessor = yAxis.accessor;

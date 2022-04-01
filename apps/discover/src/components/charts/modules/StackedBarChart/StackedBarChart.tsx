@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef } from 'react';
 
 import { BaseChart } from 'components/charts/BaseChart';
-import { AxisPlacement } from 'components/charts/common/Axis';
+import { AxisPlacement, AxisProps } from 'components/charts/common/Axis';
 import { ChartPlane } from 'components/charts/common/ChartPlane';
 import { useXScaleRange } from 'components/charts/hooks/useXScaleRange';
 
@@ -30,6 +30,11 @@ export const StackedBarChart = <T extends DataObject<T>>({
 }: StackedBarChartProps<T>) => {
   const chartRef = useRef<HTMLDivElement>(null);
 
+  const yAxisExtraProps: Partial<AxisProps> = {
+    hideAxisTicks: true,
+    hideAxisLabels: true,
+  };
+
   const {
     data,
     filteredData,
@@ -45,6 +50,7 @@ export const StackedBarChart = <T extends DataObject<T>>({
     dataOriginal,
     xAxis,
     yAxis,
+    yAxisExtraProps,
     options,
     onUpdate,
   });
@@ -139,10 +145,7 @@ export const StackedBarChart = <T extends DataObject<T>>({
         margins={margins}
         chartOffsetBottom={chartOffsetBottom}
         renderChartData={renderChartData}
-        yAxisExtraProps={{
-          hideAxisTicks: true,
-          hideAxisLabels: true,
-        }}
+        yAxisExtraProps={yAxisExtraProps}
         maxHeight={options?.maxHeight}
       />
     );

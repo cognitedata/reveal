@@ -1,4 +1,3 @@
-import compact from 'lodash/compact';
 import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import isUndefined from 'lodash/isUndefined';
@@ -6,7 +5,11 @@ import isUndefined from 'lodash/isUndefined';
 import { useDeepMemo } from 'hooks/useDeep';
 
 import { Accessors, ScaleRange } from '../types';
-import { getRangeScaleFactor, getSumOfValuesOfObjectsByKey } from '../utils';
+import {
+  getRangeScaleFactor,
+  getSumOfValuesOfObjectsByKey,
+  getValidatedValues,
+} from '../utils';
 
 export const useXScaleRange = <T>({
   data,
@@ -34,9 +37,8 @@ export const useXScaleRange = <T>({
   };
 
   const getUngroupedValues = () => {
-    const xAxisValues = compact(
-      data.map((dataElement) => get(dataElement, xAccessor))
-    );
+    const dataXValues = data.map((dataElement) => get(dataElement, xAccessor));
+    const xAxisValues = getValidatedValues(dataXValues);
     return xAxisValues;
   };
 

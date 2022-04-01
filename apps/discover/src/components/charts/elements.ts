@@ -6,7 +6,11 @@ import { FlexColumn, sizes } from 'styles/layout';
 
 import { FlexRow } from '../../styles/layout';
 
-import { CHART_BACKGROUND_COLOR } from './constants';
+import {
+  AXIS_LABEL_FONT_SIZE,
+  AXIS_TITLE_FONT_SIZE,
+  CHART_BACKGROUND_COLOR,
+} from './constants';
 
 export const ChartWrapper = styled(FlexColumn)`
   height: 100%;
@@ -25,7 +29,7 @@ export const ChartWrapper = styled(FlexColumn)`
     }
     text {
       color: var(--cogs-text-hint);
-      font-size: 12px;
+      font-size: ${AXIS_LABEL_FONT_SIZE}px;
     }
   }
 `;
@@ -45,11 +49,12 @@ export const ChartRowContent = styled(FlexRow)`
 
 export const AxisLabel = styled(Body)`
   color: var(--cogs-text-hint) !important;
-  font-size: 12px !important;
+  font-size: ${AXIS_TITLE_FONT_SIZE}px !important;
   font-weight: 500;
 `;
 
 export const ChartWithXAxis = styled.div`
+  width: 100%;
   overflow: auto;
   /* Scrollbar styles */
 

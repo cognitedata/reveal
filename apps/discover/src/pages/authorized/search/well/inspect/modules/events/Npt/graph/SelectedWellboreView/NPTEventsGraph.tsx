@@ -68,11 +68,6 @@ export const NPTEventsGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
         legendOptions: {
           isolate: false,
         },
-        margins: {
-          top: 10,
-          bottom: 5,
-          left: 60,
-        },
       }),
       []
     );

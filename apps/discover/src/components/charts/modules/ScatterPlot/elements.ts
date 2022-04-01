@@ -16,7 +16,6 @@ export const PlotContainer = styled.foreignObject`
 export const Plot = styled.div`
   height: 100%;
   width: 100%;
-  background: ${(props: { color: string }) => props.color};
   border: ${PLOT_BORDER_SIZE}px solid ${CHART_BACKGROUND_COLOR};
   border-radius: ${sizes.extraSmall};
   cursor: pointer;

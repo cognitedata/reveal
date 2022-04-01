@@ -33,8 +33,6 @@ export const Plots = <T extends DataObject<T>>({
           ? renderPlotHoverComponent(dataElement)
           : tooltip;
 
-        const PlotElement = <Plot color={plotColor} data-testid="plot" />;
-
         return (
           <PlotContainer key={key} x={xScale(xValue)} y={yScale(yValue)}>
             <PlotTooltip
@@ -42,7 +40,7 @@ export const Plots = <T extends DataObject<T>>({
               placement={renderPlotHoverComponent ? 'auto' : 'top'}
               inverted
             >
-              {PlotElement}
+              <Plot data-testid="plot" style={{ background: plotColor }} />
             </PlotTooltip>
           </PlotContainer>
         );

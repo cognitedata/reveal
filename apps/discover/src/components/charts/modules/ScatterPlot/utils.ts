@@ -1,6 +1,7 @@
-import compact from 'lodash/compact';
 import get from 'lodash/get';
 import uniq from 'lodash/uniq';
+
+import { getValidatedValues } from 'components/charts/utils';
 
 import { ColorConfig, DataObject } from '../../types';
 
@@ -28,8 +29,6 @@ export const getPlotColorForDataElement = <T extends DataObject<T>>(
 };
 
 export const getCalculatedYAxisTicks = <T>(data: T[], accessor: string) => {
-  const values = uniq(
-    compact(data.map((dataElement) => get(dataElement, accessor)))
-  );
-  return values.length;
+  const yValues = data.map((dataElement) => get(dataElement, accessor));
+  return uniq(getValidatedValues(yValues)).length;
 };
