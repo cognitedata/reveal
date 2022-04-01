@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import { MemoryRouter } from 'react-router-dom';
 import Extractors from './Extractors';
 
-describe('Extractors', () => {
+describe('Extractor downloads', () => {
   it('Renders without exploding', () => {
     const wrapper = shallow(
       <MemoryRouter>
