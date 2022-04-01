@@ -11,6 +11,7 @@ import {
   Cognite3DViewer,
   Cognite3DViewerOptions,
   Cognite3DModel,
+  CognitePointCloudModel,
   CameraControlsOptions,
   TreeIndexNodeCollection,
   CogniteModelBase,
@@ -28,6 +29,7 @@ import { CameraUI } from '../utils/CameraUI';
 import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
 import { createSDKFromEnvironment } from '../utils/example-helpers';
+import { PointCloudClassificationFilterUI } from '../utils/PointCloudClassificationFilterUI';
 
 
 window.THREE = THREE;
@@ -179,6 +181,8 @@ export function Migration() {
         if (model instanceof Cognite3DModel) {
           new NodeStylingUI(gui.addFolder(`Node styling #${modelUi.cadModels.length}`), client, model);
           new BulkHtmlOverlayUI(gui.addFolder(`Node tagging #${modelUi.cadModels.length}`), viewer, model, client);
+        } else if (model instanceof CognitePointCloudModel) {
+          new PointCloudClassificationFilterUI(gui.addFolder(`Class filter #${modelUi.pointCloudModels.length}`), model);
         }
       }
       const modelUi = new ModelUi(gui.addFolder('Models'), viewer, handleModelAdded);

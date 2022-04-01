@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { AddModelOptions, Cognite3DModel, Cognite3DViewer, CogniteModelBase, CognitePointCloudModel, ViewerState } from "@cognite/reveal";
 
 import * as dat from 'dat.gui';
+import { isLocalUrlPointCloudModel } from './isLocalUrlPointCloudModel';
 
 export class ModelUi {
   private readonly _viewer: Cognite3DViewer;
@@ -114,7 +115,7 @@ export class ModelUi {
 
   async addModel(options: AddModelOptions) {
     try {
-      const model = options.localPath !== undefined ? await this._viewer.addCadModel(options) : await this._viewer.addModel(options);
+      const model = options.localPath !== undefined ? await addLocalModel(this._viewer, options) : await this._viewer.addModel(options);
       if (model instanceof Cognite3DModel) {
         this._cadModels.push(model);
       } else if (model instanceof CognitePointCloudModel) {
@@ -134,6 +135,11 @@ export class ModelUi {
     }
   }
 
+}
+
+async function addLocalModel(viewer: Cognite3DViewer, addModelOptions: AddModelOptions): Promise<CognitePointCloudModel | Cognite3DModel> {
+  const isPointCloud = addModelOptions.localPath !== undefined && await isLocalUrlPointCloudModel(addModelOptions.localPath);
+  return isPointCloud ? viewer.addPointCloudModel(addModelOptions) : viewer.addCadModel(addModelOptions);
 }
 
 function createGeometryFilterStateFromBounds(bounds: THREE.Box3, out: { center: THREE.Vector3, size: THREE.Vector3 }) {
