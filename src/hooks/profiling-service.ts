@@ -399,10 +399,15 @@ export const useProfileResultType = (database: string, table: string) => {
     table,
   });
 
+  const { rowCount = undefined, isComplete = false } = fullProfile.data ?? {};
+  const isPartial =
+    rowCount === FULL_PROFILE_LIMIT || (!isComplete && fullProfile.isFetched);
+
   let profileResultType: ProfileResultType = 'running';
-  if (fullProfile.data?.isComplete) {
+  if (isComplete) {
     profileResultType = 'complete';
-  } else if (fullProfile.isFetched) {
+  }
+  if (isPartial) {
     profileResultType = 'partial';
   }
 
