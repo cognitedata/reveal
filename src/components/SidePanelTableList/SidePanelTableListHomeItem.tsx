@@ -47,15 +47,12 @@ const StyledHomeItemName = styled(Body)`
 const SidePanelTableListHomeItem = ({
   isEmpty,
 }: SidePanelTableListHomeItemProps): JSX.Element => {
+  const { flow } = getFlow();
   const { selectedSidePanelDatabase = '' } = useContext(RawExplorerContext);
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const { data: hasWriteAccess } = usePermissions(
-    getFlow().flow,
-    'rawAcl',
-    'WRITE'
-  );
+  const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
 
   return (
     <StyledPanelTableListHomeItemWrapper>

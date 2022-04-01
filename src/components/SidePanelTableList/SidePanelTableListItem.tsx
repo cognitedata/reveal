@@ -67,16 +67,13 @@ const SidePanelTableListItem = ({
   databaseName,
   tableName,
 }: SidePanelTableListItemProps): JSX.Element => {
+  const { flow } = getFlow();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [[, activeTableName] = [], setTable] = useActiveTable();
   const isSelected = activeTableName === tableName;
 
-  const { data: hasWriteAccess } = usePermissions(
-    getFlow().flow,
-    'rawAcl',
-    'WRITE'
-  );
+  const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
 
   const handleDatabaseListItemClick = (): void => {
     setTable([databaseName, tableName]);

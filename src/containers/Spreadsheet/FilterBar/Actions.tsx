@@ -16,11 +16,8 @@ import { Menu } from './Menu';
 
 export const Actions = (): JSX.Element => {
   const queryClient = useQueryClient();
-  const { data: hasWriteAccess } = usePermissions(
-    getFlow().flow,
-    'rawAcl',
-    'WRITE'
-  );
+  const { flow } = getFlow();
+  const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
   const { database, table } = useActiveTableContext();
   const [csvModalVisible, setCSVModalVisible] = useState<boolean>(false);
 

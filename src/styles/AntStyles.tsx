@@ -8,7 +8,6 @@ import {
   notification,
   Dropdown,
   Spin,
-  TooltipProps,
 } from 'antd';
 
 import affixStyle from 'antd/es/affix/style/index.less';
@@ -125,8 +124,7 @@ Tooltip.defaultProps = {
   getPopupContainer: getContainer,
 };
 
-(CogsTooltip as React.FC<TooltipProps>).defaultProps = {
-  // @ts-ignore
+CogsTooltip.defaultProps = {
   ...CogsTooltip.defaultProps,
   appendTo: getContainer,
 };
