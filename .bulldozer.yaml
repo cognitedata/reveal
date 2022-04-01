@@ -35,6 +35,7 @@ merge:
 
 update:
   whitelist:
-    labels: ["auto-update"]
+    labels: ['auto-merge']
   blacklist:
     labels: ["do-not-update"]
+  ignore_drafts: true

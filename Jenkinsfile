@@ -1,5 +1,8 @@
 @Library('jenkins-helpers') _
 
+properties([
+  disableConcurrentBuilds()
+])
 static final String NODE_VERSION = 'node:16'
 
 static final String PR_COMMENT_MARKER = "[pr-server]\n"
