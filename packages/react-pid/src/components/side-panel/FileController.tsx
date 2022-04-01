@@ -1,12 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
-import {
-  DiagramLineInstance,
-  DiagramSymbol,
-  DiagramSymbolInstance,
-  saveSymbolsAsJson,
-} from '@cognite/pid-tools';
+import { DiagramSymbol, saveSymbolsAsJson } from '@cognite/pid-tools';
 
 const DropDownWrapper = styled.div`
   text-align: left;
@@ -14,8 +9,6 @@ const DropDownWrapper = styled.div`
 
 interface FileControllerProps {
   symbols: DiagramSymbol[];
-  symbolInstances: DiagramSymbolInstance[];
-  lineInstances: DiagramLineInstance[];
   disabled: boolean;
   loadJson: (json: Record<string, unknown>) => void;
   saveGraphAsJson: () => void;
@@ -25,11 +18,9 @@ interface FileControllerProps {
 
 export const FileController: React.FC<FileControllerProps> = ({
   symbols,
-  symbolInstances,
   disabled,
   loadJson,
   saveGraphAsJson,
-  lineInstances,
   jsonInputRef,
   onUploadJsonClick,
 }) => {
@@ -52,14 +43,7 @@ export const FileController: React.FC<FileControllerProps> = ({
           content={
             <Menu>
               <Menu.Item onClick={onUploadJsonClick}>Upload</Menu.Item>
-              <Menu.Item
-                onClick={saveGraphAsJson}
-                disabled={
-                  symbolInstances.length === 0 && lineInstances.length === 0
-                }
-              >
-                Download Graph
-              </Menu.Item>
+              <Menu.Item onClick={saveGraphAsJson}>Download Graph</Menu.Item>
               <Menu.Item
                 onClick={() => saveSymbolsAsJson(symbols)}
                 disabled={symbols.length === 0}

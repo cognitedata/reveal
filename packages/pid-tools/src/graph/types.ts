@@ -1,5 +1,6 @@
 import {
   DiagramConnection,
+  DiagramEquipmentTagInstanceOutputFormat,
   DiagramLineInstance,
   DiagramLineInstanceOutputFormat,
   DiagramSymbolInstance,
@@ -16,4 +17,5 @@ export interface GraphOutputFormat {
   diagramConnections: DiagramConnection[];
   diagramSymbolInstances: DiagramSymbolInstanceOutputFormat[];
   diagramLineInstances: DiagramLineInstanceOutputFormat[];
+  diagramTags: DiagramEquipmentTagInstanceOutputFormat[];
 }

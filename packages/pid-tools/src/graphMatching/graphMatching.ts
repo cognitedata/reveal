@@ -1,11 +1,7 @@
 /* eslint-disable no-continue */
 import { GraphOutputFormat } from '../graph/types';
-import {
-  DiagramInstanceId,
-  DiagramInstanceOutputFormat,
-  DiagramSymbolInstanceOutputFormat,
-} from '../types';
-import { isEquipment, isInstrument } from '../utils';
+import { DiagramInstanceId, DiagramInstanceOutputFormat } from '../types';
+import { isEquipment, isEquipmentTag, isInstrument } from '../utils';
 import { calculateShortestPaths, PathOutputFormat } from '../graph';
 
 import {
@@ -33,7 +29,10 @@ export const isCrossConnection = (
     }
     return true;
   }
-  if (isEquipment(pidInstance) && isEquipment(isoInstance)) {
+  if (
+    (isEquipment(pidInstance) || isEquipmentTag(pidInstance)) &&
+    (isEquipment(isoInstance) || isEquipmentTag(isoInstance))
+  ) {
     return (
       pidInstance.equipmentTag &&
       pidInstance.equipmentTag === isoInstance.equipmentTag
@@ -43,22 +42,23 @@ export const isCrossConnection = (
 };
 
 export const getUniqueCrossConnections = (
-  pidSymbolInstances: DiagramSymbolInstanceOutputFormat[],
-  isoSymbolInstances: DiagramSymbolInstanceOutputFormat[]
+  pidInstances: DiagramInstanceOutputFormat[],
+  isoInstances: DiagramInstanceOutputFormat[]
 ): CrossDocumentConnection[] => {
   const crossDocumentConnections: CrossDocumentConnection[] = [];
-  for (let i = 0; i < pidSymbolInstances.length; i++) {
-    const pidInstance = pidSymbolInstances[i];
+  for (let i = 0; i < pidInstances.length; i++) {
+    const pidInstance = pidInstances[i];
 
-    const isoInstancesWithAssetExternalId = isoSymbolInstances.filter(
-      (isoInstance) => isCrossConnection(pidInstance, isoInstance)
+    const matchedIsoInstances = isoInstances.filter((isoInstance) =>
+      isCrossConnection(pidInstance, isoInstance)
     );
-    if (isoInstancesWithAssetExternalId.length === 1) {
-      crossDocumentConnections.push({
-        pidInstanceId: pidInstance.id,
-        isoInstanceId: isoInstancesWithAssetExternalId[0].id,
-      });
-    }
+    if (matchedIsoInstances.length !== 1) continue;
+
+    const isoInstance = matchedIsoInstances[0];
+    crossDocumentConnections.push({
+      pidInstanceId: pidInstance.id,
+      isoInstanceId: isoInstance.id,
+    });
   }
   return crossDocumentConnections;
 };
@@ -67,12 +67,18 @@ export const matchGraphs = (
   pidGraph: GraphOutputFormat,
   isoGraph: GraphOutputFormat
 ) => {
-  const potentialPidStartObjects = pidGraph.diagramSymbolInstances.filter(
-    (instance) => ['Instrument', 'Equipment'].includes(instance.type)
-  );
-  const potentialIsoStartObjects = isoGraph.diagramSymbolInstances.filter(
-    (instance) => ['Instrument', 'Equipment'].includes(instance.type)
-  );
+  const potentialPidStartObjects = [
+    ...pidGraph.diagramSymbolInstances.filter((instance) =>
+      ['Instrument', 'Equipment'].includes(instance.type)
+    ),
+    ...pidGraph.diagramTags,
+  ];
+  const potentialIsoStartObjects = [
+    ...isoGraph.diagramSymbolInstances.filter((instance) =>
+      ['Instrument', 'Equipment'].includes(instance.type)
+    ),
+    ...isoGraph.diagramTags,
+  ];
 
   const startObjects = getUniqueCrossConnections(
     potentialPidStartObjects,
@@ -115,9 +121,6 @@ export const matchGraphs = (
     shortestPathsIso
   );
 
-  const symbolMapping = getOptimalEditDistanceMapping(
-    editDistances,
-    startObjects
-  );
+  const symbolMapping = getOptimalEditDistanceMapping(editDistances);
   return { editDistances, symbolMapping, startObjects };
 };

@@ -57,6 +57,7 @@ import {
   addOrRemoveLineNumberToInstance,
   connectionExists,
   createEquipmentTagInstance,
+  createEquipmentTagInstanceFromSVGTSpanElement,
   getDiagramEquipmentTagInstanceByLabelId,
   getDiagramEquipmentTagInstanceByTagId,
   getDiagramInstanceByPathId,
@@ -69,6 +70,7 @@ import {
   pruneSymbolOverlappingPathsFromLines,
 } from './utils/diagramInstanceUtils';
 import { isLine } from './utils/type';
+import { EQUIPMENT_TAG_REGEX } from './constants';
 import { getMetadataFromFileName } from './utils/fileNameUtils';
 
 const hoverBoldStrokeScale = 1.5;
@@ -681,8 +683,11 @@ export class CognitePid {
     this.isDrawing = true;
 
     this.render();
+
     this.splitPaths();
     this.parseLineNumbers();
+    this.parseEquipmentTags();
+
     this.emit(EventType.LOAD);
     this.refresh();
   }
@@ -1124,7 +1129,7 @@ export class CognitePid {
           this.equipmentTags
         );
         if (tag === undefined) {
-          const newTag = createEquipmentTagInstance(node);
+          const newTag = createEquipmentTagInstanceFromSVGTSpanElement(node);
           this.setEquipmentTags([...this.equipmentTags, newTag]);
           this.setActiveTagId(newTag.id);
         } else {
@@ -1194,7 +1199,31 @@ export class CognitePid {
       newLineNumbers.push(lineNumber);
     });
 
-    this.setLineNumbers(newLineNumbers.sort());
+    this.setLineNumbers(newLineNumbers.sort(), false);
+  }
+
+  parseEquipmentTags() {
+    if (this.pidDocument === undefined) return;
+
+    const newEqiupmentTags = [...this.equipmentTags];
+
+    this.pidDocument.pidLabels.forEach((pidLabel) => {
+      const equipmentTagMatch = pidLabel.text.match(EQUIPMENT_TAG_REGEX);
+
+      if (!equipmentTagMatch) return;
+
+      if (newEqiupmentTags.some((eq) => eq.labelIds.includes(pidLabel.id)))
+        return;
+
+      const equipmentTagText = equipmentTagMatch[0];
+      const newEquipmentTag = createEquipmentTagInstance(
+        equipmentTagText,
+        pidLabel.id
+      );
+      newEqiupmentTags.push(newEquipmentTag);
+    });
+
+    this.setEquipmentTags(newEqiupmentTags, false);
   }
 
   autoAnalysis(documentMetadata: DocumentMetadata) {

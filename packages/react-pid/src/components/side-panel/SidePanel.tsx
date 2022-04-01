@@ -166,8 +166,6 @@ export const SidePanel = ({
         <FileController
           disabled={file === null}
           symbols={symbols}
-          symbolInstances={symbolInstances}
-          lineInstances={lines}
           loadJson={loadJson}
           saveGraphAsJson={saveGraphAsJson}
           jsonInputRef={jsonInputRef}

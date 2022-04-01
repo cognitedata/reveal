@@ -8,8 +8,8 @@ import {
 } from '../../types';
 import { matchGraphs } from '../graphMatching';
 import {
-  appendSymbolConnections,
-  convertGraphToGlobalizedIds,
+  mutateGraphByAppendingSymbolConnections,
+  mutateGraphToGlobalizedIds,
   mergeGraphs,
 } from '../multiFileGraphMatching';
 import { SymbolConnection } from '../types';
@@ -111,7 +111,7 @@ describe('convertGraphToGlobalIds', () => {
     };
 
     const filename = graphDocument.documentMetadata.name;
-    const newGraph = convertGraphToGlobalizedIds(graphDocument);
+    const newGraph = mutateGraphToGlobalizedIds(graphDocument);
 
     newGraph.connections.forEach((con) => {
       expect(con.end.startsWith(filename)).toEqual(true);
@@ -291,10 +291,10 @@ describe('match multifileGraphs', () => {
       labels: [],
     };
 
-    const pid1Graph = convertGraphToGlobalizedIds(pid1);
-    const pid2Graph = convertGraphToGlobalizedIds(pid2);
-    const iso1Graph = convertGraphToGlobalizedIds(iso1);
-    const iso2Graph = convertGraphToGlobalizedIds(iso2);
+    const pid1Graph = mutateGraphToGlobalizedIds(pid1);
+    const pid2Graph = mutateGraphToGlobalizedIds(pid2);
+    const iso1Graph = mutateGraphToGlobalizedIds(iso1);
+    const iso2Graph = mutateGraphToGlobalizedIds(iso2);
 
     const pidCombinedGraph = mergeGraphs([pid1Graph, pid2Graph]);
     const isoCombinedGraph = mergeGraphs([iso1Graph, iso2Graph]);
@@ -314,8 +314,8 @@ describe('match multifileGraphs', () => {
         to: { fileName: 'iso2', instanceId: 'i1' },
       },
     ];
-    appendSymbolConnections(pidCombinedGraph, pidFileLinks);
-    appendSymbolConnections(isoCombinedGraph, isoFileLinks);
+    mutateGraphByAppendingSymbolConnections(pidCombinedGraph, pidFileLinks);
+    mutateGraphByAppendingSymbolConnections(isoCombinedGraph, isoFileLinks);
 
     const { symbolMapping, startObjects } = matchGraphs(
       pidCombinedGraph,

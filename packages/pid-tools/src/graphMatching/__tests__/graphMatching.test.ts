@@ -158,6 +158,7 @@ describe('graph matching', () => {
         { start: 'pid-v', end: 'pid-l', direction: 'unknown' },
         { start: 'pid-l', end: 'pid-i', direction: 'unknown' },
       ],
+      diagramTags: [],
     };
 
     const isoGraph: GraphOutputFormat = {
@@ -170,6 +171,7 @@ describe('graph matching', () => {
         { start: 'iso-v', end: 'iso-l', direction: 'unknown' },
         { start: 'iso-l', end: 'iso-i', direction: 'unknown' },
       ],
+      diagramTags: [],
     };
 
     const { symbolMapping } = matchGraphs(pidGraph, isoGraph);
@@ -194,6 +196,7 @@ describe('graph matching', () => {
         { start: 'pid-v', end: 'pid-l', direction: 'unknown' },
         { start: 'pid-l', end: 'pid-i', direction: 'unknown' },
       ],
+      diagramTags: [],
     };
 
     const isoGraph: GraphOutputFormat = {
@@ -207,6 +210,7 @@ describe('graph matching', () => {
         { start: 'iso-v', end: 'iso-l', direction: 'unknown' },
         { start: 'iso-l', end: 'iso-i', direction: 'unknown' },
       ],
+      diagramTags: [],
     };
 
     const { symbolMapping } = matchGraphs(pidGraph, isoGraph);
@@ -232,6 +236,7 @@ describe('graph matching', () => {
         { start: 'pid-v', end: 'pid-l', direction: 'unknown' },
         { start: 'pid-l', end: 'pid-i', direction: 'unknown' },
       ],
+      diagramTags: [],
     };
 
     const mockIso: GraphOutputFormat = {
@@ -244,6 +249,7 @@ describe('graph matching', () => {
         { start: 'iso-v', end: 'iso-l', direction: 'unknown' },
         { start: 'iso-l', end: 'iso-i', direction: 'unknown' },
       ],
+      diagramTags: [],
     };
 
     const { symbolMapping } = matchGraphs(mockPid, mockIso);
@@ -373,7 +379,7 @@ describe('graph matching', () => {
         shortestPathsIso
       );
 
-      const symbolMapping = getOptimalEditDistanceMapping(editDistances, []);
+      const symbolMapping = getOptimalEditDistanceMapping(editDistances);
 
       expect(symbolMapping.get(pidI1.id)?.isoInstanceId).toEqual(isoI1.id);
       expect(symbolMapping.get(pidI1.id)?.editDistances.length).toEqual(2);

@@ -10,27 +10,18 @@ import { SymbolConnection } from './types';
 export const GLOBALSPLITPREFIX = '_GLOBAL_';
 
 export const mergeGraphs = (graphs: GraphDocument[]): GraphOutputFormat => {
-  const combinedGraph = {
+  const combinedGraph: GraphOutputFormat = {
     diagramConnections: [],
     diagramLineInstances: [],
     diagramSymbolInstances: [],
-  } as GraphOutputFormat;
+    diagramTags: [],
+  };
 
-  graphs.forEach((thisGraph) => {
-    combinedGraph.diagramConnections = [
-      ...combinedGraph.diagramConnections,
-      ...thisGraph.connections,
-    ];
-
-    combinedGraph.diagramLineInstances = [
-      ...combinedGraph.diagramLineInstances,
-      ...thisGraph.lines,
-    ];
-
-    combinedGraph.diagramSymbolInstances = [
-      ...combinedGraph.diagramSymbolInstances,
-      ...thisGraph.symbolInstances,
-    ];
+  graphs.forEach((graph) => {
+    combinedGraph.diagramConnections.push(...graph.connections);
+    combinedGraph.diagramLineInstances.push(...graph.lines);
+    combinedGraph.diagramSymbolInstances.push(...graph.symbolInstances);
+    combinedGraph.diagramTags.push(...graph.equipmentTags);
   });
   return combinedGraph;
 };
@@ -46,7 +37,7 @@ export const getUnglobalizedId = (globalId: DiagramInstanceId) => {
   return globalId.split(GLOBALSPLITPREFIX)[1];
 };
 
-export const convertGraphToGlobalizedIds = (graph: GraphDocument) => {
+export const mutateGraphToGlobalizedIds = (graph: GraphDocument) => {
   // Verify that the IDs are correct
   const instanceIds = [...graph.symbolInstances, ...graph.lines].flatMap(
     (i) => i.id
@@ -84,10 +75,14 @@ export const convertGraphToGlobalizedIds = (graph: GraphDocument) => {
     connectionInstance.end = getGlobalizedId(fileName, connectionInstance.end);
   });
 
+  graph.equipmentTags.forEach((equipmentTag) => {
+    equipmentTag.id = getGlobalizedId(fileName, equipmentTag.id);
+  });
+
   return graph;
 };
 
-export const convertGraphToUnglobalizedIds = (graph: GraphDocument) => {
+export const mutateGraphToUnglobalizedIds = (graph: GraphDocument) => {
   graph.symbolInstances.forEach((instance) => {
     instance.id = getUnglobalizedId(instance.id);
   });
@@ -100,16 +95,20 @@ export const convertGraphToUnglobalizedIds = (graph: GraphDocument) => {
     connectionInstance.start = getUnglobalizedId(connectionInstance.start);
     connectionInstance.end = getUnglobalizedId(connectionInstance.end);
   });
+
+  graph.equipmentTags.forEach((equipmentTag) => {
+    equipmentTag.id = getUnglobalizedId(equipmentTag.id);
+  });
   return graph;
 };
 
-export const appendSymbolConnections = (
-  combinedGraph: Graph,
+export const mutateGraphByAppendingSymbolConnections = (
+  graph: Graph,
   documentLinks: SymbolConnection[]
 ) => {
   // currently this is handled by findIsoLink. So we get the results as DocumentLinks. Lets just convert that to DiagramConnections
-  combinedGraph.diagramConnections = [
-    ...combinedGraph.diagramConnections,
+  graph.diagramConnections = [
+    ...graph.diagramConnections,
     ...documentLinks.map((link) => {
       return {
         direction: 'unknown',

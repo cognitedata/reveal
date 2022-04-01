@@ -12,10 +12,10 @@ import {
 } from '../pid-tools/src';
 import { SymbolConnection } from '../pid-tools/src/graphMatching/types';
 
+import { graphMatching } from './graphMatching';
 import emptyDir from './utils/emptyDir';
 import readJsonFromFile from './utils/readJsonFromFile';
 import writeJsonToFile from './utils/writeJsonToFile';
-import { graphMatching } from './graphMatching';
 
 const run = async () => {
   const { argv } = yargs(hideBin(process.argv))
@@ -78,7 +78,7 @@ const run = async () => {
     const fileAndLineConnectionLinks = resolveFileAndLineConnections(graphs);
 
     const doesConnectionsFileExists = fs.existsSync(connectionsPath);
-    const connections =
+    const symbolConnections =
       doesConnectionsFileExists && preferConnectionsFromFile
         ? readJsonFromFile<{ connections: SymbolConnection[] }>(
             '',
@@ -90,14 +90,13 @@ const run = async () => {
             'symbolMapping.json'
           );
 
-    computeLineFiles(
-      graphs,
-      [...connections, ...fileAndLineConnectionLinks],
-      outputVersion
-    ).forEach(({ fileName, data }) => {
-      console.log(`Writing output file ${fileName}`);
-      writeJsonToFile(OUTPUT_DIRECTORY, fileName, data);
-    });
+    const connections = [...fileAndLineConnectionLinks, ...symbolConnections];
+    computeLineFiles(graphs, connections, outputVersion).forEach(
+      ({ fileName, data }) => {
+        console.log(`Writing output file ${fileName}`);
+        writeJsonToFile(OUTPUT_DIRECTORY, fileName, data);
+      }
+    );
   });
 };
 

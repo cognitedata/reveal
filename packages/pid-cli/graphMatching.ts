@@ -1,5 +1,8 @@
 import fs from 'fs';
 
+import uniq from 'lodash/uniq';
+import isEqual from 'lodash/isEqual';
+
 import {
   GraphDocument,
   DocumentType,
@@ -7,13 +10,14 @@ import {
 } from '../pid-tools/src';
 import { SymbolConnection } from '../pid-tools/src/graphMatching/types';
 import {
-  convertGraphToGlobalizedIds,
-  convertGraphToUnglobalizedIds,
+  mutateGraphToGlobalizedIds,
+  mutateGraphToUnglobalizedIds,
   GLOBALSPLITPREFIX,
   mergeGraphs,
   matchGraphs,
-  appendSymbolConnections,
+  mutateGraphByAppendingSymbolConnections,
   getGlobalizedId,
+  CrossDocumentConnection,
 } from '../pid-tools/src/graphMatching';
 import {
   EditDistanceMapResult,
@@ -47,6 +51,23 @@ const convertSymbolMappingToSymbolConnections = (
   return matches;
 };
 
+const crossDocumentConnectionToSymbolConnection = (
+  crossDocumentConnection: CrossDocumentConnection
+): SymbolConnection => {
+  const { fileName: pidFileName, id: pidInstanceId } = globalIdToFileNameAndId(
+    crossDocumentConnection.pidInstanceId
+  );
+
+  const { fileName: isoFileName, id: isoInstanceId } = globalIdToFileNameAndId(
+    crossDocumentConnection.isoInstanceId
+  );
+
+  return {
+    from: { fileName: pidFileName, instanceId: pidInstanceId },
+    to: { fileName: isoFileName, instanceId: isoInstanceId },
+  };
+};
+
 const saveSymbolMappingAsJsonFile = (
   path: string,
   symbolMapping: SymbolMapping
@@ -66,61 +87,110 @@ const saveSymbolMappingAsJsonFile = (
 
 export const graphMatching = (
   graphs: GraphDocument[],
-  connections: SymbolConnection[],
+  fileConnections: SymbolConnection[],
   symbolMappingFilePath: string | undefined = undefined
 ): SymbolConnection[] => {
+  const symbolConnections: SymbolConnection[] = [];
+
   const globalGraphList: GraphDocument[] = [];
   graphs.forEach((graph: GraphDocument) => {
-    const newGraph = convertGraphToGlobalizedIds(graph);
+    const newGraph = mutateGraphToGlobalizedIds(graph);
     globalGraphList.push(newGraph);
   });
 
-  const pidGraphs = globalGraphList.filter(
-    (g) => g.documentMetadata.type === DocumentType.pid
-  );
-  const isoGraphs = globalGraphList.filter(
-    (g) => g.documentMetadata.type === DocumentType.isometric
-  );
+  const lineNumbers = uniq(graphs.flatMap((graph) => graph.lineNumbers));
+  const combinedSymbolMapping: SymbolMapping = new Map();
+  const combinedStartObjects = [];
 
-  const pidCombinedGraph = mergeGraphs(pidGraphs);
-  const isoCombinedGraph = mergeGraphs(isoGraphs);
+  lineNumbers.forEach((lineNumber, i) => {
+    const pidGraphs = globalGraphList.filter(
+      (g) =>
+        g.documentMetadata.type === DocumentType.pid &&
+        g.lineNumbers.includes(lineNumber)
+    );
+    const isoGraphs = globalGraphList.filter(
+      (g) =>
+        g.documentMetadata.type === DocumentType.isometric &&
+        g.lineNumbers.includes(lineNumber)
+    );
 
-  const pidFileLinks = connections.filter((con) =>
-    pidGraphs.some((g) => g.documentMetadata.name === con.from.fileName)
-  );
-  const isoFileLinks = connections.filter((con) =>
-    isoGraphs.some((g) => g.documentMetadata.name === con.from.fileName)
-  );
+    const pidCombinedGraph = mergeGraphs(pidGraphs);
+    const isoCombinedGraph = mergeGraphs(isoGraphs);
 
-  // eslint-disable-next-line no-console
-  console.log(
-    `Linking: PID file links: ${pidFileLinks.length}, ISO file links: ${isoFileLinks.length}`
-  );
+    // eslint-disable-next-line no-console
+    console.log(
+      `\nLINE NUMBER ${i + 1}/${lineNumbers.length} (${lineNumber}): ${
+        pidGraphs.length
+      } PIDs (${pidCombinedGraph.diagramSymbolInstances.length} symbols, ${
+        pidCombinedGraph.diagramTags.length
+      } tags) and ${isoGraphs.length} ISOs (${
+        isoCombinedGraph.diagramSymbolInstances.length
+      } symbols, ${isoCombinedGraph.diagramTags.length} tags)`
+    );
 
-  appendSymbolConnections(pidCombinedGraph, pidFileLinks);
-  appendSymbolConnections(isoCombinedGraph, isoFileLinks);
+    const pidFileLinks = fileConnections.filter((con) =>
+      pidGraphs.some((g) => g.documentMetadata.name === con.from.fileName)
+    );
+    const isoFileLinks = fileConnections.filter((con) =>
+      isoGraphs.some((g) => g.documentMetadata.name === con.from.fileName)
+    );
 
-  const { symbolMapping, startObjects } = matchGraphs(
-    pidCombinedGraph,
-    isoCombinedGraph
-  );
+    // eslint-disable-next-line no-console
+    console.log(
+      `GRAPH MATCHING ${lineNumber}: PID file links: ${pidFileLinks.length}, ISO file links: ${isoFileLinks.length}`
+    );
 
-  if (symbolMappingFilePath) {
-    saveSymbolMappingAsJsonFile(symbolMappingFilePath, symbolMapping);
-  }
+    mutateGraphByAppendingSymbolConnections(pidCombinedGraph, pidFileLinks);
+    mutateGraphByAppendingSymbolConnections(isoCombinedGraph, isoFileLinks);
 
-  const matches: SymbolConnection[] =
-    convertSymbolMappingToSymbolConnections(symbolMapping);
+    const { symbolMapping, startObjects } = matchGraphs(
+      pidCombinedGraph,
+      isoCombinedGraph
+    );
+
+    const newSymbolConnectionsForLineNumber: SymbolConnection[] = [];
+
+    symbolMapping.forEach((value, key) => {
+      combinedSymbolMapping.set(key, value);
+    });
+    combinedStartObjects.push(...startObjects);
+
+    const startObjectsSymbolConnections = startObjects.map(
+      crossDocumentConnectionToSymbolConnection
+    );
+
+    newSymbolConnectionsForLineNumber.push(...startObjectsSymbolConnections);
+
+    const symbolMappingConnections = convertSymbolMappingToSymbolConnections(
+      symbolMapping
+    ).filter((symbolConnection) => {
+      return !newSymbolConnectionsForLineNumber.some((sc) =>
+        isEqual(sc.from, symbolConnection.from)
+      );
+    });
+
+    newSymbolConnectionsForLineNumber.push(...symbolMappingConnections);
+
+    // eslint-disable-next-line no-console
+    console.log(
+      `GRAPH MATCHING ${lineNumber}: ${startObjectsSymbolConnections.length} start objects and ${symbolMappingConnections.length} symbol connections`
+    );
+
+    symbolConnections.push(...newSymbolConnectionsForLineNumber);
+  });
 
   {
+    if (symbolMappingFilePath) {
+      saveSymbolMappingAsJsonFile(symbolMappingFilePath, combinedSymbolMapping);
+    }
     // Debug logging
     const startObjectsSet = new Set(
-      startObjects.map(
+      combinedStartObjects.map(
         (startObject) =>
           `${startObject.pidInstanceId}|${startObject.isoInstanceId}`
       )
     );
-    const numberOfStartObjectMatched = matches.filter((match) => {
+    const numberOfStartObjectMatched = symbolConnections.filter((match) => {
       const mappingString = `${getGlobalizedId(
         match.from.fileName,
         match.from.instanceId
@@ -130,13 +200,13 @@ export const graphMatching = (
 
     // eslint-disable-next-line no-console
     console.log(
-      `SYMBOL MATCHING: Found ${symbolMapping.size} symbol mappings with ${startObjects.length} start objects (${numberOfStartObjectMatched} actually matched). ${pidCombinedGraph.diagramSymbolInstances.length} PID symbols and ${isoCombinedGraph.diagramSymbolInstances.length} ISO symbols.`
+      `SYMBOL MATCHING: Found ${combinedSymbolMapping.size} symbol mappings with ${combinedStartObjects.length} start objects (${numberOfStartObjectMatched} actually matched).`
     );
   }
 
   graphs.forEach((graph: GraphDocument) => {
-    convertGraphToUnglobalizedIds(graph);
+    mutateGraphToUnglobalizedIds(graph);
   });
 
-  return matches;
+  return symbolConnections;
 };

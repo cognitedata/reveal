@@ -267,13 +267,20 @@ export function addOrRemoveLineNumberToInstance<Type extends DiagramInstance>(
 }
 /* eslint-enable no-param-reassign */
 
-export const createEquipmentTagInstance = (
+export const createEquipmentTagInstanceFromSVGTSpanElement = (
   node: SVGTSpanElement
 ): DiagramEquipmentTagInstance => {
+  return createEquipmentTagInstance(node.innerHTML, node.id);
+};
+
+export const createEquipmentTagInstance = (
+  equipmentTag: string,
+  labelId: string
+): DiagramEquipmentTagInstance => {
   return {
-    id: node.id,
-    equipmentTag: node.innerHTML,
-    labelIds: [node.id],
+    id: `equipTag-${labelId}`,
+    equipmentTag,
+    labelIds: [labelId],
     type: 'EquipmentTag',
     lineNumbers: [],
     inferedLineNumbers: [],

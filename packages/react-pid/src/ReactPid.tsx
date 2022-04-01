@@ -222,11 +222,14 @@ export const ReactPid = ({
       activeTool === 'selectDocumentType'
     ) {
       setActiveToolWrapper('addSymbol');
-      if (documentMetadata.type === DocumentType.isometric) {
-        setLineNumbers([documentMetadata.lineNumber]);
-      }
     }
   }, [documentMetadata]);
+
+  useEffect(() => {
+    if (documentMetadata.type === DocumentType.isometric) {
+      setLineNumbersWrapper([documentMetadata.lineNumber]);
+    }
+  }, [hasDocumentLoaded]);
 
   useEffect(() => {
     if (activeTool !== 'addEquipmentTag' && activeTagId !== null) {

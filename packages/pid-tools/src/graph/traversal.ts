@@ -63,11 +63,10 @@ export const calculateShortestPaths = (
       continue;
     }
 
-    if (
-      diagramInstance.type !== undefined &&
-      relevantSymbolTypes.includes(diagramInstance.type)
-    ) {
-      const path = [...cur.path, diagramInstance];
+    const isRelevantType = relevantSymbolTypes.includes(diagramInstance.type);
+    const path = isRelevantType ? [...cur.path, diagramInstance] : cur.path;
+
+    if (isRelevantType) {
       shortestPaths.push({
         from: path[0].id,
         to: instanceId,
@@ -83,7 +82,7 @@ export const calculateShortestPaths = (
     for (let i = 0; i < neighbours.length; i++) {
       queue.push({
         instanceId: neighbours[i],
-        path: [...cur.path, diagramInstance],
+        path,
       });
     }
   }
