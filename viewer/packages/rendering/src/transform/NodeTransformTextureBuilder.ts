@@ -11,7 +11,7 @@ import { NodeTransformProvider } from './NodeTransformProvider';
 export class NodeTransformTextureBuilder {
   private readonly _transformProvider: NodeTransformProvider;
   private readonly _transformOverrideBuffer: TransformOverrideBuffer;
-  private _transformOverrideIndexTexture: THREE.DataTexture;
+  private readonly _transformOverrideIndexTexture: THREE.DataTexture;
   private _needsUpdate = false;
   private readonly _handleTransformChangedBound = this.handleTransformChanged.bind(this);
 
@@ -23,15 +23,9 @@ export class NodeTransformTextureBuilder {
     this._transformProvider.on('changed', this._handleTransformChangedBound);
   }
 
-  clearData(): void {
-    delete this._transformOverrideBuffer.dataTexture.source;
-    delete this._transformOverrideIndexTexture.source;
-  }
-
   dispose(): void {
     this._transformOverrideBuffer.dispose();
     this._transformOverrideIndexTexture.dispose();
-    this.clearData();
     this._transformProvider.off('changed', this._handleTransformChangedBound);
   }
 

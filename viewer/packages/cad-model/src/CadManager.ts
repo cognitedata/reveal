@@ -170,8 +170,8 @@ export class CadManager {
       throw new Error(`Could not remove model ${model.cadModelIdentifier} because it's not added`);
     }
     model.removeEventListener('update', this._markNeedsRedrawBound);
-    model.clearCache();
     this._cadModelUpdateHandler.removeModel(model);
+    model.dispose();
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {

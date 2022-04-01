@@ -114,6 +114,17 @@ export class CadMaterialManager {
     this.updateClippingPlanesForModel(modelIdentifier);
   }
 
+  deleteModelData(modelIdentifier: string): void {
+    const modelData = this.materialsMap.get(modelIdentifier);
+    for (const mat of Object.values(modelData.materials)) {
+      mat.dispose();
+    }
+
+    this.materialsMap.delete(modelIdentifier);
+    modelData.nodeTransformTextureBuilder.dispose();
+    modelData.nodeAppearanceTextureBuilder.dispose();
+  }
+
   getModelMaterials(modelIdentifier: string): Materials {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     return wrapper.materials;
@@ -186,13 +197,6 @@ export class CadMaterialManager {
       wrapper.nodeAppearanceTextureBuilder.dispose();
       wrapper.nodeTransformTextureBuilder.dispose();
     }
-  }
-
-  clearModelData(modelIdentifier: string): void {
-    const { nodeAppearanceTextureBuilder, nodeTransformTextureBuilder } = this.materialsMap.get(modelIdentifier);
-
-    nodeTransformTextureBuilder.dispose();
-    nodeAppearanceTextureBuilder.dispose();
   }
 
   private updateClippingPlanesForModel(modelIdentifier: string) {
