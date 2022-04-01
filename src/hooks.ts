@@ -1,9 +1,16 @@
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+  useQueryClient,
+} from 'react-query';
+import { notification } from 'antd';
 import { getFlow, getToken } from '@cognite/cdf-sdk-singleton';
 import { getEnv, getProject } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteClient, Group } from '@cognite/sdk';
-import { useMutation, UseMutationOptions, useQuery } from 'react-query';
 import { usePermissions as _usePermissions } from '@cognite/sdk-react-query-hooks';
+
 import { LEGACY_SESSION_TOKEN_KEY } from 'utils/constants';
 import { sleep } from 'utils/utils';
 
@@ -101,4 +108,47 @@ export const useRefreshToken = () => {
 
 export const forUnitTests = {
   getUpdater,
+};
+
+export const useListServiceAccounts = (isLegacyFlow: boolean) => {
+  const sdk = useSDK();
+  return useQuery('service-accounts', () => sdk.serviceAccounts.list(), {
+    enabled: isLegacyFlow,
+  });
+};
+
+const deleteServiceAccount =
+  (sdk: CogniteClient, project: string) => async (accountIds: number[]) => {
+    await sdk.post(`/api/v1/projects/${project}/serviceaccounts/delete`, {
+      data: {
+        items: accountIds,
+      },
+    });
+  };
+
+export const useDeleteServiceAccounts = (project: string) => {
+  const sdk = useSDK();
+  const client = useQueryClient();
+  return useMutation(deleteServiceAccount(sdk, project), {
+    onMutate() {
+      notification.info({
+        key: 'delete-legacy-service-accounts',
+        message: 'Deleting Legacy Service Accounts',
+      });
+    },
+    onSuccess() {
+      notification.success({
+        key: 'delete-legacy-service-accounts',
+        message: 'Legacy Service Accounts are deleted successfully',
+      });
+      client.invalidateQueries(['service-accounts']);
+    },
+    onError() {
+      notification.error({
+        key: 'delete-legacy-service-accounts',
+        message: 'Legacy service account is not deleted!',
+        description: 'An error occured while deleting legacy service accounts.',
+      });
+    },
+  });
 };
