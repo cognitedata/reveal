@@ -110,8 +110,7 @@ export class CadModelUpdateHandler {
       map(createDetermineSectorsInput), // Map from array to interface (enables destructuring)
       filter(loadingEnabled), // should we load?
       mergeMap(async x => loadSectors(x)),
-      mergeMap(x => x),
-      share()
+      mergeMap(x => x)
     );
   }
 
@@ -181,9 +180,10 @@ export class CadModelUpdateHandler {
             array.push(model);
             return array;
           case 'remove':
-            return array.filter(
+            array = array.filter(
               x => x.cadModelMetadata.modelIdentifier !== model.cadModelMetadata.modelIdentifier
             );
+            return array;
           default:
             assertNever(operation);
         }
