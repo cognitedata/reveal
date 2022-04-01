@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { useActiveTableContext } from 'contexts';
 import { useFilteredColumns } from 'hooks/table-filters';
 import {
+  FULL_PROFILE_LIMIT,
   useQuickProfile,
   useFullProfile,
   useColumnType,
@@ -41,11 +42,15 @@ export const Profiling = (): JSX.Element => {
   });
 
   const {
-    data = { columns: [], rowCount: 0 },
+    data = { columns: [], rowCount: 0, isComplete: false },
+    isFetched,
     isLoading,
     isError,
     error,
   } = fullProfile.isFetched ? fullProfile : limitProfile;
+
+  const isPartialProfiling =
+    data.rowCount === FULL_PROFILE_LIMIT || (isFetched && !data.isComplete);
 
   const profileResultType = useProfileResultType(database, table);
   const [sortKey, _setSortKey] = useState<SortableColumn>('label');
@@ -99,6 +104,7 @@ export const Profiling = (): JSX.Element => {
             <ProfileCoverageLabel
               coverageType="rows"
               resultType={profileResultType}
+              nrOfProfiledRows={isPartialProfiling ? data.rowCount : undefined}
             />
           </Flex>
         </Card>
