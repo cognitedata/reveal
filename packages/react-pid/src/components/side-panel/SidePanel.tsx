@@ -9,6 +9,7 @@ import {
   DocumentMetadata,
   DocumentType,
   ToolType,
+  PathReplacementGroup,
   AddSymbolData,
 } from '@cognite/pid-tools';
 
@@ -65,6 +66,10 @@ interface SidePanelProps {
   clearSymbolSelection: () => void;
   jsonInputRef: (node: HTMLInputElement | null) => void;
   onUploadJsonClick: () => void;
+  pathReplacementGroups: PathReplacementGroup[];
+  deletePathReplacementGroups: (
+    pathReplacementGroupIds: string[] | string
+  ) => void;
 }
 
 export const SidePanel = ({
@@ -97,6 +102,8 @@ export const SidePanel = ({
   clearSymbolSelection,
   jsonInputRef,
   onUploadJsonClick,
+  pathReplacementGroups,
+  deletePathReplacementGroups,
 }: SidePanelProps) => {
   const toolBarButtonGroups: ToolBarButton[][] = [
     [
@@ -180,6 +187,8 @@ export const SidePanel = ({
         activeTagId={activeTagId}
         setActiveTagId={setActiveTagWrapper}
         documentType={documentMetadata.type}
+        pathReplacementGroups={pathReplacementGroups}
+        deletePathReplacementGroups={deletePathReplacementGroups}
       />
 
       <Button onClick={autoAnalysis}>Auto Analysis</Button>

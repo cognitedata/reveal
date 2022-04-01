@@ -8,6 +8,7 @@ import {
   DiagramLineInstance,
   DiagramSymbolInstance,
   DiagramEquipmentTagInstance,
+  PathReplacement,
 } from '../types';
 
 import { isFileConnection, isLineConnection, isEquipment } from './type';
@@ -35,6 +36,14 @@ export function getDiagramInstanceByPathId<T extends DiagramInstanceWithPaths>(
     return diagramInstance[0];
   }
   return null;
+}
+
+export function getDiagramInstancesByPathIds<
+  T extends DiagramInstanceWithPaths
+>(diagramInstances: T[], pathIds: string[]): T[] {
+  return diagramInstances.filter((instance) =>
+    pathIds.some((id) => instance.pathIds.includes(id))
+  );
 }
 
 export const isDiagramInstanceInList = (
@@ -284,3 +293,6 @@ export const getDiagramEquipmentTagInstanceByLabelId = (
 ) => {
   return equipmentTags.find((tag) => tag.labelIds.includes(labelId));
 };
+
+export const getPathReplacementId = (pathReplacement: PathReplacement[]) =>
+  pathReplacement.map((pr) => pr.pathId).join('-');

@@ -6,10 +6,14 @@ import {
   DiagramSymbolInstance,
   DiagramEquipmentTagInstance,
   DocumentType,
+  PathReplacementGroup,
+  PathReplacementType,
 } from '@cognite/pid-tools';
 import styled from 'styled-components';
 import { Collapse, Icon } from '@cognite/cogs.js';
 import uniqBy from 'lodash/uniqBy';
+
+import usePathReplacementGroupsByType from '../../utils/usePathReplacementsByType';
 
 import { getInstancesBySymbolId } from './utils';
 import { CollapsableSymbolHeader } from './CollapsableSymbolHeader';
@@ -45,6 +49,10 @@ interface CollapsableInstanceListProps {
   activeTagId: string | null;
   setActiveTagId: (arg: string | null) => void;
   documentType: DocumentType;
+  pathReplacementGroups: PathReplacementGroup[];
+  deletePathReplacementGroups: (
+    pathReplacementGroupsIds: string[] | string
+  ) => void;
 }
 
 export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
@@ -60,6 +68,8 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
     activeTagId,
     setActiveTagId,
     documentType,
+    pathReplacementGroups,
+    deletePathReplacementGroups,
   }) => {
     const renderSymbolInstances = (
       symbolInstances: DiagramSymbolInstance[],
@@ -100,6 +110,12 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
       });
     };
 
+    const { pathReplacementGroupMap, deletePathReplacementByType } =
+      usePathReplacementGroupsByType(
+        pathReplacementGroups,
+        deletePathReplacementGroups
+      );
+
     return (
       <ScrollWrapper>
         <CollapseSeperator>Lines</CollapseSeperator>
@@ -118,7 +134,7 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
 
         <CollapseSeperator>Connections</CollapseSeperator>
         <Collapse accordion ghost>
-          <Collapse.Panel header={`Connections (${connections?.length || 0})`}>
+          <Collapse.Panel header={`Connections (${connections.length})`}>
             {connections?.map((connection) => (
               <ConnectionItem key={`${connection.start}.${connection.end}`}>
                 <p>
@@ -134,6 +150,49 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
               </ConnectionItem>
             ))}
           </Collapse.Panel>
+        </Collapse>
+
+        <CollapseSeperator>Path Replacements</CollapseSeperator>
+        <Collapse accordion ghost>
+          {Object.keys(pathReplacementGroupMap).map((key) => (
+            <Collapse.Panel
+              key={key}
+              header={
+                <>
+                  <div>
+                    {key} (
+                    {pathReplacementGroupMap[key as PathReplacementType].length}
+                    )
+                  </div>
+                  <Icon
+                    onClick={() => {
+                      deletePathReplacementByType(key as PathReplacementType);
+                    }}
+                    type="Close"
+                    size={12}
+                    style={{ marginLeft: 'auto' }}
+                  />
+                </>
+              }
+            >
+              {pathReplacementGroupMap[key as PathReplacementType].map(
+                (group) => (
+                  <ConnectionItem key={group.id}>
+                    <Pre key={group.id}>
+                      {JSON.stringify(group.replacements, null, 2)}
+                    </Pre>
+                    <Icon
+                      onClick={() => {
+                        deletePathReplacementGroups(group.id);
+                      }}
+                      type="Close"
+                      size={12}
+                    />
+                  </ConnectionItem>
+                )
+              )}
+            </Collapse.Panel>
+          ))}
         </Collapse>
         {documentType === DocumentType.isometric && (
           <div>

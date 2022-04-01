@@ -3,6 +3,7 @@
 import { v4 as uuid } from 'uuid';
 
 import {
+  getPathReplacementDescendants,
   getLineNumberFromText,
   ConnectionVisualization,
   LabelVisualization,
@@ -12,7 +13,10 @@ import {
   computeSymbolInstances,
   getGraphFormat,
 } from './utils';
-import { applyPathReplacementInSvg } from './utils/pathReplacementUtils';
+import {
+  applyPathReplacementInSvg,
+  removePathReplacementFromSvg,
+} from './utils/pathReplacementUtils';
 import { PidDocumentWithDom } from './pid';
 import {
   applyStyleToNode,
@@ -43,6 +47,7 @@ import {
   GraphDocument,
   Legend,
   PathReplacement,
+  PathReplacementGroup,
   SymbolType,
   ToolType,
 } from './types';
@@ -57,7 +62,9 @@ import {
   getDiagramInstanceByPathId,
   getDiagramInstanceId,
   getDiagramInstanceIdFromPathIds,
+  getDiagramInstancesByPathIds,
   getInstanceByDiagramInstanceId,
+  getPathReplacementId,
   isConnectionUnidirectionalMatch,
   pruneSymbolOverlappingPathsFromLines,
 } from './utils/diagramInstanceUtils';
@@ -86,6 +93,9 @@ type EquipmentTagsCallback = (
 ) => void;
 type ActiveLineNumberCallback = (activeLineNumber: string | null) => void;
 type ActiveTagIdCallback = (activeTagId: string | null) => void;
+type PathReplacmentCallback = (
+  pathReplacementGroups: PathReplacementGroup[]
+) => void;
 type LineNumbersCallback = (lineNumbers: string[]) => void;
 type DocumentMetadataCallback = (documentMetadata: DocumentMetadata) => void;
 
@@ -151,11 +161,20 @@ export class CognitePid {
   private labelSelection: DiagramInstanceId | null = null;
   private splitSelection: string | null = null;
 
-  pathReplacements: PathReplacement[] = [];
+  private pathReplacementGroups: PathReplacementGroup[] = [];
+  private pathReplacementsSubscriber: PathReplacmentCallback | undefined;
 
   private nodeMap = new Map<
     string,
     { node: SVGElement; originalStyle: string }
+  >();
+  private replacedNodes = new Map<
+    string,
+    {
+      node: SVGElement;
+      originalStyle: string;
+      parentElement: HTMLElement | null;
+    }
   >();
   private connectionVisualizations: ConnectionVisualization[] = [];
   private manuallyRemovedConnections: DiagramConnection[] = [];
@@ -481,6 +500,23 @@ export class CognitePid {
     this.lineNumbersSubscriber = callback;
   }
 
+  setPathReplacementGroups(pathReplacementGroups: PathReplacementGroup[]) {
+    this.pathReplacementGroups = pathReplacementGroups;
+    if (this.pathReplacementsSubscriber) {
+      this.pathReplacementsSubscriber(pathReplacementGroups);
+    } else {
+      console.warn(
+        'PID: Called this.setPathReplacementGroupss without this.pathReplacementsSubscriber'
+      );
+    }
+  }
+
+  onChangePathReplacements(
+    callback: (pathReplacementGroups: PathReplacementGroup[]) => void
+  ) {
+    this.pathReplacementsSubscriber = callback;
+  }
+
   private setConnectionSelection(
     connectionSelection: DiagramInstanceId | null,
     refresh = true
@@ -561,7 +597,7 @@ export class CognitePid {
     this.setSplitSelection(null, false);
     this.setActiveTagId(null);
     this.setLineNumbers([], false);
-    this.pathReplacements = [];
+    this.setPathReplacementGroups([]);
   }
 
   loadJson(json: Record<string, unknown>) {
@@ -582,15 +618,18 @@ export class CognitePid {
     const setSymbolInstances = (symbolInstances: DiagramSymbolInstance[]) =>
       this.setSymbolInstances(symbolInstances, false);
 
-    const setLines = (lines: DiagramLineInstance[]) => this.setLines(lines);
+    const setLines = (lines: DiagramLineInstance[]) =>
+      this.setLines(lines, false);
     const setConnections = (connections: DiagramConnection[]) => {
       this.setConnections(connections, false);
     };
-    const setPathReplacements = (pathReplacements: PathReplacement[]) => {
-      this.addPathReplacements(pathReplacements, false);
+    const setPathReplacement = (
+      pathReplacementGroups: PathReplacementGroup[]
+    ) => {
+      this.addPathReplacementGroups(pathReplacementGroups);
     };
     const setLineNumbers = (lineNumbers: string[]) => {
-      this.setLineNumbers(lineNumbers);
+      this.setLineNumbers(lineNumbers, false);
     };
     const setEquipmentTags = (equipmentTags: DiagramEquipmentTagInstance[]) => {
       this.setEquipmentTags(equipmentTags, false);
@@ -602,7 +641,7 @@ export class CognitePid {
       setSymbolInstances,
       setLines,
       setConnections,
-      setPathReplacements,
+      setPathReplacement,
       setLineNumbers,
       setEquipmentTags
     );
@@ -629,23 +668,7 @@ export class CognitePid {
 
     applyToLeafSVGElements(this.svg, (node) => {
       allSvgElements.push(node);
-
-      this.nodeMap.set(node.id, {
-        node,
-        originalStyle: node.getAttribute('style') || '',
-      });
-
-      node.addEventListener('mouseenter', (mouseEvent) => {
-        this.onMouseEnter(mouseEvent, node);
-      });
-
-      node.addEventListener('mouseleave', () => {
-        this.onMouseLeave(node);
-      });
-
-      node.addEventListener('mousedown', (event) =>
-        this.onMouseClick(event, node)
-      );
+      this.applyNode(node);
     });
 
     this.host.appendChild(this.svg);
@@ -667,6 +690,25 @@ export class CognitePid {
   getDocumentWidth = () => this.pidDocument?.viewBox.width ?? 0;
 
   getDocumentHeight = () => this.pidDocument?.viewBox.height ?? 0;
+
+  private applyNode(path: SVGElement) {
+    path.addEventListener('mouseenter', (mouseEvent) => {
+      this.onMouseEnter(mouseEvent, path);
+    });
+
+    path.addEventListener('mouseleave', () => {
+      this.onMouseLeave(path);
+    });
+
+    path.addEventListener('mousedown', (event: MouseEvent) =>
+      this.onMouseClick(event, path)
+    );
+
+    this.nodeMap.set(path.id, {
+      node: path,
+      originalStyle: path.getAttribute('style')!,
+    });
+  }
 
   private applyStyleToNodeId(nodeId: string) {
     const nodeData = this.nodeMap.get(nodeId);
@@ -692,6 +734,113 @@ export class CognitePid {
       splitSelection: this.splitSelection,
       hideSelection: this.hideSelection,
     });
+  }
+
+  deleteTJunction(pathId: string) {
+    const pathReplacementWithTJunction = this.pathReplacementGroups.find((pr) =>
+      pr.replacements.some((p) =>
+        p.replacementPaths.map((r) => r.id).includes(pathId)
+      )
+    );
+    if (pathReplacementWithTJunction === undefined) return;
+
+    this.deletePathReplacementGroups(pathReplacementWithTJunction.id);
+  }
+
+  private findAllPathReplacementGroupDescendants(
+    pathReplacementGroupIds: string[] | string
+  ) {
+    const pathReplacementGroupIdList = Array.isArray(pathReplacementGroupIds)
+      ? pathReplacementGroupIds
+      : [pathReplacementGroupIds];
+
+    const pathReplacementGroupsToDelete = pathReplacementGroupIdList.reduce(
+      (toDelete, pathReplacementGroupId) => {
+        const alreadyEvaluated = toDelete.find(
+          (pr) => pr.id === pathReplacementGroupId
+        );
+        if (!alreadyEvaluated) {
+          toDelete.push(
+            ...getPathReplacementDescendants(
+              pathReplacementGroupId,
+              this.pathReplacementGroups
+            )
+          );
+        }
+        return toDelete;
+      },
+      <PathReplacementGroup[]>[]
+    );
+    // Reverse so that we always start with the last added, that can have dependencies to the previous ones but not have others depending on it
+    return pathReplacementGroupsToDelete.reverse();
+  }
+
+  private removePathReplacement(pathReplacement: PathReplacement) {
+    this.pidDocument?.removePathReplacement(pathReplacement);
+    const replacedNode = this.replacedNodes.get(pathReplacement.pathId);
+    if (replacedNode && replacedNode.parentElement) {
+      removePathReplacementFromSvg(
+        this.svg!,
+        pathReplacement,
+        replacedNode.node,
+        replacedNode.originalStyle,
+        replacedNode.parentElement
+      );
+      this.nodeMap.set(pathReplacement.pathId, replacedNode);
+      this.replacedNodes.delete(pathReplacement.pathId);
+    } else {
+      throw new Error(
+        `Attempting to remove replacement ${pathReplacement.pathId} without having the previously replaced element`
+      );
+    }
+  }
+
+  deletePathReplacementGroups(pathReplacementGroupsIds: string[] | string) {
+    const pathReplacementGroupsToDelete =
+      this.findAllPathReplacementGroupDescendants(pathReplacementGroupsIds);
+
+    const deletedPathIds = pathReplacementGroupsToDelete.flatMap(
+      (replacementGroup) =>
+        replacementGroup.replacements.flatMap((replacement) => {
+          this.removePathReplacement(replacement);
+          return replacement.replacementPaths.map((p) => p.id);
+        })
+    );
+
+    const affectedSymbolInstances = getDiagramInstancesByPathIds(
+      this.symbolInstances,
+      deletedPathIds
+    );
+    if (affectedSymbolInstances.length > 0) {
+      throw new Error(
+        `Symbol instances ${affectedSymbolInstances} would be affected by path replacement. They need to be deleted first`
+      );
+    }
+
+    const affectedLines = getDiagramInstancesByPathIds(
+      this.lines,
+      deletedPathIds
+    );
+    const lineIdsSet = new Set<string>(
+      affectedLines.map((affectedLine) => affectedLine.id)
+    );
+    this.setLines(this.lines.filter((line) => !lineIdsSet.has(line.id)));
+
+    this.setConnections(
+      this.connections.filter(
+        (connection) =>
+          !(lineIdsSet.has(connection.start) || lineIdsSet.has(connection.end))
+      )
+    );
+
+    const pathReplacementIdsToDelete = new Set<string>(
+      pathReplacementGroupsToDelete.map((pr) => pr.id)
+    );
+    this.setPathReplacementGroups(
+      this.pathReplacementGroups.filter(
+        (pr) => !pathReplacementIdsToDelete.has(pr.id)
+      )
+    );
   }
 
   refresh() {
@@ -838,7 +987,10 @@ export class CognitePid {
       if (node instanceof SVGTSpanElement) return;
       if (isSymbolInstance(node, this.symbolInstances)) return;
       if (this.pidDocument === undefined) return;
-
+      if (event.altKey) {
+        this.deleteTJunction(node.id);
+        return;
+      }
       // Remove line if it was already selected
       if (this.splitSelection === node.id) {
         this.setSplitSelection(null);
@@ -855,7 +1007,13 @@ export class CognitePid {
           return;
         }
 
-        this.addPathReplacements(tJunctionPathReplacements);
+        const pathReplacementGroup: PathReplacementGroup = {
+          id: getPathReplacementId(tJunctionPathReplacements),
+          type: 'T-junction',
+          replacements: tJunctionPathReplacements,
+        };
+
+        this.addPathReplacementGroups(pathReplacementGroup);
         this.setSplitSelection(null);
         return;
       }
@@ -1114,86 +1272,6 @@ export class CognitePid {
     this.setLines([...newLines], true);
   }
 
-  splitPaths = () => {
-    if (this.pidDocument === undefined) return;
-
-    const newPathReplacements: PathReplacement[] = [];
-    const diagramInstances = [...this.lines, ...this.symbolInstances];
-    this.pidDocument.pidPaths.forEach((pidPath) => {
-      if (
-        getDiagramInstanceByPathId(diagramInstances, pidPath.pathId) === null
-      ) {
-        const possiblePathReplacement = pidPath?.getPathReplacementByAngles([
-          90,
-        ]);
-
-        if (possiblePathReplacement) {
-          newPathReplacements.push(possiblePathReplacement);
-        }
-      }
-    });
-
-    this.addPathReplacements(newPathReplacements);
-  };
-
-  addPathReplacements(pathReplacements: PathReplacement[], refresh = true) {
-    if (!this.svg) return;
-    if (!this.pidDocument) return;
-
-    for (let i = 0; i < pathReplacements.length; i++) {
-      const pathReplacement = pathReplacements[i];
-      const pathToReplace = this.nodeMap.get(pathReplacement.pathId);
-      // eslint-disable-next-line no-continue
-      if (pathToReplace === undefined) continue;
-
-      this.pathReplacements.push(pathReplacement);
-      this.pidDocument.applyPathReplacement(pathReplacement);
-      const newPaths = applyPathReplacementInSvg(
-        this.svg,
-        pathReplacement,
-        pathToReplace.originalStyle
-      );
-      newPaths.forEach((newPath) => {
-        newPath.addEventListener('mouseenter', (mouseEvent) => {
-          this.onMouseEnter(mouseEvent, newPath);
-        });
-
-        newPath.addEventListener('mouseleave', () => {
-          this.onMouseLeave(newPath);
-        });
-
-        newPath.addEventListener('mousedown', (event) =>
-          this.onMouseClick(event, newPath)
-        );
-
-        this.nodeMap.set(newPath.id, {
-          node: newPath,
-          originalStyle: newPath.getAttribute('style')!,
-        });
-      });
-
-      this.nodeMap.delete(pathReplacement.pathId);
-    }
-
-    const pathReplacementIds = pathReplacements.map((pr) => pr.pathId);
-    const linesToDelete = this.lines.filter((line) =>
-      pathReplacementIds.includes(line.pathIds[0])
-    );
-    const linesToKeep = this.lines.filter(
-      (line) => !pathReplacementIds.includes(line.pathIds[0])
-    );
-    this.setLines(linesToKeep, refresh);
-
-    this.setConnections(
-      getConnectionsWithoutInstances(linesToDelete, this.connections),
-      refresh
-    );
-
-    if (refresh) {
-      this.refresh();
-    }
-  }
-
   getGraphDocument() {
     if (!this.pidDocument || !this.documentMetadata) return null;
 
@@ -1203,11 +1281,121 @@ export class CognitePid {
       this.lines,
       this.symbolInstances,
       this.connections,
-      this.pathReplacements,
+      this.pathReplacementGroups,
       this.documentMetadata,
       this.lineNumbers,
       this.equipmentTags
     );
+  }
+
+  private applyNewPathReplacementGroups(
+    newPathReplacements: PathReplacementGroup[],
+    refresh = true
+  ) {
+    this.setPathReplacementGroups([
+      ...this.pathReplacementGroups,
+      ...newPathReplacements,
+    ]);
+
+    const pathReplacementIds = newPathReplacements.flatMap((pr) =>
+      pr.replacements.map((r) => r.pathId)
+    );
+    const linesToDelete = this.lines.filter((line) =>
+      pathReplacementIds.includes(line.pathIds[0])
+    );
+    const linesToKeep = this.lines.filter(
+      (line) => !pathReplacementIds.includes(line.pathIds[0])
+    );
+
+    this.setLines(linesToKeep, false);
+
+    this.setConnections(
+      getConnectionsWithoutInstances(linesToDelete, this.connections),
+      false
+    );
+
+    if (refresh) {
+      this.refresh();
+    }
+  }
+
+  splitPaths = () => {
+    if (this.pidDocument === undefined) return;
+
+    const diagramInstances = [...this.lines, ...this.symbolInstances];
+
+    const newGroups = this.pidDocument.pidPaths.reduce((groups, pidPath) => {
+      // Paths in existing instances of line or symbol should not be split
+      if (getDiagramInstanceByPathId(diagramInstances, pidPath.pathId) !== null)
+        return groups;
+
+      const pathReplacement = pidPath?.getPathReplacementByAngles([90]);
+
+      if (pathReplacement === null) return groups;
+
+      const pathReplacementGroup: PathReplacementGroup = {
+        id: getPathReplacementId([pathReplacement]),
+        type: 'Multi-path',
+        replacements: [pathReplacement],
+      };
+      groups.push(pathReplacementGroup);
+      return groups;
+    }, <PathReplacementGroup[]>[]);
+
+    this.addPathReplacementGroups(newGroups);
+  };
+
+  addPathReplacementGroups(
+    pathReplacementGroups: PathReplacementGroup[] | PathReplacementGroup,
+    refresh = false
+  ) {
+    const replacements = Array.isArray(pathReplacementGroups)
+      ? pathReplacementGroups
+      : [pathReplacementGroups];
+
+    const newReplacements = replacements.reduce((groups, newGroup) => {
+      const addedReplacements = newGroup.replacements.reduce(
+        (addedReplacements, possibleReplacement) => {
+          const added = this.addPathReplacementIfPossible(possibleReplacement);
+          if (added) {
+            addedReplacements.push(possibleReplacement);
+          }
+          return addedReplacements;
+        },
+        <PathReplacement[]>[]
+      );
+      if (addedReplacements.length) {
+        newGroup.replacements = addedReplacements;
+        groups.push(newGroup);
+      }
+      return groups;
+    }, <PathReplacementGroup[]>[]);
+
+    this.applyNewPathReplacementGroups(newReplacements, refresh);
+  }
+
+  addPathReplacementIfPossible(pathReplacement: PathReplacement): boolean {
+    if (!this.svg) return false;
+    if (!this.pidDocument) return false;
+
+    const pathToReplace = this.nodeMap.get(pathReplacement.pathId);
+    if (pathToReplace === undefined) return false;
+
+    this.replacedNodes.set(pathReplacement.pathId, {
+      ...pathToReplace,
+      parentElement: pathToReplace.node.parentElement,
+    });
+
+    this.pidDocument.applyPathReplacement(pathReplacement);
+    const newNodes = applyPathReplacementInSvg(
+      this.svg,
+      pathReplacement,
+      pathToReplace.originalStyle
+    );
+    newNodes.forEach((newNode) => this.applyNode(newNode));
+
+    this.nodeMap.delete(pathReplacement.pathId);
+    return true;
   }
 
   private drawConnectionVisualizations() {

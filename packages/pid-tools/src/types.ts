@@ -97,6 +97,14 @@ export interface DiagramEquipmentTagInstance
   type: 'EquipmentTag';
 }
 
+export type PathReplacementType = 'T-junction' | 'Multi-path';
+
+export interface PathReplacementGroup {
+  id: string;
+  type: PathReplacementType;
+  replacements: PathReplacement[];
+}
+
 export interface PathReplacement {
   pathId: string;
   replacementPaths: SvgPathWithId[];
@@ -155,7 +163,7 @@ export interface GraphDocument extends Legend {
   symbolInstances: DiagramSymbolInstanceOutputFormat[];
   lines: DiagramLineInstanceOutputFormat[];
   connections: DiagramConnection[];
-  pathReplacements: PathReplacement[];
+  pathReplacementGroups: PathReplacementGroup[];
   lineNumbers: string[];
   equipmentTags: DiagramEquipmentTagInstanceOutputFormat[];
   labels: DiagramLabelOutputFormat[];

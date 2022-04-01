@@ -10,7 +10,7 @@ import {
   DiagramSymbolInstance,
   DocumentMetadata,
   GraphDocument,
-  PathReplacement,
+  PathReplacementGroup,
 } from '../types';
 
 import getFileNameWithoutExtension from './getFileNameWithoutExtension';
@@ -34,7 +34,7 @@ export const getGraphFormat = (
   lines: DiagramLineInstance[],
   symbolInstances: DiagramSymbolInstance[],
   connections: DiagramConnection[],
-  pathReplacements: PathReplacement[],
+  pathReplacementGroups: PathReplacementGroup[],
   documentMetadata: DocumentMetadata,
   lineNumbers: string[],
   equipmentTags: DiagramEquipmentTagInstance[]
@@ -63,7 +63,7 @@ export const getGraphFormat = (
     lines: linesOutputFormat,
     symbolInstances: symbolInstancesOutputFormat,
     connections,
-    pathReplacements,
+    pathReplacementGroups,
     lineNumbers,
     equipmentTags: equipmentTagInstancesFormat,
     labels,
@@ -86,16 +86,15 @@ export const loadGraphFromJson = (
   setSymbolInstances: (diagramSymbolInstances: DiagramSymbolInstance[]) => void,
   setLines: (diagramLines: DiagramLineInstance[]) => void,
   setConnections: (diagramConnections: DiagramConnection[]) => void,
-  setPathReplacements: (args: PathReplacement[]) => void,
+  setPathReplacements: (args: PathReplacementGroup[]) => void,
   setLineNumbers: (arg: string[]) => void,
   setEquipmentTags: (tags: DiagramEquipmentTagInstance[]) => void
 ) => {
-  if ('pathReplacements' in jsonData) {
-    setPathReplacements(jsonData.pathReplacements);
+  if ('pathReplacementGroups' in jsonData) {
+    setPathReplacements(jsonData.pathReplacementGroups);
   }
   if ('symbols' in jsonData) {
-    const newSymbols = jsonData.symbols as DiagramSymbol[];
-    setSymbols([...newSymbols]);
+    setSymbols(jsonData.symbols);
   }
   if ('symbolInstances' in jsonData) {
     setSymbolInstances(jsonData.symbolInstances);

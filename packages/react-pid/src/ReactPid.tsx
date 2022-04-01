@@ -11,10 +11,13 @@ import {
   AddSymbolData,
   ToolType,
   saveGraphAsJson,
+  PathReplacementGroup,
 } from '@cognite/pid-tools';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Loader } from '@cognite/cogs.js';
 
+import { SaveState } from './utils/useCdfDiagrams';
+import useDiagramFile from './utils/useDiagramFile';
 import SvgContainer, { CONTAINER_ID } from './components/viewport/SvgContainer';
 import { ReactPidWrapper, ReactPidLayout, LoaderOverlay } from './elements';
 import { SidePanel } from './components';
@@ -22,8 +25,6 @@ import useSymbolState from './components/side-panel/useSymbolState';
 import { Toolbar } from './components/toolbar/Toolbar';
 import { enableExitWarning, disableExitWarning } from './utils/exitWarning';
 import { Viewport } from './components/viewport/Viewport';
-import useDiagramFile from './utils/useDiagramFile';
-import { SaveState } from './utils/useCdfDiagrams';
 
 interface ReactPidProps {
   pidViewer?: React.MutableRefObject<CognitePid | undefined>;
@@ -46,6 +47,10 @@ export const ReactPid = ({
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
+
+  const [pathReplacementGroups, setPathReplacements] = useState<
+    PathReplacementGroup[]
+  >([]);
 
   const {
     file,
@@ -170,6 +175,12 @@ export const ReactPid = ({
       pidViewer.current.onChangeLineNumbers(setLineNumbers);
     }
   }, [lineNumbers]);
+
+  useEffect(() => {
+    if (pidViewer.current) {
+      pidViewer.current.onChangePathReplacements(setPathReplacements);
+    }
+  }, [setPathReplacements]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -316,6 +327,13 @@ export const ReactPid = ({
     pidViewer.current.addSymbolFromSymbolSelection(symbolData);
   };
 
+  const deletePathReplacementGroups = (
+    pathReplacementGroupIds: string[] | string
+  ) => {
+    if (!pidViewer.current) return;
+    pidViewer.current.deletePathReplacementGroups(pathReplacementGroupIds);
+  };
+
   useEffect(() => {
     if (file) {
       if (pidViewer.current && pidViewer.current.document === undefined) {
@@ -365,6 +383,8 @@ export const ReactPid = ({
           clearSymbolSelection={clearSymbolSelection}
           jsonInputRef={jsonInputRef}
           onUploadJsonClick={onUploadJsonClick}
+          pathReplacementGroups={pathReplacementGroups}
+          deletePathReplacementGroups={deletePathReplacementGroups}
         />
         <Viewport>
           <SvgContainer

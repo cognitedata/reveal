@@ -40,6 +40,14 @@ export class PidDocument {
   pidPaths: PidPath[];
   pidLabels: PidTspan[];
   viewBox: Rect;
+  replacements = new Map<
+    string,
+    {
+      pidPath: PidPath;
+      pathReplacement: PathReplacement;
+    }
+  >();
+
   constructor(paths: PidPath[], labels: PidTspan[], viewBox: Rect) {
     this.pidPaths = paths;
     this.pidLabels = labels;
@@ -82,7 +90,49 @@ export class PidDocument {
     this.pidPaths = this.pidPaths.filter(
       (pidPath) => pidPath.pathId !== oldPidPath.pathId
     );
+    this.replacements.set(pathReplacement.pathId, {
+      pidPath: oldPidPath,
+      pathReplacement,
+    });
     this.pidPaths.push(...newPidPaths);
+  }
+
+  removePathReplacement(pathReplacement: PathReplacement) {
+    const replacementPidPathIds = pathReplacement.replacementPaths.reduce(
+      (aggregate, svgPathWithId) => {
+        const replacementPidPath = this.getPidPathById(svgPathWithId.id);
+        // Only remove pidPaths currently in pidDocument
+        if (replacementPidPath !== null) {
+          aggregate.push(replacementPidPath.pathId);
+        }
+        return aggregate;
+      },
+      <string[]>[]
+    );
+
+    // Remove the replacements pidPaths
+    this.pidPaths = this.pidPaths.filter(
+      (pidPath) => !replacementPidPathIds.includes(pidPath.pathId)
+    );
+
+    const replacement = this.replacements.get(pathReplacement.pathId);
+    if (!replacement) {
+      throw new Error(
+        `Tried to get re-introduce previously replaced ${pathReplacement.pathId} which does not exist in pidDocument`
+      );
+    }
+    // Only reintroduce pidPath if it is not already in pidPaths
+    if (!this.getPidPathById(pathReplacement.pathId)) {
+      this.pidPaths.push(replacement.pidPath);
+    }
+
+    // Remove other replacement pathIds relying on this
+    this.pruneReplacementDescendants(
+      pathReplacement.pathId,
+      replacementPidPathIds
+    );
+    // Remove from replaced paths
+    this.replacements.delete(pathReplacement.pathId);
   }
 
   toSvgString(
@@ -351,6 +401,22 @@ export class PidDocument {
   ): SvgRepresentation {
     const pidPaths = pathIds.map((pathId) => this.getPidPathById(pathId)!);
     return createSvgRepresentation(pidPaths, normalized, toFixed);
+  }
+
+  protected pruneReplacementDescendants(
+    pathId: string,
+    descendantPathIds: string[]
+  ): void {
+    let passedCurrent = false;
+    this.replacements.forEach((replacement, currentPathId) => {
+      // The pathReplacements should be cronological, hence we only need
+      // to check for path replacements after the replacement we are removing
+      if (passedCurrent && descendantPathIds.includes(pathId)) {
+        this.removePathReplacement(replacement.pathReplacement);
+      } else if (currentPathId === pathId) {
+        passedCurrent = true;
+      }
+    });
   }
 }
 
