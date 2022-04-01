@@ -180,6 +180,7 @@ export class CadNode extends THREE.Object3D {
     this._sectorRepository.clearCache();
     this._rootSector.dereferenceAllNodes();
     this._rootSector.clear();
+    this.clear();
 
     delete this._geometryBatchingManager;
     delete this._rootSector;
