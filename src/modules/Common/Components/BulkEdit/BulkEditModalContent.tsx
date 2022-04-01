@@ -188,7 +188,7 @@ export const BulkEditModalContent = ({
       </Title>
       <BodyContainer>
         <EditType>
-          <Body level={2}>Select data to edit</Body>
+          <Body level={2}>Select bulk action</Body>
           <div style={{ width: '255px' }}>
             <Select
               value={selectedBulkEditOption}
