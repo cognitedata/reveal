@@ -8,7 +8,7 @@ import {
   getLineReviews,
   getLineReviewState,
 } from './api';
-import { LineReview, ParsedDocument } from './types';
+import { LineReview, ParsedDocument, TextAnnotation } from './types';
 
 const useLineReview = (
   id: string
@@ -17,22 +17,30 @@ const useLineReview = (
   lineReview: LineReview | undefined;
   documents: ParsedDocument[] | undefined;
   discrepancies: Discrepancy[];
-  setDiscrepancies: (discrepancies: Discrepancy[]) => void;
+  textAnnotations: TextAnnotation[];
+  setDiscrepancies: (
+    transform: (previousDiscrepancies: Discrepancy[]) => Discrepancy[]
+  ) => void;
+  setTextAnnotations: (
+    transform: (previousTextAnnotations: TextAnnotation[]) => TextAnnotation[]
+  ) => void;
 } => {
   const { client } = useAuthContext();
   const [
-    { isLoading, lineReview, documents, discrepancies },
+    { isLoading, lineReview, documents, discrepancies, textAnnotations },
     setLineReviewState,
   ] = useState<{
     isLoading: boolean;
     lineReview: LineReview | undefined;
     documents: ParsedDocument[] | undefined;
     discrepancies: Discrepancy[];
+    textAnnotations: TextAnnotation[];
   }>({
     isLoading: true,
     lineReview: undefined,
     documents: undefined,
     discrepancies: [],
+    textAnnotations: [],
   });
 
   useEffect(() => {
@@ -54,20 +62,33 @@ const useLineReview = (
 
       const lineReviewState = await getLineReviewState(client, lineReview);
 
+      console.log('Loaded linereview state', lineReviewState);
+
       setLineReviewState({
         isLoading: false,
         lineReview,
         documents: lineReviewDocuments,
         discrepancies: lineReviewState?.discrepancies ?? [],
+        textAnnotations: lineReviewState?.textAnnotations ?? [],
       });
     })();
   }, []);
 
   const setDiscrepancies = useCallback(
-    (discrepancies: Discrepancy[]) => {
+    (transform: (discrepancies: Discrepancy[]) => Discrepancy[]) => {
       setLineReviewState((prevState) => ({
         ...prevState,
-        discrepancies,
+        discrepancies: transform(prevState.discrepancies),
+      }));
+    },
+    [setLineReviewState]
+  );
+
+  const setTextAnnotations = useCallback(
+    (transform: (textAnnotations: TextAnnotation[]) => TextAnnotation[]) => {
+      setLineReviewState((prevState) => ({
+        ...prevState,
+        textAnnotations: transform(prevState.textAnnotations),
       }));
     },
     [setLineReviewState]
@@ -78,7 +99,9 @@ const useLineReview = (
     lineReview,
     documents,
     discrepancies,
+    textAnnotations,
     setDiscrepancies,
+    setTextAnnotations,
   };
 };
 

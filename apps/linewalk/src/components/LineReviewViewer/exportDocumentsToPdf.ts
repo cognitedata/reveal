@@ -5,23 +5,22 @@ import sortBy from 'lodash/sortBy';
 
 import { ParsedDocument, DocumentType } from '../../modules/lineReviews/types';
 
-import getAnnotationsByDocument from './getAnnotationsByDocument';
 import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId';
 import { Discrepancy } from './LineReviewViewer';
-import mapPidAnnotationIdsToIsoAnnotationIds from './mapPidAnnotationIdsToIsoAnnotationIds';
 
 const isDiscrepancyInDocument = (
-  document: ParsedDocument,
-  documents: ParsedDocument[],
-  discrepancy: Discrepancy
+  ornateRef: CogniteOrnate,
+  discrepancy: Discrepancy,
+  document: ParsedDocument
 ) => {
-  const discrepancyAnnotationIds =
-    document.type === DocumentType.ISO
-      ? mapPidAnnotationIdsToIsoAnnotationIds(documents, discrepancy.ids)
-      : discrepancy.ids;
+  const node = ornateRef.stage.findOne(`#${discrepancy.id}`);
+  if (node === undefined) {
+    return false;
+  }
 
-  return getAnnotationsByDocument(document).some((annotation) =>
-    discrepancyAnnotationIds.includes(annotation.id)
+  return (
+    getKonvaSelectorSlugByExternalId(document.externalId) ===
+    node.getParent().id()
   );
 };
 
@@ -79,7 +78,7 @@ const exportDocumentsToPdf = async (
 
       const discrepancyFootNotes = discrepancies
         .map((discrepancy, index) =>
-          isDiscrepancyInDocument(document, sortedDocuments, discrepancy)
+          isDiscrepancyInDocument(ornateRef, discrepancy, document)
             ? `[${index + 1}]: ${discrepancy.comment}`
             : undefined
         )

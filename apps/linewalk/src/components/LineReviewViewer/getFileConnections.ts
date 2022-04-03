@@ -7,7 +7,6 @@ import {
 } from '../../modules/lineReviews/types';
 
 const getFileConnections = (
-  line: string,
   documents: ParsedDocument[],
   sourceDocumentType: string,
   targetDocumentType: string
@@ -58,9 +57,7 @@ const getFileConnections = (
           sourceDocument.type === sourceDocumentType &&
           targetDocument.type === targetDocumentType &&
           sourceAnnotation?.type === AnnotationType.FILE_CONNECTION &&
-          targetAnnotation?.type === AnnotationType.FILE_CONNECTION &&
-          sourceAnnotation?.lineNumbers.includes(line) &&
-          targetAnnotation?.lineNumbers.includes(line)
+          targetAnnotation?.type === AnnotationType.FILE_CONNECTION
         );
       })
     )

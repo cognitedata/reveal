@@ -8,7 +8,7 @@ type Props = {
   initialPosition: { x: number; y: number };
   initialDiscrepancy: Discrepancy;
   onSave: (discrepancy: Discrepancy) => void;
-  onDeletePress: () => void;
+  onDeletePress: (id: string) => void;
 };
 
 const DiscrepancyModal: React.FC<Props> = ({
@@ -40,6 +40,7 @@ const DiscrepancyModal: React.FC<Props> = ({
         style={{ width: '100%', height: '100%' }}
         value={comment}
         onChange={(e) => setComment(e.target.value)}
+        autoFocus
       />
       <div
         style={{
@@ -49,7 +50,10 @@ const DiscrepancyModal: React.FC<Props> = ({
           justifyContent: 'flex-end',
         }}
       >
-        <Button style={{ marginRight: 8 }} onClick={onDeletePress}>
+        <Button
+          style={{ marginRight: 8 }}
+          onClick={() => onDeletePress(initialDiscrepancy.id)}
+        >
           Remove discrepancy
         </Button>
         <Button type="primary" style={{ marginRight: 8 }} onClick={onSavePress}>

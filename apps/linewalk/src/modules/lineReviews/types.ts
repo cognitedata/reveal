@@ -80,6 +80,17 @@ type LineReviewDiscrepancy = {
   description: string;
   updatedAt?: Date;
   createdAt: Date;
+  boundingBox: BoundingBox;
+};
+
+// Text annotation needs target document as well as the bounding box
+export type TextAnnotation = {
+  id: string;
+  text: string;
+  boundingBox: BoundingBox;
+  fontSize?: number;
+  fill?: string;
+  targetExternalId: string;
 };
 
 export type LineReview = {
@@ -87,6 +98,7 @@ export type LineReview = {
   name: string;
   system: string;
   discrepancies: LineReviewDiscrepancy[];
+  textAnnotations?: TextAnnotation[];
   assignees: Assignee[];
   entryFileExternalId: string;
   // All lines need to be manually reviewed at this stage, so a lack of discrepancies does not
@@ -104,6 +116,7 @@ export type DocumentsForLine = {
 
 export type LineReviewState = {
   discrepancies: Discrepancy[];
+  textAnnotations?: TextAnnotation[];
 };
 
 export enum AnnotationType {

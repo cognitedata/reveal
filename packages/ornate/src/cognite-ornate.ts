@@ -308,6 +308,7 @@ export class CogniteOrnate {
       width?: number;
       height?: number;
       shouldCenterOnDoubleClick?: boolean;
+      unselectable?: boolean;
     }
   ): Promise<OrnatePDFDocument> => {
     const {
@@ -322,6 +323,7 @@ export class CogniteOrnate {
         id: groupId,
         PDFCurrentPage: pageNumber,
         PDFMaxPages: pdf.numPages,
+        unselectable: options?.unselectable,
       });
       this.baseLayer.add(group);
       const image = new Image(options?.width, options?.height);
@@ -336,6 +338,7 @@ export class CogniteOrnate {
           stroke: 'black',
           strokeWidth: 1,
           attachedToGroup: group.id(),
+          unselectable: options?.unselectable,
         });
         kBaseImage.image(image);
 
@@ -353,6 +356,7 @@ export class CogniteOrnate {
           height: image.height,
           fill: '#E8E8E8',
           attachedToGroup: group.id(),
+          unselectable: options?.unselectable,
         });
         group.add(baseRect);
         baseRect.zIndex(0);

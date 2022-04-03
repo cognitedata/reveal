@@ -44,7 +44,8 @@ const saveJsonByExternalId = async <T = unknown>(
   }
 };
 
-const LINE_REVIEWS_ENTRY_POINT = 'LINE_REVIEWS_V0.0.7.json';
+const VERSION = '0.0.8';
+const LINE_REVIEWS_ENTRY_POINT = `LINE_REVIEWS_V${VERSION}.json`;
 export const getLineReviews = async (client: CogniteClient) => {
   const lineReviewsEntryPointResponse = await getJsonByExternalId<{
     lineReviews: LineReview[];
@@ -82,7 +83,7 @@ export const getLineReviewDocuments = async (
 };
 
 const getLineReviewStateExternalIdByLineReviewId = (id: string) =>
-  `linewalk-${id}-state.json`;
+  `linewalk-${id}-${VERSION}-state.json`;
 
 export const getLineReviewState = async (
   client: CogniteClient,

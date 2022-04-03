@@ -4,6 +4,7 @@ import {
   Table,
   TextInput,
   Tooltip,
+  Icon,
 } from '@cognite/cogs.js';
 import withoutFileExtension from 'components/LineReviewViewer/withoutFileExtension';
 import StatusTag from 'components/StatusTag';
@@ -148,6 +149,22 @@ const FileCell = ({
   );
 };
 
+type CommentCellProps = {
+  value: string;
+};
+
+const CommentCell: React.FC<CommentCellProps> = ({ value }) => {
+  if (value === undefined || value === '') {
+    return <div />;
+  }
+
+  return (
+    <Tooltip content={value}>
+      <Icon type="Comment" style={{ color: '#4A67FB' }} />
+    </Tooltip>
+  );
+};
+
 const LineReviewTable: React.FC<LineReviewTableProps> = ({
   lineReviews,
   onRowClick,
@@ -181,6 +198,11 @@ const LineReviewTable: React.FC<LineReviewTableProps> = ({
             Header: 'Assignee',
             accessor: 'assignees',
             Cell: AssigneeCell,
+          },
+          {
+            Header: 'Comment',
+            accessor: 'comment',
+            Cell: CommentCell,
           },
         ]}
         dataSource={lineReviews}

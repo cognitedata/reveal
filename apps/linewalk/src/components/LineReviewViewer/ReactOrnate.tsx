@@ -29,6 +29,7 @@ export type ReactOrnateProps = {
     column?: number;
     type: string;
     name: string;
+    externalId: string;
   }[];
   nodes?: (Group | Drawing)[];
   onAnnotationClick?: (nodes: any) => void;
@@ -132,6 +133,15 @@ const ReactOrnate = ({
       shouldShowImagesWhenZoomedOut: true,
     });
 
+    // Shamefully set the shape settings here.
+    // Ideally should be specified with the tools themselves
+    ornateViewer.current.handleShapeSettingsChange({
+      text: {
+        fontSize: 26,
+        fill: '#ff0000',
+      },
+    });
+
     // NEXT:
     // - Figure this out
     // - Report back -> in review.
@@ -164,6 +174,7 @@ const ReactOrnate = ({
               column = 1,
               type,
               name,
+              externalId,
             }) => {
               // Do not add the same document twice
               if (
@@ -178,7 +189,9 @@ const ReactOrnate = ({
               await ornateRef?.addPDFDocument(
                 url,
                 pageNumber,
-                {},
+                {
+                  externalId,
+                },
                 {
                   zoomAfterLoad: false,
                   initialPosition: {
@@ -190,6 +203,7 @@ const ReactOrnate = ({
                   height: SHAMEFUL_SLIDE_HEIGHT,
                   groupId: id,
                   shouldCenterOnDoubleClick: false,
+                  unselectable: true,
                 }
               );
 

@@ -5,9 +5,8 @@ import React, { useState } from 'react';
 import { DocumentType, ParsedDocument } from '../modules/lineReviews/types';
 
 import exportDocumentsToPdf from './LineReviewViewer/exportDocumentsToPdf';
-import getUniqueDocumentsByDiscrepancy from './LineReviewViewer/getUniqueDocumentsByDiscrepancy';
+import getDocumentByDiscrepancy from './LineReviewViewer/getDocumentByDiscrepancy';
 import { Discrepancy } from './LineReviewViewer/LineReviewViewer';
-import mapPidAnnotationIdsToIsoAnnotationIds from './LineReviewViewer/mapPidAnnotationIdsToIsoAnnotationIds';
 
 type Props = {
   documents: ParsedDocument[];
@@ -34,6 +33,10 @@ const ReportBackModal: React.FC<Props> = ({
     return null;
   }
 
+  const isoDocuments = documents.filter(
+    (document) => document.type === DocumentType.ISO
+  );
+
   return (
     <Modal visible onCancel={onCancelPress} footer={null}>
       <h2>Report back</h2>
@@ -48,53 +51,49 @@ const ReportBackModal: React.FC<Props> = ({
         </p>
       )}
 
-      {discrepancies.map((discrepancy) => {
-        const uniqueDiscrepancyIsos = getUniqueDocumentsByDiscrepancy(
+      {discrepancies.map((discrepancy, index) => {
+        const document = getDocumentByDiscrepancy(
+          ornateRef,
           documents,
-          mapPidAnnotationIdsToIsoAnnotationIds(documents, discrepancy.ids)
-        ).filter((document) => document.type === DocumentType.ISO);
-        const usedDiscrepancyIsos =
-          uniqueDiscrepancyIsos.length === 0
-            ? documents.filter((document) => document.type === DocumentType.ISO)
-            : uniqueDiscrepancyIsos;
+          discrepancy
+        );
+
         return (
           <div key={discrepancy.id}>
             <div>
-              <b>{discrepancy.comment}</b>
+              <b>
+                [{index + 1}]:{' '}
+                {discrepancy.comment === ''
+                  ? '(No comment specified)'
+                  : discrepancy.comment}
+              </b>
             </div>
-
-            <div>
-              <b>MF:</b>{' '}
-              {getUniqueDocumentsByDiscrepancy(documents, discrepancy.ids)
-                .filter((document) => document.type === DocumentType.PID)
-                .map((document) => (
-                  <React.Fragment key={document.externalId}>
-                    <a //eslint-disable-line
-                      onClick={() => {
-                        return undefined;
-                      }}
-                    >
-                      {document.pdfExternalId}
-                    </a>{' '}
-                  </React.Fragment>
+            {document?.type === DocumentType.PID && (
+              <div>
+                <b>MF:</b>{' '}
+                <a //eslint-disable-line
+                  onClick={() => {
+                    return undefined;
+                  }}
+                >
+                  {document?.pdfExternalId}
+                </a>
+              </div>
+            )}
+            {document?.type === DocumentType.ISO && (
+              <div>
+                <b>ISO:</b>{' '}
+                {isoDocuments.map((document) => (
+                  <a //eslint-disable-line
+                    onClick={() => {
+                      return undefined;
+                    }}
+                  >
+                    {document.pdfExternalId}
+                  </a>
                 ))}
-            </div>
-            <div>
-              <b>ISO:</b>{' '}
-              {usedDiscrepancyIsos
-                .filter((document) => document.type === DocumentType.ISO)
-                .map((document) => (
-                  <React.Fragment key={document.externalId}>
-                    <a //eslint-disable-line
-                      onClick={() => {
-                        return undefined;
-                      }}
-                    >
-                      {document.pdfExternalId}
-                    </a>{' '}
-                  </React.Fragment>
-                ))}
-            </div>
+              </div>
+            )}{' '}
             <br />
           </div>
         );

@@ -95,13 +95,20 @@ export class DefaultTool extends Tool implements ICogniteOrnateTool {
     if (e.target.attrs.unselectable) {
       return;
     }
+
     // If this is defined, we dont select the original target, but the group instead
     // e.g. if we click a PDF image, we move the whole group, not just the image.
     // We also only enable dragging, not scaling
     if (e.target.attrs.attachedToGroup) {
-      this.selectedNode = this.ornateInstance.stage.findOne(
+      const groupNode = this.ornateInstance.stage.findOne(
         `#${e.target.attrs.attachedToGroup}`
       );
+
+      if (groupNode.attrs.unselectable) {
+        return;
+      }
+
+      this.selectedNode = groupNode;
 
       this.ornateInstance.transformer?.rotateEnabled(false);
       this.ornateInstance.transformer?.resizeEnabled(false);

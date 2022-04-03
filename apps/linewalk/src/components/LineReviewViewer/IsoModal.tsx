@@ -15,12 +15,11 @@ import {
 } from '../../modules/lineReviews/types';
 
 import centerOnAnnotationByAnnotationId from './centerOnIsoAnnotationByPidAnnotation';
-import getAnnotationOverlay from './getAnnotationOverlay';
+import { BOUNDING_BOX_PADDING_PX } from './constants';
+import getAnnotationBoundingBoxOverlay from './getAnnotationBoundingBoxOverlay';
 import getAnnotationsForLineByDocument from './getAnnotationsForLineByDocument';
-import getDiscrepancyCircleMarkersForDocument from './getDiscrepancyCircleMarkersForDocument';
 import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId';
 import getLinkByAnnotationId from './getLinkByAnnotationId';
-import { Discrepancy } from './LineReviewViewer';
 import ReactOrnate from './ReactOrnate';
 import useDimensions from './useDimensions';
 import { WorkspaceTool } from './useWorkspaceTools';
@@ -32,7 +31,6 @@ const INITIAL_HEIGHT = 526;
 type IsoModalProps = {
   documents: ParsedDocument[] | undefined;
   visible?: boolean;
-  discrepancies: Discrepancy[];
   onHidePress: () => void;
   onOrnateRef: (ref: CogniteOrnate | undefined) => void;
   tool: WorkspaceTool;
@@ -45,7 +43,6 @@ const RESIZABLE_CORNER_SIZE = 15;
 const IsoModal: React.FC<IsoModalProps> = ({
   documents,
   visible,
-  discrepancies,
   onOrnateRef,
   onHidePress,
   tool,
@@ -142,59 +139,51 @@ const IsoModal: React.FC<IsoModalProps> = ({
   );
 
   const drawings = documents?.flatMap((document) => [
-    ...([WorkspaceTool.LINK].includes(tool)
-      ? [
-          ...getAnnotationOverlay(
-            lineReview.id,
-            document,
-            document.linking
-              .map(({ from: { annotationId } }) => annotationId)
-              .filter(
-                (id) =>
-                  annotationsById[id]?.type === AnnotationType.FILE_CONNECTION
-              ),
-            'navigatable',
-            {
-              stroke: '#39A263',
-              strokeWidth: 3,
-            }
-          ),
-          ...getAnnotationOverlay(
-            lineReview.id,
-            document,
-            document.linking
-              .map(({ to: { annotationId } }) => annotationId)
-              .filter(
-                (id) =>
-                  annotationsById[id]?.type === AnnotationType.FILE_CONNECTION
-              ),
-            'navigatable',
-            {
-              stroke: '#39A263',
-              strokeWidth: 3,
-            }
-          ),
-        ]
-      : []),
-    ...getAnnotationOverlay(
+    ...getAnnotationBoundingBoxOverlay(
       lineReview.id,
       document,
-      getAnnotationsForLineByDocument(lineReview.id, document)
-        .filter(({ svgPaths }) => svgPaths.length > 0)
-        .map((annotation) => annotation.id),
+      document.linking
+        .map(({ from: { annotationId } }) => annotationId)
+        .filter(
+          (id) => annotationsById[id]?.type === AnnotationType.FILE_CONNECTION
+        ),
+      'navigatable',
+      {
+        fill: 'rgba(24, 175, 142, 0.2)',
+        stroke: '#39A263',
+        strokeWidth: 3,
+        padding: BOUNDING_BOX_PADDING_PX,
+      }
+    ),
+    ...getAnnotationBoundingBoxOverlay(
+      lineReview.id,
+      document,
+      document.linking
+        .map(({ to: { annotationId } }) => annotationId)
+        .filter(
+          (id) => annotationsById[id]?.type === AnnotationType.FILE_CONNECTION
+        ),
+      'navigatable',
+      {
+        padding: BOUNDING_BOX_PADDING_PX,
+        fill: 'rgba(24, 175, 142, 0.2)',
+        stroke: '#39A263',
+        strokeWidth: 3,
+      }
+    ),
+    ...getAnnotationBoundingBoxOverlay(
+      lineReview.id,
+      document,
+      getAnnotationsForLineByDocument(lineReview.id, document).map(
+        (annotation) => annotation.id
+      ),
       '',
       {
+        padding: BOUNDING_BOX_PADDING_PX,
         stroke: 'transparent',
         strokeWidth: 6,
       },
-      [(WorkspaceTool.SELECT, WorkspaceTool.LINK)].includes(tool)
-        ? onAnnotationClick
-        : undefined
-    ),
-    ...getDiscrepancyCircleMarkersForDocument(
-      lineReview.id,
-      document,
-      discrepancies
+      onAnnotationClick
     ),
   ]);
 
@@ -258,11 +247,7 @@ const IsoModal: React.FC<IsoModalProps> = ({
           renderWorkspaceTools={(ornate, isFocused) => (
             <WorkSpaceTools
               tool={tool}
-              enabledTools={[
-                WorkspaceTool.MOVE,
-                WorkspaceTool.LINK,
-                WorkspaceTool.COMMENT,
-              ]}
+              enabledTools={[WorkspaceTool.MOVE]}
               onToolChange={onToolChange}
               areKeyboardShortcutsEnabled={isFocused}
             />

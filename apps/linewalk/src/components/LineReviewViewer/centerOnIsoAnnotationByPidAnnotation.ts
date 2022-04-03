@@ -60,14 +60,13 @@ const centerOnAnnotationByAnnotationId = (
 
   const drawing: Drawing = {
     id: `flash-${annotation.id}`,
-    type: 'path',
+    type: 'rect',
     attrs: {
       id: `flash-${annotation.id}`,
       ...mapPathToNewCoordinateSystem(
         document.viewBox,
         annotation.boundingBox,
-        { width: SLIDE_WIDTH, height: SHAMEFUL_SLIDE_HEIGHT },
-        annotation.svgPaths.map(({ svgCommands }) => svgCommands).join(' ')
+        { width: SLIDE_WIDTH, height: SHAMEFUL_SLIDE_HEIGHT }
       ),
       x: boundingBox.x,
       y: boundingBox.y,
