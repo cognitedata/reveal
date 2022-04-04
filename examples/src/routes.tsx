@@ -14,6 +14,7 @@ import { TwoModels } from './pages/TwoModels';
 import { WalkablePath } from './pages/WalkablePath';
 import { visualTests } from './pages/e2e/visualTests';
 import { CustomDataSource } from './pages/CustomDataSource';
+
 const cadTestBasePath = '/test/cad/';
 const pointcloudTestBasePath = '/test/pointcloud/';
 
