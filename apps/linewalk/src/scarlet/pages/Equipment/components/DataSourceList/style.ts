@@ -36,7 +36,6 @@ export const EmptySource = styled.div`
   border: 1px solid var(--cogs-greyscale-grey4) !important;
   overflow: hidden;
   border-radius: 8px;
-  margin: 12px 0;
   padding: 10px 16px;
   display: flex;
 `;

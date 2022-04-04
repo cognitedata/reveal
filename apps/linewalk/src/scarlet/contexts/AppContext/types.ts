@@ -12,6 +12,16 @@ import {
   Remark,
 } from 'scarlet/types';
 
+export type AppStateEquipmentList = {
+  unitName: string;
+  equipments: EquipmentListItem[];
+};
+
+export type AppStateDataElementModal = {
+  dataElements: DataElement[];
+  state: DataElementState;
+};
+
 export type AppState = {
   unitName: string;
   equipmentName: string;
@@ -19,14 +29,8 @@ export type AppState = {
   documents: APIState<EquipmentDocument[]>;
   equipment: APIState<EquipmentData>;
   equipmentConfig: APIState<EquipmentConfig>;
-  equipmentList?: {
-    unitName: string;
-    equipments: EquipmentListItem[];
-  };
-  dataElementModal?: {
-    dataElements: DataElement[];
-    state: DataElementState;
-  };
+  equipmentList?: AppStateEquipmentList;
+  dataElementModal?: AppStateDataElementModal;
   saveState: APIState<EquipmentData>;
 };
 
@@ -115,6 +119,14 @@ export type AppAction =
     }
   | {
       type: AppActionType.APPROVE_EQUIPMENT;
+    }
+  | {
+      type: AppActionType.SET_CONNECTED_DATA_ELEMENTS;
+      currentDataElementId: string;
+      dataElements: DataElement[];
+      detection: Detection;
+      isApproved: boolean;
+      isPrimary: boolean;
     };
 
 export enum AppActionType {
@@ -137,4 +149,5 @@ export enum AppActionType {
   UPDATE_COMPONENTS = 'update-components',
   ADD_REMARK = 'add-remark',
   APPROVE_EQUIPMENT = 'approve-equipment',
+  SET_CONNECTED_DATA_ELEMENTS = 'set-connected-data-elements',
 }

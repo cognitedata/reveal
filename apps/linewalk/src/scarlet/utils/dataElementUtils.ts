@@ -1,8 +1,10 @@
 import {
   DataElement,
+  DataElementOrigin,
   Detection,
   DetectionState,
   DetectionType,
+  EquipmentConfig,
 } from 'scarlet/types';
 
 export const getDataElementPrimaryDetection = (
@@ -58,4 +60,38 @@ export const getIsDataElementValueAvailable = (
   const value = typeof data === 'string' ? data : getDataElementValue(data);
 
   return value !== null && value !== undefined && value !== '';
+};
+
+export const getDataElementConfig = (
+  config?: EquipmentConfig,
+  dataElement?: DataElement
+) => {
+  if (!dataElement)
+    return { label: undefined, unit: undefined, type: undefined };
+
+  const configElements =
+    dataElement.origin === DataElementOrigin.COMPONENT
+      ? config?.componentElements
+      : config?.equipmentElements;
+
+  return (
+    (configElements && configElements[dataElement.key]) || {
+      label: dataElement.key,
+      type: undefined,
+      unit: undefined,
+    }
+  );
+};
+
+export const getDataElementTypeLabel = (
+  dataElement?: DataElement
+): string | undefined => {
+  switch (dataElement?.origin) {
+    case DataElementOrigin.EQUIPMENT:
+      return 'Equipment';
+    case DataElementOrigin.COMPONENT:
+      return 'Component';
+    default:
+      return undefined;
+  }
 };

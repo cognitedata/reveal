@@ -4,6 +4,7 @@ export * from './useAppContext';
 export * from './useCheckedDataElementsState';
 export * from './useComponent';
 export * from './useComponentName';
+export * from './useConnectedDataElements';
 export * from './useDataElementConfig';
 export * from './useDataPanelContext';
 export * from './useEquipmentComponentsByType';

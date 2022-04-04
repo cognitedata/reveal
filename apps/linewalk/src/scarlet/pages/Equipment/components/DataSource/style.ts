@@ -35,3 +35,14 @@ export const LoaderContainer = styled.div`
 export const ExternalSourceContainer = styled.div`
   margin-bottom: 8px;
 `;
+
+export const PrimaryValueContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+export const PrimaryValueLabel = styled.div`
+  color: rgba(0, 0, 0, 0.45);
+  margin-bottom: 4px;
+`;

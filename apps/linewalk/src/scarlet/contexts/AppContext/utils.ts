@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import {
   DataElement,
   DataElementOrigin,
@@ -80,20 +81,17 @@ export const removeDetection = (
   const detectionIndex = dataElement.detections!.findIndex(
     (item) => item.id === detection.id
   );
-  dataElement.detections![detectionIndex!] = {
-    ...detection,
-    isModified: true,
-    state: DetectionState.OMITTED,
-    isPrimary: false,
-  };
 
-  dataElement.detections = dataElement.detections.filter(
-    (detection) =>
-      !(
-        detection.state === DetectionState.OMITTED &&
-        detection.type === DetectionType.MANUAL
-      )
-  );
+  if (detection.type === DetectionType.SCANNER) {
+    dataElement.detections![detectionIndex!] = {
+      ...detection,
+      isModified: true,
+      state: DetectionState.OMITTED,
+      isPrimary: false,
+    };
+  } else {
+    dataElement.detections.splice(detectionIndex, 1);
+  }
 
   const isApproved = dataElement.detections.some((item) => item.isPrimary);
 
@@ -265,4 +263,57 @@ const updateComponentScannerDetectionsOnApproval = (
       });
     });
   }
+};
+
+export const setConnectedDataElements = (
+  equipmentOrigin: EquipmentData,
+  dataElementsOrigin: DataElement[],
+  currentDataElementId: string,
+  detection: Detection,
+  isApproved: boolean,
+  isPrimary: boolean
+) => {
+  const connectedId = detection.connectedId || uuid();
+  let equipment = equipmentOrigin;
+  dataElementsOrigin.forEach((dataElement) => {
+    const itemDetection = dataElement.detections.find(
+      (detection) => detection.connectedId === connectedId
+    );
+    if (itemDetection) {
+      equipment = updateDetection(
+        equipment,
+        dataElement,
+        itemDetection,
+        detection.value!,
+        detection.externalSource,
+        isApproved,
+        isPrimary
+      );
+    } else {
+      let detectionType = detection.type;
+      const isCurrentDataElement = dataElement.id === currentDataElementId;
+      if (!isCurrentDataElement && detectionType === DetectionType.PCMS) {
+        detectionType = DetectionType.MANUAL_INPUT;
+      }
+
+      equipment = addDetection(
+        equipment,
+        dataElement,
+        {
+          ...detection,
+          id: isCurrentDataElement ? detection.id : uuid(),
+          type: detectionType,
+          connectedId,
+          scannerComponent: isCurrentDataElement
+            ? detection.scannerComponent
+            : undefined,
+        },
+        detection.value!,
+        detection.externalSource,
+        isApproved,
+        isPrimary
+      );
+    }
+  });
+  return equipment;
 };

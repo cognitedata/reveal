@@ -91,6 +91,7 @@ export const RestoreModal = ({
       onOk={onRestore}
       onCancel={!loading ? onClose : () => null}
       loading={loading}
+      isPrompt
     />
   );
 };

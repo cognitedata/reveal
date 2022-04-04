@@ -1,5 +1,6 @@
 import { CollapsePanelProps, CollapseProps, Icon } from '@cognite/cogs.js';
-import { DataElement, Detection, DetectionType } from 'scarlet/types';
+import { DataElement, Detection } from 'scarlet/types';
+import { getDetectionSourceLabel } from 'scarlet/utils';
 
 import { DataSource, DataSourceHeader } from '..';
 
@@ -12,6 +13,7 @@ type DataSourcePanelProps = {
   focused?: boolean;
   isApproved?: boolean;
   isDraft?: boolean;
+  hasConnectedElements: boolean;
   collapseProps?: Omit<CollapseProps, 'children'>;
 };
 
@@ -22,6 +24,7 @@ export const DataSourcePanel = ({
   focused = false,
   isApproved = false,
   isDraft = false,
+  hasConnectedElements,
   collapseProps,
 }: DataSourcePanelProps) => (
   <Styled.Collapse expandIcon={expandIcon} {...collapseProps}>
@@ -29,7 +32,7 @@ export const DataSourcePanel = ({
       header={
         <DataSourceHeader
           key={detection.id}
-          label={getLabel(detection)}
+          label={getDetectionSourceLabel(detection)}
           isApproved={isApproved}
         />
       }
@@ -43,28 +46,11 @@ export const DataSourcePanel = ({
         focused={focused}
         isPrimaryOnApproval={isPrimaryOnApproval}
         isDraft={isDraft}
+        hasConnectedElements={hasConnectedElements}
       />
     </Styled.Panel>
   </Styled.Collapse>
 );
-
-const getLabel = (detection: Detection) => {
-  const defaultLabel = 'No source';
-
-  switch (detection.type) {
-    case DetectionType.PCMS:
-      return 'PCMS';
-    case DetectionType.MANUAL_INPUT:
-      return 'Manual input';
-    case DetectionType.MANUAL_EXTERNAL:
-      return 'External source';
-    case DetectionType.MANUAL:
-    case DetectionType.SCANNER:
-      return detection.documentExternalId || defaultLabel;
-    default:
-      return defaultLabel;
-  }
-};
 
 const expandIcon = ({ isActive }: CollapsePanelProps) => {
   return (

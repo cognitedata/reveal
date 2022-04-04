@@ -1,28 +1,16 @@
 import { useMemo } from 'react';
-import { DataElement, DataElementOrigin } from 'scarlet/types';
+import { DataElement } from 'scarlet/types';
+import { getDataElementConfig } from 'scarlet/utils';
 
 import { useAppState } from '.';
 
 export const useDataElementConfig = (dataElement?: DataElement) => {
   const { equipmentConfig } = useAppState();
 
-  const config = useMemo(() => {
-    if (!dataElement)
-      return { label: undefined, unit: undefined, type: undefined };
-
-    const configElements =
-      dataElement.origin === DataElementOrigin.COMPONENT
-        ? equipmentConfig.data?.componentElements
-        : equipmentConfig.data?.equipmentElements;
-
-    return (
-      (configElements && configElements[dataElement.key]) || {
-        label: dataElement.key,
-        type: undefined,
-        unit: undefined,
-      }
-    );
-  }, [dataElement, equipmentConfig.data]);
+  const config = useMemo(
+    () => getDataElementConfig(equipmentConfig.data, dataElement),
+    [dataElement, equipmentConfig.data]
+  );
 
   return config;
 };

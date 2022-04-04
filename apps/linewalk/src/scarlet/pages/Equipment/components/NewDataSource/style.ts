@@ -5,11 +5,12 @@ export const NewSourceButton = styled(Button)`
   color: var(--cogs-midblue-3);
   border: 1px solid currentColor;
   width: 100%;
-  padding: 16px !important;
+  padding: 12px 46px 12px 16px !important;
   border-radius: 8px !important;
   height: auto;
   position: relative;
   justify-content: left;
+  font-size: 13px;
 `;
 
 export const Chevron = styled.div`

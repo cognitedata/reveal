@@ -14,9 +14,13 @@ import * as Styled from './style';
 
 type DataSourceListProps = {
   dataElement: DataElement;
+  hasConnectedElements: boolean;
 };
 
-export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
+export const DataSourceList = ({
+  dataElement,
+  hasConnectedElements,
+}: DataSourceListProps) => {
   const [activeDetectionId, setActiveDetectionId] = useState<string>();
   const [sortingIds, setSortingIds] = useState<string[]>([]);
   const { dataPanelState, dataPanelDispatch } = useDataPanelContext();
@@ -82,6 +86,10 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
   useEffect(() => {
     if (activeDetection) {
       setActiveDetectionId(activeDetection.id);
+      return;
+    }
+
+    if (isPCMSDetectionPrimary) {
       return;
     }
 
@@ -177,6 +185,8 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
           isApproved={detection.state === DetectionState.APPROVED}
           focused={detection.id === activeDetectionId}
           isDraft={!detection.state}
+          isPrimaryOnApproval
+          hasConnectedElements={hasConnectedElements}
           collapseProps={{
             activeKey: activeDetectionId,
             onChange: setActiveDetectionId,
@@ -190,6 +200,7 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
           detection={PCMSDetection}
           dataElement={dataElement}
           isApproved={isPCMSDetectionPrimary}
+          hasConnectedElements={hasConnectedElements}
           collapseProps={{
             defaultActiveKey: PCMSDetection.id,
           }}
@@ -210,6 +221,7 @@ export const DataSourceList = ({ dataElement }: DataSourceListProps) => {
           isApproved={detection.state === DetectionState.APPROVED}
           isPrimaryOnApproval={detections.length === 1}
           focused={detection.id === activeDetectionId}
+          hasConnectedElements={hasConnectedElements}
           collapseProps={{
             activeKey: activeDetectionId,
             onChange: setActiveDetectionId,

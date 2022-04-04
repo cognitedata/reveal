@@ -96,6 +96,7 @@ export const OmitModal = ({
       onOk={onOmit}
       onCancel={!loading ? onClose : () => null}
       loading={loading}
+      isPrompt
     >
       <Textarea
         value={reason}

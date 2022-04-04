@@ -16,7 +16,7 @@ import {
   EquipmentComponentType,
   DetectionState,
 } from 'scarlet/types';
-import { isSameDetection } from 'scarlet/utils';
+import { isSameScannerDetection } from 'scarlet/utils';
 
 export const transformEquipmentData = ({
   config,
@@ -136,7 +136,7 @@ const mergeDetections = (
       d.isModified
   );
   const newScannerDetections = scannerDetections.filter((sd) =>
-    lockedDetections.every((d) => !isSameDetection(sd, d))
+    lockedDetections.every((d) => !isSameScannerDetection(sd, d))
   );
 
   const mergedDetections = [...lockedDetections, ...newScannerDetections];
@@ -288,9 +288,16 @@ const pushComponent = ({
 
   const componentElements = componentConfig.componentElementKeys.map(
     (dataElementKey): DataElement | undefined => {
-      const detections = componentDetections.filter(
-        (detection) => detection.key === dataElementKey
-      );
+      const detections = componentDetections
+        .filter((detection) => detection.key === dataElementKey)
+        .map(
+          (detection) =>
+            ({
+              ...detection,
+              id: uuid(),
+              connectedId: detection.id,
+            } as Detection)
+        );
 
       const pcmsDetection = getPCMSDetection(dataElementKey, pcmsComponent);
       if (pcmsDetection) {
@@ -328,7 +335,7 @@ const getPCMSDetection = (key: string, pcms?: { [key: string]: string }) => {
     type: DetectionType.PCMS,
     value: pcms[key],
     status: DetectionState.APPROVED,
-  };
+  } as Detection;
 };
 
 const fixUndefinedComponentElementsId = (

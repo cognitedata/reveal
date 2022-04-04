@@ -129,6 +129,20 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
         checkedDataElements: [],
       };
 
+    case DataPanelActionType.OPEN_CONNECTED_ELEMENTS_MODAL:
+      return {
+        ...state,
+        connectedElementsModal: {
+          dataElement: action.dataElement,
+          detection: action.detection,
+        },
+      };
+    case DataPanelActionType.CLOSE_CONNECTED_ELEMENTS_MODAL:
+      return {
+        ...state,
+        connectedElementsModal: undefined,
+      };
+
     default: {
       return state;
     }

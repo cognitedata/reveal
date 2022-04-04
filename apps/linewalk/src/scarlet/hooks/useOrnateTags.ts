@@ -42,7 +42,7 @@ export const useOrnateTags = (): {
   );
 
   const tags: OrnateTag[] = useMemo(() => {
-    const result: OrnateTag[] = [];
+    let result: OrnateTag[] = [];
 
     dataElements?.forEach((dataElement) => {
       dataElement.detections
@@ -53,6 +53,25 @@ export const useOrnateTags = (): {
             detection.state !== DetectionState.OMITTED
         )
         .forEach((detection) => {
+          if (detection.connectedId) {
+            if (
+              visibleDataElement &&
+              dataElement.id === visibleDataElement?.id
+            ) {
+              result = result.filter(
+                (tag) =>
+                  !tag.detection.connectedId ||
+                  tag.detection.connectedId !== detection.connectedId
+              );
+            } else if (
+              result.some(
+                (tag) => tag.detection.connectedId === detection.connectedId
+              )
+            ) {
+              return;
+            }
+          }
+
           const tag = getOrnateTag({ detection, dataElement, activeDetection });
           result.push(tag);
         });

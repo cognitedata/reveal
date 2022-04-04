@@ -15,7 +15,10 @@ export const transformEquipmentConfig = (data: any): EquipmentConfig => ({
       [equipmentType.equipment_type]: {
         type: equipmentType.equipment_type,
         label: equipmentType.label,
-        equipmentElementKeys: equipmentType.properties,
+        equipmentElementKeys: [
+          ...(equipmentType.properties ?? []),
+          ...(equipmentType.calculated_properties ?? []),
+        ],
         componentTypes: equipmentType.components.reduce(
           (componentResult: any, item: any) => {
             const componentType = getType(item.component_type);
@@ -26,7 +29,10 @@ export const transformEquipmentConfig = (data: any): EquipmentConfig => ({
               [componentType]: {
                 type: componentType,
                 label: item.label,
-                componentElementKeys: item.properties,
+                componentElementKeys: [
+                  ...(item.properties ?? []),
+                  ...(item.calculated_properties ?? []),
+                ],
               },
             };
           },

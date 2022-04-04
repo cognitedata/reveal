@@ -15,6 +15,7 @@ export enum DetectionState {
 
 export type Detection = Partial<Annotation> & {
   id: string;
+  connectedId?: string;
   key: string;
   type: DetectionType;
   value?: string;

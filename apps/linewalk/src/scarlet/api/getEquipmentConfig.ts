@@ -10,7 +10,20 @@ export const getEquipmentConfig = async (client: CogniteClient) => {
         dataSetIds: [{ id: DataSetId.P66_ScarletScannerConfiguration }],
       },
     })
-    .then((response) => response.items.pop());
+    .then((response) => {
+      const version = response.items
+        .map((item) => {
+          const match = item.externalId?.match(
+            /schema_scanner_config_(\d+)\.json/
+          );
+          return match ? parseInt(match[1], 10) : 0;
+        })
+        .sort()
+        .pop();
+      return response.items.find(
+        (item) => item.externalId === `schema_scanner_config_${version}.json`
+      );
+    });
 
   if (!configFile)
     throw Error(

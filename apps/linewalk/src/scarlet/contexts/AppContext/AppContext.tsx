@@ -19,6 +19,7 @@ import {
   removeDetection,
   updateComponents,
   updateDataElementState,
+  setConnectedDataElements,
 } from './utils';
 
 const equipmentInitialState = {
@@ -222,6 +223,24 @@ function reducer(state: AppState, action: AppAction) {
     }
     case AppActionType.APPROVE_EQUIPMENT: {
       const equipmentToSave = approveEquipment(state.equipment.data!);
+
+      return {
+        ...state,
+        saveState: {
+          loading: true,
+          data: equipmentToSave,
+        },
+      };
+    }
+    case AppActionType.SET_CONNECTED_DATA_ELEMENTS: {
+      const equipmentToSave = setConnectedDataElements(
+        state.equipment.data!,
+        action.dataElements,
+        action.currentDataElementId,
+        action.detection,
+        action.isApproved,
+        action.isPrimary
+      );
 
       return {
         ...state,

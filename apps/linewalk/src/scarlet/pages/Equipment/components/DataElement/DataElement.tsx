@@ -11,12 +11,12 @@ import {
   DataElement as DataElementType,
   DataElementState,
   DataPanelActionType,
-  Detection,
   DetectionType,
 } from 'scarlet/types';
 import {
   getDataElementPCMSDetection,
   getDataElementPrimaryDetection,
+  getDetectionSourceAcronym,
   getIsDataElementValueAvailable,
 } from 'scarlet/utils';
 
@@ -160,7 +160,7 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
                   isDiscrepancy={isDiscrepancy}
                   className="cogs-micro"
                 >
-                  {getDataSourceAcronym(primaryDetection!)}
+                  {getDetectionSourceAcronym(primaryDetection!)}
                   {isDiscrepancy && <Icon type="WarningTriangle" size={8} />}
                 </Styled.DataSource>
                 <Styled.Value className="cogs-body-3 strong">
@@ -203,31 +203,4 @@ const getCheckboxColor = (state: DataElementState) => {
       return '#8C8C8C';
   }
   return '#FF6918';
-};
-
-const getDataSourceAcronym = (detection: Detection) => {
-  switch (detection.type) {
-    case DetectionType.PCMS:
-      return 'PCMS';
-    case DetectionType.MANUAL_INPUT:
-      return 'Input';
-    case DetectionType.MANUAL_EXTERNAL:
-      return 'Ext.';
-  }
-
-  const type = detection.documentExternalId
-    ?.toLocaleLowerCase()
-    ?.split('.')[0]
-    ?.split('_')[2];
-
-  switch (type) {
-    case 'nameplate':
-      return 'NPL';
-    case 'miscellaneous':
-      return 'MISC';
-    case 'mech drawing':
-      return 'MECH';
-  }
-
-  return type?.toUpperCase();
 };

@@ -6,6 +6,11 @@ import {
   DetectionType,
 } from 'scarlet/types';
 
+export type DataPanelStateConnectedElementsModal = {
+  dataElement: DataElement;
+  detection: Detection;
+};
+
 export type DataPanelState = {
   isVisible: boolean;
   newDetection?: Detection;
@@ -14,6 +19,7 @@ export type DataPanelState = {
   visibleDataElement?: DataElement;
   activeDetection?: Detection;
   checkedDataElements: DataElement[];
+  connectedElementsModal?: DataPanelStateConnectedElementsModal;
 };
 
 export type DataPanelAction =
@@ -55,6 +61,14 @@ export type DataPanelAction =
     }
   | {
       type: DataPanelActionType.UNCHECK_ALL_DATA_ELEMENTS;
+    }
+  | {
+      type: DataPanelActionType.OPEN_CONNECTED_ELEMENTS_MODAL;
+      dataElement: DataElement;
+      detection: Detection;
+    }
+  | {
+      type: DataPanelActionType.CLOSE_CONNECTED_ELEMENTS_MODAL;
     };
 
 export enum DataPanelActionType {
@@ -68,4 +82,6 @@ export enum DataPanelActionType {
   TOGGLE_NEW_DATA_SOURCE = 'toggle-new-data-source',
   TOGGLE_DATA_ELEMENT = 'toggle-data-element',
   UNCHECK_ALL_DATA_ELEMENTS = 'unselect-all-data-elements',
+  OPEN_CONNECTED_ELEMENTS_MODAL = 'open-connected-elements-modal',
+  CLOSE_CONNECTED_ELEMENTS_MODAL = 'close-connected-elements-modal',
 }

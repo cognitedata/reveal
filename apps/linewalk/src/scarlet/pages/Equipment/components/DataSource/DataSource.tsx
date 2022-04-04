@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Checkbox, Icon, Input, toast } from '@cognite/cogs.js';
+import { FormEvent, useEffect, useState } from 'react';
+import { Button, Checkbox, Icon, Input, toast } from '@cognite/cogs.js';
 import {
   AppActionType,
   DataElement,
@@ -23,6 +23,7 @@ export type DataSourceProps = {
   focused?: boolean;
   isPrimaryOnApproval?: boolean;
   isDraft?: boolean;
+  hasConnectedElements: boolean;
 };
 
 export const DataSource = ({
@@ -32,6 +33,7 @@ export const DataSource = ({
   focused,
   isPrimaryOnApproval = false,
   isDraft = false,
+  hasConnectedElements,
 }: DataSourceProps) => {
   const originalValue = detection.value;
   const originalExternalSource = detection.externalSource;
@@ -54,7 +56,7 @@ export const DataSource = ({
   const dataElementConfig = useDataElementConfig(dataElement);
   const isPCMS = detection?.type === DetectionType.PCMS;
   const isExternalSource = detection?.type === DetectionType.MANUAL_EXTERNAL;
-  const disabledActions =
+  const isActionsDisabled =
     isApproving || isRemoving || isSaving || isPrimaryLoading;
 
   const externalSourceId = `data-field-source-${detection!.id}`;
@@ -83,7 +85,14 @@ export const DataSource = ({
     }
   };
 
-  const approveDetection = () => {
+  const approveDetection = (e: FormEvent) => {
+    e.preventDefault();
+
+    if (isPrimaryOnApproval && hasConnectedElements) {
+      openConnectedModal();
+      return;
+    }
+
     setApproving(true);
     setIsApproved(isApproved);
 
@@ -116,6 +125,11 @@ export const DataSource = ({
   };
 
   const updatePrimaryValue = (isPrimary: boolean) => {
+    if (isPrimary && hasConnectedElements) {
+      openConnectedModal();
+      return;
+    }
+
     setIsPrimary(isPrimary);
     setIsPrimaryLoading(true);
     setIsApproved(isApproved);
@@ -125,12 +139,18 @@ export const DataSource = ({
       dataElement,
       detection: detection!,
       value: value || '',
+      externalSource,
       isApproved: true,
       isPrimary,
     });
   };
 
-  const saveDetection = () => {
+  const saveDetection = (e: FormEvent) => {
+    e.preventDefault();
+    if (isPrimary && hasConnectedElements) {
+      openConnectedModal();
+      return;
+    }
     setIsSaving(true);
 
     appDispatch({
@@ -138,8 +158,17 @@ export const DataSource = ({
       dataElement,
       detection: detection!,
       value: value || '',
+      externalSource,
       isApproved: true,
-      isPrimary: false,
+      isPrimary,
+    });
+  };
+
+  const openConnectedModal = () => {
+    dataPanelDispatch({
+      type: DataPanelActionType.OPEN_CONNECTED_ELEMENTS_MODAL,
+      dataElement,
+      detection: { ...detection, value, externalSource },
     });
   };
 
@@ -196,10 +225,16 @@ export const DataSource = ({
   }, [focused]);
 
   const isFormPristine =
-    value === originalValue && externalSource === originalExternalSource;
+    value === originalValue &&
+    (!isExternalSource || externalSource === originalExternalSource);
 
   const isFormValid =
     value.trim() !== '' && (!isExternalSource || externalSource.trim() !== '');
+
+  const isPrimaryValueDisabled =
+    (!isPCMS && detection?.state !== DetectionState.APPROVED) ||
+    !isFormPristine ||
+    isActionsDisabled;
 
   return (
     <form
@@ -245,7 +280,7 @@ export const DataSource = ({
               iconPlacement="left"
               icon="Checkmark"
               loading={isSaving}
-              disabled={disabledActions || !isFormValid || isFormPristine}
+              disabled={isActionsDisabled || !isFormValid || isFormPristine}
               onClick={saveDetection}
             >
               Save
@@ -257,7 +292,7 @@ export const DataSource = ({
               iconPlacement="left"
               icon="Checkmark"
               loading={isApproving}
-              disabled={disabledActions || !isFormValid}
+              disabled={isActionsDisabled || !isFormValid}
               onClick={approveDetection}
             >
               {isDraft ? 'Approve' : 'Add as data source'}
@@ -268,7 +303,7 @@ export const DataSource = ({
             htmlType="button"
             iconPlacement="left"
             icon={isRemoving ? 'Loader' : 'Delete'}
-            disabled={disabledActions}
+            disabled={isActionsDisabled}
             onClick={removeDetection}
             aria-label="Remove data source"
           />
@@ -277,23 +312,36 @@ export const DataSource = ({
 
       <Styled.Delimiter />
 
-      <Checkbox
-        name={`detection-${detection?.id}`}
-        onChange={updatePrimaryValue}
-        checked={isPrimary}
-        disabled={
-          (!isPCMS && detection?.state !== DetectionState.APPROVED) ||
-          !isFormPristine ||
-          disabledActions
-        }
-      >
-        <span className="cogs-detail">Set as primary value</span>
-        {isPrimaryLoading && (
-          <Styled.LoaderContainer>
-            <Icon type="Loader" />
-          </Styled.LoaderContainer>
+      <Styled.PrimaryValueContainer>
+        <div>
+          <Styled.PrimaryValueLabel className="cogs-detail">
+            Set as primary value
+          </Styled.PrimaryValueLabel>
+          <Checkbox
+            name={`detection-${detection?.id}`}
+            onChange={updatePrimaryValue}
+            checked={isPrimary}
+            disabled={isPrimaryValueDisabled}
+          >
+            <span className="cogs-detail">For this field</span>
+            {isPrimaryLoading && (
+              <Styled.LoaderContainer>
+                <Icon type="Loader" />
+              </Styled.LoaderContainer>
+            )}
+          </Checkbox>
+        </div>
+
+        {hasConnectedElements && (
+          <Button
+            type="tertiary"
+            icon="Edit"
+            onClick={openConnectedModal}
+            aria-label="Open connected data-elements"
+            disabled={isPrimaryValueDisabled}
+          />
         )}
-      </Checkbox>
+      </Styled.PrimaryValueContainer>
     </form>
   );
 };

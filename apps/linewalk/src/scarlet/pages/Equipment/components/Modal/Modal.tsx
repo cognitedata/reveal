@@ -13,6 +13,7 @@ export type ModalProps = Omit<CogsModalProps, 'children'> & {
   okButtonType?: ButtonType;
   description?: string;
   loading?: boolean;
+  isPrompt?: boolean;
 };
 
 export const Modal = ({
@@ -26,16 +27,23 @@ export const Modal = ({
   children,
   loading,
   closable = true,
+  isPrompt = false,
   ...props
 }: ModalProps) => (
   <Styled.Modal
     appElement={document.getElementById('root') || undefined}
     footer={null}
     closable={closable && !loading}
+    width={isPrompt ? 330 : 980}
+    isPrompt={isPrompt}
     {...props}
   >
     {title && (
-      <Styled.Title className="cogs-body-1 strong">{title}</Styled.Title>
+      <Styled.Title>
+        <span className={isPrompt ? 'cogs-body-1 strong' : 'cogs-title-4'}>
+          {title}
+        </span>
+      </Styled.Title>
     )}
     {description && (
       <Styled.Description className="cogs-body-2">

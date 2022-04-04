@@ -3,6 +3,7 @@ import { SegmentedControl } from '@cognite/cogs.js';
 import {
   useComponent,
   useComponentName,
+  useConnectedDataElements,
   useDataElementConfig,
 } from 'scarlet/hooks';
 import { DataElement } from 'scarlet/types';
@@ -25,6 +26,8 @@ export const Card = ({ dataElement }: CardProps) => {
   const [currentTab, setCurrentTab] = useState(CardTabs.DATA_SOURCES);
   const { component, componentGroup } = useComponent(dataElement.componentId);
   const getComponentName = useComponentName();
+  const connectedDataElements = useConnectedDataElements(dataElement.key);
+  const hasConnectedElements = connectedDataElements.length > 1;
 
   return (
     <Styled.Container>
@@ -55,7 +58,10 @@ export const Card = ({ dataElement }: CardProps) => {
         </SegmentedControl.Button>
       </SegmentedControl>
       {currentTab === CardTabs.DATA_SOURCES && (
-        <DataSourceList dataElement={dataElement} />
+        <DataSourceList
+          dataElement={dataElement}
+          hasConnectedElements={hasConnectedElements}
+        />
       )}
       {currentTab === CardTabs.REMARKS && (
         <CardRemarks dataElement={dataElement} />

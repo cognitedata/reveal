@@ -91,6 +91,7 @@ export const ApproveModal = ({
       onOk={onApprove}
       onCancel={!loading ? onClose : () => null}
       loading={loading}
+      isPrompt
     />
   );
 };
