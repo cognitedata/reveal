@@ -10,5 +10,5 @@ build --action_env=GOOGLE_APPLICATION_CREDENTIALS
 run --remote_download_toplevel
 
 # Limit the number of parallel jobs in CI to avoid getting OOM-killed
-# build --jobs=4
-# test --jobs=3
+build --jobs=3
+test --jobs=3
