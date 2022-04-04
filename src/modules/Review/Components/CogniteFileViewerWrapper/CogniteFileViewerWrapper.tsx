@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import {
   AnnotationStatus,
   AnnotationUtils,
-  VisionAnnotation,
+  VisionAnnotationV1,
 } from 'src/utils/AnnotationUtils';
 import * as pdfjs from 'pdfjs-dist';
 import { FilePreviewProps } from 'src/modules/Review/types';
@@ -33,7 +33,7 @@ export type AnnotationStyle = {
   draw?: DrawFunction;
 };
 
-export type StyledVisionAnnotation = Required<VisionAnnotation> & {
+export type StyledVisionAnnotation = Required<VisionAnnotationV1> & {
   mark: AnnotationStyle;
 };
 

@@ -3,7 +3,7 @@ import { Button, Tooltip } from '@cognite/cogs.js';
 import { unwrapResult } from '@reduxjs/toolkit';
 import React, { ReactText, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { UnsavedAnnotation, Annotation } from 'src/api/annotation/types';
+import { UnsavedAnnotation, CDFAnnotationV1 } from 'src/api/annotation/types';
 import { AnnotationSettingsModal } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsModal';
 import { KeyboardShortcutModal } from 'src/modules/Review/Components/KeyboardShortcutModal/KeyboardShortcutModal';
 import { ReactImageAnnotateWrapper } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ReactImageAnnotateWrapper';
@@ -122,12 +122,12 @@ export const ImagePreview = ({
     }
   };
 
-  const handleModifyAnnotation = async (annotation: Annotation) => {
+  const handleModifyAnnotation = async (annotation: CDFAnnotationV1) => {
     dispatch(deselectAllSelectionsReviewPage());
     await dispatch(UpdateAnnotations([annotation]));
   };
 
-  const handleDeleteAnnotation = (annotation: Annotation) => {
+  const handleDeleteAnnotation = (annotation: CDFAnnotationV1) => {
     dispatch(
       DeleteAnnotationsAndHandleLinkedAssetsOfFile({
         annotationIds: [annotation.id],

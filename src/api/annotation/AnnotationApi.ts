@@ -1,7 +1,7 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpResponse, ItemsResponse } from '@cognite/sdk';
 import {
-  Annotation,
+  CDFAnnotationV1,
   AnnotationCreateRequest,
   AnnotationListRequest,
   AnnotationUpdateRequest,
@@ -11,7 +11,7 @@ export class AnnotationApi {
   public static listCursor = async (
     request: AnnotationListRequest
   ): Promise<{
-    items: Annotation[];
+    items: CDFAnnotationV1[];
     nextCursor?: string;
   }> => {
     const { limit } = request;
@@ -36,10 +36,10 @@ export class AnnotationApi {
 
   public static list = async (
     request: AnnotationListRequest
-  ): Promise<Annotation[]> => {
+  ): Promise<CDFAnnotationV1[]> => {
     const { limit } = request;
     const limitVar = limit === -1 ? undefined : limit;
-    const result: Annotation[] = [];
+    const result: CDFAnnotationV1[] = [];
     let remaining: number | undefined = limitVar;
     let cursor: string | undefined;
     let currentLimit: number = 1000;
@@ -69,7 +69,7 @@ export class AnnotationApi {
 
   public static create(
     request: AnnotationCreateRequest
-  ): Promise<HttpResponse<ItemsResponse<Annotation>>> {
+  ): Promise<HttpResponse<ItemsResponse<CDFAnnotationV1>>> {
     const data = { data: request };
     return sdk.post(
       `${sdk.getBaseUrl()}/api/playground/projects/${
@@ -81,7 +81,7 @@ export class AnnotationApi {
 
   public static update(
     request: AnnotationUpdateRequest
-  ): Promise<HttpResponse<ItemsResponse<Annotation>>> {
+  ): Promise<HttpResponse<ItemsResponse<CDFAnnotationV1>>> {
     const data = { data: request };
     return sdk.post(
       `${sdk.getBaseUrl()}/api/playground/projects/${

@@ -3,7 +3,7 @@ import { AnnotationState } from 'src/modules/Common/store/annotation/types';
 import {
   AnnotationUtils,
   getAnnotationsBadgeCounts,
-  VisionAnnotation,
+  VisionAnnotationV1,
 } from 'src/utils/AnnotationUtils';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import isEqual from 'lodash-es/isEqual';
@@ -43,7 +43,7 @@ export const makeSelectAnnotationsForFileIds = () =>
     annotatedFilesById,
     (fileIds, filter, allAnnotations, allFiles) => {
       // file id existence checked in selectFileAnnotations
-      const data: Record<number, VisionAnnotation[]> = {};
+      const data: Record<number, VisionAnnotationV1[]> = {};
       fileIds.forEach((id) => {
         const fileAnnotations = allFiles[id];
         if (fileAnnotations && fileAnnotations.length) {

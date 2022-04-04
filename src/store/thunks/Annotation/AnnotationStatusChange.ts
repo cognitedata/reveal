@@ -4,7 +4,10 @@ import { ThunkConfig } from 'src/store/rootReducer';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
-import { AnnotationStatus, VisionAnnotation } from 'src/utils/AnnotationUtils';
+import {
+  AnnotationStatus,
+  VisionAnnotationV1,
+} from 'src/utils/AnnotationUtils';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { ToastUtils } from 'src/utils/ToastUtils';
 
@@ -15,7 +18,7 @@ export const AnnotationStatusChange = createAsyncThunk<
 >('AnnotationStatusChange', async (payload, { getState, dispatch }) => {
   const updateTagAnnotationAndFileAssetLinks = async (
     file: VisionFile,
-    updatedAnnotation: VisionAnnotation
+    updatedAnnotation: VisionAnnotationV1
   ) => {
     // eslint-disable-next-line no-nested-ternary
     const assetsToFetch = updatedAnnotation.linkedResourceId

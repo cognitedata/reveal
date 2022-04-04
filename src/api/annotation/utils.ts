@@ -7,7 +7,7 @@ import {
   ModelTypeAnnotationTypeMap,
 } from 'src/utils/AnnotationUtils';
 import {
-  Annotation,
+  CDFAnnotationV1,
   AnnotationMetadata,
   AnnotationSource,
   UnsavedAnnotation,
@@ -89,7 +89,7 @@ export function enforceRegionValidity(region: AnnotationRegion) {
 }
 
 export function validateAnnotation(
-  annotation: Annotation | UnsavedAnnotation
+  annotation: CDFAnnotationV1 | UnsavedAnnotation
 ): boolean {
   if (annotation.region) {
     const vertexSignatures = annotation.region.vertices.map(

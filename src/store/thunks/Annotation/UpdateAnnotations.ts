@@ -5,12 +5,12 @@ import {
   getFieldOrSetNull,
   validateAnnotation,
 } from 'src/api/annotation/utils';
-import { AnnotationUtils, VisionAnnotation } from 'src/utils/AnnotationUtils';
-import { Annotation } from 'src/api/annotation/types';
+import { AnnotationUtils, VisionAnnotationV1 } from 'src/utils/AnnotationUtils';
+import { CDFAnnotationV1 } from 'src/api/annotation/types';
 
 export const UpdateAnnotations = createAsyncThunk<
-  VisionAnnotation[],
-  Annotation[],
+  VisionAnnotationV1[],
+  CDFAnnotationV1[],
   ThunkConfig
 >('UpdateAnnotations', async (annotations) => {
   if (!annotations.length) {

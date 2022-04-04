@@ -8,7 +8,7 @@ import {
   FETCH_ANNOTATION_LIMIT,
 } from 'src/constants/FetchConstants';
 import { splitListIntoChunks } from 'src/utils/generalUtils';
-import { Annotation } from './types';
+import { CDFAnnotationV1 } from './types';
 
 const getAnnotations = async (
   annotationText?: string,
@@ -27,7 +27,7 @@ const getAnnotations = async (
   };
   const annotations = await AnnotationApi.list(annotationListRequest);
 
-  const validAnnotations = annotations.filter((annotation: Annotation) => {
+  const validAnnotations = annotations.filter((annotation: CDFAnnotationV1) => {
     try {
       return validateAnnotation(annotation);
     } catch (error) {
