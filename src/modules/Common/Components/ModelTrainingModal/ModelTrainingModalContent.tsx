@@ -26,6 +26,9 @@ export const ModelTrainingModalContent = ({
   const [modelType, setModelType] =
     useState<AutoMLModelType>('objectdetection');
   const [jobCreated, setJobCreated] = useState<boolean>(false);
+  const [startAutoMLJobCalled, setStartAutoMLJobCalled] =
+    useState<boolean>(false);
+
   const history = useHistory();
 
   const selectAnnotationsForFileIds = useMemo(
@@ -40,6 +43,7 @@ export const ModelTrainingModalContent = ({
   );
 
   const onStartModelTraining = async () => {
+    setStartAutoMLJobCalled(true);
     const data = await AutoMLAPI.startAutoMLJob(
       modelName,
       modelType,
@@ -52,15 +56,20 @@ export const ModelTrainingModalContent = ({
     if (data) {
       // if job was successfully started
       setJobCreated(true);
+    } else {
+      setStartAutoMLJobCalled(false); // reset in case request failed
     }
   };
 
   const handleStartModelTraining = () => {
-    onStartModelTraining();
+    if (!startAutoMLJobCalled) {
+      onStartModelTraining();
+    }
   };
 
   const handleOnClose = () => {
     setJobCreated(false);
+    setStartAutoMLJobCalled(false);
     onCancel();
   };
 
@@ -130,6 +139,7 @@ export const ModelTrainingModalContent = ({
               data-testid="start-training-button"
               onClick={handleStartModelTraining}
               disabled={startModelTrainingDisabled}
+              loading={startAutoMLJobCalled}
             >
               Start training job
             </Button>
