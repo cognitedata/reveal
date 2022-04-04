@@ -46,7 +46,7 @@ export class GeometryBatchingManager {
     }
 
     for (const mesh of this._batchedGeometriesGroup.children) {
-      if (mesh instanceof THREE.Mesh || mesh instanceof THREE.InstancedMesh) {
+      if (mesh instanceof THREE.Mesh) {
         mesh.geometry.dispose();
 
         delete mesh.geometry;

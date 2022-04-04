@@ -180,8 +180,7 @@ export class CadModelUpdateHandler {
             array.push(model);
             return array;
           case 'remove':
-            array = array.filter(x => x.cadModelMetadata.modelIdentifier !== model.cadModelMetadata.modelIdentifier);
-            return array;
+            return array.filter(x => x.cadModelMetadata.modelIdentifier !== model.cadModelMetadata.modelIdentifier);
           default:
             assertNever(operation);
         }

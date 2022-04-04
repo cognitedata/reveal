@@ -180,7 +180,7 @@ export class CadNode extends THREE.Object3D {
 
   public dispose(): void {
     this._sectorRepository.clearCache();
-    this._materialManager.deleteModelData(this._cadModelMetadata.modelIdentifier);
+    this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier);
     this._geometryBatchingManager.dispose();
     this._rootSector.dereferenceAllNodes();
     this._rootSector.clear();

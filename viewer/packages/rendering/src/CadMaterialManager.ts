@@ -114,7 +114,7 @@ export class CadMaterialManager {
     this.updateClippingPlanesForModel(modelIdentifier);
   }
 
-  deleteModelData(modelIdentifier: string): void {
+  removeModelMaterials(modelIdentifier: string): void {
     const modelData = this.materialsMap.get(modelIdentifier);
     for (const mat of Object.values(modelData.materials)) {
       mat.dispose();

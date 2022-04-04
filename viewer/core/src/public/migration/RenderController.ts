@@ -24,7 +24,7 @@ export default class RenderController {
     this._lastCameraRotation = new THREE.Euler();
     this._lastCameraZoom = 0;
 
-    window.addEventListener('focus', this.redraw.bind(this));
+    window.addEventListener('focus', this.redraw);
   }
 
   public get needsRedraw(): boolean {
@@ -45,14 +45,14 @@ export default class RenderController {
   }
 
   dispose(): void {
-    window.removeEventListener('focus', this.redraw.bind(this));
+    window.removeEventListener('focus', this.redraw);
   }
 
   clearNeedsRedraw(): void {
     this._needsRedraw = false;
   }
 
-  redraw(): void {
+  redraw = (): void => {
     this._needsRedraw = true;
-  }
+  };
 }
