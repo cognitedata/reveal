@@ -331,8 +331,6 @@ export class Cognite3DViewer {
       cancelAnimationFrame(this.latestRequestId);
     }
 
-    this.stopPointerEventListeners();
-
     this.renderController.dispose();
     this._subscription.unsubscribe();
     this._cameraManager.dispose();
@@ -1206,20 +1204,14 @@ export class Cognite3DViewer {
   }
 
   private readonly startPointerEventListeners = () => {
-    this._mouseHandler.on('click', this.mouseHandlerClick);
+    this._mouseHandler.on('click', e => {
+      this._events.click.fire(e);
+    });
 
-    this._mouseHandler.on('hover', this.mouseHandlerHover);
+    this._mouseHandler.on('hover', e => {
+      this._events.hover.fire(e);
+    });
   };
-
-  /**
-   * Will remove all event listeners added in startPointerEventListeners.
-   */
-  /** @private */
-  private stopPointerEventListeners(): void {
-    this._mouseHandler.off('click', this.mouseHandlerClick);
-
-    this._mouseHandler.off('hover', this.mouseHandlerHover);
-  }
 }
 
 function adjustCamera(camera: THREE.PerspectiveCamera, width: number, height: number) {
