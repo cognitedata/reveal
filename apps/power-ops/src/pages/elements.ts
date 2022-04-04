@@ -4,7 +4,7 @@ import { TopBar } from '@cognite/cogs.js';
 
 export const BaseContainer = styled.div`
   text-align: center;
-  min-height: calc(100vh - 125px);
+  min-height: calc(100vh - 134px);
 `;
 
 export const Container = styled(BaseContainer)`

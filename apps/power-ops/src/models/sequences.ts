@@ -15,6 +15,10 @@ export interface TableData {
   [key: string]: any;
 }
 
+export interface TableRow {
+  [key: string]: string;
+}
+
 export interface Cols {
   Header: string | undefined;
   accessor: string | undefined;

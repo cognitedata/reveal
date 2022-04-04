@@ -6,7 +6,7 @@ import { Relationship } from '@cognite/sdk';
 import { Column } from 'react-table';
 import debounce from 'lodash/debounce';
 
-import { TableData } from '../../models/sequences';
+import { TableData, TableRow } from '../../models/sequences';
 
 import {
   Container,
@@ -28,7 +28,6 @@ const Portfolio = () => {
   const { client } = useAuthContext();
   const [sequenceCols, setSequenceCols] = useState<Column<TableData>[]>();
   const [sequenceData, setSequenceData] = useState<TableData[]>();
-  const [copyData, setCopyData] = useState<string[]>();
   const [matrixExternalId, setMatrixExternalId] = useState<string>();
 
   const currentdate = new Date();
@@ -83,7 +82,6 @@ const Portfolio = () => {
     GetBidMatrixData(client, matrixExternalId).then((response) => {
       setSequenceCols(response?.columns);
       setSequenceData(response?.data);
-      setCopyData(response?.copy);
     });
   }, [matrixExternalId]);
 
@@ -100,6 +98,28 @@ const Portfolio = () => {
   }, [query]);
 
   const copy = async () => {
+    // Put sequenceData in proper order
+    const copyData = sequenceData?.map((row) => {
+      // Remove id
+      const newrow: TableRow = { ...row };
+      delete newrow.id;
+
+      const orderedRow: TableRow = {};
+      sequenceCols?.forEach((col) => {
+        const comp = col.accessor?.toString();
+        if (comp && col.id && comp in newrow) {
+          orderedRow[col.id] = newrow[comp];
+        }
+      });
+
+      // Insert hour at start of row
+      orderedRow[0] = newrow.hour;
+
+      // Return row in copiable format
+      return Object.values(orderedRow).join('\t');
+    });
+
+    // Create header row in copiable format
     const cols = sequenceCols
       ?.map((column) => {
         return column.Header;
@@ -109,15 +129,23 @@ const Portfolio = () => {
     if (copyData && cols) {
       // Add header row
       copyData.unshift(cols);
+
       // Copy to clipboard
-      await navigator.clipboard
-        .writeText(copyData.join('\n'))
-        .catch((error) => {
-          throw new Error(error);
-        });
-      // Change tooltip state
-      setCopied(true);
-      setTooltipContent('Copied!');
+      try {
+        await navigator.clipboard
+          .writeText(copyData.join('\n'))
+          .catch((error) => {
+            throw new Error(error);
+          });
+
+        // Change tooltip state
+        setCopied(true);
+        setTooltipContent('Copied!');
+      } catch (error) {
+        // Change tooltip state
+        setCopied(true);
+        setTooltipContent('Unable to copy');
+      }
     } else {
       throw new Error('No data to copy');
     }
@@ -189,6 +217,7 @@ const Portfolio = () => {
                 content={tooltipContent}
               >
                 <Button
+                  aria-label="Copy Bidmatrix"
                   icon="Copy"
                   onClick={() => {
                     copy();

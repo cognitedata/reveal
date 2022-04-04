@@ -18,7 +18,6 @@ export const GetBidMatrixData = async (
     return {
       columns: [],
       data: [],
-      copy: [],
     };
   }
 
@@ -32,7 +31,7 @@ export const GetBidMatrixData = async (
         Header: `${formattedValue}`,
         accessor,
         disableSortBy: true,
-        id: index,
+        id: index + 1,
       } as Cols;
     }
   );
@@ -45,6 +44,7 @@ export const GetBidMatrixData = async (
       ),
       disableSortBy: true,
       sticky: 'left',
+      id: 0,
     },
     ...columnHeaders,
   ];
@@ -69,8 +69,6 @@ export const GetBidMatrixData = async (
 
   // Create array of table data
   const tableData: TableData[] = [];
-  // Create array of table data with indices to maintain order
-  const copyFormat: TableData[] = [];
   transposedColumns?.forEach((col) => {
     col?.values.forEach((value, index) => {
       if (!tableData[index]) {
@@ -78,32 +76,16 @@ export const GetBidMatrixData = async (
           id: index,
         };
       }
-      if (!copyFormat[index]) {
-        copyFormat[index] = {
-          id: index,
-        };
-      }
       const accessor = `${col?.accessor || 0}`;
-      const id = `${col?.id || 0}`;
       const formattedValue =
         typeof value === 'number' ? `${Math.round(value * 10) / 10}` : value;
       tableData[index][accessor] = formattedValue || 0;
-      // Key is index to maintain order
-      copyFormat[index][id] = formattedValue || 0;
     });
-  });
-  // Create array of strings in copiable format
-  const copyData: string[] = copyFormat.map((row) => {
-    let newrow: { [key: string]: any } = { ...row };
-    delete newrow.id;
-    newrow = Object.values(newrow);
-    return newrow.join('\t');
   });
 
   return {
     columns: columnHeaders as Column<TableData>[],
     data: tableData,
-    copy: copyData,
   };
 };
 
