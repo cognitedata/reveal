@@ -41,12 +41,13 @@ export function SimulatorStatus() {
 
   return (
     <SimulatorStatusContainer>
-      {simulators.map((simulator) => (
+      {simulators.map((simulator, index) => (
         <div
+          // eslint-disable-next-line react/no-array-index-key
           key={`
           ${simulator.connectorName ?? Math.random()}
           -${simulator.dataSetId ?? Math.random()}
-          -simulator-status`}
+          -simulator-status-${index}`}
         >
           <SimulatorTooltip
             content={

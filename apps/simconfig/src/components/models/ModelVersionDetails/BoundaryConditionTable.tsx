@@ -35,7 +35,7 @@ export function BoundaryConditionTable({
   return (
     <BoundaryConditionsTableContainer>
       {boundaryConditions.map(
-        ({ variableName, displayUnit, current, previous }) => (
+        ({ variableName, displayUnit, current, previous }, index) => (
           <div className="entry" key={variableName}>
             <div className="label">{variableName}</div>
             <CopyValue
@@ -54,13 +54,19 @@ export function BoundaryConditionTable({
                     {previous ? getFormattedSciNumber(previous) : 'n/a'}
                   </>
                 }
+                // eslint-disable-next-line react/no-array-index-key
+                key={index}
               >
                 <>
                   {previous && previous > current ? (
-                    <span className="lower">▾</span>
+                    <span className="lower" key={variableName}>
+                      ▾
+                    </span>
                   ) : null}
                   {previous && current > previous ? (
-                    <span className="higher">▴</span>
+                    <span className="higher" key={variableName}>
+                      ▴
+                    </span>
                   ) : null}
                 </>
               </Tooltip>

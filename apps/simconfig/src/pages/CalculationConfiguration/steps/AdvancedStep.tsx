@@ -30,6 +30,12 @@ import { Alert } from 'components/molecules/Alert';
 
 import type { StepProps } from '../types';
 
+import { BHPEstimationInfoDrawer } from './infoDrawers/BHPEstimationInfoDrawer';
+import { ChokeCurveInfoDrawer } from './infoDrawers/ChokeCurveInfoDrawer';
+import { GaugeDepthInfoDrawer } from './infoDrawers/GaugeDepthInfoDrawer';
+import { GradientTraverseGaugeDepthInfoDrawer } from './infoDrawers/GradientTraverseGaugeDepthInfoDrawer';
+import { RootFindingInfoDrawer } from './infoDrawers/RootFindingInfoDrawer';
+
 import type { AppLocationGenerics } from 'routes';
 
 export function AdvancedStep({ isEditing }: StepProps) {
@@ -110,6 +116,7 @@ export function AdvancedStep({ isEditing }: StepProps) {
           <FormHeader>
             Choke curve
             <Button onClick={resetChokeCurve}>Reset choke curve</Button>
+            <ChokeCurveInfoDrawer />
           </FormHeader>
           <ChokeCurveContainer>
             <ChokeCurveSidebar>
@@ -246,6 +253,7 @@ export function AdvancedStep({ isEditing }: StepProps) {
         <>
           <FormHeader>
             BHP estimation
+            <BHPEstimationInfoDrawer />
             <Field
               as={Switch}
               checked={values.estimateBHP.enabled}
@@ -278,7 +286,9 @@ export function AdvancedStep({ isEditing }: StepProps) {
               </FormRowStacked>
               {values.estimateBHP.method === 'GradientTraverse' ? (
                 <>
-                  <FormHeader>Gauge Depth</FormHeader>
+                  <FormHeader>
+                    Gauge Depth <GradientTraverseGaugeDepthInfoDrawer />{' '}
+                  </FormHeader>
                   <FormRowStacked>
                     <NumberField
                       disabled={isEditing}
@@ -309,7 +319,9 @@ export function AdvancedStep({ isEditing }: StepProps) {
             </>
           ) : null}
 
-          <FormHeader>Root finding</FormHeader>
+          <FormHeader>
+            Root finding <RootFindingInfoDrawer />{' '}
+          </FormHeader>
           <FormRowStacked>
             <div className="cogs-input-container">
               <div className="title">Main solution</div>
@@ -350,7 +362,9 @@ export function AdvancedStep({ isEditing }: StepProps) {
 
       {values.calculationType === 'BhpFromGradientTraverse' ? (
         <>
-          <FormHeader>Gauge Depth</FormHeader>
+          <FormHeader>
+            Gauge Depth <GaugeDepthInfoDrawer />{' '}
+          </FormHeader>
           <FormRowStacked>
             <NumberField
               disabled={isEditing}
