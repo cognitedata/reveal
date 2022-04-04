@@ -5,7 +5,7 @@ import {
   imagesHaveAnnotations,
 } from 'src/modules/Common/Components/ModelTrainingModal/datasetValidators';
 import { VisionFile } from 'src/modules/Common/store/files/types';
-import { AnnotationUtils, VisionAnnotation } from 'src/utils/AnnotationUtils';
+import { AnnotationUtils, VisionAnnotationV1 } from 'src/utils/AnnotationUtils';
 
 jest.mock('src/api/vision/autoML/constants', () => ({
   ...jest.requireActual('src/api/vision/autoML/constants'),
@@ -26,7 +26,7 @@ const getDummyAnnotation = (text: string, fileId?: number) => {
     ),
     show: true,
     selected: false,
-  } as VisionAnnotation;
+  } as VisionAnnotationV1;
 };
 
 describe('Test AutoML validator: fileTypesValid', () => {

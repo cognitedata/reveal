@@ -1,4 +1,7 @@
-import { AnnotationStatus, VisionAnnotation } from 'src/utils/AnnotationUtils';
+import {
+  AnnotationStatus,
+  VisionAnnotationV1,
+} from 'src/utils/AnnotationUtils';
 import { selectProcessSummary } from 'src/modules/Process/store/selectors';
 import { initialState as annotationReducerInitialState } from 'src/modules/Common/store/annotation/slice';
 import { initialState as fileReducerInitialState } from 'src/modules/Common/store/files/slice';
@@ -15,7 +18,7 @@ import { getDummyAnnotation } from 'src/__test-utils/annotations';
 const getRootState = (
   fileIds: number[],
   annotationsByFile: { [key: string]: number[] },
-  annotationsById: { [key: string]: VisionAnnotation }
+  annotationsById: { [key: string]: VisionAnnotationV1 }
 ) => {
   const annotationState: AnnotationState = {
     ...annotationReducerInitialState,

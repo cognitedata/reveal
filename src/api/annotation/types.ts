@@ -1,4 +1,10 @@
-import { ExternalId, IdEither, InternalId } from '@cognite/sdk';
+import {
+  CogniteExternalId,
+  CogniteInternalId,
+  ExternalId,
+  IdEither,
+  InternalId,
+} from '@cognite/sdk';
 import { AnnotationRegion } from 'src/api/vision/detectionModels/types';
 import { Keypoint } from 'src/modules/Review/types';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
@@ -8,6 +14,12 @@ export enum RegionShape {
   Points = 'points',
   Rectangle = 'rectangle',
   Polygon = 'polygon',
+}
+
+export enum Status {
+  Suggested = 'suggested',
+  Approved = 'approved',
+  Rejected = 'rejected',
 }
 
 // Primitives
@@ -44,6 +56,35 @@ export type ImageKeypoint = Label &
     point: Point;
   };
 
+export type Timestamp = number;
+
+export type AnnotatedResourceIdEither =
+  | AnnotatedResourceId
+  | AnnotatedResourceExternalId;
+
+export interface AnnotatedResourceId {
+  annotatedResourceId: CogniteInternalId;
+}
+export interface AnnotatedResourceExternalId {
+  annotatedResourceExternalId: CogniteExternalId;
+}
+
+export type LinkedResourceRef = Partial<
+  { linkedResourceType: 'file' | 'asset' } & (
+    | LinkedResourceId
+    | LinkedResourceExternalId
+  )
+>;
+
+export interface LinkedResourceId {
+  linkedResourceId: CogniteInternalId;
+}
+export interface LinkedResourceExternalId {
+  linkedResourceExternalId: CogniteExternalId;
+}
+
+// Data field Types
+
 // Image types
 export type ImageClassification = Label & Partial<Confidence>;
 
@@ -73,8 +114,41 @@ export type ImageKeypointCollection = Label &
     keypoints: ImageKeypoint[];
   };
 
+// Annotation API V2 types todo: remove this and import correct type from @cognite/sdk when v2 becomes available
+
+export type ImageObjectDetection =
+  | ImageObjectDetectionBoundingBox
+  | ImageObjectDetectionPolygon;
+
+export type CDFAnnotationDataType = ImageClassification | ImageObjectDetection;
+
+export type CDFImageObjectDetectionTypeName = 'images.ObjectDetection';
+export type CDFImageClassificationTypeName = 'images.Classification';
+
+export type CDFAnnotationStatus =
+  | `${Status.Suggested}`
+  | `${Status.Approved}`
+  | `${Status.Rejected}`;
+
+export type CDFAnnotationType<Type extends CDFAnnotationDataType> =
+  Type extends ImageObjectDetection
+    ? CDFImageObjectDetectionTypeName
+    : Type extends ImageClassification
+    ? CDFImageClassificationTypeName
+    : never;
+
+export type CDFAnnotationV2<Type extends CDFAnnotationDataType> =
+  AnnotatedResourceIdEither & {
+    createdTime: Timestamp;
+    lastUpdatedTime: Timestamp;
+    annotatedResourceType: 'file';
+    status: CDFAnnotationStatus;
+    annotationType: CDFAnnotationType<Type>;
+    data: Type;
+  } & LinkedResourceRef; // TODO: remove `LinkedResource` once removed from the api
+
 // Annotation API types
-export type AnnotationType =
+export type AnnotationTypeV1 =
   | 'vision/ocr'
   | 'vision/tagdetection'
   | 'vision/objectdetection'
@@ -98,7 +172,7 @@ interface BaseAnnotation {
   annotatedResourceId: number;
   annotatedResourceExternalId?: string;
   annotatedResourceType: 'file';
-  annotationType: AnnotationType;
+  annotationType: AnnotationTypeV1;
   source: AnnotationSource;
   status: AnnotationStatus;
   id: number;
@@ -112,7 +186,7 @@ export interface LinkedAnnotation extends BaseAnnotation {
   linkedResourceType?: 'asset' | 'file';
 }
 
-export type Annotation = LinkedAnnotation;
+export type CDFAnnotationV1 = LinkedAnnotation;
 
 export interface AnnotationListRequest {
   limit?: number;
@@ -130,7 +204,7 @@ export interface AnnotationListRequest {
 }
 
 export type UnsavedAnnotation = Omit<
-  Annotation,
+  CDFAnnotationV1,
   'id' | 'createdTime' | 'lastUpdatedTime' | 'status'
 > & {
   data?: { useCache?: boolean; threshold?: number };

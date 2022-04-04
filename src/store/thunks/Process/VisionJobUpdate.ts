@@ -13,7 +13,7 @@ import {
   AnnotationStatus,
   AnnotationUtils,
   ModelTypeAnnotationTypeMap,
-  VisionAnnotation,
+  VisionAnnotationV1,
 } from 'src/utils/AnnotationUtils';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { fileProcessUpdate } from 'src/store/commonActions';
@@ -22,7 +22,7 @@ import { ToastUtils } from 'src/utils/ToastUtils';
 import { convertVisionJobAnnotationToAnnotationTypeV1 } from 'src/api/vision/detectionModels/converters';
 
 export const VisionJobUpdate = createAsyncThunk<
-  VisionAnnotation[],
+  VisionAnnotationV1[],
   {
     job: VisionJob;
     fileIds: number[];
@@ -32,7 +32,7 @@ export const VisionJobUpdate = createAsyncThunk<
 >(
   'VisionJobUpdate',
   async ({ job, fileIds, modelType }, { dispatch, getState }) => {
-    let savedVisionAnnotation: VisionAnnotation[] = [];
+    let savedVisionAnnotation: VisionAnnotationV1[] = [];
 
     const jobState = getState().processSlice.jobs;
 

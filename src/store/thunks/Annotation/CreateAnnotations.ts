@@ -4,14 +4,14 @@ import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
 import {
   AnnotationStatus,
   AnnotationUtils,
-  VisionAnnotation,
+  VisionAnnotationV1,
 } from 'src/utils/AnnotationUtils';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { getUnsavedAnnotation } from 'src/api/annotation/utils';
 
 export const CreateAnnotations = createAsyncThunk<
-  VisionAnnotation[],
+  VisionAnnotationV1[],
   { fileId: number; annotation: UnsavedAnnotation },
   ThunkConfig
 >('CreateAnnotations', async (payload, { dispatch }) => {

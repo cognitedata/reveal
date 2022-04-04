@@ -1,8 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
-import { AnnotationUtils, VisionAnnotation } from 'src/utils/AnnotationUtils';
-import { Annotation } from 'src/api/annotation/types';
+import { AnnotationUtils, VisionAnnotationV1 } from 'src/utils/AnnotationUtils';
+import { CDFAnnotationV1 } from 'src/api/annotation/types';
 import { validateAnnotation } from 'src/api/annotation/utils';
 import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
 import { splitListIntoChunks } from 'src/utils/generalUtils';
@@ -10,7 +10,7 @@ import { from, lastValueFrom } from 'rxjs';
 import { map, mergeMap, reduce } from 'rxjs/operators';
 
 export const RetrieveAnnotations = createAsyncThunk<
-  VisionAnnotation[],
+  VisionAnnotationV1[],
   { fileIds: number[]; clearCache?: boolean },
   ThunkConfig
 >('RetrieveAnnotations', async (payload) => {
@@ -36,7 +36,7 @@ export const RetrieveAnnotations = createAsyncThunk<
       mergeMap((request) => from(request)),
       map((annotations) => {
         const filteredAnnotations = annotations.filter(
-          (annotation: Annotation) => {
+          (annotation: CDFAnnotationV1) => {
             try {
               return validateAnnotation(annotation);
             } catch (error) {
