@@ -44,7 +44,7 @@ export default class RenderController {
     }
   }
 
-  dispose = (): void => {
+  dispose (): void {
     window.removeEventListener('focus', this.redraw);
   };
 
@@ -52,7 +52,7 @@ export default class RenderController {
     this._needsRedraw = false;
   }
 
-  redraw = (): void => {
+  redraw (): void {
     this._needsRedraw = true;
   };
 }

@@ -99,9 +99,7 @@ export class DracoDecoderHelper {
       indexBufferView: decodedIndicesBufferView
     };
   }
-
-  public clearData(): void {}
-
+  
   private async decodeVertexBuffer(
     module: DecoderModule,
     decoder: Decoder,
