@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   core: {
@@ -13,11 +14,13 @@ module.exports = {
     '@storybook/addon-essentials',
     // this stops build on errors:
     // '@storybook/preset-create-react-app',
-    {
-      name: '@storybook/addon-docs',
-      options: { configureJSX: true },
-    },
-    '@storybook/addon-viewport/register',
+
+    // Causes an error with useNavigate in @storybook/router
+    // {
+    //   name: '@storybook/addon-docs',
+    //   options: { configureJSX: true },
+    // },
+    // '@storybook/addon-viewport/register',
   ],
   typescript: {
     check: false, // type-check stories during Storybook build
@@ -28,6 +31,15 @@ module.exports = {
       ...(config.resolve.modules || []),
       path.resolve(__dirname, '../src'),
     ];
+
+    // Upgrading to storybook 6.4.19 required this change
+    config.plugins = config.plugins.map((plugin) => {
+      if (plugin instanceof webpack.DefinePlugin) {
+        plugin.definitions['process.env'] = JSON.stringify('{}');
+      }
+
+      return plugin;
+    });
 
     return config;
   },

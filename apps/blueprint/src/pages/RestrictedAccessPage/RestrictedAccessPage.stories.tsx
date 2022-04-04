@@ -10,7 +10,7 @@ const meta: Meta<RestrictedAccessPageProps> = {
   title: 'Utils / Restricted Access Page',
   component: RestrictedAccessPage,
   argTypes: {
-    message: {
+    setup: {
       name: 'Message',
       defaultValue: 'Error message',
     },

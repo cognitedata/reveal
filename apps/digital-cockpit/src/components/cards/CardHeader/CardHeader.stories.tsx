@@ -47,11 +47,8 @@ const meta: Meta<CardHeaderProps> = {
 
     onClick: {
       name: 'On Click',
-      type: { name: 'action', required: false },
+      action: 'clicked',
       description: 'On click',
-      control: {
-        type: 'action',
-      },
     },
   },
 };

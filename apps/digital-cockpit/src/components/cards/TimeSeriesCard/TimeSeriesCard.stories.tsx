@@ -13,26 +13,26 @@ import TimeSeriesCard, { TimeSeriesCardProps } from './TimeSeriesCard';
 const meta: Meta<TimeSeriesCardProps> = {
   title: 'Cards / TimeSeries Card',
   component: TimeSeriesCard,
-  argTypes: {
-    timeSeries: {
-      name: 'Time Series',
-      defaultValue: {
-        id: 1,
-        name: 'LOR_KARLSTAD_WELL_05_Well_ASSOC_GAS_CAPACITY',
-        description: 'Some description',
-        unit: 'M3',
-        metadata: {
-          product_type: 'ASSOC_GAS',
-          ValueType: 'IPSC',
-          SourceFrequency: 'PerMonth',
-          SourceAggregationModel: 'DailyAverage',
-        },
-      } as unknown as Timeseries,
-      control: {
-        type: 'object',
-      },
-    },
-  },
+  // argTypes: {
+  //   timeSeries: {
+  //     name: 'Time Series',
+  //     defaultValue: {
+  //       id: 1,
+  //       name: 'LOR_KARLSTAD_WELL_05_Well_ASSOC_GAS_CAPACITY',
+  //       description: 'Some description',
+  //       unit: 'M3',
+  //       metadata: {
+  //         product_type: 'ASSOC_GAS',
+  //         ValueType: 'IPSC',
+  //         SourceFrequency: 'PerMonth',
+  //         SourceAggregationModel: 'DailyAverage',
+  //       },
+  //     } as unknown as Timeseries,
+  //     control: {
+  //       type: 'object',
+  //     },
+  //   },
+  // },
 };
 
 export default meta;

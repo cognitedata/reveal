@@ -16,7 +16,7 @@ const meta: Meta<DocumentTabProps> = {
       name: 'Asset ID',
       defaultValue: 1,
     },
-    groupedByField: {
+    groupByField: {
       name: 'Group by field',
       defaultValue: '',
     },

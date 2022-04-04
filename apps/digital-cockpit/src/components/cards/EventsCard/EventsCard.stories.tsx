@@ -18,19 +18,13 @@ const meta: Meta<EventsCardProps> = {
     },
     onEventClick: {
       name: 'On Event Click',
-      type: { name: 'action', required: false },
+      action: 'clicked',
       description: 'On event click',
-      control: {
-        type: 'action',
-      },
     },
     onHeaderClick: {
       name: 'On Header Click',
-      type: { name: 'action', required: false },
+      action: 'clicked',
       description: 'On header click',
-      control: {
-        type: 'action',
-      },
     },
   },
 };

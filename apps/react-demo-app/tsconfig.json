@@ -3,6 +3,7 @@
   "compilerOptions": {
     "isolatedModules": true,
     "baseUrl": "src",
+    "target": "es6",
     "module": "esnext",
     "noEmit": false,
     "types": ["vite/client", "jest", "@testing-library/jest-dom"]

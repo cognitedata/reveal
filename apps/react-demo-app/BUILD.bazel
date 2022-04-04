@@ -15,6 +15,7 @@ load("//rules/publish:publish_storybook.bzl", "publish_storybook")
 load("//rules/test:cypress_batch_test.bzl", "cypress_batch_test")
 load("//rules/build_sed:build_sed.bzl", "build_sed")
 load("//rules/container:container_build.bzl", "container_build")
+load("//rules/storybook:move_assets.bzl", "move_assets")
 
 # Filename conventions described at
 # https://create-react-app.dev/docs/running-tests#filename-conventions
@@ -164,6 +165,8 @@ copy_to_bin(
         ":package.json",
         ":tsconfig.json",
         ":index.html",
+        ":.env.production",
+        ":.env.development",
     ],
 )
 
@@ -193,7 +196,7 @@ _RUNTIME_DEPS = [
     "//:tsconfig",
 ]
 
-### react-scripts build ###
+### vite build ###
 
 vite(
     name = "build",
@@ -211,30 +214,28 @@ vite(
         "@npm//vite-plugin-babel-macros",
     ],
     env = {
-        # Specify your Sentry DSN is the URL used to report runtime issues
-        "REACT_APP_SENTRY_DSN": "https://da67b4b23d3e4baea6c36de155a08491@sentry.io/3541732",
-        # Specify your Mixpanel project token used in users analytics
-        "REACT_APP_MIXPANEL_TOKEN": "1cc1cdc82fb93ec9a20a690216de41e4",
-        # Specify your locize.io project ID used for localization
-        "REACT_APP_LOCIZE_PROJECT_ID": "1ee63b21-27c7-44ad-891f-4bd9af378b72",
-
-        ### DO NOT CHANGE: FAS placeholders
-        # In order to build only once we set placeholders into dynamic variables
-        # Which will be on FAS publish step in Jenkins replaced to actual values
-        # see https://cognitedata.atlassian.net/browse/FAS-159?focusedCommentId=124832
-        "PUBLIC_URL": "PUBLIC_URL_VALUE",
-        "REACT_APP_APP_ID": "REACT_APP_APP_ID_VALUE",
-        "REACT_APP_ENV": "REACT_APP_ENV_VALUE",
-        "REACT_APP_RELEASE_ID": "REACT_APP_RELEASE_ID_VALUE",
-        "REACT_APP_VERSION_NAME": "REACT_APP_VERSION_NAME_VALUE",
-        "REACT_APP_VERSION_SHA": "REACT_APP_VERSION_SHA_VALUE",
         "INLINE_RUNTIME_CHUNK": "false",
-        ### END
     },
     output_dir = True,
 )
 
-### react-scripts test CI ###
+### vite start ###
+
+vite(
+    name = "start",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "--https",
+    ],
+    data = _RUNTIME_DEPS + [
+        "chdir-workspace.js",
+    ],
+    env = {
+        "NODE_OPTIONS": "--max_old_space_size=4096",
+    },
+)
+
+### vite test CI ###
 
 copy_to_bin(
     name = "copy_test_files",
@@ -256,7 +257,7 @@ jest_test(
     deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + ["@npm//babel-preset-react-app"],
 )
 
-### react-scripts test Dev ###
+### vite test Dev ###
 jest(
     name = "jest",
     args = [
@@ -279,33 +280,6 @@ jest(
     ],
 )
 
-### vite start ###
-
-vite(
-    name = "start",
-    args = [
-        "--node_options=--require=./$(rootpath chdir-workspace.js)",
-    ],
-    data = _RUNTIME_DEPS + [
-        "chdir-workspace.js",
-    ],
-    env = {
-        "DISABLE_ESLINT_PLUGIN": "true",
-        "HTTPS": "true",
-        "REACT_APP_I18N_DEBUG": "true",
-        "REACT_APP_I18N_PSEUDO": "false",
-        "REACT_APP_LANGUAGE": "en",
-        # Specify your locize.io api key used for localization
-        "REACT_APP_LOCIZE_API_KEY": "7a10ae6b-49f3-4600-944d-009140ca6fc9",
-        # Specify your locize.io project ID used for localization
-        "REACT_APP_LOCIZE_PROJECT_ID": "1ee63b21-27c7-44ad-891f-4bd9af378b72",
-        "REACT_APP_LOCIZE_VERSION": "latest",
-        "REACT_APP_MIXPANEL_DEBUG": "false",
-        # Specify your Mixpanel project token used in users analytics
-        "REACT_APP_MIXPANEL_TOKEN": "1cc1cdc82fb93ec9a20a690216de41e4",
-        "NODE_OPTIONS": "--max_old_space_size=4096",
-    },
-)
 ### E2E Tests ###
 
 sh_binary(
@@ -405,31 +379,40 @@ build_storybook(
         "@npm//assert",
         "copy_storybook_files",
         "@npm//tsconfig-paths-webpack-plugin",
-        "@npm//@storybook/manager-webpack5",
-        "@npm//@storybook/builder-webpack5",
         "@npm//@storybook/addon-essentials",
         "@npm//@storybook/addon-links",
         "@npm//@storybook/preset-create-react-app",
         "@npm//@storybook/react",
-        "@npm//@types/jest",
+        "@npm//storybook-builder-vite",
+        "@npm//vite-plugin-babel-macros",
+        "@npm//rollup-plugin-node-builtins",
+        "@npm//path-browserify",
+        "@npm//vite-tsconfig-paths",
+        "@npm//@rollup/plugin-inject",
     ],
     output_dir = True,
+)
+
+move_assets(
+    name = "storybook-static-final",
+    out_dir = "storybook-static-final",
+    src_dir = ":storybook-static",
+    tmp_dir = "tmp",
 )
 
 start_storybook(
     name = "start-storybook",
     args = [
         "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "-c",
+        ".storybook-dev",
         "-p",
         "6006",
     ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
+    data = [
         "chdir-workspace.js",
-        "copy_storybook_files",
-        "@npm//@types",
-        "@npm//@storybook/addon-essentials",
-        "@npm//@storybook/addon-links",
-        "@npm//@storybook/preset-create-react-app",
+        # Bazel needs to give access @tippyjs in cogs.js
+        "@npm//@cognite/cogs.js",
     ],
     tags = [
         # This tag instructs ibazel to pipe into stdin a event describing actions.
@@ -441,7 +424,7 @@ start_storybook(
 
 publish_storybook(
     name = "publish_storybook",
-    build = ":storybook-static",
+    build = ":storybook-static-final",
     # Storybook sub domain to be used
     sub_domain = "react-demo-app",
 )

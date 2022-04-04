@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   core: {
@@ -20,6 +21,15 @@ module.exports = {
       ...(config.resolve.modules || []),
       path.resolve(__dirname, '../src'),
     ];
+
+    // Upgrading to storybook 6.4.19 required this change
+    config.plugins = config.plugins.map((plugin) => {
+      if (plugin instanceof webpack.DefinePlugin) {
+        plugin.definitions['process.env'] = JSON.stringify('{}');
+      }
+
+      return plugin;
+    });
 
     return config;
   },

@@ -1,20 +1,7 @@
 const tsconfigPaths = require('vite-tsconfig-paths');
-const inject = require('@rollup/plugin-inject');
+const NodeGlobalsPolyfillPlugin = require('@esbuild-plugins/node-globals-polyfill');
 const macrosPlugin = require('vite-plugin-babel-macros');
-const { glob } = require('glob');
-const path = require('path');
 const { loadEnv } = require('vite');
-
-const pathToNodeModules = path.normalize(
-  `${process.cwd()}/../../../../../node_modules`
-);
-const coreJsFiles = glob
-  .sync(`${pathToNodeModules}/core-js/modules/*.js`)
-  .map((it) => {
-    // Add 1 for trailing '/'
-    const t = it.substring(pathToNodeModules.length + 1);
-    return t;
-  });
 
 module.exports = {
   framework: '@storybook/react',
@@ -33,14 +20,10 @@ module.exports = {
         root: `${process.cwd()}/../..`,
         projects: ['tsconfig.json', 'apps/react-demo-app/tsconfig.json'],
       }),
+      // polyfillNode(),
       macrosPlugin.default(),
+      // viteCommonjs(),
     ];
-    const plugins = config.plugins.filter((_, i) => i !== 1);
-    config.plugins = plugins;
-    config.optimizeDeps = {
-      ...config.optimizeDeps,
-      include: coreJsFiles,
-    };
 
     const NODE_ENV = configType.toLowerCase();
     const env = {
@@ -52,17 +35,26 @@ module.exports = {
     config.define = {
       'process.env': env,
     };
-    config.build = {
-      // sourcemap: true,
-      outDir: 'storybook-static/tmp',
-      commonjsOptions: {
-        include: [],
+    config.resolve = {
+      ...config.resolve,
+      dedupe: ['@storybook/client-api'],
+      alias: {
+        ...config.alias,
+        crypto: require.resolve('rollup-plugin-node-builtins'),
+        path: require.resolve('path-browserify'),
       },
-      rollupOptions: {
+    };
+    config.optimizeDeps = {
+      ...config.optimizeDeps,
+      esbuildOptions: {
+        // Node.js global to browser globalThis
+        define: {
+          global: 'globalThis',
+        },
+        // Enable esbuild polyfill plugins
         plugins: [
-          inject({
-            Buffer: ['buffer', 'Buffer'],
-            process: 'process',
+          NodeGlobalsPolyfillPlugin.default({
+            buffer: true,
           }),
         ],
       },

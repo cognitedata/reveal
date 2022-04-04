@@ -18,19 +18,13 @@ const meta: Meta<DocumentsCardProps> = {
     },
     onFileClick: {
       name: 'On File Click',
-      type: { name: 'action', required: false },
+      action: 'clicked',
       description: 'On file click',
-      control: {
-        type: 'action',
-      },
     },
     onHeaderClick: {
       name: 'On Header Click',
-      type: { name: 'action', required: false },
+      action: 'clicked',
       description: 'On header click',
-      control: {
-        type: 'action',
-      },
     },
   },
 };
