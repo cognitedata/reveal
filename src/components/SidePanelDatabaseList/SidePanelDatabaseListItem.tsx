@@ -73,15 +73,15 @@ const SidePanelDatabaseListItem = ({
 }: SidePanelDatabaseListItemProps): JSX.Element => {
   const { setSelectedSidePanelDatabase } = useContext(RawExplorerContext);
 
-  const { data, isLoading, hasNextPage, fetchNextPage } = useTables({
+  const { data, isFetching, hasNextPage, fetchNextPage } = useTables({
     database: name,
   });
 
   useEffect(() => {
-    if (!isLoading && hasNextPage) {
+    if (!isFetching && hasNextPage) {
       fetchNextPage();
     }
-  }, [isLoading, fetchNextPage, hasNextPage]);
+  }, [isFetching, fetchNextPage, hasNextPage]);
 
   const tables = useMemo(
     () =>

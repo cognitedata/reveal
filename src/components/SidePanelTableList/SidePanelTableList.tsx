@@ -32,7 +32,7 @@ const SidePanelTableList = (): JSX.Element => {
   const [query, setQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  const { data, isLoading, hasNextPage, fetchNextPage } = useTables(
+  const { data, isFetching, isLoading, hasNextPage, fetchNextPage } = useTables(
     { database: selectedSidePanelDatabase },
     { enabled: !!selectedSidePanelDatabase }
   );
@@ -42,10 +42,10 @@ const SidePanelTableList = (): JSX.Element => {
   const [[activeDatabase, activeTable] = []] = useActiveTable();
 
   useEffect(() => {
-    if (!isLoading && hasNextPage) {
+    if (!isFetching && hasNextPage) {
       fetchNextPage();
     }
-  }, [isLoading, fetchNextPage, hasNextPage]);
+  }, [isFetching, fetchNextPage, hasNextPage]);
 
   useEffect(() => {
     setQuery('');

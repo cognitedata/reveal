@@ -27,17 +27,17 @@ const SidePanelDatabaseList = (): JSX.Element => {
   const [query, setQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  const { data, fetchNextPage, isLoading, hasNextPage } = useDatabases();
+  const { data, fetchNextPage, isFetching, hasNextPage } = useDatabases();
 
   const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
 
   const [[activeDatabase, activeTable] = []] = useActiveTable();
 
   useEffect(() => {
-    if (hasNextPage && !isLoading) {
+    if (hasNextPage && !isFetching) {
       fetchNextPage();
     }
-  }, [hasNextPage, fetchNextPage, isLoading]);
+  }, [hasNextPage, fetchNextPage, isFetching]);
 
   const databases = useMemo(
     () =>
