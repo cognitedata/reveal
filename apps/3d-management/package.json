@@ -9,9 +9,10 @@
     "build:preview": "yarn build && yarn generate-preview-artifacts",
     "test": "rescripts test",
     "lint": "concurrently \"yarn prettier\" \"yarn eslint\"",
+    "lint:fix": "concurrently \"yarn prettier -w\" \"yarn eslint --fix\"",
     "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
     "eslint:changed": "eslint --config .eslintrc.production.js",
-    "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
+    "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}'",
     "analyze": "source-map-explorer 'build/static/js/*.js' --gzip",
     "storybook": "start-storybook -p 6006"
   },
