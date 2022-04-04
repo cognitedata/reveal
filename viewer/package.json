@@ -50,7 +50,7 @@
     "@types/three": "0.138.0",
     "assert": "2.0.0",
     "comlink": "4.3.1",
-    "geo-three": "0.0.16",
+    "geo-three": "0.0.17",
     "glslify": "7.1.1",
     "glslify-import": "3.1.0",
     "lodash": "4.17.21",
