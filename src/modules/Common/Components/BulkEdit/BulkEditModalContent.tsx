@@ -162,8 +162,8 @@ export const BulkEditModalContent = ({
           setErrors({
             ...errors,
             [BulkEditOptions.assets]: {
-              message: e.errors[0].message,
-              description: '',
+              message: 'Retrieve asset failed',
+              description: e.errors[0].message,
             },
           });
         }
