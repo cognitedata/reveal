@@ -1153,14 +1153,6 @@ export class Cognite3DViewer {
     });
   }
 
-  mouseHandlerClick = (e: any): void => {
-    this._events.click.fire(e);
-  };
-
-  mouseHandlerHover = (e: any): void => {
-    this._events.hover.fire(e);
-  };
-
   /** @private */
   private resizeIfNecessary(): boolean {
     if (this.isDisposed) {
