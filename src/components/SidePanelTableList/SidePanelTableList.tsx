@@ -119,14 +119,12 @@ const SidePanelTableList = (): JSX.Element => {
           </Button>
         </Tooltip>
       )}
-      {isCreateModalOpen && (
-        <CreateTableModal
-          databaseName={selectedSidePanelDatabase}
-          onCancel={() => setIsCreateModalOpen(false)}
-          tables={tables}
-          visible={isCreateModalOpen}
-        />
-      )}
+      <CreateTableModal
+        databaseName={selectedSidePanelDatabase}
+        onCancel={() => setIsCreateModalOpen(false)}
+        tables={tables}
+        visible={isCreateModalOpen}
+      />
     </SidePanelLevelWrapper>
   );
 };
