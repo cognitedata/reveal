@@ -36,6 +36,7 @@ import { useModels } from 'hooks/models/useModels';
 import { Revision3D } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { useFlag } from '@cognite/react-feature-flags';
 
 export const PUBLISH_STATUS_HINT = `
   Publishing a Revision makes this version of
@@ -104,6 +105,8 @@ export default function RevisionDetails(props: Props) {
 
   const revisionId: number = Number(props.match.params.revisionId);
   const modelId: number = Number(props.match.params.modelId);
+
+  const alwaysShowReprocessingButton = useFlag('3DM_show_reprocessing');
 
   const [showLogs, setShowLogs] = useState(false);
   const [deletionModalVisible, setDeletionModalVisible] = useState(false);
@@ -220,7 +223,8 @@ export default function RevisionDetails(props: Props) {
       revisionLogs.find((log) => log.type === 'reveal-optimizer/Success')
     );
 
-  const isReprocessingButtonVisible = reprocessingRequired && canBeViewed;
+  const isReprocessingButtonVisible =
+    (reprocessingRequired && canBeViewed) || alwaysShowReprocessingButton;
 
   return (
     <PageWithFixedWidth width={900}>
