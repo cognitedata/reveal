@@ -160,6 +160,7 @@ export const WellResultTable: React.FC = () => {
           hideIcon
         />
         <Dropdown
+          openOnHover
           content={
             <Menu>
               <Menu.Submenu

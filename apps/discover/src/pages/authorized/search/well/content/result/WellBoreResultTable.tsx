@@ -92,6 +92,7 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
               hideIcon
             />
             <Dropdown
+              openOnHover
               content={
                 <Menu>
                   <Menu.Submenu

@@ -199,7 +199,7 @@ describe('Documents', () => {
       .first()
       .invoke('attr', 'style', 'opacity: 1')
       .findByTestId('menu-button')
-      .click({ force: true });
+      .trigger('mouseenter', { force: true });
 
     cy.findByText('Open parent folder').click({ force: true });
 

@@ -152,7 +152,7 @@ class ResultTable {
     await this.hoverRowWithText(text);
 
     progress(`Hover three dots of row with text ${text}`);
-    await t.click(
+    await t.hover(
       this.getRowWithText(text).find('[data-testid="menu-button"]')
     );
 
@@ -236,7 +236,7 @@ class ResultTable {
     await this.hoverRow(row);
 
     progress(`Hover more options`, true);
-    await t.click(row.find('[data-testid="menu-button"]'));
+    await t.hover(row.find('[data-testid="menu-button"]'));
   };
 
   selectOptionFromMoreOptionsDropdown = async (option: string) => {
@@ -302,7 +302,7 @@ class ResultTable {
 
   hoverThreeDotsIcon = async (text: string) => {
     progress(`Click three dots on line with text ${text}`);
-    await t.click(
+    await t.hover(
       this.getRowWithText(text).find('[data-testid="menu-button"]')
     );
   };
