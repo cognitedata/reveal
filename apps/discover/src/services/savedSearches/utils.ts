@@ -1,7 +1,7 @@
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
+import { handleServiceError } from 'utils/errors';
 import { FetchHeaders } from 'utils/fetch';
-import { handleServiceError } from 'utils/service/handleServiceError';
 
 import { Geometry, GeoJson } from '@cognite/seismic-sdk-js';
 

@@ -9,9 +9,9 @@ import {
   CancellablePromise,
   convertToCancellablePromise,
 } from 'utils/cancellablePromise';
+import { handleServiceError } from 'utils/errors';
 import { fetchTenantFile } from 'utils/fetchTenantFile';
 import { log } from 'utils/log';
-import { handleServiceError } from 'utils/service/handleServiceError';
 
 import { ProjectConfigMapLayers } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';

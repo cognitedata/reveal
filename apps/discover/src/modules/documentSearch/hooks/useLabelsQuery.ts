@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 
-import { handleServiceError } from 'utils/service/handleServiceError';
+import { handleServiceError } from 'utils/errors';
 
 import { DOCUMENTS_QUERY_KEY } from 'constants/react-query';
 

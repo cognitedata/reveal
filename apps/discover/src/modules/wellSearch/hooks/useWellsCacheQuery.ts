@@ -4,8 +4,7 @@ import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
 import concat from 'lodash/concat';
 import difference from 'lodash/difference';
 import isEmpty from 'lodash/isEmpty';
-import { handleServiceError } from 'utils/service/handleServiceError';
-import { ServiceError } from 'utils/service/types';
+import { handleServiceError, PossibleError } from 'utils/errors';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useDeepMemo } from 'hooks/useDeep';
@@ -68,7 +67,7 @@ export const useWellsCacheQuery = (
       } catch (error) {
         // console.log('Error loading wells:', error);
         return handleServiceError<Well[]>(
-          error as ServiceError,
+          error as PossibleError,
           [],
           ERROR_LOADING_WELLS_ERROR
         );

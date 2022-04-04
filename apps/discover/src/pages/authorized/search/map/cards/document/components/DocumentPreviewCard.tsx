@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { openDocumentPreviewInNewTab } from 'services/documentPreview/utils';
+import { handleServiceError } from 'utils/errors';
 import { getPathsFromDoc } from 'utils/getPathsFromDocument';
-import { handleServiceError } from 'utils/service/handleServiceError';
 
 import { useTranslation } from '@cognite/react-i18n';
 

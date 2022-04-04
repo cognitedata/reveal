@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from 'react-query';
 
 import { useJsonHeaders } from 'services/service';
+import { handleServiceError } from 'utils/errors';
 import { log } from 'utils/log';
-import { handleServiceError } from 'utils/service/handleServiceError';
 
 import {
   SavedSearchAddShareSchemaBody,

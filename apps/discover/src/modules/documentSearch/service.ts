@@ -1,6 +1,6 @@
+import { handleServiceError } from 'utils/errors';
 import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 import { mergeUniqueArray } from 'utils/merge';
-import { handleServiceError } from 'utils/service/handleServiceError';
 
 import {
   Document,

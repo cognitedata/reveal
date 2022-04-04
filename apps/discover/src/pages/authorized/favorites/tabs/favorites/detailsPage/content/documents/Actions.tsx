@@ -6,7 +6,7 @@ import {
   downloadFileFromUrl,
   openDocumentPreviewInNewTab,
 } from 'services/documentPreview/utils';
-import { handleServiceError } from 'utils/service/handleServiceError';
+import { handleServiceError } from 'utils/errors';
 
 import { Menu, Dropdown } from '@cognite/cogs.js';
 

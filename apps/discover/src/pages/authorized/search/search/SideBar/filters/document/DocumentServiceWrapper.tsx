@@ -6,8 +6,7 @@ import {
 } from 'services/documents/types';
 import { useDocumentCategoryQuery } from 'services/documents/useDocumentQuery';
 import styled from 'styled-components/macro';
-import { handleServiceError } from 'utils/service/handleServiceError';
-import { ServiceError } from 'utils/service/types';
+import { handleServiceError, PossibleError } from 'utils/errors';
 
 import { DocumentCategories } from '@cognite/discover-api-types';
 
@@ -39,7 +38,7 @@ const Documents: React.FC<
   }
 
   if (!data || error || 'error' in data) {
-    handleServiceError(error as ServiceError);
+    handleServiceError(error as PossibleError);
     return <Wrapper>{SOMETHING_WENT_WRONG}</Wrapper>;
   }
 

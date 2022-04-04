@@ -1,3 +1,4 @@
+import isEmpty from 'lodash/isEmpty';
 import { doReAuth } from 'utils/getCogniteSDKClient';
 
 import { reportException } from '@cognite/react-errors';
@@ -5,34 +6,31 @@ import { reportException } from '@cognite/react-errors';
 import { showErrorMessage } from 'components/toast';
 import { SERVICE_ERROR_MESSAGE } from 'constants/error';
 
-import { ServiceError } from './types';
+import { getSafeError } from './getSafeError';
+import { PossibleError } from './types';
 
 export const handleServiceError = <ErrorResponseType>(
-  error: ServiceError,
+  error: PossibleError,
   errorResponse: ErrorResponseType = {} as ErrorResponseType,
-  errorMessage: string = SERVICE_ERROR_MESSAGE
+  errorMessage?: string
 ) => {
+  const safeError = getSafeError(error);
+  const { message, status, errors } = safeError;
+
   // Handle 401 error
-  if ('status' in error && error.status === 401) {
+  if (status === 401) {
     doReAuth();
-    showErrorMessage(errorMessage);
+    showErrorMessage(errorMessage || message || SERVICE_ERROR_MESSAGE);
     return errorResponse;
   }
 
   // Handle 400 error
-  if (
-    'status' in error &&
-    error.extra &&
-    error.status === 400 &&
-    error.extra.validationError
-  ) {
-    const validations = error.extra.validationError;
-
-    Object.keys(validations).forEach((key) => {
-      showErrorMessage(validations[key]);
+  if (!isEmpty(errors)) {
+    errors.forEach((error) => {
+      showErrorMessage(error.message);
     });
   } else {
-    showErrorMessage(errorMessage);
+    showErrorMessage(errorMessage || message || SERVICE_ERROR_MESSAGE);
   }
 
   // Report exception to Sentry

@@ -9,8 +9,8 @@ import isEmpty from 'lodash/isEmpty';
 import { adaptSaveSearchContentToSchemaBody } from 'services/savedSearches/adaptSavedSearch';
 import { SavedSearchContent } from 'services/savedSearches/types';
 import { discoverAPI, useJsonHeaders } from 'services/service';
+import { handleServiceError } from 'utils/errors';
 import { mergeUniqueArray } from 'utils/merge';
-import { handleServiceError } from 'utils/service/handleServiceError';
 
 import { getTenantInfo } from '@cognite/react-container';
 import { DocumentsFilter } from '@cognite/sdk-playground';

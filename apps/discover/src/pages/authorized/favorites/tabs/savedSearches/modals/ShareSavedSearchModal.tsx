@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useSavedSearchRemoveShareMutate } from 'services/savedSearches/useSavedSearchesMutate';
 import { useQuerySavedSearcheGetOne } from 'services/savedSearches/useSavedSearchQuery';
-import { handleServiceError } from 'utils/service/handleServiceError';
+import { handleServiceError } from 'utils/errors';
 
 import { BasicShareModal } from 'components/basic-share-modal';
 import { SharedUsersList } from 'components/basic-share-modal/SharedUsersList';
