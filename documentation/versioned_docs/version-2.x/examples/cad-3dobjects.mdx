@@ -4,7 +4,7 @@ title: Add custom 3D objects
 description: Extend the scene with custom ThreeJS objects.
 ---
 
-import { DemoWrapper } from '@site/versioned_docs/version-2.x/components/DemoWrapper';
+import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 Sometimes it's useful to add custom content to the 3D scene to model data Reveal doesn't
@@ -38,7 +38,7 @@ need lights this needs to be added to the viewer scene.
 
 The following example reacts to clicks in the scene and adds markers to the positions clicked.
 
-```jsx runnable-2x
+```jsx runnable
 const markerGeometry = new THREE.SphereBufferGeometry(1, 10, 10);
 const markerMaterial = new THREE.MeshBasicMaterial({
   color: 'blue',
@@ -99,29 +99,31 @@ Note that since the ocean has moving waves we want to render the model continuou
 when camera changes or data is loaded. We do this by repeatedly calling `Cognite3DViewer.requestRedraw()`.
 
 ```js
-import { Water } from 'three/examples/jsm/objects/Water';
-
 // Water
-const waterGeometry = new THREE.PlaneBufferGeometry(6000, 6000);
-const water = new Water(waterGeometry, {
-  textureWidth: 512,
-  textureHeight: 512,
-  waterNormals: new THREE.TextureLoader().load(
-    'https://threejs.org/examples/textures/waternormals.jpg',
-    (texture) => {
-      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-    }
-  ),
-  waterColor: 0x442e1f,
-});
-// Make the ocean horizontal
-water.rotation.x = -Math.PI / 2;
-water.position.copy(modelCenterAtSeaLevel);
+const geometry = new THREE.PlaneGeometry(20000, 20000, 127, 127);
+geometry.rotateX( - Math.PI / 2 );
+
+const position = geometry.attributes.position;
+position.usage = THREE.DynamicDrawUsage;
+
+for ( let i = 0; i < position.count; i ++ ) {
+  const y = 35 * Math.sin( i / 2 );
+  position.setY( i, y );
+}
+
+const texture = new THREE.TextureLoader().load('https://threejs.org/examples/textures/water.jpg');
+texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+texture.repeat.set( 5, 5 );
+const material = new THREE.MeshBasicMaterial( { color: 0xd4f1f9, map: texture } );
+const water = new THREE.Mesh( geometry, material );
+
 viewer.addObject3D(water);
 
 function updateOcean() {
-  const time = performance.now() * 0.001;
-  water.material.uniforms['time'].value = time;
+for ( let i = 0; i < position.count; i ++ ) {
+  const y = Math.random() * Math.sin( i / 2 ) * 100;
+  position.setY( i, y );
+}
   viewer.requestRedraw();
   requestAnimationFrame(updateOcean);
 }
@@ -149,9 +151,8 @@ viewer.on('cameraChange', (position, target) => {
 
 Below is the complete code for adding a skybox and ocean to the scene.
 
-```jsx runnable-2x
+```jsx runnable
 // The following has been imported outside this scope:
-// import { Water } from 'three/examples/jsm/objects/Water';
 // const skyUrl = 'https://...'
 const modelCenterAtSeaLevel = model
   .getModelBoundingBox()
@@ -171,27 +172,30 @@ skyBox.position.copy(modelCenterAtSeaLevel);
 viewer.addObject3D(skyBox);
 
 // Water
-var waterGeometry = new THREE.PlaneBufferGeometry(6000, 6000);
-water = new Water(waterGeometry, {
-  textureWidth: 512,
-  textureHeight: 512,
-  waterNormals: new THREE.TextureLoader().load(
-    'https://threejs.org/examples/textures/waternormals.jpg',
-    (texture) => {
-      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-    }
-  ),
-  waterColor: 0x442e1f,
-});
+const geometry = new THREE.PlaneGeometry(20000, 20000, 127, 127);
+geometry.rotateX( - Math.PI / 2 );
 
-// Make the ocean horizontal
-water.rotation.x = -Math.PI / 2;
-water.position.copy(modelCenterAtSeaLevel);
+const position = geometry.attributes.position;
+position.usage = THREE.DynamicDrawUsage;
+
+for ( let i = 0; i < position.count; i ++ ) {
+  const y = 35 * Math.sin( i / 2 );
+  position.setY( i, y );
+}
+
+const texture = new THREE.TextureLoader().load('https://threejs.org/examples/textures/water.jpg');
+texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+texture.repeat.set( 5, 5 );
+const material = new THREE.MeshBasicMaterial( { color: 0xd4f1f9, map: texture } );
+const water = new THREE.Mesh( geometry, material );
+
 viewer.addObject3D(water);
 
 function updateOcean() {
-  const time = performance.now() * 0.001;
-  water.material.uniforms['time'].value = time;
+for ( let i = 0; i < position.count; i ++ ) {
+  const y = Math.random() * Math.sin( i / 2 ) * 100;
+  position.setY( i, y );
+}
   viewer.requestRedraw();
   requestAnimationFrame(updateOcean);
 }
