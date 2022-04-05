@@ -8,13 +8,10 @@ import { ByScreenSizeSectorCuller } from './ByScreenSizeSectorCuller';
 
 import { CadModelMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
 
-import {
-  createCadModelMetadata,
-  createDetermineSectorInput,
-  createV8SectorMetadata,
-  createV9SectorMetadata
-} from '../../../../../test-utilities';
+import { createCadModelMetadata, createV8SectorMetadata, createV9SectorMetadata } from '../../../../../test-utilities';
 import { CadModelBudget } from '../../CadModelBudget';
+
+import { createDetermineSectorInput } from './createDetermineSectorInput';
 
 describe(ByScreenSizeSectorCuller.name, () => {
   let camera: THREE.PerspectiveCamera;
