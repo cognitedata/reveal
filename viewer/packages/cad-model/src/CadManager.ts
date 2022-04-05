@@ -116,6 +116,7 @@ export class CadManager {
 
   dispose(): void {
     this._cadModelUpdateHandler.dispose();
+    this._materialManager.dispose();
     this._cadModelFactory.dispose();
     this._subscription.unsubscribe();
     this._materialManager.off('materialsChanged', this._materialsChangedListener);
@@ -169,8 +170,8 @@ export class CadManager {
       throw new Error(`Could not remove model ${model.cadModelIdentifier} because it's not added`);
     }
     model.removeEventListener('update', this._markNeedsRedrawBound);
-    model.clearCache();
     this._cadModelUpdateHandler.removeModel(model);
+    model.dispose();
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
