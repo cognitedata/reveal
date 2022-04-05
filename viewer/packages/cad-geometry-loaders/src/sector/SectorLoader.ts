@@ -114,10 +114,10 @@ export class SectorLoader {
   }
 
   private shouldLoad(input: DetermineSectorsPayload) {
-    return (
-      (this._continuousModelStreaming && !isLegacyModelFormat(input.models[0].cadModelMetadata)) ||
-      !input.cameraInMotion
-    );
+    if (isLegacyModelFormat(input.models[0].cadModelMetadata)) {
+      return !input.cameraInMotion;
+    }
+    return this._continuousModelStreaming || !input.cameraInMotion;
   }
 
   private getSectorCuller(sectorCullerInput: DetermineSectorsInput): SectorCuller {
