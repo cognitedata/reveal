@@ -53,9 +53,7 @@ export function InputStep({ isEditing }: StepProps) {
             <FormHeader>{name}</FormHeader>
             <FormRowStacked>
               <TimeSeriesField
-                aggregateTypeDisabled={isEditing}
                 aggregateTypeField={`inputTimeSeries.${index}.aggregateType`}
-                externalIdDisabled={isEditing}
                 externalIdField={`inputTimeSeries.${index}.sensorExternalId`}
               />
 
