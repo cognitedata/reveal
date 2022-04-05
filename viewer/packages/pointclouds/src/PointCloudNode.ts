@@ -113,6 +113,7 @@ export class PointCloudNode extends THREE.Group {
     const key = createPointClassKey(pointClass);
     this._potreeNode.classification[key].w = visible ? 1.0 : 0.0;
     this._potreeNode.recomputeClassification();
+    this.requestRedraw();
   }
 
   /**
