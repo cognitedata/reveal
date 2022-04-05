@@ -14,21 +14,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-browser@npm:2.22.1":
-  version: 2.22.1
-  resolution: "@azure/msal-browser@npm:2.22.1"
+"@azure/msal-browser@npm:2.23.0":
+  version: 2.23.0
+  resolution: "@azure/msal-browser@npm:2.23.0"
   dependencies:
-    "@azure/msal-common": ^6.1.0
-  checksum: 8e329c14723390a7462e186b27c3ba8f10250d3f39aa4c627604df3519342b7a3dcf8db1bd415ccb11e992051269f5009d0fe72d9d00a9ac01959663509df170
+    "@azure/msal-common": ^6.2.0
+  checksum: a26779b94de27b63a99fbb302f02ad21ae1c700595150dda2895bbef77a144ae66ca7b427a736fafa832abcc76de13ab695caecdb9aaf1589775976b25e1d392
   languageName: node
   linkType: hard
 
-"@azure/msal-common@npm:^6.1.0":
-  version: 6.1.0
-  resolution: "@azure/msal-common@npm:6.1.0"
-  dependencies:
-    debug: ^4.1.1
-  checksum: 5fd6617fb9ceaf8f93719c5596a7f0bfc3b4dd427bf11d9f18759b101f7a0bef46bce371ad38a5726185e8520f5ac793e4fd283e84948467ac8695a15205d429
+"@azure/msal-common@npm:^6.2.0":
+  version: 6.2.0
+  resolution: "@azure/msal-common@npm:6.2.0"
+  checksum: e734722a0c30a1992fd12ce1d14f0e006ed0bba3c173df97fac97e817caf9eb43740ab21350cb0d6c81502cdf5501913f26cbd9533148b896fb844df1f2c5568
   languageName: node
   linkType: hard
 
@@ -707,7 +705,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal@workspace:."
   dependencies:
-    "@azure/msal-browser": 2.22.1
+    "@azure/msal-browser": 2.23.0
     "@cognite/potree-core": 1.5.2
     "@cognite/reveal-parser-worker": 1.3.0
     "@cognite/sdk": 7.1.1
