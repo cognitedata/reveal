@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { UploadChangeParam, UploadProps } from 'antd/lib/upload';
-import { notification, Upload } from 'antd';
+import { notification, Popconfirm, Upload } from 'antd';
 import List from 'antd/lib/list';
 import Spin from 'antd/lib/spin';
 import { Button, Icon } from '@cognite/cogs.js';
@@ -12,10 +12,10 @@ import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { ErrorMessageBox } from 'components/ErrorMessage/ErrorMessage';
 import { FileInfo } from 'utils/types';
-import { nameToAclTypeMap } from 'utils/shared';
+import { getContainer, nameToAclTypeMap } from 'utils/shared';
 
 interface UploadFileProps {
-  setFileList(value: FileInfo[]): void;
+  setFileList: Dispatch<SetStateAction<FileInfo[]>>;
   fileList: FileInfo[];
   setChangesSaved(value: boolean): void;
 }
@@ -178,6 +178,15 @@ const UploadFiles = ({
     },
   };
 
+  const removeFileFromDataSet =
+    (file: FileInfo): (() => void) =>
+    () => {
+      setChangesSaved(false);
+      setFileList((prevFileList) =>
+        prevFileList.filter((testFile) => testFile.id !== file.id)
+      );
+    };
+
   return (
     <div>
       {uploadError && (
@@ -221,6 +230,14 @@ const UploadFiles = ({
             >
               {file.name}
             </Button>
+            <Popconfirm
+              getPopupContainer={getContainer}
+              onConfirm={removeFileFromDataSet(file)}
+              placement="topLeft"
+              title={`Are you sure you want to remove ${file.name} from this data set?`}
+            >
+              <Button icon="Delete" type="ghost" />
+            </Popconfirm>
           </List.Item>
         ))}
       </List>
