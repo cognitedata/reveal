@@ -3,7 +3,7 @@ import {
   TAB_NAMES,
 } from '../../../src/pages/authorized/search/well/inspect/constants';
 
-Cypress.Commands.add('goToWellsTab', (tab: WellInspectTabs) => {
+Cypress.Commands.add('goToWellsInspectTab', (tab: WellInspectTabs) => {
   cy.log(`Go to wells ${tab} tab`);
 
   if (tab === TAB_NAMES.THREE_DEE) {
@@ -58,9 +58,29 @@ Cypress.Commands.add('selectFirstWellInResults', () => {
     .click();
 });
 
+Cypress.Commands.add(
+  'checkWellsBulkSelectionCount',
+  (wellCount: number, wellboresCount?: number) => {
+    cy.log('Check bulk actions selection count');
+    cy.findByText(`${wellCount} ${wellCount > 1 ? 'wells' : 'well'} selected`);
+
+    if (wellboresCount) {
+      cy.findByText(
+        `With ${wellboresCount} ${
+          wellboresCount > 1 ? 'wellbores' : 'wellbore'
+        } inside`
+      );
+    }
+  }
+);
+
 export interface WellsCommands {
-  goToWellsTab(tab: any): void;
+  goToWellsInspectTab(tab: any): void;
   openInspectView(selectedWells?: number): void;
   clearWellsSelection(): void;
   selectFirstWellInResults(): void;
+  checkWellsBulkSelectionCount(
+    wellCount: number,
+    wellboresCount?: number
+  ): void;
 }

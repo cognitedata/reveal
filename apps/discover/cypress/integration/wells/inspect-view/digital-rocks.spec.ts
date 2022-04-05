@@ -1,3 +1,8 @@
+import {
+  DATA_AVAILABILITY,
+  DATA_SOURCE,
+  MEASUREMENTS,
+} from '../../../../src/modules/wellSearch/constantsSidebarFilters';
 import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/constants';
 
 describe('Wells: DigitalRocks', () => {
@@ -13,10 +18,11 @@ describe('Wells: DigitalRocks', () => {
       search: {
         filters: [
           {
-            category: 'Source',
+            category: DATA_SOURCE,
+            subCategory: DATA_SOURCE,
             value: {
               name: 'carina',
-              type: 'checkbox',
+              type: 'select',
             },
           },
         ],
@@ -32,7 +38,7 @@ describe('Wells: DigitalRocks', () => {
       .click();
 
     cy.openInspectView();
-    cy.goToWellsTab(TAB_NAMES.DIGITAL_ROCKS);
+    cy.goToWellsInspectTab(TAB_NAMES.DIGITAL_ROCKS);
 
     cy.log('Inspect digital rocks results');
     cy.findByTestId('digital-rocks-result-table')

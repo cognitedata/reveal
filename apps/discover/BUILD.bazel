@@ -2,15 +2,12 @@ load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
 load("@npm//@storybook/react:index.bzl", "build_storybook", "start_storybook")
 load("@npm//react-scripts:index.bzl", "react_scripts")
-load("@npm//testcafe:index.bzl", "testcafe")
 load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
 load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
 load("//rules/publish:publish_storybook.bzl", "publish_storybook")
 load("//rules/test:react_scripts_test.bzl", "react_scripts_test")
 load("//rules/build_sed:build_sed.bzl", "build_sed")
 load("//rules/publish:publish_fas.bzl", "publish_fas")
-load("//rules/test:testcafe_user.bzl", "REACT_APP_E2E_USER")
-load("//rules/test:testcafe_batch_test.bzl", "testcafe_batch_test")
 load("@npm//@bazel/typescript:index.bzl", "ts_project")
 load("@npm//@bazel/cypress:index.bzl", "cypress_web_test")
 load("@npm//cypress:index.bzl", "cypress")
@@ -31,10 +28,6 @@ _TESTS = [
     "src/__test-utils/**/*",
 ]
 
-_TESTS_TESTCAFE = [
-    "testcafe/**/*.ts",
-]
-
 _STORYBOOK = [
     ".storybook/*",
     "src/**/__stories__/*",
@@ -51,22 +44,12 @@ _SOURCES = [
     "src/**/*.css",
 ]
 
-TESTS_TESTCAFE = glob(
-    _TESTS_TESTCAFE,
-    exclude = ["testcafe/**/*.testcafe.ts"],
-)
-
 STORYBOOK = glob(_STORYBOOK + _TESTS)
 
 SOURCES = glob(
     _SOURCES,
     exclude = _TESTS + _STORYBOOK,
 )
-
-SCRIPTS = glob([
-    "scripts/*",
-    "scripts/**/*",
-])
 
 PUBLIC = glob([
     "public/*",
@@ -196,7 +179,6 @@ DEV_DEPENDENCIES = [
     "@npm//@testing-library/jest-dom",
     "@npm//@testing-library/react-hooks",
     "@npm//@testing-library/react",
-    "@npm//@testing-library/testcafe",
     "@npm//@testing-library/user-event",
     "@npm//babel-eslint",
     "@npm//@babel/runtime",
@@ -353,9 +335,6 @@ sh_binary(
     srcs = ["//rules/build_sed:sed_darwin.sh"],
 )
 
-# Replace PUBLIC_URL_VALUE placeholder with '' in order to run testcafe
-# If you need additional env vars being set during testcafe run add them into
-# :build target above and override here
 build_sed(
     name = "build_sed",
     app = "Discover",
@@ -446,119 +425,6 @@ react_scripts(
         # So use this to prevent EOF.
         "ibazel_notify_changes",
     ],
-)
-
-### Testcafe ###
-
-copy_to_bin(
-    name = "copy_main_testcafe_files",
-    srcs = TESTS_TESTCAFE + [
-        ".testcaferc.json",
-        "tsconfig.testcafe.json",
-    ],
-)
-
-testcafe_batch_test(
-    name = "testcafe_test",
-    timeout = "eternal",
-    # folder name to store artifacts during CI run
-    app_name = "discover",
-    args = [
-        "'chrome --headless --disable-software-rasterizer --use-gl=swiftshader --window-size=\"1500,1040\"'",
-        "testcafe",
-        "--stop-on-first-fail",
-        "–q",
-        "--config-file .testcaferc.json",
-    ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + SCRIPTS + [
-        ":build_sed",
-        "copy_main_testcafe_files",
-    ],
-    serve_script = "./scripts/testcafe/testcafe-bazel-serve.sh",
-    starting_port = 11211,
-    tags = [
-        "ignore_test_in_cd",
-    ],
-    testcafe_files = [
-        glob([
-            "testcafe/tests/admin/*.testcafe.ts",
-            "testcafe/tests/documents/*.testcafe.ts",
-            "testcafe/tests/map/*.testcafe.ts",
-        ]),
-        # glob([
-        #     "testcafe/tests/favorites/*.testcafe.ts",
-        # ]),
-        glob([
-            "testcafe/tests/seismic/*.testcafe.ts",
-            "testcafe/tests/sidebar/*.testcafe.ts",
-        ]),
-        glob([
-            "testcafe/tests/topbar/*.testcafe.ts",
-        ]),
-        glob([
-            "testcafe/tests/well/*.testcafe.ts",
-        ]),
-    ],
-)
-
-copy_to_bin(
-    name = "copy_testcafe_files",
-    srcs = glob(["testcafe/**/*.testcafe.ts"]),
-)
-
-genrule(
-    name = "random-id",
-    outs = ["src/uniqueUserId.ts"],
-    cmd = "echo 'export const USER_ID = \'$$RANDOM\';' > $@",
-)
-
-# for local (mac):
-# to use this, manually change the cluster and page fixtures inline here:
-testcafe(
-    name = "testcafe",
-    args = [
-        "--node_options=--require=./$(rootpath chdir-workspace.js)",
-        "'chrome --no-sandbox --use-gl=swiftshader --window-size=\"1500,1040\"'",
-        "testcafe",
-        "--stop-on-first-fail",
-        # "--fixture-meta page=search:documents",
-    ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + SCRIPTS + [
-        ":start",
-        "chdir-workspace.js",
-        ":copy_main_testcafe_files",
-        ":copy_testcafe_files",
-    ],
-    env = {
-        "REACT_APP_CLUSTER": "bluefield",
-        "REACT_APP_E2E_USER": REACT_APP_E2E_USER,
-        "BASE_URL": "https://localhost:3000",
-    },
-)
-
-# for local (linux):
-# to use this, manually change the cluster and page fixtures inline here:
-testcafe(
-    name = "testcafe_linux",
-    args = [
-        "--node_options=--require=./$(rootpath chdir-workspace.js)",
-        "chromium --use-gl=swiftshader --disable-software-rasterizer --window-size=1920,1040",
-        "testcafe",
-        "--stop-on-first-fail",
-        "--fixture-meta page=well:search",
-    ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + SCRIPTS + [
-        ":start",
-        "chdir-workspace.js",
-        ":copy_main_testcafe_files",
-        ":copy_testcafe_files",
-    ],
-    env = {
-        "REACT_APP_CLUSTER": "bluefield",
-        # "REACT_APP_CLUSTER": "azure-dev",
-        "REACT_APP_E2E_USER": REACT_APP_E2E_USER,
-        "BASE_URL": "https://127.0.0.1:3000",
-    },
 )
 
 ### Storybook ###

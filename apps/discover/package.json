@@ -8,8 +8,6 @@
     "analyze": "yarn analyse",
     "build:bazel": "bazel build :build_sed",
     "clean": "rm -Rf build",
-    "testcafe": "ibazel run :testcafe --",
-    "testcafe:linux": "ibazel run :testcafe_linux --",
     "eslint": "bazel test :eslint_test",
     "eslint:fix": "bazel run :eslint_test -- --fix",
     "lint": "bazel test :eslint_test :prettier_test",

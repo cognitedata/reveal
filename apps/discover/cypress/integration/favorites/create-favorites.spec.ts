@@ -13,12 +13,6 @@ describe('Creating Favorites', () => {
     cy.findByRole('button', { name: 'Create' }).click();
   };
 
-  const goToFavoritesPage = () => {
-    cy.log('go to Favorites page');
-    cy.findByTestId('top-bar').findByRole('tab', { name: 'Favorites' }).click();
-    cy.url().should('include', '/favorites');
-  };
-
   const checkFavoriteIsCreated = (name) => {
     cy.log('Check if favorite is created');
     cy.findByText('Favorite set created').should('be.visible');
@@ -56,7 +50,7 @@ describe('Creating Favorites', () => {
 
   describe('Favorites Page', () => {
     it('has the option to create favorites from  here', () => {
-      goToFavoritesPage();
+      cy.goToFavoritesPage();
       cy.log('Create a new Favorite Set by pressing the "Create set" button');
       cy.findByLabelText('Plus').should('be.visible').click();
       cy.findByText('Create new set').should('be.visible');
@@ -91,7 +85,7 @@ describe('Creating Favorites', () => {
 
       const favoriteName = `Favorite from DocumentResult hover, ${Date.now()}`;
       createFavorite(favoriteName);
-      goToFavoritesPage();
+      cy.goToFavoritesPage();
       checkFavoriteIsCreated(favoriteName);
       checkFavoriteContainsDocument(favoriteName);
     });
@@ -115,7 +109,7 @@ describe('Creating Favorites', () => {
       clickCreateNewSetButton();
 
       createFavorite(favoriteName);
-      goToFavoritesPage();
+      cy.goToFavoritesPage();
       checkFavoriteIsCreated(favoriteName);
       checkFavoriteContainsDocument(favoriteName);
     });
@@ -145,7 +139,7 @@ describe('Creating Favorites', () => {
 
       const favoriteName = `Favorite from WellResult hover well, ${Date.now()}`;
       createFavorite(favoriteName);
-      goToFavoritesPage();
+      cy.goToFavoritesPage();
       checkFavoriteIsCreated(favoriteName);
       checkFavoriteContainsWell(favoriteName);
     });
@@ -175,7 +169,7 @@ describe('Creating Favorites', () => {
 
       const favoriteName = `Favorite from WellResult hover wellbore, ${Date.now()}`;
       createFavorite(favoriteName);
-      goToFavoritesPage();
+      cy.goToFavoritesPage();
       checkFavoriteIsCreated(favoriteName);
       checkFavoriteContainsWell(favoriteName);
     });
@@ -199,7 +193,7 @@ describe('Creating Favorites', () => {
 
       const favoriteName = `Favorite from WellResult bulk actions, ${Date.now()}`;
       createFavorite(favoriteName);
-      goToFavoritesPage();
+      cy.goToFavoritesPage();
       checkFavoriteIsCreated(favoriteName);
       checkFavoriteContainsWell(favoriteName);
     });

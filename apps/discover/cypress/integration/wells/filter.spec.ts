@@ -21,6 +21,7 @@ import {
   NDS_PROBABILITY,
   NPT_DURATION,
   NDS_SEVERITY,
+  WELL_TYPE,
 } from '../../../src/modules/wellSearch/constantsSidebarFilters';
 import { ISODateRegex } from '../../../src/utils/isISODateRegex';
 import { SOURCE_FILTER } from '../../support/selectors/wells.selectors';
@@ -28,7 +29,7 @@ import { SOURCE_FILTER } from '../../support/selectors/wells.selectors';
 const SELECT_TEXT = 'Select...';
 const DATA_AVAILABILITY_SELECT = 'Trajectories';
 const MEASUREMENT_SELECT = 'salinity';
-const NPT_CODE_SELECT = 'TESTC';
+const NPT_CODE_SELECT = 'CEMT';
 const NPT_DETAILS_CODE_SELECT = 'BARR';
 const SEARCH_QUERY = 'Discover';
 
@@ -36,8 +37,48 @@ const checkRequestContainsFilter = (expectedFilter: unknown) => {
   cy.wait('@searchWells')
     .its('request.body.filter')
     .should((body) => {
-      console.log('wow body', body, 'expectedFilter', expectedFilter);
       return assert.deepNestedInclude(body, expectedFilter);
+    });
+};
+
+const checkTVDFilter = () => {
+  cy.wait('@searchWells')
+    .its('request.body.filter')
+    .should((body) => {
+      assert.nestedProperty(body, 'trajectories.maxTrueVerticalDepth');
+      assert.nestedProperty(body, 'trajectories.maxTrueVerticalDepth.min');
+      assert.nestedProperty(body, 'trajectories.maxTrueVerticalDepth.max');
+      assert.nestedProperty(body, 'trajectories.maxTrueVerticalDepth.unit');
+    });
+};
+
+const checkDogledFilter = () => {
+  cy.wait('@searchWells')
+    .its('request.body.filter')
+    .should((body) => {
+      assert.nestedProperty(body, 'trajectories.maxDoglegSeverity');
+      assert.nestedProperty(body, 'trajectories.maxDoglegSeverity.min');
+      assert.nestedProperty(body, 'trajectories.maxDoglegSeverity.max');
+      assert.nestedProperty(body, 'trajectories.maxDoglegSeverity.unit');
+      assert.isAbove(body.trajectories.maxDoglegSeverity.min, 0);
+      assert.isAbove(
+        body.trajectories.maxDoglegSeverity.max,
+        body.trajectories.maxDoglegSeverity.min
+      );
+    });
+};
+
+const checkMaxInclination = () => {
+  cy.wait('@searchWells')
+    .its('request.body.filter')
+    .should((body) => {
+      const expected = {
+        min: 100,
+        max: 180,
+        unit: 'degree',
+      };
+
+      assert.deepEqual(body.trajectories.maxInclination, expected);
     });
 };
 
@@ -49,15 +90,8 @@ const checkSpudDateFilter = () => {
       expect(body.spudDate).haveOwnProperty('max');
       expect(body.spudDate.min).match(ISODateRegex);
       expect(body.spudDate.max).match(ISODateRegex);
-      expect(new Date(body.spudDate.min).getFullYear()).eq(2021);
-      expect(new Date(body.spudDate.max).getFullYear()).eq(2021);
-
-      expect(new Date(body.spudDate.min).getMonth()).eq(6);
-      expect(new Date(body.spudDate.max).getMonth()).eq(6);
-
-      expect(new Date(body.spudDate.min).getDate()).eq(1);
-      // In CI it expects 10, locally it expects 11. Gotta investigate this
-      expect(new Date(body.spudDate.max).getDate()).eq(10);
+      expect(Date.parse(body.spudDate.min)).equal(1625097600000);
+      expect(Date.parse(body.spudDate.max)).equal(1625961599999);
     });
 };
 
@@ -67,21 +101,18 @@ describe('Wells sidebar filters', () => {
     cy.login();
     cy.acceptCookies();
 
-    cy.log('Perform empty search');
-    cy.performSearch('');
-
-    cy.goToTab('Wells');
-
     cy.intercept({
       url: '**/wdl/wells/search',
       method: 'POST',
     }).as('searchWells');
+    cy.selectCategory('Wells');
   });
 
   it(`Should display wells sidebar filters: ${REGION_FIELD_BLOCK}`, () => {
     cy.clickOnFilterCategory(DATA_SOURCE);
 
     cy.log('Checking source values');
+    cy.validateSelect(DATA_SOURCE, [SOURCE_FILTER], SOURCE_FILTER);
     cy.contains(SOURCE_FILTER).should('be.visible').click();
     checkRequestContainsFilter({ sources: [SOURCE_FILTER] });
 
@@ -101,10 +132,12 @@ describe('Wells sidebar filters', () => {
     // these are temp changed, so disabling till the new design is in place:
     // cy.validateSelect(FIELD, ['Carme', 'Erinome'], 'Erinome');
     // cy.validateSelect(BLOCK, ['', ''], '');
+    cy.clickOnFilterCategory(REGION_FIELD_BLOCK);
     cy.log('Open OPERATOR');
     cy.clickOnFilterCategory(OPERATOR);
 
     cy.validateSelect(OPERATOR, ['Pretty Polly ASA']);
+    cy.clickOnFilterCategory(OPERATOR);
 
     // cleanup:
     cy.log('Remove source selected filter');
@@ -141,14 +174,14 @@ describe('Wells sidebar filters', () => {
     cy.log(`Expand ${WELL_CHARACTERISTICS} filter`);
     cy.clickOnFilterCategory(WELL_CHARACTERISTICS);
 
-    // cy.validateSelect(WELL_TYPE, ['shallow'], 'shallow');
+    cy.validateSelect(WELL_TYPE, ['Shallow'], 'Shallow');
 
-    // checkRequestContainsFilter({
-    //   wellType: {
-    //     isSet: true,
-    //     oneOf: ['shallow'],
-    //   },
-    // });
+    checkRequestContainsFilter({
+      wellType: {
+        isSet: true,
+        oneOf: ['Shallow'],
+      },
+    });
 
     cy.log(`Checking visibility of ${WELL_CHARACTERISTICS} filters`);
     cy.findAllByTestId('filter-item-wrapper')
@@ -167,24 +200,17 @@ describe('Wells sidebar filters', () => {
       .type('{rightarrow}{rightarrow}');
 
     const maxMeasuredDepth = {
-      min: 3554,
-      max: 17491,
+      min: 6237,
+      max: 26251,
     };
     const datum = {
-      min: 84,
-      max: 246,
+      min: 11,
+      max: 332,
     };
-    const maxTrueVerticalDepth = {
-      min: 3323,
-      max: 12994,
-    };
-    const maxDoglegSeverity = {
-      min: 1,
-      max: 22,
-    };
+
     const maxWaterDepth = {
       min: 1,
-      max: 9813,
+      max: 9846,
     };
 
     checkRequestContainsFilter({
@@ -207,7 +233,7 @@ describe('Wells sidebar filters', () => {
     checkRequestContainsFilter({
       datum: {
         min: datum.min,
-        max: 241,
+        max: 327,
         unit: 'foot',
       },
     });
@@ -226,7 +252,11 @@ describe('Wells sidebar filters', () => {
       .first()
       .as('firstSlider');
 
-    cy.get('@firstSlider').click().type('{rightarrow}');
+    cy.get('@firstSlider')
+      .scrollIntoView()
+      .should('be.visible')
+      .click()
+      .type('{rightarrow}');
 
     checkRequestContainsFilter({
       trajectories: {
@@ -251,20 +281,8 @@ describe('Wells sidebar filters', () => {
       .last()
       .click()
       .type('{leftArrow}{leftArrow}');
-    checkRequestContainsFilter({
-      trajectories: {
-        maxMeasuredDepth: {
-          min: maxMeasuredDepth.min,
-          max: maxMeasuredDepth.max,
-          unit: 'foot',
-        },
-        maxTrueVerticalDepth: {
-          min: maxTrueVerticalDepth.min,
-          max: maxTrueVerticalDepth.max,
-          unit: 'foot',
-        },
-      },
-    });
+
+    checkTVDFilter();
 
     cy.findAllByTestId('filter-item-wrapper')
       .contains(DOGLEG_SEVERITY)
@@ -280,59 +298,7 @@ describe('Wells sidebar filters', () => {
       .click()
       .type('{rightarrow}');
 
-    checkRequestContainsFilter({
-      trajectories: {
-        maxMeasuredDepth: {
-          min: maxMeasuredDepth.min,
-          max: maxMeasuredDepth.max,
-          unit: 'foot',
-        },
-        maxTrueVerticalDepth: {
-          min: maxTrueVerticalDepth.min,
-          max: maxTrueVerticalDepth.max,
-          unit: 'foot',
-        },
-        maxDoglegSeverity: {
-          min: maxDoglegSeverity.min,
-          max: maxDoglegSeverity.max,
-          unit: {
-            angleUnit: 'degree',
-            distanceUnit: 'foot',
-            distanceInterval: 30,
-          },
-        },
-      },
-    });
-
-    cy.findAllByTestId('filter-item-wrapper')
-      .contains(DOGLEG_SEVERITY)
-      .siblings()
-      .last()
-      .findByTestId('To-DoglegSeverityDegree30ft')
-      .type('{selectAll}10{enter}');
-    checkRequestContainsFilter({
-      trajectories: {
-        maxMeasuredDepth: {
-          min: maxMeasuredDepth.min,
-          max: maxMeasuredDepth.max,
-          unit: 'foot',
-        },
-        maxTrueVerticalDepth: {
-          min: maxTrueVerticalDepth.min,
-          max: maxTrueVerticalDepth.max,
-          unit: 'foot',
-        },
-        maxDoglegSeverity: {
-          min: maxDoglegSeverity.min,
-          max: 10,
-          unit: {
-            angleUnit: 'degree',
-            distanceUnit: 'foot',
-            distanceInterval: 30,
-          },
-        },
-      },
-    });
+    checkDogledFilter();
 
     cy.findAllByTestId('filter-item-wrapper')
       .contains(WATER_DEPTH)
@@ -378,34 +344,7 @@ describe('Wells sidebar filters', () => {
       .findByTestId('From-MaximumInclinationAngleo')
       .type('100{enter}');
 
-    checkRequestContainsFilter({
-      trajectories: {
-        maxMeasuredDepth: {
-          min: maxMeasuredDepth.min,
-          max: maxMeasuredDepth.max,
-          unit: 'foot',
-        },
-        maxTrueVerticalDepth: {
-          min: maxTrueVerticalDepth.min,
-          max: maxTrueVerticalDepth.max,
-          unit: 'foot',
-        },
-        maxDoglegSeverity: {
-          min: maxDoglegSeverity.min,
-          max: 10,
-          unit: {
-            angleUnit: 'degree',
-            distanceUnit: 'foot',
-            distanceInterval: 30,
-          },
-        },
-        maxInclination: {
-          min: 100,
-          max: 180,
-          unit: 'degree',
-        },
-      },
-    });
+    checkMaxInclination();
 
     cy.clickOnFilterCategory(WELL_CHARACTERISTICS);
   });
@@ -413,15 +352,7 @@ describe('Wells sidebar filters', () => {
   it(`should display wells sidebar filter: ${NDS_RISKS}`, () => {
     cy.clickOnFilterCategory(NDS_RISKS);
 
-    cy.log(`Check visibility and expand ${NDS_RISKS_TYPE}`);
-    cy.findAllByTestId('filter-item-wrapper')
-      .as('ndsFilters')
-      .first()
-      .as('nds-risk')
-      .contains(NDS_RISKS_TYPE)
-      .should('be.visible');
-    cy.get('@nds-risk').contains(SELECT_TEXT).click();
-    cy.findByText('Hydraulics').click();
+    cy.validateSelect(NDS_RISKS_TYPE, ['Hydraulics'], 'Hydraulics');
     checkRequestContainsFilter({
       nds: {
         exists: true,
@@ -431,8 +362,11 @@ describe('Wells sidebar filters', () => {
       },
     });
 
-    cy.get('@ndsFilters').eq(1).contains(NDS_SEVERITY);
-    cy.get('@ndsFilters')
+    cy.findAllByTestId('filter-item-wrapper')
+      .eq(1)
+      .scrollIntoView()
+      .contains(NDS_SEVERITY);
+    cy.findAllByTestId('filter-item-wrapper')
       .eq(1)
       .findAllByTestId('filter-checkbox-label')
       .eq(2)
@@ -451,8 +385,11 @@ describe('Wells sidebar filters', () => {
       },
     });
 
-    cy.get('@ndsFilters').eq(2).contains(NDS_PROBABILITY);
-    cy.get('@ndsFilters')
+    cy.findAllByTestId('filter-item-wrapper')
+      .eq(2)
+      .scrollIntoView()
+      .contains(NDS_PROBABILITY);
+    cy.findAllByTestId('filter-item-wrapper')
       .eq(2)
       .findAllByTestId('filter-checkbox-label')
       .last()
@@ -482,6 +419,7 @@ describe('Wells sidebar filters', () => {
 
     cy.get('@nptFilters')
       .first()
+      .scrollIntoView()
       .as('nptDurationFilter')
       .contains(NPT_DURATION);
 
@@ -549,7 +487,7 @@ describe('Wells sidebar filters', () => {
     cy.clickOnFilterCategory(NPT_EVENTS);
 
     cy.log('Clear all selected filters');
-    cy.findByTestId('clear-all-btn').click();
+    cy.findByTestId('clear-all-filter-button').click();
 
     cy.log('search result on search');
     cy.performSearch(SEARCH_QUERY);

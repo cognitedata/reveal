@@ -1,6 +1,0 @@
-{
-  "include": ["testcafe"],
-  "compilerOptions": {
-    "esModuleInterop": true
-  }
-}

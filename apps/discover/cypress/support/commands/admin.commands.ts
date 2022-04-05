@@ -1,5 +1,5 @@
 import { INSUFFICIENT_ACCESS_RIGHTS_MESSAGE } from '../../../src/core/constants';
-import { PROJECT } from '../constants';
+import { PROJECT } from '../../app.constants';
 
 function checkUserCannotAccessPage(path: string): void {
   cy.intercept({

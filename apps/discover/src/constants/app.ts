@@ -30,7 +30,7 @@ if (localComments) {
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore ignore because of testcafe
+// @ts-ignore ignore because of e2e
 const sidecarOverrides = global.window ? global.window.__cogniteSidecar : {}; // eslint-disable-line no-underscore-dangle
 
 const getAadApplicationId = (cluster: string) => {

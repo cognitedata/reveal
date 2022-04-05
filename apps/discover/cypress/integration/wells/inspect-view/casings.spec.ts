@@ -1,3 +1,4 @@
+import { DATA_SOURCE } from '../../../../src/modules/wellSearch/constantsSidebarFilters';
 import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/constants';
 
 describe('Wells: Casings', () => {
@@ -5,22 +6,20 @@ describe('Wells: Casings', () => {
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
-
-    cy.log('Perform empty search');
-    cy.performSearch('');
-
-    cy.goToTab('Wells');
+    cy.selectCategory('Wells');
   });
 
-  it('allows us to inspect bad casings for wellbores', () => {
+  it('allows us to inspect bad and good casings for wellbores', () => {
+    // inspect bad casings
     cy.performWellsSearch({
       search: {
         filters: [
           {
-            category: 'Source',
+            category: DATA_SOURCE,
+            subCategory: DATA_SOURCE,
             value: {
               name: 'rigel',
-              type: 'checkbox',
+              type: 'select',
             },
           },
         ],
@@ -28,30 +27,17 @@ describe('Wells: Casings', () => {
     });
 
     cy.selectFirstWellInResults();
-
     cy.openInspectView();
-    cy.goToWellsTab(TAB_NAMES.CASINGS);
+    cy.goToWellsInspectTab(TAB_NAMES.CASINGS);
 
     cy.log('Inspect casings results');
     cy.get('[data-testid="depth-indicator"]').should('exist');
-  });
 
-  it('allows us to inspect good casings for wellbores', () => {
-    cy.performWellsSearch({
-      search: {
-        filters: [
-          {
-            category: 'Source',
-            value: {
-              name: 'pyxis',
-              type: 'checkbox',
-            },
-          },
-        ],
-      },
-    });
+    cy.findByTestId('cognite-logo').click();
 
-    cy.log('Inspect first well in table');
+    // inspect good casings
+    cy.validateSelect(DATA_SOURCE, ['pyxis'], 'pyxis');
+    cy.goToTab('Wells');
 
     cy.findByTestId('well-result-table')
       .findAllByTestId('table-row')
@@ -61,7 +47,7 @@ describe('Wells: Casings', () => {
       .click();
 
     cy.openInspectView();
-    cy.goToWellsTab(TAB_NAMES.CASINGS);
+    cy.goToWellsInspectTab(TAB_NAMES.CASINGS);
 
     cy.log('Inspect casings results');
     cy.get('[data-testid="depth-indicator"]').should('exist');

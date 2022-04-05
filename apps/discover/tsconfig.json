@@ -25,7 +25,6 @@
   "include": [
     "**/src/**/*",
     "**/.storybook/**/*",
-    "**/testcafe/**/*",
     "./.eslintrc.production.js",
     "./.eslintrc.js",
     "public/sidecar.js"

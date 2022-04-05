@@ -1,4 +1,4 @@
-const SELECT_TEXT = 'Select...';
+// const SELECT_TEXT = 'Select...';
 
 Cypress.Commands.add(
   'validateSelect',
@@ -18,10 +18,9 @@ Cypress.Commands.add(
 
     cy.findByLabelText(`${filter} list`)
       .should('be.visible')
-      .as(`${filter}-select`);
-
-    cy.get(`@${filter}-select`)
-      .contains(SELECT_TEXT)
+      .findByLabelText(`${filter} label`)
+      .siblings()
+      .first()
       .should('be.visible')
       .click();
 
@@ -37,11 +36,14 @@ Cypress.Commands.add(
     });
 
     if (toSelect) {
-      cy.contains(toSelect).click();
+      cy.contains(toSelect).scrollIntoView().should('be.visible').click();
     }
 
     cy.log(`Close ${filter} select list`);
-    cy.get(`@${filter}-label`).scrollIntoView().click();
+    cy.findByLabelText(`${filter} label`)
+      .scrollIntoView()
+      .should('be.visible')
+      .click();
   }
 );
 

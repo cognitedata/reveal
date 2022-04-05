@@ -1,3 +1,4 @@
-export const CLUSTER = Cypress.env('CLUSTER') || 'bluefield';
-export const PROJECT = Cypress.env('PROJECT') || `discover-dev-${CLUSTER}`;
-export const USER_PREFIX = Cypress.env('USER_PREFIX') || 'dev';
+export const STATIC_LOCATION_WELL = 'Skarv';
+export const STATIC_LOCATION_DOCUMENT = 'mercury.pdf';
+
+export const WELL_SOURCE_WITH_ALL = 'ophiuchus';

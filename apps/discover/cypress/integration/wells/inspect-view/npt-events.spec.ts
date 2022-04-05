@@ -1,5 +1,6 @@
+import { DATA_SOURCE } from '../../../../src/modules/wellSearch/constantsSidebarFilters';
 import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/constants';
-import { SOURCE_FILTER } from '../../../support/selectors/wells.selectors';
+import { NPT_EVENTS_SOURCE } from '../../../support/selectors/wells.selectors';
 
 describe('Wells: NPT Events', () => {
   beforeEach(() => {
@@ -18,10 +19,11 @@ describe('Wells: NPT Events', () => {
       search: {
         filters: [
           {
-            category: 'Source',
+            category: DATA_SOURCE,
+            subCategory: DATA_SOURCE,
             value: {
-              name: SOURCE_FILTER,
-              type: 'checkbox',
+              name: NPT_EVENTS_SOURCE,
+              type: 'select',
             },
           },
         ],
@@ -29,9 +31,9 @@ describe('Wells: NPT Events', () => {
       select: 'ALL',
     });
 
-    cy.openInspectView(100);
+    cy.openInspectView(1);
 
-    cy.goToWellsTab(TAB_NAMES.NPT_EVENTS);
+    cy.goToWellsInspectTab(TAB_NAMES.NPT_EVENTS);
 
     cy.log('Graph should be the default selected view');
 
@@ -54,7 +56,7 @@ describe('Wells: NPT Events', () => {
     cy.contains('NPT Codes').should('be.visible');
 
     cy.log('Open single wellbore view');
-    cy.findAllByTestId('bar-label').contains('Discover WB 1').click();
+    cy.findAllByTestId('bar-label').first().click();
     cy.findByLabelText('previous-wellbore')
       .should('be.visible')
       .should('be.disabled');

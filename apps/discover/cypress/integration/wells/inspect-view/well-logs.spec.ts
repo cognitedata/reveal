@@ -29,7 +29,7 @@ describe('Wells: Well Logs', () => {
     cy.selectFirstWellInResults();
 
     cy.openInspectView();
-    cy.goToWellsTab(TAB_NAMES.WELL_LOGS);
+    cy.goToWellsInspectTab(TAB_NAMES.WELL_LOGS);
   });
 
   it('Should select and de-select well logs in the result table', () => {

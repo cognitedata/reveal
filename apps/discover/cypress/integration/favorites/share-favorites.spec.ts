@@ -1,4 +1,4 @@
-import { CLUSTER, USER_PREFIX } from '../../support/constants';
+import { CLUSTER, USER_PREFIX } from '../../app.constants';
 
 describe('Share Favorites', () => {
   const favoriteName = `shared favorite, ${Date.now()}`;

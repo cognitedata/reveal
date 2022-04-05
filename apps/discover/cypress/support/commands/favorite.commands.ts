@@ -1,7 +1,7 @@
 import { FavoritePostSchema } from '@cognite/discover-api-types';
 
 import { SIDECAR } from '../../../src/constants/app';
-import { PROJECT } from '../constants';
+import { PROJECT } from '../../app.constants';
 
 import { getTokenHeaders } from './helpers';
 
@@ -37,9 +37,16 @@ const deleteAllFavorites = () => {
   });
 };
 
+const goToFavoritesPage = () => {
+  cy.log('go to Favorites page');
+  cy.findByTestId('top-bar').findByRole('tab', { name: 'Favorites' }).click();
+  cy.url().should('include', '/favorites');
+};
+
 Cypress.Commands.add('listFavorites', getAllFavorites);
 Cypress.Commands.add('createFavorite', createFavorite);
 Cypress.Commands.add('deleteAllFavorites', deleteAllFavorites);
+Cypress.Commands.add('goToFavoritesPage', goToFavoritesPage);
 
 export interface FavoriteCommands {
   listFavorites(): Cypress.Chainable<Cypress.Response<[]>>;
@@ -47,4 +54,5 @@ export interface FavoriteCommands {
     body: FavoritePostSchema
   ): Cypress.Chainable<Cypress.Response<string>>;
   deleteAllFavorites(): void;
+  goToFavoritesPage(): void;
 }

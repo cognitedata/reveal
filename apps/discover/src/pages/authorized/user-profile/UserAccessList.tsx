@@ -372,7 +372,10 @@ export const UserAccessList: React.FC = () => {
             {access.map((value) => {
               if (value[1].missing.length > 0) {
                 return (
-                  <div key={value[0]}>
+                  <div
+                    key={value[0]}
+                    data-testid={`access-list-item-${value[0]}`}
+                  >
                     <ErrorParagraph>
                       <Icon type="ErrorFilled" style={{ color: '#D51A46' }} />
                       <div>{startCase(value[0])}:</div>
@@ -392,10 +395,15 @@ export const UserAccessList: React.FC = () => {
                 );
               }
               return (
-                <GoodParagraph key={value[0]}>
-                  <Icon type="CheckmarkFilled" style={{ color: '#18AF8E' }} />
-                  <div>{startCase(value[0])}</div>
-                </GoodParagraph>
+                <div
+                  data-testid={`access-list-item-${value[0]}`}
+                  key={value[0]}
+                >
+                  <GoodParagraph>
+                    <Icon type="CheckmarkFilled" style={{ color: '#18AF8E' }} />
+                    <div>{startCase(value[0])}</div>
+                  </GoodParagraph>
+                </div>
               );
             })}
           </>

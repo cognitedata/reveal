@@ -6,4 +6,4 @@ set -eu
  --kill-others-on-fail \
   "yarn prettier" \
   "yarn run tsc" \
-  "yarn run eslint \"src/**/*.{ts,tsx,js}\" \"src/*.{ts,tsx}\" \"testcafe/**/*.ts\" \"public/index.html\""
+  "yarn run eslint \"src/**/*.{ts,tsx,js}\" \"src/*.{ts,tsx}\" \"public/index.html\""

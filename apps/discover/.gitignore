@@ -36,12 +36,7 @@ storybook-static/
 .env.local
 .env.docker
 
-# testcafe
-testcafe/screenshots
-testcafe/logs
-testcafe/videos
-res.xml
-testcafe/artifacts
+# cypress
 cypress/videos
 
 # lint

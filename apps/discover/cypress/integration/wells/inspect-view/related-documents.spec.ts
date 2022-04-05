@@ -14,7 +14,7 @@ describe('Wells: Related documents', () => {
 
     cy.openInspectView();
 
-    cy.goToWellsTab(TAB_NAMES.RELATED_DOCUMENTS);
+    cy.goToWellsInspectTab(TAB_NAMES.RELATED_DOCUMENTS);
 
     cy.findByTestId('search-header-breadcrumb').contains('0 files');
   });

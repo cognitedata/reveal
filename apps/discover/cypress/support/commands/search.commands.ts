@@ -16,6 +16,10 @@ Cypress.Commands.add(
       .findByText(category)
       .should('be.visible')
       .click();
+
+    cy.findByTestId('side-bar')
+      .findByRole('heading', { name: category })
+      .should('be.visible');
   }
 );
 

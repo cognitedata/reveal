@@ -1,4 +1,4 @@
-import { PROJECT } from '../../support/constants';
+import { PROJECT } from '../../app.constants';
 
 describe('Project Config', () => {
   beforeEach(() => {

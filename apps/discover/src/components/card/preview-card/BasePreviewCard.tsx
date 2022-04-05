@@ -37,51 +37,53 @@ export const BasePreviewCard: React.FC<Props> = ({
   const [isCollapsed, setCollapsed] = React.useState(false);
 
   return (
-    <Container classNames="z-4" elevation={2}>
-      <Content collapsed={isCollapsed}>
-        <HeaderContainer>
-          <PreviewTitleAlignItems>
-            {icon && <Label icon={icon} />}
-            <TitleComponent>{title}</TitleComponent>
-            <FlexGrow />
-            {collapsible && (
-              <Button
-                icon="Collapse"
-                type="ghost"
-                onClick={() => setCollapsed((prevState) => !prevState)}
-                aria-label="Minimize"
+    <div data-testid={`well-card-${title}`}>
+      <Container classNames="z-4" elevation={2}>
+        <Content collapsed={isCollapsed}>
+          <HeaderContainer>
+            <PreviewTitleAlignItems>
+              {icon && <Label icon={icon} />}
+              <TitleComponent>{title}</TitleComponent>
+              <FlexGrow />
+              {collapsible && (
+                <Button
+                  icon="Collapse"
+                  type="ghost"
+                  onClick={() => setCollapsed((prevState) => !prevState)}
+                  aria-label="Minimize"
+                />
+              )}
+              <TooltipContainer
+                content="Copy to Clipboard"
+                key={title}
+                placement="right"
+              >
+                <CopyToClipboardContainer text={title}>
+                  <CopyIconContainer>
+                    <CopyIcon type="Copy" />
+                  </CopyIconContainer>
+                </CopyToClipboardContainer>
+              </TooltipContainer>
+            </PreviewTitleAlignItems>
+            {handleCloseClick && (
+              <CloseButton
+                data-testid="preview-card-close-button"
+                onClick={handleCloseClick}
               />
             )}
-            <TooltipContainer
-              content="Copy to Clipboard"
-              key={title}
-              placement="right"
-            >
-              <CopyToClipboardContainer text={title}>
-                <CopyIconContainer>
-                  <CopyIcon type="Copy" />
-                </CopyIconContainer>
-              </CopyToClipboardContainer>
-            </TooltipContainer>
-          </PreviewTitleAlignItems>
-          {handleCloseClick && (
-            <CloseButton
-              data-testid="preview-card-close-button"
-              onClick={handleCloseClick}
-            />
-          )}
-        </HeaderContainer>
-        <DividerContainer color="gray" size="small" />
-        {!isCollapsed && children}
-      </Content>
+          </HeaderContainer>
+          <DividerContainer color="gray" size="small" />
+          {!isCollapsed && children}
+        </Content>
 
-      {actions && !isCollapsed && (
-        <>
-          <Divider />
-          {actions}
-        </>
-      )}
-    </Container>
+        {actions && !isCollapsed && (
+          <>
+            <Divider />
+            {actions}
+          </>
+        )}
+      </Container>
+    </div>
   );
 };
 

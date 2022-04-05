@@ -1,6 +1,6 @@
 import capitalize from 'lodash/capitalize';
 
-import { CLUSTER, USER_PREFIX } from '../constants';
+import { CLUSTER, USER_PREFIX } from '../../app.constants';
 
 import { getTokenHeaders } from './helpers';
 

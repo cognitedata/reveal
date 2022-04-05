@@ -2,6 +2,7 @@ import '@testing-library/cypress/add-commands';
 import { AdminCommands } from './admin.commands';
 import { ButtonCommands } from './button.commands';
 import { FavoriteCommands } from './favorite.commands';
+import { FeedbackCommands } from './feedback.commands';
 import { LoginCommand } from './login.command';
 import { SearchCommands } from './search.commands';
 import { SidebarCommands } from './sidebar.commands';
@@ -18,7 +19,8 @@ declare global {
         FavoriteCommands,
         TableCommands,
         ButtonCommands,
-        AdminCommands {}
+        AdminCommands,
+        FeedbackCommands {}
   }
 }
 
@@ -30,3 +32,4 @@ export * from './wells.commands';
 export * from './sidebar.commands';
 export * from './table.commands';
 export * from './button.commands';
+export * from './feedback.commands';

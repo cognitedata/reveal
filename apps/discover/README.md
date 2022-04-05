@@ -48,11 +48,11 @@ See details in Configuration.md document.
 
 # Automated Testing
 
-We use Jest for running automated unit tests. TestCafé is used for end-to-end
+We use Jest for running automated unit tests. Cypress is used for end-to-end
 tests. Both of these will be run in the Jenkins Pipeline after pushing to a
 branch.
 
-For help writing testcafe you can check the [examples](https://github.com/DevExpress/testcafe-examples/blob/master/README.md).
+For help writing Cypress checkout the [documentation](https://docs.cypress.io/guides/getting-started/writing-your-first-test).
 
 ## User identities
 
@@ -130,16 +130,6 @@ Before executing in please comment out the "REACT_APP_MIXPANEL_TOKEN" in the BUI
 yarn cypress:ci
 ```
 
-### Testcafe: Run tests
-
-`sh yarn testcafe ` or `sh yarn testcafe --fixture-meta page=savedSearches` for specific test
-
-For linux:
-
-```sh
-yarn testcafe:linux --fixture-meta page=savedSearches
-```
-
 ### How to ingest data into the test tenants
 
 Checkout: https://github.com/cognitedata/fusion-demo-data
@@ -180,31 +170,7 @@ To make CDF requests as the discover-e2e-bluefield tenant we only need the acces
 
 ### Misc
 
-Useful info: [Supported browsers](https://devexpress.github.io/testcafe/documentation/using-testcafe/common-concepts/browsers/browser-support.html), [Page model](https://devexpress.github.io/testcafe/documentation/recipes/extract-reusable-test-code/use-page-model.html)
-
 Known bug: [Firefox cannot display maps](https://bugzilla.mozilla.org/show_bug.cgi?id=1375585)
-
-### Testcafe logging
-
-To enable extra logging in tests, do something like this:
-
-```
-import { logNetworkLoggerResults, getNetworkLogger, logErrors } from '../../utils';
-
-const logger = getNetworkLogger();
-
-fixture('My test page')
-  .afterEach(() => //      <-- log chrome logs
-    logErrors({ log: true, warn: true, info: true, error: true })
-  )
-  .requestHooks(logger); // <-- log network requests
-```
-
-Then in the test:
-
-```
-  logNetworkLoggerResults(logger);
-```
 
 ### Troubleshooting
 
