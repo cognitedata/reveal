@@ -23,15 +23,17 @@ const SidePanelLevelWrapper = ({
   return (
     <StyledPanelLevel>
       <StyledSidePanelLevelHeader>{header}</StyledSidePanelLevelHeader>
-      <StyledSidePanelLevelSearchInput
-        fullWidth
-        icon="Search"
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          onQueryChange(e.target.value)
-        }
-        placeholder={searchInputPlaceholder}
-        value={query}
-      />
+      <StyledSidePanelLevelSearchInputContainer>
+        <Input
+          fullWidth
+          icon="Search"
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            onQueryChange(e.target.value)
+          }
+          placeholder={searchInputPlaceholder}
+          value={query}
+        />
+      </StyledSidePanelLevelSearchInputContainer>
       <StyledSidePanelLevelContent>{children}</StyledSidePanelLevelContent>
     </StyledPanelLevel>
   );
@@ -88,7 +90,7 @@ const StyledSidePanelLevelContent = styled.div`
   padding: 0 12px 12px;
 `;
 
-const StyledSidePanelLevelSearchInput = styled(Input)`
+const StyledSidePanelLevelSearchInputContainer = styled.div`
   border-bottom: 1px solid ${Colors['border-default']};
   margin-bottom: 12px;
   padding: 0 12px 12px;
