@@ -15,8 +15,9 @@ const StyledDatabaseListItemTooltipWrapper = styled(Tooltip)`
     background-color: ${Colors.white};
     border-radius: 12px;
 
-    .tippy-arrow {
-      color: ${Colors.white};
+    .tippy-svg-arrow {
+      fill: ${Colors.white};
+      stroke: ${Colors.white};
     }
   }
 
