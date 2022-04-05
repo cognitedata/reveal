@@ -195,7 +195,6 @@ function createBoxes(
 
   geometry.setIndex(boxGeometry.index);
   geometry.setAttribute('position', boxGeometry.position);
-  geometry.setAttribute('normal', boxGeometry.normal);
   setAttributes(geometry, filteredCollection, boxAttributes, mesh);
   setBoundsFromInstanceMatrices(geometry);
 

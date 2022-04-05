@@ -46,13 +46,72 @@ function generatePlane3D(
   };
 }
 
+/* Box vertex topology
+ *      0-------1
+ *     /|      /|
+ *    / |     / |
+ *   2-------3  |
+ *   |  4----|--5
+ *   | /     | /
+ *   |/      |/
+ *   6-------7
+ */
+
+function createBoxVertexPositions(): number[] {
+
+  const vertices: number[] = [];
+  for (let i = 0; i < 8; i++) {
+    vertices.push((i % 2) * 0.5 - 1.0);
+    vertices.push((Math.floor(i / 2) % 2) * 0.5 - 1.0);
+    vertices.push((Math.floor(i / 4) % 2) * 0.5 - 1.0);
+  }
+
+  return vertices;
+}
+
+function createBoxIndices(): number[] {
+  /*
+   * Create box indices by creating triangle fans around vertex 0 and vertex 7
+   */
+  const roundPathVertices = [1, 3, 2, 6, 4, 5];
+
+  const indices: number[] = [];
+
+  for (let i = 0; i < roundPathVertices.length; i++) {
+    const nextIndex = (i + 1) % roundPathVertices.length;
+    indices.push(0);
+    indices.push(roundPathVertices[i]);
+    indices.push(roundPathVertices[nextIndex]);
+
+    indices.push(7);
+    indices.push(roundPathVertices[nextIndex]);
+    indices.push(roundPathVertices[i]);
+  }
+
+  return indices;
+}
+
+function createBoxGeometry(): THREE.BufferGeometry {
+  const vertices = createBoxVertexPositions();
+  const indices = createBoxIndices();
+
+  const vertexArray = new Float32Array(vertices);
+  const positionAttribute = new THREE.BufferAttribute(vertexArray, 3, false);
+
+  const boxGeometry = new THREE.BufferGeometry();
+  boxGeometry.setIndex(indices);
+  boxGeometry.setAttribute('position', positionAttribute);
+
+  return boxGeometry
+}
+
 export const { boxGeometry, boxGeometryBoundingBox } = (() => {
-  const geometry = new THREE.BoxBufferGeometry(1, 1, 1, 1, 1, 1);
+  const geometry = createBoxGeometry();
   try {
+
     const result = {
       index: geometry.getIndex(),
-      position: geometry.getAttribute('position'),
-      normal: geometry.getAttribute('normal')
+      position: geometry.getAttribute('position')
     };
     geometry.computeBoundingBox();
     return { boxGeometry: result, boxGeometryBoundingBox: geometry.boundingBox! };
