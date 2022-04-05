@@ -58,7 +58,6 @@ function generatePlane3D(
  */
 
 function createBoxVertexPositions(): number[] {
-
   const vertices: number[] = [];
   for (let i = 0; i < 8; i++) {
     vertices.push((i % 2) * 0.5 - 1.0);
@@ -102,13 +101,12 @@ function createBoxGeometry(): THREE.BufferGeometry {
   boxGeometry.setIndex(indices);
   boxGeometry.setAttribute('position', positionAttribute);
 
-  return boxGeometry
+  return boxGeometry;
 }
 
 export const { boxGeometry, boxGeometryBoundingBox } = (() => {
   const geometry = createBoxGeometry();
   try {
-
     const result = {
       index: geometry.getIndex(),
       position: geometry.getAttribute('position')
