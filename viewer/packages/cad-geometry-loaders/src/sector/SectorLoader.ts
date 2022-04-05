@@ -114,6 +114,9 @@ export class SectorLoader {
   }
 
   private shouldLoad(input: DetermineSectorsPayload) {
+    if (input.models.length == 0) {
+      return false;
+    }
     if (isLegacyModelFormat(input.models[0].cadModelMetadata)) {
       return !input.cameraInMotion;
     }
