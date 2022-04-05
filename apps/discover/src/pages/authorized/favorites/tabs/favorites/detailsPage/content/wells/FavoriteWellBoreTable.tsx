@@ -10,13 +10,10 @@ import { Dropdown, Menu } from '@cognite/cogs.js';
 import { MoreOptionsButton, ViewButton } from 'components/buttons';
 import { RowProps, Table } from 'components/tablev3';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { useVisibleWellboreColumns } from 'hooks/useVisibleWellboreColumns';
 import { SelectedMap } from 'modules/filterData/types';
 import { Wellbore, WellboreId } from 'modules/wellSearch/types';
-import {
-  WellboreColumns,
-  WellboreSubtableOptions,
-} from 'pages/authorized/constant';
+import { WellboreSubtableOptions } from 'pages/authorized/constant';
 import { REMOVE_FROM_SET_TEXT } from 'pages/authorized/favorites/constants';
 import { DeleteWellFromSetModal } from 'pages/authorized/favorites/modals';
 import { NO_WELLBORES_FOUND } from 'pages/authorized/search/well/content/constants';
@@ -46,8 +43,7 @@ const WellboreResult: React.FC<Props> = ({
   const [isDeleteWellModalOpen, setIsDeleteWellModalOpen] = useState(false);
 
   const { t } = useTranslation('WellData');
-  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
-  const columns = WellboreColumns(userPreferredUnit);
+  const columns = useVisibleWellboreColumns();
   const handleOpenDeleteModal = () => setIsDeleteWellModalOpen(true);
   const handleCloseDeleteModal = () => setIsDeleteWellModalOpen(false);
   const [hoveredWellbore, setHoveredWellbore] = useState<Wellbore>();

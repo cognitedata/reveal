@@ -2,6 +2,7 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { getMockWellbore } from '__test-utils/fixtures/well';
 import { testRendererModal } from '__test-utils/renderer';
+import { getMockedStore } from '__test-utils/store.utils';
 import { REMOVE_FROM_SET_TEXT } from 'pages/authorized/favorites/constants';
 
 import { NO_WELLBORES_FOUND } from '../../../../../../../search/well/content/constants';
@@ -22,7 +23,7 @@ describe('Favorite Wellbore table', () => {
       'onRemoveWellbores' | 'onViewWellbores' | 'onSelectedWellbore'
     >
   ) =>
-    testRendererModal(FavoriteWellboreTable, undefined, {
+    testRendererModal(FavoriteWellboreTable, getMockedStore(), {
       onViewWellbores,
       onSelectedWellbore,
       onRemoveWellbores,

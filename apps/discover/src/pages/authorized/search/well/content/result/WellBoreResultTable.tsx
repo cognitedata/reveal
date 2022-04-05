@@ -16,16 +16,13 @@ import { MoreOptionsButton, ViewButton } from 'components/buttons';
 import { FavoriteStarIcon } from 'components/icons/FavoriteStarIcon';
 import { Table, RowProps } from 'components/tablev3';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { useVisibleWellboreColumns } from 'hooks/useVisibleWellboreColumns';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useWellQueryResultWellbores } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
 import { useWells } from 'modules/wellSearch/selectors';
 import { Wellbore, Well } from 'modules/wellSearch/types';
-import {
-  WellboreColumns,
-  WellboreSubtableOptions,
-} from 'pages/authorized/constant';
+import { WellboreSubtableOptions } from 'pages/authorized/constant';
 import { ADD_TO_FAVORITES_OPTION_TEXT } from 'pages/authorized/search/document/constants';
 import { FlexRow } from 'styles/layout';
 
@@ -49,11 +46,10 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
   const { selectedWellboreIds } = useWells();
   const favoriteWellIds = useFavoriteWellIds();
   const navigateToWellInspect = useNavigateToWellInspect();
-  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
   const dispatch = useDispatch();
   const { t } = useTranslation('WellData');
   const metrics = useGlobalMetrics('wells');
-  const columns = WellboreColumns(userPreferredUnit);
+  const visibleWellboreColumns = useVisibleWellboreColumns();
 
   const sortedWellbores = useMemo(
     () => sortBy(wellbores, 'name'),
@@ -142,7 +138,7 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
       id="wellbore-result-table"
       indent
       data={sortedWellbores}
-      columns={columns}
+      columns={visibleWellboreColumns}
       handleRowSelect={handleRowSelect}
       options={WellboreSubtableOptions}
       selectedIds={selectedWellboreIds}

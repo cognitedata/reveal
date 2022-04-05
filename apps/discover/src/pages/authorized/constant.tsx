@@ -1,7 +1,7 @@
 import { getKbElevation } from 'dataLayers/wells/wellbores/selectors/getKbElevation';
 
-import { ColumnType } from 'components/tablev3/types';
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
+import { ColumnMap } from 'modules/documentSearch/utils/columns';
 import { KB_ELEVATION_TEXT } from 'modules/wellSearch/constantsSidebarFilters';
 import { Wellbore } from 'modules/wellSearch/types';
 
@@ -33,20 +33,20 @@ export const WellboreSubtableOptions = {
   },
 };
 
-export const WellboreColumns = (
+export const getWellboreColumns = (
   userPreferredUnit?: string
-): ColumnType<Wellbore>[] => {
-  return [
-    {
+): ColumnMap<Wellbore> => {
+  return {
+    wellbore: {
       Header: WELLBORE,
       accessor: (row) => row?.name || row?.description || '',
       width: '250px',
       maxWidth: '1fr',
     },
-    {
+    kbElevation: {
       Header: KB_ELEVATION_TEXT,
       accessor: (wellbore) => getKbElevation(wellbore, userPreferredUnit),
       width: '100px',
     },
-  ];
+  };
 };
