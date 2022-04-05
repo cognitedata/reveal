@@ -40,6 +40,22 @@ export class GeometryBatchingManager {
     this._sectorMap = new Map();
   }
 
+  public dispose(): void {
+    for (const sectorId of this._sectorMap.keys()) {
+      this.removeSectorBatches(sectorId);
+    }
+
+    for (const mesh of this._batchedGeometriesGroup.children) {
+      if (mesh instanceof THREE.Mesh) {
+        mesh.geometry.dispose();
+
+        delete mesh.geometry;
+      }
+    }
+
+    this._batchedGeometriesGroup.clear();
+  }
+
   public batchGeometries(geometryBatchingQueue: ParsedGeometry[], sectorId: number): void {
     if (this._sectorMap.get(sectorId) !== undefined) {
       return;
