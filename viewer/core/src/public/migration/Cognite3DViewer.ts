@@ -1153,14 +1153,6 @@ export class Cognite3DViewer {
     });
   }
 
-  mouseHandlerClick = (e: any): void => {
-    this._events.click.fire(e);
-  };
-
-  mouseHandlerHover = (e: any): void => {
-    this._events.hover.fire(e);
-  };
-
   /** @private */
   private resizeIfNecessary(): boolean {
     if (this.isDisposed) {
@@ -1204,9 +1196,13 @@ export class Cognite3DViewer {
   }
 
   private readonly startPointerEventListeners = () => {
-    this._mouseHandler.on('click', this.mouseHandlerClick);
+    this._mouseHandler.on('click', e => {
+      this._events.click.fire(e);
+    });
 
-    this._mouseHandler.on('hover', this.mouseHandlerHover);
+    this._mouseHandler.on('hover', e => {
+      this._events.hover.fire(e);
+    });
   };
 }
 
