@@ -305,6 +305,10 @@ export const getStepsFromWorkflowReactFlow = (
   workflows: ChartWorkflowV2[] = [],
   operations: Operation[] = []
 ): ComputationStep[] => {
+  if (!workflow) {
+    return [];
+  }
+
   const { flow } = workflow;
 
   if (!flow) {

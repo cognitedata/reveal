@@ -2178,6 +2178,199 @@ describe('getStepsFromWorkflowReactFlow', () => {
     ]);
   });
 
+  it('should handle using deleted calculation reference as a source in a calculation', () => {
+    const workflows = [
+      {
+        settings: { autoAlign: true },
+        version: 'v2',
+        id: 'kFo_FV7arfuTOhmIiYlhw',
+        name: 'Calc 1',
+        color: '#005d5d',
+        flow: {
+          elements: [
+            {
+              id: 'dhXPgqDjQM_-qbKammNQK',
+              type: 'CalculationOutput',
+              position: {
+                x: 738,
+                y: 147,
+              },
+            },
+            {
+              id: '9DTF-2YetWJSHNS6XnFDu',
+              type: 'CalculationInput',
+              data: {
+                selectedSourceId: 'D4p8lyEgT0P86-Abc-jh7',
+                type: 'timeseries',
+              },
+              position: {
+                x: 187,
+                y: 136,
+              },
+            },
+            {
+              source: '9DTF-2YetWJSHNS6XnFDu',
+              sourceHandle: 'result',
+              target: 'dhXPgqDjQM_-qbKammNQK',
+              targetHandle: 'datapoints',
+              id: 'reactflow__edge-9DTF-2YetWJSHNS6XnFDuresult-dhXPgqDjQM_-qbKammNQKdatapoints',
+            },
+          ],
+          position: [0, -1],
+          zoom: 1,
+        },
+        lineWeight: 1,
+        lineStyle: 'solid',
+        enabled: true,
+        createdAt: 1638391582179,
+        unit: '',
+        preferredUnit: '',
+        type: 'workflow',
+        calls: [
+          {
+            id: 'e40c02b8-a7bb-4641-9ba3-a79170c9d9ab',
+            status: 'Pending',
+            callId: 'e40c02b8-a7bb-4641-9ba3-a79170c9d9ab',
+            callDate: 1638391662262,
+            hash: 734472289,
+          },
+        ],
+      },
+      {
+        settings: { autoAlign: true },
+        version: 'v2',
+        id: 'MLoc-AIHZ-xlaiaTB3iCC',
+        name: 'Calc 2',
+        color: '#9f1853',
+        flow: {
+          elements: [
+            {
+              id: 'f5ZOUOyTNXygScVxU8Y0F',
+              type: 'CalculationOutput',
+              position: {
+                x: 620,
+                y: 154,
+              },
+            },
+            {
+              id: 'T0rxXeu0Xdl0lL5R_FEcA',
+              type: 'CalculationInput',
+              data: {
+                selectedSourceId: 'missing-1',
+                type: 'workflow',
+              },
+              position: {
+                x: 82,
+                y: 54,
+              },
+            },
+            {
+              id: 'OfDdDuGT3QaUANdY0kY6o',
+              type: 'CalculationInput',
+              data: {
+                selectedSourceId: 'kFo_FV7arfuTOhmIiYlhw',
+                type: 'workflow',
+              },
+              position: {
+                x: 76,
+                y: 235,
+              },
+            },
+            {
+              id: 'J-R87u1PMUdi5CIXM5ove',
+              type: 'ToolboxFunction',
+              data: {
+                selectedOperation: {
+                  op: 'add',
+                  version: '1.0',
+                },
+                parameterValues: {},
+              },
+              position: {
+                x: 442,
+                y: 115,
+              },
+            },
+            {
+              source: 'T0rxXeu0Xdl0lL5R_FEcA',
+              sourceHandle: 'result',
+              target: 'J-R87u1PMUdi5CIXM5ove',
+              targetHandle: 'a',
+              id: 'reactflow__edge-T0rxXeu0Xdl0lL5R_FEcAresult-J-R87u1PMUdi5CIXM5ovea',
+            },
+            {
+              source: 'OfDdDuGT3QaUANdY0kY6o',
+              sourceHandle: 'result',
+              target: 'J-R87u1PMUdi5CIXM5ove',
+              targetHandle: 'b',
+              id: 'reactflow__edge-OfDdDuGT3QaUANdY0kY6oresult-J-R87u1PMUdi5CIXM5oveb',
+            },
+            {
+              source: 'J-R87u1PMUdi5CIXM5ove',
+              sourceHandle: 'out-result',
+              target: 'f5ZOUOyTNXygScVxU8Y0F',
+              targetHandle: 'datapoints',
+              id: 'reactflow__edge-J-R87u1PMUdi5CIXM5oveout-result-f5ZOUOyTNXygScVxU8Y0Fdatapoints',
+            },
+          ],
+          position: [0, 0],
+          zoom: 1,
+        },
+        lineWeight: 1,
+        lineStyle: 'solid',
+        enabled: true,
+        createdAt: 1638391593172,
+        unit: '',
+        preferredUnit: '',
+        type: 'workflow',
+        calls: [],
+      },
+    ] as ChartWorkflowV2[];
+
+    const workflow = workflows[1];
+
+    const steps = getStepsFromWorkflowReactFlow(
+      workflow,
+      workflows,
+      fullListOfOperations
+    );
+
+    expect(steps).toEqual([
+      {
+        step: 0,
+        op: 'add',
+        version: '1.0',
+        inputs: [
+          {
+            param: 'a',
+            type: 'ts',
+            value: '',
+          },
+          {
+            param: 'b',
+            type: 'ts',
+            value: 'D4p8lyEgT0P86-Abc-jh7',
+          },
+        ],
+        params: {
+          align_timesteps: true,
+        },
+      },
+      {
+        step: 1,
+        op: 'PASSTHROUGH',
+        version: '1.0',
+        inputs: [
+          {
+            param: 'series',
+            type: 'result',
+            value: 0,
+          },
+        ],
+      },
+    ]);
+  });
+
   it('should handle using the same calculation reference as a source multiple times in a calculation (2)', () => {
     const workflows = [
       {

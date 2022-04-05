@@ -29,13 +29,6 @@ const NodeEditor = ({
   translations,
 }: Props) => {
   const t = { ...defaultTranslations, ...translations };
-  /**
-   * This could be done using a selector
-   */
-  const workflow = chart?.workflowCollection?.find(
-    (flow) => flow.id === workflowId
-  ) as ChartWorkflowV2;
-
   const { data: login } = useUserInfo();
   const isOwner = useIsChartOwner(chart);
 
@@ -81,6 +74,20 @@ const NodeEditor = ({
     return <Icon type="Loader" />;
   }
 
+  /**
+   * This could be done using a selector (refactor opportunity)
+   */
+  const workflow = chart?.workflowCollection?.find(
+    (flow) => flow.id === workflowId
+  ) as ChartWorkflowV2 | undefined;
+
+  if (!workflow) {
+    return <div>No calculation selected</div>;
+  }
+
+  /**
+   * This could be done using a selector (refactor opportunity)
+   */
   const referenceableWorkflows = (chart.workflowCollection || []).filter(
     ({ version }) => version === 'v2'
   ) as ChartWorkflowV2[];
