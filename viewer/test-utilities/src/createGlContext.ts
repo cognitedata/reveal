@@ -2,6 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
+//https://stackoverflow.com/questions/68468203/why-am-i-getting-textencoder-is-not-defined-in-jest
+import { TextEncoder } from 'util';
+global.TextEncoder = TextEncoder;
 // mock 'document'
 // https://stackoverflow.com/a/50629802
 import { JSDOM } from 'jsdom';

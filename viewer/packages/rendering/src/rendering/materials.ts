@@ -47,18 +47,6 @@ export function createMaterials(
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      modelMatrix: {
-        value: new THREE.Matrix4()
-      },
-      viewMatrix: {
-        value: new THREE.Matrix4()
-      },
-      projectionMatrix: {
-        value: new THREE.Matrix4()
-      },
-      normalMatrix: {
-        value: new THREE.Matrix3()
       }
     },
     glslVersion: THREE.GLSL3
@@ -76,18 +64,6 @@ export function createMaterials(
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      modelMatrix: {
-        value: new THREE.Matrix4()
-      },
-      viewMatrix: {
-        value: new THREE.Matrix4()
-      },
-      projectionMatrix: {
-        value: new THREE.Matrix4()
-      },
-      normalMatrix: {
-        value: new THREE.Matrix3()
       }
     },
     glslVersion: THREE.GLSL3
@@ -120,18 +96,6 @@ export function createMaterials(
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      modelMatrix: {
-        value: new THREE.Matrix4()
-      },
-      viewMatrix: {
-        value: new THREE.Matrix4()
-      },
-      projectionMatrix: {
-        value: new THREE.Matrix4()
-      },
-      normalMatrix: {
-        value: new THREE.Matrix3()
       }
     },
     vertexShader: sectorShaders.generalRingPrimitive.vertex,
@@ -149,18 +113,6 @@ export function createMaterials(
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      modelMatrix: {
-        value: new THREE.Matrix4()
-      },
-      viewMatrix: {
-        value: new THREE.Matrix4()
-      },
-      projectionMatrix: {
-        value: new THREE.Matrix4()
-      },
-      normalMatrix: {
-        value: new THREE.Matrix3()
       }
     },
     vertexShader: sectorShaders.conePrimitive.vertex,
@@ -176,18 +128,6 @@ export function createMaterials(
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      modelMatrix: {
-        value: new THREE.Matrix4()
-      },
-      viewMatrix: {
-        value: new THREE.Matrix4()
-      },
-      projectionMatrix: {
-        value: new THREE.Matrix4()
-      },
-      normalMatrix: {
-        value: new THREE.Matrix3()
       }
     },
     vertexShader: sectorShaders.eccentricConePrimitive.vertex,
@@ -203,18 +143,6 @@ export function createMaterials(
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      modelMatrix: {
-        value: new THREE.Matrix4()
-      },
-      viewMatrix: {
-        value: new THREE.Matrix4()
-      },
-      projectionMatrix: {
-        value: new THREE.Matrix4()
-      },
-      normalMatrix: {
-        value: new THREE.Matrix3()
       }
     },
 
@@ -231,18 +159,6 @@ export function createMaterials(
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      modelMatrix: {
-        value: new THREE.Matrix4()
-      },
-      modelViewMatrix: {
-        value: new THREE.Matrix4()
-      },
-      projectionMatrix: {
-        value: new THREE.Matrix4()
-      },
-      normalMatrix: {
-        value: new THREE.Matrix3()
       },
       cameraPosition: {
         value: new THREE.Vector3()
@@ -261,18 +177,6 @@ export function createMaterials(
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      modelMatrix: {
-        value: new THREE.Matrix4()
-      },
-      viewMatrix: {
-        value: new THREE.Matrix4()
-      },
-      projectionMatrix: {
-        value: new THREE.Matrix4()
-      },
-      normalMatrix: {
-        value: new THREE.Matrix3()
       }
     },
     vertexShader: sectorShaders.trapeziumPrimitive.vertex,
@@ -288,18 +192,6 @@ export function createMaterials(
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      modelMatrix: {
-        value: new THREE.Matrix4()
-      },
-      viewMatrix: {
-        value: new THREE.Matrix4()
-      },
-      projectionMatrix: {
-        value: new THREE.Matrix4()
-      },
-      normalMatrix: {
-        value: new THREE.Matrix3()
       }
     },
     extensions: {
@@ -318,18 +210,6 @@ export function createMaterials(
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      modelMatrix: {
-        value: new THREE.Matrix4()
-      },
-      viewMatrix: {
-        value: new THREE.Matrix4()
-      },
-      projectionMatrix: {
-        value: new THREE.Matrix4()
-      },
-      normalMatrix: {
-        value: new THREE.Matrix3()
       }
     },
     vertexShader: sectorShaders.ellipsoidSegmentPrimitive.vertex,
@@ -371,18 +251,6 @@ export function createMaterials(
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      modelMatrix: {
-        value: new THREE.Matrix4()
-      },
-      viewMatrix: {
-        value: new THREE.Matrix4()
-      },
-      projectionMatrix: {
-        value: new THREE.Matrix4()
-      },
-      normalMatrix: {
-        value: new THREE.Matrix3()
       }
     },
     side: THREE.FrontSide,

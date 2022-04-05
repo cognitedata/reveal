@@ -130,6 +130,7 @@ export class ComboControls extends EventDispatcher {
 
     this.dispose = () => {
       domElement.removeEventListener('pointerdown', this.onPointerDown);
+      domElement.removeEventListener('wheel', this.onMouseWheel);
       domElement.removeEventListener('touchstart', this.onTouchStart);
       domElement.removeEventListener('wheel', this.onMouseWheel);
       domElement.removeEventListener('contextmenu', this.onContextMenu);
