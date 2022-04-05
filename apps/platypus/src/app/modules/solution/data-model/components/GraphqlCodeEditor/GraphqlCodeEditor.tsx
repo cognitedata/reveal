@@ -41,6 +41,9 @@ export const GraphqlCodeEditor = React.memo(
             autoClosingBrackets: 'always',
             renderValidationDecorations: 'on',
             readOnly: disabled,
+            overviewRulerLanes: 0,
+            renderLineHighlight: 'none',
+            scrollBeyondLastLine: false,
           }}
           language="graphql"
           value={editorValue}
