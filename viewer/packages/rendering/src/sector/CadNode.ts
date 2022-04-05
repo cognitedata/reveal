@@ -27,13 +27,17 @@ import { ParsedGeometry } from '@reveal/sector-parser';
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
 export class CadNode extends THREE.Object3D {
-  private readonly _rootSector: RootSectorNode;
   private readonly _cadModelMetadata: CadModelMetadata;
   private readonly _materialManager: CadMaterialManager;
-  private readonly _sectorScene: SectorScene;
   private readonly _instancedMeshManager: InstancedMeshManager;
   private readonly _sectorRepository: SectorRepository;
-  private readonly _geometryBatchingManager: GeometryBatchingManager;
+
+  // savokr 01-04-22: These are made non-readonly because they need to be manually deleted when model is removed.
+  // Can be made back to readonly if all references of the CadNode are removed from memory when model is removed
+  // from the scene. Also possible to make the same thing only inside GeometryBatchingManager and RootSectorNode.
+  private _rootSector: RootSectorNode;
+  private _sectorScene: SectorScene;
+  private _geometryBatchingManager: GeometryBatchingManager;
 
   constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
     super();
@@ -53,10 +57,10 @@ export class CadNode extends THREE.Object3D {
     const materials = materialManager.getModelMaterials(model.modelIdentifier);
     this._geometryBatchingManager = new GeometryBatchingManager(batchedGeometryMeshGroup, materials);
 
-    const rootSector = new RootSectorNode(model);
+    this._rootSector = new RootSectorNode(model);
 
-    rootSector.add(instancedMeshGroup);
-    rootSector.add(batchedGeometryMeshGroup);
+    this._rootSector.add(instancedMeshGroup);
+    this._rootSector.add(batchedGeometryMeshGroup);
 
     this._cadModelMetadata = model;
     const { scene } = model;
@@ -64,8 +68,7 @@ export class CadNode extends THREE.Object3D {
     this._sectorScene = scene;
 
     // Prepare renderables
-    this._rootSector = rootSector;
-    this.add(rootSector);
+    this.add(this._rootSector);
 
     this.matrixAutoUpdate = false;
     this.updateMatrixWorld();
@@ -175,7 +178,16 @@ export class CadNode extends THREE.Object3D {
     this._sectorRepository.setCacheSize(sectorCount);
   }
 
-  public clearCache(): void {
+  public dispose(): void {
     this._sectorRepository.clearCache();
+    this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier);
+    this._geometryBatchingManager.dispose();
+    this._rootSector.dereferenceAllNodes();
+    this._rootSector.clear();
+    this.clear();
+
+    delete this._geometryBatchingManager;
+    delete this._rootSector;
+    delete this._sectorScene;
   }
 }
