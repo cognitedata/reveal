@@ -89,7 +89,7 @@ jobs:
         xvfb-run yarn run coverage
 
     - name: Publish to codecov
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v3
 
   ci-examples:
     name: Examples
