@@ -26,6 +26,7 @@ export const useNptWellsTableColumns = () => {
       width: COMMON_COLUMN_WIDTHS.WELL_NAME,
       Cell: ({ row: { original } }: { row: { original: NPTEvent } }) =>
         renderAsBody2DefaultStrongText(get(original, accessors.WELL_NAME)),
+      stickyColumn: true,
     },
     ...useNptTableCommonHeaders(),
   ];
@@ -35,9 +36,10 @@ export const useNptWellboresTableColumns = () => {
   return [
     {
       id: accessors.WELLBORE_NAME,
-      width: '300px',
+      width: '270px',
       Cell: ({ row: { original } }: { row: { original: NPTEvent } }) =>
         renderAsBody2DefaultStrongText(get(original, accessors.WELLBORE_NAME)),
+      stickyColumn: true,
     },
     ...useNptTableCommonHeaders(),
   ];
@@ -47,10 +49,11 @@ export const useNptEventsTableColumns = () => {
   return [
     {
       id: accessors.NPT_CODE,
-      width: '330px',
+      width: '270px',
       maxWidth: '0.3fr',
       Cell: ({ row: { original } }: { row: { original: NPTEvent } }) =>
         renderNPTCodeWithColor(original),
+      stickyColumn: true,
     },
     ...useNptTableCommonHeaders(),
   ];
@@ -69,10 +72,6 @@ export const useSelectedWellboreNptEventsTableColumns = () => {
       stickyColumn: true,
     },
     ...getExtendedColumns(commonHeaders, [
-      {
-        id: accessors.NPT_DETAIL_CODE,
-        stickyColumn: true,
-      },
       {
         id: accessors.DURATION,
         Header: 'Duration',

@@ -11,7 +11,6 @@ import { NPTEvent } from 'modules/wellSearch/types';
 import { accessors } from '../constants';
 
 import { PAGE_SIZE } from './constants';
-import { WellboreNptEventsTableWrapper } from './elements';
 import { useNptWellboresTableColumns } from './hooks/useHelpers';
 import { NptEventsTable } from './NptEventsTable';
 import { NPTWellbore } from './types';
@@ -76,17 +75,16 @@ export const NptWellboresTable: React.FC<{ events: NPTEvent[] }> = ({
   );
 
   return (
-    <WellboreNptEventsTableWrapper>
-      <Table<NPTWellbore>
-        id="npt-table-wellbores"
-        data={wellbores || []}
-        columns={nptWellboresTableColumns}
-        options={tableOptions}
-        expandedIds={expandedWellbores}
-        handleRowClick={handleRowClick}
-        renderRowSubComponent={renderRowSubComponent}
-        hideHeaders
-      />
-    </WellboreNptEventsTableWrapper>
+    <Table<NPTWellbore>
+      id="npt-table-wellbores"
+      data={wellbores || []}
+      columns={nptWellboresTableColumns}
+      options={tableOptions}
+      expandedIds={expandedWellbores}
+      handleRowClick={handleRowClick}
+      renderRowSubComponent={renderRowSubComponent}
+      indent
+      hideHeaders
+    />
   );
 };

@@ -1,5 +1,7 @@
 import { Cell, HeaderGroup } from 'react-table';
 
+import get from 'lodash/get';
+import head from 'lodash/head';
 import layers from 'utils/zindex';
 
 import { ColumnType } from './types';
@@ -10,10 +12,25 @@ export const getStickyColumnHeadersStyles = <T extends object>(
 ) => {
   let left = 0;
 
-  return columns.map((column, index) => {
+  /**
+   * This is to track the action columns which are added before the data columns.
+   * eg: selection, expansion, indentation, etc.
+   */
+  const indexOfFirstColumnInHeaders = headers.findIndex(
+    (header) => header.id === head(columns)?.id
+  );
+
+  return headers.map((header, index) => {
     const columnWidth = headers[index].width || 0;
 
-    if (!column.stickyColumn) {
+    const isStickyColumn = get(header, 'stickyColumn', false);
+    /**
+     * `index < indexOfFirstColumnInHeaders` is satisfied for all the action columns.
+     * All those action columns will be sticky.
+     * Checking `isStickyColumn` only for the data columns.
+     * `index >= indexOfFirstColumnInHeaders` is satisfied for all the data columns.
+     */
+    if (index >= indexOfFirstColumnInHeaders && !isStickyColumn) {
       return undefined;
     }
 
@@ -43,10 +60,25 @@ export const getStickyColumnCellsStyles = <T extends object>(
 ) => {
   let left = 0;
 
-  return columns.map((column, index) => {
+  /**
+   * This is to track the action columns which are added before the data columns.
+   * eg: selection, expansion, indentation, etc.
+   */
+  const indexOfFirstColumnInCells = cells.findIndex(
+    (cell) => cell.column.id === head(columns)?.id
+  );
+
+  return cells.map((cell, index) => {
     const columnWidth = cells[index].column.width || 0;
 
-    if (!column.stickyColumn) {
+    const isStickyColumn = get(cell.column, 'stickyColumn', false);
+    /**
+     * `index < indexOfFirstColumnInHeaders` is satisfied for all the action columns.
+     * All those action columns will be sticky.
+     * Checking `isStickyColumn` only for the data columns.
+     * `index >= indexOfFirstColumnInHeaders` is satisfied for all the data columns.
+     */
+    if (index >= indexOfFirstColumnInCells && !isStickyColumn) {
       return undefined;
     }
 

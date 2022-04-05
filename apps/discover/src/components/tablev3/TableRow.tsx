@@ -11,6 +11,7 @@ import {
   OverlayContentWrapper,
 } from './elements';
 import { useClickPreventionOnDoubleClick } from './hooks/clickPreventionOnDoubleClick';
+import { getStickyColumnCellsStyles } from './stickyColumnHandler';
 import { TableCell as RenderTableCell } from './TableCell';
 import {
   RowOptions,
@@ -19,7 +20,6 @@ import {
   HandleRowMouseEnter,
   HandleRowMouseLeave,
 } from './types';
-import { getStickyColumnCellsStyles } from './utils';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 interface RowProps<T extends Object> {

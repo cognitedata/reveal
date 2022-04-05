@@ -17,31 +17,6 @@ export const WellNptEventsTableWrapper = styled(FlexColumn)`
   }
 `;
 
-export const WellboreNptEventsTableWrapper = styled.div`
-  & > * {
-    overflow-x: hidden !important;
-    width: 100% !important;
-  }
-
-  .cogs-body-2 {
-    margin-left: ${sizes.large};
-  }
-
-  div[role='cell']:first-child span {
-    margin-left: ${sizes.large};
-  }
-
-  div[role='row']:last-child {
-    border-bottom: none;
-  }
-`;
-
-export const NptEventsTableWrapper = styled.div`
-  div[role='cell']:first-child {
-    padding-left: 82px;
-  }
-`;
-
 export const Body = styled(CogsBody)`
   padding-top: ${sizes.normal};
   padding-bottom: ${sizes.normal};

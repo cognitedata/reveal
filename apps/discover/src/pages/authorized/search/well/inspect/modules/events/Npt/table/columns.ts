@@ -21,6 +21,7 @@ export const getCommonColumns = (unit?: string): ColumnType<NPTEvent>[] => {
       width: '150px',
       accessor: (row: NPTEvent) =>
         processAccessor(row, accessors.NPT_DETAIL_CODE),
+      stickyColumn: true,
     },
     {
       id: accessors.START_TIME,

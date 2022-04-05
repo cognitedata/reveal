@@ -34,10 +34,10 @@ import {
 } from './elements';
 import { selectionHook, expansionHook, indentationHook } from './hooks';
 import { TableResults } from './resultTypes';
+import { getStickyColumnHeadersStyles } from './stickyColumnHandler';
 import { TableColumnSortIcons } from './TableColumnSortIcons';
 import { CustomRow } from './TableRow';
 import { TableProps } from './types';
-import { getStickyColumnHeadersStyles } from './utils';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 const TableInner = <T extends Object>({
