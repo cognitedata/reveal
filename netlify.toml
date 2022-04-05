@@ -1,6 +1,9 @@
 [context.production.environment]
   REACT_APP_ENV = "production"
 
+[context.branch-deploy.environment]
+  REACT_APP_ENV = "production"
+
 [context.deploy-preview.environment]
   REACT_APP_ENV = "preview"
 
