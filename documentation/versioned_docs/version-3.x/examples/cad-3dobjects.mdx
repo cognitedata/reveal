@@ -93,7 +93,6 @@ viewer.addObject3D(skyBox);
 
 This looks a bit better, but the oil rig appears to be floating mid-air at this point. Lets
 add an ocean. A plane is rendered at the sea level and an ocean effect is applied to the plane.
-The example builds upon [the ocean example from ThreeJS](https://threejs.org/examples/?q=ocea#webgl_shaders_ocean).
 
 Note that since the ocean has moving waves we want to render the model continuously and not only
 when camera changes or data is loaded. We do this by repeatedly calling `Cognite3DViewer.requestRedraw()`.
