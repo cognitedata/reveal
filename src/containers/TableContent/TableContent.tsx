@@ -71,7 +71,6 @@ const TabProfiling = ({
 );
 
 const Wrapper = styled(Flex)`
-  border-left: 1px solid ${Colors['greyscale-grey3'].hex()};
   height: calc(100% - ${TAB_HEIGHT}px);
   width: 100%;
 `;
