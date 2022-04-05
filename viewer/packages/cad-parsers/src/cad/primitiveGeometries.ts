@@ -57,15 +57,17 @@ function generatePlane3D(
  *   6-------7
  */
 
-function createBoxVertexPositions(): number[] {
-  const vertices: number[] = [];
-  for (let i = 0; i < 8; i++) {
-    vertices.push((i % 2) * 0.5 - 1.0);
-    vertices.push((Math.floor(i / 2) % 2) * 0.5 - 1.0);
-    vertices.push((Math.floor(i / 4) % 2) * 0.5 - 1.0);
-  }
-
-  return vertices;
+function getBoxVertexPositions(): number[] {
+  return [
+      - 0.5, - 0.5, - 0.5,
+      - 0.5, - 0.5,   0.5,
+      - 0.5,   0.5, - 0.5,
+      - 0.5,   0.5,   0.5,
+        0.5, - 0.5, - 0.5,
+        0.5, - 0.5,   0.5,
+        0.5,   0.5, - 0.5,
+        0.5,   0.5,   0.5
+  ];
 }
 
 function createBoxIndices(): number[] {
@@ -91,7 +93,7 @@ function createBoxIndices(): number[] {
 }
 
 function createBoxGeometry(): THREE.BufferGeometry {
-  const vertices = createBoxVertexPositions();
+  const vertices = getBoxVertexPositions();
   const indices = createBoxIndices();
 
   const vertexArray = new Float32Array(vertices);
