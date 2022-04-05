@@ -6,12 +6,7 @@ import ChainedBackend from 'i18next-chained-backend';
 import LocizeBackend from 'i18next-locize-backend';
 import LocalStorageBackend from 'i18next-localstorage-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import {
-  isDevelopment,
-  isPR,
-  isProduction,
-  isStaging,
-} from 'utils/environment';
+import { isDevelopment, isPR, isProduction } from 'utils/environment';
 import config from 'config/config';
 
 if (!config.locizeProjectId) throw new Error('Locize is not configured!');
@@ -34,7 +29,7 @@ const locizeOptions = {
   projectId: config.locizeProjectId,
   apiKey: isDevelopment || isPR ? config.locizeApiKey : undefined,
   referenceLng: 'en',
-  version: isProduction || isStaging ? 'production' : 'latest',
+  version: isProduction ? 'production' : 'latest',
   allowedAddOrUpdateHosts: ['localhost'],
 };
 
