@@ -58,6 +58,7 @@ function generatePlane3D(
  */
 
 function getBoxVertexPositions(): number[] {
+  // prettier-ignore
   return [
       - 0.5, - 0.5, - 0.5,
       - 0.5, - 0.5,   0.5,
