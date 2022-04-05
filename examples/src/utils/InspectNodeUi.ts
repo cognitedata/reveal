@@ -51,8 +51,13 @@ export class InspectNodeUI {
       resetAndHighlight: () => {
         model.removeAllStyledNodeCollections();
         actions.highlight();
+      },
+      hide: () => {
+        const nodeCollection = new TreeIndexNodeCollection(new NumericRange(node.treeIndex, node.subtreeSize));
+        model.assignStyledNodeCollection(nodeCollection, DefaultNodeAppearance.Hidden);
       }
     };
+    nodeUi.add(actions, 'hide').name('Hide');
     nodeUi.add(actions, 'highlight').name('Highlight');
     nodeUi.add(actions, 'resetAndHighlight').name('Reset+highlight');
 
