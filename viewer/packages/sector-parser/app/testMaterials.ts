@@ -42,18 +42,6 @@ export function createGeneralCylinderMaterial(): THREE.RawShaderMaterial {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
       },
-      modelMatrix: {
-        value: new THREE.Matrix4()
-      },
-      modelViewMatrix: {
-        value: new THREE.Matrix4()
-      },
-      projectionMatrix: {
-        value: new THREE.Matrix4()
-      },
-      normalMatrix: {
-        value: new THREE.Matrix3()
-      },
       cameraPosition: {
         value: new THREE.Vector3()
       },
@@ -202,18 +190,6 @@ export function createGeneralRingMaterial(): THREE.RawShaderMaterial {
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      modelMatrix: {
-        value: new THREE.Matrix4()
-      },
-      viewMatrix: {
-        value: new THREE.Matrix4()
-      },
-      projectionMatrix: {
-        value: new THREE.Matrix4()
-      },
-      normalMatrix: {
-        value: new THREE.Matrix3()
       },
       renderMode: { value: 1 },
       matCapTexture: { value: matCapTexture },
