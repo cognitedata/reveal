@@ -1,3 +1,7 @@
+## 1.1.25
+
+- BUG: Stamp preview alignment issue
+
 ## 1.1.24
 
 - Removed @types/pdfjs-dist - as types are provided by pdfjs-dist package

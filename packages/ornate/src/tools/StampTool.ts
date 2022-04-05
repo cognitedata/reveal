@@ -60,6 +60,14 @@ export class StampTool extends Tool implements ICogniteOrnateTool {
 
   onMouseMove = () => {
     const translatedMousePosition = this.getStampPosition();
+    /*
+      We need to re-add the group coordinates (if a group exists),
+      because we subtract them in order to properly place the stamp in `getPosition`
+    */
+    if (this.group) {
+      translatedMousePosition.x += this.group.x();
+      translatedMousePosition.y += this.group.y();
+    }
     if (this.previewNode) {
       this.previewNode.x(translatedMousePosition.x);
       this.previewNode.y(translatedMousePosition.y);
