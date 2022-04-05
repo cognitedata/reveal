@@ -137,15 +137,6 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     uniforms: {
       instanceMatrix: {
         value: new THREE.Matrix4()
-      },
-      modelMatrix: {
-        value: new THREE.Matrix4()
-      },
-      viewMatrix: {
-        value: new THREE.Matrix4()
-      },
-      projectionMatrix: {
-        value: new THREE.Matrix4()
       }
     },
     glslVersion: THREE.GLSL3
@@ -464,12 +455,6 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     return sectorVisibility;
   }
 
-  private updateMaterialUniforms(mesh: THREE.Mesh, camera: THREE.PerspectiveCamera) {
-    (this.coverageMaterial.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
-    (this.coverageMaterial.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
-    (this.coverageMaterial.uniforms.projectionMatrix?.value as THREE.Matrix4)?.copy(camera.projectionMatrix);
-  }
-
   private createSectorTreeGeometry(
     sectorIdOffset: number,
     sectors: V8SectorMetadata[]
@@ -481,9 +466,6 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     const instanceValues = new Float32Array(5 * sectorCount); // sectorId, coverageFactor[3], visibility
     const boxGeometry = new THREE.BoxBufferGeometry();
     const mesh = new THREE.InstancedMesh(boxGeometry, this.coverageMaterial, sectorCount);
-    mesh.onBeforeRender = (_0, _1, camera: THREE.PerspectiveCamera) => {
-      this.updateMaterialUniforms(mesh, camera);
-    };
 
     const addSector = (sectorBounds: THREE.Box3, sectorIndex: number, sectorId: number, coverage: THREE.Vector3) => {
       sectorBounds.getCenter(translation);
