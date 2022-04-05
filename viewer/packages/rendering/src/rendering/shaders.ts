@@ -35,8 +35,8 @@ export const sectorShaders = {
   // Primitives
   // ----------------
   boxPrimitive: {
-    fragment: glsl(require('../glsl/sector/primitives/instanced.frag').default),
-    vertex: glsl(require('../glsl/sector/primitives/instanced.vert').default)
+    fragment: glsl(require('../glsl/sector/instancedMesh.frag').default),
+    vertex: glsl(require('../glsl/sector/instancedMesh.vert').default)
   },
   circlePrimitive: {
     fragment: glsl(require('../glsl/sector/primitives/circle.frag').default),
@@ -63,12 +63,12 @@ export const sectorShaders = {
     vertex: glsl(require('../glsl/sector/primitives/generalring.vert').default)
   },
   nutPrimitive: {
-    fragment: glsl(require('../glsl/sector/primitives/instanced.frag').default),
-    vertex: glsl(require('../glsl/sector/primitives/instanced.vert').default)
+    fragment: glsl(require('../glsl/sector/instancedMesh.frag').default),
+    vertex: glsl(require('../glsl/sector/instancedMesh.vert').default)
   },
   quadPrimitive: {
-    fragment: glsl(require('../glsl/sector/primitives/instanced.frag').default),
-    vertex: glsl(require('../glsl/sector/primitives/instanced.vert').default)
+    fragment: glsl(require('../glsl/sector/instancedMesh.frag').default),
+    vertex: glsl(require('../glsl/sector/instancedMesh.vert').default)
   },
   torusSegmentPrimitive: {
     fragment: glsl(require('../glsl/sector/primitives/torusSegment.frag').default),
