@@ -100,31 +100,32 @@ when camera changes or data is loaded. We do this by repeatedly calling `Cognite
 ```js
 // Water
 const geometry = new THREE.PlaneGeometry(20000, 20000, 127, 127);
-geometry.rotateX( - Math.PI / 2 );
+geometry.rotateX(- Math.PI / 2);
 
 const position = geometry.attributes.position;
 position.usage = THREE.DynamicDrawUsage;
 
-for ( let i = 0; i < position.count; i ++ ) {
-  const y = 35 * Math.sin( i / 2 );
-  position.setY( i, y );
+for (let i = 0; i < position.count; i ++) {
+  const y = 35 * Math.sin(i / 2);
+  position.setY(i, y);
 }
 
 const texture = new THREE.TextureLoader().load('https://threejs.org/examples/textures/water.jpg');
 texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-texture.repeat.set( 5, 5 );
-const material = new THREE.MeshBasicMaterial( { color: 0xd4f1f9, map: texture } );
-const water = new THREE.Mesh( geometry, material );
+texture.repeat.set(5, 5);
+const material = new THREE.MeshBasicMaterial({color: 0xd4f1f9, map: texture});
+const water = new THREE.Mesh(geometry, material);
 
 viewer.addObject3D(water);
 
 function updateOcean() {
-for ( let i = 0; i < position.count; i ++ ) {
-  const y = Math.random() * Math.sin( i / 2 ) * 100;
-  position.setY( i, y );
-}
+  for (let i = 0; i < position.count; i ++) {
+    const y = Math.random() * Math.sin(i / 2) * 10;
+    position.setY(i, y);
+  }
+  water.geometry.attributes.position.needsUpdate = true;
   viewer.requestRedraw();
-  requestAnimationFrame(updateOcean);
+  setInterval(updateOcean, 1500);
 }
 updateOcean();
 ```
@@ -151,7 +152,6 @@ viewer.on('cameraChange', (position, target) => {
 Below is the complete code for adding a skybox and ocean to the scene.
 
 ```jsx runnable
-// The following has been imported outside this scope:
 // const skyUrl = 'https://...'
 const modelCenterAtSeaLevel = model
   .getModelBoundingBox()
@@ -172,31 +172,32 @@ viewer.addObject3D(skyBox);
 
 // Water
 const geometry = new THREE.PlaneGeometry(20000, 20000, 127, 127);
-geometry.rotateX( - Math.PI / 2 );
+geometry.rotateX(-Math.PI / 2);
 
 const position = geometry.attributes.position;
 position.usage = THREE.DynamicDrawUsage;
 
-for ( let i = 0; i < position.count; i ++ ) {
-  const y = 35 * Math.sin( i / 2 );
-  position.setY( i, y );
+for (let i = 0; i < position.count; i ++) {
+  const y = 35 * Math.sin(i / 2);
+  position.setY(i, y);
 }
 
 const texture = new THREE.TextureLoader().load('https://threejs.org/examples/textures/water.jpg');
 texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-texture.repeat.set( 5, 5 );
-const material = new THREE.MeshBasicMaterial( { color: 0xd4f1f9, map: texture } );
-const water = new THREE.Mesh( geometry, material );
+texture.repeat.set(5, 5);
+const material = new THREE.MeshBasicMaterial({color: 0xd4f1f9, map: texture});
+const water = new THREE.Mesh(geometry, material);
 
 viewer.addObject3D(water);
 
 function updateOcean() {
-for ( let i = 0; i < position.count; i ++ ) {
-  const y = Math.random() * Math.sin( i / 2 ) * 100;
-  position.setY( i, y );
-}
+  for (let i = 0; i < position.count; i ++) {
+    const y = Math.random() * Math.sin(i / 2) * 10;
+    position.setY(i, y);
+  }
+  water.geometry.attributes.position.needsUpdate = true;
   viewer.requestRedraw();
-  requestAnimationFrame(updateOcean);
+  setInterval(updateOcean, 1500);
 }
 updateOcean();
 
