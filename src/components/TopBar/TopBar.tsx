@@ -9,6 +9,7 @@ import { useTranslations } from 'hooks/translations';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
 import config from 'config/config';
 import { useIntercom } from 'react-use-intercom';
+import { useCallback } from 'react';
 import { ChartActions } from './ChartActions';
 
 const TopBarWrapper = () => {
@@ -29,6 +30,11 @@ const TopBarWrapper = () => {
     ],
     'TopBar'
   );
+
+  const handleLogout = useCallback(() => {
+    localStorage.clear();
+    window.location.reload();
+  }, []);
 
   return (
     <TopBarWrap>
@@ -117,7 +123,7 @@ const TopBarWrapper = () => {
                     >
                       {t.Profile}
                     </Menu.Item>
-                    <Menu.Item>{t.Logout}</Menu.Item>
+                    <Menu.Item onClick={handleLogout}>{t.Logout}</Menu.Item>
                   </Menu>
                 ),
               },
