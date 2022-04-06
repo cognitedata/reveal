@@ -158,6 +158,7 @@ export const Richtext: React.FC<RichtextProps> = ({
         onKeyDown={onKeyDown}
         placeholder={placeholder}
         readOnly={readOnly}
+        data-testid="editable-area"
       />
 
       {showActionButtons && (

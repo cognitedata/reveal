@@ -4,6 +4,7 @@ import { ButtonCommands } from './button.commands';
 import { FavoriteCommands } from './favorite.commands';
 import { FeedbackCommands } from './feedback.commands';
 import { LoginCommand } from './login.command';
+import { SavedSearchCommands } from './savedSearches.commands';
 import { SearchCommands } from './search.commands';
 import { SidebarCommands } from './sidebar.commands';
 import { TableCommands } from './table.commands';
@@ -20,6 +21,7 @@ declare global {
         TableCommands,
         ButtonCommands,
         AdminCommands,
+        SavedSearchCommands,
         FeedbackCommands {}
   }
 }
@@ -33,3 +35,4 @@ export * from './sidebar.commands';
 export * from './table.commands';
 export * from './button.commands';
 export * from './feedback.commands';
+export * from './savedSearches.commands';

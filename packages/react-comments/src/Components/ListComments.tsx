@@ -42,7 +42,9 @@ export const ListComments: React.FC<ListCommentsProps> = ({
 
   const { authState } = useAuthContext();
 
-  const userId = authState?.id || getUserIdFromToken(idToken);
+  const token = idToken || authState?.idToken || authState?.token;
+
+  const userId = getUserIdFromToken(token);
 
   const [editing, setEditing] = React.useState<
     CommentResponse['id'] | undefined
@@ -55,20 +57,20 @@ export const ListComments: React.FC<ListCommentsProps> = ({
     scope: scope ? scope[0] : undefined, // always assume first scope is 'home' app (for legacy)
     serviceUrl: fullServiceUrl,
     fasAppId,
-    idToken,
+    idToken: token,
   });
   const { mutate: deleteComment } = useCommentDeleteMutate({
     serviceUrl: fullServiceUrl,
     target,
     fasAppId,
-    idToken,
+    idToken: token,
   });
 
   const { mutate: editComment } = useCommentEditMutate({
     serviceUrl: fullServiceUrl,
     target,
     fasAppId,
-    idToken,
+    idToken: token,
   });
 
   const { data: richComments, isError } = useFetchComments({
@@ -76,14 +78,14 @@ export const ListComments: React.FC<ListCommentsProps> = ({
     scope,
     serviceUrl: fullServiceUrl,
     fasAppId,
-    idToken,
+    idToken: token,
   });
 
   const { data: user } = useFetchUser({
     userManagementServiceBaseUrl,
     userId,
     fasAppId,
-    idToken,
+    idToken: token,
   });
 
   const handleCreateMessage = (comment: CommentData) => {
@@ -103,7 +105,7 @@ export const ListComments: React.FC<ListCommentsProps> = ({
     deleteComment(id);
   };
 
-  const isLoading = !userId || !target;
+  const isLoading = userId === undefined || !target || target.id === '';
 
   if (isLoading) {
     return <span>Loading...</span>;
@@ -137,7 +139,7 @@ export const ListComments: React.FC<ListCommentsProps> = ({
   const actionButtonsTarget = 'comment-action-buttons';
 
   return (
-    <ConversationContainer>
+    <ConversationContainer data-testid="comments-root">
       <ErrorBoundary instanceId="comment-root">
         <Conversation
           key={`${target.id}+${target.targetType}`}
