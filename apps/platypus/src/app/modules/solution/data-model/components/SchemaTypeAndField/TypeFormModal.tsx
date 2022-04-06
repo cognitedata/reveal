@@ -53,13 +53,6 @@ export const TypeFormModal = ({
     rules: {
       required: 'This field is required',
       validate: validateTypeNameIsUnique,
-      pattern: {
-        value: /^[A-Z][a-z]+(?:[A-Za-z_0-9]+)*$/,
-        message: t(
-          'validation_message',
-          'Type name must be alphabetic only and in PascalCase e.g. ProductType'
-        ),
-      },
     },
   });
 
