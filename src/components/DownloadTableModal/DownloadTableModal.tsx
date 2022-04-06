@@ -9,9 +9,9 @@ import { escapeCSVValue } from 'utils/utils';
 import Modal, { ModalProps } from 'components/Modal/Modal';
 import Message from 'components/Message/Message';
 import { useDownloadData } from 'hooks/table-data';
+import { RAW_PAGE_SIZE_LIMIT } from 'utils/constants';
 
 const COLUMNS_IGNORED = ['column-index', 'lastUpdatedTime'];
-const MAX_ROWS = 100_000;
 
 type DownloadTableModalProps = {
   databaseName: string;
@@ -68,7 +68,7 @@ const DownloadTableModal = ({
 
   const isItValidRowNumber = (n: string | number): boolean => {
     const count = Number(n);
-    return Number.isInteger(count) && count > 0 && count <= MAX_ROWS;
+    return Number.isInteger(count) && count > 0 && count <= RAW_PAGE_SIZE_LIMIT;
   };
 
   return (
@@ -97,7 +97,7 @@ const DownloadTableModal = ({
       {...modalProps}
     >
       <Message
-        message={`The download option is limited to ${MAX_ROWS} rows.`}
+        message={`The download option is limited to ${RAW_PAGE_SIZE_LIMIT} rows.`}
         type="info"
       />
       <StyledRowsInputWrapper>

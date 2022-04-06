@@ -1,6 +1,7 @@
 import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
 import { RawDB, RawDBRow, RawDBRowInsert, RawDBTable } from '@cognite/sdk';
 import { useInfiniteQuery, useMutation, useQueryClient } from 'react-query';
+import { RAW_PAGE_SIZE_LIMIT } from 'utils/constants';
 export const baseKey = 'raw-explorer';
 
 export const dbKey = (db: string) => [baseKey, db];
@@ -81,8 +82,11 @@ export const useTableRows = (
 ) => {
   const sdk = useSDK();
 
+  const validatedPageSize =
+    pageSize > RAW_PAGE_SIZE_LIMIT ? RAW_PAGE_SIZE_LIMIT : pageSize;
+
   return useInfiniteQuery(
-    rowKey(database, table, pageSize),
+    rowKey(database, table, validatedPageSize),
     ({ pageParam = undefined }) =>
       sdk
         .get<{
@@ -91,7 +95,7 @@ export const useTableRows = (
         }>(
           `/api/v1/projects/${
             sdk.project
-          }/raw/dbs/${database}/tables/${table}/rows?limit=${pageSize}${
+          }/raw/dbs/${database}/tables/${table}/rows?limit=${validatedPageSize}${
             pageParam ? `&cursor=${pageParam}` : ''
           }`
         )
