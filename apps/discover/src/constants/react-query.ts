@@ -20,7 +20,6 @@ export const USER_KEY = {
   USER: [USER],
   ROLES: [USER, 'roles'],
   USER_FAVORITES: [USER, 'favorites'],
-  ADMIN_USERS: [USER, 'adminUsers'],
 };
 
 export const FAVORITE_KEY = {
@@ -106,6 +105,7 @@ const USER_MANAGEMENT_SYSTEM = 'userManagementSystem';
 export const USER_MANAGEMENT_SYSTEM_KEY = {
   ME: [USER_MANAGEMENT_SYSTEM, 'me'],
   SEARCH: [USER_MANAGEMENT_SYSTEM, 'search'],
+  ADMIN_USERS: [USER_MANAGEMENT_SYSTEM, 'adminUsers'],
 } as const;
 
 const DOCUMENTS = 'documents';

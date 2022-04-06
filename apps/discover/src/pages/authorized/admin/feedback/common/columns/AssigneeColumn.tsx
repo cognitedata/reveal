@@ -1,80 +1,73 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useState } from 'react';
 
+import { getUmsUserName } from 'dataLayers/userManagementService/selectors/getUmsUserName';
 import { useUserInfo } from 'services/userManagementService/query';
 
 import { Dropdown, Menu, Label } from '@cognite/cogs.js';
-import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
+import { UMSUser } from '@cognite/user-management-service-types';
 
 import { NoPropagationWrapper } from 'components/buttons/NoPropagationWrapper';
-import { getFullNameOrDefaultText } from 'modules/user/utils';
+import { DangerButton } from 'pages/authorized/favorites/elements';
+
+import { ASSIGNED_TO, UNASSIGN, UNASSIGNED } from '../../constants';
+import { AssignToDropdown } from '../elements';
+import { UnassignWarningModal } from '../UnassignWarningModal';
+
+import { AdminList } from './AdminList';
 
 interface Props {
-  assignee?: ObjectFeedbackResponse['assignee'];
-  assignFeedback: () => void;
+  assignFeedback: (userId: string) => void;
   unassignFeedback: () => void;
-}
-
-enum Options {
-  assignToMe = 0,
-  unassign = 1,
+  adminUsers?: UMSUser[];
+  assignee?: UMSUser;
 }
 
 export const AssigneeColumn: React.FC<Props> = (props) => {
-  const { assignee, assignFeedback, unassignFeedback } = props;
-  const { t } = useTranslation('Admin');
+  const { assignee, assignFeedback, unassignFeedback, adminUsers } = props;
   const { data: user } = useUserInfo();
   const [visibleAssignee, setVisibleAssignee] = React.useState<
-    undefined | ObjectFeedbackResponse['assignee']
+    UMSUser | undefined
   >(assignee);
+  const [openModal, setOpenModal] = useState(false);
 
-  const isAssigned = !!visibleAssignee;
-  const isAssignedToMe = user?.id === visibleAssignee?.id;
-
-  const handleChange = (value: number) => {
-    if (value === Options.assignToMe) {
-      setVisibleAssignee(user);
-      assignFeedback();
-    } else if (value === Options.unassign) {
-      setVisibleAssignee(undefined);
-      unassignFeedback();
-    }
+  const unassign = () => {
+    unassignModal();
+    setVisibleAssignee(undefined);
+    unassignFeedback();
   };
 
-  const options = [
-    {
-      value: Options.assignToMe,
-      display: isAssignedToMe ? t('Assigned to me') : t('Assign to me'),
-    },
-    {
-      value: Options.unassign,
-      display: isAssigned ? t('Unassign') : t('Unassigned'),
-    },
-  ];
+  const unassignModal = () => {
+    setOpenModal((prevState) => !prevState);
+  };
 
-  const getSelected = () => {
-    if (isAssignedToMe) {
-      return Options.assignToMe;
-    }
-    if (!isAssigned) {
-      return Options.unassign;
-    }
-
-    return undefined;
+  const assign = (user: UMSUser) => {
+    setVisibleAssignee(user);
+    assignFeedback(user.id);
   };
 
   const MenuContent = (
-    <Menu>
-      {options.map((option) => (
-        <Menu.Item
-          key={option.value}
-          onClick={() => handleChange(option.value)}
-          disabled={getSelected() === option.value}
+    <AssignToDropdown>
+      <>
+        <Menu.Submenu
+          content={
+            <AdminList
+              adminList={adminUsers}
+              currentUserId={user?.id}
+              assigneeId={assignee?.id}
+              assign={assign}
+            />
+          }
         >
-          {option.display}
-        </Menu.Item>
-      ))}
-    </Menu>
+          <span>{ASSIGNED_TO}</span>
+        </Menu.Submenu>
+        {assignee && (
+          <>
+            <Menu.Divider />
+            <DangerButton onClick={unassignModal}>{UNASSIGN}</DangerButton>
+          </>
+        )}
+      </>
+    </AssignToDropdown>
   );
 
   return (
@@ -85,13 +78,18 @@ export const AssigneeColumn: React.FC<Props> = (props) => {
           iconPlacement="right"
           icon="ChevronDownLarge"
           variant={visibleAssignee ? 'normal' : 'unknown'}
-          aria-label="Unassigned"
+          aria-label={UNASSIGNED}
         >
           {visibleAssignee
-            ? getFullNameOrDefaultText(visibleAssignee)
-            : 'Unassigned'}
+            ? getUmsUserName(visibleAssignee, user?.id)
+            : UNASSIGNED}
         </Label>
       </Dropdown>
+      <UnassignWarningModal
+        openModal={openModal}
+        unassignModal={unassignModal}
+        unassign={unassign}
+      />
     </NoPropagationWrapper>
   );
 };

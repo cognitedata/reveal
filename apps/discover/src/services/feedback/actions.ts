@@ -1,11 +1,8 @@
+import isUndefined from 'lodash/isUndefined';
 import { getEmail } from 'utils/getCogniteSDKClient';
 import { log } from 'utils/log';
 
-import {
-  GeneralFeedback,
-  ObjectFeedback,
-  User,
-} from '@cognite/discover-api-types';
+import { GeneralFeedback, ObjectFeedback } from '@cognite/discover-api-types';
 
 import { showErrorMessage } from 'components/toast';
 import { FEEDBACK_ERROR_MESSAGE } from 'constants/feedback';
@@ -140,11 +137,11 @@ export function deleteGeneralFeedback(
  */
 export function assignGeneralFeedback(
   id: string,
-  user: User | undefined,
-  mutate: MutateUpdateFeedback
+  mutate: MutateUpdateFeedback,
+  userId?: string
 ) {
-  if (user) {
-    return mutate({ id, payload: { assignedTo: user.id } }).catch((error) => {
+  if (!isUndefined(userId)) {
+    return mutate({ id, payload: { assignedTo: userId } }).catch((error) => {
       log('Error updating general feedback: ', error);
       showErrorMessage(error.message);
     });

@@ -1,11 +1,16 @@
-import { fireEvent, screen } from '@testing-library/react';
+import '__mocks/mockContainerAuth'; // should be first
+import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { setupServer } from 'msw/node';
 import { Store } from 'redux';
 import { getMockedDocumentFeedbackItem } from 'services/feedback/__fixtures/feedback';
+import { getMockUserSearch } from 'services/userManagementService/__mocks/mockUmsSearch';
 
 import { testRendererModal } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 
 import { DocumentFeedbackTable } from '../DocumentFeedbackTable';
+
+const mockServer = setupServer(getMockUserSearch());
 
 const mockDocumentFeedbackItemOne = getMockedDocumentFeedbackItem({
   id: '111111',
@@ -72,6 +77,9 @@ const DocumentFeedbackTableComponent = () => {
 };
 
 describe('DocumentFeedbackTable Tests', () => {
+  beforeAll(() => mockServer.listen());
+  afterAll(() => mockServer.close());
+
   const setupStore = () => {
     const store = getMockedStore({
       feedback: {
@@ -86,19 +94,25 @@ describe('DocumentFeedbackTable Tests', () => {
 
   it('should render table with user name', async () => {
     await testInit(setupStore());
-    expect(screen.getByText('Richard Doe')).toBeInTheDocument(); // in user column
+    await waitFor(() => {
+      expect(screen.getByText('Richard Doe')).toBeInTheDocument();
+    }); // in user column
   });
 
   it('should render table with records', async () => {
     await testInit(setupStore());
-    expect(screen.getByText('comment')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('comment')).toBeInTheDocument();
+    });
     fireEvent.click(screen.getByText('comment'));
   });
 
   it('should render record with archive button', async () => {
     await testInit(setupStore());
-    expect(screen.getByText('comment')).toBeInTheDocument();
 
+    await waitFor(() => {
+      expect(screen.getByText('comment')).toBeInTheDocument();
+    });
     const archiveButton = screen.getByTestId('button-archive-333333');
     expect(archiveButton).toBeInTheDocument();
     fireEvent.click(archiveButton);

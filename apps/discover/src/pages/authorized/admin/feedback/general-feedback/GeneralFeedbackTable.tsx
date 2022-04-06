@@ -1,5 +1,7 @@
 import React, { useCallback, useState } from 'react';
+import { Cell } from 'react-table';
 
+import { filterUmsUserFromId } from 'dataLayers/userManagementService/selectors/getUmsUserFromId';
 import compact from 'lodash/compact';
 import isString from 'lodash/isString';
 import sortBy from 'lodash/sortBy';
@@ -11,11 +13,14 @@ import {
   recoverGeneralFeedback,
   useFeedbackGetAllQuery,
 } from 'services/feedback';
-import { useUserInfo } from 'services/userManagementService/query';
+import {
+  useAdminUsers,
+  useUserInfo,
+} from 'services/userManagementService/query';
 import { getDateOrDefaultText } from 'utils/date';
 import { sortByDate } from 'utils/sort/sortByDate';
 
-import { GeneralFeedbackResponse, User } from '@cognite/discover-api-types';
+import { GeneralFeedbackResponse } from '@cognite/discover-api-types';
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 
 import EmptyState from 'components/emptyState';
@@ -28,6 +33,7 @@ import { feedbackHelper } from 'modules/feedback/helper';
 import { getFullNameOrDefaultText } from 'modules/user/utils';
 
 import { ActionColumn } from '../common/columns/ActionColumn';
+import { AssigneeColumn } from '../common/columns/AssigneeColumn';
 import { ScreenshotColumn } from '../common/columns/ScreenshotColumn';
 import { StatusColumn } from '../common/columns/StatusColumn';
 import { useFeedback } from '../Selector';
@@ -53,6 +59,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
   const [expandedIds, setExpandedIds] = useState<TableResults>({});
   const { data: user } = useUserInfo();
   const [highlightedIds, setHighlightedIds] = useState<TableResults>();
+  const { data: adminUsers, isLoading: isAdminUserLoading } = useAdminUsers();
 
   /**
    * Reason for eslint-disable: components that are inline-rendered for React-Table cell,
@@ -100,9 +107,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
       maxWidth: '0.1fr',
       order: 2,
       // eslint-disable-next-line react/no-unstable-nested-components
-      Cell: (cell) => (
-        <span>{getFullNameOrDefaultText(cell.row.original.assignee)}</span>
-      ),
+      Cell: (cell) => <span>{getRowAssigneeColumn(cell)}</span>,
       sortType: (row1, row2) =>
         getFullNameOrDefaultText(row1.original.assignee).localeCompare(
           getFullNameOrDefaultText(row2.original.assignee)
@@ -168,7 +173,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
           }}
           recoverFeedback={recoverFeedback}
           assignFeedback={(feedback: GeneralFeedbackResponse) =>
-            assignFeedback(feedback, user)
+            assignFeedback(feedback, user?.id)
           }
           deleteGeneralFeedback={handleDeleteGeneralFeedback}
         />
@@ -219,9 +224,9 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
   };
   const assignFeedback = (
     feedback: GeneralFeedbackResponse,
-    user: User | undefined
+    userId?: string
   ) => {
-    return assignGeneralFeedback(feedback.id, user, updateGeneralFeedback);
+    return assignGeneralFeedback(feedback.id, updateGeneralFeedback, userId);
   };
 
   const handleDeleteGeneralFeedback = (feedback: GeneralFeedbackResponse) =>
@@ -250,6 +255,17 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
     []
   );
 
+  const getRowAssigneeColumn = (cell: Cell<GeneralFeedbackResponse>) => (
+    <AssigneeColumn
+      assignee={filterUmsUserFromId(adminUsers, cell.row.original.assignee?.id)}
+      assignFeedback={(userId: string) =>
+        assignFeedback(cell.row.original, userId)
+      }
+      unassignFeedback={() => assignFeedback(cell.row.original, '')}
+      adminUsers={adminUsers}
+    />
+  );
+
   const toggleGeneralFeedbackData = React.useMemo(() => {
     if (!data || isString(data)) {
       return [];
@@ -257,7 +273,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
     return data.filter((item) => item.deleted === generalFeedbackShowDeleted);
   }, [data, generalFeedbackShowDeleted]);
 
-  if (isLoading) {
+  if (isLoading || isAdminUserLoading) {
     return (
       <EmptyState
         isLoading

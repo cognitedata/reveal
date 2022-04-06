@@ -29,11 +29,13 @@ export const userPreferences = (headers: FetchHeaders) => {
 };
 
 export const userManagement = (headers: FetchHeaders) => {
-  const search = (query: string) => {
+  const search = (query: string, onlyAdmins = false, limit = 5) => {
     return fetchPost<UMSUser[]>(
       getUserManagementEndpoint('search'),
       {
         query,
+        onlyAdmins,
+        limit,
       },
       { headers }
     );

@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
 
-import { Label } from '@cognite/cogs.js';
+import { Label, Menu } from '@cognite/cogs.js';
 
 import { FlexRow, sizes } from 'styles/layout';
 
@@ -51,3 +51,20 @@ export const SmallGreyLabel = styled(Label).attrs({
   size: 'small',
   variant: 'unknown',
 })``;
+
+export const AdminListMenu = styled(Menu)`
+  width: 220px;
+`;
+
+export const MenuItemAssigned = styled(Menu.Item)`
+  color: var(--cogs-primary);
+`;
+
+export const AdminListMenuFooter = styled(Menu.Footer)`
+  color: rgba(0, 0, 0, 0.45); // this color is not in the cogs
+`;
+
+export const AdminUsersWrapper = styled.div`
+  max-height: 400px;
+  overflow-y: auto;
+`;

@@ -1,16 +1,26 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  UseQueryResult,
+} from 'react-query';
 
 import { useJsonHeaders } from 'services/service';
 
 import { getTenantInfo } from '@cognite/react-container';
 import {
+  UMSUser,
   UMSUserProfile,
   UMSUserProfilePreferences,
 } from '@cognite/user-management-service-types';
 
-import { USER_MANAGEMENT_SYSTEM_KEY } from 'constants/react-query';
+import {
+  ONLY_FETCH_ONCE,
+  USER_MANAGEMENT_SYSTEM_KEY,
+} from 'constants/react-query';
 
-import { userPreferences } from './endpoints';
+import { MAXIMUM_NUMBER_OF_ADMINS } from './constants';
+import { userManagement, userPreferences } from './endpoints';
 
 export const useUserInfo = () => {
   const [project] = getTenantInfo();
@@ -70,6 +80,27 @@ export const useUserPreferencesMutate = (
       },
       onSuccess: () => {
         queryClient.invalidateQueries(USER_MANAGEMENT_SYSTEM_KEY.ME);
+      },
+    }
+  );
+};
+
+export const useAdminUsers = (
+  query = ''
+): UseQueryResult<UMSUser[] | undefined> => {
+  const headers = useJsonHeaders({}, true);
+  const queryClient = useQueryClient();
+
+  const { search } = userManagement(headers);
+
+  return useQuery<UMSUser[] | undefined>(
+    USER_MANAGEMENT_SYSTEM_KEY.ADMIN_USERS,
+    () => search(query, true, MAXIMUM_NUMBER_OF_ADMINS),
+    {
+      retry: 2,
+      ...ONLY_FETCH_ONCE,
+      onError: () => {
+        queryClient.invalidateQueries(USER_MANAGEMENT_SYSTEM_KEY.ADMIN_USERS);
       },
     }
   );

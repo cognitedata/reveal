@@ -66,11 +66,11 @@ describe('feedback actions', () => {
 
   it('should call `assignGeneralFeedback` as expected', async () => {
     const user = getUser();
-    assignGeneralFeedback(id, user, mutate);
+    assignGeneralFeedback(id, mutate, user.id);
     expect(mutate).toBeCalledTimes(1);
 
     // When user is undefined
-    expect(assignGeneralFeedback(id, undefined, mutate)).toBeFalsy();
+    expect(assignGeneralFeedback(id, mutate, undefined)).toBeFalsy();
   });
 
   it('should call `unassignGeneralFeedback` as expected', async () => {
@@ -140,7 +140,7 @@ describe('feedback api error handling', () => {
 
   it('should handle error on call `assignGeneralFeedback` as expected', async () => {
     const user = getUser();
-    assignGeneralFeedback(id, user, mutate);
+    assignGeneralFeedback(id, mutate, user.id);
     expect(mutate).toBeCalledTimes(1);
   });
 

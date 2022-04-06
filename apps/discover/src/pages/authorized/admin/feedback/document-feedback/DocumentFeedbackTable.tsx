@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Cell } from 'react-table';
 
+import { filterUmsUserFromId } from 'dataLayers/userManagementService/selectors/getUmsUserFromId';
 import compact from 'lodash/compact';
 import sortBy from 'lodash/sortBy';
 import {
@@ -10,13 +11,15 @@ import {
   deleteObjectFeedback,
   recoverObjectFeedback,
 } from 'services/feedback';
-import { useUserInfo } from 'services/userManagementService/query';
+import { useAdminUsers } from 'services/userManagementService/query';
 import { getDateOrDefaultText } from 'utils/date';
 import { sortByDate } from 'utils/sort/sortByDate';
 
-import { ObjectFeedbackResponse, User } from '@cognite/discover-api-types';
+import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
+import { UMSUser } from '@cognite/user-management-service-types';
 
+import EmptyState from 'components/emptyState';
 import { OKModal } from 'components/modal';
 import { Table, Options, TableResults, RowProps } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
@@ -41,7 +44,7 @@ import { DocumentFeedbackLabels } from './DocumentFeedbackLabels';
 
 type UpdateFeedbackAssignee = (
   feedback: ObjectFeedbackResponse,
-  user?: User
+  userId?: string
 ) => void;
 type HandleUpdateFeedbackStatus = (
   feedback: ObjectFeedbackResponse,
@@ -62,13 +65,19 @@ const getRowStatusColumn =
     );
 
 const getRowAssigneeColumn =
-  (updateFeedbackAssignee: UpdateFeedbackAssignee, user?: User) =>
+  (updateFeedbackAssignee: UpdateFeedbackAssignee, adminUsers?: UMSUser[]) =>
   (cell: Cell<ObjectFeedbackResponse>) =>
     (
       <AssigneeColumn
-        assignee={cell.row.original.assignee}
-        assignFeedback={() => updateFeedbackAssignee(cell.row.original, user)}
+        assignee={filterUmsUserFromId(
+          adminUsers,
+          cell.row.original.assignee?.id
+        )}
+        assignFeedback={(userId: string) =>
+          updateFeedbackAssignee(cell.row.original, userId)
+        }
         unassignFeedback={() => updateFeedbackAssignee(cell.row.original)}
+        adminUsers={adminUsers}
       />
     );
 
@@ -87,11 +96,11 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
 
   const { t } = useTranslation('Admin');
 
-  const { data: user } = useUserInfo();
   const { mutateAsync: addDocumentFeedback } =
     useFeedbackUpdateMutate('object');
   const { mutateAsync: updateDocumentFeedback } =
     useFeedbackUpdateMutate('object');
+  const { data: adminUsers, isLoading } = useAdminUsers();
 
   const [highlightedIds, setHighlightedIds] = useState<TableResults>();
   const [expandedIds, setExpandedIds] = useState<TableResults>({});
@@ -117,10 +126,10 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
       }
     );
 
-  const updateFeedbackAssignee: UpdateFeedbackAssignee = (feedback, user) => {
+  const updateFeedbackAssignee: UpdateFeedbackAssignee = (feedback, userId) => {
     updateDocumentFeedback({
       id: feedback.id,
-      payload: { assignedTo: user?.id || '' },
+      payload: { assignedTo: userId || '' },
     });
   };
 
@@ -220,7 +229,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
       accessor: 'assignedToCol', // Don't rename this to assignedTo. It cause to render a "<div> inside <p> validation error".
       width: '200px',
       order: 5,
-      Cell: getRowAssigneeColumn(updateFeedbackAssignee, user),
+      Cell: getRowAssigneeColumn(updateFeedbackAssignee, adminUsers),
       sortType: (row1, row2) =>
         getFullNameOrDefaultText(row1.original.assignee).localeCompare(
           getFullNameOrDefaultText(row2.original.assignee)
@@ -335,6 +344,10 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
       (item) => item.deleted === objectFeedbackShowDeleted
     );
   }, [documentFeedbackItems, objectFeedbackShowDeleted]);
+
+  if (isLoading) {
+    return <EmptyState isLoading />;
+  }
 
   return (
     <>
