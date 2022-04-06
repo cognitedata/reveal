@@ -50,6 +50,7 @@ export class TransformOverrideBuffer {
 
   dispose(): void {
     this._dataTexture.dispose();
+    delete this._dataTexture.image;
   }
 
   public addOverrideTransform(treeIndex: number, transform: THREE.Matrix4): number {

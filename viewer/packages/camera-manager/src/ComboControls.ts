@@ -129,14 +129,14 @@ export class ComboControls extends EventDispatcher {
     window.addEventListener('pointerdown', this.onFocusChanged);
 
     this.dispose = () => {
-      domElement.removeEventListener('pointerdown', this.onMouseDown);
+      domElement.removeEventListener('pointerdown', this.onPointerDown);
       domElement.removeEventListener('wheel', this.onMouseWheel);
       domElement.removeEventListener('touchstart', this.onTouchStart);
       domElement.removeEventListener('contextmenu', this.onContextMenu);
       domElement.removeEventListener('focus', this.onFocusChanged);
       domElement.removeEventListener('blur', this.onFocusChanged);
 
-      window.removeEventListener('mouseup', this.onMouseUp);
+      window.removeEventListener('pointerup', this.onMouseUp);
       window.removeEventListener('pointerdown', this.onFocusChanged);
     };
   }

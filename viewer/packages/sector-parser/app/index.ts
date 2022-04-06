@@ -104,10 +104,6 @@ async function init() {
         mesh.frustumCulled = false;
         mesh.onBeforeRender = () => {
           (material.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld).invert();
-          (material.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
-          (material.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
-          (material.uniforms.projectionMatrix?.value as THREE.Matrix4)?.copy(camera.projectionMatrix);
-          (material.uniforms.normalMatrix?.value as THREE.Matrix3)?.copy(mesh.normalMatrix);
           (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
         };
         group.add(mesh);

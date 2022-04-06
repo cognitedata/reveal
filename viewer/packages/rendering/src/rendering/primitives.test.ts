@@ -82,7 +82,7 @@ describe('createPrimitives', () => {
     boxSector.primitives.boxCollection = mockAttributeBuffer;
     boxSector.primitives.boxAttributes = mockAttributes;
 
-    testPrimitiveBase(boxSector, materials, mockAttributes, 'box', bounds, 2);
+    testPrimitiveBase(boxSector, materials, mockAttributes, 'box', bounds, 1);
   });
 
   test('Circle primitives, returns one geometry', () => {

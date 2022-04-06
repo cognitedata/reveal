@@ -331,6 +331,7 @@ export class Cognite3DViewer {
       cancelAnimationFrame(this.latestRequestId);
     }
 
+    this.renderController.dispose();
     this._subscription.unsubscribe();
     this._cameraManager.dispose();
     this.revealManager.dispose();
@@ -562,9 +563,6 @@ export class Cognite3DViewer {
    * ```
    */
   async addPointCloudModel(options: AddModelOptions): Promise<CognitePointCloudModel> {
-    if (options.localPath) {
-      throw new NotSupportedInMigrationWrapperError('localPath is not supported');
-    }
     if (options.geometryFilter) {
       throw new NotSupportedInMigrationWrapperError('geometryFilter is not supported for point clouds');
     }
@@ -594,7 +592,13 @@ export class Cognite3DViewer {
       case 'cad':
         const cadModel = model as Cognite3DModel;
         this.scene.remove(cadModel);
+        model.dispose();
         this.revealManager.removeModel(model.type, cadModel.cadNode);
+
+        // This is required because renderer holds references to scenes that were rendered,
+        // including geometry on that scenes. `dispose` method removes unused references for
+        // removed model.
+        this._renderer.renderLists.dispose();
         break;
 
       case 'pointcloud':
@@ -1185,9 +1189,8 @@ export class Cognite3DViewer {
       return false;
     }
 
-    this.renderer.setSize(width, height);
-
     adjustCamera(this.camera, width, height);
+    this.renderer.setSize(width, height);
 
     return true;
   }

@@ -1,0 +1,184 @@
+---
+id: camera-manager
+title: Custom CameraManager
+description: Shows how to implement custom CameraManager to enable new camera manipulation features.
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+By default `Cognite3DViewer` uses `DefaultCameraManager` class to manage user interaction with the camera.
+In certain cases it can be useful to customize behaviour of the camera:
+
+- Need to provide custom `THREE.PerspectiveCamera` object to `Cognite3DViewer`
+- Need to extend camera controls to any specific case that is not covered by current implementation
+
+
+## Overview
+
+To create a custom camera manager class, `CameraManager` interface from `@cognite/reveal` must be implemented
+and provided to `Cognite3DViewer` on construction using the `cameraManager`-option. Interface looks like this:
+
+```js
+export interface CameraManager {
+  /**
+   * Returns the camera used for rendering in {@link Cognite3DViewer}.
+   * Note that the camera will not be modified directly by Reveal.
+   * Implementations must trigger the `cameraChange`-event whenever the
+   * camera changes.
+   */
+  getCamera(): THREE.PerspectiveCamera;
+  /**
+   * Set camera's state. Rotation and target can't be set at the same time. as they could conflict,
+   * should throw an error if both are passed with non-zero value inside state.
+   *
+   * @param state Camera state, all fields are optional.
+   * @param state.position Camera position in world space.
+   * @param state.target Camera target in world space.
+   * @param state.rotation Camera local rotation in quaternion form.
+   * @example
+   * ```js
+   * // store position, target
+   * const { position, target } = cameraManager.getCameraState();
+   * // restore position, target
+   * cameraManager.setCameraState({ position, target });
+   * ```
+   */
+  setCameraState(state: CameraState): void;
+
+  /**
+   * Get camera's state
+   * @returns Camera state: position, target and rotation.
+   */
+  getCameraState(): Required<CameraState>;
+
+  /**
+   * Subscribes to changes of the camera event. This is used by Reveal to react on changes of the camera.
+   * @param event Name of the event.
+   * @param callback Callback to be called when the event is fired.
+   */
+  on(event: 'cameraChange', callback: CameraChangedEvent): void;
+  /**
+   * Unsubscribes from changes of the camera event.
+   * @param event Name of the event.
+   * @param callback Callback function to be unsubscribed.
+   */
+  off(event: 'cameraChange', callback: CameraChangedEvent): void;
+
+  /**
+   * Moves camera to a place where the content of a bounding box is visible to the camera.
+   * @param box The bounding box in world space.
+   * @param duration The duration of the animation moving the camera.
+   * @param radiusFactor The ratio of the distance from camera to center of box and radius of the box.
+   */
+  fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void;
+  /**
+   * Updates internal state of camera manager. Expected to update visual state of the camera
+   * as well as it's near and far planes if needed. Called in `requestAnimationFrame`-loop.
+   * Reveal performance affects frequency with which this method is called.
+   * @param deltaTime Delta time since last update in seconds.
+   * @param boundingBox Global bounding box of the model(s) and any custom objects added to the scene.
+   */
+  update(deltaTime: number, boundingBox: THREE.Box3): void;
+  /**
+   * @obvious
+   */
+  dispose(): void;
+}
+
+```
+
+Main implementation specific functions are `setCameraState`, `fitCameraToBoundingBox` and `update`. 
+Setting state shouldn't be possible when `rotation` and `target` are passed at the same time because they could conflict.
+When implementing these functions you can use a helper class `CameraManagerHelper` that contains some useful methods.
+
+## Example implementation
+
+Here is an example implementation of a custom camera manager that utilizes standard ThreeJS [`OrbitControls`](https://threejs.org/docs/index.html?q=orbit#examples/en/controls/OrbitControls) for mouse movement:
+
+```js
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+
+import { CameraManager, CameraManagerHelper, CameraState, CameraChangeDelegate } from '@cognite/reveal';
+
+export class CustomCameraManager implements CameraManager {
+    private _domElement: HTMLElement;
+    private _camera: THREE.PerspectiveCamera;
+    private _controls: OrbitControls;
+    private readonly _cameraChangedListener: Array<CameraChangeDelegate> = [];
+
+    constructor(domElement: HTMLElement, camera: THREE.PerspectiveCamera) {
+        this._domElement = domElement;
+        this._camera = camera;
+        this._controls = new OrbitControls(this._camera, domElement);
+        this._controls.enableDamping = true;
+        this._controls.dampingFactor = 0.3;
+
+        this._controls.addEventListener('change', () => {
+            this._cameraChangedListener.forEach( cb => cb(this._camera.position, 
+            this._controls.target));
+        });
+    }
+
+    getCamera(): THREE.PerspectiveCamera {
+        return this._camera;
+    }
+
+    setCameraState(state: CameraState): void {
+        if (state.rotation && state.target) throw 
+          new Error("Can't set both rotation and target");
+
+        const position = state.position ?? this._camera.position;
+        const rotation = state.rotation ?? this._camera.quaternion;
+        const target = state.target ?? ( state.rotation ? 
+            CameraManagerHelper.calculateNewTargetFromRotation(
+                this._camera, state.rotation, this._controls.target) : 
+            this._controls.target);
+
+        this._camera.position.copy(position);
+        this._controls.target.copy(target);
+        this._camera.quaternion.copy(rotation);
+    }
+
+    getCameraState(): Required<CameraState> {
+        return {
+            position: this._camera.position.clone(),
+            target: this._controls.target.clone(),
+            rotation: this._camera.quaternion.clone(),
+        }
+    }
+
+    on(event: "cameraChange", callback: CameraChangeDelegate): void {
+        this._cameraChangedListener.push(callback);
+    }
+
+    off(event: "cameraChange", callback: CameraChangeDelegate): void {
+        const index  = this._cameraChangedListener.indexOf(callback);
+        if (index !== -1) {
+            this._cameraChangedListener.splice(index, 1);
+        }
+    }
+
+    fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void {
+        const { position, target } = CameraManagerHelper
+          .calculateCameraStateToFitBoundingBox(this._camera, boundingBox, radiusFactor);
+
+        this.setCameraState({ position, target });
+    }
+
+    update(deltaTime: number, boundingBox: THREE.Box3): void {
+        this._controls.update();
+        CameraManagerHelper.updateCameraNearAndFar(this._camera, boundingBox);
+    }
+
+    dispose(): void {
+        this._controls.dispose();
+        this._cameraChangedListener.splice(0);
+    }
+}
+```
+As you can see, implementation can be quite simple. There are three things that you should really pay extra attention to:
+1. `'cameraChange'` event must be fired every time camera position or rotation changes to trigger redraw in Reveal.
+2. For the `setCameraState` method you should properly handle how change in rotation and target affects the camera and corresponds with 
+the behaviour of camera controls (`OrbitControls` in this case). For calculating camera target from rotation you can use `calculateNewTargetFromRotation` method of `CameraManagerHelper` .
+3. Inside `update` method you should update `near` and `far` planes of the camera, which can be easily done using `updateCameraNearAndFar` method of `CameraManagerHelper`. 

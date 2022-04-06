@@ -35,12 +35,12 @@ describe('RevealManager', () => {
         internal: { cad: { sectorCuller } }
       }
     );
+    jest.useFakeTimers();
   });
 
   beforeAll(() => {
     const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
     renderer = new THREE.WebGLRenderer({ context });
-    jest.useFakeTimers();
   });
 
   afterAll(() => {
