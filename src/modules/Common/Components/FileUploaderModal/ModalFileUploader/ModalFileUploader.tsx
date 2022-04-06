@@ -46,9 +46,12 @@ const GCSUploader = ({
    Meaning there is no way to cancel file upload that is lesser than chunkSize.
    Since we focus on image uploads for the vision app, chunks should be smaller.
    */
-  const chunkMultiple = Math.max(
-    5, // min chunk is 1.25 MB
-    Math.ceil(file.size / 20 / 262144) // for big files divide into 20 segments and take multiplier
+  const chunkMultiple = Math.min(
+    Math.max(
+      2, // 0.5MB min chunks
+      Math.ceil((file.size / 20) * 262144) // will divide into 20 segments
+    ),
+    200 // 50 MB max
   );
 
   return new UploadGCS({
