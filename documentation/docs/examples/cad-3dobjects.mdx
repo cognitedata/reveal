@@ -152,7 +152,6 @@ viewer.on('cameraChange', (position, target) => {
 Below is the complete code for adding a skybox and ocean to the scene.
 
 ```jsx runnable
-// const skyUrl = 'https://...'
 const modelCenterAtSeaLevel = model
   .getModelBoundingBox()
   .getCenter(new THREE.Vector3());
@@ -171,33 +170,33 @@ skyBox.position.copy(modelCenterAtSeaLevel);
 viewer.addObject3D(skyBox);
 
 // Water
-const geometry = new THREE.PlaneGeometry(20000, 20000, 127, 127);
-geometry.rotateX(-Math.PI / 2);
+const waterGeometry = new THREE.PlaneBufferGeometry(6000, 6000);
+const clock = new THREE.Clock();
+const timeUniform = {
+  iGlobalTime: {type: 'f', value: 0.1},
+  iResolution: {type: 'v2', value: new THREE.Vector2()}
+};
 
-const position = geometry.attributes.position;
-position.usage = THREE.DynamicDrawUsage;
+timeUniform.iResolution.value.x = 200;
+timeUniform.iResolution.value.y = 200;
 
-for (let i = 0; i < position.count; i ++) {
-  const y = 35 * Math.sin(i / 2);
-  position.setY(i, y);
-}
+var material = new THREE.ShaderMaterial({
+  uniforms: timeUniform,
+  side: THREE.DoubleSide,
+  vertexShader: WaterShader.Vertex,
+  fragmentShader: WaterShader.Fragment
+});
 
-const texture = new THREE.TextureLoader().load('https://threejs.org/examples/textures/water.jpg');
-texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-texture.repeat.set(5, 5);
-const material = new THREE.MeshBasicMaterial({color: 0xd4f1f9, map: texture});
-const water = new THREE.Mesh(geometry, material);
-
+water = new THREE.Mesh(waterGeometry, material);
+// Make the ocean horizontal
+water.rotation.x = -Math.PI / 2;
+water.position.copy(modelCenterAtSeaLevel);
 viewer.addObject3D(water);
 
 function updateOcean() {
-  for (let i = 0; i < position.count; i ++) {
-    const y = Math.random() * Math.sin(i / 2) * 10;
-    position.setY(i, y);
-  }
-  water.geometry.attributes.position.needsUpdate = true;
+  timeUniform.iGlobalTime.value += clock.getDelta();
   viewer.requestRedraw();
-  setInterval(updateOcean, 1500);
+  requestAnimationFrame(updateOcean);
 }
 updateOcean();
 
