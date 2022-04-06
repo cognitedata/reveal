@@ -130,22 +130,20 @@ export type CDFAnnotationStatus =
   | `${Status.Approved}`
   | `${Status.Rejected}`;
 
-export type CDFAnnotationType<Type extends CDFAnnotationDataType> =
-  Type extends ImageObjectDetection
-    ? CDFImageObjectDetectionTypeName
-    : Type extends ImageClassification
-    ? CDFImageClassificationTypeName
-    : never;
+export type CDFAnnotationType<Type> = Type extends ImageObjectDetection
+  ? CDFImageObjectDetectionTypeName
+  : Type extends ImageClassification
+  ? CDFImageClassificationTypeName
+  : never;
 
-export type CDFAnnotationV2<Type extends CDFAnnotationDataType> =
-  AnnotatedResourceIdEither & {
-    createdTime: Timestamp;
-    lastUpdatedTime: Timestamp;
-    annotatedResourceType: 'file';
-    status: CDFAnnotationStatus;
-    annotationType: CDFAnnotationType<Type>;
-    data: Type;
-  } & LinkedResourceRef; // TODO: remove `LinkedResource` once removed from the api
+export type CDFAnnotationV2<Type> = AnnotatedResourceIdEither & {
+  createdTime: Timestamp;
+  lastUpdatedTime: Timestamp;
+  annotatedResourceType: 'file';
+  status: CDFAnnotationStatus;
+  annotationType: CDFAnnotationType<Type>;
+  data: Type;
+} & LinkedResourceRef; // TODO: remove `LinkedResource` once removed from the api
 
 // Annotation API types
 export type AnnotationTypeV1 =

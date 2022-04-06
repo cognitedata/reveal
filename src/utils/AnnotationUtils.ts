@@ -10,7 +10,6 @@ import {
   AnnotationMetadata,
   AnnotationSource,
   AnnotationTypeV1,
-  LinkedAnnotation,
   UnsavedAnnotation,
 } from 'src/api/annotation/types';
 import {
@@ -25,6 +24,10 @@ import { AnnotationsBadgeCounts } from 'src/modules/Common/types';
 import { AllIconTypes } from '@cognite/cogs.js';
 import { v4 as uuidv4 } from 'uuid';
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
+import {
+  isAssetLinkedAnnotation,
+  isKeyPointAnnotation,
+} from 'src/api/annotation/TypeGuards';
 
 export enum AnnotationStatus {
   Verified = 'verified',
@@ -150,7 +153,7 @@ export class AnnotationUtils {
         value.annotatedResourceExternalId
       );
 
-      if (isLinkedAnnotation(value)) {
+      if (isAssetLinkedAnnotation(value)) {
         ann = {
           ...ann,
           linkedResourceId: value.linkedResourceId,
@@ -253,7 +256,7 @@ export class AnnotationUtils {
   public static getAnnotationsDetectionModelType = (
     ann: CDFAnnotationV1
   ): VisionDetectionModelType => {
-    if (isLinkedAnnotation(ann)) {
+    if (isAssetLinkedAnnotation(ann)) {
       return VisionDetectionModelType.TagDetection;
     }
 
@@ -493,14 +496,6 @@ export const isUnSavedAnnotation = (
   ann: DetectedAnnotation | CDFAnnotationV1 | UnsavedAnnotation
 ): ann is UnsavedAnnotation => {
   return !(ann as CDFAnnotationV1).lastUpdatedTime;
-};
-
-export const isLinkedAnnotation = (ann: CDFAnnotationV1): boolean => {
-  return !!(ann as LinkedAnnotation).linkedResourceType;
-};
-
-export const isKeyPointAnnotation = (ann: CDFAnnotationV1): boolean => {
-  return (ann as LinkedAnnotation).region?.shape === 'points';
 };
 
 export const createUniqueId = (text: string): string => {

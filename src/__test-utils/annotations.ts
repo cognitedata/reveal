@@ -1,4 +1,13 @@
-import { AnnotationStatus, AnnotationUtils } from 'src/utils/AnnotationUtils';
+import {
+  AnnotationStatus,
+  AnnotationUtils,
+  ModelTypeAnnotationTypeMap,
+} from 'src/utils/AnnotationUtils';
+import {
+  RegionType,
+  VisionDetectionModelType,
+} from 'src/api/vision/detectionModels/types';
+import { AnnotationMetadata, AnnotationTypeV1 } from 'src/api/annotation/types';
 
 export const getDummyAnnotation = (
   id?: number,
@@ -7,6 +16,10 @@ export const getDummyAnnotation = (
     status?: AnnotationStatus;
     confidence?: number;
     text?: string;
+    assetId?: number;
+    shape?: RegionType;
+    data?: AnnotationMetadata;
+    type?: AnnotationTypeV1;
   }
 ) => {
   return AnnotationUtils.createVisionAnnotationStub(
@@ -16,10 +29,14 @@ export const getDummyAnnotation = (
     1,
     123,
     124,
-    { shape: 'rectangle', vertices: [] },
+    { shape: other?.shape || 'rectangle', vertices: [] },
     undefined,
     undefined,
     other?.status,
-    { confidence: other?.confidence }
+    { ...other?.data, confidence: other?.confidence },
+    other?.type ||
+      ModelTypeAnnotationTypeMap[modelType || VisionDetectionModelType.OCR],
+    undefined,
+    other?.assetId
   );
 };
