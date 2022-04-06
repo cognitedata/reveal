@@ -50,7 +50,7 @@ const getAadApplicationId = (cluster: string) => {
   applicationName: 'Platypus',
   docsSiteBaseUrl: 'https://docs.cognite.com',
   nomaApiBaseUrl: 'https://noma.development.cognite.ai',
-  enableUserManagement: true,
+  enableUserManagement: false,
   disableTranslations: false,
   disableLoopDetector: false,
   disableSentry: true,
