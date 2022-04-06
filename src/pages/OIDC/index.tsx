@@ -1,12 +1,15 @@
 import React from 'react';
 import { Checkbox, Form, Input, Select, notification } from 'antd';
 import InputNumber from 'antd/lib/input-number';
+import { OidcConfiguration } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { Icon, Button } from '@cognite/cogs.js';
+import { Icon, Button, Tooltip } from '@cognite/cogs.js';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getContainer } from 'utils/utils';
 import { useRouteMatch } from 'react-router';
 import { useAuthConfiguration } from 'hooks';
+import { StyledHelpIcon } from 'pages/components/CustomInfo';
+import styled from 'styled-components';
 
 const formItemLayout = {
   labelCol: {
@@ -110,9 +113,7 @@ export default function OIDCConfigContainer() {
               claimName,
             })) || [],
           skewMs: values.skewMs,
-          isGroupCallbackEnabled:
-            (projectSettings?.oidcConfiguration as any)
-              ?.isGroupCallbackEnabled || null,
+          isGroupCallbackEnabled: values.isGroupCallbackEnabled ?? null,
         },
       },
     });
@@ -138,6 +139,11 @@ export default function OIDCConfigContainer() {
           (o) => o.claimName
         ),
         isOidcEnabled: authConfiguration?.isOidcEnabled,
+        isGroupCallbackEnabled: (
+          projectSettings?.oidcConfiguration as OidcConfiguration & {
+            isGroupCallbackEnabled?: boolean;
+          }
+        )?.isGroupCallbackEnabled,
       }}
     >
       <Form.Item name="isOidcEnabled" label="Enabled" valuePropName="checked">
@@ -201,6 +207,25 @@ export default function OIDCConfigContainer() {
       <Form.Item label="Permitted time skew (ms)" name="skewMs">
         <InputNumber min={0} disabled={updating} />
       </Form.Item>
+
+      <Form.Item
+        label={
+          <StyledFormItemLabel>
+            Group callback is enabled
+            <Tooltip
+              content="A group callback occurs when a user has too many groups attached. This property indicates whether the group callback functionality should be supported for this project. This is only supported for AAD hosted IdPs."
+              wrapped
+            >
+              <StyledHelpIcon size={20} type="HelpFilled" />
+            </Tooltip>
+          </StyledFormItemLabel>
+        }
+        name="isGroupCallbackEnabled"
+        valuePropName="checked"
+      >
+        <Checkbox disabled={updating} />
+      </Form.Item>
+
       <Form.Item {...noLabelItemLayout}>
         <Button type="primary" htmlType="submit" disabled={updating}>
           Save configuration
@@ -209,6 +234,11 @@ export default function OIDCConfigContainer() {
     </Form>
   );
 }
+
+const StyledFormItemLabel = styled.div`
+  align-items: center;
+  display: flex;
+`;
 
 function isValidURL(url: string) {
   try {
