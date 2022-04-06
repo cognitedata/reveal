@@ -37,7 +37,7 @@ export class CadModelUpdateHandler {
   private readonly _budgetSubject: Subject<CadModelBudget> = new Subject();
   private readonly _progressSubject: Subject<LoadingState> = new BehaviorSubject<LoadingState>(notLoadingState);
 
-  private readonly _updateObservable: Observable<ConsumedSector>;
+  private _updateObservable: Observable<ConsumedSector>;
 
   constructor(sectorCuller: SectorCuller, continuousModelStreaming = false) {
     this._sectorCuller = sectorCuller;
@@ -116,6 +116,8 @@ export class CadModelUpdateHandler {
   }
 
   dispose(): void {
+    delete this._updateObservable;
+    this._modelSubject.unsubscribe();
     this._sectorCuller.dispose();
   }
 

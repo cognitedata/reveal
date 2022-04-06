@@ -39,6 +39,10 @@ export class ModelUi {
           : { center: new THREE.Vector3(), size: new THREE.Vector3(), enabled: false },
     };
     const guiActions = {
+      removeLastModel: () => {
+        viewer.removeModel(this._cadModels[0]);
+        this._cadModels.splice(0,1);
+      },
       addModel: () =>
         this.addModel({
           modelId: this._guiState.modelId,
@@ -57,6 +61,7 @@ export class ModelUi {
     modelGui.add(this._guiState, 'modelId').name('Model ID');
     modelGui.add(this._guiState, 'revisionId').name('Revision ID');
     modelGui.add(guiActions, 'addModel').name('Load model');
+    modelGui.add(guiActions, 'removeLastModel').name('Remove last model');
     modelGui.add(guiActions, 'fitToModel').name('Fit camera');
     modelGui.add(guiActions, 'saveModelStateToUrl').name('Save model state to url');
 
