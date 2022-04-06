@@ -4,18 +4,21 @@ import {
 } from '@cognite/calculation-backend';
 import { useState, useEffect } from 'react';
 import {
-  useCalculationResult,
+  useCalculationQueryResult,
   useCalculationStatus,
 } from 'hooks/calculation-backend';
+import { DatapointsMultiQuery } from '@cognite/sdk';
 
 interface Props {
   id: string;
+  query: DatapointsMultiQuery;
   renderStatus?: (calculationStatus: CalculationStatus) => JSX.Element | null;
   renderLoading?: () => JSX.Element | null;
 }
 
 function InnerCalculationCallStatus({
   id,
+  query,
   renderStatus = () => null,
   renderLoading,
 }: Props) {
@@ -31,7 +34,7 @@ function InnerCalculationCallStatus({
     data: response,
     isError: responseError,
     refetch: refetchResponse,
-  } = useCalculationResult(id, {
+  } = useCalculationQueryResult(id, query, {
     // Some other compoment could have called this hook prematurly, setting it in a completed state
     // in the query cache with null as the response body. It is therefore refetch below then the
     // status is Success.
@@ -73,6 +76,7 @@ function InnerCalculationCallStatus({
 
 export default function CalculationCallStatus({
   id,
+  query,
   renderStatus,
   renderLoading,
 }: Props) {
@@ -82,6 +86,7 @@ export default function CalculationCallStatus({
   return (
     <InnerCalculationCallStatus
       id={id}
+      query={query}
       renderStatus={renderStatus}
       renderLoading={renderLoading}
     />

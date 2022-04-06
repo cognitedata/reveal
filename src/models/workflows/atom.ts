@@ -1,7 +1,9 @@
 import { atom } from 'recoil';
-import { WorkflowResult } from './types';
+import { WorkflowState } from './types';
 
-export const workflowsAtom = atom<{ [key: string]: WorkflowResult }>({
+export const workflowsAtom = atom<{
+  [key: string]: WorkflowState;
+}>({
   key: 'workflowsAtom',
   default: {},
 });

@@ -35,7 +35,7 @@ export function getTimeseriesSummaryById(
     return undefined;
   }
 
-  const isRaw = hasRawPoints(ts);
+  const isRaw = hasRawPoints(ts.datapoints);
 
   let min: number | undefined;
   let max: number | undefined;

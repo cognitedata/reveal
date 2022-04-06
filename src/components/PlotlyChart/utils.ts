@@ -1,11 +1,4 @@
-import {
-  DatapointAggregates,
-  DatapointAggregate,
-  Datapoints,
-  DoubleDatapoint,
-  StringDatapoints,
-  DoubleDatapoints,
-} from '@cognite/sdk';
+import { DatapointAggregate, Datapoints, DoubleDatapoint } from '@cognite/sdk';
 import dayjs from 'dayjs';
 import groupBy from 'lodash/groupBy';
 import { ChartTimeSeries, ChartWorkflow, LineStyle } from 'models/chart/types';
@@ -14,9 +7,8 @@ import { hexToRGBA } from 'utils/colors';
 import { convertUnits, units } from 'utils/units';
 import { useDebouncedCallback } from 'use-debounce';
 import { useState, useEffect, useCallback } from 'react';
-import { WorkflowResult } from 'models/workflows/types';
+import { WorkflowState } from 'models/workflows/types';
 import { TimeseriesEntry } from 'models/timeseries/types';
-import { RAW_DATA_POINTS_THRESHOLD } from 'utils/constants';
 
 export type PlotlyEventData = {
   [key: string]: any;
@@ -50,16 +42,16 @@ export type AxisUpdate = {
 };
 
 export function hasRawPoints(
-  ts?: DatapointAggregates | StringDatapoints | DoubleDatapoints
+  datapoints: DatapointAggregate[] | DoubleDatapoint[] = []
 ) {
-  return ts?.datapoints.some((point) => 'value' in point) || false;
+  return datapoints.some((point) => 'value' in point) || false;
 }
 
 export function calculateSeriesData(
   timeSeriesCollection: ChartTimeSeries[] = [],
   workflowCollection: ChartWorkflow[] = [],
   timeseries: TimeseriesEntry[],
-  workflows: WorkflowResult[] = [],
+  workflows: WorkflowState[] = [],
   mergeUnits: boolean
 ): SeriesData[] {
   const seriesData: SeriesData[] = [
@@ -70,11 +62,23 @@ export function calculateSeriesData(
             (unitOption) => unitOption.value === t.preferredUnit?.toLowerCase()
           )?.label || t.preferredUnit;
 
+        const timeseriesState = timeseries.find(
+          (ts) => ts.externalId === t.tsExternalId
+        );
+
         const mode = getMode(
           t.displayMode,
-          hasRawPoints(
-            timeseries.find((ts) => ts.externalId === t.tsExternalId)?.series
-          )
+          hasRawPoints(timeseriesState?.series?.datapoints)
+        );
+
+        const hasOutdatedData = timeseries.find(
+          (ts) => ts.externalId === t.tsExternalId
+        )?.loading;
+
+        const unitConvertedDatapoints = convertUnits(
+          timeseriesState?.series?.datapoints || [],
+          t.unit,
+          t.preferredUnit
         );
 
         return {
@@ -87,15 +91,8 @@ export function calculateSeriesData(
               type: 'timeseries',
               width: t.lineWeight,
               name: t.name,
-              outdatedData: timeseries.find(
-                (ts) => ts.externalId === t.tsExternalId
-              )?.loading,
-              datapoints: convertUnits(
-                timeseries.find((ts) => ts.externalId === t.tsExternalId)
-                  ?.series?.datapoints || [],
-                t.unit,
-                t.preferredUnit
-              ),
+              outdatedData: hasOutdatedData,
+              datapoints: unitConvertedDatapoints,
               dash: convertLineStyle(t.lineStyle),
               mode,
               shape: t.interpolation,
@@ -105,40 +102,52 @@ export function calculateSeriesData(
       })
       .filter((t) => t.enabled),
     ...workflowCollection
-      .map((workflow) => ({
-        enabled: workflow.enabled,
-        range: workflow.range,
-        unit: units.find(
+      .map((workflow) => {
+        const unitLabel = units.find(
           (unitOption) =>
             unitOption.value === workflow.preferredUnit?.toLowerCase()
-        )?.label,
-        series: [
-          {
-            enabled: workflow.enabled,
-            outdatedData: workflows?.find(({ id }) => id === workflow.id)
-              ?.loading,
-            id: workflow?.id,
-            type: 'workflow',
-            name: workflow.name,
-            color: workflow.color,
-            mode: getMode(
-              workflow.displayMode,
-              (
-                workflows?.find(({ id }) => id === workflow.id)?.datapoints ||
-                []
-              ).length < RAW_DATA_POINTS_THRESHOLD
-            ),
-            shape: workflow.interpolation,
-            width: workflow.lineWeight,
-            dash: convertLineStyle(workflow.lineStyle),
-            datapoints: convertUnits(
-              workflows?.find(({ id }) => id === workflow.id)?.datapoints || [],
-              workflow.unit,
-              workflow.preferredUnit
-            ),
-          },
-        ],
-      }))
+        )?.label;
+
+        const workflowState = workflows?.find(({ id }) => id === workflow.id);
+
+        const mode = getMode(
+          workflow.displayMode,
+          workflowState?.isDownsampled
+            ? false
+            : hasRawPoints(workflowState?.datapoints)
+        );
+
+        const hasOutdatedData = workflows?.find(
+          ({ id }) => id === workflow.id
+        )?.loading;
+
+        const unitConvertedDatapoints = convertUnits(
+          workflowState?.datapoints || [],
+          workflow.unit,
+          workflow.preferredUnit
+        );
+
+        return {
+          enabled: workflow.enabled,
+          range: workflow.range,
+          unit: unitLabel,
+          series: [
+            {
+              enabled: workflow.enabled,
+              outdatedData: hasOutdatedData,
+              id: workflow?.id,
+              type: 'workflow',
+              name: workflow.name,
+              color: workflow.color,
+              mode,
+              shape: workflow.interpolation,
+              width: workflow.lineWeight,
+              dash: convertLineStyle(workflow.lineStyle),
+              datapoints: unitConvertedDatapoints,
+            },
+          ],
+        };
+      })
       .filter((t) => t.enabled),
   ];
 

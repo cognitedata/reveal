@@ -1270,10 +1270,10 @@
     jwt-decode "3.1.2"
     lodash "4.17.21"
 
-"@cognite/calculation-backend@3.0.0-alpha.2":
-  version "3.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@cognite/calculation-backend/-/calculation-backend-3.0.0-alpha.2.tgz#59d91ee6384368b3d74742625e0e6c411eefca0c"
-  integrity sha512-j3FXqfSSrCqjUNHB6GaaF00RQ7mgiUPdkDrs6DKii2vJH2EgMco5Cxc24F5gSOR4Z3P/AfcXJa44YowzOnV2MQ==
+"@cognite/calculation-backend@3.0.0-alpha.5":
+  version "3.0.0-alpha.5"
+  resolved "https://registry.yarnpkg.com/@cognite/calculation-backend/-/calculation-backend-3.0.0-alpha.5.tgz#e644bf7a0279d36d614b318d541a56af47578a0e"
+  integrity sha512-T0dqwppGTyE3H7/SCTLbnbNZWE2UR/XHHjBLuoTU1O/wiCdd0d2Tgha9ZK6dwmjZUwaEmqg7dYXs78LNSHixDQ==
   dependencies:
     axios "^0.21.4"
 
@@ -1310,7 +1310,7 @@
     fs-extra "^9.0.1"
     mixpanel "^0.13.0"
 
-"@cognite/cogs.js@5.19.1", "@cognite/cogs.js@^5.3.1":
+"@cognite/cogs.js@5.19.1":
   version "5.19.1"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.19.1.tgz#d4a9075db965b5dbc97b49896d35323ef16ae610"
   integrity sha512-Q9gDxrW+N8BJE6OiAJEhd1Ng3cY7hSPlgpyHMWKURb4jnrvakaqGfKiT9+pkMgH+ay29IAxMXZn9UHwjl6Ja4A==
@@ -1342,6 +1342,34 @@
   version "3.44.1"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.44.1.tgz#cab0b75fe199260531c3c650248122e77bfedf07"
   integrity sha512-hToYuYPaNFZLCV1PRFC9FMQ8O6YvVOk38CzIgxkRdXhvXJXDbE2cBKahqD1Pg9N7pdiacgeDiVf6Jd5u1mvALw==
+  dependencies:
+    "@tippyjs/react" "4.2.3"
+    "@types/react-date-range" "^1.1.2"
+    axios "^0.21.2"
+    classnames "^2.3.1"
+    color "^3.1.2"
+    dayjs "^1.9.7"
+    eslint-config-stylelint "^13.1.1"
+    focus-visible "^5.1.0"
+    match-sorter "^6.3.0"
+    rc-collapse "^1.11.8"
+    rc-drawer "^4.1.0"
+    rc-slider "^9.5.4"
+    rc-tabs "^11.6.2"
+    react-date-range "^1.1.3"
+    react-modal "^3.11.2"
+    react-select "^3.1.0"
+    react-table "^7.6.0"
+    react-toastify "^6.0.9"
+    resize-observer-polyfill "^1.5.1"
+    stylelint "^13.13.1"
+    tippy.js "6.2.0"
+    ts-dedent "^2.2.0"
+
+"@cognite/cogs.js@^5.3.1":
+  version "5.19.5"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.19.5.tgz#5fa025481b8711b90fea1b9b29bf38ebef773f29"
+  integrity sha512-8Fi+0J2j4qNOAENoIV2L10WXZGmhGXnxeEJDfZFZyPDWHKcilADD7mojmdg9lKGk1rgHkp4cYhxDm0xdRCwHwA==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"

@@ -1,4 +1,6 @@
-import { selector } from 'recoil';
+import { DatapointAggregate, DoubleDatapoint } from '@cognite/sdk';
+import { hasRawPoints } from 'components/PlotlyChart/utils';
+import { selector, selectorFamily } from 'recoil';
 import { workflowsAtom } from './atom';
 import { WorkflowResult } from './types';
 
@@ -9,6 +11,16 @@ export const availableWorkflows = selector({
     const workflowsAsArray = Object.values(state);
     return workflowsAsArray;
   },
+});
+
+export const workflowsSummaryById = selectorFamily({
+  key: 'workflowsSummaryById',
+  get:
+    (id: string | undefined) =>
+    ({ get }) => {
+      const workflowCollection = get(workflowsAtom);
+      return getWorkflowSummaryById(Object.values(workflowCollection), id);
+    },
 });
 
 export function getWorkflowSummaryById(
@@ -29,28 +41,57 @@ export function getWorkflowSummaryById(
     return undefined;
   }
 
-  const min = Math.min(
-    ...wf.datapoints.map((datapoint) =>
-      typeof datapoint.value === 'number' ? datapoint.value : NaN
-    )
-  );
+  const isRaw = hasRawPoints(wf.datapoints);
 
-  const max = Math.max(
-    ...wf.datapoints.map((datapoint) =>
-      typeof datapoint.value === 'number' ? datapoint.value : NaN
-    )
-  );
+  let min: number | undefined;
+  let max: number | undefined;
+  let mean: number | undefined;
 
-  const mean =
-    wf.datapoints
-      .map((datapoint) => datapoint.value || 0)
-      .reduce((total, average) => total + average, 0) / wf.datapoints.length;
+  if (isRaw) {
+    const datapoints = wf.datapoints as DoubleDatapoint[];
 
-  const result = {
+    min = Math.min(...datapoints.map((datapoint) => datapoint.value));
+    max = Math.max(...datapoints.map((datapoint) => datapoint.value));
+
+    const totalSum = datapoints.reduce(
+      (total, { value }) => total + (value || 0),
+      0
+    );
+
+    const totalCount = datapoints.length;
+
+    mean = totalCount ? totalSum / totalCount : undefined;
+  } else {
+    const datapoints = wf.datapoints as DatapointAggregate[];
+
+    min = Math.min(
+      ...datapoints.map((datapoint) =>
+        typeof datapoint.min === 'number' ? datapoint.min : NaN
+      )
+    );
+
+    max = Math.max(
+      ...datapoints.map((datapoint) =>
+        typeof datapoint.max === 'number' ? datapoint.max : NaN
+      )
+    );
+
+    const totalSum = datapoints.reduce(
+      (total, { sum }) => total + (sum || 0),
+      0
+    );
+
+    const totalCount = datapoints.reduce(
+      (total, { count }) => total + (count || 0),
+      0
+    );
+
+    mean = totalCount ? totalSum / totalCount : undefined;
+  }
+
+  return {
     min: Number.isNaN(min) ? undefined : min,
     max: Number.isNaN(max) ? undefined : max,
     mean: Number.isNaN(mean) ? undefined : mean,
   };
-
-  return result;
 }

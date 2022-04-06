@@ -212,10 +212,29 @@ export const ChartWrapper = styled.div`
   }
 `;
 
-export const StyledStatusIcon = styled(Icon)`
+export const StyledVisibilityIcon = styled(Icon)`
   margin-left: 7px;
   margin-right: 20px;
   vertical-align: middle;
+`;
+
+export const StyledStatusIcon = styled(Icon)`
+  vertical-align: middle;
+  margin-top: 0;
+  margin-left: 0;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+`;
+
+export const StyledErrorIcon = styled(Icon)`
+  margin-right: 5px;
+  padding: 6px;
+  height: 34px;
+  width: 34px;
+  border-radius: 50%;
+  background-color: var(--cogs-red-5);
+  color: var(--cogs-red-2);
 `;
 
 export const DropdownWithoutMaxWidth = styled(Dropdown)`

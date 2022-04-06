@@ -1,6 +1,7 @@
 import {
   CalculationStatusStatusEnum,
   Calculation,
+  CalculationResultQueryAggregateEnum,
 } from '@cognite/calculation-backend';
 import { Button, Popconfirm, Tooltip } from '@cognite/cogs.js';
 import { workflowsAtom } from 'models/workflows/atom';
@@ -11,12 +12,11 @@ import UnitDropdown from 'components/UnitDropdown/UnitDropdown';
 import { flow, isEqual } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DraggableProvided } from 'react-beautiful-dnd';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { Chart, ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import { useDebounce } from 'use-debounce';
-import { formatCalculationResult } from 'services/calculation-backend';
 import {
-  useCalculationResult,
+  useCalculationQueryResult,
   useCalculationStatus,
   useCreateCalculation,
 } from 'hooks/calculation-backend';
@@ -27,7 +27,7 @@ import {
 } from 'models/chart/updates';
 import { getHash } from 'utils/hash';
 import { calculateGranularity } from 'utils/timeseries';
-import { convertValue } from 'utils/units';
+import { convertValue, getUnitConverter } from 'utils/units';
 import { getIconTypeFromStatus } from 'components/StatusIcon/StatusIcon';
 import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
 import { getStepsFromWorkflow } from 'components/NodeEditor/transforms';
@@ -39,6 +39,10 @@ import TranslatedEditableText from 'components/EditableText/TranslatedEditableTe
 import Dropdown from 'components/Dropdown/Dropdown';
 import { trackUsage } from 'services/metrics';
 import chartAtom from 'models/chart/atom';
+import dayjs from 'dayjs';
+import { CHART_POINTS_PER_SERIES } from 'utils/constants';
+import { formatValueForDisplay } from 'utils/numbers';
+import { workflowsSummaryById } from 'models/workflows/selectors';
 import {
   DropdownWithoutMaxWidth,
   SourceDescription,
@@ -46,7 +50,9 @@ import {
   SourceName,
   SourceRow,
   SourceStatus,
+  StyledErrorIcon,
   StyledStatusIcon,
+  StyledVisibilityIcon,
 } from './elements';
 
 type Props = {
@@ -139,7 +145,15 @@ function WorkflowRow({
 
   const computation: Calculation = useMemo(
     () => ({
-      steps: steps as any,
+      /**
+       * Use raw data for all steps
+       */
+      steps: steps.map((step) => {
+        return {
+          ...step,
+          raw: true,
+        };
+      }),
       start_time: new Date(dateFrom).getTime(),
       end_time: new Date(dateTo).getTime(),
       granularity: calculateGranularity(
@@ -254,9 +268,33 @@ function WorkflowRow({
   useEffect(handleRetries, [handleRetries]);
   useEffect(handleChanges, [handleChanges]);
 
-  const { data: calculationResult } = useCalculationResult(call?.callId, {
-    enabled: currentCallStatus.data?.status === 'Success',
-  });
+  const resultQuery = useMemo(() => {
+    return {
+      items: [],
+      start: new Date(dateFrom).getTime(),
+      end: new Date(dateTo).getTime(),
+      granularity: calculateGranularity(
+        [dayjs(dateFrom).valueOf(), dayjs(dateTo).valueOf()],
+        CHART_POINTS_PER_SERIES
+      ),
+      aggregates: [
+        'average',
+        'min',
+        'max',
+        'count',
+        'sum',
+      ] as CalculationResultQueryAggregateEnum[],
+      limit: CHART_POINTS_PER_SERIES,
+    };
+  }, [dateFrom, dateTo]);
+
+  const { data: calculationResult } = useCalculationQueryResult(
+    call?.callId,
+    resultQuery,
+    {
+      enabled: currentCallStatus.data?.status === 'Success',
+    }
+  );
 
   useEffect(() => {
     setWorkflowState((workflows) => ({
@@ -265,8 +303,12 @@ function WorkflowRow({
         id,
         loading: currentCallStatus.data?.status !== 'Success',
         datapoints: calculationResult
-          ? formatCalculationResult(calculationResult)
+          ? calculationResult.datapoints
           : workflows[id]?.datapoints || [],
+        warnings: calculationResult?.warnings || [],
+        error: calculationResult?.error,
+        isDownsampled:
+          calculationResult?.isDownsampled ?? workflows[id]?.isDownsampled,
       },
     }));
   }, [id, calculationResult, setWorkflowState, currentCallStatus.data?.status]);
@@ -378,6 +420,13 @@ function WorkflowRow({
     [enabled, id, update]
   );
 
+  const summary = useRecoilValue(workflowsSummaryById(id));
+  const convertUnit = getUnitConverter(unit, preferredUnit);
+  const resultError = calculationResult?.error;
+  const hasFailed = currentCallStatus.isError || resultError;
+  const isVisible = enabled;
+  const isDownsampled = calculationResult?.isDownsampled;
+
   return (
     <SourceRow
       onClick={() => onRowClick(id)}
@@ -424,31 +473,48 @@ function WorkflowRow({
             onClick={handleStatusIconClick}
             onDoubleClick={(event) => event.stopPropagation()}
           >
-            {!call && (
-              <StyledStatusIcon type={enabled ? 'EyeShow' : 'EyeHide'} />
-            )}
+            <StyledVisibilityIcon type={enabled ? 'EyeShow' : 'EyeHide'} />
+          </SourceStatus>
+          <SourceStatus>
             {call && (
-              <CalculationCallStatus
-                id={call.callId}
-                renderLoading={() => (
-                  <StyledStatusIcon
-                    type={getIconTypeFromStatus(
-                      CalculationStatusStatusEnum.Running
-                    )}
-                  />
-                )}
-                renderStatus={({ status }) => (
-                  <StyledStatusIcon type={getIconTypeFromStatus(status)} />
-                )}
-              />
+              <Tooltip
+                disabled={!isDownsampled}
+                content="The time span for this calculation is too long. The result is based on fewer data-points and may not be accurate. Use a shorter date range for an accurate result."
+                maxWidth={350}
+              >
+                <CalculationCallStatus
+                  id={call.callId}
+                  query={resultQuery}
+                  renderLoading={() => (
+                    <StyledStatusIcon
+                      type={getIconTypeFromStatus(
+                        CalculationStatusStatusEnum.Running
+                      )}
+                      style={{
+                        color: isDownsampled ? 'var(--cogs-yellow-1)' : 'auto',
+                      }}
+                    />
+                  )}
+                  renderStatus={({ status }) => (
+                    <StyledStatusIcon
+                      type={
+                        isDownsampled
+                          ? 'WarningFilled'
+                          : getIconTypeFromStatus(status)
+                      }
+                      style={{
+                        color: isDownsampled ? 'var(--cogs-yellow-1)' : '#000',
+                      }}
+                    />
+                  )}
+                />
+              </Tooltip>
             )}
           </SourceStatus>
-          {currentCallStatus.isError && (
-            <SourceName>
-              <span style={{ color: 'var(--cogs-red)', marginRight: 5 }}>
-                [Error]
-              </span>
-            </SourceName>
+          {hasFailed && (
+            <Tooltip content={resultError} maxWidth={300}>
+              <StyledErrorIcon size={20} type="Error" />
+            </Tooltip>
           )}
           <SourceName>
             <TranslatedEditableText
@@ -479,9 +545,21 @@ function WorkflowRow({
               </SourceName>
             </SourceItem>
           </td>
-          <td className="bordered" />
-          <td className="bordered" />
-          <td className="bordered" />
+          <td className="bordered">
+            <SourceItem disabled={!isVisible}>
+              {formatValueForDisplay(convertUnit(summary?.min))}
+            </SourceItem>
+          </td>
+          <td className="bordered">
+            <SourceItem disabled={!isVisible}>
+              {formatValueForDisplay(convertUnit(summary?.max))}
+            </SourceItem>
+          </td>
+          <td className="bordered">
+            <SourceItem disabled={!isVisible}>
+              {formatValueForDisplay(convertUnit(summary?.mean))}
+            </SourceItem>
+          </td>
           <td className="col-unit">
             <UnitDropdown
               unit={unit}

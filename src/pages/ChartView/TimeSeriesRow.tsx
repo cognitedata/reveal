@@ -18,22 +18,15 @@ import { useDebounce } from 'use-debounce';
 import { useQuery } from 'react-query';
 import dayjs from 'dayjs';
 import { calculateGranularity } from 'utils/timeseries';
-import {
-  CHART_POINTS_PER_SERIES,
-  RAW_DATA_POINTS_THRESHOLD,
-} from 'utils/constants';
-import {
-  DatapointAggregate,
-  DatapointAggregates,
-  Datapoints,
-  DatapointsMultiQuery,
-} from '@cognite/sdk';
+import { CHART_POINTS_PER_SERIES } from 'utils/constants';
+import { DatapointsMultiQuery } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { timeseriesAtom } from 'models/timeseries/atom';
 import { StyleButton } from 'components/StyleButton/StyleButton';
 import { useTranslations } from 'hooks/translations';
 import { makeDefaultTranslations } from 'utils/translations';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
+import { fetchRawOrAggregatedDatapoints } from 'services/cdf-api';
 import {
   SourceItem,
   SourceName,
@@ -41,8 +34,8 @@ import {
   SourceDescription,
   SourceTag,
   SourceStatus,
-  StyledStatusIcon,
   DropdownWithoutMaxWidth,
+  StyledVisibilityIcon,
 } from './elements';
 
 type Props = {
@@ -223,29 +216,7 @@ function TimeSeriesRow({
     isSuccess,
   } = useQuery(
     ['chart-data', 'timeseries', timeseries.tsExternalId, query],
-    () => {
-      return sdk.datapoints
-        .retrieve(query)
-        .then((r: DatapointAggregates[] | Datapoints[]) => {
-          const aggregatedCount = (
-            r[0]?.datapoints as DatapointAggregate[]
-          ).reduce((point: number, c: DatapointAggregate) => {
-            return point + (c.count || 0);
-          }, 0);
-
-          const isRaw = aggregatedCount < RAW_DATA_POINTS_THRESHOLD;
-
-          return isRaw
-            ? sdk.datapoints.retrieve({
-                ...query,
-                granularity: undefined,
-                aggregates: undefined,
-                includeOutsidePoints: true,
-              } as DatapointsMultiQuery)
-            : r;
-        })
-        .then((r) => r[0]);
-    },
+    () => fetchRawOrAggregatedDatapoints(sdk, query),
     {
       enabled: !!timeseries.tsExternalId,
     }
@@ -346,7 +317,7 @@ function TimeSeriesRow({
         <SourceItem disabled={!isVisible} key={id}>
           {!isFileViewerMode && (
             <SourceStatus onClick={handleStatusIconClick}>
-              <StyledStatusIcon
+              <StyledVisibilityIcon
                 type={isVisible ? 'EyeShow' : 'EyeHide'}
                 title="Toggle visibility"
               />

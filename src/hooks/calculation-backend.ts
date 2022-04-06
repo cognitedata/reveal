@@ -7,10 +7,14 @@ import {
   StatisticsStatus,
 } from '@cognite/calculation-backend';
 import { useSDK } from '@cognite/sdk-provider';
+import { DatapointAggregate, DatapointsMultiQuery } from '@cognite/sdk';
 import { useMutation, useQuery, UseQueryOptions } from 'react-query';
+import { RAW_DATA_POINTS_THRESHOLD } from 'utils/constants';
+import { WorkflowResult } from 'models/workflows/types';
 import {
   createCalculation,
   createStatistics,
+  fetchCalculationQueryResult,
   fetchCalculationResult,
   fetchCalculationStatus,
   fetchStatisticsResult,
@@ -50,6 +54,50 @@ export const useCalculationResult = (
     ['calculation', 'response', id],
     () => {
       return fetchCalculationResult(sdk, String(id));
+    },
+    {
+      retry: 1,
+      retryDelay: 1000,
+      enabled: !!id,
+      staleTime: 10000,
+      ...queryOpts,
+    }
+  );
+};
+
+export const useCalculationQueryResult = (
+  id: string | number,
+  query: DatapointsMultiQuery,
+  queryOpts?: UseQueryOptions<WorkflowResult>
+) => {
+  const sdk = useSDK();
+  return useQuery<WorkflowResult>(
+    ['calculation', 'response_query_v2', id, query],
+    async () => {
+      const aggregatedResult = await fetchCalculationQueryResult(
+        sdk,
+        String(id),
+        query
+      );
+
+      const aggregatedCount = (
+        aggregatedResult.datapoints as DatapointAggregate[]
+      ).reduce((point: number, c: DatapointAggregate) => {
+        return point + (c.count || 0);
+      }, 0);
+
+      const isRaw =
+        !aggregatedResult.isDownsampled &&
+        aggregatedCount < RAW_DATA_POINTS_THRESHOLD;
+
+      const getRawResult = () =>
+        fetchCalculationQueryResult(sdk, String(id), {
+          ...query,
+          granularity: undefined,
+          aggregates: undefined,
+        });
+
+      return isRaw ? getRawResult() : aggregatedResult;
     },
     {
       retry: 1,
