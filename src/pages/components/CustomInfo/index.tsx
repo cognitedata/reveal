@@ -75,7 +75,7 @@ const StyledDisableButtonSection = styled.div`
   display: flex;
 `;
 
-const StyledHelpIcon = styled(Icon)`
+export const StyledHelpIcon = styled(Icon)`
   color: ${Colors['text-hint']};
   margin: 4px 0 0 8px;
 `;
