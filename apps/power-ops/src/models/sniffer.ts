@@ -1,6 +1,7 @@
-export interface SnifferEvent {
-  id: string;
-  type: string;
-  createdTime: string;
+import { CogniteEvent } from '@cognite/sdk';
+
+export interface SnifferEvent extends CogniteEvent {
+  id: number;
+  createdTime: Date;
   cdfProject: string;
 }

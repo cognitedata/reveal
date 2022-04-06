@@ -7,15 +7,15 @@ import { StyledTopBar, LogoContainer, LogOutButtonContainer } from './elements';
 
 export enum PAGES {
   HOME = '/home',
-  EVENTS = '/events',
-  DEMO = '/demo',
+  PROCESSES = '/processes',
+  MONITORING = '/monitoring',
   PORTFOLIO = '/portfolio',
   LOGOUT = '/logout',
 }
 
 export const MenuBar = () => {
   const history = useHistory();
-  const [active, setActive] = React.useState<string>(PAGES.DEMO);
+  const [active, setActive] = React.useState<string>(PAGES.PORTFOLIO);
 
   const handleNavigate = (page: PAGES) => () => {
     setActive(page);
@@ -38,7 +38,7 @@ export const MenuBar = () => {
   return (
     <StyledTopBar data-testid="top-bar">
       <TopBar.Left>
-        <Link to={PAGES.DEMO} onClick={handleNavigate(PAGES.DEMO)}>
+        <Link to={PAGES.PORTFOLIO} onClick={handleNavigate(PAGES.PORTFOLIO)}>
           <LogoContainer>
             <TopBar.Logo title="Cognite Power Markets" />
           </LogoContainer>
@@ -46,19 +46,19 @@ export const MenuBar = () => {
         <TopBar.Navigation
           links={[
             {
-              name: 'Demo',
-              isActive: active === PAGES.DEMO,
-              onClick: handleNavigate(PAGES.DEMO),
-            },
-            {
               name: 'Portfolio',
               isActive: active === PAGES.PORTFOLIO,
               onClick: handleNavigate(PAGES.PORTFOLIO),
             },
             {
-              name: 'SSE Events',
-              isActive: active === PAGES.EVENTS,
-              onClick: handleNavigate(PAGES.EVENTS),
+              name: 'Processes',
+              isActive: active === PAGES.PROCESSES,
+              onClick: handleNavigate(PAGES.PROCESSES),
+            },
+            {
+              name: 'Monitoring',
+              isActive: active === PAGES.MONITORING,
+              onClick: handleNavigate(PAGES.MONITORING),
             },
           ]}
         />

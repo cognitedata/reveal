@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { SidecarConfig, getDefaultSidecar } from '@cognite/sidecar';
+import { SidecarConfig, getDefaultSidecar, Service } from '@cognite/sidecar';
 
 // # -------------------------------------
 // #
@@ -12,7 +12,7 @@ const PROD = false;
 // examples: bluefield, greenfield, ew1, bp-northeurope, azure-dev, bp
 // NOTE: leave on 'azure-dev' for testing in the PR's since that is the only place we have the FAKEIdp currently for this project:
 const CLUSTER = 'azure-dev';
-const LOCAL_POWER_OPS_API = false;
+const LOCAL_SERVICES: Service[] = ['power-ops-api', 'sniffer-service'];
 // #
 // #
 // #
@@ -41,7 +41,7 @@ const getAadApplicationId = (cluster: string) => {
   ...getDefaultSidecar({
     prod: PROD,
     cluster: CLUSTER,
-    localServices: LOCAL_POWER_OPS_API ? ['power-ops-api'] : [],
+    localServices: LOCAL_SERVICES?.length ? LOCAL_SERVICES : [],
   }),
   ...getAadApplicationId(CLUSTER),
   __sidecarFormatVersion: 1,

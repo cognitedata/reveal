@@ -23,17 +23,9 @@ export const EventProvider: React.FC = ({ children }) => {
     });
 
     const observable = new Observable<SnifferEvent>((subscriber) => {
-      [
-        'POWEROPS_DEBUG',
-        'POWEROPS_SHOP_START',
-        'POWEROPS_SHOP_END',
-        'POWEROPS_FUNCTION_CALL',
-        'POWEROPS_BID_MATRIX_END',
-      ].forEach((type) => {
-        source?.addEventListener(type, (e) => {
-          subscriber.next(JSON.parse((e as MessageEvent).data));
-        });
-      });
+      source.onmessage = (e: MessageEvent) => {
+        subscriber.next(JSON.parse(e.data));
+      };
     });
 
     setEventContextValue({ EDAEvents: observable });
