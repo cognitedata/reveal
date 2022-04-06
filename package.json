@@ -15,7 +15,7 @@
     "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)"
   },
   "dependencies": {
-    "@cognite/acl-protos": "^0.14.6",
+    "@cognite/acl-protos": "^0.15.0",
     "@cognite/cdf-utilities": "^0.12.1",
     "@cognite/cogs.js": "^5.17.0",
     "@cognite/login-utils": "^2.0.0",
