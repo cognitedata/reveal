@@ -172,7 +172,7 @@ pods {
         sh(label: 'Set up NPM', script: 'cp /npm-credentials/npm-public-credentials.txt ~/.npmrc')
         // For cloning Blazier and fetching master
         withCredentials([usernamePassword(credentialsId: scm.userRemoteConfigs[0].credentialsId, passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GH_USER')]) {
-            sh("git config --global credential.helper '!f() { sleep 1; echo \"username=${GH_USER}\"; echo \"password=${GITHUB_TOKEN}\"; }; f'")
+            sh("git config --global credential.helper '!f() { sleep 1; echo \"username=$GH_USER\"; echo \"password=$GITHUB_TOKEN\"; }; f'")
             // Override ssh access with https which is supported by Jenkins
             sh('git config --global url."https://github.com/".insteadOf git@github.com:')
             sh("git fetch --no-tags --force --progress -- https://github.com/cognitedata/applications.git +refs/heads/master:refs/remotes/origin/master")
