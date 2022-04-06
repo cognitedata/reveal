@@ -65,7 +65,7 @@ export const SelectedWellboreView: React.FC<Props> = React.memo(
       setTimeout(() => {
         setChartRendering(false);
       });
-    }, [wellboreName, groupedEvents]);
+    }, [wellboreName, groupedEvents, selectedWellbore]);
 
     const index = get(selectedWellbore, 'index', -1);
     const wellName = get(
@@ -82,13 +82,13 @@ export const SelectedWellboreView: React.FC<Props> = React.memo(
       (selectedWellbore: SelectedWellbore) => {
         setSelectedWellbore?.(selectedWellbore);
       },
-      []
+      [setSelectedWellbore]
     );
 
     const handleCloseSelectedWellboreView = useCallback(() => {
       chartData.current = EMPTY_ARRAY;
       setSelectedWellbore?.(undefined);
-    }, []);
+    }, [setSelectedWellbore]);
 
     return (
       <>

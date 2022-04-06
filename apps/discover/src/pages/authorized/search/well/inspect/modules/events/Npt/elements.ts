@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro';
 import layers from 'utils/zindex';
 
-import { Flex, sizes } from 'styles/layout';
+import { Flex, FlexAlignJustifyContent, sizes } from 'styles/layout';
 
 export const NptEventsDataControlArea = styled(Flex)`
   flex-direction: row;
@@ -17,4 +17,9 @@ export const NptCodeAvatar = styled.div`
   border: 2px var(--cogs-greyscale-grey2) solid;
   background-color: ${(props: { color: string }) => props.color};
   margin-right: ${sizes.extraSmall};
+`;
+
+export const SingleCasingContainer = styled(FlexAlignJustifyContent)`
+  height: 100%;
+  margin-bottom: ${sizes.normal};
 `;

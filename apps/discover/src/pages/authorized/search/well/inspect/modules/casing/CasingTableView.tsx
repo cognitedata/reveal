@@ -11,7 +11,7 @@ import { Table, TableResults, RowProps } from 'components/tablev3';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useCasingsForTable } from 'modules/wellSearch/selectors';
 
-import CasingPreviewModal from './CasingPreviewModal';
+import { CasingPreviewFullscreen } from './CasingPreviewFullscreen';
 import {
   CasingsTableWrapper,
   CasingViewButtonWrapper,
@@ -138,8 +138,9 @@ export const CasingTableView: React.FC<Props> = ({ searchPhrase }) => {
           renderRowSubComponent={renderRowSubComponent}
         />
       </GroupedCasingsTableWrapper>
+
       {!isEmpty(formattedCasings) && (
-        <CasingPreviewModal
+        <CasingPreviewFullscreen
           onClose={handleDialogClosed}
           casing={formattedCasings[0]}
         />

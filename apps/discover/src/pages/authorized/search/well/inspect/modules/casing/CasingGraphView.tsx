@@ -15,11 +15,11 @@ import CasingView from './CasingView/CasingView';
 import { CasingViewListWrapper } from './elements';
 import { getFortmattedCasingData } from './helper';
 
-type Props = {
+interface Props {
   scrollRef: React.RefObject<HTMLDivElement>;
-};
+}
 
-export const CasingGraphView: React.FC<Props> = ({ scrollRef }: Props) => {
+export const CasingGraphView: React.FC<Props> = ({ scrollRef }) => {
   const { data: preferredUnit } = useUserPreferencesMeasurement();
 
   const { casings, isLoading } = useCasingsForTable();

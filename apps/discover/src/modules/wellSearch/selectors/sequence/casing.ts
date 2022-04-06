@@ -100,7 +100,7 @@ export const useSelectedWellboresCasingsData = () => {
         if (topMD && bottomMD) {
           tempData.push({
             wellName: well.name,
-            wellboreName: wellbore.description || '',
+            wellboreName: wellbore.name || wellbore.description || '',
             id: wellbore.id,
             topMD: Math.round(topMD),
             bottomMD: Math.round(bottomMD),

@@ -1,41 +1,43 @@
 import React from 'react';
 
-import { BaseButton } from 'components/buttons';
+import { OverlayNavigation } from 'components/overlay-navigation';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useNptEventsForCasings } from 'modules/wellSearch/selectors';
 
+import { SingleCasingContainer } from '../events/Npt/elements';
+import {
+  NavigationPanel,
+  NavigationPanelData,
+} from '../events/Npt/graph/SelectedWellboreView/NavigationPanel';
+
 import CasingView from './CasingView/CasingView';
-import { CasingPreviewFooter, CasingPreviewModalWrapper } from './elements';
 import { FormattedCasings } from './interfaces';
 
-type Props = {
+interface Props {
   onClose: () => void;
   casing: FormattedCasings;
-};
+}
 
-export const CasingPreviewModal: React.FC<Props> = ({ onClose, casing }) => {
+export const CasingPreviewFullscreen: React.FC<Props> = ({
+  onClose,
+  casing,
+}) => {
   const { isLoading: isEventsLoading, events } = useNptEventsForCasings();
   const { data: preferredUnit } = useUserPreferencesMeasurement();
 
-  const footer = (
-    <CasingPreviewFooter>
-      <BaseButton
-        type="secondary"
-        text="Close"
-        aria-label="Close"
-        onClick={onClose}
-      />
-    </CasingPreviewFooter>
-  );
+  const navigationPanelData = {
+    wellboreName: casing.wellboreName,
+    wellName: casing.wellName,
+  } as NavigationPanelData;
 
   return (
-    <CasingPreviewModalWrapper
-      appElement={document.getElementById('root') || undefined}
-      visible
-      onCancel={onClose}
-      footer={footer}
-    >
-      {preferredUnit && (
+    <OverlayNavigation backgroundInvisibleMount mount>
+      <NavigationPanel
+        data={navigationPanelData}
+        onCloseSelectedWellboreView={onClose}
+        disableNavigation
+      />
+      <SingleCasingContainer>
         <CasingView
           key={`${casing.key}-casing-key`}
           wellName={casing.wellName}
@@ -45,9 +47,7 @@ export const CasingPreviewModal: React.FC<Props> = ({ onClose, casing }) => {
           events={events[casing.key]}
           isEventsLoading={isEventsLoading}
         />
-      )}
-    </CasingPreviewModalWrapper>
+      </SingleCasingContainer>
+    </OverlayNavigation>
   );
 };
-
-export default CasingPreviewModal;

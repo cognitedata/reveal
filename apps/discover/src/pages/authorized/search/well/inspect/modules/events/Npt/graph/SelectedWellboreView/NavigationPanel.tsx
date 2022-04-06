@@ -19,7 +19,7 @@ export interface NavigationPanelData extends SelectedWellboreNavigatable {
 
 interface Props {
   data: NavigationPanelData;
-  onChangeSelectedWellbore: (
+  onChangeSelectedWellbore?: (
     selectedWellbore: SelectedWellboreNavigatable
   ) => void;
   onCloseSelectedWellboreView: () => void;
@@ -39,7 +39,7 @@ export const NavigationPanel: React.FC<Props> = React.memo(
 
     const { wellboreName, wellName, index } = data;
 
-    const validIndexes = useMemo(
+    const validIndices = useMemo(
       () =>
         [...Array(wellbores.length).keys()].filter((index) => {
           const wellboreName = wellbores[index];
@@ -47,24 +47,26 @@ export const NavigationPanel: React.FC<Props> = React.memo(
         }),
       [JSON.stringify(wellbores)]
     );
-    const indexOfValidIndexes = validIndexes.indexOf(index);
+    const indexOfValidIndexes = validIndices.indexOf(index);
     const isFirstWellbore = indexOfValidIndexes === 0;
-    const isLastWellbore = indexOfValidIndexes === validIndexes.length - 1;
+    const isLastWellbore = indexOfValidIndexes === validIndices.length - 1;
 
     const navigateToWellboreOfNthIndex = (index: number) => {
-      onChangeSelectedWellbore({
-        wellboreName: wellbores[index],
-        index,
-      });
+      if (onChangeSelectedWellbore) {
+        onChangeSelectedWellbore({
+          wellboreName: wellbores[index],
+          index,
+        });
+      }
     };
 
     const handleNavigateToPreviousWellbore = () => {
-      const previousIndex = validIndexes[indexOfValidIndexes - 1];
+      const previousIndex = validIndices[indexOfValidIndexes - 1];
       navigateToWellboreOfNthIndex(previousIndex);
     };
 
     const handleNavigateToNextWellbore = () => {
-      const nextIndex = validIndexes[indexOfValidIndexes + 1];
+      const nextIndex = validIndices[indexOfValidIndexes + 1];
       navigateToWellboreOfNthIndex(nextIndex);
     };
 
