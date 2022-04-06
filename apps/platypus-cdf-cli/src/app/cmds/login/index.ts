@@ -4,17 +4,16 @@ import { AUTH_TYPE, SETTINGS } from '../../constants';
 import { promiseWithTimeout } from '../../utils/general';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 
-export const command = 'login [project]';
+export const command = 'login <project>';
 export const desc = 'Login to Cognite Data Fusion';
 export const builder = (yargs: Argv<LoginArgs>) =>
   yargs
-    .usage('$0 login [project]')
-    .example('$0 login cognite', 'Login to cognite tenant')
+    .usage('$0 login <project>')
+    .example('$0 login platypus', 'Login to platypus project')
     .positional('project', {
       alias: 'p',
       type: 'string',
       description: 'CDF Project Name',
-      default: 'platypus',
     })
     .option('client-id', {
       type: 'string',
