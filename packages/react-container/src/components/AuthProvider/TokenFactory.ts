@@ -159,9 +159,8 @@ export class TokenFactory {
     await legacyInstance.handleLoginRedirect();
     let token = await legacyInstance.getCDFToken();
     if (token) {
-      this.idTokenLocal = token.idToken;
       const parsedIdToken = jwtDecode<{ unique_name: string; sub: string }>(
-        this.idTokenLocal
+        token.idToken
       );
       this.emailLocal = parsedIdToken?.unique_name || parsedIdToken?.sub;
 
@@ -169,9 +168,8 @@ export class TokenFactory {
     }
     token = await legacyInstance.login({ onAuthenticate: REDIRECT }).catch();
     if (token) {
-      this.idTokenLocal = token.idToken;
       const parsedIdToken = jwtDecode<{ unique_name: string; sub: string }>(
-        this.idTokenLocal
+        token.idToken
       );
 
       this.emailLocal = parsedIdToken?.unique_name || parsedIdToken?.sub;
