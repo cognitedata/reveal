@@ -19,6 +19,7 @@ export interface RegisterExtpipeInfo {
   metadata?: MetaData;
   contacts?: User[];
   rawTables?: ExtpipeRawTable[];
+  createdBy?: string;
 }
 export type NotificationConfig = {
   allowedNotSeenRangeInMinutes?: number;

@@ -119,7 +119,10 @@ const constructMetadata = (
   });
 };
 
-export const createAddExtpipeInfo = (fields: AddExtpipeFormInput) => {
+export const createAddExtpipeInfo = (
+  fields: AddExtpipeFormInput,
+  user: any
+) => {
   const {
     source,
     schedule,
@@ -150,6 +153,10 @@ export const createAddExtpipeInfo = (fields: AddExtpipeFormInput) => {
     ...(!!scheduleToStore && { schedule: scheduleToStore }),
     ...(selectedRawTables && { rawTables: selectedRawTables }),
     ...(documentation && { documentation }),
+    ...(user && {
+      createdBy:
+        user.displayName || user.email || user.mail || user.id || user.user,
+    }),
   };
 };
 
