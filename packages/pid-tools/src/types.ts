@@ -64,7 +64,7 @@ export interface DiagramSymbolInstance extends DiagramInstanceWithPaths {
 export type FileDirection = 'In' | 'Out' | 'Unidirectional' | 'Unknown';
 
 export interface PidFileConnectionInstance extends DiagramSymbolInstance {
-  type: 'File connection' | 'Bypass connection';
+  type: 'File Connection' | 'Bypass Connection';
   position?: string; // 'A5', 'B3' or similar
   toPosition?: string;
   documentNumber?: number; // points to `PidDocumentMetadata.documentNumber`
@@ -74,7 +74,7 @@ export interface PidFileConnectionInstance extends DiagramSymbolInstance {
 }
 
 export interface LineConnectionInstance extends DiagramSymbolInstance {
-  type: 'Line connection';
+  type: 'Line Connection';
   letterIndex?: string; // A/B/C
   pointsToFileName?: string; // point to IsoDocumentMetadata.lineNumber or 'SAME' if on the same document
 }

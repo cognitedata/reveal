@@ -167,7 +167,7 @@
     },
     {
       "id": "f4db7ace-a7de-4667-ab6c-c50be4216dbd",
-      "symbolType": "File connection",
+      "symbolType": "File Connection",
       "description": "",
       "svgRepresentation": {
         "boundingBox": {
@@ -204,7 +204,7 @@
     },
     {
       "id": "9c99765c-0a8d-4350-8d29-a717e7361f03",
-      "symbolType": "File connection",
+      "symbolType": "File Connection",
       "description": "",
       "svgRepresentation": {
         "boundingBox": {
@@ -1164,7 +1164,7 @@
       "labels": []
     },
     {
-      "type": "File connection",
+      "type": "File Connection",
       "id": "path12862-path12864_0-path12864_1-path12864_2-path12866-path12868_0-path12868_1",
       "symbolId": "f4db7ace-a7de-4667-ab6c-c50be4216dbd",
       "pathIds": [
@@ -1217,7 +1217,7 @@
       "labels": []
     },
     {
-      "type": "File connection",
+      "type": "File Connection",
       "id": "path13606_0-path13606_1-path13606_2-path13606_3-path13608-path13610_0-path13610_1",
       "symbolId": "f4db7ace-a7de-4667-ab6c-c50be4216dbd",
       "pathIds": [
@@ -1270,7 +1270,7 @@
       "labels": []
     },
     {
-      "type": "File connection",
+      "type": "File Connection",
       "id": "path13784_0-path13784_1-path13784_2-path13784_3-path13786-path13788_0-path13788_1",
       "symbolId": "f4db7ace-a7de-4667-ab6c-c50be4216dbd",
       "pathIds": [
@@ -1323,7 +1323,7 @@
       "labels": []
     },
     {
-      "type": "File connection",
+      "type": "File Connection",
       "id": "path12894_0-path12894_1-path12894_2-path12894_3-path12896-path12898_0-path12898_1",
       "symbolId": "f4db7ace-a7de-4667-ab6c-c50be4216dbd",
       "pathIds": [
@@ -1376,7 +1376,7 @@
       "labels": []
     },
     {
-      "type": "File connection",
+      "type": "File Connection",
       "id": "path12916_0-path12916_1-path12916_2-path12918-path12920-path12922_0-path12922_1",
       "symbolId": "9c99765c-0a8d-4350-8d29-a717e7361f03",
       "pathIds": [
@@ -1429,7 +1429,7 @@
       "labels": []
     },
     {
-      "type": "File connection",
+      "type": "File Connection",
       "id": "path14084_0-path14084_1-path14084_2-path14086-path14088-path14090_0-path14090_1",
       "symbolId": "9c99765c-0a8d-4350-8d29-a717e7361f03",
       "pathIds": [
@@ -1482,7 +1482,7 @@
       "labels": []
     },
     {
-      "type": "File connection",
+      "type": "File Connection",
       "id": "path14332_0-path14332_1-path14332_2-path14334-path14336-path14338_0-path14338_1",
       "symbolId": "9c99765c-0a8d-4350-8d29-a717e7361f03",
       "pathIds": [

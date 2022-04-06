@@ -48,7 +48,7 @@ test('should find the matching file connection in pid26', async () => {
   expect(link).toEqual(expectedLink);
 });
 
-test('should not find file connection with document number 27 in pid26', async () => {
+test('should not find File Connection with document number 27 in pid26', async () => {
   const fileConnection = {
     fileDirection: 'Out',
     documentNumber: 27,
@@ -66,7 +66,7 @@ test('should not find file connection with document number 27 in pid26', async (
 
 test('find correct SAME iso link', async () => {
   const isoConnection: LineConnectionInstanceOutputFormat = {
-    type: 'Line connection',
+    type: 'Line Connection',
     symbolId: 's1',
     letterIndex: 'A',
     pointsToFileName: 'SAME',
@@ -101,7 +101,7 @@ test('find correct SAME iso link', async () => {
 test('find correct external iso link with same id', async () => {
   const labels = [getLabelFromText('tspan1', 'L001-2')];
   const isoConnection: LineConnectionInstanceOutputFormat = {
-    type: 'Line connection',
+    type: 'Line Connection',
     symbolId: 'S1',
     letterIndex: 'A',
     pathIds: ['path3'],

@@ -48,7 +48,7 @@ const getBestFitLabel = (
 
   const midPoint = boundingBox.midPoint();
   normalizedLabels.forEach((label) => {
-    // Inside a file connection there can be numbers or letters that should
+    // Inside a File Connection there can be numbers or letters that should
     // not be used to infer position
     if (boundingBox.encloses(label.normalizedMidPoint)) return;
 
@@ -143,7 +143,7 @@ export const getFileConnectionsWithPosition = (
         return { ...fileConnection, fileDirection: 'Unknown' };
 
       let fileDirection: FileDirection;
-      if (fileConnection.type === 'Bypass connection') {
+      if (fileConnection.type === 'Bypass Connection') {
         fileDirection = 'Unidirectional';
       } else if (isLeft(fileConnection.direction)) {
         fileDirection = 'Out';
@@ -174,7 +174,7 @@ export const getFileConnectionsWithPosition = (
         return { ...fileConnection, fileDirection: 'Unknown' };
 
       let fileDirection: FileDirection;
-      if (fileConnection.type === 'Bypass connection') {
+      if (fileConnection.type === 'Bypass Connection') {
         fileDirection = 'Unidirectional';
       } else if (isLeft(fileConnection.direction)) {
         fileDirection = 'In';
@@ -205,7 +205,7 @@ export const getFileConnectionsWithPosition = (
         return { ...fileConnection, fileDirection: 'Unknown' };
 
       let fileDirection: FileDirection;
-      if (fileConnection.type === 'Bypass connection') {
+      if (fileConnection.type === 'Bypass Connection') {
         fileDirection = 'Unidirectional';
       } else if (isUp(fileConnection.direction)) {
         fileDirection = 'Out';

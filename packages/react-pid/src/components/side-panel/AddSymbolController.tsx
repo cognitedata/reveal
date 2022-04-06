@@ -34,10 +34,10 @@ const unidirectedOptions: OptionType<number>[] = unidirectedDirections.map(
 );
 
 const directionSymbolType = (symbolType: SymbolType | undefined) =>
-  symbolType === 'File connection' ||
+  symbolType === 'File Connection' ||
   symbolType === 'Arrow' ||
   symbolType === 'Reducer' ||
-  symbolType === 'Bypass connection';
+  symbolType === 'Bypass Connection';
 
 interface AddSymbolControllerProps {
   symbolSelection: string[];
@@ -91,7 +91,7 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
   );
 
   const DirectionSelector = useCallback(() => {
-    if (selectedSymbolTypeOption.value === 'Bypass connection') {
+    if (selectedSymbolTypeOption.value === 'Bypass Connection') {
       directionOptions = unidirectedOptions;
     } else {
       directionOptions = directedOptions;

@@ -50,7 +50,7 @@ export const findAllInstancesOfSymbol = (
     });
   }
 
-  if (symbol.symbolType === 'File connection') {
+  if (symbol.symbolType === 'File Connection') {
     const fileConnections = foundSymbolInstances.filter(isFileConnection);
     return pidDocument.getFileConnectionsWithPosition(fileConnections);
   }

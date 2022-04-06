@@ -16,7 +16,7 @@
   "lines": [],
   "symbolInstances": [
     {
-      "type": "Line connection",
+      "type": "Line Connection",
       "symbolId": "s1",
       "letterIndex": "A",
       "pointsToFileName": "SAME",
@@ -39,7 +39,7 @@
       "labels": []
     },
     {
-      "type": "Line connection",
+      "type": "Line Connection",
       "symbolId": "s1",
       "letterIndex": "A",
       "pointsToFileName": "SAME",
@@ -62,7 +62,7 @@
       "labels": []
     },
     {
-      "type": "Line connection",
+      "type": "Line Connection",
       "symbolId": "s1",
       "letterIndex": "A",
       "pathIds": ["path3"],

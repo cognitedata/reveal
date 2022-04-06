@@ -17,14 +17,14 @@ import { LineSegment, PathSegment } from '../geometry';
 export const isFileConnection = (
   diagramInstance: any
 ): diagramInstance is PidFileConnectionInstance => {
-  const fileConnection: DiagramType = 'File connection';
+  const fileConnection: DiagramType = 'File Connection';
   return diagramInstance.type === fileConnection;
 };
 
 export const isLineConnection = (
   diagramInstance: any
 ): diagramInstance is LineConnectionInstance => {
-  const lineConnection: DiagramType = 'Line connection';
+  const lineConnection: DiagramType = 'Line Connection';
   return diagramInstance.type === lineConnection;
 };
 

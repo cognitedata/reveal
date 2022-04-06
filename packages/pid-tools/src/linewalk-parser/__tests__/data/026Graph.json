@@ -14,7 +14,7 @@
   "symbols": [
     {
       "id": "f1",
-      "symbolType": "File connection",
+      "symbolType": "File Connection",
       "description": "right",
       "svgRepresentation": {
         "boundingBox": {
@@ -31,7 +31,7 @@
   "lines": [],
   "symbolInstances": [
     {
-      "type": "File connection",
+      "type": "File Connection",
       "symbolId": "f1",
       "pathIds": ["path1"],
       "scale": 1,

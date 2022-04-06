@@ -198,7 +198,7 @@ describe('match multifileGraphs', () => {
         getDiagramInstrumentOutputFormat('i0', ['ASSET0'], ['L001']),
         getDiagramInstanceOutputFormat('i1', 'Valve', ['L001']),
         getDiagramInstrumentOutputFormat('i3', ['ASSET1'], ['L001']),
-        getDiagramInstanceOutputFormat('i4', 'File connection', ['L001']),
+        getDiagramInstanceOutputFormat('i4', 'File Connection', ['L001']),
       ],
       lines: [getDiagramLineOutputFormat('i2', ['L001'])],
       connections: [
@@ -223,7 +223,7 @@ describe('match multifileGraphs', () => {
       viewBox: boundingBox,
       symbols: [],
       symbolInstances: [
-        getDiagramInstanceOutputFormat('i1', 'File connection', ['L001']),
+        getDiagramInstanceOutputFormat('i1', 'File Connection', ['L001']),
         getDiagramInstanceOutputFormat('i3', 'Reducer', ['L001']),
       ],
       lines: [],
@@ -251,7 +251,7 @@ describe('match multifileGraphs', () => {
       symbolInstances: [
         getDiagramInstrumentOutputFormat('i0', ['ASSET0'], ['L001']),
         getDiagramInstanceOutputFormat('i1', 'Valve', ['L001']),
-        getDiagramInstanceOutputFormat('i3', 'File connection', ['L001']),
+        getDiagramInstanceOutputFormat('i3', 'File Connection', ['L001']),
       ],
       lines: [],
       connections: [
@@ -275,7 +275,7 @@ describe('match multifileGraphs', () => {
       viewBox: boundingBox,
       symbols: [],
       symbolInstances: [
-        getDiagramInstanceOutputFormat('i1', 'File connection', ['L001']),
+        getDiagramInstanceOutputFormat('i1', 'File Connection', ['L001']),
         getDiagramInstrumentOutputFormat('i3', ['ASSET1'], ['L001']),
         getDiagramInstanceOutputFormat('i4', 'Reducer', ['L001']),
       ],

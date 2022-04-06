@@ -9,18 +9,23 @@ export const AUTO_ANALYSIS_DISTANCE_THRESHOLD_ISO = 2;
 export const AUTO_ANALYSIS_LABEL_THRESHOLD_PID = 10;
 export const AUTO_ANALYSIS_LABEL_THRESHOLD_ISO = 40;
 
-export const pidSymbolTypes = ['File connection', 'Bypass connection'] as const;
-export const isoSymbolTypes = ['Line connection'] as const;
+export const pidSymbolTypes = [
+  'File Connection',
+  'Bypass Connection',
+  'Shared Instrument',
+] as const;
+export const isoSymbolTypes = ['Line Connection'] as const;
 export const bothSymbolTypes = [
   'Instrument',
   'Valve',
   'Reducer',
   'Flange',
   'Cap',
-  'Insolation',
+  'Insulation',
   'Arrow',
   'Custom',
   'Equipment',
+  'Line Break',
 ] as const;
 
 export const symbolTypes = [
