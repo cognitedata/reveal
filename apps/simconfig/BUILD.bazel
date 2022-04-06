@@ -2,13 +2,11 @@ load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
 load("@npm//@storybook/react:index.bzl", "build_storybook", "start_storybook")
 load("@npm//react-scripts:index.bzl", "react_scripts")
-load("@npm//testcafe:index.bzl", "testcafe")
 load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_config", "prettier_test")
 load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
 load("//rules/publish:publish_fas.bzl", "publish_fas")
 load("//rules/publish:publish_storybook.bzl", "publish_storybook")
 load("//rules/test:react_scripts_test.bzl", "react_scripts_test")
-load("//rules/test:testcafe_test.bzl", "testcafe_test")
 load("//rules/build_sed:build_sed.bzl", "build_sed")
 
 # Filename conventions described at
@@ -25,10 +23,6 @@ _TESTS = [
     "src/utils/test/*",
 ]
 
-_TESTS_TESTCAFE = [
-    "testcafe/**/*.ts",
-]
-
 _STORYBOOK = [
     ".storybook/*",
     "src/**/*.stories.ts*",
@@ -40,8 +34,6 @@ _SOURCES = [
 
 TESTS = glob(_TESTS + _STORYBOOK)
 
-TESTS_TESTCAFE = glob(_TESTS_TESTCAFE)
-
 STORYBOOK = glob(_STORYBOOK)
 
 SOURCES = glob(
@@ -49,9 +41,9 @@ SOURCES = glob(
     exclude = _TESTS + _STORYBOOK,
 )
 
-SCRIPTS = glob([
-    "scripts/**/*",
-])
+# SCRIPTS = glob([
+#     "scripts/**/*",
+# ])
 
 PUBLIC = glob([
     "public/*",
@@ -133,7 +125,6 @@ TYPE_DEPENDENCIES = [
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = [
     "@npm//@testing-library/jest-dom",
-    "@npm//@testing-library/testcafe",
     "@npm//eslint-config-react-app",
 ]
 
@@ -277,8 +268,8 @@ sh_binary(
     srcs = ["//rules/build_sed:sed_darwin.sh"],
 )
 
-# Replace PUBLIC_URL_VALUE placeholder with '' in order to run testcafe
-# If you need additional env vars being set during testcafe run add them into
+# Replace PUBLIC_URL_VALUE placeholder with '' in order to run e2e tests
+# If you need additional env vars being set during e2e tests run add them into
 # :build target above and override here
 build_sed(
     name = "build_sed",
@@ -344,55 +335,6 @@ react_scripts(
         # So use this to prevent EOF.
         "ibazel_notify_changes",
     ],
-)
-
-### Testcafe ###
-
-copy_to_bin(
-    name = "copy_testcafe_files",
-    srcs = TESTS_TESTCAFE + [
-        ".testcaferc.json",
-        "tsconfig.testcafe.json",
-    ],
-)
-
-testcafe_test(
-    name = "testcafe_test",
-    # folder name to store artifacts during CI run
-    app_name = "simconfig",
-    args = [
-        "'chrome --headless --no-sandbox --disable-software-rasterizer'",
-        "'testcafe/desktop'",
-        "--stop-on-first-fail",
-        "--app './scripts/testcafe-bazel-serve.sh'",
-        "–q",
-        "--config-file .testcaferc.json",
-    ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + SCRIPTS + [
-        ":build_sed",
-        "copy_testcafe_files",
-    ],
-    env = {
-        "BASE_URL": "http://localhost:11111",
-    },
-)
-
-testcafe(
-    name = "testcafe",
-    args = [
-        "--node_options=--require=./$(rootpath chdir-workspace.js)",
-        "'chrome --disable-software-rasterizer'",
-        "'testcafe/desktop'",
-        "--stop-on-first-fail",
-    ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + SCRIPTS + [
-        ":start",
-        "chdir-workspace.js",
-        "copy_testcafe_files",
-    ],
-    env = {
-        "BASE_URL": "https://localhost:3000",
-    },
 )
 
 ### Storybook ###

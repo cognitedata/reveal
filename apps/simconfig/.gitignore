@@ -21,9 +21,6 @@ npm-public-credentials.txt
 
 # testcafe
 *.jwk-key.json
-testcafe/screenshots
-testcafe/videos
-testcafe/logs
 res.xml
 
 #storybook
