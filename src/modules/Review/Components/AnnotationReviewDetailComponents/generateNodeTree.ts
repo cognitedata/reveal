@@ -26,7 +26,7 @@ const isAnnotation = (data: Data): data is RowData<ReviewAnnotation> => {
  */
 export const generateNodeTree = (data: Data): TreeNode<Data> => {
   if (isCategory(data)) {
-    const { title, common, callbacks } = data as RowData<Category>;
+    const { title, common, selected, callbacks } = data as RowData<Category>;
     return {
       id: title,
       name: title,
@@ -34,7 +34,7 @@ export const generateNodeTree = (data: Data): TreeNode<Data> => {
       children: common.annotations.map((annotation) =>
         generateNodeTree({ ...annotation, common, callbacks })
       ),
-      openByDefault: true,
+      openByDefault: selected,
       additionalData: data,
     };
   }

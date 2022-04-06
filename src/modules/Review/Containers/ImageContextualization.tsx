@@ -1,4 +1,10 @@
-import React, { ReactText, useCallback, useMemo } from 'react';
+import React, {
+  ReactText,
+  Reducer,
+  useCallback,
+  useMemo,
+  useReducer,
+} from 'react';
 import { Detail, Icon, PrimaryTooltip } from '@cognite/cogs.js';
 import {
   deleteCollectionById,
@@ -30,6 +36,58 @@ import { VirtualizedAnnotationsReview } from 'src/modules/Review/Components/Anno
 import { ReviewAnnotation } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/types';
 import { generateNodeTree } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/generateNodeTree';
 
+export enum Categories {
+  Asset = 'Asset tags',
+  Object = 'Objects',
+  Text = 'Text',
+  KeypointCollections = 'Keypoint collections',
+  Classifications = 'Classification tags',
+}
+
+type CategoryState = {
+  [index in Categories]?: { selected: boolean };
+};
+
+const categories: CategoryState = {};
+
+const initialCategoriesState: {
+  categories: CategoryState;
+} = { categories };
+
+const reducer: Reducer<
+  {
+    categories: CategoryState;
+  },
+  { type: string; payload: { category: Categories; selected: boolean } }
+> = (state, action) => {
+  switch (action.type) {
+    case 'selectCategory': {
+      if (
+        action?.payload?.category &&
+        action?.payload?.selected !== undefined
+      ) {
+        return {
+          ...state,
+          categories: {
+            ...state.categories,
+            [action.payload.category]: {
+              selected: action.payload.selected,
+            },
+          },
+        };
+      }
+      return {
+        ...state,
+      };
+    }
+    default: {
+      return {
+        ...state,
+      };
+    }
+  }
+};
+
 export const ImageContextualization = (props: {
   file: FileInfo;
   reference: any;
@@ -37,6 +95,10 @@ export const ImageContextualization = (props: {
   const { file } = props;
 
   const dispatch = useDispatch();
+  const [categoryState, categoryDispatch] = useReducer(
+    reducer,
+    initialCategoriesState
+  );
 
   // when set virtualized tree component will use this to automatically scroll to position
   const scrollId = useSelector(
@@ -120,7 +182,7 @@ export const ImageContextualization = (props: {
     [currentKeypointCollection?.id]
   );
 
-  const handleDeleteAnnotations = useCallback(
+  const handleDelete = useCallback(
     (id: ReactText) => {
       if (id === currentKeypointCollection?.id) {
         // when creating keypoint collections
@@ -149,7 +211,7 @@ export const ImageContextualization = (props: {
     [currentKeypointCollection?.id]
   );
 
-  const handleOnAnnotationSelect = useCallback(
+  const handleOnSelect = useCallback(
     (id: ReactText, nextState: boolean) => {
       if (id === currentKeypointCollection?.id) {
         // when creating keypoint collections
@@ -157,6 +219,11 @@ export const ImageContextualization = (props: {
         if (nextState) {
           dispatch(selectCollection(id.toString()));
         }
+      } else if (Object.values(Categories).includes(id as Categories)) {
+        categoryDispatch({
+          type: 'selectCategory',
+          payload: { category: id as Categories, selected: nextState },
+        });
       } else {
         dispatch(deselectAllSelectionsReviewPage());
         if (nextState) {
@@ -173,27 +240,27 @@ export const ImageContextualization = (props: {
 
   const ReviewCallbacks = useMemo(
     () => ({
-      onDelete: handleDeleteAnnotations,
+      onDelete: handleDelete,
       onVisibilityChange: handleVisibility,
       onApproveStateChange: handleApprovalState,
-      onSelect: handleOnAnnotationSelect,
+      onSelect: handleOnSelect,
       onKeypointSelect: handleKeypointSelect,
     }),
     [
-      handleDeleteAnnotations,
+      handleDelete,
       handleVisibility,
       handleApprovalState,
-      handleOnAnnotationSelect,
+      handleOnSelect,
       handleKeypointSelect,
     ]
   );
 
   // items in common section will be passed down to child items
   const annotationReviewCategories = useMemo(() => {
-    const categories = [
+    const annotationCategories = [
       {
-        title: 'Asset tags',
-        selected: mode === VisionDetectionModelType.TagDetection,
+        title: Categories.Asset,
+        selected: !!categoryState.categories[Categories.Asset]?.selected,
         emptyPlaceholder: 'No assets detected or manually added',
         common: {
           annotations: tagAnnotations,
@@ -202,9 +269,8 @@ export const ImageContextualization = (props: {
         },
       },
       {
-        title: 'Objects',
-        selected:
-          mode === VisionDetectionModelType.ObjectDetection && !isKeypoint,
+        title: Categories.Object,
+        selected: !!categoryState.categories[Categories.Object]?.selected,
         emptyPlaceholder: 'No objects detected or manually added',
         common: {
           annotations: objectAnnotations,
@@ -213,8 +279,8 @@ export const ImageContextualization = (props: {
         },
       },
       {
-        title: 'Text',
-        selected: mode === VisionDetectionModelType.OCR,
+        title: Categories.Text,
+        selected: !!categoryState.categories[Categories.Text]?.selected,
         emptyPlaceholder: 'No text or objects detected or manually added',
         common: {
           annotations: textAnnotations,
@@ -223,9 +289,9 @@ export const ImageContextualization = (props: {
         },
       },
       {
-        title: 'Keypoint collections',
+        title: Categories.KeypointCollections,
         selected:
-          mode === VisionDetectionModelType.ObjectDetection && !!isKeypoint,
+          !!categoryState.categories[Categories.KeypointCollections]?.selected,
         emptyPlaceholder: 'No keypoints detected or manually added',
         common: {
           annotations: keyPointAnnotations,
@@ -234,8 +300,9 @@ export const ImageContextualization = (props: {
         },
       },
       {
-        title: 'Classification tags',
-        selected: !(mode in [Object.keys(VisionDetectionModelType)]),
+        title: Categories.Classifications,
+        selected:
+          !!categoryState.categories[Categories.Classifications]?.selected,
         emptyPlaceholder: 'No classifications detected or manually added',
         common: {
           annotations: classificationAnnotations,
@@ -246,7 +313,7 @@ export const ImageContextualization = (props: {
     ];
 
     // filters categories of empty annotations
-    return categories
+    return annotationCategories
       .filter((category) => !!category.common.annotations.length)
       .map((category) => ({
         ...category,
@@ -259,6 +326,7 @@ export const ImageContextualization = (props: {
     mode,
     isKeypoint,
     keyPointAnnotations,
+    categoryState,
   ]);
 
   const rootNodeArr = useMemo(

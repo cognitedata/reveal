@@ -21,9 +21,12 @@ export const CategoryRow = ({
 }: VirtualizedTreeRowProps<RowData<Category>>) => {
   const {
     common: { mode },
+    callbacks: { onSelect },
+    title,
+    selected,
   } = additionalData;
   return (
-    <PanelHeader>
+    <PanelHeader onClick={() => onSelect(title, !selected)}>
       <ExpandIconComponent isActive={isOpen} />
       <IconContainer background={ModelTypeStyleMap[mode].backgroundColor}>
         <Icon
