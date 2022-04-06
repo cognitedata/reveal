@@ -37,16 +37,6 @@ export class WellTrajectory extends MdSamples {
   //= =================================================
 
   public kb = 0;
-  public mdUnit?: string;
-
-  //= =================================================
-  // CONSTRUCTOR
-  //= =================================================
-
-  public constructor(mdUnit?: string) {
-    super();
-    this.mdUnit = mdUnit;
-  }
 
   //= =================================================
   // INSTANCE METHODS: Range

@@ -65,8 +65,7 @@ export class WellNodesCreator {
         bpData.trajectoryDataColumnIndexes,
         trajectoryRows,
         startMd,
-        unit,
-        elevationUnit
+        unit
       );
       if (!trajectoryNode) continue;
 

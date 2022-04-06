@@ -79,8 +79,7 @@ export abstract class BaseThreeView extends Base3DView {
 
   public /* virtual */ onShowInfo(
     _viewInfo: ViewInfo,
-    _intersection: THREE.Intersection,
-    _mdUnit?: string
+    _intersection: THREE.Intersection
   ): void {}
 
   //= =================================================

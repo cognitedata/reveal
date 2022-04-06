@@ -206,15 +206,12 @@ export class WellTrajectoryView extends BaseGroupThreeView {
 
   public /* override */ onShowInfo(
     viewInfo: ViewInfo,
-    intersection: THREE.Intersection,
-    mdUnit?: string
+    intersection: THREE.Intersection
   ): void {
     const md = WellTrajectoryView.startPickingAndReturnMd(
       this,
       viewInfo,
-      intersection,
-      undefined,
-      mdUnit
+      intersection
     );
     if (md === undefined) return;
 
@@ -673,10 +670,7 @@ export class WellTrajectoryView extends BaseGroupThreeView {
     /**
      * This is an assumption. If unit is not provided assumed to be ft
      */
-    if (!mdUnit) {
-      return `${mdRounded} ft`;
-    }
-    if (Units.isFeet(mdUnit)) {
+    if (!mdUnit || Units.isFeet(mdUnit)) {
       return `${Units.covertFeetToMeterAndRounded(md)} m / ${mdRounded} ft`;
     }
     if (Units.isMeter(mdUnit)) {
@@ -711,6 +705,9 @@ export class WellTrajectoryView extends BaseGroupThreeView {
     }
     const positionAtMd = Vector3.newEmpty;
     trajectory.getPositionAtMd(md, positionAtMd);
+    /**
+     * n-vis deal with ft so even though not provided tvd is in ft
+     */
     const tvd = -positionAtMd.z;
 
     viewInfo.addValue('Well', wellNode.displayName);
@@ -718,7 +715,7 @@ export class WellTrajectoryView extends BaseGroupThreeView {
     viewInfo.addValue('Md', this.generateMeterAndFeetMdValues(md, mdUnit));
     viewInfo.addValue(
       'Tvd',
-      `${tvd.toFixed(2)} m / ${Units.convertMeterToFeet(tvd).toFixed(2)} ft`
+      `${Units.convertFeetToMeter(tvd).toFixed(2)} m / ${tvd.toFixed(2)} ft`
     );
     return md;
   }
