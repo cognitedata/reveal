@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { debounce } from 'lodash';
 
-import { Button, Input, Title } from '@cognite/cogs.js';
+import { Button, Input } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { CSVLink } from 'react-csv';
@@ -92,11 +92,7 @@ const DownloadTableModal = ({
         </CSVLink>,
       ]}
       onCancel={handleClose}
-      title={
-        <StyledDownloadTableModalTitle level={5}>
-          Download as csv {tableName}
-        </StyledDownloadTableModalTitle>
-      }
+      title={`Download as csv ${tableName}`}
       visible={visible}
       {...modalProps}
     >
@@ -117,13 +113,6 @@ const DownloadTableModal = ({
 
 const StyledCancelButton = styled(Button)`
   margin-right: 8px;
-`;
-
-const StyledDownloadTableModalTitle = styled(Title)`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 312px;
 `;
 
 const StyledRowsInputWrapper = styled.div`
