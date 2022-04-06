@@ -16,21 +16,21 @@ describe('config', () => {
       process.env.REACT_APP_ENV = 'development';
       const baseUrl =
         require('./calculation-backend').getBackendServiceBaseUrl();
-      expect(baseUrl).toBe('https://calculation-backend.staging.cognite.ai/v3');
+      expect(baseUrl).toBe('https://calculation-backend.staging.cognite.ai/v4');
     });
 
     it('provides correct base url for default staging', () => {
       process.env.REACT_APP_ENV = 'staging';
       const baseUrl =
         require('./calculation-backend').getBackendServiceBaseUrl();
-      expect(baseUrl).toBe('https://calculation-backend.staging.cognite.ai/v3');
+      expect(baseUrl).toBe('https://calculation-backend.staging.cognite.ai/v4');
     });
 
     it('provides correct base url for default production', () => {
       process.env.REACT_APP_ENV = 'production';
       const baseUrl =
         require('./calculation-backend').getBackendServiceBaseUrl();
-      expect(baseUrl).toBe('https://calculation-backend.cognite.ai/v3');
+      expect(baseUrl).toBe('https://calculation-backend.cognite.ai/v4');
     });
 
     it('provides correct base url for alternative cluster staging', () => {
@@ -39,7 +39,7 @@ describe('config', () => {
         'greenfield'
       );
       expect(baseUrl).toBe(
-        'https://calculation-backend.staging.greenfield.cognite.ai/v3'
+        'https://calculation-backend.staging.greenfield.cognite.ai/v4'
       );
     });
 
@@ -49,7 +49,7 @@ describe('config', () => {
         'greenfield'
       );
       expect(baseUrl).toBe(
-        'https://calculation-backend.greenfield.cognite.ai/v3'
+        'https://calculation-backend.greenfield.cognite.ai/v4'
       );
     });
   });

@@ -1,4 +1,4 @@
-import { Operation, OperationVersions } from '@cognite/calculation-backend';
+import { Operation, OperationVersion } from '@cognite/calculation-backend';
 import { ChartWorkflowV2 } from 'models/chart/types';
 import { Elements, FlowElement, Node } from 'react-flow-renderer';
 import {
@@ -76,7 +76,7 @@ export const duplicateNode = (
 };
 
 export const initializeParameterValues = (
-  operationVersion: OperationVersions
+  operationVersion: OperationVersion
 ): { [key: string]: any } => {
   let parameterValues = {};
   operationVersion.parameters.forEach(

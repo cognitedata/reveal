@@ -1,4 +1,4 @@
-import { OperationParametersTypeEnum } from '@cognite/calculation-backend';
+import { OperationVersionParamsTypeEnum } from '@cognite/calculation-backend';
 import { Chart, ChartWorkflowV2 } from 'models/chart/types';
 import { fullListOfOperations } from 'models/operations/mocks';
 import {
@@ -8,22 +8,25 @@ import {
 
 describe('transformParamInput', () => {
   it('transforms a 0 float correctly', () => {
-    const testCases: [OperationParametersTypeEnum, string, string | number][] =
-      [
-        [OperationParametersTypeEnum.Str, '0', '0'],
-        [OperationParametersTypeEnum.Str, 'false', 'false'],
-        [OperationParametersTypeEnum.Str, 'true', 'true'],
-        [OperationParametersTypeEnum.Str, '12.3245', '12.3245'],
-        [OperationParametersTypeEnum.Int, '0', 0],
-        [OperationParametersTypeEnum.Int, '12.3245', 12],
-        [OperationParametersTypeEnum.Int, 'false', ''],
-        [OperationParametersTypeEnum.Float, '0', 0],
-        [OperationParametersTypeEnum.Float, '12.345', 12.345],
-        [OperationParametersTypeEnum.Float, '1e-6', 0.000001],
-        [OperationParametersTypeEnum.Float, '1e6', 1000000],
-        [OperationParametersTypeEnum.Float, 'false', ''],
-        [OperationParametersTypeEnum.Float, 'true', ''],
-      ];
+    const testCases: [
+      OperationVersionParamsTypeEnum,
+      string,
+      string | number
+    ][] = [
+      [OperationVersionParamsTypeEnum.Str, '0', '0'],
+      [OperationVersionParamsTypeEnum.Str, 'false', 'false'],
+      [OperationVersionParamsTypeEnum.Str, 'true', 'true'],
+      [OperationVersionParamsTypeEnum.Str, '12.3245', '12.3245'],
+      [OperationVersionParamsTypeEnum.Int, '0', 0],
+      [OperationVersionParamsTypeEnum.Int, '12.3245', 12],
+      [OperationVersionParamsTypeEnum.Int, 'false', ''],
+      [OperationVersionParamsTypeEnum.Float, '0', 0],
+      [OperationVersionParamsTypeEnum.Float, '12.345', 12.345],
+      [OperationVersionParamsTypeEnum.Float, '1e-6', 0.000001],
+      [OperationVersionParamsTypeEnum.Float, '1e6', 1000000],
+      [OperationVersionParamsTypeEnum.Float, 'false', ''],
+      [OperationVersionParamsTypeEnum.Float, 'true', ''],
+    ];
 
     testCases.forEach((testCase) => {
       const granularity = transformParamInput(testCase[0], testCase[1]);

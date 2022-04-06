@@ -1,6 +1,6 @@
 /* eslint camelcase: 0 */
 
-import { StatisticsStatusStatusEnum } from '@cognite/calculation-backend';
+import { StatusStatusEnum } from '@cognite/calculation-backend';
 import {
   Button,
   Icon,
@@ -33,15 +33,15 @@ import { MetadataList } from './MetadataList';
 import { getDisplayUnit, useStatistics } from './utils';
 import { Histogram } from './Histogram';
 
-const renderStatusIcon = (status?: StatisticsStatusStatusEnum) => {
+const renderStatusIcon = (status?: StatusStatusEnum) => {
   switch (status) {
-    case StatisticsStatusStatusEnum.Pending:
-    case StatisticsStatusStatusEnum.Running:
+    case StatusStatusEnum.Pending:
+    case StatusStatusEnum.Running:
       return <Icon type="Loader" />;
-    case StatisticsStatusStatusEnum.Success:
+    case StatusStatusEnum.Success:
       return <Icon type="Checkmark" />;
-    case StatisticsStatusStatusEnum.Failed:
-    case StatisticsStatusStatusEnum.Error:
+    case StatusStatusEnum.Failed:
+    case StatusStatusEnum.Error:
       return <Icon type="ExclamationMark" title="Failed" />;
     default:
       return null;
@@ -207,9 +207,7 @@ const Statistics = ({
       <div>
         <StatisticsCallStatus
           id={statisticsCall?.callId}
-          renderLoading={() =>
-            renderStatusIcon(StatisticsStatusStatusEnum.Running)
-          }
+          renderLoading={() => renderStatusIcon(StatusStatusEnum.Running)}
           renderStatus={({ status }) => renderStatusIcon(status)}
         />
       </div>

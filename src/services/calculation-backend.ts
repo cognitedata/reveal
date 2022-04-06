@@ -6,15 +6,13 @@ import {
   CalculationsApi,
   StatisticsApi,
   OperationsApi,
-  CalculationStatus,
   CreateStatisticsParams,
   StatisticsResult,
-  StatisticsStatus,
+  Status,
   Configuration,
   CalculationResultDatapoints,
   Operation,
-  CalculationStatusStatusEnum,
-  StatisticsStatusStatusEnum,
+  StatusStatusEnum,
   CalculationResultQuery,
 } from '@cognite/calculation-backend';
 
@@ -41,7 +39,7 @@ export const getBackendServiceBaseUrl = (cluster?: string) => {
     .filter(Boolean)
     .join('.');
 
-  return `https://${domain}/v3`;
+  return `https://${domain}/v4`;
 };
 
 async function getConfig(sdk: CogniteClient): Promise<Configuration> {
@@ -75,20 +73,20 @@ export async function fetchOperations(
 export async function createCalculation(
   sdk: CogniteClient,
   definition: Calculation
-): Promise<CalculationStatus> {
+): Promise<Status> {
   const config = await getConfig(sdk);
   const api = new CalculationsApi(config);
-  const { data } = await api.createCalculation(sdk.project, definition);
+  const { data } = await api.createGraphCalculation(sdk.project, definition);
   return data;
 }
 
 export async function fetchCalculationStatus(
   sdk: CogniteClient,
   id: string
-): Promise<CalculationStatus> {
+): Promise<Status> {
   const config = await getConfig(sdk);
   const api = await new CalculationsApi(config);
-  const { data } = await api.getCalculationStatus(sdk.project, id);
+  const { data } = await api.getGraphCalculationStatus(sdk.project, id);
   return data;
 }
 
@@ -98,7 +96,7 @@ export async function fetchCalculationResult(
 ): Promise<CalculationResult> {
   const config = await getConfig(sdk);
   const api = await new CalculationsApi(config);
-  const { data } = await api.getCalculationResult(sdk.project, id);
+  const { data } = await api.getGraphCalculationResult(sdk.project, id);
   return data;
 }
 
@@ -198,10 +196,7 @@ export async function waitForCalculationToFinish(
 
   while (
     (
-      [
-        CalculationStatusStatusEnum.Pending,
-        CalculationStatusStatusEnum.Running,
-      ] as CalculationStatusStatusEnum[]
+      [StatusStatusEnum.Pending, StatusStatusEnum.Running] as StatusStatusEnum[]
     ).includes(calculationStatus.status)
   ) {
     // eslint-disable-next-line no-await-in-loop
@@ -214,10 +209,10 @@ export async function waitForCalculationToFinish(
 export async function createStatistics(
   sdk: CogniteClient,
   createStatisticsParams: CreateStatisticsParams
-): Promise<StatisticsStatus> {
+): Promise<Status> {
   const config = await getConfig(sdk);
   const api = new StatisticsApi(config);
-  const { data } = await api.createStatistics(
+  const { data } = await api.createStatisticsCalculation(
     sdk.project,
     createStatisticsParams
   );
@@ -227,10 +222,10 @@ export async function createStatistics(
 export async function fetchStatisticsStatus(
   sdk: CogniteClient,
   id: string
-): Promise<StatisticsStatus> {
+): Promise<Status> {
   const config = await getConfig(sdk);
   const api = new StatisticsApi(config);
-  const { data } = await api.getStatisticsStatus(sdk.project, id);
+  const { data } = await api.getStatisticsCalculationStatus(sdk.project, id);
   return data;
 }
 
@@ -242,10 +237,7 @@ export async function waitForStatisticsToFinish(
 
   while (
     (
-      [
-        StatisticsStatusStatusEnum.Pending,
-        StatisticsStatusStatusEnum.Running,
-      ] as StatisticsStatusStatusEnum[]
+      [StatusStatusEnum.Pending, StatusStatusEnum.Running] as StatusStatusEnum[]
     ).includes(statisticsStatus.status)
   ) {
     // eslint-disable-next-line no-await-in-loop
@@ -263,7 +255,10 @@ export async function fetchStatisticsResult(
 ): Promise<StatisticsResult> {
   const config = await getConfig(sdk);
   const api = new StatisticsApi(config);
-  const { data } = await api.getStatisticsResult(sdk.project, String(id));
+  const { data } = await api.getStatisticsCalculationResult(
+    sdk.project,
+    String(id)
+  );
   return data;
 }
 

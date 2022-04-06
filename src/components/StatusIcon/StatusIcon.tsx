@@ -2,47 +2,45 @@
  * Status Icons
  */
 
-import { CalculationStatusStatusEnum } from '@cognite/calculation-backend';
+import { StatusStatusEnum } from '@cognite/calculation-backend';
 import { IconType, Icon } from '@cognite/cogs.js';
 
 type Props = {
-  status: CalculationStatusStatusEnum;
+  status: StatusStatusEnum;
 };
 
 export const StatusIcon = ({ status }: Props) => {
   switch (status) {
-    case CalculationStatusStatusEnum.Pending:
-    case CalculationStatusStatusEnum.Running:
+    case StatusStatusEnum.Pending:
+    case StatusStatusEnum.Running:
       return <Icon type="Loader" />;
-    case CalculationStatusStatusEnum.Success:
+    case StatusStatusEnum.Success:
       return <Icon type="Checkmark" />;
-    case CalculationStatusStatusEnum.Cancelled:
+    case StatusStatusEnum.Cancelled:
       return <Icon type="Warning" />;
-    case CalculationStatusStatusEnum.Unknown:
+    case StatusStatusEnum.Unknown:
       return <Icon type="Help" />;
-    case CalculationStatusStatusEnum.Failed:
-    case CalculationStatusStatusEnum.Error:
+    case StatusStatusEnum.Failed:
+    case StatusStatusEnum.Error:
       return <Icon type="Error" title="Failed" />;
     default:
       return null;
   }
 };
 
-export function getIconTypeFromStatus(
-  status: CalculationStatusStatusEnum
-): IconType {
+export function getIconTypeFromStatus(status: StatusStatusEnum): IconType {
   switch (status) {
-    case CalculationStatusStatusEnum.Pending:
-    case CalculationStatusStatusEnum.Running:
+    case StatusStatusEnum.Pending:
+    case StatusStatusEnum.Running:
       return 'Loader';
-    case CalculationStatusStatusEnum.Success:
+    case StatusStatusEnum.Success:
       return 'Checkmark';
-    case CalculationStatusStatusEnum.Cancelled:
+    case StatusStatusEnum.Cancelled:
       return 'Warning';
-    case CalculationStatusStatusEnum.Unknown:
+    case StatusStatusEnum.Unknown:
       return 'Help';
-    case CalculationStatusStatusEnum.Failed:
-    case CalculationStatusStatusEnum.Error:
+    case StatusStatusEnum.Failed:
+    case StatusStatusEnum.Error:
       return 'Error';
     default:
       return 'Cognite';

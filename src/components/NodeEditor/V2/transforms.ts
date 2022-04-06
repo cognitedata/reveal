@@ -3,8 +3,8 @@
 import {
   ComputationStep,
   Operation,
-  OperationParameters,
-  OperationParametersTypeEnum,
+  OperationVersionParams,
+  OperationVersionParamsTypeEnum,
 } from '@cognite/calculation-backend';
 import {
   Node,
@@ -29,7 +29,7 @@ import { SourceNodeData } from './Nodes/SourceNode';
 import { passthroughOperationDefinition } from './calculations';
 
 export function transformParamInput(
-  type: OperationParametersTypeEnum,
+  type: OperationVersionParamsTypeEnum,
   value: string
 ): string | number {
   switch (type) {
@@ -189,7 +189,7 @@ const getParamsFromReactFlowNode = (
   // Add auto-align parameter using the global setting
   if (
     availableParameters.some(
-      (p: OperationParameters) => p.param === AUTO_ALIGN_PARAM
+      (p: OperationVersionParams) => p.param === AUTO_ALIGN_PARAM
     )
   ) {
     parameterValues = {

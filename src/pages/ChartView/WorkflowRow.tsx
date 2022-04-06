@@ -1,5 +1,5 @@
 import {
-  CalculationStatusStatusEnum,
+  StatusStatusEnum,
   Calculation,
   CalculationResultQueryAggregateEnum,
 } from '@cognite/calculation-backend';
@@ -487,9 +487,7 @@ function WorkflowRow({
                   query={resultQuery}
                   renderLoading={() => (
                     <StyledStatusIcon
-                      type={getIconTypeFromStatus(
-                        CalculationStatusStatusEnum.Running
-                      )}
+                      type={getIconTypeFromStatus(StatusStatusEnum.Running)}
                       style={{
                         color: isDownsampled ? 'var(--cogs-yellow-1)' : 'auto',
                       }}

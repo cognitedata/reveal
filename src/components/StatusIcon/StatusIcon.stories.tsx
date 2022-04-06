@@ -2,7 +2,7 @@
  * StatusIcon StoryBook
  */
 
-import { CalculationStatusStatusEnum } from '@cognite/calculation-backend';
+import { StatusStatusEnum } from '@cognite/calculation-backend';
 import { Meta, Story } from '@storybook/react';
 import { ComponentProps } from 'react';
 import { StatusIcon } from './StatusIcon';
@@ -24,10 +24,10 @@ export const ErrorStatusIcons = Template.bind({});
 export const CancelledStatusIcons = Template.bind({});
 export const UnknownStatusIcons = Template.bind({});
 
-RunningStatusIcons.args = { status: CalculationStatusStatusEnum.Running };
-PendingStatusIcons.args = { status: CalculationStatusStatusEnum.Pending };
-SuccessStatusIcons.args = { status: CalculationStatusStatusEnum.Success };
-FailedStatusIcons.args = { status: CalculationStatusStatusEnum.Failed };
-ErrorStatusIcons.args = { status: CalculationStatusStatusEnum.Error };
-CancelledStatusIcons.args = { status: CalculationStatusStatusEnum.Cancelled };
-UnknownStatusIcons.args = { status: CalculationStatusStatusEnum.Unknown };
+RunningStatusIcons.args = { status: StatusStatusEnum.Running };
+PendingStatusIcons.args = { status: StatusStatusEnum.Pending };
+SuccessStatusIcons.args = { status: StatusStatusEnum.Success };
+FailedStatusIcons.args = { status: StatusStatusEnum.Failed };
+ErrorStatusIcons.args = { status: StatusStatusEnum.Error };
+CancelledStatusIcons.args = { status: StatusStatusEnum.Cancelled };
+UnknownStatusIcons.args = { status: StatusStatusEnum.Unknown };

@@ -22,7 +22,7 @@
   "dependencies": {
     "@cognite/annotations": "1.1.0",
     "@cognite/auth-utils": "1.0.15",
-    "@cognite/calculation-backend": "3.0.0-alpha.5",
+    "@cognite/calculation-backend": "4.0.0-alpha",
     "@cognite/cdf-hub-tenant-selector": "0.14.1",
     "@cognite/cogs.js": "5.19.1",
     "@cognite/connect": "0.0.8",

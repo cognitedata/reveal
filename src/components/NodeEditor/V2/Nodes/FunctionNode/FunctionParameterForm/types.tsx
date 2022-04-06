@@ -1,6 +1,6 @@
 import {
-  OperationParameters,
-  OperationParametersTypeEnum,
+  OperationVersionParams,
+  OperationVersionParamsTypeEnum,
 } from '@cognite/calculation-backend';
 import { defaultTranslations } from 'components/NodeEditor/translations';
 
@@ -10,16 +10,16 @@ interface ParameterFormBase {
 }
 
 export interface ParameterFormElementProps extends ParameterFormBase {
-  parameter: OperationParameters;
+  parameter: OperationVersionParams;
   onInputValueChange: (
     param: string,
-    type: OperationParametersTypeEnum,
+    type: OperationVersionParamsTypeEnum,
     value: any
   ) => void;
 }
 
 export interface ParameterFormProps extends ParameterFormBase {
-  parameters: OperationParameters[];
+  parameters: OperationVersionParams[];
   onParameterValuesChange: (
     nodeId: string,
     formData: { [key: string]: any }

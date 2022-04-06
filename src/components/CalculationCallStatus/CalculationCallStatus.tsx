@@ -1,7 +1,4 @@
-import {
-  CalculationStatus,
-  CalculationStatusStatusEnum,
-} from '@cognite/calculation-backend';
+import { Status, StatusStatusEnum } from '@cognite/calculation-backend';
 import { useState, useEffect } from 'react';
 import {
   useCalculationQueryResult,
@@ -12,7 +9,7 @@ import { DatapointsMultiQuery } from '@cognite/sdk';
 interface Props {
   id: string;
   query: DatapointsMultiQuery;
-  renderStatus?: (calculationStatus: CalculationStatus) => JSX.Element | null;
+  renderStatus?: (calculationStatus: Status) => JSX.Element | null;
   renderLoading?: () => JSX.Element | null;
 }
 
@@ -63,7 +60,7 @@ function InnerCalculationCallStatus({
   if (apiError) {
     return renderStatus({
       id,
-      status: CalculationStatusStatusEnum.Failed,
+      status: StatusStatusEnum.Failed,
     });
   }
 

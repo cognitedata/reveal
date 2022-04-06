@@ -1,6 +1,6 @@
 import { Button, Input, InputProps } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
-import { OperationParametersTypeEnum } from '@cognite/calculation-backend';
+import { OperationVersionParamsTypeEnum } from '@cognite/calculation-backend';
 import { useState } from 'react';
 import { defaultTranslations } from 'components/NodeEditor/translations';
 import { transformParamInput } from '../../../transforms';
@@ -29,17 +29,17 @@ const FunctionParameterForm = ({
 
   const handleFormValueChange = (
     param: string,
-    type: OperationParametersTypeEnum,
+    type: OperationVersionParamsTypeEnum,
     value: any
   ) => {
     setFormData({ ...formData, [param]: transformParamInput(type, value) });
   };
 
-  const inputProps = (type: OperationParametersTypeEnum): InputProps => {
+  const inputProps = (type: OperationVersionParamsTypeEnum): InputProps => {
     switch (type) {
-      case OperationParametersTypeEnum.Int:
+      case OperationVersionParamsTypeEnum.Int:
         return { type: 'tel' };
-      case OperationParametersTypeEnum.Float:
+      case OperationVersionParamsTypeEnum.Float:
         return { type: 'number', step: 0.01 };
       default:
         return { type: 'text' };
@@ -63,7 +63,7 @@ const FunctionParameterForm = ({
           );
         }
 
-        if (type === OperationParametersTypeEnum.Bool) {
+        if (type === OperationVersionParamsTypeEnum.Bool) {
           return (
             <FunctionParameterCheckbox
               key={`${nodeId}-${param}`}

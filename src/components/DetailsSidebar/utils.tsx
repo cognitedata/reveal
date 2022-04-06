@@ -15,7 +15,7 @@ import {
 import { useCreateStatistics } from 'hooks/calculation-backend';
 import {
   CreateStatisticsParams,
-  StatisticsStatusStatusEnum,
+  StatusStatusEnum,
 } from '@cognite/calculation-backend';
 import { getHash } from 'utils/hash';
 import { useCluster, useProject } from 'hooks/config';
@@ -64,7 +64,7 @@ export const useStatistics = (
     queryFn: () => fetchStatisticsResult(sdk, statisticsCall?.callId || ''),
     retry: true,
     retryDelay: 1000,
-    enabled: callStatus?.status === StatisticsStatusStatusEnum.Success,
+    enabled: callStatus?.status === StatusStatusEnum.Success,
   });
 
   const { results: statistics } = statisticsData || {};

@@ -1,7 +1,4 @@
-import {
-  StatisticsStatus,
-  StatisticsStatusStatusEnum,
-} from '@cognite/calculation-backend';
+import { Status, StatusStatusEnum } from '@cognite/calculation-backend';
 import { useState, useEffect } from 'react';
 import {
   useStatisticsResult,
@@ -10,7 +7,7 @@ import {
 
 interface Props {
   id: string | number;
-  renderStatus?: (calculationStatus: StatisticsStatus) => JSX.Element | null;
+  renderStatus?: (calculationStatus: Status) => JSX.Element | null;
   renderLoading?: () => JSX.Element | null;
 }
 
@@ -58,7 +55,7 @@ function InnerStatisticsCallStatus({
   if (apiError) {
     return renderStatus({
       id: String(id),
-      status: StatisticsStatusStatusEnum.Failed,
+      status: StatusStatusEnum.Failed,
     });
   }
 

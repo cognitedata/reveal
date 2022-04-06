@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { OperationVersions } from '@cognite/calculation-backend';
+import { OperationVersion } from '@cognite/calculation-backend';
 import { Button } from '@cognite/cogs.js';
 import { defaultTranslations } from 'components/NodeEditor/translations';
 import EditSaveViewButton from './EditSaveViewButton';
@@ -23,7 +23,7 @@ type Props = {
     isEditing?: boolean;
   };
   data?: {
-    indslFunction?: OperationVersions;
+    indslFunction?: OperationVersion;
   };
   translations: typeof defaultTranslations;
 };

@@ -1,10 +1,9 @@
 import {
   Calculation,
   CalculationResult,
-  CalculationStatus,
+  Status,
   CreateStatisticsParams,
   StatisticsResult,
-  StatisticsStatus,
 } from '@cognite/calculation-backend';
 import { useSDK } from '@cognite/sdk-provider';
 import { DatapointAggregate, DatapointsMultiQuery } from '@cognite/sdk';
@@ -30,10 +29,10 @@ export const useCreateCalculation = () => {
 
 export const useCalculationStatus = (
   id: string | number,
-  queryOpts?: UseQueryOptions<CalculationStatus>
+  queryOpts?: UseQueryOptions<Status>
 ) => {
   const sdk = useSDK();
-  return useQuery<CalculationStatus>(
+  return useQuery<Status>(
     ['calculation', 'status', id],
     () => fetchCalculationStatus(sdk, String(id)),
     {
@@ -118,10 +117,10 @@ export const useCreateStatistics = () => {
 
 export const useStatisticsStatus = (
   id: string | number,
-  queryOpts?: UseQueryOptions<StatisticsStatus>
+  queryOpts?: UseQueryOptions<Status>
 ) => {
   const sdk = useSDK();
-  return useQuery<StatisticsStatus>(
+  return useQuery<Status>(
     ['calculation', 'status', id],
     () => fetchStatisticsStatus(sdk, String(id)),
     {
