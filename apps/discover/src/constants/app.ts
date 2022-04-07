@@ -16,6 +16,7 @@ const PROD = false;
 // Use local api (localhost:8001)
 const localDiscover = false;
 const localComments = false;
+const localUMS = false;
 /* ************************************************************************** *
  * -------------------------------------------------------------------------- *
  * -------------------- NO NEED TO CHANGE ANYTHING BELOW -------------------- *
@@ -27,6 +28,9 @@ if (localDiscover) {
 }
 if (localComments) {
   localServices.push('comment-service');
+}
+if (localUMS) {
+  localServices.push('user-management-service');
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

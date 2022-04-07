@@ -26,6 +26,6 @@ export const OPERATOR = 'Operator';
 
 export const KB_ELEVATION_TEXT = 'KB elevation';
 export const MD_ELEVATION_TEXT = 'Measured Depth';
-export const TVD = 'Total Vertical Depth';
+export const TVD = 'True Vertical Depth';
 export const DOGLEG_SEVERITY = 'Dogleg Severity';
 export const WATER_DEPTH = 'Water Depth';
