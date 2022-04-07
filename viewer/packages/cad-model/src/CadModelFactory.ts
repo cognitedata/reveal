@@ -30,7 +30,7 @@ export class CadModelFactory {
     this._cadModelMetadataRepository = new CadModelMetadataRepository(modelMetadataProvider, modelDataProvider);
   }
 
-  async loadModelMetadata(externalModelIdentifier: ModelIdentifier): Promise<CadModelMetadata> {
+  loadModelMetadata(externalModelIdentifier: ModelIdentifier): Promise<CadModelMetadata> {
     return this._cadModelMetadataRepository.loadData(externalModelIdentifier);
   }
 
