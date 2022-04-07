@@ -375,7 +375,7 @@ export function Migration() {
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client);
 
       viewer.on('click', async (event: { offsetX: any; offsetY: any; button: any; }) => {
-        const { offsetX, offsetY, button } = event; 
+        const { offsetX, offsetY } = event; 
         console.log('2D coordinates', event);
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {
