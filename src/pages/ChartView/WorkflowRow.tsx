@@ -511,7 +511,7 @@ function WorkflowRow({
           </SourceStatus>
           {hasFailed && (
             <Tooltip content={resultError} maxWidth={300}>
-              <StyledErrorIcon size={20} type="Error" />
+              <StyledErrorIcon type="Error" />
             </Tooltip>
           )}
           <SourceName>
