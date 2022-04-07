@@ -5,6 +5,7 @@ import {
   TextInput,
   Tooltip,
   Icon,
+  Loader,
 } from '@cognite/cogs.js';
 import withoutFileExtension from 'components/LineReviewViewer/withoutFileExtension';
 import StatusTag from 'components/StatusTag';
@@ -14,7 +15,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import styled from 'styled-components';
 
-import { LineReviewsWrapper } from './elements';
+import { LineReviewsWrapper, LoaderContainer } from './elements';
 import Statistic from './Statistic';
 import * as Styled from './styled';
 
@@ -289,7 +290,11 @@ const LineReviews = () => {
     );
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <LoaderContainer>
+        <Loader infoTitle="Loading..." darkMode={false} />
+      </LoaderContainer>
+    );
   }
 
   return (

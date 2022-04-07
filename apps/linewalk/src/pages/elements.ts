@@ -7,3 +7,14 @@ export const LineReviewsWrapper = styled.div`
     margin-bottom: 32px;
   }
 `;
+
+export const LoaderContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 50vh;
+  min-height: 300px;
+
+  > div {
+    position: absolute;
+  }
+`;

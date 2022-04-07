@@ -21,6 +21,7 @@ import getExportableLineState from '../modules/lineReviews/getExportableLineStat
 import { LineReviewStatus } from '../modules/lineReviews/types';
 import useLineReview from '../modules/lineReviews/useLineReview';
 
+import { LoaderContainer } from './elements';
 import { PagePath } from './Menubar';
 
 const SIDE_PANEL_RIGHT_WIDTH = 450;
@@ -38,17 +39,6 @@ export const MainContainer = styled.div`
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-`;
-
-export const LoaderContainer = styled.div`
-  position: relative;
-  width: 100%;
-  height: 50vh;
-  min-height: 300px;
-
-  > div {
-    position: absolute;
-  }
 `;
 
 export type DiscrepancyModalState = {
