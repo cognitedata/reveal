@@ -26,4 +26,5 @@ export default {
     process.env.NX_SENTRY_PROJECT_NAME ||
     'platypus',
   USE_MIXER_API: shouldUseMixerApi,
+  WHITELISTED_TENANTS: ['platypus', 'schema-test'],
 };

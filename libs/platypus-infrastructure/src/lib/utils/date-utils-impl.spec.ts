@@ -43,4 +43,11 @@ describe('DateUtilsTest', () => {
     const dateUtils = new DateUtilsImpl();
     expect(dateUtils.format(1636107405779, 'yyyy-MM-dd')).toBe('2021-11-05');
   });
+
+  test('Convert date string to custom formaat', () => {
+    const dateUtils = new DateUtilsImpl();
+    expect(dateUtils.format('2022-03-23T11:25:31.237184Z', 'dd.MM.yyyy')).toBe(
+      '23.03.2022'
+    );
+  });
 });

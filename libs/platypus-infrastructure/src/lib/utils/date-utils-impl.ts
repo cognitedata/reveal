@@ -19,10 +19,18 @@ export class DateUtilsImpl implements DateUtils {
   }
 
   format(
-    date: Date | number,
+    date: Date | number | string,
     dateFormat: string | DateFormat = DateFormat.DISPLAY_DATE_FORMAT
   ): string {
-    return format(date, this.normalizeDateFormat(dateFormat));
+    // eslint-disable-next-line lodash/prefer-lodash-typecheck
+    const inputDate = typeof date === 'string' ? new Date(date) : date;
+    let parsedDate = '';
+    try {
+      parsedDate = format(inputDate, this.normalizeDateFormat(dateFormat));
+    } catch (err) {
+      console.error(err, inputDate);
+    }
+    return parsedDate;
   }
 
   private normalizeDateFormat(format: string): string {

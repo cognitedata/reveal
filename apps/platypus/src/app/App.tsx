@@ -11,6 +11,7 @@ import store from './redux/store';
 import { environment } from '../environments/environment';
 import { ConditionalReduxProvider } from './utils/ReactContainerMock';
 import { AuthContainerMock } from './AuthContainerMock';
+import { getTenant } from './utils/tenant-utils';
 
 // Globally defined global
 // GraphiQL package needs this to be run correctly
@@ -22,6 +23,8 @@ function App() {
 
   const AuthContainerComponent =
     environment.APP_ENV === 'mock' ? AuthContainerMock : AuthContainer;
+
+  const tenant = getTenant();
   return (
     <>
       <ToastContainer />
@@ -29,7 +32,7 @@ function App() {
         <AuthContainerComponent>
           <GlobalStyle />
           <StyledWrapper>
-            <Router basename="platypus">
+            <Router basename={tenant}>
               <StyledPage>
                 <Routes />
               </StyledPage>
