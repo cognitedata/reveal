@@ -10,11 +10,11 @@ import { CadModelFactory } from './CadModelFactory';
 import { CadModelSectorLoadStatistics } from './CadModelSectorLoadStatistics';
 import { GeometryFilter } from './GeometryFilter';
 
-import { LevelOfDetail, ConsumedSector } from '@reveal/cad-parsers';
+import { LevelOfDetail, ConsumedSector, CadModelMetadata } from '@reveal/cad-parsers';
 import { CadModelUpdateHandler, CadModelBudget } from '@reveal/cad-geometry-loaders';
 import { LoadingState } from '@reveal/model-base';
 import { CadNode, CadMaterialManager, RenderMode } from '@reveal/rendering';
-import { ModelIdentifier } from '@reveal/modeldata-api';
+import { File3dFormat, ModelIdentifier } from '@reveal/modeldata-api';
 import { MetricsLogger } from '@reveal/metrics';
 import { defaultDesktopCadModelBudget } from '@reveal/cad-geometry-loaders';
 
@@ -25,6 +25,12 @@ export class CadManager {
 
   private readonly _cadModelMap: Map<string, CadNode> = new Map();
   private readonly _subscription: Subscription = new Subscription();
+  private _compatibleFileFormat:
+    | {
+        format: File3dFormat;
+        version: number;
+      }
+    | undefined = undefined;
 
   private _needsRedraw: boolean = false;
 
@@ -157,8 +163,36 @@ export class CadManager {
     this._materialManager.setRenderMode(renderMode);
   }
 
+  doesModelHaveCompatibleFormat(modelMetadata: CadModelMetadata): boolean {
+    return (
+      this._compatibleFileFormat === undefined ||
+      (this._compatibleFileFormat.format === modelMetadata.format &&
+        this._compatibleFileFormat.version === modelMetadata.formatVersion)
+    );
+  }
+
+  updateModelCompatibilityFormat(modelMetadata: CadModelMetadata): void {
+    this._compatibleFileFormat = this._compatibleFileFormat ?? {
+      format: modelMetadata.format,
+      version: modelMetadata.formatVersion
+    };
+  }
+
   async addModel(modelIdentifier: ModelIdentifier, geometryFilter?: GeometryFilter): Promise<CadNode> {
-    const model = await this._cadModelFactory.createModel(modelIdentifier, geometryFilter);
+    const modelMetadata = await this._cadModelFactory.loadModelMetadata(modelIdentifier);
+
+    if (!this.doesModelHaveCompatibleFormat(modelMetadata)) {
+      throw Error(
+        `The added model had format ${modelMetadata.format} and ` +
+          `version ${modelMetadata.formatVersion} which is incompatible ` +
+          `with previously added models of format ${this._compatibleFileFormat.format} ` +
+          `and version ${this._compatibleFileFormat.version}`
+      );
+    }
+
+    this.updateModelCompatibilityFormat(modelMetadata);
+
+    const model = await this._cadModelFactory.createModel(modelMetadata, geometryFilter);
     model.addEventListener('update', this._markNeedsRedrawBound);
     this._cadModelMap.set(model.cadModelIdentifier, model);
     this._cadModelUpdateHandler.addModel(model);
