@@ -109,16 +109,15 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     renderer.clear();
     yield this._defaultRenderPipelinePasses.blitComposite;
 
-    yield* this.renderGhosted(renderer);
-
     yield* this.renderCustom(renderer);
+
+    yield* this.renderGhosted(renderer);
 
     yield* this.renderDeferredCustom(renderer);
 
     yield* this.blitToCanvas(renderer);
 
     this.pipelineTearDown(renderer);
-    return;
   }
 
   private *blitToCanvas(renderer: THREE.WebGLRenderer) {
