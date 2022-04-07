@@ -7,6 +7,7 @@ const LAYERS = [
   // things closer to here are shown on TOP (ie: have high z-index)
   //
 
+  'TOOLTIP',
   'COOKIE_CONSENT',
   'TOP_BAR',
   'PAGE_HEADER',

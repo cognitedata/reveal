@@ -112,6 +112,7 @@ DEPENDENCIES = [
     "@npm//react-modal",
     "@npm//react-pdf",
     "@npm//react-plotly.js",
+    "@npm//react-popper-tooltip",
     "@npm//react-query",
     "@npm//react-redux",
     "@npm//react-resizable",

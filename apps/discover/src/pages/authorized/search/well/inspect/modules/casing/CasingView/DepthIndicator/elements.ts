@@ -2,19 +2,20 @@ import styled from 'styled-components/macro';
 
 import mainPalette from 'styles/default.palette';
 
+const DEPTH_INDICATOR_LINE_WIDTH = '4px';
+
 export const DepthIndicatorWrapper = styled.div`
   display: inline-block;
-  width: 20px;
+  width: ${DEPTH_INDICATOR_LINE_WIDTH};
   height: 100%;
   cursor: pointer;
-  position: relative;
-  transform: ${(props: { transform: string }) => props.transform};
+  transform: ${(props: { transform?: string }) => props.transform};
   z-index: ${(props: { zIndex: number }) => props.zIndex};
   margin-right: 20px;
 `;
 
 export const Start = styled.div`
-  border-left: 4px solid #00000027;
+  border-left: ${DEPTH_INDICATOR_LINE_WIDTH} solid #00000027;
   box-sizing: border-box;
   float: left;
   width: 100%;
@@ -22,7 +23,7 @@ export const Start = styled.div`
 `;
 
 export const Middle = styled.div`
-  border-left: 4px solid ${mainPalette.black};
+  border-left: ${DEPTH_INDICATOR_LINE_WIDTH} solid ${mainPalette.black};
   box-sizing: border-box;
   float: left;
   width: 100%;
@@ -30,7 +31,7 @@ export const Middle = styled.div`
 `;
 
 export const End = styled.div`
-  border-left: 4px solid ${mainPalette.black};
+  border-left: ${DEPTH_INDICATOR_LINE_WIDTH} solid ${mainPalette.black};
   box-sizing: border-box;
   float: left;
   width: 100%;

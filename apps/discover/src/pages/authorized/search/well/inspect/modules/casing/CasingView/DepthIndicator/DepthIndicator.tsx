@@ -1,8 +1,6 @@
 import React, { FC } from 'react';
 
-import { followCursor } from 'tippy.js';
-
-import { Tooltip } from '@cognite/cogs.js';
+import { Tooltip } from 'components/popper-tooltip';
 
 import {
   DepthIndicatorWrapper,
@@ -41,7 +39,7 @@ const DepthIndicator: FC<Props> = ({
 }: Props) => {
   const startHeight = `${startDepth}%`;
   const middleHeight = `calc(${casingDepth}% - ${triangleHeight}px)`;
-  const indicatorTransform = `rotateY(${flip ? '180' : '0'}deg)`;
+  const indicatorTransform = flip ? `rotateY(180deg)` : undefined;
   const [zIndex, setRecentZIndex] = React.useState(0);
 
   const onMouseOver = () => {
@@ -58,13 +56,13 @@ const DepthIndicator: FC<Props> = ({
       zIndex={zIndex}
       data-testid="depth-indicator"
     >
-      <Tooltip content={description} followCursor plugins={[followCursor]}>
+      <Tooltip content={description} followCursor>
         <Start height={startHeight} onMouseOver={onMouseOver} />
       </Tooltip>
-      <Tooltip content={description} followCursor plugins={[followCursor]}>
+      <Tooltip content={description} followCursor>
         <Middle onClick={onMouseOver} height={middleHeight} />
       </Tooltip>
-      <Tooltip content={description} followCursor plugins={[followCursor]}>
+      <Tooltip content={description} followCursor>
         <End onMouseOver={onMouseOver}>
           {linerCasing ? <LinerEnd /> : <TriangleBottomRight />}
         </End>
