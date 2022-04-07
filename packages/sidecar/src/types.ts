@@ -47,13 +47,14 @@ export type ApiBaseUrls = {
   commentServiceBaseUrl: string;
   digitalCockpitApiBaseUrl: string;
   discoverApiBaseUrl: string;
-  powerOpsApiBaseUrl: string;
+  fakeIdpBaseUrl: string;
+  frontendMetricsBaseUrl: string;
   infieldApiBaseUrl: string;
   infieldCacheApiBaseUrl: string;
-  userManagementServiceBaseUrl: string;
+  powerOpsApiBaseUrl: string;
   simconfigApiBaseUrl: string;
   snifferServiceBaseUrl: string;
-  fakeIdpBaseUrl: string;
+  userManagementServiceBaseUrl: string;
 };
 
 export type SidecarConfig = ApiBaseUrls & {

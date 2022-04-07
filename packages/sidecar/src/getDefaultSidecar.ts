@@ -2,16 +2,17 @@ import { generateUrl } from './generateUrl';
 import { CDFCluster, ApiBaseUrls } from './types';
 
 export type Service =
-  | 'discover-api'
   | 'comment-service'
-  | 'user-management-service'
   | 'digital-cockpit-api'
+  | 'discover-api'
+  | 'fake-idp'
+  | 'frontend-metrics'
   | 'infield-api'
   | 'infield-cache-api'
-  | 'simconfig-api'
   | 'power-ops-api'
+  | 'simconfig-api'
   | 'sniffer-service'
-  | 'fake-idp';
+  | 'user-management-service';
 
 type LocalServices = Omit<ApiBaseUrls, 'appsApiBaseUrl' | 'cdfApiBaseUrl'>;
 
@@ -19,19 +20,20 @@ export const services: Record<
   number,
   { name: Service; key: keyof LocalServices }
 > = {
-  8700: { name: 'discover-api', key: 'discoverApiBaseUrl' },
+  8001: { name: 'digital-cockpit-api', key: 'digitalCockpitApiBaseUrl' },
+  8011: { name: 'infield-api', key: 'infieldApiBaseUrl' },
+  8015: { name: 'infield-cache-api', key: 'infieldCacheApiBaseUrl' },
+  8200: { name: 'fake-idp', key: 'fakeIdpBaseUrl' },
   8300: { name: 'comment-service', key: 'commentServiceBaseUrl' },
   8600: {
     name: 'user-management-service',
     key: 'userManagementServiceBaseUrl',
   },
-  8001: { name: 'digital-cockpit-api', key: 'digitalCockpitApiBaseUrl' },
-  8011: { name: 'infield-api', key: 'infieldApiBaseUrl' },
-  8015: { name: 'infield-cache-api', key: 'infieldCacheApiBaseUrl' },
+  8700: { name: 'discover-api', key: 'discoverApiBaseUrl' },
   8800: { name: 'simconfig-api', key: 'simconfigApiBaseUrl' },
-  8200: { name: 'fake-idp', key: 'fakeIdpBaseUrl' },
   8805: { name: 'power-ops-api', key: 'powerOpsApiBaseUrl' },
   8810: { name: 'sniffer-service', key: 'snifferServiceBaseUrl' },
+  8900: { name: 'frontend-metrics', key: 'frontendMetricsBaseUrl' },
 };
 
 const getPort = (name: Service) => {
