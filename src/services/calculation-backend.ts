@@ -185,6 +185,7 @@ export async function fetchCalculationQueryResult(
     datapoints,
     warnings: queryResults[0].result.warnings,
     error: queryResults[0].result.error,
+    isDownsampled: queryResults[0].result.exceeded_server_limits,
   };
 }
 
