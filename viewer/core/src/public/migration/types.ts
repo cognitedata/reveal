@@ -204,31 +204,26 @@ export { CameraConfiguration } from '@reveal/utilities';
  * @module @cognite/reveal
  * @see {@link Cognite3DViewer.on}.
  */
-export type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
+export { PointerEventDelegate } from '@reveal/utilities';
 
 /**
  * Delegate for camera update events.
  * @module @cognite/reveal
  * @see {@link Cognite3DViewer.on}.
  */
-export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
+export { CameraChangeDelegate } from '@reveal/utilities';
 
 /**
  * Delegate for disposal events.
  */
-export type DisposedDelegate = () => void;
+export { DisposedDelegate } from '@reveal/utilities'
 
 /**
  * Delegate for rendering events.
  * @module @cognite/reveal
  * @see {@link Cognite3DViewer.on}.
  */
-export type SceneRenderedDelegate = (event: {
-  frameNumber: number;
-  renderTime: number;
-  renderer: THREE.WebGLRenderer;
-  camera: THREE.PerspectiveCamera;
-}) => void;
+export {SceneRenderedDelegate } from '@reveal/utilities';
 
 export * from './NotSupportedInMigrationWrapperError';
 

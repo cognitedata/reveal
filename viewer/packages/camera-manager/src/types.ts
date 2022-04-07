@@ -93,15 +93,3 @@ export type CameraManagerCallbackData = {
   modelsBoundingBox: THREE.Box3;
 };
 
-/**
- * Delegate for pointer events.
- * @module @cognite/reveal
- */
-export type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
-
-/**
- * Delegate for camera update events.
- * @module @cognite/reveal
- * @see {@link CameraManager.on}.
- */
-export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;

@@ -15,7 +15,11 @@ import {
   InputHandler,
   disposeOfAllEventListeners,
   worldToNormalizedViewportCoordinates,
-  worldToViewportCoordinates
+  worldToViewportCoordinates,
+  PointerEventDelegate,
+  SceneRenderedDelegate,
+  DisposedDelegate,
+  CameraChangeDelegate
 } from '@reveal/utilities';
 
 import { MetricsLogger } from '@reveal/metrics';
@@ -31,14 +35,12 @@ import {
   AddModelOptions,
   Cognite3DViewerOptions,
   Intersection,
-  CameraChangeDelegate,
-  PointerEventDelegate,
   CadModelBudget
 } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
 import { RevealManager } from '../RevealManager';
-import { DisposedDelegate, SceneRenderedDelegate, RevealOptions } from '../types';
+import { RevealOptions } from '../types';
 
 import { Spinner } from '../../utilities/Spinner';
 
