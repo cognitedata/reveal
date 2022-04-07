@@ -263,6 +263,9 @@ export const ProcessToolBar = () => {
                   value={selectedDetectionModels}
                   onChange={onChange}
                   handleCustomModelCreate={handleCustomModelCreate}
+                  handleOpenSettingsWindow={() => {
+                    setModalOpen(true);
+                  }}
                   disabledModelTypes={disabledModelTypes}
                   isDisabled={disableModelSelection}
                 />
