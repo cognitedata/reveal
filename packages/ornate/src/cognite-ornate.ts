@@ -770,6 +770,13 @@ export class CogniteOrnate {
         shape.on('click', drawing.onClick);
       }
 
+      if (drawing.onMouseOver) {
+        shape.on('mouseover', drawing.onMouseOver);
+      }
+      if (drawing.onMouseOut) {
+        shape.on('mouseout', drawing.onMouseOut);
+      }
+
       container.add(shape);
       return shape;
     });

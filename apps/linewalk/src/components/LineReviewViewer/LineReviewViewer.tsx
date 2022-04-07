@@ -30,7 +30,7 @@ import getDiscrepancyCircleMarkers from './getDiscrepancyCircleMarkers';
 import getDocumentByExternalId from './getDocumentByExternalId';
 import getFileConnections from './getFileConnections';
 import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId';
-import getLinkByAnnotationId from './getLinkByAnnotationId';
+import getLinksByAnnotationId from './getLinksByAnnotationId';
 import IsoModal from './IsoModal';
 import ReactOrnate, {
   ReactOrnateProps,
@@ -355,14 +355,16 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     event: KonvaEventObject<MouseEvent>,
     annotationId: string
   ) => {
-    const link =
-      getLinkByAnnotationId(documents, annotationId) ??
-      getLinkByAnnotationId(documents, annotationId, true);
-    if (!link) {
+    const links = [
+      ...getLinksByAnnotationId(documents, annotationId),
+      ...getLinksByAnnotationId(documents, annotationId, true),
+    ];
+    if (links.length === 0) {
       console.warn(`No link found for ${annotationId}`);
       return;
     }
 
+    const link = links[0];
     const isLinkedAnnotationInIso =
       getDocumentByExternalId(documents, link.to.documentId).type ===
       DocumentType.ISO;
@@ -490,12 +492,14 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
 
       <IsoModal
         lineReview={lineReview}
-        documents={documents.filter(({ type }) => type === DocumentType.ISO)}
+        documents={documents}
+        isoDocuments={documents.filter(({ type }) => type === DocumentType.ISO)}
         visible={isIsoModalOpen}
         onOrnateRef={setIsoOrnateRef}
         onHidePress={() => setIsIsoModalOpen(false)}
         tool={isoModalTool}
         onToolChange={onIsoModalToolChange}
+        ornateRef={ornateRef}
       />
       <div style={{ height: 'calc(100vh - 125px)', position: 'relative' }}>
         {!isIsoModalOpen && (

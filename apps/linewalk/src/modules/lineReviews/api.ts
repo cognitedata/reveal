@@ -44,7 +44,7 @@ const saveJsonByExternalId = async <T = unknown>(
   }
 };
 
-const VERSION = '0.0.8';
+const VERSION = '0.0.10';
 const LINE_REVIEWS_ENTRY_POINT = `LINE_REVIEWS_V${VERSION}.json`;
 export const getLineReviews = async (client: CogniteClient) => {
   const lineReviewsEntryPointResponse = await getJsonByExternalId<{

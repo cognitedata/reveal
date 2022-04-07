@@ -1,16 +1,20 @@
 import { Button } from '@cognite/cogs.js';
-import { CogniteOrnate } from '@cognite/ornate';
+import { CogniteOrnate, Drawing } from '@cognite/ornate';
 import { useAuthContext } from '@cognite/react-container';
 import { KonvaEventObject } from 'konva/lib/Node';
 import keyBy from 'lodash/keyBy';
+import sortBy from 'lodash/sortBy';
 import React, { useEffect, useState } from 'react';
 import layers from 'utils/z';
 
 import { getDocumentUrlByExternalId } from '../../modules/lineReviews/api';
 import WorkSpaceTools from '../WorkSpaceTools/WorkSpaceTools';
 import {
+  Annotation,
   AnnotationType,
+  DocumentType,
   LineReview,
+  Link,
   ParsedDocument,
 } from '../../modules/lineReviews/types';
 
@@ -18,9 +22,12 @@ import centerOnAnnotationByAnnotationId from './centerOnIsoAnnotationByPidAnnota
 import { BOUNDING_BOX_PADDING_PX } from './constants';
 import getAnnotationBoundingBoxOverlay from './getAnnotationBoundingBoxOverlay';
 import getAnnotationsForLineByDocument from './getAnnotationsForLineByDocument';
+import getDocumentByExternalId from './getDocumentByExternalId';
 import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId';
-import getLinkByAnnotationId from './getLinkByAnnotationId';
-import ReactOrnate from './ReactOrnate';
+import getLinksByAnnotationId from './getLinksByAnnotationId';
+import mapPathToNewCoordinateSystem from './mapPathToNewCoordinateSystem';
+import padBoundingBoxByPixels from './padBoundingBoxByPixels';
+import ReactOrnate, { SHAMEFUL_SLIDE_HEIGHT, SLIDE_WIDTH } from './ReactOrnate';
 import useDimensions from './useDimensions';
 import { WorkspaceTool } from './useWorkspaceTools';
 import withoutFileExtension from './withoutFileExtension';
@@ -28,28 +35,115 @@ import withoutFileExtension from './withoutFileExtension';
 const INITIAL_WIDTH = 643;
 const INITIAL_HEIGHT = 526;
 
+const findCenterLink = (links: Link[], annotations: Annotation[]): Link => {
+  if (links.length === 1) {
+    return links[0];
+  }
+
+  const annotationsById = keyBy(annotations, (annotation) => annotation.id);
+  const linksAnnotations = sortBy(
+    links.map<[Link, Annotation]>((link) => [
+      link,
+      annotationsById[link.to.annotationId],
+    ]),
+    ([, annotation]) => annotation.boundingBox.y
+  );
+
+  return links[Math.floor(linksAnnotations.length / 2)];
+};
+
 type IsoModalProps = {
   documents: ParsedDocument[] | undefined;
+  isoDocuments: ParsedDocument[] | undefined;
   visible?: boolean;
   onHidePress: () => void;
   onOrnateRef: (ref: CogniteOrnate | undefined) => void;
   tool: WorkspaceTool;
   onToolChange: (tool: WorkspaceTool) => void;
   lineReview: LineReview;
+  ornateRef: CogniteOrnate | undefined;
 };
 
 const RESIZABLE_CORNER_SIZE = 15;
 
+const getFileConnectionLine = (
+  document: ParsedDocument,
+  annotationId: string
+): Drawing[] => {
+  const annotationsById = keyBy(
+    document.annotations,
+    (annotation) => annotation.id
+  );
+  const links = document.linking.filter(
+    ({ from, to }) =>
+      from.documentId === document.externalId &&
+      to.documentId === document.externalId &&
+      annotationsById[from.annotationId]?.type ===
+        AnnotationType.FILE_CONNECTION &&
+      annotationsById[to.annotationId]?.type ===
+        AnnotationType.FILE_CONNECTION &&
+      (from.annotationId === annotationId || to.annotationId === annotationId)
+  );
+
+  return links.map(({ from, to }) => {
+    const fromAnnotation = annotationsById[from.annotationId];
+    const toAnnotation = annotationsById[to.annotationId];
+
+    const fromAnnotationBox = padBoundingBoxByPixels(
+      mapPathToNewCoordinateSystem(
+        document.viewBox,
+        fromAnnotation.boundingBox,
+        {
+          width: SLIDE_WIDTH,
+          height: SHAMEFUL_SLIDE_HEIGHT,
+        }
+      ),
+      3
+    );
+
+    const toAnnotationBox = padBoundingBoxByPixels(
+      mapPathToNewCoordinateSystem(document.viewBox, toAnnotation.boundingBox, {
+        width: SLIDE_WIDTH,
+        height: SHAMEFUL_SLIDE_HEIGHT,
+      }),
+      3
+    );
+
+    return {
+      groupId: getKonvaSelectorSlugByExternalId(document.externalId),
+      id: `${from.annotationId}-${to.annotationId}`,
+      type: 'line',
+      attrs: {
+        id: `${from.annotationId}-${to.annotationId}`,
+        points: [
+          fromAnnotationBox.x + fromAnnotationBox.width / 2,
+          fromAnnotationBox.y + fromAnnotationBox.height / 2,
+          toAnnotationBox.x + toAnnotationBox.width / 2,
+          toAnnotationBox.y + toAnnotationBox.height / 2,
+        ],
+        strokeWidth: 3,
+        dash: [3, 3],
+        stroke: 'rgba(0, 0, 200, 0.4)',
+        strokeScaleEnabled: false,
+        draggable: false,
+        unselectable: true,
+      },
+    };
+  });
+};
+
 const IsoModal: React.FC<IsoModalProps> = ({
   documents,
+  isoDocuments,
   visible,
   onOrnateRef,
   onHidePress,
   tool,
   onToolChange,
   lineReview,
+  ornateRef,
 }) => {
-  const [ornateRef, setOrnateRef] = useState<CogniteOrnate | undefined>(
+  const [isoOrnateRef, setIsoOrnateRef] = useState<CogniteOrnate | undefined>(
     undefined
   );
   const [modalRef, setModalRef] = useState<HTMLElement | null>(null);
@@ -69,16 +163,20 @@ const IsoModal: React.FC<IsoModalProps> = ({
     x: window.innerWidth - INITIAL_WIDTH - Math.round(window.innerWidth * 0.02),
     y: Math.round(window.innerHeight * 0.02),
   });
+  const [
+    hoveredFileConnectionAnnotationId,
+    setHoveredFileConnectionAnnotationId,
+  ] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    onOrnateRef(ornateRef);
-  }, [ornateRef]);
+    onOrnateRef(isoOrnateRef);
+  }, [isoOrnateRef]);
 
   useEffect(() => {
-    if (client !== undefined && documents) {
+    if (client !== undefined && isoDocuments) {
       (async () => {
         const result = await Promise.all(
-          documents.map(async (document, index) => ({
+          isoDocuments.map(async (document, index) => ({
             id: getKonvaSelectorSlugByExternalId(document.externalId),
             url: await getDocumentUrlByExternalId(client)(
               document.pdfExternalId
@@ -101,21 +199,22 @@ const IsoModal: React.FC<IsoModalProps> = ({
     return null;
   }
 
-  const onAnnotationClick = (
+  const onLinkClick = (
     event: KonvaEventObject<MouseEvent>,
     annotationId: string
   ) => {
-    if (!documents) {
+    if (!isoDocuments || !documents) {
       return;
     }
 
-    const link =
-      getLinkByAnnotationId(documents, annotationId) ??
-      getLinkByAnnotationId(documents, annotationId, true);
-    if (!link) {
+    const links = [
+      ...getLinksByAnnotationId(isoDocuments, annotationId),
+      ...getLinksByAnnotationId(isoDocuments, annotationId, true),
+    ];
+    if (links.length === 0) {
       console.warn(
         `No link found for ${annotationId}`,
-        documents.filter((document) =>
+        isoDocuments.filter((document) =>
           document.linking.some(
             (link) =>
               link.from.annotationId === annotationId ||
@@ -126,19 +225,27 @@ const IsoModal: React.FC<IsoModalProps> = ({
       return;
     }
 
+    const link = findCenterLink(
+      links,
+      documents.flatMap((document) => document.annotations)
+    );
+    const isLinkedAnnotationInIso =
+      getDocumentByExternalId(documents, link.to.documentId).type ===
+      DocumentType.ISO;
+
     centerOnAnnotationByAnnotationId(
       documents,
-      ornateRef,
+      isLinkedAnnotationInIso ? isoOrnateRef : ornateRef,
       link.to.annotationId
     );
   };
 
   const annotationsById = keyBy(
-    documents?.flatMap((document) => document.annotations),
+    isoDocuments?.flatMap((document) => document.annotations),
     (annotation) => annotation.id
   );
 
-  const drawings = documents?.flatMap((document) => [
+  const drawings = isoDocuments?.flatMap((document) => [
     ...getAnnotationBoundingBoxOverlay(
       lineReview.id,
       document,
@@ -149,26 +256,27 @@ const IsoModal: React.FC<IsoModalProps> = ({
         ),
       'navigatable',
       {
-        fill: 'rgba(24, 175, 142, 0.2)',
-        stroke: '#39A263',
-        strokeWidth: 3,
         padding: BOUNDING_BOX_PADDING_PX,
+        fill: 'rgba(24, 175, 142, 0.2)',
+        stroke: '#00665C',
+        strokeWidth: 3,
+        dash: [3, 3],
       }
     ),
     ...getAnnotationBoundingBoxOverlay(
       lineReview.id,
       document,
-      document.linking
-        .map(({ to: { annotationId } }) => annotationId)
-        .filter(
-          (id) => annotationsById[id]?.type === AnnotationType.FILE_CONNECTION
-        ),
+      document.linking.map(({ to: { annotationId } }) => annotationId),
+      // .filter(
+      //   (id) => annotationsById[id]?.type === AnnotationType.FILE_CONNECTION
+      // ),
       'navigatable',
       {
-        padding: BOUNDING_BOX_PADDING_PX,
         fill: 'rgba(24, 175, 142, 0.2)',
-        stroke: '#39A263',
+        stroke: '#00665C',
         strokeWidth: 3,
+        dash: [3, 3],
+        padding: BOUNDING_BOX_PADDING_PX,
       }
     ),
     ...getAnnotationBoundingBoxOverlay(
@@ -183,8 +291,14 @@ const IsoModal: React.FC<IsoModalProps> = ({
         stroke: 'transparent',
         strokeWidth: 6,
       },
-      onAnnotationClick
+      onLinkClick,
+      (event, annotationId) =>
+        setHoveredFileConnectionAnnotationId(annotationId),
+      () => setHoveredFileConnectionAnnotationId(undefined)
     ),
+    ...(hoveredFileConnectionAnnotationId === undefined
+      ? []
+      : getFileConnectionLine(document, hoveredFileConnectionAnnotationId)),
   ]);
 
   return (
@@ -216,7 +330,7 @@ const IsoModal: React.FC<IsoModalProps> = ({
       >
         <h2>
           Isometric Drawing{' '}
-          {documents
+          {isoDocuments
             ?.map(({ pdfExternalId }) => withoutFileExtension(pdfExternalId))
             .join(', ')}
         </h2>
@@ -241,7 +355,7 @@ const IsoModal: React.FC<IsoModalProps> = ({
         }}
       >
         <ReactOrnate
-          onOrnateRef={(ref) => setOrnateRef(ref)}
+          onOrnateRef={(ref) => setIsoOrnateRef(ref)}
           documents={fetchedDocuments}
           nodes={drawings}
           renderWorkspaceTools={(ornate, isFocused) => (

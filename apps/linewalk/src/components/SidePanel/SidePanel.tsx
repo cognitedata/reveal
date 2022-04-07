@@ -67,6 +67,9 @@ const IconButton = styled.button`
 
 const MainContainer = styled.div``;
 const ActionsContainer = styled.div`
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
   > *:not(:last-child) {
     margin-right: 4px;
   }

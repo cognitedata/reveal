@@ -26,6 +26,12 @@ const getAnnotationBoundingBoxOverlay = (
   },
   onClick?:
     | ((event: KonvaEventObject<MouseEvent>, pathId: string) => void)
+    | undefined,
+  onMouseOver?:
+    | ((event: KonvaEventObject<MouseEvent>, pathId: string) => void)
+    | undefined,
+  onMouseOut?:
+    | ((event: KonvaEventObject<MouseEvent>, pathId: string) => void)
     | undefined
 ): Drawing[] => {
   return getAnnotationsForLineByDocument(line, document)
@@ -35,6 +41,12 @@ const getAnnotationBoundingBoxOverlay = (
       id: `${prefix}${annotation.id}`,
       type: 'rect',
       onClick: onClick ? (event) => onClick(event, annotation.id) : undefined,
+      onMouseOver: onMouseOver
+        ? (event) => onMouseOver(event, annotation.id)
+        : undefined,
+      onMouseOut: onMouseOut
+        ? (event) => onMouseOut(event, annotation.id)
+        : undefined,
       attrs: {
         ...options,
         id: `${prefix}${annotation.id}`,

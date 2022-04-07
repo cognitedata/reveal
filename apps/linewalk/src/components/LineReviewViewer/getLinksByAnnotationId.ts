@@ -1,30 +1,30 @@
 import { ParsedDocument, Link } from '../../modules/lineReviews/types';
 
-const getLinkByAnnotationId = (
+const getLinksByAnnotationId = (
   documents: ParsedDocument[],
   annotationId: string,
   inverse = false
-): Link | undefined => {
-  const match: Link | undefined = documents
+): Link[] => {
+  const matches: Link[] = documents
     .flatMap((document) => document.linking)
-    .find((link) =>
+    .filter((link) =>
       inverse
         ? link.to.annotationId === annotationId
         : link.from.annotationId === annotationId
     );
 
-  if (match === undefined) {
-    return undefined;
+  if (matches.length === 0) {
+    return [];
   }
 
   if (inverse) {
-    return {
+    return matches.map((match) => ({
       from: match.to,
       to: match.from,
-    };
+    }));
   }
 
-  return inverse ? { from: match.to, to: match.from } : match;
+  return matches;
 };
 
-export default getLinkByAnnotationId;
+export default getLinksByAnnotationId;

@@ -49,6 +49,8 @@ export type Drawing = {
   attrs: any;
   groupId?: string;
   onClick?: (event: KonvaEventObject<MouseEvent>) => void;
+  onMouseOver?: (event: KonvaEventObject<MouseEvent>) => void;
+  onMouseOut?: (event: KonvaEventObject<MouseEvent>) => void;
 };
 
 export type OrnateJsonDocument = {

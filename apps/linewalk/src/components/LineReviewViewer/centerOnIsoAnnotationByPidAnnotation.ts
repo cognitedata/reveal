@@ -3,9 +3,11 @@ import Konva from 'konva';
 
 import { ParsedDocument } from '../../modules/lineReviews/types';
 
+import { BOUNDING_BOX_PADDING_PX } from './constants';
 import flashDrawing from './flashDrawing';
 import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId';
 import mapPathToNewCoordinateSystem from './mapPathToNewCoordinateSystem';
+import padBoundingBoxByPixels from './padBoundingBoxByPixels';
 import { SHAMEFUL_SLIDE_HEIGHT, SLIDE_WIDTH } from './ReactOrnate';
 
 const centerOnAnnotationByAnnotationId = (
@@ -14,7 +16,7 @@ const centerOnAnnotationByAnnotationId = (
   annotationId: string
 ) => {
   if (!ornateRef) {
-    console.log('isoOrnateRef was not defined, exiting early');
+    console.log('ornateRef was not defined, exiting early');
     return;
   }
 
@@ -63,10 +65,12 @@ const centerOnAnnotationByAnnotationId = (
     type: 'rect',
     attrs: {
       id: `flash-${annotation.id}`,
-      ...mapPathToNewCoordinateSystem(
-        document.viewBox,
-        annotation.boundingBox,
-        { width: SLIDE_WIDTH, height: SHAMEFUL_SLIDE_HEIGHT }
+      ...padBoundingBoxByPixels(
+        mapPathToNewCoordinateSystem(document.viewBox, annotation.boundingBox, {
+          width: SLIDE_WIDTH,
+          height: SHAMEFUL_SLIDE_HEIGHT,
+        }),
+        BOUNDING_BOX_PADDING_PX
       ),
       x: boundingBox.x,
       y: boundingBox.y,
