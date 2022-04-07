@@ -30,8 +30,11 @@ export class CadModelFactory {
     this._cadModelMetadataRepository = new CadModelMetadataRepository(modelMetadataProvider, modelDataProvider);
   }
 
-  async createModel(externalModelIdentifier: ModelIdentifier, geometryFilter?: GeometryFilter): Promise<CadNode> {
-    const metadata = await this._cadModelMetadataRepository.loadData(externalModelIdentifier);
+  async loadModelMetadata(externalModelIdentifier: ModelIdentifier): Promise<CadModelMetadata> {
+    return this._cadModelMetadataRepository.loadData(externalModelIdentifier);
+  }
+
+  async createModel(metadata: CadModelMetadata, geometryFilter?: GeometryFilter): Promise<CadNode> {
 
     const geometryClipBox = determineGeometryClipBox(geometryFilter, metadata);
     const modelMetadata = createClippedModel(metadata, geometryClipBox);
