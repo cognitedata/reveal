@@ -9,7 +9,7 @@ export const log = <T>(
   const safeData = isIterable(data) ? data : [data];
 
   if (level === 1) {
-    // normal logs can only be shown in development mode
+    // Normal logs can only be shown in development mode
     if (isDevelopment) {
       // eslint-disable-next-line no-console
       console.log(message, ...safeData);
