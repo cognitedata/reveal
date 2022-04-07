@@ -99,33 +99,36 @@ when camera changes or data is loaded. We do this by repeatedly calling `Cognite
 
 ```js
 // Water
-const geometry = new THREE.PlaneGeometry(20000, 20000, 127, 127);
-geometry.rotateX(- Math.PI / 2);
+const waterGeometry = new THREE.PlaneBufferGeometry(6000, 6000, 63, 63);
+const clock = new THREE.Clock();
+const waterUniforms = {
+  u_amplitude: { value: 10 },
+  u_frequency: { value: 0.25 },
+  u_time: { value: 0.0 },
+  map: { value: new THREE.TextureLoader().load(
+          'https://threejs.org/examples/textures/water.jpg',
+          (texture) => {
+          texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    } )}
+};
 
-const position = geometry.attributes.position;
-position.usage = THREE.DynamicDrawUsage;
+var material = new THREE.ShaderMaterial({
+  uniforms: waterUniforms,
+  side: THREE.DoubleSide,
+  vertexShader: WaterShader.Vertex,
+  fragmentShader: WaterShader.Fragment
+});
 
-for (let i = 0; i < position.count; i ++) {
-  const y = 35 * Math.sin(i / 2);
-  position.setY(i, y);
-}
-
-const texture = new THREE.TextureLoader().load('https://threejs.org/examples/textures/water.jpg');
-texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-texture.repeat.set(5, 5);
-const material = new THREE.MeshBasicMaterial({color: 0xd4f1f9, map: texture});
-const water = new THREE.Mesh(geometry, material);
-
+water = new THREE.Mesh(waterGeometry, material);
+// Make the ocean horizontal
+water.rotation.x = -Math.PI / 2;
+water.position.copy(modelCenterAtSeaLevel);
 viewer.addObject3D(water);
 
 function updateOcean() {
-  for (let i = 0; i < position.count; i ++) {
-    const y = Math.random() * Math.sin(i / 2) * 10;
-    position.setY(i, y);
-  }
-  water.geometry.attributes.position.needsUpdate = true;
+  waterUniforms.u_time.value += clock.getDelta();
   viewer.requestRedraw();
-  setInterval(updateOcean, 1500);
+  requestAnimationFrame(updateOcean);
 }
 updateOcean();
 ```
@@ -170,19 +173,22 @@ skyBox.position.copy(modelCenterAtSeaLevel);
 viewer.addObject3D(skyBox);
 
 // Water
-const waterGeometry = new THREE.PlaneBufferGeometry(6000, 6000);
+const waterGeometry = new THREE.PlaneBufferGeometry(6000, 6000, 63, 63);
 const clock = new THREE.Clock();
-const timeUniform = {
-  iGlobalTime: {type: 'f', value: 0.1},
-  iResolution: {type: 'v2', value: new THREE.Vector2()}
+const waterUniforms = {
+  u_amplitude: { value: 10 },
+  u_frequency: { value: 0.25 },
+  u_time: { value: 0.0 },
+  map: { value: new THREE.TextureLoader().load(
+          'https://threejs.org/examples/textures/water.jpg',
+          (texture) => {
+          texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    } )}
 };
 
-timeUniform.iResolution.value.x = 200;
-timeUniform.iResolution.value.y = 200;
-
 var material = new THREE.ShaderMaterial({
-  uniforms: timeUniform,
-  side: THREE.DoubleSide, 
+  uniforms: waterUniforms,
+  side: THREE.DoubleSide,
   vertexShader: WaterShader.Vertex,
   fragmentShader: WaterShader.Fragment
 });
@@ -194,7 +200,7 @@ water.position.copy(modelCenterAtSeaLevel);
 viewer.addObject3D(water);
 
 function updateOcean() {
-  timeUniform.iGlobalTime.value += clock.getDelta();
+  waterUniforms.u_time.value += clock.getDelta();
   viewer.requestRedraw();
   requestAnimationFrame(updateOcean);
 }
