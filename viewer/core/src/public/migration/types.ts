@@ -216,14 +216,14 @@ export { CameraChangeDelegate } from '@reveal/utilities';
 /**
  * Delegate for disposal events.
  */
-export { DisposedDelegate } from '@reveal/utilities'
+export { DisposedDelegate } from '@reveal/utilities';
 
 /**
  * Delegate for rendering events.
  * @module @cognite/reveal
  * @see {@link Cognite3DViewer.on}.
  */
-export {SceneRenderedDelegate } from '@reveal/utilities';
+export { SceneRenderedDelegate } from '@reveal/utilities';
 
 export * from './NotSupportedInMigrationWrapperError';
 

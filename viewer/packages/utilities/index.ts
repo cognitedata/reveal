@@ -8,7 +8,12 @@ export { transformCameraConfiguration } from './src/transformCameraConfiguration
 export { RandomColors } from './src/RandomColors';
 export { CameraConfiguration } from './src/CameraConfiguration';
 export { EventTrigger, clickOrTouchEventOffset, InputHandler, disposeOfAllEventListeners } from './src/events';
-export { CameraChangeDelegate, DisposedDelegate, SceneRenderedDelegate, PointerEventDelegate } from './src/events/types';
+export {
+  CameraChangeDelegate,
+  DisposedDelegate,
+  SceneRenderedDelegate,
+  PointerEventDelegate
+} from './src/events/types';
 export { assertNever } from './src/assertNever';
 export { NumericRange } from './src/NumericRange';
 export { determinePowerOfTwoDimensions } from './src/determinePowerOfTwoDimensions';

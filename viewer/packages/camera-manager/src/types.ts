@@ -92,4 +92,3 @@ export type CameraManagerCallbackData = {
    */
   modelsBoundingBox: THREE.Box3;
 };
-

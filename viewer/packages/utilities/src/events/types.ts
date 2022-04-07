@@ -10,7 +10,7 @@ export type PointerEventDelegate = (event: { offsetX: number; offsetY: number; b
 /**
  * Delegate for camera update events.
  */
- export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
+export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
 
 /**
  * Delegate for disposal events.

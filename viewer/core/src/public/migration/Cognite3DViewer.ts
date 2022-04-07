@@ -31,12 +31,7 @@ import {
   CognitePointCloudModel
 } from '@reveal/pointclouds';
 
-import {
-  AddModelOptions,
-  Cognite3DViewerOptions,
-  Intersection,
-  CadModelBudget
-} from './types';
+import { AddModelOptions, Cognite3DViewerOptions, Intersection, CadModelBudget } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
 import { RevealManager } from '../RevealManager';

@@ -140,8 +140,10 @@ export class InputHandler {
     const isProperClick = this.isProperClick(e, startOffset, pointerDown, validClick, pointerDownTimestamp);
 
     if (isProperClick) {
-      const firedEvent = {...clickOrTouchEventOffset(e, this.domElement), 
-        button: (e instanceof MouseEvent) ? e.button : undefined}
+      const firedEvent = {
+        ...clickOrTouchEventOffset(e, this.domElement),
+        button: e instanceof MouseEvent ? e.button : undefined
+      };
 
       this._events.click.fire(firedEvent);
     }
