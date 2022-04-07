@@ -40,6 +40,22 @@ export class GeometryBatchingManager {
     this._sectorMap = new Map();
   }
 
+  public dispose(): void {
+    for (const sectorId of this._sectorMap.keys()) {
+      this.removeSectorBatches(sectorId);
+    }
+
+    for (const mesh of this._batchedGeometriesGroup.children) {
+      if (mesh instanceof THREE.Mesh) {
+        mesh.geometry.dispose();
+
+        delete mesh.geometry;
+      }
+    }
+
+    this._batchedGeometriesGroup.clear();
+  }
+
   public batchGeometries(geometryBatchingQueue: ParsedGeometry[], sectorId: number): void {
     if (this._sectorMap.get(sectorId) !== undefined) {
       return;
@@ -310,10 +326,6 @@ export class GeometryBatchingManager {
 
     mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
       (material.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld).invert();
-      (material.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
-      (material.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
-      (material.uniforms.projectionMatrix?.value as THREE.Matrix4)?.copy(camera.projectionMatrix);
-      (material.uniforms.normalMatrix?.value as THREE.Matrix3)?.copy(mesh.normalMatrix);
       (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
     };
 

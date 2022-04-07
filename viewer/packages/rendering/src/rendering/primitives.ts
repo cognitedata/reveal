@@ -195,7 +195,6 @@ function createBoxes(
 
   geometry.setIndex(boxGeometry.index);
   geometry.setAttribute('position', boxGeometry.position);
-  geometry.setAttribute('normal', boxGeometry.normal);
   setAttributes(geometry, filteredCollection, boxAttributes, mesh);
   setBoundsFromInstanceMatrices(geometry);
 
@@ -591,10 +590,6 @@ function createNuts(
 }
 
 function updateMaterialUniforms(material: THREE.RawShaderMaterial, mesh: THREE.Mesh, camera: THREE.Camera) {
-  (material.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
-  (material.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
-  (material.uniforms.projectionMatrix?.value as THREE.Matrix4)?.copy(camera.projectionMatrix);
-  (material.uniforms.normalMatrix?.value as THREE.Matrix3)?.copy(mesh.normalMatrix);
   (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
 
   const inverseModelMatrix: THREE.Matrix4 = material.uniforms.inverseModelMatrix.value;
