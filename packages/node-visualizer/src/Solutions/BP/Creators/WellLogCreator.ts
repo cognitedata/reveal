@@ -99,10 +99,13 @@ export class WellLogCreator {
   }
 
   private static getMdIndex(columns: ILogRowColumn[]): number {
+    const allowedMDExternalIds = ['MD', 'DEPT', 'DEPTH'];
     if (!columns) return -1;
     for (let logIndex = 0; logIndex < columns.length; logIndex++) {
       const column = columns[logIndex];
-      if (column.externalId === 'DEPT') return logIndex;
+      if (allowedMDExternalIds.includes(column.externalId)) {
+        return logIndex;
+      }
     }
     return -1;
   }
