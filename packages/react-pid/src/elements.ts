@@ -27,7 +27,3 @@ export const HandlerContainer = styled.div`
   height: 100%;
   overflow: hidden;
 `;
-
-export const HandlerContent = styled.div`
-  position: relative;
-`;

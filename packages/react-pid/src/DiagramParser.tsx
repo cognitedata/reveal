@@ -1,6 +1,6 @@
 import { useEffect, useReducer } from 'react';
 
-import { HandlerContainer, HandlerContent } from './elements';
+import { HandlerContainer } from './elements';
 import { ReactPid } from './ReactPid';
 import TopBar from './components/top-bar/TopBar';
 import DiagramList from './components/diagram-list/DiagramList';
@@ -40,23 +40,21 @@ const DiagramParser = () => {
         saveState={saveState}
         isAutoMode={isAutoMode}
       />
-      <HandlerContent>
-        <ReactPid
-          isAutoMode={isAutoMode}
-          key={diagramExternalId || 'no_diagram'}
-          pidViewer={pidViewer}
-          diagramExternalId={diagramExternalId}
-          saveState={saveState}
-          onAutoAnalysisCompleted={saveGraph}
+      <ReactPid
+        isAutoMode={isAutoMode}
+        key={diagramExternalId || 'no_diagram'}
+        pidViewer={pidViewer}
+        diagramExternalId={diagramExternalId}
+        saveState={saveState}
+        onAutoAnalysisCompleted={saveGraph}
+      />
+      {state.showList && (
+        <DiagramList
+          diagrams={diagrams}
+          selectedUnparsedDiagrams={selectedExternalIds}
+          dispatch={dispatch}
         />
-        {state.showList && (
-          <DiagramList
-            diagrams={diagrams}
-            selectedUnparsedDiagrams={selectedExternalIds}
-            dispatch={dispatch}
-          />
-        )}
-      </HandlerContent>
+      )}
     </HandlerContainer>
   );
 };

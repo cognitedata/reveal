@@ -23,8 +23,8 @@ import { DocumentInfo } from './DocumentInfo';
 const SidePanelWrapper = styled.div`
   display: grid;
   grid-template-rows: max-content max-content auto max-content;
-  height: 100%;
   position: relative;
+  overflow: auto;
 `;
 
 const FileControllerWrapper = styled.div`
