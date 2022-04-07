@@ -291,7 +291,7 @@ export function formatPlotlyData(
               'timestamp' in datapoint ? new Date(datapoint.timestamp) : null
           ),
           y: avgYValues,
-          hovertemplate: `%{y}${unitLabel} &#183; <span style="color:#8c8c8c">%{fullData.name}</span><extra></extra>`,
+          hovertemplate: `%{y:.}${unitLabel} &#183; <span style="color:#8c8c8c">%{fullData.name}</span><extra></extra>`,
           hoverlabel: {
             bgcolor: '#ffffff',
             bordercolor: color,
