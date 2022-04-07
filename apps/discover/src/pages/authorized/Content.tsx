@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { Switch, Redirect, Route } from 'react-router-dom';
 
-import { ToastContainer } from '@cognite/cogs.js';
 import { Logout } from '@cognite/react-container';
 
 import { Page } from 'components/page';
@@ -40,7 +39,6 @@ const Content = () => {
 
   return (
     <div role="application">
-      <ToastContainer />
       <GlobalModals /> {/* Global Modals to be shown from multiple places */}
       <AppFrame>
         <Page

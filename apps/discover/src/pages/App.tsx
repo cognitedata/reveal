@@ -4,6 +4,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 
 import { Providers as DiscoverProviders } from 'providers';
 
+import { ToastContainer } from '@cognite/cogs.js';
 import { isTest, Container, getTenantInfo } from '@cognite/react-container';
 import { SidecarConfig } from '@cognite/sidecar';
 
@@ -69,6 +70,7 @@ export const AppRoot: React.FC = () => {
           <>
             <DevelopmentHelpers />
             <GlobalStyles />
+            <ToastContainer />
             {/* eg: feature flags, query cache */}
             <DiscoverProviders>
               {/* eg: app main entry point */}
