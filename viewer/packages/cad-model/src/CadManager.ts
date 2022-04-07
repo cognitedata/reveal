@@ -25,10 +25,12 @@ export class CadManager {
 
   private readonly _cadModelMap: Map<string, CadNode> = new Map();
   private readonly _subscription: Subscription = new Subscription();
-  private  _compatibleFileFormat: {
-    format: File3dFormat,
-    version: number
-  } | undefined = undefined;;
+  private _compatibleFileFormat:
+    | {
+        format: File3dFormat;
+        version: number;
+      }
+    | undefined = undefined;
 
   private _needsRedraw: boolean = false;
 
@@ -162,9 +164,10 @@ export class CadManager {
   }
 
   doesModelHaveCompatibleFormat(modelMetadata: CadModelMetadata): boolean {
-    return this._compatibleFileFormat === undefined || (
-      this._compatibleFileFormat.format === modelMetadata.format &&
-        this._compatibleFileFormat.version === modelMetadata.formatVersion
+    return (
+      this._compatibleFileFormat === undefined ||
+      (this._compatibleFileFormat.format === modelMetadata.format &&
+        this._compatibleFileFormat.version === modelMetadata.formatVersion)
     );
   }
 
@@ -179,10 +182,12 @@ export class CadManager {
     const modelMetadata = await this._cadModelFactory.loadModelMetadata(modelIdentifier);
 
     if (!this.doesModelHaveCompatibleFormat(modelMetadata)) {
-      throw Error(`The added model had format ${modelMetadata.format} and ` +
-                  `version ${modelMetadata.formatVersion} which is incompatible ` +
-                  `with previously added models of format ${this._compatibleFileFormat.format} ` +
-                  `and version ${this._compatibleFileFormat.version}`);
+      throw Error(
+        `The added model had format ${modelMetadata.format} and ` +
+          `version ${modelMetadata.formatVersion} which is incompatible ` +
+          `with previously added models of format ${this._compatibleFileFormat.format} ` +
+          `and version ${this._compatibleFileFormat.version}`
+      );
     }
 
     this.updateModelCompatibilityFormat(modelMetadata);
