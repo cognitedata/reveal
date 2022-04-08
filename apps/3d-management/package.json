@@ -23,14 +23,13 @@
     "@cognite/cogs.js": "^5.19.5",
     "@cognite/gcs-browser-upload": "cognitedata/gcs-browser-upload#mn/temporary-azure-fix",
     "@cognite/react-feature-flags": "^0.0.2",
-    "@cognite/reveal": "3.0.0-beta.0",
+    "@cognite/reveal": "^3.0.0",
     "@cognite/sdk": "^6.3.1",
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/sdk-react-query-hooks": "^6.0.2",
     "@cognite/z-index": "^0.1.0",
     "@google-cloud/storage": "^5.7.2",
     "@sentry/browser": "^5.30.0",
-    "@types/three": "0.133.0",
     "antd": "^4.15.4",
     "connected-react-router": "^6.9.1",
     "dayjs": "^1.10.4",
@@ -52,7 +51,7 @@
     "redux-thunk": "^2.3.0",
     "single-spa-react": "^4.1.1",
     "styled-components": "^5.3.1",
-    "three": "0.133.0"
+    "three": "^0.138.0"
   },
   "devDependencies": {
     "@cognite/babel-plugin-styled-components": "^1.10.7",
@@ -81,6 +80,7 @@
     "@types/single-spa-react": "^4.0.0",
     "@types/sinon": "^9.0.11",
     "@types/styled-components": "^5.1.7",
+    "@types/three": "^0.138.0",
     "concurrently": "^6.0.0",
     "cross-env": "^7.0.3",
     "enzyme": "^3.11.0",
