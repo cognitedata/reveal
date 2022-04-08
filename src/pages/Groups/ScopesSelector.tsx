@@ -11,46 +11,44 @@ import PartitionSelector from './PartitionSelector';
 import ResourcesSelector from './ResourcesSelector';
 import RawSelector from './RawSelector';
 
-import { AclScopeTableIds, CapabilityScope, ScopeNames } from 'types';
-
 const SelectorContainer = styled.div`
   margin-top: 10px;
 `;
 
 type Props = {
   capabilityKey: string;
-  value?: CapabilityScope;
-  onChange: (scope: CapabilityScope) => void;
+  value?: any;
+  onChange: (_: any) => void;
 };
-
 const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
   const scopes = getCapabilityScopes(capabilityKey);
+
+  const selectedScope = Object.keys(value || {})?.[0] || 'all';
   let selectedResources: number[] = [];
 
-  switch (value?.scope) {
-    case ScopeNames.AssetIdScope:
+  switch (selectedScope) {
+    case 'assetIdScope':
       selectedResources = value.assetIdScope.subtreeIds;
       break;
-    case ScopeNames.AssetRootIdScope:
+    case 'assetRootIdScope':
       selectedResources = value.assetRootIdScope.rootIds;
       break;
-    case ScopeNames.Idscope:
+    case 'idscope':
       selectedResources = value.idscope.ids;
       break;
-    case ScopeNames.IdScope:
+    case 'idScope':
       selectedResources = value.idScope.ids;
       break;
-    case ScopeNames.ExtractionPipelineScope:
+    case 'extractionPipelineScope':
       selectedResources = value.extractionPipelineScope.ids;
       break;
-    case ScopeNames.TableScope:
-      (selectedResources as unknown as AclScopeTableIds[ScopeNames.TableScope]) =
-        value.tableScope;
+    case 'tableScope':
+      selectedResources = value.tableScope;
       break;
-    case ScopeNames.DatasetScope:
+    case 'datasetScope':
       selectedResources = value.datasetScope.ids;
       break;
-    case ScopeNames.PartitionScope:
+    case 'partition':
       selectedResources = value.partition.partitionIds;
       break;
     default:
@@ -65,116 +63,82 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
 
   const onSelectScope = (e: RadioChangeEvent) => {
     const newSelectedScope = e.target.value;
-    let scope: CapabilityScope;
+    let scope;
     switch (newSelectedScope) {
-      case ScopeNames.AllScopes:
-        scope = { scope: ScopeNames.AllScopes, all: {} };
+      case 'all':
+        scope = { all: {} };
         break;
-      case ScopeNames.CurrentUserScope:
-        scope = { scope: ScopeNames.CurrentUserScope, currentuserscope: {} };
+      case 'currentuserscope':
+        scope = { currentuserscope: {} };
         break;
-      case ScopeNames.AssetIdScope:
-        scope = {
-          scope: ScopeNames.AssetIdScope,
-          assetIdScope: { subtreeIds: [] },
-        };
+      case 'assetIdScope':
+        scope = { assetIdScope: { subtreeIds: [] } };
         break;
-      case ScopeNames.AssetRootIdScope:
-        scope = {
-          scope: ScopeNames.AssetRootIdScope,
-          assetRootIdScope: { rootIds: [] },
-        };
+      case 'assetRootIdScope':
+        scope = { assetRootIdScope: { rootIds: [] } };
         break;
-      case ScopeNames.Idscope:
-        scope = { scope: ScopeNames.Idscope, idscope: { ids: [] } };
+      case 'idscope':
+        scope = { idscope: { ids: [] } };
         break;
-      case ScopeNames.IdScope:
-        scope = { scope: ScopeNames.IdScope, idScope: { ids: [] } };
+      case 'idScope':
+        scope = { idScope: { ids: [] } };
         break;
-      case ScopeNames.DatasetScope:
-        scope = { scope: ScopeNames.DatasetScope, datasetScope: { ids: [] } };
+      case 'datasetScope':
+        scope = { datasetScope: { ids: [] } };
         break;
-      case ScopeNames.ExtractionPipelineScope:
-        scope = {
-          scope: ScopeNames.ExtractionPipelineScope,
-          extractionPipelineScope: { ids: [] },
-        };
+      case 'extractionPipelineScope':
+        scope = { extractionPipelineScope: { ids: [] } };
         break;
-      case ScopeNames.TableScope:
-        scope = { scope: ScopeNames.TableScope, tableScope: {} };
+      case 'tableScope':
+        scope = { tableScope: {} };
         break;
-      case ScopeNames.PartitionScope:
-        scope = {
-          scope: ScopeNames.PartitionScope,
-          partition: { partitionIds: [] },
-        };
+      case 'partition':
+        scope = { partition: { partitionIds: [] } };
         break;
       default:
-        throw new Error('Undefined scope!');
+        break;
     }
     onChange(scope);
   };
 
   const onChangeResource = (newSelectedResources: number[]) => {
     let scope = value;
-    switch (scope?.scope) {
-      case ScopeNames.AssetIdScope:
-        scope = {
-          scope: ScopeNames.AssetIdScope,
-          assetIdScope: { subtreeIds: newSelectedResources },
-        };
+    switch (selectedScope) {
+      case 'assetIdScope':
+        scope = { assetIdScope: { subtreeIds: newSelectedResources } };
         break;
-      case ScopeNames.AssetRootIdScope:
-        scope = {
-          scope: ScopeNames.AssetRootIdScope,
-          assetRootIdScope: { rootIds: newSelectedResources },
-        };
+      case 'assetRootIdScope':
+        scope = { assetRootIdScope: { rootIds: newSelectedResources } };
         break;
-      case ScopeNames.Idscope:
-        scope = {
-          scope: ScopeNames.Idscope,
-          idscope: { ids: newSelectedResources },
-        };
+      case 'idscope':
+        scope = { idscope: { ids: newSelectedResources } };
         break;
-      case ScopeNames.IdScope:
-        scope = {
-          scope: ScopeNames.IdScope,
-          idScope: { ids: newSelectedResources },
-        };
+      case 'idScope':
+        scope = { idScope: { ids: newSelectedResources } };
         break;
-      case ScopeNames.DatasetScope:
-        scope = {
-          scope: ScopeNames.DatasetScope,
-          datasetScope: { ids: newSelectedResources },
-        };
+      case 'datasetScope':
+        scope = { datasetScope: { ids: newSelectedResources } };
         break;
-      case ScopeNames.ExtractionPipelineScope:
-        scope = {
-          scope: ScopeNames.ExtractionPipelineScope,
-          extractionPipelineScope: { ids: newSelectedResources },
-        };
+      case 'extractionPipelineScope':
+        scope = { extractionPipelineScope: { ids: newSelectedResources } };
         break;
-      case ScopeNames.TableScope:
-        scope = {
-          scope: ScopeNames.TableScope,
-          tableScope:
-            newSelectedResources as unknown as AclScopeTableIds['tableScope'],
-        };
+      case 'tableScope':
+        scope = { tableScope: newSelectedResources };
         break;
-      case ScopeNames.PartitionScope:
-        scope = {
-          scope: ScopeNames.PartitionScope,
-          partition: { partitionIds: newSelectedResources },
-        };
+      case 'securitycategories':
+        scope = { idscope: { ids: newSelectedResources } };
+        break;
+      case 'partition':
+        scope = { partition: { partitionIds: newSelectedResources } };
         break;
       default:
-        throw new Error('Undefined scope!');
+        break;
     }
     onChange(scope);
   };
 
   function getScopesSelector() {
-    switch (value?.scope) {
+    switch (selectedScope) {
       case 'assetIdScope':
         return (
           <ResourcesSelector
@@ -281,7 +245,7 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
 
   return (
     <div>
-      <Radio.Group value={value?.scope} onChange={(e) => onSelectScope(e)}>
+      <Radio.Group value={selectedScope} onChange={(e) => onSelectScope(e)}>
         {scopes.map((scope) => (
           <Radio value={scope} key={scope}>
             {getScopeLabel(scope, capabilityKey)}
@@ -292,5 +256,4 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
     </div>
   );
 };
-
 export default ScopesSelector;
