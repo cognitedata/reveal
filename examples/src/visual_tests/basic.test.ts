@@ -36,13 +36,13 @@ console.log(`Run tests with ${RETRIES} retries`);
  * Basically, you just need to add a new test page to src/pages/e2e
  * and create a new record in src/routes to map a component to its route
  */
-describe('Reveal visual tests', () => {
+describe('Reveal visual tests', async () => {
 
   test('dispose disposes WebGL resources', async () => {
     await Promise.all(visualTests.map(async test => {
       const { testKey, category, snapshotBlur } = test;
 
-      if(testKey !== 'default' || category !== 'cad') return;
+      if(testKey !== 'customObjectWithHighlightAndGhosted' || category !== 'cad') return;
   
       const snapshotName = `${category}_${testKey}`;
       const url = `http://localhost:3000/test/${category}/${testKey}`;

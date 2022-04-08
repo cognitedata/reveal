@@ -24,6 +24,7 @@ export type TestEnv = {
   revealManager: reveal.RevealManager;
   scene: THREE.Scene;
   renderer: THREE.WebGLRenderer;
+  customObjects: THREE.Object3D[];
 };
 
 export type TestEnvCad = TestEnv & CadModelEnv;
@@ -182,6 +183,7 @@ export function TestViewer(props: Props) {
           renderer,
           revealManager,
           scene,
+          customObjects: renderables.customObjects,
         };
         testEnv = props.modifyTestEnv(defaultTestEnv) || testEnv;
 
