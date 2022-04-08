@@ -112,9 +112,9 @@ void main() {
 
 export const FragmentShader = `precision highp float;
 uniform sampler2D map;
-
+uniform vec3 color;
 in vec2 vUV;
 
 void main() {
-  gl_FragColor = texture2D(map, vUV);
+  gl_FragColor = texture2D(map, vUV) * vec4(color, 0.5) ;
 }`;
