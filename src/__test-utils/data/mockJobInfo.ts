@@ -15,6 +15,9 @@ export const filesWithJobs: Record<number, { jobIds: number[] }> = {
   10: { jobIds: [100, 200, 400] },
   11: { jobIds: [100, 200, 400] },
   12: { jobIds: [100, 200, 400] },
+  13: { jobIds: [300] },
+  14: { jobIds: [400] },
+  15: { jobIds: [300, 400] },
 };
 export const queuedJob: JobState = {
   jobId: 100,
@@ -41,8 +44,8 @@ export const completedJob: JobState = {
   createdTime: 1643352030229,
   statusTime: 1643352030229,
   startTime: 1643352030660,
-  fileIds: [2, 3, 4, 5, 6, 7, 8, 9],
-  completedFileIds: [2, 3, 4, 5, 6, 7, 8, 9],
+  fileIds: [2, 3, 4, 5, 6, 7, 8, 9, 13, 15],
+  completedFileIds: [2, 3, 4, 5, 6, 7, 8, 9, 13, 15],
   items: [
     {
       annotations: [
@@ -102,8 +105,8 @@ export const failedJob: JobState = {
   createdTime: 1643352030229,
   statusTime: 1643352030229,
   startTime: null,
-  fileIds: [10, 11, 12],
-  failedFileIds: [10, 11, 12],
+  fileIds: [10, 11, 12, 14, 15],
+  failedFileIds: [10, 11, 12, 14, 15],
 };
 export const partiallyCompletedJob: JobState = {
   jobId: 500,
@@ -168,3 +171,5 @@ export const jobState: Record<number, JobState> = {
   400: failedJob,
   500: partiallyCompletedJob,
 };
+
+export const allFileIdsWithJob400 = [10, 11, 12, 14, 15];
