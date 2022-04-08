@@ -46,6 +46,7 @@ DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
     "@npm//@cognite/seismic-sdk-js",
     "@npm//@reduxjs/toolkit",
+    "@npm//@cognite/sdk-wells-v3",
     "@npm//color",
     "@npm//react",
     "@npm//react-color",

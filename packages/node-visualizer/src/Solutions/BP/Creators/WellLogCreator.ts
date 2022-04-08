@@ -1,3 +1,5 @@
+import { DepthIndexTypeEnum } from '@cognite/sdk-wells-v3';
+
 import { BaseNode } from '../../../Core/Nodes/BaseNode';
 import { Util } from '../../../Core/Primitives/Util';
 import {
@@ -99,11 +101,10 @@ export class WellLogCreator {
   }
 
   private static getMdIndex(columns: ILogRowColumn[]): number {
-    const allowedMDExternalIds = ['MD', 'DEPT', 'DEPTH'];
     if (!columns) return -1;
     for (let logIndex = 0; logIndex < columns.length; logIndex++) {
       const column = columns[logIndex];
-      if (allowedMDExternalIds.includes(column.externalId)) {
+      if (column.name === DepthIndexTypeEnum.MeasuredDepth) {
         return logIndex;
       }
     }
