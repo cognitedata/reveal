@@ -22,8 +22,8 @@ const getPackageAlias = (filename) => {
   const localPackageName = fileSplit.join('/');
 
   if (localPackageName !== name) {
-    name = localPackageName;
     version = `npm:${name}@${version}`;
+    name = localPackageName;
   }
   return { name, version };
 };

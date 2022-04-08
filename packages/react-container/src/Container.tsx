@@ -181,7 +181,7 @@ export const Container = (props: Props) => {
 
   const WrappedConatiner = withI18nSuspense<Props>(RawContainer);
 
-  // wrappers here are for both TSA and the authed flow
+  // Wrappers here are for both TSA and the authed flow
   return (
     <TranslationWrapper {...sidecar}>
       <WrappedConatiner {...props} sidecar={sidecar} />

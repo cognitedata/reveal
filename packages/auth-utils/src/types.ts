@@ -4,7 +4,7 @@ export type AuthFlow =
   | 'ADFS'
   | 'OAUTH_GENERIC'
   | 'FAKE_IDP' // Used for E2E testing
-  | 'UNKNOWN'; // set to this during logout
+  | 'UNKNOWN'; // Set to this during logout
 
 export type AuthResult = {
   idToken?: string;

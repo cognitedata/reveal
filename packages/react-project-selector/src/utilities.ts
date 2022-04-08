@@ -27,9 +27,9 @@ export const hasTokenOrCode = (AZURE_APP_ID: string) => {
   );
   const urlHash = window.sessionStorage.getItem(`msal.${AZURE_APP_ID}.urlHash`);
 
-  // if accountLocalId si present then user is connected from previous sessions
-  // if location includes code= then user just navigated from msft login
-  // if session storage urlHash contains code= then login is in progress
+  // If accountLocalId si present then user is connected from previous sessions
+  // If location includes code= then user just navigated from msft login
+  // If session storage urlHash contains code= then login is in progress
   return (
     accountLocalId ||
     window.location.hash.includes('code=') ||
