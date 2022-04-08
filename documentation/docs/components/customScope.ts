@@ -17,8 +17,7 @@ export const customScope: Record<string, any> = {
   DragControls,
   // you can't simply call useBaseUrl here because it's a react hook...
   urls: {
-    skyUrl: '/img/sky007.jpg',
-    waterUrl: '/img/water.jpg.'
+    skyUrl: '/img/sky007.jpg'
   },
   APIKeys: {
     BingMapAPI: 'AuViYD_FXGfc3dxc0pNa8ZEJxyZyPq1lwOLPCOydV3f0tlEVH-HKMgxZ9ilcRj-T',

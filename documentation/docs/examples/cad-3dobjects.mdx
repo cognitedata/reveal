@@ -109,7 +109,8 @@ const waterUniforms = {
           'https://threejs.org/examples/textures/water.jpg',
           (texture) => {
           texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-    } )}
+    } )},
+    color: { value: new THREE.Color(0x0099ff)}
 };
 
 var material = new THREE.ShaderMaterial({
