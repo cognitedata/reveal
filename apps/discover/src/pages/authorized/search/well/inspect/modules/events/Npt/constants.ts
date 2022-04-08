@@ -29,5 +29,6 @@ export const DEFAULT_NPT_COLOR = '#BFBFBF';
 export const VIEW_MODES = {
   Graph: 'Graph',
   Table: 'Table',
-};
+} as const;
+
 export const DEFAULT_ACTIVE_VIEW_MODE = VIEW_MODES.Graph;

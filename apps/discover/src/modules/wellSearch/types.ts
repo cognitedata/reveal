@@ -22,6 +22,8 @@ import {
 } from '@cognite/sdk-wells-v3';
 import { Point } from '@cognite/seismic-sdk-js';
 
+import { CasingType } from 'pages/authorized/search/well/inspect/modules/casing/CasingView/interfaces';
+
 import { TableResults } from '../../components/tablev3/resultTypes';
 import { UserPreferredUnit } from '../../constants/units';
 import { PossibleDateRangeDate } from '../../utils/date';
@@ -461,3 +463,11 @@ export type RegionFieldBlockHierarchy = {
 };
 
 export type RegionFieldBlockResult = { [key in RegionFieldBlock]: string[] };
+
+export interface PreviewCasingType extends CasingType {
+  startDepth: number;
+  casingDepth: number;
+  casingDescription: string;
+  linerCasing: boolean;
+  maximumDescription: string;
+}

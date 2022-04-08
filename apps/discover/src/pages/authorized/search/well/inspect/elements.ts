@@ -170,8 +170,7 @@ export const ThreeDeeWarningContentQuestion = styled.p`
 `;
 
 export const Separator = styled(Flex)`
-  margin-right: 10px;
-  margin-left: 10px;
+  margin-right: 16px;
   border-right: 2px solid var(--cogs-border-default);
   height: 16px;
 `;

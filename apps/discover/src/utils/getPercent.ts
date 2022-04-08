@@ -3,7 +3,15 @@ export const getPercent = (value: number, total: number): number => {
     return 0;
   }
 
-  const result = (value / total) * 100;
+  return (value / total) * 100;
+};
 
-  return Number(result.toFixed(0));
+export const getFixedPercent = (
+  value: number,
+  total: number,
+  fractionDigits = 0
+): number => {
+  const result = getPercent(value, total);
+
+  return Number(result.toFixed(fractionDigits));
 };

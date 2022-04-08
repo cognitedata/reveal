@@ -43,7 +43,7 @@ describe('Wells: NPT Events', () => {
     );
 
     cy.log('Switch to table view');
-    cy.findByTestId('graph-view-switch').contains('Table').click();
+    cy.findByTestId('multi-state-toggle').contains('Table').click();
     cy.log('Check that we have filters');
     cy.findByTestId('search-box-input').should('be.visible');
     cy.contains('NPT Duration (hrs)').should('be.visible');
@@ -51,7 +51,7 @@ describe('Wells: NPT Events', () => {
     cy.contains('NPT Detail Code').should('be.visible');
 
     cy.log('Switch back to graph view');
-    cy.findByTestId('graph-view-switch').contains('Graph').click();
+    cy.findByTestId('multi-state-toggle').contains('Graph').click();
     cy.log('Check that we see the legend footer');
     cy.contains('NPT Codes').should('be.visible');
 

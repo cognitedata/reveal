@@ -1,10 +1,13 @@
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
 import uniqBy from 'lodash/uniqBy';
+import { getPercent } from 'utils/getPercent';
 
 import { Sequence } from '@cognite/sdk';
 
 import { CasingType } from 'pages/authorized/search/well/inspect/modules/casing/CasingView/interfaces';
+
+import { PreviewCasingType } from '../types';
 
 /**
  * This holds lengthiest casing description
@@ -75,39 +78,48 @@ const sortCasingsByDiameter = (casings: CasingType[]) => {
   return sortBy(casings, (casing) => Number(casing.outerDiameter));
 };
 
-export const convertToPreviewData = (casings: CasingType[]) => {
+export const convertToPreviewData = (
+  casings: CasingType[]
+): PreviewCasingType[] => {
   // Need to show casings in increasing order of diameter
   const sortedCasings = sortCasingsByDiameter(casings);
 
   // This finds the maximum depth of casings
-  const maxDepth = Math.max(...sortedCasings.map((o) => o.endDepth), 0);
+  const maxDepth = Math.max(
+    ...sortedCasings.map(({ endDepth }) => endDepth),
+    0
+  );
+
   // If the casings length is empty, then this will return empty
   if (maxDepth === 0) {
     return [];
   }
-  // This returns percentage value for casing depth
-  const getPercentage = (value: number) => (value / maxDepth) * 100;
 
   return sortedCasings.map((casing) => {
     const endDepth = Math.ceil(casing.endDepth);
     const casingDisplayName = casing.name || '';
+
     const getCasingName = (casing: CasingType) => {
-      if (casing.name)
+      if (casing.name) {
         return casing.name.toLowerCase().includes('casing') ? '' : 'Casing';
+      }
       return '';
     };
+
     const description = `${
       casing.outerDiameter
     }" ${casingDisplayName} ${getCasingName(casing)} at ${endDepth}${
       casing.depthUnit
     } depth`;
+
     if (description.length > maxDescription.length) {
       maxDescription = `${description}`;
     }
+
     return {
       ...casing,
-      startDepth: getPercentage(casing.startDepth),
-      casingDepth: getPercentage(casing.endDepth - casing.startDepth),
+      startDepth: getPercent(casing.startDepth, maxDepth),
+      casingDepth: getPercent(casing.endDepth - casing.startDepth, maxDepth),
       casingDescription: description,
       linerCasing: casing.name
         ? casing.name.toLowerCase().includes('liner')

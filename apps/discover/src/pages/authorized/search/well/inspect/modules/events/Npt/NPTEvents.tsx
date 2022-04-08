@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from 'react';
 
 import { Loading, WhiteLoaderOverlay } from 'components/loading';
+import { MultiStateToggle } from 'components/multiStateToggle';
 import { NoUnmountShowHide } from 'components/no-unmount-show-hide';
 import { useNptEvents } from 'modules/wellSearch/selectors';
 
 import { Separator } from '../../../elements';
-import { GraphTableSwitch } from '../../common/GraphTableSwitch';
 
 import { VIEW_MODES, DEFAULT_ACTIVE_VIEW_MODE } from './constants';
 import { NptEventsDataControlArea } from './elements';
@@ -13,13 +13,15 @@ import { FilterContainer } from './filters';
 import { NPTGraph, SelectedWellboreView } from './graph';
 import { SelectedWellbore } from './graph/types';
 import { NPTTable } from './table';
+import { ViewModes } from './types';
 
 export const NPTEvents: React.FC = () => {
   const { isLoading, events } = useNptEvents();
 
-  const [activeViewMode, setActiveViewMode] = useState<string>(
+  const [activeViewMode, setActiveViewMode] = useState<ViewModes>(
     DEFAULT_ACTIVE_VIEW_MODE
   );
+
   const [nptGraphSelectedWellbore, setNptGraphSelectedWellbore] =
     useState<SelectedWellbore>();
   const [selectedWellboreViewLoading, setSelectedWellboreViewLoading] =
@@ -46,11 +48,14 @@ export const NPTEvents: React.FC = () => {
   return (
     <>
       <NptEventsDataControlArea>
-        <GraphTableSwitch
-          viewMode={activeViewMode}
+        <MultiStateToggle<ViewModes>
+          activeOption={activeViewMode}
+          options={VIEW_MODES}
           onChange={setActiveViewMode}
         />
+
         {isTableViewModeActive && <Separator />}
+
         <FilterContainer events={events} isVisible={isTableViewModeActive} />
       </NptEventsDataControlArea>
 

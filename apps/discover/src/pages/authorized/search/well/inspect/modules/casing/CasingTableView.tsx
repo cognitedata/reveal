@@ -12,6 +12,7 @@ import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useCasingsForTable } from 'modules/wellSearch/selectors';
 
 import { CasingPreviewFullscreen } from './CasingPreviewFullscreen';
+import { SideModes } from './CasingView/types';
 import {
   CasingsTableWrapper,
   CasingViewButtonWrapper,
@@ -29,9 +30,13 @@ const wellsTableOptions = {
 
 type Props = {
   searchPhrase: string;
+  sideMode: SideModes;
 };
 
-export const CasingTableView: React.FC<Props> = ({ searchPhrase }) => {
+export const CasingTableView: React.FC<Props> = ({
+  searchPhrase,
+  sideMode,
+}) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const [formattedCasings, setFormattedCasings] = useState<FormattedCasings[]>(
@@ -143,6 +148,7 @@ export const CasingTableView: React.FC<Props> = ({ searchPhrase }) => {
         <CasingPreviewFullscreen
           onClose={handleDialogClosed}
           casing={formattedCasings[0]}
+          sideMode={sideMode}
         />
       )}
     </>

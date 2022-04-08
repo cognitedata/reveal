@@ -11,16 +11,19 @@ import {
 } from '../events/Npt/graph/SelectedWellboreView/NavigationPanel';
 
 import CasingView from './CasingView/CasingView';
+import { SideModes } from './CasingView/types';
 import { FormattedCasings } from './interfaces';
 
 interface Props {
   onClose: () => void;
   casing: FormattedCasings;
+  sideMode: SideModes;
 }
 
 export const CasingPreviewFullscreen: React.FC<Props> = ({
   onClose,
   casing,
+  sideMode,
 }) => {
   const { isLoading: isEventsLoading, events } = useNptEventsForCasings();
   const { data: preferredUnit } = useUserPreferencesMeasurement();
@@ -46,6 +49,7 @@ export const CasingPreviewFullscreen: React.FC<Props> = ({
           unit={preferredUnit}
           events={events[casing.key]}
           isEventsLoading={isEventsLoading}
+          sideMode={sideMode}
         />
       </SingleCasingContainer>
     </OverlayNavigation>

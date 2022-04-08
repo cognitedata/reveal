@@ -3,7 +3,7 @@
 // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-unused-prop-types.md#false-positives-sfc
 import * as React from 'react';
 
-import { getPercent } from 'utils/getPercent';
+import { getFixedPercent } from 'utils/getPercent';
 
 import { WidgetContentWithLoading } from './WidgetContentWithLoading';
 
@@ -36,7 +36,7 @@ const useContentCalculation = ({
   if (selectedDataLoading) {
     mainText = `${completeData.size} wells`;
   } else {
-    percent = getPercent(intersection.size, completeData.size);
+    percent = getFixedPercent(intersection.size, completeData.size);
   }
 
   return { percent, mainText };

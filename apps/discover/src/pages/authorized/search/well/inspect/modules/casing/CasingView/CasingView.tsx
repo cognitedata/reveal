@@ -1,6 +1,7 @@
-import React, {
+import {
   FC,
   Fragment,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -14,11 +15,14 @@ import orderBy from 'lodash/orderBy';
 import { Button } from '@cognite/cogs.js';
 
 import EmptyState from 'components/emptyState';
+import { useDeepMemo } from 'hooks/useDeep';
+import { NPTEvent, PreviewCasingType } from 'modules/wellSearch/types';
 import { convertToPreviewData } from 'modules/wellSearch/utils/casings';
 import { FlexColumn } from 'styles/layout';
 
 import { SelectedWellboreView } from '../../events/Npt/graph';
 import { SelectedWellbore } from '../../events/Npt/graph/types';
+import { SIDE_MODES } from '../constants';
 import { getScaleBlocks } from '../helper';
 
 import DepthColumn from './DepthColumn';
@@ -39,46 +43,70 @@ import {
   EmptyCasingsStateWrapper,
 } from './elements';
 import EventsColumn from './EventsColumn';
-import { CasingViewType } from './interfaces';
+import { CasingType, CasingViewTypeProps } from './interfaces';
 
 const MIN_SCALE_HEIGHT = 16;
 const EMPTY_STATE_TEXT = 'This wellbore has no casing and NPT events data';
 const EMPTY_SCHEMA_TEXT = 'This wellbore has no schema data';
 const LOADING_TEXT = 'Loading';
 
+const mirrorCasingData = (data: PreviewCasingType[]) => {
+  const reverseData = data.reduce((accumulator, item) => {
+    // the '*-1' for the duplicate/mirrored casing seems to be the easiest way to get a unique id that will not clash with any existing ones
+    return [{ ...item, id: item.id * -1 }, ...accumulator];
+  }, [] as PreviewCasingType[]);
+
+  return [...reverseData, ...data];
+};
+
+const getMinMaxDepth = (casingsList: CasingType[], events: NPTEvent[]) => {
+  const minDepth = 0;
+
+  let maxDepth = max(casingsList.map((row) => Number(row.endDepth))) as number;
+  if (isEmpty(casingsList) && !isEmpty(events)) {
+    maxDepth = max(
+      events.map((row) => Number(row.measuredDepth?.value))
+    ) as number;
+  }
+
+  return [minDepth, maxDepth];
+};
+
 /**
  * This component is used to generate casings diagram
  */
-const CasingView: FC<CasingViewType> = ({
+const CasingView: FC<CasingViewTypeProps> = ({
   casings,
   wellName,
   wellboreName,
   unit,
   events = [],
   isEventsLoading,
-}: CasingViewType) => {
+  sideMode,
+}) => {
   const scaleRef = useRef<HTMLElement | null>(null);
 
   const [recentZIndex, setRecentZIndex] = useState(1);
-
-  const casingsList = orderBy(casings, 'endDepth', 'desc');
-
   const [scaleBlocks, setScaleBlocks] = useState<number[]>([]);
-
   const [selectedWellbore, setSelectedWellbore] = useState<SelectedWellbore>();
 
-  const normalizedCasings = useMemo(
-    () => convertToPreviewData(casingsList),
-    [casingsList]
+  const casingsList = useDeepMemo(
+    () => orderBy(casings, 'endDepth', 'desc'),
+    [casings]
   );
 
-  const minDepth = 0;
-  let maxDepth = max(casingsList.map((row) => Number(row.endDepth))) as number;
-  if (isEmpty(casings) && !isEmpty(events)) {
-    maxDepth = max(
-      events.map((row) => Number(row.measuredDepth?.value))
-    ) as number;
-  }
+  const normalizedCasings = useMemo(() => {
+    const data = convertToPreviewData(casingsList);
+
+    if (sideMode === SIDE_MODES.Both) {
+      return mirrorCasingData(data);
+    }
+
+    // Side mode = one / fallback
+    return data;
+  }, [casingsList, sideMode]);
+
+  const [minDepth, maxDepth] = getMinMaxDepth(casingsList, events);
 
   const validEvents = events.filter(
     (event) =>
@@ -87,26 +115,26 @@ const CasingView: FC<CasingViewType> = ({
       event.measuredDepth.value <= maxDepth
   );
 
-  const setScaleBlocksCount = () => {
+  const setScaleBlocksCount = useCallback(() => {
     const height = scaleRef.current?.offsetHeight || MIN_SCALE_HEIGHT;
     setScaleBlocks(getScaleBlocks(height, minDepth, maxDepth));
-  };
+  }, [minDepth, maxDepth]);
 
   useEffect(() => {
     window.addEventListener('resize', setScaleBlocksCount);
     return () => {
       window.removeEventListener('resize', setScaleBlocksCount);
     };
-  }, [maxDepth]);
+  }, [setScaleBlocksCount]);
 
   useEffect(() => {
     setScaleBlocksCount();
-  }, [minDepth, maxDepth]);
+  }, [setScaleBlocksCount]);
 
   // This fires on indicator click event
   const onIndicatorClick = () => {
     // This increments casing view zindex value and return highest value only for clicked casing
-    setRecentZIndex((r) => r + 1);
+    setRecentZIndex((previousZIndex) => previousZIndex + 1);
     return recentZIndex;
   };
 
@@ -129,6 +157,7 @@ const CasingView: FC<CasingViewType> = ({
             NPT details
           </Button>
         </Header>
+
         <BodyWrapper>
           {isEmpty(casings) &&
           (isEventsLoading || (!isEventsLoading && isEmpty(events))) ? (
@@ -142,6 +171,7 @@ const CasingView: FC<CasingViewType> = ({
           ) : (
             <>
               <DepthColumn scaleBlocks={scaleBlocks} unit={unit} />
+
               <BodyColumn width={150}>
                 <BodyColumnHeaderWrapper>
                   <BodyColumnMainHeader>Schema</BodyColumnMainHeader>
@@ -156,6 +186,7 @@ const CasingView: FC<CasingViewType> = ({
                       scaleBlocks.map((row) => <ScaleLine key={row} />)
                     )}
                   </CasingScale>
+
                   {normalizedCasings.map((normalizedCasing, index) => (
                     <Fragment key={normalizedCasing.id}>
                       <DepthIndicator
@@ -176,6 +207,7 @@ const CasingView: FC<CasingViewType> = ({
                   ))}
                 </BodyColumnBody>
               </BodyColumn>
+
               <EventsColumn
                 scaleBlocks={scaleBlocks}
                 events={validEvents}

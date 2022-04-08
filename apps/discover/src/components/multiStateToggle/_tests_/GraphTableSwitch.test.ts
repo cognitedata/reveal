@@ -1,19 +1,21 @@
 import { fireEvent, screen } from '@testing-library/react';
 
 import { testRenderer } from '__test-utils/renderer';
+import { VIEW_MODES } from 'pages/authorized/search/well/inspect/modules/events/Npt/constants';
 
-import { GraphTableSwitch, Props, VIEW_MODES } from '../GraphTableSwitch';
+import { MultiStateToggle, Props } from '../MultiStateToggle';
 
 const onChange = jest.fn();
 
-const props = {
-  viewMode: 'Graph',
+const props: Props = {
+  activeOption: 'Graph',
+  options: VIEW_MODES,
   onChange,
 };
 
 describe('Graph Table Switch', () => {
   const page = (viewProps?: Props) =>
-    testRenderer(GraphTableSwitch, undefined, viewProps);
+    testRenderer(MultiStateToggle, undefined, viewProps);
 
   const defaultTestInit = async () => {
     return {

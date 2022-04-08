@@ -12,14 +12,16 @@ import {
 } from 'modules/wellSearch/selectors';
 
 import CasingView from './CasingView/CasingView';
+import { SideModes } from './CasingView/types';
 import { CasingViewListWrapper } from './elements';
 import { getFortmattedCasingData } from './helper';
 
 interface Props {
   scrollRef: React.RefObject<HTMLDivElement>;
+  sideMode: SideModes;
 }
 
-export const CasingGraphView: React.FC<Props> = ({ scrollRef }) => {
+export const CasingGraphView: React.FC<Props> = ({ scrollRef, sideMode }) => {
   const { data: preferredUnit } = useUserPreferencesMeasurement();
 
   const { casings, isLoading } = useCasingsForTable();
@@ -52,6 +54,7 @@ export const CasingGraphView: React.FC<Props> = ({ scrollRef }) => {
                 unit={preferredUnit}
                 events={events[wellbore.id]}
                 isEventsLoading={isEventsLoading}
+                sideMode={sideMode}
               />
             );
           })

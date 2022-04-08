@@ -5,10 +5,11 @@ import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { UserPreferredUnit } from 'constants/units';
 
+import { SIDE_MODES } from '../../constants';
 import CasingView from '../CasingView';
-import { CasingViewType } from '../interfaces';
+import { CasingViewTypeProps } from '../interfaces';
 
-const props: CasingViewType = {
+const props: CasingViewTypeProps = {
   wellboreName: 'Wllbore 1',
   wellName: 'Well 1',
   unit: UserPreferredUnit.FEET,
@@ -24,12 +25,13 @@ const props: CasingViewType = {
       depthUnit: '',
     },
   ],
+  sideMode: SIDE_MODES.One,
 };
 
 describe('Casing view', () => {
   const defaultStore = getMockedStore();
 
-  const page = (props?: CasingViewType, store: Store = defaultStore) =>
+  const page = (props?: CasingViewTypeProps, store: Store = defaultStore) =>
     testRenderer(CasingView, store, props);
 
   const defaultTestInit = async () => {
