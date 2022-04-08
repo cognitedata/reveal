@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { debounce } from 'lodash';
 
-import { Button, Input, Title } from '@cognite/cogs.js';
+import { Button, Input } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { CSVLink } from 'react-csv';
@@ -9,9 +9,9 @@ import { escapeCSVValue } from 'utils/utils';
 import Modal, { ModalProps } from 'components/Modal/Modal';
 import Message from 'components/Message/Message';
 import { useDownloadData } from 'hooks/table-data';
+import { RAW_PAGE_SIZE_LIMIT } from 'utils/constants';
 
 const COLUMNS_IGNORED = ['column-index', 'lastUpdatedTime'];
-const MAX_ROWS = 100_000;
 
 type DownloadTableModalProps = {
   databaseName: string;
@@ -68,7 +68,7 @@ const DownloadTableModal = ({
 
   const isItValidRowNumber = (n: string | number): boolean => {
     const count = Number(n);
-    return Number.isInteger(count) && count > 0 && count <= MAX_ROWS;
+    return Number.isInteger(count) && count > 0 && count <= RAW_PAGE_SIZE_LIMIT;
   };
 
   return (
@@ -92,16 +92,12 @@ const DownloadTableModal = ({
         </CSVLink>,
       ]}
       onCancel={handleClose}
-      title={
-        <StyledDownloadTableModalTitle level={5}>
-          Download as csv {tableName}
-        </StyledDownloadTableModalTitle>
-      }
+      title={`Download as csv ${tableName}`}
       visible={visible}
       {...modalProps}
     >
       <Message
-        message={`The download option is limited to ${MAX_ROWS} rows.`}
+        message={`The download option is limited to ${RAW_PAGE_SIZE_LIMIT} rows.`}
         type="info"
       />
       <StyledRowsInputWrapper>
@@ -117,13 +113,6 @@ const DownloadTableModal = ({
 
 const StyledCancelButton = styled(Button)`
   margin-right: 8px;
-`;
-
-const StyledDownloadTableModalTitle = styled(Title)`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 312px;
 `;
 
 const StyledRowsInputWrapper = styled.div`
