@@ -33,6 +33,7 @@ describe(HtmlOverlayTool.name, () => {
     fakeGetBoundingClientRect(canvas, 0, 0, 128, 128);
 
     renderer = new THREE.WebGLRenderer({ context, canvas });
+    renderer.render = jest.fn();
 
     canvasContainer = document.createElement('div');
     canvasContainer.style.width = '640px';
