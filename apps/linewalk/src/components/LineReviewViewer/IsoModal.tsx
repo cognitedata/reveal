@@ -314,7 +314,7 @@ const IsoModal: React.FC<IsoModalProps> = ({
         background: 'white',
         border: '1px solid rgba(0, 0, 0, 0.15)',
         borderRadius: 8,
-        zIndex: layers.OVERLAY,
+        zIndex: layers.OVERLAY - 1,
         padding: '25px 20px',
         overflow: 'hidden',
         display: 'flex',
