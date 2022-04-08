@@ -9,6 +9,7 @@ import {
   selectAllJobsForAllFilesDict,
   selectAllProcessFiles,
   selectIsPollingComplete,
+  selectIsProcessing,
   selectIsProcessingStarted,
   selectJobIdsByFileId,
   selectJobsByFileId,
@@ -340,9 +341,7 @@ describe('Test file process selectors', () => {
 
     test('Return jobs by ascending order of file ids for mock state', () => {
       const jobs = selectProcessSortedFiles(mockRootState);
-      expect(jobs.map((job) => job.id)).toEqual([
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
-      ]);
+      expect(jobs.map((job) => job.id)).toEqual(mockFileIds);
     });
 
     // by Name
@@ -632,6 +631,32 @@ describe('Test file process selectors', () => {
       const visionFiles: VisionFile[] =
         selectProcessAllSelectedFilesInSortedOrder(modifiedMockRootState);
       expect(visionFiles).toEqual([undefined]);
+    });
+  });
+
+  describe('Test selectIsProcessing', () => {
+    test('every file gets processing false for initial process state', () => {
+      expect(
+        selectIsProcessing(processSliceInitialState, INVALID_FILE_ID)
+      ).toBe(false);
+    });
+
+    test('when no process state available for related file', () => {
+      expect(selectIsProcessing(mockProcessState, INVALID_FILE_ID)).toBe(false);
+    });
+
+    test('files with all completed or fail jobs', () => {
+      const fileIds = [13, 14, 15];
+      fileIds.forEach((fileId) => {
+        expect(selectIsProcessing(mockProcessState, fileId)).toBe(false);
+      });
+    });
+
+    test('if file has at least one not Completed job', () => {
+      const fileIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+      fileIds.forEach((fileId) => {
+        expect(selectIsProcessing(mockProcessState, fileId)).toBe(true);
+      });
     });
   });
 });

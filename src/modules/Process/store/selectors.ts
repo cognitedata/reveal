@@ -304,3 +304,25 @@ export const selectProcessSummary = createSelector(
     };
   }
 );
+
+export const selectIsProcessing = createSelector(
+  [
+    (state: ProcessState) => state,
+    (state: ProcessState, fileId: number) => fileId,
+  ],
+  (state: ProcessState, fileId: number) => {
+    const { files, jobs } = state;
+    const notCompletedStates = ['Queued', 'Collecting', 'Running'];
+
+    const relatedJobIds = files.byId[fileId]?.jobIds;
+    if (relatedJobIds) {
+      const relatedJobStatuses = relatedJobIds.map(
+        (relatedJobId) => jobs.byId[relatedJobId]?.status
+      );
+      return relatedJobStatuses.some((relatedJobStatus) =>
+        notCompletedStates.includes(relatedJobStatus)
+      );
+    }
+    return false;
+  }
+);

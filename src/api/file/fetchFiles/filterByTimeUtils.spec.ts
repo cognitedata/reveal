@@ -67,7 +67,7 @@ describe('Testing filterByTime fn', () => {
         },
         items
       )
-    ).toHaveLength(8);
+    ).toHaveLength(11);
   });
   it('max time defined', () => {
     expect(

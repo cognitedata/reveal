@@ -13,7 +13,7 @@ export const getTenant = () => {
 };
 
 // TODO: add test
-export const getIdfromUrl = () => {
+export const getIdFromUrl = () => {
   const { pathname } = window.location;
   if (!pathname) {
     return '';
