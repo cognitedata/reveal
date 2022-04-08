@@ -22,6 +22,7 @@ describe('EffectRenderManager', () => {
   const renderer = new THREE.WebGLRenderer({ context });
   const setRenderTargetSpy = jest.spyOn(renderer, 'setRenderTarget');
   const getRenderTargetSpy = jest.spyOn(renderer, 'getRenderTarget');
+  renderer.render = jest.fn();
 
   const camera = new THREE.PerspectiveCamera();
   const scene = new THREE.Scene();
@@ -71,6 +72,7 @@ describe('EffectRenderManager', () => {
   test('sets up multisample for WebGL 2', () => {
     // Arrange
     const webglRenderer = new THREE.WebGLRenderer({ context });
+    webglRenderer.render = jest.fn();
     const options: RenderOptions = {
       multiSampleCountHint: 4
     };
