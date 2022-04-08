@@ -29,6 +29,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 
   beforeEach(() => {
     renderer = new THREE.WebGLRenderer({ context: glContext });
+    renderer.render = jest.fn();
     renderManager = new Mock<EffectRenderManager>()
       .setup(e => e.getRenderTarget)
       .returns(renderer.getRenderTarget)
