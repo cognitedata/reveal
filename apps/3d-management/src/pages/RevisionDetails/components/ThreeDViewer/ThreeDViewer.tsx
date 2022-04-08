@@ -62,6 +62,7 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
       viewerLocal = new props.ViewerConstructor({
         sdk,
         domElement: canvasWrapperRef.current,
+        continuousModelStreaming: true,
       } as any);
       setViewer(viewerLocal);
     })();
