@@ -64,7 +64,7 @@ const ThreeDee: React.FC<ThreeDeeProps> = ({
     modules.install();
 
     setRoot(modules.createRoot());
-  }, [fileId, wells]);
+  }, [fileId, wells, wellLogs]);
 
   return (
     <React.StrictMode>

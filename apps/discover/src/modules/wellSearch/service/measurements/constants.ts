@@ -10,19 +10,20 @@ export enum GraphTrackEnum {
 
 /**
  * Measurement types to fetch with regard to each graph track.
+ * To increase the 3D View performance some filters are commented out temporarily
  */
 export const WELL_LOGS_MEASUREMENT_TYPES = {
   [GraphTrackEnum.GAMMA_RAY_AND_CALIPER]: ['gamma ray', 'caliper'],
   [GraphTrackEnum.RESISTIVITY]: [
     'deep resistivity',
-    'medium resistivity',
-    'micro resistivity',
-    'shallow resistivity',
+    // 'medium resistivity',
+    // 'micro resistivity',
+    // 'shallow resistivity',
   ],
-  [GraphTrackEnum.DENSITY_AND_NEUTRON]: ['density', 'neutron porosity'],
-  [GraphTrackEnum.GEOMECHANICS_AND_PPFG]: [
-    'pore pressure',
-    'fracture pressure',
-    'geomechanics',
-  ],
+  // [GraphTrackEnum.DENSITY_AND_NEUTRON]: ['density', 'neutron porosity'],
+  // [GraphTrackEnum.GEOMECHANICS_AND_PPFG]: [
+  //   'pore pressure',
+  //   'fracture pressure',
+  //   'geomechanics',
+  // ],
 };
