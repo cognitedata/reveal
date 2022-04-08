@@ -24,67 +24,7 @@ private-keys/power-ops-e2e-azure-dev.jwk-key.json
 
 ## e2e tests
 
-End-to-end tests can be written with either [Testcafe](https://github.com/DevExpress/testcafe) or [Cypress](https://github.com/cypress-io/cypress)
-
-### Run e2e tests with testcafe
-
-Tests are are stored in `/testcafe`.
-
-To run testcafe tests locally:
-
-1. Start the app
-
-```sh
-yarn start
-```
-
-2. Run Testcafe tests
-
-```sh
-yarn testcafe:run-live
-```
-
-Note: if you want to run just one testcafe file, you can do that like this:
-
-```sh
-yarn testcafe:run-live comments
-```
-
-#### Batch testcafe testing
-
-```bazel
-copy_to_bin(
-    name = "copy_main_testcafe_files",
-    # Every files needed for all your testcafe tests (like utils)
-    srcs = FILES,
-)
-
-testcafe_batch_test(
-    name = "base_name_for_every_tests",
-    # folder name to store artifacts during CI run
-    app_name = "app-name",
-    # command line arguments to run testcafe
-    args = ARGS,
-    data = TESTCAFE_DEPS + [
-        ":my_build_target",
-        ":copy_main_testcafe_files",
-    ],
-    # Path to your script serving your build files
-    serve_script = "./scripts/testcafe-bazel-serve.sh",
-    # Make sure your starting port does not interfere with existing ones in other apps
-    starting_port = 11111,
-    # Insert as many globs here as you want runs of your tests
-    testcafe_files = [
-        glob(["testcafe/folder1/*.spec.ts"]),
-        glob(["testcafe/folder2/*.spec.ts"]),
-        glob(["testcafe/folder3/*.spec.ts"]),
-        glob([
-            "testcafe/folder4/*.spec.ts,
-            "testcafe/folder5/*.spec.ts,
-        "]),
-    ],
-)
-```
+End-to-end tests can be written with [Cypress](https://github.com/cypress-io/cypress)
 
 ### Run e2e tests with cypress
 

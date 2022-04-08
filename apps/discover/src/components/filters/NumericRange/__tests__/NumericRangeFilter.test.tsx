@@ -96,40 +96,31 @@ describe('Numeric Range Filter', () => {
     expect(screen.getByTestId(fromId)).toHaveAttribute('readonly');
   });
 
-  it(`Should limit input value to minimum value`, async () => {
-    const minValue = values[0];
-
+  it(`Should show error when value is less than min`, async () => {
     await defaultTestInit(defaultProps);
 
-    fireEvent.change(screen.getByTestId(fromId), {
-      target: { value: minValue - 1 },
-    });
+    await userEvent.type(screen.getByTestId(fromId), '{backspace}-1');
     fireEvent.blur(screen.getByTestId(fromId));
-    expect(screen.getByTestId(fromId)).toHaveValue(minValue);
+
+    expect(screen.getByText(`Min value is ${values[0]}`)).toBeInTheDocument();
   });
 
-  it(`Should limit input value to maximum value`, async () => {
-    const maxValue = values[1];
-
+  it(`Should show error when value is higher than max`, async () => {
     await defaultTestInit(defaultProps);
 
-    fireEvent.change(screen.getByTestId(toId), {
-      target: { value: maxValue + 1 },
-    });
+    await userEvent.type(screen.getByTestId(toId), '1');
     fireEvent.blur(screen.getByTestId(toId));
-    expect(screen.getByTestId(toId)).toHaveValue(maxValue);
+    expect(screen.getByText(`Max value is ${values[1]}`)).toBeInTheDocument();
   });
 
   it(`Should fire correct callback values on input changes`, async () => {
     await defaultTestInit(defaultProps);
     const fromInput = screen.getByTestId(fromId);
-    fromInput.focus();
-    await userEvent.keyboard('5');
+    await userEvent.type(fromInput, '5');
     fireEvent.blur(fromInput);
     expect(onValueChange).toBeCalledWith([5, 100]);
 
     const toInput = screen.getByTestId(toId);
-    toInput.focus();
     await userEvent.type(toInput, '{backspace}{backspace}5');
     fireEvent.blur(toInput);
     expect(onValueChange).toBeCalledWith([5, 15]);

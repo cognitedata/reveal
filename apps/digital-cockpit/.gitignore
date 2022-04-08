@@ -18,10 +18,9 @@
 .env.test.local
 .env.production.local
 
-# testcafe
-testcafe/screenshots
-testcafe/videos
+# e2e
 res.xml
+*.jwk-key.json
 
 npm-debug.log*
 yarn-debug.log*

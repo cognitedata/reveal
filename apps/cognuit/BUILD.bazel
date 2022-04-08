@@ -226,8 +226,8 @@ sh_binary(
     srcs = ["//rules/build_sed:sed_darwin.sh"],
 )
 
-# Replace PUBLIC_URL_VALUE placeholder with '' in order to run testcafe
-# If you need additional env vars being set during testcafe run add them into
+# Replace PUBLIC_URL_VALUE placeholder with '' in order to run e2e tests
+# If you need additional env vars being set during e2e tests run add them into
 # :build target above and override here
 build_sed(
     name = "build_sed",

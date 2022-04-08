@@ -24,9 +24,6 @@
     "storybook:bazel": "ibazel run :start-storybook",
     "build-storybook": "../../node_modules/.bin/build-storybook",
     "build-storybook:bazel": "bazel build :storybook-static",
-    "testcafe:start-idp": "./scripts/start-fake-idp.sh",
-    "testcafe:run-live": "./scripts/testcafe-run-live.sh",
-    "testcafe:bazel-run-live": "ibazel run :testcafe",
     "update-helpers": "bazel run :generate_package_json_helpers",
     "deploy": "cd ../.. && ./scripts/deploy.sh cognite-ornate"
   },

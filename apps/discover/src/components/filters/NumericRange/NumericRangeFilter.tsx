@@ -43,8 +43,6 @@ export const NumericRangeFilter: React.FC<Props> = ({
     selectedMax,
   ]);
 
-  const [fastMin, fastMax] = fastMinMax;
-
   const [focusedField, setFocusedField] = useState<'min' | 'max' | undefined>(
     undefined
   );
@@ -76,29 +74,31 @@ export const NumericRangeFilter: React.FC<Props> = ({
   };
 
   const handleMinChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { target } = event;
-    setFastMinMax((values) => [Number(target.value), values[1]]);
+    const { value } = event.target;
+    setFastMinMax((values) => {
+      return [Number(value), values[1]];
+    });
   };
 
   const handleMaxChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { target } = event;
-    setFastMinMax((values) => [values[0], Number(target.value)]);
+    const { value } = event.target;
+    setFastMinMax((values) => [values[0], Number(value)]);
   };
 
   const isValid = () => !getMinValueError() && !getMaxValueError();
 
   const handleMinBlur = () => {
     if (isValid()) {
-      if (fastMin !== selectedMin) {
-        onValueChange([fastMin, fastMax]);
+      if (fastMinMax[0] !== selectedMin) {
+        onValueChange([fastMinMax[0], fastMinMax[1]]);
       }
     }
   };
 
   const handleMaxBlur = () => {
     if (isValid()) {
-      if (fastMax !== selectedMax) {
-        onValueChange([fastMin, fastMax]);
+      if (fastMinMax[1] !== selectedMax) {
+        onValueChange([fastMinMax[0], fastMinMax[1]]);
       }
     }
   };
@@ -113,22 +113,22 @@ export const NumericRangeFilter: React.FC<Props> = ({
   };
 
   const getMinValueError = () => {
-    if (fastMin < min) {
+    if (fastMinMax[0] < min) {
       return `Min value is ${min}`;
     }
-    if (fastMin > fastMax && focusedField === 'min') {
-      return `Max value is ${fastMax}`;
+    if (fastMinMax[0] > fastMinMax[1] && focusedField === 'min') {
+      return `Max value is ${fastMinMax[1]}`;
     }
 
     return false;
   };
 
   const getMaxValueError = () => {
-    if (fastMax > max) {
+    if (fastMinMax[1] > max) {
       return `Max value is ${max}`;
     }
-    if (fastMax < fastMin && focusedField === 'max') {
-      return `Min value is ${fastMin}`;
+    if (fastMinMax[1] < fastMinMax[0] && focusedField === 'max') {
+      return `Min value is ${fastMinMax[0]}`;
     }
 
     return false;

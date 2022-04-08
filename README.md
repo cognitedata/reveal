@@ -107,7 +107,7 @@ When you have your project available you need to:
 
 1. Ask in #infrastructure to populate `apps-e2e-fake-idp-private-keys` secret with the new key being the name of your project.
 2. In `public/sidecar.js` inside `fakeIdp` array object define `name: <projectName>` and `project: <projectName>` parameters which will render a button `Login with Fake IDP (<projectName>)`.
-3. Inside your app's testcafe / cypress role find and click the button above in order to obtain a token.
+3. Inside your app's cypress role find and click the button above in order to obtain a token.
 
 ## Release procedure
 

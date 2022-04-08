@@ -8,8 +8,7 @@
 
 # testing
 /coverage
-testcafe/screenshots
-testcafe/videos
+*.jwk-key.json
 
 # production
 /build

@@ -18,11 +18,8 @@ coverage
 # NPM
 npm-public-credentials.txt
 
-# testcafe
+# e2e
 *.jwk-key.json
-testcafe/screenshots
-testcafe/videos
-testcafe/logs
 res.xml
 
 #storybook

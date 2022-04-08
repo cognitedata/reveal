@@ -244,17 +244,14 @@ depcheck(`${process.cwd()}/${path.dirname(srcPath)}`, {
         excludeNameStartsWith(
           excludeNameStartsWith(
             excludeNameStartsWith(
-              excludeNameStartsWith(
-                excludeInternal(package.devDependencies),
-                '@bazel/'
-              ),
-              '@types/'
+              excludeInternal(package.devDependencies),
+              '@bazel/'
             ),
-            'cypress'
+            '@types/'
           ),
-          '@storybook/react'
+          'cypress'
         ),
-        'testcafe'
+        '@storybook/react'
       ),
       missingWithPeerDeps
     ),

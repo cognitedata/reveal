@@ -6,7 +6,7 @@ import { CustomActionFunction } from 'node-plop';
 import { AddLibraryActionConfig } from '../types';
 
 type LibraryAction = (base: string) => void;
-type PossibleActions = 'cypress' | 'testcafe' | 'none';
+type PossibleActions = 'cypress' | 'none';
 
 const removeFilesFromFolder = (folder: string, filesToRemove: string): void => {
   // eslint-disable-next-line no-console

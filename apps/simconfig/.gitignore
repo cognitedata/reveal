@@ -19,7 +19,7 @@ coverage
 # NPM
 npm-public-credentials.txt
 
-# testcafe
+# e2e
 *.jwk-key.json
 res.xml
 

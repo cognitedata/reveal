@@ -6,16 +6,9 @@ module.exports = {
     'airbnb',
     ...baseConfig.extends,
     'plugin:react/recommended',
-    'plugin:testcafe/recommended',
     'plugin:testing-library/react',
   ],
-  plugins: [
-    ...baseConfig.plugins,
-    'testing-library',
-    'react',
-    'react-hooks',
-    'testcafe',
-  ],
+  plugins: [...baseConfig.plugins, 'testing-library', 'react', 'react-hooks'],
   rules: {
     ...baseConfig.rules,
     '@cognite/no-unissued-todos': 'error',
