@@ -1565,7 +1565,6 @@
 
 "@cognite/reveal@link:../viewer/dist":
   version "0.0.0"
-  uid ""
 
 "@cognite/sdk-1.x@npm:@cognite/sdk@^3.4.0":
   version "3.5.2"
@@ -1627,20 +1626,8 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk-core@^4.1.1":
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.1.1.tgz#c0793c68be3c965707a1b7948669f9401885951e"
-  integrity sha512-4/7f0xgIVN/tJXD+0fyEu0mOZeAg0tRiYucx3IngLT9jXAjMuk1SeJbrQPWk3lRyuNj8BkW/2SlUtsvGnleljQ==
-  dependencies:
-    cross-fetch "^3.0.4"
-    is-buffer "^2.0.5"
-    lodash "^4.17.11"
-    query-string "^5.1.1"
-    url "^0.11.0"
-
 "@cognite/sdk@link:../viewer/node_modules/@cognite/sdk":
   version "0.0.0"
-  uid ""
 
 "@cognite/three-combo-controls@^1.4.3":
   version "1.4.3"
@@ -4044,10 +4031,10 @@ concat-map@0.0.1:
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
 
-concat-md@0.3.8:
-  version "0.3.8"
-  resolved "https://registry.yarnpkg.com/concat-md/-/concat-md-0.3.8.tgz#d891e878cb96dadb8e47554257fff99327f31e7d"
-  integrity sha512-qWd+BqcAaYE9pqR9BbId5Nx4TFdeNJjP6ooIon4QjjH4udMRjkDYoxgS1M3ubCiQI/uT42rv7cNXJobw1jeYqA==
+concat-md@0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/concat-md/-/concat-md-0.4.0.tgz#4555a66a737d05af6d466ee2e1f5b28fa68f6941"
+  integrity sha512-86jhWjmNVF6CHhCwZdA+LKExlyz305lsUfYeOC12xrLcJKyi+EXzS44/FvH1wu/+lVXaSIgj8lWGnCtSKtR6Vw==
   dependencies:
     doctoc "^1.4.0"
     front-matter "^4.0.2"
@@ -11557,11 +11544,6 @@ three@0.133.0:
   version "0.133.0"
   resolved "https://registry.yarnpkg.com/three/-/three-0.133.0.tgz#41427306c731a89407221b7be48c7a63580400e7"
   integrity sha512-1p8xTXnJD4hMM2Ktm7+FqOOBoImBoftKnKtAZT/b9AQeL3LhRkVu/HnIJhWA69qIMvUYpjfnunNsO4WdObw1ZQ==
-
-three@0.137.5:
-  version "0.137.5"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.137.5.tgz#a1e34bedd0412f2d8797112973dfadac78022ce6"
-  integrity sha512-rTyr+HDFxjnN8+N/guZjDgfVxgHptZQpf6xfL/Mo7a5JYIFwK6tAq3bzxYYB4Ae0RosDZlDuP+X5aXDXz+XnHQ==
 
 three@0.138.3:
   version "0.138.3"
