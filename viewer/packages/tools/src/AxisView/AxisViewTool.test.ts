@@ -25,6 +25,7 @@ describe('AxisViewTool', () => {
     mockClientAuthentication(sdk);
     const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
     const renderer = new THREE.WebGLRenderer({ context });
+    renderer.render = jest.fn();
 
     domSize = { height: 480, width: 640 };
     canvasContainer = document.createElement('div');
