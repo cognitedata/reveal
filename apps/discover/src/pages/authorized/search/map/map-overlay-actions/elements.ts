@@ -1,9 +1,7 @@
 import styled from 'styled-components/macro';
-import layers from 'utils/zindex';
 
 import { Menu } from '@cognite/cogs.js';
 
-import { Paper } from 'components/paper';
 import { Flex, FlexAlignItems, sizes } from 'styles/layout';
 
 const InlineBlock = styled.div`
@@ -87,22 +85,6 @@ const AssetList = styled.ul`
   padding-top: 12px;
 `;
 
-const BasePaper = styled(Paper)`
-  width: 100%;
-  position: absolute;
-  margin-top: 8px;
-
-  background-color: white;
-  z-index: ${layers.LAYER_SELECTOR};
-  top: 50px;
-  left: 0px;
-  border-radius: 4px;
-`;
-
-const AssetsPaper = styled(BasePaper)`
-  padding: 0px !important;
-`;
-
 const AssetListItemContainer = styled(Flex)`
   justify-content: space-between;
   align-items: center;
@@ -145,7 +127,6 @@ export {
   ButtonContainer,
   SearchableAssetSuggestion,
   AssetList,
-  AssetsPaper,
   AssetListItem,
   AssetHeaderContainer,
   LayerWrapper,

@@ -26,7 +26,7 @@ export const DomainFilter: React.FC<DomainFilterProps> = ({
 
       {isOpen && (
         <ClickAwayListener onClickAway={handleClose}>
-          <Panel elevation={6}>
+          <Panel>
             {domainList.map((domainListItem) => {
               return (
                 <DomainFilterRow
