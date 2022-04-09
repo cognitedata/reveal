@@ -217,16 +217,10 @@ export class WellLogCreator {
       if (mdHoleStart !== undefined && mdHoleStartUnit) {
         topMd = Util.getNumberWithUnit(mdHoleStart, mdHoleStartUnit);
       }
-      if (Number.isNaN(topMd)) {
-        continue;
-      }
 
       let baseMd = Number.NaN;
       if (mdHoleEnd && mdHoleEndUnit) {
         baseMd = Util.getNumberWithUnit(mdHoleEnd, mdHoleEndUnit);
-      }
-      if (Number.isNaN(baseMd)) {
-        continue;
       }
 
       const { subtype, description } = event;

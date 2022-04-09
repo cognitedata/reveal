@@ -1,11 +1,6 @@
 import { ICasing } from 'SubSurface/Wells/Interfaces/ICasing';
 import { ILog } from 'SubSurface/Wells/Interfaces/ILog';
-import {
-  INds,
-  INpt,
-  IRiskEvent,
-  IRiskMetadata,
-} from 'SubSurface/Wells/Interfaces/IRisk';
+import { INds, INpt } from 'SubSurface/Wells/Interfaces/IRisk';
 import {
   ITrajectory,
   TrajectoryId,
@@ -86,8 +81,14 @@ export class BPData {
     this.generateTrajectoryMap(trajectories);
     this.generateTrajectoryDataColumnIndexes(trajectoryData);
     this.generateTrajectoryDataMap(trajectoryData);
-    this.generateWellBoreRiskEventMap(this.wellBoreToNDSEventsMap, ndsEvents);
-    this.generateWellBoreRiskEventMap(this.wellBoreToNPTEventsMap, nptEvents);
+    this.generateWellBoreNdsRiskEventMap(
+      this.wellBoreToNDSEventsMap,
+      ndsEvents
+    );
+    this.generateWellBoreNptRiskEventMap(
+      this.wellBoreToNPTEventsMap,
+      nptEvents
+    );
     this._wellBoreToLogsMap = logs;
     this.generateWellBoreToCasingDataMap(casings);
   }
@@ -197,14 +198,34 @@ export class BPData {
     }
   }
 
-  private generateWellBoreRiskEventMap(
-    riskEventMap: Map<string, IRiskEvent<IRiskMetadata>[]>,
-    riskEvents?: IRiskEvent<IRiskMetadata>[]
+  private generateWellBoreNptRiskEventMap(
+    riskEventMap: Map<string, INpt[]>,
+    riskEvents?: INpt[]
   ) {
     if (!riskEvents || !riskEvents.length) return;
     for (const event of riskEvents) {
       const wellBoreIds = event.assetIds;
-      const valid = this.validateRiskEvent(event, wellBoreIds);
+      const valid = this.validateNptRiskEvent(event, wellBoreIds);
+      if (valid) {
+        for (const wellBoreId of wellBoreIds) {
+          if (this.wellBoreToWellMap.has(wellBoreId)) {
+            if (!riskEventMap.get(wellBoreId)) riskEventMap.set(wellBoreId, []);
+
+            riskEventMap.get(wellBoreId)?.push(event);
+          }
+        }
+      }
+    }
+  }
+
+  private generateWellBoreNdsRiskEventMap(
+    riskEventMap: Map<string, INds[]>,
+    riskEvents?: INds[]
+  ) {
+    if (!riskEvents || !riskEvents.length) return;
+    for (const event of riskEvents) {
+      const wellBoreIds = event.assetIds;
+      const valid = this.validateNdsRiskEvent(event, wellBoreIds);
       if (valid) {
         for (const wellBoreId of wellBoreIds) {
           if (this.wellBoreToWellMap.has(wellBoreId)) {
@@ -294,13 +315,10 @@ export class BPData {
     return false;
   }
 
-  private validateRiskEvent(
-    event: IRiskEvent<IRiskMetadata>,
-    wellBoreIds: any[]
-  ): boolean {
+  private validateNptRiskEvent(event: INpt, wellBoreIds: any[]): boolean {
     if (!wellBoreIds || !wellBoreIds.length) {
       console.warn(
-        'Risk Event wellbore ID not found, AssetIds are empty!',
+        'NPT Risk Event wellbore ID not found, AssetIds are empty!',
         event
       );
       return false;
@@ -311,7 +329,39 @@ export class BPData {
       return true;
     }
 
-    console.warn('Orphan Risk Event, Parent Bore not found!', event);
+    console.warn('Orphan NPT Risk Event, Parent Bore not found!', event);
+    return false;
+  }
+
+  private validateNdsRiskEvent(event: INds, wellBoreIds: any[]): boolean {
+    const { md_hole_start: mdHoleStart, md_hole_start_unit: mdHoleStartUnit } =
+      event.metadata;
+
+    if (!mdHoleStart) {
+      console.warn('NDS Risk Event missing md_hole_start!', event);
+      return false;
+    }
+
+    if (!mdHoleStartUnit) {
+      console.warn('NDS Risk Event missing md_hole_start_unit!', event);
+      return false;
+    }
+
+    if (!wellBoreIds || !wellBoreIds.length) {
+      console.warn(
+        'NDS Risk Event wellbore ID not found, AssetIds are empty!',
+        event
+      );
+      return false;
+    }
+    if (event.metadata)
+      if (
+        wellBoreIds.some((wellBoreId) => this.wellBoreToWellMap.has(wellBoreId))
+      ) {
+        return true;
+      }
+
+    console.warn('Orphan NDS Risk Event, Parent Bore not found!', event);
     return false;
   }
 
