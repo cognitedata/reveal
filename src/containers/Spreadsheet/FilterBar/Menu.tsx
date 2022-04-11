@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { Button, Colors, Icon, Menu as CogsMenu } from '@cognite/cogs.js';
+import { Button, Icon, Menu as CogsMenu } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 
@@ -85,9 +85,4 @@ const Item = styled.span<{ danger?: boolean }>`
   align-items: center;
   justify-content: flex-start;
   font-weight: 500;
-
-  & > * {
-    color: ${({ danger }) =>
-      danger ? Colors['text-danger'].hex() : 'inherit'};
-  }
 `;
