@@ -38,7 +38,7 @@ import { RootFindingInfoDrawer } from './infoDrawers/RootFindingInfoDrawer';
 
 import type { AppLocationGenerics } from 'routes';
 
-export function AdvancedStep({ isEditing }: StepProps) {
+export function AdvancedStep({ isDisabled }: StepProps) {
   const { values, setFieldValue } = useFormikContext<CalculationTemplate>();
   const {
     data: { definitions },
@@ -271,7 +271,7 @@ export function AdvancedStep({ isEditing }: StepProps) {
                   <div className="title">Method</div>
                   <Field
                     as={Select}
-                    isDisabled={isEditing}
+                    isDisabled={isDisabled}
                     name="estimateBHP.method"
                     options={bhpEstimationMethodOptions}
                     value={bhpEstimationMethodOptions.find(
@@ -291,7 +291,7 @@ export function AdvancedStep({ isEditing }: StepProps) {
                   </FormHeader>
                   <FormRowStacked>
                     <NumberField
-                      disabled={isEditing}
+                      disabled={isDisabled}
                       min={0}
                       name="estimateBHP.gaugeDepth.value"
                       title="Length"
@@ -367,7 +367,7 @@ export function AdvancedStep({ isEditing }: StepProps) {
           </FormHeader>
           <FormRowStacked>
             <NumberField
-              disabled={isEditing}
+              disabled={isDisabled}
               min={0}
               name="gaugeDepth.value"
               title="Length"

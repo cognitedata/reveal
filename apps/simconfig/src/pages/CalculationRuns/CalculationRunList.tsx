@@ -1,10 +1,14 @@
 import { useState } from 'react';
 
-import { formatDuration, formatISO9075, intervalToDuration } from 'date-fns';
+import {
+  formatDuration,
+  formatISO9075,
+  intervalToDuration,
+  parseISO,
+} from 'date-fns';
 import styled from 'styled-components/macro';
 
 import { Collapse, Icon, Label, Skeleton } from '@cognite/cogs.js';
-import type { Timestamp } from '@cognite/sdk';
 import type { CalculationRun } from '@cognite/simconfig-api-sdk/rtk';
 
 import { CalculationRunTypeIndicator } from 'components/models/CalculationList/CalculationRunTypeIndicator';
@@ -12,18 +16,15 @@ import { CalculationStatusIndicator } from 'components/models/CalculationList/Ca
 
 import { CalculationRunChartButtons } from '../CalculationRuns/CalculationRunChartButtons';
 
-const formatCalculationDate = (date?: number) =>
-  date ? formatISO9075(new Date(date)) : 'n/a';
+const formatCalculationDate = (date?: string) =>
+  date ? formatISO9075(parseISO(date)) : 'n/a';
 
-const formatCalculationDuration = (
-  start?: Timestamp | number,
-  end?: Timestamp | number
-) =>
+const formatCalculationDuration = (start?: string, end?: string) =>
   start && end
     ? formatDuration(
         intervalToDuration({
-          start: new Date(start),
-          end: new Date(end),
+          start: parseISO(start),
+          end: parseISO(end),
         })
       ) || '-'
     : 'n/a';

@@ -37,6 +37,10 @@ export async function timeseriesSearch({
   endOffset?: number;
   datapointLimit?: number;
 }): Promise<TimeseriesOption[]> {
+  if (!query) {
+    return [];
+  }
+
   const timeseriesList = await client.timeseries.search({
     search: {
       query,

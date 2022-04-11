@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
+import { parseISO } from 'date-fns';
 import styled from 'styled-components/macro';
 
 import {
@@ -77,20 +78,22 @@ export function CalculationList({
     );
 
   const isRunTriggered = useCallback(
-    (externalId: string, lastUpdatedTime?: number) => {
+    (externalId: string, lastUpdated?: Date | string) => {
       // if the run has not run before, or has not been triggered manually
       if (
-        !lastUpdatedTime ||
+        !lastUpdated ||
         triggeredRuns === undefined ||
         !(externalId in triggeredRuns)
       ) {
         return false;
       }
+      const lastUpdatedDate =
+        lastUpdated instanceof Date ? lastUpdated : parseISO(lastUpdated);
       // if its manually triggered and triggered time is later than last
       // updated time (ie run button pressed but new data not received yet)
       return (
         externalId in triggeredRuns &&
-        triggeredRuns[externalId] >= new Date(lastUpdatedTime).getTime()
+        triggeredRuns[externalId] >= lastUpdatedDate.getTime()
       );
     },
     [triggeredRuns]
@@ -105,10 +108,11 @@ export function CalculationList({
         (calculation) =>
           calculation.latestRun?.metadata.status === 'ready' ||
           calculation.latestRun?.metadata.status === 'running' ||
-          isRunTriggered(
-            calculation.externalId,
-            calculation.latestRun?.lastUpdatedTime
-          )
+          (calculation.latestRun?.lastUpdatedTime &&
+            isRunTriggered(
+              calculation.externalId,
+              calculation.latestRun.lastUpdatedTime
+            ))
       );
 
     if (hasReadyRunningOrTriggeredCalculation) {
@@ -198,9 +202,12 @@ export function CalculationList({
               className="run-calculation"
               disabled={
                 calculation.latestRun?.metadata.status === 'ready' ||
-                isRunTriggered(
-                  calculation.externalId,
-                  calculation.latestRun?.lastUpdatedTime
+                !!(
+                  calculation.latestRun?.lastUpdatedTime &&
+                  isRunTriggered(
+                    calculation.externalId,
+                    calculation.latestRun.lastUpdatedTime
+                  )
                 )
               }
               icon="Play"

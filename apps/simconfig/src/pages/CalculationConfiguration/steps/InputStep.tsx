@@ -20,7 +20,7 @@ import { InputInfoDrawer } from './infoDrawers/InputInfoDrawer';
 
 import type { AppLocationGenerics } from 'routes';
 
-export function InputStep({ isEditing }: StepProps) {
+export function InputStep({ isDisabled }: StepProps) {
   const { values, setFieldValue } = useFormikContext<CalculationTemplate>();
   const {
     data: { definitions },
@@ -61,7 +61,7 @@ export function InputStep({ isEditing }: StepProps) {
                 <div className="title">Unit</div>
                 <Field
                   as={Select}
-                  isDisabled={isEditing}
+                  isDisabled={isDisabled}
                   name={`inputTimeSeries.${index}.unit`}
                   options={unitTypeOptions[unitType]}
                   value={unitTypeOptions[unitType].find(

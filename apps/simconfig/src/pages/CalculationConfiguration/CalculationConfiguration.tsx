@@ -1,6 +1,7 @@
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
+import { formatISO } from 'date-fns';
 import { Form, Formik, useFormikContext } from 'formik';
 import styled from 'styled-components/macro';
 import * as Yup from 'yup';
@@ -15,6 +16,7 @@ import type {
   TimeSeries,
 } from '@cognite/simconfig-api-sdk/rtk';
 import {
+  useGetCalculationRunListQuery,
   useGetModelCalculationQuery,
   useGetModelCalculationTemplateQuery,
   useGetModelFileQuery,
@@ -92,8 +94,25 @@ export function CalculationConfiguration() {
     { skip: !simulatorConnector?.connectorName }
   );
 
+  const {
+    data: calculationsRunList,
+    isFetching: isFetchingCalculationsRunList,
+    isLoading: isLoadingCalculationsRunList,
+  } = useGetCalculationRunListQuery({
+    project,
+    modelName,
+    simulator,
+    calculationType: encodedCalculationType,
+    eventEndTime: formatISO(new Date()),
+    limit: 1,
+  });
+
   const [upsertCalculation] = useUpsertCalculationMutation();
 
+  const isReadonly =
+    isFetchingCalculationsRunList ||
+    isLoadingCalculationsRunList ||
+    !!calculationsRunList?.calculationRunList.length;
   const isEditing = !!modelCalculation?.configuration;
   const initialValues =
     modelCalculation?.configuration ?? configurationTemplate;
@@ -255,7 +274,7 @@ export function CalculationConfiguration() {
                   'rootFindingSettings'
                 )}
               >
-                <AdvancedStep isEditing={isEditing} />
+                <AdvancedStep isDisabled={isEditing || isReadonly} />
               </Wizard.Step>
               <Wizard.Step
                 icon="InputData"
@@ -266,7 +285,7 @@ export function CalculationConfiguration() {
                   'inputTimeSeries'
                 )}
               >
-                <InputStep isEditing={isEditing} />
+                <InputStep isDisabled={isEditing || isReadonly} />
               </Wizard.Step>
               <Wizard.Step
                 icon="OutputData"
@@ -277,7 +296,7 @@ export function CalculationConfiguration() {
                   'outputTimeSeries'
                 )}
               >
-                <OutputStep isEditing={isEditing} />
+                <OutputStep isDisabled={isEditing || isReadonly} />
               </Wizard.Step>
               <Wizard.Step icon="Checkmark" key="summary" title="Summary">
                 <YupValidationErrors schema={calculationTemplateSchema} />

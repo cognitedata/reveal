@@ -29,5 +29,5 @@ export type ValueOptionType<T> = OptionType<T> &
   Required<Pick<OptionType<T>, 'value'>>;
 
 export interface StepProps {
-  isEditing?: boolean;
+  isDisabled?: boolean;
 }

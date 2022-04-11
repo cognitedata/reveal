@@ -4,7 +4,7 @@ import type { Range } from 'react-date-range';
 import { useMatch, useNavigate, useSearch } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { sub } from 'date-fns';
+import { formatISO, parseISO, sub } from 'date-fns';
 import styled from 'styled-components/macro';
 
 import type { OptionType } from '@cognite/cogs.js';
@@ -132,8 +132,8 @@ export function CalculationRuns() {
     }
 
     setSearchParams({
-      eventStartTime: startDate.getTime(),
-      eventEndTime: endDate.getTime(),
+      eventStartTime: formatISO(startDate),
+      eventEndTime: formatISO(endDate),
     });
   };
 
@@ -147,8 +147,8 @@ export function CalculationRuns() {
             format="YYYY.MM.DD"
             maxDate={new Date()}
             range={{
-              startDate: new Date(+searchFilters.eventStartTime),
-              endDate: new Date(+searchFilters.eventEndTime),
+              startDate: parseISO(searchFilters.eventStartTime),
+              endDate: parseISO(searchFilters.eventEndTime),
             }}
             startDatePlaceholder="Interval"
             onChange={handleDateChange}
@@ -244,8 +244,8 @@ export function CalculationRuns() {
 }
 
 const initialDateRange = {
-  eventStartTime: sub(new Date(), { days: 7 }).getTime().toString(),
-  eventEndTime: new Date().getTime().toString(),
+  eventStartTime: formatISO(sub(new Date(), { days: 7 })),
+  eventEndTime: formatISO(new Date()),
 };
 
 const CalculationRunsContainer = styled.div`

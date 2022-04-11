@@ -452,6 +452,9 @@ function useTimeseries({
         setIsLoading(true);
 
         try {
+          if (!timeseries) {
+            return;
+          }
           const {
             items: [{ unit, description }],
           } = await client.timeseries.list({
