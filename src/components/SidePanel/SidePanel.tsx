@@ -35,7 +35,7 @@ const SidePanel = (): JSX.Element => {
     if (!active && !isSidePanelOpen) {
       setIsSidePanelOpen(true);
     }
-  });
+  }, [active, isSidePanelOpen, setIsSidePanelOpen]);
 
   return (
     <StyledSidePanelWrapper $isOpen={isSidePanelOpen}>
