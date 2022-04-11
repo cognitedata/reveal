@@ -4031,10 +4031,10 @@ concat-map@0.0.1:
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
 
-concat-md@0.3.8:
-  version "0.3.8"
-  resolved "https://registry.yarnpkg.com/concat-md/-/concat-md-0.3.8.tgz#d891e878cb96dadb8e47554257fff99327f31e7d"
-  integrity sha512-qWd+BqcAaYE9pqR9BbId5Nx4TFdeNJjP6ooIon4QjjH4udMRjkDYoxgS1M3ubCiQI/uT42rv7cNXJobw1jeYqA==
+concat-md@0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/concat-md/-/concat-md-0.4.0.tgz#4555a66a737d05af6d466ee2e1f5b28fa68f6941"
+  integrity sha512-86jhWjmNVF6CHhCwZdA+LKExlyz305lsUfYeOC12xrLcJKyi+EXzS44/FvH1wu/+lVXaSIgj8lWGnCtSKtR6Vw==
   dependencies:
     doctoc "^1.4.0"
     front-matter "^4.0.2"
