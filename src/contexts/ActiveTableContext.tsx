@@ -13,7 +13,7 @@ import { SpecificTable, useActiveTable } from 'hooks/table-tabs';
 import { DEFAULT_FILTER } from 'hooks/table-filters';
 
 import { graphics } from 'assets';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 type ActiveTableState = {
   database: string;
@@ -38,6 +38,7 @@ type ActiveTableProviderProps = {
 export const useActiveTableContext = () => useContext(ActiveTableContext);
 
 export const ActiveTableProvider = ({ children }: ActiveTableProviderProps) => {
+  const { t } = useTranslation();
   const [[database, table, view] = [], update] = useActiveTable();
   const { isFetched, isError } = useTableRows(
     { database: database!, table: table!, pageSize: 1 },
