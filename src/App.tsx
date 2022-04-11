@@ -6,6 +6,8 @@ import {
   AuthWrapper,
   getEnv,
   getProject,
+  I18nWrapper,
+  setupTranslations,
   SubAppWrapper,
 } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
@@ -14,8 +16,10 @@ import { SDKProvider } from '@cognite/sdk-provider'; // eslint-disable-line
 import { createBrowserHistory } from 'history';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import i18next from 'i18next';
 
 import { RawExplorerProvider } from 'contexts';
+import { languages, translations } from 'common/i18n';
 import GlobalStyles from 'styles/GlobalStyles';
 import { AntStyles } from 'styles/AntStyles';
 import { setupMixpanel } from 'utils/config';
@@ -24,6 +28,7 @@ import RawExplorer from 'containers/RawExplorer';
 import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 
 setupMixpanel();
+setupTranslations(translations);
 
 const App = () => {
   const history = createBrowserHistory();
@@ -39,6 +44,13 @@ const App = () => {
   const project = getProject();
   const env = getEnv();
 
+  const handleLanguageChange = (language: string) => {
+    if (languages.includes(language)) {
+      return i18next.changeLanguage(language);
+    }
+    return Promise.resolve();
+  };
+
   return (
     <FlagProvider
       apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
@@ -49,30 +61,32 @@ const App = () => {
         disableVendorPrefixes={process.env.NODE_ENV === 'development'}
       >
         <SDKProvider sdk={sdk}>
-          <QueryClientProvider client={queryClient}>
-            <GlobalStyles>
-              <AntStyles>
-                <SubAppWrapper title="Raw Explorer">
-                  <AuthWrapper
-                    loadingScreen={<Loader />}
-                    login={() => loginAndAuthIfNeeded(project, env)}
-                  >
-                    <Router history={history}>
-                      <RawExplorerProvider>
-                        <Switch>
-                          <Route
-                            path={['/:project/:appPath']}
-                            component={RawExplorer}
-                          />
-                        </Switch>
-                      </RawExplorerProvider>
-                    </Router>
-                  </AuthWrapper>
-                </SubAppWrapper>
-              </AntStyles>
-            </GlobalStyles>
-            <ReactQueryDevtools initialIsOpen={false} />
-          </QueryClientProvider>
+          <I18nWrapper onLanguageChange={handleLanguageChange}>
+            <QueryClientProvider client={queryClient}>
+              <GlobalStyles>
+                <AntStyles>
+                  <SubAppWrapper title="Raw Explorer">
+                    <AuthWrapper
+                      loadingScreen={<Loader />}
+                      login={() => loginAndAuthIfNeeded(project, env)}
+                    >
+                      <Router history={history}>
+                        <RawExplorerProvider>
+                          <Switch>
+                            <Route
+                              path={['/:project/:appPath']}
+                              component={RawExplorer}
+                            />
+                          </Switch>
+                        </RawExplorerProvider>
+                      </Router>
+                    </AuthWrapper>
+                  </SubAppWrapper>
+                </AntStyles>
+              </GlobalStyles>
+              <ReactQueryDevtools initialIsOpen={false} />
+            </QueryClientProvider>
+          </I18nWrapper>
         </SDKProvider>
       </StyleSheetManager>
     </FlagProvider>

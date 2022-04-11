@@ -13,6 +13,7 @@ import { SpecificTable, useActiveTable } from 'hooks/table-tabs';
 import { DEFAULT_FILTER } from 'hooks/table-filters';
 
 import { graphics } from 'assets';
+import { useTranslation } from 'common/i18n';
 
 type ActiveTableState = {
   database: string;
@@ -37,6 +38,7 @@ type ActiveTableProviderProps = {
 export const useActiveTableContext = () => useContext(ActiveTableContext);
 
 export const ActiveTableProvider = ({ children }: ActiveTableProviderProps) => {
+  const { t } = useTranslation();
   const [[database, table, view] = [], update] = useActiveTable();
   const { isFetched, isError } = useTableRows(
     { database: database!, table: table!, pageSize: 1 },
@@ -56,15 +58,15 @@ export const ActiveTableProvider = ({ children }: ActiveTableProviderProps) => {
             src={graphics.EmptyStateArrowGraphic}
           />
           <StyledRawExplorerNotSelectedTitle level={3}>
-            Select a table to view raw data
+            {t('select_a_table_to_view')}
           </StyledRawExplorerNotSelectedTitle>
           {isError && (
             <StyledRawExplorerNotSelectedBody>
-              The specified table was not found!
+              {t('table_not_found')}
             </StyledRawExplorerNotSelectedBody>
           )}
           <StyledRawExplorerNotSelectedBody>
-            Use the side menu to navigate between databases and open raw tables.
+            {t('use_the_side_menu')}
           </StyledRawExplorerNotSelectedBody>
         </StyledRawExplorerNotSelectedContent>
       </StyledRawExplorerNotSelectedWrapper>
