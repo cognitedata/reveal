@@ -4,7 +4,7 @@ import { batch, useDispatch } from 'react-redux';
 import { Row, Col } from '@cognite/cogs.js';
 
 import { useDeepMemo } from 'hooks/useDeep';
-import { filterDataActions } from 'modules/filterData/actions';
+import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { NPTEvent } from 'modules/wellSearch/types';
 import { getNPTFilterOptions } from 'modules/wellSearch/utils/events';
 
@@ -26,9 +26,9 @@ export const FilterContainer: React.FC<{
 
   useEffect(() => {
     batch(() => {
-      dispatch(filterDataActions.setNptDuration(minMaxDuration));
-      dispatch(filterDataActions.setNptCode(nptCodes));
-      dispatch(filterDataActions.setNptDetailCode(nptDetailCodes));
+      dispatch(inspectTabsActions.setNptDuration(minMaxDuration));
+      dispatch(inspectTabsActions.setNptCode(nptCodes));
+      dispatch(inspectTabsActions.setNptDetailCode(nptDetailCodes));
     });
   }, []);
 

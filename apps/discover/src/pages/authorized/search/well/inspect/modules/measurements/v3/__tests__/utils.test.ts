@@ -160,7 +160,7 @@ describe('mapDepthMeasurementColumnToPlotly test', () => {
       PressureUnit.PPG,
       MeasurementType.GEOMECHANNICS
     );
-    expect(result.length).toBe(1);
+    expect(result.chartData.length).toBe(1);
   });
   test('Should not create graph if column is missing', () => {
     const result = mapCurveToPlotly(
@@ -175,7 +175,7 @@ describe('mapDepthMeasurementColumnToPlotly test', () => {
       PressureUnit.PPG,
       MeasurementType.GEOMECHANNICS
     );
-    expect(result.length).toBe(0);
+    expect(result.chartData.length).toBe(0);
   });
 
   test('Should not create graph if wrong measurement type passed', () => {
@@ -191,7 +191,7 @@ describe('mapDepthMeasurementColumnToPlotly test', () => {
       PressureUnit.PPG,
       'wrong measurement type' as MeasurementType
     );
-    expect(result.length).toBe(0);
+    expect(result.chartData.length).toBe(0);
   });
 
   test('Should create multiple graphs if there are breaking values Geomechanics', () => {
@@ -208,9 +208,9 @@ describe('mapDepthMeasurementColumnToPlotly test', () => {
       MeasurementType.GEOMECHANNICS
     );
     // Should be three graphs ( 3 breaking points in data )
-    expect(result.length).toBe(3);
+    expect(result.chartData.length).toBe(3);
     expect([0, -9999]).toEqual(
-      expect.not.arrayContaining(result[0].x as number[])
+      expect.not.arrayContaining(result.chartData[0].x as number[])
     );
   });
 
@@ -228,9 +228,9 @@ describe('mapDepthMeasurementColumnToPlotly test', () => {
       MeasurementType.PPFG
     );
     // Should be three graphs ( 3 breaking points in data )
-    expect(result.length).toBe(3);
+    expect(result.chartData.length).toBe(3);
     expect([0, -9999]).toEqual(
-      expect.not.arrayContaining(result[0].x as number[])
+      expect.not.arrayContaining(result.chartData[0].x as number[])
     );
   });
 });
@@ -248,7 +248,7 @@ describe('mapMeasurementToPlotly test', () => {
       UserPreferredUnit.FEET,
       []
     );
-    expect(result.length).toBe(1);
+    expect(result.chartData.length).toBe(1);
   });
 
   test('Should return a chart ( geomechanics )', () => {
@@ -263,7 +263,7 @@ describe('mapMeasurementToPlotly test', () => {
       UserPreferredUnit.FEET,
       []
     );
-    expect(result.length).toBe(1);
+    expect(result.chartData.length).toBe(1);
   });
 });
 
@@ -277,6 +277,6 @@ describe('formatChartData test', () => {
       PressureUnit.PPG,
       UserPreferredUnit.FEET
     );
-    expect(result.length).toBe(2);
+    expect(result.chartData.length).toBe(2);
   });
 });

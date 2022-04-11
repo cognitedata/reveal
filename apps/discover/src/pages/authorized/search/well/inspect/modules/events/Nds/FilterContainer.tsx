@@ -11,8 +11,8 @@ import { CogniteEvent } from '@cognite/sdk';
 
 import { ExtraLabels } from 'components/filters/interfaces';
 import { NOT_AVAILABLE } from 'constants/empty';
-import { filterDataActions } from 'modules/filterData/actions';
-import { useFilterDataNds } from 'modules/filterData/selectors';
+import { inspectTabsActions } from 'modules/inspectTabs/actions';
+import { useFilterDataNds } from 'modules/inspectTabs/selectors';
 
 import { hasCategoryFilterFulfilled } from '../common';
 import { accessors } from '../constants';
@@ -73,9 +73,9 @@ const FilterContainer: FC<Props> = ({
   const { riskType, severity, probability } = useFilterDataNds();
 
   useEffect(() => {
-    dispatch(filterDataActions.setNdsRiskType(riskTypesAll));
-    dispatch(filterDataActions.setNdsSeverity(severityAll));
-    dispatch(filterDataActions.setNdsProbability(probabilityAll));
+    dispatch(inspectTabsActions.setNdsRiskType(riskTypesAll));
+    dispatch(inspectTabsActions.setNdsSeverity(severityAll));
+    dispatch(inspectTabsActions.setNdsProbability(probabilityAll));
 
     // Trigger on initial render to select all available options.
   }, []);
@@ -104,7 +104,7 @@ const FilterContainer: FC<Props> = ({
             selectedOptions={riskType}
             extraLabels={riskTypesAllExtraLabels}
             onValueChange={(values) =>
-              dispatch(filterDataActions.setNdsRiskType(values))
+              dispatch(inspectTabsActions.setNdsRiskType(values))
             }
           />
         </FilterCol>
@@ -115,7 +115,7 @@ const FilterContainer: FC<Props> = ({
             selectedOptions={severity}
             extraLabels={severityAllExtraLabels}
             onValueChange={(values) =>
-              dispatch(filterDataActions.setNdsSeverity(values))
+              dispatch(inspectTabsActions.setNdsSeverity(values))
             }
             showMinMaxFooter
           />
@@ -127,7 +127,7 @@ const FilterContainer: FC<Props> = ({
             selectedOptions={probability}
             extraLabels={probabilityAllExtraLabels}
             onValueChange={(values) =>
-              dispatch(filterDataActions.setNdsProbability(values))
+              dispatch(inspectTabsActions.setNdsProbability(values))
             }
             showMinMaxFooter
           />

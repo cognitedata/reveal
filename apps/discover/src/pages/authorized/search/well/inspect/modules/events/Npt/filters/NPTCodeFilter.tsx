@@ -3,8 +3,8 @@ import { useDispatch } from 'react-redux';
 
 import { MultiSelect } from 'components/filters';
 import { useDeepMemo } from 'hooks/useDeep';
-import { filterDataActions } from 'modules/filterData/actions';
-import { useFilterDataNpt } from 'modules/filterData/selectors';
+import { inspectTabsActions } from 'modules/inspectTabs/actions';
+import { useFilterDataNpt } from 'modules/inspectTabs/selectors';
 import { NPT_CODE } from 'modules/wellSearch/constantsSidebarFilters';
 
 import {
@@ -25,7 +25,7 @@ export const NPTCodeFilter = React.memo(
     }, [nptCode, nptCodes]);
 
     const handleValueChange = useCallback((values: string[]) => {
-      dispatch(filterDataActions.setNptCode(values));
+      dispatch(inspectTabsActions.setNptCode(values));
     }, []);
 
     return (

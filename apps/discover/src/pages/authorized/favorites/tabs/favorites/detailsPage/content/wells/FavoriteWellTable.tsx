@@ -14,7 +14,7 @@ import { LOADING_TEXT } from 'components/emptyState/constants';
 import { Options, Table, RowProps } from 'components/tablev3';
 import { useDeepCallback, useDeepEffect } from 'hooks/useDeep';
 import { FavoriteContentWells } from 'modules/favorite/types';
-import { SelectedMap } from 'modules/filterData/types';
+import { SelectedMap } from 'modules/inspectTabs/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { useWellsCacheQuery } from 'modules/wellSearch/hooks/useWellsCacheQuery';
 import { Well, WellId, Wellbore } from 'modules/wellSearch/types';

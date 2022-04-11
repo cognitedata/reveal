@@ -34,6 +34,8 @@ export const useMeasurementsQuery = () => {
     LOG_WELLS_MEASUREMENTS_NAMESPACE
   );
 
+  const enableApiCall = !isUndefined(config) && !isEmpty(wellboreMatchingIds);
+
   // Do the initial search with react-query
   const { data, isLoading } = useQuery(
     WELL_QUERY_KEY.MEASUREMENTS,
@@ -41,11 +43,11 @@ export const useMeasurementsQuery = () => {
       getMeasurementsByWellboreIds(wellboreMatchingIds, config, metricLogger),
     {
       // wait till config is loaded
-      enabled: !isUndefined(config),
+      enabled: enableApiCall,
     }
   );
 
-  if (isLoading || !data) {
+  if (isLoading || !enableApiCall || !data) {
     return { isLoading: true };
   }
 
@@ -69,6 +71,5 @@ export const useMeasurementsQuery = () => {
       }
     );
   }
-
   return { isLoading: true };
 };

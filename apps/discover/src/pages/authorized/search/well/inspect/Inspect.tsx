@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 
 import isEmpty from 'lodash/isEmpty';
@@ -11,6 +12,7 @@ import navigation from 'constants/navigation';
 import { useDeepEffect } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useHorizontalScroll } from 'hooks/useHorizontalScroll';
+import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import {
   useWellInspectSelectedWellboreIds,
   useWellInspectWells,
@@ -42,6 +44,7 @@ export const WellInspect: React.FC = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const location = useLocation();
+  const dispatch = useDispatch();
 
   const { data: config } = useWellConfig();
   const wells = useWellInspectWells();
@@ -84,6 +87,10 @@ export const WellInspect: React.FC = () => {
   const handleNavigation = (tabKey: string) => {
     const tabItem = items.find((item) => item.key === tabKey);
     if (tabItem) {
+      /**
+       * Clear errors in side bar
+       */
+      dispatch(inspectTabsActions.resetErrors());
       metrics.track(`click-${tabKey}-tab`);
       history.push(tabItem.path);
     }

@@ -2,8 +2,8 @@ import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { SearchBox } from 'components/filters';
-import { filterDataActions } from 'modules/filterData/actions';
-import { useFilterDataNpt } from 'modules/filterData/selectors';
+import { inspectTabsActions } from 'modules/inspectTabs/actions';
+import { useFilterDataNpt } from 'modules/inspectTabs/selectors';
 
 import { NPT_NAME_FILTER_PLACEHOLDER } from './constants';
 
@@ -14,7 +14,7 @@ export const NPTFilterByName = () => {
   const handleFilterByName = useCallback(
     (name: string) => {
       if (searchPhrase === name) return;
-      dispatch(filterDataActions.setNptSearchPhrase(name));
+      dispatch(inspectTabsActions.setNptSearchPhrase(name));
     },
     [searchPhrase]
   );

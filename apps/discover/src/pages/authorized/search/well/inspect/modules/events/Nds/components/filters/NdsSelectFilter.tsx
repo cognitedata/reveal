@@ -5,7 +5,7 @@ import { Body } from '@cognite/cogs.js';
 
 import { MultiSelect as Select } from 'components/filters';
 import { ExtraLabels } from 'components/filters/interfaces';
-import { MultiSelect } from 'modules/filterData/types';
+import { MultiSelect } from 'modules/inspectTabs/types';
 
 import { FILTER_THEME } from '../../../Npt/filters/constants';
 import { NdsFooter } from '../../elements';

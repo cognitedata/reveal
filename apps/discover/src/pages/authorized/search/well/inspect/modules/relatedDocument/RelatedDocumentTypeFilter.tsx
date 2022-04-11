@@ -6,7 +6,7 @@ import orderBy from 'lodash/orderBy';
 import Histogram from 'components/histogram/Histogram';
 import Skeleton from 'components/skeleton';
 import { DocumentQueryFacet } from 'modules/documentSearch/types';
-import { usePatchRelatedDocumentFilters } from 'modules/filterData/hooks/usePatchRelatedDocumentFilters';
+import { usePatchRelatedDocumentFilters } from 'modules/inspectTabs/hooks/usePatchRelatedDocumentFilters';
 import { useRelatedDocumentDataStats } from 'modules/wellSearch/selectors/sequence/RelatedDocuments/useRelatedDocument';
 import { FlexGrow } from 'styles/layout';
 

@@ -4,8 +4,11 @@ import {
   MultiSelect,
   NumericRange,
   SelectedMap,
+  Errors,
   SET_FILTER_VALUES,
   SET_SELECTED_ID_MAP,
+  SET_ERRORS,
+  RESET_ERRORS,
 } from './types';
 
 // NDS
@@ -85,7 +88,16 @@ export const setSelectedTrajectoryWellboreIds = (values: SelectedMap) => {
   return { type: SET_SELECTED_ID_MAP, filter, values };
 };
 
-export const filterDataActions = {
+// Errors
+export const setErrors = (values: Errors) => {
+  return { type: SET_ERRORS, filter: {}, values };
+};
+
+export const resetErrors = () => {
+  return { type: RESET_ERRORS };
+};
+
+export const inspectTabsActions = {
   setNdsRiskType,
   setNdsProbability,
   setNdsSeverity,
@@ -96,4 +108,6 @@ export const filterDataActions = {
   setSelectedLogIds,
   setSelectedTrajIds,
   setSelectedTrajectoryWellboreIds,
+  setErrors,
+  resetErrors,
 };

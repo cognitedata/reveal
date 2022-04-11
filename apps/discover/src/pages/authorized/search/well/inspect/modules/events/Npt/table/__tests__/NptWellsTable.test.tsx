@@ -11,7 +11,7 @@ jest.mock('modules/wellSearch/selectors', () => ({
   useNptEvents: jest.fn(),
 }));
 
-jest.mock('modules/filterData/selectors', () => ({
+jest.mock('modules/inspectTabs/selectors', () => ({
   useFilterDataNpt: () => ({
     duration: [0, 10],
     nptCode: ['CODE_A, CODE_B'],

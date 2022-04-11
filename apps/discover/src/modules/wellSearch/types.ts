@@ -22,6 +22,7 @@ import {
 } from '@cognite/sdk-wells-v3';
 import { Point } from '@cognite/seismic-sdk-js';
 
+import { Error } from 'modules/inspectTabs/types';
 import { CasingType } from 'pages/authorized/search/well/inspect/modules/casing/CasingView/interfaces';
 
 import { TableResults } from '../../components/tablev3/resultTypes';
@@ -419,6 +420,7 @@ export interface Measurement extends Sequence {
  */
 export interface MeasurementV3 extends DepthMeasurement {
   data?: DepthMeasurementData;
+  errors?: Error[];
 }
 
 export type WellboreMeasurementsMap = {
@@ -447,6 +449,24 @@ export type MeasurementChartData = Partial<PlotData> & {
 
 export type MeasurementChartDataV3 = Partial<PlotData> & {
   measurementType: MeasurementTypeV3;
+};
+
+export type WellboreChartData = {
+  wellbore: Wellbore;
+  chartData: MeasurementChartDataV3[];
+};
+
+export type WellboreProcessedData = {
+  wellbore: Wellbore;
+  proccessedData: ProcessedData;
+};
+
+/**
+ * Store charts and errors encountered after processing MeasurementV3
+ */
+export type ProcessedData = {
+  chartData: MeasurementChartDataV3[];
+  errors: Error[];
 };
 
 export type RegionFieldBlock =

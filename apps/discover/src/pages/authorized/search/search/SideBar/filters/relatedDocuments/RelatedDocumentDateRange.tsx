@@ -9,7 +9,7 @@ import { Dropdown, Menu, Range } from '@cognite/cogs.js';
 
 import { BaseButton } from 'components/buttons';
 import { DocumentsFacets } from 'modules/documentSearch/types';
-import { useSetRelatedDocumentFilters } from 'modules/filterData/hooks/useSetRelatedDocumentFilters';
+import { useSetRelatedDocumentFilters } from 'modules/inspectTabs/hooks/useSetRelatedDocumentFilters';
 
 import { ClearButton } from '../../components/ClearButton';
 import { CommonDateRange } from '../../components/CommonDateRange';

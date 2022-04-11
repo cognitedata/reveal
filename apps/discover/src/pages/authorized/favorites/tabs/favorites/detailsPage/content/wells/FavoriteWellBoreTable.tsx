@@ -11,7 +11,7 @@ import { MoreOptionsButton, ViewButton } from 'components/buttons';
 import { RowProps, Table } from 'components/tablev3';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { useVisibleWellboreColumns } from 'hooks/useVisibleWellboreColumns';
-import { SelectedMap } from 'modules/filterData/types';
+import { SelectedMap } from 'modules/inspectTabs/types';
 import { Wellbore, WellboreId } from 'modules/wellSearch/types';
 import { WellboreSubtableOptions } from 'pages/authorized/constant';
 import { REMOVE_FROM_SET_TEXT } from 'pages/authorized/favorites/constants';

@@ -7,8 +7,8 @@ import { Sequence } from '@cognite/sdk';
 
 import { Loading } from 'components/loading/Loading';
 import { Table, ColumnType, RowProps } from 'components/tablev3';
-import { filterDataActions } from 'modules/filterData/actions';
-import { useFilterDataTrajectory } from 'modules/filterData/selectors';
+import { inspectTabsActions } from 'modules/inspectTabs/actions';
+import { useFilterDataTrajectory } from 'modules/inspectTabs/selectors';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { useTrajectoriesQuery } from 'modules/wellSearch/hooks/useTrajectoriesQuery';
 
@@ -86,7 +86,7 @@ export const Trajectory: React.FC = () => {
       .reduce((result, item) => ({ ...result, [item.id]: true }), {});
     if (Object.keys(selectedWellboreIdsMap).length) {
       dispatch(
-        filterDataActions.setSelectedTrajectoryWellboreIds(
+        inspectTabsActions.setSelectedTrajectoryWellboreIds(
           selectedWellboreIdsMap
         )
       );
@@ -100,14 +100,14 @@ export const Trajectory: React.FC = () => {
       .reduce((result, item) => ({ ...result, [item.id]: true }), {});
     if (Object.keys(selectedTrajectoriesIdsMap).length) {
       dispatch(
-        filterDataActions.setSelectedTrajIds(selectedTrajectoriesIdsMap)
+        inspectTabsActions.setSelectedTrajIds(selectedTrajectoriesIdsMap)
       );
     }
   }, [trajectories, selectedIds]);
 
   const handleRowSelect = (traj: RowProps<Sequence>, value: boolean) => {
     dispatch(
-      filterDataActions.setSelectedTrajIds({ [traj.original.id]: value })
+      inspectTabsActions.setSelectedTrajIds({ [traj.original.id]: value })
     );
   };
 
@@ -116,7 +116,7 @@ export const Trajectory: React.FC = () => {
       (result, item) => ({ ...result, [item.id]: value }),
       {}
     );
-    dispatch(filterDataActions.setSelectedTrajIds(selectedTrajectoriesIdsMap));
+    dispatch(inspectTabsActions.setSelectedTrajIds(selectedTrajectoriesIdsMap));
   };
 
   const showTrajectoryTable = false;

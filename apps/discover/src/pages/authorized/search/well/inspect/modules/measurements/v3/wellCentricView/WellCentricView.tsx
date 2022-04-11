@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
@@ -10,16 +11,21 @@ import { NoDataAvailable } from 'components/charts/common/NoDataAvailable';
 import { Loading } from 'components/loading';
 import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { BooleanSelection } from 'modules/wellInspect/types';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQueryV3';
 import {
-  MeasurementChartDataV3 as MeasurementChartData,
-  Wellbore,
   WellboreId,
+  WellboreChartData,
+  WellboreProcessedData,
 } from 'modules/wellSearch/types';
 
-import { formatChartData } from '../utils';
+import {
+  formatChartData,
+  extractChartDataFromProcessedData,
+  extractWellboreErrorsFromProcessedData,
+} from '../utils';
 
 import { CompareView } from './CompareView/CompareView';
 import { BulkActionsWrapper, WellCentricViewWrapper } from './elements';
@@ -34,11 +40,6 @@ export type Props = {
   measurementReference: DepthMeasurementUnit;
 };
 
-type WellboreChartData = {
-  wellbore: Wellbore;
-  chartData: MeasurementChartData[];
-};
-
 export const WellCentricView: React.FC<Props> = ({
   geomechanicsCurves,
   ppfgCurves,
@@ -46,6 +47,8 @@ export const WellCentricView: React.FC<Props> = ({
   pressureUnit,
   measurementReference,
 }) => {
+  const dispatch = useDispatch();
+
   const { data, isLoading } = useMeasurementsQuery();
 
   const selectedInspectWellbores = useWellInspectSelectedWellbores();
@@ -55,6 +58,9 @@ export const WellCentricView: React.FC<Props> = ({
   const [wellboreChartData, setWellboreChartData] = useState<
     WellboreChartData[]
   >([]);
+
+  const [wellboreProcessedData, setWellboreProcessedData] =
+    useState<WellboreProcessedData[]>();
 
   const [chartRendering, setChartRendering] = useState<boolean>(false);
 
@@ -75,22 +81,42 @@ export const WellCentricView: React.FC<Props> = ({
     setCompare(false);
   };
 
+  /**
+   * Extract chart data from processed data and set to state
+   */
+  useEffect(() => {
+    if (!wellboreProcessedData) return;
+    setWellboreChartData(
+      extractChartDataFromProcessedData(wellboreProcessedData)
+    );
+  }, [wellboreProcessedData]);
+
+  /**
+   * Extract errors from processed data and dispath to state
+   */
+  useEffect(() => {
+    if (!wellboreProcessedData) return;
+    dispatch(
+      inspectTabsActions.setErrors(
+        extractWellboreErrorsFromProcessedData(wellboreProcessedData)
+      )
+    );
+  }, [wellboreProcessedData]);
+
   const updateChartData = useCallback(() => {
     if (isUndefined(data) || !userPreferredUnit) return;
-    const filteredChartData = selectedInspectWellbores
-      .map((wellbore) => ({
-        wellbore,
-        chartData: formatChartData(
-          data[wellbore.matchingId || ''], // Matching id is not optional in sdkv3. this is due to handling two sdk's
-          geomechanicsCurves,
-          ppfgCurves,
-          otherTypes,
-          pressureUnit,
-          userPreferredUnit
-        ),
-      }))
-      .filter((row) => !isEmpty(row.chartData));
-    setWellboreChartData(filteredChartData);
+    const wellboreProcessedData = selectedInspectWellbores.map((wellbore) => ({
+      wellbore,
+      proccessedData: formatChartData(
+        data[wellbore.matchingId || ''], // Matching id is not optional in sdkv3. this is due to handling two sdk's
+        geomechanicsCurves,
+        ppfgCurves,
+        otherTypes,
+        pressureUnit,
+        userPreferredUnit
+      ),
+    }));
+    setWellboreProcessedData(wellboreProcessedData);
   }, [
     JSON.stringify(data),
     isLoading,

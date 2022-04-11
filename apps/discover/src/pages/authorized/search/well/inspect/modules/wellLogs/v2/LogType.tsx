@@ -6,8 +6,8 @@ import { Loading } from 'components/loading/Loading';
 import { Modal } from 'components/modal';
 import { RowProps, Table } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
-import { filterDataActions } from 'modules/filterData/actions';
-import { useFilterDataLog } from 'modules/filterData/selectors';
+import { inspectTabsActions } from 'modules/inspectTabs/actions';
+import { useFilterDataLog } from 'modules/inspectTabs/selectors';
 
 import {
   COMMON_COLUMN_WIDTHS,
@@ -92,7 +92,9 @@ export const LogType: React.FC = () => {
     value: boolean
   ) => {
     dispatch(
-      filterDataActions.setSelectedLogIds({ [logTypeData.original.id]: value })
+      inspectTabsActions.setSelectedLogIds({
+        [logTypeData.original.id]: value,
+      })
     );
   };
 
@@ -101,7 +103,7 @@ export const LogType: React.FC = () => {
     data.forEach((row) => {
       ids[row.id] = value;
     });
-    dispatch(filterDataActions.setSelectedLogIds(ids));
+    dispatch(inspectTabsActions.setSelectedLogIds(ids));
   };
 
   const onApplyChanges = ({ selected }: { selected: LogTypeData[] }) => {

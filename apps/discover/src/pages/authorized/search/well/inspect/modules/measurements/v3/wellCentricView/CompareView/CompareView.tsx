@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import isEmpty from 'lodash/isEmpty';
 import uniqBy from 'lodash/uniqBy';
@@ -9,8 +10,9 @@ import { BackButton } from 'components/buttons';
 import { OverlayNavigation } from 'components/overlay-navigation';
 import { PressureUnit, DepthMeasurementUnit } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQueryV3';
-import { Wellbore } from 'modules/wellSearch/types';
+import { Wellbore, WellboreProcessedData } from 'modules/wellSearch/types';
 import { FlexColumn } from 'styles/layout';
 
 import {
@@ -28,6 +30,8 @@ import {
   getSelectedWellboresTitle,
   getSelectedWellsTitle,
   mapToCompareView,
+  extractChartDataFromProcessedData,
+  extractWellboreErrorsFromProcessedData,
 } from '../../utils';
 
 import CompareViewCard from './CompareViewCard';
@@ -45,6 +49,7 @@ export type Props = {
 };
 
 export const CompareView: React.FC<Props> = ({ wellbores, onBack }) => {
+  const dispatch = useDispatch();
   const wellsCounts = useMemo(
     () => uniqBy(wellbores, 'wellId').length,
     [wellbores]
@@ -61,25 +66,55 @@ export const CompareView: React.FC<Props> = ({ wellbores, onBack }) => {
   const [measurementReference, setMeasurementReference] =
     useState<DepthMeasurementUnit>(DEFAULT_MEASUREMENTS_REFERENCE);
 
+  const [wellboreProcessedData, setWellboreProcessedData] =
+    useState<WellboreProcessedData[]>();
+
   const { data } = useMeasurementsQuery();
 
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
+  /**
+   * Extract errors from processed data and dispath to state
+   */
+  useEffect(() => {
+    if (!wellboreProcessedData) return;
+    dispatch(
+      inspectTabsActions.setErrors(
+        extractWellboreErrorsFromProcessedData(wellboreProcessedData)
+      )
+    );
+  }, [wellboreProcessedData]);
+
+  useEffect(() => {
+    if (!data || isEmpty(data) || !userPreferredUnit) return;
+    const wellboreProcessedData = wellbores.map((wellbore) => ({
+      wellbore,
+      proccessedData: formatChartData(
+        data[wellbore.id] || [],
+        geomechanicsCurves,
+        ppfgCurves,
+        otherTypes,
+        pressureUnit,
+        userPreferredUnit
+      ),
+    }));
+    setWellboreProcessedData(wellboreProcessedData);
+  }, [
+    wellbores,
+    JSON.stringify(data),
+    pressureUnit,
+    geomechanicsCurves,
+    ppfgCurves,
+    measurementReference,
+    otherTypes,
+    userPreferredUnit,
+  ]);
+
   const graphCards = useMemo(() => {
-    if (!data || isEmpty(data) || !userPreferredUnit) return [];
-    const wellboreCharts = wellbores
-      .map((wellbore) => ({
-        wellbore,
-        chartData: formatChartData(
-          data[wellbore.id] || [],
-          geomechanicsCurves,
-          ppfgCurves,
-          otherTypes,
-          pressureUnit,
-          userPreferredUnit
-        ),
-      }))
-      .filter((row) => !isEmpty(row.chartData));
+    if (!wellboreProcessedData) return [];
+    const wellboreCharts = extractChartDataFromProcessedData(
+      wellboreProcessedData
+    );
 
     const groupedData = mapToCompareView(wellboreCharts);
 
@@ -112,16 +147,7 @@ export const CompareView: React.FC<Props> = ({ wellbores, onBack }) => {
       );
     }
     return charts;
-  }, [
-    wellbores,
-    JSON.stringify(data),
-    pressureUnit,
-    geomechanicsCurves,
-    ppfgCurves,
-    measurementReference,
-    otherTypes,
-    userPreferredUnit,
-  ]);
+  }, [wellboreProcessedData]);
 
   return (
     <OverlayNavigation mount>

@@ -86,10 +86,7 @@ export const useNdsEventsQuery = () => {
   }
 
   // Check if there are ids not in the cached data. Also filter cached data by requested ids
-  const { newIds, trimmedData } = trimCachedData(
-    data as Record<string, any>,
-    wellboreIds
-  );
+  const { newIds, trimmedData } = trimCachedData(data, wellboreIds);
   if (newIds.length === 0) {
     return { data: trimmedData as WellboreEventsMap, isLoading: false };
   }

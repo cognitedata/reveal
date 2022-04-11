@@ -8,7 +8,7 @@ import { isEnterPressed } from 'utils/general.helper';
 
 import { Input } from '@cognite/cogs.js';
 
-import { useSetRelatedDocumentFilters } from 'modules/filterData/hooks/useSetRelatedDocumentFilters';
+import { useSetRelatedDocumentFilters } from 'modules/inspectTabs/hooks/useSetRelatedDocumentFilters';
 
 import { InputContainer } from './elements';
 

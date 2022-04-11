@@ -14,6 +14,7 @@ import {
 } from '@cognite/sdk-wells-v3';
 
 import { PressureUnit, UserPreferredUnit } from 'constants/units';
+import { Error, Errors } from 'modules/inspectTabs/types';
 import {
   MEASUREMENT_CURVE_CONFIG_V3 as MEASUREMENT_CURVE_CONFIG,
   MEASUREMENT_EXTERNAL_ID_CONFIG,
@@ -25,6 +26,9 @@ import {
   MeasurementTypeV3 as MeasurementType,
   WdlMeasurementType,
   GeoPpfgFilterTypes,
+  WellboreMeasurementsMapV3 as WellboreMeasurementsMap,
+  ProcessedData,
+  WellboreProcessedData,
 } from 'modules/wellSearch/types';
 
 const ANGLE_CURVES_UNIT = 'deg';
@@ -40,40 +44,72 @@ export const formatChartData = (
 ) => {
   const processedCurves: string[] = [];
 
-  return measurements.reduce((chartData, measurement) => {
-    const { data } = measurement;
+  return measurements.reduce(
+    (processedData, measurement) => {
+      const { data: depthMeasurementData } = measurement;
 
-    // No rows
-    if (isUndefined(data)) return [];
+      // No rows
+      if (isUndefined(depthMeasurementData)) {
+        return {
+          chartData: [],
+          errors: [],
+        };
+      }
 
-    if (!measurement || isEmpty(measurement.columns)) return [];
+      if (!measurement || isEmpty(measurement.columns)) {
+        return {
+          chartData: [],
+          errors: [],
+        };
+      }
 
-    const tvdUnit = measurement.depthColumn.unit.unit;
+      const tvdUnit = measurement.depthColumn.unit.unit;
 
-    const chartsOfCurrentMeasurement = data.columns.reduce(
-      (chartData, column) => {
-        const chartsOfCurrentColumn = mapMeasurementToPlotly(
-          column,
-          data,
-          geomechanicsCurves,
-          ppfgCurves,
-          otherTypes,
-          tvdUnit,
-          userPreferedPressureUnit,
-          userPreferedDepthMeasurementUnit,
-          processedCurves
+      const currentMeasurementProcessedData =
+        depthMeasurementData.columns.reduce(
+          (processedData, column) => {
+            const processedDataOfCurrentColumn = mapMeasurementToPlotly(
+              column,
+              depthMeasurementData,
+              geomechanicsCurves,
+              ppfgCurves,
+              otherTypes,
+              tvdUnit,
+              userPreferedPressureUnit,
+              userPreferedDepthMeasurementUnit,
+              processedCurves
+            );
+            return {
+              chartData: [
+                ...processedData.chartData,
+                ...processedDataOfCurrentColumn.chartData,
+              ],
+              errors: [
+                ...processedData.errors,
+                ...processedDataOfCurrentColumn.errors,
+              ],
+            };
+          },
+          { chartData: [], errors: [] } as ProcessedData
         );
-        return [...chartData, ...chartsOfCurrentColumn];
-      },
-      [] as MeasurementChartData[]
-    );
-    return [...chartData, ...chartsOfCurrentMeasurement];
-  }, [] as MeasurementChartData[]);
+      return {
+        chartData: [
+          ...processedData.chartData,
+          ...currentMeasurementProcessedData.chartData,
+        ],
+        errors: [
+          ...processedData.errors,
+          ...currentMeasurementProcessedData.errors,
+        ],
+      };
+    },
+    { chartData: [], errors: [] } as ProcessedData
+  );
 };
 
 export const mapMeasurementToPlotly = (
   column: DepthMeasurementDataColumn,
-  data: DepthMeasurementData,
+  depthMeasurementData: DepthMeasurementData,
   geomechanicsCurves: DepthMeasurementColumn[], // currently enabled geomechanics curves from filters
   ppfgCurves: DepthMeasurementColumn[], // currently enabled ppfg curves from filters
   otherTypes: DepthMeasurementColumn[], // currently enabled other curves from filters
@@ -81,15 +117,32 @@ export const mapMeasurementToPlotly = (
   userPreferedPressureUnit: PressureUnit,
   userPreferedDepthMeasurementUnit: UserPreferredUnit,
   processedCurves: string[] = []
-): MeasurementChartData[] => {
+): ProcessedData => {
   const measurementType = resolveMeasurementType(column.measurementType);
 
-  if (isUndefined(measurementType)) return [];
+  if (isUndefined(measurementType)) {
+    return {
+      chartData: [],
+      errors: [
+        {
+          value: `Cannot resolve measurement type ${column.measurementType}`,
+        },
+      ],
+    };
+  }
 
   const filterType = getFilterType(measurementType);
 
-  if (isEmpty(ppfgCurves) && isEmpty(geomechanicsCurves) && isEmpty(otherTypes))
-    return [];
+  if (
+    isEmpty(ppfgCurves) &&
+    isEmpty(geomechanicsCurves) &&
+    isEmpty(otherTypes)
+  ) {
+    return {
+      chartData: [],
+      errors: [],
+    };
+  }
 
   const { detailCardTitle, enabledCurves } =
     getEnabledCurvesAndCardTitleForFilterType(
@@ -99,24 +152,36 @@ export const mapMeasurementToPlotly = (
       otherTypes
     );
 
-  return enabledCurves.reduce((chartDataList, enabledCurve) => {
-    const chartDataListForCurrentCurve = mapCurveToPlotly(
-      enabledCurve,
-      processedCurves,
-      detailCardTitle,
-      data,
-      tvdUnit,
-      userPreferedDepthMeasurementUnit,
-      userPreferedPressureUnit,
-      measurementType
-    );
+  return enabledCurves.reduce(
+    (processedData, enabledCurve) => {
+      const chartDataListForCurrentCurve = mapCurveToPlotly(
+        enabledCurve,
+        processedCurves,
+        detailCardTitle,
+        depthMeasurementData,
+        tvdUnit,
+        userPreferedDepthMeasurementUnit,
+        userPreferedPressureUnit,
+        measurementType
+      );
 
-    if (isUndefined(chartDataListForCurrentCurve)) {
-      return chartDataList;
-    }
+      if (isUndefined(chartDataListForCurrentCurve)) {
+        return processedData;
+      }
 
-    return [...chartDataList, ...chartDataListForCurrentCurve];
-  }, [] as MeasurementChartData[]);
+      return {
+        chartData: [
+          ...processedData.chartData,
+          ...chartDataListForCurrentCurve.chartData,
+        ],
+        errors: [
+          ...processedData.errors,
+          ...chartDataListForCurrentCurve.errors,
+        ],
+      };
+    },
+    { chartData: [], errors: [] } as ProcessedData
+  );
 };
 
 const getEnabledCurvesAndCardTitleForFilterType = (
@@ -169,17 +234,32 @@ export const mapCurveToPlotly = (
   userPreferedDepthMeasurementUnit: UserPreferredUnit,
   userPreferedPressureUnit: PressureUnit,
   measurementType: MeasurementType
-): MeasurementChartData[] => {
+): ProcessedData => {
   const chartData: MeasurementChartData[] = [];
+  const errors: Error[] = [];
   const curveDescription = `${depthMeasurementColumn.columnExternalId} (${detailCardTitle})`;
 
-  if (processedCurves.includes(curveDescription)) return [];
+  /**
+   * I'm not sure why we have this. Can there be duplicate curves in row data. It is the only scenario
+   * this condition could have met. Still scared to remove it.
+   */
+  if (processedCurves.includes(curveDescription)) {
+    return {
+      chartData: [],
+      errors: [],
+    };
+  }
 
   /**
    * We don't recognize this measurement type
    * Just a precausion, we fetch by measurement type
    */
-  if (isUndefined(measurementType)) return [];
+  if (isUndefined(measurementType)) {
+    return {
+      chartData: [],
+      errors: [],
+    };
+  }
 
   /**
    * Ploty config for the curve ( color, line etc)
@@ -196,7 +276,16 @@ export const mapCurveToPlotly = (
     (column) => column.externalId === depthMeasurementColumn.columnExternalId
   );
 
-  if (isUndefined(lineConfig) || columnIndex < 0) return [];
+  if (isUndefined(lineConfig) || columnIndex < 0) {
+    return {
+      chartData: [],
+      errors: [
+        {
+          value: `Line config for ${depthMeasurementColumn.columnExternalId} does not exist or data not found for curve`,
+        },
+      ],
+    };
+  }
 
   processedCurves.push(curveDescription);
 
@@ -218,6 +307,11 @@ export const mapCurveToPlotly = (
       tvdUnit,
       userPreferedDepthMeasurementUnit
     );
+    if (!convertedYValue) {
+      errors.push({
+        value: `${yValue} of unit ${tvdUnit} could not converted to ${userPreferedDepthMeasurementUnit}`,
+      });
+    }
 
     /**
      * When then is a breaking point ( coordinates are not smooth but wayward) we break the chart (line)
@@ -279,7 +373,10 @@ export const mapCurveToPlotly = (
     y
   );
 
-  return chartData;
+  return {
+    chartData,
+    errors,
+  };
 };
 
 export const pushCurveToChart = (
@@ -399,3 +496,47 @@ export const getSelectedWellboresTitle = (count: number) =>
 
 export const getSelectedWellsTitle = (count: number) =>
   `From ${count} ${count > 1 ? 'wells' : 'well'}`;
+
+export const getMeasurementDataFetchErrors = (
+  data: WellboreMeasurementsMap
+) => {
+  return Object.keys(data).reduce((results, wellboreId) => {
+    const measurements = data[wellboreId];
+    const errors = flatten(
+      measurements
+        .filter((measurement) => measurement.errors)
+        .map((measurement) => measurement.errors)
+        .filter((error): error is Error[] => !!error)
+    );
+    return {
+      ...results,
+      [wellboreId]: errors,
+    };
+  }, {} as Errors);
+};
+
+export const extractChartDataFromProcessedData = (
+  wellboreProcessedData: WellboreProcessedData[]
+) => {
+  return wellboreProcessedData
+    .map(({ wellbore, proccessedData }) => ({
+      wellbore,
+      chartData: proccessedData.chartData,
+    }))
+    .filter((row) => !isEmpty(row.chartData));
+};
+
+export const extractWellboreErrorsFromProcessedData = (
+  wellboreProcessedData: WellboreProcessedData[]
+) => {
+  return wellboreProcessedData.reduce(
+    (wellboreErrors, wellboreProcessedData) => {
+      return {
+        ...wellboreErrors,
+        [wellboreProcessedData.wellbore.matchingId || '']:
+          wellboreProcessedData.proccessedData.errors || [],
+      };
+    },
+    {} as Errors
+  );
+};

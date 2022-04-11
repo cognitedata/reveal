@@ -7,7 +7,6 @@ import {
 } from 'services/well/measurements/service';
 
 import { ProjectConfigWells } from '@cognite/discover-api-types';
-import { reportException } from '@cognite/react-errors';
 
 import { MetricLogger } from 'hooks/useTimeLog';
 import {
@@ -27,6 +26,8 @@ export const getMeasurementsByWellboreIds = async (
 
   startNetworkTimer();
 
+  // console.log('wellboreMatchingIds: ', wellboreMatchingIds);
+
   const depthMeasurementPromises = getDepthMeasurements(wellboreMatchingIds, [
     WdlMeasurementType.GEOMECHANNICS,
     WdlMeasurementType.PRESSURE,
@@ -36,6 +37,8 @@ export const getMeasurementsByWellboreIds = async (
 
   const depthMeasurements = await depthMeasurementPromises;
 
+  // console.log('depthmeasurements: ', depthMeasurements);
+
   const results = ([] as Measurement[]).concat(...depthMeasurements);
 
   /**
@@ -44,35 +47,32 @@ export const getMeasurementsByWellboreIds = async (
   const promiseMeasurements: Promise<Measurement>[] = [];
   results.forEach((measurement) => {
     promiseMeasurements.push(
-      getDepthMeasurementData(measurement.source.sequenceExternalId).then(
-        (depthMeasurementData) => {
+      getDepthMeasurementData(measurement.source.sequenceExternalId)
+        .then((depthMeasurementData) => {
+          // console.log('response: ', depthMeasurementData);
           return {
             ...measurement,
             data: depthMeasurementData,
           };
-        }
-      )
+        })
+        .catch((error) => {
+          // console.log('error: ', error);
+          const errorString = error.message as string;
+          return {
+            ...measurement,
+            errors: [
+              {
+                value: `Error fetching row data of '${measurement.source.sequenceExternalId}': ${errorString}`,
+              },
+            ],
+          };
+        })
     );
   });
 
-  const promiseMeasurementSettledResults = await Promise.allSettled(
-    promiseMeasurements
-  );
+  const measurements = await Promise.all(promiseMeasurements);
 
-  const measurements = promiseMeasurementSettledResults
-    .map((promiseResult) => {
-      if (promiseResult.status === 'rejected') {
-        reportException(promiseResult.reason);
-        console.error(
-          'Error fetching sequence row data: ',
-          promiseResult.reason
-        );
-      }
-      return promiseResult;
-    })
-    .filter((promiseResult) => promiseResult.status === 'fulfilled')
-    .map((result) => <PromiseFulfilledResult<Measurement>>result)
-    .map((result) => result.value);
+  // console.log('measurements: ', measurements);
 
   const groupedData = groupBy(measurements, 'wellboreMatchingId');
   wellboreMatchingIds.forEach((wellboreId) => {
@@ -84,6 +84,8 @@ export const getMeasurementsByWellboreIds = async (
   stopNetworkTimer({
     noOfWellbores: wellboreMatchingIds.length,
   });
+
+  // console.log('grouped: ', groupedData);
 
   return groupedData;
 };

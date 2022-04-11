@@ -11,7 +11,7 @@ import { UNITS_TO_STANDARD } from 'utils/units/constants';
 import { CogniteEvent } from '@cognite/sdk';
 import { DistanceUnitEnum } from '@cognite/sdk-wells-v3';
 
-import { FilterDataState } from 'modules/filterData/types';
+import { InspectTabsState } from 'modules/inspectTabs/types';
 import {
   UNKNOWN_NPT_CODE,
   UNKNOWN_NPT_DETAIL_CODE,
@@ -179,7 +179,7 @@ const filterByNptDetailCode = (event: NPTEvent, nptDetailCode: string[]) =>
 
 export const getFilteredNPTEvents = (
   events: NPTEvent[],
-  nptFilters: FilterDataState['npt']
+  nptFilters: InspectTabsState['npt']
 ) => {
   const { searchPhrase, duration, nptCode, nptDetailCode } = nptFilters;
 

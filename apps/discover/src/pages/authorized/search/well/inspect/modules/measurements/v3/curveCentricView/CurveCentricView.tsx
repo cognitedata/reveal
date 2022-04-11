@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
@@ -11,6 +12,7 @@ import { NoDataAvailable } from 'components/charts/common/NoDataAvailable';
 import { Loading } from 'components/loading';
 import { PressureUnit } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQueryV3';
 import {
@@ -43,6 +45,8 @@ export const CurveCentricView: React.FC<Props> = ({
   pressureUnit,
   measurementReference,
 }) => {
+  const dispatch = useDispatch();
+
   const { data, isLoading } = useMeasurementsQuery();
 
   const selectedInspectWellbores = useWellInspectSelectedWellbores();
@@ -55,17 +59,32 @@ export const CurveCentricView: React.FC<Props> = ({
 
   const updateChartData = useCallback(() => {
     if (isUndefined(data) || !userPreferredUnit) return;
-    const wellboreChartData = selectedInspectWellbores.map((wellbore) => {
-      const chartData = formatChartData(
-        data[wellbore.id],
-        geomechanicsCurves,
-        ppfgCurves,
-        otherTypes,
-        pressureUnit,
-        userPreferredUnit
-      );
-      return mapToCurveCentric(chartData, wellbore);
-    });
+    const wellboreChartData = selectedInspectWellbores
+      .map((wellbore) => ({
+        wellbore,
+        proccessedData: formatChartData(
+          data[wellbore.id],
+          geomechanicsCurves,
+          ppfgCurves,
+          otherTypes,
+          pressureUnit,
+          userPreferredUnit
+        ),
+      }))
+      .map(({ wellbore, proccessedData }) => {
+        if (!isEmpty(proccessedData.errors)) {
+          dispatch(
+            inspectTabsActions.setErrors({
+              [wellbore.matchingId || '']: proccessedData.errors,
+            })
+          );
+        }
+        return {
+          wellbore,
+          chartData: proccessedData.chartData,
+        };
+      })
+      .map(({ wellbore, chartData }) => mapToCurveCentric(chartData, wellbore));
     setCharts(flatten(wellboreChartData));
   }, [
     JSON.stringify(data),

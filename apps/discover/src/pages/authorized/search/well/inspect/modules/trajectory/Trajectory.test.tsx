@@ -10,7 +10,7 @@ import Trajectory from './Trajectory';
 describe('Trajectory Page', () => {
   const setupStore = () => {
     const store = getMockedStore({
-      filterData: {
+      inspectTabs: {
         trajectory: {
           selectedIds: {},
           selectedWellboreIds: { 759155409324993: true },

@@ -1,8 +1,10 @@
 import 'services/well/__mocks/setupWellsMockSDK';
+import flatten from 'lodash/flatten';
 import { setupServer } from 'msw/node';
 import {
   getMockDepthMeasurements,
   getMockDepthMeasurementData,
+  getMockDepthMeasurementDataRejectAll,
 } from 'services/well/measurements/__mocks/mockMeasurements';
 
 import { getMeasurementsByWellboreIds } from '../measurementsV3';
@@ -14,7 +16,7 @@ const mockServer = setupServer(
 
 const mockServerWithErrorApiCalls = setupServer(
   getMockDepthMeasurements(),
-  getMockDepthMeasurementData()
+  getMockDepthMeasurementDataRejectAll()
 );
 
 describe('Measurement service', () => {
@@ -45,5 +47,10 @@ describe('Measurement service with error codes', () => {
     expect(result).not.toBeUndefined();
     const wellMeasurements = result[matchingIds[0]];
     expect(wellMeasurements.length).toBe(1);
+
+    const errors = flatten(Object.values(result))
+      .filter((measurement) => measurement.errors)
+      .map((result) => result.errors);
+    expect(errors).not.toEqual([]);
   });
 });

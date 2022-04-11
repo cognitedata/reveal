@@ -11,11 +11,17 @@ import {
   getMockDepthMeasurementData,
 } from 'services/well/measurements/__mocks/mockMeasurements';
 
+import {
+  getMockDepthMeasurementDataWellboreOne,
+  getMockDepthMeasurementItem,
+} from '__test-utils/fixtures/measurements';
+import { getMockWell } from '__test-utils/fixtures/well/well';
 import { getMockWellbore } from '__test-utils/fixtures/well/wellbore';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { LOADING_TEXT, NO_RESULTS_TEXT } from 'components/loading/constants';
 import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
+import { SET_ERRORS } from 'modules/inspectTabs/types';
 
 import { WellCentricView, Props } from '../WellCentricView';
 
@@ -136,5 +142,136 @@ describe('WellCentricView Tests api return data sequence list', () => {
       },
       { timeout: 5000 }
     );
+  }, 10000);
+});
+
+describe('Measuremnts with loading errors ( unit )', () => {
+  const mockDepthMeasurementItem =
+    getMockDepthMeasurementItem('mockmatchindId');
+  const mockServer = setupServer(
+    getMockDepthMeasurements(0, [
+      {
+        ...mockDepthMeasurementItem,
+        depthColumn: {
+          ...mockDepthMeasurementItem.depthColumn,
+          unit: {
+            unit: 'wrongUnit' as any,
+            factor: 1,
+          },
+        },
+      },
+    ]),
+    getMockDepthMeasurementData(),
+    getMockUserMe(),
+    getMockConfigGet(),
+    getMockWellsById([
+      getMockWell({
+        wellbores: [getMockWellbore()],
+      }),
+    ])
+  );
+
+  beforeAll(() => mockServer.listen());
+  afterAll(() => mockServer.close());
+
+  const page = async (props: Props) => {
+    const store = getMockedStore({
+      wellInspect: {
+        selectedWellIds: { 'test-well-1': true },
+        selectedWellboreIds: { 'test-well-1': true, 'test-well-2': true },
+      },
+    });
+    testRenderer(WellCentricView, store, props);
+    return { store };
+  };
+
+  it('Should throw error action for wrong unit', async () => {
+    const { store } = await page({
+      geomechanicsCurves: [],
+      ppfgCurves: [
+        {
+          measurementType: 'fracture pressure pre drill mean',
+          columnExternalId: 'FP_CARBONATE_ML',
+          unit: 'psi',
+        },
+      ],
+      otherTypes: [],
+      measurementReference: DepthMeasurementUnit.TVD,
+      pressureUnit: PressureUnit.PPG,
+    });
+
+    await waitFor(
+      () => {
+        expect(store.getActions().length).toEqual(1);
+      },
+      { timeout: 5000 }
+    );
+    expect(store.getActions()[0].type).toEqual(SET_ERRORS);
+  }, 10000);
+});
+
+describe('Measuremnts with loading errors ( measurement type )', () => {
+  const depthMeasurementData = getMockDepthMeasurementDataWellboreOne();
+  const mockServer = setupServer(
+    getMockDepthMeasurements(),
+    getMockDepthMeasurementData(0, {
+      ...depthMeasurementData,
+      columns: [
+        depthMeasurementData.columns[0], // TVD column
+        depthMeasurementData.columns[1], // MD column
+        {
+          externalId: 'FP_CARBONATE_ML',
+          measurementType: 'unsupported measurement type',
+          unit: 'psi',
+          valueType: 'double',
+          name: 'FP_CARBONATE_ML',
+        },
+      ],
+    }),
+    getMockUserMe(),
+    getMockConfigGet(),
+    getMockWellsById([
+      getMockWell({
+        wellbores: [getMockWellbore()],
+      }),
+    ])
+  );
+
+  beforeAll(() => mockServer.listen());
+  afterAll(() => mockServer.close());
+
+  const page = async (props: Props) => {
+    const store = getMockedStore({
+      wellInspect: {
+        selectedWellIds: { 'test-well-1': true },
+        selectedWellboreIds: { 'test-well-1': true, 'test-well-2': true },
+      },
+    });
+    testRenderer(WellCentricView, store, props);
+    return { store };
+  };
+
+  it('Should throw error action for wrong unit', async () => {
+    const { store } = await page({
+      geomechanicsCurves: [],
+      ppfgCurves: [
+        {
+          measurementType: 'fracture pressure pre drill mean',
+          columnExternalId: 'FP_CARBONATE_ML',
+          unit: 'psi',
+        },
+      ],
+      otherTypes: [],
+      measurementReference: DepthMeasurementUnit.TVD,
+      pressureUnit: PressureUnit.PPG,
+    });
+
+    await waitFor(
+      () => {
+        expect(store.getActions().length).toEqual(1);
+      },
+      { timeout: 5000 }
+    );
+    expect(store.getActions()[0].type).toEqual(SET_ERRORS);
   }, 10000);
 });

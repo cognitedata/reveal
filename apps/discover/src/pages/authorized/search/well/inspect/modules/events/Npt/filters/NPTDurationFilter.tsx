@@ -2,8 +2,8 @@ import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { NumericRangeDropdown } from 'components/filters';
-import { filterDataActions } from 'modules/filterData/actions';
-import { useFilterDataNpt } from 'modules/filterData/selectors';
+import { inspectTabsActions } from 'modules/inspectTabs/actions';
+import { useFilterDataNpt } from 'modules/inspectTabs/selectors';
 
 import { NPT_DURATION_FILTER_TITLE } from './constants';
 
@@ -13,7 +13,7 @@ export const NPTDurationFilter = React.memo(
     const dispatch = useDispatch();
 
     const handleChangeDuration = useCallback((durationVals: number[]) => {
-      dispatch(filterDataActions.setNptDuration(durationVals));
+      dispatch(inspectTabsActions.setNptDuration(durationVals));
     }, []);
 
     return (

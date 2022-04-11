@@ -3,7 +3,7 @@ import includes from 'lodash/includes';
 import isEmpty from 'lodash/isEmpty';
 import set from 'lodash/set';
 
-import { MultiSelect } from 'modules/filterData/types';
+import { MultiSelect } from 'modules/inspectTabs/types';
 
 export const convertToClosestInteger = <Item>(
   event: Item,

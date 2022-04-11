@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import { search as documentSearch } from 'modules/documentSearch/reducer';
 import favorites from 'modules/favorite/reducer';
 import { feedback } from 'modules/feedback/reducer';
-import { filterData } from 'modules/filterData/reducer';
+import { inspectTabs } from 'modules/inspectTabs/reducer';
 import { map } from 'modules/map/reducer';
 import { resultPanel } from 'modules/resultPanel/reducer';
 import { search } from 'modules/search/reducer';
@@ -21,7 +21,7 @@ const rootReducer = combineReducers<StoreState>({
   },
   favorites,
   feedback,
-  filterData,
+  inspectTabs,
   map,
   search,
   documentSearch,

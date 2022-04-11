@@ -1,7 +1,11 @@
+import isEmpty from 'lodash/isEmpty';
 import { rest } from 'msw';
 import { TEST_PROJECT } from 'setupTests';
 
-import { DepthMeasurementData } from '@cognite/sdk-wells-v3/dist/src';
+import {
+  DepthMeasurementData,
+  DepthMeasurement,
+} from '@cognite/sdk-wells-v3/dist/src';
 
 import {
   getMockDepthMeasurementItem,
@@ -15,16 +19,38 @@ const SEQUENCE_DATA_URL = `https://${SIDECAR.cdfCluster}.cognitedata.com/api/pla
 
 export const getMockDepthMeasurements = (
   delay?: number,
-  customData?: DepthMeasurementData[]
+  customResponse?: DepthMeasurement[]
 ): MSWRequest => {
   return rest.post<{ filter: { wellboreIds: { matchingId: string }[] } }>(
     SEQUENCE_URL,
     (req, res, ctx) => {
-      const items =
-        customData ||
-        req.body.filter.wellboreIds.map(({ matchingId }) =>
+      if (
+        customResponse &&
+        customResponse.length > 0 &&
+        customResponse.length !== req.body.filter.wellboreIds.length
+      ) {
+        console.warn(
+          'Need to provide same number of depth measurements as number of wellbores'
+        );
+        throw new Error(
+          'Need to provide same number of depth measurements as number of wellbores'
+        );
+      }
+      let items;
+      if (!customResponse) {
+        items = req.body.filter.wellboreIds.map(({ matchingId }) =>
           getMockDepthMeasurementItem(matchingId)
         );
+      } else {
+        items = !isEmpty(customResponse)
+          ? req.body.filter.wellboreIds.map(({ matchingId }, index) => {
+              return {
+                ...customResponse[index],
+                wellboreMatchingId: matchingId,
+              };
+            })
+          : [];
+      }
       if (delay && delay > 0) {
         return res(ctx.delay(delay), ctx.json({ items }));
       }
@@ -35,20 +61,26 @@ export const getMockDepthMeasurements = (
 
 export const getMockDepthMeasurementData = (
   delay?: number,
-  customData?: DepthMeasurementData
+  customResponse?: Partial<DepthMeasurementData>
 ): MSWRequest => {
   return rest.post<{ sequenceExternalId: string }>(
     SEQUENCE_DATA_URL,
     (req, res, ctx) => {
       const { sequenceExternalId } = req.body;
-      const response =
-        customData ||
-        getMockDepthMeasurementDataWellboreOne({
-          source: {
-            sequenceExternalId,
-            sourceName: 'BP-Pequin',
-          },
-        });
+      const source = {
+        sequenceExternalId,
+        sourceName: customResponse?.source?.sourceName
+          ? customResponse.source.sourceName
+          : 'BP-Pequin',
+      };
+      const response = customResponse
+        ? {
+            ...customResponse,
+            source,
+          }
+        : getMockDepthMeasurementDataWellboreOne({
+            source,
+          });
       if (delay && delay > 0) {
         return res(ctx.delay(delay), ctx.json(response));
       }
@@ -57,21 +89,20 @@ export const getMockDepthMeasurementData = (
   );
 };
 
-export const getMockDepthMeasurementDataReject50Percent = (): MSWRequest => {
-  return rest.post<{ filter: { sequenceExternalId: string } }>(
+export const getMockDepthMeasurementDataRejectAll = (): MSWRequest => {
+  return rest.post<{ sequenceExternalId: string }>(
     SEQUENCE_DATA_URL,
     (req, res, ctx) => {
-      const rejectRequest = Math.random() < 0.5; // 50% this will be true, 30% false
-      const { sequenceExternalId } = req.body.filter;
-      const response = getMockDepthMeasurementDataWellboreOne({
-        source: {
-          sequenceExternalId,
-          sourceName: 'BP-Pequin',
-        },
-      });
-      return rejectRequest
-        ? res(ctx.status(500), ctx.json({ error: 'Some error' }))
-        : res(ctx.json(response));
+      return res(
+        ctx.status(500),
+        ctx.json({
+          data: {
+            error: {
+              message: 'Some Error',
+            },
+          },
+        })
+      );
     }
   );
 };

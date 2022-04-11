@@ -1,9 +1,12 @@
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
+import isEmpty from 'lodash/isEmpty';
+
 import { Checkbox } from '@cognite/cogs.js';
 
 import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
+import { useOverviewPageErrors } from 'modules/inspectTabs/selectors';
 import { wellInspectActions } from 'modules/wellInspect/actions';
 import { useWellInspectWells } from 'modules/wellInspect/hooks/useWellInspect';
 import {
@@ -25,9 +28,11 @@ import {
   WellLabel,
   WellLabelValue,
 } from './elements';
+import { WellboreErrorWarning } from './WellboreErrorWarning';
 
 export const SidebarContent: React.FC = () => {
   const wells = useWellInspectWells();
+  const errors = useOverviewPageErrors();
   const isColoredWellbores = useColoredWellbores();
   const { selectedWellIds, selectedWellboreIds } = useWellInspectSelection();
   const indeterminateWells = useWellInspectIndeterminateWells();
@@ -76,6 +81,7 @@ export const SidebarContent: React.FC = () => {
                 wellbore,
                 isColoredWellbores
               );
+              const wellboreHasErrors = !isEmpty(errors[id]);
 
               return (
                 <BlockContentItem
@@ -95,6 +101,9 @@ export const SidebarContent: React.FC = () => {
                       <MiddleEllipsis value={title} />
                     </CheckboxContent>
                   </Checkbox>
+                  {wellboreHasErrors && (
+                    <WellboreErrorWarning errors={errors[id]} />
+                  )}
                 </BlockContentItem>
               );
             })}

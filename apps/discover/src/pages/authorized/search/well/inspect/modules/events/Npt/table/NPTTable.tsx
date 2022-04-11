@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useDeepMemo } from 'hooks/useDeep';
-import { useFilterDataNpt } from 'modules/filterData/selectors';
+import { useFilterDataNpt } from 'modules/inspectTabs/selectors';
 import { NPTEvent } from 'modules/wellSearch/types';
 import { getFilteredNPTEvents } from 'modules/wellSearch/utils/events';
 

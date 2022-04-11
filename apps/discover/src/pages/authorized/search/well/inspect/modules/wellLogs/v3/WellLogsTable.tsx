@@ -11,8 +11,8 @@ import { Loading } from 'components/loading/Loading';
 import { OKModal } from 'components/modal';
 import { RowProps, Table } from 'components/tablev3';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
-import { filterDataActions } from 'modules/filterData/actions';
-import { useFilterDataLog } from 'modules/filterData/selectors';
+import { inspectTabsActions } from 'modules/inspectTabs/actions';
+import { useFilterDataLog } from 'modules/inspectTabs/selectors';
 import { useSelectedWellboreLogs } from 'modules/wellInspect/hooks/useWellLogsQuerySelectors';
 import { toBooleanMap } from 'modules/wellSearch/utils';
 
@@ -73,7 +73,7 @@ export const WellLogsTable: React.FC = () => {
     const wellLogIds = map(data, 'id');
     const allSelectedWellLogsMap = toBooleanMap(wellLogIds, true);
 
-    dispatch(filterDataActions.setSelectedLogIds(allSelectedWellLogsMap));
+    dispatch(inspectTabsActions.setSelectedLogIds(allSelectedWellLogsMap));
   }, [data]);
 
   const selectedWellLogs = useDeepMemo(
@@ -83,7 +83,7 @@ export const WellLogsTable: React.FC = () => {
 
   const handleRowSelect = (wellLogs: RowProps<WellLog>, value: boolean) => {
     dispatch(
-      filterDataActions.setSelectedLogIds({
+      inspectTabsActions.setSelectedLogIds({
         [wellLogs.original.id]: value,
       })
     );
@@ -94,7 +94,7 @@ export const WellLogsTable: React.FC = () => {
     data.forEach((row) => {
       ids[row.id] = value;
     });
-    dispatch(filterDataActions.setSelectedLogIds(ids));
+    dispatch(inspectTabsActions.setSelectedLogIds(ids));
   };
 
   if (isLoading) {

@@ -10,7 +10,7 @@ import { DocumentState } from 'modules/documentSearch/types';
 import { DocumentAction } from 'modules/documentSearch/types.actions';
 import { FavoriteState } from 'modules/favorite/types';
 import { FeedbackState, FeedbackAction } from 'modules/feedback/types';
-import { FilterDataAction, FilterDataState } from 'modules/filterData/types';
+import { InspectTabsAction, InspectTabsState } from 'modules/inspectTabs/types';
 import { MapState } from 'modules/map/types';
 import { MapAction } from 'modules/map/types.actions';
 import {
@@ -29,7 +29,7 @@ import { WellState, WellSearchAction } from 'modules/wellSearch/types';
 export type StoreAction =
   | DocumentAction
   | FeedbackAction
-  | FilterDataAction
+  | InspectTabsAction
   | MapAction
   | SearchAction
   | SeismicAction
@@ -46,7 +46,7 @@ export type StoreState = {
   };
   favorites: FavoriteState;
   feedback: FeedbackState;
-  filterData: FilterDataState;
+  inspectTabs: InspectTabsState;
   map: MapState;
   search: SearchState;
   documentSearch: DocumentState;
