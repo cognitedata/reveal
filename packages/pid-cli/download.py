@@ -21,7 +21,9 @@ def main():
 
     id_list = [metadata.id for metadata in file_list]
 
+    print(f"Downloading {len(id_list)} files...")
     client.files.download(directory=graphs_dir, id=id_list)
+    print(f"Finished downloading files to folder {graphs_dir}")
 
 if __name__ == "__main__":
     main()
