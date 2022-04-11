@@ -32,6 +32,7 @@ import DataSetIdInput, {
   DATASET_LIST_LIMIT,
 } from 'pages/create/DataSetIdInput';
 import { useDataSetsList } from 'hooks/useDataSetsList';
+import { useUserInformation } from 'hooks/useUserInformation';
 import { ScheduleFormInput } from 'components/extpipe/edit/Schedule';
 import { createExtPipePath } from 'utils/baseURL';
 import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
@@ -103,6 +104,7 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
   const history = useHistory();
   const location = useLocation();
   const dataSetIdFromLocation = findDataSetId(location.search);
+  const { data: userInfo } = useUserInformation();
   const { data: dataSets, status: dataSetsStatus } = useDataSetsList(
     DATASET_LIST_LIMIT
   );
@@ -135,7 +137,7 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
   }, [register]);
 
   const onSubmit = (fields: AddExtpipeFormInput) => {
-    const extpipeInfo = createAddExtpipeInfo(fields);
+    const extpipeInfo = createAddExtpipeInfo(fields, userInfo);
     trackUsage({ t: 'Create.Submit' });
     mutate(
       { extpipeInfo },

@@ -106,7 +106,7 @@ describe('partition', () => {
 describe('createAddExtpipeInfo', () => {
   const cases = [
     {
-      desc: 'Only required valued',
+      desc: 'Only required values',
       values: {
         name: 'extpipe name',
         externalId: 'my_external_id',
@@ -136,6 +136,7 @@ describe('createAddExtpipeInfo', () => {
           { name: 'Test Testsen', email: 'test@test.no', role: 'Tester' },
         ],
         skipNotificationInHours: 1,
+        user: { displayName: 'Creator Name' },
       },
       expected: {
         name: 'extpipe name',
@@ -151,15 +152,13 @@ describe('createAddExtpipeInfo', () => {
         contacts: [
           { name: 'Test Testsen', email: 'test@test.no', role: 'Tester' },
         ],
+        createdBy: 'Creator Name',
       },
     },
   ];
-  cases.forEach(({ desc, values, expected }) => {
+  cases.forEach(({ desc, values: { user, ...values }, expected }) => {
     test(`Creates extpipe info with: ${desc}`, () => {
-      const res = createAddExtpipeInfo(values, {
-        name: 'this data set',
-        id: values.dataSetId,
-      });
+      const res = createAddExtpipeInfo(values, user);
       expect(res).toEqual(expected);
     });
   });

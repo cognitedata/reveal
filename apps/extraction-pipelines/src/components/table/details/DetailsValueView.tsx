@@ -14,7 +14,6 @@ import {
   ExtpipeRawTable,
 } from 'model/Extpipe';
 import RawTable from 'components/extpipes/cols/RawTable';
-import EmailLink from 'components/buttons/EmailLink';
 
 interface DetailsValueViewProps {
   fieldValue: ExtpipeFieldValue;
@@ -101,9 +100,7 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
     case 'status': {
       return <StatusMarker id={fieldName} status={fieldValue as RunStatusUI} />;
     }
-    case 'createdBy': {
-      return <>{fieldValue && <EmailLink email={fieldValue as string} />}</>;
-    }
+    case 'createdBy':
     case 'name':
     case 'lastSuccess':
     case 'lastFailure':
