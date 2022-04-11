@@ -20,6 +20,7 @@ export const BulkActionMenu = ({
   onBulkEdit,
   onDelete,
   onTrainModel,
+  handleCancelOtherEdits,
   style,
   processingFiles,
 }: {
@@ -31,6 +32,7 @@ export const BulkActionMenu = ({
   onBulkEdit?: () => void;
   onDelete?: () => void;
   onTrainModel?: () => void;
+  handleCancelOtherEdits: () => void;
   style?: any;
   processingFiles?: boolean;
 }) => {
@@ -59,7 +61,12 @@ export const BulkActionMenu = ({
       }}
     >
       {onBulkEdit && (
-        <Menu.Item onClick={onBulkEdit}>
+        <Menu.Item
+          onClick={() => {
+            onBulkEdit();
+            handleCancelOtherEdits();
+          }}
+        >
           <>
             <Icon type="Document" style={{ marginRight: 17 }} />
             <Detail strong>Bulk Edit Data {count}</Detail>
