@@ -721,7 +721,7 @@ __metadata:
     "@types/offscreencanvas": 2019.6.4
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.3
-    "@types/three": 0.138.0
+    "@types/three": 0.139.0
     "@types/tween.js": 18.5.1
     "@typescript-eslint/eslint-plugin": 5.18.0
     "@typescript-eslint/parser": 5.18.0
@@ -732,10 +732,10 @@ __metadata:
     core-js: 3.21.1
     cross-var: 1.1.0
     dat.gui: 0.7.9
-    eslint: 8.12.0
+    eslint: 8.13.0
     eslint-config-prettier: 8.5.0
     eslint-plugin-header: 3.1.1
-    eslint-plugin-jsdoc: 38.1.6
+    eslint-plugin-jsdoc: 39.1.0
     eslint-plugin-lodash: 7.4.0
     eslint-plugin-prettier: 4.0.0
     eslint-plugin-unused-imports: 2.0.0
@@ -765,10 +765,10 @@ __metadata:
     rxjs: 7.5.5
     shx: 0.3.4
     skmeans: 0.11.3
-    three: 0.138.3
+    three: 0.139.2
     ts-jest: 27.1.4
     ts-loader: 8.3.0
-    tsc-alias: 1.6.5
+    tsc-alias: 1.6.6
     typescript: 4.6.3
     webpack: 4.46.0
     webpack-cli: 3.3.12
@@ -1687,10 +1687,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.138.0":
-  version: 0.138.0
-  resolution: "@types/three@npm:0.138.0"
-  checksum: 49107459571a8b38e1ff4adc3cff1127286d2990d78584ceb5a161ad9d43689190011938d0c3623b28e23628cf1963e9a201596d41f2875096c5c2626db6bfd1
+"@types/three@npm:0.139.0":
+  version: 0.139.0
+  resolution: "@types/three@npm:0.139.0"
+  checksum: 811ce2dd6cfeaa8b051699b6e57f5696b30cb4d33697675c9eee500e377cdbdc872dc6932dfc094c3ae61acfb895d089043a6e5c389d563c516d99ebfef8c130
   languageName: node
   linkType: hard
 
@@ -5475,21 +5475,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:38.1.6":
-  version: 38.1.6
-  resolution: "eslint-plugin-jsdoc@npm:38.1.6"
+"eslint-plugin-jsdoc@npm:39.1.0":
+  version: 39.1.0
+  resolution: "eslint-plugin-jsdoc@npm:39.1.0"
   dependencies:
     "@es-joy/jsdoccomment": ~0.22.1
     comment-parser: 1.3.1
     debug: ^4.3.4
     escape-string-regexp: ^4.0.0
     esquery: ^1.4.0
-    regextras: ^0.8.0
-    semver: ^7.3.5
+    semver: ^7.3.6
     spdx-expression-parse: ^3.0.1
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
-  checksum: 600dac3a9b81ac6fcb62a30a30e83a85a003ca3ecfe5376d99a1042ba703cfdf3ef404413c74a75f61c2a77e6cc7435628cfc51d80081108a67965ac238d14b4
+  checksum: 191dbf1c005592b4fba856639854f9c4fae5be19c017d417dd47104bb2fda3daae9131a12e0967b36ad69aad347f558617c4bbae7b82bb33f32a0ca89b1fb402
   languageName: node
   linkType: hard
 
@@ -5596,9 +5595,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:8.12.0":
-  version: 8.12.0
-  resolution: "eslint@npm:8.12.0"
+"eslint@npm:8.13.0":
+  version: 8.13.0
+  resolution: "eslint@npm:8.13.0"
   dependencies:
     "@eslint/eslintrc": ^1.2.1
     "@humanwhocodes/config-array": ^0.9.2
@@ -5637,7 +5636,7 @@ __metadata:
     v8-compile-cache: ^2.0.3
   bin:
     eslint: bin/eslint.js
-  checksum: 111bf9046b7a463049788dd00d7f4cd91e024029982352dff4811ce5dfa8cb1136aa127cd8a7a91508234d3e1b4fb6f638a1f5ef9ea08b1af93a18703a4a8dc1
+  checksum: bc7d2fc9a046d42cb2c8987573ecaf534c1fae14747c4695e32388e179c5f21b83eefdb3e4f35924bf76152e226d7cc9dfb21f12348baf12c803109005b17439
   languageName: node
   linkType: hard
 
@@ -8993,6 +8992,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"lru-cache@npm:^7.4.0":
+  version: 7.8.0
+  resolution: "lru-cache@npm:7.8.0"
+  checksum: 7cc046276b668e7b59c10f7f25049d89315cd22fb5205c0eb476583ba29b8542955189452dc8655a771e1a91f6056ddcb29daf4ac35197f77b3ce9a0041d54c9
+  languageName: node
+  linkType: hard
+
 "make-dir@npm:^2.0.0":
   version: 2.1.0
   resolution: "make-dir@npm:2.1.0"
@@ -10879,13 +10885,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"regextras@npm:^0.8.0":
-  version: 0.8.0
-  resolution: "regextras@npm:0.8.0"
-  checksum: b7ec5b32a2b98b4b27048d44f8ab90009873c1307f2cf89321aa8c4cbb8147f1bee07863f4dadf585546ca0b91a234ad9804954dea5fc029421f6c25a4523798
-  languageName: node
-  linkType: hard
-
 "regjsgen@npm:^0.2.0":
   version: 0.2.0
   resolution: "regjsgen@npm:0.2.0"
@@ -11327,6 +11326,17 @@ resolve@^1.20.0:
   bin:
     semver: ./bin/semver.js
   checksum: 1b26ecf6db9e8292dd90df4e781d91875c0dcc1b1909e70f5d12959a23c7eebb8f01ea581c00783bbee72ceeaad9505797c381756326073850dc36ed284b21b9
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.3.6":
+  version: 7.3.6
+  resolution: "semver@npm:7.3.6"
+  dependencies:
+    lru-cache: ^7.4.0
+  bin:
+    semver: bin/semver.js
+  checksum: 9845f96b22268190b30025e02feca391451f2bd49b2c51920c27cc56744f64cbe397df089018fdb347d4b4fd800eabbd85661870eb63eb28055d2b72e457f759
   languageName: node
   linkType: hard
 
@@ -12444,6 +12454,13 @@ resolve@^1.20.0:
   languageName: node
   linkType: hard
 
+"three@npm:0.139.2":
+  version: 0.139.2
+  resolution: "three@npm:0.139.2"
+  checksum: 9e016065b31a2a69bba730a32bd5b61354365bf0f5072121b8695aac38c9585e4e46361275967fbb58d21e001e5189128107c3ecbf24338ca951d11b524df992
+  languageName: node
+  linkType: hard
+
 "throat@npm:^6.0.1":
   version: 6.0.1
   resolution: "throat@npm:6.0.1"
@@ -12654,9 +12671,9 @@ resolve@^1.20.0:
   languageName: node
   linkType: hard
 
-"tsc-alias@npm:1.6.5":
-  version: 1.6.5
-  resolution: "tsc-alias@npm:1.6.5"
+"tsc-alias@npm:1.6.6":
+  version: 1.6.6
+  resolution: "tsc-alias@npm:1.6.6"
   dependencies:
     chokidar: ^3.5.3
     commander: ^9.0.0
@@ -12665,7 +12682,7 @@ resolve@^1.20.0:
     normalize-path: ^3.0.0
   bin:
     tsc-alias: dist/bin/index.js
-  checksum: 83dc32ffe7848b64f9c2e524f0ef81e4924bbcd0522b3bf9bff1e51a9f440d00c8ca65252066c66bce223ce874336272c9ad08d753587ef81a2b1d5a831ee5c5
+  checksum: 1f322e2b3526f0df11fe2a0306bcbebadb83e865fd326da2d74128c205bc0a322f3adf7e311912c6f858bb829f018cb397a20b3bc838bd6b2100f8fac2885f32
   languageName: node
   linkType: hard
 
