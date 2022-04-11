@@ -104,6 +104,7 @@ const Bar = styled(Flex)`
   padding: 16px;
   box-sizing: border-box;
   border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+  white-space: nowrap;
 `;
 
 const List = styled(Flex)`
