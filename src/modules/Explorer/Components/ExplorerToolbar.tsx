@@ -19,6 +19,7 @@ type ExplorerToolbarProps = ExplorerToolbarContainerProps & {
   onBulkEdit: () => void;
   onDelete: () => void;
   onTrainModel: () => void;
+  handleCancelOtherEdits: () => void;
 };
 
 export const ExplorerToolbar = ({
@@ -38,6 +39,7 @@ export const ExplorerToolbar = ({
   onDelete,
   onTrainModel,
   reFetch,
+  handleCancelOtherEdits,
 }: ExplorerToolbarProps) => {
   return (
     <>
@@ -63,6 +65,7 @@ export const ExplorerToolbar = ({
             onBulkEdit={onBulkEdit}
             onDelete={onDelete}
             onTrainModel={onTrainModel}
+            handleCancelOtherEdits={handleCancelOtherEdits}
           />
         </Right>
       </TitleBar>
