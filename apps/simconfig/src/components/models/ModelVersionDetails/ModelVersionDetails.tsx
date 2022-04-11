@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import formatISO9075 from 'date-fns/formatISO9075';
 import parseISO from 'date-fns/parseISO';
 import styled from 'styled-components/macro';
 
-import { Button, Icon, Skeleton, toast } from '@cognite/cogs.js';
+import { Button, Icon, Skeleton, Tooltip, toast } from '@cognite/cogs.js';
 import type { ModelFile } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useGetModelBoundaryConditionListQuery,
@@ -36,6 +36,10 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
 
   const [isModelFileDownloading, setIsModelFileDownloading] = useState(false);
   const [isProcessingReady, setIsProcessingReady] = useState(false);
+  const [
+    isAdditionMetaInfoTooltipEnabled,
+    setIsAdditionMetaInfoTooltipEnabled,
+  ] = useState(false);
 
   const { metadata } = modelFile;
   const { simulator, modelName, version } = metadata;
@@ -88,6 +92,30 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
     }
   }, [modelName, isProcessingReady, simulator, version]);
 
+  const additionalMetadata = useMemo(() => {
+    const metadataKeys = [
+      'dataModelVersion',
+      'modelName',
+      'modelType',
+      'simulator',
+      'description',
+      'fileName',
+      'unitSystem',
+      'userEmail',
+      'version',
+      'nextVersion',
+      'previousVersion',
+      'dataType',
+      'errorMessage',
+    ];
+
+    return Object.fromEntries(
+      Object.entries(modelFile.metadata).filter(
+        ([key]) => !metadataKeys.includes(key)
+      )
+    );
+  }, [modelFile.metadata]);
+
   if (isFetchingBoundaryConditions && !isSuccessBoundaryConditions) {
     return <Skeleton.List lines={2} />;
   }
@@ -134,6 +162,38 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
               <Icon type="Document" />
               {modelFile.metadata.fileName}
             </div>
+            {Object.keys(additionalMetadata).length ? (
+              <div className="more-info">
+                <Tooltip
+                  content={Object.keys(additionalMetadata).map((key) => (
+                    <AdditionalMetadataContainer key={key}>
+                      <dl>
+                        <dt>{key}</dt>
+                        <dd>{additionalMetadata[key]}</dd>
+                      </dl>
+                    </AdditionalMetadataContainer>
+                  ))}
+                  position="right-top"
+                  visible={isAdditionMetaInfoTooltipEnabled}
+                  elevated
+                  interactive
+                  inverted
+                  onClickOutside={() => {
+                    setIsAdditionMetaInfoTooltipEnabled(false);
+                  }}
+                >
+                  <Button
+                    icon="Info"
+                    type="ghost"
+                    onClick={() => {
+                      setIsAdditionMetaInfoTooltipEnabled(true);
+                    }}
+                  >
+                    More Info{' '}
+                  </Button>
+                </Tooltip>
+              </div>
+            ) : undefined}
           </div>
           <div className="actions">
             <div className="charts-link">
@@ -186,6 +246,7 @@ const ModelVersionProperties = styled.main`
       gap: 12px;
       .user-email,
       .file-name,
+      .more-info,
       .time {
         overflow: hidden;
         flex: 0 0 auto;
@@ -215,4 +276,18 @@ const ModelVersionProperties = styled.main`
 
 const BoundaryConditionsContainer = styled.aside`
   overflow: hidden;
+`;
+
+const AdditionalMetadataContainer = styled.div`
+  padding: 5px;
+  > dl {
+    padding: 2px;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    margin: 0;
+    align-items: center;
+    > dd {
+      margin: 0;
+    }
+  }
 `;
