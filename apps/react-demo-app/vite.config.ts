@@ -3,7 +3,6 @@ import react from '@vitejs/plugin-react';
 import tsConfigPaths from 'vite-tsconfig-paths';
 import svgr from 'vite-plugin-svgr';
 import macrosPlugin from 'vite-plugin-babel-macros';
-import inject from '@rollup/plugin-inject';
 
 export default defineConfig(({ command }) => {
   let env = {};
@@ -37,14 +36,6 @@ export default defineConfig(({ command }) => {
       sourcemap: command === 'build',
       commonjsOptions: {
         include: [],
-      },
-      rollupOptions: {
-        plugins: [
-          inject({
-            Buffer: ['buffer', 'Buffer'],
-            process: 'process',
-          }) as Plugin,
-        ],
       },
     },
   };

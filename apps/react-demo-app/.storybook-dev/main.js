@@ -5,7 +5,7 @@ const { loadEnv } = require('vite');
 
 module.exports = {
   framework: '@storybook/react',
-  core: { builder: 'storybook-builder-vite' },
+  core: { builder: '@storybook/builder-vite' },
   stories: ['../src/**/*.stories.tsx'],
   addons: ['@storybook/addon-links', '@storybook/addon-essentials'],
   // https://storybook.js.org/docs/react/configure/typescript#mainjs-configuration
@@ -20,9 +20,7 @@ module.exports = {
         root: `${process.cwd()}/../..`,
         projects: ['tsconfig.json', 'apps/react-demo-app/tsconfig.json'],
       }),
-      // polyfillNode(),
       macrosPlugin.default(),
-      // viteCommonjs(),
     ];
 
     const NODE_ENV = configType.toLowerCase();

@@ -1,5 +1,4 @@
 const tsconfigPaths = require('vite-tsconfig-paths');
-const inject = require('@rollup/plugin-inject');
 const macrosPlugin = require('vite-plugin-babel-macros');
 const { glob } = require('glob');
 const path = require('path');
@@ -18,7 +17,7 @@ const coreJsFiles = glob
 
 module.exports = {
   framework: '@storybook/react',
-  core: { builder: 'storybook-builder-vite' },
+  core: { builder: '@storybook/builder-vite' },
   stories: ['../src/**/*.stories.tsx'],
   addons: ['@storybook/addon-links', '@storybook/addon-essentials'],
   // https://storybook.js.org/docs/react/configure/typescript#mainjs-configuration
@@ -35,7 +34,9 @@ module.exports = {
       }),
       macrosPlugin.default(),
     ];
-    const plugins = config.plugins.filter((_, i) => i !== 1);
+    const plugins = config.plugins.filter(
+      (plugin) => plugin.name !== 'mock-core-js'
+    );
     config.plugins = plugins;
     config.optimizeDeps = {
       ...config.optimizeDeps,
@@ -57,14 +58,6 @@ module.exports = {
       outDir: 'storybook-static/tmp',
       commonjsOptions: {
         include: [],
-      },
-      rollupOptions: {
-        plugins: [
-          inject({
-            Buffer: ['buffer', 'Buffer'],
-            process: 'process',
-          }),
-        ],
       },
     };
     return config;
