@@ -1,9 +1,11 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { RawExplorerContext } from 'contexts';
+
+import { useActiveTable } from 'hooks/table-tabs';
 import {
   SIDE_PANEL_TRANSITION_DURATION,
   SIDE_PANEL_TRANSITION_FUNCTION,
@@ -23,7 +25,17 @@ const StyledSidePanelWrapper = styled.div<{ $isOpen: boolean }>`
 `;
 
 const SidePanel = (): JSX.Element => {
-  const { isSidePanelOpen } = useContext(RawExplorerContext);
+  const [active] = useActiveTable();
+  const { isSidePanelOpen, setIsSidePanelOpen } =
+    useContext(RawExplorerContext);
+
+  useEffect(() => {
+    // Force the sidebar to open when we close all of the tabs,
+    // which wouldn't allow the user to open the sidebar again.
+    if (!active && !isSidePanelOpen) {
+      setIsSidePanelOpen(true);
+    }
+  }, [active, isSidePanelOpen, setIsSidePanelOpen]);
 
   return (
     <StyledSidePanelWrapper $isOpen={isSidePanelOpen}>
