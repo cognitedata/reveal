@@ -11808,10 +11808,10 @@ typedoc-plugin-no-inherit@1.3.1:
   resolved "https://registry.yarnpkg.com/typedoc-plugin-no-inherit/-/typedoc-plugin-no-inherit-1.3.1.tgz#c0b1c81c91bb1d03f1303622c3791dd4f4b576f3"
   integrity sha512-3fdPHRaIcCVV1W5gJYpZTdZL+F2VZTlUMd3Hw9xIv931ILh18CcD8IfxZtTtOijJRuKbgRLJ+J/+hVlgCbq1RQ==
 
-typedoc@0.22.13:
-  version "0.22.13"
-  resolved "https://registry.yarnpkg.com/typedoc/-/typedoc-0.22.13.tgz#d061f8f0fb7c9d686e48814f245bddeea4564e66"
-  integrity sha512-NHNI7Dr6JHa/I3+c62gdRNXBIyX7P33O9TafGLd07ur3MqzcKgwTvpg18EtvCLHJyfeSthAtCLpM7WkStUmDuQ==
+typedoc@0.22.14:
+  version "0.22.14"
+  resolved "https://registry.yarnpkg.com/typedoc/-/typedoc-0.22.14.tgz#c690677c31bc1dd5618caffc001bfa8554c4c02f"
+  integrity sha512-tlf9wIcsrnQSjetStrnRutuy2RjZkG5PK2umwveZLTkuC2K9VywOZTdu2G19BdOPzGrhZjf9WK7pthXqnFQejg==
   dependencies:
     glob "^7.2.0"
     lunr "^2.3.9"
