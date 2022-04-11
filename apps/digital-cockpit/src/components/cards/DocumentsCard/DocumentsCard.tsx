@@ -30,16 +30,15 @@ const DocumentsCard = ({
     limit: 5,
   });
 
-  const renderLink = (file: FileInfo) => {
-    return (
-      <FileLink>
+  const renderLinks = (files: FileInfo[] | undefined) =>
+    files?.map((file) => (
+      <FileLink key={`filelink-${file.id}`}>
         <Button type="link" onClick={() => onFileClick && onFileClick(file)}>
           {file.name}
         </Button>
         {descriptionField && <span>{file.metadata?.[descriptionField]}</span>}
       </FileLink>
-    );
-  };
+    ));
 
   const renderContent = () => {
     if (isLoading) {
@@ -58,7 +57,7 @@ const DocumentsCard = ({
       return <StatusMessage type="Missing.Documents" />;
     }
 
-    return fileList?.map(renderLink);
+    return renderLinks(fileList);
   };
 
   return (

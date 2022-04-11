@@ -15,9 +15,10 @@ import { mapFiltersToCDF } from 'components/search/utils';
 import DocumentGrouper from '../DocumentGrouper';
 import DocumentRow from '../DocumentRow';
 import { DocumentRowWrapper } from '../DocumentRow/DocumentRowWrapper';
+import DocumentGlobalView from '../DocumentGlobalView';
 import DocumentSidebar from '../DocumentSidebar';
 
-import { DocumentTabWrapper } from './elements';
+import { DocumentTabWrapper, DocumentModal } from './elements';
 import { FILE_FILTER_SELECTORS } from './consts';
 
 export type DocumentTabProps = {
@@ -46,6 +47,17 @@ const DocumentTab = ({ assetId, groupByField = '' }: DocumentTabProps) => {
   const [selectedDocument, setSelectedDocument] = useState<
     FileInfo | undefined
   >();
+
+  const [documentModalOpened, setDocumentModalOpened] = useState(false);
+
+  const isImgOrPdf = useMemo(
+    () =>
+      Boolean(
+        selectedDocument?.mimeType?.includes('pdf') ||
+          selectedDocument?.mimeType?.includes('image')
+      ),
+    [selectedDocument]
+  );
 
   const { renderPagination, getPageData, resetPages } = usePagination();
 
@@ -136,6 +148,54 @@ const DocumentTab = ({ assetId, groupByField = '' }: DocumentTabProps) => {
     );
   };
 
+  const handleCloseModal = () => {
+    setSelectedDocument(undefined);
+    setDocumentModalOpened(false);
+  };
+
+  const renderPreview = () => {
+    if (!selectedDocument) {
+      return null;
+    }
+
+    // for pdf/img show sidebar with expand button
+    if (isImgOrPdf) {
+      return (
+        <>
+          <div className="document-tab--sidebar">
+            <DocumentSidebar
+              document={selectedDocument}
+              handleSelect={handleCloseModal}
+              handleExpandDocument={() => setDocumentModalOpened(true)}
+            />
+          </div>
+          <DocumentModal
+            visible={Boolean(documentModalOpened)}
+            title={selectedDocument?.name}
+            onCancel={handleCloseModal}
+            footer={null}
+            width={1320}
+            closable
+          >
+            {documentModalOpened && (
+              <DocumentGlobalView
+                document={selectedDocument}
+                handleSelect={handleCloseModal}
+              />
+            )}
+          </DocumentModal>
+        </>
+      );
+    }
+
+    // show sidebar for any other type of document
+    return (
+      <div className="document-tab--sidebar">
+        <DocumentSidebar document={selectedDocument} />
+      </div>
+    );
+  };
+
   return (
     <DocumentTabWrapper style={{ paddingRight: selectedDocument ? 280 : 0 }}>
       <SearchBar
@@ -171,11 +231,7 @@ const DocumentTab = ({ assetId, groupByField = '' }: DocumentTabProps) => {
         </h3>
         {renderSection(relatedQuery, 'relatedAssets')}
       </section>
-      {selectedDocument && (
-        <div className="document-tab--sidebar">
-          <DocumentSidebar document={selectedDocument} />
-        </div>
-      )}
+      {renderPreview()}
     </DocumentTabWrapper>
   );
 };

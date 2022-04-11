@@ -1,3 +1,4 @@
+import { Modal } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 export const DocumentTabWrapper = styled.div`
@@ -22,5 +23,17 @@ export const DocumentTabWrapper = styled.div`
     background: white;
     height: calc(100% - 48px);
     border-left: 1px solid var(--cogs-greyscale-grey2);
+  }
+`;
+
+export const DocumentModal = styled(Modal)`
+  &.cogs-modal {
+    height: 90vh;
+    min-width: 90vw;
+
+    .cogs-modal-content {
+      overflow: hidden;
+      height: calc(100% - 65px);
+    }
   }
 `;

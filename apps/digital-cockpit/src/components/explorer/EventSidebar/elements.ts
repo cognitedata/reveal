@@ -53,7 +53,7 @@ export const Metadata = styled.section`
   .event-sidebar--details {
     margin-bottom: 12px;
   }
-  & > div:nth-child(even) {
+  & > div:nth-child(odd) {
     background-color: var(--cogs-bg-accent);
   }
 `;

@@ -4,15 +4,15 @@ import { FileInfo } from '@cognite/sdk';
 import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 import { useQuery } from 'react-query';
 
-export const useDocumentImage = (document: FileInfo) => {
+export const useDocumentImage = (document: FileInfo | undefined) => {
   const { client } = useCDFExplorerContext();
 
   return useQuery<any>(
-    ['getFileImage', document.id],
+    ['getFileImage', document?.id],
     () =>
       client
         .get(
-          `/api/playground/projects/${client.project}/documents/preview?documentId=${document.id}`,
+          `/api/playground/projects/${client.project}/documents/preview?documentId=${document?.id}`,
           { headers: { Accept: 'image/png' }, responseType: 'arraybuffer' }
         )
         .then((response) => {
@@ -21,7 +21,7 @@ export const useDocumentImage = (document: FileInfo) => {
           )}`;
         }),
     {
-      enabled: Boolean(document.id),
+      enabled: document && Boolean(document.id),
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,

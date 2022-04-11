@@ -3,7 +3,7 @@ import { Timeseries, TimeseriesFilterQuery } from '@cognite/sdk';
 import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 
 const useTimeSeriesQuery = (
-  tsQuery: TimeseriesFilterQuery,
+  tsQuery: TimeseriesFilterQuery | undefined,
   options: UseQueryOptions<Timeseries[]> = {}
 ) => {
   const { client } = useCDFExplorerContext();

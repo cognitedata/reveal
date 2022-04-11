@@ -72,6 +72,7 @@ DEPENDENCIES = [
     "@npm//formik",
     "@npm//gridstack",
     "@npm//i18next",
+    "@npm//konva",
     "@npm//lodash",
     "@npm//moment",
     "@npm//react",
@@ -97,6 +98,7 @@ DEPENDENCIES = [
     "//packages/auth-utils",
     "//packages/react-container",
     "//packages/react-i18n",
+    "//packages/ornate",
 ]
 
 # Type dependencies from package.json
