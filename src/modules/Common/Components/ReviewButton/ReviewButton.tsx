@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 // using noBackground flag to disable background when button disabled
 interface ReviewButtonProps {
-  onClick: () => void;
+  onClick: (evt: any) => void;
   disabled?: boolean;
   noBackground?: boolean;
 }
