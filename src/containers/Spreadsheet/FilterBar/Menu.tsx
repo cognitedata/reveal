@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { Colors, Icon, Menu as CogsMenu } from '@cognite/cogs.js';
+import { Button, Icon, Menu as CogsMenu } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 
@@ -52,10 +52,10 @@ export const Menu = (): JSX.Element => {
           setIsDeleteModalOpen(true);
         }}
       >
-        <Item danger>
+        <DeleteButton type="ghost-danger" tabIndex={-1}>
           <Icon type="Delete" />
           <span>Delete table</span>
-        </Item>
+        </DeleteButton>
       </CogsMenu.Item>
       <DeleteTableModal
         databaseName={database}
@@ -73,14 +73,15 @@ const StyledMenu = styled(CogsMenu)`
     color: inherit;
   }
 `;
+const DeleteButton = styled(Button)`
+  flex-grow: 1;
+  margin: -8px;
+  height: 34px;
+  justify-content: flex-start;
+`;
 const Item = styled.span<{ danger?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: flex-start;
   font-weight: 500;
-
-  & > * {
-    color: ${({ danger }) =>
-      danger ? Colors['text-danger'].hex() : 'inherit'};
-  }
 `;
