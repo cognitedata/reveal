@@ -13,7 +13,7 @@ import { SpecificTable, useActiveTable } from 'hooks/table-tabs';
 import { DEFAULT_FILTER } from 'hooks/table-filters';
 
 import { graphics } from 'assets';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'utils/i18n';
 
 type ActiveTableState = {
   database: string;
