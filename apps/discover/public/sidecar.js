@@ -14,6 +14,7 @@ window.__cogniteSidecar = {
       otherAccessTokenFields: {
         given_name: 'Normal',
         family_name: 'User E2E',
+        appid: '808c3e2e-7bc1-4211-8d9e-66b4a7a37d48',
       },
       otherIdTokenFields: {
         given_name: 'Normal',
@@ -32,6 +33,7 @@ window.__cogniteSidecar = {
       otherAccessTokenFields: {
         given_name: 'Admin',
         family_name: 'User E2E',
+        appid: '808c3e2e-7bc1-4211-8d9e-66b4a7a37d48',
       },
       otherIdTokenFields: {
         given_name: 'Admin',
@@ -50,6 +52,7 @@ window.__cogniteSidecar = {
       otherAccessTokenFields: {
         given_name: 'Normal',
         family_name: 'User E2E',
+        appid: '1f860e84-7353-4533-a088-8fbe3228400f',
       },
       otherIdTokenFields: {
         given_name: 'Normal',
@@ -70,6 +73,7 @@ window.__cogniteSidecar = {
       otherAccessTokenFields: {
         given_name: 'Admin',
         family_name: 'User E2E',
+        appid: '1f860e84-7353-4533-a088-8fbe3228400f',
       },
       otherIdTokenFields: {
         given_name: 'Admin',
@@ -88,6 +92,7 @@ window.__cogniteSidecar = {
       otherAccessTokenFields: {
         given_name: 'Normal',
         family_name: 'User DEV',
+        appid: '1f860e84-7353-4533-a088-8fbe3228400f',
       },
       otherIdTokenFields: {
         given_name: 'Normal',
@@ -106,6 +111,7 @@ window.__cogniteSidecar = {
       otherAccessTokenFields: {
         given_name: 'Admin',
         family_name: 'User DEV',
+        appid: '1f860e84-7353-4533-a088-8fbe3228400f',
       },
       otherIdTokenFields: {
         given_name: 'Admin',
