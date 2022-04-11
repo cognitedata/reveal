@@ -64,7 +64,7 @@ const TabProfiling = ({
   isFetching: boolean;
   isEmpty: boolean;
 }): JSX.Element => (
-  <Tab style={{ color: isEmpty ? Colors['greyscale-grey5'].hex() : 'inherit' }}>
+  <Tab $isEmpty={isEmpty}>
     <Icon type={isFetching ? 'Loader' : 'Profiling'} />
     Profile
   </Tab>
@@ -81,10 +81,16 @@ const TopBar = styled(Flex)`
   border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
 `;
 
-const Tab = styled.span`
+const Tab = styled.span<{ $isEmpty?: boolean }>`
+  display: inline-flex;
+  align-content: center;
+  line-height: 17px;
   font-weight: 500;
   font-size: 14px;
-  color: ${Colors['greyscale-grey7'].hex()};
+  color: ${({ $isEmpty = false }) =>
+    $isEmpty
+      ? Colors['greyscale-grey-5'].hex()
+      : Colors['greyscale-grey7'].hex()};
 `;
 
 const StyledTabs = styled(Tabs)`
