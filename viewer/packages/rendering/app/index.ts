@@ -24,8 +24,14 @@ init();
 async function init() {
   const gui = new dat.GUI();
 
-  const guiData = { drawCalls: 0, steps: 16, canvasColor: '#50728c', clearColor: '#444', clearAlpha: 1 };
-  const guiController = gui.add(guiData, 'drawCalls').listen();
+  const guiData = {
+    drawCalls: 0,
+    gpuFrameTime: 1.1,
+    steps: 16,
+    canvasColor: '#50728c',
+    clearColor: '#444',
+    clearAlpha: 1
+  };
 
   const client = await createApplicationSDK('reveal.example.simple', {
     project: '3d-test',
@@ -39,10 +45,10 @@ async function init() {
 
   // Defaults to all-primitives model on 3d-test
   const modelId = parseInt(urlParams.get('modelId') ?? '1791160622840317');
-  // const modelId = parseInt(urlParams.get('modelId') ?? '5244774438818744');
+  // const modelId = parseInt(urlParams.get('modelId') ?? '7029437408438765');
 
   const revisionId = parseInt(urlParams.get('revisionId') ?? '498427137020189');
-  // const revisionId = parseInt(urlParams.get('revisionId') ?? '2249063501234508');
+  // const revisionId = parseInt(urlParams.get('revisionId') ?? '1994234928723810');
 
   const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
   const cdfModelMetadataProvider = new CdfModelMetadataProvider(client);
@@ -100,21 +106,10 @@ async function init() {
     await render();
   });
 
-  gui.addColor(guiData, 'clearColor').onChange(async () => {
-    renderer.setClearColor(guiData.clearColor);
-    renderer.setClearAlpha(guiData.clearAlpha);
-    await render();
-  });
-
-  gui.add(guiData, 'clearAlpha', 0, 1).onChange(async () => {
-    renderer.setClearColor(guiData.clearColor);
-    renderer.setClearAlpha(guiData.clearAlpha);
-    await render();
-  });
-
-  gui.addColor(guiData, 'canvasColor').onChange(async () => {
-    renderer.domElement.style.backgroundColor = guiData.canvasColor;
-  });
+  const stats = gui.addFolder('frame stats');
+  const drawCallController = stats.add(guiData, 'drawCalls');
+  const gpuFrameTimeController = stats.add(guiData, 'gpuFrameTime');
+  stats.open();
 
   const grid = new THREE.GridHelper(30, 40);
   grid.position.set(14, -1, -14);
@@ -167,6 +162,22 @@ async function init() {
   const renderOptionsGUI = gui.addFolder('Render Options');
   renderOptionsGUI.open();
 
+  renderOptionsGUI.addColor(guiData, 'clearColor').onChange(async () => {
+    renderer.setClearColor(guiData.clearColor);
+    renderer.setClearAlpha(guiData.clearAlpha);
+    await render();
+  });
+
+  renderOptionsGUI.add(guiData, 'clearAlpha', 0, 1).onChange(async () => {
+    renderer.setClearColor(guiData.clearColor);
+    renderer.setClearAlpha(guiData.clearAlpha);
+    await render();
+  });
+
+  renderOptionsGUI.addColor(guiData, 'canvasColor').onChange(async () => {
+    renderer.domElement.style.backgroundColor = guiData.canvasColor;
+  });
+
   const edgeDetectionParametersGUI = renderOptionsGUI.addFolder('Edge Detection');
   edgeDetectionParametersGUI.add(renderOptions.edgeDetectionParameters, 'enabled').onChange(updateRenderOptions);
   edgeDetectionParametersGUI.open();
@@ -189,10 +200,21 @@ async function init() {
     await render();
   });
 
+  let timings: number[] = [];
+
   const render = async () => {
     await pipelineExecutor.render(defaultRenderPipeline, camera);
     guiData.drawCalls = renderer.info.render.calls;
-    guiController.updateDisplay();
+    drawCallController.updateDisplay();
+    if (pipelineExecutor.timings.length > 0) {
+      if (timings.length >= 20) {
+        guiData.gpuFrameTime = timings.reduce((sum, current) => sum + current, 0) / timings.length;
+        gpuFrameTimeController.updateDisplay();
+        timings = [];
+      } else {
+        timings.push(pipelineExecutor.timings[pipelineExecutor.timings.length - 1]);
+      }
+    }
   };
 
   renderer.setAnimationLoop(async () => {
