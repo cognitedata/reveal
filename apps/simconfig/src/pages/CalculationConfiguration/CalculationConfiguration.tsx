@@ -7,6 +7,7 @@ import styled from 'styled-components/macro';
 import * as Yup from 'yup';
 
 import { Button, Icon, Skeleton, toast } from '@cognite/cogs.js';
+import { useAuthContext } from '@cognite/react-container';
 import type {
   AggregateType,
   CalculationTemplate,
@@ -41,6 +42,8 @@ import type { AppLocationGenerics } from 'routes';
 import type { ObjectSchema, ValidationError } from 'yup';
 
 export function CalculationConfiguration() {
+  const { authState } = useAuthContext();
+
   const project = useSelector(selectProject);
   const {
     params: {
@@ -209,7 +212,10 @@ export function CalculationConfiguration() {
             await upsertCalculation({
               project,
               dataSetId,
-              calculationTemplateModel: values,
+              calculationTemplateModel: {
+                ...values,
+                userEmail: authState?.email ?? values.userEmail,
+              },
             }).unwrap();
             toast.success('The calculation was successfully configured.', {
               autoClose: 5000,

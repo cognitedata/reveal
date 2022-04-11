@@ -291,7 +291,7 @@ export function ModelForm({
           <InputRow>
             <Field
               as={Input}
-              maxLength={512}
+              maxLength={200}
               name="metadata.description"
               title="Description"
               fullWidth
