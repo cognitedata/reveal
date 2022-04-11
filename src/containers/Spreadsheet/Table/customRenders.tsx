@@ -84,6 +84,7 @@ export const HeaderRender = (props: Props): JSX.Element => {
 const TooltipWrapper = styled.p`
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-bottom: 0px;
 `;
 
 const Box = styled.div`
