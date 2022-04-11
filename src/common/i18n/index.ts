@@ -1,5 +1,3 @@
-import i18next from 'i18next';
-import { initReactI18next } from 'react-i18next';
 import { useTypedTranslation } from '@cognite/cdf-utilities';
 
 import en from 'common/i18n/en.json';
@@ -11,16 +9,6 @@ export const translations = {
 };
 
 export const languages = Object.keys(translations);
-
-export const setupTranslations = () => {
-  i18next.use(initReactI18next).init({
-    resources: translations,
-    lng: 'en',
-    interpolation: {
-      escapeValue: false,
-    },
-  });
-};
 
 export type TranslationKeys = keyof typeof en & keyof typeof no;
 

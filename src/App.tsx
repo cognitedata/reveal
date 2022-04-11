@@ -7,6 +7,7 @@ import {
   getEnv,
   getProject,
   I18nWrapper,
+  setupTranslations,
   SubAppWrapper,
 } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
@@ -18,7 +19,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import i18next from 'i18next';
 
 import { RawExplorerProvider } from 'contexts';
-import { languages, setupTranslations } from 'utils/i18n';
+import { languages, translations } from 'common/i18n';
 import GlobalStyles from 'styles/GlobalStyles';
 import { AntStyles } from 'styles/AntStyles';
 import { setupMixpanel } from 'utils/config';
@@ -27,7 +28,7 @@ import RawExplorer from 'containers/RawExplorer';
 import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 
 setupMixpanel();
-setupTranslations();
+setupTranslations(translations);
 
 const App = () => {
   const history = createBrowserHistory();
