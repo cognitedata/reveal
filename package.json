@@ -10,7 +10,7 @@
     "eslint:changed": "eslint --config .eslintrc.production.js"
   },
   "dependencies": {
-    "@cognite/cdf-utilities": "^0.12.1",
+    "@cognite/cdf-utilities": "^1.0.0",
     "@cognite/cogs.js": "^5.2.1",
     "@cognite/login-utils": "^2.0.0",
     "@cognite/metrics": "^1.2.1",

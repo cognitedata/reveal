@@ -1164,13 +1164,12 @@
     babel-plugin-syntax-jsx "^6.18.0"
     lodash "^4.17.11"
 
-"@cognite/cdf-utilities@^0.12.1":
-  version "0.12.2"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-0.12.2.tgz#4f6ab5f1c62117d23aa5e591822c139d7cf803d5"
-  integrity sha512-KmJMe/YZpa153NKsjynb46s/lc2IxahvKI/D4HC0kMnjLepek29P40AzWSNTi0Jzdk1mhqi9cG9YOEsc5TOpnA==
+"@cognite/cdf-utilities@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-1.0.0.tgz#c486e2d979353dc99b3c93616bcba96cf5a042fb"
+  integrity sha512-DPhVVO3pLgogVpTurfDyM9K+tNI91z5X64tqZ58VwZn2flFnjBBvTa9andDj6E4rlisDAHDgWwHACuEqpwGLug==
   dependencies:
     "@cognite/cogs.js" "^3.38.4"
-    parse-duration "^1.0.2"
     query-string "^7.0.1"
     styled-components "^5.3.3"
 
@@ -8113,11 +8112,6 @@ parent-module@^1.0.0:
   integrity sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==
   dependencies:
     callsites "^3.0.0"
-
-parse-duration@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/parse-duration/-/parse-duration-1.0.2.tgz#b9aa7d3a1363cc7e8845bea8fd3baf8a11df5805"
-  integrity sha512-Dg27N6mfok+ow1a2rj/nRjtCfaKrHUZV2SJpEn/s8GaVUSlf4GGRCRP1c13Hj+wfPKVMrFDqLMLITkYKgKxyyg==
 
 parse-entities@^2.0.0:
   version "2.0.0"
