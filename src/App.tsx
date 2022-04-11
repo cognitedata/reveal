@@ -16,6 +16,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 
 import { RawExplorerProvider } from 'contexts';
+import { setupTranslations } from 'common';
 import GlobalStyles from 'styles/GlobalStyles';
 import { AntStyles } from 'styles/AntStyles';
 import { setupMixpanel } from 'utils/config';
@@ -24,6 +25,7 @@ import RawExplorer from 'containers/RawExplorer';
 import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 
 setupMixpanel();
+setupTranslations();
 
 const App = () => {
   const history = createBrowserHistory();

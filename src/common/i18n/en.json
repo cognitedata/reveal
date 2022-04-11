@@ -1,0 +1,5 @@
+{
+  "select_a_table_to_view": "Select a table to view raw data",
+  "table_not_found": "The specified table was not found!",
+  "use_the_side_menu": "Use the side menu to navigate between databases and open raw tables."
+}
