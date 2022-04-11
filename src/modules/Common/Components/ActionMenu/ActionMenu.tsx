@@ -16,7 +16,7 @@ interface ActionMenuProps {
   showExifIcon?: boolean;
   reviewDisabled?: boolean;
   actionDisabled?: boolean;
-  handleReview?: () => void;
+  handleReview?: (evt: any) => void;
   handleFileDelete: () => void;
   handleFileDetails: () => void;
 }

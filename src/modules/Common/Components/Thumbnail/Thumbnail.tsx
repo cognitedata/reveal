@@ -14,7 +14,7 @@ export const Thumbnail = ({
 }: {
   fileInfo: FileInfo;
   isFileProcessing?: boolean;
-  onViewClicked?: () => void;
+  onViewClicked?: (evt: any) => void;
 }) => {
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
   const { data, isError } = useFileIcon(fileInfo);
