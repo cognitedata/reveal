@@ -2,8 +2,8 @@ import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { useTypedTranslation } from '@cognite/cdf-utilities';
 
-import en from 'utils/i18n/en.json';
-import no from 'utils/i18n/no.json';
+import en from 'common/i18n/en.json';
+import no from 'common/i18n/no.json';
 
 export const translations = {
   en: { translation: en },
