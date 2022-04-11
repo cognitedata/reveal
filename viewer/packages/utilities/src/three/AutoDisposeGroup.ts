@@ -33,15 +33,21 @@ export class AutoDisposeGroup extends THREE.Group {
   private dispose(): void {
     this.ensureNotDisposed();
     this._isDisposed = true;
-    const meshes: THREE.Mesh[] = this.children.filter(x => x instanceof THREE.Mesh).map(x => x as THREE.Mesh);
-    for (const mesh of meshes) {
-      if (mesh.geometry !== undefined) {
-        mesh.geometry.dispose();
+
+    for (const child of this.children) {
+      if (child instanceof THREE.Mesh && child.geometry !== undefined) {
+        child.geometry.dispose();
+
         // // NOTE: Forcefully creating a new reference here to make sure
         // // there are no lingering references to the large geometry buffer
-        mesh.geometry = emptyGeometry;
+        child.geometry = emptyGeometry;
+      }
+      if (child instanceof THREE.BufferGeometry) {
+        child.dispose();
       }
     }
+
+    this.clear();
   }
 
   private ensureNotDisposed() {

@@ -62,7 +62,7 @@ export class SectorLoader {
   }
 
   async *loadSectors(input: DetermineSectorsPayload): AsyncIterable<ConsumedSector> {
-    if (!this._continuousModelStreaming && input.cameraInMotion) {
+    if (!this.shouldLoad(input)) {
       return [];
     }
 
@@ -111,6 +111,16 @@ export class SectorLoader {
         progressHelper.reportNewSectorsLoaded(1);
       }
     }
+  }
+
+  private shouldLoad(input: DetermineSectorsPayload) {
+    if (input.models.length == 0) {
+      return false;
+    }
+    if (isLegacyModelFormat(input.models[0].cadModelMetadata)) {
+      return !input.cameraInMotion;
+    }
+    return this._continuousModelStreaming || !input.cameraInMotion;
   }
 
   private getSectorCuller(sectorCullerInput: DetermineSectorsInput): SectorCuller {
