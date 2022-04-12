@@ -10,7 +10,7 @@ export const AxisTitleContainer = styled.div`
 `;
 
 export const AxisTitle = styled(AxisLabel)`
-  transform: rotate(270deg) translateX(25%);
+  transform: rotate(270deg) translateX(50%);
   white-space: nowrap;
   margin: -${sizes.small};
 `;

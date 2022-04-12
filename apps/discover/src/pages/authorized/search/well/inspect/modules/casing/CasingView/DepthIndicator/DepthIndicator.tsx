@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React from 'react';
 
 import { Tooltip } from 'components/popper-tooltip';
 import { useEnabledWellSdkV3 } from 'modules/wellSearch/hooks/useEnabledWellSdkV3';
@@ -15,18 +15,17 @@ import {
 } from './elements';
 import { TooltipContent } from './TooltipContent';
 
-type DepthIndicatorProps = {
+export interface DepthIndicatorProps {
   normalizedCasing: PreviewCasingType;
   flip?: boolean;
-};
+}
 
 const triangleHeight = 16;
 
 /**
  * This component is used to generate depth indicator for a casing
- * @param param0
  */
-const DepthIndicator: FC<DepthIndicatorProps> = ({
+const DepthIndicator: React.FC<DepthIndicatorProps> = ({
   normalizedCasing,
   flip = false,
 }) => {

@@ -1,6 +1,7 @@
 import { RefObject } from 'react';
 
 import get from 'lodash/get';
+import isNaN from 'lodash/isNaN';
 import isUndefined from 'lodash/isUndefined';
 import without from 'lodash/without';
 
@@ -8,7 +9,6 @@ import { LegendCheckboxState } from './common/Legend';
 import { getCheckedLegendCheckboxOptions } from './common/Legend/utils';
 import {
   AXIS_LABEL_FONT_SIZE,
-  AXIS_TITLE_FONT_SIZE,
   DEFAULT_COLOR,
   DEFAULT_NO_DATA_COLOR,
 } from './constants';
@@ -89,21 +89,30 @@ export const getValidatedValues = <T>(values: T[]) => {
 };
 
 export const getCalculatedMarginLeft = <T>(data: T[], yAxis: ChartAxis) => {
-  const { accessor, formatAxisLabel, title } = yAxis;
+  const { accessor, formatAxisLabel } = yAxis;
 
   const yValues = data.map((dataElement) => get(dataElement, accessor));
   const formattedYValues = formatAxisLabel
     ? yValues.map(formatAxisLabel)
     : yValues;
-  const yAxisLabelLengths = formattedYValues.map(
-    (value) => String(value).length
-  );
-  const yAxisLabelsMaxWidth = Math.max(...yAxisLabelLengths);
-  const yAxisLabelsSpace = yAxisLabelsMaxWidth * AXIS_LABEL_FONT_SIZE;
 
-  if (title) {
-    return yAxisLabelsSpace + AXIS_TITLE_FONT_SIZE + 10;
-  }
+  /**
+   * When taking the lengths, the following logic must be checked.
+   * Otherwise, if the length of a yValue such as 1.00095 will be taken as 7.
+   * This leads to miscalculate the margin left.
+   */
+  const yAxisLabelLengths = formattedYValues.map((value) => {
+    // If the value is not a number, take the length directly.
+    if (isNaN(Number(value))) {
+      return value.length;
+    }
+
+    // If the value is a number, round it and then take the length.
+    return String(Math.round(value)).length;
+  });
+
+  const yAxisLabelsMaxLength = Math.max(...yAxisLabelLengths);
+  const yAxisLabelsSpace = yAxisLabelsMaxLength * AXIS_LABEL_FONT_SIZE;
 
   return yAxisLabelsSpace;
 };

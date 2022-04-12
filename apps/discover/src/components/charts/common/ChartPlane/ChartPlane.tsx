@@ -88,9 +88,11 @@ export const ChartPlane = ({
         <YAxisTitle title={yAxisTitle} />
 
         <ChartWithXAxis>
-          <FlexColumn style={{ maxHeight }}>
-            {ChartContent}
-            {ChartXAxisSticky}
+          <FlexColumn>
+            <div style={{ maxHeight }}>
+              {ChartContent}
+              {ChartXAxisSticky}
+            </div>
           </FlexColumn>
         </ChartWithXAxis>
       </ChartRowContent>
