@@ -15,9 +15,9 @@ export {
   DefaultCameraManager,
   CameraManagerHelper,
   CameraManager,
-  CameraChangeDelegate,
   CameraState,
-  ComboControls
+  ComboControls,
+  CameraChangeDelegate
 } from './packages/camera-manager';
 
 export {
@@ -45,7 +45,14 @@ export {
 
 export { CogniteModelBase, SupportedModelTypes } from './packages/model-base';
 
-export { revealEnv, IndexSet, NumericRange } from './packages/utilities';
+export {
+  revealEnv,
+  IndexSet,
+  NumericRange,
+  SceneRenderedDelegate,
+  PointerEventDelegate,
+  DisposedDelegate
+} from './packages/utilities';
 
 export { Cognite3DModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from './packages/cad-model';
 export { CognitePointCloudModel } from './packages/pointclouds';

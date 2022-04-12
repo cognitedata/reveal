@@ -5,16 +5,16 @@
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { ComboControls } from './ComboControls';
-import {
-  CameraManagerCallbackData,
-  CameraControlsOptions,
-  CameraChangeDelegate,
-  PointerEventDelegate,
-  CameraState
-} from './types';
+import { CameraManagerCallbackData, CameraControlsOptions, CameraState, CameraChangeDelegate } from './types';
 import { CameraManager } from './CameraManager';
 import { CameraManagerHelper } from './CameraManagerHelper';
-import { assertNever, EventTrigger, InputHandler, disposeOfAllEventListeners } from '@reveal/utilities';
+import {
+  assertNever,
+  EventTrigger,
+  InputHandler,
+  disposeOfAllEventListeners,
+  PointerEventDelegate
+} from '@reveal/utilities';
 
 /**
  * Default implementation of {@link CameraManager}. Uses target-based orbit controls combined with
