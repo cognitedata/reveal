@@ -86,7 +86,6 @@ const CasingView: FC<CasingViewTypeProps> = ({
 }) => {
   const scaleRef = useRef<HTMLElement | null>(null);
 
-  const [recentZIndex, setRecentZIndex] = useState(1);
   const [scaleBlocks, setScaleBlocks] = useState<number[]>([]);
   const [selectedWellbore, setSelectedWellbore] = useState<SelectedWellbore>();
 
@@ -131,13 +130,6 @@ const CasingView: FC<CasingViewTypeProps> = ({
     setScaleBlocksCount();
   }, [setScaleBlocksCount]);
 
-  // This fires on indicator click event
-  const onIndicatorClick = () => {
-    // This increments casing view zindex value and return highest value only for clicked casing
-    setRecentZIndex((previousZIndex) => previousZIndex + 1);
-    return recentZIndex;
-  };
-
   return (
     <>
       <Wrapper>
@@ -171,7 +163,6 @@ const CasingView: FC<CasingViewTypeProps> = ({
           ) : (
             <>
               <DepthColumn scaleBlocks={scaleBlocks} unit={unit} />
-
               <BodyColumn width={150}>
                 <BodyColumnHeaderWrapper>
                   <BodyColumnMainHeader>Schema</BodyColumnMainHeader>
@@ -189,14 +180,7 @@ const CasingView: FC<CasingViewTypeProps> = ({
 
                   {normalizedCasings.map((normalizedCasing, index) => (
                     <Fragment key={normalizedCasing.id}>
-                      <DepthIndicator
-                        startDepth={normalizedCasing.startDepth}
-                        casingDepth={normalizedCasing.casingDepth}
-                        description={normalizedCasing.casingDescription}
-                        outerDiameter={normalizedCasing.outerDiameter}
-                        onClick={onIndicatorClick}
-                        linerCasing={normalizedCasing.linerCasing}
-                      />
+                      <DepthIndicator normalizedCasing={normalizedCasing} />
                       {/* A trick to have space in right side for lengthiest description */}
                       {casings.length === index + 1 && (
                         <RightGutter>

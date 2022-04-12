@@ -2,12 +2,23 @@ import { screen } from '@testing-library/react';
 
 import { testRenderer } from '__test-utils/renderer';
 
-import DepthIndicator from './DepthIndicator';
+import DepthIndicator, { DepthIndicatorProps } from './DepthIndicator';
 
-const depthIndicatorProps = {
-  casingDepth: 100,
-  description: '22.0" intermediate casing 2',
-  outerDiameter: '22.0',
+const depthIndicatorProps: DepthIndicatorProps = {
+  normalizedCasing: {
+    id: 12345,
+    name: 'Test Casing',
+    outerDiameter: '22.0',
+    startDepth: 0,
+    endDepth: 1000,
+    startDepthTVD: 0,
+    endDepthTVD: 800,
+    depthUnit: 'ft',
+    casingDepth: 100,
+    casingDescription: 'Test casing description',
+    linerCasing: false,
+    maximumDescription: 'Test maximum description',
+  },
 };
 
 describe('Depth Indicator', () => {
@@ -26,7 +37,9 @@ describe('Depth Indicator', () => {
   it(`should display casing description`, async () => {
     await defaultTestInit();
     expect(
-      await screen.findByText(depthIndicatorProps.outerDiameter)
+      await screen.findByText(
+        depthIndicatorProps.normalizedCasing.outerDiameter
+      )
     ).toBeInTheDocument();
   });
 });

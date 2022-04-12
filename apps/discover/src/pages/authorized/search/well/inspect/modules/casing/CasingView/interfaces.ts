@@ -9,6 +9,8 @@ export interface CasingType {
   outerDiameter: string;
   startDepth: number;
   endDepth: number;
+  startDepthTVD: number;
+  endDepthTVD: number;
   depthUnit: string;
 }
 

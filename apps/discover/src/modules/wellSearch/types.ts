@@ -19,6 +19,9 @@ import {
   WellFilter as WellFilterV3,
   DepthMeasurement,
   DepthMeasurementData,
+  CasingAssembly,
+  Distance,
+  CasingSchematic,
 } from '@cognite/sdk-wells-v3';
 import { Point } from '@cognite/seismic-sdk-js';
 
@@ -490,4 +493,12 @@ export interface PreviewCasingType extends CasingType {
   casingDescription: string;
   linerCasing: boolean;
   maximumDescription: string;
+}
+export interface CasingAssemblyWithTVD extends CasingAssembly {
+  trueVerticalDepthTop?: Distance;
+  trueVerticalDepthBase?: Distance;
+}
+
+export interface CasingSchematicWithTVDs extends CasingSchematic {
+  casingAssemblies: Array<CasingAssemblyWithTVD>;
 }

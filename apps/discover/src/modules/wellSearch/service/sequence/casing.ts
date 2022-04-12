@@ -2,6 +2,7 @@ import chunk from 'lodash/chunk';
 import flatten from 'lodash/flatten';
 import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
+import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
 import keyBy from 'lodash/keyBy';
 import noop from 'lodash/noop';
@@ -10,13 +11,21 @@ import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 import { changeUnitTo } from 'utils/units';
 
 import { Sequence, SequenceColumn, SequenceFilter } from '@cognite/sdk';
-import { CasingAssembly, CasingItems } from '@cognite/sdk-wells-v3';
+import {
+  CasingAssembly,
+  CasingItems,
+  CasingSchematic,
+  DistanceUnitEnum,
+  TrajectoryInterpolationRequest,
+} from '@cognite/sdk-wells-v3';
 
 import { EMPTY_ARRAY } from 'constants/empty';
 import { MetricLogger } from 'hooks/useTimeLog';
 import { toIdentifier } from 'modules/wellSearch/sdk/utils';
 import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';
 import {
+  CasingAssemblyWithTVD,
+  CasingSchematicWithTVDs,
   WellboreAssetIdMap,
   WellboreId,
   WellboreSourceExternalIdMap,
@@ -29,6 +38,10 @@ import {
   CASING_SIZE_UNIT,
   SEQUENCE_COLUMNS,
 } from './constants';
+import {
+  getTrajectoryInterpolateTVDs,
+  getTVDForMD,
+} from './trajectoryInterpolate';
 
 const CHUNK_LIMIT = 100;
 
@@ -72,9 +85,13 @@ export const fetchCasingsUsingWellsSDK = async (
             filter: { wellboreIds: wellboreIdChunk.map(toIdentifier) },
             limit: CHUNK_LIMIT,
           })
-          .then((casingItems) => {
-            return mapCasingItemsToSequences(
-              casingItems,
+          .then(async (casingItems: CasingItems) => {
+            const casingSchematicsWithTVDs = await getCasingSchematicsWithTVDs(
+              casingItems
+            );
+
+            return mapCasingsToSequences(
+              casingSchematicsWithTVDs,
               wellboreSourceExternalIdMap
             );
           })
@@ -91,11 +108,82 @@ export const fetchCasingsUsingWellsSDK = async (
   return groupedData;
 };
 
-export const mapCasingItemsToSequences = (
-  casingItems: CasingItems,
+export const getCasingSchematicsWithTVDs = async (
+  casingItems: CasingItems
+): Promise<CasingSchematicWithTVDs[]> => {
+  const tvds = await getTVDValues(casingItems);
+
+  return casingItems.items.map((casingSchematic) => {
+    const tvdsForWellbore = head(tvds[casingSchematic.wellboreMatchingId]);
+    const tvdUnit = tvdsForWellbore?.trueVerticalDepthUnit.unit;
+
+    if (!tvdsForWellbore) {
+      return casingSchematic;
+    }
+
+    return {
+      ...casingSchematic,
+      casingAssemblies: casingSchematic.casingAssemblies.map(
+        (casingAssembly) => {
+          return {
+            ...casingAssembly,
+            trueVerticalDepthTop: {
+              value: getTVDForMD(
+                tvdsForWellbore,
+                casingAssembly.originalMeasuredDepthTop.value
+              ),
+              unit: tvdUnit,
+            },
+            trueVerticalDepthBase: {
+              value: getTVDForMD(
+                tvdsForWellbore,
+                casingAssembly.originalMeasuredDepthBase.value
+              ),
+              unit: tvdUnit,
+            },
+          };
+        }
+      ),
+    };
+  });
+};
+
+export const getTVDValues = (casingItems: CasingItems) => {
+  const trajectoryInterpolationRequests: TrajectoryInterpolationRequest[] = (
+    casingItems.items as CasingSchematic[]
+  ).map((casingSchematic) => {
+    const measuredDepths = casingSchematic.casingAssemblies.flatMap(
+      (casingAssembly) => {
+        return [
+          casingAssembly.originalMeasuredDepthTop.value,
+          casingAssembly.originalMeasuredDepthBase.value,
+        ];
+      }
+    );
+    const measuredDepthUnit = {
+      unit:
+        head(casingSchematic.casingAssemblies)?.originalMeasuredDepthTop.unit ||
+        DistanceUnitEnum.Meter,
+    };
+
+    return {
+      wellboreId: toIdentifier(casingSchematic.wellboreMatchingId),
+      measuredDepths,
+      measuredDepthUnit,
+    };
+  });
+
+  return getTrajectoryInterpolateTVDs(
+    casingItems.items,
+    trajectoryInterpolationRequests
+  );
+};
+
+export const mapCasingsToSequences = (
+  casingSchematicsWithTVDs: CasingSchematicWithTVDs[],
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap
 ) => {
-  return casingItems.items.reduce((goodSequences, casingSchematic) => {
+  return casingSchematicsWithTVDs.reduce((goodSequences, casingSchematic) => {
     // drop empty casingAssemblies sequences
     if (isEmpty(casingSchematic.casingAssemblies)) {
       // console.log('Dropping schematic for:', casingSchematic);
@@ -146,7 +234,7 @@ export const getCasingsColumns = (casingAssembly: CasingAssembly) => {
   });
 };
 
-export const getSequenceMetadata = (casingAssembly: CasingAssembly) => {
+export const getSequenceMetadata = (casingAssembly: CasingAssemblyWithTVD) => {
   const minOutsideDiameter = changeUnitTo(
     casingAssembly.minOutsideDiameter.value,
     casingAssembly.minOutsideDiameter.unit,
@@ -159,16 +247,30 @@ export const getSequenceMetadata = (casingAssembly: CasingAssembly) => {
     CASING_SIZE_UNIT
   );
 
+  const {
+    originalMeasuredDepthTop,
+    originalMeasuredDepthBase,
+    trueVerticalDepthTop,
+    trueVerticalDepthBase,
+    type,
+  } = casingAssembly;
+
   return {
-    assy_original_md_base: String(
-      casingAssembly.originalMeasuredDepthBase.value
-    ),
-    assy_original_md_base_unit: casingAssembly.originalMeasuredDepthBase.unit,
-    assy_name: casingAssembly.type,
-    assy_original_md_top: String(casingAssembly.originalMeasuredDepthTop.value),
-    assy_original_md_top_unit: casingAssembly.originalMeasuredDepthTop.unit,
+    assy_original_md_base: String(originalMeasuredDepthBase.value),
+    assy_original_md_base_unit: originalMeasuredDepthBase.unit,
+    assy_name: type,
+    assy_original_md_top: String(originalMeasuredDepthTop.value),
+    assy_original_md_top_unit: originalMeasuredDepthTop.unit,
     assy_size: String(minOutsideDiameter || '-'),
     assy_min_inside_diameter: String(minInsideDiameter || '-'),
+    assy_tvd_top: trueVerticalDepthTop
+      ? String(trueVerticalDepthTop.value)
+      : undefined,
+    assy_tvd_top_unit: trueVerticalDepthTop?.unit,
+    assy_tvd_base: trueVerticalDepthBase
+      ? String(trueVerticalDepthBase.value)
+      : undefined,
+    assy_tvd_base_unit: trueVerticalDepthBase?.unit,
   };
 };
 

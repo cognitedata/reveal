@@ -1,4 +1,7 @@
 import styled from 'styled-components/macro';
+import layers from 'utils/zindex';
+
+import { Menu } from '@cognite/cogs.js';
 
 import mainPalette from 'styles/default.palette';
 
@@ -10,7 +13,7 @@ export const DepthIndicatorWrapper = styled.div`
   height: 100%;
   cursor: pointer;
   transform: ${(props: { transform?: string }) => props.transform};
-  z-index: ${(props: { zIndex: number }) => props.zIndex};
+  z-index: ${layers.TOOLTIP};
   margin-right: 20px;
 `;
 
@@ -72,4 +75,9 @@ export const LinerEnd = styled.div`
   height: 0;
   border-bottom: 16px solid ${mainPalette.black};
   float: left;
+`;
+
+export const TooptipSection = styled(Menu.Item)`
+  flex-direction: column;
+  align-items: flex-start;
 `;

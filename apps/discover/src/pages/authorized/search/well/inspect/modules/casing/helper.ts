@@ -76,6 +76,18 @@ export const mapSequenceToCasingType = (
     endDepthUnit: casing.metadata
       ? casing.metadata.assy_original_md_base_unit
       : FEET,
+    startDepthTVD: getDepth(
+      casing.metadata ? casing.metadata.assy_tvd_top : '0'
+    ),
+    startDepthTVDUnit: casing.metadata
+      ? casing.metadata.assy_tvd_top_unit
+      : FEET,
+    endDepthTVD: getDepth(
+      casing.metadata ? casing.metadata.assy_tvd_base : '0'
+    ),
+    endDepthTVDUnit: casing.metadata
+      ? casing.metadata.assy_tvd_base_unit
+      : FEET,
     depthUnit: prefferedUnit,
   };
 };

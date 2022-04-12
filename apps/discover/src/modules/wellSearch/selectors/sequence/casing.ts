@@ -40,10 +40,13 @@ export const useSelectedWellboresCasingsData = () => {
         const casingNames: string[] = [];
         let topMD = 0;
         let bottomMD = 0;
+        let topTVD = 0;
+        let bottomTVD = 0;
         let odMin = 0; // minimum outer diameter
         let odMax = 0; // maximum outer diameter
         let idMin = 0; // minimum inner diameter
         let mdUnit = FEET;
+        let tvdUnit = FEET;
         let odUnit = 'in';
         let idUnit = 'in';
 
@@ -67,6 +70,19 @@ export const useSelectedWellboresCasingsData = () => {
               bottomMD = Number(row.metadata.assy_original_md_base);
             }
             if (
+              row.metadata.assy_tvd_top &&
+              (topTVD === 0 || Number(row.metadata.assy_tvd_top) < topTVD)
+            ) {
+              topTVD = Number(row.metadata.assy_tvd_top);
+            }
+            if (
+              row.metadata.assy_tvd_base &&
+              (bottomTVD === 0 ||
+                Number(row.metadata.assy_tvd_base) > bottomTVD)
+            ) {
+              bottomTVD = Number(row.metadata.assy_tvd_base);
+            }
+            if (
               odMin === 0 ||
               (Number(row.metadata.assy_size) &&
                 Number(row.metadata.assy_size) < odMin)
@@ -83,6 +99,7 @@ export const useSelectedWellboresCasingsData = () => {
             ) {
               idMin = Number(row.metadata.assy_min_inside_diameter);
             }
+            tvdUnit = get(row, 'metadata.assy_tvd_top_unit', tvdUnit);
           }
           row.columns.forEach((column) => {
             if (column.name === 'comp_md_top') {
@@ -104,10 +121,13 @@ export const useSelectedWellboresCasingsData = () => {
             id: wellbore.id,
             topMD: Math.round(topMD),
             bottomMD: Math.round(bottomMD),
+            topTVD: Math.round(topTVD),
+            bottomTVD: Math.round(bottomTVD),
             odMin,
             odMax,
             idMin,
             mdUnit,
+            tvdUnit,
             odUnit,
             idUnit,
             casingNames: casingNames.join(', '),
@@ -152,6 +172,18 @@ export const getCasingUnitChangeAccessors = (
           id: 'id',
           accessor: 'bottomMD',
           fromAccessor: 'mdUnit',
+          to: toUnit,
+        },
+        {
+          id: 'id',
+          accessor: 'topTVD',
+          fromAccessor: 'tvdUnit',
+          to: toUnit,
+        },
+        {
+          id: 'id',
+          accessor: 'bottomTVD',
+          fromAccessor: 'tvdUnit',
           to: toUnit,
         },
       ]

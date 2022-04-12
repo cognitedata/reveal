@@ -15,10 +15,13 @@ export type CasingData = {
   wellName: string;
   topMD: number;
   bottomMD: number;
+  topTVD: number;
+  bottomTVD: number;
   odMin: number;
   odMax: number;
   idMin: number;
   mdUnit: string;
+  tvdUnit: string;
   odUnit: string;
   idUnit: string;
   casingNames: string;

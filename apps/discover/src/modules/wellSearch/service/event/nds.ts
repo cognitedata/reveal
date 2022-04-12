@@ -1,27 +1,20 @@
-import groupBy from 'lodash/groupBy';
 import invert from 'lodash/invert';
 import set from 'lodash/set';
 import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
 import { CogniteEvent } from '@cognite/sdk';
-import {
-  Nds,
-  NdsItems,
-  TrajectoryInterpolationItems,
-} from '@cognite/sdk-wells-v3';
+import { Nds, NdsItems } from '@cognite/sdk-wells-v3';
 
-import { showErrorMessage } from 'components/toast';
 import { MetricLogger } from 'hooks/useTimeLog';
 import { toIdentifier } from 'modules/wellSearch/sdk/utils';
 import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';
 import { WellboreSourceExternalIdMap } from 'modules/wellSearch/types';
-import {
-  getDummyTrueVerticalDepths,
-  getTrajectoryInterpolationRequests,
-  getTVDForMD,
-} from 'modules/wellSearch/utils/nds';
+import { getTrajectoryInterpolationRequests } from 'modules/wellSearch/utils/nds';
 
-import { SOMETHING_WENT_WRONG_FETCHING_TVD } from '../../../../constants/error';
+import {
+  getTrajectoryInterpolateTVDs,
+  getTVDForMD,
+} from '../sequence/trajectoryInterpolate';
 
 import { EVENT_LIMIT, EVENT_PER_PAGE, groupEventsByAssetId } from './common';
 
@@ -120,32 +113,10 @@ export const mapNdsItemsToCogniteEvents = async (
   ndsEvents: Nds[],
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap
 ) => {
-  const tvds = await getWellSDKClient()
-    .trajectories.interpolate({
-      items: getTrajectoryInterpolationRequests(ndsEvents),
-      ignoreUnknownMeasuredDepths: true,
-      // This will be enabled in another PR, right now it's producing a weird infinity loop bug
-      ignoreMissingTrajectories: true,
-    })
-    .then((interpolationItems: TrajectoryInterpolationItems) => {
-      // we need this otherwise there is a runtime error resulting in an infinite loop
-      if (interpolationItems.items.length === 0) {
-        return groupBy(
-          getDummyTrueVerticalDepths(ndsEvents),
-          'wellboreMatchingId'
-        );
-      }
-
-      return groupBy(interpolationItems.items, 'wellboreMatchingId');
-    })
-    .catch(() => {
-      showErrorMessage(SOMETHING_WENT_WRONG_FETCHING_TVD);
-
-      return groupBy(
-        getDummyTrueVerticalDepths(ndsEvents),
-        'wellboreMatchingId'
-      );
-    });
+  const tvds = await getTrajectoryInterpolateTVDs(
+    ndsEvents,
+    getTrajectoryInterpolationRequests(ndsEvents)
+  );
 
   return ndsEvents.map((event) => {
     const tvdsForWellbore = tvds[event.wellboreMatchingId][0];
