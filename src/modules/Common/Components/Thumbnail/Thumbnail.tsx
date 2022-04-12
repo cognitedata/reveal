@@ -5,13 +5,17 @@ import { Loader, useFileIcon } from '@cognite/data-exploration';
 import React, { useEffect, useMemo, useState } from 'react';
 import { isFilePreviewable } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import styled from 'styled-components';
+import { ThumbnailProcessingOverlay } from './ThumbnailProcessingOverlay';
 
-interface ThumbnailProps {
+export const Thumbnail = ({
+  fileInfo,
+  isFileProcessing,
+  onViewClicked,
+}: {
   fileInfo: FileInfo;
-  onViewClicked?: () => void;
-}
-
-export const Thumbnail = ({ fileInfo, onViewClicked }: ThumbnailProps) => {
+  isFileProcessing?: boolean;
+  onViewClicked?: (evt: any) => void;
+}) => {
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
   const { data, isError } = useFileIcon(fileInfo);
 
@@ -71,7 +75,12 @@ export const Thumbnail = ({ fileInfo, onViewClicked }: ThumbnailProps) => {
     );
   }, [imageUrl, isPreviewable, fileInfo, isError]);
 
-  return <Container>{image}</Container>;
+  return (
+    <Container>
+      {image}
+      {isFileProcessing && <ThumbnailProcessingOverlay />}
+    </Container>
+  );
 };
 
 const Container = styled.div`

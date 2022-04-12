@@ -76,6 +76,12 @@ const fileDetailsSlice = createSlice({
     resetEditHistory(state) {
       resetEditHistoryState(state);
     },
+    cancelFileDetailsEdit(state) {
+      state.fileDetails = initialState.fileDetails;
+      state.fileMetaData = initialState.fileMetaData;
+      state.loadingField = initialState.loadingField;
+      state.metadataEdit = initialState.metadataEdit;
+    },
   },
   extraReducers: (builder) => {
     // On Update File //
@@ -109,6 +115,7 @@ export const {
   toggleMetaDataTableEditMode,
   fileMetaDataAddRow,
   resetEditHistory,
+  cancelFileDetailsEdit,
 } = fileDetailsSlice.actions;
 
 export default fileDetailsSlice.reducer;

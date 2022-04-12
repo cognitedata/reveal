@@ -15,6 +15,7 @@ import {
   selectAllProcessFiles,
   selectIsPollingComplete,
 } from 'src/modules/Process/store/selectors';
+import { cancelFileDetailsEdit } from 'src/modules/FileDetails/slice';
 
 export const FileToolbar = ({
   onViewChange,
@@ -49,6 +50,10 @@ export const FileToolbar = ({
     dispatch(setBulkEditModalVisibility(true));
   };
 
+  const handleCancelOtherEdits = () => {
+    dispatch(cancelFileDetailsEdit());
+  };
+
   return (
     <>
       <Container>
@@ -60,6 +65,7 @@ export const FileToolbar = ({
               onBulkEdit={onBulkEdit}
               onDownload={onDownload}
               onDelete={onDelete}
+              handleCancelOtherEdits={handleCancelOtherEdits}
               processingFiles={!isPollingFinished}
               style={{ zIndex: 1 }}
             />

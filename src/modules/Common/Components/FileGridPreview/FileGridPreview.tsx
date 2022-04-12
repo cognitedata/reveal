@@ -36,9 +36,12 @@ export const FileGridPreview = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { menuActions, rowKey, ...fileInfo } = item;
 
-  const handleReview = () => {
-    if (menuActions.onReviewClick)
+  const handleReview = (evt: any) => {
+    if (menuActions.onReviewClick) {
       menuActions.onReviewClick(fileInfo as FileInfo);
+    }
+    // stop event propagation from here to stop triggering button underneath the overlay
+    evt.stopPropagation();
   };
 
   const handleFileDetails = () => {
