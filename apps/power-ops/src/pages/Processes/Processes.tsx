@@ -2,7 +2,7 @@ import { memo, useState, useContext, useEffect, useMemo } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { AuthConsumer, AuthContext } from '@cognite/react-container';
 import { CogniteClient, CogniteEvent } from '@cognite/sdk';
-import { EDAContext } from 'providers/EDAProvider';
+import { EDAContext } from 'providers/edaProvider';
 import { useFetchEvents } from 'queries/useFetchEvents';
 
 import { Container } from '../elements';
@@ -24,15 +24,15 @@ export type Process = {
 
 const SHOP_PROCESS_PREFIX = 'POWEROPS_BID_PROCESS';
 
-const ProcessPage: React.FC = () => (
+const ProcessWrapper: React.FC = () => (
   <AuthConsumer>
     {({ client }: AuthContext) =>
-      client ? <Processes client={client} /> : null
+      client ? <ProcessesPage client={client} /> : null
     }
   </AuthConsumer>
 );
 
-const Processes = ({ client }: { client: CogniteClient }) => {
+const ProcessesPage = ({ client }: { client: CogniteClient }) => {
   const { EDAEvents } = useContext(EDAContext);
   const [processes, setProcesses] = useState<Process[]>([]);
 
@@ -140,4 +140,4 @@ const Processes = ({ client }: { client: CogniteClient }) => {
   );
 };
 
-export default memo(ProcessPage);
+export const Processes = memo(ProcessWrapper);

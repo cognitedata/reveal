@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
 import { useTable, Column, useFlexLayout } from 'react-table';
 import { useSticky } from 'react-table-sticky';
-
-import { TableData } from '../../models/sequences';
+import { TableData } from 'models/sequences';
 
 export const BidmatrixTable = ({
   tableHeader,
@@ -34,7 +33,10 @@ export const BidmatrixTable = ({
         {
           // Loop over the header rows
           headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
+            <tr
+              {...headerGroup.getHeaderGroupProps()}
+              key={headerGroup.getHeaderGroupProps().key}
+            >
               {
                 // Loop over the headers in each row
                 headerGroup.headers.map((column) => (
@@ -53,7 +55,7 @@ export const BidmatrixTable = ({
           rows.map((row) => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()} key={row.id}>
+              <tr {...row.getRowProps()} key={row.getRowProps().key}>
                 {
                   // Loop over the rows cells
                   row.cells.map((cell) => {
@@ -74,7 +76,10 @@ export const BidmatrixTable = ({
         {data.length < 25 &&
           // Empty row at bottom of table for formatting
           headerGroups.map((headerGroup: any) => (
-            <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
+            <tr
+              {...headerGroup.getHeaderGroupProps()}
+              key={`${headerGroup.id}_end`}
+            >
               {headerGroup.headers.map((column: any) => (
                 <td {...column.getHeaderProps()} key={column.id}>
                   <div>
@@ -88,5 +93,3 @@ export const BidmatrixTable = ({
     </table>
   );
 };
-
-export default BidmatrixTable;

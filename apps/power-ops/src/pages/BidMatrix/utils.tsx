@@ -1,19 +1,28 @@
 import { CogniteClient, SequenceItem } from '@cognite/sdk';
 import { Column } from 'react-table';
+import { SequenceRow, TableData, TableRow, Cols } from 'models/sequences';
 
-import { SequenceRow, TableData, Cols } from '../../models/sequences';
+interface BidMatrixResponse {
+  columns: Column<TableData>[];
+  data: TableData[];
+}
 
-export const GetBidMatrixData = async (
+export const getBidMatrixData = async (
   client: CogniteClient | undefined,
   matrixExternalId: string | undefined
-) => {
-  // Get bid matrix
+): Promise<SequenceRow[] | undefined> => {
   const sequenceRows = await client?.sequences
     .retrieveRows({
       externalId: matrixExternalId || '',
     })
     .autoPagingToArray({ limit: 100 });
 
+  return sequenceRows;
+};
+
+export const formatBidMatrixData = async (
+  sequenceRows: SequenceRow[]
+): Promise<BidMatrixResponse> => {
   if (!sequenceRows?.length) {
     return {
       columns: [],
@@ -89,4 +98,52 @@ export const GetBidMatrixData = async (
   };
 };
 
-export default GetBidMatrixData;
+export const copyMatrixToClipboard = async (
+  sequenceCols: Column<TableData>[],
+  sequenceData: TableData[]
+): Promise<boolean> => {
+  // Put sequenceData in proper order
+  const copyData = sequenceData?.map((row) => {
+    // Remove id
+    const newrow: TableRow = { ...row };
+    delete newrow.id;
+
+    const orderedRow: TableRow = {};
+    sequenceCols?.forEach((col) => {
+      const comp = col.accessor?.toString();
+      if (comp && col.id && comp in newrow) {
+        orderedRow[col.id] = newrow[comp];
+      }
+    });
+
+    // Insert hour at start of row
+    orderedRow[0] = newrow.hour;
+
+    // Return row in copiable format
+    return Object.values(orderedRow).join('\t');
+  });
+
+  // Create header row in copiable format
+  const cols = sequenceCols
+    ?.map((column) => {
+      return column.Header;
+    })
+    .join('\t');
+
+  if (!copyData || !cols) {
+    return false;
+  }
+  // Add header row
+  copyData.unshift(cols);
+
+  // Copy to clipboard
+  try {
+    await navigator.clipboard.writeText(copyData.join('\n')).catch((error) => {
+      throw new Error(error);
+    });
+
+    return true;
+  } catch (error) {
+    return false;
+  }
+};

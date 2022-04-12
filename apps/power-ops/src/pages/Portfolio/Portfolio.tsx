@@ -1,163 +1,122 @@
-import { useState, useEffect } from 'react';
-import { Button, Tooltip, Label } from '@cognite/cogs.js';
-import { useAuthContext } from '@cognite/react-container';
+import { useState, useEffect, memo, useContext } from 'react';
+import { Button, Detail, Label } from '@cognite/cogs.js';
 import { BaseContainer } from 'pages/elements';
-import { Relationship } from '@cognite/sdk';
-import { Column } from 'react-table';
 import debounce from 'lodash/debounce';
-
-import { TableData, TableRow } from '../../models/sequences';
+import {
+  NavLink,
+  Route,
+  Switch,
+  useHistory,
+  useLocation,
+  useParams,
+  useRouteMatch,
+} from 'react-router-dom';
+import { Plant, PriceArea } from 'models/sequences';
+import PriceScenarios from 'pages/PriceScenarios';
+import BidMatrix from 'pages/BidMatrix';
+import { PAGES } from 'pages/Menubar';
+import { PriceAreasContext } from 'providers/priceAreasProvider';
 
 import {
   Container,
   Header,
-  StyledDiv,
-  StyledHeader,
-  StyledBidMatrix,
   PanelContent,
   LeftPanel,
-  MainPanel,
   StyledSearch,
   StyledButton,
-  StyledTable,
+  StyledTitle,
 } from './elements';
-import GetBidMatrixData from './BidmatrixData';
-import { colInput, inputData } from './FakeData';
 
-const Portfolio = () => {
-  const { client } = useAuthContext();
-  const [sequenceCols, setSequenceCols] = useState<Column<TableData>[]>();
-  const [sequenceData, setSequenceData] = useState<TableData[]>();
-  const [matrixExternalId, setMatrixExternalId] = useState<string>();
+const PortfolioPage = () => {
+  const { priceAreas } = useContext(PriceAreasContext);
 
-  const currentdate = new Date();
-  currentdate.setDate(currentdate.getDate() + 1);
-  const tomorrow = currentdate.toLocaleDateString();
+  const history = useHistory();
+  const location = useLocation();
+  const match = useRouteMatch();
 
-  const [selectedButton, setSelectedButton] = useState<string | undefined>(
-    undefined
-  );
+  const { priceAreaExternalId } = useParams<{ priceAreaExternalId?: string }>();
 
   const [query, setQuery] = useState<string>('');
-  const [searchResult, setSearchResult] = useState<Relationship[]>([]);
-  const [relationshipList, setRelationshipList] = useState<Relationship[]>();
+  const [allPlants, setAllPlants] = useState<Plant[]>();
+  const [filteredPlants, setFilteredPlants] = useState<Plant[]>([]);
+  const [searchPrice, setSearchPrice] = useState<boolean>(true);
+  const [searchTotal, setSearchTotal] = useState<boolean>(true);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [priceArea, setPriceArea] = useState<PriceArea | undefined>();
 
-  const [copied, setCopied] = useState<boolean>(false);
-  const [tooltipContent, setTooltipContent] =
-    useState<string>('Copy to clipboard');
+  const startDate = priceArea
+    ? new Date(priceArea?.totalMatrixes?.[0].startTime).toLocaleString()
+    : undefined;
 
-  const search = async (query: any, callback: any) => {
-    const res = await relationshipList?.filter((sequence) =>
-      sequence.targetExternalId.toLowerCase().includes(query.toLowerCase())
+  const search = (query: any, callback: any) => {
+    const searchResults = allPlants?.filter((plant) =>
+      plant.name.toLowerCase().includes(query.toLowerCase())
     );
-    callback(res);
+    if ('price scenarios'.includes(query.toLowerCase())) {
+      setSearchPrice(true);
+    } else {
+      setSearchPrice(false);
+    }
+    if ('total'.includes(query.toLowerCase())) {
+      setSearchTotal(true);
+    } else {
+      setSearchTotal(false);
+    }
+    callback(searchResults);
   };
 
   const debouncedSearch = debounce((query, callback) => {
     search(query, callback);
-  }, 500);
+  }, 300);
 
   useEffect(() => {
-    client?.relationships
-      .list({
-        filter: {
-          sourceTypes: ['event'],
-          targetTypes: ['sequence'],
-          labels: {
-            containsAny: [
-              {
-                externalId: 'relationship_to.bid_matrix_sequence',
-              },
-            ],
-          },
-        },
-      })
-      .then((response) => {
-        setRelationshipList(response?.items);
-        setSearchResult(response?.items);
-      });
-  }, []);
-
-  useEffect(() => {
-    GetBidMatrixData(client, matrixExternalId).then((response) => {
-      setSequenceCols(response?.columns);
-      setSequenceData(response?.data);
-    });
-  }, [matrixExternalId]);
-
-  useEffect(() => {
-    if (relationshipList) {
-      debouncedSearch(query, (result: Relationship[]) => {
+    if (allPlants) {
+      debouncedSearch(query, (result: Plant[]) => {
         if (query.length === 0) {
-          setSearchResult(relationshipList);
+          setSearchPrice(true);
+          setSearchTotal(true);
+          setFilteredPlants(allPlants);
+          setIsSearching(false);
         } else {
-          setSearchResult(result);
+          setFilteredPlants(result);
+          setIsSearching(true);
         }
       });
     }
   }, [query]);
 
-  const copy = async () => {
-    // Put sequenceData in proper order
-    const copyData = sequenceData?.map((row) => {
-      // Remove id
-      const newrow: TableRow = { ...row };
-      delete newrow.id;
-
-      const orderedRow: TableRow = {};
-      sequenceCols?.forEach((col) => {
-        const comp = col.accessor?.toString();
-        if (comp && col.id && comp in newrow) {
-          orderedRow[col.id] = newrow[comp];
-        }
-      });
-
-      // Insert hour at start of row
-      orderedRow[0] = newrow.hour;
-
-      // Return row in copiable format
-      return Object.values(orderedRow).join('\t');
-    });
-
-    // Create header row in copiable format
-    const cols = sequenceCols
-      ?.map((column) => {
-        return column.Header;
-      })
-      .join('\t');
-
-    if (copyData && cols) {
-      // Add header row
-      copyData.unshift(cols);
-
-      // Copy to clipboard
-      try {
-        await navigator.clipboard
-          .writeText(copyData.join('\n'))
-          .catch((error) => {
-            throw new Error(error);
-          });
-
-        // Change tooltip state
-        setCopied(true);
-        setTooltipContent('Copied!');
-      } catch (error) {
-        // Change tooltip state
-        setCopied(true);
-        setTooltipContent('Unable to copy');
+  useEffect(() => {
+    if (priceAreas?.length) {
+      const firstAreaId = priceAreas?.[0].externalId || undefined;
+      if (priceAreaExternalId) {
+        const foundArea = priceAreas.find(
+          (area) => area.externalId === priceAreaExternalId
+        );
+        setPriceArea(foundArea);
       }
-    } else {
-      throw new Error('No data to copy');
+      history.push(
+        `${PAGES.PORTFOLIO}/${priceAreaExternalId || firstAreaId}/total`
+      );
     }
-  };
+  }, [priceAreaExternalId, priceAreas]);
+
+  useEffect(() => {
+    if (priceArea) {
+      // Get list of plants
+      setAllPlants(priceArea.plants);
+      setFilteredPlants(priceArea.plants);
+    }
+  }, [priceArea]);
+
+  if (!priceArea) return <div>No Price Area Found</div>;
 
   return (
     <BaseContainer>
       <Header className="top">
         <div>
-          <p>Price Area NO 1</p>
+          <StyledTitle level={5}>Price Area NO 1</StyledTitle>
           <Label size="small" variant="unknown">
-            Last shop run: Today 16:00
+            {`Matrix generation started: ${startDate}`}
           </Label>
         </div>
         <Button icon="Download" type="primary">
@@ -180,90 +139,62 @@ const Portfolio = () => {
             />
           </Header>
           <PanelContent>
-            {searchResult &&
-              searchResult.map((sequence) => {
+            {!isSearching && <Detail>Price area overview</Detail>}
+            {searchTotal && (
+              <NavLink to={`${match.url}/total`}>
+                <StyledButton
+                  toggled={location.pathname === `${match.url}/total`}
+                  key={`${priceArea.externalId}-total`}
+                >
+                  <p>Total</p>
+                </StyledButton>
+              </NavLink>
+            )}
+            {searchPrice && (
+              <NavLink to={`${match.url}/price-scenarios`}>
+                <StyledButton
+                  toggled={location.pathname === `${match.url}/price-scenarios`}
+                  key={`${priceArea.externalId}-price-scenarios-link`}
+                >
+                  <p>Price Scenarios</p>
+                </StyledButton>
+              </NavLink>
+            )}
+            {!isSearching && <Detail>Plants</Detail>}
+            {filteredPlants &&
+              filteredPlants.map((plant) => {
                 return (
-                  <StyledButton
-                    toggled={selectedButton === sequence.targetExternalId}
-                    onClick={() => {
-                      setMatrixExternalId(sequence.targetExternalId);
-                      setSelectedButton(sequence.targetExternalId);
-                    }}
-                    key={sequence.targetExternalId}
+                  <NavLink
+                    to={`${match.url}/${plant.externalId}`}
+                    key={`${priceArea.externalId}-${plant.externalId}`}
                   >
-                    <p>{sequence.targetExternalId.split('.')[0]}</p>
-                  </StyledButton>
+                    <StyledButton
+                      toggled={
+                        location.pathname === `${match.url}/${plant.externalId}`
+                      }
+                      key={plant.externalId}
+                    >
+                      <p>{plant.name}</p>
+                    </StyledButton>
+                  </NavLink>
                 );
               })}
           </PanelContent>
         </LeftPanel>
-        <MainPanel>
-          <StyledDiv className="bidmatrix">
-            <StyledHeader>
-              <div>
-                <h1>
-                  <p>
-                    Bidmatrix: {matrixExternalId?.split('.')[0] || 'Not found'}
-                  </p>
-                  <Label size="small" variant="unknown">
-                    Method 1
-                  </Label>
-                </h1>
-                <h2>{`Generated for: ${tomorrow}`}</h2>
-              </div>
-              <Tooltip
-                position="left"
-                visible={copied}
-                content={tooltipContent}
-              >
-                <Button
-                  aria-label="Copy Bidmatrix"
-                  icon="Copy"
-                  onClick={() => {
-                    copy();
-                  }}
-                  onMouseEnter={() => {
-                    setCopied(true);
-                    setTooltipContent('Copy to clipboard');
-                  }}
-                  onMouseLeave={() => setCopied(false)}
-                />
-              </Tooltip>
-            </StyledHeader>
-            <StyledBidMatrix>
-              {sequenceCols && sequenceData && (
-                <StyledTable
-                  tableHeader={sequenceCols}
-                  tableData={sequenceData}
-                  className="bidmatrix"
-                />
-              )}
-            </StyledBidMatrix>
-          </StyledDiv>
-          <StyledDiv className="price-scenario">
-            <StyledHeader>
-              <div>
-                <h1>Price Scenario</h1>
-                <h2>
-                  Water value
-                  <Label size="small" variant="unknown">
-                    155 NOK
-                  </Label>
-                </h2>
-              </div>
-            </StyledHeader>
-            <StyledBidMatrix>
-              <StyledTable
-                tableHeader={colInput}
-                tableData={inputData}
-                className="price-scenario"
-              />
-            </StyledBidMatrix>
-          </StyledDiv>
-        </MainPanel>
+        <Switch>
+          <Route path={`${match.path}/price-scenarios`}>
+            <PriceScenarios priceArea={priceArea} />
+          </Route>
+          <Route exact path={`${match.path}/:plantExternalId`}>
+            <BidMatrix priceArea={priceArea} />
+          </Route>
+          <Route path={`${match.path}/:plantExternalId/price-scenarios`}>
+            <PriceScenarios priceArea={priceArea} />
+          </Route>
+        </Switch>
       </Container>
     </BaseContainer>
   );
 };
 
-export default Portfolio;
+export const Portfolio = memo(PortfolioPage);

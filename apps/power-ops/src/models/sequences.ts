@@ -40,3 +40,43 @@ export type BidMatrixData = {
     dataSource: TableData[];
   };
 };
+
+export interface Matrix {
+  method: string;
+  externalId: string;
+  startTime: number;
+}
+
+export interface Plant {
+  id: number;
+  externalId: string;
+  name: string;
+}
+
+export interface ProductionValues {
+  method: string;
+  marketProductionExternalId: string;
+  calculatedProductionExternalId: string;
+}
+
+export interface Scenario {
+  id: number;
+  name: string;
+  externalId: string;
+  totalProductionValues: ProductionValues[];
+  plantProductionValues: {
+    plantId: number;
+    productionValues: ProductionValues[];
+  }[];
+}
+
+export interface PriceArea {
+  id: number;
+  externalId: string;
+  name: string;
+  plants: Plant[];
+  totalMatrixes: Matrix[];
+  plantMatrixes: { plantId: number; matrixes: Matrix[] }[];
+  priceScenarios: Scenario[];
+  mainScenarioId: number;
+}
