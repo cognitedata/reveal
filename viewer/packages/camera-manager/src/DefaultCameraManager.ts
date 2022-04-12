@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { ComboControls } from './ComboControls';
-import { CameraManagerCallbackData, CameraControlsOptions, CameraState } from './types';
+import { CameraManagerCallbackData, CameraControlsOptions, CameraState, CameraChangeDelegate } from './types';
 import { CameraManager } from './CameraManager';
 import { CameraManagerHelper } from './CameraManagerHelper';
 import {
@@ -13,7 +13,6 @@ import {
   EventTrigger,
   InputHandler,
   disposeOfAllEventListeners,
-  CameraChangeDelegate,
   PointerEventDelegate
 } from '@reveal/utilities';
 

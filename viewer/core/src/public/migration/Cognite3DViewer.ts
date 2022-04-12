@@ -18,8 +18,7 @@ import {
   worldToViewportCoordinates,
   PointerEventDelegate,
   SceneRenderedDelegate,
-  DisposedDelegate,
-  CameraChangeDelegate
+  DisposedDelegate
 } from '@reveal/utilities';
 
 import { MetricsLogger } from '@reveal/metrics';
@@ -44,7 +43,7 @@ import { PropType } from '../../utilities/reflection';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
-import { DefaultCameraManager, CameraManager } from '@reveal/camera-manager';
+import { DefaultCameraManager, CameraManager, CameraChangeDelegate } from '@reveal/camera-manager';
 import { CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 import { IntersectInput, SupportedModelTypes, CogniteModelBase, LoadingState } from '@reveal/model-base';

@@ -4,21 +4,19 @@
 
 /**
  * Delegate for pointer events.
+ * @module @cognite/reveal
  */
 export type PointerEventDelegate = (event: { offsetX: number; offsetY: number; button?: number }) => void;
 
 /**
- * Delegate for camera update events.
- */
-export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
-
-/**
  * Delegate for disposal events.
+ * @module @cognite/reveal
  */
 export type DisposedDelegate = () => void;
 
 /**
  * Delegate for rendering events.
+ * @module @cognite/reveal
  */
 export type SceneRenderedDelegate = (event: {
   frameNumber: number;

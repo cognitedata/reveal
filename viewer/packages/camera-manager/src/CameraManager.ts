@@ -1,9 +1,8 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-
-import { CameraState } from './types';
-import { CameraChangeDelegate } from '@reveal/utilities';
+import * as THREE from 'three';
+import { CameraState, CameraChangeDelegate } from './types';
 
 /**
  * Interface for manager responsible for all manipulations to the camera,

@@ -31,6 +31,7 @@ export type ControlsState = {
   position: THREE.Vector3;
   target: THREE.Vector3;
 };
+
 /**
  * @internal
  * */
@@ -61,6 +62,7 @@ export interface RevealCameraControls extends THREE.EventDispatcher {
    */
   setScrollTarget: (target: THREE.Vector3) => void;
 }
+
 export type CameraState = {
   /**
    * Camera position in world space.
@@ -75,6 +77,12 @@ export type CameraState = {
    */
   rotation?: THREE.Quaternion;
 };
+
+/**
+ * Delegate for camera update events.
+ * @module @cognite/reveal
+ */
+export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
 
 export type CameraManagerCallbackData = {
   intersection: {
