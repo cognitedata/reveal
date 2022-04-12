@@ -5,9 +5,13 @@ import {
 } from 'src/utils/AnnotationUtils';
 import {
   RegionType,
+  Vertex,
   VisionDetectionModelType,
 } from 'src/api/vision/detectionModels/types';
-import { AnnotationMetadata, AnnotationTypeV1 } from 'src/api/annotation/types';
+import {
+  AnnotationMetadataV1,
+  AnnotationTypeV1,
+} from 'src/api/annotation/types';
 
 export const getDummyAnnotation = (
   id?: number,
@@ -18,7 +22,8 @@ export const getDummyAnnotation = (
     text?: string;
     assetId?: number;
     shape?: RegionType;
-    data?: AnnotationMetadata;
+    vertices?: Vertex[];
+    data?: AnnotationMetadataV1;
     type?: AnnotationTypeV1;
   }
 ) => {
@@ -29,10 +34,10 @@ export const getDummyAnnotation = (
     1,
     123,
     124,
-    { shape: other?.shape || 'rectangle', vertices: [] },
+    { shape: other?.shape || 'rectangle', vertices: other?.vertices! },
     undefined,
     undefined,
-    other?.status,
+    other?.status || AnnotationStatus.Unhandled,
     { ...other?.data, confidence: other?.confidence },
     other?.type ||
       ModelTypeAnnotationTypeMap[modelType || VisionDetectionModelType.OCR],

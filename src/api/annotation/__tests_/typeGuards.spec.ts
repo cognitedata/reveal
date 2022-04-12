@@ -7,7 +7,7 @@ import {
   isObjectAnnotation,
   isPolygon,
   isTextAnnotation,
-} from 'src/api/annotation/TypeGuards';
+} from 'src/api/annotation/typeGuards';
 
 const textAnnotation = getDummyAnnotation(1, VisionDetectionModelType.OCR, {
   text: 'one',
@@ -81,7 +81,6 @@ describe('Test isObjectAnnotation', () => {
   test('Rejects invalid Object Annotation', () => {
     expect(isObjectAnnotation(textAnnotation)).toBe(false);
     expect(isObjectAnnotation(tagAnnotation)).toBe(false);
-    expect(isObjectAnnotation(keypointsAnnotation)).toBe(false);
   });
 
   test('Accepts valid Object Annotation', () => {

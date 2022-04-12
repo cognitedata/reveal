@@ -1,6 +1,6 @@
 import isFinite from 'lodash-es/isFinite';
 import { CDFAnnotationV1, RegionShape } from 'src/api/annotation/types';
-import { uniqueVertices, vertexIsNormalized } from 'src/api/utils/RegionUtils';
+import { uniqueVertices, vertexIsNormalized } from 'src/api/utils/regionUtils';
 
 export function validBoundingBox(annotationV1: CDFAnnotationV1) {
   return (
@@ -27,10 +27,17 @@ export function validPolygon(annotationV1: CDFAnnotationV1) {
 }
 
 export function validImageAssetLink(annotationV1: CDFAnnotationV1) {
+  if (
+    !(
+      annotationV1.linkedResourceId && isFinite(annotationV1.linkedResourceId)
+    ) &&
+    !annotationV1.linkedResourceExternalId
+  ) {
+    return false;
+  }
   return (
     validBoundingBox(annotationV1) &&
-    annotationV1.linkedResourceType === 'asset' &&
-    isFinite(annotationV1.linkedResourceId)
+    annotationV1.linkedResourceType === 'asset'
   );
 }
 

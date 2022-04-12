@@ -1,11 +1,10 @@
 import {
   AnnotatedResourceIdEither,
-  CDFAnnotationDataType,
   CDFAnnotationV2,
-  CDFImageClassificationTypeName,
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
+  ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
   Status,
@@ -45,3 +44,5 @@ export type VisionImageObjectDetectionPolygonAnnotation =
 export type VisionImageExtractedTextAnnotation =
   VisionAnnotation<ImageExtractedText>;
 export type VisionImageAssetLinkAnnotation = VisionAnnotation<ImageAssetLink>;
+export type VisionImageKeypointCollectionAnnotation =
+  VisionAnnotation<ImageKeypointCollection>;

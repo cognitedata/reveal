@@ -7,8 +7,8 @@ import {
 } from 'src/api/vision/detectionModels/types';
 import {
   CDFAnnotationV1,
-  AnnotationMetadata,
-  AnnotationSource,
+  AnnotationMetadataV1,
+  AnnotationSourceV1,
   AnnotationTypeV1,
   UnsavedAnnotation,
 } from 'src/api/annotation/types';
@@ -27,7 +27,7 @@ import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
 import {
   isAssetLinkedAnnotation,
   isKeyPointAnnotation,
-} from 'src/api/annotation/TypeGuards';
+} from 'src/api/annotation/typeGuards';
 
 export enum AnnotationStatus {
   Verified = 'verified',
@@ -108,7 +108,7 @@ export class AnnotationUtils {
   public static getAnnotationColor(
     text: string,
     modelType: VisionDetectionModelType,
-    data?: AnnotationMetadata
+    data?: AnnotationMetadataV1
   ): string {
     if (data) {
       if (data.color) {
@@ -177,9 +177,9 @@ export class AnnotationUtils {
     lastUpdatedTime: number,
     region?: AnnotationRegion,
     type: RegionType = 'rectangle', // TODO: get this from region.shape?
-    source: AnnotationSource = 'user',
+    source: AnnotationSourceV1 = 'user',
     status = AnnotationStatus.Unhandled,
-    data?: AnnotationMetadata,
+    data?: AnnotationMetadataV1,
     annotationType: AnnotationTypeV1 = 'vision/ocr',
     fileExternalId?: string,
     assetId?: number,
@@ -325,7 +325,7 @@ export class AnnotationUtils {
 
 const populateKeyPoints = (annotation: VisionAnnotationV1) => {
   const keypointAnnotation: VisionAnnotationV1 = { ...annotation };
-  const keypointMeta = (annotation.data as AnnotationMetadata).keypoints;
+  const keypointMeta = (annotation.data as AnnotationMetadataV1).keypoints;
 
   if (keypointAnnotation.region) {
     if (keypointMeta) {

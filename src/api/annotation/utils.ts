@@ -8,8 +8,8 @@ import {
 } from 'src/utils/AnnotationUtils';
 import {
   CDFAnnotationV1,
-  AnnotationMetadata,
-  AnnotationSource,
+  AnnotationMetadataV1,
+  AnnotationSourceV1,
   UnsavedAnnotation,
 } from 'src/api/annotation/types';
 
@@ -17,10 +17,10 @@ export function getUnsavedAnnotation(
   text: string,
   jobType: VisionDetectionModelType,
   fileId: number,
-  source: AnnotationSource,
+  source: AnnotationSourceV1,
   region?: AnnotationRegion,
   status = AnnotationStatus.Unhandled,
-  data?: AnnotationMetadata,
+  data?: AnnotationMetadataV1,
   assetId?: number,
   assetExternalId?: string,
   fileExternalId?: string

@@ -154,44 +154,44 @@ export type AnnotationTypeV1 =
   | 'user_defined'
   | 'CDF_ANNOTATION_TEMPLATE';
 
-export type AnnotationSource = 'context_api' | 'user';
+export type AnnotationSourceV1 = 'context_api' | 'user';
 
-export type AnnotationMetadata = {
+export type AnnotationMetadataV1 = {
   keypoint?: boolean;
   keypoints?: Keypoint[];
   color?: string;
   confidence?: number;
 };
 
-interface BaseAnnotation {
+interface CDFBaseAnnotationV1 {
   text: string;
-  data?: AnnotationMetadata;
+  data?: AnnotationMetadataV1;
   region?: AnnotationRegion;
   annotatedResourceId: number;
   annotatedResourceExternalId?: string;
   annotatedResourceType: 'file';
   annotationType: AnnotationTypeV1;
-  source: AnnotationSource;
+  source: AnnotationSourceV1;
   status: AnnotationStatus;
   id: number;
   createdTime: number;
   lastUpdatedTime: number;
 }
 
-export interface LinkedAnnotation extends BaseAnnotation {
+export interface CDFLinkedAnnotationV1 extends CDFBaseAnnotationV1 {
   linkedResourceId?: number;
   linkedResourceExternalId?: string;
   linkedResourceType?: 'asset' | 'file';
 }
 
-export type CDFAnnotationV1 = LinkedAnnotation;
+export type CDFAnnotationV1 = CDFLinkedAnnotationV1;
 
 export interface AnnotationListRequest {
   limit?: number;
   cursor?: string;
   filter?: Partial<
     Pick<
-      LinkedAnnotation,
+      CDFLinkedAnnotationV1,
       | 'linkedResourceType'
       | 'annotatedResourceType'
       | 'annotationType'
@@ -221,7 +221,7 @@ export interface AnnotationUpdateRequest {
       text?: annotationUpdateField<string>;
       status?: annotationUpdateField<AnnotationStatus>;
       region?: annotationUpdateField<AnnotationRegion>;
-      data?: annotationUpdateField<AnnotationMetadata>;
+      data?: annotationUpdateField<AnnotationMetadataV1>;
     };
   }[];
 }

@@ -21,21 +21,27 @@ import {
   isObjectAnnotation,
   isPolygon,
   isTextAnnotation,
-} from 'src/api/annotation/TypeGuards';
+} from 'src/api/annotation/typeGuards';
 import {
   validBoundingBox,
   validImageAssetLink,
   validKeypointCollection,
   validPolygon,
-} from './TypeValidators';
+} from './typeValidators';
 
 function conversionWarningMessage(type: string) {
-  return `Could not convert annotation in cognite annotation response to ${type}.`;
+  return `Could not convert annotation in CDF Annotation (V1) response to ${type}.`;
 }
 
-function convertCDFAnnotationV1ToImageClassification(
+export function convertCDFAnnotationV1ToImageClassification(
   annotation: CDFAnnotationV1
 ): ImageClassification | null {
+  if (annotation.region) {
+    console.warn(
+      'CDFAnnotation with region field converted to ImageClassification ',
+      JSON.stringify(annotation)
+    );
+  }
   if (annotation.text) {
     const imageClassification: ImageClassification = {
       label: annotation.text,
@@ -43,10 +49,11 @@ function convertCDFAnnotationV1ToImageClassification(
     };
     return imageClassification;
   }
+  console.warn(conversionWarningMessage('ImageClassification'));
   return null;
 }
 
-function convertCDFAnnotationV1ToImageObjectDetectionBoundingBox(
+export function convertCDFAnnotationV1ToImageObjectDetectionBoundingBox(
   annotation: CDFAnnotationV1
 ): ImageObjectDetectionBoundingBox | null {
   if (!validBoundingBox(annotation)) {
@@ -67,7 +74,7 @@ function convertCDFAnnotationV1ToImageObjectDetectionBoundingBox(
   return imageObjectDetectionBoundingBox;
 }
 
-function convertCDFAnnotationV1ToImageObjectDetectionPolygon(
+export function convertCDFAnnotationV1ToImageObjectDetectionPolygon(
   annotation: CDFAnnotationV1
 ): ImageObjectDetectionPolygon | null {
   if (!validPolygon(annotation)) {
@@ -85,7 +92,7 @@ function convertCDFAnnotationV1ToImageObjectDetectionPolygon(
   return imageObjectDetectionPolygon;
 }
 
-function convertCDFAnnotationV1ToImageExtractedText(
+export function convertCDFAnnotationV1ToImageExtractedText(
   annotation: CDFAnnotationV1
 ): ImageExtractedText | null {
   if (!validBoundingBox(annotation)) {
@@ -106,7 +113,7 @@ function convertCDFAnnotationV1ToImageExtractedText(
   return imageExtractedText;
 }
 
-function convertCDFAnnotationV1ToImageAssetLink(
+export function convertCDFAnnotationV1ToImageAssetLink(
   annotation: CDFAnnotationV1
 ): ImageAssetLink | null {
   if (!validImageAssetLink(annotation)) {
@@ -133,7 +140,7 @@ function convertCDFAnnotationV1ToImageAssetLink(
   return imageAssetLink;
 }
 
-function convertCDFAnnotationV1ToImageKeypointCollection(
+export function convertCDFAnnotationV1ToImageKeypointCollection(
   annotation: CDFAnnotationV1
 ): ImageKeypointCollection | null {
   if (!validKeypointCollection(annotation)) {
@@ -153,7 +160,7 @@ function convertCDFAnnotationV1ToImageKeypointCollection(
   return imageKeypointCollection;
 }
 
-function convertAnnotationStatusToStatus(
+export function convertCDFAnnotationV1StatusToStatus(
   annotationStatusV1: AnnotationStatus
 ): Status {
   if (annotationStatusV1 === AnnotationStatus.Verified) {
@@ -190,7 +197,7 @@ export function convertCDFAnnotationV1ToVisionAnnotation(
     ...annotationIdEither,
     createdTime: annotation.createdTime,
     lastUpdatedTime: annotation.lastUpdatedTime,
-    status: convertAnnotationStatusToStatus(annotation.status),
+    status: convertCDFAnnotationV1StatusToStatus(annotation.status),
   };
 
   if (isAssetLinkedAnnotation(annotation)) {
