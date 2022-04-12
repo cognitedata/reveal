@@ -8,8 +8,9 @@ import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { BucketGrid2D } from './BucketGrid2D';
 
 import { MetricsLogger } from '@reveal/metrics';
+import { DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
 import { assertNever, worldToViewportCoordinates } from '@reveal/core/utilities';
-import { Cognite3DViewer, DisposedDelegate, SceneRenderedDelegate } from '@reveal/core';
+import { Cognite3DViewer } from '@reveal/core';
 import debounce from 'lodash/debounce';
 
 /**
