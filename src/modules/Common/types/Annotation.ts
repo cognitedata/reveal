@@ -1,5 +1,5 @@
 import {
-  AnnotatedResourceIdEither,
+  AnnotatedResourceId,
   CDFAnnotationV2,
   ImageAssetLink,
   ImageClassification,
@@ -23,7 +23,7 @@ export type VisionAnnotationDataType =
 
 // Vision Annotation Type
 
-export type CDFInheritedFields = AnnotatedResourceIdEither & // also available in CDFAnnotationV2, cannot be used in Pick operation due to One of relationship
+export type CDFInheritedFields = AnnotatedResourceId & // also available in CDFAnnotationV2, cannot be used in Pick operation due to One of relationship
   Pick<
     CDFAnnotationV2<ImageClassification>,
     'createdTime' | 'lastUpdatedTime' | 'status'

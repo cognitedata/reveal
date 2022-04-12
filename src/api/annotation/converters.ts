@@ -1,5 +1,5 @@
 import {
-  AnnotatedResourceIdEither,
+  AnnotatedResourceId,
   CDFAnnotationV1,
   ImageAssetLink,
   ImageClassification,
@@ -179,22 +179,24 @@ export function convertCDFAnnotationV1ToVisionAnnotation(
   annotation: CDFAnnotationV1
 ): VisionAnnotation<VisionAnnotationDataType> | null {
   let data: VisionAnnotationDataType | null = null;
-  let annotationIdEither: AnnotatedResourceIdEither | null = null;
+  let annotatedResourceId: AnnotatedResourceId | null = null;
 
   if (annotation.annotatedResourceId) {
-    annotationIdEither = {
+    annotatedResourceId = {
       annotatedResourceId: annotation.annotatedResourceId,
     };
-  } else if (annotation.annotatedResourceExternalId) {
-    annotationIdEither = {
-      annotatedResourceExternalId: annotation.annotatedResourceExternalId,
-    };
   } else {
+    if (annotation.annotatedResourceExternalId) {
+      console.error(
+        'annotatedResourceExternalId is deprecated! all annotations must contain annotatedResourceId!',
+        annotation
+      );
+    }
     return null;
   }
 
   const cdfInheritedFields: CDFInheritedFields = {
-    ...annotationIdEither,
+    ...annotatedResourceId,
     createdTime: annotation.createdTime,
     lastUpdatedTime: annotation.lastUpdatedTime,
     status: convertCDFAnnotationV1StatusToStatus(annotation.status),
