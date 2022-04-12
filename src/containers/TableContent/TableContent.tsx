@@ -89,7 +89,7 @@ const Tab = styled.span<{ $isEmpty?: boolean }>`
   font-size: 14px;
   color: ${({ $isEmpty = false }) =>
     $isEmpty
-      ? Colors['greyscale-grey-5'].hex()
+      ? Colors['greyscale-grey5'].hex()
       : Colors['greyscale-grey7'].hex()};
 `;
 
