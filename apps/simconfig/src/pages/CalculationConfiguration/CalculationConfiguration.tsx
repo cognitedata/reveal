@@ -105,7 +105,7 @@ export function CalculationConfiguration() {
     project,
     modelName,
     simulator,
-    calculationType: encodedCalculationType,
+    calculationType,
     eventEndTime: formatISO(new Date()),
     limit: 1,
   });
