@@ -80,7 +80,7 @@ export const getSearchQuery = (query: SearchQueryFull) => {
 
   const queryFilters: DocumentsFilter = {};
 
-  const filetypeFacets = query.facets.filetype || [];
+  const fileCategoryFacets = query.facets.fileCategory || [];
 
   const labelFacets = query.facets.labels || [];
 
@@ -93,9 +93,9 @@ export const getSearchQuery = (query: SearchQueryFull) => {
   const pageCount = query.facets.pageCount || [];
 
   // eg: pdf, image
-  if (!isEmpty(filetypeFacets)) {
+  if (!isEmpty(fileCategoryFacets)) {
     set(queryFilters, FILE_TYPE_KEY, {
-      in: filetypeFacets,
+      in: fileCategoryFacets,
     });
   }
 

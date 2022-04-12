@@ -38,7 +38,7 @@ export const normalize = (rawAPIDoc: Document): DocumentType => {
       id: String(rawAPIDoc.id),
       assetIds: rawAPIDoc.sourceFile.assetIds || [],
       filename: rawAPIDoc.sourceFile.name,
-      filetype: rawAPIDoc.type || '',
+      fileCategory: rawAPIDoc.type || '',
       labels: rawAPIDoc.labels || [],
       location: rawAPIDoc.sourceFile.source || '',
       author: rawAPIDoc.author || 'Unknown',

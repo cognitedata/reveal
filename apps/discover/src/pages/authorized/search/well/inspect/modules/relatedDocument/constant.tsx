@@ -20,7 +20,7 @@ export const columns: ColumnMap<DocumentType> = {
   fileType: {
     title: 'File type',
     Header: <Icon type={'Document' as IconType} />,
-    accessor: 'doc.filetype',
+    accessor: 'doc.fileCategory',
     width: '250px',
     maxWidth: '0.5fr',
   },

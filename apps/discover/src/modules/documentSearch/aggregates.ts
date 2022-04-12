@@ -20,7 +20,7 @@ export const aggregates: DocumentsCountAggregate[] = [
     groupBy: [SOURCE_KEY],
   },
   {
-    name: 'filetype',
+    name: 'fileCategory',
     aggregate: 'count',
     groupBy: [FILE_TYPE_KEY],
   },

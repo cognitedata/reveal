@@ -22,7 +22,7 @@ export const initialState: DocumentState = {
     'creationdate',
     'lastmodified',
     'location',
-    'filetype',
+    'fileCategory',
     'labels',
     'author',
   ],

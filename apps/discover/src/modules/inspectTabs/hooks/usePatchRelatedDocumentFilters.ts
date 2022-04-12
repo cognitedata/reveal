@@ -4,7 +4,7 @@ import { useQuerySavedSearchRelatedDocuments } from 'services/savedSearches/useS
 import { getEmptyGeometry } from 'utils/geometry';
 
 import { DocumentsFacets } from 'modules/documentSearch/types';
-import { useMutateRelatedDocumentPatch } from 'modules/wellSearch/selectors/sequence/RelatedDocuments/RelatedDocumentUseQuery';
+import { useMutateRelatedDocumentPatch } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useMutateRelatedDocumentPatch';
 
 export const usePatchRelatedDocumentFilters = () => {
   const { mutate } = useMutateRelatedDocumentPatch();

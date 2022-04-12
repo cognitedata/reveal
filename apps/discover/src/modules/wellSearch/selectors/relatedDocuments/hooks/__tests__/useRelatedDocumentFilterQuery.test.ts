@@ -16,7 +16,7 @@ jest.mock('react-query', () => ({
       filters: {
         documents: {
           facets: {
-            filetype: ['Test File Type 1'],
+            fileCategory: ['Test File Type 1'],
           },
         },
       },
@@ -30,7 +30,7 @@ describe('useRelatedDocumentFilterQuery', () => {
     expect(result.current).toEqual({
       facets: {
         ...getMockDocumentEmptyFacets(),
-        filetype: ['Test File Type 1'],
+        fileCategory: ['Test File Type 1'],
       },
       geoFilter: [],
       phrase: '',

@@ -2,12 +2,14 @@ import isUndefined from 'lodash/isUndefined';
 
 import { DocumentPayload } from '@cognite/discover-api-types';
 
-import { DocumentQueryFacet } from 'modules/documentSearch/types';
-
 export const patchDocumentPayloadCount = (
   currentContent: DocumentPayload[],
-  patchContent: (DocumentPayload | DocumentQueryFacet)[]
+  patchContent?: DocumentPayload[]
 ): DocumentPayload[] => {
+  if (!patchContent) {
+    return currentContent;
+  }
+
   return currentContent.map((currentItem) => {
     const itemToPatch = patchContent.find((patchItem) =>
       'id' in currentItem

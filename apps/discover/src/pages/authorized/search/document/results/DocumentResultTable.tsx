@@ -78,10 +78,10 @@ export const columnMap: ColumnMap<DocumentType> = {
     width: '100px',
     order: 3,
   },
-  filetype: {
-    title: DocumentFilterCategoryTitles.filetype,
+  fileCategory: {
+    title: DocumentFilterCategoryTitles.fileCategory,
     Header: <Icon type={'Document' as IconType} />,
-    accessor: 'doc.filetype',
+    accessor: 'doc.fileCategory',
     width: '110px',
     order: 4,
   },

@@ -19,7 +19,7 @@ describe('Document Applied Filters', () => {
 
     const data = result.current;
 
-    expect(data[0][0]).toEqual('filetype');
+    expect(data[0][0]).toEqual('fileCategory');
     expect(data[0][1]).toEqual(['Compressed', 'Image']);
     expect(data[1][0]).toEqual('labels');
   });

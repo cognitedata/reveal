@@ -2,9 +2,11 @@ import { useMemo } from 'react';
 
 import { useQuerySavedSearchRelatedDocuments } from 'services/savedSearches/useSavedSearchQuery';
 
-import { getFilterQuery } from './utils';
+import { SearchQueryFull } from 'modules/documentSearch/types';
 
-export const useRelatedDocumentFilterQuery = () => {
+import { getFilterQuery } from '../utils';
+
+export const useRelatedDocumentFilterQuery = (): SearchQueryFull => {
   const { data } = useQuerySavedSearchRelatedDocuments();
 
   return useMemo(() => {

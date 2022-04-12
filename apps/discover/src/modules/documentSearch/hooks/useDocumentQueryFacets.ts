@@ -1,63 +1,31 @@
-import { useMemo } from 'react';
-
-import isUndefined from 'lodash/isUndefined';
-import { DocumentCategoriesFacets } from 'services/documents/types';
 import { useDocumentCategoryQuery } from 'services/documents/useDocumentQuery';
 
-import { patchDocumentPayloadCount } from '../utils/availableDocumentResultsCount';
+import { useDeepMemo } from 'hooks/useDeep';
 
-import { useDocumentsCategories } from './useDocumentsCategories';
+import { getEmptyDocumentCategories } from '../utils';
+import { getAvailableDocumentCategories } from '../utils/getAvailableDocumentCategories';
 
-let documentCategoryData: DocumentCategoriesFacets;
+import { useDocumentAggregateResponse } from './useDocumentAggregateResponse';
+import { useDocumentSearchQueryFull } from './useDocumentSearchQueryFull';
 
 export const useDocumentQueryFacets = () => {
   const { isLoading, error, data } = useDocumentCategoryQuery();
+  const searchQuery = useDocumentSearchQueryFull();
+  const aggregateResponse = useDocumentAggregateResponse(searchQuery);
 
-  const { data: filetypeResponse } = useDocumentsCategories('filetype');
-  const { data: labelsResponse } = useDocumentsCategories('labels');
-  const { data: locationResponse } = useDocumentsCategories('location');
-  const { data: pageCountResponse } = useDocumentsCategories('pageCount');
-
-  const isDocumentsCategoriesDataUndefined =
-    isUndefined(filetypeResponse) ||
-    isUndefined(labelsResponse) ||
-    isUndefined(locationResponse);
-
-  const aggregateResponse = {
-    filetype: filetypeResponse?.facets,
-    labels: labelsResponse?.facets,
-    location: locationResponse?.facets,
-    pageCount: pageCountResponse?.facets,
-  };
-
-  return useMemo(() => {
+  return useDeepMemo(() => {
     if (!data || 'error' in data) {
-      return { isLoading, error, data };
+      return {
+        isLoading,
+        error,
+        data: getEmptyDocumentCategories(),
+      };
     }
 
-    if (
-      !isUndefined(documentCategoryData) &&
-      isDocumentsCategoriesDataUndefined
-    ) {
-      return { isLoading, error, data: documentCategoryData };
-    }
-
-    documentCategoryData = {
-      fileCategory: patchDocumentPayloadCount(
-        data.fileCategory,
-        aggregateResponse.filetype || data.fileCategory
-      ),
-      labels: patchDocumentPayloadCount(
-        data.labels,
-        aggregateResponse.labels || data.labels
-      ),
-      location: patchDocumentPayloadCount(
-        data.location,
-        aggregateResponse.location || data.location
-      ),
-      pageCount: aggregateResponse.pageCount || data.pageCount,
+    return {
+      isLoading,
+      error,
+      data: getAvailableDocumentCategories(data, aggregateResponse),
     };
-
-    return { isLoading, error, data: documentCategoryData };
   }, [data, aggregateResponse]);
 };

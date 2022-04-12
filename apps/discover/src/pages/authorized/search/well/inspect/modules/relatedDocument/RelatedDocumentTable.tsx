@@ -23,7 +23,7 @@ import { setObjectFeedbackModalDocumentId } from 'modules/feedback/actions';
 import {
   useRelatedDocumentData,
   useSelectedColumns,
-} from 'modules/wellSearch/selectors/sequence/RelatedDocuments/useRelatedDocument';
+} from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocument';
 import { DocumentResultTableHoverComponent } from 'pages/authorized/search/document/results/DocumentResultTableHoverComponent';
 import { DocumentResultTableSubRow } from 'pages/authorized/search/document/results/DocumentResultTableSubRow';
 import { DocumentsBulkActions } from 'pages/authorized/search/document/results/DocumentsBulkActions';

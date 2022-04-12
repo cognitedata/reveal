@@ -11,7 +11,7 @@ jest.mock('modules/sidebar/selectors', () => ({
 describe('useAppliedDocumentsFacetsKeys hook', () => {
   beforeEach(() => {
     (useAppliedDocumentFilters as jest.Mock).mockImplementation(() => ({
-      filetype: ['filetype1', 'filetype2'],
+      fileCategory: ['fileCategory1', 'fileCategory2'],
       labels: [],
       lastmodified: [],
       lastcreated: [],
@@ -25,6 +25,6 @@ describe('useAppliedDocumentsFacetsKeys hook', () => {
     );
     waitForNextUpdate();
 
-    expect(result.current).toEqual(['filetype', 'location']);
+    expect(result.current).toEqual(['fileCategory', 'location']);
   });
 });

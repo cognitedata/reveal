@@ -36,7 +36,7 @@ export const Metadata: React.FC<Props> = ({
             value: doc.doc.filesize,
             type: 'filesize',
           },
-          { label: 'File type', value: doc.doc.filetype },
+          { label: 'File type', value: doc.doc.fileCategory },
           {
             label: 'Creation date',
             value: doc.createdDisplay,

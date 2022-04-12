@@ -1,4 +1,5 @@
 import isArray from 'lodash/isArray';
+import isNaN from 'lodash/isNaN';
 import mergeWith from 'lodash/mergeWith';
 
 /**
@@ -18,6 +19,10 @@ export const mergeUniqueArray = <T extends Record<any, any>>(
   return mergeWith(source, target, (objValue, srcValue) => {
     if (isArray(objValue)) {
       return [...new Set(objValue.concat(srcValue))];
+    }
+
+    if (!isNaN(Number(objValue)) && !isNaN(Number(srcValue))) {
+      return Number(objValue) + Number(srcValue);
     }
 
     return undefined;

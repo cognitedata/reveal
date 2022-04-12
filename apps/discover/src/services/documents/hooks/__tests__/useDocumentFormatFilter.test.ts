@@ -18,8 +18,8 @@ describe('useDocumentFormatFilter', () => {
     });
     expect(result).toBe('Document Category: TEST_TYPE_1');
   });
-  it('formats the "filetype" tag correctly', () => {
-    const result = formatTag('filetype', 'Compressed');
+  it('formats the "fileCategory" tag correctly', () => {
+    const result = formatTag('fileCategory', 'Compressed');
     expect(result).toBe('File Type: Compressed');
   });
   it('formats the "created" tag correctly', () => {
@@ -46,8 +46,10 @@ describe('useDocumentFormatFilter', () => {
 
 describe('useFormatDocumentFilters', () => {
   const formattedDocumentFilters = useFormatDocumentFilters();
-  it('formats the "filetype" tag correctly', () => {
-    const result = formattedDocumentFilters([['filetype', ['PDF', 'IMAGE']]]);
+  it('formats the "fileCategory" tag correctly', () => {
+    const result = formattedDocumentFilters([
+      ['fileCategory', ['PDF', 'IMAGE']],
+    ]);
     expect(result).toMatchObject({
       'File Type': ['PDF', 'IMAGE'],
     });

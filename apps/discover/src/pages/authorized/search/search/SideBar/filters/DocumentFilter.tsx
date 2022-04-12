@@ -33,7 +33,7 @@ export const DocumentFilter = () => {
           <FilterCollapse category={CATEGORY}>
             <SourceFilter category={CATEGORY} title="Source" data={location} />
             <FileTypeFilter
-              title={DocumentFilterCategoryTitles.filetype}
+              title={DocumentFilterCategoryTitles.fileCategory}
               data={fileCategory}
               category={CATEGORY}
             />

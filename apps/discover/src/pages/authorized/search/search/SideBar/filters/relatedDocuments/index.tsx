@@ -1,3 +1,3 @@
 export * from './RelatedDocumentDateRange';
 export * from './RelatedDocumentSource';
-export * from './RelatedDocumentFIleType';
+export * from './RelatedDocumentFileType';

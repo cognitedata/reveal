@@ -21,8 +21,8 @@ export const getDocumentsFacetsInfo = (
 ): BreadCrumbStatInfo[] => {
   const documentInformation: BreadCrumbStatInfo[] = [
     {
-      name: DocumentFilterCategoryTitles.filetype,
-      content: transformFacets(facets.filetype),
+      name: DocumentFilterCategoryTitles.fileCategory,
+      content: transformFacets(facets.fileCategory),
     },
     {
       name: DocumentFilterCategoryTitles.labels,

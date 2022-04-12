@@ -1,27 +1,27 @@
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { MultiSelect } from 'components/filters';
+import { useDeepMemo } from 'hooks/useDeep';
 import { usePatchRelatedDocumentFilters } from 'modules/inspectTabs/hooks/usePatchRelatedDocumentFilters';
-import { useRelatedDocumentDataStats } from 'modules/wellSearch/selectors/sequence/RelatedDocuments/useRelatedDocument';
-import { useRelatedDocumentFilterQuery } from 'modules/wellSearch/selectors/sequence/RelatedDocuments/useRelatedDocumentFilterQuery';
+import { useRelatedDocumentDataStats } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocument';
+import { useRelatedDocumentFilterQuery } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocumentFilterQuery';
 
 import { DropdownWrapper } from './elements';
 
 export const RelatedDocumentFileType = () => {
-  const [options, setOptions] = useState<string[]>([]);
   const { t } = useTranslation();
   const { facets } = useRelatedDocumentDataStats();
   const patchRelatedDocumentFilters = usePatchRelatedDocumentFilters();
   const { facets: filters } = useRelatedDocumentFilterQuery();
-  const filetypeFilters = filters.filetype;
-  const selectedCount = filetypeFilters.length;
+  const fileCategoryFilters = filters.fileCategory;
+  const selectedCount = fileCategoryFilters.length;
 
-  useEffect(() => {
-    if (facets?.filetype) {
-      setOptions((facets?.filetype || []).map((row) => row.name));
+  const options = useDeepMemo(() => {
+    if (!facets?.fileCategory) {
+      return [];
     }
-  }, [JSON.stringify(facets?.filetype)]);
+    return facets.fileCategory.map((row) => row.name);
+  }, [facets?.fileCategory]);
 
   return (
     <DropdownWrapper>
@@ -30,16 +30,16 @@ export const RelatedDocumentFileType = () => {
         title={t('File Type')}
         SelectAllLabel={t('All')}
         options={options}
-        selectedOptions={filetypeFilters}
+        selectedOptions={fileCategoryFilters}
         onValueChange={(values: string[]) => {
-          patchRelatedDocumentFilters({ filetype: values });
+          patchRelatedDocumentFilters({ fileCategory: values });
         }}
         enableSelectAll
         showCustomCheckbox
         displayValue={
           options.length === selectedCount
             ? t('All')
-            : `${filetypeFilters.length}`
+            : `${fileCategoryFilters.length}`
         }
         hideClearIndicator
         disableTyping

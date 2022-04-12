@@ -10,7 +10,7 @@ describe('ClearButton', () => {
     testRenderer(ClearButton, undefined, viewProps);
 
   const filtersMock = {
-    filetype: [],
+    fileCategory: [],
     labels: [],
     lastmodified: [],
     lastcreated: [],

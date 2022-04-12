@@ -43,7 +43,7 @@ describe('useSearchHistoryOptionData hook', () => {
               filters: {
                 documents: {
                   facets: {
-                    filetype: [],
+                    fileCategory: [],
                     lastcreated: [],
                     lastmodified: [],
                     location: [],

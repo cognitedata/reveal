@@ -41,7 +41,7 @@ const findResult = (
 export const processFacets = (
   result: DocumentsAggregatesResponse
 ): DocumentResultFacets => {
-  const filetype = findResult(result, 'filetype').map(
+  const fileCategory = findResult(result, 'fileCategory').map(
     (item): DocumentQueryFacet => {
       const name = (item.group as { [FILE_TYPE_KEY]: string }[])
         .map((group) => group[FILE_TYPE_KEY] || '')
@@ -57,7 +57,7 @@ export const processFacets = (
   );
 
   // note: this can be optimised to do all in the above function
-  const groupMimetypesTogether = filetype.reduce(
+  const groupMimetypesTogether = fileCategory.reduce(
     (groupFiletypesResult, item) => {
       const found = groupFiletypesResult.find(
         (resultItem) => resultItem.name === item.name
@@ -145,7 +145,7 @@ export const processFacets = (
     lastcreated,
     total,
     location,
-    filetype: groupMimetypesTogether,
+    fileCategory: groupMimetypesTogether,
     pageCount,
   };
 };

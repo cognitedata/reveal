@@ -8,11 +8,11 @@ import { getFacetsCounts } from 'modules/documentSearch/utils/getFacetsCounts';
 import { useWellInspect } from 'modules/wellInspect/selectors';
 import { columns } from 'pages/authorized/search/well/inspect/modules/relatedDocument/constant';
 
-import { useQuerySavedRelatedDocuments } from './RelatedDocumentUseQuery';
+import { useRelatedDocumentResultQuery } from './useRelatedDocumentResultQuery';
 
 export const useRelatedDocumentData = () => {
   const limit = useRelatedDocumentLimit();
-  const { data, isLoading } = useQuerySavedRelatedDocuments(limit);
+  const { data, isLoading } = useRelatedDocumentResultQuery(limit);
 
   return useMemo(() => {
     return {

@@ -46,7 +46,7 @@ export const getMockDocumentMetadata: (
     assetIds: [1234],
     filename: 'file',
     filepath: '/',
-    filetype: '',
+    fileCategory: '',
     labels: [{ externalId: 'unclassified' }],
     location: '',
     author: '',
@@ -91,7 +91,7 @@ export const getMockAPIResponse = (
   items: items || [],
   aggregates: [
     {
-      name: 'filetype',
+      name: 'fileCategory',
       groups: [
         {
           group: [{ type: 'PDF' }],
@@ -152,7 +152,7 @@ export const getMockAPIResponse = (
 export const getMockDocumentFacets = (
   extras?: Partial<DocumentResultFacets>
 ): DocumentResultFacets => ({
-  filetype: [
+  fileCategory: [
     {
       count: 100,
       key: 'PDF',
@@ -215,7 +215,7 @@ export const getMockDocumentFacets = (
 export const getMockDocumentResultsEmptyFacets = (
   extras?: Partial<DocumentResultFacets>
 ): DocumentResultFacets => ({
-  filetype: [],
+  fileCategory: [],
   labels: [],
   total: [],
   lastcreated: [],
@@ -227,7 +227,7 @@ export const getMockDocumentResultsEmptyFacets = (
 export const getMockDocumentEmptyFacets = (
   extras?: Partial<DocumentsFacets>
 ): DocumentsFacets => ({
-  filetype: [],
+  fileCategory: [],
   labels: [],
   lastcreated: [],
   location: [],

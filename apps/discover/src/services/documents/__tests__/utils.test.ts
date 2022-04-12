@@ -83,25 +83,25 @@ describe('documents:utils', () => {
 
   describe('Facet: "rest"', () => {
     it('Formats the file type correctly', () => {
-      const result = formatFacetValue('filetype', 'pdf', {});
+      const result = formatFacetValue('fileCategory', 'pdf', {});
 
       expect(result).toMatch('File Type: pdf');
     });
 
     it('Hides the prefix on file type', () => {
-      const result = formatFacetValue('filetype', 'pdf', {}, true);
+      const result = formatFacetValue('fileCategory', 'pdf', {}, true);
 
       expect(result).toMatch('pdf');
     });
 
     it('Manges to show array as items', () => {
-      const result = formatFacetValue('filetype', ['pdf', 'image'], {});
+      const result = formatFacetValue('fileCategory', ['pdf', 'image'], {});
 
       expect(result).toMatch('File Type: pdf,image');
     });
 
     it('Manages to show number as items', () => {
-      const result = formatFacetValue('filetype', 10, {});
+      const result = formatFacetValue('fileCategory', 10, {});
 
       expect(result).toMatch('File Type: 10');
     });

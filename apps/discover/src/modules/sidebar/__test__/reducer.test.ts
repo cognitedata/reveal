@@ -46,11 +46,11 @@ describe('search.reducer', () => {
       type: UPDATE_CATEGORY_APPLIED_FILTER,
       payload: {
         category: Modules.DOCUMENTS,
-        facet: 'filetype',
+        facet: 'fileCategory',
         value: ['option1', 'option2'],
       },
     });
-    expect(state.appliedFilters.documents.filetype).toStrictEqual([
+    expect(state.appliedFilters.documents.fileCategory).toStrictEqual([
       'option1',
       'option2',
     ]);
@@ -77,7 +77,7 @@ describe('search.reducer', () => {
         value: documentFilters,
       },
     });
-    expect(state.appliedFilters.documents.filetype).toStrictEqual([
+    expect(state.appliedFilters.documents.fileCategory).toStrictEqual([
       'Compressed',
       'Image',
     ]);
@@ -125,7 +125,7 @@ describe('search.reducer', () => {
 
     expect(state.appliedFilters.wells[0]).toStrictEqual(appliedFilter.wells[0]);
     expect(state.appliedFilters.wells[1]).toStrictEqual(appliedFilter.wells[1]);
-    expect(state.appliedFilters.documents.filetype).toStrictEqual([
+    expect(state.appliedFilters.documents.fileCategory).toStrictEqual([
       'Compressed',
       'Image',
     ]);

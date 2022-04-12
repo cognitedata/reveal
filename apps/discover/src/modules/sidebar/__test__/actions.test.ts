@@ -39,14 +39,14 @@ describe('Actions', () => {
     expect(
       updateCategoryAppliedFilter({
         category: 'documents',
-        facet: 'filetype',
+        facet: 'fileCategory',
         value: ['option1', 'option2'],
       })
     ).toEqual({
       type: UPDATE_CATEGORY_APPLIED_FILTER,
       payload: {
         category: 'documents',
-        facet: 'filetype',
+        facet: 'fileCategory',
         value: ['option1', 'option2'],
       },
     });

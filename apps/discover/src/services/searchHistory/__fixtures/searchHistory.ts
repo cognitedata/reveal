@@ -12,7 +12,7 @@ export const getMockSearchHistory: () => SearchHistoryResponse[] = () => [
     filters: {
       documents: {
         facets: {
-          filetype: ['PDF', 'IMAGE'],
+          fileCategory: ['PDF', 'IMAGE'],
           lastmodified: [],
           lastcreated: [],
           location: ['SOURCE_1'],
@@ -37,7 +37,7 @@ export const getMockSearchHistory: () => SearchHistoryResponse[] = () => [
     filters: {
       documents: {
         facets: {
-          filetype: [],
+          fileCategory: [],
           lastmodified: [],
           lastcreated: [],
           location: [],

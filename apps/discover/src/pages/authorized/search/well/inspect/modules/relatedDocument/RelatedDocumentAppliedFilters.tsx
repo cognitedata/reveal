@@ -3,7 +3,7 @@ import React from 'react';
 import { DocumentsFacets } from 'modules/documentSearch/types';
 import { getEmptyFacets } from 'modules/documentSearch/utils';
 import { useSetRelatedDocumentFilters } from 'modules/inspectTabs/hooks/useSetRelatedDocumentFilters';
-import { useRelatedDocumentFilterQuery } from 'modules/wellSearch/selectors/sequence/RelatedDocuments/useRelatedDocumentFilterQuery';
+import { useRelatedDocumentFilterQuery } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocumentFilterQuery';
 import { DocumentAppliedFiltersCore } from 'pages/authorized/search/document/header/DocumentAppliedFilters';
 
 import { useAppliedMapGeoJsonFilters } from '../../../../../../../modules/sidebar/selectors';

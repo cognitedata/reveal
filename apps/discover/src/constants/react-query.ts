@@ -94,6 +94,8 @@ export const WELL_QUERY_KEY = {
   WELL_TOPS: [WELLS, 'wellTops'],
   FORMATION_TOPS: [WELLS, 'logsFrmTops'],
   LOGS_PPFGS: ['logsPPFGs'],
+  RELATED_DOCUMENTS: [WELLS, 'relatedDocuments'],
+  RELATED_DOCUMENT_FACETS: [WELLS, 'relatedDocuments', 'facets'],
 };
 
 const SEARCH_HISTORY = 'searchHistory';
@@ -117,7 +119,7 @@ export const DOCUMENTS_QUERY_KEY = {
 
 export const DOCUMENTS_AGGREGATES = {
   labels: 'DOCUMENTS_LABELS_AGGREGATE',
-  filetype: 'DOCUMENTS_FILE_TYPE_AGGREGATE',
+  fileCategory: 'DOCUMENTS_FILE_TYPE_AGGREGATE',
   location: 'DOCUMENTS_LOCATION_AGGREGATE',
   lastcreated: 'DOCUMENTS_LASTCREATED_AGGREGATE',
   total: 'DOCUMENTS_TOTAL_AGGREGATE',

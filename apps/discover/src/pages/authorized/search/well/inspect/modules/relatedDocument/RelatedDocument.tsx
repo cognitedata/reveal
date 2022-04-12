@@ -5,7 +5,7 @@ import { CollapsablePanel } from '@cognite/cogs.js';
 
 import { BaseButton } from 'components/buttons/BaseButton';
 import { useAnythingHasSearched } from 'hooks/useAnythingHasSearched';
-import { useRelatedDocumentDataStats } from 'modules/wellSearch/selectors/sequence/RelatedDocuments/useRelatedDocument';
+import { useRelatedDocumentDataStats } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocument';
 import { SearchBreadcrumb } from 'pages/authorized/search/common/searchResult';
 import { SearchQueryInfoPanel } from 'pages/authorized/search/search/SearchQueryInfoPanel';
 import { RelatedDocumentFilters } from 'pages/authorized/search/search/SideBar/filters/RelatedDocumentFilters';

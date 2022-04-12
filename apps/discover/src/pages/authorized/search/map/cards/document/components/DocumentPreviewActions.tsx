@@ -79,7 +79,7 @@ const DocumentPreviewActionsComponent: React.FC<Props> = ({
    */
   const isSupportedFileType =
     supportedFileTypes &&
-    includes(supportedFileTypes, doc.doc.filetype.toUpperCase());
+    includes(supportedFileTypes, doc.doc.fileCategory.toUpperCase());
 
   return (
     <ActionContainer>

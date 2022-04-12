@@ -13,7 +13,7 @@ export const getSavedSearchContentFixture = (
     filters: {
       documents: {
         facets: {
-          filetype: ['PDF', 'some-unknown-filetype'],
+          fileCategory: ['PDF', 'some-unknown-fileCategory'],
           labels: [
             { externalId: 'TEST_TYPE_1' },
             { externalId: 'some-unknown-documentype' },

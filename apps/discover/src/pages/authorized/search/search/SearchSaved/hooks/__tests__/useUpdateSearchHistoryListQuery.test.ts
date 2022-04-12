@@ -53,7 +53,7 @@ describe('useUpdateSearchHistoryListQuery hook', () => {
           filters: {
             documents: {
               facets: {
-                filetype: ['Compressed', 'Image'],
+                fileCategory: ['Compressed', 'Image'],
                 labels: [{ externalId: '1' }],
                 lastcreated: [],
                 lastmodified: [],

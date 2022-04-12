@@ -5,7 +5,7 @@ import { SAVED_SEARCHES_CURRENT_KEY } from '../savedSearches/constants';
 import { SavedSearchContent } from '../savedSearches/types';
 
 export const documentFacetsStructure: DocumentsFacets = {
-  filetype: [],
+  fileCategory: [],
   labels: [],
   location: [],
   lastmodified: [],

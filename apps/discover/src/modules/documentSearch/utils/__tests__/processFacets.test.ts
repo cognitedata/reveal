@@ -6,7 +6,7 @@ describe('processFacets', () => {
   it('should return empty facets', () => {
     const facets = processFacets({ items: [], aggregates: [] });
     expect(facets).toEqual({
-      filetype: [],
+      fileCategory: [],
       labels: [],
       total: [],
       lastcreated: [],
@@ -17,7 +17,7 @@ describe('processFacets', () => {
   it('should return facets from document response', () => {
     const facets = processFacets(getMockAPIResponse());
     expect(facets).toEqual({
-      filetype: [
+      fileCategory: [
         {
           count: 100,
           key: 'PDF',
@@ -67,12 +67,12 @@ describe('processFacets', () => {
     });
   });
 
-  it('should return accumulated count of same filetypes', () => {
+  it('should return accumulated count of same fileCategorys', () => {
     const facets = processFacets({
       items: [],
       aggregates: [
         {
-          name: 'filetype',
+          name: 'fileCategory',
           groups: [
             {
               group: [{ type: 'PDF' }],
@@ -84,7 +84,7 @@ describe('processFacets', () => {
         },
       ],
     });
-    expect(facets.filetype[0]).toEqual({
+    expect(facets.fileCategory[0]).toEqual({
       name: 'PDF',
       key: 'PDF',
       count: 102,

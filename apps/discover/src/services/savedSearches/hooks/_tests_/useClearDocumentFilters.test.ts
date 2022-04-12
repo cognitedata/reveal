@@ -32,7 +32,7 @@ describe('useClearDocumentFilters hook', () => {
       filters: {
         documents: {
           facets: {
-            filetype: [],
+            fileCategory: [],
             labels: [],
             lastcreated: [],
             lastmodified: [],

@@ -45,7 +45,7 @@ export const DocumentResultTableHoverComponent = ({
 
   // TODO(PP-2573): check if this can be removed after upgrading the pdf viewer lib
   const getPreviewButton = (doc: DocumentType) => {
-    if (doc.doc.filetype === 'Compressed') {
+    if (doc.doc.fileCategory === 'Compressed') {
       return null;
     }
     return (

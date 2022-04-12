@@ -97,7 +97,7 @@ describe('Saved search utils', () => {
             filters: {
               documents: {
                 facets: getFacets({
-                  filetype: ['PDF'],
+                  fileCategory: ['PDF'],
                   labels: [],
                   lastmodified: ['a'],
                 }),
@@ -170,13 +170,15 @@ describe('Saved search utils', () => {
       expect(
         normalizeSavedSearch({
           phrase: 'test',
-          filters: { documents: { facets: getFacets({ filetype: ['pdf'] }) } },
+          filters: {
+            documents: { facets: getFacets({ fileCategory: ['pdf'] }) },
+          },
         })
       ).toEqual({
         filters: {
           documents: {
             facets: {
-              filetype: ['pdf'],
+              fileCategory: ['pdf'],
               labels: [],
               lastcreated: [],
               lastmodified: [],

@@ -5,7 +5,7 @@ import { convertFacetsToAPIStructure } from '../convertFacetsToAPIStructure';
 describe('convert Facets To API Structure test', () => {
   it('convert to api structure', () => {
     const facets: DocumentsFacets = {
-      filetype: ['Unknown'],
+      fileCategory: ['Unknown'],
       labels: [{ externalId: 'PDF' }],
       lastcreated: [],
       lastmodified: [],
@@ -15,7 +15,7 @@ describe('convert Facets To API Structure test', () => {
 
     const apiStructure = convertFacetsToAPIStructure(facets);
     expect(apiStructure.labels).toEqual([{ externalId: 'PDF' }]);
-    expect(apiStructure.filetype).toEqual(['Unknown']);
+    expect(apiStructure.fileCategory).toEqual(['Unknown']);
     expect(apiStructure.location).toEqual(['location']);
   });
 });

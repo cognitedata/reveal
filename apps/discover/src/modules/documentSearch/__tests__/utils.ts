@@ -20,7 +20,7 @@ export const getMockSearchQueryWithFacets = (
 ) => {
   return {
     facets: {
-      filetype: ['Image', 'PDF'],
+      fileCategory: ['Image', 'PDF'],
       labels: [
         {
           externalId: 'COMPLETION_REPORT',

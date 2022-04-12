@@ -30,9 +30,9 @@ describe('toDocument', () => {
     expect(doc.modifiedDisplay).toContain('01-Apr-2014');
   });
 
-  it('should find filetype', () => {
+  it('should find fileCategory', () => {
     const { doc } = toDocument({ item: getDocumentFixture() });
-    expect(doc.filetype).toEqual('PDF');
+    expect(doc.fileCategory).toEqual('PDF');
   });
 
   it('should find title', () => {

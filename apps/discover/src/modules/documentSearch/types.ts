@@ -56,7 +56,7 @@ export interface DocumentMetadata {
   filename: string;
   filepath: string;
   url?: string;
-  filetype: string;
+  fileCategory: string;
   labels: DocumentLabel[];
   location: string;
   author: string;
@@ -113,7 +113,7 @@ export interface DocumentQueryFacet extends QueryFacet {
 export type DocumentQueryFacetsNames =
   | 'labels'
   | 'location'
-  | 'filetype'
+  | 'fileCategory'
   | 'lastcreated'
   | 'lastmodified'
   | 'pageCount';
@@ -124,7 +124,7 @@ export type DocumentQueryFacets = Record<AggregateNames, DocumentQueryFacet[]>;
 export type AggregateNames =
   | 'labels'
   | 'location'
-  | 'filetype'
+  | 'fileCategory'
   | 'lastcreated'
   | 'total'
   | 'pageCount';
@@ -153,7 +153,7 @@ export interface DocumentsFacetLabels {
 }
 
 export interface DocumentsFacets {
-  filetype: string[];
+  fileCategory: string[];
   labels: DocumentsFacetLabels[];
   lastmodified: string[];
   lastcreated: string[];
@@ -183,7 +183,7 @@ export type CategoryResponse = {
 };
 
 export enum DocumentFilterCategoryTitles {
-  filetype = 'File Type',
+  fileCategory = 'File Type',
   labels = 'Document Category',
   location = 'Source',
   lastmodified = 'Last Modified',
@@ -194,3 +194,5 @@ export enum DocumentFilterCategoryTitles {
 export type FacetsCounts = {
   [key: string]: number;
 };
+
+export type BatchedDocumentsFilters = { filters: DocumentsFilter }[];

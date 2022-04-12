@@ -82,7 +82,7 @@ describe('Search Actions', () => {
           'creationdate',
           'lastmodified',
           'location',
-          'filetype',
+          'fileCategory',
           'labels',
           'author',
         ],

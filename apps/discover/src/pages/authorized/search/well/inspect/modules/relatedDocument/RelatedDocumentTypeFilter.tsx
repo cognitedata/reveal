@@ -1,13 +1,10 @@
-import { useEffect, useState } from 'react';
-
-import isUndefined from 'lodash/isUndefined';
 import orderBy from 'lodash/orderBy';
 
 import Histogram from 'components/histogram/Histogram';
 import Skeleton from 'components/skeleton';
-import { DocumentQueryFacet } from 'modules/documentSearch/types';
+import { useDeepMemo } from 'hooks/useDeep';
 import { usePatchRelatedDocumentFilters } from 'modules/inspectTabs/hooks/usePatchRelatedDocumentFilters';
-import { useRelatedDocumentDataStats } from 'modules/wellSearch/selectors/sequence/RelatedDocuments/useRelatedDocument';
+import { useRelatedDocumentDataStats } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocument';
 import { FlexGrow } from 'styles/layout';
 
 import {
@@ -21,24 +18,18 @@ import {
 export const RelatedDocumentTypeFilter = () => {
   const patchRelatedDocumentFilters = usePatchRelatedDocumentFilters();
   const { facets, facetCounts } = useRelatedDocumentDataStats();
-  const [options, setOptions] = useState<DocumentQueryFacet[]>();
-  const [total, setTotal] = useState<number>(0);
 
-  useEffect(() => {
-    if (facets?.labels) {
-      setOptions(orderBy(facets.labels, 'count', 'desc'));
-    } else {
-      setOptions([]);
+  const options = useDeepMemo(() => {
+    if (!facets?.labels) {
+      return [];
     }
-  }, [JSON.stringify(facets?.labels)]);
+    return orderBy(facets.labels, 'count', 'desc');
+  }, [facets?.labels]);
 
-  useEffect(() => {
-    if (!isUndefined(facetCounts?.labels)) {
-      setTotal(facetCounts.labels);
-    } else {
-      setTotal(0);
-    }
-  }, [JSON.stringify(facetCounts?.labels)]);
+  const total = useDeepMemo(
+    () => facetCounts.labels || 0,
+    [facetCounts.labels]
+  );
 
   const toggleFilter = (key: string) => {
     const labels = (options || [])

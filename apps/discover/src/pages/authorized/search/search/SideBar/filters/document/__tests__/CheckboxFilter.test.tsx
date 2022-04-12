@@ -55,7 +55,7 @@ describe('CheckboxFilter without selected values from state', () => {
       (props) => (
         <CheckboxFilter
           title="test-title"
-          docQueryFacetType="filetype"
+          docQueryFacetType="fileCategory"
           category="documents"
           resultFacets={[]}
           categoryData={[
@@ -149,7 +149,7 @@ describe('CheckboxFilter with selected values from state', () => {
       (props) => (
         <CheckboxFilter
           title="test-title"
-          docQueryFacetType="filetype"
+          docQueryFacetType="fileCategory"
           category="documents"
           resultFacets={[]}
           categoryData={[

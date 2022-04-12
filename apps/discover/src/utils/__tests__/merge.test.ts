@@ -20,7 +20,7 @@ describe('merge', () => {
         { a: ['a', 'c'], b: 6 }
       );
 
-      expect(result).toMatchObject({ a: ['a', 'b', 'c'], b: 6 });
+      expect(result).toMatchObject({ a: ['a', 'b', 'c'], b: 11 });
     });
 
     it('merges two objects', () => {

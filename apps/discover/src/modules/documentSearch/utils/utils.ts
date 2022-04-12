@@ -1,3 +1,5 @@
+import { DocumentCategories } from '@cognite/discover-api-types';
+
 import {
   DocumentResult,
   DocumentResultFacets,
@@ -25,7 +27,7 @@ export const addQueryRefinement = (field: string, refinement: Refinement) => {
 };
 
 export const getEmptyDocumentStateFacets = (): DocumentResultFacets => ({
-  filetype: [],
+  fileCategory: [],
   labels: [],
   lastcreated: [],
   location: [],
@@ -40,7 +42,7 @@ export const getEmptyDocumentResult = (): DocumentResult => ({
 });
 
 export const getEmptyFacets = (): DocumentsFacets => ({
-  filetype: [],
+  fileCategory: [],
   labels: [],
   lastmodified: [],
   lastcreated: [],
@@ -53,4 +55,13 @@ export const getFacets = (
 ): DocumentsFacets => ({
   ...getEmptyFacets(),
   ...facets,
+});
+
+export const getEmptyDocumentCategories = (): DocumentCategories => ({
+  documentType: [],
+  fileCategory: [],
+  fileType: [],
+  labels: [],
+  location: [],
+  pageCount: [],
 });

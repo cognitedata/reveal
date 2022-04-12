@@ -22,14 +22,6 @@ export const RelatedDocumentOptionPanel: React.FC = () => {
     );
   };
 
-  // const handleSelectAllColumns = (value: boolean) => {
-  //   dispatch(
-  //     setSelectedRelatedDocumentColumns(
-  //       toBooleanMap(Object.keys(columns), value)
-  //     )
-  //   );
-  // };
-
   const filteredColumns = availableColumns.map((availableColumn) => {
     return {
       ...availableColumn,
@@ -40,7 +32,6 @@ export const RelatedDocumentOptionPanel: React.FC = () => {
   return (
     <OptionsPanel
       handleColumnSelection={handleColumnSelection}
-      // handleSelectAllColumns={handleSelectAllColumns}
       columns={filteredColumns}
     />
   );

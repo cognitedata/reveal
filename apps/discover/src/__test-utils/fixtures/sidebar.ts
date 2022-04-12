@@ -29,7 +29,7 @@ export const getEmptyAppliedFilterType = (
 ): AppliedFiltersType => {
   return {
     documents: {
-      filetype: [],
+      fileCategory: [],
       labels: [],
       lastmodified: [],
       lastcreated: [],
@@ -60,7 +60,7 @@ export const getMockDocumentFilter: (
   extras?: Partial<DocumentsFacets>
 ) => DocumentsFacets = (extras = {}) => {
   return {
-    filetype: ['Compressed', 'Image'],
+    fileCategory: ['Compressed', 'Image'],
     labels: [{ externalId: '1' }],
     lastmodified: [],
     lastcreated: [],
@@ -126,7 +126,7 @@ export const getMockFormattedFacet: (
   extras?: Partial<FormattedFacet>
 ) => FormattedFacet = (extras = {}) => {
   return {
-    facet: 'filetype',
+    facet: 'fileCategory',
     facetNameDisplayFormat: 'File Type',
     facetValueDisplayFormat: 'PDF',
     ...extras,

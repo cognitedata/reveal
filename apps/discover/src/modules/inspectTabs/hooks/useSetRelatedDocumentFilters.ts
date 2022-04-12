@@ -2,7 +2,7 @@ import { documentValuesPayload } from 'services/documents/structure';
 import { getEmptyGeometry } from 'utils/geometry';
 
 import { DocumentsFacets } from 'modules/documentSearch/types';
-import { useMutateRelatedDocumentPatch } from 'modules/wellSearch/selectors/sequence/RelatedDocuments/RelatedDocumentUseQuery';
+import { useMutateRelatedDocumentPatch } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useMutateRelatedDocumentPatch';
 
 export const useSetRelatedDocumentFilters = () => {
   const { mutate } = useMutateRelatedDocumentPatch();

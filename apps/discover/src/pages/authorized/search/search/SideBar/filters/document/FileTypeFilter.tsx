@@ -12,7 +12,7 @@ export const FileTypeFilter: React.FC<FilterPayload> = React.memo(
       <CheckboxFilter
         title={title}
         category={category}
-        docQueryFacetType="filetype"
+        docQueryFacetType="fileCategory"
         categoryData={data}
         defaultNumberOfItemsToDisplay={DEFAULT_FILTER_ITEM_LIMIT}
         {...rest}

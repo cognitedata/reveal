@@ -1,15 +1,14 @@
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { MultiSelect } from 'components/filters';
+import { useDeepMemo } from 'hooks/useDeep';
 import { usePatchRelatedDocumentFilters } from 'modules/inspectTabs/hooks/usePatchRelatedDocumentFilters';
-import { useRelatedDocumentDataStats } from 'modules/wellSearch/selectors/sequence/RelatedDocuments/useRelatedDocument';
-import { useRelatedDocumentFilterQuery } from 'modules/wellSearch/selectors/sequence/RelatedDocuments/useRelatedDocumentFilterQuery';
+import { useRelatedDocumentDataStats } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocument';
+import { useRelatedDocumentFilterQuery } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocumentFilterQuery';
 
 import { DropdownWrapper } from './elements';
 
 export const RelatedDocumentSource = () => {
-  const [options, setOptions] = useState<string[]>([]);
   const { t } = useTranslation();
   const { facets } = useRelatedDocumentDataStats();
   const patchRelatedDocumentFilters = usePatchRelatedDocumentFilters();
@@ -17,11 +16,12 @@ export const RelatedDocumentSource = () => {
   const locationFilters = filters.location;
   const selectedCount = locationFilters.length;
 
-  useEffect(() => {
-    if (facets?.location) {
-      setOptions((facets?.location || []).map((row) => row.name));
+  const options = useDeepMemo(() => {
+    if (!facets?.location) {
+      return [];
     }
-  }, [JSON.stringify(facets?.location)]);
+    return facets.location.map((row) => row.name);
+  }, [facets?.location]);
 
   return (
     <DropdownWrapper>

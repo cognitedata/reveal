@@ -6,7 +6,7 @@ import { SortBy } from 'pages/types';
 export const sortByMap: { [key: string]: string } = {
   'doc.filename': 'sourceFile.name',
   'doc.location': 'sourceFile.source',
-  'doc.filetype': 'type',
+  'doc.fileCategory': 'type',
   'doc.author': 'author',
   'doc.title': 'title',
   // 'doc.topfolder': 'metadata.path', Not supported yet
