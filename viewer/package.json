@@ -62,7 +62,7 @@
   },
   "devDependencies": {
     "@azure/msal-browser": "2.23.0",
-    "@cognite/sdk": "7.2.0",
+    "@cognite/sdk": "7.2.2",
     "@cognite/sdk-core": "^4.1.0",
     "@types/dat.gui": "0.7.7",
     "@types/jest": "27.4.1",
