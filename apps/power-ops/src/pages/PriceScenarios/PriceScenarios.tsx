@@ -1,5 +1,5 @@
 import { PriceScenariosChart } from 'components/PriceScenariosChart';
-import { PriceArea } from 'models/sequences';
+import { PriceArea } from '@cognite/power-ops-api-types';
 import { useEffect, useState } from 'react';
 
 import { MainPanel, GraphContainer, StyledIcon, StyledTabs } from './elements';

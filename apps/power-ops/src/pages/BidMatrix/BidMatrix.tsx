@@ -8,8 +8,8 @@ import {
   Matrix,
   PriceArea,
   ProductionValues,
-  TableData,
-} from 'models/sequences';
+} from '@cognite/power-ops-api-types';
+import { TableData } from 'types';
 
 import {
   getBidMatrixData,

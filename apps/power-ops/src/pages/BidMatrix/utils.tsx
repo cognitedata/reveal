@@ -1,6 +1,6 @@
 import { CogniteClient, SequenceItem } from '@cognite/sdk';
 import { Column } from 'react-table';
-import { SequenceRow, TableData, TableRow, Cols } from 'models/sequences';
+import { SequenceRow, TableData, TableRow, Cols } from 'types';
 
 interface BidMatrixResponse {
   columns: Column<TableData>[];

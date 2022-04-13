@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { DoubleDatapoint, IdEither } from '@cognite/sdk';
 import { useAuthContext } from '@cognite/react-container';
 import Plot from 'react-plotly.js';
-import { PriceArea } from 'models/sequences';
+import { PriceArea } from '@cognite/power-ops-api-types';
 
 import { StyledTitle } from './elements';
 

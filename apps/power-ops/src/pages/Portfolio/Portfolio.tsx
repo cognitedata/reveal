@@ -11,7 +11,7 @@ import {
   useParams,
   useRouteMatch,
 } from 'react-router-dom';
-import { Plant, PriceArea } from 'models/sequences';
+import { Plant, PriceArea } from '@cognite/power-ops-api-types';
 import PriceScenarios from 'pages/PriceScenarios';
 import BidMatrix from 'pages/BidMatrix';
 import { PAGES } from 'pages/Menubar';

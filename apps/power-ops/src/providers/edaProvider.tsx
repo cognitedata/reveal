@@ -1,7 +1,7 @@
 import { useState, createContext, useEffect } from 'react';
 import sidecar from 'utils/sidecar';
 import { Observable } from 'rxjs';
-import { SnifferEvent } from 'models/sniffer';
+import { SnifferEvent } from '@cognite/power-ops-api-types';
 
 export interface EDAContextType {
   EDAEvents?: Observable<SnifferEvent>;

@@ -1,7 +1,7 @@
 import { useState, createContext, useEffect } from 'react';
 import { useAuthContext } from '@cognite/react-container';
 import { useFetchPriceAreas } from 'queries/useFetchPriceAreas';
-import { PriceArea } from 'models/sequences';
+import { PriceArea } from '@cognite/power-ops-api-types';
 
 export interface PriceAreasContextType {
   priceAreas?: PriceArea[];

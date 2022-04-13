@@ -2,11 +2,11 @@ import { memo, useState, useContext, useEffect, useMemo } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { AuthConsumer, AuthContext } from '@cognite/react-container';
 import { CogniteClient, CogniteEvent } from '@cognite/sdk';
+import { SnifferEvent } from '@cognite/power-ops-api-types';
 import { EDAContext } from 'providers/edaProvider';
 import { useFetchEvents } from 'queries/useFetchEvents';
 
 import { Container } from '../elements';
-import { SnifferEvent } from '../../models/sniffer';
 
 import ProcessList from './ProcessList';
 

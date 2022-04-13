@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTable, Column, useFlexLayout } from 'react-table';
 import { useSticky } from 'react-table-sticky';
-import { TableData } from 'models/sequences';
+import { TableData } from 'types';
 
 export const BidmatrixTable = ({
   tableHeader,

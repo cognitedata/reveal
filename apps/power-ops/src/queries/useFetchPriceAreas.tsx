@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { PriceArea } from 'models/sequences';
+import { PriceArea } from '@cognite/power-ops-api-types';
 import { useQuery } from 'react-query';
 import sidecar from 'utils/sidecar';
 
