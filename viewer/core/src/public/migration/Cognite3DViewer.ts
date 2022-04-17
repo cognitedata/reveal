@@ -15,7 +15,10 @@ import {
   InputHandler,
   disposeOfAllEventListeners,
   worldToNormalizedViewportCoordinates,
-  worldToViewportCoordinates
+  worldToViewportCoordinates,
+  PointerEventDelegate,
+  SceneRenderedDelegate,
+  DisposedDelegate
 } from '@reveal/utilities';
 
 import { MetricsLogger } from '@reveal/metrics';
@@ -32,18 +35,11 @@ import {
   CognitePointCloudModel
 } from '@reveal/pointclouds';
 
-import {
-  AddModelOptions,
-  Cognite3DViewerOptions,
-  Intersection,
-  CameraChangeDelegate,
-  PointerEventDelegate,
-  CadModelBudget
-} from './types';
+import { AddModelOptions, Cognite3DViewerOptions, Intersection, CadModelBudget } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
 import { RevealManager } from '../RevealManager';
-import { DisposedDelegate, SceneRenderedDelegate, RevealOptions } from '../types';
+import { RevealOptions } from '../types';
 
 import { Spinner } from '../../utilities/Spinner';
 
@@ -52,7 +48,7 @@ import { PropType } from '../../utilities/reflection';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
-import { DefaultCameraManager, CameraManager } from '@reveal/camera-manager';
+import { DefaultCameraManager, CameraManager, CameraChangeDelegate } from '@reveal/camera-manager';
 import { CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 import { IntersectInput, SupportedModelTypes, CogniteModelBase, LoadingState } from '@reveal/model-base';
