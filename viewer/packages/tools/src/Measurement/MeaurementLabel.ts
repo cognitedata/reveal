@@ -13,14 +13,20 @@ export class MeasurementLabel {
     this._viewer = viewer;
   }
 
-  public getOverlayTexture(distance: string, size: number): THREE.Texture {
+  /**
+   * Create overlay texture to be added as Sprite
+   * @param label String to be added into the Sprite
+   * @param size Size of the label
+   * @returns Texture object containing label string
+   */
+  public getOverlayTexture(label: string, size: number): THREE.Texture {
     const borderSize = 24;
     const baseWidth = 64;
     const ctx = document.createElement('canvas').getContext('2d');
     const font = `${64}px bold sans-serif`;
     ctx.font = font;
 
-    const textWidth = ctx.measureText(distance).width;
+    const textWidth = ctx.measureText(label).width;
 
     const doubleBorderSize = borderSize * 2;
     const width = baseWidth + doubleBorderSize + 10;
@@ -41,7 +47,7 @@ export class MeasurementLabel {
     ctx.translate(width / 2, height / 2);
     ctx.scale(scaleFactor, 1);
     ctx.fillStyle = 'white';
-    ctx.fillText(distance, 0, 0);
+    ctx.fillText(label, 0, 0);
 
     ctx.canvas.style.borderRadius = '20px';
 
@@ -53,6 +59,11 @@ export class MeasurementLabel {
     return texture;
   }
 
+  /**
+   * Add a label
+   * @param position Label position
+   * @param texture Texture for the sprite
+   */
   public addLabel(position: THREE.Vector3, texture: THREE.Texture): void {
     const labelMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true });
     this._label = new THREE.Sprite(labelMaterial);
@@ -62,18 +73,30 @@ export class MeasurementLabel {
     this._viewer.addObject3D(this._label);
   }
 
+  /**
+   * Remove the label
+   */
   public removeLabel(): void {
     if (this._label) {
       this._viewer.removeObject3D(this._label);
     }
   }
 
+  /**
+   * Update the label texture
+   * @param texture updated texture
+   */
   public updateLabelTexture(texture: THREE.Texture): void {
     if (this._label) {
       this._label.material.map = texture;
     }
   }
 
+  /**
+   * Update the label position
+   * @param startPosition start point
+   * @param endPosition end point
+   */
   public updateLabelPosition(startPosition: THREE.Vector3, endPosition: THREE.Vector3): void {
     if (this._label) {
       let direction = endPosition.clone().sub(startPosition);

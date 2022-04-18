@@ -6,17 +6,17 @@ import { Cognite3DViewer } from '@reveal/core';
 import { InputHandler } from '@reveal/utilities';
 import * as THREE from 'three';
 import { MeasurementGizmo } from './MeasurementGizmo';
-import { MeasurementDistance } from './MeasurementDistance';
 import { MeasurementLabel } from './MeaurementLabel';
+import { Measurement } from './Measurement';
 
 export class MeasurementControls {
   private readonly _domElement: HTMLElement;
   private readonly _viewer: Cognite3DViewer;
   private readonly _inputHandler: InputHandler;
   private readonly _measurementGizmo: MeasurementGizmo;
-  private readonly _measurementDistance: MeasurementDistance;
   private readonly _measurementLabel: MeasurementLabel;
   private readonly _startPosition: THREE.Vector3;
+  private _measurement: Measurement;
 
   private readonly _handleonPointerClick = this.onPointerClick.bind(this);
   private readonly _handleonPointerMove = this.onPointerMove.bind(this);
@@ -26,19 +26,42 @@ export class MeasurementControls {
     this._domElement = viewer.domElement;
     this._inputHandler = viewer.inputHandler;
     this._measurementGizmo = new MeasurementGizmo(this._viewer);
-    this._measurementDistance = new MeasurementDistance(this._viewer);
     this._measurementLabel = new MeasurementLabel(this._viewer);
     this._startPosition = new THREE.Vector3();
 
     this.setupInputHandling();
   }
 
+  /**
+   * Set input handling
+   */
   private setupInputHandling() {
     this._inputHandler.on('click', this._handleonPointerClick);
   }
 
+  /**
+   * Remove input handling
+   */
   private removeInputHandling() {
     this._domElement.removeEventListener('click', this._handleonPointerClick);
+  }
+
+  /**
+   * Add an measurement to the control
+   * @param measurement Measurement object which is the active measurement type
+   */
+  public add(measurement: Measurement): void {
+    this._measurement = measurement;
+  }
+
+  /**
+   * Remove measurement from control
+   */
+  public remove(): void {
+    if (this._measurement) {
+      this._measurement.remove();
+      this._measurement = null;
+    }
   }
 
   private async onPointerClick(event: MouseEvent) {
@@ -50,15 +73,15 @@ export class MeasurementControls {
     if (intersection) {
       this._measurementGizmo.add(intersection.point);
 
-      if (!this._measurementDistance.isActive()) {
+      if (!this._measurement.isActive()) {
         this._domElement.addEventListener('mousemove', this._handleonPointerMove);
         this._startPosition.copy(intersection.point);
-        this._measurementDistance.addLine(intersection.point);
+        this._measurement.add(intersection.point);
         const texture = this._measurementLabel.getOverlayTexture('0 m', 64);
         this._measurementLabel.addLabel(intersection.point, texture);
       } else {
         this.updateMeasurement(intersection.point);
-        this._measurementDistance.completeLine();
+        this._measurement.complete();
         this._domElement.removeEventListener('mousemove', this._handleonPointerMove);
       }
       this._viewer.requestRedraw();
@@ -78,8 +101,8 @@ export class MeasurementControls {
   }
 
   private updateMeasurement(point: THREE.Vector3): void {
-    this._measurementDistance.update(point);
-    const distanceValue = this._measurementDistance.getDistance().toFixed(3).toString() + ' m';
+    this._measurement.update(point);
+    const distanceValue = this._measurement.getMeasurementValue().toFixed(3).toString() + ' m';
     const texture = this._measurementLabel.getOverlayTexture(distanceValue, 64);
     this._measurementLabel.updateLabelTexture(texture);
     this._measurementLabel.updateLabelPosition(this._startPosition, point);

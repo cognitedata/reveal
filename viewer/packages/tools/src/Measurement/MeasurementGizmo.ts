@@ -13,6 +13,10 @@ export class MeasurementGizmo {
     this._viewer = viewer;
   }
 
+  /**
+   * Adds a Gizmo/Sphere at specified position
+   * @param position Gizmo position
+   */
   add(position: THREE.Vector3): void {
     this._mesh = new THREE.Mesh(
       new THREE.SphereBufferGeometry(0.01),
@@ -23,6 +27,9 @@ export class MeasurementGizmo {
     this._viewer.addObject3D(this._mesh);
   }
 
+  /**
+   * Remove Gizmo/Sphere
+   */
   remove(): void {
     this._viewer.removeObject3D(this._mesh);
   }

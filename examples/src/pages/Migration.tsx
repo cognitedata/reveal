@@ -17,7 +17,7 @@ import {
   CogniteModelBase,
   DefaultCameraManager
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, MeasurementControls } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, MeasurementTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
 import { ClippingUI } from '../utils/ClippingUI';
@@ -227,7 +227,7 @@ export function Migration() {
       debugStatsGui.add(guiState.debug.stats, 'textures').name('Textures');
       debugStatsGui.add(guiState.debug.stats, 'renderTime').name('Ms/frame');
 
-      viewer.on('sceneRendered', (sceneRenderedEventArgs) => {
+      viewer.on('sceneRendered', (sceneRenderedEventArgs: { renderer: { info: { render: { calls: number; points: number; triangles: number; }; memory: { geometries: number; textures: number; }; }; }; renderTime: number; }) => {
         guiState.debug.stats.drawCalls = sceneRenderedEventArgs.renderer.info.render.calls;
         guiState.debug.stats.points = sceneRenderedEventArgs.renderer.info.render.points;
         guiState.debug.stats.triangles = sceneRenderedEventArgs.renderer.info.render.triangles;
@@ -369,7 +369,7 @@ export function Migration() {
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client);
 
-      viewer.on('click', async (event) => {
+      viewer.on('click', async (event: { offsetX: any; offsetY: any; }) => {
         const { offsetX, offsetY } = event; 
         console.log('2D coordinates', event);
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
@@ -399,7 +399,8 @@ export function Migration() {
 
       new AxisViewTool(viewer);
 
-      new MeasurementControls(viewer);
+      const measurement = new MeasurementTool(viewer);
+      measurement.addMeasurementDistance();
     }
 
     function showBoundsForAllGeometries(model: Cognite3DModel) {

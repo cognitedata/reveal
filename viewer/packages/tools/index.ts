@@ -40,4 +40,4 @@ export { Keyframe } from './src/Timeline/Keyframe';
 export { TimelineDateUpdateDelegate } from './src/Timeline/types';
 export { Cognite3DViewerToolBase } from './src/Cognite3DViewerToolBase';
 export { DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions } from './src/DebugLoadedSectorsTool';
-export { MeasurementControls } from './src/Measurement/MeasurementControls';
+export { MeasurementTool } from './src/Measurement/MeasurementTool';
