@@ -7,11 +7,7 @@ import { CameraConfiguration } from '@reveal/utilities';
 import { WellKnownAsprsPointClassCodes } from './types';
 import { PointCloudNode } from './PointCloudNode';
 
-import {
-  PotreePointColorType,
-  PotreePointShape,
-  PotreePointSizeType
-} from './potree-three-loader';
+import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from './potree-three-loader';
 
 import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
 
