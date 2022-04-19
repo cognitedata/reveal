@@ -1,10 +1,4 @@
-import React, {
-  ReactText,
-  Reducer,
-  useCallback,
-  useMemo,
-  useReducer,
-} from 'react';
+import React, { ReactText, useCallback, useMemo } from 'react';
 import { Detail, Icon, PrimaryTooltip } from '@cognite/cogs.js';
 import {
   deleteCollectionById,
@@ -35,69 +29,18 @@ import { AnnotationReviewRow } from 'src/modules/Review/Components/AnnotationRev
 import { VirtualizedAnnotationsReview } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/VirtualizedAnnotationsReview';
 import { ReviewAnnotation } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/types';
 import { generateNodeTree } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/generateNodeTree';
+import { Categories } from 'src/modules/Review/types';
+import { selectCategory } from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
 
-export enum Categories {
-  Asset = 'Asset tags',
-  Object = 'Objects',
-  Text = 'Text',
-  KeypointCollections = 'Keypoint collections',
-  Classifications = 'Classification tags',
-}
-
-type CategoryState = {
-  [index in Categories]?: { selected: boolean };
-};
-
-const categories: CategoryState = {};
-
-const initialCategoriesState: {
-  categories: CategoryState;
-} = { categories };
-
-const reducer: Reducer<
-  {
-    categories: CategoryState;
-  },
-  { type: string; payload: { category: Categories; selected: boolean } }
-> = (state, action) => {
-  switch (action.type) {
-    case 'selectCategory': {
-      if (
-        action?.payload?.category &&
-        action?.payload?.selected !== undefined
-      ) {
-        return {
-          ...state,
-          categories: {
-            ...state.categories,
-            [action.payload.category]: {
-              selected: action.payload.selected,
-            },
-          },
-        };
-      }
-      return {
-        ...state,
-      };
-    }
-    default: {
-      return {
-        ...state,
-      };
-    }
-  }
-};
-
-export const ImageContextualization = (props: {
+export const AnnotationDetailPanel = (props: {
   file: FileInfo;
   reference: any;
 }) => {
   const { file } = props;
 
   const dispatch = useDispatch();
-  const [categoryState, categoryDispatch] = useReducer(
-    reducer,
-    initialCategoriesState
+  const categoryState = useSelector(
+    (state: RootState) => state.annotationDetailPanelReducer.categories
   );
 
   // when set virtualized tree component will use this to automatically scroll to position
@@ -220,10 +163,9 @@ export const ImageContextualization = (props: {
           dispatch(selectCollection(id.toString()));
         }
       } else if (Object.values(Categories).includes(id as Categories)) {
-        categoryDispatch({
-          type: 'selectCategory',
-          payload: { category: id as Categories, selected: nextState },
-        });
+        dispatch(
+          selectCategory({ category: id as Categories, selected: nextState })
+        );
       } else {
         dispatch(deselectAllSelectionsReviewPage());
         if (nextState) {
@@ -260,7 +202,7 @@ export const ImageContextualization = (props: {
     const annotationCategories = [
       {
         title: Categories.Asset,
-        selected: !!categoryState.categories[Categories.Asset]?.selected,
+        selected: !!categoryState[Categories.Asset]?.selected,
         emptyPlaceholder: 'No assets detected or manually added',
         common: {
           annotations: tagAnnotations,
@@ -270,7 +212,7 @@ export const ImageContextualization = (props: {
       },
       {
         title: Categories.Object,
-        selected: !!categoryState.categories[Categories.Object]?.selected,
+        selected: !!categoryState[Categories.Object]?.selected,
         emptyPlaceholder: 'No objects detected or manually added',
         common: {
           annotations: objectAnnotations,
@@ -280,7 +222,7 @@ export const ImageContextualization = (props: {
       },
       {
         title: Categories.Text,
-        selected: !!categoryState.categories[Categories.Text]?.selected,
+        selected: !!categoryState[Categories.Text]?.selected,
         emptyPlaceholder: 'No text or objects detected or manually added',
         common: {
           annotations: textAnnotations,
@@ -290,8 +232,7 @@ export const ImageContextualization = (props: {
       },
       {
         title: Categories.KeypointCollections,
-        selected:
-          !!categoryState.categories[Categories.KeypointCollections]?.selected,
+        selected: !!categoryState[Categories.KeypointCollections]?.selected,
         emptyPlaceholder: 'No keypoints detected or manually added',
         common: {
           annotations: keyPointAnnotations,
@@ -301,8 +242,7 @@ export const ImageContextualization = (props: {
       },
       {
         title: Categories.Classifications,
-        selected:
-          !!categoryState.categories[Categories.Classifications]?.selected,
+        selected: !!categoryState[Categories.Classifications]?.selected,
         emptyPlaceholder: 'No classifications detected or manually added',
         common: {
           annotations: classificationAnnotations,

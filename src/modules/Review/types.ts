@@ -93,3 +93,11 @@ export type KeypointCollection = {
 };
 
 export type Tool = typeof tools[keyof typeof tools];
+
+export enum Categories {
+  Asset = 'Asset tags',
+  Object = 'Objects',
+  Text = 'Text',
+  KeypointCollections = 'Keypoint collections',
+  Classifications = 'Classification tags',
+}
