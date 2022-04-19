@@ -7,7 +7,6 @@ import styled from 'styled-components/macro';
 
 import { SetCommentTarget } from '@cognite/react-comments';
 
-import FeedbackPanel from 'components/modals/entity-feedback';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { FavoriteDetailsContent } from 'pages/authorized/favorites/tabs/favorites/detailsPage/FavoriteDetailsContent';
 import { FlexColumn, PageBottomPaddingWrapper } from 'styles/layout';
@@ -85,7 +84,6 @@ export const FavoriteDetails: React.FC<{
             )}
           </>
         )}
-        <FeedbackPanel />
       </PageBottomPaddingWrapper>
     </ResetHeader>
   );

@@ -5,7 +5,6 @@ import { Row } from 'react-table';
 import DocumentViewModal from 'components/document-preview/DocumentViewModal';
 import EmptyState from 'components/emptyState';
 import { NO_RESULTS_TEXT } from 'components/emptyState/constants';
-import FeedbackPanel from 'components/modals/entity-feedback';
 import { Table, Options, TableResults, RowProps } from 'components/tablev3';
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
 import {
@@ -179,7 +178,6 @@ export const RelatedDocumentTableComponent: React.FC<Props> = () => {
           modalOpen={showModal}
         />
       )}
-      <FeedbackPanel />
       <TableBulkActionsHolder>
         <DocumentsBulkActions
           selectedDocumentIds={selectedList}
