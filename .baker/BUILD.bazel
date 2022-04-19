@@ -17,3 +17,9 @@ filegroup(
     srcs = glob(["manifests/react-demo-app/**/*.yaml"]),
     visibility = ["//visibility:public"],
 )
+
+filegroup(
+    name = "explorer-manifests",
+    srcs = glob(["manifests/explorer/**/*.yaml"]),
+    visibility = ["//visibility:public"],
+)

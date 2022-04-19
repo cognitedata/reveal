@@ -1,0 +1,36 @@
+---
+apiVersion: getambassador.io/v2
+kind: Host
+metadata:
+  annotations:
+    external-dns.ambassador-service: ambassador-apps.apps
+  labels:
+    app: explorer
+    team: apps
+  name: explorer
+spec:
+  hostname: explorer.app.cogniteapp.com
+---
+apiVersion: getambassador.io/v2
+kind: Mapping
+metadata:
+  labels:
+    app: explorer
+    team: apps
+  name: explorer
+spec:
+  host: explorer.app.cogniteapp.com
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: explorer
+spec:
+  template:
+    spec:
+      containers:
+        - image: eu.gcr.io/cognitedata/apps/explorer
+          name: explorer
+          env:
+            - name: URL_PREFIX
+              value: explorer.app

@@ -24,3 +24,16 @@ services:
             '-c',
             "/scripts/kustomize_vendor_and_cluster_overlays.sh apps/react-demo-app/kustomize/staging | sed \"s|\\${account}|${BAKER_CLUSTER}|g\"",
           ]
+  - name: 'explorer'
+    email: 'frontend-app-server@cognite.com'
+    pipelines:
+      - name: prod
+        cluster_selection_rules:
+          - description: 'explorer cdf deployment pipeline'
+            expression: 'name:greenfield || name:europe-west1-1'
+        manifest_template_command:
+          [
+            'bash',
+            '-c',
+            "/scripts/kustomize_vendor_and_cluster_overlays.sh apps/explorer/kustomize/production | sed \"s|\\${account}|${BAKER_CLUSTER}|g\"",
+          ]
