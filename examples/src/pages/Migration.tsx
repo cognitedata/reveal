@@ -227,7 +227,7 @@ export function Migration() {
       debugStatsGui.add(guiState.debug.stats, 'textures').name('Textures');
       debugStatsGui.add(guiState.debug.stats, 'renderTime').name('Ms/frame');
 
-      viewer.on('sceneRendered', (sceneRenderedEventArgs) => {
+      viewer.on('sceneRendered', (sceneRenderedEventArgs: any) => {
         guiState.debug.stats.drawCalls = sceneRenderedEventArgs.renderer.info.render.calls;
         guiState.debug.stats.points = sceneRenderedEventArgs.renderer.info.render.points;
         guiState.debug.stats.triangles = sceneRenderedEventArgs.renderer.info.render.triangles;
@@ -369,7 +369,7 @@ export function Migration() {
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client);
 
-      viewer.on('click', async (event) => {
+      viewer.on('click', async (event: any) => {
         const { offsetX, offsetY } = event; 
         console.log('2D coordinates', event);
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
