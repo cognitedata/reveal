@@ -149,7 +149,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   /**
    * Determines how points currently are colored.
    */
-  get pointColorType(): PointColorType {
+  get pointColorType(): PotreePointColorType {
     return this.pointCloudNode.pointColorType;
   }
 
@@ -161,7 +161,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * model.pointColorType = PotreePointColorType.Rgb
    * ```
    */
-  set pointColorType(type: PointColorType) {
+  set pointColorType(type: PotreePointColorType) {
     this.pointCloudNode.pointColorType = type;
   }
 
@@ -201,7 +201,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * @default `PotreePointShape.Circle`
    * @see {@link PotreePointShape}.
    */
-  get pointShape(): PointShape {
+  get pointShape(): PotreePointShape {
     return this.pointCloudNode.pointShape;
   }
 
@@ -209,7 +209,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * Gets the point shape of each rendered point in the point cloud.
    * @see {@link PotreePointShape}.
    */
-  set pointShape(shape: PointShape) {
+  set pointShape(shape: PotreePointShape) {
     this.pointCloudNode.pointShape = shape;
   }
 }
