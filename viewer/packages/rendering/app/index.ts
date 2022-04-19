@@ -13,9 +13,11 @@ import { NumericRange, revealEnv } from '@reveal/utilities';
 import dat from 'dat.gui';
 import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
 import { CadModelUpdateHandler, defaultDesktopCadModelBudget } from '@reveal/cad-geometry-loaders';
-import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { ByScreenSizeSectorCuller } from '@reveal/cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
 import { StepPipelineExecutor } from '../src/pipeline-executors/StepPipelineExecutor';
+import { IdentifiedModel } from '../src/utilities/types';
+import { createPointCloudManager } from '@reveal/pointclouds';
+import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 
 revealEnv.publicPath = 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.2.0/';
 
@@ -58,22 +60,38 @@ async function init() {
   const cadModelFactory = new CadModelFactory(materialManager, cdfModelMetadataProvider, cdfModelDataProvider);
   const cadModelUpdateHandler = new CadModelUpdateHandler(new ByScreenSizeSectorCuller(), false);
 
+  const pointCloudManager = createPointCloudManager(cdfModelMetadataProvider, cdfModelDataProvider);
+  pointCloudManager.pointBudget = 1_000_000;
   const cadManager = new CadManager(materialManager, cadModelFactory, cadModelUpdateHandler);
   cadManager.budget = defaultDesktopCadModelBudget;
   const scene = new THREE.Scene();
-  const cogniteModels = new THREE.Group();
   const customObjects = new THREE.Group();
 
-  scene.add(cogniteModels);
   scene.add(customObjects);
 
-  const model = await cadManager.addModel(modelIdentifier);
-  cogniteModels.add(model);
+  const modelOutputs = (await cdfModelMetadataProvider.getModelOutputs(modelIdentifier)).map(outputs => outputs.format);
+
+  let model: THREE.Object3D;
+  let bb: THREE.Box3;
+  const cadModels: IdentifiedModel[] = [];
+  if (modelOutputs.includes('gltf-directory') || modelOutputs.includes('reveal-directory')) {
+    const cadModel = await cadManager.addModel(modelIdentifier);
+    cadModels.push({ model: cadModel, modelIdentifier: cadModel.cadModelIdentifier });
+    model = cadModel;
+    bb = (cadModel as any)._cadModelMetadata.scene.getBoundsOfMostGeometry().clone();
+    bb.applyMatrix4(model.children[0].matrix);
+    scene.add(model);
+  } else if (modelOutputs.includes('ept-pointcloud')) {
+    const pointCloudModel = await pointCloudManager.addModel(modelIdentifier);
+    bb = pointCloudModel.getBoundingBox();
+    customObjects.add(pointCloudModel);
+    model = pointCloudModel;
+  } else {
+    throw Error(`Unknown output format ${modelOutputs}`);
+  }
+
   model.updateMatrix();
   model.updateWorldMatrix(true, true);
-
-  const bb: THREE.Box3 = (model as any)._cadModelMetadata.scene.getBoundsOfMostGeometry().clone();
-  bb.applyMatrix4(model.children[0].matrix);
 
   const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
@@ -92,11 +110,11 @@ async function init() {
   const pipelineExecutor = new StepPipelineExecutor(renderer);
   pipelineExecutor.numberOfSteps = guiData.steps;
 
-  const defaultRenderPipeline = new DefaultRenderPipeline(
+  let defaultRenderPipeline = new DefaultRenderPipeline(
     materialManager,
     scene,
     defaultRenderOptions,
-    [{ model, modelIdentifier: model.cadModelIdentifier }],
+    cadModels,
     customObjects.children
   );
   gui.add(guiData, 'steps', 1, pipelineExecutor.calcNumSteps(defaultRenderPipeline), 1).onChange(async () => {
@@ -186,7 +204,19 @@ async function init() {
   antiAliasingGui
     .add(renderOptions, 'antiAliasing', { NoAA: AntiAliasingMode.NoAA, FXAA: AntiAliasingMode.FXAA })
     .onChange(updateRenderOptions);
-  antiAliasingGui.add(renderOptions, 'multiSampleCountHint', 0, 16, 1).onChange(updateRenderOptions);
+  antiAliasingGui
+    .add(renderOptions, 'multiSampleCountHint', [0, 2, 4, 8, 16])
+    .name('MSAA count')
+    .onChange(async () => {
+      defaultRenderPipeline = new DefaultRenderPipeline(
+        materialManager,
+        scene,
+        renderOptions,
+        cadModels,
+        customObjects.children
+      );
+      await render();
+    });
   antiAliasingGui.open();
 
   const ssaoOptionsGui = renderOptionsGUI.addFolder('SSAO');
@@ -197,6 +227,7 @@ async function init() {
 
   controls.addEventListener('change', async () => {
     cadModelUpdateHandler.updateCamera(camera);
+    pointCloudManager.updateCamera(camera);
     await render();
   });
 
@@ -225,6 +256,7 @@ async function init() {
 
     await render();
     cadManager.resetRedraw();
+    pointCloudManager.resetRedraw();
   });
 }
 

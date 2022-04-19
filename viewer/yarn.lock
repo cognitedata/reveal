@@ -1354,6 +1354,7 @@ __metadata:
     "@reveal/cad-styling": "workspace:*"
     "@reveal/logger": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
+    "@reveal/pointclouds": "workspace:*"
     "@reveal/sector-loader": "workspace:*"
     "@reveal/sector-parser": "workspace:*"
     "@reveal/utilities": "workspace:*"

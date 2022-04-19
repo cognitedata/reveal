@@ -49,10 +49,6 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
       this._defaultRenderPipelinePasses.blitToOutput.blitEffect = blitEffect;
     }
 
-    this._renderTargetData.color.samples = renderOptions.multiSampleCountHint ?? 0;
-    this._renderTargetData.ghost.samples = renderOptions.multiSampleCountHint ?? 0;
-    this._renderTargetData.inFront.samples = renderOptions.multiSampleCountHint ?? 0;
-
     this._renderOptions = cloneDeep(renderOptions);
   }
 
@@ -202,7 +198,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
 
     renderer.sortObjects = false;
     renderer.autoClear = false;
-    renderer.setClearColor('#000000');
+    renderer.setClearColor(this._currentRendererState.clearColor);
     renderer.setClearAlpha(0.0);
 
     this._cadModels?.forEach(identifiedModel => {

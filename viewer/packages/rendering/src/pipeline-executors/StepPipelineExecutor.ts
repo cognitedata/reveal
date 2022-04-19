@@ -4,7 +4,6 @@
 
 import * as THREE from 'three';
 import { PipelineExecutor } from '../PipelineExecutor';
-import { BlitPass } from '../render-passes/BlitPass';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { GpuTimer } from '../utilities/GpuTimer';
 
@@ -35,14 +34,13 @@ export class StepPipelineExecutor implements PipelineExecutor {
 
     for await (const renderPass of renderPipeline.pipeline(this._renderer)) {
       count++;
-      await renderPass.render(this._renderer, camera);
-      const currentRenderTarget = this._renderer.getRenderTarget();
-      if (count === this._numSteps && currentRenderTarget !== null) {
+
+      if (count === this._numSteps) {
         this._renderer.setRenderTarget(null);
-        await new BlitPass({ texture: currentRenderTarget.texture, overrideAlpha: 1 }).render(this._renderer, camera);
-        this._gpuTimer.end();
-        return;
+        await renderPass.render(this._renderer, camera);
+        break;
       }
+      await renderPass.render(this._renderer, camera);
     }
 
     this._gpuTimer.end();
