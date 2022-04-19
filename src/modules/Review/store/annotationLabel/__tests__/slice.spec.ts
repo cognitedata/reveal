@@ -1,7 +1,7 @@
 import { Point } from '@cognite/react-image-annotate';
 import { RegionType } from 'src/api/vision/detectionModels/types';
 
-import { AnnotationSource } from 'src/api/annotation/types';
+import { AnnotationSourceV1 } from 'src/api/annotation/types';
 import reducer, {
   initialState,
   keypointSelectStatusChange,
@@ -497,7 +497,7 @@ describe('Test annotationLabel reducer', () => {
           ],
         } as VisionAnnotationRegion,
         type: 'points' as RegionType,
-        source: 'user' as AnnotationSource,
+        source: 'user' as AnnotationSourceV1,
         status: AnnotationStatus.Unhandled,
         data: {
           keypoint: true,
