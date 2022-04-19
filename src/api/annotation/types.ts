@@ -122,7 +122,6 @@ export type CDFAnnotationV2<Type> = AnnotatedResourceId & {
   annotationType: CDFAnnotationType<Type>;
   data: Type;
 };
-
 // Annotation API types
 export type AnnotationTypeV1 =
   | 'vision/ocr'
