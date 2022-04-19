@@ -21,7 +21,7 @@ const ActionCell = <T extends { id: AllowedTableStateId }>({
 }: {
   item: T;
   selectionMode: ResourceSelectionMode;
-  onItemSelected: (item: T) => void;
+  onItemSelected: (_item: T) => void;
   isSelected: boolean;
   isHovered: boolean;
 }) => {

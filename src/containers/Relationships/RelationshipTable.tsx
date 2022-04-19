@@ -32,10 +32,10 @@ export const RelationshipTable = ({
   const { data: count } = useRelationshipCount(parentResource, type);
 
   const context = useContext(AppContext);
-  const {
-    data: relationshipPermission,
-    isFetched: permissionFetched,
-  } = usePermissions(context?.flow, 'relationshipsAcl', 'READ');
+  const { data: relationshipPermission, isFetched: permissionFetched } =
+    usePermissions(context?.flow!, 'relationshipsAcl', 'READ', undefined, {
+      enabled: !!context?.flow,
+    });
 
   if (permissionFetched && !relationshipPermission) {
     return (

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { CogniteClient } from '@cognite/sdk';
 
-type Flow =
+export type Flow =
   | 'COGNITE_AUTH'
   | 'AZURE_AD'
   | 'ADFS'

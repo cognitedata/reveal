@@ -34,7 +34,7 @@ export const CreateAnnotationForm = ({
 }: {
   annotation: ProposedCogniteAnnotation | CogniteAnnotation;
   updateAnnotation: (
-    annotation: ProposedCogniteAnnotation | CogniteAnnotation
+    _annotation: ProposedCogniteAnnotation | CogniteAnnotation
   ) => void;
   onDelete: () => void;
   onCancel?: () => void;

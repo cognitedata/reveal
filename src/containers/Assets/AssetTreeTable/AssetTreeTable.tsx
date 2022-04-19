@@ -91,7 +91,7 @@ export const AssetTreeTable = ({
     id: string;
   }>();
 
-  const assetId = parseInt(assetIdString, 10);
+  const assetId = parseInt(assetIdString || '', 10);
 
   const { data: rootPath, isFetched: rootPathFetched } = useRootPath(assetId, {
     enabled: !!assetIdString && !!assetId,
@@ -110,8 +110,9 @@ export const AssetTreeTable = ({
     if (searchItems) {
       const reducer = (prev: number[], el: ConstructedTreeAsset): number[] => {
         if (el.children) {
-          const childrenIds = ((el.children ||
-            []) as ConstructedTreeAsset[]).reduce(reducer, prev);
+          const childrenIds = (
+            (el.children || []) as ConstructedTreeAsset[]
+          ).reduce(reducer, prev);
           return childrenIds.concat([el.id]);
         }
         return prev;

@@ -15,8 +15,20 @@ export default function MissingPermissionFeedback(props: Props) {
   const { tenant } = useParams<{ tenant: string }>();
 
   const context = useContext(AppContext);
-  const { data: groupPermission } = usePermissions(context?.flow, 'groupAcl');
-  const { data: hasPermission } = usePermissions(context?.flow, key, type);
+  const { data: groupPermission } = usePermissions(
+    context?.flow!,
+    'groupAcl',
+    undefined,
+    undefined,
+    { enabled: !!context?.flow }
+  );
+  const { data: hasPermission } = usePermissions(
+    context?.flow!,
+    key,
+    type,
+    undefined,
+    { enabled: !!context?.flow }
+  );
 
   useEffect(() => {
     if (!groupPermission) {

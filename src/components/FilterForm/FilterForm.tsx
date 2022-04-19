@@ -210,15 +210,7 @@ const FilterItem = ({
               selectedKey ? { label: selectedKey, value: selectedKey } : null
             }
             onChange={item => {
-              if (item === undefined) {
-                setSelectedKey(null);
-              } else {
-                setSelectedKey(
-                  (item as {
-                    value: string;
-                  })?.value
-                );
-              }
+              setSelectedKey(item ? (item as { value: string }).value : null);
               setSelectedValue(null);
             }}
             options={options}

@@ -13,9 +13,11 @@ export const RelationshipCell = ({
 }: {
   resourceExternalId?: string;
 }) => {
-  const { data: relationships, isFetching, isFetched } = useRelationships(
-    resourceExternalId
-  );
+  const {
+    data: relationships,
+    isFetching,
+    isFetched,
+  } = useRelationships(resourceExternalId);
 
   const counts = relationships.reduce(
     (types, item) => ({

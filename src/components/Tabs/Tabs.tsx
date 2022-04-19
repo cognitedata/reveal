@@ -34,9 +34,9 @@ export const Tabs = <T extends string>({
         {tabs.map(el => {
           const key = el as typeof tabs[number];
 
-          const item = (children.find(
+          const item = children.find(
             tab => tab.key === key
-          )! as unknown) as React.ReactElement<TabPaneProps>;
+          )! as unknown as React.ReactElement<TabPaneProps>;
           const { disabled, title } = item.props;
 
           return (

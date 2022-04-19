@@ -4,7 +4,12 @@ import { AssetFilterProps, AggregateResponse } from '@cognite/sdk';
 
 export const useAssetMetadataKeys = (
   filter?: AssetFilterProps,
-  config?: UseQueryOptions<AggregateResponse[]>
+  config?: UseQueryOptions<
+    AggregateResponse[],
+    unknown,
+    AggregateResponse[],
+    (string | AssetFilterProps | undefined)[]
+  >
 ) => {
   const sdk = useSDK();
   const { data, ...rest } = useQuery(
@@ -23,7 +28,12 @@ export const useAssetMetadataKeys = (
 
 export const useAssetMetadataValues = (
   key: string | null,
-  config?: UseQueryOptions<AggregateResponse[]>
+  config?: UseQueryOptions<
+    AggregateResponse[],
+    unknown,
+    unknown,
+    (string | null)[]
+  >
 ) => {
   const sdk = useSDK();
   const { data, ...rest } = useQuery(

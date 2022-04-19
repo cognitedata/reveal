@@ -15,20 +15,24 @@ const FileReview = ({
 }: {
   annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
   onApprove: (
-    annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>
+    _annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>
   ) => void;
   onTypeClick: (type: 'assets' | 'files') => void;
 }) => {
   const context = useContext(AppContext);
   const { data: labelsReadAcl } = usePermissions(
-    context?.flow,
+    context?.flow!,
     'labelsAcl',
-    'READ'
+    'READ',
+    undefined,
+    { enabled: !!context?.flow }
   );
   const { data: labelsWriteAcl } = usePermissions(
-    context?.flow,
+    context?.flow!,
     'labelsAcl',
-    'WRITE'
+    'WRITE',
+    undefined,
+    { enabled: !!context?.flow }
   );
 
   const labelsAccess = labelsReadAcl && labelsWriteAcl;

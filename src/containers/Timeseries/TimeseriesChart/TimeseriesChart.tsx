@@ -178,7 +178,11 @@ export const TimeseriesChart = ({
     }
   }, [timePeriod, cacheToDate]);
 
-  const { data: overallData, isFetched, isFetching } = useQuery(
+  const {
+    data: overallData,
+    isFetched,
+    isFetching,
+  } = useQuery(
     [
       ...baseCacheKey('timeseries'),
       'datapoints',

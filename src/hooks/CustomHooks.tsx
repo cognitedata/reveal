@@ -19,7 +19,7 @@ export const useTenant = () => {
 export const useEnv = (): string | undefined => {
   const param = queryString.parse(window.location.search).env;
   if (param instanceof Array) {
-    return param[0];
+    return param[0] || undefined;
   }
   if (typeof param === 'string') {
     return param;

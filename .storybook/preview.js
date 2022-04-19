@@ -5,8 +5,6 @@ import 'rc-collapse/assets/index.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Container, sdkMock } from '../src/docs/stub';
 import { DataExplorationProvider } from '../src/context';
-import { Router } from 'react-router-dom';
-import { createBrowserHistory } from 'history';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 export const parameters = {
@@ -17,15 +15,13 @@ export const parameters = {
 const queryClient = new QueryClient();
 
 export const decorators = [
-  (storyFn) => (
+  storyFn => (
     <Container>
-      <Router history={createBrowserHistory()}>
-        <DataExplorationProvider sdk={sdkMock}>
-          <QueryClientProvider client={queryClient}>
-            {storyFn()}
-          </QueryClientProvider>
-        </DataExplorationProvider>
-      </Router>
+      <DataExplorationProvider sdk={sdkMock}>
+        <QueryClientProvider client={queryClient}>
+          {storyFn()}
+        </QueryClientProvider>
+      </DataExplorationProvider>
     </Container>
   ),
 ];

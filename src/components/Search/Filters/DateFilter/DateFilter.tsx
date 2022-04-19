@@ -70,9 +70,11 @@ export const DateFilter = ({
         blurInputOnSelect
         isMulti={false}
         onChange={(newValue: any) => {
-          const newKey = (newValue as {
-            value: 'none' | 'null' | 'before' | 'during' | 'after';
-          }).value;
+          const newKey = (
+            newValue as {
+              value: 'none' | 'null' | 'before' | 'during' | 'after';
+            }
+          ).value;
           setPeriod(newKey);
           switch (newKey) {
             case 'none': {

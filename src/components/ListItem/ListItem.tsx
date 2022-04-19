@@ -43,8 +43,8 @@ export const ListItem = ({
   </ListItemWrapper>
 );
 
-const additionalStyles = (props: WrapperProps) => {
-  if (props.selected) {
+const additionalStyles = ({ selected, isClickable }: WrapperProps) => {
+  if (selected) {
     return css`
       background: ${Colors['midblue-6'].hex()};
       color: ${Colors['midblue-2'].hex()};
@@ -54,7 +54,7 @@ const additionalStyles = (props: WrapperProps) => {
       }
     `;
   }
-  if (!props.isClickable) {
+  if (!isClickable) {
     return css`
       cursor: default;
     `;

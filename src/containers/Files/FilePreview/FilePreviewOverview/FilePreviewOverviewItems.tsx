@@ -72,8 +72,11 @@ const preparedPages = (
   selectPage: (page: number) => void,
   currentPage?: number
 ) => {
-  pages = pages.sort((a, b) => a - b);
-  if (pages.length === 0 || (pages.length === 1 && pages[0] === 1)) {
+  const sortedPages = pages.sort((a, b) => a - b);
+  if (
+    sortedPages.length === 0 ||
+    (sortedPages.length === 1 && sortedPages[0] === 1)
+  ) {
     return null;
   }
   return (
@@ -82,7 +85,7 @@ const preparedPages = (
         Located on Pages
       </Overline>
       <SpacedRow className="button-row">
-        {pages.map(page => (
+        {sortedPages.map(page => (
           <PageButton
             key={`page-${page}`}
             onClick={ev => {
@@ -90,7 +93,6 @@ const preparedPages = (
               ev.stopPropagation();
               selectPage(page);
             }}
-            style={{}}
             type={page === currentPage ? 'primary' : 'secondary'}
           >
             {Number(page)}

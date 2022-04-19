@@ -44,7 +44,11 @@ export default function DiagramReviewStatus({ fileId }: Props) {
     approvalDetails.unknown
   );
 
-  const { data: file, isFetched, error } = useCdfItem<FileInfo>('files', {
+  const {
+    data: file,
+    isFetched,
+    error,
+  } = useCdfItem<FileInfo>('files', {
     id: fileId,
   });
 

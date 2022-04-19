@@ -38,9 +38,11 @@ export const DataSetSelect = ({
   );
   const context = useContext(AppContext);
   const { data: canReadDataSets } = usePermissions(
-    context?.flow,
+    context?.flow!,
     'datasetsAcl',
-    'READ'
+    'READ',
+    undefined,
+    { enabled: !!context?.flow }
   );
 
   const { isFetching: isLoading, data: listData } = useInfiniteList<DataSet>(

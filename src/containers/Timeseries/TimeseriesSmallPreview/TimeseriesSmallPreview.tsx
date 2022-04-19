@@ -30,10 +30,11 @@ export const TimeseriesSmallPreview = ({
   timeseriesId: number;
 } & SmallPreviewProps &
   Partial<SelectableItemProps>) => {
-  const { data: timeseries, isFetched, error } = useCdfItem<Timeseries>(
-    'timeseries',
-    { id: timeseriesId }
-  );
+  const {
+    data: timeseries,
+    isFetched,
+    error,
+  } = useCdfItem<Timeseries>('timeseries', { id: timeseriesId });
 
   const selectionButton = useSelectionButton(
     selectionMode,

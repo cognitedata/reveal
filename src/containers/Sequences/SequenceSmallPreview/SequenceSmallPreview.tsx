@@ -28,10 +28,11 @@ export const SequenceSmallPreview = ({
   sequenceId: number;
 } & SmallPreviewProps &
   Partial<SelectableItemProps>) => {
-  const { data: sequences = [], isFetched, error } = useCdfItems<Sequence>(
-    'sequences',
-    [{ id: sequenceId }]
-  );
+  const {
+    data: sequences = [],
+    isFetched,
+    error,
+  } = useCdfItems<Sequence>('sequences', [{ id: sequenceId }]);
 
   const sequence = isFetched && sequences[0];
 

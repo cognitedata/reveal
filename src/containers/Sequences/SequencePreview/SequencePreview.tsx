@@ -10,18 +10,13 @@ import {
 import { Loader } from 'components';
 
 export const SequencePreview = ({ sequence }: { sequence: Sequence }) => {
-  const {
-    data,
-    isFetched,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteSequenceRows(
-    {
-      id: sequence.id,
-    },
-    100
-  );
+  const { data, isFetched, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteSequenceRows(
+      {
+        id: sequence.id,
+      },
+      100
+    );
 
   /*
     The trick here is to add the latest paginated results to the bottom of the existing array.

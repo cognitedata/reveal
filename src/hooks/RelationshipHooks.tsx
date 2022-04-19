@@ -42,10 +42,10 @@ export type Relationship = {
 
 export const useRelationships = (externalId?: string, type?: ResourceType) => {
   const context = useContext(AppContext);
-  const {
-    data: hasRelationshipRead,
-    isFetched: permissionFetched,
-  } = usePermissions(context?.flow, 'relationshipsAcl', 'READ');
+  const { data: hasRelationshipRead, isFetched: permissionFetched } =
+    usePermissions(context?.flow!, 'relationshipsAcl', 'READ', undefined, {
+      enabled: !!context?.flow,
+    });
   const enabled = !!(permissionFetched && hasRelationshipRead && !!externalId);
 
   const sourceRelationships = useList<Relationship>(
@@ -284,10 +284,11 @@ export const useRelationshipCount = (
   resource: ResourceItem,
   type: ResourceType
 ) => {
-  const { data: relationships, isFetched, ...rest } = useRelationships(
-    resource.externalId,
-    type
-  );
+  const {
+    data: relationships,
+    isFetched,
+    ...rest
+  } = useRelationships(resource.externalId, type);
 
   let count = 0;
   if (isFetched && relationships?.length > 0) {
@@ -368,19 +369,15 @@ export const useRelatedResourceCount = (
   const isAssetTab = type === 'asset';
   const isFileTab = type === 'file';
 
-  const {
-    data: linkedResourceCount,
-    isFetched: isLinkedResourceFetched,
-  } = useAggregate(
-    convertResourceType(type),
-    { assetSubtreeIds: [{ id: resource.id }] },
-    { enabled: isAsset && !!resource.id, staleTime: 60 * 1000 }
-  );
+  const { data: linkedResourceCount, isFetched: isLinkedResourceFetched } =
+    useAggregate(
+      convertResourceType(type),
+      { assetSubtreeIds: [{ id: resource.id }] },
+      { enabled: isAsset && !!resource.id, staleTime: 60 * 1000 }
+    );
 
-  const {
-    data: relationships = [],
-    isFetched: isRelationshipFetched,
-  } = useRelationships(resource.externalId, type);
+  const { data: relationships = [], isFetched: isRelationshipFetched } =
+    useRelationships(resource.externalId, type);
 
   const { data: item, isFetched: isResourceFetched } = useCdfItem(
     convertResourceType(resource.type),
@@ -388,15 +385,11 @@ export const useRelatedResourceCount = (
     { enabled: isAssetTab }
   );
 
-  const {
-    data: annotationCount,
-    isFetched: isAnnotationFetched,
-  } = useAnnotationCount(resource.id, type, isFile);
+  const { data: annotationCount, isFetched: isAnnotationFetched } =
+    useAnnotationCount(resource.id, type, isFile);
 
-  const {
-    data: annotatedWithCount,
-    isFetched: isAnnotatedWithFetched,
-  } = useFilesAnnotatedWithResourceCount(resource, isFileTab);
+  const { data: annotatedWithCount, isFetched: isAnnotatedWithFetched } =
+    useFilesAnnotatedWithResourceCount(resource, isFileTab);
 
   const isFetched =
     isLinkedResourceFetched &&

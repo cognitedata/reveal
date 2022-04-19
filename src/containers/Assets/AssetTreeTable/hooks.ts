@@ -239,7 +239,7 @@ const constructTree = (
 
 export const useRootPath = (
   assetId: any,
-  config?: UseQueryOptions<number[]>
+  config?: UseQueryOptions<number[], unknown, number[], (string | number)[]>
 ) => {
   const sdk = useSDK();
   const client = useQueryClient();

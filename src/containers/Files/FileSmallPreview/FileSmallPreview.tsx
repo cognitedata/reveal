@@ -41,7 +41,11 @@ export const FileSmallPreview = ({
 
   const { overrideURLMap = {} } = useContext(AppContext) ?? {};
 
-  const { data: file, isFetched, error } = useCdfItem<FileInfo>('files', {
+  const {
+    data: file,
+    isFetched,
+    error,
+  } = useCdfItem<FileInfo>('files', {
     id: fileId,
   });
 

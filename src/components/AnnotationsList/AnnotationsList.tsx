@@ -44,6 +44,7 @@ const AnnotationsList = ({
     } else {
       setFilteredList(annotations.filter(filterByStatus));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterType, annotations]);
 
   const filterByStatus = (an: CogniteAnnotation | ProposedCogniteAnnotation) =>

@@ -28,7 +28,11 @@ export const EventSmallPreview = ({
   eventId: number;
 } & SmallPreviewProps &
   Partial<SelectableItemProps>) => {
-  const { data: event, isFetched, error } = useCdfItem<CogniteEvent>('events', {
+  const {
+    data: event,
+    isFetched,
+    error,
+  } = useCdfItem<CogniteEvent>('events', {
     id: eventId,
   });
 

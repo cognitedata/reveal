@@ -6,7 +6,7 @@ module.exports = {
     '../**/*.stories.mdx',
     '../**/*.stories.tsx',
   ],
-  webpackFinal: async (webpackConfig) => {
+  webpackFinal: async webpackConfig => {
     webpackConfig.resolve.extensions.push('.ts', '.tsx');
     webpackConfig.resolve.modules = [
       path.resolve(__dirname, '../src/'),
@@ -21,14 +21,13 @@ module.exports = {
     reactDocgenTypescriptOptions: {
       shouldRemoveUndefinedFromOptional: false,
       shouldExtractLiteralValuesFromEnum: true,
-      propFilter: (prop) =>
+      propFilter: prop =>
         prop.parent ? !/node_modules/.test(prop.parent.fileName) : true,
     },
   },
   addons: [
     '@storybook/preset-create-react-app',
     '@storybook/addon-knobs',
-    '@storybook/addon-links',
     {
       name: '@storybook/addon-docs',
       options: { configureJSX: true },

@@ -28,9 +28,11 @@ export const FileToolbar = ({
 }) => {
   const context = useContext(AppContext);
   const { data: hasEditPermissions } = usePermissions(
-    context?.flow,
+    context?.flow!,
     'filesAcl',
-    'WRITE'
+    'WRITE',
+    undefined,
+    { enabled: !!context?.flow }
   );
 
   const [modalVisible, setModalVisible] = useState(false);

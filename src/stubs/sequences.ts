@@ -2,7 +2,7 @@ import { Sequence } from '@cognite/sdk';
 
 // TODO(DE-135) Clean up shared resources
 export const sequences: Sequence[] = [
-  ({
+  {
     id: 18829367093500,
     name: 'LubeOil_65-CT-510',
     externalId: 'LubeOil_65-CT-510',
@@ -68,5 +68,5 @@ export const sequences: Sequence[] = [
     ],
     createdTime: new Date(),
     lastUpdatedTime: new Date(),
-  } as unknown) as Sequence,
+  } as unknown as Sequence,
 ];

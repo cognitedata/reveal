@@ -81,10 +81,8 @@ const AnnotationPreviewSidebar = ({
     'assets' | 'files' | undefined
   >();
   const { isLoading: isApprovingFile } = useReviewFile(file?.id);
-  const {
-    selectedAnnotations = [],
-    setSelectedAnnotations,
-  } = useSelectedAnnotations();
+  const { selectedAnnotations = [], setSelectedAnnotations } =
+    useSelectedAnnotations();
 
   const selectedAnnotation = selectedAnnotations?.length
     ? selectedAnnotations[currentIndex || 0]

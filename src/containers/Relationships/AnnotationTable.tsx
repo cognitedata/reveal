@@ -28,10 +28,11 @@ export function AnnotationTable({
   onItemClicked,
   ...props
 }: Props & SelectableItemsProps) {
-  const { data: annotations, isFetched, isError } = useAnnotations(
-    fileId,
-    resourceType
-  );
+  const {
+    data: annotations,
+    isFetched,
+    isError,
+  } = useAnnotations(fileId, resourceType);
 
   const ids = useMemo(
     () =>

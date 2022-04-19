@@ -85,7 +85,7 @@ export const DatePickerInput = ({
   ...props
 }: {
   date: Date;
-  onDateChange: (date: Date) => void;
+  onDateChange: (_date: Date) => void;
 } & Omit<ButtonProps, 'ref'>) => (
   <ButtonWrapper icon="Calendar" variant="outline" {...props}>
     <ReactDatePicker
@@ -144,11 +144,6 @@ const colourStyles = {
     color: isDisabled ? '#ccc' : isSelected ? Colors.midblue.hex() : 'black',
     cursor: isDisabled ? 'not-allowed' : 'default',
   }),
-};
-
-type CalendarPickerProps = {
-  dates: [Date, Date];
-  onDatesChanged?: (start: Date, end: Date) => void;
 };
 
 export const renderCustomHeader = (
