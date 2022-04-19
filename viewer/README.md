@@ -9,13 +9,16 @@ The documentation has a bunch of [live examples](https://cognitedata.github.io/r
 
 ```typescript
 import { Cognite3DViewer } from "@cognite/reveal";
-import { CogniteClient } from "@cognite/sdk";
+import { CogniteClient, CogniteAuthentication } from "@cognite/sdk";
 
 const appId = "com.cognite.reveal.example";
-const client = new CogniteClient({ appId });
+const client = new CogniteClient({
+  appId,
+  project,
+  getToken
+});
 
 async function start() {
-  await client.loginWithOAuth({ type: "CDF_OAUTH", options: { project: "publicdata" }});
   await client.authenticate();
 
   const viewer = new Cognite3DViewer({
@@ -24,6 +27,24 @@ async function start() {
   });
   viewer.addModel({ modelId: 4715379429968321, revisionId: 5688854005909501 });
 }
+
+const project = "publicdata";
+const legacyInstance = new CogniteAuthentication({
+  project,
+});
+
+const getToken = async () => {
+  await legacyInstance.handleLoginRedirect();
+  let token = await legacyInstance.getCDFToken();
+  if (token) {
+    return token.accessToken;
+  }
+  token = await legacyInstance.login({ onAuthenticate: "REDIRECT" });
+  if (token) {
+    return token.accessToken;
+  }
+  throw new Error("authentication error");
+};
 
 start();
 ```
