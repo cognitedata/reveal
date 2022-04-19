@@ -97,7 +97,7 @@ add an ocean. A plane is rendered at the sea level.
 ```js
 // Water
 const waterGeometry = new THREE.PlaneBufferGeometry(6000, 6000, 63, 63);
-  
+
 const material = new THREE.MeshBasicMaterial({
   map: new THREE.TextureLoader().load(
       'https://threejs.org/examples/textures/water.jpg',
@@ -139,10 +139,10 @@ viewer.addObject3D(skyBox);
 
 // Water
 const waterGeometry = new THREE.PlaneBufferGeometry(6000, 6000, 63, 63);
-  
+
 const material = new THREE.MeshBasicMaterial({
   map: new THREE.TextureLoader().load(
-      'https://threejs.org/examples/textures/water.jpg',
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Water_texture_1390894_Nevit.jpg/2048px-Water_texture_1390894_Nevit.jpg',
       (texture) => {
       texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     }),
@@ -170,4 +170,10 @@ viewer.on('cameraChange', (position, target) => {
     viewer.setCameraPosition(position);
   }
 });
+
+//Make sure the Skybox & ocean plane have applied textures
+setTimeout(() => {
+  viewer.requestRedraw();
+}, 100);
+
 ```
