@@ -2,7 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-// import * as Potree from '@cognite/potree-core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 

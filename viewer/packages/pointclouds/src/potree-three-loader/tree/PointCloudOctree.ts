@@ -1,6 +1,6 @@
 import { Box3, Matrix4, Camera, Object3D, Points, Ray, Sphere, Vector3, WebGLRenderer } from 'three';
 import { DEFAULT_MIN_NODE_PIXEL_SIZE } from '../rendering/constants';
-import { PointCloudMaterial, PointSizeType } from '../rendering';
+import { PointCloudMaterial, PotreePointSizeType } from '../rendering';
 import { IPointCloudTreeGeometry } from '../geometry/IPointCloudTreeGeometry';
 import { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometryNode';
 import { PointCloudOctreeNode } from './PointCloudOctreeNode';
@@ -78,11 +78,11 @@ export class PointCloudOctree extends PointCloudTree {
     this.disposed = true;
   }
 
-  get pointSizeType(): PointSizeType {
+  get pointSizeType(): PotreePointSizeType {
     return this.material.pointSizeType;
   }
 
-  set pointSizeType(value: PointSizeType) {
+  set pointSizeType(value: PotreePointSizeType) {
     this.material.pointSizeType = value;
   }
 

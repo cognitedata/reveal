@@ -7,9 +7,9 @@ export { intersectPointClouds } from './src/picking';
 export { WellKnownAsprsPointClassCodes } from './src/types';
 
 export {
-  PointShape as PotreePointShape,
-  PointColorType as PotreePointColorType,
-  PointSizeType as PotreePointSizeType
+  PotreePointShape,
+  PotreePointColorType,
+  PotreePointSizeType
 } from './src/potree-three-loader';
 
 export { PointCloudNode } from './src/PointCloudNode';

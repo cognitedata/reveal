@@ -10,7 +10,7 @@ import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { WellKnownAsprsPointClassCodes } from './types';
 import { createPointClassKey } from './createPointClassKey';
 
-import { PointColorType, PointShape, PointSizeType } from './potree-three-loader';
+import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from './potree-three-loader';
 
 const PotreeDefaultPointClass = 'DEFAULT';
 
@@ -66,11 +66,11 @@ export class PointCloudNode extends THREE.Group {
     this._potreeNode.pointSize = size;
   }
 
-  get pointSizeType(): PointSizeType {
+  get pointSizeType(): PotreePointSizeType {
     return this._potreeNode.octree.pointSizeType;
   }
 
-  set pointSizeType(pointSizeType: PointSizeType) {
+  set pointSizeType(pointSizeType: PotreePointSizeType) {
     this._potreeNode.octree.pointSizeType = pointSizeType;
   }
 
@@ -78,19 +78,19 @@ export class PointCloudNode extends THREE.Group {
     return this._potreeNode.visiblePointCount;
   }
 
-  get pointColorType(): PointColorType {
+  get pointColorType(): PotreePointColorType {
     return this._potreeNode.pointColorType;
   }
 
-  set pointColorType(type: PointColorType) {
+  set pointColorType(type: PotreePointColorType) {
     this._potreeNode.pointColorType = type;
   }
 
-  get pointShape(): PointShape {
+  get pointShape(): PotreePointShape {
     return this._potreeNode.pointShape;
   }
 
-  set pointShape(value: PointShape) {
+  set pointShape(value: PotreePointShape) {
     this._potreeNode.pointShape = value;
   }
 

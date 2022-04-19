@@ -34,10 +34,10 @@ import { ClipMode, IClipBox } from './clipping';
 import {
   NormalFilteringMode,
   PointCloudMixingMode,
-  PointColorType,
+  PotreePointColorType,
   PointOpacityType,
-  PointShape,
-  PointSizeType,
+  PotreePointShape,
+  PotreePointSizeType,
   TreeType,
 } from './enums';
 import { generateClassificationTexture, generateDataTexture, generateGradientTexture } from './texture-generation';
@@ -114,9 +114,9 @@ const TREE_TYPE_DEFS = {
 };
 
 const SIZE_TYPE_DEFS = {
-  [PointSizeType.Fixed]: 'fixed_point_size',
-  [PointSizeType.Attenuated]: 'attenuated_point_size',
-  [PointSizeType.Adaptive]: 'adaptive_point_size'
+  [PotreePointSizeType.Fixed]: 'fixed_point_size',
+  [PotreePointSizeType.Attenuated]: 'attenuated_point_size',
+  [PotreePointSizeType.Adaptive]: 'adaptive_point_size'
 };
 
 const OPACITY_DEFS = {
@@ -125,27 +125,27 @@ const OPACITY_DEFS = {
 };
 
 const SHAPE_DEFS = {
-  [PointShape.Square]: 'square_point_shape',
-  [PointShape.Circle]: 'circle_point_shape',
-  [PointShape.Paraboloid]: 'paraboloid_point_shape'
+  [PotreePointShape.Square]: 'square_point_shape',
+  [PotreePointShape.Circle]: 'circle_point_shape',
+  [PotreePointShape.Paraboloid]: 'paraboloid_point_shape'
 };
 
 const COLOR_DEFS = {
-  [PointColorType.Rgb]: 'color_type_rgb',
-  [PointColorType.Color]: 'color_type_color',
-  [PointColorType.Depth]: 'color_type_depth',
-  [PointColorType.Height]: 'color_type_height',
-  [PointColorType.Intensity]: 'color_type_intensity',
-  [PointColorType.IntensityGradient]: 'color_type_intensity_gradient',
-  [PointColorType.Lod]: 'color_type_lod',
-  [PointColorType.PointIndex]: 'color_type_point_index',
-  [PointColorType.Classification]: 'color_type_classification',
-  [PointColorType.ReturnNumber]: 'color_type_return_number',
-  [PointColorType.Source]: 'color_type_source',
-  [PointColorType.Normal]: 'color_type_normal',
-  [PointColorType.Phong]: 'color_type_phong',
-  [PointColorType.RgbHeight]: 'color_type_rgb_height',
-  [PointColorType.Composite]: 'color_type_composite'
+  [PotreePointColorType.Rgb]: 'color_type_rgb',
+  [PotreePointColorType.Color]: 'color_type_color',
+  [PotreePointColorType.Depth]: 'color_type_depth',
+  [PotreePointColorType.Height]: 'color_type_height',
+  [PotreePointColorType.Intensity]: 'color_type_intensity',
+  [PotreePointColorType.IntensityGradient]: 'color_type_intensity_gradient',
+  [PotreePointColorType.Lod]: 'color_type_lod',
+  [PotreePointColorType.PointIndex]: 'color_type_point_index',
+  [PotreePointColorType.Classification]: 'color_type_classification',
+  [PotreePointColorType.ReturnNumber]: 'color_type_return_number',
+  [PotreePointColorType.Source]: 'color_type_source',
+  [PotreePointColorType.Normal]: 'color_type_normal',
+  [PotreePointColorType.Phong]: 'color_type_phong',
+  [PotreePointColorType.RgbHeight]: 'color_type_rgb_height',
+  [PotreePointColorType.Composite]: 'color_type_composite'
 };
 
 const CLIP_MODE_DEFS = {
@@ -282,11 +282,11 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
   @requiresShaderUpdate() useClipBox: boolean = false;
   @requiresShaderUpdate() weighted: boolean = false;
-  @requiresShaderUpdate() pointColorType: PointColorType = PointColorType.Rgb;
-  @requiresShaderUpdate() pointSizeType: PointSizeType = PointSizeType.Adaptive;
+  @requiresShaderUpdate() pointColorType: PotreePointColorType = PotreePointColorType.Rgb;
+  @requiresShaderUpdate() pointSizeType: PotreePointSizeType = PotreePointSizeType.Adaptive;
   @requiresShaderUpdate() clipMode: ClipMode = ClipMode.DISABLED;
   @requiresShaderUpdate() useEDL: boolean = false;
-  @requiresShaderUpdate() shape: PointShape = PointShape.Circle;
+  @requiresShaderUpdate() shape: PotreePointShape = PotreePointShape.Circle;
   @requiresShaderUpdate() treeType: TreeType = TreeType.Octree;
   @requiresShaderUpdate() pointOpacityType: PointOpacityType = PointOpacityType.Fixed;
   @requiresShaderUpdate() useFilterByNormal: boolean = false;
@@ -592,7 +592,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     this.spacing = octree.pcoGeometry.spacing * maxScale;
     this.octreeSize = octree.pcoGeometry.boundingBox.getSize(PointCloudMaterial.helperVec3).x;
 
-    if (this.pointSizeType === PointSizeType.Adaptive || this.pointColorType === PointColorType.Lod) {
+    if (this.pointSizeType === PotreePointSizeType.Adaptive || this.pointColorType === PotreePointColorType.Lod) {
       this.updateVisibilityTextureData(visibleNodes);
     }
   }

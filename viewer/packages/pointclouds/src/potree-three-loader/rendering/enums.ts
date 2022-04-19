@@ -1,10 +1,10 @@
-export enum PointSizeType {
+export enum PotreePointSizeType {
   Fixed = 0,
   Attenuated = 1,
   Adaptive = 2
 }
 
-export enum PointShape {
+export enum PotreePointShape {
   Square = 0,
   Circle = 1,
   Paraboloid = 2
@@ -20,7 +20,7 @@ export enum PointOpacityType {
   Attenuated = 1
 }
 
-export enum PointColorType {
+export enum PotreePointColorType {
   Rgb = 0,
   Color = 1,
   Depth = 2,
