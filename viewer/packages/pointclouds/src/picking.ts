@@ -68,7 +68,7 @@ function determinePointCloudNode(node: THREE.Object3D, candidates: PointCloudNod
     node = node.parent;
   }
   if (node instanceof Potree.PointCloudOctree) {
-    const root: Potree.PointCloudOctreeNode = (node as any).root;
+    const root = (node as any).root;
     return candidates.find(x => root.pointcloud === x.potreeNode.octtree) || null;
   }
   return null;
