@@ -26,6 +26,7 @@ import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { ExplorerToolbar } from 'src/modules/Explorer/Components/ExplorerToolbar';
 import { AppDispatch } from 'src/store';
+import { cancelFileDetailsEdit } from 'src/modules/FileDetails/slice';
 
 export type ExplorerToolbarContainerProps = {
   query?: string;
@@ -92,6 +93,10 @@ export const ExplorerToolbarContainer = (
     dispatch(setBulkEditModalVisibility(true));
   };
 
+  const handleCancelOtherEdits = () => {
+    dispatch(cancelFileDetailsEdit());
+  };
+
   return (
     <ExplorerToolbar
       {...props}
@@ -106,6 +111,7 @@ export const ExplorerToolbarContainer = (
       onDelete={onDelete}
       onBulkEdit={onBulkEdit}
       onTrainModel={onTrainModel}
+      handleCancelOtherEdits={handleCancelOtherEdits}
     />
   );
 };

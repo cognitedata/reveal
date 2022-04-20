@@ -1,6 +1,6 @@
 import { FileInfo } from '@cognite/sdk';
 import { ColumnShape } from 'react-base-table';
-import { Annotation } from 'src/api/annotation/types';
+import { CDFAnnotationV1 } from 'src/api/annotation/types';
 import {
   JobStatus,
   VisionDetectionModelType,
@@ -9,7 +9,7 @@ import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
 
 export interface AnnotationPreview
   extends Pick<
-    Annotation,
+    CDFAnnotationV1,
     'id' | 'annotatedResourceId' | 'status' | 'source' | 'text' | 'region'
   > {
   modelType: VisionDetectionModelType;

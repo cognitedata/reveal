@@ -33,7 +33,10 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { MapView } from 'src/modules/Common/Components/MapView/MapView';
-import { resetEditHistory } from 'src/modules/FileDetails/slice';
+import {
+  cancelFileDetailsEdit,
+  resetEditHistory,
+} from 'src/modules/FileDetails/slice';
 import { FileTable } from 'src/modules/Common/Components/FileTable/FileTable';
 import { FileGridPreview } from 'src/modules/Common/Components/FileGridPreview/FileGridPreview';
 import { useHistory } from 'react-router-dom';
@@ -135,6 +138,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
 
   const handleItemClick = useCallback(
     (item: TableDataItem, showFileDetailsOnClick: boolean = true) => {
+      dispatch(cancelFileDetailsEdit());
       dispatch(setFocusedFileId(item.id));
       if (showFileDetailsOnClick) {
         dispatch(showFileMetadata());

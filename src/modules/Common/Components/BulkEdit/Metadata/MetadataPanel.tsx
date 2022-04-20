@@ -156,6 +156,7 @@ export const MetadataPanel = ({
           value={activeKey}
           onChange={setActiveKey}
           options={metadataSelectOptions}
+          closeMenuOnSelect
         />
       </SelectContainer>
       <InputContainer>

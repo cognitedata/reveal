@@ -16,11 +16,11 @@ import { createFileInfo } from 'src/store/util/StateUtils';
 import {
   AnnotationStatus,
   KeypointVertex,
-  VisionAnnotation,
+  VisionAnnotationV1,
 } from 'src/utils/AnnotationUtils';
 import { makeSelectFileAnnotations } from 'src/modules/Common/store/annotation/selectors';
 
-export interface VisibleAnnotation extends VisionAnnotation {
+export interface VisibleAnnotation extends VisionAnnotationV1 {
   show: boolean;
   selected: boolean;
 }

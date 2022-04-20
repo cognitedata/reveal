@@ -6,11 +6,10 @@ import {
   VisionDetectionModelType,
 } from 'src/api/vision/detectionModels/types';
 import {
-  Annotation,
-  AnnotationMetadata,
-  AnnotationSource,
-  AnnotationType,
-  LinkedAnnotation,
+  CDFAnnotationV1,
+  AnnotationMetadataV1,
+  AnnotationSourceV1,
+  AnnotationTypeV1,
   UnsavedAnnotation,
 } from 'src/api/annotation/types';
 import {
@@ -25,6 +24,10 @@ import { AllIconTypes } from '@cognite/cogs.js';
 import { v4 as uuidv4 } from 'uuid';
 import { getRandomColor } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
+import {
+  isAssetLinkedAnnotation,
+  isKeyPointAnnotation,
+} from 'src/api/annotation/typeGuards';
 
 export enum AnnotationStatus {
   Verified = 'verified',
@@ -44,8 +47,8 @@ export type VisionAnnotationRegion = Pick<AnnotationRegion, 'shape'> & {
   vertices: Array<Vertex | KeypointVertex>;
 };
 
-export type VisionAnnotation = Omit<
-  Annotation,
+export type VisionAnnotationV1 = Omit<
+  CDFAnnotationV1,
   | 'linkedResourceId'
   | 'linkedResourceExternalId'
   | 'linkedResourceType'
@@ -76,7 +79,7 @@ export const ModelTypeIconMap: { [key: number]: string } = {
   [VisionDetectionModelType.CustomModel]: 'Scan',
 };
 
-export const ModelTypeAnnotationTypeMap: { [key: number]: AnnotationType } = {
+export const ModelTypeAnnotationTypeMap: { [key: number]: AnnotationTypeV1 } = {
   [VisionDetectionModelType.OCR]: 'vision/ocr',
   [VisionDetectionModelType.TagDetection]: 'vision/tagdetection',
   [VisionDetectionModelType.ObjectDetection]: 'vision/objectdetection',
@@ -108,7 +111,7 @@ export class AnnotationUtils {
   public static getAnnotationColor(
     text: string,
     modelType: VisionDetectionModelType,
-    data?: AnnotationMetadata
+    data?: AnnotationMetadataV1
   ): string {
     if (data) {
       if (data.color) {
@@ -134,8 +137,8 @@ export class AnnotationUtils {
   };
 
   public static convertToVisionAnnotations(
-    annotations: Annotation[]
-  ): VisionAnnotation[] {
+    annotations: CDFAnnotationV1[]
+  ): VisionAnnotationV1[] {
     return annotations.map((value) => {
       let ann = AnnotationUtils.createVisionAnnotationStub(
         value.id,
@@ -153,7 +156,7 @@ export class AnnotationUtils {
         value.annotatedResourceExternalId
       );
 
-      if (isLinkedAnnotation(value)) {
+      if (isAssetLinkedAnnotation(value)) {
         ann = {
           ...ann,
           linkedResourceId: value.linkedResourceId,
@@ -177,14 +180,14 @@ export class AnnotationUtils {
     lastUpdatedTime: number,
     region?: AnnotationRegion,
     type: RegionType = 'rectangle', // TODO: get this from region.shape?
-    source: AnnotationSource = 'user',
+    source: AnnotationSourceV1 = 'user',
     status = AnnotationStatus.Unhandled,
-    data?: AnnotationMetadata,
-    annotationType: AnnotationType = 'vision/ocr',
+    data?: AnnotationMetadataV1,
+    annotationType: AnnotationTypeV1 = 'vision/ocr',
     fileExternalId?: string,
     assetId?: number,
     assetExternalId?: string
-  ): VisionAnnotation {
+  ): VisionAnnotationV1 {
     const modifiedData = // use random color for keypoints if no color information exist
       !data || !data.keypoint || !data.keypoints?.length
         ? data
@@ -223,8 +226,10 @@ export class AnnotationUtils {
     };
   }
 
-  public static convertToAnnotation(value: VisionAnnotation): Annotation {
-    const ann: Annotation = {
+  public static convertToAnnotation(
+    value: VisionAnnotationV1
+  ): CDFAnnotationV1 {
+    const ann: CDFAnnotationV1 = {
       id: value.id,
       createdTime: value.createdTime,
       lastUpdatedTime: value.lastUpdatedTime,
@@ -245,9 +250,9 @@ export class AnnotationUtils {
   }
 
   public static filterAnnotations(
-    annotations: VisionAnnotation[],
+    annotations: VisionAnnotationV1[],
     filter?: AnnotationFilterType
-  ): VisionAnnotation[] {
+  ): VisionAnnotationV1[] {
     let filteredAnnotations = annotations;
     if (filter) {
       if (filter.annotationState) {
@@ -265,9 +270,9 @@ export class AnnotationUtils {
   }
 
   public static getAnnotationsDetectionModelType = (
-    ann: Annotation
+    ann: CDFAnnotationV1
   ): VisionDetectionModelType => {
-    if (isLinkedAnnotation(ann)) {
+    if (isAssetLinkedAnnotation(ann)) {
       return VisionDetectionModelType.TagDetection;
     }
 
@@ -278,7 +283,7 @@ export class AnnotationUtils {
   };
 
   public static filterAnnotationsIdsByAnnotationStatus(
-    annotations: VisionAnnotation[]
+    annotations: VisionAnnotationV1[]
   ): AnnotationIdsByStatus {
     const rejectedAnnotationIds: number[] = [];
     const acceptedAnnotationIds: number[] = [];
@@ -299,7 +304,7 @@ export class AnnotationUtils {
   }
 
   public static filterAnnotationsIdsByConfidence(
-    annotations: VisionAnnotation[],
+    annotations: VisionAnnotationV1[],
     rejectedThreshold: number,
     acceptedThreshold: number
   ): AnnotationIdsByStatus {
@@ -334,9 +339,9 @@ export class AnnotationUtils {
   }
 }
 
-const populateKeyPoints = (annotation: VisionAnnotation) => {
-  const keypointAnnotation: VisionAnnotation = { ...annotation };
-  const keypointMeta = (annotation.data as AnnotationMetadata).keypoints;
+const populateKeyPoints = (annotation: VisionAnnotationV1) => {
+  const keypointAnnotation: VisionAnnotationV1 = { ...annotation };
+  const keypointMeta = (annotation.data as AnnotationMetadataV1).keypoints;
 
   if (keypointAnnotation.region) {
     if (keypointMeta) {
@@ -422,7 +427,7 @@ const populateKeyPoints = (annotation: VisionAnnotation) => {
   return keypointAnnotation;
 };
 
-export const getAnnotationCounts = (annotations: VisionAnnotation[]) => {
+export const getAnnotationCounts = (annotations: VisionAnnotationV1[]) => {
   const counts: { [text: string]: number } = {};
 
   annotations.forEach((item) => {
@@ -432,7 +437,9 @@ export const getAnnotationCounts = (annotations: VisionAnnotation[]) => {
   return counts;
 };
 
-export const getAnnotationsBadgeCounts = (annotations: VisionAnnotation[]) => {
+export const getAnnotationsBadgeCounts = (
+  annotations: VisionAnnotationV1[]
+) => {
   const annotationsBadgeProps: AnnotationsBadgeCounts = {
     objects: 0,
     assets: 0,
@@ -495,23 +502,17 @@ export const calculateBadgeCountsDifferences = (
 };
 
 export const isAnnotation = (
-  ann: DetectedAnnotation | Annotation | UnsavedAnnotation
-): ann is Annotation => {
-  return !!(ann as Annotation).id && !!(ann as Annotation).lastUpdatedTime;
+  ann: DetectedAnnotation | CDFAnnotationV1 | UnsavedAnnotation
+): ann is CDFAnnotationV1 => {
+  return (
+    !!(ann as CDFAnnotationV1).id && !!(ann as CDFAnnotationV1).lastUpdatedTime
+  );
 };
 
 export const isUnSavedAnnotation = (
-  ann: DetectedAnnotation | Annotation | UnsavedAnnotation
+  ann: DetectedAnnotation | CDFAnnotationV1 | UnsavedAnnotation
 ): ann is UnsavedAnnotation => {
-  return !(ann as Annotation).lastUpdatedTime;
-};
-
-export const isLinkedAnnotation = (ann: Annotation): boolean => {
-  return !!(ann as LinkedAnnotation).linkedResourceType;
-};
-
-export const isKeyPointAnnotation = (ann: Annotation): boolean => {
-  return (ann as LinkedAnnotation).region?.shape === 'points';
+  return !(ann as CDFAnnotationV1).lastUpdatedTime;
 };
 
 export const createUniqueId = (text: string): string => {

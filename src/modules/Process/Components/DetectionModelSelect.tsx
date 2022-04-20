@@ -22,6 +22,7 @@ import { BUILT_IN_MODEL_COUNT } from 'src/modules/Process/store/slice';
 
 type SelectOption = {
   label: any;
+  isSelectable: boolean;
   value: VisionDetectionModelType;
   backgroundColor: string;
 };
@@ -39,6 +40,7 @@ export function DetectionModelSelect({
   value,
   onChange,
   handleCustomModelCreate,
+  handleOpenSettingsWindow,
   disabledModelTypes,
   ...props
 }: Props) {
@@ -85,6 +87,7 @@ export function DetectionModelSelect({
             label: ocrModelDetails.badge(item.modelName),
             value: VisionDetectionModelType.OCR,
             backgroundColor: ColorsOCR.backgroundColor,
+            isSelectable: true,
           };
 
         case VisionDetectionModelType.TagDetection:
@@ -92,6 +95,7 @@ export function DetectionModelSelect({
             label: tagDetectionModelDetails.badge(item.modelName),
             value: VisionDetectionModelType.TagDetection,
             backgroundColor: ColorsTagDetection.backgroundColor,
+            isSelectable: true,
           };
 
         case VisionDetectionModelType.ObjectDetection:
@@ -99,18 +103,21 @@ export function DetectionModelSelect({
             label: objectDetectionModelDetails.badge(item.modelName),
             value: VisionDetectionModelType.ObjectDetection,
             backgroundColor: ColorsObjectDetection.backgroundColor,
+            isSelectable: true,
           };
         case VisionDetectionModelType.GaugeReader:
           return {
             label: gaugeReaderDetails.badge(item.modelName),
             value: VisionDetectionModelType.GaugeReader,
             backgroundColor: ColorsObjectDetection.backgroundColor,
+            isSelectable: true,
           };
         case VisionDetectionModelType.CustomModel:
           return {
             label: customModelDetails.badge(item.modelName),
             value: VisionDetectionModelType.CustomModel,
             backgroundColor: ColorsObjectDetection.backgroundColor,
+            isSelectable: true,
           };
       }
     }
@@ -128,6 +135,22 @@ export function DetectionModelSelect({
     ),
     value: VisionDetectionModelType.CustomModel,
     backgroundColor: '',
+    isSelectable: true,
+  };
+
+  const openSettingsOption = {
+    label: (
+      <StyledButton
+        icon="Settings"
+        onClick={handleOpenSettingsWindow}
+        type="ghost"
+      >
+        Edit model settings
+      </StyledButton>
+    ),
+    value: -1, // since isSelected is false, value is not used anyways
+    backgroundColor: '',
+    isSelectable: false,
   };
 
   const options =
@@ -136,6 +159,7 @@ export function DetectionModelSelect({
     disabledModelTypes.includes(VisionDetectionModelType.CustomModel)
       ? detectionModelOptions
       : [...detectionModelOptions, addCustomModelOption];
+  options.push(openSettingsOption);
 
   const toOption = (modelType: VisionDetectionModelType): SelectOption => {
     const option = detectionModelOptions.find(
@@ -157,12 +181,18 @@ export function DetectionModelSelect({
       value={enabledSelectedModels
         .filter(
           (modelType) =>
-            !!detectionModelOptions.find((item) => item.value === modelType)
+            !!detectionModelOptions.find(
+              (item) => item.isSelectable && item.value === modelType
+            )
         )
         .map(toOption)}
       onChange={(selectedOptions?: Array<SelectOption>) => {
-        setSelectedOptionsCount(selectedOptions?.length || 1);
-        onChange(selectedOptions?.map(fromOption) || []);
+        // Only consider the selectable options
+        const filteredOptions = selectedOptions?.filter(
+          (option) => option.isSelectable
+        );
+        setSelectedOptionsCount(filteredOptions?.length || 1);
+        onChange(filteredOptions?.map(fromOption) || []);
       }}
       options={options}
       {...props}

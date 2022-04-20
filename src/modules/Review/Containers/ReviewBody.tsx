@@ -18,6 +18,8 @@ import styled from 'styled-components';
 import { VideoPreview } from 'src/modules/Review/Components/VideoPreview/VideoPreview';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import { useUserInformation } from 'src/hooks/useUserInformation';
+import { FileProcessStatusWrapper } from 'src/modules/Review/Containers/FileProcessStatusWrapper';
+import { PreviewProcessingOverlay } from 'src/modules/Review/Components/PreviewProcessingOverlay/PreviewProcessingOverlay';
 import { ImageContextualization } from './ImageContextualization';
 
 const queryClient = new QueryClient();
@@ -117,12 +119,21 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
                   onError={handleError}
                 />
               ) : (
-                <ImagePreview
-                  file={file}
-                  onEditMode={onEditMode}
-                  isLoading={handleLoad}
-                  scrollIntoView={scrollToItem}
-                />
+                <FileProcessStatusWrapper fileId={file.id}>
+                  {({ isFileProcessing }) => {
+                    return (
+                      <>
+                        <ImagePreview
+                          file={file}
+                          onEditMode={onEditMode}
+                          isLoading={handleLoad}
+                          scrollIntoView={scrollToItem}
+                        />
+                        {isFileProcessing && <PreviewProcessingOverlay />}
+                      </>
+                    );
+                  }}
+                </FileProcessStatusWrapper>
               )}
             </PreviewContainer>
             {reviewFiles.length > 1 && (

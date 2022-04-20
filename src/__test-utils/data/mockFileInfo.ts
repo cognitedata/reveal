@@ -129,21 +129,51 @@ export const mockFileInfo: FileInfo[] = [
     uploadedTime: new Date(2021, 0, 4, 15, 0, 0, 0),
     mimeType: MimeTypes.webm,
   },
+  {
+    id: 13,
+    uploaded: true,
+    name: 'thirteen',
+    createdTime: new Date(2021, 0, 4, 16, 0, 0, 0),
+    lastUpdatedTime: new Date(2021, 0, 4, 16, 0, 0, 0),
+    sourceCreatedTime: new Date(2021, 0, 4, 16, 0, 0, 0),
+    uploadedTime: new Date(2021, 0, 4, 16, 0, 0, 0),
+    mimeType: MimeTypes.webm,
+  },
+  {
+    id: 14,
+    uploaded: true,
+    name: 'fourteen',
+    createdTime: new Date(2021, 0, 4, 17, 0, 0, 0),
+    lastUpdatedTime: new Date(2021, 0, 4, 17, 0, 0, 0),
+    sourceCreatedTime: new Date(2021, 0, 4, 17, 0, 0, 0),
+    uploadedTime: new Date(2021, 0, 4, 17, 0, 0, 0),
+    mimeType: MimeTypes.webm,
+  },
+  {
+    id: 15,
+    uploaded: true,
+    name: 'fifteen',
+    createdTime: new Date(2021, 0, 4, 18, 0, 0, 0),
+    lastUpdatedTime: new Date(2021, 0, 4, 18, 0, 0, 0),
+    sourceCreatedTime: new Date(2021, 0, 4, 18, 0, 0, 0),
+    uploadedTime: new Date(2021, 0, 4, 18, 0, 0, 0),
+    mimeType: MimeTypes.webm,
+  },
 ];
-export const mockFileIds = mockFileInfo.map((file) => file.id);
+export const mockFileIds = mockFileInfo.map((file) => file.id); // in ascending order
 export const INVALID_FILE_ID = mockFileIds.length + 1;
 
 // Sorted by name
 export const mockFileIdsSortedByNameAscending = [
-  8, 11, 5, 4, 9, 1, 7, 6, 10, 3, 12, 2,
+  8, 11, 15, 5, 4, 14, 9, 1, 7, 6, 10, 13, 3, 12, 2,
 ];
 export const mockFileIdsSortedByNameDescending =
   mockFileIdsSortedByNameAscending.slice().reverse();
 
 // Sorted by Mime Type
 export const mockFileIdsSortedByMimeTypeAscending = [
-  6, 5, 4, 3, 2, 1, 8, 7, 10, 9, 12, 11,
+  6, 5, 4, 3, 2, 1, 8, 7, 10, 9, 15, 14, 13, 12, 11,
 ];
 export const mockFileIdsSortedByMimeTypeDescending = [
-  12, 11, 10, 9, 8, 7, 3, 2, 1, 6, 5, 4,
+  15, 14, 13, 12, 11, 10, 9, 8, 7, 3, 2, 1, 6, 5, 4,
 ];

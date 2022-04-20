@@ -11,30 +11,32 @@ import SwiperCore, {
   Keyboard,
 } from 'swiper/core';
 import styled from 'styled-components';
-import { getIdfromUrl } from 'src/utils/tenancy';
+import { getIdFromUrl } from 'src/utils/tenancy';
 import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
 import { Button, Icon } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 // Import Swiper styles
 import swiperStyles from 'swiper/swiper-bundle.css';
+import { FileProcessStatusWrapper } from 'src/modules/Review/Containers/FileProcessStatusWrapper';
 
 SwiperCore.use([Navigation, Mousewheel, Pagination, Virtual, Keyboard]);
 
-export const ThumbnailCarousel = (props: {
+export const ThumbnailCarousel = ({
+  files,
+  onItemClick,
+}: {
   files: FileInfo[];
   onItemClick: (fileId: number) => void;
 }) => {
-  const { files } = props;
-
-  const initialSlide = Number(getIdfromUrl());
+  const initialSlide = Number(getIdFromUrl());
   const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(
     files.findIndex((item: any) => item.id === initialSlide)
   );
   const [swiperRef, setSwiperRef] = useState<SwiperCore | null>(null);
 
   const debouncedOnItemClick = useMemo(
-    () => debounce(props.onItemClick, 300),
-    [props.onItemClick]
+    () => debounce(onItemClick, 300),
+    [onItemClick]
   );
 
   useEffect(() => {
@@ -45,7 +47,7 @@ export const ThumbnailCarousel = (props: {
   }, []);
 
   useEffect(() => {
-    const idFromUrl = +getIdfromUrl();
+    const idFromUrl = +getIdFromUrl();
     const currentFileIndex = files.findIndex(
       (item: any) => item.id === idFromUrl
     );
@@ -112,11 +114,22 @@ export const ThumbnailCarousel = (props: {
           onClick={() => handleOnClick(data.id)}
           aria-label={`${index} icon`}
         >
-          <Thumbnail key={`${index}-thumbnail`} fileInfo={data} />
+          <FileProcessStatusWrapper fileId={data.id}>
+            {({ isFileProcessing }) => {
+              return (
+                <Thumbnail
+                  key={`${index}-thumbnail`}
+                  fileInfo={data}
+                  isFileProcessing={isFileProcessing}
+                />
+              );
+            }}
+          </FileProcessStatusWrapper>
         </ThumbnailContainer>
       </SwiperSlide>
     );
   });
+
   return (
     <CarouselContainer id="verticalCarouselContainer">
       <NavigateLeftButton

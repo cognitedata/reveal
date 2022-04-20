@@ -23,6 +23,7 @@ import {
   jobState,
   jobIds,
   partiallyCompletedJob,
+  allFileIdsWithJob400,
 } from 'src/__test-utils/data/mockJobInfo';
 import { clearFileState, fileProcessUpdate } from 'src/store/commonActions';
 import { CreateVisionJob } from 'src/store/thunks/Process/CreateVisionJob';
@@ -535,7 +536,7 @@ describe('Test process reducers', () => {
         expect(newState.jobs.byId[job.jobId].status).toEqual(job.status);
       });
       test('files should have the job assigned', () => {
-        fileIds.forEach((fileId) => {
+        [...completedFileIds, ...failedFileIds].forEach((fileId) => {
           expect(newState.files.byId[fileId].jobIds.includes(job.jobId)).toBe(
             true
           );
@@ -756,7 +757,7 @@ describe('Test process reducers', () => {
       actionTypes.forEach((actionType) => {
         const action = {
           type: actionType,
-          payload: [10, 11, 12],
+          payload: allFileIdsWithJob400,
         };
         const newState = reducer(mockProcessState, action);
 

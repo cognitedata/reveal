@@ -2,7 +2,10 @@ import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
-import { AnnotationStatus, VisionAnnotation } from 'src/utils/AnnotationUtils';
+import {
+  AnnotationStatus,
+  VisionAnnotationV1,
+} from 'src/utils/AnnotationUtils';
 import { ToastUtils } from 'src/utils/ToastUtils';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 
@@ -19,7 +22,7 @@ export const DeleteAnnotationsAndHandleLinkedAssetsOfFile = createAsyncThunk<
     const annotations = annotationIds.map(
       (id) => getState().annotationReducer.annotations.byId[id]
     );
-    const linkedAnnotations: VisionAnnotation[] = [];
+    const linkedAnnotations: VisionAnnotationV1[] = [];
 
     annotations.forEach((annotation) => {
       if (

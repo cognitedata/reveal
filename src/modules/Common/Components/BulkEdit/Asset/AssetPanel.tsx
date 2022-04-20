@@ -92,7 +92,12 @@ export const AssetPanel = ({
     <PanelContainer>
       <SelectContainer>
         <Body level={2}>Task</Body>
-        <Select value={task} onChange={setTask} options={taskSelectorOptions} />
+        <Select
+          value={task}
+          onChange={setTask}
+          options={taskSelectorOptions}
+          closeMenuOnSelect
+        />
       </SelectContainer>
       <AssetEditPanel
         task={task}

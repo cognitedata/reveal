@@ -30,6 +30,7 @@ import { ExplorerBulkEditModalContainer } from 'src/modules/Explorer/Containers/
 import { FilterSidePanel } from 'src/modules/FilterSidePanel/Containers/FilterSidePanel';
 import FilterToggleButton from 'src/modules/FilterSidePanel/Components/FilterToggleButton';
 import { ExplorerToolbarContainer } from 'src/modules/Explorer/Containers/ExplorerToolbarContainer';
+import { cancelFileDetailsEdit } from 'src/modules/FileDetails/slice';
 import { ExplorerModelTrainingModalContainer } from './ExplorerModelTrainingModalContainer';
 
 const Explorer = () => {
@@ -77,6 +78,7 @@ const Explorer = () => {
 
   const handleItemClick = useCallback(
     (item: TableDataItem, showFileDetailsOnClick: boolean = true) => {
+      dispatch(cancelFileDetailsEdit());
       dispatch(FetchFilesById([item.id]));
       dispatch(setFocusedFileId(item.id));
       if (showFileDetailsOnClick) {
