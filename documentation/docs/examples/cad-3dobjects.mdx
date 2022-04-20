@@ -156,21 +156,6 @@ water.rotation.x = -Math.PI / 2;
 water.position.copy(modelCenterAtSeaLevel);
 viewer.addObject3D(water);
 
-// Restrict camera movement
-const boundingSphere = new THREE.Sphere(modelCenterAtSeaLevel, 2000);
-viewer.on('cameraChange', (position, target) => {
-  // Keep camera above sea level
-  if (position.y < 20) {
-    position.y = 21;
-    viewer.setCameraPosition(position);
-  }
-  // Clamp point within our skybox to avoid moving outside the defined 'world'
-  if (!boundingSphere.containsPoint(position)) {
-    boundingSphere.clampPoint(position, position);
-    viewer.setCameraPosition(position);
-  }
-});
-
 //Make sure the Skybox & ocean plane have applied textures
 setTimeout(() => {
   viewer.requestRedraw();
