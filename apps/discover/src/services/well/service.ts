@@ -9,6 +9,8 @@ import {
 
 import { SIDECAR } from 'constants/app';
 
+import { nptLegend } from './legend/npt/service';
+
 const URL = 'well';
 
 export const well = {
@@ -90,4 +92,7 @@ export const well = {
       }
     );
   },
+
+  // Sub-endpoints of 'well' category (found inside of 'well' folder)
+  nptLegend,
 };

@@ -1,11 +1,10 @@
-import {
-  SavedSearch,
-  SavedSearchResponseShared,
-} from '@cognite/discover-api-types';
+import { SavedSearch } from '@cognite/discover-api-types';
+
 import { SIDECAR } from '../../../src/constants/app';
 import { PROJECT } from '../../app.constants';
 
 import { getTokenHeaders } from './helpers';
+
 const getSavedSearchesEndpoint = (project: string) =>
   `${SIDECAR.discoverApiBaseUrl}/${project}/savedSearches`;
 
@@ -38,9 +37,9 @@ const createSavedSearch = (searchName, isAdmin = false) => {
   };
   return cy.request({
     method: 'PUT',
-    url: getSavedSearchesEndpoint(PROJECT) + '/' + searchName,
+    url: `${getSavedSearchesEndpoint(PROJECT)}/${searchName}`,
     headers: getTokenHeaders(isAdmin),
-    body: body,
+    body,
   });
 };
 
