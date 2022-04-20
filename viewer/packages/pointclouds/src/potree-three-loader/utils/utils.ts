@@ -28,7 +28,7 @@ export function handleFailedRequest(response: Response): Response {
   return response;
 }
 
-export function handleEmptyBuffer(buffer: ArrayBuffer) {
+export function handleEmptyBuffer(buffer: ArrayBuffer): ArrayBuffer {
   if (!buffer || buffer.byteLength === 0) {
     throw Error('Empty buffer');
   }

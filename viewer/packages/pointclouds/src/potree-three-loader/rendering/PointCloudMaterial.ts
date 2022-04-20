@@ -453,7 +453,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     return parts.join('\n');
   }
 
-  setPointCloudMixingMode(mode: PointCloudMixingMode) {
+  setPointCloudMixingMode(mode: PointCloudMixingMode): void {
     this.pointCloudMixingMode = mode;
   }
 
