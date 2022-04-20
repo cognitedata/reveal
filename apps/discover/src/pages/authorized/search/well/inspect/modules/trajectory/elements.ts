@@ -70,3 +70,12 @@ export const TrajectoryGrid = styled.div`
 export const TrajectoryChildGrid = styled.div`
   display: grid;
 `;
+
+export const FullSizedTrajectoryView = styled(TrajectoryGrid)`
+  border: 1px solid var(--cogs-black);
+  grid-template-columns: repeat(1, 1fr);
+
+  .chart2d {
+    border: none;
+  }
+`;

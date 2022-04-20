@@ -1,63 +1,46 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import template from 'lodash/template';
-
-import { ProjectConfigWellsTrajectoryChartVizData } from '@cognite/discover-api-types/types/model/projectConfigWellsTrajectoryChartVizData';
-import { Sequence } from '@cognite/sdk';
-
-import { UserPreferredUnit } from 'constants/units';
+import { NoUnmountShowHide } from 'components/no-unmount-show-hide';
+import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
-import { TrajectoryRows } from 'modules/wellSearch/types';
 
-import { Chart } from '../../common/Chart';
-import { TrajectoryChildGrid, TrajectoryGrid } from '../elements';
+import { FullSizedTrajectoryView, TrajectoryGrid } from '../elements';
 
+import { TrajectoryChart } from './TrajectoryChart';
+import { TrajectoryChartProps, Trajectory2DProps } from './types';
 import { generateChartData } from './utils/generateChartData';
 
-export interface Props {
-  selectedTrajectoryData: (TrajectoryRows | undefined)[];
-  selectedTrajectories: Sequence[];
-}
-
-const getChartVizDataConfig = (
-  chartVizDataConfig: ProjectConfigWellsTrajectoryChartVizData | undefined,
-  userPreferredUnit: UserPreferredUnit
-): ProjectConfigWellsTrajectoryChartVizData => {
-  return {
-    ...chartVizDataConfig,
-    axisNames: {
-      x: template(chartVizDataConfig?.axisNames?.x)({
-        unit: userPreferredUnit,
-      }),
-      y: template(chartVizDataConfig?.axisNames?.y)({
-        unit: userPreferredUnit,
-      }),
-      z: template(chartVizDataConfig?.axisNames?.z)({
-        unit: userPreferredUnit,
-      }),
-    },
-  };
-};
-
-export const Trajectory2D: React.FC<Props> = ({
+export const Trajectory2D: React.FC<Trajectory2DProps> = ({
   selectedTrajectoryData,
   selectedTrajectories,
 }) => {
   const { data: config } = useWellConfig();
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
-  const chartConfigs = useMemo(
+  const [expandedChart, setExpandedChart] = useState<TrajectoryChartProps>();
+  const [autosizeGridView, setAutosizeGridView] = useState<boolean>(true);
+
+  /**
+   * Enable autosizing for grid view charts.
+   * Since the autosizing is disabled when the full sized view is expanded,
+   * the grid view is not resized even after the window size is changed.
+   * Hence, this event listener enables autosizing for gird view if the window is resized.
+   */
+  useEffect(() => {
+    const enableAutosizeGridView = () => {
+      setAutosizeGridView(true);
+    };
+    window.addEventListener('resize', enableAutosizeGridView);
+    return () => window.removeEventListener('resize', enableAutosizeGridView);
+  }, []);
+
+  const chartConfigs = useDeepMemo(
     () => config?.trajectory?.charts || [],
     [config?.trajectory?.charts]
   );
 
-  const isLegend = useCallback(
-    (index: number) => chartConfigs[index].type === 'legend',
-    [chartConfigs]
-  );
-
-  const charts = useMemo(
+  const charts = useDeepMemo(
     () =>
       generateChartData(
         selectedTrajectoryData,
@@ -75,37 +58,59 @@ export const Trajectory2D: React.FC<Props> = ({
     ]
   );
 
+  const handleExpandFullSizedView = ({ data, index }: TrajectoryChartProps) => {
+    setExpandedChart({ data, index });
+    /**
+     * Disable autosizing for grid view charts.
+     * This is to prevent triggering an unnecessary resize after the full sized view is collapsed.
+     */
+    setAutosizeGridView(false);
+  };
+
+  const handleCollapseFullSizedView = () => {
+    setExpandedChart(undefined);
+  };
+
+  const renderTrajectoryFullSizedView = () => {
+    if (!expandedChart) {
+      return null;
+    }
+
+    const { data, index } = expandedChart;
+
+    return (
+      <FullSizedTrajectoryView>
+        <TrajectoryChart
+          data={data}
+          index={index}
+          onCollapse={handleCollapseFullSizedView}
+        />
+      </FullSizedTrajectoryView>
+    );
+  };
+
   if (!config) {
     return null;
   }
 
   return (
     <>
-      <TrajectoryGrid>
-        {charts.map((chart, index) => (
-          <TrajectoryChildGrid
-            // eslint-disable-next-line react/no-array-index-key
-            key={`chart_${index}`}
-            className={isLegend(index) ? 'legend' : 'chart2d'}
-          >
-            <Chart
-              isTrajectory
-              data={chart}
-              showLegend={isLegend(index)}
-              {...getChartVizDataConfig(
-                chartConfigs[index].chartVizData,
-                userPreferredUnit
-              )}
-              autosize
-              axisAutorange={{
-                y: 'reversed',
-                z: chartConfigs[index].type === '3d' ? 'reversed' : undefined,
-              }}
-              margin={isLegend(index) ? { r: 250 } : undefined}
+      <NoUnmountShowHide show={!expandedChart} fullHeight>
+        <TrajectoryGrid>
+          {charts.map((data, index) => (
+            <TrajectoryChart
+              // eslint-disable-next-line react/no-array-index-key
+              key={`chart_${index}`}
+              data={data}
+              index={index}
+              autosize={autosizeGridView}
+              onExpand={() => handleExpandFullSizedView({ data, index })}
             />
-          </TrajectoryChildGrid>
-        ))}
-      </TrajectoryGrid>
+          ))}
+        </TrajectoryGrid>
+      </NoUnmountShowHide>
+
+      {renderTrajectoryFullSizedView()}
     </>
   );
 };

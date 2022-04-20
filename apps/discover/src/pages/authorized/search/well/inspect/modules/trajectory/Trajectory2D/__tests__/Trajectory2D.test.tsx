@@ -5,7 +5,8 @@ import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGe
 import { getMockedTrajectoryData } from '__test-utils/fixtures/trajectory';
 import { testRenderer } from '__test-utils/renderer';
 
-import { Trajectory2D, Props } from '../Trajectory2D';
+import { Trajectory2D } from '../Trajectory2D';
+import { Trajectory2DProps } from '../types';
 
 const mockServer = setupServer(getMockConfigGet());
 
@@ -13,7 +14,7 @@ describe('Trajectory2D', () => {
   beforeAll(() => mockServer.listen());
   afterAll(() => mockServer.close());
 
-  const defaultTestInit = async (props?: Props) =>
+  const defaultTestInit = async (props?: Trajectory2DProps) =>
     testRenderer(Trajectory2D, undefined, props);
 
   // SKIPPED: Test is checking for results in dropdown; however, the wellbore dropdown is removed from the trajectory page
@@ -23,7 +24,6 @@ describe('Trajectory2D', () => {
     await defaultTestInit({
       selectedTrajectoryData: getMockedTrajectoryData(),
       selectedTrajectories: [],
-      selectedWellbores: [],
     });
 
     const results = await screen.findAllByTestId('wellbore-dropdown');

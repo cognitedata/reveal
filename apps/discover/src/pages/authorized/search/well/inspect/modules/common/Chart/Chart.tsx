@@ -1,26 +1,13 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Plot from 'react-plotly.js';
-import { withSize, SizeMeProps } from 'react-sizeme';
+import { withSize } from 'react-sizeme';
+
+import { ModeBarButton } from 'plotly.js';
 
 import { Loader } from '@cognite/cogs.js';
 
-type Data = any;
-
-type Autorange = true | false | 'reversed';
-
-export type ChartProps = {
-  data: Data[];
-  size: SizeMeProps['size'];
-  axisNames?: { x?: string; y?: string; z?: string };
-  axisAutorange?: { x?: Autorange; y?: Autorange; z?: Autorange };
-  axisTicksuffixes?: { x?: string; y?: string; z?: string };
-  title?: string;
-  autosize?: boolean;
-  showLegend?: boolean;
-  hovermode?: 'closest' | 'x' | 'y' | 'x unified' | 'y unified' | false;
-  isTrajectory?: boolean;
-  margin?: Partial<Plotly.Margin>;
-};
+import { Collapse, Expand } from './icons';
+import { ChartProps } from './types';
 
 const chartStyles = {
   display: 'flex !important',
@@ -31,19 +18,23 @@ const getWidth = (isTrajectory: boolean, width: number | null) => {
   return isTrajectory && width ? width - 10 : width;
 };
 
-const Chart = ({
-  data,
-  size,
-  axisNames,
-  axisAutorange,
-  axisTicksuffixes,
-  title,
-  autosize = false,
-  showLegend = false,
-  isTrajectory = false,
-  hovermode = 'closest',
-  margin,
-}: ChartProps) => {
+const Chart = (props: ChartProps) => {
+  const {
+    data,
+    size,
+    axisNames,
+    axisAutorange,
+    axisTicksuffixes,
+    title,
+    autosize = false,
+    showLegend = false,
+    isTrajectory = false,
+    hovermode = 'closest',
+    margin,
+    onExpand,
+    onCollapse,
+  } = props;
+
   const layout: Partial<Plotly.Layout> = {
     legend: { orientation: 'v' },
     title,
@@ -74,6 +65,30 @@ const Chart = ({
     margin,
   };
 
+  const expandOrCollapseButton: ModeBarButton[] = useMemo(() => {
+    if (onExpand) {
+      return [
+        {
+          name: 'Expand',
+          title: 'Expand full-sized view',
+          icon: Expand,
+          click: onExpand,
+        },
+      ];
+    }
+    if (onCollapse) {
+      return [
+        {
+          name: 'Collapse',
+          title: 'Collapse full-sized view',
+          icon: Collapse,
+          click: onCollapse,
+        },
+      ];
+    }
+    return [];
+  }, [onExpand, onCollapse]);
+
   return (
     <React.Suspense fallback={<Loader darkMode={false} />}>
       <Plot
@@ -84,6 +99,7 @@ const Chart = ({
         config={{
           responsive: true,
           displaylogo: false,
+          modeBarButtonsToAdd: [...expandOrCollapseButton],
         }}
       />
     </React.Suspense>
