@@ -1,18 +1,23 @@
 import { Box3, Camera, Object3D, Points, Ray, Sphere, Vector3, WebGLRenderer } from 'three';
 import { DEFAULT_MIN_NODE_PIXEL_SIZE } from './constants';
 import { PointCloudMaterial, PointSizeType } from './materials';
-import { PointCloudOctreeGeometry } from './point-cloud-octree-geometry';
-import { PointCloudOctreeGeometryNode } from './point-cloud-octree-geometry-node';
-import { PointCloudOctreeNode } from './point-cloud-octree-node';
-import { PickParams, PointCloudOctreePicker } from './point-cloud-octree-picker';
-import { PointCloudTree } from './point-cloud-tree';
-import { IPointCloudTreeNode, IPotree, PickPoint } from './types';
+// import { PointCloudOctreeGeometry } from './point-cloud-octree-geometry';
+import { IPointCloudTreeGeometry } from './IPointCloudTreeGeometry';
+// import { IPointCloudOctree } from './IPointCloudOctree';
+// import { PointCloudOctreeGeometryNode } from './PointCloudOctreeGeometryNode';
+import { IPointCloudTreeGeometryNode } from './types/IPointCloudTreeGeometryNode';
+import { PointCloudOctreeNode } from './PointCloudOctreeNode';
+import { PickParams, PointCloudOctreePicker } from './PointCloudOctreePicker';
+import { PointCloudTree } from './PointCloudTree';
+import { IPotree, PickPoint } from './types';
+import { IPointCloudTreeNodeBase } from './types/IPointCloudTreeNodeBase';
+import { IPointCloudTreeNode } from './types/IPointCloudTreeNode';
 import { computeTransformedBoundingBox } from './utils/bounds';
 
 export class PointCloudOctree extends PointCloudTree {
   potree: IPotree;
   disposed: boolean = false;
-  pcoGeometry: PointCloudOctreeGeometry;
+  pcoGeometry: IPointCloudTreeGeometry;
   boundingBox: Box3;
   boundingSphere: Sphere;
   material: PointCloudMaterial;
@@ -22,10 +27,10 @@ export class PointCloudOctree extends PointCloudTree {
    * The minimum radius of a node's bounding sphere on the screen in order to be displayed.
    */
   minNodePixelSize: number = DEFAULT_MIN_NODE_PIXEL_SIZE;
-  root: IPointCloudTreeNode | null = null;
+  root: IPointCloudTreeNodeBase | undefined = undefined;
   boundingBoxNodes: Object3D[] = [];
-  visibleNodes: PointCloudOctreeNode[] = [];
-  visibleGeometry: PointCloudOctreeGeometryNode[] = [];
+  visibleNodes: IPointCloudTreeNode[] = [];
+  visibleGeometry: IPointCloudTreeGeometryNode[] = [];
   numVisiblePoints: number = 0;
   showBoundingBox: boolean = false;
   private visibleBounds: Box3 = new Box3();
@@ -33,7 +38,7 @@ export class PointCloudOctree extends PointCloudTree {
 
   constructor(
     potree: IPotree,
-    pcoGeometry: PointCloudOctreeGeometry,
+    pcoGeometry: IPointCloudTreeGeometry,
     material?: PointCloudMaterial,
   ) {
     super();
@@ -70,7 +75,7 @@ export class PointCloudOctree extends PointCloudTree {
       this.root.dispose();
     }
 
-    this.pcoGeometry.root.traverse(n => this.potree.lru.remove(n));
+    this.pcoGeometry.root?.traverse(n => this.potree.lru.remove(n));
     this.pcoGeometry.dispose();
     this.material.dispose();
 
@@ -94,9 +99,9 @@ export class PointCloudOctree extends PointCloudTree {
   }
 
   toTreeNode(
-    geometryNode: PointCloudOctreeGeometryNode,
-    parent?: PointCloudOctreeNode | null,
-  ): PointCloudOctreeNode {
+    geometryNode: IPointCloudTreeGeometryNode,
+    parent?: IPointCloudTreeNode | null,
+  ): IPointCloudTreeNode {
     const points = new Points(geometryNode.geometry, this.material);
     const node = new PointCloudOctreeNode(geometryNode, points);
     points.name = geometryNode.name;

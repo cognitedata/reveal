@@ -1,18 +1,19 @@
 import { Box3, BufferGeometry, EventDispatcher, Object3D, Points, Sphere } from 'three';
-import { PointCloudOctreeGeometryNode } from './point-cloud-octree-geometry-node';
-import { IPointCloudTreeNode } from './types';
+import { IPointCloudTreeGeometryNode } from './types/IPointCloudTreeGeometryNode';
+import { IPointCloudTreeNode } from './types/IPointCloudTreeNode';
+import { IPointCloudTreeNodeBase } from './types/IPointCloudTreeNodeBase';
 
 export class PointCloudOctreeNode extends EventDispatcher implements IPointCloudTreeNode {
-  geometryNode: PointCloudOctreeGeometryNode;
+  geometryNode: IPointCloudTreeGeometryNode;
   sceneNode: Points;
   pcIndex: number | undefined = undefined;
-  boundingBoxNode: Object3D | null = null;
-  readonly children: (IPointCloudTreeNode | null)[];
+  boundingBoxNode?: Object3D | undefined = undefined;
+  readonly children: (IPointCloudTreeNodeBase | null)[];
   readonly loaded = true;
   readonly isTreeNode: boolean = true;
   readonly isGeometryNode: boolean = false;
 
-  constructor(geometryNode: PointCloudOctreeGeometryNode, sceneNode: Points) {
+  constructor(geometryNode: IPointCloudTreeGeometryNode, sceneNode: Points) {
     super();
 
     this.geometryNode = geometryNode;
@@ -44,7 +45,7 @@ export class PointCloudOctreeNode extends EventDispatcher implements IPointCloud
     }
   }
 
-  traverse(cb: (node: IPointCloudTreeNode) => void, includeSelf?: boolean): void {
+  traverse(cb: (node: IPointCloudTreeNodeBase) => void, includeSelf?: boolean): void {
     this.geometryNode.traverse(cb, includeSelf);
   }
 

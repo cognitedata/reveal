@@ -1,6 +1,6 @@
-import { IPointCloudTreeNode } from '../types';
+import { IPointCloudTreeNodeBase } from "../types/IPointCloudTreeNodeBase";
 
-export type Node = IPointCloudTreeNode;
+export type Node = IPointCloudTreeNodeBase;
 
 export class LRUItem {
   next: LRUItem | null = null;

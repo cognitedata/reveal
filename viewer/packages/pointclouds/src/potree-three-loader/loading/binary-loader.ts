@@ -3,10 +3,13 @@
 // -------------------------------------------------------------------------------------------------
 
 import { Box3, BufferAttribute, BufferGeometry, Uint8BufferAttribute, Vector3 } from 'three';
-import { handleFailedRequest, handleEmptyBuffer } from '../utils/utils';
-import { PointAttributeName, PointAttributeType } from '../point-attributes';
-import { PointCloudOctreeGeometryNode } from '../point-cloud-octree-geometry-node';
+
 import { WorkerPool } from '../utils/worker-pool';
+import { handleFailedRequest, handleEmptyBuffer } from '../utils/utils';
+
+import { PointAttributeName, PointAttributeType } from '../PointAttributes';
+import { PointCloudOctreeGeometryNode } from '../PointCloudOctreeGeometryNode';
+
 import { Version } from '../version';
 import { GetUrlFn, XhrRequest } from './types';
 

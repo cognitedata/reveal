@@ -4,8 +4,8 @@
  */
 
 import { Box3, BufferGeometry, EventDispatcher, Sphere, Vector3 } from 'three';
-import { PointCloudOctreeGeometry } from './point-cloud-octree-geometry';
-import { IPointCloudTreeNode } from './types';
+import { PointCloudOctreeGeometry } from './PointCloudOctreeGeometry';
+import { IPointCloudTreeGeometryNode } from './types/IPointCloudTreeGeometryNode';
 import { createChildAABB } from './utils/bounds';
 import { getIndexFromName, handleEmptyBuffer, handleFailedRequest } from './utils/utils';
 
@@ -17,7 +17,7 @@ export interface NodeData {
 
 const NODE_STRIDE = 5;
 
-export class PointCloudOctreeGeometryNode extends EventDispatcher implements IPointCloudTreeNode {
+export class PointCloudOctreeGeometryNode extends EventDispatcher implements IPointCloudTreeGeometryNode {
   id: number = PointCloudOctreeGeometryNode.idCount++;
   name: string;
   pcoGeometry: PointCloudOctreeGeometry;
@@ -25,7 +25,7 @@ export class PointCloudOctreeGeometryNode extends EventDispatcher implements IPo
   level: number = 0;
   spacing: number = 0;
   hasChildren: boolean = false;
-  readonly children: ReadonlyArray<PointCloudOctreeGeometryNode | null> = [
+  readonly children: Array<PointCloudOctreeGeometryNode | null> = [
     null,
     null,
     null,

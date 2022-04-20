@@ -25,8 +25,9 @@ import {
   DEFAULT_RGB_GAMMA,
   PERSPECTIVE_CAMERA,
 } from '../constants';
-import { PointCloudOctree } from '../point-cloud-octree';
-import { PointCloudOctreeNode } from '../point-cloud-octree-node';
+import { PointCloudOctree } from '../PointCloudOctree';
+import { IPointCloudTreeNodeBase } from "../types/IPointCloudTreeNodeBase";
+import { IPointCloudTreeNode } from '../types/IPointCloudTreeNode';
 import { byLevelAndIndex } from '../utils/utils';
 import { DEFAULT_CLASSIFICATION } from './classification';
 import { ClipMode, IClipBox } from './clipping';
@@ -289,10 +290,10 @@ export class PointCloudMaterial extends RawShaderMaterial {
   @requiresShaderUpdate() useClipBox: boolean = false;
   @requiresShaderUpdate() weighted: boolean = false;
   @requiresShaderUpdate() pointColorType: PointColorType = PointColorType.RGB;
-  @requiresShaderUpdate() pointSizeType: PointSizeType = PointSizeType.ADAPTIVE;
+  @requiresShaderUpdate() pointSizeType: PointSizeType = PointSizeType.FIXED;
   @requiresShaderUpdate() clipMode: ClipMode = ClipMode.DISABLED;
-  @requiresShaderUpdate() useEDL: boolean = false;
-  @requiresShaderUpdate() shape: PointShape = PointShape.SQUARE;
+  @requiresShaderUpdate() useEDL: boolean = true;
+  @requiresShaderUpdate() shape: PointShape = PointShape.CIRCLE;
   @requiresShaderUpdate() treeType: TreeType = TreeType.OCTREE;
   @requiresShaderUpdate() pointOpacityType: PointOpacityType = PointOpacityType.FIXED;
   @requiresShaderUpdate() useFilterByNormal: boolean = false;
@@ -374,6 +375,8 @@ export class PointCloudMaterial extends RawShaderMaterial {
     this.vertexShader = this.applyDefines(require('./shaders/pointcloud.vert').default);
     this.fragmentShader = this.applyDefines(require('./shaders/pointcloud.frag').default);
 
+    console.log("Updating shader source");
+
     if (this.opacity === 1.0) {
       this.blending = NoBlending;
       this.transparent = false;
@@ -428,6 +431,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     }
 
     if (this.useEDL) {
+      console.log("use_edl is a thing");
       define('use_edl');
     }
 
@@ -583,7 +587,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
   updateMaterial(
     octree: PointCloudOctree,
-    visibleNodes: PointCloudOctreeNode[],
+    visibleNodes: IPointCloudTreeNodeBase[],
     camera: Camera,
     renderer: WebGLRenderer,
   ): void {
@@ -621,7 +625,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     }
   }
 
-  private updateVisibilityTextureData(nodes: PointCloudOctreeNode[]) {
+  private updateVisibilityTextureData(nodes: IPointCloudTreeNodeBase[]) {
     nodes.sort(byLevelAndIndex);
 
     const data = new Uint8Array(nodes.length * 4);
@@ -661,7 +665,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
   static makeOnBeforeRender(
     octree: PointCloudOctree,
-    node: PointCloudOctreeNode,
+    node: IPointCloudTreeNode,
     pcIndex?: number,
   ) {
     return (

@@ -3,9 +3,9 @@
 // -------------------------------------------------------------------------------------------------
 
 import { Box3, Vector3 } from 'three';
-import { PointAttributes, PointAttributeStringName } from '../point-attributes';
-import { PointCloudOctreeGeometry } from '../point-cloud-octree-geometry';
-import { PointCloudOctreeGeometryNode } from '../point-cloud-octree-geometry-node';
+import { PointAttributes, PointAttributeStringName } from '../PointAttributes';
+import { PointCloudOctreeGeometry } from '../PointCloudOctreeGeometry';
+import { PointCloudOctreeGeometryNode } from '../PointCloudOctreeGeometryNode';
 import { createChildAABB } from '../utils/bounds';
 import { getIndexFromName, handleFailedRequest } from '../utils/utils';
 import { Version } from '../version';

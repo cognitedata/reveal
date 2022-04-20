@@ -8,7 +8,7 @@ import {
   IPointAttributes,
   PointAttributeName,
   POINT_ATTRIBUTES,
-} from '../point-attributes';
+} from '../PointAttributes';
 import { Version } from '../version';
 import { CustomArrayView } from './custom-array-view';
 

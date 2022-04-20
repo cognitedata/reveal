@@ -1,9 +1,10 @@
 import { Box3, Vector3 } from 'three';
 import { BinaryLoader, XhrRequest } from './loading';
-import { PointAttributes } from './point-attributes';
-import { PointCloudOctreeGeometryNode } from './point-cloud-octree-geometry-node';
+import { PointAttributes } from './PointAttributes';
+import { PointCloudOctreeGeometryNode } from './PointCloudOctreeGeometryNode';
+import { IPointCloudTreeGeometry } from './IPointCloudTreeGeometry';
 
-export class PointCloudOctreeGeometry {
+export class PointCloudOctreeGeometry implements IPointCloudTreeGeometry {
   disposed: boolean = false;
   needsUpdate: boolean = true;
   root!: PointCloudOctreeGeometryNode;

@@ -17,8 +17,8 @@ import {
 } from 'three';
 import { COLOR_BLACK, DEFAULT_PICK_WINDOW_SIZE } from './constants';
 import { ClipMode, PointCloudMaterial, PointColorType } from './materials';
-import { PointCloudOctree } from './point-cloud-octree';
-import { PointCloudOctreeNode } from './point-cloud-octree-node';
+import { PointCloudOctree } from './PointCloudOctree';
+import { IPointCloudTreeNode } from './types/IPointCloudTreeNode';
 import { PickPoint, PointCloudHit } from './types';
 import { clamp } from './utils/math';
 
@@ -50,7 +50,7 @@ interface IPickState {
 }
 
 interface RenderedNode {
-  node: PointCloudOctreeNode;
+  node: IPointCloudTreeNode;
   octree: PointCloudOctree;
 }
 
@@ -191,8 +191,8 @@ export class PointCloudOctreePicker {
     return renderedNodes;
   }
 
-  private static nodesOnRay(octree: PointCloudOctree, ray: Ray): PointCloudOctreeNode[] {
-    const nodesOnRay: PointCloudOctreeNode[] = [];
+  private static nodesOnRay(octree: PointCloudOctree, ray: Ray): IPointCloudTreeNode[] {
+    const nodesOnRay: IPointCloudTreeNode[] = [];
 
     const rayClone = ray.clone();
     for (const node of octree.visibleNodes) {
@@ -231,7 +231,7 @@ export class PointCloudOctreePicker {
 
   private static createTempNodes(
     octree: PointCloudOctree,
-    nodes: PointCloudOctreeNode[],
+    nodes: IPointCloudTreeNode[],
     pickMaterial: PointCloudMaterial,
     nodeIndexOffset: number,
   ): Points[] {

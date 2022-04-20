@@ -1,28 +1,11 @@
-import { Box3, Camera, Sphere, Vector3, WebGLRenderer } from 'three';
+import { Camera, Vector3, WebGLRenderer } from 'three';
 import { GetUrlFn, XhrRequest } from './loading/types';
-import { PointCloudOctree } from './point-cloud-octree';
 import { LRU } from './utils/lru';
-
-export interface IPointCloudTreeNode {
-  id: number;
-  name: string;
-  level: number;
-  index: number;
-  spacing: number;
-  boundingBox: Box3;
-  boundingSphere: Sphere;
-  loaded: boolean;
-  numPoints: number;
-  readonly children: ReadonlyArray<IPointCloudTreeNode | null>;
-  readonly isLeafNode: boolean;
-
-  dispose(): void;
-
-  traverse(cb: (node: IPointCloudTreeNode) => void, includeSelf?: boolean): void;
-}
+import { PointCloudOctree } from './PointCloudOctree';
+import { IPointCloudTreeNodeBase } from './types/IPointCloudTreeNodeBase';
 
 export interface IVisibilityUpdateResult {
-  visibleNodes: IPointCloudTreeNode[];
+  visibleNodes: IPointCloudTreeNodeBase[];
   numVisiblePoints: number;
   /**
    * True when a node has been loaded but was not added to the scene yet.
