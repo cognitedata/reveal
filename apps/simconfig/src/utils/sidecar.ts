@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import type { SidecarConfig } from '@cognite/sidecar';
+import type { CDFCluster, SidecarConfig } from '@cognite/sidecar';
 import { getDefaultSidecar } from '@cognite/sidecar';
 
 // # -------------------------------------
@@ -13,7 +13,10 @@ const PROD = false;
 // examples: bluefield, greenfield, ew1, bp-northeurope, azure-dev, bp,
 // westeurope-1 NOTE: leave on 'azure-dev' for testing in the PR's since that
 // is the only place we have the FAKEIdp currently for this project:
-const CLUSTER = 'westeurope-1';
+
+const CLUSTER: CDFCluster =
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  (process.env.REACT_APP_CLUSTER as CDFCluster) ?? ('azure-dev' as CDFCluster);
 const LOCAL_SERVICE = Boolean(process.env.REACT_APP_LOCAL_SERVICE) || false;
 // #
 // #
@@ -23,7 +26,7 @@ const LOCAL_SERVICE = Boolean(process.env.REACT_APP_LOCAL_SERVICE) || false;
 const getAadApplicationId = (cluster: string) => {
   const ids: Record<string, string> = {
     'bluefield': '245a8a64-4142-4226-86fa-63d590de14c9',
-    'azure-dev': '5a262178-942b-4c8f-ac15-f96642b73b56',
+    'azure-dev': '9d30a99f-4209-470d-8389-c8390c3007fe',
     'ew1': 'd584f014-5fa9-4b0b-953d-cc4837d093f3',
     'westeurope-1': '83e4fd8b-321f-4e35-89f9-80dde739a713',
   };
@@ -67,6 +70,7 @@ window.__cogniteSidecar = {
   ...window.__cogniteSidecar,
 
   __sidecarFormatVersion: 1,
+
   // to be used only locally as a sidecar placeholder
   // when deployed with FAS the values below are partly overriden
   applicationId: 'simconfig',

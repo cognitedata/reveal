@@ -27,7 +27,10 @@
     "build-storybook": "../../node_modules/.bin/build-storybook",
     "build-storybook:bazel": "bazel build :storybook-static",
     "update-helpers": "bazel run :generate_package_json_helpers",
-    "deploy": "cd ../.. && ./scripts/deploy.sh simconfig"
+    "deploy": "cd ../.. && ./scripts/deploy.sh simconfig",
+    "cypress:run-live": "./scripts/cypress-run-live.sh",
+    "cypress:bazel-run-live": "ibazel run :cypress",
+    "cypress:open": "../../node_modules/.bin/cypress open"
   },
   "jest": {
     "coveragePathIgnorePatterns": [

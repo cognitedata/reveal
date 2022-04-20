@@ -8,6 +8,9 @@ load("//rules/publish:publish_fas.bzl", "publish_fas")
 load("//rules/publish:publish_storybook.bzl", "publish_storybook")
 load("//rules/test:react_scripts_test.bzl", "react_scripts_test")
 load("//rules/build_sed:build_sed.bzl", "build_sed")
+load("@npm//cypress:index.bzl", "cypress")
+load("//rules/test:cypress_batch_test.bzl", "cypress_batch_test")
+load("@npm//@bazel/typescript:index.bzl", "ts_project")
 
 # Filename conventions described at
 # https://create-react-app.dev/docs/running-tests#filename-conventions
@@ -23,6 +26,10 @@ _TESTS = [
     "src/utils/test/*",
 ]
 
+_TESTS_CYPRESS = [
+    "cypress/**/*.test.ts",
+]
+
 _STORYBOOK = [
     ".storybook/*",
     "src/**/*.stories.ts*",
@@ -33,6 +40,8 @@ _SOURCES = [
 ]
 
 TESTS = glob(_TESTS + _STORYBOOK)
+
+TESTS_CYPRESS = glob(_TESTS_CYPRESS)
 
 STORYBOOK = glob(_STORYBOOK)
 
@@ -282,6 +291,56 @@ build_sed(
     src_dir = ":build",
 )
 
+### Cypress ###
+
+# The cypress folder has to have a "plugin.ts" file serving your files, as well as a "tsconfig.json"
+cypress_batch_test(
+    name = "cypress_test",
+    build_src = ":build_sed",
+    cypress_files = [
+        glob(["cypress/*.spec.ts"]),
+    ],
+    cypress_folder = "cypress",
+    global_cypress_files = TESTS_CYPRESS,
+    starting_port = 12111,
+    tags = [
+        "ignore_test_in_cd",
+    ],
+)
+
+# You can write your cypress tests a javascript files or in typescript.
+ts_project(
+    name = "cypress_project",
+    srcs = TESTS_CYPRESS + glob(["cypress/*.spec.ts"]),
+    extends = "cypress/tsconfig.json",
+    tsconfig = {
+        "compilerOptions": {
+            "types": ["cypress"],
+        },
+    },
+    deps = [
+        "@npm//cypress",
+    ],
+)
+
+cypress(
+    name = "cypress",
+    args = [
+        "run",
+        "--headed",
+        "--project ./apps/simconfig",
+        "--spec ./apps/simconfig/cypress/**/*.spec.js",
+        "--env BASE_URL=https://localhost:3000",
+    ],
+    data = [
+        "cypress.json",
+        ":cypress_project",
+        ":start",
+    ],
+)
+
+### Cypress End ###
+
 ### react-scripts test ###
 
 copy_to_bin(
@@ -328,6 +387,7 @@ react_scripts(
         "REACT_APP_MIXPANEL_DEBUG": "false",
         # Specify your Mixpanel project token used in users analytics
         "REACT_APP_MIXPANEL_TOKEN": "071f5119a9f05349bee1e1391b8c3c2c",
+        "REACT_APP_CLUSTER": "westeurope-1",
     },
     tags = [
         # This tag instructs ibazel to pipe into stdin a event describing actions.

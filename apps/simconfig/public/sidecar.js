@@ -4,10 +4,10 @@ window.__cogniteSidecar = {
   fakeIdp: [
     {
       roles: [],
-      groups: ['defaultGroup'],
+      groups: ['oidc-admin-group'],
       fakeApplicationId: 'user',
       // project to run e2e tests against
-      project: 'react-demo-app-e2e-azure-dev',
+      project: 'simconfig-e2e',
       // to match `Login with Fake IDP (azure-dev)` button
       name: 'azure-dev',
       cluster: 'azure-dev',
