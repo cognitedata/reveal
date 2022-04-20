@@ -18,6 +18,7 @@ import {
 } from './rendering/constants';
 import { FEATURES } from './rendering/features';
 import { EptLoader } from './loading/EptLoader';
+import { EptBinaryLoader } from './loading/EptBinaryLoader';
 import { ClipMode } from './rendering';
 import { PointCloudOctree } from './tree/PointCloudOctree';
 import { PickParams, PointCloudOctreePicker } from './tree/PointCloudOctreePicker';
@@ -31,7 +32,6 @@ import { IPointCloudTreeGeometryNode } from './geometry/IPointCloudTreeGeometryN
 import { BinaryHeap } from './utils/BinaryHeap';
 import { Box3Helper } from './utils/box3-helper';
 import { LRU } from './utils/lru';
-import { workerPool } from './utils/WorkerPool';
 import { ModelDataProvider } from '@reveal/modeldata-api';
 
 export class QueueItem {
@@ -110,11 +110,11 @@ export class Potree implements IPotree {
   }
 
   static set maxLoaderWorkers(value: number) {
-    workerPool.maxWorkers = value;
+    EptBinaryLoader.WORKER_POOL.maxWorkers = value;
   }
 
   static get maxLoaderWorkers(): number {
-    return workerPool.maxWorkers;
+    return EptBinaryLoader.WORKER_POOL.maxWorkers;
   }
 
   private updateVisibility(

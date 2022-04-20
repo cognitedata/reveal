@@ -1,6 +1,6 @@
 export class AsyncBlockingQueue<T> {
-  private promises: Promise<T>[];
-  private resolvers: ((t: T) => void)[];
+  private readonly promises: Promise<T>[];
+  private readonly resolvers: ((t: T) => void)[];
 
   constructor() {
     this.resolvers = [];
@@ -26,7 +26,7 @@ export class AsyncBlockingQueue<T> {
     this.promises.push(
       new Promise(resolve => {
         this.resolvers.push(resolve);
-      }),
+      })
     );
   }
 }

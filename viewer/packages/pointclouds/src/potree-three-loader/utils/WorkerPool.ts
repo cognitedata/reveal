@@ -1,50 +1,72 @@
-import EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
+import { AsyncBlockingQueue } from './async-blocking-queue';
 
-export enum WorkerType {
-  Ept
+export class AutoTerminatingWorker {
+  private timeoutId: number | undefined = undefined;
+  private terminated: boolean = false;
+
+  constructor(private readonly wrappedWorker: Worker, private readonly maxIdle: number) {}
+
+  public get worker(): Worker {
+    return this.wrappedWorker;
+  }
+
+  get isTerminated(): boolean {
+    return this.terminated;
+  }
+
+  markIdle(): void {
+    this.timeoutId = window.setTimeout(() => {
+      this.terminated = true;
+      this.wrappedWorker.terminate();
+    }, this.maxIdle);
+  }
+
+  markInUse(): void {
+    if (this.timeoutId) {
+      window.clearTimeout(this.timeoutId);
+    }
+  }
 }
 
-class WorkerPool {
-  private _maxWorkers: number;
-  private readonly _workers: Record<WorkerType, Worker[]>;
+export class WorkerPool<T extends Worker> {
+  /**
+   * The maximum amount of idle time that can elapse before a worker from this pool is automatically terminated
+   */
+  private static readonly POOL_MAX_IDLE = 7000;
 
-  constructor() {
-    this._workers = {
-      0: []
-    };
-  }
+  private readonly pool = new AsyncBlockingQueue<AutoTerminatingWorker>();
+  private poolSize = 0;
 
-  createNewWorker(workerType: WorkerType): Worker;
-  createNewWorker(_workerType: WorkerType.Ept): Worker {
-    return new EptDecoderWorker();
-  }
+  constructor(public maxWorkers: number, private readonly workerType: new () => T) {}
 
-  getWorker(workerType: WorkerType.Ept) {
-    if (!this._workers[workerType]) {
-      this._workers[workerType] = [];
+  /**
+   * Returns a worker promise which is resolved when one is available.
+   */
+  public getWorker(): Promise<AutoTerminatingWorker> {
+    // If the number of active workers is smaller than the maximum, return a new one.
+    // Otherwise, return a promise for worker from the pool.
+    if (this.poolSize < this.maxWorkers) {
+      this.poolSize++;
+      return Promise.resolve(new AutoTerminatingWorker(new this.workerType(), WorkerPool.POOL_MAX_IDLE));
+    } else {
+      return this.pool.dequeue().then(worker => {
+        worker.markInUse();
+        // If the dequeued worker has been terminated, decrease the pool size and make a recursive call to get a new worker
+        if (worker.isTerminated) {
+          this.poolSize--;
+          return this.getWorker();
+        }
+        return worker;
+      });
     }
-
-    if (this._workers[workerType].length === 0) {
-      const worker = this.createNewWorker(workerType);
-      this._workers[workerType].push(worker);
-    }
-
-    const worker = this._workers[workerType].pop();
-
-    return worker;
   }
 
-  returnWorker(workerType: WorkerType, worker: any) {
-    this._workers[workerType].push(worker);
+  /**
+   * Releases a Worker back into the pool
+   * @param worker
+   */
+  public releaseWorker(worker: AutoTerminatingWorker): void {
+    worker.markIdle();
+    this.pool.enqueue(worker);
   }
-
-  get maxWorkers(): number {
-    return this._maxWorkers;
-  }
-
-  set maxWorkers(maxWorkers: number) {
-    this._maxWorkers = maxWorkers;
-  }
-};
-
-export const workerPool = new WorkerPool();
+}

@@ -38,7 +38,7 @@ import {
   PointOpacityType,
   PotreePointShape,
   PotreePointSizeType,
-  TreeType,
+  TreeType
 } from './enums';
 import { generateClassificationTexture, generateDataTexture, generateGradientTexture } from './texture-generation';
 import { IClassification, IUniform } from './types';
@@ -155,8 +155,8 @@ const CLIP_MODE_DEFS = {
 };
 
 export class PointCloudMaterial extends RawShaderMaterial {
-  private static helperVec3 = new Vector3();
-  private static helperVec2 = new Vector2();
+  private static readonly helperVec3 = new Vector3();
+  private static readonly helperVec2 = new Vector2();
 
   /**
    * Use the drawing buffer size instead of the dom client width and height when passing the screen height and screen width uniforms to the
