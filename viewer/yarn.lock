@@ -708,11 +708,12 @@ __metadata:
     "@azure/msal-browser": 2.23.0
     "@cognite/potree-core": 1.5.2
     "@cognite/reveal-parser-worker": 1.3.0
-    "@cognite/sdk": 7.1.1
-    "@cognite/sdk-core": ^4.1.0
+    "@cognite/sdk": 7.2.2
+    "@cognite/sdk-core": ^4.1.1
     "@tweenjs/tween.js": 18.6.4
     "@types/dat.gui": 0.7.7
     "@types/draco3dgltf": 1.4.0
+    "@types/geojson": ^7946.0.8
     "@types/jest": 27.4.1
     "@types/jsdom": 16.2.14
     "@types/lodash": 4.14.181
@@ -783,19 +784,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@cognite/sdk-core@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "@cognite/sdk-core@npm:4.1.0"
-  dependencies:
-    cross-fetch: ^3.0.4
-    is-buffer: ^2.0.5
-    lodash: ^4.17.11
-    query-string: ^5.1.1
-    url: ^0.11.0
-  checksum: 48672d00ba4feabcfa88ea5ae42be709a3f07304e318c234df7207d18274ef81ce0a68e3a808c684a36a87187237214cc3d745d3fd2ae1074d6490e11fa5ef82
-  languageName: node
-  linkType: hard
-
 "@cognite/sdk-core@npm:^4.1.1":
   version: 4.1.1
   resolution: "@cognite/sdk-core@npm:4.1.1"
@@ -809,13 +797,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/sdk@npm:7.1.1":
-  version: 7.1.1
-  resolution: "@cognite/sdk@npm:7.1.1"
+"@cognite/sdk@npm:7.2.2":
+  version: 7.2.2
+  resolution: "@cognite/sdk@npm:7.2.2"
   dependencies:
     "@cognite/sdk-core": ^4.1.1
+    geojson: ^0.5.0
     lodash: ^4.17.11
-  checksum: ff4e80c67710ed29e11d66e4e1166d783bbb1b9ea7aef0beefba89dfcba8b8f4a7dcda6a64242e0eff2386dd3c80f979decd29afdc248923d104ae7316e4edf4
+  checksum: 1aebadb531f3f7d7b18d8951c1a5f34297c9ba4da847d02735edfa808ed0a20de87289d6bb7bf6938f582a01d05497e003c96e7de027a726e6cbdaf95516e237
   languageName: node
   linkType: hard
 
@@ -1511,6 +1500,13 @@ __metadata:
   dependencies:
     "@types/draco3d": "*"
   checksum: f55ee53425d2f00d29788c73b41a35ccf523af1582c10205d30ca581515d888a1dbb9a72f00254878640cf69d6a1959a7894818673492edfa5f86a96f906c7cd
+  languageName: node
+  linkType: hard
+
+"@types/geojson@npm:^7946.0.8":
+  version: 7946.0.8
+  resolution: "@types/geojson@npm:7946.0.8"
+  checksum: 6049a39b025cfe323d5cf87333d87c133ec963cdbd349c49295bee779827ee4b46a3041fd8bd2e7a4b02d6d1e26f3002968875928941bbed08477bfd5f6f9284
   languageName: node
   linkType: hard
 
@@ -6343,6 +6339,13 @@ fsevents@^1.2.7:
   peerDependencies:
     three: ">0.120.0"
   checksum: 92fe645b1b529c5ec0778e2d5bef9b554457ad80383d11300be489fe828fefbf801aa01282bfc0e6d546600b6893d790a1ad186b617dd8ed841a1e821bdfd182
+  languageName: node
+  linkType: hard
+
+"geojson@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "geojson@npm:0.5.0"
+  checksum: 44fbf916dc66d17f1561fb56fd2741f21e26da5dd7daf842a794119c841c7f6d611ccc21d9797c9c62a78c41a0f841c0648042989a5a5a05045835c6ada8612f
   languageName: node
   linkType: hard
 
