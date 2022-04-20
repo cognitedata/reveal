@@ -8,16 +8,14 @@ import isEmpty from 'lodash/isEmpty';
 import { Button, Icon, Menu, Tabs, Dropdown, Loader } from '@cognite/cogs.js';
 
 import { WELL_INSPECT_ID } from 'constants/metrics';
-import navigation from 'constants/navigation';
-import { useDeepEffect } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useHorizontalScroll } from 'hooks/useHorizontalScroll';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
+import { useInspectStateFromUrl } from 'modules/wellInspect/hooks/useInspectStateFromUrl';
 import {
   useWellInspectSelectedWellboreIds,
   useWellInspectWells,
 } from 'modules/wellInspect/hooks/useWellInspect';
-import { useWellInspectSelection } from 'modules/wellInspect/selectors';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 
 import {
@@ -46,9 +44,10 @@ export const WellInspect: React.FC = () => {
   const location = useLocation();
   const dispatch = useDispatch();
 
+  useInspectStateFromUrl();
+
   const { data: config } = useWellConfig();
   const wells = useWellInspectWells();
-  const { selectedWellIds } = useWellInspectSelection();
   const wellboreIds = useWellInspectSelectedWellboreIds();
 
   const [isOpen, setIsOpen] = useState(true);
@@ -58,14 +57,6 @@ export const WellInspect: React.FC = () => {
   const scrollRef = useHorizontalScroll();
   const [show3dWarningModal, setShow3dWarningModal] = useState(false);
   const metrics = useGlobalMetrics(WELL_INSPECT_ID);
-
-  useDeepEffect(() => {
-    /**
-     * This will redirect the app to well search screen if there are no selected wellbores.
-     * This Usable when user directly access the inspection screen
-     */
-    if (isEmpty(selectedWellIds)) history.push(navigation.SEARCH_WELLS);
-  }, [selectedWellIds]);
 
   const items = useMemo(
     () => TAB_ITEMS.filter((item) => config?.[item.key]?.enabled),

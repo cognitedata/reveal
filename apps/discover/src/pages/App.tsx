@@ -5,7 +5,12 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { Providers as DiscoverProviders } from 'providers';
 
 import { ToastContainer } from '@cognite/cogs.js';
-import { isTest, Container, getTenantInfo } from '@cognite/react-container';
+import {
+  isTest,
+  Container,
+  getTenantInfo,
+  storage,
+} from '@cognite/react-container';
 import { SidecarConfig } from '@cognite/sidecar';
 
 import { DiscoverSidecarConfig, SIDECAR } from 'constants/app';
@@ -19,16 +24,35 @@ if (isTest) {
   ReactModal.setAppElement('#root');
 }
 
+const APP_STATE_KEY = 'APP_STATE';
+
 export const AppRoot: React.FC = () => {
   const [possibleTenant] = getTenantInfo();
   const [store] = useState(() =>
     configureStore({
+      ...(storage.getItem(APP_STATE_KEY) || {}),
       environment: { tenant: possibleTenant, appName: SIDECAR.applicationId },
     })
   );
   const [sidecar, setSidecar] = useState<DiscoverSidecarConfig | undefined>(
     undefined
   );
+
+  const writeAppStateToStorage = () => {
+    const appState = store.getState();
+    const preserveAppState = false;
+
+    if (preserveAppState) {
+      storage.setItem(APP_STATE_KEY, appState);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', writeAppStateToStorage);
+    return () => {
+      window.removeEventListener('beforeunload', writeAppStateToStorage);
+    };
+  }, []);
 
   // overwrite fakeIdp user for e2e tests
   useEffect(() => {
