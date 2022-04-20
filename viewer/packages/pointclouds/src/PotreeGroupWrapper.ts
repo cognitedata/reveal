@@ -32,7 +32,7 @@ export class PotreeGroupWrapper extends THREE.Object3D {
   }
 
   private readonly nodes: PotreeNodeWrapper[] = [];
-  private readonly potreeGroup: Potree.Group;
+  private readonly potreeGroup: any;
   private numNodesLoadingAfterLastRedraw = 0;
   private numChildrenAfterLastRedraw = 0;
 
