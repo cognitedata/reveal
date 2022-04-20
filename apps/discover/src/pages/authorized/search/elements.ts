@@ -112,7 +112,6 @@ export const MainSearchContainer = styled(FlexColumn)`
 export const SearchTableResultActionContainer = styled(FlexRow)`
   align-items: center;
   justify-content: space-between;
-  min-height: 56px;
   padding-top: ${sizes.normal};
   padding-right: ${sizes.normal};
   padding-left: ${sizes.normal};
