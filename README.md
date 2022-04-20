@@ -21,6 +21,8 @@ Then you can install the node_modules by running
 yarn
 ```
 
+_Note: If you're on an Apple M1 machine, make sure your Node version is >= 16_
+
 ## Authentication
 
 ### UI (quick-start)
@@ -93,3 +95,7 @@ If you want to pass CLI arguments using nx serve, you can use `--args=` and pass
 
 Example:
 `nx serve mock-server --args="./data-provider.js --config=./mock-server-config.js --port=4001"`
+
+To run Platypus using the mock server, start the mock server and then run:
+
+`yarn start mock platypus`
