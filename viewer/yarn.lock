@@ -720,6 +720,7 @@ __metadata:
     "@types/mixpanel-browser": 2.38.0
     "@types/node": 16.11.32
     "@types/offscreencanvas": 2019.6.4
+    "@types/proj4": ^2.5.2
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.3
     "@types/three": 0.139.0
@@ -759,6 +760,7 @@ __metadata:
     moq.ts: 9.0.2
     nock: 13.2.4
     prettier: 2.6.2
+    proj4: ^2.8.0
     random-seed: 0.3.0
     raw-loader: 4.0.2
     rimraf: 3.0.2
@@ -1652,6 +1654,13 @@ __metadata:
   version: 2.4.4
   resolution: "@types/prettier@npm:2.4.4"
   checksum: 2c2cc57efd49c7d8907415a72f96c84a6dd8696dd3bf8aa4ca3a667427bebf71cbfbc912673624bdfc935d272d1c008c639cf155f6449315990a4dc110f0d216
+  languageName: node
+  linkType: hard
+
+"@types/proj4@npm:^2.5.2":
+  version: 2.5.2
+  resolution: "@types/proj4@npm:2.5.2"
+  checksum: f70fb89fe1e234faa164b57095624e054ead1b14653b1eb04e1aa50489ae9a6a30c90518efe571d53f5fcc12a25bee61e8cf8d9cc79b5a01586d051bdad4a992
   languageName: node
   linkType: hard
 
@@ -9175,6 +9184,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"mgrs@npm:1.0.0":
+  version: 1.0.0
+  resolution: "mgrs@npm:1.0.0"
+  checksum: 98b9fa3caff9986868344567996f8dcc833f939c2e140507a00e2ce9a96ef7eaeb81933a749222a2b7bcbc1a4bb6ada6120dda3a5b6af6d72ae332d8990956b9
+  languageName: node
+  linkType: hard
+
 "micromatch@npm:^3.0.4, micromatch@npm:^3.1.10, micromatch@npm:^3.1.4":
   version: 3.1.10
   resolution: "micromatch@npm:3.1.10"
@@ -10500,6 +10516,16 @@ fsevents@^1.2.7:
   version: 0.11.10
   resolution: "process@npm:0.11.10"
   checksum: bfcce49814f7d172a6e6a14d5fa3ac92cc3d0c3b9feb1279774708a719e19acd673995226351a082a9ae99978254e320ccda4240ddc474ba31a76c79491ca7c3
+  languageName: node
+  linkType: hard
+
+"proj4@npm:^2.8.0":
+  version: 2.8.0
+  resolution: "proj4@npm:2.8.0"
+  dependencies:
+    mgrs: 1.0.0
+    wkt-parser: ^1.3.1
+  checksum: 05c46387ac866bba699d50291507f9cfd2eece4806e375e7bc536c28c03af4d4ae8c386ab53a0c4a26a4b1718d5d0b30a6cf972614f4fb997e89bd262348c6b1
   languageName: node
   linkType: hard
 
@@ -13452,6 +13478,13 @@ typescript@4.6.4:
   dependencies:
     string-width: ^1.0.2 || 2 || 3 || 4
   checksum: d5fc37cd561f9daee3c80e03b92ed3e84d80dde3365a8767263d03dacfc8fa06b065ffe1df00d8c2a09f731482fcacae745abfbb478d4af36d0a891fad4834d3
+  languageName: node
+  linkType: hard
+
+"wkt-parser@npm:^1.3.1":
+  version: 1.3.2
+  resolution: "wkt-parser@npm:1.3.2"
+  checksum: 35318a7fb3ef848b9bc9b29fa58d9b9371f8e47354f2a1325cfc9968b1b390334804a963751a5daeaf7d421b735fd85d3fe34d73a44ba2432e1ee5932c87d269
   languageName: node
   linkType: hard
 
