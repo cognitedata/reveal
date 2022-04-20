@@ -15,8 +15,8 @@ There are few special naming cases here to be aware of:
 
 Inside each service folder we should have the following:
 
-| Folder        | Description |
-| :---          | :----       |
+| Folder        | Description                                                    |
+| :------------ | :------------------------------------------------------------- |
 | \_\_fixtures  | generator functions to create objects of this type for testing |
-| \_\_mocks     | network level mocks, one file for each endpoint/request type |
-| \_\_tests\_\_ | hopefully you know what goes in here! |
+| \_\_mocks     | network level mocks, one file for each endpoint/request type   |
+| \_\_tests\_\_ | hopefully you know what goes in here!                          |
