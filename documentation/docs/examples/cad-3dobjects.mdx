@@ -92,57 +92,27 @@ viewer.addObject3D(skyBox);
 ```
 
 This looks a bit better, but the oil rig appears to be floating mid-air at this point. Lets
-add an ocean. A plane is rendered at the sea level and an ocean effect is applied to the plane.
-The example builds upon [the ocean example from ThreeJS](https://threejs.org/examples/?q=ocea#webgl_shaders_ocean).
-
-Note that since the ocean has moving waves we want to render the model continuously and not only
-when camera changes or data is loaded. We do this by repeatedly calling `Cognite3DViewer.requestRedraw()`.
+add an ocean. A plane is rendered at the sea level.
 
 ```js
-import { Water } from 'three/examples/jsm/objects/Water';
-
 // Water
-const waterGeometry = new THREE.PlaneBufferGeometry(6000, 6000);
-const water = new Water(waterGeometry, {
-  textureWidth: 512,
-  textureHeight: 512,
-  waterNormals: new THREE.TextureLoader().load(
-    'https://threejs.org/examples/textures/waternormals.jpg',
-    (texture) => {
+const waterGeometry = new THREE.PlaneBufferGeometry(6000, 6000, 63, 63);
+
+const material = new THREE.MeshBasicMaterial({
+  map: new THREE.TextureLoader().load(
+      'https://threejs.org/examples/textures/water.jpg',
+      (texture) => {
       texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-    }
-  ),
-  waterColor: 0x442e1f,
+    }),
+  color: { value: new THREE.Color(0x0099ff)},
+  side: THREE.DoubleSide
 });
+
+const water = new THREE.Mesh(waterGeometry, material);
 // Make the ocean horizontal
 water.rotation.x = -Math.PI / 2;
 water.position.copy(modelCenterAtSeaLevel);
 viewer.addObject3D(water);
-
-function updateOcean() {
-  const time = performance.now() * 0.001;
-  water.material.uniforms['time'].value = time;
-  viewer.requestRedraw();
-  requestAnimationFrame(updateOcean);
-}
-updateOcean();
-```
-
-The user is available to move below sea level. Let's restrict the movement to avoid this.
-
-```js
-viewer.on('cameraChange', (position, target) => {
-  // Keep camera above sea level
-  if (position.y < 20) {
-    position.y = 21;
-    viewer.setCameraPosition(position);
-  }
-  // Clamp point within our skybox to avoid moving outside the defined 'world'
-  if (!boundingSphere.containsPoint(position)) {
-    boundingSphere.clampPoint(position, position);
-    viewer.setCameraPosition(position);
-  }
-});
 ```
 
 ### Interactive example
@@ -150,9 +120,6 @@ viewer.on('cameraChange', (position, target) => {
 Below is the complete code for adding a skybox and ocean to the scene.
 
 ```jsx runnable
-// The following has been imported outside this scope:
-// import { Water } from 'three/examples/jsm/objects/Water';
-// const skyUrl = 'https://...'
 const modelCenterAtSeaLevel = model
   .getModelBoundingBox()
   .getCenter(new THREE.Vector3());
@@ -171,44 +138,27 @@ skyBox.position.copy(modelCenterAtSeaLevel);
 viewer.addObject3D(skyBox);
 
 // Water
-var waterGeometry = new THREE.PlaneBufferGeometry(6000, 6000);
-water = new Water(waterGeometry, {
-  textureWidth: 512,
-  textureHeight: 512,
-  waterNormals: new THREE.TextureLoader().load(
-    'https://threejs.org/examples/textures/waternormals.jpg',
-    (texture) => {
+const waterGeometry = new THREE.PlaneBufferGeometry(6000, 6000, 63, 63);
+
+const material = new THREE.MeshBasicMaterial({
+  map: new THREE.TextureLoader().load(
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Water_texture_1390894_Nevit.jpg/2048px-Water_texture_1390894_Nevit.jpg',
+      (texture) => {
       texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-    }
-  ),
-  waterColor: 0x442e1f,
+    }),
+  color: { value: new THREE.Color(0x0099ff)},
+  side: THREE.DoubleSide
 });
 
+const water = new THREE.Mesh(waterGeometry, material);
 // Make the ocean horizontal
 water.rotation.x = -Math.PI / 2;
 water.position.copy(modelCenterAtSeaLevel);
 viewer.addObject3D(water);
 
-function updateOcean() {
-  const time = performance.now() * 0.001;
-  water.material.uniforms['time'].value = time;
+//Make sure the Skybox & ocean plane have applied textures
+setTimeout(() => {
   viewer.requestRedraw();
-  requestAnimationFrame(updateOcean);
-}
-updateOcean();
+}, 100);
 
-// Restrict camera movement
-const boundingSphere = new THREE.Sphere(modelCenterAtSeaLevel, 2000);
-viewer.on('cameraChange', (position, target) => {
-  // Keep camera above sea level
-  if (position.y < 20) {
-    position.y = 21;
-    viewer.setCameraPosition(position);
-  }
-  // Clamp point within our skybox to avoid moving outside the defined 'world'
-  if (!boundingSphere.containsPoint(position)) {
-    boundingSphere.clampPoint(position, position);
-    viewer.setCameraPosition(position);
-  }
-});
 ```
