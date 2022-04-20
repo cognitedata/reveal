@@ -45,6 +45,7 @@ export interface ParsedDocument {
   potentialDiscrepancies: PotentialDiscrepancies[];
   linking: DocumentLink[];
   viewBox: Rect;
+  lineNumbers: string[];
 }
 
 export type DocumentForUpload =

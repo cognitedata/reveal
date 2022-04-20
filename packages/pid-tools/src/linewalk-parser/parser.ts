@@ -114,6 +114,7 @@ const parseDocument = (
     potentialDiscrepancies: [],
     type: graph.documentMetadata.type === DocumentType.pid ? 'p&id' : 'iso',
     viewBox: graph.viewBox,
+    lineNumbers: graph.lineNumbers,
   };
 };
 
