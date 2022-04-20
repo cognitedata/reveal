@@ -1,5 +1,5 @@
 import { Colors } from '@cognite/cogs.js';
-import { DoubleDatapoint, Timeseries } from '@cognite/sdk';
+import { DatapointAggregate, DoubleDatapoint, Timeseries } from '@cognite/sdk';
 import Loading from 'components/utils/Loading';
 import useElementSize from 'hooks/useElementSize';
 import useDatapointsQuery from 'hooks/useQuery/useDatapointsQuery';
@@ -15,22 +15,30 @@ import {
 
 export type TimeSeriesDetailedPreviewProps = {
   timeSeries: Timeseries;
+  start?: Date;
+  end?: Date;
 };
 
 const TimeSeriesDetailedPreview = ({
   timeSeries,
+  start,
+  end,
 }: TimeSeriesDetailedPreviewProps) => {
   const [containerRef, { width, height }] = useElementSize();
   const {
     data: datapoints,
     isLoading,
     error,
-  } = useDatapointsQuery([{ id: timeSeries.id }]);
+  } = useDatapointsQuery(
+    [{ id: timeSeries.id }],
+    { useAggregates: true, limit: 1000 },
+    start && end ? [start?.valueOf(), end?.valueOf()] : undefined
+  );
   const data = useMemo(
     () =>
       (datapoints?.[0]?.datapoints || []).map((dp) => ({
         x: dp.timestamp,
-        y: (dp as DoubleDatapoint).value,
+        y: (dp as DatapointAggregate).average,
       })),
     [datapoints]
   );
@@ -53,6 +61,9 @@ const TimeSeriesDetailedPreview = ({
         scale={{ x: 'time' }}
         width={width}
         height={height}
+        domain={
+          start && end ? { x: [start.valueOf(), end.valueOf()] } : undefined
+        }
         containerComponent={
           <VictoryVoronoiContainer
             voronoiDimension="x"

@@ -7,8 +7,11 @@ export const Container = styled.div`
 `;
 
 export const Preview = styled.div`
-  margin-right: 10px;
+  margin-right: 16px;
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 `;
 
 export const Sidebar = styled.div`
