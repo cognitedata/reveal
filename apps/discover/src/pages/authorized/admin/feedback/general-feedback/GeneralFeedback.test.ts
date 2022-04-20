@@ -3,7 +3,6 @@ import {
   fireEvent,
   waitForElementToBeRemoved,
 } from '@testing-library/react';
-import noop from 'lodash/noop';
 
 import { testRenderer } from '__test-utils/renderer';
 import { defaultTestUser } from '__test-utils/testdata.utils';
@@ -75,9 +74,10 @@ describe.skip('Admin -> General feedback', () => {
 
   it(`should dispatch toggleGeneralFeedbackDeleted when clicking 'show deleted'`, async () => {
     await defaultTestInit();
-    const toggleGeneralFeedbackDeletedSpy = jest
-      .spyOn(feedbackActions, 'toggleGeneralFeedbackDeleted')
-      .mockImplementation(() => noop);
+    const toggleGeneralFeedbackDeletedSpy = jest.spyOn(
+      feedbackActions,
+      'toggleFeedbackDelete'
+    );
 
     await screen.findByText('New!');
 

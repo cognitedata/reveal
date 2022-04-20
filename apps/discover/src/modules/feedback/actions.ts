@@ -1,114 +1,17 @@
-import { ThunkResult } from 'core/types';
+import { createAction } from '@reduxjs/toolkit';
+
 import {
-  SET_ITEM,
-  SET_ROWS_PER_PAGE,
-  SORT_ASCENDING_GENERAL,
-  SORT_FIELD_GENERAL,
-  TOGGLE_DELETED_GENERAL,
-  TOGGLE_DELETED_OBJECT,
-  SORT_FIELD_OBJECT,
-  SORT_ASCENDING_OBJECT,
+  CLEAR_OBJECT_FEEDBACK_MODAL_DOCUMENT_ID,
   SET_OBJECT_FEEDBACK_MODAL_DOCUMENT_ID,
-  FeedbackItem,
+  TOGGLE_DELETED_FEEDBACK,
 } from 'modules/feedback/types';
 
-function setItem(item: FeedbackItem): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({ type: SET_ITEM, item });
-  };
-}
+export const setObjectFeedbackModalDocumentId = createAction<string>(
+  SET_OBJECT_FEEDBACK_MODAL_DOCUMENT_ID
+);
 
-function setRowsPerPage(number: number): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({ type: SET_ROWS_PER_PAGE, number });
-  };
-}
+export const clearObjectFeedbackModalDocumentId = createAction(
+  CLEAR_OBJECT_FEEDBACK_MODAL_DOCUMENT_ID
+);
 
-function setGeneralFeedbackSortField(field: string): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({
-      type: SORT_FIELD_GENERAL,
-      field,
-    });
-  };
-}
-
-function setGeneralFeedbackSortAscending(
-  isAscending: boolean
-): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({
-      type: SORT_ASCENDING_GENERAL,
-      asc: isAscending,
-    });
-  };
-}
-
-export function toggleGeneralFeedbackDeleted(): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({
-      type: TOGGLE_DELETED_GENERAL,
-    });
-  };
-}
-
-function setObjectFeedbackSortField(field: string): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({
-      type: SORT_FIELD_OBJECT,
-      field,
-    });
-  };
-}
-
-function setObjectFeedbackSortAscending(
-  isAscending: boolean
-): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({
-      type: SORT_ASCENDING_OBJECT,
-      asc: isAscending,
-    });
-  };
-}
-
-export function toggleObjectFeedbackDeleted(): ThunkResult<void> {
-  return (dispatch) => {
-    dispatch({
-      type: TOGGLE_DELETED_OBJECT,
-    });
-  };
-}
-
-export const setObjectFeedbackModalDocumentId = (
-  documentId: string
-): ThunkResult<void> => {
-  return (dispatch) => {
-    dispatch({
-      type: SET_OBJECT_FEEDBACK_MODAL_DOCUMENT_ID,
-      documentId,
-    });
-  };
-};
-
-export const clearObjectFeedbackModalDocumentId = (): ThunkResult<void> => {
-  return (dispatch) => {
-    dispatch({
-      type: SET_OBJECT_FEEDBACK_MODAL_DOCUMENT_ID,
-      documentId: undefined,
-    });
-  };
-};
-
-export const feedbackActions = {
-  setItem,
-  setRowsPerPage,
-  // General feedback
-  setGeneralFeedbackSortField,
-  setGeneralFeedbackSortAscending,
-  toggleGeneralFeedbackDeleted,
-  // Object feedback
-  setObjectFeedbackSortField,
-  setObjectFeedbackSortAscending,
-  toggleObjectFeedbackDeleted,
-};
+export const toggleFeedbackDelete = createAction(TOGGLE_DELETED_FEEDBACK);

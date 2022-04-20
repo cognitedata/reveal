@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { CookieConsent as CookieConsentComponent } from 'components/cookie-consent';
-import { userActions } from 'modules/user/actions';
+import { initializeConsent, setConsent } from 'modules/user/actions';
 import { useUserHasGivenConsent } from 'modules/user/selectors';
 
 export const CookieConsent: React.FC = () => {
@@ -11,11 +11,11 @@ export const CookieConsent: React.FC = () => {
   const hasGivenConsent = useUserHasGivenConsent();
 
   const handleSetConsent = () => {
-    dispatch(userActions.setConsent());
+    dispatch(setConsent());
   };
 
   React.useEffect(() => {
-    dispatch(userActions.initializeConsent());
+    dispatch(initializeConsent());
   }, []);
 
   React.useEffect(() => {

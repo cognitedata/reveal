@@ -16,7 +16,7 @@ import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { NavigationTab } from 'pages/types';
 
-import { ViewDeletedFilesSwitch } from './common/viewDeletedFilesSwitch';
+import { ViewArchivedFeedback } from './common/ViewArchivedFeedback';
 import DocumentFeedback from './document-feedback';
 import { TabBar, FeedbackContent } from './elements';
 import GeneralFeedback from './general-feedback';
@@ -85,7 +85,7 @@ export const Feedback = () => {
                 </SegmentedControl>
               </div>
               <div>
-                <ViewDeletedFilesSwitch />
+                <ViewArchivedFeedback />
               </div>
             </TabBar>
             <Switch>

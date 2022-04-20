@@ -1,4 +1,5 @@
 export const SET_CONSENT = 'USERS_SET_CONSENT';
+export const INITIALIZE_CONSENT = 'INITIALIZE_CONSENT';
 export const COOKIE_CONSENT = 'COOKIE_CONSENT';
 
 export interface UserState {

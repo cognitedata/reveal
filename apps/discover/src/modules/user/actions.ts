@@ -1,27 +1,6 @@
-import { storage } from '@cognite/react-container';
+import { createAction } from '@reduxjs/toolkit';
 
-import {
-  SET_CONSENT,
-  COOKIE_CONSENT,
-  SetConsent,
-  InitializeConsent,
-} from './types';
+import { SET_CONSENT, INITIALIZE_CONSENT } from './types';
 
-export function setConsent(): SetConsent {
-  storage.setItem(COOKIE_CONSENT, true);
-  return { type: SET_CONSENT, hasGivenConsent: true };
-}
-
-export function initializeConsent(): InitializeConsent {
-  return {
-    type: SET_CONSENT,
-    hasGivenConsent: storage.getItem<boolean>(COOKIE_CONSENT, false) as boolean,
-  };
-}
-
-export const userActions = {
-  initializeConsent,
-  setConsent,
-};
-
-export default userActions;
+export const setConsent = createAction(SET_CONSENT);
+export const initializeConsent = createAction(INITIALIZE_CONSENT);
