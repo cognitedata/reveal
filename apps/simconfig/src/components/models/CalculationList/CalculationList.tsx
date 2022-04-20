@@ -10,8 +10,10 @@ import {
   Dropdown,
   Graphic,
   Icon,
+  Label,
   Menu,
   Skeleton,
+  Tooltip,
   toast,
 } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
@@ -23,12 +25,14 @@ import type {
 } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useGetModelCalculationListQuery,
+  useGetModelFileQuery,
   useRunModelCalculationMutation,
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { GraphicContainer } from 'components/shared/elements';
 import { CalculationDescriptionInfoDrawer } from 'pages/CalculationConfiguration/steps/infoDrawers/CalculationDescriptionInfoDrawer';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
+import { isBHPApproxMethodWarning } from 'utils/common';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
 import { isSuccessResponse } from 'utils/responseUtils';
@@ -75,6 +79,12 @@ export function CalculationList({
         modelName,
       },
       { pollingInterval: shouldPoll ? STATUS_POLLING_INTERVAL : undefined }
+    );
+
+  const { data: modelFile, isFetching: isFetchingModelFile } =
+    useGetModelFileQuery(
+      { project, modelName, simulator },
+      { skip: simulator === 'UNKNOWN' }
     );
 
   const isRunTriggered = useCallback(
@@ -228,6 +238,29 @@ export function CalculationList({
               <CalculationDescriptionInfoDrawer
                 calculation={calculation.configuration.calculationType}
               />
+              {!isFetchingModelFile &&
+              modelFile?.metadata &&
+              isBHPApproxMethodWarning(
+                simulator,
+                modelFile.metadata,
+                calculation.configuration
+              ) ? (
+                <Tooltip
+                  content={
+                    <span>
+                      This calculation uses PROSPER&apos;s &apos;BHP from
+                      WHP&apos; calculation, which may not produce valid results
+                      when the temperature model is not &apos;Rough
+                      Approximation&apos;
+                    </span>
+                  }
+                  position="right"
+                  elevated
+                  wrapped
+                >
+                  <Label icon="WarningTriangle" variant="warning" />
+                </Tooltip>
+              ) : undefined}
             </span>
             <span className="schedule">
               <CalculationScheduleIndicator
