@@ -72,7 +72,7 @@ export const getWellColumns = (userPreferredUnit = ''): ColumnMap<Well> => {
     kbElevation: {
       Header: `${KB_ELEVATION_TEXT} (${userPreferredUnit})`,
       accessor: 'kbElevation', // this is an empty cell in well table
-      width: '100px',
+      width: '130px',
       order: 7,
     },
   };

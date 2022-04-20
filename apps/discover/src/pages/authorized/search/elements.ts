@@ -147,7 +147,6 @@ export const Container = styled.div`
 
 export const FavoriteIndicatorContainer = styled.div`
   background: var(--cogs-bg-default);
-  padding: 0px ${sizes.small};
   i {
     color: var(--cogs-bg-status-small--accent);
   }

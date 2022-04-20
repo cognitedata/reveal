@@ -46,7 +46,7 @@ export const getWellboreColumns = (
     kbElevation: {
       Header: KB_ELEVATION_TEXT,
       accessor: (wellbore) => getKbElevation(wellbore, userPreferredUnit),
-      width: '100px',
+      width: '130px',
     },
   };
 };

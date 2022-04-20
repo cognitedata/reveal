@@ -124,7 +124,7 @@ export const columnMap: ColumnMap<DocumentType> = {
   pageCount: {
     Header: 'No. of pages',
     accessor: 'pageCount',
-    width: '50px',
+    width: '90px',
     order: 10,
   },
 };

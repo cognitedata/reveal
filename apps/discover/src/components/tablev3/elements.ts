@@ -120,6 +120,7 @@ export const OverlayCell = styled.div`
 
 export const OverlayContentWrapper = styled(HoverContentWrapper)`
   opacity: 1;
+  background: border-box;
 `;
 
 export const ExpandedRow = (maxWidth: string) => css`
