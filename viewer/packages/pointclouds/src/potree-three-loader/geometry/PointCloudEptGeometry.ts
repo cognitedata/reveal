@@ -8,6 +8,7 @@ import { IPointCloudTreeGeometry } from './IPointCloudTreeGeometry';
 
 import proj4 from 'proj4';
 import { ModelDataProvider } from '@reveal/modeldata-api';
+import { toVector3, toBox3 } from './translationUtils';
 
 type SchemaEntry = {
   name: string;
@@ -15,24 +16,10 @@ type SchemaEntry = {
   offset: number;
 };
 
-export class Utils {
-  static toVector3(v: number[], offset?: number): THREE.Vector3 {
-    return new THREE.Vector3().fromArray(v, offset || 0);
-  }
-
-  static toBox3(b: number[]): THREE.Box3 {
-    return new THREE.Box3(Utils.toVector3(b), Utils.toVector3(b, 3));
-  }
-
-  static findDim(schema: SchemaEntry[], name: string): SchemaEntry {
-    const dim = schema.find(dim => dim.name == name);
-    if (!dim) throw new Error('Failed to find ' + name + ' in schema');
-    return dim;
-  }
-
-  static sphereFrom(b: THREE.Box3): THREE.Sphere {
-    return b.getBoundingSphere(new THREE.Sphere());
-  }
+function findDim(schema: SchemaEntry[], name: string): SchemaEntry {
+  const dim = schema.find(dim => dim.name == name);
+  if (!dim) throw new Error('Failed to find ' + name + ' in schema');
+  return dim;
 }
 
 export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
@@ -106,19 +93,19 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
     const bounds = info.bounds;
     const boundsConforming = info.boundsConforming;
 
-    const xyz = [Utils.findDim(schema, 'X'), Utils.findDim(schema, 'Y'), Utils.findDim(schema, 'Z')];
+    const xyz = [findDim(schema, 'X'), findDim(schema, 'Y'), findDim(schema, 'Z')];
     const scale = xyz.map(d => d.scale || 1);
     const offset = xyz.map(d => d.offset || 0);
-    this._eptScale = Utils.toVector3(scale);
-    this._eptOffset = Utils.toVector3(offset);
+    this._eptScale = toVector3(scale);
+    this._eptOffset = toVector3(offset);
 
     this._url = url;
 
     this._schema = schema;
     this._span = info.span || info.ticks;
-    this._boundingBox = Utils.toBox3(bounds);
-    this._tightBoundingBox = Utils.toBox3(boundsConforming);
-    this._offset = Utils.toVector3([0, 0, 0]);
+    this._boundingBox = toBox3(bounds);
+    this._tightBoundingBox = toBox3(boundsConforming);
+    this._offset = toVector3([0, 0, 0]);
 
     this._projection = null;
 

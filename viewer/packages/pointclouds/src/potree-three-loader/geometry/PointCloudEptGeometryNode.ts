@@ -1,7 +1,8 @@
 import { IPointCloudTreeGeometryNode } from './IPointCloudTreeGeometryNode';
 import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
 import * as THREE from 'three';
-import { PointCloudEptGeometry, EptKey, Utils } from './PointCloudEptGeometry';
+import { PointCloudEptGeometry, EptKey } from './PointCloudEptGeometry';
+import { sphereFrom } from './translationUtils';
 
 import {
   globalNumNodesLoading,
@@ -135,7 +136,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     this._geometry = undefined;
     this._boundingBox = this._key.b;
     this._spacing = this._ept.spacing / Math.pow(2, this._key.d);
-    this._boundingSphere = Utils.sphereFrom(this._boundingBox);
+    this._boundingSphere = sphereFrom(this._boundingBox);
 
     this._numPoints = -1;
 
