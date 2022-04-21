@@ -14,7 +14,6 @@ load("//rules/publish:publish_fas.bzl", "publish_fas")
 load("//rules/publish:publish_storybook.bzl", "publish_storybook")
 load("//rules/test:cypress_batch_test.bzl", "cypress_batch_test")
 load("//rules/build_sed:build_sed.bzl", "build_sed")
-load("//rules/container:container_build.bzl", "container_build")
 load("//rules/storybook:move_assets.bzl", "move_assets")
 
 # Filename conventions described at
@@ -461,22 +460,22 @@ baker_bake(
 #     environment = "release",
 # )
 
-container_build(
-    name = "fas_staging",
-    app_id = "explorer",
-    app_name = "explorer",
-    build_layer = ":build",
-    config_map = "config/config-staging.json",
-    docker_repo = "cognitedata/apps/explorer-staging",
-    environment = "staging",
-)
+# container_build(
+#     name = "fas_staging",
+#     app_id = "explorer",
+#     app_name = "explorer",
+#     build_layer = ":build",
+#     config_map = "config/config-staging.json",
+#     docker_repo = "cognitedata/apps/explorer-staging",
+#     environment = "staging",
+# )
 
-container_build(
-    name = "fas_prod",
-    app_id = "explorer",
-    app_name = "explorer",
-    build_layer = ":build",
-    config_map = "config/config-prod.json",
-    docker_repo = "cognitedata/apps/explorer",
-    environment = "production",
-)
+# container_build(
+#     name = "fas_prod",
+#     app_id = "explorer",
+#     app_name = "explorer",
+#     build_layer = ":build",
+#     config_map = "config/config-prod.json",
+#     docker_repo = "cognitedata/apps/explorer",
+#     environment = "production",
+# )
