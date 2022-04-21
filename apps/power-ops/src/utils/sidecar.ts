@@ -12,7 +12,7 @@ const PROD = false;
 // examples: bluefield, greenfield, ew1, bp-northeurope, azure-dev, bp
 // NOTE: leave on 'azure-dev' for testing in the PR's since that is the only place we have the FAKEIdp currently for this project:
 const CLUSTER = 'az-power-no-northeurope';
-const LOCAL_SERVICES: Service[] = [];
+const LOCAL_SERVICES: Service[] = ['power-ops-api', 'sniffer-service'];
 // #
 // #
 // #

@@ -6,11 +6,13 @@ import {
 } from '@cognite/react-container';
 import { CogniteClient } from '@cognite/sdk';
 import { useFetchSnifferJobs } from 'queries/useFetchSnifferJobs';
-import { Flex, Label } from '@cognite/cogs.js';
+import { Flex, Label, Button } from '@cognite/cogs.js';
 import axios from 'axios';
 import sidecar from 'utils/sidecar';
 
 import { Container } from '../elements';
+
+import { StyledTable } from './elements';
 
 const MonitoringPage: React.FC = () => (
   <AuthConsumer>
@@ -64,14 +66,14 @@ const Monitoring = ({ client }: { client: CogniteClient }) => {
       }}
     >
       <Flex gap={8} style={{ alignSelf: 'end', marginBottom: '20px' }}>
-        <button type="button" onClick={() => startJobs()}>
+        <Button type="secondary" onClick={() => startJobs()}>
           Start all jobs
-        </button>
-        <button type="button" onClick={() => stopJobs()}>
+        </Button>
+        <Button type="secondary" onClick={() => stopJobs()}>
           Stop all jobs
-        </button>
+        </Button>
       </Flex>
-      <table style={{ textAlign: 'left', borderSpacing: '8px' }}>
+      <StyledTable>
         <thead>
           <tr>
             <th>Job Name</th>
@@ -116,7 +118,7 @@ const Monitoring = ({ client }: { client: CogniteClient }) => {
               );
             })}
         </tbody>
-      </table>
+      </StyledTable>
     </Container>
   );
 };

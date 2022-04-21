@@ -1,10 +1,11 @@
-import { memo, useState, useContext, useEffect, useMemo } from 'react';
-import { Button } from '@cognite/cogs.js';
+import { memo, useContext, useEffect, useMemo } from 'react';
+import { Flex, Button } from '@cognite/cogs.js';
 import { AuthConsumer, AuthContext } from '@cognite/react-container';
+import { AuthenticatedUser } from '@cognite/auth-utils';
 import { CogniteClient, CogniteEvent } from '@cognite/sdk';
 import { SnifferEvent } from '@cognite/power-ops-api-types';
 import { EDAContext } from 'providers/edaProvider';
-import { useFetchEvents } from 'queries/useFetchEvents';
+import { useFetchProcesses } from 'queries/useFetchProcesses';
 
 import { Container } from '../elements';
 
@@ -22,55 +23,102 @@ export type Process = {
   event?: CogniteEvent;
 };
 
-const SHOP_PROCESS_PREFIX = 'POWEROPS_BID_PROCESS';
+const PROCESS_PREFIX = 'POWEROPS_BID_PROCESS';
 
 const ProcessWrapper: React.FC = () => (
   <AuthConsumer>
-    {({ client }: AuthContext) =>
-      client ? <ProcessesPage client={client} /> : null
+    {({ client, authState }: AuthContext) =>
+      client ? <ProcessesPage client={client} authState={authState} /> : null
     }
   </AuthConsumer>
 );
 
-const ProcessesPage = ({ client }: { client: CogniteClient }) => {
+const ProcessesPage = ({
+  client,
+  authState,
+}: {
+  client: CogniteClient;
+  authState: AuthenticatedUser | undefined;
+}) => {
   const { EDAEvents } = useContext(EDAContext);
-  const [processes, setProcesses] = useState<Process[]>([]);
 
-  const { data: events, refetch: refetchEvents } = useFetchEvents({
-    client,
-    processType: SHOP_PROCESS_PREFIX,
+  const { data: processes, refetch: refetchProcesses } = useFetchProcesses({
+    project: client.project,
+    processTypes: [
+      'POWEROPS_BID_PROCESS',
+      'POWEROPS_SHOP_RUN',
+      'POWEROPS_FUNCTIONAL_CALL',
+    ],
+    token: authState?.token,
   });
-
-  const getProcessList = async (): Promise<void> => {
-    const transformedData = events?.map((row) => {
-      return {
-        id: row.id,
-        name: row.type!,
-        externalId: row.externalId!,
-        startTime: '',
-        endTime: '',
-        time: row.createdTime,
-        status: 'Fetching status',
-      };
-    });
-
-    if (transformedData) setProcesses(transformedData);
-  };
 
   const startNewProcess = async (type: string) => {
     const dataSets = await client?.datasets.retrieve([
       { externalId: 'uc:002:sandbox' },
     ]);
-    const externalId = `${SHOP_PROCESS_PREFIX}_`.concat(Date.now().toString());
+    const externalId = `${PROCESS_PREFIX}_`.concat(Date.now().toString());
+    const mappingExternalId1 =
+      'SHOP_OE_incremental_mapping_scenario_1_1650468154000';
+    const mappingExternalId2 =
+      'SHOP_OE_incremental_mapping_scenario_2_1650468154000';
+    const matrixConfigId = 'SHOP_OE_bid_matrix_generator_config';
+
+    await client?.relationships.create([
+      {
+        externalId: `${externalId}.${mappingExternalId1}`,
+        sourceExternalId: externalId,
+        sourceType: 'event',
+        targetExternalId: mappingExternalId1,
+        targetType: 'sequence',
+        dataSetId: dataSets[0].id,
+        labels: [
+          { externalId: 'relationship_to.incremental_mapping_sequence' },
+        ],
+      },
+    ]);
+    await client?.relationships.create([
+      {
+        externalId: `${externalId}.${mappingExternalId2}`,
+        sourceExternalId: externalId,
+        sourceType: 'event',
+        targetExternalId: mappingExternalId2,
+        targetType: 'sequence',
+        dataSetId: dataSets[0].id,
+        labels: [
+          { externalId: 'relationship_to.incremental_mapping_sequence' },
+        ],
+      },
+    ]);
+    await client?.relationships.create([
+      {
+        externalId: `${externalId}.${matrixConfigId}`,
+        sourceExternalId: externalId,
+        sourceType: 'event',
+        targetExternalId: matrixConfigId,
+        targetType: 'sequence',
+        dataSetId: dataSets[0].id,
+        labels: [
+          {
+            externalId: 'relationship_to.bid_matrix_generator_config_sequence',
+          },
+        ],
+      },
+    ]);
     await client?.events.create([
       {
         externalId,
-        dataSetId: dataSets && dataSets[0].id,
+        dataSetId: dataSets[0].id,
         type,
         metadata: {
+          'bid:date': '2022-04-20',
+          'bid:bid_matrix_generator_config_external_id':
+            'SHOP_OE_bid_matrix_generator_config',
+          'shop:starttime': '2022-04-19 00:00:00',
+          'shop:endtime': '2022-04-30 00:00:00',
           'shop:watercourse': 'OE',
-          'shop:starttime': '2022-02-16 00:00:00',
-          'shop:endtime': '2022-02-28 00:00:00',
+          'shop:incremental_mapping_external_ids': `[${mappingExternalId1},${mappingExternalId2}]`,
+          'bid:main_scenario_incremental_mapping_external_id':
+            mappingExternalId1,
         },
       },
     ]);
@@ -83,21 +131,14 @@ const ProcessesPage = ({ client }: { client: CogniteClient }) => {
     if (!event) return;
 
     switch (event.type) {
+      case 'POWEROPS_BID_PROCESS':
       case 'POWEROPS_SHOP_RUN':
-        refetchEvents();
+      case 'POWEROPS_FUNCTIONAL_CALL':
+      case 'POWEROPS_PROCESS_FAILED':
+      case 'POWEROPS_PROCESS_FINISHED':
+        refetchProcesses();
         break;
     }
-  };
-
-  const updateProcess = (externalId: string, newData: Process) => {
-    setProcesses(
-      processes.map((p) => {
-        if (p.externalId === externalId) {
-          return newData;
-        }
-        return p;
-      })
-    );
   };
 
   useEffect(() => {
@@ -110,33 +151,24 @@ const ProcessesPage = ({ client }: { client: CogniteClient }) => {
     };
   }, [processEvent]);
 
-  useEffect(() => {
-    if (events) {
-      getProcessList();
-    }
-  }, [events]);
-
   return (
-    <Container
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyItems: 'start',
-      }}
-    >
-      <Button
-        type="primary"
-        onClick={() => startNewProcess('POWEROPS_SHOP_RUN')}
+    <>
+      <Flex>
+        <Button type="primary" onClick={() => startNewProcess(PROCESS_PREFIX)}>
+          New Bid Process
+        </Button>
+      </Flex>
+      <Container
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyItems: 'start',
+        }}
       >
-        Run SHOP
-      </Button>
-      <ProcessList
-        client={client}
-        processes={useMemo(() => processes, [processes])}
-        updateProcess={updateProcess}
-      />
-    </Container>
+        <ProcessList processes={useMemo(() => processes, [processes])} />
+      </Container>
+    </>
   );
 };
 

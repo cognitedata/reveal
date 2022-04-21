@@ -1,8 +1,5 @@
 import { Flex, Label } from '@cognite/cogs.js';
-import { CogniteClient, CogniteEvent } from '@cognite/sdk';
-import { fetchSingleEvent } from 'queries/useFetchEvents';
-import { useEffect, useMemo } from 'react';
-import { useQueries } from 'react-query';
+import { useMemo } from 'react';
 import {
   useTable,
   useFilters,
@@ -13,35 +10,21 @@ import {
 
 import { Process } from './Processes';
 
-const ProcessList = (props: {
-  processes: Process[];
-  client: CogniteClient;
-  updateProcess: (externalId: string, newData: Process) => void;
-}) => {
-  const { processes, client, updateProcess } = props;
-
+const ProcessList = (props: { processes: Process[] | undefined }) => {
+  const { processes } = props;
   const columns: Column[] = [
     {
-      accessor: 'name',
-      Header: 'Process Name',
+      accessor: 'eventType',
+      Header: 'Process Type',
     },
     {
-      accessor: 'externalId',
+      accessor: 'eventExternalId',
       Header: 'Extenal ID',
       Cell: ({ value }) => useMemo(() => <small>{value}</small>, []),
     },
     {
-      accessor: 'startTime',
-      Header: 'From',
-    },
-    {
-      accessor: 'endTime',
-      Header: 'To',
-    },
-    {
-      accessor: 'time',
-      Header: 'Executed',
-      Cell: ({ value }) => value.toLocaleString(),
+      accessor: 'eventCreationTime',
+      Header: 'Started at',
     },
     {
       accessor: 'status',
@@ -50,8 +33,14 @@ const ProcessList = (props: {
         useMemo(
           () => (
             <Label
-              variant={value === 'Bid Matrix Ready' ? 'success' : 'warning'}
-              icon={value === 'Bid Matrix Ready' ? false : 'Loader'}
+              variant={
+                // eslint-disable-next-line no-nested-ternary
+                value === 'FINISHED'
+                  ? 'success'
+                  : value === 'FAILED'
+                  ? 'danger'
+                  : 'warning'
+              }
               iconPlacement="right"
             >
               {value}
@@ -62,28 +51,22 @@ const ProcessList = (props: {
     },
   ];
 
-  return (
+  return processes ? (
     <ProcessTable
       tableOptions={{
         columns,
         data: processes,
-        initialState: { pageIndex: 0, pageSize: 10 },
+        initialState: { pageIndex: 0, pageSize: 30 },
       }}
-      updateProcess={updateProcess}
-      client={client}
     />
-  );
+  ) : null;
 };
 
 // Create a component to render your table
 const ProcessTable = ({
   tableOptions,
-  client,
-  updateProcess,
 }: {
   tableOptions: { columns: Column[]; data: Process[]; initialState: any };
-  client: CogniteClient;
-  updateProcess: (externalId: string, newData: Process) => void;
 }) => {
   // Use the useTable hook to create your table configuration
   const instance = useTable(
@@ -115,45 +98,18 @@ const ProcessTable = ({
     canNextPage,
   } = instance;
 
-  const eventQueries = useQueries(
-    page.map((row) => {
-      return {
-        queryKey: ['process', row.values.externalId],
-        queryFn: () =>
-          fetchSingleEvent({
-            client,
-            externalId: row.values.externalId,
-          }),
-      };
-    })
-  );
-
-  useEffect(() => {
-    eventQueries
-      .filter((query) => query?.data?.[0])
-      .map((query) => query?.data?.[0])
-      .forEach((event: CogniteEvent | undefined) => {
-        if (event?.externalId) {
-          const process = tableOptions.data.find(
-            (p) => p.externalId === event.externalId
-          );
-          if (
-            event.metadata &&
-            event.metadata?.['shop:endtime'] !== process?.endTime
-          ) {
-            updateProcess(event.externalId, {
-              id: event.id,
-              name: event.type!,
-              externalId: event.externalId!,
-              startTime: event.metadata?.['shop:endtime'] || '',
-              endTime: event.metadata?.['shop:endtime'] || '',
-              time: event.createdTime,
-              status: 'Returned from server',
-            });
-          }
-        }
-      });
-  }, [eventQueries]);
+  // const eventQueries = useQueries(
+  //   page.map((row) => {
+  //     return {
+  //       queryKey: ['process', row.values.externalId],
+  //       queryFn: () =>
+  //         fetchSingleEvent({
+  //           client,
+  //           externalId: row.values.externalId,
+  //         }),
+  //     };
+  //   })
+  // );
 
   // Render the UI for your table
   return (
