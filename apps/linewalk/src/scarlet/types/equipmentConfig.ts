@@ -6,14 +6,23 @@ export enum EquipmentType {
   VESSEL = 'vessel',
 }
 
+export type ComponentGroup = {
+  type: EquipmentComponentType;
+  label: string;
+  componentElementKeys: string[];
+};
+
+export type DataElementConfig = {
+  key: string;
+  label: string;
+  type?: DataElementType;
+  unit?: DataElementUnit;
+  values?: string[];
+};
+
 export type EquipmentConfig = {
   [key in 'componentElements' | 'equipmentElements']: {
-    [key: string]: {
-      key: string;
-      label: string;
-      type?: DataElementType;
-      unit?: DataElementUnit;
-    };
+    [key: string]: DataElementConfig;
   };
 } & {
   equipmentTypes: {
@@ -22,11 +31,7 @@ export type EquipmentConfig = {
       label: string;
       equipmentElementKeys: string[];
       componentTypes: {
-        [key: string]: {
-          type: EquipmentComponentType;
-          label: string;
-          componentElementKeys: string[];
-        };
+        [key: string]: ComponentGroup;
       };
     };
   };

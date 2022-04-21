@@ -11,11 +11,12 @@ export enum DataElementType {
   FLOAT = 'float',
   BOOLEAN = 'bool',
   DATE = 'date',
+  ENUM = 'enum',
 }
 
 export enum DataElementUnit {
   PSI = 'psi',
-  FAHRENHEIT = 'F',
+  FAHRENHEIT = 'fahrenheit',
   FEET = 'feet',
   DEGREES = 'degrees',
   INCHES = 'inches',

@@ -1,11 +1,6 @@
 import { useState } from 'react';
 import { SegmentedControl } from '@cognite/cogs.js';
-import {
-  useComponent,
-  useComponentName,
-  useConnectedDataElements,
-  useDataElementConfig,
-} from 'scarlet/hooks';
+import { useConnectedDataElements } from 'scarlet/hooks';
 import { DataElement } from 'scarlet/types';
 
 import { CardHeader, CardRemarks, DataSourceList } from '..';
@@ -22,29 +17,13 @@ enum CardTabs {
 }
 
 export const Card = ({ dataElement }: CardProps) => {
-  const dataElementConfig = useDataElementConfig(dataElement);
   const [currentTab, setCurrentTab] = useState(CardTabs.DATA_SOURCES);
-  const { component, componentGroup } = useComponent(dataElement.componentId);
-  const getComponentName = useComponentName();
   const connectedDataElements = useConnectedDataElements(dataElement.key);
   const hasConnectedElements = connectedDataElements.length > 1;
 
   return (
     <Styled.Container>
       <CardHeader dataElement={dataElement} />
-      <Styled.CategoryWrapper>
-        <div className="cogs-body-1">{dataElementConfig?.label}</div>
-        <div className="cogs-micro">
-          {component
-            ? `${
-                componentGroup
-                  ? `${componentGroup.label} component`
-                  : 'Component'
-              }: ${getComponentName(component)}`
-            : 'Equipment'}
-        </div>
-      </Styled.CategoryWrapper>
-      <Styled.Delimiter />
       <SegmentedControl
         fullWidth
         currentKey={currentTab}
@@ -57,15 +36,21 @@ export const Card = ({ dataElement }: CardProps) => {
           Remarks
         </SegmentedControl.Button>
       </SegmentedControl>
-      {currentTab === CardTabs.DATA_SOURCES && (
-        <DataSourceList
-          dataElement={dataElement}
-          hasConnectedElements={hasConnectedElements}
-        />
-      )}
-      {currentTab === CardTabs.REMARKS && (
-        <CardRemarks dataElement={dataElement} />
-      )}
+      <Styled.ContentWrapper>
+        {currentTab === CardTabs.DATA_SOURCES && (
+          <Styled.ScrollContainer>
+            <DataSourceList
+              dataElement={dataElement}
+              hasConnectedElements={hasConnectedElements}
+            />
+          </Styled.ScrollContainer>
+        )}
+        {currentTab === CardTabs.REMARKS && (
+          <Styled.ScrollContainer>
+            <CardRemarks dataElement={dataElement} />
+          </Styled.ScrollContainer>
+        )}
+      </Styled.ContentWrapper>
     </Styled.Container>
   );
 };

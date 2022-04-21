@@ -40,7 +40,10 @@ export const Value = styled.div<{ noValue?: boolean }>`
       : oneLineText}
 `;
 
-export const DataSource = styled.div<{ isDiscrepancy: boolean }>`
+export const DataSource = styled.div<{
+  isDiscrepancy: boolean;
+  isApproved: boolean;
+}>`
   display: flex;
   color: var(--cogs-midorange-5);
   background-color: var(--cogs-white);
@@ -50,12 +53,16 @@ export const DataSource = styled.div<{ isDiscrepancy: boolean }>`
   align-items: center;
   gap: 2px;
 
-  ${({ isDiscrepancy }) =>
+  ${({ isDiscrepancy, isApproved }) =>
     isDiscrepancy &&
-    css`
-      background-color: var(--cogs-red-4);
-      color: var(--cogs-white);
-    `}
+    (isApproved
+      ? css`
+          color: var(--cogs-green-3) !important;
+        `
+      : css`
+          background-color: var(--cogs-red-4);
+          color: var(--cogs-white);
+        `)}
 `;
 
 export const Content = styled.div`

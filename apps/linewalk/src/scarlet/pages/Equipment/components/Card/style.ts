@@ -7,24 +7,35 @@ export const Container = styled.div`
   min-height: 100%;
 `;
 
-export const CategoryWrapper = styled.div`
-  background-color: var(--cogs-greyscale-grey2);
-  border: 1px solid var(--cogs-greyscale-grey4);
-  border-radius: 6px;
-  padding: 8px 12px;
-  color: var(--cogs-text-secondary);
-  margin-top: 28px;
+export const ScrollContainer = styled.div`
+  position: absolute;
+  top: 0;
+  right: -18px;
+  bottom: -18px;
+  left: -18px;
+  overflow-x: hidden;
+  padding: 0 18px 18px;
+  display: flex;
+  flex-direction: column;
 `;
 
-export const Delimiter = styled.div`
-  border-bottom: 1px solid var(--cogs-greyscale-grey4);
-  margin-bottom: 14px;
+export const ContentWrapper = styled.div`
+  flex-grow: 1;
+  position: relative;
 
   &:after {
     content: '';
     display: block;
-    width: 12px;
-    height: 40px;
-    border-right: 1px solid var(--cogs-greyscale-grey4);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(255, 255, 255, 0) 100%
+    );
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 12px;
   }
 `;

@@ -28,3 +28,8 @@ export type Detection = Partial<Annotation> & {
     type: EquipmentComponentType;
   };
 };
+
+export enum BooleanDetectionValue {
+  YES = 'Y',
+  NO = 'N',
+}

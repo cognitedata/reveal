@@ -5,6 +5,7 @@ import {
   useAppContext,
   useComponentName,
   useConnectedDataElements,
+  useDataElementConfig,
   useDataPanelDispatch,
 } from 'scarlet/hooks';
 import {
@@ -18,6 +19,7 @@ import {
   getDataElementConfig,
   getDataElementTypeLabel,
   getDetectionSourceLabel,
+  getPrettifiedDataElementValue,
 } from 'scarlet/utils';
 
 import { Modal } from '../..';
@@ -55,6 +57,7 @@ export const ConnectedElementsModal = ({
   const [selectedDataElementIds, setSelectedDataElementIds] = useState<
     string[]
   >([]);
+  const dataElementConfig = useDataElementConfig(dataElement);
 
   useEffect(() => {
     if (!visible) return;
@@ -107,7 +110,7 @@ export const ConnectedElementsModal = ({
     () =>
       connectedElements
         .map((item) => {
-          const dataElementConfig = getDataElementConfig(
+          const itemElementConfig = getDataElementConfig(
             appState.equipmentConfig.data,
             item
           );
@@ -121,7 +124,7 @@ export const ConnectedElementsModal = ({
 
           return {
             id: item.id,
-            label: dataElementConfig.label,
+            label: itemElementConfig?.label,
             type: getDataElementTypeLabel(item),
             componentName: component ? geComponentName(component) : '-',
             isCurrentDataElement,
@@ -140,7 +143,6 @@ export const ConnectedElementsModal = ({
         : currentSelected
     );
   };
-
   return (
     <Modal
       title="Set primary value for multiple instances of a field"
@@ -157,7 +159,11 @@ export const ConnectedElementsModal = ({
             {getDetectionSourceLabel(detection)}
           </Styled.DetectionSource>
           <Styled.DetectionValue className="cogs-body-2 strong">
-            {detection.value}
+            {getPrettifiedDataElementValue(
+              detection.value!,
+              dataElementConfig?.unit,
+              dataElementConfig?.type
+            )}
           </Styled.DetectionValue>
         </Styled.Detection>
         as primary value for the following data fields

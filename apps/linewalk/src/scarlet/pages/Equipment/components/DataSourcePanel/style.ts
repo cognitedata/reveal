@@ -10,16 +10,21 @@ export const Collapse = styled(CogsCollapse)`
 
 export const Panel = styled(CogsCollapse.Panel)`
   border: 1px solid var(--cogs-greyscale-grey4) !important;
-  overflow: hidden;
   border-radius: 8px;
+  overflow: hidden;
+  background-color: none;
+
+  &.rc-collapse-item-active {
+    overflow: visible;
+  }
 
   > .rc-collapse-header {
     flex-direction: row-reverse;
-    background-color: var(--cogs-white);
   }
 
   > .rc-collapse-content {
     border-top: 1px solid var(--cogs-greyscale-grey4) !important;
     padding: 0 12px;
+    overflow: visible;
   }
 `;

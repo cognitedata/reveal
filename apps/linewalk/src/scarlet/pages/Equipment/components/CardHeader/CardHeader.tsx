@@ -2,6 +2,8 @@ import { Icon } from '@cognite/cogs.js';
 import { useEffect, useState } from 'react';
 import {
   useAppDispatch,
+  useComponent,
+  useComponentName,
   useDataElementConfig,
   useDataPanelDispatch,
 } from 'scarlet/hooks';
@@ -23,6 +25,8 @@ export const CardHeader = ({ dataElement }: CardHeaderProps) => {
   const appDispatch = useAppDispatch();
   const [isMenuActive, setMenuActive] = useState(false);
   const dataElementConfig = useDataElementConfig(dataElement);
+  const { component, componentGroup } = useComponent(dataElement.componentId);
+  const getComponentName = useComponentName();
 
   const onBackButton = () =>
     dataPanelDispatch({
@@ -49,7 +53,18 @@ export const CardHeader = ({ dataElement }: CardHeaderProps) => {
   return (
     <Styled.Container>
       <Styled.BackButton icon="ArrowLeft" type="ghost" onClick={onBackButton}>
-        <Styled.Label>{dataElementConfig?.label}</Styled.Label>
+        <Styled.Header>
+          <Styled.Title>{dataElementConfig?.label}</Styled.Title>
+          <Styled.Details className="cogs-detail">
+            {component
+              ? `${
+                  componentGroup
+                    ? `${componentGroup.label} component`
+                    : 'Component'
+                }: ${getComponentName(component)}`
+              : 'Equipment level'}
+          </Styled.Details>
+        </Styled.Header>
       </Styled.BackButton>
       <Styled.MenuWrapper>
         <Styled.MenuButton

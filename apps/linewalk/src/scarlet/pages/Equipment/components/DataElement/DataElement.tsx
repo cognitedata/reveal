@@ -1,4 +1,4 @@
-import { Icon } from '@cognite/cogs.js';
+import { Icon, Tooltip } from '@cognite/cogs.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   useAppDispatch,
@@ -18,6 +18,7 @@ import {
   getDataElementPrimaryDetection,
   getDetectionSourceAcronym,
   getIsDataElementValueAvailable,
+  getPrettifiedDataElementValue,
 } from 'scarlet/utils';
 
 import * as Styled from './style';
@@ -45,15 +46,24 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
   } = useMemo(() => {
     const primaryDetection = getDataElementPrimaryDetection(dataElement);
     const pcmsDetection = getDataElementPCMSDetection(dataElement);
-    const value = primaryDetection?.value;
+
+    const value = getPrettifiedDataElementValue(
+      primaryDetection?.value,
+      dataElementConfig!.unit,
+      dataElementConfig!.type
+    );
     const isApproved = dataElement.state === DataElementState.APPROVED;
     const isOmitted = dataElement.state === DataElementState.OMITTED;
-    const isDiscrepancy =
-      !isApproved &&
-      Boolean(pcmsDetection) &&
-      primaryDetection?.type !== DetectionType.PCMS &&
-      value?.trim().toLocaleLowerCase() !==
-        pcmsDetection?.value?.trim().toLocaleLowerCase();
+
+    let isDiscrepancy = false;
+    if (pcmsDetection && primaryDetection?.type !== DetectionType.PCMS) {
+      const pcmsDetectionValue = getPrettifiedDataElementValue(
+        pcmsDetection?.value,
+        dataElementConfig!.unit,
+        dataElementConfig!.type
+      );
+      isDiscrepancy = pcmsDetectionValue !== value;
+    }
 
     const hasValue = getIsDataElementValueAvailable(value);
 
@@ -156,13 +166,29 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
                 isLink={!!primaryDetection?.boundingBox}
                 onClick={zoomDetection}
               >
-                <Styled.DataSource
-                  isDiscrepancy={isDiscrepancy}
-                  className="cogs-micro"
+                <Tooltip
+                  disabled={!isDiscrepancy}
+                  content={
+                    isApproved
+                      ? "PCMS value isn't the same as primary value."
+                      : "PCMS value isn't the same as suggested data source."
+                  }
+                  wrapped
                 >
-                  {getDetectionSourceAcronym(primaryDetection!)}
-                  {isDiscrepancy && <Icon type="WarningTriangle" size={8} />}
-                </Styled.DataSource>
+                  <Styled.DataSource
+                    isDiscrepancy={isDiscrepancy}
+                    isApproved={isApproved}
+                    className="cogs-micro"
+                  >
+                    {getDetectionSourceAcronym(primaryDetection!)}
+                    {isDiscrepancy && !isApproved && (
+                      <Icon type="WarningTriangle" size={8} />
+                    )}
+                    {isDiscrepancy && isApproved && (
+                      <Icon type="Info" size={10} />
+                    )}
+                  </Styled.DataSource>
+                </Tooltip>
                 <Styled.Value className="cogs-body-3 strong">
                   {value}
                 </Styled.Value>
@@ -172,7 +198,7 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
         )}
       </Styled.Content>
       <Styled.Actions>
-        {!isApproved && !isOmitted && hasValue && (
+        {!isApproved && !isOmitted && !isDiscrepancy && hasValue && (
           <Styled.Button aria-label="Approve" onClick={onApprove}>
             <Icon type="Checkmark" />
           </Styled.Button>

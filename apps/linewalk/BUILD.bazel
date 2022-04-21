@@ -69,6 +69,7 @@ DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
     "@npm//@cognite/sdk",
     "@npm//@sentry/browser",
+    "@npm//formik",
     "@npm//keyboardjs",
     "@npm//konva",
     "@npm//lodash",

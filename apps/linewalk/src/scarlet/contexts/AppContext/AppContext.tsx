@@ -108,7 +108,7 @@ function reducer(state: AppState, action: AppAction) {
       return {
         ...state,
         saveState: {
-          loading: false,
+          loading: true,
           data: equipment,
         },
       };

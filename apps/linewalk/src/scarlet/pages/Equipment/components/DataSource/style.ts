@@ -22,7 +22,7 @@ export const Button = styled(CogsButton)`
 
 export const Delimiter = styled.div`
   border-bottom: 1px solid var(--cogs-greyscale-grey4);
-  margin: 14px 0;
+  margin: 16px 0;
 `;
 
 export const LoaderContainer = styled.div`

@@ -1,11 +1,17 @@
 import {
+  BooleanDetectionValue,
   DataElement,
+  DataElementConfig,
   DataElementOrigin,
+  DataElementType,
+  DataElementUnit,
   Detection,
   DetectionState,
   DetectionType,
   EquipmentConfig,
 } from 'scarlet/types';
+
+import { getLocaleDateString } from '.';
 
 export const getDataElementPrimaryDetection = (
   dataElement: DataElement
@@ -65,9 +71,8 @@ export const getIsDataElementValueAvailable = (
 export const getDataElementConfig = (
   config?: EquipmentConfig,
   dataElement?: DataElement
-) => {
-  if (!dataElement)
-    return { label: undefined, unit: undefined, type: undefined };
+): DataElementConfig | undefined => {
+  if (!dataElement) return undefined;
 
   const configElements =
     dataElement.origin === DataElementOrigin.COMPONENT
@@ -75,11 +80,11 @@ export const getDataElementConfig = (
       : config?.equipmentElements;
 
   return (
-    (configElements && configElements[dataElement.key]) || {
+    (configElements && configElements[dataElement.key]) ||
+    ({
+      key: dataElement.key,
       label: dataElement.key,
-      type: undefined,
-      unit: undefined,
-    }
+    } as DataElementConfig)
   );
 };
 
@@ -93,5 +98,64 @@ export const getDataElementTypeLabel = (
       return 'Component';
     default:
       return undefined;
+  }
+};
+
+export const getPrettifiedDataElementValue = (
+  value?: string,
+  unit?: DataElementUnit,
+  type?: DataElementType
+) => {
+  if (value === undefined || value === null) return value;
+
+  let result = getPrettifiedValue(value, type);
+  if (unit) result += getPrettifiedDataElementUnit(unit);
+  return result;
+};
+
+export const getPrettifiedValue = (
+  value: string,
+  type?: DataElementType
+): string => {
+  switch (type) {
+    case DataElementType.DATE:
+      return getLocaleDateString(value);
+    case DataElementType.BOOLEAN:
+      return getPrettifiedBooleanDataElementValue(
+        value as BooleanDetectionValue
+      );
+    default:
+      return value;
+  }
+};
+
+export const getPrettifiedBooleanDataElementValue = (
+  value: BooleanDetectionValue
+) => {
+  switch (value) {
+    case BooleanDetectionValue.YES:
+      return 'Yes';
+    case BooleanDetectionValue.NO:
+      return 'No';
+    default:
+      return 'N/A';
+  }
+};
+
+export const getPrettifiedDataElementUnit = (unit?: DataElementUnit) => {
+  switch (unit) {
+    case DataElementUnit.PSI:
+      return 'psi';
+    case DataElementUnit.FAHRENHEIT:
+      return '°F';
+    case DataElementUnit.FEET:
+      return 'ft';
+    case DataElementUnit.DEGREES:
+      return 'deg';
+    case DataElementUnit.INCHES:
+      return 'in';
+
+    default:
+      return '';
   }
 };
