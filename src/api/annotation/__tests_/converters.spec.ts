@@ -297,6 +297,7 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
     expect(
       convertCDFAnnotationV1ToVisionAnnotation(cdfAnnotationWithIdV1)
     ).toStrictEqual({
+      id: cdfAnnotationWithIdV1.id,
       createdTime: cdfAnnotationWithIdV1.createdTime,
       lastUpdatedTime: cdfAnnotationWithIdV1.lastUpdatedTime,
       annotatedResourceId: cdfAnnotationWithIdV1.annotatedResourceId,
@@ -315,6 +316,7 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
         cdfAnnotationWithExternalIdV1 as unknown as CDFAnnotationV1
       )
     ).toStrictEqual({
+      id: cdfAnnotationWithExternalIdV1.id,
       createdTime: cdfAnnotationWithExternalIdV1.createdTime,
       lastUpdatedTime: cdfAnnotationWithExternalIdV1.lastUpdatedTime,
       annotatedResourceExternalId:
@@ -348,6 +350,7 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
     expect(
       convertCDFAnnotationV1ToVisionAnnotation(cdfAnnotationWithOCR)
     ).toStrictEqual({
+      id: cdfAnnotationWithOCR.id,
       annotatedResourceId: cdfAnnotationWithOCR.annotatedResourceId,
       createdTime: cdfAnnotationWithOCR.createdTime,
       lastUpdatedTime: cdfAnnotationWithOCR.lastUpdatedTime,
@@ -379,6 +382,7 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
     expect(
       convertCDFAnnotationV1ToVisionAnnotation(cdfAnnotationWithTag)
     ).toStrictEqual({
+      id: cdfAnnotationWithTag.id,
       annotatedResourceId: cdfAnnotationWithTag.annotatedResourceId,
       createdTime: cdfAnnotationWithTag.createdTime,
       lastUpdatedTime: cdfAnnotationWithTag.lastUpdatedTime,
@@ -414,6 +418,7 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
     expect(
       convertCDFAnnotationV1ToVisionAnnotation(cdfAnnotationWithKeypoint)
     ).toStrictEqual({
+      id: cdfAnnotationWithKeypoint.id,
       annotatedResourceId: cdfAnnotationWithKeypoint.annotatedResourceId,
       createdTime: cdfAnnotationWithKeypoint.createdTime,
       lastUpdatedTime: cdfAnnotationWithKeypoint.lastUpdatedTime,
@@ -445,6 +450,7 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
     expect(
       convertCDFAnnotationV1ToVisionAnnotation(cdfAnnotationWithObjectDetection)
     ).toStrictEqual({
+      id: cdfAnnotationWithObjectDetection.id,
       annotatedResourceId: cdfAnnotationWithObjectDetection.annotatedResourceId,
       createdTime: cdfAnnotationWithObjectDetection.createdTime,
       lastUpdatedTime: cdfAnnotationWithObjectDetection.lastUpdatedTime,
@@ -475,6 +481,7 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
     expect(
       convertCDFAnnotationV1ToVisionAnnotation(cdfAnnotationWithPolygon)
     ).toStrictEqual({
+      id: cdfAnnotationWithPolygon.id,
       annotatedResourceId: cdfAnnotationWithPolygon.annotatedResourceId,
       createdTime: cdfAnnotationWithPolygon.createdTime,
       lastUpdatedTime: cdfAnnotationWithPolygon.lastUpdatedTime,
