@@ -68,7 +68,7 @@ export interface IPointCloudMaterialUniforms {
   intensityContrast: IUniform<number>;
   intensityGamma: IUniform<number>;
   intensityRange: IUniform<[number, number]>;
-  isLeafNode: IUniform<number>;
+  isLeafNode: IUniform<boolean>;
   level: IUniform<number>;
   maxSize: IUniform<number>;
   minSize: IUniform<number>;
@@ -195,7 +195,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     intensityContrast: makeUniform('f', 0),
     intensityGamma: makeUniform('f', 1),
     intensityRange: makeUniform('fv', [0, 256] as [number, number]),
-    isLeafNode: makeUniform('b', 0),
+    isLeafNode: makeUniform('b', false),
     level: makeUniform('f', 0.0),
     maxSize: makeUniform('f', DEFAULT_MAX_POINT_SIZE),
     minSize: makeUniform('f', DEFAULT_MIN_POINT_SIZE),
