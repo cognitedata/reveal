@@ -54,6 +54,7 @@ type LineReviewViewerProps = {
     transform: (textAnnotations: TextAnnotation[]) => TextAnnotation[]
   ) => void;
   onOrnateRef: (ref: CogniteOrnate | undefined) => void;
+  isSidePanelOpen: boolean;
   onOpenSidePanelButtonPress: () => void;
   onDeleteDiscrepancy: (id: string) => void;
   discrepancyModalState: DiscrepancyModalState;
@@ -66,7 +67,7 @@ const DocumentJumperContainer = styled.div`
   left: 16px;
   top: 16px;
   width: 170px;
-  z-index: ${layers.OVERLAY - 1};
+  z-index: ${layers.LINE_REVIEW_VIEWER_BUTTONS};
   background-color: white;
 `;
 
@@ -227,6 +228,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   discrepancyModalState,
   setDiscrepancyModalState,
   onDiscrepancyInteraction,
+  isSidePanelOpen,
 }) => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [pdfDocuments, setPdfDocuments] = useState<
@@ -301,6 +303,16 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     );
 
     setDiscrepancyModalState((prevState) => ({ ...prevState, isOpen: false }));
+  };
+
+  const onDiscrepancyModalClosePress = () => {
+    setDiscrepancyModalState((prevState) => {
+      if (prevState.discrepancy?.status === 'pending') {
+        onDeleteDiscrepancy(prevState.discrepancy.id);
+      }
+
+      return { ...prevState, isOpen: false };
+    });
   };
 
   const { tool: isoModalTool, onToolChange: onIsoModalToolChange } =
@@ -485,8 +497,11 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
           key={discrepancyModalState.discrepancy.id}
           initialPosition={discrepancyModalState.position}
           initialDiscrepancy={discrepancyModalState.discrepancy}
-          onDeletePress={onDeleteDiscrepancy}
+          onDeletePress={() =>
+            onDeleteDiscrepancy(discrepancyModalState.discrepancy!.id)
+          }
           onSave={onSaveDiscrepancy}
+          onClosePress={onDiscrepancyModalClosePress}
         />
       )}
 
@@ -502,28 +517,32 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
         ornateRef={ornateRef}
       />
       <div style={{ height: 'calc(100vh - 125px)', position: 'relative' }}>
-        {!isIsoModalOpen && (
-          <div
-            style={{
-              position: 'absolute',
-              right: 60,
-              top: 20,
-              zIndex: layers.OVERLAY - 2,
-            }}
-          >
-            <Button onClick={onOpenIsoButtonPress}>Open ISO</Button>
-          </div>
-        )}
-
         <div
           style={{
             position: 'absolute',
-            right: 20,
+            right: 18,
             top: 20,
-            zIndex: layers.OVERLAY - 2,
+            zIndex: layers.LINE_REVIEW_VIEWER_BUTTONS,
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
           }}
         >
-          <Button onClick={onOpenSidePanelButtonPress} icon="PanelLeft" />
+          {!isIsoModalOpen && (
+            <div>
+              <Button onClick={onOpenIsoButtonPress}>Open ISO</Button>
+            </div>
+          )}
+
+          {!isSidePanelOpen && (
+            <div
+              style={{
+                marginLeft: 20,
+              }}
+            >
+              <Button onClick={onOpenSidePanelButtonPress} icon="PanelLeft" />
+            </div>
+          )}
         </div>
 
         <DocumentJumperContainer>

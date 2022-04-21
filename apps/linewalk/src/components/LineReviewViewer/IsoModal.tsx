@@ -6,6 +6,7 @@ import keyBy from 'lodash/keyBy';
 import sortBy from 'lodash/sortBy';
 import React, { useEffect, useState } from 'react';
 import layers from 'utils/z';
+import styled from 'styled-components';
 
 import { getDocumentUrlByExternalId } from '../../modules/lineReviews/api';
 import WorkSpaceTools from '../WorkSpaceTools/WorkSpaceTools';
@@ -34,6 +35,8 @@ import withoutFileExtension from './withoutFileExtension';
 
 const INITIAL_WIDTH = 643;
 const INITIAL_HEIGHT = 526;
+const MODAL_PADDING_TOP = 20;
+const RESIZABLE_CORNER_SIZE = 15;
 
 const findCenterLink = (links: Link[], annotations: Annotation[]): Link => {
   if (links.length === 1) {
@@ -52,6 +55,47 @@ const findCenterLink = (links: Link[], annotations: Annotation[]): Link => {
   return links[Math.floor(linksAnnotations.length / 2)];
 };
 
+const TitleContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  cursor: text;
+`;
+
+const Title = styled.div`
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 20px;
+  /* identical to box height, or 125% */
+
+  display: flex;
+  align-items: center;
+`;
+
+const FileNames = styled.div`
+  /* Text / Detail Strong */
+
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  /* identical to box height, or 133% */
+
+  display: flex;
+  align-items: center;
+  color: rgba(0, 0, 0, 0.45);
+`;
+
+const HeaderContainer = styled.div`
+  padding: 13px 12px 13px 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  cursor: move;
+`;
+
 type IsoModalProps = {
   documents: ParsedDocument[] | undefined;
   isoDocuments: ParsedDocument[] | undefined;
@@ -63,8 +107,6 @@ type IsoModalProps = {
   lineReview: LineReview;
   ornateRef: CogniteOrnate | undefined;
 };
-
-const RESIZABLE_CORNER_SIZE = 15;
 
 const getFileConnectionLine = (
   document: ParsedDocument,
@@ -313,42 +355,38 @@ const IsoModal: React.FC<IsoModalProps> = ({
         height: dimensions.height,
         background: 'white',
         border: '1px solid rgba(0, 0, 0, 0.15)',
-        borderRadius: 8,
-        zIndex: layers.OVERLAY - 1,
-        padding: '25px 20px',
+        borderRadius: 12,
+        zIndex: layers.ISO_MODAL,
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
+        boxShadow:
+          '0px 8px 16px 4px rgba(0, 0, 0, 0.04), 0px 2px 12px rgba(0, 0, 0, 0.08)',
       }}
     >
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}
+      <HeaderContainer
+        onMouseDown={onMove}
+        role="button"
+        tabIndex={-1}
+        aria-label="Move"
       >
-        <h2>
-          Isometric Drawing{' '}
-          {isoDocuments
-            ?.map(({ pdfExternalId }) => withoutFileExtension(pdfExternalId))
-            .join(', ')}
-        </h2>
-        <div
-          style={{
-            marginLeft: '16px',
-          }}
-        >
-          <Button onClick={onHidePress}>Hide</Button>
-        </div>
-      </div>
+        <TitleContainer onMouseDown={(e) => e.stopPropagation()}>
+          <Title>Isometric drawing</Title>
+          <FileNames>
+            {isoDocuments
+              ?.map(({ pdfExternalId }) => withoutFileExtension(pdfExternalId))
+              .join(', ')}
+          </FileNames>
+        </TitleContainer>
+        <Button icon="Close" type="ghost" onClick={onHidePress} />
+      </HeaderContainer>
       <div
         style={{
           width: '100%',
           flexBasis: 0,
           flexGrow: 1,
           flexShrink: 1,
-          border: '1px solid rgba(0, 0, 0, 0.15)',
+          borderTop: '1px solid rgba(0, 0, 0, 0.15)',
           borderRadius: '4px',
           position: 'relative',
           overflow: 'hidden',
@@ -375,7 +413,7 @@ const IsoModal: React.FC<IsoModalProps> = ({
           top: 0,
           left: RESIZABLE_CORNER_SIZE,
           right: RESIZABLE_CORNER_SIZE,
-          height: RESIZABLE_CORNER_SIZE,
+          height: MODAL_PADDING_TOP,
         }}
         role="button"
         tabIndex={-1}

@@ -28,7 +28,7 @@ const exportDocumentsToPdf = async (
   ornateRef: CogniteOrnate,
   documents: ParsedDocument[],
   discrepancies: Discrepancy[] = [],
-  fileName = 'WorkSpace'
+  fileName = 'LineReview.pdf'
 ) => {
   const pdf = await PDFDocument.create();
 
@@ -92,7 +92,8 @@ const exportDocumentsToPdf = async (
             x: 0,
             y: Math.round(groupClientRect.height),
             padding: 40,
-            fontSize: 20,
+            fontSize: 22,
+            fill: '#ff0000',
             lineHeight: 1.1,
             fontFamily: 'Arial',
           })
@@ -125,7 +126,7 @@ const exportDocumentsToPdf = async (
   await Promise.all(annotatedPIDs);
 
   const pdfBytes = await pdf.saveAsBase64({ dataUri: true });
-  downloadURL(pdfBytes, `${fileName}.pdf`);
+  downloadURL(pdfBytes, fileName);
 };
 
 export default exportDocumentsToPdf;

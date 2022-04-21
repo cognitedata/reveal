@@ -5,7 +5,7 @@ import layers from '../../utils/z';
 import useDimensions from './useDimensions';
 
 const INITIAL_WIDTH = 400;
-const INITIAL_HEIGHT = 240;
+const INITIAL_HEIGHT = 280;
 const RESIZABLE_CORNER_SIZE = 15;
 
 type Props = {
@@ -15,9 +15,14 @@ type Props = {
     x: number;
     y: number;
   };
+  renderFunc: ({
+    onMove,
+  }: {
+    onMove: (event: React.MouseEvent) => void;
+  }) => React.ReactNode;
 };
 
-const PopupModal: React.FC<Props> = ({ children, initialDimensions }) => {
+const PopupModal: React.FC<Props> = ({ renderFunc, initialDimensions }) => {
   const [modalRef, setModalRef] = useState<HTMLElement | null>(null);
   const {
     dimensions,
@@ -53,26 +58,11 @@ const PopupModal: React.FC<Props> = ({ children, initialDimensions }) => {
         border: '1px solid rgba(0, 0, 0, 0.15)',
         borderRadius: 8,
         zIndex: layers.OVERLAY,
-        padding: '25px 20px',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
       }}
     >
-      <div
-        style={{
-          cursor: 'move',
-          position: 'absolute',
-          top: 0,
-          left: RESIZABLE_CORNER_SIZE,
-          right: RESIZABLE_CORNER_SIZE,
-          height: RESIZABLE_CORNER_SIZE,
-        }}
-        role="button"
-        tabIndex={-1}
-        aria-label="Move"
-        onMouseDown={onMove}
-      />
       <div
         style={{
           cursor: 'nwse-resize',
@@ -129,7 +119,7 @@ const PopupModal: React.FC<Props> = ({ children, initialDimensions }) => {
         tabIndex={-1}
         onMouseDown={onResizeTopRight}
       />
-      {children}
+      {renderFunc({ onMove })}
     </div>
   );
 };

@@ -9,6 +9,7 @@ import Konva from 'konva';
 import { useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 import styled from 'styled-components';
+import clamp from 'lodash/clamp';
 
 import exportDocumentsToPdf from '../components/LineReviewViewer/exportDocumentsToPdf';
 import { Discrepancy } from '../components/LineReviewViewer/LineReviewViewer';
@@ -171,12 +172,22 @@ const LineReview = () => {
       skipStroke: true,
     });
 
+    const PADDING_FACTOR = 1.3;
+    const scale = clamp(
+      Math.min(
+        ornateRef.stage.width() / (boundingBox.width * PADDING_FACTOR),
+        ornateRef.stage.height() / (boundingBox.height * PADDING_FACTOR)
+      ),
+      0.5,
+      2
+    );
+
     ornateRef?.zoomToLocation(
       {
         x: -(boundingBox.x + boundingBox.width / 2),
         y: -(boundingBox.y + boundingBox.height / 2),
       },
-      0.5
+      scale
     );
   };
 
@@ -213,7 +224,12 @@ const LineReview = () => {
         lineReview={lineReview}
         onSaveToPdfPress={() =>
           ornateRef
-            ? exportDocumentsToPdf(ornateRef, documents, discrepancies)
+            ? exportDocumentsToPdf(
+                ornateRef,
+                documents,
+                discrepancies,
+                `line-review-${lineReview.id}.pdf`
+              )
             : undefined
         }
         onReportBackPress={onReportBackPress}
@@ -250,6 +266,7 @@ const LineReview = () => {
             discrepancyModalState={discrepancyModalState}
             setDiscrepancyModalState={setDiscrepancyModalState}
             onDiscrepancyInteraction={onDiscrepancyInteraction}
+            isSidePanelOpen={isSidePanelOpen}
           />
         </MainContainer>
       </CollapsablePanel>
