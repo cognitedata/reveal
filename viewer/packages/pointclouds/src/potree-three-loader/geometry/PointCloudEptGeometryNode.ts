@@ -1,3 +1,9 @@
+/*
+ * Adapted from Potree:
+ * https://github.com/potree/potree/blob/develop/src/PointCloudEptGeometry.js
+ * License in LICENSE.potree
+ */
+
 import { IPointCloudTreeGeometryNode } from './IPointCloudTreeGeometryNode';
 import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
 import * as THREE from 'three';

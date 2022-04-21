@@ -1,3 +1,9 @@
+/*
+ * Adapted from Potree:
+ * https://github.com/potree/potree/blob/develop/src/loader/ept/BinaryLoader.js
+ * License in LICENSE.potree
+ */
+
 import * as THREE from 'three';
 
 import { WorkerPool } from '../utils/WorkerPool';

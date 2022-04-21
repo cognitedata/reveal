@@ -1,3 +1,9 @@
+/*
+ * Adapted from Potree:
+ * https://github.com/potree/potree/blob/develop/src/PointCloudEptGeometry.js
+ * License in LICENSE.potree
+ */
+
 import * as THREE from 'three';
 
 import { ILoader } from '../loading/ILoader';
