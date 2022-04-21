@@ -16,7 +16,13 @@
   "files": [
     "dist"
   ],
+  "devDependencies": {
+    "ts-node": "^10.4.0",
+    "@azure/msal-node": "^1.8.0",
+    "open": "^8.4.0"
+  },
   "scripts": {
+    "cli": "ts-node cli/main.ts",
     "build": "bazel build :pid-tools",
     "test": "../../node_modules/.bin/jest --no-watchman",
     "test:watch": "yarn test --watchAll",

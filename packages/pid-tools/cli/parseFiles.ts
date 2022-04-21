@@ -6,9 +6,10 @@ import {
   computeLineFiles,
   GraphDocument,
   resolveFileAndLineConnections,
-} from '../pid-tools/src';
-import { SymbolConnection } from '../pid-tools/src/graphMatching/types';
+} from '../src';
+import { SymbolConnection } from '../src/graphMatching/types';
 
+import { DOCUMENTS_DIR, GRAPHS_DIR } from './constants';
 import { graphMatching } from './graphMatching';
 import emptyDir from './utils/emptyDir';
 import readJsonFromFile from './utils/readJsonFromFile';
@@ -22,8 +23,8 @@ const parseFiles = async (argv) => {
     outputVersion: string;
   };
 
-  const GRAPH_DIR = path.resolve('graphs');
-  const OUTPUT_DIRECTORY = path.resolve('documents');
+  const GRAPH_DIR = path.resolve(GRAPHS_DIR);
+  const OUTPUT_DIRECTORY = path.resolve(DOCUMENTS_DIR);
   const connectionsPath = path.resolve('connections/connections.json');
 
   await emptyDir(OUTPUT_DIRECTORY);

@@ -3,12 +3,8 @@ import fs from 'fs';
 import uniq from 'lodash/uniq';
 import isEqual from 'lodash/isEqual';
 
-import {
-  GraphDocument,
-  DocumentType,
-  DiagramInstanceId,
-} from '../pid-tools/src';
-import { SymbolConnection } from '../pid-tools/src/graphMatching/types';
+import { GraphDocument, DocumentType, DiagramInstanceId } from '../src';
+import { SymbolConnection } from '../src/graphMatching/types';
 import {
   mutateGraphToGlobalizedIds,
   mutateGraphToUnglobalizedIds,
@@ -18,11 +14,11 @@ import {
   mutateGraphByAppendingSymbolConnections,
   getGlobalizedId,
   CrossDocumentConnection,
-} from '../pid-tools/src/graphMatching';
+} from '../src/graphMatching';
 import {
   EditDistanceMapResult,
   SymbolMapping,
-} from '../pid-tools/src/graphMatching/editDistance';
+} from '../src/graphMatching/editDistance';
 
 export const globalIdToFileNameAndId = (globalId: string) => {
   const globalIdSplit = globalId.split(GLOBALSPLITPREFIX);

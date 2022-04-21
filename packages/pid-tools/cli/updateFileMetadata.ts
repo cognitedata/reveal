@@ -7,9 +7,10 @@ import {
   DIAGRAM_PARSER_PDF_EXTERNAL_ID,
   DIAGRAM_PARSER_SOURCE,
   DIAGRAM_PARSER_TYPE,
-  DOCUMENTS_DIR,
   LINE_LABEL_PREFIX,
-} from './constants';
+} from '../src';
+
+import { DOCUMENTS_DIR } from './constants';
 import getClient from './utils/getClient';
 
 const readJsonFromFile = async (filePath: string): Promise<any> => {

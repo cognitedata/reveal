@@ -3,9 +3,9 @@ import * as https from 'https';
 
 import chunk from 'lodash/chunk';
 
-import { DIAGRAM_PARSER_OUTPUT_TYPE } from '../pid-tools/src';
+import { DIAGRAM_PARSER_OUTPUT_TYPE, DIAGRAM_PARSER_SOURCE } from '../src';
 
-import { DIAGRAM_PARSER_SOURCE, GRAPHS_DIR } from './constants';
+import { GRAPHS_DIR } from './constants';
 import emptyDir from './utils/emptyDir';
 import getClient from './utils/getClient';
 

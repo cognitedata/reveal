@@ -8,7 +8,7 @@ const AZURE_TENANT_ID = '67105506-2613-4c69-a9af-d2794c862ae7';
 const CLIENT_ID = '9b263878-21b1-4178-a991-adf73e52be72';
 const COGNITE_PROJECT = 'p66-dev';
 const REDIRECT_URL = 'http://localhost:53000/';
-const APP_ID = 'pid-cli';
+const APP_ID = 'pid-tools';
 const BASE_URL = 'https://az-eastus-1.cognitedata.com';
 const SCOPES = ['https://az-eastus-1.cognitedata.com/.default'];
 

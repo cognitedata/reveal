@@ -3,7 +3,9 @@ import path from 'path';
 import util from 'util';
 import fsPromises from 'fs/promises';
 
-import { DIAGRAM_PARSER_SOURCE, DOCUMENTS_DIR } from './constants';
+import { DIAGRAM_PARSER_SOURCE } from '../src';
+
+import { DOCUMENTS_DIR } from './constants';
 import getClient from './utils/getClient';
 
 const readDir = util.promisify(fs.readdir);
