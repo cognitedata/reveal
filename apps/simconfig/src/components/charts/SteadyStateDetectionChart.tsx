@@ -13,6 +13,7 @@ import { getCurve } from './utils';
 
 interface SteadyStateDetectionChartProps {
   data: TemporalDatum[];
+  granularity: number;
 
   minSegmentDistance: number;
   varianceThreshold: number;
@@ -28,6 +29,7 @@ interface SteadyStateDetectionChartProps {
 
 export function SteadyStateDetectionChart({
   data,
+  granularity,
 
   minSegmentDistance,
   varianceThreshold,
@@ -43,13 +45,16 @@ export function SteadyStateDetectionChart({
   // TODO(SIM-000): Ideally here we need to pass the granularity and isStep (aggregation === 'stepInterpolation') when initializing the Timeseries
   const timeseries = useMemo(() => {
     try {
-      return Timeseries.fromDatapoints(data).getEquallySpacedResampled();
+      return Timeseries.fromDatapoints(
+        data,
+        granularity * 60 * 1000
+      ).getEquallySpacedResampled();
     } catch (e) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       toast.error(`Could not plot time series: ${e}`);
       return null;
     }
-  }, [data]);
+  }, [data, granularity]);
 
   const resampledData = useMemo(
     () =>

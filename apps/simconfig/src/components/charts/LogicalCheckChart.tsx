@@ -20,6 +20,7 @@ interface LogicalCheckChartProps {
   threshold: number;
   check: Required<LogicalCheck>['check'];
   data: TemporalDatum[];
+  granularity: number;
   aggregateType: AggregateType;
 
   primaryColor?: string;
@@ -33,6 +34,7 @@ export function LogicalCheckChart({
   threshold,
   check,
   data,
+  granularity,
   aggregateType = 'stepInterpolation',
 
   width = 300,
@@ -43,13 +45,16 @@ export function LogicalCheckChart({
 }: LogicalCheckChartProps) {
   const timeseries = useMemo(() => {
     try {
-      return Timeseries.fromDatapoints(data).getEquallySpacedResampled();
+      return Timeseries.fromDatapoints(
+        data,
+        granularity * 60 * 1000
+      ).getEquallySpacedResampled();
     } catch (e) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       toast.error(`Could not plot time series: ${e}`);
       return null;
     }
-  }, [data]);
+  }, [data, granularity]);
 
   const timestamps = useMemo(
     () => timeseries?.time.map((ms) => new Date(ms)),

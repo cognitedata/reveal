@@ -58,27 +58,27 @@ export function DataSamplingStep() {
   };
 
   const granularity = useThrottle(
-    values.dataSampling.granularity,
+    +values.dataSampling.granularity,
     DATA_SAMPLING_VALUE_THROTTLE
   );
   const window = useThrottle(
-    values.dataSampling.validationWindow,
+    +values.dataSampling.validationWindow,
     DATA_SAMPLING_VALUE_THROTTLE
   );
   const endOffset = useThrottle(
-    validationOffset.minutes,
+    +validationOffset.minutes,
     DATA_SAMPLING_VALUE_THROTTLE
   );
   const minSectionSize = useThrottle(
-    values.steadyStateDetection.minSectionSize,
+    +values.steadyStateDetection.minSectionSize,
     SSD_VALUE_THROTTLE
   );
   const slopeThreshold = useThrottle(
-    values.steadyStateDetection.slopeThreshold,
+    +values.steadyStateDetection.slopeThreshold,
     SSD_VALUE_THROTTLE
   );
   const varThreshold = useThrottle(
-    values.steadyStateDetection.varThreshold,
+    +values.steadyStateDetection.varThreshold,
     SSD_VALUE_THROTTLE
   );
 
@@ -114,6 +114,7 @@ export function DataSamplingStep() {
           <SteadyStateDetectionChart
             aggregateType={ssdAggregateType}
             data={ssdTimeseries.data}
+            granularity={granularity}
             height={height}
             minSegmentDistance={minSectionSize}
             slopeThreshold={slopeThreshold}
@@ -129,6 +130,7 @@ export function DataSamplingStep() {
       slopeThreshold,
       ssdTimeseries.axisLabel,
       ssdTimeseries.data,
+      granularity,
       ssdAggregateType,
       varThreshold,
     ]
@@ -142,6 +144,7 @@ export function DataSamplingStep() {
             aggregateType={lcAggregateType}
             check={values.logicalCheck.check ?? 'gt'}
             data={lcTimeseries.data}
+            granularity={granularity}
             height={height}
             threshold={values.logicalCheck.value ?? 0}
             width={width}
@@ -153,6 +156,7 @@ export function DataSamplingStep() {
     [
       lcTimeseries.axisLabel,
       lcTimeseries.data,
+      granularity,
       lcAggregateType,
       values.logicalCheck.check,
       values.logicalCheck.value,

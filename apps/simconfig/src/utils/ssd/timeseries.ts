@@ -23,15 +23,13 @@ export class Timeseries {
   maxTime: number;
 
   // TODO(SIM-000) evaluate if isStep can be read from Datapoints
-  static fromDatapoints(datapoints: TemporalDatum[]) {
+  static fromDatapoints(datapoints: TemporalDatum[], granularity: number) {
     // FIXME(SIM-209): Refactor to use Datapoint[] internally
     if (datapoints.length < 2) {
       throw new Error('timeseries require at least two data points');
     }
     const time = datapoints.map((d) => d.timestamp.getTime());
     const data = datapoints.map((d) => d.value);
-    const granularity =
-      datapoints[1].timestamp.getTime() - datapoints[0].timestamp.getTime();
     return new Timeseries(time, data, granularity);
   }
 
