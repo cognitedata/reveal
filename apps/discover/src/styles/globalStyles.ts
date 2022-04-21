@@ -250,6 +250,7 @@ export const GlobalStyles = createGlobalStyle`
   .mapbox-popup {
     width: ${CARD_WIDTH}px;
     max-width: ${CARD_WIDTH}px !important;
+    z-index: ${layers.MAP_TOP_BUTTONS};
 
     .mapboxgl-popup-tip {
       display: none;
