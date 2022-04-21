@@ -29,7 +29,7 @@ export class PointCloudNode extends THREE.Group {
     this._potreeGroup = potreeGroup;
     this._potreeNode = potreeNode;
     this._cameraConfiguration = cameraConfiguration;
-    this.add(this._potreeGroup);
+    this.add(this._potreeNode.octree);
 
     this.matrixAutoUpdate = false;
   }
@@ -151,8 +151,8 @@ export class PointCloudNode extends THREE.Group {
   }
 
   setModelTransformation(matrix: THREE.Matrix4): void {
-    this.matrix.copy(matrix);
-    this.updateMatrixWorld(true);
+    this._potreeNode.octree.applyMatrix4(matrix);
+    this._potreeNode.octree.updateMatrix();
   }
 
   getModelTransformation(out = new THREE.Matrix4()): THREE.Matrix4 {

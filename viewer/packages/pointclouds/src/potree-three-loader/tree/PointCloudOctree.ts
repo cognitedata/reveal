@@ -1,4 +1,4 @@
-import { Box3, Matrix4, Camera, Object3D, Points, Ray, Sphere, Vector3, WebGLRenderer } from 'three';
+import { Box3, Camera, Object3D, Points, Ray, Sphere, Vector3, WebGLRenderer } from 'three';
 import { DEFAULT_MIN_NODE_PIXEL_SIZE } from '../rendering/constants';
 import { PointCloudMaterial, PotreePointSizeType } from '../rendering';
 import { IPointCloudTreeGeometry } from '../geometry/IPointCloudTreeGeometry';
@@ -45,9 +45,6 @@ export class PointCloudOctree extends PointCloudTree {
     this.boundingSphere = this.boundingBox.getBoundingSphere(new Sphere());
 
     this.position.copy(pcoGeometry.offset);
-
-    this.applyMatrix4(new Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1));
-    this.updateMatrix();
 
     this.material = material || new PointCloudMaterial();
     this.updateMaterial();
