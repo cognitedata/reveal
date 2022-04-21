@@ -120,23 +120,24 @@ export type ImageObjectDetection =
   | ImageObjectDetectionBoundingBox
   | ImageObjectDetectionPolygon;
 
-export type CDFAnnotationDataType = ImageClassification | ImageObjectDetection;
-
-export type CDFImageObjectDetectionTypeName = 'images.ObjectDetection';
-export type CDFImageClassificationTypeName = 'images.Classification';
-
 export type CDFAnnotationStatus =
   | `${Status.Suggested}`
   | `${Status.Approved}`
   | `${Status.Rejected}`;
 
+export enum CDFAnnotationTypeEnum {
+  ImagesObjectDetection = 'images.ObjectDetection',
+  ImageClassification = 'images.Classification',
+}
+
 export type CDFAnnotationType<Type> = Type extends ImageObjectDetection
-  ? CDFImageObjectDetectionTypeName
+  ? CDFAnnotationTypeEnum.ImagesObjectDetection
   : Type extends ImageClassification
-  ? CDFImageClassificationTypeName
+  ? CDFAnnotationTypeEnum.ImageClassification
   : never;
 
 export type CDFAnnotationV2<Type> = AnnotatedResourceIdEither & {
+  id: number;
   createdTime: Timestamp;
   lastUpdatedTime: Timestamp;
   annotatedResourceType: 'file';

@@ -195,6 +195,7 @@ export function convertCDFAnnotationV1ToVisionAnnotation(
 
   const cdfInheritedFields: CDFInheritedFields = {
     ...annotationIdEither,
+    id: annotation.id,
     createdTime: annotation.createdTime,
     lastUpdatedTime: annotation.lastUpdatedTime,
     status: convertCDFAnnotationV1StatusToStatus(annotation.status),
