@@ -78,6 +78,7 @@ export function intersectCadNode(cadNode: CadNode, input: IntersectInput): Inter
     const viewZ = perspectiveDepthToViewZ(depth, camera.near, camera.far);
     const point = getPosition(pickInput, viewZ);
     const distance = new THREE.Vector3().subVectors(point, camera.position).length();
+    isDepthFilled = false;
     return {
       distance,
       point,
@@ -94,6 +95,7 @@ export function intersectCadNode(cadNode: CadNode, input: IntersectInput): Inter
 }
 
 let depthArray = new Uint8Array();
+let isDepthFilled = false;
 
 export function intersectCadNodeFromStoredPixel(cadNode: CadNode, input: IntersectInput): THREE.Vector3 | undefined {
   const { camera, normalizedCoords, renderer, domElement } = input;
@@ -112,11 +114,12 @@ export function intersectCadNodeFromStoredPixel(cadNode: CadNode, input: Interse
       cadNode
     };
 
-    if (depthArray.length === 0) {
+    if (!isDepthFilled) {
       const previousRenderMode = cadNode.renderMode;
       cadNode.renderMode = RenderMode.Depth;
       depthArray = pickPixelBufferColor(pickInput, clearColor, clearAlpha);
       cadNode.renderMode = previousRenderMode;
+      isDepthFilled = true;
     }
     const absoluteCoords = {
       x: Math.round(((normalizedCoords.x + 1.0) / 2.0) * domElement.clientWidth),
