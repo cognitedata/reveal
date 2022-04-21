@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Row } from 'react-table';
 
-import { shortDate } from 'utils/date';
+import { getDateOrDefaultText } from 'utils/date';
 import { sortByDate } from 'utils/sort/sortByDate';
 
 import { CommentTarget, SetCommentTarget } from '@cognite/react-comments';
@@ -86,9 +86,13 @@ const ListView: React.FC<Props> = ({
       {
         Header: t('Date created'),
         width: '170px',
-        accessor: (row: FavoriteSummary) => shortDate(row.createdTime),
+        accessor: (row: FavoriteSummary) =>
+          getDateOrDefaultText(row.createdTime),
         sortType: (rowA: Row<FavoriteSummary>, rowB: Row<FavoriteSummary>) =>
-          sortByDate(rowA.original.createdTime, rowB.original.createdTime),
+          sortByDate(
+            getDateOrDefaultText(rowA.original.createdTime),
+            getDateOrDefaultText(rowB.original.createdTime)
+          ),
       },
       {
         Header: t('Last update by'),
@@ -100,14 +104,16 @@ const ListView: React.FC<Props> = ({
         Header: t('Date updated'),
         width: '170px',
         accessor: (row: FavoriteSummary) =>
-          shortDate(getFavoriteLastUpdatedByDateTime(row.lastUpdatedBy)),
+          getDateOrDefaultText(
+            getFavoriteLastUpdatedByDateTime(row.lastUpdatedBy)
+          ),
         sortType: (rowA: Row<FavoriteSummary>, rowB: Row<FavoriteSummary>) =>
           sortByDate(
-            new Date(
-              getFavoriteLastUpdatedByDateTime(rowB.original.lastUpdatedBy)
-            ),
-            new Date(
+            getDateOrDefaultText(
               getFavoriteLastUpdatedByDateTime(rowA.original.lastUpdatedBy)
+            ),
+            getDateOrDefaultText(
+              getFavoriteLastUpdatedByDateTime(rowB.original.lastUpdatedBy)
             )
           ),
       },
