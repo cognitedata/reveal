@@ -3,14 +3,15 @@
   "version": "0.0.1",
   "description": "Compile Graph-documents to Linewalk format",
   "scripts": {
-    "calc-lines": "ts-node node-script.ts",
-    "calc-lines:prefer-file": "ts-node node-script.ts --prefer-connections-from-file"
+    "cli": "ts-node main.ts"
   },
   "types": "node",
   "devDependencies": {
     "ts-node": "^10.4.0"
   },
   "dependencies": {
+    "@azure/msal-node": "^1.8.0",
+    "open": "^8.4.0",
     "typescript": "^4.5.5"
   }
 }

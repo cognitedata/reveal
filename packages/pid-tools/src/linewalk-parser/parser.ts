@@ -224,7 +224,6 @@ export const computeLineFiles = (
       parsedDocumentsWithLineNumbers.map(({ parsedDocument }) => parsedDocument)
     ),
     getParsedLinesFile(version, lineNumbers),
-    ...documentsForLineFiles,
     getLineReviewsFile(version, documentsForLineFiles),
   ];
 };

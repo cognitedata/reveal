@@ -3,6 +3,7 @@ import { useAuthContext } from '@cognite/react-container';
 import { ExternalFileInfo, FileInfo } from '@cognite/sdk';
 import {
   CognitePid,
+  DIAGRAM_PARSER_OUTPUT_TYPE,
   DIAGRAM_PARSER_SOURCE,
   getFileNameWithoutExtension,
 } from '@cognite/pid-tools';
@@ -51,7 +52,7 @@ const useCdfDiagrams = () => {
       mimeType: 'application/json',
       source: DIAGRAM_PARSER_SOURCE,
       metadata: {
-        type: 'graph',
+        type: DIAGRAM_PARSER_OUTPUT_TYPE,
         diagramType: graph.documentMetadata.type,
         unit: graph.documentMetadata.unit,
         lineNumbers: graph.lineNumbers.join(','),

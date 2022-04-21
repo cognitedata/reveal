@@ -13,7 +13,6 @@ Run
 
 ```
 yarn install
-poetry install
 ```
 
 in the root directory in this package to install Typescript and Python dependencies.
@@ -26,36 +25,29 @@ The output used by LineWalk has versioning, and you should supply a version when
 
 ### Download graph documents from CDF
 
-Run
+Run the following command to download all parsed files from Diagram Parser in CDF to the `./graphs` folder.
+
+**Note: this will overwrite any files with conflicting file names**.
 
 ```bash
-poetry run python download.py
+yarn download
 ```
-
-to download all parsed files from Diagram Parser in CDF to the `./graphs` folder.
-
-###### Note: This will clear all documents currently in the `./graphs` folder.
 
 ### Calculate only
 
-Run
+Run the following parse the graphs in the `./graphs` folder and output the Linewalk output to the `./documents` folder.
 
 ```bash
-yarn calc-lines --output-version <version>
+yarn parse --output-version <version>
 ```
-
-to parse the in the .`/graphs` folder.
-The output, formatted for use in LineWalk, is stored in the `./documents` folder.
 
 ### Upload only
 
-Run
+Run the following command to upload the documents in the `./documents` folder to CDF.
 
 ```bash
-poetry run python upload.py
+yarn upload
 ```
-
-to upload the JSON files in the `./documents` folder to CDF.
 
 ### Download, Calculate and Upload
 
