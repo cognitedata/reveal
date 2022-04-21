@@ -362,31 +362,36 @@ export const useFilesAnnotatedWithResourceCount = (
 
 export const useRelatedResourceCount = (
   resource: ResourceItem,
-  type: ResourceType
+  tabType: ResourceType
 ) => {
   const isAsset = resource.type === 'asset';
   const isFile = resource.type === 'file';
-  const isAssetTab = type === 'asset';
-  const isFileTab = type === 'file';
+  const isAssetTab = tabType === 'asset';
+  const isFileTab = tabType === 'file';
 
   const { data: linkedResourceCount, isFetched: isLinkedResourceFetched } =
     useAggregate(
-      convertResourceType(type),
+      convertResourceType(tabType),
       { assetSubtreeIds: [{ id: resource.id }] },
       { enabled: isAsset && !!resource.id, staleTime: 60 * 1000 }
     );
 
   const { data: relationships = [], isFetched: isRelationshipFetched } =
-    useRelationships(resource.externalId, type);
+    useRelationships(resource.externalId, tabType);
 
-  const { data: item, isFetched: isResourceFetched } = useCdfItem(
+  type Item = {
+    assetId?: string;
+    assetIds?: string[];
+  };
+
+  const { data: item, isFetched: isResourceFetched } = useCdfItem<Item>(
     convertResourceType(resource.type),
     { id: resource.id },
     { enabled: isAssetTab }
   );
 
   const { data: annotationCount, isFetched: isAnnotationFetched } =
-    useAnnotationCount(resource.id, type, isFile);
+    useAnnotationCount(resource.id, tabType, isFile);
 
   const { data: annotatedWithCount, isFetched: isAnnotatedWithFetched } =
     useFilesAnnotatedWithResourceCount(resource, isFileTab);
@@ -402,15 +407,15 @@ export const useRelatedResourceCount = (
 
   let assetIdCount = 0;
   if (isAssetTab && item) {
-    if ((item as any).assetId) {
+    if (item.assetId) {
       assetIdCount = 1;
-    } else if ((item as any).assetIds) {
-      assetIdCount = (item as any).assetIds.length;
+    } else if (item.assetIds) {
+      assetIdCount = item.assetIds.length;
     }
   }
   count += assetIdCount;
 
-  if (isAsset && linkedResourceCount) {
+  if (isAsset && linkedResourceCount?.count) {
     count += linkedResourceCount?.count;
   }
 
@@ -426,7 +431,9 @@ export const useRelatedResourceCount = (
     count: formatNumber(count),
     relationshipCount: relationships.length,
     assetIdCount,
-    linkedResourceCount: linkedResourceCount?.count,
+    linkedResourceCount: isAssetTab
+      ? Math.max((linkedResourceCount?.count ?? 1) - 1, 0)
+      : linkedResourceCount?.count,
     annotationCount,
     annotatedWithCount,
     isFetched,
