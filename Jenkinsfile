@@ -337,6 +337,7 @@ pods {
                 variant: 'preview',
                 previewSubdomain: params.preview_subdomain != "" ? params.preview_subdomain : null,
                 baseVersion: params.base_version,
+                // sourceMapPath: 'assets',
               )
               print("FAS preview published")
             }
@@ -349,6 +350,7 @@ pods {
                 sentryProjectName: params.sentry_project_name,
                 variant: 'staging',
                 baseVersion: params.base_version,
+                // sourceMapPath: 'assets',
               )
               print("FAS staging published")
               slackMessages.add("- `${params.staging_app_id}`")
@@ -362,6 +364,7 @@ pods {
                 sentryProjectName: params.sentry_project_name,
                 variant: 'production',
                 baseVersion: params.base_version,
+                // sourceMapPath: 'assets',
               )
               print("FAS production published")
               slackMessages.add("- `${params.production_app_id}`")
