@@ -46,7 +46,11 @@ export class Point {
     return new Point((this.x + other.x) / 2, (this.y + other.y) / 2);
   }
 
-  translateAndScale(translatePoint: Point, scale: number | Point) {
+  translateAndScale(
+    translatePoint: Point,
+    scale: number | Point,
+    scaleOrigin: Point | undefined
+  ) {
     let scaleX;
     let scaleY;
     if (scale instanceof Point) {
@@ -56,12 +60,15 @@ export class Point {
       scaleX = scale;
       scaleY = scale;
     }
-    const newX = scaleX * (this.x - translatePoint.x);
-    const newY = scaleY * (this.y - translatePoint.y);
+
+    const origin = scaleOrigin ?? new Point(0, 0);
+
+    const newX = scaleX * (this.x + translatePoint.x - origin.x) + origin.x;
+    const newY = scaleY * (this.y + translatePoint.y - origin.y) + origin.y;
     return new Point(newX, newY);
   }
 
-  rotate(degAngle: number, pivotPoint: Point | undefined = undefined): Point {
+  rotate(degAngle: number, pivotPoint: Point | undefined): Point {
     // based on: https://stackoverflow.com/a/2259502
 
     const radAngle = degToRad(degAngle);

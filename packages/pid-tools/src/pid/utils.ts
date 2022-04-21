@@ -18,24 +18,22 @@ export const createSvgRepresentation = (
   const boundingBox = calculatePidPathsBoundingBox(pidPaths);
   let svgPaths: SvgPath[];
   if (normalizeToBoundingBox) {
-    const translatePoint = new Point(boundingBox.x, boundingBox.y);
+    const translatePoint = new Point(-boundingBox.x, -boundingBox.y);
     const scaleX = boundingBox.width === 0 ? 0 : 1 / boundingBox.width;
     const scaleY = boundingBox.height === 0 ? 0 : 1 / boundingBox.height;
     const scale = new Point(scaleX, scaleY);
-    svgPaths = pidPaths
-      .sort((a, b) => a.segmentList[0].start.lessThan(b.segmentList[0].start))
-      .map((pidPath) => {
-        const svgCommands = pidPath
-          .translateAndScale(translatePoint, scale)
-          .serializeToPathCommands(toFixed);
-        return { svgCommands };
-      });
+    svgPaths = pidPaths.map((pidPath) => {
+      const svgCommands = pidPath
+        .translateAndScale(translatePoint, scale, undefined)
+        .serializeToPathCommands(toFixed);
+      return { svgCommands, style: pidPath.getStyleString() };
+    });
   } else {
     svgPaths = pidPaths
       .sort((a, b) => a.segmentList[0].start.lessThan(b.segmentList[0].start))
       .map((pidPath) => {
         const svgCommands = pidPath.serializeToPathCommands(toFixed);
-        return { svgCommands };
+        return { svgCommands, style: pidPath.getStyleString() };
       });
   }
   return { boundingBox, svgPaths };

@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable no-param-reassign */
 import { v4 as uuid } from 'uuid';
+import uniqBy from 'lodash/uniqBy';
 
 import {
   getPathReplacementDescendants,
@@ -1156,8 +1157,13 @@ export class CognitePid {
     this.addSymbolsAndFindInstances([newSymbol]);
   }
 
-  addSymbolsAndFindInstances(newSymbols: DiagramSymbol[], refresh = true) {
+  addSymbolsAndFindInstances(symbols: DiagramSymbol[], refresh = true) {
     if (!this.pidDocument) return;
+
+    const newSymbols = uniqBy(
+      symbols.filter((symbol) => !this.symbols.some((s) => s.id === symbol.id)),
+      (symbol) => symbol.id
+    );
 
     const { symbolInstancesToKeep, symbolInstancesToDelete } =
       computeSymbolInstances(
@@ -1378,52 +1384,68 @@ export class CognitePid {
     pathReplacementGroups: PathReplacementGroup[] | PathReplacementGroup,
     refresh = false
   ) {
-    const replacements = Array.isArray(pathReplacementGroups)
+    const newPathReplacementGroups = Array.isArray(pathReplacementGroups)
       ? pathReplacementGroups
       : [pathReplacementGroups];
 
-    const newReplacements = replacements.reduce((groups, newGroup) => {
-      const addedReplacements = newGroup.replacements.reduce(
-        (addedReplacements, possibleReplacement) => {
-          const added = this.addPathReplacementIfPossible(possibleReplacement);
-          if (added) {
-            addedReplacements.push(possibleReplacement);
-          }
-          return addedReplacements;
-        },
-        <PathReplacement[]>[]
-      );
-      if (addedReplacements.length) {
-        newGroup.replacements = addedReplacements;
-        groups.push(newGroup);
-      }
-      return groups;
-    }, <PathReplacementGroup[]>[]);
+    this.setPathReplacementGroups([
+      ...this.pathReplacementGroups,
+      ...newPathReplacementGroups,
+    ]);
 
-    this.applyNewPathReplacementGroups(newReplacements, refresh);
+    const newPathReplacements = newPathReplacementGroups.flatMap(
+      (prg) => prg.replacements
+    );
+    this.applyPathReplacements(newPathReplacements);
+
+    const pathReplacementIds = newPathReplacementGroups.flatMap((pr) =>
+      pr.replacements.map((r) => r.pathId)
+    );
+    const linesToDelete = this.lines.filter((line) =>
+      pathReplacementIds.includes(line.pathIds[0])
+    );
+    const linesToKeep = this.lines.filter(
+      (line) => !pathReplacementIds.includes(line.pathIds[0])
+    );
+
+    this.setLines(linesToKeep, false);
+
+    this.setConnections(
+      getConnectionsWithoutInstances(linesToDelete, this.connections),
+      false
+    );
+
+    if (refresh) {
+      this.refresh();
+    }
   }
 
-  addPathReplacementIfPossible(pathReplacement: PathReplacement): boolean {
+  private applyPathReplacements(pathReplacements: PathReplacement[]): boolean {
     if (!this.svg) return false;
     if (!this.pidDocument) return false;
 
-    const pathToReplace = this.nodeMap.get(pathReplacement.pathId);
-    if (pathToReplace === undefined) return false;
+    pathReplacements.forEach((pathReplacement) => {
+      const pathToReplace = this.nodeMap.get(pathReplacement.pathId);
+      if (pathToReplace === undefined) return;
 
-    this.replacedNodes.set(pathReplacement.pathId, {
-      ...pathToReplace,
-      parentElement: pathToReplace.node.parentElement,
+      this.replacedNodes.set(pathReplacement.pathId, {
+        ...pathToReplace,
+        parentElement: pathToReplace.node.parentElement,
+      });
+
+      if (!this.svg) return;
+
+      const newNodes = applyPathReplacementInSvg(
+        this.svg,
+        pathReplacement,
+        pathToReplace.originalStyle
+      );
+      newNodes.forEach((newNode) => this.applyNode(newNode));
+
+      this.nodeMap.delete(pathReplacement.pathId);
     });
 
-    this.pidDocument.applyPathReplacement(pathReplacement);
-    const newNodes = applyPathReplacementInSvg(
-      this.svg,
-      pathReplacement,
-      pathToReplace.originalStyle
-    );
-    newNodes.forEach((newNode) => this.applyNode(newNode));
-
-    this.nodeMap.delete(pathReplacement.pathId);
+    this.pidDocument.applyPathReplacement(pathReplacements);
     return true;
   }
 

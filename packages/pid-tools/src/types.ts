@@ -2,6 +2,7 @@ import { symbolTypes } from './constants';
 
 export interface SvgPath {
   svgCommands: string;
+  style?: string;
 }
 
 export interface SvgPathWithId extends SvgPath {

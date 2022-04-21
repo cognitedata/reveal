@@ -49,6 +49,7 @@ DEPENDENCIES = [
     "@npm//svg-parser",
     "@npm//svg-path-parser",
     "@npm//uuid",
+    "@npm//kd-tree-javascript",
 ]
 
 # Type dependencies from package.json
@@ -58,6 +59,7 @@ TYPE_DEPENDENCIES = [
     "@npm//@types/svg-parser",
     "@npm//@types/svg-path-parser",
     "@npm//@types/uuid",
+    "@npm//@types/kd-tree-javascript",
 ]
 
 # Dev dependencies from package.json

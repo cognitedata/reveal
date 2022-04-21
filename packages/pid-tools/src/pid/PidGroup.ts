@@ -1,4 +1,9 @@
-import { Rect, DiagramInstanceWithPaths, SvgRepresentation } from '../types';
+import {
+  Rect,
+  DiagramInstanceWithPaths,
+  SvgRepresentation,
+  SvgPath,
+} from '../types';
 import { PidDocument, PidPath } from '../pid';
 import {
   getClosestPointOnSegments,
@@ -74,6 +79,13 @@ export class PidGroup {
     toFixed: number | null = null
   ): SvgRepresentation {
     return createSvgRepresentation(this.pidPaths, normalized, toFixed);
+  }
+
+  static fromSvgPaths(svgPaths: SvgPath[]): PidGroup {
+    const pidPaths = svgPaths.map((svgPath) => {
+      return PidPath.fromSvgPath(svgPath);
+    });
+    return new PidGroup(pidPaths);
   }
 }
 

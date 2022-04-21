@@ -9,3 +9,4 @@ export { default as getFileNameWithoutExtension } from './getFileNameWithoutExte
 export { default as getLineNumberFromText } from './getLineNumberFromText';
 export { default as splitBy } from './splitBy';
 export { default as getLineNumberAndPageFromText } from './getLineNumberAndPageFromText';
+export { default as parseStyleString } from './parseStyleString';

@@ -15,15 +15,13 @@ import {
   angleDifference,
   approxeq,
 } from '../geometry';
-import { PathReplacement, SvgPathWithId } from '../types';
+import { PathReplacement, SvgPath, SvgPathWithId } from '../types';
 import { T_JUNCTION, T_JUNCTION_SIZE } from '../constants';
-import { splitBy } from '../utils';
+import { splitBy, parseStyleString } from '../utils';
 
-interface PidPathStyle {
-  strokeLinejoin: string;
-  stroke: string;
-  fill: string;
-}
+import { calculatePidPathsBoundingBox } from './utils';
+
+export type PidPathStyle = Record<string, string>;
 
 export class PidPath {
   segmentList: PathSegment[];
@@ -47,14 +45,22 @@ export class PidPath {
     }
   }
 
+  getBoundingBox() {
+    return calculatePidPathsBoundingBox([this]);
+  }
+
   serializeToPathCommands(toFixed: null | number = null): string {
     return segmentsToSvgCommands(this.segmentList, toFixed);
   }
 
-  translateAndScale(translatePoint: Point, scale: number | Point): PidPath {
+  translateAndScale(
+    translatePoint: Point,
+    scale: number | Point,
+    scaleOrigin: Point | undefined
+  ): PidPath {
     return new PidPath(
       this.segmentList.map((pathSegment) =>
-        pathSegment.translateAndScale(translatePoint, scale)
+        pathSegment.translateAndScale(translatePoint, scale, scaleOrigin)
       ),
       this.pathId,
       this.style
@@ -84,8 +90,25 @@ export class PidPath {
     );
   }
 
+  getStyleString(): string | undefined {
+    const { style } = this;
+    if (style === undefined) return undefined;
+
+    const outputStringList: string[] = [];
+    Object.keys(style).forEach((key) => {
+      outputStringList.push(`${key}:${style[key]}`);
+    });
+    return outputStringList.join(';');
+  }
+
   static fromPathCommand(pathCommand: string, pathId = '') {
     return new PidPath(svgCommandsToSegments(pathCommand), pathId, undefined);
+  }
+
+  static fromSvgPath(svgPath: SvgPath) {
+    const style =
+      svgPath.style === undefined ? undefined : parseStyleString(svgPath.style);
+    return new PidPath(svgCommandsToSegments(svgPath.svgCommands), '', style);
   }
 
   getTJunctionByIntersectionWith(
@@ -207,6 +230,12 @@ export class PidPath {
     return outputPathReplacements;
   }
 
+  isFilled(): boolean {
+    const { style } = this;
+    if (style === undefined || style.fill === undefined) return false;
+    return style.fill !== 'none';
+  }
+
   getPathReplacementByAngles(
     angles: number[],
     threshold = 2,
@@ -218,7 +247,7 @@ export class PidPath {
       return null;
 
     // Hack to not split badly formatted paths in isometrics
-    if (this.style?.fill !== 'none') return null;
+    if (this.isFilled()) return null;
 
     if (
       skipIfCloses &&

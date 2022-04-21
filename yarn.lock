@@ -7510,6 +7510,11 @@
   dependencies:
     jwt-decode "*"
 
+"@types/kd-tree-javascript@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@types/kd-tree-javascript/-/kd-tree-javascript-1.0.1.tgz#9351b0118efe1d5c74f7a952b16d4bec71729cca"
+  integrity sha512-GE4nu1+pPERjXrnmwtKufcOI2NazvBtT3tmqxQ8C0AgFKGH9mdelLMkbhD3E2UR6/lZGeDc+QUNyvph74gCaww==
+
 "@types/keyboardjs@^2.5.0":
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/@types/keyboardjs/-/keyboardjs-2.5.0.tgz#8ab3ac77a1e413e64b80c51b8d6c20e6c79da3f5"
@@ -19833,6 +19838,11 @@ jwt-decode@*, jwt-decode@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-3.1.2.tgz#3fb319f3675a2df0c2895c8f5e9fa4b67b04ed59"
   integrity sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==
+
+kd-tree-javascript@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/kd-tree-javascript/-/kd-tree-javascript-1.0.3.tgz#ab5239ed44e347e10065590fd479e947bedff96c"
+  integrity sha512-7oSugmaxTCJFqey11rlTSEQD3hGDnRgROMj9MEREvDGV8SlIFwN7x3jJRyFoi+mjO0+4wuSuaDLS1reNQHP7uA==
 
 kdbush@^3.0.0:
   version "3.0.0"

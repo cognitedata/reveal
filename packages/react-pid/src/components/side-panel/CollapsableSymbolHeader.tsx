@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { DiagramSymbol } from '@cognite/pid-tools';
+import { DiagramSymbol, parseStyleString } from '@cognite/pid-tools';
 import { Icon } from '@cognite/cogs.js';
 
 const CollapseHeader = styled.div`
@@ -34,6 +34,10 @@ export const CollapsableSymbolHeader: React.FC<CollapsableSymbolHeaderProps> =
           style={{ aspectRatio: '1 / 1', height: '2rem' }}
         >
           {symbol.svgRepresentation.svgPaths.map((path) => {
+            const fill =
+              path.style === undefined
+                ? 'none'
+                : parseStyleString(path.style).fill ?? 'none';
             return (
               <path
                 key={path.svgCommands}
@@ -41,7 +45,7 @@ export const CollapsableSymbolHeader: React.FC<CollapsableSymbolHeaderProps> =
                 style={{
                   strokeWidth,
                   stroke: 'black',
-                  fill: 'none',
+                  fill,
                 }}
               />
             );

@@ -1,6 +1,8 @@
 import { ElementNode, parse } from 'svg-parser';
 import sortBy from 'lodash/sortBy';
+import { kdTree } from 'kd-tree-javascript';
 
+import { parseStyleString } from '../utils';
 import {
   DiagramConnection,
   DiagramLineInstance,
@@ -36,10 +38,46 @@ export type LabelInstanceConnection = {
   instanceId: DiagramInstanceId;
 };
 
+export type KdTreePidPath = kdTree<PidPathPoint>;
+
+export interface PidPathPoint {
+  x: number;
+  y: number;
+  pathSegment: PathSegment;
+  index: number;
+  pathId: string;
+  isFilled: boolean;
+}
+
+const distance = (a: PidPathPoint, b: PidPathPoint) => {
+  return (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
+};
+
+const pidPathsToKdTree = (pidPaths: PidPath[]): KdTreePidPath => {
+  const points = pidPaths.flatMap((pidPath) => {
+    return pidPath.segmentList.map((pathSegment, index) => {
+      const { midPoint } = pathSegment;
+      const pidPathPoint: PidPathPoint = {
+        x: midPoint.x,
+        y: midPoint.y,
+        pathSegment,
+        index,
+        pathId: pidPath.pathId,
+        isFilled: pidPath.isFilled(),
+      };
+      return pidPathPoint;
+    });
+  });
+
+  // eslint-disable-next-line new-cap
+  return new kdTree<PidPathPoint>(points, distance, ['x', 'y']);
+};
+
 export class PidDocument {
   pidPaths: PidPath[];
   pidLabels: PidTspan[];
   viewBox: Rect;
+  kdTree: KdTreePidPath;
   replacements = new Map<
     string,
     {
@@ -52,6 +90,7 @@ export class PidDocument {
     this.pidPaths = paths;
     this.pidLabels = labels;
     this.viewBox = viewBox;
+    this.kdTree = pidPathsToKdTree(this.pidPaths);
   }
 
   getPidPathById(pathId: string): PidPath | null {
@@ -74,27 +113,31 @@ export class PidDocument {
     return null;
   }
 
-  applyPathReplacement(pathReplacement: PathReplacement) {
-    const oldPidPath = this.getPidPathById(pathReplacement.pathId);
-    if (!oldPidPath) {
-      throw new Error(
-        `Tried to get pidPath with ID ${pathReplacement.pathId} which does not exist in pidDocument`
-      );
-    }
-    const newPidPaths = pathReplacement.replacementPaths.map(
-      (svgPathWithId) => {
-        const pathSegments = svgCommandsToSegments(svgPathWithId.svgCommands);
-        return new PidPath(pathSegments, svgPathWithId.id, oldPidPath?.style);
+  applyPathReplacement(pathReplacements: PathReplacement[]) {
+    pathReplacements.forEach((pathReplacement) => {
+      const oldPidPath = this.getPidPathById(pathReplacement.pathId);
+      if (!oldPidPath) {
+        throw new Error(
+          `Tried to get pidPath with ID ${pathReplacement.pathId} which does not exist in pidDocument`
+        );
       }
-    );
-    this.pidPaths = this.pidPaths.filter(
-      (pidPath) => pidPath.pathId !== oldPidPath.pathId
-    );
-    this.replacements.set(pathReplacement.pathId, {
-      pidPath: oldPidPath,
-      pathReplacement,
+      this.replacements.set(pathReplacement.pathId, {
+        pidPath: oldPidPath,
+        pathReplacement,
+      });
+
+      const newPidPaths = pathReplacement.replacementPaths.map(
+        (svgPathWithId) => {
+          const pathSegments = svgCommandsToSegments(svgPathWithId.svgCommands);
+          return new PidPath(pathSegments, svgPathWithId.id, oldPidPath?.style);
+        }
+      );
+      this.pidPaths = this.pidPaths.filter(
+        (pidPath) => pidPath.pathId !== oldPidPath.pathId
+      );
+      this.pidPaths.push(...newPidPaths);
     });
-    this.pidPaths.push(...newPidPaths);
+    this.kdTree = pidPathsToKdTree(this.pidPaths);
   }
 
   removePathReplacement(pathReplacement: PathReplacement) {
@@ -133,6 +176,9 @@ export class PidDocument {
     );
     // Remove from replaced paths
     this.replacements.delete(pathReplacement.pathId);
+
+    // Update k-d-tree
+    this.kdTree = pidPathsToKdTree(this.pidPaths);
   }
 
   toSvgString(
@@ -190,13 +236,27 @@ export class PidDocument {
     (doc.children[0] as ElementNode).children.forEach((element) => {
       const elementNode = element as ElementNode;
       if (elementNode.tagName === 'path') {
-        const segmentList = elementNode.properties?.d as string;
-        pidPaths.push(
-          new PidPath(
-            svgCommandsToSegments(segmentList),
-            elementNode.properties?.id as string
-          )
-        );
+        const { properties } = elementNode;
+        if (!properties) return;
+
+        const { id } = properties;
+        if (!id || typeof id === 'number') return;
+
+        const segmentList = properties.d as string;
+
+        const { style } = properties;
+        if (style === undefined) {
+          pidPaths.push(
+            new PidPath(svgCommandsToSegments(segmentList), id, undefined)
+          );
+        } else {
+          if (typeof style === 'number') return;
+
+          const styleRecord = parseStyleString(style);
+          pidPaths.push(
+            new PidPath(svgCommandsToSegments(segmentList), id, styleRecord)
+          );
+        }
       }
     });
 

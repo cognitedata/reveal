@@ -45,29 +45,19 @@ export abstract class PathSegment {
   abstract get boundingBox(): Rect;
   abstract translateAndScale(
     translatePoint: Point,
-    scale: number | Point
+    scale: number | Point,
+    scaleOrigin: Point | undefined
   ): PathSegment;
   abstract rotate(degAngle: number, pivotPoint: Point | undefined): PathSegment;
 
-  getTranslationAndScaleDistance(
-    thisOrigin: Point,
-    thisScale: number,
-    other: PathSegment,
-    otherOrigin: Point,
-    otherScale: number
-  ): number {
+  getDistance(other: PathSegment): number {
     if (this.pathType !== other.pathType) return Infinity;
 
-    const thisStart = this.start.translateAndScale(thisOrigin, thisScale);
-    const thisStop = this.stop.translateAndScale(thisOrigin, thisScale);
-    const otherStart = other.start.translateAndScale(otherOrigin, otherScale);
-    const otherStop = other.stop.translateAndScale(otherOrigin, otherScale);
-
     const sameDistance =
-      thisStart.distance(otherStart) + thisStop.distance(otherStop);
+      this.start.distance(other.start) + this.stop.distance(other.stop);
     const oppositeDistance =
-      thisStart.distance(otherStop) + thisStop.distance(otherStart);
-    return Math.min(sameDistance, oppositeDistance);
+      this.start.distance(other.stop) + this.stop.distance(other.start);
+    return Math.min(sameDistance, oppositeDistance) / (this.length + 1);
   }
 
   get angle() {
@@ -247,10 +237,14 @@ export class LineSegment extends PathSegment {
     return getBoundingBox(this.start, this.stop);
   }
 
-  translateAndScale(translatePoint: Point, scale: number | Point): LineSegment {
+  translateAndScale(
+    translatePoint: Point,
+    scale: number | Point,
+    scaleOrigin: Point | undefined
+  ): LineSegment {
     return new LineSegment(
-      this.start.translateAndScale(translatePoint, scale),
-      this.stop.translateAndScale(translatePoint, scale)
+      this.start.translateAndScale(translatePoint, scale, scaleOrigin),
+      this.stop.translateAndScale(translatePoint, scale, scaleOrigin)
     );
   }
 
@@ -369,13 +363,14 @@ export class CurveSegment extends PathSegment {
 
   translateAndScale(
     translatePoint: Point,
-    scale: number | Point
+    scale: number | Point,
+    scaleOrigin: Point | undefined
   ): CurveSegment {
     return new CurveSegment(
-      this.controlPoint1.translateAndScale(translatePoint, scale),
-      this.controlPoint2.translateAndScale(translatePoint, scale),
-      this.start.translateAndScale(translatePoint, scale),
-      this.stop.translateAndScale(translatePoint, scale)
+      this.controlPoint1.translateAndScale(translatePoint, scale, scaleOrigin),
+      this.controlPoint2.translateAndScale(translatePoint, scale, scaleOrigin),
+      this.start.translateAndScale(translatePoint, scale, scaleOrigin),
+      this.stop.translateAndScale(translatePoint, scale, scaleOrigin)
     );
   }
 

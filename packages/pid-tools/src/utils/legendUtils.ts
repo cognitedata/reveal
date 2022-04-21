@@ -30,7 +30,14 @@ export const computeSymbolInstances = (
     ...existingSymbolInstances,
   ];
   symbols.forEach((symbol) => {
-    const newSymbolInstances = pidDocument.findAllInstancesOfSymbol(symbol);
+    const newSymbolInstances = pidDocument
+      .findAllInstancesOfSymbol(symbol)
+      // remove equal symbol instance since it would have been removed otherwise
+      .filter(
+        (symbolInstance) =>
+          !symbolInstancesToKeep.some((si) => si.id === symbolInstance.id)
+      );
+
     symbolInstancesToKeep = getNoneOverlappingSymbolInstances(
       pidDocument,
       symbolInstancesToKeep,
