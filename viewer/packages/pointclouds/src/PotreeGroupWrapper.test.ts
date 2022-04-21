@@ -2,7 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as Potree from '@cognite/potree-core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -21,10 +20,7 @@ describe('PotreeGroupWrapper', () => {
   });
 
   test('getLoadingStateObserver() triggers true after add', done => {
-    const dummyNode: Potree.PointCloudOctreeNode = new THREE.Mesh(
-      new THREE.BufferGeometry(),
-      new THREE.PointsMaterial()
-    );
+    const dummyNode = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.PointsMaterial());
     const model = new PotreeNodeWrapper(dummyNode);
     const manager = new PotreeGroupWrapper(pollLoadingStatusInterval);
 
