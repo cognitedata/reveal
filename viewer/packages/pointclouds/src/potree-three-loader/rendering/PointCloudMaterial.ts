@@ -694,7 +694,7 @@ function uniform<K extends keyof IPointCloudMaterialUniforms>(
   uniformName: K,
   requireSrcUpdate: boolean = false
 ): PropertyDecorator {
-  return (target: Object, propertyKey: string | symbol): void => {
+  return (target: any, propertyKey: string | symbol): void => {
     Object.defineProperty(target, propertyKey, {
       get() {
         return this.getUniform(uniformName);
@@ -711,8 +711,8 @@ function uniform<K extends keyof IPointCloudMaterialUniforms>(
   };
 }
 
-function requiresShaderUpdate(): (target: Object, propertyKey: string | symbol) => void {
-  return (target: Object, propertyKey: string | symbol): void => {
+function requiresShaderUpdate(): (target: any, propertyKey: string | symbol) => void {
+  return (target: any, propertyKey: string | symbol): void => {
     const fieldName = `_${propertyKey.toString()}`;
 
     Object.defineProperty(target, propertyKey, {
