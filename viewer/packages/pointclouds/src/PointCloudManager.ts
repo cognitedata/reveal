@@ -4,6 +4,7 @@
 
 import * as THREE from 'three';
 
+import { assertNever } from '@reveal/utilities';
 import { LoadingState } from '@reveal/model-base';
 
 import { PointCloudFactory } from './PointCloudFactory';
@@ -11,7 +12,7 @@ import { PointCloudNode } from './PointCloudNode';
 import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 
-import { asyncScheduler, combineLatest, Observable, Subject, throttleTime } from 'rxjs';
+import { asyncScheduler, combineLatest, Observable, scan, Subject, throttleTime } from 'rxjs';
 
 import { ModelIdentifier } from '@reveal/modeldata-api';
 import { MetricsLogger } from '@reveal/metrics';
@@ -23,7 +24,8 @@ export class PointCloudManager {
   private readonly _pointCloudGroupWrapper: PotreeGroupWrapper;
 
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
-  private readonly _addModelSubject: Subject<void> = new Subject();
+  private readonly _modelSubject: Subject<{ modelIdentifier: ModelIdentifier; operation: 'add' | 'remove' }> =
+    new Subject();
 
   private readonly _renderer: THREE.WebGLRenderer;
 
@@ -36,9 +38,9 @@ export class PointCloudManager {
     this._pointCloudFactory = modelFactory;
     this._pointCloudGroupWrapper = new PotreeGroupWrapper(modelFactory.potreeInstance);
 
-    combineLatest([this._cameraSubject, this._addModelSubject])
+    combineLatest([this._cameraSubject, this.loadedModelsObservable()])
       .pipe(throttleTime(500, asyncScheduler, { leading: true, trailing: true }))
-      .subscribe(([cam, _]: [THREE.PerspectiveCamera, void]) => {
+      .subscribe(([cam, _models]: [THREE.PerspectiveCamera, ModelIdentifier[]]) => {
         this.updatePointClouds(cam);
       });
 
@@ -98,7 +100,7 @@ export class PointCloudManager {
   async addModel(modelIdentifier: ModelIdentifier): Promise<PointCloudNode> {
     const metadata = await this._pointCloudMetadataRepository.loadData(modelIdentifier);
 
-    this._addModelSubject.next();
+    this._modelSubject.next({ modelIdentifier, operation: 'add' });
 
     const modelType: SupportedModelTypes = 'pointcloud';
     MetricsLogger.trackLoadModel(
@@ -118,5 +120,22 @@ export class PointCloudManager {
 
   removeModel(node: PointCloudNode): void {
     this._pointCloudGroupWrapper.removePointCloud(node.potreeNode);
+  }
+
+  private loadedModelsObservable() {
+    return this._modelSubject.pipe(
+      scan((array, next) => {
+        const { modelIdentifier, operation } = next;
+        switch (operation) {
+          case 'add':
+            array.push(modelIdentifier);
+            return array;
+          case 'remove':
+            return array.filter(x => x !== modelIdentifier);
+          default:
+            assertNever(operation);
+        }
+      }, [] as ModelIdentifier[])
+    );
   }
 }
