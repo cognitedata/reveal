@@ -1,8 +1,14 @@
 /* eslint-disable no-continue */
 import { GraphOutputFormat } from '../graph/types';
 import { DiagramInstanceId, DiagramInstanceOutputFormat } from '../types';
-import { isEquipment, isEquipmentTag, isInstrument } from '../utils';
+import {
+  getLineNumberFromText,
+  isEquipment,
+  isEquipmentTag,
+  isInstrument,
+} from '../utils';
 import { calculateShortestPaths, PathOutputFormat } from '../graph';
+import areSetsEqual from '../utils/areSetsEqual';
 
 import {
   getEditDistanceBetweenPaths,
@@ -38,6 +44,30 @@ export const isCrossConnection = (
       pidInstance.equipmentTag === isoInstance.equipmentTag
     );
   }
+
+  if (pidInstance.type === 'Line Break' && isoInstance.type === 'Line Break') {
+    const pidLineNumbers = new Set<string>();
+    pidInstance.labels.forEach((label) => {
+      const lineNumber = getLineNumberFromText(label.text);
+      if (lineNumber !== null) {
+        pidLineNumbers.add(lineNumber);
+      }
+    });
+
+    if (pidLineNumbers.size !== 2) return false;
+
+    const isoLineNumbers = new Set<string>();
+    isoInstance.labels.forEach((label) => {
+      const lineNumber = getLineNumberFromText(label.text);
+      if (lineNumber !== null) {
+        isoLineNumbers.add(lineNumber);
+      }
+    });
+
+    if (areSetsEqual(pidLineNumbers, isoLineNumbers)) return true;
+
+    return false;
+  }
   return false;
 };
 
@@ -69,13 +99,13 @@ export const matchGraphs = (
 ) => {
   const potentialPidStartObjects = [
     ...pidGraph.diagramSymbolInstances.filter((instance) =>
-      ['Instrument', 'Equipment'].includes(instance.type)
+      ['Instrument', 'Equipment', 'Line Break'].includes(instance.type)
     ),
     ...pidGraph.diagramTags,
   ];
   const potentialIsoStartObjects = [
     ...isoGraph.diagramSymbolInstances.filter((instance) =>
-      ['Instrument', 'Equipment'].includes(instance.type)
+      ['Instrument', 'Equipment', 'Line Break'].includes(instance.type)
     ),
     ...isoGraph.diagramTags,
   ];
