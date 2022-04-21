@@ -79,6 +79,16 @@ describe('Feedback', () => {
           assert.equal(requestBody.isSensitiveData, false);
           assert.equal(requestBody.isOther, false);
           assert.equal(interception.response.statusCode, 200);
+          assert.isDefined(
+            interception.response.body.id,
+            'feedback Id is returned in response'
+          );
+
+          cy.deleteFeedback(interception.response.body.id, 'object').then(
+            (response) => {
+              assert.equal(response.status, 204);
+            }
+          );
         }
       );
     });
@@ -138,6 +148,11 @@ describe('Feedback', () => {
           assert.equal(interception.request.body.payload.comment, comment);
           assert.exists(interception.request.body.payload.screenshotB64);
           assert.equal(interception.response.statusCode, 200);
+          cy.deleteFeedback(interception.response.body.id, 'general').then(
+            (response) => {
+              assert.equal(response.status, 204);
+            }
+          );
         }
       );
 

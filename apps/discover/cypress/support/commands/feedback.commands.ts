@@ -1,3 +1,8 @@
+import { SIDECAR } from '../../../src/constants/app';
+import { PROJECT } from '../../app.constants';
+
+import { getTokenHeaders } from './helpers';
+
 Cypress.Commands.add(
   'openGeneralFeedbackModal',
   (comment: string, createFeedback?: boolean) => {
@@ -13,6 +18,18 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add(
+  'deleteFeedback',
+  (id: string, feedbackType: string): Cypress.Chainable => {
+    return cy.request({
+      method: 'DELETE',
+      url: `${SIDECAR.discoverApiBaseUrl}/${PROJECT}/feedback/${feedbackType}/${id}`,
+      headers: getTokenHeaders(true),
+    });
+  }
+);
+
 export interface FeedbackCommands {
   openGeneralFeedbackModal(comment: string, createFeedback?: boolean): void;
+  deleteFeedback(id: string, feedbackType: string): Cypress.Chainable;
 }
