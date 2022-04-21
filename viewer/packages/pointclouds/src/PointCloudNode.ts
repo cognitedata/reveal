@@ -153,6 +153,7 @@ export class PointCloudNode extends THREE.Group {
   setModelTransformation(matrix: THREE.Matrix4): void {
     this._potreeNode.octree.applyMatrix4(matrix);
     this._potreeNode.octree.updateMatrix();
+    this._potreeNode.octree.updateWorldMatrix(true, true);
   }
 
   getModelTransformation(out = new THREE.Matrix4()): THREE.Matrix4 {

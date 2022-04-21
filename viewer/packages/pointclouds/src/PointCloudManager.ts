@@ -100,8 +100,6 @@ export class PointCloudManager {
   async addModel(modelIdentifier: ModelIdentifier): Promise<PointCloudNode> {
     const metadata = await this._pointCloudMetadataRepository.loadData(modelIdentifier);
 
-    this._modelSubject.next({ modelIdentifier, operation: 'add' });
-
     const modelType: SupportedModelTypes = 'pointcloud';
     MetricsLogger.trackLoadModel(
       {
@@ -115,6 +113,9 @@ export class PointCloudManager {
     this._pointCloudGroupWrapper.addPointCloud(nodeWrapper);
     const node = new PointCloudNode(this._pointCloudGroupWrapper, nodeWrapper, metadata.cameraConfiguration);
     node.setModelTransformation(metadata.modelMatrix);
+
+    this._modelSubject.next({ modelIdentifier, operation: 'add' });
+
     return node;
   }
 
