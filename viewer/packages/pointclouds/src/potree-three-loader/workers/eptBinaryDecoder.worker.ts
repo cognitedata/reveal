@@ -5,17 +5,17 @@ ctx.onmessage = function (arg0: any) {
 };
 
 export type ParsedEptData = {
-  numPoints: number,
-  tightBoundingBox: { min: number[], max: number[] },
-  mean: number[],
-  position: ArrayBuffer,
-  color: ArrayBuffer,
-  intensity: ArrayBuffer,
-  classification: ArrayBuffer,
-  returnNumber: ArrayBuffer,
-  numberOfReturns: ArrayBuffer,
-  pointSourceId: ArrayBuffer,
-  indices: ArrayBuffer
+  numPoints: number;
+  tightBoundingBox: { min: number[]; max: number[] };
+  mean: number[];
+  position: ArrayBuffer;
+  color: ArrayBuffer;
+  intensity: ArrayBuffer;
+  classification: ArrayBuffer;
+  returnNumber: ArrayBuffer;
+  numberOfReturns: ArrayBuffer;
+  pointSourceId: ArrayBuffer;
+  indices: ArrayBuffer;
 };
 
 type SchemaEntry = {
