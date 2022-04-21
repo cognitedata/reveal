@@ -61,12 +61,14 @@ export interface IPointCloudMaterialUniforms {
   depthMap: IUniform<Texture | null>;
   diffuse: IUniform<[number, number, number]>;
   fov: IUniform<number>;
+  gradient: IUniform<Texture>;
   heightMax: IUniform<number>;
   heightMin: IUniform<number>;
   intensityBrightness: IUniform<number>;
   intensityContrast: IUniform<number>;
   intensityGamma: IUniform<number>;
   intensityRange: IUniform<[number, number]>;
+  isLeafNode: IUniform<number>;
   level: IUniform<number>;
   maxSize: IUniform<number>;
   minSize: IUniform<number>;
@@ -182,7 +184,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     blendHardness: makeUniform('f', 2.0),
     classificationLUT: makeUniform('t', this.classificationTexture || new Texture()),
     clipBoxCount: makeUniform('f', 0),
-    clipBoxes: makeUniform('Matrix4fv', [] as any),
+    clipBoxes: makeUniform('Matrix4fv', new Float32Array()),
     depthMap: makeUniform('t', null),
     diffuse: makeUniform('fv', [1, 1, 1] as [number, number, number]),
     fov: makeUniform('f', 1.0),
@@ -502,7 +504,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
   }
 
   set classification(value: IClassification) {
-    const copy: IClassification = {} as any;
+    const copy = {} as IClassification;
     for (const key of Object.keys(value)) {
       copy[key] = value[key].clone();
     }
@@ -671,7 +673,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
       // https://github.com/mrdoob/three.js/issues/9870#issuecomment-368750182.
 
       // Remove the cast to any after updating to Three.JS >= r113
-      (material as any) /*ShaderMaterial*/.uniformsNeedUpdate = true;
+      (material as RawShaderMaterial).uniformsNeedUpdate = true;
     };
   }
 }
@@ -689,7 +691,7 @@ function uniform<K extends keyof IPointCloudMaterialUniforms>(
   uniformName: K,
   requireSrcUpdate: boolean = false
 ): PropertyDecorator {
-  return (target: any, propertyKey: string | symbol): void => {
+  return (target: Object, propertyKey: string | symbol): void => {
     Object.defineProperty(target, propertyKey, {
       get() {
         return this.getUniform(uniformName);
@@ -706,8 +708,8 @@ function uniform<K extends keyof IPointCloudMaterialUniforms>(
   };
 }
 
-function requiresShaderUpdate() {
-  return (target: any, propertyKey: string | symbol): void => {
+function requiresShaderUpdate(): (target: Object, propertyKey: string | symbol) => void {
+  return (target: Object, propertyKey: string | symbol): void => {
     const fieldName = `_${propertyKey.toString()}`;
 
     Object.defineProperty(target, propertyKey, {
