@@ -74,6 +74,7 @@ DEPENDENCIES = [
     "@npm//konva",
     "@npm//lodash",
     "@npm//pdf-lib",
+    "@npm//query-string",
     "@npm//react",
     "@npm//react-dom",
     "@npm//react-router-dom",
@@ -93,6 +94,7 @@ DEPENDENCIES = [
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
+    "@npm//@types/history",
     "@npm//@types/keyboardjs",
     "@npm//@types/lodash",
     "@npm//@types/react",

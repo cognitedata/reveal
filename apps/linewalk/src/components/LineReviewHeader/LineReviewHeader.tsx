@@ -58,7 +58,10 @@ const LineReviewHeader = ({
             className="back-button"
             icon="ChevronLeftLarge"
             onClick={() => {
-              history.push(PagePath.LINE_REVIEWS);
+              // eslint-disable-next-line no-unused-expressions
+              history.length === 0
+                ? history.push(PagePath.LINE_REVIEWS)
+                : history.goBack();
             }}
           />
         </BackButtonContainer>
