@@ -11,6 +11,7 @@ import { ILoader } from './ILoader';
 import { ModelDataProvider } from '@reveal/modeldata-api';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
+import { ParsedEptData } from '../workers/eptBinaryDecoder.worker';
 
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
@@ -37,7 +38,7 @@ export class EptBinaryLoader implements ILoader {
     return EptBinaryLoader.WORKER_POOL.getWorker().then(
       autoTerminatingWorker =>
         new Promise<void>(res => {
-          autoTerminatingWorker.worker.onmessage = function (e: any) {
+          autoTerminatingWorker.worker.onmessage = function (e: { data: ParsedEptData }) {
             const g = new THREE.BufferGeometry();
             const numPoints = e.data.numPoints;
 

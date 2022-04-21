@@ -4,6 +4,20 @@ ctx.onmessage = function (arg0: any) {
   parseEpt(arg0);
 };
 
+export type ParsedEptData = {
+  numPoints: number,
+  tightBoundingBox: { min: number[], max: number[] },
+  mean: number[],
+  position: ArrayBuffer,
+  color: ArrayBuffer,
+  intensity: ArrayBuffer,
+  classification: ArrayBuffer,
+  returnNumber: ArrayBuffer,
+  numberOfReturns: ArrayBuffer,
+  pointSourceId: ArrayBuffer,
+  indices: ArrayBuffer
+};
+
 type SchemaEntry = {
   name: string;
   size: number;
@@ -219,7 +233,7 @@ function parseEpt(event: MessageEvent): void {
     indices[i] = i;
   }
 
-  const message = {
+  const message: ParsedEptData = {
     numPoints: numPoints,
     tightBoundingBox: bounds,
     mean: mean,
@@ -245,7 +259,6 @@ function parseEpt(event: MessageEvent): void {
     message.indices
   ].filter(v => v);
 
-  // (postMessage as (a: any, b: ArrayBuffer[]) => void)(message, transferables);
   ctx.postMessage(message, transferables);
 }
 
