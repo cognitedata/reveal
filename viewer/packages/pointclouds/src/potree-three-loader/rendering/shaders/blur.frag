@@ -8,7 +8,9 @@ uniform float screenHeight;
 
 uniform sampler2D map;
 
-varying vec2 vUv;
+in vec2 vUv;
+
+out vec4 outputColor;
 
 void main() {
 
@@ -25,10 +27,10 @@ void main() {
 	color += texture2D(map, vUv + vec2(-dx,  dy)).rgb;
 	color += texture2D(map, vUv + vec2(  0,  dy)).rgb;
 	color += texture2D(map, vUv + vec2(+dx,  dy)).rgb;
-    
+
 	color = color / 9.0;
-	
-	gl_FragColor = vec4(color, 1.0);
-	
-	
+
+	outputColor = vec4(color, 1.0);
+
+
 }

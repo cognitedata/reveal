@@ -21,6 +21,8 @@ uniform float screenHeight;
 
 uniform sampler2D depthMap;
 
+out vec4 outputColor;
+
 #ifdef use_texture_blending
 	uniform sampler2D backgroundMap;
 #endif
@@ -41,34 +43,34 @@ uniform sampler2D depthMap;
 	uniform vec4 highlightedPointColor;
 #endif
 
-varying vec3 vColor;
+in vec3 vColor;
 
 #if !defined(color_type_point_index)
-	varying float vOpacity;
+	in float vOpacity;
 #endif
 
 #if defined(weighted_splats)
-	varying float vLinearDepth;
+	in float vLinearDepth;
 #endif
 
 #if !defined(paraboloid_point_shape) && defined(use_edl)
-	varying float vLogDepth;
+	in float vLogDepth;
 #endif
 
 #if defined(color_type_phong) && (MAX_POINT_LIGHTS > 0 || MAX_DIR_LIGHTS > 0) || defined(paraboloid_point_shape)
-	varying vec3 vViewPosition;
+	in vec3 vViewPosition;
 #endif
 
 #if defined(weighted_splats) || defined(paraboloid_point_shape)
-	varying float vRadius;
+	in float vRadius;
 #endif
 
 #if defined(color_type_phong) && (MAX_POINT_LIGHTS > 0 || MAX_DIR_LIGHTS > 0)
-	varying vec3 vNormal;
+	in vec3 vNormal;
 #endif
 
 #ifdef highlight_point
-	varying float vHighlight;
+	in float vHighlight;
 #endif
 
 float specularStrength = 1.0;
@@ -91,16 +93,16 @@ void main() {
 
 	#if defined weighted_splats
 		vec2 uv = gl_FragCoord.xy / vec2(screenWidth, screenHeight);
-		float sDepth = texture2D(depthMap, uv).r;
+		float sDepth = texture(depthMap, uv).r;
 		if(vLinearDepth > sDepth + vRadius + blendDepthSupplement){
 			discard;
 		}
 	#endif
 
 	#if defined color_type_point_index
-		gl_FragColor = vec4(color, pcIndex / 255.0);
+		outputColor = vec4(color, pcIndex / 255.0);
 	#else
-		gl_FragColor = vec4(color, vOpacity);
+		outputColor = vec4(color, vOpacity);
 	#endif
 
 	#ifdef use_point_cloud_mixing
@@ -125,8 +127,8 @@ void main() {
 	#ifdef use_texture_blending
 		vec2 vUv = gl_FragCoord.xy / vec2(screenWidth, screenHeight);
 
-		vec4 tColor = texture2D(backgroundMap, vUv);
-		gl_FragColor = vec4(vOpacity * color, 1.) + vec4((1. - vOpacity) * tColor.rgb, 0.);
+		vec4 tColor = texture(backgroundMap, vUv);
+		outputColor = vec4(vOpacity * color, 1.) + vec4((1. - vOpacity) * tColor.rgb, 0.);
 	#endif
 
 	#if defined(color_type_phong)
@@ -249,7 +251,7 @@ void main() {
 
 		#endif
 
-		gl_FragColor.xyz = gl_FragColor.xyz * ( emissive + totalDiffuse + ambientLightColor * ambient ) + totalSpecular;
+		outputColor.xyz = outputColor.xyz * ( emissive + totalDiffuse + ambientLightColor * ambient ) + totalSpecular;
 
 	#endif
 
@@ -262,8 +264,8 @@ void main() {
 		//float distance = length(2.0 * gl_PointCoord - 1.0);
 		//float w = exp( -(distance * distance) / blendHardness);
 
-		gl_FragColor.rgb = gl_FragColor.rgb * w;
-		gl_FragColor.a = w;
+		outputColor.rgb = outputColor.rgb * w;
+		outputColor.a = w;
 	#endif
 
 	#if defined paraboloid_point_shape
@@ -278,23 +280,23 @@ void main() {
 		gl_FragDepthEXT = depth;
 
 		#if defined(color_type_depth)
-			gl_FragColor.r = linearDepth;
-			gl_FragColor.g = expDepth;
+			outputColor.r = linearDepth;
+			outputColor.g = expDepth;
 		#endif
 
 		#if defined(use_edl)
-			gl_FragColor.a = log2(linearDepth);
+			outputColor.a = log2(linearDepth);
 		#endif
 
 	#else
 		#if defined(use_edl)
-			gl_FragColor.a = vLogDepth;
+			outputColor.a = vLogDepth;
 		#endif
 	#endif
 
 	#ifdef highlight_point
 		if (vHighlight > 0.0) {
-			gl_FragColor = highlightedPointColor;
+			outputColor = highlightedPointColor;
 		}
 	#endif
 }
