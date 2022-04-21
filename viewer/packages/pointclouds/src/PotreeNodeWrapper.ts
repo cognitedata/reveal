@@ -73,9 +73,6 @@ export class PotreeNodeWrapper {
 
   setClassificationAndRecompute(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void {
     const key = createPointClassKey(pointClass);
-    if (!this._classification) {
-      return;
-    }
 
     this._classification[key].w = visible ? 1.0 : 0.0;
     this.octree.material.classification = this._classification;
