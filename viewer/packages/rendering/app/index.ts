@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+import dat from 'dat.gui';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { CadModelFactory } from '../../cad-model/src/CadModelFactory';
@@ -10,7 +11,6 @@ import { AntiAliasingMode, CadMaterialManager, defaultRenderOptions, DefaultRend
 import { CdfModelDataProvider, CdfModelIdentifier, CdfModelMetadataProvider } from '@reveal/modeldata-api';
 import { CadManager } from '../../cad-model/src/CadManager';
 import { NumericRange, revealEnv } from '@reveal/utilities';
-import dat from 'dat.gui';
 import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
 import { CadModelUpdateHandler, defaultDesktopCadModelBudget } from '@reveal/cad-geometry-loaders';
 import { ByScreenSizeSectorCuller } from '@reveal/cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
@@ -29,7 +29,7 @@ async function init() {
   const guiData = {
     drawCalls: 0,
     gpuFrameTime: 1.1,
-    steps: 16,
+    steps: 5,
     canvasColor: '#50728c',
     clearColor: '#444',
     clearAlpha: 1
@@ -65,9 +65,7 @@ async function init() {
   const cadManager = new CadManager(materialManager, cadModelFactory, cadModelUpdateHandler);
   cadManager.budget = defaultDesktopCadModelBudget;
   const scene = new THREE.Scene();
-  const customObjects = new THREE.Group();
-
-  scene.add(customObjects);
+  const customObjects: THREE.Object3D[] = [];
 
   const modelOutputs = (await cdfModelMetadataProvider.getModelOutputs(modelIdentifier)).map(outputs => outputs.format);
 
@@ -81,10 +79,27 @@ async function init() {
     bb = (cadModel as any)._cadModelMetadata.scene.getBoundsOfMostGeometry().clone();
     bb.applyMatrix4(model.children[0].matrix);
     scene.add(model);
+
+    const nodeAppearanceProvider = materialManager.getModelNodeAppearanceProvider('0');
+    nodeAppearanceProvider.assignStyledNodeCollection(
+      new TreeIndexNodeCollection(new NumericRange(0, 10)),
+      DefaultNodeAppearance.Ghosted
+    );
+
+    nodeAppearanceProvider.assignStyledNodeCollection(
+      new TreeIndexNodeCollection(new NumericRange(10, 20)),
+      DefaultNodeAppearance.Highlighted
+    );
+
+    nodeAppearanceProvider.assignStyledNodeCollection(new TreeIndexNodeCollection(new NumericRange(40, 41)), {
+      ...DefaultNodeAppearance.Default,
+      outlineColor: 6
+    });
   } else if (modelOutputs.includes('ept-pointcloud')) {
     const pointCloudModel = await pointCloudManager.addModel(modelIdentifier);
     bb = pointCloudModel.getBoundingBox();
-    customObjects.add(pointCloudModel);
+    scene.add(pointCloudModel);
+    customObjects.push(pointCloudModel);
     model = pointCloudModel;
   } else {
     throw Error(`Unknown output format ${modelOutputs}`);
@@ -100,10 +115,6 @@ async function init() {
   renderer.setClearColor(guiData.clearColor);
   renderer.setClearAlpha(guiData.clearAlpha);
 
-  const controlsTest = new TransformControls(camera, renderer.domElement);
-  controlsTest.attach(model);
-  customObjects.add(controlsTest);
-
   const renderOptions = defaultRenderOptions;
   renderOptions.multiSampleCountHint = 4;
 
@@ -115,7 +126,7 @@ async function init() {
     scene,
     defaultRenderOptions,
     cadModels,
-    customObjects.children
+    customObjects
   );
   gui.add(guiData, 'steps', 1, pipelineExecutor.calcNumSteps(defaultRenderPipeline), 1).onChange(async () => {
     pipelineExecutor.numberOfSteps = guiData.steps;
@@ -131,7 +142,8 @@ async function init() {
 
   const grid = new THREE.GridHelper(30, 40);
   grid.position.set(14, -1, -14);
-  customObjects.add(grid);
+  scene.add(grid);
+  customObjects.push(grid);
 
   const customBox = new THREE.Mesh(
     new THREE.BoxGeometry(10, 10, 30),
@@ -142,9 +154,15 @@ async function init() {
       depthTest: true
     })
   );
-  customBox.position.set(15, 0, -15);
 
-  customObjects.add(customBox);
+  customBox.position.set(15, 0, -15);
+  scene.add(customBox);
+  customObjects.push(customBox);
+
+  const controlsTest = new TransformControls(camera, renderer.domElement);
+  controlsTest.attach(customBox);
+  scene.add(controlsTest);
+  customObjects.push(controlsTest);
 
   renderer.domElement.style.backgroundColor = guiData.canvasColor;
 
@@ -155,22 +173,6 @@ async function init() {
   cadModelUpdateHandler.updateCamera(camera);
 
   document.body.appendChild(renderer.domElement);
-
-  const nodeAppearanceProvider = materialManager.getModelNodeAppearanceProvider('0');
-  nodeAppearanceProvider.assignStyledNodeCollection(
-    new TreeIndexNodeCollection(new NumericRange(0, 10)),
-    DefaultNodeAppearance.Ghosted
-  );
-
-  nodeAppearanceProvider.assignStyledNodeCollection(
-    new TreeIndexNodeCollection(new NumericRange(10, 20)),
-    DefaultNodeAppearance.Highlighted
-  );
-
-  nodeAppearanceProvider.assignStyledNodeCollection(new TreeIndexNodeCollection(new NumericRange(40, 41)), {
-    ...DefaultNodeAppearance.Default,
-    outlineColor: 6
-  });
 
   const updateRenderOptions = async () => {
     defaultRenderPipeline.renderOptions = renderOptions;
@@ -213,7 +215,7 @@ async function init() {
         scene,
         renderOptions,
         cadModels,
-        customObjects.children
+        customObjects
       );
       await render();
     });

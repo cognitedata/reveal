@@ -9,13 +9,7 @@ import { RenderPass } from '../RenderPass';
 
 export type RenderTargetData = {
   currentRenderSize: THREE.Vector2;
-  backComposition: THREE.WebGLRenderTarget;
-  opaqueComposition: THREE.WebGLRenderTarget;
-  finalComposition: THREE.WebGLRenderTarget;
-  color: THREE.WebGLRenderTarget;
-  ghost: THREE.WebGLRenderTarget;
-  inFront: THREE.WebGLRenderTarget;
-  ssao: THREE.WebGLRenderTarget;
+  postProcessingRenderTarget: THREE.WebGLRenderTarget;
 };
 
 export type DefaultRenderPipelinePasses = {
@@ -43,4 +37,11 @@ export type DefaultRenderPipelinePasses = {
   blitOpaque: RenderPass;
   blitComposite: RenderPass;
   blitToOutput: BlitPass;
+};
+
+export type CadGeometryRenderTargets = {
+  currentRenderSize: THREE.Vector2;
+  back: THREE.WebGLRenderTarget;
+  ghost: THREE.WebGLRenderTarget;
+  inFront: THREE.WebGLRenderTarget;
 };

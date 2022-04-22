@@ -116,7 +116,7 @@ export const edgeDetectShaders = {
 
 export const blitShaders = {
   fragment: glsl(require('../glsl/post-processing/blit.frag').default),
-  vertex: glsl(require('../glsl/post-processing/passthrough.vert').default)
+  vertex: glsl(require('../glsl/post-processing/unit-orthographic-passthrough.vert').default)
 };
 
 export const outlineShaders = {
