@@ -9,6 +9,7 @@ import { Elements } from 'react-flow-renderer';
 import { NodeTypes, SourceOption, NodeDataVariants } from './types';
 import { defaultTranslations } from '../translations';
 import { getOperationsGroupedByCategory } from '../utils';
+import { useCanvasSize } from './CanvasContext';
 
 interface AddButtonProps {
   elements: Elements<NodeDataVariants>;
@@ -37,22 +38,28 @@ const SourceListDropdown = ({
   | 'addConstantNode'
   | 'addOutputNode'
 >) => {
+  const canvasSize = useCanvasSize();
+  const maxHeight =
+    typeof canvasSize.height === 'number' ? canvasSize.height - 50 : undefined;
+
   return (
     <SourceDropdownMenu>
       <Menu.Header>{t['Select wanted sources']}</Menu.Header>
-      {sources.map((source) => (
-        <SourceMenuItem
-          key={source.value}
-          onClick={(event) => addSourceNode(event, source)}
-        >
-          {source.type === 'timeseries' ? (
-            <SourceCircle color={source?.color} fade={false} />
-          ) : (
-            <SourceSquare color={source?.color} fade={false} />
-          )}
-          {source.label}
-        </SourceMenuItem>
-      ))}
+      <SourcesContainer maxHeight={maxHeight}>
+        {sources.map((source) => (
+          <SourceMenuItem
+            key={source.value}
+            onClick={(event) => addSourceNode(event, source)}
+          >
+            {source.type === 'timeseries' ? (
+              <SourceCircle color={source?.color} fade={false} />
+            ) : (
+              <SourceSquare color={source?.color} fade={false} />
+            )}
+            {source.label}
+          </SourceMenuItem>
+        ))}
+      </SourcesContainer>
     </SourceDropdownMenu>
   );
 };
@@ -189,14 +196,20 @@ const AddDropdownMenu = styled(Menu)`
 `;
 
 const SourceDropdownMenu = styled(Menu)`
-  width: 250px;
-  padding: 5px 0;
+  max-width: 275px;
+  padding: 5px 5px;
 `;
 
 const SourceMenuItem = styled(Menu.Item)`
   height: 40px;
   text-align: left;
   word-break: break-all;
+`;
+
+const SourcesContainer = styled.div<{ maxHeight?: number }>`
+  max-height: ${(props) =>
+    typeof props.maxHeight === 'number' ? props.maxHeight : 390}px;
+  overflow-y: auto;
 `;
 
 export { AddMenu };

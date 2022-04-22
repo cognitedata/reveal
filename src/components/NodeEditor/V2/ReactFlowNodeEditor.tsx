@@ -26,6 +26,7 @@ import ConstantNode from './Nodes/ConstantNode';
 import OutputNode from './Nodes/OutputNode';
 import SourceNode from './Nodes/SourceNode';
 import { defaultTranslations } from '../translations';
+import { CanvasContext } from './CanvasContext';
 
 type Props = {
   id?: string;
@@ -183,62 +184,54 @@ const ReactFlowNodeEditor = ({
     setIsRenderable(previousId === id);
   }, [previousId, id]);
 
+  /**
+   * Set canvas context
+   */
+  const canvasRect = reactFlowWrapper?.current?.getBoundingClientRect();
+  const canvasSize = {
+    height: canvasRect?.height,
+    width: canvasRect?.width,
+  };
+
   return (
-    <NodeEditorContainer ref={reactFlowWrapper} onClick={handleEditorClick}>
-      {isRenderable && (
-        <ReactFlow
-          defaultPosition={position}
-          defaultZoom={zoom}
-          elements={flowElements}
-          nodeTypes={{
-            [NodeTypes.SOURCE]: SourceNode,
-            [NodeTypes.FUNCTION]: FunctionNode,
-            [NodeTypes.CONSTANT]: ConstantNode,
-            [NodeTypes.OUTPUT]: OutputNode,
-          }}
-          onLoad={setReactFlowInstance}
-          onElementsRemove={onElementsRemove}
-          onConnect={onConnect}
-          onEdgeUpdate={onEdgeUpdate}
-          onNodeDragStop={onNodeDragStop}
-          onPaneClick={() => {
-            setContextMenuPosition(undefined);
-          }}
-          onPaneContextMenu={(e) => {
-            e.preventDefault();
-            setContextMenuPosition(e);
-          }}
-          onMoveEnd={handleMove}
-        >
-          <EditorControls
-            settings={settings}
-            onSaveSettings={onSaveSettings}
-            readOnly={readOnly}
-            translations={t}
-          />
-          <Background variant={BackgroundVariant.Dots} />
-        </ReactFlow>
-      )}
-      {!readOnly && (
-        <AddButton
-          elements={flowElements}
-          sources={sources}
-          operations={operations}
-          addSourceNode={addSourceNode}
-          addFunctionNode={addFunctionNode}
-          addConstantNode={addConstantNode}
-          addOutputNode={addOutputNode}
-          translations={t}
-        />
-      )}
-      {contextMenuPosition && (
-        <ContextMenu
-          position={{
-            x: contextMenuPosition.clientX,
-            y: contextMenuPosition.clientY,
-          }}
-        >
-          <AddMenu
+    <CanvasContext.Provider value={canvasSize}>
+      <NodeEditorContainer ref={reactFlowWrapper} onClick={handleEditorClick}>
+        {isRenderable && (
+          <ReactFlow
+            defaultPosition={position}
+            defaultZoom={zoom}
+            elements={flowElements}
+            nodeTypes={{
+              [NodeTypes.SOURCE]: SourceNode,
+              [NodeTypes.FUNCTION]: FunctionNode,
+              [NodeTypes.CONSTANT]: ConstantNode,
+              [NodeTypes.OUTPUT]: OutputNode,
+            }}
+            onLoad={setReactFlowInstance}
+            onElementsRemove={onElementsRemove}
+            onConnect={onConnect}
+            onEdgeUpdate={onEdgeUpdate}
+            onNodeDragStop={onNodeDragStop}
+            onPaneClick={() => {
+              setContextMenuPosition(undefined);
+            }}
+            onPaneContextMenu={(e) => {
+              e.preventDefault();
+              setContextMenuPosition(e);
+            }}
+            onMoveEnd={handleMove}
+          >
+            <EditorControls
+              settings={settings}
+              onSaveSettings={onSaveSettings}
+              readOnly={readOnly}
+              translations={t}
+            />
+            <Background variant={BackgroundVariant.Dots} />
+          </ReactFlow>
+        )}
+        {!readOnly && (
+          <AddButton
             elements={flowElements}
             sources={sources}
             operations={operations}
@@ -248,9 +241,28 @@ const ReactFlowNodeEditor = ({
             addOutputNode={addOutputNode}
             translations={t}
           />
-        </ContextMenu>
-      )}
-    </NodeEditorContainer>
+        )}
+        {contextMenuPosition && (
+          <ContextMenu
+            position={{
+              x: contextMenuPosition.clientX,
+              y: contextMenuPosition.clientY,
+            }}
+          >
+            <AddMenu
+              elements={flowElements}
+              sources={sources}
+              operations={operations}
+              addSourceNode={addSourceNode}
+              addFunctionNode={addFunctionNode}
+              addConstantNode={addConstantNode}
+              addOutputNode={addOutputNode}
+              translations={t}
+            />
+          </ContextMenu>
+        )}
+      </NodeEditorContainer>
+    </CanvasContext.Provider>
   );
 };
 

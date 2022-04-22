@@ -2,6 +2,7 @@ import { Operation } from '@cognite/calculation-backend';
 import { Menu } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { sortBy } from 'lodash';
+import { useCanvasSize } from 'components/NodeEditor/V2/CanvasContext';
 import FunctionsList from './FunctionsList';
 
 const CategoryMenu = ({
@@ -26,6 +27,10 @@ const CategoryMenu = ({
 
   const sortedFunctionsByCategory = sortBy(functionsByCategory, ['category']);
 
+  const canvasSize = useCanvasSize();
+  const maxHeight =
+    typeof canvasSize.height === 'number' ? canvasSize.height - 5 : 615;
+
   return (
     <Menu style={{ boxShadow: 'none' }}>
       {/* Recent category */}
@@ -33,7 +38,7 @@ const CategoryMenu = ({
         <>
           <Menu.Submenu
             content={
-              <Menu style={{ maxHeight: 615, overflowY: 'auto' }}>
+              <Menu style={{ maxHeight, overflowY: 'auto' }}>
                 <FunctionsList
                   category="Recent"
                   operations={categories.Recent}
@@ -65,7 +70,7 @@ const CategoryMenu = ({
                   visible={selectedCategory === category}
                   trigger={undefined}
                   content={
-                    <Menu style={{ maxHeight: 615, overflowY: 'auto' }}>
+                    <Menu style={{ maxHeight, overflowY: 'auto' }}>
                       <FunctionsList
                         category={category}
                         operations={toolFunctions}

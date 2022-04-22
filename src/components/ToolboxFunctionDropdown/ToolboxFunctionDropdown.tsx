@@ -5,6 +5,7 @@ import { Button, Dropdown, Input, Modal } from '@cognite/cogs.js';
 import Layers from 'utils/z-index';
 import compareVersions from 'compare-versions';
 import Markdown from 'components/Markdown/Markdown';
+import { useCanvasSize } from 'components/NodeEditor/V2/CanvasContext';
 import CategoryMenu from './CategoryMenu';
 import SearchResultMenu from './SearchResultMenu';
 
@@ -45,6 +46,10 @@ const ToolboxFunctionDropdown = ({
     setIsModalVisible(true);
   };
 
+  const canvasSize = useCanvasSize();
+  const maxHeight =
+    typeof canvasSize.height === 'number' ? canvasSize.height - 5 : undefined;
+
   return (
     <>
       <FunctionsDropdown
@@ -56,7 +61,7 @@ const ToolboxFunctionDropdown = ({
         zIndex={Layers.DROPDOWN}
         placement="right"
         content={
-          <FunctionsDropdownContent>
+          <FunctionsDropdownContent maxHeight={maxHeight}>
             <Input
               id="phrase"
               value={phrase}
@@ -155,8 +160,9 @@ const FunctionsDropdown = styled(Dropdown)`
   }
 `;
 
-const FunctionsDropdownContent = styled.div`
-  max-height: 400px;
+const FunctionsDropdownContent = styled.div<{ maxHeight?: number }>`
+  max-height: ${(props) =>
+    typeof props.maxHeight === 'number' ? props.maxHeight : 400}px;
   overflow-y: auto;
 `;
 
