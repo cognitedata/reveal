@@ -1,5 +1,4 @@
 import styled from 'styled-components/macro';
-import layers from 'utils/zindex';
 
 import { Menu } from '@cognite/cogs.js';
 
@@ -18,7 +17,6 @@ export const DepthIndicatorWrapper = styled.div`
   height: 100%;
   cursor: pointer;
   transform: ${(props: { transform?: string }) => props.transform};
-  z-index: ${layers.TOOLTIP};
   margin-right: 20px;
 `;
 

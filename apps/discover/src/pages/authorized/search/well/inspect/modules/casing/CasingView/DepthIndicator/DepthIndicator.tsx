@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+
+import layers from 'utils/zindex';
 
 import { Tooltip } from 'components/popper-tooltip';
 import { useEnabledWellSdkV3 } from 'modules/wellSearch/hooks/useEnabledWellSdkV3';
@@ -25,6 +27,8 @@ const DepthIndicator: React.FC<DepthIndicatorProps> = ({
 }) => {
   const enableWellSdkV3 = useEnabledWellSdkV3();
 
+  const [zIndex, setZIndex] = useState<number>(layers.MAIN_LAYER);
+
   const {
     casingStartDepth = 0,
     casingDepth,
@@ -48,6 +52,14 @@ const DepthIndicator: React.FC<DepthIndicatorProps> = ({
     <DepthIndicatorWrapper
       transform={indicatorTransform}
       data-testid="depth-indicator"
+      style={{ zIndex }}
+      /**
+       * A trick to prevent tooltip being overlapped.
+       * This increases the zIndex of hovered depth indicator by one.
+       * Then return it to the initial when the mouse left.
+       */
+      onMouseEnter={() => setZIndex((zIndex) => zIndex + 1)}
+      onMouseLeave={() => setZIndex((zIndex) => zIndex - 1)}
     >
       <Tooltip
         followCursor
