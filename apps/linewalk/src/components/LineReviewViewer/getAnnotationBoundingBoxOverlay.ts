@@ -37,7 +37,7 @@ const getAnnotationBoundingBoxOverlay = (
   return getAnnotationsForLineByDocument(line, document)
     .filter(({ id }) => annotationIds.includes(id))
     .map((annotation) => ({
-      groupId: getKonvaSelectorSlugByExternalId(document.externalId),
+      groupId: getKonvaSelectorSlugByExternalId(document.pdfExternalId),
       id: `${prefix}${annotation.id}`,
       type: 'rect',
       onClick: onClick ? (event) => onClick(event, annotation.id) : undefined,

@@ -14,20 +14,20 @@ const getOpacityGroupByDocument = (
 ): Group => {
   return {
     id: `opacity-group-${getKonvaSelectorSlugByExternalId(
-      document.externalId
+      document.pdfExternalId
     )}`,
-    groupId: `${getKonvaSelectorSlugByExternalId(document.externalId)}`,
+    groupId: `${getKonvaSelectorSlugByExternalId(document.pdfExternalId)}`,
     cached: true,
     type: 'group',
     drawings: [
       {
         id: `opacity-group-base-${getKonvaSelectorSlugByExternalId(
-          document.externalId
+          document.pdfExternalId
         )}`,
         type: 'rect',
         attrs: {
           id: `opacity-group-base-${getKonvaSelectorSlugByExternalId(
-            document.externalId
+            document.pdfExternalId
           )}`,
           x: 0,
           y: 0,

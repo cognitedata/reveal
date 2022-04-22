@@ -1,4 +1,4 @@
-import { useAuthContext } from '@cognite/react-container';
+import { CogniteClient } from '@cognite/sdk';
 import { useEffect, useState, useCallback } from 'react';
 
 import { Discrepancy } from '../../components/LineReviewViewer/LineReviewViewer';
@@ -8,14 +8,15 @@ import {
   getLineReviews,
   getLineReviewState,
 } from './api';
-import { LineReview, ParsedDocument, TextAnnotation } from './types';
+import { LineReview, TextAnnotation, WorkspaceDocument } from './types';
 
 const useLineReview = (
+  client: CogniteClient | undefined,
   id: string
 ): {
   isLoading: boolean;
   lineReview: LineReview | undefined;
-  documents: ParsedDocument[] | undefined;
+  documents: WorkspaceDocument[] | undefined;
   discrepancies: Discrepancy[];
   textAnnotations: TextAnnotation[];
   setDiscrepancies: (
@@ -24,21 +25,23 @@ const useLineReview = (
   setTextAnnotations: (
     transform: (previousTextAnnotations: TextAnnotation[]) => TextAnnotation[]
   ) => void;
+  setDocuments: (
+    transform: (previousDocuments: WorkspaceDocument[]) => WorkspaceDocument[]
+  ) => void;
 } => {
-  const { client } = useAuthContext();
   const [
     { isLoading, lineReview, documents, discrepancies, textAnnotations },
     setLineReviewState,
   ] = useState<{
     isLoading: boolean;
     lineReview: LineReview | undefined;
-    documents: ParsedDocument[] | undefined;
+    documents: WorkspaceDocument[];
     discrepancies: Discrepancy[];
     textAnnotations: TextAnnotation[];
   }>({
     isLoading: true,
     lineReview: undefined,
-    documents: undefined,
+    documents: [],
     discrepancies: [],
     textAnnotations: [],
   });
@@ -49,20 +52,17 @@ const useLineReview = (
         throw new Error('No client found');
       }
 
-      const lineReviews = await getLineReviews(client);
+      const [lineReviews, lineReviewDocuments, lineReviewState] =
+        await Promise.all([
+          getLineReviews(client),
+          getLineReviewDocuments(client, id),
+          getLineReviewState(client, id),
+        ]);
+
       const lineReview = lineReviews.find((l) => l.id === id);
       if (!lineReview) {
         throw new Error('No such line was found in the data');
       }
-
-      const lineReviewDocuments = await getLineReviewDocuments(
-        client,
-        lineReview
-      );
-
-      const lineReviewState = await getLineReviewState(client, lineReview);
-
-      console.log('Loaded linereview state', lineReviewState);
 
       setLineReviewState({
         isLoading: false,
@@ -72,7 +72,7 @@ const useLineReview = (
         textAnnotations: lineReviewState?.textAnnotations ?? [],
       });
     })();
-  }, []);
+  }, [client, id]);
 
   const setDiscrepancies = useCallback(
     (transform: (discrepancies: Discrepancy[]) => Discrepancy[]) => {
@@ -94,10 +94,21 @@ const useLineReview = (
     [setLineReviewState]
   );
 
+  const setDocuments = useCallback(
+    (transform: (documents: WorkspaceDocument[]) => WorkspaceDocument[]) => {
+      setLineReviewState((prevState) => ({
+        ...prevState,
+        documents: transform(prevState.documents),
+      }));
+    },
+    [setLineReviewState]
+  );
+
   return {
     isLoading,
     lineReview,
     documents,
+    setDocuments,
     discrepancies,
     textAnnotations,
     setDiscrepancies,

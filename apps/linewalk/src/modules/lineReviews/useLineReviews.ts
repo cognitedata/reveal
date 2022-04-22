@@ -1,7 +1,6 @@
-import uniq from 'lodash/uniq';
-import { useAuthContext } from '@cognite/react-container';
-import { LineReview, LineReviewStatus } from 'modules/lineReviews/types';
 import { useEffect, useState } from 'react';
+import { useAuthContext } from '@cognite/react-container';
+import { LineReview } from 'modules/lineReviews/types';
 
 import { getLineReviews } from './api';
 
@@ -24,16 +23,6 @@ const useLineReviews = () => {
   return {
     isLoading,
     lineReviews,
-    statuses: [
-      LineReviewStatus.OPEN,
-      LineReviewStatus.REVIEWED,
-      LineReviewStatus.COMPLETED,
-    ],
-    assignees: uniq(
-      lineReviews.flatMap((lineReview) =>
-        lineReview.assignees.map((assignee) => assignee.name)
-      )
-    ),
   };
 };
 

@@ -7,16 +7,13 @@ import {
   Icon,
   Loader,
 } from '@cognite/cogs.js';
-import capitalize from 'lodash/capitalize';
 import withoutFileExtension from 'components/LineReviewViewer/withoutFileExtension';
 import StatusTag from 'components/StatusTag';
-import * as H from 'history';
 import { LineReview, LineReviewStatus } from 'modules/lineReviews/types';
 import useLineReviews from 'modules/lineReviews/useLineReviews';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import styled from 'styled-components';
-import qs from 'query-string';
 
 import { LineReviewsWrapper, LoaderContainer } from './elements';
 import Statistic from './Statistic';
@@ -216,152 +213,71 @@ const LineReviewTable: React.FC<LineReviewTableProps> = ({
   );
 };
 
-type SearchQueryParams = {
-  status?: string;
-  assignee?: string;
-  search?: string;
-};
-
-const DEFAULT_STATUS_OPTION = {
-  label: 'All',
-  value: '',
-};
-
-const DEFAULT_ASSIGNEE_OPTION = {
-  label: 'All',
-  value: '',
-};
-
-const getInitialStatus = (
-  maybeStatusValue: string | undefined,
-  possibleStatusOptions: OptionType<string>[]
-): OptionType<string> => {
-  if (maybeStatusValue === undefined) {
-    return DEFAULT_STATUS_OPTION;
-  }
-
-  const foundStatusOption = possibleStatusOptions.find(
-    (option) => option.value === maybeStatusValue
-  );
-  if (!foundStatusOption) {
-    return DEFAULT_STATUS_OPTION;
-  }
-
-  return foundStatusOption;
-};
-
-const getInitialAssignee = (
-  maybeAssigneeValue: string | undefined,
-  assigneeOptions: OptionType<string>[]
-): OptionType<string> => {
-  if (maybeAssigneeValue === undefined) {
-    return DEFAULT_ASSIGNEE_OPTION;
-  }
-
-  const foundAssigneeOption = assigneeOptions.find(
-    (option) => option.value === maybeAssigneeValue
-  );
-  if (!foundAssigneeOption) {
-    return DEFAULT_ASSIGNEE_OPTION;
-  }
-
-  return {
-    label: maybeAssigneeValue,
-    value: maybeAssigneeValue,
-  };
-};
-
-const useFilters = (
-  history: H.History<unknown>,
-  isLoading: boolean,
-  statuses: string[],
-  assignees: string[]
-) => {
-  const searchQueryParams: SearchQueryParams = qs.parse(
-    history.location.search
-  );
-  const [search, setSearch] = useState<string>(searchQueryParams.search || '');
-
-  const statusOptions = [
-    DEFAULT_STATUS_OPTION,
-    ...statuses.map((status) => ({
-      label: capitalize(status),
-      value: status,
-    })),
-  ];
-
-  const assigneeOptions: OptionType<string>[] = [
-    DEFAULT_ASSIGNEE_OPTION,
-    ...assignees.map((a) => ({ label: a, value: a })),
-  ];
-
-  const [status, setStatus] = useState<
-    OptionType<LineReviewStatus> | OptionType<string>
-  >(DEFAULT_STATUS_OPTION);
-  const [assignee, setAssignee] = useState<OptionType<string>>(
-    getInitialAssignee(searchQueryParams.assignee, assigneeOptions)
-  );
-
-  // Update the filters on load
-  useEffect(() => {
-    if (!isLoading) {
-      setStatus(getInitialStatus(searchQueryParams.status, statusOptions));
-      setAssignee(
-        getInitialAssignee(searchQueryParams.assignee, assigneeOptions)
-      );
-    }
-  }, [isLoading]);
-
-  // Update the search query when filters change
-  useEffect(() => {
-    if (!isLoading) {
-      history.replace({
-        ...history.location,
-        search: qs.stringify(
-          {
-            search,
-            status: status.value,
-            assignee: assignee.value,
-          },
-          { skipEmptyString: true, skipNull: true }
-        ),
-      });
-    }
-  }, [search, status, assignee]);
-
-  return {
-    search,
-    setSearch,
-    status,
-    setStatus,
-    assignee,
-    setAssignee,
-    statusOptions,
-    assigneeOptions,
-  };
-};
-
 const LineReviews = () => {
   const history = useHistory();
 
-  const { isLoading, lineReviews, assignees, statuses } = useLineReviews();
+  const { isLoading, lineReviews } = useLineReviews();
+  const [search, setSearch] = useState<string>('');
+  const statusOptions: OptionType<string>[] = [
+    {
+      label: 'All',
+      value: '',
+    },
+    {
+      label: 'Open',
+      value: LineReviewStatus.OPEN,
+    },
+    {
+      label: 'Reviewed',
+      value: LineReviewStatus.REVIEWED,
+    },
+    {
+      label: 'Completed',
+      value: LineReviewStatus.COMPLETED,
+    },
+  ];
+  const [assigneeOptions, setAssigneeOptions] = useState<OptionType<string>[]>(
+    []
+  );
 
-  const {
-    search,
-    setSearch,
-    assignee,
-    setAssignee,
-    status,
-    setStatus,
-    statusOptions,
-    assigneeOptions,
-  } = useFilters(history, isLoading, statuses, assignees);
+  const [status, setStatus] = useState<
+    OptionType<LineReviewStatus> | OptionType<string>
+  >({
+    label: 'All',
+    value: '',
+  });
+  const [assignee, setAssignee] = useState<OptionType<string>>({
+    label: 'All',
+    value: '',
+  });
+
+  useEffect(() => {
+    if (!isLoading && lineReviews.length) {
+      const assigneeOptions = Object.keys(
+        lineReviews.reduce(
+          (acc, d) => ({
+            ...acc,
+            ...d.assignees.reduce(
+              (ac, a) => ({
+                ...ac,
+                [a.name]: true,
+              }),
+              {}
+            ),
+          }),
+          {}
+        )
+      );
+      setAssigneeOptions([
+        { label: 'All', value: '' },
+        ...assigneeOptions.map((a) => ({ label: a, value: a })),
+      ]);
+    }
+  }, [lineReviews, isLoading]);
 
   const filteredLineReviews = lineReviews
     .filter(
-      (lineReview) =>
-        search.length === 0 ||
-        lineReview.name.toLowerCase().includes(search.toLowerCase())
+      (lineReview) => search.length === 0 || lineReview.name.includes(search)
     )
     .filter(
       (lineReview) =>

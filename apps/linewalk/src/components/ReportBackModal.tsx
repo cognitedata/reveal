@@ -1,15 +1,16 @@
 import { Button, Modal, Textarea } from '@cognite/cogs.js';
 import { CogniteOrnate } from '@cognite/ornate';
+import keyBy from 'lodash/keyBy';
 import React, { useState } from 'react';
 
-import { DocumentType, ParsedDocument } from '../modules/lineReviews/types';
+import { DocumentType, WorkspaceDocument } from '../modules/lineReviews/types';
 
 import exportDocumentsToPdf from './LineReviewViewer/exportDocumentsToPdf';
-import getDocumentByDiscrepancy from './LineReviewViewer/getDocumentByDiscrepancy';
+import getKonvaSelectorSlugByExternalId from './LineReviewViewer/getKonvaSelectorSlugByExternalId';
 import { Discrepancy } from './LineReviewViewer/LineReviewViewer';
 
 type Props = {
-  documents: ParsedDocument[];
+  documents: WorkspaceDocument[];
   discrepancies: Discrepancy[];
   onCancelPress: () => void;
   ornateRef: CogniteOrnate;
@@ -37,6 +38,10 @@ const ReportBackModal: React.FC<Props> = ({
     (document) => document.type === DocumentType.ISO
   );
 
+  const workspaceDocumentsBySlugPdfExternalId = keyBy(documents, (document) =>
+    getKonvaSelectorSlugByExternalId(document.pdfExternalId)
+  );
+
   return (
     <Modal visible onCancel={onCancelPress} footer={null}>
       <h2>Report back</h2>
@@ -52,11 +57,8 @@ const ReportBackModal: React.FC<Props> = ({
       )}
 
       {discrepancies.map((discrepancy, index) => {
-        const document = getDocumentByDiscrepancy(
-          ornateRef,
-          documents,
-          discrepancy
-        );
+        const document =
+          workspaceDocumentsBySlugPdfExternalId[discrepancy.targetExternalId];
 
         return (
           <div key={discrepancy.id}>

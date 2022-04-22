@@ -74,7 +74,6 @@ DEPENDENCIES = [
     "@npm//konva",
     "@npm//lodash",
     "@npm//pdf-lib",
-    "@npm//query-string",
     "@npm//react",
     "@npm//react-dom",
     "@npm//react-router-dom",
@@ -90,16 +89,17 @@ DEPENDENCIES = [
     "//packages/z-index",
     "//packages/react-i18n",
     "//packages/react-pid",
+    "//packages/pid-tools",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
-    "@npm//@types/history",
     "@npm//@types/keyboardjs",
     "@npm//@types/lodash",
     "@npm//@types/react",
     "@npm//@types/react-dom",
     "@npm//@types/react-router-dom",
+    "@npm//@types/react-select",
     "@npm//@types/react-table",
     "@npm//@types/sinon",
     "@npm//@types/styled-components",

@@ -23,14 +23,20 @@ const getFileConnectionGroups = ({
   selectedId: string | undefined;
 }): Group[] => {
   const paths: Path[] = getPathsWithoutOverlaps({
-    paths: connections.map((annotationIds) =>
-      getConnectionPath({
-        annotationIds,
-        ornateViewer,
-        columnGap,
-        rowGap,
-      })
-    ),
+    paths: connections
+      .filter((annotationIds) =>
+        annotationIds.every((annotationId) =>
+          ornateViewer.stage.findOne(`#${annotationId}`)
+        )
+      )
+      .map((annotationIds) =>
+        getConnectionPath({
+          annotationIds,
+          ornateViewer,
+          columnGap,
+          rowGap,
+        })
+      ),
     columnGap,
     rowGap,
   });

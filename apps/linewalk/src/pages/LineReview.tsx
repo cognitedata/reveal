@@ -78,7 +78,8 @@ const LineReview = () => {
     setDiscrepancies,
     textAnnotations,
     setTextAnnotations,
-  } = useLineReview(id);
+    setDocuments,
+  } = useLineReview(client, id);
 
   if (isLoading || !client) {
     return (
@@ -237,8 +238,6 @@ const LineReview = () => {
       <CollapsablePanel
         sidePanelRight={
           <SidePanel
-            ornateRef={ornateRef}
-            documents={documents}
             discrepancies={discrepancies.filter(
               (discrepancy) => discrepancy.status === 'approved'
             )}
@@ -253,13 +252,13 @@ const LineReview = () => {
       >
         <MainContainer>
           <LineReviewViewer
-            client={client}
             lineReview={lineReview}
             discrepancies={discrepancies}
             onDiscrepancyChange={setDiscrepancies}
             textAnnotations={textAnnotations}
             onTextAnnotationChange={setTextAnnotations}
             documents={documents}
+            setDocuments={setDocuments}
             onOrnateRef={setOrnateRef}
             onOpenSidePanelButtonPress={() => setIsSidePanelOpen(true)}
             onDeleteDiscrepancy={onDeleteDiscrepancy}

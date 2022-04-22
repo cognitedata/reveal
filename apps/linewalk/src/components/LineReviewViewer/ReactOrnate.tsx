@@ -1,15 +1,18 @@
 import Konva from 'konva';
+import { PDFDocumentProxy } from 'pdfjs-dist/types/display/api';
 import { useEffect, useRef, useState } from 'react';
-import {
-  CogniteOrnate,
-  OrnateTransformer,
-  Drawing,
-  getGroupById,
-} from '@cognite/ornate';
+import { CogniteOrnate, OrnateTransformer, Drawing } from '@cognite/ornate';
 import { v4 as uuid } from 'uuid';
 import isEqual from 'lodash/isEqual';
 
+import usePrevious from '../../hooks/usePrevious';
 import useElementDescendantFocus from '../../utils/useElementDescendantFocus';
+
+import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId';
+
+const getGroupById = (id: string, stage: Konva.Stage) => {
+  return stage.findOne<Konva.Group>(`#${id}`);
+};
 
 export type Group = {
   id: string;
@@ -23,13 +26,13 @@ export type Group = {
 export type ReactOrnateProps = {
   documents: {
     id: string;
-    url: string;
     pageNumber: number;
     row?: number;
     column?: number;
     type: string;
     name: string;
-    externalId: string;
+    pdfExternalId: string;
+    pdf: PDFDocumentProxy;
   }[];
   nodes?: (Group | Drawing)[];
   onAnnotationClick?: (nodes: any) => void;
@@ -38,6 +41,7 @@ export type ReactOrnateProps = {
     ornateRef: CogniteOrnate | undefined,
     isFocused: boolean
   ) => JSX.Element;
+  onRemovePress?: (pdfExternalId: string) => void;
 };
 
 export const SLIDE_WIDTH = 2500;
@@ -64,43 +68,54 @@ const useSyncNodes = (
           : undefined
       );
 
-      nodes?.forEach((node) => {
-        if (node.type === 'group') {
-          // Note: This is a bit icky for now as for groups we are handling
-          // the adding in ReactOrnate, but for the remainder of the drawings
-          // we are delegating the responsibility to Ornate. This is a smell
-          // but it's better to keep it in ReactOrnate than to do something
-          // premature about the APIs of Ornate.
-          const konvaGroup = new Konva.Group({
-            id: node.id,
-          });
+      nodes
+        ?.filter(
+          (node) =>
+            node.groupId === undefined ||
+            getGroupById(node.groupId, ornateRef.stage) !== undefined
+        )
+        .forEach((node) => {
+          if (node.type === 'group') {
+            // Note: This is a bit icky for now as for groups we are handling
+            // the adding in ReactOrnate, but for the remainder of the drawings
+            // we are delegating the responsibility to Ornate. This is a smell
+            // but it's better to keep it in ReactOrnate than to do something
+            // premature about the APIs of Ornate.
+            const konvaGroup = new Konva.Group({
+              id: node.id,
+            });
 
-          const parent = node.groupId
-            ? getGroupById(node.groupId, ornateRef.stage)
-            : ornateRef.baseLayer;
+            const parent = node.groupId
+              ? getGroupById(node.groupId, ornateRef.stage)
+              : ornateRef.baseLayer;
 
-          parent.add(konvaGroup);
+            if (parent === undefined) {
+              console.warn('No parent with id', node.groupId, ', skipping');
+              return;
+            }
 
-          if (node.onClick) {
-            konvaGroup.on('click', node.onClick);
+            parent.add(konvaGroup);
+
+            if (node.onClick) {
+              konvaGroup.on('click', node.onClick);
+            }
+
+            node.drawings.forEach((drawing) =>
+              ornateRef.addDrawings({
+                ...drawing,
+                groupId: node.id,
+              })
+            );
+
+            if (node.cached) {
+              konvaGroup.cache();
+            }
+
+            return;
           }
 
-          node.drawings.forEach((drawing) =>
-            ornateRef.addDrawings({
-              ...drawing,
-              groupId: node.id,
-            })
-          );
-
-          if (node.cached) {
-            konvaGroup.cache();
-          }
-
-          return;
-        }
-
-        ornateRef.addDrawings(node);
-      });
+          ornateRef.addDrawings(node);
+        });
       setCommittedNodes(nodes || []);
     }
   }, [nodes, isInitialized]);
@@ -111,6 +126,7 @@ const ReactOrnate = ({
   nodes,
   onOrnateRef,
   renderWorkspaceTools,
+  onRemovePress,
 }: ReactOrnateProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const componentContainerId = useRef(
@@ -119,8 +135,9 @@ const ReactOrnate = ({
   const ornateViewer = useRef<CogniteOrnate>();
   const [isInitialized, setIsInitialized] = useState(false);
   const { isFocused } = useElementDescendantFocus(containerRef);
-
+  const addedPdfExternalIds = useRef<string[]>([]);
   useSyncNodes(ornateViewer.current, nodes, isInitialized);
+  const previousDocuments = usePrevious(documents);
 
   // Setup Ornate
   useEffect(() => {
@@ -160,37 +177,64 @@ const ReactOrnate = ({
   }, []);
 
   useEffect(() => {
+    const previousPdfExternalIds =
+      previousDocuments?.map((document) => document.pdfExternalId) ?? [];
+    const currentPdfExternalIds = documents.map(
+      (document) => document.pdfExternalId
+    );
+
+    const removedPdfExternalIds = previousPdfExternalIds.filter(
+      (pdfExternalId) => !currentPdfExternalIds.includes(pdfExternalId)
+    );
+
+    removedPdfExternalIds.forEach((pdfExternalId) => {
+      ornateViewer.current?.stage
+        .findOne(`#${getKonvaSelectorSlugByExternalId(pdfExternalId)}`)
+        ?.destroy();
+      ornateViewer.current?.stage
+        .findOne(
+          `#${getKonvaSelectorSlugByExternalId(pdfExternalId)}-label-group`
+        )
+        ?.destroy();
+      addedPdfExternalIds.current = addedPdfExternalIds.current.filter(
+        (addedPdfExternalId) =>
+          addedPdfExternalId !== getKonvaSelectorSlugByExternalId(pdfExternalId)
+      );
+    });
+  }, [documents]);
+
+  useEffect(() => {
     (async () => {
       const ornateRef = ornateViewer.current;
+
+      console.log(addedPdfExternalIds.current);
 
       if (ornateRef && documents?.length) {
         await Promise.all(
           documents.map(
             async ({
               id,
-              url,
               pageNumber,
               row = 1,
               column = 1,
               type,
               name,
-              externalId,
+              pdfExternalId,
+              pdf,
             }) => {
-              // Do not add the same document twice
-              if (
-                ornateRef.documents.some((doc) => doc.group.attrs.id === id)
-              ) {
+              // Note: Should Ornate keep track of this instead?
+              if (addedPdfExternalIds.current.includes(id)) {
                 return;
               }
-
+              addedPdfExternalIds.current.push(id);
               const x = (column - 1) * (SLIDE_WIDTH + SLIDE_COLUMN_GAP);
               const y = (row - 1) * (SHAMEFUL_SLIDE_HEIGHT + SLIDE_ROW_GAP);
 
               await ornateRef?.addPDFDocument(
-                url,
+                pdf,
                 pageNumber,
                 {
-                  externalId,
+                  pdfExternalId,
                 },
                 {
                   zoomAfterLoad: false,
@@ -208,6 +252,7 @@ const ReactOrnate = ({
               );
 
               const documentLabelGroup = new Konva.Group({
+                id: `${getKonvaSelectorSlugByExternalId(id)}-label-group`,
                 x,
                 y: 0,
               });
@@ -247,6 +292,22 @@ const ReactOrnate = ({
 
               documentLabelGroup.y(y - documentLabelGroupClientRect.height);
 
+              if (onRemovePress) {
+                const removeButton = new Konva.Text({
+                  text: 'Remove',
+                  fontSize: 36,
+                  fontFamily: 'Inter',
+                  lineHeight: 1.4,
+                  fill: 'rgba(0,0,0,0.45)',
+                  x: SLIDE_WIDTH - 170,
+                  y: 0,
+                });
+
+                removeButton.on('click', () => onRemovePress(pdfExternalId));
+
+                documentLabelGroup.add(removeButton);
+              }
+
               ornateRef.baseLayer.add(documentLabelGroup);
             }
           )
@@ -260,11 +321,15 @@ const ReactOrnate = ({
   useEffect(() => {
     if (isInitialized) {
       onOrnateRef?.(ornateViewer.current);
-      ornateViewer.current?.zoomToGroup(ornateViewer.current?.baseLayer, {
-        scaleFactor: 0.95,
-      });
+      setTimeout(() => {
+        // This is a temporary solution as the logic for adding/removing PDFs will be changing
+        // soon
+        ornateViewer.current?.zoomToGroup(ornateViewer.current?.baseLayer, {
+          scaleFactor: 0.95,
+        });
+      }, 200);
     }
-  }, [isInitialized]);
+  }, [isInitialized, documents]);
 
   return (
     <div

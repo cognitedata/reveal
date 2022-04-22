@@ -3,7 +3,10 @@ import { PDFDocument } from 'pdf-lib';
 import Konva from 'konva';
 import sortBy from 'lodash/sortBy';
 
-import { ParsedDocument, DocumentType } from '../../modules/lineReviews/types';
+import {
+  DocumentType,
+  WorkspaceDocument,
+} from '../../modules/lineReviews/types';
 
 import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId';
 import { Discrepancy } from './LineReviewViewer';
@@ -11,7 +14,7 @@ import { Discrepancy } from './LineReviewViewer';
 const isDiscrepancyInDocument = (
   ornateRef: CogniteOrnate,
   discrepancy: Discrepancy,
-  document: ParsedDocument
+  document: WorkspaceDocument
 ) => {
   const node = ornateRef.stage.findOne(`#${discrepancy.id}`);
   if (node === undefined) {
@@ -19,14 +22,14 @@ const isDiscrepancyInDocument = (
   }
 
   return (
-    getKonvaSelectorSlugByExternalId(document.externalId) ===
+    getKonvaSelectorSlugByExternalId(document.pdfExternalId) ===
     node.getParent().id()
   );
 };
 
 const exportDocumentsToPdf = async (
   ornateRef: CogniteOrnate,
-  documents: ParsedDocument[],
+  documents: WorkspaceDocument[],
   discrepancies: Discrepancy[] = [],
   fileName = 'LineReview.pdf'
 ) => {
@@ -35,21 +38,21 @@ const exportDocumentsToPdf = async (
   const sortedDocuments = [
     ...sortBy(
       documents.filter((document) => document.type === DocumentType.PID),
-      (document) => document.externalId
+      (document) => document.pdfExternalId
     ),
     ...sortBy(
       documents.filter((document) => document.type === DocumentType.ISO),
-      (document) => document.externalId
+      (document) => document.pdfExternalId
     ),
   ];
 
   const documentOrnateDocumentTuples = sortedDocuments.map<
-    [ParsedDocument, OrnatePDFDocument]
+    [WorkspaceDocument, OrnatePDFDocument]
   >((document) => {
     const ornateDocument = ornateRef.documents.find(
       (ornateDocument) =>
         ornateDocument.group.id() ===
-        getKonvaSelectorSlugByExternalId(document.externalId)
+        getKonvaSelectorSlugByExternalId(document.pdfExternalId)
     );
     if (ornateDocument === undefined) {
       throw new Error('No such document');
@@ -70,7 +73,7 @@ const exportDocumentsToPdf = async (
       clonedGroup
         .findOne(
           `#opacity-group-${getKonvaSelectorSlugByExternalId(
-            document.externalId
+            document.pdfExternalId
           )}`
         )
         ?.cache();

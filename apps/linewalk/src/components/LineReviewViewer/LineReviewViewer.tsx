@@ -1,6 +1,6 @@
-import { Button } from '@cognite/cogs.js';
+import { Button, Icon } from '@cognite/cogs.js';
 import { CogniteOrnate } from '@cognite/ornate';
-import type { CogniteClient } from '@cognite/sdk';
+import { useAuthContext } from '@cognite/react-container';
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 import keyBy from 'lodash/keyBy';
@@ -9,18 +9,19 @@ import {
   LineReview,
   ParsedDocument,
   TextAnnotation,
+  WorkspaceDocument,
 } from 'modules/lineReviews/types';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import layers from 'utils/z';
 
 import usePrevious from '../../hooks/usePrevious';
-import { getDocumentUrlByExternalId } from '../../modules/lineReviews/api';
+import { removeDocumentLabel } from '../../modules/lineReviews/api';
 import { DiscrepancyModalState } from '../../pages/LineReview';
 import getFileConnectionGroups from '../../utils/getFileConnectionDrawings';
 import WorkSpaceTools from '../WorkSpaceTools';
 
-import centerOnAnnotationByAnnotationId from './centerOnIsoAnnotationByPidAnnotation';
+import centerOnAnnotationByAnnotationId from './centerOnAnnotationByAnnotationId';
 import { BOUNDING_BOX_PADDING_PX } from './constants';
 import DiscrepancyModal from './DiscrepancyModal';
 import DiscrepancyTool from './DiscrepancyTool';
@@ -32,19 +33,18 @@ import getFileConnections from './getFileConnections';
 import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId';
 import getLinksByAnnotationId from './getLinksByAnnotationId';
 import IsoModal from './IsoModal';
-import ReactOrnate, {
-  ReactOrnateProps,
-  SLIDE_COLUMN_GAP,
-  SLIDE_ROW_GAP,
-} from './ReactOrnate';
+import ReactOrnate, { SLIDE_COLUMN_GAP, SLIDE_ROW_GAP } from './ReactOrnate';
 import useDocumentJumper from './useDocumentJumper';
+import useParsedDocuments from './useParsedDocuments';
 import useWorkspaceTools, { WorkspaceTool } from './useWorkspaceTools';
 import withoutFileExtension from './withoutFileExtension';
 
 type LineReviewViewerProps = {
-  client: CogniteClient;
   lineReview: LineReview;
-  documents: ParsedDocument[];
+  documents: WorkspaceDocument[];
+  setDocuments: (
+    transform: (previousDocuments: WorkspaceDocument[]) => WorkspaceDocument[]
+  ) => void;
   discrepancies: Discrepancy[];
   onDiscrepancyChange: (
     transform: (discrepancies: Discrepancy[]) => Discrepancy[]
@@ -66,7 +66,7 @@ const DocumentJumperContainer = styled.div`
   position: absolute;
   left: 16px;
   top: 16px;
-  width: 170px;
+  width: 300px;
   z-index: ${layers.LINE_REVIEW_VIEWER_BUTTONS};
   background-color: white;
 `;
@@ -216,7 +216,6 @@ const useShamefulKeepReactAndOrnateInSync = (
 };
 
 const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
-  client,
   discrepancies,
   documents,
   onDiscrepancyChange,
@@ -229,11 +228,9 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   setDiscrepancyModalState,
   onDiscrepancyInteraction,
   isSidePanelOpen,
+  setDocuments,
 }) => {
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [pdfDocuments, setPdfDocuments] = useState<
-    ReactOrnateProps['documents'] | undefined
-  >(undefined);
+  const { client } = useAuthContext();
   const [isIsoModalOpen, setIsIsoModalOpen] = useState(false);
   const [isoOrnateRef, setIsoOrnateRef] = useState<CogniteOrnate | undefined>(
     undefined
@@ -244,11 +241,54 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   const [ornateRef, setOrnateRef] = useState<CogniteOrnate | undefined>(
     undefined
   );
-  const { documentJumperOptions, jumpToDocumentValue, setJumpToDocumentValue } =
-    useDocumentJumper(documents, ornateRef);
+  const {
+    documentJumperOptions,
+    jumpToDocumentValue,
+    setJumpToDocumentValue,
+    inputValue,
+    onInputChange,
+  } = useDocumentJumper(lineReview.id, documents, ornateRef, (document) =>
+    setDocuments((prevDocuments) => [...prevDocuments, document])
+  );
   const [selectedFileConnectionId, setSelectedFileConnectionId] = useState<
     string | undefined
   >(undefined);
+  const { isLoading, parsedDocuments } = useParsedDocuments(documents);
+
+  const pdfDocuments = useMemo(
+    () => [
+      ...documents
+        .filter(({ type }) => type === DocumentType.PID)
+        .map((document, index) => ({
+          id: getKonvaSelectorSlugByExternalId(document.pdfExternalId),
+          pageNumber: 1,
+          row: 1,
+          column: index + 1,
+          type: document.type,
+          name: withoutFileExtension(document.pdfExternalId),
+          pdfExternalId: document.pdfExternalId,
+          pdf: document.pdf,
+        })),
+      ...documents
+        .filter(({ type }) => type === DocumentType.ISO)
+        .map((document, index) => ({
+          id: getKonvaSelectorSlugByExternalId(document.pdfExternalId),
+          pageNumber: 1,
+          row: 2,
+          column: index + 1,
+          type: document.type,
+          name: withoutFileExtension(document.pdfExternalId),
+          pdfExternalId: document.pdfExternalId,
+          pdf: document.pdf,
+        })),
+    ],
+    [documents]
+  );
+
+  const isoDocuments = useMemo(
+    () => documents.filter(({ type }) => type === DocumentType.ISO),
+    [documents]
+  );
 
   useShamefulKeepReactAndOrnateInSync(
     ornateRef,
@@ -318,48 +358,37 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   const { tool: isoModalTool, onToolChange: onIsoModalToolChange } =
     useWorkspaceTools(isoOrnateRef);
 
-  useEffect(() => {
-    if (client !== undefined) {
-      (async () => {
-        setPdfDocuments(
-          await Promise.all([
-            ...documents
-              .filter(({ type }) => type === DocumentType.PID)
-              .map(async (document, index) => ({
-                id: getKonvaSelectorSlugByExternalId(document.externalId),
-                url: await getDocumentUrlByExternalId(client)(
-                  document.pdfExternalId
-                ),
-                pageNumber: 1,
-                row: 1,
-                column: index + 1,
-                type: document.type,
-                name: withoutFileExtension(document.pdfExternalId),
-                externalId: document.externalId,
-              })),
-            ...documents
-              .filter(({ type }) => type === DocumentType.ISO)
-              .map(async (document, index) => ({
-                id: getKonvaSelectorSlugByExternalId(document.externalId),
-                url: await getDocumentUrlByExternalId(client)(
-                  document.pdfExternalId
-                ),
-                pageNumber: 1,
-                row: 2,
-                column: index + 1,
-                type: document.type,
-                name: withoutFileExtension(document.pdfExternalId),
-                externalId: document.externalId,
-              })),
-          ])
-        );
-
-        setIsInitialized(true);
-      })();
+  const groups = useMemo(() => {
+    if (!ornateRef) {
+      return [];
     }
-  }, [client]);
 
-  if (!isInitialized || !documents || !pdfDocuments) {
+    if (!parsedDocuments) {
+      return [];
+    }
+
+    if (isLoading) {
+      return [];
+    }
+
+    return getFileConnectionGroups({
+      ornateViewer: ornateRef,
+      connections: getFileConnections(
+        parsedDocuments,
+        DocumentType.PID,
+        DocumentType.PID
+      ),
+      columnGap: SLIDE_COLUMN_GAP,
+      rowGap: SLIDE_ROW_GAP,
+      onSelect: (id: string) =>
+        selectedFileConnectionId === id
+          ? setSelectedFileConnectionId(undefined)
+          : setSelectedFileConnectionId(id),
+      selectedId: selectedFileConnectionId,
+    });
+  }, [ornateRef, parsedDocuments, isLoading]);
+
+  if (!documents) {
     return null;
   }
 
@@ -368,8 +397,8 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     annotationId: string
   ) => {
     const links = [
-      ...getLinksByAnnotationId(documents, annotationId),
-      ...getLinksByAnnotationId(documents, annotationId, true),
+      ...getLinksByAnnotationId(parsedDocuments, annotationId),
+      ...getLinksByAnnotationId(parsedDocuments, annotationId, true),
     ];
     if (links.length === 0) {
       console.warn(`No link found for ${annotationId}`);
@@ -378,14 +407,14 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
 
     const link = links[0];
     const isLinkedAnnotationInIso =
-      getDocumentByExternalId(documents, link.to.documentId).type ===
+      getDocumentByExternalId(parsedDocuments, link.to.documentId).type ===
       DocumentType.ISO;
     if (isLinkedAnnotationInIso && !isIsoModalOpen) {
       setIsIsoModalOpen(true);
     }
 
     centerOnAnnotationByAnnotationId(
-      documents,
+      parsedDocuments,
       isLinkedAnnotationInIso ? isoOrnateRef : ornateRef,
       link.to.annotationId
     );
@@ -452,28 +481,10 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     ];
   };
 
-  const groups = ornateRef
-    ? getFileConnectionGroups({
-        ornateViewer: ornateRef,
-        connections: getFileConnections(
-          documents,
-          DocumentType.PID,
-          DocumentType.PID
-        ),
-        columnGap: SLIDE_COLUMN_GAP,
-        rowGap: SLIDE_ROW_GAP,
-        onSelect: (id: string) =>
-          selectedFileConnectionId === id
-            ? setSelectedFileConnectionId(undefined)
-            : setSelectedFileConnectionId(id),
-        selectedId: selectedFileConnectionId,
-      })
-    : [];
-
   const overlays = documents
     .filter(({ type }) => type === DocumentType.PID)
     .flatMap((document) =>
-      getDrawingsByDocumentId(documents, document.externalId)
+      getDrawingsByDocumentId(parsedDocuments, document.externalId)
     );
 
   const nodes = [
@@ -489,11 +500,24 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
 
   const onOpenIsoButtonPress = () => setIsIsoModalOpen(true);
 
+  const onRemovePress = (pdfExternalId: string) => {
+    setDocuments((prevDocuments) =>
+      prevDocuments.filter(
+        (document) => document.pdfExternalId !== pdfExternalId
+      )
+    );
+
+    if (client) {
+      removeDocumentLabel(client, pdfExternalId, lineReview.id);
+    }
+  };
+
   return (
     <>
       {discrepancyModalState.isOpen && discrepancyModalState.discrepancy && (
         <DiscrepancyModal
           // This is a hack
+          documents={documents}
           key={discrepancyModalState.discrepancy.id}
           initialPosition={discrepancyModalState.position}
           initialDiscrepancy={discrepancyModalState.discrepancy}
@@ -507,8 +531,8 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
 
       <IsoModal
         lineReview={lineReview}
-        documents={documents}
-        isoDocuments={documents.filter(({ type }) => type === DocumentType.ISO)}
+        parsedDocuments={parsedDocuments}
+        isoDocuments={isoDocuments}
         visible={isIsoModalOpen}
         onOrnateRef={setIsoOrnateRef}
         onHidePress={() => setIsIsoModalOpen(false)}
@@ -528,8 +552,18 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
             justifyContent: 'flex-end',
           }}
         >
+          {isLoading && (
+            <div style={{ display: 'flex', alignSelf: 'center' }}>
+              <Icon type="Loader" />
+            </div>
+          )}
+
           {!isIsoModalOpen && (
-            <div>
+            <div
+              style={{
+                marginLeft: 20,
+              }}
+            >
               <Button onClick={onOpenIsoButtonPress}>Open ISO</Button>
             </div>
           )}
@@ -548,8 +582,10 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
         <DocumentJumperContainer>
           <DocumentJumper
             options={documentJumperOptions}
-            onChange={(value) => setJumpToDocumentValue(value)}
+            onChange={(value) => value && setJumpToDocumentValue(value)}
             value={jumpToDocumentValue}
+            inputValue={inputValue}
+            onInputChange={onInputChange}
           />
         </DocumentJumperContainer>
 
@@ -573,6 +609,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
               areKeyboardShortcutsEnabled={isFocused}
             />
           )}
+          onRemovePress={onRemovePress}
         />
       </div>
     </>

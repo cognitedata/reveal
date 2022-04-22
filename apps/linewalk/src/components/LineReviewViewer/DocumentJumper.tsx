@@ -1,37 +1,37 @@
 import React from 'react';
-
-type Option = {
-  label: string;
-  value: string;
-};
+import { OptionType, Select } from '@cognite/cogs.js';
+import { ValueType } from 'react-select';
 
 type Props = {
-  options?: Option[];
-  onChange: (value: string) => void;
-  value: string;
+  options: OptionType<string>[];
+  onChange: (value: OptionType<string> | null) => void;
+  value: OptionType<string>;
+  inputValue: string;
+  onInputChange: (value: string) => void;
 };
 
-const DocumentJumper: React.FC<Props> = ({ options = [], onChange, value }) => {
+const DocumentJumper: React.FC<Props> = ({
+  options = [],
+  onChange,
+  inputValue,
+  onInputChange,
+  value,
+}) => {
   return (
-    <select
+    <Select
       name="cars"
       className="cogs-select__control"
       style={{
-        padding: '0 10px',
-        width: '300px',
+        width: '500px',
       }}
-      onChange={(event) => onChange(event.target.value)}
-    >
-      {options.map((option) => (
-        <option
-          value={option.value}
-          key={option.value}
-          selected={option.value === value}
-        >
-          {option.label}
-        </option>
-      ))}
-    </select>
+      options={options}
+      value={value}
+      onChange={(option: ValueType<OptionType<string>, false>) =>
+        onChange(option)
+      }
+      onInputChange={(nextInputValue: string) => onInputChange(nextInputValue)}
+      inputValue={inputValue}
+    />
   );
 };
 

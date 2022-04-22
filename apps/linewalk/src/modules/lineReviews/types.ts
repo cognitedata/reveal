@@ -1,3 +1,5 @@
+import { PDFDocumentProxy } from 'pdfjs-dist/types/display/api';
+
 import { Discrepancy } from '../../components/LineReviewViewer/LineReviewViewer';
 
 export type BoundingBox = {
@@ -46,6 +48,13 @@ export type Link = {
     documentId: string;
     annotationId: string;
   };
+};
+
+export type WorkspaceDocument = {
+  externalId: string;
+  pdfExternalId: string;
+  type: DocumentType;
+  pdf: PDFDocumentProxy;
 };
 
 export type ParsedDocument = {

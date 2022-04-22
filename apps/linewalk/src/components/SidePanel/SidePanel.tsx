@@ -1,9 +1,6 @@
 import { Button, Icon } from '@cognite/cogs.js';
-import { CogniteOrnate } from '@cognite/ornate';
 import styled from 'styled-components';
 
-import { ParsedDocument } from '../../modules/lineReviews/types';
-import getDocumentByDiscrepancy from '../LineReviewViewer/getDocumentByDiscrepancy';
 import { Discrepancy } from '../LineReviewViewer/LineReviewViewer';
 
 const Container = styled.div`
@@ -118,8 +115,6 @@ type Props = {
   onDiscrepancyPress: (id: string) => void;
   onDiscrepancyEditPress: (id: string) => void;
   onDiscrepancyDeletePress: (id: string) => void;
-  ornateRef: CogniteOrnate | undefined;
-  documents: ParsedDocument[];
 };
 
 const HeaderContainer = styled.div`
@@ -140,13 +135,11 @@ const HeaderContainer = styled.div`
 `;
 
 const SidePanel: React.FC<Props> = ({
-  documents,
   discrepancies,
   onDiscrepancyPress,
   onDiscrepancyEditPress,
   onDiscrepancyDeletePress,
   onClosePress,
-  ornateRef,
 }) => {
   return (
     <Container>
@@ -163,10 +156,7 @@ const SidePanel: React.FC<Props> = ({
       <DiscrepancyListContainer>
         {discrepancies.map((discrepancy, index) => (
           <DiscrepancyListItem
-            documentName={
-              getDocumentByDiscrepancy(ornateRef, documents, discrepancy)
-                ?.pdfExternalId
-            }
+            documentName={discrepancy.targetExternalId}
             number={index + 1}
             key={discrepancy.id}
             comment={discrepancy.comment}

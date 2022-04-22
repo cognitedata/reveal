@@ -2,10 +2,14 @@ import { Button, Textarea } from '@cognite/cogs.js';
 import React from 'react';
 import styled from 'styled-components';
 
+import { WorkspaceDocument } from '../../modules/lineReviews/types';
+
+import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId';
 import PopupModal from './PopupModal';
 import { Discrepancy } from './LineReviewViewer';
 
 type Props = {
+  documents: WorkspaceDocument[];
   initialPosition: { x: number; y: number };
   initialDiscrepancy: Discrepancy;
   onSave: (discrepancy: Discrepancy) => void;
@@ -102,6 +106,7 @@ const DescriptionTextArea = styled(Textarea)`
 `;
 
 const DiscrepancyModal: React.FC<Props> = ({
+  documents,
   initialPosition,
   initialDiscrepancy,
   onDeletePress,
@@ -130,7 +135,15 @@ const DiscrepancyModal: React.FC<Props> = ({
                 discrepancy
               </StyledTitle>
               <FilenameLabel>
-                On {initialDiscrepancy.targetExternalId}
+                On{' '}
+                {
+                  documents.find(
+                    (document) =>
+                      getKonvaSelectorSlugByExternalId(
+                        document.pdfExternalId
+                      ) === initialDiscrepancy.targetExternalId
+                  )?.pdfExternalId
+                }
               </FilenameLabel>
             </TitleContainer>
             <Button type="ghost" icon="Close" onClick={onClosePress} />

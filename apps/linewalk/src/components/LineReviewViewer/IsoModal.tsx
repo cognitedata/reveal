@@ -1,14 +1,12 @@
 import { Button } from '@cognite/cogs.js';
 import { CogniteOrnate, Drawing } from '@cognite/ornate';
-import { useAuthContext } from '@cognite/react-container';
 import { KonvaEventObject } from 'konva/lib/Node';
 import keyBy from 'lodash/keyBy';
 import sortBy from 'lodash/sortBy';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import layers from 'utils/z';
 import styled from 'styled-components';
 
-import { getDocumentUrlByExternalId } from '../../modules/lineReviews/api';
 import WorkSpaceTools from '../WorkSpaceTools/WorkSpaceTools';
 import {
   Annotation,
@@ -17,9 +15,10 @@ import {
   LineReview,
   Link,
   ParsedDocument,
+  WorkspaceDocument,
 } from '../../modules/lineReviews/types';
 
-import centerOnAnnotationByAnnotationId from './centerOnIsoAnnotationByPidAnnotation';
+import centerOnAnnotationByAnnotationId from './centerOnAnnotationByAnnotationId';
 import { BOUNDING_BOX_PADDING_PX } from './constants';
 import getAnnotationBoundingBoxOverlay from './getAnnotationBoundingBoxOverlay';
 import getAnnotationsForLineByDocument from './getAnnotationsForLineByDocument';
@@ -97,8 +96,8 @@ const HeaderContainer = styled.div`
 `;
 
 type IsoModalProps = {
-  documents: ParsedDocument[] | undefined;
-  isoDocuments: ParsedDocument[] | undefined;
+  parsedDocuments: ParsedDocument[];
+  isoDocuments: WorkspaceDocument[];
   visible?: boolean;
   onHidePress: () => void;
   onOrnateRef: (ref: CogniteOrnate | undefined) => void;
@@ -152,7 +151,7 @@ const getFileConnectionLine = (
     );
 
     return {
-      groupId: getKonvaSelectorSlugByExternalId(document.externalId),
+      groupId: getKonvaSelectorSlugByExternalId(document.pdfExternalId),
       id: `${from.annotationId}-${to.annotationId}`,
       type: 'line',
       attrs: {
@@ -175,7 +174,7 @@ const getFileConnectionLine = (
 };
 
 const IsoModal: React.FC<IsoModalProps> = ({
-  documents,
+  parsedDocuments,
   isoDocuments,
   visible,
   onOrnateRef,
@@ -189,9 +188,22 @@ const IsoModal: React.FC<IsoModalProps> = ({
     undefined
   );
   const [modalRef, setModalRef] = useState<HTMLElement | null>(null);
-  const { client } = useAuthContext();
-  const [fetchedDocuments, setFetchedDocuments] = useState<any[]>([]);
-  const [isInitialized, setIsInitialized] = useState(false);
+
+  const pdfDocuments = useMemo(
+    () =>
+      isoDocuments.map((document, index) => ({
+        id: getKonvaSelectorSlugByExternalId(document.pdfExternalId),
+        pageNumber: 1,
+        row: 1,
+        column: index + 1,
+        type: document.type,
+        name: withoutFileExtension(document.pdfExternalId),
+        pdf: document.pdf,
+        pdfExternalId: document.pdfExternalId,
+      })),
+    [isoDocuments]
+  );
+
   const {
     dimensions,
     onMove,
@@ -214,49 +226,28 @@ const IsoModal: React.FC<IsoModalProps> = ({
     onOrnateRef(isoOrnateRef);
   }, [isoOrnateRef]);
 
-  useEffect(() => {
-    if (client !== undefined && isoDocuments) {
-      (async () => {
-        const result = await Promise.all(
-          isoDocuments.map(async (document, index) => ({
-            id: getKonvaSelectorSlugByExternalId(document.externalId),
-            url: await getDocumentUrlByExternalId(client)(
-              document.pdfExternalId
-            ),
-            pageNumber: 1,
-            row: 1,
-            column: index + 1,
-            type: document.type,
-            name: withoutFileExtension(document.pdfExternalId),
-          }))
-        );
-
-        setFetchedDocuments(result);
-        setIsInitialized(true);
-      })();
-    }
-  }, [document, client]);
-
-  if (!isInitialized) {
-    return null;
-  }
+  const isoParsedDocuments: ParsedDocument[] = useMemo(
+    () =>
+      parsedDocuments.filter((document) => document.type === DocumentType.ISO),
+    [parsedDocuments]
+  );
 
   const onLinkClick = (
     event: KonvaEventObject<MouseEvent>,
     annotationId: string
   ) => {
-    if (!isoDocuments || !documents) {
+    if (!isoDocuments || !isoParsedDocuments) {
       return;
     }
 
     const links = [
-      ...getLinksByAnnotationId(isoDocuments, annotationId),
-      ...getLinksByAnnotationId(isoDocuments, annotationId, true),
+      ...getLinksByAnnotationId(isoParsedDocuments, annotationId),
+      ...getLinksByAnnotationId(isoParsedDocuments, annotationId, true),
     ];
     if (links.length === 0) {
       console.warn(
         `No link found for ${annotationId}`,
-        isoDocuments.filter((document) =>
+        isoParsedDocuments.filter((document) =>
           document.linking.some(
             (link) =>
               link.from.annotationId === annotationId ||
@@ -269,25 +260,25 @@ const IsoModal: React.FC<IsoModalProps> = ({
 
     const link = findCenterLink(
       links,
-      documents.flatMap((document) => document.annotations)
+      parsedDocuments.flatMap((document) => document.annotations)
     );
     const isLinkedAnnotationInIso =
-      getDocumentByExternalId(documents, link.to.documentId).type ===
+      getDocumentByExternalId(parsedDocuments, link.to.documentId).type ===
       DocumentType.ISO;
 
     centerOnAnnotationByAnnotationId(
-      documents,
+      parsedDocuments,
       isLinkedAnnotationInIso ? isoOrnateRef : ornateRef,
       link.to.annotationId
     );
   };
 
   const annotationsById = keyBy(
-    isoDocuments?.flatMap((document) => document.annotations),
+    isoParsedDocuments?.flatMap((document) => document.annotations),
     (annotation) => annotation.id
   );
 
-  const drawings = isoDocuments?.flatMap((document) => [
+  const drawings = isoParsedDocuments?.flatMap((document) => [
     ...getAnnotationBoundingBoxOverlay(
       lineReview.id,
       document,
@@ -394,7 +385,7 @@ const IsoModal: React.FC<IsoModalProps> = ({
       >
         <ReactOrnate
           onOrnateRef={(ref) => setIsoOrnateRef(ref)}
-          documents={fetchedDocuments}
+          documents={pdfDocuments}
           nodes={drawings}
           renderWorkspaceTools={(ornate, isFocused) => (
             <WorkSpaceTools
