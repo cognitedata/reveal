@@ -1,5 +1,4 @@
 import { getProcessedAdminList } from 'dataLayers/userManagementService/selectors/getProcessedAdminList';
-import { getUmsUserName } from 'dataLayers/userManagementService/selectors/getUmsUserName';
 
 import { Input, Menu } from '@cognite/cogs.js';
 import { UMSUser } from '@cognite/user-management-service-types';
@@ -11,6 +10,8 @@ import {
   AdminUsersWrapper,
   MenuItemAssigned,
 } from '../../elements';
+
+import { UserNameSubtitle } from './UserNameSubtitle';
 
 interface Props {
   assign: (user: UMSUser) => void;
@@ -41,14 +42,13 @@ export const AdminList = ({
       <AdminUsersWrapper>
         {users.length &&
           users.map((user: UMSUser) => {
-            const userName = getUmsUserName(user, currentUserId);
             return user.id === assigneeId ? (
               <MenuItemAssigned key={user.id} appendIcon="Checkmark">
-                {userName}
+                <UserNameSubtitle user={user} currentUserId={currentUserId} />
               </MenuItemAssigned>
             ) : (
               <Menu.Item key={user.id} onClick={() => assign(user)}>
-                {userName}
+                <UserNameSubtitle user={user} currentUserId={currentUserId} />
               </Menu.Item>
             );
           })}

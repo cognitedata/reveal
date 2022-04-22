@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
-import { getUmsUserName } from 'dataLayers/userManagementService/selectors/getUmsUserName';
+import { getAssigneeName } from 'dataLayers/userManagementService/adapters/getAssigneeName';
 import { useUserInfo } from 'services/userManagementService/query';
 
 import { Dropdown, Menu, Label } from '@cognite/cogs.js';
@@ -45,6 +45,10 @@ export const AssigneeColumn: React.FC<Props> = (props) => {
     assignFeedback(user.id);
   };
 
+  const assigneeName = useMemo(() => {
+    return getAssigneeName(visibleAssignee, user?.id);
+  }, [visibleAssignee?.displayName, user?.id]);
+
   const MenuContent = (
     <AssignToDropdown>
       <>
@@ -80,9 +84,7 @@ export const AssigneeColumn: React.FC<Props> = (props) => {
           variant={visibleAssignee ? 'normal' : 'unknown'}
           aria-label={UNASSIGNED}
         >
-          {visibleAssignee
-            ? getUmsUserName(visibleAssignee, user?.id)
-            : UNASSIGNED}
+          {assigneeName}
         </Label>
       </Dropdown>
       <UnassignWarningModal

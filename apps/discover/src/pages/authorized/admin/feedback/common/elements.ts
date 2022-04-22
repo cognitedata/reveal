@@ -14,3 +14,11 @@ export const AssignToDropdown = styled(Menu)`
 export const UnassignWarningMessage = styled.div`
   color: var(--cogs-text-primary);
 `;
+
+export const SubTitle = styled.div`
+  margin: 0px;
+  padding: 0;
+  font-size: 10px;
+  color: var(--cogs-text-hint);
+  width: fit-content;
+`;
