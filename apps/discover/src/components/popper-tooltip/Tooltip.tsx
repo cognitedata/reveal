@@ -35,9 +35,12 @@ export const Tooltip: React.FC<TooltipProps> = ({
   const backgroundColor = isStringContent
     ? 'var(--cogs-bg-inverted)'
     : 'var(--cogs-bg-default)';
+  const borderColor = isStringContent
+    ? 'var(--cogs-border-default)'
+    : 'transparent';
 
   return (
-    <TooltipWrapper backgroundColor={backgroundColor}>
+    <TooltipWrapper backgroundColor={backgroundColor} borderColor={borderColor}>
       <span ref={setTriggerRef}>{children}</span>
 
       {visible && !isEmpty(content) && (

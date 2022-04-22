@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
-import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
+import keyBy from 'lodash/keyBy';
 
 import EmptyState from 'components/emptyState';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
@@ -30,7 +30,7 @@ export const CasingGraphView: React.FC<Props> = ({ scrollRef, sideMode }) => {
   const { isLoading: isEventsLoading, events } = useNptEventsForCasings();
 
   const groupedCasings = useMemo(
-    () => groupBy(getFortmattedCasingData(casings || [], preferredUnit), 'key'),
+    () => keyBy(getFortmattedCasingData(casings || [], preferredUnit), 'key'),
     [casings, preferredUnit]
   );
 
@@ -44,13 +44,13 @@ export const CasingGraphView: React.FC<Props> = ({ scrollRef, sideMode }) => {
       {!isLoading &&
         wells.map((well) =>
           well.wellbores.map((wellbore) => {
-            const rows = groupedCasings[wellbore.id];
+            const data = groupedCasings[wellbore.id];
             return (
               <CasingView
                 key={`${well.id}-${wellbore.id}-KEY`}
                 wellName={well.name}
                 wellboreName={wellbore?.name || wellbore?.description || ''}
-                casings={isEmpty(rows) ? [] : rows[0].casings}
+                casings={isEmpty(data) ? [] : data.casings}
                 unit={preferredUnit}
                 events={events[wellbore.id]}
                 isEventsLoading={isEventsLoading}

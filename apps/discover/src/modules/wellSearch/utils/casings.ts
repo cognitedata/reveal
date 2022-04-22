@@ -118,7 +118,7 @@ export const convertToPreviewData = (
 
     return {
       ...casing,
-      startDepth: getPercent(casing.startDepth, maxDepth),
+      casingStartDepth: getPercent(casing.startDepth, maxDepth),
       casingDepth: getPercent(casing.endDepth - casing.startDepth, maxDepth),
       casingDescription: description,
       linerCasing: casing.name

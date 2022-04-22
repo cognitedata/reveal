@@ -14,6 +14,7 @@ const depthIndicatorProps: DepthIndicatorProps = {
     startDepthTVD: 0,
     endDepthTVD: 800,
     depthUnit: 'ft',
+    casingStartDepth: 0,
     casingDepth: 100,
     casingDescription: 'Test casing description',
     linerCasing: false,

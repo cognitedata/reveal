@@ -1,4 +1,5 @@
 import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
 import { UnitConverterItem } from 'utils/units';
 
 import { Sequence } from '@cognite/sdk';
@@ -8,6 +9,7 @@ import { convertObject } from 'modules/wellSearch/utils';
 
 import { COMMON_COLUMN_WIDTHS } from '../../constants';
 
+import { CasingType } from './CasingView/interfaces';
 import { CasingData, FormattedCasings } from './interfaces';
 
 const SCALE_BLOCK_HEIGHT = 40;
@@ -33,6 +35,15 @@ export const getFortmattedCasingData = (
     if (isEmpty(validCasings)) {
       return formattedCasings;
     }
+
+    const tvdValuesModifier: Partial<CasingType> = {};
+    if (isUndefined(casingData.topTVD)) {
+      tvdValuesModifier.startDepthTVD = undefined;
+    }
+    if (isUndefined(casingData.bottomTVD)) {
+      tvdValuesModifier.endDepthTVD = undefined;
+    }
+
     return [
       ...formattedCasings,
       {
@@ -43,12 +54,13 @@ export const getFortmattedCasingData = (
           .map((casing: Sequence) =>
             mapSequenceToCasingType(casing, prefferedUnit)
           )
-          .map((casing) =>
-            convertObject(casing)
+          .map((casing) => ({
+            ...convertObject(casing)
               .changeUnits(getCasingListUnitChangeAccessors(prefferedUnit))
               .toClosestInteger(casingAccessorsToFixedDecimal)
-              .get()
-          ),
+              .get(),
+            ...tvdValuesModifier,
+          })),
       },
     ];
   }, [] as FormattedCasings[]);
@@ -79,20 +91,21 @@ export const mapSequenceToCasingType = (
     startDepthTVD: getDepth(
       casing.metadata ? casing.metadata.assy_tvd_top : '0'
     ),
-    startDepthTVDUnit: casing.metadata
-      ? casing.metadata.assy_tvd_top_unit
-      : FEET,
+    startDepthTVDUnit: casing.metadata?.assy_tvd_top_unit,
     endDepthTVD: getDepth(
       casing.metadata ? casing.metadata.assy_tvd_base : '0'
     ),
-    endDepthTVDUnit: casing.metadata
-      ? casing.metadata.assy_tvd_base_unit
-      : FEET,
+    endDepthTVDUnit: casing.metadata?.assy_tvd_base_unit,
     depthUnit: prefferedUnit,
   };
 };
 
-export const casingAccessorsToFixedDecimal = ['startDepth', 'endDepth'];
+export const casingAccessorsToFixedDecimal = [
+  'startDepth',
+  'endDepth',
+  'startDepthTVD',
+  'endDepthTVD',
+];
 
 export const getCasingListUnitChangeAccessors = (
   toUnit: string
@@ -107,6 +120,18 @@ export const getCasingListUnitChangeAccessors = (
     id: 'id',
     accessor: 'endDepth',
     fromAccessor: 'endDepthUnit',
+    to: toUnit,
+  },
+  {
+    id: 'id',
+    accessor: 'startDepthTVD',
+    fromAccessor: 'startDepthTVDUnit',
+    to: toUnit,
+  },
+  {
+    id: 'id',
+    accessor: 'endDepthTVD',
+    fromAccessor: 'endDepthTVDUnit',
     to: toUnit,
   },
 ];

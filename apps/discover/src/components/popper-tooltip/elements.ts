@@ -3,9 +3,10 @@ import layers from 'utils/zindex';
 
 export const TooltipWrapper = styled.span`
   .tooltip-container {
-    --tooltipBackground: ${(props: { backgroundColor: string }) =>
-      props.backgroundColor};
-    --tooltipBorder: var(--cogs-border-default);
+    ${(props: { backgroundColor: string; borderColor: boolean }) => `
+      --tooltipBackground: ${props.backgroundColor};
+      --tooltipBorder: ${props.borderColor};
+    `}
 
     background-color: var(--tooltipBackground);
     border-radius: 6px;

@@ -489,10 +489,13 @@ export type RegionFieldBlockResult = { [key in RegionFieldBlock]: string[] };
 
 export interface PreviewCasingType extends CasingType {
   startDepth: number;
+  casingStartDepth: number;
   casingDepth: number;
   casingDescription: string;
   linerCasing: boolean;
   maximumDescription: string;
+  /** Invert the triangle (shoe) end */
+  leftEnd?: boolean;
 }
 export interface CasingAssemblyWithTVD extends CasingAssembly {
   trueVerticalDepthTop?: Distance;

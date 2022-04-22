@@ -52,8 +52,15 @@ const LOADING_TEXT = 'Loading';
 
 const mirrorCasingData = (data: PreviewCasingType[]) => {
   const reverseData = data.reduce((accumulator, item) => {
-    // the '*-1' for the duplicate/mirrored casing seems to be the easiest way to get a unique id that will not clash with any existing ones
-    return [{ ...item, id: item.id * -1 }, ...accumulator];
+    return [
+      {
+        ...item,
+        // the '*-1' for the duplicate/mirrored casing seems to be the easiest way to get a unique id that will not clash with any existing ones
+        id: item.id * -1,
+        leftEnd: true,
+      },
+      ...accumulator,
+    ];
   }, [] as PreviewCasingType[]);
 
   return [...reverseData, ...data];

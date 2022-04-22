@@ -3,9 +3,14 @@ import layers from 'utils/zindex';
 
 import { Menu } from '@cognite/cogs.js';
 
-import mainPalette from 'styles/default.palette';
+import { Center } from 'styles/layout';
 
-const DEPTH_INDICATOR_LINE_WIDTH = '4px';
+import {
+  DEPTH_INDICATOR_END_HEIGHT,
+  DEPTH_INDICATOR_LINE_WIDTH,
+  SEGMENT_COLOR,
+  TOOLTIP_HOVER_AREA,
+} from './constants';
 
 export const DepthIndicatorWrapper = styled.div`
   display: inline-block;
@@ -17,27 +22,21 @@ export const DepthIndicatorWrapper = styled.div`
   margin-right: 20px;
 `;
 
-export const Start = styled.div`
-  border-left: ${DEPTH_INDICATOR_LINE_WIDTH} solid #00000027;
-  box-sizing: border-box;
-  float: left;
-  width: 100%;
-  height: ${(props: { height: string }) => props.height};
+export const DepthIndicatorLineWrapper = styled(Center)`
+  width: calc(${TOOLTIP_HOVER_AREA} + ${TOOLTIP_HOVER_AREA});
+  ${(props: { height?: string }) => `
+    height: ${props.height};
+  `}
 `;
 
-export const Middle = styled.div`
-  border-left: ${DEPTH_INDICATOR_LINE_WIDTH} solid ${mainPalette.black};
+export const DepthIndicatorLine = styled.div`
+  width: ${DEPTH_INDICATOR_LINE_WIDTH};
   box-sizing: border-box;
   float: left;
-  width: 100%;
-  height: ${(props: { height: string }) => props.height};
-`;
-
-export const End = styled.div`
-  border-left: ${DEPTH_INDICATOR_LINE_WIDTH} solid ${mainPalette.black};
-  box-sizing: border-box;
-  float: left;
-  width: 100%;
+  ${(props: { color: string; height?: string }) => `
+    background: ${props.color};
+    height: 100%;
+  `}
 `;
 
 export const Description = styled.div`
@@ -65,16 +64,16 @@ export const Description = styled.div`
 export const TriangleBottomRight = styled.div`
   width: 0;
   height: 0;
-  border-bottom: 16px solid ${mainPalette.black};
-  border-right: 16px solid transparent;
+  border-bottom: ${DEPTH_INDICATOR_END_HEIGHT} solid ${SEGMENT_COLOR};
+  border-right: ${DEPTH_INDICATOR_END_HEIGHT} solid transparent;
+  border-left: ${DEPTH_INDICATOR_LINE_WIDTH} solid ${SEGMENT_COLOR};
+  margin-left: ${DEPTH_INDICATOR_END_HEIGHT};
   float: left;
 `;
 
-export const LinerEnd = styled.div`
-  width: 0;
-  height: 0;
-  border-bottom: 16px solid ${mainPalette.black};
-  float: left;
+export const TriangleBottomLeft = styled(TriangleBottomRight)`
+  transform: rotateY(180deg);
+  margin-left: -${DEPTH_INDICATOR_END_HEIGHT};
 `;
 
 export const TooptipSection = styled(Menu.Item)`

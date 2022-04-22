@@ -1,26 +1,23 @@
 import React from 'react';
 
+import isUndefined from 'lodash/isUndefined';
+
 import { Body, Menu } from '@cognite/cogs.js';
+
+import { PreviewCasingType } from 'modules/wellSearch/types';
 
 import { TooptipSection } from './elements';
 
-interface Props {
-  assemblyType: string;
-  topDepthMD: number | string;
-  bottomDepthMD: number | string;
-  topDepthTVD?: number | string;
-  bottomDepthTVD?: number | string;
-  depthUnit: string;
-}
-
-export const TooltipContent: React.FC<Props> = ({
-  assemblyType,
-  topDepthMD,
-  bottomDepthMD,
-  topDepthTVD,
-  bottomDepthTVD,
+export const TooltipContent: React.FC<PreviewCasingType> = ({
+  linerCasing,
+  startDepth,
+  endDepth,
+  startDepthTVD,
+  endDepthTVD,
   depthUnit,
 }) => {
+  const assemblyType = linerCasing ? 'Liner' : 'Casing';
+
   return (
     <Menu>
       <TooptipSection>
@@ -34,10 +31,8 @@ export const TooltipContent: React.FC<Props> = ({
         <Body level={3} strong>
           Depth (MD):
         </Body>
-        <Body level={3}>Top Depth (MD): {`${topDepthMD} ${depthUnit}`}</Body>
-        <Body level={3}>
-          Bottom Depth (MD): {`${bottomDepthMD} ${depthUnit}`}
-        </Body>
+        <Body level={3}>Top Depth (MD): {`${startDepth} ${depthUnit}`}</Body>
+        <Body level={3}>Bottom Depth (MD): {`${endDepth} ${depthUnit}`}</Body>
       </TooptipSection>
 
       <TooptipSection>
@@ -45,11 +40,12 @@ export const TooltipContent: React.FC<Props> = ({
           Depth (TVD):
         </Body>
         <Body level={3}>
-          Top Depth (TVD): {topDepthTVD ? `${topDepthTVD} ${depthUnit}` : 'N/A'}
+          Top Depth (TVD):{' '}
+          {isUndefined(startDepthTVD) ? 'N/A' : `${startDepthTVD} ${depthUnit}`}
         </Body>
         <Body level={3}>
           Bottom Depth (TVD):{' '}
-          {bottomDepthTVD ? `${bottomDepthTVD} ${depthUnit}` : 'N/A'}
+          {isUndefined(endDepthTVD) ? 'N/A' : `${endDepthTVD} ${depthUnit}`}
         </Body>
       </TooptipSection>
     </Menu>

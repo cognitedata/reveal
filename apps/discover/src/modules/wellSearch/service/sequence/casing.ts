@@ -125,22 +125,29 @@ export const getCasingSchematicsWithTVDs = async (
       ...casingSchematic,
       casingAssemblies: casingSchematic.casingAssemblies.map(
         (casingAssembly) => {
+          const tvdTopValue = getTVDForMD(
+            tvdsForWellbore,
+            casingAssembly.originalMeasuredDepthTop.value
+          );
+          const tvdBaseValue = getTVDForMD(
+            tvdsForWellbore,
+            casingAssembly.originalMeasuredDepthBase.value
+          );
+
           return {
             ...casingAssembly,
-            trueVerticalDepthTop: {
-              value: getTVDForMD(
-                tvdsForWellbore,
-                casingAssembly.originalMeasuredDepthTop.value
-              ),
-              unit: tvdUnit,
-            },
-            trueVerticalDepthBase: {
-              value: getTVDForMD(
-                tvdsForWellbore,
-                casingAssembly.originalMeasuredDepthBase.value
-              ),
-              unit: tvdUnit,
-            },
+            trueVerticalDepthTop: tvdTopValue
+              ? {
+                  value: tvdTopValue,
+                  unit: tvdUnit,
+                }
+              : undefined,
+            trueVerticalDepthBase: tvdBaseValue
+              ? {
+                  value: tvdBaseValue,
+                  unit: tvdUnit,
+                }
+              : undefined,
           };
         }
       ),

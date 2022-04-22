@@ -4,15 +4,9 @@ import { Tooltip } from 'components/popper-tooltip';
 import { useEnabledWellSdkV3 } from 'modules/wellSearch/hooks/useEnabledWellSdkV3';
 import { PreviewCasingType } from 'modules/wellSearch/types';
 
-import {
-  DepthIndicatorWrapper,
-  LinerEnd,
-  TriangleBottomRight,
-  Description,
-  Start,
-  End,
-  Middle,
-} from './elements';
+import { TOOLTIP_PLACEMENT } from './constants';
+import { DepthSegment } from './DepthSegment';
+import { DepthIndicatorWrapper, Description } from './elements';
 import { TooltipContent } from './TooltipContent';
 
 export interface DepthIndicatorProps {
@@ -32,34 +26,23 @@ const DepthIndicator: React.FC<DepthIndicatorProps> = ({
   const enableWellSdkV3 = useEnabledWellSdkV3();
 
   const {
-    startDepth = 0,
-    endDepth,
-    startDepthTVD,
-    endDepthTVD,
-    depthUnit,
+    casingStartDepth = 0,
     casingDepth,
     casingDescription,
     outerDiameter,
     linerCasing = false,
+    leftEnd,
   } = normalizedCasing;
 
-  const startHeight = `${startDepth}%`;
+  const startHeight = `${casingStartDepth}%`;
   const middleHeight = `calc(${casingDepth}% - ${triangleHeight}px)`;
   const indicatorTransform = flip ? `rotateY(180deg)` : undefined;
 
   const tooltipContent = enableWellSdkV3 ? (
-    <TooltipContent
-      assemblyType={linerCasing ? 'Liner' : 'Casing'}
-      topDepthMD={startDepth.toFixed(2)}
-      bottomDepthMD={endDepth}
-      topDepthTVD={startDepthTVD && startDepthTVD.toFixed(2)}
-      bottomDepthTVD={endDepthTVD && endDepthTVD.toFixed(2)}
-      depthUnit={depthUnit}
-    />
+    <TooltipContent {...normalizedCasing} />
   ) : (
     casingDescription
   );
-  const tooltipPlacement = enableWellSdkV3 ? 'left' : 'top';
 
   return (
     <DepthIndicatorWrapper
@@ -69,25 +52,11 @@ const DepthIndicator: React.FC<DepthIndicatorProps> = ({
       <Tooltip
         followCursor
         content={tooltipContent}
-        placement={tooltipPlacement}
+        placement={TOOLTIP_PLACEMENT}
       >
-        <Start height={startHeight} />
-      </Tooltip>
-
-      <Tooltip
-        followCursor
-        content={tooltipContent}
-        placement={tooltipPlacement}
-      >
-        <Middle height={middleHeight} />
-      </Tooltip>
-
-      <Tooltip
-        followCursor
-        content={tooltipContent}
-        placement={tooltipPlacement}
-      >
-        <End>{linerCasing ? <LinerEnd /> : <TriangleBottomRight />}</End>
+        <DepthSegment.Start height={startHeight} />
+        <DepthSegment.Middle height={middleHeight} />
+        <DepthSegment.End linerCasing={linerCasing} leftEnd={leftEnd} />
       </Tooltip>
 
       {outerDiameter && (

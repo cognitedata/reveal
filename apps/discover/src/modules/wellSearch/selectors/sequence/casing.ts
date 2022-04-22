@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 
 import capitalize from 'lodash/capitalize';
 import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
 import sortBy from 'lodash/sortBy';
 import { UnitConverterItem } from 'utils/units';
 
@@ -40,13 +42,13 @@ export const useSelectedWellboresCasingsData = () => {
         const casingNames: string[] = [];
         let topMD = 0;
         let bottomMD = 0;
-        let topTVD = 0;
-        let bottomTVD = 0;
         let odMin = 0; // minimum outer diameter
         let odMax = 0; // maximum outer diameter
         let idMin = 0; // minimum inner diameter
         let mdUnit = FEET;
-        let tvdUnit = FEET;
+        let topTVD = -1;
+        let bottomTVD = -1;
+        let tvdUnit = '';
         let odUnit = 'in';
         let idUnit = 'in';
 
@@ -70,14 +72,14 @@ export const useSelectedWellboresCasingsData = () => {
               bottomMD = Number(row.metadata.assy_original_md_base);
             }
             if (
-              row.metadata.assy_tvd_top &&
-              (topTVD === 0 || Number(row.metadata.assy_tvd_top) < topTVD)
+              !isUndefined(row.metadata.assy_tvd_top) &&
+              (topTVD === -1 || Number(row.metadata.assy_tvd_top) < topTVD)
             ) {
               topTVD = Number(row.metadata.assy_tvd_top);
             }
             if (
-              row.metadata.assy_tvd_base &&
-              (bottomTVD === 0 ||
+              !isUndefined(row.metadata.assy_tvd_base) &&
+              (bottomTVD === -1 ||
                 Number(row.metadata.assy_tvd_base) > bottomTVD)
             ) {
               bottomTVD = Number(row.metadata.assy_tvd_base);
@@ -99,7 +101,10 @@ export const useSelectedWellboresCasingsData = () => {
             ) {
               idMin = Number(row.metadata.assy_min_inside_diameter);
             }
-            tvdUnit = get(row, 'metadata.assy_tvd_top_unit', tvdUnit);
+            tvdUnit =
+              row.metadata.assy_tvd_top_unit ||
+              row.metadata.assy_tvd_base_unit ||
+              tvdUnit;
           }
           row.columns.forEach((column) => {
             if (column.name === 'comp_md_top') {
@@ -114,24 +119,33 @@ export const useSelectedWellboresCasingsData = () => {
           });
         });
 
+        const tvdData: Partial<CasingData> = {};
+        if (topTVD !== -1) {
+          tvdData.topTVD = topTVD;
+        }
+        if (bottomTVD !== -1) {
+          tvdData.bottomTVD = bottomTVD;
+        }
+        if (!isEmpty(tvdUnit)) {
+          tvdData.tvdUnit = tvdUnit;
+        }
+
         if (topMD && bottomMD) {
           tempData.push({
             wellName: well.name,
             wellboreName: wellbore.name || wellbore.description || '',
             id: wellbore.id,
-            topMD: Math.round(topMD),
-            bottomMD: Math.round(bottomMD),
-            topTVD: Math.round(topTVD),
-            bottomTVD: Math.round(bottomTVD),
+            topMD,
+            bottomMD,
             odMin,
             odMax,
             idMin,
             mdUnit,
-            tvdUnit,
             odUnit,
             idUnit,
             casingNames: casingNames.join(', '),
             casings,
+            ...tvdData,
           });
         }
       });
