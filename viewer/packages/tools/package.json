@@ -11,6 +11,7 @@
     "@reveal/cad-styling": "workspace:*",
     "@reveal/core": "workspace:*",
     "@reveal/metrics": "workspace:*",
+    "@reveal/rendering": "workspace:*",
     "@reveal/utilities": "workspace:*"
   }
 }

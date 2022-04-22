@@ -4,15 +4,35 @@
 
 import { Cognite3DViewer } from '@reveal/core';
 import * as THREE from 'three';
+import { LineGeometry } from './LineGeometry';
+import { lineShaders } from '@reveal/rendering';
+import { Line } from './Line';
 import { Measurement } from './Measurement';
 
 export class MeasurementDistance implements Measurement {
   private readonly _viewer: Cognite3DViewer;
-  private _measurementLine: THREE.Line | undefined;
-  private _lineGeometry: THREE.BufferGeometry;
+  private _measurementLine: Line | undefined;
+  private _lineGeometry: LineGeometry;
   private _isActive: boolean;
   private readonly _startPoint: THREE.Vector3;
   private readonly _endPoint: THREE.Vector3;
+  private _positions: Float32Array;
+  private _colors: Float32Array;
+
+  private readonly LineUniforms: any = {
+    worldUnits: { value: 1 },
+    linewidth: { value: 0.1 },
+    resolution: { value: new THREE.Vector2(1, 1) },
+    dashOffset: { value: 0 },
+    dashScale: { value: 1 },
+    dashSize: { value: 1 },
+    gapSize: { value: 1 }, // todo FIX - maybe change to totalSize,
+    diffuse: { value: 0xffffff }
+  };
+
+  private readonly ShaderLibUnifroms: any = {
+    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.common, THREE.UniformsLib.fog, this.LineUniforms])
+  };
 
   constructor(viewer: Cognite3DViewer) {
     this._viewer = viewer;
@@ -23,11 +43,36 @@ export class MeasurementDistance implements Measurement {
 
   private initializeLine(): void {
     if (this._measurementLine === undefined) {
-      const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
-      this._lineGeometry = new THREE.BufferGeometry();
-      this._lineGeometry = new THREE.BufferGeometry().setFromPoints([this._startPoint, this._endPoint]);
+      this._lineGeometry = new LineGeometry();
+      const material = new THREE.ShaderMaterial({
+        uniforms: THREE.UniformsUtils.clone(this.ShaderLibUnifroms.uniforms),
+        vertexShader: lineShaders.vertex,
+        fragmentShader: lineShaders.fragment,
+        clipping: true,
+        linewidth: 0.1,
+        vertexColors: true,
+        alphaToCoverage: true,
+        glslVersion: THREE.GLSL3
+      });
 
-      this._measurementLine = new THREE.Line(this._lineGeometry, material);
+      this._positions = new Float32Array(6);
+      this._positions[0] = this._positions[1] = this._positions[2] = 0;
+      this._positions[3] = this._positions[4] = this._positions[5] = 0;
+
+      const color = new THREE.Color(200, 180, 100);
+
+      this._colors = new Float32Array(6);
+      this._colors[0] = color.r;
+      this._colors[1] = color.g;
+      this._colors[2] = color.b;
+      this._colors[3] = color.r;
+      this._colors[4] = color.g;
+      this._colors[5] = color.b;
+
+      this._lineGeometry.setPositions(this._positions);
+      this._lineGeometry.setColors(this._colors);
+
+      this._measurementLine = new Line(this._lineGeometry, material);
 
       this._viewer.addObject3D(this._measurementLine);
     }
@@ -67,6 +112,9 @@ export class MeasurementDistance implements Measurement {
 
   private addStartPoint(point: THREE.Vector3): void {
     this._startPoint.copy(point);
+    this._positions[0] = this._startPoint.x;
+    this._positions[1] = this._startPoint.y;
+    this._positions[2] = this._startPoint.z;
     this._isActive = true;
   }
 
@@ -85,7 +133,10 @@ export class MeasurementDistance implements Measurement {
   public update(controlPoint: THREE.Vector3): void {
     if (this._isActive && this._measurementLine) {
       controlPoint.addScalar(0.0001);
-      this._measurementLine.geometry.setFromPoints([this._startPoint, controlPoint]);
+      this._positions[3] = controlPoint.x;
+      this._positions[4] = controlPoint.y;
+      this._positions[5] = controlPoint.z;
+      this._lineGeometry.setPositions(this._positions);
       this._endPoint.copy(controlPoint);
     }
   }
