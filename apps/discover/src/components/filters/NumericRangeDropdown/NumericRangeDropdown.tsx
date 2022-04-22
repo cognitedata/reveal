@@ -65,14 +65,16 @@ export const NumericRangeDropdown: React.FC<NumericRangeDropdownProps> = ({
     <FullWidth>
       <Dropdown
         content={NumericRangeDropdownContent}
-        onShow={() => setDropdownVisible(true)}
-        onHide={() => setDropdownVisible(false)}
+        appendTo={document.body}
+        onClickOutside={() => setDropdownVisible(false)}
+        visible={dropdownVisible}
       >
         <DropdownLabel
           variant={config?.variant || DEFAULT_DROPDOWN_LABEL_VARIANT}
           icon={dropdownIcon}
           iconPlacement="right"
           $focused={dropdownVisible}
+          onClick={() => setDropdownVisible((prevState) => !prevState)}
         >
           <Body level={2} strong>
             {title}:

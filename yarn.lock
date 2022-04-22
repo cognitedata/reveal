@@ -3092,13 +3092,13 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/cogs.js@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-6.0.2.tgz#92680f094b1eb50678e860d0d12042e19d4de735"
-  integrity sha512-MZErGw2CMJQIYgW7iXmzA7IVz5z4XI7dHGVeT380pWfGtuCEH6XkAEtVmAEk18vg1IqnSiAGZhOsHChe3/Qqfg==
+"@cognite/cogs.js@6.9.1":
+  version "6.9.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-6.9.1.tgz#765526488fdb93136864a4d3409c8d9c4a3a49b3"
+  integrity sha512-WpKgza/lbN/r+kIC3sgLfXipGTz4zSQWivxcA9/kM406rJ3mMDgMITObP1jH+Sw2JfzFxCq6s+0wiwJgGV+Jng==
   dependencies:
     "@tippyjs/react" "4.2.3"
-    "@types/react-date-range" "^1.1.2"
+    "@types/react-date-range" "^1.4.3"
     axios "^0.21.2"
     classnames "^2.3.1"
     color "^3.1.2"
@@ -7771,14 +7771,6 @@
   integrity sha512-Xn+nEg3uK4kNkZ5QR97fDsGkFjICo81Ys5pZ0Ov5T9NR+nDKFoB2OUjKBtQcYKcXYsprNONQaWZ4/HSQZP8ivA==
   dependencies:
     "@types/react" "*"
-
-"@types/react-date-range@^1.1.2":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@types/react-date-range/-/react-date-range-1.1.4.tgz#d595f1d3a427a69920b36e73a3771883f0449b66"
-  integrity sha512-84RAN6zpfjsVds+yZMffe4G1szmCx//mPI9rr+toJhvzTPaZ7zLGsiNdl+Gq2+FdkHdyt/A72tYShJ2xPisHfQ==
-  dependencies:
-    "@types/react" "*"
-    date-fns "^2.16.1"
 
 "@types/react-date-range@^1.4.3":
   version "1.4.3"

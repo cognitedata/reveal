@@ -89,8 +89,8 @@ export const RelatedDocumentDateRange: React.FC = () => {
   return (
     <div>
       <Dropdown
-        onShow={() => setShowDropdown(true)}
-        onHide={() => setShowDropdown(false)}
+        visible={showDropdown}
+        onClickOutside={() => setShowDropdown(false)}
         content={
           <div>
             {showDropdown && (

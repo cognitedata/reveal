@@ -4,7 +4,7 @@ import { Dropdown as CogsDropdown, Label } from '@cognite/cogs.js';
 
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
-export const Dropdown = styled(CogsDropdown)`
+export const Dropdown: typeof CogsDropdown = styled(CogsDropdown)`
   .cogs-menu {
     border-radius: 6px;
   }
