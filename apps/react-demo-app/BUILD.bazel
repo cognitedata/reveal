@@ -3,6 +3,7 @@ load("@npm//@bazel/typescript:index.bzl", "ts_project")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
 load("@npm//@storybook/react:index.bzl", "build_storybook", "start_storybook")
 load("@npm//vite:index.bzl", "vite")
+load("//rules/vite:vite_build.bzl", "vite_build")
 load("//rules/test:jest.bzl", "jest_test")
 load("@npm//jest:index.bzl", "jest")
 load("@npm//cypress:index.bzl", "cypress")
@@ -198,12 +199,11 @@ _RUNTIME_DEPS = [
 
 ### vite build ###
 
-vite(
+vite_build(
     name = "build",
     args = [
         "--node_options=--require=./$(execpath chdir.js)",
         "build",
-        "--outDir=build",
     ],
     data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
         ":vite_config",
