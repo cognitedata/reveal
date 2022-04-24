@@ -33,7 +33,7 @@
     "@cognite/sdk-react-query-hooks": "4.0.0",
     "@cognite/z-index": "0.2.3",
     "@sentry/react": "6.18.2",
-    "@sentry/rrweb": "0.3.1",
+    "@sentry/rrweb": "0.3.2",
     "@sentry/tracing": "6.18.2",
     "@storybook/router": "6.3.13",
     "antd": "4.18.7",
