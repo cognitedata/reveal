@@ -769,7 +769,7 @@ __metadata:
     three: 0.139.2
     ts-jest: 27.1.4
     ts-loader: 8.3.0
-    tsc-alias: 1.6.6
+    tsc-alias: 1.6.7
     typescript: 4.6.3
     webpack: 4.46.0
     webpack-cli: 3.3.12
@@ -10357,6 +10357,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"plimit-lit@npm:^1.2.6":
+  version: 1.2.6
+  resolution: "plimit-lit@npm:1.2.6"
+  dependencies:
+    queue-lit: ^1.2.7
+  checksum: 7b9614c71b9327a6c5d74d92653c5abb3d69113d760c1df5dd6939925f26199415620aa3f3cc198a172178904f4aadc03314c3c2fcacee5df452430266178614
+  languageName: node
+  linkType: hard
+
 "portfinder@npm:^1.0.26":
   version: 1.0.28
   resolution: "portfinder@npm:1.0.28"
@@ -10661,6 +10670,13 @@ fsevents@^1.2.7:
   version: 2.2.0
   resolution: "querystringify@npm:2.2.0"
   checksum: 5641ea231bad7ef6d64d9998faca95611ed4b11c2591a8cae741e178a974f6a8e0ebde008475259abe1621cb15e692404e6b6626e927f7b849d5c09392604b15
+  languageName: node
+  linkType: hard
+
+"queue-lit@npm:^1.2.7":
+  version: 1.2.7
+  resolution: "queue-lit@npm:1.2.7"
+  checksum: 83e0092ccc4d2a87b6c1dbd133ac5841bfba8e991190b749985e50ac15eeef79068f163f8f3fe83afc9660eb2f09b47953257d4294cfa16b75c4cef518e467ca
   languageName: node
   linkType: hard
 
@@ -12674,18 +12690,19 @@ resolve@^1.20.0:
   languageName: node
   linkType: hard
 
-"tsc-alias@npm:1.6.6":
-  version: 1.6.6
-  resolution: "tsc-alias@npm:1.6.6"
+"tsc-alias@npm:1.6.7":
+  version: 1.6.7
+  resolution: "tsc-alias@npm:1.6.7"
   dependencies:
     chokidar: ^3.5.3
     commander: ^9.0.0
     globby: ^11.0.4
     mylas: ^2.1.9
     normalize-path: ^3.0.0
+    plimit-lit: ^1.2.6
   bin:
     tsc-alias: dist/bin/index.js
-  checksum: 1f322e2b3526f0df11fe2a0306bcbebadb83e865fd326da2d74128c205bc0a322f3adf7e311912c6f858bb829f018cb397a20b3bc838bd6b2100f8fac2885f32
+  checksum: 2404141e31924a64649f9f1da03ca5adddd8e044fe8e685e1a536e08fde434529a9d1fca07197496c5c8de02c3bf290dc720712c880e0be496d0662cecfba321
   languageName: node
   linkType: hard
 
