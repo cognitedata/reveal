@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { Button, Colors, Detail, Input, Title } from '@cognite/cogs.js';
 import { RawDBTable } from '@cognite/sdk';
@@ -59,6 +59,7 @@ const CreateTableModal = ({
     useState<PrimaryKeyMethod>();
   const [file, setFile] = useState<File>(); // eslint-disable-line
   const [selectedColumnIndex, setSelectedColumnIndex] = useState<number>(-1);
+  const remountCount = useRef(0);
 
   const {
     mutate: createDatabase,
@@ -111,6 +112,10 @@ const CreateTableModal = ({
     resetForm();
     setCreateTableModalStep(CreateTableModalStep.CreationMode);
     onCancel();
+    // We tie this to a key property on the wrapping <form>...</form> element
+    // in order to remount the whole component whenever we close/cancel the modal
+    // so the whole state gets reset.
+    remountCount.current += 1;
   }
 
   function handleCreate(): void {
@@ -219,7 +224,7 @@ const CreateTableModal = ({
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} key={remountCount.current}>
       <Modal
         footer={
           <>
