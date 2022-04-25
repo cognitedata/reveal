@@ -17,9 +17,10 @@ const depthIndicatorProps: DepthIndicatorProps = {
     casingStartDepth: 0,
     casingDepth: 100,
     casingDescription: 'Test casing description',
-    linerCasing: false,
+    liner: false,
     maximumDescription: 'Test maximum description',
   },
+  isTied: false,
 };
 
 describe('Depth Indicator', () => {

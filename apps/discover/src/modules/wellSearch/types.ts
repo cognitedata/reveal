@@ -492,7 +492,11 @@ export interface PreviewCasingType extends CasingType {
   casingStartDepth: number;
   casingDepth: number;
   casingDescription: string;
-  linerCasing: boolean;
+  /**
+   * If the assembly is a liner or casing.
+   * True if it's a liner. False otherwise.
+   */
+  liner: boolean;
   maximumDescription: string;
   /** Invert the triangle (shoe) end */
   leftEnd?: boolean;

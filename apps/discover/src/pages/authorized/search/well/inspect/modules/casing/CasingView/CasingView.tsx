@@ -9,14 +9,12 @@ import {
 } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
-import max from 'lodash/max';
 import orderBy from 'lodash/orderBy';
 
 import { Button } from '@cognite/cogs.js';
 
 import EmptyState from 'components/emptyState';
 import { useDeepMemo } from 'hooks/useDeep';
-import { NPTEvent, PreviewCasingType } from 'modules/wellSearch/types';
 import { convertToPreviewData } from 'modules/wellSearch/utils/casings';
 import { FlexColumn } from 'styles/layout';
 
@@ -43,41 +41,13 @@ import {
   EmptyCasingsStateWrapper,
 } from './elements';
 import EventsColumn from './EventsColumn';
-import { CasingType, CasingViewTypeProps } from './interfaces';
+import { CasingViewTypeProps } from './interfaces';
+import { getMinMaxDepth, isTied, mirrorCasingData } from './utils';
 
 const MIN_SCALE_HEIGHT = 16;
 const EMPTY_STATE_TEXT = 'This wellbore has no casing and NPT events data';
 const EMPTY_SCHEMA_TEXT = 'This wellbore has no schema data';
 const LOADING_TEXT = 'Loading';
-
-const mirrorCasingData = (data: PreviewCasingType[]) => {
-  const reverseData = data.reduce((accumulator, item) => {
-    return [
-      {
-        ...item,
-        // the '*-1' for the duplicate/mirrored casing seems to be the easiest way to get a unique id that will not clash with any existing ones
-        id: item.id * -1,
-        leftEnd: true,
-      },
-      ...accumulator,
-    ];
-  }, [] as PreviewCasingType[]);
-
-  return [...reverseData, ...data];
-};
-
-const getMinMaxDepth = (casingsList: CasingType[], events: NPTEvent[]) => {
-  const minDepth = 0;
-
-  let maxDepth = max(casingsList.map((row) => Number(row.endDepth))) as number;
-  if (isEmpty(casingsList) && !isEmpty(events)) {
-    maxDepth = max(
-      events.map((row) => Number(row.measuredDepth?.value))
-    ) as number;
-  }
-
-  return [minDepth, maxDepth];
-};
 
 /**
  * This component is used to generate casings diagram
@@ -187,7 +157,10 @@ const CasingView: FC<CasingViewTypeProps> = ({
 
                   {normalizedCasings.map((normalizedCasing, index) => (
                     <Fragment key={normalizedCasing.id}>
-                      <DepthIndicator normalizedCasing={normalizedCasing} />
+                      <DepthIndicator
+                        normalizedCasing={normalizedCasing}
+                        isTied={isTied(normalizedCasings, index)}
+                      />
                       {/* A trick to have space in right side for lengthiest description */}
                       {casings.length === index + 1 && (
                         <RightGutter>

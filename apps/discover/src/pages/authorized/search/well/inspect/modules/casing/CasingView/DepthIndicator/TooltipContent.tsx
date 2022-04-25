@@ -9,14 +9,14 @@ import { PreviewCasingType } from 'modules/wellSearch/types';
 import { TooptipSection } from './elements';
 
 export const TooltipContent: React.FC<PreviewCasingType> = ({
-  linerCasing,
+  liner,
   startDepth,
   endDepth,
   startDepthTVD,
   endDepthTVD,
   depthUnit,
 }) => {
-  const assemblyType = linerCasing ? 'Liner' : 'Casing';
+  const assemblyType = liner ? 'Liner' : 'Casing';
 
   return (
     <Menu>

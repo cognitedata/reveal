@@ -51,9 +51,7 @@ describe('normalize casings', () => {
   });
 
   it(`should return true when name includes liner`, async () => {
-    expect(convertToPreviewData(casingViewProps.casing)[0].linerCasing).toEqual(
-      true
-    );
+    expect(convertToPreviewData(casingViewProps.casing)[0].liner).toEqual(true);
   });
 
   it(`should sort casings on basis of outerDiameter`, async () => {
@@ -68,7 +66,7 @@ describe('normalize casings', () => {
 
   it(`should return false when casing name  doesnot include liner`, async () => {
     casingViewProps.casing[1].name = 'SURFACE CASING';
-    expect(convertToPreviewData(casingViewProps.casing)[0].linerCasing).toEqual(
+    expect(convertToPreviewData(casingViewProps.casing)[0].liner).toEqual(
       false
     );
   });

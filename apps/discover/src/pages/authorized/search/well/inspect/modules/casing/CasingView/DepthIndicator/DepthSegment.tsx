@@ -1,13 +1,11 @@
 import React from 'react';
 
-import {
-  DEPTH_INDICATOR_END_HEIGHT,
-  SEGMENT_COLOR,
-  START_SEGMENT_COLOR,
-} from './constants';
+import { DEPTH_INDICATOR_END_HEIGHT, DEPTH_SEGMENT_COLOR } from './constants';
 import {
   DepthIndicatorLine,
   DepthIndicatorLineWrapper,
+  SideLineLeft,
+  SideLineRight,
   TriangleBottomLeft,
   TriangleBottomRight,
 } from './elements';
@@ -16,30 +14,35 @@ const Start: React.FC<{
   height: string;
 }> = ({ height }) => {
   return (
-    <DepthIndicatorLineWrapper height={height}>
-      <DepthIndicatorLine color={START_SEGMENT_COLOR} />
+    <DepthIndicatorLineWrapper height={height} disablePointer>
+      <DepthIndicatorLine />
     </DepthIndicatorLineWrapper>
   );
 };
 
 const Middle: React.FC<{
   height: string;
-}> = ({ height }) => {
+  isTied?: boolean;
+  leftEnd?: boolean;
+}> = ({ height, isTied, leftEnd }) => {
   return (
-    <DepthIndicatorLineWrapper height={height}>
-      <DepthIndicatorLine color={SEGMENT_COLOR} />
-    </DepthIndicatorLineWrapper>
+    <>
+      {isTied && (leftEnd ? <SideLineLeft /> : <SideLineRight />)}
+      <DepthIndicatorLineWrapper height={height}>
+        <DepthIndicatorLine color={DEPTH_SEGMENT_COLOR} />
+      </DepthIndicatorLineWrapper>
+    </>
   );
 };
 
 const End: React.FC<{
-  linerCasing?: boolean;
+  liner?: boolean;
   leftEnd?: boolean;
-}> = ({ linerCasing, leftEnd }) => {
-  if (linerCasing) {
+}> = ({ liner, leftEnd }) => {
+  if (liner) {
     return (
       <DepthIndicatorLineWrapper height={DEPTH_INDICATOR_END_HEIGHT}>
-        <DepthIndicatorLine color={SEGMENT_COLOR} />
+        <DepthIndicatorLine color={DEPTH_SEGMENT_COLOR} />
       </DepthIndicatorLineWrapper>
     );
   }

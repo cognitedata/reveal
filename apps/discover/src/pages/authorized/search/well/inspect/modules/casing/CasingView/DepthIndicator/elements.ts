@@ -7,7 +7,8 @@ import { Center } from 'styles/layout';
 import {
   DEPTH_INDICATOR_END_HEIGHT,
   DEPTH_INDICATOR_LINE_WIDTH,
-  SEGMENT_COLOR,
+  DEPTH_INDICATOR_SPACING,
+  DEPTH_SEGMENT_COLOR,
   TOOLTIP_HOVER_AREA,
 } from './constants';
 
@@ -15,15 +16,14 @@ export const DepthIndicatorWrapper = styled.div`
   display: inline-block;
   width: ${DEPTH_INDICATOR_LINE_WIDTH};
   height: 100%;
-  cursor: pointer;
-  transform: ${(props: { transform?: string }) => props.transform};
-  margin-right: 20px;
+  margin-right: ${DEPTH_INDICATOR_SPACING};
 `;
 
 export const DepthIndicatorLineWrapper = styled(Center)`
   width: calc(${TOOLTIP_HOVER_AREA} + ${TOOLTIP_HOVER_AREA});
-  ${(props: { height?: string }) => `
+  ${(props: { height?: string; disablePointer?: boolean }) => `
     height: ${props.height};
+    cursor: ${props.disablePointer ? 'auto' : 'pointer'}
   `}
 `;
 
@@ -39,7 +39,7 @@ export const DepthIndicatorLine = styled.div`
 
 export const Description = styled.div`
   position: relative;
-  bottom: -2px;
+  bottom: -${DEPTH_INDICATOR_LINE_WIDTH};
   padding: 2px;
   text-transform: lowercase;
   /** left: ${(props: { linerCasing: boolean }) =>
@@ -62,9 +62,9 @@ export const Description = styled.div`
 export const TriangleBottomRight = styled.div`
   width: 0;
   height: 0;
-  border-bottom: ${DEPTH_INDICATOR_END_HEIGHT} solid ${SEGMENT_COLOR};
+  border-bottom: ${DEPTH_INDICATOR_END_HEIGHT} solid ${DEPTH_SEGMENT_COLOR};
   border-right: ${DEPTH_INDICATOR_END_HEIGHT} solid transparent;
-  border-left: ${DEPTH_INDICATOR_LINE_WIDTH} solid ${SEGMENT_COLOR};
+  border-left: ${DEPTH_INDICATOR_LINE_WIDTH} solid ${DEPTH_SEGMENT_COLOR};
   margin-left: ${DEPTH_INDICATOR_END_HEIGHT};
   float: left;
 `;
@@ -72,6 +72,24 @@ export const TriangleBottomRight = styled.div`
 export const TriangleBottomLeft = styled(TriangleBottomRight)`
   transform: rotateY(180deg);
   margin-left: -${DEPTH_INDICATOR_END_HEIGHT};
+`;
+
+export const SideLineRight = styled.div`
+  width: 0;
+  height: 0;
+  border-bottom: ${DEPTH_INDICATOR_LINE_WIDTH} solid ${DEPTH_SEGMENT_COLOR};
+  border-right: calc(
+      ${DEPTH_INDICATOR_LINE_WIDTH} + ${DEPTH_INDICATOR_LINE_WIDTH} +
+        ${DEPTH_INDICATOR_SPACING}
+    )
+    solid ${DEPTH_SEGMENT_COLOR};
+  margin-bottom: -${DEPTH_INDICATOR_LINE_WIDTH};
+  margin-left: 6px;
+  float: left;
+`;
+
+export const SideLineLeft = styled(SideLineRight)`
+  margin-left: -18px;
 `;
 
 export const TooptipSection = styled(Menu.Item)`

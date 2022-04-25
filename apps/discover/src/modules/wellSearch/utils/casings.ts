@@ -121,9 +121,7 @@ export const convertToPreviewData = (
       casingStartDepth: getPercent(casing.startDepth, maxDepth),
       casingDepth: getPercent(casing.endDepth - casing.startDepth, maxDepth),
       casingDescription: description,
-      linerCasing: casing.name
-        ? casing.name.toLowerCase().includes('liner')
-        : false,
+      liner: casing.name ? casing.name.toLowerCase().includes('liner') : false,
       maximumDescription: maxDescription,
     };
   });

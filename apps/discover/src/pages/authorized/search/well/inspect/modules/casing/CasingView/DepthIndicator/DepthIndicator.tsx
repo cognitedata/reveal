@@ -6,24 +6,23 @@ import { Tooltip } from 'components/popper-tooltip';
 import { useEnabledWellSdkV3 } from 'modules/wellSearch/hooks/useEnabledWellSdkV3';
 import { PreviewCasingType } from 'modules/wellSearch/types';
 
-import { TOOLTIP_PLACEMENT } from './constants';
+import { DEPTH_INDICATOR_END_HEIGHT, TOOLTIP_PLACEMENT } from './constants';
 import { DepthSegment } from './DepthSegment';
 import { DepthIndicatorWrapper, Description } from './elements';
 import { TooltipContent } from './TooltipContent';
 
 export interface DepthIndicatorProps {
   normalizedCasing: PreviewCasingType;
-  flip?: boolean;
+  // If the assembly is tied (connected) with another assembly.
+  isTied: boolean;
 }
-
-const triangleHeight = 16;
 
 /**
  * This component is used to generate depth indicator for a casing
  */
 const DepthIndicator: React.FC<DepthIndicatorProps> = ({
   normalizedCasing,
-  flip = false,
+  isTied,
 }) => {
   const enableWellSdkV3 = useEnabledWellSdkV3();
 
@@ -34,13 +33,12 @@ const DepthIndicator: React.FC<DepthIndicatorProps> = ({
     casingDepth,
     casingDescription,
     outerDiameter,
-    linerCasing = false,
+    liner = false,
     leftEnd,
   } = normalizedCasing;
 
   const startHeight = `${casingStartDepth}%`;
-  const middleHeight = `calc(${casingDepth}% - ${triangleHeight}px)`;
-  const indicatorTransform = flip ? `rotateY(180deg)` : undefined;
+  const middleHeight = `calc(${casingDepth}% - ${DEPTH_INDICATOR_END_HEIGHT})`;
 
   const tooltipContent = enableWellSdkV3 ? (
     <TooltipContent {...normalizedCasing} />
@@ -50,7 +48,6 @@ const DepthIndicator: React.FC<DepthIndicatorProps> = ({
 
   return (
     <DepthIndicatorWrapper
-      transform={indicatorTransform}
       data-testid="depth-indicator"
       style={{ zIndex }}
       /**
@@ -61,18 +58,22 @@ const DepthIndicator: React.FC<DepthIndicatorProps> = ({
       onMouseEnter={() => setZIndex((zIndex) => zIndex + 1)}
       onMouseLeave={() => setZIndex((zIndex) => zIndex - 1)}
     >
+      <DepthSegment.Start height={startHeight} />
       <Tooltip
         followCursor
         content={tooltipContent}
         placement={TOOLTIP_PLACEMENT}
       >
-        <DepthSegment.Start height={startHeight} />
-        <DepthSegment.Middle height={middleHeight} />
-        <DepthSegment.End linerCasing={linerCasing} leftEnd={leftEnd} />
+        <DepthSegment.Middle
+          height={middleHeight}
+          isTied={isTied}
+          leftEnd={leftEnd}
+        />
+        <DepthSegment.End liner={liner} leftEnd={leftEnd} />
       </Tooltip>
 
       {outerDiameter && (
-        <Description linerCasing={linerCasing}>{outerDiameter}</Description>
+        <Description liner={liner}>{outerDiameter}</Description>
       )}
     </DepthIndicatorWrapper>
   );
