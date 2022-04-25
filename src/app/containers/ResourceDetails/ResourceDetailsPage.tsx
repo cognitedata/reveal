@@ -8,29 +8,23 @@ import { FilePage } from 'app/containers/File/FilePage';
 import { SequencePage } from 'app/containers/Sequence/SequencePage';
 import { ThreeDPreview } from 'app/containers/ThreeD/ThreeDPreview';
 
+const resourcePageType = {
+  asset: AssetPage,
+  event: EventPage,
+  timeSeries: TimeseriesPage,
+  file: FilePage,
+  sequence: SequencePage,
+  threeD: ThreeDPreview,
+};
+
 export const ResourceDetailsPage = () => {
   const [currentResourceType] = useCurrentResourceType();
-
-  const ResourcePage = () => {
-    switch (currentResourceType) {
-      case 'asset':
-        return <AssetPage />;
-      case 'event':
-        return <EventPage />;
-      case 'timeSeries':
-        return <TimeseriesPage />;
-      case 'file':
-        return <FilePage />;
-      case 'sequence':
-        return <SequencePage />;
-      case 'threeD':
-        return <ThreeDPreview />;
-      default:
-        return null;
-    }
-  };
-
-  return <Wrapper>{ResourcePage()}</Wrapper>;
+  const ResourcePage = resourcePageType[currentResourceType];
+  return (
+    <Wrapper>
+      <ResourcePage />
+    </Wrapper>
+  );
 };
 
 const Wrapper = styled.div`
@@ -39,5 +33,4 @@ const Wrapper = styled.div`
   width: 100%;
   height: 100%;
   background: #fff;
-  overflow: hidden;
 `;
