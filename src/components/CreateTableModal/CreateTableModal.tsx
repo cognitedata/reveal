@@ -108,6 +108,10 @@ const CreateTableModal = ({
     if (tableCreated) {
       openTable([databaseName, values.tableName]);
     }
+    if (isUploadFailed) {
+      resetForm();
+      setCreateTableModalStep(CreateTableModalStep.CreationMode);
+    }
     onCancel();
   }
 
