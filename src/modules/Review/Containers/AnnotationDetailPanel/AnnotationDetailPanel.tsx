@@ -197,8 +197,9 @@ export const AnnotationDetailPanel = (props: {
     ]
   );
 
-  // items in common section will be passed down to child items
+  // todo: map categories to annotation types from a functions and remove these hardcoded categories - VIS-803
   const annotationReviewCategories = useMemo(() => {
+    // items in common section will be passed down to child items
     const annotationCategories = [
       {
         title: Categories.Asset,
