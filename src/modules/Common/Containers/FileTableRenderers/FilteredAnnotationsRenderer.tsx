@@ -15,8 +15,9 @@ export function FilteredAnnotationsRenderer({
     []
   );
 
-  const allAnnotationCounts = useSelector(({ annotationV1Reducer }: RootState) =>
-    selectTotalAnnotationCountForFileIds(annotationV1Reducer, [id])
+  const allAnnotationCounts = useSelector(
+    ({ annotationV1Reducer }: RootState) =>
+      selectTotalAnnotationCountForFileIds(annotationV1Reducer, [id])
   );
 
   const filteredAnnotationCounts = useSelector(
