@@ -110,8 +110,7 @@ const CreateTableModal = ({
     }
     if (isUploadFailed) {
       resetForm();
-      setCreateTableModalStep(CreateTableModalStep.CreationMode);
-    }
+    setCreateTableModalStep(CreateTableModalStep.CreationMode);
     onCancel();
   }
 
