@@ -3,7 +3,6 @@ import { CogniteCapability, SingleCogniteCapability } from '@cognite/sdk';
 import { Button } from '@cognite/cogs.js';
 import List from 'antd/lib/list';
 import CapabilityTag from './CapabilityTag';
-import { isDeprecated } from './utils';
 
 interface CapabilitiesTableProps {
   capabilities: CogniteCapability;
@@ -15,8 +14,6 @@ export const EMPTY_MESSAGE = 'No capability was added yet';
 
 export default function CapabilitiesList(props: CapabilitiesTableProps) {
   const { capabilities, onEdit, onRemove } = props;
-
-  const filteredCapabilities = capabilities.filter(isDeprecated);
 
   const renderItem = (capability: SingleCogniteCapability, index: number) => {
     const removeButton = (
@@ -46,7 +43,7 @@ export default function CapabilitiesList(props: CapabilitiesTableProps) {
 
   return (
     <List
-      dataSource={filteredCapabilities}
+      dataSource={capabilities}
       renderItem={renderItem}
       bordered
       size="small"

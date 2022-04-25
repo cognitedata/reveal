@@ -4,6 +4,7 @@ import { Button } from '@cognite/cogs.js';
 
 import CapabilitiesList from './CapabilitiesList';
 import SingleCapabilityEditor from './SingleCapabilityEditor';
+import { isDeprecated } from './utils';
 
 interface CapabilitiesSelectorProps {
   value: CogniteCapability;
@@ -13,7 +14,9 @@ interface CapabilitiesSelectorProps {
 const CapabilitiesSelector = (props: CapabilitiesSelectorProps, ref: any) => {
   const { onChange, value } = props;
 
-  const [capabilities, setCapabilities] = useState<CogniteCapability>(value);
+  const [capabilities, setCapabilities] = useState<CogniteCapability>(
+    value.filter(isDeprecated)
+  );
   const [composerVisible, setComposerVisible] = useState<boolean>(false);
   const [editCapabilityIndex, setEditCapabilityIndex] = useState<number>(-1);
 
@@ -81,7 +84,7 @@ const CapabilitiesSelector = (props: CapabilitiesSelectorProps, ref: any) => {
     <div ref={ref}>
       <div style={{ marginBottom: 10, marginTop: 10 }}>
         <CapabilitiesList
-          capabilities={value}
+          capabilities={capabilities}
           onRemove={removeCapability}
           onEdit={startEditing}
         />
