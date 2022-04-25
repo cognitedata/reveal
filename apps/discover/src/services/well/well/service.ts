@@ -1,10 +1,10 @@
 import get from 'lodash/get';
+import { getWellSDKClient as getWellSDKClientV3 } from 'services/wellSearch/sdk/authenticate';
 
 import { WellFilter } from '@cognite/sdk-wells-v3';
 
 import { WellSearchResult } from 'modules/wellSearch/hooks/useWellSearchResultQuery';
 import { mapV3ToV2WellItems } from 'modules/wellSearch/sdk/utils';
-import { getWellSDKClient as getWellSDKClientV3 } from 'modules/wellSearch/sdk/v3';
 import { normalizeWells } from 'modules/wellSearch/utils/wells';
 
 export const getListWells = async (

@@ -30,6 +30,7 @@ export const changeUnitTo = (
 };
 
 /**
+ * @deprecated - use changeUnitTo
  * This is unsafe because the units are not typed
  * Prefer to use the changeUnitTo instead
  */

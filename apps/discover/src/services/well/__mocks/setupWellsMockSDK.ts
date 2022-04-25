@@ -1,7 +1,8 @@
+import { authenticateWellSDK } from 'services/wellSearch/sdk/authenticate';
+
 import { TEST_PROJECT } from '__mocks/mockContainerAuth';
 import { SIDECAR } from 'constants/app';
 import { setEnableWellSDKV3 } from 'modules/wellSearch/sdk';
-import { authenticateWellSDK } from 'modules/wellSearch/sdk/v3';
 
 setEnableWellSDKV3(true);
 authenticateWellSDK(

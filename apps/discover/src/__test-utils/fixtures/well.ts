@@ -13,7 +13,6 @@ import {
   Measurement,
   Well,
 } from 'modules/wellSearch/types';
-import { toWellSequence } from 'modules/wellSearch/utils';
 
 import { StoreState } from '../../core';
 
@@ -337,10 +336,6 @@ export const mockedSequencesResultFixture = [
   },
 ];
 
-export const mockedSequenceFixtures = mockedSequencesResultFixture.map(
-  (asset: any) => toWellSequence(asset)
-);
-
 export const getDefaultWell = (includeWellBore = false) => {
   const well: OldWellType = mockedWellResultFixture[0];
   return {
@@ -353,8 +348,6 @@ export const getDefaultWellbore = () => ({
   ...mockedWellboreResultFixture[0],
   wellId: mockedWellResultFixture[0].id,
 });
-
-export const getDefaultSequence = () => ({ ...mockedSequenceFixtures[0] });
 
 export const getMockFilterConfig = (extras?: any): FilterConfig => ({
   id: 12345,

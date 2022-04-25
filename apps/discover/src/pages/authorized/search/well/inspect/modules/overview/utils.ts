@@ -24,8 +24,7 @@ export const generateOverviewColumns = (
     },
     {
       Header: 'Source',
-      accessor: (value: OverviewModel) =>
-        value.sources ? value.sources.join(', ') : '',
+      accessor: 'sources',
       width: '100px',
       maxWidth: '0.2fr',
     },
@@ -50,13 +49,13 @@ export const generateOverviewColumns = (
     },
     {
       Header: `TVD${preferredUnit ? ` (${preferredUnit})` : ''}`,
-      accessor: (row) => row.tvd || '',
+      accessor: (row) => String(row.tvd),
       maxWidth: '0.15fr',
       width: '100px',
     },
     {
       Header: `MD${preferredUnit ? ` (${preferredUnit})` : ''}`,
-      accessor: (row) => row.md || '',
+      accessor: (row) => String(row.md),
       maxWidth: '0.15fr',
       width: '100px',
     },

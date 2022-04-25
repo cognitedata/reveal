@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+import { getWellboreTitle } from 'dataLayers/wells/wellbores/decorators/getWellboreTitle';
+import { getWellboreName } from 'dataLayers/wells/wellbores/selectors/getWellboreName';
 import head from 'lodash/head';
 import uniqueBy from 'lodash/uniqBy';
 import { v4 as uuid } from 'uuid';
@@ -78,7 +80,7 @@ export const WellCentricCard: React.FC<Props> = ({
             <div>
               <HeaderTitle>{wellbore.metadata?.wellName}</HeaderTitle>
               <HeaderSubTitle data-testid="wellbore-descriptor">
-                {wellbore.description} {wellbore.name}
+                {getWellboreTitle(wellbore)}
               </HeaderSubTitle>
             </div>
           </Checkbox>
@@ -102,7 +104,9 @@ export const WellCentricCard: React.FC<Props> = ({
             const [curveDisplayName] = row.customdata as string[];
             return (
               <CurveIndicator
-                key={`${wellbore.description}-${curveDisplayName}-${uuid()}`}
+                key={`${getWellboreName(
+                  wellbore
+                )}-${curveDisplayName}-${uuid()}`}
               >
                 <CurveColorCode line={row.line} marker={row.marker} />
                 <span>{curveDisplayName}</span>
@@ -111,14 +115,14 @@ export const WellCentricCard: React.FC<Props> = ({
           })}
 
           {fitChart && (
-            <CurveIndicator key={`${wellbore.description}-FIT`}>
+            <CurveIndicator key={`${getWellboreName(wellbore)}-FIT`}>
               <CurveColorCode line={fitChart.line} marker={fitChart.marker} />
               <span>FIT</span>
             </CurveIndicator>
           )}
 
           {lotChart && (
-            <CurveIndicator key={`${wellbore.description}-LOT`}>
+            <CurveIndicator key={`${getWellboreName(wellbore)}-LOT`}>
               <CurveColorCode line={lotChart.line} marker={lotChart.marker} />
               <span>LOT</span>
             </CurveIndicator>

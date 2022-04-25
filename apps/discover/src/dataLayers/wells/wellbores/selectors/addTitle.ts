@@ -1,13 +1,10 @@
 import { Wellbore } from '@cognite/sdk-wells-v2';
 
-export const addTitle = <T extends Wellbore>(wellbore: T) => {
-  const title =
-    wellbore.description === wellbore.name
-      ? wellbore.name
-      : `${wellbore.description} ${wellbore.name}`;
+import { getWellboreTitle } from '../decorators/getWellboreTitle';
 
+export const addTitle = <T extends Wellbore>(wellbore: T) => {
   return {
     ...wellbore,
-    title,
+    title: getWellboreTitle(wellbore),
   };
 };

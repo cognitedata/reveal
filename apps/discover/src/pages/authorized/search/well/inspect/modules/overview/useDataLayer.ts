@@ -1,42 +1,24 @@
 import { useMemo } from 'react';
 
+import { getMd, getMdUnit } from 'dataLayers/wells/trajectory/selectors/getMd';
+import { getTrajectoryForWellbore } from 'dataLayers/wells/trajectory/selectors/getTrajectoryForWellbore';
+import {
+  getTvd,
+  getTvdUnit,
+} from 'dataLayers/wells/trajectory/selectors/getTvd';
+import { getWaterDepth } from 'dataLayers/wells/wells/selectors/getWaterDepth';
 import flatten from 'lodash/flatten';
-import { changeUnits } from 'utils/units';
 
 import { Sequence } from '@cognite/sdk';
-import { Trajectory } from '@cognite/sdk-wells-v3/dist/src';
+import { Trajectory } from '@cognite/sdk-wells-v3';
 
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
 import { useEnabledWellSdkV3 } from 'modules/wellSearch/hooks/useEnabledWellSdkV3';
 import { useTrajectoriesMetadataQuery } from 'modules/wellSearch/hooks/useTrajectoriesQuery';
-import { convertToFixedDecimal } from 'modules/wellSearch/utils';
 import { OverviewModel } from 'pages/authorized/search/well/inspect/modules/overview/types';
 
-const getUnitChangeAccessors = (unit?: string) =>
-  unit
-    ? [
-        {
-          accessor: 'waterDepth.value',
-          fromAccessor: 'waterDepth.unit',
-          to: unit,
-        },
-        {
-          accessor: 'md',
-          fromAccessor: 'mdUnit',
-          to: unit,
-        },
-        {
-          accessor: 'tvd',
-          fromAccessor: 'tvdUnit',
-          to: unit,
-        },
-      ]
-    : [];
-
-const accessorsToFixedDecimal = ['waterDepth.value', 'tvd', 'md'];
-
-export const useOverviewData = () => {
+export const useDataLayer = () => {
   const wells = useWellInspectSelectedWells();
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
@@ -54,26 +36,35 @@ export const useOverviewData = () => {
         well.wellbores.map((wellbore) => {
           const overView: OverviewModel = {
             ...wellbore,
+            // this is a special case just for the overview
             wellName: `${well?.name} / ${wellbore?.description}`,
             operator: well.operator,
             spudDate: well.spudDate,
-            waterDepth: well.waterDepth,
-            sources: well.sources,
+            sources: well.sources ? well.sources.join(', ') : '',
+            // this is a special case just for the overview
             field: well.field || wellbore.metadata?.field_name,
+            md: '',
+            tvd: '',
+
+            waterDepth: getWaterDepth(well, userPreferredUnit),
           };
 
           if (enabledWellSDKV3) {
-            const trajectory = (trajectories as Trajectory[])?.find(
-              (row) => row.wellboreMatchingId === wellbore.id
-            );
+            if (trajectories) {
+              const trajectory = getTrajectoryForWellbore(
+                trajectories as Trajectory[], // remove cast when @sdk-wells-v2 is removed
+                wellbore.id
+              );
 
-            if (trajectory) {
-              overView.md = String(trajectory.maxMeasuredDepth);
-              overView.mdUnit = 'meter';
-              overView.tvd = String(trajectory.maxTrueVerticalDepth);
-              overView.tvdUnit = 'meter';
+              if (trajectory) {
+                overView.md = String(getMd(trajectory, userPreferredUnit));
+                overView.mdUnit = getMdUnit();
+                overView.tvd = String(getTvd(trajectory, userPreferredUnit));
+                overView.tvdUnit = getTvdUnit();
+              }
             }
           } else {
+            // remove when @sdk-wells-v2 is removed:
             const trajectory = (trajectories as Sequence[]).find(
               (row) => row.assetId === wellbore.id
             );
@@ -86,15 +77,7 @@ export const useOverviewData = () => {
             }
           }
 
-          const transformedOverview = changeUnits(
-            overView,
-            getUnitChangeAccessors(userPreferredUnit)
-          );
-
-          return convertToFixedDecimal(
-            transformedOverview,
-            accessorsToFixedDecimal
-          );
+          return overView;
         })
       )
     );

@@ -2,13 +2,13 @@ import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import isUndefined from 'lodash/isUndefined';
 import keyBy from 'lodash/keyBy';
+import { normalizeCoords } from 'services/wellSearch/utils/normalizeCoords';
 
 import { Well as SDKWell } from '@cognite/sdk-wells-v2';
 
 import { TableResults } from 'components/tablev3';
 
 import { Well, Wellbore, WellId, WellMap } from '../types';
-import { normalizeCoords } from '../utils';
 
 export const normalizeWell = (well: SDKWell): Well => {
   return {

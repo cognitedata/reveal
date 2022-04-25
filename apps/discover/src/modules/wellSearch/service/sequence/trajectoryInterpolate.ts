@@ -1,5 +1,6 @@
 import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
+import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
 
 import {
   DistanceUnitEnum,
@@ -11,7 +12,6 @@ import {
 
 import { showErrorMessage } from 'components/toast';
 import { SOMETHING_WENT_WRONG_FETCHING_TVD } from 'constants/error';
-import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';
 
 export interface ResponseItemType {
   wellboreMatchingId: string;

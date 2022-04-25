@@ -7,6 +7,7 @@ import isEmpty from 'lodash/isEmpty';
 import keyBy from 'lodash/keyBy';
 import noop from 'lodash/noop';
 import uniqueId from 'lodash/uniqueId';
+import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
 import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 import { changeUnitTo } from 'utils/units';
 
@@ -22,7 +23,6 @@ import {
 import { EMPTY_ARRAY } from 'constants/empty';
 import { MetricLogger } from 'hooks/useTimeLog';
 import { toIdentifier } from 'modules/wellSearch/sdk/utils';
-import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';
 import {
   CasingAssemblyWithTVD,
   CasingSchematicWithTVDs,

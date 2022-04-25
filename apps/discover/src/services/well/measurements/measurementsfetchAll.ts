@@ -1,9 +1,9 @@
+import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
+import { toIdentifier } from 'services/wellSearch/utils/toIdentifier';
 import { fetchAllCursors, FetchOptions } from 'utils/fetchAllCursors';
 
 import { DepthMeasurement, DepthMeasurementData } from '@cognite/sdk-wells-v3';
 
-import { toIdentifier } from 'modules/wellSearch/sdk/utils';
-import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';
 import { WdlMeasurementType } from 'modules/wellSearch/types';
 
 type ActionProps = Record<string, unknown>;

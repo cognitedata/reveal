@@ -1,4 +1,8 @@
 import isUndefined from 'lodash/isUndefined';
+import {
+  authenticateWellSDK as authenticateWellSDKV3,
+  getWellSDKClient as getWellSDKClientV3,
+} from 'services/wellSearch/sdk/authenticate';
 import { fetchAllCursors, FetchOptions } from 'utils/fetchAllCursors';
 
 import { ProjectConfigGeneral } from '@cognite/discover-api-types';
@@ -13,7 +17,6 @@ import {
   mapV3ToV2NPTItems,
   mapV3ToV2SourceItems,
   mapV3ToV2SpudDateLimits,
-  mapV3ToV2Well,
   mapV3ToV2Wellbore,
   mapV3ToV2WellsWaterDepthLimits,
   mapWellFilterToWellFilterRequest,
@@ -24,11 +27,6 @@ import {
   authenticateWellSDK as authenticateWellSDKV2,
   getWellSDKClient as getWellSDKClientV2,
 } from './v2';
-import {
-  authenticateWellSDK as authenticateWellSDKV3,
-  getWellSDKClient as getWellSDKClientV3,
-  getWellByMatchingId,
-} from './v3';
 
 let globalEnableWellSDKV3: ProjectConfigGeneral['enableWellSDKV3'];
 
@@ -194,10 +192,9 @@ export const getNDSRiskTypes = () => {
     : getWellSDKClientV2().events.ndsRiskTypes();
 };
 
+// v2 only
 export const getWellById = (wellId: number) => {
-  return globalEnableWellSDKV3
-    ? getWellByMatchingId(wellId).then(mapV3ToV2Well)
-    : getWellSDKClientV2().wells.getById(wellId);
+  return getWellSDKClientV2().wells.getById(wellId);
 };
 
 // v2 only

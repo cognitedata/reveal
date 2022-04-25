@@ -4,14 +4,12 @@ import get from 'lodash/get';
 import head from 'lodash/head';
 import last from 'lodash/last';
 import set from 'lodash/set';
-import proj4 from 'proj4';
 import {
   endOf,
   getDateByMatchingRegex,
   isValidDate,
   startOf,
 } from 'utils/date';
-import { log } from 'utils/log';
 import {
   changeUnit,
   changeUnits as changeSomeUnits,
@@ -19,85 +17,17 @@ import {
   UnitConverterItem,
 } from 'utils/units';
 
-import { Asset, Sequence } from '@cognite/sdk';
 import { SpudDateLimits, WaterDepthLimits } from '@cognite/sdk-wells-v2';
 
 import { FEET, UserPreferredUnit } from 'constants/units';
-import { proj4Defs } from 'modules/map/proj4Defs';
 import { convertToClosestInteger } from 'pages/authorized/search/well/inspect/modules/events/common';
-
-import { Well, Wellbore, WellSequence } from './types';
-
-const defaultUnknownValue = 'Unknown';
 
 const DEFAULT_MIN_LIMIT = 0;
 const DEFAULT_MAX_LIMIT = 0;
 
-proj4.defs(Object.keys(proj4Defs).map((key) => [key, proj4Defs[key]]));
-
-export const toWellbore = (input: Asset): Partial<Wellbore> => {
-  return {
-    id: input.id,
-    name: input.name,
-    metadata: {
-      WELLBORE_TYPE: input.metadata?.WELLBORE_TYPE || defaultUnknownValue,
-      CURRENT_STATUS: input.metadata?.CURRENT_STATUS || defaultUnknownValue,
-      CONTENT: input.metadata?.CONTENT || defaultUnknownValue,
-    },
-  };
-};
-
-export const toWellSequence = (input: Sequence): WellSequence => {
-  return {
-    id: input.id,
-    name: input.name || '',
-    metadata: {
-      subtype: input.metadata?.subtype || '',
-      type: input.metadata?.type || '',
-      source: input.metadata?.source || '',
-      fileType: input.metadata?.fileType || '',
-    },
-  };
-};
-
-export const normalizeCoords = (
-  x: string | number = 0,
-  y: string | number = 0,
-  crs = ''
-): Partial<Well> => {
-  if (!crs) return {};
-  const CRS = crs.toUpperCase();
-  if (CRS === 'WGS84') {
-    return {
-      geometry: {
-        type: 'Point',
-        coordinates: [Number(x), Number(y)],
-      },
-    };
-  }
-  if (proj4Defs[CRS]) {
-    try {
-      const [normalizedX, normalizedY] = proj4(crs.toUpperCase()).inverse([
-        Number(x),
-        Number(y),
-      ]);
-      if (normalizedX && normalizedY) {
-        return {
-          geometry: {
-            type: 'Point',
-            coordinates: [normalizedX, normalizedY],
-          },
-        };
-      }
-    } catch (error) {
-      log('Error during tranforming coordinates', String(error));
-    }
-  } else {
-    log('proj4 Defs Not found :', crs);
-  }
-  return {};
-};
-
+/**
+ * @deprecated - this is mega unsafe - use direct key accessor instead
+ */
 export const convertToFixedDecimal = <Item>(
   dataObj: Item,
   accessors: string[]

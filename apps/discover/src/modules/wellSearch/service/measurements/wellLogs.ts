@@ -1,4 +1,5 @@
 import flatten from 'lodash/flatten';
+import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
 import {
   fetchAllCursors,
   fetchAllCursorsItem,
@@ -8,7 +9,6 @@ import {
 import { DepthMeasurement, DepthMeasurementData } from '@cognite/sdk-wells-v3';
 
 import { toIdentifier } from 'modules/wellSearch/sdk/utils';
-import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';
 import { WellboreId } from 'modules/wellSearch/types';
 
 import { WELL_LOGS_MEASUREMENT_TYPES } from './constants';

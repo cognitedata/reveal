@@ -18,6 +18,11 @@ export interface UnitConverterItem {
   // we should be using this:
   // to: convert.Unit;
 }
+/**
+ * @deprecated - use changeUnitTo
+ * This is unsafe because the units are not typed
+ * Prefer to use the changeUnitTo instead
+ */
 export const changeUnit = <Item>(
   item: Item,
   unitAccessorsObj: UnitConverterItem

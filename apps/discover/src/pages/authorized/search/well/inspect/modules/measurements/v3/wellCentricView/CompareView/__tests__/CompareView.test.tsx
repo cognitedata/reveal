@@ -2,6 +2,7 @@ import '__mocks/mockContainerAuth'; // should be first
 import 'services/well/__mocks/setupWellsMockSDK';
 import 'modules/map/__mocks/mockMapbox';
 import { screen, waitFor } from '@testing-library/react';
+import { getWellboreTitle } from 'dataLayers/wells/wellbores/decorators/getWellboreTitle';
 import { setupServer } from 'msw/node';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
@@ -54,9 +55,7 @@ describe('Measurement with delayed loading and no data', () => {
     });
     await waitFor(() => {
       expect(
-        screen.getByText(
-          new RegExp(`${wellbore.description} ${wellbore.name}`, 'g')
-        )
+        screen.getByText(new RegExp(`${getWellboreTitle(wellbore)}`, 'g'))
       ).toBeInTheDocument();
     });
   });

@@ -5,10 +5,10 @@ import isEmpty from 'lodash/isEmpty';
 import EmptyState from 'components/emptyState';
 import { Loading } from 'components/loading/Loading';
 import { Table } from 'components/tablev3';
-import { useOverviewData } from 'modules/wellSearch/selectors/sequence/useOverviewData';
 
 import { useOverviewResultColumns } from './hooks/useOverviewUtils';
 import { OverviewModel } from './types';
+import { useDataLayer } from './useDataLayer';
 
 export const OverviewComponent: React.FC<{
   overviewData: OverviewModel[];
@@ -33,7 +33,7 @@ export const OverviewComponent: React.FC<{
 };
 
 export const Overview: React.FC = () => {
-  const { isLoading, overviewData } = useOverviewData();
+  const { isLoading, overviewData } = useDataLayer();
 
   if (isLoading) {
     return <Loading />;

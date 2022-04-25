@@ -1,5 +1,6 @@
 import invert from 'lodash/invert';
 import set from 'lodash/set';
+import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
 import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
 import { CogniteEvent } from '@cognite/sdk';
@@ -7,7 +8,6 @@ import { Nds, NdsItems } from '@cognite/sdk-wells-v3';
 
 import { MetricLogger } from 'hooks/useTimeLog';
 import { toIdentifier } from 'modules/wellSearch/sdk/utils';
-import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';
 import { WellboreSourceExternalIdMap } from 'modules/wellSearch/types';
 import { getTrajectoryInterpolationRequests } from 'modules/wellSearch/utils/nds';
 

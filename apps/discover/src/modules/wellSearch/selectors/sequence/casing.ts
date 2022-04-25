@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { getWellboreName } from 'dataLayers/wells/wellbores/selectors/getWellboreName';
 import capitalize from 'lodash/capitalize';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
@@ -133,7 +134,7 @@ export const useSelectedWellboresCasingsData = () => {
         if (topMD && bottomMD) {
           tempData.push({
             wellName: well.name,
-            wellboreName: wellbore.name || wellbore.description || '',
+            wellboreName: getWellboreName(wellbore),
             id: wellbore.id,
             topMD,
             bottomMD,

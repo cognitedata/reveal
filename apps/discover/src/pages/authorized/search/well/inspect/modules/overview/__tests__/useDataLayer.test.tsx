@@ -9,7 +9,7 @@ import { getMockTrajectoriesList } from 'services/well/__mocks/getMockWellTrajec
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 
-import { useOverviewData } from '../useOverviewData';
+import { useDataLayer } from '../useDataLayer';
 
 jest.mock('modules/wellSearch/hooks/useEnabledWellSdkV3', () => ({
   useEnabledWellSdkV3: () => true,
@@ -35,7 +35,7 @@ describe('Overview hook', () => {
     });
 
     const TestComponent: React.FC = () => {
-      const { overviewData, isLoading } = useOverviewData();
+      const { overviewData, isLoading } = useDataLayer();
 
       if (isLoading && !overviewData.length) {
         return <div>Loading...</div>;
@@ -58,13 +58,13 @@ describe('Overview hook', () => {
     const name = await screen.findByText('Name: wellbore B');
     expect(name).toBeInTheDocument();
 
-    const waterDepth = await screen.findByText('Water-depth: 10.00');
+    const waterDepth = await screen.findByText('Water-depth: 10');
     expect(waterDepth).toBeInTheDocument();
 
-    const md = await screen.findByText('MD: 41.00');
+    const md = await screen.findByText('MD: 41');
     expect(md).toBeInTheDocument();
 
-    const tvd = await screen.findByText('TVD: 32.00');
+    const tvd = await screen.findByText('TVD: 32');
     expect(tvd).toBeInTheDocument();
   });
 });

@@ -1,10 +1,32 @@
 import { screen } from '@testing-library/react';
 
-import { getMockOverviewModel } from '__test-utils/fixtures/well/overviewModel';
+import { mockWellboreOptions } from '__test-utils/fixtures/well';
 import { testRenderer } from '__test-utils/renderer';
 
 import { OverviewComponent } from '../Overview';
 import { OverviewModel } from '../types';
+
+const getMockOverviewModel = (
+  extras: Partial<OverviewModel> = {}
+): OverviewModel => {
+  const model: OverviewModel = {
+    id: 1,
+    name: 'test',
+    wellName: 'test-well',
+    sources: 'test-source',
+    operator: 'test-operator',
+    spudDate: '2021-04-15T13:31:27.767Z',
+    waterDepth: { value: 1, unit: 'feet' },
+    md: '1',
+    tvd: '2',
+    sourceWellbores: [],
+
+    ...mockWellboreOptions,
+    ...extras,
+  };
+
+  return model;
+};
 
 describe('Module Preview Selector', () => {
   const overviewData: OverviewModel[] = [getMockOverviewModel()];

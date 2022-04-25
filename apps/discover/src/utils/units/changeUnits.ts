@@ -2,6 +2,9 @@ import cloneDeep from 'lodash/cloneDeep';
 
 import { UnitConverterItem, changeUnit } from './changeUnit';
 
+/**
+ * @deprecated - use changeUnitTo
+ */
 export const changeUnits = <Item>(
   item: Item,
   unitAccessors: UnitConverterItem[]

@@ -1,3 +1,4 @@
+import { getWellboreTitle } from 'dataLayers/wells/wellbores/decorators/getWellboreTitle';
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
@@ -34,6 +35,11 @@ import {
 const ANGLE_CURVES_UNIT = 'deg';
 const CHART_BREAK_POINTS = [0, -9999, null];
 
+const EMPTY_DATA = Object.freeze({
+  chartData: [],
+  errors: [],
+});
+
 export const formatChartData = (
   measurements: Measurement[],
   geomechanicsCurves: DepthMeasurementColumn[], // currently enabled geomechanics curves from filters
@@ -44,67 +50,57 @@ export const formatChartData = (
 ) => {
   const processedCurves: string[] = [];
 
-  return measurements.reduce(
-    (processedData, measurement) => {
-      const { data: depthMeasurementData } = measurement;
+  return measurements.reduce((processedData, measurement) => {
+    const { data: depthMeasurementData } = measurement;
 
-      // No rows
-      if (isUndefined(depthMeasurementData)) {
-        return {
-          chartData: [],
-          errors: [],
-        };
-      }
+    // No rows
+    if (isUndefined(depthMeasurementData)) {
+      return EMPTY_DATA;
+    }
 
-      if (!measurement || isEmpty(measurement.columns)) {
-        return {
-          chartData: [],
-          errors: [],
-        };
-      }
+    if (!measurement || isEmpty(measurement.columns)) {
+      return EMPTY_DATA;
+    }
 
-      const tvdUnit = measurement.depthColumn.unit.unit;
+    const tvdUnit = measurement.depthColumn.unit.unit;
 
-      const currentMeasurementProcessedData =
-        depthMeasurementData.columns.reduce(
-          (processedData, column) => {
-            const processedDataOfCurrentColumn = mapMeasurementToPlotly(
-              column,
-              depthMeasurementData,
-              geomechanicsCurves,
-              ppfgCurves,
-              otherTypes,
-              tvdUnit,
-              userPreferedPressureUnit,
-              userPreferedDepthMeasurementUnit,
-              processedCurves
-            );
-            return {
-              chartData: [
-                ...processedData.chartData,
-                ...processedDataOfCurrentColumn.chartData,
-              ],
-              errors: [
-                ...processedData.errors,
-                ...processedDataOfCurrentColumn.errors,
-              ],
-            };
-          },
-          { chartData: [], errors: [] } as ProcessedData
+    const currentMeasurementProcessedData = depthMeasurementData.columns.reduce(
+      (processedData, column) => {
+        const processedDataOfCurrentColumn = mapMeasurementToPlotly(
+          column,
+          depthMeasurementData,
+          geomechanicsCurves,
+          ppfgCurves,
+          otherTypes,
+          tvdUnit,
+          userPreferedPressureUnit,
+          userPreferedDepthMeasurementUnit,
+          processedCurves
         );
-      return {
-        chartData: [
-          ...processedData.chartData,
-          ...currentMeasurementProcessedData.chartData,
-        ],
-        errors: [
-          ...processedData.errors,
-          ...currentMeasurementProcessedData.errors,
-        ],
-      };
-    },
-    { chartData: [], errors: [] } as ProcessedData
-  );
+        return {
+          chartData: [
+            ...processedData.chartData,
+            ...processedDataOfCurrentColumn.chartData,
+          ],
+          errors: [
+            ...processedData.errors,
+            ...processedDataOfCurrentColumn.errors,
+          ],
+        };
+      },
+      EMPTY_DATA as ProcessedData
+    );
+    return {
+      chartData: [
+        ...processedData.chartData,
+        ...currentMeasurementProcessedData.chartData,
+      ],
+      errors: [
+        ...processedData.errors,
+        ...currentMeasurementProcessedData.errors,
+      ],
+    };
+  }, EMPTY_DATA as ProcessedData);
 };
 
 export const mapMeasurementToPlotly = (
@@ -138,10 +134,7 @@ export const mapMeasurementToPlotly = (
     isEmpty(geomechanicsCurves) &&
     isEmpty(otherTypes)
   ) {
-    return {
-      chartData: [],
-      errors: [],
-    };
+    return EMPTY_DATA;
   }
 
   const { detailCardTitle, enabledCurves } =
@@ -152,36 +145,30 @@ export const mapMeasurementToPlotly = (
       otherTypes
     );
 
-  return enabledCurves.reduce(
-    (processedData, enabledCurve) => {
-      const chartDataListForCurrentCurve = mapCurveToPlotly(
-        enabledCurve,
-        processedCurves,
-        detailCardTitle,
-        depthMeasurementData,
-        tvdUnit,
-        userPreferedDepthMeasurementUnit,
-        userPreferedPressureUnit,
-        measurementType
-      );
+  return enabledCurves.reduce((processedData, enabledCurve) => {
+    const chartDataListForCurrentCurve = mapCurveToPlotly(
+      enabledCurve,
+      processedCurves,
+      detailCardTitle,
+      depthMeasurementData,
+      tvdUnit,
+      userPreferedDepthMeasurementUnit,
+      userPreferedPressureUnit,
+      measurementType
+    );
 
-      if (isUndefined(chartDataListForCurrentCurve)) {
-        return processedData;
-      }
+    if (isUndefined(chartDataListForCurrentCurve)) {
+      return processedData;
+    }
 
-      return {
-        chartData: [
-          ...processedData.chartData,
-          ...chartDataListForCurrentCurve.chartData,
-        ],
-        errors: [
-          ...processedData.errors,
-          ...chartDataListForCurrentCurve.errors,
-        ],
-      };
-    },
-    { chartData: [], errors: [] } as ProcessedData
-  );
+    return {
+      chartData: [
+        ...processedData.chartData,
+        ...chartDataListForCurrentCurve.chartData,
+      ],
+      errors: [...processedData.errors, ...chartDataListForCurrentCurve.errors],
+    };
+  }, EMPTY_DATA as ProcessedData);
 };
 
 const getEnabledCurvesAndCardTitleForFilterType = (
@@ -244,10 +231,7 @@ export const mapCurveToPlotly = (
    * this condition could have met. Still scared to remove it.
    */
   if (processedCurves.includes(curveDescription)) {
-    return {
-      chartData: [],
-      errors: [],
-    };
+    return EMPTY_DATA;
   }
 
   /**
@@ -255,10 +239,7 @@ export const mapCurveToPlotly = (
    * Just a precausion, we fetch by measurement type
    */
   if (isUndefined(measurementType)) {
-    return {
-      chartData: [],
-      errors: [],
-    };
+    return EMPTY_DATA;
   }
 
   /**
@@ -411,10 +392,7 @@ export const mapToCurveCentric = (
 ) =>
   data.map((row) => ({
     ...row,
-    customdata: [
-      wellbore.metadata?.wellName || '',
-      `${wellbore.description} ${wellbore.name}`,
-    ],
+    customdata: [wellbore.metadata?.wellName || '', getWellboreTitle(wellbore)],
     ...(row.marker
       ? {
           marker: {
@@ -443,14 +421,14 @@ export const mapToCompareView = (
     flatten(
       data.map(({ wellbore, chartData }) =>
         chartData.map((row) => {
-          const wellboreDescription = `${wellbore.description} ${wellbore.name}`;
+          const wellboreTitle = getWellboreTitle(wellbore);
           const curveDescription = row.customdata
             ? (row.customdata[0] as string)
             : '';
           const chart: MeasurementChartData = {
             ...row,
             xaxis: !row.xaxis ? 'x' : row.xaxis,
-            customdata: [curveDescription, wellboreDescription],
+            customdata: [curveDescription, wellboreTitle],
           };
           return chart;
         })

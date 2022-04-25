@@ -12,6 +12,6 @@ export interface OverviewModel extends Omit<Wellbore, 'wellbores' | 'sources'> {
   mdUnit?: string;
   tvd?: string;
   tvdUnit?: string;
-  sources?: string[];
+  sources?: string;
   field?: string;
 }

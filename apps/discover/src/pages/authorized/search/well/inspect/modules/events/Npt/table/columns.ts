@@ -56,7 +56,7 @@ export const getCommonColumns = (unit?: string): ColumnType<NPTEvent>[] => {
       Header: 'Duration (Hrs)',
       width: '150px',
       accessor: (row: NPTEvent) =>
-        toFixedNumber(processAccessor(row, accessors.DURATION), 2),
+        String(toFixedNumber(processAccessor(row, accessors.DURATION), 2)),
       sortType: (rowA: Row<NPTEvent>, rowB: Row<NPTEvent>) =>
         processAccessor(rowA.original, accessors.DURATION) -
         processAccessor(rowB.original, accessors.DURATION),
