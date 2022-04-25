@@ -22,7 +22,7 @@ import { RootState } from 'src/store/rootReducer';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { useDispatch, useSelector } from 'react-redux';
 import { FileInfo } from '@cognite/sdk';
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   ReviewAnnotation,
   VirtualizedAnnotationsReview,

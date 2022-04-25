@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { convertCDFAnnotationV1ToVisionAnnotationBulk } from 'src/api/annotation/bulkConverters';
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
-import { VisionAnnotationV1 } from 'src/utils/AnnotationUtils';
+import { VisionAnnotationV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { getAnnotatedResourceId } from 'src/modules/Common/Utils/getAnnotatedResourceId/getAnnotatedResourceId';
 
 export const initialState: AnnotationState = {

@@ -6,7 +6,10 @@ import {
   makeSelectFileAnnotationsByType,
   makeSelectTotalAnnotationCountForFileIds,
 } from 'src/modules/Common/store/annotationV1/selectors';
-import { AnnotationStatus, AnnotationUtils } from 'src/utils/AnnotationUtils';
+import {
+  AnnotationStatus,
+  AnnotationUtilsV1,
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { RegionShape } from 'src/api/annotation/types';
 
@@ -17,7 +20,7 @@ describe('Test annotation selectors', () => {
     text?: string,
     status: AnnotationStatus = AnnotationStatus.Unhandled
   ) => {
-    return AnnotationUtils.createVisionAnnotationStubV1(
+    return AnnotationUtilsV1.createVisionAnnotationStubV1(
       id || 1,
       text || 'pump',
       modelType || 1,

@@ -2,7 +2,7 @@ import { FileInfo } from '@cognite/sdk';
 import { Vertex } from 'src/api/vision/detectionModels/types';
 import { AnnotationPreview } from 'src/modules/Common/types';
 import { Keypoint } from 'src/modules/Review/types';
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 export const convertAnnotationsToAutoML = async (
   files: FileInfo[],

@@ -3,7 +3,7 @@ import {
   AnnotationStatus,
   ModelTypeIconMap,
   ModelTypeStyleMap,
-} from 'src/utils/AnnotationUtils';
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import React, { ReactText } from 'react';
 import styled from 'styled-components';

@@ -1,4 +1,4 @@
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { VisionAsset } from 'src/modules/Common/store/files/types';
 import { AnnotationTableItem } from 'src/modules/Review/types';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';

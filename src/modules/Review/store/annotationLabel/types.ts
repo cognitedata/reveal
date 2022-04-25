@@ -1,4 +1,4 @@
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { AnnotationCollection, Tool } from 'src/modules/Review/types';
 
 export type KeyPointState = {

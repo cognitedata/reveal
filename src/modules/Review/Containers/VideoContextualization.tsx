@@ -14,7 +14,7 @@ import { AnnotationsTable } from 'src/modules/Review/Components/AnnotationsTable
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { useDispatch } from 'react-redux';
 import { FileInfo } from '@cognite/sdk';
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 export const VideoContextualization = (props: {
   file: FileInfo;
