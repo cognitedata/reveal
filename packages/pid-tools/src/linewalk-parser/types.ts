@@ -37,6 +37,15 @@ export type LinewalkListSchema = {
   }[];
 };
 
+export type LineReviewEvent = {
+  id: string;
+  name: string;
+  system: string;
+  assignee: { name: string }[];
+  status: string;
+  discrepancies: [];
+};
+
 export interface ParsedDocument {
   externalId: string; // external id of this document (probably redundant since it would be same as the file name)
   pdfExternalId: string; // external id of the PDF in CDF

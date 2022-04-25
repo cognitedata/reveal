@@ -83,9 +83,34 @@ export const VALID_LINE_NUMBER_PREFIXES = ['L', 'UT', 'IP', 'UL'];
 
 export const DIAGRAM_PARSER_SOURCE = 'COGNITE_DIAGRAM_PARSER';
 export const DIAGRAM_PARSER_OUTPUT_TYPE = 'graph';
-export const LINE_LABEL_PREFIX = 'LINE_LABEL_';
 export const DIAGRAM_PARSER_TYPE = 'COGNITE_DIAGRAM_PARSER_TYPE';
 export const DIAGRAM_PARSER_PDF_EXTERNAL_ID =
   'COGNITE_DIAGRAM_PARSER_PDF_EXTERNAL_ID';
-export const DIAGRAM_PARSER_PARSED_DOCUMENT_EXTERNAL_ID =
+
+export const LINE_REVIEW_EVENT_TYPE = 'LINE_REVIEW';
+
+export const LINEWALK_VERSION_KEY = 'LINEWALK_VERSION';
+export const DIAGRAM_PARSER_PARSED_DOCUMENT_EXTERNAL_ID_PREFIX =
   'COGNITE_DIAGRAM_PARSER_PARSED_DOCUMENT_EXTERNAL_ID';
+
+export const getVersionedParsedDocumentExternalId = (version: string) =>
+  `${DIAGRAM_PARSER_PARSED_DOCUMENT_EXTERNAL_ID_PREFIX}_${version}_`;
+
+export const LINEWALK_LINE_REVIEW_EVENT_EXTERNAL_ID_PREFIX =
+  'COGNITE_LINEWALK_LINE_REVIEW_EVENT';
+
+const LINE_LABEL_PREFIX = 'COGNITE_LINE_LABEL';
+
+export const getLineReviewEventExternalId = (
+  version: string,
+  lineNumber: string
+): string =>
+  `${LINEWALK_LINE_REVIEW_EVENT_EXTERNAL_ID_PREFIX}_${version}_${lineNumber}`;
+
+export const versionedLineLabelPrefix = (version: string) =>
+  `${LINE_LABEL_PREFIX}_${version}_`;
+
+export const lineNumberMetadataKey = (
+  version: string,
+  lineNumber: string
+): string => `${versionedLineLabelPrefix(version)}${lineNumber}`;

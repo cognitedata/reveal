@@ -3,11 +3,7 @@ import { useEffect, useState, useCallback } from 'react';
 
 import { Discrepancy } from '../../components/LineReviewViewer/LineReviewViewer';
 
-import {
-  getLineReviewDocuments,
-  getLineReviews,
-  getLineReviewState,
-} from './api';
+import { getLineReviewDocuments, getLineReviews } from './api';
 import { LineReview, TextAnnotation, WorkspaceDocument } from './types';
 
 const useLineReview = (
@@ -52,12 +48,10 @@ const useLineReview = (
         throw new Error('No client found');
       }
 
-      const [lineReviews, lineReviewDocuments, lineReviewState] =
-        await Promise.all([
-          getLineReviews(client),
-          getLineReviewDocuments(client, id),
-          getLineReviewState(client, id),
-        ]);
+      const [lineReviews, lineReviewDocuments] = await Promise.all([
+        getLineReviews(client),
+        getLineReviewDocuments(client, id),
+      ]);
 
       const lineReview = lineReviews.find((l) => l.id === id);
       if (!lineReview) {
@@ -68,8 +62,8 @@ const useLineReview = (
         isLoading: false,
         lineReview,
         documents: lineReviewDocuments,
-        discrepancies: lineReviewState?.discrepancies ?? [],
-        textAnnotations: lineReviewState?.textAnnotations ?? [],
+        discrepancies: lineReview?.discrepancies ?? [],
+        textAnnotations: lineReview?.textAnnotations ?? [],
       });
     })();
   }, [client, id]);

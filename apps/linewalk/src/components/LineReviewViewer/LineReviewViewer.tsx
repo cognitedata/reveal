@@ -16,7 +16,7 @@ import styled from 'styled-components';
 import layers from 'utils/z';
 
 import usePrevious from '../../hooks/usePrevious';
-import { removeDocumentLabel } from '../../modules/lineReviews/api';
+import { removeLineNumberFromDocumentMetadata } from '../../modules/lineReviews/api';
 import { DiscrepancyModalState } from '../../pages/LineReview';
 import getFileConnectionGroups from '../../utils/getFileConnectionDrawings';
 import WorkSpaceTools from '../WorkSpaceTools';
@@ -508,7 +508,11 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     );
 
     if (client) {
-      removeDocumentLabel(client, pdfExternalId, lineReview.id);
+      removeLineNumberFromDocumentMetadata(
+        client,
+        pdfExternalId,
+        lineReview.id
+      );
     }
   };
 

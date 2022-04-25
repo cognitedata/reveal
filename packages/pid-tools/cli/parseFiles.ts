@@ -7,7 +7,6 @@ import {
   GraphDocument,
   resolveFileAndLineConnections,
 } from '../src';
-import { SymbolConnection } from '../src/graphMatching/types';
 
 import { DOCUMENTS_DIR, GRAPHS_DIR } from './constants';
 import { graphMatching } from './graphMatching';
@@ -17,15 +16,9 @@ import writeJsonToFile from './utils/writeJsonToFile';
 
 const readDir = util.promisify(fs.readdir);
 
-const parseFiles = async (argv) => {
-  const { preferConnectionsFromFile, outputVersion } = argv as unknown as {
-    preferConnectionsFromFile: boolean;
-    outputVersion: string;
-  };
-
+const parseFiles = async ({ outputVersion }: { outputVersion: string }) => {
   const GRAPH_DIR = path.resolve(GRAPHS_DIR);
   const OUTPUT_DIRECTORY = path.resolve(DOCUMENTS_DIR);
-  const connectionsPath = path.resolve('connections/connections.json');
 
   await emptyDir(OUTPUT_DIRECTORY);
   const fileNames = await readDir(GRAPH_DIR);
@@ -60,14 +53,11 @@ const parseFiles = async (argv) => {
 
   const fileAndLineConnectionLinks = resolveFileAndLineConnections(graphs);
 
-  const doesConnectionsFileExists = fs.existsSync(connectionsPath);
-  const symbolConnections =
-    doesConnectionsFileExists && preferConnectionsFromFile
-      ? readJsonFromFile<{ connections: SymbolConnection[] }>(
-          '',
-          connectionsPath
-        ).connections
-      : graphMatching(graphs, fileAndLineConnectionLinks, 'symbolMapping.json');
+  const symbolConnections = graphMatching(
+    graphs,
+    fileAndLineConnectionLinks,
+    'symbolMapping.json'
+  );
 
   const connections = [...fileAndLineConnectionLinks, ...symbolConnections];
   computeLineFiles(graphs, connections, outputVersion).forEach(

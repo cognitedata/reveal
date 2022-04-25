@@ -14,13 +14,11 @@ import clamp from 'lodash/clamp';
 import exportDocumentsToPdf from '../components/LineReviewViewer/exportDocumentsToPdf';
 import { Discrepancy } from '../components/LineReviewViewer/LineReviewViewer';
 import ReportBackModal from '../components/ReportBackModal';
-import {
-  saveLineReviewState,
-  updateLineReviews,
-} from '../modules/lineReviews/api';
+import { updateLineReview } from '../modules/lineReviews/api';
 import getExportableLineState from '../modules/lineReviews/getExportableLineState';
 import { LineReviewStatus } from '../modules/lineReviews/types';
 import useLineReview from '../modules/lineReviews/useLineReview';
+import delayMs from '../utils/delayMs';
 
 import { LoaderContainer } from './elements';
 import { PagePath } from './Menubar';
@@ -110,17 +108,16 @@ const LineReview = () => {
       return;
     }
 
-    await saveLineReviewState(
-      client,
-      lineReview,
-      getExportableLineState(ornateRef, discrepancies)
-    );
-
-    await updateLineReviews(client, {
-      ...lineReview,
-      comment,
+    await updateLineReview(client, lineReview.id, {
       status: LineReviewStatus.COMPLETED,
+      comment,
+      state: getExportableLineState(ornateRef, discrepancies),
     });
+
+    // This is a workaround to ensure that the data is updated before
+    // we fetch it anew.
+    await delayMs(1000);
+
     history.push(PagePath.LINE_REVIEWS);
   };
 

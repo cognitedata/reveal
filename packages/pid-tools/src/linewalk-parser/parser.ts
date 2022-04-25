@@ -1,5 +1,3 @@
-import uniq from 'lodash/uniq';
-
 import { GraphDocument, DocumentType } from '../types';
 import { SymbolConnection } from '../graphMatching/types';
 import getFileNameWithoutExtension from '../utils/getFileNameWithoutExtension';
@@ -19,9 +17,7 @@ import {
   DocumentLink,
   SymbolAnnotation,
   TextAnnotation,
-  LinewalkListSchema,
   File,
-  DocumentsForLineSchema,
 } from './types';
 
 const parseDocument = (
@@ -127,60 +123,6 @@ const getParsedDocumentFiles = (
     data: parsedDocument,
   }));
 
-const getDocumentsForLineFiles = (
-  version: string,
-  parsedDocumentExternalIsdByLineNumber: Map<string, string[]>
-): File<DocumentsForLineSchema>[] =>
-  [...parsedDocumentExternalIsdByLineNumber.entries()].map(
-    ([lineNumber, parsedDocumentExternalIds]) => {
-      const externalId = `DOCUMENTS_FOR_LINE_V${version}_L${lineNumber}.json`;
-      return {
-        fileName: externalId,
-        data: {
-          externalId,
-          line: lineNumber.toString(),
-          parsedDocuments: parsedDocumentExternalIds,
-        },
-      };
-    }
-  );
-
-const getParsedLinesFile = (version: string, lineNumbers: string[]): File => {
-  const externalId = `PARSED_LINES_V${version}.json`;
-  return {
-    fileName: externalId,
-    data: {
-      externalId,
-      lineIds: lineNumbers.map((number) => number.toString()),
-    },
-  };
-};
-
-const getLineReviewsFile = (
-  version: string,
-  documentsForLineFiles: File<DocumentsForLineSchema>[]
-): File<LinewalkListSchema> => {
-  const externalId = `LINE_REVIEWS_V${version}.json`;
-  return {
-    fileName: externalId,
-    data: {
-      externalId,
-      lineReviews: documentsForLineFiles.map(
-        ({ data: { externalId, line, parsedDocuments } }) => ({
-          id: line,
-          name: line,
-          system: 'unknown',
-          entryFileExternalId: externalId,
-          assignees: [{ name: 'Garima' }],
-          status: 'OPEN',
-          discrepancies: [],
-          parsedDocumentsExternalIds: parsedDocuments,
-        })
-      ),
-    },
-  };
-};
-
 export const computeLineFiles = (
   graphDocuments: GraphDocument[],
   connections: SymbolConnection[],
@@ -198,32 +140,8 @@ export const computeLineFiles = (
     })
   );
 
-  const lineNumbers: string[] = uniq(
-    graphDocuments.flatMap((graphDocument) => graphDocument.lineNumbers ?? [])
-  );
-
-  const parsedDocumentExternalIdsByLineNumber = new Map<string, string[]>(
-    lineNumbers.map((lineNumber) => [
-      lineNumber,
-      parsedDocumentsWithLineNumbers
-        .filter((parsedDocumentsWithLineNumber) =>
-          parsedDocumentsWithLineNumber.lineNumbers.includes(lineNumber)
-        )
-        .map(({ parsedDocument }) => parsedDocument.externalId),
-    ])
-  );
-
-  const documentsForLineFiles = getDocumentsForLineFiles(
+  return getParsedDocumentFiles(
     version,
-    parsedDocumentExternalIdsByLineNumber
+    parsedDocumentsWithLineNumbers.map(({ parsedDocument }) => parsedDocument)
   );
-
-  return [
-    ...getParsedDocumentFiles(
-      version,
-      parsedDocumentsWithLineNumbers.map(({ parsedDocument }) => parsedDocument)
-    ),
-    getParsedLinesFile(version, lineNumbers),
-    getLineReviewsFile(version, documentsForLineFiles),
-  ];
 };

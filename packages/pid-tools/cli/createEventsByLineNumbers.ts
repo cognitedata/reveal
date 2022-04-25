@@ -1,13 +1,8 @@
 import fsPromises from 'fs/promises';
 
-import uniq from 'lodash/uniq';
-
 import {
-  DIAGRAM_PARSER_PDF_EXTERNAL_ID,
-  DIAGRAM_PARSER_SOURCE,
-  DIAGRAM_PARSER_TYPE,
-  getVersionedParsedDocumentExternalId,
-  lineNumberMetadataKey,
+  getLineReviewEventExternalId,
+  LINE_REVIEW_EVENT_TYPE,
   LINEWALK_VERSION_KEY,
 } from '../src';
 
@@ -19,7 +14,9 @@ const readJsonFromFile = async (filePath: string): Promise<any> => {
   return JSON.parse(fileContent);
 };
 
-const updateFileMetadata = async ({
+const processedLineNumbers = new Set<number>();
+
+const createEventsByLineNumbers = async ({
   outputVersion,
 }: {
   outputVersion: string;
@@ -34,6 +31,11 @@ const updateFileMetadata = async ({
   for (const fileName of filteredFileNames) {
     // eslint-disable-next-line no-await-in-loop
     const document = await readJsonFromFile(`${DOCUMENTS_DIR}/${fileName}`);
+
+    if (document.type !== 'iso') {
+      // eslint-disable-next-line no-continue
+      continue;
+    }
 
     if (
       document.annotations === undefined ||
@@ -65,53 +67,50 @@ const updateFileMetadata = async ({
       continue;
     }
 
-    const lineNumbers: string[] = uniq(document.lineNumbers);
+    // eslint-disable-next-line no-restricted-syntax
+    for (const lineNumber of document.lineNumbers) {
+      if (processedLineNumbers.has(lineNumber)) {
+        // eslint-disable-next-line no-continue
+        continue;
+      }
+      processedLineNumbers.add(lineNumber);
 
-    if (document.type === undefined) {
-      console.log('No type found in document, skipping: ', fileName);
-      // eslint-disable-next-line no-continue
-      continue;
-    }
+      // Delete existing
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        await client.events.delete([
+          {
+            externalId: getLineReviewEventExternalId(outputVersion, lineNumber),
+          },
+        ]);
+      } catch (error) {
+        // Silent
+      }
 
-    const lineNumbersMetadata: Record<string, string> = lineNumbers.reduce(
-      (acc, lineNumber) => {
-        acc[lineNumberMetadataKey(outputVersion, lineNumber)] = 'true';
-        return acc;
-      },
-      {}
-    );
-
-    const update = {
-      metadata: {
-        add: {
-          [DIAGRAM_PARSER_SOURCE]: 'true',
-          [DIAGRAM_PARSER_TYPE]: document.type,
-          [DIAGRAM_PARSER_PDF_EXTERNAL_ID]: document.pdfExternalId,
-          [getVersionedParsedDocumentExternalId(outputVersion)]:
-            document.externalId,
-          [LINEWALK_VERSION_KEY]: outputVersion,
-          ...lineNumbersMetadata,
+      // Create new
+      // eslint-disable-next-line no-await-in-loop
+      await client.events.create([
+        {
+          externalId: getLineReviewEventExternalId(outputVersion, lineNumber),
+          type: LINE_REVIEW_EVENT_TYPE,
+          metadata: {
+            [LINEWALK_VERSION_KEY]: outputVersion,
+            lineNumber,
+            assignee: 'Garima',
+            status: 'OPEN',
+            system: 'unknown',
+            comment: '',
+            state: JSON.stringify({
+              discrepancies: [],
+              textAnnotations: [],
+            }),
+          },
         },
-        remove: [],
-      },
-    };
+      ]);
 
-    // eslint-disable-next-line no-await-in-loop
-    await client.files.update([
-      {
-        externalId: document.externalId,
-        update,
-      },
-      {
-        externalId: document.pdfExternalId,
-        update,
-      },
-    ]);
-
-    console.log(
-      `Updated files: ${document.externalId}, ${document.pdfExternalId} with lineNumbers: ${lineNumbers}`
-    );
+      console.log('Created event for', lineNumber);
+    }
   }
 };
 
-export default updateFileMetadata;
+export default createEventsByLineNumbers;

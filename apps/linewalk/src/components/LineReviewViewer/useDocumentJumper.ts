@@ -7,7 +7,7 @@ import { useAuthContext } from '@cognite/react-container';
 import { FileInfo } from '@cognite/sdk';
 
 import {
-  addDocumentLabel,
+  addLineNumberToDocumentMetadata,
   getWorkspaceDocuments,
 } from '../../modules/lineReviews/api';
 import {
@@ -145,7 +145,7 @@ const useDocumentJumper = (
             file,
           ]);
 
-          await addDocumentLabel(
+          await addLineNumberToDocumentMetadata(
             client,
             workspaceDocument.pdfExternalId,
             lineNumber

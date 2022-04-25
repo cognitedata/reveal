@@ -49,7 +49,7 @@ const downloadFileByUrl = (url: string, filePath: string, attempt = 0) => {
   });
 };
 
-const downloadFiles = async () => {
+const downloadFiles = async ({ outputVersion }: { outputVersion: string }) => {
   await emptyDir(GRAPHS_DIR);
 
   const client = await getClient();

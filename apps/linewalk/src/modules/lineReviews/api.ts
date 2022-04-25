@@ -1,6 +1,12 @@
 import {
-  DIAGRAM_PARSER_PARSED_DOCUMENT_EXTERNAL_ID,
+  DIAGRAM_PARSER_SOURCE,
   DIAGRAM_PARSER_TYPE,
+  getLineReviewEventExternalId,
+  getVersionedParsedDocumentExternalId,
+  LINE_REVIEW_EVENT_TYPE,
+  lineNumberMetadataKey,
+  LINEWALK_VERSION_KEY,
+  versionedLineLabelPrefix,
 } from '@cognite/pid-tools';
 import type { CogniteClient, FileInfo } from '@cognite/sdk';
 import zipWith from 'lodash/zipWith';
@@ -8,43 +14,27 @@ import * as PDFJS from 'pdfjs-dist';
 import { PDFDocumentProxy } from 'pdfjs-dist/types/display/api';
 import sortBy from 'lodash/sortBy';
 
+import groupByArray from '../../utils/groupByArray';
 import isNotUndefined from '../../utils/isNotUndefined';
 
 import {
   LineReview,
-  LineReviewState,
   WorkspaceDocument,
   DocumentType,
+  LineReviewStatus,
 } from './types';
 
 PDFJS.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js`;
-export const LINE_LABEL_PREFIX = 'LINE_LABEL_';
-
-export const getDocumentUrlByExternalId =
-  (client: CogniteClient) =>
-  async (externalId: string): Promise<string> => {
-    try {
-      const response = await client.files.getDownloadUrls([{ externalId }]);
-      return response[0].downloadUrl;
-    } catch (error) {
-      throw new Error('Getting document url failed');
-    }
-  };
-
-const getJsonByExternalId = async <T = unknown>(
-  client: CogniteClient,
-  externalId: string
-): Promise<T> => {
-  const url = await getDocumentUrlByExternalId(client)(externalId);
-  const response = await fetch(url);
-  const json = await response.json();
-  return json;
-};
+const VERSION = '0.0.23';
 
 export const getJsonsByExternalIds = async <T = unknown>(
   client: CogniteClient,
   externalIds: string[]
 ): Promise<T[]> => {
+  if (externalIds.length === 0) {
+    return [];
+  }
+
   const downloadUrls = await client.files.getDownloadUrls(
     externalIds.map((externalId) => ({ externalId }))
   );
@@ -58,6 +48,10 @@ export const getPdfsByExternalIds = async (
   client: CogniteClient,
   externalIds: string[]
 ): Promise<PDFDocumentProxy[]> => {
+  if (externalIds.length === 0) {
+    return [];
+  }
+
   const downloadUrls = await client.files.getDownloadUrls(
     externalIds.map((externalId) => ({ externalId }))
   );
@@ -69,43 +63,98 @@ export const getPdfsByExternalIds = async (
   );
 };
 
-const saveJsonByExternalId = async <T = unknown>(
-  client: CogniteClient,
-  externalId: string,
-  data: T
-): Promise<void> => {
-  try {
-    await client.files.upload(
-      { externalId, name: externalId, mimeType: 'application/json' },
-      JSON.stringify(data),
-      true
-    );
-  } catch (error) {
-    console.log('Throws errors unnecessarily');
+type LineReviewEvent = {
+  externalId: string;
+  metadata: {
+    assignee: string;
+    lineNumber: string;
+    status: LineReviewStatus;
+    system: string;
+    comment: string;
+    state: string;
+  };
+};
+
+const lineReviewFromEvent = (
+  event: LineReviewEvent,
+  pdfExternalIds: string[]
+): LineReview => {
+  const state: { discrepancies: any; textAnnotations: any } = JSON.parse(
+    event.metadata.state
+  );
+  return {
+    id: event.metadata.lineNumber,
+    name: event.metadata.lineNumber,
+    assignee: event.metadata.assignee,
+    status: event.metadata.status,
+    system: event.metadata.system,
+    comment: event.metadata.comment,
+    discrepancies: state.discrepancies,
+    textAnnotations: state.textAnnotations,
+    pdfExternalIds,
+  };
+};
+
+const lineNumbersFromFileMetadata = (file: FileInfo): string[] => {
+  if (file.metadata === undefined) {
+    throw new Error();
   }
+
+  return Object.entries(file.metadata)
+    .filter(
+      ([key, value]) =>
+        key.includes(versionedLineLabelPrefix(VERSION)) && value === 'true'
+    )
+    .map(([key]) => key)
+    .map((key) => key.replace(versionedLineLabelPrefix(VERSION), ''));
 };
 
-const VERSION = '0.0.10';
-const LINE_REVIEWS_ENTRY_POINT = `LINE_REVIEWS_V${VERSION}.json`;
 export const getLineReviews = async (client: CogniteClient) => {
-  const lineReviewsEntryPointResponse = await getJsonByExternalId<{
-    lineReviews: LineReview[];
-  }>(client, LINE_REVIEWS_ENTRY_POINT);
+  const [lineReviewEvents, lineReviewFiles] = await Promise.all([
+    client.events
+      .list({
+        filter: {
+          metadata: {
+            [LINEWALK_VERSION_KEY]: VERSION,
+          },
+          type: LINE_REVIEW_EVENT_TYPE,
+        },
+        sort: {
+          createdTime: 'asc',
+        },
+      })
+      .autoPagingToArray({ limit: Infinity }) as unknown as LineReviewEvent[],
+    client.files
+      .list({
+        filter: {
+          mimeType: 'application/pdf',
+          metadata: {
+            [LINEWALK_VERSION_KEY]: VERSION,
+            [DIAGRAM_PARSER_SOURCE]: 'true',
+          },
+        },
+      })
+      .autoPagingToArray({ limit: Infinity }) as unknown as FileInfo[],
+  ]);
 
-  return lineReviewsEntryPointResponse.lineReviews;
+  const lineReviewFilesByLineNumbers = groupByArray(
+    lineReviewFiles,
+    lineNumbersFromFileMetadata
+  );
+
+  const lineReviews = lineReviewEvents.map((event) =>
+    lineReviewFromEvent(
+      event,
+      (lineReviewFilesByLineNumbers[event.metadata.lineNumber] ?? [])
+        .map((file) => file.externalId)
+        .filter(isNotUndefined)
+    )
+  );
+
+  return lineReviews;
 };
 
-export const saveLineReviews = async (
-  client: CogniteClient,
-  lineReviews: LineReview[]
-) => {
-  return saveJsonByExternalId(client, LINE_REVIEWS_ENTRY_POINT, {
-    externalId: LINE_REVIEWS_ENTRY_POINT,
-    lineReviews,
-  });
-};
-
-export const addDocumentLabel = async (
+export const addLineNumberToDocumentMetadata = async (
   client: CogniteClient,
   externalId: string,
   lineNumber: string
@@ -116,7 +165,7 @@ export const addDocumentLabel = async (
       update: {
         metadata: {
           add: {
-            [`${LINE_LABEL_PREFIX}${lineNumber}`]: 'true',
+            [lineNumberMetadataKey(VERSION, lineNumber)]: 'true',
           },
           remove: [],
         },
@@ -125,7 +174,7 @@ export const addDocumentLabel = async (
   ]);
 };
 
-export const removeDocumentLabel = async (
+export const removeLineNumberFromDocumentMetadata = async (
   client: CogniteClient,
   externalId: string,
   lineNumber: string
@@ -136,7 +185,7 @@ export const removeDocumentLabel = async (
       update: {
         metadata: {
           add: {},
-          remove: [`${LINE_LABEL_PREFIX}${lineNumber}`],
+          remove: [lineNumberMetadataKey(VERSION, lineNumber)],
         },
       },
     },
@@ -158,7 +207,7 @@ export const getWorkspaceDocuments = async (
     WorkspaceDocument
   >(files, pdfDocuments, (file, pdf) => {
     const externalId =
-      file.metadata?.[DIAGRAM_PARSER_PARSED_DOCUMENT_EXTERNAL_ID];
+      file.metadata?.[getVersionedParsedDocumentExternalId(VERSION)];
     const type = file.metadata?.[DIAGRAM_PARSER_TYPE] as
       | DocumentType
       | undefined;
@@ -197,7 +246,8 @@ export const getLineReviewDocuments = async (
         filter: {
           mimeType: 'application/pdf',
           metadata: {
-            [`${LINE_LABEL_PREFIX}${lineNumber}`]: 'true',
+            [LINEWALK_VERSION_KEY]: VERSION,
+            [lineNumberMetadataKey(VERSION, lineNumber)]: 'true',
           },
         },
       })
@@ -210,51 +260,23 @@ export const getLineReviewDocuments = async (
   return getWorkspaceDocuments(client, files);
 };
 
-const getLineReviewStateExternalIdByLineReviewId = (id: string) =>
-  `linewalk-${id}-${VERSION}-state.json`;
-
-export const getLineReviewState = async (
+export const updateLineReview = async (
   client: CogniteClient,
-  lineNumber: string
-) => {
-  try {
-    const lineReviewState = await getJsonByExternalId<LineReviewState>(
-      client,
-      getLineReviewStateExternalIdByLineReviewId(lineNumber)
-    );
-    return lineReviewState;
-  } catch (error) {
-    return undefined;
-  }
-};
-
-export const saveLineReviewState = async (
-  client: CogniteClient,
-  lineReview: LineReview,
-  state: any
-) => {
-  try {
-    const lineReviewState = await saveJsonByExternalId<LineReviewState>(
-      client,
-      getLineReviewStateExternalIdByLineReviewId(lineReview.id),
-      state
-    );
-    return lineReviewState;
-  } catch (error) {
-    return undefined;
-  }
-};
-
-export const updateLineReviews = async (
-  client: CogniteClient,
-  update: LineReview
-) => {
-  const lineReviews = await getLineReviews(client);
-  await saveLineReviews(
-    client,
-    lineReviews.map((lineReview) => ({
-      ...lineReview,
-      ...(update.id === lineReview.id ? update : lineReview),
-    }))
-  );
-};
+  lineNumber: string,
+  update: { comment: string; status: LineReviewStatus; state: any }
+) =>
+  client.events.update([
+    {
+      externalId: getLineReviewEventExternalId(VERSION, lineNumber),
+      update: {
+        metadata: {
+          add: {
+            comment: update.comment,
+            status: update.status,
+            state: JSON.stringify(update.state),
+          },
+          remove: [],
+        },
+      },
+    },
+  ]);

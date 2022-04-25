@@ -3,7 +3,7 @@ import path from 'path';
 import util from 'util';
 import fsPromises from 'fs/promises';
 
-import { DIAGRAM_PARSER_SOURCE } from '../src';
+import { DIAGRAM_PARSER_SOURCE, LINEWALK_VERSION_KEY } from '../src';
 
 import { DOCUMENTS_DIR } from './constants';
 import getClient from './utils/getClient';
@@ -24,7 +24,7 @@ const getFileExtensionByFileName = (fileName: string): string => {
   return fileName.substring(lastDotIndex);
 };
 
-const uploadFiles = async () => {
+const uploadFiles = async ({ outputVersion }: { outputVersion: string }) => {
   const supportedFileExtensions = Object.keys(mimeTypeByFileExtension);
   const fileNames = await readDir(DOCUMENTS_DIR);
   const supportedFileNames = fileNames.filter((fileName) => {
@@ -51,6 +51,9 @@ const uploadFiles = async () => {
         mimeType: mimeTypeByFileExtension[getFileExtensionByFileName(fileName)],
         externalId: fileName,
         source: DIAGRAM_PARSER_SOURCE,
+        metadata: {
+          [LINEWALK_VERSION_KEY]: outputVersion,
+        },
       },
       fileBuffer,
       true

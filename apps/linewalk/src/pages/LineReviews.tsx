@@ -9,6 +9,7 @@ import {
 } from '@cognite/cogs.js';
 import withoutFileExtension from 'components/LineReviewViewer/withoutFileExtension';
 import StatusTag from 'components/StatusTag';
+import uniq from 'lodash/uniq';
 import { LineReview, LineReviewStatus } from 'modules/lineReviews/types';
 import useLineReviews from 'modules/lineReviews/useLineReviews';
 import React, { useEffect, useState } from 'react';
@@ -49,16 +50,11 @@ const StatusCell = ({ value }: { value: string }) => (
 );
 
 const AssigneeCell = ({ value }: { value: { name: string }[] }) =>
-  value.length === 0 ? (
-    <span style={{ fontStyle: 'italic', opacity: 0.7 }}>None</span>
+  value ? (
+    <span style={{ fontWeight: 'bold' }}>{value}</span>
   ) : (
-    <span style={{ fontWeight: 'bold' }}>
-      {value.map((v) => v.name).join(', ')}
-    </span>
+    <span style={{ fontStyle: 'italic', opacity: 0.7 }}>None</span>
   );
-
-const shamefulWithoutPrefix = (name: string) =>
-  name.substring('PARSED_DIAGRAM_V0.0.7_'.length, name.length);
 
 const shamefulIsIso = (name: string) => !name.includes('MF');
 
@@ -67,12 +63,12 @@ const shamefulIsPid = (name: string) => name.includes('MF');
 const IsoCell = ({
   value: documents,
 }: {
-  value: LineReview['parsedDocumentsExternalIds'];
+  value: LineReview['pdfExternalIds'];
 }) => {
   return (
     <FileCell
       value={documents
-        .map((name) => withoutFileExtension(shamefulWithoutPrefix(name)))
+        .map((name) => withoutFileExtension(name))
         .filter(shamefulIsIso)}
     />
   );
@@ -81,12 +77,12 @@ const IsoCell = ({
 const PidCell = ({
   value: documents,
 }: {
-  value: LineReview['parsedDocumentsExternalIds'];
+  value: LineReview['pdfExternalIds'];
 }) => {
   return (
     <FileCell
       value={documents
-        .map((name) => withoutFileExtension(shamefulWithoutPrefix(name)))
+        .map((name) => withoutFileExtension(name))
         .filter(shamefulIsPid)}
     />
   );
@@ -120,7 +116,7 @@ const Badge: React.FC<BadgeProps> = ({ label }) => (
 const FileCell = ({
   value: documentExternalIds,
 }: {
-  value: LineReview['parsedDocumentsExternalIds'];
+  value: LineReview['pdfExternalIds'];
 }) => {
   if (documentExternalIds.length === 0) {
     return <div>N/A</div>;
@@ -186,18 +182,18 @@ const LineReviewTable: React.FC<LineReviewTableProps> = ({
           {
             id: 'iso',
             Header: 'ISO',
-            accessor: 'parsedDocumentsExternalIds',
+            accessor: 'pdfExternalIds',
             Cell: IsoCell,
           },
           {
             id: 'pid',
             Header: 'PID',
-            accessor: 'parsedDocumentsExternalIds',
+            accessor: 'pdfExternalIds',
             Cell: PidCell,
           },
           {
             Header: 'Assignee',
-            accessor: 'assignees',
+            accessor: 'assignee',
             Cell: AssigneeCell,
           },
           {
@@ -253,31 +249,21 @@ const LineReviews = () => {
 
   useEffect(() => {
     if (!isLoading && lineReviews.length) {
-      const assigneeOptions = Object.keys(
-        lineReviews.reduce(
-          (acc, d) => ({
-            ...acc,
-            ...d.assignees.reduce(
-              (ac, a) => ({
-                ...ac,
-                [a.name]: true,
-              }),
-              {}
-            ),
-          }),
-          {}
-        )
-      );
+      const uniqueAssigneeOptions = uniq(
+        lineReviews.flatMap((lineReview) => lineReview.assignee)
+      ).map((a) => ({ label: a, value: a }));
       setAssigneeOptions([
         { label: 'All', value: '' },
-        ...assigneeOptions.map((a) => ({ label: a, value: a })),
+        ...uniqueAssigneeOptions,
       ]);
     }
   }, [lineReviews, isLoading]);
 
   const filteredLineReviews = lineReviews
     .filter(
-      (lineReview) => search.length === 0 || lineReview.name.includes(search)
+      (lineReview) =>
+        search.length === 0 ||
+        lineReview.name.toLowerCase().includes(search.toLowerCase())
     )
     .filter(
       (lineReview) =>
@@ -285,8 +271,7 @@ const LineReviews = () => {
     )
     .filter(
       (lineReview) =>
-        assignee.value!.length === 0 ||
-        assignee.value === lineReview.assignees[0].name
+        assignee.value!.length === 0 || assignee.value === lineReview.assignee
     );
 
   if (isLoading) {
