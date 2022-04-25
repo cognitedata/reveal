@@ -1,5 +1,6 @@
 import type { CalculationType } from '@cognite/simconfig-api-sdk/rtk';
 
+import { BHPFromGaugeBHPInfoDrawer } from './BHPFromGaugeBHPInfoDrawer';
 import { BHPfromGradientTraverseInfoDrawer } from './BHPfromGradientTraverseInfoDrawer';
 import { BHPFromRateInfoDrawer } from './BHPFromRateInfoDrawer';
 import { ChokePerformanceInfoDrawer } from './ChokePerformanceInfoDrawer';
@@ -19,6 +20,7 @@ export function CalculationDescriptionInfoDrawer({
     'IPR/VLP': <NodalAnalysisInfoDrawer />,
     'VLP': <LiftCurveSolutionInfoDrawer />,
     'BhpFromGradientTraverse': <BHPfromGradientTraverseInfoDrawer />,
+    'BhpFromGaugeBhp': <BHPFromGaugeBHPInfoDrawer />,
   };
   return calculationInfoDrawer[calculation] ?? null;
 }
