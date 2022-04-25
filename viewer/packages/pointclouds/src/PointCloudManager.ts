@@ -77,6 +77,12 @@ export class PointCloudManager {
       material.clipping = true;
       material.clipIntersection = false;
       material.clippingPlanes = planes;
+
+      material.defines = {
+        ...material.defines,
+        NUM_CLIPPING_PLANES: planes.length,
+        UNION_CLIPPING_PLANES: 0
+      };
     });
   }
 
