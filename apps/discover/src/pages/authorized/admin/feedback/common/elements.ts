@@ -15,6 +15,10 @@ export const UnassignWarningMessage = styled.div`
   color: var(--cogs-text-primary);
 `;
 
+export const NoOption = styled(Menu.Item)`
+  display: block;
+`;
+
 export const SubTitle = styled.div`
   margin: 0px;
   padding: 0;

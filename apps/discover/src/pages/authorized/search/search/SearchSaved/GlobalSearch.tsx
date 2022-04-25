@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
-import { components } from 'react-select';
 
 import get from 'lodash/get';
 import { useSavedSearch } from 'services/savedSearches/hooks';
@@ -10,6 +9,7 @@ import { SavedSearchContent } from 'services/savedSearches/types';
 
 import { AutoComplete, OptionType } from '@cognite/cogs.js';
 
+import { SearchValueContainer } from 'components/search-bar/SearchValueContainer';
 import {
   SEARCH_HISTORY_TRACK_ID,
   SEARCH_ID,
@@ -24,12 +24,7 @@ import { SearchQueryInfoPanel } from '../SearchQueryInfoPanel';
 
 import { SearchHistory } from './components/SearchHistory';
 import { SEARCH_HISTORY_DISPLAY_COUNT } from './constants';
-import {
-  SearchHistoryContainer,
-  SearchBarTextWrapper,
-  SearchBarIconWrapper,
-  customStyles,
-} from './elements';
+import { SearchHistoryContainer, customStyles } from './elements';
 import { useSearchHistoryAppliedFilters } from './hooks/useSearchHistoryAppliedFilters';
 import { useSearchHistoryOptionData } from './hooks/useSearchHistoryOptionData';
 import { useUpdateSearchHistoryListQuery } from './hooks/useUpdateSearchHistoryListQuery';
@@ -38,17 +33,6 @@ export interface SearchHistoryOptionType<ValueType>
   extends OptionType<ValueType> {
   data: SavedSearchContent;
 }
-
-const ValueContainer = ({ children, ...props }: any) => {
-  return (
-    components.ValueContainer && (
-      <components.ValueContainer {...props}>
-        <SearchBarIconWrapper type="Search" />
-        <SearchBarTextWrapper>{children}</SearchBarTextWrapper>
-      </components.ValueContainer>
-    )
-  );
-};
 
 export const GlobalSearch: React.FC = () => {
   const { t } = useTranslation('Search');
@@ -180,7 +164,7 @@ export const GlobalSearch: React.FC = () => {
       onChange={handleEnterPressOrSelect}
       components={{
         DropdownIndicator: () => null,
-        ValueContainer,
+        ValueContainer: SearchValueContainer,
       }}
       onFocus={() => {
         setFastValue(value?.value);

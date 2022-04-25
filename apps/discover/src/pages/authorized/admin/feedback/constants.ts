@@ -7,3 +7,4 @@ export const UNASSIGN_WARNING =
 export const ASSIGNED_TO = 'Assign to';
 export const UNASSIGN = 'Unassign';
 export const UNASSIGNED = 'Unassigned';
+export const NO_OPTIONS = 'No options';

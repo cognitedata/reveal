@@ -1,8 +1,6 @@
 import styled from 'styled-components/macro';
 import layers from 'utils/zindex';
 
-import { Icon } from '@cognite/cogs.js';
-
 import {
   FlexRow,
   FlexColumn,
@@ -56,14 +54,6 @@ export const Filters = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
 `;
-
-export const SearchBarTextWrapper = styled.div`
-  margin-left: 24px;
-`;
-
-export const SearchBarIconWrapper = styled(Icon).attrs({
-  style: { position: 'absolute', left: '8px' },
-})``;
 
 export const IconWrapper = styled(FlexColumn)`
   align-items: flex-end;
