@@ -21,16 +21,16 @@ export class MeasurementDistance implements Measurement {
 
   private readonly LineUniforms: any = {
     worldUnits: { value: 1 },
-    linewidth: { value: 0.1 },
+    linewidth: { value: 0.02 },
     resolution: { value: new THREE.Vector2(1, 1) },
     dashOffset: { value: 0 },
     dashScale: { value: 1 },
     dashSize: { value: 1 },
-    gapSize: { value: 1 }, // todo FIX - maybe change to totalSize,
-    diffuse: { value: 0xffffff }
+    gapSize: { value: 1 },
+    diffuse: { value: new THREE.Color(0x00ffff) }
   };
 
-  private readonly ShaderLibUnifroms: any = {
+  private readonly ShaderLibUniforms: any = {
     uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.common, THREE.UniformsLib.fog, this.LineUniforms])
   };
 
@@ -39,13 +39,15 @@ export class MeasurementDistance implements Measurement {
     this._isActive = false;
     this._startPoint = new THREE.Vector3();
     this._endPoint = new THREE.Vector3();
+    this._positions = new Float32Array(6);
+    this._colors = new Float32Array(6);
   }
 
   private initializeLine(): void {
     if (this._measurementLine === undefined) {
       this._lineGeometry = new LineGeometry();
       const material = new THREE.ShaderMaterial({
-        uniforms: THREE.UniformsUtils.clone(this.ShaderLibUnifroms.uniforms),
+        uniforms: THREE.UniformsUtils.clone(this.ShaderLibUniforms.uniforms),
         vertexShader: lineShaders.vertex,
         fragmentShader: lineShaders.fragment,
         clipping: true,
@@ -55,19 +57,17 @@ export class MeasurementDistance implements Measurement {
         glslVersion: THREE.GLSL3
       });
 
-      this._positions = new Float32Array(6);
       this._positions[0] = this._positions[1] = this._positions[2] = 0;
       this._positions[3] = this._positions[4] = this._positions[5] = 0;
 
-      const color = new THREE.Color(200, 180, 100);
+      // const color = new THREE.Color(200, 180, 100);
 
-      this._colors = new Float32Array(6);
-      this._colors[0] = color.r;
-      this._colors[1] = color.g;
-      this._colors[2] = color.b;
-      this._colors[3] = color.r;
-      this._colors[4] = color.g;
-      this._colors[5] = color.b;
+      this._colors[0] = 25;
+      this._colors[1] = 50;
+      this._colors[2] = 100;
+      this._colors[3] = 100;
+      this._colors[4] = 50;
+      this._colors[5] = 25;
 
       this._lineGeometry.setPositions(this._positions);
       this._lineGeometry.setColors(this._colors);
@@ -112,6 +112,7 @@ export class MeasurementDistance implements Measurement {
 
   private addStartPoint(point: THREE.Vector3): void {
     this._startPoint.copy(point);
+    this._endPoint.copy(point);
     this._positions[0] = this._startPoint.x;
     this._positions[1] = this._startPoint.y;
     this._positions[2] = this._startPoint.z;
@@ -131,8 +132,15 @@ export class MeasurementDistance implements Measurement {
    * @param controlPoint Control point (Second point) of the distance measurement
    */
   public update(controlPoint: THREE.Vector3): void {
+    const distance = new THREE.Vector3()
+      .subVectors(controlPoint, this._viewer.cameraManager.getCamera().position)
+      .length();
+    if (distance < 0.4) {
+      const direction = new THREE.Vector3();
+      direction.subVectors(this._endPoint, this._startPoint);
+      // controlPoint.addVectors(this._endPoint, this._endPoint.normalize());
+    }
     if (this._isActive && this._measurementLine) {
-      controlPoint.addScalar(0.0001);
       this._positions[3] = controlPoint.x;
       this._positions[4] = controlPoint.y;
       this._positions[5] = controlPoint.z;

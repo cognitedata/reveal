@@ -77,7 +77,7 @@ export class MeasurementControls {
         this._domElement.addEventListener('mousemove', this._handleonPointerMove);
         this._startPosition.copy(intersection.point);
         this._measurement.add(intersection.point);
-        const texture = this._measurementLabel.getOverlayTexture('0 m', 64);
+        const texture = this._measurementLabel.getOverlayTexture('0', 64);
         this._measurementLabel.addLabel(intersection.point, texture);
       } else {
         this.updateMeasurement(intersection.point);
@@ -102,7 +102,7 @@ export class MeasurementControls {
 
   private updateMeasurement(point: THREE.Vector3): void {
     this._measurement.update(point);
-    const distanceValue = this._measurement.getMeasurementValue().toFixed(3).toString() + ' m';
+    const distanceValue = this._measurement.getMeasurementValue().toFixed(3).toString();
     const texture = this._measurementLabel.getOverlayTexture(distanceValue, 64);
     this._measurementLabel.updateLabelTexture(texture);
     this._measurementLabel.updateLabelPosition(this._startPosition, point);
