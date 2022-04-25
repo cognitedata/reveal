@@ -1,6 +1,6 @@
 import reducer, {
   initialState,
-} from 'src/modules/Common/store/annotation/slice';
+} from 'src/modules/Common/store/annotationV1/slice';
 import { clearAnnotationState } from 'src/store/commonActions';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';

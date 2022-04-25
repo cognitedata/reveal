@@ -3,7 +3,7 @@ import { Body, Select } from '@cognite/cogs.js';
 import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
+import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotationV1/selectors';
 import { RootState } from 'src/store/rootReducer';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
 import {

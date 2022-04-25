@@ -6,7 +6,7 @@ import { AutoMLModelType } from 'src/api/vision/autoML/types';
 import { useHistory } from 'react-router-dom';
 import { getLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import { AutoMLAPI } from 'src/api/vision/autoML/AutoMLAPI';
-import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
+import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotationV1/selectors';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { ModelTrainingSettings } from './ModelTrainingSettings';

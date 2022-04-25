@@ -15,7 +15,7 @@ import { createFileInfo } from 'src/store/util/StateUtils';
 import {
   annotatedFilesById,
   annotationsById,
-} from 'src/modules/Common/store/annotation/selectors';
+} from 'src/modules/Common/store/annotationV1/selectors';
 import {
   AnnotationStatus,
   getAnnotationsBadgeCounts,

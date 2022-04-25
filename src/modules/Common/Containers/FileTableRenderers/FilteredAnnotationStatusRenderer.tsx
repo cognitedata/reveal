@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
+import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotationV1/selectors';
 import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';

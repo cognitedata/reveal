@@ -6,7 +6,7 @@ import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { clearAnnotationState } from 'src/store/commonActions';
-import { AnnotationStateV1 } from 'src/modules/Common/store/annotation/types';
+import { AnnotationStateV1 } from 'src/modules/Common/store/annotationV1/types';
 
 export const initialState: AnnotationStateV1 = {
   files: {

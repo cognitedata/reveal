@@ -18,7 +18,7 @@ import {
   KeypointVertex,
   VisionAnnotationV1,
 } from 'src/utils/AnnotationUtils';
-import { makeSelectFileAnnotations } from 'src/modules/Common/store/annotation/selectors';
+import { makeSelectFileAnnotations } from 'src/modules/Common/store/annotationV1/selectors';
 
 export interface VisibleAnnotation extends VisionAnnotationV1 {
   show: boolean;

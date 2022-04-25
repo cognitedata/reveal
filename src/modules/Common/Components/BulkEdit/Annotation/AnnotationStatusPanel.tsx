@@ -3,7 +3,7 @@ import { Body, Micro } from '@cognite/cogs.js';
 import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
 import { RangeSlider } from 'src/modules/Common/Components/Slider/rangeSlider';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
-import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
+import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotationV1/selectors';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 

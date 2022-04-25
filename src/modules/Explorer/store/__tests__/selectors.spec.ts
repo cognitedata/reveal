@@ -1,4 +1,4 @@
-import { AnnotationStateV1 } from 'src/modules/Common/store/annotation/types';
+import { AnnotationStateV1 } from 'src/modules/Common/store/annotationV1/types';
 import { SortKeys } from 'src/modules/Common/Utils/SortUtils';
 import {
   selectExplorerSelectedIds,

@@ -1,11 +1,11 @@
-import { initialState } from 'src/modules/Common/store/annotation/slice';
+import { initialState } from 'src/modules/Common/store/annotationV1/slice';
 import {
   filesAnnotationCounts,
   makeSelectAnnotationsForFileIds,
   makeSelectFileAnnotations,
   makeSelectFileAnnotationsByType,
   makeSelectTotalAnnotationCountForFileIds,
-} from 'src/modules/Common/store/annotation/selectors';
+} from 'src/modules/Common/store/annotationV1/selectors';
 import { AnnotationStatus, AnnotationUtils } from 'src/utils/AnnotationUtils';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { RegionShape } from 'src/api/annotation/types';
