@@ -145,6 +145,7 @@ const PortfolioPage = () => {
                 <StyledButton
                   toggled={location.pathname === `${match.url}/total`}
                   key={`${priceArea.externalId}-total`}
+                  onClick={() => setQuery('')}
                 >
                   <p>Total</p>
                 </StyledButton>
@@ -155,6 +156,7 @@ const PortfolioPage = () => {
                 <StyledButton
                   toggled={location.pathname === `${match.url}/price-scenarios`}
                   key={`${priceArea.externalId}-price-scenarios-link`}
+                  onClick={() => setQuery('')}
                 >
                   <p>Price Scenarios</p>
                 </StyledButton>
@@ -173,6 +175,7 @@ const PortfolioPage = () => {
                         location.pathname === `${match.url}/${plant.externalId}`
                       }
                       key={plant.externalId}
+                      onClick={() => setQuery('')}
                     >
                       <p>{plant.name}</p>
                     </StyledButton>
