@@ -41,12 +41,12 @@ describe('Project Config', () => {
     cy.url().should('include', '/admin/projectConfig');
     cy.visit(`${Cypress.env('BASE_URL')}/${PROJECT}`);
 
-    cy.log('Check that the Admin Settings button is visible');
+    cy.log('Check that the "Project Configuration" button is visible');
     cy.findByTestId('top-bar')
       .contains('Admin Settings')
       .should('be.visible')
       .click();
-    cy.contains('Manage Project Config').should('be.visible').click();
+    cy.contains('Project Configuration').should('be.visible').click();
     cy.url().should('include', '/admin/projectConfig');
 
     cy.log('The default General category should be open');

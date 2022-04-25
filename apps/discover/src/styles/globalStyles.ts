@@ -86,6 +86,10 @@ export const GlobalStyles = createGlobalStyle`
     opacity: 1 !important;
   }
 
+  .admin-navigation {
+    padding-left: 0px !important;
+  }
+
   /* Cogs modal */
 
   .cogs-modal-content {

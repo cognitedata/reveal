@@ -22,6 +22,7 @@ import { AdminSettings } from './AdminSettings';
 import {
   SEARCH_LINK_TEXT_KEY,
   FAVORITES_LINK_TEXT_KEY,
+  PATHNAMES,
   // DASHBOARD_LINK_TEXT_KEY,
 } from './constants';
 import { Feedback } from './Feedback';
@@ -53,20 +54,9 @@ const TopBarLogo = styled(TopBar.Logo)`
   cursor: pointer;
 `;
 
-export const PATHNAMES = {
-  SEARCH: 1,
-  FAVORITES: 2,
-  DASHBOARD: 3,
-  ADMIN: 3, // Default admin base path
-  'ADMIN/FEEDBACK': 3,
-  'ADMIN/USER': 4,
-  'ADMIN/LAYERS': 5,
-  'ADMIN/PROJECT_CONFIG': 6,
-};
-
 export const Topbar: React.FC = () => {
   const metrics = useGlobalMetrics('topbar');
-  const [active, setActive] = React.useState<number>(1);
+  const [activeTab, setActive] = React.useState<number>(1);
   const { t } = useTranslation('global');
   const history = useHistory();
   const dispatch = useDispatch();
@@ -83,11 +73,13 @@ export const Topbar: React.FC = () => {
 
   React.useEffect(() => {
     const mapOfPathNames = Object.entries(PATHNAMES);
+
     const [, key] = mapOfPathNames.find(([name]) => {
       return pathname
         .toLocaleLowerCase()
         .includes(`/${name.toLocaleLowerCase()}`);
     }) || ['NOT_FOUND', -1];
+
     setActive(key as number);
   }, [pathname]);
 
@@ -132,18 +124,16 @@ export const Topbar: React.FC = () => {
         <TopBar.Navigation
           links={compact([
             {
-              key: PATHNAMES.SEARCH,
               name: t(SEARCH_LINK_TEXT_KEY) as string,
-              isActive: active === PATHNAMES.SEARCH,
+              isActive: activeTab === PATHNAMES.SEARCH,
               onClick: handleNavigate(
                 `${navigation.SEARCH}${activePanel ? `/${activePanel}` : ''}`,
                 PATHNAMES.SEARCH
               ),
             },
             {
-              key: PATHNAMES.FAVORITES,
               name: t(FAVORITES_LINK_TEXT_KEY) as string,
-              isActive: active === PATHNAMES.FAVORITES,
+              isActive: activeTab === PATHNAMES.FAVORITES,
               onClick: handleNavigate(
                 navigation.FAVORITES,
                 PATHNAMES.FAVORITES
@@ -162,18 +152,19 @@ export const Topbar: React.FC = () => {
         />
       </TopBar.Left>
     ),
-    [active, activePanel]
+    [activeTab, activePanel]
   );
 
   const renderTopBarRight = React.useMemo(
     () => (
       <TopBar.Right>
         <AdminSettings
-          PATHNAMES={PATHNAMES}
           handleNavigation={(navigation: string, path: number) => {
             handleNavigate(navigation, path)();
           }}
+          activeTab={activeTab}
         />
+
         <UserSettings />
         <Feedback />
         <UserProfileButton />
@@ -183,7 +174,7 @@ export const Topbar: React.FC = () => {
         </LogoWrapper>
       </TopBar.Right>
     ),
-    []
+    [activeTab]
   );
 
   return (

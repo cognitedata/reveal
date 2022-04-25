@@ -35,6 +35,8 @@ const ADMIN_LAYERS_LIST = `${ADMIN_LAYERS}/list`;
 const ADMIN_PROJECT_CONFIG = `${ADMIN}/projectConfig`;
 const INTERNAL_PROJECT_CONFIG = '/__internal__/projectConfig';
 
+const ADMIN_LEGEND = `${ADMIN}/legend`;
+
 const navigationConfig = {
   LOGOUT: '/logout',
 
@@ -79,6 +81,8 @@ const navigationConfig = {
 
   ADMIN_PROJECT_CONFIG,
   INTERNAL_PROJECT_CONFIG,
+
+  ADMIN_LEGEND,
 };
 
 export default navigationConfig;

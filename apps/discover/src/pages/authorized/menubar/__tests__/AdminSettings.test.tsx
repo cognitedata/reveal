@@ -7,7 +7,7 @@ import { getMockedStore } from '__test-utils/store.utils';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 
 import { AdminSettings } from '../AdminSettings';
-import { PATHNAMES } from '../Topbar';
+import { PATHNAMES } from '../constants';
 
 jest.mock('services/user/useUserQuery', () => ({
   useUserRoles: jest.fn(),
@@ -83,12 +83,13 @@ describe('Admin Settings', () => {
     });
 
     fireEvent.click(screen.getByText('Admin Settings'));
-    expect(screen.getByText('Manage Feedback')).toBeInTheDocument();
-    expect(screen.getByText('Manage Layers')).toBeInTheDocument();
-    expect(screen.getByText('Manage Project Config')).toBeInTheDocument();
+    expect(screen.getByText('Feedback')).toBeInTheDocument();
+    expect(screen.getByText('Layers')).toBeInTheDocument();
+    expect(screen.getByText('Project Configuration')).toBeInTheDocument();
+    expect(screen.getByText('Code Definitions')).toBeInTheDocument();
   });
 
-  it('should not render drop-down item `Manage Project Config` when `showProjectConfig` is false', async () => {
+  it('should not render drop-down item `Project Configuration` when `showProjectConfig` is false', async () => {
     (useUserRoles as jest.Mock).mockImplementation(() => ({
       data: { isAdmin: true },
     }));
@@ -104,6 +105,6 @@ describe('Admin Settings', () => {
     });
 
     fireEvent.click(screen.getByText('Admin Settings'));
-    expect(screen.queryByText('Manage Project Config')).not.toBeInTheDocument();
+    expect(screen.queryByText('Project Configuration')).not.toBeInTheDocument();
   });
 });

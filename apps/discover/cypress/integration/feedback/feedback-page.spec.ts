@@ -203,7 +203,7 @@ describe('Feedback', () => {
         .contains('Admin Settings')
         .should('exist')
         .click();
-      cy.contains('Manage Feedback').should('be.visible').click();
+      cy.contains('Feedback').should('be.visible').click();
     });
 
     it('can check reported feedback as Admin', () => {
