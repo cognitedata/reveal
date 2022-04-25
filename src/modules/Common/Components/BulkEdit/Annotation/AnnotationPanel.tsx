@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotationV1/selectors';
 import { RootState } from 'src/store/rootReducer';
-import { AnnotationUtils } from 'src/utils/AnnotationUtils';
+import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   AnnotationEditOptionType,
   annotationEditOptions,
@@ -37,7 +37,7 @@ export const AnnotationPanel = ({
     };
     const annotationIds: number[] = [];
     Object.entries(annotationsMap).forEach(([_, annotations]) => {
-      const filteredAnnotations = AnnotationUtils.filterAnnotations(
+      const filteredAnnotations = AnnotationUtilsV1.filterAnnotations(
         annotations,
         annotationFilterType
       );

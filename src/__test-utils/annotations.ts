@@ -1,8 +1,8 @@
 import {
   AnnotationStatus,
-  AnnotationUtils,
+  AnnotationUtilsV1,
   ModelTypeAnnotationTypeMap,
-} from 'src/utils/AnnotationUtils';
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   RegionType,
   Vertex,
@@ -27,7 +27,7 @@ export const getDummyAnnotation = (
     type?: AnnotationTypeV1;
   }
 ) => {
-  return AnnotationUtils.createVisionAnnotationStubV1(
+  return AnnotationUtilsV1.createVisionAnnotationStubV1(
     id || 1,
     other?.text || 'pump',
     modelType || 1,

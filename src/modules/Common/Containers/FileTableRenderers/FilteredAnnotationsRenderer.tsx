@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
 import { AnnotationsBadgePopover } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
-import { calculateBadgeCountsDifferences } from 'src/utils/AnnotationUtils';
+import { calculateBadgeCountsDifferences } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 export function FilteredAnnotationsRenderer({
   rowData: { id, annotationFilter },
@@ -15,8 +15,9 @@ export function FilteredAnnotationsRenderer({
     []
   );
 
-  const allAnnotationCounts = useSelector(({ annotationV1Reducer }: RootState) =>
-    selectTotalAnnotationCountForFileIds(annotationV1Reducer, [id])
+  const allAnnotationCounts = useSelector(
+    ({ annotationV1Reducer }: RootState) =>
+      selectTotalAnnotationCountForFileIds(annotationV1Reducer, [id])
   );
 
   const filteredAnnotationCounts = useSelector(

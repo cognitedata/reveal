@@ -1,7 +1,7 @@
 import { Title } from '@cognite/cogs.js';
 import React, { ReactText } from 'react';
 import styled from 'styled-components';
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { FileInfo } from '@cognite/sdk';
 import { AnnotationTableItem } from 'src/modules/Review/types';

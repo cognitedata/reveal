@@ -7,7 +7,7 @@ import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
 import {
   AnnotationStatus,
   VisionAnnotationV1,
-} from 'src/utils/AnnotationUtils';
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { ToastUtils } from 'src/utils/ToastUtils';
 

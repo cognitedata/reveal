@@ -1,6 +1,6 @@
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { getDummyAnnotation } from 'src/__test-utils/annotations';
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   isAssetLinkedAnnotation,
   isKeyPointAnnotation,
