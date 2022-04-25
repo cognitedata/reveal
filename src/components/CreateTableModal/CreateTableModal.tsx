@@ -250,11 +250,12 @@ const CreateTableModal = ({
                 Create
               </Button>
             )}
-            {(isUploadCompleted || isUploadFailed) && (
-              <Button onClick={handleCancel} type="primary">
-                OK
-              </Button>
-            )}
+            {selectedCreationMode !== CreationMode.Empty &&
+              (isUploadCompleted || isUploadFailed) && (
+                <Button onClick={handleCancel} type="primary">
+                  OK
+                </Button>
+              )}
           </>
         }
         maskClosable={createTableModalStep !== CreateTableModalStep.Upload}
