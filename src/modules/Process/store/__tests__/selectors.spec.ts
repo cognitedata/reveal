@@ -40,7 +40,7 @@ import {
   completedJob,
   failedJob,
 } from 'src/__test-utils/data/mockJobInfo';
-import { AnnotationState } from 'src/modules/Common/store/annotation/types';
+import { AnnotationStateV1 } from 'src/modules/Common/store/annotation/types';
 import { VisionFilesToFileState } from 'src/store/util/StateUtils';
 import {
   AnnotationStatus,
@@ -125,7 +125,7 @@ const getRootState = (
   annotationsByFile: { [key: string]: number[] },
   annotationsById: { [key: string]: VisionAnnotationV1 }
 ) => {
-  const annotationState: AnnotationState = {
+  const annotationState: AnnotationStateV1 = {
     ...annotationReducerInitialState,
     files: {
       byId: annotationsByFile,
