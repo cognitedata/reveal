@@ -43,9 +43,6 @@ export default () => {
   });
 
   useEffect(() => {
-    message.config({
-      getContainer: () => document.getElementById('message')!,
-    });
     cogsStyles.use();
     rootStyles.use();
     collapseStyle.use();
@@ -62,7 +59,6 @@ export default () => {
     <SDKProvider sdk={sdk}>
       <QueryClientProvider client={queryClient}>
         <AntStyles>
-          <div id="message" className="data-exploration-style-scope" />
           <SubAppWrapper padding={false}>
             <AuthWrapper
               loadingScreen={<Loader darkMode={false} />}
