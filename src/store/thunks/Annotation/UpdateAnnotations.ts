@@ -43,6 +43,6 @@ export const UpdateAnnotations = createAsyncThunk<
   const responseAnnotations = response.data.items;
 
   const updatedVisionAnnotations =
-    AnnotationUtils.convertToVisionAnnotations(responseAnnotations);
+    AnnotationUtils.convertToVisionAnnotationsV1(responseAnnotations);
   return updatedVisionAnnotations;
 });

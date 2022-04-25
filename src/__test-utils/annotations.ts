@@ -27,7 +27,7 @@ export const getDummyAnnotation = (
     type?: AnnotationTypeV1;
   }
 ) => {
-  return AnnotationUtils.createVisionAnnotationStub(
+  return AnnotationUtils.createVisionAnnotationStubV1(
     id || 1,
     other?.text || 'pump',
     modelType || 1,

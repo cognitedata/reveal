@@ -46,7 +46,7 @@ describe('ModelTrainingModalContent', () => {
 
   const getMockData = (data: MockDataType[]) => {
     const getDummyAnnotation = (id: number, text: string, fileId: number) => {
-      return AnnotationUtils.createVisionAnnotationStub(
+      return AnnotationUtils.createVisionAnnotationStubV1(
         id || 1,
         text || 'pump',
         1,
