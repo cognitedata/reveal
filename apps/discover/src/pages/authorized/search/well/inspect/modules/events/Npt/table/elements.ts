@@ -26,3 +26,9 @@ export const NptCodeContainer = styled(FlexRow)`
   margin-top: ${sizes.extraSmall};
   align-items: center;
 `;
+
+export const IconStyles = {
+  marginLeft: '9px',
+  verticalAlign: 'middle',
+  color: 'rgba(0, 0, 0, 0.55)',
+};

@@ -1,4 +1,5 @@
 import get from 'lodash/get';
+import { useNptLegendCodeQuery } from 'services/well/legend/npt/useNptLegendQuery';
 import { getTimeDuration } from 'utils/date';
 import { processAccessor } from 'utils/table/processAccessor';
 
@@ -46,13 +47,15 @@ export const useNptWellboresTableColumns = () => {
 };
 
 export const useNptEventsTableColumns = () => {
+  const { data: nptLegendCodes } = useNptLegendCodeQuery();
+
   return [
     {
       id: accessors.NPT_CODE,
       width: '270px',
       maxWidth: '0.3fr',
       Cell: ({ row: { original } }: { row: { original: NPTEvent } }) =>
-        renderNPTCodeWithColor(original),
+        renderNPTCodeWithColor(original, nptLegendCodes?.items),
       stickyColumn: true,
     },
     ...useNptTableCommonHeaders(),
@@ -61,6 +64,7 @@ export const useNptEventsTableColumns = () => {
 
 export const useSelectedWellboreNptEventsTableColumns = () => {
   const commonHeaders = useNptTableCommonHeaders();
+  const { data: nptLegendCodes } = useNptLegendCodeQuery();
 
   return [
     {
@@ -68,7 +72,7 @@ export const useSelectedWellboreNptEventsTableColumns = () => {
       Header: 'NPT Code',
       width: '150px',
       Cell: ({ row: { original } }: { row: { original: NPTEvent } }) =>
-        renderNPTCodeWithColor(original),
+        renderNPTCodeWithColor(original, nptLegendCodes?.items),
       stickyColumn: true,
     },
     ...getExtendedColumns(commonHeaders, [

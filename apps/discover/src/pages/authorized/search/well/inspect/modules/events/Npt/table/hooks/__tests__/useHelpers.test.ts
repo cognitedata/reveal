@@ -14,6 +14,15 @@ jest.mock('hooks/useUserPreferences', () => ({
   useUserPreferencesMeasurement: jest.fn(),
 }));
 
+// Mocked for now, needs to be replaced with network mock
+jest.mock('services/well/legend/npt/useNptLegendQuery', () => ({
+  useNptLegendCodeQuery: () => {
+    return {
+      data: [],
+    };
+  },
+}));
+
 describe('useNptTableCommonHeaders hook', () => {
   beforeEach(() => {
     (useUserPreferencesMeasurement as jest.Mock).mockImplementation(() => ({
