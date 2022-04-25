@@ -1,5 +1,6 @@
 import { ComponentProps } from 'react';
 import { Meta, Story } from '@storybook/react';
+import { rootAssetsMock } from 'models/facility/mocks';
 import FilterDropdown from './FilterDropdown';
 
 export default {
@@ -21,6 +22,8 @@ DefaultFilterDropdown.args = {
     isShowEmptyChecked: false,
   },
   onFilterChange: () => {},
+  onFacilityChange: () => {},
+  availableFacilities: rootAssetsMock,
 };
 
 export const StepFilterDropdown = Template.bind({});
@@ -33,6 +36,8 @@ StepFilterDropdown.args = {
     isShowEmptyChecked: false,
   },
   onFilterChange: () => {},
+  onFacilityChange: () => {},
+  availableFacilities: rootAssetsMock,
 };
 
 export const StringFilterDropdown = Template.bind({});
@@ -45,6 +50,8 @@ StringFilterDropdown.args = {
     isShowEmptyChecked: false,
   },
   onFilterChange: () => {},
+  onFacilityChange: () => {},
+  availableFacilities: rootAssetsMock,
 };
 
 export const ShowEmptyFilterDropdown = Template.bind({});
@@ -57,6 +64,8 @@ ShowEmptyFilterDropdown.args = {
     isShowEmptyChecked: true,
   },
   onFilterChange: () => {},
+  onFacilityChange: () => {},
+  availableFacilities: rootAssetsMock,
 };
 
 export const NoResultFilterDropdown = Template.bind({});
@@ -69,4 +78,36 @@ NoResultFilterDropdown.args = {
     isShowEmptyChecked: false,
   },
   onFilterChange: () => {},
+  onFacilityChange: () => {},
+  availableFacilities: rootAssetsMock,
+};
+
+export const SelectedFacilityFilterDropdown = Template.bind({});
+
+SelectedFacilityFilterDropdown.args = {
+  settings: {
+    isTimeseriesChecked: true,
+    isStepChecked: false,
+    isStringChecked: false,
+    isShowEmptyChecked: false,
+  },
+  onFilterChange: () => {},
+  onFacilityChange: () => {},
+  availableFacilities: rootAssetsMock,
+  selectedFacility: 'b',
+};
+
+export const InvalidSelectedFacilityFilterDropdown = Template.bind({});
+
+InvalidSelectedFacilityFilterDropdown.args = {
+  settings: {
+    isTimeseriesChecked: true,
+    isStepChecked: false,
+    isStringChecked: false,
+    isShowEmptyChecked: false,
+  },
+  onFilterChange: () => {},
+  onFacilityChange: () => {},
+  availableFacilities: rootAssetsMock,
+  selectedFacility: 'does-not-exist',
 };

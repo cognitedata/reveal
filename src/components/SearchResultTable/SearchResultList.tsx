@@ -28,15 +28,25 @@ const defaultTranslations = makeDefaultTranslations(
 );
 
 export default function SearchResultList({ query, filter }: Props) {
+  const rootAssetFilter = filter.rootAsset
+    ? { assetSubtreeIds: [{ externalId: filter.rootAsset }] }
+    : {};
+
   const {
     data: resourcesBySearch,
     isLoading,
     isError,
     fetchNextPage,
     hasNextPage,
-  } = useInfiniteSearch<Asset>('assets', query, 20, undefined, {
-    enabled: !!query,
-  });
+  } = useInfiniteSearch<Asset>(
+    'assets',
+    query,
+    20,
+    { ...rootAssetFilter },
+    {
+      enabled: !!query,
+    }
+  );
 
   const { data: resourcesByExternalId } = useCdfItems<Asset>('assets', [
     { externalId: query },

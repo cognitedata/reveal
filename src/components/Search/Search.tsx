@@ -26,12 +26,16 @@ import {
 import EmptyResult, {
   defaultTranslations as emptyResultDefaultTranslations,
 } from 'components/Search/EmptyResult';
+import { useRootAssets } from 'hooks/cdf-assets';
+import { useRecoilState } from 'recoil';
+import { facilityAtom } from 'models/facility/atom';
 import FilterDropdown from './FilterDropdown';
 
 export type SearchFilter = {
   showEmpty: boolean;
   isStep?: boolean;
   isString?: boolean;
+  rootAsset?: string;
 };
 
 const defaultTranslations = makeDefaultTranslations(
@@ -63,6 +67,12 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
     isStringChecked: false,
   });
 
+  const { data: rootAssets = [] } = useRootAssets();
+  const [selectedFacility, setSelectedFacility] = useRecoilState(facilityAtom);
+  const selectedFacilityExistsInAvailableRootAssets = !!rootAssets.find(
+    (asset) => asset.externalId === selectedFacility
+  );
+
   const isEmpty =
     !filterSettings.isTimeseriesChecked &&
     !filterSettings.isStepChecked &&
@@ -81,6 +91,9 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
       ? reversedIsStepChecked
       : filterSettings.isStepChecked,
     isString: filterSettings.isStringChecked,
+    rootAsset: selectedFacilityExistsInAvailableRootAssets
+      ? selectedFacility
+      : undefined,
   };
 
   const handleFilterChange = (field: string, val?: boolean) => {
@@ -90,6 +103,11 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
       ...existingFilterSettings,
       [field]: val,
     }));
+  };
+
+  const handleFacilityChange = (facilityExternalId: string) => {
+    trackUsage(`Search.Filters.facility`, { value: facilityExternalId });
+    setSelectedFacility(facilityExternalId);
   };
 
   const handleSearchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -173,6 +191,9 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
         <Dropdown
           content={
             <FilterDropdown
+              selectedFacility={selectedFacility}
+              availableFacilities={rootAssets}
+              onFacilityChange={handleFacilityChange}
               translations={filterDropdownTranslations}
               settings={filterSettings}
               onFilterChange={handleFilterChange}

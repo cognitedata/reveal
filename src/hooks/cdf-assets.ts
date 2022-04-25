@@ -15,6 +15,22 @@ export const useAsset = (id?: number) => {
   );
 };
 
+export const useRootAssets = () => {
+  const sdk = useSDK();
+
+  return useQuery<Asset[]>(
+    ['assets', 'root'],
+    async () => {
+      const assets = await sdk.assets.list({ filter: { root: true } });
+      const filteredAssets = assets.items.filter(
+        (asset) => asset.name !== 'AIR'
+      );
+      return filteredAssets;
+    },
+    { enabled: true }
+  );
+};
+
 export const useAssetTimeseries = (assetId?: number) => {
   const sdk = useSDK();
 

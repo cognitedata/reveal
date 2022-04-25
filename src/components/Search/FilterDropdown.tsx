@@ -1,4 +1,5 @@
-import { Checkbox, Menu, Tooltip } from '@cognite/cogs.js';
+import { Checkbox, Menu, Select, Tooltip } from '@cognite/cogs.js';
+import { Asset } from '@cognite/sdk';
 import styled from 'styled-components';
 import { makeDefaultTranslations } from 'utils/translations';
 
@@ -9,7 +10,8 @@ export const defaultTranslations = makeDefaultTranslations(
   'Time series',
   'Step time series',
   'String time series',
-  'String time series are currently not supported'
+  'String time series are currently not supported',
+  'Facility'
 );
 
 export type SearchFilterSettings = {
@@ -20,20 +22,48 @@ export type SearchFilterSettings = {
 };
 
 type FilterDropdownProps = {
+  availableFacilities: Asset[];
+  selectedFacility?: string;
   settings: SearchFilterSettings;
   onFilterChange: (field: string, val?: boolean) => void;
+  onFacilityChange: (facilityExternalId: string) => void;
   translations?: typeof defaultTranslations;
 };
 
 const FilterDropdown = ({
+  availableFacilities,
+  selectedFacility,
   settings,
   onFilterChange,
+  onFacilityChange,
   translations,
 }: FilterDropdownProps) => {
   const t = { ...defaultTranslations, ...translations };
 
+  const facilityOptions: { value: string; label: string }[] = [
+    { value: '', label: 'All' },
+    ...availableFacilities.map((facility) => ({
+      value: facility.externalId!,
+      label: facility.name,
+    })),
+  ];
+
+  const selectedFacilityOption =
+    facilityOptions.find((facility) => facility.value === selectedFacility) ||
+    facilityOptions[0];
+
   return (
     <FilterMenu>
+      <Menu.Header>{t.Facility}</Menu.Header>
+      <Select
+        value={selectedFacilityOption}
+        options={facilityOptions}
+        onChange={({ value }: { label: string; value: string }) =>
+          onFacilityChange(value)
+        }
+      />
+      <Spacing height={8} />
+      <Menu.Divider />
       <Menu.Header>{t.Filters}</Menu.Header>
       <Checkbox
         name="showEmpty"
@@ -66,6 +96,10 @@ const FilterDropdown = ({
     </FilterMenu>
   );
 };
+
+const Spacing = styled.div<{ height: number }>`
+  height: ${(props) => (props.height ? props.height : 0)}px;
+`;
 
 const FilterMenu = styled(Menu)`
   .cogs-checkbox {

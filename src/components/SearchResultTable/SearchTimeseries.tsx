@@ -43,6 +43,10 @@ export default function SearchTimeseries({ query, filter }: Props) {
     ).t,
   };
 
+  const rootAssetFilter = filter.rootAsset
+    ? { assetSubtreeIds: [{ externalId: filter.rootAsset }] }
+    : {};
+
   const {
     data: resourcesBySearch,
     isLoading,
@@ -53,7 +57,7 @@ export default function SearchTimeseries({ query, filter }: Props) {
     'timeseries',
     query,
     20,
-    { isStep: filter.isStep, isString: filter.isString },
+    { isStep: filter.isStep, isString: filter.isString, ...rootAssetFilter },
     {
       enabled: !!query,
     }
