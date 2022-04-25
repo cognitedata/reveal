@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Router, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import { ThemeProvider } from 'styled-components';
+import { message } from 'antd';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import GlobalStyle from 'app/styles/global-styles';
@@ -42,6 +43,9 @@ export default () => {
   });
 
   useEffect(() => {
+    message.config({
+      getContainer: () => document.getElementById('message')!,
+    });
     cogsStyles.use();
     rootStyles.use();
     collapseStyle.use();
@@ -58,6 +62,7 @@ export default () => {
     <SDKProvider sdk={sdk}>
       <QueryClientProvider client={queryClient}>
         <AntStyles>
+          <div id="message" className="data-exploration-style-scope" />
           <SubAppWrapper padding={false}>
             <AuthWrapper
               loadingScreen={<Loader darkMode={false} />}
