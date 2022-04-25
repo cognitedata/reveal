@@ -76,7 +76,7 @@ const CreateTableModal = ({
     uploadPercentage,
   } = useCSVUpload(file, selectedPrimaryKeyMethod, selectedColumnIndex);
 
-  const { errors, handleBlur, handleChange, handleSubmit, values } =
+  const { errors, handleBlur, handleChange, handleSubmit, values, resetForm } =
     useFormik<CreateTableFormValues>({
       initialValues: {
         tableName: '',
@@ -126,6 +126,7 @@ const CreateTableModal = ({
             });
             handleCancel();
             openTable([databaseName, values.tableName]);
+            resetForm();
           }
         },
         onError: (e: any) => {
