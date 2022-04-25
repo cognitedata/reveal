@@ -317,10 +317,12 @@ pods {
                 sentryProjectName: args.sentryProjectName,
                 performBuild: performBuild,
                 baseVersion: args.baseVersion,
+                shouldPublishSourceMap: args.shouldPublishSourceMap,
                 shouldInstallPackages: false,
               )
               fas.publish(
-                previewSubdomain: args.previewSubdomain
+                previewSubdomain: args.previewSubdomain,
+                shouldPublishSourceMap: args.shouldPublishSourceMap,
               )
             }
 
@@ -337,6 +339,7 @@ pods {
                 variant: 'preview',
                 previewSubdomain: params.preview_subdomain != "" ? params.preview_subdomain : null,
                 baseVersion: params.base_version,
+                shouldPublishSourceMap: params.should_publish_source_map == 'true',
                 // sourceMapPath: 'assets',
               )
               print("FAS preview published")
@@ -350,6 +353,7 @@ pods {
                 sentryProjectName: params.sentry_project_name,
                 variant: 'staging',
                 baseVersion: params.base_version,
+                shouldPublishSourceMap: params.should_publish_source_map == 'true',
                 // sourceMapPath: 'assets',
               )
               print("FAS staging published")
@@ -364,6 +368,7 @@ pods {
                 sentryProjectName: params.sentry_project_name,
                 variant: 'production',
                 baseVersion: params.base_version,
+                shouldPublishSourceMap: params.should_publish_source_map == 'true',
                 // sourceMapPath: 'assets',
               )
               print("FAS production published")

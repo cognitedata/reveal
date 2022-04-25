@@ -13,6 +13,7 @@ def _publish_fas(ctx):
         "@@PREVIEW_SUBDOMAIN@@": ctx.attr.preview_subdomain,
         "@@VERSIONING_STRATEGY@@": ctx.attr.versioning_strategy,
         "@@PACKAGE_JSON_PATH@@": ctx.file.package_json.path,
+        "@@SHOULD_PUBLISH_SOURCE_MAP@@": "true" if ctx.attr.sentry_project_name else "false",
     }
     ctx.actions.expand_template(
         template = ctx.file._runner,

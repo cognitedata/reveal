@@ -432,7 +432,7 @@ publish_fas(
     # FAS app identifier (repo) shared across both production and staging apps
     repo_id = "explorer",
     # Sentry project name
-    sentry_project_name = "explorer",
+    sentry_project_name = "",
     # FAS staging app id
     staging_app_id = "explorer-staging",
     versioning_strategy = "single-branch",
