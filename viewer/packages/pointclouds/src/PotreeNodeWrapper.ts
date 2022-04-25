@@ -2,7 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as Potree from '@cognite/potree-core';
 import * as THREE from 'three';
 
 import { PotreePointSizeType, PotreePointColorType, PotreePointShape } from './types';
@@ -13,14 +12,14 @@ export type PotreeClassification = { [pointClass: number]: { x: number; y: numbe
  * Wrapper around `Potree.PointCloudOctree` with some convinence functions.
  */
 export class PotreeNodeWrapper {
-  readonly octtree: Potree.PointCloudOctreeNode;
+  readonly octtree: any;
   private _needsRedraw = false;
 
   get needsRedraw(): boolean {
     return this._needsRedraw;
   }
 
-  constructor(octtree: Potree.PointCloudOctreeNode) {
+  constructor(octtree: any) {
     this.octtree = octtree;
     this.pointSize = 2;
     this.pointSizeType = PotreePointSizeType.Adaptive;
