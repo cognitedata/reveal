@@ -35,9 +35,9 @@ export const ModelTrainingModalContent = ({
     makeSelectAnnotationsForFileIds,
     []
   );
-  const annotationsMap = useSelector(({ annotationReducer }: RootState) =>
+  const annotationsMap = useSelector(({ annotationV1Reducer }: RootState) =>
     selectAnnotationsForFileIds(
-      annotationReducer,
+      annotationV1Reducer,
       selectedFiles.map((item) => item.id)
     )
   );

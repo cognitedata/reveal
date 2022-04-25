@@ -30,8 +30,8 @@ export default function ProgressStatus() {
     makeSelectTotalAnnotationCountForFileIds,
     []
   );
-  const annotationCounts = useSelector(({ annotationReducer }: RootState) =>
-    selectTotalAnnotationCountForFileIds(annotationReducer, processFileIds)
+  const annotationCounts = useSelector(({ annotationV1Reducer }: RootState) =>
+    selectTotalAnnotationCountForFileIds(annotationV1Reducer, processFileIds)
   );
 
   const fileCount = processFileIds.length;

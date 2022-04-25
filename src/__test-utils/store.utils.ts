@@ -24,7 +24,7 @@ export const getInitialState: () => StoreState = () => {
     fileReducer: fileState,
     fileDetailsSlice: fileDetailsState,
     processSlice: processState,
-    annotationReducer: annotationState,
+    annotationV1Reducer: annotationState,
   };
 };
 

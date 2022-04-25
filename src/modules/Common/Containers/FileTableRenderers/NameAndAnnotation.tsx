@@ -16,8 +16,8 @@ export function NameAndAnnotationRenderer({
     makeSelectTotalAnnotationCountForFileIds,
     []
   );
-  const annotationCounts = useSelector(({ annotationReducer }: RootState) =>
-    selectTotalAnnotationCountForFileIds(annotationReducer, [id])
+  const annotationCounts = useSelector(({ annotationV1Reducer }: RootState) =>
+    selectTotalAnnotationCountForFileIds(annotationV1Reducer, [id])
   );
 
   const selectAnnotationStatuses = useMemo(makeSelectJobStatusForFile, []);

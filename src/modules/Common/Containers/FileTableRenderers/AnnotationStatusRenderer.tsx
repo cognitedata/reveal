@@ -21,8 +21,8 @@ export function AnnotationStatusRenderer({ rowData: { id } }: CellRenderer) {
     makeSelectAnnotationsForFileIds,
     []
   );
-  const annotationsMap = useSelector(({ annotationReducer }: RootState) =>
-    selectAnnotationsForFileIds(annotationReducer, [id])
+  const annotationsMap = useSelector(({ annotationV1Reducer }: RootState) =>
+    selectAnnotationsForFileIds(annotationV1Reducer, [id])
   );
 
   const rejectedAnnotationIds: number[] = [];

@@ -51,8 +51,8 @@ export const MapPopup = ({
     makeSelectTotalAnnotationCountForFileIds,
     []
   );
-  const annotationCounts = useSelector(({ annotationReducer }: RootState) =>
-    selectTotalAnnotationCountForFileIds(annotationReducer, [item.id])
+  const annotationCounts = useSelector(({ annotationV1Reducer }: RootState) =>
+    selectTotalAnnotationCountForFileIds(annotationV1Reducer, [item.id])
   );
 
   const getAnnotationStatuses = useMemo(makeSelectJobStatusForFile, []);

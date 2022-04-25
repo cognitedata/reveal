@@ -31,15 +31,15 @@ export const FileDetailsAnnotationsPreview = ({
   );
 
   const textAndObjectAnnotations = useSelector(
-    ({ annotationReducer }: RootState) =>
-      selectFileAnnotationsByOcrObjectTypes(annotationReducer, fileInfo.id, [
+    ({ annotationV1Reducer }: RootState) =>
+      selectFileAnnotationsByOcrObjectTypes(annotationV1Reducer, fileInfo.id, [
         VisionDetectionModelType.OCR,
         VisionDetectionModelType.ObjectDetection,
       ])
   );
 
-  const tagAnnotations = useSelector(({ annotationReducer }: RootState) =>
-    selectFileAnnotationsByTagDetectionType(annotationReducer, fileInfo.id, [
+  const tagAnnotations = useSelector(({ annotationV1Reducer }: RootState) =>
+    selectFileAnnotationsByTagDetectionType(annotationV1Reducer, fileInfo.id, [
       VisionDetectionModelType.TagDetection,
     ])
   );

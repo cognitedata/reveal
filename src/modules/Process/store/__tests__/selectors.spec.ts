@@ -152,7 +152,7 @@ const getRootState = (
   };
   return {
     processSlice: processState,
-    annotationReducer: annotationState,
+    annotationV1Reducer: annotationState,
     fileReducer: fileState,
   } as RootState;
 };

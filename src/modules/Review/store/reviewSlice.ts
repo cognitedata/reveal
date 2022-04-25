@@ -178,7 +178,7 @@ const fileAnnotationsSelector = makeSelectFileAnnotations();
 
 export const selectVisibleAnnotationsForFile = createSelector(
   (state: RootState, fileId: number) =>
-    fileAnnotationsSelector(state.annotationReducer, fileId),
+    fileAnnotationsSelector(state.annotationV1Reducer, fileId),
   (state: RootState) => state.reviewSlice.selectedAnnotationIds,
   (state: RootState) => state.reviewSlice.hiddenAnnotationIds,
   (state: RootState) => state.annotationLabelReducer.keypointMap.selectedIds,

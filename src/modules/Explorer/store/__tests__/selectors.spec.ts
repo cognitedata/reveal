@@ -154,7 +154,7 @@ describe('Test file explorer selectors', () => {
   };
   const rootState: RootState = {
     explorerReducer: explorerState,
-    annotationReducer: annoState,
+    annotationV1Reducer: annoState,
   } as RootState;
 
   describe('Test selectExplorerFilesWithAnnotationCount', () => {

@@ -45,8 +45,8 @@ export const FileDownloaderModalContent = ({
     makeSelectAnnotationsForFileIds,
     []
   );
-  const annotations = useSelector(({ annotationReducer }: RootState) =>
-    selectAnnotationsForFileIds(annotationReducer, fileIds)
+  const annotations = useSelector(({ annotationV1Reducer }: RootState) =>
+    selectAnnotationsForFileIds(annotationV1Reducer, fileIds)
   );
 
   const annotationStatusMap = () => {

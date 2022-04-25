@@ -44,8 +44,8 @@ export function NameRenderer({
 }: CellRenderer) {
   const selectFileAnnotations = useMemo(makeSelectFileAnnotations, []);
   const hasAnnotations = useSelector(
-    ({ annotationReducer }: RootState) =>
-      !!selectFileAnnotations(annotationReducer, id).length
+    ({ annotationV1Reducer }: RootState) =>
+      !!selectFileAnnotations(annotationV1Reducer, id).length
   );
 
   const renderIcon = () => {
