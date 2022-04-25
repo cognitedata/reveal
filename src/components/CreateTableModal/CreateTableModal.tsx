@@ -110,6 +110,7 @@ const CreateTableModal = ({
     }
     if (isUploadFailed) {
       resetForm();
+    }
     setCreateTableModalStep(CreateTableModalStep.CreationMode);
     onCancel();
   }
@@ -249,7 +250,7 @@ const CreateTableModal = ({
                 Create
               </Button>
             )}
-            {selectedCreationMode !== CreationMode.Empty &&
+            {selectedCreationMode === CreationMode.Upload &&
               (isUploadCompleted || isUploadFailed) && (
                 <Button onClick={handleCancel} type="primary">
                   OK
