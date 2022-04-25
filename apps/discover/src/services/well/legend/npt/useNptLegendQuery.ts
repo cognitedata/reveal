@@ -6,9 +6,9 @@ import { getTenantInfo } from '@cognite/react-container';
 
 import { NPT_LEGEND_KEY } from 'constants/react-query';
 
-import { WellLegendType } from '../types';
+import { WellLegendNptType } from '../types';
 
-const useNptLegendQuery = (type: WellLegendType) => {
+const useNptLegendQuery = (type: WellLegendNptType) => {
   const headers = useJsonHeaders({}, true);
   const [project] = getTenantInfo();
 
@@ -18,9 +18,9 @@ const useNptLegendQuery = (type: WellLegendType) => {
 };
 
 export const useNptLegendCodeQuery = () => {
-  return useNptLegendQuery('code');
+  return useNptLegendQuery(WellLegendNptType.Code);
 };
 
 export const useNptLegendDetailCodeQuery = () => {
-  return useNptLegendQuery('detailCode');
+  return useNptLegendQuery(WellLegendNptType.DetailCode);
 };

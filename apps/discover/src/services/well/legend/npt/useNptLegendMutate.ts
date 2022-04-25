@@ -7,9 +7,9 @@ import { getTenantInfo } from '@cognite/react-container';
 
 import { NPT_LEGEND_KEY } from 'constants/react-query';
 
-import { WellLegendPayload, WellLegendType } from '../types';
+import { WellLegendNptType, WellLegendPayload } from '../types';
 
-const useNptLegendMutate = (type: WellLegendType) => {
+const useNptLegendMutate = (type: WellLegendNptType) => {
   const queryClient = useQueryClient();
   const headers = useJsonHeaders({}, true);
   const [project] = getTenantInfo();
@@ -19,7 +19,7 @@ const useNptLegendMutate = (type: WellLegendType) => {
       discoverAPI.well.nptLegend.create(headers, project, type, id, body),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(NPT_LEGEND_KEY.all);
+        queryClient.invalidateQueries(NPT_LEGEND_KEY.lists(type));
       },
       onError: (error: Error) => {
         return handleServiceError(error);
@@ -29,9 +29,9 @@ const useNptLegendMutate = (type: WellLegendType) => {
 };
 
 export const useNptLegendCodeMutate = () => {
-  return useNptLegendMutate('code');
+  return useNptLegendMutate(WellLegendNptType.Code);
 };
 
 export const useNptLegendDetailCodeMutate = () => {
-  return useNptLegendMutate('detailCode');
+  return useNptLegendMutate(WellLegendNptType.DetailCode);
 };

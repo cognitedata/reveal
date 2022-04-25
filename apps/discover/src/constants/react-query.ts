@@ -2,7 +2,7 @@
 // is that it will make it easier to keep the
 // format in sync
 
-import { WellLegendType } from 'services/well/legend/types';
+import { WellLegendNptType } from 'services/well/legend/types';
 
 import { FeedbackType } from '../services/feedback/types';
 import { SAVED_SEARCHES_CURRENT_KEY } from '../services/savedSearches/constants';
@@ -151,5 +151,5 @@ export const DOCUMENT_FEEDBACK_QUERY_KEY = {
 
 export const NPT_LEGEND_KEY = {
   all: ['nptLegend'],
-  lists: (type: WellLegendType) => [...NPT_LEGEND_KEY.all, type],
+  lists: (type: WellLegendNptType) => [...NPT_LEGEND_KEY.all, type],
 };

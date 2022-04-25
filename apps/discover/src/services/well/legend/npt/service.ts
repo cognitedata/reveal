@@ -1,30 +1,37 @@
 import { fetchGet, FetchHeaders, fetchPost } from 'utils/fetch';
 
 import {
-  SearchHistoryResponse,
+  WellEventLegendListResponse,
   WellEventLegendCreateBody,
   WellEventLegendCreateResponse,
 } from '@cognite/discover-api-types';
 
 import { SIDECAR } from 'constants/app';
 
-import { WellLegendType } from '../types';
+import { WellLegendNptType } from '../types';
 
 const getNptLegendEndpoint = (
   project: string,
-  type: WellLegendType,
+  type: WellLegendNptType,
   id?: string
-) => `${SIDECAR.discoverApiBaseUrl}/${project}/well/npt/${type}/${id}`;
+) =>
+  `${SIDECAR.discoverApiBaseUrl}/${project}/well/legend/npt/${type}${
+    id ? `/${id}` : ''
+  }`;
 
 export const nptLegend = {
-  list: async (headers: FetchHeaders, project: string, type: WellLegendType) =>
-    fetchGet<SearchHistoryResponse[]>(getNptLegendEndpoint(project, type), {
+  list: async (
+    headers: FetchHeaders,
+    project: string,
+    type: WellLegendNptType
+  ) =>
+    fetchGet<WellEventLegendListResponse>(getNptLegendEndpoint(project, type), {
       headers,
     }),
   create: async (
     headers: FetchHeaders,
     project: string,
-    type: WellLegendType,
+    type: WellLegendNptType,
     id: string,
     body: WellEventLegendCreateBody
   ) =>
