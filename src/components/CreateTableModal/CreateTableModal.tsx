@@ -223,46 +223,40 @@ const CreateTableModal = ({
   return (
     <form onSubmit={handleSubmit}>
       <Modal
-        footer={[
-          ...(createTableModalStep !== CreateTableModalStep.Upload
-            ? [
-                <StyledCancelButton onClick={handleCancel} type="ghost">
-                  Cancel
-                </StyledCancelButton>,
-              ]
-            : []),
-          ...(selectedCreationMode === CreationMode.Empty
-            ? [
-                <Button
-                  disabled={isCreationDisabled}
-                  loading={isCreatingTable}
-                  onClick={() => handleSubmit()}
-                  type="primary"
-                >
-                  Create
-                </Button>,
-              ]
-            : []),
-          ...(createTableModalStep === CreateTableModalStep.PrimaryKey
-            ? [
-                <Button
-                  disabled={isUploadDisabled}
-                  loading={isCreatingTable}
-                  onClick={() => handleSubmit()}
-                  type="primary"
-                >
-                  Create
-                </Button>,
-              ]
-            : []),
-          ...(isUploadCompleted || isUploadFailed
-            ? [
-                <Button onClick={handleCancel} type="primary">
-                  OK
-                </Button>,
-              ]
-            : []),
-        ]}
+        footer={
+          <>
+            {createTableModalStep !== CreateTableModalStep.Upload && (
+              <StyledCancelButton onClick={handleCancel} type="ghost">
+                Cancel
+              </StyledCancelButton>
+            )}
+            {selectedCreationMode === CreationMode.Empty && (
+              <Button
+                disabled={isCreationDisabled}
+                loading={isCreatingTable}
+                onClick={() => handleSubmit()}
+                type="primary"
+              >
+                Create
+              </Button>
+            )}
+            {createTableModalStep === CreateTableModalStep.PrimaryKey && (
+              <Button
+                disabled={isUploadDisabled}
+                loading={isCreatingTable}
+                onClick={() => handleSubmit()}
+                type="primary"
+              >
+                Create
+              </Button>
+            )}
+            {(isUploadCompleted || isUploadFailed) && (
+              <Button onClick={handleCancel} type="primary">
+                OK
+              </Button>
+            )}
+          </>
+        }
         maskClosable={createTableModalStep !== CreateTableModalStep.Upload}
         onCancel={handleCancel}
         title={<Title level={5}>Create table</Title>}
