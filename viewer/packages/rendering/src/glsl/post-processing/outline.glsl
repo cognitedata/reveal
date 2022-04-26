@@ -22,11 +22,7 @@ int outlineIndex(sampler2D tDiffuse, vec2 uv) {
 
   bvec4 isEqualOrMiss = bvec4(isEqualToPixel.x || isMiss.x, isEqualToPixel.y || isMiss.y, isEqualToPixel.z || isMiss.z, isEqualToPixel.w || isMiss.w);
 
-  if(outlineIndex > 0 && !(all(isEqualToPixel)) && all(isEqualOrMiss)){
-    return outlineIndex;
-    // outline = vec4(texelFetch(tOutlineColors, ivec2(outlineIndex, 0), 0).rgb, 1.0);
-  } else {
-    return 0;
-    // outline = vec4(0.0);
-  }
+  bool hasOutline = outlineIndex > 0 && !(all(isEqualToPixel)) && all(isEqualOrMiss);
+
+  return hasOutline ? outlineIndex : 0;
 }

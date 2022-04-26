@@ -55,9 +55,7 @@ void main() {
   #endif
   #if defined(OUTLINE)
     int outline = outlineIndex(tDiffuse, vUv);
-    if(outline > 0){
-      fragColor = vec4(texelFetch(tOutlineColors, ivec2(outline, 0), 0).rgb, 1.0);
-    }
+    fragColor.rgb = outline > 0 ? texelFetch(tOutlineColors, ivec2(outline, 0), 0).rgb : fragColor.rgb;
   #endif
 #endif
 
