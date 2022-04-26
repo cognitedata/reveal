@@ -15,8 +15,8 @@ export const NptCodeDefinition: React.FC<{
         <>
           {description ? (
             <>
-              <div>{DEFINITION}</div>
-              <div> {description}</div>
+              <div style={{ fontSize: '11px' }}>{DEFINITION}</div>
+              <div style={{ fontWeight: 'bolder' }}> {description}</div>
             </>
           ) : (
             <>

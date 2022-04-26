@@ -1,3 +1,4 @@
+import { CodeDefinitionsListWrapper } from '../elements';
 import { CodeDefinition } from '../types';
 
 import { CodeDefinitionItem } from './CodeDefinitionItem';
@@ -17,7 +18,7 @@ export const CodeDefinitionsList: React.FC<Props> = ({
   onLegendUpdated,
 }) => {
   return (
-    <>
+    <CodeDefinitionsListWrapper>
       {codeDefinitions.map((codeDefinition, index) => {
         return (
           <CodeDefinitionItem
@@ -29,6 +30,6 @@ export const CodeDefinitionsList: React.FC<Props> = ({
           />
         );
       })}
-    </>
+    </CodeDefinitionsListWrapper>
   );
 };

@@ -98,6 +98,8 @@ export const WELL_QUERY_KEY = {
   LOGS_PPFGS: ['logsPPFGs'],
   RELATED_DOCUMENTS: [WELLS, 'relatedDocuments'],
   RELATED_DOCUMENT_FACETS: [WELLS, 'relatedDocuments', 'facets'],
+  NPT_CODES: [WELLS, 'nptCodes'],
+  NPT_DETAIL_CODES: [WELLS, 'nptDetailCodes'],
 };
 
 const SEARCH_HISTORY = 'searchHistory';

@@ -10,10 +10,13 @@ import {
   useNptLegendDetailCodeQuery,
 } from 'services/well/legend/npt/useNptLegendQuery';
 import { WellLegendNptType } from 'services/well/legend/types';
+import { useNptCodesQuery } from 'services/wellSearch/sdk/useNptCodesQuery';
+import { useNptDetailCodesQuery } from 'services/wellSearch/sdk/useNptDetailCodesQuery';
 
 import { CodeDefinitionsMenuItem } from './components/CodeDefinitionsMenuItem';
 import { CodeDefinitionsView } from './components/CodeDefinitionsView';
 import { Wrapper, LeftPanel, RightPanel } from './elements';
+import { mapLegendValuesToCodes } from './utils';
 
 const NptMenuItems = [
   {
@@ -29,8 +32,10 @@ const NptMenuItems = [
 const URL_QUERY_KEY = 'selected';
 
 export const CodeDefinitions = () => {
-  const { data: nptCodes } = useNptLegendCodeQuery();
-  const { data: nptDetailCodes } = useNptLegendDetailCodeQuery();
+  const { data: nptCodesLegend } = useNptLegendCodeQuery();
+  const { data: nptDetailCodesLegend } = useNptLegendDetailCodeQuery();
+  const { data: nptCodes } = useNptCodesQuery();
+  const { data: nptDetailCodes } = useNptDetailCodesQuery();
   const [activeItem, setActiveItem] = useState<WellLegendNptType>(
     WellLegendNptType.Code
   );
@@ -39,19 +44,15 @@ export const CodeDefinitions = () => {
   const { mutateAsync: updateNptDetailsLegend } =
     useNptLegendDetailCodeMutate();
 
-  const codes = nptCodes
-    ? nptCodes?.items.map((item) => ({
-        code: item.id,
-        definition: item.legend,
-      }))
-    : undefined;
+  const codes =
+    nptCodes && nptCodesLegend
+      ? mapLegendValuesToCodes(nptCodes, nptCodesLegend?.items)
+      : undefined;
 
-  const detailCodes = nptDetailCodes
-    ? nptDetailCodes.items.map((item) => ({
-        code: item.id,
-        definition: item.legend,
-      }))
-    : undefined;
+  const detailCodes =
+    nptDetailCodes && nptDetailCodesLegend
+      ? mapLegendValuesToCodes(nptDetailCodes, nptDetailCodesLegend.items)
+      : undefined;
 
   const history = useHistory();
   const { search } = useLocation();

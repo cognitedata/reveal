@@ -8,6 +8,7 @@ export const Wrapper = styled(FlexRow)`
 
 export const CodeDefinitionsWrapper = styled(FlexColumn)`
   max-width: 850px;
+  height: 100%;
 `;
 export const LeftPanel = styled(FlexColumn)`
   width: 400px;
@@ -39,4 +40,8 @@ export const CodeDefinitionItemWrapper = styled(FlexRow)`
 
 export const TitleWrapper = styled.div`
   padding-bottom: 56px;
+`;
+
+export const CodeDefinitionsListWrapper = styled(FlexColumn)`
+  overflow: auto;
 `;

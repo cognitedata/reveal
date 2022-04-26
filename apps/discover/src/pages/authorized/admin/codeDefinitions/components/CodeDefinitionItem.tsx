@@ -78,6 +78,7 @@ export const CodeDefinitionItem: React.FC<Props> = ({
         onChange={handleDefinitionChange}
         helpText={helpText}
         error={definitionInputValue.length > DEFINITION_MAX_LENGTH}
+        placeholder="Definition"
       />
     </CodeDefinitionItemWrapper>
   );
