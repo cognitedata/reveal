@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Body, Button, Colors } from '@cognite/cogs.js';
@@ -40,6 +40,14 @@ const SidePanelTableList = (): JSX.Element => {
   const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
 
   const [[activeDatabase, activeTable] = []] = useActiveTable();
+
+  const remountCount = useRef(0);
+
+  const handleRemount = () => {
+    setTimeout(() => {
+      remountCount.current += 1;
+    }, 1000);
+  };
 
   useEffect(() => {
     if (!isFetching && hasNextPage) {
@@ -120,8 +128,10 @@ const SidePanelTableList = (): JSX.Element => {
         </Tooltip>
       )}
       <CreateTableModal
+        key={remountCount.current}
         databaseName={selectedSidePanelDatabase}
         onCancel={() => setIsCreateModalOpen(false)}
+        onReset={handleRemount}
         tables={tables}
         visible={isCreateModalOpen}
       />
