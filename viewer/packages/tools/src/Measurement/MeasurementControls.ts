@@ -8,6 +8,7 @@ import * as THREE from 'three';
 import { MeasurementGizmo } from './MeasurementGizmo';
 import { MeasurementLabel } from './MeaurementLabel';
 import { Measurement } from './Measurement';
+import { MeasurementLabelOptions } from './types';
 
 export class MeasurementControls {
   private readonly _domElement: HTMLElement;
@@ -17,17 +18,19 @@ export class MeasurementControls {
   private readonly _measurementLabel: MeasurementLabel;
   private readonly _startPosition: THREE.Vector3;
   private _measurement: Measurement;
+  private _labelOptions: MeasurementLabelOptions;
 
   private readonly _handleonPointerClick = this.onPointerClick.bind(this);
   private readonly _handleonPointerMove = this.onPointerMove.bind(this);
 
-  constructor(viewer: Cognite3DViewer) {
+  constructor(viewer: Cognite3DViewer, labelOptions?: MeasurementLabelOptions) {
     this._viewer = viewer;
     this._domElement = viewer.domElement;
     this._inputHandler = viewer.inputHandler;
     this._measurementGizmo = new MeasurementGizmo(this._viewer);
-    this._measurementLabel = new MeasurementLabel(this._viewer);
+    this._measurementLabel = new MeasurementLabel(this._viewer, this._labelOptions);
     this._startPosition = new THREE.Vector3();
+    this._labelOptions = labelOptions;
 
     this.setupInputHandling();
   }
@@ -64,6 +67,10 @@ export class MeasurementControls {
     }
   }
 
+  public setLabelOptions(options: MeasurementLabelOptions): void {
+    this._measurementLabel.updateLabelOptions(options);
+  }
+
   private async onPointerClick(event: MouseEvent) {
     const { offsetX, offsetY } = event;
     const pointer = new THREE.Vector2(offsetX, offsetY);
@@ -77,7 +84,7 @@ export class MeasurementControls {
         this._domElement.addEventListener('mousemove', this._handleonPointerMove);
         this._startPosition.copy(intersection.point);
         this._measurement.add(intersection.point);
-        const texture = this._measurementLabel.getOverlayTexture('0', 64);
+        const texture = this._measurementLabel.getOverlayTexture('0');
         this._measurementLabel.addLabel(intersection.point, texture);
       } else {
         this.updateMeasurement(intersection.point);
@@ -103,7 +110,7 @@ export class MeasurementControls {
   private updateMeasurement(point: THREE.Vector3): void {
     this._measurement.update(point);
     const distanceValue = this._measurement.getMeasurementValue().toFixed(3).toString();
-    const texture = this._measurementLabel.getOverlayTexture(distanceValue, 64);
+    const texture = this._measurementLabel.getOverlayTexture(distanceValue);
     this._measurementLabel.updateLabelTexture(texture);
     this._measurementLabel.updateLabelPosition(this._startPosition, point);
   }

@@ -4,13 +4,22 @@
 
 import { Cognite3DViewer } from '@reveal/core';
 import * as THREE from 'three';
+import { MeasurementLabelOptions } from './types';
 
 export class MeasurementLabel {
   private readonly _viewer: Cognite3DViewer;
   private _label: THREE.Sprite;
+  private _options: MeasurementLabelOptions = {
+    size: 64,
+    radius: 20,
+    font: '${64}px bold Georgia',
+    fontColor: 'green',
+    fillColor: 'rgba(255, 255, 255, 1.0)'
+  };
 
-  constructor(viewer: Cognite3DViewer) {
+  constructor(viewer: Cognite3DViewer, options: MeasurementLabelOptions) {
     this._viewer = viewer;
+    this._options = options;
   }
 
   /**
@@ -19,34 +28,34 @@ export class MeasurementLabel {
    * @param size Size of the label
    * @returns Texture object containing label string
    */
-  public getOverlayTexture(label: string, size: number): THREE.Texture {
+  public getOverlayTexture(label: string): THREE.Texture {
     const borderSize = 24;
     const baseWidth = 64;
     const ctx = document.createElement('canvas').getContext('2d');
-    const font = `${64}px bold Georgia`;
+    const font = ``;
     ctx.font = font;
 
     const textWidth = ctx.measureText(label).width;
 
     const doubleBorderSize = borderSize * 2;
     const width = baseWidth + doubleBorderSize + 10;
-    const height = size + doubleBorderSize - 5;
+    const height = this._options.size + doubleBorderSize - 5;
     ctx.canvas.width = width;
     ctx.canvas.height = height;
 
     // need to set font again after resizing canvas
-    ctx.font = font;
+    ctx.font = this._options.font;
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 1.0)';
-    this.roundRect(ctx, 0, 0, ctx.canvas.width, ctx.canvas.height, 5.0);
+    ctx.fillStyle = this._options.fillColor;
+    this.roundRect(ctx, 0, 0, ctx.canvas.width, ctx.canvas.height);
 
     // scale to fit but don't stretch
     const scaleFactor = Math.min(1.0, width / textWidth);
     ctx.translate(width / 2, height / 2);
     ctx.scale(scaleFactor, 1);
-    ctx.fillStyle = 'green';
+    ctx.fillStyle = this._options.fontColor;
     ctx.fillText(label, 0, 0);
 
     ctx.canvas.style.borderRadius = '20px';
@@ -66,7 +75,6 @@ export class MeasurementLabel {
    * @param y start point y
    * @param width width of the rectangle
    * @param height height of the rectangle
-   * @param radius radius to round the rectangle
    * @param fill rectangle to be filled or not
    * @param stroke is the rectangle to be stroked
    */
@@ -76,23 +84,23 @@ export class MeasurementLabel {
     y: number,
     width: number,
     height: number,
-    radius: number = 0,
-    fill: boolean = true,
-    stroke: boolean = false
+    stroke?: boolean
   ) {
     if (typeof stroke === 'undefined') {
       stroke = true;
     }
-    if (typeof radius === 'undefined') {
-      radius = 5;
-    }
     let radiusParameter: any;
-    if (typeof radius === 'number') {
-      radiusParameter = { tl: radius, tr: radius, br: radius, bl: radius };
+    if (typeof this._options.radius === 'number') {
+      radiusParameter = {
+        tl: this._options.radius,
+        tr: this._options.radius,
+        br: this._options.radius,
+        bl: this._options.radius
+      };
     } else {
       const defaultRadius = { tl: 0, tr: 0, br: 0, bl: 0 };
       for (const side in defaultRadius) {
-        radius[side] = radius[side] || defaultRadius[side];
+        this._options.radius[side] = this._options.radius[side] || defaultRadius[side];
       }
     }
     ctx.beginPath();
@@ -106,12 +114,15 @@ export class MeasurementLabel {
     ctx.lineTo(x, y + radiusParameter.tl);
     ctx.quadraticCurveTo(x, y, x + radiusParameter.tl, y);
     ctx.closePath();
-    if (fill) {
-      ctx.fill();
-    }
+    ctx.fill();
+
     if (stroke) {
       ctx.stroke();
     }
+  }
+
+  public updateLabelOptions(options: MeasurementLabelOptions): void {
+    this._options = options;
   }
 
   /**

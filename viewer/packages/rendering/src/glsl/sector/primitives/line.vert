@@ -14,6 +14,7 @@ in vec3 instanceColorEnd;
 out vec4 worldPos;
 out vec3 worldStart;
 out vec3 worldEnd;
+
 #ifdef USE_DASH
   out vec2 vUv;
 #endif

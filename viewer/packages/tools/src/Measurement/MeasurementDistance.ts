@@ -8,6 +8,7 @@ import { LineGeometry } from './LineGeometry';
 import { lineShaders } from '@reveal/rendering';
 import { Line } from './Line';
 import { Measurement } from './Measurement';
+import { MeasurementLineOptions } from './types';
 
 export class MeasurementDistance implements Measurement {
   private readonly _viewer: Cognite3DViewer;
@@ -18,29 +19,34 @@ export class MeasurementDistance implements Measurement {
   private readonly _endPoint: THREE.Vector3;
   private _positions: Float32Array;
   private _colors: Float32Array;
+  private _lineOptions: MeasurementLineOptions = {
+    lineWidth: 0.02,
+    color: new THREE.Color(0x00ffff)
+  };
 
   private readonly LineUniforms: any = {
     worldUnits: { value: 1 },
-    linewidth: { value: 0.02 },
+    linewidth: { value: this._lineOptions.lineWidth },
     resolution: { value: new THREE.Vector2(1, 1) },
     dashOffset: { value: 0 },
     dashScale: { value: 1 },
     dashSize: { value: 1 },
     gapSize: { value: 1 },
-    diffuse: { value: new THREE.Color(0x00ffff) }
+    diffuse: { value: this._lineOptions.color }
   };
 
   private readonly ShaderLibUniforms: any = {
     uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.common, THREE.UniformsLib.fog, this.LineUniforms])
   };
 
-  constructor(viewer: Cognite3DViewer) {
+  constructor(viewer: Cognite3DViewer, lineOptions?: MeasurementLineOptions) {
     this._viewer = viewer;
     this._isActive = false;
     this._startPoint = new THREE.Vector3();
     this._endPoint = new THREE.Vector3();
     this._positions = new Float32Array(6);
     this._colors = new Float32Array(6);
+    this._lineOptions = lineOptions;
   }
 
   private initializeLine(): void {
@@ -59,8 +65,6 @@ export class MeasurementDistance implements Measurement {
 
       this._positions[0] = this._positions[1] = this._positions[2] = 0;
       this._positions[3] = this._positions[4] = this._positions[5] = 0;
-
-      // const color = new THREE.Color(200, 180, 100);
 
       this._colors[0] = 25;
       this._colors[1] = 50;
@@ -138,7 +142,6 @@ export class MeasurementDistance implements Measurement {
     if (distance < 0.4) {
       const direction = new THREE.Vector3();
       direction.subVectors(this._endPoint, this._startPoint);
-      // controlPoint.addVectors(this._endPoint, this._endPoint.normalize());
     }
     if (this._isActive && this._measurementLine && distance > 0.2) {
       this._positions[3] = controlPoint.x;
@@ -155,5 +158,11 @@ export class MeasurementDistance implements Measurement {
    */
   public isActive(): boolean {
     return this._isActive;
+  }
+
+  public setLineOptions(options: MeasurementLineOptions): void {
+    this._lineOptions = options;
+    this.ShaderLibUniforms.uniforms.linewidth = options?.lineWidth;
+    this.ShaderLibUniforms.uniforms.color = options?.color;
   }
 }
