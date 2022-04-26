@@ -71,7 +71,7 @@
     "@types/jsdom": "16.2.14",
     "@types/lodash": "4.14.182",
     "@types/mixpanel-browser": "2.38.0",
-    "@types/node": "16.11.28",
+    "@types/node": "16.11.29",
     "@types/offscreencanvas": "2019.6.4",
     "@types/random-seed": "0.3.3",
     "@types/skmeans": "0.11.3",
