@@ -27,6 +27,7 @@ export class PointCloudManager {
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
   private readonly _modelSubject: Subject<{ modelIdentifier: ModelIdentifier; operation: 'add' | 'remove' }> =
     new Subject();
+  private readonly _budgetSubject: Subject<number> = new Subject();
 
   private readonly _renderer: THREE.WebGLRenderer;
 
@@ -41,9 +42,9 @@ export class PointCloudManager {
     this._pointCloudFactory = modelFactory;
     this._pointCloudGroupWrapper = new PotreeGroupWrapper(modelFactory.potreeInstance);
 
-    combineLatest([this._cameraSubject, this.loadedModelsObservable()])
+    combineLatest([this._cameraSubject, this.loadedModelsObservable(), this._budgetSubject])
       .pipe(throttleTime(500, asyncScheduler, { leading: true, trailing: true }))
-      .subscribe(([cam, _models]: [THREE.PerspectiveCamera, ModelIdentifier[]]) => {
+      .subscribe(([cam, _models, _budget]: [THREE.PerspectiveCamera, ModelIdentifier[], number]) => {
         this.updatePointClouds(cam);
       });
 
@@ -68,6 +69,7 @@ export class PointCloudManager {
 
   set pointBudget(points: number) {
     this._pointCloudGroupWrapper.pointBudget = points;
+    this._budgetSubject.next(points);
   }
 
   get needsRedraw(): boolean {
