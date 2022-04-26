@@ -9,10 +9,12 @@ import reducer, {
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
 import { VisionAnnotation } from 'src/modules/Common/types';
 import { createVisionAnnotationStub } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import { clearAnnotationState } from 'src/store/commonActions';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 
 const getDummyImageObjectDetectionBoundingBoxAnnotation = ({
@@ -433,6 +435,49 @@ describe('Test annotation reducer', () => {
                 id: 4,
                 annotatedResourceId: 30,
               }),
+            },
+          },
+        });
+      });
+    });
+  });
+
+  describe('Test delete actions based on file ids', () => {
+    const actionTypes = [
+      DeleteFilesById.fulfilled.type,
+      clearAnnotationState.type,
+    ];
+    test('should delete file and corresponding annotations from state', () => {
+      actionTypes.forEach((actionType) => {
+        const action = {
+          type: actionType,
+          payload: [20], // file id to delete
+        };
+
+        const previousState = {
+          files: {
+            byId: {
+              '10': [1],
+              '20': [2],
+            },
+          },
+          annotations: {
+            byId: {
+              '1': getDummyImageObjectDetectionBoundingBoxAnnotation({ id: 1 }),
+              '2': getDummyImageObjectDetectionBoundingBoxAnnotation({ id: 2 }),
+            },
+          },
+        };
+
+        expect(reducer(previousState, action)).toEqual({
+          files: {
+            byId: {
+              '10': [1],
+            },
+          },
+          annotations: {
+            byId: {
+              '1': getDummyImageObjectDetectionBoundingBoxAnnotation({ id: 1 }),
             },
           },
         });

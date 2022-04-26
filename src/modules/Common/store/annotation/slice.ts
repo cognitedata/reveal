@@ -8,6 +8,8 @@ import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { clearAnnotationState } from 'src/store/commonActions';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 
 export const initialState: AnnotationState = {
   files: {
@@ -150,6 +152,22 @@ const annotationSlice = createSlice({
             }
           }
           state.annotations.byId[annotation.id] = annotation;
+        });
+      }
+    );
+
+    builder.addMatcher(
+      isAnyOf(DeleteFilesById.fulfilled, clearAnnotationState),
+      (state: AnnotationState, action) => {
+        action.payload.forEach((fileId) => {
+          const fileAnnotations = state.files.byId[fileId];
+
+          if (fileAnnotations && fileAnnotations.length) {
+            fileAnnotations.forEach((annotationId) => {
+              delete state.annotations.byId[annotationId];
+            });
+            delete state.files.byId[fileId];
+          }
         });
       }
     );
