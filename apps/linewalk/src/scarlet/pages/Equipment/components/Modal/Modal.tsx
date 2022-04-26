@@ -14,11 +14,18 @@ export type ModalProps = Omit<CogsModalProps, 'children'> & {
   description?: string;
   loading?: boolean;
   isPrompt?: boolean;
+  secondaryButton?: {
+    label: string;
+    onClick: () => void;
+    loading?: boolean;
+    disabled?: boolean;
+  };
 };
 
 export const Modal = ({
   cancelText = 'Cancel',
   skipCancelButton,
+  secondaryButton,
   okText,
   onOk,
   okButtonType = 'primary',
@@ -53,10 +60,23 @@ export const Modal = ({
     {children}
     <Styled.Footer>
       {!skipCancelButton && (
-        <Button type="ghost" onClick={props.onCancel}>
+        <Button type={isPrompt ? 'ghost' : 'tertiary'} onClick={props.onCancel}>
           {cancelText}
         </Button>
       )}
+      {secondaryButton && (
+        <Styled.SecondaryButtonContainer>
+          <Button
+            disabled={secondaryButton.disabled}
+            loading={secondaryButton.loading}
+            type="tertiary"
+            onClick={secondaryButton.onClick}
+          >
+            {secondaryButton.label}
+          </Button>
+        </Styled.SecondaryButtonContainer>
+      )}
+
       <Button
         disabled={props.okDisabled}
         loading={loading}

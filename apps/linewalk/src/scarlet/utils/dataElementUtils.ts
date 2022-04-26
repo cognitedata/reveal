@@ -159,3 +159,31 @@ export const getPrettifiedDataElementUnit = (unit?: DataElementUnit) => {
       return '';
   }
 };
+
+export const getDataElementHasDiscrepancy = (
+  dataElement: DataElement,
+  unit?: DataElementUnit,
+  type?: DataElementType
+): boolean => {
+  const primaryDetection = getDataElementPrimaryDetection(dataElement);
+  if (!primaryDetection || primaryDetection.type === DetectionType.PCMS) {
+    return false;
+  }
+
+  const pcmsDetection = getDataElementPCMSDetection(dataElement);
+  if (!pcmsDetection) return false;
+
+  const primaryDetectionValue = getPrettifiedDataElementValue(
+    primaryDetection?.value,
+    unit,
+    type
+  );
+
+  const pcmsDetectionValue = getPrettifiedDataElementValue(
+    pcmsDetection?.value,
+    unit,
+    type
+  );
+
+  return primaryDetectionValue !== pcmsDetectionValue;
+};

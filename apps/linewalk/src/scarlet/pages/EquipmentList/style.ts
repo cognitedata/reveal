@@ -1,5 +1,7 @@
 import styled, { css } from 'styled-components';
 
+import { EquipmentStatus } from './types';
+
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -7,7 +9,7 @@ export const Container = styled.div`
 `;
 
 export const ContentWrapper = styled.div<{ empty?: boolean }>`
-  padding: 32px 48px;
+  padding: 32px;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -45,19 +47,35 @@ export const TableContainer = styled.div<{ isLoading: boolean }>`
   }
 `;
 
-export const StatusLabel = styled.div<{ approved: boolean }>`
+export const StatusLabel = styled.div<{ status: EquipmentStatus }>`
   display: inline-block;
   padding: 4px 8px;
   border-radius: 4px;
 
-  ${({ approved }) =>
-    approved
-      ? css`
-          color: #22633c;
-          background-color: rgba(24, 175, 142, 0.1); ;
-        `
-      : css`
+  ${({ status }) => {
+    switch (status) {
+      case EquipmentStatus.ONGOING:
+        return css`
           color: #b25c00;
           background-color: rgba(255, 187, 0, 0.14);
-        `}
+        `;
+      case EquipmentStatus.COMPLETED:
+        return css`
+          color: var(--cogs-green-1);
+          background: rgba(24, 175, 142, 0.1);
+        `;
+
+      default:
+        return css`
+          color: var(--cogs-secondary-text);
+          background-color: rgba(0, 0, 0, 0.05);
+        `;
+    }
+  }}
+`;
+
+export const Value = styled.div`
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;

@@ -4,15 +4,22 @@ import { useAppContext, useDataPanelContext } from 'scarlet/hooks';
 import {
   AppActionType,
   AppStateDataElementModal,
+  DataElement,
   DataElementState,
   DataPanelActionType,
   DataPanelStateConnectedElementsModal,
+  EquipmentData,
 } from 'scarlet/types';
+import {
+  getConnectedDataElements,
+  getDataElementPrimaryDetection,
+} from 'scarlet/utils';
 
 import { ApproveModal } from './ApproveModal';
 import { OmitModal } from './OmitModal';
 import { RestoreModal } from './RestoreModal';
 import { ConnectedElementsModal } from './ConnectedElementsModal';
+import { MultiConnectedElementsModal } from './MultiConnectedElementsModal';
 
 export const DataElementModals = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -77,14 +84,14 @@ export const DataElementModals = () => {
   }
 
   switch (dataElementModal?.state) {
-    case DataElementState.APPROVED:
-      return (
-        <ApproveModal
-          dataElements={dataElementModal.dataElements}
-          visible={isVisible}
-          onClose={onClose}
-        />
+    case DataElementState.APPROVED: {
+      return getApprovedModal(
+        appState.equipment.data!,
+        dataElementModal.dataElements,
+        isVisible,
+        onClose
       );
+    }
     case DataElementState.OMITTED:
       return (
         <OmitModal
@@ -104,4 +111,49 @@ export const DataElementModals = () => {
   }
 
   return null;
+};
+
+const getApprovedModal = (
+  equipment: EquipmentData,
+  dataElements: DataElement[],
+  isVisible: boolean,
+  onClose: () => void
+) => {
+  const ignoreDataElementIds = dataElements.map((item) => item.id);
+  const hasConnectedElements = dataElements.some(
+    (dataElement) =>
+      getConnectedDataElements(equipment, dataElement.key, ignoreDataElementIds)
+        .length
+  );
+
+  if (!hasConnectedElements) {
+    return (
+      <ApproveModal
+        dataElements={dataElements}
+        visible={isVisible}
+        onClose={onClose}
+      />
+    );
+  }
+
+  if (dataElements.length === 1) {
+    const dataElement = dataElements[0];
+    const detection = getDataElementPrimaryDetection(dataElement)!;
+    return (
+      <ConnectedElementsModal
+        dataElement={dataElement}
+        detection={detection}
+        visible={isVisible}
+        onClose={onClose}
+      />
+    );
+  }
+
+  return (
+    <MultiConnectedElementsModal
+      dataElements={dataElements}
+      visible={isVisible}
+      onClose={onClose}
+    />
+  );
 };

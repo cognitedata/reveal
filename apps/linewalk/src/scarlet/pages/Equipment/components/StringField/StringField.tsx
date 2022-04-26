@@ -2,7 +2,7 @@ import { Input } from '@cognite/cogs.js';
 import { Field, useFormikContext } from 'formik';
 import { getPrettifiedDataElementUnit } from 'scarlet/utils';
 
-import { DataSourceFieldProps } from '..';
+import { DataSourceFieldProps, DataSourceFormValues } from '..';
 
 import * as Styled from './style';
 
@@ -12,8 +12,9 @@ export const StringField = ({
   name,
   disabled,
   unit,
-}: DataSourceFieldProps) => {
-  const { setFieldValue } = useFormikContext();
+  printedValue,
+}: DataSourceFieldProps & { printedValue?: string }) => {
+  const { setFieldValue, values } = useFormikContext<DataSourceFormValues>();
 
   return (
     <Styled.Container>
@@ -21,6 +22,7 @@ export const StringField = ({
         as={Input}
         id={id}
         name={name}
+        value={printedValue ?? values[name]}
         disabled={disabled}
         title={label}
         variant="titleAsPlaceholder"

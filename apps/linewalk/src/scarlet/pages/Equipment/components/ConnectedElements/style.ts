@@ -6,8 +6,9 @@ export const Header = styled.div`
 `;
 
 export const Detection = styled.div`
-  background-color: var(--cogs-greyscale-grey2);
-  border: 1px solid var(--cogs-greyscale-grey4);
+  background: var(--cogs-midorange-8);
+  border: 1px solid var(--cogs-midorange-6);
+  color: var(--cogs-midorange-2);
   border-radius: 6px;
   padding: 10px 12px;
   display: inline-flex;
@@ -17,11 +18,11 @@ export const Detection = styled.div`
 `;
 
 export const DetectionSource = styled.div`
+  color: var(--cogs-midorange-5);
   background-color: var(--cogs-white);
-  border: 1px solid var(--cogs-greyscale-grey4);
+  border: 1px solid currentColor;
   border-radius: 4px;
   padding: 2px 8px;
-  color: var(--cogs-greyscale-grey6);
   flex-shrink: 0;
 `;
 
@@ -29,6 +30,7 @@ export const DetectionValue = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: inherit;
 `;
 
 export const CurrentField = styled.div`

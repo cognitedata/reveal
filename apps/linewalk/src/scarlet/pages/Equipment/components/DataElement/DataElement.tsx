@@ -11,10 +11,9 @@ import {
   DataElement as DataElementType,
   DataElementState,
   DataPanelActionType,
-  DetectionType,
 } from 'scarlet/types';
 import {
-  getDataElementPCMSDetection,
+  getDataElementHasDiscrepancy,
   getDataElementPrimaryDetection,
   getDetectionSourceAcronym,
   getIsDataElementValueAvailable,
@@ -45,7 +44,6 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
     hasValue,
   } = useMemo(() => {
     const primaryDetection = getDataElementPrimaryDetection(dataElement);
-    const pcmsDetection = getDataElementPCMSDetection(dataElement);
 
     const value = getPrettifiedDataElementValue(
       primaryDetection?.value,
@@ -55,15 +53,11 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
     const isApproved = dataElement.state === DataElementState.APPROVED;
     const isOmitted = dataElement.state === DataElementState.OMITTED;
 
-    let isDiscrepancy = false;
-    if (pcmsDetection && primaryDetection?.type !== DetectionType.PCMS) {
-      const pcmsDetectionValue = getPrettifiedDataElementValue(
-        pcmsDetection?.value,
-        dataElementConfig!.unit,
-        dataElementConfig!.type
-      );
-      isDiscrepancy = pcmsDetectionValue !== value;
-    }
+    const isDiscrepancy = getDataElementHasDiscrepancy(
+      dataElement,
+      dataElementConfig?.unit,
+      dataElementConfig?.type
+    );
 
     const hasValue = getIsDataElementValueAvailable(value);
 

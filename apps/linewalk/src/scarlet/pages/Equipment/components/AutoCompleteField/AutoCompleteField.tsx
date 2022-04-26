@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
-import { Field, useFormikContext } from 'formik';
+import { Field, FieldProps, useFormikContext } from 'formik';
 import { AutoComplete } from '@cognite/cogs.js';
 
 import { DataSourceFormValues, DataSourceFieldProps } from '..';
+import { StringField } from '../StringField';
 
 export const AutoCompleteField = ({
   id,
@@ -10,6 +11,7 @@ export const AutoCompleteField = ({
   name,
   unit,
   values,
+  disabled,
 }: DataSourceFieldProps) => {
   const {
     setFieldValue,
@@ -50,20 +52,30 @@ export const AutoCompleteField = ({
       name={name}
       validate={(value: string) => (!value?.trim() ? 'Empty' : undefined)}
     >
-      {() => (
-        <AutoComplete
-          id={id}
-          options={options}
-          title={label}
-          variant="titleAsPlaceholder"
-          fullWidth
-          style={{ height: '48px', borderWidth: '1px' }}
-          postfix={unit}
-          onChange={onChange}
-          onCreateOption={onCreateOption}
-          value={selectedOption}
-        />
-      )}
+      {({ field }: FieldProps<string>) =>
+        disabled ? (
+          <StringField
+            id={id}
+            name={name}
+            label={label}
+            printedValue={field.value}
+            disabled
+          />
+        ) : (
+          <AutoComplete
+            id={id}
+            options={options}
+            title={label}
+            variant="titleAsPlaceholder"
+            fullWidth
+            style={{ height: '48px', borderWidth: '1px' }}
+            postfix={unit}
+            onChange={onChange}
+            onCreateOption={onCreateOption}
+            value={selectedOption}
+          />
+        )
+      }
     </Field>
   );
 };

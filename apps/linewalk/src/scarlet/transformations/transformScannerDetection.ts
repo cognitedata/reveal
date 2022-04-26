@@ -20,7 +20,7 @@ export const transformScannerDetection = (data: any): Detection => ({
   ...(data.value_annotation && {
     boundingBox: getBoundingBox(data.value_annotation.bounding_box),
     pageNumber: data.value_annotation.page,
-    value: data.value_annotation.text,
+    value: data.value.trim(),
   }),
 });
 

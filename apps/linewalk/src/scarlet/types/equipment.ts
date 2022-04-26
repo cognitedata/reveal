@@ -8,3 +8,9 @@ export type EquipmentData = {
   created: number;
   modified?: number;
 };
+
+export enum EquipmentStatus {
+  NOT_STARTED = 'Not started',
+  ONGOING = 'Ongoing',
+  COMPLETED = 'Completed',
+}

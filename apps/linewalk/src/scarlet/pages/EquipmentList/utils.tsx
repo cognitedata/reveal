@@ -2,14 +2,14 @@ import { Skeleton } from '@cognite/cogs.js';
 import { CellProps } from 'react-table';
 import { EquipmentListItem } from 'scarlet/types';
 
-import { ColumnAccessor } from './types';
+import { ColumnAccessor, EquipmentStatus } from './types';
 import * as Styled from './style';
 
 export const getCellValue = ({
   value,
   cell,
 }: CellProps<EquipmentListItem, string>) => {
-  if (value !== undefined) return value;
+  if (value !== undefined) return <Styled.Value>{value}</Styled.Value>;
   switch (cell.column.id) {
     case ColumnAccessor.TYPE:
       return '—';
@@ -20,12 +20,13 @@ export const getCellValue = ({
 
 export const getCellStatus = ({
   value,
-}: CellProps<EquipmentListItem, string>) => {
-  return (
-    <Styled.StatusLabel approved={value === 'Approved'}>
-      {value}
-    </Styled.StatusLabel>
-  );
+  row,
+}: CellProps<EquipmentListItem, EquipmentStatus>) => {
+  const message =
+    value === EquipmentStatus.ONGOING
+      ? `${value} - ${row.original.progress}%`
+      : value;
+  return <Styled.StatusLabel status={value}>{message}</Styled.StatusLabel>;
 };
 
 export const getCellSkeleton = ({
@@ -51,3 +52,9 @@ export const getCellSkeleton = ({
     />
   );
 };
+
+export const transformSearchValue = (value?: string) =>
+  value
+    ?.trim()
+    .toLocaleLowerCase()
+    .replaceAll(/[\s.,-]/g, '');

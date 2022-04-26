@@ -81,11 +81,7 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
     case DataPanelActionType.SET_NEW_MANUAL_DETECTION: {
       if (!state.visibleDataElement) return state;
 
-      const detection = getDetection(
-        state.visibleDataElement,
-        action.detectionType,
-        action.annotation
-      );
+      const detection = getDetection(action.detectionType, action.annotation);
 
       return {
         ...state,

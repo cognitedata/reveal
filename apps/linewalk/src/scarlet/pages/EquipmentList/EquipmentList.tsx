@@ -2,60 +2,51 @@ import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { Table, Input, Graphic } from '@cognite/cogs.js';
 import debounce from 'lodash/debounce';
 import { useHistory, useParams, generatePath } from 'react-router-dom';
-import { getEquipmentList, getUnitState } from 'scarlet/api';
+import { getEquipmentList } from 'scarlet/api';
 import { useApi } from 'scarlet/hooks';
 import { RoutePath } from 'scarlet/routes';
 
-import { BreadcrumbBar } from './components';
+import { TopBar } from './components';
 import * as Styled from './style';
-import { ColumnAccessor, EquipmentListItem, UnitData } from './types';
-import { getCellSkeleton, getCellStatus, getCellValue } from './utils';
+import { ColumnAccessor, EquipmentListItem } from './types';
+import {
+  getCellSkeleton,
+  getCellStatus,
+  getCellValue,
+  transformSearchValue,
+} from './utils';
 
 export const EquipmentList = () => {
   const { unitName } = useParams<{ unitName: string }>();
   const history = useHistory();
   const TableContainerRef = useRef<HTMLDivElement>(null);
 
-  const {
-    data: listData,
-    loading: listLoading,
-    error: listError,
-  } = useApi<EquipmentListItem[]>(getEquipmentList, { unitName });
-
-  const {
-    data: unitState,
-    loading: unitStateLoading,
-    error: unitStateError,
-  } = useApi<UnitData>(getUnitState, { unitName });
+  const { data, loading, error } = useApi<EquipmentListItem[]>(
+    getEquipmentList,
+    { unitName }
+  );
 
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState({ search: '' });
 
   const setFilterWithDebounce = useCallback(debounce(setFilter, 300), []);
+
   useEffect(
-    () => setFilterWithDebounce({ search: search.trim().toLocaleLowerCase() }),
+    () =>
+      setFilterWithDebounce({
+        search: transformSearchValue(search)!,
+      }),
     [search]
   );
-
-  const loading = listLoading || unitStateLoading;
-  const error = listError || unitStateError;
-  const data = useMemo(() => {
-    if (loading) return undefined;
-    return listData?.map((item) => ({
-      ...item,
-      status: unitState?.equipments[item.id]?.isApproved
-        ? 'Approved'
-        : 'Pending review',
-    }));
-  }, [listData, unitState]);
 
   const equipmentList = useMemo(() => {
     if (!search) return data;
     return data?.filter(
       (item) =>
-        item.id.toLocaleLowerCase().includes(filter.search) ||
-        item.type?.toLocaleLowerCase().includes(filter.search) ||
-        item.status?.toLocaleLowerCase().includes(filter.search)
+        transformSearchValue(item.id)?.includes(filter.search) ||
+        transformSearchValue(item.type)?.includes(filter.search) ||
+        transformSearchValue(item.status)?.includes(filter.search) ||
+        transformSearchValue(item.modifiedBy)?.includes(filter.search)
     );
   }, [data, filter]);
 
@@ -82,7 +73,7 @@ export const EquipmentList = () => {
 
   return (
     <Styled.Container>
-      <BreadcrumbBar unitName={unitName} />
+      <TopBar unitName={unitName} />
 
       {error ? (
         <Styled.ContentWrapper empty>
@@ -127,12 +118,19 @@ export const EquipmentList = () => {
                   {
                     Header: 'Equipment type',
                     accessor: ColumnAccessor.TYPE,
+                    maxWidth: 250,
                     Cell: loading ? getCellSkeleton : getCellValue,
                   },
                   {
                     Header: 'Status',
                     accessor: ColumnAccessor.STATUS,
+                    maxWidth: 250,
                     Cell: loading ? getCellSkeleton : getCellStatus,
+                  },
+                  {
+                    Header: 'Last modified by',
+                    accessor: ColumnAccessor.MODIFIED_BY,
+                    Cell: loading ? getCellSkeleton : getCellValue,
                   },
                 ]}
                 onRowClick={

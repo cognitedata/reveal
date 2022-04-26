@@ -15,6 +15,7 @@ import {
   EquipmentComponent,
   EquipmentComponentType,
   DetectionState,
+  ScannerDetection,
 } from 'scarlet/types';
 import { isSameScannerDetection } from 'scarlet/utils';
 
@@ -27,7 +28,7 @@ export const transformEquipmentData = ({
   type,
 }: {
   config?: EquipmentConfig;
-  scannerDetections?: Detection[];
+  scannerDetections?: ScannerDetection[];
   equipmentState?: EquipmentData;
   pcms?: PCMSData;
   documents?: EquipmentDocument[];
@@ -69,7 +70,7 @@ export const transformEquipmentData = ({
 const getEquipmentElements = (
   type: EquipmentType,
   config: EquipmentConfig,
-  scannerDetections: Detection[] = [],
+  scannerDetections: ScannerDetection[] = [],
   savedElements: DataElement[] = [],
   pcms: { [key: string]: string } = {}
 ): DataElement[] => {
@@ -114,7 +115,7 @@ const getU1Document = (documents: EquipmentDocument[]) =>
   documents?.find((document) => document.type === DocumentType.U1);
 
 const transformScannerDetections = (
-  detections: Detection[],
+  detections: ScannerDetection[],
   documentExternalId?: string
 ) =>
   documentExternalId
@@ -126,7 +127,7 @@ const transformScannerDetections = (
 
 const mergeDetections = (
   detections: Detection[] = [],
-  scannerDetections: Detection[] = [],
+  scannerDetections: ScannerDetection[] = [],
   pcmsDetection?: Detection
 ) => {
   const lockedDetections = detections.filter(
@@ -135,9 +136,12 @@ const mergeDetections = (
       d.type === DetectionType.PCMS ||
       d.isModified
   );
-  const newScannerDetections = scannerDetections.filter((sd) =>
-    lockedDetections.every((d) => !isSameScannerDetection(sd, d))
-  );
+  const newScannerDetections = scannerDetections
+    .filter((sd) =>
+      lockedDetections.every((d) => !isSameScannerDetection(sd, d))
+    )
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .map(({ key, ...detection }) => detection);
 
   const mergedDetections = [...lockedDetections, ...newScannerDetections];
 
@@ -160,7 +164,7 @@ const mergeDetections = (
 const getInitializedEquipmentComponents = (
   equipmentType: EquipmentType,
   config: EquipmentConfig,
-  scannerDetections: Detection[] = [],
+  scannerDetections: ScannerDetection[] = [],
   pcmsComponents?: Metadata[]
 ): EquipmentComponent[] => {
   // if pcms components are not available
@@ -183,7 +187,7 @@ const getInitializedEquipmentComponents = (
 const getInitializedEquipmentComponentsByScannerDetections = (
   equipmentType: EquipmentType,
   config: EquipmentConfig,
-  scannerDetections: Detection[] = []
+  scannerDetections: ScannerDetection[] = []
 ): EquipmentComponent[] => {
   const components: EquipmentComponent[] = [];
 
@@ -206,7 +210,7 @@ const getInitializedEquipmentComponentsByScannerDetections = (
       [key: string]: {
         id: string;
         type: EquipmentComponentType;
-        componentDetections: Detection[];
+        componentDetections: ScannerDetection[];
       };
     }
   );
@@ -227,7 +231,7 @@ const getInitializedEquipmentComponentsByScannerDetections = (
 const getInitializedEquipmentComponentsByPCMS = (
   equipmentType: EquipmentType,
   config: EquipmentConfig,
-  scannerDetections: Detection[] = [],
+  scannerDetections: ScannerDetection[] = [],
   pcmsComponents: Metadata[] = []
 ): EquipmentComponent[] => {
   const components: EquipmentComponent[] = [];
@@ -272,7 +276,7 @@ const pushComponent = ({
   componentType: EquipmentComponentType;
   config: EquipmentConfig;
   pcmsComponent?: Metadata;
-  componentDetections: Detection[];
+  componentDetections: ScannerDetection[];
 }) => {
   const configComponentTypes = Object.values(
     config.equipmentTypes[equipmentType].componentTypes
@@ -290,14 +294,15 @@ const pushComponent = ({
     (dataElementKey): DataElement | undefined => {
       const detections = componentDetections
         .filter((detection) => detection.key === dataElementKey)
-        .map(
-          (detection) =>
-            ({
-              ...detection,
-              id: uuid(),
-              connectedId: detection.id,
-            } as Detection)
-        );
+        .map((detection) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { key, ...rest } = detection;
+          return {
+            ...rest,
+            id: uuid(),
+            connectedId: detection.id,
+          } as Detection;
+        });
 
       const pcmsDetection = getPCMSDetection(dataElementKey, pcmsComponent);
       if (pcmsDetection) {
@@ -331,7 +336,6 @@ const getPCMSDetection = (key: string, pcms?: { [key: string]: string }) => {
 
   return {
     id: uuid(),
-    key,
     type: DetectionType.PCMS,
     value: pcms[key],
     status: DetectionState.APPROVED,

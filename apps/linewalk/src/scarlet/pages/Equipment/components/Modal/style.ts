@@ -25,7 +25,7 @@ export const Modal = styled(CogsModal)<{ isPrompt: boolean }>`
           ${Footer} {
             justify-content: flex-end;
 
-            > .cogs-btn {
+            .cogs-btn {
               min-width: 150px;
             }
           }
@@ -41,4 +41,10 @@ export const Title = styled.div`
 export const Description = styled.div`
   margin: 8px 0 24px;
   color: var(--cogs-greyscale-grey7);
+`;
+
+export const SecondaryButtonContainer = styled.div`
+  flex-grow: 1;
+  display: flex;
+  justify-content: flex-end;
 `;

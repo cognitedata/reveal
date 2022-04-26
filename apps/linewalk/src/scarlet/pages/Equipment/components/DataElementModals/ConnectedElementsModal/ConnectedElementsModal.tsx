@@ -1,46 +1,24 @@
-import { useEffect, useMemo, useState } from 'react';
-import { CellProps } from 'react-table';
-import { Checkbox, Icon, Table, toast } from '@cognite/cogs.js';
+import { useEffect, useState } from 'react';
+import { toast } from '@cognite/cogs.js';
 import {
   useAppContext,
-  useComponentName,
   useConnectedDataElements,
-  useDataElementConfig,
   useDataPanelDispatch,
 } from 'scarlet/hooks';
 import {
   AppActionType,
   DataElement,
-  DataElementOrigin,
   DataPanelActionType,
   Detection,
 } from 'scarlet/types';
-import {
-  getDataElementConfig,
-  getDataElementTypeLabel,
-  getDetectionSourceLabel,
-  getPrettifiedDataElementValue,
-} from 'scarlet/utils';
 
-import { Modal } from '../..';
-
-import * as Styled from './style';
+import { ConnectedElements, Modal } from '../..';
 
 type ConnectedElementsModalProps = {
   visible: boolean;
   dataElement: DataElement;
   detection: Detection;
   onClose: () => void;
-};
-
-type ConnectedTableRow = {
-  id: string;
-  label: string;
-  type: DataElementOrigin;
-  componentName: string;
-  isCurrentDataElement: boolean;
-  sortBy: number;
-  isSelectDisabled: boolean;
 };
 
 export const ConnectedElementsModal = ({
@@ -53,12 +31,9 @@ export const ConnectedElementsModal = ({
   const dataPanelDispatch = useDataPanelDispatch();
   const [loading, setLoading] = useState(false);
   const connectedElements = useConnectedDataElements(dataElement.key);
-  const geComponentName = useComponentName();
   const [selectedDataElementIds, setSelectedDataElementIds] = useState<
     string[]
   >([]);
-  const dataElementConfig = useDataElementConfig(dataElement);
-
   useEffect(() => {
     if (!visible) return;
 
@@ -77,6 +52,10 @@ export const ConnectedElementsModal = ({
 
         dataPanelDispatch({
           type: DataPanelActionType.CLOSE_DATA_ELEMENT,
+        });
+
+        dataPanelDispatch({
+          type: DataPanelActionType.UNCHECK_ALL_DATA_ELEMENTS,
         });
       }
     }
@@ -97,50 +76,9 @@ export const ConnectedElementsModal = ({
     });
   };
 
-  const defaultSelectedIds = useMemo(
-    () =>
-      connectedElements.reduce(
-        (result, item) => ({ ...result, [item.id]: true }),
-        {}
-      ),
-    [connectedElements]
-  );
-
-  const tableDataSource = useMemo(
-    () =>
-      connectedElements
-        .map((item) => {
-          const itemElementConfig = getDataElementConfig(
-            appState.equipmentConfig.data,
-            item
-          );
-          const component = item.componentId
-            ? appState.equipment.data?.components.find(
-                (component) => component.id === item.componentId
-              )
-            : undefined;
-
-          const isCurrentDataElement = item.id === dataElement.id;
-
-          return {
-            id: item.id,
-            label: itemElementConfig?.label,
-            type: getDataElementTypeLabel(item),
-            componentName: component ? geComponentName(component) : '-',
-            isCurrentDataElement,
-            sortBy: isCurrentDataElement ? 0 : 1,
-            isSelectDisabled: isCurrentDataElement,
-          } as ConnectedTableRow;
-        })
-        .sort((a, b) => a.sortBy - b.sortBy),
-    [connectedElements]
-  );
-
-  const onSelectionChange = (values: ConnectedTableRow[]) => {
+  const onChange = (values: string[]) => {
     setSelectedDataElementIds((currentSelected) =>
-      values.length !== selectedDataElementIds.length
-        ? values.map(({ id }) => id)
-        : currentSelected
+      values.length !== selectedDataElementIds.length ? values : currentSelected
     );
   };
   return (
@@ -152,114 +90,12 @@ export const ConnectedElementsModal = ({
       onCancel={!loading ? onClose : () => null}
       loading={loading}
     >
-      <Styled.Header className="cogs-body-1">
-        Set
-        <Styled.Detection>
-          <Styled.DetectionSource className="cogs-micro strong">
-            {getDetectionSourceLabel(detection)}
-          </Styled.DetectionSource>
-          <Styled.DetectionValue className="cogs-body-2 strong">
-            {getPrettifiedDataElementValue(
-              detection.value!,
-              dataElementConfig?.unit,
-              dataElementConfig?.type
-            )}
-          </Styled.DetectionValue>
-        </Styled.Detection>
-        as primary value for the following data fields
-      </Styled.Header>
-      <Styled.TableContainer>
-        <Table<ConnectedTableRow>
-          dataSource={tableDataSource}
-          columns={
-            [
-              {
-                Header: SelectHeader,
-                accessor: 'sortBy',
-                Cell: SelectCell,
-                disableSortBy: true,
-              },
-              {
-                Header: 'Field name',
-                accessor: 'label',
-              },
-              {
-                Header: 'Field level',
-                accessor: 'type',
-              },
-              {
-                Header: 'Component ID',
-                accessor: 'componentName',
-              },
-              {
-                Header: '',
-                accessor: 'isCurrentDataElement',
-                Cell: CurrenField,
-              },
-            ] as any
-          }
-          pagination={false}
-          rowKey={(row) => row.id}
-          onRow={({ isSelectDisabled }, _index, row: any) => ({
-            onClick: () => {
-              if (!isSelectDisabled) {
-                row?.toggleRowSelected();
-              }
-            },
-          })}
-          defaultSelectedIds={defaultSelectedIds}
-          onSelectionChange={onSelectionChange}
-        />
-      </Styled.TableContainer>
+      <ConnectedElements
+        dataElement={dataElement}
+        detection={detection}
+        connectedElements={connectedElements}
+        onChange={onChange}
+      />
     </Modal>
   );
 };
-
-const CurrenField = ({ value }: CellProps<ConnectedTableRow, boolean>) =>
-  value ? (
-    <Styled.CurrentField>
-      <Icon type="Pin" />
-      Current field
-    </Styled.CurrentField>
-  ) : null;
-
-const SelectHeader = ({ isAllRowsSelected, rows }: any) => {
-  const isSomeSelected =
-    !isAllRowsSelected && rows.some((row: any) => row.isSelected);
-
-  return (
-    <Styled.SelectHeader>
-      <Checkbox
-        name="select-all-connected-fields"
-        checked={isSomeSelected || isAllRowsSelected}
-        indeterminate={isSomeSelected}
-        onClick={(e) => e.stopPropagation()}
-        onChange={() => {
-          if (isSomeSelected) {
-            rows.forEach((row: any) => row.toggleRowSelected(true));
-          } else if (isAllRowsSelected) {
-            rows.forEach((row: any) => {
-              if (!row.original.isSelectDisabled) {
-                row.toggleRowSelected(false);
-              }
-            });
-          }
-        }}
-      />
-    </Styled.SelectHeader>
-  );
-};
-
-const SelectCell = ({ row }: any) => (
-  <Checkbox
-    name={`connected-field-${row.id}`}
-    checked={row.isSelected}
-    disabled={row.original.isSelectDisabled}
-    onClick={(e) => e.stopPropagation()}
-    onChange={() => {
-      if (!row.original.isSelectDisabled) {
-        row.toggleRowSelected();
-      }
-    }}
-  />
-);

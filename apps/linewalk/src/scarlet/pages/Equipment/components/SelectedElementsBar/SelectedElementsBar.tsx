@@ -2,6 +2,7 @@ import { Button } from '@cognite/cogs.js';
 import { useMemo } from 'react';
 import {
   useAppDispatch,
+  useAppState,
   useCheckedDataElementsState,
   useDataPanelDispatch,
 } from 'scarlet/hooks';
@@ -12,6 +13,8 @@ import {
   DataPanelActionType,
 } from 'scarlet/types';
 import {
+  getDataElementConfig,
+  getDataElementHasDiscrepancy,
   getDataElementPrimaryDetection,
   getIsDataElementValueAvailable,
 } from 'scarlet/utils';
@@ -25,6 +28,7 @@ type SelectedElementsBarProps = {
 export const SelectedElementsBar = ({
   dataElements = [],
 }: SelectedElementsBarProps) => {
+  const { equipmentConfig } = useAppState();
   const appDispatch = useAppDispatch();
   const dataPanelDispatch = useDataPanelDispatch();
   const currentCheckedState = useCheckedDataElementsState();
@@ -36,6 +40,16 @@ export const SelectedElementsBar = ({
         return !getIsDataElementValueAvailable(value);
       }),
     [dataElements]
+  );
+
+  const isElementWithDiscrepancy = useMemo(
+    () =>
+      dataElements.some((dataElement) => {
+        const { unit, type } =
+          getDataElementConfig(equipmentConfig.data, dataElement) ?? {};
+        return getDataElementHasDiscrepancy(dataElement, unit, type);
+      }),
+    [equipmentConfig.data, dataElements]
   );
 
   const onUnselect = () => {
@@ -75,7 +89,8 @@ export const SelectedElementsBar = ({
       </Styled.Label>
       <Styled.Actions>
         {currentCheckedState === DataElementState.PENDING &&
-          !isElementWithoutValue && (
+          !isElementWithoutValue &&
+          !isElementWithDiscrepancy && (
             <Button icon="Checkmark" iconPlacement="left" onClick={onApprove}>
               {dataElements?.length === 1 ? 'Approve value' : 'Approve values'}
             </Button>

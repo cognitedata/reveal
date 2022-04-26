@@ -1,39 +1,60 @@
 import { CogniteClient } from '@cognite/sdk';
-import { DataSetId, EquipmentListItem } from 'scarlet/types';
+import { DataSetId, EquipmentListItem, EquipmentStatus } from 'scarlet/types';
 import { getEquipmentType, getEquipmentTypeLabel } from 'scarlet/utils';
+import config from 'utils/config';
 
 import { getUnitAsset } from '.';
+
+const isDevelopment = config.env === 'development';
 
 export const getEquipmentList = async (
   client: CogniteClient,
   { unitName }: { unitName: string }
 ): Promise<EquipmentListItem[]> => {
   let equipments: EquipmentListItem[] = [];
-  const equipmentIds = await getEquipmentIds(client, { unitName });
+  const equipmentStates = await getEquipmentStates(client, { unitName });
   const pcmsEquipmentIds = await getPCMSEquipmentIds(client, { unitName });
 
-  equipments = [...equipmentIds, ...pcmsEquipmentIds]
+  equipments = pcmsEquipmentIds
     .filter((item) => /^\d+-/.test(item))
     .filter((item, i, self) => self.indexOf(item) === i)
-    .map((id) => ({
-      id,
-      type: getEquipmentTypeLabel(getEquipmentType(id)),
-    }))
+    .map((id) => {
+      const equipmentState = equipmentStates[id];
+      const completed = equipmentState?.completed === 'Y';
+      const progress = equipmentState?.progress ?? 0;
+      let status = EquipmentStatus.NOT_STARTED;
+      if (completed) status = EquipmentStatus.COMPLETED;
+      else if (progress > 0) status = EquipmentStatus.ONGOING;
+
+      return {
+        id,
+        type: getEquipmentTypeLabel(getEquipmentType(id)),
+        status,
+        progress,
+        modifiedBy: equipmentState?.modifiedBy,
+      };
+    })
     .sort((a, b) => (a.id < b.id ? -1 : 1));
 
   return equipments;
 };
 
-const getEquipmentIds = async (
+const getEquipmentStates = async (
   client: CogniteClient,
   { unitName }: { unitName: string }
 ) => {
-  let equipmentIds: string[] = [];
+  const equipmentStates: Record<string, any> = {};
+
+  const fileParts = [unitName];
+  if (isDevelopment) {
+    fileParts.unshift('dev');
+  }
+  const externalIdPrefix = `${fileParts.join('_')}_`;
 
   let list = await client.files.list({
     filter: {
-      externalIdPrefix: `${unitName}_`,
-      dataSetIds: [{ id: DataSetId.P66_ScarletScannerResults }],
+      externalIdPrefix,
+      dataSetIds: [{ id: DataSetId.P66_ScarletViewState }],
     },
     limit: 1000,
   });
@@ -42,13 +63,15 @@ const getEquipmentIds = async (
 
   do {
     if (next) list = await next(); // eslint-disable-line no-await-in-loop
-    equipmentIds = equipmentIds.concat(
-      list.items.map((item) => item.name.split('_')[1])
-    );
+    list.items.forEach((item) => {
+      if (item.metadata?.equipmentName) {
+        equipmentStates[item.metadata.equipmentName] = item.metadata;
+      }
+    });
     next = list.next;
   } while (list.next);
 
-  return equipmentIds.filter((id, i, list) => list.indexOf(id) === i).sort();
+  return equipmentStates;
 };
 
 const getPCMSEquipmentIds = async (

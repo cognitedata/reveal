@@ -16,7 +16,6 @@ export enum DetectionState {
 export type Detection = Partial<Annotation> & {
   id: string;
   connectedId?: string;
-  key: string;
   type: DetectionType;
   value?: string;
   externalSource?: string;
@@ -33,3 +32,5 @@ export enum BooleanDetectionValue {
   YES = 'Y',
   NO = 'N',
 }
+
+export type ScannerDetection = Detection & { key: string };

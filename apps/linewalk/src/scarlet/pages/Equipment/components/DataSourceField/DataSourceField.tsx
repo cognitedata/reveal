@@ -8,7 +8,7 @@ import { getPrettifiedBooleanDataElementValue } from 'scarlet/utils';
 import { AutoCompleteField, DateField, RadioGroupField, StringField } from '..';
 
 export interface DataSourceFieldProps {
-  name: string;
+  name: 'value' | 'externalSource';
   label: string;
   id?: string;
   type?: DataElementType;
@@ -62,7 +62,7 @@ const renderEnumType = (props: DataSourceFieldProps) => {
 };
 
 const renderStringType = (props: DataSourceFieldProps) => {
-  if (props.values?.length && !props.disabled) {
+  if (props.values?.length) {
     return <AutoCompleteField {...props} />;
   }
   return <StringField {...props} />;

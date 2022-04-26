@@ -1,11 +1,11 @@
 import { CogniteClient } from '@cognite/sdk';
 import { transformScannerDetection } from 'scarlet/transformations';
-import { DataSetId, Detection } from 'scarlet/types';
+import { DataSetId, ScannerDetection } from 'scarlet/types';
 
 export const getScannerDetections = async (
   client: CogniteClient,
   { unitName, equipmentName }: { unitName: string; equipmentName: string }
-): Promise<Detection[]> => {
+): Promise<ScannerDetection[]> => {
   const file = await client.files
     .list({
       filter: {
@@ -35,5 +35,5 @@ export const getScannerDetections = async (
 
   return data
     .map(transformScannerDetection)
-    .filter((item: Detection) => item.value);
+    .filter((item: ScannerDetection) => item.value);
 };

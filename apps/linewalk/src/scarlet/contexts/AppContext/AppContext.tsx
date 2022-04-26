@@ -234,7 +234,7 @@ function reducer(state: AppState, action: AppAction) {
     }
     case AppActionType.SET_CONNECTED_DATA_ELEMENTS: {
       const equipmentToSave = setConnectedDataElements(
-        state.equipment.data!,
+        state.saveState.data || state.equipment.data!,
         action.dataElements,
         action.currentDataElementId,
         action.detection,

@@ -1,7 +1,8 @@
 import { Button, toast } from '@cognite/cogs.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppState } from 'scarlet/hooks';
-import { AppActionType, DataElementState } from 'scarlet/types';
+import { AppActionType } from 'scarlet/types';
+import { getEquipmentProgress } from 'scarlet/utils';
 
 import * as Styled from './style';
 
@@ -57,29 +58,10 @@ export const EquipmentStateBar = () => {
     }
   }, [saveState.loading]);
 
-  const progress = useMemo(() => {
-    if (!equipment.data) return undefined;
-    let total = 0;
-    let completed = 0;
-    total += equipment.data.equipmentElements.length;
-    completed += equipment.data.equipmentElements.filter(
-      (dataElement) => dataElement.state !== DataElementState.PENDING
-    ).length;
-
-    if (!equipment.data.components.length) {
-      total *= 2;
-    } else {
-      equipment.data.components.forEach((component) => {
-        total += component.componentElements.length;
-        completed += component.componentElements.filter(
-          (dataElement) => dataElement.state !== DataElementState.PENDING
-        ).length;
-      });
-    }
-
-    const result = total ? (completed / total) * 100 : 0;
-    return result < 50 ? Math.ceil(result) : Math.floor(result);
-  }, [equipment.data]);
+  const progress = useMemo(
+    () => getEquipmentProgress(equipment.data),
+    [equipment.data]
+  );
 
   if (progress === undefined) return null;
 

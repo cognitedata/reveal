@@ -1,6 +1,6 @@
 import { Dispatch, useEffect } from 'react';
 import { useAuthContext } from '@cognite/react-container';
-import { getUnitState, saveEquipment, saveUnitState } from 'scarlet/api';
+import { saveEquipment } from 'scarlet/api';
 import {
   APIState,
   AppAction,
@@ -15,7 +15,7 @@ export const useSaveEquipment = (
   saveApiState: APIState<EquipmentData>,
   dispatch: Dispatch<AppAction>
 ) => {
-  const { client } = useAuthContext();
+  const { authState, client } = useAuthContext();
 
   useEffect(() => {
     const equipment = saveApiState.data;
@@ -26,20 +26,13 @@ export const useSaveEquipment = (
 
     if (equipment.isApproved !== isApproved || isApproved) {
       equipment.isApproved = isApproved;
-      getUnitState(client!, { unitName }).then((data) => {
-        const unitState = data || { equipments: {} };
-        if (!unitState.equipments[equipmentName]) {
-          unitState.equipments[equipmentName] = {};
-        }
-        unitState.equipments[equipmentName].isApproved = isApproved;
-        saveUnitState(client!, { unitName, unitState });
-      });
     }
 
     saveEquipment(client!, {
       unitName,
       equipmentName,
       equipment,
+      authState: authState!,
     })
       .then(() => {
         dispatch({

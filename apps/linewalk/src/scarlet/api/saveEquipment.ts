@@ -1,5 +1,7 @@
+import { AuthenticatedUser } from '@cognite/auth-utils';
 import { CogniteClient } from '@cognite/sdk';
 import { DataSetId, EquipmentData } from 'scarlet/types';
+import { getEquipmentProgress } from 'scarlet/utils';
 import config from 'utils/config';
 
 const isDevelopment = config.env === 'development';
@@ -10,7 +12,13 @@ export const saveEquipment = async (
     unitName,
     equipmentName,
     equipment,
-  }: { unitName: string; equipmentName: string; equipment: EquipmentData }
+    authState,
+  }: {
+    unitName: string;
+    equipmentName: string;
+    equipment: EquipmentData;
+    authState: AuthenticatedUser;
+  }
 ): Promise<boolean> => {
   const fileParts = [unitName, equipmentName, 'state'];
 
@@ -24,12 +32,15 @@ export const saveEquipment = async (
     await client.files.upload(
       {
         externalId: id,
-        name: id,
+        name: `${id}.json`,
         mimeType: 'application/json',
         dataSetId: DataSetId.P66_ScarletViewState,
         metadata: {
           unitName,
           equipmentName,
+          completed: equipment.isApproved ? 'Y' : 'N',
+          progress: getEquipmentProgress(equipment)?.toString() || '',
+          modifiedBy: authState.email ?? '',
         },
         source: 'p66-scarlet-view',
       },

@@ -3277,6 +3277,14 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
+"@cognite/sdk-playground-v5@npm:@cognite/sdk-playground@5.0.6":
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-playground/-/sdk-playground-5.0.6.tgz#586109221fe122b3565b1c93e9ad848847be268b"
+  integrity sha512-8q8ETHFh4OC6IECPSzIVQzjAflexGIM4O2mC9nAKfUKdy86V9HhtZv+8NeiVxL4KwNQLCjBGucPFAmI8GPlEeQ==
+  dependencies:
+    "@cognite/sdk" "^7.2.2"
+    "@cognite/sdk-core" "^4.1.1"
+
 "@cognite/sdk-playground@2.6.2":
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-playground/-/sdk-playground-2.6.2.tgz#e8ea4fe9dfc18a2976fad462094a56f6ca822cce"
@@ -3317,6 +3325,15 @@
   integrity sha512-7XBT5AzJ+DBTRa/LxIsihHfFWchWQo9kIGChX2Wj1XagANpsel0CD3Ip7LaFT1aamyqizAH/bnyH/1blQFzI8A==
   dependencies:
     "@cognite/sdk-core" "^4.1.1"
+    lodash "^4.17.11"
+
+"@cognite/sdk@^7.2.2":
+  version "7.2.2"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.2.2.tgz#60d0d6a4b66c18c9f32fe3900d45811aa34ae1a2"
+  integrity sha512-5fXpqJJs4NIw8I7R0cuSkbI9tXe6TihVNkoLp129i5gj9C++b/doEdLeoXg5ZjL57j6bYmfBwTVFBTfh84guVA==
+  dependencies:
+    "@cognite/sdk-core" "^4.1.1"
+    geojson "^0.5.0"
     lodash "^4.17.11"
 
 "@cognite/seismic-sdk-js@0.2.1":
@@ -16353,6 +16370,11 @@ geojson-vt@^3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/geojson-vt/-/geojson-vt-3.2.1.tgz#f8adb614d2c1d3f6ee7c4265cad4bbf3ad60c8b7"
   integrity sha512-EvGQQi/zPrDA6zr6BnJD/YhwAkBP8nnJ9emh3EnHQKVMfg/MRVtPbMYdgVy/IaEmn4UfagD2a6fafPDL5hbtwg==
+
+geojson@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/geojson/-/geojson-0.5.0.tgz#3cd6c96399be65b56ee55596116fe9191ce701c0"
+  integrity sha1-PNbJY5m+ZbVu5VWWEW/pGRznAcA=
 
 get-caller-file@^2.0.1, get-caller-file@^2.0.5:
   version "2.0.5"

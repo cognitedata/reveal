@@ -26,12 +26,10 @@ export const toggleDataElement = (
 };
 
 export const getDetection = (
-  visibleDataElement: DataElement,
   detectionType: DetectionType,
   annotation?: Annotation
 ): Detection => ({
   id: uuid(),
-  key: visibleDataElement!.key,
   type: detectionType,
   ...annotation,
 });

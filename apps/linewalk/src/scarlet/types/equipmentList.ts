@@ -1,5 +1,9 @@
+import { EquipmentStatus } from './equipment';
+
 export type EquipmentListItem = {
   id: string;
   type?: string;
-  status?: string;
+  status?: EquipmentStatus;
+  progress?: number;
+  modifiedBy?: string;
 };
