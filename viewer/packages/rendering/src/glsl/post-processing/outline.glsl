@@ -1,22 +1,24 @@
 #pragma glslify: import('../math/floatBitsSubset.glsl')
 
+const int texelWidth = 2;
+
 int computeFloatEncodedOutlineIndex(float bitEncodedFloat){
   return int(floatBitsSubset(floor((bitEncodedFloat * 255.0) + 0.5), 5, 8));
 }
 
-ivec4 computeNeighborOutlineIndices(sampler2D tDiffuse, vec2 uv){
-  const int texelWidth = 2;
-  int outlineN = computeFloatEncodedOutlineIndex(textureOffset(tDiffuse, uv, ivec2(0, texelWidth)).a);
-  int outlineS = computeFloatEncodedOutlineIndex(textureOffset(tDiffuse, uv, ivec2(texelWidth, 0)).a);
-  int outlineE = computeFloatEncodedOutlineIndex(textureOffset(tDiffuse, uv, ivec2(0, -texelWidth)).a);
-  int outlineW = computeFloatEncodedOutlineIndex(textureOffset(tDiffuse, uv, ivec2(-texelWidth, 0)).a);
+ivec4 computeNeighborOutlineIndices(sampler2D tDiffuse, ivec2 fragCoord){
+  int outlineN = computeFloatEncodedOutlineIndex(texelFetchOffset(tDiffuse, fragCoord, 0, ivec2(0, texelWidth)).a);
+  int outlineS = computeFloatEncodedOutlineIndex(texelFetchOffset(tDiffuse, fragCoord, 0, ivec2(texelWidth, 0)).a);
+  int outlineE = computeFloatEncodedOutlineIndex(texelFetchOffset(tDiffuse, fragCoord, 0, ivec2(0, -texelWidth)).a);
+  int outlineW = computeFloatEncodedOutlineIndex(texelFetchOffset(tDiffuse, fragCoord, 0, ivec2(-texelWidth, 0)).a);
 
   return ivec4(outlineN, outlineS, outlineE, outlineW);
 }
 
-int outlineIndex(sampler2D tDiffuse, vec2 uv) {
-  int outlineIndex = computeFloatEncodedOutlineIndex(texture(tDiffuse, uv).a);
-  ivec4 neighbours = computeNeighborOutlineIndices(tDiffuse, uv);
+int fetchOutlineIndex(sampler2D tDiffuse) {
+  ivec2 fragCoord = ivec2(gl_FragCoord.xy);
+  int outlineIndex = computeFloatEncodedOutlineIndex(texelFetch(tDiffuse, fragCoord, 0).a);
+  ivec4 neighbours = computeNeighborOutlineIndices(tDiffuse, fragCoord);
   bvec4 isEqualToPixel = equal(neighbours, ivec4(outlineIndex));
   bvec4 isMiss = equal(neighbours, ivec4(0));
 

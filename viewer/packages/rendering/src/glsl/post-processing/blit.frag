@@ -49,12 +49,11 @@ void main() {
 #else
   fragColor = diffuse;
   #if defined(EDGES)
-    ivec2 textureSize = textureSize(tDiffuse, 0);
-    float edgeStrength = edgeDetectionFilter(tDiffuse, vUv, vec2(float(textureSize.x), float(textureSize.y)));
+    float edgeStrength = edgeDetectionFilter(tDiffuse);
     fragColor.rgb *= mix(pow(1.0 - edgeStrength, 2.0), 1.0, isnan(edgeStrength));
   #endif
   #if defined(OUTLINE)
-    int outline = outlineIndex(tDiffuse, vUv);
+    int outline = fetchOutlineIndex(tDiffuse);
     fragColor.rgb = outline > 0 ? texelFetch(tOutlineColors, ivec2(outline, 0), 0).rgb : fragColor.rgb;
   #endif
 #endif
