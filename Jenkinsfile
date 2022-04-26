@@ -144,6 +144,21 @@ def handleError = { err ->
   throw err
 }
 
+void registerNightly() {
+  def triggers = []
+  // add nightly run cron on master only
+  if (env.BRANCH_NAME == "master") {
+      triggers += [parameterizedCron("0 10 * * * %NIGHTLY=true")]
+      properties([
+        disableConcurrentBuilds(),
+        parameters([
+          booleanParam(name: "NIGHTLY", defaultValue: false, description: "Nightly long running tasks"),
+        ]),
+        pipelineTriggers(triggers)
+      ])
+  }  
+}
+
 pods {
   final boolean isPullRequest = versioning.getEnv().isPullRequest
   final boolean isProduction = versioning.getEnv().isProduction
@@ -152,6 +167,8 @@ pods {
     "\$(git merge-base refs/remotes/origin/master HEAD)" :
     // for staging/production compare current and previous commit hashes
     "HEAD^1"
+
+  registerNightly()
 
   app.safeRun(
     logErrors: !isPullRequest,
@@ -177,6 +194,16 @@ pods {
             sh("git fetch --no-tags --force --progress -- https://github.com/cognitedata/applications.git +refs/heads/master:refs/remotes/origin/master")
         }
       }
+    }
+
+    // run the long running things on master if the nightly flag enabled
+    if (env.BRANCH_NAME == "master" && params.NIGHTLY) {
+      stageWithNotify('Nightly tests', CONTEXTS.bazelTests) {
+        container('bazel') {
+          sh(label: 'bazel test discover', script: "bazel --bazelrc=.ci.bazelrc test //apps/discover/... --test_tag_filters=nightly")
+        }
+      }
+      return
     }
 
     stageWithNotify("Bazel build", CONTEXTS.bazelBuild) {
@@ -223,10 +250,10 @@ pods {
     stageWithNotify('Bazel test', CONTEXTS.bazelTests) {
       container('bazel') {
         sh(label: 'lint bazel files', script: "bazel --bazelrc=.ci.bazelrc run //:buildifier_check")
-        if (isProduction || (!isPullRequest && env.BRANCH_NAME.startsWith("release-"))) {
-          sh(label: 'bazel test //...', script: "bazel --bazelrc=.ci.bazelrc test //... --test_tag_filters=-ignore_test_in_cd")
+        if (isProduction || (params.versioning_strategy == 'multi-branch' && env.BRANCH_NAME.startsWith("release-"))) {
+          sh(label: 'bazel test //...', script: "bazel --bazelrc=.ci.bazelrc test //... --test_tag_filters=-ignore_test_in_cd,-nightly")
         } else {
-          sh(label: 'bazel test //...', script: "bazel --bazelrc=.ci.bazelrc test //...")
+          sh(label: 'bazel test //...', script: "bazel --bazelrc=.ci.bazelrc test //... --test_tag_filters=-nightly")
         }
 
         // Bazel stores test outputs as zip files

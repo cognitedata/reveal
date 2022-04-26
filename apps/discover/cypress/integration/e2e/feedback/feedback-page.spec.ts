@@ -1,4 +1,4 @@
-import { EXPAND_SEARCH_RESULTS_TEXT } from '../../../src/pages/authorized/search/map/constants';
+import { EXPAND_SEARCH_RESULTS_TEXT } from '../../../../src/pages/authorized/search/map/constants';
 
 describe('Feedback', () => {
   describe('Normal User', () => {

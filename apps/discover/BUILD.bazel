@@ -578,7 +578,37 @@ cypress_web_test(
         "--config " +
         "retries=2," +
         "supportFile=./apps/discover/cypress/support," +
-        "integrationFolder=./apps/discover/cypress/integration," +
+        "integrationFolder=./apps/discover/cypress/integration/e2e," +
+        "pluginsFile=./apps/discover/cypress/plugin.js," +
+        "videosFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/video," +
+        "screenshotsFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/screenshots",
+    ],
+)
+
+cypress_web_test(
+    name = "cypress_nightly_test",
+    timeout = "eternal",
+    srcs = [
+        ":cypress_files",
+    ],
+    # A cypress config file is required
+    config_file = "cypress.json",
+    # Any runtime dependencies you need to boot your server or run your tests
+    data = DEPENDENCIES + [
+        ":build_sed",
+    ],
+    env = {
+        "PORT": "11120",
+    },
+    tags = [
+        "ignore_test_in_cd",
+        "nightly",
+    ],
+    templated_args = [
+        "--config " +
+        "retries=2," +
+        "supportFile=./apps/discover/cypress/support," +
+        "integrationFolder=./apps/discover/cypress/integration/nightly," +
         "pluginsFile=./apps/discover/cypress/plugin.js," +
         "videosFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/video," +
         "screenshotsFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/screenshots",

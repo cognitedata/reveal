@@ -130,6 +130,12 @@ Before executing in please comment out the "REACT_APP_MIXPANEL_TOKEN" in the BUI
 yarn cypress:ci
 ```
 
+To execute nightly buids as in the CI, we use:
+
+```shell
+yarn cypress:nightly
+```
+
 ### How to ingest data into the test tenants
 
 Checkout: https://github.com/cognitedata/fusion-demo-data

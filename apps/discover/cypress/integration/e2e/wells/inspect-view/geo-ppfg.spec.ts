@@ -1,7 +1,7 @@
 import {
   DATA_AVAILABILITY,
   MEASUREMENTS,
-} from '../../../../src/modules/wellSearch/constantsSidebarFilters';
+} from '../../../../../src/modules/wellSearch/constantsSidebarFilters';
 
 describe('Wells: Geomechanics & Ppfg', () => {
   before(() => {

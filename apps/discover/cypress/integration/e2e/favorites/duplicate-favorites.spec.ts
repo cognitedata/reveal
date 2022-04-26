@@ -1,4 +1,4 @@
-import { PROJECT } from '../../app.constants';
+import { PROJECT } from '../../../app.constants';
 
 describe('Duplicate Favorites', () => {
   const favoriteToDuplicate = `favorite to duplicate, ${Date.now()}`;

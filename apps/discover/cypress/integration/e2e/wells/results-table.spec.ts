@@ -1,5 +1,4 @@
-import { DATA_SOURCE } from '../../../src/modules/wellSearch/constantsSidebarFilters';
-import { STATIC_LOCATION_WELL } from '../../support/constants';
+import { STATIC_LOCATION_WELL } from '../../../support/constants';
 
 describe('Wells: Search table', () => {
   before(() => {
