@@ -3,10 +3,10 @@ import '__mocks/mockCogniteSDK';
 
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
+import { getMockDocumentSearch } from 'services/documentSearch/__mocks/getMockDocumentSearch';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import { testWrapper as wrapper } from '__test-utils/renderer';
-import { getMockDocumentSearch } from 'modules/documentSearch/__mocks/getMockDocumentSearch';
 
 import { useDocumentResultCount } from '../useDocumentResultCount';
 

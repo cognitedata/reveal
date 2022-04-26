@@ -5,7 +5,7 @@ import { setupServer } from 'msw/node';
 import { getMockFavoritesListGet } from 'services/favorites/__mocks/getMockFavoritesListGet';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
-import { getMockWellsList } from 'services/well/__mocks/getMockWellsList';
+import { getMockWellsList } from 'services/wellSearch/__mocks/getMockWellsList';
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';

@@ -1,4 +1,4 @@
-import 'services/well/__mocks/setupWellsMockSDK';
+import 'services/wellSearch/__mocks/setupWellsMockSDK';
 import flatten from 'lodash/flatten';
 import { setupServer } from 'msw/node';
 import {

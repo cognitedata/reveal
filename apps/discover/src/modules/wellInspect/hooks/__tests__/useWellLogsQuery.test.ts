@@ -1,4 +1,4 @@
-import 'services/well/__mocks/setupWellsMockSDK';
+import 'services/wellSearch/__mocks/setupWellsMockSDK';
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
 import { getMockDepthMeasurements } from 'services/well/measurements/__mocks/mockMeasurements';

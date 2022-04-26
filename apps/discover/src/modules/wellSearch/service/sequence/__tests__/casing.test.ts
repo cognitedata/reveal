@@ -1,4 +1,4 @@
-import 'services/well/__mocks/setupWellsMockSDK';
+import 'services/wellSearch/__mocks/setupWellsMockSDK';
 import { setupServer } from 'msw/node';
 
 import { getMockCasingsList } from '__mocks/mockCasings';

@@ -1,7 +1,10 @@
-import { renderHook } from '@testing-library/react-hooks';
+import '__mocks/mockContainerAuth'; // should be first
+import { setupServer } from 'msw/node';
+import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
+import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
+import { getMockWellLegendGet } from 'services/well/__mocks/getMockWellLegendGet';
 
-import { METER } from 'constants/units';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { renderHookWithStore } from '__test-utils/renderer';
 
 import {
   useNptTableCommonHeaders,
@@ -10,116 +13,89 @@ import {
   useSelectedWellboreNptEventsTableColumns,
 } from '../useHelpers';
 
-jest.mock('hooks/useUserPreferences', () => ({
-  useUserPreferencesMeasurement: jest.fn(),
-}));
+const mockServer = setupServer(
+  getMockConfigGet(),
+  getMockUserMe(),
+  getMockWellLegendGet()
+);
 
-// Mocked for now, needs to be replaced with network mock
-jest.mock('services/well/legend/npt/useNptLegendQuery', () => ({
-  useNptLegendCodeQuery: () => {
-    return {
-      data: [],
+describe('useHelpers', () => {
+  beforeAll(() => mockServer.listen());
+  afterAll(() => mockServer.close());
+  describe('useNptTableCommonHeaders hook', () => {
+    const getHookResult = async () => {
+      const { result, waitForNextUpdate } = renderHookWithStore(() =>
+        useNptTableCommonHeaders()
+      );
+      waitForNextUpdate();
+      return result.current;
     };
-  },
-}));
 
-describe('useNptTableCommonHeaders hook', () => {
-  beforeEach(() => {
-    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(() => ({
-      data: METER,
-    }));
+    it('should return well result head object with preferred unit', async () => {
+      const ndsColumnHeaders = await getHookResult();
+      expect(ndsColumnHeaders).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ Header: 'NPT MD (ft)' }),
+        ])
+      );
+    });
   });
 
-  const getHookResult = async () => {
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useNptTableCommonHeaders()
-    );
-    waitForNextUpdate();
-    return result.current;
-  };
+  describe('useNptWellboresTableColumns hook', () => {
+    const getHookResult = async () => {
+      const { result, waitForNextUpdate } = renderHookWithStore(() =>
+        useNptWellboresTableColumns()
+      );
+      waitForNextUpdate();
+      return result.current;
+    };
 
-  it('should return well result head object with preferred unit', async () => {
-    const ndsColumnHeaders = await getHookResult();
-    expect(ndsColumnHeaders).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ Header: 'NPT MD (m)' }),
-      ])
-    );
-  });
-});
-
-describe('useNptWellboresTableColumns hook', () => {
-  beforeEach(() => {
-    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(() => ({
-      data: METER,
-    }));
+    it('should return well result head object with preferred unit', async () => {
+      const ndsColumnHeaders = await getHookResult();
+      expect(ndsColumnHeaders).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ Header: 'NPT MD (ft)' }),
+        ])
+      );
+    });
   });
 
-  const getHookResult = async () => {
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useNptWellboresTableColumns()
-    );
-    waitForNextUpdate();
-    return result.current;
-  };
+  describe('useNptEventsTableColumns hook', () => {
+    const getHookResult = async () => {
+      const { result, waitForNextUpdate } = renderHookWithStore(() =>
+        useNptEventsTableColumns()
+      );
+      waitForNextUpdate();
+      return result.current;
+    };
 
-  it('should return well result head object with preferred unit', async () => {
-    const ndsColumnHeaders = await getHookResult();
-    expect(ndsColumnHeaders).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ Header: 'NPT MD (m)' }),
-      ])
-    );
-  });
-});
-
-describe('useNptEventsTableColumns hook', () => {
-  beforeEach(() => {
-    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(() => ({
-      data: METER,
-    }));
+    it('should return well result head object with preferred unit', async () => {
+      const ndsColumnHeaders = await getHookResult();
+      expect(ndsColumnHeaders).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ Header: 'NPT MD (ft)' }),
+        ])
+      );
+    });
   });
 
-  const getHookResult = async () => {
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useNptEventsTableColumns()
-    );
-    waitForNextUpdate();
-    return result.current;
-  };
+  describe('useSelectedWellboreNptEventsTableColumns hook', () => {
+    const getHookResult = async () => {
+      const { result, waitForNextUpdate } = renderHookWithStore(() =>
+        useSelectedWellboreNptEventsTableColumns()
+      );
+      waitForNextUpdate();
+      return result.current;
+    };
 
-  it('should return well result head object with preferred unit', async () => {
-    const ndsColumnHeaders = await getHookResult();
-    expect(ndsColumnHeaders).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ Header: 'NPT MD (m)' }),
-      ])
-    );
-  });
-});
-
-describe('useSelectedWellboreNptEventsTableColumns hook', () => {
-  beforeEach(() => {
-    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(() => ({
-      data: METER,
-    }));
-  });
-
-  const getHookResult = async () => {
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useSelectedWellboreNptEventsTableColumns()
-    );
-    waitForNextUpdate();
-    return result.current;
-  };
-
-  it('should return npt codes and description columns as expected', async () => {
-    const ndsColumnHeaders = await getHookResult();
-    expect(ndsColumnHeaders).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ Header: 'NPT Code' }),
-        expect.objectContaining({ Header: 'Description' }),
-      ])
-    );
+    it('should return npt codes and description columns as expected', async () => {
+      const ndsColumnHeaders = await getHookResult();
+      expect(ndsColumnHeaders).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ Header: 'NPT Code' }),
+          expect.objectContaining({ Header: 'Description' }),
+        ])
+      );
+    });
   });
 });

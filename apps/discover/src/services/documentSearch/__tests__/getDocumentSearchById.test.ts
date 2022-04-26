@@ -1,9 +1,9 @@
 import '__mocks/mockCogniteSDK'; // never miss this import
 
 import { setupServer } from 'msw/node';
+import { getMockDocumentSearch } from 'services/documentSearch/__mocks/getMockDocumentSearch';
 
 import { getDocumentFixture } from '__test-utils/fixtures/documents/getDocumentFixture';
-import { getMockDocumentSearch } from 'modules/documentSearch/__mocks/getMockDocumentSearch';
 
 import { getDocumentSearchById } from '../getDocumentSearchById';
 

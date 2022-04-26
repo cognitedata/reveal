@@ -2,6 +2,8 @@ import '__mocks/mockContainerAuth';
 import '__mocks/mockCogniteSDK';
 import { saveAs } from 'file-saver';
 import { setupServer } from 'msw/node';
+import { getMockFilesByIds } from 'services/documentSearch/__mocks/getMockFilesByIds';
+import { getMockFilesDownloadLink } from 'services/documentSearch/__mocks/getMockFilesDownloadLink';
 
 import { InternalId, ExternalId, FileLink } from '@cognite/sdk';
 
@@ -10,8 +12,6 @@ import {
   getMockFileLinkWithInternalId,
   getMockFileLinkWithExternalId,
 } from '__test-utils/fixtures/document';
-import { getMockFilesByIds } from 'modules/documentSearch/__mocks/getMockFilesByIds';
-import { getMockFilesDownloadLink } from 'modules/documentSearch/__mocks/getMockFilesDownloadLink';
 import {
   getMockFilesDownloadLinkEndpoint,
   MOCK_DOWNLOAD_URL,

@@ -4,6 +4,7 @@ import { QueryClient } from 'react-query';
 import { screen } from '@testing-library/react'; // should be first
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
+import { getMockLabels } from 'services/labels/__mocks/getMockLabels';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
 
@@ -14,7 +15,6 @@ import {
 } from '__test-utils/fixtures/sidebar';
 import { QueryClientWrapper } from '__test-utils/queryClientWrapper';
 import { testRendererForHooks } from '__test-utils/renderer';
-import { getMockLabels } from 'modules/documentSearch/__mocks/getMockLabels';
 
 import { GEO_FILTER_ENABLED } from '../../constants';
 import { useSearchHistoryAppliedFilters } from '../useSearchHistoryAppliedFilters';

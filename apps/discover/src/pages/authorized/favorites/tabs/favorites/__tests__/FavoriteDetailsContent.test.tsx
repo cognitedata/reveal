@@ -1,13 +1,15 @@
 import '__mocks/mockCogniteSDK';
-import 'services/well/__mocks/setupWellsMockSDK';
+import 'services/wellSearch/__mocks/setupWellsMockSDK';
 
 import { screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { setupServer } from 'msw/node';
+import { getMockAssetsByIds } from 'services/assets/__mocks/getMockAssets';
 import { getMockDocumentCategoriesGet } from 'services/documents/__mocks/getMockDocumentCategoriesGet';
+import { getMockDocumentSearch } from 'services/documentSearch/__mocks/getMockDocumentSearch';
 import { getMockFavoriteSummary } from 'services/favorites/__fixtures/favorite';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
-import { getMockWellsById } from 'services/well/__mocks/getMockWellsById';
+import { getMockWellsById } from 'services/wellSearch/__mocks/getMockWellsById';
 
 import { getMockWell } from '__test-utils/fixtures/well/well';
 import { testRenderer } from '__test-utils/renderer';
@@ -15,7 +17,6 @@ import { getMockedStore } from '__test-utils/store.utils';
 import { defaultTestUser } from '__test-utils/testdata.utils';
 import { LOADING_TEXT } from 'components/emptyState/constants';
 import navigation from 'constants/navigation';
-import { getMockDocumentSearch } from 'modules/documentSearch/__mocks/getMockDocumentSearch';
 import {
   FAVORITE_SET_NO_DOCUMENTS,
   FAVORITE_SET_NO_WELLS,
@@ -30,6 +31,7 @@ const mockServer = setupServer(
   getMockConfigGet(),
   getMockDocumentCategoriesGet(),
   getMockUserMe(),
+  getMockAssetsByIds(),
   getMockDocumentSearch()
 );
 

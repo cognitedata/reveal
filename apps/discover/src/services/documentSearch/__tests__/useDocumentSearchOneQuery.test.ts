@@ -2,9 +2,9 @@ import '__mocks/mockCogniteSDK'; // never miss this import
 
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
+import { getMockDocumentSearch } from 'services/documentSearch/__mocks/getMockDocumentSearch';
 
 import { testWrapper } from '__test-utils/renderer';
-import { getMockDocumentSearch } from 'modules/documentSearch/__mocks/getMockDocumentSearch';
 
 import { useDocumentSearchOneQuery } from '../useDocumentSearchOneQuery';
 

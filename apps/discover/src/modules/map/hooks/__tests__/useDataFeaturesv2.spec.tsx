@@ -1,20 +1,20 @@
 import '__mocks/mockCogniteSDK';
-import 'services/well/__mocks/setupWellsMockSDK';
+import 'services/wellSearch/__mocks/setupWellsMockSDK';
 
 import { screen, waitFor } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
+import { getMockDocumentSearch } from 'services/documentSearch/__mocks/getMockDocumentSearch';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
-import { getMockWellsById } from 'services/well/__mocks/getMockWellsById';
-import { getMockWellsSearch } from 'services/well/__mocks/getMockWellsSearch';
-import { getMockWellsGeometry } from 'services/well/__mocks/mockWellsGeometry';
+import { getMockWellsGeometry } from 'services/well/__mocks/getMockWellsGeometry';
+import { getMockWellsById } from 'services/wellSearch/__mocks/getMockWellsById';
+import { getMockWellsSearch } from 'services/wellSearch/__mocks/getMockWellsSearch';
 
 import { getMockPointGeo } from '__test-utils/fixtures/geometry';
 import { getMockWell } from '__test-utils/fixtures/well/well';
 import { getWrapper, testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { getMockDocumentSearch } from 'modules/documentSearch/__mocks/getMockDocumentSearch';
 import {
   ExternalWellsFeature,
   useDataFeatures,

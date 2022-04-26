@@ -1,11 +1,10 @@
 import '__mocks/mockCogniteSDK';
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
+import { getMockAssetsByIds } from 'services/assets/__mocks/getMockAssets';
 
 import { testWrapper } from '__test-utils/renderer';
 import { useDocumentAssetNames } from 'hooks/useDocumentAssetNames';
-
-import { getMockAssetsByIds } from '../../modules/assets/__mocks/getMockAssets';
 
 const mockServer = setupServer(getMockAssetsByIds());
 describe('useDocumentAssetNames hook', () => {

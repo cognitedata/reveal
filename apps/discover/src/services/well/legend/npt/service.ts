@@ -10,7 +10,7 @@ import { SIDECAR } from 'constants/app';
 
 import { WellLegendNptType } from '../types';
 
-const getNptLegendEndpoint = (
+export const getNptLegendEndpoint = (
   project: string,
   type: WellLegendNptType,
   id?: string

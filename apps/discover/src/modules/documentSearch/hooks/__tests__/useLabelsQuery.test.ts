@@ -1,10 +1,10 @@
 import '__mocks/setupMockCogniteSDK';
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
+import { getMockLabels } from 'services/labels/__mocks/getMockLabels';
 
 import { testWrapper as wrapper } from '__test-utils/renderer';
 
-import { getMockLabels } from '../../__mocks/getMockLabels';
 import { useLabelsQuery } from '../useLabelsQuery';
 
 const mockServer = setupServer(getMockLabels());

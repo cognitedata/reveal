@@ -3,6 +3,7 @@ import '__mocks/mockCogniteSDK';
 import { waitFor, screen, fireEvent, within } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { getMockDocumentCategoriesGet } from 'services/documents/__mocks/getMockDocumentCategoriesGet';
+import { getMockDocumentSearch } from 'services/documentSearch/__mocks/getMockDocumentSearch';
 import { getMockFavoritesListGet } from 'services/favorites/__mocks/getMockFavoritesListGet';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockSavedSearchCurrentGet } from 'services/savedSearches/__mocks/getMockSavedSearchCurrentGet';
@@ -11,7 +12,6 @@ import { getMockAPIResponse } from '__test-utils/fixtures/document';
 import { getDocumentFixture } from '__test-utils/fixtures/documents/getDocumentFixture';
 import { testRenderer } from '__test-utils/renderer';
 import { MockStore, getMockedStore } from '__test-utils/store.utils';
-import { getMockDocumentSearch } from 'modules/documentSearch/__mocks/getMockDocumentSearch';
 import { SELECT_DOCUMENT_IDS } from 'modules/documentSearch/types.actions';
 import { ZOOM_TO_COORDS } from 'modules/map/types.actions';
 

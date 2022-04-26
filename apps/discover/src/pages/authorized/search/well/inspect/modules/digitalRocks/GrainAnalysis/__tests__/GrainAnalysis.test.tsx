@@ -9,9 +9,8 @@ import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { LOADING_TEXT } from 'components/emptyState/constants';
 
-import { EMPTY_CHART_DATA_MESSAGE } from '../../../constants';
-
-import GrainAnalysis, { Props } from './GrainAnalysis';
+import { EMPTY_CHART_DATA_MESSAGE } from '../../../../constants';
+import GrainAnalysis, { Props } from '../GrainAnalysis';
 
 const digitalRockSamples: Asset[] = [
   {
