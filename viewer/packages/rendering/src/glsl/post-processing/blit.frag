@@ -6,6 +6,10 @@ uniform sampler2D tDiffuse;
 uniform sampler2D tDepth;
 #endif
 
+#if defined(SSAO_BLUR) 
+uniform sampler2D tSsao;
+#endif
+
 #if defined(ALPHA)
 uniform float alpha;
 #endif
@@ -18,7 +22,7 @@ in vec2 vUv;
 
 out vec4 fragColor;
 
-#if defined(GAUSSIAN_BLUR) 
+#if defined(SSAO_BLUR) 
 #pragma glslify: import('./gaussian-blur.glsl')
 #endif
 
@@ -42,12 +46,13 @@ void main() {
     discard;
   }
 
-#if defined(GAUSSIAN_BLUR) 
-  fragColor = gaussianBlur(tDiffuse, vUv);
-#elif defined(FXAA)
+#if defined(FXAA)
   fragColor = fxaa(tDiffuse);
 #else
   fragColor = diffuse;
+  #if defined(SSAO_BLUR)
+    fragColor *= gaussianBlur(tSsao, vUv);
+  #endif
   #if defined(EDGES)
     float edgeStrength = edgeDetectionFilter(tDiffuse);
     fragColor.rgb *= mix(pow(1.0 - edgeStrength, 2.0), 1.0, isnan(edgeStrength));

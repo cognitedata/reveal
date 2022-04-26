@@ -35,7 +35,7 @@ export function getBlitMaterial(
   edges = false,
   outlines = false
 ): THREE.RawShaderMaterial {
-  const { texture, effect, depthTexture, blendOptions, overrideAlpha } = options;
+  const { texture, effect, depthTexture, blendOptions, overrideAlpha, ssaoTexture } = options;
 
   const uniforms = {
     tDiffuse: { value: texture }
@@ -53,6 +53,11 @@ export function getBlitMaterial(
   if (outlines) {
     defines['OUTLINE'] = true;
     uniforms['tOutlineColors'] = { value: createOutlineColorTexture() };
+  }
+
+  if (ssaoTexture) {
+    defines['SSAO_BLUR'] = true;
+    uniforms['tSsao'] = { value: ssaoTexture };
   }
 
   const initializedBlendOptions = initializeBlendingOptions(blendOptions); // Uses blendDst value if null

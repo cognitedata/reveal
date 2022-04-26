@@ -21,6 +21,7 @@ export type BlitOptions = {
   texture: THREE.Texture;
   effect?: BlitEffect;
   depthTexture?: THREE.DepthTexture;
+  ssaoTexture?: THREE.Texture;
   blendOptions?: BlendOptions;
   overrideAlpha?: number;
 };

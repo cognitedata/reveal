@@ -9,19 +9,19 @@ import { RenderPass } from '../RenderPass';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { createRenderTarget } from '../utilities/renderUtilities';
 import { IdentifiedModel } from '../utilities/types';
-import { DefaultRenderPipelinePasses, RenderTargetData } from './types';
+import { RenderTargetData } from './types';
 import { BlitEffect } from '../render-passes/types';
 import { AntiAliasingMode, RenderOptions } from '../rendering/types';
 import { CadGeometryRenderPipeline } from './CadGeometryRenderPipeline';
 import { PostProcessingPipeline } from './PostProcessingPipeline';
 import { BlitPass } from '../render-passes/BlitPass';
+import { SSAOPass } from '../render-passes/SSAOPass';
 
 export class DefaultRenderPipeline implements RenderPipelineProvider {
   private readonly _cadScene: THREE.Scene;
   private readonly _renderTargetData: RenderTargetData;
   private readonly _cadModels: IdentifiedModel[];
   private readonly _customObjects: THREE.Object3D[];
-  private readonly _defaultRenderPipelinePasses: DefaultRenderPipelinePasses;
   private _renderOptions: RenderOptions;
   private _outputRenderTarget: { target: THREE.WebGLRenderTarget; autoUpdateSize: boolean } = {
     target: null,
@@ -35,10 +35,11 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
   private readonly _cadGeometryRenderPipeline: CadGeometryRenderPipeline;
   private readonly _postProcessingRenderPipeline: PostProcessingPipeline;
   private readonly _blitToScreenPass: BlitPass;
+  private readonly _ssaoPass: SSAOPass;
 
   set renderOptions(renderOptions: RenderOptions) {
-    // const { ssaoRenderParameters } = renderOptions;
-    // this._defaultRenderPipelinePasses.back.ssao.ssaoParameters = ssaoRenderParameters;
+    const { ssaoRenderParameters } = renderOptions;
+    this._ssaoPass.ssaoParameters = ssaoRenderParameters;
 
     if (renderOptions.antiAliasing !== this._renderOptions.antiAliasing) {
       const blitEffect =
@@ -71,16 +72,26 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
 
     this._renderTargetData = {
       currentRenderSize: new THREE.Vector2(1, 1),
+      ssaoRenderTarget: createRenderTarget(),
       postProcessingRenderTarget: createRenderTarget()
     };
     this._cadModels = cadModels;
     this._customObjects = customObjects;
 
     this._cadGeometryRenderPipeline = new CadGeometryRenderPipeline(scene, cadModels, materialManager, renderOptions);
+    this._ssaoPass = new SSAOPass(
+      this._cadGeometryRenderPipeline.cadGeometryRenderTargets.back.depthTexture,
+      this._renderOptions.ssaoRenderParameters
+    );
+
     this._postProcessingRenderPipeline = new PostProcessingPipeline(
-      this._cadGeometryRenderPipeline.cadGeometryRenderTargets,
+      {
+        ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
+        ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
+      },
       customObjects
     );
+
     this._blitToScreenPass = new BlitPass({
       texture: this._renderTargetData.postProcessingRenderTarget.texture
     });
@@ -90,6 +101,9 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     this.pipelineSetup(renderer);
 
     yield* this._cadGeometryRenderPipeline.pipeline(renderer);
+
+    renderer.setRenderTarget(this._renderTargetData.ssaoRenderTarget);
+    yield this._ssaoPass;
 
     renderer.setRenderTarget(this._renderTargetData.postProcessingRenderTarget);
     renderer.setClearColor(this._currentRendererState.clearColor);
@@ -143,6 +157,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     }
 
     this._renderTargetData.postProcessingRenderTarget.setSize(width, height);
+    this._renderTargetData.ssaoRenderTarget.setSize(width, height);
     this._renderTargetData.currentRenderSize.set(width, height);
 
     if (this._outputRenderTarget.target !== null && this._outputRenderTarget.autoUpdateSize) {

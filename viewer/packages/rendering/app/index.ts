@@ -29,7 +29,7 @@ async function init() {
   const guiData = {
     drawCalls: 0,
     gpuFrameTime: 1.1,
-    steps: 5,
+    steps: 6,
     canvasColor: '#50728c',
     clearColor: '#444',
     clearAlpha: 1

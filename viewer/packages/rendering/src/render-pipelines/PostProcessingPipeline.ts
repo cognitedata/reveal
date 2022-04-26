@@ -6,14 +6,14 @@ import * as THREE from 'three';
 import { transparentBlendOptions } from '../render-passes/types';
 import { RenderPass } from '../RenderPass';
 import { createFullScreenTriangleMesh, getBlitMaterial } from '../utilities/renderUtilities';
-import { CadGeometryRenderTargets } from './types';
+import { PostProcessingPipelineInput } from './types';
 
 export class PostProcessingPipeline implements RenderPass {
   private readonly _postProcessingScene: THREE.Scene;
   private readonly _customObjects: THREE.Object3D[];
   private _takenCustomObjects: { object: THREE.Object3D; parent: THREE.Object3D }[];
 
-  constructor(cadGeometryRenderTargets: CadGeometryRenderTargets, customObjects: THREE.Object3D[]) {
+  constructor(cadGeometryRenderTargets: PostProcessingPipelineInput, customObjects: THREE.Object3D[]) {
     this._postProcessingScene = new THREE.Scene();
     this._customObjects = customObjects;
     this._takenCustomObjects = [];
@@ -26,6 +26,7 @@ export class PostProcessingPipeline implements RenderPass {
       },
       false
     );
+
     const inFrontEarlyZBlitObject = createFullScreenTriangleMesh(inFrontEarlyZBlitMaterial);
     inFrontEarlyZBlitObject.renderOrder = 0;
     inFrontEarlyZBlitObject.frustumCulled = false;
@@ -34,6 +35,7 @@ export class PostProcessingPipeline implements RenderPass {
       {
         texture: cadGeometryRenderTargets.back.texture,
         depthTexture: cadGeometryRenderTargets.back.depthTexture,
+        ssaoTexture: cadGeometryRenderTargets.ssaoTexture,
         overrideAlpha: 1.0
       },
       true,
@@ -49,6 +51,7 @@ export class PostProcessingPipeline implements RenderPass {
       depthTexture: cadGeometryRenderTargets.ghost.depthTexture,
       blendOptions: transparentBlendOptions
     });
+
     const ghostBlitObject = createFullScreenTriangleMesh(ghostBlitMaterial);
     ghostBlitObject.renderOrder = 3;
     ghostBlitObject.frustumCulled = false;
