@@ -1,21 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
-import {
-  KeyboardShortCutExpandChildSelectable,
-  KeyboardShortCutSelectable,
-} from 'src/modules/Review/Containers/KeyboardShortKeys/KeyboardShortCutSelectable';
 import { KeypointVertex } from 'src/utils/AnnotationUtils';
-import { SidePanelRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/SidePanelRow';
 import {
   RowData,
   VirtualizedTreeRowProps,
-} from 'src/modules/Review/Components/AnnotationReviewDetailComponents/types';
-import { KeypointRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/KeypointRow';
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
+import {
+  KeyboardShortCutExpandChildSelectable,
+  KeyboardShortCutSelectable,
+  KeypointRow,
+  SidePanelRow,
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/components/common';
 
 /**
  * Annotation detail Component for a row of a single keypoint
- * @param keypoint
- * @param remaining
+ * @param additionalData
  * @constructor
  */
 

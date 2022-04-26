@@ -49,6 +49,7 @@
     "react-datepicker": "^3.8.0",
     "react-dom": "^16.14.0",
     "react-hotkeys": "^2.0.0",
+    "react-hotkeys-hook": "^3.4.4",
     "react-mapbox-gl": "4.8.6",
     "react-player": "^2.9.0",
     "react-query": "^3.13.10",

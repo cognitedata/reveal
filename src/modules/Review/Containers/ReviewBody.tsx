@@ -23,7 +23,7 @@ import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUt
 import { useUserInformation } from 'src/hooks/useUserInformation';
 import { FileProcessStatusWrapper } from 'src/modules/Review/Containers/FileProcessStatusWrapper';
 import { PreviewProcessingOverlay } from 'src/modules/Review/Components/PreviewProcessingOverlay/PreviewProcessingOverlay';
-import { ImageContextualization } from './ImageContextualization';
+import { AnnotationDetailPanel } from './AnnotationDetailPanel/AnnotationDetailPanel';
 
 const queryClient = new QueryClient();
 
@@ -158,7 +158,7 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
                   style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
                   disabled={isVideo(file)}
                 >
-                  <ImageContextualization
+                  <AnnotationDetailPanel
                     file={file}
                     reference={contextElement}
                   />

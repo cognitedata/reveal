@@ -1,10 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
-import { KeyboardShortCutSelectable } from 'src/modules/Review/Containers/KeyboardShortKeys/KeyboardShortCutSelectable';
-import { AnnotationTableRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/AnnotationTableRow';
-import { ExpandIconComponent } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/ExpandIconComponent';
-import { SidePanelRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/SidePanelRow';
-import { ReviewAnnotation, RowData, VirtualizedTreeRowProps } from './types';
+import {
+  ReviewAnnotation,
+  RowData,
+  VirtualizedTreeRowProps,
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
+import {
+  AnnotationTableRow,
+  ExpandIconComponent,
+  KeyboardShortCutSelectable,
+  SidePanelRow,
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/components/common';
 
 /**
  * Special Annotation Detail row component for Keypoint annotations

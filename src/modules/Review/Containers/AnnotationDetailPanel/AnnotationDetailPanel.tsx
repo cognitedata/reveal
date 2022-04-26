@@ -1,10 +1,4 @@
-import React, {
-  ReactText,
-  Reducer,
-  useCallback,
-  useMemo,
-  useReducer,
-} from 'react';
+import React, { ReactText, useCallback, useMemo } from 'react';
 import { Detail, Icon, PrimaryTooltip } from '@cognite/cogs.js';
 import {
   deleteCollectionById,
@@ -28,76 +22,28 @@ import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { useDispatch, useSelector } from 'react-redux';
 import { FileInfo } from '@cognite/sdk';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { generateNodeTree } from 'src/modules/Review/Containers/AnnotationDetailPanel/utils/generateNodeTree';
+import { Categories } from 'src/modules/Review/types';
+import {
+  AnnotationReviewRow,
+  KeypointAnnotationReviewRow,
+  TagAnnotationReviewRow,
+  VirtualizedAnnotationsReview,
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/components';
+import { AnnotationDetailPanelHotKeys } from 'src/modules/Review/Containers/AnnotationDetailPanel/AnnotationDetailPanelHotKeys';
+import { ReviewAnnotation } from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
 import { convertKeyPointCollectionToAnnotationStub } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ConversionUtils';
-import { TagAnnotationReviewRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/TagAnnotationReviewRow';
-import { KeypointAnnotationReviewRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/KeypointAnnotationReviewRow';
-import { AnnotationReviewRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/AnnotationReviewRow';
-import { VirtualizedAnnotationsReview } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/VirtualizedAnnotationsReview';
-import { ReviewAnnotation } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/types';
-import { generateNodeTree } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/generateNodeTree';
+import { selectCategory } from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
 
-export enum Categories {
-  Asset = 'Asset tags',
-  Object = 'Objects',
-  Text = 'Text',
-  KeypointCollections = 'Keypoint collections',
-  Classifications = 'Classification tags',
-}
-
-type CategoryState = {
-  [index in Categories]?: { selected: boolean };
-};
-
-const categories: CategoryState = {};
-
-const initialCategoriesState: {
-  categories: CategoryState;
-} = { categories };
-
-const reducer: Reducer<
-  {
-    categories: CategoryState;
-  },
-  { type: string; payload: { category: Categories; selected: boolean } }
-> = (state, action) => {
-  switch (action.type) {
-    case 'selectCategory': {
-      if (
-        action?.payload?.category &&
-        action?.payload?.selected !== undefined
-      ) {
-        return {
-          ...state,
-          categories: {
-            ...state.categories,
-            [action.payload.category]: {
-              selected: action.payload.selected,
-            },
-          },
-        };
-      }
-      return {
-        ...state,
-      };
-    }
-    default: {
-      return {
-        ...state,
-      };
-    }
-  }
-};
-
-export const ImageContextualization = (props: {
+export const AnnotationDetailPanel = (props: {
   file: FileInfo;
   reference: any;
 }) => {
   const { file } = props;
 
   const dispatch = useDispatch();
-  const [categoryState, categoryDispatch] = useReducer(
-    reducer,
-    initialCategoriesState
+  const categoryState = useSelector(
+    (state: RootState) => state.annotationDetailPanelReducer.categories
   );
 
   // when set virtualized tree component will use this to automatically scroll to position
@@ -213,22 +159,18 @@ export const ImageContextualization = (props: {
 
   const handleOnSelect = useCallback(
     (id: ReactText, nextState: boolean) => {
+      dispatch(deselectAllSelectionsReviewPage());
       if (id === currentKeypointCollection?.id) {
         // when creating keypoint collections
-        dispatch(deselectAllSelectionsReviewPage());
         if (nextState) {
           dispatch(selectCollection(id.toString()));
         }
       } else if (Object.values(Categories).includes(id as Categories)) {
-        categoryDispatch({
-          type: 'selectCategory',
-          payload: { category: id as Categories, selected: nextState },
-        });
-      } else {
-        dispatch(deselectAllSelectionsReviewPage());
-        if (nextState) {
-          dispatch(selectAnnotation(+id));
-        }
+        dispatch(
+          selectCategory({ category: id as Categories, selected: nextState })
+        );
+      } else if (nextState) {
+        dispatch(selectAnnotation(+id));
       }
     },
     [currentKeypointCollection?.id]
@@ -255,12 +197,13 @@ export const ImageContextualization = (props: {
     ]
   );
 
-  // items in common section will be passed down to child items
+  // todo: map categories to annotation types from a functions and remove these hardcoded categories - VIS-803
   const annotationReviewCategories = useMemo(() => {
+    // items in common section will be passed down to child items
     const annotationCategories = [
       {
         title: Categories.Asset,
-        selected: !!categoryState.categories[Categories.Asset]?.selected,
+        selected: !!categoryState[Categories.Asset]?.selected,
         emptyPlaceholder: 'No assets detected or manually added',
         common: {
           annotations: tagAnnotations,
@@ -270,7 +213,7 @@ export const ImageContextualization = (props: {
       },
       {
         title: Categories.Object,
-        selected: !!categoryState.categories[Categories.Object]?.selected,
+        selected: !!categoryState[Categories.Object]?.selected,
         emptyPlaceholder: 'No objects detected or manually added',
         common: {
           annotations: objectAnnotations,
@@ -280,7 +223,7 @@ export const ImageContextualization = (props: {
       },
       {
         title: Categories.Text,
-        selected: !!categoryState.categories[Categories.Text]?.selected,
+        selected: !!categoryState[Categories.Text]?.selected,
         emptyPlaceholder: 'No text or objects detected or manually added',
         common: {
           annotations: textAnnotations,
@@ -290,8 +233,7 @@ export const ImageContextualization = (props: {
       },
       {
         title: Categories.KeypointCollections,
-        selected:
-          !!categoryState.categories[Categories.KeypointCollections]?.selected,
+        selected: !!categoryState[Categories.KeypointCollections]?.selected,
         emptyPlaceholder: 'No keypoints detected or manually added',
         common: {
           annotations: keyPointAnnotations,
@@ -301,8 +243,7 @@ export const ImageContextualization = (props: {
       },
       {
         title: Categories.Classifications,
-        selected:
-          !!categoryState.categories[Categories.Classifications]?.selected,
+        selected: !!categoryState[Categories.Classifications]?.selected,
         emptyPlaceholder: 'No classifications detected or manually added',
         common: {
           annotations: classificationAnnotations,
@@ -338,27 +279,29 @@ export const ImageContextualization = (props: {
   );
 
   return (
-    <Container ref={props.reference}>
-      <Detail style={{ color: '#595959' }}>
-        {'Approve and reject detected annotations '}
-        <PrimaryTooltip
-          tooltipTitle="Labeling annotations"
-          tooltipText={`
+    <AnnotationDetailPanelHotKeys nodeTree={rootNodeArr} scrollId={scrollId}>
+      <Container ref={props.reference}>
+        <Detail style={{ color: '#595959' }}>
+          {'Approve and reject detected annotations '}
+          <PrimaryTooltip
+            tooltipTitle="Labeling annotations"
+            tooltipText={`
               Pressing True or False will label the predictions in order to improve the 
               future quality of the annotation detection. Pressing False will not delete the annotation.
               `}
-        >
-          <Icon style={{ color: '#BFBFBF' }} type="HelpFilled" />
-        </PrimaryTooltip>
-      </Detail>
+          >
+            <Icon style={{ color: '#BFBFBF' }} type="HelpFilled" />
+          </PrimaryTooltip>
+        </Detail>
 
-      <TableContainer>
-        <VirtualizedAnnotationsReview
-          rootNodeArr={rootNodeArr}
-          scrollId={scrollId}
-        />
-      </TableContainer>
-    </Container>
+        <TableContainer>
+          <VirtualizedAnnotationsReview
+            rootNodeArr={rootNodeArr}
+            scrollId={scrollId}
+          />
+        </TableContainer>
+      </Container>
+    </AnnotationDetailPanelHotKeys>
   );
 };
 
