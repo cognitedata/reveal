@@ -32,10 +32,14 @@ export const EmptyStateWrapper = styled.div`
   margin-top: 100px;
 `;
 
-export const CodeDefinitionItemWrapper = styled(FlexRow)`
+export const CodeDefinitionItemWrapper = styled(FlexRow)<{ hasLabel: boolean }>`
   padding-bottom: 5px;
   justify-content: space-between;
   width: 80%;
+  flex-shrink: 0;
+  // we are setting the height so the UI doesn't "jump" when helper text shows up
+  height: ${(props: { hasLabel: boolean }) =>
+    props.hasLabel ? '85px' : '60px'};
 `;
 
 export const TitleWrapper = styled.div`

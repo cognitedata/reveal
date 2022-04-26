@@ -32,27 +32,37 @@ const NptMenuItems = [
 const URL_QUERY_KEY = 'selected';
 
 export const CodeDefinitions = () => {
-  const { data: nptCodesLegend } = useNptLegendCodeQuery();
-  const { data: nptDetailCodesLegend } = useNptLegendDetailCodeQuery();
-  const { data: nptCodes } = useNptCodesQuery();
-  const { data: nptDetailCodes } = useNptDetailCodesQuery();
-  const [activeItem, setActiveItem] = useState<WellLegendNptType>(
-    WellLegendNptType.Code
-  );
+  // NPT codes from WDL
+  const { data: nptCodes, isLoading: isNptCodesLoading } = useNptCodesQuery();
+  const { data: nptDetailCodes, isLoading: isNptDetailCodesLoading } =
+    useNptDetailCodesQuery();
 
+  // NPT legend from discover-api
+  const { data: nptCodesLegend, isLoading: isNptCodeLegendLoading } =
+    useNptLegendCodeQuery();
+  const {
+    data: nptDetailCodesLegend,
+    isLoading: isNptDetailCodesLegendLoading,
+  } = useNptLegendDetailCodeQuery();
+
+  // NPT legend mutations
   const { mutateAsync: updateNptLegend } = useNptLegendCodeMutate();
   const { mutateAsync: updateNptDetailsLegend } =
     useNptLegendDetailCodeMutate();
 
+  const [activeItem, setActiveItem] = useState<WellLegendNptType>(
+    WellLegendNptType.Code
+  );
+
   const codes =
     nptCodes && nptCodesLegend
       ? mapLegendValuesToCodes(nptCodes, nptCodesLegend?.items)
-      : undefined;
+      : [];
 
   const detailCodes =
     nptDetailCodes && nptDetailCodesLegend
       ? mapLegendValuesToCodes(nptDetailCodes, nptDetailCodesLegend.items)
-      : undefined;
+      : [];
 
   const history = useHistory();
   const { search } = useLocation();
@@ -99,6 +109,7 @@ export const CodeDefinitions = () => {
         {activeItem === WellLegendNptType.Code && (
           <CodeDefinitionsView
             title={NptMenuItems[0].label}
+            isLoading={isNptCodeLegendLoading || isNptCodesLoading}
             codeDefinitions={codes}
             onLegendUpdated={({ code, definition }) => {
               updateNptLegend({ id: code, body: { legend: definition } });
@@ -109,6 +120,7 @@ export const CodeDefinitions = () => {
         {activeItem === WellLegendNptType.DetailCode && (
           <CodeDefinitionsView
             title={NptMenuItems[1].label}
+            isLoading={isNptDetailCodesLoading || isNptDetailCodesLegendLoading}
             codeDefinitions={detailCodes}
             onLegendUpdated={({ code, definition }) => {
               updateNptDetailsLegend({

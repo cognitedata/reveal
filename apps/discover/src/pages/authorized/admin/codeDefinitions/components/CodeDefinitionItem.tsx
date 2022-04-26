@@ -1,6 +1,14 @@
-import { ChangeEvent, KeyboardEvent, useMemo, useState } from 'react';
+import {
+  ChangeEvent,
+  KeyboardEvent,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import { Input } from '@cognite/cogs.js';
+
+import { useDebounce } from 'hooks/useDebounce';
 
 import { CodeDefinitionItemWrapper } from '../elements';
 
@@ -30,6 +38,20 @@ export const CodeDefinitionItem: React.FC<Props> = ({
   const [definitionInputValue, setDefinitionInputValue] = useState(
     definition || ''
   );
+  const [isBeingUpdated, setIsBeingUpdated] = useState<boolean>(false);
+  const [isSuccessState, setIsSuccessState] = useState<boolean>(false);
+
+  const setIsSuccessStateDebounce = useDebounce((state: boolean) => {
+    setIsSuccessState(state);
+  }, 1000);
+
+  useEffect(() => {
+    if (isBeingUpdated && definitionInputValue === definition) {
+      setIsBeingUpdated(false);
+      setIsSuccessState(true);
+      setIsSuccessStateDebounce(false);
+    }
+  }, [definition, isBeingUpdated, definitionInputValue]);
 
   const handleCodeChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -44,7 +66,8 @@ export const CodeDefinitionItem: React.FC<Props> = ({
   const helpText = useMemo(() => {
     return definitionInputValue.length > DEFINITION_MAX_LENGTH
       ? DEFINITION_TOO_LONG_ERROR_MESSAGE
-      : `${definitionInputValue.length}/${DEFINITION_MAX_LENGTH}`;
+      : // : `${definitionInputValue.length}/${DEFINITION_MAX_LENGTH}`;
+        '';
   }, [definitionInputValue]);
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -55,12 +78,13 @@ export const CodeDefinitionItem: React.FC<Props> = ({
 
   const handleLegendUpdate = () => {
     if (definitionInputValue !== definition) {
+      setIsBeingUpdated(true);
       onLegendUpdated({ code, definition: definitionInputValue });
     }
   };
 
   return (
-    <CodeDefinitionItemWrapper>
+    <CodeDefinitionItemWrapper hasLabel={showLabels}>
       <Input
         title={showLabels ? 'Code' : ''}
         disabled
@@ -79,6 +103,9 @@ export const CodeDefinitionItem: React.FC<Props> = ({
         helpText={helpText}
         error={definitionInputValue.length > DEFINITION_MAX_LENGTH}
         placeholder="Definition"
+        icon={isBeingUpdated ? 'Loader' : undefined}
+        iconPlacement="right"
+        isValid={isSuccessState}
       />
     </CodeDefinitionItemWrapper>
   );

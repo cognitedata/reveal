@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
 
-import isUndefined from 'lodash/isUndefined';
-
 import { Body, Icon, Title } from '@cognite/cogs.js';
 
 import EmptyState from 'components/emptyState';
@@ -18,7 +16,8 @@ import { CodeDefinitionsList } from './CodeDefinitionsList';
 
 interface Props {
   title: string;
-  codeDefinitions?: CodeDefinition[];
+  isLoading: boolean;
+  codeDefinitions: CodeDefinition[];
   onLegendUpdated: ({
     code,
     definition,
@@ -30,24 +29,21 @@ interface Props {
 
 export const CodeDefinitionsView: React.FC<Props> = ({
   title,
+  isLoading,
   codeDefinitions,
   onLegendUpdated,
 }) => {
   const CodeDefinitionsEmptyState = useMemo(() => {
-    /**
-     * if codeDefinitions is undefined it means request is not finished so isLoading is true, we show loading state
-     * if codeDefinitions is defined but empty then isLoading is false, we show empty state
-     * */
-    if (!codeDefinitions || codeDefinitions?.length === 0) {
+    if (codeDefinitions.length === 0) {
       return (
         <EmptyStateWrapper>
-          <EmptyState isLoading={isUndefined(codeDefinitions)} />
+          <EmptyState isLoading={isLoading} />
         </EmptyStateWrapper>
       );
     }
 
     return null;
-  }, [codeDefinitions]);
+  }, [codeDefinitions, isLoading]);
 
   return (
     <CodeDefinitionsWrapper>
