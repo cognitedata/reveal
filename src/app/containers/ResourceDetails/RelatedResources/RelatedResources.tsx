@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   RelationshipTable,
   RelationshipTableProps,
@@ -37,12 +37,7 @@ export const RelatedResources = ({
     isFetched,
   } = useRelatedResourceCount(parentResource, type);
 
-  const filteredLinkedResourceCount =
-    parentResource.type === 'asset'
-      ? Math.max(linkedResourceCount - 1, 0)
-      : linkedResourceCount;
-
-  const relatedResourceTypes = useMemo(() => {
+  const getRelatedResourceType = () => {
     let types: TypeOption[] = [
       {
         label: `Relationships (${relationshipCount})`,
@@ -65,11 +60,9 @@ export const RelatedResources = ({
     if (parentResource.type === 'asset') {
       types = [
         {
-          label: `Linked ${convertResourceType(
-            type
-          )} (${filteredLinkedResourceCount})`,
+          label: `Linked ${convertResourceType(type)} (${linkedResourceCount})`,
           value: 'linkedResource',
-          count: filteredLinkedResourceCount,
+          count: linkedResourceCount,
         },
         ...types,
       ];
@@ -98,15 +91,9 @@ export const RelatedResources = ({
     }
 
     return types;
-  }, [
-    parentResource,
-    type,
-    relationshipCount,
-    assetIdCount,
-    filteredLinkedResourceCount,
-    annotationCount,
-    annotatedWithCount,
-  ]);
+  };
+
+  const relatedResourceTypes = getRelatedResourceType();
 
   useEffect(
     () =>
