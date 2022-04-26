@@ -6,7 +6,7 @@ import { Form, Formik, useFormikContext } from 'formik';
 import styled from 'styled-components/macro';
 import * as Yup from 'yup';
 
-import { Button, Icon, Skeleton, toast } from '@cognite/cogs.js';
+import { Button, Icon, Infobox, Skeleton, toast } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import type {
   AggregateType,
@@ -61,7 +61,12 @@ export function CalculationConfiguration() {
   );
 
   const { data: modelFile, isFetching: isFetchingModelFile } =
-    useGetModelFileQuery({ project, modelName, simulator });
+    useGetModelFileQuery(
+      { project, modelName, simulator },
+      {
+        refetchOnMountOrArgChange: true,
+      }
+    );
 
   const calculationType = decodeURIComponent(
     encodedCalculationType
@@ -201,117 +206,124 @@ export function CalculationConfiguration() {
           <Button icon="ArrowLeft">Return to model library</Button>
         </Link>
       </h2>
-      <Formik
-        initialValues={initialValues}
-        validateOnChange={false}
-        validationSchema={calculationTemplateSchema}
-        validateOnBlur
-        validateOnMount
-        onSubmit={async (values) => {
-          try {
-            await upsertCalculation({
-              project,
-              dataSetId,
-              calculationTemplateModel: {
-                ...values,
-                userEmail: authState?.email ?? values.userEmail,
-              },
-            }).unwrap();
-            toast.success('The calculation was successfully configured.', {
-              autoClose: 5000,
-            });
-            navigate({ to: '../..' });
-          } catch (e) {
-            toast.error(
-              `An error occured while storing the calculation configuration.`
-            );
-          }
-        }}
-      >
-        {({ submitForm, isSubmitting, isValid, values, setValues }) => (
-          <Form>
-            <Wizard
-              isSubmitting={isSubmitting}
-              isValid={isValid}
-              animated
-              onCancel={() => {
-                navigate({ to: '../..' });
-              }}
-              onChangeStep={() => {
-                const ret = calculationTemplateSchema.cast(
-                  values
-                ) as CalculationTemplate;
-                setValues(ret);
-                return true;
-              }}
-              onSubmit={submitForm}
-            >
-              <Wizard.Step
-                icon="Calendar"
-                key="schedule"
-                title="Schedule"
-                validationErrors={getStepValidationErrors(values, 'schedule')}
+      {modelFile.metadata.modelType ? (
+        <Formik
+          initialValues={initialValues}
+          validateOnChange={false}
+          validationSchema={calculationTemplateSchema}
+          validateOnBlur
+          validateOnMount
+          onSubmit={async (values) => {
+            try {
+              await upsertCalculation({
+                project,
+                dataSetId,
+                calculationTemplateModel: {
+                  ...values,
+                  userEmail: authState?.email ?? values.userEmail,
+                },
+              }).unwrap();
+              toast.success('The calculation was successfully configured.', {
+                autoClose: 5000,
+              });
+              navigate({ to: '../..' });
+            } catch (e) {
+              toast.error(
+                `An error occured while storing the calculation configuration.`
+              );
+            }
+          }}
+        >
+          {({ submitForm, isSubmitting, isValid, values, setValues }) => (
+            <Form>
+              <Wizard
+                isSubmitting={isSubmitting}
+                isValid={isValid}
+                animated
+                onCancel={() => {
+                  navigate({ to: '../..' });
+                }}
+                onChangeStep={() => {
+                  const ret = calculationTemplateSchema.cast(
+                    values
+                  ) as CalculationTemplate;
+                  setValues(ret);
+                  return true;
+                }}
+                onSubmit={submitForm}
               >
-                <ScheduleStep />
-              </Wizard.Step>
-              <Wizard.Step
-                icon="DataSource"
-                key="data-sampling"
-                title="Data sampling"
-                validationErrors={getStepValidationErrors(
-                  values,
-                  'dataSampling',
-                  'logicalCheck',
-                  'steadyStateDetection'
-                )}
-              >
-                <DataSamplingStep />
-              </Wizard.Step>
-              <Wizard.Step
-                disabled={!calcTypesWtAvcdStps.includes(calculationType)}
-                icon="Configure"
-                key="advanced"
-                title="Advanced"
-                validationErrors={getStepValidationErrors(
-                  values,
-                  'chokeCurve',
-                  'estimateBHP',
-                  'gaugeDepth',
-                  'rootFindingSettings'
-                )}
-              >
-                <AdvancedStep isDisabled={isEditing || isReadonly} />
-              </Wizard.Step>
-              <Wizard.Step
-                icon="InputData"
-                key="input"
-                title="Inputs"
-                validationErrors={getStepValidationErrors(
-                  values,
-                  'inputTimeSeries'
-                )}
-              >
-                <InputStep isDisabled={isEditing || isReadonly} />
-              </Wizard.Step>
-              <Wizard.Step
-                icon="OutputData"
-                key="output"
-                title="Outputs"
-                validationErrors={getStepValidationErrors(
-                  values,
-                  'outputTimeSeries'
-                )}
-              >
-                <OutputStep isDisabled={isEditing || isReadonly} />
-              </Wizard.Step>
-              <Wizard.Step icon="Checkmark" key="summary" title="Summary">
-                <YupValidationErrors schema={calculationTemplateSchema} />
-                <SummaryStep />
-              </Wizard.Step>
-            </Wizard>
-          </Form>
-        )}
-      </Formik>
+                <Wizard.Step
+                  icon="Calendar"
+                  key="schedule"
+                  title="Schedule"
+                  validationErrors={getStepValidationErrors(values, 'schedule')}
+                >
+                  <ScheduleStep />
+                </Wizard.Step>
+                <Wizard.Step
+                  icon="DataSource"
+                  key="data-sampling"
+                  title="Data sampling"
+                  validationErrors={getStepValidationErrors(
+                    values,
+                    'dataSampling',
+                    'logicalCheck',
+                    'steadyStateDetection'
+                  )}
+                >
+                  <DataSamplingStep />
+                </Wizard.Step>
+                <Wizard.Step
+                  disabled={!calcTypesWtAvcdStps.includes(calculationType)}
+                  icon="Configure"
+                  key="advanced"
+                  title="Advanced"
+                  validationErrors={getStepValidationErrors(
+                    values,
+                    'chokeCurve',
+                    'estimateBHP',
+                    'gaugeDepth',
+                    'rootFindingSettings'
+                  )}
+                >
+                  <AdvancedStep isDisabled={isEditing || isReadonly} />
+                </Wizard.Step>
+                <Wizard.Step
+                  icon="InputData"
+                  key="input"
+                  title="Inputs"
+                  validationErrors={getStepValidationErrors(
+                    values,
+                    'inputTimeSeries'
+                  )}
+                >
+                  <InputStep isDisabled={isEditing || isReadonly} />
+                </Wizard.Step>
+                <Wizard.Step
+                  icon="OutputData"
+                  key="output"
+                  title="Outputs"
+                  validationErrors={getStepValidationErrors(
+                    values,
+                    'outputTimeSeries'
+                  )}
+                >
+                  <OutputStep isDisabled={isEditing || isReadonly} />
+                </Wizard.Step>
+                <Wizard.Step icon="Checkmark" key="summary" title="Summary">
+                  <YupValidationErrors schema={calculationTemplateSchema} />
+                  <SummaryStep />
+                </Wizard.Step>
+              </Wizard>
+            </Form>
+          )}
+        </Formik>
+      ) : (
+        <Infobox title="Missing Model Type" type="warning">
+          Cannot determine the model type. Check that the PROSPER integration is
+          available, then refresh the page and try again.
+        </Infobox>
+      )}
     </CalculationConfigurationContainer>
   );
 }
