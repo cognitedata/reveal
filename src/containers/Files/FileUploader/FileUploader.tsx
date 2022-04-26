@@ -105,14 +105,7 @@ export const FileUploader = ({
       file.status = 'uploading';
       file.percent = 0;
 
-      setFileList(list =>
-        list.map(el => {
-          if (el.uid === file.uid) {
-            return file;
-          }
-          return el;
-        })
-      );
+      setFileList(list => list.map(el => (el.uid === file.uid ? file : el)));
 
       currentUploads[file.uid] = await GCSUploader(
         file,

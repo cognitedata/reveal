@@ -1,6 +1,6 @@
 {
   "name": "@cognite/data-exploration",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "typings": "dist/index.d.ts",
@@ -9,7 +9,7 @@
     "@babel/runtime": "^7.12.5",
     "@cognite/annotations": "^1.1.0",
     "@cognite/cogs.js": "^5.19.5",
-    "@cognite/gcs-browser-upload": "^1.1.0",
+    "@cognite/gcs-browser-upload": "cognitedata/gcs-browser-upload#mn/temporary-azure-fix",
     "@cognite/react-picture-annotation": "3.0.0",
     "@cognite/sdk": "^6.3.1",
     "@cognite/sdk-provider": "^1.0.0",
