@@ -12,7 +12,7 @@ import {
   NodeMeta,
   TreeData,
   TreeNode,
-} from 'src/modules/Review/Components/AnnotationReviewDetailComponents/types';
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
 
 // This helper function constructs the object that will be sent back at the step
 // [2] during the treeWalker function work. Except for the mandatory `data`

@@ -1,4 +1,5 @@
 import { AnnotationStatus, AnnotationUtils } from 'src/utils/AnnotationUtils';
+import { AnnotationMetadata } from 'src/api/annotation/types';
 
 export const getDummyAnnotation = (
   id?: number,
@@ -7,6 +8,7 @@ export const getDummyAnnotation = (
     status?: AnnotationStatus;
     confidence?: number;
     text?: string;
+    data?: AnnotationMetadata;
   }
 ) => {
   return AnnotationUtils.createVisionAnnotationStub(
@@ -20,6 +22,6 @@ export const getDummyAnnotation = (
     undefined,
     undefined,
     other?.status,
-    { confidence: other?.confidence }
+    { ...other?.data, confidence: other?.confidence }
   );
 };

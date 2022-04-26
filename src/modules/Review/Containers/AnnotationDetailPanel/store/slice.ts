@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Categories } from 'src/modules/Review/types';
+import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 
 type CategoryState = {
   [index in Categories]?: { selected: boolean };
@@ -20,13 +21,24 @@ const annotationDetailPanelSlice = createSlice({
       state,
       action: PayloadAction<{ category: Categories; selected: boolean }>
     ) {
-      if (action.payload.category && action.payload.selected !== undefined) {
-        // eslint-disable-next-line no-param-reassign
-        state.categories[action.payload.category as Categories] = {
-          selected: action.payload.selected,
-        };
+      if (action.payload.category) {
+        /* eslint-disable no-param-reassign */
+        if (action.payload.selected) {
+          state.categories[action.payload.category as Categories] = {
+            selected: action.payload.selected,
+          };
+        } else if (state.categories[action.payload.category]) {
+          delete state.categories[action.payload.category];
+        }
+        /* eslint-enable no-param-reassign */
       }
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(deselectAllSelectionsReviewPage, (state) => {
+      // eslint-disable-next-line no-param-reassign
+      state.categories = {};
+    });
   },
 });
 

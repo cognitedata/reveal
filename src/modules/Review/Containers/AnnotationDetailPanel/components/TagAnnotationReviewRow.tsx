@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { KeyboardShortCutSelectable } from 'src/modules/Review/Containers/KeyboardShortKeys/KeyboardShortCutSelectable';
-import { AssetLinkWarning } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/AssetLinkWarning';
-import { SidePanelRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/SidePanelRow';
-import { AnnotationTableRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/AnnotationTableRow';
+import styled from 'styled-components';
 import {
   ReviewAnnotation,
   RowData,
   VirtualizedTreeRowProps,
-} from 'src/modules/Review/Components/AnnotationReviewDetailComponents/types';
-import styled from 'styled-components';
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
+import {
+  AnnotationTableRow,
+  AssetLinkWarning,
+  KeyboardShortCutSelectable,
+  SidePanelRow,
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/components/common';
 
 /**
  * Annotation detail row component for Tag annotations

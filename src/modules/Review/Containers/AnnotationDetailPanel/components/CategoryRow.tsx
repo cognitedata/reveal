@@ -1,9 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 import { AllIconTypes, Icon } from '@cognite/cogs.js';
-import { ExpandIconComponent } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/ExpandIconComponent';
 import { ModelTypeIconMap, ModelTypeStyleMap } from 'src/utils/AnnotationUtils';
-import { Category, RowData, VirtualizedTreeRowProps } from './types';
+import {
+  Category,
+  RowData,
+  VirtualizedTreeRowProps,
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
+import {
+  ExpandIconComponent,
+  KeyboardShortCutSelectable,
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/components/common';
 
 /**
  * Annotation detail row component for main annotation category group headers
@@ -26,21 +33,23 @@ export const CategoryRow = ({
     selected,
   } = additionalData;
   return (
-    <PanelHeader onClick={() => onSelect(title, !selected)}>
-      <ExpandIconComponent isActive={isOpen} />
-      <IconContainer background={ModelTypeStyleMap[mode].backgroundColor}>
-        <Icon
-          style={{
-            color: ModelTypeStyleMap[mode].color,
-            flex: '0 0 16px',
-          }}
-          type={ModelTypeIconMap[mode] as AllIconTypes}
-        />
-      </IconContainer>
-      <span>
-        {name} ({childItems.length})
-      </span>
-    </PanelHeader>
+    <KeyboardShortCutSelectable id={title} selected={selected}>
+      <PanelHeader onClick={() => onSelect(title, !selected)}>
+        <ExpandIconComponent isActive={isOpen} />
+        <IconContainer background={ModelTypeStyleMap[mode].backgroundColor}>
+          <Icon
+            style={{
+              color: ModelTypeStyleMap[mode].color,
+              flex: '0 0 16px',
+            }}
+            type={ModelTypeIconMap[mode] as AllIconTypes}
+          />
+        </IconContainer>
+        <span>
+          {name} ({childItems.length})
+        </span>
+      </PanelHeader>
+    </KeyboardShortCutSelectable>
   );
 };
 

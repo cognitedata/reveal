@@ -1,12 +1,14 @@
 import React from 'react';
-import { KeyboardShortCutSelectable } from 'src/modules/Review/Containers/KeyboardShortKeys/KeyboardShortCutSelectable';
-import { SidePanelRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/SidePanelRow';
-import { AnnotationTableRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/AnnotationTableRow';
+import {
+  AnnotationTableRow,
+  KeyboardShortCutSelectable,
+  SidePanelRow,
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/components/common';
 import {
   ReviewAnnotation,
   RowData,
   VirtualizedTreeRowProps,
-} from 'src/modules/Review/Components/AnnotationReviewDetailComponents/types';
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
 
 /**
  * Annotation detail row component for a OCR/OBJECT annotations without child items

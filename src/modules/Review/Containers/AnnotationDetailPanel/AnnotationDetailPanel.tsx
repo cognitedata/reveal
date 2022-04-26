@@ -22,14 +22,17 @@ import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { useDispatch, useSelector } from 'react-redux';
 import { FileInfo } from '@cognite/sdk';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
-import { convertKeyPointCollectionToAnnotationStub } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ConversionUtils';
-import { TagAnnotationReviewRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/TagAnnotationReviewRow';
-import { KeypointAnnotationReviewRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/KeypointAnnotationReviewRow';
-import { AnnotationReviewRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/AnnotationReviewRow';
-import { VirtualizedAnnotationsReview } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/VirtualizedAnnotationsReview';
-import { ReviewAnnotation } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/types';
-import { generateNodeTree } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/generateNodeTree';
+import { generateNodeTree } from 'src/modules/Review/Containers/AnnotationDetailPanel/utils/generateNodeTree';
 import { Categories } from 'src/modules/Review/types';
+import {
+  AnnotationReviewRow,
+  KeypointAnnotationReviewRow,
+  TagAnnotationReviewRow,
+  VirtualizedAnnotationsReview,
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/components';
+import { AnnotationDetailPanelHotKeys } from 'src/modules/Review/Containers/AnnotationDetailPanel/AnnotationDetailPanelHotKeys';
+import { ReviewAnnotation } from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
+import { convertKeyPointCollectionToAnnotationStub } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ConversionUtils';
 import { selectCategory } from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
 
 export const AnnotationDetailPanel = (props: {
@@ -156,9 +159,9 @@ export const AnnotationDetailPanel = (props: {
 
   const handleOnSelect = useCallback(
     (id: ReactText, nextState: boolean) => {
+      dispatch(deselectAllSelectionsReviewPage());
       if (id === currentKeypointCollection?.id) {
         // when creating keypoint collections
-        dispatch(deselectAllSelectionsReviewPage());
         if (nextState) {
           dispatch(selectCollection(id.toString()));
         }
@@ -166,11 +169,8 @@ export const AnnotationDetailPanel = (props: {
         dispatch(
           selectCategory({ category: id as Categories, selected: nextState })
         );
-      } else {
-        dispatch(deselectAllSelectionsReviewPage());
-        if (nextState) {
-          dispatch(selectAnnotation(+id));
-        }
+      } else if (nextState) {
+        dispatch(selectAnnotation(+id));
       }
     },
     [currentKeypointCollection?.id]
@@ -279,27 +279,29 @@ export const AnnotationDetailPanel = (props: {
   );
 
   return (
-    <Container ref={props.reference}>
-      <Detail style={{ color: '#595959' }}>
-        {'Approve and reject detected annotations '}
-        <PrimaryTooltip
-          tooltipTitle="Labeling annotations"
-          tooltipText={`
+    <AnnotationDetailPanelHotKeys nodeTree={rootNodeArr} scrollId={scrollId}>
+      <Container ref={props.reference}>
+        <Detail style={{ color: '#595959' }}>
+          {'Approve and reject detected annotations '}
+          <PrimaryTooltip
+            tooltipTitle="Labeling annotations"
+            tooltipText={`
               Pressing True or False will label the predictions in order to improve the 
               future quality of the annotation detection. Pressing False will not delete the annotation.
               `}
-        >
-          <Icon style={{ color: '#BFBFBF' }} type="HelpFilled" />
-        </PrimaryTooltip>
-      </Detail>
+          >
+            <Icon style={{ color: '#BFBFBF' }} type="HelpFilled" />
+          </PrimaryTooltip>
+        </Detail>
 
-      <TableContainer>
-        <VirtualizedAnnotationsReview
-          rootNodeArr={rootNodeArr}
-          scrollId={scrollId}
-        />
-      </TableContainer>
-    </Container>
+        <TableContainer>
+          <VirtualizedAnnotationsReview
+            rootNodeArr={rootNodeArr}
+            scrollId={scrollId}
+          />
+        </TableContainer>
+      </Container>
+    </AnnotationDetailPanelHotKeys>
   );
 };
 
