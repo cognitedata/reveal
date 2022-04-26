@@ -94,6 +94,7 @@ DEPENDENCIES = [
     "@npm//d3",
     "@npm//file-saver",
     "@npm//formik",
+    "@npm//fraction.js",
     "@npm//html2canvas",
     "@npm//jszip",
     "@npm//immutable",

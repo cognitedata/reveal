@@ -11,6 +11,10 @@ import {
 } from '../casings';
 
 describe('normalize casings', () => {
+  /**
+   * This should be properly typed and fixed.
+   * Better to do when completely migrating to use well sdk v3.
+   */
   const casingViewProps = {
     name: 'Casing view 1',
     casing: [
@@ -20,6 +24,8 @@ describe('normalize casings', () => {
         outerDiameter: '20.0',
         startDepth: 8660.797497795,
         endDepth: 11084.12749779,
+        startDepthTVD: 8340.797497795,
+        endDepthTVD: 10825.12749779,
         depthUnit: 'ft',
         metadata: { assy_report_desc: '' },
       },
@@ -75,14 +81,14 @@ describe('normalize casings', () => {
     casingViewProps.casing[1].name = 'DRILLING LINER 1';
     expect(
       convertToPreviewData(casingViewProps.casing)[0].casingDescription
-    ).toEqual('18.0" DRILLING LINER 1 Casing at 11084ft depth');
+    ).toEqual('18" DRILLING LINER 1 Casing at 11084ft depth');
   });
 
   it(`should not include casing in the description when  name not consist Casing`, async () => {
     casingViewProps.casing[1].name = 'SURFACE CASING';
     expect(
       convertToPreviewData(casingViewProps.casing)[0].casingDescription
-    ).toEqual('18.0" SURFACE CASING  at 11084ft depth');
+    ).toEqual('18" SURFACE CASING  at 11084ft depth');
   });
 
   it(`should return casings ordered by Base`, async () => {

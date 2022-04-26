@@ -40,11 +40,10 @@ export const DepthIndicatorLine = styled.div`
 export const Description = styled.div`
   position: relative;
   bottom: -${DEPTH_INDICATOR_LINE_WIDTH};
-  padding: 2px;
   text-transform: lowercase;
-  /** left: ${(props: { linerCasing: boolean }) =>
-    props.linerCasing ? '9px' : '25px'}; **/
-  float: left;
+  float: ${(props: { leftEnd: boolean }) => (props.leftEnd ? 'right' : 'left')};
+  padding: 2px;
+  left: calc(${DEPTH_INDICATOR_LINE_WIDTH} + 2px); // adding the padding value
 
   height: 18px;
   background: #efeef0;
@@ -89,7 +88,7 @@ export const SideLineRight = styled.div`
 `;
 
 export const SideLineLeft = styled(SideLineRight)`
-  margin-left: -18px;
+  margin-left: calc(2px - ${DEPTH_INDICATOR_SPACING});
 `;
 
 export const TooptipSection = styled(Menu.Item)`

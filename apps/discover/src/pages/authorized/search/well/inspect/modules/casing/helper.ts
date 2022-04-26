@@ -74,7 +74,7 @@ export const mapSequenceToCasingType = (
     id: casing.id,
     name: casing.metadata ? casing.metadata.assy_name : '',
     outerDiameter: casing.metadata
-      ? Number(casing.metadata.assy_size).toFixed(2)
+      ? Number(casing.metadata.assy_size).toFixed(3)
       : '',
     startDepth: getDepth(
       casing.metadata ? casing.metadata.assy_original_md_top : '0'

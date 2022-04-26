@@ -3,6 +3,8 @@ import styled from 'styled-components/macro';
 import { SubTitleText } from 'components/emptyState/elements';
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
+import { Description } from './DepthIndicator/elements';
+
 export const CasingViewListWrapper = styled.div`
   height: calc(100% - 4px);
   white-space: nowrap;
@@ -14,10 +16,8 @@ export const CenterLine = styled.div`
   height: 100%;
 `;
 
-export const RightGutter = styled.div`
+export const DepthIndicatorGutter = styled(Description)`
   display: inline-block;
-  font-size: 15px;
-  text-transform: lowercase;
   visibility: hidden;
 `;
 

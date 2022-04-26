@@ -73,7 +73,7 @@ const DepthIndicator: React.FC<DepthIndicatorProps> = ({
       </Tooltip>
 
       {outerDiameter && (
-        <Description liner={liner}>{outerDiameter}</Description>
+        <Description leftEnd={leftEnd}>{outerDiameter}</Description>
       )}
     </DepthIndicatorWrapper>
   );

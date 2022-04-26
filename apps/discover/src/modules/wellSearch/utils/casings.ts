@@ -2,6 +2,7 @@ import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
 import uniqBy from 'lodash/uniqBy';
 import { getPercent } from 'utils/getPercent';
+import { toFraction } from 'utils/number/toFraction';
 
 import { Sequence } from '@cognite/sdk';
 
@@ -106,11 +107,11 @@ export const convertToPreviewData = (
       return '';
     };
 
-    const description = `${
-      casing.outerDiameter
-    }" ${casingDisplayName} ${getCasingName(casing)} at ${endDepth}${
-      casing.depthUnit
-    } depth`;
+    const formattedOuterDiameter = formatOuterDiameter(casing.outerDiameter);
+
+    const description = `${formattedOuterDiameter} ${casingDisplayName} ${getCasingName(
+      casing
+    )} at ${endDepth}${casing.depthUnit} depth`;
 
     if (description.length > maxDescription.length) {
       maxDescription = `${description}`;
@@ -123,6 +124,7 @@ export const convertToPreviewData = (
       casingDescription: description,
       liner: casing.name ? casing.name.toLowerCase().includes('liner') : false,
       maximumDescription: maxDescription,
+      outerDiameter: formattedOuterDiameter,
     };
   });
 };
@@ -138,4 +140,9 @@ export const orderedCasingsByBase = (casings: Sequence[]) => {
 
 export const doesCasingHaveReportDescription = (casing: any) => {
   return get(casing, 'metadata.assy_report_desc', '').includes('LINER');
+};
+
+export const formatOuterDiameter = (outerDiameter: string): string => {
+  const fraction = toFraction(outerDiameter);
+  return `${fraction.replace(/\s+/g, '-')}"`;
 };

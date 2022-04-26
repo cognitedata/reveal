@@ -27,7 +27,7 @@ import DepthColumn from './DepthColumn';
 import DepthIndicator from './DepthIndicator/DepthIndicator';
 import {
   BodyWrapper,
-  RightGutter,
+  DepthIndicatorGutter,
   Wrapper,
   Header,
   MainHeader,
@@ -157,15 +157,21 @@ const CasingView: FC<CasingViewTypeProps> = ({
 
                   {normalizedCasings.map((normalizedCasing, index) => (
                     <Fragment key={normalizedCasing.id}>
+                      {/* A trick to have space in left side */}
+                      {index === 0 && (
+                        <DepthIndicatorGutter>
+                          {normalizedCasing.outerDiameter}
+                        </DepthIndicatorGutter>
+                      )}
                       <DepthIndicator
                         normalizedCasing={normalizedCasing}
                         isTied={isTied(normalizedCasings, index)}
                       />
-                      {/* A trick to have space in right side for lengthiest description */}
-                      {casings.length === index + 1 && (
-                        <RightGutter>
+                      {/* A trick to have space in right side */}
+                      {index === normalizedCasings.length - 1 && (
+                        <DepthIndicatorGutter>
                           {normalizedCasing.outerDiameter}
-                        </RightGutter>
+                        </DepthIndicatorGutter>
                       )}
                     </Fragment>
                   ))}
