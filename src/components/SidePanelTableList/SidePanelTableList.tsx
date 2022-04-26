@@ -62,6 +62,8 @@ const SidePanelTableList = (): JSX.Element => {
     [data]
   );
 
+  const remountCount = useRef(0);
+
   return (
     <SidePanelLevelWrapper
       header={
@@ -120,8 +122,12 @@ const SidePanelTableList = (): JSX.Element => {
         </Tooltip>
       )}
       <CreateTableModal
+        key={remountCount.current}
         databaseName={selectedSidePanelDatabase}
         onCancel={() => setIsCreateModalOpen(false)}
+        onReset={() => {
+          remountCount.current += 1;
+        }}
         tables={tables}
         visible={isCreateModalOpen}
       />
