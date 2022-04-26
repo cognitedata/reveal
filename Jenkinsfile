@@ -250,7 +250,7 @@ pods {
     stageWithNotify('Bazel test', CONTEXTS.bazelTests) {
       container('bazel') {
         sh(label: 'lint bazel files', script: "bazel --bazelrc=.ci.bazelrc run //:buildifier_check")
-        if (isProduction || (params.versioning_strategy == 'multi-branch' && env.BRANCH_NAME.startsWith("release-"))) {
+        if (isProduction || (!isPullRequest && env.BRANCH_NAME.startsWith("release-"))) {
           sh(label: 'bazel test //...', script: "bazel --bazelrc=.ci.bazelrc test //... --test_tag_filters=-ignore_test_in_cd,-nightly")
         } else {
           sh(label: 'bazel test //...', script: "bazel --bazelrc=.ci.bazelrc test //... --test_tag_filters=-nightly")
