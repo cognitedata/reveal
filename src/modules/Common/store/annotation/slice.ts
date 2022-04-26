@@ -58,7 +58,7 @@ const annotationSlice = createSlice({
         }
 
         // update annotations
-        // ToDo (VIS-768): conversion logic from V1 to V2 in the new slice can be moved into thunks.
+        // ToDo (VIS-794): conversion logic from V1 to V2 in the new slice can be moved into thunks.
         const annotations =
           convertCDFAnnotationV1ToVisionAnnotationBulk(payload);
 
