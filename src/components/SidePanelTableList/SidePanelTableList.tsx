@@ -41,14 +41,6 @@ const SidePanelTableList = (): JSX.Element => {
 
   const [[activeDatabase, activeTable] = []] = useActiveTable();
 
-  const remountCount = useRef(0);
-
-  const handleRemount = () => {
-    setTimeout(() => {
-      remountCount.current += 1;
-    }, 1000);
-  };
-
   useEffect(() => {
     if (!isFetching && hasNextPage) {
       fetchNextPage();
@@ -128,10 +120,8 @@ const SidePanelTableList = (): JSX.Element => {
         </Tooltip>
       )}
       <CreateTableModal
-        key={remountCount.current}
         databaseName={selectedSidePanelDatabase}
         onCancel={() => setIsCreateModalOpen(false)}
-        onReset={handleRemount}
         tables={tables}
         visible={isCreateModalOpen}
       />
