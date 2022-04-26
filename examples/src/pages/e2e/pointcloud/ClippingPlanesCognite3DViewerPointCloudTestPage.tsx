@@ -19,4 +19,4 @@ function ClippingPlanesCognite3DViewerPointCloudTestPage() {
   initializeCallback={(viewer) => { viewer.setClippingPlanes([new THREE.Plane().setFromNormalAndCoplanarPoint(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 0, 0))]); } }/>;
 }
 
-registerVisualTest('cad', 'clipping-planes-cognite3dviewer-pointcloud', 'Clipping Planes PointCloud', <ClippingPlanesCognite3DViewerPointCloudTestPage />)
+registerVisualTest('pointcloud', 'clipping-planes-cognite3dviewer-pointcloud', 'Clipping Planes PointCloud', <ClippingPlanesCognite3DViewerPointCloudTestPage />)
