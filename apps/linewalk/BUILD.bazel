@@ -74,6 +74,7 @@ DEPENDENCIES = [
     "@npm//konva",
     "@npm//lodash",
     "@npm//pdf-lib",
+    "@npm//query-string",
     "@npm//react",
     "@npm//react-dom",
     "@npm//react-router-dom",
