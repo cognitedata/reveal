@@ -1,3 +1,5 @@
+import { DocumentFilter, DocumentSortItem } from '@cognite/sdk';
+
 import { useProjectConfig } from 'hooks/useProjectConfig';
 import { useSortByOptions } from 'modules/resultPanel/selectors';
 
@@ -14,13 +16,19 @@ export const useDocumentSearchOptions = () => {
     sort: sortByOptions.documents?.map(toSort) || [],
   };
 
-  const extractParentFolderOptions = {
+  const extractParentFolderOptions: {
+    filters?: DocumentFilter;
+    sort: DocumentSortItem[];
+  } = {
     filters: {
-      sourceFile: {
-        directoryPrefix: {
-          in: [extractParentFolderPath],
+      and: [
+        {
+          prefix: {
+            property: ['sourceFile', 'directory'],
+            value: extractParentFolderPath || '',
+          },
         },
-      },
+      ],
     },
     sort: [],
   };

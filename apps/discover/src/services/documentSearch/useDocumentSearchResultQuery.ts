@@ -10,13 +10,12 @@ import { DOCUMENTS_QUERY_KEY } from 'constants/react-query';
 import { useProjectConfig } from 'hooks/useProjectConfig';
 import { TimeLogStages } from 'hooks/useTimeLog';
 
-import { DOCUMENT_FALLBACK_SEARCH_LIMIT } from '../constants';
-import { documentSearchService } from '../service';
-import { getEmptyDocumentResult } from '../utils';
-import { handleDocumentSearchError } from '../utils/documentSearch';
-
-import { useDocumentSearchOptions } from './useDocumentSearchOptions';
-import { useDocumentSearchQueryFull } from './useDocumentSearchQueryFull';
+import { DOCUMENT_FALLBACK_SEARCH_LIMIT } from '../../modules/documentSearch/constants';
+import { useDocumentSearchOptions } from '../../modules/documentSearch/hooks/useDocumentSearchOptions';
+import { useDocumentSearchQueryFull } from '../../modules/documentSearch/hooks/useDocumentSearchQueryFull';
+import { documentSearchService } from '../../modules/documentSearch/service';
+import { getEmptyDocumentResult } from '../../modules/documentSearch/utils';
+import { handleDocumentSearchError } from '../../modules/documentSearch/utils/documentSearch';
 
 const documentSearchMetric = Metrics.create(LOG_DOCUMENT_SEARCH);
 

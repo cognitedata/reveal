@@ -10,7 +10,6 @@ const defaultConfig: TenantConfig = {
   },
   documents: {
     disabled: false,
-    filters: {},
   },
   seismic: {
     metadata: {

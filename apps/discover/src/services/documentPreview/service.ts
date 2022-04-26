@@ -1,6 +1,5 @@
+import { getDocumentSDKClient } from 'services/documentSearch/sdk';
 import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
-
-import { getDocumentSDKClient } from 'modules/documentSearch/sdk';
 
 import { bufferDataToImageUrl } from './utils';
 
@@ -36,20 +35,20 @@ export function getSignedUrls(valueList: string[]) {
 
 export const getPreview = (documentId: string, page = 0) => {
   return getDocumentSDKClient()
-    .documents.preview.documentAsImage(Number(documentId), page)
+    .preview.documentAsImage(Number(documentId), page)
     .then((response) => bufferDataToImageUrl(response));
 };
 
 export const getPdfPreview = (documentId: string) => {
   return getDocumentSDKClient()
-    .documents.preview.documentAsPdf(Number(documentId))
+    .preview.documentAsPdf(Number(documentId))
     .then((response) => bufferDataToImageUrl(response));
 };
 
 export const getTemporaryPreviewLink = (documentId: string) => {
   return getDocumentSDKClient()
-    .documents.preview.temporaryLink(Number(documentId))
-    .then((response) => response.temporaryLink);
+    .preview.pdfTemporaryLink(Number(documentId))
+    .then((response) => response.temporaryLink || '');
 };
 
 export const getFileMetadataByIds = (documentIds: number[]) => {

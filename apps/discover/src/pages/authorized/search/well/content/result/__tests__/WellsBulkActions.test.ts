@@ -1,3 +1,5 @@
+import '__mocks/mockContainerAuth';
+import '__mocks/mockCogniteSDK';
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { getMockFavoritesListGet } from 'services/favorites/__mocks/getMockFavoritesListGet';

@@ -1,4 +1,4 @@
-import { Document } from '@cognite/sdk-playground';
+import { Document } from '@cognite/sdk';
 
 import { DocumentType } from 'modules/documentSearch/types';
 

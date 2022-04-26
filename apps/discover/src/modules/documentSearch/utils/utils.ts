@@ -6,6 +6,8 @@ import {
   DocumentsFacets,
 } from 'modules/documentSearch/types';
 
+import { aggregates } from '../aggregates';
+
 //
 // ----
 //
@@ -39,6 +41,13 @@ export const getEmptyDocumentResult = (): DocumentResult => ({
   count: 0,
   hits: [],
   facets: getEmptyDocumentStateFacets(),
+  aggregates: aggregates.map((aggregate) => {
+    return {
+      name: aggregate.name,
+      groups: [],
+      total: 0,
+    };
+  }),
 });
 
 export const getEmptyFacets = (): DocumentsFacets => ({

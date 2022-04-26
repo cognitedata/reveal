@@ -111,7 +111,7 @@ describe('Filter data Actions', () => {
     const expectedActions = { type: RESET_ERRORS };
 
     const store = createMockStore({
-      overviewPages: {
+      inspectTabs: {
         errors: {
           wellbore1: [{ value: 'Error 1' }, { value: 'Error 2' }],
         },

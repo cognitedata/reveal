@@ -1,10 +1,10 @@
 import { normalize } from 'dataLayers/documents/adapters/normalize';
 
-import { DocumentsSearchWrapper } from '@cognite/sdk-playground';
+import { DocumentSearchResponse, DocumentHighlight } from '@cognite/sdk';
 
-import { DocumentType, SearchHighlight } from '../types';
+import { DocumentType } from '../types';
 
-export const getHighlight = (info?: SearchHighlight) => {
+export const getHighlight = (info?: DocumentHighlight) => {
   let result: string[] = [];
 
   if (!info) {
@@ -21,7 +21,7 @@ export const getHighlight = (info?: SearchHighlight) => {
 export const toDocument = ({
   item,
   highlight,
-}: DocumentsSearchWrapper): DocumentType => {
+}: DocumentSearchResponse['items'][number]): DocumentType => {
   const documentResponse = {
     ...normalize(item),
     highlight: {

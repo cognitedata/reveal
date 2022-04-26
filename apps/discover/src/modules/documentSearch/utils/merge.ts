@@ -2,7 +2,7 @@ import concat from 'lodash/concat';
 import groupBy from 'lodash/groupBy';
 import { mergeUniqueArray } from 'utils/merge';
 
-import { DocumentsAggregate } from '@cognite/sdk-playground';
+import { DocumentSearchResponse } from '@cognite/sdk';
 
 import {
   AggregateNames,
@@ -46,7 +46,6 @@ export const mergeDocumentResults = (
   documentResults: DocumentResult[]
 ): DocumentResult => {
   const emptyDocumentResult = getEmptyDocumentResult();
-
   return documentResults.reduce((mergedResult, result) => {
     return {
       count: Number(mergedResult.count) + Number(result.count),
@@ -55,37 +54,30 @@ export const mergeDocumentResults = (
         concat(mergedResult.facets, result.facets)
       ),
       aggregates: mergeDocumentsAggregates(
-        concat(mergedResult.aggregates || [], result.aggregates || [])
+        mergedResult?.aggregates,
+        result?.aggregates
       ),
     };
   }, emptyDocumentResult);
 };
 
-export const mergeDocumentsAggregates = (
-  documentsAggregates: DocumentsAggregate[]
-): DocumentsAggregate[] => {
-  const groupedDocumentsAggregates = groupBy(documentsAggregates, 'name');
+const mergeDocumentsAggregates = (
+  previousAggregates: DocumentSearchResponse['aggregates'],
+  newAggregates: DocumentSearchResponse['aggregates']
+): DocumentSearchResponse['aggregates'] => {
+  return previousAggregates?.map((aggregate) => {
+    const newAggregate = newAggregates?.find(
+      (agg) => agg.name === aggregate.name
+    );
 
-  return Object.keys(groupedDocumentsAggregates).reduce(
-    (result, aggregateName) => {
-      return [
-        ...result,
-        groupedDocumentsAggregates[aggregateName].reduce(
-          (mergedAggregate, aggregate) => {
-            return {
-              name: aggregate.name,
-              groups: concat(mergedAggregate.groups, aggregate.groups),
-              total: mergedAggregate.total + Number(aggregate.total),
-            };
-          },
-          {
-            name: '',
-            groups: [],
-            total: 0,
-          } as DocumentsAggregate
-        ),
-      ];
-    },
-    [] as DocumentsAggregate[]
-  );
+    if (!newAggregate) {
+      return aggregate;
+    }
+
+    return {
+      ...aggregate,
+      total: aggregate.total + newAggregate.total,
+      groups: concat(aggregate.groups, newAggregate.groups),
+    };
+  });
 };

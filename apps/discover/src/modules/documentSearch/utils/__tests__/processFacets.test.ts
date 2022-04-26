@@ -8,8 +8,8 @@ describe('processFacets', () => {
     expect(facets).toEqual({
       fileCategory: [],
       labels: [],
-      total: [],
       lastcreated: [],
+      total: [],
       location: [],
       pageCount: [],
     });
@@ -20,7 +20,7 @@ describe('processFacets', () => {
       fileCategory: [
         {
           count: 100,
-          key: 'PDF',
+          key: 'type',
           name: 'PDF',
           selected: false,
         },
@@ -28,7 +28,7 @@ describe('processFacets', () => {
       labels: [
         {
           count: 200,
-          key: 'TestId',
+          key: 'labels',
           name: 'TestId',
           selected: false,
         },
@@ -40,18 +40,11 @@ describe('processFacets', () => {
           name: 'total',
         },
       ],
-      lastcreated: [
-        {
-          count: 500,
-          key: '2020',
-          name: '2020',
-          selected: false,
-        },
-      ],
+      lastcreated: [],
       location: [
         {
           count: 300,
-          key: 'TestSource',
+          key: 'sourceFile.source',
           name: 'TestSource',
           selected: false,
         },
@@ -59,7 +52,7 @@ describe('processFacets', () => {
       pageCount: [
         {
           count: 10,
-          key: '1',
+          key: 'pageCount',
           name: '1',
           selected: false,
         },
@@ -75,10 +68,13 @@ describe('processFacets', () => {
           name: 'fileCategory',
           groups: [
             {
-              group: [{ type: 'PDF' }],
-              value: 100,
+              group: [{ property: ['type'], value: 'PDF' }],
+              count: 100,
             },
-            { group: [{ type: 'PDF' }], value: 2 },
+            {
+              group: [{ property: ['type'], value: 'PDF' }],
+              count: 2,
+            },
           ],
           total: 100,
         },
@@ -86,7 +82,7 @@ describe('processFacets', () => {
     });
     expect(facets.fileCategory[0]).toEqual({
       name: 'PDF',
-      key: 'PDF',
+      key: 'type',
       count: 102,
       selected: false,
     });

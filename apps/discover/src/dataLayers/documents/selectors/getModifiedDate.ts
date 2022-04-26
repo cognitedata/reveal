@@ -1,7 +1,7 @@
-import { Document } from '@cognite/sdk-playground';
+import { Document } from '@cognite/sdk';
 
 export const getModifiedDate = (doc: Document) => {
   // these keys used to be dynamic, before the sdk typed them
   // but now they are fixed we can use them directly (bonus: we get types)
-  return doc.sourceFile?.sourceModifiedTime;
+  return doc.modifiedTime ? new Date(doc.modifiedTime) : undefined;
 };

@@ -1,27 +1,29 @@
-import { LAST_CREATED_KEY } from 'dataLayers/documents/keys';
-import compact from 'lodash/compact';
-import { getYear } from 'utils/date';
+import {
+  DocumentFilterProperty,
+  DocumentFilterValue,
+  DocumentSearchResponse,
+  Label,
+} from '@cognite/sdk';
 
 import { EMPTY_ARRAY } from 'constants/empty';
 
-import {
-  FILE_TYPE_KEY,
-  LABELS_KEY,
-  PAGE_COUNT_KEY,
-  SOURCE_KEY,
-  TOTAL_COUNT_KEY,
-} from '../constants';
+import { LABELS_KEY, PAGE_COUNT_KEY, TOTAL_COUNT_KEY } from '../constants';
 import {
   AggregateNames,
   DocumentQueryFacet,
   DocumentResultFacets,
-  DocumentsAggregatesResponse,
 } from '../types';
 
 const findResult = (
-  result: DocumentsAggregatesResponse,
+  result: DocumentSearchResponse,
   name: AggregateNames
-) => {
+): {
+  group: {
+    property: DocumentFilterProperty;
+    value: DocumentFilterValue;
+  }[];
+  count: number;
+}[] => {
   const found = (result.aggregates || EMPTY_ARRAY).find(
     (item) => item.name === name
   );
@@ -39,18 +41,14 @@ const findResult = (
  *
  */
 export const processFacets = (
-  result: DocumentsAggregatesResponse
+  result: DocumentSearchResponse
 ): DocumentResultFacets => {
   const fileCategory = findResult(result, 'fileCategory').map(
-    (item): DocumentQueryFacet => {
-      const name = (item.group as { [FILE_TYPE_KEY]: string }[])
-        .map((group) => group[FILE_TYPE_KEY] || '')
-        .join(' ');
-
+    ({ count, group }) => {
       return {
-        name,
-        key: name,
-        count: item.value,
+        name: group[0]?.value as string,
+        key: group[0]?.property.join('.'),
+        count,
         selected: false,
       };
     }
@@ -75,20 +73,16 @@ export const processFacets = (
     <DocumentQueryFacet[]>[]
   );
 
-  const lastcreated = findResult(result, 'lastcreated').map((item) => {
-    const name = (item.group as { [LAST_CREATED_KEY]: string }[])
-      .map((group) => {
-        return getYear(group[LAST_CREATED_KEY]);
-      })
-      .join(' ');
-
-    return {
-      name,
-      key: name,
-      count: item.value,
-      selected: false,
-    };
-  });
+  const lastcreated = findResult(result, 'lastcreated').map(
+    ({ count, group }) => {
+      return {
+        name: group[0]?.value as string,
+        key: group[0]?.property.join('.'),
+        count,
+        selected: false,
+      };
+    }
+  );
 
   const totalCount = (result.aggregates || []).find(
     (item) => item.name === TOTAL_COUNT_KEY
@@ -104,41 +98,34 @@ export const processFacets = (
       ]
     : [];
 
-  const location = findResult(result, 'location').map((item) => {
-    const name = (item.group as { [SOURCE_KEY]: string }[])
-      .map((group) => group[SOURCE_KEY])
-      .join(' ');
+  const location = findResult(result, 'location').map(({ count, group }) => {
     return {
-      name,
-      key: name,
-      count: item.value,
+      name: group[0]?.value as string,
+      key: group[0]?.property.join('.'),
+      count,
       selected: false,
     };
   });
 
-  const labels = findResult(result, 'labels').map((item) => {
-    const name = compact(
-      (item.group as { [LABELS_KEY]: string }[]).map(
-        (group) => group[LABELS_KEY]
-      )
-    ).join(' ');
+  const labels = findResult(result, LABELS_KEY).map(({ count, group }) => {
     return {
-      name,
-      key: name,
-      count: item.value,
+      name: (group[0]?.value as Label).externalId,
+      key: group[0]?.property.join('.'),
+      count,
       selected: false,
     };
   });
 
-  const pageCount = findResult(result, 'pageCount').map((item) => {
-    const name = item.group[0][PAGE_COUNT_KEY];
-    return {
-      name,
-      key: name,
-      count: item.value,
-      selected: false,
-    };
-  });
+  const pageCount = findResult(result, PAGE_COUNT_KEY).map(
+    ({ count, group }) => {
+      return {
+        name: group[0]?.value as string,
+        key: group[0]?.property.join('.'),
+        count,
+        selected: false,
+      };
+    }
+  );
 
   return {
     labels,

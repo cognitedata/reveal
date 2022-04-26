@@ -1,16 +1,18 @@
+import isEmpty from 'lodash/isEmpty';
+import { getDocumentSDKClient } from 'services/documentSearch/sdk';
 import { handleServiceError } from 'utils/errors';
-import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 import { mergeUniqueArray } from 'utils/merge';
 
 import {
   Document,
-  DocumentsFilter,
-  DocumentsSearch,
-  ExternalDocumentsSearch,
-} from '@cognite/sdk-playground';
+  DocumentSearch,
+  DocumentFilter,
+  DocumentSortItem,
+  DocumentSearchResponse,
+  DocumentSearchRequest,
+} from '@cognite/sdk';
 
 import { aggregates } from 'modules/documentSearch/aggregates';
-import { getDocumentSDKClient } from 'modules/documentSearch/sdk';
 import {
   SearchQueryFull,
   DocumentResult,
@@ -18,20 +20,22 @@ import {
 } from 'modules/documentSearch/types';
 import { toDocument } from 'modules/documentSearch/utils';
 
+import { getCogniteSDKClient } from '../../utils/getCogniteSDKClient';
+
 import { processFacets } from './utils/processFacets';
 import { getSearchQuery } from './utils/queryUtil';
 import { toDocuments } from './utils/toDocuments';
 
 const doSearch = (
-  searchQuery: DocumentsSearch,
-  filter: DocumentsFilter = {},
-  sort: string[] = [],
+  searchQuery: DocumentSearch['search'],
+  filter: DocumentFilter | undefined,
+  sort?: DocumentSortItem[],
   limit = 100
-) => {
-  return getDocumentSDKClient().documents.search({
+): Promise<DocumentSearchResponse> => {
+  return getDocumentSDKClient().search({
     limit,
-    sort: sort.length > 0 ? sort : undefined,
-    filter,
+    sort: sort && sort.length > 0 ? sort : undefined,
+    filter: isEmpty(filter) ? undefined : filter,
     search: searchQuery,
     aggregates,
   });
@@ -48,8 +52,9 @@ export const getDocument = (query: string, documentId: string) => {
   return doSearch(
     { query, highlight: true },
     {
-      id: {
-        equals: Number(documentId),
+      equals: {
+        property: ['id'],
+        value: Number(documentId),
       },
     },
     [],
@@ -59,13 +64,16 @@ export const getDocument = (query: string, documentId: string) => {
 
 const search = (
   query: SearchQueryFull,
-  options: { filters?: DocumentsFilter; sort: string[] },
+  options: { filters?: DocumentFilter; sort: DocumentSortItem[] },
   limit?: number
 ): Promise<DocumentResult> => {
   const queryInfo = getSearchQuery(query);
   return doSearch(
     queryInfo.query,
-    mergeUniqueArray(queryInfo.filter, options.filters),
+    mergeUniqueArray<DocumentFilter | undefined>(
+      queryInfo.filter,
+      options.filters
+    ),
     options.sort,
     limit
   )
@@ -92,36 +100,46 @@ const search = (
 };
 
 const documentsByIds = (documentIds: Document['id'][]) => {
-  return getDocumentSDKClient().documents.search({
+  return getDocumentSDKClient().search({
     filter: {
-      id: {
-        in: documentIds,
+      in: {
+        property: ['id'],
+        values: documentIds,
       },
     },
   });
 };
 
-const getCategoriesByAssetIds = (filters: DocumentsFilter) => {
+const getCategoriesByAssetIds = (filters: DocumentFilter) => {
   return getDocumentSDKClient()
-    .documents.search({
+    .search({
       limit: 0,
-      filter: filters,
+      filter: isEmpty(filters) ? undefined : filters,
       aggregates,
     })
     .then((result) => processFacets(result));
 };
 
-const getCategoriesByQuery = (
-  query: SearchQueryFull,
-  filters: DocumentsFilter,
-  category: AggregateNames
-) => {
+const getCategoriesByQuery = ({
+  query,
+  filters,
+  category,
+}: {
+  query: SearchQueryFull;
+  filters: DocumentFilter | undefined;
+  category: AggregateNames;
+}) => {
   const queryInfo = getSearchQuery(query);
 
-  const searchBody: ExternalDocumentsSearch = {
+  const finalFilters = mergeUniqueArray<DocumentFilter | undefined>(
+    queryInfo?.filter,
+    filters
+  );
+
+  const searchBody: DocumentSearchRequest = {
     limit: 0,
     search: queryInfo.query,
-    filter: mergeUniqueArray(queryInfo.filter, filters),
+    filter: isEmpty(finalFilters) ? undefined : finalFilters,
   };
 
   const filteredAggregates = aggregates.filter(
@@ -132,7 +150,7 @@ const getCategoriesByQuery = (
   }
 
   return getDocumentSDKClient()
-    .documents.search(searchBody)
+    .search(searchBody)
     .then((result) => ({
       facets: processFacets(result)[category],
       total: result.aggregates ? result.aggregates[0].total : 0,

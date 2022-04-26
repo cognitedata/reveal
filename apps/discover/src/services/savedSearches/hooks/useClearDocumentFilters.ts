@@ -1,7 +1,7 @@
 import { documentFacetsStructure as emptyFacets } from 'services/documents/structure';
 import { useMutatePatchSavedSearch } from 'services/savedSearches/useSavedSearchQuery';
 
-import { DocumentsFilter } from '@cognite/sdk-playground';
+import { DocumentFilter } from '@cognite/sdk';
 
 import { DocumentsFacets } from 'modules/documentSearch/types';
 
@@ -16,7 +16,7 @@ export const useClearDocumentFilters = () => {
 
 export const useSetDocumentFilters = () => {
   const { mutateAsync } = useMutatePatchSavedSearch();
-  return (facets: DocumentsFacets, extraDocumentFilters?: DocumentsFilter) => {
+  return (facets: DocumentsFacets, extraDocumentFilters?: DocumentFilter) => {
     return mutateAsync({
       filters: {
         documents: { facets, extraDocumentFilters },

@@ -1,7 +1,7 @@
 import { normalize } from 'dataLayers/documents/adapters/normalize';
 import isEmpty from 'lodash/isEmpty';
 
-import { Document } from '@cognite/sdk-playground';
+import { Document } from '@cognite/sdk';
 
 import { documentSearchService } from 'modules/documentSearch/service';
 import { DocumentType } from 'modules/documentSearch/types';

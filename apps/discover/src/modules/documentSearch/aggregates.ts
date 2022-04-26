@@ -1,4 +1,4 @@
-import { DocumentsCountAggregate } from '@cognite/sdk-playground';
+import { DocumentCountAggregate } from '@cognite/sdk';
 
 import {
   FILE_TYPE_KEY,
@@ -8,21 +8,21 @@ import {
   TOTAL_COUNT_KEY,
 } from './constants';
 
-export const aggregates: DocumentsCountAggregate[] = [
+export const aggregates: DocumentCountAggregate[] = [
   {
     name: 'labels',
     aggregate: 'count',
-    groupBy: [LABELS_KEY],
+    groupBy: [{ property: [LABELS_KEY] }],
   },
   {
     name: 'location',
     aggregate: 'count',
-    groupBy: [SOURCE_KEY],
+    groupBy: [{ property: SOURCE_KEY }],
   },
   {
     name: 'fileCategory',
     aggregate: 'count',
-    groupBy: [FILE_TYPE_KEY],
+    groupBy: [{ property: [FILE_TYPE_KEY] }],
   },
   /**
    * We don't use aggregate result for lastcreated date so this is not necessary,
@@ -42,6 +42,6 @@ export const aggregates: DocumentsCountAggregate[] = [
   {
     name: PAGE_COUNT_KEY,
     aggregate: 'count',
-    groupBy: [PAGE_COUNT_KEY],
+    groupBy: [{ property: [PAGE_COUNT_KEY] }],
   },
 ];

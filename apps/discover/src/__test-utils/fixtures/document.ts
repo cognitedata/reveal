@@ -1,16 +1,19 @@
 import { normalize } from 'dataLayers/documents/adapters/normalize';
-import { LAST_CREATED_KEY } from 'dataLayers/documents/keys';
 import uniqueId from 'lodash/uniqueId';
 
-import { FileInfo, FileLink, InternalId, ExternalId } from '@cognite/sdk';
-import { DocumentsAggregatesResponse } from '@cognite/sdk-playground';
+import {
+  FileInfo,
+  FileLink,
+  InternalId,
+  ExternalId,
+  DocumentSearchResponse,
+} from '@cognite/sdk';
 
 import {
   DocumentType,
   DocumentMetadata,
   DocumentResultFacets,
   DocumentsFacets,
-  DocumentApiResponseItems,
 } from 'modules/documentSearch/types';
 
 import { getDocumentFixture } from './documents/getDocumentFixture';
@@ -85,17 +88,22 @@ export const getMockFileInfo = (extras?: Partial<FileInfo>): FileInfo => ({
 });
 
 export const getMockAPIResponse = (
-  items: DocumentApiResponseItems = [],
-  aggregates: DocumentsAggregatesResponse<DocumentApiResponseItems>['aggregates'] = []
-): DocumentsAggregatesResponse<DocumentApiResponseItems> => ({
+  items: DocumentSearchResponse['items'] = [],
+  aggregates: DocumentSearchResponse['aggregates'] = []
+): DocumentSearchResponse => ({
   items: items || [],
   aggregates: [
     {
       name: 'fileCategory',
       groups: [
         {
-          group: [{ type: 'PDF' }],
-          value: 100,
+          group: [
+            {
+              property: ['type'],
+              value: 'PDF',
+            },
+          ],
+          count: 100,
         },
       ],
       total: 100,
@@ -104,8 +112,15 @@ export const getMockAPIResponse = (
       name: 'labels',
       groups: [
         {
-          group: [{ labels: 'TestId' }],
-          value: 200,
+          group: [
+            {
+              property: ['labels'],
+              value: {
+                externalId: 'TestId',
+              },
+            },
+          ],
+          count: 200,
         },
       ],
       total: 200,
@@ -114,8 +129,13 @@ export const getMockAPIResponse = (
       name: 'location',
       groups: [
         {
-          group: [{ 'sourceFile.source': 'TestSource' }],
-          value: 300,
+          group: [
+            {
+              property: ['sourceFile', 'source'],
+              value: 'TestSource',
+            },
+          ],
+          count: 300,
         },
       ],
       total: 300,
@@ -125,22 +145,18 @@ export const getMockAPIResponse = (
       total: 400,
       groups: [],
     },
-    {
-      name: 'lastcreated',
-      groups: [
-        {
-          group: [{ [LAST_CREATED_KEY]: 1592472506240 }],
-          value: 500,
-        },
-      ],
-      total: 500,
-    },
+
     {
       name: 'pageCount',
       groups: [
         {
-          group: [{ pageCount: '1' }],
-          value: 10,
+          count: 10,
+          group: [
+            {
+              property: ['pageCount'],
+              value: '1',
+            },
+          ],
         },
       ],
       total: 10,

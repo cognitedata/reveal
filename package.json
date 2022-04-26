@@ -28,7 +28,7 @@
     "@cognite/potree-core": "1.0.6",
     "@cognite/power-ops-api-types": "^0.0.3",
     "@cognite/reveal": "^2.3.0",
-    "@cognite/sdk": "^7.1.1",
+    "@cognite/sdk": "^7.2.0",
     "@cognite/sdk-playground": "2.6.2",
     "@cognite/sdk-v5": "npm:@cognite/sdk@^5.6.2",
     "@cognite/sdk-wells-v2": "npm:@cognite/sdk-wells@2.0.14",

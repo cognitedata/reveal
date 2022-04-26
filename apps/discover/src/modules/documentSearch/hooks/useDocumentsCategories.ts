@@ -2,7 +2,7 @@ import { useQuery, UseQueryResult } from 'react-query';
 
 import { mergeUniqueArray } from 'utils/merge';
 
-import { DocumentsFilter } from '@cognite/sdk-playground';
+import { DocumentFilter } from '@cognite/sdk';
 
 import { DOCUMENTS_AGGREGATES } from 'constants/react-query';
 import { useProjectConfig } from 'hooks/useProjectConfig';
@@ -29,8 +29,7 @@ export const useDocumentsCategories = (
     },
   };
 
-  const configFilters: DocumentsFilter =
-    projectConfig?.documents?.filters || {};
+  const configFilters: DocumentFilter = projectConfig?.documents?.filters || {};
 
   const batchedFilters = batchedDocumentsFilters || [
     { filters: configFilters },
@@ -41,14 +40,11 @@ export const useDocumentsCategories = (
     async () => {
       const results = await Promise.all(
         batchedFilters.map(({ filters }) => {
-          return documentSearchService.getCategoriesByQuery(
+          return documentSearchService.getCategoriesByQuery({
             query,
-            {
-              ...filters,
-              ...configFilters,
-            },
-            category
-          );
+            filters: { ...filters, ...configFilters },
+            category,
+          });
         })
       );
 

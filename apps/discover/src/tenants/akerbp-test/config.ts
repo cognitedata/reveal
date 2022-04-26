@@ -16,7 +16,6 @@ const defaultConfig: TenantConfig = {
   },
   documents: {
     extractByFilepath: true,
-    filters: {},
   },
   seismic: {
     metadata: {

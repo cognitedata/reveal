@@ -1,5 +1,6 @@
+import '__mocks/mockCogniteSDK';
 import 'services/well/__mocks/setupWellsMockSDK';
-import 'services/documents/__mocks/setupDocumentsMockSDK';
+
 import { screen } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';

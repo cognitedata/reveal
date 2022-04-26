@@ -1,5 +1,6 @@
+import '__mocks/mockCogniteSDK';
 import 'services/well/__mocks/setupWellsMockSDK';
-import 'services/documents/__mocks/setupDocumentsMockSDK';
+
 import { screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { getMockDocumentCategoriesGet } from 'services/documents/__mocks/getMockDocumentCategoriesGet';

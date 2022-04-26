@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { DocumentsFilter } from '@cognite/sdk-playground';
+import { DocumentFilter } from '@cognite/sdk';
 
 import useSelector from 'hooks/useSelector';
 import { DocumentsFacets } from 'modules/documentSearch/types';
@@ -47,7 +47,7 @@ export const useAppliedDocumentFilters = (): DocumentsFacets => {
 };
 
 export const useAppliedDocumentMapLayerFilters = ():
-  | DocumentsFilter
+  | DocumentFilter
   | undefined => {
   const state = useSidebar();
   return useMemo(

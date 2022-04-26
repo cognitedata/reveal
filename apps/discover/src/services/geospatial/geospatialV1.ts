@@ -23,8 +23,8 @@ export const geospatialV1 = {
         log(error?.message);
         throw new Error(FEATURE_TYPE_ERROR);
       })
-      .then(([featureTypeResponse]) =>
-        getCogniteSDKClient()
+      .then(([featureTypeResponse]) => {
+        return getCogniteSDKClient()
           .geospatial.feature.create(
             featureTypeResponse.externalId,
             featureItems
@@ -33,8 +33,8 @@ export const geospatialV1 = {
             geospatialV1.deleteFeatureType(layerId);
             log(error?.message);
             throw new Error(FEATURE_ERROR);
-          })
-      );
+          });
+      });
   },
   getGeoJSON: (id: string) => {
     return getCogniteSDKClient()

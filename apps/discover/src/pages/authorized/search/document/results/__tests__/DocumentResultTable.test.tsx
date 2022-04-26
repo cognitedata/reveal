@@ -1,4 +1,5 @@
-import 'services/documents/__mocks/setupDocumentsMockSDK';
+import '__mocks/mockContainerAuth';
+import '__mocks/mockCogniteSDK';
 import { waitFor, screen, fireEvent, within } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { getMockDocumentCategoriesGet } from 'services/documents/__mocks/getMockDocumentCategoriesGet';

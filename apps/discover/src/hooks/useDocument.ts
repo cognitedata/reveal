@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { getDocumentSDKClient } from 'modules/documentSearch/sdk';
+import { getDocumentSDKClient } from 'services/documentSearch/sdk';
+
 import { DocumentType } from 'modules/documentSearch/types';
 import { toDocument } from 'modules/documentSearch/utils';
 
@@ -15,8 +16,23 @@ export const useDocument = (
     setIsLoading(true);
     try {
       getDocumentSDKClient()
-        .documents.search({
-          filter: { id: { in: [Number(documentId)] } },
+        .search({
+          filter: {
+            or: [
+              {
+                in: {
+                  property: ['id'],
+                  values: [Number(documentId)],
+                },
+              },
+              {
+                in: {
+                  property: ['externalId'],
+                  values: [documentId],
+                },
+              },
+            ],
+          },
         })
         .then(({ items }) => {
           setDoc(

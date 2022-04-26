@@ -1,4 +1,4 @@
-import { Document, DocumentsSearchWrapper } from '@cognite/sdk-playground';
+import { Document, DocumentHighlight } from '@cognite/sdk';
 
 import { getMockGeometry } from '../geometry';
 
@@ -8,7 +8,8 @@ export const getDocumentFixture = (
 ): Document => ({
   id: 123,
   externalId: 'aa123aa',
-  createdTime: 1592472506240,
+  createdTime: 1396357617000,
+  modifiedTime: 1396357617334,
   language: 'en',
   type: 'PDF',
   title: 'Chapter 5 pressure tests.xlsx',
@@ -20,9 +21,6 @@ export const getDocumentFixture = (
     name: 'Pressure tests.pdf',
     assetIds: [1, 2, 3],
     directory: '/folder1/folder2',
-    sourceCreatedTime: new Date(1396357617000),
-    sourceModifiedTime: new Date(1396357617334),
-    lastUpdatedTime: new Date(1396357617334),
     metadata: {
       parentPath: '/folder1/folder2',
       path: '/folder1/folder2/Pressure tests.pdf',
@@ -32,7 +30,7 @@ export const getDocumentFixture = (
   },
 });
 
-export const getHighlightContentFixture =
-  (): DocumentsSearchWrapper['highlight'] => ({
-    content: ['content 1', 'content 2'],
-  });
+export const getHighlightContentFixture = (): DocumentHighlight => ({
+  name: [''],
+  content: ['content 1', 'content 2'],
+});

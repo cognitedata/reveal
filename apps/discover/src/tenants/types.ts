@@ -17,8 +17,8 @@ import {
   ListResponse,
   Sequence,
   SequenceFilter as SdkSequenceFilter,
+  DocumentFilter,
 } from '@cognite/sdk';
-import { DocumentsFilter } from '@cognite/sdk-playground/dist/src/types';
 
 import { Modules } from 'modules/sidebar/types';
 import { SequenceFilter } from 'modules/wellSearch/service';
@@ -67,7 +67,7 @@ export interface DocumentConfig {
   defaultLimit?: number;
   // This is used to decide whether extract documents by parent path field or directory field
   extractByFilepath?: boolean;
-  filters: DocumentsFilter;
+  filters?: DocumentFilter;
   wellboreSchematics?: {
     supportedFileTypes: Array<string>;
   };
@@ -320,7 +320,7 @@ export interface CompanyInfoConfig {
 export interface MapLayerFilters {
   [key: string]: {
     labelAccessor: string;
-    filters?: Array<keyof DocumentsFilter>;
+    filters?: Array<keyof DocumentFilter>;
   };
 }
 

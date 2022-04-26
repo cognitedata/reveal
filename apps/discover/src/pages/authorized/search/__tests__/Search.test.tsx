@@ -1,4 +1,5 @@
 import '__mocks/mockContainerAuth'; // should be first
+import '__mocks/mockCogniteSDK';
 import 'services/well/__mocks/setupWellsMockSDK';
 
 import { screen } from '@testing-library/react';

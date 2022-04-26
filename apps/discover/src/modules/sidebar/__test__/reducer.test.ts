@@ -102,7 +102,7 @@ describe('search.reducer', () => {
 
   test('Set extra documents filters', () => {
     const documentFilters = getMockDocumentFilter();
-    const extraDocumentFilters = { id: { in: [123] } };
+    const extraDocumentFilters = { in: { property: ['id'], values: [123] } };
     const state = reducer(initialState, {
       type: UPDATE_CATEGORY_APPLIED_FILTERS,
       payload: {

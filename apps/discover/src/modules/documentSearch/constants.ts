@@ -1,6 +1,6 @@
 export const FILE_TYPE_KEY = 'type';
 export const LABELS_KEY = 'labels';
-export const SOURCE_KEY = 'sourceFile.source';
+export const SOURCE_KEY = ['sourceFile', 'source'];
 export const PAGE_COUNT_KEY = 'pageCount';
 export const TOTAL_COUNT_KEY = 'total';
 

@@ -1,3 +1,4 @@
+import '__mocks/mockCogniteSDK';
 import { getMockDocumentEmptyFacets } from '__test-utils/fixtures/document';
 
 import { formatAssetIdsFilter, getFilterQuery } from '../utils';
@@ -16,7 +17,12 @@ describe('related document util', () => {
       expect(result.length).toBe(1);
       const [{ filters }] = result;
 
-      expect(filters!.assetIds).toMatchObject({ containsAny: [1234] });
+      expect(filters!).toMatchObject({
+        containsAny: {
+          property: ['assetIds'],
+          values: ids,
+        },
+      });
     });
 
     it('should return formatted asset ids for document filter (v3)', async () => {
@@ -27,8 +33,11 @@ describe('related document util', () => {
       const [{ filters }] = result;
 
       // TODO(PP-2452): fix types
-      expect((filters as any).assetExternalIds).toMatchObject({
-        containsAny: ['1234'],
+      expect(filters).toMatchObject({
+        containsAny: {
+          property: ['assetExternalIds'],
+          values: ids,
+        },
       });
     });
 
@@ -39,10 +48,18 @@ describe('related document util', () => {
       expect(result.length).toBe(2);
       const [batch1, batch2] = result;
 
-      expect(batch1.filters!.assetIds).toMatchObject({
-        containsAny: [1, 2, 3, 4],
+      expect(batch1.filters).toMatchObject({
+        containsAny: {
+          property: ['assetIds'],
+          values: [1, 2, 3, 4],
+        },
       });
-      expect(batch2.filters!.assetIds).toMatchObject({ containsAny: [5] });
+      expect(batch2.filters).toMatchObject({
+        containsAny: {
+          property: ['assetIds'],
+          values: [5],
+        },
+      });
     });
   });
 

@@ -2,11 +2,11 @@ import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import isEmpty from 'lodash/isEmpty';
+import { useDocumentSearchResultQuery } from 'services/documentSearch/useDocumentSearchResultQuery';
 import styled from 'styled-components/macro';
 
 import { documentSearchActions } from 'modules/documentSearch/actions';
 import { useDocumentResultCount } from 'modules/documentSearch/hooks/useDocumentResultCount';
-import { useDocumentSearchResultQuery } from 'modules/documentSearch/hooks/useDocumentSearchResultQuery';
 import { useLabelsQuery } from 'modules/documentSearch/hooks/useLabelsQuery';
 import { useSelectedDocumentIds } from 'modules/documentSearch/selectors';
 import { getDocumentsFacetsInfo } from 'modules/documentSearch/utils';

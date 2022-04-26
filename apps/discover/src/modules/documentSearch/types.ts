@@ -1,11 +1,8 @@
 import {
-  Document,
-  DocumentsAggregate,
-  DocumentsAggregatesResponse as DocumentsAggregatesSDKResponse,
-  DocumentsFilter,
-  DocumentsSearch,
-  DocumentsSearchWrapper,
-} from '@cognite/sdk-playground';
+  DocumentFilter,
+  DocumentSearchResponse,
+  DocumentSearch,
+} from '@cognite/sdk';
 import { Geometry, GeoJson } from '@cognite/seismic-sdk-js';
 
 import { MapLayerGeoJsonFilter } from '../sidebar/types';
@@ -36,15 +33,15 @@ export type DateRange = {
 };
 
 export interface Result {
-  query: DocumentsSearch;
-  filter: DocumentsFilter;
+  query: DocumentSearch['search'];
+  filter?: DocumentFilter;
 }
 
 export interface DocumentResult {
   count: number;
   hits: DocumentType[];
   facets: DocumentResultFacets;
-  aggregates?: DocumentsAggregate[];
+  aggregates?: DocumentSearchResponse['aggregates'];
 }
 
 export interface DocumentLabel {
@@ -74,8 +71,6 @@ export interface DocumentMetadata {
 export interface DocumentHighlight {
   content: string[];
 }
-
-export type DocumentApiResponseItems = { item: Document }[];
 
 export interface DocumentType {
   // data state
@@ -139,7 +134,7 @@ export interface SearchQueryFull {
   facets: DocumentsFacets;
   geoFilter: GeoJson[];
   extraGeoJsonFilters?: MapLayerGeoJsonFilter[];
-  extraDocumentFilters?: DocumentsFilter;
+  extraDocumentFilters?: DocumentFilter;
 }
 
 export type ViewMode = 'card' | 'table';
@@ -173,9 +168,7 @@ export interface FormattedFacet {
   facetValueDisplayFormat: string;
 }
 
-export type DocumentsAggregatesResponse = DocumentsAggregatesSDKResponse<
-  DocumentsSearchWrapper[]
->;
+export type DocumentsAggregatesResponse = DocumentSearchResponse['aggregates'];
 
 export type CategoryResponse = {
   facets: DocumentQueryFacet[];
@@ -195,4 +188,4 @@ export type FacetsCounts = {
   [key: string]: number;
 };
 
-export type BatchedDocumentsFilters = { filters: DocumentsFilter }[];
+export type BatchedDocumentsFilters = { filters: DocumentFilter }[];

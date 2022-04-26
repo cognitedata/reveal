@@ -1,10 +1,10 @@
 import { useQueryClient } from 'react-query';
 
 import { renderHook } from '@testing-library/react-hooks';
+import { useDocumentSearchResultQuery } from 'services/documentSearch/useDocumentSearchResultQuery';
 
 import { getMockDocument } from '__test-utils/fixtures/document';
 import { DOCUMENTS_QUERY_KEY } from 'constants/react-query';
-import { useDocumentSearchResultQuery } from 'modules/documentSearch/hooks/useDocumentSearchResultQuery';
 import { getEmptyDocumentStateFacets } from 'modules/documentSearch/utils';
 
 import { useRemoveSensitiveDocument } from '../useRemoveSensitiveDocument';
@@ -21,7 +21,7 @@ jest.mock('modules/documentSearch/hooks/useDocumentSearchQueryFull', () => ({
   useDocumentSearchQueryFull: jest.fn(),
 }));
 
-jest.mock('modules/documentSearch/hooks/useDocumentSearchResultQuery', () => ({
+jest.mock('services/documentSearch/useDocumentSearchResultQuery', () => ({
   useDocumentSearchResultQuery: jest.fn(),
 }));
 

@@ -12,10 +12,7 @@ import mergeWith from 'lodash/mergeWith';
  * @param target object
  * @returns source and target merged
  */
-export const mergeUniqueArray = <T extends Record<any, any>>(
-  source: T,
-  target?: T
-) => {
+export const mergeUniqueArray = <T>(source: T, target?: T) => {
   return mergeWith(source, target, (objValue, srcValue) => {
     if (isArray(objValue)) {
       return [...new Set(objValue.concat(srcValue))];

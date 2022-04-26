@@ -1,3 +1,4 @@
+import '__mocks/mockCogniteSDK';
 import { renderHook } from '@testing-library/react-hooks';
 
 import { getMockDocument as mockDocument } from '__test-utils/fixtures/document';
@@ -7,7 +8,7 @@ import { getMockedStore } from '__test-utils/store.utils';
 
 import { useDocumentHighlightedContent } from '../useDocumentHighlightedContent';
 
-jest.mock('modules/documentSearch/sdk', () => ({
+jest.mock('services/documentSearch/sdk', () => ({
   getDocumentSDKClient: () => ({
     documents: {
       search: jest

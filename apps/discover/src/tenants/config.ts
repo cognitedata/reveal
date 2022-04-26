@@ -418,7 +418,6 @@ const defaultConfig: TenantConfig = {
   },
   documents: {
     defaultLimit: 100,
-    filters: {},
     wellboreSchematics: {
       supportedFileTypes: ['PDF', 'IMAGE'],
     },

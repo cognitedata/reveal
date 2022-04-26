@@ -3,7 +3,7 @@ import {
   SearchHistoryResponse,
   UserInfoSummary,
 } from '@cognite/discover-api-types';
-import { DocumentsFilter } from '@cognite/sdk-playground';
+import { DocumentFilter } from '@cognite/sdk';
 import { GeoJson } from '@cognite/seismic-sdk-js';
 
 import { DocumentsFacets } from '../../modules/documentSearch/types';
@@ -36,7 +36,7 @@ export interface SavedSearchContent {
 export interface SearchOptionFilters {
   documents?: {
     facets: DocumentsFacets;
-    extraDocumentFilters?: DocumentsFilter;
+    extraDocumentFilters?: DocumentFilter;
   };
   wells?: WellFilterMap;
   extraGeoJsonFilters?: MapLayerGeoJsonFilter[];

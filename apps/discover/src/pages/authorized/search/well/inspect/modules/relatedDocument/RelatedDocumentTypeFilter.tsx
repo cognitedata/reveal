@@ -35,11 +35,11 @@ export const RelatedDocumentTypeFilter = () => {
     const labels = (options || [])
       .filter(
         (option) =>
-          (option.key === key && !option.selected) ||
-          (option.key !== key && option.selected)
+          (option.name === key && !option.selected) ||
+          (option.name !== key && option.selected)
       )
       .map((option) => ({
-        externalId: option.key,
+        externalId: option.name,
       }));
     patchRelatedDocumentFilters({
       labels,
@@ -60,7 +60,7 @@ export const RelatedDocumentTypeFilter = () => {
             </DocTypeHeader>
             {options.map((option) => (
               <Histogram
-                key={option.key}
+                key={option.name}
                 options={{ ...option, total }}
                 toggleFilter={toggleFilter}
               />

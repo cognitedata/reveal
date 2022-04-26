@@ -1,9 +1,3 @@
-import {
-  LAST_CREATED_KEY_VALUE,
-  LAST_UPDATED_KEY_VALUE,
-} from 'dataLayers/documents/keys';
-import { adaptLocalEpochToUTC } from 'utils/date/adaptLocalEpochToUTC';
-
 import { getMockGeometry } from '__test-utils/fixtures/geometry';
 
 import { getMockSearchQueryWithFacets } from '../../__tests__/utils';
@@ -13,47 +7,39 @@ describe('Test query builder', () => {
   describe('Test facet building', () => {
     it(`File type facet should transform to IN condition`, async () => {
       const result = getSearchQuery(getMockSearchQueryWithFacets());
-      expect(result.filter.type).toEqual({
-        in: ['Image', 'PDF'],
+      expect(result.filter.and).toContainEqual({
+        in: { property: ['type'], values: ['Image', 'PDF'] },
       });
     });
 
     it(`Label`, async () => {
       const result = getSearchQuery(getMockSearchQueryWithFacets());
 
-      expect(result.filter.sourceFile).not.toBeNull();
-      expect(result.filter.labels).toEqual({
-        containsAny: [
-          { externalId: 'COMPLETION_REPORT' },
-          { externalId: 'COMPLETION_SCHEMATIC' },
-        ],
-      });
-    });
-
-    it(`created data`, async () => {
-      const result = getSearchQuery(getMockSearchQueryWithFacets());
-      expect(result.filter.sourceFile?.[LAST_CREATED_KEY_VALUE]).toEqual({
-        max: adaptLocalEpochToUTC(1623695400000),
-        min: adaptLocalEpochToUTC(1622485800000),
-      });
-    });
-
-    it(`updated time`, async () => {
-      const result = getSearchQuery(getMockSearchQueryWithFacets());
-
-      expect(result.filter.sourceFile).not.toBeNull();
-      expect(result.filter.sourceFile?.[LAST_UPDATED_KEY_VALUE]).toEqual({
-        max: adaptLocalEpochToUTC(1623695400000),
-        min: adaptLocalEpochToUTC(1622485800000),
+      expect(result.filter).not.toBeNull();
+      expect(result.filter.and).toContainEqual({
+        containsAny: {
+          property: ['labels'],
+          values: [
+            {
+              externalId: 'COMPLETION_REPORT',
+            },
+            {
+              externalId: 'COMPLETION_SCHEMATIC',
+            },
+          ],
+        },
       });
     });
 
     it(`source`, async () => {
       const result = getSearchQuery(getMockSearchQueryWithFacets());
 
-      expect(result.filter.sourceFile).not.toBeNull();
-      expect(result.filter.sourceFile?.source).toEqual({
-        in: ['bp-blob', 'bp-edm-attachment'],
+      expect(result.filter).not.toBeNull();
+      expect(result.filter.and).toContainEqual({
+        in: {
+          property: ['sourceFile', 'source'],
+          values: ['bp-blob', 'bp-edm-attachment'],
+        },
       });
     });
 
@@ -69,10 +55,12 @@ describe('Test query builder', () => {
           ],
         })
       );
-      expect(result.filter.geoLocation).toEqual(
+      expect(result.filter.and).toContainEqual(
         expect.objectContaining({
-          relation: 'intersects',
-          shape: geoJson,
+          geojsonIntersects: {
+            geometry: geoJson,
+            property: ['geoLocation'],
+          },
         })
       );
     });
@@ -84,10 +72,12 @@ describe('Test query builder', () => {
           geoFilter: [{ geometry }],
         })
       );
-      expect(result.filter.geoLocation).toEqual(
+      expect(result.filter.and).toContainEqual(
         expect.objectContaining({
-          relation: 'intersects',
-          shape: geometry,
+          geojsonIntersects: {
+            geometry,
+            property: ['geoLocation'],
+          },
         })
       );
     });

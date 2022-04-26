@@ -46,7 +46,12 @@ describe('useDocumentSearchOptions hook', () => {
     const options = getHookResult();
     expect(options).toEqual({
       filters,
-      sort: ['title:desc'],
+      sort: [
+        {
+          order: 'desc',
+          property: ['title'],
+        },
+      ],
     });
   });
 
@@ -59,11 +64,14 @@ describe('useDocumentSearchOptions hook', () => {
     const options = getHookResult();
     expect(options).toEqual({
       filters: {
-        sourceFile: {
-          directoryPrefix: {
-            in: [extractParentFolderPath],
+        and: [
+          {
+            prefix: {
+              property: ['sourceFile', 'directory'],
+              value: '/extractParentFolderPath',
+            },
           },
-        },
+        ],
       },
       sort: [],
     });

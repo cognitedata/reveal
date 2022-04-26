@@ -6,7 +6,7 @@
   "scripts": {
     "analyse": "../../node_modules/.bin/source-map-explorer 'build/static/js/*.js' --only-mapped --html /tmp/result.html && google-chrome /tmp/result.html",
     "analyze": "yarn analyse",
-    "build:bazel": "bazel build :build_sed",
+    "build": "bazel build :build_sed",
     "clean": "rm -Rf build",
     "eslint": "bazel test :eslint_test",
     "eslint:fix": "bazel run :eslint_test -- --fix",

@@ -1,6 +1,6 @@
 import get from 'lodash/get';
 
-import { Document } from '@cognite/sdk-playground';
+import { Document } from '@cognite/sdk';
 
 function escapeRegExp(value = '') {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string

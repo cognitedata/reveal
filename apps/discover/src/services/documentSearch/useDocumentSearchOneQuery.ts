@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 
-import { Document } from '@cognite/sdk-playground';
+import { Document } from '@cognite/sdk';
 
 import { DOCUMENTS_QUERY_KEY } from 'constants/react-query';
 

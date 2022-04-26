@@ -29,8 +29,6 @@ export const getMockSearchQueryWithFacets = (
           externalId: 'COMPLETION_SCHEMATIC',
         },
       ],
-      lastmodified: ['1622485800000', '1623695400000'],
-      lastcreated: ['1622485800000', '1623695400000'],
       location: ['bp-blob', 'bp-edm-attachment'],
     },
     geoFilter: [],

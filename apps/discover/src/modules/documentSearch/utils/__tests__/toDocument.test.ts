@@ -90,6 +90,6 @@ describe('toDocument', () => {
       item: getDocumentFixture(),
       highlight: highlightContent,
     });
-    expect(highlight).toEqual(highlightContent);
+    expect(highlight).toEqual({ content: highlightContent.content });
   });
 });

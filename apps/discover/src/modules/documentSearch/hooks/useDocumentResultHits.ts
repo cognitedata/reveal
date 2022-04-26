@@ -1,6 +1,6 @@
 import { useDeepMemo } from 'hooks/useDeep';
 
-import { useDocumentSearchResultQuery } from './useDocumentSearchResultQuery';
+import { useDocumentSearchResultQuery } from '../../../services/documentSearch/useDocumentSearchResultQuery';
 
 export const useDocumentResultHits = () => {
   const { data: documentResult } = useDocumentSearchResultQuery();

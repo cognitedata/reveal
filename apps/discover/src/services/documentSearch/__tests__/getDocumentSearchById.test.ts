@@ -1,5 +1,5 @@
-import '__mocks/mockContainerAuth'; // never miss this import
-import 'services/documents/__mocks/setupDocumentsMockSDK';
+import '__mocks/mockCogniteSDK'; // never miss this import
+
 import { setupServer } from 'msw/node';
 
 import { getDocumentFixture } from '__test-utils/fixtures/documents/getDocumentFixture';

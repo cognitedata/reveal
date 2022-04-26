@@ -1,14 +1,12 @@
-import { LAST_CREATED_KEY, LAST_UPDATED_KEY } from 'dataLayers/documents/keys';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import set from 'lodash/set';
-import { adaptLocalEpochToUTC } from 'utils/date/adaptLocalEpochToUTC';
 
 import {
-  DocumentsFilter,
-  DocumentsSearch,
-  GeoLocationFilter,
-} from '@cognite/sdk-playground';
+  DocumentFilter,
+  DocumentSearch,
+  DocumentFilterGeoJsonIntersects,
+} from '@cognite/sdk';
 import { GeoJson, GeoJsonObject } from '@cognite/seismic-sdk-js';
 
 import {
@@ -17,13 +15,14 @@ import {
   SOURCE_KEY,
   PAGE_COUNT_KEY,
 } from 'modules/documentSearch/constants';
-import {
-  SearchQueryFull,
-  Result,
-  DateRange,
-} from 'modules/documentSearch/types';
+import { SearchQueryFull, Result } from 'modules/documentSearch/types';
 
-const generateGeoFilter = (geoJson: GeoJson[]): GeoLocationFilter | null => {
+import { adaptLocalEpochToUTC } from '../../../utils/date/adaptLocalEpochToUTC';
+import { DateRange } from '../types';
+
+const generateGeoFilter = (
+  geoJson: GeoJson[]
+): DocumentFilterGeoJsonIntersects | null => {
   const coordinates = geoJson.map((item) => {
     const geometry = item.geometry as GeoJsonObject;
     if (isArray(geometry.coordinates)) {
@@ -33,13 +32,15 @@ const generateGeoFilter = (geoJson: GeoJson[]): GeoLocationFilter | null => {
     return [0, 0];
   });
   return coordinates && coordinates.length > 0
-    ? ({
-        shape: {
-          type: 'Polygon',
-          coordinates,
+    ? {
+        geojsonIntersects: {
+          property: ['geoLocation'],
+          geometry: {
+            type: 'Polygon',
+            coordinates,
+          },
         },
-        relation: 'intersects',
-      } as any)
+      }
     : null;
 };
 
@@ -49,13 +50,29 @@ const generateGeoFilter = (geoJson: GeoJson[]): GeoLocationFilter | null => {
  * Note: this function is horrific. Needs to be a tonne of smaller ones.
  */
 export const getSearchQuery = (query: SearchQueryFull) => {
-  const queryInfoResults: Result = {
+  let queryInfoResults: Result = {
     query: { query: '' },
-    filter: {},
+    filter: undefined,
   };
 
+  // concat filters
+  const appendFilter = (filter: DocumentFilter) => {
+    if (isEmpty(queryInfoResults.filter)) {
+      set(queryInfoResults, 'filter.and', [filter]);
+    } else {
+      queryInfoResults = {
+        ...queryInfoResults,
+        filter: {
+          ...queryInfoResults.filter,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore even though the filter is fully typed it doesn't recognize the '.and' as one of the allowed options
+          and: [...(queryInfoResults.filter?.and || []), filter],
+        },
+      };
+    }
+  };
   // now we need to map the field filters to the API names
-  const searchQuery: DocumentsSearch = {
+  const searchQuery: DocumentSearch['search'] = {
     query: query.phrase,
     highlight: false, // This will now be fetch pr document rather than for all documents at once to ease the load on the backend
   };
@@ -74,11 +91,10 @@ export const getSearchQuery = (query: SearchQueryFull) => {
           },
         ])
       : generateGeoFilter(query.geoFilter);
-  if (geoLocation) {
-    queryInfoResults.filter.geoLocation = geoLocation;
-  }
 
-  const queryFilters: DocumentsFilter = {};
+  if (geoLocation) {
+    appendFilter(geoLocation);
+  }
 
   const fileCategoryFacets = query.facets.fileCategory || [];
 
@@ -94,22 +110,31 @@ export const getSearchQuery = (query: SearchQueryFull) => {
 
   // eg: pdf, image
   if (!isEmpty(fileCategoryFacets)) {
-    set(queryFilters, FILE_TYPE_KEY, {
-      in: fileCategoryFacets,
+    appendFilter({
+      in: {
+        property: [FILE_TYPE_KEY],
+        values: fileCategoryFacets,
+      },
     });
   }
 
   // source
   if (!isEmpty(locationFacets)) {
-    set(queryFilters, SOURCE_KEY, {
-      in: locationFacets,
+    appendFilter({
+      in: {
+        property: SOURCE_KEY,
+        values: locationFacets,
+      },
     });
   }
 
   // document types, eg: drilling report
   if (!isEmpty(labelFacets)) {
-    set(queryFilters, LABELS_KEY, {
-      containsAny: labelFacets,
+    appendFilter({
+      containsAny: {
+        property: [LABELS_KEY],
+        values: labelFacets,
+      },
     });
   }
 
@@ -119,7 +144,13 @@ export const getSearchQuery = (query: SearchQueryFull) => {
       max: adaptLocalEpochToUTC(Number(lastmodifiedFacets[1])),
     };
     if (timeFilters.min && timeFilters.max) {
-      set(queryFilters, LAST_UPDATED_KEY, timeFilters);
+      appendFilter({
+        range: {
+          property: ['modifiedTime'],
+          gte: timeFilters.min,
+          lt: timeFilters.max,
+        },
+      });
     }
   }
 
@@ -129,7 +160,13 @@ export const getSearchQuery = (query: SearchQueryFull) => {
       max: adaptLocalEpochToUTC(Number(lastcreatedFacets[1])),
     };
     if (timeFilters.min && timeFilters.max) {
-      set(queryFilters, LAST_CREATED_KEY, timeFilters);
+      appendFilter({
+        range: {
+          property: ['createdTime'],
+          gte: timeFilters.min,
+          lt: timeFilters.max,
+        },
+      });
     }
   }
 
@@ -138,13 +175,14 @@ export const getSearchQuery = (query: SearchQueryFull) => {
       min: Number(pageCount[0]),
       max: Number(pageCount[1]),
     };
-    set(queryFilters, PAGE_COUNT_KEY, pageCountFilters);
+    appendFilter({
+      range: {
+        property: [PAGE_COUNT_KEY],
+        gte: pageCountFilters.min,
+        lt: pageCountFilters.max,
+      },
+    });
   }
-
-  queryInfoResults.filter = {
-    ...queryInfoResults.filter,
-    ...queryFilters,
-  };
 
   return queryInfoResults;
 };

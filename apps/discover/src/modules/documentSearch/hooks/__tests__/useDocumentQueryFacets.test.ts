@@ -1,4 +1,6 @@
-import 'services/documents/__mocks/setupDocumentsMockSDK';
+import '__mocks/mockContainerAuth';
+import '__mocks/mockCogniteSDK';
+
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
 import { DocumentCategoriesFacets } from 'services/documents/types';
@@ -46,7 +48,7 @@ describe('useDocumentQueryFacets', () => {
     expect(data.pageCount[0]).toEqual(
       expect.objectContaining({
         name: '1',
-        key: '1',
+        key: 'pageCount',
         count: 10,
         selected: false,
       })

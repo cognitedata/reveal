@@ -9,9 +9,7 @@ const defaultConfig: TenantConfig = {
       [64, 80],
     ],
   },
-  documents: {
-    filters: {},
-  },
+  documents: {},
   wells: {
     trajectory: {
       enabled: true,

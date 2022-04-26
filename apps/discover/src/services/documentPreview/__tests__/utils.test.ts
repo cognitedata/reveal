@@ -1,5 +1,7 @@
+import '__mocks/mockContainerAuth';
 import '__mocks/mockCogniteSDK';
 import { saveAs } from 'file-saver';
+import { setupServer } from 'msw/node';
 
 import { InternalId, ExternalId, FileLink } from '@cognite/sdk';
 
@@ -8,6 +10,12 @@ import {
   getMockFileLinkWithInternalId,
   getMockFileLinkWithExternalId,
 } from '__test-utils/fixtures/document';
+import { getMockFilesByIds } from 'modules/documentSearch/__mocks/getMockFilesByIds';
+import { getMockFilesDownloadLink } from 'modules/documentSearch/__mocks/getMockFilesDownloadLink';
+import {
+  getMockFilesDownloadLinkEndpoint,
+  MOCK_DOWNLOAD_URL,
+} from 'modules/documentSearch/__mocks/getMockFilesDownloadLinkEndpoint';
 
 import * as service from '../service';
 import {
@@ -27,7 +35,96 @@ jest.mock('file-saver', () => ({
   saveAs: jest.fn(),
 }));
 
+const filename = 'document.pdf';
+const documents = [getMockDocument({}, { filename })];
+
 describe('documentPreview -> utils', () => {
+  const mockServer = setupServer(
+    getMockFilesDownloadLink({
+      items: documents.map((document) => ({
+        externalId: document?.externalId || '1',
+        downloadUrl: MOCK_DOWNLOAD_URL,
+      })),
+    }),
+    getMockFilesDownloadLinkEndpoint(),
+    getMockFilesByIds()
+  );
+
+  beforeAll(() => mockServer.listen());
+  afterAll(() => mockServer.close());
+
+  describe('getFavoriteContentForZipping', () => {
+    it('should throw error as expected', async () => {
+      await expect(getFavoriteContentForZipping([])).rejects.toThrowError(
+        'No files to download'
+      );
+    });
+
+    it('should return a not null result', () => {
+      expect(getFavoriteContentForZipping(documents)).toBeTruthy();
+    });
+
+    it('should return result as expected', async () => {
+      const favoriteContentForZipping = await getFavoriteContentForZipping(
+        documents
+      );
+
+      expect(favoriteContentForZipping).toEqual([
+        { blob: Promise.resolve({}), filename },
+      ]);
+    });
+  });
+
+  describe('getDocumentContentForZipping', () => {
+    it('should throw error as expected', async () => {
+      await expect(getDocumentContentForZipping([])).rejects.toThrowError(
+        'No files to download'
+      );
+    });
+
+    it('should return a not null result', () => {
+      expect(getDocumentContentForZipping(documents)).toBeTruthy();
+    });
+
+    it('should return result as expected', async () => {
+      const documentContentForZipping = await getDocumentContentForZipping(
+        documents
+      );
+      expect(documentContentForZipping).toEqual([
+        { blob: Promise.resolve({}), filename },
+      ]);
+    });
+  });
+
+  describe('downloadFile', () => {
+    it('should call `saveAs` as expected', async () => {
+      downloadFile('document.pdf');
+      expect(saveAs).toBeCalledTimes(1);
+    });
+  });
+
+  describe('downloadFileFromUrl', () => {
+    it('should call `downloadFileFromUrl` as expected', async () => {
+      const openSpy = jest
+        .spyOn(window, 'open')
+        .mockImplementation(() => window);
+
+      await downloadFileFromUrl('12345');
+      expect(openSpy).toBeCalledTimes(1);
+    });
+  });
+
+  describe('openDocumentPreviewInNewTab', () => {
+    it('should call `openDocumentPreviewInNewTab` as expected', async () => {
+      const getTemporaryPreviewLinkSpy = jest
+        .spyOn(service, 'getTemporaryPreviewLink')
+        .mockImplementation(() => Promise.resolve('getTemporaryPreviewLink'));
+
+      await openDocumentPreviewInNewTab('12345');
+      expect(getTemporaryPreviewLinkSpy).toBeCalledTimes(1);
+    });
+  });
+
   describe('getDocIdFromSignedUrlResponse', () => {
     it('should return response when internalId is provided', () => {
       const response: FileLink & InternalId = getMockFileLinkWithInternalId();
@@ -38,7 +135,9 @@ describe('documentPreview -> utils', () => {
     it('should return response when externalId is provided', () => {
       const response: FileLink & ExternalId = getMockFileLinkWithExternalId();
       const id = '12345';
-      expect(getDocIdFromSignedUrlResponse([response], id)).toEqual(response);
+      expect(getDocIdFromSignedUrlResponse([response], id, id)).toEqual(
+        response
+      );
     });
 
     it('should not return response when typeof id is number', () => {
@@ -78,83 +177,6 @@ describe('documentPreview -> utils', () => {
   describe('zipFavoritesAndDownload', () => {
     it('should throw error when document is null', async () => {
       await expect(zipFavoritesAndDownload([])).rejects.toThrowError();
-    });
-  });
-
-  describe('getFavoriteContentForZipping', () => {
-    it('should throw error as expected', async () => {
-      await expect(getFavoriteContentForZipping([])).rejects.toThrowError(
-        'No files to download'
-      );
-    });
-
-    it('should return a not null result', () => {
-      const documents = [getMockDocument()];
-      expect(getFavoriteContentForZipping(documents)).toBeTruthy();
-    });
-
-    it('should return result as expected', async () => {
-      const filename = 'document.pdf';
-      const documents = [getMockDocument({}, { filename })];
-      const favoriteContentForZipping = await getFavoriteContentForZipping(
-        documents
-      );
-      expect(favoriteContentForZipping).toEqual([
-        { blob: Promise.resolve({}), filename },
-      ]);
-    });
-  });
-
-  describe('getDocumentContentForZipping', () => {
-    it('should throw error as expected', async () => {
-      await expect(getDocumentContentForZipping([])).rejects.toThrowError(
-        'No files to download'
-      );
-    });
-
-    it('should return a not null result', () => {
-      const documents = [getMockDocument()];
-      expect(getDocumentContentForZipping(documents)).toBeTruthy();
-    });
-
-    it('should return result as expected', async () => {
-      const filename = 'document.pdf';
-      const documents = [getMockDocument({ filename }, { filename })];
-      const documentContentForZipping = await getDocumentContentForZipping(
-        documents
-      );
-      expect(documentContentForZipping).toEqual([
-        { blob: Promise.resolve({}), filename },
-      ]);
-    });
-  });
-
-  describe('downloadFile', () => {
-    it('should call `saveAs` as expected', async () => {
-      downloadFile('document.pdf');
-      expect(saveAs).toBeCalledTimes(1);
-    });
-  });
-
-  describe('downloadFileFromUrl', () => {
-    it('should call `downloadFileFromUrl` as expected', async () => {
-      const openSpy = jest
-        .spyOn(window, 'open')
-        .mockImplementation(() => window);
-
-      await downloadFileFromUrl('12345');
-      expect(openSpy).toBeCalledTimes(1);
-    });
-  });
-
-  describe('openDocumentPreviewInNewTab', () => {
-    it('should call `openDocumentPreviewInNewTab` as expected', async () => {
-      const getTemporaryPreviewLinkSpy = jest
-        .spyOn(service, 'getTemporaryPreviewLink')
-        .mockImplementation(() => Promise.resolve('getTemporaryPreviewLink'));
-
-      await openDocumentPreviewInNewTab('12345');
-      expect(getTemporaryPreviewLinkSpy).toBeCalledTimes(1);
     });
   });
 });

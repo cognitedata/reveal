@@ -17,8 +17,9 @@ const defaultConfig: TenantConfig = {
     defaultLimit: 100,
     extractByFilepath: true,
     filters: {
-      sourceFile: {
-        datasetId: { in: [7915249683971782, 1322531845625181] },
+      in: {
+        property: ['sourceFile', 'datasetId'],
+        values: [7915249683971782, 1322531845625181],
       },
     },
     mapLayerFilters: {

@@ -1,9 +1,10 @@
 import { useQueryClient } from 'react-query';
 
+import { useDocumentSearchResultQuery } from 'services/documentSearch/useDocumentSearchResultQuery';
+
 import { DOCUMENTS_QUERY_KEY } from 'constants/react-query';
 import { useDocumentSearchOptions } from 'modules/documentSearch/hooks/useDocumentSearchOptions';
 import { useDocumentSearchQueryFull } from 'modules/documentSearch/hooks/useDocumentSearchQueryFull';
-import { useDocumentSearchResultQuery } from 'modules/documentSearch/hooks/useDocumentSearchResultQuery';
 
 export const useRemoveSensitiveDocument = () => {
   const queryClient = useQueryClient();

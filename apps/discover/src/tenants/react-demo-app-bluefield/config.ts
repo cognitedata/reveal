@@ -8,7 +8,6 @@ const defaultConfig: TenantConfig = {
   },
   documents: {
     defaultLimit: 100,
-    filters: {},
   },
   wells: {
     filters: {},

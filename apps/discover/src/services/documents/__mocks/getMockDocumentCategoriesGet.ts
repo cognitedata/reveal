@@ -8,7 +8,7 @@ import { MSWRequest } from '__test-utils/types';
 import { SIDECAR } from 'constants/app';
 
 const responseData: DocumentCategories = getMockDocumentCategories();
-const url = `https://discover-api.staging.${SIDECAR.cdfCluster}.cognite.ai/${TEST_PROJECT}/document/categories`;
+const url = `${SIDECAR.discoverApiBaseUrl}/${TEST_PROJECT}/document/categories`;
 
 export const getMockDocumentCategoriesGet = (): MSWRequest => {
   return rest.get<Request>(url, (_req, res, ctx) => {

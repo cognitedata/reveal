@@ -1,5 +1,5 @@
 import { GeoJSONGeometry } from '@cognite/geospatial-sdk-js';
-import { DocumentsFilter } from '@cognite/sdk-playground';
+import { DocumentFilter } from '@cognite/sdk';
 
 import { DocumentsFacetLabels, DocumentsFacets } from '../documentSearch/types';
 import { WellFilterMap } from '../wellSearch/types';
@@ -45,7 +45,7 @@ export type AppliedFiltersType = {
   seismic: FilterType;
   wells: WellFilterMap;
   landing: FilterType;
-  extraDocumentsFilters?: DocumentsFilter;
+  extraDocumentsFilters?: DocumentFilter;
   extraGeoJsonFilters?: MapLayerGeoJsonFilter[];
 };
 
@@ -95,7 +95,7 @@ export type UpdateWellAppliedFilters = {
 export type UpdateDocumentAppliedFilters = {
   category: Modules.DOCUMENTS;
   value: DocumentsFacets;
-  extraDocumentFilters?: DocumentsFilter;
+  extraDocumentFilters?: DocumentFilter;
 };
 
 export type UpdateCategoryAppliedFilterType =

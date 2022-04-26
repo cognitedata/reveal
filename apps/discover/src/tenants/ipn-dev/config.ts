@@ -13,7 +13,6 @@ const defaultConfig: TenantConfig = {
     disabled: false,
     showGeometryOnMap: true,
     extractByFilepath: true,
-    filters: {},
   },
   seismic: {
     metadata: {

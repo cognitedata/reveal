@@ -35,8 +35,9 @@ export const formatAssetIdsFilter = (
   return batchSelectedWellboreIds.map((wellboreIds) => {
     return {
       filters: {
-        [key]: {
-          containsAny: wellboreIds,
+        containsAny: {
+          property: [key],
+          values: wellboreIds,
         },
       },
     };

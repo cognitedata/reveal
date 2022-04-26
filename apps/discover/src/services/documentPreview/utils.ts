@@ -15,11 +15,12 @@ import {
 
 export const getDocIdFromSignedUrlResponse = (
   responses: ((FileLink & InternalId) | (FileLink & ExternalId))[],
-  id: number | string
+  id: number | string,
+  externalId?: string
 ) => {
   return responses.find((possibleId: IdEither) => {
     if ('externalId' in possibleId) {
-      return possibleId.externalId === id; // Cognite ExternalId is a string
+      return possibleId.externalId === externalId; // Cognite ExternalId is a string
     }
 
     if ('id' in possibleId) {
@@ -44,21 +45,22 @@ export async function zipAndDownloadDocumentsByIds(documentIds: number[]) {
   const documentsMetaData = getFileMetadataByIds(documentIds);
   const resultList = getSignedUrls(documentIds.map((d) => d.toString()));
 
+  if (documentIds.length === 0) {
+    return Promise.reject(new Error('No files to download'));
+  }
+
   const [documentsMeta, documentDownloadUrls] = await Promise.all([
     documentsMetaData,
     resultList,
   ]);
-
-  if (documentDownloadUrls.length === 0) {
-    return Promise.reject(new Error('No files to download'));
-  }
 
   const documentsWithFetchingContent = documentsMeta.reduce(
     (results, content) => {
       // get the filename
       const signedUrlInfo = getDocIdFromSignedUrlResponse(
         documentDownloadUrls,
-        content.id.toString()
+        content.id.toString(),
+        content?.externalId
       );
 
       if (signedUrlInfo?.downloadUrl && content?.name) {
@@ -93,23 +95,27 @@ const getIdListForInspect = (docs: DocumentType[]) => {
 export const getFavoriteContentForZipping = async (
   documents: DocumentType[]
 ) => {
-  const resultList = await getSignedUrls(documents.map((d) => d.id.toString()));
-  if (resultList.length === 0) {
+  if (documents.length === 0) {
     return Promise.reject(new Error('No files to download'));
   }
+
+  const resultList = await getSignedUrls(documents.map((d) => d.id.toString()));
+
   const documentsWithFetchingContent = documents.reduce((results, content) => {
     // get the filename
     const signedUrlInfo = getDocIdFromSignedUrlResponse(
       resultList,
-      content.id.toString()
+      content.id.toString(),
+      content?.externalId
     );
+
     if (signedUrlInfo?.downloadUrl && content?.doc.filename) {
       return [
         ...results,
         {
-          blob: fetch(signedUrlInfo?.downloadUrl).then((docContent) =>
-            docContent.blob()
-          ),
+          blob: fetch(signedUrlInfo?.downloadUrl).then((docContent) => {
+            return docContent.blob();
+          }),
           filename: content.doc.filename,
         },
       ];
@@ -122,16 +128,19 @@ export const getFavoriteContentForZipping = async (
 
 export const getDocumentContentForZipping = async (docs: DocumentType[]) => {
   const idList = getIdListForInspect(docs);
-  const resultList = await getSignedUrls(idList);
-
-  if (resultList.length === 0) {
+  if (idList.length === 0) {
     return Promise.reject(new Error('No files to download'));
   }
+  const resultList = await getSignedUrls(idList);
 
   // make a list of the document urls to fetch from
   const documentsWithFetchingContent = docs.reduce((results, doc) => {
     // get the filename
-    const signedUrlInfo = getDocIdFromSignedUrlResponse(resultList, doc.id);
+    const signedUrlInfo = getDocIdFromSignedUrlResponse(
+      resultList,
+      doc.id,
+      doc?.externalId
+    );
 
     if (signedUrlInfo?.downloadUrl && doc.doc.filename) {
       return [

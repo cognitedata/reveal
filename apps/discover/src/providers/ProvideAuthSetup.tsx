@@ -7,7 +7,6 @@ import { Cluster } from '@cognite/sdk-wells-v2';
 
 import { SIDECAR } from 'constants/app';
 import { useProjectConfig } from 'hooks/useProjectConfig';
-import { authenticateDocumentSDK } from 'modules/documentSearch/sdk';
 import { authenticateSeismicSDK } from 'modules/seismicSearch/service';
 import {
   authenticateWellSDK,
@@ -46,15 +45,6 @@ export const ProvideAuthSetup: React.FC<{
     }
     if (!projectConfig?.seismic?.disabled) {
       authenticateSeismicSDK(token);
-    }
-
-    if (project && !projectConfig?.documents?.disabled) {
-      authenticateDocumentSDK(
-        SIDECAR.applicationId,
-        SIDECAR.cdfApiBaseUrl,
-        project,
-        token
-      );
     }
 
     setDoneAuth(true);

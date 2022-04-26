@@ -1,5 +1,5 @@
-import '__mocks/mockContainerAuth'; // never miss this import
-import 'services/documents/__mocks/setupDocumentsMockSDK';
+import '__mocks/mockCogniteSDK'; // never miss this import
+
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
 

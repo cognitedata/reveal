@@ -3,11 +3,12 @@ import isArray from 'lodash/isArray';
 import pick from 'lodash/pick';
 import { MapboxGeoJSONFeature } from 'maplibre-gl';
 
-import { DocumentsFilter } from '@cognite/sdk-playground';
+import { DocumentFilter } from '@cognite/sdk';
 import { GeoJson, Geometry } from '@cognite/seismic-sdk-js';
 
 import { convertPolygonToPoint } from 'modules/map/helper';
 import { Asset, GEOJSONPoint, MapDataSource } from 'modules/map/types';
+import { MapLayerGeoJsonFilter } from 'modules/sidebar/types';
 import {
   DEFAULT_CLUSTER_RADIUS,
   DEFAULT_CLUSTER_ZOOM_LEVEL,
@@ -16,9 +17,7 @@ import {
   SEISMIC_LAYER_ID,
   WELL_MARKER,
 } from 'pages/authorized/search/map/constants';
-
-import { MapLayerGeoJsonFilter } from '../../../../../modules/sidebar/types';
-import { MapLayerFilters } from '../../../../../tenants/types';
+import { MapLayerFilters } from 'tenants/types';
 
 export const clusterConfig = {
   clusterRadius: DEFAULT_CLUSTER_RADIUS,
@@ -147,13 +146,13 @@ const extractDocumentMapLayers = (
   tenantConfigMapLayerFilters?: MapLayerFilters
 ): {
   geoFilter: MapLayerGeoJsonFilter;
-  extraDocumentsFilter?: DocumentsFilter;
+  extraDocumentsFilter?: DocumentFilter;
 }[] => {
   return features.reduce(
     (
       previousValue: {
         geoFilter: MapLayerGeoJsonFilter;
-        extraDocumentsFilter?: DocumentsFilter;
+        extraDocumentsFilter?: DocumentFilter;
       }[],
       currentValue
     ) => {
@@ -171,13 +170,14 @@ const extractDocumentMapLayers = (
             geoJson: currentValue.geometry,
           },
           extraDocumentsFilter:
+            // fix type here, if possible remove cast
             currentValue.properties.filter &&
             tenantConfigMapLayerFilters[currentValue.layer.id]?.filters
-              ? pick(
+              ? (pick(
                   JSON.parse(currentValue.properties.filter),
                   tenantConfigMapLayerFilters[currentValue.layer.id]
                     .filters as string[]
-                )
+                ) as DocumentFilter)
               : undefined,
         });
       }

@@ -50,7 +50,9 @@ const WrappedWithProviders: React.FC<Props> = ({
   store,
   component,
   props = {},
-  queryClient = new QueryClient(),
+  queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  }),
 }) => {
   const storeWrapper = (children: React.ReactNode) => {
     return store ? (

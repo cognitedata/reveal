@@ -1,10 +1,8 @@
-import { Document } from '@cognite/sdk-playground';
-
-import { LAST_CREATED_KEY_VALUE } from '../keys';
+import { Document } from '@cognite/sdk';
 
 export const addCreatedDate = (doc: Document) => {
   return {
     ...doc,
-    createdDate: doc.sourceFile[LAST_CREATED_KEY_VALUE],
+    createdDate: doc.createdTime,
   };
 };
