@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useRouteMatch, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import {
@@ -12,7 +12,6 @@ import {
 import { renderTitle } from 'app/utils/EventsUtils';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteEvent } from '@cognite/sdk';
-import { useHistory } from 'react-router';
 import { createLink } from '@cognite/cdf-utilities';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 
@@ -31,20 +30,24 @@ export const EventPreview = ({
   eventId: number;
   actions?: React.ReactNode;
 }) => {
-  const history = useHistory();
+  const { tabType } = useParams<{
+    tabType: EventPreviewTabType;
+  }>();
+  const activeTab = tabType || 'details';
+
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     trackUsage('Exploration.Preview.Event', { eventId });
   }, [eventId]);
-  const { data: event, error, isFetched } = useCdfItem<CogniteEvent>('events', {
+  const {
+    data: event,
+    error,
+    isFetched,
+  } = useCdfItem<CogniteEvent>('events', {
     id: eventId,
   });
-
-  const match = useRouteMatch();
-  const location = useLocation();
-  const activeTab = location.pathname
-    .replace(match.url, '')
-    .slice(1) as EventPreviewTabType;
 
   if (!eventId || !Number.isFinite(eventId)) {
     return <>Invalid event id: {eventId}</>;
@@ -77,10 +80,14 @@ export const EventPreview = ({
         }}
         tab={activeTab}
         onTabChange={newTab => {
-          history.push(
+          navigate(
             createLink(
-              `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
-            )
+              `/${location.pathname
+                .split('/')
+                .slice(2, tabType ? -1 : undefined)
+                .join('/')}/${newTab}`
+            ),
+            { replace: true }
           );
           trackUsage('Exploration.Details.TabChange', {
             type: 'event',

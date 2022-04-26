@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useRouteMatch, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import {
   SequenceDetails,
@@ -12,7 +12,6 @@ import {
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { Sequence } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { useHistory } from 'react-router';
 import { createLink } from '@cognite/cdf-utilities';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 
@@ -32,22 +31,23 @@ export const SequencePreview = ({
   sequenceId: number;
   actions?: React.ReactNode;
 }) => {
-  const history = useHistory();
+  const { tabType } = useParams<{
+    tabType: SequencePreviewType;
+  }>();
+  const activeTab = tabType || 'preview';
+
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     trackUsage('Exploration.Preview.Sequence', { sequenceId });
   }, [sequenceId]);
 
-  const { data: sequence, isFetched, error } = useCdfItem<Sequence>(
-    'sequences',
-    { id: sequenceId }
-  );
-
-  const match = useRouteMatch();
-  const location = useLocation();
-  const activeTab = location.pathname
-    .replace(match.url, '')
-    .slice(1) as SequencePreviewType;
+  const {
+    data: sequence,
+    isFetched,
+    error,
+  } = useCdfItem<Sequence>('sequences', { id: sequenceId });
 
   if (!isFetched) {
     return <Loader />;
@@ -75,10 +75,14 @@ export const SequencePreview = ({
         }}
         tab={activeTab}
         onTabChange={newTab => {
-          history.push(
+          navigate(
             createLink(
-              `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
-            )
+              `/${location.pathname
+                .split('/')
+                .slice(2, tabType ? -1 : undefined)
+                .join('/')}/${newTab}`
+            ),
+            { replace: true }
           );
           trackUsage('Exploration.Details.TabChange', {
             type: 'sequence',

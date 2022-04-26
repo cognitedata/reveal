@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, useRouteMatch } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { ResourceSelectorProvider } from '@cognite/data-exploration';
 import styled from 'styled-components';
 import { ResourceDetailsPage } from 'app/containers/ResourceDetails';
@@ -16,23 +16,22 @@ const AppWrapper = styled.div`
 `;
 
 export const Explorer = () => {
-  const { path } = useRouteMatch();
-
   return (
     <>
       <AppWrapper>
         <ResourceSelectorProvider>
-          <Switch>
+          <Routes>
+            <Route path="/search/:resourceType" element={<SearchResultsPage />}>
+              <Route path=":id" element={<SearchResultsPage />}>
+                <Route path=":tabType" element={<SearchResultsPage />} />
+              </Route>
+            </Route>
             <Route
-              path={`${path}/search/:resourceType?/:id?`}
-              component={SearchResultsPage}
+              path="/:resourceType/:id/*"
+              element={<ResourceDetailsPage />}
             />
-            <Route
-              path={`${path}/:resourceType/:id`}
-              component={ResourceDetailsPage}
-            />
-            <Route exact path={`${path}/`} component={SearchRedirect} />
-          </Switch>
+            <Route path="/" element={<SearchRedirect />} />
+          </Routes>
         </ResourceSelectorProvider>
       </AppWrapper>
     </>

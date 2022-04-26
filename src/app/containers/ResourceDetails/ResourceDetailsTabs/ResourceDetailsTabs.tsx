@@ -9,7 +9,7 @@ import {
   getTitle,
 } from '@cognite/data-exploration';
 import { Badge, Colors } from '@cognite/cogs.js';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
 import { RelatedResources } from 'app/containers/ResourceDetails/RelatedResources/RelatedResources';
@@ -38,7 +38,7 @@ const ResourceDetailTabContent = ({
   resource: ResourceItem;
   type: ResourceType;
 }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const { mode, onSelect, resourcesState } = useContext(
     ResourceSelectionContext
@@ -56,7 +56,7 @@ const ResourceDetailTabContent = ({
       type={type}
       parentResource={resource}
       onItemClicked={(id: number) => {
-        history.push(createLink(`/explore/${type}/${id}`));
+        navigate(createLink(`/explore/${type}/${id}`));
       }}
       selectionMode={mode}
       onSelect={onSelect}

@@ -55,7 +55,7 @@ export function PowerBIButton({ ids, resourceType }: Props) {
             oData(
               ids.map(i => i.id),
               resourceType,
-              tenant,
+              tenant!,
               env
             ),
             'oData'

@@ -6,7 +6,7 @@ import { PageTitle } from '@cognite/cdf-utilities';
 import { SequencePreview } from './SequencePreview';
 
 export const SequencePage = () => {
-  const { id: sequenceIdString } = useParams<{
+  const { id: sequenceIdString = '' } = useParams<{
     id: string;
   }>();
   const sequenceId = parseInt(sequenceIdString, 10);

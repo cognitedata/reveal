@@ -123,7 +123,7 @@ pods {
         'Test': {
           container('fas') {
             stageWithNotify('Unit tests') {
-              sh("./bin/ci-run-unittest.sh test")
+              sh("yarn test:once")
             }
           }
         },

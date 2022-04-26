@@ -6,7 +6,7 @@ import { Asset } from '@cognite/sdk';
 import { AssetPreview } from './AssetPreview';
 
 export const AssetPage = () => {
-  const { id: assetIdString } = useParams<{
+  const { id: assetIdString = '' } = useParams<{
     id: string;
   }>();
 

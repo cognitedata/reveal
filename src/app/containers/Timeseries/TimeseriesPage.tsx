@@ -6,7 +6,7 @@ import { PageTitle } from '@cognite/cdf-utilities';
 import { TimeseriesPreview } from './TimeseriesPreview';
 
 export const TimeseriesPage = () => {
-  const { id: timeseriesIdString } = useParams<{
+  const { id: timeseriesIdString = '' } = useParams<{
     id: string;
   }>();
   const timeseriesId = parseInt(timeseriesIdString, 10);

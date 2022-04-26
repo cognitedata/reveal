@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import { Router, Route, Switch } from 'react-router-dom';
-import { createBrowserHistory } from 'history';
+import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
@@ -26,7 +25,6 @@ import rootStyles from './styles/index.css';
 export default () => {
   const env = getEnv();
   const project = getProject();
-  const history = createBrowserHistory();
 
   if (!project) {
     throw new Error('project missing');
@@ -72,11 +70,11 @@ export default () => {
                   disableMetrics
                   refreshInterval={86400}
                 >
-                  <Router history={history}>
-                    <Switch>
-                      <Route path="/:tenant" component={RootApp} />
-                    </Switch>
-                  </Router>
+                  <BrowserRouter>
+                    <Routes>
+                      <Route path="/:tenant/*" element={<RootApp />} />
+                    </Routes>
+                  </BrowserRouter>
                 </FlagProvider>
               </ThemeProvider>
               <GlobalStyle theme={theme} />

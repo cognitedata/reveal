@@ -1,11 +1,11 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { Cognite3DViewer, Cognite3DModel } from '@cognite/reveal';
 import { createLink } from '@cognite/cdf-utilities';
 
 export const HomeButton = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   return (
     <Tooltip content="All 3D models">
@@ -13,7 +13,7 @@ export const HomeButton = () => {
         icon="Home"
         aria-label="Home"
         onClick={() => {
-          history.push(createLink(`/explore/search/threeD`));
+          navigate(createLink(`/explore/search/threeD`));
         }}
       />
     </Tooltip>

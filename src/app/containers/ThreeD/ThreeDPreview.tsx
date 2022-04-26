@@ -25,18 +25,14 @@ export const ThreeDPreview = () => {
   const { data: threeDModel, isLoading: isThreeDModelLoading } = use3DModel(
     Number(modelId)
   );
-  const {
-    data: revision,
-    isLoading: isRevisionLoading,
-  } = useDefault3DModelRevision(Number(modelId));
+  const { data: revision, isLoading: isRevisionLoading } =
+    useDefault3DModelRevision(Number(modelId));
 
   const [viewer, setViewer] = useState<Cognite3DViewer | null>(null);
   const [viewerModel, setViewerModel] = useState<Cognite3DModel | null>(null);
   const [selectedAssetId, setSelectedAssetId] = useState<number | null>(null);
-  const [
-    isAssetMappingSidebarVisible,
-    setIsAssetMappingSidebarVisible,
-  ] = useState<boolean>(false);
+  const [isAssetMappingSidebarVisible, setIsAssetMappingSidebarVisible] =
+    useState<boolean>(false);
 
   const initializeModel = useCallback(async () => {
     if (!threeDModel || !revision || !revealContainer.current) {

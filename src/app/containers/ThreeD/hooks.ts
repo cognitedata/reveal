@@ -26,7 +26,13 @@ export type AssetMappingResponse = {
 
 export const useInfinite3DModels = (
   limit?: number,
-  config?: UseInfiniteQueryOptions<ThreeDModelsResponse>
+  config?: UseInfiniteQueryOptions<
+    ThreeDModelsResponse,
+    unknown,
+    ThreeDModelsResponse,
+    ThreeDModelsResponse,
+    string[]
+  >
 ) => {
   const sdk = useSDK();
 

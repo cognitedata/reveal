@@ -1,5 +1,11 @@
 import qs from 'query-string';
-import { useParams, useHistory } from 'react-router-dom';
+import {
+  useParams,
+  useLocation,
+  useNavigate,
+  Location,
+  NavigateFunction,
+} from 'react-router-dom';
 import { ResourceType } from '@cognite/data-exploration';
 import { createLink } from '@cognite/cdf-utilities';
 import { getUserInformation } from '@cognite/cdf-sdk-singleton';
@@ -9,34 +15,41 @@ import { SEARCH_KEY } from './utils/constants';
 
 const opts: { arrayFormat: 'comma' } = { arrayFormat: 'comma' };
 
-const getSetItems = (
-  key: string,
-  push: boolean,
-  history: ReturnType<typeof useHistory>
-) => (newItems: string | string[] | undefined) => {
-  const search = qs.parse(history?.location?.search, opts);
-  history[push ? 'push' : 'replace']({
-    pathname: history?.location?.pathname,
-    search: qs.stringify(
+const getSetItems =
+  (
+    key: string,
+    push: boolean,
+    location: Location,
+    navigate: NavigateFunction
+  ) =>
+  (newItems?: string | string[]) => {
+    const search = qs.parse(location.search, opts);
+    navigate(
       {
-        ...search,
-        [key]: newItems,
+        pathname: location.pathname,
+        search: qs.stringify(
+          {
+            ...search,
+            [key]: newItems,
+          },
+          opts
+        ),
       },
-      opts
-    ),
-  });
-};
+      { replace: !push }
+    );
+  };
 
 export function useQueryString(
   key: string,
   push = true
 ): [string, (_: string) => void] {
-  const history = useHistory();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const search = qs.parse(history?.location?.search, opts);
+  const search = qs.parse(location.search, opts);
   const item = (search[key] || '') as string;
 
-  return [decodeURIComponent(item), getSetItems(key, push, history)];
+  return [decodeURIComponent(item), getSetItems(key, push, location, navigate)];
 }
 
 const emptyArray = [] as string[];
@@ -44,30 +57,32 @@ export function useQueryStringArray(
   key: string,
   push: boolean = true
 ): [string[], (_: any[]) => void] {
-  const history = useHistory();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const search = qs.parse(history?.location?.search, opts);
+  const search = qs.parse(location?.search, opts);
   const rawItems = search[key];
   if (!rawItems) {
-    return [emptyArray, getSetItems(key, push, history)];
+    return [emptyArray, getSetItems(key, push, location, navigate)];
   }
   const items = Array.isArray(rawItems) ? rawItems : [rawItems];
 
-  return [items, getSetItems(key, push, history)];
+  return [items, getSetItems(key, push, location, navigate)];
 }
 
 export const useCurrentResourceType = (): [
   ResourceType,
   (type: ResourceType) => void
 ] => {
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const { resourceType = 'asset' } = useParams<{
     resourceType: ResourceType;
   }>();
   const setCurrentResourceType = (newResourceType: ResourceType) => {
-    const query = qs.parse(history.location.search, opts)[SEARCH_KEY];
-    history.push(
+    const query = qs.parse(location.search, opts)[SEARCH_KEY];
+    navigate(
       createLink(
         `/explore/search/${newResourceType}`,
         {
@@ -85,7 +100,8 @@ export const useCurrentResourceId = (): [
   (type: number | undefined, replace?: boolean) => void
 ] => {
   const [type] = useCurrentResourceType();
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const { id } = useParams<{
     id: string;
@@ -97,13 +113,15 @@ export const useCurrentResourceId = (): [
     newResourceId?: number,
     replaceHistory: boolean = false
   ) => {
-    const search = qs.parse(history.location.search, opts);
-    const move = replaceHistory ? history.replace : history.push;
+    const search = qs.parse(location.search, opts);
     if (!newResourceId) {
-      move(createLink(`/explore/search/${type}`, search, opts));
+      navigate(createLink(`/explore/search/${type}`, search, opts), {
+        replace: replaceHistory,
+      });
     } else {
-      move(
-        createLink(`/explore/search/${type}/${newResourceId}`, search, opts)
+      navigate(
+        createLink(`/explore/search/${type}/${newResourceId}`, search, opts),
+        { replace: replaceHistory }
       );
     }
   };

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -32,22 +32,24 @@ export const TimeseriesPreview = ({
   timeseriesId: number;
   actions?: React.ReactNode;
 }) => {
-  const history = useHistory();
+  const { tabType } = useParams<{
+    tabType: TimeseriesPreviewTabType;
+  }>();
+  const activeTab = tabType || 'details';
+
+  const location = useLocation();
+  const navigate = useNavigate();
   const [dateRange, setDateRange] = useDateRange();
 
   useEffect(() => {
     trackUsage('Exploration.Preview.Timeseries', { timeseriesId });
   }, [timeseriesId]);
 
-  const { data: timeseries, isFetched, error } = useCdfItem<Timeseries>(
-    'timeseries',
-    { id: timeseriesId }
-  );
-
-  const match = useRouteMatch();
-  const activeTab = history.location.pathname
-    .replace(match.url, '')
-    .slice(1) as TimeseriesPreviewTabType;
+  const {
+    data: timeseries,
+    isFetched,
+    error,
+  } = useCdfItem<Timeseries>('timeseries', { id: timeseriesId });
 
   if (!timeseriesId || !Number.isFinite(timeseriesId)) {
     return <>Invalid time series id {timeseriesId}</>;
@@ -96,10 +98,14 @@ export const TimeseriesPreview = ({
             }}
             tab={activeTab}
             onTabChange={newTab => {
-              history.push(
+              navigate(
                 createLink(
-                  `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
-                )
+                  `/${location.pathname
+                    .split('/')
+                    .slice(2, tabType ? -1 : undefined)
+                    .join('/')}/${newTab}`
+                ),
+                { replace: true }
               );
               trackUsage('Exploration.Details.TabChange', {
                 type: 'timeseries',

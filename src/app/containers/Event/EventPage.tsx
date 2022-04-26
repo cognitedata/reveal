@@ -7,7 +7,7 @@ import { PageTitle } from '@cognite/cdf-utilities';
 import { EventPreview } from './EventPreview';
 
 export const EventPage = () => {
-  const { id: eventIdString } = useParams<{
+  const { id: eventIdString = '' } = useParams<{
     id: string;
   }>();
   const eventId = parseInt(eventIdString, 10);

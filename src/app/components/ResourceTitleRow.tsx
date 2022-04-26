@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Link, useLocation, useHistory } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { Icon, Button, Colors } from '@cognite/cogs.js';
 import {
@@ -36,7 +36,7 @@ export default function ResourceTitleRow({
     }
   );
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const isPreview =
     location.pathname.includes('/search') ||
@@ -70,7 +70,8 @@ export default function ResourceTitleRow({
           }}
         >
           <Space>
-            <Button icon="ArrowLeft" onClick={() => history.goBack()} />
+            {/* Go back */}
+            <Button icon="ArrowLeft" onClick={() => navigate(-1)} />
             <Divider type="vertical" style={{ height: '36px' }} />
           </Space>
         </div>

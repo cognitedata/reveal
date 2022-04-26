@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Dropdown, Menu, Tooltip } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import { baseCacheKey, useCdfItems } from '@cognite/sdk-react-query-hooks';
@@ -68,11 +68,10 @@ function TimeseriesDownloadButton({ ids }: Pick<Props, 'ids'>) {
   const [downloading, setDownloading] = useState(false);
 
   const limit = 100000;
-  const { data: metadata = [], isFetched: metadataFetched } = useCdfItems<
-    Timeseries
-  >('timeseries', ids, false, {
-    enabled: downloading,
-  });
+  const { data: metadata = [], isFetched: metadataFetched } =
+    useCdfItems<Timeseries>('timeseries', ids, false, {
+      enabled: downloading,
+    });
   const { data: datapoints = [], isFetched: dataPointsFetched } = useQuery(
     [...baseCacheKey('timeseries'), 'datapoints', ids, limit],
     () =>
@@ -86,13 +85,16 @@ function TimeseriesDownloadButton({ ids }: Pick<Props, 'ids'>) {
     { enabled: downloading && includeDatapoints }
   );
 
-  const metadataIncDatapoints =
-    metadataFetched && dataPointsFetched
-      ? metadata.map((d, i) => ({
-          ...d,
-          datapoints: datapoints[i] || [],
-        }))
-      : [];
+  const metadataIncDatapoints = useMemo(
+    () =>
+      metadataFetched && dataPointsFetched
+        ? metadata.map((d, i) => ({
+            ...d,
+            datapoints: datapoints[i] || [],
+          }))
+        : [],
+    [metadata, metadataFetched, datapoints, dataPointsFetched]
+  );
 
   useEffect(() => {
     if (includeDatapoints) {

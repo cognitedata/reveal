@@ -1,4 +1,6 @@
 {
   "trailingComma": "es5",
-  "singleQuote": true
+  "singleQuote": true,
+  "arrowParens": "avoid",
+  "endOfLine": "auto"
 }

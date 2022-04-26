@@ -19,7 +19,7 @@ import styled from 'styled-components';
 import { Colors, Body } from '@cognite/cogs.js';
 import { ContextualizationButton } from 'app/components/TitleRowActions/ContextualizationButton';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
-import { useRouteMatch, useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 
@@ -52,12 +52,13 @@ export const FilePreview = ({
   const { data: eventsAcl } = usePermissions(flow, 'eventsAcl', 'WRITE');
   const writeAccess = filesAcl && eventsAcl;
 
-  const match = useRouteMatch();
+  const { tabType } = useParams<{
+    tabType: FilePreviewTabType;
+  }>();
+  const activeTab = tabType || 'preview';
+
   const location = useLocation();
-  const history = useHistory();
-  const activeTab = location.pathname
-    .replace(match.url, '')
-    .slice(1) as FilePreviewTabType;
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (fileId && !isActive) {
@@ -74,14 +75,16 @@ export const FilePreview = ({
     setEditMode(false);
   }, [fileId]);
 
-  const { data: fileInfo, isFetched, isError, error } = useCdfItem<FileInfo>(
-    'files',
-    {
-      id: fileId!,
-    }
-  );
+  const {
+    data: fileInfo,
+    isLoading,
+    isError,
+    error,
+  } = useCdfItem<FileInfo>('files', {
+    id: fileId!,
+  });
 
-  if (!isFetched) {
+  if (isLoading) {
     return <Loader />;
   }
 
@@ -135,10 +138,14 @@ export const FilePreview = ({
             }}
             tab={activeTab}
             onTabChange={newTab => {
-              history.push(
+              navigate(
                 createLink(
-                  `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
-                )
+                  `/${location.pathname
+                    .split('/')
+                    .slice(2, tabType ? -1 : undefined)
+                    .join('/')}/${newTab}`
+                ),
+                { replace: true }
               );
               trackUsage('Exploration.Details.TabChange', {
                 type: 'file',
@@ -165,9 +172,7 @@ export const FilePreview = ({
                     creatable={editMode}
                     contextualization={writeAccess}
                     onItemClicked={item =>
-                      history.push(
-                        createLink(`/explore/${item.type}/${item.id}`)
-                      )
+                      navigate(createLink(`/explore/${item.type}/${item.id}`))
                     }
                   />
                 </div>

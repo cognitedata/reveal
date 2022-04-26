@@ -65,7 +65,7 @@ export function PowerBIButton({ item: { type, id } }: Props) {
     <Menu>
       <Menu.Item
         onClick={() =>
-          copyIdsToClipboard(oData(id, type, tenant, env), 'oData')
+          copyIdsToClipboard(oData(id, type, tenant!, env), 'oData')
         }
         key="copyoData"
       >

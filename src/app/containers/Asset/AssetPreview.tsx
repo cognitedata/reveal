@@ -1,7 +1,6 @@
 import React, { useEffect, useContext } from 'react';
-import { useRouteMatch } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
-import { useLocation, useHistory } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import {
   AssetDetails,
@@ -34,16 +33,17 @@ export const AssetPreview = ({
   assetId: number;
   actions?: React.ReactNode;
 }) => {
+  const { tabType } = useParams<{
+    tabType: AssetPreviewTabType;
+  }>();
+  const activeTab = tabType || 'details';
+
   useEffect(() => {
     trackUsage('Exploration.Preview.Asset', { assetId });
   }, [assetId]);
 
-  const match = useRouteMatch();
   const location = useLocation();
-  const history = useHistory();
-  const activeTab = location.pathname
-    .replace(match.url, '')
-    .slice(1) as AssetPreviewTabType;
+  const navigate = useNavigate();
 
   const { mode, onSelect, resourcesState } = useContext(
     ResourceSelectionContext
@@ -58,7 +58,11 @@ export const AssetPreview = ({
 
   const openAsset = useCurrentResourceId()[1];
 
-  const { data: asset, isFetched, error } = useCdfItem<Asset>(
+  const {
+    data: asset,
+    isFetched,
+    error,
+  } = useCdfItem<Asset>(
     'assets',
     { id: assetId },
     {
@@ -92,10 +96,14 @@ export const AssetPreview = ({
         }}
         tab={activeTab}
         onTabChange={newTab => {
-          history.push(
+          navigate(
             createLink(
-              `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
-            )
+              `/${location.pathname
+                .split('/')
+                .slice(2, tabType ? -1 : undefined)
+                .join('/')}/${newTab}`
+            ),
+            { replace: true }
           );
           trackUsage('Exploration.Details.TabChange', {
             type: 'asset',

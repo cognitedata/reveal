@@ -49,10 +49,8 @@ const getPageTitle = (query: string, resourceType: ResourceType): string => {
 };
 
 function SearchPage() {
-  const [
-    currentResourceType,
-    setCurrentResourceType,
-  ] = useCurrentResourceType();
+  const [currentResourceType, setCurrentResourceType] =
+    useCurrentResourceType();
 
   const [activeId, openPreview] = useCurrentResourceId();
   const [showFilter, setShowFilter] = useState(false);
