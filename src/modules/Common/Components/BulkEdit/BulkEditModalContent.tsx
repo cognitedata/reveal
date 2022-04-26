@@ -194,6 +194,7 @@ export const BulkEditModalContent = ({
               value={selectedBulkEditOption}
               onChange={handleBulkEditOptionChange}
               options={bulkEditOptions}
+              closeMenuOnSelect
             />
           </div>
         </EditType>

@@ -4,6 +4,7 @@ import {
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
+  ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
   Status,
@@ -22,9 +23,13 @@ export type VisionAnnotationDataType =
 
 // Vision Annotation Type
 
-export type VisionAnnotation<Type extends VisionAnnotationDataType> = Type &
-  AnnotatedResourceIdEither & // also available in CDFAnnotationV2, cannot be used in Pick operation due to One of relationship
-  Pick<CDFAnnotationV2<any>, 'createdTime' | 'lastUpdatedTime' | 'status'>;
+export type CDFInheritedFields = AnnotatedResourceIdEither & // also available in CDFAnnotationV2, cannot be used in Pick operation due to One of relationship
+  Pick<
+    CDFAnnotationV2<ImageClassification>,
+    'id' | 'createdTime' | 'lastUpdatedTime' | 'status'
+  >;
+
+export type VisionAnnotation<Type> = CDFInheritedFields & Type;
 
 export type UnsavedVisionAnnotation = VisionAnnotationDataType & {
   status: Status;
@@ -39,3 +44,5 @@ export type VisionImageObjectDetectionPolygonAnnotation =
 export type VisionImageExtractedTextAnnotation =
   VisionAnnotation<ImageExtractedText>;
 export type VisionImageAssetLinkAnnotation = VisionAnnotation<ImageAssetLink>;
+export type VisionImageKeypointCollectionAnnotation =
+  VisionAnnotation<ImageKeypointCollection>;
