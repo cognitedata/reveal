@@ -1,10 +1,13 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { convertCDFAnnotationV1ToVisionAnnotationBulk } from 'src/api/annotation/bulkConverters';
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { VisionAnnotationV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { getAnnotatedResourceId } from 'src/modules/Common/Utils/getAnnotatedResourceId/getAnnotatedResourceId';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
+import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
+import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
+import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 
 export const initialState: AnnotationState = {
   files: {
@@ -29,6 +32,7 @@ const annotationSlice = createSlice({
           payload,
           meta,
         }: {
+          // ToDo (VIS-794): change to new type VisionAnnotation
           payload: VisionAnnotationV1[];
           meta: {
             arg: {
@@ -116,6 +120,36 @@ const annotationSlice = createSlice({
               delete state.annotations.byId[annotationId];
             }
           }
+        });
+      }
+    );
+
+    builder.addMatcher(
+      // TODO: refactor -> same as RetrieveAnnotations.fulfilled
+      isAnyOf(
+        CreateAnnotations.fulfilled,
+        VisionJobUpdate.fulfilled,
+        UpdateAnnotations.fulfilled
+      ),
+      (state: AnnotationState, { payload }) => {
+        // update annotations
+        // ToDo (VIS-794): conversion logic from V1 to V2 in the new slice can be moved into thunks.
+        const annotations =
+          convertCDFAnnotationV1ToVisionAnnotationBulk(payload);
+        annotations.forEach((annotation) => {
+          const resourceId: number | undefined = getAnnotatedResourceId({
+            annotation,
+          });
+          if (resourceId) {
+            if (state.files.byId[resourceId]) {
+              if (!state.files.byId[resourceId].includes(annotation.id)) {
+                state.files.byId[resourceId].push(annotation.id);
+              }
+            } else {
+              state.files.byId[resourceId] = [annotation.id];
+            }
+          }
+          state.annotations.byId[annotation.id] = annotation;
         });
       }
     );
