@@ -105,6 +105,15 @@ In order to only execute the tests without a GUI (Like in a CI), the you run:
 yarn cy:ci
 ```
 
+## Definition of Done
+
+- 100% storybook representing all states of given components
+- 90% unit test coverage for custom hooks
+- Appropriate folder structure (i.e. `component/feature/**`)
+- Separation of logic (Proper use of atoms, model and hooks)
+- Standardized form validation (i.e use `Formik`)
+- Prefer third party solutions over cogs for better feature parity with design and requirement
+
 ## Storage
 
 The data stored in Charts is currently on Firebase and can be accessed for administration purposes on the following clusters:
