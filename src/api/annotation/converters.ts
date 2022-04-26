@@ -188,7 +188,7 @@ export function convertCDFAnnotationV1ToVisionAnnotation(
   } else {
     if (annotation.annotatedResourceExternalId) {
       console.error(
-        'annotatedResourceExternalId is deprecated! all annotations must contain annotatedResourceId!',
+        'annotatedResourceExternalId is deprecated. All annotations must contain annotatedResourceId.',
         annotation
       );
     }
