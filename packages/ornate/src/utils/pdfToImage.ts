@@ -18,6 +18,7 @@ export const pdfToImage = async (
   file: string | PDFDocumentProxy,
   pageNumber: number
 ) => {
+  const isPdfExternallyLoaded = typeof file !== 'string';
   const pdf =
     typeof file === 'string' ? await PDFJS.getDocument(file).promise : file;
 
@@ -49,6 +50,8 @@ export const pdfToImage = async (
       numPages: pdf.numPages,
     },
   };
-  pdf.destroy();
+  if (!isPdfExternallyLoaded) {
+    pdf.destroy();
+  }
   return result;
 };
