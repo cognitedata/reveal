@@ -118,7 +118,7 @@ describe('Wells sidebar filters', () => {
 
     cy.log('Checking visibility of selected source');
     cy.findAllByTestId('filter-tag')
-      .contains(`${DATA_SOURCE} : ${SOURCE_FILTER}`)
+      .contains(`${DATA_SOURCE}: ${SOURCE_FILTER}`)
       .as(`filter-tag:source-${SOURCE_FILTER}`)
       .should('be.visible');
 

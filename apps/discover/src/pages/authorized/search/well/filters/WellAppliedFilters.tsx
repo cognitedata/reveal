@@ -99,7 +99,7 @@ export const WellAppliedFilters: React.FC<Props> = React.memo(
         {(filterValues || []).map((filterValue) =>
           createFilterTagElement(
             `${filterValue.id}-${filterValue.value}-well-tags`,
-            `${filterValue.field || filterValue.category} : ${
+            `${filterValue.field || filterValue.category}: ${
               filterValue.value || filterValue.displayName
             }`,
             () => {
