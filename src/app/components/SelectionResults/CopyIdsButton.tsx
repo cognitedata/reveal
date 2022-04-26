@@ -20,7 +20,7 @@ type Props = {
 const oData = (
   ids: number[],
   type: ResourceType,
-  tenant: string,
+  tenant: string | undefined,
   env: string | undefined
 ) => {
   const baseUrl = `https://${
