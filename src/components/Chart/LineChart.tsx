@@ -1,13 +1,8 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import { AreaClosed, Line, Bar, LinePath } from '@visx/shape';
 import { GridRows, GridColumns } from '@visx/grid';
 import { scaleTime, scaleLinear } from '@visx/scale';
-import {
-  useTooltip,
-  Tooltip,
-  TooltipWithBounds,
-  defaultStyles,
-} from '@visx/tooltip';
+import { useTooltip, defaultStyles, Tooltip } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
 import { LinearGradient } from '@visx/gradient';
 import { max, min, extent, bisector } from 'd3-array';
@@ -76,7 +71,7 @@ export const LineChart = ({
   enableTooltip = true,
   showPoints = true,
   minRowTicks = 5,
-  margin = { top: 0, right: 40, bottom: 40, left: 0 },
+  margin = { top: 0, right: 40, bottom: 40, left: 40 },
 }: LineChartProps) => {
   const {
     showTooltip,
@@ -112,33 +107,30 @@ export const LineChart = ({
     });
   }, [innerHeight, values]);
 
-  const handleTooltip = useCallback(
-    (
-      event: React.TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>
-    ) => {
-      const { x } = localPoint(event) || { x: 0 };
-      const translatedX = x - margin.left;
-      const x0 = dateScale.invert(translatedX);
-      const index = bisectDate(values, x0, 1);
-      const d0 = values[index - 1];
-      const d1 = values[index];
-      let d: DatapointAggregate | undefined = d0;
-      if (d1 && getDate(d1)) {
-        d =
-          x0.valueOf() - getDate(d0).valueOf() >
-          getDate(d1).valueOf() - x0.valueOf()
-            ? d1
-            : d0;
-      }
-      const value = getDataPointAverage(d);
-      showTooltip({
-        tooltipData: d,
-        tooltipLeft: translatedX,
-        tooltipTop: d && value !== undefined ? valuesScale(value) : 0,
-      });
-    },
-    [margin.left, values, showTooltip, valuesScale, dateScale]
-  );
+  const handleTooltip = (
+    event: React.TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>
+  ) => {
+    const { x } = localPoint(event) || { x: 0 };
+    const translatedX = x - margin.left;
+    const x0 = dateScale.invert(translatedX);
+    const index = bisectDate(values, x0, 1);
+    const d0 = values[index - 1];
+    const d1 = values[index];
+    let d: DatapointAggregate | undefined = d0;
+    if (d1 && getDate(d1)) {
+      d =
+        x0.valueOf() - getDate(d0).valueOf() >
+        getDate(d1).valueOf() - x0.valueOf()
+          ? d1
+          : d0;
+    }
+    const value = getDataPointAverage(d);
+    showTooltip({
+      tooltipData: d,
+      tooltipLeft: translatedX,
+      tooltipTop: d && value !== undefined ? valuesScale(value) : 0,
+    });
+  };
 
   const numRowTicks = Math.max(minRowTicks, Math.floor(height / 30));
   const numColumnTicks = Math.max(5, Math.floor(width / 100));
@@ -364,32 +356,39 @@ export const LineChart = ({
     }
     return (
       tooltipData && (
-        <div>
-          <TooltipWithBounds
+        <div style={{ position: 'relative' }}>
+          <Tooltip
             key={Math.random()}
-            top={tooltipTop - 90}
-            left={tooltipLeft + 12}
+            top={tooltipTop < innerHeight ? -innerHeight : -tooltipTop}
+            left={tooltipLeft + 5}
             style={tooltipStyles}
           >
             <>
               <Overline level={3}>Average</Overline>
-              <Body level={3}>{getDataPointAverage(tooltipData)}</Body>
+              <Body level={3}>
+                {/* Adding the precision upto 3 places  */}
+                {getDataPointAverage(tooltipData)?.toFixed(3)}
+              </Body>
               <Overline level={3}>Max</Overline>
-              <Body level={3}>{getDataPointMaxValue(tooltipData)}</Body>
+              <Body level={3}>
+                {getDataPointMaxValue(tooltipData)?.toFixed(3)}
+              </Body>
               <Overline level={3}>Min</Overline>
-              <Body level={3}>{getDataPointMinValue(tooltipData)}</Body>
+              <Body level={3}>
+                {getDataPointMinValue(tooltipData)?.toFixed(3)}
+              </Body>
               <Overline level={3}>Count</Overline>
               <Body level={3}>{getDataPointCount(tooltipData)}</Body>
             </>
-          </TooltipWithBounds>
+          </Tooltip>
+
           <Tooltip
-            top={innerHeight + margin.top - 14}
-            left={tooltipLeft}
+            top={margin.top - 14}
+            left={tooltipLeft + 5}
             style={{
               ...defaultStyles,
               minWidth: 72,
               textAlign: 'center',
-              transform: 'translateX(-50%)',
             }}
           >
             {formatDate(getDate(tooltipData))}

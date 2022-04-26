@@ -9,10 +9,10 @@ import {
 import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
-import AutoSizer from 'react-virtualized-auto-sizer';
 import moment from 'moment';
 import { DateRangeProps } from 'CommonProps';
 import { SegmentedControl } from '@cognite/cogs.js';
+import { ParentSize } from '@visx/responsive';
 
 export type TIME_OPTION_KEY =
   | '10Y'
@@ -219,30 +219,30 @@ export const TimeseriesChart = ({
   );
   return (
     <>
-      <div style={{ ...(height ? { height } : { flex: 1 }), width: '100%' }}>
-        <AutoSizer disableHeight={!!height}>
-          {({ width, height: innerHeight }) => {
-            if (isFetching && !isFetched) {
-              return (
-                <div style={{ height: height || innerHeight, width }}>
-                  <Loader />
-                </div>
-              );
-            }
-            return (
-              <LineChart
-                width={width}
-                height={height || innerHeight}
-                values={((overallData?.datapoints ?? []) as any[]).filter(
-                  el => el.average !== undefined
-                )}
-                domain={presetZoom}
-                {...otherProps}
-              />
-            );
-          }}
-        </AutoSizer>
-      </div>
+      <ParentSize>
+        {parent =>
+          isFetching && !isFetched ? (
+            <div
+              style={{
+                height: height || parent.height,
+                width: parent.width,
+              }}
+            >
+              <Loader />
+            </div>
+          ) : (
+            <LineChart
+              width={parent.width}
+              height={height || parent.height - 30}
+              values={((overallData?.datapoints ?? []) as any[]).filter(
+                el => el.average !== undefined
+              )}
+              domain={presetZoom}
+              {...otherProps}
+            />
+          )
+        }
+      </ParentSize>
 
       <SpacedRow>
         {timeOptions.length > 1 && (

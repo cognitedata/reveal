@@ -19,6 +19,7 @@
     "@visx/gradient": "^2.1.0",
     "@visx/grid": "^2.1.0",
     "@visx/group": "^2.1.0",
+    "@visx/responsive": "^2.8.0",
     "@visx/scale": "^2.1.0",
     "@visx/shape": "^2.1.0",
     "@visx/threshold": "^2.1.0",
