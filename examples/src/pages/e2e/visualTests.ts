@@ -43,6 +43,10 @@ export const visualTests: VisualTest[] = [
     category: 'cad'
   },
   {
+    testKey: 'clipping-planes-cognite3dviewer-pointcloud',
+    category: 'cad'
+  },
+  {
     testKey: 'default-cognite3dviewer-v8',
     category: 'cad'
   },
