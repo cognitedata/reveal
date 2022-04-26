@@ -140,7 +140,7 @@ export class MeasurementDistance implements Measurement {
       direction.subVectors(this._endPoint, this._startPoint);
       // controlPoint.addVectors(this._endPoint, this._endPoint.normalize());
     }
-    if (this._isActive && this._measurementLine) {
+    if (this._isActive && this._measurementLine && distance > 0.2) {
       this._positions[3] = controlPoint.x;
       this._positions[4] = controlPoint.y;
       this._positions[5] = controlPoint.z;

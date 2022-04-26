@@ -244,8 +244,6 @@ function pickPixelBufferColor(input: PickingInput, clearColor: THREE.Color, clea
 
   const stateHelper = new WebGLRendererStateHelper(renderer);
   try {
-    const { width, height } = renderer.getSize(new THREE.Vector2());
-    renderTarget.setSize(width, height);
     stateHelper.setRenderTarget(renderTarget);
     stateHelper.setClearColor(clearColor, clearAlpha);
 
