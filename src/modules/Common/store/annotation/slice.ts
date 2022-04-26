@@ -4,6 +4,7 @@ import { AnnotationState } from 'src/modules/Common/store/annotation/types';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { VisionAnnotationV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { getAnnotatedResourceId } from 'src/modules/Common/Utils/getAnnotatedResourceId/getAnnotatedResourceId';
+import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 
 export const initialState: AnnotationState = {
   files: {
@@ -84,6 +85,36 @@ const annotationSlice = createSlice({
               annotation.lastUpdatedTime
           ) {
             state.annotations.byId[annotation.id] = annotation;
+          }
+        });
+      }
+    );
+
+    builder.addCase(
+      DeleteAnnotations.fulfilled,
+      (state: AnnotationState, { payload }: { payload: number[] }) => {
+        payload.forEach((annotationId) => {
+          const annotation = state.annotations.byId[annotationId];
+
+          if (annotation) {
+            const resourceId: number | undefined = getAnnotatedResourceId({
+              annotation,
+            });
+
+            if (resourceId) {
+              const annotatedFileState = state.files.byId[resourceId];
+              if (annotatedFileState) {
+                const filteredState = annotatedFileState.filter(
+                  (id) => id !== annotationId
+                );
+                if (filteredState.length) {
+                  state.files.byId[resourceId] = filteredState;
+                } else {
+                  delete state.files.byId[resourceId];
+                }
+              }
+              delete state.annotations.byId[annotationId];
+            }
           }
         });
       }

@@ -9,6 +9,7 @@ import reducer, {
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
 import { VisionAnnotation } from 'src/modules/Common/types';
 import { createVisionAnnotationStub } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 
 const getDummyImageObjectDetectionBoundingBoxAnnotation = ({
@@ -228,6 +229,53 @@ describe('Test annotation reducer', () => {
           },
         },
       });
+    });
+  });
+
+  describe('Test DeleteAnnotations.fulfilled action', () => {
+    test('should not change state for nonexistent annotation id', () => {
+      const previousState = {
+        files: {
+          byId: {
+            '10': [1],
+          },
+        },
+        annotations: {
+          byId: {
+            '1': getDummyImageObjectDetectionBoundingBoxAnnotation({ id: 1 }),
+          },
+        },
+      };
+
+      const action = {
+        type: DeleteAnnotations.fulfilled.type,
+        payload: [3], // annotation ids to delete
+      };
+
+      expect(reducer(previousState, action)).toEqual(previousState);
+    });
+
+    test('should clean entire state since all annotation ids in state given in payload', () => {
+      const previousState = {
+        files: {
+          byId: {
+            '10': [1, 2],
+          },
+        },
+        annotations: {
+          byId: {
+            '1': getDummyImageObjectDetectionBoundingBoxAnnotation({ id: 1 }),
+            '2': getDummyImageObjectDetectionBoundingBoxAnnotation({ id: 1 }),
+          },
+        },
+      };
+
+      const action = {
+        type: DeleteAnnotations.fulfilled.type,
+        payload: [1, 2], // annotation ids to delete
+      };
+
+      expect(reducer(previousState, action)).toEqual(initialState);
     });
   });
 });
