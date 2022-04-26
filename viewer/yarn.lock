@@ -768,7 +768,7 @@ __metadata:
     skmeans: 0.11.3
     three: 0.139.2
     ts-jest: 27.1.4
-    ts-loader: 8.3.0
+    ts-loader: 8.4.0
     tsc-alias: 1.6.7
     typescript: 4.6.3
     webpack: 4.46.0
@@ -12674,9 +12674,9 @@ resolve@^1.20.0:
   languageName: node
   linkType: hard
 
-"ts-loader@npm:8.3.0":
-  version: 8.3.0
-  resolution: "ts-loader@npm:8.3.0"
+"ts-loader@npm:8.4.0":
+  version: 8.4.0
+  resolution: "ts-loader@npm:8.4.0"
   dependencies:
     chalk: ^4.1.0
     enhanced-resolve: ^4.0.0
@@ -12686,7 +12686,7 @@ resolve@^1.20.0:
   peerDependencies:
     typescript: "*"
     webpack: "*"
-  checksum: 93dd15b553a2621f969c4c834e7eb085b9b079adb702cba68a7ee516bcd2c67620e62cc5a8c57345e90c644ff6b689ee5a09f0702e440284fdfe872e9aaeefd8
+  checksum: 79da0f364c013231bff28baede3f4f4081b1cca30b24df2d9f31a0517e0524eca2c8e4d438b853b1566a3a8eb9ff51ab0b36743346f0b3d5daa7001c98e5c738
   languageName: node
   linkType: hard
 
