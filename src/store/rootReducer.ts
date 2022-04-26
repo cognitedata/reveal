@@ -8,6 +8,7 @@ import fileDetailsSlice from 'src/modules/FileDetails/slice';
 import explorerReducer from 'src/modules/Explorer/store/slice';
 import processSlice from 'src/modules/Process/store/slice';
 import reviewSlice from 'src/modules/Review/store/reviewSlice';
+import annotationDetailPanelReducer from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
 
 const rootReducer = combineReducers({
   fileReducer,
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   annotationReducer,
   explorerReducer,
   annotationLabelReducer,
+  annotationDetailPanelReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
