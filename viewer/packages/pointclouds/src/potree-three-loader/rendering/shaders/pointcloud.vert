@@ -118,7 +118,7 @@ bool isClipped(vec3 point) {
     return false;
 }
 
-out vec3 vColor;
+out vec4 vColor;
 
 #if !defined(color_type_point_index)
 	out float vOpacity;
@@ -419,6 +419,9 @@ vec3 getCompositeColor() {
 void main() {
 	vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
 
+        vec3 outColorRgb;
+        float outColorAlpha = 1.0;
+
 	gl_Position = projectionMatrix * mvPosition;
 
 	#if defined(color_type_phong) && (MAX_POINT_LIGHTS > 0 || MAX_DIR_LIGHTS > 0) || defined(paraboloid_point_shape)
@@ -521,42 +524,43 @@ void main() {
 	// ---------------------
 
 	#ifdef color_type_rgb
-		vColor = getRGB();
+		outColorRgb = getRGB();
 	#elif defined color_type_height
-		vColor = getElevation();
+		outColorRgb = getElevation();
 	#elif defined color_type_rgb_height
 		vec3 cHeight = getElevation();
-		vColor = (1.0 - transition) * getRGB() + transition * cHeight;
+		outColorRgb = (1.0 - transition) * getRGB() + transition * cHeight;
 	#elif defined color_type_depth
 		float linearDepth = -mvPosition.z ;
 		float expDepth = (gl_Position.z / gl_Position.w) * 0.5 + 0.5;
-		vColor = vec3(linearDepth, expDepth, 0.0);
+		outColorRgb = vec3(linearDepth, expDepth, 0.0);
 	#elif defined color_type_intensity
 		float w = getIntensity();
-		vColor = vec3(w, w, w);
+		outColorRgb = vec3(w, w, w);
 	#elif defined color_type_intensity_gradient
 		float w = getIntensity();
-		vColor = texture(gradient, vec2(w, 1.0 - w)).rgb;
+		outColorRgb = texture(gradient, vec2(w, 1.0 - w)).rgb;
 	#elif defined color_type_color
-		vColor = uColor;
+		outColorRgb = uColor;
 	#elif defined color_type_lod
 	float w = getLOD() / 10.0;
-	vColor = texture(gradient, vec2(w, 1.0 - w)).rgb;
+	outColorRgb = texture(gradient, vec2(w, 1.0 - w)).rgb;
 	#elif defined color_type_point_index
-		vColor = indices.rgb;
+		outColorRgb = indices.rgb;
 	#elif defined color_type_classification
 	  vec4 cl = getClassification();
-		vColor = cl.rgb;
+		outColorRgb = cl.rgb;
+                outColorAlpha = cl.a;
 	#elif defined color_type_return_number
-		vColor = getReturnNumber();
+		outColorRgb = getReturnNumber();
 	#elif defined color_type_source
-		vColor = getSourceID();
+		outColorRgb = getSourceID();
 	#elif defined color_type_normal
-		vColor = (modelMatrix * vec4(normal, 0.0)).xyz;
+		outColorRgb = (modelMatrix * vec4(normal, 0.0)).xyz;
 	#elif defined color_type_phong
-		vColor = color;
+		outColorRgb = color;
 	#elif defined color_type_composite
-		vColor = getCompositeColor();
+		outColorRgb = getCompositeColor();
 	#endif
 
 	#if !defined color_type_composite && defined color_type_classification
@@ -588,11 +592,11 @@ void main() {
 			#if defined clip_outside
 				gl_Position = vec4(1000.0, 1000.0, 1000.0, 1.0);
 			#elif defined clip_highlight_inside && !defined(color_type_depth)
-				float c = (vColor.r + vColor.g + vColor.b) / 6.0;
+				float c = (outColorRgb.r + outColorRgb.g + outColorRgb.b) / 6.0;
 			#endif
 		} else {
 			#if defined clip_highlight_inside
-				vColor.r += 0.5;
+				outColorRgb.r += 0.5;
 			#endif
 		}
 	#endif
@@ -600,4 +604,6 @@ void main() {
         if (isClipped((modelViewMatrix * vec4(position, 1.0)).xyz)) {
                  gl_Position = vec4(1000.0, 1000.0, 1000.0, 1.0);
         }
+
+        vColor = vec4(outColorRgb, outColorAlpha);
 }

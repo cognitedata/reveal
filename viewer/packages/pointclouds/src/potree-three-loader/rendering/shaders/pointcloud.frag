@@ -43,7 +43,7 @@ out vec4 outputColor;
 	uniform vec4 highlightedPointColor;
 #endif
 
-in vec3 vColor;
+in vec4 vColor;
 
 #if !defined(color_type_point_index)
 	in float vOpacity;
@@ -76,8 +76,12 @@ in vec3 vColor;
 float specularStrength = 1.0;
 
 void main() {
-	vec3 color = vColor;
+	vec3 color = vColor.rgb;
 	float depth = gl_FragCoord.z;
+
+        if (vColor.a == 0.0) {
+                discard;
+        }
 
 	#if defined(circle_point_shape) || defined(paraboloid_point_shape) || defined (weighted_splats)
 		float u = 2.0 * gl_PointCoord.x - 1.0;

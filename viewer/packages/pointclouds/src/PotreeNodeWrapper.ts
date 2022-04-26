@@ -28,6 +28,7 @@ export class PotreeNodeWrapper {
     this.pointSize = 2;
     this.pointColorType = PotreePointColorType.Rgb;
     this.pointShape = PotreePointShape.Circle;
+    this._classification = octree.material.classification;
   }
 
   get pointSize(): number {
