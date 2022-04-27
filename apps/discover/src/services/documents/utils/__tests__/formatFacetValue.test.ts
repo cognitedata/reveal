@@ -1,4 +1,4 @@
-import { formatFacetValue } from '../utils';
+import { formatFacetValue } from '../formatFacetValue';
 
 describe('documents:utils', () => {
   describe('Facet: Date', () => {

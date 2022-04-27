@@ -1,8 +1,9 @@
+import { Labels } from 'services/labels/types';
+
 import {
   DocumentFilterCategoryTitles,
   DocumentQueryFacet,
   DocumentResultFacets,
-  Labels,
 } from 'modules/documentSearch/types';
 import { BreadCrumbStatInfo } from 'pages/authorized/search/common/searchResult/types';
 

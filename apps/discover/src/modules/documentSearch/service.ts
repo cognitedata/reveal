@@ -20,8 +20,6 @@ import {
 } from 'modules/documentSearch/types';
 import { toDocument } from 'modules/documentSearch/utils';
 
-import { getCogniteSDKClient } from '../../utils/getCogniteSDKClient';
-
 import { processFacets } from './utils/processFacets';
 import { getSearchQuery } from './utils/queryUtil';
 import { toDocuments } from './utils/toDocuments';
@@ -38,12 +36,6 @@ const doSearch = (
     filter: isEmpty(filter) ? undefined : filter,
     search: searchQuery,
     aggregates,
-  });
-};
-
-export const getLabels = () => {
-  return getCogniteSDKClient().labels.list({
-    filter: {},
   });
 };
 

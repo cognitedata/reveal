@@ -1,5 +1,5 @@
 import isEmpty from 'lodash/isEmpty';
-import { useFormatDocumentFilters } from 'services/documents/hooks/useDocumentFormatFilter';
+import { useFormatDocumentFilters } from 'services/documents/hooks/useFormatDocumentFilters';
 import { DocumentFormatFilter } from 'services/documents/types';
 import { SavedSearchContent } from 'services/savedSearches';
 

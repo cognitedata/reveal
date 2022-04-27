@@ -2,14 +2,17 @@ import head from 'lodash/head';
 import isArray from 'lodash/isArray';
 import isObject from 'lodash/isObject';
 import tail from 'lodash/tail';
+import { Labels } from 'services/labels/types';
 import { getDateOrDefaultText } from 'utils/date';
 
-import { Labels, DocumentFacet } from 'modules/documentSearch/types';
+import { DocumentFacet } from 'modules/documentSearch/types';
 import {
   getDocumentCategoryTitle,
   isDocumentDateFacet,
   isRangeFacet,
 } from 'modules/sidebar/utils';
+
+import { formatFacetValueFromTemplate } from './formatFacetValueFromTemplate';
 
 export const formatFacetValue = (
   facet: DocumentFacet,
@@ -60,9 +63,3 @@ export const formatFacetValue = (
 
   return formatFacetValueFromTemplate(prefix, item, hidePrefix);
 };
-
-const formatFacetValueFromTemplate = (
-  prefix: string,
-  value: string,
-  hidePrefix?: boolean
-) => (hidePrefix ? value : `${prefix}: ${value}`);

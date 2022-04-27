@@ -3,11 +3,11 @@ import { useDispatch } from 'react-redux';
 
 import isEmpty from 'lodash/isEmpty';
 import { useDocumentSearchResultQuery } from 'services/documentSearch/useDocumentSearchResultQuery';
+import { useLabelsQuery } from 'services/labels/useLabelsQuery';
 import styled from 'styled-components/macro';
 
 import { documentSearchActions } from 'modules/documentSearch/actions';
 import { useDocumentResultCount } from 'modules/documentSearch/hooks/useDocumentResultCount';
-import { useLabelsQuery } from 'modules/documentSearch/hooks/useLabelsQuery';
 import { useSelectedDocumentIds } from 'modules/documentSearch/selectors';
 import { getDocumentsFacetsInfo } from 'modules/documentSearch/utils';
 import { SearchBreadcrumb } from 'pages/authorized/search/common/searchResult';
@@ -22,7 +22,7 @@ import { NoResults } from '../NoResults';
 import { DocumentResultTable } from './DocumentResultTable';
 import { DocumentsBulkActions } from './DocumentsBulkActions';
 
-const SearchResults = styled(FlexColumn)`
+const MaxHeight = styled(FlexColumn)`
   height: 100%;
   max-height: 100%;
 `;
@@ -61,10 +61,10 @@ export const DocumentSearchContent: React.FC = () => {
   const renderResults = () => (
     <>
       <SearchTableResultActionContainer>
-        <SearchResults>
+        <MaxHeight>
           <SearchBreadcrumb stats={documentStats} />
           <DocumentContentAppliedFilters />
-        </SearchResults>
+        </MaxHeight>
 
         <SearchDisplayOptionPanel />
       </SearchTableResultActionContainer>
@@ -78,13 +78,13 @@ export const DocumentSearchContent: React.FC = () => {
   );
 
   return (
-    <SearchResults>
+    <MaxHeight>
       {searchHasFoundResults ? (
         renderResults()
       ) : (
         <NoResults isLoading={isLoading} />
       )}
-    </SearchResults>
+    </MaxHeight>
   );
 };
 

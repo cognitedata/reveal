@@ -4,7 +4,7 @@ import { QueryClient } from 'react-query';
 import { screen } from '@testing-library/react'; // should be first
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
-import { getMockLabels } from 'services/labels/__mocks/getMockLabels';
+import { getMockLabelsPost } from 'services/labels/__mocks/getMockLabels';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
 
@@ -33,7 +33,7 @@ const getHookResult = async () => {
 const mockServer = setupServer(
   getMockConfigGet(),
   getMockUserMe(),
-  getMockLabels()
+  getMockLabelsPost()
 );
 
 describe('useSearchHistoryAppliedFilters', () => {

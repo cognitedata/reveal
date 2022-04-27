@@ -15,9 +15,6 @@ export interface DocumentState {
   selectedColumns: string[];
   viewMode: ViewMode;
 }
-export interface Labels {
-  [s: string]: string;
-}
 
 // other types:
 

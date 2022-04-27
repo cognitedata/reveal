@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 
+import { useLabelsQuery } from 'services/labels/useLabelsQuery';
+
 import { DOCUMENT_FALLBACK_SEARCH_LIMIT } from 'modules/documentSearch/constants';
 import { useDocumentConfig } from 'modules/documentSearch/hooks';
-import { useLabelsQuery } from 'modules/documentSearch/hooks/useLabelsQuery';
 import { getDocumentsFacetsInfo } from 'modules/documentSearch/utils';
 import { getFacetsCounts } from 'modules/documentSearch/utils/getFacetsCounts';
 import { useWellInspect } from 'modules/wellInspect/selectors';
