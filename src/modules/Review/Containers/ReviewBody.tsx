@@ -5,13 +5,16 @@ import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
 import { Spin, notification } from 'antd';
 import React, { ReactText, useEffect, useRef, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
 import { ThumbnailCarousel } from 'src/modules/Review/Components/ThumbnailCarousel/ThumbnailCarousel';
 import { ImagePreview } from 'src/modules/Review/Containers/ImagePreview';
 import { ImageKeyboardShortKeys } from 'src/modules/Review/Containers/KeyboardShortKeys/ImageKeyboardShortKeys';
-import { selectAllReviewFiles } from 'src/modules/Review/store/reviewSlice';
+import {
+  selectAllReviewFiles,
+  setScrollToId,
+} from 'src/modules/Review/store/reviewSlice';
 import { RootState } from 'src/store/rootReducer';
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
@@ -20,13 +23,14 @@ import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUt
 import { useUserInformation } from 'src/hooks/useUserInformation';
 import { FileProcessStatusWrapper } from 'src/modules/Review/Containers/FileProcessStatusWrapper';
 import { PreviewProcessingOverlay } from 'src/modules/Review/Components/PreviewProcessingOverlay/PreviewProcessingOverlay';
-import { ImageContextualization } from './ImageContextualization';
+import { AnnotationDetailPanel } from './AnnotationDetailPanel/AnnotationDetailPanel';
 
 const queryClient = new QueryClient();
 
 const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
   const { file, prev } = props;
   const history = useHistory();
+  const dispatch = useDispatch();
   const [inFocus, setInFocus] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const loadingState = useRef<boolean>(false);
@@ -85,12 +89,7 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
 
   const scrollToItem = (id: ReactText) => {
     tabChange('context');
-    if (contextElement.current) {
-      const rowElement = contextElement.current.querySelector(`#row-${id}`);
-      if (rowElement) {
-        rowElement.scrollIntoView(true);
-      }
-    }
+    dispatch(setScrollToId(id.toString()));
   };
 
   return (
@@ -159,7 +158,7 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
                   style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
                   disabled={isVideo(file)}
                 >
-                  <ImageContextualization
+                  <AnnotationDetailPanel
                     file={file}
                     reference={contextElement}
                   />
