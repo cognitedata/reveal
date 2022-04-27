@@ -30,7 +30,7 @@ export const NPT_GRAPH_OPTIONS: StackedBarChartOptions<NPTEvent> = {
     overlay: true,
   },
   formatTooltip,
-  fixXValuesToDecimalPlaces: 1,
+  fixXValuesToDecimalPlaces: 3,
   noDataAmongSelectedCheckboxesText: NO_DATA_AMONG_SELECTED_NPT_CODES_TEXT,
   noDataText: NO_DATA_TEXT,
 };

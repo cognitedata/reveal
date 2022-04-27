@@ -27,7 +27,7 @@ export const sumObjectsByKey = <T>(
 
     return {
       ...currentGroupData[0],
-      [valueAccessor]: toFixed ? parseFloat(sum.toFixed(1)) : sum,
+      [valueAccessor]: toFixed ? parseFloat(sum.toFixed(toFixed)) : sum,
     };
   });
 
