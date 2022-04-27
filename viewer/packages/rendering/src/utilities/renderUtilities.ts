@@ -29,13 +29,9 @@ export function createRenderTarget(width = 1, height = 1, multiSampleCount = 1):
   return renderTarget;
 }
 
-export function getBlitMaterial(
-  options: BlitOptions,
-  writeColor = true,
-  edges = false,
-  outlines = false
-): THREE.RawShaderMaterial {
-  const { texture, effect, depthTexture, blendOptions, overrideAlpha, ssaoTexture } = options;
+export function getBlitMaterial(options: BlitOptions): THREE.RawShaderMaterial {
+  const { texture, effect, depthTexture, blendOptions, overrideAlpha, ssaoTexture, writeColor, edges, outline } =
+    options;
 
   const uniforms = {
     tDiffuse: { value: texture }
@@ -46,11 +42,11 @@ export function getBlitMaterial(
   setAlphaOverride(overrideAlpha, uniforms, defines);
   setBlitEffect(effect, defines);
 
-  if (edges) {
+  if (edges ?? false) {
     defines['EDGES'] = true;
   }
 
-  if (outlines) {
+  if (outline ?? false) {
     defines['OUTLINE'] = true;
     uniforms['tOutlineColors'] = { value: createOutlineColorTexture() };
   }
@@ -69,7 +65,7 @@ export function getBlitMaterial(
     glslVersion: THREE.GLSL3,
     defines,
     depthTest,
-    colorWrite: writeColor,
+    colorWrite: writeColor ?? true,
     ...initializedBlendOptions
   });
 }

@@ -6,49 +6,44 @@ import * as THREE from 'three';
 import { transparentBlendOptions } from '../render-passes/types';
 import { RenderPass } from '../RenderPass';
 import { createFullScreenTriangleMesh, getBlitMaterial } from '../utilities/renderUtilities';
-import { PostProcessingPipelineInput } from './types';
+import { PostProcessingPipelineOptions } from './types';
 
 export class PostProcessingPipeline implements RenderPass {
   private readonly _postProcessingScene: THREE.Scene;
   private readonly _customObjects: THREE.Object3D[];
   private _takenCustomObjects: { object: THREE.Object3D; parent: THREE.Object3D }[];
 
-  constructor(cadGeometryRenderTargets: PostProcessingPipelineInput, customObjects: THREE.Object3D[]) {
+  constructor(postProcessingPipelineOptions: PostProcessingPipelineOptions, customObjects: THREE.Object3D[]) {
     this._postProcessingScene = new THREE.Scene();
     this._customObjects = customObjects;
     this._takenCustomObjects = [];
 
-    const inFrontEarlyZBlitMaterial = getBlitMaterial(
-      {
-        texture: cadGeometryRenderTargets.inFront.texture,
-        depthTexture: cadGeometryRenderTargets.inFront.depthTexture,
-        overrideAlpha: 1.0
-      },
-      false
-    );
+    const inFrontEarlyZBlitMaterial = getBlitMaterial({
+      texture: postProcessingPipelineOptions.inFront.texture,
+      depthTexture: postProcessingPipelineOptions.inFront.depthTexture,
+      overrideAlpha: 1.0,
+      writeColor: false
+    });
 
     const inFrontEarlyZBlitObject = createFullScreenTriangleMesh(inFrontEarlyZBlitMaterial);
     inFrontEarlyZBlitObject.renderOrder = 0;
     inFrontEarlyZBlitObject.frustumCulled = false;
 
-    const backBlitMaterial = getBlitMaterial(
-      {
-        texture: cadGeometryRenderTargets.back.texture,
-        depthTexture: cadGeometryRenderTargets.back.depthTexture,
-        ssaoTexture: cadGeometryRenderTargets.ssaoTexture,
-        overrideAlpha: 1.0
-      },
-      true,
-      true,
-      true
-    );
+    const backBlitMaterial = getBlitMaterial({
+      texture: postProcessingPipelineOptions.back.texture,
+      depthTexture: postProcessingPipelineOptions.back.depthTexture,
+      ssaoTexture: postProcessingPipelineOptions.ssaoTexture,
+      overrideAlpha: 1.0,
+      edges: postProcessingPipelineOptions.edges,
+      outline: true
+    });
     const backBlitObject = createFullScreenTriangleMesh(backBlitMaterial);
     backBlitObject.renderOrder = 2;
     backBlitObject.frustumCulled = false;
 
     const ghostBlitMaterial = getBlitMaterial({
-      texture: cadGeometryRenderTargets.ghost.texture,
-      depthTexture: cadGeometryRenderTargets.ghost.depthTexture,
+      texture: postProcessingPipelineOptions.ghost.texture,
+      depthTexture: postProcessingPipelineOptions.ghost.depthTexture,
       blendOptions: transparentBlendOptions
     });
 
@@ -56,16 +51,12 @@ export class PostProcessingPipeline implements RenderPass {
     ghostBlitObject.renderOrder = 3;
     ghostBlitObject.frustumCulled = false;
 
-    const inFrontBlitMaterial = getBlitMaterial(
-      {
-        texture: cadGeometryRenderTargets.inFront.texture,
-        blendOptions: transparentBlendOptions,
-        overrideAlpha: 0.5
-      },
-      true,
-      false,
-      true
-    );
+    const inFrontBlitMaterial = getBlitMaterial({
+      texture: postProcessingPipelineOptions.inFront.texture,
+      blendOptions: transparentBlendOptions,
+      overrideAlpha: 0.5,
+      outline: true
+    });
     const inFrontBlitObject = createFullScreenTriangleMesh(inFrontBlitMaterial);
     inFrontBlitObject.renderOrder = 4;
     inFrontBlitObject.frustumCulled = false;

@@ -175,7 +175,7 @@ async function init() {
   document.body.appendChild(renderer.domElement);
 
   const updateRenderOptions = async () => {
-    defaultRenderPipeline.renderOptions = renderOptions;
+    defaultRenderPipeline = new DefaultRenderPipeline(materialManager, scene, renderOptions, cadModels, customObjects);
     await render();
   };
 

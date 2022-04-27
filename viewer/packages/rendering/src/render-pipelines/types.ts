@@ -17,6 +17,7 @@ export type CadGeometryRenderTargets = {
   inFront: THREE.WebGLRenderTarget;
 };
 
-export type PostProcessingPipelineInput = CadGeometryRenderTargets & {
+export type PostProcessingPipelineOptions = CadGeometryRenderTargets & {
   ssaoTexture: THREE.Texture;
+  edges: boolean;
 };

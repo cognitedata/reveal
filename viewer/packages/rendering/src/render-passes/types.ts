@@ -24,6 +24,9 @@ export type BlitOptions = {
   ssaoTexture?: THREE.Texture;
   blendOptions?: BlendOptions;
   overrideAlpha?: number;
+  writeColor?: boolean;
+  edges?: boolean;
+  outline?: boolean;
 };
 
 export const transparentBlendOptions: BlendOptions = {

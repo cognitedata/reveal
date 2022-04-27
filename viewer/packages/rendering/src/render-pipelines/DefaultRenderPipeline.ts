@@ -41,13 +41,11 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     const { ssaoRenderParameters } = renderOptions;
     this._ssaoPass.ssaoParameters = ssaoRenderParameters;
 
-    if (renderOptions.antiAliasing !== this._renderOptions.antiAliasing) {
-      const blitEffect =
-        AntiAliasingMode[renderOptions.antiAliasing] === AntiAliasingMode[AntiAliasingMode.FXAA]
-          ? BlitEffect.Fxaa
-          : BlitEffect.None;
-      this._blitToScreenPass.blitEffect = blitEffect;
-    }
+    const blitEffect =
+      AntiAliasingMode[renderOptions.antiAliasing] === AntiAliasingMode[AntiAliasingMode.FXAA]
+        ? BlitEffect.Fxaa
+        : BlitEffect.None;
+    this._blitToScreenPass.blitEffect = blitEffect;
 
     this._renderOptions = cloneDeep(renderOptions);
   }
@@ -68,7 +66,6 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     customObjects?: THREE.Object3D[]
   ) {
     this._cadScene = scene;
-    this._renderOptions = cloneDeep(renderOptions);
 
     this._renderTargetData = {
       currentRenderSize: new THREE.Vector2(1, 1),
@@ -81,12 +78,13 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     this._cadGeometryRenderPipeline = new CadGeometryRenderPipeline(scene, cadModels, materialManager, renderOptions);
     this._ssaoPass = new SSAOPass(
       this._cadGeometryRenderPipeline.cadGeometryRenderTargets.back.depthTexture,
-      this._renderOptions.ssaoRenderParameters
+      renderOptions.ssaoRenderParameters
     );
 
     this._postProcessingRenderPipeline = new PostProcessingPipeline(
       {
         ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
+        edges: renderOptions.edgeDetectionParameters.enabled,
         ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
       },
       customObjects
@@ -95,6 +93,8 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     this._blitToScreenPass = new BlitPass({
       texture: this._renderTargetData.postProcessingRenderTarget.texture
     });
+
+    this.renderOptions = cloneDeep(renderOptions);
   }
 
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
