@@ -42,3 +42,12 @@ export const StyledMenu = styled(Menu)`
   margin-left: 16px;
   min-width: 189px;
 `;
+
+export const MainPanel = styled.div`
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 280px;
+  right: 0;
+  height: 100%;
+`;

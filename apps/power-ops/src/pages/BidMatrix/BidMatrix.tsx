@@ -20,7 +20,7 @@ import {
   StyledHeader,
   StyledBidMatrix,
   StyledTable,
-  MainPanel,
+  Main,
   StyledTitle,
 } from './elements';
 
@@ -164,7 +164,7 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
   }, [priceArea, plantExternalId]);
 
   return (
-    <MainPanel>
+    <Main>
       <StyledDiv className="bidmatrix">
         <StyledHeader>
           <div>
@@ -239,7 +239,7 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
           )}
         </StyledBidMatrix>
       </StyledDiv>
-    </MainPanel>
+    </Main>
   );
 };
 

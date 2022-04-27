@@ -22,7 +22,7 @@ export interface TableRow {
 
 export interface Cols {
   Header: string | undefined;
-  accessor: string | undefined;
+  accessor?: string | undefined;
   disableSortBy: boolean;
   columns?: SubColumn[];
   sticky?: string;
@@ -38,6 +38,7 @@ export interface SubColumn {
 export interface MatrixWithData extends Matrix {
   sequenceRows: SequenceRow[];
 }
+
 export interface PriceAreaWithData extends PriceArea {
   totalMatrixesWithData: MatrixWithData[];
   plantMatrixesWithData: {

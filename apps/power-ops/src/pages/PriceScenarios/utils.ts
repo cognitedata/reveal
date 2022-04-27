@@ -44,7 +44,7 @@ export function getActiveColumns(
           accessor: `scenario-${index}`,
           columns: [
             {
-              Header: 'Calc',
+              Header: 'Auction Matrix',
               accessor: `calc-${index}`,
             },
             {
@@ -66,7 +66,7 @@ export function getActiveColumns(
               accessor: `plant-${plantIndex}`,
               columns: [
                 {
-                  Header: 'Calc',
+                  Header: 'Auction Matrix',
                   accessor: `calc-plant-${plantIndex}`,
                 },
                 {
@@ -85,11 +85,17 @@ export function getActiveColumns(
   // Add hour column in to front of array
   const totalColumns = [
     {
-      Header: 'Hour',
-      accessor: 'hour',
+      Header: ' ',
       disableSortBy: true,
       sticky: 'left',
+      columns: [
+        {
+          Header: 'Hour',
+          accessor: 'hour',
+        },
+      ],
     },
+
     ...columns,
   ];
   return totalColumns;

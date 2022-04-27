@@ -1,88 +1,151 @@
-import { Data } from 'plotly.js';
+import { Data, PlotMouseEvent } from 'plotly.js';
 import { SetStateAction, useEffect, useState } from 'react';
-import { DoubleDatapoint, IdEither } from '@cognite/sdk';
+import { Datapoints, DoubleDatapoint, ExternalId } from '@cognite/sdk';
 import { useAuthContext } from '@cognite/react-container';
 import Plot from 'react-plotly.js';
 import { pickChartColor } from 'utils/utils';
-import { PieHoverInfo } from 'plotly.js/lib/traces/pie';
 import { PriceArea } from '@cognite/power-ops-api-types';
+import { TableData } from 'types';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 
-import { StyledTitle } from './elements';
-import { chartStyles, layout } from './chartConfig';
+import { StyledTitle, TooltipCard, FlexRow } from './elements';
+import { chartStyles, layout, Card } from './chartConfig';
 
 dayjs.extend(utc);
+
+interface TooltipOffset {
+  top: number;
+  left: number;
+}
+interface TooltipData {
+  color: string | undefined;
+  scenario: string;
+  hour: string | undefined;
+  price: Plotly.Datum;
+  auctionMatrix: string;
+  shop: string;
+}
+
+interface PriceScenariosChartProps {
+  externalIds: ExternalId[] | undefined;
+  priceArea: PriceArea;
+  activeTab: string | number;
+  changeTab: (tab: SetStateAction<string>) => void;
+  tableData: TableData[];
+}
 
 export const PriceScenariosChart = ({
   externalIds,
   priceArea,
   activeTab,
   changeTab,
-}: {
-  externalIds: IdEither[] | undefined;
-  priceArea: PriceArea;
-  activeTab: string | number;
-  changeTab: (tab: SetStateAction<string>) => void;
-}) => {
+  tableData,
+}: PriceScenariosChartProps) => {
   const { client } = useAuthContext();
   const [chartData, setChartData] = useState<Data[]>([{}]);
+  const [hoverClass, setHoverClass] = useState<string>('');
+  const [tooltipAlignClass, setTooltipAlignClass] =
+    useState<string>('align-left');
+  const [tooltipData, setTooltipData] = useState<TooltipData | undefined>();
+  const [tooltipOffset, setTooltipOffset] = useState<TooltipOffset>({
+    top: 0,
+    left: 0,
+  });
+
+  const getPointOffset = (point: Plotly.PlotDatum): TooltipOffset => {
+    const {
+      xaxis,
+      yaxis,
+      data: {
+        x: { [point.pointIndex]: x },
+        y: { [point.pointIndex]: y },
+      },
+    } = point;
+
+    if (!x || !y) return { left: 0, top: 0 };
+
+    return {
+      left: (xaxis as any).l2p(x.valueOf()),
+      top: (yaxis as any).l2p(y),
+    };
+  };
 
   const getChartData = async () => {
     const tomorrow = dayjs.utc().utcOffset(2, true).add(1, 'day');
 
     const timeseries =
-      externalIds && (await client?.timeseries.retrieve(externalIds));
+      externalIds &&
+      ((await client?.datapoints.retrieve({
+        items: externalIds,
+        start: tomorrow.startOf('day').valueOf(),
+        end: tomorrow.endOf('day').valueOf(),
+      })) as Datapoints[]);
 
     const plotData = timeseries
-      ? await Promise.all(
-          timeseries.map(async (series, index) => {
-            const seriesData = await client?.datapoints.retrieve({
-              items: [{ id: series.id }],
-              start: tomorrow.startOf('day').valueOf(),
-              end: tomorrow.endOf('day').valueOf(),
-            });
-            const xvals =
-              seriesData &&
-              seriesData[0].datapoints.map((dataPoint) => dataPoint.timestamp);
-            const yvals =
-              seriesData &&
-              seriesData[0].datapoints.map((dataPoint) => {
-                const newPoint = dataPoint as DoubleDatapoint;
-                return newPoint.value;
-              });
+      ? timeseries.map((ts, index) => {
+          const xvals = ts.datapoints.map((dataPoint) => dataPoint.timestamp);
+          const yvals = ts.datapoints.map((dataPoint) => {
+            const newPoint = dataPoint as DoubleDatapoint;
+            return newPoint.value;
+          });
 
-            const active = !(
-              activeTab !== 'total' && activeTab !== series.externalId
-            );
-            const opacity = active ? 1 : 0.4;
-            const hoverinfo: PieHoverInfo = active ? 'all' : 'none';
-            const hovertemplate = active
-              ? `<b>${priceArea?.priceScenarios[index].name}</b><br><br>` +
-                '%{yaxis.title.text}: %{y:.02f}<br>' +
-                '%{xaxis.title.text}: %{x}<br>' +
-                '<extra></extra>'
-              : '';
+          const active = !(
+            activeTab !== 'total' && activeTab !== ts.externalId
+          );
+          const opacity = active ? 1 : 0.1;
 
-            const formattedData: Data = seriesData
-              ? {
-                  x: xvals,
-                  y: yvals,
-                  type: 'scatter',
-                  mode: 'lines+markers',
-                  name: series.externalId,
-                  hovertemplate,
-                  hoverinfo,
-                  line: { color: pickChartColor(index) },
-                  opacity,
-                }
-              : {};
-            return formattedData;
-          })
-        )
+          const formattedData: Data = ts
+            ? {
+                x: xvals,
+                y: yvals,
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: ts.externalId,
+                text: priceArea?.priceScenarios[index].name,
+                hoverinfo: 'none',
+                line: { color: pickChartColor(index) },
+                opacity,
+              }
+            : {};
+          return formattedData;
+        })
       : [];
 
     setChartData(plotData);
+  };
+
+  const handleChartHoverEvent = (event: PlotMouseEvent) => {
+    const hour = event.points[0].pointIndex;
+    const { index } = (event.points[0] as any).fullData;
+
+    const offset = event.points[0]
+      ? getPointOffset(event.points[0])
+      : { top: 0, left: 0 };
+    setTooltipOffset(offset);
+
+    if (event.points[0].pointIndex >= event.points[0].data.x.length - 4) {
+      setTooltipAlignClass('align-right');
+    } else {
+      setTooltipAlignClass('align-left');
+    }
+
+    setTooltipData({
+      color: event.points[0].data.line.color?.toString(),
+      scenario: event.points[0].data.text.toString(),
+      hour: `${hour.toString().padStart(2, '0')}:00`,
+      price: Math.round(Number(event.points[0].y)),
+      auctionMatrix: tableData[hour][`calc-${index}`]
+        ? tableData[hour][`calc-${index}`].toString()
+        : 'No data',
+      shop: tableData[hour][`shop-${index}`]
+        ? tableData[hour][`shop-${index}`].toString()
+        : 'No data',
+    });
+
+    if (activeTab === 'total' || activeTab === event.points[0].data.name) {
+      setHoverClass('hover');
+    }
   };
 
   useEffect(() => {
@@ -93,6 +156,25 @@ export const PriceScenariosChart = ({
     (chartData && (
       <>
         <StyledTitle level={5}>Price Scenarios</StyledTitle>
+        {tooltipData && (
+          <TooltipCard
+            className={[hoverClass, tooltipAlignClass].join(' ')}
+            style={{
+              top: `${tooltipOffset.top}px`,
+              left: `${tooltipOffset.left}px`,
+            }}
+          >
+            <FlexRow>
+              <Card title={tooltipData?.scenario} color={tooltipData?.color} />
+              <Card title="Hour" value={tooltipData.hour} />
+            </FlexRow>
+            <FlexRow>
+              <Card title="Shop" value={tooltipData.shop} />
+              <Card title="Price" value={`${tooltipData.price} NOK`} />
+              <Card title="Auction Matrix" value={tooltipData.auctionMatrix} />
+            </FlexRow>
+          </TooltipCard>
+        )}
         <Plot
           data-testid="plotly-chart"
           className="styled-plot"
@@ -104,6 +186,8 @@ export const PriceScenariosChart = ({
             displayModeBar: false,
           }}
           onClick={(event) => changeTab(event.points[0].data.name)}
+          onHover={handleChartHoverEvent}
+          onUnhover={() => setHoverClass('')}
         />
       </>
     )) ||

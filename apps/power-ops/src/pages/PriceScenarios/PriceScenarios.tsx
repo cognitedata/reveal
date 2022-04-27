@@ -16,7 +16,7 @@ import { CalculatedProduction } from '@cognite/power-ops-api-types';
 
 import { getActiveColumns } from './utils';
 import {
-  MainPanel,
+  Main,
   GraphContainer,
   StyledIcon,
   StyledTabs,
@@ -234,13 +234,14 @@ const PriceScenario = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
   }, [priceExternalIds]);
 
   return (
-    <MainPanel>
+    <Main>
       <GraphContainer>
         <PriceScenariosChart
           priceArea={priceArea}
           externalIds={priceExternalIds}
           activeTab={activeTab}
           changeTab={changeTab}
+          tableData={tableData}
         />
         <StyledTabs
           defaultActiveKey="total"
@@ -268,11 +269,11 @@ const PriceScenario = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
           <BidmatrixTable
             tableHeader={tableColumns}
             tableData={tableData}
-            className="price-scenario"
+            className="price-scenario-table"
           />
         )}
       </StyledTable>
-    </MainPanel>
+    </Main>
   );
 };
 

@@ -1,3 +1,13 @@
+import CSS from 'csstype';
+
+import {
+  ColorIndicator,
+  CardTitle,
+  FlexRow,
+  CardSection,
+  CardText,
+} from './elements';
+
 export const layout: Partial<Plotly.Layout> = {
   paper_bgcolor: 'transparent',
   plot_bgcolor: 'transparent',
@@ -52,13 +62,30 @@ export const layout: Partial<Plotly.Layout> = {
     spikecolor: '#8C8C8C',
   },
   hovermode: 'closest',
-  hoverlabel: {
-    bgcolor: '#ffffff',
-  },
 };
 
-export const chartStyles = {
+export const chartStyles: CSS.Properties = {
   display: 'flex',
   width: '100%',
   height: '368px',
+};
+
+export const Card = ({
+  title,
+  value,
+  color,
+}: {
+  title: string;
+  value?: string;
+  color?: string;
+}) => {
+  return (
+    <CardSection>
+      <FlexRow>
+        {color && <ColorIndicator color={color} />}
+        <CardTitle>{title}</CardTitle>
+      </FlexRow>
+      {value && <CardText>{value}</CardText>}
+    </CardSection>
+  );
 };

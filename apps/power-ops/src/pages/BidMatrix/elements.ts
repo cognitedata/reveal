@@ -1,14 +1,9 @@
 import styled from 'styled-components/macro';
 import { Title } from '@cognite/cogs.js';
 import { BidmatrixTable } from 'components/BidmatrixTable';
+import { MainPanel } from 'pages/elements';
 
-export const MainPanel = styled.div`
-  display: flex;
-  position: absolute;
-  top: 0;
-  left: 280px;
-  right: 0;
-  height: 100%;
+export const Main = styled(MainPanel)`
   overflow: auto;
   padding: 16px 0 16px 16px;
 `;

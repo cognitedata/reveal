@@ -74,6 +74,7 @@ export const BidmatrixTable = ({
           })
         }
         {data.length < 25 &&
+          className !== 'price-scenario-table' &&
           // Empty row at bottom of table for formatting
           headerGroups.map((headerGroup: any) => (
             <tr
