@@ -4,14 +4,14 @@ import { ToastUtils } from 'src/utils/ToastUtils';
 
 import {
   AutoMLDownload,
-  AutoMLModel,
+  AutoMLModelCore,
   AutoMLModelType,
   AutoMLTrainingJob,
   AutoMLTrainingJobPostRequest,
 } from './types';
 
 export class AutoMLAPI {
-  public static listAutoMLModels = async (): Promise<AutoMLModel[]> => {
+  public static listAutoMLModels = async (): Promise<AutoMLModelCore[]> => {
     const response = await sdk.get(
       `${sdk.getBaseUrl()}/api/playground/projects/${
         sdk.project
