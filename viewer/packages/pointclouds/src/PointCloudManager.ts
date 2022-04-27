@@ -48,6 +48,8 @@ export class PointCloudManager {
         this.updatePointClouds(cam);
       });
 
+    this._budgetSubject.next(this._pointCloudGroupWrapper.pointBudget);
+
     this._renderer = renderer;
   }
 
