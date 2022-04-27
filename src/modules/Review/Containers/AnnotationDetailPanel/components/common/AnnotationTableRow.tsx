@@ -7,6 +7,7 @@ import { AnnotationTableRowProps } from 'src/modules/Review/types';
 import { pushMetric } from 'src/utils/pushMetric';
 import { createLink } from '@cognite/cdf-utilities';
 import { Link } from 'react-router-dom';
+import { AnnotationTableRowAttribute } from './AnnotationTableRowAttribute';
 
 export const AnnotationTableRow = ({
   annotation,
@@ -16,26 +17,6 @@ export const AnnotationTableRow = ({
   onApprove,
   showColorCircle,
 }: AnnotationTableRowProps) => {
-  const renderAttributes = () => {
-    return (
-      <AttributesContainer>
-        <StyledDetail>
-          confidence:{' '}
-          {annotation.data?.confidence
-            ? annotation.data.confidence.toFixed(2)
-            : '-'}
-        </StyledDetail>
-
-        {Object.entries(annotation.data?.attributes || []).map(
-          ([key, value]) => (
-            <StyledDetail>
-              {key}: {value.value}
-            </StyledDetail>
-          )
-        )}
-      </AttributesContainer>
-    );
-  };
   return (
     <StyledRow
       key={annotation.id}
@@ -80,7 +61,9 @@ export const AnnotationTableRow = ({
       </ShowHideIconContainer>
       <AttributesIconContainer>
         <Detail style={{ color: '#595959' }}>
-          <Tooltip content={renderAttributes()}>
+          <Tooltip
+            content={<AnnotationTableRowAttribute annotation={annotation} />}
+          >
             <Icon type="Info" />
           </Tooltip>
         </Detail>
@@ -261,13 +244,4 @@ const StyledSegmentedControl = styled(SegmentedControl)<{ status: string }>`
     background: ${(props) =>
       props.status !== AnnotationStatus.Rejected ? '#d9d9d9' : '#FFCFCF'};
   }
-`;
-
-const AttributesContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const StyledDetail = styled(Detail)`
-  color: white;
 `;
