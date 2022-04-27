@@ -53,25 +53,29 @@ export type TagDetectionJobAnnotation = BaseVisionJobAnnotation & {
   assetIds: CogniteInternalId[];
 };
 
+export type DigitalGaugeDataAttributes = {
+  /* eslint-disable camelcase */
+  comma_pos: number;
+  max_num_digits: number;
+  min_num_digits: number;
+  /* eslint-enable camelcase */
+};
+export type AnalogLevelGaugeDataAttributes = {
+  /* eslint-disable camelcase */
+  max_level: number;
+  min_level: number;
+  /* eslint-enable camelcase */
+};
+
 export type GaugeReaderJobAnnotation = BaseVisionJobAnnotation & {
   // __typename: VisionDetectionModelType.GaugeReader;
   region: AnnotationRegion;
   data: {
     keypointNames: string[];
     unit: string;
-    /* eslint-disable camelcase */
+    // eslint-disable-next-line camelcase
     gauge_value?: number;
-
-    // analog & level gauge attrs
-    max_level?: number;
-    min_level?: number;
-
-    // digital gauge attrs
-    comma_pos?: number;
-    max_num_digits?: number;
-    min_num_digits?: number;
-    /* eslint-enable camelcase */
-  };
+  } & (DigitalGaugeDataAttributes | AnalogLevelGaugeDataAttributes);
 };
 
 export type CusomModelJobAnnotation = BaseVisionJobAnnotation & {
