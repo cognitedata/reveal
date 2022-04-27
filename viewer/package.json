@@ -100,7 +100,7 @@
     "jest-extended": "0.11.5",
     "jsdom": "19.0.0",
     "lint-staged": "12.4.0",
-    "moq.ts": "8.0.3",
+    "moq.ts": "9.0.2",
     "nock": "13.2.4",
     "prettier": "2.6.2",
     "random-seed": "0.3.0",
