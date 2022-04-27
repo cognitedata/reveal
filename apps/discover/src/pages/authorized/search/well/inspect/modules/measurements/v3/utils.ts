@@ -5,6 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 import isNull from 'lodash/isNull';
 import isUndefined from 'lodash/isUndefined';
 import { PlotData } from 'plotly.js';
+import { pluralize } from 'utils/pluralize';
 import { convertPressure, changeUnitTo } from 'utils/units';
 
 import {
@@ -470,10 +471,10 @@ export const getFilterType = (measurementType: MeasurementType) => {
 };
 
 export const getSelectedWellboresTitle = (count: number) =>
-  `${count} ${count > 1 ? 'wellbores' : 'wellbore'} selected`;
+  `${count} ${pluralize('wellbore', count)} selected`;
 
 export const getSelectedWellsTitle = (count: number) =>
-  `From ${count} ${count > 1 ? 'wells' : 'well'}`;
+  `From ${count} ${pluralize('well', count)}`;
 
 export const getMeasurementDataFetchErrors = (
   data: WellboreMeasurementsMap
