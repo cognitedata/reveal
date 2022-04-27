@@ -1,7 +1,9 @@
 import React from 'react';
 import { Tooltip } from '@cognite/cogs.js';
-import moment from 'moment';
+import dayjs from 'dayjs';
+import relativeTimePlugin from 'dayjs/plugin/relativeTime';
 
+dayjs.extend(relativeTimePlugin);
 interface TimeDisplayProps {
   value?: number | Date;
   relative?: boolean;
@@ -17,8 +19,8 @@ export const TimeDisplay = ({
     return <em>Not set</em>;
   }
 
-  const absoluteTime = moment(value).format('YYYY-MM-DD HH:mm');
-  const relativeTime = moment(value).fromNow();
+  const absoluteTime = dayjs(value).format('YYYY-MM-DD HH:mm');
+  const relativeTime = dayjs(value).fromNow();
 
   let displayTime = absoluteTime;
   let tooltipTime = relativeTime;

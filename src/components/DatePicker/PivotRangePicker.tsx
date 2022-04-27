@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { Body, Input, Select } from '@cognite/cogs.js';
 import { SpacedRow } from 'components';
 import ReactDatePicker from 'react-datepicker';
@@ -29,7 +29,7 @@ const directions = [
 export type PivotRangePickerProps = {
   range: PivotRange;
   onRangeChanged: (range: PivotRange) => void;
-  units?: moment.unitOfTime.Base[];
+  units?: dayjs.OpUnitType[];
 };
 
 export const PivotRangePicker = ({

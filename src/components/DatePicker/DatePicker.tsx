@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState, useRef, useMemo } from 'react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { Dropdown, Button } from '@cognite/cogs.js';
 import ReactDatePicker from 'react-datepicker';
 import { SpacedRow } from 'components';
@@ -72,8 +72,8 @@ export const DatePicker = ({
   return (
     <Dropdown content={renderModePicker()} maxWidth="auto">
       <Button icon="Calendar">
-        <span ref={spanRef}>{`${moment(initialDate).format(
-          'yyyy/MM/DD HH:mm'
+        <span ref={spanRef}>{`${dayjs(initialDate).format(
+          'YYYY/MM/DD HH:mm'
         )}`}</span>
       </Button>
     </Dropdown>

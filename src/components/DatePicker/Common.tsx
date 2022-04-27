@@ -3,7 +3,7 @@ import { Button, Colors, ButtonProps, Select } from '@cognite/cogs.js';
 import styled, { css } from 'styled-components';
 import ReactDatePicker, { ReactDatePickerProps } from 'react-datepicker';
 /* eslint-disable no-nested-ternary */
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import { SpacedRow } from 'components';
 
@@ -28,8 +28,8 @@ export const determinePivotRange = (
   startDate: Date,
   endDate: Date
 ): PivotRange => {
-  const startMoment = moment(startDate);
-  const endMoment = moment(endDate);
+  const startDay = dayjs(startDate);
+  const endDay = dayjs(endDate);
 
   let amount = 0;
   let unit: PivotRange['unit'] = 'year';
@@ -42,7 +42,7 @@ export const determinePivotRange = (
     'minute',
   ];
   units.some(item => {
-    amount = endMoment.diff(startMoment, item);
+    amount = endDay.diff(startDay, item);
     unit = item;
     if (amount !== 0) {
       return true;
@@ -67,15 +67,15 @@ export const getPivotRangeAsDates = ({
 }: PivotRange): [Date, Date] => {
   switch (direction) {
     case 'before': {
-      return [moment(date).subtract(amount, unit).toDate(), date];
+      return [dayjs(date).subtract(amount, unit).toDate(), date];
     }
     case 'after': {
-      return [date, moment(date).add(amount, unit).toDate()];
+      return [date, dayjs(date).add(amount, unit).toDate()];
     }
   }
   return [
-    moment(date).subtract(amount, unit).toDate(),
-    moment(date).add(amount, unit).toDate(),
+    dayjs(date).subtract(amount, unit).toDate(),
+    dayjs(date).add(amount, unit).toDate(),
   ];
 };
 
@@ -111,11 +111,7 @@ const ButtonWrapper = styled(Button)`
   }
 `;
 
-const years = range(
-  moment(0).get('year'),
-  moment().get('year') + 1,
-  1
-).reverse();
+const years = range(dayjs(0).get('year'), dayjs().get('year') + 1, 1).reverse();
 const months = [
   'January',
   'February',
@@ -160,8 +156,8 @@ export const renderCustomHeader = (
     prevMonthButtonDisabled,
     nextMonthButtonDisabled,
   }) => {
-    const year = moment(date).get('year');
-    const month = moment(date).get('month');
+    const year = dayjs(date).get('year');
+    const month = dayjs(date).get('month');
     return (
       <SpacedRow style={{ paddingLeft: 8, paddingRight: 8 }}>
         <Button

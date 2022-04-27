@@ -1,6 +1,6 @@
 {
   "name": "@cognite/data-exploration",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "typings": "dist/index.d.ts",
@@ -27,9 +27,9 @@
     "antd": "^4.15.2",
     "d3-array": "^2.12.1",
     "d3-time-format": "^3.0.0",
+    "dayjs": "^1.11.1",
     "lodash": "^4.17.21",
     "mime-types": "^2.1.30",
-    "moment": "^2.29.1",
     "query-string": "^7.0.0",
     "react-base-table": "^1.12.0",
     "react-datepicker": "^3.7.0",

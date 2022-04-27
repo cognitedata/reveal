@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React, { useMemo, useState, useRef } from 'react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { SpacedRow, Divider } from 'components';
 import {
   Dropdown,
@@ -118,11 +118,11 @@ export const RangePicker = ({
   return (
     <Dropdown content={renderModePicker()} maxWidth="auto">
       <Button icon="Calendar" {...buttonProps}>
-        <span ref={spanRef}>{`${moment(initialRange[0]).format(
-          'yyyy/MM/DD HH:mm'
+        <span ref={spanRef}>{`${dayjs(initialRange[0]).format(
+          'YYYY/MM/DD HH:mm'
         )}`}</span>
         <Icon type="ArrowRight" style={{ marginLeft: 8, marginRight: 8 }} />
-        <span>{`${moment(initialRange[1]).format('yyyy/MM/DD HH:mm')}`}</span>
+        <span>{`${dayjs(initialRange[1]).format('YYYY/MM/DD HH:mm')}`}</span>
       </Button>
     </Dropdown>
   );

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { RangePicker } from './RangePicker';
 import { CalendarPicker } from './CalendarPicker';
 import { PivotRangePicker } from './PivotRangePicker';
@@ -13,22 +13,22 @@ export default {
 };
 export const Example = () => {
   const [startDate, setStartDate] = useState<Date>(
-    moment().subtract(1, 'year').toDate()
+    dayjs().subtract(1, 'year').toDate()
   );
   const [endDate, setEndDate] = useState<Date>(new Date());
   return (
     <RangePicker
       initialRange={[startDate, endDate]}
-      onRangeChanged={(start, end) => {
-        setStartDate(start);
-        setEndDate(end);
+      onRangeChanged={(range: [Date, Date]) => {
+        setStartDate(range[0]);
+        setEndDate(range[1]);
       }}
     />
   );
 };
 export const CalendarPickerExample = () => {
   const [startDate, setStartDate] = useState<Date>(
-    moment().subtract(1, 'year').toDate()
+    dayjs().subtract(1, 'year').toDate()
   );
   const [endDate, setEndDate] = useState<Date>(new Date());
   return (
