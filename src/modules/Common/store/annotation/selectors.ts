@@ -6,7 +6,7 @@ import {
   VisionAnnotationDataType,
 } from 'src/modules/Common/types/Annotation';
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
-import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import { filterAnnotations } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 
 const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
 
@@ -27,5 +27,37 @@ export const makeSelectFileAnnotations = () =>
         return annotationIds.map((id) => allAnnotations[id]);
       }
       return [];
+    }
+  );
+
+export const makeSelectAnnotationsForFileIds = () =>
+  createDeepEqualSelector(
+    (state: AnnotationState, fileIds: number[]) => fileIds,
+    (
+      state: AnnotationState,
+      fileIds: number[],
+      filter?: AnnotationFilterType
+    ) => filter,
+    annotationsById,
+    annotatedFilesById,
+    (fileIds, filter, allAnnotations, allFiles) => {
+      // file id existence checked in selectFileAnnotations
+      const data: Record<number, VisionAnnotation<VisionAnnotationDataType>[]> =
+        {};
+      fileIds.forEach((id) => {
+        const fileAnnotations = allFiles[id];
+        if (fileAnnotations && fileAnnotations.length) {
+          data[id] = filterAnnotations({
+            annotations: fileAnnotations.map(
+              (annotationId) => allAnnotations[annotationId]
+            ),
+            filter,
+          });
+        } else {
+          data[id] = [];
+        }
+      });
+
+      return data;
     }
   );

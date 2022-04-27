@@ -1,12 +1,17 @@
 /* eslint-disable jest/no-disabled-tests */
 import { initialState } from 'src/modules/Common/store/annotation/slice';
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
-import { getDummyImageObjectDetectionBoundingBoxAnnotation } from 'src/modules/Common/store/annotation/utils/getDummyAnnotations';
+import {
+  getDummyImageClassificationAnnotation,
+  getDummyImageObjectDetectionBoundingBoxAnnotation,
+} from 'src/modules/Common/store/annotation/utils/getDummyAnnotations';
 import {
   annotatedFilesById,
   annotationsById,
+  makeSelectAnnotationsForFileIds,
   makeSelectFileAnnotations,
 } from 'src/modules/Common/store/annotation/selectors';
+import { Status } from 'src/api/annotation/types';
 
 const mockState: AnnotationState = {
   ...initialState,
@@ -108,6 +113,67 @@ describe('Test annotation selectors', () => {
           annotatedResourceId: 10,
         }),
       ]);
+    });
+  });
+
+  describe('Test makeSelectAnnotationsForFileIds', () => {
+    const selectAnnotationsForFileIds = makeSelectAnnotationsForFileIds();
+    const annotations = [
+      getDummyImageClassificationAnnotation({
+        id: 1,
+        annotatedResourceId: 10,
+        label: 'foo',
+        status: Status.Suggested,
+      }),
+      getDummyImageObjectDetectionBoundingBoxAnnotation({
+        id: 2,
+        annotatedResourceId: 20,
+        label: 'bar',
+        status: Status.Rejected,
+      }),
+    ];
+    const previousState = {
+      files: {
+        byId: {
+          '10': [1],
+          '20': [2],
+        },
+      },
+      annotations: {
+        byId: {
+          '1': annotations[0],
+          '2': annotations[1],
+        },
+      },
+    };
+    test('should return all annotations for provided file ids', () => {
+      expect(selectAnnotationsForFileIds(previousState, [10, 20, 30])).toEqual({
+        '10': [annotations[0]],
+        '20': [annotations[1]],
+        '30': [], // prefer to not raise exception in selectors
+      });
+    });
+    test('should return the annotations filtered by text for provided file ids', () => {
+      expect(
+        selectAnnotationsForFileIds(previousState, [10, 20, 30], {
+          annotationText: 'foo',
+        })
+      ).toEqual({
+        '10': [annotations[0]],
+        '20': [],
+        '30': [],
+      });
+    });
+    test('should return the annotations filtered by status for provided file ids', () => {
+      expect(
+        selectAnnotationsForFileIds(previousState, [10, 20, 30], {
+          annotationState: Status.Rejected,
+        })
+      ).toEqual({
+        '10': [],
+        '20': [annotations[1]],
+        '30': [],
+      });
     });
   });
 });
