@@ -11,11 +11,11 @@ import {
   useParams,
   useRouteMatch,
 } from 'react-router-dom';
-import { Plant, PriceArea } from '@cognite/power-ops-api-types';
+import { Plant } from '@cognite/power-ops-api-types';
 import PriceScenarios from 'pages/PriceScenarios';
 import BidMatrix from 'pages/BidMatrix';
 import { PAGES } from 'pages/Menubar';
-import { PriceAreasContext } from 'providers/priceAreasProvider';
+import { PriceAreasContext } from 'providers/priceAreaProvider';
 
 import {
   Container,
@@ -28,7 +28,8 @@ import {
 } from './elements';
 
 const PortfolioPage = () => {
-  const { priceAreas } = useContext(PriceAreasContext);
+  const { priceArea, allPriceAreas, priceAreaChanged } =
+    useContext(PriceAreasContext);
 
   const history = useHistory();
   const location = useLocation();
@@ -36,13 +37,13 @@ const PortfolioPage = () => {
 
   const { priceAreaExternalId } = useParams<{ priceAreaExternalId?: string }>();
 
+  const [loading, setLoading] = useState<boolean>(true);
   const [query, setQuery] = useState<string>('');
   const [allPlants, setAllPlants] = useState<Plant[]>();
   const [filteredPlants, setFilteredPlants] = useState<Plant[]>([]);
   const [searchPrice, setSearchPrice] = useState<boolean>(true);
   const [searchTotal, setSearchTotal] = useState<boolean>(true);
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [priceArea, setPriceArea] = useState<PriceArea | undefined>();
 
   const startDate = priceArea
     ? new Date(priceArea?.totalMatrixes?.[0].startTime).toLocaleString()
@@ -86,31 +87,41 @@ const PortfolioPage = () => {
   }, [query]);
 
   useEffect(() => {
-    if (priceAreas?.length) {
-      const firstAreaId = priceAreas?.[0].externalId || undefined;
-      if (priceAreaExternalId) {
-        const foundArea = priceAreas.find(
-          (area) => area.externalId === priceAreaExternalId
-        );
-        setPriceArea(foundArea);
+    setLoading(!!allPriceAreas?.length);
+    if (!priceAreaExternalId) {
+      const [firstPriceArea] = allPriceAreas || [];
+      if (firstPriceArea) {
+        history.push(`${PAGES.PORTFOLIO}/${firstPriceArea.externalId}/total`);
+        priceAreaChanged(firstPriceArea.externalId);
+        setLoading(true);
       }
-      history.push(
-        `${PAGES.PORTFOLIO}/${priceAreaExternalId || firstAreaId}/total`
-      );
+    } else {
+      priceAreaChanged(priceAreaExternalId);
+      setLoading(true);
     }
-  }, [priceAreaExternalId, priceAreas]);
+  }, [allPriceAreas]);
 
   useEffect(() => {
     if (priceArea) {
-      // Get list of plants
+      setLoading(false);
       setAllPlants(priceArea.plants);
       setFilteredPlants(priceArea.plants);
     }
   }, [priceArea]);
 
-  if (!priceArea) return <div>No Price Area Found</div>;
+  if (!allPriceAreas) {
+    return loading ? (
+      <div>Loading Price Areas</div>
+    ) : (
+      <div>No Price Areas found on this project</div>
+    );
+  }
 
-  return (
+  if (loading && !priceArea && priceAreaExternalId) {
+    return <div>...loading Price Area {priceAreaExternalId}</div>;
+  }
+
+  return priceArea ? (
     <BaseContainer>
       <Header className="top">
         <div>
@@ -197,7 +208,7 @@ const PortfolioPage = () => {
         </Switch>
       </Container>
     </BaseContainer>
-  );
+  ) : null;
 };
 
 export const Portfolio = memo(PortfolioPage);

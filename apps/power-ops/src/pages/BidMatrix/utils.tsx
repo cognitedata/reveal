@@ -40,7 +40,7 @@ export const formatBidMatrixData = async (
         Header: `${formattedValue}`,
         accessor,
         disableSortBy: true,
-        id: index + 1,
+        id: `${index + 1}`,
       } as Cols;
     }
   );
@@ -53,7 +53,6 @@ export const formatBidMatrixData = async (
       ),
       disableSortBy: true,
       sticky: 'left',
-      id: 0,
     },
     ...columnHeaders,
   ];

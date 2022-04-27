@@ -58,9 +58,9 @@ const ProcessesPage = ({
     ]);
     const externalId = `${PROCESS_PREFIX}_`.concat(Date.now().toString());
     const mappingExternalId1 =
-      'SHOP_OE_incremental_mapping_scenario_1_1650468154000';
+      'SHOP_OE_incremental_mapping_scenario_1_1650887409000';
     const mappingExternalId2 =
-      'SHOP_OE_incremental_mapping_scenario_2_1650468154000';
+      'SHOP_OE_incremental_mapping_scenario_2_1650887409000';
     const matrixConfigId = 'SHOP_OE_bid_matrix_generator_config';
 
     await client?.relationships.create([
@@ -110,11 +110,11 @@ const ProcessesPage = ({
         dataSetId: dataSets[0].id,
         type,
         metadata: {
-          'bid:date': '2022-04-20',
+          'bid:date': '2022-04-26',
           'bid:bid_matrix_generator_config_external_id':
             'SHOP_OE_bid_matrix_generator_config',
-          'shop:starttime': '2022-04-19 00:00:00',
-          'shop:endtime': '2022-04-30 00:00:00',
+          'shop:starttime': '2022-04-25 22:00:00',
+          'shop:endtime': '2022-05-08 00:00:00',
           'shop:watercourse': 'OE',
           'shop:incremental_mapping_external_ids': `[${mappingExternalId1},${mappingExternalId2}]`,
           'bid:main_scenario_incremental_mapping_external_id':

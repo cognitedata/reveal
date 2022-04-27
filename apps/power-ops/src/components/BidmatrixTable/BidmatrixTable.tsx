@@ -78,7 +78,7 @@ export const BidmatrixTable = ({
           headerGroups.map((headerGroup: any) => (
             <tr
               {...headerGroup.getHeaderGroupProps()}
-              key={`${headerGroup.id}_end`}
+              key={headerGroup.getHeaderGroupProps().key}
             >
               {headerGroup.headers.map((column: any) => (
                 <td {...column.getHeaderProps()} key={column.id}>

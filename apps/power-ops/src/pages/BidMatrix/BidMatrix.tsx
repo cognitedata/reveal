@@ -1,21 +1,20 @@
-import { Datapoints } from '@cognite/sdk';
+import { DoubleDatapoint } from '@cognite/sdk';
 import { useState, useEffect } from 'react';
 import { Button, Tooltip, Label, Detail } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import { Column } from 'react-table';
 import { useParams } from 'react-router-dom';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import {
-  Matrix,
-  PriceArea,
-  ProductionValues,
-} from '@cognite/power-ops-api-types';
-import { TableData } from 'types';
+  TableData,
+  SequenceRow,
+  PriceAreaWithData,
+  MatrixWithData,
+} from 'types';
+import { calculateScenarioProduction, roundWithDec } from 'utils/utils';
 
-import {
-  getBidMatrixData,
-  formatBidMatrixData,
-  copyMatrixToClipboard,
-} from './utils';
+import { formatBidMatrixData, copyMatrixToClipboard } from './utils';
 import {
   StyledDiv,
   StyledHeader,
@@ -25,25 +24,28 @@ import {
   StyledTitle,
 } from './elements';
 
-export const tableHeaderConfig = [
+dayjs.extend(utc);
+
+export const mainScenarioTableHeaderConfig = [
   {
     Header: 'Base Price',
     accessor: 'base',
   },
   {
-    Header: 'Prod',
+    Header: 'Production',
     accessor: 'production',
   },
 ];
 
-const BidMatrix = ({ priceArea }: { priceArea: PriceArea }) => {
+const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
   const { client } = useAuthContext();
 
   const { plantExternalId } = useParams<{ plantExternalId?: string }>();
-  const [sequenceCols, setSequenceCols] = useState<Column<TableData>[]>();
-  const [sequenceData, setSequenceData] = useState<TableData[]>();
-  const [matrix, setMatrix] = useState<Matrix | null>();
+  const [matrixHeaderConfig, setSequenceCols] = useState<Column<TableData>[]>();
+  const [matrixData, setSequenceData] = useState<TableData[]>();
+  const [matrix, setMatrix] = useState<MatrixWithData | null>();
   const [mainScenarioData, setMainScenarioData] = useState<TableData[]>();
+  const [bidDate, setBidDate] = useState<Date>();
 
   const currentdate = new Date();
   currentdate.setDate(currentdate.getDate() + 1);
@@ -53,82 +55,110 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceArea }) => {
   const [tooltipContent, setTooltipContent] =
     useState<string>('Copy to clipboard');
 
-  const updateMatrixData = async (matrixExternalId: string) => {
-    const sequenceRows = await getBidMatrixData(client, matrixExternalId);
-    if (!sequenceRows?.length) return;
+  const updateMatrixData = async (
+    matrix: MatrixWithData,
+    scenariopPriceTsExternalId: string
+  ) => {
+    if (!matrix.sequenceRows?.length) return;
+    setMatrix(matrix);
 
-    const { columns, data } = await formatBidMatrixData(sequenceRows);
+    const { columns, data } = await formatBidMatrixData(matrix.sequenceRows);
     setSequenceCols(columns);
     setSequenceData(data);
-  };
 
-  const formatMainScenarioData = async (productionValues: ProductionValues) => {
-    const datapoints = await client?.datapoints.retrieve({
-      items: [
-        { externalId: productionValues.marketProductionExternalId },
-        { externalId: productionValues.calculatedProductionExternalId },
-      ],
+    if (!priceArea.bidDate) return;
+
+    const tomorrow = dayjs.utc(bidDate).utcOffset(2, true).add(1, 'day');
+    const priceTs = await client?.datapoints.retrieve({
+      items: [{ externalId: scenariopPriceTsExternalId }],
+      start: tomorrow.startOf('day').valueOf(),
+      end: tomorrow.endOf('day').valueOf(),
     });
 
-    if (datapoints) {
-      const [prices, productions] = datapoints as Datapoints[];
-      if (prices?.datapoints.length && productions?.datapoints.length) {
-        const dataArray = [];
-        for (
-          let index = 0;
-          index <
-          Math.min(prices.datapoints.length, productions.datapoints.length);
-          index++
-        ) {
-          if (
-            prices?.datapoints?.[index]?.value &&
-            productions?.datapoints?.[index]?.value
-          )
-            dataArray.push({
-              id: index,
-              base: Math.round(prices.datapoints[index].value as number),
-              production: Math.round(
-                productions.datapoints[index].value as number
-              ),
-            });
-        }
-        setMainScenarioData(dataArray);
-      }
-    }
+    if (!priceTs?.length) return;
+
+    const scenarioPricePerHour = (priceTs?.[0]?.datapoints ||
+      []) as DoubleDatapoint[];
+
+    const scenarioData = await formatScenarioData(
+      scenarioPricePerHour,
+      matrix.sequenceRows
+    );
+
+    setMainScenarioData(scenarioData);
   };
 
-  useEffect(() => {
-    if (matrix?.externalId) updateMatrixData(matrix?.externalId);
-  }, [matrix]);
+  const formatScenarioData = async (
+    scenarioPricePerHour: DoubleDatapoint[],
+    sequenceRows: SequenceRow[]
+  ): Promise<{ id: number; base: number; production: number }[]> => {
+    const dataArray: { id: number; base: number; production: number }[] = [];
+    const production = calculateScenarioProduction(
+      scenarioPricePerHour,
+      sequenceRows
+    );
+
+    if (scenarioPricePerHour.length && production?.length) {
+      for (
+        let index = 0;
+        index < Math.min(scenarioPricePerHour.length, production.length);
+        index++
+      ) {
+        if (scenarioPricePerHour[index]?.value && production?.[index]?.value)
+          dataArray.push({
+            id: index,
+            base: roundWithDec(scenarioPricePerHour[index].value as number),
+            production: roundWithDec(production[index].value as number),
+          });
+      }
+    }
+    return dataArray;
+  };
 
   useEffect(() => {
     if (plantExternalId && priceArea) {
+      setBidDate(priceArea.bidDate);
+      const priceExternalId = priceArea.priceScenarios.find(
+        (scenario) => scenario.externalId === priceArea.mainScenarioExternalId
+      )?.externalId;
+      if (!priceExternalId) return;
+
       if (plantExternalId === 'total') {
-        const matrixes = priceArea.totalMatrixes;
-        const productionValues = priceArea.priceScenarios.find(
-          (scenario) => scenario.id === priceArea.mainScenarioId
-        )?.totalProductionValues;
+        const matrixes = priceArea.totalMatrixesWithData;
+        const production = priceArea.priceScenarios.find(
+          (scenario) => scenario.externalId === priceArea.mainScenarioExternalId
+        )?.totalProduction;
 
         // TODO(POWEROPS-223):
         // For now, we select always the first method available
-        if (matrixes?.[0]) setMatrix(matrixes[0]);
-        if (productionValues?.[0]) formatMainScenarioData(productionValues[0]);
+        if (matrixes?.[0] && production?.[0]?.shopProductionExternalId) {
+          updateMatrixData(matrixes[0], priceExternalId);
+        }
       } else {
         const plant = priceArea.plants?.find(
           (p) => p.externalId === plantExternalId
         );
-        const plantMatrixes = priceArea.plantMatrixes?.find(
-          (p) => p.plantId === plant?.id
+        // TODO(POWEROPS-111):
+        // Rename plant variable to .name instead of .externalId
+        const plantMatrixes = priceArea.plantMatrixesWithData?.find(
+          (p) => p.plantExternalId === plant?.name
         );
-        const productionValues = priceArea.priceScenarios
-          .find((scenario) => scenario.id === priceArea.mainScenarioId)
-          ?.plantProductionValues.find(
-            (p) => p.plantId === plant?.id
-          )?.productionValues;
+        const production = priceArea.priceScenarios
+          .find(
+            (scenario) =>
+              scenario.externalId === priceArea.mainScenarioExternalId
+          )
+          ?.plantProduction.find(
+            (p) => p.plantExternalId === plant?.externalId
+          )?.production;
         // TODO(POWEROPS-223):
         // For now, we select always the first method available
-        if (plantMatrixes?.matrixes[0]) setMatrix(plantMatrixes?.matrixes[0]);
-        if (productionValues?.[0]) formatMainScenarioData(productionValues[0]);
+        if (
+          plantMatrixes?.matrixesWithData[0] &&
+          production?.[0]?.shopProductionExternalId
+        ) {
+          updateMatrixData(plantMatrixes?.matrixesWithData[0], priceExternalId);
+        }
       }
     }
   }, [priceArea, plantExternalId]);
@@ -154,8 +184,11 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceArea }) => {
               icon="Copy"
               onClick={async () => {
                 const isCopied =
-                  sequenceCols && sequenceData
-                    ? await copyMatrixToClipboard(sequenceCols, sequenceData)
+                  matrixHeaderConfig && matrixData
+                    ? await copyMatrixToClipboard(
+                        matrixHeaderConfig,
+                        matrixData
+                      )
                     : false;
 
                 // Change tooltip state
@@ -173,10 +206,10 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceArea }) => {
           </Tooltip>
         </StyledHeader>
         <StyledBidMatrix>
-          {sequenceCols && sequenceData && (
+          {matrixHeaderConfig && matrixData && (
             <StyledTable
-              tableHeader={sequenceCols}
-              tableData={sequenceData}
+              tableHeader={matrixHeaderConfig}
+              tableData={matrixData}
               className="bidmatrix"
             />
           )}
@@ -197,11 +230,13 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceArea }) => {
           </div>
         </StyledHeader>
         <StyledBidMatrix>
-          <StyledTable
-            tableHeader={tableHeaderConfig}
-            tableData={mainScenarioData || []}
-            className="price-scenario"
-          />
+          {mainScenarioTableHeaderConfig && mainScenarioData && (
+            <StyledTable
+              tableHeader={mainScenarioTableHeaderConfig}
+              tableData={mainScenarioData || []}
+              className="price-scenario"
+            />
+          )}
         </StyledBidMatrix>
       </StyledDiv>
     </MainPanel>

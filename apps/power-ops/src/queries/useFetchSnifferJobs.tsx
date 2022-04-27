@@ -5,7 +5,7 @@ import sidecar from 'utils/sidecar';
 
 const { snifferServiceBaseUrl } = sidecar;
 
-const fetchJobs = ({
+const fetchJobs = async ({
   client,
   token,
 }: {

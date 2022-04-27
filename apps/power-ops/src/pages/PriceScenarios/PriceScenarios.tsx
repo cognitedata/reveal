@@ -1,12 +1,39 @@
 import { PriceScenariosChart } from 'components/PriceScenariosChart';
-import { PriceArea } from '@cognite/power-ops-api-types';
 import { SetStateAction, useEffect, useState } from 'react';
-import { pickChartColor } from 'utils/utils';
+import {
+  calculateScenarioProduction,
+  pickChartColor,
+  roundWithDec,
+} from 'utils/utils';
+import { PriceAreaWithData, TableData } from 'types';
+import { Column } from 'react-table';
+import { BidmatrixTable } from 'components/BidmatrixTable';
+import { useAuthContext } from '@cognite/react-container';
+import { DoubleDatapoint, ExternalId } from '@cognite/sdk';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import { CalculatedProduction } from '@cognite/power-ops-api-types';
 
-import { MainPanel, GraphContainer, StyledIcon, StyledTabs } from './elements';
+import { getActiveColumns } from './utils';
+import {
+  MainPanel,
+  GraphContainer,
+  StyledIcon,
+  StyledTabs,
+  StyledTable,
+} from './elements';
 
-const PriceScenario = ({ priceArea }: { priceArea: PriceArea }) => {
-  const [externalIds, setExternalIds] = useState<
+dayjs.extend(utc);
+
+const PriceScenario = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
+  const { client } = useAuthContext();
+
+  const tomorrow = dayjs
+    .utc(priceArea.bidDate)
+    .utcOffset(2, true)
+    .add(1, 'day');
+
+  const [priceExternalIds, setPriceExternalIds] = useState<
     { externalId: string }[] | undefined
   >();
 
@@ -15,21 +42,203 @@ const PriceScenario = ({ priceArea }: { priceArea: PriceArea }) => {
     setActiveTab(tab);
   };
 
+  const [tableColumns, setTableColumns] = useState<Column<TableData>[]>([]);
+  const [tableData, setTableData] = useState<TableData[]>([]);
+
+  const getFormattedProductionColumn = (
+    datapoints: DoubleDatapoint[] | CalculatedProduction[],
+    accessor: string
+  ): { [accesor: string]: number }[] => {
+    const formatedData: { [accesor: string]: number }[] = Array(24).fill({
+      [accessor]: undefined,
+    });
+    datapoints.forEach((point) => {
+      const hour = point.timestamp.getHours();
+      formatedData[hour] = {
+        [accessor]: roundWithDec(point.value),
+      };
+    });
+    return formatedData || [];
+  };
+
+  const getTableData = async () => {
+    const activeScenarioIndex = priceArea?.priceScenarios.findIndex(
+      (scenario) => scenario.externalId === activeTab
+    );
+
+    const activeColumns = getActiveColumns(activeTab, priceArea);
+    setTableColumns(activeColumns as Column<TableData>[]);
+
+    // Create array of column externalids
+    const productionTsExternalIds: ExternalId[] = [];
+    activeColumns.forEach(async (column, index) => {
+      if (column.accessor?.includes('scenario')) {
+        const scenario = priceArea?.priceScenarios.find(
+          (scenario) => scenario.externalId === column.id
+        );
+        if (scenario) {
+          // TODO(POWEROPS-223):
+          // For now, we select always the first method available
+          productionTsExternalIds.push({
+            externalId: scenario?.totalProduction[0].shopProductionExternalId,
+          });
+        }
+      } else {
+        // Get Plant from current scenario (activeTab)
+        const plant = priceArea?.priceScenarios
+          .find((scenario) => scenario.externalId === activeTab)
+          ?.plantProduction?.find(
+            (_plant) => `plant-${index - 2}` === column.id
+          );
+        if (plant) {
+          // TODO(POWEROPS-223):
+          // For now, we select always the first method available
+          productionTsExternalIds.push({
+            externalId: plant?.production[0].shopProductionExternalId,
+          });
+        }
+      }
+    });
+
+    // Get SHOP production data for the next day
+    const shopProductionDatapoints =
+      productionTsExternalIds &&
+      (await client?.datapoints.retrieve({
+        items: productionTsExternalIds.map((externalId) => {
+          return externalId;
+        }),
+        start: tomorrow.startOf('day').valueOf(),
+        end: tomorrow.endOf('day').valueOf(),
+      }));
+
+    const shopProductionData = shopProductionDatapoints
+      ? await Promise.all(
+          shopProductionDatapoints.map(async (ts, index) => {
+            let accessor = '';
+            if (activeTab === 'total') {
+              accessor = `shop-${index}`;
+            } else {
+              accessor =
+                index === 0
+                  ? `shop-${activeScenarioIndex}`
+                  : `shop-plant-${index - 1}`;
+            }
+            return getFormattedProductionColumn(
+              ts.datapoints as DoubleDatapoint[],
+              accessor
+            );
+          })
+        )
+      : [];
+
+    let calcProductionData: { [accessor: string]: number }[][];
+    if (activeTab === 'total') {
+      const priceTimeseries =
+        priceExternalIds &&
+        (await client?.datapoints.retrieve({
+          items: priceExternalIds.map((externalId) => {
+            return externalId;
+          }),
+          start: tomorrow.startOf('day').valueOf(),
+          end: tomorrow.endOf('day').valueOf(),
+        }));
+
+      calcProductionData = priceTimeseries
+        ? priceTimeseries.map((scenarioPricePerHour, index) => {
+            const { sequenceRows } = priceArea.totalMatrixesWithData[0];
+            const accessor = `calc-${index}`;
+            const calulatedProduction = calculateScenarioProduction(
+              scenarioPricePerHour.datapoints as DoubleDatapoint[],
+              sequenceRows
+            );
+            return getFormattedProductionColumn(calulatedProduction, accessor);
+          })
+        : [];
+    } else {
+      const activeScenarioTimeseries =
+        priceArea?.priceScenarios[activeScenarioIndex] &&
+        (await client?.datapoints.retrieve({
+          items: [
+            {
+              externalId:
+                priceArea?.priceScenarios[activeScenarioIndex].externalId,
+            },
+          ],
+          start: tomorrow.startOf('day').valueOf(),
+          end: tomorrow.endOf('day').valueOf(),
+        }));
+
+      // Calculate Plant Columns
+      calcProductionData =
+        activeScenarioTimeseries && priceArea.plantMatrixesWithData
+          ? priceArea.plantMatrixesWithData.map((plantMatrix, index) => {
+              const { sequenceRows } = plantMatrix.matrixesWithData[0];
+              const accessor = `calc-plant-${index}`;
+              const calulatedProduction = calculateScenarioProduction(
+                activeScenarioTimeseries[0].datapoints as DoubleDatapoint[],
+                sequenceRows
+              );
+              return getFormattedProductionColumn(
+                calulatedProduction,
+                accessor
+              );
+            })
+          : [];
+
+      // Calculate Total Column
+      const [calcTotalProductionData] = activeScenarioTimeseries
+        ? activeScenarioTimeseries.map((scenarioPricePerHour) => {
+            const { sequenceRows } = priceArea.totalMatrixesWithData[0];
+            const accessor = `calc-${activeScenarioIndex}`;
+            const calulatedProduction = calculateScenarioProduction(
+              scenarioPricePerHour.datapoints as DoubleDatapoint[],
+              sequenceRows
+            );
+            return getFormattedProductionColumn(calulatedProduction, accessor);
+          })
+        : [];
+
+      // Append total prod uction column first
+      calcProductionData = [calcTotalProductionData, ...calcProductionData];
+    }
+
+    // Combine both SHOP and calculated production values
+    const combinedData = [...shopProductionData, ...calcProductionData];
+
+    // Transpose rows and columns
+    const transposedColumns = combinedData[0].map((_, index: number) =>
+      combinedData.map((row) => row[index])
+    );
+    const priceScenarioTableData = transposedColumns.map(
+      (row: any, index: number) => {
+        // Convert each row from array of objects to object
+        const formattedRow = Object.assign.apply(null, row);
+        formattedRow.hour = index;
+        return formattedRow;
+      }
+    );
+    setTableData(priceScenarioTableData);
+  };
+
   useEffect(() => {
     if (priceArea) {
-      const externalIdsArray = priceArea?.priceScenarios.map((scenario) => {
+      const priceExternalIds = priceArea?.priceScenarios.map((scenario) => {
         return { externalId: scenario.externalId };
       });
-      setExternalIds(externalIdsArray);
+      setPriceExternalIds(priceExternalIds);
     }
-  }, [priceArea]);
+  }, [activeTab]);
+
+  useEffect(() => {
+    getTableData();
+  }, [priceExternalIds]);
 
   return (
     <MainPanel>
       <GraphContainer>
         <PriceScenariosChart
           priceArea={priceArea}
-          externalIds={externalIds}
+          externalIds={priceExternalIds}
           activeTab={activeTab}
           changeTab={changeTab}
         />
@@ -54,6 +263,15 @@ const PriceScenario = ({ priceArea }: { priceArea: PriceArea }) => {
           })}
         </StyledTabs>
       </GraphContainer>
+      <StyledTable>
+        {tableColumns && tableData && (
+          <BidmatrixTable
+            tableHeader={tableColumns}
+            tableData={tableData}
+            className="price-scenario"
+          />
+        )}
+      </StyledTable>
     </MainPanel>
   );
 };

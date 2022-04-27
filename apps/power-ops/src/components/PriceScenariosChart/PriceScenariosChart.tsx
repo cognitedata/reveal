@@ -6,9 +6,13 @@ import Plot from 'react-plotly.js';
 import { pickChartColor } from 'utils/utils';
 import { PieHoverInfo } from 'plotly.js/lib/traces/pie';
 import { PriceArea } from '@cognite/power-ops-api-types';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 
 import { StyledTitle } from './elements';
 import { chartStyles, layout } from './chartConfig';
+
+dayjs.extend(utc);
 
 export const PriceScenariosChart = ({
   externalIds,
@@ -25,6 +29,8 @@ export const PriceScenariosChart = ({
   const [chartData, setChartData] = useState<Data[]>([{}]);
 
   const getChartData = async () => {
+    const tomorrow = dayjs.utc().utcOffset(2, true).add(1, 'day');
+
     const timeseries =
       externalIds && (await client?.timeseries.retrieve(externalIds));
 
@@ -33,6 +39,8 @@ export const PriceScenariosChart = ({
           timeseries.map(async (series, index) => {
             const seriesData = await client?.datapoints.retrieve({
               items: [{ id: series.id }],
+              start: tomorrow.startOf('day').valueOf(),
+              end: tomorrow.endOf('day').valueOf(),
             });
             const xvals =
               seriesData &&

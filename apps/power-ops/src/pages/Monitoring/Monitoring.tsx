@@ -84,7 +84,7 @@ const Monitoring = ({ client }: { client: CogniteClient }) => {
           </tr>
         </thead>
         <tbody>
-          {data?.length &&
+          {Array.isArray(data) &&
             data.map((job: any) => {
               return (
                 <tr key={job.name}>

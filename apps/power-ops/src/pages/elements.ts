@@ -1,6 +1,7 @@
 import styled from 'styled-components/macro';
 import { sizes } from 'styles/layout';
-import { TopBar } from '@cognite/cogs.js';
+import { Menu, TopBar } from '@cognite/cogs.js';
+import layers from 'utils/zindex';
 
 export const BaseContainer = styled.div`
   text-align: center;
@@ -13,6 +14,7 @@ export const Container = styled(BaseContainer)`
 `;
 
 export const StyledTopBar = styled(TopBar)`
+  z-index: ${layers.MAXIMUM};
   position: sticky;
   top: 0;
 `;
@@ -34,4 +36,9 @@ export const LogoContainer = styled.div`
   width: 280px;
   height: 100%;
   border-right: 1px solid #e8e8e8;
+`;
+
+export const StyledMenu = styled(Menu)`
+  margin-left: 16px;
+  min-width: 189px;
 `;
