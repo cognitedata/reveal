@@ -13,5 +13,5 @@ export const DEFAULT_CLASSIFICATION: IClassification = {
   8: new Vector4(1.0, 0, 0.0, 1.0),
   9: new Vector4(0.0, 0.0, 1.0, 1.0),
   12: new Vector4(1.0, 1.0, 0.0, 1.0),
-  DEFAULT: new Vector4(0.3, 0.6, 0.6, 0.5)
+  DEFAULT: new Vector4(0.3, 0.6, 0.6, 1.0)
 };
