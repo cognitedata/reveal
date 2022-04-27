@@ -17,7 +17,7 @@ export class MeasurementLabel {
     fillColor: 'rgba(255, 255, 255, 1.0)'
   };
 
-  constructor(viewer: Cognite3DViewer, options: MeasurementLabelOptions) {
+  constructor(viewer: Cognite3DViewer, options?: MeasurementLabelOptions) {
     this._viewer = viewer;
     this._options = options;
   }
@@ -75,7 +75,6 @@ export class MeasurementLabel {
    * @param y start point y
    * @param width width of the rectangle
    * @param height height of the rectangle
-   * @param fill rectangle to be filled or not
    * @param stroke is the rectangle to be stroked
    */
   private roundRect(
@@ -121,6 +120,10 @@ export class MeasurementLabel {
     }
   }
 
+  /**
+   * Updates the label parameters
+   * @param options MeasurementLabelOptions of size, radius, font, font color & fill color
+   */
   public updateLabelOptions(options: MeasurementLabelOptions): void {
     this._options = options;
   }

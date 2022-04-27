@@ -18,7 +18,7 @@ export class MeasurementControls {
   private readonly _measurementLabel: MeasurementLabel;
   private readonly _startPosition: THREE.Vector3;
   private _measurement: Measurement;
-  private _labelOptions: MeasurementLabelOptions;
+  private readonly _labelOptions: MeasurementLabelOptions;
 
   private readonly _handleonPointerClick = this.onPointerClick.bind(this);
   private readonly _handleonPointerMove = this.onPointerMove.bind(this);
@@ -65,10 +65,6 @@ export class MeasurementControls {
       this._measurement.remove();
       this._measurement = null;
     }
-  }
-
-  public setLabelOptions(options: MeasurementLabelOptions): void {
-    this._measurementLabel.updateLabelOptions(options);
   }
 
   private async onPointerClick(event: MouseEvent) {
