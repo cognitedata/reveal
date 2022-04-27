@@ -165,11 +165,12 @@ export const ProcessToolBar = () => {
   useEffect(() => {
     const getModels = async () => {
       const models = await AutoMLAPI.listAutoMLModels();
-      await Promise.all(
-        models.map((model) => AutoMLAPI.getAutoMLModel(model.jobId))
-      ).then((modelJobs) =>
-        setCustomModels(modelJobs.filter((item) => item.status === 'Completed'))
-      );
+      // await Promise.all(
+      //   models.map((model) => AutoMLAPI.getAutoMLModel(model.jobId))
+      // ).then((modelJobs) =>
+      //   setCustomModels(modelJobs.filter((item) => item.status === 'Completed'))
+      // );
+      setCustomModels(models);
     };
     if (visionAutoMLEnabled) getModels();
   }, []);
