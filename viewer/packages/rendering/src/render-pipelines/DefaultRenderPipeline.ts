@@ -11,7 +11,7 @@ import { createRenderTarget } from '../utilities/renderUtilities';
 import { IdentifiedModel } from '../utilities/types';
 import { RenderTargetData } from './types';
 import { BlitEffect } from '../render-passes/types';
-import { AntiAliasingMode, RenderOptions } from '../rendering/types';
+import { AntiAliasingMode, defaultRenderOptions, RenderOptions } from '../rendering/types';
 import { CadGeometryRenderPipeline } from './CadGeometryRenderPipeline';
 import { PostProcessingPipeline } from './PostProcessingPipeline';
 import { BlitPass } from '../render-passes/BlitPass';
@@ -38,7 +38,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
 
   set renderOptions(renderOptions: RenderOptions) {
     const { ssaoRenderParameters } = renderOptions;
-    this._ssaoPass.ssaoParameters = ssaoRenderParameters;
+    this._ssaoPass.ssaoParameters = ssaoRenderParameters ?? defaultRenderOptions.ssaoRenderParameters;
 
     const blitEffect =
       AntiAliasingMode[renderOptions.antiAliasing] === AntiAliasingMode[AntiAliasingMode.FXAA]
@@ -72,16 +72,19 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     this._cadModels = cadModels;
     this._customObjects = customObjects;
 
+    const ssaoParameters = renderOptions.ssaoRenderParameters ?? defaultRenderOptions.ssaoRenderParameters;
+    const edges = renderOptions.edgeDetectionParameters ?? defaultRenderOptions.edgeDetectionParameters;
+
     this._cadGeometryRenderPipeline = new CadGeometryRenderPipeline(scene, cadModels, materialManager, renderOptions);
     this._ssaoPass = new SSAOPass(
       this._cadGeometryRenderPipeline.cadGeometryRenderTargets.back.depthTexture,
-      renderOptions.ssaoRenderParameters
+      ssaoParameters
     );
 
     this._postProcessingRenderPipeline = new PostProcessingPipeline(
       {
         ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
-        edges: renderOptions.edgeDetectionParameters.enabled,
+        edges: edges.enabled,
         ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
       },
       customObjects

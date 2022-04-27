@@ -53,7 +53,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
     const v8input = createDetermineSectorInput(camera, createCadModelMetadata(8, createV9SectorMetadata([0, []])));
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
 
-    expect(culler.determineSectors(v8input)).rejects.toThrowError();
+    expect(() => culler.determineSectors(v8input)).toThrowError();
   });
 
   test('determineSectors sets models to coverage utility', () => {
