@@ -1079,7 +1079,7 @@ export class Cognite3DViewer {
   }
 
   /** @private */
-  private async animate(time: number) {
+  private animate(time: number) {
     if (this.isDisposed) {
       return;
     }
@@ -1103,7 +1103,7 @@ export class Cognite3DViewer {
       if (renderController.needsRedraw || this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
-        await this.revealManager.render(this.camera);
+        this.revealManager.render(this.camera);
         renderController.clearNeedsRedraw();
         this.revealManager.resetRedraw();
         this._clippingNeedsUpdate = false;

@@ -212,7 +212,7 @@ export function TestViewer(props: Props) {
       camera.updateMatrixWorld();
       revealManager.update(camera);
 
-      animationLoopHandler.setOnAnimationFrameListener(async (deltaTime) => {
+      animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
         let needsResize = resizeRendererToDisplaySize(renderer, camera);
 
         const controlsNeedUpdate = controls.update(deltaTime);
@@ -221,7 +221,7 @@ export function TestViewer(props: Props) {
         }
 
         if (controlsNeedUpdate || revealManager.needsRedraw || needsResize) {
-          await revealManager.render(camera);
+          revealManager.render(camera);
 
           if (testEnv.postRender) {
             testEnv.postRender();

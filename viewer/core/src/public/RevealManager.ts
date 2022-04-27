@@ -181,8 +181,8 @@ export class RevealManager {
     }
   }
 
-  public async render(camera: THREE.PerspectiveCamera): Promise<void> {
-    await this._pipelineExecutor.render(this._renderPipeline, camera);
+  public render(camera: THREE.PerspectiveCamera): void {
+    this._pipelineExecutor.render(this._renderPipeline, camera);
     this.resetRedraw();
   }
 
