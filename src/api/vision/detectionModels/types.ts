@@ -58,6 +58,19 @@ export type GaugeReaderJobAnnotation = BaseVisionJobAnnotation & {
   region: AnnotationRegion;
   data: {
     keypointNames: string[];
+    unit: string;
+    /* eslint-disable camelcase */
+    gauge_value?: number;
+
+    // analog & level gauge attrs
+    max_level?: number;
+    min_level?: number;
+
+    // digital gauge attrs
+    comma_pos?: number;
+    max_num_digits?: number;
+    min_num_digits?: number;
+    /* eslint-enable camelcase */
   };
 };
 
