@@ -164,9 +164,12 @@ export const ProcessToolBar = () => {
 
   useEffect(() => {
     const getModels = async () => {
-      const items = await AutoMLAPI.listAutoMLModels();
-      // items = items.filter((item) => item.status === 'Completed'); // TODO: fix this
-      setCustomModels(items);
+      const models = await AutoMLAPI.listAutoMLModels();
+      await Promise.all(
+        models.map((model) => AutoMLAPI.getAutoMLModel(model.jobId))
+      ).then((modelJobs) =>
+        setCustomModels(modelJobs.filter((item) => item.status === 'Completed'))
+      );
     };
     if (visionAutoMLEnabled) getModels();
   }, []);
