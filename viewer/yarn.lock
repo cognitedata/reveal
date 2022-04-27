@@ -756,7 +756,7 @@ __metadata:
     lodash: 4.17.21
     loglevel: 1.8.0
     mixpanel-browser: 2.45.0
-    moq.ts: 8.0.3
+    moq.ts: 9.0.2
     nock: 13.2.4
     prettier: 2.6.2
     random-seed: 0.3.0
@@ -9437,12 +9437,12 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"moq.ts@npm:8.0.3":
-  version: 8.0.3
-  resolution: "moq.ts@npm:8.0.3"
+"moq.ts@npm:9.0.2":
+  version: 9.0.2
+  resolution: "moq.ts@npm:9.0.2"
   dependencies:
     tslib: 2.3.1
-  checksum: 677023583b69de216efe68f08dc2c2a753d62390931270ad2922514d38ea43bd8facd8e28aa2d94ac15613c8b7e7aebddc980c620a839268d72d072c74cc9a86
+  checksum: 3fbe4ef6600cf4230efa5e601a28b76a49879106458b13f59d85794adac116a0e8ceb23bfa6e449bbfe7f6cbf8f07dab904ee5bf5fe322d0c7123b4b856bc196
   languageName: node
   linkType: hard
 
