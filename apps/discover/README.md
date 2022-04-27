@@ -130,11 +130,13 @@ Before executing in please comment out the "REACT_APP_MIXPANEL_TOKEN" in the BUI
 yarn cypress:ci
 ```
 
-To execute nightly buids as in the CI, we use:
+To execute nightly builds as in the CI, we use:
 
 ```shell
 yarn cypress:nightly
 ```
+
+The results of the nightly runs are recorded here: https://dashboard.cypress.io/projects/skhqd5/analytics/runs-over-time
 
 ### How to ingest data into the test tenants
 

@@ -605,6 +605,9 @@ cypress_web_test(
         "nightly",
     ],
     templated_args = [
+        "--record",
+        "--key 57e436d7-0dbb-401d-ac07-7a1ec69e7a90",
+        "--group nightly-tests",
         "--config " +
         "retries=2," +
         "supportFile=./apps/discover/cypress/support," +

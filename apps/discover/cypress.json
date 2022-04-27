@@ -14,5 +14,6 @@
   },
   "animationDistanceThreshold": 3,
   "numTestsKeptInMemory": 0,
-  "chromeWebSecurity": false
+  "chromeWebSecurity": false,
+  "projectId": "skhqd5"
 }
