@@ -15,10 +15,10 @@ export interface SectorCuller {
    * what sectors we should load. Use {@link filterSectorsToLoad} to improve this estimate as new data is loaded.
    * @param input
    */
-  determineSectors(input: DetermineSectorsInput): Promise<{
+  determineSectors(input: DetermineSectorsInput): {
     wantedSectors: WantedSector[];
     spentBudget: SectorLoadingSpent;
-  }>;
+  };
 
   /**
    * Evaluates if sectors provided should be loaded or not, e.g. based on geometry we have now loaded
@@ -28,7 +28,7 @@ export interface SectorCuller {
    * @param input Same input as used in {@link determineSectors}.
    * @param wantedSectorsBatch A set of sectors from {@link determineSectors}, e.g. in batches of 5-10.
    */
-  filterSectorsToLoad(input: DetermineSectorsInput, wantedSectorsBatch: WantedSector[]): Promise<WantedSector[]>;
+  filterSectorsToLoad(input: DetermineSectorsInput, wantedSectorsBatch: WantedSector[]): WantedSector[];
 
   /**
    * Dispose all non-GCed resoures held.

@@ -67,16 +67,11 @@ export class PostProcessingPipeline implements RenderPass {
     this._postProcessingScene.add(inFrontBlitObject);
   }
 
-  public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): Promise<THREE.WebGLRenderTarget> {
+  public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {
     this.takeCustomObjects();
     renderer.sortObjects = true;
     renderer.render(this._postProcessingScene, camera);
     this.releaseCustomObjects();
-    return;
-  }
-
-  public getOutputRenderTarget(): THREE.WebGLRenderTarget {
-    return null;
   }
 
   private takeCustomObjects(): void {

@@ -115,6 +115,8 @@ async function init() {
   renderer.setClearColor(guiData.clearColor);
   renderer.setClearAlpha(guiData.clearAlpha);
 
+  let needsRedraw = false;
+
   const renderOptions = defaultRenderOptions;
   renderOptions.multiSampleCountHint = 4;
 
@@ -132,7 +134,7 @@ async function init() {
     pipelineExecutor.numberOfSteps = guiData.steps;
     renderer.setClearColor(guiData.clearColor);
     renderer.setClearAlpha(guiData.clearAlpha);
-    await render();
+    needsRedraw = true;
   });
 
   const stats = gui.addFolder('frame stats');
@@ -176,7 +178,7 @@ async function init() {
 
   const updateRenderOptions = async () => {
     defaultRenderPipeline = new DefaultRenderPipeline(materialManager, scene, renderOptions, cadModels, customObjects);
-    await render();
+    needsRedraw = true;
   };
 
   const renderOptionsGUI = gui.addFolder('Render Options');
@@ -185,13 +187,13 @@ async function init() {
   renderOptionsGUI.addColor(guiData, 'clearColor').onChange(async () => {
     renderer.setClearColor(guiData.clearColor);
     renderer.setClearAlpha(guiData.clearAlpha);
-    await render();
+    needsRedraw = true;
   });
 
   renderOptionsGUI.add(guiData, 'clearAlpha', 0, 1).onChange(async () => {
     renderer.setClearColor(guiData.clearColor);
     renderer.setClearAlpha(guiData.clearAlpha);
-    await render();
+    needsRedraw = true;
   });
 
   renderOptionsGUI.addColor(guiData, 'canvasColor').onChange(async () => {
@@ -217,7 +219,7 @@ async function init() {
         cadModels,
         customObjects
       );
-      await render();
+      needsRedraw = true;
     });
   antiAliasingGui.open();
 
@@ -230,13 +232,13 @@ async function init() {
   controls.addEventListener('change', async () => {
     cadModelUpdateHandler.updateCamera(camera);
     pointCloudManager.updateCamera(camera);
-    await render();
+    needsRedraw = true;
   });
 
   let timings: number[] = [];
 
-  const render = async () => {
-    await pipelineExecutor.render(defaultRenderPipeline, camera);
+  const render = () => {
+    pipelineExecutor.render(defaultRenderPipeline, camera);
     guiData.drawCalls = renderer.info.render.calls;
     drawCallController.updateDisplay();
     if (pipelineExecutor.timings.length > 0) {
@@ -250,16 +252,31 @@ async function init() {
     }
   };
 
-  renderer.setAnimationLoop(async () => {
+  const animate = () => {
     controls.update();
-    if (!cadManager.needsRedraw) {
+    requestAnimationFrame(animate);
+    if (!cadManager.needsRedraw && !needsRedraw) {
       return;
     }
+    render();
 
-    await render();
     cadManager.resetRedraw();
     pointCloudManager.resetRedraw();
-  });
+    needsRedraw = false;
+  };
+
+  animate();
+
+  // renderer.setAnimationLoop(() => {
+  //   controls.update();
+  //   if (!cadManager.needsRedraw) {
+  //     return;
+  //   }
+  //   render();
+
+  //   cadManager.resetRedraw();
+  //   pointCloudManager.resetRedraw();
+  // });
 }
 
 function fitCameraToBoundingBox(

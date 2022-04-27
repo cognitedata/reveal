@@ -10,7 +10,6 @@ import { getLayerMask } from '../utilities/renderUtilities';
 
 export class GeometryPass implements RenderPass {
   private readonly _geometryScene: THREE.Object3D;
-  private readonly _renderTarget: THREE.WebGLRenderTarget;
   private readonly _materialManager: CadMaterialManager;
   private readonly _renderMode: RenderMode;
   private readonly _overrideRenderLayer: number;
@@ -27,11 +26,7 @@ export class GeometryPass implements RenderPass {
     this._overrideRenderLayer = overrideLayerMask;
   }
 
-  public getOutputRenderTarget(): THREE.WebGLRenderTarget | null {
-    return this._renderTarget;
-  }
-
-  public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): Promise<THREE.WebGLRenderTarget> {
+  public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {
     const curr = camera.layers.mask;
 
     const renderLayer = this._overrideRenderLayer ?? getLayerMask(this._renderMode);
@@ -40,6 +35,5 @@ export class GeometryPass implements RenderPass {
     renderer.render(this._geometryScene, camera);
 
     camera.layers.mask = curr;
-    return;
   }
 }

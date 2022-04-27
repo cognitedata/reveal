@@ -14,10 +14,10 @@ export class BasicPipelineExecutor implements PipelineExecutor {
     renderer.info.autoReset = false;
   }
 
-  public async render(renderPipeline: RenderPipelineProvider, camera: THREE.Camera): Promise<void> {
+  public render(renderPipeline: RenderPipelineProvider, camera: THREE.Camera): void {
     this._renderer.info.reset();
-    for await (const renderPass of renderPipeline.pipeline(this._renderer)) {
-      await renderPass.render(this._renderer, camera);
+    for (const renderPass of renderPipeline.pipeline(this._renderer)) {
+      renderPass.render(this._renderer, camera);
     }
   }
 }

@@ -15,10 +15,7 @@ export class RenderAlreadyLoadedGeometryProvider {
     this._depthOnlyRenderPipeline = depthOnlyRenderPipeline;
   }
 
-  async renderOccludingGeometry(
-    target: THREE.WebGLRenderTarget | null,
-    camera: THREE.PerspectiveCamera
-  ): Promise<void> {
+  renderOccludingGeometry(target: THREE.WebGLRenderTarget | null, camera: THREE.PerspectiveCamera): void {
     const scene = this._depthOnlyRenderPipeline.scene;
 
     scene?.traverse(x => {
@@ -28,7 +25,7 @@ export class RenderAlreadyLoadedGeometryProvider {
     });
 
     this._depthOnlyRenderPipeline.outputRenderTarget = target;
-    await this._basicPipelineExecutor.render(this._depthOnlyRenderPipeline, camera);
+    this._basicPipelineExecutor.render(this._depthOnlyRenderPipeline, camera);
 
     scene?.traverse(x => {
       if (x instanceof SectorNode && x.levelOfDetail === LevelOfDetail.Simple) {

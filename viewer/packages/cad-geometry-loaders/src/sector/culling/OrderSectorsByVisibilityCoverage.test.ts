@@ -30,9 +30,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
   beforeEach(() => {
     renderer = new THREE.WebGLRenderer({ context: glContext });
     renderer.render = jest.fn();
-    const renderPassMock = new Mock<RenderPass>()
-      .setup(e => e.render(It.IsAny(), It.IsAny()))
-      .returns(Promise.resolve(renderer.getRenderTarget()));
+    const renderPassMock = new Mock<RenderPass>();
 
     depthOnlyPipelineProvider = new Mock<GeometryDepthRenderPipeline>()
       .setup(e => e.outputRenderTarget)

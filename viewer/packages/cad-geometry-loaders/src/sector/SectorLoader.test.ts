@@ -168,17 +168,15 @@ class StubRepository implements SectorRepository {
 class StubSectorCuller implements SectorCuller {
   filterCallback: (sector: WantedSector) => boolean = () => true;
 
-  determineSectors(
-    input: DetermineSectorsInput
-  ): Promise<{ wantedSectors: WantedSector[]; spentBudget: SectorLoadingSpent }> {
+  determineSectors(input: DetermineSectorsInput): { wantedSectors: WantedSector[]; spentBudget: SectorLoadingSpent } {
     const wantedSectors: WantedSector[] = input.cadModelsMetadata.flatMap(model =>
       model.scene.getAllSectors().map(s => createWantedSector(model, s))
     );
-    return Promise.resolve({ wantedSectors, spentBudget: noBudget });
+    return { wantedSectors, spentBudget: noBudget };
   }
 
-  filterSectorsToLoad(_input: DetermineSectorsInput, wantedSectorsBatch: WantedSector[]): Promise<WantedSector[]> {
-    return Promise.resolve(wantedSectorsBatch.filter(x => this.filterCallback(x)));
+  filterSectorsToLoad(_input: DetermineSectorsInput, wantedSectorsBatch: WantedSector[]): WantedSector[] {
+    return wantedSectorsBatch.filter(x => this.filterCallback(x));
   }
 
   dispose(): void {}

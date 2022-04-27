@@ -36,10 +36,10 @@ describe('ByVisibilityGpuSectorCuller', () => {
     setClipping: setClippingMock,
     orderSectorsByVisibility: camera => {
       orderSectorsByVisibilityMock(camera);
-      return Promise.resolve([]);
+      return [];
     },
     cullOccludedSectors: (_camera, sectors) => {
-      return Promise.resolve(sectors);
+      return sectors;
     },
     dispose: jest.fn()
   };
@@ -49,32 +49,32 @@ describe('ByVisibilityGpuSectorCuller', () => {
     jest.resetAllMocks();
   });
 
-  test('determineSectors throws if model is not v9', async () => {
+  test('determineSectors throws if model is not v9', () => {
     const v8input = createDetermineSectorInput(camera, createCadModelMetadata(8, createV9SectorMetadata([0, []])));
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
 
-    await expect(culler.determineSectors(v8input)).rejects.toThrowError();
+    expect(culler.determineSectors(v8input)).rejects.toThrowError();
   });
 
-  test('determineSectors sets models to coverage utility', async () => {
+  test('determineSectors sets models to coverage utility', () => {
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
     const model = createCadModelMetadata(8, generateV8SectorTree(1));
     const input = createDetermineSectorInput(camera, model);
-    await culler.determineSectors(input);
+    culler.determineSectors(input);
     expect(setModelsMock).toBeCalled();
   });
 
-  test('determineSectors sets clip planes to coverage utility', async () => {
+  test('determineSectors sets clip planes to coverage utility', () => {
     const clippingPlanes = [new THREE.Plane(), new THREE.Plane()];
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
     const model = createCadModelMetadata(8, generateV8SectorTree(1));
     const input = createDetermineSectorInput(camera, model);
     input.clippingPlanes = clippingPlanes;
-    await culler.determineSectors(input);
+    culler.determineSectors(input);
     expect(setClippingMock).toBeCalledWith(clippingPlanes);
   });
 
-  test('determineSectors returns sectors for all models', async () => {
+  test('determineSectors returns sectors for all models', () => {
     // Arrange
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
     const model1 = createCadModelMetadata(8, generateV8SectorTree(1));
@@ -82,7 +82,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
     const input = createDetermineSectorInput(camera, [model1, model2]);
 
     // Act
-    const result = await culler.determineSectors(input);
+    const result = culler.determineSectors(input);
     const sectors = result.wantedSectors;
 
     // Assert
@@ -95,7 +95,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
     expect(model2.scene.getAllSectors().map(x => x.id)).toContainAllValues(sectors2.map(x => x.metadata.id));
   });
 
-  test('determineSectors returns sector from coverage utility by priority', async () => {
+  test('determineSectors returns sector from coverage utility by priority', () => {
     // Arrange
     const determineSectorCost = (sector: SectorMetadata, lod: LevelOfDetail): SectorCost => {
       switch (lod) {
@@ -119,11 +119,11 @@ describe('ByVisibilityGpuSectorCuller', () => {
     Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(model) });
     // culler.(model);
     coverageUtil.orderSectorsByVisibility = () => {
-      return Promise.resolve([
+      return [
         { model, sectorId: 0, priority: 1000.0 },
         { model, sectorId: 1, priority: 100.0 },
         { model, sectorId: 2, priority: 10.0 }
-      ]);
+      ];
     };
     // Place camera far away to avoid sectors being loaded because camera is near them
     camera.position.set(1000, 1000, 1000);
@@ -133,7 +133,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
     });
 
     // Act
-    const result = await culler.determineSectors(input);
+    const result = culler.determineSectors(input);
     const sectors = result.wantedSectors;
 
     // Assert
@@ -141,7 +141,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
     expect(sectors.filter(x => x.levelOfDetail === LevelOfDetail.Simple).map(x => x.metadata.id)).toEqual([2]);
   });
 
-  test('determineSectors limits sectors by render cost', async () => {
+  test('determineSectors limits sectors by render cost', () => {
     // Arrange
     const determineSectorCost = (_sector: SectorMetadata, lod: LevelOfDetail): SectorCost => {
       switch (lod) {
@@ -161,11 +161,11 @@ describe('ByVisibilityGpuSectorCuller', () => {
     Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(model) });
     // culler.(model);
     coverageUtil.orderSectorsByVisibility = () => {
-      return Promise.resolve([
+      return [
         { model, sectorId: 0, priority: 1000.0 },
         { model, sectorId: 1, priority: 100.0 },
         { model, sectorId: 2, priority: 10.0 }
-      ]);
+      ];
     };
     // Place camera far away to avoid sectors being loaded because camera is near them
     camera.position.set(1000, 1000, 1000);
@@ -175,7 +175,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
     });
 
     // Act
-    const result = await culler.determineSectors(input);
+    const result = culler.determineSectors(input);
     const sectors = result.wantedSectors;
 
     // Assert

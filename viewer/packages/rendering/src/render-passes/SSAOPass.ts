@@ -9,7 +9,6 @@ import { RenderPass } from '../RenderPass';
 import { createFullScreenTriangleMesh, unitOrthographicCamera } from '../utilities/renderUtilities';
 
 export class SSAOPass implements RenderPass {
-  private readonly _renderTarget: THREE.WebGLRenderTarget;
   private readonly _fullScreenTriangle: THREE.Mesh;
   private readonly _ssaoShaderMaterial: THREE.RawShaderMaterial;
 
@@ -53,16 +52,11 @@ export class SSAOPass implements RenderPass {
     this._fullScreenTriangle = createFullScreenTriangleMesh(this._ssaoShaderMaterial);
   }
 
-  public getOutputRenderTarget(): THREE.WebGLRenderTarget | null {
-    return this._renderTarget;
-  }
-
-  public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): Promise<THREE.WebGLRenderTarget> {
+  public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {
     this._ssaoShaderMaterial.uniforms.inverseProjectionMatrix.value = camera.projectionMatrixInverse;
     this._ssaoShaderMaterial.uniforms.projMatrix.value = camera.projectionMatrix;
 
     renderer.render(this._fullScreenTriangle, unitOrthographicCamera);
-    return;
   }
 
   private createKernel(kernelSize: number): THREE.Vector3[] {

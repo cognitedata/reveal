@@ -67,28 +67,27 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     this.options.coverageUtil.dispose();
   }
 
-  async determineSectors(input: DetermineSectorsInput): Promise<{
+  determineSectors(input: DetermineSectorsInput): {
     wantedSectors: WantedSector[];
     spentBudget: SectorLoadingSpent;
-  }> {
-    const takenSectors = await this.update(input.camera, input.cadModelsMetadata, input.clippingPlanes, input.budget);
+  } {
+    const takenSectors = this.update(input.camera, input.cadModelsMetadata, input.clippingPlanes, input.budget);
     const wanted = takenSectors.collectWantedSectors();
     const spentBudget = takenSectors.computeSpentBudget();
 
     return { spentBudget, wantedSectors: wanted };
   }
 
-  filterSectorsToLoad(input: DetermineSectorsInput, wantedSectors: WantedSector[]): Promise<WantedSector[]> {
-    const filtered = this.options.coverageUtil.cullOccludedSectors(input.camera, wantedSectors);
-    return Promise.resolve(filtered);
+  filterSectorsToLoad(input: DetermineSectorsInput, wantedSectors: WantedSector[]): WantedSector[] {
+    return this.options.coverageUtil.cullOccludedSectors(input.camera, wantedSectors);
   }
 
-  private async update(
+  private update(
     camera: THREE.PerspectiveCamera,
     models: CadModelMetadata[],
     clippingPlanes: THREE.Plane[] | null,
     budget: CadModelBudget
-  ): Promise<TakenV8SectorMap> {
+  ): TakenV8SectorMap {
     const { coverageUtil } = this.options;
     const takenSectors = this.takenSectors;
     takenSectors.clear();
@@ -97,7 +96,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     // Update wanted sectors
     coverageUtil.setModels(models);
     coverageUtil.setClipping(clippingPlanes);
-    const prioritized = await coverageUtil.orderSectorsByVisibility(camera);
+    const prioritized = coverageUtil.orderSectorsByVisibility(camera);
 
     // Add high details for all sectors the camera is inside or near
     this.addHighDetailsForNearSectors(camera, models, budget, takenSectors, clippingPlanes);

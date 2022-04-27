@@ -5,6 +5,5 @@
 import * as THREE from 'three';
 
 export interface RenderPass {
-  render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): Promise<THREE.WebGLRenderTarget | undefined>;
-  getOutputRenderTarget(): THREE.WebGLRenderTarget | null;
+  render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void;
 }

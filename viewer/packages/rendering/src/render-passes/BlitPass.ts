@@ -9,7 +9,6 @@ import { createFullScreenTriangleMesh, unitOrthographicCamera } from '../utiliti
 import { BlitOptions, ThreeUniforms, BlitEffect, BlendOptions } from './types';
 
 export class BlitPass implements RenderPass {
-  private readonly _renderTarget: THREE.WebGLRenderTarget;
   private readonly _fullScreenTriangle: THREE.Mesh;
   private readonly _blitShaderMaterial: THREE.RawShaderMaterial;
 
@@ -46,13 +45,8 @@ export class BlitPass implements RenderPass {
     this._fullScreenTriangle = createFullScreenTriangleMesh(this._blitShaderMaterial);
   }
 
-  public render(renderer: THREE.WebGLRenderer, _: THREE.Camera): Promise<THREE.WebGLRenderTarget> {
+  public render(renderer: THREE.WebGLRenderer, _: THREE.Camera): void {
     renderer.render(this._fullScreenTriangle, unitOrthographicCamera);
-    return;
-  }
-
-  public getOutputRenderTarget(): THREE.WebGLRenderTarget | null {
-    return this._renderTarget;
   }
 
   private setDepthTestOptions(depthTexture: THREE.DepthTexture, uniforms: ThreeUniforms, defines: any) {

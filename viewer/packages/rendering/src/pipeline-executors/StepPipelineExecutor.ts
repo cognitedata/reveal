@@ -26,21 +26,21 @@ export class StepPipelineExecutor implements PipelineExecutor {
     this._gpuTimer = new GpuTimer(renderer.getContext() as WebGL2RenderingContext);
   }
 
-  public async render(renderPipeline: RenderPipelineProvider, camera: THREE.Camera): Promise<void> {
+  public render(renderPipeline: RenderPipelineProvider, camera: THREE.Camera): void {
     this._renderer.info.reset();
     let count = 0;
 
     this._gpuTimer.begin('FULL');
 
-    for await (const renderPass of renderPipeline.pipeline(this._renderer)) {
+    for (const renderPass of renderPipeline.pipeline(this._renderer)) {
       count++;
 
       if (count === this._numSteps) {
         this._renderer.setRenderTarget(null);
-        await renderPass.render(this._renderer, camera);
+        renderPass.render(this._renderer, camera);
         break;
       }
-      await renderPass.render(this._renderer, camera);
+      renderPass.render(this._renderer, camera);
     }
 
     this._gpuTimer.end();

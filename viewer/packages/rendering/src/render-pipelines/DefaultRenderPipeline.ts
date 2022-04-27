@@ -22,7 +22,6 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
   private readonly _renderTargetData: RenderTargetData;
   private readonly _cadModels: IdentifiedModel[];
   private readonly _customObjects: THREE.Object3D[];
-  private _renderOptions: RenderOptions;
   private _outputRenderTarget: { target: THREE.WebGLRenderTarget; autoUpdateSize: boolean } = {
     target: null,
     autoUpdateSize: true
@@ -46,8 +45,6 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
         ? BlitEffect.Fxaa
         : BlitEffect.None;
     this._blitToScreenPass.blitEffect = blitEffect;
-
-    this._renderOptions = cloneDeep(renderOptions);
   }
 
   get outputRenderTarget(): { target: THREE.WebGLRenderTarget; autoUpdateSize: boolean } {
