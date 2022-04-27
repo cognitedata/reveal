@@ -1,4 +1,4 @@
-import { mapLegendValuesToCodes } from '../utils';
+import { mapLegendValuesToCodes } from '../utils/mapLegendValuesToCodes';
 
 describe('utils', () => {
   it('mapLegendValuesToCodes', () => {

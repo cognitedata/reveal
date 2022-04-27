@@ -16,7 +16,7 @@ import { useNptDetailCodesQuery } from 'services/wellSearch/sdk/useNptDetailCode
 import { CodeDefinitionsMenuItem } from './components/CodeDefinitionsMenuItem';
 import { CodeDefinitionsView } from './components/CodeDefinitionsView';
 import { Wrapper, LeftPanel, RightPanel } from './elements';
-import { mapLegendValuesToCodes } from './utils';
+import { mapLegendValuesToCodes } from './utils/mapLegendValuesToCodes';
 
 const NptMenuItems = [
   {

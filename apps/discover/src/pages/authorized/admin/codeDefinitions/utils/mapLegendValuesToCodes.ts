@@ -3,7 +3,7 @@ import keyBy from 'lodash/keyBy';
 
 import { WellEventLegend } from '@cognite/discover-api-types';
 
-import { CodeDefinition } from './types';
+import { CodeDefinition } from '../types';
 
 export const mapLegendValuesToCodes = (
   codes: string[],
