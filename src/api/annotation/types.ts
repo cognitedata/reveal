@@ -134,7 +134,7 @@ export type ImageAssetLink = TextRegion &
   };
 
 export type ImageKeypointCollection = Label &
-  Partial<Confidence> & {
+  Partial<Confidence & AnnotationAttributes> & {
     keypoints: ImageKeypoint[];
   };
 
@@ -182,7 +182,7 @@ export type AnnotationTypeV1 =
 
 export type AnnotationSourceV1 = 'context_api' | 'user';
 
-export type AnnotationMetadataV1 = {
+export type AnnotationMetadataV1 = Partial<AnnotationAttributes> & {
   keypoint?: boolean;
   keypoints?: Keypoint[];
   color?: string;

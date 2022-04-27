@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import {
+  AnnotationAttributes,
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
@@ -106,6 +107,24 @@ export function convertVisionJobAnnotationToImageAssetLinkList(
   return imageAssetLinkList;
 }
 
+function convertGaugeReaderJobAnnotationAttributesToAnnotationAttributes(
+  visionJobAnnotation: GaugeReaderJobAnnotation
+): AnnotationAttributes {
+  const { data } = visionJobAnnotation;
+  return {
+    attributes: {
+      unit: {
+        type: 'unit',
+        value: data.unit,
+      },
+      gaugeValue: {
+        type: 'numerical',
+        value: data.gauge_value || -1,
+      },
+    },
+  };
+}
+
 export function convertVisionJobAnnotationToImageKeypointCollection(
   visionJobAnnotation: VisionJobAnnotation
 ) {
@@ -117,6 +136,9 @@ export function convertVisionJobAnnotationToImageKeypointCollection(
   const imageKeypointCollection: ImageKeypointCollection = {
     label: annotation.text,
     confidence: annotation.confidence,
+    ...convertGaugeReaderJobAnnotationAttributesToAnnotationAttributes(
+      annotation
+    ),
     keypoints: annotation.region.vertices.map((item, index) => {
       return {
         point: item,
@@ -234,6 +256,9 @@ export function convertImageKeypointCollectionToAnnotationTypeV1(
     data: {
       keypoint: true,
       confidence: imageKeypointCollection.confidence,
+      ...(imageKeypointCollection.attributes && {
+        attributes: imageKeypointCollection.attributes,
+      }),
       keypoints: imageKeypointCollection.keypoints.map((item, index) => {
         return {
           caption: item.label,
