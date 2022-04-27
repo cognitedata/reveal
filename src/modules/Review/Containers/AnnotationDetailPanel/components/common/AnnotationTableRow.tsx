@@ -1,5 +1,5 @@
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
-import { Icon, SegmentedControl, Tooltip } from '@cognite/cogs.js';
+import { Detail, Icon, SegmentedControl, Tooltip } from '@cognite/cogs.js';
 import { AnnotationActionMenuExtended } from 'src/modules/Common/Components/AnnotationActionMenu/AnnotationActionMenuExtended';
 import React from 'react';
 import styled from 'styled-components';
@@ -16,6 +16,26 @@ export const AnnotationTableRow = ({
   onApprove,
   showColorCircle,
 }: AnnotationTableRowProps) => {
+  const renderAttributes = () => {
+    return (
+      <AttributesContainer>
+        <StyledDetail>
+          confidence:{' '}
+          {annotation.data?.confidence
+            ? annotation.data.confidence.toFixed(2)
+            : '-'}
+        </StyledDetail>
+
+        {Object.entries(annotation.data?.attributes || []).map(
+          ([key, value]) => (
+            <StyledDetail>
+              {key}: {value.value}
+            </StyledDetail>
+          )
+        )}
+      </AttributesContainer>
+    );
+  };
   return (
     <StyledRow
       key={annotation.id}
@@ -58,6 +78,13 @@ export const AnnotationTableRow = ({
           />
         ) : undefined}
       </ShowHideIconContainer>
+      <AttributesIconContainer>
+        <Detail style={{ color: '#595959' }}>
+          <Tooltip content={renderAttributes()}>
+            <Icon type="Info" />
+          </Tooltip>
+        </Detail>
+      </AttributesIconContainer>
       <ApproveBtnContainer onClick={(evt) => evt.stopPropagation()}>
         <StyledSegmentedControl
           status={annotation.status}
@@ -181,6 +208,12 @@ const ShowHideIconContainer = styled.div`
   justify-content: center;
 `;
 
+const AttributesIconContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: start;
+`;
+
 const ActionMenuContainer = styled.div`
   flex: 0 1 30px;
 `;
@@ -228,4 +261,13 @@ const StyledSegmentedControl = styled(SegmentedControl)<{ status: string }>`
     background: ${(props) =>
       props.status !== AnnotationStatus.Rejected ? '#d9d9d9' : '#FFCFCF'};
   }
+`;
+
+const AttributesContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledDetail = styled(Detail)`
+  color: white;
 `;
