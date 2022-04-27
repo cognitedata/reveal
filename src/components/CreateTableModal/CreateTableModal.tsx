@@ -41,6 +41,7 @@ type CreateTableFormValues = {
 type CreateTableModalProps = {
   databaseName: string;
   tables: RawDBTable[];
+  onReset: () => void;
 } & Omit<ModalProps, 'children' | 'onOk' | 'title' | 'width'>;
 
 const CreateTableModal = ({
@@ -48,6 +49,7 @@ const CreateTableModal = ({
   onCancel,
   tables,
   visible,
+  onReset,
   ...modalProps
 }: CreateTableModalProps): JSX.Element => {
   const [createTableModalStep, setCreateTableModalStep] = useState(
@@ -76,7 +78,7 @@ const CreateTableModal = ({
     uploadPercentage,
   } = useCSVUpload(file, selectedPrimaryKeyMethod, selectedColumnIndex);
 
-  const { errors, handleBlur, handleChange, handleSubmit, values } =
+  const { errors, handleBlur, handleChange, handleSubmit, values, resetForm } =
     useFormik<CreateTableFormValues>({
       initialValues: {
         tableName: '',
@@ -108,6 +110,8 @@ const CreateTableModal = ({
     if (tableCreated) {
       openTable([databaseName, values.tableName]);
     }
+    resetForm();
+    setCreateTableModalStep(CreateTableModalStep.CreationMode);
     onCancel();
   }
 
@@ -126,6 +130,7 @@ const CreateTableModal = ({
             });
             handleCancel();
             openTable([databaseName, values.tableName]);
+            resetForm();
           }
         },
         onError: (e: any) => {
@@ -218,51 +223,50 @@ const CreateTableModal = ({
   return (
     <form onSubmit={handleSubmit}>
       <Modal
-        footer={[
-          ...(createTableModalStep !== CreateTableModalStep.Upload
-            ? [
-                <StyledCancelButton onClick={handleCancel} type="ghost">
-                  Cancel
-                </StyledCancelButton>,
-              ]
-            : []),
-          ...(selectedCreationMode === CreationMode.Empty
-            ? [
-                <Button
-                  disabled={isCreationDisabled}
-                  loading={isCreatingTable}
-                  onClick={() => handleSubmit()}
-                  type="primary"
-                >
-                  Create
-                </Button>,
-              ]
-            : []),
-          ...(createTableModalStep === CreateTableModalStep.PrimaryKey
-            ? [
-                <Button
-                  disabled={isUploadDisabled}
-                  loading={isCreatingTable}
-                  onClick={() => handleSubmit()}
-                  type="primary"
-                >
-                  Create
-                </Button>,
-              ]
-            : []),
-          ...(isUploadCompleted || isUploadFailed
-            ? [
+        footer={
+          <>
+            {createTableModalStep !== CreateTableModalStep.Upload ? (
+              <StyledCancelButton onClick={handleCancel} type="ghost">
+                Cancel
+              </StyledCancelButton>
+            ) : (
+              (isUploadCompleted || isUploadFailed) && (
                 <Button onClick={handleCancel} type="primary">
                   OK
-                </Button>,
-              ]
-            : []),
-        ]}
+                </Button>
+              )
+            )}
+            {selectedCreationMode === CreationMode.Empty && (
+              <Button
+                disabled={isCreationDisabled}
+                loading={isCreatingTable}
+                onClick={() => handleSubmit()}
+                type="primary"
+              >
+                Create
+              </Button>
+            )}
+            {createTableModalStep === CreateTableModalStep.PrimaryKey && (
+              <Button
+                disabled={isUploadDisabled}
+                loading={isCreatingTable}
+                onClick={() => handleSubmit()}
+                type="primary"
+              >
+                Create
+              </Button>
+            )}
+          </>
+        }
         maskClosable={createTableModalStep !== CreateTableModalStep.Upload}
         onCancel={handleCancel}
         title={<Title level={5}>Create table</Title>}
         visible={visible}
         {...modalProps}
+        afterClose={() => {
+          modalProps?.afterClose && modalProps.afterClose();
+          onReset();
+        }}
         width={CREATE_TABLE_MODAL_WIDTH}
       >
         {createTableModalStep !== CreateTableModalStep.Upload && (
