@@ -1,17 +1,159 @@
 /* eslint-disable no-nested-ternary */
-/* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
-import { Icon, Title } from '@cognite/cogs.js';
+import { Icon, Title, Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { AutoMLModel } from 'src/api/vision/autoML/types';
-import { AutoMLModelListItem } from './AutoMLModelListItem';
+import {
+  AutoMLModelCore,
+  AutoMLTrainingJob,
+} from 'src/api/vision/autoML/types';
+import { TableWrapper } from 'src/modules/Common/Components/FileTable/FileTableWrapper';
+import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
+import { StringHeaderRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringHeaderRenderer';
+import ReactBaseTable, { Column, ColumnShape } from 'react-base-table';
+import { CopyableText } from 'src/modules/FileDetails/Components/FileMetadata/CopyableText';
+import { dateformat } from 'src/utils/DateUtils';
+import { AutoMLModelNameBadge } from './AutoMLModelNameBadge';
+import { AutoMLStatusBadge } from './AutoMLStatusBadge';
+
+type AutoMLTableDataType = AutoMLModelCore &
+  Partial<Omit<AutoMLTrainingJob, 'name' | 'jobId' | 'modelType'>>;
 
 export const AutoMLModelList = (props: {
-  models?: AutoMLModel[];
+  jobs?: AutoMLTrainingJob[];
+  modelList?: AutoMLModelCore[];
   onRowClick: (id: number) => void;
   selectedModelId?: number;
 }) => {
-  const { models } = props;
+  const data: AutoMLTableDataType[] | undefined = props.modelList?.map(
+    (item) => {
+      return {
+        ...item,
+        ...props.jobs?.find((job) => job.jobId === item.jobId),
+        key: item.jobId,
+      };
+    }
+  );
+
+  const columns = [
+    {
+      key: 'name',
+      title: 'Model name',
+      dataKey: 'name',
+      width: 200,
+      align: Column.Alignment.LEFT,
+      editMode: false,
+    },
+    {
+      key: 'jobId',
+      title: 'Training job Id',
+      dataKey: 'jobId',
+      width: 200,
+      align: Column.Alignment.CENTER,
+      editMode: false,
+    },
+    {
+      key: 'status',
+      title: 'Status',
+      dataKey: 'status',
+      width: 200,
+      align: Column.Alignment.CENTER,
+      editMode: false,
+    },
+    {
+      key: 'createdTime',
+      title: 'Created time',
+      dataKey: 'createdTime',
+      width: 200,
+      align: Column.Alignment.CENTER,
+      editMode: false,
+    },
+  ];
+
+  // Table renderers
+  const IdRenderer = ({
+    rowData: { jobId },
+  }: {
+    rowData: AutoMLTableDataType;
+  }) => {
+    return (
+      <CopyableText copyable text={jobId} copyIconColor="#595959">
+        <>{jobId}</>
+      </CopyableText>
+    );
+  };
+
+  const NameRenderer = ({
+    rowData: { name },
+  }: {
+    rowData: AutoMLTableDataType;
+  }) => {
+    return <AutoMLModelNameBadge name={name} small />;
+  };
+
+  const StatusRenderer = ({
+    rowData: { status },
+  }: {
+    rowData: AutoMLTableDataType;
+  }) => {
+    return status ? (
+      <AutoMLStatusBadge status={status} />
+    ) : (
+      <StyledIcon type="Loading" />
+    );
+  };
+
+  const DateRenderer = ({
+    rowData: { createdTime },
+  }: {
+    rowData: AutoMLTableDataType;
+  }) => {
+    return createdTime ? (
+      <>{dateformat(new Date(createdTime))}</>
+    ) : (
+      <StyledIcon type="Loading" />
+    );
+  };
+
+  const rendererMap: {
+    [key: string]: (props: { rowData: AutoMLTableDataType }) => JSX.Element;
+  } = {
+    name: NameRenderer,
+    jobId: IdRenderer,
+    status: StatusRenderer,
+    createdTime: DateRenderer,
+  };
+
+  const Cell = (cellProps: any) => {
+    const renderer = rendererMap[cellProps.column.dataKey];
+    if (renderer) {
+      return renderer(cellProps);
+    }
+    return StringRenderer(cellProps);
+  };
+  const HeaderCell = (cellProps: any) => {
+    return StringHeaderRenderer(cellProps);
+  };
+
+  const components = {
+    TableCell: Cell,
+    TableHeaderCell: HeaderCell,
+  };
+
+  const rowEventHandlers = {
+    onClick: ({ rowData }: { rowData: AutoMLTableDataType }) => {
+      props.onRowClick(rowData.jobId);
+    },
+  };
+
+  const rowClassName = ({
+    rowData,
+  }: {
+    columns: ColumnShape<AutoMLTableDataType>[];
+    rowData: AutoMLTableDataType;
+    rowIndex: number;
+  }) => {
+    return `clickable ${props.selectedModelId === rowData.jobId && 'active'}`;
+  };
 
   return (
     <Container>
@@ -19,20 +161,23 @@ export const AutoMLModelList = (props: {
         <Title level={2}>Computer Vision Models</Title>
       </TitleBar>
 
-      {models && models.length ? (
-        <Body>
-          {models.map((model) => {
-            return (
-              <AutoMLModelListItem
-                key={model.jobId}
-                model={model}
-                onRowClick={props.onRowClick}
-                selectedModelId={props.selectedModelId}
-              />
-            );
-          })}
-        </Body>
-      ) : models && models.length === 0 ? (
+      {props.modelList && props.modelList.length ? (
+        <TableContainer>
+          <TableWrapper>
+            <ReactBaseTable<AutoMLTableDataType>
+              key="ReactBaseTable"
+              rowKey="key"
+              data={data}
+              width={720}
+              maxHeight={Infinity}
+              columns={columns}
+              components={components}
+              rowEventHandlers={rowEventHandlers}
+              rowClassName={rowClassName}
+            />
+          </TableWrapper>
+        </TableContainer>
+      ) : props.modelList && props.modelList.length === 0 ? (
         <StyledBody data-testid="no-model-msg">No models found</StyledBody>
       ) : (
         <StyledIcon data-testid="loading-animation-icon" type="Loading" />
@@ -41,6 +186,13 @@ export const AutoMLModelList = (props: {
   );
 };
 
+const TableContainer = styled.div`
+  overflow: auto;
+  .BaseTable__row-cell-text {
+    white-space: normal !important;
+  }
+`;
+
 const Container = styled.div`
   display: grid;
   grid-template-rows: 45px auto;
@@ -48,14 +200,8 @@ const Container = styled.div`
   grid-gap: 10px;
   margin-bottom: 20px;
   padding: 14px;
-  width: 500px;
-`;
-const Body = styled.div`
   width: 100%;
-  border: 1px solid #e8e8e8;
-  border-radius: 5px;
-  overflow-y: auto;
-  height: 700px;
+  overflow: auto;
 `;
 
 const TitleBar = styled.div`

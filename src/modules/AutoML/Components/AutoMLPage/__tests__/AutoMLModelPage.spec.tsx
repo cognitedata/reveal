@@ -1,17 +1,10 @@
 import React from 'react';
 
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { testRenderer } from 'src/__test-utils/renderer';
 import { AutoMLModelPage } from 'src/modules/AutoML/Components/AutoMLPage/AutoMLModelPage';
-import { AutoMLAPI } from 'src/api/vision/autoML/AutoMLAPI';
 import { mockCogniteAutoMLModel } from 'src/__test-utils/fixtures/automlModels';
 import { AutoMLTrainingJob } from 'src/api/vision/autoML/types';
-
-jest.mock('src/api/vision/autoML/AutoMLAPI', () => ({
-  AutoMLAPI: {
-    getAutoMLModel: jest.fn(),
-  },
-}));
 
 jest.mock('src/hooks/useUserCapabilities', () => ({
   useUserCapabilities: () => {
@@ -25,43 +18,27 @@ describe('AutoMLModelPage', () => {
   };
 
   it('should render message when no models selected', async () => {
-    AutoMLAPI.getAutoMLModel = () =>
-      Promise.resolve(mockCogniteAutoMLModel[0] as AutoMLTrainingJob);
     testRenderer(TestComponent, undefined, undefined);
-
     expect(screen.queryByTestId('model-page-loading')).toBeNull();
     expect(screen.queryByTestId('model-page-placeholder')).toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(screen.queryByTestId('model-page-loading')).toBeNull();
-      expect(
-        screen.queryByTestId('model-page-placeholder')
-      ).toBeInTheDocument();
-    });
   });
 
-  it('should render loading state when model id and selectedModelId are different', async () => {
-    const props = { selectedModelId: 2 };
-    AutoMLAPI.getAutoMLModel = () =>
-      Promise.resolve(mockCogniteAutoMLModel[0] as AutoMLTrainingJob);
-    testRenderer(TestComponent, undefined, props);
+  it('should render loading state when model is loading', async () => {
+    const props = {
+      isLoadingJob: true,
+    };
 
-    await waitFor(() => {
-      expect(screen.queryByTestId('model-page-loading')).toBeInTheDocument();
-      expect(screen.queryByTestId('model-page-placeholder')).toBeNull();
-    });
+    testRenderer(TestComponent, undefined, props);
+    expect(screen.queryByTestId('model-page-loading')).toBeInTheDocument();
+    expect(screen.queryByTestId('model-page-placeholder')).toBeNull();
   });
 
   it('should render model page', async () => {
-    const props = { selectedModelId: 1 };
-    AutoMLAPI.getAutoMLModel = () =>
-      Promise.resolve(mockCogniteAutoMLModel[0] as AutoMLTrainingJob);
-    testRenderer(TestComponent, undefined, props);
+    const props = { model: mockCogniteAutoMLModel[0] as AutoMLTrainingJob };
 
-    await waitFor(() => {
-      expect(screen.queryByTestId('model-page-loading')).toBeNull();
-      expect(screen.queryByTestId('model-page-placeholder')).toBeNull();
-      expect(screen.queryByText('Model information')).toBeInTheDocument();
-    });
+    testRenderer(TestComponent, undefined, props);
+    expect(screen.queryByTestId('model-page-loading')).toBeNull();
+    expect(screen.queryByTestId('model-page-placeholder')).toBeNull();
+    expect(screen.queryByText('Model information')).toBeInTheDocument();
   });
 });

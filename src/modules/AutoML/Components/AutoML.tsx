@@ -6,7 +6,10 @@ import { useHistory } from 'react-router-dom';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import styled from 'styled-components';
 import { AutoMLAPI } from 'src/api/vision/autoML/AutoMLAPI';
-import { AutoMLModel, AutoMLTrainingJob } from 'src/api/vision/autoML/types';
+import {
+  AutoMLModelCore,
+  AutoMLTrainingJob,
+} from 'src/api/vision/autoML/types';
 import { getLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import { PopulateCustomModel } from 'src/store/thunks/Process/PopulateCustomModel';
 import { AutoMLModelPage } from './AutoMLPage/AutoMLModelPage';
@@ -16,15 +19,19 @@ import { AutoMLPredictionDocModal } from './AutoMLPredictionDocModal';
 const AutoML = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const [modelList, setModelList] = useState<AutoMLModelCore[] | undefined>();
+  const [jobs, setJobs] = useState<AutoMLTrainingJob[]>([]);
   const [selectedModelId, setSelectedModelId] = useState<number>();
   const [downloadingModel, setDownloadingModel] = useState<boolean>(false);
   const [showApiDocModal, setShowApiDocModal] = useState<boolean>(false);
 
-  const [models, setModels] = useState<AutoMLModel[] | undefined>();
-
   const getModels = async () => {
-    const items = await AutoMLAPI.listAutoMLModels();
-    setModels(items);
+    const models = await AutoMLAPI.listAutoMLModels();
+    setModelList(models);
+    await Promise.all(
+      models.map((model) => AutoMLAPI.getAutoMLModel(model.jobId))
+    ).then((modelJobs) => setJobs(modelJobs));
   };
 
   const handleDownload = async () => {
@@ -49,7 +56,8 @@ const AutoML = () => {
   const handleOnDelete = async () => {
     if (selectedModelId) {
       setSelectedModelId(undefined);
-      setModels(models?.filter((item) => item.jobId !== selectedModelId));
+      setModelList(modelList?.filter((item) => item.jobId !== selectedModelId));
+      setJobs(jobs?.filter((item) => item.jobId !== selectedModelId));
       const res = await AutoMLAPI.deleteAutoMLJob(selectedModelId);
       // revert, if request fails
       if (res === undefined) {
@@ -74,6 +82,10 @@ const AutoML = () => {
     setSelectedModelId(id);
   };
 
+  const isLoadingJob =
+    (selectedModelId && !jobs.find((item) => item.jobId === selectedModelId)) ||
+    false;
+
   useEffect(() => {
     getModels();
   }, []);
@@ -84,7 +96,8 @@ const AutoML = () => {
       <Container>
         <Left>
           <AutoMLModelList
-            models={models}
+            jobs={jobs}
+            modelList={modelList}
             onRowClick={onRowClick}
             selectedModelId={selectedModelId}
           />
@@ -92,7 +105,8 @@ const AutoML = () => {
         </Left>
         <Right>
           <AutoMLModelPage
-            selectedModelId={selectedModelId}
+            model={jobs.find((item) => item.jobId === selectedModelId)}
+            isLoadingJob={isLoadingJob}
             handleDownload={handleDownload}
             downloadingModel={downloadingModel}
             handleOnDelete={handleOnDelete}
