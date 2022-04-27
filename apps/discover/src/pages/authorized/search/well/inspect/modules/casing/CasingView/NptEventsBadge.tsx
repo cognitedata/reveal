@@ -6,6 +6,7 @@ import { Dropdown } from '@cognite/cogs.js';
 
 import { NPTEvent } from 'modules/wellSearch/types';
 
+import { NPT_EVENT_CODES_TITLE } from './constants';
 import {
   EventsCountBadge,
   EventsCountBadgeWrapper,
@@ -58,7 +59,7 @@ const EventsBadge: React.FC<Props> = ({ events }: Props) => {
       visible={isVisible}
       content={
         <EventsCodesWrapper>
-          <EventsCodesHeader>NPT events codes</EventsCodesHeader>
+          <EventsCodesHeader>{NPT_EVENT_CODES_TITLE}</EventsCodesHeader>
           {Object.keys(groupedEvents).map((code) => (
             <EventsCodeRow key={code}>
               <EventsCodeName>{code}</EventsCodeName>

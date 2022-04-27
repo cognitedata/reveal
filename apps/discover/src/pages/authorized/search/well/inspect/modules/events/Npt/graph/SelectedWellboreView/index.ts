@@ -1,1 +1,0 @@
-export { SelectedWellboreView } from './SelectedWellboreView';

@@ -1,5 +1,7 @@
 import styled from 'styled-components/macro';
 
+import { Label } from '@cognite/cogs.js';
+
 import { SubTitleText } from 'components/emptyState/elements';
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
@@ -181,6 +183,15 @@ export const EventsCountBadge = styled(Flex)`
   }
 `;
 
+export const NdsEventsCountBadge = styled(EventsCountBadge)`
+  background: rgba(24, 175, 142, 1);
+
+  &:hover {
+    border: 2px solid var(--cogs-green-2);
+    background-color: rgba(7, 141, 121, 1);
+  }
+`;
+
 export const EventsCountBadgeWrapper = styled(Flex)`
   width: 40px;
   height: 40px;
@@ -256,4 +267,8 @@ export const EmptyCasingsStateWrapper = styled(Flex)`
     padding-top: 0;
     justify-content: center;
   }
+`;
+
+export const NdsRiskTypeCountLabel = styled(Label)`
+  background: rgba(102, 102, 102, 0.12);
 `;

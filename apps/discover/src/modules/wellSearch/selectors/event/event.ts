@@ -19,6 +19,7 @@ import { useNptEventsQuery } from 'modules/wellSearch/hooks/useNptEventsQuery';
 import {
   mapWellInfo,
   mapWellInfoToNPTEvents,
+  mapWellInfoToNdsEvents,
 } from 'modules/wellSearch/utils/events';
 
 import { useGetConvertFunctionForEvents } from './helper';
@@ -61,11 +62,36 @@ export const useNptEvents = () => {
   }, [data, userPreferredUnit]);
 };
 
+export const useNdsEvents = () => {
+  const wells = useWellInspectSelectedWells();
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
+  const { data, isLoading } = useNdsEventsQuery();
+
+  return useDeepMemo(() => {
+    if (isLoading || !data) {
+      return { isLoading, events: [] };
+    }
+    const events = mapWellInfoToNdsEvents(data, wells, userPreferredUnit);
+    return { isLoading: false, events };
+  }, [data, userPreferredUnit]);
+};
+
 export const useNptEventsForCasings = () => {
   const { isLoading, events } = useNptEvents();
   return useMemo(() => {
     const groupedEvents = groupBy(
       (events || []).filter((event) => event.measuredDepth),
+      'wellboreId'
+    );
+    return { isLoading, events: groupedEvents };
+  }, [isLoading, events]);
+};
+
+export const useNdsEventsForCasings = () => {
+  const { isLoading, events } = useNdsEvents();
+  return useMemo(() => {
+    const groupedEvents = groupBy(
+      (events || []).filter((event) => event.metadata?.md_hole_start),
       'wellboreId'
     );
     return { isLoading, events: groupedEvents };

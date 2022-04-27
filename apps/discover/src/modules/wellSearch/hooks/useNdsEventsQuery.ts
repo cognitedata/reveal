@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useInfiniteQuery, useQuery, useQueryClient } from 'react-query';
 
+import isEmpty from 'lodash/isEmpty';
+
 import { LOG_EVENTS_NDS } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
@@ -87,7 +89,7 @@ export const useNdsEventsQuery = () => {
 
   // Check if there are ids not in the cached data. Also filter cached data by requested ids
   const { newIds, trimmedData } = trimCachedData(data, wellboreIds);
-  if (newIds.length === 0) {
+  if (isEmpty(newIds)) {
     return { data: trimmedData as WellboreEventsMap, isLoading: false };
   }
 

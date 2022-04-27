@@ -2,13 +2,16 @@ import React from 'react';
 
 import { OverlayNavigation } from 'components/overlay-navigation';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
-import { useNptEventsForCasings } from 'modules/wellSearch/selectors';
+import {
+  useNptEventsForCasings,
+  useNdsEventsForCasings,
+} from 'modules/wellSearch/selectors';
 
 import { SingleCasingContainer } from '../events/Npt/elements';
 import {
   NavigationPanel,
   NavigationPanelData,
-} from '../events/Npt/graph/SelectedWellboreView/NavigationPanel';
+} from '../events/Npt/graph/SelectedWellboreNptView/NavigationPanel';
 
 import CasingView from './CasingView/CasingView';
 import { SideModes } from './CasingView/types';
@@ -25,7 +28,10 @@ export const CasingPreviewFullscreen: React.FC<Props> = ({
   casing,
   sideMode,
 }) => {
-  const { isLoading: isEventsLoading, events } = useNptEventsForCasings();
+  const { isLoading: isNptEventsLoading, events: nptEvents } =
+    useNptEventsForCasings();
+  const { isLoading: isNdsEventsLoading, events: ndsEvents } =
+    useNdsEventsForCasings();
   const { data: preferredUnit } = useUserPreferencesMeasurement();
 
   const navigationPanelData = {
@@ -47,8 +53,10 @@ export const CasingPreviewFullscreen: React.FC<Props> = ({
           wellboreName={casing.wellboreName}
           casings={casing.casings}
           unit={preferredUnit}
-          events={events[casing.key]}
-          isEventsLoading={isEventsLoading}
+          nptEvents={nptEvents[casing.key]}
+          ndsEvents={ndsEvents[casing.key]}
+          isNptEventsLoading={isNptEventsLoading}
+          isNdsEventsLoading={isNdsEventsLoading}
           sideMode={sideMode}
         />
       </SingleCasingContainer>

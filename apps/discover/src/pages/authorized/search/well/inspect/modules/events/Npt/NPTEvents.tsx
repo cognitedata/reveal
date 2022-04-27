@@ -10,7 +10,7 @@ import { Separator } from '../../../elements';
 import { VIEW_MODES, DEFAULT_ACTIVE_VIEW_MODE } from './constants';
 import { NptEventsDataControlArea } from './elements';
 import { FilterContainer } from './filters';
-import { NPTGraph, SelectedWellboreView } from './graph';
+import { NPTGraph, SelectedWellboreNptView } from './graph';
 import { SelectedWellbore } from './graph/types';
 import { NPTTable } from './table';
 import { ViewModes } from './types';
@@ -67,7 +67,7 @@ export const NPTEvents: React.FC = () => {
         <NPTTable events={events} />
       </NoUnmountShowHide>
 
-      <SelectedWellboreView
+      <SelectedWellboreNptView
         events={events}
         selectedWellbore={nptGraphSelectedWellbore}
         setSelectedWellbore={setNptGraphSelectedWellbore}

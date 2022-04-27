@@ -9,20 +9,28 @@ import {
 } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
+import noop from 'lodash/noop';
 import orderBy from 'lodash/orderBy';
 
-import { Button } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 
 import EmptyState from 'components/emptyState';
 import { useDeepMemo } from 'hooks/useDeep';
 import { convertToPreviewData } from 'modules/wellSearch/utils/casings';
 import { FlexColumn } from 'styles/layout';
 
-import { SelectedWellboreView } from '../../events/Npt/graph';
+import { SelectedWellboreNptView } from '../../events/Npt/graph';
 import { SelectedWellbore } from '../../events/Npt/graph/types';
 import { SIDE_MODES } from '../constants';
 import { getScaleBlocks } from '../helper';
 
+import {
+  NPT_EVENT_DETAILS_LABEL,
+  NDS_EVENT_DETAILS_LABEL,
+  EMPTY_STATE_TEXT,
+  EMPTY_SCHEMA_TEXT,
+  LOADING_TEXT,
+} from './constants';
 import DepthColumn from './DepthColumn';
 import DepthIndicator from './DepthIndicator/DepthIndicator';
 import {
@@ -40,14 +48,12 @@ import {
   CasingScale,
   EmptyCasingsStateWrapper,
 } from './elements';
-import EventsColumn from './EventsColumn';
 import { CasingViewTypeProps } from './interfaces';
+import NdsEventsColumn from './NdsEventsColumn';
+import NptEventsColumn from './NptEventsColumn';
 import { getMinMaxDepth, isTied, mirrorCasingData } from './utils';
 
 const MIN_SCALE_HEIGHT = 16;
-const EMPTY_STATE_TEXT = 'This wellbore has no casing and NPT events data';
-const EMPTY_SCHEMA_TEXT = 'This wellbore has no schema data';
-const LOADING_TEXT = 'Loading';
 
 /**
  * This component is used to generate casings diagram
@@ -57,8 +63,10 @@ const CasingView: FC<CasingViewTypeProps> = ({
   wellName,
   wellboreName,
   unit,
-  events = [],
-  isEventsLoading,
+  nptEvents = [],
+  ndsEvents = [],
+  isNptEventsLoading,
+  isNdsEventsLoading,
   sideMode,
 }) => {
   const scaleRef = useRef<HTMLElement | null>(null);
@@ -82,13 +90,29 @@ const CasingView: FC<CasingViewTypeProps> = ({
     return data;
   }, [casingsList, sideMode]);
 
-  const [minDepth, maxDepth] = getMinMaxDepth(casingsList, events);
+  const [minDepth, maxDepth] = getMinMaxDepth(casingsList, nptEvents);
 
-  const validEvents = events.filter(
-    (event) =>
-      event.measuredDepth &&
-      event.measuredDepth.value >= minDepth &&
-      event.measuredDepth.value <= maxDepth
+  const validNptEvents = useMemo(
+    () =>
+      nptEvents.filter(
+        (nptEvent) =>
+          nptEvent.measuredDepth &&
+          nptEvent.measuredDepth.value >= minDepth &&
+          nptEvent.measuredDepth.value <= maxDepth
+      ),
+    [minDepth, maxDepth, nptEvents]
+  );
+
+  const validNdsEvents = useMemo(
+    () =>
+      ndsEvents.filter(
+        (ndsEvent) =>
+          ndsEvent.metadata &&
+          ndsEvent.metadata.md_hole_start &&
+          Number(ndsEvent.metadata.md_hole_start) >= minDepth &&
+          Number(ndsEvent.metadata.md_hole_start) <= maxDepth
+      ),
+    [minDepth, maxDepth, ndsEvents]
   );
 
   const setScaleBlocksCount = useCallback(() => {
@@ -115,25 +139,36 @@ const CasingView: FC<CasingViewTypeProps> = ({
             <MainHeader>{wellName}</MainHeader>
             <SubHeader>{wellboreName}</SubHeader>
           </FlexColumn>
-          <Button
-            onClick={() => {
-              setSelectedWellbore(wellboreName);
-            }}
-            title="NPT details"
-            disabled={isEmpty(validEvents)}
-            className="casings-np-details-button"
+          <Dropdown
+            content={
+              <Menu>
+                <Menu.Item onClick={noop} disabled>
+                  {NDS_EVENT_DETAILS_LABEL}
+                </Menu.Item>
+                <Menu.Item
+                  onClick={() => {
+                    setSelectedWellbore(wellboreName);
+                  }}
+                >
+                  {NPT_EVENT_DETAILS_LABEL}
+                </Menu.Item>
+              </Menu>
+            }
           >
-            NPT details
-          </Button>
+            <Button icon="ChevronDown" iconPlacement="right">
+              Details
+            </Button>
+          </Dropdown>
         </Header>
 
         <BodyWrapper>
           {isEmpty(casings) &&
-          (isEventsLoading || (!isEventsLoading && isEmpty(events))) ? (
+          (isNptEventsLoading ||
+            (!isNptEventsLoading && isEmpty(nptEvents))) ? (
             <EmptyCasingsStateWrapper>
               <EmptyState
-                isLoading={isEventsLoading}
-                loadingSubtitle={isEventsLoading ? LOADING_TEXT : ''}
+                isLoading={isNptEventsLoading}
+                loadingSubtitle={isNptEventsLoading ? LOADING_TEXT : ''}
                 emptySubtitle={EMPTY_STATE_TEXT}
               />
             </EmptyCasingsStateWrapper>
@@ -178,18 +213,23 @@ const CasingView: FC<CasingViewTypeProps> = ({
                 </BodyColumnBody>
               </BodyColumn>
 
-              <EventsColumn
+              <NptEventsColumn
                 scaleBlocks={scaleBlocks}
-                events={validEvents}
-                isEventsLoading={isEventsLoading}
+                events={validNptEvents}
+                isEventsLoading={isNptEventsLoading}
+              />
+              <NdsEventsColumn
+                scaleBlocks={scaleBlocks}
+                events={validNdsEvents}
+                isEventsLoading={isNdsEventsLoading}
               />
             </>
           )}
         </BodyWrapper>
       </Wrapper>
 
-      <SelectedWellboreView
-        events={validEvents}
+      <SelectedWellboreNptView
+        events={validNptEvents}
         selectedWellbore={selectedWellbore}
         setSelectedWellbore={setSelectedWellbore}
         disableWellboreNavigation

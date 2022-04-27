@@ -5,6 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 import EmptyState from 'components/emptyState';
 import { NPTEvent } from 'modules/wellSearch/types';
 
+import { NDS_COLUMN_TITLE } from './constants';
 import {
   BodyColumn,
   BodyColumnHeaderWrapper,
@@ -15,7 +16,7 @@ import {
   LastScaleBlock,
   EmptyStateWrapper,
 } from './elements';
-import EventsBadge from './EventsBadge';
+import NptEventsBadge from './NptEventsBadge';
 
 export type Props = {
   scaleBlocks: number[];
@@ -26,7 +27,7 @@ export type Props = {
 export const EMPTY_STATE_TEXT = 'This wellbore has no NPT events data';
 export const LOADING_TEXT = 'Loading';
 
-const EventsColumn: React.FC<Props> = ({
+const NptEventsColumn: React.FC<Props> = ({
   scaleBlocks,
   events,
   isEventsLoading,
@@ -51,7 +52,7 @@ const EventsColumn: React.FC<Props> = ({
           return (
             <ScaleLine key={row}>
               {!isEmpty(blockEvents) ? (
-                <EventsBadge events={blockEvents} />
+                <NptEventsBadge events={blockEvents} />
               ) : null}
             </ScaleLine>
           );
@@ -59,16 +60,17 @@ const EventsColumn: React.FC<Props> = ({
 
         {!isEmpty(lastEvents) ? (
           <LastScaleBlock>
-            <EventsBadge events={lastEvents} />
+            <NptEventsBadge events={lastEvents} />
           </LastScaleBlock>
         ) : null}
       </>
     );
   }, [scaleBlocks, events]);
+
   return (
     <BodyColumn width={150}>
       <BodyColumnHeaderWrapper>
-        <BodyColumnMainHeader>NPT Events</BodyColumnMainHeader>
+        <BodyColumnMainHeader>{NDS_COLUMN_TITLE}</BodyColumnMainHeader>
       </BodyColumnHeaderWrapper>
       <BodyColumnBody>
         {(isEventsLoading || isEmpty(events)) && (
@@ -88,4 +90,4 @@ const EventsColumn: React.FC<Props> = ({
   );
 };
 
-export default EventsColumn;
+export default NptEventsColumn;

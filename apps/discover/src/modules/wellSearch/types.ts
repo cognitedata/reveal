@@ -357,6 +357,12 @@ export interface NPTEvent extends NPT {
   wellboreName?: string;
 }
 
+export interface NDSEvent extends CogniteEvent {
+  wellboreId: string;
+  wellName?: string;
+  wellboreName?: string;
+}
+
 export interface FilterValues {
   id: number;
   value: WellFilterOptionValue;

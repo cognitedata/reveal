@@ -1,5 +1,5 @@
 import { UserPreferredUnit } from 'constants/units';
-import { NPTEvent } from 'modules/wellSearch/types';
+import { NDSEvent, NPTEvent } from 'modules/wellSearch/types';
 
 import { SideModes } from './types';
 
@@ -19,7 +19,9 @@ export type CasingViewTypeProps = {
   wellboreName: string;
   wellName: string;
   unit: UserPreferredUnit;
-  events: NPTEvent[];
-  isEventsLoading?: boolean;
+  nptEvents: NPTEvent[];
+  ndsEvents: NDSEvent[];
+  isNptEventsLoading?: boolean;
+  isNdsEventsLoading?: boolean;
   sideMode: SideModes;
 };

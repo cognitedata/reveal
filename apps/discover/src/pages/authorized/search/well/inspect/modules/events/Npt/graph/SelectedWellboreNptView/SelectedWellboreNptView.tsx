@@ -34,7 +34,7 @@ const getSelectedWellboreName = (selectedWellbore?: SelectedWellbore) => {
   return selectedWellbore.wellboreName;
 };
 
-export const SelectedWellboreView: React.FC<Props> = React.memo(
+export const SelectedWellboreNptView: React.FC<Props> = React.memo(
   ({
     events,
     selectedWellbore,

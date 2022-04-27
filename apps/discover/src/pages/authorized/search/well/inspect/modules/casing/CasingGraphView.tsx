@@ -9,6 +9,7 @@ import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellIn
 import {
   useCasingsForTable,
   useNptEventsForCasings,
+  useNdsEventsForCasings,
 } from 'modules/wellSearch/selectors';
 
 import CasingView from './CasingView/CasingView';
@@ -27,7 +28,10 @@ export const CasingGraphView: React.FC<Props> = ({ scrollRef, sideMode }) => {
   const { casings, isLoading } = useCasingsForTable();
 
   const wells = useWellInspectSelectedWells();
-  const { isLoading: isEventsLoading, events } = useNptEventsForCasings();
+  const { isLoading: isNptEventsLoading, events: nptEvents } =
+    useNptEventsForCasings();
+  const { isLoading: isNdsEventsLoading, events: ndsEvents } =
+    useNdsEventsForCasings();
 
   const groupedCasings = useMemo(
     () => keyBy(getFortmattedCasingData(casings || [], preferredUnit), 'key'),
@@ -52,8 +56,9 @@ export const CasingGraphView: React.FC<Props> = ({ scrollRef, sideMode }) => {
                 wellboreName={wellbore?.name || wellbore?.description || ''}
                 casings={isEmpty(data) ? [] : data.casings}
                 unit={preferredUnit}
-                events={events[wellbore.id]}
-                isEventsLoading={isEventsLoading}
+                nptEvents={nptEvents[wellbore.id]}
+                ndsEvents={ndsEvents[wellbore.id]}
+                isNptEventsLoading={isNptEventsLoading || isNdsEventsLoading}
                 sideMode={sideMode}
               />
             );
