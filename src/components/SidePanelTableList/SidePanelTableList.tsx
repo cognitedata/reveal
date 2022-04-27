@@ -62,6 +62,15 @@ const SidePanelTableList = (): JSX.Element => {
     [data]
   );
 
+  // We're using this ref as a container for a "unique" value that will
+  // remount the <CreateTableModal... /> whenever we close the modal.
+  // We do this in order to reset the whole state and recreate the scope of the component
+  // so we will have a clean slate when it comes to creating a new table.
+  // This is most important due to the file upload that was causing multiple issues
+  // with opening tabs in the raw explorer for tables that haven't been created successfully
+  // and for stopping requests to fetch a resource that shouldn't exist.
+  // By binding this refs `current` value as a key to the component React will force a
+  // remount whenever it changes.
   const remountCount = useRef(0);
 
   return (
