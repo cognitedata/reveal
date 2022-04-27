@@ -26,8 +26,14 @@ export interface DisableIntercomActionConfig extends ActionConfig {
   skip?: (answers: Answers) => string;
 }
 
+export interface DisableExperimentalActionConfig extends ActionConfig {
+  type: 'disableExperimental';
+  base: string;
+}
+
 export type ExpandedActionType =
   | ActionType
   | CopyManyActionConfig
   | AddLibraryActionConfig
-  | DisableIntercomActionConfig;
+  | DisableIntercomActionConfig
+  | DisableExperimentalActionConfig;

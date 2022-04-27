@@ -9,6 +9,10 @@ import { ExpandedActionType } from '../types';
 import { TEMPLATES, MARKERS } from './app-templates';
 import { ROOT, APP_SERVICES_CFG_PATH } from './constants';
 
+const RED = '\x1b[0;31m';
+
+const CLEAR = '\x1b[0m';
+
 export const appActions: ExpandedActionType[] = [
   {
     type: 'copyMany',
@@ -24,6 +28,7 @@ export const appActions: ExpandedActionType[] = [
         )
         .replace(/fas-demo-prod/g, data.name)
         .replace(/fas-demo/g, data.name)
+        .replace(/React Demo App/g, data.fullName)
         .replace(/React Demo \(staging\)/g, data.fullName);
     },
   },
@@ -170,6 +175,11 @@ export const appActions: ExpandedActionType[] = [
     },
   },
 
+  {
+    type: 'disableExperimental',
+    base: path.join(ROOT, 'apps', '{{ name }}'),
+  },
+
   function customAction(answers: Answers): string {
     const source = path.join(ROOT, 'apps', answers.name, 'private-keys');
 
@@ -243,6 +253,7 @@ export const appSteps = [
     type: 'list',
     name: 'appServicesRegister',
     message:
+      `${RED}This step will generate every configuration for your app to be deployed with FAS (recommended)${CLEAR}\n` +
       'Do you want to register your app in `application-services`?\n' +
       '(You need to have the repository at the same level as `applications`)',
     choices: [

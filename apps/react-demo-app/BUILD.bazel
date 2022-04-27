@@ -453,6 +453,7 @@ baker_bake(
 )
 
 ### FAS BUILD ###
+
 # container_build(
 #     name = "fas_release",
 #     app_id = "fas-demo-release",
@@ -482,3 +483,5 @@ container_build(
     docker_repo = "cognitedata/apps/react-demo-app",
     environment = "production",
 )
+
+### FAS BUILD End ###

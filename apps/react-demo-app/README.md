@@ -15,12 +15,14 @@ yarn test:debug                                     # Run tests in band
 yarn test:coverage                                  # Run tests with coverage report
 ```
 
-The CI uses the `react_scripts_test` rule which takes longer as it performs a build internally
+The CI uses the `vite_test` rule which takes longer as it performs a build internally
 
 ## Requirements to run and test locally
 
 Copy react-demo-app-e2e-azure-dev.jwk-key.json from Lastpass -> Shared Demo App into the file:
 private-keys/react-demo-app-e2e-azure-dev.jwk-key.json
+
+If your app was created with the generator, you need to create a new e2e key instead following the main [README](https://github.com/cognitedata/applications#running-e2e-tests-on-jenkins)
 
 ## e2e tests
 
