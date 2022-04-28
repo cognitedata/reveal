@@ -99,3 +99,19 @@ Example:
 To run Platypus using the mock server, start the mock server and then run:
 
 `yarn start mock platypus`
+
+# E2E Testing
+
+We use cypress to run our e2e test suite. To run them from the terminal using a headless browser, make sure the mock server is running, and then from another terminal window, run:
+
+`nx run platypus-e2e:e2e`
+
+To run them in the Cypress GUI:
+
+`nx run platypus-e2e:e2e --watch`
+
+You can optionally run the e2e tests using the `Nx Console` VSCode extension by clicking to run `e2e` and then choosing the `platypus-e2e` project.
+
+## Setup for M1 machines
+
+If you're on an Apple M1 machine, you need to do a bit of extra setup to get Cypress to run using Rosetta 2. You can follow [these instructions](https://www.cypress.io/blog/2021/01/20/running-cypress-on-the-apple-m1-silicon-arm-architecture-using-rosetta-2/) and then use the above commands from your terminal running Rosetta.
