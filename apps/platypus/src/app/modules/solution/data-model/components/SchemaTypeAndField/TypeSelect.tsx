@@ -8,6 +8,7 @@ import { groupOptions } from './utils';
 type OptionValue = {
   value: string;
   label: string;
+  isList: boolean;
 };
 
 type TypeSelectProps = {
@@ -15,7 +16,7 @@ type TypeSelectProps = {
   field: SolutionDataModelField;
   builtInTypes: BuiltInType[];
   customTypesNames: string[];
-  onValueChanged: (value: string) => void;
+  onValueChanged: (value: OptionValue) => void;
 };
 export const TypeSelect = ({
   builtInTypes,
@@ -35,12 +36,11 @@ export const TypeSelect = ({
       groupOptions(builtInTypes, customTypesNames, currentKey === 'list')
     );
   }, [builtInTypes, customTypesNames, currentKey]);
-
   const curFieldValue = {
     label: field.type.list ? `[${field.type.name}] list` : field.type.name,
-    value: field.type.list ? `[${field.type.name}]` : field.type.name,
+    value: field.type.name,
+    isList: field.type.list,
   };
-
   return (
     <div data-cy={`select-${field.type.name}`}>
       <Select
@@ -75,7 +75,7 @@ export const TypeSelect = ({
         )}
         options={optionsToShow}
         value={curFieldValue}
-        onChange={(option: OptionValue) => onValueChanged(option.value)}
+        onChange={(option: OptionValue) => onValueChanged(option)}
         isOptionSelected={(option: OptionValue) =>
           option.value === field.type.name
         }

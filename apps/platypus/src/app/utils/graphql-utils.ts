@@ -1,3 +1,4 @@
+import { DirectiveProps } from '@platypus/platypus-core';
 import {
   DefinitionNode,
   InterfaceTypeDefinitionNode,
@@ -23,6 +24,11 @@ export const isFieldRequired = (type: TypeNode): boolean => {
   return false;
 };
 
+export const doesFieldHaveDirective = (
+  directives: DirectiveProps[],
+  directiveName: string
+) => directives.some((directive) => directive.name === directiveName);
+
 export const getFieldType = (type: TypeNode): string => {
   switch (type?.kind) {
     case 'NamedType':
@@ -42,7 +48,7 @@ export const renderFieldType = (type: TypeNode): string => {
     case 'ListType':
       return `[${renderFieldType(type.type)}]`;
     case 'NonNullType':
-      return renderFieldType(type.type);
+      return renderFieldType(type.type).concat('!');
     default:
       return '';
   }

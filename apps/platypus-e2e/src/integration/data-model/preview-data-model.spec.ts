@@ -64,7 +64,7 @@ describe('Data Model Page - Existing Solution Preview', () => {
     cy.contains('Person').click();
     cy.get('h5').contains('Person').should('be.visible');
     cy.getBySel('edit-schema-btn').should('be.visible').click();
-    cy.get('button[aria-label="Add field"').click();
+    cy.get('button[aria-label="Add field"]').click();
     cy.getBySel('schema-type-field').last().type('phone');
     cy.getBySel('checkbox-field-required').last().click();
     // checks if visualizer updated with edited value
@@ -73,10 +73,9 @@ describe('Data Model Page - Existing Solution Preview', () => {
       .children()
       .getBySel('visualizer-type-field')
       .should('contain', 'phone')
-      .and('contain', 'String')
-      .get('[aria-label="Required field type"]')
-      .should('be.visible');
+      .and('contain', 'String!');
   });
+
   it('should delete field inside type and see changes in visualizer', () => {
     cy.get('[aria-label="UI editor"]').click();
     cy.contains('Person').click();
@@ -141,8 +140,6 @@ describe('Data Model Page - Existing Solution Preview', () => {
       .children()
       .last()
       .should('contain', 'person')
-      .and('contain', 'Person')
-      .get('[aria-label="Required field type"]')
-      .should('be.visible');
+      .and('contain', 'Person!');
   });
 });

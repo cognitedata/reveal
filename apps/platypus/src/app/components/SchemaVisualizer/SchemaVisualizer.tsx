@@ -23,14 +23,26 @@ import { connectorsGenerator } from './connectors';
 import { VisualizerToolbar } from './VisualizerToolbar';
 import { Spinner } from '../Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { BuiltInType, DirectiveBuiltInType } from '@platypus/platypus-core';
+import { usePersistedState } from '@platypus-app/hooks/usePersistedState';
+
+export interface SchemaVisualizerConfig {
+  /* Set known types to control which types and field directives will be rendered and their styling */
+  knownTypes?: BuiltInType[];
+}
 
 export const SchemaVisualizer = React.memo(
   ({
     graphQLSchemaString,
     active,
+    config = {
+      knownTypes: [],
+    },
   }: {
     graphQLSchemaString?: string;
     active?: string;
+    /* Customize the Visualizer rendering */
+    config?: SchemaVisualizerConfig;
   }) => {
     const { t } = useTranslation('Schema Visualizer');
     const [nodes, setNodes] = useState<(Node & SchemaDefinitionNode)[]>([]);
@@ -38,7 +50,10 @@ export const SchemaVisualizer = React.memo(
     const [highlightedIds, setHighlightedIds] = useState<string[]>([]);
 
     // if set, then should render small node instead of full node.
-    const [showHeaderOnly, setShowHeaderOnly] = useState<boolean>(false);
+    const [showHeaderOnly, setShowHeaderOnly] = usePersistedState<boolean>(
+      false,
+      'SHOW_HEADER_ONLY'
+    );
     const [searchFilterValue, setSearchFilterValue] = useState('');
     const [isVisualizerExpanded, setIsVisualizerExpanded] = useState(false);
     const [isErrorState, setIsError] = useState(false);
@@ -113,6 +128,20 @@ export const SchemaVisualizer = React.memo(
       [nodes, links, showHeaderOnly]
     );
 
+    const fieldDirectives = config.knownTypes
+      ? (config.knownTypes.filter(
+          (knownType) =>
+            knownType.type === 'DIRECTIVE' &&
+            (knownType as DirectiveBuiltInType).fieldDirective
+        ) as DirectiveBuiltInType[])
+      : [];
+
+    const [visibleFieldDirectives, setVisibleFieldDirectives] =
+      usePersistedState<DirectiveBuiltInType[]>(
+        fieldDirectives,
+        'VISIBLE_FIELD_DIRECTIVES'
+      );
+
     const renderGraph = () => (
       <Wrapper direction="column">
         {!isLoaded && (
@@ -143,6 +172,9 @@ export const SchemaVisualizer = React.memo(
             fitHandler={() => {
               graphRef.current?.fitContent();
             }}
+            fieldDirectives={fieldDirectives}
+            visibleFieldDirectives={visibleFieldDirectives}
+            setVisibleFieldDirectives={setVisibleFieldDirectives}
           />
           {isVisualizerExpanded && (
             <Button
@@ -160,12 +192,12 @@ export const SchemaVisualizer = React.memo(
             direction="column"
           >
             <Title level={2} style={{ textAlign: 'center', marginBottom: 16 }}>
-              {t('failed_to_load', 'Unable to visualize schema.')}
+              {t('failed_to_load', 'Unable to visualize the Data Model.')}
             </Title>
             <Body>
               {t(
                 'failed_to_load_description',
-                'Have you created a schema already?'
+                'Have you created a Data Model already?'
               )}
             </Body>
           </Flex>
@@ -233,12 +265,30 @@ export const SchemaVisualizer = React.memo(
               }
               const nodeWidth = getNodeWidth(item);
               let content = <p>Loading&hellip;</p>;
+              const isActive = active === item.id;
               switch (item.kind) {
                 case 'ObjectTypeDefinition': {
                   if (showHeaderOnly) {
                     content = <SmallNode key={item.name.value} item={item} />;
                   } else {
-                    content = <FullNode key={item.name.value} item={item} />;
+                    content = (
+                      <FullNode
+                        key={item.name.value}
+                        item={item}
+                        isActive={isActive}
+                        knownTypeDirectives={
+                          config.knownTypes
+                            ? (config.knownTypes.filter(
+                                (knownType) =>
+                                  knownType.type === 'DIRECTIVE' &&
+                                  !(knownType as DirectiveBuiltInType)
+                                    .fieldDirective
+                              ) as DirectiveBuiltInType[])
+                            : []
+                        }
+                        knownFieldDirectives={visibleFieldDirectives}
+                      />
+                    );
                   }
                   break;
                 }
@@ -348,8 +398,8 @@ interface ITypeItem {
   width?: number;
 }
 
-const NodeWrapper = styled.div<ITypeItem>`
-  padding: 10px 14px;
+export const NodeWrapper = styled.div<ITypeItem>`
+  padding: 10px 12px;
   width: ${(props: ITypeItem) =>
     props.width ? `${props.width}px` : `${NODE_WIDTH}px`};
   background-color: ${(props: ITypeItem) =>

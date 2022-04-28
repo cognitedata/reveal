@@ -8,9 +8,10 @@ export const groupOptions = (
 ) => {
   const mapToOption = (types: BuiltInType[], skipDivider = false) =>
     types.map((type, index, types) => ({
-      value: isListMode ? `[${type.name}]` : type.name,
-      label: isListMode ? `[${type.name}]` : type.name,
+      value: type.name,
+      label: isListMode ? `[${type.name}] list` : type.name,
       divider: skipDivider ? false : index === types.length - 1,
+      isList: isListMode,
     }));
 
   const optionsList = [

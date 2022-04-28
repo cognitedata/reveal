@@ -2,6 +2,7 @@ import { SimulationLinkDatum } from 'd3';
 import { FieldDefinitionNode, ObjectTypeDefinitionNode } from 'graphql';
 import { GetOffsetFunction, Node } from '../Graph/Graph';
 import { getFieldType, SchemaDefinitionNode } from '../../utils/graphql-utils';
+import { DirectiveBuiltInType } from '@platypus/platypus-core';
 
 export const NODE_WIDTH = 240;
 export const NODE_ICON_WIDTH = 20;
@@ -116,3 +117,38 @@ export const isTypeATemplate = (item: ObjectTypeDefinitionNode) => {
     (el) => el.name.value.toLowerCase() === 'template'
   );
 };
+
+export const getTypeDirective = (item: ObjectTypeDefinitionNode): string => {
+  if (!item.directives || !item.directives.length) {
+    return 'Type';
+  }
+
+  return item.directives[0].name.value;
+};
+
+export const getFieldDirectives = (
+  field: FieldDefinitionNode,
+  knownFieldDirectives: DirectiveBuiltInType[]
+): DirectiveBuiltInType[] => {
+  return [...knownFieldDirectives]
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((knownDirective) => {
+      if (
+        field.directives &&
+        field.directives.some(
+          (directive) => directive.name.value === knownDirective.name
+        )
+      ) {
+        return knownDirective;
+      }
+
+      return {
+        name: '',
+        type: 'DIRECTIVE',
+        icon: '',
+      } as DirectiveBuiltInType;
+    });
+};
+
+export const capitalizeFirst = (text: string): string =>
+  text.substring(0, 1).toUpperCase() + text.substring(1);

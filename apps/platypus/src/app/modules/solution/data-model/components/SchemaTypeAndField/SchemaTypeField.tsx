@@ -1,4 +1,4 @@
-import { Button, Checkbox, Flex, Input } from '@cognite/cogs.js';
+import { Body, Button, Checkbox, Flex, Input } from '@cognite/cogs.js';
 import {
   BuiltInType,
   SolutionDataModelField,
@@ -11,8 +11,11 @@ import { SolutionDataModelFieldNameValidator } from '@platypus/platypus-core';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import debounce from 'lodash/debounce';
 import { v4 } from 'uuid';
+import { FieldDirectiveSelect } from '../FieldDirective/FieldDirectiveSelect';
+import config from '@platypus-app/config/config';
 
 export interface SchemaTypeFieldProps {
+  index: number;
   field: SolutionDataModelField;
   builtInTypes: BuiltInType[];
   customTypesNames: string[];
@@ -28,6 +31,7 @@ export const SchemaTypeField = ({
   disabled = false,
   typeFieldNames,
   onFieldUpdated,
+  index,
   onFieldRemoved,
 }: SchemaTypeFieldProps) => {
   const [fieldName, setFieldname] = useState(field.name);
@@ -45,7 +49,6 @@ export const SchemaTypeField = ({
     }, 500),
     [field.name]
   );
-
   const onFieldNameChanged = useCallback(
     (e: React.FormEvent<HTMLInputElement>) => {
       e.preventDefault();
@@ -63,10 +66,13 @@ export const SchemaTypeField = ({
     },
     [fieldNameDebounced]
   );
-
+  const isFirstField = index === 0;
   return (
     <Flex gap={8} justifyContent="space-between" className="pl-4 pr-2.5">
       <InputWrapper>
+        {isFirstField && (
+          <Label level="2"> {t('field_name_label', 'Field name')}</Label>
+        )}
         <Input
           data-cy="schema-type-field"
           fullWidth
@@ -80,54 +86,105 @@ export const SchemaTypeField = ({
         />
       </InputWrapper>
       <InputWrapper>
+        {isFirstField && (
+          <Label level="2">{t('field_type_label', 'Type')}</Label>
+        )}
         <TypeSelect
           field={field}
           builtInTypes={builtInTypes}
           customTypesNames={customTypesNames}
           disabled={disabled}
-          onValueChanged={(value) => {
+          onValueChanged={({ value, isList }) => {
             onFieldUpdated({
-              type: { ...field.type, name: value },
+              directives: [],
+              type: {
+                ...field.type,
+                name: value,
+                list: isList,
+              },
             });
           }}
         />
       </InputWrapper>
-
-      <Flex>
-        <Checkbox
-          name={`required_${v4()}`}
-          data-cy="checkbox-field-required"
-          style={{ height: 36, marginLeft: 16 }}
-          disabled={disabled}
-          onChange={(isChecked) => {
-            onFieldUpdated({
-              type: {
-                ...field.type,
+      {config.USE_MIXER_API && (
+        <div>
+          {isFirstField && (
+            <Label level="2">{t('field_label_attributes', 'Attributes')}</Label>
+          )}
+          <FieldDirectiveSelect
+            disabled={disabled}
+            builtInTypes={builtInTypes}
+            field={field}
+            onSelect={(directive) => {
+              if (field.directives?.some((d) => d.name === directive)) {
+                onFieldUpdated({
+                  directives: field.directives.filter(
+                    (d) => d.name !== directive
+                  ),
+                });
+              } else {
+                onFieldUpdated({
+                  directives: [
+                    ...(field.directives || []),
+                    { name: directive, arguments: [] },
+                  ],
+                });
+              }
+            }}
+          />
+        </div>
+      )}
+      <Flex style={{ width: 80 }}>
+        <div style={{ width: 40 }}>
+          {isFirstField && (
+            <Label level="2">{t('field_label_req', 'Rqd[!].')}</Label>
+          )}
+          <Checkbox
+            name={`required_${v4()}`}
+            data-cy="checkbox-field-required"
+            style={{ height: 36, marginLeft: 16 }}
+            disabled={disabled}
+            onChange={(isChecked) => {
+              onFieldUpdated({
+                type: {
+                  ...field.type,
+                  nonNull: isChecked,
+                },
                 nonNull: isChecked,
-              },
-              nonNull: isChecked,
-            });
-          }}
-          checked={field.nonNull === true}
-        />
-
-        <Button
-          icon="Delete"
-          aria-label="Delete field"
-          type="ghost"
-          disabled={disabled}
-          onClick={(e) => {
-            e.preventDefault();
-            onFieldRemoved(field);
-          }}
-        />
+              });
+            }}
+            checked={field.nonNull === true}
+          />
+        </div>
+        <div>
+          {isFirstField && <EmptyLabel />}
+          <Button
+            icon="Delete"
+            aria-label="Delete field"
+            type="ghost"
+            disabled={disabled}
+            onClick={(e) => {
+              e.preventDefault();
+              onFieldRemoved(field);
+            }}
+          />
+        </div>
       </Flex>
     </Flex>
   );
 };
 
+const Label = styled(Body)`
+  margin-bottom: 12px;
+`;
+const EmptyLabel = styled(Body)`
+  margin-bottom: 12px;
+  height: 20px;
+  width: 36px;
+`;
 const InputWrapper = styled.div`
-  width: 240px;
+  flex: 1;
+  margin-right: 10px;
   .cogs-menu-divider {
     width: 100%;
   }

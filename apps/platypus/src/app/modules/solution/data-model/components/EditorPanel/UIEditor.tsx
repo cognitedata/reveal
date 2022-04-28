@@ -11,7 +11,6 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import services from '../../di';
 import { SchemaTypeField } from '../SchemaTypeAndField/SchemaTypeField';
-import { SchemaTypeFieldsList } from '../SchemaTypeAndField/SchemaTypeFieldsList';
 import { SchemaTypeList } from '../SchemaTypeAndField/SchemaTypeList';
 import { SchemaTypeView } from '../SchemaTypeAndField/SchemaTypeView';
 import { useErrorLogger } from '@platypus-app/hooks/useErrorLogger';
@@ -177,45 +176,44 @@ export function UIEditor({
           currentType={currentType}
           onNavigateBack={() => setCurrentType(null)}
         >
-          <SchemaTypeFieldsList>
-            <Flex direction="column" gap={16}>
-              {currentType.fields.map((field) => (
-                <SchemaTypeField
-                  field={field}
-                  key={field.name}
-                  disabled={disabled}
-                  builtInTypes={builtInTypes}
-                  customTypesNames={customTypesNames.filter(
-                    (name) => name !== currentType.name
-                  )}
-                  typeFieldNames={currentType.fields.map((f) => f.name)}
-                  onFieldUpdated={(updates) =>
-                    onFieldUpdated(currentType.name, field.name, updates)
-                  }
-                  onFieldRemoved={(removedField) =>
-                    onFieldRemoved(currentType.name, removedField.name)
-                  }
-                />
-              ))}
-              <Button
-                icon="Add"
-                iconPlacement="left"
-                aria-label={t('add_field', 'Add field')}
-                type="ghost"
-                disabled={
-                  disabled || currentType.fields.some((field) => !field.name)
+          <Flex direction="column" gap={16}>
+            {currentType.fields.map((field, index) => (
+              <SchemaTypeField
+                index={index}
+                field={field}
+                key={field.name}
+                disabled={disabled}
+                builtInTypes={builtInTypes}
+                customTypesNames={customTypesNames.filter(
+                  (name) => name !== currentType.name
+                )}
+                typeFieldNames={currentType.fields.map((f) => f.name)}
+                onFieldUpdated={(updates) =>
+                  onFieldUpdated(currentType.name, field.name, updates)
                 }
-                style={{
-                  alignSelf: 'flex-start',
-                  marginLeft: '8px',
-                  padding: '4px 8px 4px 8px',
-                }}
-                onClick={onFieldCreate}
-              >
-                {t('add_field', 'Add field')}
-              </Button>
-            </Flex>
-          </SchemaTypeFieldsList>
+                onFieldRemoved={(removedField) =>
+                  onFieldRemoved(currentType.name, removedField.name)
+                }
+              />
+            ))}
+            <Button
+              icon="Add"
+              iconPlacement="left"
+              aria-label={t('add_field', 'Add field')}
+              type="ghost"
+              disabled={
+                disabled || currentType.fields.some((field) => !field.name)
+              }
+              style={{
+                alignSelf: 'flex-start',
+                marginLeft: '8px',
+                padding: '4px 8px 4px 8px',
+              }}
+              onClick={onFieldCreate}
+            >
+              {t('add_field', 'Add field')}
+            </Button>
+          </Flex>
         </SchemaTypeView>
       ) : (
         <SchemaTypeList

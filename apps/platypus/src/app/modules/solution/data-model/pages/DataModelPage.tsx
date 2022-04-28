@@ -9,7 +9,11 @@ import { SolutionState } from '@platypus-app/redux/reducers/global/solutionReduc
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import services from '@platypus-app/di';
-import { SolutionDataModelType, ErrorType } from '@platypus/platypus-core';
+import {
+  SolutionDataModelType,
+  ErrorType,
+  BuiltInType,
+} from '@platypus/platypus-core';
 
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { useSolution } from '../../hooks/useSolution';
@@ -40,16 +44,24 @@ export const DataModelPage = () => {
   const [isDirty, setIsDirty] = useState(false);
   const [isInit, setInit] = useState(false);
   const [breakingChanges, setBreakingChanges] = useState('');
+  const [builtInTypes, setBuiltInTypes] = useState<BuiltInType[]>([]);
   const [currentType, setCurrentType] = useState<null | SolutionDataModelType>(
     null
   );
   const { insertSchema, updateSchema } = useSolution();
 
   useEffect(() => {
-    dataModelService.clear();
-    setProjectSchema(selectedSchema!.schema);
-    setIsDirty(false);
-    setInit(true);
+    async function fetchSchemaAndTypes() {
+      const builtInTypesResponse =
+        await dataModelService.getSupportedPrimitiveTypes();
+      setBuiltInTypes(builtInTypesResponse);
+      dataModelService.clear();
+      setProjectSchema(selectedSchema!.schema);
+      setIsDirty(false);
+      setInit(true);
+    }
+
+    fetchSchemaAndTypes();
   }, [selectedSchema]);
 
   const onSaveOrPublish = async () => {
@@ -145,6 +157,7 @@ export const DataModelPage = () => {
               );
               setMode(SchemaEditorMode.View);
               setIsDirty(false);
+              setCurrentType(null);
             }}
             style={{ marginRight: '10px' }}
           >
@@ -206,12 +219,13 @@ export const DataModelPage = () => {
                     setCurrentType={setCurrentType}
                     editorMode={mode}
                     graphQlSchema={projectSchema}
+                    builtInTypes={builtInTypes}
                     onSchemaChanged={onSchemaChanged}
                   />
                 </ErrorBoundary>
               }
-              sidebarWidth={'40%'}
-              sidebarMinWidth={400}
+              sidebarWidth={640}
+              sidebarMinWidth={440}
               content={
                 <Flex
                   data-testid="Schema_visualization"
@@ -226,6 +240,9 @@ export const DataModelPage = () => {
                     <SchemaVisualizer
                       graphQLSchemaString={projectSchema}
                       active={currentType?.name}
+                      config={{
+                        knownTypes: builtInTypes,
+                      }}
                     />
                   </ErrorBoundary>
                 </Flex>

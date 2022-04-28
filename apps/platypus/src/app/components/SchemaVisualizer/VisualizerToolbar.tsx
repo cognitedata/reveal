@@ -1,4 +1,6 @@
-import { Switch, Input, ToolBar } from '@cognite/cogs.js';
+import { Icon, IconType, Input, Switch, ToolBar } from '@cognite/cogs.js';
+import { ToolbarMenu } from './ToolbarMenu';
+import { DirectiveBuiltInType } from '@platypus/platypus-core';
 
 export const VisualizerToolbar = ({
   isCollapsed,
@@ -10,6 +12,9 @@ export const VisualizerToolbar = ({
   zoomInHandler,
   zoomOutHandler,
   fitHandler,
+  fieldDirectives,
+  visibleFieldDirectives,
+  setVisibleFieldDirectives,
 }: {
   isCollapsed: boolean;
   setIsCollapsed: (newValue: boolean) => void;
@@ -20,7 +25,69 @@ export const VisualizerToolbar = ({
   zoomInHandler: () => void;
   zoomOutHandler: () => void;
   fitHandler: () => void;
+  fieldDirectives: DirectiveBuiltInType[];
+  visibleFieldDirectives: DirectiveBuiltInType[];
+  setVisibleFieldDirectives: (
+    visibleFieldDirectives: DirectiveBuiltInType[]
+  ) => void;
 }) => {
+  // eslint-disable-next-line
+  const isDirectiveVisible = (directive: DirectiveBuiltInType) =>
+    visibleFieldDirectives.some((f) => f.name === directive.name);
+
+  const filterDropdownMenu = (
+    <ToolbarMenu>
+      <ToolbarMenu.Item onClick={() => setIsCollapsed(!isCollapsed)}>
+        Headers only{' '}
+        <Switch
+          checked={isCollapsed}
+          onClick={(e) => {
+            e.preventDefault();
+            setIsCollapsed(!isCollapsed);
+          }}
+          name="Collapse details"
+        ></Switch>
+      </ToolbarMenu.Item>
+
+      {!!fieldDirectives.length && <ToolbarMenu.Divider /> && (
+        <ToolbarMenu.Header>Attributes</ToolbarMenu.Header>
+      )}
+      {fieldDirectives.map((fieldDirective) => {
+        return (
+          <ToolbarMenu.Item
+            key={fieldDirective.name}
+            onClick={() => {
+              if (
+                visibleFieldDirectives.some(
+                  (directive) => directive.name === fieldDirective.name
+                )
+              ) {
+                setVisibleFieldDirectives(
+                  visibleFieldDirectives.filter(
+                    (directive) => directive.name !== fieldDirective.name
+                  )
+                );
+              } else {
+                setVisibleFieldDirectives([
+                  ...visibleFieldDirectives,
+                  fieldDirective,
+                ]);
+              }
+            }}
+            appendIcon={
+              isDirectiveVisible(fieldDirective) ? 'Checkmark' : undefined
+            }
+          >
+            {fieldDirective.icon && (
+              <Icon type={fieldDirective.icon as IconType} />
+            )}
+            {fieldDirective.name}
+          </ToolbarMenu.Item>
+        );
+      })}
+    </ToolbarMenu>
+  );
+
   return (
     <ToolBar direction="horizontal">
       <>
@@ -31,15 +98,16 @@ export const VisualizerToolbar = ({
           value={searchFilterValue}
           onChange={(e) => setSearchFilterValue(e.target.value)}
         />
-        <Switch
-          style={{ marginLeft: 8, marginRight: 8 }}
-          checked={isCollapsed}
-          name="Collapse details"
-          onChange={() => setIsCollapsed(!isCollapsed)}
-        >
-          Collapse details
-        </Switch>
       </>
+      <ToolBar.ButtonGroup
+        buttonGroup={[
+          {
+            icon: 'EyeShow',
+            description: 'Filter',
+            dropdownContent: filterDropdownMenu,
+          },
+        ]}
+      />
       <ToolBar.ButtonGroup
         buttonGroup={[
           {

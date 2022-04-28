@@ -34,6 +34,7 @@ export const Default = () => {
         <div style={{ height: '600px' }}>
           <SchemaTypeField
             field={field}
+            index={0}
             builtInTypes={[{ name: 'Post', type: 'OBJECT' }]}
             customTypesNames={['Person']}
             typeFieldNames={['Post']}

@@ -85,6 +85,7 @@ export type BaseBuiltInType = {
 
 export type DirectiveBuiltInType = BaseBuiltInType & {
   fieldDirective: boolean;
+  icon?: string;
 };
 
 export type BuiltInType = BaseBuiltInType | DirectiveBuiltInType;
