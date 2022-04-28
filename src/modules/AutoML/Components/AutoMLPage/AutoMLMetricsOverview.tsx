@@ -145,7 +145,14 @@ export const AutoMLMetricsOverview = (props: { model?: AutoMLTrainingJob }) => {
       model && (
         <>
           <Title level={6}>Model information</Title>
-
+          <ModelDataContainer>
+            <Body strong level={2}>
+              id
+            </Body>
+            <Body strong level={2}>
+              {model.jobId}
+            </Body>
+          </ModelDataContainer>
           <ModelDataContainer>
             <Body strong level={2}>
               Status
