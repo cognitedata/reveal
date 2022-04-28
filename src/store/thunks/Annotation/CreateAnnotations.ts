@@ -3,9 +3,9 @@ import { ThunkConfig } from 'src/store/rootReducer';
 import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
 import {
   AnnotationStatus,
-  AnnotationUtils,
+  AnnotationUtilsV1,
   VisionAnnotationV1,
-} from 'src/utils/AnnotationUtils';
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { getUnsavedAnnotation } from 'src/api/annotation/utils';
@@ -34,7 +34,7 @@ export const CreateAnnotations = createAsyncThunk<
     );
     const savedAnnotations = unwrapResult(savedAnnotationResponse);
 
-    return AnnotationUtils.convertToVisionAnnotationsV1(savedAnnotations);
+    return AnnotationUtilsV1.convertToVisionAnnotationsV1(savedAnnotations);
   }
 
   return [];

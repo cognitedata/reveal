@@ -5,7 +5,7 @@ import {
 } from 'src/modules/Review/types';
 import { Col, Collapse, Row } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { KeypointVertex } from 'src/utils/AnnotationUtils';
+import { KeypointVertex } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   AnnotationTableRow,
   ExpandIconComponent,

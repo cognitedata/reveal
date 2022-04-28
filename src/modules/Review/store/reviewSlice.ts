@@ -17,7 +17,7 @@ import {
   AnnotationStatus,
   KeypointVertex,
   VisionAnnotationV1,
-} from 'src/utils/AnnotationUtils';
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { makeSelectFileAnnotations } from 'src/modules/Common/store/annotationV1/selectors';
 
 export interface VisibleAnnotation extends VisionAnnotationV1 {

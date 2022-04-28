@@ -1,10 +1,10 @@
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { AnnotationStateV1 } from 'src/modules/Common/store/annotationV1/types';
 import {
-  AnnotationUtils,
+  AnnotationUtilsV1,
   getAnnotationsBadgeCounts,
   VisionAnnotationV1,
-} from 'src/utils/AnnotationUtils';
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import isEqual from 'lodash-es/isEqual';
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
@@ -47,7 +47,7 @@ export const makeSelectAnnotationsForFileIds = () =>
       fileIds.forEach((id) => {
         const fileAnnotations = allFiles[id];
         if (fileAnnotations && fileAnnotations.length) {
-          data[id] = AnnotationUtils.filterAnnotations(
+          data[id] = AnnotationUtilsV1.filterAnnotations(
             fileAnnotations.map((annotationId) => allAnnotations[annotationId]),
             filter
           );

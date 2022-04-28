@@ -12,13 +12,13 @@ import {
 } from 'src/modules/Explorer/store/selectors';
 import { ExplorerState } from 'src/modules/Explorer/types';
 import { RootState } from 'src/store/rootReducer';
-import { AnnotationUtils } from 'src/utils/AnnotationUtils';
+import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { VisionFilesToFileState } from 'src/store/util/StateUtils';
 import { mockFileList } from 'src/__test-utils/fixtures/files';
 
 const createMockAnnotation = (id?: number, fileId?: number) => {
-  return AnnotationUtils.createVisionAnnotationStubV1(
+  return AnnotationUtilsV1.createVisionAnnotationStubV1(
     id || 1,
     'foo',
     VisionDetectionModelType.ObjectDetection,
