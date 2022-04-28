@@ -12,7 +12,7 @@ export class MeasurementLabel {
   private _options: MeasurementLabelOptions = {
     size: 64,
     radius: 20,
-    font: '${64}px bold Georgia',
+    font: '64px bold Georgia',
     fontColor: 'green',
     fillColor: 'rgba(255, 255, 255, 1.0)'
   };
@@ -25,7 +25,6 @@ export class MeasurementLabel {
   /**
    * Create overlay texture to be added as Sprite
    * @param label String to be added into the Sprite
-   * @param size Size of the label
    * @returns Texture object containing label string
    */
   public getOverlayTexture(label: string): THREE.Texture {
@@ -56,8 +55,6 @@ export class MeasurementLabel {
     ctx.scale(scaleFactor, 1);
     ctx.fillStyle = this._options.fontColor;
     ctx.fillText(label, 0, 0);
-
-    ctx.canvas.style.borderRadius = '20px';
 
     const texture = new THREE.CanvasTexture(ctx.canvas);
     texture.minFilter = THREE.LinearFilter;
