@@ -16,7 +16,7 @@ import { createGenericTabularDataSlice } from 'src/store/genericTabularDataSlice
 import { getFakeQueuedJob } from 'src/api/vision/detectionModels/detectionUtils';
 import { ProcessState } from 'src/modules/Process/store/types';
 
-export const BUILT_IN_MODEL_COUNT = 3; // ocr, tag & objectdetection
+export const BUILT_IN_MODEL_COUNT = 4; // ocr, tagdetection, objectdetection, gaugereader
 
 const initialDetectionModelParameters = {
   ocr: {
@@ -29,6 +29,9 @@ const initialDetectionModelParameters = {
   },
   objectDetection: {
     threshold: 0.8,
+  },
+  gaugeReader: {
+    gaugeType: 'analog',
   },
   customModel: {
     modelJobId: undefined,
@@ -79,6 +82,12 @@ export const initialState: ProcessState = {
       type: VisionDetectionModelType.ObjectDetection,
       settings: initialDetectionModelParameters.objectDetection,
       unsavedSettings: initialDetectionModelParameters.objectDetection,
+    },
+    {
+      modelName: 'Gauge reader',
+      type: VisionDetectionModelType.GaugeReader,
+      settings: initialDetectionModelParameters.gaugeReader,
+      unsavedSettings: initialDetectionModelParameters.gaugeReader,
     },
   ],
   showExploreModal: false,
@@ -132,6 +141,9 @@ const processSlice = createGenericTabularDataSlice({
           case VisionDetectionModelType.ObjectDetection:
             item.unsavedSettings =
               initialDetectionModelParameters.objectDetection;
+            break;
+          case VisionDetectionModelType.GaugeReader:
+            item.unsavedSettings = initialDetectionModelParameters.gaugeReader;
             break;
           case VisionDetectionModelType.CustomModel:
             item.unsavedSettings = initialDetectionModelParameters.customModel;

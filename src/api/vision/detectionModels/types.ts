@@ -53,13 +53,29 @@ export type TagDetectionJobAnnotation = BaseVisionJobAnnotation & {
   assetIds: CogniteInternalId[];
 };
 
+export type DigitalGaugeDataAttributes = {
+  /* eslint-disable camelcase */
+  comma_pos: number;
+  max_num_digits: number;
+  min_num_digits: number;
+  /* eslint-enable camelcase */
+};
+export type AnalogLevelGaugeDataAttributes = {
+  /* eslint-disable camelcase */
+  max_level: number;
+  min_level: number;
+  /* eslint-enable camelcase */
+};
+
 export type GaugeReaderJobAnnotation = BaseVisionJobAnnotation & {
   // __typename: VisionDetectionModelType.GaugeReader;
   region: AnnotationRegion;
   data: {
+    keypointNames: string[];
+    unit: string;
     // eslint-disable-next-line camelcase
-    keypoint_names: string[];
-  };
+    gauge_value?: number;
+  } & (DigitalGaugeDataAttributes | AnalogLevelGaugeDataAttributes);
 };
 
 export type CusomModelJobAnnotation = BaseVisionJobAnnotation & {
@@ -134,6 +150,9 @@ export interface ParamsObjectDetection {
   threshold: number;
 }
 
+export interface ParamsGaugeReader {
+  gaugeType: string;
+}
 export interface ParamsCustomModel {
   modelJobId?: number;
   threshold: number;
@@ -143,6 +162,7 @@ export type DetectionModelParams =
   | ParamsOCR
   | ParamsTagDetection
   | ParamsObjectDetection
+  | ParamsGaugeReader
   | ParamsCustomModel;
 
 // App specific types
@@ -150,6 +170,7 @@ export enum VisionDetectionModelType {
   OCR = 1,
   TagDetection,
   ObjectDetection,
+  GaugeReader,
   CustomModel,
 }
 export interface DetectionModelDataProvider {

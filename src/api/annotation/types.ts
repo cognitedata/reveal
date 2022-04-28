@@ -58,6 +58,30 @@ export type ImageKeypoint = Label &
 
 export type Timestamp = number;
 
+export type NumericalAttribute = {
+  type: 'numerical';
+  value: number;
+  description?: string;
+};
+
+export type BooleanAttribute = {
+  type: 'boolean';
+  value: boolean;
+  description?: string;
+};
+
+export type UnitAttribute = {
+  type: 'unit';
+  value: string;
+  description?: string;
+};
+
+export type AnnotationAttributes = {
+  attributes: {
+    [key: string]: NumericalAttribute | BooleanAttribute | UnitAttribute;
+  };
+};
+
 export type AnnotatedResourceIdEither =
   | AnnotatedResourceId
   | AnnotatedResourceExternalId;
@@ -110,7 +134,7 @@ export type ImageAssetLink = TextRegion &
   };
 
 export type ImageKeypointCollection = Label &
-  Partial<Confidence> & {
+  Partial<Confidence & AnnotationAttributes> & {
     keypoints: ImageKeypoint[];
   };
 
@@ -151,13 +175,14 @@ export type AnnotationTypeV1 =
   | 'vision/ocr'
   | 'vision/tagdetection'
   | 'vision/objectdetection'
+  | 'vision/gaugereader'
   | 'vision/custommodel'
   | 'user_defined'
   | 'CDF_ANNOTATION_TEMPLATE';
 
 export type AnnotationSourceV1 = 'context_api' | 'user';
 
-export type AnnotationMetadataV1 = {
+export type AnnotationMetadataV1 = Partial<AnnotationAttributes> & {
   keypoint?: boolean;
   keypoints?: Keypoint[];
   color?: string;
