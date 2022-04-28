@@ -1,4 +1,4 @@
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { Icon, SegmentedControl, Tooltip } from '@cognite/cogs.js';
 import { AnnotationActionMenuExtended } from 'src/modules/Common/Components/AnnotationActionMenu/AnnotationActionMenuExtended';
 import React from 'react';

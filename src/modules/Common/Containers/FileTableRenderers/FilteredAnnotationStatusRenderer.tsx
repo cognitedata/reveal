@@ -6,7 +6,7 @@ import { RootState } from 'src/store/rootReducer';
 import styled from 'styled-components';
 import { DEFAULT_THRESHOLDS } from 'src/modules/Common/Components/BulkEdit/Annotation/AnnotationStatusPanel';
 import { Body } from '@cognite/cogs.js';
-import { AnnotationUtils } from 'src/utils/AnnotationUtils';
+import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { createTag } from './AnnotationStatusRenderer';
 
 export function FilteredAnnotationStatusRenderer({
@@ -31,7 +31,7 @@ export function FilteredAnnotationStatusRenderer({
   const unhandledAnnotationIdsFromConfidence: number[] = [];
   Object.entries(annotationsMap).forEach(([_, annotations]) => {
     const annotationIdsByStatus =
-      AnnotationUtils.filterAnnotationsIdsByConfidence(
+      AnnotationUtilsV1.filterAnnotationsIdsByConfidence(
         annotations,
         rejectedThreshold,
         acceptedThreshold
@@ -53,7 +53,7 @@ export function FilteredAnnotationStatusRenderer({
   const unhandledAnnotationIdsFromStatus: number[] = [];
   Object.entries(annotationsMap).forEach(([_, annotations]) => {
     const annotationIdsByStatus =
-      AnnotationUtils.filterAnnotationsIdsByAnnotationStatus(annotations);
+      AnnotationUtilsV1.filterAnnotationsIdsByAnnotationStatus(annotations);
     rejectedAnnotationIdsFromStatus.push(
       ...annotationIdsByStatus.rejectedAnnotationIds
     );

@@ -29,7 +29,7 @@ import { AppDispatch } from 'src/store';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 export const ImageKeyboardShortKeys = ({
   scrollToItem,

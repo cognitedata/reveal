@@ -19,14 +19,14 @@ import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import {
   AnnotationStatus,
-  AnnotationUtils,
+  AnnotationUtilsV1,
   KeypointVertex,
   VisionAnnotationRegion,
-} from 'src/utils/AnnotationUtils';
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 
-jest.mock('src/utils/AnnotationUtils', () => ({
-  ...jest.requireActual('src/utils/AnnotationUtils'),
+jest.mock('src/utils/AnnotationUtilsV1/AnnotationUtilsV1', () => ({
+  ...jest.requireActual('src/utils/AnnotationUtilsV1/AnnotationUtilsV1'),
   createUniqueId: (text: string) => {
     return text;
   },
@@ -505,7 +505,7 @@ describe('Test annotationLabel reducer', () => {
       };
 
       const generateDummyAnnotations = (fileId?: number) => {
-        return AnnotationUtils.createVisionAnnotationStubV1(
+        return AnnotationUtilsV1.createVisionAnnotationStubV1(
           payload.id,
           payload.text,
           payload.modelType,

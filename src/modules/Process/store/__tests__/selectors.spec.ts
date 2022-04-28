@@ -45,7 +45,7 @@ import { VisionFilesToFileState } from 'src/store/util/StateUtils';
 import {
   AnnotationStatus,
   VisionAnnotationV1,
-} from 'src/utils/AnnotationUtils';
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { mockFileList } from 'src/__test-utils/fixtures/files';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { getDummyAnnotation } from 'src/__test-utils/annotations';

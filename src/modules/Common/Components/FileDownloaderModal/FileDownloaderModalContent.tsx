@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import JSZip from 'jszip';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { ToastUtils } from 'src/utils/ToastUtils';
 import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotationV1/selectors';
 import { renameDuplicates } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';

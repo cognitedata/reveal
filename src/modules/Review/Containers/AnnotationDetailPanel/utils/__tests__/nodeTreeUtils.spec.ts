@@ -1,4 +1,4 @@
-import { KeypointVertex } from 'src/utils/AnnotationUtils';
+import { KeypointVertex } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { getDummyAnnotation } from 'src/__test-utils/annotations';
 import { Categories } from 'src/modules/Review/types';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';

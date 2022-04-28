@@ -1,10 +1,10 @@
 import {
-  AnnotationUtils,
+  AnnotationUtilsV1,
   calculateBadgeCountsDifferences,
   getAnnotationCounts,
   getAnnotationsBadgeCounts,
   AnnotationStatus,
-} from 'src/utils/AnnotationUtils';
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { getDummyAnnotation } from 'src/__test-utils/annotations';
@@ -122,25 +122,25 @@ describe('filterAnnotations', () => {
     })
   );
   test('undefined filter', () => {
-    expect(AnnotationUtils.filterAnnotations(annotations)).toEqual(
+    expect(AnnotationUtilsV1.filterAnnotations(annotations)).toEqual(
       expect.arrayContaining(annotations)
     );
   });
   test('empty filter', () => {
-    expect(AnnotationUtils.filterAnnotations(annotations, {})).toEqual(
+    expect(AnnotationUtilsV1.filterAnnotations(annotations, {})).toEqual(
       expect.arrayContaining(annotations)
     );
   });
   statuses.forEach((annotationStatus, index) => {
     test(`filter ${annotationStatus}`, () => {
       expect(
-        AnnotationUtils.filterAnnotations(annotations, { annotationStatus })
+        AnnotationUtilsV1.filterAnnotations(annotations, { annotationStatus })
       ).toEqual(expect.arrayContaining([annotations[index]]));
     });
   });
   test('filter annotation text', () => {
     expect(
-      AnnotationUtils.filterAnnotations(annotations, { annotationText: 'a' })
+      AnnotationUtilsV1.filterAnnotations(annotations, { annotationText: 'a' })
     ).toEqual(expect.arrayContaining(annotations.slice(0, 2)));
   });
 });
@@ -159,7 +159,7 @@ describe('filterAnnotationIdsByAnnotationStatus', () => {
   );
   test('get ids by rejected, verified and unhandled statuses', () => {
     expect(
-      AnnotationUtils.filterAnnotationsIdsByAnnotationStatus(annotations)
+      AnnotationUtilsV1.filterAnnotationsIdsByAnnotationStatus(annotations)
     ).toEqual({
       rejectedAnnotationIds: [2],
       acceptedAnnotationIds: [1],
@@ -185,7 +185,7 @@ describe('filterAnnotationsIdsByConfidence', () => {
   describe('filter annotations with confidences: [0.9, 0.4, 0.1]', () => {
     test('rejectedThreshold: 0.25, acceptedThreshold: 0.75', () => {
       expect(
-        AnnotationUtils.filterAnnotationsIdsByConfidence(
+        AnnotationUtilsV1.filterAnnotationsIdsByConfidence(
           annotations,
           0.25,
           0.75
@@ -198,7 +198,11 @@ describe('filterAnnotationsIdsByConfidence', () => {
     });
     test('rejectedThreshold: 0.00, acceptedThreshold: 0.00', () => {
       expect(
-        AnnotationUtils.filterAnnotationsIdsByConfidence(annotations, 0.0, 0.0)
+        AnnotationUtilsV1.filterAnnotationsIdsByConfidence(
+          annotations,
+          0.0,
+          0.0
+        )
       ).toEqual({
         rejectedAnnotationIds: [],
         acceptedAnnotationIds: [1, 2, 3],
@@ -207,7 +211,11 @@ describe('filterAnnotationsIdsByConfidence', () => {
     });
     test('rejectedThreshold: 0.00, acceptedThreshold: 1.00', () => {
       expect(
-        AnnotationUtils.filterAnnotationsIdsByConfidence(annotations, 0.0, 1.0)
+        AnnotationUtilsV1.filterAnnotationsIdsByConfidence(
+          annotations,
+          0.0,
+          1.0
+        )
       ).toEqual({
         rejectedAnnotationIds: [],
         acceptedAnnotationIds: [],
@@ -216,7 +224,11 @@ describe('filterAnnotationsIdsByConfidence', () => {
     });
     test('rejectedThreshold: 1.00, acceptedThreshold: 1.00', () => {
       expect(
-        AnnotationUtils.filterAnnotationsIdsByConfidence(annotations, 1.0, 1.0)
+        AnnotationUtilsV1.filterAnnotationsIdsByConfidence(
+          annotations,
+          1.0,
+          1.0
+        )
       ).toEqual({
         rejectedAnnotationIds: [1, 2, 3],
         acceptedAnnotationIds: [],
@@ -225,7 +237,11 @@ describe('filterAnnotationsIdsByConfidence', () => {
     });
     test('rejectedThreshold: 0.50, acceptedThreshold: 0.50', () => {
       expect(
-        AnnotationUtils.filterAnnotationsIdsByConfidence(annotations, 0.5, 0.5)
+        AnnotationUtilsV1.filterAnnotationsIdsByConfidence(
+          annotations,
+          0.5,
+          0.5
+        )
       ).toEqual({
         rejectedAnnotationIds: [2, 3],
         acceptedAnnotationIds: [1],
@@ -249,7 +265,11 @@ describe('filterAnnotationsIdsByConfidence', () => {
   );
   test('Should use status as fallback if confidence is undefined', () => {
     expect(
-      AnnotationUtils.filterAnnotationsIdsByConfidence(annotations2, 0.25, 0.75)
+      AnnotationUtilsV1.filterAnnotationsIdsByConfidence(
+        annotations2,
+        0.25,
+        0.75
+      )
     ).toEqual({
       rejectedAnnotationIds: [3, 6],
       acceptedAnnotationIds: [1, 4],

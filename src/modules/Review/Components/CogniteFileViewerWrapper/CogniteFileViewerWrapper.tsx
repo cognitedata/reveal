@@ -9,9 +9,9 @@ import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import {
   AnnotationStatus,
-  AnnotationUtils,
+  AnnotationUtilsV1,
   VisionAnnotationV1,
-} from 'src/utils/AnnotationUtils';
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import * as pdfjs from 'pdfjs-dist';
 import { FilePreviewProps } from 'src/modules/Review/types';
 
@@ -123,7 +123,7 @@ export function getAnnotationStyle(
   selected?: boolean
 ): AnnotationStyle {
   const lineColor = color;
-  const { lineWidth } = AnnotationUtils;
+  const { lineWidth } = AnnotationUtilsV1;
 
   if (status && status === AnnotationStatus.Verified) {
     return {

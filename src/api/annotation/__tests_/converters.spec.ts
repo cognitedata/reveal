@@ -19,7 +19,10 @@ import {
   convertCDFAnnotationV1ToVisionAnnotation,
 } from 'src/api/annotation/converters';
 import { mockAnnotationList } from 'src/__test-utils/fixtures/annotationsV1';
-import { AnnotationStatus, KeypointItem } from 'src/utils/AnnotationUtils';
+import {
+  AnnotationStatus,
+  KeypointItem,
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   VisionImageAssetLinkAnnotation,
   VisionImageExtractedTextAnnotation,

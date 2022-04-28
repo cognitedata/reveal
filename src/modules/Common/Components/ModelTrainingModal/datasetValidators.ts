@@ -3,7 +3,7 @@ import {
   MAX_AUTOML_ANNOTATIONS_TYPE,
   MIN_AUTOML_FILES_PER_ANNOTATIONS_TYPE,
 } from 'src/api/vision/autoML/constants';
-import { VisionAnnotationV1 } from 'src/utils/AnnotationUtils';
+import { VisionAnnotationV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 import mime from 'mime-types';
 

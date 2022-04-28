@@ -5,7 +5,7 @@ import {
 import {
   AnnotationStatus,
   ModelTypeAnnotationTypeMap,
-} from 'src/utils/AnnotationUtils';
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   CDFAnnotationV1,
   AnnotationMetadataV1,
