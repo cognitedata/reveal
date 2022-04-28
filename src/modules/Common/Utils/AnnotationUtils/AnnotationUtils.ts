@@ -12,7 +12,7 @@ export const createVisionAnnotationStub = <T>({
   id: number;
   createdTime: number;
   lastUpdatedTime: number;
-  status: any;
+  status: Status;
   resourceId: AnnotatedResourceIdEither;
   data: T;
 }): VisionAnnotation<T> => ({
