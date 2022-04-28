@@ -17,7 +17,7 @@ import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 
-const getDummyImageObjectDetectionBoundingBoxAnnotation = ({
+export const getDummyImageObjectDetectionBoundingBoxAnnotation = ({
   id = 1,
   annotatedResourceId = 10,
 }: {
@@ -75,14 +75,7 @@ describe('Test annotation reducer', () => {
         payload: [],
       };
 
-      expect(reducer(previousState, action)).toEqual({
-        files: {
-          byId: {},
-        },
-        annotations: {
-          byId: {},
-        },
-      });
+      expect(reducer(previousState, action)).toEqual(initialState);
     });
 
     test('should clear only specified fileIds when clear cache is false and response is empty', () => {

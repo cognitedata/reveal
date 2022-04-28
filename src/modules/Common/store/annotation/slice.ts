@@ -10,6 +10,7 @@ import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { clearAnnotationState } from 'src/store/commonActions';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
+import { clearStates } from 'src/modules/Common/store/annotation/util';
 
 export const initialState: AnnotationState = {
   files: {
@@ -49,20 +50,9 @@ const annotationSlice = createSlice({
         const { fileIds, clearCache } = meta.arg;
 
         // clear states
-        if (clearCache) {
-          state.annotations.byId = {};
-          state.files.byId = {};
-        } else {
-          fileIds.forEach((fileId: any) => {
-            const annotationIdsForFile = state.files.byId[fileId];
-            if (annotationIdsForFile && annotationIdsForFile.length) {
-              annotationIdsForFile.forEach((annotationId) => {
-                delete state.annotations.byId[annotationId];
-              });
-            }
-            delete state.files.byId[fileId];
-          });
-        }
+        const updatedState = clearStates(state, fileIds, clearCache);
+        state.annotations = updatedState.annotations;
+        state.files = updatedState.files;
 
         // update annotations
         // ToDo (VIS-794): conversion logic from V1 to V2 in the new slice can be moved into thunks.
