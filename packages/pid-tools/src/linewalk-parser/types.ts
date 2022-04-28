@@ -55,6 +55,7 @@ export interface ParsedDocument {
   linking: DocumentLink[];
   viewBox: Rect;
   lineNumbers: string[];
+  unit: string;
 }
 
 export type DocumentForUpload =

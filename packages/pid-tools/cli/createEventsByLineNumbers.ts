@@ -88,6 +88,7 @@ const createEventsByLineNumbers = async ({
       }
 
       // Create new
+      console.log('Creating event for', lineNumber);
       // eslint-disable-next-line no-await-in-loop
       await client.events.create([
         {
@@ -96,6 +97,8 @@ const createEventsByLineNumbers = async ({
           metadata: {
             [LINEWALK_VERSION_KEY]: outputVersion,
             lineNumber,
+            // site: document.site ?
+            unit: document.unit,
             assignee: 'Garima',
             status: 'OPEN',
             system: 'unknown',
@@ -107,8 +110,6 @@ const createEventsByLineNumbers = async ({
           },
         },
       ]);
-
-      console.log('Created event for', lineNumber);
     }
   }
 };

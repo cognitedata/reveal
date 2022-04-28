@@ -30,6 +30,7 @@ const useLineReviews = () => {
       LineReviewStatus.COMPLETED,
     ],
     assignees: uniq(lineReviews.flatMap((lineReview) => lineReview.assignee)),
+    units: uniq(lineReviews.flatMap((lineReview) => lineReview.unit)),
   };
 };
 

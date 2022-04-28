@@ -95,6 +95,7 @@ export type LineReview = {
   status: LineReviewStatus;
   comment?: string;
   pdfExternalIds: string[];
+  unit: string;
 } & LineReviewState;
 
 export enum AnnotationType {

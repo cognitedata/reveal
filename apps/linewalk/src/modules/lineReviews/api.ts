@@ -72,6 +72,7 @@ type LineReviewEvent = {
     system: string;
     comment: string;
     state: string;
+    unit: string;
   };
 };
 
@@ -89,6 +90,7 @@ const lineReviewFromEvent = (
     status: event.metadata.status,
     system: event.metadata.system,
     comment: event.metadata.comment,
+    unit: event.metadata.unit,
     discrepancies: state.discrepancies,
     textAnnotations: state.textAnnotations,
     pdfExternalIds,

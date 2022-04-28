@@ -215,6 +215,12 @@ type SearchQueryParams = {
   status?: string;
   assignee?: string;
   search?: string;
+  unit?: string;
+};
+
+const DEFAULT_UNIT_OPTION = {
+  label: 'All',
+  value: '',
 };
 
 const DEFAULT_STATUS_OPTION = {
@@ -225,6 +231,24 @@ const DEFAULT_STATUS_OPTION = {
 const DEFAULT_ASSIGNEE_OPTION = {
   label: 'All',
   value: '',
+};
+
+const getInitialUnit = (
+  maybeUnitValue: string | undefined,
+  possibleUnitOptions: OptionType<string>[]
+): OptionType<string> => {
+  if (maybeUnitValue === undefined) {
+    return DEFAULT_UNIT_OPTION;
+  }
+
+  const foundUnitOption = possibleUnitOptions.find(
+    (option) => option.value === maybeUnitValue
+  );
+  if (!foundUnitOption) {
+    return DEFAULT_UNIT_OPTION;
+  }
+
+  return foundUnitOption;
 };
 
 const getInitialStatus = (
@@ -270,7 +294,8 @@ const useFilters = (
   history: H.History<unknown>,
   isLoading: boolean,
   statuses: string[],
-  assignees: string[]
+  assignees: string[],
+  units: string[]
 ) => {
   const searchQueryParams: SearchQueryParams = qs.parse(
     history.location.search
@@ -289,6 +314,15 @@ const useFilters = (
     DEFAULT_ASSIGNEE_OPTION,
     ...assignees.map((a) => ({ label: a, value: a })),
   ];
+
+  const unitOptions: OptionType<string>[] = [
+    DEFAULT_ASSIGNEE_OPTION,
+    ...units.map((a) => ({ label: a, value: a })),
+  ];
+
+  const [unit, setUnit] = useState<OptionType<string>>(
+    getInitialUnit(searchQueryParams.unit, unitOptions)
+  );
 
   const [status, setStatus] = useState<
     OptionType<LineReviewStatus> | OptionType<string>
@@ -317,12 +351,13 @@ const useFilters = (
             search,
             status: status.value,
             assignee: assignee.value,
+            unit: unit.value,
           },
           { skipEmptyString: true, skipNull: true }
         ),
       });
     }
-  }, [search, status, assignee]);
+  }, [search, status, assignee, unit]);
 
   return {
     search,
@@ -333,24 +368,31 @@ const useFilters = (
     setAssignee,
     statusOptions,
     assigneeOptions,
+    unit,
+    unitOptions,
+    setUnit,
   };
 };
 
 const LineReviews = () => {
   const history = useHistory();
 
-  const { isLoading, lineReviews, assignees, statuses } = useLineReviews();
+  const { isLoading, lineReviews, assignees, statuses, units } =
+    useLineReviews();
 
   const {
     search,
     setSearch,
     assignee,
+    assigneeOptions,
     setAssignee,
     status,
-    setStatus,
     statusOptions,
-    assigneeOptions,
-  } = useFilters(history, isLoading, statuses, assignees);
+    setStatus,
+    unit,
+    unitOptions,
+    setUnit,
+  } = useFilters(history, isLoading, statuses, assignees, units);
 
   const filteredLineReviews = lineReviews
     .filter(
@@ -365,6 +407,9 @@ const LineReviews = () => {
     .filter(
       (lineReview) =>
         assignee.value!.length === 0 || assignee.value === lineReview.assignee
+    )
+    .filter(
+      (lineReview) => unit.value!.length === 0 || unit.value === lineReview.unit
     );
 
   if (isLoading) {
@@ -433,6 +478,15 @@ const LineReviews = () => {
               value={assignee}
               onChange={setAssignee}
               options={assigneeOptions}
+            />
+          </FilterContainer>
+
+          <FilterContainer>
+            <Select
+              title="Unit"
+              value={unit}
+              onChange={setUnit}
+              options={unitOptions}
             />
           </FilterContainer>
         </FiltersContainer>
