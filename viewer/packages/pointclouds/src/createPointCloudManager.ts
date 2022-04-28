@@ -13,9 +13,10 @@ import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api'
 export function createPointCloudManager(
   modelMetadataProvider: ModelMetadataProvider,
   modelDataProvider: ModelDataProvider,
+  scene: THREE.Scene,
   renderer: THREE.WebGLRenderer
 ): PointCloudManager {
   const metadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataProvider);
   const modelFactory = new PointCloudFactory(modelDataProvider);
-  return new PointCloudManager(metadataRepository, modelFactory, renderer);
+  return new PointCloudManager(metadataRepository, modelFactory, scene, renderer);
 }

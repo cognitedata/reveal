@@ -36,11 +36,14 @@ export class PointCloudManager {
   constructor(
     metadataRepository: PointCloudMetadataRepository,
     modelFactory: PointCloudFactory,
+    scene: THREE.Scene,
     renderer: THREE.WebGLRenderer
   ) {
     this._pointCloudMetadataRepository = metadataRepository;
     this._pointCloudFactory = modelFactory;
     this._pointCloudGroupWrapper = new PotreeGroupWrapper(modelFactory.potreeInstance);
+
+    scene.add(this._pointCloudGroupWrapper);
 
     combineLatest([this._cameraSubject, this.loadedModelsObservable(), this._budgetSubject])
       .pipe(throttleTime(500, asyncScheduler, { leading: true, trailing: true }))
