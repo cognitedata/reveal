@@ -20,7 +20,7 @@ export const getBidMatrixData = async (
   return sequenceRows;
 };
 
-export const formatBidMatrixData = async (
+export const getFormattedBidMatrixData = async (
   sequenceRows: SequenceRow[]
 ): Promise<BidMatrixResponse> => {
   if (!sequenceRows?.length) {

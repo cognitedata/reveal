@@ -1,5 +1,5 @@
 import { useState, useEffect, memo, useContext } from 'react';
-import { Button, Detail, Label } from '@cognite/cogs.js';
+import { Button, Detail, Label, Loader } from '@cognite/cogs.js';
 import { BaseContainer } from 'pages/elements';
 import debounce from 'lodash/debounce';
 import {
@@ -18,6 +18,7 @@ import { PAGES } from 'pages/Menubar';
 import { PriceAreasContext } from 'providers/priceAreaProvider';
 import { useAuthContext } from '@cognite/react-container';
 import { downloadBidMatrices } from 'utils/utils';
+import NotFoundPage from 'pages/Error404';
 
 import {
   Container,
@@ -116,14 +117,27 @@ const PortfolioPage = () => {
 
   if (!allPriceAreas) {
     return loading ? (
-      <div>Loading Price Areas</div>
+      <Loader infoText="Loading Price Areas" darkMode={false} />
     ) : (
-      <div>No Price Areas found on this project</div>
+      <NotFoundPage message="No Price Areas found on this project" />
     );
   }
 
   if (loading && !priceArea && priceAreaExternalId) {
-    return <div>...loading Price Area {priceAreaExternalId}</div>;
+    const found = allPriceAreas.filter(
+      (pricearea) => pricearea.externalId === priceAreaExternalId
+    ).length;
+    return found ? (
+      <Loader
+        infoTitle="Loading Price Area:"
+        infoText={priceAreaExternalId}
+        darkMode={false}
+      />
+    ) : (
+      <NotFoundPage
+        message={`Could not find Price Area: ${priceAreaExternalId}`}
+      />
+    );
   }
 
   return priceArea ? (

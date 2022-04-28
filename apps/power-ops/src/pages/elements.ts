@@ -51,3 +51,15 @@ export const MainPanel = styled.div`
   right: 0;
   height: 100%;
 `;
+
+export const NotFound = styled(BaseContainer)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  h3 {
+    font-weight: 700;
+    font-size: 16px;
+  }
+`;

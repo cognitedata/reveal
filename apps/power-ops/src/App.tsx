@@ -8,13 +8,13 @@ import {
 } from '@cognite/react-container';
 import sidecar from 'utils/sidecar';
 import { EventStreamProvider } from 'providers/eventStreamProvider';
+import { PriceAreaProvider } from 'providers/priceAreaProvider';
 import { Providers } from 'providers/appProvider';
-import { Processes } from 'pages/Processes';
 import { Portfolio } from 'pages/Portfolio';
 import { MenuBar, PAGES } from 'pages/Menubar';
 import NotFoundPage from 'pages/Error404';
+import { Processes } from 'pages/Processes';
 import Monitoring from 'pages/Monitoring/Monitoring';
-import { PriceAreaProvider } from 'providers/priceAreaProvider';
 
 const App = () => (
   <Providers>

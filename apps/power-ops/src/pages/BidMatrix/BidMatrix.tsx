@@ -16,7 +16,7 @@ import { calculateScenarioProduction, roundWithDec } from 'utils/utils';
 import { SnifferEvent } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 
-import { formatBidMatrixData, copyMatrixToClipboard } from './utils';
+import { getFormattedBidMatrixData, copyMatrixToClipboard } from './utils';
 import {
   StyledDiv,
   StyledHeader,
@@ -45,8 +45,9 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
   const { eventStore } = useContext(EventStreamContext);
 
   const { plantExternalId } = useParams<{ plantExternalId?: string }>();
-  const [matrixHeaderConfig, setSequenceCols] = useState<Column<TableData>[]>();
-  const [matrixData, setSequenceData] = useState<TableData[]>();
+  const [matrixHeaderConfig, setMatrixHeaderConfig] =
+    useState<Column<TableData>[]>();
+  const [matrixData, setMatrixData] = useState<TableData[]>();
   const [matrix, setMatrix] = useState<MatrixWithData | null>();
   const [mainScenarioData, setMainScenarioData] = useState<TableData[]>();
   const [bidDate, setBidDate] = useState<Date>();
@@ -67,9 +68,11 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
     if (!matrix.sequenceRows?.length) return;
     setMatrix(matrix);
 
-    const { columns, data } = await formatBidMatrixData(matrix.sequenceRows);
-    setSequenceCols(columns);
-    setSequenceData(data);
+    const { columns, data } = await getFormattedBidMatrixData(
+      matrix.sequenceRows
+    );
+    setMatrixHeaderConfig(columns);
+    setMatrixData(data);
 
     if (!priceArea.bidDate) return;
 

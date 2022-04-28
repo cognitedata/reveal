@@ -98,19 +98,6 @@ const ProcessTable = ({
     canNextPage,
   } = instance;
 
-  // const eventQueries = useQueries(
-  //   page.map((row) => {
-  //     return {
-  //       queryKey: ['process', row.values.externalId],
-  //       queryFn: () =>
-  //         fetchSingleEvent({
-  //           client,
-  //           externalId: row.values.externalId,
-  //         }),
-  //     };
-  //   })
-  // );
-
   // Render the UI for your table
   return (
     <div>

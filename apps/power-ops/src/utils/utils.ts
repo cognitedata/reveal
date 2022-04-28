@@ -124,7 +124,7 @@ export const downloadBidMatrices = (
   const plantMatrixExternalIds = priceArea.plantMatrixes
     ?.map((plant) => `&externalId=${plant.matrixes[0].externalId}`)
     .join('');
-  const url = `${powerOpsApiBaseUrl}/${project}/sequeknce/bid-matrix?externalId=${totalMatrixExternalId}${plantMatrixExternalIds}`;
+  const url = `${powerOpsApiBaseUrl}/${project}/sequence/bid-matrix?externalId=${totalMatrixExternalId}${plantMatrixExternalIds}`;
 
   axios
     .get(url, {

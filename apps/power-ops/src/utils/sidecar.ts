@@ -12,7 +12,7 @@ const PROD = false;
 // examples: bluefield, greenfield, ew1, bp-northeurope, azure-dev, bp
 // NOTE: leave on 'azure-dev' for testing in the PR's since that is the only place we have the FAKEIdp currently for this project:
 const CLUSTER = 'az-power-no-northeurope';
-const LOCAL_SERVICES: Service[] = ['power-ops-api'];
+const LOCAL_SERVICES: Service[] = [];
 // #
 // #
 // #
@@ -49,15 +49,10 @@ const getAadApplicationId = (cluster: string) => {
   applicationId: 'power-ops',
   applicationName: 'Power Ops',
   docsSiteBaseUrl: 'https://docs.cognite.com',
-  nomaApiBaseUrl: 'https://noma.development.cognite.ai',
   locize: {
     keySeparator: false,
     projectId: '1ee63b21-27c7-44ad-891f-4bd9af378b72', // <- move this to release-configs
     version: 'Production', // <- move this to release-configs
-  },
-  intercomSettings: {
-    app_id: 'ou1uyk2p',
-    hide_default_launcher: true,
   },
   enableUserManagement: true,
   ...((window as any).__cogniteSidecar || {}),

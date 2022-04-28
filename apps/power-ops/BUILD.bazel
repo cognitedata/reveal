@@ -71,7 +71,10 @@ DEPENDENCIES = [
     "@npm//@cognite/sdk",
     "@npm//@cognite/power-ops-api-types",
     "@npm//@sentry/browser",
+    "@npm//axios",
+    "@npm//dayjs",
     "@npm//lodash",
+    "@npm//plotly.js",
     "@npm//react",
     "@npm//react-dom",
     "@npm//react-plotly.js",
@@ -86,10 +89,12 @@ DEPENDENCIES = [
     "//packages/sidecar",
     "//packages/z-index",
     "//packages/react-i18n",
+    "//packages/auth-utils",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
+    "@npm//@types/axios",
     "@npm//@types/lodash",
     "@npm//@types/react",
     "@npm//@types/react-dom",
@@ -113,15 +118,18 @@ DEV_DEPENDENCIES = [
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
     "App": "build/App",
+    "components": "build/components",
     "global-styles": "build/global-styles",
     "index": "build/index",
     "pages": "build/pages",
     "providers": "build/providers",
     "queries": "build/queries",
     "react-app-env.d": "build/react-app-env.d",
+    "react-table-config.d": "build/react-table-config.d",
     "serviceWorker": "build/serviceWorker",
     "setupTests": "build/setupTests",
     "styles": "build/styles",
+    "types": "build/types",
     "typings": "build/typings",
     "utils": "build/utils",
 }
