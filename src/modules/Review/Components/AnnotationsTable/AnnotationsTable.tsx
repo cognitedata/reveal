@@ -5,8 +5,10 @@ import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1'
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { FileInfo } from '@cognite/sdk';
 import { AnnotationTableItem } from 'src/modules/Review/types';
-import { CollapsibleAnnotationTableRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/CollapsibleAnnotationTableRow';
-import { AssetLinkWarning } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/AssetLinkWarning';
+import {
+  AssetLinkWarning,
+  CollapsibleAnnotationTableRow,
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/components/common';
 
 export interface AnnotationTableProps {
   title: string;
