@@ -1,12 +1,13 @@
 import { screen } from '@testing-library/react';
 
+import { mockNdsV2Events } from '__test-utils/fixtures/nds';
 import { testRenderer } from '__test-utils/renderer';
 
-import EventsColumn, {
+import NdsEventsColumn, {
   EMPTY_STATE_TEXT,
   LOADING_TEXT,
   Props,
-} from '../NptEventsColumn';
+} from '../Events/NdsEventsColumn';
 
 const props = {
   scaleBlocks: [],
@@ -14,9 +15,11 @@ const props = {
   isEventsLoading: false,
 };
 
-describe('Events Column', () => {
+describe('NdsEventsColumn Tests', () => {
   const page = (viewProps?: Props) =>
-    testRenderer(EventsColumn, undefined, viewProps);
+    testRenderer(NdsEventsColumn, undefined, viewProps);
+
+  const ndsEvents = mockNdsV2Events();
 
   const defaultTestInit = async (props: Props) => {
     return {
@@ -35,5 +38,17 @@ describe('Events Column', () => {
   it(`should display empty state`, async () => {
     await defaultTestInit({ ...props, events: [] });
     expect(await screen.findByText(EMPTY_STATE_TEXT)).toBeInTheDocument();
+  });
+
+  /**
+   * Doesn't make any sense to mock old NDS event and write a test. Do once old sdk is cleaned up
+   */
+  it(`Should display events`, async () => {
+    await defaultTestInit({
+      ...props,
+      events: ndsEvents,
+      scaleBlocks: [0, 200],
+    });
+    expect(await screen.findByText(ndsEvents.length)).toBeInTheDocument();
   });
 });

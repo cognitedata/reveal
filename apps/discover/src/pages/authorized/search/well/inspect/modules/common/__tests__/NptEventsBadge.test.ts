@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 
 import { testRenderer } from '__test-utils/renderer';
 
-import EventsBadge from '../NptEventsBadge';
+import NptEventsBadge from '../Events/NptEventsBadge';
 
 const props = {
   events: [
@@ -15,9 +15,9 @@ const props = {
   ],
 };
 
-describe('Events Badge', () => {
+describe('Npt Events Badge', () => {
   const page = (viewProps?: any) =>
-    testRenderer(EventsBadge, undefined, viewProps);
+    testRenderer(NptEventsBadge, undefined, viewProps);
 
   const defaultTestInit = async () => {
     return {

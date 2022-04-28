@@ -5,14 +5,14 @@ import isEmpty from 'lodash/isEmpty';
 import EmptyState from 'components/emptyState';
 import { NDSEvent } from 'modules/wellSearch/types';
 
-import { NPT_COLUMN_TITLE } from './constants';
+import { NDS_COLUMN_TITLE } from './constants';
 import {
   BodyColumn,
   BodyColumnHeaderWrapper,
   BodyColumnMainHeader,
   BodyColumnBody,
   ScaleLine,
-  CasingScale,
+  DepthMeasurementScale,
   LastScaleBlock,
   EmptyStateWrapper,
 } from './elements';
@@ -72,7 +72,7 @@ const NdsEventsColumn: React.FC<Props> = ({
   return (
     <BodyColumn width={150}>
       <BodyColumnHeaderWrapper>
-        <BodyColumnMainHeader>{NPT_COLUMN_TITLE}</BodyColumnMainHeader>
+        <BodyColumnMainHeader>{NDS_COLUMN_TITLE}</BodyColumnMainHeader>
       </BodyColumnHeaderWrapper>
       <BodyColumnBody>
         {(isEventsLoading || isEmpty(events)) && (
@@ -85,7 +85,7 @@ const NdsEventsColumn: React.FC<Props> = ({
           </EmptyStateWrapper>
         )}
         {!isEventsLoading && !isEmpty(events) && (
-          <CasingScale>{blockElements}</CasingScale>
+          <DepthMeasurementScale>{blockElements}</DepthMeasurementScale>
         )}
       </BodyColumnBody>
     </BodyColumn>

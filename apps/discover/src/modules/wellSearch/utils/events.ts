@@ -224,7 +224,7 @@ export const mapWellInfoToNdsEvents = (
               : '',
             tvd_offset_hole_start_unit: userPreferredUnit,
           },
-          riskType: event.subtype,
+          riskType: event.subtype || '',
           wellboreId,
           wellName: wellbores[wellboreId]?.metadata?.wellName,
           wellboreName:

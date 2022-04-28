@@ -24,7 +24,7 @@ export type Props = {
 const MIN_SIZE_PERCENTAGE = 70;
 const MAX_SIZE_PERCENTAGE = 100;
 
-const EventsBadge: React.FC<Props> = ({ events }: Props) => {
+const NptEventsBadge: React.FC<Props> = ({ events }: Props) => {
   /**
    * Visibility state of events badge hover content.
    *
@@ -81,4 +81,4 @@ const EventsBadge: React.FC<Props> = ({ events }: Props) => {
   );
 };
 
-export default EventsBadge;
+export default NptEventsBadge;

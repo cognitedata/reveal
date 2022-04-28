@@ -15,10 +15,22 @@ import orderBy from 'lodash/orderBy';
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 
 import EmptyState from 'components/emptyState';
+import { DepthMeasurementUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
 import { convertToPreviewData } from 'modules/wellSearch/utils/casings';
 import { FlexColumn } from 'styles/layout';
 
+import DepthColumn from '../../common/Events/DepthColumn';
+import {
+  ScaleLine,
+  DepthMeasurementScale,
+  BodyWrapper,
+  BodyColumn,
+  BodyColumnHeaderWrapper,
+  BodyColumnMainHeader,
+  BodyColumnBody,
+} from '../../common/Events/elements';
+import EventsByDepth from '../../common/Events/EventsByDepth';
 import { SelectedWellboreNptView } from '../../events/Npt/graph';
 import { SelectedWellbore } from '../../events/Npt/graph/types';
 import { SIDE_MODES } from '../constants';
@@ -31,26 +43,16 @@ import {
   EMPTY_SCHEMA_TEXT,
   LOADING_TEXT,
 } from './constants';
-import DepthColumn from './DepthColumn';
 import DepthIndicator from './DepthIndicator/DepthIndicator';
 import {
-  BodyWrapper,
   DepthIndicatorGutter,
   Wrapper,
   Header,
   MainHeader,
   SubHeader,
-  BodyColumn,
-  BodyColumnHeaderWrapper,
-  BodyColumnMainHeader,
-  BodyColumnBody,
-  ScaleLine,
-  CasingScale,
   EmptyCasingsStateWrapper,
 } from './elements';
 import { CasingViewTypeProps } from './interfaces';
-import NdsEventsColumn from './NdsEventsColumn';
-import NptEventsColumn from './NptEventsColumn';
 import { getMinMaxDepth, isTied, mirrorCasingData } from './utils';
 
 const MIN_SCALE_HEIGHT = 16;
@@ -174,13 +176,17 @@ const CasingView: FC<CasingViewTypeProps> = ({
             </EmptyCasingsStateWrapper>
           ) : (
             <>
-              <DepthColumn scaleBlocks={scaleBlocks} unit={unit} />
+              <DepthColumn
+                scaleBlocks={scaleBlocks}
+                unit={unit}
+                measurementUnit={DepthMeasurementUnit.MD}
+              />
               <BodyColumn width={150}>
                 <BodyColumnHeaderWrapper>
                   <BodyColumnMainHeader>Schema</BodyColumnMainHeader>
                 </BodyColumnHeaderWrapper>
                 <BodyColumnBody>
-                  <CasingScale ref={scaleRef}>
+                  <DepthMeasurementScale ref={scaleRef}>
                     {isEmpty(casings) ? (
                       <EmptyCasingsStateWrapper>
                         <EmptyState emptySubtitle={EMPTY_SCHEMA_TEXT} />
@@ -188,7 +194,7 @@ const CasingView: FC<CasingViewTypeProps> = ({
                     ) : (
                       scaleBlocks.map((row) => <ScaleLine key={row} />)
                     )}
-                  </CasingScale>
+                  </DepthMeasurementScale>
 
                   {normalizedCasings.map((normalizedCasing, index) => (
                     <Fragment key={normalizedCasing.id}>
@@ -213,15 +219,17 @@ const CasingView: FC<CasingViewTypeProps> = ({
                 </BodyColumnBody>
               </BodyColumn>
 
-              <NptEventsColumn
+              {/**
+                  Render NPT and NDS Events vs MD
+               */}
+              <EventsByDepth
+                minDepth={minDepth}
+                maxDepth={maxDepth}
+                ndsEvents={validNdsEvents}
+                nptEvents={validNptEvents}
+                isNdsEventsLoading={isNdsEventsLoading}
+                isNptEventsLoading={isNptEventsLoading}
                 scaleBlocks={scaleBlocks}
-                events={validNptEvents}
-                isEventsLoading={isNptEventsLoading}
-              />
-              <NdsEventsColumn
-                scaleBlocks={scaleBlocks}
-                events={validNdsEvents}
-                isEventsLoading={isNdsEventsLoading}
               />
             </>
           )}

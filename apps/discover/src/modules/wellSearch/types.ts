@@ -361,6 +361,7 @@ export interface NDSEvent extends CogniteEvent {
   wellboreId: string;
   wellName?: string;
   wellboreName?: string;
+  riskType: string;
 }
 
 export interface FilterValues {

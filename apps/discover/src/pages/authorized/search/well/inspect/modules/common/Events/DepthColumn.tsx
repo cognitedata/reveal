@@ -1,7 +1,10 @@
 import React from 'react';
 
-import { UMSUserProfilePreferences } from '@cognite/user-management-service-types';
-
+import {
+  DepthMeasurementUnit,
+  DistanceUnit,
+  UserPreferredUnit,
+} from 'constants/units';
 import { FlexGrow } from 'styles/layout';
 
 import {
@@ -11,31 +14,36 @@ import {
   BodyColumnSubHeader,
   BodyColumnBody,
   ScaleLine,
-  CasingScale,
+  DepthMeasurementScale,
   ScaleLineDepth,
 } from './elements';
 
 export type Props = {
   scaleBlocks: number[];
-  unit: UMSUserProfilePreferences.MeasurementEnum | 'ft' | 'm';
+  measurementUnit: DepthMeasurementUnit;
+  unit: UserPreferredUnit | DistanceUnit.FEET | DistanceUnit.METER;
 };
 
-const DepthColumn: React.FC<Props> = ({ scaleBlocks, unit }: Props) => {
+const DepthColumn: React.FC<Props> = ({
+  scaleBlocks,
+  measurementUnit,
+  unit,
+}: Props) => {
   return (
     <BodyColumn width={100}>
       <BodyColumnHeaderWrapper>
-        <BodyColumnMainHeader>MD</BodyColumnMainHeader>
+        <BodyColumnMainHeader>{measurementUnit}</BodyColumnMainHeader>
         <FlexGrow />
         <BodyColumnSubHeader>{unit}</BodyColumnSubHeader>
       </BodyColumnHeaderWrapper>
       <BodyColumnBody>
-        <CasingScale>
+        <DepthMeasurementScale>
           {scaleBlocks.map((row) => (
             <ScaleLine key={row}>
               <ScaleLineDepth>{row.toFixed(2)}</ScaleLineDepth>
             </ScaleLine>
           ))}
-        </CasingScale>
+        </DepthMeasurementScale>
       </BodyColumnBody>
     </BodyColumn>
   );
