@@ -15,7 +15,7 @@ import { createFileInfo } from 'src/store/util/StateUtils';
 import {
   annotatedFilesById,
   annotationsById,
-} from 'src/modules/Common/store/annotation/selectors';
+} from 'src/modules/Common/store/annotationV1/selectors';
 import {
   AnnotationStatus,
   getAnnotationsBadgeCounts,
@@ -203,8 +203,8 @@ export const selectProcessAllSelectedFilesInSortedOrder = createSelector(
 
 export const selectProcessSummary = createSelector(
   selectAllProcessFiles,
-  (state: RootState) => annotatedFilesById(state.annotationReducer),
-  (state: RootState) => annotationsById(state.annotationReducer),
+  (state: RootState) => annotatedFilesById(state.annotationV1Reducer),
+  (state: RootState) => annotationsById(state.annotationV1Reducer),
   (processFiles, allAnnotatedFiles, allAnnotations) => {
     // all files with geolocation
     const totalFilesWithGeolocation = processFiles.filter(

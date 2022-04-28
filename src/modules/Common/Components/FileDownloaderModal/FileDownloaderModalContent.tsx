@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 import { ToastUtils } from 'src/utils/ToastUtils';
-import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
+import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotationV1/selectors';
 import { renameDuplicates } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import { getDownloadControls } from './DownloadControlButtons';
 import {
@@ -45,8 +45,8 @@ export const FileDownloaderModalContent = ({
     makeSelectAnnotationsForFileIds,
     []
   );
-  const annotations = useSelector(({ annotationReducer }: RootState) =>
-    selectAnnotationsForFileIds(annotationReducer, fileIds)
+  const annotations = useSelector(({ annotationV1Reducer }: RootState) =>
+    selectAnnotationsForFileIds(annotationV1Reducer, fileIds)
   );
 
   const annotationStatusMap = () => {

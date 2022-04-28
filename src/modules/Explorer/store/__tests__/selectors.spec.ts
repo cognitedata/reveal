@@ -1,4 +1,4 @@
-import { AnnotationState } from 'src/modules/Common/store/annotation/types';
+import { AnnotationStateV1 } from 'src/modules/Common/store/annotationV1/types';
 import { SortKeys } from 'src/modules/Common/Utils/SortUtils';
 import {
   selectExplorerSelectedIds,
@@ -18,7 +18,7 @@ import { VisionFilesToFileState } from 'src/store/util/StateUtils';
 import { mockFileList } from 'src/__test-utils/fixtures/files';
 
 const createMockAnnotation = (id?: number, fileId?: number) => {
-  return AnnotationUtils.createVisionAnnotationStub(
+  return AnnotationUtils.createVisionAnnotationStubV1(
     id || 1,
     'foo',
     VisionDetectionModelType.ObjectDetection,
@@ -129,7 +129,7 @@ describe('Test file explorer selectors', () => {
     });
   });
 
-  const annoState: AnnotationState = {
+  const annoState: AnnotationStateV1 = {
     files: {
       byId: { 1: [1, 2], 2: [], 4: [4] },
     },
@@ -154,7 +154,7 @@ describe('Test file explorer selectors', () => {
   };
   const rootState: RootState = {
     explorerReducer: explorerState,
-    annotationReducer: annoState,
+    annotationV1Reducer: annoState,
   } as RootState;
 
   describe('Test selectExplorerFilesWithAnnotationCount', () => {
