@@ -232,6 +232,7 @@ describe('convertVisionJobAnnotationToImageKeypointCollection', () => {
       confidence: 0.1,
       data: {
         keypointNames: ['left', 'right'],
+        gauge_value: 1.2,
       },
       ...points,
     } as VisionJobAnnotation;
@@ -240,6 +241,17 @@ describe('convertVisionJobAnnotationToImageKeypointCollection', () => {
     ).toStrictEqual({
       confidence: visionJobAnnotation.confidence,
       label: visionJobAnnotation.text,
+      attributes: {
+        unit: {
+          type: 'unit',
+          value: (visionJobAnnotation as GaugeReaderJobAnnotation).data.unit,
+        },
+        gaugeValue: {
+          type: 'numerical',
+          value: (visionJobAnnotation as GaugeReaderJobAnnotation).data
+            .gauge_value,
+        },
+      },
       keypoints: visionJobAnnotation.region?.vertices.map((vertex, index) => {
         return {
           label: (visionJobAnnotation as GaugeReaderJobAnnotation).data
