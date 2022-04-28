@@ -5,7 +5,7 @@ import { fireEvent, screen } from '@testing-library/react';
 import { testRenderer } from 'src/__test-utils/renderer';
 import { ModelTrainingModalContent } from 'src/modules/Common/Components/ModelTrainingModal/ModelTrainingModalContent';
 import { getMockedStore } from 'src/__test-utils/store.utils';
-import { AnnotationUtils } from 'src/utils/AnnotationUtils';
+import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   MAX_AUTOML_ANNOTATIONS_TYPE,
   MIN_AUTOML_FILES_PER_ANNOTATIONS_TYPE,
@@ -46,7 +46,7 @@ describe('ModelTrainingModalContent', () => {
 
   const getMockData = (data: MockDataType[]) => {
     const getDummyAnnotation = (id: number, text: string, fileId: number) => {
-      return AnnotationUtils.createVisionAnnotationStubV1(
+      return AnnotationUtilsV1.createVisionAnnotationStubV1(
         id || 1,
         text || 'pump',
         1,

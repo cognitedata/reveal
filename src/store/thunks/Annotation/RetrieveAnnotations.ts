@@ -1,7 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
-import { AnnotationUtils, VisionAnnotationV1 } from 'src/utils/AnnotationUtils';
+import {
+  AnnotationUtilsV1,
+  VisionAnnotationV1,
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { CDFAnnotationV1 } from 'src/api/annotation/types';
 import { validateAnnotation } from 'src/api/annotation/utils';
 import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
@@ -49,7 +52,7 @@ export const RetrieveAnnotations = createAsyncThunk<
           }
         );
         const visionAnnotations =
-          AnnotationUtils.convertToVisionAnnotationsV1(filteredAnnotations);
+          AnnotationUtilsV1.convertToVisionAnnotationsV1(filteredAnnotations);
         return visionAnnotations;
       }),
       reduce((allAnnotations, annotationsPerFile) => {

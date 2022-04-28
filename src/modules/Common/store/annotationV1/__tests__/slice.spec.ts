@@ -8,7 +8,7 @@ import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotat
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
-import { AnnotationUtils } from 'src/utils/AnnotationUtils';
+import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 describe('Test annotationV1 reducer', () => {
   const getDummyAnnotationV1 = (
@@ -16,7 +16,7 @@ describe('Test annotationV1 reducer', () => {
     modelType?: number,
     annotatedResourceId?: number
   ) => {
-    return AnnotationUtils.createVisionAnnotationStubV1(
+    return AnnotationUtilsV1.createVisionAnnotationStubV1(
       id || 1,
       'pump',
       modelType || 1,

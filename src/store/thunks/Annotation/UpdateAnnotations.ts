@@ -5,7 +5,10 @@ import {
   getFieldOrSetNull,
   validateAnnotation,
 } from 'src/api/annotation/utils';
-import { AnnotationUtils, VisionAnnotationV1 } from 'src/utils/AnnotationUtils';
+import {
+  AnnotationUtilsV1,
+  VisionAnnotationV1,
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { CDFAnnotationV1 } from 'src/api/annotation/types';
 
 export const UpdateAnnotations = createAsyncThunk<
@@ -43,6 +46,6 @@ export const UpdateAnnotations = createAsyncThunk<
   const responseAnnotations = response.data.items;
 
   const updatedVisionAnnotations =
-    AnnotationUtils.convertToVisionAnnotationsV1(responseAnnotations);
+    AnnotationUtilsV1.convertToVisionAnnotationsV1(responseAnnotations);
   return updatedVisionAnnotations;
 });

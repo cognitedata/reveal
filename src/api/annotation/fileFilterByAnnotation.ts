@@ -1,5 +1,5 @@
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
-import { AnnotationUtils } from 'src/utils/AnnotationUtils';
+import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import { validateAnnotation } from 'src/api/annotation/utils';
 import { FileInfo } from '@cognite/sdk';
@@ -35,7 +35,7 @@ const getAnnotations = async (
     }
   });
 
-  return AnnotationUtils.convertToVisionAnnotationsV1(validAnnotations);
+  return AnnotationUtilsV1.convertToVisionAnnotationsV1(validAnnotations);
 };
 
 export const fileFilterByAnnotation = async (

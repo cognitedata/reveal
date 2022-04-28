@@ -3,7 +3,10 @@ import { OptionType } from '@cognite/cogs.js';
 import { ReactText } from 'react';
 import { tools } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/Tools';
 import { VisibleAnnotation } from 'src/modules/Review/store/reviewSlice';
-import { AnnotationStatus, KeypointItem } from 'src/utils/AnnotationUtils';
+import {
+  AnnotationStatus,
+  KeypointItem,
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 export type KeypointItemCollection = {
   id: string;

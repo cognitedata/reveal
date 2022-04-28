@@ -41,7 +41,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { AppDispatch } from 'src/store';
 import { AnnotationEditPopup } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup/AnnotationEditPopup';
-import { AnnotationUtils } from 'src/utils/AnnotationUtils';
+import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { RootState } from 'src/store/rootReducer';
 import { tools } from './Tools';
@@ -85,11 +85,11 @@ export const ReactImageAnnotateWrapper = ({
     (keypoint) => ({
       value: keypoint.collectionName,
       label: keypoint.collectionName,
-      icon: AnnotationUtils.getIconType({
+      icon: AnnotationUtilsV1.getIconType({
         text: keypoint.collectionName,
         modelType: VisionDetectionModelType.ObjectDetection,
       }),
-      color: AnnotationUtils.getAnnotationColor(
+      color: AnnotationUtilsV1.getAnnotationColor(
         keypoint.collectionName,
         VisionDetectionModelType.ObjectDetection,
         { keypoint: true }
@@ -99,7 +99,7 @@ export const ReactImageAnnotateWrapper = ({
   const shapeOptions = predefinedAnnotations?.predefinedShapes.map((shape) => ({
     value: shape.shapeName,
     label: shape.shapeName,
-    icon: AnnotationUtils.getIconType({
+    icon: AnnotationUtilsV1.getIconType({
       text: shape.shapeName,
       modelType: VisionDetectionModelType.ObjectDetection,
     }),

@@ -98,7 +98,7 @@ export interface AnnotationIdsByStatus {
   unhandledAnnotationIds: number[];
 }
 
-export class AnnotationUtils {
+export class AnnotationUtilsV1 {
   public static lineWidth = 5;
 
   public static getModelId(fileId: string, modelType: number): string {
@@ -137,10 +137,10 @@ export class AnnotationUtils {
     annotations: CDFAnnotationV1[]
   ): VisionAnnotationV1[] {
     return annotations.map((value) => {
-      let ann = AnnotationUtils.createVisionAnnotationStubV1(
+      let ann = AnnotationUtilsV1.createVisionAnnotationStubV1(
         value.id,
         value.text,
-        AnnotationUtils.getAnnotationsDetectionModelType(value),
+        AnnotationUtilsV1.getAnnotationsDetectionModelType(value),
         value.annotatedResourceId,
         value.createdTime,
         value.lastUpdatedTime,
@@ -186,7 +186,7 @@ export class AnnotationUtils {
     assetExternalId?: string
   ): VisionAnnotationV1 {
     return {
-      color: AnnotationUtils.getAnnotationColor(text, modelType, data),
+      color: AnnotationUtilsV1.getAnnotationColor(text, modelType, data),
       modelType,
       type,
       source,
