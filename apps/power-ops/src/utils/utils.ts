@@ -1,6 +1,8 @@
 import { CalculatedProduction } from '@cognite/power-ops-api-types';
 import { DoubleDatapoint } from '@cognite/sdk';
-import { SequenceRow } from 'types';
+import { PriceAreaWithData, SequenceRow } from 'types';
+import sidecar from 'utils/sidecar';
+import axios from 'axios';
 
 export const CHART_COLORS: string[] = [
   '#008b8b',
@@ -109,4 +111,41 @@ export const calculateScenarioProduction = (
     });
   });
   return production;
+};
+
+export const downloadBidMatrices = (
+  priceArea: PriceAreaWithData,
+  project: string | undefined,
+  token: string | undefined
+) => {
+  const { powerOpsApiBaseUrl } = sidecar;
+
+  const totalMatrixExternalId = priceArea.totalMatrixes[0].externalId;
+  const plantMatrixExternalIds = priceArea.plantMatrixes
+    ?.map((plant) => `&externalId=${plant.matrixes[0].externalId}`)
+    .join('');
+  const url = `${powerOpsApiBaseUrl}/${project}/sequeknce/bid-matrix?externalId=${totalMatrixExternalId}${plantMatrixExternalIds}`;
+
+  axios
+    .get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/zip',
+      },
+      responseType: 'blob',
+    })
+    .then((response) => {
+      const blob: Blob = new Blob([response.data]);
+      triggerDownloadFromBlob('bid-matrices.zip', blob);
+    });
+};
+
+export const triggerDownloadFromBlob = (fileName: string, blob: Blob) => {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', fileName);
+  document.body.appendChild(link);
+  link.click();
+  link.parentNode?.removeChild(link);
 };

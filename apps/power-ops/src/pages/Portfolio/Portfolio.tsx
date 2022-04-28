@@ -16,6 +16,8 @@ import PriceScenarios from 'pages/PriceScenarios';
 import BidMatrix from 'pages/BidMatrix';
 import { PAGES } from 'pages/Menubar';
 import { PriceAreasContext } from 'providers/priceAreaProvider';
+import { useAuthContext } from '@cognite/react-container';
+import { downloadBidMatrices } from 'utils/utils';
 
 import {
   Container,
@@ -28,6 +30,9 @@ import {
 } from './elements';
 
 const PortfolioPage = () => {
+  const { client } = useAuthContext();
+  const { authState } = useAuthContext();
+
   const { priceArea, allPriceAreas, priceAreaChanged } =
     useContext(PriceAreasContext);
 
@@ -130,7 +135,13 @@ const PortfolioPage = () => {
             {`Matrix generation started: ${startDate}`}
           </Label>
         </div>
-        <Button icon="Download" type="primary">
+        <Button
+          icon="Download"
+          type="primary"
+          onClick={() =>
+            downloadBidMatrices(priceArea, client?.project, authState?.token)
+          }
+        >
           Download
         </Button>
       </Header>

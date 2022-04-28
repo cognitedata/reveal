@@ -15,7 +15,7 @@ export const getBidMatrixData = async (
     .retrieveRows({
       externalId: matrixExternalId || '',
     })
-    .autoPagingToArray({ limit: 100 });
+    .autoPagingToArray({ limit: Infinity });
 
   return sequenceRows;
 };

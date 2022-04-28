@@ -1,6 +1,6 @@
 import { DoubleDatapoint } from '@cognite/sdk';
 import { useState, useEffect } from 'react';
-import { Button, Tooltip, Label, Detail } from '@cognite/cogs.js';
+import { Button, Tooltip, Detail } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import { Column } from 'react-table';
 import { useParams } from 'react-router-dom';
@@ -221,12 +221,9 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
             <span>
               <StyledTitle level={5}>Price Scenario</StyledTitle>
             </span>
-            <Detail>
-              Water value
-              <Label size="small" variant="unknown">
-                155 NOK
-              </Label>
-            </Detail>
+            {/* TODO(POWEROPS-297):
+            Replace with water value */}
+            <div style={{ height: '16px' }} />
           </div>
         </StyledHeader>
         <StyledBidMatrix>
