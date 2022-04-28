@@ -1,3 +1,7 @@
+## 1.2.3 Apr 28 2022
+
+- Added performance tracking : can log performance related events to the frontend metrics service.
+
 ## 1.2.1 Sept 23 2021
 
 - Fix failed publish
