@@ -1,8 +1,13 @@
 import styled from 'styled-components';
-import { CollapsePanelProps, Icon } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 import React from 'react';
 
-export const ExpandIconComponent = ({ isActive }: CollapsePanelProps) => {
+/**
+ * Annimated Expand/Collapse icon component
+ * @param isActive
+ * @constructor
+ */
+export const ExpandIconComponent = ({ isActive }: { isActive: boolean }) => {
   return (
     <IconContainer>
       <Icon
