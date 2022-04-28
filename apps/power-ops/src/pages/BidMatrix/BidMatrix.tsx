@@ -104,7 +104,10 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
         index < Math.min(scenarioPricePerHour.length, production.length);
         index++
       ) {
-        if (scenarioPricePerHour[index]?.value && production?.[index]?.value)
+        if (
+          Number.isFinite(scenarioPricePerHour[index]?.value) &&
+          Number.isFinite(production?.[index]?.value)
+        )
           dataArray.push({
             id: index,
             base: roundWithDec(scenarioPricePerHour[index].value as number),

@@ -27,7 +27,7 @@ export const StyledHeader = styled.div`
   display: flex;
   align-items: center;
   box-shadow: inset 0px -1px 0px var(--cogs-bg-control--disabled);
-  margin: 0 16px;
+  padding: 0 16px;
   font-family: 'Inter';
   font-style: normal;
   height: 72px;
