@@ -65,11 +65,7 @@ export const SchemaTypeField = ({
   );
 
   return (
-    <Flex
-      gap={8}
-      justifyContent="space-between"
-      style={{ paddingLeft: 16, paddingRight: 10 }}
-    >
+    <Flex gap={8} justifyContent="space-between" className="pl-4 pr-2.5">
       <InputWrapper>
         <Input
           data-cy="schema-type-field"

@@ -4,7 +4,6 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider as ReduxProvider } from 'react-redux';
 import { I18nContainer } from '@cognite/react-i18n';
 import { StoreType } from '@platypus-app/redux/store';
-import { GlobalStyle } from '@platypus-app/AppGlobalStyles';
 
 export type Props = {
   store: StoreType;
@@ -16,7 +15,6 @@ const AppProviders = ({ store, children, tenant }: Props) => {
   return (
     <ReduxProvider store={store}>
       <I18nContainer>
-        <GlobalStyle />
         <BrowserRouter basename={`/${tenant}`}>{children}</BrowserRouter>
       </I18nContainer>
     </ReduxProvider>

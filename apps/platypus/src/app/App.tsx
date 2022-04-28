@@ -1,7 +1,6 @@
 import { Container } from '@cognite/react-container';
 import { BrowserRouter as Router } from 'react-router-dom';
 import styled from 'styled-components/macro';
-import { GlobalStyle } from './AppGlobalStyles';
 import { AuthContainer } from './AuthContainer';
 import { ToastContainer } from '@cognite/cogs.js';
 
@@ -30,7 +29,6 @@ function App() {
       <ToastContainer />
       <ContainerComponent sidecar={sidecar} store={store}>
         <AuthContainerComponent>
-          <GlobalStyle />
           <StyledWrapper>
             <Router basename={tenant}>
               <StyledPage>
