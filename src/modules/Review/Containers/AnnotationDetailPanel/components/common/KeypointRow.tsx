@@ -1,4 +1,4 @@
-import { KeypointVertex } from 'src/utils/AnnotationUtils';
+import { KeypointVertex } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import styled from 'styled-components';
 import { Col, Row } from '@cognite/cogs.js';
 import React from 'react';
