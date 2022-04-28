@@ -1,4 +1,4 @@
-import { AnnotatedResourceIdEither, Status } from 'src/api/annotation/types';
+import { AnnotatedResourceId, Status } from 'src/api/annotation/types';
 import { VisionAnnotation } from 'src/modules/Common/types';
 
 export const createVisionAnnotationStub = <T>({
@@ -13,7 +13,7 @@ export const createVisionAnnotationStub = <T>({
   createdTime: number;
   lastUpdatedTime: number;
   status: Status;
-  resourceId: AnnotatedResourceIdEither;
+  resourceId: AnnotatedResourceId;
   data: T;
 }): VisionAnnotation<T> => ({
   id,
