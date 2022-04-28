@@ -8,7 +8,8 @@ import * as THREE from 'three';
 import { MeasurementGizmo } from './MeasurementGizmo';
 import { MeasurementLabel } from './MeaurementLabel';
 import { Measurement } from './Measurement';
-import { MeasurementLabelOptions } from './types';
+import { MeasurementLabelOptions, MeasurementLineOptions } from './types';
+import { MeasurementDistance } from './MeasurementDistance';
 
 export class MeasurementControls {
   private readonly _domElement: HTMLElement;
@@ -28,9 +29,9 @@ export class MeasurementControls {
     this._domElement = viewer.domElement;
     this._inputHandler = viewer.inputHandler;
     this._measurementGizmo = new MeasurementGizmo(this._viewer);
-    this._measurementLabel = new MeasurementLabel(this._viewer, this._labelOptions);
+    this._measurementLabel = new MeasurementLabel(this._viewer);
     this._startPosition = new THREE.Vector3();
-    this._labelOptions = labelOptions;
+    this._labelOptions = labelOptions ?? this._labelOptions;
 
     this.setupInputHandling();
   }
@@ -109,6 +110,13 @@ export class MeasurementControls {
     const texture = this._measurementLabel.getOverlayTexture(distanceValue);
     this._measurementLabel.updateLabelTexture(texture);
     this._measurementLabel.updateLabelPosition(this._startPosition, point);
+  }
+
+  public updateLineOptions(options: MeasurementLineOptions): void {
+    if (this._measurement) {
+      const distanceMeasurement = this._measurement as MeasurementDistance;
+      distanceMeasurement.setLineOptions(options);
+    }
   }
 
   public dispose(): void {

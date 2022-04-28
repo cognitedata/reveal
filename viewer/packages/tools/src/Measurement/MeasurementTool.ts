@@ -23,6 +23,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    */
   public addMeasurementDistance(): void {
     this._measurementDistance = new MeasurementDistance(this._viewer);
+    this._measurementControls.add(this._measurementDistance);
   }
 
   /**
@@ -33,8 +34,8 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   public setLineOptions(lineOptions: MeasurementLineOptions): void {
-    if (this._measurementDistance) {
-      this._measurementDistance.setLineOptions(lineOptions);
+    if (this._measurementControls) {
+      this._measurementControls.updateLineOptions(lineOptions);
     }
   }
 }

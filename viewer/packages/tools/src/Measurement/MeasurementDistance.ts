@@ -18,7 +18,6 @@ export class MeasurementDistance implements Measurement {
   private readonly _startPoint: THREE.Vector3;
   private readonly _endPoint: THREE.Vector3;
   private _positions: Float32Array;
-  private _colors: Float32Array;
   private _lineOptions: MeasurementLineOptions = {
     lineWidth: 0.02,
     color: new THREE.Color(0x00ffff)
@@ -35,7 +34,7 @@ export class MeasurementDistance implements Measurement {
     diffuse: { value: this._lineOptions.color }
   };
 
-  private readonly ShaderLibUniforms: any = {
+  private readonly ShaderUniforms: any = {
     uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.common, THREE.UniformsLib.fog, this.LineUniforms])
   };
 
@@ -45,20 +44,17 @@ export class MeasurementDistance implements Measurement {
     this._startPoint = new THREE.Vector3();
     this._endPoint = new THREE.Vector3();
     this._positions = new Float32Array(6);
-    this._colors = new Float32Array(6);
-    this._lineOptions = lineOptions;
+    this._lineOptions = lineOptions ?? this._lineOptions;
   }
 
   private initializeLine(): void {
     if (this._measurementLine === undefined) {
       this._lineGeometry = new LineGeometry();
-      const material = new THREE.ShaderMaterial({
-        uniforms: THREE.UniformsUtils.clone(this.ShaderLibUniforms.uniforms),
+      const lineMaterial = new THREE.ShaderMaterial({
+        uniforms: THREE.UniformsUtils.clone(this.ShaderUniforms.uniforms),
         vertexShader: lineShaders.vertex,
         fragmentShader: lineShaders.fragment,
         clipping: true,
-        linewidth: 0.1,
-        vertexColors: true,
         alphaToCoverage: true,
         glslVersion: THREE.GLSL3
       });
@@ -66,17 +62,9 @@ export class MeasurementDistance implements Measurement {
       this._positions[0] = this._positions[1] = this._positions[2] = 0;
       this._positions[3] = this._positions[4] = this._positions[5] = 0;
 
-      this._colors[0] = 25;
-      this._colors[1] = 50;
-      this._colors[2] = 100;
-      this._colors[3] = 100;
-      this._colors[4] = 50;
-      this._colors[5] = 25;
-
       this._lineGeometry.setPositions(this._positions);
-      this._lineGeometry.setColors(this._colors);
 
-      this._measurementLine = new Line(this._lineGeometry, material);
+      this._measurementLine = new Line(this._lineGeometry, lineMaterial);
 
       this._viewer.addObject3D(this._measurementLine);
     }
@@ -161,8 +149,9 @@ export class MeasurementDistance implements Measurement {
   }
 
   public setLineOptions(options: MeasurementLineOptions): void {
-    this._lineOptions = options;
-    this.ShaderLibUniforms.uniforms.linewidth = options?.lineWidth;
-    this.ShaderLibUniforms.uniforms.color = options?.color;
+    this.ShaderUniforms.uniforms.linewidth.value = options?.lineWidth ?? this._lineOptions.lineWidth;
+    this.ShaderUniforms.uniforms.diffuse.value = new THREE.Color(options?.color ?? this._lineOptions.color);
+    this._lineOptions.color = this.ShaderUniforms.uniforms.diffuse.value;
+    this._lineOptions.lineWidth = this.ShaderUniforms.uniforms.linewidth.value;
   }
 }

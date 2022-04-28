@@ -17,7 +17,7 @@ import {
   CogniteModelBase,
   DefaultCameraManager
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, MeasurementTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
 import { ClippingUI } from '../utils/ClippingUI';
@@ -30,6 +30,7 @@ import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
 import { createSDKFromEnvironment } from '../utils/example-helpers';
 import { PointCloudClassificationFilterUI } from '../utils/PointCloudClassificationFilterUI';
+import { MeasurementUi } from '../utils/MeasurementUi';
 
 
 window.THREE = THREE;
@@ -399,8 +400,7 @@ export function Migration() {
 
       new AxisViewTool(viewer);
 
-      const measurement = new MeasurementTool(viewer);
-      measurement.addMeasurementDistance();
+      new MeasurementUi(viewer, gui.addFolder('Measurement'));
     }
 
     function showBoundsForAllGeometries(model: Cognite3DModel) {

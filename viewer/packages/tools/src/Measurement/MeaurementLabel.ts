@@ -19,7 +19,7 @@ export class MeasurementLabel {
 
   constructor(viewer: Cognite3DViewer, options?: MeasurementLabelOptions) {
     this._viewer = viewer;
-    this._options = options;
+    this._options = options ?? this._options;
   }
 
   /**
@@ -32,8 +32,7 @@ export class MeasurementLabel {
     const borderSize = 24;
     const baseWidth = 64;
     const ctx = document.createElement('canvas').getContext('2d');
-    const font = ``;
-    ctx.font = font;
+    ctx.font = this._options.font;
 
     const textWidth = ctx.measureText(label).width;
 
