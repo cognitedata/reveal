@@ -73,7 +73,6 @@ generate_package_json_helpers(
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
     "@npm//@cognite/discover-api-types",
-    "@npm//@cognite/geospatial-sdk-js",
     "@npm//@cognite/sdk-wells-v2",
     "@npm//@cognite/sdk-wells-v3",
     "@npm//@cognite/sdk",

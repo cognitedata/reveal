@@ -1,4 +1,5 @@
-import { GeoJSONGeometry } from '@cognite/geospatial-sdk-js';
+import { Geometry } from 'geojson';
+
 import { DocumentFilter } from '@cognite/sdk';
 
 import { DocumentsFacetLabels, DocumentsFacets } from '../documentSearch/types';
@@ -17,7 +18,7 @@ import {
 
 /**
  * This enum and derived key type(ModuleKeys) and value type (ModulesValueType)
- * should represent any property related to modues.
+ * should represent any property related to modules.
  */
 
 export enum Modules {
@@ -37,7 +38,7 @@ type FilterType = Record<string, string[]>;
 
 export interface MapLayerGeoJsonFilter {
   label: string;
-  geoJson: GeoJSONGeometry;
+  geoJson: Geometry;
 }
 
 export type AppliedFiltersType = {

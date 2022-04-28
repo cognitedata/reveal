@@ -12,8 +12,6 @@ import {
   getWellboresExplorationActive,
   getProspects,
   getTrajectories,
-  getAllBlocks,
-  getAllWellbores,
 } from './geospatial';
 import { getMapContent } from './getMapContent';
 
@@ -32,6 +30,4 @@ export const mapService = {
   getWellboresExplorationActive,
   getProspects,
   getTrajectories,
-  getAllBlocks,
-  getAllWellbores,
 };

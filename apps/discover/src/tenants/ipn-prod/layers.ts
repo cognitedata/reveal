@@ -31,78 +31,6 @@ const weights: Record<string, number> = [
 }, {});
 
 const ipnProdLayers = {
-  developmentWells: {
-    remoteService: mapService.getAllWellbores,
-    name: 'Development Wells',
-    color: 'black',
-    defaultOn: false,
-    mapLayers: [
-      {
-        id: 'developmentWells',
-        source: 'developmentWells',
-        type: 'circle',
-        minzoom: 6,
-        filter: ['==', 'type', 'DEVELOPMENT'],
-        paint: {
-          'circle-color': '#222',
-          'circle-radius': 2,
-          'circle-blur': 0.1,
-          'circle-stroke-color': '#eee',
-        },
-        weight: weights.idemitsuWellHeads,
-      },
-      {
-        id: 'developmentWellsLabel',
-        source: 'developmentWells',
-        type: 'symbol',
-        minzoom: 7,
-        filter: ['==', 'type', 'DEVELOPMENT'],
-        layout: {
-          'text-field': '{name}',
-          'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-          'text-size': 12,
-          'text-offset': [0, 1],
-        },
-        weight: weights.idemitsuWellHeads,
-      },
-    ],
-  },
-  explorationWells: {
-    remoteService: mapService.getAllWellbores,
-    name: 'Exploration Wells',
-    color: 'black',
-    defaultOn: false,
-    mapLayers: [
-      {
-        id: 'explorationWells',
-        source: 'explorationWells',
-        type: 'circle',
-        minzoom: 6,
-        filter: ['==', 'type', 'EXPLORATION'],
-        paint: {
-          'circle-color': '#222',
-          'circle-radius': 2,
-          'circle-blur': 0.1,
-          'circle-stroke-color': '#eee',
-        },
-        weight: weights.idemitsuWellHeads,
-      },
-      {
-        id: 'explorationWellsLabel',
-        source: 'explorationWells',
-        type: 'symbol',
-        minzoom: 7,
-        filter: ['==', 'type', 'EXPLORATION'],
-        layout: {
-          'text-field': '{name}',
-          'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-          'text-size': 12,
-          'text-offset': [0, 1],
-        },
-        weight: weights.idemitsuWellHeads,
-      },
-    ],
-  },
   explorationWellsActive: {
     remoteService: mapService.getWellboresExplorationActive,
     name: 'Exploration Wells Active',
@@ -601,37 +529,6 @@ const ipnProdLayers = {
           'fill-opacity': 0.75,
         },
         weight: weights.structuralElements,
-      },
-    ],
-  },
-  blocks: {
-    remoteService: mapService.getAllBlocks,
-    name: 'Blocks',
-    color: 'transparent',
-    defaultOn: true,
-    alwaysOn: true,
-    mapLayers: [
-      {
-        id: 'blocks',
-        minzoom: 6,
-        source: 'blocks',
-        type: 'line',
-        layout: {},
-        paint: { 'line-color': '#fff', 'line-opacity': 0.8 },
-        weight: weights.blocks,
-      },
-      {
-        id: 'blocksLabel',
-        source: 'blocks',
-        type: 'symbol',
-        minzoom: 6,
-        maxzoom: 8,
-        layout: {
-          'text-field': '{name}',
-          'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-          'text-size': 10,
-        },
-        weight: weights.blocks,
       },
     ],
   },

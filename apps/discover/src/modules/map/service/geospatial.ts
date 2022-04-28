@@ -1,13 +1,9 @@
 import { Geometry } from '@turf/helpers';
 import head from 'lodash/head';
-import isArray from 'lodash/isArray';
-import { discoverAPI } from 'services/service';
 import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
 import { API_PLAYGROUND_DOMAIN } from 'constants/app';
 import { NPDLayerItemResponse } from 'modules/map/types';
-
-import { FetchHeaders } from '../../../utils/fetch';
 
 export interface SpatialSearchItemResponse {
   assetIds: number[];
@@ -46,36 +42,6 @@ const cache: {
   getProspects: undefined,
   getTrajectories: undefined,
 };
-
-export async function getWellHeads(tenant: string, headers: FetchHeaders) {
-  const response = await discoverAPI.geospatial.search(
-    {
-      data: {
-        limit: 1000,
-        layer: 'wellhead',
-        source: 'well-data-layer',
-        attributes: ['head'],
-      },
-    },
-    headers,
-    tenant
-  );
-  const items = isArray(response) ? response : [];
-
-  const features = items.map((item: SpatialSearchItemResponse) => ({
-    type: 'Feature',
-    properties: {
-      id: head(item.assetIds),
-      highlight: 'true',
-    },
-    ...item.attributes,
-    geometry: item.attributes.head,
-  }));
-  return {
-    features,
-    type: 'FeatureCollection',
-  };
-}
 
 export async function getFields(tenant: string) {
   if (cache.getFields) {
@@ -575,67 +541,4 @@ export async function getTrajectories(tenant: string) {
   });
 
   return cache.getTrajectories;
-}
-
-export async function getAllBlocks(tenant: string, headers: FetchHeaders) {
-  const response = await discoverAPI.geospatial.search(
-    {
-      data: {
-        limit: 1000,
-        layer: 'whereoil-blocks',
-        attributes: ['geometry', 'name'],
-      },
-    },
-    headers,
-    tenant
-  );
-
-  const items = response || [];
-
-  const features = (items as unknown as NPDLayerItemResponse[]).map(
-    (item: NPDLayerItemResponse) => ({
-      type: 'Feature',
-      properties: {
-        name: item.attributes.name,
-        id: head(item.assetIds),
-      },
-      geometry: item.attributes.geometry,
-    })
-  );
-  return {
-    features,
-    type: 'FeatureCollection',
-  };
-}
-
-export async function getAllWellbores(tenant: string, headers: FetchHeaders) {
-  const response = await discoverAPI.geospatial.search(
-    {
-      data: {
-        limit: 1000,
-        layer: 'whereoil-wellbores',
-        attributes: ['geometry', 'name', 'type'],
-      },
-    },
-    headers,
-    tenant
-  );
-
-  const items = response || [];
-
-  const features = (items as unknown as NPDLayerItemResponse[]).map(
-    (item: NPDLayerItemResponse) => ({
-      type: 'Feature',
-      properties: {
-        name: item.attributes.name,
-        id: head(item.assetIds),
-        type: item.attributes.type,
-      },
-      geometry: item.attributes.geometry,
-    })
-  );
-  return {
-    features,
-    type: 'FeatureCollection',
-  };
 }

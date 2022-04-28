@@ -1,18 +1,8 @@
-import { getWellHeads } from 'modules/map/service/geospatial';
-
 import { Layers } from '../types';
 
 const MAP_DATA_URL = 'https://storage.googleapis.com/discover_layers_us/';
 
 const owaStageLayers = {
-  Well_Heads: {
-    remoteService: getWellHeads,
-    name: 'Well Heads',
-    color: 'transparent',
-    defaultOn: true,
-    mapLayers: [],
-    weight: 101,
-  },
   Well_Path: {
     remote: `${MAP_DATA_URL}Well_Path.json`,
     name: 'Well Paths',

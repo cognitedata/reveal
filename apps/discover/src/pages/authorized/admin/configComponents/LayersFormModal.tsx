@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useFormik } from 'formik';
 import omit from 'lodash/omit';
-import { geospatialV1 } from 'services/geospatial/geospatialV1';
+import { geospatial } from 'services/geospatial';
 
 import { FileReaderComp } from 'components/file-reader';
 import { Modal } from 'components/modal';
@@ -34,7 +34,7 @@ export const LayersFormModal: CustomComponent = ({
   const { t } = useTranslation();
 
   const onSubmit = (values: any) => {
-    return geospatialV1
+    return geospatial
       .createLayer(values.layerSource, values.id)
       .then(() => {
         onOk(omit(values, 'layerSource'));

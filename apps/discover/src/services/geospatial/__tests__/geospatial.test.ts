@@ -13,7 +13,7 @@ import { getMockGeospatialFeatureSearch } from '../__mocks/getMockGeospatialFeat
 import { getMockGeospatialFeatureTypes } from '../__mocks/getMockGeospatialFeatureTypes';
 import { getMockGeospatialFeatureTypesDelete } from '../__mocks/getMockGeospatialFeatureTypesDelete';
 import { FEATURE_ERROR, FEATURE_TYPE_ERROR } from '../constants';
-import { geospatialV1 } from '../geospatialV1';
+import { geospatial } from '../geospatial';
 
 const mockServer = setupServer(
   getMockGeospatialFeatureTypes(),
@@ -38,7 +38,7 @@ describe('GeospecialV1 Actions', () => {
   });
 
   it('should return expected output', async () => {
-    const result = await geospatialV1.createLayer(
+    const result = await geospatial.createLayer(
       {
         type: 'FeatureCollection',
         features: [
@@ -65,7 +65,7 @@ describe('GeospecialV1 Actions', () => {
   });
 
   it('should return error messages as expected in feature types', async () => {
-    const result = geospatialV1.createLayer(
+    const result = geospatial.createLayer(
       {
         type: 'FeatureCollection',
         features: [],
@@ -78,7 +78,7 @@ describe('GeospecialV1 Actions', () => {
   });
 
   it('should return error messages as expected in features', async () => {
-    const result = geospatialV1.createLayer(
+    const result = geospatial.createLayer(
       {
         type: 'FeatureCollection',
         features: [],
@@ -90,7 +90,7 @@ describe('GeospecialV1 Actions', () => {
   });
 
   it('should return expected output with getGeoJSON', async () => {
-    const result = await geospatialV1.getGeoJSON(TEST_LAYER_ID);
+    const result = await geospatial.getGeoJSON(TEST_LAYER_ID);
 
     expect(result.features).toEqual([
       {

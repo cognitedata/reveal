@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import { FeatureCollection } from '@turf/helpers';
 import isUndefined from 'lodash/isUndefined';
-import { geospatialV1 } from 'services/geospatial/geospatialV1';
+import { geospatial } from 'services/geospatial';
 import { useJsonHeaders } from 'services/service';
 import {
   CancellablePromise,
@@ -82,7 +82,7 @@ export const useMapContent = () => {
 
         if (!isUndefined((layers[id] as ProjectConfigMapLayers).disabled)) {
           promises.push(
-            geospatialV1.getGeoJSON(id).then((geoJSON) => {
+            geospatial.getGeoJSON(id).then((geoJSON) => {
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore need to update FeatureCollection to be used from geojson
               pushResponse(geoJSON);

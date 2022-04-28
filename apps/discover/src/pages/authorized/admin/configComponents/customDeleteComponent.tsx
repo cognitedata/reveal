@@ -1,4 +1,4 @@
-import { geospatialV1 } from 'services/geospatial/geospatialV1';
+import { geospatial } from 'services/geospatial';
 
 import { Modal } from '@cognite/cogs.js';
 
@@ -9,7 +9,7 @@ export const customDeleteComponent: CustomDeleteComponent = (props) => {
     case 'map.children.layers': {
       const handleOk = async () => {
         if (props.id) {
-          await geospatialV1.deleteFeatureType(props.id);
+          await geospatial.deleteFeatureType(props.id);
         }
         props.onOk();
       };
