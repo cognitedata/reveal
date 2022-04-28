@@ -6,9 +6,9 @@ import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { clearAnnotationState } from 'src/store/commonActions';
-import { AnnotationState } from './types';
+import { AnnotationStateV1 } from 'src/modules/Common/store/annotationV1/types';
 
-export const initialState: AnnotationState = {
+export const initialState: AnnotationStateV1 = {
   files: {
     byId: {},
   },
@@ -16,15 +16,15 @@ export const initialState: AnnotationState = {
     byId: {},
   },
 };
-const annotationSlice = createSlice({
-  name: 'annotation',
+const annotationSliceV1 = createSlice({
+  name: 'annotationV1',
   initialState,
   reducers: {},
   /* eslint-disable no-param-reassign */
   extraReducers: (builder) => {
     builder.addCase(
       RetrieveAnnotations.fulfilled,
-      (state: AnnotationState, { payload, meta }) => {
+      (state: AnnotationStateV1, { payload, meta }) => {
         const { fileIds, clearCache } = meta.arg;
 
         // clear states
@@ -137,4 +137,4 @@ const annotationSlice = createSlice({
   },
 });
 
-export default annotationSlice.reducer;
+export default annotationSliceV1.reducer;

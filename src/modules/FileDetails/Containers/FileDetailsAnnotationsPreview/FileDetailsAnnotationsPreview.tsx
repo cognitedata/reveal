@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Button, Title } from '@cognite/cogs.js';
-import { makeSelectFileAnnotationsByType } from 'src/modules/Common/store/annotation/selectors';
+import { makeSelectFileAnnotationsByType } from 'src/modules/Common/store/annotationV1/selectors';
 import { VisionFileDetails } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import { AnnotationsListPreview } from 'src/modules/FileDetails/Containers/FileDetailsAnnotationsPreview/AnnotationsListPreview';
 import styled from 'styled-components';
@@ -31,15 +31,15 @@ export const FileDetailsAnnotationsPreview = ({
   );
 
   const textAndObjectAnnotations = useSelector(
-    ({ annotationReducer }: RootState) =>
-      selectFileAnnotationsByOcrObjectTypes(annotationReducer, fileInfo.id, [
+    ({ annotationV1Reducer }: RootState) =>
+      selectFileAnnotationsByOcrObjectTypes(annotationV1Reducer, fileInfo.id, [
         VisionDetectionModelType.OCR,
         VisionDetectionModelType.ObjectDetection,
       ])
   );
 
-  const tagAnnotations = useSelector(({ annotationReducer }: RootState) =>
-    selectFileAnnotationsByTagDetectionType(annotationReducer, fileInfo.id, [
+  const tagAnnotations = useSelector(({ annotationV1Reducer }: RootState) =>
+    selectFileAnnotationsByTagDetectionType(annotationV1Reducer, fileInfo.id, [
       VisionDetectionModelType.TagDetection,
     ])
   );

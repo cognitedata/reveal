@@ -18,7 +18,7 @@ import {
   KeypointVertex,
   VisionAnnotationV1,
 } from 'src/utils/AnnotationUtils';
-import { makeSelectFileAnnotations } from 'src/modules/Common/store/annotation/selectors';
+import { makeSelectFileAnnotations } from 'src/modules/Common/store/annotationV1/selectors';
 
 export interface VisibleAnnotation extends VisionAnnotationV1 {
   show: boolean;
@@ -185,7 +185,7 @@ const fileAnnotationsSelector = makeSelectFileAnnotations();
 
 export const selectVisibleAnnotationsForFile = createSelector(
   (state: RootState, fileId: number) =>
-    fileAnnotationsSelector(state.annotationReducer, fileId),
+    fileAnnotationsSelector(state.annotationV1Reducer, fileId),
   (state: RootState) => state.reviewSlice.selectedAnnotationIds,
   (state: RootState) => state.reviewSlice.hiddenAnnotationIds,
   (state: RootState) => state.annotationLabelReducer.keypointMap.selectedIds,
