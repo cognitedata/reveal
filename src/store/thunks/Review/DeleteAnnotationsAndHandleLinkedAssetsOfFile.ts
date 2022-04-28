@@ -20,7 +20,7 @@ export const DeleteAnnotationsAndHandleLinkedAssetsOfFile = createAsyncThunk<
   'DeleteAnnotationsAndRemoveLinkedAssets',
   async ({ annotationIds, showWarnings }, { getState, dispatch }) => {
     const annotations = annotationIds.map(
-      (id) => getState().annotationReducer.annotations.byId[id]
+      (id) => getState().annotationV1Reducer.annotations.byId[id]
     );
     const linkedAnnotations: VisionAnnotationV1[] = [];
 

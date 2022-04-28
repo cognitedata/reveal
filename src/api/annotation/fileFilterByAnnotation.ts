@@ -35,7 +35,7 @@ const getAnnotations = async (
     }
   });
 
-  return AnnotationUtils.convertToVisionAnnotations(validAnnotations);
+  return AnnotationUtils.convertToVisionAnnotationsV1(validAnnotations);
 };
 
 export const fileFilterByAnnotation = async (

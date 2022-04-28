@@ -46,7 +46,7 @@ describe('ModelTrainingModalContent', () => {
 
   const getMockData = (data: MockDataType[]) => {
     const getDummyAnnotation = (id: number, text: string, fileId: number) => {
-      return AnnotationUtils.createVisionAnnotationStub(
+      return AnnotationUtils.createVisionAnnotationStubV1(
         id || 1,
         text || 'pump',
         1,
@@ -129,7 +129,7 @@ describe('ModelTrainingModalContent', () => {
     const { props, annotationState } = getMockData(data);
 
     const store = getMockedStore({
-      annotationReducer: annotationState,
+      annotationV1Reducer: annotationState,
     });
 
     testRenderer(TestComponent, store, props);
@@ -183,7 +183,7 @@ describe('ModelTrainingModalContent', () => {
     const { props, annotationState } = getMockData(data);
 
     const store = getMockedStore({
-      annotationReducer: annotationState,
+      annotationV1Reducer: annotationState,
     });
 
     testRenderer(TestComponent, store, props);
@@ -224,7 +224,7 @@ describe('ModelTrainingModalContent', () => {
     const { props, annotationState } = getMockData(data);
 
     const store = getMockedStore({
-      annotationReducer: annotationState,
+      annotationV1Reducer: annotationState,
     });
 
     testRenderer(TestComponent, store, props);
@@ -267,7 +267,7 @@ describe('ModelTrainingModalContent', () => {
     const { props, annotationState } = getMockData(data);
 
     const store = getMockedStore({
-      annotationReducer: annotationState,
+      annotationV1Reducer: annotationState,
     });
 
     testRenderer(TestComponent, store, props);
@@ -311,7 +311,7 @@ describe('ModelTrainingModalContent', () => {
     const { props, annotationState } = getMockData(data);
 
     const store = getMockedStore({
-      annotationReducer: annotationState,
+      annotationV1Reducer: annotationState,
     });
 
     testRenderer(TestComponent, store, props);

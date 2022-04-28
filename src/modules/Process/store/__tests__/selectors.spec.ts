@@ -2,7 +2,7 @@ import { RootState } from 'src/store/rootReducer';
 import { ProcessState } from 'src/modules/Process/store/types';
 import { initialState as processSliceInitialState } from 'src/modules/Process/store/slice';
 import { initialState as fileSliceInitialState } from 'src/modules/Common/store/files/slice';
-import { initialState as annotationReducerInitialState } from 'src/modules/Common/store/annotation/slice';
+import { initialState as annotationReducerInitialState } from 'src/modules/Common/store/annotationV1/slice';
 import {
   makeSelectJobStatusForFile,
   selectAllFilesDict,
@@ -40,7 +40,7 @@ import {
   completedJob,
   failedJob,
 } from 'src/__test-utils/data/mockJobInfo';
-import { AnnotationState } from 'src/modules/Common/store/annotation/types';
+import { AnnotationStateV1 } from 'src/modules/Common/store/annotationV1/types';
 import { VisionFilesToFileState } from 'src/store/util/StateUtils';
 import {
   AnnotationStatus,
@@ -125,7 +125,7 @@ const getRootState = (
   annotationsByFile: { [key: string]: number[] },
   annotationsById: { [key: string]: VisionAnnotationV1 }
 ) => {
-  const annotationState: AnnotationState = {
+  const annotationState: AnnotationStateV1 = {
     ...annotationReducerInitialState,
     files: {
       byId: annotationsByFile,
@@ -152,7 +152,7 @@ const getRootState = (
   };
   return {
     processSlice: processState,
-    annotationReducer: annotationState,
+    annotationV1Reducer: annotationState,
     fileReducer: fileState,
   } as RootState;
 };
