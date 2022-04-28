@@ -29,9 +29,12 @@ const AutoML = () => {
   const getModels = async () => {
     const models = await AutoMLAPI.listAutoMLModels();
     setModelList(models);
-    await Promise.all(
-      models.map((model) => AutoMLAPI.getAutoMLModel(model.jobId))
-    ).then((modelJobs) => setJobs(modelJobs));
+
+    models.forEach((model) => {
+      AutoMLAPI.getAutoMLModel(model.jobId).then((modelJob) => {
+        setJobs((currentJobs) => [...currentJobs, modelJob]);
+      });
+    });
   };
 
   const handleDownload = async () => {
