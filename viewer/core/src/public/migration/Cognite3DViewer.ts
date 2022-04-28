@@ -1074,6 +1074,12 @@ export class Cognite3DViewer {
     return intersections.length > 0 ? intersections[0] : null;
   }
 
+  /**
+   * Raycasting model(s) for finding where the ray intersects with the model. Note: Only Cad models
+   * @param offsetX X coordinate in pixels (relative to the domElement).
+   * @param offsetY Y coordinate in pixels (relative to the domElement).
+   * @returns A promise that if there was an intersection then return the intersection point.
+   */
   async getIntersectionPixelFromBuffer(offsetX: number, offsetY: number): Promise<THREE.Vector3> {
     const cadModels = this.getModels('cad');
     const cadNodes = cadModels.map(x => x.cadNode);
