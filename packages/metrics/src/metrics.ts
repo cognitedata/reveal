@@ -68,6 +68,7 @@ class Metrics {
     if (!mixpanelToken) {
       throw new Error('Missing mixpanelToken parameter');
     }
+
     mixpanel.init(mixpanelToken, {
       persistence: persistence === 'cookie' ? 'cookie' : 'localStorage',
     });

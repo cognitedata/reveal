@@ -23,6 +23,7 @@
     "@cognite/eslint-config": "link:packages/eslint-config",
     "@cognite/eslint-plugin": "link:packages/eslint-plugin",
     "@cognite/fas-utils": "^3.1.2",
+    "@cognite/frontend-metrics-types": "^0.0.1",
     "@cognite/gcs-browser-upload": "^1.1.1",
     "@cognite/geospatial-sdk-js": "^0.1.0",
     "@cognite/potree-core": "1.0.6",

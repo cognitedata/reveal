@@ -34,12 +34,15 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
+    "@npm//lodash",
     "@npm//mixpanel-browser",
     "@npm//react",
+    "@npm//@cognite/frontend-metrics-types",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
+    "@npm//@types/lodash",
     "@npm//@types/mixpanel-browser",
     "@npm//@types/react",
     "@npm//@types/sinon",
@@ -50,6 +53,7 @@ DEV_DEPENDENCIES = [
     "@npm//rollup-plugin-json",
     "@npm//rollup-plugin-typescript2",
     "@npm//sinon",
+    "@npm//typescript",
 ]
 
 # Mappings for absolute imports from baseUrl @unused
@@ -59,6 +63,8 @@ mappings_dict = {
     "metrics.spec": "dist/metrics.spec",
     "metrics": "dist/metrics",
     "mocks": "dist/mocks",
+    "perfMetrics.helper": "dist/perfMetrics.helper",
+    "perfMetrics": "dist/perfMetrics",
     "types": "dist/types",
     "useMetrics": "dist/useMetrics",
 }

@@ -136,6 +136,135 @@ Metrics.hasOptedOut(options?);
 Options are passed down to underlying library.
 See [the documentation] for possible options.
 
+### Performance Metrics
+
+Initializing the PerformanceMetrics instance.
+
+```js
+import { PerfMetrics } from '@cognite/metrics';
+
+/**
+ * Initialize the PerfMetrics instance
+ *
+ * @param {string} url : URL to the frontend metrics service
+ * @param {string} accessToken : Current user's access token
+ * @param {string} project : Current project/tenant id
+ * */
+
+PerfMetrics.initialize(
+  `${SIDECAR.frontendMetricsBaseUrl}/${tenant}`,
+  accessToken,
+  tenant
+);
+```
+
+Enabling
+
+```js
+import { PerfMetrics } from '@cognite/metrics';
+
+PerfMetrics.enable();
+```
+
+Disabling
+
+```js
+import { PerfMetrics } from '@cognite/metrics';
+
+PerfMetrics.disable();
+```
+
+Performing basic performance tracking e.g timing duration of an event.
+
+```js
+import { PerfMetrics } from '@cognite/metrics';
+
+const Component = () => {
+  const eventHandler = () => {
+    //event started
+    PerfMetrics.trackPerfStart('SEARCH_ACTION_DATA_UPDATED', 'SEARCH', false);
+    //do something
+    //event ended
+    PerfMetrics.trackPerfEnd('SEARCH_ACTION_DATA_UPDATED')
+  }
+  return ...
+}
+
+```
+
+Tracking changes in the DOM and using it to time events. Under the hood we use a MutationObserver to observe the DOM for changes and fire a callback when those changes are observed. The `observeDom` function needs a DOM reference to a HTML/React Component it can observe for changes.
+
+The following observer should fire when it finds the DOM element below added or removed from the DOM :
+
+```html
+<div data-testid="table-row"></div>
+```
+
+Code:
+
+```js
+import { PerfMetrics } from '@cognite/metrics';
+
+const Component = () => {
+  const tableRef = useRef<any>();
+  const onRowExpand = () => {
+    PerfMetrics.trackPerfStart('SEARCH_TABLE_EXPAND_ROW');
+  }
+  useEffect(() => {
+    PerfMetrics.observeDom(tableRef, (mutations: MutationRecord[]) => {
+      PerfMetrics.findInMutation({
+        mutations: mutations,
+        type: 'childList',
+        searchIn: ['addedNodes', 'removedNodes'],
+        searchFor: 'attribute',
+        searchBy: 'data-testid',
+        searchValue: 'table-row',
+        callback: (output: any) => {
+          if (output.addedNodes) {
+            PerfMetrics.trackPerfEnd('SEARCH_TABLE_EXPAND_ROW');
+          }
+        },
+      });
+    });
+  }, [data]);
+  return <div ref={tableRef}>
+  ...
+  </div>
+}
+```
+
+Tracking DOM events and measuring duration of those events.
+
+```js
+import { PerfMetrics } from '@cognite/metrics';
+const Component = () => {
+  const tableRef = useRef<any>();
+
+  useEffect(() => {
+    /**
+     * @param {string} name : Name of tracking event
+     * @param {keyof HTMLElementEventMap} eventType : DOM Event listener to attach (e.g click, keypress, mouseenter)
+     * @param {string} domSelector : a simple string that selects the DOM element you want to attach the listener to
+     * @param {number} selectIndex : index of the element to attach the listener to, in case of multiple DOM elements
+     * @param {MutableRefObject<HTMLElement | null>} ref : a reference of the current React Component, we will query for DOM elements matching the selector inside here.
+     * */
+    PerfMetrics.trackPerfEvent(
+      'SEARCH_CHECKBOX_CLICKED',
+      'click',
+      tableRef,
+      'input[type=checkbox]',
+      1
+    );
+    return () => {
+      PerfMetrics.untrackPerfEvent('SEARCH_CHECKBOX_CLICKED');
+    };
+  }, [data]);
+  return <div ref={tableRef}>
+  ...
+  </div>
+}
+```
+
 ## Testing
 
 Unit tests should stub out this library.
