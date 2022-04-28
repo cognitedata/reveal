@@ -2,7 +2,6 @@
  * Copyright 2022 Cognite AS
  */
 import { Cognite3DViewer } from '@reveal/core';
-import { Vector3 } from 'three';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { MeasurementControls } from './MeasurementControls';
 import { MeasurementDistance } from './MeasurementDistance';
@@ -44,5 +43,13 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     }
   }
 
-  public setMeasurementDistanceAxis(axis: THREE.Vector3): void {}
+  /**
+   * Set axis for measurement of point to point distance
+   * @param axis Axis to be used for measuring
+   */
+  public setMeasurementDistanceAxis(axis: THREE.Vector3): void {
+    if (this._measurementDistance) {
+      this._measurementDistance.setAxis(axis);
+    }
+  }
 }
