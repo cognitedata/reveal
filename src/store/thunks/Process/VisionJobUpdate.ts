@@ -11,10 +11,10 @@ import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
 import {
   AnnotationStatus,
-  AnnotationUtils,
+  AnnotationUtilsV1,
   ModelTypeAnnotationTypeMap,
   VisionAnnotationV1,
-} from 'src/utils/AnnotationUtils';
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { fileProcessUpdate } from 'src/store/commonActions';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
@@ -179,7 +179,7 @@ export const VisionJobUpdate = createAsyncThunk<
         );
         const savedAnnotations = unwrapResult(savedAnnotationResponse);
         savedVisionAnnotation =
-          AnnotationUtils.convertToVisionAnnotationsV1(savedAnnotations);
+          AnnotationUtilsV1.convertToVisionAnnotationsV1(savedAnnotations);
       }
 
       dispatch(

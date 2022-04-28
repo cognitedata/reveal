@@ -14,7 +14,7 @@ import {
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   isAssetLinkedAnnotation,
   isKeyPointAnnotation,

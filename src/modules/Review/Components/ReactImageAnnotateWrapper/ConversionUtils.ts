@@ -16,7 +16,7 @@ import {
   AnnotationStatus,
   KeypointVertex,
   VisionAnnotationRegion,
-} from 'src/utils/AnnotationUtils';
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   AnnotationTableItem,
   KeypointItemCollection,

@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { RootState } from 'src/store/rootReducer';
 import { useSelector } from 'react-redux';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
-import { AutoMLModel } from 'src/api/vision/autoML/types';
+import { AutoMLModelCore } from 'src/api/vision/autoML/types';
 import { BUILT_IN_MODEL_COUNT } from 'src/modules/Process/store/slice';
 import * as tagDetectionModelDetails from './ModelDetails/TagDetectionModelDetails';
 import * as objectDetectionModelDetails from './ModelDetails/ObjectDetectionModelDetails';
@@ -36,7 +36,7 @@ const BadgeWrapper = (modelName: string, badge: JSX.Element) => {
 
 export const ModelConfiguration = (props: {
   disabledModelTypes: VisionDetectionModelType[];
-  customModels?: AutoMLModel[];
+  customModels?: AutoMLModelCore[];
   handleCustomModelCreate: () => void;
 }) => {
   const availableDetectionModels = useSelector(

@@ -1,6 +1,6 @@
 import { initialState } from 'src/modules/Review/store/annotationLabel/slice';
 import { deleteCollection } from 'src/modules/Review/store/annotationLabel/utils';
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 describe('Test deleteCollection', () => {
   const dummyKeyPoint = (id: string) => {

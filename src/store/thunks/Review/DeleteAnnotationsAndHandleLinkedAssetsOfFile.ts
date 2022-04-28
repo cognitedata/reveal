@@ -5,7 +5,7 @@ import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
 import {
   AnnotationStatus,
   VisionAnnotationV1,
-} from 'src/utils/AnnotationUtils';
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { ToastUtils } from 'src/utils/ToastUtils';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 

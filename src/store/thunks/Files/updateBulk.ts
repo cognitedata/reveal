@@ -4,7 +4,7 @@ import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
 import { UpdateFiles } from './UpdateFiles';
 

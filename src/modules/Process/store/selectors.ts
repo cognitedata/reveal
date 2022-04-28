@@ -19,7 +19,7 @@ import {
 import {
   AnnotationStatus,
   getAnnotationsBadgeCounts,
-} from 'src/utils/AnnotationUtils';
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { ProcessState, JobState } from './types';
 
 export const selectAllFilesDict = (

@@ -2,7 +2,10 @@ import useAssetLinkWarning, {
   AssetWarnTypes,
 } from 'src/store/hooks/useAssetLinkWarning';
 import { act, renderHook } from '@testing-library/react-hooks';
-import { AnnotationStatus, AnnotationUtils } from 'src/utils/AnnotationUtils';
+import {
+  AnnotationStatus,
+  AnnotationUtilsV1,
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { waitFor } from '@testing-library/react';
 import { WrappedWithProviders } from 'src/__test-utils/renderer';
@@ -15,7 +18,7 @@ const getDummyAnnotation = (
   linkedResourceId?: number
 ) => {
   return {
-    ...AnnotationUtils.createVisionAnnotationStubV1(
+    ...AnnotationUtilsV1.createVisionAnnotationStubV1(
       id || 1,
       'pump',
       modelType || 1,

@@ -7,7 +7,7 @@ import {
 } from '@cognite/sdk';
 import { AnnotationRegion } from 'src/api/vision/detectionModels/types';
 import { Keypoint } from 'src/modules/Review/types';
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 // Constants
 export enum RegionShape {

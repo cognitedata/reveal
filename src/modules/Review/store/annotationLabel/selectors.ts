@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'src/store/rootReducer';
-import { KeypointItem } from 'src/utils/AnnotationUtils';
+import { KeypointItem } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { AnnotationLabelState } from './types';
 
 export const nextKeypoint = createSelector(
