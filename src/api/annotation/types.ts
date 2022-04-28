@@ -81,10 +81,6 @@ export type AnnotationAttributes = {
   };
 };
 
-export type AnnotatedResourceIdEither =
-  | AnnotatedResourceId
-  | AnnotatedResourceExternalId;
-
 export interface AnnotatedResourceId {
   annotatedResourceId: CogniteInternalId;
 }
