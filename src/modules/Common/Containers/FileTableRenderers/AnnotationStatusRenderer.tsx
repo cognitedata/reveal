@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { Tag } from 'antd';
 import styled from 'styled-components';
-import { AnnotationUtils } from 'src/utils/AnnotationUtils';
+import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { Body } from '@cognite/cogs.js';
 
 export const createTag = (status: string, count: number, color: string) => {
@@ -30,7 +30,7 @@ export function AnnotationStatusRenderer({ rowData: { id } }: CellRenderer) {
   const unhandledAnnotationIds: number[] = [];
   Object.entries(annotationsMap).forEach(([_, annotations]) => {
     const annotationIdsByStatus =
-      AnnotationUtils.filterAnnotationsIdsByAnnotationStatus(annotations);
+      AnnotationUtilsV1.filterAnnotationsIdsByAnnotationStatus(annotations);
     rejectedAnnotationIds.push(...annotationIdsByStatus.rejectedAnnotationIds);
     acceptedAnnotationIds.push(...annotationIdsByStatus.acceptedAnnotationIds);
     unhandledAnnotationIds.push(

@@ -1,5 +1,3 @@
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
-
 import { initialState } from 'src/modules/Review/store/annotationLabel/slice';
 import {
   nextShape,
@@ -12,6 +10,7 @@ import { getInitialState } from 'src/__test-utils/store.utils';
 import { RootState } from 'src/store/rootReducer';
 import { CombinedState } from '@reduxjs/toolkit';
 import { ReviewReducerState } from 'src/modules/Review/store/reviewSlice';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 describe('Test annotationLabel selectors', () => {
   describe('Test nextShape selector', () => {

@@ -1,4 +1,7 @@
-import { KeypointItem, KeypointVertex } from 'src/utils/AnnotationUtils';
+import {
+  KeypointItem,
+  KeypointVertex,
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { FC } from 'react';
 import {
   Category,

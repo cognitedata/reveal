@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Body, Micro } from '@cognite/cogs.js';
 import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
 import { RangeSlider } from 'src/modules/Common/Components/Slider/rangeSlider';
-import { AnnotationUtils } from 'src/utils/AnnotationUtils';
+import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotationV1/selectors';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -102,7 +102,7 @@ export const AnnotationStatusPanel = ({
     const unhandledAnnotationIds: number[] = [];
     Object.entries(annotationsMap).forEach(([_, annotations]) => {
       const filteredAnnotations =
-        AnnotationUtils.filterAnnotationsIdsByConfidence(
+        AnnotationUtilsV1.filterAnnotationsIdsByConfidence(
           annotations,
           rejectThreshold,
           acceptThreshold

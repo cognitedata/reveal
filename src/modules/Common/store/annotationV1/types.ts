@@ -1,4 +1,4 @@
-import { VisionAnnotationV1 } from 'src/utils/AnnotationUtils';
+import { VisionAnnotationV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 export type AnnotationStateV1 = {
   files: {

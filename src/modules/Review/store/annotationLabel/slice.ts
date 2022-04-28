@@ -13,7 +13,7 @@ import {
   AnnotationStatus,
   createUniqueId,
   KeypointVertex,
-} from 'src/utils/AnnotationUtils';
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { ReactText } from 'react';
 import { AnnotationLabelState, KeyPointState } from './types';
 import { deleteCollection } from './utils';
