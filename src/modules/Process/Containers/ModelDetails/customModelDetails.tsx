@@ -19,7 +19,7 @@ import { ColorsObjectDetection } from 'src/constants/Colors';
 import CustomModelIllustration from 'src/assets/visualDescriptions/CustomModelIllustration.svg';
 
 import { AutoMLModelSelectFilter } from 'src/modules/Process/Components/AutoMLModelSelectFilter';
-import { AutoMLModel } from 'src/api/vision/autoML/types';
+import { AutoMLModelCore } from 'src/api/vision/autoML/types';
 import {
   ColorBox,
   NameContainer,
@@ -51,7 +51,10 @@ export const badge = (modelName: string, hideText: boolean = false) => {
   );
 };
 
-export const content = (modelIndex: number, customModels?: AutoMLModel[]) => {
+export const content = (
+  modelIndex: number,
+  customModels?: AutoMLModelCore[]
+) => {
   const dispatch = useDispatch();
   const params: ParamsCustomModel = useSelector(
     ({ processSlice }: RootState) => {

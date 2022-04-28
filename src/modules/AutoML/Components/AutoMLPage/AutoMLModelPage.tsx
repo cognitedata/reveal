@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable @cognite/no-number-z-index */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Detail,
@@ -11,7 +11,6 @@ import {
   Title,
 } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { AutoMLAPI } from 'src/api/vision/autoML/AutoMLAPI';
 import { AutoMLTrainingJob } from 'src/api/vision/autoML/types';
 import { AutoMLModelNameBadge } from 'src/modules/AutoML/Components/AutoMLModelNameBadge';
 import { useUserCapabilities } from 'src/hooks/useUserCapabilities';
@@ -19,7 +18,8 @@ import { AutoMLMetricsOverview } from './AutoMLMetricsOverview';
 import { AutoMLCharts } from './AutoMLCharts';
 
 export const AutoMLModelPage = (props: {
-  selectedModelId?: number;
+  isLoadingJob: boolean;
+  model?: AutoMLTrainingJob;
   downloadingModel?: boolean;
   handleDownload: () => void;
   handleOnDelete: () => void;
@@ -27,18 +27,6 @@ export const AutoMLModelPage = (props: {
   handleOnGetPredictionURL: () => void;
 }) => {
   const [hideDropDown, setHideDropDown] = useState<boolean>(true);
-  const [model, setModel] = useState<AutoMLTrainingJob>();
-
-  const getModel = async () => {
-    if (props.selectedModelId) {
-      const item = await AutoMLAPI.getAutoMLModel(props.selectedModelId);
-      setModel(item);
-    }
-  };
-
-  useEffect(() => {
-    getModel();
-  }, [props.selectedModelId]);
 
   const { data: hasCapabilities, isFetched } = useUserCapabilities([
     {
@@ -56,7 +44,7 @@ export const AutoMLModelPage = (props: {
     >
       <Menu.Item
         onClick={() => {
-          props.handleOnContextualize(model);
+          props.handleOnContextualize(props.model);
           setHideDropDown(true);
         }}
       >
@@ -94,10 +82,10 @@ export const AutoMLModelPage = (props: {
 
   return (
     <>
-      {model && props.selectedModelId === model?.jobId ? ( // TODO: use id
+      {props.model ? (
         <Container>
           <Header>
-            <AutoMLModelNameBadge name={model.name} disabled />
+            <AutoMLModelNameBadge name={props.model.name} disabled />
             <ActionContainer>
               <Dropdown visible={!hideDropDown} content={MenuContent}>
                 <Button
@@ -105,7 +93,7 @@ export const AutoMLModelPage = (props: {
                   icon="ChevronDownCompact"
                   aria-label="dropdown button"
                   disabled={
-                    model.status !== 'Completed' || props.downloadingModel
+                    props.model.status !== 'Completed' || props.downloadingModel
                   }
                   loading={props.downloadingModel}
                   iconPlacement="right"
@@ -132,11 +120,14 @@ export const AutoMLModelPage = (props: {
               </Popconfirm>
             </ActionContainer>
           </Header>
-          <AutoMLMetricsOverview model={model} />
-          <AutoMLCharts model={model} />
+          <AutoMLMetricsOverview model={props.model} />
+          <AutoMLCharts model={props.model} />
         </Container>
-      ) : props.selectedModelId ? (
-        <StyledIcon data-testid="model-page-loading" type="Loading" />
+      ) : props.isLoadingJob ? (
+        <LoadingMessageContainer>
+          Retrieving model data. This may take a few seconds...
+          <Icon data-testid="model-page-loading" type="Loading" />
+        </LoadingMessageContainer>
       ) : (
         <StyledTitle data-testid="model-page-placeholder" level={4}>
           Select a model to see model data
@@ -177,8 +168,10 @@ const StyledTitle = styled(Title)`
   align-items: center;
 `;
 
-const StyledIcon = styled(Icon)`
+const LoadingMessageContainer = styled.div`
   display: flex;
-  justify-items: center;
-  align-content: center;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
