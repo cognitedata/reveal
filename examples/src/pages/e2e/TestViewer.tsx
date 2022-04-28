@@ -133,7 +133,7 @@ export function TestViewer(props: Props) {
         ssaoRenderParameters: {
           depthCheckBias: 0.0,
           sampleRadius: 0.0,
-          sampleSize: 1
+          sampleSize: 0
         }
       };
 
@@ -153,6 +153,7 @@ export function TestViewer(props: Props) {
         const modelIdentifier = new reveal.LocalModelIdentifier(modelUrl.fileName!);
         model = await revealManager.addModel('pointcloud', modelIdentifier);
         model.pointColorType = props.pointColorType ? props.pointColorType : reveal.PotreePointColorType.Rgb;
+        renderables.customObjects.push(model);
       } else {
         const modelIdentifier = new reveal.LocalModelIdentifier(modelUrl.fileName!);
         model = await revealManager.addModel(

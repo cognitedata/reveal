@@ -5,8 +5,8 @@ module.exports = {
     args: ['--allow-insecure-localhost', '--window-size=800,600', '--no-sandbox'],
     headless: true,
     defaultViewport: {
-      width: 1560,
-      height: 1111,
+      width: 1280,
+      height: 720,
       deviceScaleFactor: 1, // https://github.com/puppeteer/puppeteer/issues/571
       isMobile: false
     },

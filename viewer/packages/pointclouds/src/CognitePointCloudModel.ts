@@ -38,7 +38,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
     this.modelId = modelId;
     this.revisionId = revisionId;
     this.pointCloudNode = pointCloudNode;
-    // this.matrixAutoUpdate = false;
+    this.matrixAutoUpdate = false;
     this.add(pointCloudNode);
   }
 

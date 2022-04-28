@@ -91,7 +91,8 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     );
 
     this._blitToScreenPass = new BlitPass({
-      texture: this._renderTargetData.postProcessingRenderTarget.texture
+      texture: this._renderTargetData.postProcessingRenderTarget.texture,
+      depthTexture: this._renderTargetData.postProcessingRenderTarget.depthTexture
     });
 
     this.renderOptions = cloneDeep(renderOptions);
@@ -103,6 +104,9 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     yield* this._cadGeometryRenderPipeline.pipeline(renderer);
 
     renderer.setRenderTarget(this._renderTargetData.ssaoRenderTarget);
+    renderer.setClearColor('#FFFFFF');
+    renderer.setClearAlpha(1.0);
+    renderer.clear();
     yield this._ssaoPass;
 
     renderer.setRenderTarget(this._renderTargetData.postProcessingRenderTarget);
@@ -111,7 +115,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     renderer.clear();
     yield this._postProcessingRenderPipeline;
 
-    renderer.setRenderTarget(null);
+    renderer.setRenderTarget(this._outputRenderTarget.target);
     yield this._blitToScreenPass;
 
     this.pipelineTearDown(renderer);

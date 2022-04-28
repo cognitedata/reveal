@@ -16,7 +16,7 @@ import { CadModelUpdateHandler, defaultDesktopCadModelBudget } from '@reveal/cad
 import { ByScreenSizeSectorCuller } from '@reveal/cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
 import { StepPipelineExecutor } from '../src/pipeline-executors/StepPipelineExecutor';
 import { IdentifiedModel } from '../src/utilities/types';
-import { createPointCloudManager } from '@reveal/pointclouds';
+import { CognitePointCloudModel, createPointCloudManager } from '@reveal/pointclouds';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 
 revealEnv.publicPath = 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.2.0/';
@@ -70,14 +70,14 @@ async function init() {
   const modelOutputs = (await cdfModelMetadataProvider.getModelOutputs(modelIdentifier)).map(outputs => outputs.format);
 
   let model: THREE.Object3D;
-  let bb: THREE.Box3;
+  let boundingBox: THREE.Box3;
   const cadModels: IdentifiedModel[] = [];
   if (modelOutputs.includes('gltf-directory') || modelOutputs.includes('reveal-directory')) {
     const cadModel = await cadManager.addModel(modelIdentifier);
     cadModels.push({ model: cadModel, modelIdentifier: cadModel.cadModelIdentifier });
     model = cadModel;
-    bb = (cadModel as any)._cadModelMetadata.scene.getBoundsOfMostGeometry().clone();
-    bb.applyMatrix4(model.children[0].matrix);
+    boundingBox = (cadModel as any)._cadModelMetadata.scene.getBoundsOfMostGeometry().clone();
+    boundingBox.applyMatrix4(model.children[0].matrix);
     scene.add(model);
 
     const nodeAppearanceProvider = materialManager.getModelNodeAppearanceProvider('0');
@@ -96,11 +96,11 @@ async function init() {
       outlineColor: 6
     });
   } else if (modelOutputs.includes('ept-pointcloud')) {
-    const pointCloudModel = await pointCloudManager.addModel(modelIdentifier);
-    bb = pointCloudModel.getBoundingBox();
-    scene.add(pointCloudModel);
-    customObjects.push(pointCloudModel);
-    model = pointCloudModel;
+    const pointCloudNode = await pointCloudManager.addModel(modelIdentifier);
+    const pointcloudModel = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
+    boundingBox = pointcloudModel.getModelBoundingBox();
+    customObjects.push(pointCloudNode);
+    model = pointCloudNode;
   } else {
     throw Error(`Unknown output format ${modelOutputs}`);
   }
@@ -170,7 +170,7 @@ async function init() {
 
   const controls = new OrbitControls(camera, renderer.domElement);
 
-  fitCameraToBoundingBox(bb, camera, controls);
+  fitCameraToBoundingBox(boundingBox, camera, controls);
 
   cadModelUpdateHandler.updateCamera(camera);
 
@@ -225,7 +225,7 @@ async function init() {
 
   const ssaoOptionsGui = renderOptionsGUI.addFolder('SSAO');
   ssaoOptionsGui.add(renderOptions.ssaoRenderParameters, 'sampleRadius', 0, 30).onChange(updateRenderOptions);
-  ssaoOptionsGui.add(renderOptions.ssaoRenderParameters, 'sampleSize', 1, 256, 1).onChange(updateRenderOptions);
+  ssaoOptionsGui.add(renderOptions.ssaoRenderParameters, 'sampleSize', 0, 256, 1).onChange(updateRenderOptions);
   ssaoOptionsGui.add(renderOptions.ssaoRenderParameters, 'depthCheckBias', 0, 1).onChange(updateRenderOptions);
   ssaoOptionsGui.open();
 

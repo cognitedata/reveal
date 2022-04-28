@@ -584,7 +584,12 @@ export class Cognite3DViewer {
     const pointCloudNode = await this._revealManagerHelper.addPointCloudModel(options);
     const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this._models.push(model);
-    this.scene.add(model);
+
+    this.scene.add(pointCloudNode);
+    this._renderables.customObjects.push(pointCloudNode);
+    model.updateMatrix();
+    model.updateWorldMatrix(true, true);
+
     return model;
   }
 

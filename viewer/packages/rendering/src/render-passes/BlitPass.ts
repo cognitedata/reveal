@@ -38,7 +38,8 @@ export class BlitPass implements RenderPass {
       uniforms,
       glslVersion: THREE.GLSL3,
       defines,
-      depthTest,
+      depthTest: true,
+      depthFunc: THREE.AlwaysDepth,
       ...initializedBlendOptions
     });
 

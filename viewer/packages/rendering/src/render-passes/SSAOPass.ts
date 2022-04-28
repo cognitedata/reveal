@@ -23,6 +23,8 @@ export class SSAOPass implements RenderPass {
       this._ssaoShaderMaterial.uniforms.kernel.value = this.createKernel(sampleSize);
       this._ssaoShaderMaterial.needsUpdate = true;
     }
+
+    this._fullScreenTriangle.visible = sampleSize > 0;
   }
 
   constructor(depthTexture: THREE.Texture, ssaoParameters: SsaoParameters) {
@@ -50,6 +52,7 @@ export class SSAOPass implements RenderPass {
     });
 
     this._fullScreenTriangle = createFullScreenTriangleMesh(this._ssaoShaderMaterial);
+    this._fullScreenTriangle.visible = sampleSize > 0;
   }
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {
