@@ -1,6 +1,6 @@
-import { DoubleDatapoint } from '@cognite/sdk';
-import { useState, useEffect } from 'react';
-import { Button, Tooltip, Detail } from '@cognite/cogs.js';
+import { CogniteEvent, DoubleDatapoint } from '@cognite/sdk';
+import { useState, useEffect, useContext } from 'react';
+import { Button, Tooltip, Label, Detail } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import { Column } from 'react-table';
 import { useParams } from 'react-router-dom';
@@ -13,6 +13,8 @@ import {
   MatrixWithData,
 } from 'types';
 import { calculateScenarioProduction, roundWithDec } from 'utils/utils';
+import { SnifferEvent } from '@cognite/power-ops-api-types';
+import { EventStreamContext } from 'providers/eventStreamProvider';
 
 import { formatBidMatrixData, copyMatrixToClipboard } from './utils';
 import {
@@ -20,8 +22,9 @@ import {
   StyledHeader,
   StyledBidMatrix,
   StyledTable,
-  Main,
+  MainPanel,
   StyledTitle,
+  StyledInfobar,
 } from './elements';
 
 dayjs.extend(utc);
@@ -39,6 +42,7 @@ export const mainScenarioTableHeaderConfig = [
 
 const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
   const { client } = useAuthContext();
+  const { eventStore } = useContext(EventStreamContext);
 
   const { plantExternalId } = useParams<{ plantExternalId?: string }>();
   const [matrixHeaderConfig, setSequenceCols] = useState<Column<TableData>[]>();
@@ -46,6 +50,7 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
   const [matrix, setMatrix] = useState<MatrixWithData | null>();
   const [mainScenarioData, setMainScenarioData] = useState<TableData[]>();
   const [bidDate, setBidDate] = useState<Date>();
+  const [newMatrixAvailable, setNewMatrixAvailable] = useState<boolean>(false);
 
   const currentdate = new Date();
   currentdate.setDate(currentdate.getDate() + 1);
@@ -118,6 +123,40 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
     return dataArray;
   };
 
+  const isNewBidMatrixAvailable = async (
+    processFinishEvent: CogniteEvent
+  ): Promise<void> => {
+    const parentProcessEventExternalId =
+      processFinishEvent.metadata?.event_external_id;
+
+    if (!parentProcessEventExternalId || !client) {
+      return;
+    }
+
+    const [parentProcessEvent] = await client.events.retrieve([
+      { externalId: parentProcessEventExternalId },
+    ]);
+    if (
+      parentProcessEvent.type === 'POWEROPS_BID_PROCESS' &&
+      parentProcessEvent.externalId !== priceArea.bidProcessExternalId
+    ) {
+      setNewMatrixAvailable(true);
+    }
+  };
+
+  const processEvent = async (e: SnifferEvent): Promise<void> => {
+    if (!e.id) return;
+
+    const event = (await client?.events.retrieve([{ id: e.id }]))?.[0];
+    if (!event) return;
+
+    switch (event.type) {
+      case 'POWEROPS_PROCESS_FINISHED':
+        isNewBidMatrixAvailable(event);
+        break;
+    }
+  };
+
   useEffect(() => {
     if (plantExternalId && priceArea) {
       setBidDate(priceArea.bidDate);
@@ -166,80 +205,109 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
     }
   }, [priceArea, plantExternalId]);
 
+  useEffect(() => {
+    const subscription = eventStore?.subscribe((event) => {
+      processEvent(event);
+    });
+
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, [processEvent]);
+
   return (
-    <Main>
-      <StyledDiv className="bidmatrix">
-        <StyledHeader>
-          <div>
-            <span>
-              <StyledTitle level={5}>
-                Bidmatrix: {matrix?.externalId?.split('.')[0] || 'Not found'}
-              </StyledTitle>
-              {/* <Label size="small" variant="unknown">
+    <MainPanel>
+      {newMatrixAvailable && (
+        <StyledInfobar className="new-matrix">
+          A new matrix is available. We recommend that you update this page.
+          <Button
+            type="tertiary"
+            size="small"
+            icon="Refresh"
+            iconPlacement="right"
+            onClick={() => window.location.reload()}
+          >
+            Update matrix
+          </Button>
+        </StyledInfobar>
+      )}
+      <div className="main">
+        <StyledDiv className="bidmatrix">
+          <StyledHeader>
+            <div>
+              <span>
+                <StyledTitle level={5}>
+                  Bidmatrix: {matrix?.externalId?.split('.')[0] || 'Not found'}
+                </StyledTitle>
+                {/* <Label size="small" variant="unknown">
                 {matrix?.method}
               </Label> */}
-            </span>
-            <Detail>{`Generated for: ${tomorrow}`}</Detail>
-          </div>
-          <Tooltip position="left" visible={copied} content={tooltipContent}>
-            <Button
-              aria-label="Copy Bidmatrix"
-              icon="Copy"
-              onClick={async () => {
-                const isCopied =
-                  matrixHeaderConfig && matrixData
-                    ? await copyMatrixToClipboard(
-                        matrixHeaderConfig,
-                        matrixData
-                      )
-                    : false;
+              </span>
+              <Detail>{`Generated for: ${tomorrow}`}</Detail>
+            </div>
+            <Tooltip position="left" visible={copied} content={tooltipContent}>
+              <Button
+                aria-label="Copy Bidmatrix"
+                icon="Copy"
+                onClick={async () => {
+                  const isCopied =
+                    matrixHeaderConfig && matrixData
+                      ? await copyMatrixToClipboard(
+                          matrixHeaderConfig,
+                          matrixData
+                        )
+                      : false;
 
-                // Change tooltip state
-                setCopied(true);
+                  // Change tooltip state
+                  setCopied(true);
 
-                if (isCopied) setTooltipContent('Copied!');
-                else setTooltipContent('Unable to copy');
-              }}
-              onMouseEnter={() => {
-                setCopied(true);
-                setTooltipContent('Copy to clipboard');
-              }}
-              onMouseLeave={() => setCopied(false)}
-            />
-          </Tooltip>
-        </StyledHeader>
-        <StyledBidMatrix>
-          {matrixHeaderConfig && matrixData && (
-            <StyledTable
-              tableHeader={matrixHeaderConfig}
-              tableData={matrixData}
-              className="bidmatrix"
-            />
-          )}
-        </StyledBidMatrix>
-      </StyledDiv>
-      <StyledDiv className="price-scenario">
-        <StyledHeader>
-          <div>
-            <span>
-              <StyledTitle level={5}>Price Scenario</StyledTitle>
-            </span>
-            {/* TODO(POWEROPS-297):
-            Replace with water value */}
-            <div style={{ height: '16px' }} />
-          </div>
-        </StyledHeader>
-        <StyledBidMatrix>
-          {mainScenarioTableHeaderConfig && mainScenarioData && (
-            <StyledTable
-              tableHeader={mainScenarioTableHeaderConfig}
-              tableData={mainScenarioData || []}
-              className="price-scenario"
-            />
-          )}
-        </StyledBidMatrix>
-      </StyledDiv>
-    </Main>
+                  if (isCopied) setTooltipContent('Copied!');
+                  else setTooltipContent('Unable to copy');
+                }}
+                onMouseEnter={() => {
+                  setCopied(true);
+                  setTooltipContent('Copy to clipboard');
+                }}
+                onMouseLeave={() => setCopied(false)}
+              />
+            </Tooltip>
+          </StyledHeader>
+          <StyledBidMatrix>
+            {matrixHeaderConfig && matrixData && (
+              <StyledTable
+                tableHeader={matrixHeaderConfig}
+                tableData={matrixData}
+                className="bidmatrix"
+              />
+            )}
+          </StyledBidMatrix>
+        </StyledDiv>
+        <StyledDiv className="price-scenario">
+          <StyledHeader>
+            <div>
+              <span>
+                <StyledTitle level={5}>Price Scenario</StyledTitle>
+              </span>
+              <Detail>
+                Water value
+                <Label size="small" variant="unknown">
+                  155 NOK
+                </Label>
+              </Detail>
+            </div>
+          </StyledHeader>
+          <StyledBidMatrix>
+            {mainScenarioTableHeaderConfig && mainScenarioData && (
+              <StyledTable
+                tableHeader={mainScenarioTableHeaderConfig}
+                tableData={mainScenarioData || []}
+                className="price-scenario"
+              />
+            )}
+          </StyledBidMatrix>
+        </StyledDiv>
+      </div>
+    </MainPanel>
   );
 };
 

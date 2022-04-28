@@ -1,11 +1,34 @@
 import styled from 'styled-components/macro';
-import { Title } from '@cognite/cogs.js';
+import { Infobar, Title } from '@cognite/cogs.js';
 import { BidmatrixTable } from 'components/BidmatrixTable';
-import { MainPanel } from 'pages/elements';
 
-export const Main = styled(MainPanel)`
+export const MainPanel = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  left: 280px;
+  right: 0;
+  height: 100%;
   overflow: auto;
-  padding: 16px 0 16px 16px;
+
+  .main {
+    display: flex;
+    flex-direction: row;
+    padding: 16px 0 16px 16px;
+  }
+`;
+
+export const StyledInfobar = styled(Infobar)`
+  .cogs-infobar__content {
+    height: 40px;
+  }
+  p {
+    margin: auto;
+    Button {
+      margin-left: 16px;
+    }
+  }
 `;
 
 export const StyledDiv = styled.div`

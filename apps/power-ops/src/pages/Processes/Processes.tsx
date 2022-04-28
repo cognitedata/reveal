@@ -4,7 +4,7 @@ import { AuthConsumer, AuthContext } from '@cognite/react-container';
 import { AuthenticatedUser } from '@cognite/auth-utils';
 import { CogniteClient, CogniteEvent } from '@cognite/sdk';
 import { SnifferEvent } from '@cognite/power-ops-api-types';
-import { EDAContext } from 'providers/edaProvider';
+import { EventStreamContext } from 'providers/eventStreamProvider';
 import { useFetchProcesses } from 'queries/useFetchProcesses';
 
 import { Container } from '../elements';
@@ -40,7 +40,7 @@ const ProcessesPage = ({
   client: CogniteClient;
   authState: AuthenticatedUser | undefined;
 }) => {
-  const { EDAEvents } = useContext(EDAContext);
+  const { eventStore } = useContext(EventStreamContext);
 
   const { data: processes, refetch: refetchProcesses } = useFetchProcesses({
     project: client.project,
@@ -142,7 +142,7 @@ const ProcessesPage = ({
   };
 
   useEffect(() => {
-    const subscription = EDAEvents?.subscribe((event) => {
+    const subscription = eventStore?.subscribe((event) => {
       processEvent(event);
     });
 

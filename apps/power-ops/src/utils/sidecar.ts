@@ -20,10 +20,9 @@ const LOCAL_SERVICES: Service[] = ['power-ops-api'];
 
 const getAadApplicationId = (cluster: string) => {
   const ids: Record<string, string> = {
-    greenfield: '24771fe6-16f7-4f4c-afbe-93897c914310', // <- power-ops
-    bluefield: 'd6e4e244-9b1f-4e42-9831-74c239e0c2ae', // <- power-ops
-    'azure-dev': 'd5128515-81db-49b5-a718-1760686fb958', // <- power-ops
-    'az-power-no-northeurope': 'ebcd14e2-9c0e-4c66-9c05-eab3e4920c25', // <- power-ops
+    bluefield: 'd6e4e244-9b1f-4e42-9831-74c239e0c2ae',
+    'azure-dev': 'd5128515-81db-49b5-a718-1760686fb958',
+    'az-power-no-northeurope': 'ebcd14e2-9c0e-4c66-9c05-eab3e4920c25',
   };
 
   const aadApplicationId = ids[cluster] || '';

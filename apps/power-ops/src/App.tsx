@@ -7,7 +7,7 @@ import {
   Logout,
 } from '@cognite/react-container';
 import sidecar from 'utils/sidecar';
-import { EventProvider } from 'providers/edaProvider';
+import { EventStreamProvider } from 'providers/eventStreamProvider';
 import { Providers } from 'providers/appProvider';
 import { Processes } from 'pages/Processes';
 import { Portfolio } from 'pages/Portfolio';
@@ -19,7 +19,7 @@ import { PriceAreaProvider } from 'providers/priceAreaProvider';
 const App = () => (
   <Providers>
     <Container sidecar={sidecar}>
-      <EventProvider>
+      <EventStreamProvider>
         <GlobalStyles />
         <AuthConsumer>
           {({ client, authState }: AuthContext) =>
@@ -48,7 +48,7 @@ const App = () => (
             ) : null
           }
         </AuthConsumer>
-      </EventProvider>
+      </EventStreamProvider>
     </Container>
   </Providers>
 );

@@ -3,19 +3,18 @@ import sidecar from 'utils/sidecar';
 import { Observable } from 'rxjs';
 import { SnifferEvent } from '@cognite/power-ops-api-types';
 
-export interface EDAContextType {
-  EDAEvents?: Observable<SnifferEvent>;
+export interface EventStreamContextType {
+  eventStore?: Observable<SnifferEvent>;
 }
 
-export const EDAContext = createContext<EDAContextType>({});
+export const EventStreamContext = createContext<EventStreamContextType>({});
 
-export const EventProvider: React.FC = ({ children }) => {
+export const EventStreamProvider: React.FC = ({ children }) => {
   const { powerOpsApiBaseUrl } = sidecar;
   const eventsSourceURL = `${powerOpsApiBaseUrl}/sse`;
 
-  const [eventContextValue, setEventContextValue] = useState<EDAContextType>(
-    {}
-  );
+  const [eventContextValue, setEventContextValue] =
+    useState<EventStreamContextType>({});
 
   useEffect(() => {
     const source = new EventSource(eventsSourceURL, {
@@ -28,14 +27,14 @@ export const EventProvider: React.FC = ({ children }) => {
       };
     });
 
-    setEventContextValue({ EDAEvents: observable });
+    setEventContextValue({ eventStore: observable });
 
     return () => {
       source?.close();
     };
   }, []);
 
-  const { Provider } = EDAContext;
+  const { Provider } = EventStreamContext;
 
   return <Provider value={eventContextValue}>{children}</Provider>;
 };

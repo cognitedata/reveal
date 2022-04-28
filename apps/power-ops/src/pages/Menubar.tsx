@@ -65,7 +65,7 @@ export const MenuBar = () => {
     <StyledTopBar data-testid="top-bar">
       <TopBar.Left>
         <LogoContainer>
-          <TopBar.Logo title="Cognite Power Markets" />
+          <TopBar.Logo title="Power Market Operations" />
         </LogoContainer>
         <Dropdown
           visible={visible}

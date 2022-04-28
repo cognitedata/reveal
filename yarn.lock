@@ -3132,9 +3132,11 @@
 
 "@cognite/eslint-config@link:packages/eslint-config":
   version "0.0.0"
+  uid ""
 
 "@cognite/eslint-plugin@link:packages/eslint-plugin":
   version "0.0.0"
+  uid ""
 
 "@cognite/fas-tools@^1.3.3":
   version "1.3.3"
@@ -3208,10 +3210,10 @@
   resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.5.1.tgz#b61bc4ed905757701c8d2074b153890974857bb3"
   integrity sha512-T0+MIDd3ebZDjRbddiLF1KhMeW0JCunbvaxpseZdgAjXx6S/W4EiIFJqjP0g9KXOn09DLSAIS8DVtKKfKtyhAA==
 
-"@cognite/power-ops-api-types@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@cognite/power-ops-api-types/-/power-ops-api-types-0.0.5.tgz#660737cb1136bf9eaaf0fab28ecf38883bcdd829"
-  integrity sha512-belkXwk9zJVxncxZwtN175NUeQ5CdDbS+eERj3lFeHqBAa22broecdKqVYahp4ONN2oXjx7Tv+/YJrTke1W4jg==
+"@cognite/power-ops-api-types@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@cognite/power-ops-api-types/-/power-ops-api-types-0.0.6.tgz#f878974f11e091d9035a18cc738f3a45a94cabfa"
+  integrity sha512-/oW9KHJoQ2uCM3vtNdYUfikSgWzbxTriwqIjVwI6QU4hPWYRiC9jvYkpNWpbCgatv1xNCiEy0VAe8Qyn+spNRw==
 
 "@cognite/reveal-parser-worker@1.3.0":
   version "1.3.0"
