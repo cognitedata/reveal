@@ -87,6 +87,7 @@ export default function ProgressStatus() {
         if (
           [
             VisionDetectionModelType.ObjectDetection,
+            VisionDetectionModelType.GaugeReader,
             VisionDetectionModelType.CustomModel,
           ].includes(job.type)
         ) {

@@ -2,6 +2,7 @@ import { ProcessState } from 'src/modules/Process/store/types';
 import reducer, {
   addProcessUploadedFileId,
   addToAvailableDetectionModels,
+  BUILT_IN_MODEL_COUNT,
   clearUploadedFiles,
   initialState,
   removeJobById,
@@ -124,16 +125,17 @@ describe('Test process reducers', () => {
 
   describe('action addToAvailableDetectionModels', () => {
     test('should have added a custom detection model', () => {
+      const customModelIndex = BUILT_IN_MODEL_COUNT;
       const newState = reducer(
         mockProcessState,
         addToAvailableDetectionModels()
       );
-      expect(newState.availableDetectionModels[3].type).toEqual(
+      expect(newState.availableDetectionModels[customModelIndex].type).toEqual(
         VisionDetectionModelType.CustomModel
       );
-      expect(newState.availableDetectionModels[3].modelName).toEqual(
-        'Custom model'
-      );
+      expect(
+        newState.availableDetectionModels[customModelIndex].modelName
+      ).toEqual('Custom model');
     });
   });
 
@@ -169,6 +171,16 @@ describe('Test process reducers', () => {
           },
           unsavedSettings: {
             threshold: 0.9,
+          },
+        },
+        {
+          modelName: 'Gague reader',
+          type: VisionDetectionModelType.GaugeReader,
+          settings: {
+            gaugeType: 'analog',
+          },
+          unsavedSettings: {
+            gaugeType: 'digital',
           },
         },
         {
@@ -297,7 +309,11 @@ describe('Test process reducers', () => {
           mockProcessStateWithUnsavedSettings,
           revertDetectionModelParameters()
         );
-        for (let modelIndex = 0; modelIndex < 4; modelIndex++) {
+        for (
+          let modelIndex = 0;
+          modelIndex < BUILT_IN_MODEL_COUNT + 1; // built-in models + custom model
+          modelIndex++
+        ) {
           expect(
             newState.availableDetectionModels[modelIndex].unsavedSettings
           ).toEqual(
@@ -318,7 +334,11 @@ describe('Test process reducers', () => {
           mockProcessStateWithUnsavedSettings,
           resetDetectionModelParameters()
         );
-        for (let modelIndex = 0; modelIndex < 4; modelIndex++) {
+        for (
+          let modelIndex = 0;
+          modelIndex < BUILT_IN_MODEL_COUNT + 1; // built-in models + custom model
+          modelIndex++
+        ) {
           expect(
             newState.availableDetectionModels[modelIndex].unsavedSettings
           ).toEqual(
@@ -333,7 +353,11 @@ describe('Test process reducers', () => {
     describe('action setCustomModelName', () => {
       test('Update the Modal name', () => {
         const newModelName = 'New Name';
-        for (let modelIndex = 0; modelIndex < 4; modelIndex++) {
+        for (
+          let modelIndex = 0;
+          modelIndex < BUILT_IN_MODEL_COUNT + 1; // built-in models + custom model
+          modelIndex++
+        ) {
           const newState = reducer(
             mockProcessState,
             setCustomModelName({ modelIndex, modelName: newModelName })
@@ -361,11 +385,15 @@ describe('Test process reducers', () => {
     });
 
     test('for invalid job id nothing should change', () => {
+      const consoleSpy = jest
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {});
       const newState = reducer(mockProcessState, removeJobById(123));
       expect(newState.jobs.allIds).toEqual(jobIds);
       expect(newState.jobs.byId).toEqual(jobState);
       expect(newState.files.allIds).toEqual(mockFileIds);
       expect(newState.files.byId).toEqual(filesWithJobs);
+      expect(consoleSpy).toHaveBeenCalled();
     });
   });
 
