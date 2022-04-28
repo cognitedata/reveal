@@ -2,7 +2,10 @@ import React, { ReactText } from 'react';
 import { FixedSizeNodeData } from 'react-vtree';
 import { VisibleAnnotation } from 'src/modules/Review/store/reviewSlice';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
-import { AnnotationStatus, KeypointVertex } from 'src/utils/AnnotationUtils';
+import {
+  AnnotationStatus,
+  KeypointVertex,
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { AnnotationTableItem } from 'src/modules/Review/types';
 import { FileInfo } from '@cognite/sdk';
 

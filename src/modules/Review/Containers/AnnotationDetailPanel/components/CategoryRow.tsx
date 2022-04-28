@@ -1,7 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { AllIconTypes, Icon } from '@cognite/cogs.js';
-import { ModelTypeIconMap, ModelTypeStyleMap } from 'src/utils/AnnotationUtils';
+import {
+  ModelTypeIconMap,
+  ModelTypeStyleMap,
+} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   Category,
   RowData,
