@@ -179,7 +179,7 @@ export const VisionJobUpdate = createAsyncThunk<
         );
         const savedAnnotations = unwrapResult(savedAnnotationResponse);
         savedVisionAnnotation =
-          AnnotationUtils.convertToVisionAnnotations(savedAnnotations);
+          AnnotationUtils.convertToVisionAnnotationsV1(savedAnnotations);
       }
 
       dispatch(

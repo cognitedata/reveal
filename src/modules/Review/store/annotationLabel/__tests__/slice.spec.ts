@@ -505,7 +505,7 @@ describe('Test annotationLabel reducer', () => {
       };
 
       const generateDummyAnnotations = (fileId?: number) => {
-        return AnnotationUtils.createVisionAnnotationStub(
+        return AnnotationUtils.createVisionAnnotationStubV1(
           payload.id,
           payload.text,
           payload.modelType,

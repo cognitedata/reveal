@@ -34,7 +34,7 @@ export const CreateAnnotations = createAsyncThunk<
     );
     const savedAnnotations = unwrapResult(savedAnnotationResponse);
 
-    return AnnotationUtils.convertToVisionAnnotations(savedAnnotations);
+    return AnnotationUtils.convertToVisionAnnotationsV1(savedAnnotations);
   }
 
   return [];

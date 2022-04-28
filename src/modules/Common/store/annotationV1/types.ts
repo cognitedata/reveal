@@ -1,6 +1,6 @@
 import { VisionAnnotationV1 } from 'src/utils/AnnotationUtils';
 
-export type AnnotationState = {
+export type AnnotationStateV1 = {
   files: {
     byId: Record<number, number[]>;
   };
