@@ -1,5 +1,5 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
-import { convertCDFAnnotationV1ToVisionAnnotationBulk } from 'src/api/annotation/bulkConverters';
+import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bulkConverters';
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { VisionAnnotationV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
@@ -66,8 +66,7 @@ const annotationSlice = createSlice({
 
         // update annotations
         // ToDo (VIS-794): conversion logic from V1 to V2 in the new slice can be moved into thunks.
-        const annotations =
-          convertCDFAnnotationV1ToVisionAnnotationBulk(payload);
+        const annotations = convertCDFAnnotationV1ToVisionAnnotations(payload);
 
         annotations.forEach((annotation) => {
           const resourceId: number | undefined = getAnnotatedResourceId({
@@ -136,8 +135,7 @@ const annotationSlice = createSlice({
       (state: AnnotationState, { payload }) => {
         // update annotations
         // ToDo (VIS-794): conversion logic from V1 to V2 in the new slice can be moved into thunks.
-        const annotations =
-          convertCDFAnnotationV1ToVisionAnnotationBulk(payload);
+        const annotations = convertCDFAnnotationV1ToVisionAnnotations(payload);
         annotations.forEach((annotation) => {
           const resourceId: number | undefined = getAnnotatedResourceId({
             annotation,

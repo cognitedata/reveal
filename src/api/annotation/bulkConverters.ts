@@ -5,7 +5,7 @@ import {
 import { convertCDFAnnotationV1ToVisionAnnotation } from './converters';
 import { CDFAnnotationV1 } from './types';
 
-export const convertCDFAnnotationV1ToVisionAnnotationBulk = (
+export const convertCDFAnnotationV1ToVisionAnnotations = (
   annotations: CDFAnnotationV1[]
 ): VisionAnnotation<VisionAnnotationDataType>[] =>
   annotations
