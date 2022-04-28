@@ -7,7 +7,7 @@ import { testRenderer } from 'src/__test-utils/renderer';
 import { AutoMLModelList } from 'src/modules/AutoML/Components/AutoMLModelList';
 
 import { mockCogniteAutoMLModelList } from 'src/__test-utils/fixtures/automlModels';
-import { AutoMLModel } from 'src/api/vision/autoML/types';
+import { AutoMLModelCore } from 'src/api/vision/autoML/types';
 
 describe('AutoMLModelList', () => {
   const TestComponent = (props: any) => {
@@ -15,7 +15,7 @@ describe('AutoMLModelList', () => {
   };
 
   it('should render loading page when models are yet to be fetched and then message when no models found', async () => {
-    const props = { onRowClick: () => {}, models: [] };
+    const props = { onRowClick: () => {}, modelList: [] };
     testRenderer(TestComponent, undefined, props);
 
     expect(screen.queryByTestId('loading-animation-icon')).toBeNull();
@@ -24,7 +24,7 @@ describe('AutoMLModelList', () => {
 
   it('should render model list', async () => {
     const props = {
-      models: mockCogniteAutoMLModelList as AutoMLModel[],
+      modelList: mockCogniteAutoMLModelList as AutoMLModelCore[],
       onRowClick: () => {},
     };
     testRenderer(TestComponent, undefined, props);

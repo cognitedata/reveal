@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import { Body, Micro } from '@cognite/cogs.js';
+import { Body } from '@cognite/cogs.js';
 import { JobStatus } from 'src/api/vision/detectionModels/types';
 import styled from 'styled-components';
 import { StatusColors } from 'src/constants/Colors';
@@ -26,7 +26,7 @@ export const AutoMLStatusBadge = (props: {
           {props.status || 'Queued'}
         </Body>
       ) : (
-        <Micro strong>{props.status || 'Queued'}</Micro>
+        <div>{props.status || 'Queued'}</div>
       )}
     </Container>
   );
@@ -44,6 +44,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
 `;

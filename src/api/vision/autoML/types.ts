@@ -18,10 +18,12 @@ export interface AutoMLModelEvaluation {
   iouThreshold?: number;
 }
 
-export interface AutoMLModel {
+export interface AutoMLModelCore {
   name: string;
   jobId: number;
   modelType: AutoMLModelType;
+}
+export interface AutoMLModel extends AutoMLModelCore {
   status: JobStatus;
   modelEvaluation?: AutoMLModelEvaluation;
   modelUrl?: string;
