@@ -7,7 +7,6 @@ import {
   setCollectionStatus,
   toggleCollectionVisibility,
 } from 'src/modules/Review/store/annotationLabel/slice';
-
 import { currentCollection } from 'src/modules/Review/store/annotationLabel/selectors';
 import {
   selectAnnotation,
@@ -23,22 +22,34 @@ import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { useDispatch, useSelector } from 'react-redux';
 import { FileInfo } from '@cognite/sdk';
 import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import { generateNodeTree } from 'src/modules/Review/Containers/AnnotationDetailPanel/utils/generateNodeTree';
+import { Categories } from 'src/modules/Review/types';
 import {
-  ReviewAnnotation,
+  AnnotationReviewRow,
+  KeypointAnnotationReviewRow,
+  TagAnnotationReviewRow,
   VirtualizedAnnotationsReview,
-} from 'src/modules/Review/Containers/VirtualizedAnnotationsReview';
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/components';
+import { AnnotationDetailPanelHotKeys } from 'src/modules/Review/Containers/AnnotationDetailPanel/AnnotationDetailPanelHotKeys';
+import { ReviewAnnotation } from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
 import { convertKeyPointCollectionToAnnotationStub } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ConversionUtils';
-import { TagAnnotationReviewRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/TagAnnotationReviewRow';
-import { KeypointAnnotationReviewRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/KeypointAnnotationReviewRow';
-import { AnnotationReviewRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/AnnotationReviewRow';
+import { selectCategory } from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
 
-export const ImageContextualization = (props: {
+export const AnnotationDetailPanel = (props: {
   file: FileInfo;
   reference: any;
 }) => {
   const { file } = props;
 
   const dispatch = useDispatch();
+  const categoryState = useSelector(
+    (state: RootState) => state.annotationDetailPanelReducer.categories
+  );
+
+  // when set virtualized tree component will use this to automatically scroll to position
+  const scrollId = useSelector(
+    (rootState: RootState) => rootState.reviewSlice.scrollToId
+  );
 
   const visibleAnnotations = useSelector((rootState: RootState) =>
     selectVisibleAnnotationsForFile(rootState, file.id)
@@ -117,7 +128,7 @@ export const ImageContextualization = (props: {
     [currentKeypointCollection?.id]
   );
 
-  const handleDeleteAnnotations = useCallback(
+  const handleDelete = useCallback(
     (id: ReactText) => {
       if (id === currentKeypointCollection?.id) {
         // when creating keypoint collections
@@ -146,88 +157,109 @@ export const ImageContextualization = (props: {
     [currentKeypointCollection?.id]
   );
 
-  const handleOnAnnotationSelect = useCallback(
+  const handleOnSelect = useCallback(
     (id: ReactText, nextState: boolean) => {
+      dispatch(deselectAllSelectionsReviewPage());
       if (id === currentKeypointCollection?.id) {
         // when creating keypoint collections
-        dispatch(deselectAllSelectionsReviewPage());
         if (nextState) {
           dispatch(selectCollection(id.toString()));
         }
-      } else {
-        dispatch(deselectAllSelectionsReviewPage());
-        if (nextState) {
-          dispatch(selectAnnotation(+id));
-        }
+      } else if (Object.values(Categories).includes(id as Categories)) {
+        dispatch(
+          selectCategory({ category: id as Categories, selected: nextState })
+        );
+      } else if (nextState) {
+        dispatch(selectAnnotation(+id));
       }
     },
     [currentKeypointCollection?.id]
   );
 
-  const handleKeypointSelect = (id: ReactText) => {
+  const handleKeypointSelect = useCallback((id: ReactText) => {
     dispatch(keypointSelectStatusChange(id.toString()));
-  };
+  }, []);
 
-  const ReviewCallbacks = {
-    onDelete: handleDeleteAnnotations,
-    onVisibilityChange: handleVisibility,
-    onApproveStateChange: handleApprovalState,
-    onSelect: handleOnAnnotationSelect,
-    onKeypointSelect: handleKeypointSelect,
-  };
+  const ReviewCallbacks = useMemo(
+    () => ({
+      onDelete: handleDelete,
+      onVisibilityChange: handleVisibility,
+      onApproveStateChange: handleApprovalState,
+      onSelect: handleOnSelect,
+      onKeypointSelect: handleKeypointSelect,
+    }),
+    [
+      handleDelete,
+      handleVisibility,
+      handleApprovalState,
+      handleOnSelect,
+      handleKeypointSelect,
+    ]
+  );
 
+  // todo: map categories to annotation types from a functions and remove these hardcoded categories - VIS-803
   const annotationReviewCategories = useMemo(() => {
-    const categories = [
+    // items in common section will be passed down to child items
+    const annotationCategories = [
       {
-        title: 'Asset tags',
-        annotations: tagAnnotations,
-        mode: VisionDetectionModelType.TagDetection,
-        selected: mode === VisionDetectionModelType.TagDetection,
-        component: TagAnnotationReviewRow as React.FC,
+        title: Categories.Asset,
+        selected: !!categoryState[Categories.Asset]?.selected,
         emptyPlaceholder: 'No assets detected or manually added',
-        ...ReviewCallbacks,
+        common: {
+          annotations: tagAnnotations,
+          mode: VisionDetectionModelType.TagDetection,
+          component: TagAnnotationReviewRow as React.FC,
+        },
       },
       {
-        title: 'Objects',
-        annotations: objectAnnotations,
-        mode: VisionDetectionModelType.ObjectDetection,
-        selected:
-          mode === VisionDetectionModelType.ObjectDetection && !isKeypoint,
-        component: KeypointAnnotationReviewRow as React.FC,
+        title: Categories.Object,
+        selected: !!categoryState[Categories.Object]?.selected,
         emptyPlaceholder: 'No objects detected or manually added',
-        ...ReviewCallbacks,
+        common: {
+          annotations: objectAnnotations,
+          mode: VisionDetectionModelType.ObjectDetection,
+          component: KeypointAnnotationReviewRow as React.FC,
+        },
       },
       {
-        title: 'Text',
-        annotations: textAnnotations,
-        mode: VisionDetectionModelType.OCR,
-        selected: mode === VisionDetectionModelType.OCR,
-        component: AnnotationReviewRow as React.FC,
+        title: Categories.Text,
+        selected: !!categoryState[Categories.Text]?.selected,
         emptyPlaceholder: 'No text or objects detected or manually added',
-        ...ReviewCallbacks,
+        common: {
+          annotations: textAnnotations,
+          mode: VisionDetectionModelType.OCR,
+          component: AnnotationReviewRow as React.FC,
+        },
       },
       {
-        title: 'Keypoint collections',
-        annotations: keyPointAnnotations,
-        mode: VisionDetectionModelType.ObjectDetection,
-        selected:
-          mode === VisionDetectionModelType.ObjectDetection && !!isKeypoint,
-        component: KeypointAnnotationReviewRow as React.FC,
+        title: Categories.KeypointCollections,
+        selected: !!categoryState[Categories.KeypointCollections]?.selected,
         emptyPlaceholder: 'No keypoints detected or manually added',
-        ...ReviewCallbacks,
+        common: {
+          annotations: keyPointAnnotations,
+          mode: VisionDetectionModelType.ObjectDetection,
+          component: KeypointAnnotationReviewRow as React.FC,
+        },
       },
       {
-        title: 'Classification tags',
-        annotations: classificationAnnotations,
-        mode: VisionDetectionModelType.ObjectDetection,
-        selected: !(mode in [Object.keys(VisionDetectionModelType)]),
-        component: KeypointAnnotationReviewRow as React.FC,
-        emptyPlaceholder: 'No classification tags detected or manually added',
-        ...ReviewCallbacks,
+        title: Categories.Classifications,
+        selected: !!categoryState[Categories.Classifications]?.selected,
+        emptyPlaceholder: 'No classifications detected or manually added',
+        common: {
+          annotations: classificationAnnotations,
+          mode: VisionDetectionModelType.ObjectDetection,
+          component: KeypointAnnotationReviewRow as React.FC,
+        },
       },
     ];
 
-    return categories.filter((category) => !!category.annotations.length);
+    // filters categories of empty annotations
+    return annotationCategories
+      .filter((category) => !!category.common.annotations.length)
+      .map((category) => ({
+        ...category,
+        common: { ...category.common, file }, // add file to common props
+      }));
   }, [
     tagAnnotations,
     textAnnotations,
@@ -235,30 +267,41 @@ export const ImageContextualization = (props: {
     mode,
     isKeypoint,
     keyPointAnnotations,
+    categoryState,
   ]);
 
+  const rootNodeArr = useMemo(
+    () =>
+      annotationReviewCategories.map((category) =>
+        generateNodeTree({ ...category, callbacks: ReviewCallbacks })
+      ),
+    [annotationReviewCategories]
+  );
+
   return (
-    <Container ref={props.reference}>
-      <Detail style={{ color: '#595959' }}>
-        {'Approve and reject detected annotations '}
-        <PrimaryTooltip
-          tooltipTitle="Labeling annotations"
-          tooltipText={`
+    <AnnotationDetailPanelHotKeys nodeTree={rootNodeArr} scrollId={scrollId}>
+      <Container ref={props.reference}>
+        <Detail style={{ color: '#595959' }}>
+          {'Approve and reject detected annotations '}
+          <PrimaryTooltip
+            tooltipTitle="Labeling annotations"
+            tooltipText={`
               Pressing True or False will label the predictions in order to improve the 
               future quality of the annotation detection. Pressing False will not delete the annotation.
               `}
-        >
-          <Icon style={{ color: '#BFBFBF' }} type="HelpFilled" />
-        </PrimaryTooltip>
-      </Detail>
+          >
+            <Icon style={{ color: '#BFBFBF' }} type="HelpFilled" />
+          </PrimaryTooltip>
+        </Detail>
 
-      <TableContainer>
-        <VirtualizedAnnotationsReview
-          childContainers={annotationReviewCategories}
-          file={file}
-        />
-      </TableContainer>
-    </Container>
+        <TableContainer>
+          <VirtualizedAnnotationsReview
+            rootNodeArr={rootNodeArr}
+            scrollId={scrollId}
+          />
+        </TableContainer>
+      </Container>
+    </AnnotationDetailPanelHotKeys>
   );
 };
 
@@ -272,5 +315,6 @@ const Container = styled.div`
 `;
 
 const TableContainer = styled.div`
-  overflow-y: auto;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
 `;

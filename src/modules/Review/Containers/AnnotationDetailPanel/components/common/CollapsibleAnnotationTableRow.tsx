@@ -6,11 +6,13 @@ import {
 import { Col, Collapse, Row } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { KeypointVertex } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { KeyboardShortCutExpandChildSelectable } from 'src/modules/Review/Containers/KeyboardShortKeys/KeyboardShortCutSelectable';
-import { KeypointAnnotationReviewCollapseHeader } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/KeypointAnnotationReviewHeaderRow';
-import { ExpandIconComponent } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/ExpandIconComponent';
-import { SidePanelRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/SidePanelRow';
-import { AnnotationTableRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/AnnotationTableRow';
+import {
+  AnnotationTableRow,
+  ExpandIconComponent,
+  KeyboardShortCutExpandChildSelectable,
+  SidePanelRow,
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/components/common';
+import { KeypointAnnotationReviewHeaderRow } from 'src/modules/Review/Containers/AnnotationDetailPanel/components';
 
 const KeypointRow = ({
   keypoint,
@@ -83,7 +85,7 @@ export const CollapsibleAnnotationTableRow = ({
       >
         <StyledCollapsePanel
           header={
-            <KeypointAnnotationReviewCollapseHeader
+            <KeypointAnnotationReviewHeaderRow
               annotation={annotation}
               onSelect={onSelect}
               onDelete={onDelete}
