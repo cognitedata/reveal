@@ -176,8 +176,7 @@ describe('Cognite3DViewer', () => {
     expect(scene.getObjectById(obj.id)).toBeFalsy();
   });
 
-  test('sceneRendered triggers after rendering', async () => {
-    jest.useRealTimers();
+  test('sceneRendered triggers after rendering', () => {
     // Setup a fake rendering loop
     const requestAnimationFrameSpy: jest.SpyInstance<any, any> = jest
       .spyOn(window, 'requestAnimationFrame')
@@ -193,7 +192,6 @@ describe('Cognite3DViewer', () => {
     try {
       viewer.on('sceneRendered', onRendered);
       viewer.requestRedraw();
-      await new Promise(resolve => setTimeout(resolve, 0)); //yield control to async render call
       requestAnimationFrameCallback(1000);
       expect(onRendered).toBeCalledTimes(1);
 
@@ -204,7 +202,6 @@ describe('Cognite3DViewer', () => {
       expect(onRendered).toBeCalledTimes(0);
     } finally {
       requestAnimationFrameSpy.mockRestore();
-      jest.useFakeTimers();
     }
   });
 
