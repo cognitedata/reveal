@@ -54,7 +54,6 @@ export const layout: Partial<Plotly.Layout> = {
         size: 10,
       },
     },
-    fixedrange: true,
     spikemode: 'across',
     spikesnap: 'hovered data',
     spikethickness: 1,
@@ -62,6 +61,7 @@ export const layout: Partial<Plotly.Layout> = {
     spikecolor: '#8C8C8C',
   },
   hovermode: 'closest',
+  dragmode: false,
 };
 
 export const chartStyles: CSS.Properties = {

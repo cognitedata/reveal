@@ -2,14 +2,13 @@ import { Data, PlotMouseEvent } from 'plotly.js';
 import { SetStateAction, useEffect, useState } from 'react';
 import { Datapoints, DoubleDatapoint, ExternalId } from '@cognite/sdk';
 import { useAuthContext } from '@cognite/react-container';
-import Plot from 'react-plotly.js';
 import { pickChartColor } from 'utils/utils';
 import { PriceArea } from '@cognite/power-ops-api-types';
 import { TableData } from 'types';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 
-import { StyledTitle, TooltipCard, FlexRow } from './elements';
+import { StyledTitle, TooltipCard, FlexRow, StyledPlot } from './elements';
 import { chartStyles, layout, Card } from './chartConfig';
 
 dayjs.extend(utc);
@@ -175,7 +174,7 @@ export const PriceScenariosChart = ({
             </FlexRow>
           </TooltipCard>
         )}
-        <Plot
+        <StyledPlot
           data-testid="plotly-chart"
           className="styled-plot"
           data={chartData}
@@ -184,6 +183,7 @@ export const PriceScenariosChart = ({
           config={{
             responsive: true,
             displayModeBar: false,
+            scrollZoom: true,
           }}
           onClick={(event) => changeTab(event.points[0].data.name)}
           onHover={handleChartHoverEvent}

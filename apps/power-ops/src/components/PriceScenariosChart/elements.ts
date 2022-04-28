@@ -2,6 +2,7 @@ import styled from 'styled-components/macro';
 import { Title, Body } from '@cognite/cogs.js';
 import { sizes } from 'styles/layout';
 import layers from 'utils/zindex';
+import Plot from 'react-plotly.js';
 
 export const StyledTitle = styled(Title)`
   font-family: 'Inter';
@@ -84,4 +85,12 @@ export const ColorIndicator = styled.div`
   height: 12px;
   border-radius: ${sizes.extraSmall};
   box-shadow: 0 0 0 2px rgba(64, 64, 64, 0.04);
+`;
+
+export const StyledPlot = styled(Plot)`
+  .draglayer {
+    .nsewdrag {
+      cursor: pointer;
+    }
+  }
 `;
