@@ -14,7 +14,7 @@ import thunk from 'redux-thunk';
 import { initialState as fileState } from 'src/modules/Common/store/files/slice';
 import { initialState as fileDetailsState } from 'src/modules/FileDetails/slice';
 import { initialState as processState } from 'src/modules/Process/store/slice';
-import { initialState as annotationState } from 'src/modules/Common/store/annotation/slice';
+import { initialState as annotationV1State } from 'src/modules/Common/store/annotationV1/slice';
 import { initialState as annotationLabelState } from 'src/modules/Review/store/annotationLabel/slice';
 import rootReducer, { RootState } from 'src/store/rootReducer';
 
@@ -25,7 +25,7 @@ export const getInitialState: () => StoreState = () => {
     fileReducer: fileState,
     fileDetailsSlice: fileDetailsState,
     processSlice: processState,
-    annotationReducer: annotationState,
+    annotationV1Reducer: annotationV1State,
     annotationLabelReducer: annotationLabelState,
   };
 };

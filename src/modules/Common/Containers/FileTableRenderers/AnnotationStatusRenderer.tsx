@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
+import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotationV1/selectors';
 import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -21,8 +21,8 @@ export function AnnotationStatusRenderer({ rowData: { id } }: CellRenderer) {
     makeSelectAnnotationsForFileIds,
     []
   );
-  const annotationsMap = useSelector(({ annotationReducer }: RootState) =>
-    selectAnnotationsForFileIds(annotationReducer, [id])
+  const annotationsMap = useSelector(({ annotationV1Reducer }: RootState) =>
+    selectAnnotationsForFileIds(annotationV1Reducer, [id])
   );
 
   const rejectedAnnotationIds: number[] = [];

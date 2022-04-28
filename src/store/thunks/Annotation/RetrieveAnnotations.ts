@@ -49,7 +49,7 @@ export const RetrieveAnnotations = createAsyncThunk<
           }
         );
         const visionAnnotations =
-          AnnotationUtils.convertToVisionAnnotations(filteredAnnotations);
+          AnnotationUtils.convertToVisionAnnotationsV1(filteredAnnotations);
         return visionAnnotations;
       }),
       reduce((allAnnotations, annotationsPerFile) => {

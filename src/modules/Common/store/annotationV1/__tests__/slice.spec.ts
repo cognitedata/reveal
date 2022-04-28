@@ -1,6 +1,6 @@
 import reducer, {
   initialState,
-} from 'src/modules/Common/store/annotation/slice';
+} from 'src/modules/Common/store/annotationV1/slice';
 import { clearAnnotationState } from 'src/store/commonActions';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
@@ -10,13 +10,13 @@ import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
 
-describe('Test annotation reducer', () => {
-  const getDummyAnnotation = (
+describe('Test annotationV1 reducer', () => {
+  const getDummyAnnotationV1 = (
     id?: number,
     modelType?: number,
     annotatedResourceId?: number
   ) => {
-    return AnnotationUtils.createVisionAnnotationStub(
+    return AnnotationUtils.createVisionAnnotationStubV1(
       id || 1,
       'pump',
       modelType || 1,
@@ -52,8 +52,8 @@ describe('Test annotation reducer', () => {
         },
         annotations: {
           byId: {
-            '1': getDummyAnnotation(1),
-            '2': getDummyAnnotation(2),
+            '1': getDummyAnnotationV1(1),
+            '2': getDummyAnnotationV1(2),
           },
         },
       };
@@ -89,8 +89,8 @@ describe('Test annotation reducer', () => {
         },
         annotations: {
           byId: {
-            '1': getDummyAnnotation(1),
-            '2': getDummyAnnotation(2),
+            '1': getDummyAnnotationV1(1),
+            '2': getDummyAnnotationV1(2),
           },
         },
       };
@@ -100,7 +100,7 @@ describe('Test annotation reducer', () => {
           byId: { '20': [2] },
         },
         annotations: {
-          byId: { '2': getDummyAnnotation(2) },
+          byId: { '2': getDummyAnnotationV1(2) },
         },
       });
     });
@@ -125,7 +125,7 @@ describe('Test annotation reducer', () => {
         },
         annotations: {
           byId: {
-            '1': getDummyAnnotation(1),
+            '1': getDummyAnnotationV1(1),
           },
         },
       };
@@ -142,10 +142,10 @@ describe('Test annotation reducer', () => {
           },
         },
         payload: [
-          getDummyAnnotation(1, undefined, 10), // existing annotation and file
-          getDummyAnnotation(2, undefined, 10), // new annotation for existing file with annotation
-          getDummyAnnotation(3, undefined, 20), // new annotation for existing file without annotation
-          getDummyAnnotation(4, undefined, 30), // new file and annotation
+          getDummyAnnotationV1(1, undefined, 10), // existing annotation and file
+          getDummyAnnotationV1(2, undefined, 10), // new annotation for existing file with annotation
+          getDummyAnnotationV1(3, undefined, 20), // new annotation for existing file without annotation
+          getDummyAnnotationV1(4, undefined, 30), // new file and annotation
         ],
       };
 
@@ -158,7 +158,7 @@ describe('Test annotation reducer', () => {
         },
         annotations: {
           byId: {
-            '1': getDummyAnnotation(1, undefined, 10),
+            '1': getDummyAnnotationV1(1, undefined, 10),
           },
         },
       };
@@ -173,10 +173,10 @@ describe('Test annotation reducer', () => {
         },
         annotations: {
           byId: {
-            '1': getDummyAnnotation(1, undefined, 10),
-            '2': getDummyAnnotation(2, undefined, 10),
-            '3': getDummyAnnotation(3, undefined, 20),
-            '4': getDummyAnnotation(4, undefined, 30),
+            '1': getDummyAnnotationV1(1, undefined, 10),
+            '2': getDummyAnnotationV1(2, undefined, 10),
+            '3': getDummyAnnotationV1(3, undefined, 20),
+            '4': getDummyAnnotationV1(4, undefined, 30),
           },
         },
       });
@@ -198,7 +198,7 @@ describe('Test annotation reducer', () => {
         },
         annotations: {
           byId: {
-            '1': getDummyAnnotation(1, undefined, 10),
+            '1': getDummyAnnotationV1(1, undefined, 10),
           },
         },
       };
@@ -220,8 +220,8 @@ describe('Test annotation reducer', () => {
         },
         annotations: {
           byId: {
-            '1': getDummyAnnotation(1, undefined, 10),
-            '2': getDummyAnnotation(2, undefined, 10),
+            '1': getDummyAnnotationV1(1, undefined, 10),
+            '2': getDummyAnnotationV1(2, undefined, 10),
           },
         },
       };
@@ -244,8 +244,8 @@ describe('Test annotation reducer', () => {
       },
       annotations: {
         byId: {
-          '1': getDummyAnnotation(1, undefined, 10),
-          '2': getDummyAnnotation(2, undefined, 10),
+          '1': getDummyAnnotationV1(1, undefined, 10),
+          '2': getDummyAnnotationV1(2, undefined, 10),
         },
       },
     };
@@ -258,7 +258,7 @@ describe('Test annotation reducer', () => {
       },
       annotations: {
         byId: {
-          '1': getDummyAnnotation(1, undefined, 10),
+          '1': getDummyAnnotationV1(1, undefined, 10),
         },
       },
     });
@@ -278,7 +278,7 @@ describe('Test annotation reducer', () => {
       },
       annotations: {
         byId: {
-          '1': getDummyAnnotation(1, undefined, 10),
+          '1': getDummyAnnotationV1(1, undefined, 10),
         },
       },
     };
@@ -308,10 +308,10 @@ describe('Test annotation reducer', () => {
         const action = {
           type: actionType,
           payload: [
-            getDummyAnnotation(1, undefined, 10), // existing annotation and file
-            getDummyAnnotation(2, undefined, 10), // new annotation for existing file with annotation
-            getDummyAnnotation(3, undefined, 20), // new annotation for existing file without annotation
-            getDummyAnnotation(4, undefined, 30), // new file and annotation
+            getDummyAnnotationV1(1, undefined, 10), // existing annotation and file
+            getDummyAnnotationV1(2, undefined, 10), // new annotation for existing file with annotation
+            getDummyAnnotationV1(3, undefined, 20), // new annotation for existing file without annotation
+            getDummyAnnotationV1(4, undefined, 30), // new file and annotation
           ],
         };
 
@@ -324,7 +324,7 @@ describe('Test annotation reducer', () => {
           },
           annotations: {
             byId: {
-              '1': getDummyAnnotation(1, undefined, 10),
+              '1': getDummyAnnotationV1(1, undefined, 10),
             },
           },
         };
@@ -339,10 +339,10 @@ describe('Test annotation reducer', () => {
           },
           annotations: {
             byId: {
-              '1': getDummyAnnotation(1, undefined, 10),
-              '2': getDummyAnnotation(2, undefined, 10),
-              '3': getDummyAnnotation(3, undefined, 20),
-              '4': getDummyAnnotation(4, undefined, 30),
+              '1': getDummyAnnotationV1(1, undefined, 10),
+              '2': getDummyAnnotationV1(2, undefined, 10),
+              '3': getDummyAnnotationV1(3, undefined, 20),
+              '4': getDummyAnnotationV1(4, undefined, 30),
             },
           },
         });
@@ -371,8 +371,8 @@ describe('Test annotation reducer', () => {
           },
           annotations: {
             byId: {
-              '1': getDummyAnnotation(1),
-              '2': getDummyAnnotation(2),
+              '1': getDummyAnnotationV1(1),
+              '2': getDummyAnnotationV1(2),
             },
           },
         };
@@ -385,7 +385,7 @@ describe('Test annotation reducer', () => {
           },
           annotations: {
             byId: {
-              '1': getDummyAnnotation(1),
+              '1': getDummyAnnotationV1(1),
             },
           },
         });
