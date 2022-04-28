@@ -133,11 +133,11 @@ export class AnnotationUtils {
       : (ModelTypeIconMap[annotation.modelType] as AllIconTypes);
   };
 
-  public static convertToVisionAnnotations(
+  public static convertToVisionAnnotationsV1(
     annotations: CDFAnnotationV1[]
   ): VisionAnnotationV1[] {
     return annotations.map((value) => {
-      let ann = AnnotationUtils.createVisionAnnotationStub(
+      let ann = AnnotationUtils.createVisionAnnotationStubV1(
         value.id,
         value.text,
         AnnotationUtils.getAnnotationsDetectionModelType(value),
@@ -168,7 +168,7 @@ export class AnnotationUtils {
     });
   }
 
-  public static createVisionAnnotationStub(
+  public static createVisionAnnotationStubV1(
     id: number,
     text: string,
     modelType: VisionDetectionModelType,

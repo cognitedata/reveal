@@ -30,7 +30,7 @@ export const selectExplorerAllFilesSelected = createSelector(
 
 export const selectExplorerFilesWithAnnotationCount = createSelector(
   (state: RootState) => selectExplorerAllFiles(state.explorerReducer),
-  (state: RootState) => state.annotationReducer.files.byId,
+  (state: RootState) => state.annotationV1Reducer.files.byId,
   (explorerAllFiles, allAnnotationFiles) => {
     return explorerAllFiles.map((file) => {
       return {

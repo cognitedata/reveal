@@ -15,7 +15,7 @@ const getDummyAnnotation = (
   linkedResourceId?: number
 ) => {
   return {
-    ...AnnotationUtils.createVisionAnnotationStub(
+    ...AnnotationUtils.createVisionAnnotationStubV1(
       id || 1,
       'pump',
       modelType || 1,

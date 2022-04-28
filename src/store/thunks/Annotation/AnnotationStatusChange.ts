@@ -82,7 +82,7 @@ export const AnnotationStatusChange = createAsyncThunk<
   };
 
   const annotationState =
-    getState().annotationReducer.annotations.byId[payload.id];
+    getState().annotationV1Reducer.annotations.byId[payload.id];
   const file =
     getState().fileReducer.files.byId[annotationState.annotatedResourceId];
 

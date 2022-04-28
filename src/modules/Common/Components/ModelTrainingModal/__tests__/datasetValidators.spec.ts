@@ -16,7 +16,7 @@ jest.mock('src/api/vision/autoML/constants', () => ({
 
 const getDummyAnnotation = (text: string, fileId?: number) => {
   return {
-    ...AnnotationUtils.createVisionAnnotationStub(
+    ...AnnotationUtils.createVisionAnnotationStubV1(
       1,
       text,
       1,

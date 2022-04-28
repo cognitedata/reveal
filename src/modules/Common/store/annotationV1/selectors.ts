@@ -1,5 +1,5 @@
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
-import { AnnotationState } from 'src/modules/Common/store/annotation/types';
+import { AnnotationStateV1 } from 'src/modules/Common/store/annotationV1/types';
 import {
   AnnotationUtils,
   getAnnotationsBadgeCounts,
@@ -11,17 +11,17 @@ import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
 
 const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
 
-export const annotationsById = (state: AnnotationState) => {
+export const annotationsById = (state: AnnotationStateV1) => {
   return state.annotations.byId;
 };
 
-export const annotatedFilesById = (state: AnnotationState) => {
+export const annotatedFilesById = (state: AnnotationStateV1) => {
   return state.files.byId;
 };
 
 export const makeSelectFileAnnotations = () =>
   createDeepEqualSelector(
-    (state: AnnotationState, id: number) => state.files.byId[id],
+    (state: AnnotationStateV1, id: number) => state.files.byId[id],
     annotationsById,
     (annotationIds, allAnnotations) => {
       if (annotationIds && annotationIds.length) {
@@ -33,9 +33,9 @@ export const makeSelectFileAnnotations = () =>
 
 export const makeSelectAnnotationsForFileIds = () =>
   createDeepEqualSelector(
-    (state: AnnotationState, fileIds: number[]) => fileIds,
+    (state: AnnotationStateV1, fileIds: number[]) => fileIds,
     (
-      state: AnnotationState,
+      state: AnnotationStateV1,
       fileIds: number[],
       filter?: AnnotationFilterType
     ) => filter,
@@ -65,7 +65,7 @@ export const makeSelectFileAnnotationsByType = () => {
 
   return createDeepEqualSelector(
     (
-      state: AnnotationState,
+      state: AnnotationStateV1,
       fileId: number,
       types: VisionDetectionModelType[]
     ) => types,
@@ -80,8 +80,8 @@ export const makeSelectFileAnnotationsByType = () => {
 };
 
 export const filesAnnotationCounts = createDeepEqualSelector(
-  (state: AnnotationState) => state.files.byId,
-  (_: AnnotationState, fileIds: number[]) => fileIds,
+  (state: AnnotationStateV1) => state.files.byId,
+  (_: AnnotationStateV1, fileIds: number[]) => fileIds,
   (allFiles, fileIds) => {
     const data: Record<number, number> = {};
     fileIds.forEach((id) => {
