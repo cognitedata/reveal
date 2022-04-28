@@ -1,8 +1,8 @@
 import React from 'react';
 import { AnnotationTableRowProps } from 'src/modules/Review/types';
-import { AnnotationTableRow } from 'src/modules/Review/Components/AnnotationReviewDetailComponents/Common/AnnotationTableRow';
+import { AnnotationTableRow } from 'src/modules/Review/Containers/AnnotationDetailPanel/components/common';
 
-export const KeypointAnnotationReviewCollapseHeader = ({
+export const KeypointAnnotationReviewHeaderRow = ({
   annotation,
   onSelect,
   onDelete,
