@@ -274,6 +274,9 @@ describe('Test convertAnnotationStatusToStatus', () => {
 describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
   test('annotationId, annotationExternalId and annotationStatus', () => {
     const cdfAnnotation = {} as CDFAnnotationV1;
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
 
     const cdfAnnotationWithIdV1 = getDummyAnnotation(
       1,
@@ -318,22 +321,8 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
       convertCDFAnnotationV1ToVisionAnnotation(
         cdfAnnotationWithExternalIdV1 as unknown as CDFAnnotationV1
       )
-    ).toStrictEqual({
-      id: cdfAnnotationWithExternalIdV1.id,
-      createdTime: cdfAnnotationWithExternalIdV1.createdTime,
-      lastUpdatedTime: cdfAnnotationWithExternalIdV1.lastUpdatedTime,
-      annotatedResourceExternalId:
-        cdfAnnotationWithExternalIdV1.annotatedResourceExternalId,
-      status: Status.Suggested,
-      confidence: cdfAnnotationWithIdV1.data?.confidence,
-      extractedText: cdfAnnotationWithIdV1.text,
-      textRegion: {
-        xMin: cdfAnnotationWithIdV1.region?.vertices[0].x,
-        yMin: cdfAnnotationWithIdV1.region?.vertices[0].y,
-        xMax: cdfAnnotationWithIdV1.region?.vertices[1].x,
-        yMax: cdfAnnotationWithIdV1.region?.vertices[1].y,
-      },
-    } as VisionImageExtractedTextAnnotation);
+    ).toEqual(null);
+    expect(consoleSpy).toHaveBeenCalled();
   });
 
   test('conversions', () => {

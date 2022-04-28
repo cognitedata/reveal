@@ -1,5 +1,4 @@
 import {
-  CogniteExternalId,
   CogniteInternalId,
   ExternalId,
   IdEither,
@@ -82,29 +81,8 @@ export type AnnotationAttributes = {
   };
 };
 
-export type AnnotatedResourceIdEither =
-  | AnnotatedResourceId
-  | AnnotatedResourceExternalId;
-
 export interface AnnotatedResourceId {
   annotatedResourceId: CogniteInternalId;
-}
-export interface AnnotatedResourceExternalId {
-  annotatedResourceExternalId: CogniteExternalId;
-}
-
-export type LinkedResourceRef = Partial<
-  { linkedResourceType: 'file' | 'asset' } & (
-    | LinkedResourceId
-    | LinkedResourceExternalId
-  )
->;
-
-export interface LinkedResourceId {
-  linkedResourceId: CogniteInternalId;
-}
-export interface LinkedResourceExternalId {
-  linkedResourceExternalId: CogniteExternalId;
 }
 
 // Data field Types
@@ -160,7 +138,7 @@ export type CDFAnnotationType<Type> = Type extends ImageObjectDetection
   ? CDFAnnotationTypeEnum.ImageClassification
   : never;
 
-export type CDFAnnotationV2<Type> = AnnotatedResourceIdEither & {
+export type CDFAnnotationV2<Type> = AnnotatedResourceId & {
   id: number;
   createdTime: Timestamp;
   lastUpdatedTime: Timestamp;
@@ -168,8 +146,8 @@ export type CDFAnnotationV2<Type> = AnnotatedResourceIdEither & {
   status: CDFAnnotationStatus;
   annotationType: CDFAnnotationType<Type>;
   data: Type;
-} & LinkedResourceRef; // TODO: remove `LinkedResource` once removed from the api
-
+  linkedResourceType: 'file' | 'asset';
+};
 // Annotation API types
 export type AnnotationTypeV1 =
   | 'vision/ocr'
