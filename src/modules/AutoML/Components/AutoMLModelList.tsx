@@ -10,12 +10,12 @@ import { TableWrapper } from 'src/modules/Common/Components/FileTable/FileTableW
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
 import { StringHeaderRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringHeaderRenderer';
 import ReactBaseTable, { Column, ColumnShape } from 'react-base-table';
-import { CopyableText } from 'src/modules/FileDetails/Components/FileMetadata/CopyableText';
-import { dateformat } from 'src/utils/DateUtils';
-import { AutoMLModelNameBadge } from './AutoMLModelNameBadge';
-import { AutoMLStatusBadge } from './AutoMLStatusBadge';
+import { NameRenderer } from './AutoMLTableRenderer/NameRenderer';
+import { IdRenderer } from './AutoMLTableRenderer/IdRenderer';
+import { StatusRenderer } from './AutoMLTableRenderer/StatusRenderer';
+import { DateRenderer } from './AutoMLTableRenderer/DateRenderer';
 
-type AutoMLTableDataType = AutoMLModelCore &
+export type AutoMLTableDataType = AutoMLModelCore &
   Partial<Omit<AutoMLTrainingJob, 'name' | 'jobId' | 'modelType'>>;
 
 export const AutoMLModelList = (props: {
@@ -68,51 +68,6 @@ export const AutoMLModelList = (props: {
       editMode: false,
     },
   ];
-
-  // Table renderers
-  const IdRenderer = ({
-    rowData: { jobId },
-  }: {
-    rowData: AutoMLTableDataType;
-  }) => {
-    return (
-      <CopyableText copyable text={jobId} copyIconColor="#595959">
-        <>{jobId}</>
-      </CopyableText>
-    );
-  };
-
-  const NameRenderer = ({
-    rowData: { name },
-  }: {
-    rowData: AutoMLTableDataType;
-  }) => {
-    return <AutoMLModelNameBadge name={name} small />;
-  };
-
-  const StatusRenderer = ({
-    rowData: { status },
-  }: {
-    rowData: AutoMLTableDataType;
-  }) => {
-    return status ? (
-      <AutoMLStatusBadge status={status} />
-    ) : (
-      <StyledIcon type="Loading" />
-    );
-  };
-
-  const DateRenderer = ({
-    rowData: { createdTime },
-  }: {
-    rowData: AutoMLTableDataType;
-  }) => {
-    return createdTime ? (
-      <>{dateformat(new Date(createdTime))}</>
-    ) : (
-      <StyledIcon type="Loading" />
-    );
-  };
 
   const rendererMap: {
     [key: string]: (props: { rowData: AutoMLTableDataType }) => JSX.Element;
