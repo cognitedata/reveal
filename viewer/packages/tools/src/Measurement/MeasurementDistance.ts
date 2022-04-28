@@ -18,6 +18,7 @@ export class MeasurementDistance implements Measurement {
   private readonly _startPoint: THREE.Vector3;
   private readonly _endPoint: THREE.Vector3;
   private _positions: Float32Array;
+  private _axis: THREE.Vector3;
   private _lineOptions: MeasurementLineOptions = {
     lineWidth: 0.02,
     color: new THREE.Color(0x00ffff)
@@ -45,6 +46,7 @@ export class MeasurementDistance implements Measurement {
     this._endPoint = new THREE.Vector3();
     this._positions = new Float32Array(6);
     this._lineOptions = lineOptions ?? this._lineOptions;
+    this._axis = new THREE.Vector3(1, 1, 1);
   }
 
   private initializeLine(): void {
@@ -127,10 +129,9 @@ export class MeasurementDistance implements Measurement {
     const distance = new THREE.Vector3()
       .subVectors(controlPoint, this._viewer.cameraManager.getCamera().position)
       .length();
-    if (distance < 0.4) {
-      const direction = new THREE.Vector3();
-      direction.subVectors(this._endPoint, this._startPoint);
-    }
+
+    // controlPoint.multiplyVectors(controlPoint, this._axis);
+
     if (this._isActive && this._measurementLine && distance > 0.2) {
       this._positions[3] = controlPoint.x;
       this._positions[4] = controlPoint.y;
@@ -148,10 +149,18 @@ export class MeasurementDistance implements Measurement {
     return this._isActive;
   }
 
+  /**
+   * Sets the line width & color
+   * @param options MeasurementLineOptions.lineWidth or MeasurementLineOptions.color or both
+   */
   public setLineOptions(options: MeasurementLineOptions): void {
     this.ShaderUniforms.uniforms.linewidth.value = options?.lineWidth ?? this._lineOptions.lineWidth;
     this.ShaderUniforms.uniforms.diffuse.value = new THREE.Color(options?.color ?? this._lineOptions.color);
     this._lineOptions.color = this.ShaderUniforms.uniforms.diffuse.value;
     this._lineOptions.lineWidth = this.ShaderUniforms.uniforms.linewidth.value;
+  }
+
+  public setAxis(axis: THREE.Vector3): void {
+    this._axis = axis;
   }
 }

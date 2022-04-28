@@ -2,6 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 import { Cognite3DViewer } from '@reveal/core';
+import { Vector3 } from 'three';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { MeasurementControls } from './MeasurementControls';
 import { MeasurementDistance } from './MeasurementDistance';
@@ -33,9 +34,15 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._measurementControls.remove();
   }
 
+  /**
+   * Set Line width & Color
+   * @param lineOptions MeasurementLineOptions.lineWidth or MeasurementLineOptions.color or both
+   */
   public setLineOptions(lineOptions: MeasurementLineOptions): void {
     if (this._measurementControls) {
       this._measurementControls.updateLineOptions(lineOptions);
     }
   }
+
+  public setMeasurementDistanceAxis(axis: THREE.Vector3): void {}
 }
