@@ -8,6 +8,8 @@ import { OCRDetectionDataProvider } from 'src/api/vision/detectionModels/ocr/OCR
 import { MockDataProvider } from 'src/api/vision/detectionModels/MockDataProvider';
 import { TagDetectionDataProvider } from 'src/api/vision/detectionModels/tagDetection/TagDetectionDataProvider';
 import { ObjectDetectionDataProvider } from 'src/api/vision/detectionModels/objectDetection/ObjectDetectionDataProvider';
+import { GaugeReaderDataProvider } from 'src/api/vision/detectionModels/gaugeReader/GaugeReaderDetectionDataProvider';
+
 import { CustomModelDataProvider } from 'src/api/vision/detectionModels/customModel/CustomModelDataProvider';
 
 function getDetectionModelDataProvider(
@@ -22,6 +24,9 @@ function getDetectionModelDataProvider(
     }
     case VisionDetectionModelType.ObjectDetection: {
       return new ObjectDetectionDataProvider();
+    }
+    case VisionDetectionModelType.GaugeReader: {
+      return new GaugeReaderDataProvider();
     }
     case VisionDetectionModelType.CustomModel: {
       return new CustomModelDataProvider();

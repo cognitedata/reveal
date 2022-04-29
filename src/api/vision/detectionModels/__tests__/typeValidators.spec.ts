@@ -229,7 +229,7 @@ describe('validKeypointCollection', () => {
   test('Missing region', () => {
     const visionJobAnnotation = {
       data: {
-        keypoint_names: ['left'],
+        keypointNames: ['left'],
       },
     } as VisionJobAnnotation;
     expect(validKeypointCollection(visionJobAnnotation)).toBe(false);
@@ -238,7 +238,7 @@ describe('validKeypointCollection', () => {
   test('Missing shape', () => {
     const visionJobAnnotation = {
       data: {
-        keypoint_names: ['left'],
+        keypointNames: ['left'],
       },
       region: {},
     } as VisionJobAnnotation;
@@ -248,7 +248,7 @@ describe('validKeypointCollection', () => {
   test('Invalid shape', () => {
     const visionJobAnnotation = {
       data: {
-        keypoint_names: ['left'],
+        keypointNames: ['left'],
       },
       region: { shape: RegionShape.Rectangle },
     } as VisionJobAnnotation;
@@ -258,17 +258,17 @@ describe('validKeypointCollection', () => {
   test('Missing vertices', () => {
     const visionJobAnnotation = {
       data: {
-        keypoint_names: ['left'],
+        keypointNames: ['left'],
       },
       region: { shape: RegionShape.Points },
     } as VisionJobAnnotation;
     expect(validKeypointCollection(visionJobAnnotation)).toBe(false);
   });
 
-  test('Missing keypoint_names', () => {
+  test('Missing keypointNames', () => {
     const visionJobAnnotation = {
       data: {
-        keypoint_names: ['left'],
+        keypointNames: ['left'],
       },
       region: {
         shape: RegionShape.Points,
@@ -281,10 +281,10 @@ describe('validKeypointCollection', () => {
     expect(validKeypointCollection(visionJobAnnotation)).toBe(false);
   });
 
-  test('Mismatch between keypoint_names and vertices', () => {
+  test('Mismatch between keypointNames and vertices', () => {
     const visionJobAnnotation = {
       data: {
-        keypoint_names: ['left'],
+        keypointNames: ['left'],
       },
       region: {
         shape: RegionShape.Points,
@@ -300,7 +300,7 @@ describe('validKeypointCollection', () => {
   test('Invalid vertex', () => {
     const visionJobAnnotation = {
       data: {
-        keypoint_names: ['left'],
+        keypointNames: ['left'],
       },
       region: {
         shape: RegionShape.Points,
@@ -313,7 +313,7 @@ describe('validKeypointCollection', () => {
   test('Non-normalized vertices', () => {
     const visionJobAnnotation = {
       data: {
-        keypoint_names: ['left'],
+        keypointNames: ['left'],
       },
       region: {
         shape: RegionShape.Points,
@@ -329,7 +329,7 @@ describe('validKeypointCollection', () => {
   test('Overlapping vertices', () => {
     const visionJobAnnotation = {
       data: {
-        keypoint_names: ['left'],
+        keypointNames: ['left'],
       },
       region: {
         shape: RegionShape.Points,
@@ -345,7 +345,7 @@ describe('validKeypointCollection', () => {
   test('Valid collection', () => {
     const visionJobAnnotation = {
       data: {
-        keypoint_names: ['left', 'right'],
+        keypointNames: ['left', 'right'],
       },
       region: {
         shape: RegionShape.Points,

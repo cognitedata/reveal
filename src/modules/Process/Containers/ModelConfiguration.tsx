@@ -14,6 +14,7 @@ import * as tagDetectionModelDetails from './ModelDetails/TagDetectionModelDetai
 import * as objectDetectionModelDetails from './ModelDetails/ObjectDetectionModelDetails';
 import * as ocrModelDetails from './ModelDetails/OcrModelDetails';
 import * as customModelDetails from './ModelDetails/customModelDetails';
+import * as gaugeReaderDetails from './ModelDetails/gaugeReaderDetails';
 
 const queryClient = new QueryClient();
 
@@ -44,7 +45,7 @@ export const ModelConfiguration = (props: {
 
   const [currentModelSettings, setCurrentModelSettings] = useState(
     // show custom model settings if custom model added and automl is enabled
-    availableDetectionModels.length > 3 &&
+    availableDetectionModels.length > BUILT_IN_MODEL_COUNT &&
       !props.disabledModelTypes.includes(VisionDetectionModelType.CustomModel)
       ? availableDetectionModels.length - 1
       : 0
@@ -98,6 +99,16 @@ export const ModelConfiguration = (props: {
               objectDetectionModelDetails.badge(item.modelName, hideText)
             ),
             content: objectDetectionModelDetails.content(index),
+          };
+          break;
+
+        case VisionDetectionModelType.GaugeReader:
+          labelAndContent = {
+            label: BadgeWrapper(
+              item.modelName,
+              gaugeReaderDetails.badge(item.modelName, hideText)
+            ),
+            content: gaugeReaderDetails.content(index),
           };
           break;
         case VisionDetectionModelType.CustomModel:

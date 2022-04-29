@@ -1,5 +1,4 @@
 import {
-  CogniteExternalId,
   CogniteInternalId,
   ExternalId,
   IdEither,
@@ -58,29 +57,32 @@ export type ImageKeypoint = Label &
 
 export type Timestamp = number;
 
-export type AnnotatedResourceIdEither =
-  | AnnotatedResourceId
-  | AnnotatedResourceExternalId;
+export type NumericalAttribute = {
+  type: 'numerical';
+  value: number;
+  description?: string;
+};
+
+export type BooleanAttribute = {
+  type: 'boolean';
+  value: boolean;
+  description?: string;
+};
+
+export type UnitAttribute = {
+  type: 'unit';
+  value: string;
+  description?: string;
+};
+
+export type AnnotationAttributes = {
+  attributes: {
+    [key: string]: NumericalAttribute | BooleanAttribute | UnitAttribute;
+  };
+};
 
 export interface AnnotatedResourceId {
   annotatedResourceId: CogniteInternalId;
-}
-export interface AnnotatedResourceExternalId {
-  annotatedResourceExternalId: CogniteExternalId;
-}
-
-export type LinkedResourceRef = Partial<
-  { linkedResourceType: 'file' | 'asset' } & (
-    | LinkedResourceId
-    | LinkedResourceExternalId
-  )
->;
-
-export interface LinkedResourceId {
-  linkedResourceId: CogniteInternalId;
-}
-export interface LinkedResourceExternalId {
-  linkedResourceExternalId: CogniteExternalId;
 }
 
 // Data field Types
@@ -110,7 +112,7 @@ export type ImageAssetLink = TextRegion &
   };
 
 export type ImageKeypointCollection = Label &
-  Partial<Confidence> & {
+  Partial<Confidence & AnnotationAttributes> & {
     keypoints: ImageKeypoint[];
   };
 
@@ -136,7 +138,7 @@ export type CDFAnnotationType<Type> = Type extends ImageObjectDetection
   ? CDFAnnotationTypeEnum.ImageClassification
   : never;
 
-export type CDFAnnotationV2<Type> = AnnotatedResourceIdEither & {
+export type CDFAnnotationV2<Type> = AnnotatedResourceId & {
   id: number;
   createdTime: Timestamp;
   lastUpdatedTime: Timestamp;
@@ -144,20 +146,21 @@ export type CDFAnnotationV2<Type> = AnnotatedResourceIdEither & {
   status: CDFAnnotationStatus;
   annotationType: CDFAnnotationType<Type>;
   data: Type;
-} & LinkedResourceRef; // TODO: remove `LinkedResource` once removed from the api
-
+  linkedResourceType: 'file' | 'asset';
+};
 // Annotation API types
 export type AnnotationTypeV1 =
   | 'vision/ocr'
   | 'vision/tagdetection'
   | 'vision/objectdetection'
+  | 'vision/gaugereader'
   | 'vision/custommodel'
   | 'user_defined'
   | 'CDF_ANNOTATION_TEMPLATE';
 
 export type AnnotationSourceV1 = 'context_api' | 'user';
 
-export type AnnotationMetadataV1 = {
+export type AnnotationMetadataV1 = Partial<AnnotationAttributes> & {
   keypoint?: boolean;
   keypoints?: Keypoint[];
   color?: string;
