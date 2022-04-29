@@ -1,23 +1,15 @@
-uniform vec3 diffuse;
+precision highp float;
+
+uniform vec3 color;
 uniform float opacity;
 uniform float linewidth;
 
-#ifdef USE_DASH
-  uniform float dashOffset;
-  uniform float dashSize;
-  uniform float gapSize;
-#endif
-
 in float vLineDistance;
-
-out vec4 outputColor;
-
 in vec4 worldPos;
 in vec3 worldStart;
 in vec3 worldEnd;
-#ifdef USE_DASH
-  in vec2 vUv;
-#endif
+
+out vec4 outputColor;
 
 vec2 closestLineToLine(vec3 p1, vec3 p2, vec3 p3, vec3 p4) {
   float mua;
@@ -44,12 +36,6 @@ vec2 closestLineToLine(vec3 p1, vec3 p2, vec3 p3, vec3 p4) {
 }
 
 void main() {
-  #ifdef USE_DASH
-    if (vUv.y < - 1.0 || vUv.y > 1.0) discard; // discard endcaps
-
-    if (mod(vLineDistance + dashOffset, dashSize + gapSize) > dashSize) discard; // todo - FIX
-  #endif
-
   float alpha = opacity;
 
     // Find the closest points on the view ray and the line segment
@@ -63,18 +49,9 @@ void main() {
   float len = length(delta);
   float norm = len / linewidth;
 
-  #ifndef USE_DASH
-    #ifdef USE_ALPHA_TO_COVERAGE
-      float dnorm = fwidth(norm);
-      alpha = 1.0 - smoothstep(0.5 - dnorm, 0.5 + dnorm, norm);
-    #else
-      if (norm > 0.5) {
-        discard;
-      }
-    #endif
-  #endif
+  if (norm > 0.5) {
+    discard;
+  }
 
-  vec4 diffuseColor = vec4(diffuse, alpha);
-
-  outputColor = vec4(diffuseColor.rgb, alpha);
+  outputColor = vec4(color, alpha);
 }

@@ -25,14 +25,9 @@ export class MeasurementDistance implements Measurement {
   };
 
   private readonly LineUniforms: any = {
-    worldUnits: { value: 1 },
     linewidth: { value: this._lineOptions.lineWidth },
     resolution: { value: new THREE.Vector2(1, 1) },
-    dashOffset: { value: 0 },
-    dashScale: { value: 1 },
-    dashSize: { value: 1 },
-    gapSize: { value: 1 },
-    diffuse: { value: this._lineOptions.color }
+    color: { value: this._lineOptions.color }
   };
 
   private readonly ShaderUniforms: any = {
@@ -52,12 +47,11 @@ export class MeasurementDistance implements Measurement {
   private initializeLine(): void {
     if (this._measurementLine === undefined) {
       this._lineGeometry = new LineGeometry();
-      const lineMaterial = new THREE.ShaderMaterial({
+      const lineMaterial = new THREE.RawShaderMaterial({
         uniforms: THREE.UniformsUtils.clone(this.ShaderUniforms.uniforms),
         vertexShader: lineShaders.vertex,
         fragmentShader: lineShaders.fragment,
         clipping: true,
-        alphaToCoverage: true,
         glslVersion: THREE.GLSL3
       });
 
@@ -155,8 +149,8 @@ export class MeasurementDistance implements Measurement {
    */
   public setLineOptions(options: MeasurementLineOptions): void {
     this.ShaderUniforms.uniforms.linewidth.value = options?.lineWidth ?? this._lineOptions.lineWidth;
-    this.ShaderUniforms.uniforms.diffuse.value = new THREE.Color(options?.color ?? this._lineOptions.color);
-    this._lineOptions.color = this.ShaderUniforms.uniforms.diffuse.value;
+    this.ShaderUniforms.uniforms.color.value = new THREE.Color(options?.color ?? this._lineOptions.color);
+    this._lineOptions.color = this.ShaderUniforms.uniforms.color.value;
     this._lineOptions.lineWidth = this.ShaderUniforms.uniforms.linewidth.value;
   }
 

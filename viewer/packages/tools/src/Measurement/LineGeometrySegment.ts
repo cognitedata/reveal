@@ -20,7 +20,7 @@ export class LineGeometrySegment extends THREE.InstancedBufferGeometry {
   }
 
   public setPositions(array: Float32Array): void {
-    let lineSegments;
+    let lineSegments: ArrayLike<number>;
 
     if (array instanceof Float32Array) {
       lineSegments = array;
@@ -34,20 +34,6 @@ export class LineGeometrySegment extends THREE.InstancedBufferGeometry {
 
     this.computeBoundingBox();
     this.computeBoundingSphere();
-  }
-
-  public setColors(array: Float32Array): void {
-    let colors;
-
-    if (array instanceof Float32Array) {
-      colors = array;
-    } else if (Array.isArray(array)) {
-      colors = new Float32Array(array);
-    }
-
-    const instanceColorBuffer = new THREE.InstancedInterleavedBuffer(colors, 6, 1);
-    this.setAttribute('instanceColorStart', new THREE.InterleavedBufferAttribute(instanceColorBuffer, 3, 0));
-    this.setAttribute('instanceColorEnd', new THREE.InterleavedBufferAttribute(instanceColorBuffer, 3, 3));
   }
 
   public computeBoundingBox(): void {

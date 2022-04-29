@@ -1,35 +1,21 @@
-#include <common>
-#include <color_pars_vertex>
-
 uniform float linewidth;
 uniform vec2 resolution;
+uniform mat4 projectionMatrix;
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
 
+in vec3 position;
 in vec3 instanceStart;
 in vec3 instanceEnd;
-
-in vec3 instanceColorStart;
-in vec3 instanceColorEnd;
-
+in vec2 uv;
 
 out vec4 worldPos;
 out vec3 worldStart;
 out vec3 worldEnd;
 
-#ifdef USE_DASH
-  out vec2 vUv;
-#endif
-
-#ifdef USE_DASH
-  uniform float dashScale;
-  in float instanceDistanceStart;
-  in float instanceDistanceEnd;
-  out float vLineDistance;
-#endif
-
 void trimSegment(const in vec4 start, inout vec4 end) {
-  // conservative estimate of the near plane
-  float a = projectionMatrix[ 2 ][ 2 ]; // 3nd entry in 3th column
-  float b = projectionMatrix[ 3 ][ 2 ]; // 3nd entry in 4th column
+  float a = projectionMatrix[ 2 ][ 2 ];
+  float b = projectionMatrix[ 3 ][ 2 ];
   float nearEstimate = - 0.5 * b / a;
   float alpha = (nearEstimate - start.z) / (end.z - start.z);
 
@@ -37,14 +23,7 @@ void trimSegment(const in vec4 start, inout vec4 end) {
 }
 
 void main() {
-  #ifdef USE_COLOR
-    vColor.xyz = (position.y < 0.5) ? instanceColorStart : instanceColorEnd;
-  #endif
-
-  #ifdef USE_DASH
-    vLineDistance = (position.y < 0.5) ? dashScale * instanceDistanceStart : dashScale * instanceDistanceEnd;
-    vUv = uv;
-  #endif
+  mat4 modelViewMatrix = viewMatrix * modelMatrix;
 
   float aspect = resolution.x / resolution.y;
 
@@ -55,7 +34,7 @@ void main() {
   worldStart = start.xyz;
   worldEnd = end.xyz;
 
-  bool perspective = (projectionMatrix[ 2 ][ 3 ] == - 1.0); // 4th entry in the 3rd column
+  bool perspective = (projectionMatrix[ 2 ][ 3 ] == - 1.0);
 
   if (perspective) {
     if (start.z < 0.0 && end.z >= 0.0) {
@@ -93,17 +72,11 @@ void main() {
   if (position.x < 0.0) offset *= - 1.0;
 
   float forwardOffset = dot(worldDir, vec3(0.0, 0.0, 1.0));
-  // don't extend the line if we're rendering dashes because we
-  // won't be rendering the endcaps
-  #ifndef USE_DASH
-    // extend the line bounds to encompass  endcaps
-    start.xyz += - worldDir * linewidth * 0.5;
-    end.xyz += worldDir * linewidth * 0.5;
-    // shift the position of the quad so it hugs the forward edge of the line
-    offset.xy -= dir * forwardOffset;
-    offset.z += 0.5;
-  #endif
-  // endcaps
+  start.xyz += - worldDir * linewidth * 0.5;
+  end.xyz += worldDir * linewidth * 0.5;
+  offset.xy -= dir * forwardOffset;
+  offset.z += 0.5;
+  
   if (position.y > 1.0 || position.y < 0.0) {
     offset.xy += dir * 2.0 * forwardOffset;
   }
@@ -113,7 +86,6 @@ void main() {
   worldPos = (position.y < 0.5) ? start : end;
   worldPos.xyz += offset;
 
-  // project the worldpos
   vec4 clip = projectionMatrix * worldPos;
   vec3 clipPose = (position.y < 0.5) ? ndcStart : ndcEnd;
   clip.z = clipPose.z * clip.w;

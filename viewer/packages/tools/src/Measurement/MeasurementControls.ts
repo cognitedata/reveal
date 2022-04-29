@@ -45,7 +45,7 @@ export class MeasurementControls {
    * Remove input handling
    */
   private removeInputHandling() {
-    this._domElement.removeEventListener('click', this._handleonPointerClick);
+    this._inputHandler.off('click', this._handleonPointerClick);
   }
 
   /**
