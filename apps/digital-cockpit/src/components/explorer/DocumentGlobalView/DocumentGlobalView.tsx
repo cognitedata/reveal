@@ -8,12 +8,12 @@ import { Container, Preview, Sidebar } from './elements';
 
 export type DocumentGlobalViewProps = {
   document: FileInfo;
-  handleSelect?: () => void; // handle selection of an asset or a timeserie
+  onSelect?: () => void; // handle selection of an asset or a timeserie
 };
 
 const TimeSeriesGlobalView = ({
   document,
-  handleSelect = noop,
+  onSelect = noop,
 }: DocumentGlobalViewProps) => {
   return (
     <Container>
@@ -25,7 +25,7 @@ const TimeSeriesGlobalView = ({
           document={document}
           showPreview={false}
           showHeader={false}
-          handleSelect={handleSelect}
+          onSelect={onSelect}
         />
       </Sidebar>
     </Container>

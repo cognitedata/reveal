@@ -11,7 +11,7 @@ import useTimeSeriesAggregateQuery from 'hooks/useQuery/useTimeSeriesAggregateQu
 import { InternalFilterSettings } from 'components/search/types';
 import { mapFiltersToCDF } from 'components/search/utils';
 import SearchBar from 'components/search/SearchBar';
-import { useLocation } from 'react-router-dom';
+import useFullScreenView from 'hooks/useFullScreenView';
 
 import TimeSeriesRow from '../TimeSeriesRow';
 import { RowWrapper } from '../TimeSeriesRow/RowWrapper';
@@ -25,12 +25,9 @@ export type TimeSeriesTabProps = {
 };
 
 const TimeSeriesTab = ({ assetId }: TimeSeriesTabProps) => {
-  // get search query from url
-  const { search } = useLocation();
-  const urlParams = useMemo(() => new URLSearchParams(search), [search]);
   // The actual value of the input field
   const [filterValue, setFilterValue] = useState<InternalFilterSettings>({
-    query: urlParams.get('q') || '',
+    query: '',
     filters: [],
   });
   // The field we pass to the query (so we can debounce)
@@ -43,7 +40,7 @@ const TimeSeriesTab = ({ assetId }: TimeSeriesTabProps) => {
     []
   );
   const { renderPagination, getPageData, resetPages } = usePagination();
-  const [selectedTimeSeries, setSelectedTimeSeries] = useState();
+  const [selectedTimeSeries, setSelectedTimeSeries] = useState<Timeseries>();
 
   const { data: totalTimeSeriesOnAsset } = useTimeSeriesAggregateQuery({
     filter: {
@@ -76,6 +73,8 @@ const TimeSeriesTab = ({ assetId }: TimeSeriesTabProps) => {
   useEffect(() => {
     resetPages();
   }, [relatedQuery.data, assetQuery.data]);
+
+  const { openTimeSeriesView } = useFullScreenView();
 
   const renderSection = (
     { data, isLoading }: UseQueryResult<Timeseries[], unknown>,
@@ -141,7 +140,10 @@ const TimeSeriesTab = ({ assetId }: TimeSeriesTabProps) => {
       </section>
       {selectedTimeSeries && (
         <div className="sidebar">
-          <TimeSeriesSidebar timeSeries={selectedTimeSeries} />
+          <TimeSeriesSidebar
+            timeSeries={selectedTimeSeries}
+            onExpand={() => openTimeSeriesView(selectedTimeSeries.id)}
+          />
         </div>
       )}
     </TabWrapper>

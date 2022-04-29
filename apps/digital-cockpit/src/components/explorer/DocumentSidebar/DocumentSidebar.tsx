@@ -6,7 +6,7 @@ import { useAssetRetrieveQuery } from 'hooks/useQuery/useAssetQuery';
 import { useDocumentDownloadUrl } from 'hooks/useQuery/useDocumentDownloadUrl';
 import useTimeSeriesQuery from 'hooks/useQuery/useTimeSeriesListQuery';
 import noop from 'lodash/noop';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 
 import DocumentPreview from '../DocumentPreview';
 import ShareButton from '../ShareButton';
@@ -25,8 +25,8 @@ export type DocumentSidebarProps = {
   document: FileInfo;
   showPreview?: boolean;
   showHeader?: boolean;
-  handleSelect?: () => void; // select asset or timeserie
-  handleExpandDocument?: () => void; // show expand btn & handle click on it
+  onSelect?: () => void; // select asset or timeserie
+  onExpandDocument?: () => void; // show expand btn & handle onclick
 };
 
 const DocumentDownloadButton = ({ document }: { document: FileInfo }) => {
@@ -53,8 +53,8 @@ const DocumentSidebar = ({
   document,
   showPreview = true,
   showHeader = true,
-  handleExpandDocument,
-  handleSelect = noop,
+  onExpandDocument,
+  onSelect = noop,
 }: DocumentSidebarProps) => {
   const handleOpenInBlueprint = () => {
     const url = `https://blueprint.cogniteapp.com`;
@@ -72,6 +72,8 @@ const DocumentSidebar = ({
       : undefined
   );
 
+  const location = useLocation();
+
   return (
     <Container>
       {showHeader && (
@@ -85,10 +87,7 @@ const DocumentSidebar = ({
       {showPreview && (
         <Preview>
           <div className="document-sidebar--preview-wrapper">
-            <DocumentPreview
-              document={document}
-              handleClick={handleExpandDocument}
-            />
+            <DocumentPreview document={document} onClick={onExpandDocument} />
           </div>
         </Preview>
       )}
@@ -102,12 +101,12 @@ const DocumentSidebar = ({
         >
           Open in Blueprint
         </Button>
-        {handleExpandDocument && (
+        {onExpandDocument && (
           <Button
             size="small"
             type="secondary"
             className="share sidebar-action-btn"
-            onClick={handleExpandDocument}
+            onClick={onExpandDocument}
           >
             <Icon type="Expand" />
           </Button>
@@ -129,7 +128,7 @@ const DocumentSidebar = ({
                     <li>
                       <NavLink
                         to={`/explore/${asset.id}/detail`}
-                        onClick={handleSelect}
+                        onClick={onSelect}
                       >
                         {asset.name}
                       </NavLink>
@@ -155,10 +154,8 @@ const DocumentSidebar = ({
                   >
                     <li>
                       <NavLink
-                        to={`/explore/${
-                          timeserie.assetId
-                        }/timeseries?q=${encodeURI(timeserie.name || '')}`}
-                        onClick={handleSelect}
+                        to={`${location.pathname}?fullscreen&tsid=${timeserie.id}`}
+                        onClick={onSelect}
                       >
                         {timeserie.name}
                       </NavLink>

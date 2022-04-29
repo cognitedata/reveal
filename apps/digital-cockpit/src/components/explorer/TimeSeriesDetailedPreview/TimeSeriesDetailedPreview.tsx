@@ -48,11 +48,15 @@ const TimeSeriesDetailedPreview = ({
   }
 
   if (error) {
-    return <div>Could not load preview</div>;
+    return (
+      <div style={{ width: '100%', textAlign: 'center' }}>
+        Could not load preview
+      </div>
+    );
   }
 
   if (!data || data.length <= 0) {
-    return <div>No data</div>;
+    return <div style={{ width: '100%', textAlign: 'center' }}>No data</div>;
   }
 
   return (

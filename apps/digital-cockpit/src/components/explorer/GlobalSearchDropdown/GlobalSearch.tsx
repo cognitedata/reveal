@@ -1,7 +1,8 @@
-import { Button, Drawer, Modal } from '@cognite/cogs.js';
+import { Button, Drawer } from '@cognite/cogs.js';
 import { FileInfo, Timeseries } from '@cognite/sdk';
 import IconContainer from 'components/icons';
 import Loading from 'components/utils/Loading';
+import useFullScreenView from 'hooks/useFullScreenView';
 import { useGlobalSearchQuery } from 'hooks/useQuery/useGlobalSearchQuery';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -10,14 +11,11 @@ import { mapResourceTypeToLabel } from 'utils/resourceTypes';
 
 import DocumentSidebar from '../DocumentSidebar';
 import SearchResult from '../SearchResult';
-import TimeSeriesGlobalView from '../TimeSeriesGlobalView';
-import TimeSeriesSidebar from '../TimeSeriesSidebar';
 
 import {
   GlobalSearchMenu,
   ResourceTypeContainer,
   ResultContainer,
-  TimeSeriesModal,
 } from './elements';
 
 export type GlobalSearchProps = {
@@ -66,15 +64,14 @@ const ResourceTypeSelector = ({
 const GlobalSearch = ({ query = '', onResultSelected }: GlobalSearchProps) => {
   const history = useHistory();
   const [selectedType, setSelectedType] = useState<ResourceType | undefined>();
-  const [selectedTimeSeries, setSelectedTimeSeries] = useState<
-    Timeseries | undefined
-  >();
   const [selectedFile, setSelectedFile] = useState<FileInfo | undefined>();
 
   const { data: results, isLoading } = useGlobalSearchQuery(
     query,
     selectedType as SdkResourceType
   );
+
+  const { openTimeSeriesView, openDocumentView } = useFullScreenView();
 
   const handleAssetSelected = (assetId: number) => {
     history.push(`/explore/${assetId}/detail`);
@@ -84,7 +81,7 @@ const GlobalSearch = ({ query = '', onResultSelected }: GlobalSearchProps) => {
   };
 
   const handleTimeSeriesSelected = (timeSeries: Timeseries) => {
-    setSelectedTimeSeries(timeSeries);
+    openTimeSeriesView(timeSeries.id);
     if (onResultSelected) {
       onResultSelected();
     }
@@ -141,19 +138,17 @@ const GlobalSearch = ({ query = '', onResultSelected }: GlobalSearchProps) => {
         onCancel={() => setSelectedFile(undefined)}
         footer={null}
       >
-        {selectedFile && <DocumentSidebar document={selectedFile} />}
-      </Drawer>
-      <TimeSeriesModal
-        visible={Boolean(selectedTimeSeries)}
-        title={selectedTimeSeries?.name}
-        onCancel={() => setSelectedTimeSeries(undefined)}
-        footer={null}
-        width={1320}
-      >
-        {selectedTimeSeries && (
-          <TimeSeriesGlobalView timeSeries={selectedTimeSeries} />
+        {selectedFile && (
+          <DocumentSidebar
+            document={selectedFile}
+            onExpandDocument={() => {
+              openDocumentView(selectedFile.id);
+              setSelectedFile(undefined);
+            }}
+            onSelect={() => setSelectedFile(undefined)}
+          />
         )}
-      </TimeSeriesModal>
+      </Drawer>
     </>
   );
 };

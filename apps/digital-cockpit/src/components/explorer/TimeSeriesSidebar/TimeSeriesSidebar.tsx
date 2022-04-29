@@ -24,6 +24,7 @@ export type TimeSeriesSidebarProps = {
   timeSeries: Timeseries;
   showPreview?: boolean;
   showHeader?: boolean;
+  onExpand?: (e?: React.MouseEvent) => void; // show expand btn & handle onclick
 };
 
 const TimeSeriesDownloadButton = ({
@@ -64,6 +65,7 @@ const TimeSeriesSidebar = ({
   timeSeries,
   showPreview = true,
   showHeader = true,
+  onExpand,
 }: TimeSeriesSidebarProps) => {
   const { client } = useCDFExplorerContext();
   const { data: datapoints, isLoading } = useDatapointsQuery(
@@ -120,7 +122,11 @@ const TimeSeriesSidebar = ({
         (showPreview ? (
           <Preview>
             {renderLastReading()}
-            <TimeSeriesPreview timeSeries={timeSeries} showYAxis />
+            <TimeSeriesPreview
+              timeSeries={timeSeries}
+              showYAxis
+              onClick={onExpand}
+            />
           </Preview>
         ) : (
           renderLastReading()
@@ -130,12 +136,24 @@ const TimeSeriesSidebar = ({
           size="small"
           type="primary"
           icon="MergedChart"
-          className="timeseries-sidebar--open-in-charts"
+          className="timeseries-sidebar--open-in-charts sidebar-action-btn"
           onClick={handleOpenInCharts}
         >
           Open in Charts
         </Button>
-        <ShareButton />
+
+        {onExpand && (
+          <Button
+            size="small"
+            type="secondary"
+            className="share sidebar-action-btn"
+            onClick={onExpand}
+          >
+            <Icon type="Expand" />
+          </Button>
+        )}
+
+        <ShareButton className="sidebar-action-btn" />
         <TimeSeriesDownloadButton timeSeries={timeSeries} />
       </Actions>
       <MetadataList>

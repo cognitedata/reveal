@@ -11,14 +11,14 @@ import useFileAggregateQuery from 'hooks/useQuery/useFileAggregateQuery';
 import SearchBar from 'components/search/SearchBar';
 import { InternalFilterSettings } from 'components/search/types';
 import { mapFiltersToCDF } from 'components/search/utils';
+import useFullScreenView from 'hooks/useFullScreenView';
 
 import DocumentGrouper from '../DocumentGrouper';
 import DocumentRow from '../DocumentRow';
 import { DocumentRowWrapper } from '../DocumentRow/DocumentRowWrapper';
-import DocumentGlobalView from '../DocumentGlobalView';
 import DocumentSidebar from '../DocumentSidebar';
 
-import { DocumentTabWrapper, DocumentModal } from './elements';
+import { DocumentTabWrapper } from './elements';
 import { FILE_FILTER_SELECTORS } from './consts';
 
 export type DocumentTabProps = {
@@ -48,7 +48,7 @@ const DocumentTab = ({ assetId, groupByField = '' }: DocumentTabProps) => {
     FileInfo | undefined
   >();
 
-  const [documentModalOpened, setDocumentModalOpened] = useState(false);
+  const { openDocumentView } = useFullScreenView();
 
   const isImgOrPdf = useMemo(
     () =>
@@ -150,7 +150,6 @@ const DocumentTab = ({ assetId, groupByField = '' }: DocumentTabProps) => {
 
   const handleCloseModal = () => {
     setSelectedDocument(undefined);
-    setDocumentModalOpened(false);
   };
 
   const renderPreview = () => {
@@ -161,30 +160,13 @@ const DocumentTab = ({ assetId, groupByField = '' }: DocumentTabProps) => {
     // for pdf/img show sidebar with expand button
     if (isImgOrPdf) {
       return (
-        <>
-          <div className="document-tab--sidebar">
-            <DocumentSidebar
-              document={selectedDocument}
-              handleSelect={handleCloseModal}
-              handleExpandDocument={() => setDocumentModalOpened(true)}
-            />
-          </div>
-          <DocumentModal
-            visible={Boolean(documentModalOpened)}
-            title={selectedDocument?.name}
-            onCancel={handleCloseModal}
-            footer={null}
-            width={1320}
-            closable
-          >
-            {documentModalOpened && (
-              <DocumentGlobalView
-                document={selectedDocument}
-                handleSelect={handleCloseModal}
-              />
-            )}
-          </DocumentModal>
-        </>
+        <div className="document-tab--sidebar">
+          <DocumentSidebar
+            document={selectedDocument}
+            onSelect={handleCloseModal}
+            onExpandDocument={() => openDocumentView(selectedDocument.id)}
+          />
+        </div>
       );
     }
 

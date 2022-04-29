@@ -30,6 +30,10 @@ export const Actions = styled.section`
   display: flex;
   justify-content: space-around;
 
+  .sidebar-action-btn {
+    margin-right: 4px;
+  }
+
   .timeseries-sidebar--open-in-charts {
     width: 175px;
     margin-right: 10px;

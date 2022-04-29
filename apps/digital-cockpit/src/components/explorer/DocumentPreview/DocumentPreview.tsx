@@ -7,10 +7,10 @@ import { PreviewImage } from './elements';
 
 export type DocumentPreviewProps = {
   document: FileInfo;
-  handleClick?: () => void;
+  onClick?: () => void;
 };
 
-const DocumentPreview = ({ document, handleClick }: DocumentPreviewProps) => {
+const DocumentPreview = ({ document, onClick }: DocumentPreviewProps) => {
   const [isBroken, setBroken] = useState(false);
   const { data: image } = useDocumentImage(document);
 
@@ -30,7 +30,7 @@ const DocumentPreview = ({ document, handleClick }: DocumentPreviewProps) => {
           src={image}
           alt={document.name}
           onError={() => setBroken(true)}
-          onClick={handleClick}
+          onClick={onClick}
         />
       </Tooltip>
     );

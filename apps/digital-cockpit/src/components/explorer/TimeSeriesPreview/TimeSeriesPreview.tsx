@@ -9,11 +9,13 @@ import useElementSize from 'hooks/useElementSize';
 export type TimeSeriesPreviewProps = {
   timeSeries: Timeseries;
   showYAxis?: boolean;
+  onClick?: () => void;
 };
 
 const TimeSeriesPreview = ({
   timeSeries,
   showYAxis = false,
+  onClick,
 }: TimeSeriesPreviewProps) => {
   const {
     data: datapoints,
@@ -90,7 +92,12 @@ const TimeSeriesPreview = ({
   };
 
   return (
-    <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
+    <div
+      ref={containerRef}
+      style={{ width: '100%', height: '100%', cursor: 'pointer' }}
+      onClick={onClick}
+      aria-hidden="true"
+    >
       {showYAxis ? renderPreviewWithYAxis() : renderSimplePreview()}
     </div>
   );
