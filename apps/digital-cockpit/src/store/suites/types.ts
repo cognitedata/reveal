@@ -58,3 +58,7 @@ export interface SuitesTableState {
   suites: Suite[] | null;
   imageUrls: ImgUrls;
 }
+
+export type SuitesByKey = {
+  [key: string]: Suite;
+};

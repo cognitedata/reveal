@@ -15,20 +15,28 @@ import { Link } from 'react-router-dom';
 interface Props {
   suiteKey: CogniteExternalId;
   handleClick: () => void;
+  menu?: React.ReactElement;
 }
 
-const SubSuiteTile: React.FC<Props> = ({ suiteKey, handleClick }: Props) => {
+const SubSuiteTile: React.FC<Props> = ({
+  suiteKey,
+  handleClick,
+  menu,
+}: Props) => {
   const suite = useSelector(getSuiteByKey(suiteKey)) as Suite;
 
   return suite ? (
     <Link to={`/suites/${suiteKey}`} key={suiteKey} onClick={handleClick}>
       <SubSuiteTileContainer>
-        <SuiteAvatar color={suite.color} title={suite.title} />
-        <TileDescription>
-          <Tooltip content={suite.title}>
-            <StyledTitle level={6}>{suite.title}</StyledTitle>
-          </Tooltip>
-        </TileDescription>
+        <div className="flex-aligned-content">
+          <SuiteAvatar color={suite.color} title={suite.title} />
+          <TileDescription>
+            <Tooltip content={suite.title}>
+              <StyledTitle level={6}>{suite.title}</StyledTitle>
+            </Tooltip>
+          </TileDescription>
+        </div>
+        {menu}
       </SubSuiteTileContainer>
     </Link>
   ) : null;

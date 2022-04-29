@@ -5,7 +5,7 @@ import maxBy from 'lodash/maxBy';
 import { CogniteExternalId } from '@cognite/sdk';
 import { createSelector } from 'reselect';
 
-import { ImgUrls, Suite, SuitesTableState } from './types';
+import { ImgUrls, Suite, SuitesTableState, SuitesByKey } from './types';
 
 export const getSuitesTableState = (state: StoreState): SuitesTableState => {
   const { suites: suitesState } = state.suitesTable;
@@ -65,3 +65,9 @@ export const getSuitePath = (suiteKey: CogniteExternalId) =>
 
     return breadbrumbs.reverse();
   });
+
+export const suitesByKey = (state: StoreState): SuitesByKey =>
+  getSuitesTableState(state).suites?.reduce((acc, suite) => {
+    acc[suite.key] = suite;
+    return acc;
+  }, {} as SuitesByKey) || {};

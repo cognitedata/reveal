@@ -4,6 +4,9 @@ export const SuiteAvatarContainer = styled.div<{
   disabled?: boolean;
   color?: string;
 }>`
+  display: flex;
+  justify-content: center;
+
   text-align: center;
   padding-top: 6px;
   padding-bottom: 6px;

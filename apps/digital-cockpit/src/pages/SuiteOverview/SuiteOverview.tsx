@@ -6,7 +6,11 @@ import Suitebar from 'components/suitebar';
 import { SuiteMenu } from 'components/menus';
 import { OverviewContainer, NoItemsContainer } from 'styles/common';
 import { useDispatch, useSelector } from 'react-redux';
-import { getSuiteByKey, getSuitesTableState } from 'store/suites/selectors';
+import {
+  getSuiteByKey,
+  getSuitesTableState,
+  suitesByKey,
+} from 'store/suites/selectors';
 import { getGroupsState, isAdmin } from 'store/groups/selectors';
 import { RootDispatcher } from 'store/types';
 import { modalOpen } from 'store/modals/actions';
@@ -55,6 +59,8 @@ const SuiteOverview: React.FC = () => {
   } = useSelector(getModalState);
 
   const suite: Suite = useSelector(getSuiteByKey(id)) as Suite;
+
+  const byKey = useSelector(suitesByKey);
 
   const metrics = useMetrics('SuiteOverview');
 
@@ -262,15 +268,23 @@ const SuiteOverview: React.FC = () => {
             <ContainerTitle>
               <Title level={6}>Subsuites</Title>
             </ContainerTitle>
-            {childSuites?.map((suiteKey) => (
+            {childSuites?.map((subSuiteKey) => (
               <SubSuiteTile
-                suiteKey={suiteKey}
-                key={suiteKey}
+                suiteKey={subSuiteKey}
+                key={subSuiteKey}
                 handleClick={() =>
                   metrics.track('Suite_Click:Subsuite', {
-                    suiteKey,
+                    subSuiteKey,
                     suite: suite.title,
                   })
+                }
+                menu={
+                  canEdit ? (
+                    <SuiteMenu
+                      suiteItem={byKey[subSuiteKey]}
+                      className="subsuite-tile-menu"
+                    />
+                  ) : undefined
                 }
               />
             ))}

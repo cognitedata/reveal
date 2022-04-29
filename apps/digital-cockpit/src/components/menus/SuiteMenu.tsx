@@ -18,8 +18,9 @@ import {
 
 interface Props {
   suiteItem: Suite;
+  className?: string;
 }
-export const SuiteMenu: React.FC<Props> = ({ suiteItem }) => {
+export const SuiteMenu: React.FC<Props> = ({ suiteItem, className }) => {
   const dispatch = useDispatch<RootDispatcher>();
   const { ref, isComponentVisible, setIsComponentVisible } =
     useClickAwayListener(false);
@@ -55,7 +56,7 @@ export const SuiteMenu: React.FC<Props> = ({ suiteItem }) => {
   };
 
   return (
-    <MenuContainer ref={ref}>
+    <MenuContainer ref={ref} className={className}>
       <Button
         type="ghost"
         icon="EllipsisHorizontal"
@@ -90,6 +91,18 @@ export const SuiteMenu: React.FC<Props> = ({ suiteItem }) => {
                   >
                     <Icon type="Edit" />
                     Edit suite
+                  </MenuItemContent>
+                </Menu.Item>
+                <Menu.Item>
+                  <MenuItemContent
+                    role="button"
+                    tabIndex={0}
+                    onClick={(event) =>
+                      handleOpenModal(event, 'MoveSuite', { suiteItem })
+                    }
+                  >
+                    <Icon type="Folder" />
+                    Move suite to...
                   </MenuItemContent>
                 </Menu.Item>
                 <Menu.Item>

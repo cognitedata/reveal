@@ -28,8 +28,13 @@ export const ApplicationTileContainer = styled(SmallTileContainer)`
 `;
 
 export const SubSuiteTileContainer = styled(SmallTileContainer)`
+  justify-content: space-between;
   padding: 10px;
   margin: 0 48px 24px 0;
+  .flex-aligned-content {
+    display: flex;
+    align-items: center;
+  }
 `;
 
 export const TileContainer = styled(TileBasic)<{

@@ -7,65 +7,70 @@ import { ApiClientContext } from 'providers/ApiClientProvider';
 import Modal from 'components/modals/simpleModal/Modal';
 import { ModalFooter } from 'components/modals/elements';
 import { useMetrics } from 'utils/metrics';
-import { Board, Suite } from 'store/suites/types';
+import { Suite } from 'store/suites/types';
 import { suitesByKey } from 'store/suites/selectors';
-import { moveBoard as moveBoardDispatcher } from 'store/suites/thunks';
+import { moveSuite as moveSuiteDispatcher } from 'store/suites/thunks';
+import SuitesTree from 'components/modals/SuitesTree';
 import { useHistory } from 'react-router-dom';
-import { deleteLayoutItems } from 'store/layout/thunks';
 import * as Sentry from '@sentry/browser';
 
-import SuitesTree from '../SuitesTree';
-
 interface Props {
-  boardItem: Board;
   suiteItem: Suite;
 }
 
-const MoveBoard: React.FC<Props> = ({
-  boardItem: board,
-  suiteItem: sourceSuite,
-}: Props) => {
+const MoveSuite: React.FC<Props> = ({ suiteItem: currentSuite }: Props) => {
   const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
   const metrics = useMetrics('EditSuite');
-  const [targetSuiteKey, setTargetSuiteKey] = useState<string | null>('');
+  const [targetSuiteKey, setTargetSuiteKey] = useState<
+    string | undefined | null
+  >(currentSuite.parent);
   const byKey = useSelector(suitesByKey);
   const [isProcessing, setIsProcessing] = useState(false);
   const history = useHistory();
-  if (!sourceSuite) {
+  if (!currentSuite) {
     Sentry.captureMessage(
-      'MoveBoard: No source suite provided',
+      'MoveSuite: No source suite provided',
       Sentry.Severity.Error
     );
     return null;
   }
+
+  const childSuitesKeys =
+    Object.values(byKey).reduce(
+      (acc, suite) => {
+        if (suite.parent && acc.includes(suite.parent as string)) {
+          acc.push(suite.key);
+        }
+        return acc;
+      },
+      [currentSuite.key] as string[]
+    ) || [];
+
   const handleClose = () => {
     dispatch(modalClose());
   };
 
   const save = async () => {
-    if (!targetSuiteKey) {
+    if (targetSuiteKey === undefined) {
       return;
     }
-    metrics.track('MoveBoard');
-    // const targetSuite = suites?.find((suite) => suite.key === targetSuiteKey);
-    const targetSuite = byKey[targetSuiteKey];
-    if (!targetSuite) {
-      Sentry.captureMessage(
-        'MoveBoard: No target suite found',
-        Sentry.Severity.Error
-      );
-      return;
-    }
+
     setIsProcessing(true);
+    metrics.track('MoveSuite');
+
+    const targetSuite = byKey[targetSuiteKey || ''];
+    const parentSuite = byKey[currentSuite.parent || ''];
     // move a board from one source to target suites
     await dispatch(
-      moveBoardDispatcher(apiClient, board, sourceSuite, targetSuite)
+      moveSuiteDispatcher(apiClient, {
+        currentSuite,
+        targetSuite,
+        parentSuite,
+      })
     );
-    // remove layout configuration for a board
-    await dispatch(deleteLayoutItems(apiClient, [board.key]));
     handleClose();
-    history.push(`/suites/${sourceSuite.key}`);
+    history.push(`/suites/${currentSuite.key}`);
   };
 
   const handleOnChange = (key: string | null) => {
@@ -91,25 +96,25 @@ const MoveBoard: React.FC<Props> = ({
     <Modal
       visible
       onCancel={handleClose}
-      headerText="Move board to a suite"
+      headerText="Move suite"
       footer={footer}
       width={400}
       underlineColor="#db0657"
     >
       <Title level={4} style={{ marginBottom: '10px' }}>
-        Select a target suite
+        Select the target suite for <i>{currentSuite.title}</i>
       </Title>
-
       <div style={{ maxHeight: '60vh', minHeight: '30vh' }}>
         <SuitesTree
           suitesByKey={byKey}
           selectedSuiteKey={targetSuiteKey}
           onSelect={handleOnChange}
-          disabledKeys={[sourceSuite.key]}
+          showRoot
+          disabledKeys={[currentSuite.key, ...childSuitesKeys]}
         />
       </div>
     </Modal>
   );
 };
 
-export default MoveBoard;
+export default MoveSuite;

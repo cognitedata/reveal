@@ -119,6 +119,49 @@ function saveSuitesSilently(apiClient: ApiClient, suites: Suite[]) {
   };
 }
 
+export function moveSuite(
+  apiClient: ApiClient,
+  {
+    currentSuite,
+    targetSuite,
+    parentSuite,
+  }: { currentSuite: Suite; targetSuite?: Suite; parentSuite?: Suite }
+) {
+  return async (dispatch: RootDispatcher) => {
+    if (targetSuite?.key === parentSuite?.key) {
+      return;
+    }
+    const suitesToUpdate: Suite[] = [];
+    // update current suite
+    suitesToUpdate.push({ ...currentSuite, parent: targetSuite?.key || null });
+    /// update target
+    if (targetSuite) {
+      suitesToUpdate.push({
+        ...targetSuite,
+        suites: (targetSuite.suites || []).concat(currentSuite.key),
+      });
+    }
+    // update current
+    if (parentSuite) {
+      suitesToUpdate.push({
+        ...parentSuite,
+        suites: parentSuite!.suites?.filter(
+          (suiteKey) => suiteKey !== currentSuite.key
+        ),
+      });
+    }
+    // update suite in db and in redux
+    try {
+      await apiClient.updateSuites(suitesToUpdate);
+      dispatch(actions.replaceSuites(suitesToUpdate));
+    } catch (e) {
+      const error = e as MixedHttpError;
+      dispatch(setHttpError(`Failed to update suites`, error));
+      Sentry.captureException(e);
+    }
+  };
+}
+
 // moves a board from a source suite to a target suite
 export function moveBoard(
   apiClient: ApiClient,

@@ -39,6 +39,11 @@ export const CustomMenuLink = styled.a`
 export const OverviewContainer = styled.div`
   padding: 24px 48px;
 
+  .subsuite-tile-menu {
+    padding: 0;
+    display: flex;
+  }
+
   .grid-stack > .grid-stack-item > .grid-stack-item-content {
     overflow-y: hidden;
   }

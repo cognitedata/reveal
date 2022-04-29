@@ -19,6 +19,7 @@ export type ModalType =
   | 'SelectApplications'
   | 'AppConfig'
   | 'MoveBoard'
+  | 'MoveSuite'
   | null;
 
 export type Modal = {

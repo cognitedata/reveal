@@ -42,7 +42,6 @@ type AssetNodeRendererProps = CustomRendererProps<any> & {
 
 const AssetNodeRenderer: React.FC<AssetNodeRendererProps> = ({
   node,
-  children: childrenNodes,
   onChange,
   selectedId,
   measure,
@@ -159,8 +158,6 @@ const AssetNodeRenderer: React.FC<AssetNodeRendererProps> = ({
           }}
         />
         {renderName(asset, deepness)}
-
-        {isExpanded ? childrenNodes : null}
       </span>
     </div>
   );

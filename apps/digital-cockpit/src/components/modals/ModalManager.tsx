@@ -7,6 +7,7 @@ import UploadLogo from 'components/modals/uploadLogoModal/UploadLogoModal';
 import SelectApplications from 'components/modals/applicationsModal/SelectApplicationsModal';
 import AppConfig from 'components/modals/appConfigModal/AppConfigModal';
 import MoveBoard from 'components/modals/moveBoard/MoveBoard';
+import MoveSuite from 'components/modals/moveSuite/MoveSuite';
 import { useSelector } from 'react-redux';
 import { getModalState } from 'store/modals/selectors';
 
@@ -20,6 +21,7 @@ const modalComponentLookupTable = {
   SelectApplications,
   AppConfig,
   MoveBoard,
+  MoveSuite,
 };
 
 const ModalManager: React.FC = () => {
