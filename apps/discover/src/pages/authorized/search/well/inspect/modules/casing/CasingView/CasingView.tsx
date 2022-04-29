@@ -31,6 +31,7 @@ import {
   BodyColumnBody,
 } from '../../common/Events/elements';
 import EventsByDepth from '../../common/Events/EventsByDepth';
+import { filterNdsByDepth, filterNptByDepth } from '../../common/Events/utils';
 import { SelectedWellboreNptView } from '../../events/Npt/graph';
 import { SelectedWellbore } from '../../events/Npt/graph/types';
 import { SIDE_MODES } from '../constants';
@@ -95,25 +96,12 @@ const CasingView: FC<CasingViewTypeProps> = ({
   const [minDepth, maxDepth] = getMinMaxDepth(casingsList, nptEvents);
 
   const validNptEvents = useMemo(
-    () =>
-      nptEvents.filter(
-        (nptEvent) =>
-          nptEvent.measuredDepth &&
-          nptEvent.measuredDepth.value >= minDepth &&
-          nptEvent.measuredDepth.value <= maxDepth
-      ),
+    () => filterNptByDepth(nptEvents, minDepth, maxDepth),
     [minDepth, maxDepth, nptEvents]
   );
 
   const validNdsEvents = useMemo(
-    () =>
-      ndsEvents.filter(
-        (ndsEvent) =>
-          ndsEvent.metadata &&
-          ndsEvent.metadata.md_hole_start &&
-          Number(ndsEvent.metadata.md_hole_start) >= minDepth &&
-          Number(ndsEvent.metadata.md_hole_start) <= maxDepth
-      ),
+    () => filterNdsByDepth(ndsEvents, minDepth, maxDepth),
     [minDepth, maxDepth, ndsEvents]
   );
 
@@ -223,8 +211,6 @@ const CasingView: FC<CasingViewTypeProps> = ({
                   Render NPT and NDS Events vs MD
                */}
               <EventsByDepth
-                minDepth={minDepth}
-                maxDepth={maxDepth}
                 ndsEvents={validNdsEvents}
                 nptEvents={validNptEvents}
                 isNdsEventsLoading={isNdsEventsLoading}
