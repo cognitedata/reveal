@@ -73,6 +73,10 @@ const ProcessesPage = ({
     };
   }, [processEvent]);
 
+  useEffect(() => {
+    refetchProcesses();
+  }, []);
+
   return (
     <Container
       style={{

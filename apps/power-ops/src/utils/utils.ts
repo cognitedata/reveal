@@ -107,6 +107,7 @@ export const calculateScenarioProduction = (
     production.push({
       timestamp: scenarioPrice.timestamp,
       price: scenarioPrice.value,
+      // Multiply by (-1) all calculated production for presentation
       value: calculatedProduction * -1,
     });
   });

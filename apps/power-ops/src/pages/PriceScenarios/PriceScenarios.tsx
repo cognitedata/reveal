@@ -112,7 +112,7 @@ const PriceScenario = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
 
     const shopProductionData = shopProductionDatapoints
       ? await Promise.all(
-          shopProductionDatapoints.map(async (ts, index) => {
+          shopProductionDatapoints.map(async ({ datapoints }, index) => {
             let accessor = '';
             if (activeTab === 'total') {
               accessor = `shop-${index}`;
@@ -122,10 +122,18 @@ const PriceScenario = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
                   ? `shop-${activeScenarioIndex}`
                   : `shop-plant-${index - 1}`;
             }
-            return getFormattedProductionColumn(
-              ts.datapoints as DoubleDatapoint[],
-              accessor
+
+            const convertedDatapoints = (datapoints as DoubleDatapoint[]).map(
+              (point) => ({
+                ...point,
+                // Multiply by (-1) all Total SHOP production for presentation (leave Plants unchanged)
+                value: accessor.includes('plant')
+                  ? point.value
+                  : point.value * -1,
+              })
             );
+
+            return getFormattedProductionColumn(convertedDatapoints, accessor);
           })
         )
       : [];
