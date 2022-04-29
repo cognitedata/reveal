@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Dropdown, Menu, TopBar } from '@cognite/cogs.js';
-import { LogoutButton } from '@cognite/react-container';
+import { LogoutButton, useAuthContext } from '@cognite/react-container';
 import { PriceArea } from '@cognite/power-ops-api-types';
 import { PriceAreasContext } from 'providers/priceAreaProvider';
 
@@ -22,6 +22,7 @@ export enum PAGES {
 
 export const MenuBar = () => {
   const history = useHistory();
+  const { authState } = useAuthContext();
   const [active, setActive] = useState<string>(PAGES.PORTFOLIO);
 
   const [visible, setVisible] = useState<boolean>(false);
@@ -95,16 +96,20 @@ export const MenuBar = () => {
                 isActive: active.includes(PAGES.PORTFOLIO),
                 onClick: () => toggleDropdown(),
               },
-              {
-                name: 'Processes',
-                isActive: active === PAGES.PROCESSES,
-                onClick: () => handleNavigate(PAGES.PROCESSES),
-              },
-              {
-                name: 'Monitoring',
-                isActive: active === PAGES.MONITORING,
-                onClick: () => handleNavigate(PAGES.MONITORING),
-              },
+              ...(authState?.email?.includes('@cognite')
+                ? [
+                    {
+                      name: 'Processes',
+                      isActive: active === PAGES.PROCESSES,
+                      onClick: () => handleNavigate(PAGES.PROCESSES),
+                    },
+                    {
+                      name: 'Monitoring',
+                      isActive: active === PAGES.MONITORING,
+                      onClick: () => handleNavigate(PAGES.MONITORING),
+                    },
+                  ]
+                : []),
             ]}
           />
         </Dropdown>

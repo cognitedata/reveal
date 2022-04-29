@@ -1,6 +1,7 @@
 import styled from 'styled-components/macro';
 import { Icon, Tabs } from '@cognite/cogs.js';
 import { MainPanel } from 'pages/elements';
+import layers from 'utils/zindex';
 
 export const Main = styled(MainPanel)`
   flex-direction: column;
@@ -38,7 +39,7 @@ export const StyledTable = styled.div`
     overflow: auto;
   }
   width: 100%;
-  padding-top: 20px;
+  margin-top: 20px;
 
   font-family: 'Inter';
   font-weight: 400;
@@ -46,7 +47,11 @@ export const StyledTable = styled.div`
   line-height: 20px;
 
   thead {
-    border-bottom: 1px solid #dcdcdc;
+    box-shadow: 0px 1px 0px #dcdcdc;
+    position: sticky;
+    top: 0;
+    background: var(--cogs-bg-default);
+    z-index: ${layers.MIDDLE};
     tr {
       align-items: center;
       th {

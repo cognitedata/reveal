@@ -1,6 +1,7 @@
 import { CogniteClient, SequenceItem } from '@cognite/sdk';
 import { Column } from 'react-table';
 import { SequenceRow, TableData, TableRow, Cols } from 'types';
+import { roundWithDec } from 'utils/utils';
 
 interface BidMatrixResponse {
   columns: Column<TableData>[];
@@ -34,7 +35,7 @@ export const getFormattedBidMatrixData = async (
   let columnHeaders: Cols[] = sequenceRows.map(
     (row: SequenceRow, index: number) => {
       const formattedValue =
-        typeof row[0] === 'number' ? `${Math.round(row[0] * 10) / 10}` : row[0];
+        typeof row[0] === 'number' ? `${roundWithDec(row[0])}` : row[0];
       const accessor = row[0]?.toString().replace('.', '');
       return {
         Header: `${formattedValue}`,
@@ -86,7 +87,7 @@ export const getFormattedBidMatrixData = async (
       }
       const accessor = `${col?.accessor || 0}`;
       const formattedValue =
-        typeof value === 'number' ? `${Math.round(value * 10) / 10}` : value;
+        typeof value === 'number' ? `${roundWithDec(value)}` : value;
       tableData[index][accessor] = formattedValue || 0;
     });
   });

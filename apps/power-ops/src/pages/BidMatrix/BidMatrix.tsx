@@ -45,6 +45,8 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
   const { eventStore } = useContext(EventStreamContext);
 
   const { plantExternalId } = useParams<{ plantExternalId?: string }>();
+
+  const [currentMatrix, setCurrentMatrix] = useState<MatrixWithData | null>();
   const [matrixHeaderConfig, setMatrixHeaderConfig] =
     useState<Column<TableData>[]>();
   const [matrixData, setMatrixData] = useState<TableData[]>();
@@ -65,6 +67,7 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
     scenariopPriceTsExternalId: string
   ) => {
     if (!matrix.sequenceRows?.length) return;
+    setCurrentMatrix(matrix);
 
     const { columns, data } = await getFormattedBidMatrixData(
       matrix.sequenceRows
@@ -254,7 +257,7 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
                 {matrix?.method}
               </Label> */}
               </span>
-              <Detail>{`Generated for: ${tomorrow}`}</Detail>
+              <Detail>{`Generated for: ${tomorrow} - ${currentMatrix?.externalId}`}</Detail>
             </div>
             <Tooltip position="left" visible={copied} content={tooltipContent}>
               <Button
