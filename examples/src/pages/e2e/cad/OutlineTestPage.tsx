@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 
 import { Cognite3DModel, NumericRange, IndexSet, TreeIndexNodeCollection, NodeOutlineColor, Cognite3DViewer } from '@cognite/reveal';
 import { registerVisualTest } from '../../../visual_tests';

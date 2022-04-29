@@ -8,7 +8,7 @@ import { registerVisualTest } from '../../../visual_tests';
 import { PotreePointColorType } from '@cognite/reveal';
 import { Cognite3DTestViewer } from '../Cognite3DTestViewer';
 
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 
 function ClippingPlanesCognite3DViewerPointCloudTestPage() {
   const modelUrl = 'pointcloud-bunny';

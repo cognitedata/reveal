@@ -5,7 +5,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { CanvasWrapper, Loader } from '../components/styled'
 
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 import * as reveal from '@cognite/reveal/internals';
 import { CogniteClient } from '@cognite/sdk';
 
