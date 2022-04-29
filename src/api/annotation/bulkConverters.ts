@@ -8,8 +8,14 @@ import { CDFAnnotationV1 } from './types';
 export const convertCDFAnnotationV1ToVisionAnnotations = (
   annotations: CDFAnnotationV1[]
 ): VisionAnnotation<VisionAnnotationDataType>[] =>
-  annotations
-    .map((annotation) => convertCDFAnnotationV1ToVisionAnnotation(annotation))
-    .filter((annotation) => {
-      return annotation != null;
-    }) as VisionAnnotation<VisionAnnotationDataType>[];
+  annotations.reduce(
+    (acc: VisionAnnotation<VisionAnnotationDataType>[], item) => {
+      const convertedAnnotation =
+        convertCDFAnnotationV1ToVisionAnnotation(item);
+      if (convertedAnnotation) {
+        return acc.concat(convertedAnnotation);
+      }
+      return acc;
+    },
+    []
+  );
