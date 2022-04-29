@@ -178,18 +178,23 @@ const PriceScenario = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
       // Calculate Plant Columns
       calcProductionData =
         activeScenarioTimeseries && priceArea.plantMatrixesWithData
-          ? priceArea.plantMatrixesWithData.map((plantMatrix, index) => {
-              const { sequenceRows } = plantMatrix.matrixesWithData[0];
-              const accessor = `calc-plant-${index}`;
-              const calulatedProduction = calculateScenarioProduction(
-                activeScenarioTimeseries[0].datapoints as DoubleDatapoint[],
-                sequenceRows
-              );
-              return getFormattedProductionColumn(
-                calulatedProduction,
-                accessor
-              );
-            })
+          ? priceArea.plantMatrixesWithData
+              .sort((plantA, plantB) =>
+                plantA.plantName.localeCompare(plantB.plantName)
+              )
+              .map((plantMatrix, index) => {
+                const { sequenceRows } = plantMatrix.matrixesWithData[0];
+                const accessor = `calc-plant-${index}`;
+
+                const calulatedProduction = calculateScenarioProduction(
+                  activeScenarioTimeseries[0].datapoints as DoubleDatapoint[],
+                  sequenceRows
+                );
+                return getFormattedProductionColumn(
+                  calulatedProduction,
+                  accessor
+                );
+              })
           : [];
 
       // Calculate Total Column
@@ -220,7 +225,7 @@ const PriceScenario = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
       (row: any, index: number) => {
         // Convert each row from array of objects to object
         const formattedRow = Object.assign.apply(null, row);
-        formattedRow.hour = index;
+        formattedRow.hour = index + 1;
         return formattedRow;
       }
     );

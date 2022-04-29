@@ -6,8 +6,7 @@ import { SnifferEvent } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { useFetchProcesses } from 'queries/useFetchProcesses';
 
-import { Container } from '../elements';
-
+import { TableContainer } from './elements';
 import ProcessList from './ProcessList';
 
 export type Process = {
@@ -78,21 +77,14 @@ const ProcessesPage = ({
   }, []);
 
   return (
-    <Container
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyItems: 'start',
-      }}
-    >
+    <TableContainer>
       <ProcessList
         processes={useMemo(
           () => processes?.filter((p) => p.eventCreationTime),
           [processes]
         )}
       />
-    </Container>
+    </TableContainer>
   );
 };
 

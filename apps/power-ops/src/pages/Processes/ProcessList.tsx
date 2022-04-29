@@ -1,5 +1,5 @@
-import { Flex, Label } from '@cognite/cogs.js';
-import { useMemo } from 'react';
+import { Flex, Label, Pagination } from '@cognite/cogs.js';
+import { useEffect, useMemo, useRef } from 'react';
 import {
   useTable,
   useFilters,
@@ -8,6 +8,7 @@ import {
   Column,
 } from 'react-table';
 
+import { StyledTable } from './elements';
 import { Process } from './Processes';
 
 const ProcessList = (props: { processes: Process[] | undefined }) => {
@@ -68,6 +69,8 @@ const ProcessTable = ({
 }: {
   tableOptions: { columns: Column[]; data: Process[]; initialState: any };
 }) => {
+  const TableContainerRef = useRef<HTMLDivElement>(null);
+
   // Use the useTable hook to create your table configuration
   const instance = useTable(
     {
@@ -88,20 +91,31 @@ const ProcessTable = ({
     getTableBodyProps,
     headerGroups,
     prepareRow,
+    setPageSize,
     page,
     pageOptions,
     state: { pageIndex, pageSize },
-    // gotoPage,
-    previousPage,
-    nextPage,
-    canPreviousPage,
-    canNextPage,
+    gotoPage,
   } = instance;
+
+  useEffect(() => {
+    const tableContainer = TableContainerRef.current;
+    if (tableContainer) {
+      const { height } = tableContainer.getBoundingClientRect();
+      const pagination = 60;
+      const rowHeight = 54;
+      let pagesize = Math.floor((height - pagination - rowHeight) / rowHeight);
+      if (pagesize < 10) {
+        pagesize = 10;
+      }
+      setPageSize(pagesize);
+    }
+  }, [TableContainerRef]);
 
   // Render the UI for your table
   return (
-    <div>
-      <table {...getTableProps()}>
+    <div className="tableContainer" ref={TableContainerRef}>
+      <StyledTable {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup) => (
             // eslint-disable-next-line react/jsx-key
@@ -129,38 +143,16 @@ const ProcessTable = ({
             );
           })}
         </tbody>
-      </table>
-      <Flex gap={8}>
-        <button
-          type="button"
-          onClick={() => previousPage()}
-          disabled={!canPreviousPage}
-        >
-          Previous Page
-        </button>
-        <button
-          type="button"
-          onClick={() => nextPage()}
-          disabled={!canNextPage}
-        >
-          Next Page
-        </button>
-        <div>
-          Page{' '}
-          <em>
-            {pageIndex + 1} of {pageOptions.length}
-          </em>
-        </div>
-        <div>Page size: {pageSize}</div>
-        {/* <div>Go to page:</div>
-        <input
-          type="number"
-          defaultValue={pageIndex + 1 || 1}
-          onChange={(e) => {
-            const page = e.target.value ? Number(e.target.value) - 1 : 0;
-            gotoPage(page);
-          }}
-        /> */}
+      </StyledTable>
+      <Flex style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <Pagination
+          current={pageIndex + 1}
+          defaultCurrent={pageIndex + 1}
+          total={pageOptions.length * pageSize}
+          pageSize={pageSize}
+          onChange={(x) => gotoPage(() => x - 1)}
+        />
+        <div>of {pageOptions.length}</div>
       </Flex>
     </div>
   );

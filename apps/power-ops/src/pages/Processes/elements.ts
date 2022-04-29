@@ -11,36 +11,33 @@ export const Header = styled.header`
   padding: 20px;
 `;
 
-export const StyledTable = styled.div`
-  margin: 4vh 1.5vw;
-  overflow: auto;
-  min-height: 40vh;
+export const StyledTable = styled.table`
+  text-align: left;
+  border-radius: 8px;
+  font-family: 'Inter';
+  overflow: hidden;
 
-  .cogs-table {
-    font-family: 'Inter';
-    font-style: normal;
-
-    th {
-      color: #333333;
+  thead {
+    tr {
       background: #f5f5f5;
-      font-weight: 500;
-      color: var(--cogs-b3-color);
-      font-size: var(--cogs-b3-font-size);
-      letter-spacing: var(--cogs-b3-letter-spacing);
-      line-height: var(--cogs-b3-line-height);
-    }
+      border-top: none;
 
-    .cogs-table-row {
-      color: #595959;
-      background: #fafafa;
-      font-weight: 500;
-      color: var(--cogs-b2-color);
-      font-size: var(--cogs-b2-font-size);
-      letter-spacing: var(--cogs-b2-letter-spacing);
-      line-height: var(--cogs-b2-line-height);
+      th {
+        padding: 8px 16px 8px 16px;
+        color: var(--cogs-text-primary);
+        font-weight: 500;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      color: var(--cogs-text-secondary);
+      border-top: 1px solid var(--cogs-bg-control--disabled);
+      background: var(--cogs-bg-accent);
+
       td {
-        border-bottom: 0;
-        border-top: 1px solid #e8e8e8;
+        padding: 8px 16px 8px 16px;
       }
     }
   }
@@ -119,5 +116,19 @@ export const StyledBidMatrix = styled.div`
         border-top: 1px solid #e8e8e8;
       }
     }
+  }
+`;
+
+export const TableContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  min-height: calc(100vh - 56px);
+  height: calc(100vh - 56px);
+  padding: 32px;
+
+  .tableContainer {
+    height: 100%;
   }
 `;

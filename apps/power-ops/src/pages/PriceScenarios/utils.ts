@@ -55,8 +55,11 @@ export function getActiveColumns(
           disableSortBy: true,
         };
         // The following columns are for each plant
-        const plantColumns: Cols[] = scenario.plantProduction.map(
-          (plant, plantIndex) => {
+        const plantColumns: Cols[] = scenario.plantProduction
+          .sort((plantA, plantB) =>
+            plantA.plantName.localeCompare(plantB.plantName)
+          )
+          .map((plant, plantIndex) => {
             return {
               Header: priceArea?.plants.find(
                 (specificPlant) => specificPlant.name === plant.plantName
@@ -75,8 +78,7 @@ export function getActiveColumns(
               ],
               disableSortBy: true,
             };
-          }
-        );
+          });
         return [totalColumn, ...plantColumns];
       });
   }

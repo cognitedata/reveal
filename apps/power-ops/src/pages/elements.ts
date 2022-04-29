@@ -17,6 +17,7 @@ export const StyledTopBar = styled(TopBar)`
   z-index: ${layers.MAXIMUM};
   position: sticky;
   top: 0;
+  background: var(--cogs-bg-default);
 `;
 
 export const Code = styled.code`
