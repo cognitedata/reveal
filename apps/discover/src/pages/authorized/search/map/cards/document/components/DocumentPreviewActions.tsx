@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
@@ -9,6 +9,7 @@ import { openExternalPage } from 'utils/url';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { getTenantInfo } from '@cognite/react-container';
 
+import { ADD_TO_FAVOURITES } from 'components/add-to-favorite-set-menu/constants';
 import {
   DownloadButton,
   PreviewButton,
@@ -20,6 +21,7 @@ import { useDocumentLabelsByExternalIds } from 'hooks/useDocumentLabels';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useDocumentConfig } from 'modules/documentSearch/hooks';
 import { useExtractParentFolder } from 'modules/documentSearch/hooks/useExtractParentFolder';
+import { useFavoriteDocumentIds } from 'modules/documentSearch/hooks/useFavoriteDocumentIds';
 import { DocumentType } from 'modules/documentSearch/types';
 import {
   canContextualize,
@@ -51,11 +53,16 @@ const DocumentPreviewActionsComponent: React.FC<Props> = ({
   const [project] = getTenantInfo();
   const filteredLabels = useDocumentLabelsByExternalIds(doc.doc.labels);
   const extractParentFolder = useExtractParentFolder();
+  const favoriteDocumentIds = useFavoriteDocumentIds();
 
   const onExtractParentFolder = () => {
     metrics.track('click-extract-parent-folder-button');
     extractParentFolder(doc);
   };
+
+  const isFavored: boolean = useMemo(() => {
+    return favoriteDocumentIds.includes(Number(doc.id));
+  }, [doc.id, favoriteDocumentIds]);
 
   const onOpenFeedback = () => {
     dispatch(setObjectFeedbackModalDocumentId(doc.id));
@@ -84,10 +91,10 @@ const DocumentPreviewActionsComponent: React.FC<Props> = ({
   return (
     <ActionContainer>
       <FavouriteTooltip
-        content={t('Add to Favourites') as string}
+        content={t(ADD_TO_FAVOURITES) as string}
         placement="top"
       >
-        <AddToFavoritesButton document={doc} />
+        <AddToFavoritesButton document={doc} isFavored={isFavored} />
       </FavouriteTooltip>
 
       <Tooltip content={t('Explore Parent Folder') as string} placement="top">

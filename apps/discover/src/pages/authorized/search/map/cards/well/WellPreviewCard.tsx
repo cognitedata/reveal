@@ -1,6 +1,8 @@
 import { useLayoutEffect, Suspense } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { useFavoriteWellIds } from 'services/favorites/hooks/useFavoriteWellIds';
+
 import BasePreviewCard from 'components/card/preview-card';
 import { LoaderContainer } from 'components/card/preview-card/elements';
 import { WhiteLoaderInline } from 'components/loading';
@@ -23,6 +25,7 @@ export const WellPreviewCard: React.FC<{
   const dispatch = useDispatch();
   const well = useWellById(wellId);
   const metrics = useGlobalMetrics('wells');
+  const favoriteWellIds = useFavoriteWellIds();
 
   const WellIcon = new Image();
   WellIcon.src = wellImage;
@@ -54,14 +57,19 @@ export const WellPreviewCard: React.FC<{
       <BasePreviewCard
         title={well?.name || ''}
         handleCloseClick={handlePreviewClose}
-        actions={<WellPreviewAction well={well} />}
+        actions={
+          <WellPreviewAction well={well} favoriteWellIds={favoriteWellIds} />
+        }
         icon="OilPlatform"
       >
         <WellMetaDataContainer>
           <WellMetadata well={well} />
         </WellMetaDataContainer>
         <MarginBottomNormalContainer>
-          <WellboreCardDetails wellId={wellId} />
+          <WellboreCardDetails
+            wellId={wellId}
+            favoriteWellIds={favoriteWellIds}
+          />
         </MarginBottomNormalContainer>
       </BasePreviewCard>
     </Suspense>

@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Row } from 'react-table';
 
-import isEmpty from 'lodash/isEmpty';
-import isUndefined from 'lodash/isUndefined';
 import sortBy from 'lodash/sortBy';
 import { useFavoriteWellIds } from 'services/favorites/hooks/useFavoriteWellIds';
 import styled from 'styled-components/macro';
@@ -22,6 +20,7 @@ import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useWellQueryResultWellbores } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
 import { useWells } from 'modules/wellSearch/selectors';
 import { Wellbore, Well } from 'modules/wellSearch/types';
+import { isWellboreFavored } from 'modules/wellSearch/utils/isWellboreFavored';
 import { WellboreSubtableOptions } from 'pages/authorized/constant';
 import { ADD_TO_FAVORITES_OPTION_TEXT } from 'pages/authorized/search/document/constants';
 import { FlexRow } from 'styles/layout';
@@ -112,17 +111,12 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
   };
 
   const renderRowOverlayComponent = ({ row }: { row: Row<Wellbore> }) => {
-    // undefined favorite set or well id not in favorite
     if (
-      isUndefined(favoriteWellIds) ||
-      !Object.keys(favoriteWellIds).includes(String(well.id))
-    )
-      return null;
-
-    // wellbore list not empty and wellbore row not in welbore list
-    if (
-      !isEmpty(favoriteWellIds[well.id]) &&
-      !favoriteWellIds[well.id].includes(String(row.original.id))
+      !isWellboreFavored(
+        favoriteWellIds,
+        String(well.id),
+        String(row.original.id)
+      )
     )
       return null;
 

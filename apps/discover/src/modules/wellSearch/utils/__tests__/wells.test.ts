@@ -1,5 +1,6 @@
 import { getMockWell, getMockWellbore } from '__test-utils/fixtures/well';
 
+import { isWellboreFavored } from '../isWellboreFavored';
 import {
   getIndeterminateWells,
   getWellsOfWellIds,
@@ -59,5 +60,48 @@ describe('Well utils', () => {
     expect(getWellsOfWellIds(wells, ['requiredWellId'])).toEqual([
       requiredWell,
     ]);
+  });
+
+  it('should return false with empty favorite well id list', () => {
+    expect(isWellboreFavored({}, 'well_id', 'wellbore_id')).toBeFalsy();
+  });
+
+  it('should return false when the well id not in the favorite list', () => {
+    expect(
+      isWellboreFavored(
+        { well_id: ['wellbore_id'], well_Id_2: [] },
+        'well_id_3',
+        'wellbore_id'
+      )
+    ).toBeFalsy();
+  });
+
+  it('should return false when wellbore id not in favorite', () => {
+    expect(
+      isWellboreFavored(
+        { well_id: ['wellbore_id'] },
+        'well_id',
+        'wellbore_id_2'
+      )
+    ).toBeFalsy();
+  });
+
+  it('should return true with valid input', () => {
+    expect(
+      isWellboreFavored(
+        {
+          well_id: ['wellbore_id'],
+          well_Id_2: ['wellbore_id_2'],
+        },
+        'well_id',
+        'wellbore_id'
+      )
+    ).toBeTruthy();
+  });
+
+  it('should return true when corresponding wellbore array is empty', () => {
+    expect(
+      isWellboreFavored({ well_id: [] }, 'well_id', 'wellbore_id_2')
+    ).toBeTruthy();
   });
 });

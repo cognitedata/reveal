@@ -3,16 +3,19 @@ import { useEffect } from 'react';
 import { useTranslation } from '@cognite/react-i18n';
 
 import { PathHeader } from 'components/document-preview/elements';
+import { FavoriteContentWells } from 'modules/favorite/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { useWellboresOfWellById } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
 import { FlexColumn } from 'styles/layout';
 
-import { WellboreButton, WellboreRow, WellboreTitle } from './elements';
+import { WellboreRow, WellboreTitle } from './elements';
+import { WellboreDetailIcon } from './WellboreDetailIcon';
 
-export const WellboreCardDetails: React.FC<{ wellId: number }> = ({
-  wellId,
-}) => {
-  const wellbore = useWellboresOfWellById(wellId);
+export const WellboreCardDetails: React.FC<{
+  wellId: number;
+  favoriteWellIds: FavoriteContentWells;
+}> = ({ wellId, favoriteWellIds }) => {
+  const wellbores = useWellboresOfWellById(wellId);
   const { t } = useTranslation('Well');
   const navigateToWellInspect = useNavigateToWellInspect();
 
@@ -29,19 +32,19 @@ export const WellboreCardDetails: React.FC<{ wellId: number }> = ({
 
   return (
     <FlexColumn>
-      {wellbore && wellbore.length > 0 && (
+      {wellbores && wellbores.length > 0 && (
         <>
           <PathHeader>{t('Wellbores')}</PathHeader>
-          {wellbore?.map((wellbore) => (
+          {wellbores?.map((wellbore) => (
             <WellboreRow
               key={wellbore.id}
               onClick={() => handleClickView(wellbore.id)}
             >
               <WellboreTitle>{wellbore.name}</WellboreTitle>
-              <WellboreButton
-                aria-label="Wellbore button"
-                type="ghost"
-                icon="ArrowRight"
+              <WellboreDetailIcon
+                favoriteWellIds={favoriteWellIds}
+                wellId={wellId}
+                wellboreId={wellbore.id}
               />
             </WellboreRow>
           ))}
