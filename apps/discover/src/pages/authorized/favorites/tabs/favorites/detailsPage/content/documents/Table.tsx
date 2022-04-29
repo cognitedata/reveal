@@ -88,9 +88,16 @@ export const FavoriteDocumentsTable: React.FC<Props> = ({
     []
   );
 
+  const removeDocumentAndUnselect = (item: DocumentType) => {
+    if (selectedIds[item.id]) {
+      setSelectedIds((prevState) => ({ ...prevState, [item.id]: false }));
+    }
+    removeDocument(item);
+  };
+
   const renderRowHoverComponent = (row: FavouriteRowType<DocumentType>) => (
     <Actions
-      removeDocument={removeDocument}
+      removeDocument={removeDocumentAndUnselect}
       row={row}
       showRemoveOption={isFavoriteSetOwner}
     />
