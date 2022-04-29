@@ -32,8 +32,6 @@ export class MeasurementControls {
     this._measurementLabel = new MeasurementLabel(this._viewer);
     this._startPosition = new THREE.Vector3();
     this._labelOptions = labelOptions ?? this._labelOptions;
-
-    this.setupInputHandling();
   }
 
   /**
@@ -56,6 +54,7 @@ export class MeasurementControls {
    */
   public add(measurement: Measurement): void {
     this._measurement = measurement;
+    this.setupInputHandling();
   }
 
   /**
@@ -65,6 +64,7 @@ export class MeasurementControls {
     if (this._measurement) {
       this._measurement.remove();
       this._measurement = null;
+      this.removeInputHandling();
     }
   }
 

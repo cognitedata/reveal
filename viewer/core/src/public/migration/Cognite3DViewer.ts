@@ -1075,7 +1075,7 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Raycasting model(s) for finding where the ray intersects with the model. Note: Only Cad models
+   * Raycasting model(s) for finding where the ray intersects with the model. Note: Only Cad models.
    * @param offsetX X coordinate in pixels (relative to the domElement).
    * @param offsetY Y coordinate in pixels (relative to the domElement).
    * @returns A promise that if there was an intersection then return the intersection point.

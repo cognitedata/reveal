@@ -21,7 +21,6 @@ export class MeasurementUi {
   constructor(viewer: Cognite3DViewer, ui: dat.GUI) {
     this._viewer = viewer;
     this._measurementTool = new MeasurementTool(this._viewer);
-    this._measurementTool.addMeasurementDistance();
     this._gui = ui.addFolder('Line Options');
     this._guiController = [];
     const addDistanceOptions = this.addDistanceOptions.bind(this);
@@ -30,7 +29,10 @@ export class MeasurementUi {
   }
 
   addDistanceOptions(enable: boolean) {
+
     if (enable && this._guiController.length === 0) {
+      //add the point to point measurement distance
+      this._measurementTool.addMeasurementDistance();
       this._guiController.push(this._gui.add(this.state, 'linewidth').name('Line Width').onFinishChange(linewidth => {
         const options: MeasurementLineOptions = {
           lineWidth: linewidth
@@ -50,6 +52,7 @@ export class MeasurementUi {
         guiController.remove();
       });
       this._guiController.splice(0, this._guiController.length)
+      this._measurementTool.removeMeasurementDistance();
     }
   }
 
