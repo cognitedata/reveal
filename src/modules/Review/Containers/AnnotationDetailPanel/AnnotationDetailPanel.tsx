@@ -57,7 +57,7 @@ export const AnnotationDetailPanel = (props: {
 
   const currentKeypointCollection = useSelector(
     ({ annotationLabelReducer }: RootState) =>
-      currentCollection(annotationLabelReducer)
+      currentCollection(annotationLabelReducer, file.id)
   );
 
   const tagAnnotations = useMemo(() => {
