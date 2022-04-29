@@ -1,5 +1,12 @@
 import { initialState } from 'src/modules/Common/store/annotation/slice';
-import { clearStates } from 'src/modules/Common/store/annotation/util';
+import {
+  clearStates,
+  repopulateAnnotationState,
+} from 'src/modules/Common/store/annotation/util';
+import {
+  VisionAnnotation,
+  VisionAnnotationDataType,
+} from 'src/modules/Common/types';
 import { getDummyImageObjectDetectionBoundingBoxAnnotation } from './slice.spec';
 
 const mockState = {
@@ -47,6 +54,7 @@ describe('Test annotation utils', () => {
     test('when clear cache is true', () => {
       expect(clearStates(mockState, [], true)).toStrictEqual(initialState);
     });
+
     describe('when clear cache is false', () => {
       test('for single file id', () => {
         const clearCache = false;
@@ -72,6 +80,39 @@ describe('Test annotation utils', () => {
         expect(modifiedState.annotations.byId[5]).toStrictEqual(undefined);
         expect(modifiedState.annotations.byId[6]).toStrictEqual(undefined);
       });
+    });
+  });
+
+  describe('Test updateAnnotations fn', () => {
+    test('when no annotations to update', () => {
+      expect(repopulateAnnotationState(mockState, [])).toStrictEqual(mockState);
+    });
+
+    test('with new payload', () => {
+      const newAnnotations: VisionAnnotation<VisionAnnotationDataType>[] = [
+        getDummyImageObjectDetectionBoundingBoxAnnotation({
+          id: 7,
+          annotatedResourceId: 10,
+        }),
+        getDummyImageObjectDetectionBoundingBoxAnnotation({
+          id: 8,
+          annotatedResourceId: 10,
+        }),
+      ];
+      const updatedState = repopulateAnnotationState(mockState, newAnnotations);
+
+      expect(updatedState.annotations.byId).toStrictEqual({
+        '7': getDummyImageObjectDetectionBoundingBoxAnnotation({
+          id: 7,
+          annotatedResourceId: 10,
+        }),
+        '8': getDummyImageObjectDetectionBoundingBoxAnnotation({
+          id: 8,
+          annotatedResourceId: 10,
+        }),
+      });
+
+      expect(updatedState.files.byId[10]).toStrictEqual([7, 8]);
     });
   });
 });

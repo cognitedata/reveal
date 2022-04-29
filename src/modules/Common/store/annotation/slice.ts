@@ -10,7 +10,10 @@ import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { clearAnnotationState } from 'src/store/commonActions';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { clearStates } from 'src/modules/Common/store/annotation/util';
+import {
+  clearStates,
+  repopulateAnnotationState,
+} from 'src/modules/Common/store/annotation/util';
 
 export const initialState: AnnotationState = {
   files: {
@@ -50,38 +53,17 @@ const annotationSlice = createSlice({
         const { fileIds, clearCache } = meta.arg;
 
         // clear states
-        const updatedState = clearStates(state, fileIds, clearCache);
-        state.annotations = updatedState.annotations;
-        state.files = updatedState.files;
+        const clearedState = clearStates(state, fileIds, clearCache);
+        state.annotations = clearedState.annotations;
+        state.files = clearedState.files;
 
         // update annotations
         // ToDo (VIS-794): conversion logic from V1 to V2 in the new slice can be moved into thunks.
         const annotations = convertCDFAnnotationV1ToVisionAnnotations(payload);
 
-        annotations.forEach((annotation) => {
-          const resourceId: number | undefined = getAnnotatedResourceId({
-            annotation,
-          });
-
-          if (resourceId) {
-            if (
-              state.files.byId[resourceId] &&
-              !state.files.byId[resourceId].includes(annotation.id)
-            ) {
-              state.files.byId[resourceId].push(annotation.id);
-            } else {
-              state.files.byId[resourceId] = [annotation.id];
-            }
-          }
-
-          if (
-            !state.annotations.byId[annotation.id] ||
-            state.annotations.byId[annotation.id].lastUpdatedTime !==
-              annotation.lastUpdatedTime
-          ) {
-            state.annotations.byId[annotation.id] = annotation;
-          }
-        });
+        const updatedState = repopulateAnnotationState(state, annotations);
+        state.annotations = updatedState.annotations;
+        state.files = updatedState.files;
       }
     );
 
