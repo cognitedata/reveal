@@ -16,7 +16,8 @@
     "allowSyntheticDefaultImports": true,
     "lib": [
       "es2015",
-      "dom"
+      "dom",
+      "dom.iterable"
     ],
     "jsx": "react-jsx",
     "allowJs": true,

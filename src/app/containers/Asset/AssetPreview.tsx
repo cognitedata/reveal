@@ -1,5 +1,6 @@
 import React, { useEffect, useContext } from 'react';
 import { trackUsage } from 'app/utils/Metrics';
+import qs from 'query-string';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import {
@@ -101,7 +102,8 @@ export const AssetPreview = ({
               `/${location.pathname
                 .split('/')
                 .slice(2, tabType ? -1 : undefined)
-                .join('/')}/${newTab}`
+                .join('/')}/${newTab}`,
+              qs.parse(location.search)
             ),
             { replace: true }
           );
