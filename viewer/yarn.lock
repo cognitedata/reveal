@@ -741,7 +741,7 @@ __metadata:
     eslint-plugin-prettier: 4.0.0
     eslint-plugin-unused-imports: 2.0.0
     file-loader: 6.2.0
-    geo-three: 0.0.17
+    geo-three: 0.0.18
     gl: 5.0.0
     glslify: 7.1.1
     glslify-import: 3.1.0
@@ -6332,12 +6332,12 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"geo-three@npm:0.0.17":
-  version: 0.0.17
-  resolution: "geo-three@npm:0.0.17"
+"geo-three@npm:0.0.18":
+  version: 0.0.18
+  resolution: "geo-three@npm:0.0.18"
   peerDependencies:
     three: ">0.120.0"
-  checksum: 92fe645b1b529c5ec0778e2d5bef9b554457ad80383d11300be489fe828fefbf801aa01282bfc0e6d546600b6893d790a1ad186b617dd8ed841a1e821bdfd182
+  checksum: 47090506f1638d1af90c564a65fca3959a6c66c5d1f2e7313cae2a4090ba197b828288d55f31319194323ecfb6bd759c9f3d52e687c30f705a2b98d89b2baefd
   languageName: node
   linkType: hard
 

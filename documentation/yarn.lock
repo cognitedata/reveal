@@ -5810,6 +5810,11 @@ geo-three@0.0.17:
   resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.0.17.tgz#869694f81df09b5a2724340ad212f47e48459162"
   integrity sha512-yPujgRnkRNdYVllLt32JOFB/mSJtUKkTKrT7YYbuEyDmCa9CotxzJkI7Wlhqd8ky1STMccSluYDi4JDV30InLw==
 
+geo-three@0.0.18:
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.0.18.tgz#93bd8aed6ab9b886534add0c890d239732dcd0a7"
+  integrity sha512-pCncmBE7tlTFPhiSLGA0TP9J51h706Wu83VrOXUTcoU0EhVZrM+ww60iYMbrwZ8gkJlNsAzR0eSVmsDzINdy2Q==
+
 geo-three@^0.0.15:
   version "0.0.15"
   resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.0.15.tgz#ea52193c104a6b4a3c1dc797218936894ea41c7c"
