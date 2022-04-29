@@ -23,6 +23,7 @@ import {
   FunctionNodeDataDehydrated,
 } from 'components/NodeEditor/V2/Nodes/FunctionNode/FunctionNode';
 import compareVersions from 'compare-versions';
+import { uniqBy } from 'lodash';
 import { NodeTypes } from './types';
 import { AUTO_ALIGN_PARAM } from './constants';
 import { SourceNodeData } from './Nodes/SourceNode';
@@ -348,7 +349,7 @@ export const getStepsFromWorkflowReactFlow = (
 
   // traversing from output node and all incomers and add it to validNodes until none left.
   function findInputNodes(node: Node, visited: Node[]) {
-    const incomers = getIncomers(node as Node, elements);
+    const incomers = uniqBy(getIncomers(node as Node, elements), 'id');
 
     const localLoopDetected = incomers.some((incomer) =>
       visited.includes(incomer)
