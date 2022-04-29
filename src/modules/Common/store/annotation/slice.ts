@@ -3,7 +3,6 @@ import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bu
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { VisionAnnotationV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { getAnnotatedResourceId } from 'src/modules/Common/Utils/getAnnotatedResourceId/getAnnotatedResourceId';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
@@ -74,9 +73,8 @@ const annotationSlice = createSlice({
           const annotation = state.annotations.byId[annotationId];
 
           if (annotation) {
-            const resourceId: number | undefined = getAnnotatedResourceId({
-              annotation,
-            });
+            const resourceId: number | undefined =
+              annotation.annotatedResourceId;
 
             if (resourceId) {
               const annotatedFileState = state.files.byId[resourceId];
@@ -109,9 +107,7 @@ const annotationSlice = createSlice({
         // ToDo (VIS-794): conversion logic from V1 to V2 in the new slice can be moved into thunks.
         const annotations = convertCDFAnnotationV1ToVisionAnnotations(payload);
         annotations.forEach((annotation) => {
-          const resourceId: number | undefined = getAnnotatedResourceId({
-            annotation,
-          });
+          const resourceId: number | undefined = annotation.annotatedResourceId;
           if (resourceId) {
             if (state.files.byId[resourceId]) {
               if (!state.files.byId[resourceId].includes(annotation.id)) {

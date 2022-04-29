@@ -3,7 +3,6 @@ import {
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types/index';
-import { getAnnotatedResourceId } from 'src/modules/Common/Utils/getAnnotatedResourceId/getAnnotatedResourceId';
 
 export const clearStates = (
   state: AnnotationState,
@@ -46,10 +45,7 @@ export const repopulateAnnotationState = (
   const annotationsById = state.annotations.byId;
 
   annotations.forEach((annotation) => {
-    const resourceId: number | undefined = getAnnotatedResourceId({
-      annotation,
-    });
-
+    const resourceId: number | undefined = annotation.annotatedResourceId;
     if (resourceId) {
       if (
         filesById[resourceId] &&
