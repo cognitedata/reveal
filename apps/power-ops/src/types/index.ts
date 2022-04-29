@@ -42,7 +42,7 @@ export interface MatrixWithData extends Matrix {
 export interface PriceAreaWithData extends PriceArea {
   totalMatrixesWithData: MatrixWithData[];
   plantMatrixesWithData: {
-    plantExternalId: string;
+    plantName: string;
     matrixesWithData: MatrixWithData[];
   }[];
 }

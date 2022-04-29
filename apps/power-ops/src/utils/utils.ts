@@ -107,13 +107,13 @@ export const calculateScenarioProduction = (
     production.push({
       timestamp: scenarioPrice.timestamp,
       price: scenarioPrice.value,
-      value: calculatedProduction,
+      value: calculatedProduction * -1,
     });
   });
   return production;
 };
 
-export const downloadBidMatrices = (
+export const downloadBidMatrices = async (
   priceArea: PriceAreaWithData,
   project: string | undefined,
   token: string | undefined
@@ -125,8 +125,7 @@ export const downloadBidMatrices = (
     ?.map((plant) => `&externalId=${plant.matrixes[0].externalId}`)
     .join('');
   const url = `${powerOpsApiBaseUrl}/${project}/sequence/bid-matrix?externalId=${totalMatrixExternalId}${plantMatrixExternalIds}`;
-
-  axios
+  await axios
     .get(url, {
       headers: {
         Authorization: `Bearer ${token}`,

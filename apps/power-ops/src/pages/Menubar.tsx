@@ -53,7 +53,7 @@ export const MenuBar = () => {
   useEffect(() => {
     // setup initial selection on page load
     // (this is a bit hack perhaps, please modify for your own routes)
-    setActive(`/${window.location.pathname.split('/')[2]}`);
+    setActive(`${window.location.pathname.split('/')[2]}`);
     setSelected(`${window.location.pathname.split('/')[3]}`);
     return history.listen((location) => {
       setActive(`${location.pathname}`);

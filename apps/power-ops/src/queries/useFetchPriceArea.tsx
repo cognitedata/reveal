@@ -20,13 +20,10 @@ export const fetchPriceArea = async ({
   const { powerOpsApiBaseUrl } = sidecar;
 
   const { data: priceArea }: { data: PriceArea } = await axios.get(
-    `${powerOpsApiBaseUrl}/${client.project}/price-area-with-data`,
+    `${powerOpsApiBaseUrl}/${client.project}/price-area-with-data/${priceAreaExternalId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
-      },
-      params: {
-        priceArea: priceAreaExternalId,
       },
     }
   );

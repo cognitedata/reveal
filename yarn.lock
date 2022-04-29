@@ -3210,10 +3210,10 @@
   resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.5.1.tgz#b61bc4ed905757701c8d2074b153890974857bb3"
   integrity sha512-T0+MIDd3ebZDjRbddiLF1KhMeW0JCunbvaxpseZdgAjXx6S/W4EiIFJqjP0g9KXOn09DLSAIS8DVtKKfKtyhAA==
 
-"@cognite/power-ops-api-types@^0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@cognite/power-ops-api-types/-/power-ops-api-types-0.0.6.tgz#f878974f11e091d9035a18cc738f3a45a94cabfa"
-  integrity sha512-/oW9KHJoQ2uCM3vtNdYUfikSgWzbxTriwqIjVwI6QU4hPWYRiC9jvYkpNWpbCgatv1xNCiEy0VAe8Qyn+spNRw==
+"@cognite/power-ops-api-types@^0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@cognite/power-ops-api-types/-/power-ops-api-types-0.0.7.tgz#4b82e0cd9db18f0e61492a43d372b22949799929"
+  integrity sha512-lX9Fqj0JT7/vHvFIG3OrzM5aH7VoqcemopmVAe9s1cBESYfSvwpWvgXqStLbtEwJUZ0gukjCr1BZkilT/AUv6Q==
 
 "@cognite/reveal-parser-worker@1.3.0":
   version "1.3.0"

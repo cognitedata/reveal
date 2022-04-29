@@ -50,6 +50,7 @@ const PortfolioPage = () => {
   const [searchPrice, setSearchPrice] = useState<boolean>(true);
   const [searchTotal, setSearchTotal] = useState<boolean>(true);
   const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [downloading, setDownloading] = useState<boolean>(false);
 
   const startDate = priceArea
     ? new Date(priceArea?.totalMatrixes?.[0].startTime).toLocaleString()
@@ -57,7 +58,7 @@ const PortfolioPage = () => {
 
   const search = (query: any, callback: any) => {
     const searchResults = allPlants?.filter((plant) =>
-      plant.name.toLowerCase().includes(query.toLowerCase())
+      plant.displayName.toLowerCase().includes(query.toLowerCase())
     );
     if ('price scenarios'.includes(query.toLowerCase())) {
       setSearchPrice(true);
@@ -93,7 +94,6 @@ const PortfolioPage = () => {
   }, [query]);
 
   useEffect(() => {
-    setLoading(!!allPriceAreas?.length);
     if (!priceAreaExternalId) {
       const [firstPriceArea] = allPriceAreas || [];
       if (firstPriceArea) {
@@ -102,6 +102,8 @@ const PortfolioPage = () => {
         setLoading(true);
       }
     } else {
+      if (!window.location.pathname.split('/')[4])
+        history.push(`${PAGES.PORTFOLIO}/${priceAreaExternalId}/total`);
       priceAreaChanged(priceAreaExternalId);
       setLoading(true);
     }
@@ -152,9 +154,16 @@ const PortfolioPage = () => {
         <Button
           icon="Download"
           type="primary"
-          onClick={() =>
-            downloadBidMatrices(priceArea, client?.project, authState?.token)
-          }
+          loading={downloading}
+          onClick={async () => {
+            setDownloading(true);
+            await downloadBidMatrices(
+              priceArea,
+              client?.project,
+              authState?.token
+            );
+            setDownloading(false);
+          }}
         >
           Download
         </Button>
@@ -213,7 +222,7 @@ const PortfolioPage = () => {
                       key={plant.externalId}
                       onClick={() => setQuery('')}
                     >
-                      <p>{plant.name}</p>
+                      <p>{plant.displayName}</p>
                     </StyledButton>
                   </NavLink>
                 );

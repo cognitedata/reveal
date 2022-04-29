@@ -85,11 +85,10 @@ const PriceScenario = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
         }
       } else {
         // Get Plant from current scenario (activeTab)
-        const plant = priceArea?.priceScenarios
-          .find((scenario) => scenario.externalId === activeTab)
-          ?.plantProduction?.find(
-            (_plant) => `plant-${index - 2}` === column.id
-          );
+        const plant = priceArea?.priceScenarios.find(
+          (scenario) => scenario.externalId === activeTab
+        )?.plantProduction?.[index - 2];
+
         if (plant) {
           // TODO(POWEROPS-223):
           // For now, we select always the first method available

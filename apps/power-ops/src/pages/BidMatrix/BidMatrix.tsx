@@ -48,7 +48,6 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
   const [matrixHeaderConfig, setMatrixHeaderConfig] =
     useState<Column<TableData>[]>();
   const [matrixData, setMatrixData] = useState<TableData[]>();
-  const [matrix, setMatrix] = useState<MatrixWithData | null>();
   const [mainScenarioData, setMainScenarioData] = useState<TableData[]>();
   const [bidDate, setBidDate] = useState<Date>();
   const [newMatrixAvailable, setNewMatrixAvailable] = useState<boolean>(false);
@@ -66,7 +65,6 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
     scenariopPriceTsExternalId: string
   ) => {
     if (!matrix.sequenceRows?.length) return;
-    setMatrix(matrix);
 
     const { columns, data } = await getFormattedBidMatrixData(
       matrix.sequenceRows
@@ -160,6 +158,16 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
     }
   };
 
+  const getMatrixTitle = () => {
+    if (plantExternalId !== 'total') {
+      const plant = priceArea.plants?.find(
+        (p) => p.externalId === plantExternalId
+      );
+      return plant?.displayName || plantExternalId;
+    }
+    return 'Total';
+  };
+
   useEffect(() => {
     if (plantExternalId && priceArea) {
       setBidDate(priceArea.bidDate);
@@ -186,7 +194,7 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
         // TODO(POWEROPS-111):
         // Rename plant variable to .name instead of .externalId
         const plantMatrixes = priceArea.plantMatrixesWithData?.find(
-          (p) => p.plantExternalId === plant?.name
+          (p) => p.plantName === plant?.name
         );
         const production = priceArea.priceScenarios
           .find(
@@ -194,7 +202,7 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
               scenario.externalId === priceArea.mainScenarioExternalId
           )
           ?.plantProduction.find(
-            (p) => p.plantExternalId === plant?.externalId
+            (p) => p.plantName === plant?.name
           )?.production;
         // TODO(POWEROPS-223):
         // For now, we select always the first method available
@@ -240,7 +248,7 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
             <div>
               <span>
                 <StyledTitle level={5}>
-                  Bidmatrix: {matrix?.externalId?.split('.')[0] || 'Not found'}
+                  Bidmatrix: {getMatrixTitle()}
                 </StyledTitle>
                 {/* <Label size="small" variant="unknown">
                 {matrix?.method}

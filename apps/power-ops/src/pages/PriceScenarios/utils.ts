@@ -59,8 +59,7 @@ export function getActiveColumns(
           (plant, plantIndex) => {
             return {
               Header: priceArea?.plants.find(
-                (specificPlant) =>
-                  specificPlant.externalId === plant.plantExternalId
+                (specificPlant) => specificPlant.name === plant.plantName
               )?.name,
               id: `plant-${plantIndex}`,
               accessor: `plant-${plantIndex}`,
