@@ -120,6 +120,7 @@ export const findIsoLink = (
       (symbolInstance) =>
         isLineConnection(symbolInstance) &&
         symbolInstance.letterIndex === lineConnection.letterIndex &&
+        symbolInstance.pointsToFileName === 'SAME' &&
         symbolInstance.id !== lineConnection.id
     );
 
