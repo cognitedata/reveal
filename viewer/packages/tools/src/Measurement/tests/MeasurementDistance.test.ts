@@ -77,4 +77,32 @@ describe(MeasurementDistance.name, () => {
 
     expect(measurementDistance.isActive()).toBeFalse();
   });
+
+  test('Distance between two points', () => {
+    const startPosition = new THREE.Vector3(0, 0, 0);
+    const endPosition = new THREE.Vector3(100, 100, 1);
+    const distanceSpyOn = jest.spyOn(measurementDistance, 'getMeasurementValue');
+
+    measurementDistance.add(startPosition);
+    measurementDistance.update(endPosition);
+
+    const distance = measurementDistance.getMeasurementValue();
+
+    expect(distanceSpyOn).toBeCalled();
+
+    expect(distanceSpyOn).toReturnWith(distance);
+  });
+
+  test('Set line options', () => {
+    const options = {
+      lineWidth: 0.1,
+      color: new THREE.Color(0xffffff)
+    };
+    const setLineOptionsSpyOn = jest.spyOn(measurementDistance, 'setLineOptions');
+    measurementDistance.setLineOptions(options);
+
+    expect(setLineOptionsSpyOn).toBeCalled();
+    expect((measurementDistance as any)._lineOptions.lineWidth).toBe(0.1);
+    expect((measurementDistance as any)._lineOptions.color).toStrictEqual(new THREE.Color(0xffffff));
+  });
 });

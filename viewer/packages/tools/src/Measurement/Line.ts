@@ -13,7 +13,7 @@ export class Line extends THREE.Mesh {
     this._end = new THREE.Vector3();
   }
 
-  public computeLneDistances(): void {
+  public computeLineDistances(): void {
     const geometry = this.geometry;
     const instanceStart = geometry.attributes.instanceStart;
     const instanceEnd = geometry.attributes.instanceEnd;

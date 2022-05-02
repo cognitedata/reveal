@@ -42,14 +42,4 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       this._measurementControls.updateLineOptions(lineOptions);
     }
   }
-
-  /**
-   * Set axis for measurement of point to point distance
-   * @param axis Axis to be used for measuring
-   */
-  public setMeasurementDistanceAxis(axis: THREE.Vector3): void {
-    if (this._measurementDistance) {
-      this._measurementDistance.setAxis(axis);
-    }
-  }
 }
