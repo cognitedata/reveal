@@ -28,7 +28,7 @@ describe('User Profile', () => {
     cy.findByText('Show my access').should('be.visible').click();
     cy.get('[data-testid^="access-list-item-"]')
       .should('be.visible')
-      .should('have.length', 12);
+      .should('have.length', 10);
   });
 
   it('can be used to logout of current project', () => {

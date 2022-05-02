@@ -31,12 +31,11 @@ type ThingsToCheckAccessFor =
   | 'sequences'
   | 'datasets'
   | 'assets'
-  | 'groups'
   | 'wells'
 
   // APIS:
-  | 'discover-api'
-  | 'wells-api';
+  | 'discover-api';
+
 type Access = {
   missing: string[];
   error?: string; // any extra error info we have found, eg: missing dataset
@@ -54,7 +53,6 @@ type ActionScope = {
     | AclScopeTimeSeriesAssetRootIds;
 };
 type AclName =
-  | 'groupsAcl'
   | 'assetsAcl'
   | 'eventsAcl'
   | 'filesAcl'
@@ -91,7 +89,7 @@ export const checkACL = ({
   aclName: AclName;
   acl: string;
   context: ThingsToCheckAccessFor;
-  scope?: 'all' | 'currentuserscope';
+  scope?: 'all';
 }): AllAccess => {
   const scopeToCheck = scope || 'all';
 
@@ -166,27 +164,6 @@ export const UserAccessList: React.FC = () => {
     return { 'discover-api': { missing: ['NETWORK'] } };
   };
 
-  const checkWellsAPIAccess = async (): Promise<Partial<AllAccess>> => {
-    try {
-      const result = await fetchGet<string>(
-        `https://well-service.${
-          SIDECAR.cdfCluster === ''
-            ? 'cognitedata-production'
-            : SIDECAR.cdfCluster
-        }.cognite.ai/docs`,
-        { headers }
-      );
-
-      if (result.includes('Swagger')) {
-        return { 'wells-api': { missing: [] } };
-      }
-    } catch (error) {
-      log(String(error));
-    }
-
-    return { 'wells-api': { missing: ['NETWORK'] } };
-  };
-
   const inspectToken = async () => {
     let result: { capabilities: CogniteCapability } = { capabilities: [] };
     try {
@@ -230,18 +207,6 @@ export const UserAccessList: React.FC = () => {
               aclName: 'sequencesAcl',
               acl: 'READ',
               context: 'sequences',
-            }),
-          };
-        }
-        if ('groupsAcl' in item) {
-          return {
-            ...checkACL({
-              result,
-              item,
-              aclName: 'groupsAcl',
-              acl: 'LIST',
-              scope: 'currentuserscope',
-              context: 'groups',
             }),
           };
         }
@@ -324,9 +289,7 @@ export const UserAccessList: React.FC = () => {
         sequences: { missing: ['READ'] },
         assets: { missing: ['READ'] },
         wells: { missing: ['READ'] },
-        groups: { missing: ['LIST'] },
         'discover-api': { missing: ['NETWORK'] },
-        'wells-api': { missing: ['NETWORK'] },
       } as AllAccess
     );
 
@@ -336,12 +299,10 @@ export const UserAccessList: React.FC = () => {
   const checkUserAccess = async () => {
     const tokenResults = await inspectToken();
     const discoverAPIResults = await checkDiscoverAPIAccess();
-    const wellsAPIAccess = await checkWellsAPIAccess();
 
     const currentUserAccess: AllAccess = {
       ...tokenResults,
       ...discoverAPIResults,
-      ...wellsAPIAccess,
     };
 
     const accessCheckResult = Object.entries(
