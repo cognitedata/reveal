@@ -5,7 +5,6 @@ import { useAuthContext } from '@cognite/react-container';
 import { Column } from 'react-table';
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 import {
   TableData,
   SequenceRow,
@@ -26,8 +25,6 @@ import {
   StyledTitle,
   StyledInfobar,
 } from './elements';
-
-dayjs.extend(utc);
 
 export const mainScenarioTableHeaderConfig = [
   {
@@ -252,7 +249,7 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
                 {matrix?.method}
               </Label> */}
               </span>
-              <Detail>{`Generated for: ${bidDate.format('DD/MMM/YYYY')} - ${
+              <Detail>{`Generated for: ${bidDate.format('DD/MMM/YYYY Z')} - ${
                 currentMatrix?.externalId
               }`}</Detail>
             </div>

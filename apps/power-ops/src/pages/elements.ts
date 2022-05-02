@@ -18,6 +18,14 @@ export const StyledTopBar = styled(TopBar)`
   position: sticky;
   top: 0;
   background: var(--cogs-bg-default);
+  .rc-tabs-tab:first-child {
+    .rc-tabs-tab-btn {
+      padding-right: 32px;
+    }
+  }
+  .cogs-icon {
+    z-index: ${layers.MAXIMUM};
+  }
 `;
 
 export const Code = styled.code`

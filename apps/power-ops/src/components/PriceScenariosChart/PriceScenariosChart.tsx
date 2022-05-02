@@ -6,12 +6,9 @@ import { pickChartColor } from 'utils/utils';
 import { PriceArea } from '@cognite/power-ops-api-types';
 import { TableData } from 'types';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 
 import { StyledTitle, TooltipCard, FlexRow, StyledPlot } from './elements';
 import { chartStyles, layout, Card } from './chartConfig';
-
-dayjs.extend(utc);
 
 interface TooltipOffset {
   top: number;

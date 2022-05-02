@@ -11,7 +11,6 @@ import { BidmatrixTable } from 'components/BidmatrixTable';
 import { useAuthContext } from '@cognite/react-container';
 import { DoubleDatapoint, ExternalId } from '@cognite/sdk';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 import { CalculatedProduction } from '@cognite/power-ops-api-types';
 
 import { getActiveColumns } from './utils';
@@ -22,8 +21,6 @@ import {
   StyledTabs,
   StyledTable,
 } from './elements';
-
-dayjs.extend(utc);
 
 const PriceScenario = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
   const { client } = useAuthContext();

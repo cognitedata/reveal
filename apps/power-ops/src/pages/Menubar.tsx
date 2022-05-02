@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Dropdown, Menu, TopBar } from '@cognite/cogs.js';
+import { Dropdown, Icon, Menu, TopBar } from '@cognite/cogs.js';
 import { LogoutButton, useAuthContext } from '@cognite/react-container';
 import { PriceArea } from '@cognite/power-ops-api-types';
 import { PriceAreasContext } from 'providers/priceAreaProvider';
@@ -68,6 +68,17 @@ export const MenuBar = () => {
         <LogoContainer>
           <TopBar.Logo title="Power Market Operations" />
         </LogoContainer>
+        {/* TODO(POWEROPS-198):
+            Temporary fix until dropdown functionality is added to TopBar in the Design System
+        */}
+        <Icon
+          type={visible ? 'ChevronUpSmall' : 'ChevronDownSmall'}
+          style={{
+            position: 'absolute',
+            top: '19.5px',
+            left: '372px',
+          }}
+        />
         <Dropdown
           visible={visible}
           onClickOutside={() => setVisible(false)}
