@@ -5,8 +5,8 @@ import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
 import layers from 'utils/zindex';
 
-import { NumericRangeFilter, MultiSelect } from 'components/filters';
-import { MultiSelectGroup } from 'components/filters/MultiSelect/MultiSelectGroup';
+import { NumericRangeFilter, MultiSelect } from 'components/Filters';
+import { MultiSelectGroup } from 'components/Filters/MultiSelect/MultiSelectGroup';
 import {
   FilterConfig,
   FilterTypes,

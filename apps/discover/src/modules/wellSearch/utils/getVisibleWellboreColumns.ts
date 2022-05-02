@@ -1,6 +1,6 @@
 import intersection from 'lodash/intersection';
 
-import { ColumnType } from 'components/tablev3/types';
+import { ColumnType } from 'components/Tablev3/types';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';
 import { Well, Wellbore } from 'modules/wellSearch/types';
 

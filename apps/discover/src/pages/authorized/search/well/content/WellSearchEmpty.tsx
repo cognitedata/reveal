@@ -4,7 +4,7 @@ import { useClearAllFilters } from 'services/savedSearches/hooks/useClearAllFilt
 import { useClearPolygon } from 'services/savedSearches/hooks/useClearPolygon';
 import { useClearQuery } from 'services/savedSearches/hooks/useClearQuery';
 
-import { TableEmpty } from 'components/tableEmpty';
+import { TableEmpty } from 'components/TableEmpty';
 
 export const WellSearchEmpty: React.FC = () => {
   const clearAllFilters = useClearAllFilters();

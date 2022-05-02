@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { Body, Icon, Title } from '@cognite/cogs.js';
 
-import EmptyState from 'components/emptyState';
+import EmptyState from 'components/EmptyState';
 
 import {
   BreadcrumbWrapper,

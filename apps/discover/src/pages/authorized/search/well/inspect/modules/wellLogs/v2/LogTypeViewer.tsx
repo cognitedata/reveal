@@ -13,9 +13,9 @@ import { DATE_NOT_AVAILABLE } from 'utils/date/constants';
 
 import { Dropdown, Menu } from '@cognite/cogs.js';
 
-import { ExpandButton } from 'components/buttons';
-import { Loading } from 'components/loading';
-import ManageColumnsPanel from 'components/manage-columns-panel';
+import { ExpandButton } from 'components/Buttons';
+import { Loading } from 'components/Loading';
+import ManageColumnsPanel from 'components/ManageColumnsPanel';
 import { useDeepMemo } from 'hooks/useDeep';
 import { PETREL_LOG_TYPE, TRACK_CONFIG } from 'modules/wellSearch/constants';
 import { useLogsPPFGQuery } from 'modules/wellSearch/hooks/useLogsPPFGQuery';

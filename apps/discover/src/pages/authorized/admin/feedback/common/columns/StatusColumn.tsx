@@ -5,7 +5,7 @@ import isNumber from 'lodash/isNumber';
 
 import { Dropdown, Menu, Label, LabelVariants } from '@cognite/cogs.js';
 
-import { NoPropagationWrapper } from 'components/buttons/NoPropagationWrapper';
+import { NoPropagationWrapper } from 'components/Buttons/NoPropagationWrapper';
 import { STATUS } from 'modules/feedback/constants';
 
 interface DropdownButtonProps {

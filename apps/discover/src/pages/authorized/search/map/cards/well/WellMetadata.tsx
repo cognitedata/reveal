@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { waterDepthAdapter } from 'dataLayers/wells/wells/adapters/waterDepthAdapter';
 
-import MetadataTable from 'components/metadataTable';
+import MetadataTable from 'components/MetadataTable';
 import { FEET } from 'constants/units';
 import { Well } from 'modules/wellSearch/types';
 

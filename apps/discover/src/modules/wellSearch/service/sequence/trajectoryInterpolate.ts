@@ -10,7 +10,7 @@ import {
   Wellbore,
 } from '@cognite/sdk-wells-v3';
 
-import { showErrorMessage } from 'components/toast';
+import { showErrorMessage } from 'components/Toast';
 import { SOMETHING_WENT_WRONG_FETCHING_TVD } from 'constants/error';
 
 export interface ResponseItemType {

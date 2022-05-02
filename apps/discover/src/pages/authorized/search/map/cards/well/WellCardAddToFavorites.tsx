@@ -1,6 +1,6 @@
 import { Button, Dropdown } from '@cognite/cogs.js';
 
-import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
+import AddToFavoriteSetMenu from 'components/AddToFavoriteSetMenu';
 import { Well } from 'modules/wellSearch/types';
 
 import { FAVORITE_OFF_ICON, FAVORITE_ON_ICON } from '../../constants';

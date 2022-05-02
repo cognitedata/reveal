@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { MultiSelect } from 'components/filters';
+import { MultiSelect } from 'components/Filters';
 import { useDeepMemo } from 'hooks/useDeep';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useFilterDataNpt } from 'modules/inspectTabs/selectors';

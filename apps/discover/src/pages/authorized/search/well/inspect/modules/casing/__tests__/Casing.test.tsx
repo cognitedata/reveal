@@ -6,14 +6,14 @@ import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe'
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { LOADING_TEXT } from 'components/emptyState/constants';
-import { showErrorMessage } from 'components/toast';
+import { LOADING_TEXT } from 'components/EmptyState/constants';
+import { showErrorMessage } from 'components/Toast';
 // import { useCasingsForTable } from 'modules/wellSearch/selectors';
 
 import Casing from '../Casing';
 
 const showErrorMessageMock = jest.fn();
-jest.mock('components/toast', () => ({
+jest.mock('components/Toast', () => ({
   showErrorMessage: jest.fn(),
 }));
 

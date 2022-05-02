@@ -2,9 +2,9 @@ import React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
-import EmptyState from 'components/emptyState';
-import { Loading } from 'components/loading/Loading';
-import { Table } from 'components/tablev3';
+import EmptyState from 'components/EmptyState';
+import { Loading } from 'components/Loading/Loading';
+import { Table } from 'components/Tablev3';
 
 import { useOverviewResultColumns } from './hooks/useOverviewUtils';
 import { OverviewModel } from './types';

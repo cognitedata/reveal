@@ -9,10 +9,10 @@ import styled from 'styled-components/macro';
 
 import { Dropdown, Menu } from '@cognite/cogs.js';
 
-import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
-import { MoreOptionsButton, ViewButton } from 'components/buttons';
-import { FavoriteStarIcon } from 'components/icons/FavoriteStarIcon';
-import { Table, RowProps } from 'components/tablev3';
+import AddToFavoriteSetMenu from 'components/AddToFavoriteSetMenu';
+import { MoreOptionsButton, ViewButton } from 'components/Buttons';
+import { FavoriteStarIcon } from 'components/Icons/FavoriteStarIcon';
+import { Table, RowProps } from 'components/Tablev3';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useVisibleWellboreColumns } from 'hooks/useVisibleWellboreColumns';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';

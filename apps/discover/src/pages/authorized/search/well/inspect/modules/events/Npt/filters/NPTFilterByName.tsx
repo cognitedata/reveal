@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { SearchBox } from 'components/filters';
+import { SearchBox } from 'components/Filters';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useFilterDataNpt } from 'modules/inspectTabs/selectors';
 

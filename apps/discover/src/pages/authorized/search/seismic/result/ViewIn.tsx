@@ -4,8 +4,8 @@ import { useDispatch } from 'react-redux';
 
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 
-import { CloseButton } from 'components/buttons';
-import TableBulkActions from 'components/table-bulk-actions';
+import { CloseButton } from 'components/Buttons';
+import TableBulkActions from 'components/TableBulkActions';
 import { useSelectedFiles } from 'modules/seismicSearch/selectors';
 import { deselectAllFiles } from 'modules/seismicSearch/utils';
 

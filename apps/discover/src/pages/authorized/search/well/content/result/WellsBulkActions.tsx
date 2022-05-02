@@ -6,11 +6,11 @@ import { openInNewTab } from 'utils/openInNewTab';
 
 import { Dropdown } from '@cognite/cogs.js';
 
-import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
-import { NO_ITEMS_ADDED_TEXT } from 'components/add-to-favorite-set-menu/constants';
-import { ViewButton, FavoriteButton, CloseButton } from 'components/buttons';
-import TableBulkActions from 'components/table-bulk-actions';
-import { showErrorMessage } from 'components/toast';
+import AddToFavoriteSetMenu from 'components/AddToFavoriteSetMenu';
+import { NO_ITEMS_ADDED_TEXT } from 'components/AddToFavoriteSetMenu/constants';
+import { ViewButton, FavoriteButton, CloseButton } from 'components/Buttons';
+import TableBulkActions from 'components/TableBulkActions';
+import { showErrorMessage } from 'components/Toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { wellSearchActions } from 'modules/wellSearch/actions';

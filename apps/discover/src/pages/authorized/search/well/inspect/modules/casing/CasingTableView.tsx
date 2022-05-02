@@ -4,10 +4,10 @@ import groupBy from 'lodash/groupBy';
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
 
-import { BaseButton } from 'components/buttons';
-import EmptyState from 'components/emptyState';
-import { NO_RESULTS_TEXT } from 'components/emptyState/constants';
-import { Table, TableResults, RowProps } from 'components/tablev3';
+import { BaseButton } from 'components/Buttons';
+import EmptyState from 'components/EmptyState';
+import { NO_RESULTS_TEXT } from 'components/EmptyState/constants';
+import { Table, TableResults, RowProps } from 'components/Tablev3';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useCasingsForTable } from 'modules/wellSearch/selectors';
 

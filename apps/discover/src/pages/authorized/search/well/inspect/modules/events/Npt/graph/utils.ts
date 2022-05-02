@@ -3,8 +3,8 @@ import { getTimeDuration } from 'utils/date';
 import { HOURS_IN_A_DAY } from 'utils/date/constants';
 import { caseInsensitiveSort } from 'utils/sort';
 
-import { LegendCheckboxState } from 'components/charts/common/Legend';
-import { DataObject } from 'components/charts/types';
+import { LegendCheckboxState } from 'components/Charts/common/Legend';
+import { DataObject } from 'components/Charts/types';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../constants';

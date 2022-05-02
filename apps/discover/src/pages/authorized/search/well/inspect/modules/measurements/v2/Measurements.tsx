@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 
 import { areAllSetValuesEmpty } from 'utils/areAllSetValuesEmpty';
 
-import EmptyState from 'components/emptyState';
-import { Loading } from 'components/loading';
+import EmptyState from 'components/EmptyState';
+import { Loading } from 'components/Loading';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 import { FlexGrow } from 'styles/layout';
 

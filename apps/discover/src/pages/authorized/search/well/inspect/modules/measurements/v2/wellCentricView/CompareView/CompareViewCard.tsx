@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { BaseButton } from 'components/buttons';
+import { BaseButton } from 'components/Buttons';
 import {
   MeasurementChartData,
   MeasurementType,

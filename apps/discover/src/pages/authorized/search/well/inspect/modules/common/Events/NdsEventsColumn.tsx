@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
-import EmptyState from 'components/emptyState';
+import EmptyState from 'components/EmptyState';
 import { NDSEvent } from 'modules/wellSearch/types';
 
 import { NDS_COLUMN_TITLE } from './constants';

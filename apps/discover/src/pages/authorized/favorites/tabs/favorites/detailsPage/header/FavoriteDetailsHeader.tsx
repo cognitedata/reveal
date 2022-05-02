@@ -10,9 +10,9 @@ import {
   DownloadButton,
   EditButton,
   BackButton,
-} from 'components/buttons';
-import Header from 'components/header/Header';
-import { showInfoMessageWithTitle } from 'components/toast';
+} from 'components/Buttons';
+import Header from 'components/Header/Header';
+import { showInfoMessageWithTitle } from 'components/Toast';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';

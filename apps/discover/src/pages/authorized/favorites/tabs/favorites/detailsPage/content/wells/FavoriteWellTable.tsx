@@ -8,10 +8,10 @@ import { useFavoriteUpdateContent } from 'services/favorites/useFavoritesMutate'
 
 import { Menu, Dropdown } from '@cognite/cogs.js';
 
-import { MoreOptionsButton, ViewButton } from 'components/buttons';
-import EmptyState from 'components/emptyState';
-import { LOADING_TEXT } from 'components/emptyState/constants';
-import { Options, Table, RowProps } from 'components/tablev3';
+import { MoreOptionsButton, ViewButton } from 'components/Buttons';
+import EmptyState from 'components/EmptyState';
+import { LOADING_TEXT } from 'components/EmptyState/constants';
+import { Options, Table, RowProps } from 'components/Tablev3';
 import { useDeepCallback, useDeepEffect } from 'hooks/useDeep';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/inspectTabs/types';

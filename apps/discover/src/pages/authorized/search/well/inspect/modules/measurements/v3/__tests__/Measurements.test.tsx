@@ -16,7 +16,7 @@ import { getMockWell } from '__test-utils/fixtures/well/well';
 import { getMockWellbore } from '__test-utils/fixtures/well/wellbore';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { LOADING_TEXT, NO_RESULTS_TEXT } from 'components/loading/constants';
+import { LOADING_TEXT, NO_RESULTS_TEXT } from 'components/Loading/constants';
 import { SET_ERRORS } from 'modules/inspectTabs/types';
 
 import { Measurements } from '../Measurements';

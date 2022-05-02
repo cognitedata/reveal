@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { ProjectConfig } from '@cognite/discover-api-types';
 
-import { SearchBox } from 'components/filters';
+import { SearchBox } from 'components/Filters';
 
 import { ConfigFields } from '../fields/ConfigFields';
 import { Metadata } from '../types';

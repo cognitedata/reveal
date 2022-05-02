@@ -5,8 +5,8 @@ import { useJsonHeaders } from 'services/service';
 
 import { getTenantInfo } from '@cognite/react-container';
 
-import { showErrorMessage } from 'components/toast';
-import { LONG_DURATION } from 'components/toast/constants';
+import { showErrorMessage } from 'components/Toast';
+import { LONG_DURATION } from 'components/Toast/constants';
 import { DOCUMENT_FEEDBACK_QUERY_KEY } from 'constants/react-query';
 
 import {

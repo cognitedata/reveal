@@ -6,8 +6,8 @@ import uniqBy from 'lodash/uniqBy';
 
 import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
-import { BackButton } from 'components/buttons';
-import { OverlayNavigation } from 'components/overlay-navigation';
+import { BackButton } from 'components/Buttons';
+import { OverlayNavigation } from 'components/OverlayNavigation';
 import { PressureUnit, DepthMeasurementUnit } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';

@@ -25,8 +25,8 @@ import { Point } from '@cognite/seismic-sdk-js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 
-import { BlockExpander } from 'components/block-expander/BlockExpander';
-import { showErrorMessage } from 'components/toast';
+import { BlockExpander } from 'components/BlockExpander/BlockExpander';
+import { showErrorMessage } from 'components/Toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useKeyPressListener } from 'hooks/useKeyPressListener';
 import {

@@ -7,8 +7,8 @@ import { DATE_NOT_AVAILABLE } from 'utils/date/constants';
 
 import { Dropdown, Menu } from '@cognite/cogs.js';
 
-import { ExpandButton } from 'components/buttons';
-import { Loading } from 'components/loading';
+import { ExpandButton } from 'components/Buttons';
+import { Loading } from 'components/Loading';
 import { useWellLogsRowDataKeyBySource } from 'modules/wellInspect/hooks/useWellLogsRowDataSelectors';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 

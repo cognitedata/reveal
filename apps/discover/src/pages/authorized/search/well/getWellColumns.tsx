@@ -2,7 +2,7 @@ import { getSpudDateDisplay } from 'dataLayers/wells/wells/selectors/getSpudDate
 import { getSpudDateTableSort } from 'dataLayers/wells/wells/selectors/getSpudDateSort';
 import { wellFieldTitles } from 'dataLayers/wells/wells/titles';
 
-import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
+import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';
 import { KB_ELEVATION_TEXT } from 'modules/wellSearch/constantsSidebarFilters';
 import { Well } from 'modules/wellSearch/types';

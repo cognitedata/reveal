@@ -1,4 +1,4 @@
-import { TableResults } from 'components/tablev3';
+import { TableResults } from 'components/Tablev3';
 import {
   SequenceData,
   Well,

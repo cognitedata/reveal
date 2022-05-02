@@ -6,8 +6,8 @@ import { areAllSetValuesEmpty } from 'utils/areAllSetValuesEmpty';
 
 import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
-import { NoDataAvailable } from 'components/charts/common/NoDataAvailable';
-import { Loading } from 'components/loading';
+import { NoDataAvailable } from 'components/Charts/common/NoDataAvailable';
+import { Loading } from 'components/Loading';
 import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQueryV3';

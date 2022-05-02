@@ -15,7 +15,7 @@ import { getMockWell } from '__test-utils/fixtures/well/well';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { defaultTestUser } from '__test-utils/testdata.utils';
-import { LOADING_TEXT } from 'components/emptyState/constants';
+import { LOADING_TEXT } from 'components/EmptyState/constants';
 import navigation from 'constants/navigation';
 import {
   FAVORITE_SET_NO_DOCUMENTS,

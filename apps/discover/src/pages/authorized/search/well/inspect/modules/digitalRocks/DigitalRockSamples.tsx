@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 
-import EmptyState from 'components/emptyState';
-import { Modal } from 'components/modal';
-import { RowProps, Table } from 'components/tablev3';
+import EmptyState from 'components/EmptyState';
+import { Modal } from 'components/Modal';
+import { RowProps, Table } from 'components/Tablev3';
 import { useWellInspectWellboreExternalAssetIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 import { DIGITAL_ROCK_SAMPLES_ACCESSORS } from 'modules/wellSearch/constants';
 import { useDigitalRocksSamples } from 'modules/wellSearch/selectors/asset/digitalRocks';

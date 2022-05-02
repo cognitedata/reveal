@@ -3,7 +3,7 @@ import { Switch, Redirect, Route } from 'react-router-dom';
 
 import { Logout } from '@cognite/react-container';
 
-import { Page } from 'components/page';
+import { Page } from 'components/Page';
 import navigation from 'constants/navigation';
 import { usePageSettings } from 'hooks/usePageSettings';
 import AdminPageContainer from 'pages/authorized/admin';

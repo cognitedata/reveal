@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components/macro';
 
-import ManageColumnsPanel from 'components/manage-columns-panel';
+import ManageColumnsPanel from 'components/ManageColumnsPanel';
 import { AvailableColumn } from 'pages/authorized/search/common/types';
 
 const Root = styled.div`

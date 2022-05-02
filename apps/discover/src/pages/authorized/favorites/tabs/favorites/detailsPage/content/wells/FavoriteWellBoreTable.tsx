@@ -7,8 +7,8 @@ import sortBy from 'lodash/sortBy';
 
 import { Dropdown, Menu } from '@cognite/cogs.js';
 
-import { MoreOptionsButton, ViewButton } from 'components/buttons';
-import { RowProps, Table } from 'components/tablev3';
+import { MoreOptionsButton, ViewButton } from 'components/Buttons';
+import { RowProps, Table } from 'components/Tablev3';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { useVisibleWellboreColumns } from 'hooks/useVisibleWellboreColumns';
 import { SelectedMap } from 'modules/inspectTabs/types';

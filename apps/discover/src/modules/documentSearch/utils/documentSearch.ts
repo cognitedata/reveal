@@ -3,7 +3,7 @@ import isObject from 'lodash/isObject';
 
 import { CogniteError } from '@cognite/sdk-core';
 
-import { showErrorMessage } from 'components/toast';
+import { showErrorMessage } from 'components/Toast';
 
 import { DEFAULT_ERROR_MESSAGE } from '../constants';
 

@@ -2,10 +2,10 @@ import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
-import { Loading } from 'components/loading/Loading';
-import { Modal } from 'components/modal';
-import { RowProps, Table } from 'components/tablev3';
-import { showErrorMessage } from 'components/toast';
+import { Loading } from 'components/Loading/Loading';
+import { Modal } from 'components/Modal';
+import { RowProps, Table } from 'components/Tablev3';
+import { showErrorMessage } from 'components/Toast';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useFilterDataLog } from 'modules/inspectTabs/selectors';
 

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components/macro';
 import layers from 'utils/zindex';
 
-import { PlusButton, MinusButton } from 'components/buttons';
+import { PlusButton, MinusButton } from 'components/Buttons';
 import { sizes } from 'styles/layout';
 
 export const MAP_ZOOM_IN_TOOLTIP = 'Zoom in';

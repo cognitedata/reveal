@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { Title } from '@cognite/cogs.js';
 
-import { Gauge } from 'components/gauge';
+import { Gauge } from 'components/Gauge';
 
 interface LoadingProps {
   mainText: string;

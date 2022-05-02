@@ -8,7 +8,7 @@ import set from 'lodash/set';
 import { toFixedNumber } from 'utils/number';
 import { processAccessor } from 'utils/table/processAccessor';
 
-import { ColumnType } from 'components/tablev3';
+import { ColumnType } from 'components/Tablev3';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../constants';

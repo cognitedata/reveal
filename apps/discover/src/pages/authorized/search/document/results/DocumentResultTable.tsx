@@ -13,11 +13,11 @@ import { useQuerySavedSearchCurrent } from 'services/savedSearches/useSavedSearc
 
 import { Icon, IconType } from '@cognite/cogs.js';
 
-import DocumentViewModal from 'components/document-preview/DocumentViewModal';
-import { FavoriteStarIcon } from 'components/icons/FavoriteStarIcon';
-import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
-import { Table, RowProps } from 'components/tablev3';
-import { showErrorMessage } from 'components/toast';
+import DocumentViewModal from 'components/DocumentPreview/DocumentViewModal';
+import { FavoriteStarIcon } from 'components/Icons/FavoriteStarIcon';
+import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
+import { Table, RowProps } from 'components/Tablev3';
+import { showErrorMessage } from 'components/Toast';
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
 import { useDeepCallback, useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';

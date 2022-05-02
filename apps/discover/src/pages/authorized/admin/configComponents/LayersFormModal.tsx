@@ -4,9 +4,9 @@ import { useFormik } from 'formik';
 import omit from 'lodash/omit';
 import { geospatial } from 'services/geospatial';
 
-import { FileReaderComp } from 'components/file-reader';
-import { Modal } from 'components/modal';
-import { showErrorMessage } from 'components/toast';
+import { FileReaderComp } from 'components/FileReader';
+import { Modal } from 'components/Modal';
+import { showErrorMessage } from 'components/Toast';
 
 import { CustomComponent, ConfigFormFields } from '../projectConfig';
 

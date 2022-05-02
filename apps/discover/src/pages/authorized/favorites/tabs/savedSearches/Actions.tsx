@@ -4,7 +4,7 @@ import { Row } from 'react-table';
 import { SavedSearchItem } from 'services/savedSearches/types';
 import styled from 'styled-components/macro';
 
-import { CommentButton } from 'components/buttons';
+import { CommentButton } from 'components/Buttons';
 import { FlexRow, sizes } from 'styles/layout';
 
 export const ActionPadding = styled(FlexRow)`

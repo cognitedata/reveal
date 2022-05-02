@@ -13,7 +13,7 @@ import get from 'lodash/get';
 
 import { Loader, Tabs } from '@cognite/cogs.js';
 
-import { HorizontalResizableBox } from 'components/horizontal-resizable-box/HorizontalResizableBox';
+import { HorizontalResizableBox } from 'components/HorizontalResizable-box/HorizontalResizableBox';
 import navigation from 'constants/navigation';
 import { useAnythingHasSearched } from 'hooks/useAnythingHasSearched';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';

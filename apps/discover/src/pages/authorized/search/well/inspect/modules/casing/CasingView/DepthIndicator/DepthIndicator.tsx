@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import layers from 'utils/zindex';
 
-import { Tooltip } from 'components/popper-tooltip';
+import { Tooltip } from 'components/PopperTooltip';
 import { useEnabledWellSdkV3 } from 'modules/wellSearch/hooks/useEnabledWellSdkV3';
 import { PreviewCasingType } from 'modules/wellSearch/types';
 

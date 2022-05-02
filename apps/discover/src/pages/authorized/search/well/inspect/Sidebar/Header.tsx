@@ -1,7 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { BackButton } from 'components/buttons';
+import { BackButton } from 'components/Buttons';
 import {
   useWellInspectSelectionStats,
   useWellInspectGoBackNavigationPath,

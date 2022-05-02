@@ -6,7 +6,7 @@ import {
   Margins,
   GroupedData,
   Accessors,
-} from 'components/charts/types';
+} from 'components/Charts/types';
 
 export type Data = { label: string; group: string; count: number };
 

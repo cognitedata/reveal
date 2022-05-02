@@ -5,7 +5,7 @@ import { SavedSearchItem } from 'services/savedSearches/types';
 
 import { Button } from '@cognite/cogs.js';
 
-import { Modal } from 'components/modal';
+import { Modal } from 'components/Modal';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 
 import { DELETE_SAVED_SEARCH_CONFIRM_BUTTON_TEXT } from '../constants';

@@ -5,7 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import { Checkbox } from '@cognite/cogs.js';
 
-import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
+import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 import { useOverviewPageErrors } from 'modules/inspectTabs/selectors';
 import { wellInspectActions } from 'modules/wellInspect/actions';
 import { useWellInspectWells } from 'modules/wellInspect/hooks/useWellInspect';

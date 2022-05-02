@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { useTranslation } from '@cognite/react-i18n';
 
-import { PathHeader } from 'components/document-preview/elements';
+import { PathHeader } from 'components/DocumentPreview/elements';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { useWellboresOfWellById } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';

@@ -6,8 +6,8 @@ import styled from 'styled-components/macro';
 
 import { SegmentedControl, Tooltip } from '@cognite/cogs.js';
 
-import { PlusButton } from 'components/buttons';
-import Header from 'components/header/Header';
+import { PlusButton } from 'components/Buttons';
+import Header from 'components/Header/Header';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import {
   setFavoritesViewMode,

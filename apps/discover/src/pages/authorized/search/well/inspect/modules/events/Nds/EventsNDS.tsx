@@ -4,9 +4,9 @@ import isEmpty from 'lodash/isEmpty';
 
 import { CogniteEvent } from '@cognite/sdk';
 
-import EmptyState from 'components/emptyState';
-import { Loading } from 'components/loading';
-import { Table } from 'components/tablev3';
+import EmptyState from 'components/EmptyState';
+import { Loading } from 'components/Loading';
+import { Table } from 'components/Tablev3';
 import {
   LOG_EVENTS_NDS,
   LOG_WELLS_EVENTS_NDS_NAMESPACE,

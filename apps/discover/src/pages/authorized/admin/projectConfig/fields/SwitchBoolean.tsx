@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { Switch, Body } from '@cognite/cogs.js';
 
-import { SubtitlePlain } from 'components/typography/SubtitlePlain';
+import { SubtitlePlain } from 'components/Typography/SubtitlePlain';
 
 export interface Props {
   name: string;

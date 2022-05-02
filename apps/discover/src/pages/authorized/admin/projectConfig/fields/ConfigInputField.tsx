@@ -5,7 +5,7 @@ import isUndefined from 'lodash/isUndefined';
 
 import { Input, Textarea, toast } from '@cognite/cogs.js';
 
-import { showErrorMessage } from 'components/toast';
+import { showErrorMessage } from 'components/Toast';
 
 import { HandleConfigChange, MetadataValue } from '../types';
 

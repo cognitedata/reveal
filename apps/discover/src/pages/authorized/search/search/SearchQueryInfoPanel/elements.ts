@@ -2,7 +2,7 @@ import styled from 'styled-components/macro';
 
 import { Title } from '@cognite/cogs.js';
 
-import { CloseButton } from 'components/buttons';
+import { CloseButton } from 'components/Buttons';
 import { FlexRow, sizes } from 'styles/layout';
 
 export const MarginLeftContainer = styled.div`

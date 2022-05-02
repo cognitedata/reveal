@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { SearchButton, CloseButton } from 'components/buttons';
+import { SearchButton, CloseButton } from 'components/Buttons';
 
 import { FloatingActionsWrapper } from './elements';
 

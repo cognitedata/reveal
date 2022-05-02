@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '@cognite/cogs.js';
 
-import { Tooltip } from 'components/tooltip';
+import { Tooltip } from 'components/Tooltip';
 
 import TableResultActions from '../TableResultActions';
 

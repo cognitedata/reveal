@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import { MultiSelect } from 'components/filters';
+import { MultiSelect } from 'components/Filters';
 import { useDeepMemo } from 'hooks/useDeep';
 import { usePatchRelatedDocumentFilters } from 'modules/inspectTabs/hooks/usePatchRelatedDocumentFilters';
 import { useRelatedDocumentDataStats } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocument';

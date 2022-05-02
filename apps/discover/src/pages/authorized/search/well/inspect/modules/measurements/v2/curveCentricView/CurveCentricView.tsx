@@ -4,7 +4,7 @@ import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
 import isUndefined from 'lodash/isUndefined';
 
-import { Loading } from 'components/loading';
+import { Loading } from 'components/Loading';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';

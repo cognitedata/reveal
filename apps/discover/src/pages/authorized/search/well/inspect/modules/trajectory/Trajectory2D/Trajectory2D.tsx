@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { NoUnmountShowHide } from 'components/no-unmount-show-hide';
+import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';

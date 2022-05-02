@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { BackButton, BaseButton } from 'components/buttons';
+import { BackButton, BaseButton } from 'components/Buttons';
 import { useWellInspectSelectedWellboreNames } from 'modules/wellInspect/hooks/useWellInspect';
 import { useSelectedSecondaryWellboreNamesWithoutNptData } from 'modules/wellSearch/selectors';
 

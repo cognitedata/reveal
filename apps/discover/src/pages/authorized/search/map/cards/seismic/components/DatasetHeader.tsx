@@ -3,7 +3,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 
 import styled from 'styled-components/macro';
 
-import { Typography } from 'components/typography';
+import { Typography } from 'components/Typography';
 import { SeismicHeader } from 'modules/seismicSearch/service';
 
 const PreWrappedTypography = styled(Typography)`

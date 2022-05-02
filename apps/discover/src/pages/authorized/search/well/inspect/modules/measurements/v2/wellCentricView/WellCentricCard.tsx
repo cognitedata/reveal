@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 
 import { Checkbox } from '@cognite/cogs.js';
 
-import { BaseButton } from 'components/buttons';
+import { BaseButton } from 'components/Buttons';
 import {
   MeasurementChartData,
   MeasurementType,

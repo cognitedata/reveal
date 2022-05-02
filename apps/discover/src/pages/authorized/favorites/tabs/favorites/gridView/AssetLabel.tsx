@@ -2,7 +2,7 @@ import React from 'react';
 
 import { pluralize } from 'utils/pluralize';
 
-import { Tooltip } from 'components/tooltip';
+import { Tooltip } from 'components/Tooltip';
 
 import { AssetIcon, SubLabel } from '../elements';
 

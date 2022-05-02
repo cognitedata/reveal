@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Menu, Dropdown } from '@cognite/cogs.js';
 
-import { MoreOptionsButton } from 'components/buttons';
+import { MoreOptionsButton } from 'components/Buttons';
 import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 
 import { PRESSURE_UNITS } from '../constants';

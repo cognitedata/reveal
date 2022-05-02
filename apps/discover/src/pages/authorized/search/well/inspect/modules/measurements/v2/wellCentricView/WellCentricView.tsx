@@ -4,7 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import uniqBy from 'lodash/uniqBy';
 
-import { Loading } from 'components/loading';
+import { Loading } from 'components/Loading';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { BooleanSelection } from 'modules/wellInspect/types';

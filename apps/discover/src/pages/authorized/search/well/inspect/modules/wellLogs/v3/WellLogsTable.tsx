@@ -5,11 +5,11 @@ import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
 import pickBy from 'lodash/pickBy';
 
-import { PreviewButton } from 'components/buttons';
-import EmptyState from 'components/emptyState';
-import { Loading } from 'components/loading/Loading';
-import { OKModal } from 'components/modal';
-import { RowProps, Table } from 'components/tablev3';
+import { PreviewButton } from 'components/Buttons';
+import EmptyState from 'components/EmptyState';
+import { Loading } from 'components/Loading/Loading';
+import { OKModal } from 'components/Modal';
+import { RowProps, Table } from 'components/Tablev3';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useFilterDataLog } from 'modules/inspectTabs/selectors';

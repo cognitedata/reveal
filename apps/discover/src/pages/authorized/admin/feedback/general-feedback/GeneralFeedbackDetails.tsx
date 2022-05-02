@@ -6,7 +6,7 @@ import { shortDate } from 'utils/date';
 import { Button } from '@cognite/cogs.js';
 import { GeneralFeedbackResponse } from '@cognite/discover-api-types';
 
-import { Typography } from 'components/typography';
+import { Typography } from 'components/Typography';
 import { generateReplyToUserContent } from 'modules/feedback/helper';
 import { Flex, sizes } from 'styles/layout';
 

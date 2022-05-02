@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { MinusButton, PlusButton } from 'components/buttons';
+import { MinusButton, PlusButton } from 'components/Buttons';
 
 import { ZOOM_FACTOR } from '../constants';
 

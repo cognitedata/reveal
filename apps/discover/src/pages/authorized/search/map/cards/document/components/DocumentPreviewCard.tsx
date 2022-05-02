@@ -7,15 +7,15 @@ import { getPathsFromDoc } from 'utils/getPathsFromDocument';
 
 import { useTranslation } from '@cognite/react-i18n';
 
-import BasePreviewCard from 'components/card/preview-card/BasePreviewCard';
+import BasePreviewCard from 'components/Card/PreviewCard/BasePreviewCard';
 import {
   FilePath,
   DocumentViewModal,
   Metadata,
   Url,
   Highlight,
-} from 'components/document-preview';
-import { showSuccessMessage } from 'components/toast';
+} from 'components/DocumentPreview';
+import { showSuccessMessage } from 'components/Toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useDocumentResultHits } from 'modules/documentSearch/hooks/useDocumentResultHits';
 import { clearSelectedDocument } from 'modules/map/actions';

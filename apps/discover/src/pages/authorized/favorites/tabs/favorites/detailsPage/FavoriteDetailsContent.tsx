@@ -4,8 +4,8 @@ import { Switch, Route, useHistory, useLocation } from 'react-router-dom';
 import { Badge, Icon, Tabs } from '@cognite/cogs.js';
 import { FavoriteContent } from '@cognite/discover-api-types';
 
-import DocumentViewModal from 'components/document-preview/DocumentViewModal';
-import EmptyState from 'components/emptyState';
+import DocumentViewModal from 'components/DocumentPreview/DocumentViewModal';
+import EmptyState from 'components/EmptyState';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useDocumentsByIdForFavoritesQuery } from 'modules/documentSearch/hooks/useDocumentsByIdsForFavorites';

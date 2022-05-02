@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useFavoritesUpdateMutate } from 'services/favorites/useFavoritesMutate';
 
-import { showErrorMessage } from 'components/toast';
+import { showErrorMessage } from 'components/Toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { FavoriteMetadata, FavoriteSummary } from 'modules/favorite/types';
 import BaseFavoriteCreationModal from 'pages/authorized/favorites/modals/baseFavoriteCreationModal/BaseFavoriteCreationModal';

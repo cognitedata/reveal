@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
 
-import { SubTitleText } from 'components/emptyState/elements';
+import { SubTitleText } from 'components/EmptyState/elements';
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
 import { Description } from './DepthIndicator/elements';

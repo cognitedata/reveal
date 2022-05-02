@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { Textarea } from '@cognite/cogs.js';
 
-import Header from 'components/header/Header';
+import Header from 'components/Header/Header';
 
 export const LayersCreate: React.FC = () => {
   const [text, setText] = React.useState('');

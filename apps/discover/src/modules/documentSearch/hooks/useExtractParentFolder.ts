@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
 
-import { showErrorMessage } from 'components/toast';
+import { showErrorMessage } from 'components/Toast';
 
 import { documentSearchActions } from '../actions';
 import { DocumentType } from '../types';

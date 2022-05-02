@@ -7,7 +7,7 @@ import styled from 'styled-components/macro';
 import { Dropdown, Menu, TopBar } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
-import { Admin } from 'components/admin';
+import { Admin } from 'components/Admin';
 import navigation from 'constants/navigation';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 

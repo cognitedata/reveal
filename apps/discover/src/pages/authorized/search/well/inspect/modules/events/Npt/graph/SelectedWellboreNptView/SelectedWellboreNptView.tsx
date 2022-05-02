@@ -6,8 +6,8 @@ import head from 'lodash/head';
 import isString from 'lodash/isString';
 import isUndefined from 'lodash/isUndefined';
 
-import { WhiteLoaderOverlay } from 'components/loading';
-import { OverlayNavigation } from 'components/overlay-navigation';
+import { WhiteLoaderOverlay } from 'components/Loading';
+import { OverlayNavigation } from 'components/OverlayNavigation';
 import { EMPTY_ARRAY } from 'constants/empty';
 import { useDeepMemo } from 'hooks/useDeep';
 import { NPTEvent } from 'modules/wellSearch/types';

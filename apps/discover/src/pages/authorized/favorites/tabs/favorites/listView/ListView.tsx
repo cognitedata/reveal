@@ -7,9 +7,9 @@ import { sortByDate } from 'utils/sort/sortByDate';
 
 import { CommentTarget, SetCommentTarget } from '@cognite/react-comments';
 
-import { CommentButton } from 'components/buttons';
-import { AvatarWrapper, IconWrapper } from 'components/card/element';
-import { Table, TableResults } from 'components/tablev3';
+import { CommentButton } from 'components/Buttons';
+import { AvatarWrapper, IconWrapper } from 'components/Card/element';
+import { Table, TableResults } from 'components/Tablev3';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { FavoriteSummary } from 'modules/favorite/types';
 import {

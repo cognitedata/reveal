@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import keyBy from 'lodash/keyBy';
 
-import EmptyState from 'components/emptyState';
+import EmptyState from 'components/EmptyState';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
 import {

@@ -1,12 +1,12 @@
 import { CogniteError } from '@cognite/sdk-core';
 
-import { showErrorMessage } from 'components/toast';
+import { showErrorMessage } from 'components/Toast';
 
 import { DEFAULT_ERROR_MESSAGE } from '../../constants';
 import { handleDocumentSearchError } from '../documentSearch';
 
 const showErrorMessageMock = jest.fn();
-jest.mock('components/toast', () => ({
+jest.mock('components/Toast', () => ({
   showErrorMessage: jest.fn(),
 }));
 

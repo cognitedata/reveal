@@ -6,7 +6,7 @@ import isUndefined from 'lodash/isUndefined';
 import max from 'lodash/max';
 import min from 'lodash/min';
 
-import { BlankModal } from 'components/modal';
+import { BlankModal } from 'components/Modal';
 import { useSelectedFiles } from 'modules/seismicSearch/selectors';
 import { seismicService } from 'modules/seismicSearch/service';
 import { SurveyFile } from 'modules/seismicSearch/types';

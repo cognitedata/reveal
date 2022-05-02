@@ -9,8 +9,8 @@ import {
 } from 'services/savedSearches/hooks/useClearWellsFilters';
 import styled from 'styled-components/macro';
 
-import { FilterClearAllButton } from 'components/buttons/FilterClearAllButton';
-import { SelectedFilterLabel } from 'components/labels/SelectedFilterLabel';
+import { FilterClearAllButton } from 'components/Buttons/FilterClearAllButton';
+import { SelectedFilterLabel } from 'components/Labels/SelectedFilterLabel';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useGetTypeFromGeometry, useMap } from 'modules/map/selectors';
 import {

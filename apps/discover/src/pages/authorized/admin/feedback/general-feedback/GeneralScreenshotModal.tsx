@@ -6,7 +6,7 @@ import styled from 'styled-components/macro';
 
 import { GeneralFeedbackResponse } from '@cognite/discover-api-types';
 
-import { BlankModal } from 'components/modal';
+import { BlankModal } from 'components/Modal';
 
 const ImagePreview = styled.img`
   max-width: 100%;

@@ -3,8 +3,8 @@ import { useQueryClient } from 'react-query';
 
 import { useQuerySavedSearchCurrent } from 'services/savedSearches/useSavedSearchQuery';
 
-import EmptyState from 'components/emptyState';
-import { NO_RESULTS_TEXT } from 'components/emptyState/constants';
+import EmptyState from 'components/EmptyState';
+import { NO_RESULTS_TEXT } from 'components/EmptyState/constants';
 import { SAVED_SEARCHES_QUERY_KEY } from 'constants/react-query';
 import { useSurveys } from 'modules/seismicSearch/hooks';
 

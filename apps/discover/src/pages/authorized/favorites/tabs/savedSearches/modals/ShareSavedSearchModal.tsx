@@ -5,10 +5,10 @@ import { useSavedSearchRemoveShareMutate } from 'services/savedSearches/useSaved
 import { useQuerySavedSearcheGetOne } from 'services/savedSearches/useSavedSearchQuery';
 import { handleServiceError } from 'utils/errors';
 
-import { BasicShareModal } from 'components/basic-share-modal';
-import { SharedUsersList } from 'components/basic-share-modal/SharedUsersList';
+import { BasicShareModal } from 'components/BasicShareModal';
+import { SharedUsersList } from 'components/BasicShareModal/SharedUsersList';
 import { UserOption } from 'components/search-users/SearchUsers';
-import { showSuccessMessage } from 'components/toast';
+import { showSuccessMessage } from 'components/Toast';
 import { REMOVE_SHARE_SUCCESS_TOAST } from 'pages/authorized/favorites/modals/constants';
 
 interface Props {

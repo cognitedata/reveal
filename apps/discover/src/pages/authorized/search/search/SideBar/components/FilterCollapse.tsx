@@ -5,7 +5,7 @@ import noop from 'lodash/noop';
 
 import { Collapse, Button } from '@cognite/cogs.js';
 
-import { CollapseIcon } from 'components/icons/CollapseIcon';
+import { CollapseIcon } from 'components/Icons/CollapseIcon';
 import { updateCategoryCollapseKey } from 'modules/sidebar/actions';
 import { useFilterActiveKeys } from 'modules/sidebar/selectors';
 import { CategoryTypes } from 'modules/sidebar/types';

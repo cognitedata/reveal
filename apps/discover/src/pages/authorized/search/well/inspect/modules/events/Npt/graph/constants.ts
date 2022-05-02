@@ -1,4 +1,4 @@
-import { StackedBarChartOptions } from 'components/charts/modules/StackedBarChart';
+import { StackedBarChartOptions } from 'components/Charts/modules/StackedBarChart';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors, colors, DEFAULT_NPT_COLOR } from '../constants';

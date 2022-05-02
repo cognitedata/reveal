@@ -526,8 +526,8 @@ _CYPRESS_FILES = glob([
 CYPRESS_EXTERNAL_FILES = [
     "src/constants/app.ts",
     "src/modules/wellSearch/constantsSidebarFilters.ts",
-    "src/components/add-to-favorite-set-menu/constants.ts",
-    "src/components/emptyState/constants.ts",
+    "src/components/AddToFavoriteSetMenu/constants.ts",
+    "src/components/EmptyState/constants.ts",
     "src/pages/authorized/search/map/constants.ts",
     "src/pages/authorized/search/well/inspect/constants.ts",
     "src/core/constants.ts",

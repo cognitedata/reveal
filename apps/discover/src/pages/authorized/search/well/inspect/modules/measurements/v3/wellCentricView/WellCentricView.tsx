@@ -7,8 +7,8 @@ import uniqBy from 'lodash/uniqBy';
 
 import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
-import { NoDataAvailable } from 'components/charts/common/NoDataAvailable';
-import { Loading } from 'components/loading';
+import { NoDataAvailable } from 'components/Charts/common/NoDataAvailable';
+import { Loading } from 'components/Loading';
 import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';

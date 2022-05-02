@@ -10,9 +10,9 @@ import {
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
 
-import { Loading } from 'components/loading';
+import { Loading } from 'components/Loading';
 // import { Metadata } from 'components/document-preview';
-import MetadataTable, { MetadataItem } from 'components/metadataTable';
+import MetadataTable, { MetadataItem } from 'components/MetadataTable';
 import { ASSESS } from 'modules/feedback/constants';
 import { generateReplyToUserContent } from 'modules/feedback/helper';
 import { MarginBottomNormalContainer } from 'styles/layout';

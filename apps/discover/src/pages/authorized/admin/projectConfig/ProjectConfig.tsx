@@ -11,8 +11,8 @@ import {
 
 import { ProjectConfig as ProjectConfigTypes } from '@cognite/discover-api-types';
 
-import EmptyState from 'components/emptyState';
-import { showErrorMessage } from 'components/toast';
+import EmptyState from 'components/EmptyState';
+import { showErrorMessage } from 'components/Toast';
 
 import {
   customConfigComponent,

@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Dropdown, Menu } from '@cognite/cogs.js';
 
-import { ExpandButton } from 'components/buttons';
+import { ExpandButton } from 'components/Buttons';
 
 import { SelectorWrapper } from './elements';
 

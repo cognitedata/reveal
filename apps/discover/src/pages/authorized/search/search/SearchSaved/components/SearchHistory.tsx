@@ -4,7 +4,7 @@ import { pluralize } from 'utils/pluralize';
 
 import { Flex, Icon, Tooltip } from '@cognite/cogs.js';
 
-import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
+import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 import { NewLine } from 'styles/layout';
 
 import { FILTER_END_MARKER, NO_FILTERS } from '../constants';

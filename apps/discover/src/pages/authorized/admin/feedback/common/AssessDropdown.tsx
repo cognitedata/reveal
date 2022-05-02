@@ -5,8 +5,8 @@ import isNumber from 'lodash/isNumber';
 
 import { Dropdown, Menu, Button } from '@cognite/cogs.js';
 
-import { NoPropagationWrapper } from 'components/buttons/NoPropagationWrapper';
-import { Modal } from 'components/modal';
+import { NoPropagationWrapper } from 'components/Buttons/NoPropagationWrapper';
+import { Modal } from 'components/Modal';
 import {
   ASSESS,
   ASSESS_DROPDOWN_APPROVE,

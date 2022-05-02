@@ -23,8 +23,8 @@ import { sortByDate } from 'utils/sort/sortByDate';
 import { GeneralFeedbackResponse } from '@cognite/discover-api-types';
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 
-import EmptyState from 'components/emptyState';
-import { Table, Options, TableResults, RowProps } from 'components/tablev3';
+import EmptyState from 'components/EmptyState';
+import { Table, Options, TableResults, RowProps } from 'components/Tablev3';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { SOMETHING_WENT_WRONG_REFRESH_PAGE } from 'constants/error';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';

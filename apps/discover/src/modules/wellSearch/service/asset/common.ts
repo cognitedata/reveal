@@ -3,7 +3,7 @@ import { log } from 'utils/log';
 
 import { Asset } from '@cognite/sdk';
 
-import { showErrorMessage } from '../../../../components/toast';
+import { showErrorMessage } from '../../../../components/Toast';
 import { getChunkNumberList } from '../sequence/common';
 
 export async function getAssetsByParentIds(parentIds: number[], fetcher: any) {

@@ -14,7 +14,7 @@ import orderBy from 'lodash/orderBy';
 
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 
-import EmptyState from 'components/emptyState';
+import EmptyState from 'components/EmptyState';
 import { DepthMeasurementUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
 import { convertToPreviewData } from 'modules/wellSearch/utils/casings';

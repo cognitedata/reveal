@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { NormalModal } from 'components/modal/NormalModal';
+import { NormalModal } from 'components/Modal/NormalModal';
 
 interface Props {
   handleClose: () => void;

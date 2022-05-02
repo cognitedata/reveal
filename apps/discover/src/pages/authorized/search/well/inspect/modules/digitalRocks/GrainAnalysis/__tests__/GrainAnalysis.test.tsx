@@ -7,7 +7,7 @@ import { createdAndLastUpdatedTime } from '__test-utils/fixtures/log';
 import { mockedWellStateWithSelectedWells } from '__test-utils/fixtures/well';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { LOADING_TEXT } from 'components/emptyState/constants';
+import { LOADING_TEXT } from 'components/EmptyState/constants';
 
 import { EMPTY_CHART_DATA_MESSAGE } from '../../../../constants';
 import GrainAnalysis, { Props } from '../GrainAnalysis';

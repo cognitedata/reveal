@@ -3,8 +3,8 @@ import layers from 'utils/zindex';
 
 import { Body } from '@cognite/cogs.js';
 
-import { MultiSelect as Select } from 'components/filters';
-import { ExtraLabels } from 'components/filters/interfaces';
+import { MultiSelect as Select } from 'components/Filters';
+import { ExtraLabels } from 'components/Filters/interfaces';
 import { MultiSelect } from 'modules/inspectTabs/types';
 
 import { FILTER_THEME } from '../../../Npt/filters/constants';

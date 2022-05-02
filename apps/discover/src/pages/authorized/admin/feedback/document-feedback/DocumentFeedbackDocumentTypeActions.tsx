@@ -7,7 +7,7 @@ import styled from 'styled-components/macro';
 
 import { Body, Button, Flex, Tooltip } from '@cognite/cogs.js';
 
-import { ModalConfirm } from 'components/modals/confirm/ModalConfirm';
+import { ModalConfirm } from 'components/Modals/confirm/ModalConfirm';
 import { usePermissions } from 'hooks/usePermissions';
 
 import { SmallGreyLabel } from '../elements';

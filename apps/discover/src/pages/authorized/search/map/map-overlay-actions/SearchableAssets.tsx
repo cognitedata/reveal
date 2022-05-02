@@ -8,7 +8,7 @@ import layers from 'utils/zindex';
 
 import { Input } from '@cognite/cogs.js';
 
-import { Tooltip } from 'components/tooltip/TooltipSlowly';
+import { Tooltip } from 'components/Tooltip/TooltipSlowly';
 import { MarginRightSmallContainer } from 'styles/layout';
 
 import { TypeaheadResult } from '../hooks/useLayers';

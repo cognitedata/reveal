@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Table, RowProps } from 'components/tablev3';
+import { Table, RowProps } from 'components/Tablev3';
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
 import { stopSearching } from 'modules/search/actions';
 import { useSearchState } from 'modules/search/selectors';

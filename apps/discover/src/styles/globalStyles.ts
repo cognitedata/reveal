@@ -2,7 +2,7 @@ import { createGlobalStyle } from 'styled-components/macro';
 import '@fontsource/inter';
 import layers from 'utils/zindex';
 
-import { CARD_WIDTH } from 'components/card/preview-card/constants';
+import { CARD_WIDTH } from 'components/Card/PreviewCard/constants';
 
 import { sizes } from './layout';
 

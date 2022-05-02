@@ -2,8 +2,8 @@ import styled from 'styled-components/macro';
 
 import { Icon, Label, Menu } from '@cognite/cogs.js';
 
-import { Card } from 'components/card';
-import InlineLink from 'components/inlineLink';
+import { Card } from 'components/Card';
+import InlineLink from 'components/InlineLink';
 import { FlexAlignItems, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
 export const ToggleContainer = styled.div`

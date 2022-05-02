@@ -6,8 +6,8 @@ import isArray from 'lodash/isArray';
 import { Sequence, CogniteEvent } from '@cognite/sdk';
 
 import { ThreeDee } from 'components/3d';
-import EmptyState from 'components/emptyState';
-import { LOADING_SUB_TEXT } from 'components/emptyState/constants';
+import EmptyState from 'components/EmptyState';
+import { LOADING_SUB_TEXT } from 'components/EmptyState/constants';
 import { StoreState } from 'core/types';
 import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
 import { useWellLogsWithRowData } from 'modules/wellInspect/hooks/useWellLogsWithRowData';

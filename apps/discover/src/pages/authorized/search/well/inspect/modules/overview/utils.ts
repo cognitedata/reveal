@@ -2,7 +2,7 @@ import { getSpudDateDisplay } from 'dataLayers/wells/wells/selectors/getSpudDate
 import { getSpudDateTableSort } from 'dataLayers/wells/wells/selectors/getSpudDateSort';
 import { wellFieldTitles } from 'dataLayers/wells/wells/titles';
 
-import { ColumnType } from 'components/tablev3';
+import { ColumnType } from 'components/Tablev3';
 import { WATER_DEPTH } from 'pages/authorized/search/well/content/constants';
 
 import { OverviewModel } from './types';

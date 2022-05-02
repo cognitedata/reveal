@@ -19,10 +19,10 @@ import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 import { UMSUser } from '@cognite/user-management-service-types';
 
-import EmptyState from 'components/emptyState';
-import { OKModal } from 'components/modal';
-import { Table, Options, TableResults, RowProps } from 'components/tablev3';
-import { showErrorMessage } from 'components/toast';
+import EmptyState from 'components/EmptyState';
+import { OKModal } from 'components/Modal';
+import { Table, Options, TableResults, RowProps } from 'components/Tablev3';
+import { showErrorMessage } from 'components/Toast';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { EMPTY_FIELD_PLACEHOLDER } from 'constants/general';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';

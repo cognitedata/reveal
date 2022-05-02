@@ -5,7 +5,7 @@ import { Menu } from '@cognite/cogs.js';
 import {
   ChildrenContainer,
   SubtitleContainer,
-} from 'components/emptyState/elements';
+} from 'components/EmptyState/elements';
 import { Flex, FlexColumn, sizes } from 'styles/layout';
 
 export const DropdownWrapper = styled(Flex)`

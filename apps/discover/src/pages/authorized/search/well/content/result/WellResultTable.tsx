@@ -8,10 +8,10 @@ import { useFavoriteWellIds } from 'services/favorites/hooks/useFavoriteWellIds'
 
 import { Menu, Dropdown } from '@cognite/cogs.js';
 
-import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
-import { ViewButton, MoreOptionsButton } from 'components/buttons';
-import { FavoriteStarIcon } from 'components/icons/FavoriteStarIcon';
-import { Table, RowProps } from 'components/tablev3';
+import AddToFavoriteSetMenu from 'components/AddToFavoriteSetMenu';
+import { ViewButton, MoreOptionsButton } from 'components/Buttons';
+import { FavoriteStarIcon } from 'components/Icons/FavoriteStarIcon';
+import { Table, RowProps } from 'components/Tablev3';
 import { EMPTY_ARRAY } from 'constants/empty';
 import { useDeepCallback, useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';

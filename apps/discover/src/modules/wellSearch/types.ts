@@ -28,7 +28,7 @@ import { Point } from '@cognite/seismic-sdk-js';
 import { Error } from 'modules/inspectTabs/types';
 import { CasingType } from 'pages/authorized/search/well/inspect/modules/casing/CasingView/interfaces';
 
-import { TableResults } from '../../components/tablev3/resultTypes';
+import { TableResults } from '../../components/Tablev3/resultTypes';
 import { UserPreferredUnit } from '../../constants/units';
 import { PossibleDateRangeDate } from '../../utils/date';
 import { DocumentType } from '../documentSearch/types';

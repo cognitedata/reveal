@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Table } from 'components/tablev3';
+import { Table } from 'components/Tablev3';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { PAGE_SIZE } from '../../table/constants';

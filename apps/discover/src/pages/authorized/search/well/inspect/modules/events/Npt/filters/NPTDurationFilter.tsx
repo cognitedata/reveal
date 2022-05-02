@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { NumericRangeDropdown } from 'components/filters';
+import { NumericRangeDropdown } from 'components/Filters';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useFilterDataNpt } from 'modules/inspectTabs/selectors';
 

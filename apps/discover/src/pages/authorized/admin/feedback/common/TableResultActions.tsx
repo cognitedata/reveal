@@ -2,7 +2,7 @@ import { PropsWithChildren } from 'react';
 
 import styled from 'styled-components/macro';
 
-import { BaseButton, CommentButton } from 'components/buttons';
+import { BaseButton, CommentButton } from 'components/Buttons';
 import { sizes } from 'styles/layout';
 
 import { ActionContainer } from './elements';

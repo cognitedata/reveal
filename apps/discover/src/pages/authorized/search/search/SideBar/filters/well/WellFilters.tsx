@@ -8,7 +8,7 @@ import {
   useSetWellsFiltersAsync,
 } from 'services/savedSearches/hooks/useClearWellsFilters';
 
-import Skeleton from 'components/skeleton';
+import Skeleton from 'components/Skeleton';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useAppliedWellFilters } from 'modules/sidebar/selectors';
 import { Modules } from 'modules/sidebar/types';

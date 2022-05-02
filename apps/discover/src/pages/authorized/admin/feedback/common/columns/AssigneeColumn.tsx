@@ -6,7 +6,7 @@ import { useUserInfo } from 'services/userManagementService/query';
 import { Dropdown, Menu, Label } from '@cognite/cogs.js';
 import { UMSUser } from '@cognite/user-management-service-types';
 
-import { NoPropagationWrapper } from 'components/buttons/NoPropagationWrapper';
+import { NoPropagationWrapper } from 'components/Buttons/NoPropagationWrapper';
 import { DangerButton } from 'pages/authorized/favorites/elements';
 
 import { ASSIGNED_TO, UNASSIGN, UNASSIGNED } from '../../constants';

@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 
 import reduce from 'lodash/reduce';
 
-import { DownloadButton, CloseButton } from 'components/buttons';
-import { Metadata } from 'components/document-preview';
-import EmptyState from 'components/emptyState';
-import TableBulkActions from 'components/table-bulk-actions';
-import { Table, TableResults, RowProps } from 'components/tablev3';
+import { DownloadButton, CloseButton } from 'components/Buttons';
+import { Metadata } from 'components/DocumentPreview';
+import EmptyState from 'components/EmptyState';
+import TableBulkActions from 'components/TableBulkActions';
+import { Table, TableResults, RowProps } from 'components/Tablev3';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { DocumentType } from 'modules/documentSearch/types';
 import { FavouriteRowType } from 'modules/favorite/types';

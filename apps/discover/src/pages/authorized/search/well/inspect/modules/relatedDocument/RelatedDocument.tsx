@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { CollapsablePanel } from '@cognite/cogs.js';
 
-import { BaseButton } from 'components/buttons/BaseButton';
+import { BaseButton } from 'components/Buttons/BaseButton';
 import { useAnythingHasSearched } from 'hooks/useAnythingHasSearched';
 import { useRelatedDocumentDataStats } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocument';
 import { SearchBreadcrumb } from 'pages/authorized/search/common/searchResult';

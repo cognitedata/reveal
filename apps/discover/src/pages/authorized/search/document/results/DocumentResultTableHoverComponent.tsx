@@ -5,13 +5,13 @@ import { handleServiceError } from 'utils/errors';
 
 import { Menu, Dropdown } from '@cognite/cogs.js';
 
-import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
+import AddToFavoriteSetMenu from 'components/AddToFavoriteSetMenu';
 import {
   MoreOptionsButton,
   PreviewButton,
   ViewButton,
-} from 'components/buttons';
-import { showSuccessMessage } from 'components/toast';
+} from 'components/Buttons';
+import { showSuccessMessage } from 'components/Toast';
 import { DocumentType } from 'modules/documentSearch/types';
 import { FlexRow } from 'styles/layout';
 

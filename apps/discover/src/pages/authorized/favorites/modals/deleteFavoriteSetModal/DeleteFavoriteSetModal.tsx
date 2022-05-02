@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Modal } from 'components/modal';
+import { Modal } from 'components/Modal';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { FavoriteSummary } from 'modules/favorite/types';
 

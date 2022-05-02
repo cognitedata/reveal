@@ -6,7 +6,7 @@ import { v1 } from 'uuid';
 
 import { Checkbox } from '@cognite/cogs.js';
 
-import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
+import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 
 import {
   CheckboxContainer,

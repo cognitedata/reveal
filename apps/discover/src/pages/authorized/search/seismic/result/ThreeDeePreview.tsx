@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 
 import isEmpty from 'lodash/isEmpty';
 
-import { ThreeDee } from 'components/3d-old';
-import { BlankModal } from 'components/modal';
+import { ThreeDee } from 'components/3dOld';
+import { BlankModal } from 'components/Modal';
 import { useSelectedFiles } from 'modules/seismicSearch/selectors';
 
 import { ThreeDeeContainer } from './elements';

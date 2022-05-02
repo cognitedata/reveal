@@ -1,4 +1,4 @@
-import { LOADING_SUB_TEXT } from '../../../../../src/components/emptyState/constants';
+import { LOADING_SUB_TEXT } from '../../../../../src/components/EmptyState/constants';
 import { DATA_SOURCE } from '../../../../../src/modules/wellSearch/constantsSidebarFilters';
 import {
   TAB_NAMES,

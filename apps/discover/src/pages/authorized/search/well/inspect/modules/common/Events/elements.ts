@@ -2,7 +2,7 @@ import styled from 'styled-components/macro';
 
 import { Label } from '@cognite/cogs.js';
 
-import { SubTitleText } from 'components/emptyState/elements';
+import { SubTitleText } from 'components/EmptyState/elements';
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
 export const CasingViewListWrapper = styled.div`

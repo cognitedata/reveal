@@ -9,7 +9,7 @@ import { AutoComplete, OptionsType, OptionTypeBase } from '@cognite/cogs.js';
 
 import { SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN } from 'constants/error';
 
-import { showErrorMessage } from '../toast';
+import { showErrorMessage } from '../Toast';
 
 export interface UserOption {
   value: string;

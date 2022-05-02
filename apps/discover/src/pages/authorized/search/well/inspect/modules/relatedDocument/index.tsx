@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Loading } from 'components/loading';
+import { Loading } from 'components/Loading';
 
 const RelatedDocumentLazy = React.lazy(() => import('./RelatedDocument'));
 

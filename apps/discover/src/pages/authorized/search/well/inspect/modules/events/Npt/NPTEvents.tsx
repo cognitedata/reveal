@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react';
 
-import { Loading, WhiteLoaderOverlay } from 'components/loading';
-import { MultiStateToggle } from 'components/multiStateToggle';
-import { NoUnmountShowHide } from 'components/no-unmount-show-hide';
+import { Loading, WhiteLoaderOverlay } from 'components/Loading';
+import { MultiStateToggle } from 'components/MultiStateToggle';
+import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 import { useNptEvents } from 'modules/wellSearch/selectors';
 
 import { Separator } from '../../../elements';

@@ -4,9 +4,9 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { Location } from 'history';
 
-import { WhiteLoader } from 'components/loading';
+import { WhiteLoader } from 'components/Loading';
 
-import { showErrorMessage } from '../components/toast';
+import { showErrorMessage } from '../components/Toast';
 
 import { INSUFFICIENT_ACCESS_RIGHTS_MESSAGE } from './constants';
 

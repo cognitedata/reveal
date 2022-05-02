@@ -2,8 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
-import EmptyState from 'components/emptyState';
-import InlineLink from 'components/inlineLink';
+import EmptyState from 'components/EmptyState';
+import InlineLink from 'components/InlineLink';
 import navigation from 'constants/navigation';
 import { showCreateFavoriteModal } from 'modules/favorite/reducer';
 

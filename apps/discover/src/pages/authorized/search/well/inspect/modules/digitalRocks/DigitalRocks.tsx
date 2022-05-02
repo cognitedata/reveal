@@ -8,9 +8,9 @@ import { shortDateTime } from 'utils/date';
 
 import { Asset } from '@cognite/sdk';
 
-import EmptyState from 'components/emptyState';
-import { Loading } from 'components/loading/Loading';
-import { Table } from 'components/tablev3';
+import EmptyState from 'components/EmptyState';
+import { Loading } from 'components/Loading/Loading';
+import { Table } from 'components/Tablev3';
 import { useDeepEffect } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';

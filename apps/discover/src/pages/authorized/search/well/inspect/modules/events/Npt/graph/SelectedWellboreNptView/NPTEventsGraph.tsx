@@ -7,9 +7,9 @@ import uniqueId from 'lodash/uniqueId';
 import { formatDate, getTimeDuration } from 'utils/date';
 import { CHART_AXIS_LABEL_DATE_FORMAT } from 'utils/date/constants';
 
-import { ScatterPlot } from 'components/charts';
-import { AxisPlacement } from 'components/charts/common/Axis';
-import { ScatterPlotOptions } from 'components/charts/modules/ScatterPlot/types';
+import { ScatterPlot } from 'components/Charts';
+import { AxisPlacement } from 'components/Charts/common/Axis';
+import { ScatterPlotOptions } from 'components/Charts/modules/ScatterPlot/types';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { NPTEvent } from 'modules/wellSearch/types';
 import { FlexColumn, FlexRow } from 'styles/layout';

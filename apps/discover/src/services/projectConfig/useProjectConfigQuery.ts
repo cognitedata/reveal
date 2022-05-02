@@ -13,7 +13,7 @@ import { discoverAPI, useJsonHeaders } from 'services/service';
 import { ProjectConfig } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 
-import { showErrorMessage } from 'components/toast/Toast';
+import { showErrorMessage } from 'components/Toast/Toast';
 import {
   PROJECT_CONFIG_QUERY_KEY,
   LAYERS_QUERY_KEY,

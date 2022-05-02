@@ -8,7 +8,7 @@ import {
 } from '__test-utils/fixtures/sidebar';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { CLEAR_ALL_TEXT } from 'components/tableEmpty/constants';
+import { CLEAR_ALL_TEXT } from 'components/TableEmpty/constants';
 import { PartialStoreState } from 'core/types';
 
 import {

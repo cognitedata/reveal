@@ -2,7 +2,7 @@ import React from 'react';
 
 import { OptionType, Select } from '@cognite/cogs.js';
 
-import EmptyState from 'components/emptyState';
+import EmptyState from 'components/EmptyState';
 
 import { DropdownWrapper } from './elements';
 import { mapCurvesToOptions, mapOptionsToCurves } from './utils';

@@ -8,7 +8,7 @@ import { useSetDocumentFilters } from 'services/savedSearches/hooks/useClearDocu
 
 import { DocumentPayload } from '@cognite/discover-api-types';
 
-import { NumericRangeFilter } from 'components/filters';
+import { NumericRangeFilter } from 'components/Filters';
 import { useDeepEffect } from 'hooks/useDeep';
 import {
   DocumentQueryFacet,

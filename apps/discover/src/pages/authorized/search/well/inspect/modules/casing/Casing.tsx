@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 
-import { SearchBox } from 'components/filters';
-import { MultiStateToggle } from 'components/multiStateToggle';
+import { SearchBox } from 'components/Filters';
+import { MultiStateToggle } from 'components/MultiStateToggle';
 import { FlexGrow } from 'styles/layout';
 
 import { Separator } from '../../elements';

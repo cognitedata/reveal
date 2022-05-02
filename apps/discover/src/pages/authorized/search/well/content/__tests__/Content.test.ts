@@ -7,7 +7,7 @@ import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe'
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { NO_RESULTS_TEXT } from 'components/loading/constants';
+import { NO_RESULTS_TEXT } from 'components/Loading/constants';
 import { initialState as wellState } from 'modules/wellSearch/reducer';
 import { WellState } from 'modules/wellSearch/types';
 

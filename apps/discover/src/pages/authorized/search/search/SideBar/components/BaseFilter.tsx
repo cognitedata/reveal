@@ -5,8 +5,8 @@ import { useHistory } from 'react-router-dom';
 
 import styled from 'styled-components/macro';
 
-import { BlockExpander } from 'components/block-expander/BlockExpander';
-import { HideButton } from 'components/buttons';
+import { BlockExpander } from 'components/BlockExpander/BlockExpander';
+import { HideButton } from 'components/Buttons';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { setCategoryPage, toggleFilterBar } from 'modules/sidebar/actions';

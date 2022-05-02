@@ -2,7 +2,7 @@ import { log } from 'utils/log';
 
 import { CogniteError } from '@cognite/sdk-core';
 
-import { showWarningMessage } from 'components/toast';
+import { showWarningMessage } from 'components/Toast';
 
 import { WELL_SEARCH_ACCESS_ERROR } from '../constants';
 

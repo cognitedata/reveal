@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { BackButton } from 'components/buttons';
+import { BackButton } from 'components/Buttons';
 
 import {
   BackButtonWrapper,

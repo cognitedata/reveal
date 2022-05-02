@@ -9,7 +9,7 @@ import uniq from 'lodash/uniq';
 
 import { CogniteEvent } from '@cognite/sdk';
 
-import { ExtraLabels } from 'components/filters/interfaces';
+import { ExtraLabels } from 'components/Filters/interfaces';
 import { NOT_AVAILABLE } from 'constants/empty';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useFilterDataNds } from 'modules/inspectTabs/selectors';

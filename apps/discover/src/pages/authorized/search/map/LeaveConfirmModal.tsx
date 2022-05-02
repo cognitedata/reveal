@@ -3,7 +3,7 @@ import React from 'react';
 import { Button, Modal } from '@cognite/cogs.js';
 import { useTranslation } from '@cognite/react-i18n';
 
-import { CloseButton } from 'components/buttons';
+import { CloseButton } from 'components/Buttons';
 import { FlexGrow } from 'styles/layout';
 
 import { DialogHeader, DialogHeaderLabel, DialogFooter } from './elements';

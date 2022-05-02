@@ -4,7 +4,7 @@ import styled from 'styled-components/macro';
 
 import { User } from '@cognite/discover-api-types';
 
-import { Typography } from 'components/typography';
+import { Typography } from 'components/Typography';
 import { FlexColumn, FlexGrow } from 'styles/layout';
 
 const Suggestion = styled(FlexGrow)`

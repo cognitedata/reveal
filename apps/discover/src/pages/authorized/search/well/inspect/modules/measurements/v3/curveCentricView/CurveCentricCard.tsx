@@ -3,7 +3,7 @@ import React from 'react';
 import head from 'lodash/head';
 import isUndefined from 'lodash/isUndefined';
 
-import { NoDataAvailable } from 'components/charts/common/NoDataAvailable';
+import { NoDataAvailable } from 'components/Charts/common/NoDataAvailable';
 import {
   MeasurementChartDataV3 as MeasurementChartData,
   MeasurementTypeV3 as MeasurementType,

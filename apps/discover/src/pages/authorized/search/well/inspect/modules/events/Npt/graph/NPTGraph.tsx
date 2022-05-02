@@ -5,7 +5,7 @@ import { now, fromNow } from 'utils/date';
 import {
   SelectedBarData,
   StackedBarChart,
-} from 'components/charts/modules/StackedBarChart';
+} from 'components/Charts/modules/StackedBarChart';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useWellInspectSelectedWellboreNames } from 'modules/wellInspect/hooks/useWellInspect';
 import { NPTEvent } from 'modules/wellSearch/types';

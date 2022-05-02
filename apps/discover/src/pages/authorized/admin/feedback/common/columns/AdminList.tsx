@@ -8,7 +8,7 @@ import { userManagement } from 'services/userManagementService/endpoints';
 import { Input, Menu } from '@cognite/cogs.js';
 import { UMSUser } from '@cognite/user-management-service-types';
 
-import { showErrorMessage } from 'components/toast';
+import { showErrorMessage } from 'components/Toast';
 
 import { INFO_MESSAGE, NO_OPTIONS } from '../../constants';
 import {

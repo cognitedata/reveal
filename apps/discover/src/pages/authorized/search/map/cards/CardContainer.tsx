@@ -4,7 +4,7 @@ import mapboxgl, { LngLatLike } from 'maplibre-gl';
 
 import { Point } from '@cognite/seismic-sdk-js';
 
-import { CARD_WIDTH } from 'components/card/preview-card/constants';
+import { CARD_WIDTH } from 'components/Card/PreviewCard/constants';
 
 import { MapDocumentPreviewContainer } from '../elements';
 

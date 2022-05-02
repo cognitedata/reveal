@@ -9,7 +9,7 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 
-import { CloseButton } from 'components/buttons';
+import { CloseButton } from 'components/Buttons';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 
 import { SEARCH_QUERY_INFO_HEADER, SEARCH_QUERY_INFO_TABS } from './constants';

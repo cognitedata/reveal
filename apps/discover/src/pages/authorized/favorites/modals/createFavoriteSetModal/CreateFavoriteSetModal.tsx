@@ -4,8 +4,8 @@ import { useDispatch } from 'react-redux';
 
 import { useFavoritesCreateMutate } from 'services/favorites/useFavoritesMutate';
 
-import { NOTIFICATION_MESSAGE } from 'components/add-to-favorite-set-menu/constants';
-import { showSuccessMessage } from 'components/toast';
+import { NOTIFICATION_MESSAGE } from 'components/AddToFavoriteSetMenu/constants';
+import { showSuccessMessage } from 'components/Toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import {
   hideCreateFavoriteModal,

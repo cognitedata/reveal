@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { OverlayNavigation } from 'components/overlay-navigation';
+import { OverlayNavigation } from 'components/OverlayNavigation';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import {
   useNptEventsForCasings,

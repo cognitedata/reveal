@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 
 import { Dropdown } from '@cognite/cogs.js';
 
-import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
-import { FavoriteButton, CloseButton } from 'components/buttons';
-import TableBulkActions from 'components/table-bulk-actions';
+import AddToFavoriteSetMenu from 'components/AddToFavoriteSetMenu';
+import { FavoriteButton, CloseButton } from 'components/Buttons';
+import TableBulkActions from 'components/TableBulkActions';
 
 type Props = {
   selectedDocumentIds: number[];

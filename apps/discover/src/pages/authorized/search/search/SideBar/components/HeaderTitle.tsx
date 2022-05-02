@@ -6,7 +6,7 @@ import layers from 'utils/zindex';
 
 import { Icon } from '@cognite/cogs.js';
 
-import { BackButton } from 'components/buttons';
+import { BackButton } from 'components/Buttons';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { toggleFilterBar, setCategoryPage } from 'modules/sidebar/actions';
 import { useFilterBarIsOpen } from 'modules/sidebar/selectors';

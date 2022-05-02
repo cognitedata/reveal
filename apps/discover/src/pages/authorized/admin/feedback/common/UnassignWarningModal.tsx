@@ -1,4 +1,4 @@
-import { WarningModal } from 'components/modal/WarningModal';
+import { WarningModal } from 'components/Modal/WarningModal';
 
 import { UNASSIGN, UNASSIGN_WARNING } from '../constants';
 

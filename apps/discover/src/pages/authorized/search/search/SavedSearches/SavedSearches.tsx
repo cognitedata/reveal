@@ -15,11 +15,11 @@ import { log } from 'utils/log';
 
 import { Dropdown, Input, Menu, Tooltip, Button } from '@cognite/cogs.js';
 
-import Divider from 'components/divider';
-import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
-import OverwriteSearchModal from 'components/modals/overwrite-search-modal';
-import Skeleton from 'components/skeleton';
-import { showErrorMessage, showSuccessMessage } from 'components/toast';
+import Divider from 'components/Divider';
+import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
+import OverwriteSearchModal from 'components/Modals/overwrite-search-modal';
+import Skeleton from 'components/Skeleton';
+import { showErrorMessage, showSuccessMessage } from 'components/Toast';
 import { useCurrentSavedSearchState } from 'hooks/useCurrentSavedSearchState';
 import { useSavedSearchNavigation } from 'hooks/useSavedSearchNavigation';
 

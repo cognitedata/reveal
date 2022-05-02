@@ -5,7 +5,7 @@ import styled from 'styled-components/macro';
 
 import { Input } from '@cognite/cogs.js';
 
-import { Modal } from 'components/modal';
+import { Modal } from 'components/Modal';
 import { FavoriteSummary } from 'modules/favorite/types';
 import {
   CREATE_SET_MODAL_DESCRIPTION_LABEL,

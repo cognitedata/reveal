@@ -6,7 +6,7 @@ import map from 'lodash/map';
 
 import { OptionType } from '@cognite/cogs.js';
 
-import { GroupedColumn } from 'components/manage-columns-panel/ManageColumnsPanel';
+import { GroupedColumn } from 'components/ManageColumnsPanel/ManageColumnsPanel';
 import { Wellbore } from 'modules/wellSearch/types';
 
 export const getFilteredOptionTypeValues = (

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { WarningModal } from 'components/modal';
+import { WarningModal } from 'components/Modal';
 
 import {
   WARNING_MODAL_EXPLANATION,

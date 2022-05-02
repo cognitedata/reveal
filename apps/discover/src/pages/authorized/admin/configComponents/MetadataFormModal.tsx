@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Modal } from 'components/modal';
+import { Modal } from 'components/Modal';
 
 import { CustomComponent, ConfigFormFields } from '../projectConfig';
 

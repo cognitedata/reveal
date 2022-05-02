@@ -7,7 +7,7 @@ import { Data } from 'plotly.js';
 
 import { Asset } from '@cognite/sdk';
 
-import EmptyState from 'components/emptyState';
+import EmptyState from 'components/EmptyState';
 import { DIGITAL_ROCK_SAMPLES_ACCESSORS } from 'modules/wellSearch/constants';
 import { useGrainPartionings } from 'modules/wellSearch/selectors/sequence/grainAnalysis';
 import { convertToPlotly } from 'modules/wellSearch/utils/grainAnalysis';

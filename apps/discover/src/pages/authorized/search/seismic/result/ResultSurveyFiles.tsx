@@ -5,7 +5,7 @@ import { Row } from 'react-table';
 
 import compact from 'lodash/compact';
 
-import { RowProps, Table } from 'components/tablev3';
+import { RowProps, Table } from 'components/Tablev3';
 import {
   useSurvey,
   useSurveys,

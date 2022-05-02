@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Dropdown, Menu } from '@cognite/cogs.js';
 
-import { MoreOptionsButton } from 'components/buttons';
+import { MoreOptionsButton } from 'components/Buttons';
 import { FavoriteSummary } from 'modules/favorite/types';
 
 import {

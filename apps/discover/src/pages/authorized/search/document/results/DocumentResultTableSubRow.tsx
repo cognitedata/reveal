@@ -2,12 +2,7 @@ import { Row } from 'react-table';
 
 import { getPathsFromDoc } from 'utils/getPathsFromDocument';
 
-import {
-  Highlight,
-  Metadata,
-  FilePath,
-  Url,
-} from 'components/document-preview';
+import { Highlight, Metadata, FilePath, Url } from 'components/DocumentPreview';
 import { DocumentType } from 'modules/documentSearch/types';
 import { MetadataContainer } from 'pages/authorized/search/elements';
 import { MarginBottomNormalContainer } from 'styles/layout';

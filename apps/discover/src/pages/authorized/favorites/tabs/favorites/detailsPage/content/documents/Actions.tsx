@@ -14,9 +14,9 @@ import {
   PreviewButton,
   ViewButton,
   MoreOptionsButton,
-} from 'components/buttons';
-import DocumentViewModal from 'components/document-preview/DocumentViewModal';
-import { showInfoMessageWithTitle, showSuccessMessage } from 'components/toast';
+} from 'components/Buttons';
+import DocumentViewModal from 'components/DocumentPreview/DocumentViewModal';
+import { showInfoMessageWithTitle, showSuccessMessage } from 'components/Toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { DocumentType } from 'modules/documentSearch/types';
 import { FavouriteRowType } from 'modules/favorite/types';

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 
-import { PreviewButton } from 'components/buttons';
+import { PreviewButton } from 'components/Buttons';
 
 import {
   PreviewSelectorWrapper,

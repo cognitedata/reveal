@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 
-import { AxisPlacement } from 'components/charts/common/Axis';
+import { AxisPlacement } from 'components/Charts/common/Axis';
 import {
   StackedBarChart,
   StackedBarChartOptions,
-} from 'components/charts/modules/StackedBarChart';
+} from 'components/Charts/modules/StackedBarChart';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../../constants';

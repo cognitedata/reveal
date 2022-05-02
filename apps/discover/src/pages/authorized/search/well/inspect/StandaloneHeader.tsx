@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 
-import { CloseButton } from 'components/buttons';
+import { CloseButton } from 'components/Buttons';
 import { FlexGrow } from 'styles/layout';
 
 import { StandaloneHeaderWrapper, StandaloneHeaderTitle } from './elements';

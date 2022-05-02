@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Input, RangeSlider } from '@cognite/cogs.js';
 
-import { showErrorMessage } from 'components/toast';
+import { showErrorMessage } from 'components/Toast';
 
 import { DEFAULT_COLOR_SCALE_RANGE, VALUE_NOT_IN_RANGE } from '../constants';
 import { Tuplet } from '../types';

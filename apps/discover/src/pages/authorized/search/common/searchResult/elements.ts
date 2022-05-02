@@ -2,7 +2,7 @@ import styled from 'styled-components/macro';
 
 import { Body, Button, Menu } from '@cognite/cogs.js';
 
-import { GreyBadge } from 'components/badge';
+import { GreyBadge } from 'components/Badge';
 
 export const BreadCrumbButton = styled(Button)`
   background-color: #ebf2fc;

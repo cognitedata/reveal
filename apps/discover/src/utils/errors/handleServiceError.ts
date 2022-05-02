@@ -3,7 +3,7 @@ import { doReAuth } from 'utils/getCogniteSDKClient';
 
 import { reportException } from '@cognite/react-errors';
 
-import { showErrorMessage } from 'components/toast';
+import { showErrorMessage } from 'components/Toast';
 import { SERVICE_ERROR_MESSAGE } from 'constants/error';
 
 import { getSafeError } from './getSafeError';

@@ -1,4 +1,4 @@
-import { NO_RESULTS_TEXT } from '../../../src/components/emptyState/constants';
+import { NO_RESULTS_TEXT } from '../../../src/components/EmptyState/constants';
 
 Cypress.Commands.add('goToTab', (tab: 'Documents' | 'Wells' | 'Seismic') => {
   cy.log(`Go to ${tab} tab`);

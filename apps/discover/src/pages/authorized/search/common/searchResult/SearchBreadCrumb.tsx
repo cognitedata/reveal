@@ -5,7 +5,7 @@ import { withThousandSeparator } from 'utils/number';
 import { Dropdown, Menu, Flex } from '@cognite/cogs.js';
 import { useTranslation } from '@cognite/react-i18n';
 
-import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
+import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 import { EMPTY_ARRAY } from 'constants/empty';
 import { FlexGrow } from 'styles/layout';
 

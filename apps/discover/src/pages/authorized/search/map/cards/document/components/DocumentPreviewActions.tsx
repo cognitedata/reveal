@@ -9,14 +9,14 @@ import { openExternalPage } from 'utils/url';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { getTenantInfo } from '@cognite/react-container';
 
-import { ADD_TO_FAVOURITES } from 'components/add-to-favorite-set-menu/constants';
+import { ADD_TO_FAVOURITES } from 'components/AddToFavoriteSetMenu/constants';
 import {
   DownloadButton,
   PreviewButton,
   ViewButton,
   CogniteButton,
   FeedbackButton,
-} from 'components/buttons';
+} from 'components/Buttons';
 import { useDocumentLabelsByExternalIds } from 'hooks/useDocumentLabels';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useDocumentConfig } from 'modules/documentSearch/hooks';

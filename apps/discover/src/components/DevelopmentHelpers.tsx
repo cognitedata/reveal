@@ -5,7 +5,7 @@ import layers from 'utils/zindex';
 import { isLocalhost } from '@cognite/react-container';
 import { ErrorWatcher } from '@cognite/react-errors';
 
-// import { showInfiniteToast } from 'components/toast';
+// import { showInfiniteToast } from 'components/Toast';
 // import { SIDECAR } from 'constants/app';
 
 export const DevelopmentHelpers = () => {

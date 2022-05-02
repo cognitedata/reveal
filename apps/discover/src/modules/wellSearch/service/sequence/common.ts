@@ -4,7 +4,7 @@ import { log } from 'utils/log';
 
 import { Sequence } from '@cognite/sdk';
 
-import { showErrorMessage } from '../../../../components/toast';
+import { showErrorMessage } from '../../../../components/Toast';
 
 export interface SequenceFilter {
   exclude?: string;

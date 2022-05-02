@@ -5,7 +5,7 @@ import { sortObjectsAscending, sortObjectsDecending } from 'utils/sort';
 
 import { WellEventLegend } from '@cognite/discover-api-types';
 
-import { MiddleEllipsis } from 'components/middle-ellipsis/MiddleEllipsis';
+import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 import { NPTEvent } from 'modules/wellSearch/types';
 import { SortBy } from 'pages/types';
 

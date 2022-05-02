@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import head from 'lodash/head';
 
-import { BaseButton } from 'components/buttons';
+import { BaseButton } from 'components/Buttons';
 import {
   MeasurementChartDataV3 as MeasurementChartData,
   MeasurementTypeV3 as MeasurementType,

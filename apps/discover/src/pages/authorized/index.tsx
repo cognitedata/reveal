@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { WhiteLoader } from 'components/loading';
+import { WhiteLoader } from 'components/Loading';
 
 const Content = React.lazy(
   () => import(/* webpackChunkName: 'main-content' */ './Content')

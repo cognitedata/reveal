@@ -13,7 +13,7 @@ import { getMockWellsById } from 'services/wellSearch/__mocks/getMockWellsById';
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { LOADING_TEXT, NO_RESULTS_TEXT } from 'components/loading/constants';
+import { LOADING_TEXT, NO_RESULTS_TEXT } from 'components/Loading/constants';
 
 import { CurveCentricView, Props } from '../CurveCentricView';
 

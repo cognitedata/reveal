@@ -2,10 +2,10 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Row } from 'react-table';
 
-import DocumentViewModal from 'components/document-preview/DocumentViewModal';
-import EmptyState from 'components/emptyState';
-import { NO_RESULTS_TEXT } from 'components/emptyState/constants';
-import { Table, Options, TableResults, RowProps } from 'components/tablev3';
+import DocumentViewModal from 'components/DocumentPreview/DocumentViewModal';
+import EmptyState from 'components/EmptyState';
+import { NO_RESULTS_TEXT } from 'components/EmptyState/constants';
+import { Table, Options, TableResults, RowProps } from 'components/Tablev3';
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
 import {
   LOG_RELATED_DOCUMENTS,

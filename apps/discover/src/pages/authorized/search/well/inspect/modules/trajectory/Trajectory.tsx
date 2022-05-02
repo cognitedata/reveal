@@ -5,8 +5,8 @@ import has from 'lodash/has';
 
 import { Sequence } from '@cognite/sdk';
 
-import { Loading } from 'components/loading/Loading';
-import { Table, ColumnType, RowProps } from 'components/tablev3';
+import { Loading } from 'components/Loading/Loading';
+import { Table, ColumnType, RowProps } from 'components/Tablev3';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useFilterDataTrajectory } from 'modules/inspectTabs/selectors';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';

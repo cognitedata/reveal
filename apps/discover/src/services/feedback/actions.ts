@@ -4,7 +4,7 @@ import { log } from 'utils/log';
 
 import { GeneralFeedback, ObjectFeedback } from '@cognite/discover-api-types';
 
-import { showErrorMessage } from 'components/toast';
+import { showErrorMessage } from 'components/Toast';
 import { FEEDBACK_ERROR_MESSAGE } from 'constants/feedback';
 import { APP_EMAIL } from 'constants/general';
 import { STATUS } from 'modules/feedback/constants';

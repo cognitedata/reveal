@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
-import EmptyState from 'components/emptyState';
+import EmptyState from 'components/EmptyState';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { NPT_COLUMN_TITLE } from '../../casing/CasingView/constants';

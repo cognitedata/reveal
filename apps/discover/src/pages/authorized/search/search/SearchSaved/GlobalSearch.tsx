@@ -9,7 +9,7 @@ import { SavedSearchContent } from 'services/savedSearches/types';
 
 import { AutoComplete, OptionType } from '@cognite/cogs.js';
 
-import { SearchValueContainer } from 'components/search-bar/SearchValueContainer';
+import { SearchValueContainer } from 'components/SearchBar/SearchValueContainer';
 import {
   SEARCH_HISTORY_TRACK_ID,
   SEARCH_ID,

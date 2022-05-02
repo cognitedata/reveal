@@ -6,7 +6,7 @@ import { normalizeCoords } from 'services/wellSearch/utils/normalizeCoords';
 
 import { Well as SDKWell } from '@cognite/sdk-wells-v2';
 
-import { TableResults } from 'components/tablev3';
+import { TableResults } from 'components/Tablev3';
 
 import { Well, Wellbore, WellId, WellMap } from '../types';
 

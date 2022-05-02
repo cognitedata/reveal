@@ -5,8 +5,8 @@ import isEmpty from 'lodash/isEmpty';
 
 import { Button } from '@cognite/cogs.js';
 
-import { CloseButton, ViewButton } from 'components/buttons';
-import TableBulkActions from 'components/table-bulk-actions';
+import { CloseButton, ViewButton } from 'components/Buttons';
+import TableBulkActions from 'components/TableBulkActions';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { REMOVE_FROM_SET_TEXT } from 'pages/authorized/favorites/constants';
 import { DeleteWellFromSetModal } from 'pages/authorized/favorites/modals';

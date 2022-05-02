@@ -8,7 +8,7 @@ import { getMockWellsById } from 'services/wellSearch/__mocks/getMockWellsById';
 import { getMockWell } from '__test-utils/fixtures/well/well';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { LOADING_TEXT } from 'components/emptyState/constants';
+import { LOADING_TEXT } from 'components/EmptyState/constants';
 import { initialState } from 'modules/wellSearch/reducer';
 import {
   FAVORITE_SET_NO_WELLS,

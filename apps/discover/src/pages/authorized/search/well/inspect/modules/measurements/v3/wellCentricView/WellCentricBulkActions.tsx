@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { CloseButton, BaseButton } from 'components/buttons';
-import TableBulkActions from 'components/table-bulk-actions';
+import { CloseButton, BaseButton } from 'components/Buttons';
+import TableBulkActions from 'components/TableBulkActions';
 import { CLEAR_SELECTION_TEXT } from 'pages/authorized/search/well/content/constants';
 
 import { getSelectedWellboresTitle, getSelectedWellsTitle } from '../utils';

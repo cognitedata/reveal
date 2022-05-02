@@ -2,8 +2,8 @@ import React, { useMemo, useState } from 'react';
 
 import uniqBy from 'lodash/uniqBy';
 
-import { BackButton } from 'components/buttons';
-import { OverlayNavigation } from 'components/overlay-navigation';
+import { BackButton } from 'components/Buttons';
+import { OverlayNavigation } from 'components/OverlayNavigation';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';

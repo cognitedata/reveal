@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 
-import { CookieConsent as CookieConsentComponent } from 'components/cookie-consent';
+import { CookieConsent as CookieConsentComponent } from 'components/CookieConsent';
 import { initializeConsent, setConsent } from 'modules/user/actions';
 import { useUserHasGivenConsent } from 'modules/user/selectors';
 

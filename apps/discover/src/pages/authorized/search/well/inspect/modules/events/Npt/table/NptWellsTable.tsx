@@ -5,8 +5,8 @@ import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 
-import EmptyState from 'components/emptyState';
-import { Table, TableResults } from 'components/tablev3';
+import EmptyState from 'components/EmptyState';
+import { Table, TableResults } from 'components/Tablev3';
 import { useDeepEffect } from 'hooks/useDeep';
 import { NPTEvent } from 'modules/wellSearch/types';
 import { SortBy } from 'pages/types';

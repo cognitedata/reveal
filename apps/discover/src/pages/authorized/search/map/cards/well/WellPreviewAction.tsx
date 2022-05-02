@@ -5,9 +5,9 @@ import map from 'lodash/map';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { useTranslation } from '@cognite/react-i18n';
 
-import { ADD_TO_FAVOURITES } from 'components/add-to-favorite-set-menu/constants';
-import { FeedbackButton } from 'components/buttons';
-import GeneralFeedback from 'components/modals/general-feedback/GeneralFeedback';
+import { ADD_TO_FAVOURITES } from 'components/AddToFavoriteSetMenu/constants';
+import { FeedbackButton } from 'components/Buttons';
+import GeneralFeedback from 'components/Modals/general-feedback/GeneralFeedback';
 import { useDeepMemo } from 'hooks/useDeep';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';

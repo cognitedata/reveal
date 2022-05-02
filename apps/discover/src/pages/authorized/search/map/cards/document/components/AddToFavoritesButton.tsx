@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Dropdown, Button } from '@cognite/cogs.js';
 
-import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
+import AddToFavoriteSetMenu from 'components/AddToFavoriteSetMenu';
 import { DocumentType } from 'modules/documentSearch/types';
 
 import { FAVORITE_OFF_ICON, FAVORITE_ON_ICON } from '../../../constants';

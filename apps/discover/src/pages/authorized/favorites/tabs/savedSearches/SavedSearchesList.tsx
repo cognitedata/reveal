@@ -16,12 +16,12 @@ import { sortByDate } from 'utils/sort/sortByDate';
 import { Menu, Dropdown } from '@cognite/cogs.js';
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 
-import { ViewButton, MoreOptionsButton } from 'components/buttons';
-import EmptyState from 'components/emptyState';
-import InlineLink from 'components/inlineLink';
+import { ViewButton, MoreOptionsButton } from 'components/Buttons';
+import EmptyState from 'components/EmptyState';
+import InlineLink from 'components/InlineLink';
 import { UserOption } from 'components/search-users/SearchUsers';
-import { Table, TableResults, RowProps } from 'components/tablev3';
-import { showErrorMessage, showSuccessMessage } from 'components/toast';
+import { Table, TableResults, RowProps } from 'components/Tablev3';
+import { showErrorMessage, showSuccessMessage } from 'components/Toast';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { EMPTY_FIELD_PLACEHOLDER } from 'constants/general';
 import navigation from 'constants/navigation';

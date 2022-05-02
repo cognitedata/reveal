@@ -5,8 +5,8 @@ import noop from 'lodash/noop';
 import { SeismicGetData, SeismicFile } from 'services/types';
 import { log } from 'utils/log';
 
-import BasePreviewCard from 'components/card/preview-card/BasePreviewCard';
-import { showErrorMessage } from 'components/toast';
+import BasePreviewCard from 'components/Card/PreviewCard/BasePreviewCard';
+import { showErrorMessage } from 'components/Toast';
 import { NOT_AVAILABLE } from 'constants/empty';
 import { seismicService, SeismicHeader } from 'modules/seismicSearch/service';
 import { FlexGrow } from 'styles/layout';

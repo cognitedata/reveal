@@ -10,7 +10,7 @@ import { handleServiceError, PossibleError } from 'utils/errors';
 
 import { DocumentCategories } from '@cognite/discover-api-types';
 
-import Skeleton from 'components/skeleton';
+import Skeleton from 'components/Skeleton';
 import { SOMETHING_WENT_WRONG } from 'constants/error';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useDocumentQueryFacets } from 'modules/documentSearch/hooks/useDocumentQueryFacets';

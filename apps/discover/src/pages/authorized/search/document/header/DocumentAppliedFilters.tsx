@@ -10,8 +10,8 @@ import { useClearQuery } from 'services/savedSearches/hooks/useClearQuery';
 
 import { GeoJsonGeometryTypes } from '@cognite/seismic-sdk-js';
 
-import { FilterClearAllButton } from 'components/buttons/FilterClearAllButton';
-import { SelectedFilterLabel } from 'components/labels/SelectedFilterLabel';
+import { FilterClearAllButton } from 'components/Buttons/FilterClearAllButton';
+import { SelectedFilterLabel } from 'components/Labels/SelectedFilterLabel';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { DocumentsFacets } from 'modules/documentSearch/types';
 import { useGetTypeFromGeometry, useMap } from 'modules/map/selectors';

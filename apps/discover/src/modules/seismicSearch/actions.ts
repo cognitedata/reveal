@@ -3,7 +3,7 @@ import { log } from 'utils/log';
 
 import { LineString, GeoJson } from '@cognite/seismic-sdk-js';
 
-import { showErrorMessage } from 'components/toast';
+import { showErrorMessage } from 'components/Toast';
 import { ThunkResult, TS_FIX_ME } from 'core/types';
 import { setGeo } from 'modules/map/actions';
 import { REMOVE_ARBITRARYLINE } from 'modules/map/types.actions';

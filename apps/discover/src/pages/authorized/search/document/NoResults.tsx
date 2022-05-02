@@ -1,4 +1,4 @@
-import EmptyState from 'components/emptyState';
+import EmptyState from 'components/EmptyState';
 import { DocumentContentAppliedFilters } from 'pages/authorized/search/document/header/DocumentContentAppliedFilters';
 
 import { AppliedFilterWrapper } from './element';

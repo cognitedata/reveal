@@ -1,6 +1,6 @@
 import isString from 'lodash/isString';
 
-import { ColumnType } from 'components/tablev3';
+import { ColumnType } from 'components/Tablev3';
 
 export type ColumnMap<Row> = Record<string, ColumnType<Row>>;
 export const getAvailableColumns = <Row>(columnMap: ColumnMap<Row>) =>

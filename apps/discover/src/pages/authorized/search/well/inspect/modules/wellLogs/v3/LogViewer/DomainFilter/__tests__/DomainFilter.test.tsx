@@ -1,7 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react';
 
 import { testRenderer } from '__test-utils/renderer';
-import { ExpandButton } from 'components/buttons/ExpandButton';
+import { ExpandButton } from 'components/Buttons/ExpandButton';
 
 import { DomainFilter } from '../DomainFilter';
 import { DomainFilterProps, DomainListItem } from '../types';

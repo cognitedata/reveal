@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useUserInfo } from 'services/userManagementService/query';
 
-import { UserAvatar } from 'components/user-avatar/UserAvatar';
+import { UserAvatar } from 'components/UserAvatar/UserAvatar';
 
 interface Props {
   size?: number;

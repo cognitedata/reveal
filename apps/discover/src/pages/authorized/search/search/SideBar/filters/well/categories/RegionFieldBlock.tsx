@@ -3,7 +3,7 @@ import React from 'react';
 import isEmpty from 'lodash/isEmpty';
 import { useWellGroupsQuery } from 'services/well/useWellQuery';
 
-import { MULTISELECT_NO_RESULTS } from 'components/filters/MultiSelect/constants';
+import { MULTISELECT_NO_RESULTS } from 'components/Filters/MultiSelect/constants';
 import { FilterIDs } from 'modules/wellSearch/constants';
 import {
   BLOCK,

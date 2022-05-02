@@ -4,7 +4,7 @@ import { screen } from '@testing-library/react';
 import { mockedWellStateWithSelectedWells } from '__test-utils/fixtures/well';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { LOADING_TEXT } from 'components/loading/constants';
+import { LOADING_TEXT } from 'components/Loading/constants';
 import { useSelectedWellBoresDigitalRocks } from 'modules/wellSearch/selectors/asset/digitalRocks';
 
 import DigitalRocks from './DigitalRocks';

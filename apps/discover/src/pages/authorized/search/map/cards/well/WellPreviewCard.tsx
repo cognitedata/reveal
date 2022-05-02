@@ -3,9 +3,9 @@ import { useDispatch } from 'react-redux';
 
 import { useFavoriteWellIds } from 'services/favorites/hooks/useFavoriteWellIds';
 
-import BasePreviewCard from 'components/card/preview-card';
-import { LoaderContainer } from 'components/card/preview-card/elements';
-import { WhiteLoaderInline } from 'components/loading';
+import BasePreviewCard from 'components/Card/PreviewCard';
+import { LoaderContainer } from 'components/Card/PreviewCard/elements';
+import { WhiteLoaderInline } from 'components/Loading';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { clearSelectedWell } from 'modules/map/actions';
 import { useWellById } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';

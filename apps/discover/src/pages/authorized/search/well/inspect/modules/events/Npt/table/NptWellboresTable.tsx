@@ -5,7 +5,7 @@ import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 
-import { Options, Table, TableResults } from 'components/tablev3';
+import { Options, Table, TableResults } from 'components/Tablev3';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../constants';

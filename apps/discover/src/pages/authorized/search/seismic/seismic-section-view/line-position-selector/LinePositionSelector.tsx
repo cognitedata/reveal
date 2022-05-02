@@ -5,7 +5,7 @@ import isUndefined from 'lodash/isUndefined';
 
 import { Input } from '@cognite/cogs.js';
 
-import { showErrorMessage } from 'components/toast';
+import { showErrorMessage } from 'components/Toast';
 import { LineProps } from 'modules/seismicSearch/types';
 
 import { VALUE_NOT_IN_RANGE } from '../constants';

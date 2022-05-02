@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import { LoadingSpinner } from 'components/loading';
+import { LoadingSpinner } from 'components/Loading';
 
 import { LOADING_TEXT } from '../constants';
 

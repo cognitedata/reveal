@@ -3,7 +3,7 @@ import React from 'react';
 import { OptionType, Select } from '@cognite/cogs.js';
 import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
-import EmptyState from 'components/emptyState';
+import EmptyState from 'components/EmptyState';
 
 import { DropdownWrapper } from './elements';
 import { mapCurvesToOptions, extractSelectedCurvesFromOptions } from './utils';

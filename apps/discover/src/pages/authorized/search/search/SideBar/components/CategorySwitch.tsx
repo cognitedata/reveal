@@ -6,7 +6,7 @@ import get from 'lodash/get';
 
 import { Button, Dropdown, Icons, Menu } from '@cognite/cogs.js';
 
-import { Tooltip } from 'components/tooltip';
+import { Tooltip } from 'components/Tooltip';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useProjectConfig } from 'hooks/useProjectConfig';
 import { setCategoryPage } from 'modules/sidebar/actions';

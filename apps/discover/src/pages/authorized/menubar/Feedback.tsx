@@ -6,7 +6,7 @@ import styled from 'styled-components/macro';
 import { Dropdown, Menu, TopBar } from '@cognite/cogs.js';
 import { intercomHelper } from '@cognite/intercom-helper';
 
-import GeneralFeedback from 'components/modals/general-feedback';
+import GeneralFeedback from 'components/Modals/general-feedback';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 
 const MenuContainer = styled.div``;

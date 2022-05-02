@@ -7,7 +7,7 @@ import { dateToEpoch } from 'utils/date';
 
 import { Dropdown, Menu, Range } from '@cognite/cogs.js';
 
-import { BaseButton } from 'components/buttons';
+import { BaseButton } from 'components/Buttons';
 import { DocumentsFacets } from 'modules/documentSearch/types';
 import { useSetRelatedDocumentFilters } from 'modules/inspectTabs/hooks/useSetRelatedDocumentFilters';
 

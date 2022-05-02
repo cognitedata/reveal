@@ -1,7 +1,7 @@
 import orderBy from 'lodash/orderBy';
 
-import Histogram from 'components/histogram/Histogram';
-import Skeleton from 'components/skeleton';
+import Histogram from 'components/Histogram/Histogram';
+import Skeleton from 'components/Skeleton';
 import { useDeepMemo } from 'hooks/useDeep';
 import { usePatchRelatedDocumentFilters } from 'modules/inspectTabs/hooks/usePatchRelatedDocumentFilters';
 import { useRelatedDocumentDataStats } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocument';

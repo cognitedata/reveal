@@ -2,7 +2,7 @@ import React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
-import EmptyState from 'components/emptyState';
+import EmptyState from 'components/EmptyState';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 
 import { LogsMessageWrapper } from '../elements';

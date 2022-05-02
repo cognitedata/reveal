@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components/macro';
 
-import { Modal } from 'components/modal';
+import { Modal } from 'components/Modal';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 
 const Title = styled.span`
