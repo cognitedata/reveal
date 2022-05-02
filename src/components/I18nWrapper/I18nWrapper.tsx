@@ -7,7 +7,7 @@ import I18NextLocizeBackend from 'i18next-locize-backend';
 import { initReactI18next } from 'react-i18next';
 import { locizePlugin } from 'locize';
 
-import { useLanguage } from '../..';
+import { LOCIZE_PROJECT_ID, useLanguage } from '../..';
 
 type FlagProviderProps = {
   apiToken: string;
@@ -30,13 +30,15 @@ type I18nWrapperProps = {
    * Default value: `['next-release']`
    */
   useLocizeBackend?: boolean | string[];
+  locizeProjectId?: string;
 };
 
 const setupTranslations = (
   currentLanguage: string,
   translations: Resource,
   defaultNamespace: string,
-  useLocizeBackend: boolean | string[]
+  useLocizeBackend: boolean | string[],
+  locizeProjectId = LOCIZE_PROJECT_ID
 ) => {
   let shouldUseLocizeBackend = false;
   if (typeof useLocizeBackend === 'boolean') {
@@ -70,7 +72,7 @@ const setupTranslations = (
           useSuspense: false,
         },
         backend: {
-          projectId: '0f0363e6-4ef6-49cf-8f1b-e0d993b4b828',
+          projectId: locizeProjectId,
           version: 'latest',
           referenceLng: 'en',
         },
@@ -101,6 +103,7 @@ const I18nInnerWrapper = ({
   errorScreen,
   loadingScreen,
   translations,
+  locizeProjectId,
 }: Omit<I18nWrapperProps, 'flagProviderProps'>): JSX.Element => {
   const [didLoadTranslations, setDidLoadTranslations] = useState(false);
   const [error, setError] = useState<Error | undefined>();
@@ -113,7 +116,8 @@ const I18nInnerWrapper = ({
         language,
         translations,
         defaultNamespace,
-        useLocizeBackend
+        useLocizeBackend,
+        locizeProjectId
       )
         .then(() => {
           setDidLoadTranslations(true);
@@ -129,6 +133,7 @@ const I18nInnerWrapper = ({
     isClientReady,
     language,
     translations,
+    locizeProjectId,
   ]);
 
   if (error && errorScreen) {
