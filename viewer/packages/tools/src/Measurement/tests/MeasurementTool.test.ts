@@ -5,7 +5,6 @@ import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@reveal/core';
 import * as THREE from 'three';
 import { createGlContext, mockClientAuthentication } from '../../../../../test-utilities';
-import { MeasurementControls } from '../MeasurementControls';
 
 import { MeasurementTool } from '../MeasurementTool';
 
@@ -37,10 +36,18 @@ describe(MeasurementTool.name, () => {
   });
 
   test('Add Point to point distance measurement', () => {
-    const controls = new MeasurementControls(viewer);
-    const addSpyOn = jest.spyOn(controls, 'add');
+    const addSpyOn = jest.spyOn(measurementTool, 'addMeasurementDistance');
     measurementTool.addMeasurementDistance();
 
     expect(addSpyOn).toBeCalled();
+    expect((measurementTool as any)._measurementControls._measurement).toBeDefined();
+  });
+
+  test('Remove distance memasurement', () => {
+    const removeSpyOn = jest.spyOn(measurementTool, 'removeMeasurementDistance');
+    measurementTool.removeMeasurementDistance();
+
+    expect(removeSpyOn).toBeCalled();
+    expect((measurementTool as any)._measurementControls._measurement).toBeUndefined();
   });
 });

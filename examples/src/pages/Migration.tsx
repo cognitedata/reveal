@@ -228,7 +228,7 @@ export function Migration() {
       debugStatsGui.add(guiState.debug.stats, 'textures').name('Textures');
       debugStatsGui.add(guiState.debug.stats, 'renderTime').name('Ms/frame');
 
-      viewer.on('sceneRendered', (sceneRenderedEventArgs: { renderer: { info: { render: { calls: number; points: number; triangles: number; }; memory: { geometries: number; textures: number; }; }; }; renderTime: number; }) => {
+      viewer.on('sceneRendered', (sceneRenderedEventArgs) => {
         guiState.debug.stats.drawCalls = sceneRenderedEventArgs.renderer.info.render.calls;
         guiState.debug.stats.points = sceneRenderedEventArgs.renderer.info.render.points;
         guiState.debug.stats.triangles = sceneRenderedEventArgs.renderer.info.render.triangles;
@@ -370,7 +370,7 @@ export function Migration() {
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client);
 
-      viewer.on('click', async (event: { offsetX: any; offsetY: any; }) => {
+      viewer.on('click', async (event) => {
         const { offsetX, offsetY } = event; 
         console.log('2D coordinates', event);
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
@@ -408,7 +408,7 @@ export function Migration() {
       model.getModelTransformation(boxes.matrix);
       boxes.matrixWorldNeedsUpdate = true;
 
-      model.traverse((x: any) => {
+      model.traverse((x) => {
         if (x instanceof THREE.Mesh) {
           const mesh = x;
           const geometry: THREE.BufferGeometry = mesh.geometry;
