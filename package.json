@@ -1,0 +1,53 @@
+{
+  "name": "@cognite/cdf-i18n-utils",
+  "version": "0.0.1",
+  "license": "UNLICENSED",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "yarn clean && rollup -c",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "yarn build",
+    "lint": "eslint --config .eslintrc.production.js 'src/**/*.{ts,tsx}'",
+    "test": "jest --passWithNoTests"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/core": "^7.17.8",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-typescript": "^7.16.7",
+    "@types/jest": "^27.4.1",
+    "@types/react": "17.0.39",
+    "@types/react-dom": "17.0.13",
+    "@types/styled-components": "5.1.24",
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.13.0",
+    "babel-jest": "^27.5.1",
+    "eslint": "^8.10.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "jest": "^27.5.1",
+    "prettier": "^2.5.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-query": "3.34.16",
+    "rollup": "2.69.0",
+    "rollup-plugin-typescript2": "0.31.2",
+    "styled-components": "5.3.3",
+    "ts-jest": "^27.1.4",
+    "typescript": "4.5.5"
+  },
+  "peerDependencies": {
+    "react": ">=16",
+    "react-dom": ">=16",
+    "react-query": ">=3",
+    "styled-components": ">=5"
+  }
+}
