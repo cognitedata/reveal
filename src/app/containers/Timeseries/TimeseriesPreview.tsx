@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -13,9 +13,9 @@ import {
   TimeseriesDetails,
 } from '@cognite/data-exploration';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
-import { createLink } from '@cognite/cdf-utilities';
 
 import { useDateRange } from 'app/context/DateRangeContext';
+import { useOnPreviewTabChange } from 'app/hooks';
 
 export type TimeseriesPreviewTabType =
   | 'details'
@@ -37,8 +37,7 @@ export const TimeseriesPreview = ({
   }>();
   const activeTab = tabType || 'details';
 
-  const location = useLocation();
-  const navigate = useNavigate();
+  const tabChange = useOnPreviewTabChange(tabType, 'timeseries');
   const [dateRange, setDateRange] = useDateRange();
 
   useEffect(() => {
@@ -97,21 +96,7 @@ export const TimeseriesPreview = ({
               externalId: timeseries.externalId,
             }}
             tab={activeTab}
-            onTabChange={newTab => {
-              navigate(
-                createLink(
-                  `/${location.pathname
-                    .split('/')
-                    .slice(2, tabType ? -1 : undefined)
-                    .join('/')}/${newTab}`
-                ),
-                { replace: true }
-              );
-              trackUsage('Exploration.Details.TabChange', {
-                type: 'timeseries',
-                tab: newTab,
-              });
-            }}
+            onTabChange={tabChange}
             additionalTabs={[
               <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
                 <TimeseriesDetails timeseries={timeseries} />

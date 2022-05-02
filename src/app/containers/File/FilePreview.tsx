@@ -19,9 +19,10 @@ import styled from 'styled-components';
 import { Colors, Body } from '@cognite/cogs.js';
 import { ContextualizationButton } from 'app/components/TitleRowActions/ContextualizationButton';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { useOnPreviewTabChange } from 'app/hooks';
 
 export type FilePreviewTabType =
   | 'preview'
@@ -44,6 +45,7 @@ export const FilePreview = ({
   const { resourcesState, setResourcesState } = useContext(
     ResourceSelectionContext
   );
+  const navigate = useNavigate();
   const isActive = resourcesState.some(
     el => el.state === 'active' && el.id === fileId && el.type === 'file'
   );
@@ -57,8 +59,7 @@ export const FilePreview = ({
   }>();
   const activeTab = tabType || 'preview';
 
-  const location = useLocation();
-  const navigate = useNavigate();
+  const onTabChange = useOnPreviewTabChange(tabType, 'file');
 
   useEffect(() => {
     if (fileId && !isActive) {
@@ -137,21 +138,7 @@ export const FilePreview = ({
               externalId: fileInfo.externalId,
             }}
             tab={activeTab}
-            onTabChange={newTab => {
-              navigate(
-                createLink(
-                  `/${location.pathname
-                    .split('/')
-                    .slice(2, tabType ? -1 : undefined)
-                    .join('/')}/${newTab}`
-                ),
-                { replace: true }
-              );
-              trackUsage('Exploration.Details.TabChange', {
-                type: 'file',
-                tab: newTab,
-              });
-            }}
+            onTabChange={onTabChange}
             additionalTabs={[
               <Tabs.Pane title={<TabTitle>Preview</TabTitle>} key="preview">
                 {editMode && (

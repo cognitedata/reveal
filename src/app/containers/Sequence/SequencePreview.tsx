@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import {
   SequenceDetails,
@@ -12,8 +12,9 @@ import {
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { Sequence } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { createLink } from '@cognite/cdf-utilities';
+
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
+import { useOnPreviewTabChange } from 'app/hooks';
 
 export type SequencePreviewType =
   | 'details'
@@ -36,8 +37,7 @@ export const SequencePreview = ({
   }>();
   const activeTab = tabType || 'preview';
 
-  const location = useLocation();
-  const navigate = useNavigate();
+  const onTabChange = useOnPreviewTabChange(tabType, 'sequence');
 
   useEffect(() => {
     trackUsage('Exploration.Preview.Sequence', { sequenceId });
@@ -74,21 +74,7 @@ export const SequencePreview = ({
           externalId: sequence.externalId,
         }}
         tab={activeTab}
-        onTabChange={newTab => {
-          navigate(
-            createLink(
-              `/${location.pathname
-                .split('/')
-                .slice(2, tabType ? -1 : undefined)
-                .join('/')}/${newTab}`
-            ),
-            { replace: true }
-          );
-          trackUsage('Exploration.Details.TabChange', {
-            type: 'sequence',
-            tab: newTab,
-          });
-        }}
+        onTabChange={onTabChange}
         additionalTabs={[
           <Tabs.Pane
             title={<TabTitle>Preview</TabTitle>}
