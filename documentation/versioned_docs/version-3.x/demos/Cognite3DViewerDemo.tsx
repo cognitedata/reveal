@@ -6,6 +6,7 @@ import React, { useEffect, useRef } from 'react';
 import {
   AddModelOptions,
   Cognite3DViewer,
+  CognitePointCloudModel,
   SupportedModelTypes
 } from '@cognite/reveal-3.x';
 
@@ -37,6 +38,10 @@ export default function Cognite3DViewerDemo({
 
     async function addModel(options: AddModelOptions) {
       const model = await viewer.addModel(options);
+      if (model.type === 'pointcloud') {
+        // TODO 2022-04-29 larsmoa: Default point size is not good for test model. Will be improved in Reveal 3.1
+        (model as CognitePointCloudModel).pointSize = 0.2;
+      }
       viewer.loadCameraFromModel(model);
       window.model = model;
     }
