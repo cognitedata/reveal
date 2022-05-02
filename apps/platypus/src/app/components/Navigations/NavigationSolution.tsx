@@ -62,7 +62,7 @@ export const NavigationSolution = () => {
     return (
       <StyledTopBarRight>
         <Tooltip placement="bottom" content="WIP..." arrow={false}>
-          <StyledButton icon="Settings" />
+          <StyledButton icon="Settings" aria-label="Settings" />
         </Tooltip>
       </StyledTopBarRight>
     );
@@ -92,7 +92,7 @@ export const NavigationSolution = () => {
               <Button
                 icon="ChevronDownSmall"
                 iconPlacement="right"
-                unstyled
+                type="ghost"
                 style={{ alignItems: 'center' }}
               >
                 <Body level={2} style={{ color: '#fff' }}>

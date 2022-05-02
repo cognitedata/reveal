@@ -93,9 +93,15 @@ export class CreateApiSpecVersionCommand extends CLICommand {
       bindings: schemaBindings,
     } as CreateSchemaDTO;
 
-    const response = await (conflictMode === 'NEW_VERSION'
-      ? schemaSchemaHandler.publish(dto)
-      : schemaSchemaHandler.update(dto));
+    let response;
+    try {
+      response = await (conflictMode === 'NEW_VERSION'
+        ? schemaSchemaHandler.publish(dto)
+        : schemaSchemaHandler.update(dto));
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
 
     if (!response.isSuccess) {
       throw response.error;

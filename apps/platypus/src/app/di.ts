@@ -5,9 +5,11 @@ import {
   TemplatesApiService,
   SolutionMixerApiFacadeService,
   SolutionsApiService,
+  SolutionDataModelService,
 } from '@platypus/platypus-core';
 import {
   DateUtilsImpl,
+  GraphQlUtilsService,
   StorageProviderFactoryImpl,
   TimeUtilsImpl,
 } from '@platypus/platypus-infrastructure';
@@ -28,5 +30,9 @@ export default () => {
     storageProviderFactory: new StorageProviderFactoryImpl(),
     solutionHandler: new SolutionsHandler(solutionsApiService),
     solutionSchemaHandler: new SolutionSchemaHandler(solutionsApiService),
+    solutionDataModelService: new SolutionDataModelService(
+      new GraphQlUtilsService(),
+      config.USE_MIXER_API ? 'schema-service' : 'templates'
+    ),
   };
 };

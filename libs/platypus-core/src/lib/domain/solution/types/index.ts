@@ -90,3 +90,8 @@ export type DirectiveBuiltInType = BaseBuiltInType & {
 
 export type BuiltInType = BaseBuiltInType | DirectiveBuiltInType;
 /* SOLUTION DATA MODEL TYPES */
+
+export type PaginatedResponse = {
+  pageInfo: { cursor: string; hasNextPage: boolean };
+  items: KeyValueMap[];
+};

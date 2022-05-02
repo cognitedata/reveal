@@ -7,10 +7,35 @@ import {
 } from '@platypus-app/components/Styles/storybook';
 import { CogDataGrid, TableType } from '@cognite/cog-data-grid';
 import { useState } from 'react';
-import { TypeList } from '../components/TypeList';
+import { TypeList } from '../components/TypeList/TypeList';
 
 const configMock = {
   columns: [
+    {
+      property: 'models',
+      label: 'Models',
+      optional: false,
+      dataType: 'NUMBER',
+      isList: true,
+      defaultValue: [],
+      execOrder: 1,
+      metadata: {},
+      rules: [],
+      displayOrder: 1,
+      colDef: {
+        editable: false,
+      },
+    },
+    {
+      property: 'company',
+      label: 'Company',
+      optional: false,
+      dataType: 'CUSTOM',
+      defaultValue: '',
+      colDef: {
+        editable: false,
+      },
+    },
     {
       property: 'isSold',
       label: 'Sold',
@@ -112,6 +137,8 @@ const responseMock = [
     price: 245000,
     currency: 'NOK',
     type: 'sedan',
+    models: [],
+    company: { name: 'AAA', externalId: 'AAA' },
   },
   {
     id: 2,
@@ -122,6 +149,8 @@ const responseMock = [
     price: 265000,
     currency: 'NOK',
     type: 'sedan',
+    models: [1, 3, 44],
+    company: { name: 'BBB', externalId: 'BBB' },
   },
   {
     id: 3,
@@ -132,6 +161,8 @@ const responseMock = [
     price: 225000,
     currency: 'NOK',
     type: 'sedan',
+    models: [22, 33, 44, 55, 66, 77],
+    company: { name: 'CCC', externalId: 'CCC' },
   },
   {
     id: 4,
@@ -142,6 +173,8 @@ const responseMock = [
     price: 185000,
     currency: '',
     type: '',
+    models: [220.0298, 11, 2, 333, 444, 555],
+    company: { name: 'DDD', externalId: 'DDD' },
   },
 ];
 
@@ -222,13 +255,12 @@ export const TypeListPreview = () => (
       <GroupTitle>Default</GroupTitle>
       <div style={{ height: '600px' }}>
         <TypeList
-          width="320px"
           placeholder="Filter"
           items={[
-            { title: 'System', description: '7 properties' },
-            { title: 'Well', description: '5 properties' },
-            { title: 'Pump' },
-            { title: 'Person', description: '0 properties' },
+            { name: 'System', description: '7 properties', fields: [] },
+            { name: 'Well', description: '5 properties', fields: [] },
+            { name: 'Pump', fields: [] },
+            { name: 'Person', description: '0 properties', fields: [] },
           ]}
           onClick={(item: any) => alert(item.title)}
         />

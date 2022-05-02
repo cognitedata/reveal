@@ -16,6 +16,7 @@ export enum ColumnDataType {
   Duration = 'DURATION',
   Boolean = 'BOOLEAN',
   Dynamic = 'DYNAMIC',
+  Custom = 'CUSTOM',
 }
 
 export enum ColumnRuleType {
@@ -53,6 +54,7 @@ export interface ColumnConfig {
   displayOrder?: number;
   columnType?: string;
   colDef?: ColDef;
+  isList?: boolean;
 }
 
 export interface GridConfig {

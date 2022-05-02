@@ -4,6 +4,7 @@ import { Icon, IconType } from '@cognite/cogs.js';
 
 interface CustomHeaderState {
   sortDirection: string;
+  sortable: boolean;
 }
 export interface CustomHeaderProps extends IHeaderParams {
   headerIcon: IconType;
@@ -22,9 +23,9 @@ export class CustomHeader extends PureComponent<
 
     this.state = {
       sortDirection: '',
+      sortable: props.enableSorting,
     };
 
-    console.log(props);
     this.onSortRequested = this.onSortRequested.bind(this);
     this.onSortChanged = this.onSortChanged.bind(this);
     this.getSortDirection = this.getSortDirection.bind(this);
@@ -121,7 +122,9 @@ export class CustomHeader extends PureComponent<
   }
 
   onSortRequested(event: any) {
-    console.log(event);
+    if (!this.state.sortable) {
+      return;
+    }
     this.props.setSort(
       this.getSortDirection(),
       event.shiftKey || event.ctrlKey || event.metaKey

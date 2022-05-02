@@ -1,4 +1,3 @@
-import { TemplateGroupVersion } from '@cognite/sdk';
 import { SolutionSchema, SolutionSchemaStatus } from '../../../types';
 import { ApiVersion } from '../../../dto';
 

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars-experimental */
 import React from 'react';
-import { ErrorPlaceholder } from './ErrorPlaceholder';
 
 interface IProps {
-  children?: any;
+  errorComponent: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 interface ErrorBoundaryState {
@@ -27,7 +27,7 @@ export class ErrorBoundary extends React.Component<IProps, ErrorBoundaryState> {
 
   render() {
     if (this.state.hasError) {
-      return <ErrorPlaceholder />;
+      return this.props.errorComponent;
     }
     return this.props.children;
   }

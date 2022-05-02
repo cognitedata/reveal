@@ -24,9 +24,10 @@ import { DataModelHeader } from '../components/DataModelHeader';
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { SchemaVisualizer } from '@platypus-app/components/SchemaVisualizer/SchemaVisualizer';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import dataModelServices from '../di';
-import { ErrorBoundary } from '../components/ErrorBoundary/ErrorBoundary';
-const dataModelService = dataModelServices.solutionDataModelService;
+import dataModelServices from '@platypus-app/di';
+import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
+import { ErrorPlaceholder } from '../components/ErrorBoundary/ErrorPlaceholder';
+const dataModelService = dataModelServices().solutionDataModelService;
 
 export const DataModelPage = () => {
   const history = useHistory();
@@ -51,9 +52,8 @@ export const DataModelPage = () => {
   const { insertSchema, updateSchema } = useSolution();
 
   useEffect(() => {
-    async function fetchSchemaAndTypes() {
-      const builtInTypesResponse =
-        await dataModelService.getSupportedPrimitiveTypes();
+    function fetchSchemaAndTypes() {
+      const builtInTypesResponse = dataModelService.getBuiltinTypes();
       setBuiltInTypes(builtInTypesResponse);
       dataModelService.clear();
       setProjectSchema(selectedSchema!.schema);
@@ -73,6 +73,7 @@ export const DataModelPage = () => {
         result = await services().solutionSchemaHandler.publish({
           solutionId: solution!.id,
           schema: projectSchema,
+          version: '1',
         });
         setBreakingChanges('');
       } else {
@@ -213,7 +214,7 @@ export const DataModelPage = () => {
           {isInit ? (
             <SplitPanelLayout
               sidebar={
-                <ErrorBoundary>
+                <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
                   <EditorPanel
                     currentType={currentType}
                     setCurrentType={setCurrentType}
@@ -236,7 +237,7 @@ export const DataModelPage = () => {
                     title={t('preview_title', 'Preview')}
                     titleLevel={6}
                   />
-                  <ErrorBoundary>
+                  <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
                     <SchemaVisualizer
                       graphQLSchemaString={projectSchema}
                       active={currentType?.name}

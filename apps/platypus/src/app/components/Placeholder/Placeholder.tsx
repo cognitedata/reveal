@@ -36,10 +36,18 @@ export const Placeholder = ({
         <div className="content">
           <div>
             <div className="placeholder-text">
-              <Title level={3}>{t('placeholder_title', 'Coming soon')}</Title>
+              <Title key="placeholder_title" level={3}>
+                {t('placeholder_title', 'Coming soon')}
+              </Title>
               <Tooltip
+                key="help_tooltip"
                 content={
-                  <Body level={3} strong style={{ color: 'var(--cogs-white)' }}>
+                  <Body
+                    level={3}
+                    strong
+                    key="tooltip-description"
+                    style={{ color: 'var(--cogs-white)' }}
+                  >
                     {componentDescription}
                   </Body>
                 }

@@ -1,5 +1,5 @@
 import { IGraphQlUtilsService } from '../boundaries';
-import { schemaServiceBuiltInTypes, templatesBuiltInTypes } from '../constants';
+import { schemaServiceBuiltInTypes, templatesBiltInTypes } from '../constants';
 import { UpdateSolutionDataModelFieldDTO } from '../dto';
 import {
   SolutionDataModelField,
@@ -160,12 +160,10 @@ export class SolutionDataModelService {
     return state.types.map((type) => type.name);
   }
 
-  getSupportedPrimitiveTypes(): Promise<BuiltInType[]> {
-    return Promise.resolve(
-      this.backend === 'templates'
-        ? templatesBuiltInTypes
-        : schemaServiceBuiltInTypes
-    );
+  getBuiltinTypes(): BuiltInType[] {
+    return this.backend === 'templates'
+      ? templatesBiltInTypes
+      : schemaServiceBuiltInTypes;
   }
 
   /** Clears the state */

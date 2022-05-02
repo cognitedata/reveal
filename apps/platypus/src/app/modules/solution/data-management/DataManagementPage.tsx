@@ -1,4 +1,4 @@
-import { lazy, Suspense, useRef, useState } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { Tabs } from '@cognite/cogs.js';
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
@@ -38,89 +38,54 @@ export const DataManagementPage = () => {
   const initialPage: TabType = (subSolutionPage as TabType) || 'preview';
   const [tab, setTab] = useState<TabType>(initialPage);
 
-  // Lazy loading when the tab was open the first time
-  const openedPages = useRef(new Set().add(initialPage));
+  const Preview = (
+    <StyledPage style={tab !== 'preview' ? { display: 'none' } : {}}>
+      <Suspense fallback={<Spinner />}>
+        <PreviewPage />
+      </Suspense>
+    </StyledPage>
+  );
 
-  const renderHeader = () => {
-    return (
-      <PageToolbar title={t('data_management_title', 'Data management')} />
-    );
-  };
+  const Pipelines = (
+    <StyledPage style={tab !== 'pipelines' ? { display: 'none' } : {}}>
+      <Suspense fallback={<Spinner />}>
+        <PipelinesPage />
+      </Suspense>
+    </StyledPage>
+  );
 
-  const renderNavigation = () => {
-    return (
-      <StyledTabs
-        size="default"
-        onChange={(key) => {
-          setTab(key as TabType);
-          openedPages.current.add(key);
-          history.push(`${!subSolutionPage ? 'data-management/' : ''}${key}`);
-        }}
-        activeKey={tab}
-      >
-        <Tabs.TabPane key="preview" tab={t('preview', 'Preview')} />
-        <Tabs.TabPane key="pipelines" tab={t('pipelines', 'Pipelines')} />
-        <Tabs.TabPane
-          key="data-quality"
-          tab={t('data_quality', 'Data quality')}
-        />
-      </StyledTabs>
-    );
-  };
-
-  const renderPreviewPage = () => {
-    // The page is only hidden to keep the state -> { display: 'none' }
-    return (
-      <StyledPage style={tab !== 'preview' ? { display: 'none' } : {}}>
-        {openedPages.current.has('preview') && (
-          <Suspense fallback={<Spinner />}>
-            <PreviewPage />
-          </Suspense>
-        )}
-      </StyledPage>
-    );
-  };
-
-  const renderPipelinesPage = () => {
-    return (
-      <StyledPage style={tab !== 'pipelines' ? { display: 'none' } : {}}>
-        {openedPages.current.has('pipelines') && (
-          <Suspense fallback={<Spinner />}>
-            <PipelinesPage />
-          </Suspense>
-        )}
-      </StyledPage>
-    );
-  };
-
-  const renderDataQualityPage = () => {
-    return (
-      <StyledPage style={tab !== 'data-quality' ? { display: 'none' } : {}}>
-        {openedPages.current.has('data-quality') && (
-          <Suspense fallback={<Spinner />}>
-            <DataQualityPage />
-          </Suspense>
-        )}
-      </StyledPage>
-    );
-  };
-
-  const renderContent = () => {
-    return (
-      <>
-        {renderPreviewPage()}
-        {renderPipelinesPage()}
-        {renderDataQualityPage()}
-      </>
-    );
-  };
+  const DataQuality = (
+    <StyledPage style={tab !== 'data-quality' ? { display: 'none' } : {}}>
+      <Suspense fallback={<Spinner />}>
+        <DataQualityPage />
+      </Suspense>
+    </StyledPage>
+  );
 
   return (
     <PageContentLayout>
-      <PageContentLayout.Header>{renderHeader()}</PageContentLayout.Header>
+      <PageContentLayout.Header>
+        <PageToolbar title={t('data_management_title', 'Data management')} />
+        <StyledTabs
+          size="default"
+          onChange={(key) => {
+            setTab(key as TabType);
+            history.push(`${!subSolutionPage ? 'data-management/' : ''}${key}`);
+          }}
+          activeKey={tab}
+        >
+          <Tabs.TabPane key="preview" tab={t('preview', 'Preview')} />
+          <Tabs.TabPane key="pipelines" tab={t('pipelines', 'Pipelines')} />
+          <Tabs.TabPane
+            key="data-quality"
+            tab={t('data_quality', 'Data quality')}
+          />
+        </StyledTabs>
+      </PageContentLayout.Header>
       <PageContentLayout.Body>
-        {renderNavigation()}
-        {renderContent()}
+        {Preview}
+        {Pipelines}
+        {DataQuality}
       </PageContentLayout.Body>
     </PageContentLayout>
   );

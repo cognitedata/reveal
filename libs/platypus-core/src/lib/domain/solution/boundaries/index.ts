@@ -1,4 +1,5 @@
 import {
+  BuildQueryDTO,
   CreateSchemaDTO,
   CreateSolutionDTO,
   DeleteSolutionDTO,
@@ -121,4 +122,9 @@ export interface IGraphQlUtilsService {
 
   /** Clears the state */
   clear(): void;
+}
+
+export interface IQueryBuilderService {
+  getOperationName(typeName: string): string;
+  buildQuery(dto: BuildQueryDTO): string;
 }

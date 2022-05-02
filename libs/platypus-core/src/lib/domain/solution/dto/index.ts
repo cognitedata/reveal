@@ -1,4 +1,8 @@
-import { SolutionDataModelField, SolutionDataModelFieldType } from '../types';
+import {
+  SolutionDataModelField,
+  SolutionDataModelFieldType,
+  SolutionDataModelType,
+} from '../types';
 
 export interface CreateSolutionDTO {
   name: string;
@@ -40,7 +44,7 @@ export interface CreateSchemaDTO {
 
 export interface GraphQlQueryParams {
   query: string;
-  operationName: string;
+  operationName?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   variables?: any;
 }
@@ -74,7 +78,7 @@ export interface SolutionApiBinding {
 }
 
 export interface ApiVersionDataModel {
-  types: [any];
+  types: any[];
   graphqlRepresentation: string;
 }
 
@@ -144,4 +148,20 @@ export interface StorageInstanceDTO {
   properties: {
     [propertyName: string]: string | number | boolean;
   };
+}
+
+export interface BuildQueryDTO {
+  dataModelType: SolutionDataModelType;
+  limit: number;
+  cursor: string;
+  hasNextPage: boolean;
+}
+
+export interface FetchDataDTO {
+  dataModelType: SolutionDataModelType;
+  limit: number;
+  cursor: string;
+  hasNextPage: boolean;
+  solutionId: string;
+  version: string;
 }

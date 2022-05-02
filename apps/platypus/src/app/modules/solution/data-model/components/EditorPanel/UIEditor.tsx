@@ -9,16 +9,17 @@ import {
   UpdateSolutionDataModelFieldDTO,
 } from '@platypus/platypus-core';
 import { useCallback, useEffect, useState } from 'react';
-import services from '../../di';
+import services from '@platypus-app/di';
 import { SchemaTypeField } from '../SchemaTypeAndField/SchemaTypeField';
 import { SchemaTypeList } from '../SchemaTypeAndField/SchemaTypeList';
 import { SchemaTypeView } from '../SchemaTypeAndField/SchemaTypeView';
 import { useErrorLogger } from '@platypus-app/hooks/useErrorLogger';
 import { ErrorPlaceholder } from '../ErrorBoundary/ErrorPlaceholder';
 
-const dataModelService = services.solutionDataModelService;
+const dataModelService = services().solutionDataModelService;
 
 interface UIEditorProps {
+  builtInTypes: BuiltInType[];
   graphQLSchemaString: string;
   disabled?: boolean;
   onSchemaChange: (typeName: string) => void;
@@ -27,6 +28,7 @@ interface UIEditorProps {
 }
 
 export function UIEditor({
+  builtInTypes,
   graphQLSchemaString,
   disabled,
   onSchemaChange,
@@ -38,7 +40,6 @@ export function UIEditor({
   const [hasError, setHasError] = useState(false);
   const [currentGraphqlSchema, setCurrentGraphqlSchema] = useState('');
   const [customTypesNames, setCustomTypesNames] = useState<string[]>([]);
-  const [builtInTypes, setBuiltInTypes] = useState<BuiltInType[]>([]);
 
   const [solutionDataModel, setSolutionDataModel] = useState<SolutionDataModel>(
     {
@@ -62,17 +63,6 @@ export function UIEditor({
     setIsInit(true);
     // eslint-disable-next-line
   }, [graphQLSchemaString]);
-
-  useEffect(() => {
-    async function getOptions() {
-      const builtInTypesResponse =
-        await services.solutionDataModelService.getSupportedPrimitiveTypes();
-      setBuiltInTypes(builtInTypesResponse);
-    }
-
-    // Load built in types only once, since they are not going to change
-    getOptions();
-  }, []);
 
   const updateUiState = useCallback(
     (newState: SolutionDataModel, updatedTypeName: string) => {

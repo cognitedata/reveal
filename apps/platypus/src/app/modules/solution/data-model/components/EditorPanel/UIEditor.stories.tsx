@@ -30,6 +30,7 @@ export const Default = () => {
       <Group>
         <div style={{ height: '600px' }}>
           <UIEditor
+            builtInTypes={[]}
             graphQLSchemaString={schema}
             onSchemaChange={setSchema}
             currentType={currentType}

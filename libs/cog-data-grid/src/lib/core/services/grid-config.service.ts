@@ -1,8 +1,10 @@
 import {
   NumberCellEditor,
   BoolCellRenderer,
+  ListCellRenderer,
   TextCellEditor,
   CustomHeader,
+  CustomCellRenderer,
 } from '../../components';
 import { ColDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
 import {
@@ -23,7 +25,11 @@ export class GridConfigService {
   /**
    * Loads default ag-grid gridOptions needed for grid to work
    */
-  getGridConfig(tableType: TableType, columnTypes?: ColumnTypes): GridOptions {
+  getGridConfig(
+    tableType: TableType,
+    columnTypes?: ColumnTypes,
+    rowNodeId?: string
+  ): GridOptions {
     const virtualizationDisabled = this.isVirtualizationModeDisabled();
 
     if (columnTypes) {
@@ -47,7 +53,7 @@ export class GridConfigService {
       suppressMenuHide: false,
       enableCellExpressions: true,
       suppressAggFuncInHeader: true,
-      getRowNodeId: (data) => data.id,
+      getRowNodeId: (data) => (rowNodeId ? data[rowNodeId] : data.id),
       rowHeight: tableType === 'large' ? 96 : 44,
       headerHeight: tableType === 'large' ? 56 : 48,
       // a default column definition with properties that get applied to every column
@@ -74,8 +80,10 @@ export class GridConfigService {
       frameworkComponents: {
         checkboxRendererComponent: BoolCellRenderer,
         numberCellEditor: NumberCellEditor,
+        listCellRendererComponent: ListCellRenderer,
         decimalColType: NumberCellEditor,
         textCellEditor: TextCellEditor,
+        customRendererComponent: CustomCellRenderer,
         cogCustomHeader: CustomHeader,
       },
       columnTypes: Object.assign(
@@ -84,9 +92,17 @@ export class GridConfigService {
             cellRenderer: 'checkboxRendererComponent',
             ...this.getColTypeProps(tableType, 'Boolean'),
           },
+          customColTypes: {
+            cellRenderer: 'customRendererComponent',
+            ...this.getColTypeProps(tableType, 'Link'),
+          },
           largeTextColType: {
             cellEditor: 'textCellEditor',
             ...this.getColTypeProps(tableType, 'String'),
+          },
+          listColType: {
+            cellRenderer: 'listCellRendererComponent',
+            ...this.getColTypeProps(tableType, 'List'),
           },
           numberColType: {
             cellEditor: 'numberCellEditor',
@@ -101,9 +117,11 @@ export class GridConfigService {
               allowDecimals: true,
             },
             valueFormatter: (params: ValueFormatterParams) =>
-              params.value.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-              }),
+              params.value && params.value !== 0
+                ? params.value.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                  })
+                : '',
           },
         },
         columnTypes || {}
@@ -150,7 +168,7 @@ export class GridConfigService {
             headerName: `${columnConfig.label}`,
             type: columnConfig.columnType
               ? columnConfig.columnType
-              : this.getColumnType(columnConfig.dataType),
+              : this.getColumnType(columnConfig),
             editable: isEditable,
             resizable: true,
             cellClassRules: cellClassRules,
@@ -162,9 +180,14 @@ export class GridConfigService {
       .filter((col) => col);
   }
 
-  private getColumnType(dataType: string): string[] {
+  private getColumnType({ dataType, isList }: ColumnConfig): string[] {
     //Handle here for now, untill we migrate all column types
     let dataTypeName = this.normalizeName(dataType);
+
+    if (isList) {
+      dataTypeName = 'list';
+      return ['listColType', dataType];
+    }
 
     if (this.customColTypes.includes(dataType)) {
       return [dataType];
@@ -177,6 +200,11 @@ export class GridConfigService {
     if (dataType === ColumnDataType.Boolean) {
       dataTypeName = 'boolean';
       return ['booleanColType'];
+    }
+
+    if (dataType === ColumnDataType.Custom) {
+      dataTypeName = 'custom';
+      return ['customColTypes'];
     }
 
     if (dataType === ColumnDataType.Number) {

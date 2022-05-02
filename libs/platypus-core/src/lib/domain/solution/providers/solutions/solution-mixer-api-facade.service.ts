@@ -43,7 +43,7 @@ export class SolutionMixerApiFacadeService
       );
   }
   deleteSolution(dto: DeleteSolutionDTO): Promise<unknown> {
-    throw new Error('Method not implemented.');
+    return this.solutionsApiService.deleteApi(dto.id);
   }
   listSolutions(): Promise<Solution[]> {
     return this.solutionsApiService
@@ -104,7 +104,7 @@ export class SolutionMixerApiFacadeService
         apiExternalId: dto.solutionId,
         graphQl: dto.schema,
         bindings: dto.bindings,
-        version: dto.version ? +dto.version : undefined,
+        version: dto.version ? +dto.version : 1,
       })
       .then((version) =>
         this.apiSpecVersionMapper.deserialize(dto.solutionId, version)

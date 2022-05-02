@@ -1,6 +1,6 @@
 import { BuiltInType } from './types';
 
-export const templatesBuiltInTypes = [
+export const templatesBiltInTypes = [
   { name: 'String', type: 'SCALAR' },
   { name: 'Int', type: 'SCALAR' },
   { name: 'Float', type: 'SCALAR' },
@@ -12,7 +12,6 @@ export const templatesBuiltInTypes = [
   { name: 'Sequence', type: 'OBJECT' },
   { name: 'File', type: 'OBJECT' },
   { name: 'Asset', type: 'OBJECT' },
-  { name: 'Event', type: 'OBJECT' },
   { name: 'template', type: 'DIRECTIVE', fieldDirective: false },
 ] as BuiltInType[];
 
@@ -21,8 +20,8 @@ export const schemaServiceBuiltInTypes = [
   { name: 'Int', type: 'SCALAR' },
   { name: 'Float', type: 'SCALAR' },
   { name: 'Boolean', type: 'SCALAR' },
-  { name: 'ID', type: 'SCALAR' },
-  { name: 'Long', type: 'SCALAR' },
+  { name: 'Timestamp', type: 'SCALAR' },
+  { name: 'JSONObject', type: 'SCALAR' },
   { name: 'view', type: 'DIRECTIVE', fieldDirective: false },
   {
     name: 'filterable',

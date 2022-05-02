@@ -1,45 +1,49 @@
 import { Input, Title } from '@cognite/cogs.js';
+import { SolutionDataModelType } from '@platypus/platypus-core';
 import { useState } from 'react';
 import styled from 'styled-components/macro';
 
-type Item = { title: string; description?: string };
-
 export type TypeListProps = {
-  items?: Item[];
-  width?: number | string;
+  items?: SolutionDataModelType[];
   placeholder?: string;
-  onClick?: (item: Item, index: number) => void;
+  onClick: (item: SolutionDataModelType) => void;
 };
 
-export const TypeList = ({
-  width,
-  items,
-  placeholder,
-  onClick,
-}: TypeListProps) => {
+export const TypeList = ({ items, placeholder, onClick }: TypeListProps) => {
   const [filter, setFilter] = useState('');
+  const [selectedTypeName, setSelected] = useState('');
+
   return (
-    <StyledTypeList width={width}>
+    <StyledTypeList data-cy="types-list-panel">
       <StyledFilterContainer>
         <Input
           fullWidth
           placeholder={placeholder}
           value={filter}
+          data-cy="types-list-filter"
           onChange={(e) => setFilter(e.target.value)}
         ></Input>
       </StyledFilterContainer>
       <StyledItemContainer>
         {items
-          ?.filter(({ title }) => title.match(new RegExp(filter, 'gi')))
-          ?.map(({ title, description }, index) => (
+          ?.filter(({ name }) => name.match(new RegExp(filter, 'gi')))
+          ?.map((dataModelType) => (
             <StyledItem
-              key={index}
-              onClick={() => onClick && onClick({ title, description }, index)}
+              key={dataModelType.name}
+              data-cy="types-list-item"
+              data-testid={dataModelType.name}
+              className={
+                selectedTypeName === dataModelType.name ? 'active' : ''
+              }
+              onClick={() => {
+                setSelected(dataModelType.name);
+                onClick(dataModelType);
+              }}
             >
-              <Title level={5} color="#333333">
-                {title}
+              <Title level={5} className="type-name" title={dataModelType.name}>
+                {dataModelType.name}
               </Title>
-              <Description>{description}</Description>
+              <Description>{dataModelType.description}</Description>
             </StyledItem>
           ))}
       </StyledItemContainer>
@@ -47,12 +51,11 @@ export const TypeList = ({
   );
 };
 
-const StyledTypeList = styled.div<{ width?: number | string }>`
+const StyledTypeList = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  width: ${(props) => props.width};
-  border-right: 1px solid rgba(0, 0, 0, 0.15);
+  width: 100%;
 `;
 
 const StyledFilterContainer = styled.div`
@@ -68,16 +71,25 @@ const StyledItemContainer = styled.div`
 `;
 
 const StyledItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 54px;
+  display: block;
+  overflow: hidden;
+  min-height: 54px;
   width: 100%;
   padding: 8px 12px;
   transition: background-color 0.2s ease-in-out;
+
+  &.active,
   &:hover {
     background: rgba(74, 103, 251, 0.08);
     border-radius: 6px;
     cursor: pointer;
+  }
+
+  .type-name {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: var(--cogs-text-primary);
   }
 `;
 

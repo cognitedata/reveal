@@ -34,6 +34,7 @@ export const EllipsisMenu = ({
     <Dropdown
       disabled={disabled}
       visible={isDropdownVisible}
+      appendTo={document.body}
       onClickOutside={() => setDropdownVisibility(false)}
       content={
         <Menu style={{ width: 200, height: 80 }}>

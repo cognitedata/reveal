@@ -1,3 +1,10 @@
+export interface ValidationError {
+  status: number;
+  message: string;
+  errorMessage?: string;
+  missing: Record<string, string>[];
+  locations?: { line: number; column: number }[];
+}
 export interface SdkError {
   status: number;
   message: string;
@@ -5,12 +12,7 @@ export interface SdkError {
   missing?: Record<string, string>[];
   duplicated?: Record<string, string>[];
   statuses?: number[];
-  errors: {
-    status: number;
-    message: string;
-    errorMessage?: string;
-    missing: Record<string, string>[];
-  }[];
+  errors: ValidationError[];
   failed: Record<string, string>[];
   stack?: unknown;
 }
@@ -28,12 +30,14 @@ export class PlatypusError {
   code?: number;
   type: ErrorType;
   stack?: unknown;
+  errors?: ValidationError[];
 
   constructor(
     message: string,
     type: ErrorType,
     code?: number,
-    stack?: unknown
+    stack?: unknown,
+    errors?: ValidationError[]
   ) {
     this.message = message;
     this.type = type as ErrorType;
@@ -42,6 +46,10 @@ export class PlatypusError {
     if (stack) {
       this.stack = stack;
     }
+
+    if (errors) {
+      this.errors = errors;
+    }
   }
 
   static fromSdkError(err: SdkError): PlatypusError {
@@ -49,7 +57,8 @@ export class PlatypusError {
       err.message as string,
       'UNKNOWN',
       err.status,
-      err.stack
+      err.stack,
+      err.errors || []
     );
 
     const scopedMsg =

@@ -1,5 +1,5 @@
 import { CogniteClient } from '@cognite/sdk';
-import { PlatypusError } from '@platypus-core/boundaries/types';
+import { PlatypusError, SdkError } from '@platypus-core/boundaries/types';
 
 import {
   ApiSpecDTO,
@@ -124,6 +124,24 @@ export class SolutionsApiService {
     return this.upsertApiVersion(dto, 'PATCH');
   }
 
+  deleteApi(externalId: string): Promise<unknown> {
+    const deleteDTO = {
+      query: `mutation deleteApi($externalId: ID!) {
+        deleteApis(externalIds: [$externalId]) {
+          externalId
+        }
+      }`,
+      variables: {
+        externalId,
+      },
+    } as GraphQlQueryParams;
+    return this.runGraphQlQuery(this.schemaServiceBaseUrl, deleteDTO)
+      .then((response) => {
+        return response.data.data.deleteApis[0];
+      })
+      .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
+  }
+
   /** List data models for a project */
   listStorage(): Promise<SolutionStorageDataModelDTO[]> {
     return this.runStorageApiRequest('definitions/list', {
@@ -238,7 +256,9 @@ export class SolutionsApiService {
         })
         .then((response) => {
           if (response.data.errors) {
-            reject({ status: 400, errors: [...response.data.errors] });
+            const errorMsg =
+              'Something went wrong, we were not able to run your query.';
+            reject(this.toSdkError(400, errorMsg, response.data));
           } else {
             resolve(response);
           }
@@ -248,5 +268,18 @@ export class SolutionsApiService {
 
   private transformData(response: GraphQLQueryResponse, path: string): any {
     return response.data.data[path].edges.map((edge: any) => edge.node);
+  }
+
+  private toSdkError(
+    status: number,
+    errorMessage: string,
+    error: any
+  ): SdkError {
+    return {
+      status,
+      message: errorMessage,
+      errorMessage,
+      errors: error.errors || [],
+    } as SdkError;
   }
 }
