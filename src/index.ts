@@ -1,5 +1,4 @@
-const dummy = () => {
-  return 0;
-};
-
-export { dummy };
+export * from './common';
+export * from './components';
+export * from './hooks';
+export * from './utils';
