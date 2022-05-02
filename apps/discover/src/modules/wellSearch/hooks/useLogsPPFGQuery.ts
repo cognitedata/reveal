@@ -1,3 +1,7 @@
+/*
+ * this file is only being used in LogTypeViewer in v2, which will be removed in near future
+ * Hence, not adding test for this.
+ * */
 import { useQuery } from 'react-query';
 
 import { Sequence } from '@cognite/sdk';

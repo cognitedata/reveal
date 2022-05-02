@@ -1,3 +1,8 @@
+/*
+ * this file is only being used in v2, which will be removed in near future
+ * Hence, not adding test for this.
+ * */
+
 import { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 
