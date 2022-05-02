@@ -17,7 +17,15 @@
     "lint": "eslint --config .eslintrc.production.js 'src/**/*.{ts,tsx}'",
     "test": "jest --passWithNoTests"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@cognite/react-feature-flags": "^1.0.0",
+    "i18next": "^21.6.13",
+    "i18next-locize-backend": "^5.0.1",
+    "locize": "^2.3.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-i18next": "^11.15.6"
+  },
   "devDependencies": {
     "@babel/core": "^7.17.8",
     "@babel/preset-env": "^7.16.11",
@@ -35,8 +43,6 @@
     "eslint-plugin-react-hooks": "^4.3.0",
     "jest": "^27.5.1",
     "prettier": "^2.5.1",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
     "react-query": "3.34.16",
     "rollup": "2.69.0",
     "rollup-plugin-typescript2": "0.31.2",
