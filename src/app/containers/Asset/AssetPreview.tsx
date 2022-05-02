@@ -1,8 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import { trackUsage } from 'app/utils/Metrics';
-import qs from 'query-string';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { createLink } from '@cognite/cdf-utilities';
+import { useParams } from 'react-router-dom';
+
 import {
   AssetDetails,
   AssetTreeTable,
@@ -16,7 +15,7 @@ import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { Asset } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
-import { useCurrentResourceId } from 'app/hooks';
+import { useCurrentResourceId, useTabNavigationPreview } from 'app/hooks';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
 
 export type AssetPreviewTabType =
@@ -39,12 +38,11 @@ export const AssetPreview = ({
   }>();
   const activeTab = tabType || 'details';
 
+  const onTabChange = useTabNavigationPreview(tabType, 'asset');
+
   useEffect(() => {
     trackUsage('Exploration.Preview.Asset', { assetId });
   }, [assetId]);
-
-  const location = useLocation();
-  const navigate = useNavigate();
 
   const { mode, onSelect, resourcesState } = useContext(
     ResourceSelectionContext
@@ -96,22 +94,7 @@ export const AssetPreview = ({
           externalId: asset.externalId,
         }}
         tab={activeTab}
-        onTabChange={newTab => {
-          navigate(
-            createLink(
-              `/${location.pathname
-                .split('/')
-                .slice(2, tabType ? -1 : undefined)
-                .join('/')}/${newTab}`,
-              qs.parse(location.search)
-            ),
-            { replace: true }
-          );
-          trackUsage('Exploration.Details.TabChange', {
-            type: 'asset',
-            tab: newTab,
-          });
-        }}
+        onTabChange={onTabChange}
         additionalTabs={[
           <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
             <AssetDetails asset={asset} />

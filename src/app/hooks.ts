@@ -11,6 +11,7 @@ import { createLink } from '@cognite/cdf-utilities';
 import { getUserInformation } from '@cognite/cdf-sdk-singleton';
 import { useQuery } from 'react-query';
 
+import { trackUsage } from 'app/utils/Metrics';
 import { SEARCH_KEY } from './utils/constants';
 
 const opts: { arrayFormat: 'comma' } = { arrayFormat: 'comma' };
@@ -130,4 +131,26 @@ export const useCurrentResourceId = (): [
 
 export const useUserInformation = () => {
   return useQuery('user-info', getUserInformation);
+};
+
+export const useTabNavigationPreview = (tabType?: string, type?: string) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  return (newTab: string) => {
+    navigate(
+      createLink(
+        `/${location.pathname
+          .split('/')
+          .slice(2, tabType ? -1 : undefined)
+          .join('/')}/${newTab}`,
+        qs.parse(location.search)
+      ),
+      { replace: true }
+    );
+    trackUsage('Exploration.Details.TabChange', {
+      type,
+      tab: newTab,
+    });
+  };
 };

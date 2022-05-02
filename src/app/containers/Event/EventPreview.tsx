@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
+
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import {
   EventDetails,
@@ -12,8 +13,9 @@ import {
 import { renderTitle } from 'app/utils/EventsUtils';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteEvent } from '@cognite/sdk';
-import { createLink } from '@cognite/cdf-utilities';
+
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
+import { useTabNavigationPreview } from 'app/hooks';
 
 export type EventPreviewTabType =
   | 'details'
@@ -35,8 +37,7 @@ export const EventPreview = ({
   }>();
   const activeTab = tabType || 'details';
 
-  const location = useLocation();
-  const navigate = useNavigate();
+  const onTabChange = useTabNavigationPreview(tabType, 'event');
 
   useEffect(() => {
     trackUsage('Exploration.Preview.Event', { eventId });
@@ -79,21 +80,7 @@ export const EventPreview = ({
           externalId: event.externalId,
         }}
         tab={activeTab}
-        onTabChange={newTab => {
-          navigate(
-            createLink(
-              `/${location.pathname
-                .split('/')
-                .slice(2, tabType ? -1 : undefined)
-                .join('/')}/${newTab}`
-            ),
-            { replace: true }
-          );
-          trackUsage('Exploration.Details.TabChange', {
-            type: 'event',
-            tab: newTab,
-          });
-        }}
+        onTabChange={onTabChange}
         additionalTabs={[
           <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
             <EventDetails event={event} />
