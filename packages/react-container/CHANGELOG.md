@@ -1,6 +1,10 @@
+## 5.0.2 May 2 2022
+
+- Removed -rc from version
+
 ## 5.0.2-rc-1 Mar 22 2022
 
-Update package dependencies. No dependency on `@cognite/react-tenant-selector` anymore.
+- Update package dependencies. No dependency on `@cognite/react-tenant-selector` anymore.
 
 ## 5.0.1-rc-1 Mar 21 2022
 
