@@ -6,7 +6,7 @@ import { Cognite3DViewer } from '@reveal/core';
 import { InputHandler } from '@reveal/utilities';
 import * as THREE from 'three';
 import { MeasurementGizmo } from './MeasurementGizmo';
-import { MeasurementLabel } from './MeaurementLabel';
+import { MeasurementLabel } from './MeasurementLabel';
 import { Measurement } from './Measurement';
 import { MeasurementLabelOptions, MeasurementLineOptions } from './types';
 import { MeasurementDistance } from './MeasurementDistance';

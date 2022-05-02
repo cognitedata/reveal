@@ -124,8 +124,6 @@ export class MeasurementDistance implements Measurement {
       .subVectors(controlPoint, this._viewer.cameraManager.getCamera().position)
       .length();
 
-    // controlPoint.multiplyVectors(controlPoint, this._axis);
-
     if (this._isActive && this._measurementLine && distance > 0.2) {
       this._positions[3] = controlPoint.x;
       this._positions[4] = controlPoint.y;

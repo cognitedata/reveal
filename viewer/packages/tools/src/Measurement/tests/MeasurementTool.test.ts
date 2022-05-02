@@ -4,14 +4,17 @@
 import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@reveal/core';
 import * as THREE from 'three';
-import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
+import { createGlContext, mockClientAuthentication } from '../../../../../test-utilities';
+import { MeasurementControls } from '../MeasurementControls';
 
-import { MeasurementTool } from './MeasurementTool';
+import { MeasurementTool } from '../MeasurementTool';
 
 describe(MeasurementTool.name, () => {
   let viewer: Cognite3DViewer;
   let canvasContainer: HTMLElement;
   let domSize: { height: number; width: number };
+
+  let measurementTool: MeasurementTool;
 
   beforeEach(() => {
     const sdk = new CogniteClient({
@@ -29,9 +32,15 @@ describe(MeasurementTool.name, () => {
     canvasContainer.style.width = `${domSize.width}px`;
     canvasContainer.style.height = `${domSize.height}px`;
     viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer });
+
+    measurementTool = new MeasurementTool(viewer);
   });
 
-  test('Creation of tool', () => {
-    const measurementTool = new MeasurementTool(viewer);
+  test('Add Point to point distance measurement', () => {
+    const controls = new MeasurementControls(viewer);
+    const addSpyOn = jest.spyOn(controls, 'add');
+    measurementTool.addMeasurementDistance();
+
+    expect(addSpyOn).toBeCalled();
   });
 });
