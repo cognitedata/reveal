@@ -51,12 +51,8 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
     useState<Column<TableData>[]>();
   const [matrixData, setMatrixData] = useState<TableData[]>();
   const [mainScenarioData, setMainScenarioData] = useState<TableData[]>();
-  const [bidDate, setBidDate] = useState<Date>();
+  const [bidDate, setBidDate] = useState<dayjs.Dayjs>(dayjs(priceArea.bidDate));
   const [newMatrixAvailable, setNewMatrixAvailable] = useState<boolean>(false);
-
-  const currentdate = new Date();
-  currentdate.setDate(currentdate.getDate() + 1);
-  const tomorrow = currentdate.toLocaleDateString();
 
   const [copied, setCopied] = useState<boolean>(false);
   const [tooltipContent, setTooltipContent] =
@@ -77,11 +73,10 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
 
     if (!priceArea.bidDate) return;
 
-    const tomorrow = dayjs.utc(bidDate).utcOffset(2, true).add(1, 'day');
     const priceTs = await client?.datapoints.retrieve({
       items: [{ externalId: scenariopPriceTsExternalId }],
-      start: tomorrow.startOf('day').valueOf(),
-      end: tomorrow.endOf('day').valueOf(),
+      start: bidDate.startOf('day').valueOf(),
+      end: bidDate.endOf('day').valueOf(),
     });
 
     if (!priceTs?.length) return;
@@ -173,7 +168,7 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
 
   useEffect(() => {
     if (plantExternalId && priceArea) {
-      setBidDate(priceArea.bidDate);
+      setBidDate(dayjs(priceArea.bidDate));
       const priceExternalId = priceArea.priceScenarios.find(
         (scenario) => scenario.externalId === priceArea.mainScenarioExternalId
       )?.externalId;
@@ -257,7 +252,9 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
                 {matrix?.method}
               </Label> */}
               </span>
-              <Detail>{`Generated for: ${tomorrow} - ${currentMatrix?.externalId}`}</Detail>
+              <Detail>{`Generated for: ${bidDate.format('DD/MMM/YYYY')} - ${
+                currentMatrix?.externalId
+              }`}</Detail>
             </div>
             <Tooltip position="left" visible={copied} content={tooltipContent}>
               <Button

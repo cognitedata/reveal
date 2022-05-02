@@ -28,10 +28,7 @@ dayjs.extend(utc);
 const PriceScenario = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
   const { client } = useAuthContext();
 
-  const tomorrow = dayjs
-    .utc(priceArea.bidDate)
-    .utcOffset(2, true)
-    .add(1, 'day');
+  const bidDate = dayjs(priceArea.bidDate);
 
   const [priceExternalIds, setPriceExternalIds] = useState<
     { externalId: string }[] | undefined
@@ -106,8 +103,8 @@ const PriceScenario = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
         items: productionTsExternalIds.map((externalId) => {
           return externalId;
         }),
-        start: tomorrow.startOf('day').valueOf(),
-        end: tomorrow.endOf('day').valueOf(),
+        start: bidDate.startOf('day').valueOf(),
+        end: bidDate.endOf('day').valueOf(),
       }));
 
     const shopProductionData = shopProductionDatapoints
@@ -146,8 +143,8 @@ const PriceScenario = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
           items: priceExternalIds.map((externalId) => {
             return externalId;
           }),
-          start: tomorrow.startOf('day').valueOf(),
-          end: tomorrow.endOf('day').valueOf(),
+          start: bidDate.startOf('day').valueOf(),
+          end: bidDate.endOf('day').valueOf(),
         }));
 
       calcProductionData = priceTimeseries
@@ -171,8 +168,8 @@ const PriceScenario = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
                 priceArea?.priceScenarios[activeScenarioIndex].externalId,
             },
           ],
-          start: tomorrow.startOf('day').valueOf(),
-          end: tomorrow.endOf('day').valueOf(),
+          start: bidDate.startOf('day').valueOf(),
+          end: bidDate.endOf('day').valueOf(),
         }));
 
       // Calculate Plant Columns

@@ -71,14 +71,14 @@ export const PriceScenariosChart = ({
   };
 
   const getChartData = async () => {
-    const tomorrow = dayjs.utc().utcOffset(2, true).add(1, 'day');
+    const bidDate = dayjs(priceArea.bidDate);
 
     const timeseries =
       externalIds &&
       ((await client?.datapoints.retrieve({
         items: externalIds,
-        start: tomorrow.startOf('day').valueOf(),
-        end: tomorrow.endOf('day').valueOf(),
+        start: bidDate.startOf('day').valueOf(),
+        end: bidDate.endOf('day').valueOf(),
       })) as Datapoints[]);
 
     const plotData = timeseries
