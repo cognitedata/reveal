@@ -2,9 +2,8 @@
   "name": "@cognite/cdf-i18n-utils",
   "version": "0.0.1",
   "license": "UNLICENSED",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "sideEffects": false,
   "files": [
     "dist",
@@ -18,12 +17,11 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
+    "@cognite/cdf-utilities": "^1.4.6",
     "@cognite/react-feature-flags": "^1.0.0",
     "i18next": "^21.6.13",
     "i18next-locize-backend": "^5.0.1",
     "locize": "^2.3.0",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
     "react-i18next": "^11.15.6"
   },
   "devDependencies": {
@@ -43,7 +41,8 @@
     "eslint-plugin-react-hooks": "^4.3.0",
     "jest": "^27.5.1",
     "prettier": "^2.5.1",
-    "react-query": "3.34.16",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
     "rollup": "2.69.0",
     "rollup-plugin-typescript2": "0.31.2",
     "styled-components": "5.3.3",
@@ -52,8 +51,6 @@
   },
   "peerDependencies": {
     "react": ">=16",
-    "react-dom": ">=16",
-    "react-query": ">=3",
-    "styled-components": ">=5"
+    "react-dom": ">=16"
   }
 }
