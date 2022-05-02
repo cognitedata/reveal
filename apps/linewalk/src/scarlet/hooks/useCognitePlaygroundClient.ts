@@ -1,4 +1,4 @@
-import { CogniteClientPlayground } from '@cognite/sdk-playground-v5';
+import { CogniteClientPlayground } from '@cognite/sdk-playground';
 import { useAuthContext } from '@cognite/react-container';
 import sidecar from 'utils/sidecar';
 import { useMemo } from 'react';

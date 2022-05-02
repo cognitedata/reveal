@@ -1,4 +1,4 @@
-import { CogniteClientPlayground } from '@cognite/sdk-playground-v5';
+import { CogniteClientPlayground } from '@cognite/sdk-playground';
 
 export const exportToExcel = async (
   client?: CogniteClientPlayground,

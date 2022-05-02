@@ -68,7 +68,7 @@ generate_package_json_helpers(
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
     "@npm//@cognite/sdk",
-    "@npm//@cognite/sdk-playground-v5",
+    "@npm//@cognite/sdk-playground",
     "@npm//@sentry/browser",
     "@npm//formik",
     "@npm//keyboardjs",
