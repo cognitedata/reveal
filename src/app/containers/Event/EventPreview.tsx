@@ -15,7 +15,7 @@ import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteEvent } from '@cognite/sdk';
 
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
-import { useTabNavigationPreview } from 'app/hooks';
+import { useOnPreviewTabChange } from 'app/hooks';
 
 export type EventPreviewTabType =
   | 'details'
@@ -37,7 +37,7 @@ export const EventPreview = ({
   }>();
   const activeTab = tabType || 'details';
 
-  const onTabChange = useTabNavigationPreview(tabType, 'event');
+  const onTabChange = useOnPreviewTabChange(tabType, 'event');
 
   useEffect(() => {
     trackUsage('Exploration.Preview.Event', { eventId });

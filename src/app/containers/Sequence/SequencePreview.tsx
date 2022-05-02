@@ -14,7 +14,7 @@ import { Sequence } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
-import { useTabNavigationPreview } from 'app/hooks';
+import { useOnPreviewTabChange } from 'app/hooks';
 
 export type SequencePreviewType =
   | 'details'
@@ -37,7 +37,7 @@ export const SequencePreview = ({
   }>();
   const activeTab = tabType || 'preview';
 
-  const onTabChange = useTabNavigationPreview(tabType, 'sequence');
+  const onTabChange = useOnPreviewTabChange(tabType, 'sequence');
 
   useEffect(() => {
     trackUsage('Exploration.Preview.Sequence', { sequenceId });

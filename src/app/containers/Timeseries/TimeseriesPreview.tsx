@@ -15,7 +15,7 @@ import {
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 
 import { useDateRange } from 'app/context/DateRangeContext';
-import { useTabNavigationPreview } from 'app/hooks';
+import { useOnPreviewTabChange } from 'app/hooks';
 
 export type TimeseriesPreviewTabType =
   | 'details'
@@ -37,7 +37,7 @@ export const TimeseriesPreview = ({
   }>();
   const activeTab = tabType || 'details';
 
-  const tabChange = useTabNavigationPreview(tabType, 'timeseries');
+  const tabChange = useOnPreviewTabChange(tabType, 'timeseries');
   const [dateRange, setDateRange] = useDateRange();
 
   useEffect(() => {

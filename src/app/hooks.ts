@@ -139,7 +139,7 @@ export const useUserInformation = () => {
  * @param type Resource type of the navigator
  *
  */
-export const useTabNavigationPreview = (tabType?: string, type?: string) => {
+export const useOnPreviewTabChange = (tabType?: string, type?: string) => {
   const location = useLocation();
   const navigate = useNavigate();
 

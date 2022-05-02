@@ -22,7 +22,7 @@ import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { useTabNavigationPreview } from 'app/hooks';
+import { useOnPreviewTabChange } from 'app/hooks';
 
 export type FilePreviewTabType =
   | 'preview'
@@ -59,7 +59,7 @@ export const FilePreview = ({
   }>();
   const activeTab = tabType || 'preview';
 
-  const onTabChange = useTabNavigationPreview(tabType, 'file');
+  const onTabChange = useOnPreviewTabChange(tabType, 'file');
 
   useEffect(() => {
     if (fileId && !isActive) {
