@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { SidecarConfig, getDefaultSidecar } from '@cognite/sidecar';
+import { SidecarConfig, getDefaultSidecar, CDFCluster } from '@cognite/sidecar';
 
 // # -------------------------------------
 // #
@@ -11,7 +11,7 @@ import { SidecarConfig, getDefaultSidecar } from '@cognite/sidecar';
 const PROD = false;
 // examples: bluefield, greenfield, ew1, bp-northeurope, azure-dev, bp
 // NOTE: leave on 'azure-dev' for testing in the PR's since that is the only place we have the FAKEIdp currently for this project:
-const CLUSTER = 'azure-dev';
+const CLUSTER: CDFCluster = 'azure-dev';
 const LOCAL_COMMENTS_API = false;
 // #
 // #
@@ -20,6 +20,8 @@ const LOCAL_COMMENTS_API = false;
 
 const getAadApplicationId = (cluster: string) => {
   const ids: Record<string, string> = {
+    // these are all staging ids:
+    greenfield: 'b8318db7-18d1-419d-a90a-40087c76b1cd', // <- react-demo
     bluefield: '245a8a64-4142-4226-86fa-63d590de14c9', // <- react-demo
     'azure-dev': '5a262178-942b-4c8f-ac15-f96642b73b56', // <- react-demo
     ew1: 'd584f014-5fa9-4b0b-953d-cc4837d093f3', // <- react-demo
