@@ -1245,10 +1245,10 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/data-exploration@^3.0.1":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-3.0.2.tgz#787e46aaedb917884b471c66613fccc73d0ebb35"
-  integrity sha512-XmxsHXCthHAXPfU9b6hFzocAV51qdIf0TcyuqkqrFSGTke6mGP7XQAiixANonERFfZ+D6z0uAsNvFSz5DpzJ0Q==
+"@cognite/data-exploration@^3.0.3":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-3.0.3.tgz#6366ccbdf8c138b6096d1d26fd2d98a88a308711"
+  integrity sha512-bYByZV0xhRLVUlbzX7CvVI7t9Z1VV4t3pb64YEZLOBA8CJgGxWj/ffDRXQAzgx1HPrljQscJxYH85t4dadv5RA==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
@@ -1263,6 +1263,7 @@
     "@visx/gradient" "^2.1.0"
     "@visx/grid" "^2.1.0"
     "@visx/group" "^2.1.0"
+    "@visx/responsive" "^2.8.0"
     "@visx/scale" "^2.1.0"
     "@visx/shape" "^2.1.0"
     "@visx/threshold" "^2.1.0"
@@ -1270,9 +1271,9 @@
     antd "^4.15.2"
     d3-array "^2.12.1"
     d3-time-format "^3.0.0"
+    dayjs "^1.11.1"
     lodash "^4.17.21"
     mime-types "^2.1.30"
-    moment "^2.29.1"
     query-string "^7.0.0"
     react-base-table "^1.12.0"
     react-datepicker "^3.7.0"
@@ -2003,6 +2004,11 @@
   dependencies:
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
+
+"@juggle/resize-observer@^3.3.1":
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.3.1.tgz#b50a781709c81e10701004214340f25475a171a0"
+  integrity sha512-zMM9Ds+SawiUkakS7y94Ymqx+S0ORzpG3frZirN3l+UlXUmSUR7hF4wxCVqW+ei94JzV5kt0uXBcoOEAuiydrw==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -3014,6 +3020,17 @@
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/@visx/point/-/point-2.6.0.tgz#c4316ca409b5b829c5455f07118d8c14a92cc633"
   integrity sha512-amBi7yMz4S2VSchlPdliznN41TuES64506ySI22DeKQ+mc1s1+BudlpnY90sM1EIw4xnqbKmrghTTGfy6SVqvQ==
+
+"@visx/responsive@^2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@visx/responsive/-/responsive-2.8.0.tgz#96fac67b77e9573393be780d9657337bef9b72b2"
+  integrity sha512-/CDL6aWvQARwv1CkNh1bZ6QW7Q982UU3UVESZ5Sffp1s3toygvdCmuDreL8UpDjJp0PQNtoc2alee5VUSCxg3Q==
+  dependencies:
+    "@juggle/resize-observer" "^3.3.1"
+    "@types/lodash" "^4.14.172"
+    "@types/react" "*"
+    lodash "^4.17.21"
+    prop-types "^15.6.1"
 
 "@visx/scale@2.2.2", "@visx/scale@^2.1.0":
   version "2.2.2"
@@ -5535,7 +5552,7 @@ date-fns@2.x, date-fns@^2.0.1, date-fns@^2.16.1:
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.28.0.tgz#9570d656f5fc13143e50c975a3b6bbeb46cd08b2"
   integrity sha512-8d35hViGYx/QH0icHYCeLmsLmMUheMmTyV9Fcm6gvNwdw31yXXH+O85sOBJ+OLnLQMKZowvpKb6FgMIQjcpvQw==
 
-dayjs@1.x, dayjs@^1.9.7:
+dayjs@1.x, dayjs@^1.11.1, dayjs@^1.9.7:
   version "1.11.1"
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.1.tgz#90b33a3dda3417258d48ad2771b415def6545eb0"
   integrity sha512-ER7EjqVAMkRRsxNCC5YqJ9d9VQYuWdGt7aiH2qA5R5wt8ZmWaP2dLUSIK6y/kVzLMlmh1Tvu5xUf4M/wdGJ5KA==
@@ -10072,7 +10089,7 @@ mkdirp@^1.0.3, mkdirp@^1.0.4:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
-moment@^2.24.0, moment@^2.25.3, moment@^2.29.1:
+moment@^2.24.0, moment@^2.25.3:
   version "2.29.3"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.3.tgz#edd47411c322413999f7a5940d526de183c031f3"
   integrity sha512-c6YRvhEo//6T2Jz/vVtYzqBzwvPT95JBQ+smCytzf7c50oMZRsR/a4w88aD34I+/QVSfnoAnSBFPJHItlOMJVw==
