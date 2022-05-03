@@ -2517,11 +2517,6 @@
   resolved "https://registry.yarnpkg.com/@types/tapable/-/tapable-1.0.8.tgz#b94a4391c85666c7b73299fd3ad79d4faa435310"
   integrity sha512-ipixuVrh2OdNmauvtT51o3d8z12p6LtFW9in7U79der/kwejjdNchQC5UMn5u/KxNoM7VHHOs/l8KS8uHxhODQ==
 
-"@types/three@0.125.2":
-  version "0.125.2"
-  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.125.2.tgz#b47aa31d9fc9af69c9bb4b1945c9183ce33ca954"
-  integrity sha512-cHoXyeXg/LJ6Qe6QFqSAm41erGDpTtcfesiUbkvCyLhb3hfCT/z6P8sq7OCMxe3b3Dn1LL6H6rzU7Lo+EMyTaQ==
-
 "@types/three@0.133.0":
   version "0.133.0"
   resolved "https://registry.yarnpkg.com/@types/three/-/three-0.133.0.tgz#2e344ce10bc81dc89295b79a98c09932b3f0c294"
@@ -2531,6 +2526,11 @@
   version "0.138.0"
   resolved "https://registry.yarnpkg.com/@types/three/-/three-0.138.0.tgz#ec9f1d1fd8dffea2e0572f9d815ff5a35cf4dc6b"
   integrity sha512-D8AoV7h2kbCfrv/DcebHOFh1WDwyus3HdooBkAwcBikXArdqnsQ38PQ85JCunnvun160oA9jz53GszF3zch3tg==
+
+"@types/three@0.140.0":
+  version "0.140.0"
+  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.140.0.tgz#3b74a021a69a6e2cd0e2550def15aa4c1c20e924"
+  integrity sha512-YPJLSIY6uKUOp1k6BZYDq5GtEIdhfeK04UCbc9IPAVbdn/RNjkfrbnyd7smrsNkJhc0IFASLpd3AAYgwqgXKVQ==
 
 "@types/uglify-js@*":
   version "3.13.1"
@@ -11544,11 +11544,6 @@ text-table@0.2.0, text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
-three@0.125.2:
-  version "0.125.2"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.125.2.tgz#dcba12749a2eb41522e15212b919cd3fbf729b12"
-  integrity sha512-7rIRO23jVKWcAPFdW/HREU2NZMGWPBZ4XwEMt0Ak0jwLUKVJhcKM55eCBWyGZq/KiQbeo1IeuAoo/9l2dzhTXA==
-
 three@0.133.0:
   version "0.133.0"
   resolved "https://registry.yarnpkg.com/three/-/three-0.133.0.tgz#41427306c731a89407221b7be48c7a63580400e7"
@@ -11558,6 +11553,11 @@ three@0.138.3:
   version "0.138.3"
   resolved "https://registry.yarnpkg.com/three/-/three-0.138.3.tgz#7be5153d79dcbf9e9baad82e7faf8c29edda4ed0"
   integrity sha512-4t1cKC8gimNyJChJbaklg8W/qj3PpsLJUIFm5LIuAy/hVxxNm1ru2FGTSfbTSsuHmC/7ipsyuGKqrSAKLNtkzg==
+
+three@0.140.0:
+  version "0.140.0"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.140.0.tgz#5ad85df954c63015337a846134e0daa6c7c0dead"
+  integrity sha512-jcHjbnYspPLDdsDQChmzyAoZ5KhJbgFk6pNGlAIc9fQMvsfPGjF5H9glrngqvb2CR/qXcClMyp5PYdF996lldA==
 
 through2@^0.6.3:
   version "0.6.5"
