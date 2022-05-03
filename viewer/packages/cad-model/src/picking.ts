@@ -45,10 +45,14 @@ export function intersectCadNodes(cadNodes: CadNode[], input: IntersectInput): I
   return results.sort((l, r) => l.distance - r.distance);
 }
 
-export function intersectionCadNodesFromStoredPixel(cadNodes: CadNode[], input: IntersectInput): THREE.Vector3 {
+export function intersectionCadNodesFromStoredPixel(
+  cadNodes: CadNode[],
+  input: IntersectInput,
+  cameraChanged: boolean
+): THREE.Vector3 {
   let result = new THREE.Vector3();
   for (const cadNode of cadNodes) {
-    result = intersectCadNodeFromStoredPixel(cadNode, input);
+    result = intersectCadNodeFromStoredPixel(cadNode, input, cameraChanged);
   }
   return result;
 }
@@ -78,7 +82,6 @@ export function intersectCadNode(cadNode: CadNode, input: IntersectInput): Inter
     const viewZ = perspectiveDepthToViewZ(depth, camera.near, camera.far);
     const point = getPosition(pickInput, viewZ);
     const distance = new THREE.Vector3().subVectors(point, camera.position).length();
-    isDepthFilled = false;
     return {
       distance,
       point,
@@ -95,9 +98,12 @@ export function intersectCadNode(cadNode: CadNode, input: IntersectInput): Inter
 }
 
 let depthArray = new Uint8Array();
-let isDepthFilled = false;
 
-export function intersectCadNodeFromStoredPixel(cadNode: CadNode, input: IntersectInput): THREE.Vector3 | undefined {
+export function intersectCadNodeFromStoredPixel(
+  cadNode: CadNode,
+  input: IntersectInput,
+  cameraChanged: boolean
+): THREE.Vector3 | undefined {
   const { camera, normalizedCoords, renderer, domElement } = input;
   const pickingScene = new THREE.Scene();
   // TODO consider case where parent does not exist
@@ -114,12 +120,11 @@ export function intersectCadNodeFromStoredPixel(cadNode: CadNode, input: Interse
       cadNode
     };
 
-    if (!isDepthFilled) {
+    if (!cameraChanged || depthArray.length > 0) {
       const previousRenderMode = cadNode.renderMode;
       cadNode.renderMode = RenderMode.Depth;
       depthArray = pickPixelBufferColor(pickInput, clearColor, clearAlpha);
       cadNode.renderMode = previousRenderMode;
-      isDepthFilled = true;
     }
     const absoluteCoords = {
       x: Math.round(((normalizedCoords.x + 1.0) / 2.0) * domElement.clientWidth),

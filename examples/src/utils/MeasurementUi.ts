@@ -21,7 +21,7 @@ export class MeasurementUi {
   constructor(viewer: Cognite3DViewer, ui: dat.GUI) {
     this._viewer = viewer;
     this._measurementTool = new MeasurementTool(this._viewer);
-    this._gui = ui.addFolder('Line Options');
+    this._gui = ui.addFolder('Types');
     this._guiController = [];
     const addDistanceOptions = this.addDistanceOptions.bind(this);
 

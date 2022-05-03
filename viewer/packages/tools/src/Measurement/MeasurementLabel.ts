@@ -13,8 +13,8 @@ export class MeasurementLabel {
     size: 64,
     radius: 20,
     font: '64px bold Georgia',
-    fontColor: 'green',
-    fillColor: 'rgba(255, 255, 255, 1.0)'
+    fontColor: 'white',
+    fillColor: 'rgba(0, 0, 0, 0.45)'
   };
 
   constructor(viewer: Cognite3DViewer, options?: MeasurementLabelOptions) {
