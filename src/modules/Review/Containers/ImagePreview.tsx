@@ -84,7 +84,7 @@ export const ImagePreview = ({
 
   const currentKeypointCollection = useSelector(
     ({ annotationLabelReducer }: RootState) =>
-      currentCollection(annotationLabelReducer)
+      currentCollection(annotationLabelReducer, file.id)
   );
 
   const annotationSettingsState = useSelector(({ reviewSlice }: RootState) =>
