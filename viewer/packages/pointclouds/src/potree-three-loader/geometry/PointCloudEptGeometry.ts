@@ -16,13 +16,15 @@ import proj4 from 'proj4';
 import { ModelDataProvider } from '@reveal/modeldata-api';
 import { toVector3, toBox3 } from './translationUtils';
 
-type SchemaEntry = {
+type EptSchemaEntry = {
   name: string;
+  type: 'signed' | 'unsigned' | 'float';
+  size: number;
   scale: number;
   offset: number;
 };
 
-function findDim(schema: SchemaEntry[], name: string): SchemaEntry {
+function findDim(schema: EptSchemaEntry[], name: string): EptSchemaEntry {
   const dim = schema.find(dim => dim.name == name);
   if (!dim) throw new Error('Failed to find ' + name + ' in schema');
   return dim;
@@ -44,7 +46,7 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
 
   private readonly _loader: ILoader;
 
-  private readonly _schema: SchemaEntry[];
+  private readonly _schema: EptSchemaEntry[];
 
   private _root: PointCloudEptGeometryNode | undefined;
 
@@ -78,7 +80,7 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
     return this._url;
   }
 
-  get schema(): SchemaEntry[] {
+  get schema(): EptSchemaEntry[] {
     return this._schema;
   }
 

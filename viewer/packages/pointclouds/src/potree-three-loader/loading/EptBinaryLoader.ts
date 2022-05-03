@@ -11,7 +11,11 @@ import { ILoader } from './ILoader';
 import { ModelDataProvider } from '@reveal/modeldata-api';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
-import { ParsedEptData } from '../workers/eptBinaryDecoder.worker';
+import { ParseCommand, ObjectsCommand } from '../workers/eptBinaryDecoder.worker';
+
+import { ParsedEptData, EptInputData } from '../workers/parseEpt';
+
+import { hardCodedObjects } from '../../styling/staticObjects';
 
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
@@ -72,6 +76,10 @@ export class EptBinaryLoader implements ILoader {
               const pointSourceId = new Uint16Array(e.data.pointSourceId);
               g.setAttribute('source id', new THREE.BufferAttribute(pointSourceId, 1));
             }
+            if (e.data.objectId) {
+              const objectId = new Uint16Array(e.data.objectId);
+              g.setAttribute('objectId', new THREE.BufferAttribute(objectId, 1));
+            }
 
             g.attributes.indices.normalized = true;
 
@@ -86,8 +94,8 @@ export class EptBinaryLoader implements ILoader {
             res();
           };
 
-          const toArray = (v: THREE.Vector3) => [v.x, v.y, v.z];
-          const message = {
+          const toArray = (v: THREE.Vector3): [number, number, number] => [v.x, v.y, v.z];
+          const eptData: EptInputData = {
             buffer: buffer,
             schema: node.ept.schema,
             scale: node.ept.eptScale,
@@ -95,7 +103,23 @@ export class EptBinaryLoader implements ILoader {
             mins: toArray(node.key.b.min)
           };
 
-          autoTerminatingWorker.worker.postMessage(message, [message.buffer]);
+          const offsetVec = node.boundingBox.min;
+          console.log("Node bounding box min: ", offsetVec, ", node key bounding box min: ", node.key.b.min);
+
+          const objectMessage: ObjectsCommand = {
+            type: 'objects',
+            objects: hardCodedObjects,
+            pointOffset: [offsetVec.x, offsetVec.y, offsetVec.z] as [number, number, number]
+          };
+
+          autoTerminatingWorker.worker.postMessage(objectMessage);
+
+          const parseMessage: ParseCommand = {
+            type: 'parse',
+            data: eptData
+          };
+
+          autoTerminatingWorker.worker.postMessage(parseMessage, [parseMessage.data.buffer]);
         })
     );
   }

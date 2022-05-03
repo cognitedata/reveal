@@ -11,6 +11,7 @@ in float classification;
 in float returnNumber;
 in float numberOfReturns;
 in float pointSourceID;
+in float objectId;
 in vec4 indices;
 in vec2 uv;
 
@@ -599,5 +600,9 @@ void main() {
 
         if (isClipped((modelViewMatrix * vec4(position, 1.0)).xyz)) {
                  gl_Position = vec4(1000.0, 1000.0, 1000.0, 1.0);
+        }
+
+        if (objectId > 0.0) {
+            vColor.r = 1.0;
         }
 }
