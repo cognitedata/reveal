@@ -92,6 +92,7 @@ export const nextCollection = createSelector(
 );
 
 export const currentCollection = createSelector(
+  (state: AnnotationLabelState, currentFileId: number) => currentFileId,
   (state: AnnotationLabelState) => state.lastCollectionId,
   (state: AnnotationLabelState) => state.collections.byId,
   (state: AnnotationLabelState) => state.collections.selectedIds,
@@ -100,6 +101,7 @@ export const currentCollection = createSelector(
   (state: AnnotationLabelState) =>
     state.predefinedAnnotations.predefinedKeypoints,
   (
+    fileId,
     lastCollectionId,
     allCollections,
     selectedCollectionIds,
@@ -125,6 +127,7 @@ export const currentCollection = createSelector(
 
       return {
         ...collection,
+        annotatedResourceId: fileId,
         selected: selectedCollectionIds.includes(collection.id),
         keypoints,
         remainingKeypoints,
