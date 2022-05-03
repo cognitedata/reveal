@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { useLabelsQuery } from 'services/labels/useLabelsQuery';
 
-import { DOCUMENT_FALLBACK_SEARCH_LIMIT } from 'modules/documentSearch/constants';
+import { DOCUMENT_SEARCH_PAGE_LIMIT } from 'modules/documentSearch/constants';
 import { useDocumentConfig } from 'modules/documentSearch/hooks';
 import { getDocumentsFacetsInfo } from 'modules/documentSearch/utils';
 import { getFacetsCounts } from 'modules/documentSearch/utils/getFacetsCounts';
@@ -27,7 +27,7 @@ export const useRelatedDocumentData = () => {
 
 export const useRelatedDocumentLimit = () => {
   const { data: config } = useDocumentConfig();
-  return config?.defaultLimit || DOCUMENT_FALLBACK_SEARCH_LIMIT;
+  return config?.defaultLimit || DOCUMENT_SEARCH_PAGE_LIMIT;
 };
 
 export const useRelatedDocumentDataStats = () => {

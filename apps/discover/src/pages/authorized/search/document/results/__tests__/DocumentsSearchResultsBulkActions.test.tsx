@@ -7,22 +7,22 @@ import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGe
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 
-import { DocumentsBulkActions } from '../DocumentsBulkActions';
+import { DocumentsSearchResultsBulkActions } from '../DocumentsSearchResultsBulkActions';
 
 const mockServer = setupServer(getMockConfigGet(), getMockFavoritesListGet());
 
-describe('DocumentsBulkActions', () => {
+describe('DocumentsSearchResultsBulkActions', () => {
   beforeAll(() => mockServer.listen());
   afterAll(() => mockServer.close());
 
   const defaultTestInit = async () => {
     const store = getMockedStore();
-    return testRenderer(DocumentsBulkActions, store, {
+    return testRenderer(DocumentsSearchResultsBulkActions, store, {
       selectedDocumentIds: [],
     });
   };
 
-  it('should render `DocumentsBulkActions` as expected', async () => {
+  it('should render `DocumentsSearchResultsBulkActions` as expected', async () => {
     await defaultTestInit();
     expect(screen.getByTestId('table-bulk-actions')).toBeInTheDocument();
   });

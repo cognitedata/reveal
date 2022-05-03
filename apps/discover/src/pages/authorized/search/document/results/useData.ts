@@ -1,17 +1,19 @@
 import { useQueryDocumentLabels } from 'services/documents/useDocumentQuery';
+import { useDocumentSearchResultQuery } from 'services/documentSearch/queries/useDocumentSearchResultQuery';
 
 import { useDeepMemo } from 'hooks/useDeep';
 import { getFilteredLabels } from 'hooks/utils/getFilteredLabels';
-import { useDocumentResultHits } from 'modules/documentSearch/hooks/useDocumentResultHits';
 
 export const useData = () => {
   const { data: allLabels, isFetched } = useQueryDocumentLabels();
-  const documentResultHits = useDocumentResultHits();
+  const { results, ...rest } = useDocumentSearchResultQuery();
 
-  return useDeepMemo(() => {
-    return documentResultHits.map((documentData) => ({
+  const resultsWithLabels = useDeepMemo(() => {
+    return results?.hits.map((documentData) => ({
       ...documentData,
       labels: getFilteredLabels(documentData.doc.labels, allLabels),
     }));
-  }, [allLabels, documentResultHits, isFetched]);
+  }, [allLabels, results?.hits, isFetched]);
+
+  return { ...rest, results: resultsWithLabels };
 };

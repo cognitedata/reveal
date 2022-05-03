@@ -17,7 +17,6 @@ export const useSidebar = () => {
 /**
  * Filter bar Selectors
  */
-
 export const useFilterBarIsOpen = () => {
   const state = useSidebar();
   return state.isOpen;

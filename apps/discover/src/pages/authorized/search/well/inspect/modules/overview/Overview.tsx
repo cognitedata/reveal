@@ -10,16 +10,17 @@ import { useOverviewResultColumns } from './hooks/useOverviewUtils';
 import { OverviewModel } from './types';
 import { useDataLayer } from './useDataLayer';
 
+const options = {
+  checkable: false,
+  expandable: false,
+  flex: false,
+  height: '100%',
+};
+
 export const OverviewComponent: React.FC<{
   overviewData: OverviewModel[];
 }> = ({ overviewData }) => {
   const columns = useOverviewResultColumns();
-  const options = {
-    checkable: false,
-    expandable: false,
-    flex: false,
-    height: '100%',
-  };
 
   return (
     <Table<OverviewModel>

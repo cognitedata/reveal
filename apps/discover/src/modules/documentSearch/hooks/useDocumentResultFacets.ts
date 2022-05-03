@@ -1,8 +1,8 @@
+import { useDocumentSearchResultQuery } from 'services/documentSearch/queries/useDocumentSearchResultQuery';
+
 import { useDeepMemo } from 'hooks/useDeep';
 
-import { useDocumentSearchResultQuery } from '../../../services/documentSearch/useDocumentSearchResultQuery';
-
 export const useDocumentResultFacets = () => {
-  const { data: documentResult } = useDocumentSearchResultQuery();
-  return useDeepMemo(() => documentResult.facets, [documentResult.facets]);
+  const { results } = useDocumentSearchResultQuery();
+  return useDeepMemo(() => results.facets, [results.facets]);
 };

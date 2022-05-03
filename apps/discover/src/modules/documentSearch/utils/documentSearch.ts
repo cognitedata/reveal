@@ -6,13 +6,18 @@ import { CogniteError } from '@cognite/sdk-core';
 import { showErrorMessage } from 'components/Toast';
 
 import { DEFAULT_ERROR_MESSAGE } from '../constants';
+import { DocumentResult } from '../types';
 
-export const handleDocumentSearchError = (error: CogniteError) => {
+import { getEmptyDocumentResult } from './utils';
+
+export const handleDocumentSearchError = (
+  error: CogniteError
+): DocumentResult => {
   const possibleExtraInfo = get(error, 'extra.validationError');
 
   if (!isObject(possibleExtraInfo)) {
     showErrorMessage(DEFAULT_ERROR_MESSAGE);
-    return;
+    return getEmptyDocumentResult();
   }
 
   const possibleKnownError = (possibleExtraInfo as any)[
@@ -31,4 +36,6 @@ export const handleDocumentSearchError = (error: CogniteError) => {
   }
 
   showErrorMessage(knownError || DEFAULT_ERROR_MESSAGE);
+
+  return getEmptyDocumentResult();
 };

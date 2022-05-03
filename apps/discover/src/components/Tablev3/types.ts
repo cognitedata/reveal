@@ -32,6 +32,7 @@ export interface TableProps<T extends Object> extends TableOptions<T> {
   handleMouseEnter?: HandleRowMouseEnter;
   handleMouseLeave?: HandleRowMouseLeave;
   handleRowClick?: HandleRowClick;
+  Footer?: React.FC;
   handleRowSelect?: (row: RowProps<T>, nextState: boolean) => void; // checkbox
   handleRowsSelect?: (value: boolean) => void;
   handleSort?: HandleSort;

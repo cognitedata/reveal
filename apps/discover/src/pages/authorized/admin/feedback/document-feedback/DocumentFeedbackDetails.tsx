@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useDocumentSearchOneQuery } from 'services/documentSearch/useDocumentSearchOneQuery';
+import { useDocumentSearchOneQuery } from 'services/documentSearch/queries/useDocumentSearchOneQuery';
 import {
   setObjectFeedbackSensitivityByAdmin,
   useFeedbackUpdateMutate,

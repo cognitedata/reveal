@@ -3,7 +3,6 @@ import React, { Fragment } from 'react';
 import { withThousandSeparator } from 'utils/number';
 
 import { Dropdown, Menu, Flex } from '@cognite/cogs.js';
-import { useTranslation } from '@cognite/react-i18n';
 
 import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 import { EMPTY_ARRAY } from 'constants/empty';
@@ -63,18 +62,18 @@ const getLabel = ({
   currentHits,
   totalResults,
   entityLabel,
-}: {
-  label: string;
-  currentHits: string;
-  totalResults: string;
-  entityLabel: string;
-}) => {
-  return `${label}: ${currentHits}${totalResults}${entityLabel}`;
+}: BreadCrumbStats) => {
+  const prefix = withThousandSeparator(currentHits);
+  const results = totalResults
+    ? ` / ${withThousandSeparator(totalResults)}`
+    : '';
+  const labelStart = label || 'Showing';
+  const suffix = entityLabel ? ` ${entityLabel}` : '';
+
+  return `${labelStart}: ${prefix}${results}${suffix}`;
 };
 
 export const SearchBreadcrumb: React.FC<Props> = React.memo(({ stats }) => {
-  const { t } = useTranslation();
-
   const renderDropDown = React.useMemo(
     () =>
       stats.map((stat) => {
@@ -90,14 +89,7 @@ export const SearchBreadcrumb: React.FC<Props> = React.memo(({ stats }) => {
               iconPlacement="right"
               aria-label="Info"
             >
-              {getLabel({
-                label: stat.label || t('Showing'),
-                currentHits: withThousandSeparator(stat.currentHits),
-                totalResults: stat.totalResults
-                  ? ` / ${withThousandSeparator(stat.totalResults)}`
-                  : '',
-                entityLabel: stat.entityLabel ? ` ${stat.entityLabel}` : '',
-              })}
+              {getLabel(stat)}
             </BreadCrumbButton>
           </Dropdown>
         );

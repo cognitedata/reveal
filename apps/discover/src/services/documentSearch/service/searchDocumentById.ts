@@ -6,7 +6,7 @@ import { Document } from '@cognite/sdk';
 import { documentSearchService } from 'modules/documentSearch/service';
 import { DocumentType } from 'modules/documentSearch/types';
 
-export const getDocumentSearchById = (
+export const searchDocumentById = (
   id: Document['id']
 ): Promise<DocumentType | undefined> => {
   return documentSearchService.documentsByIds([id]).then((result) => {

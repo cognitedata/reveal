@@ -36,6 +36,7 @@ export interface Result {
 
 export interface DocumentResult {
   count: number;
+  nextCursor?: string;
   hits: DocumentType[];
   facets: DocumentResultFacets;
   aggregates?: DocumentSearchResponse['aggregates'];

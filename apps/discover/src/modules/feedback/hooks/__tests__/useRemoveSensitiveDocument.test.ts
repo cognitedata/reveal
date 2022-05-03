@@ -1,7 +1,7 @@
 import { useQueryClient } from 'react-query';
 
 import { renderHook } from '@testing-library/react-hooks';
-import { useDocumentSearchResultQuery } from 'services/documentSearch/useDocumentSearchResultQuery';
+import { useDocumentSearchResultQuery } from 'services/documentSearch/queries/useDocumentSearchResultQuery';
 
 import { getMockDocument } from '__test-utils/fixtures/document';
 import { DOCUMENTS_QUERY_KEY } from 'constants/react-query';
@@ -21,9 +21,12 @@ jest.mock('modules/documentSearch/hooks/useDocumentSearchQueryFull', () => ({
   useDocumentSearchQueryFull: jest.fn(),
 }));
 
-jest.mock('services/documentSearch/useDocumentSearchResultQuery', () => ({
-  useDocumentSearchResultQuery: jest.fn(),
-}));
+jest.mock(
+  'services/documentSearch/queries/useDocumentSearchResultQuery',
+  () => ({
+    useDocumentSearchResultQuery: jest.fn(),
+  })
+);
 
 describe('useRemoveSensitiveDocument hook', () => {
   const setQueryData = jest.fn();
@@ -39,7 +42,7 @@ describe('useRemoveSensitiveDocument hook', () => {
   beforeEach(() => {
     (useQueryClient as jest.Mock).mockImplementation(() => ({ setQueryData }));
     (useDocumentSearchResultQuery as jest.Mock).mockImplementation(() => ({
-      data: documentResult,
+      results: documentResult,
     }));
   });
 

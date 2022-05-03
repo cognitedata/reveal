@@ -1,13 +1,8 @@
-import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import set from 'lodash/set';
+import { adaptLocalEpochToUTC } from 'utils/date/adaptLocalEpochToUTC';
 
-import {
-  DocumentFilter,
-  DocumentSearch,
-  DocumentFilterGeoJsonIntersects,
-} from '@cognite/sdk';
-import { GeoJson, GeoJsonObject } from '@cognite/seismic-sdk-js';
+import { DocumentFilter, DocumentSearch } from '@cognite/sdk';
 
 import {
   LABELS_KEY,
@@ -17,32 +12,9 @@ import {
 } from 'modules/documentSearch/constants';
 import { SearchQueryFull, Result } from 'modules/documentSearch/types';
 
-import { adaptLocalEpochToUTC } from '../../../utils/date/adaptLocalEpochToUTC';
 import { DateRange } from '../types';
 
-const generateGeoFilter = (
-  geoJson: GeoJson[]
-): DocumentFilterGeoJsonIntersects | null => {
-  const coordinates = geoJson.map((item) => {
-    const geometry = item.geometry as GeoJsonObject;
-    if (isArray(geometry.coordinates)) {
-      return geometry.coordinates[0] as unknown as [number, number];
-    }
-
-    return [0, 0];
-  });
-  return coordinates && coordinates.length > 0
-    ? {
-        geojsonIntersects: {
-          property: ['geoLocation'],
-          geometry: {
-            type: 'Polygon',
-            coordinates,
-          },
-        },
-      }
-    : null;
-};
+import { getGeoFilter } from './getGeoFilter';
 
 /*
  * Prepare the query and facets to send to the API
@@ -51,7 +23,7 @@ const generateGeoFilter = (
  */
 export const getSearchQuery = (query: SearchQueryFull) => {
   let queryInfoResults: Result = {
-    query: { query: '' },
+    query: { query: '', highlight: true },
     filter: undefined,
   };
 
@@ -74,7 +46,6 @@ export const getSearchQuery = (query: SearchQueryFull) => {
   // now we need to map the field filters to the API names
   const searchQuery: DocumentSearch['search'] = {
     query: query.phrase,
-    highlight: false, // This will now be fetch pr document rather than for all documents at once to ease the load on the backend
   };
 
   if (query.phrase) {
@@ -84,13 +55,13 @@ export const getSearchQuery = (query: SearchQueryFull) => {
   // polygon
   const geoLocation =
     query.extraGeoJsonFilters && query.extraGeoJsonFilters[0]
-      ? generateGeoFilter([
+      ? getGeoFilter([
           {
             properties: {},
             geometry: query.extraGeoJsonFilters[0].geoJson,
           },
         ])
-      : generateGeoFilter(query.geoFilter);
+      : getGeoFilter(query.geoFilter);
 
   if (geoLocation) {
     appendFilter(geoLocation);

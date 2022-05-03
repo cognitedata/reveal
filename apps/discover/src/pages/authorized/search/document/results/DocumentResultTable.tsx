@@ -17,12 +17,14 @@ import DocumentViewModal from 'components/DocumentPreview/DocumentViewModal';
 import { FavoriteStarIcon } from 'components/Icons/FavoriteStarIcon';
 import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 import { Table, RowProps } from 'components/Tablev3';
+import { FooterPaginationServer } from 'components/Tablev3/FooterPaginationServer';
 import { showErrorMessage } from 'components/Toast';
-import { DEFAULT_PAGE_SIZE } from 'constants/app';
 import { useDeepCallback, useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { documentSearchActions } from 'modules/documentSearch/actions';
+import { DOCUMENT_SEARCH_PAGE_LIMIT } from 'modules/documentSearch/constants';
 import { useDocumentConfig } from 'modules/documentSearch/hooks';
+import { useDocumentResultCount } from 'modules/documentSearch/hooks/useDocumentResultCount';
 import { useExtractParentFolder } from 'modules/documentSearch/hooks/useExtractParentFolder';
 import { useFavoriteDocumentIds } from 'modules/documentSearch/hooks/useFavoriteDocumentIds';
 import {
@@ -131,8 +133,7 @@ export const columnMap: ColumnMap<DocumentType> = {
 
 export const DocumentResultTable: React.FC = () => {
   const { selectedColumns } = useDocuments();
-
-  const data = useData();
+  const { results, hasNextPage, isFetching, fetchNextPage } = useData();
   const dispatch = useDispatch();
   const { data: savedSearch } = useQuerySavedSearchCurrent();
   const initialSortBy = get(savedSearch, 'sortBy.documents');
@@ -143,6 +144,7 @@ export const DocumentResultTable: React.FC = () => {
   const selectedDocumentIds = useSelectedDocumentIds();
   const favoriteDocumentIds = useFavoriteDocumentIds();
   const extractParentFolder = useExtractParentFolder();
+  const documentResultCount = useDocumentResultCount();
 
   const [documentToPreview, setDocumentToPreview] = useState<
     DocumentType | undefined
@@ -153,8 +155,8 @@ export const DocumentResultTable: React.FC = () => {
   }>({});
 
   const documentIds = useDeepMemo(
-    () => data.map((document) => document.id),
-    [data]
+    () => results.map((document) => document.id),
+    [results]
   );
 
   const documentIdsRef = useRef(documentIds);
@@ -253,8 +255,8 @@ export const DocumentResultTable: React.FC = () => {
       flex: false,
       hideScrollbars: true,
       pagination: {
-        enabled: true,
-        pageSize: DEFAULT_PAGE_SIZE,
+        enabled: false,
+        pageSize: DOCUMENT_SEARCH_PAGE_LIMIT,
       },
       manualSortBy: true,
       sortBy: initialSortBy,
@@ -314,13 +316,26 @@ export const DocumentResultTable: React.FC = () => {
     expandedDocumentIds,
   ]);
 
+  const Footer: React.FC = React.memo(() => {
+    return (
+      <FooterPaginationServer
+        handleLoadMore={hasNextPage ? fetchNextPage : undefined}
+        showingResults={results.length}
+        totalResults={documentResultCount}
+        isLoading={isFetching}
+        pageSize={DOCUMENT_SEARCH_PAGE_LIMIT}
+      />
+    );
+  });
+
   return (
     <>
       <Table<DocumentType>
         scrollTable
         id="doc-result-table"
-        data={data}
+        data={results}
         columns={columns}
+        Footer={Footer}
         handleRowClick={handleRowClick}
         handleDoubleClick={handleDoubleClick}
         handleRowSelect={handleRowSelect}

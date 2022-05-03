@@ -5,7 +5,7 @@ import { getMockDocumentSearch } from 'services/documentSearch/__mocks/getMockDo
 
 import { getDocumentFixture } from '__test-utils/fixtures/documents/getDocumentFixture';
 
-import { getDocumentSearchById } from '../getDocumentSearchById';
+import { searchDocumentById } from '../searchDocumentById';
 
 describe('Document search undefined', () => {
   const mockServer = setupServer(getMockDocumentSearch({ items: [] }));
@@ -13,7 +13,7 @@ describe('Document search undefined', () => {
   afterAll(() => mockServer.close());
 
   it('should be undefined', async () => {
-    const result = await getDocumentSearchById(1);
+    const result = await searchDocumentById(1);
 
     expect(result).toBeUndefined();
   });
@@ -25,7 +25,7 @@ describe('Document search', () => {
   afterAll(() => mockServer.close());
 
   it('should return expected value', async () => {
-    const result = await getDocumentSearchById(1);
+    const result = await searchDocumentById(1);
 
     expect(result?.doc.filename).toEqual(getDocumentFixture().sourceFile.name);
   });

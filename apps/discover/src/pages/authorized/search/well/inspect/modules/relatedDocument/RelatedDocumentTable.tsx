@@ -23,9 +23,9 @@ import {
   useRelatedDocumentData,
   useSelectedColumns,
 } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocument';
+import { DocumentsBulkActions } from 'pages/authorized/search/document/common/DocumentsBulkActions';
 import { DocumentResultTableHoverComponent } from 'pages/authorized/search/document/results/DocumentResultTableHoverComponent';
 import { DocumentResultTableSubRow } from 'pages/authorized/search/document/results/DocumentResultTableSubRow';
-import { DocumentsBulkActions } from 'pages/authorized/search/document/results/DocumentsBulkActions';
 import { FlexAlignJustifyContent } from 'styles/layout';
 
 import { TableBulkActionsHolder } from './elements';

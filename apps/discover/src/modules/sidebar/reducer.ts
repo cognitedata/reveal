@@ -35,35 +35,29 @@ export const initialState = {
 const runTimeConfigReducerCreator = createReducer(initialState, (builder) => {
   builder
     .addCase(toggleFilterBar, (state) => {
-      // eslint-disable-next-line no-param-reassign
       state.isOpen = !state.isOpen;
     })
     .addCase(setCategoryPage, (state, action) => {
-      // eslint-disable-next-line no-param-reassign
       state.category = action.payload;
     })
     .addCase(setCategoryFilter, (state, action) => {
-      // eslint-disable-next-line no-param-reassign
       state.appliedFilters = action.payload;
     })
     .addCase(updateCategoryCollapseKey, (state, action) => {
-      // eslint-disable-next-line no-param-reassign
       state.activeKeys[action.payload.category] = action.payload.value;
     })
     .addCase(updateCategoryAppliedFilter, (state, action) => {
       /**
-       * There is no way this funciton to know secific types becase they are inferred by
-       * where it is called.
+       * There is no way this funciton to know specific types because
+       * they are inferred by where it is called.
        */
       if (action.payload) {
-        // eslint-disable-next-line no-param-reassign
         (state as any).appliedFilters[action.payload.category][
           action.payload.facet
         ] = action.payload.value;
       }
     })
     .addCase(updateCategoryAppliedFilters, (state, action) => {
-      // eslint-disable-next-line no-param-reassign
       (state as any).appliedFilters[action.payload.category] =
         action.payload.value;
       if ('extraDocumentFilters' in action.payload) {
@@ -72,7 +66,6 @@ const runTimeConfigReducerCreator = createReducer(initialState, (builder) => {
       }
     })
     .addCase(setSearchPhrase, (state, action) => {
-      // eslint-disable-next-line no-param-reassign
       state.searchPhrase = action.payload;
     })
     .addCase(updateExtraGeoJsonAppliedFilters, (state, action) => {

@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 import React, { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   useTable,
   useSortBy,
@@ -21,19 +20,10 @@ import { EMPTY_ARRAY, EMPTY_OBJECT } from 'constants/empty';
 import { SortBy } from 'pages/types';
 import { MarginRightSmallContainer } from 'styles/layout';
 
-import {
-  TableWrap,
-  TableRow,
-  TableHead,
-  CellContent,
-  EndPaginationText,
-  Footer,
-  Thead,
-  LoadMoreButton,
-  FooterWrapper,
-} from './elements';
+import { TableWrap, TableRow, TableHead, CellContent, Thead } from './elements';
 import { selectionHook, expansionHook, indentationHook } from './hooks';
 import { TableResults } from './resultTypes';
+import { ShowMore } from './ShowMore';
 import { getStickyColumnHeadersStyles } from './stickyColumnHandler';
 import { TableColumnSortIcons } from './TableColumnSortIcons';
 import { CustomRow } from './TableRow';
@@ -52,6 +42,7 @@ const TableInner = <T extends Object>({
   handleRowSelect,
   handleRowsSelect,
   renderChildren,
+  Footer,
   renderRowSubComponent,
   renderRowOverlayComponent,
   renderRowHoverComponent,
@@ -68,7 +59,6 @@ const TableInner = <T extends Object>({
   const [selected, setSelected] = React.useState<T[]>([]);
   const [tableWidth, setTableWidth] = React.useState<number>(1000);
   const hooks: any = [useSortBy, useRowSelect];
-  const { t } = useTranslation();
   const TableWrapperRef = React.useRef<HTMLElement>(null);
 
   // NOTE: This is not working correctly. Will fix later. This should run every
@@ -202,31 +192,6 @@ const TableInner = <T extends Object>({
     };
   }, [options?.rowOptions?.selectedStyle, options?.rowOptions?.hoveredStyle]);
 
-  const showFooterForPaginationButton =
-    pagination.enabled && rows.length > pagination.pageSize;
-
-  const renderShowMore = React.useMemo(() => {
-    if (showFooterForPaginationButton) {
-      return (
-        <FooterWrapper>
-          <Footer>
-            {pageSize < rows.length ? (
-              <LoadMoreButton
-                onClick={() => setPageSize(pageSize + pagination.pageSize)}
-              />
-            ) : (
-              <EndPaginationText level={2}>
-                {t('Use filters to refine your search')}
-              </EndPaginationText>
-            )}
-          </Footer>
-        </FooterWrapper>
-      );
-    }
-
-    return null;
-  }, [pageSize, showFooterForPaginationButton]);
-
   const handleColumnHeadClick = (column: TS_FIX_ME) => {
     if (column.disableSorting) return;
     column?.toggleSortBy?.(!column.isSortedDesc);
@@ -332,6 +297,7 @@ const TableInner = <T extends Object>({
           })}
         </Thead>
       )}
+
       {(pagination.enabled ? page : rows).map((row: TS_FIX_ME) => {
         prepareRow(row);
         const isExpanded = expandable
@@ -363,7 +329,18 @@ const TableInner = <T extends Object>({
           />
         );
       })}
-      {renderShowMore}
+
+      {Footer && <Footer />}
+
+      {/* this is the client side pagination */}
+      {/* potentially in the future we can move this into the above optional Footer^ */}
+      <ShowMore
+        showingSize={pageSize}
+        enabled={pagination.enabled}
+        pageSizeLimit={pagination.pageSize}
+        totalClientData={rows.length}
+        setPageSize={setPageSize}
+      />
     </TableWrap>
   );
 

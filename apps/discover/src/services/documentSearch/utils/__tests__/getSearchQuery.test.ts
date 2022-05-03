@@ -1,13 +1,13 @@
 import { getMockGeometry } from '__test-utils/fixtures/geometry';
+import { getMockSearchQueryWithFacets } from 'modules/documentSearch/__tests__/utils';
 
-import { getMockSearchQueryWithFacets } from '../../__tests__/utils';
-import { getSearchQuery } from '../queryUtil';
+import { getSearchQuery } from '../getSearchQuery';
 
 describe('Test query builder', () => {
   describe('Test facet building', () => {
     it(`File type facet should transform to IN condition`, async () => {
       const result = getSearchQuery(getMockSearchQueryWithFacets());
-      expect(result.filter.and).toContainEqual({
+      expect(result.filter?.and).toContainEqual({
         in: { property: ['type'], values: ['Image', 'PDF'] },
       });
     });
@@ -16,7 +16,7 @@ describe('Test query builder', () => {
       const result = getSearchQuery(getMockSearchQueryWithFacets());
 
       expect(result.filter).not.toBeNull();
-      expect(result.filter.and).toContainEqual({
+      expect(result.filter?.and).toContainEqual({
         containsAny: {
           property: ['labels'],
           values: [
@@ -35,7 +35,7 @@ describe('Test query builder', () => {
       const result = getSearchQuery(getMockSearchQueryWithFacets());
 
       expect(result.filter).not.toBeNull();
-      expect(result.filter.and).toContainEqual({
+      expect(result.filter?.and).toContainEqual({
         in: {
           property: ['sourceFile', 'source'],
           values: ['bp-blob', 'bp-edm-attachment'],
@@ -55,7 +55,7 @@ describe('Test query builder', () => {
           ],
         })
       );
-      expect(result.filter.and).toContainEqual(
+      expect(result.filter?.and).toContainEqual(
         expect.objectContaining({
           geojsonIntersects: {
             geometry: geoJson,
@@ -72,7 +72,7 @@ describe('Test query builder', () => {
           geoFilter: [{ geometry }],
         })
       );
-      expect(result.filter.and).toContainEqual(
+      expect(result.filter?.and).toContainEqual(
         expect.objectContaining({
           geojsonIntersects: {
             geometry,

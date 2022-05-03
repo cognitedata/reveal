@@ -1,6 +1,7 @@
 import isEmpty from 'lodash/isEmpty';
 import { getDocumentSDKClient } from 'services/documentSearch/sdk';
-import { handleServiceError } from 'utils/errors';
+import { searchDocument } from 'services/documentSearch/service/searchDocument';
+import { getSearchQuery } from 'services/documentSearch/utils/getSearchQuery';
 import { mergeUniqueArray } from 'utils/merge';
 
 import {
@@ -13,34 +14,29 @@ import {
 } from '@cognite/sdk';
 
 import { aggregates } from 'modules/documentSearch/aggregates';
-import {
-  SearchQueryFull,
-  DocumentResult,
-  AggregateNames,
-} from 'modules/documentSearch/types';
+import { SearchQueryFull, AggregateNames } from 'modules/documentSearch/types';
 import { toDocument } from 'modules/documentSearch/utils';
 
 import { processFacets } from './utils/processFacets';
-import { getSearchQuery } from './utils/queryUtil';
-import { toDocuments } from './utils/toDocuments';
 
-const doSearch = (
-  searchQuery: DocumentSearch['search'],
-  filter: DocumentFilter | undefined,
-  sort?: DocumentSortItem[],
-  limit = 100
-): Promise<DocumentSearchResponse> => {
-  return getDocumentSDKClient().search({
-    limit,
-    sort: sort && sort.length > 0 ? sort : undefined,
-    filter: isEmpty(filter) ? undefined : filter,
-    search: searchQuery,
-    aggregates,
-  });
-};
-
-// @deprecated, use documentsByIds instead (this is only used in components/Highlight.tsx)
+/**
+ * @deprecated, use documentsByIds instead (this is only used in components/Highlight.tsx)
+ */
 export const getDocument = (query: string, documentId: string) => {
+  const doSearch = (
+    searchQuery: DocumentSearch['search'],
+    filter: DocumentFilter | undefined,
+    sort?: DocumentSortItem[],
+    limit = 100
+  ): Promise<DocumentSearchResponse> => {
+    return getDocumentSDKClient().search({
+      limit,
+      sort: sort && sort.length > 0 ? sort : undefined,
+      filter: isEmpty(filter) ? undefined : filter,
+      search: searchQuery,
+      aggregates,
+    });
+  };
   return doSearch(
     { query, highlight: true },
     {
@@ -52,43 +48,6 @@ export const getDocument = (query: string, documentId: string) => {
     [],
     1
   ).then((response) => toDocument(response.items[0]));
-};
-
-const search = (
-  query: SearchQueryFull,
-  options: { filters?: DocumentFilter; sort: DocumentSortItem[] },
-  limit?: number
-): Promise<DocumentResult> => {
-  const queryInfo = getSearchQuery(query);
-  return doSearch(
-    queryInfo.query,
-    mergeUniqueArray<DocumentFilter | undefined>(
-      queryInfo.filter,
-      options.filters
-    ),
-    options.sort,
-    limit
-  )
-    .then((result): DocumentResult => {
-      return {
-        count: result.items.length,
-        hits: toDocuments(result),
-        facets: processFacets(result),
-        aggregates: result.aggregates,
-      };
-    })
-    .catch((error) => {
-      const safeErrorResponse = {
-        count: 0,
-        hits: [],
-        facets: processFacets({
-          items: [],
-          aggregates: [],
-        }),
-      };
-
-      return handleServiceError<DocumentResult>(error, safeErrorResponse);
-    });
 };
 
 const documentsByIds = (documentIds: Document['id'][]) => {
@@ -150,7 +109,7 @@ const getCategoriesByQuery = ({
 };
 
 export const documentSearchService = {
-  search,
+  search: searchDocument,
   documentsByIds,
   getCategoriesByAssetIds,
   getCategoriesByQuery,
