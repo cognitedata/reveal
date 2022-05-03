@@ -1,85 +1,37 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IntrospectionObjectType, IntrospectionQuery } from 'graphql';
-import { CdfDatabaseService } from '../../../common/cdf-database.service';
-import { config } from '../../../config';
-import { CdfMockDatabase, CdfResourceObject } from '../../../types';
+import { CdfDatabaseService } from '../../../../common/cdf-database.service';
+import { config } from '../../../../config';
+import { CdfMockDatabase, CdfResourceObject } from '../../../../types';
 import {
   filterCollection,
   flattenNestedObjArray,
   getType,
   objToFilter,
-} from '../../../utils';
-import { camelize } from '../../../utils/text-utils';
-import {
-  assetFieldsResolver,
-  synteticTimeSeriesFieldsResolver,
-  timeSeriesFieldsResolver,
-} from './built-in-types-resolvers';
-import { longScalar } from '../../../utils/graphql/custom-scalars';
-import { aggregateDatapoints } from './timeseries-utils';
+} from '../../../../utils';
+import { camelize, capitalize } from '../../../../utils/text-utils';
 
 export interface BuildQueryResolversParams {
   version: number;
-  templategroups_id: string;
+  externalId: string;
   tablesList: string[];
   parsedSchema: IntrospectionQuery;
   db: CdfMockDatabase;
 }
 export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
   const resolvers = {
-    Long: longScalar,
     Query: {},
-    Asset: assetFieldsResolver(params.db),
-    TimeSeries: timeSeriesFieldsResolver(params.db),
-    SyntheticTimeSeries: synteticTimeSeriesFieldsResolver(params.db),
-    AggregationResult: {
-      sum: (values) => {
-        return aggregateDatapoints(values, (prev, cur) => ({
-          ...prev,
-          value: prev.value + cur.value,
-        }));
-      },
-      count: (values) => {
-        return aggregateDatapoints(values, (prev) => ({
-          ...prev,
-          value: prev.value + 1,
-        }));
-      },
-      max: (values) => {
-        return aggregateDatapoints(values, (prev, cur) =>
-          prev.value > cur.value ? prev : cur
-        );
-      },
-      min: (values) => {
-        return aggregateDatapoints(values, (prev, cur) =>
-          prev.value !== 0 && prev.value < cur.value ? prev : cur
-        );
-      },
-      average: (values) => {
-        return aggregateDatapoints(
-          values,
-          (prev, cur) => ({
-            ...prev,
-            value: prev.value + cur.value,
-          }),
-          (aggregatedDatapoint, datapointsList) => ({
-            ...aggregatedDatapoint,
-            value: aggregatedDatapoint.value / datapointsList.length,
-          })
-        );
-      },
-    },
   };
 
-  const store = CdfDatabaseService.from(params.db, 'templates');
+  const store = CdfDatabaseService.from(params.db, 'schema');
 
   const templateDb = store.find({
-    templategroups_id: params.templategroups_id,
-    version: params.version,
+    externalId: params.externalId,
   });
 
   params.tablesList.forEach((table) => {
-    resolvers.Query[`${camelize(table)}Query`] = (prm, filterParams) => {
+    resolvers.Query[`list${capitalize(table)}`] = (prm, filterParams) => {
+      console.log(table, filterParams);
       const items = fetchAndQueryData({
         globalDb: params.db,
         templateDb,
@@ -92,17 +44,15 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
 
       return {
         items,
+        edges: items.map((item) => ({ node: item })),
         cursor: '',
       };
     };
 
     const tableResolver = {};
 
-    tableResolver['_externalId'] = (refObj) => {
+    tableResolver['externalId'] = (refObj) => {
       return refObj['externalId'] || '';
-    };
-    tableResolver['_dataSetId'] = (refObj) => {
-      return refObj['dataSetId'] || 0;
     };
 
     const builtInTypes = Object.keys(config.builtInTypes);

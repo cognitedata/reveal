@@ -24,9 +24,16 @@ export class GraphQlSchemaParser {
     return introspection;
   }
 
-  getTableNames(schemaString: string): string[] {
+  getTableNames(
+    schemaString: string,
+    tableDirectiveName = 'template'
+  ): string[] {
     let m;
-    const regex = /type[\s]{1,}[a-zA-Z]{1,20}[\s]{1,}@template[\s]{1,}\{/gm;
+    const regexTemplates =
+      /type[\s]{1,}[a-zA-Z]{1,20}[\s]{1,}@template[\s]{1,}\{/gm;
+    const regexSchema = /type[\s]{1,}[a-zA-Z]{1,20}[\s]{1,}@view[\s]{1,}\{/gm;
+    const regex =
+      tableDirectiveName === 'template' ? regexTemplates : regexSchema;
 
     const templateTables = [];
 
@@ -41,7 +48,7 @@ export class GraphQlSchemaParser {
         templateTables.push(
           (match as string)
             .replace('type', '')
-            .replace('@template', '')
+            .replace('@' + tableDirectiveName, '')
             .replace('{', '')
             .trim()
         );

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { LowdbSync } from 'lowdb';
+import { Api } from './middlewares/schema/types';
 
 export type FilterMode = 'list' | 'byids' | 'filter' | 'search';
 
@@ -41,6 +42,7 @@ export type MockData = {
   events?: CdfResourceObject[];
   templategroups?: TemplateGroup[];
   templates?: TemplateGroupTemplate[];
+  schema?: Api[];
 };
 
 export interface CdfApiEndpointFilterConfig {

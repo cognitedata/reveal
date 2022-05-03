@@ -143,6 +143,7 @@ const filterFunction = (dbValue, filter) => {
   // get item value based on path
   // i.e post.title -> 'foo'
   const filterValue = filter.eq;
+  console.log('filterValue', filterValue, 'dbValue', dbValue);
 
   // Prevent toString() failing on undefined or null values
   if (dbValue === undefined || dbValue === null) {

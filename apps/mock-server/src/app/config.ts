@@ -19,6 +19,7 @@ export const config = {
     '/templategroups/.*/versions/upsert',
     '/templategroups/.*/versions/.*/graphql',
     '/schema/graphql',
+    '/schema/api/.*/graphql',
     '/timeseries/data/list',
     '/files/downloadLink',
     '/files/gcs_proxy/cognitedata-file-storage/*',
