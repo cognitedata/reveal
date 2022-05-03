@@ -603,6 +603,6 @@ void main() {
         }
 
         if (objectId > 0.0) {
-            vColor.r = 1.0;
+            vColor = texture(gradient, vec2(objectId / 500.0, 1.0 - objectId / 500.0)).rgb;
         }
 }

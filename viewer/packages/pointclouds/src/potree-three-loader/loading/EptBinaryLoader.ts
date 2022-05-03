@@ -104,7 +104,6 @@ export class EptBinaryLoader implements ILoader {
           };
 
           const offsetVec = node.boundingBox.min;
-          console.log("Node bounding box min: ", offsetVec, ", node key bounding box min: ", node.key.b.min);
 
           const objectMessage: ObjectsCommand = {
             type: 'objects',

@@ -15,7 +15,8 @@ export function computeObjectIdBuffer(positionBuffer: Float32Array,
 
     // 0 is default / unassigned value
     objectIdBuffer[i] = 0;
-      const position: Vec3 =
+
+    const position: Vec3 =
       v3Add([ positionBuffer[3 * i + 0],
               positionBuffer[3 * i + 1],
               positionBuffer[3 * i + 2] ],
