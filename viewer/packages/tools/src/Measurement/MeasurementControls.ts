@@ -81,8 +81,7 @@ export class MeasurementControls {
         this._domElement.addEventListener('mousemove', this._handleonPointerMove);
         this._startPosition.copy(intersection.point);
         this._measurement.add(intersection.point);
-        const texture = this._measurementLabel.getOverlayTexture('0');
-        this._measurementLabel.addLabel(intersection.point, texture);
+        this._measurementLabel.add(intersection.point);
       } else {
         this.updateMeasurement(intersection.point);
         this._measurement.complete();
@@ -107,9 +106,7 @@ export class MeasurementControls {
   private updateMeasurement(point: THREE.Vector3): void {
     this._measurement.update(point);
     const distanceValue = this._measurement.getMeasurementValue().toFixed(3).toString();
-    const texture = this._measurementLabel.getOverlayTexture(distanceValue);
-    this._measurementLabel.updateLabelTexture(texture);
-    this._measurementLabel.updateLabelPosition(this._startPosition, point);
+    this._measurementLabel.update(distanceValue, this._startPosition, point);
   }
 
   public updateLineOptions(options: MeasurementLineOptions): void {
