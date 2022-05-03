@@ -1,12 +1,13 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import { Body } from '@cognite/cogs.js';
+import { Body, Icon, Tooltip } from '@cognite/cogs.js';
 import { JobStatus } from 'src/api/vision/detectionModels/types';
 import styled from 'styled-components';
 import { StatusColors } from 'src/constants/Colors';
 
 export const AutoMLStatusBadge = (props: {
   status: JobStatus;
+  errorMessage?: String;
   large?: boolean;
 }) => {
   const background =
@@ -18,17 +19,24 @@ export const AutoMLStatusBadge = (props: {
       ? StatusColors.failed
       : StatusColors.queued;
 
+  const showTooltip = !!(props.status === 'Failed' && props.errorMessage);
   return (
-    <Container>
-      <StatusDot data-testid="status-dot" style={{ background }} />
-      {props.large ? (
-        <Body strong level={2}>
-          {props.status || 'Queued'}
-        </Body>
-      ) : (
-        <div>{props.status || 'Queued'}</div>
-      )}
-    </Container>
+    <Tooltip
+      content={<span>{props.errorMessage}</span>}
+      disabled={!showTooltip}
+    >
+      <Container>
+        <StatusDot data-testid="status-dot" style={{ background }} />
+        {props.large ? (
+          <Body strong level={2}>
+            {props.status || 'Queued'}
+          </Body>
+        ) : (
+          <div>{props.status || 'Queued'}</div>
+        )}
+        {showTooltip && <Icon type="Info" style={{ marginLeft: '6px' }} />}
+      </Container>
+    </Tooltip>
   );
 };
 
