@@ -75,7 +75,7 @@
     "ci": "yarn lint --max-warnings 0",
     "cy:open": "yarn cypress open",
     "cy:run": "cypress run",
-    "test:open":"start-server-and-test start http://localhost:3010 cy:open",
+    "test:open": "start-server-and-test start http://localhost:3010 cy:open",
     "deploy": "gsutil -m cp -r build/. gs://cdf-hub-dev"
   },
   "browserslist": {
@@ -117,6 +117,7 @@
     "enzyme-adapter-react-16": "^1.15.5",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-prettier": "~6.0.0",
+    "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-import": "^2.22",
     "eslint-plugin-jest": "^24.1.0",
     "eslint-plugin-jsx-a11y": "^6.3.0",

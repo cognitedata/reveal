@@ -34,6 +34,7 @@
     "tests/*",
     "**/*.(spec|test|stories).ts+(|x)",
     "**/*.test.ts",
-    "**/*.stories.tsx"
+    "**/*.stories.tsx",
+    "cypress/*"
   ]
 }

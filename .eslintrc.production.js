@@ -4,8 +4,8 @@ module.exports = {
       project: ['./tsconfig.eslint.json'],
       tsconfigRootDir: __dirname,
     },
-    plugins: ['@typescript-eslint', 'react-hooks'],
-    extends: ['@cognite'],
+    plugins: ['@typescript-eslint', 'react-hooks','cypress'],
+    extends: ['@cognite',' "plugin:cypress/recommended"'],
     rules: {
       'no-console': ['error'],
       'no-nested-ternary': 'error',
@@ -45,5 +45,8 @@ module.exports = {
       'react/no-unused-prop-types': ['off'],
     },
     ignorePatterns: ['.eslintrc.production.js'],
+    parserOptions: {
+      project: ['./tsconfig.json'], // Specify it only for TypeScript files
+    },
   };
   
