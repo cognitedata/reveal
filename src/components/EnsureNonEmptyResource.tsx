@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Alert } from 'antd';
+import { Infobox } from '@cognite/cogs.js';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { Loader } from 'components/Loader/Loader';
 import { ResourceType, convertResourceType } from 'types';
@@ -10,7 +10,7 @@ type Props = {
   children?: React.ReactNode;
 };
 
-const ResourceAlert = styled(Alert)`
+const ResourceAlert = styled(Infobox)`
   margin-top: 50px;
 `;
 
@@ -19,30 +19,27 @@ const ResourceAlert = styled(Alert)`
  * alert on error or if the list call is empty.
  */
 export function EnsureNonEmptyResource({ api, children }: Props) {
-  const { data, isFetched, isError } = useList(convertResourceType(api), {
+  const { data, isLoading, isError } = useList(convertResourceType(api), {
     limit: 1,
   });
 
   if (isError) {
     return (
-      <ResourceAlert
-        type="error"
-        message="Error"
-        description="An error occurred retrieving the resource. Make sure you have access to this resource type."
-      />
+      <ResourceAlert type="danger" title="Error">
+        An error occurred retrieving the resource. Make sure you have access to
+        this resource type.
+      </ResourceAlert>
     );
   }
-  if (!isFetched) {
+  if (isLoading) {
     return <Loader />;
   }
 
   if (data && data.length === 0) {
     return (
-      <ResourceAlert
-        type="info"
-        message="No resources found"
-        description="No resources of this type were found in this project."
-      />
+      <ResourceAlert type="default" title="No resources found">
+        No resources of this type were found in this project.
+      </ResourceAlert>
     );
   }
 

@@ -1,9 +1,17 @@
 import React from 'react';
-import { Card, Button, Dropdown, Menu, notification } from 'antd';
+import { Card } from 'antd';
 import { Timeseries } from '@cognite/sdk';
 import { TimeseriesChart } from 'containers/Timeseries';
 import styled from 'styled-components';
-import { Body, Tooltip, Icon, Colors } from '@cognite/cogs.js';
+import {
+  Body,
+  Tooltip,
+  Colors,
+  Menu,
+  toast,
+  Button,
+  Dropdown,
+} from '@cognite/cogs.js';
 import { GridCellProps, LatestDatapoint } from 'components';
 import { DateRangeProps } from 'CommonProps';
 
@@ -17,11 +25,12 @@ export const TimeseriesSparklineCard = ({
   const copy = async (s: string) => {
     if (s.length > 0) {
       await navigator.clipboard.writeText(`${s}`);
-      notification.info({
-        key: 'clipboard',
-        message: 'Clipboard updated',
-        description: `'${s}' is now available in your clipboard.`,
-      });
+      toast.info(
+        <div>
+          <h3>Clipboard updated</h3>
+          <p>{s} is now available in your clipboard.</p>
+        </div>
+      );
     }
   };
 
@@ -43,8 +52,12 @@ export const TimeseriesSparklineCard = ({
         }}
       >
         <CardHeader>
-          <Dropdown overlay={menu}>
-            <Button type="text" icon={<Icon type="EllipsisHorizontal" />} />
+          <Dropdown content={menu}>
+            <Button
+              type="ghost"
+              icon="EllipsisHorizontal"
+              iconPlacement="right"
+            />
           </Dropdown>
         </CardHeader>
         <TimeseriesChart

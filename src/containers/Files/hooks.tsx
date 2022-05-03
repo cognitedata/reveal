@@ -1,4 +1,5 @@
 import { useCdfItem, useList } from '@cognite/sdk-react-query-hooks';
+import React from 'react';
 import {
   FileInfo,
   CogniteEvent,
@@ -14,7 +15,7 @@ import uniqBy from 'lodash/uniqBy';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { sleep } from 'utils';
-import { notification } from 'antd';
+import { toast, Body } from '@cognite/cogs.js';
 
 export const useAnnotations = (fileId: number) => {
   const { data: file, isFetched: fileFetched } = useCdfItem<FileInfo>('files', {
@@ -106,10 +107,12 @@ export const useReviewFile = (fileId?: number) => {
   };
 
   const onError = (error: any) => {
-    notification.error({
-      message: 'An error occurred while trying to approve this file.',
-      description: JSON.stringify(error),
-    });
+    toast.error(
+      <div>
+        <h3>An error occurred while trying to approve this file.</h3>
+        <Body>{JSON.stringify(error)}</Body>
+      </div>
+    );
   };
 
   const approveFile = async () => {
@@ -130,9 +133,7 @@ export const useReviewFile = (fileId?: number) => {
         },
       ];
       await sdk.files.update(updatePatch);
-      notification.success({
-        message: 'Diagram approved successfully',
-      });
+      toast.success('Diagram approved successfully');
     }
   };
 

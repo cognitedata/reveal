@@ -1,6 +1,6 @@
 import React from 'react';
-import { Icon, Button, Tooltip } from '@cognite/cogs.js';
-import { Row, Col } from 'antd';
+import { Icon, Button, Tooltip, Row, Col, Flex } from '@cognite/cogs.js';
+
 import { ResourceType } from 'types';
 import { ResourceFilterProps, SetResourceFilterProps } from 'CommonProps';
 import {
@@ -101,17 +101,18 @@ export const SearchFilters = ({
   >
     {visible && (
       <>
-        <HeaderRow align="middle" justify="center">
-          <IconCol flex="none">
-            <Icon type="Filter" />
-          </IconCol>
-          <Col flex="auto">Filters</Col>
+        <HeaderRow alignItems="center">
+          <Flex style={{ flex: 1 }}>
+            <IconCol>
+              <Icon type="Filter" />
+            </IconCol>
+
+            <div>Filters</div>
+          </Flex>
           {allowHide && (
-            <Col flex="none">
-              <HideFiltersTooltip content="Hide">
-                <Button icon="PanelLeft" type="ghost" onClick={closeFilters} />
-              </HideFiltersTooltip>
-            </Col>
+            <HideFiltersTooltip content="Hide">
+              <Button icon="PanelLeft" type="ghost" onClick={closeFilters} />
+            </HideFiltersTooltip>
           )}
         </HeaderRow>
         <div
@@ -142,13 +143,13 @@ export const SearchFilters = ({
   </div>
 );
 
-const IconCol = styled(Col)`
+const IconCol = styled.div`
   margin-right: 16px;
   padding-right: 16px;
   border-right: 1px solid ${lightGrey};
 `;
 
-const HeaderRow = styled(Row)`
+const HeaderRow = styled(Flex)`
   padding-right: 16px;
   padding-bottom: 20px;
   margin-top: 24px;

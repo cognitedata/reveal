@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { notification } from 'antd';
+import { toast } from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';
 
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
@@ -32,10 +32,9 @@ export default function MissingPermissionFeedback(props: Props) {
 
   useEffect(() => {
     if (!groupPermission) {
-      notification.error({
-        key: 'group-acl-warning',
-        message: `You are missing access to Group:ACL to read permissions`,
-        description: (
+      toast.error(
+        <div>
+          <h3>You are missing access to Group:ACL to read permissions</h3>
           <p>
             Go to{' '}
             <a
@@ -47,29 +46,31 @@ export default function MissingPermissionFeedback(props: Props) {
             </a>{' '}
             and set up any missing permissions or contact your administrator!
           </p>
-        ),
-      });
+        </div>
+      );
     }
   }, [groupPermission, tenant]);
 
   useEffect(() => {
     if (groupPermission && !hasPermission) {
-      notification.error({
-        message: `You are missing access ${key}:${type}`,
-        description: (
-          <p>
-            Go to{' '}
-            <a
-              href={`https://console.cognitedata.com/${tenant}/access-management`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Console
-            </a>{' '}
-            and set up any missing permissions or contact your administrator!
-          </p>
-        ),
-      });
+      toast.error(
+        <div>
+          <h3>
+            You are missing access {key}:{type}
+            <p>
+              Go to{' '}
+              <a
+                href={`https://console.cognitedata.com/${tenant}/access-management`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Console
+              </a>{' '}
+              and set up any missing permissions or contact your administrator!
+            </p>
+          </h3>
+        </div>
+      );
     }
   }, [groupPermission, hasPermission, key, type, tenant]);
 

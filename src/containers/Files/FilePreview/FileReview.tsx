@@ -1,8 +1,8 @@
 import { CogniteAnnotation } from '@cognite/annotations';
-import { Body, Button, Icon } from '@cognite/cogs.js';
+import { Body, Button, Icon, Tooltip } from '@cognite/cogs.js';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { Tooltip } from 'antd';
+
 import { ResourceIcons } from 'components';
 import { AppContext } from 'context/AppContext';
 import React, { useContext } from 'react';
@@ -69,10 +69,8 @@ const FileReview = ({
       </div>
       {pendingAnnotations.length ? (
         <Tooltip
-          title={
-            !labelsAccess &&
-            'Missing permissions to approve tags, labels:read & labels:write'
-          }
+          visible={!labelsAccess}
+          content="Missing permissions to approve tags, labels:read & labels:write"
         >
           <ButtonWrapper>
             <Button

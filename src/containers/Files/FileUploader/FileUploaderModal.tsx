@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { FileInfo } from '@cognite/sdk';
-import { Modal } from 'antd';
-import { Button } from '@cognite/cogs.js';
+
+import { Button, Modal } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import {
   searchBaseCacheKey,
@@ -18,6 +18,9 @@ const Wrapper = styled.div`
     margin-top: 6px;
   }
 
+  && .ant-upload-drag-container {
+    padding: 0 12px;
+  }
   && .ant-select-selection__clear {
     background: none;
     right: 34px;

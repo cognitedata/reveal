@@ -1,12 +1,11 @@
 import React, { useContext, useState, useEffect, useMemo } from 'react';
-import { Select, Popover, Spin } from 'antd';
+import { Popover } from 'antd';
 import { DataSet } from '@cognite/sdk';
 import {
   useInfiniteList,
   usePermissions,
 } from '@cognite/sdk-react-query-hooks';
-import styled from 'styled-components';
-import { A, Body, Colors } from '@cognite/cogs.js';
+import { A, Body, Select } from '@cognite/cogs.js';
 import { createLink } from 'utils/URLUtils';
 import { stringContains } from 'utils/stringUtils';
 import { AppContext } from 'context/AppContext';
@@ -21,6 +20,10 @@ export type DataSetSelectProps = {
   allowClear?: boolean;
 };
 
+type OptionType = {
+  value: string;
+  label: string;
+};
 export const DataSetSelect = ({
   onSelectionChange,
   style = { minWidth: '306px', maxHeight: '36px' },
@@ -30,7 +33,9 @@ export const DataSetSelect = ({
   limit = 1000,
   allowClear = false,
 }: DataSetSelectProps) => {
-  const [currentSelection, setCurrentSelection] = useState([] as number[]);
+  const [currentSelection, setCurrentSelection] = useState<
+    OptionType | OptionType[]
+  >([]);
   const [visible, setIsVisible] = useState<boolean>(false);
   const [query, setQuery] = useState('');
   const [datasetSearchResults, setDatasetSearchResults] = useState<DataSet[]>(
@@ -59,25 +64,33 @@ export const DataSetSelect = ({
     [listData]
   );
 
-  const setSelectedValue = (ids?: number | number[]) => {
-    if (!ids) {
+  const setSelectedValue = (options?: OptionType | OptionType[]) => {
+    if (!options) {
       setCurrentSelection([]);
       onSelectionChange([]);
-    } else if (multiple) {
-      setCurrentSelection(ids as number[]);
-      onSelectionChange(ids as number[]);
-    } else {
-      setCurrentSelection([ids as number]);
-      onSelectionChange([ids as number]);
+    } else if (multiple && Array.isArray(options)) {
+      setCurrentSelection(options);
+      onSelectionChange(options.map(option => +option.value));
+    } else if (!Array.isArray(options)) {
+      setCurrentSelection([options]);
+      onSelectionChange([+options]);
     }
     setQuery('');
   };
 
   useEffect(() => {
     if (selectedDataSetIds?.length) {
-      setCurrentSelection(selectedDataSetIds);
+      const selectedCurrentDataSelection = datasetSearchResults
+        .filter(searchResult =>
+          selectedDataSetIds.find(id => id === searchResult.id)
+        )
+        .map(dataset => ({
+          value: `${dataset.id}`,
+          label: dataset.name || '',
+        }));
+      setCurrentSelection(selectedCurrentDataSelection);
     }
-  }, [selectedDataSetIds]);
+  }, [datasetSearchResults, selectedDataSetIds]);
 
   useEffect(() => {
     const dataSetsFilter = (dataset: DataSet) =>
@@ -98,50 +111,34 @@ export const DataSetSelect = ({
           </Body>
         }
       >
-        <Select style={style} disabled />
+        <Select options={[]} disabled />
       </Popover>
     );
   }
   return (
-    <Spin spinning={!!isLoading} size="small">
-      <DataSetSelector
-        showSearch
-        style={style}
-        disabled={disabled}
-        mode={multiple ? 'multiple' : undefined}
-        placeholder="Select data sets"
-        value={multiple ? currentSelection : currentSelection[0]}
-        onChange={(id: any) => {
-          setSelectedValue(id);
-          setIsVisible(false);
-        }}
-        maxTagTextLength={10}
-        onSearch={setQuery}
-        dropdownMatchSelectWidth
-        filterOption={false}
-        maxTagCount="responsive"
-        onDropdownVisibleChange={setIsVisible}
-        open={visible}
-        loading={!!isLoading}
-        notFoundContent={<Body level={2}>No data sets found</Body>}
-        allowClear={allowClear}
-      >
-        {datasetSearchResults.map((dataset: DataSet) => (
-          <Select.Option
-            key={dataset.id}
-            value={dataset.id}
-            label={dataset.name}
-          >
-            {dataset.name}
-          </Select.Option>
-        ))}
-      </DataSetSelector>
-    </Spin>
+    <Select
+      icon="Loader"
+      showSearch
+      isMulti
+      style={style}
+      disabled={disabled}
+      mode={multiple ? 'multiple' : undefined}
+      placeholder="Select data sets"
+      value={currentSelection}
+      onChange={setSelectedValue}
+      maxTagTextLength={10}
+      dropdownMatchSelectWidth
+      filterOption={false}
+      maxTagCount="responsive"
+      options={datasetSearchResults.map((dataset: DataSet) => ({
+        value: dataset.id.toString(),
+        label: dataset.name || '',
+      }))}
+      onDropdownVisibleChange={setIsVisible}
+      open={visible}
+      loading={!!isLoading}
+      notFoundContent={<Body level={2}>No data sets found</Body>}
+      allowClear={allowClear}
+    />
   );
 };
-
-const DataSetSelector = styled(Select)`
-  li.ant-select-selection__choice {
-    border: 1px solid ${Colors['greyscale-grey7'].hex()};
-  }
-`;
