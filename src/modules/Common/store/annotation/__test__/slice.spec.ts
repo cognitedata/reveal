@@ -44,14 +44,7 @@ describe('Test annotation reducer', () => {
         payload: [],
       };
 
-      expect(reducer(previousState, action)).toEqual({
-        files: {
-          byId: {},
-        },
-        annotations: {
-          byId: {},
-        },
-      });
+      expect(reducer(previousState, action)).toEqual(initialState);
     });
 
     test('should clear only specified fileIds when clear cache is false and response is empty', () => {

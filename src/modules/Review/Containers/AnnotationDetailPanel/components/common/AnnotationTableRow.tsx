@@ -1,5 +1,5 @@
 import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { Icon, SegmentedControl, Tooltip } from '@cognite/cogs.js';
+import { Detail, Icon, SegmentedControl, Tooltip } from '@cognite/cogs.js';
 import { AnnotationActionMenuExtended } from 'src/modules/Common/Components/AnnotationActionMenu/AnnotationActionMenuExtended';
 import React from 'react';
 import styled from 'styled-components';
@@ -7,6 +7,7 @@ import { AnnotationTableRowProps } from 'src/modules/Review/types';
 import { pushMetric } from 'src/utils/pushMetric';
 import { createLink } from '@cognite/cdf-utilities';
 import { Link } from 'react-router-dom';
+import { AnnotationTableRowAttribute } from './AnnotationTableRowAttribute';
 
 export const AnnotationTableRow = ({
   annotation,
@@ -58,6 +59,15 @@ export const AnnotationTableRow = ({
           />
         ) : undefined}
       </ShowHideIconContainer>
+      <AttributesIconContainer>
+        <Detail style={{ color: '#595959' }}>
+          <Tooltip
+            content={<AnnotationTableRowAttribute annotation={annotation} />}
+          >
+            <Icon type="Info" />
+          </Tooltip>
+        </Detail>
+      </AttributesIconContainer>
       <ApproveBtnContainer onClick={(evt) => evt.stopPropagation()}>
         <StyledSegmentedControl
           status={annotation.status}
@@ -179,6 +189,12 @@ const ShowHideIconContainer = styled.div`
   align-items: center;
   flex: 0 1 36px;
   justify-content: center;
+`;
+
+const AttributesIconContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: start;
 `;
 
 const ActionMenuContainer = styled.div`

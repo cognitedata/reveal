@@ -17,12 +17,12 @@ import {
   ColorsOCR,
   ColorsPersonDetection,
   ColorsTagDetection,
-  ColorsTextAndIconsSecondary,
 } from 'src/constants/Colors';
 import { Keypoint } from 'src/modules/Review/types';
 import { AnnotationsBadgeCounts } from 'src/modules/Common/types';
 import { AllIconTypes } from '@cognite/cogs.js';
 import { v4 as uuidv4 } from 'uuid';
+import { getRandomColor } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
 import {
   isAssetLinkedAnnotation,
@@ -68,12 +68,14 @@ export const ModelTypeStyleMap = {
   [VisionDetectionModelType.OCR]: ColorsOCR,
   [VisionDetectionModelType.TagDetection]: ColorsTagDetection,
   [VisionDetectionModelType.ObjectDetection]: ColorsObjectDetection,
+  [VisionDetectionModelType.GaugeReader]: ColorsObjectDetection, // gauge reader is regarded as object detection models
   [VisionDetectionModelType.CustomModel]: ColorsObjectDetection, // custom models are regarded as object detection models
 };
 export const ModelTypeIconMap: { [key: number]: string } = {
   [VisionDetectionModelType.OCR]: 'Scan',
   [VisionDetectionModelType.TagDetection]: 'ResourceAssets',
   [VisionDetectionModelType.ObjectDetection]: 'Scan',
+  [VisionDetectionModelType.GaugeReader]: 'Scan',
   [VisionDetectionModelType.CustomModel]: 'Scan',
 };
 
@@ -81,6 +83,7 @@ export const ModelTypeAnnotationTypeMap: { [key: number]: AnnotationTypeV1 } = {
   [VisionDetectionModelType.OCR]: 'vision/ocr',
   [VisionDetectionModelType.TagDetection]: 'vision/tagdetection',
   [VisionDetectionModelType.ObjectDetection]: 'vision/objectdetection',
+  [VisionDetectionModelType.GaugeReader]: 'vision/gaugereader',
   [VisionDetectionModelType.CustomModel]: 'vision/custommodel',
 };
 
@@ -115,7 +118,7 @@ export class AnnotationUtilsV1 {
         return data.color;
       }
       if (data.keypoint) {
-        return ColorsTextAndIconsSecondary.color;
+        return getRandomColor();
       }
     }
     if (text === 'person') {
@@ -185,6 +188,19 @@ export class AnnotationUtilsV1 {
     assetId?: number,
     assetExternalId?: string
   ): VisionAnnotationV1 {
+    const modifiedData = // use random color for keypoints if no color information exist
+      !data || !data.keypoint || !data.keypoints?.length
+        ? data
+        : {
+            ...data,
+            keypoints: data.keypoints.map((item) => {
+              return {
+                ...item,
+                color: item.color || getRandomColor(),
+              };
+            }),
+          };
+
     return {
       color: AnnotationUtilsV1.getAnnotationColor(text, modelType, data),
       modelType,
@@ -193,7 +209,7 @@ export class AnnotationUtilsV1 {
       status: tempConvertAnnotationStatus(status),
       text,
       label: text,
-      data: data || {},
+      data: modifiedData || {},
       annotatedResourceId: fileId,
       annotatedResourceType: 'file',
       annotatedResourceExternalId: fileExternalId!,
@@ -451,6 +467,7 @@ export const getAnnotationsBadgeCounts = (
         [
           VisionDetectionModelType.ObjectDetection,
           VisionDetectionModelType.CustomModel,
+          VisionDetectionModelType.GaugeReader,
         ].includes(item.modelType) && item.label !== 'person'
     );
     annotationsBadgeProps.objects = objects.length;

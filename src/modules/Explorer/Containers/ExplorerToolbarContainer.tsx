@@ -86,6 +86,10 @@ export const ExplorerToolbarContainer = (
       { from: 'explorer' }
     );
   };
+
+  const onAutoMLModelPage = () => {
+    history.push(getLink(workflowRoutes.models), { from: 'explorer' });
+  };
   const onDelete = () => {
     dispatch(DeleteFilesById(selectedFileIds));
   };
@@ -111,6 +115,7 @@ export const ExplorerToolbarContainer = (
       onDelete={onDelete}
       onBulkEdit={onBulkEdit}
       onTrainModel={onTrainModel}
+      onAutoMLModelPage={onAutoMLModelPage}
       handleCancelOtherEdits={handleCancelOtherEdits}
     />
   );

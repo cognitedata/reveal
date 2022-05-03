@@ -6,6 +6,7 @@ import { BulkActionMenu } from 'src/modules/Common/Components/BulkActionMenu/Bul
 import { LoadingBar } from 'src/modules/Common/Components/LoadingBar/LoadingBar';
 import { ExplorationSearchBar } from 'src/modules/Explorer/Components/ExplorationSearchBar';
 import { ExplorerToolbarContainerProps } from 'src/modules/Explorer/Containers/ExplorerToolbarContainer';
+import { useFlag } from '@cognite/react-feature-flags';
 
 type ExplorerToolbarProps = ExplorerToolbarContainerProps & {
   maxSelectCount?: number;
@@ -19,6 +20,7 @@ type ExplorerToolbarProps = ExplorerToolbarContainerProps & {
   onBulkEdit: () => void;
   onDelete: () => void;
   onTrainModel: () => void;
+  onAutoMLModelPage: () => void;
   handleCancelOtherEdits: () => void;
 };
 
@@ -38,15 +40,22 @@ export const ExplorerToolbar = ({
   onBulkEdit,
   onDelete,
   onTrainModel,
+  onAutoMLModelPage,
   reFetch,
   handleCancelOtherEdits,
 }: ExplorerToolbarProps) => {
+  const visionAutoMLEnabled = useFlag('VISION_AutoML', {
+    fallback: false,
+    forceRerender: true,
+  });
+
   return (
     <>
       <TitleBar>
         <Left>
           <Title level={2}>Vision Explore</Title>
         </Left>
+
         <Right>
           <Button
             style={{ marginLeft: 14 }}
@@ -67,6 +76,17 @@ export const ExplorerToolbar = ({
             onTrainModel={onTrainModel}
             handleCancelOtherEdits={handleCancelOtherEdits}
           />
+          {visionAutoMLEnabled && (
+            <Button
+              style={{ marginLeft: 14 }}
+              icon="ArrowRight"
+              type="tertiary"
+              iconPlacement="right"
+              onClick={onAutoMLModelPage}
+            >
+              AutoML Models
+            </Button>
+          )}
         </Right>
       </TitleBar>
 

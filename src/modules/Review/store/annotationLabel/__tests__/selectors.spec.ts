@@ -333,7 +333,7 @@ describe('Test annotationLabel selectors', () => {
       const previousState = {
         ...initialState,
       };
-      expect(currentCollection(previousState)).toEqual(null);
+      expect(currentCollection(previousState, 1)).toEqual(null);
     });
 
     test('Should return last collection++', () => {
@@ -363,8 +363,9 @@ describe('Test annotationLabel selectors', () => {
           selectedIds: [],
         },
       };
-      expect(currentCollection(previousState)).toEqual({
+      expect(currentCollection(previousState, 1)).toEqual({
         ...keypointCollectionStateList[0],
+        annotatedResourceId: 1,
         selected: false,
         keypoints: keypointStateList.map((item) => {
           return { ...item, selected: false };

@@ -1,5 +1,5 @@
 import {
-  AnnotatedResourceIdEither,
+  AnnotatedResourceId,
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
@@ -24,8 +24,8 @@ export const createVisionAnnotationStub = <T>({
   id: number;
   createdTime: number;
   lastUpdatedTime: number;
-  status: any;
-  resourceId: AnnotatedResourceIdEither;
+  status: Status;
+  resourceId: AnnotatedResourceId;
   data: T;
 }): VisionAnnotation<T> => ({
   id,

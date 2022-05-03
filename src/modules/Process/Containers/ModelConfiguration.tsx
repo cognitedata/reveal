@@ -8,12 +8,13 @@ import styled from 'styled-components';
 import { RootState } from 'src/store/rootReducer';
 import { useSelector } from 'react-redux';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
-import { AutoMLModel } from 'src/api/vision/autoML/types';
+import { AutoMLModelCore } from 'src/api/vision/autoML/types';
 import { BUILT_IN_MODEL_COUNT } from 'src/modules/Process/store/slice';
 import * as tagDetectionModelDetails from './ModelDetails/TagDetectionModelDetails';
 import * as objectDetectionModelDetails from './ModelDetails/ObjectDetectionModelDetails';
 import * as ocrModelDetails from './ModelDetails/OcrModelDetails';
 import * as customModelDetails from './ModelDetails/customModelDetails';
+import * as gaugeReaderDetails from './ModelDetails/gaugeReaderDetails';
 
 const queryClient = new QueryClient();
 
@@ -35,7 +36,7 @@ const BadgeWrapper = (modelName: string, badge: JSX.Element) => {
 
 export const ModelConfiguration = (props: {
   disabledModelTypes: VisionDetectionModelType[];
-  customModels?: AutoMLModel[];
+  customModels?: AutoMLModelCore[];
   handleCustomModelCreate: () => void;
 }) => {
   const availableDetectionModels = useSelector(
@@ -44,7 +45,7 @@ export const ModelConfiguration = (props: {
 
   const [currentModelSettings, setCurrentModelSettings] = useState(
     // show custom model settings if custom model added and automl is enabled
-    availableDetectionModels.length > 3 &&
+    availableDetectionModels.length > BUILT_IN_MODEL_COUNT &&
       !props.disabledModelTypes.includes(VisionDetectionModelType.CustomModel)
       ? availableDetectionModels.length - 1
       : 0
@@ -98,6 +99,16 @@ export const ModelConfiguration = (props: {
               objectDetectionModelDetails.badge(item.modelName, hideText)
             ),
             content: objectDetectionModelDetails.content(index),
+          };
+          break;
+
+        case VisionDetectionModelType.GaugeReader:
+          labelAndContent = {
+            label: BadgeWrapper(
+              item.modelName,
+              gaugeReaderDetails.badge(item.modelName, hideText)
+            ),
+            content: gaugeReaderDetails.content(index),
           };
           break;
         case VisionDetectionModelType.CustomModel:

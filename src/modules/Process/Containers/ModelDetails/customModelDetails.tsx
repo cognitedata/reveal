@@ -19,7 +19,8 @@ import { ColorsObjectDetection } from 'src/constants/Colors';
 import CustomModelIllustration from 'src/assets/visualDescriptions/CustomModelIllustration.svg';
 
 import { AutoMLModelSelectFilter } from 'src/modules/Process/Components/AutoMLModelSelectFilter';
-import { AutoMLModel } from 'src/api/vision/autoML/types';
+import { AutoMLModelCore } from 'src/api/vision/autoML/types';
+import { getLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import {
   ColorBox,
   NameContainer,
@@ -32,7 +33,10 @@ export const description = () => {
   return (
     <Detail>
       Use the generated computer vision models to run predictions on images in
-      CDF.
+      CDF. Explore available models{' '}
+      <a href={getLink(workflowRoutes.models)} target="_blank" rel="noreferrer">
+        here.
+      </a>
     </Detail>
   );
 };
@@ -51,7 +55,10 @@ export const badge = (modelName: string, hideText: boolean = false) => {
   );
 };
 
-export const content = (modelIndex: number, customModels?: AutoMLModel[]) => {
+export const content = (
+  modelIndex: number,
+  customModels?: AutoMLModelCore[]
+) => {
   const dispatch = useDispatch();
   const params: ParamsCustomModel = useSelector(
     ({ processSlice }: RootState) => {

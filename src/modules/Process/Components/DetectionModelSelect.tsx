@@ -8,6 +8,7 @@ import * as tagDetectionModelDetails from 'src/modules/Process/Containers/ModelD
 import * as objectDetectionModelDetails from 'src/modules/Process/Containers/ModelDetails/ObjectDetectionModelDetails';
 import * as ocrModelDetails from 'src/modules/Process/Containers/ModelDetails/OcrModelDetails';
 import * as customModelDetails from 'src/modules/Process/Containers/ModelDetails/customModelDetails';
+import * as gaugeReaderDetails from 'src/modules/Process/Containers/ModelDetails/gaugeReaderDetails';
 
 import {
   ColorsOCR,
@@ -101,6 +102,13 @@ export function DetectionModelSelect({
           return {
             label: objectDetectionModelDetails.badge(item.modelName),
             value: VisionDetectionModelType.ObjectDetection,
+            backgroundColor: ColorsObjectDetection.backgroundColor,
+            isSelectable: true,
+          };
+        case VisionDetectionModelType.GaugeReader:
+          return {
+            label: gaugeReaderDetails.badge(item.modelName),
+            value: VisionDetectionModelType.GaugeReader,
             backgroundColor: ColorsObjectDetection.backgroundColor,
             isSelectable: true,
           };

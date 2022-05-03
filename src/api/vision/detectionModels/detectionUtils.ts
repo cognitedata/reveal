@@ -10,6 +10,7 @@ export function getDetectionModelEndpoint(modelType: VisionDetectionModelType) {
     [VisionDetectionModelType.OCR]: 'ocr',
     [VisionDetectionModelType.TagDetection]: 'tagdetection',
     [VisionDetectionModelType.ObjectDetection]: 'objectdetection',
+    [VisionDetectionModelType.GaugeReader]: 'gaugereader',
     [VisionDetectionModelType.CustomModel]: 'automl/prediction',
   };
   return `${sdk.getBaseUrl()}/api/playground/projects/${

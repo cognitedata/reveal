@@ -30,7 +30,7 @@ import {
 import { getContainer } from 'src/utils';
 import { AppDispatch } from 'src/store';
 import { AutoMLAPI } from 'src/api/vision/autoML/AutoMLAPI';
-import { AutoMLModel } from 'src/api/vision/autoML/types';
+import { AutoMLModelCore } from 'src/api/vision/autoML/types';
 import { useFlag } from '@cognite/react-feature-flags';
 import ProgressStatus from './ProgressStatus';
 
@@ -93,7 +93,8 @@ export const ProcessToolBar = () => {
   };
 
   const [isModalOpen, setModalOpen] = useState(false);
-  const [customModels, setCustomModels] = useState<AutoMLModel[] | undefined>();
+  const [customModels, setCustomModels] =
+    useState<AutoMLModelCore[] | undefined>();
 
   const customModelExists =
     availableDetectionModels.length > BUILT_IN_MODEL_COUNT;
@@ -163,9 +164,13 @@ export const ProcessToolBar = () => {
 
   useEffect(() => {
     const getModels = async () => {
-      let items = await AutoMLAPI.listAutoMLModels();
-      items = items.filter((item) => item.status === 'Completed');
-      setCustomModels(items);
+      const models = await AutoMLAPI.listAutoMLModels();
+      // await Promise.all(
+      //   models.map((model) => AutoMLAPI.getAutoMLModel(model.jobId))
+      // ).then((modelJobs) =>
+      //   setCustomModels(modelJobs.filter((item) => item.status === 'Completed'))
+      // );
+      setCustomModels(models);
     };
     if (visionAutoMLEnabled) getModels();
   }, []);
