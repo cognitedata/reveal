@@ -49,10 +49,20 @@ const RouteWithTopbar = ({ component, ...rest }: RouteProps) => {
 };
 
 // This will be moved out of the routes in a next refactor to have the user as a singleton class
-const identifyUser = (user: UserInfo) => {
+const identifyUser = (
+  user: UserInfo,
+  project: string,
+  cluster = 'europe-west1-1',
+  azureADTenant?: string
+) => {
   if (user) {
     if (config.mixpanelToken) {
       mixpanel.identify(user.email || user.displayName || user.id);
+      mixpanel.people.set({ $name: user.displayName, $email: user.email });
+      mixpanel.people.union('Projects', project);
+      mixpanel.people.union('Clusters', cluster);
+      if (azureADTenant)
+        mixpanel.people.union('Azure AD Tenants', azureADTenant);
     }
     Sentry.setUser({
       email: user.email,
@@ -102,18 +112,20 @@ const AppRoutes = () => {
                   type: 'loginRedirect',
                 },
               })
-              .then((gotToken) => {
+              .then(async (gotToken) => {
                 if (!gotToken) {
-                  sdk.authenticate().then(async (wasAuthenticated) => {
-                    setAuthenticated(wasAuthenticated);
-                    sdk.setProject(project);
-                    if (wasAuthenticated) {
-                      const login = await azureInfo(sdk);
-                      identifyUser(login);
-                    }
-                    setInitializing(false);
-                  });
+                  const wasAuthenticated = await sdk.authenticate();
+                  sdk.getAzureADAccessToken();
+                  setAuthenticated(wasAuthenticated);
+                  sdk.setProject(project);
+                  if (wasAuthenticated) {
+                    const login = await azureInfo(sdk);
+                    identifyUser(login, project, cluster, options?.directory);
+                  }
+                  setInitializing(false);
                 } else {
+                  const loginInfo = await azureInfo(sdk);
+                  identifyUser(loginInfo, project, cluster, options?.directory);
                   setAuthenticated(true);
                   sdk.setProject(project);
                   setInitializing(false);
@@ -138,7 +150,7 @@ const AppRoutes = () => {
                 setAuthenticated(wasAuthenticated);
                 if (wasAuthenticated) {
                   const login = await loginStatus(sdk);
-                  identifyUser(login);
+                  identifyUser(login, project, cluster);
                 }
                 setInitializing(false);
               });

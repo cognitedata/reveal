@@ -4,27 +4,10 @@ import { isDevelopment, isProduction, isStaging } from 'utils/environment';
 
 const mixpanelConfig = {
   prefix: 'Charts',
-  doNotTrackDomains: ['statnett.cogniteapp.com', 'power-no.cogniteapp.com'],
-  disableTracking: isDevelopment, // You can choose to enable tracking in development commenting this line
 };
-
-// Do-not-track is only valid for mixpanel.
-// Sentry is categorized as legitimate tracking in order to provide good support
-function isDoNotTrackDomain() {
-  const { doNotTrackDomains } = mixpanelConfig;
-  return (
-    Array.isArray(doNotTrackDomains) &&
-    doNotTrackDomains.length > 0 &&
-    doNotTrackDomains.some((domain) => window.location.href.includes(domain))
-  );
-}
 
 if (config.mixpanelToken) {
   mixpanel.init(config.mixpanelToken, { debug: isDevelopment });
-  // Automates do-not-track
-  if (mixpanelConfig.disableTracking || isDoNotTrackDomain()) {
-    mixpanel.opt_out_tracking();
-  }
 } else if (isProduction || isStaging) {
   throw new Error('Mixpanel token must be present outside of development!');
 } else {
