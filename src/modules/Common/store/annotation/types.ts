@@ -1,7 +1,7 @@
 import {
   VisionAnnotation,
   VisionAnnotationDataType,
-} from 'src/modules/Common/types/Annotation';
+} from 'src/modules/Common/types/annotation';
 
 export type AnnotationState = {
   files: {
