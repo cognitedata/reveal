@@ -120,7 +120,7 @@ export function intersectCadNodeFromStoredPixel(
       cadNode
     };
 
-    if (!cameraChanged || depthArray.length > 0) {
+    if (cameraChanged || depthArray.length === 0) {
       const previousRenderMode = cadNode.renderMode;
       cadNode.renderMode = RenderMode.Depth;
       depthArray = pickPixelBufferColor(pickInput, clearColor, clearAlpha);
