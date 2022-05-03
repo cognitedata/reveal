@@ -8,6 +8,7 @@ import {
 import {
   annotatedFilesById,
   annotationsById,
+  filesAnnotationCounts,
   makeSelectAnnotationsForFileIds,
   makeSelectFileAnnotations,
 } from 'src/modules/Common/store/annotation/selectors';
@@ -173,6 +174,24 @@ describe('Test annotation selectors', () => {
         '10': [],
         '20': [annotations[1]],
         '30': [],
+      });
+    });
+  });
+
+  describe('Test filesAnnotationCounts', () => {
+    test('should return number of annotations for each file', () => {
+      const previousState = {
+        ...initialState,
+        files: {
+          byId: {
+            '10': [1, 2],
+            '20': [3],
+          },
+        },
+      };
+      expect(filesAnnotationCounts(previousState, [10, 20])).toEqual({
+        '10': 2,
+        '20': 1,
       });
     });
   });

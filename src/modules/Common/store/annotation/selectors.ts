@@ -61,3 +61,16 @@ export const makeSelectAnnotationsForFileIds = () =>
       return data;
     }
   );
+
+export const filesAnnotationCounts = createDeepEqualSelector(
+  (state: AnnotationState) => state.files.byId,
+  (_: AnnotationState, fileIds: number[]) => fileIds,
+  (allFiles, fileIds) => {
+    const data: Record<number, number> = {};
+    fileIds.forEach((id) => {
+      data[id] = allFiles[id]?.length || 0;
+    });
+
+    return data;
+  }
+);
