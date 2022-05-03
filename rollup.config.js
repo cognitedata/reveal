@@ -1,19 +1,24 @@
 import typescript from 'rollup-plugin-typescript2';
 
 export default {
-  input: 'src/index.ts',
+  input: 'index.ts',
   output: [
     {
-      dir: 'dist/cjs',
-      format: 'cjs',
-    },
-    {
-      dir: 'dist/esm',
+      dir: 'dist',
       format: 'esm',
       preserveModules: true,
     },
   ],
-  external: ['react', 'react-dom', 'react-query', 'styled-components'],
+  external: [
+    '@cognite/cdf-utilities',
+    '@cognite/react-feature-flags',
+    'i18next',
+    'i18next-locize-backend',
+    'locize',
+    'react',
+    'react-dom',
+    'react-i18next',
+  ],
   plugins: [
     typescript({
       typescript: require('typescript'),
