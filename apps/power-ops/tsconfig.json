@@ -2,8 +2,15 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "baseUrl": "src",
-    "module": "esnext"
+    "target": "es6",
+    "module": "esnext",
+    "types": ["vite/client", "jest", "@testing-library/jest-dom"]
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "build"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".storybook/**/*",
+    ".storybook-dev/**/*"
+  ],
+  "exclude": ["node_modules", "build", "dist"]
 }
