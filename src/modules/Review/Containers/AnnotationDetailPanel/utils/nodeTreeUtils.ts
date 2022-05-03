@@ -16,7 +16,10 @@ export const isCategoryData = (data: Data): data is RowData<Category> => {
 export const isAnnotationData = (
   data: Data
 ): data is RowData<ReviewAnnotation> => {
-  return !!(data as ReviewAnnotation).lastUpdatedTime;
+  return (
+    'annotatedResourceId' in (data as ReviewAnnotation) &&
+    'lastUpdatedTime' in (data as ReviewAnnotation)
+  );
 };
 
 export const isKeypointAnnotationData = (

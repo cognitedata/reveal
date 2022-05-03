@@ -19,6 +19,8 @@ import {
   VisionAnnotationV1,
 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { makeSelectFileAnnotations } from 'src/modules/Common/store/annotationV1/selectors';
+import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
+import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 
 export interface VisibleAnnotation extends VisionAnnotationV1 {
   show: boolean;
@@ -148,6 +150,18 @@ const reviewSlice = createSlice({
       (state, { payload }) => {
         // clear loaded Ids
         state.fileIds = state.fileIds.filter((id) => !payload.includes(id));
+      }
+    );
+
+    // select created or updated annotations if no other annotation is already selected
+    builder.addMatcher(
+      isAnyOf(CreateAnnotations.fulfilled, UpdateAnnotations.fulfilled),
+      (state, { payload }) => {
+        payload.forEach((annotation) => {
+          if (!state.selectedAnnotationIds.length) {
+            state.selectedAnnotationIds = [annotation.id];
+          }
+        });
       }
     );
   },
