@@ -158,7 +158,11 @@ export const AutoMLMetricsOverview = (props: { model?: AutoMLTrainingJob }) => {
               Status
             </Body>
             <Body strong level={2}>
-              <AutoMLStatusBadge status={model.status} large />
+              <AutoMLStatusBadge
+                status={model.status}
+                errorMessage={model.errorMessage}
+                large
+              />
             </Body>
           </ModelDataContainer>
 

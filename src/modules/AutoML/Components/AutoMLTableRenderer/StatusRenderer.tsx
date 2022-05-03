@@ -5,12 +5,12 @@ import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 export const StatusRenderer = ({
-  rowData: { status },
+  rowData: { status, errorMessage },
 }: {
   rowData: AutoMLTableDataType;
 }) => {
   return status ? (
-    <AutoMLStatusBadge status={status} />
+    <AutoMLStatusBadge status={status} errorMessage={errorMessage} />
   ) : (
     <StyledIcon type="Loading" />
   );
