@@ -1,4 +1,7 @@
-import { VisionAnnotationDataType } from 'src/modules/Common/types/annotation';
+import {
+  VisionAnnotationDataType,
+  VisionAnnotationType,
+} from 'src/modules/Common/types/annotation';
 import {
   ImageAssetLink,
   ImageClassification,
@@ -54,4 +57,25 @@ export const isImageClassificationData = (
     !isImageAssetLinkData(data) &&
     !isImageExtractedTextData(data)
   );
+};
+
+export const getTypeGuardForVisionAnnotationDataType = (
+  visionAnnotationType: VisionAnnotationType
+) => {
+  switch (visionAnnotationType) {
+    case VisionAnnotationType.imageObjectDetectionPolygon:
+      return isImageObjectDetectionPolygonData;
+    case VisionAnnotationType.imageExtractedText:
+      return isImageExtractedTextData;
+    case VisionAnnotationType.imageAssetLink:
+      return isImageAssetLinkData;
+    case VisionAnnotationType.imageKeypointCollection:
+      return isImageKeypointCollectionData;
+    case VisionAnnotationType.imageClassification:
+      return isImageClassificationData;
+    case VisionAnnotationType.imageObjectDetectionBoundingBox:
+      return isImageObjectDetectionBoundingBoxData;
+    default:
+      return (_data: VisionAnnotationDataType) => false;
+  }
 };

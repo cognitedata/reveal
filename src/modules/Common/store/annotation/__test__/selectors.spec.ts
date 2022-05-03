@@ -3,6 +3,7 @@ import { initialState } from 'src/modules/Common/store/annotation/slice';
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
 import {
   getDummyImageClassificationAnnotation,
+  getDummyImageExtractedTextAnnotation,
   getDummyImageObjectDetectionBoundingBoxAnnotation,
 } from 'src/modules/Common/store/annotation/utils/getDummyAnnotations';
 import {
@@ -11,8 +12,41 @@ import {
   filesAnnotationCounts,
   makeSelectAnnotationsForFileIds,
   makeSelectFileAnnotations,
+  makeSelectFileAnnotationsByType,
 } from 'src/modules/Common/store/annotation/selectors';
 import { Status } from 'src/api/annotation/types';
+import { VisionAnnotationType } from 'src/modules/Common/types';
+
+const annotations = [
+  getDummyImageClassificationAnnotation({
+    id: 1,
+    annotatedResourceId: 10,
+    label: 'foo',
+    status: Status.Suggested,
+  }),
+  getDummyImageObjectDetectionBoundingBoxAnnotation({
+    id: 2,
+    annotatedResourceId: 10,
+  }),
+  getDummyImageObjectDetectionBoundingBoxAnnotation({
+    id: 3,
+    annotatedResourceId: 20,
+    label: 'bar',
+    status: Status.Rejected,
+  }),
+  getDummyImageObjectDetectionBoundingBoxAnnotation({
+    id: 4,
+    annotatedResourceId: 20,
+  }),
+  getDummyImageObjectDetectionBoundingBoxAnnotation({
+    id: 5,
+    annotatedResourceId: 20,
+  }),
+  getDummyImageExtractedTextAnnotation({
+    id: 6,
+    annotatedResourceId: 30,
+  }),
+];
 
 const mockState: AnnotationState = {
   ...initialState,
@@ -26,30 +60,12 @@ const mockState: AnnotationState = {
   },
   annotations: {
     byId: {
-      '1': getDummyImageObjectDetectionBoundingBoxAnnotation({
-        id: 1,
-        annotatedResourceId: 10,
-      }),
-      '2': getDummyImageObjectDetectionBoundingBoxAnnotation({
-        id: 2,
-        annotatedResourceId: 10,
-      }),
-      '3': getDummyImageObjectDetectionBoundingBoxAnnotation({
-        id: 3,
-        annotatedResourceId: 20,
-      }),
-      '4': getDummyImageObjectDetectionBoundingBoxAnnotation({
-        id: 4,
-        annotatedResourceId: 20,
-      }),
-      '5': getDummyImageObjectDetectionBoundingBoxAnnotation({
-        id: 5,
-        annotatedResourceId: 20,
-      }),
-      '6': getDummyImageObjectDetectionBoundingBoxAnnotation({
-        id: 6,
-        annotatedResourceId: 30,
-      }),
+      '1': annotations[0],
+      '2': annotations[1],
+      '3': annotations[2],
+      '4': annotations[3],
+      '5': annotations[4],
+      '6': annotations[5],
     },
   },
 };
@@ -119,44 +135,16 @@ describe('Test annotation selectors', () => {
 
   describe('Test makeSelectAnnotationsForFileIds', () => {
     const selectAnnotationsForFileIds = makeSelectAnnotationsForFileIds();
-    const annotations = [
-      getDummyImageClassificationAnnotation({
-        id: 1,
-        annotatedResourceId: 10,
-        label: 'foo',
-        status: Status.Suggested,
-      }),
-      getDummyImageObjectDetectionBoundingBoxAnnotation({
-        id: 2,
-        annotatedResourceId: 20,
-        label: 'bar',
-        status: Status.Rejected,
-      }),
-    ];
-    const previousState = {
-      files: {
-        byId: {
-          '10': [1],
-          '20': [2],
-        },
-      },
-      annotations: {
-        byId: {
-          '1': annotations[0],
-          '2': annotations[1],
-        },
-      },
-    };
     test('should return all annotations for provided file ids', () => {
-      expect(selectAnnotationsForFileIds(previousState, [10, 20, 30])).toEqual({
-        '10': [annotations[0]],
-        '20': [annotations[1]],
-        '30': [], // prefer to not raise exception in selectors
+      expect(selectAnnotationsForFileIds(mockState, [10, 20, 40])).toEqual({
+        '10': [annotations[0], annotations[1]],
+        '20': [annotations[2], annotations[3], annotations[4]],
+        '40': [], // prefer to not raise exception in selectors
       });
     });
     test('should return the annotations filtered by text for provided file ids', () => {
       expect(
-        selectAnnotationsForFileIds(previousState, [10, 20, 30], {
+        selectAnnotationsForFileIds(mockState, [10, 20, 30], {
           annotationText: 'foo',
         })
       ).toEqual({
@@ -167,14 +155,34 @@ describe('Test annotation selectors', () => {
     });
     test('should return the annotations filtered by status for provided file ids', () => {
       expect(
-        selectAnnotationsForFileIds(previousState, [10, 20, 30], {
+        selectAnnotationsForFileIds(mockState, [10, 20, 30], {
           annotationState: Status.Rejected,
         })
       ).toEqual({
         '10': [],
-        '20': [annotations[1]],
+        '20': [annotations[2]],
         '30': [],
       });
+    });
+  });
+
+  describe('Test makeSelectFileAnnotationsByType', () => {
+    const selectFileAnnotationsByType = makeSelectFileAnnotationsByType();
+
+    test('should select annotations with specified type', () => {
+      // select annotations for file id 10 with model type imageClassification
+      expect(
+        selectFileAnnotationsByType(mockState, 10, [
+          VisionAnnotationType.imageClassification,
+        ])
+      ).toEqual([annotations[0]]);
+
+      // select annotations for file id 20 with model type imageObjectDetectionBoundingBox
+      expect(
+        selectFileAnnotationsByType(mockState, 20, [
+          VisionAnnotationType.imageObjectDetectionBoundingBox,
+        ])
+      ).toEqual([annotations[2], annotations[3], annotations[4]]);
     });
   });
 
