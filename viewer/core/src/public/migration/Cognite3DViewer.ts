@@ -1098,9 +1098,9 @@ export class Cognite3DViewer {
 
     //Retrive the full pixel buffer if the camera has changed
     let cameraChanged = false;
-    this.cameraManager.on('cameraChange', function() {
+    this.cameraManager.on('cameraChange', function () {
       cameraChanged = true;
-    })
+    });
 
     return intersectionCadNodesFromStoredPixel(cadNodes, input, cameraChanged);
   }
