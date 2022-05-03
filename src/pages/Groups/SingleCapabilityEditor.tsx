@@ -99,7 +99,22 @@ const validateScope = (value: any, capability: string): FormValue<object> => {
       errorMessage: 'Select at least one security category',
     };
   }
-  if (value.idScope && value.idScope.ids.length === 0) {
+  if (
+    value.idScope &&
+    value.idScope.ids.length === 0 &&
+    capability === 'extractionPipelinesAcl'
+  ) {
+    return {
+      value,
+      validateStatus: 'error',
+      errorMessage: 'Select at least one extraction pipeline',
+    };
+  }
+  if (
+    value.idScope &&
+    value.idScope.ids.length === 0 &&
+    capability === 'datasetsAcl'
+  ) {
     return {
       value,
       validateStatus: 'error',
@@ -111,6 +126,23 @@ const validateScope = (value: any, capability: string): FormValue<object> => {
       value,
       validateStatus: 'error',
       errorMessage: 'Select at least one data set',
+    };
+  }
+  if (
+    value.extractionPipelineScope &&
+    value.extractionPipelineScope.ids.length === 0
+  ) {
+    return {
+      value,
+      validateStatus: 'error',
+      errorMessage: 'Select at least one extraction pipeline',
+    };
+  }
+  if (value.partition && value.partition.partitionIds.length === 0) {
+    return {
+      value,
+      validateStatus: 'error',
+      errorMessage: 'Select at least one partition',
     };
   }
   if (value.tableScope && isEmpty(value.tableScope)) {
@@ -305,7 +337,8 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
             !capabilityType.value ||
             !actions.value ||
             actions.value.length === 0 ||
-            !scope.value
+            !scope.value ||
+            !!scope.errorMessage
           }
           onClick={() => addCapability()}
         >
