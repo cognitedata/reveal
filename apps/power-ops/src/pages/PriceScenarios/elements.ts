@@ -21,6 +21,9 @@ export const GraphContainer = styled.div`
 
 export const StyledTabs = styled(Tabs)`
   background: none;
+  .rc-tabs-nav-list {
+    margin: auto;
+  }
 `;
 
 export const StyledIcon = styled(Icon)`
