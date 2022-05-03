@@ -1,7 +1,10 @@
 import compact from 'lodash/compact';
-import isEmpty from 'lodash/isEmpty';
 
-import { NPTEvent, PreviewCasingType } from 'modules/wellSearch/types';
+import {
+  NDSEvent,
+  NPTEvent,
+  PreviewCasingType,
+} from 'modules/wellSearch/types';
 
 import { CasingType } from './interfaces';
 
@@ -21,20 +24,42 @@ export const mirrorCasingData = (data: PreviewCasingType[]) => {
   return [...reverseData, ...data];
 };
 
-export const getMinMaxDepth = (
+export const getMdRange = (
   casingsList: CasingType[],
-  events: NPTEvent[]
+  nptEvents: NPTEvent[],
+  ndsEvents: NDSEvent[]
 ) => {
-  const minDepth = 0;
+  /**
+   * Move to data layer after sdk clean up
+   */
+  const casingMin = Math.min(...casingsList.map((casing) => casing.startDepth));
+  const casingMax = Math.max(...casingsList.map((casing) => casing.endDepth));
+  const nptMdList = nptEvents.filter((event) => !!event.measuredDepth);
+  const nptMin = Math.min(
+    ...compact(nptMdList.map((event) => event.measuredDepth?.value))
+  );
+  const nptMax = Math.max(
+    ...compact(nptMdList.map((event) => event.measuredDepth?.value))
+  );
+  const ndsMin = Math.min(
+    ...compact(
+      ndsEvents
+        .filter((event) => event.metadata && !!event.metadata.md_hole_start)
+        .map((event) => Number(event.metadata!.md_hole_start))
+    )
+  );
+  const ndsMax = Math.max(
+    ...compact(
+      ndsEvents
+        .filter((event) => event.metadata && !!event.metadata.md_hole_end)
+        .map((event) => Number(event.metadata!.md_hole_end))
+    )
+  );
 
-  let maxDepth = Math.max(...casingsList.map((row) => row.endDepth));
-  if (isEmpty(casingsList) && !isEmpty(events)) {
-    maxDepth = Math.max(
-      ...compact(events.map((row) => row.measuredDepth?.value))
-    );
-  }
-
-  return [minDepth, maxDepth];
+  return [
+    Math.min(casingMin, nptMin, ndsMin),
+    Math.max(casingMax, nptMax, ndsMax),
+  ];
 };
 
 /**

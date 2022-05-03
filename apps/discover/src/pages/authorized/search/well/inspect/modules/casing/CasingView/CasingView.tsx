@@ -70,7 +70,7 @@ import {
   DepthLabel,
 } from './elements';
 import { CasingViewTypeProps } from './interfaces';
-import { getMinMaxDepth, isTied, mirrorCasingData } from './utils';
+import { getMdRange, isTied, mirrorCasingData } from './utils';
 
 const MIN_SCALE_HEIGHT = 16;
 
@@ -113,7 +113,7 @@ const CasingView: FC<CasingViewTypeProps> = ({
     return data;
   }, [casingsList, scaleBlocks, sideMode]);
 
-  const [minDepth, maxDepth] = getMinMaxDepth(casingsList, nptEvents);
+  const [minDepth, maxDepth] = getMdRange(casingsList, nptEvents, ndsEvents);
 
   const validNptEvents = useMemo(
     () => filterNptByDepth(nptEvents, minDepth, maxDepth),
