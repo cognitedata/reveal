@@ -12,6 +12,8 @@ import { CasingViewTypeProps } from '../interfaces';
 const props: CasingViewTypeProps = {
   wellboreName: 'Wllbore 1',
   wellName: 'Well 1',
+  waterDepth: 10,
+  rkbLevel: 20,
   unit: UserPreferredUnit.FEET,
   events: [],
   isEventsLoading: true,
@@ -22,6 +24,8 @@ const props: CasingViewTypeProps = {
       outerDiameter: '22.0',
       startDepth: 10,
       endDepth: 100,
+      startDepthTVD: 10,
+      endDepthTVD: 80,
       depthUnit: '',
     },
   ],

@@ -1,12 +1,13 @@
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
 import uniqBy from 'lodash/uniqBy';
-import { getPercent } from 'utils/getPercent';
 import { toFraction } from 'utils/number/toFraction';
 
 import { Sequence } from '@cognite/sdk';
 
 import { CasingType } from 'pages/authorized/search/well/inspect/modules/casing/CasingView/interfaces';
+import { getScale } from 'pages/authorized/search/well/inspect/modules/casing/helper';
+import { SCALE_BLOCK_HEIGHT } from 'pages/authorized/search/well/inspect/modules/common/Events/constants';
 
 import { PreviewCasingType } from '../types';
 
@@ -80,8 +81,11 @@ const sortCasingsByDiameter = (casings: CasingType[]) => {
 };
 
 export const convertToPreviewData = (
-  casings: CasingType[]
+  casings: CasingType[],
+  scaleBlocks: number[]
 ): PreviewCasingType[] => {
+  const scale = getScale(scaleBlocks);
+
   // Need to show casings in increasing order of diameter
   const sortedCasings = sortCasingsByDiameter(casings);
 
@@ -119,8 +123,9 @@ export const convertToPreviewData = (
 
     return {
       ...casing,
-      casingStartDepth: getPercent(casing.startDepth, maxDepth),
-      casingDepth: getPercent(casing.endDepth - casing.startDepth, maxDepth),
+      casingStartDepth: scale(casing.startDepth) * SCALE_BLOCK_HEIGHT,
+      casingDepth:
+        scale(casing.endDepth - casing.startDepth) * SCALE_BLOCK_HEIGHT,
       casingDescription: description,
       liner: casing.name ? casing.name.toLowerCase().includes('liner') : false,
       maximumDescription: maxDescription,

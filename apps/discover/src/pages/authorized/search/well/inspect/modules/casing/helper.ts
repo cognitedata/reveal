@@ -1,5 +1,8 @@
+import { scaleLinear } from 'd3-scale';
+import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
+import last from 'lodash/last';
 import { UnitConverterItem } from 'utils/units';
 
 import { Sequence } from '@cognite/sdk';
@@ -8,13 +11,14 @@ import { FEET, UserPreferredUnit } from 'constants/units';
 import { convertObject } from 'modules/wellSearch/utils';
 
 import { COMMON_COLUMN_WIDTHS } from '../../constants';
+import {
+  SCALE_BLOCK_HEIGHT,
+  SCALE_BOTTOM_PADDING,
+  SCALE_PADDING,
+} from '../common/Events/constants';
 
 import { CasingType } from './CasingView/interfaces';
 import { CasingData, FormattedCasings } from './interfaces';
-
-const SCALE_BLOCK_HEIGHT = 40;
-const SCALE_PADDING = 16;
-const SCALE_BOTTOM_PADDING = 24;
 
 /**
  * This returns string depth in proper number format
@@ -50,6 +54,8 @@ export const getFortmattedCasingData = (
         key: casingData.id,
         wellName: casingData.wellName,
         wellboreName: casingData.wellboreName,
+        waterDepth: casingData?.waterDepth || 0,
+        rkbLevel: casingData?.rkbLevel || 0,
         casings: validCasings
           .map((casing: Sequence) =>
             mapSequenceToCasingType(casing, prefferedUnit)
@@ -73,9 +79,10 @@ export const mapSequenceToCasingType = (
   return {
     id: casing.id,
     name: casing.metadata ? casing.metadata.assy_name : '',
-    outerDiameter: casing.metadata
-      ? Number(casing.metadata.assy_size).toFixed(3)
-      : '',
+    outerDiameter:
+      casing.metadata && !Number.isNaN(Number(casing.metadata.assy_size))
+        ? Number(casing.metadata.assy_size).toFixed(3)
+        : '0',
     startDepth: getDepth(
       casing.metadata ? casing.metadata.assy_original_md_top : '0'
     ),
@@ -183,22 +190,25 @@ export const getCasingColumnsWithPrefferedUnit = (unit: string) => {
   ];
 };
 
-export const getScaleBlocks = (
-  height: number,
-  minDepth: number,
-  maxDepth: number
-) => {
-  const count = Math.floor((height - SCALE_PADDING) / SCALE_BLOCK_HEIGHT);
-  const distance = maxDepth - minDepth;
-  const pixelDepth = distance / (height - SCALE_PADDING - SCALE_BOTTOM_PADDING);
-  return [...Array(count).keys()]
-    .map((row) =>
-      Number(
-        (
-          minDepth +
-          ((row + 1) * SCALE_BLOCK_HEIGHT - SCALE_PADDING) * pixelDepth
-        ).toFixed(2)
-      )
-    )
-    .filter((row) => !Number.isNaN(row));
+export const getScaleBlocks = (scaleHeight: number, maxDepth: number) => {
+  const domainMax = maxDepth + SCALE_BOTTOM_PADDING;
+  const blocksCountWithoutZero = Math.floor(
+    (scaleHeight - SCALE_PADDING) / SCALE_BLOCK_HEIGHT
+  );
+  const blocksCount = blocksCountWithoutZero
+    ? blocksCountWithoutZero - 1
+    : blocksCountWithoutZero;
+  const interval = Math.round(domainMax / blocksCount);
+  return [
+    0,
+    ...[...Array(blocksCount).keys()]
+      .map((blockIndex) => Number(((blockIndex + 1) * interval).toFixed(2)))
+      .filter((row) => !Number.isNaN(row)),
+  ];
+};
+
+export const getScale = (scaleBlocks: number[]) => {
+  return scaleLinear()
+    .domain([head(scaleBlocks) || 0, last(scaleBlocks) || 0])
+    .range([0, scaleBlocks.length - 1]);
 };

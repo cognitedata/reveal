@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 
+import { getRkbLevel } from 'dataLayers/wells/wellbores/selectors/getRkbLevel';
 import { getWellboreName } from 'dataLayers/wells/wellbores/selectors/getWellboreName';
+import { getWaterDepth } from 'dataLayers/wells/wells/selectors/getWaterDepth';
 import capitalize from 'lodash/capitalize';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
@@ -131,6 +133,9 @@ export const useSelectedWellboresCasingsData = () => {
           tvdData.tvdUnit = tvdUnit;
         }
 
+        const wellWaterDepth = getWaterDepth(well);
+        const wellboreRkbLevel = getRkbLevel(wellbore);
+
         if (topMD && bottomMD) {
           tempData.push({
             wellName: well.name,
@@ -144,6 +149,10 @@ export const useSelectedWellboresCasingsData = () => {
             mdUnit,
             odUnit,
             idUnit,
+            waterDepth: wellWaterDepth?.value,
+            waterDepthUnit: wellWaterDepth?.unit,
+            rkbLevel: wellboreRkbLevel?.value,
+            rkbLevelUnit: wellboreRkbLevel?.unit,
             casingNames: casingNames.join(', '),
             casings,
             ...tvdData,
@@ -199,6 +208,18 @@ export const getCasingUnitChangeAccessors = (
           id: 'id',
           accessor: 'bottomTVD',
           fromAccessor: 'tvdUnit',
+          to: toUnit,
+        },
+        {
+          id: 'id',
+          accessor: 'waterDepth',
+          fromAccessor: 'waterDepthUnit',
+          to: toUnit,
+        },
+        {
+          id: 'id',
+          accessor: 'rkbLevel',
+          fromAccessor: 'rkbLevelUnit',
           to: toUnit,
         },
       ]

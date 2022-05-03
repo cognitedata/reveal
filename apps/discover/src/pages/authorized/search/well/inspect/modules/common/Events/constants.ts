@@ -11,3 +11,7 @@ export const EMPTY_STATE_TEXT =
   'This wellbore has no casing and NPT events data';
 export const EMPTY_SCHEMA_TEXT = 'This wellbore has no schema data';
 export const LOADING_TEXT = 'Loading';
+
+export const SCALE_BLOCK_HEIGHT = 40;
+export const SCALE_PADDING = 16;
+export const SCALE_BOTTOM_PADDING = 24;

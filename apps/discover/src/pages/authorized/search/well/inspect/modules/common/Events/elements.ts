@@ -5,6 +5,12 @@ import { Label } from '@cognite/cogs.js';
 import { SubTitleText } from 'components/EmptyState/elements';
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
+import {
+  SCALE_BLOCK_HEIGHT,
+  SCALE_BOTTOM_PADDING,
+  SCALE_PADDING,
+} from './constants';
+
 export const CasingViewListWrapper = styled.div`
   height: calc(100% - 4px);
   white-space: nowrap;
@@ -78,6 +84,18 @@ export const BodyColumnHeaderWrapper = styled(FlexRow)`
   border-top-right-radius: 12px;
 `;
 
+export const BodyColumnHeaderLegend = styled(FlexRow)`
+  margin-left: auto;
+`;
+
+export const LegendIndicator = styled.div`
+  height: ${sizes.small};
+  width: ${sizes.small};
+  border-radius: 50%;
+  margin: 0 ${sizes.extraSmall} 2px ${sizes.normal};
+  background: ${(props: { color: string }) => props.color};
+`;
+
 export const BodyColumnMainHeader = styled(Flex)`
   font-weight: 500;
   font-size: 12px;
@@ -98,8 +116,7 @@ export const BodyColumnSubHeader = styled(Flex)`
 
 export const BodyColumnBody = styled(Flex)`
   height: calc(100% - 32px);
-  padding: ${sizes.normal};
-  padding-bottom: 24px;
+  padding-bottom: ${SCALE_BOTTOM_PADDING}px;
   position: relative;
   > * h6 {
     display: none;
@@ -117,29 +134,29 @@ export const DepthMeasurementScale = styled(FlexColumn)`
 `;
 
 export const ScaleLine = styled(Flex)`
-  height: 40px;
+  height ${SCALE_BLOCK_HEIGHT}px;
   width: 100%;
   border-bottom: 1px solid var(--cogs-greyscale-grey3);
   justify-content: center;
-  min-height: 40px;
+  min-height: ${SCALE_BLOCK_HEIGHT}px;
 `;
 
 export const LastScaleBlock = styled(Flex)`
-  height: 40px;
-  min-height: 40px;
+  height: ${SCALE_BLOCK_HEIGHT}px;
+  min-height: ${SCALE_BLOCK_HEIGHT}px;
   width: 100%;
   justify-content: center;
 `;
 
 export const ScaleLineDepth = styled.div`
   font-size: 12px;
-  line-height: 16px;
+  line-height: ${SCALE_PADDING}px;
   display: flex;
   align-items: center;
   text-align: center;
   letter-spacing: -0.008em;
   color: var(--cogs-greyscale-grey7);
-  height: 16px;
+  height: ${SCALE_PADDING}px;
   padding: 0 ${sizes.small};
   top: 32px;
   position: relative;
@@ -158,7 +175,7 @@ export const EventsCountBadge = styled(Flex)`
 
   font-weight: 500;
   font-size: 12px;
-  line-height: 16px;
+  line-height: ${SCALE_PADDING}px;
   align-items: center;
   justify-content: center;
   letter-spacing: -0.004em;
@@ -186,8 +203,8 @@ export const NdsEventsCountBadge = styled(EventsCountBadge)`
 `;
 
 export const EventsCountBadgeWrapper = styled(Flex)`
-  width: 40px;
-  height: 40px;
+  width: ${SCALE_BLOCK_HEIGHT}px;
+  height: ${SCALE_BLOCK_HEIGHT}px;
   justify-content: center;
   align-items: center;
 `;

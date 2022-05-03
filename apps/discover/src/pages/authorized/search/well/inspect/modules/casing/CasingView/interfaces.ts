@@ -18,6 +18,8 @@ export type CasingViewTypeProps = {
   casings: CasingType[];
   wellboreName: string;
   wellName: string;
+  waterDepth: number;
+  rkbLevel: number;
   unit: UserPreferredUnit;
   nptEvents: NPTEvent[];
   ndsEvents: NDSEvent[];

@@ -5,7 +5,7 @@ import { testRenderer } from '__test-utils/renderer';
 import DepthColumn, { Props } from '../Events/DepthColumn';
 
 const casingViewProps = {
-  scaleBlocks: [100, 200, 300],
+  scaleBlocks: [0, 100, 200, 300],
   unit: 'm',
 };
 
@@ -30,13 +30,16 @@ describe('Depth Column', () => {
   it(`should display depth values`, async () => {
     await defaultTestInit();
     expect(
-      await screen.findByText(`${casingViewProps.scaleBlocks[0]}.00`)
+      await screen.findByText(`${casingViewProps.scaleBlocks[0]}`)
     ).toBeInTheDocument();
     expect(
       await screen.findByText(`${casingViewProps.scaleBlocks[1]}.00`)
     ).toBeInTheDocument();
     expect(
       await screen.findByText(`${casingViewProps.scaleBlocks[2]}.00`)
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(`${casingViewProps.scaleBlocks[3]}.00`)
     ).toBeInTheDocument();
   });
 });

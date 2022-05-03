@@ -16,7 +16,7 @@ describe('getCasingColumnsWithPrefferedUnit', () => {
 
 describe('getScaleBlocks', () => {
   it('Should return scale blocks', async () => {
-    const blocks = getScaleBlocks(200, 0, 5000);
-    expect(blocks).toEqual([750, 2000, 3250, 4500]);
+    const blocks = getScaleBlocks(200, 5000);
+    expect(blocks).toEqual([0, 1675, 3350, 5025]);
   });
 });

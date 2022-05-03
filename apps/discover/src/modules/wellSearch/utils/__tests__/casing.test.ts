@@ -57,22 +57,24 @@ describe('normalize casings', () => {
   });
 
   it(`should return true when name includes liner`, async () => {
-    expect(convertToPreviewData(casingViewProps.casing)[0].liner).toEqual(true);
+    expect(convertToPreviewData(casingViewProps.casing, [])[0].liner).toEqual(
+      true
+    );
   });
 
   it(`should sort casings on basis of outerDiameter`, async () => {
     casingViewProps.casing[1].name = 'SURFACE CASING';
-    expect(convertToPreviewData(casingViewProps.casing)[0].name).toEqual(
+    expect(convertToPreviewData(casingViewProps.casing, [])[0].name).toEqual(
       'SURFACE CASING'
     );
-    expect(convertToPreviewData(casingViewProps.casing)[1].name).toEqual(
+    expect(convertToPreviewData(casingViewProps.casing, [])[1].name).toEqual(
       'DRILLING LINER 2'
     );
   });
 
   it(`should return false when casing name  doesnot include liner`, async () => {
     casingViewProps.casing[1].name = 'SURFACE CASING';
-    expect(convertToPreviewData(casingViewProps.casing)[0].liner).toEqual(
+    expect(convertToPreviewData(casingViewProps.casing, [])[0].liner).toEqual(
       false
     );
   });
@@ -80,14 +82,14 @@ describe('normalize casings', () => {
   it(`should include casing in the description when  name not consists Casing`, async () => {
     casingViewProps.casing[1].name = 'DRILLING LINER 1';
     expect(
-      convertToPreviewData(casingViewProps.casing)[0].casingDescription
+      convertToPreviewData(casingViewProps.casing, [])[0].casingDescription
     ).toEqual('18" DRILLING LINER 1 Casing at 11084ft depth');
   });
 
   it(`should not include casing in the description when  name not consist Casing`, async () => {
     casingViewProps.casing[1].name = 'SURFACE CASING';
     expect(
-      convertToPreviewData(casingViewProps.casing)[0].casingDescription
+      convertToPreviewData(casingViewProps.casing, [])[0].casingDescription
     ).toEqual('18" SURFACE CASING  at 11084ft depth');
   });
 

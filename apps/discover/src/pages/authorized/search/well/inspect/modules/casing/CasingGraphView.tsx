@@ -54,6 +54,8 @@ export const CasingGraphView: React.FC<Props> = ({ scrollRef, sideMode }) => {
                 key={`${well.id}-${wellbore.id}-KEY`}
                 wellName={well.name}
                 wellboreName={wellbore?.name || wellbore?.description || ''}
+                waterDepth={isEmpty(data) ? 0 : data.waterDepth}
+                rkbLevel={isEmpty(data) ? 0 : data.rkbLevel}
                 casings={isEmpty(data) ? [] : data.casings}
                 unit={preferredUnit}
                 nptEvents={nptEvents[wellbore.id]}

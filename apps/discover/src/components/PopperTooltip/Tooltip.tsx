@@ -15,6 +15,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   children,
   content,
   options,
+  disabled,
   ...config
 }) => {
   const {
@@ -43,7 +44,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
     <TooltipWrapper backgroundColor={backgroundColor} borderColor={borderColor}>
       <span ref={setTriggerRef}>{children}</span>
 
-      {visible && !isEmpty(content) && (
+      {!disabled && visible && !isEmpty(content) && (
         <div
           ref={setTooltipRef}
           {...getTooltipProps({

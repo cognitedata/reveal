@@ -37,8 +37,8 @@ const DepthIndicator: React.FC<DepthIndicatorProps> = ({
     leftEnd,
   } = normalizedCasing;
 
-  const startHeight = `${casingStartDepth}%`;
-  const middleHeight = `calc(${casingDepth}% - ${DEPTH_INDICATOR_END_HEIGHT})`;
+  const startHeight = `${casingStartDepth}px`;
+  const middleHeight = `calc(${casingDepth}px - ${DEPTH_INDICATOR_END_HEIGHT})`;
 
   const tooltipContent = enableWellSdkV3 ? (
     <TooltipContent {...normalizedCasing} />

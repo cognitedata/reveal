@@ -6,6 +6,8 @@ export type FormattedCasings = {
   key: number;
   wellboreName: string;
   wellName: string;
+  waterDepth: number;
+  rkbLevel: number;
   casings: CasingType[];
 };
 
@@ -24,6 +26,10 @@ export type CasingData = {
   tvdUnit?: string;
   odUnit: string;
   idUnit: string;
+  waterDepth?: number;
+  waterDepthUnit?: string;
+  rkbLevel?: number;
+  rkbLevelUnit?: string;
   casingNames: string;
   casings: Sequence[];
 };
