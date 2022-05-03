@@ -5,7 +5,7 @@ import {
   DiagramInstanceWithPaths,
   DiagramLineInstance,
   DiagramSymbolInstance,
-  DocumentType,
+  DiagramType,
 } from '../types';
 import {
   connectionExists,
@@ -21,7 +21,7 @@ export const getPotentialLines = (
   symbolInstances: DiagramSymbolInstance[],
   lineInstances: DiagramLineInstance[],
   pidDocument: PidDocument,
-  documentType: DocumentType
+  diagramType: DiagramType
 ) => {
   const allInstances = [...symbolInstances, ...lineInstances];
 
@@ -31,20 +31,20 @@ export const getPotentialLines = (
   const isPathInAnyInstance = (path: PidPath) =>
     pathIdsInInstances.has(path.pathId);
 
-  const isPathValidForDocumentType = (path: PidPath) =>
-    documentType !== DocumentType.isometric ||
+  const isPathValidForDiagramType = (path: PidPath) =>
+    diagramType !== DiagramType.isometric ||
     path.segmentList.some(
       (pathSegment) => pathSegment.pathType === 'CurveSegment'
     ) === false;
 
   const isPathStrokeValid = (path: PidPath) =>
-    documentType === DocumentType.isometric
+    diagramType === DiagramType.isometric
       ? path.style?.strokeLinejoin === 'miter'
       : path.style?.stroke !== null;
 
   const matches = pidDocument.pidPaths.filter(
     (path) =>
-      isPathValidForDocumentType(path) &&
+      isPathValidForDiagramType(path) &&
       !isPathInAnyInstance(path) &&
       isPathStrokeValid(path)
   );
@@ -70,7 +70,7 @@ export interface FindLinesAndConnectionsOutput {
 
 export const findLinesAndConnections = (
   pidDocument: PidDocument,
-  documentType: DocumentType,
+  diagramType: DiagramType,
   symbolInstances: DiagramSymbolInstance[],
   lineInstances: DiagramLineInstance[],
   oldConnections: DiagramConnection[]
@@ -79,7 +79,7 @@ export const findLinesAndConnections = (
     symbolInstances,
     lineInstances,
     pidDocument,
-    documentType
+    diagramType
   );
 
   const relevantSymbolInstances = symbolInstances.filter(
@@ -90,7 +90,7 @@ export const findLinesAndConnections = (
     relevantSymbolInstances,
     [...lineInstances, ...potentialLineInstanceList],
     pidDocument,
-    documentType
+    diagramType
   );
 
   const newLines = detectLines(

@@ -48,7 +48,6 @@ export type Link = {
 };
 
 export type WorkspaceDocument = {
-  externalId: string;
   pdfExternalId: string;
   type: DocumentType;
   pdf: PDFDocumentProxy;

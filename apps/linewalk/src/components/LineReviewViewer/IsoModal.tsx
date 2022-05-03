@@ -12,7 +12,6 @@ import {
   Annotation,
   AnnotationType,
   DocumentType,
-  LineReview,
   Link,
   ParsedDocument,
   WorkspaceDocument,
@@ -103,7 +102,6 @@ type IsoModalProps = {
   onOrnateRef: (ref: CogniteOrnate | undefined) => void;
   tool: WorkspaceTool;
   onToolChange: (tool: WorkspaceTool) => void;
-  lineReview: LineReview;
   ornateRef: CogniteOrnate | undefined;
 };
 
@@ -181,7 +179,6 @@ const IsoModal: React.FC<IsoModalProps> = ({
   onHidePress,
   tool,
   onToolChange,
-  lineReview,
   ornateRef,
 }) => {
   const [isoOrnateRef, setIsoOrnateRef] = useState<CogniteOrnate | undefined>(
@@ -280,7 +277,7 @@ const IsoModal: React.FC<IsoModalProps> = ({
 
   const drawings = isoParsedDocuments?.flatMap((document) => [
     ...getAnnotationBoundingBoxOverlay(
-      lineReview.id,
+      undefined,
       document,
       document.linking
         .map(({ from: { annotationId } }) => annotationId)
@@ -297,7 +294,7 @@ const IsoModal: React.FC<IsoModalProps> = ({
       }
     ),
     ...getAnnotationBoundingBoxOverlay(
-      lineReview.id,
+      undefined,
       document,
       document.linking.map(({ to: { annotationId } }) => annotationId),
       // .filter(
@@ -313,9 +310,9 @@ const IsoModal: React.FC<IsoModalProps> = ({
       }
     ),
     ...getAnnotationBoundingBoxOverlay(
-      lineReview.id,
+      undefined,
       document,
-      getAnnotationsForLineByDocument(lineReview.id, document).map(
+      getAnnotationsForLineByDocument(undefined, document).map(
         (annotation) => annotation.id
       ),
       '',

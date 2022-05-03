@@ -1,4 +1,4 @@
-import { DiagramType } from '../types';
+import { DiagramAnnotationType } from '../types';
 
 import { LineWalkSymbolType } from './types';
 
@@ -20,7 +20,7 @@ export const lineWalkSymbolTypes = [
 ] as const;
 
 export const symbolTypeMap: {
-  [key in DiagramType]: LineWalkSymbolType;
+  [key in DiagramAnnotationType]: LineWalkSymbolType;
 } = {
   Line: 'line',
   Equipment: 'equipment',

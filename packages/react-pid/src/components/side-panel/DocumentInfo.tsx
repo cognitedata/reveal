@@ -2,7 +2,7 @@ import {
   DocumentMetadata,
   isIso,
   isPid,
-  DocumentType,
+  DiagramType,
 } from '@cognite/pid-tools';
 import styled from 'styled-components';
 import { Row, Title } from '@cognite/cogs.js';
@@ -31,7 +31,7 @@ export interface DocumentInfoProps {
 export const DocumentInfo: React.FC<DocumentInfoProps> = ({
   documentMetadata,
 }) => {
-  if (documentMetadata.type !== DocumentType.unknown) {
+  if (documentMetadata.type !== DiagramType.unknown) {
     return (
       <div>
         <CollapseSeperator>Document info</CollapseSeperator>

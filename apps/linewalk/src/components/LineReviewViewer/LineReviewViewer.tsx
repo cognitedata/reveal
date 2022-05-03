@@ -35,6 +35,7 @@ import getLinksByAnnotationId from './getLinksByAnnotationId';
 import IsoModal from './IsoModal';
 import ReactOrnate, { SLIDE_COLUMN_GAP, SLIDE_ROW_GAP } from './ReactOrnate';
 import useDocumentJumper from './useDocumentJumper';
+import useForceUpdate from './useForceUpdate';
 import useParsedDocuments from './useParsedDocuments';
 import useWorkspaceTools, { WorkspaceTool } from './useWorkspaceTools';
 import withoutFileExtension from './withoutFileExtension';
@@ -230,6 +231,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   isSidePanelOpen,
   setDocuments,
 }) => {
+  const forceUpdate = useForceUpdate();
   const { client } = useAuthContext();
   const [isIsoModalOpen, setIsIsoModalOpen] = useState(false);
   const [isoOrnateRef, setIsoOrnateRef] = useState<CogniteOrnate | undefined>(
@@ -358,7 +360,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   const { tool: isoModalTool, onToolChange: onIsoModalToolChange } =
     useWorkspaceTools(isoOrnateRef);
 
-  const groups = useMemo(() => {
+  const groups = (() => {
     if (!ornateRef) {
       return [];
     }
@@ -370,6 +372,8 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     if (isLoading) {
       return [];
     }
+
+    console.log('File Connection Groups documents', [...ornateRef.documents]);
 
     return getFileConnectionGroups({
       ornateViewer: ornateRef,
@@ -386,7 +390,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
           : setSelectedFileConnectionId(id),
       selectedId: selectedFileConnectionId,
     });
-  }, [ornateRef, parsedDocuments, isLoading]);
+  })();
 
   if (!documents) {
     return null;
@@ -420,8 +424,8 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     );
   };
 
-  const documentsByExternalId = keyBy(
-    documents,
+  const parsedDocumentsByExternalId = keyBy(
+    parsedDocuments,
     (document) => document.externalId
   );
 
@@ -446,9 +450,10 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
           document.linking
             .filter(
               ({ from, to }) =>
-                documentsByExternalId[from.documentId] !== undefined &&
-                documentsByExternalId[to.documentId] !== undefined &&
-                documentsByExternalId[from.documentId].type === DocumentType.PID
+                parsedDocumentsByExternalId[from.documentId] !== undefined &&
+                parsedDocumentsByExternalId[to.documentId] !== undefined &&
+                parsedDocumentsByExternalId[from.documentId].type ===
+                  DocumentType.PID
             )
             .flatMap(({ from, to }) => [from.annotationId, to.annotationId]),
           '',
@@ -481,7 +486,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     ];
   };
 
-  const overlays = documents
+  const overlays = parsedDocuments
     .filter(({ type }) => type === DocumentType.PID)
     .flatMap((document) =>
       getDrawingsByDocumentId(parsedDocuments, document.externalId)
@@ -534,7 +539,6 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       )}
 
       <IsoModal
-        lineReview={lineReview}
         parsedDocuments={parsedDocuments}
         isoDocuments={isoDocuments}
         visible={isIsoModalOpen}
@@ -596,6 +600,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
         <ReactOrnate
           documents={pdfDocuments}
           nodes={nodes}
+          onDocumentChange={() => setTimeout(() => forceUpdate(), 1500)}
           onOrnateRef={(ref) => {
             setOrnateRef(ref);
             onOrnateRef(ref);

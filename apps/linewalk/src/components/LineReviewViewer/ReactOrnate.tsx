@@ -42,6 +42,7 @@ export type ReactOrnateProps = {
     isFocused: boolean
   ) => JSX.Element;
   onRemovePress?: (pdfExternalId: string) => void;
+  onDocumentChange?: () => void;
 };
 
 export const SLIDE_WIDTH = 2500;
@@ -127,6 +128,7 @@ const ReactOrnate = ({
   onOrnateRef,
   renderWorkspaceTools,
   onRemovePress,
+  onDocumentChange,
 }: ReactOrnateProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const componentContainerId = useRef(
@@ -188,9 +190,17 @@ const ReactOrnate = ({
     );
 
     removedPdfExternalIds.forEach((pdfExternalId) => {
-      ornateViewer.current?.stage
-        .findOne(`#${getKonvaSelectorSlugByExternalId(pdfExternalId)}`)
-        ?.destroy();
+      const ornateDocument = ornateViewer.current?.documents.find(
+        (document) => document.metadata?.pdfExternalId === pdfExternalId
+      );
+
+      if (ornateDocument) {
+        ornateViewer.current?.removeDocument(ornateDocument);
+      }
+
+      // ornateViewer.current?.stage
+      //   .findOne(`#${getKonvaSelectorSlugByExternalId(pdfExternalId)}`)
+      //   ?.destroy();
       ornateViewer.current?.stage
         .findOne(
           `#${getKonvaSelectorSlugByExternalId(pdfExternalId)}-label-group`
@@ -201,13 +211,15 @@ const ReactOrnate = ({
           addedPdfExternalId !== getKonvaSelectorSlugByExternalId(pdfExternalId)
       );
     });
+
+    if (removedPdfExternalIds.length > 0) {
+      onDocumentChange?.();
+    }
   }, [documents]);
 
   useEffect(() => {
     (async () => {
       const ornateRef = ornateViewer.current;
-
-      console.log(addedPdfExternalIds.current);
 
       if (ornateRef && documents?.length) {
         await Promise.all(
@@ -312,6 +324,8 @@ const ReactOrnate = ({
             }
           )
         );
+
+        onDocumentChange?.();
 
         setIsInitialized(true);
       }

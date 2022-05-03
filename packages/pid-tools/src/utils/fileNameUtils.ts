@@ -2,7 +2,7 @@ import {
   DocumentMetadata,
   IsoDocumentMetadata,
   PidDocumentMetadata,
-  DocumentType,
+  DiagramType,
 } from '../types';
 
 import getLineNumberAndPageFromText from './getLineNumberAndPageFromText';
@@ -17,7 +17,7 @@ const getPidDocumentMetaDataFromFileName = (
     : -1;
 
   return {
-    type: DocumentType.pid,
+    type: DiagramType.pid,
     name: fileName,
     unit,
     documentNumber,
@@ -34,7 +34,7 @@ const getIsoDocumentMetaDataFromFileName = (
 ) => {
   const { lineNumber, pageNumber } = lineNumberAndPage;
   return {
-    type: DocumentType.isometric,
+    type: DiagramType.isometric,
     name: fileName,
     unit,
     lineNumber,
@@ -44,7 +44,7 @@ const getIsoDocumentMetaDataFromFileName = (
 
 export const getMetadataFromFileName = (
   fileName: string,
-  selectedDocumentType: DocumentType = DocumentType.unknown
+  selectedDiagramType: DiagramType = DiagramType.unknown
 ) => {
   const isoLineNumberAndText = getLineNumberAndPageFromText(fileName);
   const pidFileNameMatchArray = fileName.match(/MF_[0-9]{1,}/);
@@ -53,11 +53,11 @@ export const getMetadataFromFileName = (
   const unit = unitMatchArray ? unitMatchArray[0] : 'Unknown';
 
   const isPid =
-    selectedDocumentType === DocumentType.pid ||
+    selectedDiagramType === DiagramType.pid ||
     (pidFileNameMatchArray && !isoLineNumberAndText);
 
   const isIso =
-    selectedDocumentType === DocumentType.isometric ||
+    selectedDiagramType === DiagramType.isometric ||
     (isoLineNumberAndText && !pidFileNameMatchArray);
 
   if (isPid) {
@@ -75,7 +75,7 @@ export const getMetadataFromFileName = (
     );
   }
   return {
-    type: DocumentType.unknown,
+    type: DiagramType.unknown,
     name: fileName,
     unit,
   } as DocumentMetadata;

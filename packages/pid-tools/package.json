@@ -17,9 +17,9 @@
     "dist"
   ],
   "devDependencies": {
-    "ts-node": "^10.4.0",
     "@azure/msal-node": "^1.8.0",
-    "open": "^8.4.0"
+    "open": "^8.4.0",
+    "ts-node": "^10.4.0"
   },
   "scripts": {
     "cli": "ts-node cli/main.ts",
@@ -34,5 +34,6 @@
     "prettier": "bazel test :prettier_test",
     "prettier:fix": "bazel run :prettier_test -- --write",
     "update-helpers": "bazel run :generate_package_json_helpers"
-  }
+  },
+  "dependencies": {}
 }

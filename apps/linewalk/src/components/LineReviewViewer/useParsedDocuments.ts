@@ -2,7 +2,7 @@ import { useAuthContext } from '@cognite/react-container';
 import keyBy from 'lodash/keyBy';
 import { useEffect, useMemo, useState } from 'react';
 
-import { getJsonsByExternalIds } from '../../modules/lineReviews/api';
+import { getParsedDocumentsByWorkspaceDocuments } from '../../modules/lineReviews/api';
 import {
   ParsedDocument,
   WorkspaceDocument,
@@ -19,11 +19,12 @@ const useParsedDocuments = (documents: WorkspaceDocument[]) => {
   useEffect(() => {
     if (client !== undefined) {
       (async () => {
-        // TOOD: Cleaner approach?
-        const parsedDocuments: ParsedDocument[] = await getJsonsByExternalIds(
+        const parsedDocuments = await getParsedDocumentsByWorkspaceDocuments(
           client,
-          documents.map((document) => document.externalId)
+          documents
         );
+
+        console.log('ParsedDocuments', parsedDocuments);
 
         setParsedDocumentsCache((previousParsedDocumentsCache) => ({
           ...previousParsedDocumentsCache,

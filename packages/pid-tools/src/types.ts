@@ -35,11 +35,11 @@ export interface DiagramSymbol {
   direction?: number; // 0-359 or `undefined` if irrelevant
 }
 
-export type DiagramType = SymbolType | 'Line' | 'EquipmentTag';
+export type DiagramAnnotationType = SymbolType | 'Line' | 'EquipmentTag';
 
 export interface DiagramInstance {
   id: string;
-  type: DiagramType;
+  type: DiagramAnnotationType;
   labelIds: string[];
   assetExternalId?: string;
   lineNumbers: string[];
@@ -148,7 +148,7 @@ export interface DiagramLabelOutputFormat {
   boundingBox: Rect;
 }
 
-export enum DocumentType {
+export enum DiagramType {
   pid = 'P&ID',
   isometric = 'Isometric',
   unknown = 'Unknown',
@@ -171,24 +171,24 @@ export interface GraphDocument extends Legend {
 }
 
 interface DocumentMetadataBase {
-  type: DocumentType;
+  type: DiagramType;
   name: string;
   unit: string;
 }
 
 export interface PidDocumentMetadata extends DocumentMetadataBase {
-  type: DocumentType.pid;
+  type: DiagramType.pid;
   documentNumber: number; // i.e MF_34, MF_034 -> 34
 }
 
 export interface IsoDocumentMetadata extends DocumentMetadataBase {
-  type: DocumentType.isometric;
+  type: DiagramType.isometric;
   lineNumber: string; // i.e L032, L132, L132-1 -> L132
   pageNumber: number; // i.e. L132-1 -> 1
 }
 
 export interface UnknownDocumentMetadata extends DocumentMetadataBase {
-  type: DocumentType.unknown;
+  type: DiagramType.unknown;
 }
 
 export type DocumentMetadata =
@@ -202,6 +202,6 @@ export type ToolType =
   | 'splitLine'
   | 'connectInstances'
   | 'connectLabels'
-  | 'selectDocumentType'
+  | 'selectDiagramType'
   | 'setLineNumber'
   | 'addEquipmentTag';

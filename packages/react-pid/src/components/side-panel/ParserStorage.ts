@@ -1,16 +1,16 @@
-import { DiagramSymbol, DocumentType } from '@cognite/pid-tools';
+import { DiagramSymbol, DiagramType } from '@cognite/pid-tools';
 
 const LEGEND_LOCALSTORAGE_KEY_PREFIX = 'PID_TOOL_';
 
-const getLegendKeyByDocumentType = (documentType: DocumentType) => {
-  return `${LEGEND_LOCALSTORAGE_KEY_PREFIX}${documentType}`;
+const getLegendKeyByDiagramType = (diagramType: DiagramType) => {
+  return `${LEGEND_LOCALSTORAGE_KEY_PREFIX}${diagramType}`;
 };
 
 const ParserStorage = {
   symbols: {
-    load: (documentType: DocumentType): DiagramSymbol[] => {
+    load: (diagramType: DiagramType): DiagramSymbol[] => {
       try {
-        const key = getLegendKeyByDocumentType(documentType);
+        const key = getLegendKeyByDiagramType(diagramType);
         const json = window.localStorage.getItem(key);
 
         if (!json) {
@@ -38,9 +38,9 @@ const ParserStorage = {
         return [];
       }
     },
-    save: (documentType: DocumentType, symbols: DiagramSymbol[]): void =>
+    save: (diagramType: DiagramType, symbols: DiagramSymbol[]): void =>
       window.localStorage.setItem(
-        getLegendKeyByDocumentType(documentType),
+        getLegendKeyByDiagramType(diagramType),
         JSON.stringify({
           symbols,
         })

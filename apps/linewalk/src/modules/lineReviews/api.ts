@@ -2,11 +2,13 @@ import {
   DIAGRAM_PARSER_SOURCE,
   DIAGRAM_PARSER_TYPE,
   getLineReviewEventExternalId,
-  getVersionedParsedDocumentExternalId,
   LINE_REVIEW_EVENT_TYPE,
-  lineNumberMetadataKey,
+  getLineNumberKey,
   LINEWALK_VERSION_KEY,
-  versionedLineLabelPrefix,
+  getLineLabelPrefix,
+  GraphDocument,
+  getGraphExternalIdKey,
+  parseGraphs,
 } from '@cognite/pid-tools';
 import type { CogniteClient, FileInfo } from '@cognite/sdk';
 import zipWith from 'lodash/zipWith';
@@ -22,10 +24,12 @@ import {
   WorkspaceDocument,
   DocumentType,
   LineReviewStatus,
+  ParsedDocument,
 } from './types';
 
 PDFJS.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js`;
-const VERSION = '0.0.23';
+
+export const LINEWALK_FRONTEND_VERSION = '0.0.19';
 
 export const getJsonsByExternalIds = async <T = unknown>(
   client: CogniteClient,
@@ -105,10 +109,13 @@ const lineNumbersFromFileMetadata = (file: FileInfo): string[] => {
   return Object.entries(file.metadata)
     .filter(
       ([key, value]) =>
-        key.includes(versionedLineLabelPrefix(VERSION)) && value === 'true'
+        key.includes(getLineLabelPrefix(LINEWALK_FRONTEND_VERSION)) &&
+        value === 'true'
     )
     .map(([key]) => key)
-    .map((key) => key.replace(versionedLineLabelPrefix(VERSION), ''));
+    .map((key) =>
+      key.replace(getLineLabelPrefix(LINEWALK_FRONTEND_VERSION), '')
+    );
 };
 
 export const getLineReviews = async (client: CogniteClient) => {
@@ -117,7 +124,7 @@ export const getLineReviews = async (client: CogniteClient) => {
       .list({
         filter: {
           metadata: {
-            [LINEWALK_VERSION_KEY]: VERSION,
+            [LINEWALK_VERSION_KEY]: LINEWALK_FRONTEND_VERSION,
           },
           type: LINE_REVIEW_EVENT_TYPE,
         },
@@ -131,7 +138,6 @@ export const getLineReviews = async (client: CogniteClient) => {
         filter: {
           mimeType: 'application/pdf',
           metadata: {
-            [LINEWALK_VERSION_KEY]: VERSION,
             [DIAGRAM_PARSER_SOURCE]: 'true',
           },
         },
@@ -144,13 +150,16 @@ export const getLineReviews = async (client: CogniteClient) => {
     lineNumbersFromFileMetadata
   );
 
-  const lineReviews = lineReviewEvents.map((event) =>
-    lineReviewFromEvent(
-      event,
-      (lineReviewFilesByLineNumbers[event.metadata.lineNumber] ?? [])
-        .map((file) => file.externalId)
-        .filter(isNotUndefined)
-    )
+  const lineReviews = sortBy(
+    lineReviewEvents.map((event) =>
+      lineReviewFromEvent(
+        event,
+        (lineReviewFilesByLineNumbers[event.metadata.lineNumber] ?? [])
+          .map((file) => file.externalId)
+          .filter(isNotUndefined)
+      )
+    ),
+    (lineReview) => lineReview.name
   );
 
   return lineReviews;
@@ -167,7 +176,7 @@ export const addLineNumberToDocumentMetadata = async (
       update: {
         metadata: {
           add: {
-            [lineNumberMetadataKey(VERSION, lineNumber)]: 'true',
+            [getLineNumberKey(LINEWALK_FRONTEND_VERSION, lineNumber)]: 'true',
           },
           remove: [],
         },
@@ -187,7 +196,7 @@ export const removeLineNumberFromDocumentMetadata = async (
       update: {
         metadata: {
           add: {},
-          remove: [lineNumberMetadataKey(VERSION, lineNumber)],
+          remove: [getLineNumberKey(LINEWALK_FRONTEND_VERSION, lineNumber)],
         },
       },
     },
@@ -197,7 +206,7 @@ export const removeLineNumberFromDocumentMetadata = async (
 export const getWorkspaceDocuments = async (
   client: CogniteClient,
   files: FileInfo[]
-) => {
+): Promise<WorkspaceDocument[]> => {
   const pdfDocuments = await getPdfsByExternalIds(
     client,
     files.map(({ externalId }) => externalId).filter(isNotUndefined)
@@ -208,17 +217,10 @@ export const getWorkspaceDocuments = async (
     PDFDocumentProxy,
     WorkspaceDocument
   >(files, pdfDocuments, (file, pdf) => {
-    const externalId =
-      file.metadata?.[getVersionedParsedDocumentExternalId(VERSION)];
     const type = file.metadata?.[DIAGRAM_PARSER_TYPE] as
       | DocumentType
       | undefined;
     const pdfExternalId = file.externalId;
-
-    if (externalId === undefined) {
-      throw new Error('Missing external id');
-    }
-
     if (type === undefined) {
       throw new Error('Missing type');
     }
@@ -228,7 +230,6 @@ export const getWorkspaceDocuments = async (
     }
 
     return {
-      externalId,
       pdfExternalId,
       pdf,
       type,
@@ -248,8 +249,7 @@ export const getLineReviewDocuments = async (
         filter: {
           mimeType: 'application/pdf',
           metadata: {
-            [LINEWALK_VERSION_KEY]: VERSION,
-            [lineNumberMetadataKey(VERSION, lineNumber)]: 'true',
+            [getLineNumberKey(LINEWALK_FRONTEND_VERSION, lineNumber)]: 'true',
           },
         },
       })
@@ -269,7 +269,10 @@ export const updateLineReview = async (
 ) =>
   client.events.update([
     {
-      externalId: getLineReviewEventExternalId(VERSION, lineNumber),
+      externalId: getLineReviewEventExternalId(
+        LINEWALK_FRONTEND_VERSION,
+        lineNumber
+      ),
       update: {
         metadata: {
           add: {
@@ -282,3 +285,39 @@ export const updateLineReview = async (
       },
     },
   ]);
+
+export const getGraphsByWorkspaceDocuments = async (
+  client: CogniteClient,
+  documents: WorkspaceDocument[]
+) => {
+  const pdfFileInfos = await client.files.retrieve(
+    documents.map((document) => ({
+      externalId: document.pdfExternalId,
+    }))
+  );
+
+  // eslint-disable-next-line no-await-in-loop
+  const graphs: GraphDocument[] = await getJsonsByExternalIds(
+    client,
+    pdfFileInfos
+      .map(
+        (fileInfo) =>
+          fileInfo.metadata?.[getGraphExternalIdKey(LINEWALK_FRONTEND_VERSION)]
+      )
+      .filter(isNotUndefined)
+  );
+
+  return graphs;
+};
+
+export const getParsedDocumentsByWorkspaceDocuments = async (
+  client: CogniteClient,
+  documents: WorkspaceDocument[]
+): Promise<ParsedDocument[]> => {
+  const graphs = await getGraphsByWorkspaceDocuments(client, documents);
+  const parsedFiles = await parseGraphs(graphs);
+  const parsedDocuments = parsedFiles.map(
+    (parsedFile) => parsedFile.data
+  ) as unknown as ParsedDocument[];
+  return parsedDocuments;
+};

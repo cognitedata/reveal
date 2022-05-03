@@ -10,7 +10,7 @@ import {
   DiagramConnection,
   DiagramLineInstance,
   DiagramSymbolInstance,
-  DocumentType,
+  DiagramType,
 } from '../types';
 import { EdgePoint, getClosestPointsOnSegments } from '../geometry';
 
@@ -18,7 +18,7 @@ export const findConnectionsByTraversal = (
   symbolInstances: DiagramSymbolInstance[],
   lineInstances: DiagramLineInstance[],
   pidDocument: PidDocument,
-  documentType: DocumentType
+  diagramType: DiagramType
 ) => {
   const newConnectionsSet = new Set<string>();
 
@@ -50,7 +50,7 @@ export const findConnectionsByTraversal = (
       closePidGroups = getClosePidInstances(
         allInstances,
         potentialInstance,
-        documentType
+        diagramType
       );
     } else {
       // FIX: We don't try to find connections from symbol instances to symbol instances since this may
@@ -60,7 +60,7 @@ export const findConnectionsByTraversal = (
       closePidGroups = getClosePidInstances(
         linesToVisit,
         potentialInstance,
-        documentType
+        diagramType
       );
     }
 
@@ -199,10 +199,10 @@ const getCloseWithLineJumps = (
 export const getClosePidInstances = (
   pidInstances: PidInstance[],
   instance: PidInstance,
-  documentType: DocumentType
+  diagramType: DiagramType
 ) => {
   const threshold =
-    documentType === DocumentType.pid
+    diagramType === DiagramType.pid
       ? AUTO_ANALYSIS_DISTANCE_THRESHOLD_PID
       : AUTO_ANALYSIS_DISTANCE_THRESHOLD_ISO;
 

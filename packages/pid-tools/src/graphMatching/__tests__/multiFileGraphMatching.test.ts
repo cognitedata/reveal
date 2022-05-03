@@ -1,6 +1,6 @@
 import {
   GraphDocument,
-  DocumentType,
+  DiagramType,
   DiagramSymbolInstanceOutputFormat,
   SymbolType,
   Rect,
@@ -89,7 +89,7 @@ describe('convertGraphToGlobalIds', () => {
     const graphDocument: GraphDocument = {
       documentMetadata: {
         name: 'file1',
-        type: DocumentType.pid,
+        type: DiagramType.pid,
         documentNumber: 1,
         unit: 'G0001',
       },
@@ -133,7 +133,7 @@ describe('mergeGraphs', () => {
     const graphDocument1: GraphDocument = {
       documentMetadata: {
         name: 'file1',
-        type: DocumentType.pid,
+        type: DiagramType.pid,
         documentNumber: 1,
         unit: 'G0001',
       },
@@ -157,7 +157,7 @@ describe('mergeGraphs', () => {
     const graphDocument2: GraphDocument = {
       documentMetadata: {
         name: 'file2',
-        type: DocumentType.pid,
+        type: DiagramType.pid,
         documentNumber: 1,
         unit: 'G0001',
       },
@@ -188,7 +188,7 @@ describe('match multifileGraphs', () => {
     const pid1: GraphDocument = {
       documentMetadata: {
         name: 'pid1',
-        type: DocumentType.pid,
+        type: DiagramType.pid,
         documentNumber: 1,
         unit: 'G0001',
       },
@@ -216,7 +216,7 @@ describe('match multifileGraphs', () => {
     const pid2: GraphDocument = {
       documentMetadata: {
         name: 'pid2',
-        type: DocumentType.pid,
+        type: DiagramType.pid,
         documentNumber: 1,
         unit: 'G0001',
       },
@@ -241,7 +241,7 @@ describe('match multifileGraphs', () => {
     const iso1: GraphDocument = {
       documentMetadata: {
         name: 'iso1',
-        type: DocumentType.isometric,
+        type: DiagramType.isometric,
         lineNumber: 'L001',
         pageNumber: 1,
         unit: 'G0001',
@@ -267,7 +267,7 @@ describe('match multifileGraphs', () => {
     const iso2: GraphDocument = {
       documentMetadata: {
         name: 'iso2',
-        type: DocumentType.isometric,
+        type: DiagramType.isometric,
         lineNumber: 'L001',
         pageNumber: 2,
         unit: 'G0001',

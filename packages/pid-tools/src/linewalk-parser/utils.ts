@@ -54,9 +54,9 @@ export const labelToAnnotation = (
   lineNumbers: [],
 });
 
-export const getExtId = (name: string, version: string) => {
+export const getExtId = (name: string) => {
   const fileNameWithoutExtension = getFileNameWithoutExtension(name);
-  return `PARSED_DIAGRAM_V${version}_${fileNameWithoutExtension}.json`;
+  return `PARSED_DIAGRAM_${fileNameWithoutExtension}.json`;
 };
 
 export const mergeUnique = <T>(current: T[], additions: T[]) => {
@@ -80,8 +80,7 @@ export const inferIsoLineNumberToAnnotations = (
 
 export const connectionsToLinks = (
   connections: SymbolConnection[],
-  pdfExternalId: string,
-  version: string
+  pdfExternalId: string
 ) => {
   return connections.reduce((links, connection) => {
     if (
@@ -90,11 +89,11 @@ export const connectionsToLinks = (
     ) {
       links.push({
         from: {
-          documentId: getExtId(connection.from.fileName, version),
+          documentId: getExtId(connection.from.fileName),
           annotationId: connection.from.instanceId,
         },
         to: {
-          documentId: getExtId(connection.to.fileName, version),
+          documentId: getExtId(connection.to.fileName),
           annotationId: connection.to.instanceId,
         },
       });

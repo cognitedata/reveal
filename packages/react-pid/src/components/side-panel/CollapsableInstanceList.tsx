@@ -5,7 +5,7 @@ import {
   DiagramSymbol,
   DiagramSymbolInstance,
   DiagramEquipmentTagInstance,
-  DocumentType,
+  DiagramType,
   PathReplacementGroup,
   PathReplacementType,
 } from '@cognite/pid-tools';
@@ -48,7 +48,7 @@ interface CollapsableInstanceListProps {
   setEquipmentTags: (arg: DiagramEquipmentTagInstance[]) => void;
   activeTagId: string | null;
   setActiveTagId: (arg: string | null) => void;
-  documentType: DocumentType;
+  diagramType: DiagramType;
   pathReplacementGroups: PathReplacementGroup[];
   deletePathReplacementGroups: (
     pathReplacementGroupsIds: string[] | string
@@ -67,7 +67,7 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
     setEquipmentTags,
     activeTagId,
     setActiveTagId,
-    documentType,
+    diagramType,
     pathReplacementGroups,
     deletePathReplacementGroups,
   }) => {
@@ -194,7 +194,7 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
             </Collapse.Panel>
           ))}
         </Collapse>
-        {documentType === DocumentType.isometric && (
+        {diagramType === DiagramType.isometric && (
           <div>
             <CollapseSeperator>Equipment tags</CollapseSeperator>
             <EquipmentTagPanel

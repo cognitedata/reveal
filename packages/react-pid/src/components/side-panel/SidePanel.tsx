@@ -7,7 +7,7 @@ import {
   DiagramSymbol,
   DiagramSymbolInstance,
   DocumentMetadata,
-  DocumentType,
+  DiagramType,
   ToolType,
   PathReplacementGroup,
   AddSymbolData,
@@ -16,7 +16,7 @@ import {
 import { CollapsableInstanceList } from './CollapsableInstanceList';
 import { FileController } from './FileController';
 import { AddSymbolController } from './AddSymbolController';
-import { DocumentTypeSelector } from './DocumentTypeSelector';
+import { DiagramTypeSelector } from './DiagramTypeSelector';
 import { AddLineNumberController } from './AddLineNumberController';
 import { DocumentInfo } from './DocumentInfo';
 
@@ -52,7 +52,7 @@ interface SidePanelProps {
   autoAnalysis: () => void;
   saveGraphAsJson: () => void;
   documentMetadata: DocumentMetadata;
-  setDocumentType: (type: DocumentType) => void;
+  setDiagramType: (type: DiagramType) => void;
   lineNumbers: string[];
   setLineNumbers: (arg: string[]) => void;
   activeLineNumber: string | null;
@@ -88,7 +88,7 @@ export const SidePanel = ({
   autoAnalysis,
   saveGraphAsJson,
   documentMetadata,
-  setDocumentType,
+  setDiagramType,
   lineNumbers,
   setLineNumbers,
   activeLineNumber,
@@ -146,7 +146,7 @@ export const SidePanel = ({
     ],
   ];
 
-  if (documentMetadata.type === DocumentType.pid) {
+  if (documentMetadata.type === DiagramType.pid) {
     toolBarButtonGroups[0].push({
       icon: 'Slice',
       onClick: () => setActiveTool('splitLine'),
@@ -184,7 +184,7 @@ export const SidePanel = ({
         setEquipmentTags={setEquipmentTags}
         activeTagId={activeTagId}
         setActiveTagId={setActiveTagWrapper}
-        documentType={documentMetadata.type}
+        diagramType={documentMetadata.type}
         pathReplacementGroups={pathReplacementGroups}
         deletePathReplacementGroups={deletePathReplacementGroups}
       />
@@ -199,7 +199,7 @@ export const SidePanel = ({
             addSymbolFromSymbolSelection={addSymbolFromSymbolSelection}
             hideSelection={hideSelection}
             toggleHideSelection={toggleHideSelection}
-            documentType={documentMetadata.type}
+            diagramType={documentMetadata.type}
           />
         )}
         {activeTool === 'setLineNumber' && (
@@ -211,8 +211,8 @@ export const SidePanel = ({
           />
         )}
       </div>
-      {activeTool === 'selectDocumentType' && file !== null && (
-        <DocumentTypeSelector setDocumentType={setDocumentType} />
+      {activeTool === 'selectDiagramType' && file !== null && (
+        <DiagramTypeSelector setDiagramType={setDiagramType} />
       )}
     </SidePanelWrapper>
   );

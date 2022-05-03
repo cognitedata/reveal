@@ -1,10 +1,10 @@
 import {
   DiagramLineInstance,
-  DiagramType,
+  DiagramAnnotationType,
   PidFileConnectionInstance,
   PidDocumentMetadata,
   IsoDocumentMetadata,
-  DocumentType,
+  DiagramType,
   DocumentMetadata,
   DiagramEquipmentInstance,
   DiagramInstrumentInstance,
@@ -17,14 +17,14 @@ import { LineSegment, PathSegment } from '../geometry';
 export const isFileConnection = (
   diagramInstance: any
 ): diagramInstance is PidFileConnectionInstance => {
-  const fileConnection: DiagramType = 'File Connection';
+  const fileConnection: DiagramAnnotationType = 'File Connection';
   return diagramInstance.type === fileConnection;
 };
 
 export const isLineConnection = (
   diagramInstance: any
 ): diagramInstance is LineConnectionInstance => {
-  const lineConnection: DiagramType = 'Line Connection';
+  const lineConnection: DiagramAnnotationType = 'Line Connection';
   return diagramInstance.type === lineConnection;
 };
 
@@ -46,20 +46,20 @@ export const isInstrument = (
 export const isLine = (
   diagramInstance: any
 ): diagramInstance is DiagramLineInstance => {
-  const line: DiagramType = 'Line';
+  const line: DiagramAnnotationType = 'Line';
   return diagramInstance.type === line;
 };
 
 export const isPid = (
   documentMetadata: DocumentMetadata
 ): documentMetadata is PidDocumentMetadata => {
-  return documentMetadata.type === DocumentType.pid;
+  return documentMetadata.type === DiagramType.pid;
 };
 
 export const isIso = (
   documentMetadata: DocumentMetadata
 ): documentMetadata is IsoDocumentMetadata => {
-  return documentMetadata.type === DocumentType.isometric;
+  return documentMetadata.type === DiagramType.isometric;
 };
 
 export const isLineSegment = (
@@ -71,5 +71,5 @@ export const isLineSegment = (
 export const isIsoDocumentMetadata = (
   documentMetadata: DocumentMetadata
 ): documentMetadata is IsoDocumentMetadata => {
-  return documentMetadata.type === DocumentType.isometric;
+  return documentMetadata.type === DiagramType.isometric;
 };

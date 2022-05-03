@@ -2,7 +2,7 @@ import {
   CognitePid,
   DiagramSymbol,
   DiagramSymbolInstance,
-  DocumentType,
+  DiagramType,
 } from '@cognite/pid-tools';
 import { useEffect, useState } from 'react';
 
@@ -10,7 +10,7 @@ import ParserStorage from './ParserStorage';
 
 const useSymbolState = (
   pidRef: CognitePid | undefined,
-  documentType: DocumentType,
+  diagramType: DiagramType,
   hasDocumentLoaded: boolean
 ) => {
   const [hasLegendBeenLoaded, setHasLegendBeenLoaded] = useState(false);
@@ -27,12 +27,12 @@ const useSymbolState = (
       hasDocumentLoaded && pidDocument !== undefined;
     if (shouldLoadFromStorage) {
       try {
-        const loadedSymbols = ParserStorage.symbols.load(documentType);
+        const loadedSymbols = ParserStorage.symbols.load(diagramType);
         pidRef?.loadLegend({ symbols: loadedSymbols });
         setHasLegendBeenLoaded(true);
       } catch (error) {
         // If we can't parse the current symbol format - reset it
-        ParserStorage.symbols.save(documentType, []);
+        ParserStorage.symbols.save(diagramType, []);
         // eslint-disable-next-line no-console
         console.log(`Resetting local storage symbols due to error: ${error}`);
       }
@@ -41,9 +41,9 @@ const useSymbolState = (
 
   useEffect(() => {
     if (hasDocumentLoaded && hasLegendBeenLoaded) {
-      ParserStorage.symbols.save(documentType, symbols);
+      ParserStorage.symbols.save(diagramType, symbols);
     }
-  }, [documentType, symbols, hasDocumentLoaded, hasLegendBeenLoaded]);
+  }, [diagramType, symbols, hasDocumentLoaded, hasLegendBeenLoaded]);
 
   return {
     symbols,

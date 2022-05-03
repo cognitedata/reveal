@@ -6,7 +6,7 @@ import {
   DiagramEquipmentTagInstance,
   DiagramLineInstance,
   DiagramSymbol,
-  DocumentType,
+  DiagramType,
   EventType,
   AddSymbolData,
   ToolType,
@@ -43,7 +43,7 @@ export const ReactPid = ({
 }: ReactPidProps) => {
   const [hasDocumentLoaded, setHasDocumentLoaded] = useState(false);
 
-  const [activeTool, setActiveTool] = useState<ToolType>('selectDocumentType');
+  const [activeTool, setActiveTool] = useState<ToolType>('selectDiagramType');
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
@@ -58,7 +58,7 @@ export const ReactPid = ({
     loadFileIfProvided,
     isLoading,
     documentMetadata,
-    setDocumentType,
+    setDiagramType,
   } = useDiagramFile(pidViewer, hasDocumentLoaded, diagramExternalId);
 
   const { symbols, setSymbols, symbolInstances, setSymbolInstances } =
@@ -218,15 +218,15 @@ export const ReactPid = ({
 
   useEffect(() => {
     if (
-      documentMetadata.type !== DocumentType.unknown &&
-      activeTool === 'selectDocumentType'
+      documentMetadata.type !== DiagramType.unknown &&
+      activeTool === 'selectDiagramType'
     ) {
       setActiveToolWrapper('addSymbol');
     }
   }, [documentMetadata]);
 
   useEffect(() => {
-    if (documentMetadata.type === DocumentType.isometric) {
+    if (documentMetadata.type === DiagramType.isometric) {
       setLineNumbersWrapper([documentMetadata.lineNumber]);
     }
   }, [hasDocumentLoaded]);
@@ -372,7 +372,7 @@ export const ReactPid = ({
           autoAnalysis={autoAnalysis}
           saveGraphAsJson={saveGraphAsJsonWrapper}
           documentMetadata={documentMetadata}
-          setDocumentType={setDocumentType}
+          setDiagramType={setDiagramType}
           lineNumbers={lineNumbers}
           setLineNumbers={setLineNumbersWrapper}
           activeLineNumber={activeLineNumber}
@@ -412,7 +412,7 @@ export const ReactPid = ({
           <Toolbar
             activeTool={activeTool}
             setActiveTool={setActiveToolWrapper}
-            documentType={documentMetadata.type}
+            diagramType={documentMetadata.type}
           />
         </Viewport>
       </ReactPidLayout>

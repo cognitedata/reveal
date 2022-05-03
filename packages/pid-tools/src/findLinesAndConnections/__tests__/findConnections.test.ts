@@ -1,5 +1,5 @@
 import { PidDocument } from '../../pid';
-import { DocumentType } from '../../types';
+import { DiagramType } from '../../types';
 import { findConnectionsByTraversal } from '../findConnections';
 
 import { createLines, createSymbols } from './findLines.test';
@@ -23,7 +23,7 @@ describe('findConnectionsByTraversal', () => {
       symbolInstances,
       lineInstances,
       pidDocument,
-      DocumentType.pid
+      DiagramType.pid
     );
     expect(connections.length).toBe(2);
   });
@@ -46,7 +46,7 @@ describe('findConnectionsByTraversal', () => {
       symbolInstances,
       lineInstances,
       pidDocument,
-      DocumentType.pid
+      DiagramType.pid
     );
     expect(connections.length).toBe(1);
   });
@@ -57,11 +57,11 @@ describe('findConnectionsByTraversal', () => {
         <path d="M 0,0 h 100 v 100 h -100 v -100" id="path001" />
 
         <path d="M 100,50 h 80" id="path002" />
-        
+
         <path d="M 200,50 h 80" id="path003" />
-        
+
         <path d="M 300,50 h 80" id="path004" />
-        
+
         <path d="M 380,0 h 100 v 100 h -100 v -100" id="path005" />
     </svg>
     `);
@@ -73,7 +73,7 @@ describe('findConnectionsByTraversal', () => {
       symbolInstances,
       lineInstances,
       pidDocument,
-      DocumentType.pid
+      DiagramType.pid
     );
     expect(connections.length).toBe(4);
   });
@@ -88,9 +88,9 @@ describe('findConnectionsByTraversal', () => {
         <path d="M 100,50 h 100" id="path002" />
 
         <path d="M 200,0 h 100 v 100 h -100 v -100" id="path003" />
-        
+
         <path d="M 300,50 h 100" id="path004" />
-        
+
         <path d="M 400,0 h 100 v 100 h -100 v -100" id="path005" />
     </svg>
     `);
@@ -102,7 +102,7 @@ describe('findConnectionsByTraversal', () => {
       symbolInstances,
       lineInstances,
       pidDocument,
-      DocumentType.pid
+      DiagramType.pid
     );
     expect(connections.length).toBe(4);
   });

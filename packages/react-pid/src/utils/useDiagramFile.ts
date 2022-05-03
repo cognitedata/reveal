@@ -1,6 +1,6 @@
 import { useAuthContext } from '@cognite/react-container';
 import { useEffect, useState } from 'react';
-import { CognitePid, DocumentMetadata, DocumentType } from '@cognite/pid-tools';
+import { CognitePid, DocumentMetadata, DiagramType } from '@cognite/pid-tools';
 
 import { fetchFileByExternalId } from './api';
 
@@ -12,16 +12,16 @@ const useDiagramFile = (
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [documentMetadata, setDocumentMetadata] = useState<DocumentMetadata>({
-    type: DocumentType.unknown,
+    type: DiagramType.unknown,
     name: 'Unknown',
     unit: 'Unknown',
   });
 
   const { client } = useAuthContext();
 
-  const setDocumentType = (documentType: DocumentType) => {
+  const setDiagramType = (diagramType: DiagramType) => {
     if (pidViewer.current === undefined) return;
-    pidViewer.current.setDocumentMetadata(documentType);
+    pidViewer.current.setDocumentMetadata(diagramType);
   };
 
   const handleFileUpload = ({
@@ -60,7 +60,7 @@ const useDiagramFile = (
     loadFileIfProvided,
     isLoading,
     documentMetadata,
-    setDocumentType,
+    setDiagramType,
   };
 };
 

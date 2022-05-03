@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Select, OptionType } from '@cognite/cogs.js';
 import {
   SymbolType,
-  DocumentType,
+  DiagramType,
   bothSymbolTypes,
   pidSymbolTypes,
   isoSymbolTypes,
@@ -45,7 +45,7 @@ interface AddSymbolControllerProps {
   hideSelection: boolean;
   toggleHideSelection: () => void;
   clearSymbolSelection: () => void;
-  documentType: DocumentType;
+  diagramType: DiagramType;
 }
 
 export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
@@ -54,18 +54,18 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
   hideSelection,
   toggleHideSelection,
   clearSymbolSelection,
-  documentType,
+  diagramType,
 }) => {
   let symbolTypeOptions: OptionType<SymbolType>[];
 
-  if (documentType === DocumentType.pid) {
+  if (diagramType === DiagramType.pid) {
     symbolTypeOptions = [...bothSymbolTypes, ...pidSymbolTypes]
       .sort()
       .map((symbolType) => ({
         label: symbolType,
         value: symbolType,
       }));
-  } else if (documentType === DocumentType.isometric) {
+  } else if (diagramType === DiagramType.isometric) {
     symbolTypeOptions = [...bothSymbolTypes, ...isoSymbolTypes]
       .sort()
       .map((symbolType) => ({

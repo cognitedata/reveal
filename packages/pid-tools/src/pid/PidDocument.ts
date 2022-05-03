@@ -10,7 +10,7 @@ import {
   Rect,
   SvgRepresentation,
   DiagramSymbolInstance,
-  DocumentType,
+  DiagramType,
   PidFileConnectionInstance,
   DiagramInstanceId,
   PathReplacement,
@@ -275,14 +275,14 @@ export class PidDocument {
   }
 
   findLinesAndConnection(
-    documentType: DocumentType,
+    diagramType: DiagramType,
     symbolInstances: DiagramSymbolInstance[],
     lineInstances: DiagramLineInstance[],
     connections: DiagramConnection[]
   ) {
     return findLinesAndConnections(
       this,
-      documentType,
+      diagramType,
       symbolInstances,
       lineInstances,
       connections
@@ -290,7 +290,7 @@ export class PidDocument {
   }
 
   connectLabelsToInstances(
-    documentType: DocumentType,
+    diagramType: DiagramType,
     instances: DiagramInstanceWithPaths[],
     excludedLabelConnections: [DiagramInstanceWithPaths, string][]
   ): LabelInstanceConnection[] {
@@ -314,7 +314,7 @@ export class PidDocument {
     );
 
     const labelThreshold =
-      documentType === DocumentType.isometric
+      diagramType === DiagramType.isometric
         ? AUTO_ANALYSIS_LABEL_THRESHOLD_ISO
         : AUTO_ANALYSIS_LABEL_THRESHOLD_PID;
 

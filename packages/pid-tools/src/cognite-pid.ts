@@ -44,7 +44,7 @@ import {
   DiagramSymbol,
   DiagramSymbolInstance,
   DocumentMetadata,
-  DocumentType,
+  DiagramType,
   GraphDocument,
   Legend,
   PathReplacement,
@@ -554,7 +554,7 @@ export class CognitePid {
     this.documentMetadataSubscriber = callback;
   }
 
-  setDocumentMetadata(selectedType?: DocumentType) {
+  setDocumentMetadata(selectedType?: DiagramType) {
     this.documentMetadata = getMetadataFromFileName(
       this.fileName ?? '',
       selectedType

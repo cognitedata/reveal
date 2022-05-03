@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { ToolBar, ToolBarButton } from '@cognite/cogs.js';
-import { ToolType, DocumentType } from '@cognite/pid-tools';
+import { ToolType, DiagramType } from '@cognite/pid-tools';
 
 const ToolBarWrapper = styled.div`
   position: absolute;
@@ -31,13 +31,13 @@ const ToolBarWrapper = styled.div`
 interface ToolbarProps {
   activeTool: ToolType;
   setActiveTool: (tool: ToolType) => void;
-  documentType: DocumentType;
+  diagramType: DiagramType;
 }
 
 export const Toolbar = ({
   activeTool,
   setActiveTool,
-  documentType,
+  diagramType,
 }: ToolbarProps) => {
   const toolBarButtonGroups: ToolBarButton[][] = [
     [
@@ -74,14 +74,14 @@ export const Toolbar = ({
     ],
   ];
 
-  if (documentType === DocumentType.pid) {
+  if (diagramType === DiagramType.pid) {
     toolBarButtonGroups[0].push({
       icon: 'Slice',
       onClick: () => setActiveTool('splitLine'),
       className: `${activeTool === 'splitLine' && 'active'}`,
       description: 'Split line',
     });
-  } else if (documentType === DocumentType.isometric) {
+  } else if (diagramType === DiagramType.isometric) {
     toolBarButtonGroups[0].push({
       icon: 'String',
       onClick: () => setActiveTool('addEquipmentTag'),

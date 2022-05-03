@@ -1,4 +1,4 @@
-import { GraphDocument, DocumentType } from '../types';
+import { GraphDocument, DiagramType } from '../types';
 import { SymbolConnection } from '../graphMatching/types';
 import getFileNameWithoutExtension from '../utils/getFileNameWithoutExtension';
 
@@ -22,7 +22,6 @@ import {
 
 const parseDocument = (
   graph: GraphDocument,
-  version: string,
   allDocuments: GraphDocument[],
   connections: SymbolConnection[]
 ): ParsedDocument => {
@@ -37,8 +36,7 @@ const parseDocument = (
 
   const linking: DocumentLink[] = connectionsToLinks(
     connections,
-    graph.documentMetadata.name,
-    version
+    graph.documentMetadata.name
   );
 
   const textAnnotationMap = new Map<string, TextAnnotation>();
@@ -81,7 +79,7 @@ const parseDocument = (
     inferLineNumbersToLabels(annotation);
   });
 
-  if (graph.documentMetadata.type === DocumentType.isometric) {
+  if (graph.documentMetadata.type === DiagramType.isometric) {
     inferIsoLineNumberToAnnotations(
       graph.documentMetadata.lineNumber,
       annotations
@@ -104,11 +102,11 @@ const parseDocument = (
 
   return {
     annotations,
-    externalId: getExtId(fileNameWithoutExtension, version),
+    externalId: getExtId(fileNameWithoutExtension),
     linking,
     pdfExternalId,
     potentialDiscrepancies: [],
-    type: graph.documentMetadata.type === DocumentType.pid ? 'p&id' : 'iso',
+    type: graph.documentMetadata.type === DiagramType.pid ? 'p&id' : 'iso',
     viewBox: graph.viewBox,
     lineNumbers: graph.lineNumbers,
     unit: graph.documentMetadata.unit,
@@ -116,9 +114,8 @@ const parseDocument = (
 };
 
 const getParsedDocumentFiles = (
-  version: string,
   parsedDocuments: ParsedDocument[]
-): File[] =>
+): File<ParsedDocument>[] =>
   parsedDocuments.map((parsedDocument) => ({
     fileName: parsedDocument.externalId,
     data: parsedDocument,
@@ -126,23 +123,16 @@ const getParsedDocumentFiles = (
 
 export const computeLineFiles = (
   graphDocuments: GraphDocument[],
-  connections: SymbolConnection[],
-  version: string
-): File[] => {
+  connections: SymbolConnection[]
+): File<ParsedDocument>[] => {
   const parsedDocumentsWithLineNumbers = graphDocuments.map(
     (graphDocument) => ({
       lineNumbers: graphDocument.lineNumbers ?? [],
-      parsedDocument: parseDocument(
-        graphDocument,
-        version,
-        graphDocuments,
-        connections
-      ),
+      parsedDocument: parseDocument(graphDocument, graphDocuments, connections),
     })
   );
 
   return getParsedDocumentFiles(
-    version,
     parsedDocumentsWithLineNumbers.map(({ parsedDocument }) => parsedDocument)
   );
 };

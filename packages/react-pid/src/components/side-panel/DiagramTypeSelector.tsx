@@ -1,5 +1,5 @@
 import { Button } from '@cognite/cogs.js';
-import { DocumentType } from '@cognite/pid-tools';
+import { DiagramType } from '@cognite/pid-tools';
 import styled from 'styled-components';
 
 const SidePanelOverlay = styled.div`
@@ -21,25 +21,25 @@ const SelectButton = styled(Button)`
   font-size: 1.25em;
 `;
 
-interface DocumentTypeSelectorProps {
-  setDocumentType: (type: DocumentType) => void;
+interface DiagramTypeSelectorProps {
+  setDiagramType: (type: DiagramType) => void;
 }
 
-export const DocumentTypeSelector = ({
-  setDocumentType,
-}: DocumentTypeSelectorProps) => {
-  const selectType = (type: DocumentType) => {
-    setDocumentType(type);
+export const DiagramTypeSelector = ({
+  setDiagramType,
+}: DiagramTypeSelectorProps) => {
+  const selectType = (type: DiagramType) => {
+    setDiagramType(type);
   };
 
   return (
     <SidePanelOverlay>
       <h2>Please select document type</h2>
       <ButtonWrapper>
-        <SelectButton onClick={() => selectType(DocumentType.pid)}>
+        <SelectButton onClick={() => selectType(DiagramType.pid)}>
           P&ID
         </SelectButton>
-        <SelectButton onClick={() => selectType(DocumentType.isometric)}>
+        <SelectButton onClick={() => selectType(DiagramType.isometric)}>
           ISO
         </SelectButton>
       </ButtonWrapper>

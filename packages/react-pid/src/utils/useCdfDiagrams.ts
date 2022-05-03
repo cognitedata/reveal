@@ -6,7 +6,13 @@ import {
   DIAGRAM_PARSER_OUTPUT_TYPE,
   DIAGRAM_PARSER_SOURCE,
   getFileNameWithoutExtension,
+  LINEWALK_DATA_VERSION,
+  DiagramType,
+  getGraphExternalIdKey,
 } from '@cognite/pid-tools';
+
+import createEventForLineNumberIfDoesntExist from './createEventForLineNumberIfDoesntExist';
+import lineNumbersMetadata from './lineNumbersMetadata';
 
 export enum SaveState {
   Computing,
@@ -32,7 +38,11 @@ const useCdfDiagrams = () => {
       });
   }, []);
 
-  const saveGraph = () => {
+  const saveGraph = async () => {
+    if (client === undefined) {
+      return;
+    }
+
     setSaveStatus(SaveState.Computing);
     if (!pidViewer.current) return;
 
@@ -42,9 +52,11 @@ const useCdfDiagrams = () => {
 
     setSaveStatus(SaveState.Saving);
 
-    const externalId = `${getFileNameWithoutExtension(
+    const fileNameWithoutExtension = getFileNameWithoutExtension(
       graph.documentMetadata.name
-    )}.json`;
+    );
+    const externalId = `${fileNameWithoutExtension}.json`;
+    const pdfExternalId = `${fileNameWithoutExtension}.pdf`;
 
     const fileInfo: ExternalFileInfo = {
       name: externalId,
@@ -58,15 +70,42 @@ const useCdfDiagrams = () => {
         lineNumbers: graph.lineNumbers.join(','),
       },
     };
-    client?.files
-      .upload(fileInfo, JSON.stringify(graph), true)
-      .then(() => {
-        setSaveStatus(SaveState.Saved);
-      })
-      .catch((error) => {
-        setSaveStatus(SaveState.Error);
-        throw Error(error);
-      });
+    try {
+      await client?.files.upload(fileInfo, JSON.stringify(graph), true);
+      setSaveStatus(SaveState.Saved);
+      await client?.files.update([
+        {
+          externalId: pdfExternalId,
+          update: {
+            metadata: {
+              add: {
+                [getGraphExternalIdKey(LINEWALK_DATA_VERSION)]: externalId,
+                ...lineNumbersMetadata(
+                  LINEWALK_DATA_VERSION,
+                  graph.lineNumbers
+                ),
+              },
+              remove: [],
+            },
+          },
+        },
+      ]);
+
+      if (graph.documentMetadata.type === DiagramType.isometric) {
+        await Promise.all(
+          graph.lineNumbers.map((lineNumber) =>
+            createEventForLineNumberIfDoesntExist(client, {
+              version: LINEWALK_DATA_VERSION,
+              lineNumber,
+              unit: graph.documentMetadata.unit,
+            })
+          )
+        );
+      }
+    } catch (error) {
+      setSaveStatus(SaveState.Error);
+      throw Error();
+    }
   };
 
   return { diagrams, pidViewer, saveGraph, saveState: saveStatus };

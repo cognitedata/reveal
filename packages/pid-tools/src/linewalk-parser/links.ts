@@ -5,7 +5,7 @@ import { SymbolConnection, SymbolConnectionId } from '../graphMatching/types';
 import {
   PidFileConnectionInstance,
   GraphDocument,
-  DocumentType,
+  DiagramType,
   DiagramLabelOutputFormat,
   LineConnectionInstanceOutputFormat,
 } from '../types';
@@ -62,7 +62,7 @@ export const findPidLink = (
 
   const connectedDoc = documents.find((document) =>
     isMatch(document.documentMetadata, {
-      type: DocumentType.pid,
+      type: DiagramType.pid,
       documentNumber: fileConnection.documentNumber,
       unit: fileConnection.unit || document.documentMetadata.unit, // either the explicit unit or the same as current
     })
