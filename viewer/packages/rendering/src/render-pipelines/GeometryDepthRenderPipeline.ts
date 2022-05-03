@@ -16,7 +16,7 @@ export class GeometryDepthRenderPipeline implements RenderPipelineProvider {
   private readonly _materialManager: CadMaterialManager;
   private readonly _cadModels: IdentifiedModel[];
   private readonly _renderTargetData: { currentRenderSize: THREE.Vector2; composition: THREE.WebGLRenderTarget };
-  private readonly _inFrontPass: GeometryPass;
+  private readonly _geometryPass: GeometryPass;
   private _outputRenderTarget: THREE.WebGLRenderTarget = null;
   public scene: THREE.Scene;
 
@@ -38,14 +38,14 @@ export class GeometryDepthRenderPipeline implements RenderPipelineProvider {
     };
 
     const layerMask = getLayerMask(RenderLayer.InFront) | getLayerMask(RenderLayer.Back);
-    this._inFrontPass = new GeometryPass(scene, materialManager, RenderMode.DepthBufferOnly, layerMask);
+    this._geometryPass = new GeometryPass(scene, materialManager, RenderMode.DepthBufferOnly, layerMask);
   }
 
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
     this.updateRenderTargetSizes(renderer);
     setupGeometryLayers(this._materialManager, this._cadModels);
     renderer.setRenderTarget(this._outputRenderTarget);
-    yield this._inFrontPass;
+    yield this._geometryPass;
   }
 
   private updateRenderTargetSizes(renderer: THREE.WebGLRenderer): void {

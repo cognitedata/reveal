@@ -28,7 +28,7 @@ import {
 } from '@reveal/utilities';
 
 import { MetricsLogger } from '@reveal/metrics';
-import { intersectCadNodes, CadModelSectorLoadStatistics, Cognite3DModel } from '@reveal/cad-model';
+import { PickingHandler, CadModelSectorLoadStatistics, Cognite3DModel } from '@reveal/cad-model';
 import {
   intersectPointClouds,
   PointCloudIntersection,
@@ -109,6 +109,8 @@ export class Cognite3DViewer {
   private readonly _revealManagerHelper: RevealManagerHelper;
   private readonly _domElement: HTMLElement;
   private readonly _renderer: THREE.WebGLRenderer;
+
+  private readonly _pickingHandler: PickingHandler;
 
   private readonly _boundAnimate = this.animate.bind(this);
 
@@ -263,6 +265,8 @@ export class Cognite3DViewer {
 
     this.renderController = new RenderController(this.camera);
     this.startPointerEventListeners();
+
+    this._pickingHandler = new PickingHandler();
 
     this.revealManager.setRenderTarget(
       options.renderTargetOptions?.target || null,
@@ -1025,7 +1029,7 @@ export class Cognite3DViewer {
       clippingPlanes: this.getClippingPlanes(),
       domElement: this.renderer.domElement
     };
-    const cadResults = intersectCadNodes(cadNodes, input);
+    const cadResults = this._pickingHandler.intersectCadNodes(cadNodes, input);
     const pointCloudResults = intersectPointClouds(pointCloudNodes, input, options?.pointIntersectionThreshold);
 
     const intersections: Intersection[] = [];
