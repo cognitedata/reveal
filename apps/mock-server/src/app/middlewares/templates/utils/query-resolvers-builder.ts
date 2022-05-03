@@ -193,6 +193,9 @@ function fetchAndQueryData(props: FetchAndQueryDataProps): CdfResourceObject[] {
 
   if (refObj) {
     const relation = refObj[schemaFieldName];
+    if ((!isFetchingObject && !relation) || !relation.length) {
+      return [];
+    }
     const relationParams = isFetchingObject
       ? objToFilter(relation)
       : objToFilter(flattenNestedObjArray(relation, false));

@@ -231,6 +231,12 @@
               "apps/mock-server/src/static"
             ],
             "generatePackageJson": true,
+            "additionalEntryPoints": [
+              {
+                "entryName": "mock-data",
+                "entryPath": "apps/mock-server/src/mock-data.ts"
+              }
+            ],
             "webpackConfig": "tools/custom-webpack-configurations/mock-server-webpack-config.js"
           },
           "configurations": {

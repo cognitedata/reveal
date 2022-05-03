@@ -4,7 +4,10 @@ import { CdfApiConfig, MockData } from '../app';
 import { mockDataSample } from '../mock-data';
 
 export function loadMockData(mockDataPath: string): MockData {
-  return loadFile(mockDataPath, mockDataSample);
+  if (!mockDataPath) {
+    return mockDataSample;
+  }
+  return loadFile(mockDataPath, {});
 }
 
 export function loadConfig(configPath: string): CdfApiConfig {
@@ -32,7 +35,12 @@ function loadFile(filePath: string, defaultValue = {}) {
   if (!filePath) {
     return defaultValue;
   }
-  if (existsSync(getPath(filePath))) {
+  let fileToLoadPath = getPath(filePath);
+  if (!existsSync(fileToLoadPath)) {
+    fileToLoadPath = pathResolve(process.cwd(), filePath);
+  }
+
+  if (existsSync(fileToLoadPath)) {
     if (filePath.endsWith('.js')) {
       result = require(/* webpackIgnore: true */ getPath(filePath));
     } else if (filePath.endsWith('.json')) {
