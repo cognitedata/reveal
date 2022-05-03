@@ -4,7 +4,6 @@ import reducer, {
   selectCategory,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
 import { Categories } from 'src/modules/Review/types';
-import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 
 describe('Test AnnotationDetailPanel reducer', () => {
   const state: AnnotationDetailPanelState = {
@@ -12,9 +11,8 @@ describe('Test AnnotationDetailPanel reducer', () => {
       [Categories.Asset]: { selected: true },
     },
   };
-  const stateWithTwoCategories: AnnotationDetailPanelState = {
+  const stateWithTextCategory: AnnotationDetailPanelState = {
     categories: {
-      [Categories.Asset]: { selected: true },
       [Categories.Text]: { selected: true },
     },
   };
@@ -42,13 +40,13 @@ describe('Test AnnotationDetailPanel reducer', () => {
         )
       ).toEqual(annotationDetailPanelInitialState);
     });
-    test('should add another selected category', () => {
+    test('should replace the existing category', () => {
       expect(
         reducer(
           state,
           selectCategory({ category: Categories.Text, selected: true })
         )
-      ).toEqual(stateWithTwoCategories);
+      ).toEqual(stateWithTextCategory);
     });
     test('should not add same selected category', () => {
       expect(
@@ -65,13 +63,6 @@ describe('Test AnnotationDetailPanel reducer', () => {
           selectCategory({ category: Categories.Text, selected: false })
         )
       ).toEqual(state);
-    });
-  });
-
-  describe('Test extra reducers', () => {
-    test('deselectAllSelectionsReviewPage', () => {
-      const outputState = reducer(state, deselectAllSelectionsReviewPage);
-      expect(outputState).toEqual(annotationDetailPanelInitialState);
     });
   });
 });
