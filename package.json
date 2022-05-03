@@ -98,6 +98,7 @@
     "@cognite/eslint-config": "^1.6.1",
     "@cognite/eslint-plugin": "^1.4.0",
     "@quickbaseoss/babel-plugin-styled-components-css-namespace": "^1.0.1",
+    "@testing-library/cypress": "^8.0.2",
     "@testing-library/react": "^11.2.2",
     "@types/enzyme": "^3.10.7",
     "@types/enzyme-adapter-react-16": "^1.0.6",
