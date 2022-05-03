@@ -75,3 +75,34 @@ export const repopulateAnnotationState = (
     },
   };
 };
+
+export const updateAnnotations = (
+  state: AnnotationState,
+  annotations: VisionAnnotation<VisionAnnotationDataType>[]
+): AnnotationState => {
+  const filesById = state.files.byId;
+  const annotationsById = state.annotations.byId;
+
+  annotations.forEach((annotation) => {
+    const resourceId: number | undefined = annotation.annotatedResourceId;
+    if (resourceId) {
+      if (filesById[resourceId]) {
+        if (!filesById[resourceId].includes(annotation.id)) {
+          filesById[resourceId].push(annotation.id);
+        }
+      } else {
+        filesById[resourceId] = [annotation.id];
+      }
+    }
+    annotationsById[annotation.id] = annotation;
+  });
+
+  return {
+    files: {
+      byId: filesById,
+    },
+    annotations: {
+      byId: annotationsById,
+    },
+  };
+};

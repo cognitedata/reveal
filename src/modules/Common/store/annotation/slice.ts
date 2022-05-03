@@ -12,6 +12,7 @@ import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import {
   clearStates,
   repopulateAnnotationState,
+  updateAnnotations,
 } from 'src/modules/Common/store/annotation/util';
 
 export const initialState: AnnotationState = {
@@ -106,19 +107,10 @@ const annotationSlice = createSlice({
         // update annotations
         // ToDo (VIS-794): conversion logic from V1 to V2 in the new slice can be moved into thunks.
         const annotations = convertCDFAnnotationV1ToVisionAnnotations(payload);
-        annotations.forEach((annotation) => {
-          const resourceId: number | undefined = annotation.annotatedResourceId;
-          if (resourceId) {
-            if (state.files.byId[resourceId]) {
-              if (!state.files.byId[resourceId].includes(annotation.id)) {
-                state.files.byId[resourceId].push(annotation.id);
-              }
-            } else {
-              state.files.byId[resourceId] = [annotation.id];
-            }
-          }
-          state.annotations.byId[annotation.id] = annotation;
-        });
+
+        const updatedState = updateAnnotations(state, annotations);
+        state.annotations = updatedState.annotations;
+        state.files = updatedState.files;
       }
     );
 

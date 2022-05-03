@@ -2,6 +2,7 @@ import { initialState } from 'src/modules/Common/store/annotation/slice';
 import {
   clearStates,
   repopulateAnnotationState,
+  updateAnnotations,
 } from 'src/modules/Common/store/annotation/util';
 import {
   VisionAnnotation,
@@ -83,7 +84,7 @@ describe('Test annotation utils', () => {
     });
   });
 
-  describe('Test updateAnnotations fn', () => {
+  describe('Test repopulateAnnotationState fn', () => {
     test('when no annotations to update', () => {
       expect(repopulateAnnotationState(mockState, [])).toStrictEqual(mockState);
     });
@@ -100,6 +101,39 @@ describe('Test annotation utils', () => {
         }),
       ];
       const updatedState = repopulateAnnotationState(mockState, newAnnotations);
+
+      expect(updatedState.annotations.byId).toStrictEqual({
+        '7': getDummyImageObjectDetectionBoundingBoxAnnotation({
+          id: 7,
+          annotatedResourceId: 10,
+        }),
+        '8': getDummyImageObjectDetectionBoundingBoxAnnotation({
+          id: 8,
+          annotatedResourceId: 10,
+        }),
+      });
+
+      expect(updatedState.files.byId[10]).toStrictEqual([7, 8]);
+    });
+  });
+
+  describe('Test updateAnnotations fn', () => {
+    test('when no annotations to update', () => {
+      expect(updateAnnotations(mockState, [])).toStrictEqual(mockState);
+    });
+
+    test('with new payload', () => {
+      const newAnnotations: VisionAnnotation<VisionAnnotationDataType>[] = [
+        getDummyImageObjectDetectionBoundingBoxAnnotation({
+          id: 7,
+          annotatedResourceId: 10,
+        }),
+        getDummyImageObjectDetectionBoundingBoxAnnotation({
+          id: 8,
+          annotatedResourceId: 10,
+        }),
+      ];
+      const updatedState = updateAnnotations(mockState, newAnnotations);
 
       expect(updatedState.annotations.byId).toStrictEqual({
         '7': getDummyImageObjectDetectionBoundingBoxAnnotation({
