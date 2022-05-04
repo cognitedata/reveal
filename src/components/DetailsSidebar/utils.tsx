@@ -12,11 +12,14 @@ import {
   waitForCalculationToFinish,
   waitForStatisticsToFinish,
 } from 'services/calculation-backend';
+
 import { useCreateStatistics } from 'hooks/calculation-backend';
+
 import {
   CreateStatisticsParams,
   StatusStatusEnum,
 } from '@cognite/calculation-backend';
+// createStatistics
 import { getHash } from 'utils/hash';
 import { useCluster, useProject } from 'hooks/config';
 import { usePrevious } from 'react-use';

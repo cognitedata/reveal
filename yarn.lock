@@ -1270,12 +1270,12 @@
     jwt-decode "3.1.2"
     lodash "4.17.21"
 
-"@cognite/calculation-backend@4.0.0-alpha":
-  version "4.0.0-alpha"
-  resolved "https://registry.yarnpkg.com/@cognite/calculation-backend/-/calculation-backend-4.0.0-alpha.tgz#7e3c5ef11737515b93549b0fa97657a79604195d"
-  integrity sha512-YJkyQUFEOuO43VgMpDhVmDKx0eXVLal0Fx7sVWO+P5gql0+3CkteaSHeR10mCQ71fCbWhR9A8yLj+rqUFNNoRQ==
+"@cognite/calculation-backend@4.0.0-alpha.1":
+  version "4.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@cognite/calculation-backend/-/calculation-backend-4.0.0-alpha.1.tgz#725896de06364bde2ec6f7f04ddd9feed59995d0"
+  integrity sha512-/UgaVOyj9u1kUV4+VhaaJYgxS6iVXmveWqjKjellA+xOniTsiZGbHctkA+xY6ecah0104sY/D0KemnX8RBsUtg==
   dependencies:
-    axios "^0.21.4"
+    axios "^0.26.1"
 
 "@cognite/cdf-hub-tenant-selector@0.14.1":
   version "0.14.1"
@@ -5613,14 +5613,14 @@ axios@0.25.0:
   dependencies:
     follow-redirects "^1.14.7"
 
-axios@0.26.1:
+axios@0.26.1, axios@^0.26.1:
   version "0.26.1"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.26.1.tgz#1ede41c51fcf51bbbd6fd43669caaa4f0495aaa9"
   integrity sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==
   dependencies:
     follow-redirects "^1.14.8"
 
-axios@^0.21.1, axios@^0.21.2, axios@^0.21.4:
+axios@^0.21.1, axios@^0.21.2:
   version "0.21.4"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.4.tgz#c67b90dc0568e5c1cf2b0b858c43ba28e2eda575"
   integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==

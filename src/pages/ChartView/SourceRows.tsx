@@ -14,6 +14,7 @@ type Props = {
   selectedSourceId?: string;
   onRowClick: (id?: string) => void;
   onInfoClick: (id?: string) => void;
+  onThresholdClick: (id?: string) => void;
   draggable?: boolean;
 };
 
@@ -26,6 +27,7 @@ const SourceRows = memo(
     openNodeEditor,
     onRowClick = () => {},
     onInfoClick = () => {},
+    onThresholdClick = () => {},
     draggable = false,
   }: Props) => {
     const isWorkspaceMode = mode === 'workspace';
@@ -79,6 +81,7 @@ const SourceRows = memo(
                     isWorkspaceMode={isWorkspaceMode}
                     onRowClick={onRowClick}
                     onInfoClick={onInfoClick}
+                    onThresholdClick={onThresholdClick}
                     isSelected={selectedSourceId === src.id}
                     disabled={isEditorMode}
                     isFileViewerMode={isFileViewerMode}
@@ -97,6 +100,7 @@ const SourceRows = memo(
                     isSelected={selectedSourceId === src.id}
                     onRowClick={onRowClick}
                     onInfoClick={onInfoClick}
+                    onThresholdClick={onThresholdClick}
                     mode={mode}
                     openNodeEditor={openNodeEditor}
                     translations={translations}

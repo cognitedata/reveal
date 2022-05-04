@@ -1,14 +1,20 @@
 import { DatapointAggregate, Datapoints, DoubleDatapoint } from '@cognite/sdk';
 import dayjs from 'dayjs';
 import groupBy from 'lodash/groupBy';
-import { ChartTimeSeries, ChartWorkflow, LineStyle } from 'models/chart/types';
+import {
+  ChartThreshold,
+  ChartTimeSeries,
+  ChartWorkflow,
+  LineStyle,
+} from 'models/chart/types';
 import { roundToSignificantDigits } from 'utils/numbers';
 import { hexToRGBA } from 'utils/colors';
-import { convertUnits, units } from 'utils/units';
+import { convertUnits, convertThresholdUnits, units } from 'utils/units';
 import { useDebouncedCallback } from 'use-debounce';
 import { useState, useEffect, useCallback } from 'react';
 import { WorkflowState } from 'models/workflows/types';
 import { TimeseriesEntry } from 'models/timeseries/types';
+import { isThresholdValid } from 'utils/threshold';
 
 export type PlotlyEventData = {
   [key: string]: any;
@@ -33,6 +39,7 @@ export type SeriesData = {
   range: number[] | undefined;
   unit: string | undefined;
   series: SeriesInfo[];
+  thresholds: ChartThreshold[];
 };
 
 export type AxisUpdate = {
@@ -50,6 +57,7 @@ export function hasRawPoints(
 export function calculateSeriesData(
   timeSeriesCollection: ChartTimeSeries[] = [],
   workflowCollection: ChartWorkflow[] = [],
+  thresholdCollection: ChartThreshold[] = [],
   timeseries: TimeseriesEntry[],
   workflows: WorkflowState[] = [],
   mergeUnits: boolean
@@ -81,6 +89,12 @@ export function calculateSeriesData(
           t.preferredUnit
         );
 
+        const unitConvertedThresolds = convertThresholdUnits(
+          thresholdCollection || [],
+          t.unit,
+          t.preferredUnit
+        );
+
         return {
           enabled: t.enabled,
           range: t.range,
@@ -98,6 +112,9 @@ export function calculateSeriesData(
               shape: t.interpolation,
             },
           ],
+          thresholds: unitConvertedThresolds.filter(
+            (th) => th.sourceId === t.id
+          ),
         };
       })
       .filter((t) => t.enabled),
@@ -127,6 +144,12 @@ export function calculateSeriesData(
           workflow.preferredUnit
         );
 
+        const unitConvertedThresolds = convertThresholdUnits(
+          thresholdCollection || [],
+          workflow.unit,
+          workflow.preferredUnit
+        );
+
         return {
           enabled: workflow.enabled,
           range: workflow.range,
@@ -146,6 +169,9 @@ export function calculateSeriesData(
               datapoints: unitConvertedDatapoints,
             },
           ],
+          thresholds: unitConvertedThresolds.filter(
+            (th) => th.sourceId === workflow.id
+          ),
         };
       })
       .filter((t) => t.enabled),
@@ -164,6 +190,11 @@ export function calculateSeriesData(
           range: calculateMaxRange(seriesGrouppedByUnit[unit]),
           series: seriesGrouppedByUnit[unit].reduce(
             (result: any[], { series }: SeriesData) => result.concat(...series),
+            []
+          ),
+          thresholds: seriesGrouppedByUnit[unit].reduce(
+            (result: any[], { thresholds }: SeriesData) =>
+              result.concat(...thresholds),
             []
           ),
         });
@@ -482,7 +513,7 @@ export function generateLayout({
     fixedrange: yAxisLocked,
   };
 
-  seriesData.forEach(({ unit, range, series }: any, index: any) => {
+  seriesData.forEach(({ unit, range, series, thresholds }: any, index: any) => {
     const { color } = series[0];
     const datapoints = series.reduce(
       (acc: (Datapoints | DatapointAggregate)[], s: SeriesInfo) =>
@@ -536,6 +567,53 @@ export function generateLayout({
       range: rangeY,
       showgrid: isGridlinesShown,
     };
+
+    /** Display thresholds */
+    if (thresholds.length) {
+      thresholds.forEach((ths: ChartThreshold) => {
+        let y0 = 0;
+        let y1 = 0;
+
+        const thresholdColor = series.find(
+          (s: any) => s.id === ths.sourceId
+        ).color;
+
+        switch (ths.type) {
+          case 'under':
+            y0 = ths.upperLimit || 0;
+            y1 = ths.upperLimit || 0;
+            break;
+
+          case 'over':
+            y0 = ths.lowerLimit || 0;
+            y1 = ths.lowerLimit || 0;
+            break;
+
+          default:
+            y0 = ths.lowerLimit || 0;
+            y1 = ths.upperLimit || 0;
+        }
+
+        (layout.shapes as any[]).push({
+          visible: isThresholdValid(ths) && ths.visible,
+          xref: 'paper',
+          yref: `y${index ? index + 1 : '0'}`,
+          x0: showYAxis
+            ? yAxisValues.width * (seriesData.length - 1) + 0.0195
+            : -0.015,
+          x1: 1.015,
+          y0: parseFloat(String(y0)),
+          y1: parseFloat(String(y1)),
+          type: ths.type === 'between' ? 'rect' : 'line',
+          fillcolor: hexToRGBA(thresholdColor, 0.1),
+          line: {
+            dash: 'dot',
+            color: thresholdColor,
+            width: 1,
+          },
+        });
+      });
+    }
 
     if (showYAxis) {
       /**

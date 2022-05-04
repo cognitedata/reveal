@@ -14,6 +14,7 @@ export type Chart = {
   timeSeriesCollection?: ChartTimeSeries[];
   workflowCollection?: ChartWorkflow[];
   sourceCollection?: SourceCollectionData[];
+  thresholdCollection?: ChartThreshold[];
   dateFrom: string;
   dateTo: string;
   public?: boolean;
@@ -122,4 +123,29 @@ export type UserInfo = {
   id: string;
   email?: string;
   displayName?: string;
+};
+
+type ThresholdCallRef = {
+  callId: string;
+  callDate: number;
+  hash?: number;
+};
+
+export type ChartThresholdEventFilter = {
+  minValue?: number;
+  maxValue?: number;
+  minUnit?: string;
+  maxUnit?: string;
+};
+
+export type ChartThreshold = {
+  id: string;
+  name: string;
+  visible: boolean;
+  sourceId?: ChartTimeSeries['id'] | ChartWorkflow['id'];
+  upperLimit?: number;
+  lowerLimit?: number;
+  type: 'under' | 'over' | 'between';
+  calls?: ThresholdCallRef[];
+  filter: ChartThresholdEventFilter;
 };

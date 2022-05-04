@@ -2,14 +2,14 @@ import { Router } from 'react-router-dom';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { CogniteClient } from '@cognite/sdk';
 import { ToastContainer } from '@cognite/cogs.js';
 import { RecoilRoot } from 'recoil';
 import config from 'config/config';
 import { IntercomProvider } from 'react-use-intercom';
-import '@cognite/cogs.js/dist/cogs.css';
+
 import 'antd/dist/antd.css';
 import 'react-datepicker/dist/react-datepicker.css';
+import '@cognite/cogs.js/dist/cogs.css';
 import './config/i18n';
 import 'services/metrics';
 
@@ -19,6 +19,7 @@ import { Integrations } from '@sentry/tracing';
 import SentryRRWeb from '@sentry/rrweb';
 import { isDevelopment } from 'utils/environment';
 import { createBrowserHistory } from 'history';
+import { getSDK } from 'utils/cdf-sdk';
 import Routes from './pages/Routes';
 
 if (!isDevelopment && !config.sentryDSN) {
@@ -57,9 +58,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const sdkClient = new CogniteClient({
-  appId: `Cognite Charts ${config.version}`,
-});
+const sdkClient = getSDK();
 
 export default function RootApp() {
   return (

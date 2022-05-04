@@ -61,6 +61,7 @@ type Props = {
   isSelected?: boolean;
   onRowClick?: (id?: string) => void;
   onInfoClick?: (id?: string) => void;
+  onThresholdClick?: (id?: string) => void;
   openNodeEditor?: () => void;
   mode: string;
   mutate: (update: (c: Chart | undefined) => Chart) => void;
@@ -77,7 +78,8 @@ const defaultTranslations = makeDefaultTranslations(
   'Cancel',
   'Remove this calculation?',
   'Edit calculation',
-  'Duplicate'
+  'Duplicate',
+  'Threshold'
 );
 
 function WorkflowRow({
@@ -85,6 +87,7 @@ function WorkflowRow({
   workflow,
   onRowClick = () => {},
   onInfoClick = () => {},
+  onThresholdClick = () => {},
   mode,
   openNodeEditor = () => {},
   isSelected = false,
@@ -630,6 +633,13 @@ function WorkflowRow({
                       setChart((oldChart) => duplicateWorkflow(oldChart!, id));
                       trackUsage('ChartView.DuplicateCalculation');
                     }
+                  },
+                },
+                {
+                  label: t.Threshold,
+                  icon: 'Threshold',
+                  onClick: () => {
+                    onThresholdClick(id);
                   },
                 },
               ]}

@@ -148,6 +148,7 @@ const ChartList = () => {
       createdAt: Date.now(),
       timeSeriesCollection: [],
       workflowCollection: [],
+      thresholdCollection: [],
       dateFrom: dateFrom.toJSON(),
       dateTo: dateTo.toJSON(),
       public: false,

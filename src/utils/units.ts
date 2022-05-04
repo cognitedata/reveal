@@ -1,4 +1,5 @@
 import { DatapointAggregate, DoubleDatapoint } from '@cognite/sdk';
+import { ChartThreshold } from 'models/chart/types';
 
 export enum UnitTypes {
   TEMPERATURE = 'Temperature',
@@ -391,6 +392,23 @@ export const convertUnits = (
   }));
 
   return convertedDataPoints;
+};
+
+export const convertThresholdUnits = (
+  thresholds: ChartThreshold[],
+  inputUnit: string = '',
+  outputUnit: string = ''
+): ChartThreshold[] => {
+  const convert: (val: number) => number =
+    (conversions[inputUnit] || {})[outputUnit] || ((val) => val);
+
+  const convertedThresholds = thresholds.map((th) => ({
+    ...th,
+    upperLimit: th.upperLimit ? convert(th.upperLimit) : th.upperLimit,
+    lowerLimit: th.lowerLimit ? convert(th.lowerLimit) : th.lowerLimit,
+  }));
+
+  return convertedThresholds;
 };
 
 export const convertValue = (

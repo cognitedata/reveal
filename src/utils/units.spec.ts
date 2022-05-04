@@ -1,5 +1,6 @@
 import { DatapointAggregate, DoubleDatapoint } from '@cognite/sdk';
-import { convertUnits, convertValue } from './units';
+import { ChartThreshold } from 'models/chart/types';
+import { convertThresholdUnits, convertUnits, convertValue } from './units';
 
 describe('convertUnits', () => {
   it('should convert units successfully (double data points)', () => {
@@ -342,5 +343,57 @@ describe('convertUnits', () => {
     expect(convertValueWith2Decimals(1, 'mmscfd', 'bbld')).toEqual(177700.59);
     expect(convertValueWith2Decimals(1, 'mmscfd', 'mbbld')).toEqual(177.7);
     expect(convertValueWith2Decimals(1, 'mmscfd', 'mmscfd')).toEqual(1.0);
+  });
+});
+
+describe('unitConvertedThresolds', () => {
+  it('should convert threshold units', () => {
+    const thresholdCollection: ChartThreshold[] = [
+      {
+        id: 'fe6f69aa-e11c-4738-9a6e-2818000877ed',
+        name: 'Lower Values',
+        type: 'under',
+        visible: true,
+        lowerLimit: undefined,
+        upperLimit: 19,
+        filter: {},
+      },
+      {
+        id: '1b226194-43ac-4964-a8a7-5ed26d2b867a',
+        name: 'New threshold ',
+        type: 'between',
+        visible: true,
+        lowerLimit: 29,
+        upperLimit: 31,
+        filter: {},
+      },
+    ];
+
+    const unitConvertedThresolds = convertThresholdUnits(
+      thresholdCollection,
+      'c',
+      'f'
+    );
+
+    expect(unitConvertedThresolds).toEqual([
+      {
+        id: 'fe6f69aa-e11c-4738-9a6e-2818000877ed',
+        name: 'Lower Values',
+        type: 'under',
+        visible: true,
+        lowerLimit: undefined,
+        upperLimit: 66.2,
+        filter: {},
+      },
+      {
+        id: '1b226194-43ac-4964-a8a7-5ed26d2b867a',
+        name: 'New threshold ',
+        type: 'between',
+        visible: true,
+        upperLimit: 87.8,
+        lowerLimit: 84.2,
+        filter: {},
+      },
+    ]);
   });
 });

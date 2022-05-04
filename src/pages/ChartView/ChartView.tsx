@@ -60,6 +60,7 @@ import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
 import { FileView } from 'pages/FileView/FileView';
 import { useIsChartOwner } from 'hooks/user';
 import DetailsSidebar from 'components/DetailsSidebar/DetailsSidebar';
+import ThresholdSidebar from 'components/Thresholds/ThresholdSidebar';
 import SearchSidebar from 'components/Search/SearchSidebar';
 import TimePeriodSelector from 'components/TimePeriodSelector/TimePeriodSelector';
 import SourceRows from './SourceRows';
@@ -108,6 +109,7 @@ const defaultTranslations = makeDefaultTranslations(
 
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [showContextMenu, setShowContextMenu] = useState(false);
+  const [showThresholdMenu, setShowThresholdMenu] = useState(false);
   const [query = '', setQuery] = useSearchParam(SEARCH_KEY, false);
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: login } = useUserInfo();
@@ -325,13 +327,30 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       const isSameSource = sourceId === selectedSourceId;
       const showMenu = isSameSource ? !showContextMenu : true;
       setShowContextMenu(showMenu);
+      setShowThresholdMenu(false);
       setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
     },
     [selectedSourceId, showContextMenu]
   );
 
+  const handleThresholdClick = useCallback(
+    (sourceId?: string) => {
+      const isSameSource = sourceId === selectedSourceId;
+      const showMenu = isSameSource ? !showThresholdMenu : true;
+      setShowThresholdMenu(showMenu);
+      setShowContextMenu(false);
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+    },
+    [selectedSourceId, showThresholdMenu]
+  );
+
   const handleCloseContextMenu = useCallback(() => {
     setShowContextMenu(false);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+  }, []);
+
+  const handleCloseThresholdMenu = useCallback(() => {
+    setShowThresholdMenu(false);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   }, []);
 
@@ -613,6 +632,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                                   openNodeEditor={openNodeEditor}
                                   onRowClick={handleSourceClick}
                                   onInfoClick={handleInfoClick}
+                                  onThresholdClick={handleThresholdClick}
                                 />
                                 {provided.placeholder}
                               </tbody>
@@ -639,6 +659,12 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             visible={showContextMenu}
             onClose={handleCloseContextMenu}
             sourceItem={selectedSourceItem}
+          />
+          <ThresholdSidebar
+            visible={showThresholdMenu}
+            onClose={handleCloseThresholdMenu}
+            updateChart={setChart}
+            chart={chart}
           />
         </ChartViewContainer>
       </Route>

@@ -26,6 +26,7 @@ import { StyleButton } from 'components/StyleButton/StyleButton';
 import { useTranslations } from 'hooks/translations';
 import { makeDefaultTranslations } from 'utils/translations';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
+import Dropdown from 'components/Dropdown/Dropdown';
 import { fetchRawOrAggregatedDatapoints } from 'services/cdf-api';
 import {
   SourceItem,
@@ -45,6 +46,7 @@ type Props = {
   isSelected?: boolean;
   onRowClick?: (id?: string) => void;
   onInfoClick?: (id?: string) => void;
+  onThresholdClick?: (id?: string) => void;
   isWorkspaceMode?: boolean;
   isFileViewerMode?: boolean;
   provided?: DraggableProvided | undefined;
@@ -60,7 +62,8 @@ type Props = {
 const defaultTranslations = makeDefaultTranslations(
   'Remove',
   'Cancel',
-  'Remove this time series?'
+  'Remove this time series?',
+  'Threshold'
 );
 
 function TimeSeriesRow({
@@ -68,6 +71,7 @@ function TimeSeriesRow({
   timeseries,
   onRowClick = () => {},
   onInfoClick = () => {},
+  onThresholdClick = () => {},
   disabled = false,
   isSelected = false,
   isWorkspaceMode = false,
@@ -247,6 +251,10 @@ function TimeSeriesRow({
     timeseries.tsExternalId,
   ]);
 
+  /**
+   * Translations
+   */
+  const t = { ...defaultTranslations, ...translations };
   /**
    * Unit Dropdown translations
    */
@@ -446,7 +454,19 @@ function TimeSeriesRow({
           <td
             style={{ textAlign: 'center', paddingLeft: 0 }}
             className="downloadChartHide col-action"
-          />
+          >
+            <Dropdown.Uncontrolled
+              options={[
+                {
+                  label: t.Threshold,
+                  icon: 'Threshold',
+                  onClick: () => {
+                    onThresholdClick(id);
+                  },
+                },
+              ]}
+            />
+          </td>
         </>
       )}
     </SourceRow>

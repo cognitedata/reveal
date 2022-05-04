@@ -15,7 +15,7 @@ type Props = {
   options: {
     label: string;
     icon: IconType;
-    onClick: () => void;
+    onClick: (diff: any) => void;
   }[];
   open: boolean;
   children: ReactElement;
@@ -43,7 +43,7 @@ const ChartsDropdown = ({
               <Menu.Item
                 key={item.label}
                 appendIcon={item.icon}
-                onClick={item.onClick}
+                onClick={(event) => item.onClick(event)}
               >
                 <MenuText>{item.label}</MenuText>
               </Menu.Item>

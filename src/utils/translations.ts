@@ -1,3 +1,5 @@
+import { FunctionComponent } from 'react';
+
 /**
  * A helper function to create { key: key } object of same value as key name.
  * @param args Comma delimited strings, not an array though
@@ -10,4 +12,9 @@ export function makeDefaultTranslations<
     (prev, curr) => ({ ...prev, [curr]: String(curr) }),
     {} as Record<TranslationKeys, string>
   );
+}
+
+export interface FunctionComponentWithTranslationKeys<T = {}>
+  extends FunctionComponent<T> {
+  translationKeys: string[];
 }

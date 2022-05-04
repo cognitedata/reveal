@@ -9,7 +9,12 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import { useQuery } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { Chart, ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import {
+  Chart,
+  ChartThreshold,
+  ChartTimeSeries,
+  ChartWorkflow,
+} from 'models/chart/types';
 import { trackUsage } from 'services/metrics';
 import { calculateGranularity } from 'utils/timeseries';
 import { CHART_POINTS_PER_SERIES } from 'utils/constants';
@@ -189,6 +194,7 @@ const PlotlyChartComponent = ({
     const result = calculateSeriesData(
       JSON.parse(tsCollectionAsString) as ChartTimeSeries[],
       JSON.parse(wfCollectionAsString) as ChartWorkflow[],
+      chart?.thresholdCollection as ChartThreshold[],
       timeseries,
       workflows,
       mergeUnits
@@ -197,6 +203,7 @@ const PlotlyChartComponent = ({
   }, [
     tsCollectionAsString,
     wfCollectionAsString,
+    chart?.thresholdCollection,
     timeseries,
     workflows,
     mergeUnits,

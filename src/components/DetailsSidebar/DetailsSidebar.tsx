@@ -19,15 +19,17 @@ import { getUnitConverter } from 'utils/units';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
 import {
-  Container,
-  ContentOverflowWrapper,
-  HistogramWrapper,
   Sidebar,
-  SourceItemName,
-  SourceItemWrapper,
+  ContentOverflowWrapper,
   TopContainer,
   TopContainerAside,
   TopContainerTitle,
+} from 'components/Common/SidebarElements';
+import {
+  Container,
+  HistogramWrapper,
+  SourceItemName,
+  SourceItemWrapper,
 } from './elements';
 import { MetadataList } from './MetadataList';
 import { getDisplayUnit, useStatistics } from './utils';

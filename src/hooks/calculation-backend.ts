@@ -4,20 +4,34 @@ import {
   Status,
   CreateStatisticsParams,
   StatisticsResult,
+  CreateThresholdsParams,
+  StatusStatusEnum,
 } from '@cognite/calculation-backend';
 import { useSDK } from '@cognite/sdk-provider';
 import { DatapointAggregate, DatapointsMultiQuery } from '@cognite/sdk';
-import { useMutation, useQuery, UseQueryOptions } from 'react-query';
+import {
+  MutateOptions,
+  useMutation,
+  useQuery,
+  UseQueryOptions,
+} from 'react-query';
 import { RAW_DATA_POINTS_THRESHOLD } from 'utils/constants';
 import { WorkflowResult } from 'models/workflows/types';
+import { useCallback } from 'react';
+import { ChartThreshold } from 'models/chart/types';
+import { getHash } from 'utils/hash';
 import {
   createCalculation,
   createStatistics,
+  createThreshold,
   fetchCalculationQueryResult,
   fetchCalculationResult,
   fetchCalculationStatus,
   fetchStatisticsResult,
   fetchStatisticsStatus,
+  fetchThresholdResult,
+  waitForCalculationToFinish,
+  waitForThresholdToFinish,
 } from '../services/calculation-backend';
 
 export const useCreateCalculation = () => {
@@ -146,5 +160,90 @@ export const useStatisticsResult = (
       enabled: !!id,
       ...queryOpts,
     }
+  );
+};
+
+/**
+ * Threshold
+ */
+export const useCreateThreshold = () => {
+  const sdk = useSDK();
+  return useMutation(async (createThresholdParams: CreateThresholdsParams) => {
+    return createThreshold(sdk, createThresholdParams);
+  });
+};
+
+export const useThresholdIsReady = (thresholdCallId: string | undefined) => {
+  const sdk = useSDK();
+
+  return useQuery({
+    queryKey: ['threshold', 'status', thresholdCallId],
+    queryFn: async () => {
+      return waitForThresholdToFinish(sdk, String(thresholdCallId));
+    },
+    enabled: !!thresholdCallId,
+  });
+};
+
+export const useThresholdResultData = (
+  thresholdCallId: string | undefined,
+  callStatus: Status | undefined
+) => {
+  const sdk = useSDK();
+
+  return useQuery({
+    queryKey: ['thresholds', 'result', thresholdCallId],
+    queryFn: () => fetchThresholdResult(sdk, thresholdCallId || ''),
+    retry: true,
+    retryDelay: 1000,
+    enabled: callStatus?.status === StatusStatusEnum.Success,
+  });
+};
+
+export const useThresholdCreator = () => {
+  const sdk = useSDK();
+
+  return useCallback(
+    async ({
+      thresholdParameters,
+      onCreateThreshold,
+      onUpdateThreshold,
+    }: {
+      thresholdParameters: CreateThresholdsParams;
+      onCreateThreshold: (
+        variables: CreateThresholdsParams,
+        options?:
+          | MutateOptions<Status, unknown, CreateThresholdsParams, unknown>
+          | undefined
+      ) => void;
+      onUpdateThreshold: (diff: Partial<ChartThreshold>) => void;
+    }) => {
+      const hashOfParams = getHash(thresholdParameters);
+
+      if (
+        'calculation_id' in thresholdParameters &&
+        thresholdParameters.calculation_id
+      ) {
+        await waitForCalculationToFinish(
+          sdk,
+          thresholdParameters.calculation_id
+        );
+      }
+
+      onCreateThreshold(thresholdParameters, {
+        onSuccess({ id: callId }) {
+          onUpdateThreshold({
+            calls: [
+              {
+                callDate: Date.now(),
+                callId,
+                hash: hashOfParams,
+              },
+            ],
+          });
+        },
+      });
+    },
+    [sdk]
   );
 };

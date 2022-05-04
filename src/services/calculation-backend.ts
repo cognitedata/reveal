@@ -5,15 +5,18 @@ import {
   CalculationResult,
   CalculationsApi,
   StatisticsApi,
+  ThresholdsApi,
   OperationsApi,
   CreateStatisticsParams,
   StatisticsResult,
   Status,
   Configuration,
-  CalculationResultDatapoints,
   Operation,
   StatusStatusEnum,
+  ThresholdResult,
+  CreateThresholdsParams,
   CalculationResultQuery,
+  CalculationResultDatapointsInner,
 } from '@cognite/calculation-backend';
 
 import { BACKEND_SERVICE_URL_KEY, CLUSTER_KEY } from 'utils/constants';
@@ -250,6 +253,46 @@ export async function waitForStatisticsToFinish(
   return statisticsStatus;
 }
 
+export async function createThreshold(
+  sdk: CogniteClient,
+  createThresholdParams: CreateThresholdsParams
+): Promise<Status> {
+  const config = await getConfig(sdk);
+  const api = new ThresholdsApi(config);
+  const { data } = await api.createThresholdCalculation(
+    sdk.project,
+    createThresholdParams
+  );
+  return data;
+}
+
+async function fetchThresholdStatus(
+  sdk: CogniteClient,
+  id: string
+): Promise<Status> {
+  const config = await getConfig(sdk);
+  const api = new ThresholdsApi(config);
+  const { data } = await api.getThresholdCalculationStatus(sdk.project, id);
+  return data;
+}
+
+export async function waitForThresholdToFinish(sdk: CogniteClient, id: string) {
+  let thresholdStatus = await fetchThresholdStatus(sdk, id);
+
+  while (
+    (
+      [StatusStatusEnum.Pending, StatusStatusEnum.Running] as StatusStatusEnum[]
+    ).includes(thresholdStatus.status)
+  ) {
+    // eslint-disable-next-line no-await-in-loop
+    await sleep(1000);
+    // eslint-disable-next-line no-await-in-loop
+    thresholdStatus = await fetchThresholdStatus(sdk, id);
+  }
+
+  return thresholdStatus;
+}
+
 export async function fetchStatisticsResult(
   sdk: CogniteClient,
   id: string | number
@@ -263,9 +306,22 @@ export async function fetchStatisticsResult(
   return data;
 }
 
+export async function fetchThresholdResult(
+  sdk: CogniteClient,
+  id: string | number
+): Promise<ThresholdResult> {
+  const config = await getConfig(sdk);
+  const api = new ThresholdsApi(config);
+  const { data } = await api.getThresholdCalculationResult(
+    sdk.project,
+    String(id)
+  );
+  return data;
+}
+
 export const formatCalculationResult = (
   result: {
-    datapoints?: CalculationResultDatapoints[] | null;
+    datapoints?: CalculationResultDatapointsInner[] | null;
   } = {}
 ): DoubleDatapoint[] => {
   return (result.datapoints || []).map(({ timestamp, value }) => ({
