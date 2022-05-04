@@ -1,0 +1,2 @@
+ignore:
+    - "viewer/packages/pointclouds/src/potree-three-loader"

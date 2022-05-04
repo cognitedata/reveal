@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "module": "CommonJS",
+    "experimentalDecorators": true,
     "lib": [
       "ES2019",
       "dom"
