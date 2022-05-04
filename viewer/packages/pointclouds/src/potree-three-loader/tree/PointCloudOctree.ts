@@ -159,8 +159,6 @@ export class PointCloudOctree extends PointCloudTree {
       this.updateMaterial();
 
       this.matrixWorldNeedsUpdate = false;
-
-      force = true;
     }
   }
 
