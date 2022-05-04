@@ -722,7 +722,7 @@ __metadata:
     "@types/offscreencanvas": 2019.6.4
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.3
-    "@types/three": 0.139.0
+    "@types/three": 0.140.0
     "@types/tween.js": 18.5.1
     "@typescript-eslint/eslint-plugin": 5.22.0
     "@typescript-eslint/parser": 5.22.0
@@ -766,7 +766,7 @@ __metadata:
     rxjs: 7.5.5
     shx: 0.3.4
     skmeans: 0.11.3
-    three: 0.139.2
+    three: 0.140.0
     ts-jest: 27.1.4
     ts-loader: 8.4.0
     tsc-alias: 1.6.7
@@ -1683,10 +1683,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.139.0":
-  version: 0.139.0
-  resolution: "@types/three@npm:0.139.0"
-  checksum: 811ce2dd6cfeaa8b051699b6e57f5696b30cb4d33697675c9eee500e377cdbdc872dc6932dfc094c3ae61acfb895d089043a6e5c389d563c516d99ebfef8c130
+"@types/three@npm:0.140.0":
+  version: 0.140.0
+  resolution: "@types/three@npm:0.140.0"
+  checksum: 05693787002f0e879e76a09cfd474d4fd100779f00c048e380d146783adaff539846988625b0f9117451bf2790637a236c68111f7f3e160f5227373a037381ba
   languageName: node
   linkType: hard
 
@@ -12473,10 +12473,10 @@ resolve@^1.20.0:
   languageName: node
   linkType: hard
 
-"three@npm:0.139.2":
-  version: 0.139.2
-  resolution: "three@npm:0.139.2"
-  checksum: 9e016065b31a2a69bba730a32bd5b61354365bf0f5072121b8695aac38c9585e4e46361275967fbb58d21e001e5189128107c3ecbf24338ca951d11b524df992
+"three@npm:0.140.0":
+  version: 0.140.0
+  resolution: "three@npm:0.140.0"
+  checksum: f7d16e643046c831741972d3caddf1f0b64ed42d454e13708e8d6cc329d700fa0544324942fc361d1bffb924a144750fce3662288208c2b7ed640e3a732a6d2a
   languageName: node
   linkType: hard
 
