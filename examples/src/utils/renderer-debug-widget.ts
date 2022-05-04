@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 import * as reveal from '@cognite/reveal/internals';
 import dat from 'dat.gui';
 

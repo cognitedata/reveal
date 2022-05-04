@@ -4,7 +4,7 @@
 
 import CameraControls from 'camera-controls';
 import * as holdEvent from 'hold-event';
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 
 export function addWASDHandling(cameraControls: CameraControls) {
   const KEYCODE = {
