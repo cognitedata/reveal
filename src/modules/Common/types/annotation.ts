@@ -31,6 +31,11 @@ export type VisionAnnotationDataType =
   | ImageAssetLink
   | ImageKeypointCollection;
 
+export type VisionAnnotationObjectDataType =
+  | ImageObjectDetectionBoundingBox
+  | ImageObjectDetectionPolygon
+  | ImageKeypointCollection;
+
 // Vision Annotation Type
 
 export type CDFInheritedFields = AnnotatedResourceId & // also available in CDFAnnotationV2, cannot be used in Pick operation due to One of relationship

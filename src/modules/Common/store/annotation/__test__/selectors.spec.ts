@@ -13,6 +13,7 @@ import {
   makeSelectAnnotationsForFileIds,
   makeSelectFileAnnotations,
   makeSelectFileAnnotationsByType,
+  makeSelectTotalAnnotationCountForFileIds,
 } from 'src/modules/Common/store/annotation/selectors';
 import { Status } from 'src/api/annotation/types';
 import { VisionAnnotationType } from 'src/modules/Common/types';
@@ -200,6 +201,31 @@ describe('Test annotation selectors', () => {
       expect(filesAnnotationCounts(previousState, [10, 20])).toEqual({
         '10': 2,
         '20': 1,
+      });
+    });
+  });
+
+  describe('Test annotation count selectors', () => {
+    describe('Test makeSelectTotalAnnotationCountForFileIds', () => {
+      test('should return annotation counts for all annotations of provided file ids', () => {
+        const selectTotalAnnotationCounts =
+          makeSelectTotalAnnotationCountForFileIds();
+
+        expect(selectTotalAnnotationCounts(mockState, [10])).toEqual({
+          objects: 1,
+          assets: 0,
+          text: 0,
+          gdpr: 0,
+          mostFrequentObject: ['pump', 1],
+        });
+
+        expect(selectTotalAnnotationCounts(mockState, [20])).toEqual({
+          objects: 3,
+          assets: 0,
+          text: 0,
+          gdpr: 0,
+          mostFrequentObject: ['pump', 2],
+        });
       });
     });
   });

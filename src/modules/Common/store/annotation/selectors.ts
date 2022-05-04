@@ -7,7 +7,10 @@ import {
   VisionAnnotationType,
 } from 'src/modules/Common/types/annotation';
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
-import { filterAnnotations } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import {
+  filterAnnotations,
+  getAnnotationsBadgeCounts,
+} from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import { getTypeGuardForVisionAnnotationDataType } from 'src/modules/Common/types/typeGuards';
 
 const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
@@ -99,3 +102,23 @@ export const filesAnnotationCounts = createDeepEqualSelector(
     return data;
   }
 );
+
+export const makeSelectAnnotationCounts = () => {
+  const fileAnnotationSelector = makeSelectFileAnnotations();
+
+  return createDeepEqualSelector(fileAnnotationSelector, (annotations) => {
+    return getAnnotationsBadgeCounts(annotations);
+  });
+};
+
+export const makeSelectTotalAnnotationCountForFileIds = () => {
+  const selectAnnotationsForFiles = makeSelectAnnotationsForFileIds();
+
+  return createDeepEqualSelector(
+    selectAnnotationsForFiles,
+    (annotationsForFiles) => {
+      const annotations = Object.values(annotationsForFiles).flat();
+      return getAnnotationsBadgeCounts(annotations);
+    }
+  );
+};

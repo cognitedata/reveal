@@ -8,8 +8,10 @@ import {
 import {
   filterAnnotations,
   getAnnotationLabelText,
+  getAnnotationsBadgeCounts,
 } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
+  AnnotationsBadgeCounts,
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types/index';
@@ -35,7 +37,7 @@ const dummyAnnotations: VisionAnnotation<VisionAnnotationDataType>[] = [
     status: Status.Suggested,
   }),
   getDummyImageObjectDetectionBoundingBoxAnnotation({
-    label: 'pump2',
+    label: 'person',
     status: Status.Rejected,
   }),
   getDummyImageObjectDetectionPolygonAnnotation({
@@ -189,6 +191,26 @@ describe('Test AnnotationUtils', () => {
           }).length
         ).toBe(ANN_WITH_SUGGESTED_PUMP_COUNT);
       });
+    });
+  });
+
+  describe('Test getAnnotationsBadgeCounts', () => {
+    const annotationsBadgeCounts: AnnotationsBadgeCounts =
+      getAnnotationsBadgeCounts(dummyAnnotations);
+    test('text badge count', () => {
+      expect(annotationsBadgeCounts.text).toBe(2);
+    });
+    test('assets badge count', () => {
+      expect(annotationsBadgeCounts.assets).toBe(2);
+    });
+    test('objects badge count', () => {
+      expect(annotationsBadgeCounts.objects).toBe(3);
+    });
+    test('gdpr badge count', () => {
+      expect(annotationsBadgeCounts.gdpr).toBe(1);
+    });
+    test('mostFrequentObject', () => {
+      // expect(annotationsBadgeCounts.text).toBe(2);
     });
   });
 });
