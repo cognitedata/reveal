@@ -61,7 +61,7 @@ export class MeasurementUi {
     const controllers = this._gui.__controllers;
     for (let i = 0; i < controllers.length; i++) {
       let c = controllers[i];
-      if (c.property == name) {
+      if (c.property === name) {
         controller = c;
         break;
       }
