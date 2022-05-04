@@ -34,7 +34,7 @@ const TableInner = <T extends Object>({
   id,
   data,
   indent,
-  columns,
+  columns: columnsOriginal,
   handleRowClick,
   handleMouseEnter,
   handleMouseLeave,
@@ -111,6 +111,25 @@ const TableInner = <T extends Object>({
   if (flex) {
     hooks.push(useFlexLayout);
   }
+
+  /**
+   * When the `accessor` is missing in the column, the sorting doesn't work.
+   * To enable sorting, react-table needs the `accessor` to be defined.
+   * Hence, this validates the columns.
+   */
+  const columns = React.useMemo(
+    () =>
+      columnsOriginal.map((column) => {
+        if (column.accessor) {
+          return column;
+        }
+        return {
+          ...column,
+          accessor: '',
+        };
+      }),
+    [columnsOriginal]
+  );
 
   const {
     getTableProps,

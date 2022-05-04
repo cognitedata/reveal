@@ -15,6 +15,13 @@ export const getMockTrajectory = (
       sourceName: '1234',
     },
     isDefinitive: true,
+    maxDoglegSeverity: {
+      unit: {
+        angleUnit: 'degree',
+        distanceUnit: 'meter',
+      },
+      value: 0,
+    },
     ...extras,
   };
 };

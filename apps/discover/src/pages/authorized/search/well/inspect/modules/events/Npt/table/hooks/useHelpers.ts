@@ -1,3 +1,4 @@
+import { getNptCodeTableSort } from 'dataLayers/wells/wellbores/selectors/getNptCodeSort';
 import get from 'lodash/get';
 import { useNptLegendCodeQuery } from 'services/well/legend/npt/useNptLegendQuery';
 import { getTimeDuration } from 'utils/date';
@@ -71,6 +72,7 @@ export const useSelectedWellboreNptEventsTableColumns = () => {
       id: accessors.NPT_CODE,
       Header: 'NPT Code',
       width: '150px',
+      sortType: getNptCodeTableSort,
       Cell: ({ row: { original } }: { row: { original: NPTEvent } }) =>
         renderNPTCodeWithColor(original, nptLegendCodes?.items),
       stickyColumn: true,
