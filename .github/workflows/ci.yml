@@ -270,12 +270,6 @@ jobs:
         working-directory: documentation
         run: yarn install --immutable
 
-      - name: Download viewer build artifact 
-        uses: actions/download-artifact@v3
-        with:
-          name: viewer
-          path: viewer/dist/
-
       - name: Update Docosaurus base URL
         uses: jacobtomlinson/gha-find-replace@v1
         with:
