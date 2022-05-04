@@ -1,14 +1,12 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import {
-  Tabs,
-  TabPaneProps,
   useRelatedResourceCounts,
   ResourceType,
   ResourceItem,
   getTitle,
 } from '@cognite/data-exploration';
-import { Badge, Colors } from '@cognite/cogs.js';
+import { Badge, Colors, Tabs, TabPaneProps } from '@cognite/cogs.js';
 import { useNavigate } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
@@ -94,9 +92,9 @@ export const ResourceDetailsTabs = ({
   }
 
   const relationshipTabs = filteredTabs.map(key => (
-    <Tabs.Pane
+    <Tabs.TabPane
       key={key}
-      title={
+      tab={
         <>
           <TabTitle>{getTitle(key)}</TabTitle>
           <Badge
@@ -110,12 +108,12 @@ export const ResourceDetailsTabs = ({
         resource={parentResource}
         type={key as ResourceType}
       />
-    </Tabs.Pane>
+    </Tabs.TabPane>
   ));
   const tabs = [...additionalTabs, ...relationshipTabs];
 
   return (
-    <Tabs tab={tab} onTabChange={onTabChange} style={style}>
+    <Tabs style={style} activeKey={tab} onChange={onTabChange}>
       {tabs}
     </Tabs>
   );

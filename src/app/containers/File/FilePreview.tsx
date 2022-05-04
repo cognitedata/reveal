@@ -4,7 +4,6 @@ import {
   FilePreview as CogniteFilePreview,
   ErrorFeedback,
   Loader,
-  Tabs,
   FileDetails,
   Metadata,
 } from '@cognite/data-exploration';
@@ -16,7 +15,7 @@ import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
 import { EditFileButton } from 'app/components/TitleRowActions/EditFileButton';
 import styled from 'styled-components';
-import { Colors, Body } from '@cognite/cogs.js';
+import { Colors, Body, Tabs } from '@cognite/cogs.js';
 import { ContextualizationButton } from 'app/components/TitleRowActions/ContextualizationButton';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -140,7 +139,7 @@ export const FilePreview = ({
             tab={activeTab}
             onTabChange={onTabChange}
             additionalTabs={[
-              <Tabs.Pane title={<TabTitle>Preview</TabTitle>} key="preview">
+              <Tabs.TabPane tab={<TabTitle>Preview</TabTitle>} key="preview">
                 {editMode && (
                   <Banner>
                     <Body level={3}>You have entered editing mode.</Body>
@@ -163,11 +162,11 @@ export const FilePreview = ({
                     }
                   />
                 </div>
-              </Tabs.Pane>,
-              <Tabs.Pane title={<TabTitle>File details</TabTitle>} key="info">
+              </Tabs.TabPane>,
+              <Tabs.TabPane tab={<TabTitle>File details</TabTitle>} key="info">
                 <FileDetails file={fileInfo} />
                 <Metadata metadata={fileInfo.metadata} />
-              </Tabs.Pane>,
+              </Tabs.TabPane>,
             ]}
           />
         </div>

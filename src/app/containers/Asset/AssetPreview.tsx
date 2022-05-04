@@ -7,10 +7,10 @@ import {
   AssetTreeTable,
   Loader,
   ErrorFeedback,
-  Tabs,
   Metadata,
   ResourceItem,
 } from '@cognite/data-exploration';
+import { Tabs } from '@cognite/cogs.js';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { Asset } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -96,12 +96,12 @@ export const AssetPreview = ({
         tab={activeTab}
         onTabChange={onTabChange}
         additionalTabs={[
-          <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
+          <Tabs.TabPane tab={<TabTitle>Details</TabTitle>} key="details">
             <AssetDetails asset={asset} />
             <Metadata metadata={asset.metadata} />
-          </Tabs.Pane>,
-          <Tabs.Pane
-            title={<TabTitle>Children</TabTitle>}
+          </Tabs.TabPane>,
+          <Tabs.TabPane
+            tab={<TabTitle>Children</TabTitle>}
             style={{ padding: '20px 16px' }}
             key="children"
           >
@@ -112,7 +112,7 @@ export const AssetPreview = ({
               onSelect={onSelect}
               isSelected={isSelected}
             />
-          </Tabs.Pane>,
+          </Tabs.TabPane>,
         ]}
       />
     </>
