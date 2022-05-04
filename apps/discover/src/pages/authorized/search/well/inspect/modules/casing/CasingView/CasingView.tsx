@@ -56,7 +56,6 @@ import {
 } from './constants';
 import DepthIndicator from './DepthIndicator/DepthIndicator';
 import {
-  DepthIndicatorGutter,
   Wrapper,
   Header,
   MainHeader,
@@ -68,6 +67,7 @@ import {
   RkbLevel,
   WaterDepth,
   DepthLabel,
+  DepthIndicatorGutter,
 } from './elements';
 import { CasingViewTypeProps } from './interfaces';
 import { getMdRange, isTied, mirrorCasingData } from './utils';
@@ -235,7 +235,6 @@ const CasingView: FC<CasingViewTypeProps> = ({
                               {normalizedCasing.outerDiameter}
                             </DepthIndicatorGutter>
                           )}
-
                           <DepthIndicator
                             normalizedCasing={normalizedCasing}
                             isTied={isTied(normalizedCasings, index)}

@@ -1,7 +1,9 @@
 import React, { useMemo, useRef, useState } from 'react';
 
+import EmptyState from 'components/EmptyState';
 import { SearchBox } from 'components/Filters';
 import { MultiStateToggle } from 'components/MultiStateToggle';
+import { useCasingsForTable } from 'modules/wellSearch/selectors';
 import { FlexGrow } from 'styles/layout';
 
 import { Separator } from '../../elements';
@@ -18,6 +20,8 @@ import { SearchBoxWrapper, TopBarWrapper } from './elements';
 const FILTER_PLACEHOLDER = 'Filter by Well/Wellbore';
 
 export const Casing: React.FC = () => {
+  const { casings, isLoading } = useCasingsForTable();
+
   const [viewMode, setViewMode] = useState<ViewModes>(DEFAULT_ACTIVE_VIEW_MODE);
   const [activeSideMode, setActiveSideMode] = useState<SideModes>(
     DEFAULT_ACTIVE_SIDE_MODE
@@ -36,6 +40,11 @@ export const Casing: React.FC = () => {
     ),
     [searchPhrase]
   );
+
+  if (isLoading) {
+    return <EmptyState isLoading={isLoading} />;
+  }
+
   return (
     <>
       <TopBarWrapper>
@@ -65,10 +74,15 @@ export const Casing: React.FC = () => {
       </TopBarWrapper>
 
       {viewMode === VIEW_MODES.Graph && (
-        <CasingGraphView scrollRef={scrollRef} sideMode={activeSideMode} />
+        <CasingGraphView
+          casings={casings}
+          scrollRef={scrollRef}
+          sideMode={activeSideMode}
+        />
       )}
       {viewMode === VIEW_MODES.Table && (
         <CasingTableView
+          casings={casings}
           searchPhrase={searchPhrase}
           sideMode={activeSideMode}
         />

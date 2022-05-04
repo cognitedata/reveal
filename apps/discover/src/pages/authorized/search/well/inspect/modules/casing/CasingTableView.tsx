@@ -9,7 +9,6 @@ import EmptyState from 'components/EmptyState';
 import { NO_RESULTS_TEXT } from 'components/EmptyState/constants';
 import { Table, TableResults, RowProps } from 'components/Tablev3';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
-import { useCasingsForTable } from 'modules/wellSearch/selectors';
 
 import { CasingPreviewFullscreen } from './CasingPreviewFullscreen';
 import { SideModes } from './CasingView/types';
@@ -29,11 +28,13 @@ const wellsTableOptions = {
 };
 
 type Props = {
+  casings: CasingData[];
   searchPhrase: string;
   sideMode: SideModes;
 };
 
 export const CasingTableView: React.FC<Props> = ({
+  casings,
   searchPhrase,
   sideMode,
 }) => {
@@ -45,8 +46,6 @@ export const CasingTableView: React.FC<Props> = ({
 
   const { data: preferredUnit } = useUserPreferencesMeasurement();
   const { wellsTableColumns, casingsTableColumn } = useGetCasingTableColumns();
-
-  const { casings, isLoading } = useCasingsForTable();
 
   const data = casings.filter(
     (casing) =>
@@ -125,8 +124,8 @@ export const CasingTableView: React.FC<Props> = ({
     );
   }, []);
 
-  if (isLoading || isEmpty(data)) {
-    return <EmptyState isLoading={isLoading} emptyTitle={NO_RESULTS_TEXT} />;
+  if (isEmpty(data)) {
+    return <EmptyState emptyTitle={NO_RESULTS_TEXT} />;
   }
 
   return (

@@ -2,7 +2,7 @@ import styled from 'styled-components/macro';
 import layers from 'utils/zindex';
 
 import { SubTitleText } from 'components/EmptyState/elements';
-import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
+import { Center, Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
 import { SCALE_BLOCK_HEIGHT } from '../../common/Events/constants';
 
@@ -70,7 +70,7 @@ export const SchemaContent = styled(FlexColumn)`
   height: 100%;
 `;
 
-export const DepthIndicatorsContainer = styled(Flex)`
+export const DepthIndicatorsContainer = styled(Center)`
   position: relative;
   height: 100%;
   padding: ${sizes.normal};
