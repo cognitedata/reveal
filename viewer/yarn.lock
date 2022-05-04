@@ -12466,10 +12466,10 @@ resolve@^1.20.0:
   languageName: node
   linkType: hard
 
-"three@npm:0.139.0":
-  version: 0.139.0
-  resolution: "three@npm:0.139.0"
-  checksum: 8205f8420303fc507ba18c36f202859af13929fc0a8049307b4eba61b5017a6de82068cccec5e70b194fd78ab3d9359e9b5172054406329ea455af34d42ad38a
+"three@npm:0.138.3":
+  version: 0.138.3
+  resolution: "three@npm:0.138.3"
+  checksum: beef4db3914c98f02f87c18743a24c994f093132b6c9b959150d017a1835a7360b2a98ede080b9deb0ca41c3c969d7a2ee08fff35d880fb1f94a0cc343a843b1
   languageName: node
   linkType: hard
 
