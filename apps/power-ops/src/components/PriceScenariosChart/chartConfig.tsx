@@ -68,6 +68,7 @@ export const chartStyles: CSS.Properties = {
   display: 'flex',
   width: '100%',
   height: '368px',
+  overflow: 'hidden',
 };
 
 export const Card = ({

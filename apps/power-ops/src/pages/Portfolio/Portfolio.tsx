@@ -28,6 +28,8 @@ import {
   StyledSearch,
   StyledButton,
   StyledTitle,
+  Footer,
+  RightPanel,
 } from './elements';
 
 const PortfolioPage = () => {
@@ -51,6 +53,9 @@ const PortfolioPage = () => {
   const [searchTotal, setSearchTotal] = useState<boolean>(true);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [downloading, setDownloading] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(true);
+  const [focused, setFocused] = useState<boolean>(false);
+  const [resize, setResize] = useState<boolean>(false);
 
   const startDate = priceArea
     ? new Date(priceArea?.totalMatrixes?.[0].startTime).toLocaleString()
@@ -168,78 +173,111 @@ const PortfolioPage = () => {
           Download
         </Button>
       </Header>
-      <Container>
+      <Container sidePanelOpen={open}>
         <LeftPanel>
           <Header className="search">
-            <StyledSearch
-              icon="Search"
-              placeholder="Search plants"
-              onChange={(e) => setQuery(e.target.value)}
-              value={query}
-              clearable={{
-                callback: () => {
-                  setQuery('');
-                },
-              }}
-            />
+            {open ? (
+              <StyledSearch
+                icon="Search"
+                placeholder="Search plants"
+                autoFocus={focused}
+                onChange={(e) => setQuery(e.target.value)}
+                value={query}
+                clearable={{
+                  callback: () => {
+                    setQuery('');
+                  },
+                }}
+              />
+            ) : (
+              <Button
+                type="secondary"
+                icon="Search"
+                aria-label="Open search field"
+                onClick={() => {
+                  setOpen(true);
+                  setFocused(true);
+                }}
+              />
+            )}
           </Header>
-          <PanelContent>
-            {!isSearching && <Detail>Price area overview</Detail>}
-            {searchTotal && (
-              <NavLink to={`${match.url}/total`}>
-                <StyledButton
-                  toggled={location.pathname === `${match.url}/total`}
-                  key={`${priceArea.externalId}-total`}
-                  onClick={() => setQuery('')}
-                >
-                  <p>Total</p>
-                </StyledButton>
-              </NavLink>
-            )}
-            {searchPrice && (
-              <NavLink to={`${match.url}/price-scenarios`}>
-                <StyledButton
-                  toggled={location.pathname === `${match.url}/price-scenarios`}
-                  key={`${priceArea.externalId}-price-scenarios-link`}
-                  onClick={() => setQuery('')}
-                >
-                  <p>Price Scenarios</p>
-                </StyledButton>
-              </NavLink>
-            )}
-            {!isSearching && <Detail>Plants</Detail>}
-            {filteredPlants &&
-              filteredPlants.map((plant) => {
-                return (
-                  <NavLink
-                    to={`${match.url}/${plant.externalId}`}
-                    key={`${priceArea.externalId}-${plant.externalId}`}
+          {open && (
+            <PanelContent>
+              {!isSearching && <Detail>Price area overview</Detail>}
+              {searchTotal && (
+                <NavLink to={`${match.url}/total`}>
+                  <StyledButton
+                    toggled={location.pathname === `${match.url}/total`}
+                    key={`${priceArea.externalId}-total`}
+                    onClick={() => setQuery('')}
                   >
-                    <StyledButton
-                      toggled={
-                        location.pathname === `${match.url}/${plant.externalId}`
-                      }
-                      key={plant.externalId}
-                      onClick={() => setQuery('')}
+                    <p>Total</p>
+                  </StyledButton>
+                </NavLink>
+              )}
+              {searchPrice && (
+                <NavLink to={`${match.url}/price-scenarios`}>
+                  <StyledButton
+                    toggled={
+                      location.pathname === `${match.url}/price-scenarios`
+                    }
+                    key={`${priceArea.externalId}-price-scenarios-link`}
+                    onClick={() => setQuery('')}
+                  >
+                    <p>Price Scenarios</p>
+                  </StyledButton>
+                </NavLink>
+              )}
+              {!isSearching && <Detail>Plants</Detail>}
+              {filteredPlants &&
+                filteredPlants.map((plant) => {
+                  return (
+                    <NavLink
+                      to={`${match.url}/${plant.externalId}`}
+                      key={`${priceArea.externalId}-${plant.externalId}`}
                     >
-                      <p>{plant.displayName}</p>
-                    </StyledButton>
-                  </NavLink>
-                );
-              })}
-          </PanelContent>
+                      <StyledButton
+                        toggled={
+                          location.pathname ===
+                          `${match.url}/${plant.externalId}`
+                        }
+                        key={plant.externalId}
+                        onClick={() => setQuery('')}
+                      >
+                        <p>{plant.displayName}</p>
+                      </StyledButton>
+                    </NavLink>
+                  );
+                })}
+            </PanelContent>
+          )}
+          <Footer onTransitionEnd={() => setResize(!resize)}>
+            <Button
+              type="secondary"
+              aria-label="Show or hide sidebar"
+              icon={open ? 'PanelLeft' : 'PanelRight'}
+              onClick={() => {
+                setOpen(!open);
+                setFocused(false);
+              }}
+            >
+              {open && 'Hide'}
+            </Button>
+          </Footer>
         </LeftPanel>
-        <Switch>
-          <Route path={`${match.path}/price-scenarios`}>
-            <PriceScenarios priceArea={priceArea} />
-          </Route>
-          <Route exact path={`${match.path}/:plantExternalId`}>
-            <BidMatrix priceArea={priceArea} />
-          </Route>
-          <Route path={`${match.path}/:plantExternalId/price-scenarios`}>
-            <PriceScenarios priceArea={priceArea} />
-          </Route>
-        </Switch>
+        <RightPanel>
+          <Switch>
+            <Route path={`${match.path}/price-scenarios`}>
+              <PriceScenarios priceArea={priceArea} />
+            </Route>
+            <Route exact path={`${match.path}/:plantExternalId`}>
+              <BidMatrix priceArea={priceArea} />
+            </Route>
+            <Route path={`${match.path}/:plantExternalId/price-scenarios`}>
+              <PriceScenarios priceArea={priceArea} />
+            </Route>
+          </Switch>
+        </RightPanel>
       </Container>
     </BaseContainer>
   ) : null;

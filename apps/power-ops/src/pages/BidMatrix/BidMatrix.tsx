@@ -21,7 +21,7 @@ import {
   StyledHeader,
   StyledBidMatrix,
   StyledTable,
-  MainPanel,
+  Main,
   StyledTitle,
   StyledInfobar,
 } from './elements';
@@ -222,7 +222,7 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
   }, [processEvent]);
 
   return (
-    <MainPanel>
+    <Main>
       {newMatrixAvailable && (
         <StyledInfobar className="new-matrix">
           A new matrix is available. We recommend that you update this page.
@@ -317,7 +317,7 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
           </StyledBidMatrix>
         </StyledDiv>
       </div>
-    </MainPanel>
+    </Main>
   );
 };
 

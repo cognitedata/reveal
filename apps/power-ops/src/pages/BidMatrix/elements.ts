@@ -1,15 +1,10 @@
 import styled from 'styled-components/macro';
 import { Infobar, Title } from '@cognite/cogs.js';
 import { BidmatrixTable } from 'components/BidmatrixTable';
+import { MainPanel } from 'pages/elements';
 
-export const MainPanel = styled.div`
-  display: flex;
+export const Main = styled(MainPanel)`
   flex-direction: column;
-  position: absolute;
-  top: 0;
-  left: 280px;
-  right: 0;
-  height: 100%;
   overflow: auto;
 
   .main {

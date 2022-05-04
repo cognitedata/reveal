@@ -56,9 +56,9 @@ export const MainPanel = styled.div`
   display: flex;
   position: absolute;
   top: 0;
-  left: 280px;
   right: 0;
   height: 100%;
+  width: inherit;
 `;
 
 export const NotFound = styled(BaseContainer)`
