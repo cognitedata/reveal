@@ -41,7 +41,7 @@ export class MeasureDistanceTool extends BaseTool {
   protected /* override */ getTooltipCore(): string {
     return (
       `${this.getDisplayName()}\n` +
-      'Click and drag to wantet position.\n' +
+      'Click and drag to wanted position.\n' +
       'You must hit a 3D object to see the distance.'
     );
   }
