@@ -36,14 +36,14 @@ describe(MeasurementGizmo.name, () => {
 
   test('Add gizmo', () => {
     const addSpyOn = jest.spyOn(measurementGizmo, 'add');
-    measurementGizmo.add(new THREE.Vector3(1, 1, 1));
+    measurementGizmo.add(new THREE.Vector3(1, 1, 1), 1);
 
     expect(addSpyOn).toBeCalled();
   });
 
   test('Remove the gizmo', () => {
     const removeGizmoSpyOn = jest.spyOn(measurementGizmo, 'remove');
-    measurementGizmo.add(new THREE.Vector3(1, 1, 1));
+    measurementGizmo.add(new THREE.Vector3(1, 1, 1), 1);
     measurementGizmo.remove();
 
     expect(removeGizmoSpyOn).toBeCalled();
