@@ -34,7 +34,7 @@ export const PnidButton = ({
     shouldFetchLinkedAsset ? isAssetFetched : true
   );
 
-  if (!isFetched) {
+  if (!isFetched && !isAssetFetched) {
     return <StatusIcon status="Running" />;
   }
 
