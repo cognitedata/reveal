@@ -66,6 +66,10 @@ export class MeasurementLabel {
    * @param endPoint end point
    */
   public update(label: string, startPoint: THREE.Vector3, endPoint: THREE.Vector3): void {
+    //Return if the endPoint is not available from the Point Cloud
+    if (endPoint.equals(new THREE.Vector3(0))) {
+      return;
+    }
     let direction = endPoint.clone().sub(startPoint);
     const length = direction.length();
     direction = direction.normalize().multiplyScalar(length * 0.5);

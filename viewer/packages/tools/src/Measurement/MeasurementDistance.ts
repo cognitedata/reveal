@@ -118,6 +118,10 @@ export class MeasurementDistance implements Measurement {
    * @param controlPoint Control point (Second point) of the distance measurement
    */
   public update(controlPoint: THREE.Vector3): void {
+    //Return if the endPoint is not available from the Point Cloud
+    if (controlPoint.equals(new THREE.Vector3(0))) {
+      return;
+    }
     const distance = new THREE.Vector3()
       .subVectors(controlPoint, this._viewer.cameraManager.getCamera().position)
       .length();
