@@ -12,6 +12,7 @@ const perfMetricsInstance = (() => {
   let registeredMonitors: { [key: string]: PerfMonitor } = Object.freeze({});
   let accessToken: string;
   let project: string;
+  let applicationId: string | undefined;
   let initialized = false;
   //  Slow buckets [0.2, 0.4, 1, 3, 5];
   //  Fast buckets [1, 2.5, 4, 10, 25];
@@ -22,11 +23,18 @@ const perfMetricsInstance = (() => {
    * @param {string} url : URL to the frontend metrics service
    * @param {string} accessToken : Current user's access token
    * @param {string} project : Current project/tenant id
+   * @param {string} appId : Current app id (for legacy projects only)
    * */
-  function initialize(url: string, token: string, tenant: string): void {
+  function initialize(
+    url: string,
+    token: string,
+    tenant: string,
+    appId?: string
+  ): void {
     frontendMetricsBaseUrl = url;
     accessToken = token;
     project = tenant;
+    applicationId = appId;
 
     const observer = new PerformanceObserver((list) =>
       processMonitorResults(list)
@@ -82,13 +90,19 @@ const perfMetricsInstance = (() => {
   function pushEventToServer(
     body: MetricIncrementBody | Properties
   ): Promise<Response> {
+    const headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+      'x-cdp-project': project,
+    });
+
+    if (applicationId) {
+      headers.set('x-cdp-app', applicationId);
+    }
+
     const requestOptions = {
       method: 'POST',
-      headers: new Headers({
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-        'x-cdp-project': project,
-      }),
+      headers,
       body: JSON.stringify(body),
     };
     return fetch(`${frontendMetricsBaseUrl}/metrics`, requestOptions);

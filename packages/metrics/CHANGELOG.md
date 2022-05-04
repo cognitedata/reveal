@@ -1,3 +1,7 @@
+## 1.2.4 May 4 2022
+
+- Enable passing appId on initialize for legacy projects
+
 ## 1.2.3 Apr 28 2022
 
 - Added performance tracking : can log performance related events to the frontend metrics service.

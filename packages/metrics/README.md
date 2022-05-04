@@ -149,6 +149,7 @@ import { PerfMetrics } from '@cognite/metrics';
  * @param {string} url : URL to the frontend metrics service
  * @param {string} accessToken : Current user's access token
  * @param {string} project : Current project/tenant id
+ * @param {string} appId : Current app id (for legacy projects only)
  * */
 
 PerfMetrics.initialize(
