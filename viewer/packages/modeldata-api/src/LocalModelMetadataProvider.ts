@@ -18,13 +18,13 @@ export class LocalModelMetadataProvider implements ModelMetadataProvider {
     return Promise.resolve(`${location.origin}/${modelIdentifier.localPath}`);
   }
 
-  async getModelMatrix(modelIdentifier: ModelIdentifier): Promise<THREE.Matrix4> {
+  async getModelMatrix(modelIdentifier: ModelIdentifier, format: File3dFormat): Promise<THREE.Matrix4> {
     if (!(modelIdentifier instanceof LocalModelIdentifier)) {
       throw new Error(`Model must be a ${LocalModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
     }
 
     const matrix = new THREE.Matrix4();
-    applyDefaultModelTransformation(matrix, File3dFormat.RevealCadModel);
+    applyDefaultModelTransformation(matrix, format);
     return matrix;
   }
 

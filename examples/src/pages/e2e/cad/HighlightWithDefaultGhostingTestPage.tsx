@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 import { DefaultNodeAppearance, TreeIndexNodeCollection, Cognite3DViewer, Cognite3DModel } from '@cognite/reveal';
 import { registerVisualTest } from '../../../visual_tests';
 
