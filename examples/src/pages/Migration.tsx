@@ -22,6 +22,7 @@ import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
 import { ClippingUI } from '../utils/ClippingUI';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
+import { BulkHtmlOverlayUI } from '../utils/BulkHtmlOverlayUI';
 import { initialCadBudgetUi } from '../utils/CadBudgetUi';
 import { InspectNodeUI } from '../utils/InspectNodeUi';
 import { CameraUI } from '../utils/CameraUI';
@@ -62,7 +63,7 @@ export function Migration() {
         }
       };
 
-      let client: CogniteClient;;
+      let client: CogniteClient;
       if (project && environmentParam) {
         client = await createSDKFromEnvironment('reveal.example.example', project, environmentParam);
       } else {
@@ -179,6 +180,7 @@ export function Migration() {
         viewer.loadCameraFromModel(model);
         if (model instanceof Cognite3DModel) {
           new NodeStylingUI(gui.addFolder(`Node styling #${modelUi.cadModels.length}`), client, model);
+          new BulkHtmlOverlayUI(gui.addFolder(`Node tagging #${modelUi.cadModels.length}`), viewer, model, client);
         } else if (model instanceof CognitePointCloudModel) {
           new PointCloudClassificationFilterUI(gui.addFolder(`Class filter #${modelUi.pointCloudModels.length}`), model);
         }
@@ -225,7 +227,7 @@ export function Migration() {
       debugStatsGui.add(guiState.debug.stats, 'textures').name('Textures');
       debugStatsGui.add(guiState.debug.stats, 'renderTime').name('Ms/frame');
 
-      viewer.on('sceneRendered', sceneRenderedEventArgs => {
+      viewer.on('sceneRendered', (sceneRenderedEventArgs) => {
         guiState.debug.stats.drawCalls = sceneRenderedEventArgs.renderer.info.render.calls;
         guiState.debug.stats.points = sceneRenderedEventArgs.renderer.info.render.points;
         guiState.debug.stats.triangles = sceneRenderedEventArgs.renderer.info.render.triangles;
@@ -367,8 +369,8 @@ export function Migration() {
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client);
 
-      viewer.on('click', async event => {
-        const { offsetX, offsetY } = event;
+      viewer.on('click', async (event) => {
+        const { offsetX, offsetY } = event; 
         console.log('2D coordinates', event);
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {

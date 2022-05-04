@@ -199,37 +199,6 @@ export type Intersection = CadIntersection | PointCloudIntersection;
  */
 export { CameraConfiguration } from '@reveal/utilities';
 
-/**
- * Delegate for pointer events.
- * @module @cognite/reveal
- * @see {@link Cognite3DViewer.on}.
- */
-export type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
-
-/**
- * Delegate for camera update events.
- * @module @cognite/reveal
- * @see {@link Cognite3DViewer.on}.
- */
-export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
-
-/**
- * Delegate for disposal events.
- */
-export type DisposedDelegate = () => void;
-
-/**
- * Delegate for rendering events.
- * @module @cognite/reveal
- * @see {@link Cognite3DViewer.on}.
- */
-export type SceneRenderedDelegate = (event: {
-  frameNumber: number;
-  renderTime: number;
-  renderer: THREE.WebGLRenderer;
-  camera: THREE.PerspectiveCamera;
-}) => void;
-
 export * from './NotSupportedInMigrationWrapperError';
 
 export { CadModelBudget, PointCloudBudget };
