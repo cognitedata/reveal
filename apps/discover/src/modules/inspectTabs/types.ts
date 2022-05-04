@@ -36,8 +36,7 @@ export interface InspectTabsState {
 export type FilterValues = NumericRange | MultiSelect | SelectedMap;
 export interface InspectTabsAction {
   type: FilterDataActionsType;
-  filter?: Filter;
-  values?: FilterValues | Errors;
+  payload?: FilterValues | Errors;
 }
 
 export type Filter = {
@@ -46,12 +45,34 @@ export type Filter = {
 };
 
 type FilterDataActionsType =
-  | typeof SET_FILTER_VALUES
-  | typeof SET_SELECTED_ID_MAP
   | typeof SET_ERRORS
-  | typeof RESET_ERRORS;
+  | typeof RESET_ERRORS
+  | typeof SET_NDS_PROBABILITY
+  | typeof SET_NDS_SEVERITY
+  | typeof SET_NPT_CODE
+  | typeof SET_NPT_DETAIL_CODE
+  | typeof SET_NPT_SEARCH_PHRASE
+  | typeof SET_NDS_RISK_TYPE
+  | typeof SET_NPT_DURATION
+  | typeof SET_SELECTED_LOG_IDS
+  | typeof SET_SELECTED_TRAJECTORY_IDS
+  | typeof SET_SELECTED_TRAJECTORY_WELLBORE_IDS;
 
-export const SET_FILTER_VALUES = 'SET_FILTER_VALUES';
-export const SET_SELECTED_ID_MAP = 'SET_SELECTED_ID_MAP';
 export const SET_ERRORS = 'SET_ERRORS';
 export const RESET_ERRORS = 'RESET_ERRORS';
+
+// NDS
+export const SET_NDS_RISK_TYPE = 'SET_NDS_RISK_TYPE';
+export const SET_NDS_PROBABILITY = 'SET_NDS_PROBABILITY';
+export const SET_NDS_SEVERITY = 'SET_NDS_SEVERITY';
+
+// NPT
+export const SET_NPT_CODE = 'SET_NPT_CODE';
+export const SET_NPT_DETAIL_CODE = 'SET_NPT_DETAIL_CODE';
+export const SET_NPT_SEARCH_PHRASE = 'SET_NPT_SEARCH_PHRASE';
+export const SET_NPT_DURATION = 'SET_NPT_DURATION';
+
+export const SET_SELECTED_LOG_IDS = 'SET_SELECTED_LOG_IDS';
+export const SET_SELECTED_TRAJECTORY_IDS = 'SET_SELECTED_TRAJECTORY_IDS';
+export const SET_SELECTED_TRAJECTORY_WELLBORE_IDS =
+  'SET_SELECTED_TRAJECTORY_WELLBORE_IDS';

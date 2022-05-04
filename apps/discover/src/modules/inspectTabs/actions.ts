@@ -1,101 +1,48 @@
-import { FILTER_NAMES, MODULES } from './constants';
+import { createAction } from '@reduxjs/toolkit';
+
 import {
   SearchInput,
   MultiSelect,
   NumericRange,
   SelectedMap,
   Errors,
-  SET_FILTER_VALUES,
-  SET_SELECTED_ID_MAP,
   SET_ERRORS,
   RESET_ERRORS,
+  SET_NDS_RISK_TYPE,
+  SET_NDS_PROBABILITY,
+  SET_NDS_SEVERITY,
+  SET_NPT_CODE,
+  SET_NPT_DETAIL_CODE,
+  SET_NPT_SEARCH_PHRASE,
+  SET_NPT_DURATION,
+  SET_SELECTED_LOG_IDS,
+  SET_SELECTED_TRAJECTORY_IDS,
+  SET_SELECTED_TRAJECTORY_WELLBORE_IDS,
 } from './types';
 
 // NDS
-export const setNdsRiskType = (values: MultiSelect) => {
-  const filter = {
-    filterModule: MODULES.nds,
-    filterName: FILTER_NAMES.riskType,
-  };
-  return { type: SET_FILTER_VALUES, filter, values };
-};
-export const setNdsProbability = (values: MultiSelect) => {
-  const filter = {
-    filterModule: MODULES.nds,
-    filterName: FILTER_NAMES.probability,
-  };
-  return { type: SET_FILTER_VALUES, filter, values };
-};
-export const setNdsSeverity = (values: MultiSelect) => {
-  const filter = {
-    filterModule: MODULES.nds,
-    filterName: FILTER_NAMES.severity,
-  };
-  return { type: SET_FILTER_VALUES, filter, values };
-};
+
+export const setNdsRiskType = createAction<MultiSelect>(SET_NDS_RISK_TYPE);
+export const setNdsProbability = createAction<MultiSelect>(SET_NDS_PROBABILITY);
+export const setNdsSeverity = createAction<MultiSelect>(SET_NDS_SEVERITY);
 
 // NPT
-export const setNptCode = (values: MultiSelect) => {
-  const filter = {
-    filterModule: MODULES.npt,
-    filterName: FILTER_NAMES.nptCode,
-  };
-  return { type: SET_FILTER_VALUES, filter, values };
-};
-export const setNptDetailCode = (values: MultiSelect) => {
-  const filter = {
-    filterModule: MODULES.npt,
-    filterName: FILTER_NAMES.nptDetailCode,
-  };
-  return { type: SET_FILTER_VALUES, filter, values };
-};
-export const setNptSearchPhrase = (values: SearchInput) => {
-  const filter = {
-    filterModule: MODULES.npt,
-    filterName: FILTER_NAMES.searchPhrase,
-  };
-  return { type: SET_FILTER_VALUES, filter, values };
-};
-export const setNptDuration = (values: NumericRange) => {
-  const filter = {
-    filterModule: MODULES.npt,
-    filterName: FILTER_NAMES.duration,
-  };
-  return { type: SET_FILTER_VALUES, filter, values };
-};
-
-export const setSelectedLogIds = (values: SelectedMap) => {
-  const filter = {
-    filterModule: MODULES.log,
-    filterName: FILTER_NAMES.selectedIds,
-  };
-  return { type: SET_SELECTED_ID_MAP, filter, values };
-};
-
-// trajectory
-export const setSelectedTrajIds = (values: SelectedMap) => {
-  const filter = {
-    filterModule: MODULES.trajectory,
-    filterName: FILTER_NAMES.selectedIds,
-  };
-  return { type: SET_SELECTED_ID_MAP, filter, values };
-};
-export const setSelectedTrajectoryWellboreIds = (values: SelectedMap) => {
-  const filter = {
-    filterModule: MODULES.trajectory,
-    filterName: FILTER_NAMES.selectedWellboreIds,
-  };
-  return { type: SET_SELECTED_ID_MAP, filter, values };
-};
-
-// Errors
-export const setErrors = (values: Errors) => {
-  return { type: SET_ERRORS, filter: {}, values };
-};
-
-export const resetErrors = () => {
-  return { type: RESET_ERRORS };
-};
+export const setNptCode = createAction<MultiSelect>(SET_NPT_CODE);
+export const setNptDetailCode = createAction<MultiSelect>(SET_NPT_DETAIL_CODE);
+export const setNptSearchPhrase = createAction<SearchInput>(
+  SET_NPT_SEARCH_PHRASE
+);
+export const setNptDuration = createAction<NumericRange>(SET_NPT_DURATION);
+export const setSelectedLogIds =
+  createAction<SelectedMap>(SET_SELECTED_LOG_IDS);
+export const setSelectedTrajectoryIds = createAction<SelectedMap>(
+  SET_SELECTED_TRAJECTORY_IDS
+);
+export const setSelectedTrajectoryWellboreIds = createAction<SelectedMap>(
+  SET_SELECTED_TRAJECTORY_WELLBORE_IDS
+);
+export const setErrors = createAction<Errors>(SET_ERRORS);
+export const resetErrors = createAction(RESET_ERRORS);
 
 export const inspectTabsActions = {
   setNdsRiskType,
@@ -106,7 +53,7 @@ export const inspectTabsActions = {
   setNptSearchPhrase,
   setNptDuration,
   setSelectedLogIds,
-  setSelectedTrajIds,
+  setSelectedTrajectoryIds,
   setSelectedTrajectoryWellboreIds,
   setErrors,
   resetErrors,

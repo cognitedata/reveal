@@ -1,18 +1,23 @@
+import { createReducer } from '@reduxjs/toolkit';
 import cloneDeep from 'lodash/cloneDeep';
-import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import uniq from 'lodash/uniq';
 
 import {
-  InspectTabsState,
-  InspectTabsAction,
-  SET_FILTER_VALUES,
-  SET_SELECTED_ID_MAP,
-  SET_ERRORS,
-  RESET_ERRORS,
-  Filter,
-  Errors,
-} from './types';
+  resetErrors,
+  setErrors,
+  setNdsProbability,
+  setNdsRiskType,
+  setNdsSeverity,
+  setNptCode,
+  setNptDetailCode,
+  setNptDuration,
+  setNptSearchPhrase,
+  setSelectedLogIds,
+  setSelectedTrajectoryWellboreIds,
+  setSelectedTrajectoryIds,
+} from './actions';
+import { InspectTabsState, InspectTabsAction, Errors } from './types';
 
 export const initialState: InspectTabsState = {
   nds: {
@@ -39,46 +44,55 @@ export const initialState: InspectTabsState = {
   errors: {},
 };
 
-export const inspectTabs = (
-  state: InspectTabsState = initialState,
-  action?: InspectTabsAction
-) => {
-  if (!action) {
-    return state;
-  }
-
-  const { type, filter = {} as Filter, values } = action;
-  const { filterModule, filterName } = filter;
-  const module = get(state, filterModule);
-  switch (type) {
-    case SET_FILTER_VALUES:
-      return {
-        ...state,
-        [filterModule]: {
-          ...module,
-          [filterName]: values,
-        },
+const inspectReducerCreator = createReducer(initialState, (builder) => {
+  builder
+    // NDS
+    .addCase(setNdsRiskType, (state, action) => {
+      state.nds.riskType = action.payload;
+    })
+    .addCase(setNdsProbability, (state, action) => {
+      state.nds.probability = action.payload;
+    })
+    .addCase(setNdsSeverity, (state, action) => {
+      state.nds.severity = action.payload;
+    })
+    // NPT
+    .addCase(setNptCode, (state, action) => {
+      state.npt.nptCode = action.payload;
+    })
+    .addCase(setNptDetailCode, (state, action) => {
+      state.npt.nptDetailCode = action.payload;
+    })
+    .addCase(setNptSearchPhrase, (state, action) => {
+      state.npt.searchPhrase = action.payload;
+    })
+    .addCase(setNptDuration, (state, action) => {
+      state.npt.duration = action.payload;
+    }) //
+    .addCase(setSelectedLogIds, (state, action) => {
+      state.log.selectedIds = { ...state.log.selectedIds, ...action.payload };
+    })
+    .addCase(setSelectedTrajectoryIds, (state, action) => {
+      state.trajectory.selectedIds = {
+        ...state.trajectory.selectedIds,
+        ...action.payload,
       };
-    case SET_SELECTED_ID_MAP:
-      return {
-        ...state,
-        [filterModule]: {
-          ...module,
-          [filterName]: { ...get(module, filterName), ...values },
-        },
+    })
+    .addCase(setSelectedTrajectoryWellboreIds, (state, action) => {
+      state.trajectory.selectedWellboreIds = {
+        ...state.trajectory.selectedWellboreIds,
+        ...action.payload,
       };
-
-    case SET_ERRORS: {
-      const errorsToUpdate = values as Errors;
+    })
+    .addCase(setErrors, (state, action) => {
+      const errorsToUpdate = action.payload as Errors;
       const wellboreIdsToUpdate = Object.keys(errorsToUpdate);
       const updatedWellboreErrors = cloneDeep(state.errors);
       const existingWellboreIds = Object.keys(updatedWellboreErrors);
 
       if (isEmpty(existingWellboreIds)) {
-        return {
-          ...state,
-          errors: errorsToUpdate,
-        };
+        state.errors = errorsToUpdate;
+        return;
       }
 
       wellboreIdsToUpdate.forEach((wellboreId) => {
@@ -94,19 +108,16 @@ export const inspectTabs = (
         }
       });
 
-      return {
-        ...state,
-        errors: updatedWellboreErrors,
-      };
-    }
+      state.errors = updatedWellboreErrors;
+    })
+    .addCase(resetErrors, (state) => {
+      state.errors = {};
+    });
+});
 
-    case RESET_ERRORS:
-      return {
-        ...state,
-        errors: {},
-      };
-
-    default:
-      return state;
-  }
+export const inspectTabs = (
+  state: InspectTabsState | undefined,
+  action: InspectTabsAction
+): InspectTabsState => {
+  return inspectReducerCreator(state, action);
 };

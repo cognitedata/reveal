@@ -100,14 +100,14 @@ export const Trajectory: React.FC = () => {
       .reduce((result, item) => ({ ...result, [item.id]: true }), {});
     if (Object.keys(selectedTrajectoriesIdsMap).length) {
       dispatch(
-        inspectTabsActions.setSelectedTrajIds(selectedTrajectoriesIdsMap)
+        inspectTabsActions.setSelectedTrajectoryIds(selectedTrajectoriesIdsMap)
       );
     }
   }, [trajectories, selectedIds]);
 
   const handleRowSelect = (traj: RowProps<Sequence>, value: boolean) => {
     dispatch(
-      inspectTabsActions.setSelectedTrajIds({ [traj.original.id]: value })
+      inspectTabsActions.setSelectedTrajectoryIds({ [traj.original.id]: value })
     );
   };
 
@@ -116,7 +116,9 @@ export const Trajectory: React.FC = () => {
       (result, item) => ({ ...result, [item.id]: value }),
       {}
     );
-    dispatch(inspectTabsActions.setSelectedTrajIds(selectedTrajectoriesIdsMap));
+    dispatch(
+      inspectTabsActions.setSelectedTrajectoryIds(selectedTrajectoriesIdsMap)
+    );
   };
 
   const showTrajectoryTable = false;

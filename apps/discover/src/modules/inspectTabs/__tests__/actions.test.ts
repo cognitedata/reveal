@@ -9,87 +9,72 @@ import {
   setErrors,
   resetErrors,
 } from '../actions';
-import { FILTER_NAMES, MODULES } from '../constants';
 import {
-  SET_FILTER_VALUES,
-  SET_SELECTED_ID_MAP,
   SET_ERRORS,
   Errors,
   RESET_ERRORS,
+  SET_NDS_RISK_TYPE,
+  SET_NDS_PROBABILITY,
+  SET_NDS_SEVERITY,
+  SET_NPT_DURATION,
+  SET_SELECTED_TRAJECTORY_WELLBORE_IDS,
 } from '../types';
 
 describe('Filter data Actions', () => {
   it(`should set NDS RiskType`, () => {
-    const filter = {
-      filterModule: MODULES.nds,
-      filterName: FILTER_NAMES.riskType,
-    };
-    const values = ['A', 'B'];
-    const expectedActions = { type: SET_FILTER_VALUES, filter, values };
+    const payload = ['A', 'B'];
+    const expectedActions = { type: SET_NDS_RISK_TYPE, payload };
 
     const store = createMockStore();
 
-    store.dispatch(setNdsRiskType(values));
+    store.dispatch(setNdsRiskType(payload));
 
     expect(store.getActions()).toEqual([expectedActions]);
   });
 
   it(`should set NDS Probability`, () => {
-    const filter = {
-      filterModule: MODULES.nds,
-      filterName: FILTER_NAMES.probability,
-    };
-    const values = ['A', 'B'];
-    const expectedActions = { type: SET_FILTER_VALUES, filter, values };
+    const payload = ['A', 'B'];
+    const expectedActions = { type: SET_NDS_PROBABILITY, payload };
 
     const store = createMockStore();
 
-    store.dispatch(setNdsProbability(values));
+    store.dispatch(setNdsProbability(payload));
 
     expect(store.getActions()).toEqual([expectedActions]);
   });
 
   it(`should set NDS Severity`, () => {
-    const filter = {
-      filterModule: MODULES.nds,
-      filterName: FILTER_NAMES.severity,
-    };
-    const values = ['A', 'B'];
-    const expectedActions = { type: SET_FILTER_VALUES, filter, values };
+    const payload = ['A', 'B'];
+    const expectedActions = { type: SET_NDS_SEVERITY, payload };
 
     const store = createMockStore();
 
-    store.dispatch(setNdsSeverity(values));
+    store.dispatch(setNdsSeverity(payload));
 
     expect(store.getActions()).toEqual([expectedActions]);
   });
 
   it(`should set NPT duration`, () => {
-    const filter = {
-      filterModule: MODULES.npt,
-      filterName: FILTER_NAMES.duration,
-    };
-    const values = [1, 2];
-    const expectedActions = { type: SET_FILTER_VALUES, filter, values };
+    const payload = [1, 2];
+    const expectedActions = { type: SET_NPT_DURATION, payload };
 
     const store = createMockStore();
 
-    store.dispatch(setNptDuration(values));
+    store.dispatch(setNptDuration(payload));
 
     expect(store.getActions()).toEqual([expectedActions]);
   });
 
   it(`should set selected trajectory wellbores`, () => {
-    const filter = {
-      filterModule: MODULES.trajectory,
-      filterName: FILTER_NAMES.selectedWellboreIds,
+    const payload = { 1: true };
+    const expectedActions = {
+      type: SET_SELECTED_TRAJECTORY_WELLBORE_IDS,
+      payload,
     };
-    const values = { 1: true };
-    const expectedActions = { type: SET_SELECTED_ID_MAP, filter, values };
 
     const store = createMockStore();
 
-    store.dispatch(setSelectedTrajectoryWellboreIds(values));
+    store.dispatch(setSelectedTrajectoryWellboreIds(payload));
 
     expect(store.getActions()).toEqual([expectedActions]);
   });
@@ -98,7 +83,7 @@ describe('Filter data Actions', () => {
     const errors: Errors = {
       wellbore1: [{ value: 'Error 1' }, { value: 'Error 2' }],
     };
-    const expectedActions = { type: SET_ERRORS, filter: {}, values: errors };
+    const expectedActions = { type: SET_ERRORS, payload: errors };
 
     const store = createMockStore();
 

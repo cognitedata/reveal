@@ -1,14 +1,14 @@
 import get from 'lodash/get';
 
-import { FILTER_NAMES, MODULES } from '../constants';
+import { MODULES } from '../constants';
 import { inspectTabs, initialState } from '../reducer';
 import {
   InspectTabsAction,
-  SET_FILTER_VALUES,
-  SET_SELECTED_ID_MAP,
   SET_ERRORS,
   RESET_ERRORS,
   Errors,
+  SET_NDS_PROBABILITY,
+  SET_SELECTED_LOG_IDS,
 } from '../types';
 
 describe('inspectTabs.reducer', () => {
@@ -16,68 +16,59 @@ describe('inspectTabs.reducer', () => {
     expect(inspectTabs(undefined, {} as InspectTabsAction)).toBeDefined();
   });
 
-  it(`should set filter values ${SET_FILTER_VALUES}`, () => {
-    const filter = {
-      filterModule: MODULES.nds,
-      filterName: FILTER_NAMES.probability,
-    };
-    const values = ['A', 'B'];
+  it(`should set filter values ${SET_NDS_PROBABILITY}`, () => {
+    const payload = ['A', 'B'];
     const state = inspectTabs(
       { ...initialState },
       {
-        type: SET_FILTER_VALUES,
-        filter,
-        values,
+        type: SET_NDS_PROBABILITY,
+        payload,
       }
     );
     expect(state).toEqual({
       ...initialState,
       [MODULES.nds]: {
         ...get(initialState, MODULES.nds),
-        [FILTER_NAMES.probability]: values,
+        probability: payload,
       },
     });
   });
 
-  it(`should set selected Ids ${SET_SELECTED_ID_MAP}`, () => {
-    const filter = {
-      filterModule: MODULES.casing,
-      filterName: FILTER_NAMES.selectedIds,
-    };
+  it(`should set selected Ids ${SET_SELECTED_LOG_IDS}`, () => {
     const IdMap = { 1: true };
     const state = inspectTabs(
       { ...initialState },
       {
-        type: SET_SELECTED_ID_MAP,
-        filter,
-        values: IdMap,
+        type: SET_SELECTED_LOG_IDS,
+
+        payload: IdMap,
       }
     );
     expect(state).toEqual({
       ...initialState,
-      [MODULES.casing]: {
-        ...get(initialState, MODULES.casing),
-        [FILTER_NAMES.selectedIds]: IdMap,
+      [MODULES.log]: {
+        ...get(initialState, MODULES.log),
+        selectedIds: IdMap,
       },
     });
   });
 
   it('Should set errors into the state with no other errors', () => {
-    const values: Errors = {
+    const payload: Errors = {
       wellbore1: [{ value: 'Error 1' }, { value: 'Error 2' }],
     };
     const state = inspectTabs(
       { ...initialState },
       {
         type: SET_ERRORS,
-        values,
+        payload,
       }
     );
-    expect(state.errors).toEqual(values);
+    expect(state.errors).toEqual(payload);
   });
 
   it('Should set errors into the state with other wellbore errors', () => {
-    const values: Errors = {
+    const payload: Errors = {
       wellbore1: [
         { value: 'Wellbore 1 Error 1' },
         { value: 'Wellbore 1 Error 2' },
@@ -92,14 +83,14 @@ describe('inspectTabs.reducer', () => {
       },
       {
         type: SET_ERRORS,
-        values,
+        payload,
       }
     );
-    expect(state.errors.wellbore1).toEqual(values.wellbore1);
+    expect(state.errors.wellbore1).toEqual(payload.wellbore1);
   });
 
   it('Should update same wellbore errors', () => {
-    const values: Errors = {
+    const payload: Errors = {
       wellbore1: [{ value: 'Wellbore 1 Error 2' }],
     };
     const state = inspectTabs(
@@ -111,7 +102,7 @@ describe('inspectTabs.reducer', () => {
       },
       {
         type: SET_ERRORS,
-        values,
+        payload,
       }
     );
     expect(state.errors.wellbore1).toEqual(
