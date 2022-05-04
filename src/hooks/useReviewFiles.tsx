@@ -183,16 +183,12 @@ export const useReviewFiles = (fileIds: Array<number>) => {
     await doesLabelExist(INTERACTIVE_LABEL);
 
     const updatePatch: FileChangeUpdate[] = selectedFileIds.map((fileId) => {
-      const file = files?.find((curFile) => curFile.id === fileId);
       return {
         id: fileId,
         update: {
           labels: {
             add: [{ externalId: INTERACTIVE_LABEL.externalId }],
-            remove:
-              file && isFilePending(file)
-                ? [{ externalId: PENDING_LABEL.externalId }]
-                : undefined,
+            remove: [{ externalId: PENDING_LABEL.externalId }],
           },
         },
       };
@@ -211,7 +207,6 @@ export const useReviewFiles = (fileIds: Array<number>) => {
     await doesLabelExist(INTERACTIVE_LABEL);
 
     const updatePatch: FileChangeUpdate[] = selectedFileIds.map((fileId) => {
-      const file = files?.find((curFile) => curFile.id === fileId);
       return {
         id: fileId,
         update: {
@@ -219,10 +214,7 @@ export const useReviewFiles = (fileIds: Array<number>) => {
             add: isFileInteractive(fileId)
               ? [{ externalId: INTERACTIVE_LABEL.externalId }]
               : undefined,
-            remove:
-              file && isFilePending(file)
-                ? [{ externalId: PENDING_LABEL.externalId }]
-                : undefined,
+            remove: [{ externalId: PENDING_LABEL.externalId }],
           },
         },
       };
@@ -234,16 +226,12 @@ export const useReviewFiles = (fileIds: Array<number>) => {
     await doesLabelExist(PENDING_LABEL);
 
     const updatePatch: FileChangeUpdate[] = selectedFileIds.map((fileId) => {
-      const file = files?.find((curFile) => curFile.id === fileId);
       return {
         id: fileId,
         update: {
           labels: {
             add: [{ externalId: PENDING_LABEL.externalId }],
-            remove:
-              file && isFileApproved(file)
-                ? [{ externalId: INTERACTIVE_LABEL.externalId }]
-                : undefined,
+            remove: [{ externalId: INTERACTIVE_LABEL.externalId }],
           },
         },
       };
