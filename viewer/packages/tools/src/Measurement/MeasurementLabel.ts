@@ -25,9 +25,10 @@ export class MeasurementLabel {
       pointer-events: none;
       touch-action: none;
       user-select: none;
-      borderRadius: 25%;
-      -webkit-border-radius: 25%;
-      -moz-border-radius: 25%;
+      font-family: inherit;
+      borderRadius: 6px;
+      -webkit-border-radius: 6px;
+      -moz-border-radius: 6px;
 
       /* Make it look nice */
       padding: 10px;

@@ -389,9 +389,6 @@ export function Migration() {
               {
                 const { pointIndex, point } = intersection;
                 console.log(`Clicked point with pointIndex ${pointIndex} at`, point);
-                const sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(0.1), new THREE.MeshBasicMaterial({ color: 'red' }));
-                sphere.position.copy(point);
-                viewer.addObject3D(sphere);
               }
               break;
           }

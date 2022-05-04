@@ -462,10 +462,6 @@ export class Cognite3DViewer {
     return this._cameraManager;
   }
 
-  get inputHandler(): InputHandler {
-    return this._mouseHandler;
-  }
-
   /**
    * Gets the current viewer state which includes the camera pose as well as applied styling.
    * @returns JSON object containing viewer state.
@@ -1078,11 +1074,15 @@ export class Cognite3DViewer {
    * Raycasting model(s) for finding where the ray intersects with the model. Note: Only Cad models.
    * @param offsetX X coordinate in pixels (relative to the domElement).
    * @param offsetY Y coordinate in pixels (relative to the domElement).
+   * @param isFrameBuffer Enable to get framebuffer else use saved buffer.
+   * @param options Options to control the behavior of the intersection operation. Optional (new in 1.3.0).
    * @returns A promise that if there was an intersection then return the intersection point.
    */
-  async getIntersectionPixelFromBuffer(offsetX: number, offsetY: number): Promise<THREE.Vector3> {
+  async getIntersectionPixelFromBuffer(offsetX: number, offsetY: number, isFrameBuffer: boolean, options?: IntersectionFromPixelOptions): Promise<THREE.Vector3> {
     const cadModels = this.getModels('cad');
     const cadNodes = cadModels.map(x => x.cadNode);
+    const pointCloudModels = this.getModels('pointcloud');
+    const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
     const normalizedCoords = {
       x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
       y: (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
@@ -1096,13 +1096,28 @@ export class Cognite3DViewer {
       domElement: this.renderer.domElement
     };
 
-    //Retrive the full pixel buffer if the camera has changed
-    let cameraChanged = false;
-    this.cameraManager.on('cameraChange', function () {
-      cameraChanged = true;
-    });
+    const intersections: Intersection[] = [];
+    const cadResult = intersectionCadNodesFromStoredPixel(cadNodes, input, isFrameBuffer);
+    const pointCloudResults = intersectPointClouds(pointCloudNodes, input, options?.pointIntersectionThreshold);
+    if (pointCloudResults.length > 0) {
+      const result = pointCloudResults[0]; // Nearest intersection
+      for (const model of pointCloudModels) {
+        if (model.pointCloudNode === result.pointCloudNode) {
+          const intersection: PointCloudIntersection = {
+            type: 'pointcloud',
+            model,
+            point: result.point,
+            pointIndex: result.pointIndex,
+            distanceToCamera: result.distance
+          };
+          intersections.push(intersection);
+          break;
+        }
+      }
+    }
 
-    return intersectionCadNodesFromStoredPixel(cadNodes, input, cameraChanged);
+    intersections.sort((a, b) => a.distanceToCamera - b.distanceToCamera);
+    return intersections.length > 0 ? intersections[0].point : cadResult;
   }
 
   private getModels(type: 'cad'): Cognite3DModel[];

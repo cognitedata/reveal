@@ -17,12 +17,13 @@ export class MeasurementGizmo {
    * Adds a Gizmo/Sphere at specified position
    * @param position Gizmo position
    */
-  add(position: THREE.Vector3): void {
+  add(position: THREE.Vector3, size: number): void {
     this._mesh = new THREE.Mesh(
-      new THREE.SphereBufferGeometry(0.01),
-      new THREE.MeshBasicMaterial({ color: 0x000000, opacity: 0.5, transparent: true })
+      new THREE.SphereGeometry(1),
+      new THREE.MeshBasicMaterial({ color: 0xff0000, opacity: 0.5, transparent: true })
     );
     this._mesh.position.copy(position);
+    this._mesh.scale.copy(this._mesh.scale.multiplyScalar(size));
 
     this._viewer.addObject3D(this._mesh);
   }

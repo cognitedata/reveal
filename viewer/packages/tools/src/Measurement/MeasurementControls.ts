@@ -3,7 +3,6 @@
  */
 
 import { Cognite3DViewer } from '@reveal/core';
-import { InputHandler } from '@reveal/utilities';
 import * as THREE from 'three';
 import { MeasurementGizmo } from './MeasurementGizmo';
 import { MeasurementLabel } from './MeasurementLabel';
@@ -14,36 +13,45 @@ import { MeasurementDistance } from './MeasurementDistance';
 export class MeasurementControls {
   private readonly _domElement: HTMLElement;
   private readonly _viewer: Cognite3DViewer;
-  private readonly _inputHandler: InputHandler;
   private readonly _measurementGizmo: MeasurementGizmo;
   private readonly _measurementLabel: MeasurementLabel;
   private readonly _startPosition: THREE.Vector3;
   private _measurement: Measurement;
+  private _isCameraChanged: boolean;
+  private _pointSize; number;
 
   private readonly _handleonPointerClick = this.onPointerClick.bind(this);
   private readonly _handleonPointerMove = this.onPointerMove.bind(this);
+  private readonly _handleonCameraChanged = this.onCameraChanged.bind(this);
 
   constructor(viewer: Cognite3DViewer) {
     this._viewer = viewer;
     this._domElement = viewer.domElement;
-    this._inputHandler = viewer.inputHandler;
     this._measurementGizmo = new MeasurementGizmo(this._viewer);
     this._measurementLabel = new MeasurementLabel(this._viewer);
     this._startPosition = new THREE.Vector3();
+    this._isCameraChanged = false;
+    this._pointSize = 0.02;
   }
 
   /**
    * Set input handling
    */
-  private setupInputHandling() {
-    this._inputHandler.on('click', this._handleonPointerClick);
+  private setupEventHandling() {
+    this._viewer.on('click', this._handleonPointerClick);
+    this._viewer.on('cameraChange', this._handleonCameraChanged);
   }
 
   /**
    * Remove input handling
    */
-  private removeInputHandling() {
-    this._inputHandler.off('click', this._handleonPointerClick);
+  private removeEventHandling() {
+    this._viewer.off('click', this._handleonPointerClick);
+    this._viewer.off('cameraChange', this._handleonCameraChanged);
+  }
+
+  private onCameraChanged() {
+    this._isCameraChanged = true;
   }
 
   /**
@@ -52,7 +60,7 @@ export class MeasurementControls {
    */
   public add(measurement: Measurement): void {
     this._measurement = measurement;
-    this.setupInputHandling();
+    this.setupEventHandling();
   }
 
   /**
@@ -62,7 +70,7 @@ export class MeasurementControls {
     if (this._measurement) {
       this._measurement.remove();
       this._measurement = null;
-      this.removeInputHandling();
+      this.removeEventHandling();
     }
   }
 
@@ -73,7 +81,7 @@ export class MeasurementControls {
     const intersection = await this._viewer.getIntersectionFromPixel(pointer.x, pointer.y);
 
     if (intersection) {
-      this._measurementGizmo.add(intersection.point);
+      this._measurementGizmo.add(intersection.point, this._pointSize);
 
       if (!this._measurement.isActive()) {
         this._domElement.addEventListener('mousemove', this._handleonPointerMove);
@@ -84,6 +92,7 @@ export class MeasurementControls {
         this.updateMeasurement(intersection.point);
         this._measurement.complete();
         this._domElement.removeEventListener('mousemove', this._handleonPointerMove);
+        this._isCameraChanged = false;
       }
       this._viewer.requestRedraw();
     }
@@ -93,17 +102,18 @@ export class MeasurementControls {
     const { offsetX, offsetY } = event;
     const pointer = new THREE.Vector2(offsetX, offsetY);
 
-    const intersection = await this._viewer.getIntersectionPixelFromBuffer(pointer.x, pointer.y);
+    const intersection = await this._viewer.getIntersectionPixelFromBuffer(pointer.x, pointer.y, this._isCameraChanged);
 
     if (intersection) {
       this.updateMeasurement(intersection);
       this._viewer.requestRedraw();
+      this._isCameraChanged = false;
     }
   }
 
   private updateMeasurement(point: THREE.Vector3): void {
     this._measurement.update(point);
-    const distanceValue = this._measurement.getMeasurementValue().toFixed(3).toString();
+    const distanceValue = this._measurement.getMeasurementValue().toFixed(1).toString();
     this._measurementLabel.update(distanceValue, this._startPosition, point);
   }
 
@@ -111,10 +121,11 @@ export class MeasurementControls {
     if (this._measurement) {
       const distanceMeasurement = this._measurement as MeasurementDistance;
       distanceMeasurement.setLineOptions(options);
+      this._pointSize = options?.lineWidth || this._pointSize;
     }
   }
 
   public dispose(): void {
-    this.removeInputHandling();
+    this.removeEventHandling();
   }
 }
