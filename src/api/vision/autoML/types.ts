@@ -33,6 +33,7 @@ export interface AutoMLTrainingJob extends AutoMLModel {
   createdTime: number;
   startTime: number;
   statusTime: number;
+  errorMessage?: String;
 }
 
 export interface AutoMLTrainingJobPostRequest extends AutoMLTrainingJob {
