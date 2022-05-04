@@ -5,10 +5,11 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = env => {
+  const entryFile = env.example ?? './app/index.ts';
   return {
     mode: 'development',
 
-    entry: path.resolve(env.dir, './app/index.ts'),
+    entry: path.resolve(env.dir, entryFile),
 
     output: {
       path: path.resolve(env.dir, 'dist'),

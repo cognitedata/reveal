@@ -13,7 +13,8 @@ import {
   BasicPipelineExecutor,
   DefaultRenderPipeline,
   IdentifiedModel,
-  GeometryDepthRenderPipeline
+  GeometryDepthRenderPipeline,
+  RenderMode
 } from '@reveal/rendering';
 import { createCadManager } from '@reveal/cad-model';
 import { createPointCloudManager } from '@reveal/pointclouds';
@@ -128,7 +129,12 @@ export function createRevealManager(
     renderables.cadModels,
     renderables.customObjects
   );
-  const depthRenderPipeline = new GeometryDepthRenderPipeline(materialManager, scene, renderables.cadModels);
+  const depthRenderPipeline = new GeometryDepthRenderPipeline(
+    RenderMode.DepthBufferOnly,
+    materialManager,
+    scene,
+    renderables.cadModels
+  );
   const cadManager = createCadManager(
     modelMetadataProvider,
     modelDataProvider,
@@ -141,7 +147,7 @@ export function createRevealManager(
     }
   );
   const pointCloudManager = createPointCloudManager(modelMetadataProvider, modelDataProvider);
-  return new RevealManager(cadManager, pointCloudManager, pipelineExecutor, defaultRenderPipeline);
+  return new RevealManager(cadManager, pointCloudManager, pipelineExecutor, defaultRenderPipeline, materialManager);
 }
 
 /**

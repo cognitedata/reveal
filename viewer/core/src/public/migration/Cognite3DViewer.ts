@@ -266,7 +266,12 @@ export class Cognite3DViewer {
     this.renderController = new RenderController(this.camera);
     this.startPointerEventListeners();
 
-    this._pickingHandler = new PickingHandler();
+    this._pickingHandler = new PickingHandler(
+      this._renderer,
+      this._revealManagerHelper.revealManager.materialManager,
+      this.scene,
+      this._renderables.cadModels
+    );
 
     this.revealManager.setRenderTarget(
       options.renderTargetOptions?.target || null,

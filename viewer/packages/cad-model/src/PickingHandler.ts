@@ -4,7 +4,14 @@
 
 import * as THREE from 'three';
 import { IntersectInput } from '@reveal/model-base';
-import { CadNode, RenderMode } from '@reveal/rendering';
+import {
+  BasicPipelineExecutor,
+  CadMaterialManager,
+  CadNode,
+  GeometryDepthRenderPipeline,
+  IdentifiedModel,
+  RenderMode
+} from '@reveal/rendering';
 import { WebGLRendererStateHelper } from '@reveal/utilities';
 
 type PickingInput = {
@@ -46,8 +53,16 @@ export class PickingHandler {
     255 / 256 / 256,
     255 / 256
   );
+  private readonly _pipelineExecutor: BasicPipelineExecutor;
+  private readonly _depthRenderPipeline: GeometryDepthRenderPipeline;
+  private readonly _treeIndexRenderPipeline: GeometryDepthRenderPipeline;
 
-  constructor() {
+  constructor(
+    renderer: THREE.WebGLRenderer,
+    materialManager: CadMaterialManager,
+    scene: THREE.Scene,
+    cadModels: IdentifiedModel[]
+  ) {
     this._clearColor = new THREE.Color('black');
     this._clearAlpha = 0;
 
@@ -55,6 +70,25 @@ export class PickingHandler {
       renderTarget: new THREE.WebGLRenderTarget(1, 1),
       pixelBuffer: new Uint8Array(4)
     };
+
+    this._pipelineExecutor = new BasicPipelineExecutor(renderer);
+    this._depthRenderPipeline = new GeometryDepthRenderPipeline(
+      RenderMode.Depth,
+      materialManager,
+      scene,
+      cadModels,
+      false
+    );
+    this._treeIndexRenderPipeline = new GeometryDepthRenderPipeline(
+      RenderMode.TreeIndex,
+      materialManager,
+      scene,
+      cadModels,
+      false
+    );
+
+    this._treeIndexRenderPipeline.outputRenderTarget = this._pickPixelColorStorage.renderTarget;
+    this._depthRenderPipeline.outputRenderTarget = this._pickPixelColorStorage.renderTarget;
   }
 
   public intersectCadNodes(cadNodes: CadNode[], input: IntersectInput): IntersectCadNodesResult[] {
@@ -71,41 +105,31 @@ export class PickingHandler {
   public intersectCadNode(cadNode: CadNode, input: IntersectInput): IntersectCadNodesResult | undefined {
     const { camera, normalizedCoords, renderer, domElement } = input;
     const pickingScene = new THREE.Scene();
-    // TODO consider case where parent does not exist
-    // TODO add warning if parent has transforms
-    const oldParent = cadNode.parent;
-    pickingScene.add(cadNode);
-    try {
-      const pickInput = {
-        normalizedCoords,
-        camera,
-        renderer,
-        domElement,
-        scene: pickingScene,
-        cadNode
-      };
-      const treeIndex = this.pickTreeIndex(pickInput);
-      if (treeIndex === undefined) {
-        return undefined;
-      }
-      const depth = this.pickDepth(pickInput);
 
-      const viewZ = this.perspectiveDepthToViewZ(depth, camera.near, camera.far);
-      const point = this.getPosition(pickInput, viewZ);
-      const distance = new THREE.Vector3().subVectors(point, camera.position).length();
-      return {
-        distance,
-        point,
-        treeIndex,
-        object: cadNode,
-        cadNode
-      };
-    } finally {
-      // Re-add cadNode to previous parent
-      if (oldParent) {
-        oldParent.add(cadNode);
-      }
+    const pickInput = {
+      normalizedCoords,
+      camera,
+      renderer,
+      domElement,
+      scene: pickingScene,
+      cadNode
+    };
+    const treeIndex = this.pickTreeIndex(pickInput);
+    if (treeIndex === undefined) {
+      return undefined;
     }
+    const depth = this.pickDepth(pickInput);
+
+    const viewZ = this.perspectiveDepthToViewZ(depth, camera.near, camera.far);
+    const point = this.getPosition(pickInput, viewZ);
+    const distance = new THREE.Vector3().subVectors(point, camera.position).length();
+    return {
+      distance,
+      point,
+      treeIndex,
+      object: cadNode,
+      cadNode
+    };
   }
 
   private pickTreeIndex(input: TreeIndexPickingInput): number | undefined {
@@ -114,7 +138,7 @@ export class PickingHandler {
     cadNode.renderMode = RenderMode.TreeIndex;
     let pixelBuffer: Uint8Array;
     try {
-      pixelBuffer = this.pickPixelColor(input, this._clearColor, this._clearAlpha);
+      pixelBuffer = this.pickTreeIndexPixel(input, this._clearColor, this._clearAlpha);
     } finally {
       cadNode.renderMode = previousRenderMode;
     }
@@ -124,6 +148,7 @@ export class PickingHandler {
     }
 
     const treeIndex = pixelBuffer[0] * 255 * 255 + pixelBuffer[1] * 255 + pixelBuffer[2];
+
     return treeIndex;
   }
 
@@ -135,7 +160,7 @@ export class PickingHandler {
     const { cadNode } = input;
     const previousRenderMode = cadNode.renderMode;
     cadNode.renderMode = RenderMode.Depth;
-    const pixelBuffer = this.pickPixelColor(input, this._clearColor, this._clearAlpha);
+    const pixelBuffer = this.pickDepthPixel(input, this._clearColor, this._clearAlpha);
     cadNode.renderMode = previousRenderMode;
 
     const depth = this.unpackRGBAToDepth(pixelBuffer);
@@ -152,9 +177,9 @@ export class PickingHandler {
     return position;
   }
 
-  private pickPixelColor(input: PickingInput, clearColor: THREE.Color, clearAlpha: number) {
+  private pickTreeIndexPixel(input: PickingInput, clearColor: THREE.Color, clearAlpha: number) {
     const { renderTarget, pixelBuffer } = this._pickPixelColorStorage;
-    const { scene, camera, normalizedCoords, renderer, domElement } = input;
+    const { camera, normalizedCoords, renderer, domElement } = input;
 
     // Prepare camera that only renders the single pixel we are interested in
     const pickCamera = camera.clone() as THREE.PerspectiveCamera;
@@ -168,11 +193,35 @@ export class PickingHandler {
     try {
       const { width, height } = renderer.getSize(new THREE.Vector2());
       renderTarget.setSize(width, height);
-      stateHelper.setRenderTarget(renderTarget);
       stateHelper.setClearColor(clearColor, clearAlpha);
-
       renderer.clearColor();
-      renderer.render(scene, pickCamera);
+      this._pipelineExecutor.render(this._treeIndexRenderPipeline, pickCamera);
+      renderer.readRenderTargetPixels(renderTarget, 0, 0, 1, 1, pixelBuffer);
+    } finally {
+      stateHelper.resetState();
+    }
+    return pixelBuffer;
+  }
+
+  private pickDepthPixel(input: PickingInput, clearColor: THREE.Color, clearAlpha: number) {
+    const { renderTarget, pixelBuffer } = this._pickPixelColorStorage;
+    const { camera, normalizedCoords, renderer, domElement } = input;
+
+    // Prepare camera that only renders the single pixel we are interested in
+    const pickCamera = camera.clone() as THREE.PerspectiveCamera;
+    const absoluteCoords = {
+      x: ((normalizedCoords.x + 1.0) / 2.0) * domElement.clientWidth,
+      y: ((1.0 - normalizedCoords.y) / 2.0) * domElement.clientHeight
+    };
+    pickCamera.setViewOffset(domElement.clientWidth, domElement.clientHeight, absoluteCoords.x, absoluteCoords.y, 1, 1);
+
+    const stateHelper = new WebGLRendererStateHelper(renderer);
+    try {
+      const { width, height } = renderer.getSize(new THREE.Vector2());
+      renderTarget.setSize(width, height);
+      stateHelper.setClearColor(clearColor, clearAlpha);
+      renderer.clearColor();
+      this._pipelineExecutor.render(this._depthRenderPipeline, pickCamera);
       renderer.readRenderTargetPixels(renderTarget, 0, 0, 1, 1, pixelBuffer);
     } finally {
       stateHelper.resetState();

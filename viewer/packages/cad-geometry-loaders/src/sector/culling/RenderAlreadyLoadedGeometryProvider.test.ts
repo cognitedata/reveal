@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 import { createGlContext } from '../../../../../test-utilities';
-import { CadMaterialManager, GeometryDepthRenderPipeline } from '@reveal/rendering';
+import { CadMaterialManager, GeometryDepthRenderPipeline, RenderMode } from '@reveal/rendering';
 
 import { RenderAlreadyLoadedGeometryProvider } from './RenderAlreadyLoadedGeometryProvider';
 
@@ -18,7 +18,7 @@ describe('RenderAlreadyLoadedGeometryProvider', () => {
   beforeEach(() => {
     scene = new THREE.Scene();
     materialManager = new CadMaterialManager();
-    depthRenderPipelineProvider = new GeometryDepthRenderPipeline(materialManager, scene);
+    depthRenderPipelineProvider = new GeometryDepthRenderPipeline(RenderMode.DepthBufferOnly, materialManager, scene);
 
     const size = renderer.getSize(new THREE.Vector2());
     target = new THREE.WebGLRenderTarget(size.width, size.height);

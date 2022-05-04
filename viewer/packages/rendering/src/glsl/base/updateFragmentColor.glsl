@@ -71,13 +71,13 @@ void updateFragmentColor(
         outputColor = isHighDetail ? vec4(vec3(0.0, 1.0, 0.0) * mc, color.a) : vec4(vec3(1.0, 1.0, 0.0) * mc, color.a);
     } else if (renderMode == RenderTypeGeometryType) {
         vec2 cap = normal.xy * 0.5 + 0.5;
-        vec3 mc = texture(matCapTexture, cap).rgb * 1.5;
+        vec3 mc = texture(matCapTexture, cap).rgb;
         vec3 geometryColor = 
             float(geometryType == 1) * vec3(1.0, 0.0, 0.0) + // Quads
             float(geometryType == 2) * vec3(0.0, 1.0, 0.0) + // Primitives
             float(geometryType == 3) * vec3(0.0, 0.0, 1.0) + // Triangle meshes
             float(geometryType == 4) * vec3(1.0, 1.0, 0.0);  // Instance meshes
-        outputColor = vec4(geometryColor * mc, color.a);
+        outputColor = vec4(geometryColor * mc, 1.0);
     } else {
         // Unknown render mode - should not happen. 
         outputColor = vec4(1.0, 0.0, 1.0, 1.0);

@@ -19,7 +19,8 @@ import {
   defaultRenderOptions,
   RenderMode,
   PipelineExecutor,
-  DefaultRenderPipeline
+  DefaultRenderPipeline,
+  CadMaterialManager
 } from '@reveal/rendering';
 import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
@@ -52,15 +53,18 @@ export class RevealManager {
   };
 
   private readonly _updateSubject: Subject<void>;
+  private readonly _materialManager: CadMaterialManager;
 
   constructor(
     cadManager: CadManager,
     pointCloudManager: PointCloudManager,
     pipelineExecutor: PipelineExecutor,
-    renderPipeline: DefaultRenderPipeline
+    renderPipeline: DefaultRenderPipeline,
+    materialManager: CadMaterialManager
   ) {
     this._pipelineExecutor = pipelineExecutor;
     this._renderPipeline = renderPipeline;
+    this._materialManager = materialManager;
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
     this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
@@ -100,6 +104,10 @@ export class RevealManager {
 
   public set renderOptions(options: RenderOptions) {
     this._renderPipeline.renderOptions = options ?? defaultRenderOptions;
+  }
+
+  get materialManager(): CadMaterialManager {
+    return this._materialManager;
   }
 
   get needsRedraw(): boolean {

@@ -4,11 +4,12 @@
 
 import * as THREE from 'three';
 
-import { CadNode } from '@reveal/rendering';
+import { CadMaterialManager, CadNode } from '@reveal/rendering';
 import { IntersectInput } from '@reveal/model-base';
 
 import { createGlContext } from '../../../test-utilities';
 import { PickingHandler } from './PickingHandler';
+import { It, Mock } from 'moq.ts';
 
 describe(PickingHandler.name, () => {
   let pickingHandler: PickingHandler;
@@ -31,7 +32,8 @@ describe(PickingHandler.name, () => {
   const cadNode: CadNode = new THREE.Object3D() as any;
 
   beforeEach(() => {
-    pickingHandler = new PickingHandler();
+    const materialManagerMock = new Mock<CadMaterialManager>().setup(p => p.setRenderMode(It.IsAny())).returns();
+    pickingHandler = new PickingHandler(renderer, materialManagerMock.object(), new THREE.Scene(), []);
   });
 
   test('no nodes, returns empty array', () => {
