@@ -18,7 +18,7 @@ export class MeasurementControls {
   private readonly _startPosition: THREE.Vector3;
   private _measurement: Measurement;
   private _isCameraChanged: boolean;
-  private _pointSize; number;
+  private _pointSize: number;
 
   private readonly _handleonPointerClick = this.onPointerClick.bind(this);
   private readonly _handleonPointerMove = this.onPointerMove.bind(this);

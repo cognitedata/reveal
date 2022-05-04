@@ -1078,7 +1078,12 @@ export class Cognite3DViewer {
    * @param options Options to control the behavior of the intersection operation. Optional (new in 1.3.0).
    * @returns A promise that if there was an intersection then return the intersection point.
    */
-  async getIntersectionPixelFromBuffer(offsetX: number, offsetY: number, isFrameBuffer: boolean, options?: IntersectionFromPixelOptions): Promise<THREE.Vector3> {
+  async getIntersectionPixelFromBuffer(
+    offsetX: number,
+    offsetY: number,
+    isFrameBuffer: boolean,
+    options?: IntersectionFromPixelOptions
+  ): Promise<THREE.Vector3> {
     const cadModels = this.getModels('cad');
     const cadNodes = cadModels.map(x => x.cadNode);
     const pointCloudModels = this.getModels('pointcloud');
