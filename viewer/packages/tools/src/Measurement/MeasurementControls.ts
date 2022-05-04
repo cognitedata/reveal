@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import { MeasurementGizmo } from './MeasurementGizmo';
 import { MeasurementLabel } from './MeasurementLabel';
 import { Measurement } from './Measurement';
-import { MeasurementLabelOptions, MeasurementLineOptions } from './types';
+import { MeasurementLineOptions } from './types';
 import { MeasurementDistance } from './MeasurementDistance';
 
 export class MeasurementControls {
@@ -19,19 +19,17 @@ export class MeasurementControls {
   private readonly _measurementLabel: MeasurementLabel;
   private readonly _startPosition: THREE.Vector3;
   private _measurement: Measurement;
-  private readonly _labelOptions: MeasurementLabelOptions;
 
   private readonly _handleonPointerClick = this.onPointerClick.bind(this);
   private readonly _handleonPointerMove = this.onPointerMove.bind(this);
 
-  constructor(viewer: Cognite3DViewer, labelOptions?: MeasurementLabelOptions) {
+  constructor(viewer: Cognite3DViewer) {
     this._viewer = viewer;
     this._domElement = viewer.domElement;
     this._inputHandler = viewer.inputHandler;
     this._measurementGizmo = new MeasurementGizmo(this._viewer);
     this._measurementLabel = new MeasurementLabel(this._viewer);
     this._startPosition = new THREE.Vector3();
-    this._labelOptions = labelOptions ?? this._labelOptions;
   }
 
   /**
