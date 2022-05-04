@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 
 export interface SuggestedCameraConfig {
   position: THREE.Vector3;

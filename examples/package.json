@@ -26,7 +26,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@azure/msal-browser": "^2.21.0",
-    "@cognite/potree-core": "^1.5.0",
     "@cognite/reveal": "link:../viewer/dist",
     "@cognite/sdk": "link:../viewer/node_modules/@cognite/sdk",
     "camera-controls": "^1.25.1",
@@ -37,8 +36,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.2.0",
-    "styled-components": "^5.2.0",
-    "three": "0.140.0"
+    "styled-components": "^5.2.0"
   },
   "devDependencies": {
     "@actions/core": "^1.2.6",

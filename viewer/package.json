@@ -44,7 +44,6 @@
     "ws:lint": "cd $INIT_CWD && eslint . --ext .ts,.js --max-warnings 0 --cache"
   },
   "dependencies": {
-    "@cognite/potree-core": "1.5.2",
     "@cognite/reveal-parser-worker": "1.3.0",
     "@tweenjs/tween.js": "18.6.4",
     "@types/draco3dgltf": "1.4.0",
@@ -58,6 +57,7 @@
     "lodash": "4.17.21",
     "loglevel": "1.8.0",
     "mixpanel-browser": "2.45.0",
+    "proj4": "^2.8.0",
     "rxjs": "7.5.5",
     "skmeans": "0.11.3",
     "three": "0.140.0"
@@ -73,6 +73,7 @@
     "@types/mixpanel-browser": "2.38.0",
     "@types/node": "16.11.33",
     "@types/offscreencanvas": "2019.6.4",
+    "@types/proj4": "^2.5.2",
     "@types/random-seed": "0.3.3",
     "@types/skmeans": "0.11.3",
     "@types/tween.js": "18.5.1",
@@ -118,6 +119,7 @@
     "webpack-log": "3.0.2",
     "webpack-node-externals": "3.0.0",
     "whatwg-fetch": "3.6.2",
+    "worker-loader": "^3.0.8",
     "worker-plugin": "5.0.1"
   },
   "peerDependencies": {

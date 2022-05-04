@@ -4,7 +4,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 
 import CameraControls from 'camera-controls';
 import { createSDKFromEnvironment, getParamsFromURL } from '../utils/example-helpers';
