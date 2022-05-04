@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 import dat from 'dat.gui';
 
 export class ClippingUI {

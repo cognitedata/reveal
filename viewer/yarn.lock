@@ -683,15 +683,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/potree-core@npm:1.5.2":
-  version: 1.5.2
-  resolution: "@cognite/potree-core@npm:1.5.2"
-  dependencies:
-    three: 0.138.3
-  checksum: b9f545e3ee2f9d1112d7fcbf8e7780263a9b20558b7c13aef9e265176880dc240214056d0760f6e9fdad172a74b43535c219b848cc7b3ce2ba226cefc83d47df
-  languageName: node
-  linkType: hard
-
 "@cognite/reveal-parser-worker@npm:1.3.0":
   version: 1.3.0
   resolution: "@cognite/reveal-parser-worker@npm:1.3.0"
@@ -706,7 +697,6 @@ __metadata:
   resolution: "@cognite/reveal@workspace:."
   dependencies:
     "@azure/msal-browser": 2.24.0
-    "@cognite/potree-core": 1.5.2
     "@cognite/reveal-parser-worker": 1.3.0
     "@cognite/sdk": 7.2.2
     "@cognite/sdk-core": ^4.1.1
@@ -720,6 +710,7 @@ __metadata:
     "@types/mixpanel-browser": 2.38.0
     "@types/node": 16.11.33
     "@types/offscreencanvas": 2019.6.4
+    "@types/proj4": ^2.5.2
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.3
     "@types/three": 0.140.0
@@ -759,6 +750,7 @@ __metadata:
     moq.ts: 9.0.2
     nock: 13.2.4
     prettier: 2.6.2
+    proj4: ^2.8.0
     random-seed: 0.3.0
     raw-loader: 4.0.2
     rimraf: 3.0.2
@@ -777,6 +769,7 @@ __metadata:
     webpack-log: 3.0.2
     webpack-node-externals: 3.0.0
     whatwg-fetch: 3.6.2
+    worker-loader: ^3.0.8
     worker-plugin: 5.0.1
   peerDependencies:
     "@cognite/sdk": ^5.0.0 || ^6.0.0 || ^7.0.0
@@ -1653,6 +1646,13 @@ __metadata:
   version: 2.4.4
   resolution: "@types/prettier@npm:2.4.4"
   checksum: 2c2cc57efd49c7d8907415a72f96c84a6dd8696dd3bf8aa4ca3a667427bebf71cbfbc912673624bdfc935d272d1c008c639cf155f6449315990a4dc110f0d216
+  languageName: node
+  linkType: hard
+
+"@types/proj4@npm:^2.5.2":
+  version: 2.5.2
+  resolution: "@types/proj4@npm:2.5.2"
+  checksum: f70fb89fe1e234faa164b57095624e054ead1b14653b1eb04e1aa50489ae9a6a30c90518efe571d53f5fcc12a25bee61e8cf8d9cc79b5a01586d051bdad4a992
   languageName: node
   linkType: hard
 
@@ -9176,6 +9176,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"mgrs@npm:1.0.0":
+  version: 1.0.0
+  resolution: "mgrs@npm:1.0.0"
+  checksum: 98b9fa3caff9986868344567996f8dcc833f939c2e140507a00e2ce9a96ef7eaeb81933a749222a2b7bcbc1a4bb6ada6120dda3a5b6af6d72ae332d8990956b9
+  languageName: node
+  linkType: hard
+
 "micromatch@npm:^3.0.4, micromatch@npm:^3.1.10, micromatch@npm:^3.1.4":
   version: 3.1.10
   resolution: "micromatch@npm:3.1.10"
@@ -10501,6 +10508,16 @@ fsevents@^1.2.7:
   version: 0.11.10
   resolution: "process@npm:0.11.10"
   checksum: bfcce49814f7d172a6e6a14d5fa3ac92cc3d0c3b9feb1279774708a719e19acd673995226351a082a9ae99978254e320ccda4240ddc474ba31a76c79491ca7c3
+  languageName: node
+  linkType: hard
+
+"proj4@npm:^2.8.0":
+  version: 2.8.0
+  resolution: "proj4@npm:2.8.0"
+  dependencies:
+    mgrs: 1.0.0
+    wkt-parser: ^1.3.1
+  checksum: 05c46387ac866bba699d50291507f9cfd2eece4806e375e7bc536c28c03af4d4ae8c386ab53a0c4a26a4b1718d5d0b30a6cf972614f4fb997e89bd262348c6b1
   languageName: node
   linkType: hard
 
@@ -12467,13 +12484,6 @@ resolve@^1.20.0:
   languageName: node
   linkType: hard
 
-"three@npm:0.138.3":
-  version: 0.138.3
-  resolution: "three@npm:0.138.3"
-  checksum: beef4db3914c98f02f87c18743a24c994f093132b6c9b959150d017a1835a7360b2a98ede080b9deb0ca41c3c969d7a2ee08fff35d880fb1f94a0cc343a843b1
-  languageName: node
-  linkType: hard
-
 "three@npm:0.140.0":
   version: 0.140.0
   resolution: "three@npm:0.140.0"
@@ -13456,6 +13466,13 @@ typescript@4.6.4:
   languageName: node
   linkType: hard
 
+"wkt-parser@npm:^1.3.1":
+  version: 1.3.2
+  resolution: "wkt-parser@npm:1.3.2"
+  checksum: 35318a7fb3ef848b9bc9b29fa58d9b9371f8e47354f2a1325cfc9968b1b390334804a963751a5daeaf7d421b735fd85d3fe34d73a44ba2432e1ee5932c87d269
+  languageName: node
+  linkType: hard
+
 "word-wrap@npm:^1.2.3, word-wrap@npm:~1.2.3":
   version: 1.2.3
   resolution: "word-wrap@npm:1.2.3"
@@ -13469,6 +13486,18 @@ typescript@4.6.4:
   dependencies:
     errno: ~0.1.7
   checksum: eab917530e1feddf157ec749e9c91b73a886142daa7fdf3490bccbf7b548b2576c43ab8d0a98e72ac755cbc101ca8647a7b1ff2485fddb9e8f53c40c77f5a719
+  languageName: node
+  linkType: hard
+
+"worker-loader@npm:^3.0.8":
+  version: 3.0.8
+  resolution: "worker-loader@npm:3.0.8"
+  dependencies:
+    loader-utils: ^2.0.0
+    schema-utils: ^3.0.0
+  peerDependencies:
+    webpack: ^4.0.0 || ^5.0.0
+  checksum: 84f4a7eeb2a1d8b9704425837e017c91eedfae67ac89e0b866a2dcf283323c1dcabe0258196278b7d5fd0041392da895c8a0c59ddf3a94f1b2e003df68ddfec3
   languageName: node
   linkType: hard
 

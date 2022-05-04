@@ -5,7 +5,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { CanvasWrapper, Loader } from '../components/styled'
 
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 import * as reveal from '@cognite/reveal/internals';
 import { CogniteClient } from '@cognite/sdk';
 
@@ -18,13 +18,31 @@ import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
 
 CameraControls.install({ THREE });
 
+class RevealManagerUpdater {
+
+  private _revealManager: reveal.RevealManager;
+
+  constructor(revealManager: reveal.RevealManager) {
+    this._revealManager = revealManager;
+  }
+
+  public get pointCloudBudget(): number {
+    return this._revealManager.pointCloudBudget.numberOfPoints;
+  }
+
+  public set pointCloudBudget(val: number) {
+    this._revealManager.pointCloudBudget = { numberOfPoints: val };
+  }
+}
+
 function initializeGui(
   gui: GUI,
   node: reveal.PointCloudNode,
+  revealManagerUpdater: RevealManagerUpdater,
   handleSettingsChangedCb: () => void
 ) {
-  gui.add(node, 'pointBudget', 0, 20_000_000);
-  // gui.add(node, 'visiblePointCount', 0, 20_000_000).onChange(() => { /* Ignore update */ });
+  gui.add(revealManagerUpdater, 'pointCloudBudget', 0, 20_000_000);
+  gui.add(node, 'visiblePointCount', 0, 20_000_000).onChange(() => { /* Ignore update */ });
   gui.add(node, 'pointSize', 0, 10).onChange(handleSettingsChangedCb);
   gui
     .add(node, 'pointColorType', {
@@ -87,7 +105,7 @@ export function SimplePointcloud() {
                                      project: 'dummy',
                                      getToken: async () => 'dummy' });
       }
-      
+
       const scene = new THREE.Scene();
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current!,
@@ -127,17 +145,18 @@ export function SimplePointcloud() {
       function handleSettingsChanged() {
         settingsChanged = true;
       }
-      initializeGui(gui, pointCloudNode, handleSettingsChanged);
+      initializeGui(gui, pointCloudNode, new RevealManagerUpdater(revealManager), handleSettingsChanged);
 
       // Create a bounding box around the point cloud for debugging
       const bbox: THREE.Box3 = pointCloudNode.getBoundingBox();
       const bboxHelper = new THREE.Box3Helper(bbox);
       scene.add(bboxHelper);
 
+      const controls = new CameraControls(camera, renderer.domElement);
+
       const camTarget = bbox.getCenter(new THREE.Vector3());
       const minToCenter = new THREE.Vector3().subVectors(camTarget, bbox.min);
       const camPos = camTarget.clone().addScaledVector(minToCenter, -1.5);
-      const controls = new CameraControls(camera, renderer.domElement);
       controls.setLookAt(
         camPos.x,
         camPos.y,
@@ -146,11 +165,11 @@ export function SimplePointcloud() {
         camTarget.y,
         camTarget.z
       );
-      controls.update(0.0);
-      camera.updateMatrixWorld();
 
       animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
         const controlsNeedUpdate = controls.update(deltaTime);
+
+        revealManager.update(camera);
 
         const needsUpdate =
           controlsNeedUpdate || revealManager.needsRedraw || settingsChanged;
