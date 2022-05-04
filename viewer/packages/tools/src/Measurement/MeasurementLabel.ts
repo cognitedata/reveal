@@ -4,23 +4,14 @@
 
 import { Cognite3DViewer } from '@reveal/core';
 import * as THREE from 'three';
-import { MeasurementLabelOptions } from './types';
 import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
 
 export class MeasurementLabel {
   private readonly _htmlOverlay: HtmlOverlayTool;
   private _labelElement: HTMLDivElement;
-  private _options: MeasurementLabelOptions = {
-    size: 64,
-    radius: 20,
-    font: '64px bold Georgia',
-    fontColor: 'white',
-    fillColor: 'rgba(0, 0, 0, 0.45)'
-  };
 
-  constructor(viewer: Cognite3DViewer, options?: MeasurementLabelOptions) {
+  constructor(viewer: Cognite3DViewer) {
     this._htmlOverlay = new HtmlOverlayTool(viewer);
-    this._options = options ?? this._options;
   }
 
   private createLabel(label: string) {
@@ -50,14 +41,6 @@ export class MeasurementLabel {
   }
 
   /**
-   * Updates the label parameters
-   * @param options MeasurementLabelOptions of size, radius, font, font color & fill color
-   */
-  public updateLabelOptions(options: MeasurementLabelOptions): void {
-    this._options = options;
-  }
-
-  /**
    * Add a label
    * @param position Label position
    */
@@ -70,9 +53,9 @@ export class MeasurementLabel {
    * Remove the label
    */
   public removeLabel(): void {
-    // if (this._label) {
-    //   this._domElement.removeChild(this._label);
-    // }
+    if (this._labelElement) {
+      this._htmlOverlay.remove(this._labelElement);
+    }
   }
 
   /**
