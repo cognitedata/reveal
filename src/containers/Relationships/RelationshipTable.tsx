@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { Alert } from 'antd';
 import { Asset } from '@cognite/sdk';
 import { ResourceType, ResourceItem } from 'types';
 import { AssetTable } from 'containers';
@@ -13,7 +14,7 @@ import { ResultTableLoader } from 'containers/ResultTableLoader';
 import { useRelationshipCount } from 'hooks/RelationshipHooks';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { createLink } from 'utils/URLUtils';
-import { A, Infobox } from '@cognite/cogs.js';
+import { A } from '@cognite/cogs.js';
 import { AppContext } from 'context/AppContext';
 
 export type RelationshipTableProps = {
@@ -38,12 +39,18 @@ export const RelationshipTable = ({
 
   if (permissionFetched && !relationshipPermission) {
     return (
-      <Infobox type="warning" title="Permissions missing">
-        Related resources could not be looked up because you do not have access
-        to the relationship feature. Add &apos;relationships:read&apos; to your
-        service account in{' '}
-        <A href={createLink('/access-management')}>access management</A>.
-      </Infobox>
+      <Alert
+        type="warning"
+        message="Permissions missing"
+        description={
+          <>
+            Related resources could not be looked up because you do not have
+            access to the relationship feature. Add
+            &apos;relationships:read&apos; to your service account in{' '}
+            <A href={createLink('/access-management')}>access management</A>.
+          </>
+        }
+      />
     );
   }
 

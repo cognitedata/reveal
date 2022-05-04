@@ -1,6 +1,6 @@
 {
   "name": "@cognite/data-exploration",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "typings": "dist/index.d.ts",
@@ -24,7 +24,7 @@
     "@visx/shape": "^2.1.0",
     "@visx/threshold": "^2.1.0",
     "@visx/tooltip": "^2.1.0",
-    "antd": "^4.20.1",
+    "antd": "^4.15.2",
     "d3-array": "^2.12.1",
     "d3-time-format": "^3.0.0",
     "dayjs": "^1.11.1",

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { toast } from '@cognite/cogs.js';
+import { notification } from 'antd';
 import { useParams } from 'react-router-dom';
 
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
@@ -32,9 +32,10 @@ export default function MissingPermissionFeedback(props: Props) {
 
   useEffect(() => {
     if (!groupPermission) {
-      toast.error(
-        <div>
-          <h3>You are missing access to Group:ACL to read permissions</h3>
+      notification.error({
+        key: 'group-acl-warning',
+        message: `You are missing access to Group:ACL to read permissions`,
+        description: (
           <p>
             Go to{' '}
             <a
@@ -46,31 +47,29 @@ export default function MissingPermissionFeedback(props: Props) {
             </a>{' '}
             and set up any missing permissions or contact your administrator!
           </p>
-        </div>
-      );
+        ),
+      });
     }
   }, [groupPermission, tenant]);
 
   useEffect(() => {
     if (groupPermission && !hasPermission) {
-      toast.error(
-        <div>
-          <h3>
-            You are missing access {key}:{type}
-            <p>
-              Go to{' '}
-              <a
-                href={`https://console.cognitedata.com/${tenant}/access-management`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Console
-              </a>{' '}
-              and set up any missing permissions or contact your administrator!
-            </p>
-          </h3>
-        </div>
-      );
+      notification.error({
+        message: `You are missing access ${key}:${type}`,
+        description: (
+          <p>
+            Go to{' '}
+            <a
+              href={`https://console.cognitedata.com/${tenant}/access-management`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Console
+            </a>{' '}
+            and set up any missing permissions or contact your administrator!
+          </p>
+        ),
+      });
     }
   }, [groupPermission, hasPermission, key, type, tenant]);
 

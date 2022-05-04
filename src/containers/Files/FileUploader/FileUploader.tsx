@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Upload, Modal } from 'antd';
+import { Upload, Modal, message } from 'antd';
 import UploadGCS from '@cognite/gcs-browser-upload';
 import { FileUploadResponse } from '@cognite/sdk';
 import { UploadFile } from 'antd/lib/upload/interface';
-import { Body, Icon, Button, toast } from '@cognite/cogs.js';
+import { Body, Icon, Button } from '@cognite/cogs.js';
 import { getMIMEType } from 'utils/FileUtils';
 import { SpacedRow } from 'components';
 import { useSDK } from '@cognite/sdk-provider';
@@ -83,7 +83,7 @@ export const FileUploader = ({
       return;
     }
 
-    toast.info('Starting Upload...');
+    message.info('Starting Upload...');
 
     fileList.forEach(async file => {
       const mimeType = getMIMEType(file.name);
@@ -143,7 +143,7 @@ export const FileUploader = ({
           fileInfo = await sdk.files.retrieve([{ id }]).then(r => r[0]);
         }
       } catch (e) {
-        toast.error('Unable to upload file to server.');
+        message.error('Unable to upload file to server.');
       }
 
       setFileList(list => list.filter(el => el.uid !== file.uid));
@@ -222,7 +222,7 @@ export const FileUploader = ({
     } else {
       setFileList([]);
       setUploadStatus(STATUS.WAITING);
-      toast.error(`${file.name} has an invalid extension`);
+      message.error(`${file.name} has an invalid extension`);
     }
 
     // false stops them from automatically using their upload functionaility

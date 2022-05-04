@@ -3,7 +3,7 @@ import uniqBy from 'lodash/uniqBy';
 import { Loader } from 'components';
 import { SelectableItemsProps } from 'CommonProps';
 import { ResourceType, convertResourceType } from 'types';
-import { Infobox } from '@cognite/cogs.js';
+import { Alert } from 'antd';
 import {
   AssetTable,
   FileTable,
@@ -68,7 +68,7 @@ export function AnnotationTable({
   });
 
   if (isError || itemsError) {
-    return <Infobox type="warning" title="Error fetching annotations" />;
+    return <Alert type="warning" message="Error fetching annotations" />;
   }
 
   if (!isFetched || (!itemsFetched && itemsEnabled)) {

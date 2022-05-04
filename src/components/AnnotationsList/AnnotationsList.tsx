@@ -9,7 +9,7 @@ import {
   Icon,
   SegmentedControl,
 } from '@cognite/cogs.js';
-
+import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
 import { lightGrey } from 'utils/Colors';
 import { ResourceIcons } from 'components';
 import {
@@ -23,6 +23,7 @@ interface AnnotationsListProps {
   type: 'assets' | 'files';
   goBack: () => void;
 }
+
 type AnnotationType = 'pending' | 'approved' | 'all';
 
 const AnnotationsList = ({
@@ -104,7 +105,9 @@ const AnnotationsList = ({
             style={{ color: 'black', marginTop: '-7px' }}
             type="ghost"
           />
-          <StyledBreadCrumbItem>{capitalize(type)}</StyledBreadCrumbItem>
+          <BreadcrumbItem separator={<span />}>
+            {capitalize(type)}
+          </BreadcrumbItem>
         </Flex>
         <SegmentedControl
           style={{ marginRight: 24, flex: '0 0 auto' }}
@@ -205,8 +208,3 @@ const EmptyState = ({ type }: { type: AnnotationType }) => (
     <p>No {type !== 'all' ? type : ''} tags found.</p>
   </div>
 );
-
-export const StyledBreadCrumbItem = styled.div`
-  padding: 0 10px;
-  color: #374151;
-`;

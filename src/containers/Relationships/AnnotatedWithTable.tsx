@@ -6,10 +6,9 @@ import { uniqBy } from 'lodash';
 import { ANNOTATION_METADATA_PREFIX as PREFIX } from '@cognite/annotations';
 import { IdEither } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-
+import { Alert } from 'antd';
 import { Loader } from 'components';
 import { FileTable } from 'containers';
-import { Infobox } from '@cognite/cogs.js';
 
 export const AnnotatedWithTable = ({
   resource,
@@ -57,7 +56,7 @@ export const AnnotatedWithTable = ({
   } = useCdfItems('files', ids, false, { enabled: itemsEnabled });
 
   if (isError || itemsError) {
-    return <Infobox type="warning" title="Error fetching files" />;
+    return <Alert type="warning" message="Error fetching files" />;
   }
 
   if (!isFetched || (!itemsFetched && itemsEnabled)) {

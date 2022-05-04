@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FileInfo } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { Icon, Label, LabelVariants, Tooltip } from '@cognite/cogs.js';
-
+import { Icon, Label, LabelVariants } from '@cognite/cogs.js';
+import { Tooltip } from 'antd';
 import {
   PENDING_LABEL,
   INTERACTIVE_LABEL,
@@ -68,7 +68,7 @@ export default function DiagramReviewStatus({ fileId }: Props) {
   }, [error, file]);
 
   return (
-    <Tooltip content={fileStatus.tooltip}>
+    <Tooltip title={fileStatus.tooltip}>
       <Label size="small" variant={fileStatus.variant}>
         {isFetched ? fileStatus.label : <Icon type="Loader" />}
       </Label>

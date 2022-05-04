@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-
-import { Checkbox, Input, Table } from '@cognite/cogs.js';
+import { Input, Table } from 'antd';
+import { Checkbox } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
@@ -31,14 +31,13 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
       <MetadataHeader>
         <h3>Metadata</h3>
         <FilterContainer>
-          <InputWrapper>
-            <Input
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              placeholder="Filter metadata"
-              clearable={{ callback: () => setQuery('') }}
-            />
-          </InputWrapper>
+          <Input
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="Filter metadata"
+            allowClear
+            style={{ maxWidth: '300px', marginRight: '16px' }}
+          />
           <Checkbox
             name="hideEmpty"
             value={hideEmpty}
@@ -52,24 +51,25 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
         <Table
           dataSource={filteredMetadata.map(item => ({
             key: item[0],
-            id: item[0],
             value: item[1],
           }))}
           columns={[
             {
-              Header: 'Key',
+              title: 'Key',
+              dataIndex: 'key',
               key: 'key',
-              accessor: 'key',
               width: '50%',
             },
             {
-              Header: 'Value',
-              accessor: 'value',
+              title: 'Value',
+              dataIndex: 'value',
               key: 'value',
               width: '50%',
             },
           ]}
           pagination={false}
+          bordered
+          rowClassName="metadata-table-row"
         />
       </MetadataTableContainer>
     </>
@@ -91,10 +91,4 @@ const MetadataTableContainer = styled.div`
 const FilterContainer = styled.div`
   display: flex;
   margin-bottom: 16px;
-  margin-right: 15px;
-`;
-
-const InputWrapper = styled.div`
-  max-width: 300px;
-  margin-right: 16px;
 `;
