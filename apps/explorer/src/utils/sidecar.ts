@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { SidecarConfig, getDefaultSidecar } from '@cognite/sidecar';
+import { SidecarConfig, getDefaultSidecar, CDFCluster } from '@cognite/sidecar';
 
 // # -------------------------------------
 // #
@@ -9,7 +9,7 @@ import { SidecarConfig, getDefaultSidecar } from '@cognite/sidecar';
 // #
 // #
 const PROD = false;
-const CLUSTER = 'azure-dev';
+const CLUSTER: CDFCluster = 'azure-dev';
 const LOCAL_COMMENTS_API = false;
 // #
 // #
@@ -17,7 +17,9 @@ const LOCAL_COMMENTS_API = false;
 // # -------------------------------------
 
 const getAadApplicationId = (cluster: string) => {
+  // these are all staging ids:
   const ids: Record<string, string> = {
+    greenfield: 'b8318db7-18d1-419d-a90a-40087c76b1cd', // <- react-demo
     bluefield: '245a8a64-4142-4226-86fa-63d590de14c9', // <- react-demo
     'azure-dev': '5a262178-942b-4c8f-ac15-f96642b73b56', // <- react-demo
     ew1: 'd584f014-5fa9-4b0b-953d-cc4837d093f3', // <- react-demo
@@ -47,11 +49,6 @@ const getAadApplicationId = (cluster: string) => {
   applicationId: 'explorer',
   applicationName: '',
   docsSiteBaseUrl: 'https://docs.cognite.com',
-  locize: {
-    keySeparator: false,
-    projectId: '', // <- move this to release-configs
-    version: 'Production', // <- move this to release-configs
-  },
   availableClusters: [
     {
       label: 'Multi customer environments',
@@ -66,7 +63,7 @@ const getAadApplicationId = (cluster: string) => {
     },
   ],
   disableIntercom: true,
-  enableUserManagement: true,
+  enableUserManagement: false,
   disableLegacyLogin: true,
   ...((window as any).__cogniteSidecar || {}),
 } as SidecarConfig;

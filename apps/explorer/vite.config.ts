@@ -6,7 +6,14 @@ import macrosPlugin from 'vite-plugin-babel-macros';
 
 export default defineConfig(({ command }) => {
   let env = {};
+  const baseConfig: Record<string, unknown> = {};
   if (command === 'serve') {
+    // Allows vite to get resources from node_modules, like cogs.js fonts
+    baseConfig.server = {
+      fs: {
+        allow: ['../..'],
+      },
+    };
     env = {
       NODE_ENV: 'development',
       ...loadEnv('development', process.cwd(), 'REACT_APP_'),
@@ -20,6 +27,7 @@ export default defineConfig(({ command }) => {
     };
   }
   return {
+    ...baseConfig,
     plugins: [
       react(),
       tsConfigPaths({

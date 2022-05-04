@@ -12,7 +12,7 @@ load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
 load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
 load("//rules/publish:publish_fas.bzl", "publish_fas")
 load("//rules/publish:publish_storybook.bzl", "publish_storybook")
-load("//rules/test:cypress_batch_test.bzl", "cypress_batch_test")
+load("@npm//@bazel/cypress:index.bzl", "cypress_web_test")
 load("//rules/build_sed:build_sed.bzl", "build_sed")
 load("//rules/storybook:move_assets.bzl", "move_assets")
 
@@ -21,6 +21,7 @@ load("//rules/storybook:move_assets.bzl", "move_assets")
 _TESTS = [
     "src/**/*.test.js*",
     "src/**/*.test.ts*",
+    "src/**/*.test.tsx",
     "src/**/*.spec.js*",
     "src/**/*.spec.ts*",
     "src/**/__tests__/**/*.js*",
@@ -30,9 +31,11 @@ _TESTS = [
     "src/utils/test/*",
 ]
 
-_TESTS_CYPRESS = [
-    "cypress/**/*.test.ts",
-]
+_CYPRESS_FILES = glob([
+    "cypress/**/*.ts",
+])
+
+CYPRESS_FILES = _CYPRESS_FILES
 
 _STORYBOOK = [
     ".storybook/*",
@@ -44,8 +47,6 @@ _SOURCES = [
 ]
 
 TESTS = glob(_TESTS + _STORYBOOK)
-
-TESTS_CYPRESS = glob(_TESTS_CYPRESS)
 
 STORYBOOK = glob(_STORYBOOK)
 
@@ -75,6 +76,7 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
+    "@npm//@cognite/reveal",
     "@npm//@cognite/sdk",
     "@npm//@sentry/browser",
     "@npm//react",
@@ -307,33 +309,47 @@ build_sed(
 
 ### Cypress ###
 
-# The cypress folder has to have a "plugin.ts" file serving your files, as well as a "tsconfig.json"
-cypress_batch_test(
-    name = "cypress_test",
-    build_src = ":build_sed",
-    cypress_files = [
-        glob(["cypress/*.spec.ts"]),
-    ],
-    cypress_folder = "cypress",
-    global_cypress_files = TESTS_CYPRESS,
-    starting_port = 12111,
-    tags = [
-        "ignore_test_in_cd",
+ts_project(
+    name = "cypress_files",
+    srcs = CYPRESS_FILES,
+    tsconfig = "cypress/tsconfig.json",
+    deps = [
+        "@npm//@cypress/webpack-preprocessor",
+        "@npm//@testing-library/cypress",
+        "@npm//@types/node",
+        "@npm//@types/webpack-dev-server",
+        "@npm//axios",
+        "@npm//cypress",
+        "@npm//express",
+        "@npm//webpack",
     ],
 )
 
-# You can write your cypress tests a javascript files or in typescript.
-ts_project(
-    name = "cypress_project",
-    srcs = TESTS_CYPRESS + glob(["cypress/*.spec.ts"]),
-    extends = "cypress/tsconfig.json",
-    tsconfig = {
-        "compilerOptions": {
-            "types": ["cypress"],
-        },
+cypress_web_test(
+    name = "cypress_test",
+    timeout = "eternal",
+    srcs = [
+        ":cypress_files",
+    ],
+    # A cypress config file is required
+    config_file = "cypress.json",
+    # Any runtime dependencies you need to boot your server or run your tests
+    data = DEPENDENCIES + [
+        ":build_sed",
+    ],
+    env = {
+        "PORT": "11200",
     },
-    deps = [
-        "@npm//cypress",
+    tags = [
+        "ignore_test_in_cd",
+    ],
+    templated_args = [
+        "--config " +
+        "supportFile=./apps/explorer/cypress/support," +
+        "integrationFolder=./apps/explorer/cypress/integration," +
+        "pluginsFile=./apps/explorer/cypress/plugin.js," +
+        "videosFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/explorer/video," +
+        "screenshotsFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/explorer/screenshots",
     ],
 )
 
@@ -343,13 +359,11 @@ cypress(
         "run",
         "--headed",
         "--project ./apps/explorer",
-        "--spec ./apps/explorer/cypress/**/*.spec.js",
-        "--env BASE_URL=https://localhost:3000",
+        "--config supportFile=cypress/support,integrationFolder=cypress/integration",
     ],
     data = [
         "cypress.json",
-        ":cypress_project",
-        ":start",
+        ":cypress_files",
     ],
 )
 

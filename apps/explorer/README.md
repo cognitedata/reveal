@@ -1,6 +1,14 @@
 # Explorer App
 
-This app is served as an example [React]-based application served using frontend-app-server (FAS).
+## Requirements to run and test locally
+
+```
+yarn start
+```
+
+Use the cluster `greenfield` and your `cognitedata` account as a guest user in the `fusiondevforcognite.onmicrosoft.com` tenant.
+
+Then select the project `atlas-greenfield`
 
 ## Unit tests - Jest
 
@@ -16,11 +24,6 @@ yarn test:coverage                                  # Run tests with coverage re
 ```
 
 The CI uses the `react_scripts_test` rule which takes longer as it performs a build internally
-
-## Requirements to run and test locally
-
-Copy explorer-e2e-azure-dev.jwk-key.json from Lastpass -> Shared Demo App into the file:
-private-keys/explorer-e2e-azure-dev.jwk-key.json
 
 ## e2e tests
 
@@ -48,55 +51,4 @@ Note: if you want to run just one cypress file, you can do that like this:
 
 ```sh
 yarn cypress:run-live cypress/Comments.spec.ts
-```
-
-#### Batch cypress testing
-
-One special thing about this rule is that your cypress folder has to contain:
-
-- a `plugin.ts` file that serves your build files
-- a `tsconfig.json` for your cypress base config
-
-```bazel
-cypress_batch_test(
-    name = "base_name_for_every_tests",
-    build_src = ":my_build_target",
-    # Insert as many globs here as you want runs of your tests
-    cypress_files = [
-        glob(["cypress/folder1/*.spec.ts"]),
-        glob(["cypress/folder2/*.spec.ts"]),
-        glob(["cypress/folder3/*.spec.ts"]),
-        glob([
-            "cypress/folder4/*.spec.ts,
-            "cypress/folder5/*.spec.ts,
-        "]),
-    ],
-    cypress_folder = "cypress",
-    # Every files needed for all your cypress tests (like utils)
-    global_cypress_files = FILES,
-    # Make sure your starting port does not interfere with existing ones in other apps
-    starting_port = 12111,
-)
-```
-
-In the event that your test files needs to import a local package and not from npm, you will need to add
-an alias to the webpack config of cypress into your `plugin.ts`
-
-```javascript
-import path from 'path';
-
-import webpackPreprocessor from '@cypress/webpack-preprocessor';
-
-module.exports = (on, config) => {
-  // ...
-  const options = webpackPreprocessor.defaultOptions;
-  options.webpackOptions.resolve = {
-    alias: {
-      '@cognite': path.resolve('./packages'),
-    },
-  };
-
-  on('file:preprocessor', webpackPreprocessor(options));
-  // ...
-};
 ```

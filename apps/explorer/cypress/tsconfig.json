@@ -1,8 +1,20 @@
 {
-  "include": ["**/*.ts"],
   "compilerOptions": {
     "lib": ["ES2015", "dom"],
-    "types": ["cypress", "node"],
-    "esModuleInterop": true
-  }
+    "baseUrl": "../src",
+    "types": ["cypress", "node", "@testing-library/cypress"],
+    "esModuleInterop": true,
+    "paths": {
+      "@cognite/*": [
+        "../../../packages/*/src",
+        "<rootDir>/../../packages/*/src",
+        "../../../node_modules/@cognite/*",
+        "<rootDir>/../../node_modules/@cognite/*",
+
+        "../../../../packages/*/src",
+        "<rootDir>/../../../packages/*/src"
+      ]
+    }
+  },
+  "include": ["**/*.ts"]
 }

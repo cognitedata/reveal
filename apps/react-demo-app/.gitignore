@@ -19,9 +19,7 @@ coverage
 npm-public-credentials.txt
 
 # cypress
-cypress/plugins
 cypress/screenshots
-cypress/support
 cypress/videos
 *.jwk-key.json
 res.xml

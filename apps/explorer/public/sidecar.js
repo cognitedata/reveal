@@ -5,7 +5,7 @@ window.__cogniteSidecar = {
   fakeIdp: [
     {
       roles: [],
-      groups: ['defaultGroup'],
+      groups: ['readGroup'],
       fakeApplicationId: '5a262178-942b-4c8f-ac15-f96642b73b56',
       // project to run e2e tests against
       project: 'react-demo-app-e2e-azure-dev',

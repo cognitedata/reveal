@@ -1,63 +1,87 @@
+import { useAuthContext, getTenantInfo } from '@cognite/react-container';
+import {
+  AddModelOptions,
+  CadIntersection,
+  Cognite3DModel,
+  Cognite3DViewer,
+  DefaultNodeAppearance,
+  IndexSet,
+  NumericRange,
+  TreeIndexNodeCollection,
+} from '@cognite/reveal';
 import * as React from 'react';
-import { Button, A, Body, Graphic } from '@cognite/cogs.js';
-import { useTranslation, Trans } from 'react-i18next';
 
-import { Container } from '../elements';
+const projectModels: Record<string, AddModelOptions> = {
+  'atlas-greenfield': {
+    modelId: 3838447502587280,
+    revisionId: 8081245322726425,
+  },
+};
 
-import { Header } from './elements';
-
-const Home = () => {
-  const [crashing, setCrashing] = React.useState(false);
-
-  const { t } = useTranslation(['Home', 'global']);
-
-  const clickHandler = () => {
-    setCrashing(true);
-    if (!crashing) {
-      throw new Error('Synthetic error');
-    }
+const Home: React.FC = () => {
+  const { client } = useAuthContext();
+  const viewer = React.useRef<Cognite3DViewer>();
+  const [treeIndex, setTI] = React.useState<number>();
+  const indexes: Record<number, string> = {
+    2438: 'DMVP room',
+    2436: 'Cylinder',
+    2445: 'Pentagon',
   };
+  const [tenant] = getTenantInfo();
 
-  // Show how the 't' function can be used. Note that it is automatically bound
-  // to the 'Home' namespace (unlike the Trans component).
-  const buttonText = React.useMemo(() => {
-    if (crashing) {
-      return t('crashing_button', { defaultValue: 'Crashing &hellip;' });
-    }
-    return t('crashMe_button', { defaultValue: 'Crash me!' });
-  }, [t, crashing]);
+  React.useEffect(() => {
+    const main = async () => {
+      const modelInfo = projectModels[tenant];
+      if (!modelInfo) {
+        // eslint-disable-next-line no-console
+        console.warn('Missing model info for this CDF project');
+        return;
+      }
+
+      viewer.current = new Cognite3DViewer({
+        // @ts-expect-error client needs updates
+        sdk: client!,
+        domElement: document.getElementById('reveal')!,
+      });
+
+      // load a model and add it on 3d scene
+      const model = await viewer.current.addModel(modelInfo).then((model) => {
+        viewer.current?.fitCameraToModel(model);
+        return model as Cognite3DModel;
+      });
+
+      viewer.current.on('click', async (event) => {
+        const intersection = await viewer
+          .current!.getIntersectionFromPixel(event.offsetX, event.offsetY)
+          .then((res) => res as CadIntersection);
+        if (intersection) {
+          // console.log(intersection);
+          // const toPresent = {
+          //   treeIndex: intersection.treeIndex,
+          //   point: intersection.point,
+          // };
+          const myNodes = new TreeIndexNodeCollection();
+
+          model.assignStyledNodeCollection(
+            myNodes,
+            DefaultNodeAppearance.Highlighted
+          );
+          myNodes.clear();
+          myNodes.updateSet(
+            new IndexSet(new NumericRange(intersection.treeIndex, 1))
+          );
+          setTI(intersection.treeIndex);
+        }
+      });
+    };
+    main();
+  }, [client]);
 
   return (
-    <Container>
-      <Header data-test-id="header">
-        <Graphic type="Cognite" />
-        <p>
-          <Trans i18nKey="Home:welcome_paragraph" t={t}>
-            Welcome to the Cognite Explorer.
-          </Trans>
-        </p>
-      </Header>
-      <Body>
-        <A
-          isExternal
-          href="https://cog.link/fas"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Trans i18nKey="Home:learnMore_link" t={t}>
-            Learn about how this is hosted
-          </Trans>
-        </A>
-      </Body>
-      <Button
-        disabled={crashing}
-        type="danger"
-        onClick={clickHandler}
-        style={{ marginTop: 8 }}
-      >
-        {buttonText}
-      </Button>
-    </Container>
+    <div style={{ width: 800, height: 800 }}>
+      <div id="reveal" style={{ width: '100%', height: '100%' }} />
+      {treeIndex ? indexes[treeIndex] : 'Select a room'}
+    </div>
   );
 };
 
