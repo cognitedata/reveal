@@ -49,4 +49,9 @@ export const geospatial = {
       params
     );
   },
+  getFeatureType: (id: string) => {
+    return getCogniteSDKClient().geospatial.featureType.retrieve([
+      { externalId: `${DISCOVER_FEATURE_TYPE_PREFIX}${id}` },
+    ]);
+  },
 };
