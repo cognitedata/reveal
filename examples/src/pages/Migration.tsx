@@ -4,7 +4,7 @@
 
 import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
 import {

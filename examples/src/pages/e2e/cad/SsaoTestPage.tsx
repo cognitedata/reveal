@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 import React from 'react';
 import { TestEnvCad, TestViewer } from '../TestViewer';
 import { defaultRenderOptions } from '@cognite/reveal/internals';

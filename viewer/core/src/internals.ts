@@ -10,13 +10,16 @@ export { createLocalRevealManager, createCdfRevealManager } from './public/creat
 export { CadModelSectorLoadStatistics, PickingHandler } from '@reveal/cad-model';
 
 // Point cloud
-// TODO move these types into potree-core as TypeScript definitions and remove them from here
 export {
   PotreePointShape,
   PotreePointColorType,
   PotreePointSizeType,
   WellKnownAsprsPointClassCodes,
-  PointCloudNode
+  PotreeNodeWrapper,
+  PotreeGroupWrapper,
+  PointCloudNode,
+  Potree,
+  PointCloudOctree
 } from '@reveal/pointclouds';
 
 // Utilities

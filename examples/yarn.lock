@@ -1245,11 +1245,6 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/potree-core@^1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.5.0.tgz#7b288a12358b2ef2b2ae51195a4ecace396822be"
-  integrity sha512-/XhfPYlPIK7LxT0czUIGMWLcUjGfVmf3Nzcf+6FaG+sExr6S8Yqayeid9FdYgi7y+LFmvYSJrZyXgF5LL8ZMrg==
-
 "@cognite/reveal@link:../viewer/dist":
   version "0.0.0"
   uid ""
@@ -2190,10 +2185,10 @@
   dependencies:
     "@types/jest" "*"
 
-"@types/three@0.139.0":
-  version "0.139.0"
-  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.139.0.tgz#69af1f0c52f8eea390f513e05478af1dd7f49e6f"
-  integrity sha512-4V/jZhyq7Mv05coUzxL3bz8AuBOSi/1F0RY7ujisHTV0Amy/fnYJ+s7TSJ1/hXjZukSkpuFRgV+wvWUEMbsMbQ==
+"@types/three@0.140.0":
+  version "0.140.0"
+  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.140.0.tgz#3b74a021a69a6e2cd0e2550def15aa4c1c20e924"
+  integrity sha512-YPJLSIY6uKUOp1k6BZYDq5GtEIdhfeK04UCbc9IPAVbdn/RNjkfrbnyd7smrsNkJhc0IFASLpd3AAYgwqgXKVQ==
 
 "@types/uglify-js@*":
   version "3.13.1"
@@ -11709,11 +11704,6 @@ text-table@0.2.0, text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
-
-three@0.139.2:
-  version "0.139.2"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.139.2.tgz#b110799a15736df673b9293e31653a4ac73648dd"
-  integrity sha512-gV7q7QY8rogu7HLFZR9cWnOQAUedUhu2WXAnpr2kdXZP9YDKsG/0ychwQvWkZN5PlNw9mv5MoCTin6zNTXoONg==
 
 throat@^5.0.0:
   version "5.0.0"

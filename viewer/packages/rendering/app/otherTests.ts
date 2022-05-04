@@ -54,6 +54,13 @@ async function init() {
   const revisionId = parseInt(urlParams.get('revisionId') ?? '498427137020189');
   // const revisionId = parseInt(urlParams.get('revisionId') ?? '1994234928723810');
 
+  const scene = new THREE.Scene();
+
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(guiData.clearColor);
+  renderer.setClearAlpha(guiData.clearAlpha);
+
   const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
   const cdfModelMetadataProvider = new CdfModelMetadataProvider(client);
   const cdfModelDataProvider = new CdfModelDataProvider(client);
@@ -62,11 +69,10 @@ async function init() {
   const cadModelFactory = new CadModelFactory(materialManager, cdfModelMetadataProvider, cdfModelDataProvider);
   const cadModelUpdateHandler = new CadModelUpdateHandler(new ByScreenSizeSectorCuller(), false);
 
-  const pointCloudManager = createPointCloudManager(cdfModelMetadataProvider, cdfModelDataProvider);
+  const pointCloudManager = createPointCloudManager(cdfModelMetadataProvider, cdfModelDataProvider, scene, renderer);
   pointCloudManager.pointBudget = 1_000_000;
   const cadManager = new CadManager(materialManager, cadModelFactory, cadModelUpdateHandler);
   cadManager.budget = defaultDesktopCadModelBudget;
-  const scene = new THREE.Scene();
   const customObjects: THREE.Object3D[] = [];
 
   const modelOutputs = (await cdfModelMetadataProvider.getModelOutputs(modelIdentifier)).map(outputs => outputs.format);
@@ -111,11 +117,6 @@ async function init() {
   model.updateWorldMatrix(true, true);
 
   const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
-
-  const renderer = new THREE.WebGLRenderer();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setClearColor(guiData.clearColor);
-  renderer.setClearAlpha(guiData.clearAlpha);
 
   let needsRedraw = false;
 

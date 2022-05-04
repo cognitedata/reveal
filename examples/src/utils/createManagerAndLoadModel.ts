@@ -1,11 +1,11 @@
-import * as THREE from 'three';
-import { 
-  PointCloudNode, 
-  CadNode, 
-  RevealManager, 
+import { THREE } from '@cognite/reveal';
+import {
+  PointCloudNode,
+  CadNode,
+  RevealManager,
   CdfModelIdentifier,
   LocalModelIdentifier,
-  createCdfRevealManager, 
+  createCdfRevealManager,
   createLocalRevealManager
 } from "@cognite/reveal/internals";
 

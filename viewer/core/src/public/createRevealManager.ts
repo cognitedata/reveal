@@ -135,6 +135,7 @@ export function createRevealManager(
     scene,
     renderables.cadModels
   );
+  const pointCloudManager = createPointCloudManager(modelMetadataProvider, modelDataProvider, scene, renderer);
   const cadManager = createCadManager(
     modelMetadataProvider,
     modelDataProvider,
@@ -146,7 +147,6 @@ export function createRevealManager(
       continuousModelStreaming: revealOptions.continuousModelStreaming
     }
   );
-  const pointCloudManager = createPointCloudManager(modelMetadataProvider, modelDataProvider);
   return new RevealManager(cadManager, pointCloudManager, pipelineExecutor, defaultRenderPipeline, materialManager);
 }
 

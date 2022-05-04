@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimationLoopHandler } from '../../utils/AnimationLoopHandler';
 import { getParamsFromURL } from '../../utils/example-helpers';
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 import CameraControls from 'camera-controls';
 import { resizeRendererToDisplaySize } from '../../utils/sceneHelpers';
 import { CanvasWrapper } from '../../components/styled';

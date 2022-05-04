@@ -5,8 +5,7 @@
 import React, { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 
-import * as THREE from 'three';
-import * as Potree from '@cognite/potree-core';
+import { THREE } from '@cognite/reveal';
 import * as reveal from '@cognite/reveal/internals';
 
 import CameraControls from 'camera-controls';
@@ -76,7 +75,7 @@ function initializeGui(
       handleSettingsChangedCb();
     });
 
-  pcGui.add(pcNode, 'pointBudget', 0, 10_000_000);
+  pcGui.add(pcGroup, 'pointBudget', 0, 10_000_000);
   pcGui.add(pcNode, 'pointSize', 0, 10).onChange(handleSettingsChangedCb);
   pcGui
     .add(pcNode, 'pointColorType', {
@@ -147,11 +146,6 @@ export function SectorWithPointcloud() {
       renderer.setClearColor('#000000');
       renderer.setSize(window.innerWidth, window.innerHeight);
 
-      Potree.XHRFactory.config.customHeaders.push({
-        header: 'MyDummyHeader',
-        value: 'MyDummyValue',
-      });
-
       const { revealManager, model } = await createManagerAndLoadModel(client, renderer, scene, 'cad', modelRevision, modelUrl);
       scene.add(model);
 
@@ -168,13 +162,8 @@ export function SectorWithPointcloud() {
         );
       }
 
-      // fixme: something wrong with the types here.
-      //    Why THREE.Group can be destructured like that?
-      //    example is broken here. It fails at runtime.
-      const [pointCloudGroup, pointCloudNode] = pointCloud as unknown as [
-        reveal.PotreeGroupWrapper,
-        reveal.PotreeNodeWrapper
-      ];
+      const pointCloudGroup = pointCloud.potreeGroup;
+      const pointCloudNode = pointCloud.potreeNode;
       scene.add(pointCloudGroup);
 
       const cadModelOffsetRoot = new THREE.Group();

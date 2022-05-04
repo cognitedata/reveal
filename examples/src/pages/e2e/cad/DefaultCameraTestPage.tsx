@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 import React from 'react';
 import { TestViewer } from '../TestViewer';
 import { registerVisualTest } from '../../../visual_tests';
