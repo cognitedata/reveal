@@ -49,7 +49,7 @@
     "@tweenjs/tween.js": "18.6.4",
     "@types/draco3dgltf": "1.4.0",
     "@types/geojson": "7946.0.8",
-    "@types/three": "0.139.0",
+    "@types/three": "0.140.0",
     "assert": "2.0.0",
     "comlink": "4.3.1",
     "geo-three": "0.0.17",
@@ -60,14 +60,14 @@
     "mixpanel-browser": "2.45.0",
     "rxjs": "7.5.5",
     "skmeans": "0.11.3",
-    "three": "0.139.2"
+    "three": "0.140.0"
   },
   "devDependencies": {
-    "@azure/msal-browser": "2.23.0",
+    "@azure/msal-browser": "2.24.0",
     "@cognite/sdk": "7.2.2",
     "@cognite/sdk-core": "^4.1.1",
     "@types/dat.gui": "0.7.7",
-    "@types/jest": "27.4.1",
+    "@types/jest": "27.5.0",
     "@types/jsdom": "16.2.14",
     "@types/lodash": "4.14.182",
     "@types/mixpanel-browser": "2.38.0",
