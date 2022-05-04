@@ -69,7 +69,7 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
   );
 
   React.useEffect(() => {
-    if (!regionConfig) return;
+    if (!regionConfig || isEmpty(selectedOptions)) return;
 
     const {
       [FilterIDs.FIELD]: updatingField,
@@ -83,7 +83,7 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
   }, [selectedRegions, regionConfig]);
 
   React.useEffect(() => {
-    if (!fieldConfig) return;
+    if (!fieldConfig || isEmpty(selectedOptions)) return;
 
     const {
       [FilterIDs.REGION]: updatingRegion,
@@ -99,7 +99,7 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
   }, [selectedFields, fieldConfig]);
 
   React.useEffect(() => {
-    if (!blockConfig) return;
+    if (!blockConfig || isEmpty(selectedOptions)) return;
 
     const {
       [FilterIDs.REGION]: updatingRegion,
