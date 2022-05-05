@@ -41,7 +41,6 @@ export const NPTTableWrapper = styled.div`
 export const FilterCol = styled(Col)`
   display: flex;
   justify-content: center;
-  padding: 4px;
   align-items: center;
   min-width: 220px;
 `;
