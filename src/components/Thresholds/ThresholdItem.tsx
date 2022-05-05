@@ -71,6 +71,7 @@ type Props = {
   onEventFilterChange: (id: string, diff: any) => void;
   translations?: typeof defaultTranslations;
   _useThresholds?: typeof useThresholdsResults;
+  expandFilters?: boolean;
 };
 
 const typeOptions: OptionType[] = [
@@ -115,6 +116,7 @@ const ThresholdItem: FunctionComponentWithTranslationKeys<Props> = ({
   onEventFilterChange,
   translations,
   _useThresholds = useThresholdsResults,
+  expandFilters,
 }: Props) => {
   const t = {
     ...defaultTranslations,
@@ -383,9 +385,10 @@ const ThresholdItem: FunctionComponentWithTranslationKeys<Props> = ({
         expandIcon={({ isActive }) => (
           <ExpandIcon isActive={!!isActive} type="ChevronDownLarge" />
         )}
+        defaultActiveKey={expandFilters ? 'panelFilterForm' : ''}
         ghost
       >
-        <Collapse.Panel header={t['Filter event length']}>
+        <Collapse.Panel header={t['Filter event length']} key="panelFilterForm">
           <Row justify="space-between" gutter={8}>
             <Col span={7}>
               <Input

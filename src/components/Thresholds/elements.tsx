@@ -64,6 +64,9 @@ export const FilterCollapse = styled(Collapse)`
       background: none;
       border: 0;
       justify-content: start;
+      flex-direction: row-reverse;
+      background-color: #fafafa;
+      font-weight: 600;
 
       .cogs-icon {
         width: 12px !important;
@@ -74,6 +77,7 @@ export const FilterCollapse = styled(Collapse)`
     > .rc-collapse-content {
       padding-left: 0;
       padding-right: 0;
+      background-color: #fafafa;
     }
   }
 

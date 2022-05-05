@@ -2,139 +2,26 @@
  * Threshold Item
  */
 import { Meta, Story } from '@storybook/react';
+import { useArgs } from '@storybook/client-api';
 import useThresholdsResults from 'hooks/threshold-calculations';
+import { ChartThreshold } from 'models/chart/types';
+import { v4 as uuidv4 } from 'uuid';
 import ThresholdsComponent from './Thresholds';
 
 type Props = React.ComponentProps<typeof ThresholdsComponent>;
 
 export default {
   component: ThresholdsComponent,
-  title: 'Components/Thresholds/All',
+  title: 'Components/Thresholds/Collapse',
 } as Meta;
 
 const useThresholdsMock: typeof useThresholdsResults = () => ({
   data: {
     error: null,
     results: {
-      count: 31,
+      count: 2,
       cumulative_duration: 112000.0,
       events: [
-        {
-          start: 1647205254607,
-          stop: 1647205257607,
-        },
-        {
-          start: 1647208866663,
-          stop: 1647208869663,
-        },
-        {
-          start: 1647256160015,
-          stop: 1647256163015,
-        },
-        {
-          start: 1647352862516,
-          stop: 1647352866516,
-        },
-        {
-          start: 1647435655171,
-          stop: 1647435659171,
-        },
-        {
-          start: 1647500456719,
-          stop: 1647500460719,
-        },
-        {
-          start: 1647554475433,
-          stop: 1647554479433,
-        },
-        {
-          start: 1647558136420,
-          stop: 1647558139420,
-        },
-        {
-          start: 1647565249450,
-          stop: 1647565252450,
-        },
-        {
-          start: 1647594055684,
-          stop: 1647594059684,
-        },
-        {
-          start: 1647619626294,
-          stop: 1647619629294,
-        },
-        {
-          start: 1647640857170,
-          stop: 1647640860170,
-        },
-        {
-          start: 1647655275472,
-          stop: 1647655279472,
-        },
-        {
-          start: 1647658854202,
-          stop: 1647658857202,
-        },
-        {
-          start: 1647662596077,
-          stop: 1647662599077,
-        },
-        {
-          start: 1647702398269,
-          stop: 1647702403269,
-        },
-        {
-          start: 1647713219562,
-          stop: 1647713224562,
-        },
-        {
-          start: 1647748869071,
-          stop: 1647748873071,
-        },
-        {
-          start: 1647802844433,
-          stop: 1647802849433,
-        },
-        {
-          start: 1647853246973,
-          stop: 1647853250973,
-        },
-        {
-          start: 1647871255195,
-          stop: 1647871258195,
-        },
-        {
-          start: 1647910858957,
-          stop: 1647910862957,
-        },
-        {
-          start: 1647929225681,
-          stop: 1647929228681,
-        },
-        {
-          start: 1647932474917,
-          stop: 1647932477917,
-        },
-        {
-          start: 1647936055882,
-          stop: 1647936059882,
-        },
-        {
-          start: 1647972081767,
-          stop: 1647972084767,
-        },
-        {
-          start: 1647975654801,
-          stop: 1647975657801,
-        },
-        {
-          start: 1647979270361,
-          stop: 1647979275361,
-        },
-        {
-          start: 1648015276375,
-          stop: 1648015280375,
-        },
         {
           start: 1648022458569,
           stop: 1648022461569,
@@ -150,9 +37,46 @@ const useThresholdsMock: typeof useThresholdsResults = () => ({
 });
 
 const Template: Story<Props> = (args) => {
+  const [_, updateArgs] = useArgs();
+
+  const handleAddThreshold = () => {
+    const emptyThreshold: ChartThreshold = {
+      id: uuidv4(),
+      name: 'New threshold',
+      type: 'under',
+      visible: true,
+      filter: {
+        minUnit: 'seconds',
+        maxUnit: 'hours',
+      },
+    };
+
+    updateArgs({
+      ...args,
+      thresholds: [emptyThreshold, ...args.thresholds],
+    });
+  };
+
+  const handleUpdateName = (id: string, name: string) => {
+    updateArgs({
+      ...args,
+      thresholds: args.thresholds.map((th) => {
+        if (th.id === id) {
+          th.name = name;
+        }
+        return th;
+      }),
+    });
+  };
+
   return (
     <div style={{ width: '400px' }}>
-      <ThresholdsComponent {...args} _useThresholds={useThresholdsMock} />
+      <ThresholdsComponent
+        {...args}
+        _useThresholds={useThresholdsMock}
+        onAddThreshold={handleAddThreshold}
+        onUpdateThresholdName={handleUpdateName}
+      />
     </div>
   );
 };
@@ -214,7 +138,7 @@ All.args = {
   ],
   thresholds: [
     {
-      id: '928db2a5-1528-4503-be37-54722e2173a6',
+      id: '128db2a5-1528-4503-be37-54722e2173a6',
       name: 'New threshold',
       sourceId: 'oEymyO7nSTTZ0iVo31OgK', // timeseridID || workflowID
       type: 'between',
@@ -229,7 +153,7 @@ All.args = {
       visible: true,
     },
     {
-      id: '928db2a5-1528-4503-be37-54722e2173a6-2',
+      id: '228db2a5-1528-4503-be37-54722e2173a6-2',
       name: 'New threshold',
       sourceId: 's61u4QKmDnhSetdLbLi94', // timeseridID || workflowID
       type: 'between',
@@ -249,8 +173,6 @@ All.args = {
   onLowerLimitChange: () => {},
   onUpperLimitChange: () => {},
   onEventFilterChange: () => {},
-  onUpdateThresholdName: () => {},
-  onAddThreshold: () => {},
   onTypeChange: () => {},
   onSelectSource: () => {},
 };

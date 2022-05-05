@@ -33,6 +33,7 @@ import {
   TopContainerTitle,
   ContentOverflowWrapper,
 } from 'components/Common/SidebarElements';
+import useThresholdsResults from 'hooks/threshold-calculations';
 
 type OptionType = {
   value: string;
@@ -44,6 +45,7 @@ type Props = {
   onClose: () => void;
   chart: Chart;
   updateChart: (update: (c: Chart | undefined) => Chart) => void;
+  _useThresholds?: typeof useThresholdsResults;
 };
 
 const ThresholdSidebar: FunctionComponent<Props> = ({
@@ -51,6 +53,7 @@ const ThresholdSidebar: FunctionComponent<Props> = ({
   onClose,
   chart,
   updateChart,
+  _useThresholds,
 }: Props) => {
   const { t } = useTranslations(Thresholds.translationKeys, 'ThresholdSidebar');
 
@@ -170,6 +173,7 @@ const ThresholdSidebar: FunctionComponent<Props> = ({
           onTypeChange={handleChangeType}
           onAddThreshold={handleAddThreshold}
           translations={t}
+          _useThresholds={_useThresholds}
         />
       </ContentOverflowWrapper>
     </Sidebar>
