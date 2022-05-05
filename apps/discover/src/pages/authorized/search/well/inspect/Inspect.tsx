@@ -16,7 +16,6 @@ import {
   useWellInspectSelectedWellboreIds,
   useWellInspectWells,
 } from 'modules/wellInspect/hooks/useWellInspect';
-import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 
 import {
   InspectContainer,
@@ -32,7 +31,7 @@ import { ScrollButtons } from './ScrollButtons';
 import { SIDEBAR_SIZE } from './Sidebar/constants';
 import { InspectSidebar } from './Sidebar/InspectSidebar';
 import StandaloneHeader from './StandaloneHeader';
-import { TAB_ITEMS } from './types';
+import { useTabs } from './useTabs';
 import { WarningModal3D } from './WarningModal3D';
 
 const THREEDEE_TAB_KEY = 'threeDee';
@@ -46,9 +45,9 @@ export const WellInspect: React.FC = () => {
 
   useInspectStateFromUrl();
 
-  const { data: config } = useWellConfig();
   const wells = useWellInspectWells();
   const wellboreIds = useWellInspectSelectedWellboreIds();
+  const tabs = useTabs();
 
   const [isOpen, setIsOpen] = useState(true);
   const [inspectSidebarWidth, setInspectSidebarWidth] = useState(
@@ -58,13 +57,8 @@ export const WellInspect: React.FC = () => {
   const [show3dWarningModal, setShow3dWarningModal] = useState(false);
   const metrics = useGlobalMetrics(WELL_INSPECT_ID);
 
-  const items = useMemo(
-    () => TAB_ITEMS.filter((item) => config?.[item.key]?.enabled),
-    []
-  );
-
   const selectedItem = useMemo(
-    () => items.find((y) => y.path === location.pathname),
+    () => tabs.find((y) => y.path === location.pathname),
     [location.pathname]
   );
 
@@ -76,7 +70,7 @@ export const WellInspect: React.FC = () => {
   const standalone = selectedItem?.standalone || false;
 
   const handleNavigation = (tabKey: string) => {
-    const tabItem = items.find((item) => item.key === tabKey);
+    const tabItem = tabs.find((item) => item.key === tabKey);
     if (tabItem) {
       /**
        * Clear errors in side bar
@@ -118,15 +112,15 @@ export const WellInspect: React.FC = () => {
   };
 
   // Standard tabs
-  const tabs = useMemo(
+  const standardTabs = useMemo(
     () =>
-      items
-        .filter((item) => !item.standalone)
-        .map((item) => <Tabs.TabPane key={item.key} tab={t(item.name)} />),
-    [items]
+      tabs
+        .filter((tab) => !tab.standalone)
+        .map((tab) => <Tabs.TabPane key={tab.key} tab={t(tab.name)} />),
+    [tabs]
   );
 
-  const standaloneItems = items.filter((item) => item.standalone);
+  const standaloneItems = tabs.filter((tab) => tab.standalone);
 
   // Other links (Multiple ppfgs, 3d etc)
   const links = useMemo(
@@ -183,7 +177,7 @@ export const WellInspect: React.FC = () => {
                   onChange={handleNavigation}
                   data-testid="well-inspect-navigation-tabs"
                 >
-                  {tabs}
+                  {standardTabs}
                 </Tabs>
                 {!standalone && standaloneItems.length > 1 && (
                   <Dropdown content={links} openOnHover>
