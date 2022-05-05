@@ -53,40 +53,46 @@ const mockState = {
 describe('Test annotation utils', () => {
   describe('Test clearStates fn', () => {
     test('when clear cache is true', () => {
-      expect(clearStates(mockState, [], true)).toStrictEqual(initialState);
+      const annotationState = { ...mockState };
+      clearStates(annotationState, [], true);
+      expect(annotationState).toStrictEqual(initialState);
     });
 
     describe('when clear cache is false', () => {
       test('for single file id', () => {
+        const annotationState = { ...mockState };
         const clearCache = false;
 
         const fileIds = [10];
-        const modifiedState = clearStates(mockState, fileIds, clearCache);
-        expect(modifiedState.files.byId[10]).toStrictEqual(undefined);
+        clearStates(annotationState, fileIds, clearCache);
+        expect(annotationState.files.byId[10]).toStrictEqual(undefined);
 
-        expect(modifiedState.annotations.byId[1]).toStrictEqual(undefined);
-        expect(modifiedState.annotations.byId[2]).toStrictEqual(undefined);
+        expect(annotationState.annotations.byId[1]).toStrictEqual(undefined);
+        expect(annotationState.annotations.byId[2]).toStrictEqual(undefined);
       });
 
       test('for multiple file ids', () => {
+        const annotationState = { ...mockState };
         const clearCache = false;
 
         const fileIds = [20, 30];
-        const modifiedState = clearStates(mockState, fileIds, clearCache);
-        expect(modifiedState.files.byId[20]).toStrictEqual(undefined);
-        expect(modifiedState.files.byId[30]).toStrictEqual(undefined);
+        clearStates(annotationState, fileIds, clearCache);
+        expect(annotationState.files.byId[20]).toStrictEqual(undefined);
+        expect(annotationState.files.byId[30]).toStrictEqual(undefined);
 
-        expect(modifiedState.annotations.byId[3]).toStrictEqual(undefined);
-        expect(modifiedState.annotations.byId[4]).toStrictEqual(undefined);
-        expect(modifiedState.annotations.byId[5]).toStrictEqual(undefined);
-        expect(modifiedState.annotations.byId[6]).toStrictEqual(undefined);
+        expect(annotationState.annotations.byId[3]).toStrictEqual(undefined);
+        expect(annotationState.annotations.byId[4]).toStrictEqual(undefined);
+        expect(annotationState.annotations.byId[5]).toStrictEqual(undefined);
+        expect(annotationState.annotations.byId[6]).toStrictEqual(undefined);
       });
     });
   });
 
   describe('Test repopulateAnnotationState fn', () => {
     test('when no annotations to update', () => {
-      expect(repopulateAnnotationState(mockState, [])).toStrictEqual(mockState);
+      const annotationState = { ...mockState };
+      repopulateAnnotationState(annotationState, []);
+      expect(annotationState).toStrictEqual(mockState);
     });
 
     test('with new payload', () => {
@@ -100,9 +106,10 @@ describe('Test annotation utils', () => {
           annotatedResourceId: 10,
         }),
       ];
-      const updatedState = repopulateAnnotationState(mockState, newAnnotations);
+      const annotationState = { ...mockState };
+      repopulateAnnotationState(annotationState, newAnnotations);
 
-      expect(updatedState.annotations.byId).toStrictEqual({
+      expect(annotationState.annotations.byId).toStrictEqual({
         '7': getDummyImageObjectDetectionBoundingBoxAnnotation({
           id: 7,
           annotatedResourceId: 10,
@@ -113,16 +120,19 @@ describe('Test annotation utils', () => {
         }),
       });
 
-      expect(updatedState.files.byId[10]).toStrictEqual([7, 8]);
+      expect(annotationState.files.byId[10]).toStrictEqual([7, 8]);
     });
   });
 
   describe('Test updateAnnotations fn', () => {
     test('when no annotations to update', () => {
-      expect(updateAnnotations(mockState, [])).toStrictEqual(mockState);
+      const annotationState = { ...mockState };
+      updateAnnotations(mockState, []);
+      expect(annotationState).toStrictEqual(mockState);
     });
 
     test('with new payload', () => {
+      const annotationState = { ...mockState };
       const newAnnotations: VisionAnnotation<VisionAnnotationDataType>[] = [
         getDummyImageObjectDetectionBoundingBoxAnnotation({
           id: 7,
@@ -133,9 +143,9 @@ describe('Test annotation utils', () => {
           annotatedResourceId: 10,
         }),
       ];
-      const updatedState = updateAnnotations(mockState, newAnnotations);
+      updateAnnotations(annotationState, newAnnotations);
 
-      expect(updatedState.annotations.byId).toStrictEqual({
+      expect(annotationState.annotations.byId).toStrictEqual({
         '7': getDummyImageObjectDetectionBoundingBoxAnnotation({
           id: 7,
           annotatedResourceId: 10,
@@ -146,7 +156,7 @@ describe('Test annotation utils', () => {
         }),
       });
 
-      expect(updatedState.files.byId[10]).toStrictEqual([7, 8]);
+      expect(annotationState.files.byId[10]).toStrictEqual([7, 8]);
     });
   });
 });
