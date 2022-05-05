@@ -70,23 +70,20 @@ const annotationSlice = createSlice({
           const annotation = state.annotations.byId[annotationId];
 
           if (annotation) {
-            const resourceId: number | undefined =
-              annotation.annotatedResourceId;
+            const resourceId: number = annotation.annotatedResourceId;
 
-            if (resourceId) {
-              const annotatedFileState = state.files.byId[resourceId];
-              if (annotatedFileState) {
-                const filteredState = annotatedFileState.filter(
-                  (id) => id !== annotationId
-                );
-                if (filteredState.length) {
-                  state.files.byId[resourceId] = filteredState;
-                } else {
-                  delete state.files.byId[resourceId];
-                }
+            const annotatedFileState = state.files.byId[resourceId];
+            if (annotatedFileState) {
+              const filteredState = annotatedFileState.filter(
+                (id) => id !== annotationId
+              );
+              if (filteredState.length) {
+                state.files.byId[resourceId] = filteredState;
+              } else {
+                delete state.files.byId[resourceId];
               }
-              delete state.annotations.byId[annotationId];
             }
+            delete state.annotations.byId[annotationId];
           }
         });
       }
