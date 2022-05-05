@@ -53,17 +53,13 @@ const annotationSlice = createSlice({
         const { fileIds, clearCache } = meta.arg;
 
         // clear states
-        const clearedState = clearStates(state, fileIds, clearCache);
-        state.annotations = clearedState.annotations;
-        state.files = clearedState.files;
+        clearStates(state, fileIds, clearCache);
 
         // update annotations
         // ToDo (VIS-794): conversion logic from V1 to V2 in the new slice can be moved into thunks.
         const annotations = convertCDFAnnotationV1ToVisionAnnotations(payload);
 
-        const updatedState = repopulateAnnotationState(state, annotations);
-        state.annotations = updatedState.annotations;
-        state.files = updatedState.files;
+        repopulateAnnotationState(state, annotations);
       }
     );
 
@@ -108,9 +104,7 @@ const annotationSlice = createSlice({
         // ToDo (VIS-794): conversion logic from V1 to V2 in the new slice can be moved into thunks.
         const annotations = convertCDFAnnotationV1ToVisionAnnotations(payload);
 
-        const updatedState = updateAnnotations(state, annotations);
-        state.annotations = updatedState.annotations;
-        state.files = updatedState.files;
+        updateAnnotations(state, annotations);
       }
     );
 
