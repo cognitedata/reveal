@@ -60,6 +60,7 @@ const CategoryMenu = ({
           ({ category, toolFunctions }) =>
             !!toolFunctions.length && (
               <CategoryItemWrapper
+                key={category}
                 tabIndex={0}
                 role="button"
                 onClick={() => setSelectedCategory(category)}
