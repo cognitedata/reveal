@@ -10,7 +10,10 @@ import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { WellKnownAsprsPointClassCodes } from './types';
 import { createPointClassKey } from './createPointClassKey';
 
+import { RawStyleObject } from './styling/StyleObject';
+
 import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from './potree-three-loader';
+import { hardCodedObjects } from './styling/staticObjects';
 
 const PotreeDefaultPointClass = 'DEFAULT';
 
@@ -18,6 +21,7 @@ export class PointCloudNode extends THREE.Group {
   private readonly _potreeGroup: PotreeGroupWrapper;
   private readonly _potreeNode: PotreeNodeWrapper;
   private readonly _cameraConfiguration?: CameraConfiguration;
+  private readonly _objects: RawStyleObject[];
 
   constructor(
     potreeGroup: PotreeGroupWrapper,
@@ -30,6 +34,8 @@ export class PointCloudNode extends THREE.Group {
     this._potreeNode = potreeNode;
     this._cameraConfiguration = cameraConfiguration;
     this.add(this._potreeNode.octree);
+
+    this._objects = this.loadObjects();
 
     this.matrixAutoUpdate = false;
   }
@@ -92,6 +98,15 @@ export class PointCloudNode extends THREE.Group {
 
   set pointShape(value: PotreePointShape) {
     this._potreeNode.pointShape = value;
+  }
+
+  get objects(): RawStyleObject[] {
+    return this._objects;
+  }
+
+  setObjectStyle(objectId: number, color: [number, number, number]) {
+    this.potreeNode.octree.material.setObjectColor(objectId, new THREE.Color(color[0], color[1], color[2]));
+    this.requestRedraw();
   }
 
   /**
@@ -158,5 +173,9 @@ export class PointCloudNode extends THREE.Group {
 
   getModelTransformation(out = new THREE.Matrix4()): THREE.Matrix4 {
     return out.copy(this.matrix);
+  }
+
+  loadObjects(): RawStyleObject[] {
+    return hardCodedObjects;
   }
 }

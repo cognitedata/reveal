@@ -73,6 +73,7 @@ export interface IPointCloudMaterialUniforms {
   level: IUniform<number>;
   maxSize: IUniform<number>;
   minSize: IUniform<number>;
+  objectIdLUT: IUniform<Texture>;
   octreeSize: IUniform<number>;
   opacity: IUniform<number>;
   pcIndex: IUniform<number>;
@@ -176,6 +177,8 @@ export class PointCloudMaterial extends RawShaderMaterial {
   private readonly _gradient = SpectralGradient;
   private gradientTexture: Texture | undefined = generateGradientTexture(this._gradient);
 
+  private readonly _objectTexture: THREE.DataTexture = generateDataTexture(2048, 1, new Color(0x000000));
+
   private _classification: IClassification = DEFAULT_CLASSIFICATION;
   private classificationTexture: Texture | undefined = generateClassificationTexture(this._classification);
 
@@ -200,6 +203,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     level: makeUniform('f', 0.0),
     maxSize: makeUniform('f', DEFAULT_MAX_POINT_SIZE),
     minSize: makeUniform('f', DEFAULT_MIN_POINT_SIZE),
+    objectIdLUT: makeUniform('t', this._objectTexture),
     octreeSize: makeUniform('f', 0),
     opacity: makeUniform('f', 1.0),
     pcIndex: makeUniform('f', 0),
@@ -501,6 +505,15 @@ export class PointCloudMaterial extends RawShaderMaterial {
     }
 
     this.setUniform('clipBoxes', clipBoxesArray);
+  }
+
+  setObjectColor(objectId: number, color: Color): void {
+    const data = this._objectTexture.image.data;
+
+    const colorData = [color.r, color.g, color.b];
+    data.set(colorData, 4 * objectId);
+
+    this._objectTexture.needsUpdate = true;
   }
 
   get classification(): IClassification {

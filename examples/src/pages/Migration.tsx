@@ -29,6 +29,7 @@ import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
 import { createSDKFromEnvironment } from '../utils/example-helpers';
 import { PointCloudClassificationFilterUI } from '../utils/PointCloudClassificationFilterUI';
+import { PointCloudObjectStylingUI } from '../utils/PointCloudObjectStylingUI';
 
 
 window.THREE = THREE;
@@ -182,6 +183,8 @@ export function Migration() {
         } else if (model instanceof CognitePointCloudModel) {
           new PointCloudClassificationFilterUI(gui.addFolder(`Class filter #${modelUi.pointCloudModels.length}`), model);
           pointCloudUi.applyToAllModels();
+          new PointCloudObjectStylingUI(gui.addFolder(`Object styling (${PointCloudObjectStylingUI.MAX_OBJECTS} first objects) #${modelUi.pointCloudModels.length}`),
+                                        model);
         }
       }
       const modelUi = new ModelUi(gui.addFolder('Models'), viewer, handleModelAdded);
@@ -361,7 +364,7 @@ export function Migration() {
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client, viewer);
 
       viewer.on('click', async (event) => {
-        const { offsetX, offsetY } = event; 
+        const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {

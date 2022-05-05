@@ -67,6 +67,7 @@ uniform sampler2D visibleNodes;
 uniform sampler2D gradient;
 uniform sampler2D classificationLUT;
 uniform sampler2D depthMap;
+uniform sampler2D objectIdLUT;
 
 #ifdef use_texture_blending
 	uniform sampler2D backgroundMap;
@@ -603,6 +604,10 @@ void main() {
         }
 
         if (objectId > 0.0) {
-            vColor = texture(gradient, vec2(objectId / 500.0, 1.0 - objectId / 500.0)).rgb;
+            vec3 colorTexel = texelFetch(objectIdLUT, ivec2(int(objectId), 0), 0).rgb;
+
+            if (colorTexel.r + colorTexel.g + colorTexel.b > 0.0) {
+                vColor = colorTexel;
+            }
         }
 }
