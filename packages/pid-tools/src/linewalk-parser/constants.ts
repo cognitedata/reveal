@@ -5,7 +5,7 @@ import { LineWalkSymbolType } from './types';
 export const lineWalkSymbolTypes = [
   'line',
   'equipment',
-  'equipmentType',
+  'tag',
   'fileConnection',
   'instrument',
   'valve',
@@ -17,6 +17,8 @@ export const lineWalkSymbolTypes = [
   'custom',
   'sharedInstrument',
   'lineBreak',
+  'equipmentTag',
+  'lineConnectionTag',
 ] as const;
 
 export const symbolTypeMap: {
@@ -24,7 +26,8 @@ export const symbolTypeMap: {
 } = {
   Line: 'line',
   Equipment: 'equipment',
-  EquipmentTag: 'equipmentType',
+  'Equipment Tag': 'equipmentTag',
+  'Line Connection Tag': 'lineConnectionTag',
   'File Connection': 'fileConnection',
   'Bypass Connection': 'fileConnection',
   'Line Connection': 'fileConnection',

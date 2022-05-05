@@ -1,3 +1,4 @@
+import { lineWalkSymbolTypes } from '@cognite/pid-tools';
 import { PDFDocumentProxy } from 'pdfjs-dist/types/display/api';
 
 import { Discrepancy } from '../../components/LineReviewViewer/LineReviewViewer';
@@ -9,9 +10,13 @@ export type BoundingBox = {
   height: number;
 };
 
+export type LineWalkAnnotationType =
+  | typeof lineWalkSymbolTypes[number]
+  | 'text';
+
 export type Annotation = {
   id: string;
-  type: string;
+  type: LineWalkAnnotationType;
   boundingBox: BoundingBox;
   svgPaths: { svgCommands: string }[];
   nearestAssetExternalIds: [];
@@ -96,7 +101,3 @@ export type LineReview = {
   pdfExternalIds: string[];
   unit: string;
 } & LineReviewState;
-
-export enum AnnotationType {
-  FILE_CONNECTION = 'fileConnection',
-}

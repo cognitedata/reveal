@@ -3,11 +3,10 @@ import { saveAs } from 'file-saver';
 import { PidDocumentWithDom } from '../pid';
 import {
   DiagramConnection,
-  DiagramEquipmentTagInstance,
-  DiagramEquipmentTagInstanceOutputFormat,
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
+  DiagramTag,
   DocumentMetadata,
   GraphDocument,
   PathReplacementGroup,
@@ -15,7 +14,7 @@ import {
 
 import getFileNameWithoutExtension from './getFileNameWithoutExtension';
 import {
-  getEquipmentTagOutputFormat,
+  getTagOutputFormat,
   getDiagramLineInstancesOutputFormat,
   getDiagramSymbolInstancesOutputFormat,
 } from './saveGraph';
@@ -37,7 +36,7 @@ export const getGraphFormat = (
   pathReplacementGroups: PathReplacementGroup[],
   documentMetadata: DocumentMetadata,
   lineNumbers: string[],
-  equipmentTags: DiagramEquipmentTagInstance[]
+  tags: DiagramTag[]
 ): GraphDocument => {
   const linesOutputFormat = getDiagramLineInstancesOutputFormat(
     pidDocument,
@@ -47,10 +46,7 @@ export const getGraphFormat = (
     pidDocument,
     symbolInstances
   );
-  const equipmentTagInstancesFormat = getEquipmentTagOutputFormat(
-    pidDocument,
-    equipmentTags
-  );
+  const tagsOutputFormat = getTagOutputFormat(pidDocument, tags);
 
   const labels = pidDocument.pidLabels.map((label) => {
     return label.toDiagramLabelOutputFormat();
@@ -65,7 +61,7 @@ export const getGraphFormat = (
     connections,
     pathReplacementGroups,
     lineNumbers,
-    equipmentTags: equipmentTagInstancesFormat,
+    tags: tagsOutputFormat,
     labels,
   };
 };
@@ -88,7 +84,7 @@ export const loadGraphFromJson = (
   setConnections: (diagramConnections: DiagramConnection[]) => void,
   setPathReplacements: (args: PathReplacementGroup[]) => void,
   setLineNumbers: (arg: string[]) => void,
-  setEquipmentTags: (tags: DiagramEquipmentTagInstance[]) => void
+  setTags: (tags: DiagramTag[]) => void
 ) => {
   if ('pathReplacementGroups' in jsonData) {
     setPathReplacements(jsonData.pathReplacementGroups);
@@ -99,26 +95,8 @@ export const loadGraphFromJson = (
   if ('symbolInstances' in jsonData) {
     setSymbolInstances(jsonData.symbolInstances);
   }
-  if ('equipmentTags' in jsonData) {
-    const equipmentTags = (
-      jsonData.equipmentTags as DiagramEquipmentTagInstanceOutputFormat[]
-    ).map((tag) =>
-      tag.labels.reduce<DiagramEquipmentTagInstance>(
-        (prev, curr) => ({
-          ...prev,
-          labelIds: [...prev.labelIds, curr.id],
-        }),
-        {
-          id: tag.id,
-          equipmentTag: tag.equipmentTag,
-          labelIds: [],
-          type: 'EquipmentTag',
-          lineNumbers: tag.lineNumbers,
-          inferedLineNumbers: tag.inferedLineNumbers,
-        }
-      )
-    );
-    setEquipmentTags(equipmentTags);
+  if ('tags' in jsonData) {
+    setTags(jsonData.tags);
   }
   if ('lines' in jsonData) {
     setLines(jsonData.lines);

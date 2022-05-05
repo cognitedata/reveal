@@ -3,7 +3,6 @@
 import {
   CognitePid,
   DiagramConnection,
-  DiagramEquipmentTagInstance,
   DiagramLineInstance,
   DiagramSymbol,
   DiagramType,
@@ -12,6 +11,7 @@ import {
   ToolType,
   saveGraphAsJson,
   PathReplacementGroup,
+  DiagramTag,
 } from '@cognite/pid-tools';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Loader } from '@cognite/cogs.js';
@@ -65,9 +65,7 @@ export const ReactPid = ({
     useSymbolState(pidViewer.current, documentMetadata.type, hasDocumentLoaded);
   const [lines, setLines] = useState<DiagramLineInstance[]>([]);
   const [connections, setConnections] = useState<DiagramConnection[]>([]);
-  const [equipmentTags, setEquipmentTags] = useState<
-    DiagramEquipmentTagInstance[]
-  >([]);
+  const [tags, setTags] = useState<DiagramTag[]>([]);
   const [symbolSelection, setSymbolSelection] = useState<string[]>([]);
   const [hideSelection, setHideSelection] = useState<boolean>(false);
   const [lineNumbers, setLineNumbers] = useState<string[]>([]);
@@ -166,9 +164,9 @@ export const ReactPid = ({
 
   useEffect(() => {
     if (pidViewer.current) {
-      pidViewer.current.onChangeEquipmentTags(setEquipmentTags);
+      pidViewer.current.onChangeTags(setTags);
     }
-  }, [setEquipmentTags]);
+  }, [setTags]);
 
   useEffect(() => {
     if (pidViewer.current) {
@@ -299,7 +297,7 @@ export const ReactPid = ({
     pidViewer,
     documentMetadata,
     lineNumbers,
-    equipmentTags,
+    tags,
     saveState,
   ]);
 
@@ -377,8 +375,8 @@ export const ReactPid = ({
           setLineNumbers={setLineNumbersWrapper}
           activeLineNumber={activeLineNumber}
           setActiveLineNumber={setActiveLineNumberWrapper}
-          equipmentTags={equipmentTags}
-          setEquipmentTags={setEquipmentTags}
+          tags={tags}
+          setTags={setTags}
           activeTagId={activeTagId}
           setActiveTagId={setActiveTagIdWrapper}
           hideSelection={hideSelection}

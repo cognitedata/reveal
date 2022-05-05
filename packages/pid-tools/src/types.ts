@@ -1,4 +1,4 @@
-import { symbolTypes } from './constants';
+import { symbolTypes, tagTypes } from './constants';
 
 export interface SvgPath {
   svgCommands: string;
@@ -21,11 +21,8 @@ export interface SvgRepresentation {
   boundingBox: Rect;
 }
 
-interface EquipmentTagInfo {
-  equipmentTag: string;
-}
-
 export type SymbolType = typeof symbolTypes[number];
+export type TagType = typeof tagTypes[number];
 
 export interface DiagramSymbol {
   id: string; // uuid
@@ -35,7 +32,7 @@ export interface DiagramSymbol {
   direction?: number; // 0-359 or `undefined` if irrelevant
 }
 
-export type DiagramAnnotationType = SymbolType | 'Line' | 'EquipmentTag';
+export type DiagramAnnotationType = SymbolType | 'Line' | TagType;
 
 export interface DiagramInstance {
   id: string;
@@ -44,6 +41,10 @@ export interface DiagramInstance {
   assetExternalId?: string;
   lineNumbers: string[];
   inferedLineNumbers: string[];
+}
+
+export interface DiagramTag extends DiagramInstance {
+  type: TagType;
 }
 
 export interface DiagramInstanceWithPaths extends DiagramInstance {
@@ -74,16 +75,15 @@ export interface PidFileConnectionInstance extends DiagramSymbolInstance {
   fileDirection?: FileDirection;
 }
 
-export interface LineConnectionInstance extends DiagramSymbolInstance {
-  type: 'Line Connection';
+interface LineConnectionInfo {
   letterIndex?: string; // A/B/C
   pointsToFileName?: string; // point to IsoDocumentMetadata.lineNumber or 'SAME' if on the same document
 }
 
-export interface DiagramEquipmentInstance
+export interface LineConnectionInstance
   extends DiagramSymbolInstance,
-    EquipmentTagInfo {
-  type: 'Equipment';
+    LineConnectionInfo {
+  type: 'Line Connection';
 }
 
 export interface DiagramInstrumentInstance
@@ -92,10 +92,23 @@ export interface DiagramInstrumentInstance
   type: 'Instrument';
 }
 
-export interface DiagramEquipmentTagInstance
-  extends DiagramInstance,
+interface EquipmentTagInfo {
+  equipmentTag: string;
+}
+export interface DiagramEquipmentInstance
+  extends DiagramSymbolInstance,
     EquipmentTagInfo {
-  type: 'EquipmentTag';
+  type: 'Equipment';
+}
+
+export interface DiagramEquipmentTag extends DiagramTag, EquipmentTagInfo {
+  type: 'Equipment Tag';
+}
+
+export interface DiagramLineConnectionTag
+  extends DiagramTag,
+    LineConnectionInfo {
+  type: 'Line Connection Tag';
 }
 
 export type PathReplacementType = 'T-junction' | 'Multi-path';
@@ -136,8 +149,7 @@ export type DiagramLineInstanceOutputFormat = DiagramLineInstance &
 export type DiagramEquipmentInstanceOutputFormat = DiagramEquipmentInstance &
   DiagramInstanceOutputFields;
 
-export type DiagramEquipmentTagInstanceOutputFormat =
-  DiagramEquipmentTagInstance & DiagramInstanceOutputFields;
+export type DiagramTagOutputFormat = DiagramTag & DiagramInstanceOutputFields;
 
 export type LineConnectionInstanceOutputFormat = LineConnectionInstance &
   DiagramInstanceOutputFields;
@@ -166,7 +178,7 @@ export interface GraphDocument extends Legend {
   connections: DiagramConnection[];
   pathReplacementGroups: PathReplacementGroup[];
   lineNumbers: string[];
-  equipmentTags: DiagramEquipmentTagInstanceOutputFormat[];
+  tags: DiagramTagOutputFormat[];
   labels: DiagramLabelOutputFormat[];
 }
 

@@ -1,8 +1,7 @@
 import styled from 'styled-components';
-import { Button, ToolBarButton } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 import {
   DiagramConnection,
-  DiagramEquipmentTagInstance,
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
@@ -11,6 +10,7 @@ import {
   ToolType,
   PathReplacementGroup,
   AddSymbolData,
+  DiagramTag,
 } from '@cognite/pid-tools';
 
 import { CollapsableInstanceList } from './CollapsableInstanceList';
@@ -57,8 +57,8 @@ interface SidePanelProps {
   setLineNumbers: (arg: string[]) => void;
   activeLineNumber: string | null;
   setActiveLineNumber: (arg: string | null) => void;
-  equipmentTags: DiagramEquipmentTagInstance[];
-  setEquipmentTags: (arg: DiagramEquipmentTagInstance[]) => void;
+  tags: DiagramTag[];
+  setTags: (arg: DiagramTag[]) => void;
   activeTagId: string | null;
   setActiveTagId: (arg: string | null) => void;
   hideSelection: boolean;
@@ -93,8 +93,8 @@ export const SidePanel = ({
   setLineNumbers,
   activeLineNumber,
   setActiveLineNumber,
-  equipmentTags,
-  setEquipmentTags,
+  tags,
+  setTags,
   activeTagId,
   setActiveTagId,
   hideSelection,
@@ -105,56 +105,6 @@ export const SidePanel = ({
   pathReplacementGroups,
   deletePathReplacementGroups,
 }: SidePanelProps) => {
-  const toolBarButtonGroups: ToolBarButton[][] = [
-    [
-      {
-        icon: 'Add',
-        onClick: () => setActiveTool('addSymbol'),
-        className: `${activeTool === 'addSymbol' && 'active'}`,
-        description: 'Add symbol',
-      },
-      {
-        icon: 'VectorLine',
-        onClick: () => setActiveTool('addLine'),
-        className: `${activeTool === 'addLine' && 'active'}`,
-        description: 'Add line',
-      },
-      {
-        icon: 'Split',
-        onClick: () => setActiveTool('connectInstances'),
-        className: `${activeTool === 'connectInstances' && 'active'}`,
-        description: 'Connect instances',
-      },
-      {
-        icon: 'Flag',
-        onClick: () => setActiveTool('connectLabels'),
-        className: `${activeTool === 'connectLabels' && 'active'}`,
-        description: 'Connect labels',
-      },
-      {
-        icon: 'Number',
-        onClick: () => setActiveTool('setLineNumber'),
-        className: `${activeTool === 'setLineNumber' && 'active'}`,
-        description: 'Set line number',
-      },
-      {
-        icon: 'String',
-        onClick: () => setActiveTool('addEquipmentTag'),
-        className: `${activeTool === 'addEquipmentTag' && 'active'}`,
-        description: 'Add equipment tag',
-      },
-    ],
-  ];
-
-  if (documentMetadata.type === DiagramType.pid) {
-    toolBarButtonGroups[0].push({
-      icon: 'Slice',
-      onClick: () => setActiveTool('splitLine'),
-      className: `${activeTool === 'splitLine' && 'active'}`,
-      description: 'Split line',
-    });
-  }
-
   const setActiveTagWrapper = (arg: string | null) => {
     setActiveTool('addEquipmentTag');
     setActiveTagId(arg);
@@ -180,11 +130,10 @@ export const SidePanel = ({
         deleteSymbol={deleteSymbol}
         deleteConnection={deleteConnection}
         connections={connections}
-        equipmentTags={equipmentTags}
-        setEquipmentTags={setEquipmentTags}
+        tags={tags}
+        setTags={setTags}
         activeTagId={activeTagId}
         setActiveTagId={setActiveTagWrapper}
-        diagramType={documentMetadata.type}
         pathReplacementGroups={pathReplacementGroups}
         deletePathReplacementGroups={deletePathReplacementGroups}
       />

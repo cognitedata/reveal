@@ -25,7 +25,7 @@ const parseDocument = (
   allDocuments: GraphDocument[],
   connections: SymbolConnection[]
 ): ParsedDocument => {
-  const { equipmentTags, lines, symbolInstances, labels } = graph;
+  const { tags: equipmentTags, lines, symbolInstances, labels } = graph;
 
   const annotations: Annotation[] = [];
 

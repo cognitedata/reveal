@@ -1,7 +1,6 @@
 import keyBy from 'lodash/keyBy';
 
 import {
-  AnnotationType,
   DocumentConnection,
   ParsedDocument,
 } from '../../modules/lineReviews/types';
@@ -56,8 +55,8 @@ const getFileConnections = (
           shamefulIsOutwardLink &&
           sourceDocument.type === sourceDocumentType &&
           targetDocument.type === targetDocumentType &&
-          sourceAnnotation?.type === AnnotationType.FILE_CONNECTION &&
-          targetAnnotation?.type === AnnotationType.FILE_CONNECTION
+          sourceAnnotation?.type === 'fileConnection' &&
+          targetAnnotation?.type === 'fileConnection'
         );
       })
     )

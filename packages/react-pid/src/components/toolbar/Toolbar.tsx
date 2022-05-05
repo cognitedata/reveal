@@ -66,27 +66,27 @@ export const Toolbar = ({
         description: 'Connect labels',
       },
       {
-        icon: 'Number',
-        onClick: () => setActiveTool('setLineNumber'),
-        className: `${activeTool === 'setLineNumber' && 'active'}`,
-        description: 'Set line number',
+        icon: 'String',
+        onClick: () => setActiveTool('addEquipmentTag'),
+        className: `${activeTool === 'addEquipmentTag' && 'active'}`,
+        description: 'Add equipment tag',
       },
     ],
   ];
 
   if (diagramType === DiagramType.pid) {
     toolBarButtonGroups[0].push({
+      icon: 'Number',
+      onClick: () => setActiveTool('setLineNumber'),
+      className: `${activeTool === 'setLineNumber' && 'active'}`,
+      description: 'Set line number',
+    });
+
+    toolBarButtonGroups[0].push({
       icon: 'Slice',
       onClick: () => setActiveTool('splitLine'),
       className: `${activeTool === 'splitLine' && 'active'}`,
       description: 'Split line',
-    });
-  } else if (diagramType === DiagramType.isometric) {
-    toolBarButtonGroups[0].push({
-      icon: 'String',
-      onClick: () => setActiveTool('addEquipmentTag'),
-      className: `${activeTool === 'addEquipmentTag' && 'active'}`,
-      description: 'Add equipment tag',
     });
   }
 

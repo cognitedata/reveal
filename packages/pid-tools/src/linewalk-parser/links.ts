@@ -8,13 +8,16 @@ import {
   DiagramType,
   DiagramLabelOutputFormat,
   LineConnectionInstanceOutputFormat,
+  DiagramTagOutputFormat,
 } from '../types';
 import {
   isFileConnection,
   isLineConnection,
   isIsoDocumentMetadata,
   getLineNumberAndPageFromText,
+  isLineConnectionTag,
 } from '../utils';
+import { LINE_CONNECTION_LETTER_REGEX } from '../constants';
 
 export const resolveFileAndLineConnections = (
   documents: GraphDocument[]
@@ -44,6 +47,30 @@ export const resolveFileAndLineConnections = (
       symbolConnections.push(connection);
     });
   });
+
+  documents.forEach((document) => {
+    document.tags?.forEach((tag) => {
+      let connection: SymbolConnection | undefined;
+      if (isLineConnectionTag(tag)) {
+        connection = findIsoLinkTag(tag, document, documents);
+      }
+      if (connection === undefined) return;
+
+      if (
+        symbolConnections.some(
+          (symbolConnection) =>
+            (isEqual(symbolConnection.from, connection!.to) &&
+              isEqual(symbolConnection.to, connection!.from)) ||
+            (isEqual(symbolConnection.from, connection!.from) &&
+              isEqual(symbolConnection.to, connection!.to))
+        )
+      )
+        return;
+
+      symbolConnections.push(connection);
+    });
+  });
+
   return symbolConnections;
 };
 
@@ -178,6 +205,112 @@ export const findIsoLink = (
         documentMetadata.lineNumber,
         documentMetadata.pageNumber
       )
+  );
+
+  if (linkedConnection === undefined) return undefined;
+
+  return {
+    from: {
+      fileName: document.documentMetadata.name,
+      instanceId: lineConnection.id,
+    },
+    to: {
+      fileName: linkedDocument.documentMetadata.name,
+      instanceId: linkedConnection.id,
+    },
+  };
+};
+
+const pointsToSame = (labels: DiagramLabelOutputFormat[]) => {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const label of labels) {
+    if (label.text.includes('SAME')) return true;
+  }
+  return false;
+};
+
+const getLetterIndex = (labels: DiagramLabelOutputFormat[]) => {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const label of labels) {
+    const lineConnectionLetterMatch = label.text.match(
+      LINE_CONNECTION_LETTER_REGEX
+    );
+    if (lineConnectionLetterMatch) {
+      return lineConnectionLetterMatch[0][1];
+    }
+  }
+  return false;
+};
+
+export const findIsoLinkTag = (
+  lineConnection: DiagramTagOutputFormat,
+  document: GraphDocument,
+  allDocuments: GraphDocument[]
+): SymbolConnection | undefined => {
+  if (pointsToSame(lineConnection.labels)) {
+    const linkedConnection = document.tags.find(
+      (tag) =>
+        isLineConnectionTag(tag) &&
+        pointsToSame(tag.labels) &&
+        getLetterIndex(lineConnection.labels) === getLetterIndex(tag.labels) &&
+        tag.id !== lineConnection.id
+    );
+
+    if (!linkedConnection) return undefined;
+
+    return {
+      from: {
+        fileName: document.documentMetadata.name,
+        instanceId: lineConnection.id,
+      },
+      to: {
+        fileName: document.documentMetadata.name,
+        instanceId: linkedConnection.id,
+      },
+    };
+  }
+
+  // Cross document connection
+  const lineAndPageData = getLineAndPageNumberFromLabels(lineConnection.labels);
+  if (!lineAndPageData) return undefined;
+  const { lineNumber, pageNumber } = lineAndPageData;
+
+  const linkedDocument = allDocuments.find(
+    (doc) =>
+      isIsoDocumentMetadata(doc.documentMetadata) &&
+      doc.documentMetadata.lineNumber === lineNumber &&
+      doc.documentMetadata.pageNumber === pageNumber
+  );
+
+  if (linkedDocument === undefined) return undefined;
+
+  const pointToLineAndPageNumber = (
+    labels: DiagramLabelOutputFormat[],
+    lineNumber: string,
+    pageNumber: number
+  ) => {
+    const lineAndPageNumberData = getLineAndPageNumberFromLabels(labels);
+    if (!lineAndPageNumberData) return false;
+
+    return (
+      lineAndPageNumberData.lineNumber === lineNumber &&
+      lineAndPageNumberData.pageNumber === pageNumber
+    );
+  };
+
+  const { documentMetadata } = document;
+  if (!isIsoDocumentMetadata(documentMetadata)) return undefined;
+
+  const linkedConnection = linkedDocument.tags.find(
+    (tag) =>
+      isLineConnectionTag(tag) &&
+      getLetterIndex(lineConnection.labels) === getLetterIndex(tag.labels) &&
+      pointToLineAndPageNumber(
+        tag.labels,
+        documentMetadata.lineNumber,
+        documentMetadata.pageNumber
+      ) &&
+      tag.id !== lineConnection.id
   );
 
   if (linkedConnection === undefined) return undefined;

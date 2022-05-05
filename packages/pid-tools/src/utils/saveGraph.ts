@@ -1,12 +1,12 @@
 import { getEncolosingBoundingBox } from '../geometry';
 import { PidDocument } from '../pid';
 import {
-  DiagramEquipmentTagInstance,
-  DiagramEquipmentTagInstanceOutputFormat,
   DiagramLineInstance,
   DiagramLineInstanceOutputFormat,
   DiagramSymbolInstance,
   DiagramSymbolInstanceOutputFormat,
+  DiagramTag,
+  DiagramTagOutputFormat,
 } from '../types';
 
 import { getDiagramInstanceId } from './diagramInstanceUtils';
@@ -55,11 +55,11 @@ export const getDiagramSymbolInstancesOutputFormat = (
   });
 };
 
-export const getEquipmentTagOutputFormat = (
+export const getTagOutputFormat = (
   pidDocument: PidDocument,
-  equipmentTags: DiagramEquipmentTagInstance[]
-): DiagramEquipmentTagInstanceOutputFormat[] => {
-  return equipmentTags.map((tag) => {
+  tags: DiagramTag[]
+): DiagramTagOutputFormat[] => {
+  return tags.map((tag) => {
     const labels = tag.labelIds.map((labelId) =>
       pidDocument.getPidTspanById(labelId)!.toDiagramLabelOutputFormat()
     );

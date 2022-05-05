@@ -1,8 +1,8 @@
 import {
   DiagramSymbolInstanceOutputFormat,
-  DiagramEquipmentTagInstanceOutputFormat,
   DiagramLabelOutputFormat,
   DiagramLineInstanceOutputFormat,
+  DiagramTagOutputFormat,
 } from '../types';
 import { SymbolConnection } from '../graphMatching/types';
 import getFileNameWithoutExtension from '../utils/getFileNameWithoutExtension';
@@ -31,7 +31,7 @@ export const diagramInstanceToAnnotation = (
 });
 
 export const symbolTagToAnnotation = (
-  tag: DiagramEquipmentTagInstanceOutputFormat
+  tag: DiagramTagOutputFormat
 ): SymbolAnnotation => ({
   id: tag.id,
   type: symbolTypeMap[tag.type],

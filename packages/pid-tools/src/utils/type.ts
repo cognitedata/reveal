@@ -10,7 +10,8 @@ import {
   DiagramInstrumentInstance,
   LineConnectionInstance,
   DiagramInstance,
-  DiagramEquipmentTagInstance,
+  DiagramEquipmentTag,
+  DiagramLineConnectionTag,
 } from '../types';
 import { LineSegment, PathSegment } from '../geometry';
 
@@ -28,6 +29,12 @@ export const isLineConnection = (
   return diagramInstance.type === lineConnection;
 };
 
+export const isLineConnectionTag = (
+  diagramInstance: DiagramInstance
+): diagramInstance is DiagramLineConnectionTag => {
+  return diagramInstance.type === 'Line Connection Tag';
+};
+
 export const isEquipment = (
   diagramInstance: DiagramInstance
 ): diagramInstance is DiagramEquipmentInstance =>
@@ -35,8 +42,8 @@ export const isEquipment = (
 
 export const isEquipmentTag = (
   diagramInstance: DiagramInstance
-): diagramInstance is DiagramEquipmentTagInstance =>
-  diagramInstance.type === 'EquipmentTag';
+): diagramInstance is DiagramEquipmentTag =>
+  diagramInstance.type === 'Equipment Tag';
 
 export const isInstrument = (
   diagramInstance: DiagramInstance

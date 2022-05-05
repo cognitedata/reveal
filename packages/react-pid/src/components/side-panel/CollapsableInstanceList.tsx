@@ -4,10 +4,9 @@ import {
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
-  DiagramEquipmentTagInstance,
-  DiagramType,
   PathReplacementGroup,
   PathReplacementType,
+  DiagramTag,
 } from '@cognite/pid-tools';
 import styled from 'styled-components';
 import { Collapse, Icon } from '@cognite/cogs.js';
@@ -17,7 +16,7 @@ import usePathReplacementGroupsByType from '../../utils/usePathReplacementsByTyp
 
 import { getInstancesBySymbolId } from './utils';
 import { CollapsableSymbolHeader } from './CollapsableSymbolHeader';
-import { EquipmentTagPanel } from './EquipmentTagPanel';
+import { TagPanel } from './TagPanel';
 import { Pre } from './elements';
 
 const ScrollWrapper = styled.div`
@@ -44,11 +43,10 @@ interface CollapsableInstanceListProps {
   connections: DiagramConnection[];
   deleteSymbol: (symbol: DiagramSymbol) => void;
   deleteConnection: (connection: DiagramConnection) => void;
-  equipmentTags: DiagramEquipmentTagInstance[];
-  setEquipmentTags: (arg: DiagramEquipmentTagInstance[]) => void;
+  tags: DiagramTag[];
+  setTags: (arg: DiagramTag[]) => void;
   activeTagId: string | null;
   setActiveTagId: (arg: string | null) => void;
-  diagramType: DiagramType;
   pathReplacementGroups: PathReplacementGroup[];
   deletePathReplacementGroups: (
     pathReplacementGroupsIds: string[] | string
@@ -63,11 +61,10 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
     connections,
     deleteSymbol,
     deleteConnection,
-    equipmentTags,
-    setEquipmentTags,
+    tags: equipmentTags,
+    setTags: setEquipmentTags,
     activeTagId,
     setActiveTagId,
-    diagramType,
     pathReplacementGroups,
     deletePathReplacementGroups,
   }) => {
@@ -194,17 +191,15 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
             </Collapse.Panel>
           ))}
         </Collapse>
-        {diagramType === DiagramType.isometric && (
-          <div>
-            <CollapseSeperator>Equipment tags</CollapseSeperator>
-            <EquipmentTagPanel
-              equipmentTags={equipmentTags}
-              setEquipmentTags={setEquipmentTags}
-              activeTagId={activeTagId}
-              setActiveTagId={setActiveTagId}
-            />
-          </div>
-        )}
+        <div>
+          <CollapseSeperator>Tags</CollapseSeperator>
+          <TagPanel
+            tags={equipmentTags}
+            setTags={setEquipmentTags}
+            activeTagId={activeTagId}
+            setActiveTagId={setActiveTagId}
+          />
+        </div>
       </ScrollWrapper>
     );
   };

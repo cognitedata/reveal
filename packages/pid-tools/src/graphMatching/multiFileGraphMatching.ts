@@ -21,7 +21,7 @@ export const mergeGraphs = (graphs: GraphDocument[]): GraphOutputFormat => {
     combinedGraph.diagramConnections.push(...graph.connections);
     combinedGraph.diagramLineInstances.push(...graph.lines);
     combinedGraph.diagramSymbolInstances.push(...graph.symbolInstances);
-    combinedGraph.diagramTags.push(...graph.equipmentTags);
+    combinedGraph.diagramTags.push(...graph.tags);
   });
   return combinedGraph;
 };
@@ -75,7 +75,7 @@ export const mutateGraphToGlobalizedIds = (graph: GraphDocument) => {
     connectionInstance.end = getGlobalizedId(fileName, connectionInstance.end);
   });
 
-  graph.equipmentTags.forEach((equipmentTag) => {
+  graph.tags.forEach((equipmentTag) => {
     equipmentTag.id = getGlobalizedId(fileName, equipmentTag.id);
   });
 
@@ -96,7 +96,7 @@ export const mutateGraphToUnglobalizedIds = (graph: GraphDocument) => {
     connectionInstance.end = getUnglobalizedId(connectionInstance.end);
   });
 
-  graph.equipmentTags.forEach((equipmentTag) => {
+  graph.tags.forEach((equipmentTag) => {
     equipmentTag.id = getUnglobalizedId(equipmentTag.id);
   });
   return graph;

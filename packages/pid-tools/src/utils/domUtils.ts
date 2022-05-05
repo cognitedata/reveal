@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-import { DiagramInstance, Rect, ToolType } from '../types';
+import { DiagramInstance, DiagramTag, Rect, ToolType } from '../types';
 import { COLORS } from '../constants';
 import {
   DiagramInstanceId,
@@ -17,9 +17,9 @@ import {
   getDiagramInstanceByPathId,
   DiagramInstanceWithPaths,
   DiagramSymbolInstance,
-  DiagramEquipmentTagInstance,
   getClosestPointsOnSegments,
   getClosestPointOnSegments,
+  getEncolosingBoundingBox,
 } from '../index';
 
 import isNotUndefined from './isNotUndefined';
@@ -137,25 +137,22 @@ const colorNode = (
   }
 };
 
-export const isInActiveEquipmentTag = (
+export const isInActiveTag = (
   node: SVGElement,
   activeTagId: string | null,
-  equipmentTags: DiagramEquipmentTagInstance[]
+  tags: DiagramTag[]
 ) => {
   if (activeTagId === null) return false;
 
-  const activeTag = equipmentTags.find((tag) => tag.id === activeTagId);
+  const activeTag = tags.find((tag) => tag.id === activeTagId);
 
   if (activeTag === undefined) return false;
 
   return activeTag.labelIds.includes(node.id);
 };
 
-export const isInEquipmentTags = (
-  node: SVGElement,
-  equipmentTags: DiagramEquipmentTagInstance[]
-): boolean => {
-  const allNodeIds = equipmentTags.flatMap((tag) => tag.labelIds);
+export const isInTags = (node: SVGElement, tags: DiagramTag[]): boolean => {
+  const allNodeIds = tags.flatMap((tag) => tag.labelIds);
   return allNodeIds.includes(node.id);
 };
 
@@ -169,7 +166,7 @@ export interface ApplyStyleArgs {
   connections: DiagramConnection[];
   active: ToolType;
   activeLineNumber: string | null;
-  equipmentTags: DiagramEquipmentTagInstance[];
+  tags: DiagramTag[];
   activeTagId: string | null;
   splitSelection: string | null;
   hideSelection: boolean;
@@ -185,7 +182,7 @@ export const applyStyleToNode = ({
   connections,
   active,
   activeLineNumber,
-  equipmentTags,
+  tags,
   activeTagId,
   splitSelection,
   hideSelection,
@@ -215,9 +212,9 @@ export const applyStyleToNode = ({
   if (symbolSelection.includes(node.id)) {
     ({ color, opacity } = COLORS.symbolSelection);
   }
-  if (isInActiveEquipmentTag(node, activeTagId, equipmentTags)) {
+  if (isInActiveTag(node, activeTagId, tags)) {
     color = COLORS.activeLabel;
-  } else if (isInEquipmentTags(node, equipmentTags)) {
+  } else if (isInTags(node, tags)) {
     color = COLORS.labelSelection;
   }
 
@@ -648,6 +645,38 @@ export const visualizeSymbolInstanceBoundingBoxes = (
       svg,
       boundignBox: paddedBoundingBox,
       id: `symbolinstancerect_${symbolInstance.id}`,
+      color: COLORS.symbolBoundingBox.color,
+      opacity: COLORS.symbolBoundingBox.opacity,
+      strokeColor: COLORS.symbolBoundingBox.strokeColor,
+      strokeOpacity: COLORS.symbolBoundingBox.strokeOpacity,
+      strokeWidth: COLORS.symbolBoundingBox.strokeWidth,
+    });
+    return rect.id;
+  });
+};
+
+export const visualizeTagBoundingBoxes = (
+  svg: SVGSVGElement,
+  pidDocument: PidDocument,
+  tags: DiagramTag[],
+  padding = 0
+): string[] => {
+  return tags.map((tag) => {
+    const bBox = getEncolosingBoundingBox(
+      tag.labelIds.map(
+        (labelId) => pidDocument.getPidTspanById(labelId)!.boundingBox
+      )
+    );
+    const paddedBoundingBox = {
+      x: bBox.x - padding,
+      y: bBox.y - padding,
+      width: bBox.width + 2 * padding,
+      height: bBox.height + 2 * padding,
+    };
+    const rect = visualizeBoundingBoxBehind({
+      svg,
+      boundignBox: paddedBoundingBox,
+      id: `tag_${tag.id}`,
       color: COLORS.symbolBoundingBox.color,
       opacity: COLORS.symbolBoundingBox.opacity,
       strokeColor: COLORS.symbolBoundingBox.strokeColor,

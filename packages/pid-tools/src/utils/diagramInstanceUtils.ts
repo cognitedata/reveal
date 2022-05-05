@@ -7,8 +7,9 @@ import {
   DiagramInstanceId,
   DiagramLineInstance,
   DiagramSymbolInstance,
-  DiagramEquipmentTagInstance,
+  DiagramEquipmentTag,
   PathReplacement,
+  DiagramTag,
 } from '../types';
 
 import { isFileConnection, isLineConnection, isEquipment } from './type';
@@ -236,23 +237,6 @@ export function addOrRemoveLabelToInstance(
 /* eslint-enable no-param-reassign */
 
 /* eslint-disable no-param-reassign */
-export function addOrRemoveLabelToEquipmentTag(
-  label: SVGTSpanElement,
-  tag: DiagramEquipmentTagInstance
-): void {
-  const isTag = EQUIPMENT_TAG_REGEX.test(label.innerHTML);
-
-  tag.equipmentTag = isTag ? label.innerHTML : tag.equipmentTag;
-
-  if (tag.labelIds.includes(label.id)) {
-    tag.labelIds = tag.labelIds.filter((li) => li !== label.id);
-  } else {
-    tag.labelIds = [...tag.labelIds, label.id];
-  }
-}
-/* eslint-enable no-param-reassign */
-
-/* eslint-disable no-param-reassign */
 export function addOrRemoveLineNumberToInstance<Type extends DiagramInstance>(
   lineNumber: string,
   instance: Type
@@ -269,36 +253,36 @@ export function addOrRemoveLineNumberToInstance<Type extends DiagramInstance>(
 
 export const createEquipmentTagInstanceFromSVGTSpanElement = (
   node: SVGTSpanElement
-): DiagramEquipmentTagInstance => {
+): DiagramTag => {
   return createEquipmentTagInstance(node.innerHTML, node.id);
 };
 
 export const createEquipmentTagInstance = (
   equipmentTag: string,
   labelId: string
-): DiagramEquipmentTagInstance => {
+): DiagramEquipmentTag => {
   return {
     id: `equipTag-${labelId}`,
     equipmentTag,
     labelIds: [labelId],
-    type: 'EquipmentTag',
+    type: 'Equipment Tag',
     lineNumbers: [],
     inferedLineNumbers: [],
   };
 };
 
-export const getDiagramEquipmentTagInstanceByTagId = (
+export const getDiagramTagInstanceByTagId = (
   id: string,
-  equipmentTags: DiagramEquipmentTagInstance[]
+  tags: DiagramTag[]
 ) => {
-  return equipmentTags.find((tag) => tag.id === id);
+  return tags.find((tag) => tag.id === id);
 };
 
-export const getDiagramEquipmentTagInstanceByLabelId = (
+export const getDiagramTagInstanceByLabelId = (
   labelId: string,
-  equipmentTags: DiagramEquipmentTagInstance[]
+  tags: DiagramTag[]
 ) => {
-  return equipmentTags.find((tag) => tag.labelIds.includes(labelId));
+  return tags.find((tag) => tag.labelIds.includes(labelId));
 };
 
 export const getPathReplacementId = (pathReplacement: PathReplacement[]) =>

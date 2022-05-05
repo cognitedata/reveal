@@ -1,8 +1,10 @@
 /* eslint-disable no-console */
 /* eslint-disable no-param-reassign */
 import { v4 as uuid } from 'uuid';
+import minBy from 'lodash/minBy';
 import uniqBy from 'lodash/uniqBy';
 
+import { BoundingBox } from './geometry';
 import {
   getPathReplacementDescendants,
   getLineNumberFromText,
@@ -30,6 +32,7 @@ import {
   visualizeBoundingBoxBehind,
   visualizeSymbolInstanceBoundingBoxes,
   scaleStrokeWidth,
+  visualizeTagBoundingBoxes,
 } from './utils/domUtils';
 import {
   connectionHasInstanceId,
@@ -37,12 +40,13 @@ import {
 } from './utils/symbolUtils';
 import {
   DiagramConnection,
-  DiagramEquipmentTagInstance,
   DiagramInstanceId,
   DiagramInstanceWithPaths,
+  DiagramLineConnectionTag,
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
+  DiagramTag,
   DocumentMetadata,
   DiagramType,
   GraphDocument,
@@ -53,14 +57,13 @@ import {
   ToolType,
 } from './types';
 import {
-  addOrRemoveLabelToEquipmentTag,
   addOrRemoveLabelToInstance,
   addOrRemoveLineNumberToInstance,
   connectionExists,
   createEquipmentTagInstance,
   createEquipmentTagInstanceFromSVGTSpanElement,
-  getDiagramEquipmentTagInstanceByLabelId,
-  getDiagramEquipmentTagInstanceByTagId,
+  getDiagramTagInstanceByLabelId,
+  getDiagramTagInstanceByTagId,
   getDiagramInstanceByPathId,
   getDiagramInstanceId,
   getDiagramInstanceIdFromPathIds,
@@ -71,7 +74,7 @@ import {
   pruneSymbolOverlappingPathsFromLines,
 } from './utils/diagramInstanceUtils';
 import { isLine } from './utils/type';
-import { EQUIPMENT_TAG_REGEX } from './constants';
+import { EQUIPMENT_TAG_REGEX, LINE_CONNECTION_LETTER_REGEX } from './constants';
 import { getMetadataFromFileName } from './utils/fileNameUtils';
 
 const hoverBoldStrokeScale = 1.5;
@@ -91,9 +94,7 @@ type SymbolInstancesCallback = (
 ) => void;
 type LinesCallback = (lines: DiagramLineInstance[]) => void;
 type ConnectionsCallback = (lines: DiagramConnection[]) => void;
-type EquipmentTagsCallback = (
-  equipmentTags: DiagramEquipmentTagInstance[]
-) => void;
+type TagsCallback = (tags: DiagramTag[]) => void;
 type ActiveLineNumberCallback = (activeLineNumber: string | null) => void;
 type ActiveTagIdCallback = (activeTagId: string | null) => void;
 type PathReplacmentCallback = (
@@ -139,8 +140,8 @@ export class CognitePid {
   private connections: DiagramConnection[] = [];
   private connectionsSubscriber: ConnectionsCallback | undefined;
 
-  private equipmentTags: DiagramEquipmentTagInstance[] = [];
-  private equipmentTagsSubscriber: EquipmentTagsCallback | undefined;
+  private tags: DiagramTag[] = [];
+  private tagsSubscriber: TagsCallback | undefined;
 
   private activeLineNumber: string | null = null;
   private activeLineNumberSubscriber: ActiveLineNumberCallback | undefined;
@@ -188,7 +189,7 @@ export class CognitePid {
 
   private labelVisualizations: LabelVisualization[] = [];
   private lineNumberVisualizationIds: string[] = [];
-  private symbolInstanceBoundingBoxesIds: string[] = [];
+  private symbolInstanceAndTagBoundingBoxesIds: string[] = [];
 
   constructor(options: CognitePidOptions) {
     const host = document.querySelector(options.container) as SVGElement;
@@ -431,25 +432,20 @@ export class CognitePid {
     this.hideSelectionSubscriber = callback;
   }
 
-  setEquipmentTags(
-    equipmentTags: DiagramEquipmentTagInstance[],
-    refresh = true
-  ) {
-    this.equipmentTags = equipmentTags;
-    if (this.equipmentTagsSubscriber) {
-      this.equipmentTagsSubscriber(equipmentTags);
+  setTags(tags: DiagramTag[], refresh = true) {
+    this.tags = tags;
+    if (this.tagsSubscriber) {
+      this.tagsSubscriber(tags);
     } else {
-      console.warn(
-        'PID: Called this.setEquipmentTags() without this.equipmentTagsSubscriber'
-      );
+      console.warn('PID: Called this.setTags() without this.tagsSubscriber');
     }
     if (refresh) {
       this.refresh();
     }
   }
 
-  onChangeEquipmentTags(callback: EquipmentTagsCallback) {
-    this.equipmentTagsSubscriber = callback;
+  onChangeTags(callback: TagsCallback) {
+    this.tagsSubscriber = callback;
   }
 
   setActiveLineNumber(lineNumber: string | null, refresh = true) {
@@ -585,14 +581,14 @@ export class CognitePid {
     this.manuallyRemovedLabelConnections = [];
     this.labelVisualizations = [];
     this.lineNumberVisualizationIds = [];
-    this.symbolInstanceBoundingBoxesIds = [];
+    this.symbolInstanceAndTagBoundingBoxesIds = [];
 
     // Clear instances and current selections
     this.setSymbols([], false);
     this.setSymbolInstances([], false);
     this.setLines([], false);
     this.setConnections([], false);
-    this.setEquipmentTags([], false);
+    this.setTags([], false);
     this.setActiveLineNumber(null, false);
     this.setSymbolSelection([], false);
     this.setConnectionSelection(null, false);
@@ -634,8 +630,8 @@ export class CognitePid {
     const setLineNumbers = (lineNumbers: string[]) => {
       this.setLineNumbers(lineNumbers, false);
     };
-    const setEquipmentTags = (equipmentTags: DiagramEquipmentTagInstance[]) => {
-      this.setEquipmentTags(equipmentTags, false);
+    const setTags = (tags: DiagramTag[]) => {
+      this.setTags(tags, false);
     };
 
     loadGraphFromJson(
@@ -646,7 +642,7 @@ export class CognitePid {
       setConnections,
       setPathReplacement,
       setLineNumbers,
-      setEquipmentTags
+      setTags
     );
     this.refresh();
   }
@@ -688,6 +684,7 @@ export class CognitePid {
     this.splitPaths();
     this.parseLineNumbers();
     this.parseEquipmentTags();
+    this.parseLineConnectionTags();
 
     this.emit(EventType.LOAD);
     this.refresh();
@@ -735,7 +732,7 @@ export class CognitePid {
       connections: this.connections,
       active: this.activeTool,
       activeLineNumber: this.activeLineNumber,
-      equipmentTags: this.equipmentTags,
+      tags: this.tags,
       activeTagId: this.activeTagId,
       splitSelection: this.splitSelection,
       hideSelection: this.hideSelection,
@@ -863,7 +860,7 @@ export class CognitePid {
 
     // Clean up all the visualizations
     this.removeConnectionVisualizations();
-    this.removeSymbolInstanceBoundingBoxes();
+    this.removeSymbolInstanceAndTagBoundingBoxes();
     this.removeLabelVisualizations();
     this.removeLineVisualizations();
 
@@ -872,11 +869,11 @@ export class CognitePid {
       this.drawConnectionVisualizations();
     }
     if (this.activeTool === 'addSymbol') {
-      this.drawSymbolInstanceBoundingBoxes();
+      this.drawSymbolInstanceAndTagBoundingBoxes();
     }
     if (this.activeTool === 'connectLabels') {
       this.drawLabelVisualizations();
-    } else {
+    } else if (this.documentMetadata?.type === DiagramType.pid) {
       this.drawLineVisualizations();
     }
   }
@@ -946,7 +943,10 @@ export class CognitePid {
       return;
     }
 
-    if (this.activeTool !== 'connectLabels') {
+    if (
+      this.activeTool !== 'connectLabels' &&
+      this.documentMetadata?.type === DiagramType.pid
+    ) {
       if (node instanceof SVGTSpanElement) {
         const lineNumber = getLineNumberFromText(node.innerHTML);
         if (lineNumber) {
@@ -1109,29 +1109,20 @@ export class CognitePid {
       if (!(node instanceof SVGTSpanElement)) return;
 
       if (this.activeTagId) {
-        const tag = getDiagramEquipmentTagInstanceByTagId(
-          this.activeTagId,
-          this.equipmentTags
-        );
+        const tag = getDiagramTagInstanceByTagId(this.activeTagId, this.tags);
         if (tag === undefined) return;
-        addOrRemoveLabelToEquipmentTag(node, tag);
         if (tag.labelIds.length < 1) {
           this.setActiveTagId(tag.id);
-          this.setEquipmentTags(
-            this.equipmentTags.filter((tag) => tag.labelIds.length > 0)
-          );
+          this.setTags(this.tags.filter((tag) => tag.labelIds.length > 0));
         } else {
           this.setActiveTagId(tag.id);
-          this.setEquipmentTags([...this.equipmentTags]);
+          this.setTags([...this.tags]);
         }
       } else {
-        const tag = getDiagramEquipmentTagInstanceByLabelId(
-          node.id,
-          this.equipmentTags
-        );
+        const tag = getDiagramTagInstanceByLabelId(node.id, this.tags);
         if (tag === undefined) {
           const newTag = createEquipmentTagInstanceFromSVGTSpanElement(node);
-          this.setEquipmentTags([...this.equipmentTags, newTag]);
+          this.setTags([...this.tags, newTag]);
           this.setActiveTagId(newTag.id);
         } else {
           this.setActiveTagId(tag.id);
@@ -1211,25 +1202,73 @@ export class CognitePid {
   parseEquipmentTags() {
     if (this.pidDocument === undefined) return;
 
-    const newEqiupmentTags = [...this.equipmentTags];
+    const tags = [...this.tags];
 
     this.pidDocument.pidLabels.forEach((pidLabel) => {
       const equipmentTagMatch = pidLabel.text.match(EQUIPMENT_TAG_REGEX);
 
       if (!equipmentTagMatch) return;
 
-      if (newEqiupmentTags.some((eq) => eq.labelIds.includes(pidLabel.id)))
-        return;
+      if (tags.some((eq) => eq.labelIds.includes(pidLabel.id))) return;
 
       const equipmentTagText = equipmentTagMatch[0];
       const newEquipmentTag = createEquipmentTagInstance(
         equipmentTagText,
         pidLabel.id
       );
-      newEqiupmentTags.push(newEquipmentTag);
+      tags.push(newEquipmentTag);
     });
 
-    this.setEquipmentTags(newEqiupmentTags, false);
+    this.setTags(tags, false);
+  }
+
+  parseLineConnectionTags() {
+    if (this.pidDocument === undefined) return;
+
+    const tags = [...this.tags];
+
+    const sameOrLineNumberLabels = this.pidDocument.pidLabels.filter(
+      (pidLabel) =>
+        pidLabel.text.includes('SAME') || getLineNumberFromText(pidLabel.text)
+    );
+    const letterLabels = this.pidDocument.pidLabels.filter((pidLabel) =>
+      pidLabel.text.match(LINE_CONNECTION_LETTER_REGEX)
+    );
+
+    for (let i = 0; i < sameOrLineNumberLabels.length; i++) {
+      const sameOrLineNumberLabel = sameOrLineNumberLabels[i];
+
+      const potLabelWithDistance = minBy(
+        letterLabels.map((label) => {
+          return {
+            label,
+            distance: BoundingBox.fromRect(label.boundingBox).distance(
+              BoundingBox.fromRect(sameOrLineNumberLabel.boundingBox)
+            ),
+          };
+        }),
+        (labelAndDistance) => labelAndDistance.distance
+      );
+
+      // eslint-disable-next-line no-continue
+      if (potLabelWithDistance === undefined) continue;
+
+      const { distance } = potLabelWithDistance;
+      const potLabel = potLabelWithDistance.label;
+
+      if (distance < 20) {
+        const newTag: DiagramLineConnectionTag = {
+          id: `lcTag-${sameOrLineNumberLabel.id}-${potLabel.id}`,
+          labelIds: [sameOrLineNumberLabel.id, potLabel.id],
+          type: 'Line Connection Tag',
+          lineNumbers: [],
+          inferedLineNumbers: [],
+        };
+        tags.push(newTag);
+      }
+    }
+
+    this.setTags(tags, false);
   }
 
   autoAnalysis(documentMetadata: DocumentMetadata) {
@@ -1319,7 +1358,7 @@ export class CognitePid {
       this.pathReplacementGroups,
       this.documentMetadata,
       this.lineNumbers,
-      this.equipmentTags
+      this.tags
     );
   }
 
@@ -1622,27 +1661,32 @@ export class CognitePid {
     this.lineNumberVisualizationIds = [];
   }
 
-  private drawSymbolInstanceBoundingBoxes() {
+  private drawSymbolInstanceAndTagBoundingBoxes() {
     if (!this.svg) {
-      throw Error('Calling drawSymbolInstanceBoundingBoxes without SVG');
+      throw Error('Calling drawSymbolInstanceAndTagBoundingBoxes without SVG');
     }
     if (!this.pidDocument) {
       throw Error(
-        'Calling drawSymbolInstanceBoundingBoxes without pidDocument'
+        'Calling drawSymbolInstanceAndTagBoundingBoxes without pidDocument'
       );
     }
 
-    this.symbolInstanceBoundingBoxesIds = visualizeSymbolInstanceBoundingBoxes(
-      this.svg,
-      this.pidDocument,
-      this.symbolInstances
+    this.symbolInstanceAndTagBoundingBoxesIds =
+      visualizeSymbolInstanceBoundingBoxes(
+        this.svg,
+        this.pidDocument,
+        this.symbolInstances
+      );
+
+    this.symbolInstanceAndTagBoundingBoxesIds.push(
+      ...visualizeTagBoundingBoxes(this.svg, this.pidDocument, this.tags)
     );
   }
 
-  private removeSymbolInstanceBoundingBoxes() {
+  private removeSymbolInstanceAndTagBoundingBoxes() {
     if (this.svg === undefined) return;
-    for (let i = 0; i < this.symbolInstanceBoundingBoxesIds.length; i++) {
-      const id = this.symbolInstanceBoundingBoxesIds[i];
+    for (let i = 0; i < this.symbolInstanceAndTagBoundingBoxesIds.length; i++) {
+      const id = this.symbolInstanceAndTagBoundingBoxesIds[i];
       const pathToRemove = this.svg.getElementById(id);
       if (!pathToRemove) {
         throw Error(
@@ -1652,6 +1696,6 @@ export class CognitePid {
         pathToRemove.parentElement?.removeChild(pathToRemove);
       }
     }
-    this.symbolInstanceBoundingBoxesIds = [];
+    this.symbolInstanceAndTagBoundingBoxesIds = [];
   }
 }

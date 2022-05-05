@@ -106,7 +106,7 @@ describe('convertGraphToGlobalIds', () => {
       ],
       pathReplacementGroups: [],
       lineNumbers: ['L132'],
-      equipmentTags: [],
+      tags: [],
       labels: [],
     };
 
@@ -150,7 +150,7 @@ describe('mergeGraphs', () => {
       ],
       pathReplacementGroups: [],
       lineNumbers: ['L132'],
-      equipmentTags: [],
+      tags: [],
       labels: [],
     };
 
@@ -168,7 +168,7 @@ describe('mergeGraphs', () => {
       connections: [{ start: 'v2', end: 'l2', direction: 'unknown' }],
       pathReplacementGroups: [],
       lineNumbers: ['L132'],
-      equipmentTags: [],
+      tags: [],
       labels: [],
     };
 
@@ -209,7 +209,7 @@ describe('match multifileGraphs', () => {
       ],
       pathReplacementGroups: [],
       lineNumbers: ['L001'],
-      equipmentTags: [],
+      tags: [],
       labels: [],
     };
 
@@ -230,7 +230,7 @@ describe('match multifileGraphs', () => {
       connections: [{ start: 'i1', end: 'i3', direction: 'unknown' }],
       pathReplacementGroups: [],
       lineNumbers: ['L001'],
-      equipmentTags: [],
+      tags: [],
       labels: [],
     };
 
@@ -260,7 +260,7 @@ describe('match multifileGraphs', () => {
       ],
       pathReplacementGroups: [],
       lineNumbers: ['L001'],
-      equipmentTags: [],
+      tags: [],
       labels: [],
     };
 
@@ -287,7 +287,7 @@ describe('match multifileGraphs', () => {
       ],
       pathReplacementGroups: [],
       lineNumbers: ['L001'],
-      equipmentTags: [],
+      tags: [],
       labels: [],
     };
 

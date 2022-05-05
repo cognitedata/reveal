@@ -10,7 +10,6 @@ import styled from 'styled-components';
 import WorkSpaceTools from '../WorkSpaceTools/WorkSpaceTools';
 import {
   Annotation,
-  AnnotationType,
   DocumentType,
   Link,
   ParsedDocument,
@@ -117,10 +116,8 @@ const getFileConnectionLine = (
     ({ from, to }) =>
       from.documentId === document.externalId &&
       to.documentId === document.externalId &&
-      annotationsById[from.annotationId]?.type ===
-        AnnotationType.FILE_CONNECTION &&
-      annotationsById[to.annotationId]?.type ===
-        AnnotationType.FILE_CONNECTION &&
+      annotationsById[from.annotationId]?.type === 'lineConnectionTag' &&
+      annotationsById[to.annotationId]?.type === 'lineConnectionTag' &&
       (from.annotationId === annotationId || to.annotationId === annotationId)
   );
 
@@ -270,36 +267,14 @@ const IsoModal: React.FC<IsoModalProps> = ({
     );
   };
 
-  const annotationsById = keyBy(
-    isoParsedDocuments?.flatMap((document) => document.annotations),
-    (annotation) => annotation.id
-  );
-
   const drawings = isoParsedDocuments?.flatMap((document) => [
     ...getAnnotationBoundingBoxOverlay(
       undefined,
       document,
-      document.linking
-        .map(({ from: { annotationId } }) => annotationId)
-        .filter(
-          (id) => annotationsById[id]?.type === AnnotationType.FILE_CONNECTION
-        ),
-      'navigatable',
-      {
-        padding: BOUNDING_BOX_PADDING_PX,
-        fill: 'rgba(24, 175, 142, 0.2)',
-        stroke: '#00665C',
-        strokeWidth: 3,
-        dash: [3, 3],
-      }
-    ),
-    ...getAnnotationBoundingBoxOverlay(
-      undefined,
-      document,
-      document.linking.map(({ to: { annotationId } }) => annotationId),
-      // .filter(
-      //   (id) => annotationsById[id]?.type === AnnotationType.FILE_CONNECTION
-      // ),
+      document.linking.flatMap((link) => [
+        link.to.annotationId,
+        link.from.annotationId,
+      ]),
       'navigatable',
       {
         fill: 'rgba(24, 175, 142, 0.2)',
@@ -312,9 +287,9 @@ const IsoModal: React.FC<IsoModalProps> = ({
     ...getAnnotationBoundingBoxOverlay(
       undefined,
       document,
-      getAnnotationsForLineByDocument(undefined, document).map(
-        (annotation) => annotation.id
-      ),
+      getAnnotationsForLineByDocument(undefined, document)
+        .filter((annotation) => annotation.type !== 'text')
+        .map((annotation) => annotation.id),
       '',
       {
         padding: BOUNDING_BOX_PADDING_PX,

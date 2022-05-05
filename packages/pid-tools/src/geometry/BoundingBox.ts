@@ -45,6 +45,10 @@ export class BoundingBox {
     return new Point(this.x + this.width / 2, this.y + this.height / 2);
   }
 
+  distance(other: BoundingBox): number {
+    return this.midPoint().distance(other.midPoint());
+  }
+
   static fromRect(rect: Rect): BoundingBox {
     return new BoundingBox(rect.x, rect.y, rect.width, rect.height);
   }
