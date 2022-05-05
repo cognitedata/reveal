@@ -45,16 +45,14 @@ export const repopulateAnnotationState = (
   const annotationsById = state.annotations.byId;
 
   annotations.forEach((annotation) => {
-    const resourceId: number | undefined = annotation.annotatedResourceId;
-    if (resourceId) {
-      if (
-        filesById[resourceId] &&
-        !filesById[resourceId].includes(annotation.id)
-      ) {
-        filesById[resourceId].push(annotation.id);
-      } else {
-        filesById[resourceId] = [annotation.id];
-      }
+    const resourceId: number = annotation.annotatedResourceId;
+    if (
+      filesById[resourceId] &&
+      !filesById[resourceId].includes(annotation.id)
+    ) {
+      filesById[resourceId].push(annotation.id);
+    } else {
+      filesById[resourceId] = [annotation.id];
     }
 
     if (
@@ -84,15 +82,13 @@ export const updateAnnotations = (
   const annotationsById = state.annotations.byId;
 
   annotations.forEach((annotation) => {
-    const resourceId: number | undefined = annotation.annotatedResourceId;
-    if (resourceId) {
-      if (filesById[resourceId]) {
-        if (!filesById[resourceId].includes(annotation.id)) {
-          filesById[resourceId].push(annotation.id);
-        }
-      } else {
-        filesById[resourceId] = [annotation.id];
+    const resourceId = annotation.annotatedResourceId;
+    if (filesById[resourceId]) {
+      if (!filesById[resourceId].includes(annotation.id)) {
+        filesById[resourceId].push(annotation.id);
       }
+    } else {
+      filesById[resourceId] = [annotation.id];
     }
     annotationsById[annotation.id] = annotation;
   });
