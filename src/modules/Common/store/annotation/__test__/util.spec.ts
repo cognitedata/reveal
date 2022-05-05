@@ -8,7 +8,7 @@ import {
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
-import { getDummyImageObjectDetectionBoundingBoxAnnotation } from 'src/modules/Common/store/annotation/utils/getDummyAnnotations';
+import { getDummyImageObjectDetectionBoundingBoxAnnotation } from 'src/modules/Common/store/annotation/__test__/getDummyAnnotations';
 
 const mockState = {
   ...initialState,
