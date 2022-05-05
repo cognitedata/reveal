@@ -1,11 +1,12 @@
 import { existsSync, readFileSync } from 'fs';
 import { resolve as pathResolve } from 'path';
 import { CdfApiConfig, MockData } from '../app';
-import { mockDataSample } from '../mock-data';
+// import { mockDataSample } from '../mock-data';
 
 export function loadMockData(mockDataPath: string): MockData {
   if (!mockDataPath) {
-    return mockDataSample;
+    // return mockDataSample;
+    return loadFile('mock-data.js', {});
   }
   return loadFile(mockDataPath, {});
 }

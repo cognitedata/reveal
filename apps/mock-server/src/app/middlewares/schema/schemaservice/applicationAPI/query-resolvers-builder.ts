@@ -31,7 +31,6 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
 
   params.tablesList.forEach((table) => {
     resolvers.Query[`list${capitalize(table)}`] = (prm, filterParams) => {
-      console.log(table, filterParams);
       const items = fetchAndQueryData({
         globalDb: params.db,
         templateDb,
@@ -45,7 +44,12 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
       return {
         items,
         edges: items.map((item) => ({ node: item })),
-        cursor: '',
+        pageInfo: {
+          endCursor: undefined,
+          startCursor: undefined,
+          hasNextPage: false,
+          hasPreviousPage: false,
+        },
       };
     };
 
@@ -84,6 +88,7 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
             schemaFieldName: fieldName,
             isFetchingObject: true,
           });
+
           return results[0];
         };
       }
@@ -143,7 +148,10 @@ function fetchAndQueryData(props: FetchAndQueryDataProps): CdfResourceObject[] {
 
   if (refObj) {
     const relation = refObj[schemaFieldName];
-    if ((!isFetchingObject && !relation) || !relation.length) {
+    if (
+      (!isFetchingObject && !relation) ||
+      (!isFetchingObject && !relation.length)
+    ) {
       return [];
     }
     const relationParams = isFetchingObject

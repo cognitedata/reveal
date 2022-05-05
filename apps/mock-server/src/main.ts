@@ -6,7 +6,7 @@ import cdfMiddleware from './app/middlewares/cdf-middleware';
 
 // hardcoded for now, should be loaded from file
 import { loadConfig, loadMockData } from './cli/loader';
-const TENANT = process.env.TENANT || 'mock';
+const TENANT = process.env.NODE_ENV || 'mock';
 const server = createMockServer();
 
 const args = getArgs();
