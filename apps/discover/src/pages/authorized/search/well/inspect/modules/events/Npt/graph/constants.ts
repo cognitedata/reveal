@@ -3,8 +3,6 @@ import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors, colors, DEFAULT_NPT_COLOR } from '../constants';
 
-import { formatTooltip } from './utils';
-
 export const NO_NPT_DATA_COLOR = '#00000010';
 
 export const GRAPH_MAX_HEIGHT = 550;
@@ -29,7 +27,7 @@ export const NPT_GRAPH_OPTIONS: StackedBarChartOptions<NPTEvent> = {
     title: GRAPH_LEGEND_TITLE,
     overlay: true,
   },
-  formatTooltip,
+
   fixXValuesToDecimalPlaces: 3,
   noDataAmongSelectedCheckboxesText: NO_DATA_AMONG_SELECTED_NPT_CODES_TEXT,
   noDataText: NO_DATA_TEXT,

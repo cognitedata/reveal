@@ -39,13 +39,15 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   ...rest
 }) => {
   const options: OptionType<MultiSelectOptionType>[] = useDeepMemo(() => {
-    const processedOptions = data.map((option) => {
+    const processedOptions = data.map((option: MultiSelectOptionType) => {
       const value = get(option, 'value', option);
       const label = [value, extraLabels[value]].filter(Boolean).join(' ');
+      const helpText = get(option, 'helpText');
 
       return {
         label,
         value: option,
+        helpText,
       };
     });
 

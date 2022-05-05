@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { MultiSelect } from 'components/Filters';
+import { MultiSelectOptionObject } from 'components/Filters/types';
 import { useDeepMemo } from 'hooks/useDeep';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useFilterDataNpt } from 'modules/inspectTabs/selectors';
@@ -14,7 +15,7 @@ import {
 } from './constants';
 
 export const NPTCodeFilter = React.memo(
-  ({ nptCodes }: { nptCodes: string[] }) => {
+  ({ nptCodes }: { nptCodes: MultiSelectOptionObject[] }) => {
     const { nptCode } = useFilterDataNpt();
     const dispatch = useDispatch();
 

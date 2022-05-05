@@ -20,6 +20,7 @@ import { NavigationPanel, NavigationPanelData } from './NavigationPanel';
 import { NPTDurationGraph } from './NPTDurationGraph';
 import { NPTEventsGraph } from './NPTEventsGraph';
 import { NPTEventsTable } from './NPTEventsTable';
+import { useDataLayer } from './useDataLayer';
 
 interface Props {
   events: NPTEvent[];
@@ -43,6 +44,7 @@ export const SelectedWellboreNptView: React.FC<Props> = React.memo(
   }) => {
     const [chartRendering, setChartRendering] = useState<boolean>(false);
     const chartData = useRef<NPTEvent[]>(EMPTY_ARRAY);
+    const { nptCodeDefinitions } = useDataLayer();
 
     const groupedEvents = useDeepMemo(
       () => groupBy(events, accessors.WELLBORE_NAME),
@@ -104,9 +106,15 @@ export const SelectedWellboreNptView: React.FC<Props> = React.memo(
           />
 
           <SelectedWellboreDataContainer>
-            <NPTDurationGraph events={chartData.current} />
+            <NPTDurationGraph
+              events={chartData.current}
+              nptCodeDefinitions={nptCodeDefinitions}
+            />
             <Separator />
-            <NPTEventsGraph events={chartData.current} />
+            <NPTEventsGraph
+              events={chartData.current}
+              nptCodeDefinitions={nptCodeDefinitions}
+            />
             <NPTEventsTable events={chartData.current} />
           </SelectedWellboreDataContainer>
         </OverlayNavigation>

@@ -124,6 +124,7 @@ export const useChartCommonEssentials = <T>({
     colorConfig,
     isolateLegend,
     legendOptions: options?.legendOptions,
+    getInfoIcon: options?.getInfoIcon,
   };
 
   return useDeepMemo(

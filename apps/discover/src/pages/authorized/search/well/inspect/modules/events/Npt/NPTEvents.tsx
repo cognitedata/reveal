@@ -14,9 +14,11 @@ import { NPTGraph, SelectedWellboreNptView } from './graph';
 import { SelectedWellbore } from './graph/types';
 import { NPTTable } from './table';
 import { ViewModes } from './types';
+import { useDataLayer } from './useDataLayer';
 
 export const NPTEvents: React.FC = () => {
   const { isLoading, events } = useNptEvents();
+  const { nptCodeDefinitions, nptDetailCodeDefinitions } = useDataLayer();
 
   const [activeViewMode, setActiveViewMode] = useState<ViewModes>(
     DEFAULT_ACTIVE_VIEW_MODE
@@ -56,7 +58,12 @@ export const NPTEvents: React.FC = () => {
 
         {isTableViewModeActive && <Separator />}
 
-        <FilterContainer events={events} isVisible={isTableViewModeActive} />
+        <FilterContainer
+          events={events}
+          isVisible={isTableViewModeActive}
+          nptCodeDefinitions={nptCodeDefinitions}
+          nptDetailCodeDefinitions={nptDetailCodeDefinitions}
+        />
       </NptEventsDataControlArea>
 
       <NoUnmountShowHide show={isGraphViewModeActive} fullHeight>

@@ -2,7 +2,8 @@ import { CSSProperties } from 'react';
 
 import { Icon, Tooltip } from '@cognite/cogs.js';
 
-import { ACTION_MESSAGE, DEFINITION, NO_DEFINITION } from './constants';
+import { Definition } from './Definition';
+import { NoCodeDefinition } from './NoCodeDefinition';
 
 export const NptCodeDefinition: React.FC<{
   nptCodeDefinition?: string;
@@ -14,15 +15,9 @@ export const NptCodeDefinition: React.FC<{
       content={
         <>
           {description ? (
-            <>
-              <div style={{ fontSize: '11px' }}>{DEFINITION}</div>
-              <div style={{ fontWeight: 'bolder' }}> {description}</div>
-            </>
+            <Definition definition={description} />
           ) : (
-            <>
-              <div>{NO_DEFINITION}</div>
-              <div> {ACTION_MESSAGE}</div>
-            </>
+            <NoCodeDefinition />
           )}
         </>
       }

@@ -28,6 +28,7 @@ export type MultiSelectOptionValue = string | number | PossibleDateRangeDate;
 export type MultiSelectOptionObject = {
   value: MultiSelectOptionValue;
   count?: number;
+  helpText?: string | JSX.Element;
 };
 
 export type MultiSelectOptionType =

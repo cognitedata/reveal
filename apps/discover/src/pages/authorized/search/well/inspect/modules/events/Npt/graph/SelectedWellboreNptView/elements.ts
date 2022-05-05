@@ -141,3 +141,9 @@ export const QuarterColumn = styled(CardColumn)`
 export const HalfColumn = styled(CardColumn)`
   width: 50%;
 `;
+
+export const IconStyle = {
+  marginLeft: '5px',
+  verticalAlign: 'middle',
+  color: 'rgba(0, 0, 0, 0.55)',
+};

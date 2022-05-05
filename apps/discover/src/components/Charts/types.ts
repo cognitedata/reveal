@@ -34,9 +34,10 @@ export interface BaseChartOptions<T> {
   colorConfig?: ColorConfig;
   legendOptions?: LegendOptions;
   margins?: Partial<Margins>;
-  formatTooltip?: (data: T) => string;
+  formatTooltip?: (data: T) => string | JSX.Element;
   fixXValuesToDecimalPlaces?: number;
   zoomStepSize?: number;
+  getInfoIcon?: (option: string) => JSX.Element;
 }
 
 export interface AxisScales {

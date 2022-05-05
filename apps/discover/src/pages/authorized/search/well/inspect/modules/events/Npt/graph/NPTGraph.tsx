@@ -7,17 +7,20 @@ import {
   StackedBarChart,
 } from 'components/Charts/modules/StackedBarChart';
 import { useDeepMemo } from 'hooks/useDeep';
-import { useWellInspectSelectedWellboreNames } from 'modules/wellInspect/hooks/useWellInspect';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../constants';
+import { NptCodeDefinition } from '../NptCodeDefinition';
 
 import {
   GRAPH_TITLE,
   GRAPH_X_AXIS_TITLE,
   NPT_GRAPH_OPTIONS,
 } from './constants';
+import { IconStyle } from './SelectedWellboreNptView/elements';
+import { NptTooltip } from './SelectedWellboreNptView/NptTooltip';
 import { SelectedWellbore } from './types';
+import { useDataLayer } from './useDataLayer';
 import { adaptEventsToDaysDuration } from './utils';
 
 interface Props {
@@ -27,7 +30,7 @@ interface Props {
 
 export const NPTGraph: React.FC<Props> = React.memo(
   ({ events, onSelectBar }) => {
-    const wellboreNames = useWellInspectSelectedWellboreNames();
+    const { nptCodeDefinitions, wellboreNames } = useDataLayer();
 
     const [lastUpdatedTime, setLastUpdatedTime] = useState<number>();
     const [chartSubtitle, setChartSubtitle] = useState<string>(
@@ -68,6 +71,23 @@ export const NPTGraph: React.FC<Props> = React.memo(
       []
     );
 
+    const setFormatTooltip = useCallback(
+      (event: NPTEvent) => (
+        <NptTooltip event={event} definitions={nptCodeDefinitions} />
+      ),
+      []
+    );
+
+    const setInfoIcon = useCallback(
+      (option: string) => (
+        <NptCodeDefinition
+          nptCodeDefinition={nptCodeDefinitions[option]}
+          iconStyle={IconStyle}
+        />
+      ),
+      []
+    );
+
     return useDeepMemo(
       () => (
         <StackedBarChart<NPTEvent>
@@ -82,7 +102,11 @@ export const NPTGraph: React.FC<Props> = React.memo(
           groupDataInsideBarsBy={accessors.NPT_CODE}
           title={GRAPH_TITLE}
           subtitle={chartSubtitle}
-          options={NPT_GRAPH_OPTIONS}
+          options={{
+            ...NPT_GRAPH_OPTIONS,
+            formatTooltip: setFormatTooltip,
+            getInfoIcon: setInfoIcon,
+          }}
           onUpdate={handleOnUpdateGraph}
           onSelectBar={handleOnSelectBar}
         />

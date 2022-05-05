@@ -60,7 +60,7 @@ export const BarText = styled(Body)`
 export const BarTooltip = styled(Tooltip)`
   position: absolute;
   white-space: nowrap;
-  text-align: center;
+  text-align: left;
   top: ${BAR_HEIGHT}px;
   transform: translateX(-50%);
 `;

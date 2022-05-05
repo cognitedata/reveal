@@ -6,6 +6,7 @@ export interface LegendProps {
   onChangeLegendCheckbox: (option: string, checked: boolean) => void;
   isolateLegend?: boolean;
   legendOptions?: LegendOptions;
+  getInfoIcon?: (option: string) => JSX.Element;
 }
 
 export interface LegendCheckboxState {

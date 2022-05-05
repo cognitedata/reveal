@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { getEndTimeDisplay } from 'dataLayers/wells/npt/decorators/getEndTimeDisplay';
 import { getStartTimeDisplay } from 'dataLayers/wells/npt/decorators/getStartTimeDisplay';
@@ -15,6 +15,8 @@ import { NPTEvent } from 'modules/wellSearch/types';
 import { FlexColumn, FlexRow } from 'styles/layout';
 
 import { accessors, colors, DEFAULT_NPT_COLOR } from '../../constants';
+import { NptCodeDefinition } from '../../NptCodeDefinition';
+import { NptCodeDefinitionType } from '../../types';
 import { NO_NPT_DATA_COLOR } from '../constants';
 
 import {
@@ -33,6 +35,7 @@ import {
   QuarterColumn,
   HalfColumn,
   CardSection,
+  IconStyle,
 } from './elements';
 
 export const Card = ({
@@ -52,113 +55,125 @@ export const Card = ({
   );
 };
 
-export const NPTEventsGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
-  ({ events }) => {
-    const { data: unit } = useUserPreferencesMeasurement();
+export const NPTEventsGraph: React.FC<{
+  events: NPTEvent[];
+  nptCodeDefinitions?: NptCodeDefinitionType;
+}> = React.memo(({ events, nptCodeDefinitions }) => {
+  const { data: unit } = useUserPreferencesMeasurement();
 
-    const options: ScatterPlotOptions<NPTEvent> = useMemo(
-      () => ({
-        maxHeight: GRAPH_MAX_HEIGHT,
-        colorConfig: {
-          colors,
-          accessor: accessors.NPT_CODE,
-          defaultColor: DEFAULT_NPT_COLOR,
-          noDataColor: NO_NPT_DATA_COLOR,
-        },
-        legendOptions: {
-          isolate: false,
-        },
-      }),
-      []
-    );
+  const setInfoIcon = useCallback(
+    (option: string) => (
+      <NptCodeDefinition
+        nptCodeDefinition={nptCodeDefinitions && nptCodeDefinitions[option]}
+        iconStyle={IconStyle}
+      />
+    ),
+    []
+  );
 
-    const formatAxisLabel = (startTime: number) => {
-      return formatDate(startTime, CHART_AXIS_LABEL_DATE_FORMAT);
-    };
+  const options: ScatterPlotOptions<NPTEvent> = useMemo(
+    () => ({
+      maxHeight: GRAPH_MAX_HEIGHT,
+      colorConfig: {
+        colors,
+        accessor: accessors.NPT_CODE,
+        defaultColor: DEFAULT_NPT_COLOR,
+        noDataColor: NO_NPT_DATA_COLOR,
+      },
+      legendOptions: {
+        isolate: false,
+      },
+      getInfoIcon: setInfoIcon,
+    }),
+    []
+  );
 
-    const renderPlotHoverComponent = (nptEvent: NPTEvent) => {
-      const nptCode = get(nptEvent, accessors.NPT_CODE);
-      const nptCodeIndicatorColor = get(colors, nptCode, DEFAULT_NPT_COLOR);
+  const formatAxisLabel = (startTime: number) => {
+    return formatDate(startTime, CHART_AXIS_LABEL_DATE_FORMAT);
+  };
 
-      return (
-        <NPTEventCard key={uniqueId(nptCode)}>
-          <NPTCodeContainer>
-            <NPTCodeIndicator color={nptCodeIndicatorColor} />
-            <FlexColumn>
-              <SectionTitle>NPT code</SectionTitle>
-              <SectionData>{nptCode}</SectionData>
-            </FlexColumn>
-          </NPTCodeContainer>
-
-          <FlexRow>
-            <QuarterColumn>
-              <Card title="Start date" value={getStartTimeDisplay(nptEvent)} />
-              <Card
-                title={`NPT MD${unit ? ` (${unit})` : ''}`}
-                value={get(nptEvent, accessors.MEASURED_DEPTH).toFixed(2)}
-              />
-              <Card
-                title="Root cause"
-                value={get(nptEvent, accessors.ROOT_CAUSE)}
-              />
-              <Card
-                title="NPT level"
-                value={get(nptEvent, accessors.NPT_LEVEL)}
-              />
-              <Card title="Created" value="-" />
-            </QuarterColumn>
-
-            <QuarterColumn>
-              <Card title="End date" value={getEndTimeDisplay(nptEvent)} />
-              <Card
-                title="Duration"
-                value={getTimeDuration(
-                  get(nptEvent, accessors.DURATION),
-                  'hours'
-                )}
-              />
-              <Card
-                title="Failure location"
-                value={get(nptEvent, accessors.LOCATION)}
-              />
-              <Card title="Subtype" value={get(nptEvent, accessors.SUBTYPE)} />
-              <Card title="Updated" value="-" />
-            </QuarterColumn>
-
-            <HalfColumn>
-              <Card
-                title="Description"
-                value={get(nptEvent, accessors.DESCRIPTION)}
-                multiline
-              />
-            </HalfColumn>
-          </FlexRow>
-        </NPTEventCard>
-      );
-    };
+  const renderPlotHoverComponent = (nptEvent: NPTEvent) => {
+    const nptCode = get(nptEvent, accessors.NPT_CODE);
+    const nptCodeIndicatorColor = get(colors, nptCode, DEFAULT_NPT_COLOR);
 
     return (
-      <ChartWrapper>
-        <ScatterPlot<NPTEvent>
-          id="selected-wellbore-npt-events-graph"
-          data={events}
-          xAxis={{
-            accessor: accessors.START_TIME,
-            title: NPT_EVENTS_GRAPH_X_AXIS_TITLE,
-            placement: AxisPlacement.Bottom,
-            formatAxisLabel,
-          }}
-          yAxis={{
-            accessor: accessors.MEASURED_DEPTH,
-            title: `${NPT_EVENTS_GRAPH_Y_AXIS_TITLE} (${unit})`,
-            spacing: 30,
-            reverseScaleDomain: true,
-          }}
-          title={NPT_EVENTS_GRAPH_TITLE}
-          options={options}
-          renderPlotHoverComponent={renderPlotHoverComponent}
-        />
-      </ChartWrapper>
+      <NPTEventCard key={uniqueId(nptCode)}>
+        <NPTCodeContainer>
+          <NPTCodeIndicator color={nptCodeIndicatorColor} />
+          <FlexColumn>
+            <SectionTitle>NPT code</SectionTitle>
+            <SectionData>{nptCode}</SectionData>
+          </FlexColumn>
+        </NPTCodeContainer>
+
+        <FlexRow>
+          <QuarterColumn>
+            <Card title="Start date" value={getStartTimeDisplay(nptEvent)} />
+            <Card
+              title={`NPT MD${unit ? ` (${unit})` : ''}`}
+              value={get(nptEvent, accessors.MEASURED_DEPTH).toFixed(2)}
+            />
+            <Card
+              title="Root cause"
+              value={get(nptEvent, accessors.ROOT_CAUSE)}
+            />
+            <Card
+              title="NPT level"
+              value={get(nptEvent, accessors.NPT_LEVEL)}
+            />
+            <Card title="Created" value="-" />
+          </QuarterColumn>
+
+          <QuarterColumn>
+            <Card title="End date" value={getEndTimeDisplay(nptEvent)} />
+            <Card
+              title="Duration"
+              value={getTimeDuration(
+                get(nptEvent, accessors.DURATION),
+                'hours'
+              )}
+            />
+            <Card
+              title="Failure location"
+              value={get(nptEvent, accessors.LOCATION)}
+            />
+            <Card title="Subtype" value={get(nptEvent, accessors.SUBTYPE)} />
+            <Card title="Updated" value="-" />
+          </QuarterColumn>
+
+          <HalfColumn>
+            <Card
+              title="Description"
+              value={get(nptEvent, accessors.DESCRIPTION)}
+              multiline
+            />
+          </HalfColumn>
+        </FlexRow>
+      </NPTEventCard>
     );
-  }
-);
+  };
+
+  return (
+    <ChartWrapper>
+      <ScatterPlot<NPTEvent>
+        id="selected-wellbore-npt-events-graph"
+        data={events}
+        xAxis={{
+          accessor: accessors.START_TIME,
+          title: NPT_EVENTS_GRAPH_X_AXIS_TITLE,
+          placement: AxisPlacement.Bottom,
+          formatAxisLabel,
+        }}
+        yAxis={{
+          accessor: accessors.MEASURED_DEPTH,
+          title: `${NPT_EVENTS_GRAPH_Y_AXIS_TITLE} (${unit})`,
+          spacing: 30,
+          reverseScaleDomain: true,
+        }}
+        title={NPT_EVENTS_GRAPH_TITLE}
+        options={options}
+        renderPlotHoverComponent={renderPlotHoverComponent}
+      />
+    </ChartWrapper>
+  );
+});

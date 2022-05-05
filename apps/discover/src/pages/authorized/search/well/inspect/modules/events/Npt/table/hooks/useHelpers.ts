@@ -1,6 +1,5 @@
 import { getNptCodeTableSort } from 'dataLayers/wells/wellbores/selectors/getNptCodeSort';
 import get from 'lodash/get';
-import { useNptLegendCodeQuery } from 'services/well/legend/npt/useNptLegendQuery';
 import { getTimeDuration } from 'utils/date';
 import { processAccessor } from 'utils/table/processAccessor';
 
@@ -10,6 +9,7 @@ import { NPTEvent } from 'modules/wellSearch/types';
 import { COMMON_COLUMN_WIDTHS } from '../../../../../constants';
 import { accessors } from '../../constants';
 import { getCommonColumns, getExtendedColumns } from '../columns';
+import { useDataLayer } from '../useDataLayer';
 import {
   renderAsBody2DefaultStrongText,
   renderNPTCodeWithColor,
@@ -48,7 +48,7 @@ export const useNptWellboresTableColumns = () => {
 };
 
 export const useNptEventsTableColumns = () => {
-  const { data: nptLegendCodes } = useNptLegendCodeQuery();
+  const { nptCodeDefinitions } = useDataLayer();
 
   return [
     {
@@ -56,7 +56,7 @@ export const useNptEventsTableColumns = () => {
       width: '270px',
       maxWidth: '0.3fr',
       Cell: ({ row: { original } }: { row: { original: NPTEvent } }) =>
-        renderNPTCodeWithColor(original, nptLegendCodes?.items),
+        renderNPTCodeWithColor(original, nptCodeDefinitions),
       stickyColumn: true,
     },
     ...useNptTableCommonHeaders(),
@@ -65,7 +65,7 @@ export const useNptEventsTableColumns = () => {
 
 export const useSelectedWellboreNptEventsTableColumns = () => {
   const commonHeaders = useNptTableCommonHeaders();
-  const { data: nptLegendCodes } = useNptLegendCodeQuery();
+  const { nptCodeDefinitions } = useDataLayer();
 
   return [
     {
@@ -74,7 +74,7 @@ export const useSelectedWellboreNptEventsTableColumns = () => {
       width: '150px',
       sortType: getNptCodeTableSort,
       Cell: ({ row: { original } }: { row: { original: NPTEvent } }) =>
-        renderNPTCodeWithColor(original, nptLegendCodes?.items),
+        renderNPTCodeWithColor(original, nptCodeDefinitions),
       stickyColumn: true,
     },
     ...getExtendedColumns(commonHeaders, [

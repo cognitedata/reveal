@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { AxisPlacement } from 'components/Charts/common/Axis';
 import {
@@ -8,6 +8,7 @@ import {
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../../constants';
+import { NptCodeDefinitionType } from '../../types';
 import { NPT_GRAPH_OPTIONS } from '../constants';
 import { adaptEventsToDaysDuration } from '../utils';
 
@@ -17,45 +18,55 @@ import {
   NPT_DURATION_GRAPH_X_AXIS_TITLE,
 } from './constants';
 import { ChartWrapper } from './elements';
+import { NptTooltip } from './NptTooltip';
 
-export const NPTDurationGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
-  ({ events }) => {
-    const options: StackedBarChartOptions<NPTEvent> = useMemo(
-      () => ({
-        ...NPT_GRAPH_OPTIONS,
-        maxHeight: GRAPH_MAX_HEIGHT,
-        legendOptions: {
-          isolate: false,
-        },
-        hideBarLabels: true,
-        margins: {
-          top: -7,
-        },
-      }),
-      []
-    );
+export const NPTDurationGraph: React.FC<{
+  events: NPTEvent[];
+  nptCodeDefinitions?: NptCodeDefinitionType;
+}> = React.memo(({ events, nptCodeDefinitions }) => {
+  const setFormatTooltip = useCallback(
+    (event: NPTEvent) => (
+      <NptTooltip event={event} definitions={nptCodeDefinitions} />
+    ),
+    []
+  );
 
-    const adaptedEvents = useMemo(
-      () => adaptEventsToDaysDuration(events),
-      [events]
-    );
+  const options: StackedBarChartOptions<NPTEvent> = useMemo(
+    () => ({
+      ...NPT_GRAPH_OPTIONS,
+      maxHeight: GRAPH_MAX_HEIGHT,
+      legendOptions: {
+        isolate: false,
+      },
+      hideBarLabels: true,
+      margins: {
+        top: -7,
+      },
+      formatTooltip: setFormatTooltip,
+    }),
+    []
+  );
 
-    return (
-      <ChartWrapper>
-        <StackedBarChart<NPTEvent>
-          id="selected-wellbore-npt-duration-graph"
-          data={adaptedEvents}
-          xAxis={{
-            accessor: accessors.DURATION,
-            title: NPT_DURATION_GRAPH_X_AXIS_TITLE,
-            placement: AxisPlacement.Bottom,
-          }}
-          yAxis={{ accessor: accessors.WELLBORE_NAME, spacing: 50 }}
-          groupDataInsideBarsBy={accessors.NPT_CODE}
-          title={NPT_DURATION_GRAPH_TITLE}
-          options={options}
-        />
-      </ChartWrapper>
-    );
-  }
-);
+  const adaptedEvents = useMemo(
+    () => adaptEventsToDaysDuration(events),
+    [events]
+  );
+
+  return (
+    <ChartWrapper>
+      <StackedBarChart<NPTEvent>
+        id="selected-wellbore-npt-duration-graph"
+        data={adaptedEvents}
+        xAxis={{
+          accessor: accessors.DURATION,
+          title: NPT_DURATION_GRAPH_X_AXIS_TITLE,
+          placement: AxisPlacement.Bottom,
+        }}
+        yAxis={{ accessor: accessors.WELLBORE_NAME, spacing: 50 }}
+        groupDataInsideBarsBy={accessors.NPT_CODE}
+        title={NPT_DURATION_GRAPH_TITLE}
+        options={options}
+      />
+    </ChartWrapper>
+  );
+});

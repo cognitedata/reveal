@@ -21,6 +21,7 @@ const LegendWithColorConfig = ({
   onChangeLegendCheckbox,
   isolateLegend = true,
   legendOptions,
+  getInfoIcon,
 }: LegendWithColorConfigProps) => {
   const { colors, defaultColor } = colorConfig;
   const title = legendOptions?.title;
@@ -45,6 +46,7 @@ const LegendWithColorConfig = ({
             data-testid="legend-checkbox"
           >
             {option}
+            {getInfoIcon && getInfoIcon(option)}
           </Checkbox>
         );
       }),
@@ -82,5 +84,6 @@ export const Legend = ({
   if (isUndefined(colorConfig)) {
     return null;
   }
+
   return <LegendWithColorConfig colorConfig={colorConfig} {...restProps} />;
 };

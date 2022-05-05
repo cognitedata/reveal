@@ -1,9 +1,7 @@
+import { getCodeDefinition } from 'dataLayers/wells/npt/selectors/getCodeDefinition';
 import get from 'lodash/get';
-import isEqual from 'lodash/isEqual';
 import styled from 'styled-components/macro';
 import { sortObjectsAscending, sortObjectsDecending } from 'utils/sort';
-
-import { WellEventLegend } from '@cognite/discover-api-types';
 
 import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 import { NPTEvent } from 'modules/wellSearch/types';
@@ -12,6 +10,7 @@ import { SortBy } from 'pages/types';
 import { accessors, colors, DEFAULT_NPT_COLOR } from '../constants';
 import { NptCodeAvatar } from '../elements';
 import { NptCodeDefinition } from '../NptCodeDefinition';
+import { NptCodeDefinitionType } from '../types';
 
 import { Body, IconStyles, NptCodeContainer } from './elements';
 
@@ -27,19 +26,17 @@ export const renderAsBody2DefaultStrongText = (text: string) => (
 
 export const renderNPTCodeWithColor = (
   nptEvent: NPTEvent,
-  nptLegendCodes?: WellEventLegend[]
+  nptLegendCodes?: NptCodeDefinitionType
 ) => {
   const nptCode = get(nptEvent, accessors.NPT_CODE);
-  const nptLegendCode = nptLegendCodes?.find((item) =>
-    isEqual(item.id, nptEvent.nptCode)
-  );
+  const nptCodeDefinition = getCodeDefinition(nptCode, nptLegendCodes);
 
   return (
     <NptCodeContainer>
       <NptCodeAvatar color={get(colors, nptCode, DEFAULT_NPT_COLOR)} />
       {nptCode}
       <NptCodeDefinition
-        nptCodeDefinition={nptLegendCode?.legend}
+        nptCodeDefinition={nptCodeDefinition}
         iconStyle={IconStyles}
       />
     </NptCodeContainer>

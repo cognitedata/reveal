@@ -7,6 +7,9 @@ import { useDeepMemo } from 'hooks/useDeep';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { NPTEvent } from 'modules/wellSearch/types';
 import { getNPTFilterOptions } from 'modules/wellSearch/utils/events';
+import { nptDataMapToMultiSelect } from 'modules/wellSearch/utils/npt';
+
+import { NptCodeDefinitionType, NptCodeDetailsDefinitionType } from '../types';
 
 import { NPTCodeFilter } from './NPTCodeFilter';
 import { NPTDetailCodeFilter } from './NPTDetailCodeFilter';
@@ -16,41 +19,54 @@ import { NPTFilterByName } from './NPTFilterByName';
 export const FilterContainer: React.FC<{
   events: NPTEvent[];
   isVisible: boolean;
-}> = React.memo(({ events, isVisible }) => {
-  const dispatch = useDispatch();
+  nptCodeDefinitions?: NptCodeDefinitionType;
+  nptDetailCodeDefinitions?: NptCodeDetailsDefinitionType;
+}> = React.memo(
+  ({ events, isVisible, nptCodeDefinitions, nptDetailCodeDefinitions }) => {
+    const dispatch = useDispatch();
 
-  const { minMaxDuration, nptCodes, nptDetailCodes } = useDeepMemo(
-    () => getNPTFilterOptions(events),
-    [events]
-  );
+    const { minMaxDuration, nptCodes, nptDetailCodes } = useDeepMemo(
+      () => getNPTFilterOptions(events),
+      [events]
+    );
 
-  useEffect(() => {
-    batch(() => {
-      dispatch(inspectTabsActions.setNptDuration(minMaxDuration));
-      dispatch(inspectTabsActions.setNptCode(nptCodes));
-      dispatch(inspectTabsActions.setNptDetailCode(nptDetailCodes));
-    });
-  }, []);
+    const processedNptCodes = nptDataMapToMultiSelect(
+      nptCodes,
+      nptCodeDefinitions
+    );
+    const processedNptDetailCodes = nptDataMapToMultiSelect(
+      nptDetailCodes,
+      nptDetailCodeDefinitions
+    );
 
-  if (!isVisible) return null;
+    useEffect(() => {
+      batch(() => {
+        dispatch(inspectTabsActions.setNptDuration(minMaxDuration));
+        dispatch(inspectTabsActions.setNptCode(nptCodes));
+        dispatch(inspectTabsActions.setNptDetailCode(nptDetailCodes));
+      });
+    }, []);
 
-  return (
-    <Row>
-      <Col span={5}>
-        <NPTFilterByName />
-      </Col>
+    if (!isVisible) return null;
 
-      <Col span={7}>
-        <NPTDurationFilter minMaxDuration={minMaxDuration} />
-      </Col>
+    return (
+      <Row>
+        <Col span={5}>
+          <NPTFilterByName />
+        </Col>
 
-      <Col span={6}>
-        <NPTCodeFilter nptCodes={nptCodes} />
-      </Col>
+        <Col span={7}>
+          <NPTDurationFilter minMaxDuration={minMaxDuration} />
+        </Col>
 
-      <Col span={6}>
-        <NPTDetailCodeFilter nptDetailCodes={nptDetailCodes} />
-      </Col>
-    </Row>
-  );
-});
+        <Col span={6}>
+          <NPTCodeFilter nptCodes={processedNptCodes} />
+        </Col>
+
+        <Col span={6}>
+          <NPTDetailCodeFilter nptDetailCodes={processedNptDetailCodes} />
+        </Col>
+      </Row>
+    );
+  }
+);
