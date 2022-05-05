@@ -3,6 +3,7 @@ import {
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
+  ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
   Status,
@@ -11,7 +12,6 @@ import {
   AnnotationsBadgeCounts,
   VisionAnnotation,
   VisionAnnotationDataType,
-  VisionAnnotationObjectDataType,
 } from 'src/modules/Common/types';
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
 import {
@@ -21,6 +21,11 @@ import {
   isImageObjectDetectionPolygonData,
   isImageKeypointCollectionData,
 } from 'src/modules/Common/types/typeGuards';
+
+export type VisionAnnotationObjectDataType =
+  | ImageObjectDetectionBoundingBox
+  | ImageObjectDetectionPolygon
+  | ImageKeypointCollection;
 
 export const createVisionAnnotationStub = <T>({
   id,
