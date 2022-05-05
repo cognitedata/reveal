@@ -24,6 +24,8 @@ import {
   DEFAULT_RGB_BRIGHTNESS,
   DEFAULT_RGB_CONTRAST,
   DEFAULT_RGB_GAMMA,
+  OBJECT_STYLING_TEXTURE_HEIGHT,
+  OBJECT_STYLING_TEXTURE_WIDTH,
   PERSPECTIVE_CAMERA
 } from './constants';
 import { PointCloudOctree } from '../tree/PointCloudOctree';
@@ -177,7 +179,8 @@ export class PointCloudMaterial extends RawShaderMaterial {
   private readonly _gradient = SpectralGradient;
   private gradientTexture: Texture | undefined = generateGradientTexture(this._gradient);
 
-  private readonly _objectTexture: THREE.DataTexture = generateDataTexture(2048, 1, new Color(0x000000));
+  private readonly _objectTexture: THREE.DataTexture =
+    generateDataTexture(OBJECT_STYLING_TEXTURE_WIDTH, OBJECT_STYLING_TEXTURE_HEIGHT, new Color(0x000000));
 
   private _classification: IClassification = DEFAULT_CLASSIFICATION;
   private classificationTexture: Texture | undefined = generateClassificationTexture(this._classification);
@@ -457,6 +460,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
     define('MAX_POINT_LIGHTS 0');
     define('MAX_DIR_LIGHTS 0');
+    define(`OBJECT_STYLING_TEXTURE_WIDTH ${OBJECT_STYLING_TEXTURE_WIDTH}`);
 
     parts.push(shaderSrc);
 

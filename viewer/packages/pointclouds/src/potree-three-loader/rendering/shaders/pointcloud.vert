@@ -604,7 +604,9 @@ void main() {
         }
 
         if (objectId > 0.0) {
-            vec3 colorTexel = texelFetch(objectIdLUT, ivec2(int(objectId), 0), 0).rgb;
+            int lutX = int(objectId) % OBJECT_STYLING_TEXTURE_WIDTH;
+            int lutY = int(objectId) / OBJECT_STYLING_TEXTURE_WIDTH;
+            vec3 colorTexel = texelFetch(objectIdLUT, ivec2(lutX, lutY), 0).rgb;
 
             if (colorTexel.r + colorTexel.g + colorTexel.b > 0.0) {
                 vColor = colorTexel;
