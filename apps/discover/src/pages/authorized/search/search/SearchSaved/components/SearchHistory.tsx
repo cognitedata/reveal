@@ -44,7 +44,7 @@ const renderTooltipContent = (filters: SearchHistoryFilter[]) => {
       return null;
     }
 
-    const showNewLine = index < filters.length - 1;
+    const showNewLine = filters[index + 1]?.values.length > 0;
 
     return (
       <React.Fragment key={label}>
