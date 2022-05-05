@@ -266,17 +266,6 @@ async function init() {
   };
 
   animate();
-
-  // renderer.setAnimationLoop(() => {
-  //   controls.update();
-  //   if (!cadManager.needsRedraw) {
-  //     return;
-  //   }
-  //   render();
-
-  //   cadManager.resetRedraw();
-  //   pointCloudManager.resetRedraw();
-  // });
 }
 
 function fitCameraToBoundingBox(
