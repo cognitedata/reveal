@@ -25,7 +25,6 @@ import { SCALE_BLOCK_HEIGHT } from '../../common/Events/constants';
 import DepthColumn from '../../common/Events/DepthColumn';
 import {
   ScaleLine,
-  DepthMeasurementScale,
   BodyWrapper,
   BodyColumn,
   BodyColumnHeaderWrapper,
@@ -68,6 +67,7 @@ import {
   WaterDepth,
   DepthLabel,
   DepthIndicatorGutter,
+  DepthMeasurementScaleWrapper,
 } from './elements';
 import { CasingViewTypeProps } from './interfaces';
 import { getMdRange, isTied, mirrorCasingData } from './utils';
@@ -215,7 +215,7 @@ const CasingView: FC<CasingViewTypeProps> = ({
                   </BodyColumnHeaderLegend>
                 </BodyColumnHeaderWrapper>
                 <BodyColumnBody>
-                  <DepthMeasurementScale ref={scaleRef}>
+                  <DepthMeasurementScaleWrapper ref={scaleRef}>
                     {isEmpty(casings) ? (
                       <EmptyCasingsStateWrapper>
                         <EmptyState emptySubtitle={EMPTY_SCHEMA_TEXT} />
@@ -223,7 +223,7 @@ const CasingView: FC<CasingViewTypeProps> = ({
                     ) : (
                       scaleBlocks.map((row) => <ScaleLine key={row} />)
                     )}
-                  </DepthMeasurementScale>
+                  </DepthMeasurementScaleWrapper>
 
                   <SchemaContent>
                     <DepthIndicatorsContainer>
