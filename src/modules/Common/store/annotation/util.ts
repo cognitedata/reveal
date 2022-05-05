@@ -50,20 +50,3 @@ export const repopulateAnnotationState = (
     }
   });
 };
-
-export const updateAnnotations = (
-  state: AnnotationState,
-  annotations: VisionAnnotation<VisionAnnotationDataType>[]
-) => {
-  annotations.forEach((annotation) => {
-    const resourceId = annotation.annotatedResourceId;
-    if (state.files.byId[resourceId]) {
-      if (!state.files.byId[resourceId].includes(annotation.id)) {
-        state.files.byId[resourceId].push(annotation.id);
-      }
-    } else {
-      state.files.byId[resourceId] = [annotation.id];
-    }
-    state.annotations.byId[annotation.id] = annotation;
-  });
-};
