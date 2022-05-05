@@ -81,7 +81,7 @@ describe('toDocument', () => {
         },
       },
     });
-    expect(doc2.doc.topfolder).toEqual('Unknown');
+    expect(doc2.doc.topfolder).toEqual('');
   });
 
   it('should have correct highlight', () => {
