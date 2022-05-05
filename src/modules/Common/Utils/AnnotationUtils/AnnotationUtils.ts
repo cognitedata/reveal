@@ -22,11 +22,6 @@ import {
   isImageKeypointCollectionData,
 } from 'src/modules/Common/types/typeGuards';
 
-export type VisionAnnotationObjectDataType =
-  | ImageObjectDetectionBoundingBox
-  | ImageObjectDetectionPolygon
-  | ImageKeypointCollection;
-
 export const createVisionAnnotationStub = <T>({
   id,
   createdTime,
@@ -84,7 +79,11 @@ export const filterAnnotations = ({
 };
 
 export const getAnnotationCounts = (
-  annotations: VisionAnnotation<VisionAnnotationObjectDataType>[]
+  annotations: VisionAnnotation<
+    | ImageObjectDetectionBoundingBox
+    | ImageObjectDetectionPolygon
+    | ImageKeypointCollection
+  >[]
 ) => {
   const counts: { [text: string]: number } = {};
 
@@ -122,7 +121,14 @@ export const getAnnotationsBadgeCounts = (
     ).length;
 
     const objects = annotations.reduce(
-      (acc: VisionAnnotation<VisionAnnotationObjectDataType>[], annotation) => {
+      (
+        acc: VisionAnnotation<
+          | ImageObjectDetectionBoundingBox
+          | ImageObjectDetectionPolygon
+          | ImageKeypointCollection
+        >[],
+        annotation
+      ) => {
         if (
           (isImageObjectDetectionBoundingBoxData(annotation) ||
             isImageObjectDetectionPolygonData(annotation) ||
