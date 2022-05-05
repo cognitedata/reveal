@@ -14,9 +14,10 @@ export interface Measurement {
   remove(): void;
   /**
    * Update the measurement
-   * @param controlPoint control or second point for the measurement
+   * @param x screen X Position
+   * @param y screen Y Position
    */
-  update(controlPoint: THREE.Vector3): void;
+  update(x: number, y: number): void;
   /**
    * Complete the measurement calculation
    */
@@ -29,4 +30,14 @@ export interface Measurement {
    * Get respective measurement value such as distance/angle/thickness
    */
   getMeasurementValue(): number;
+
+  /**
+   * Get the end point if exists
+   */
+  getEndPoint(): THREE.Vector3;
+
+  /**
+   * Set Camera distance from startPoint
+   */
+  setCameraDistance(cameraDistance: number): void;
 }

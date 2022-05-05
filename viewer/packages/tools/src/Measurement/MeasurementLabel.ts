@@ -45,8 +45,8 @@ export class MeasurementLabel {
    * Add a label
    * @param position Label position
    */
-  public add(position: THREE.Vector3): void {
-    this._labelElement = this.createLabel('0');
+  public add(position: THREE.Vector3, label: string): void {
+    this._labelElement = this.createLabel(label);
     this._htmlOverlay.add(this._labelElement, position);
   }
 

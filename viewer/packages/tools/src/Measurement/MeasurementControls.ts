@@ -11,26 +11,21 @@ import { MeasurementLineOptions } from './types';
 import { MeasurementDistance } from './MeasurementDistance';
 
 export class MeasurementControls {
-  private readonly _domElement: HTMLElement;
   private readonly _viewer: Cognite3DViewer;
   private readonly _measurementGizmo: MeasurementGizmo;
   private readonly _measurementLabel: MeasurementLabel;
   private readonly _startPosition: THREE.Vector3;
   private _measurement: Measurement;
-  private _isCameraChanged: boolean;
   private _pointSize: number;
 
   private readonly _handleonPointerClick = this.onPointerClick.bind(this);
   private readonly _handleonPointerMove = this.onPointerMove.bind(this);
-  private readonly _handleonCameraChanged = this.onCameraChanged.bind(this);
 
   constructor(viewer: Cognite3DViewer) {
     this._viewer = viewer;
-    this._domElement = viewer.domElement;
     this._measurementGizmo = new MeasurementGizmo(this._viewer);
     this._measurementLabel = new MeasurementLabel(this._viewer);
     this._startPosition = new THREE.Vector3();
-    this._isCameraChanged = false;
     this._pointSize = 0.02;
   }
 
@@ -39,7 +34,6 @@ export class MeasurementControls {
    */
   private setupEventHandling() {
     this._viewer.on('click', this._handleonPointerClick);
-    this._viewer.on('cameraChange', this._handleonCameraChanged);
   }
 
   /**
@@ -47,11 +41,6 @@ export class MeasurementControls {
    */
   private removeEventHandling() {
     this._viewer.off('click', this._handleonPointerClick);
-    this._viewer.off('cameraChange', this._handleonCameraChanged);
-  }
-
-  private onCameraChanged() {
-    this._isCameraChanged = true;
   }
 
   /**
@@ -84,15 +73,15 @@ export class MeasurementControls {
       this._measurementGizmo.add(intersection.point, this._pointSize);
 
       if (!this._measurement.isActive()) {
-        this._domElement.addEventListener('mousemove', this._handleonPointerMove);
+        this._viewer.domElement.addEventListener('mousemove', this._handleonPointerMove);
         this._startPosition.copy(intersection.point);
         this._measurement.add(intersection.point);
-        this._measurementLabel.add(intersection.point);
+        this._measurement.setCameraDistance(intersection.distanceToCamera);
+        this._measurementLabel.add(intersection.point, '0 M');
       } else {
-        this.updateMeasurement(intersection.point);
+        this.updateMeasurement(offsetX, offsetY);
         this._measurement.complete();
-        this._domElement.removeEventListener('mousemove', this._handleonPointerMove);
-        this._isCameraChanged = false;
+        this._viewer.domElement.removeEventListener('mousemove', this._handleonPointerMove);
       }
       this._viewer.requestRedraw();
     }
@@ -100,21 +89,14 @@ export class MeasurementControls {
 
   private async onPointerMove(event: MouseEvent) {
     const { offsetX, offsetY } = event;
-    const pointer = new THREE.Vector2(offsetX, offsetY);
-
-    const intersection = await this._viewer.getIntersectionPixelFromBuffer(pointer.x, pointer.y, this._isCameraChanged);
-
-    if (intersection) {
-      this.updateMeasurement(intersection);
-      this._viewer.requestRedraw();
-      this._isCameraChanged = false;
-    }
+    this.updateMeasurement(offsetX, offsetY);
+    this._viewer.requestRedraw();
   }
 
-  private updateMeasurement(point: THREE.Vector3): void {
-    this._measurement.update(point);
-    const distanceValue = this._measurement.getMeasurementValue().toFixed(1).toString();
-    this._measurementLabel.update(distanceValue, this._startPosition, point);
+  private updateMeasurement(offsetX: number, offsetY: number): void {
+    this._measurement.update(offsetX, offsetY);
+    const distanceValue = this._measurement.getMeasurementValue().toFixed(1).toString() + ' M';
+    this._measurementLabel.update(distanceValue, this._startPosition, this._measurement.getEndPoint());
   }
 
   public updateLineOptions(options: MeasurementLineOptions): void {
