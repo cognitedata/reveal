@@ -18,7 +18,7 @@ import {
   makeSelectTotalAnnotationCountForFileIds,
 } from 'src/modules/Common/store/annotation/selectors';
 import { Status } from 'src/api/annotation/types';
-import { VisionAnnotationType } from 'src/modules/Common/types';
+import { Images } from 'src/modules/Common/types';
 
 const annotations = [
   getDummyImageClassificationAnnotation({
@@ -203,15 +203,13 @@ describe('Test annotation selectors', () => {
     test('should select annotations with specified type', () => {
       // select annotations for file id 10 with model type imageClassification
       expect(
-        selectFileAnnotationsByType(mockState, 10, [
-          VisionAnnotationType.imageClassification,
-        ])
+        selectFileAnnotationsByType(mockState, 10, [Images.Classification])
       ).toEqual([annotations[0]]);
 
       // select annotations for file id 20 with model type imageObjectDetectionBoundingBox
       expect(
         selectFileAnnotationsByType(mockState, 20, [
-          VisionAnnotationType.imageObjectDetectionBoundingBox,
+          Images.ObjectDetectionBoundingBox,
         ])
       ).toEqual([annotations[6], annotations[7], annotations[8]]);
     });
