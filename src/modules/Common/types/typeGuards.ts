@@ -76,6 +76,10 @@ export const getTypeGuardForVisionAnnotationDataType = (
     case VisionAnnotationType.imageObjectDetectionBoundingBox:
       return isImageObjectDetectionBoundingBoxData;
     default:
+      console.error(
+        'type guard not found for provided vision annotation data type!',
+        visionAnnotationType
+      );
       return (_data: VisionAnnotationDataType) => false;
   }
 };
