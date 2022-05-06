@@ -12,6 +12,7 @@ import {
   ViewButton,
 } from 'components/Buttons';
 import { showSuccessMessage } from 'components/Toast';
+import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { DocumentType } from 'modules/documentSearch/types';
 import { FlexRow } from 'styles/layout';
 
@@ -37,10 +38,12 @@ export const DocumentResultTableHoverComponent = ({
   onOpenFeedbackHandle,
 }: Props) => {
   const { t } = useTranslation();
+  const metrics = useGlobalMetrics('documents');
 
   const onViewHandle = async (doc: DocumentType) => {
     showSuccessMessage(t('Retrieving document'));
     openDocumentPreviewInNewTab(doc.doc.id).catch(handleServiceError);
+    metrics.track('click-document-view-button');
   };
 
   // TODO(PP-2573): check if this can be removed after upgrading the pdf viewer lib
