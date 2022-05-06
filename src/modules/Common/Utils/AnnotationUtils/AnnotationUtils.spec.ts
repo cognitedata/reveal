@@ -121,6 +121,10 @@ describe('Test AnnotationUtils', () => {
       );
     });
 
+    test('when no annotations', () => {
+      expect(filterAnnotations({ annotations: [] }).length).toBe(0);
+    });
+
     describe('test with annotationText filter', () => {
       test('filter pump as label, extractedText and text', () => {
         expect(
