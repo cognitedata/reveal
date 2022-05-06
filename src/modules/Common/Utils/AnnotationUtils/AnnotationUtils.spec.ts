@@ -214,7 +214,10 @@ describe('Test AnnotationUtils', () => {
       expect(annotationsBadgeCounts.gdpr).toBe(1);
     });
     test('mostFrequentObject', () => {
-      // expect(annotationsBadgeCounts.text).toBe(2);
+      expect(annotationsBadgeCounts.mostFrequentObject).toStrictEqual([
+        'pump',
+        2,
+      ]);
     });
   });
 });
