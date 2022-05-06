@@ -1,7 +1,6 @@
 import {
-  ImageAssetLink,
   ImageClassification,
-  ImageExtractedText,
+  ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
 } from 'src/api/annotation/types';
@@ -9,7 +8,6 @@ import {
   AnnotationsBadgeCounts,
   VisionAnnotation,
   VisionAnnotationDataType,
-  VisionAnnotationObjectDataType,
 } from 'src/modules/Common/types';
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
 import {
@@ -20,14 +18,13 @@ import {
   isImageKeypointCollectionData,
 } from 'src/modules/Common/types/typeGuards';
 
-export const getAnnotationLabelText = (
+export const getAnnotationInstanceLabel = (
   annotation: VisionAnnotation<VisionAnnotationDataType>
 ): string =>
   (annotation as ImageClassification).label ||
   (annotation as ImageObjectDetectionBoundingBox).label ||
   (annotation as ImageObjectDetectionPolygon).label ||
-  (annotation as ImageExtractedText).extractedText ||
-  (annotation as ImageAssetLink).text;
+  (annotation as ImageKeypointCollection).label;
 
 export const filterAnnotations = ({
   annotations,
@@ -46,15 +43,19 @@ export const filterAnnotations = ({
     if (filter.annotationText) {
       filteredAnnotations = filteredAnnotations.filter(
         (annotation) =>
-          getAnnotationLabelText(annotation) === filter.annotationText
+          getAnnotationInstanceLabel(annotation) === filter.annotationText
       );
     }
   }
   return filteredAnnotations;
 };
 
-export const getAnnotationCounts = (
-  annotations: VisionAnnotation<VisionAnnotationObjectDataType>[]
+const getAnnotationCountsPerInstanceLabel = (
+  annotations: VisionAnnotation<
+    | ImageObjectDetectionBoundingBox
+    | ImageObjectDetectionPolygon
+    | ImageKeypointCollection
+  >[]
 ) => {
   const counts: { [text: string]: number } = {};
 
@@ -92,7 +93,14 @@ export const getAnnotationsBadgeCounts = (
     ).length;
 
     const objects = annotations.reduce(
-      (acc: VisionAnnotation<VisionAnnotationObjectDataType>[], annotation) => {
+      (
+        acc: VisionAnnotation<
+          | ImageObjectDetectionBoundingBox
+          | ImageObjectDetectionPolygon
+          | ImageKeypointCollection
+        >[],
+        annotation
+      ) => {
         if (
           (isImageObjectDetectionBoundingBoxData(annotation) ||
             isImageObjectDetectionPolygonData(annotation) ||
@@ -107,7 +115,7 @@ export const getAnnotationsBadgeCounts = (
     );
     annotationsBadgeProps.objects = objects.length;
 
-    const counts = getAnnotationCounts(objects);
+    const counts = getAnnotationCountsPerInstanceLabel(objects);
     annotationsBadgeProps.mostFrequentObject = Object.entries(counts).length
       ? Object.entries(counts).reduce((a, b) => (a[1] > b[1] ? a : b))
       : undefined;

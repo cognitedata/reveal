@@ -4,10 +4,10 @@ import {
   getDummyImageExtractedTextAnnotation,
   getDummyImageObjectDetectionBoundingBoxAnnotation,
   getDummyImageObjectDetectionPolygonAnnotation,
-} from 'src/modules/Common/store/annotation/utils/getDummyAnnotations';
+} from 'src/modules/Common/store/annotation/__test__/getDummyAnnotations';
 import {
   filterAnnotations,
-  getAnnotationLabelText,
+  getAnnotationInstanceLabel,
   getAnnotationsBadgeCounts,
 } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
@@ -17,8 +17,8 @@ import {
 } from 'src/modules/Common/types/index';
 import { Status } from 'src/api/annotation/types';
 
-const ANN_WITH_PUMP_TEXT_COUNT = 6;
-const ANN_WITH_SUGGESTED_PUMP_COUNT = 5;
+const ANN_WITH_PUMP_LABEL_COUNT = 4;
+const ANN_WITH_SUGGESTED_PUMP_COUNT = 3;
 const SUGGESTED_ANN_COUNT = 5;
 const REJECTED_ANN_COUNT = 2;
 const APPROVED_ANN_COUNT = 3;
@@ -67,14 +67,14 @@ const dummyAnnotations: VisionAnnotation<VisionAnnotationDataType>[] = [
 ];
 
 describe('Test AnnotationUtils', () => {
-  describe('Test getAnnotationLabelText', () => {
+  describe('Test getAnnotationInstanceLabel', () => {
     test('get label for ImageClassification', () => {
       const label = 'pump';
       const annotation = getDummyImageClassificationAnnotation({
         label,
       });
 
-      expect(getAnnotationLabelText(annotation)).toEqual(label);
+      expect(getAnnotationInstanceLabel(annotation)).toEqual(label);
     });
 
     test('get label for ImageObjectDetectionBoundingBox', () => {
@@ -83,7 +83,7 @@ describe('Test AnnotationUtils', () => {
         label,
       });
 
-      expect(getAnnotationLabelText(annotation)).toEqual(label);
+      expect(getAnnotationInstanceLabel(annotation)).toEqual(label);
     });
 
     test('get label for ImageObjectDetectionPolygon', () => {
@@ -92,25 +92,7 @@ describe('Test AnnotationUtils', () => {
         label,
       });
 
-      expect(getAnnotationLabelText(annotation)).toEqual(label);
-    });
-
-    test('get label for ImageExtractedText', () => {
-      const extractedText = 'pump';
-      const annotation = getDummyImageExtractedTextAnnotation({
-        extractedText,
-      });
-
-      expect(getAnnotationLabelText(annotation)).toEqual(extractedText);
-    });
-
-    test('get label for ImageAssetLink', () => {
-      const text = 'pump';
-      const annotation = getDummyImageAssetLinkAnnotation({
-        text,
-      });
-
-      expect(getAnnotationLabelText(annotation)).toEqual(text);
+      expect(getAnnotationInstanceLabel(annotation)).toEqual(label);
     });
   });
 
@@ -121,6 +103,10 @@ describe('Test AnnotationUtils', () => {
       );
     });
 
+    test('when no annotations', () => {
+      expect(filterAnnotations({ annotations: [] }).length).toBe(0);
+    });
+
     describe('test with annotationText filter', () => {
       test('filter pump as label, extractedText and text', () => {
         expect(
@@ -128,7 +114,7 @@ describe('Test AnnotationUtils', () => {
             annotations: dummyAnnotations,
             filter: { annotationText: 'pump' },
           }).length
-        ).toBe(ANN_WITH_PUMP_TEXT_COUNT);
+        ).toBe(ANN_WITH_PUMP_LABEL_COUNT);
       });
 
       test('filter pump3 as extractedText', () => {
@@ -136,15 +122,6 @@ describe('Test AnnotationUtils', () => {
           filterAnnotations({
             annotations: dummyAnnotations,
             filter: { annotationText: 'pump3' },
-          }).length
-        ).toBe(1);
-      });
-
-      test('filter pumpLink as text', () => {
-        expect(
-          filterAnnotations({
-            annotations: dummyAnnotations,
-            filter: { annotationText: 'pumpLink' },
           }).length
         ).toBe(1);
       });
@@ -210,7 +187,10 @@ describe('Test AnnotationUtils', () => {
       expect(annotationsBadgeCounts.gdpr).toBe(1);
     });
     test('mostFrequentObject', () => {
-      // expect(annotationsBadgeCounts.text).toBe(2);
+      expect(annotationsBadgeCounts.mostFrequentObject).toStrictEqual([
+        'pump',
+        2,
+      ]);
     });
   });
 });

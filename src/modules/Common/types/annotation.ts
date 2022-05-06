@@ -14,13 +14,13 @@ import {
  * Annotation types used within vision sub app
  */
 
-export enum VisionAnnotationType {
-  imageClassification = 'ImageClassification',
-  imageObjectDetectionBoundingBox = 'ImageObjectDetectionBoundingBox',
-  imageObjectDetectionPolygon = 'ImageObjectDetectionPolygon',
-  imageExtractedText = 'ImageExtractedText',
-  imageAssetLink = 'ImageAssetLink',
-  imageKeypointCollection = 'ImageKeypointCollection',
+export enum Images {
+  Classification = 'Classification',
+  ObjectDetectionBoundingBox = 'ObjectDetectionBoundingBox',
+  ObjectDetectionPolygon = 'ObjectDetectionPolygon',
+  ExtractedText = 'ExtractedText',
+  AssetLink = 'AssetLink',
+  KeypointCollection = 'KeypointCollection',
 }
 
 export type VisionAnnotationDataType =
@@ -29,11 +29,6 @@ export type VisionAnnotationDataType =
   | ImageObjectDetectionPolygon
   | ImageExtractedText
   | ImageAssetLink
-  | ImageKeypointCollection;
-
-export type VisionAnnotationObjectDataType =
-  | ImageObjectDetectionBoundingBox
-  | ImageObjectDetectionPolygon
   | ImageKeypointCollection;
 
 // Vision Annotation Type

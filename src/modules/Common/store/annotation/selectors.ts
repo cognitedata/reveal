@@ -4,7 +4,7 @@ import isEqual from 'lodash-es/isEqual';
 import {
   VisionAnnotation,
   VisionAnnotationDataType,
-  VisionAnnotationType,
+  Images,
 } from 'src/modules/Common/types/annotation';
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
 import {
@@ -71,8 +71,7 @@ export const makeSelectFileAnnotationsByType = () => {
   const fileAnnotationSelector = makeSelectFileAnnotations();
 
   return createDeepEqualSelector(
-    (state: AnnotationState, fileId: number, types: VisionAnnotationType[]) =>
-      types,
+    (state: AnnotationState, fileId: number, types: Images[]) => types,
     fileAnnotationSelector,
     (types, fileAnnotations) => {
       const typeGuards = types.map((type) =>
@@ -82,7 +81,7 @@ export const makeSelectFileAnnotationsByType = () => {
         return fileAnnotations.filter((item) =>
           typeGuards
             .map((typeGuard) => typeGuard(item))
-            .reduce((a, b) => a || b)
+            .reduce((a, b) => a || b, false)
         );
       }
       return [];
