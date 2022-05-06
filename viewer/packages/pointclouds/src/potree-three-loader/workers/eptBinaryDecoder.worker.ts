@@ -2,32 +2,32 @@
  * Copyright 2022 Cognite AS
  */
 
-import { RawStyleObject, StyleObject, rawToStyleObject } from '../../styling/StyleObject';
+import { RawStyledObject, StyledObject, rawToStyleObject } from '../../styling/StyledObject';
 
 import { parseEpt, EptInputData } from './parseEpt';
 import { Vec3 } from '../../styling/shapes/linalg';
 
 const ctx: Worker = self as any;
 
-let objectList: StyleObject[] = [];
+let objectList: StyledObject[] = [];
 let pointOffset: Vec3 = [0, 0, 0];
 
 type CommandType = 'objects' | 'parse';
 
 export interface ICommand {
   type: CommandType;
-};
+}
 
 export type ObjectsCommand = {
   type: 'objects';
-  objects: RawStyleObject[];
+  objects: RawStyledObject[];
   pointOffset: Vec3;
-}
+};
 
 export type ParseCommand = {
   type: 'parse';
   data: EptInputData;
-}
+};
 
 ctx.onmessage = function (event: MessageEvent<ICommand>) {
   const command = event.data as ICommand;
@@ -43,7 +43,7 @@ ctx.onmessage = function (event: MessageEvent<ICommand>) {
       parseEpt(ctx, parseCommand.data, objectList, pointOffset);
       break;
     default:
-      console.error("Out of switch cases");
+      console.error('Out of switch cases');
   }
 };
 

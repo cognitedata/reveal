@@ -179,8 +179,11 @@ export class PointCloudMaterial extends RawShaderMaterial {
   private readonly _gradient = SpectralGradient;
   private gradientTexture: Texture | undefined = generateGradientTexture(this._gradient);
 
-  private readonly _objectTexture: THREE.DataTexture =
-    generateDataTexture(OBJECT_STYLING_TEXTURE_WIDTH, OBJECT_STYLING_TEXTURE_HEIGHT, new Color(0x000000));
+  private readonly _objectTexture: THREE.DataTexture = generateDataTexture(
+    OBJECT_STYLING_TEXTURE_WIDTH,
+    OBJECT_STYLING_TEXTURE_HEIGHT,
+    new Color(0x000000)
+  );
 
   private _classification: IClassification = DEFAULT_CLASSIFICATION;
   private classificationTexture: Texture | undefined = generateClassificationTexture(this._classification);

@@ -18,6 +18,7 @@ import { asyncScheduler, combineLatest, Observable, scan, Subject, throttleTime 
 import { ModelIdentifier } from '@reveal/modeldata-api';
 import { MetricsLogger } from '@reveal/metrics';
 import { SupportedModelTypes } from '@reveal/model-base';
+import { hardCodedObjects } from './styling/staticObjects';
 
 export class PointCloudManager {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository;
@@ -129,7 +130,7 @@ export class PointCloudManager {
       metadata.formatVersion
     );
 
-    const nodeWrapper = await this._pointCloudFactory.createModel(metadata);
+    const nodeWrapper = await this._pointCloudFactory.createModel(metadata, hardCodedObjects);
     this._pointCloudGroupWrapper.addPointCloud(nodeWrapper);
     const node = new PointCloudNode(this._pointCloudGroupWrapper, nodeWrapper, metadata.cameraConfiguration);
     node.setModelTransformation(metadata.modelMatrix);

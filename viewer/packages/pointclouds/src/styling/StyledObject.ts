@@ -7,17 +7,17 @@ import { IRawShape } from './shapes/IRawShape';
 
 import { fromRawShape } from './shapes/fromRawShape';
 
-export type RawStyleObject = {
+export type RawStyledObject = {
   objectId: number;
   shape: IRawShape;
 };
 
-export type StyleObject = {
+export type StyledObject = {
   objectId: number;
   shape: IShape;
 };
 
-export function rawToStyleObject(obj: RawStyleObject): StyleObject {
+export function rawToStyleObject(obj: RawStyledObject): StyledObject {
   return {
     objectId: obj.objectId,
     shape: fromRawShape(obj.shape)

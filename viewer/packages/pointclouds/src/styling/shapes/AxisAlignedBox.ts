@@ -40,6 +40,6 @@ export class AxisAlignedBox implements IShape {
     return {
       type: 'aabb',
       box: this._box
-    }
+    };
   }
 }

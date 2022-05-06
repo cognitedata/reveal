@@ -8,6 +8,7 @@ import { PointCloudMetadata } from './PointCloudMetadata';
 import { ModelDataProvider } from '@reveal/modeldata-api';
 
 import { PointCloudOctree, Potree } from './potree-three-loader';
+import { StyledObjectInfo } from './styling/StyledObjectInfo';
 
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
@@ -20,12 +21,17 @@ export class PointCloudFactory {
     return this._potreeInstance;
   }
 
-  async createModel(modelMetadata: PointCloudMetadata): Promise<PotreeNodeWrapper> {
+  async createModel(
+    modelMetadata: PointCloudMetadata,
+    styledObjectInfo?: StyledObjectInfo
+  ): Promise<PotreeNodeWrapper> {
     const { modelBaseUrl } = modelMetadata;
 
-    return this._potreeInstance.loadPointCloud(modelBaseUrl, 'ept.json').then((pco: PointCloudOctree) => {
-      pco.name = `PointCloudOctree: ${modelBaseUrl}`;
-      return new PotreeNodeWrapper(pco);
-    });
+    return this._potreeInstance
+      .loadPointCloud(modelBaseUrl, 'ept.json', styledObjectInfo)
+      .then((pco: PointCloudOctree) => {
+        pco.name = `PointCloudOctree: ${modelBaseUrl}`;
+        return new PotreeNodeWrapper(pco, styledObjectInfo);
+      });
   }
 }

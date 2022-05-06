@@ -1,4 +1,4 @@
-import { StyleObject } from '../../styling/StyleObject';
+import { StyledObject } from '../../styling/StyledObject';
 import { Vec3 } from '../../styling/shapes/linalg';
 import { computeObjectIdBuffer } from './assignObjects';
 
@@ -24,10 +24,10 @@ export type SchemaEntry = {
 };
 
 type RawVector3 = {
-  x: number,
-  y: number,
-  z: number
-}
+  x: number;
+  y: number;
+  z: number;
+};
 
 export type EptInputData = {
   buffer: ArrayBuffer;
@@ -37,10 +37,7 @@ export type EptInputData = {
   mins: [number, number, number];
 };
 
-export function parseEpt(worker: Worker,
-                         data: EptInputData,
-                         objects: StyleObject[],
-                         pointOffset: Vec3): void {
+export function parseEpt(worker: Worker, data: EptInputData, objects: StyledObject[], pointOffset: Vec3): void {
   const buffer = data.buffer;
   const view = new DataView(buffer);
   const schema: SchemaEntry[] = data.schema;
@@ -264,7 +261,7 @@ export function parseEpt(worker: Worker,
     numberOfReturns: numberOfReturnsBuffer,
     pointSourceId: pointSourceIdBuffer,
     indices: indicesBuffer,
-    objectId: objectIdBuffer,
+    objectId: objectIdBuffer
   };
 
   const transferables = [

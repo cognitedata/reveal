@@ -6,4 +6,4 @@ export type ShapeType = 'cylinder' | 'aabb' | 'composite';
 
 export interface IRawShape {
   type: ShapeType;
-};
+}

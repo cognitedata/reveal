@@ -15,10 +15,11 @@ import { ParseCommand, ObjectsCommand } from '../workers/eptBinaryDecoder.worker
 
 import { ParsedEptData, EptInputData } from '../workers/parseEpt';
 
-import { hardCodedObjects } from '../../styling/staticObjects';
+import { StyledObjectInfo } from '../../styling/StyledObjectInfo';
 
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
+  private readonly _styledObjectInfo: StyledObjectInfo | undefined;
 
   static readonly WORKER_POOL = new WorkerPool(32, EptDecoderWorker);
 
@@ -26,8 +27,9 @@ export class EptBinaryLoader implements ILoader {
     return '.bin';
   }
 
-  constructor(dataLoader: ModelDataProvider) {
+  constructor(dataLoader: ModelDataProvider, styledObjectInfo?: StyledObjectInfo) {
     this._dataLoader = dataLoader;
+    this._styledObjectInfo = styledObjectInfo;
   }
 
   async load(node: PointCloudEptGeometryNode): Promise<void> {
@@ -103,15 +105,17 @@ export class EptBinaryLoader implements ILoader {
             mins: toArray(node.key.b.min)
           };
 
-          const offsetVec = node.boundingBox.min;
+          if (this._styledObjectInfo) {
+            const offsetVec = node.boundingBox.min;
 
-          const objectMessage: ObjectsCommand = {
-            type: 'objects',
-            objects: hardCodedObjects,
-            pointOffset: [offsetVec.x, offsetVec.y, offsetVec.z] as [number, number, number]
-          };
+            const objectMessage: ObjectsCommand = {
+              type: 'objects',
+              objects: this._styledObjectInfo.styledObjects,
+              pointOffset: [offsetVec.x, offsetVec.y, offsetVec.z] as [number, number, number]
+            };
 
-          autoTerminatingWorker.worker.postMessage(objectMessage);
+            autoTerminatingWorker.worker.postMessage(objectMessage);
+          }
 
           const parseMessage: ParseCommand = {
             type: 'parse',

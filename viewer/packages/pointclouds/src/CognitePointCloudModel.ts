@@ -10,7 +10,7 @@ import { PointCloudNode } from './PointCloudNode';
 import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from './potree-three-loader';
 
 import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
-import { RawStyleObject } from './styling/StyleObject';
+import { RawStyledObject } from './styling/StyledObject';
 
 /**
  * Represents a point clouds model loaded from CDF.
@@ -212,15 +212,14 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   /**
    * Gets the stylable objects associated with this point cloud.
    */
-  get stylableObjects(): RawStyleObject[] {
-    return this.pointCloudNode.objects;
+  get stylableObjects(): RawStyledObject[] {
+    return this.pointCloudNode.stylingInfo.styledObjects;
   }
 
   /**
    * Sets the style of one object
    */
-  setObjectStyle(objectId: number, color: [number, number, number]) {
+  setObjectStyle(objectId: number, color: [number, number, number]): void {
     this.pointCloudNode.setObjectStyle(objectId, color);
   }
-
 }

@@ -42,6 +42,6 @@ export class CompositeShape implements IShape {
     return {
       type: 'composite',
       shapes: this._innerShapes.map(shape => shape.toRawShape())
-    }
+    };
   }
 }

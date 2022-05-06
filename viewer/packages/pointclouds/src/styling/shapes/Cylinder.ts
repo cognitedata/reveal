@@ -46,7 +46,7 @@ export class Cylinder implements IShape {
     return v3Length(v3Sub(this._centerA, this._centerB));
   }
 
-  private getMiddle(): Vec3{
+  private getMiddle(): Vec3 {
     return v3Middle(this._centerA, this._centerB);
   }
 
@@ -55,7 +55,6 @@ export class Cylinder implements IShape {
   }
 
   computeBoundingBox(): Box3 {
-
     /* const halfHeight = this.getHalfHeight();
     const middle = this.getMiddle();
 
@@ -72,7 +71,7 @@ export class Cylinder implements IShape {
     out.applyMatrix4(new THREE.Matrix4().makeRotationFromQuaternion(rotation));
     out.translate(middle);
     return out; */
-    throw Error("[Cylinder] Bounding box not yet implemented");
+    throw Error('[Cylinder] Bounding box not yet implemented');
   }
 
   containsPoint(point: Vec3): boolean {

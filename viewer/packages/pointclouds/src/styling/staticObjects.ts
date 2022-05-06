@@ -2,8 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { RawStyleObject } from './StyleObject';
-import { RawAxisAlignedBox } from './shapes/AxisAlignedBox';
+import { StyledObjectInfo } from './StyledObjectInfo';
 import { RawCylinder } from './shapes/Cylinder';
 
 import { externalObjects } from './data';
@@ -34,8 +33,13 @@ import { Vec3, v3Add, v3Sub, v3Scale } from './shapes/linalg';
   }
   ]; */
 
-
-export const hardCodedObjects: RawStyleObject[] = externalObjects.sort((a, b) => b.Height - a.Height).map((obj, index) => { return { objectId: index + 1, shape: transformObject(obj) } } );
+export const hardCodedObjects: StyledObjectInfo = {
+  styledObjects: externalObjects
+    .sort((a, b) => b.Height - a.Height)
+    .map((obj, index) => {
+      return { objectId: index + 1, shape: transformObject(obj) };
+    })
+};
 
 type ExtVec = {
   X: number;

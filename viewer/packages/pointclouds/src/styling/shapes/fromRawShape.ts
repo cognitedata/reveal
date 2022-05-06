@@ -2,7 +2,6 @@
  * Copyright 2022 Cognite AS
  */
 
-
 // import { toThreeBox3, toThreeVector3, assertNever } from '@reveal/utilities';
 // import * as THREE from 'three';
 
@@ -22,9 +21,7 @@ export function fromRawShape(rawShape: IRawShape): IShape {
   switch (rawShape.type) {
     case 'cylinder':
       const rawCylinder = rawShape as RawCylinder;
-      return new Cylinder(rawCylinder.centerA,
-                          rawCylinder.centerB,
-                          rawCylinder.radius);
+      return new Cylinder(rawCylinder.centerA, rawCylinder.centerB, rawCylinder.radius);
     case 'aabb':
       const rawBox = rawShape as RawAxisAlignedBox;
       return new AxisAlignedBox(rawBox.box);
@@ -33,6 +30,6 @@ export function fromRawShape(rawShape: IRawShape): IShape {
       return new CompositeShape(rawComposite.shapes.map(fromRawShape));
     default:
       // assertNever(rawShape.type);
-      console.error("Unsupported RawShape type");
+      console.error('Unsupported RawShape type');
   }
 }
