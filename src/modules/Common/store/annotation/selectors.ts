@@ -82,7 +82,7 @@ export const makeSelectFileAnnotationsByType = () => {
         return fileAnnotations.filter((item) =>
           typeGuards
             .map((typeGuard) => typeGuard(item))
-            .reduce((a, b) => a || b)
+            .reduce((a, b) => a || b, false)
         );
       }
       return [];
