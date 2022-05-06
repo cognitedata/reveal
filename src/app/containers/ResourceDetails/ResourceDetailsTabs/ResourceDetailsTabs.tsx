@@ -69,7 +69,9 @@ export const ResourceDetailsTabs = ({
   additionalTabs = [],
   excludedTypes = [],
   onTabChange,
-  style = { paddingLeft: '16px' },
+  style = {
+    paddingLeft: '16px',
+  },
 }: ResouceDetailsTabsProps) => {
   const { counts } = useRelatedResourceCounts(parentResource);
 
@@ -113,11 +115,17 @@ export const ResourceDetailsTabs = ({
   const tabs = [...additionalTabs, ...relationshipTabs];
 
   return (
-    <Tabs style={style} activeKey={tab} onChange={onTabChange}>
+    <StyledTabs style={style} activeKey={tab} onChange={onTabChange}>
       {tabs}
-    </Tabs>
+    </StyledTabs>
   );
 };
+
+const StyledTabs = styled(Tabs)`
+  .rc-tabs-nav-wrap {
+    border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+  }
+`;
 
 export const TabTitle = styled.span`
   font-size: 14px;
