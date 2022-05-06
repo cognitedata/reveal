@@ -7,13 +7,13 @@ const { hideBin } = require('yargs/helpers');
 
 const pull = require('./pull');
 const saveMissing = require('./save-missing');
-const removeNotFound = require('./remove-not-found');
+const removeDeleted = require('./remove-deleted');
 
 function main() {
   yargs(hideBin(process.argv))
     .command(
-      'pull [projectId] [namespace] [version] [path]',
-      'downloads translations (overrides local files)',
+      'pull-keys-from-remote [projectId] [namespace] [productionVersion] [path]',
+      'downloads translations from remote (overrides local files)',
       (yargs) => {
         return yargs
           .env('LOCIZE')
@@ -29,9 +29,8 @@ function main() {
             type: 'string',
             demandOption: true,
           })
-          .option('version', {
-            alias: 'v',
-            describe: 'The version to target for translations',
+          .option('productionVersion', {
+            describe: 'The production version to pull translations',
             default: 'latest',
             type: 'string',
           })
@@ -46,14 +45,14 @@ function main() {
         pull({
           projectId: argv.projectId,
           namespace: argv.namespace,
-          version: argv.version,
+          version: argv.productionVersion,
           path: argv.path,
         });
       }
     )
     .command(
-      'save-missing [apiKey] [projectId] [namespace] [version] [path]',
-      'saves missing keys to locize from your repository (does not update the existing values in locize)',
+      'save-missing-keys-to-remote [apiKey] [projectId] [namespace] [stagingVersion] [path]',
+      'saves missing keys to remote staging version (does not update the existing values in locize)',
       (yargs) => {
         return yargs
           .env('LOCIZE')
@@ -75,9 +74,8 @@ function main() {
             type: 'string',
             demandOption: true,
           })
-          .option('version', {
-            alias: 'v',
-            describe: 'The version to target for translations',
+          .option('stagingVersion', {
+            describe: 'The staging version to use for operations',
             default: 'staging',
             type: 'string',
           })
@@ -93,14 +91,14 @@ function main() {
           apiKey: argv.apiKey,
           projectId: argv.projectId,
           namespace: argv.namespace,
-          version: argv.version,
+          version: argv.stagingVersion,
           path: argv.path,
         });
       }
     )
     .command(
-      'remove-not-found [apiKey] [projectId] [namespace] [version] [path]',
-      'removes keys not found on your reference language',
+      'remove-deleted-keys-from-remote [apiKey] [projectId] [namespace] [stagingVersion] [path]',
+      'removes deleted keys from remote staging version',
       (yargs) => {
         return yargs
           .env('LOCIZE')
@@ -122,9 +120,8 @@ function main() {
             type: 'string',
             demandOption: true,
           })
-          .option('version', {
-            alias: 'v',
-            describe: 'The version to target for translations',
+          .option('stagingVersion', {
+            describe: 'The staging version to use for operations',
             default: 'staging',
             type: 'string',
           })
@@ -136,11 +133,11 @@ function main() {
           });
       },
       (argv) => {
-        removeNotFound({
+        removeDeleted({
           apiKey: argv.apiKey,
           projectId: argv.projectId,
           namespace: argv.namespace,
-          version: argv.version,
+          version: argv.stagingVersion,
           path: argv.path,
         });
       }
