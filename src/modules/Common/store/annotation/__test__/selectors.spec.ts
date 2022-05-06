@@ -2,9 +2,11 @@
 import { initialState } from 'src/modules/Common/store/annotation/slice';
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
 import {
+  getDummyImageAssetLinkAnnotation,
   getDummyImageClassificationAnnotation,
   getDummyImageExtractedTextAnnotation,
   getDummyImageObjectDetectionBoundingBoxAnnotation,
+  getDummyImageObjectDetectionPolygonAnnotation,
 } from 'src/modules/Common/store/annotation/__test__/getDummyAnnotations';
 import {
   annotatedFilesById,
@@ -27,24 +29,41 @@ const annotations = [
   }),
   getDummyImageObjectDetectionBoundingBoxAnnotation({
     id: 2,
+    label: 'person',
+    annotatedResourceId: 10,
+  }),
+  getDummyImageObjectDetectionPolygonAnnotation({
+    id: 3,
+    annotatedResourceId: 10,
+  }),
+  getDummyImageExtractedTextAnnotation({
+    id: 4,
+    annotatedResourceId: 10,
+  }),
+  getDummyImageAssetLinkAnnotation({
+    id: 5,
+    annotatedResourceId: 10,
+  }),
+  getDummyImageAssetLinkAnnotation({
+    id: 6,
     annotatedResourceId: 10,
   }),
   getDummyImageObjectDetectionBoundingBoxAnnotation({
-    id: 3,
+    id: 7,
     annotatedResourceId: 20,
     label: 'bar',
     status: Status.Rejected,
   }),
   getDummyImageObjectDetectionBoundingBoxAnnotation({
-    id: 4,
+    id: 8,
     annotatedResourceId: 20,
   }),
   getDummyImageObjectDetectionBoundingBoxAnnotation({
-    id: 5,
+    id: 9,
     annotatedResourceId: 20,
   }),
   getDummyImageExtractedTextAnnotation({
-    id: 6,
+    id: 10,
     annotatedResourceId: 30,
   }),
 ];
@@ -53,9 +72,9 @@ const mockState: AnnotationState = {
   ...initialState,
   files: {
     byId: {
-      '10': [1, 2],
-      '20': [3, 4, 5],
-      '30': [6],
+      '10': [1, 2, 3, 4, 5, 6],
+      '20': [7, 8, 9],
+      '30': [10],
       '40': [],
     },
   },
@@ -67,6 +86,10 @@ const mockState: AnnotationState = {
       '4': annotations[3],
       '5': annotations[4],
       '6': annotations[5],
+      '7': annotations[6],
+      '8': annotations[7],
+      '9': annotations[8],
+      '10': annotations[9],
     },
   },
 };
@@ -138,8 +161,15 @@ describe('Test annotation selectors', () => {
     const selectAnnotationsForFileIds = makeSelectAnnotationsForFileIds();
     test('should return all annotations for provided file ids', () => {
       expect(selectAnnotationsForFileIds(mockState, [10, 20, 40])).toEqual({
-        '10': [annotations[0], annotations[1]],
-        '20': [annotations[2], annotations[3], annotations[4]],
+        '10': [
+          annotations[0],
+          annotations[1],
+          annotations[2],
+          annotations[3],
+          annotations[4],
+          annotations[5],
+        ],
+        '20': [annotations[6], annotations[7], annotations[8]],
         '40': [], // prefer to not raise exception in selectors
       });
     });
@@ -161,7 +191,7 @@ describe('Test annotation selectors', () => {
         })
       ).toEqual({
         '10': [],
-        '20': [annotations[2]],
+        '20': [annotations[6]],
         '30': [],
       });
     });
@@ -183,7 +213,7 @@ describe('Test annotation selectors', () => {
         selectFileAnnotationsByType(mockState, 20, [
           VisionAnnotationType.imageObjectDetectionBoundingBox,
         ])
-      ).toEqual([annotations[2], annotations[3], annotations[4]]);
+      ).toEqual([annotations[6], annotations[7], annotations[8]]);
     });
   });
 
@@ -213,9 +243,9 @@ describe('Test annotation selectors', () => {
 
         expect(selectTotalAnnotationCounts(mockState, [10])).toEqual({
           objects: 1,
-          assets: 0,
-          text: 0,
-          gdpr: 0,
+          assets: 2,
+          text: 1,
+          gdpr: 1,
           mostFrequentObject: ['pump', 1],
         });
 
