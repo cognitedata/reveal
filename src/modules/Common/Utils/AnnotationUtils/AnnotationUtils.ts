@@ -78,7 +78,7 @@ export const filterAnnotations = ({
   return filteredAnnotations;
 };
 
-export const getAnnotationCounts = (
+const getAnnotationCountsPerInstanceLabel = (
   annotations: VisionAnnotation<
     | ImageObjectDetectionBoundingBox
     | ImageObjectDetectionPolygon
@@ -143,7 +143,7 @@ export const getAnnotationsBadgeCounts = (
     );
     annotationsBadgeProps.objects = objects.length;
 
-    const counts = getAnnotationCounts(objects);
+    const counts = getAnnotationCountsPerInstanceLabel(objects);
     annotationsBadgeProps.mostFrequentObject = Object.entries(counts).length
       ? Object.entries(counts).reduce((a, b) => (a[1] > b[1] ? a : b))
       : undefined;
