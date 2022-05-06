@@ -119,7 +119,7 @@ export const getSearchQuery = (query: SearchQueryFull) => {
         range: {
           property: ['modifiedTime'],
           gte: timeFilters.min,
-          lt: timeFilters.max,
+          lte: timeFilters.max,
         },
       });
     }
@@ -135,7 +135,7 @@ export const getSearchQuery = (query: SearchQueryFull) => {
         range: {
           property: ['createdTime'],
           gte: timeFilters.min,
-          lt: timeFilters.max,
+          lte: timeFilters.max,
         },
       });
     }
@@ -150,7 +150,7 @@ export const getSearchQuery = (query: SearchQueryFull) => {
       range: {
         property: [PAGE_COUNT_KEY],
         gte: pageCountFilters.min,
-        lt: pageCountFilters.max,
+        lte: pageCountFilters.max,
       },
     });
   }
