@@ -98,7 +98,7 @@ export const ResourceDetailsTabs = ({
       key={key}
       tab={
         <>
-          <TabTitle>{getTitle(key)}</TabTitle>
+          {getTitle(key)}
           <Badge
             text={key === 'asset' ? assetCount : counts[key]!}
             background={Colors['greyscale-grey3'].hex()}
