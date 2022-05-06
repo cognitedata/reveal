@@ -53,18 +53,21 @@ describe(MeasurementDistance.name, () => {
   });
 
   test('Add End point', () => {
-    const xPosition = 200;
-    const yPosition = 201;
-    const zPosition = 202;
+    const screenX = 100;
+    const screenY = 101;
+    const cameraDistance = 10;
     const updateSpyOn = jest.spyOn(measurementDistance, 'update');
     measurementDistance.add(new THREE.Vector3(0, 0, 0));
-    measurementDistance.update(new THREE.Vector3(xPosition, yPosition, zPosition));
+    measurementDistance.setCameraDistance(cameraDistance);
+    measurementDistance.update(screenX, screenY);
+
+    const endPosition = calculatePositionFromScreenPosition(screenX, screenY, cameraDistance, viewer);
 
     expect(updateSpyOn).toBeCalled();
 
-    expect((measurementDistance as any)._positions[3]).toBe(xPosition);
-    expect((measurementDistance as any)._positions[4]).toBe(yPosition);
-    expect((measurementDistance as any)._positions[5]).toBe(zPosition);
+    expect((measurementDistance as any)._positions[3]).toBe(endPosition.x);
+    expect((measurementDistance as any)._positions[4]).toBe(endPosition.y);
+    expect((measurementDistance as any)._positions[5]).toBe(endPosition.z);
   });
 
   test('Complete the line', () => {
@@ -80,11 +83,14 @@ describe(MeasurementDistance.name, () => {
 
   test('Distance between two points', () => {
     const startPosition = new THREE.Vector3(0, 0, 0);
-    const endPosition = new THREE.Vector3(100, 100, 1);
+    const screenX = 100;
+    const screenY = 101;
+    const cameraDistance = 10;
     const distanceSpyOn = jest.spyOn(measurementDistance, 'getMeasurementValue');
 
     measurementDistance.add(startPosition);
-    measurementDistance.update(endPosition);
+    measurementDistance.setCameraDistance(cameraDistance);
+    measurementDistance.update(screenX, screenY);
 
     const distance = measurementDistance.getMeasurementValue();
 
@@ -106,3 +112,21 @@ describe(MeasurementDistance.name, () => {
     expect((measurementDistance as any)._lineOptions.color).toStrictEqual(new THREE.Color(0xffffff));
   });
 });
+
+function calculatePositionFromScreenPosition(
+  x: number,
+  y: number,
+  cameraDistance: number,
+  viewer: Cognite3DViewer
+): THREE.Vector3 {
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+  mouse.x = (x / viewer.domElement.clientWidth) * 2 - 1;
+  mouse.y = -(y / viewer.domElement.clientHeight) * 2 + 1;
+  const position = new THREE.Vector3();
+  raycaster.setFromCamera(mouse, viewer.getCamera());
+
+  raycaster.ray.at(cameraDistance, position);
+
+  return position;
+}
