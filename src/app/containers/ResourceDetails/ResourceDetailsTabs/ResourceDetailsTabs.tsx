@@ -71,6 +71,8 @@ export const ResourceDetailsTabs = ({
   onTabChange,
   style = {
     paddingLeft: '16px',
+    flex: 1,
+    overflow: 'auto',
   },
 }: ResouceDetailsTabsProps) => {
   const { counts } = useRelatedResourceCounts(parentResource);
@@ -95,15 +97,17 @@ export const ResourceDetailsTabs = ({
 
   const relationshipTabs = filteredTabs.map(key => (
     <Tabs.TabPane
+      style={{ flex: 1, overflow: 'auto' }}
       key={key}
       tab={
-        <>
-          {getTitle(key)}
+        <TabWrapper>
+          <div>{getTitle(key)}</div>
           <Badge
+            style={{ alignSelf: 'flex-end' }}
             text={key === 'asset' ? assetCount : counts[key]!}
             background={Colors['greyscale-grey3'].hex()}
           />
-        </>
+        </TabWrapper>
       }
     >
       <ResourceDetailTabContent
@@ -115,7 +119,12 @@ export const ResourceDetailsTabs = ({
   const tabs = [...additionalTabs, ...relationshipTabs];
 
   return (
-    <StyledTabs style={style} activeKey={tab} onChange={onTabChange}>
+    <StyledTabs
+      padding="default"
+      style={style}
+      activeKey={tab}
+      onChange={onTabChange}
+    >
       {tabs}
     </StyledTabs>
   );
@@ -125,9 +134,17 @@ const StyledTabs = styled(Tabs)`
   .rc-tabs-nav-wrap {
     border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
   }
+  .rc-tabs-content-holder {
+    display: flex;
+  }
 `;
 
 export const TabTitle = styled.span`
   font-size: 14px;
   font-weight: 600;
+`;
+
+const TabWrapper = styled.div`
+  display: flex;
+  align-items: center;
 `;
