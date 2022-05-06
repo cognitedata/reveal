@@ -1,100 +1,30 @@
 import styled from 'styled-components/macro';
 import { BaseContainer } from 'pages/elements';
-import { Title, Input, Button } from '@cognite/cogs.js';
+import { Title } from '@cognite/cogs.js';
 
-const sidePanelOpenWidth = 280;
+const sidePanelOpenedWidth = 280;
 const sidePanelClosedWidth = 68;
 
 interface SidePanelProps {
-  sidePanelOpen: boolean;
+  sidePanelOpened: boolean;
 }
 
-export const Header = styled.span`
-  display: flex;
-  position: sticky;
-  padding: 16px;
-  text-align: left;
-  align-items: center;
-  background: var(--cogs-bg-default);
-  border-bottom: 1px solid var(--cogs-bg-control--disabled);
-
-  .cogs-label {
-    margin: 4px 0 0 0;
-  }
-
-  Button {
-    margin-left: auto;
-  }
-
-  &.top {
-    top: 56px;
-  }
-
-  &.search {
-    top: 0;
-    position: sticky;
-
-    .cogs-icon {
-      color: rgba(0, 0, 0, 0.45);
-    }
-  }
-`;
-
-export const LeftPanel = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  min-height: 100%;
-  overflow: hidden;
-  border-right: 1px solid var(--cogs-bg-control--disabled);
+export const MainDiv = styled.div<SidePanelProps>`
+  width: calc(
+    100% -
+      ${(props) =>
+        props.sidePanelOpened ? sidePanelOpenedWidth : sidePanelClosedWidth}px
+  );
 
   transition-property: width, transform, left, right;
   transition-duration: var(--cogs-transition-time);
 `;
 
-export const RightPanel = styled.div`
-  transition-property: width, transform, left, right;
-  transition-duration: var(--cogs-transition-time);
-`;
-
-export const Container = styled(BaseContainer)<SidePanelProps>`
+export const Container = styled(BaseContainer)`
   flex-direction: row;
   position: relative;
   width: 100%;
   height: 100%;
-
-  ${LeftPanel} {
-    width: ${(props) =>
-      props.sidePanelOpen ? sidePanelOpenWidth : sidePanelClosedWidth}px;
-  }
-
-  ${RightPanel} {
-    width: calc(
-      100% -
-        ${(props) =>
-          props.sidePanelOpen ? sidePanelOpenWidth : sidePanelClosedWidth}px
-    );
-  }
-`;
-
-export const StyledSearch = styled(Input)`
-  background: var(--cogs-bg-control--secondary);
-  width: 100%;
-  border: none;
-  border-radius: 6px;
-  color: var(--cogs-text-secondary);
-  ::placeholder {
-    color: var(--cogs-text-secondary);
-  }
-  .input-wrapper {
-    width: 100%;
-    .cogs-input {
-      padding-right: 38px;
-    }
-  }
-  .btn-reset {
-    background: transparent;
-  }
 `;
 
 export const PanelContent = styled.div`
@@ -120,33 +50,4 @@ export const PanelContent = styled.div`
 
 export const StyledTitle = styled(Title)`
   font-family: 'Inter';
-`;
-
-export const StyledButton = styled(Button)`
-  width: 100%;
-  align-items: center;
-  justify-content: left;
-  font-weight: 600;
-  font-family: Inter;
-  margin-bottom: 8px;
-
-  p {
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-  }
-`;
-
-export const Footer = styled.span`
-  display: flex;
-  position: absolute;
-  padding: 16px;
-  background: var(--cogs-bg-default);
-  border-top: 1px solid var(--cogs-bg-control--disabled);
-  bottom: 0;
-  width: 100%;
-
-  Button {
-    width: 100%;
-  }
 `;

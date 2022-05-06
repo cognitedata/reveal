@@ -1,92 +1,33 @@
 import { useState, useEffect, memo, useContext } from 'react';
-import { Button, Detail, Loader } from '@cognite/cogs.js';
+import { Loader } from '@cognite/cogs.js';
 import { BaseContainer } from 'pages/elements';
-import debounce from 'lodash/debounce';
 import {
-  NavLink,
   Route,
   Switch,
   useHistory,
-  useLocation,
   useParams,
   useRouteMatch,
 } from 'react-router-dom';
-import { Plant } from '@cognite/power-ops-api-types';
 import { PAGES } from 'pages/Menubar';
 import { PriceScenarios } from 'pages/PriceScenarios';
 import { BidMatrix } from 'pages/BidMatrix';
 import { PriceAreasContext } from 'providers/priceAreaProvider';
 import { NotFoundPage } from 'pages/Error404';
 import { PortfolioHeader } from 'components/PortfolioHeader/PortfolioHeader';
+import { Sidebar } from 'components/Sidebar/Sidebar';
 
-import {
-  Container,
-  Header,
-  PanelContent,
-  LeftPanel,
-  StyledSearch,
-  StyledButton,
-  Footer,
-  RightPanel,
-} from './elements';
+import { Container, MainDiv } from './elements';
 
 const PortfolioPage = () => {
   const { priceArea, allPriceAreas, priceAreaChanged } =
     useContext(PriceAreasContext);
-
-  const history = useHistory();
-  const location = useLocation();
-  const match = useRouteMatch();
-
   const { priceAreaExternalId } = useParams<{ priceAreaExternalId?: string }>();
 
+  const history = useHistory();
+  const match = useRouteMatch();
+
   const [loading, setLoading] = useState<boolean>(true);
-  const [query, setQuery] = useState<string>('');
-  const [allPlants, setAllPlants] = useState<Plant[]>();
-  const [filteredPlants, setFilteredPlants] = useState<Plant[]>([]);
-  const [searchPrice, setSearchPrice] = useState<boolean>(true);
-  const [searchTotal, setSearchTotal] = useState<boolean>(true);
-  const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [open, setOpen] = useState<boolean>(true);
-  const [focused, setFocused] = useState<boolean>(false);
-  const [resize, setResize] = useState<boolean>(false);
-
-  const search = (query: any, callback: any) => {
-    const searchResults = allPlants?.filter((plant) =>
-      plant.displayName.toLowerCase().includes(query.toLowerCase())
-    );
-    if ('price scenarios'.includes(query.toLowerCase())) {
-      setSearchPrice(true);
-    } else {
-      setSearchPrice(false);
-    }
-    if ('total'.includes(query.toLowerCase())) {
-      setSearchTotal(true);
-    } else {
-      setSearchTotal(false);
-    }
-    callback(searchResults);
-  };
-
-  const debouncedSearch = debounce((query, callback) => {
-    search(query, callback);
-  }, 300);
-
-  useEffect(() => {
-    if (allPlants) {
-      debouncedSearch(query, (result: Plant[]) => {
-        if (query.length === 0) {
-          setSearchPrice(true);
-          setSearchTotal(true);
-          setFilteredPlants(allPlants);
-          setIsSearching(false);
-        } else {
-          setFilteredPlants(result);
-          setIsSearching(true);
-        }
-      });
-    }
-  }, [query]);
+  const [openedSidePanel, setOpenedSidePanel] = useState<boolean>(true);
 
   useEffect(() => {
     if (!priceAreaExternalId) {
@@ -107,8 +48,6 @@ const PortfolioPage = () => {
   useEffect(() => {
     if (priceArea) {
       setLoading(false);
-      setAllPlants(priceArea.plants);
-      setFilteredPlants(priceArea.plants);
     }
   }, [priceArea]);
 
@@ -140,99 +79,13 @@ const PortfolioPage = () => {
   return priceArea ? (
     <BaseContainer>
       <PortfolioHeader priceArea={priceArea} />
-      <Container sidePanelOpen={open}>
-        <LeftPanel>
-          <Header className="search">
-            {open ? (
-              <StyledSearch
-                icon="Search"
-                placeholder="Search plants"
-                autoFocus={focused}
-                onChange={(e) => setQuery(e.target.value)}
-                value={query}
-                clearable={{
-                  callback: () => {
-                    setQuery('');
-                  },
-                }}
-              />
-            ) : (
-              <Button
-                type="secondary"
-                icon="Search"
-                aria-label="Open search field"
-                onClick={() => {
-                  setOpen(true);
-                  setFocused(true);
-                }}
-              />
-            )}
-          </Header>
-          {open && (
-            <PanelContent>
-              {!isSearching && <Detail>Price area overview</Detail>}
-              {searchTotal && (
-                <NavLink to={`${match.url}/total`}>
-                  <StyledButton
-                    toggled={location.pathname === `${match.url}/total`}
-                    key={`${priceArea.externalId}-total`}
-                    onClick={() => setQuery('')}
-                  >
-                    <p>Total</p>
-                  </StyledButton>
-                </NavLink>
-              )}
-              {searchPrice && (
-                <NavLink to={`${match.url}/price-scenarios`}>
-                  <StyledButton
-                    toggled={
-                      location.pathname === `${match.url}/price-scenarios`
-                    }
-                    key={`${priceArea.externalId}-price-scenarios-link`}
-                    onClick={() => setQuery('')}
-                  >
-                    <p>Price Scenarios</p>
-                  </StyledButton>
-                </NavLink>
-              )}
-              {!isSearching && <Detail>Plants</Detail>}
-              {filteredPlants &&
-                filteredPlants.map((plant) => {
-                  return (
-                    <NavLink
-                      to={`${match.url}/${plant.externalId}`}
-                      key={`${priceArea.externalId}-${plant.externalId}`}
-                    >
-                      <StyledButton
-                        toggled={
-                          location.pathname ===
-                          `${match.url}/${plant.externalId}`
-                        }
-                        key={plant.externalId}
-                        onClick={() => setQuery('')}
-                      >
-                        <p>{plant.displayName}</p>
-                      </StyledButton>
-                    </NavLink>
-                  );
-                })}
-            </PanelContent>
-          )}
-          <Footer onTransitionEnd={() => setResize(!resize)}>
-            <Button
-              type="secondary"
-              aria-label="Show or hide sidebar"
-              icon={open ? 'PanelLeft' : 'PanelRight'}
-              onClick={() => {
-                setOpen(!open);
-                setFocused(false);
-              }}
-            >
-              {open && 'Hide'}
-            </Button>
-          </Footer>
-        </LeftPanel>
-        <RightPanel>
+      <Container>
+        <Sidebar
+          priceArea={priceArea}
+          opened={openedSidePanel}
+          setOpened={setOpenedSidePanel}
+        />
+        <MainDiv sidePanelOpened={openedSidePanel}>
           <Switch>
             <Route path={`${match.path}/price-scenarios`}>
               <PriceScenarios priceArea={priceArea} />
@@ -244,7 +97,7 @@ const PortfolioPage = () => {
               <PriceScenarios priceArea={priceArea} />
             </Route>
           </Switch>
-        </RightPanel>
+        </MainDiv>
       </Container>
     </BaseContainer>
   ) : null;
