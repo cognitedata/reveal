@@ -19,17 +19,16 @@ export const getDummyImageClassificationAnnotation = ({
   label = 'pump',
   confidence = 0.5,
 }: {
-  id: number;
-  status: Status;
+  id?: number;
+  status?: Status;
   annotatedResourceId?: number;
-  label: string;
-  confidence: number;
+  label?: string;
+  confidence?: number;
 }): VisionAnnotation<ImageClassification> => {
   const data: ImageClassification = {
     label,
     confidence,
   };
-
   return createVisionAnnotationStub<ImageClassification>({
     id,
     createdTime: 123,
@@ -47,11 +46,11 @@ export const getDummyImageObjectDetectionBoundingBoxAnnotation = ({
   label = 'pump',
   boundingBox = { xMin: 0.25, yMin: 0.25, xMax: 0.75, yMax: 0.75 },
 }: {
-  id: number;
-  status: Status;
-  annotatedResourceId: number;
-  label: string;
-  boundingBox: BoundingBox;
+  id?: number;
+  status?: Status;
+  annotatedResourceId?: number;
+  label?: string;
+  boundingBox?: BoundingBox;
 }): VisionAnnotation<ImageObjectDetectionBoundingBox> => {
   const data: ImageObjectDetectionBoundingBox = {
     label,
@@ -82,12 +81,12 @@ export const getDummyImageObjectDetectionPolygonAnnotation = ({
     ],
   },
 }: {
-  id: number;
-  status: Status;
-  annotatedResourceId: number;
-  label: string;
-  confidence: number;
-  polygon: Polygon;
+  id?: number;
+  status?: Status;
+  annotatedResourceId?: number;
+  label?: string;
+  confidence?: number;
+  polygon?: Polygon;
 }): VisionAnnotation<ImageObjectDetectionPolygon> => {
   const data: ImageObjectDetectionPolygon = {
     label,
@@ -118,12 +117,12 @@ export const getDummyImageExtractedTextAnnotation = ({
     yMax: 0.75,
   },
 }: {
-  id: number;
-  status: Status;
-  annotatedResourceId: number;
-  extractedText: string;
-  confidence: number;
-  textRegion: BoundingBox;
+  id?: number;
+  status?: Status;
+  annotatedResourceId?: number;
+  extractedText?: string;
+  confidence?: number;
+  textRegion?: BoundingBox;
 }): VisionAnnotation<ImageExtractedText> => {
   const data: ImageExtractedText = {
     extractedText,
@@ -154,12 +153,12 @@ export const getDummyImageAssetLinkAnnotation = ({
   },
   assetRef = { id: 123 },
 }: {
-  id: number;
-  status: Status;
-  annotatedResourceId: number;
-  text: string;
-  textRegion: BoundingBox;
-  assetRef: InternalId & Partial<ExternalId>;
+  id?: number;
+  status?: Status;
+  annotatedResourceId?: number;
+  text?: string;
+  textRegion?: BoundingBox;
+  assetRef?: InternalId & Partial<ExternalId>;
 }): VisionAnnotation<ImageAssetLink> => {
   const data: ImageAssetLink = {
     text,
