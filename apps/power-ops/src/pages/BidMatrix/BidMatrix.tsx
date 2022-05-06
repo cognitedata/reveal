@@ -1,28 +1,29 @@
-import { CogniteEvent, DoubleDatapoint } from '@cognite/sdk';
+import { DoubleDatapoint } from '@cognite/sdk';
 import { useState, useEffect, useContext } from 'react';
 import { Button, Tooltip, Detail } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import { Column } from 'react-table';
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
-import {
-  TableData,
-  SequenceRow,
-  PriceAreaWithData,
-  MatrixWithData,
-} from 'types';
-import { calculateScenarioProduction, roundWithDec } from 'utils/utils';
+import { TableData, PriceAreaWithData, MatrixWithData } from 'types';
 import { SnifferEvent } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
+import { HeadlessTable } from 'components/HeadlessTable';
 
-import { getFormattedBidMatrixData, copyMatrixToClipboard } from './utils';
+import { StyledTitle } from '../elements';
+
+import {
+  getFormattedBidMatrixData,
+  copyMatrixToClipboard,
+  formatScenarioData,
+  isNewBidMatrixAvailable,
+} from './utils';
 import {
   StyledDiv,
   StyledHeader,
-  StyledBidMatrix,
-  StyledTable,
+  StyledBidMatrixTable,
+  StyledPriceScenarioTable,
   Main,
-  StyledTitle,
   StyledInfobar,
 } from './elements';
 
@@ -37,7 +38,7 @@ export const mainScenarioTableHeaderConfig = [
   },
 ];
 
-const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
+export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
   const { client } = useAuthContext();
   const { eventStore } = useContext(EventStreamContext);
 
@@ -89,67 +90,19 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
     setMainScenarioData(scenarioData);
   };
 
-  const formatScenarioData = async (
-    scenarioPricePerHour: DoubleDatapoint[],
-    sequenceRows: SequenceRow[]
-  ): Promise<{ id: number; base: number; production: number }[]> => {
-    const dataArray: { id: number; base: number; production: number }[] = [];
-    const production = calculateScenarioProduction(
-      scenarioPricePerHour,
-      sequenceRows
-    );
-
-    if (scenarioPricePerHour.length && production?.length) {
-      for (
-        let index = 0;
-        index < Math.min(scenarioPricePerHour.length, production.length);
-        index++
-      ) {
-        if (
-          Number.isFinite(scenarioPricePerHour[index]?.value) &&
-          Number.isFinite(production?.[index]?.value)
-        )
-          dataArray.push({
-            id: index,
-            base: roundWithDec(scenarioPricePerHour[index].value as number),
-            production: roundWithDec(production[index].value as number),
-          });
-      }
-    }
-    return dataArray;
-  };
-
-  const isNewBidMatrixAvailable = async (
-    processFinishEvent: CogniteEvent
-  ): Promise<void> => {
-    const parentProcessEventExternalId =
-      processFinishEvent.metadata?.event_external_id;
-
-    if (!parentProcessEventExternalId || !client) {
-      return;
-    }
-
-    const [parentProcessEvent] = await client.events.retrieve([
-      { externalId: parentProcessEventExternalId },
-    ]);
-    if (
-      parentProcessEvent.type === 'POWEROPS_BID_PROCESS' &&
-      parentProcessEvent.externalId !== priceArea.bidProcessExternalId
-    ) {
-      setNewMatrixAvailable(true);
-    }
-  };
-
   const processEvent = async (e: SnifferEvent): Promise<void> => {
-    if (!e.id) return;
+    if (!client || !e.id) return;
 
     const event = (await client?.events.retrieve([{ id: e.id }]))?.[0];
     if (!event) return;
 
-    switch (event.type) {
-      case 'POWEROPS_PROCESS_FINISHED':
-        isNewBidMatrixAvailable(event);
-        break;
+    if (event.type === 'POWEROPS_PROCESS_FINISHED') {
+      const status = await isNewBidMatrixAvailable(
+        event,
+        client,
+        priceArea?.bidProcessExternalId || ''
+      );
+      setNewMatrixAvailable(status);
     }
   };
 
@@ -177,7 +130,7 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
           (scenario) => scenario.externalId === priceArea.mainScenarioExternalId
         )?.totalProduction;
 
-        // TODO(POWEROPS-223):
+        // TODO(POWEROPS-000):
         // For now, we select always the first method available
         if (matrixes?.[0] && production?.[0]?.shopProductionExternalId) {
           updateMatrixData(matrixes[0], priceExternalId);
@@ -186,8 +139,6 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
         const plant = priceArea.plants?.find(
           (p) => p.externalId === plantExternalId
         );
-        // TODO(POWEROPS-111):
-        // Rename plant variable to .name instead of .externalId
         const plantMatrixes = priceArea.plantMatrixesWithData?.find(
           (p) => p.plantName === plant?.name
         );
@@ -199,7 +150,7 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
           ?.plantProduction.find(
             (p) => p.plantName === plant?.name
           )?.production;
-        // TODO(POWEROPS-223):
+        // TODO(POWEROPS-000):
         // For now, we select always the first method available
         if (
           plantMatrixes?.matrixesWithData[0] &&
@@ -266,7 +217,6 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
                         )
                       : false;
 
-                  // Change tooltip state
                   setCopied(true);
 
                   if (isCopied) setTooltipContent('Copied!');
@@ -280,15 +230,15 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
               />
             </Tooltip>
           </StyledHeader>
-          <StyledBidMatrix>
+          <StyledBidMatrixTable>
             {matrixHeaderConfig && matrixData && (
-              <StyledTable
+              <HeadlessTable
                 tableHeader={matrixHeaderConfig}
                 tableData={matrixData}
                 className="bidmatrix"
               />
             )}
-          </StyledBidMatrix>
+          </StyledBidMatrixTable>
         </StyledDiv>
         <StyledDiv className="price-scenario">
           <StyledHeader>
@@ -306,19 +256,17 @@ const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
               </Detail>
             </div>
           </StyledHeader>
-          <StyledBidMatrix>
+          <StyledPriceScenarioTable>
             {mainScenarioTableHeaderConfig && mainScenarioData && (
-              <StyledTable
+              <HeadlessTable
                 tableHeader={mainScenarioTableHeaderConfig}
                 tableData={mainScenarioData || []}
                 className="price-scenario"
               />
             )}
-          </StyledBidMatrix>
+          </StyledPriceScenarioTable>
         </StyledDiv>
       </div>
     </Main>
   );
 };
-
-export default BidMatrix;

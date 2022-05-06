@@ -1,1 +1,1 @@
-export { default } from './BidMatrix';
+export { BidMatrix } from './BidMatrix';

@@ -1,7 +1,12 @@
-import { CogniteClient, SequenceItem } from '@cognite/sdk';
+import {
+  CogniteClient,
+  CogniteEvent,
+  DoubleDatapoint,
+  SequenceItem,
+} from '@cognite/sdk';
 import { Column } from 'react-table';
 import { SequenceRow, TableData, TableRow, Cols } from 'types';
-import { roundWithDec } from 'utils/utils';
+import { calculateScenarioProduction, roundWithDec } from 'utils/utils';
 
 interface BidMatrixResponse {
   columns: Column<TableData>[];
@@ -91,6 +96,8 @@ export const getFormattedBidMatrixData = async (
       tableData[index][accessor] = formattedValue || 0;
     });
   });
+  // Make bidmatrix table the same height as price scenario table
+  tableData.push({ id: undefined });
 
   return {
     columns: columnHeaders as Column<TableData>[],
@@ -146,4 +153,70 @@ export const copyMatrixToClipboard = async (
   } catch (error) {
     return false;
   }
+};
+
+export const formatScenarioData = async (
+  scenarioPricePerHour: DoubleDatapoint[],
+  sequenceRows: SequenceRow[]
+): Promise<{ id: number; base: number; production: number }[]> => {
+  const dataArray: { id: number; base: number; production: number }[] = [];
+  const production = calculateScenarioProduction(
+    scenarioPricePerHour,
+    sequenceRows
+  );
+
+  if (scenarioPricePerHour.length && production?.length) {
+    for (
+      let index = 0;
+      index < Math.min(scenarioPricePerHour.length, production.length);
+      index++
+    ) {
+      if (
+        Number.isFinite(scenarioPricePerHour[index]?.value) &&
+        Number.isFinite(production?.[index]?.value)
+      )
+        dataArray.push({
+          id: index,
+          base: roundWithDec(scenarioPricePerHour[index].value as number),
+          production: roundWithDec(production[index].value as number),
+        });
+    }
+  }
+
+  // Add total production and average base price
+  const averageBasePrice =
+    dataArray.reduce((total, next) => total + next.base, 0) / dataArray.length;
+  const totalProduction = dataArray.reduce(
+    (total, next) => total + next.production,
+    0
+  );
+  dataArray.push({
+    id: 24,
+    base: Math.round(averageBasePrice * 100) / 100,
+    production: Math.round(totalProduction * 100) / 100,
+  });
+
+  return dataArray;
+};
+
+export const isNewBidMatrixAvailable = async (
+  processFinishEvent: CogniteEvent,
+  client: CogniteClient,
+  currentBidProcessExternalId: string
+): Promise<boolean> => {
+  const parentProcessEventExternalId =
+    processFinishEvent.metadata?.event_external_id;
+
+  if (!parentProcessEventExternalId || !client) {
+    return false;
+  }
+
+  const [parentProcessEvent] = await client.events.retrieve([
+    { externalId: parentProcessEventExternalId },
+  ]);
+  return (
+    (parentProcessEvent.type === 'POWEROPS_BID_PROCESS' &&
+      parentProcessEvent.externalId !== currentBidProcessExternalId) ||
+    false
+  );
 };

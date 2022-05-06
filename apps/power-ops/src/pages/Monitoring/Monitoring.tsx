@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import {
   AuthConsumer,
   AuthContext,
@@ -14,15 +13,15 @@ import { Container } from '../elements';
 
 import { StyledTable } from './elements';
 
-const MonitoringPage: React.FC = () => (
+export const Monitoring: React.FC = () => (
   <AuthConsumer>
     {({ client }: AuthContext) =>
-      client ? <Monitoring client={client} /> : null
+      client ? <MonitoringInner client={client} /> : null
     }
   </AuthConsumer>
 );
 
-const Monitoring = ({ client }: { client: CogniteClient }) => {
+const MonitoringInner = ({ client }: { client: CogniteClient }) => {
   const { authState } = useAuthContext();
   const { snifferServiceBaseUrl } = sidecar;
 
@@ -122,5 +121,3 @@ const Monitoring = ({ client }: { client: CogniteClient }) => {
     </Container>
   );
 };
-
-export default memo(MonitoringPage);

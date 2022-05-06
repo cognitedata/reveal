@@ -1,5 +1,5 @@
 import { useState, useEffect, memo, useContext } from 'react';
-import { Button, Detail, Label, Loader } from '@cognite/cogs.js';
+import { Button, Detail, Loader } from '@cognite/cogs.js';
 import { BaseContainer } from 'pages/elements';
 import debounce from 'lodash/debounce';
 import {
@@ -12,13 +12,12 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import { Plant } from '@cognite/power-ops-api-types';
-import PriceScenarios from 'pages/PriceScenarios';
-import BidMatrix from 'pages/BidMatrix';
 import { PAGES } from 'pages/Menubar';
+import { PriceScenarios } from 'pages/PriceScenarios';
+import { BidMatrix } from 'pages/BidMatrix';
 import { PriceAreasContext } from 'providers/priceAreaProvider';
-import { useAuthContext } from '@cognite/react-container';
-import { downloadBidMatrices } from 'utils/utils';
-import NotFoundPage from 'pages/Error404';
+import { NotFoundPage } from 'pages/Error404';
+import { PortfolioHeader } from 'components/PortfolioHeader/PortfolioHeader';
 
 import {
   Container,
@@ -27,15 +26,11 @@ import {
   LeftPanel,
   StyledSearch,
   StyledButton,
-  StyledTitle,
   Footer,
   RightPanel,
 } from './elements';
 
 const PortfolioPage = () => {
-  const { client } = useAuthContext();
-  const { authState } = useAuthContext();
-
   const { priceArea, allPriceAreas, priceAreaChanged } =
     useContext(PriceAreasContext);
 
@@ -52,14 +47,9 @@ const PortfolioPage = () => {
   const [searchPrice, setSearchPrice] = useState<boolean>(true);
   const [searchTotal, setSearchTotal] = useState<boolean>(true);
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [downloading, setDownloading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(true);
   const [focused, setFocused] = useState<boolean>(false);
   const [resize, setResize] = useState<boolean>(false);
-
-  const startDate = priceArea
-    ? new Date(priceArea?.totalMatrixes?.[0].startTime).toLocaleString()
-    : undefined;
 
   const search = (query: any, callback: any) => {
     const searchResults = allPlants?.filter((plant) =>
@@ -149,30 +139,7 @@ const PortfolioPage = () => {
 
   return priceArea ? (
     <BaseContainer>
-      <Header className="top">
-        <div>
-          <StyledTitle level={5}>Price Area NO 1</StyledTitle>
-          <Label size="small" variant="unknown">
-            {`Matrix generation started: ${startDate}`}
-          </Label>
-        </div>
-        <Button
-          icon="Download"
-          type="primary"
-          loading={downloading}
-          onClick={async () => {
-            setDownloading(true);
-            await downloadBidMatrices(
-              priceArea,
-              client?.project,
-              authState?.token
-            );
-            setDownloading(false);
-          }}
-        >
-          Download
-        </Button>
-      </Header>
+      <PortfolioHeader priceArea={priceArea} />
       <Container sidePanelOpen={open}>
         <LeftPanel>
           <Header className="search">

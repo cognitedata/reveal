@@ -1,1 +1,1 @@
-export { default } from './PriceScenarios';
+export { PriceScenarios } from './PriceScenarios';

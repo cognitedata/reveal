@@ -12,7 +12,7 @@ export class SequenceRow extends Array<SequenceItem> {
 }
 
 export interface TableData {
-  id: number;
+  id: number | undefined;
   [key: string]: any;
 }
 

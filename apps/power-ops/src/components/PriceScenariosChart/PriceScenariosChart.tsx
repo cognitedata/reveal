@@ -7,7 +7,7 @@ import { PriceArea } from '@cognite/power-ops-api-types';
 import { TableData } from 'types';
 import dayjs from 'dayjs';
 
-import { StyledTitle, TooltipCard, FlexRow, StyledPlot } from './elements';
+import { TooltipCard, FlexRow, StyledPlot, StyledTitle } from './elements';
 import { chartStyles, layout, Card } from './chartConfig';
 
 interface TooltipOffset {

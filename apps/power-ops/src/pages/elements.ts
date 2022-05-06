@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
 import { sizes } from 'styles/layout';
-import { Menu, TopBar } from '@cognite/cogs.js';
+import { Title, Menu, TopBar } from '@cognite/cogs.js';
 import layers from 'utils/zindex';
 
 export const BaseContainer = styled.div`
@@ -71,4 +71,8 @@ export const NotFound = styled(BaseContainer)`
     font-weight: 700;
     font-size: 16px;
   }
+`;
+
+export const StyledTitle = styled(Title)`
+  font-family: 'Inter';
 `;

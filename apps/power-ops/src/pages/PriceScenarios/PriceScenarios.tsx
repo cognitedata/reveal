@@ -7,7 +7,7 @@ import {
 } from 'utils/utils';
 import { PriceAreaWithData, TableData } from 'types';
 import { Column } from 'react-table';
-import { BidmatrixTable } from 'components/BidmatrixTable';
+import { HeadlessTable } from 'components/HeadlessTable';
 import { useAuthContext } from '@cognite/react-container';
 import { DoubleDatapoint, ExternalId } from '@cognite/sdk';
 import dayjs from 'dayjs';
@@ -22,7 +22,11 @@ import {
   StyledTable,
 } from './elements';
 
-const PriceScenario = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
+export const PriceScenarios = ({
+  priceArea,
+}: {
+  priceArea: PriceAreaWithData;
+}) => {
   const { client } = useAuthContext();
 
   const bidDate = dayjs(priceArea.bidDate);
@@ -272,7 +276,7 @@ const PriceScenario = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
       </GraphContainer>
       <StyledTable>
         {tableColumns && tableData && (
-          <BidmatrixTable
+          <HeadlessTable
             tableHeader={tableColumns}
             tableData={tableData}
             className="price-scenario-table"
@@ -282,5 +286,3 @@ const PriceScenario = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
     </Main>
   );
 };
-
-export default PriceScenario;

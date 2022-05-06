@@ -1,7 +1,25 @@
-import styled from 'styled-components/macro';
+import styled, { css } from 'styled-components/macro';
 import { Infobar, Title } from '@cognite/cogs.js';
-import { BidmatrixTable } from 'components/BidmatrixTable';
 import { MainPanel } from 'pages/elements';
+
+const GeneralTableStyles = css`
+  overflow: hidden;
+  &:hover {
+    overflow-x: auto;
+  }
+  box-shadow: 0 0 0 1px var(--cogs-bg-control--disabled);
+  border-radius: 8px;
+  margin: 16px 16px 0 16px;
+`;
+
+const GeneralTableInternalStyles = css`
+  width: 100%;
+  font-family: 'Inter';
+  font-style: normal;
+  font-size: 12px;
+  line-height: 16px;
+  background: #f5f5f5;
+`;
 
 export const Main = styled(MainPanel)`
   flex-direction: column;
@@ -28,11 +46,11 @@ export const StyledInfobar = styled(Infobar)`
 
 export const StyledDiv = styled.div`
   &.bidmatrix {
-    width: calc(100% - 232px);
+    flex: 1;
+    min-width: 0;
   }
   &.price-scenario {
-    min-width: 200px;
-    width: 200px;
+    flex: 0 0 240px;
   }
   background: var(--cogs-bg-accent);
   border-radius: 12px;
@@ -74,25 +92,73 @@ export const StyledHeader = styled.div`
   }
 `;
 
-export const StyledBidMatrix = styled.div`
-  overflow: hidden;
-  &:hover {
-    overflow-x: auto;
+export const StyledPriceScenarioTable = styled.div`
+  ${GeneralTableStyles}
+
+  table {
+    ${GeneralTableInternalStyles}
+
+    table-layout: fixed;
+    text-align: right;
+
+    thead {
+      width: 100%;
+      tr {
+        padding-right: 16px;
+        th {
+          overflow: hidden;
+          padding: 4px;
+          color: var(--cogs-text-primary);
+          font-weight: 500;
+          letter-spacing: -0.004em;
+
+          &:first-child {
+            max-width: 60%;
+          }
+          &:last-child {
+            max-width: 40%;
+          }
+        }
+      }
+    }
+
+    tbody {
+      width: 100%;
+      tr {
+        padding-right: 16px;
+        color: var(--cogs-text-secondary);
+        border-top: 1px solid var(--cogs-bg-control--disabled);
+        font-weight: normal;
+        letter-spacing: -0.008em;
+        min-height: 24px;
+
+        td {
+          padding: 4px;
+
+          &:first-child {
+            max-width: 60%;
+          }
+
+          &:last-child {
+            max-width: 40%;
+          }
+        }
+
+        &:last-child {
+          color: var(--cogs-text-primary);
+          font-weight: 500;
+        }
+      }
+    }
   }
-  box-shadow: 0 0 0 1px var(--cogs-bg-control--disabled);
-  border-radius: 8px;
-  margin: 16px 16px 0 16px;
 `;
 
-export const StyledTable = styled(BidmatrixTable)`
-  width: 100%;
-  font-family: 'Inter';
-  font-style: normal;
-  font-size: 12px;
-  line-height: 16px;
-  background: #f5f5f5;
+export const StyledBidMatrixTable = styled.div`
+  ${GeneralTableStyles}
 
-  &.bidmatrix {
+  table {
+    ${GeneralTableInternalStyles}
+
     text-align: left;
 
     thead {
@@ -128,6 +194,7 @@ export const StyledTable = styled(BidmatrixTable)`
         background: var(--cogs-bg-accent);
         font-weight: normal;
         letter-spacing: -0.008em;
+        min-height: 24px;
 
         td {
           padding: 4px;
@@ -155,59 +222,6 @@ export const StyledTable = styled(BidmatrixTable)`
 
         &:hover {
           background: rgba(34, 42, 83, 0.06);
-        }
-      }
-    }
-  }
-
-  &.price-scenario {
-    table-layout: fixed;
-    text-align: right;
-
-    thead {
-      width: 100%;
-      tr {
-        padding-right: 16px;
-        th {
-          padding: 4px;
-          color: var(--cogs-text-primary);
-          font-weight: 500;
-          letter-spacing: -0.004em;
-
-          &:first-child {
-            max-width: 60%;
-          }
-          &:last-child {
-            max-width: 40%;
-          }
-        }
-      }
-    }
-
-    tbody {
-      width: 100%;
-      tr {
-        padding-right: 16px;
-        color: var(--cogs-text-secondary);
-        border-top: 1px solid var(--cogs-bg-control--disabled);
-        font-weight: normal;
-        letter-spacing: -0.008em;
-
-        td {
-          padding: 4px;
-
-          &:first-child {
-            max-width: 60%;
-          }
-
-          &:last-child {
-            max-width: 40%;
-          }
-        }
-
-        &:last-child {
-          color: var(--cogs-text-primary);
-          font-weight: 500;
         }
       }
     }

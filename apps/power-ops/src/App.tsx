@@ -6,15 +6,18 @@ import {
   Container,
   Logout,
 } from '@cognite/react-container';
+// UTILS
 import sidecar from 'utils/sidecar';
+// PROVIDERS
 import { EventStreamProvider } from 'providers/eventStreamProvider';
 import { PriceAreaProvider } from 'providers/priceAreaProvider';
 import { Providers } from 'providers/appProvider';
+// PAGES
 import { Portfolio } from 'pages/Portfolio';
 import { MenuBar, PAGES } from 'pages/Menubar';
-import NotFoundPage from 'pages/Error404';
+import { NotFoundPage } from 'pages/Error404';
 import { Processes } from 'pages/Processes';
-import Monitoring from 'pages/Monitoring/Monitoring';
+import { Monitoring } from 'pages/Monitoring';
 
 const App = () => (
   <Providers>
