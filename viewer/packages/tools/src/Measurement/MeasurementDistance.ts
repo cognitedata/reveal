@@ -72,7 +72,7 @@ export class MeasurementDistance implements Measurement {
    * Add/Start the line of the distance measurement
    * @param point Start point of the Line
    */
-  public add(point: THREE.Vector3): void {
+  add(point: THREE.Vector3): void {
     this.initializeLine();
     this.addStartPoint(point);
   }
@@ -89,14 +89,14 @@ export class MeasurementDistance implements Measurement {
   /**
    * Remove the measurement line
    */
-  public remove(): void {
+  remove(): void {
     this.clearLine();
   }
 
   /**
    * Completes a line for distance measurement
    */
-  public complete(): void {
+  complete(): void {
     this.clearLine();
   }
 
@@ -113,7 +113,7 @@ export class MeasurementDistance implements Measurement {
    * Get the distance value between the start point & end/mouse point
    * @returns Distance between the two points
    */
-  public getMeasurementValue(): number {
+  getMeasurementValue(): number {
     return this._endPoint.distanceTo(this._startPoint);
   }
 
@@ -122,14 +122,18 @@ export class MeasurementDistance implements Measurement {
    * @param x Screen X Position
    * @param y Screen Y Position
    */
-  public update(x: number, y: number): void {
-    const mouse = new THREE.Vector2();
-    mouse.x = (x / this._viewer.domElement.clientWidth) * 2 - 1;
-    mouse.y = -(y / this._viewer.domElement.clientHeight) * 2 + 1;
+  update(x: number, y: number, endPoint?: THREE.Vector3): void {
     const position = new THREE.Vector3();
-    this._raycaster.setFromCamera(mouse, this._viewer.getCamera());
+    if (endPoint) {
+      position.copy(endPoint);
+    } else {
+      const mouse = new THREE.Vector2();
+      mouse.x = (x / this._viewer.domElement.clientWidth) * 2 - 1;
+      mouse.y = -(y / this._viewer.domElement.clientHeight) * 2 + 1;
+      this._raycaster.setFromCamera(mouse, this._viewer.getCamera());
 
-    this._raycaster.ray.at(this._cameraDistance, position);
+      this._raycaster.ray.at(this._cameraDistance, position);
+    }
 
     this._positions[3] = position.x;
     this._positions[4] = position.y;
@@ -142,7 +146,7 @@ export class MeasurementDistance implements Measurement {
    * Check if the measurement is active
    * @returns Returns `true` if distance measurement is active
    */
-  public isActive(): boolean {
+  isActive(): boolean {
     return this._isActive;
   }
 
@@ -150,7 +154,7 @@ export class MeasurementDistance implements Measurement {
    * Get the end point
    * @returns End point
    */
-  public getEndPoint(): THREE.Vector3 {
+  getEndPoint(): THREE.Vector3 {
     return this._endPoint;
   }
 
@@ -158,7 +162,7 @@ export class MeasurementDistance implements Measurement {
    * Sets the line width & color
    * @param options MeasurementLineOptions.lineWidth or MeasurementLineOptions.color or both
    */
-  public setLineOptions(options: MeasurementLineOptions): void {
+  setLineOptions(options: MeasurementLineOptions): void {
     this.ShaderUniforms.uniforms.linewidth.value = options?.lineWidth ?? this._lineOptions.lineWidth;
     this.ShaderUniforms.uniforms.color.value = new THREE.Color(options?.color ?? this._lineOptions.color);
     this._lineOptions.color = this.ShaderUniforms.uniforms.color.value;
@@ -169,7 +173,7 @@ export class MeasurementDistance implements Measurement {
    * Set the distance from camera
    * @param cameraDistance distance from the camera to the startPoint
    */
-  public setCameraDistance(cameraDistance: number): void {
+  setCameraDistance(cameraDistance: number): void {
     this._cameraDistance = cameraDistance;
   }
 }

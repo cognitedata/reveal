@@ -47,7 +47,10 @@ export class MeasurementControls {
    * Add an measurement to the control
    * @param measurement Measurement object which is the active measurement type
    */
-  public add(measurement: Measurement): void {
+  add(measurement: Measurement): void {
+    if (this._measurement) {
+      this.remove();
+    }
     this._measurement = measurement;
     this.setupEventHandling();
   }
@@ -55,7 +58,7 @@ export class MeasurementControls {
   /**
    * Remove measurement from control
    */
-  public remove(): void {
+  remove(): void {
     if (this._measurement) {
       this._measurement.remove();
       this._measurement = null;
@@ -79,7 +82,7 @@ export class MeasurementControls {
         this._measurement.setCameraDistance(intersection.distanceToCamera);
         this._measurementLabel.add(intersection.point, '0 M');
       } else {
-        this.updateMeasurement(offsetX, offsetY);
+        this.updateMeasurement(0, 0, intersection.point);
         this._measurement.complete();
         this._viewer.domElement.removeEventListener('mousemove', this._handleonPointerMove);
       }
@@ -87,19 +90,19 @@ export class MeasurementControls {
     }
   }
 
-  private async onPointerMove(event: MouseEvent) {
+  private onPointerMove(event: MouseEvent) {
     const { offsetX, offsetY } = event;
     this.updateMeasurement(offsetX, offsetY);
     this._viewer.requestRedraw();
   }
 
-  private updateMeasurement(offsetX: number, offsetY: number): void {
-    this._measurement.update(offsetX, offsetY);
+  private updateMeasurement(offsetX: number, offsetY: number, endPoint?: THREE.Vector3): void {
+    this._measurement.update(offsetX, offsetY, endPoint);
     const distanceValue = this._measurement.getMeasurementValue().toFixed(1).toString() + ' M';
     this._measurementLabel.update(distanceValue, this._startPosition, this._measurement.getEndPoint());
   }
 
-  public updateLineOptions(options: MeasurementLineOptions): void {
+  updateLineOptions(options: MeasurementLineOptions): void {
     if (this._measurement) {
       const distanceMeasurement = this._measurement as MeasurementDistance;
       distanceMeasurement.setLineOptions(options);
@@ -107,7 +110,7 @@ export class MeasurementControls {
     }
   }
 
-  public dispose(): void {
-    this.removeEventHandling();
+  dispose(): void {
+    this.remove();
   }
 }

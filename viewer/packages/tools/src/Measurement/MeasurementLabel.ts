@@ -45,7 +45,7 @@ export class MeasurementLabel {
    * Add a label
    * @param position Label position
    */
-  public add(position: THREE.Vector3, label: string): void {
+  add(position: THREE.Vector3, label: string): void {
     this._labelElement = this.createLabel(label);
     this._htmlOverlay.add(this._labelElement, position);
   }
@@ -53,7 +53,7 @@ export class MeasurementLabel {
   /**
    * Remove the label
    */
-  public removeLabel(): void {
+  removeLabel(): void {
     if (this._labelElement) {
       this._htmlOverlay.remove(this._labelElement);
     }
@@ -65,7 +65,7 @@ export class MeasurementLabel {
    * @param startPoint start point
    * @param endPoint end point
    */
-  public update(label: string, startPoint: THREE.Vector3, endPoint: THREE.Vector3): void {
+  update(label: string, startPoint: THREE.Vector3, endPoint: THREE.Vector3): void {
     //Return if the endPoint is not available from the Point Cloud
     if (endPoint.equals(new THREE.Vector3(0))) {
       return;

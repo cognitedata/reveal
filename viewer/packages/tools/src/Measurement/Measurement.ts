@@ -17,7 +17,7 @@ export interface Measurement {
    * @param x screen X Position
    * @param y screen Y Position
    */
-  update(x: number, y: number): void;
+  update(x?: number, y?: number, point?: THREE.Vector3): void;
   /**
    * Complete the measurement calculation
    */
