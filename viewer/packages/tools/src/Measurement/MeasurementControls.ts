@@ -80,10 +80,12 @@ export class MeasurementControls {
         this._startPosition.copy(intersection.point);
         this._measurement.add(intersection.point);
         this._measurement.setCameraDistance(intersection.distanceToCamera);
-        this._measurementLabel.add(intersection.point, '0 M');
       } else {
         this.updateMeasurement(0, 0, intersection.point);
         this._measurement.complete();
+        const labelPosition = this.calculateMidpoint(this._startPosition, intersection.point);
+        const distanceValue = this._measurement.getMeasurementValue().toFixed(1).toString() + ' M';
+        this._measurementLabel.add(labelPosition, distanceValue);
         this._viewer.domElement.removeEventListener('mousemove', this._handleonPointerMove);
       }
       this._viewer.requestRedraw();
@@ -96,10 +98,16 @@ export class MeasurementControls {
     this._viewer.requestRedraw();
   }
 
+  private calculateMidpoint(startPoint: THREE.Vector3, endPoint: THREE.Vector3): THREE.Vector3 {
+    let direction = endPoint.clone().sub(startPoint);
+    const length = direction.length();
+    direction = direction.normalize().multiplyScalar(length * 0.5);
+
+    return startPoint.clone().add(direction);
+  }
+
   private updateMeasurement(offsetX: number, offsetY: number, endPoint?: THREE.Vector3): void {
     this._measurement.update(offsetX, offsetY, endPoint);
-    const distanceValue = this._measurement.getMeasurementValue().toFixed(1).toString() + ' M';
-    this._measurementLabel.update(distanceValue, this._startPosition, this._measurement.getEndPoint());
   }
 
   updateLineOptions(options: MeasurementLineOptions): void {
