@@ -1,8 +1,6 @@
 import {
   AnnotatedResourceId,
-  ImageAssetLink,
   ImageClassification,
-  ImageExtractedText,
   ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
@@ -51,8 +49,7 @@ export const getAnnotationLabelText = (
   (annotation as ImageClassification).label ||
   (annotation as ImageObjectDetectionBoundingBox).label ||
   (annotation as ImageObjectDetectionPolygon).label ||
-  (annotation as ImageExtractedText).extractedText ||
-  (annotation as ImageAssetLink).text;
+  (annotation as ImageKeypointCollection).label;
 
 export const filterAnnotations = ({
   annotations,

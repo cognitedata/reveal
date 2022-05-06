@@ -17,8 +17,8 @@ import {
 } from 'src/modules/Common/types/index';
 import { Status } from 'src/api/annotation/types';
 
-const ANN_WITH_PUMP_TEXT_COUNT = 6;
-const ANN_WITH_SUGGESTED_PUMP_COUNT = 5;
+const ANN_WITH_PUMP_LABEL_COUNT = 4;
+const ANN_WITH_SUGGESTED_PUMP_COUNT = 3;
 const SUGGESTED_ANN_COUNT = 5;
 const REJECTED_ANN_COUNT = 2;
 const APPROVED_ANN_COUNT = 3;
@@ -94,24 +94,6 @@ describe('Test AnnotationUtils', () => {
 
       expect(getAnnotationLabelText(annotation)).toEqual(label);
     });
-
-    test('get label for ImageExtractedText', () => {
-      const extractedText = 'pump';
-      const annotation = getDummyImageExtractedTextAnnotation({
-        extractedText,
-      });
-
-      expect(getAnnotationLabelText(annotation)).toEqual(extractedText);
-    });
-
-    test('get label for ImageAssetLink', () => {
-      const text = 'pump';
-      const annotation = getDummyImageAssetLinkAnnotation({
-        text,
-      });
-
-      expect(getAnnotationLabelText(annotation)).toEqual(text);
-    });
   });
 
   describe('Test filterAnnotations', () => {
@@ -132,7 +114,7 @@ describe('Test AnnotationUtils', () => {
             annotations: dummyAnnotations,
             filter: { annotationText: 'pump' },
           }).length
-        ).toBe(ANN_WITH_PUMP_TEXT_COUNT);
+        ).toBe(ANN_WITH_PUMP_LABEL_COUNT);
       });
 
       test('filter pump3 as extractedText', () => {
@@ -140,15 +122,6 @@ describe('Test AnnotationUtils', () => {
           filterAnnotations({
             annotations: dummyAnnotations,
             filter: { annotationText: 'pump3' },
-          }).length
-        ).toBe(1);
-      });
-
-      test('filter pumpLink as text', () => {
-        expect(
-          filterAnnotations({
-            annotations: dummyAnnotations,
-            filter: { annotationText: 'pumpLink' },
           }).length
         ).toBe(1);
       });
