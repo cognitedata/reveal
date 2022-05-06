@@ -1,6 +1,6 @@
 import reducer, { initialState } from 'src/modules/Common/store/common/slice';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
@@ -16,7 +16,7 @@ describe('Test common reducer', () => {
 
   const rejectedActionTypes = [
     SaveAnnotations.rejected.type,
-    RetrieveAnnotations.rejected.type,
+    RetrieveAnnotationsV1.rejected.type,
     DeleteAnnotations.rejected.type,
     UpdateAnnotations.rejected.type,
     UpdateFiles.rejected.type,

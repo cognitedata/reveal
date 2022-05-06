@@ -1,7 +1,7 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bulkConverters';
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { VisionAnnotationV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
@@ -30,7 +30,7 @@ const annotationSlice = createSlice({
   /* eslint-disable no-param-reassign */
   extraReducers: (builder) => {
     builder.addCase(
-      RetrieveAnnotations.fulfilled,
+      RetrieveAnnotationsV1.fulfilled,
       (
         state: AnnotationState,
         {
@@ -89,7 +89,7 @@ const annotationSlice = createSlice({
     );
 
     builder.addMatcher(
-      // TODO: refactor -> same as RetrieveAnnotations.fulfilled
+      // TODO: refactor -> same as RetrieveAnnotationsV1.fulfilled
       isAnyOf(
         CreateAnnotations.fulfilled,
         VisionJobUpdate.fulfilled,

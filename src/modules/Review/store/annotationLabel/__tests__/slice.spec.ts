@@ -13,7 +13,7 @@ import reducer, {
 } from 'src/modules/Review/store/annotationLabel/slice';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
@@ -525,7 +525,7 @@ describe('Test annotationLabel reducer', () => {
           CreateAnnotations.fulfilled.type,
           VisionJobUpdate.fulfilled.type,
           UpdateAnnotations.fulfilled.type,
-          RetrieveAnnotations.fulfilled.type,
+          RetrieveAnnotationsV1.fulfilled.type,
         ].forEach((type) => {
           const action = {
             type,
@@ -545,7 +545,7 @@ describe('Test annotationLabel reducer', () => {
           CreateAnnotations.fulfilled.type,
           VisionJobUpdate.fulfilled.type,
           UpdateAnnotations.fulfilled.type,
-          RetrieveAnnotations.fulfilled.type,
+          RetrieveAnnotationsV1.fulfilled.type,
         ].forEach((type) => {
           const action = { type, payload: [generateDummyAnnotations()] };
 

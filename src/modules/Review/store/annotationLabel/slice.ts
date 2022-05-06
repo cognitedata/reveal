@@ -3,7 +3,7 @@ import { Tool } from 'src/modules/Review/types';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
@@ -207,7 +207,7 @@ const annotationLabelSlice = createSlice({
         CreateAnnotations.fulfilled,
         VisionJobUpdate.fulfilled,
         UpdateAnnotations.fulfilled,
-        RetrieveAnnotations.fulfilled
+        RetrieveAnnotationsV1.fulfilled
       ),
       (state, action) => {
         const annotations = action.payload;

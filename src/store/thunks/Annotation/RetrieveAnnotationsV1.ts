@@ -12,11 +12,11 @@ import { splitListIntoChunks } from 'src/utils/generalUtils';
 import { from, lastValueFrom } from 'rxjs';
 import { map, mergeMap, reduce } from 'rxjs/operators';
 
-export const RetrieveAnnotations = createAsyncThunk<
+export const RetrieveAnnotationsV1 = createAsyncThunk<
   VisionAnnotationV1[],
   { fileIds: number[]; clearCache?: boolean },
   ThunkConfig
->('RetrieveAnnotations', async (payload) => {
+>('RetrieveAnnotationsV1', async (payload) => {
   const { fileIds: fetchFileIds } = payload;
   const fileIdBatches = splitListIntoChunks(
     fetchFileIds,

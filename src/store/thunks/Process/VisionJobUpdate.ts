@@ -17,7 +17,7 @@ import {
 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { fileProcessUpdate } from 'src/store/commonActions';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { ToastUtils } from 'src/utils/ToastUtils';
 import { convertVisionJobAnnotationToAnnotationTypeV1 } from 'src/api/vision/detectionModels/converters';
 
@@ -197,7 +197,7 @@ export const VisionJobUpdate = createAsyncThunk<
 
       if (newVisionJobResults.length) {
         await dispatch(
-          RetrieveAnnotations({
+          RetrieveAnnotationsV1({
             fileIds: newVisionJobResults.map((item) => item.fileId),
             clearCache: false,
           })

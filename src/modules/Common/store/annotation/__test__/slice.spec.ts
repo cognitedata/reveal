@@ -12,7 +12,7 @@ import { createVisionAnnotationStub } from 'src/modules/Common/Utils/AnnotationU
 import { clearAnnotationState } from 'src/store/commonActions';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
@@ -49,7 +49,7 @@ describe('Test annotation reducer', () => {
     expect(reducer(undefined, { type: undefined })).toEqual(initialState);
   });
 
-  describe('Test RetrieveAnnotations.fulfilled action', () => {
+  describe('Test RetrieveAnnotationsV1.fulfilled action', () => {
     test('should clear entire state when clear cache is true and response is empty', () => {
       const previousState: AnnotationState = {
         files: {
@@ -65,7 +65,7 @@ describe('Test annotation reducer', () => {
         },
       };
       const action = {
-        type: RetrieveAnnotations.fulfilled.type,
+        type: RetrieveAnnotationsV1.fulfilled.type,
         meta: {
           arg: {
             fileIds: [],
@@ -95,7 +95,7 @@ describe('Test annotation reducer', () => {
       };
 
       const action = {
-        type: RetrieveAnnotations.fulfilled.type,
+        type: RetrieveAnnotationsV1.fulfilled.type,
         meta: {
           arg: {
             fileIds: [10],
@@ -132,7 +132,7 @@ describe('Test annotation reducer', () => {
       };
 
       const action = {
-        type: RetrieveAnnotations.pending.type,
+        type: RetrieveAnnotationsV1.pending.type,
         meta: {
           arg: {
             fileIds: [30],
@@ -171,7 +171,7 @@ describe('Test annotation reducer', () => {
       };
 
       const action = {
-        type: RetrieveAnnotations.fulfilled.type,
+        type: RetrieveAnnotationsV1.fulfilled.type,
         meta: {
           arg: {
             fileIds: [10, 20, 30],
@@ -347,7 +347,7 @@ describe('Test annotation reducer', () => {
   });
 
   describe('Test populator actions', () => {
-    // TODO: same test as for RetrieveAnnotations.fulfilled, should be removed after refactoring
+    // TODO: same test as for RetrieveAnnotationsV1.fulfilled, should be removed after refactoring
     const actionTypes = [
       CreateAnnotations.fulfilled.type,
       VisionJobUpdate.fulfilled.type,

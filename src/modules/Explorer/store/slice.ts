@@ -3,7 +3,7 @@ import { ExplorerFileState, ExplorerState } from 'src/modules/Explorer/types';
 import { SelectFilter } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/sdk';
 import { clearExplorerFileState } from 'src/store/commonActions';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
 import { createFileState } from 'src/store/util/StateUtils';
@@ -161,7 +161,7 @@ const explorerReducer = createGenericTabularDataSlice({
     );
 
     builder.addCase(
-      RetrieveAnnotations.fulfilled,
+      RetrieveAnnotationsV1.fulfilled,
       (state: ExplorerState, { payload: _ }) => {
         state.loadingAnnotations = false;
       }
