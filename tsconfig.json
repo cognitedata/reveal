@@ -23,7 +23,7 @@
     "noFallthroughCasesInSwitch": true,
     
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*","cypress/e2e"],
   "exclude": [
     "node_modules",
     "tests/*",
