@@ -7,7 +7,7 @@ import {
 } from 'src/modules/Common/store/annotation/__test__/getDummyAnnotations';
 import {
   filterAnnotations,
-  getAnnotationLabelText,
+  getAnnotationInstanceLabel,
   getAnnotationsBadgeCounts,
 } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
@@ -67,14 +67,14 @@ const dummyAnnotations: VisionAnnotation<VisionAnnotationDataType>[] = [
 ];
 
 describe('Test AnnotationUtils', () => {
-  describe('Test getAnnotationLabelText', () => {
+  describe('Test getAnnotationInstanceLabel', () => {
     test('get label for ImageClassification', () => {
       const label = 'pump';
       const annotation = getDummyImageClassificationAnnotation({
         label,
       });
 
-      expect(getAnnotationLabelText(annotation)).toEqual(label);
+      expect(getAnnotationInstanceLabel(annotation)).toEqual(label);
     });
 
     test('get label for ImageObjectDetectionBoundingBox', () => {
@@ -83,7 +83,7 @@ describe('Test AnnotationUtils', () => {
         label,
       });
 
-      expect(getAnnotationLabelText(annotation)).toEqual(label);
+      expect(getAnnotationInstanceLabel(annotation)).toEqual(label);
     });
 
     test('get label for ImageObjectDetectionPolygon', () => {
@@ -92,7 +92,7 @@ describe('Test AnnotationUtils', () => {
         label,
       });
 
-      expect(getAnnotationLabelText(annotation)).toEqual(label);
+      expect(getAnnotationInstanceLabel(annotation)).toEqual(label);
     });
   });
 

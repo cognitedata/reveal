@@ -43,7 +43,7 @@ export const createVisionAnnotationStub = <T>({
   ...data,
 });
 
-export const getAnnotationLabelText = (
+export const getAnnotationInstanceLabel = (
   annotation: VisionAnnotation<VisionAnnotationDataType>
 ): string =>
   (annotation as ImageClassification).label ||
@@ -68,7 +68,7 @@ export const filterAnnotations = ({
     if (filter.annotationText) {
       filteredAnnotations = filteredAnnotations.filter(
         (annotation) =>
-          getAnnotationLabelText(annotation) === filter.annotationText
+          getAnnotationInstanceLabel(annotation) === filter.annotationText
       );
     }
   }
