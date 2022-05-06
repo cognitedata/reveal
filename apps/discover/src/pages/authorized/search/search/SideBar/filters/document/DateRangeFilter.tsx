@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 
+import isEmpty from 'lodash/isEmpty';
 import { useSetDocumentFilters } from 'services/savedSearches/hooks/useClearDocumentFilters';
 import styled from 'styled-components/macro';
 import { dateToEpoch } from 'utils/date';
@@ -78,7 +79,11 @@ export const DateRangeFilter: React.FC = React.memo((props) => {
         filters={filters}
         handleClearDate={handleClearDate}
       />
-      <Button type="primary" onClick={handleApplyFilters}>
+      <Button
+        type="primary"
+        onClick={handleApplyFilters}
+        disabled={isEmpty(dateState)}
+      >
         Apply
       </Button>
     </DateRangeFooterWrapper>
@@ -97,7 +102,6 @@ export const DateRangeFilter: React.FC = React.memo((props) => {
   return (
     <FilterCollapse.Panel
       title="Date Range"
-      // showApplyButton={showApplyButton}
       handleApplyClick={handleApplyFilters}
       {...props}
     >
