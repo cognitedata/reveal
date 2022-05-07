@@ -60,6 +60,23 @@ clusters:
     environment: development
     status: setup
 # AKS
+- name: az-tyo-gp-001
+  vendor: aks
+  tags:
+  - cdf:true
+  - environment:production
+  - multitenant:true
+  - auth_cluster_name:az-tyo-gp-001
+  - functions:true
+  metadata:
+    auth_cluster_name: az-tyo-gp-001
+    azure_region: westeurope
+    azure_resource_group: default
+    azure_cluster_name: az-tyo-gp-001
+    azure_subscription_id: 22c00316-154e-4cd7-9a5b-dc88a062d28e
+    environment: production
+    google_project_id: cognite-ext-az-tyo-gp-001
+    status: setup
 - name: az-ams-aloe
   vendor: aks
   tags:
