@@ -13,6 +13,7 @@
 ## 5.0.0-rc-1 Feb 28 2022
 
 - BREAKING: Use @cognite/sdk V7 client
+- BREAKING: API key auth method support is dropped. `REACT_APP_API_KEY` has no effect anymore
 - Updated authentication logic to use new SDK standards
 - Refactored re-auth option to trigger from outside
 
