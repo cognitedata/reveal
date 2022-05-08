@@ -2,16 +2,19 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "baseUrl": "src",
+    "target": "es6",
     "module": "esnext",
-    "types": ["jest"],
+    "types": ["vite/client", "jest", "@testing-library/jest-dom"],
     "incremental": true,
     "noErrorTruncation": true
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
+    ".storybook/**/*.js",
+    ".storybook/**/*.jsx",
     ".eslintrc.js",
     ".eslintrc.production.js"
   ],
-  "exclude": ["**/node_modules", "**/.*/*", "**/build", "**/dist"]
+  "exclude": ["node_modules"]
 }

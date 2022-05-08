@@ -2,7 +2,7 @@
 
 set -e
 
-../../node_modules/.bin/react-scripts test "$@" \
+../../node_modules/.bin/jest test "$@" \
   --collectCoverageFrom='!*/**/*.stories.tsx' \
   --ci \
   --coverage \

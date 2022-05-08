@@ -29,7 +29,7 @@ function cleanup {
 
 trap cleanup EXIT
 
-../../node_modules/.bin/react-scripts start
+bazel run :start
 
 EXIT_CODE=$?
 
