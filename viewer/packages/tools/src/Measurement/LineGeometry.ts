@@ -8,6 +8,10 @@ export class LineGeometry extends LineGeometrySegment {
     super();
   }
 
+  /**
+   * Set the position attribute of the Line Geometry
+   * @param array Array of position
+   */
   public setPositions(array: Float32Array): void {
     const length = array.length - 3;
     const points = new Float32Array(2 * length);

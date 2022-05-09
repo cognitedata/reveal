@@ -19,6 +19,10 @@ export class LineGeometrySegment extends THREE.InstancedBufferGeometry {
     this.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
   }
 
+  /**
+   * Set the position attribute of the Line segment
+   * @param array Array of position
+   */
   public setPositions(array: Float32Array): void {
     let lineSegments: ArrayLike<number>;
 
@@ -36,6 +40,9 @@ export class LineGeometrySegment extends THREE.InstancedBufferGeometry {
     this.computeBoundingSphere();
   }
 
+  /**
+   * Compute the bounding box of the line
+   */
   public computeBoundingBox(): void {
     if (this.boundingBox === null) {
       this.boundingBox = new THREE.Box3();
@@ -53,6 +60,9 @@ export class LineGeometrySegment extends THREE.InstancedBufferGeometry {
     }
   }
 
+  /**
+   * Compute the line sphere bounding box
+   */
   public computeBoundingSphere(): void {
     if (this.boundingSphere === null) {
       this.boundingSphere = new THREE.Sphere();
@@ -84,7 +94,7 @@ export class LineGeometrySegment extends THREE.InstancedBufferGeometry {
 
       if (isNaN(this.boundingSphere.radius)) {
         console.error(
-          'THREE.LineSegmentsGeometry.computeBoundingSphere(): Computed radius is NaN. The instanced position data is likely to have NaN values.',
+          'LineGeometrySegment.computeBoundingSphere(): Computed radius is NaN. The instanced position data is likely to have NaN values.',
           this
         );
       }

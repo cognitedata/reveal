@@ -110,6 +110,10 @@ export class MeasurementControls {
     this._measurement.update(offsetX, offsetY, endPoint);
   }
 
+  /**
+   * Update the Measurement Line width & color
+   * @param options Line Options of width & color
+   */
   updateLineOptions(options: MeasurementLineOptions): void {
     if (this._measurement) {
       const distanceMeasurement = this._measurement as MeasurementDistance;
@@ -118,6 +122,9 @@ export class MeasurementControls {
     }
   }
 
+  /**
+   * Dispose Measurement control
+   */
   dispose(): void {
     this.remove();
   }
