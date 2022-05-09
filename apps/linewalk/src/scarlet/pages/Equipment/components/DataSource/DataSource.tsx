@@ -279,7 +279,7 @@ export const DataSource = ({
                 }
                 checked={isPrimary}
                 disabled={
-                  dirty ||
+                  (!isPCMS && dirty) ||
                   isActionsDisabled ||
                   (!isPCMS && detection?.state !== DetectionState.APPROVED)
                 }
