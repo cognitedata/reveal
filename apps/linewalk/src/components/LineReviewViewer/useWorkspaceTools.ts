@@ -18,63 +18,79 @@ export enum WorkspaceTool {
 }
 
 const useWorkspaceTools = (
-  ornateRef: CogniteOrnate | undefined,
+  ornateRefs: (CogniteOrnate | undefined)[],
   options: {
-    onDiscrepancyCreate?: (id: string, groupId: string) => void;
+    onDiscrepancyCreate?: (id: string, groupId: string, attrs: any) => void;
   } = {}
 ) => {
   const [tool, onToolChange] = useState<WorkspaceTool>(WorkspaceTool.DEFAULT);
-  const toolRefs = useRef<
-    | {
-        move: MoveTool;
-        rect: DiscrepancyTool;
-        default: DefaultTool;
-        text: TextTool;
+  const toolsRefs = useRef<
+    {
+      move: MoveTool;
+      rect: DiscrepancyTool;
+      default: DefaultTool;
+      text: TextTool;
+    }[]
+  >([]);
+
+  useEffect(() => {
+    ornateRefs.forEach((ornateRef, index) => {
+      if (ornateRef) {
+        toolsRefs.current[index] = {
+          move: new MoveTool(ornateRef),
+          rect: new DiscrepancyTool(ornateRef),
+          text: new TextTool(ornateRef),
+          default: new DefaultTool(ornateRef),
+        };
       }
-    | undefined
-  >(undefined);
+    });
+  }, [ornateRefs]);
 
   useEffect(() => {
-    if (ornateRef) {
-      toolRefs.current = {
-        move: new MoveTool(ornateRef),
-        rect: new DiscrepancyTool(ornateRef),
-        text: new TextTool(ornateRef),
-        default: new DefaultTool(ornateRef),
-      };
-    }
-  }, [ornateRef]);
+    ornateRefs.forEach((ornateRef, index) => {
+      if (ornateRef) {
+        // eslint-disable-next-line no-param-reassign
+        ornateRef.tools = toolsRefs.current[index] as unknown as Record<
+          string,
+          Tool
+        >;
+      }
+    });
+  }, [ornateRefs]);
 
   useEffect(() => {
-    if (ornateRef) {
-      // eslint-disable-next-line no-param-reassign
-      ornateRef.tools = toolRefs.current as unknown as Record<string, Tool>;
-    }
-  }, [ornateRef]);
-
-  useEffect(() => {
-    if (ornateRef && toolRefs.current && options.onDiscrepancyCreate) {
-      toolRefs.current.rect.addEventListener(
-        EventType.ON_CREATE_END,
-        options.onDiscrepancyCreate
-      );
-    }
-
-    return () => {
-      if (options.onDiscrepancyCreate) {
-        toolRefs.current?.rect.removeEventListener(
-          EventType.ON_CREATE_END,
+    ornateRefs
+      .filter((ornateRef) => ornateRef !== undefined)
+      .forEach((ornateRef, index) => {
+        if (
+          ornateRef &&
+          toolsRefs.current[index] &&
           options.onDiscrepancyCreate
-        );
-      }
-    };
+        ) {
+          toolsRefs.current[index].rect.addEventListener(
+            EventType.ON_CREATE_END,
+            options.onDiscrepancyCreate
+          );
+        }
+
+        return () => {
+          if (options.onDiscrepancyCreate) {
+            toolsRefs.current[index]?.rect.removeEventListener(
+              EventType.ON_CREATE_END,
+              options.onDiscrepancyCreate
+            );
+          }
+        };
+      });
   }, [options.onDiscrepancyCreate]);
 
   useEffect(() => {
-    if (ornateRef?.tools[tool] !== undefined) {
-      ornateRef?.handleToolChange(tool as ToolType);
-    }
-  }, [ornateRef, tool]);
+    ornateRefs.forEach((ornateRef) => {
+      if (ornateRef?.tools[tool] !== undefined) {
+        ornateRef?.handleToolChange(tool as ToolType);
+      }
+    });
+  }, [ornateRefs, tool]);
 
   return {
     tool,

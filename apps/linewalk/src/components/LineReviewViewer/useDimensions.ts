@@ -110,7 +110,17 @@ const useDimensions = (
     minHeight: MIN_HEIGHT,
   }
 ) => {
-  const [dimensions, setDimensions] = useState<Dimensions>(initialDimensions);
+  const [dimensions, setDimensions] = useState<Dimensions>({
+    ...initialDimensions,
+    x: Math.min(
+      Math.max(0, initialDimensions.x),
+      window.innerWidth - initialDimensions.width
+    ),
+    y: Math.min(
+      Math.max(0, initialDimensions.y),
+      window.innerHeight - initialDimensions.height
+    ),
+  });
 
   const setConstrainedDimensions = (nextDimensions: Dimensions) =>
     setDimensions(constrainDimensions(nextDimensions, options));

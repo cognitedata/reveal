@@ -57,8 +57,14 @@ const getExportableDiscrepancies = (
     comment: discrepancy.comment,
     createdAt: discrepancy.createdAt,
     status: discrepancy.status,
-    targetExternalId: discrepancy.targetExternalId,
-    boundingBox: getBoundingBoxRelativeToParentById(discrepancy.id, ornateRef),
+    annotations: discrepancy.annotations.map((annotation) => ({
+      nodeId: annotation.nodeId,
+      targetExternalId: annotation.targetExternalId,
+      boundingBox: getBoundingBoxRelativeToParentById(
+        annotation.nodeId,
+        ornateRef
+      ),
+    })),
   }));
 
 type ExportableLineState = {

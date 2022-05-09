@@ -11,13 +11,24 @@ import {
   TextAnnotation,
   WorkspaceDocument,
 } from 'modules/lineReviews/types';
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import styled from 'styled-components';
 import layers from 'utils/z';
+import { v4 as uuid } from 'uuid';
 
 import usePrevious from '../../hooks/usePrevious';
 import { removeLineNumberFromDocumentMetadata } from '../../modules/lineReviews/api';
-import { DiscrepancyModalState } from '../../pages/LineReview';
+import {
+  DISCREPANCY_MODAL_OFFSET_X,
+  DISCREPANCY_MODAL_OFFSET_Y,
+  DiscrepancyModalState,
+} from '../../pages/LineReview';
 import getFileConnectionGroups from '../../utils/getFileConnectionDrawings';
 import WorkSpaceTools from '../WorkSpaceTools';
 
@@ -34,6 +45,7 @@ import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId
 import getLinksByAnnotationId from './getLinksByAnnotationId';
 import IsoModal from './IsoModal';
 import ReactOrnate, { SLIDE_COLUMN_GAP, SLIDE_ROW_GAP } from './ReactOrnate';
+import { DiscrepancyInteractionHandler } from './types';
 import useDocumentJumper from './useDocumentJumper';
 import useForceUpdate from './useForceUpdate';
 import useParsedDocuments from './useParsedDocuments';
@@ -51,16 +63,13 @@ type LineReviewViewerProps = {
     transform: (discrepancies: Discrepancy[]) => Discrepancy[]
   ) => void;
   textAnnotations: TextAnnotation[];
-  onTextAnnotationChange: (
-    transform: (textAnnotations: TextAnnotation[]) => TextAnnotation[]
-  ) => void;
   onOrnateRef: (ref: CogniteOrnate | undefined) => void;
   isSidePanelOpen: boolean;
   onOpenSidePanelButtonPress: () => void;
   onDeleteDiscrepancy: (id: string) => void;
   discrepancyModalState: DiscrepancyModalState;
   setDiscrepancyModalState: Dispatch<SetStateAction<DiscrepancyModalState>>;
-  onDiscrepancyInteraction: (id: string) => void;
+  onDiscrepancyInteraction: DiscrepancyInteractionHandler;
 };
 
 const DocumentJumperContainer = styled.div`
@@ -72,11 +81,8 @@ const DocumentJumperContainer = styled.div`
   background-color: white;
 `;
 
-export type Discrepancy = {
-  id: string;
-  comment: string;
-  createdAt: Date;
-  status: 'pending' | 'approved';
+export type DiscrepancyAnnotation = {
+  nodeId: string;
   targetExternalId: string;
   boundingBox?: {
     width: number;
@@ -86,39 +92,54 @@ export type Discrepancy = {
   };
 };
 
+export type Discrepancy = {
+  id: string;
+  comment: string;
+  createdAt: Date;
+  status: 'pending' | 'approved';
+  annotations: DiscrepancyAnnotation[];
+};
+
 const useLoadLineReviewStateOnMount = (
   ornateRef: CogniteOrnate | undefined,
   discrepancies: Discrepancy[],
-  onDiscrepancyInteraction: (id: string) => void,
+  onDiscrepancyInteraction: DiscrepancyInteractionHandler,
   textAnnotations: TextAnnotation[]
 ) => {
   useEffect(() => {
     if (ornateRef) {
       discrepancies.forEach((discrepancy) => {
-        const { boundingBox } = discrepancy;
-        if (boundingBox === undefined) {
-          console.log('discrepancy.boundingBox is undefined', discrepancy);
-          return;
-        }
+        discrepancy.annotations.forEach((annotation) => {
+          const { boundingBox } = annotation;
+          if (boundingBox === undefined) {
+            console.log('discrepancy.boundingBox is undefined', discrepancy);
+            return;
+          }
 
-        const discrepancyNode = DiscrepancyTool.getDiscrepancyNode({
-          id: discrepancy.id,
-          groupId: getKonvaSelectorSlugByExternalId(
-            discrepancy.targetExternalId
-          ),
-          ...boundingBox,
-          status: discrepancy.status,
+          const discrepancyNode = DiscrepancyTool.getDiscrepancyNode({
+            id: annotation.nodeId,
+            groupId: getKonvaSelectorSlugByExternalId(
+              annotation.targetExternalId
+            ),
+            ...boundingBox,
+            status: discrepancy.status,
+          });
+
+          discrepancyNode.on('click', () =>
+            onDiscrepancyInteraction(ornateRef, annotation.nodeId)
+          );
+
+          const groupNode = ornateRef.stage.findOne(
+            `#${getKonvaSelectorSlugByExternalId(annotation.targetExternalId)}`
+          ) as Konva.Group;
+
+          if (groupNode === undefined) {
+            // The document might not exist in the current workspace.
+            return;
+          }
+
+          groupNode.add(discrepancyNode);
         });
-
-        discrepancyNode.on('click', () =>
-          onDiscrepancyInteraction(discrepancy.id)
-        );
-
-        const groupNode = ornateRef.stage.findOne(
-          `#${getKonvaSelectorSlugByExternalId(discrepancy.targetExternalId)}`
-        ) as Konva.Group;
-
-        groupNode.add(discrepancyNode);
       });
 
       textAnnotations.forEach((textAnnotation) => {
@@ -143,17 +164,22 @@ const useLoadLineReviewStateOnMount = (
           )}`
         ) as Konva.Group;
 
+        if (groupNode === undefined) {
+          // The document might not exist in the current workspace.
+          return;
+        }
+
         groupNode.add(textAnnotationNode);
       });
     }
   }, [ornateRef]);
 };
 
-const useShamefulKeepReactAndOrnateInSync = (
+export const useShamefulKeepReactAndOrnateInSync = (
   ornateRef: CogniteOrnate | undefined,
   discrepancies: Discrepancy[],
   textAnnotations: TextAnnotation[],
-  onDiscrepancyInteraction: (id: string) => void
+  onDiscrepancyInteraction: DiscrepancyInteractionHandler
 ) => {
   const previousDiscrepancies = usePrevious(discrepancies);
 
@@ -165,17 +191,46 @@ const useShamefulKeepReactAndOrnateInSync = (
   );
 
   useEffect(() => {
-    discrepancies.forEach((d) => {
-      const node = ornateRef?.stage.findOne(`#${d.id}`) as Konva.Rect;
-      node?.on('click', () => {
-        onDiscrepancyInteraction(d.id);
+    const discrepancyAnnotationNodeIds = discrepancies.flatMap((discrepancy) =>
+      discrepancy.annotations.map((annotation) => annotation.nodeId)
+    );
+
+    const previousDiscrepancyAnnotationNodeIds = previousDiscrepancies?.flatMap(
+      (discrepancy) =>
+        discrepancy.annotations.map((annotation) => annotation.nodeId)
+    );
+
+    // DELETIONS
+    const discrepancyAnnotationNodeIdsToRemove =
+      previousDiscrepancyAnnotationNodeIds?.filter(
+        (nodeId) => !discrepancyAnnotationNodeIds.includes(nodeId)
+      ) ?? [];
+
+    discrepancyAnnotationNodeIdsToRemove.forEach((nodeId) => {
+      ornateRef?.stage.findOne(`#${nodeId}`)?.remove();
+    });
+  }, [discrepancies]);
+
+  useEffect(() => {
+    discrepancies.forEach((discrepancy) => {
+      discrepancy.annotations.forEach((annotation) => {
+        const node = ornateRef?.stage.findOne(
+          `#${annotation.nodeId}`
+        ) as Konva.Rect;
+        node?.on('click', () => {
+          onDiscrepancyInteraction(ornateRef, annotation.nodeId);
+        });
       });
     });
 
     return () => {
-      discrepancies.forEach(({ id }) => {
-        const node = ornateRef?.stage.findOne(`#${id}`) as Konva.Rect;
-        node?.off('click');
+      discrepancies.forEach((discrepancy) => {
+        discrepancy.annotations.forEach((annotation) => {
+          const node = ornateRef?.stage.findOne(
+            `#${annotation.nodeId}`
+          ) as Konva.Rect;
+          node?.off('click');
+        });
       });
     };
   }, [discrepancies]);
@@ -189,9 +244,21 @@ const useShamefulKeepReactAndOrnateInSync = (
         (id) => !discrepancyIds.includes(id)
       );
       discrepancyIdsToRemove.forEach((id) => {
-        const node = ornateRef?.stage.findOne(`#${id}`) as Konva.Rect;
-        ornateRef?.transformer?.setSelectedNodes([]);
-        node?.remove();
+        const foundDiscrepancy = previousDiscrepancies.find(
+          (discrepancy) => discrepancy.id === id
+        );
+
+        if (!foundDiscrepancy) {
+          return;
+        }
+
+        foundDiscrepancy.annotations.forEach((annotation) => {
+          const node = ornateRef?.stage.findOne(
+            `#${annotation.nodeId}`
+          ) as Konva.Rect;
+          ornateRef?.transformer?.setSelectedNodes([]);
+          node?.remove();
+        });
       });
     }
   }, [discrepancies, previousDiscrepancies, ornateRef]);
@@ -200,18 +267,19 @@ const useShamefulKeepReactAndOrnateInSync = (
     // STATE TRANSITIONS
     discrepancies
       .filter((discrepancy) => discrepancy.status === 'approved')
-      .filter(
-        (discrepancy) =>
-          previousDiscrepancies?.find(
-            (prevDiscrepancy) => prevDiscrepancy.id === discrepancy.id
-          )?.status === 'pending'
-      )
       .forEach((discrepancy) => {
-        const node = ornateRef?.stage.findOne(
-          `#${discrepancy.id}`
-        ) as Konva.Rect;
-        node.fill('rgba(213, 26, 70, 0.15)');
-        node.stroke('#D51A46');
+        discrepancy.annotations.forEach((annotation) => {
+          const node = ornateRef?.stage.findOne(
+            `#${annotation.nodeId}`
+          ) as Konva.Rect;
+
+          if (node === undefined) {
+            return;
+          }
+
+          node.fill('rgba(213, 26, 70, 0.15)');
+          node.stroke('#D51A46');
+        });
       });
   }, [discrepancies, previousDiscrepancies, ornateRef]);
 };
@@ -237,9 +305,6 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   const [isoOrnateRef, setIsoOrnateRef] = useState<CogniteOrnate | undefined>(
     undefined
   );
-  const [pendingDiscrepancyId, setPendingDiscrepancyId] = useState<
-    string | undefined
-  >(undefined);
   const [ornateRef, setOrnateRef] = useState<CogniteOrnate | undefined>(
     undefined
   );
@@ -299,29 +364,82 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     onDiscrepancyInteraction
   );
 
-  const { tool, onToolChange } = useWorkspaceTools(ornateRef, {
-    onDiscrepancyCreate: (id: string, targetExternalId: string) => {
-      onDiscrepancyChange((prevDiscrepancies) => [
-        ...prevDiscrepancies.filter(({ status }) => status === 'approved'),
-        {
-          id,
+  const { tool, onToolChange } = useWorkspaceTools([ornateRef, isoOrnateRef], {
+    onDiscrepancyCreate: (
+      nodeId: string,
+      targetExternalId: string,
+      attrs: any
+    ) => {
+      // Shameful, keep in sync - should ideally happen in useShamefulKeepReactAndOrnateInSync
+      // but useShamefulKeepReactAndOrnateInSync would need to refactored to fetch data from
+      // multiple sources.
+      [ornateRef, isoOrnateRef].forEach((ref) => {
+        if (
+          ref?.stage.findOne(`#${nodeId}`) === undefined &&
+          ref?.stage.findOne(`#${attrs.groupId}`) !== undefined
+        ) {
+          ref?.addShape(DiscrepancyTool.getDiscrepancyNode(attrs));
+        }
+      });
+
+      onDiscrepancyChange((prevDiscrepancies) => {
+        const discrepancyBase: Discrepancy = {
+          id: uuid(),
           comment: '',
           createdAt: new Date(),
           status: 'pending',
-          targetExternalId,
-        },
-      ]);
+          annotations: [],
+          ...prevDiscrepancies.find(
+            (discrepancy) =>
+              discrepancy.id === discrepancyModalState.discrepancyId ||
+              discrepancy.status === 'pending'
+          ),
+        };
 
-      setPendingDiscrepancyId(id);
+        const additionalDiscrepancyAnnotation = {
+          nodeId,
+          targetExternalId,
+        };
+
+        setDiscrepancyModalState((prevDiscrepancyModalState) => ({
+          ...prevDiscrepancyModalState,
+          discrepancyId: discrepancyBase.id,
+        }));
+
+        const existsInCurrentListOfDiscrepancies = prevDiscrepancies.find(
+          (discrepancy) => discrepancy.id === discrepancyBase.id
+        );
+
+        return [
+          ...prevDiscrepancies.map((discrepancy) => {
+            if (discrepancy.id === discrepancyModalState.discrepancyId) {
+              return {
+                ...discrepancyBase,
+                ...discrepancy,
+                annotations: [
+                  ...discrepancy.annotations,
+                  additionalDiscrepancyAnnotation,
+                ],
+              };
+            }
+
+            return discrepancy;
+          }),
+          ...(existsInCurrentListOfDiscrepancies
+            ? []
+            : [
+                {
+                  ...discrepancyBase,
+                  annotations: [
+                    ...discrepancyBase.annotations,
+                    additionalDiscrepancyAnnotation,
+                  ],
+                },
+              ]),
+        ];
+      });
     },
   });
-
-  useEffect(() => {
-    if (pendingDiscrepancyId) {
-      onDiscrepancyInteraction(pendingDiscrepancyId);
-      setPendingDiscrepancyId(undefined);
-    }
-  }, [pendingDiscrepancyId]);
 
   const onSaveDiscrepancy = (discrepancy: Discrepancy) => {
     const foundIndex = discrepancies.findIndex((d) => d.id === discrepancy.id);
@@ -344,21 +462,19 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
           ]
     );
 
-    setDiscrepancyModalState((prevState) => ({ ...prevState, isOpen: false }));
+    setDiscrepancyModalState((prevState) => ({
+      ...prevState,
+      discrepancyId: undefined,
+      isOpen: false,
+    }));
   };
 
   const onDiscrepancyModalClosePress = () => {
-    setDiscrepancyModalState((prevState) => {
-      if (prevState.discrepancy?.status === 'pending') {
-        onDeleteDiscrepancy(prevState.discrepancy.id);
-      }
-
-      return { ...prevState, isOpen: false };
-    });
+    setDiscrepancyModalState((prevState) => ({
+      ...prevState,
+      isOpen: false,
+    }));
   };
-
-  const { tool: isoModalTool, onToolChange: onIsoModalToolChange } =
-    useWorkspaceTools(isoOrnateRef);
 
   const groups = (() => {
     if (!ornateRef) {
@@ -372,8 +488,6 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     if (isLoading) {
       return [];
     }
-
-    console.log('File Connection Groups documents', [...ornateRef.documents]);
 
     return getFileConnectionGroups({
       ornateViewer: ornateRef,
@@ -496,10 +610,9 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     ...groups,
     ...overlays,
     ...getDiscrepancyCircleMarkers(
-      lineReview.id,
       discrepancies,
       ornateRef,
-      (evt, discrepancy) => onDiscrepancyInteraction(discrepancy.id)
+      (evt, discrepancy) => onDiscrepancyInteraction(ornateRef, discrepancy.id)
     ),
   ];
 
@@ -521,31 +634,56 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     }
   };
 
+  const foundDiscrepancyIndex = discrepancies.findIndex(
+    (discrepancy) => discrepancy.id === discrepancyModalState.discrepancyId
+  );
+
+  const foundDiscrepancy = discrepancies.find(
+    (discrepancy) => discrepancy.id === discrepancyModalState.discrepancyId
+  );
+
   return (
     <>
-      {discrepancyModalState.isOpen && discrepancyModalState.discrepancy && (
-        <DiscrepancyModal
-          // This is a hack
-          documents={documents}
-          key={discrepancyModalState.discrepancy.id}
-          initialPosition={discrepancyModalState.position}
-          initialDiscrepancy={discrepancyModalState.discrepancy}
-          onDeletePress={() =>
-            onDeleteDiscrepancy(discrepancyModalState.discrepancy!.id)
-          }
-          onSave={onSaveDiscrepancy}
-          onClosePress={onDiscrepancyModalClosePress}
-        />
-      )}
+      {discrepancyModalState.isOpen &&
+        foundDiscrepancyIndex >= 0 &&
+        foundDiscrepancy && (
+          <DiscrepancyModal
+            // This is a hack
+            documents={documents}
+            key={foundDiscrepancy.id}
+            index={foundDiscrepancyIndex}
+            initialPosition={discrepancyModalState.position}
+            initialDiscrepancy={foundDiscrepancy}
+            onDeleteDiscrepancyAnnotation={(nodeId: string) => {
+              onDiscrepancyChange((prevDiscrepancies) =>
+                prevDiscrepancies.map((discrepancy) =>
+                  foundDiscrepancy?.id === discrepancy.id
+                    ? {
+                        ...discrepancy,
+                        annotations: discrepancy.annotations.filter(
+                          (annotation) => annotation.nodeId !== nodeId
+                        ),
+                      }
+                    : discrepancy
+                )
+              );
+            }}
+            onDeletePress={() => onDeleteDiscrepancy(foundDiscrepancy.id)}
+            onSave={onSaveDiscrepancy}
+            onClosePress={onDiscrepancyModalClosePress}
+          />
+        )}
 
       <IsoModal
+        onDiscrepancyInteraction={onDiscrepancyInteraction}
+        discrepancies={discrepancies}
         parsedDocuments={parsedDocuments}
         isoDocuments={isoDocuments}
         visible={isIsoModalOpen}
         onOrnateRef={setIsoOrnateRef}
         onHidePress={() => setIsIsoModalOpen(false)}
-        tool={isoModalTool}
-        onToolChange={onIsoModalToolChange}
+        tool={tool}
+        onToolChange={onToolChange}
         ornateRef={ornateRef}
       />
       <div style={{ height: 'calc(100vh - 125px)', position: 'relative' }}>
@@ -620,6 +758,39 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
           )}
           onRemovePress={onRemovePress}
         />
+
+        {foundDiscrepancy &&
+          foundDiscrepancy.status === 'pending' &&
+          !discrepancyModalState.isOpen && (
+            <div
+              style={{
+                position: 'absolute',
+                bottom: 16,
+                right: 16,
+              }}
+            >
+              <Button
+                type="primary"
+                style={{ marginRight: 8 }}
+                onClick={() => {
+                  if (foundDiscrepancy.annotations.length === 0) {
+                    return;
+                  }
+
+                  setDiscrepancyModalState((prevDiscrepancyModalState) => ({
+                    ...prevDiscrepancyModalState,
+                    position: {
+                      x: window.innerWidth - 400 - DISCREPANCY_MODAL_OFFSET_X,
+                      y: window.innerHeight - 380 - DISCREPANCY_MODAL_OFFSET_Y,
+                    },
+                    isOpen: true,
+                  }));
+                }}
+              >
+                Create discrepancy for marked areas
+              </Button>
+            </div>
+          )}
       </div>
     </>
   );

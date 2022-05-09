@@ -9,14 +9,14 @@ import {
 } from '../../modules/lineReviews/types';
 
 import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId';
-import { Discrepancy } from './LineReviewViewer';
+import { Discrepancy, DiscrepancyAnnotation } from './LineReviewViewer';
 
-const isDiscrepancyInDocument = (
+const isDiscrepancyAnnotationInDocument = (
   ornateRef: CogniteOrnate,
-  discrepancy: Discrepancy,
+  annotation: DiscrepancyAnnotation,
   document: WorkspaceDocument
 ) => {
-  const node = ornateRef.stage.findOne(`#${discrepancy.id}`);
+  const node = ornateRef.stage.findOne(`#${annotation.nodeId}`);
   if (node === undefined) {
     return false;
   }
@@ -80,10 +80,12 @@ const exportDocumentsToPdf = async (
       const groupClientRect = clonedGroup.getClientRect();
 
       const discrepancyFootNotes = discrepancies
-        .map((discrepancy, index) =>
-          isDiscrepancyInDocument(ornateRef, discrepancy, document)
-            ? `[${index + 1}]: ${discrepancy.comment}`
-            : undefined
+        .flatMap((discrepancy, index) =>
+          discrepancy.annotations.map((annotation, subIndex) =>
+            isDiscrepancyAnnotationInDocument(ornateRef, annotation, document)
+              ? `[${index + 1}.${subIndex + 1}]: ${discrepancy.comment}`
+              : undefined
+          )
         )
         .filter((v) => !!v)
         .join('\n');

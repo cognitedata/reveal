@@ -12,7 +12,7 @@ import styled from 'styled-components';
 import clamp from 'lodash/clamp';
 
 import exportDocumentsToPdf from '../components/LineReviewViewer/exportDocumentsToPdf';
-import { Discrepancy } from '../components/LineReviewViewer/LineReviewViewer';
+import { DiscrepancyInteractionHandler } from '../components/LineReviewViewer/types';
 import ReportBackModal from '../components/ReportBackModal';
 import { updateLineReview } from '../modules/lineReviews/api';
 import getExportableLineState from '../modules/lineReviews/getExportableLineState';
@@ -24,8 +24,8 @@ import { LoaderContainer } from './elements';
 import { PagePath } from './Menubar';
 
 const SIDE_PANEL_RIGHT_WIDTH = 450;
-const DISCREPANCY_MODAL_OFFSET_X = 50;
-const DISCREPANCY_MODAL_OFFSET_Y = -50;
+export const DISCREPANCY_MODAL_OFFSET_X = 50;
+export const DISCREPANCY_MODAL_OFFSET_Y = -50;
 
 const StyledContainer = styled.div`
   height: 100%;
@@ -42,7 +42,7 @@ export const MainContainer = styled.div`
 
 export type DiscrepancyModalState = {
   isOpen: boolean;
-  discrepancy: Discrepancy | undefined;
+  discrepancyId: string | undefined;
   position: {
     x: number;
     y: number;
@@ -60,7 +60,7 @@ const LineReview = () => {
   const [discrepancyModalState, setDiscrepancyModalState] =
     useState<DiscrepancyModalState>({
       isOpen: false,
-      discrepancy: undefined,
+      discrepancyId: undefined,
       position: {
         x: 0,
         y: 0,
@@ -75,7 +75,6 @@ const LineReview = () => {
     discrepancies,
     setDiscrepancies,
     textAnnotations,
-    setTextAnnotations,
     setDocuments,
   } = useLineReview(client, id);
 
@@ -121,8 +120,19 @@ const LineReview = () => {
     history.push(PagePath.LINE_REVIEWS);
   };
 
-  const onDiscrepancyInteraction = (id: string) => {
-    const node = ornateRef?.stage.findOne(`#${id}`) as Konva.Rect;
+  const onDiscrepancyInteraction: DiscrepancyInteractionHandler = (
+    ornateRef: CogniteOrnate | undefined,
+    nodeId: string
+  ) => {
+    if (ornateRef === undefined) {
+      console.log('onDiscrepancyInteraction: ornateRef is undefined');
+      return;
+    }
+
+    const { x: containerX, y: containerY } =
+      ornateRef.host.getBoundingClientRect();
+
+    const node = ornateRef?.stage.findOne(`#${nodeId}`) as Konva.Rect;
 
     if (node === undefined) {
       console.error('onDiscrepancyInteraction: node is undefined');
@@ -133,28 +143,34 @@ const LineReview = () => {
       skipStroke: true,
     });
 
-    const foundDiscrepancy = discrepancies.find(
-      (discrepancy) => discrepancy.id === id
+    const foundDiscrepancyIndex = discrepancies.findIndex((discrepancy) =>
+      discrepancy.annotations.some((annotation) => annotation.nodeId === nodeId)
     );
 
-    if (!foundDiscrepancy) {
+    if (foundDiscrepancyIndex === -1) {
       console.error('onDiscrepancyInteraction: discrepancy not found');
       return;
     }
 
+    const foundDiscrepancy = discrepancies[foundDiscrepancyIndex];
+
     setDiscrepancyModalState((prevState) => ({
       ...prevState,
-      discrepancy: foundDiscrepancy,
+      discrepancyId: foundDiscrepancy.id,
       position: {
-        x: x + width + DISCREPANCY_MODAL_OFFSET_X,
-        y: y + height + DISCREPANCY_MODAL_OFFSET_Y,
+        x: containerX + x + width + DISCREPANCY_MODAL_OFFSET_X,
+        y: containerY + y + height + DISCREPANCY_MODAL_OFFSET_Y,
       },
       isOpen: true,
     }));
   };
 
-  const zoomToDiscrepancy = (id: string) => {
-    const node = ornateRef?.stage.findOne(`#${id}`) as Konva.Rect;
+  const zoomToDiscrepancy = (discrepancyId: string) => {
+    const nodeId = discrepancies.find(
+      (discrepancy) => discrepancy.id === discrepancyId
+    )?.annotations[0].nodeId;
+
+    const node = ornateRef?.stage.findOne(`#${nodeId}`) as Konva.Rect;
     if (node === undefined) {
       console.error('onDiscrepancyEditPress: node is undefined');
       return;
@@ -189,19 +205,27 @@ const LineReview = () => {
     );
   };
 
-  const onDiscrepancyPress = (id: string) => zoomToDiscrepancy(id);
+  const onDiscrepancyPress = (discrepancyId: string) =>
+    zoomToDiscrepancy(discrepancyId);
 
-  const onDiscrepancyEditPress = (id: string) => {
-    zoomToDiscrepancy(id);
+  const onDiscrepancyEditPress = (discrepancyId: string) => {
+    zoomToDiscrepancy(discrepancyId);
     setTimeout(() => {
-      onDiscrepancyInteraction(id);
+      const nodeId = discrepancies.find(
+        (discrepancy) => discrepancy.id === discrepancyId
+      )?.annotations[0].nodeId;
+
+      if (nodeId === undefined) {
+        return;
+      }
+      onDiscrepancyInteraction(ornateRef, nodeId);
     }, 500);
   };
 
-  const onDeleteDiscrepancy = (id: string) => {
+  const onDeleteDiscrepancy = (discrepancyId: string) => {
     setDiscrepancyModalState((prevState) => ({ ...prevState, isOpen: false }));
     return setDiscrepancies((discrepancies) =>
-      discrepancies.filter((discrepancy) => discrepancy.id !== id)
+      discrepancies.filter((discrepancy) => discrepancy.id !== discrepancyId)
     );
   };
 
@@ -235,6 +259,7 @@ const LineReview = () => {
       <CollapsablePanel
         sidePanelRight={
           <SidePanel
+            documents={documents}
             discrepancies={discrepancies.filter(
               (discrepancy) => discrepancy.status === 'approved'
             )}
@@ -253,7 +278,6 @@ const LineReview = () => {
             discrepancies={discrepancies}
             onDiscrepancyChange={setDiscrepancies}
             textAnnotations={textAnnotations}
-            onTextAnnotationChange={setTextAnnotations}
             documents={documents}
             setDocuments={setDocuments}
             onOrnateRef={setOrnateRef}

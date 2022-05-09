@@ -1,6 +1,10 @@
 import { Button, Icon } from '@cognite/cogs.js';
+import sortBy from 'lodash/sortBy';
 import styled from 'styled-components';
 
+import { WorkspaceDocument } from '../../modules/lineReviews/types';
+import isNotUndefined from '../../utils/isNotUndefined';
+import getKonvaSelectorSlugByExternalId from '../LineReviewViewer/getKonvaSelectorSlugByExternalId';
 import { Discrepancy } from '../LineReviewViewer/LineReviewViewer';
 
 const Container = styled.div`
@@ -78,11 +82,11 @@ type DiscrepancyListItemProps = {
   onItemPress: () => void;
   onEditPress: () => void;
   onDeletePress: () => void;
-  documentName?: string;
+  documentNames: string[];
 };
 
 const DiscrepancyListItem: React.FC<DiscrepancyListItemProps> = ({
-  documentName,
+  documentNames,
   number,
   comment,
   onItemPress,
@@ -95,13 +99,25 @@ const DiscrepancyListItem: React.FC<DiscrepancyListItemProps> = ({
         <Title>
           {number}. {comment}
         </Title>{' '}
-        <DocumentList>{documentName}</DocumentList>
+        <DocumentList>
+          {sortBy(documentNames).map((name) => (
+            <>
+              {name}
+              <br />
+            </>
+          ))}
+        </DocumentList>
       </MainContainer>
       <ActionsContainer>
         <IconButton onClick={onEditPress}>
           <Icon type="Edit" />
         </IconButton>
-        <IconButton onClick={onDeletePress}>
+        <IconButton
+          onClick={(event) => {
+            event.stopPropagation();
+            onDeletePress();
+          }}
+        >
           <Icon type="Delete" />
         </IconButton>
       </ActionsContainer>
@@ -110,6 +126,7 @@ const DiscrepancyListItem: React.FC<DiscrepancyListItemProps> = ({
 };
 
 type Props = {
+  documents: WorkspaceDocument[];
   discrepancies: Discrepancy[];
   onClosePress: () => void;
   onDiscrepancyPress: (id: string) => void;
@@ -135,6 +152,7 @@ const HeaderContainer = styled.div`
 `;
 
 const SidePanel: React.FC<Props> = ({
+  documents,
   discrepancies,
   onDiscrepancyPress,
   onDiscrepancyEditPress,
@@ -156,7 +174,17 @@ const SidePanel: React.FC<Props> = ({
       <DiscrepancyListContainer>
         {discrepancies.map((discrepancy, index) => (
           <DiscrepancyListItem
-            documentName={discrepancy.targetExternalId}
+            documentNames={discrepancy.annotations
+              .map(
+                (annotation) =>
+                  documents.find(
+                    (document) =>
+                      getKonvaSelectorSlugByExternalId(
+                        document.pdfExternalId
+                      ) === annotation.targetExternalId
+                  )?.pdfExternalId
+              )
+              .filter(isNotUndefined)}
             number={index + 1}
             key={discrepancy.id}
             comment={discrepancy.comment}

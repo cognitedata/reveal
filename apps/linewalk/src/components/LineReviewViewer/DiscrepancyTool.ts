@@ -9,7 +9,11 @@ export enum EventType {
 }
 
 type EventListenerMap = {
-  [EventType.ON_CREATE_END]: (nodeId: string, groupId: string) => void;
+  [EventType.ON_CREATE_END]: (
+    nodeId: string,
+    groupId: string,
+    attrs: any
+  ) => void;
 };
 
 const getVisualPropertiesByStatus = (status: string) => {
@@ -135,6 +139,10 @@ export default class DiscrepancyTool
       `#${groupName}`
     ) as Konva.Group;
 
+    if (this.group === undefined) {
+      return;
+    }
+
     const translatedMousePosition = this.getPosition();
     const shapeId = uuid();
 
@@ -170,7 +178,15 @@ export default class DiscrepancyTool
     this.ornateInstance.isDrawing = false;
 
     if (this.newRect && this.group) {
-      this.emit(EventType.ON_CREATE_END, this.newRect.id(), this.group?.id());
+      this.emit(EventType.ON_CREATE_END, this.newRect.id(), this.group?.id(), {
+        id: this.newRect.id(),
+        x: this.newRect.x(),
+        y: this.newRect.y(),
+        width: this.newRect.width(),
+        height: this.newRect.height(),
+        groupId: this.group?.id(),
+        status: 'pending',
+      });
     }
   };
 }

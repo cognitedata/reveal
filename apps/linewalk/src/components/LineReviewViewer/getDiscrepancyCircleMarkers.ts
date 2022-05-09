@@ -8,7 +8,6 @@ import { Discrepancy } from './LineReviewViewer';
 
 const RADIUS = 10;
 const getDiscrepancyCircleMarkers = (
-  line: string,
   discrepancies: Discrepancy[],
   ornateRef: CogniteOrnate | undefined,
   onMarkerClick?: (event: MouseEvent, discrepancy: Discrepancy) => void
@@ -18,29 +17,30 @@ const getDiscrepancyCircleMarkers = (
   }
 
   return discrepancies
-    .map((discrepancy, index) => {
-      const node = ornateRef.stage.findOne(
-        `#${getKonvaSelectorSlugByExternalId(discrepancy.id)}`
-      );
+    .flatMap((discrepancy, index) => {
+      return discrepancy.annotations.map((annotation, subIndex) => {
+        const node = ornateRef.stage.findOne(
+          `#${getKonvaSelectorSlugByExternalId(annotation.nodeId)}`
+        );
 
-      if (node === undefined) {
-        console.log('Discrepancy node wasnt loaded yet');
-        return undefined;
-      }
+        if (node === undefined) {
+          console.log('Discrepancy node wasnt loaded yet');
+          return undefined;
+        }
 
-      const boundingBox = node.getClientRect({
-        relativeTo: node.parent ? node.parent : undefined,
+        const boundingBox = node.getClientRect({
+          relativeTo: node.parent ? node.parent : undefined,
+        });
+
+        return {
+          groupId: node.parent?.id(),
+          discrepancy,
+          boundingBox,
+          number: `${index + 1}.${subIndex + 1}`,
+        };
       });
-
-      return {
-        groupId: node.parent?.id(),
-        discrepancy,
-        boundingBox,
-        number: index + 1,
-      };
     })
     .filter(isNotUndefined)
-    .filter(({ discrepancy }) => discrepancy.status === 'approved')
     .filter(({ boundingBox }) => isNotUndefined(boundingBox))
     .map(({ groupId, discrepancy, boundingBox, number }, index) => ({
       groupId,
@@ -58,7 +58,7 @@ const getDiscrepancyCircleMarkers = (
           y: boundingBox!.y + boundingBox!.height / 2,
         },
         radius: RADIUS,
-        color: '#CF1A17',
+        color: discrepancy.status === 'approved' ? '#CF1A17' : 'orange',
         number,
       },
     }));

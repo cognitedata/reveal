@@ -1,6 +1,7 @@
 import { Button, Modal, Textarea } from '@cognite/cogs.js';
 import { CogniteOrnate } from '@cognite/ornate';
 import keyBy from 'lodash/keyBy';
+import uniq from 'lodash/uniq';
 import React, { useState } from 'react';
 
 import { DocumentType, WorkspaceDocument } from '../modules/lineReviews/types';
@@ -34,10 +35,6 @@ const ReportBackModal: React.FC<Props> = ({
     return null;
   }
 
-  const isoDocuments = documents.filter(
-    (document) => document.type === DocumentType.ISO
-  );
-
   const workspaceDocumentsBySlugPdfExternalId = keyBy(documents, (document) =>
     getKonvaSelectorSlugByExternalId(document.pdfExternalId)
   );
@@ -57,8 +54,20 @@ const ReportBackModal: React.FC<Props> = ({
       )}
 
       {discrepancies.map((discrepancy, index) => {
-        const document =
-          workspaceDocumentsBySlugPdfExternalId[discrepancy.targetExternalId];
+        const targetDocuments = uniq(
+          discrepancy.annotations.map(
+            (annotation) =>
+              workspaceDocumentsBySlugPdfExternalId[annotation.targetExternalId]
+          )
+        );
+
+        const pidDocuments = targetDocuments.filter(
+          (document) => document.type === DocumentType.PID
+        );
+
+        const isoDocuments = targetDocuments.filter(
+          (document) => document.type === DocumentType.ISO
+        );
 
         return (
           <div key={discrepancy.id}>
@@ -70,32 +79,20 @@ const ReportBackModal: React.FC<Props> = ({
                   : discrepancy.comment}
               </b>
             </div>
-            {document?.type === DocumentType.PID && (
-              <div>
-                <b>MF:</b>{' '}
-                <a //eslint-disable-line
-                  onClick={() => {
-                    return undefined;
-                  }}
-                >
-                  {document?.pdfExternalId}
-                </a>
-              </div>
-            )}
-            {document?.type === DocumentType.ISO && (
-              <div>
-                <b>ISO:</b>{' '}
-                {isoDocuments.map((document) => (
-                  <a //eslint-disable-line
-                    onClick={() => {
-                      return undefined;
-                    }}
-                  >
-                    {document.pdfExternalId}
-                  </a>
-                ))}
-              </div>
-            )}{' '}
+            <div>
+              <b>MF:</b>{' '}
+              {pidDocuments
+                .map((document) => document.pdfExternalId)
+                .join(', ')}
+              {pidDocuments.length === 0 && '(No PID documents)'}
+            </div>
+            <div>
+              <b>ISO:</b>{' '}
+              {isoDocuments
+                .map((document) => document.pdfExternalId)
+                .join(', ')}
+              {isoDocuments.length === 0 && ' (No ISO documents)'}
+            </div>
             <br />
           </div>
         );

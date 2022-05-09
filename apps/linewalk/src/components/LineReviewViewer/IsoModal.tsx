@@ -20,12 +20,18 @@ import centerOnAnnotationByAnnotationId from './centerOnAnnotationByAnnotationId
 import { BOUNDING_BOX_PADDING_PX } from './constants';
 import getAnnotationBoundingBoxOverlay from './getAnnotationBoundingBoxOverlay';
 import getAnnotationsForLineByDocument from './getAnnotationsForLineByDocument';
+import getDiscrepancyCircleMarkers from './getDiscrepancyCircleMarkers';
 import getDocumentByExternalId from './getDocumentByExternalId';
 import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId';
 import getLinksByAnnotationId from './getLinksByAnnotationId';
+import {
+  Discrepancy,
+  useShamefulKeepReactAndOrnateInSync,
+} from './LineReviewViewer';
 import mapPathToNewCoordinateSystem from './mapPathToNewCoordinateSystem';
 import padBoundingBoxByPixels from './padBoundingBoxByPixels';
 import ReactOrnate, { SHAMEFUL_SLIDE_HEIGHT, SLIDE_WIDTH } from './ReactOrnate';
+import { DiscrepancyInteractionHandler } from './types';
 import useDimensions from './useDimensions';
 import { WorkspaceTool } from './useWorkspaceTools';
 import withoutFileExtension from './withoutFileExtension';
@@ -94,6 +100,8 @@ const HeaderContainer = styled.div`
 `;
 
 type IsoModalProps = {
+  onDiscrepancyInteraction: DiscrepancyInteractionHandler;
+  discrepancies: Discrepancy[];
   parsedDocuments: ParsedDocument[];
   isoDocuments: WorkspaceDocument[];
   visible?: boolean;
@@ -169,6 +177,8 @@ const getFileConnectionLine = (
 };
 
 const IsoModal: React.FC<IsoModalProps> = ({
+  onDiscrepancyInteraction,
+  discrepancies,
   parsedDocuments,
   isoDocuments,
   visible,
@@ -224,6 +234,13 @@ const IsoModal: React.FC<IsoModalProps> = ({
     () =>
       parsedDocuments.filter((document) => document.type === DocumentType.ISO),
     [parsedDocuments]
+  );
+
+  useShamefulKeepReactAndOrnateInSync(
+    isoOrnateRef,
+    discrepancies,
+    [],
+    onDiscrepancyInteraction
   );
 
   const onLinkClick = (
@@ -301,10 +318,17 @@ const IsoModal: React.FC<IsoModalProps> = ({
         setHoveredFileConnectionAnnotationId(annotationId),
       () => setHoveredFileConnectionAnnotationId(undefined)
     ),
+    ...getDiscrepancyCircleMarkers(
+      discrepancies,
+      isoOrnateRef,
+      (evt, discrepancy) => onDiscrepancyInteraction(ornateRef, discrepancy.id)
+    ),
     ...(hoveredFileConnectionAnnotationId === undefined
       ? []
       : getFileConnectionLine(document, hoveredFileConnectionAnnotationId)),
   ]);
+
+  console.log('discrepancies', discrepancies);
 
   return (
     <div
@@ -362,7 +386,12 @@ const IsoModal: React.FC<IsoModalProps> = ({
           renderWorkspaceTools={(ornate, isFocused) => (
             <WorkSpaceTools
               tool={tool}
-              enabledTools={[WorkspaceTool.MOVE]}
+              enabledTools={[
+                WorkspaceTool.DEFAULT,
+                WorkspaceTool.RECTANGLE,
+                WorkspaceTool.TEXT,
+                WorkspaceTool.MOVE,
+              ]}
               onToolChange={onToolChange}
               areKeyboardShortcutsEnabled={isFocused}
             />

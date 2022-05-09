@@ -10,8 +10,10 @@ import { Discrepancy } from './LineReviewViewer';
 
 type Props = {
   documents: WorkspaceDocument[];
+  index: number;
   initialPosition: { x: number; y: number };
   initialDiscrepancy: Discrepancy;
+  onDeleteDiscrepancyAnnotation: (nodeId: string) => void;
   onSave: (discrepancy: Discrepancy) => void;
   onDeletePress: () => void;
   onClosePress: () => void;
@@ -21,6 +23,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  align-items: stretch;
+  overflow: hidden;
 `;
 
 const Header = styled.div`
@@ -46,6 +50,7 @@ const BodyContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   flex-grow: 1;
+  overflow: auto;
 `;
 
 const StyledTitle = styled.div`
@@ -93,10 +98,10 @@ const DescriptionLabel = styled.div`
 `;
 
 const ActionsContainer = styled.div`
-  margin-top: 16px;
   width: 100%;
   display: flex;
   justify-content: flex-start;
+  padding: 16px 16px 13px 16px;
 `;
 
 const DescriptionTextArea = styled(Textarea)`
@@ -105,10 +110,22 @@ const DescriptionTextArea = styled(Textarea)`
   resize: none;
 `;
 
+const pdfExternalIdFromTargetExternalId = (
+  documents: WorkspaceDocument[],
+  targetExternalId: string
+): string | undefined =>
+  documents.find(
+    (document) =>
+      getKonvaSelectorSlugByExternalId(document.pdfExternalId) ===
+      targetExternalId
+  )?.pdfExternalId;
+
 const DiscrepancyModal: React.FC<Props> = ({
   documents,
+  index,
   initialPosition,
   initialDiscrepancy,
+  onDeleteDiscrepancyAnnotation,
   onDeletePress,
   onSave,
   onClosePress,
@@ -134,22 +151,29 @@ const DiscrepancyModal: React.FC<Props> = ({
                 {initialDiscrepancy.status === 'pending' ? 'Create' : 'Edit'}{' '}
                 discrepancy
               </StyledTitle>
-              <FilenameLabel>
-                On{' '}
-                {
-                  documents.find(
-                    (document) =>
-                      getKonvaSelectorSlugByExternalId(
-                        document.pdfExternalId
-                      ) === initialDiscrepancy.targetExternalId
-                  )?.pdfExternalId
-                }
-              </FilenameLabel>
             </TitleContainer>
             <Button type="ghost" icon="Close" onClick={onClosePress} />
           </Header>
 
           <BodyContainer>
+            {initialDiscrepancy.annotations.map((annotation, subIndex) => (
+              <FilenameLabel key={annotation.nodeId}>
+                [{index + 1}.{subIndex + 1}]{' '}
+                {pdfExternalIdFromTargetExternalId(
+                  documents,
+                  annotation.targetExternalId
+                )}
+                <Button
+                  icon="Close"
+                  type="ghost-danger"
+                  variant="ghost"
+                  size="small"
+                  onClick={() =>
+                    onDeleteDiscrepancyAnnotation(annotation.nodeId)
+                  }
+                />
+              </FilenameLabel>
+            ))}
             <DescriptionLabel>Description</DescriptionLabel>
             <DescriptionTextArea
               placeholder="Describe the discrepancy..."
@@ -158,23 +182,27 @@ const DiscrepancyModal: React.FC<Props> = ({
               autoFocus
               resize={false}
             />
-            <ActionsContainer>
-              <Button
-                style={{ marginRight: 8 }}
-                onClick={onDeletePress}
-                type="ghost"
-              >
-                Remove
-              </Button>
-              <Button
-                type="primary"
-                style={{ marginRight: 8 }}
-                onClick={onSavePress}
-              >
-                Save
-              </Button>
-            </ActionsContainer>
           </BodyContainer>
+
+          <ActionsContainer>
+            <Button
+              style={{ marginRight: 8 }}
+              onClick={onDeletePress}
+              type="ghost"
+            >
+              Remove
+            </Button>
+            <Button
+              type="primary"
+              style={{ marginRight: 8 }}
+              disabled={initialDiscrepancy.annotations.length === 0}
+              onClick={onSavePress}
+            >
+              {initialDiscrepancy.annotations.length === 0
+                ? 'No areas marked'
+                : 'Save'}
+            </Button>
+          </ActionsContainer>
         </Container>
       )}
     />

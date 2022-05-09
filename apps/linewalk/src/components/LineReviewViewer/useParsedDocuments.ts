@@ -24,8 +24,6 @@ const useParsedDocuments = (documents: WorkspaceDocument[]) => {
           documents
         );
 
-        console.log('ParsedDocuments', parsedDocuments);
-
         setParsedDocumentsCache((previousParsedDocumentsCache) => ({
           ...previousParsedDocumentsCache,
           ...keyBy(
