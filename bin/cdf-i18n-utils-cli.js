@@ -76,7 +76,7 @@ function main() {
           })
           .option('stagingVersion', {
             describe: 'The staging version to use for operations',
-            default: 'staging',
+            default: 'latest',
             type: 'string',
           })
           .option('path', {
@@ -122,7 +122,7 @@ function main() {
           })
           .option('stagingVersion', {
             describe: 'The staging version to use for operations',
-            default: 'staging',
+            default: 'latest',
             type: 'string',
           })
           .option('path', {
