@@ -49,5 +49,4 @@ describe('Reveal visual tests', () => {
     });
 
   });
-  
 });

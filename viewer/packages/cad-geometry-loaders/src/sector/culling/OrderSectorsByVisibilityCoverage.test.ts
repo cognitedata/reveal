@@ -48,7 +48,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
     jest.restoreAllMocks();
   });
 
-  test('orderSectorsByVisibility() returns empty array when there are no models', async () => {
+  test('orderSectorsByVisibility() returns empty array when there are no models', () => {
     // Arrange
     const camera = new THREE.PerspectiveCamera();
     const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({
@@ -63,13 +63,13 @@ describe('OrderSectorsByVisibilityCoverage', () => {
       .mockImplementation((_target, _x, _y, _width, _height, buffer: Uint8Array) => {
         buffer.fill(255); // White - i.e. no sector
       });
-    const arrays = await coverageUtil.orderSectorsByVisibility(camera);
+    const arrays = coverageUtil.orderSectorsByVisibility(camera);
 
     // Assert
     expect(arrays).toBeEmpty();
   });
 
-  test('rendered result has no sectors, returns empty array', async () => {
+  test('rendered result has no sectors, returns empty array', () => {
     // Arrange
     const util = new GpuOrderSectorsByVisibilityCoverage({
       renderer,
@@ -84,13 +84,13 @@ describe('OrderSectorsByVisibilityCoverage', () => {
       .mockImplementation((_target, _x, _y, _width, _height, buffer: Uint8Array) => {
         buffer.fill(255); // White - i.e. no sector
       });
-    const result = await util.orderSectorsByVisibility(camera);
+    const result = util.orderSectorsByVisibility(camera);
 
     // Assert
     expect(result).toBeEmpty();
   });
 
-  test('rendered result has one sector, returns array with priority 1', async () => {
+  test('rendered result has one sector, returns array with priority 1', () => {
     // Arrange
     const util = new GpuOrderSectorsByVisibilityCoverage({
       renderer,
@@ -109,7 +109,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
         buffer.fill(255); // White - i.e. no sector
         buffer.set([0, 0, 0, 255], 0); // Sector ID 0 with 1.0 distance
       });
-    const result = await util.orderSectorsByVisibility(camera);
+    const result = util.orderSectorsByVisibility(camera);
 
     // Assert
     expect(result.length).toBe(1);
@@ -118,7 +118,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
     expect(result[0].model).toBe(cadModel);
   });
 
-  test('two models, rendered result returns value at offset', async () => {
+  test('two models, rendered result returns value at offset', () => {
     // Arrange
     const scene2 = createStubScene([1, [], new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1))]);
     const model1 = createStubModel('model1', singleSectorScene, identityMatrix);
@@ -143,7 +143,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
       });
 
     glContext.clearColor(0, 0, 1.0 / 255, 1); // Store 1 in output
-    const result = await util.orderSectorsByVisibility(camera);
+    const result = util.orderSectorsByVisibility(camera);
 
     // Assert - ensure output is first sector in second model
     expect(result.length).toBe(1);

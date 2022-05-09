@@ -51,11 +51,11 @@ describe(ByScreenSizeSectorCuller.name, () => {
     };
   });
 
-  test('determineSectors prioritizes sectors within budget', async () => {
+  test('determineSectors prioritizes sectors within budget', () => {
     budget = { ...budget, maximumRenderCost: allSectorsRenderCost / 2.0 };
     const input = createDetermineSectorInput(camera, model, budget);
 
-    const { wantedSectors, spentBudget } = await culler.determineSectors(input);
+    const { wantedSectors, spentBudget } = culler.determineSectors(input);
     const scheduledSectors = wantedSectors.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
 
     expect(spentBudget.renderCost).toBeLessThan(allSectorsRenderCost);
@@ -69,13 +69,13 @@ describe(ByScreenSizeSectorCuller.name, () => {
     expect(() => culler.determineSectors(v8input)).toThrowError();
   });
 
-  test('determineSectors doesnt return fully culled sectors', async () => {
+  test('determineSectors doesnt return fully culled sectors', () => {
     budget = { ...budget, maximumRenderCost: allSectorsRenderCost / 2.0 };
     const input = createDetermineSectorInput(camera, model, budget);
     const clipPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), -0.5);
     input.clippingPlanes = [clipPlane];
 
-    const { wantedSectors } = await culler.determineSectors(input);
+    const { wantedSectors } = culler.determineSectors(input);
     const scheduledSectors = wantedSectors.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
 
     expect(scheduledSectors).toSatisfyAll((x: WantedSector) => {
@@ -84,14 +84,14 @@ describe(ByScreenSizeSectorCuller.name, () => {
     });
   });
 
-  test('determineSectors prioritizes sectors intersecting prioritized areas', async () => {
+  test('determineSectors prioritizes sectors intersecting prioritized areas', () => {
     budget = { ...budget, maximumRenderCost: allSectorsRenderCost / 2.0 };
     const input = createDetermineSectorInput(camera, model, budget);
     const prioritizedAreaBounds = new THREE.Box3().setFromArray([0.5, 0.5, 0.5, 1.0, 1.0, 1.0]);
     const expectedTopPrioritySectors = model.scene.getSectorsIntersectingBox(prioritizedAreaBounds);
     input.prioritizedAreas = [{ area: prioritizedAreaBounds, extraPriority: 10 }];
 
-    const { wantedSectors } = await culler.determineSectors(input);
+    const { wantedSectors } = culler.determineSectors(input);
     const scheduledSectors = wantedSectors.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
     const topPrioritySectors = scheduledSectors.slice(0, expectedTopPrioritySectors.length);
 
