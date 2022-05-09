@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { DoubleDatapoint, Timeseries } from '@cognite/sdk';
 import { VictoryAxis, VictoryChart, VictoryLine } from 'victory';
 import Loading from 'components/utils/Loading';
 import useDatapointsQuery from 'hooks/useQuery/useDatapointsQuery';
 import { Colors } from '@cognite/cogs.js';
 import useElementSize from 'hooks/useElementSize';
+
+import { TimeSeriesPreviewContainer } from './elements';
 
 export type TimeSeriesPreviewProps = {
   timeSeries: Timeseries;
@@ -92,14 +94,12 @@ const TimeSeriesPreview = ({
   };
 
   return (
-    <div
+    <TimeSeriesPreviewContainer
       ref={containerRef}
-      style={{ width: '100%', height: '100%', cursor: 'pointer' }}
-      onClick={onClick}
-      aria-hidden="true"
+      style={{ width: '100%', height: '100%' }}
     >
       {showYAxis ? renderPreviewWithYAxis() : renderSimplePreview()}
-    </div>
+    </TimeSeriesPreviewContainer>
   );
 };
 

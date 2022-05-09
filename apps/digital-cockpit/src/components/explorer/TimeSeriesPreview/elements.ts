@@ -41,3 +41,9 @@ export const RowWrapper = styled.div`
     }
   }
 `;
+
+export const TimeSeriesPreviewContainer = styled.div`
+  svg {
+    overflow: visible;
+  }
+`;

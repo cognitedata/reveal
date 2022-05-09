@@ -95,16 +95,18 @@ const TimeSeriesCard = ({ assetId, onHeaderClick }: TimeSeriesCardProps) => {
     }
     const selectedTimeSeries = selectedTs || timeSeriesList[0];
     return (
-      <Flex direction="column" style={{ height: '100%' }}>
-        <Overline level={1}>
-          {renderTimeSeriesSelector(selectedTimeSeries)}
-        </Overline>
-        <Flex justifyContent="space-between" style={{ width: '100%' }}>
-          <span>
-            {latestDatapointValue} {selectedTimeSeries?.unit}
-          </span>
-          <span>{moment(latestDatapoint?.timestamp).fromNow()}</span>
-        </Flex>
+      <Flex style={{ height: '100%', flexFlow: 'column' }}>
+        <div>
+          <Overline level={1}>
+            {renderTimeSeriesSelector(selectedTimeSeries)}
+          </Overline>
+          <Flex justifyContent="space-between" style={{ width: '100%' }}>
+            <span>
+              {latestDatapointValue} {selectedTimeSeries?.unit}
+            </span>
+            <span>{moment(latestDatapoint?.timestamp).fromNow()}</span>
+          </Flex>
+        </div>
         <div style={{ flexGrow: 1 }}>
           <TimeSeriesPreview timeSeries={selectedTimeSeries} showYAxis />
         </div>
