@@ -304,18 +304,25 @@ export class Canvas {
     maxWidth: number,
     lineHeight: number
   ): number {
-    const characters = text.split('');
+    const { splittingCharacter, splitText } = splitTextBasedCharacter(
+      context,
+      text,
+      maxWidth
+    );
+
     let line = '';
     let height = 0;
     const draw = x >= 0 && y >= 0;
-    for (let index = 0; index < characters.length; index++) {
+    for (let index = 0; index < splitText.length; index++) {
       let testLine = line;
-      testLine += characters[index];
+      if (line.length > 0 && splittingCharacter === ' ')
+        testLine += splittingCharacter;
+      testLine += splitText[index];
       const metrics = context.measureText(testLine);
       const testWidth = metrics.width;
       if (testWidth > maxWidth && index > 0) {
         if (draw) context.fillText(line, x, y + height);
-        line = characters[index];
+        line = splitText[index];
         height += lineHeight;
       } else line = testLine;
     }
@@ -324,3 +331,24 @@ export class Canvas {
     return height;
   }
 }
+
+export const splitTextBasedCharacter = (
+  context: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number
+) => {
+  // Initially text is split space(' ') basis
+  // then comparing widths of split words with maximum width.
+  // if any width of a word is greater than the maximum width, then original text will be split character basis.
+  let splittingCharacter = ' ';
+  let splitText = text.split(splittingCharacter);
+  for (let index = 0; index < splitText.length; index++) {
+    if (context.measureText(splitText[index]).width > maxWidth) {
+      splittingCharacter = '';
+      splitText = text.split(splittingCharacter);
+      break;
+    }
+  }
+
+  return { splittingCharacter, splitText };
+};

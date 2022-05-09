@@ -89,6 +89,7 @@ DEV_DEPENDENCIES = [
     "@npm//@rollup/plugin-alias",
     "@npm//@rollup/plugin-node-resolve",
     "@npm//typescript",
+    "@npm//jest-canvas-mock",
 ]
 
 # Mappings for absolute imports from baseUrl @unused
