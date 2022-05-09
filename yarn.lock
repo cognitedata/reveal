@@ -3212,10 +3212,10 @@
   dependencies:
     three "0.138.3"
 
-"@cognite/power-ops-api-types@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@cognite/power-ops-api-types/-/power-ops-api-types-0.1.0.tgz#86337596f2aaa1575ed0216862ffe1fc67fd61ac"
-  integrity sha512-HMiwkkBJhw4/Jk9WsKftzDMtYs+jhi9XBTm5qNaFudLCTAXrcbuENJ+RgZuXBrcio9oZhVup7x1OF0b/Te3TTw==
+"@cognite/power-ops-api-types@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@cognite/power-ops-api-types/-/power-ops-api-types-0.1.2.tgz#c98d4c5b98b4878d3ae23477168b7f5b8969c898"
+  integrity sha512-ZOL0buONHP6GpYFWEPifsQfU1YUMQpn1NotUoWDKLzvwVgaARRSDFoqA7K2Bf1abCfsDNQ8n5JhUuPDG/KIFXA==
 
 "@cognite/reveal-parser-worker@1.3.0":
   version "1.3.0"

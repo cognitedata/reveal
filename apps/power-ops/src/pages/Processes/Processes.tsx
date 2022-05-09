@@ -2,7 +2,7 @@ import { memo, useContext, useEffect, useMemo } from 'react';
 import { AuthConsumer, AuthContext } from '@cognite/react-container';
 import { AuthenticatedUser } from '@cognite/auth-utils';
 import { CogniteClient } from '@cognite/sdk';
-import { SnifferEvent } from '@cognite/power-ops-api-types';
+import { EVENT_TYPES, SnifferEvent } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { useFetchProcesses } from 'queries/useFetchProcesses';
 
@@ -11,8 +11,11 @@ import ProcessList from './ProcessList';
 
 export type Process = {
   id: number;
+  cdfProject: string;
   collectionId: number;
   eventCreationTime: string;
+  eventStartTime: string;
+  eventEndTime: string;
   eventExternalId: string;
   eventType: string;
   status: string;
@@ -38,9 +41,9 @@ const ProcessesPage = ({
   const { data: processes, refetch: refetchProcesses } = useFetchProcesses({
     project: client.project,
     processTypes: [
-      'POWEROPS_BID_PROCESS',
-      'POWEROPS_SHOP_RUN',
-      'POWEROPS_FUNCTIONAL_CALL',
+      EVENT_TYPES.BID_PROCESS,
+      EVENT_TYPES.SHOP_RUN,
+      EVENT_TYPES.FUNCTION_CALL,
     ],
     token: authState?.token,
   });
@@ -52,11 +55,11 @@ const ProcessesPage = ({
     if (!event) return;
 
     switch (event.type) {
-      case 'POWEROPS_BID_PROCESS':
-      case 'POWEROPS_SHOP_RUN':
-      case 'POWEROPS_FUNCTIONAL_CALL':
-      case 'POWEROPS_PROCESS_FAILED':
-      case 'POWEROPS_PROCESS_FINISHED':
+      case EVENT_TYPES.BID_PROCESS:
+      case EVENT_TYPES.SHOP_RUN:
+      case EVENT_TYPES.FUNCTION_CALL:
+      case EVENT_TYPES.PROCESS_FAILED:
+      case EVENT_TYPES.PROCESS_FINISHED:
         refetchProcesses();
         break;
     }

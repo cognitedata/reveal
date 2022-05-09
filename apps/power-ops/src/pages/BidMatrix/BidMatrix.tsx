@@ -6,7 +6,7 @@ import { Column } from 'react-table';
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { TableData, PriceAreaWithData, MatrixWithData } from 'types';
-import { SnifferEvent } from '@cognite/power-ops-api-types';
+import { EVENT_TYPES, SnifferEvent } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { HeadlessTable } from 'components/HeadlessTable';
 
@@ -96,7 +96,7 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
     const event = (await client?.events.retrieve([{ id: e.id }]))?.[0];
     if (!event) return;
 
-    if (event.type === 'POWEROPS_PROCESS_FINISHED') {
+    if (event.type === EVENT_TYPES.PROCESS_FINISHED) {
       const status = await isNewBidMatrixAvailable(
         event,
         client,

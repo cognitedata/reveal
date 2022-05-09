@@ -27,7 +27,7 @@
     "@cognite/gcs-browser-upload": "^1.1.1",
     "@cognite/geospatial-sdk-js": "^0.1.0",
     "@cognite/potree-core": "1.0.6",
-    "@cognite/power-ops-api-types": "^0.1.0",
+    "@cognite/power-ops-api-types": "^0.1.2",
     "@cognite/reveal": "^3.0.1",
     "@cognite/sdk": "^7.2.2",
     "@cognite/sdk-playground": "5.1.0",

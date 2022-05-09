@@ -1,3 +1,4 @@
+import { EVENT_TYPES } from '@cognite/power-ops-api-types';
 import {
   CogniteClient,
   CogniteEvent,
@@ -215,7 +216,7 @@ export const isNewBidMatrixAvailable = async (
     { externalId: parentProcessEventExternalId },
   ]);
   return (
-    (parentProcessEvent.type === 'POWEROPS_BID_PROCESS' &&
+    (parentProcessEvent.type === EVENT_TYPES.BID_PROCESS &&
       parentProcessEvent.externalId !== currentBidProcessExternalId) ||
     false
   );

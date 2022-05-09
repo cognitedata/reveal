@@ -25,7 +25,21 @@ const ProcessList = (props: { processes: Process[] | undefined }) => {
     },
     {
       accessor: 'eventCreationTime',
-      Header: 'Started at',
+      Header: 'Triggered',
+      Cell: ({ value }) =>
+        Date.parse(value) ? new Date(value).toLocaleString() : value,
+    },
+    {
+      accessor: 'eventStartTime',
+      Header: 'Started',
+      Cell: ({ value }) =>
+        Date.parse(value) ? new Date(value).toLocaleString() : value,
+    },
+    {
+      accessor: 'eventEndTime',
+      Header: 'Finished/Failed',
+      Cell: ({ value }) =>
+        Date.parse(value) ? new Date(value).toLocaleString() : value,
     },
     {
       accessor: 'status',
@@ -36,11 +50,14 @@ const ProcessList = (props: { processes: Process[] | undefined }) => {
             <Label
               variant={
                 // eslint-disable-next-line no-nested-ternary
-                value === 'FINISHED'
+                value === 'RUNNING'
+                  ? 'accent'
+                  : // eslint-disable-next-line no-nested-ternary
+                  value === 'FINISHED'
                   ? 'success'
                   : value === 'FAILED'
                   ? 'danger'
-                  : 'warning'
+                  : 'unknown'
               }
               iconPlacement="right"
             >
