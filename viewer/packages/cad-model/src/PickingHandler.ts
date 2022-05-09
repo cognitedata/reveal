@@ -191,8 +191,6 @@ export class PickingHandler {
 
     const stateHelper = new WebGLRendererStateHelper(renderer);
     try {
-      const { width, height } = renderer.getSize(new THREE.Vector2());
-      renderTarget.setSize(width, height);
       stateHelper.setClearColor(clearColor, clearAlpha);
       renderer.clearColor();
       this._pipelineExecutor.render(this._treeIndexRenderPipeline, pickCamera);
@@ -217,8 +215,6 @@ export class PickingHandler {
 
     const stateHelper = new WebGLRendererStateHelper(renderer);
     try {
-      const { width, height } = renderer.getSize(new THREE.Vector2());
-      renderTarget.setSize(width, height);
       stateHelper.setClearColor(clearColor, clearAlpha);
       renderer.clearColor();
       this._pipelineExecutor.render(this._depthRenderPipeline, pickCamera);
