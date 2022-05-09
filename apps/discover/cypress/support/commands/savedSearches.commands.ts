@@ -42,9 +42,22 @@ const createSavedSearch = (searchName, isAdmin = false) => {
     body,
   });
 };
+const goToSavedSearches = () => {
+  cy.log('go to Favorites page');
+  cy.findByTestId('top-bar').findByRole('tab', { name: 'Favorites' }).click();
+  cy.findByRole('tab', { name: 'Saved Searches' }).click();
+  cy.url().should('include', '/saved-searches');
+};
+
+const createNewSavedSearch = (name: string) => {
+  cy.findAllByTestId('saved-search-input').type(name);
+  cy.findAllByTestId('save-new-search-button').click();
+};
 
 Cypress.Commands.add('deleteAllSavedSearches', deleteAllSavedSearches);
 Cypress.Commands.add('createSavedSearch', createSavedSearch);
+Cypress.Commands.add('createNewSavedSearch', createNewSavedSearch);
+Cypress.Commands.add('goToSavedSearches', goToSavedSearches);
 
 export interface SavedSearchCommands {
   deleteAllSavedSearches(isAdmin?: boolean): void;
@@ -52,4 +65,6 @@ export interface SavedSearchCommands {
     searchName: string,
     isAdmin?: boolean
   ): Cypress.Chainable<Cypress.Response<string>>;
+  createNewSavedSearch(name: string): void;
+  goToSavedSearches(): void;
 }
