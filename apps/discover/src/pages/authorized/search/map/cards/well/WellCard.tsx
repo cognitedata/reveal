@@ -20,7 +20,11 @@ export const WellCard: React.FC<Props> = ({ map }) => {
     selectedWell.point
   ) {
     return (
-      <MapPopup point={selectedWell.point} map={map}>
+      <MapPopup
+        point={selectedWell.point}
+        map={map}
+        className="mapbox-popup-previewcard"
+      >
         <WellPreviewCard wellId={selectedWell.id} />
       </MapPopup>
     );

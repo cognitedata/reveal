@@ -252,8 +252,6 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   .mapbox-popup {
-    width: ${CARD_WIDTH}px;
-    max-width: ${CARD_WIDTH}px !important;
     z-index: ${layers.MAP_TOP_BUTTONS};
 
     .mapboxgl-popup-tip {
@@ -261,9 +259,18 @@ export const GlobalStyles = createGlobalStyle`
     }
 
     .mapboxgl-popup-content {
-      width: ${CARD_WIDTH}px;
       background: transparent;
       box-shadow: none !important;
     }
   }
+
+  .mapbox-popup-previewcard {
+    width: ${CARD_WIDTH}px;
+    max-width: ${CARD_WIDTH}px !important;
+
+    .mapboxgl-popup-content {
+      width: ${CARD_WIDTH}px;
+    }
+  }
+
 `;

@@ -6,20 +6,24 @@ import { Point } from '@cognite/seismic-sdk-js';
 
 interface Props {
   point: Point;
-
   map?: mapboxgl.Map;
-
   children: JSX.Element;
+  // Add custom styles in 'globalStyles.ts' with prefix of 'mapbox-popup-X'
+  className?: 'mapbox-popup-previewcard';
 }
-export const MapPopup = ({ children, map, point }: Props) => {
+export const MapPopup = ({ children, map, point, className }: Props) => {
   const popupRef = useRef<any>();
   const currentPopup = useRef<any>();
+
+  const extendedClassnames = ['mapbox-popup', className]
+    .filter(Boolean)
+    .join(' ');
 
   useEffect(() => {
     if (!map || !popupRef.current) return undefined;
 
     currentPopup.current = new mapboxgl.Popup({
-      className: 'mapbox-popup',
+      className: extendedClassnames,
       offset: 16,
       closeButton: false,
     })
@@ -32,7 +36,7 @@ export const MapPopup = ({ children, map, point }: Props) => {
         currentPopup.current.remove();
       }
     };
-  }, [map, point]);
+  }, [map, point.coordinates]);
 
   const handleClose = useCallback(() => {
     if (currentPopup.current) {

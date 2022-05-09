@@ -21,7 +21,11 @@ export const DocumentCard: React.FC<Props> = ({ map }) => {
     selectedDocument.point
   ) {
     return (
-      <MapPopup point={selectedDocument.point} map={map}>
+      <MapPopup
+        point={selectedDocument.point}
+        map={map}
+        className="mapbox-popup-previewcard"
+      >
         <DocumentPreviewCard documentId={selectedDocument.id} />
       </MapPopup>
     );

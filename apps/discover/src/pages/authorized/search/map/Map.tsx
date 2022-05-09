@@ -74,12 +74,15 @@ import { useVisibleLayers } from './hooks/useVisibleLayers';
 import LeaveConfirmModal from './LeaveConfirmModal';
 import { MapNavigationPanel } from './map-overlay-actions';
 import { Map as MapboxMap } from './MapboxMap';
+import MapPopup from './MapPopup';
 import { PolygonBar } from './polygon/PolygonBar';
 import { getMapIcons } from './utils/mapIcons';
 
 function getGeometryType<T>(item: T) {
   return get(item, 'geometry.type');
 }
+
+const mapIcons = getMapIcons();
 
 export const Map: React.FC = () => {
   const dispatch = useDispatch();
@@ -420,40 +423,19 @@ export const Map: React.FC = () => {
   const renderFloatingActions = () => {
     if (selectedFeature && mapReference && !touched) {
       const rightMostPoint = getRightMostPoint(mapReference, selectedFeature);
-      const coo = mapReference.project(rightMostPoint.geometry.coordinates);
+      // Disabling this (v) for now, might be useful in the future if the 'MapPopup' is acting weird.
+      // const coo = mapReference.project(rightMostPoint.geometry.coordinates);
       return (
-        <FloatingActions
-          buttonX={coo.x}
-          buttonY={coo.y}
-          handleSearchClicked={handleSearchClicked}
-          handleRemoveFeature={handleRemoveFeature}
-        />
+        <MapPopup point={rightMostPoint.geometry} map={mapReference}>
+          <FloatingActions
+            handleSearchClicked={handleSearchClicked}
+            handleRemoveFeature={handleRemoveFeature}
+          />
+        </MapPopup>
       );
     }
     return null;
   };
-  // this is getting a strange error on build
-  // will disable the memo for now.
-  //
-  // const renderFloatingActions = React.useMemo(() => {
-  //   if (selectedFeature && mapReference && !touched) {
-  //     const rightMostPoint = getRightMostPoint(mapReference, selectedFeature);
-  //     const coo = mapReference.project(rightMostPoint.geometry.coordinates);
-  //     return (
-  //       <FloatingActions
-  //         buttonX={coo.x}
-  //         buttonY={coo.y}
-  //         handleSearchClicked={handleSearchClicked}
-  //         handleRemoveFeature={handleRemoveFeature}
-  //       />
-  //     );
-  //   }
-  //   return null;
-  // }, [selectedFeature, geoFilter, mapReference?.getCenter(), touched]);
-
-  const mapIcons = useMemo(() => {
-    return getMapIcons();
-  }, []);
 
   const renderBlockExpander = useMemo(() => {
     if (showSearchResults) return null;

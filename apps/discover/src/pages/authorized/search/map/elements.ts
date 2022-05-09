@@ -65,18 +65,10 @@ export const FloatingActionsWrapper = styled.div`
   padding: ${sizes.extraSmall};
   background-color: var(--cogs-white);
   border-radius: ${sizes.small};
-  position: absolute;
   display: flex;
   flex-direction: row;
-  margin-left: -42px;
-  margin-top: ${sizes.small};
-
-  top: ${(props: { buttonX: number; buttonY: number }) =>
-    props.buttonY >= 100 ? props.buttonY - 50 : 100}px;
-  left: ${(props: { buttonX: number; buttonY: number }) =>
-    props.buttonX >= 0 ? props.buttonX - 50 : 50}px;
-
   z-index: ${layers.MAP_TOP_BUTTONS};
+
   .cogs-btn-primary {
     margin-right: ${sizes.extraSmall};
   }
