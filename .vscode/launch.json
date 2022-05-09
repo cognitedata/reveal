@@ -28,7 +28,7 @@
       "name": "Platypus: Launch Chrome",
       "type": "pwa-chrome",
       "request": "launch",
-      "url": "http://localhost:4200",
+      "url": "https://localhost:3000",
       "webRoot": "${workspaceFolder}/apps/platypus",
       "envFile": "${workspaceFolder}/.env",
     }
