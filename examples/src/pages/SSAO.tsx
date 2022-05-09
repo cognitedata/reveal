@@ -11,7 +11,6 @@ import dat from 'dat.gui';
 import { createSDKFromEnvironment, getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
-import { defaultRenderOptions } from '@cognite/reveal/internals';
 import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
 import { suggestCameraConfig } from '../utils/cameraConfig';
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
@@ -73,18 +72,6 @@ export function SSAO() {
       controls.update(0.0);
       camera.updateMatrixWorld();
       revealManager.update(camera);
-
-      const renderOptions = defaultRenderOptions;
-
-      const updateEffect = () => {
-        revealManager.renderOptions = renderOptions;
-      };
-
-      gui.add(renderOptions.ssaoRenderParameters, 'sampleRadius').min(0.0).max(30.0).onChange(updateEffect);
-
-      gui.add(renderOptions.ssaoRenderParameters, 'sampleSize').min(1).max(256).step(1).onChange(updateEffect);
-
-      gui.add(renderOptions.ssaoRenderParameters, 'depthCheckBias').min(0.0).max(1.0).onChange(updateEffect);
 
       animationLoopHandler.setOnAnimationFrameListener(async (deltaTime: number) => {
         let needsResize = resizeRendererToDisplaySize(renderer, camera);

@@ -13,15 +13,7 @@ import { PointCloudManager, PointCloudNode } from '@reveal/pointclouds';
 import { SupportedModelTypes, LoadingState } from '@reveal/model-base';
 import { CadModelBudget } from '@reveal/cad-geometry-loaders';
 import { NodeAppearanceProvider } from '@reveal/cad-styling';
-import {
-  RenderOptions,
-  CadNode,
-  defaultRenderOptions,
-  RenderMode,
-  PipelineExecutor,
-  DefaultRenderPipeline,
-  CadMaterialManager
-} from '@reveal/rendering';
+import { CadNode, RenderMode, PipelineExecutor, DefaultRenderPipeline, CadMaterialManager } from '@reveal/rendering';
 import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
 
@@ -96,14 +88,6 @@ export class RevealManager {
   public resetRedraw(): void {
     this._cadManager.resetRedraw();
     this._pointCloudManager.resetRedraw();
-  }
-
-  public get renderOptions(): RenderOptions {
-    return this._renderPipeline.renderOptions;
-  }
-
-  public set renderOptions(options: RenderOptions) {
-    this._renderPipeline.renderOptions = options ?? defaultRenderOptions;
   }
 
   get materialManager(): CadMaterialManager {

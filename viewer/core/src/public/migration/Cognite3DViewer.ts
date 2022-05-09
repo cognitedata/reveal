@@ -1230,7 +1230,7 @@ function createCanvasWrapper(): HTMLElement {
 function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): RevealOptions {
   const revealOptions: RevealOptions = {
     continuousModelStreaming: viewerOptions.continuousModelStreaming,
-    autoResizeOutputRenderTarget: viewerOptions.renderTargetOptions.autoSetSize,
+    autoResizeOutputRenderTarget: viewerOptions.renderTargetOptions?.autoSetSize,
     internal: {}
   };
   revealOptions.internal.cad = { sectorCuller: viewerOptions._sectorCuller };

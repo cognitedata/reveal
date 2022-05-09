@@ -16,7 +16,7 @@ function UserRenderTargetTestPage() {
         renderTarget.depthTexture.format = THREE.DepthFormat;
         renderTarget.depthTexture.type = THREE.UnsignedIntType;
 
-        revealManager.setRenderTarget(renderTarget, true);
+        revealManager.setRenderTarget(renderTarget);
 
         const orthographicCamera = new THREE.OrthographicCamera(
           -1,
