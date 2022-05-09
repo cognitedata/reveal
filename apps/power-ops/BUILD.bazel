@@ -107,6 +107,7 @@ TYPE_DEPENDENCIES = [
     "@npm//@types/react-router-dom",
     "@npm//@types/sinon",
     "@npm//@types/styled-components",
+    "@npm//@types/enzyme",
 ]
 
 # Dev dependencies from package.json
@@ -117,6 +118,8 @@ DEV_DEPENDENCIES = [
     "@npm//eslint-config-react-app",
     "@npm//express",
     "@npm//sinon",
+    "@npm//@wojtekmaj/enzyme-adapter-react-17",
+    "@npm//enzyme",
 ]
 
 # Mappings for absolute imports from baseUrl @unused
