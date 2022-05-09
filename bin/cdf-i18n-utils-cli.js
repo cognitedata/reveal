@@ -17,18 +17,6 @@ function main() {
       (yargs) => {
         return yargs
           .env('LOCIZE')
-          .option('projectId', {
-            alias: 'i',
-            describe: 'The project id to use for operations',
-            default: '0f0363e6-4ef6-49cf-8f1b-e0d993b4b828',
-            type: 'string',
-          })
-          .option('namespace', {
-            alias: 'n',
-            describe: 'The namespace to target for translations',
-            type: 'string',
-            demandOption: true,
-          })
           .option('productionVersion', {
             describe: 'The production version to pull translations',
             default: 'latest',
@@ -62,18 +50,6 @@ function main() {
             type: 'string',
             demandOption: true,
           })
-          .option('projectId', {
-            alias: 'i',
-            describe: 'The project id to use for operations',
-            default: '0f0363e6-4ef6-49cf-8f1b-e0d993b4b828',
-            type: 'string',
-          })
-          .option('namespace', {
-            alias: 'n',
-            describe: 'The namespace to target for translations',
-            type: 'string',
-            demandOption: true,
-          })
           .option('stagingVersion', {
             describe: 'The staging version to use for operations',
             default: 'latest',
@@ -81,7 +57,7 @@ function main() {
           })
           .option('path', {
             alias: 'p',
-            describe: 'The path to download translations',
+            describe: 'The path to read local translations',
             default: './src/common/i18n/translations',
             type: 'string',
           });
@@ -108,18 +84,6 @@ function main() {
             type: 'string',
             demandOption: true,
           })
-          .option('projectId', {
-            alias: 'i',
-            describe: 'The project id to use for operations',
-            default: '0f0363e6-4ef6-49cf-8f1b-e0d993b4b828',
-            type: 'string',
-          })
-          .option('namespace', {
-            alias: 'n',
-            describe: 'The namespace to target for translations',
-            type: 'string',
-            demandOption: true,
-          })
           .option('stagingVersion', {
             describe: 'The staging version to use for operations',
             default: 'latest',
@@ -127,7 +91,7 @@ function main() {
           })
           .option('path', {
             alias: 'p',
-            describe: 'The path to download translations',
+            describe: 'The path to read local translations',
             default: './src/common/i18n/translations',
             type: 'string',
           });
@@ -142,6 +106,18 @@ function main() {
         });
       }
     )
+    .option('projectId', {
+      alias: 'i',
+      describe: 'The project id to use for operations',
+      default: '0f0363e6-4ef6-49cf-8f1b-e0d993b4b828',
+      type: 'string',
+    })
+    .option('namespace', {
+      alias: 'n',
+      describe: 'The namespace to target for translations',
+      type: 'string',
+      demandOption: true,
+    })
     .option('verbose', {
       type: 'boolean',
       description: 'Run with verbose logging',
