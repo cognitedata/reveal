@@ -22,9 +22,9 @@ import {
   NPT_DURATION,
   NDS_SEVERITY,
   WELL_TYPE,
-} from '../../../../src/modules/wellSearch/constantsSidebarFilters';
-import { ISODateRegex } from '../../../../src/utils/isISODateRegex';
-import { SOURCE_FILTER } from '../../../support/selectors/wells.selectors';
+} from '../../../src/modules/wellSearch/constantsSidebarFilters';
+import { ISODateRegex } from '../../../src/utils/isISODateRegex';
+import { SOURCE_FILTER } from '../../support/selectors/wells.selectors';
 
 const SELECT_TEXT = 'Select...';
 const DATA_AVAILABILITY_SELECT = 'Trajectories';

@@ -1,4 +1,4 @@
-import { TAB_NAMES } from '../../../../../src/pages/authorized/search/well/inspect/constants';
+import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/constants';
 
 describe('Wells: Related documents', () => {
   beforeEach(() => {

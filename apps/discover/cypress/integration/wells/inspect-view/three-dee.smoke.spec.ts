@@ -1,11 +1,11 @@
-import { LOADING_SUB_TEXT } from '../../../../../src/components/EmptyState/constants';
-import { DATA_SOURCE } from '../../../../../src/modules/wellSearch/constantsSidebarFilters';
+import { LOADING_SUB_TEXT } from '../../../../src/components/EmptyState/constants';
+import { DATA_SOURCE } from '../../../../src/modules/wellSearch/constantsSidebarFilters';
 import {
   TAB_NAMES,
   WARNING_MODAL_EXPLANATION,
   WARNING_MODAL_QUESTION,
-} from '../../../../../src/pages/authorized/search/well/inspect/constants';
-import { WELL_SOURCE_WITH_ALL } from '../../../../support/constants';
+} from '../../../../src/pages/authorized/search/well/inspect/constants';
+import { WELL_SOURCE_WITH_ALL } from '../../../support/constants';
 
 describe('Three-dee component', () => {
   beforeEach(() => {

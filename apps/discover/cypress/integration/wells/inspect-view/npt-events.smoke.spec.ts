@@ -1,6 +1,6 @@
-import { DATA_SOURCE } from '../../../../../src/modules/wellSearch/constantsSidebarFilters';
-import { TAB_NAMES } from '../../../../../src/pages/authorized/search/well/inspect/constants';
-import { NPT_EVENTS_SOURCE } from '../../../../support/selectors/wells.selectors';
+import { DATA_SOURCE } from '../../../../src/modules/wellSearch/constantsSidebarFilters';
+import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/constants';
+import { NPT_EVENTS_SOURCE } from '../../../support/selectors/wells.selectors';
 
 describe('Wells: NPT Events', () => {
   beforeEach(() => {

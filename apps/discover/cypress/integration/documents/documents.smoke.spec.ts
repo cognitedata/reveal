@@ -1,5 +1,5 @@
-import { EXPAND_MAP_TEXT } from '../../../../src/pages/authorized/search/map/constants';
-import { PROJECT } from '../../../app.constants';
+import { EXPAND_MAP_TEXT } from '../../../src/pages/authorized/search/map/constants';
+import { PROJECT } from '../../app.constants';
 
 const QUERY_DUPLICATED_FILENAME = 'Volve_Well_Summary_15_9-19.pdf';
 const SOURCE_DRIVE = 'volve';

@@ -574,10 +574,11 @@ cypress_web_test(
         "ignore_test_in_cd",
     ],
     templated_args = [
+        "--spec \"apps/discover/cypress/integration/**/*.smoke.*\"",
         "--config " +
         "retries=2," +
         "supportFile=./apps/discover/cypress/support," +
-        "integrationFolder=./apps/discover/cypress/integration/e2e," +
+        "integrationFolder=./apps/discover/cypress/integration," +
         "pluginsFile=./apps/discover/cypress/plugin.js," +
         "videosFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/video," +
         "screenshotsFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/screenshots",
@@ -606,10 +607,10 @@ cypress_web_test(
     templated_args = [
         "--record",
         "--key 57e436d7-0dbb-401d-ac07-7a1ec69e7a90",
+        "--tag \"production,nightly\"",
         "--config " +
-        "retries=2," +
         "supportFile=./apps/discover/cypress/support," +
-        "integrationFolder=./apps/discover/cypress/integration/nightly," +
+        "integrationFolder=./apps/discover/cypress/integration," +
         "pluginsFile=./apps/discover/cypress/plugin.js," +
         "videosFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/video," +
         "screenshotsFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/screenshots",

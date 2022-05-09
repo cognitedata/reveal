@@ -1,5 +1,5 @@
-import { DATA_SOURCE } from '../../../../../src/modules/wellSearch/constantsSidebarFilters';
-import { TAB_NAMES } from '../../../../../src/pages/authorized/search/well/inspect/constants';
+import { DATA_SOURCE } from '../../../../src/modules/wellSearch/constantsSidebarFilters';
+import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/constants';
 
 describe('Wells: DigitalRocks', () => {
   before(() => {

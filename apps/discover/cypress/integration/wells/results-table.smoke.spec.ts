@@ -1,4 +1,4 @@
-import { STATIC_LOCATION_WELL } from '../../../support/constants';
+import { STATIC_LOCATION_WELL } from '../../support/constants';
 
 describe('Wells: Search table', () => {
   before(() => {

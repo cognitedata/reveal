@@ -1,8 +1,8 @@
 import {
   DATA_AVAILABILITY,
   MEASUREMENTS,
-} from '../../../../../src/modules/wellSearch/constantsSidebarFilters';
-import { TAB_NAMES } from '../../../../../src/pages/authorized/search/well/inspect/constants';
+} from '../../../../src/modules/wellSearch/constantsSidebarFilters';
+import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/constants';
 
 describe('Wells: Well Logs', () => {
   beforeEach(() => {

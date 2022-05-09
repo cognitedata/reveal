@@ -1,4 +1,4 @@
-import { CLUSTER, PROJECT } from '../../../app.constants';
+import { CLUSTER, PROJECT } from '../../app.constants';
 
 const filename = '15_9_19_A_1997_07_25';
 describe.skip('Edit Favorites', () => {

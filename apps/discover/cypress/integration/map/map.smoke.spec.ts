@@ -1,8 +1,8 @@
-import { EXPAND_SEARCH_RESULTS_TEXT } from '../../../../src/pages/authorized/search/map/constants';
+import { EXPAND_SEARCH_RESULTS_TEXT } from '../../../src/pages/authorized/search/map/constants';
 import {
   STATIC_LOCATION_DOCUMENT,
   STATIC_LOCATION_WELL,
-} from '../../../support/constants';
+} from '../../support/constants';
 
 describe('Map', () => {
   before(() => {
