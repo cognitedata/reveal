@@ -4,10 +4,10 @@ import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Timeseries } from '@cognite/sdk';
+import { Tabs } from '@cognite/cogs.js';
 import {
   ErrorFeedback,
   Loader,
-  Tabs,
   TimeseriesChart,
   Metadata,
   TimeseriesDetails,
@@ -98,10 +98,10 @@ export const TimeseriesPreview = ({
             tab={activeTab}
             onTabChange={tabChange}
             additionalTabs={[
-              <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
+              <Tabs.TabPane tab={<TabTitle>Details</TabTitle>} key="details">
                 <TimeseriesDetails timeseries={timeseries} />
                 <Metadata metadata={timeseries.metadata} />
-              </Tabs.Pane>,
+              </Tabs.TabPane>,
             ]}
           />
         </>
