@@ -1,14 +1,18 @@
 {
   "name": "@cognite/cdf-i18n-utils",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "UNLICENSED",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "sideEffects": false,
   "files": [
+    "bin",
     "dist",
     "package.json"
   ],
+  "bin": {
+    "cdf-i18n-utils-cli": "bin/cdf-i18n-utils-cli.js"
+  },
   "scripts": {
     "build": "yarn clean && rollup -c",
     "clean": "rm -rf dist",
@@ -19,10 +23,15 @@
   "dependencies": {
     "@cognite/cdf-utilities": "^1.4.6",
     "@cognite/react-feature-flags": "^1.0.0",
+    "cross-spawn": "^7.0.3",
+    "dotenv": "^16.0.0",
     "i18next": "^21.6.13",
     "i18next-locize-backend": "^5.0.1",
     "locize": "^2.3.0",
-    "react-i18next": "^11.15.6"
+    "locize-cli": "^7.10.1",
+    "node-fetch": "^2.6.7",
+    "react-i18next": "^11.15.6",
+    "yargs": "^17.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.17.8",
