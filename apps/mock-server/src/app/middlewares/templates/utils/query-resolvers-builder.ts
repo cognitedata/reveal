@@ -193,7 +193,10 @@ function fetchAndQueryData(props: FetchAndQueryDataProps): CdfResourceObject[] {
 
   if (refObj) {
     const relation = refObj[schemaFieldName];
-    if ((!isFetchingObject && !relation) || !relation.length) {
+    if (
+      (!isFetchingObject && !relation) ||
+      (!isFetchingObject && !relation.length)
+    ) {
       return [];
     }
     const relationParams = isFetchingObject

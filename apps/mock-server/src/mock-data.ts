@@ -76,13 +76,5 @@ export const mockDataSample = {
         ],
       },
     },
-    {
-      externalId: 'demo',
-      name: 'demo',
-      description: 'demo',
-      metadata: {},
-      createdTime: 16394776,
-      versions: [],
-    },
   ],
 } as MockData;

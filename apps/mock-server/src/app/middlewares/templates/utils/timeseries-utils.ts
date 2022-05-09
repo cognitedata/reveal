@@ -167,6 +167,12 @@ export const filterTimeseriesDatapoints = (
       datapoints,
       prms.granularity as string
     ) as DatapointGroup[];
+  } else {
+    result = datapoints as any;
+  }
+
+  if (!result) {
+    return [];
   }
 
   if (prms.limit) {

@@ -6,7 +6,7 @@ import { CdfApiConfig, MockData } from '../app';
 export function loadMockData(mockDataPath: string): MockData {
   if (!mockDataPath) {
     // return mockDataSample;
-    return loadFile('mock-data.js', {});
+    return loadFile('mock-data.js', {}).mockDataSample;
   }
   return loadFile(mockDataPath, {});
 }

@@ -128,15 +128,17 @@ export const bestDayTemplateMockData = {
     Production: [
       {
         id: 500,
-        timeSeries: {
-          id: 6960147550797649,
-        },
+        timeSeries: [
+          {
+            id: 6960147550797649,
+          },
+        ],
         frequency: 'daily',
       },
       {
         id: 501,
         timeSeries: {
-          id: 8655586505636942,
+          externalId: 'LOR_OSLO_OIL_PRODUCTION',
         },
         frequency: 'daily',
       },
