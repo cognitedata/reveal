@@ -54,16 +54,6 @@ const shortcuts: {
     binding: ['Control+ArrowUp', 'Meta+ArrowUp'],
   },
   {
-    id: 'approve_annotation',
-    description: 'Set selected annotation as true',
-    binding: 'z',
-  },
-  {
-    id: 'reject_annotation',
-    description: 'Set selected annotation as false',
-    binding: 'x',
-  },
-  {
     id: 'delete_annotation',
     description: 'Set selected annotation as true',
     binding: 'BACKSPACE',
