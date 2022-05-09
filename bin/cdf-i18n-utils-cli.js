@@ -11,12 +11,12 @@ const removeDeleted = require('./remove-deleted');
 
 function main() {
   yargs(hideBin(process.argv))
+    .env('LOCIZE')
     .command(
       'pull-keys-from-remote [projectId] [namespace] [productionVersion] [path]',
       'downloads translations from remote (overrides local files)',
       (yargs) => {
         return yargs
-          .env('LOCIZE')
           .option('productionVersion', {
             describe: 'The production version to pull translations',
             default: 'latest',
@@ -43,7 +43,6 @@ function main() {
       'saves missing keys to remote staging version (does not update the existing values in locize)',
       (yargs) => {
         return yargs
-          .env('LOCIZE')
           .option('apiKey', {
             alias: 'k',
             describe: 'The api key to use for operations',
@@ -77,7 +76,6 @@ function main() {
       'removes deleted keys from remote staging version',
       (yargs) => {
         return yargs
-          .env('LOCIZE')
           .option('apiKey', {
             alias: 'k',
             describe: 'The api key to use for operations',
@@ -122,6 +120,7 @@ function main() {
       type: 'boolean',
       description: 'Run with verbose logging',
     })
+    .demandCommand(1, 'You need to provide a command')
     .version(false)
     .wrap(Math.min(200, yargs().terminalWidth()))
     .parse();
