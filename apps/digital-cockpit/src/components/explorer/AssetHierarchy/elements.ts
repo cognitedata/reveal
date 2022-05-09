@@ -11,6 +11,11 @@ export const AssetNodeWrapper = styled.div`
     color: #666666;
     cursor: pointer;
     line-height: 22px;
+    .description {
+      font-size: 12px;
+      opacity: 0.8;
+      line-height: 1;
+    }
   }
   & .node-item-header {
     position: relative;

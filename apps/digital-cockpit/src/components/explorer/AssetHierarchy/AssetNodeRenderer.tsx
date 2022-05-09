@@ -77,6 +77,7 @@ const AssetNodeRenderer: React.FC<AssetNodeRendererProps> = ({
       tabIndex={tabIndex}
     >
       {asset.name}
+      <br /> <span className="description">{asset.description}</span>
     </div>
   );
 

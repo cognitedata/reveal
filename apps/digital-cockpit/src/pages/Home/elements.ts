@@ -21,6 +21,8 @@ export const HomeWrapper = styled.div`
   > section {
     padding-bottom: 64px;
     .section-content {
+      display: flex;
+      align-items: center;
       margin-top: 24px;
     }
   }
