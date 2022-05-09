@@ -4,7 +4,7 @@ import { PROJECT } from '../../../app.constants';
 const QUERY_DUPLICATED_FILENAME = 'Volve_Well_Summary_15_9-19.pdf';
 const SOURCE_DRIVE = 'volve';
 const FILE_TYPE = 'PDF';
-const DOCUMENT_CATEGORY = 'unclassified';
+const DOCUMENT_CATEGORY = 'Drilling Report';
 export const filename = '15_9_19_A_1980_01_01';
 
 describe('Documents', () => {
