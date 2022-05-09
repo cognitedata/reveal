@@ -53,11 +53,14 @@ export const Casing: React.FC = () => {
           options={VIEW_MODES}
           onChange={setViewMode}
         />
-        <MultiStateToggle<SideModes>
-          activeOption={activeSideMode}
-          options={SIDE_MODES}
-          onChange={setActiveSideMode}
-        />
+
+        {viewMode === VIEW_MODES.Graph && (
+          <MultiStateToggle<SideModes>
+            activeOption={activeSideMode}
+            options={SIDE_MODES}
+            onChange={setActiveSideMode}
+          />
+        )}
 
         {viewMode === VIEW_MODES.Table && (
           <>
