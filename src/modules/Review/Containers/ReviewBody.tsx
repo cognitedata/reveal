@@ -93,11 +93,7 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
   };
 
   return (
-    <ImageKeyboardShortKeys
-      scrollToItem={scrollToItem}
-      contextElement={contextElement}
-      file={file}
-    >
+    <ImageKeyboardShortKeys contextElement={contextElement} file={file}>
       <QueryClientProvider client={queryClient}>
         <AnnotationContainer id="annotationContainer">
           <FilePreviewContainer>

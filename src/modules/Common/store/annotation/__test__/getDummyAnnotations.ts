@@ -1,4 +1,4 @@
-import { InternalId, ExternalId } from '@cognite/sdk';
+import { InternalId, ExternalId, CogniteInternalId } from '@cognite/sdk';
 import {
   BoundingBox,
   ImageAssetLink,
@@ -10,7 +10,6 @@ import {
   Status,
 } from 'src/api/annotation/types';
 import { VisionAnnotation } from 'src/modules/Common/types/index';
-import { createVisionAnnotationStub } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 
 export const getDummyImageClassificationAnnotation = ({
   id = 1,
@@ -29,14 +28,15 @@ export const getDummyImageClassificationAnnotation = ({
     label,
     confidence,
   };
-  return createVisionAnnotationStub<ImageClassification>({
+
+  return {
     id,
     createdTime: 123,
     lastUpdatedTime: 123,
     status,
-    resourceId: { annotatedResourceId },
-    data,
-  });
+    annotatedResourceId,
+    ...data,
+  };
 };
 
 export const getDummyImageObjectDetectionBoundingBoxAnnotation = ({
@@ -48,7 +48,7 @@ export const getDummyImageObjectDetectionBoundingBoxAnnotation = ({
 }: {
   id?: number;
   status?: Status;
-  annotatedResourceId?: number;
+  annotatedResourceId?: CogniteInternalId;
   label?: string;
   boundingBox?: BoundingBox;
 }): VisionAnnotation<ImageObjectDetectionBoundingBox> => {
@@ -57,14 +57,14 @@ export const getDummyImageObjectDetectionBoundingBoxAnnotation = ({
     boundingBox,
   };
 
-  return createVisionAnnotationStub<ImageObjectDetectionBoundingBox>({
+  return {
     id,
     createdTime: 123,
     lastUpdatedTime: 123,
     status,
-    resourceId: { annotatedResourceId },
-    data,
-  });
+    annotatedResourceId,
+    ...data,
+  };
 };
 
 export const getDummyImageObjectDetectionPolygonAnnotation = ({
@@ -83,7 +83,7 @@ export const getDummyImageObjectDetectionPolygonAnnotation = ({
 }: {
   id?: number;
   status?: Status;
-  annotatedResourceId?: number;
+  annotatedResourceId?: CogniteInternalId;
   label?: string;
   confidence?: number;
   polygon?: Polygon;
@@ -94,14 +94,14 @@ export const getDummyImageObjectDetectionPolygonAnnotation = ({
     polygon,
   };
 
-  return createVisionAnnotationStub<ImageObjectDetectionPolygon>({
+  return {
     id,
     createdTime: 123,
     lastUpdatedTime: 123,
     status,
-    resourceId: { annotatedResourceId },
-    data,
-  });
+    annotatedResourceId,
+    ...data,
+  };
 };
 
 export const getDummyImageExtractedTextAnnotation = ({
@@ -119,7 +119,7 @@ export const getDummyImageExtractedTextAnnotation = ({
 }: {
   id?: number;
   status?: Status;
-  annotatedResourceId?: number;
+  annotatedResourceId?: CogniteInternalId;
   extractedText?: string;
   confidence?: number;
   textRegion?: BoundingBox;
@@ -130,14 +130,14 @@ export const getDummyImageExtractedTextAnnotation = ({
     textRegion,
   };
 
-  return createVisionAnnotationStub<ImageExtractedText>({
+  return {
     id,
     createdTime: 123,
     lastUpdatedTime: 123,
     status,
-    resourceId: { annotatedResourceId },
-    data,
-  });
+    annotatedResourceId,
+    ...data,
+  };
 };
 
 export const getDummyImageAssetLinkAnnotation = ({
@@ -155,7 +155,7 @@ export const getDummyImageAssetLinkAnnotation = ({
 }: {
   id?: number;
   status?: Status;
-  annotatedResourceId?: number;
+  annotatedResourceId?: CogniteInternalId;
   text?: string;
   textRegion?: BoundingBox;
   assetRef?: InternalId & Partial<ExternalId>;
@@ -166,12 +166,12 @@ export const getDummyImageAssetLinkAnnotation = ({
     assetRef,
   };
 
-  return createVisionAnnotationStub<ImageAssetLink>({
+  return {
     id,
     createdTime: 123,
     lastUpdatedTime: 123,
     status,
-    resourceId: { annotatedResourceId },
-    data,
-  });
+    annotatedResourceId,
+    ...data,
+  };
 };
