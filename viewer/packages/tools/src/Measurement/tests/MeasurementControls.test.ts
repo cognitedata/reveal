@@ -36,21 +36,21 @@ describe(MeasurementControls.name, () => {
   });
 
   test('Add a distance measurement type to the controls', () => {
-    const addMock = jest.spyOn(measurementControls, 'add');
+    const addSpyOn = jest.spyOn(measurementControls, 'add');
     measurementControls.add(new MeasurementDistance(viewer));
 
-    expect(addMock).toBeCalled();
+    expect(addSpyOn).toBeCalled();
   });
 
   test('Remove distance measurement', () => {
-    const removeMock = jest.spyOn(measurementControls, 'remove');
+    const removeSpyOn = jest.spyOn(measurementControls, 'remove');
     measurementControls.remove();
 
-    expect(removeMock).toBeCalledTimes(1);
+    expect(removeSpyOn).toBeCalledTimes(1);
   });
 
   test('Check multiple removal of measurement type', () => {
-    const removeMock = jest.spyOn(measurementControls, 'remove');
+    const removeSpyOn = jest.spyOn(measurementControls, 'remove');
     measurementControls.add(new MeasurementDistance(viewer));
 
     expect((measurementControls as any)._measurement).toBeDefined();
@@ -59,6 +59,21 @@ describe(MeasurementControls.name, () => {
     expect((measurementControls as any)._measurement).toBeNull();
     measurementControls.remove();
 
-    expect(removeMock).toBeCalledTimes(2);
+    expect(removeSpyOn).toBeCalledTimes(2);
+  });
+
+  test('Update Line width & color', () => {
+    const updateLineOptionsSpyOn = jest.spyOn(measurementControls, 'updateLineOptions');
+    const lineOptions = {
+      color: new THREE.Color('red'),
+      lineWidth: 1.0
+    };
+
+    measurementControls.add(new MeasurementDistance(viewer));
+    measurementControls.updateLineOptions(lineOptions);
+
+    expect(updateLineOptionsSpyOn).toBeCalled();
+    expect((measurementControls as any)._measurement._lineOptions.color).toStrictEqual(new THREE.Color('red'));
+    expect((measurementControls as any)._measurement._lineOptions.lineWidth).toBe(lineOptions.lineWidth);
   });
 });
