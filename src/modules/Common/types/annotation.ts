@@ -15,12 +15,12 @@ import {
  */
 
 export enum ImageAnnotationType {
-  Classification = 'images.Classification',
-  ObjectDetectionBoundingBox = 'images.ObjectDetectionBoundingBox',
-  ObjectDetectionPolygon = 'images.ObjectDetectionPolygon',
-  ExtractedText = 'images.ExtractedText',
-  AssetLink = 'images.AssetLink',
-  KeypointCollection = 'images.KeypointCollection',
+  ImagesClassification = 'images.Classification',
+  ImagesObjectDetectionBoundingBox = 'images.ObjectDetectionBoundingBox',
+  ImagesObjectDetectionPolygon = 'images.ObjectDetectionPolygon',
+  ImagesExtractedText = 'images.ExtractedText',
+  ImagesAssetLink = 'images.AssetLink',
+  ImagesKeypointCollection = 'images.KeypointCollection',
 }
 
 export type VisionAnnotationDataType =

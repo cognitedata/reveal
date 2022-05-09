@@ -63,17 +63,17 @@ export const getTypeGuardForVisionAnnotationDataType = (
   visionAnnotationType: ImageAnnotationType
 ) => {
   switch (visionAnnotationType) {
-    case ImageAnnotationType.ObjectDetectionPolygon:
+    case ImageAnnotationType.ImagesObjectDetectionPolygon:
       return isImageObjectDetectionPolygonData;
-    case ImageAnnotationType.ExtractedText:
+    case ImageAnnotationType.ImagesExtractedText:
       return isImageExtractedTextData;
-    case ImageAnnotationType.AssetLink:
+    case ImageAnnotationType.ImagesAssetLink:
       return isImageAssetLinkData;
-    case ImageAnnotationType.KeypointCollection:
+    case ImageAnnotationType.ImagesKeypointCollection:
       return isImageKeypointCollectionData;
-    case ImageAnnotationType.Classification:
+    case ImageAnnotationType.ImagesClassification:
       return isImageClassificationData;
-    case ImageAnnotationType.ObjectDetectionBoundingBox:
+    case ImageAnnotationType.ImagesObjectDetectionBoundingBox:
       return isImageObjectDetectionBoundingBoxData;
     default:
       console.error(

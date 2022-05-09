@@ -204,14 +204,14 @@ describe('Test annotation selectors', () => {
       // select annotations for file id 10 with model type imageClassification
       expect(
         selectFileAnnotationsByType(mockState, 10, [
-          ImageAnnotationType.Classification,
+          ImageAnnotationType.ImagesClassification,
         ])
       ).toEqual([annotations[0]]);
 
       // select annotations for file id 20 with model type imageObjectDetectionBoundingBox
       expect(
         selectFileAnnotationsByType(mockState, 20, [
-          ImageAnnotationType.ObjectDetectionBoundingBox,
+          ImageAnnotationType.ImagesObjectDetectionBoundingBox,
         ])
       ).toEqual([annotations[6], annotations[7], annotations[8]]);
     });
