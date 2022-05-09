@@ -1,4 +1,4 @@
-import { DocumentFilter, DocumentSortItem } from '@cognite/sdk';
+import { SearchRequestOptions } from 'services/documentSearch/service/searchDocument';
 
 import { useProjectConfig } from 'hooks/useProjectConfig';
 import { useSortByOptions } from 'modules/resultPanel/selectors';
@@ -6,21 +6,18 @@ import { useSortByOptions } from 'modules/resultPanel/selectors';
 import { useExtractParentFolderPath } from '../selectors';
 import { toSort } from '../utils/toSort';
 
-export const useDocumentSearchOptions = () => {
+export const useDocumentSearchOptions = (): SearchRequestOptions => {
   const { data: projectConfig } = useProjectConfig();
   const sortByOptions = useSortByOptions();
   const extractParentFolderPath = useExtractParentFolderPath();
 
-  const documentSearchOptions = {
-    filters: { ...projectConfig?.documents?.filters },
+  const documentSearchOptions: SearchRequestOptions = {
+    filter: { ...projectConfig?.documents?.filters },
     sort: sortByOptions.documents?.map(toSort) || [],
   };
 
-  const extractParentFolderOptions: {
-    filters?: DocumentFilter;
-    sort: DocumentSortItem[];
-  } = {
-    filters: {
+  const extractParentFolderOptions: SearchRequestOptions = {
+    filter: {
       and: [
         {
           prefix: {

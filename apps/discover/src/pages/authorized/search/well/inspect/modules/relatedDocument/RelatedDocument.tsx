@@ -1,14 +1,9 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { CollapsablePanel } from '@cognite/cogs.js';
 
 import { BaseButton } from 'components/Buttons/BaseButton';
-import { useAnythingHasSearched } from 'hooks/useAnythingHasSearched';
-import { useRelatedDocumentDataStats } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocument';
-import { SearchBreadcrumb } from 'pages/authorized/search/common/searchResult';
 import { SearchQueryInfoPanel } from 'pages/authorized/search/search/SearchQueryInfoPanel';
-import { RelatedDocumentFilters } from 'pages/authorized/search/search/SideBar/filters/RelatedDocumentFilters';
 import { FlexGrow, FlexRow } from 'styles/layout';
 
 import {
@@ -18,17 +13,20 @@ import {
   IconSeparator,
   ResultsContainer,
 } from './elements';
+import {
+  RelatedDocumentDateRange,
+  RelatedDocumentSource,
+  RelatedDocumentFileType,
+} from './filters';
 import { RelatedDocumentAppliedFilters } from './RelatedDocumentAppliedFilters';
 import { RelatedDocumentOptionPanel } from './RelatedDocumentOptionPanel';
 import { RelatedDocumentSearch } from './RelatedDocumentSearch';
+import { RelatedDocumentStats } from './RelatedDocumentStats';
 import { RelatedDocumentTable } from './RelatedDocumentTable';
 import RelatedDocumentTypeFilter from './RelatedDocumentTypeFilter';
 
 export const RelatedDocument: React.FC = () => {
-  const anythingHasSearched = useAnythingHasSearched();
-  const { total, documentInformation } = useRelatedDocumentDataStats();
   const [showDocTypeFilter, setShowDocTypeFilter] = useState<boolean>(true);
-  const { t } = useTranslation();
 
   return (
     <CollapsablePanel
@@ -39,15 +37,7 @@ export const RelatedDocument: React.FC = () => {
       <ResultsContainer fullWidth={!showDocTypeFilter}>
         <Header>
           <FlexRow>
-            <SearchBreadcrumb
-              stats={[
-                {
-                  entityLabel: t('files'),
-                  currentHits: total,
-                  info: documentInformation,
-                },
-              ]}
-            />
+            <RelatedDocumentStats />
             <FlexGrow />
             <RelatedDocumentOptionPanel />
             <IconSeparator />
@@ -64,18 +54,16 @@ export const RelatedDocument: React.FC = () => {
           <HeaderSearchWrapper>
             <RelatedDocumentSearch />
             <SearchQueryInfoPanel />
-            {anythingHasSearched && (
-              <>
-                <IconSeparator />
-                <FlexContainer>
-                  <RelatedDocumentFilters />
-                </FlexContainer>
-              </>
-            )}
+            <IconSeparator />
+            <FlexContainer>
+              <RelatedDocumentFileType />
+              <RelatedDocumentDateRange />
+              <RelatedDocumentSource />
+            </FlexContainer>
           </HeaderSearchWrapper>
 
-          {/* Show the applied filters below the search bar when result count is >0 (otherwise, show in empty state) */}
-          {total > 0 && <RelatedDocumentAppliedFilters showClearTag />}
+          {/* Show the applied filters below the search bar */}
+          <RelatedDocumentAppliedFilters showClearTag />
         </Header>
 
         <RelatedDocumentTable />

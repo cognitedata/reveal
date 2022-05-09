@@ -4,7 +4,7 @@ import { getSearchQuery } from 'services/documentSearch/utils/getSearchQuery';
 import { handleServiceError } from 'utils/errors';
 import { mergeUniqueArray } from 'utils/merge';
 
-import { DocumentFilter, DocumentSortItem } from '@cognite/sdk';
+import { DocumentFilter, DocumentSearchRequest } from '@cognite/sdk';
 
 import { EMPTY_ARRAY } from 'constants/empty';
 import { aggregates } from 'modules/documentSearch/aggregates';
@@ -12,20 +12,21 @@ import { SearchQueryFull, DocumentResult } from 'modules/documentSearch/types';
 import { processFacets } from 'modules/documentSearch/utils/processFacets';
 import { toDocuments } from 'modules/documentSearch/utils/toDocuments';
 
+export type SearchRequestOptions = Omit<
+  DocumentSearchRequest,
+  'search' | 'limit' | 'aggregates'
+>;
+// we should eventually change the params to a single one which is just DocumentSearchRequest
 export const searchDocument = (
   query: SearchQueryFull,
-  options: {
-    filters?: DocumentFilter;
-    sort: DocumentSortItem[];
-    cursor?: string;
-  },
-  limit = 25
+  options: SearchRequestOptions,
+  limit?: number
 ): Promise<DocumentResult> => {
   const queryInfo = getSearchQuery(query);
 
   const filter = mergeUniqueArray<DocumentFilter | undefined>(
     queryInfo.filter,
-    options.filters
+    options.filter
   );
 
   const { sort, cursor } = options;

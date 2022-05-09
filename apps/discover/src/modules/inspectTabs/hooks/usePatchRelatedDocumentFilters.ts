@@ -1,10 +1,10 @@
 import get from 'lodash/get';
 import { documentValuesPayload } from 'services/documents/structure';
+import { useMutateRelatedDocumentPatch } from 'services/savedSearches/queries/useMutateRelatedDocumentPatch';
 import { useQuerySavedSearchRelatedDocuments } from 'services/savedSearches/useSavedSearchQuery';
 import { getEmptyGeometry } from 'utils/geometry';
 
 import { DocumentsFacets } from 'modules/documentSearch/types';
-import { useMutateRelatedDocumentPatch } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useMutateRelatedDocumentPatch';
 
 export const usePatchRelatedDocumentFilters = () => {
   const { mutate } = useMutateRelatedDocumentPatch();

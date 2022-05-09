@@ -4,7 +4,7 @@ import { AppStore } from 'core';
 import { testWrapper } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 
-import { useSelectedColumns } from '../useRelatedDocument';
+import { useSelectedColumns } from '../useSelectedColumns';
 
 describe('useSelectedColumns', () => {
   const renderHookWithStore = async (store: AppStore) => {

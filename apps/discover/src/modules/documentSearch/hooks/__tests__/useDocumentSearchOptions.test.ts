@@ -1,69 +1,50 @@
-import { renderHook } from '@testing-library/react-hooks';
+import '__mocks/mockCogniteSDK';
+import { setupServer } from 'msw/node';
+import { getMockDocumentSearch } from 'services/documentSearch/__mocks/getMockDocumentSearch';
+import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
-import { useProjectConfig } from 'hooks/useProjectConfig';
-import { useExtractParentFolderPath } from 'modules/documentSearch/selectors';
-import { useSortByOptions } from 'modules/resultPanel/selectors';
+import { renderHookWithStore } from '__test-utils/renderer';
+import { getMockedStore } from '__test-utils/store.utils';
+import { PartialStoreState } from 'core/types';
 
 import { useDocumentSearchOptions } from '../useDocumentSearchOptions';
 
-jest.mock('hooks/useProjectConfig', () => ({
-  useProjectConfig: jest.fn(),
-}));
-
-jest.mock('modules/resultPanel/selectors', () => ({
-  useSortByOptions: jest.fn(),
-}));
-
-jest.mock('../../selectors', () => ({
-  useExtractParentFolderPath: jest.fn(),
-}));
+const mockServer = setupServer(getMockDocumentSearch(), getMockConfigGet());
 
 describe('useDocumentSearchOptions hook', () => {
-  const filters = { testFilter: true };
-  const sort = {
-    id: 'doc.title',
-    desc: true,
-  };
+  beforeAll(() => mockServer.listen());
+  afterAll(() => mockServer.close());
 
-  beforeEach(() => {
-    (useProjectConfig as jest.Mock).mockImplementation(() => ({
-      data: { documents: { filters } },
-    }));
-    (useSortByOptions as jest.Mock).mockImplementation(() => ({
-      documents: [sort],
-    }));
-  });
+  const filter = {};
 
-  const getHookResult = () => {
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useDocumentSearchOptions()
+  const getHookResult = (store: PartialStoreState) => {
+    const { result, waitForNextUpdate } = renderHookWithStore(
+      () => useDocumentSearchOptions(),
+      getMockedStore(store)
     );
     waitForNextUpdate();
     return result.current;
   };
 
   it('should return `documentSearchOptions` when `extractParentFolderPath` is undefined', () => {
-    const options = getHookResult();
+    const options = getHookResult({
+      resultPanel: {
+        sortBy: {},
+      },
+    });
     expect(options).toEqual({
-      filters,
-      sort: [
-        {
-          order: 'desc',
-          property: ['title'],
-        },
-      ],
+      filter,
+      sort: [],
     });
   });
 
   it('should return `extractParentFolderOptions` when `extractParentFolderPath` is defined', () => {
-    const extractParentFolderPath = '/extractParentFolderPath';
-    (useExtractParentFolderPath as jest.Mock).mockImplementation(
-      () => extractParentFolderPath
-    );
-
-    const options = getHookResult();
+    const options = getHookResult({
+      resultPanel: { sortBy: {} },
+      documentSearch: { extractParentFolderPath: '/extractParentFolderPath' },
+    });
     expect(options).toEqual({
-      filters: {
+      filter: {
         and: [
           {
             prefix: {

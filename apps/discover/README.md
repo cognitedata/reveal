@@ -189,6 +189,7 @@ Known bug: [Firefox cannot display maps](https://bugzilla.mozilla.org/show_bug.c
 | `gyp: No Xcode or CLT version detected!` | [Follow these steps](https://medium.com/flawless-app-stories/gyp-no-xcode-or-clt-version-detected-macos-catalina-anansewaa-38b536389e8d)           |
 | `Yarn cannot find ...........`           | <ol><li>Did you run `npm login`?</li><li>Are you [added](https://github.com/cognitedata/terraform-npm/blob/master/cogniters.tf) here?</li></ol>    |
 | `iBazel ........... permission denied`   | Workaround until fixed: Run `bazel clean --expunge`. If that doesn't work, delete `/private/var/tmp/_bazel_***` and run the expunge command after. |
+| `gyp ERR! node-pre-gyp`                  | `rm -rf node_modules && yarn`                                                                                                                      |
 
 #### Local debugging
 

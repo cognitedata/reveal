@@ -1,3 +1,5 @@
+import { getTotalFromFacets } from 'services/documentSearch/utils/getTotalFromFacets';
+
 import { useDeepMemo } from 'hooks/useDeep';
 
 import { useDocumentResultFacets } from './useDocumentResultFacets';
@@ -5,11 +7,5 @@ import { useDocumentResultFacets } from './useDocumentResultFacets';
 export const useDocumentResultCount = () => {
   const facets = useDocumentResultFacets();
 
-  return useDeepMemo(
-    () =>
-      facets.total.reduce((result, value) => {
-        return result + value.count;
-      }, 0),
-    [facets]
-  );
+  return useDeepMemo(() => getTotalFromFacets(facets), [facets]);
 };

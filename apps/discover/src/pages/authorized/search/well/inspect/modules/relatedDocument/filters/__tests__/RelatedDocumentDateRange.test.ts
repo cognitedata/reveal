@@ -3,7 +3,7 @@ import { shortDate } from 'utils/date';
 
 import { testRenderer } from '__test-utils/renderer';
 
-import { RelatedDocumentDateRange } from './RelatedDocumentDateRange';
+import { RelatedDocumentDateRange } from '../RelatedDocumentDateRange';
 
 describe('Date Range', () => {
   const page = (viewProps?: any) =>

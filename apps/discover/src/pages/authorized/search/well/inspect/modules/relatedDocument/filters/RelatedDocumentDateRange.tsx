@@ -10,13 +10,12 @@ import { Dropdown, Menu, Range } from '@cognite/cogs.js';
 import { BaseButton } from 'components/Buttons';
 import { DocumentsFacets } from 'modules/documentSearch/types';
 import { useSetRelatedDocumentFilters } from 'modules/inspectTabs/hooks/useSetRelatedDocumentFilters';
-
-import { ClearButton } from '../../components/ClearButton';
-import { CommonDateRange } from '../../components/CommonDateRange';
-import { DateRangeTabs } from '../../components/DateRangeTabs';
-import { Content } from '../../components/elements';
-import { DateTabType } from '../../types';
-import { syncDatesWithSavedSearch } from '../dateRangeService';
+import { ClearButton } from 'pages/authorized/search/search/SideBar/components/ClearButton';
+import { CommonDateRange } from 'pages/authorized/search/search/SideBar/components/CommonDateRange';
+import { DateRangeTabs } from 'pages/authorized/search/search/SideBar/components/DateRangeTabs';
+import { Content } from 'pages/authorized/search/search/SideBar/components/elements';
+import { syncDatesWithSavedSearch } from 'pages/authorized/search/search/SideBar/filters/dateRangeService';
+import { DateTabType } from 'pages/authorized/search/search/SideBar/types';
 
 import { DateRangeButtonWrapper } from './elements';
 

@@ -1,8 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import { getMockDocumentEmptyFacets } from '__test-utils/fixtures/document';
-
-import { useRelatedDocumentFilterQuery } from '../useRelatedDocumentFilterQuery';
+import { useRelatedDocumentFilterQuery } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocumentFilterQuery';
 
 jest.mock('react-query', () => ({
   ...jest.requireActual('react-query'),

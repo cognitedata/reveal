@@ -1,4 +1,5 @@
 import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/constants';
+import { STATIC_WELL_1 } from '../../../support/constants';
 
 describe('Wells: Related documents', () => {
   beforeEach(() => {
@@ -8,14 +9,14 @@ describe('Wells: Related documents', () => {
   });
   it('Should have zero results', () => {
     cy.performWellsSearch({
-      search: { query: 'F-1' },
-      select: { wells: ['F-1'] },
+      search: { query: STATIC_WELL_1 },
+      select: { wells: [STATIC_WELL_1] },
     });
 
     cy.openInspectView();
 
     cy.goToWellsInspectTab(TAB_NAMES.RELATED_DOCUMENTS);
 
-    cy.findByTestId('search-header-breadcrumb').contains('0 files');
+    cy.findByTestId('search-header-breadcrumb').contains('Documents: 0');
   });
 });

@@ -1,6 +1,5 @@
 import isEmpty from 'lodash/isEmpty';
 import { getDocumentSDKClient } from 'services/documentSearch/sdk';
-import { searchDocument } from 'services/documentSearch/service/searchDocument';
 import { getSearchQuery } from 'services/documentSearch/utils/getSearchQuery';
 import { mergeUniqueArray } from 'utils/merge';
 
@@ -109,7 +108,6 @@ const getCategoriesByQuery = ({
 };
 
 export const documentSearchService = {
-  search: searchDocument,
   documentsByIds,
   getCategoriesByAssetIds,
   getCategoriesByQuery,

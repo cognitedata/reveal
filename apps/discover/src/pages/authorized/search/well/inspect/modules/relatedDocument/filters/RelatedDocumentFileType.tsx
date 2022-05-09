@@ -1,45 +1,40 @@
 import { useTranslation } from 'react-i18next';
 
+import { useDocumentSearchRelatedDocumentsOnlyQuery } from 'services/documentSearch/queries/useDocumentSearchRelatedDocumentsOnlyQuery';
+
 import { MultiSelect } from 'components/Filters';
-import { useDeepMemo } from 'hooks/useDeep';
 import { usePatchRelatedDocumentFilters } from 'modules/inspectTabs/hooks/usePatchRelatedDocumentFilters';
-import { useRelatedDocumentDataStats } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocument';
 import { useRelatedDocumentFilterQuery } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocumentFilterQuery';
 
 import { DropdownWrapper } from './elements';
 
-export const RelatedDocumentSource = () => {
+export const RelatedDocumentFileType = () => {
   const { t } = useTranslation();
-  const { facets } = useRelatedDocumentDataStats();
   const patchRelatedDocumentFilters = usePatchRelatedDocumentFilters();
   const { facets: filters } = useRelatedDocumentFilterQuery();
-  const locationFilters = filters.location;
-  const selectedCount = locationFilters.length;
+  const fileCategoryFilters = filters.fileCategory;
+  const selectedCount = fileCategoryFilters.length;
+  const { results } = useDocumentSearchRelatedDocumentsOnlyQuery();
 
-  const options = useDeepMemo(() => {
-    if (!facets?.location) {
-      return [];
-    }
-    return facets.location.map((row) => row.name);
-  }, [facets?.location]);
+  const options = results.facets.fileCategory.map((row) => row.name);
 
   return (
     <DropdownWrapper>
       <MultiSelect
         theme="grey"
-        title={t('Source')}
+        title={t('File Type')}
         SelectAllLabel={t('All')}
         options={options}
-        selectedOptions={locationFilters}
+        selectedOptions={fileCategoryFilters}
         onValueChange={(values: string[]) => {
-          patchRelatedDocumentFilters({ location: values });
+          patchRelatedDocumentFilters({ fileCategory: values });
         }}
         enableSelectAll
         showCustomCheckbox
         displayValue={
           options.length === selectedCount
             ? t('All')
-            : `${locationFilters.length}`
+            : `${fileCategoryFilters.length}`
         }
         hideClearIndicator
         disableTyping

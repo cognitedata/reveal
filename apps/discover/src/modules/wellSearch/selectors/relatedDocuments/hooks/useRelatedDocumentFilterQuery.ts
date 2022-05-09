@@ -1,10 +1,22 @@
 import { useMemo } from 'react';
 
+import { SavedSearchContent } from 'services/savedSearches';
 import { useQuerySavedSearchRelatedDocuments } from 'services/savedSearches/useSavedSearchQuery';
 
 import { SearchQueryFull } from 'modules/documentSearch/types';
 
-import { getFilterQuery } from '../utils';
+export const getFilterQuery = (searchOption?: SavedSearchContent) => ({
+  phrase: searchOption?.query || '',
+  geoFilter: [],
+  facets: {
+    fileCategory: searchOption?.filters.documents?.facets.fileCategory || [],
+    labels: searchOption?.filters.documents?.facets.labels || [],
+    lastcreated: searchOption?.filters.documents?.facets.lastcreated || [],
+    lastmodified: searchOption?.filters.documents?.facets.lastmodified || [],
+    location: searchOption?.filters.documents?.facets.location || [],
+    pageCount: searchOption?.filters.documents?.facets.pageCount || [],
+  },
+});
 
 export const useRelatedDocumentFilterQuery = (): SearchQueryFull => {
   const { data } = useQuerySavedSearchRelatedDocuments();

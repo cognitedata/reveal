@@ -1,43 +1,43 @@
+import '__mocks/mockContainerAuth'; // should be first
 import '__mocks/mockCogniteSDK';
 import { screen } from '@testing-library/react';
+import { setupServer } from 'msw/node';
+import { getMockDocumentSearch } from 'services/documentSearch/__mocks/getMockDocumentSearch';
+import { getMockLabelsPost } from 'services/labels/__mocks/getMockLabels';
+import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
+import { getMockSavedSearchRelatedGet } from 'services/savedSearches/__mocks/getMockSavedSearchRelatedGet';
 
 import { mockedWellStateWithSelectedWells } from '__test-utils/fixtures/well';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { useAnythingHasSearched } from 'hooks/useAnythingHasSearched';
 
 import RelatedDocument from '../RelatedDocument';
 
-jest.mock('hooks/useAnythingHasSearched', () => ({
-  useAnythingHasSearched: jest.fn(),
-}));
-
-jest.mock(
-  'pages/authorized/search/search/SideBar/filters/RelatedDocumentFilters',
-  () => ({
-    RelatedDocumentFilters: () => (
-      <div data-testid="document-filters">Document filters</div>
-    ),
-  })
+const mockServer = setupServer(
+  getMockLabelsPost(),
+  getMockDocumentSearch(),
+  getMockSavedSearchRelatedGet(),
+  getMockConfigGet()
 );
 
 describe('Related Document', () => {
-  beforeEach(() => {
-    (useAnythingHasSearched as jest.Mock).mockImplementation(() => true);
-  });
+  beforeAll(() => mockServer.listen());
+  afterAll(() => mockServer.close());
 
-  const defaultTestInit = async () =>
-    testRenderer(
+  async function defaultTestInit() {
+    return testRenderer(
       RelatedDocument,
       getMockedStore({
         ...mockedWellStateWithSelectedWells,
       })
     );
+  }
 
   it(`should display filters item`, async () => {
     await defaultTestInit();
 
-    const singleItem = screen.queryByTestId('document-filters');
-    expect(singleItem?.textContent).toEqual('Document filters');
+    expect(screen.getByText('File Type')).toBeInTheDocument();
+    expect(screen.getByText('Date Range')).toBeInTheDocument();
+    expect(screen.getByText('Source')).toBeInTheDocument();
   });
 });
