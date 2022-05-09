@@ -136,6 +136,7 @@ export function createRevealManager(
     renderables.cadModels
   );
   const pointCloudManager = createPointCloudManager(modelMetadataProvider, modelDataProvider, scene, renderer);
+  renderables.customObjects.push(pointCloudManager.pointCloudGroupWrapper);
   const cadManager = createCadManager(
     modelMetadataProvider,
     modelDataProvider,
