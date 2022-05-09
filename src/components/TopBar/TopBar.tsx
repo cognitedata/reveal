@@ -27,6 +27,7 @@ const TopBarWrapper = () => {
       'Account',
       'Profile',
       'Logout',
+      'Early Adopter Group on Cognite Hub',
     ],
     'TopBar'
   );
@@ -92,6 +93,14 @@ const TopBarWrapper = () => {
                 ),
                 menu: (
                   <Menu>
+                    <Menu.Item
+                      href={config.cogniteHubGroupUrl}
+                      style={{ color: 'var(--cogs-text-color)' }}
+                      // @ts-ignore
+                      target="_blank"
+                    >
+                      {t['Early Adopter Group on Cognite Hub']}
+                    </Menu.Item>
                     <Menu.Item
                       href={config.privacyPolicyUrl}
                       style={{ color: 'var(--cogs-text-color)' }}
