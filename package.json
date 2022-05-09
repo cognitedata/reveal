@@ -60,7 +60,7 @@
     "lodash": "4.17.21",
     "mixpanel-browser": "2.45.0",
     "ms": "2.1.3",
-    "plotly.js-basic-dist": "2.9.0",
+    "plotly.js-basic-dist": "2.11.1",
     "query-string": "7.1.1",
     "react": "17.0.2",
     "react-beautiful-dnd": "13.1.0",

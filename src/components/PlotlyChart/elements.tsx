@@ -18,14 +18,6 @@ export const LoadingIcon = () => (
 export const ChartingContainer = styled.div`
   height: 100%;
   width: 100%;
-
-  & > .adjust-button {
-    visibility: hidden;
-  }
-
-  &:hover > .adjust-button {
-    visibility: visible;
-  }
 `;
 
 export const PlotWrapper = styled.div`

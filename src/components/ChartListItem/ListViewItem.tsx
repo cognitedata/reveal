@@ -6,7 +6,7 @@ import { Chart } from 'models/chart/types';
 import { trackUsage } from 'services/metrics';
 import { useProject } from 'hooks/config';
 import { useIsChartOwner } from 'hooks/user';
-import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChart';
+import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChartContainer';
 import { formatOwner, formatDate } from './utils';
 
 interface ListViewItemProps {

@@ -10,8 +10,6 @@ import {
 import { roundToSignificantDigits } from 'utils/numbers';
 import { hexToRGBA } from 'utils/colors';
 import { convertUnits, convertThresholdUnits, units } from 'utils/units';
-import { useDebouncedCallback } from 'use-debounce';
-import { useState, useEffect, useCallback } from 'react';
 import { WorkflowState } from 'models/workflows/types';
 import { TimeseriesEntry } from 'models/timeseries/types';
 import { isThresholdValid } from 'utils/threshold';
@@ -54,23 +52,30 @@ export function hasRawPoints(
   return datapoints.some((point) => 'value' in point) || false;
 }
 
-export function calculateSeriesData(
-  timeSeriesCollection: ChartTimeSeries[] = [],
-  workflowCollection: ChartWorkflow[] = [],
-  thresholdCollection: ChartThreshold[] = [],
-  timeseries: TimeseriesEntry[],
-  workflows: WorkflowState[] = [],
-  mergeUnits: boolean
-): SeriesData[] {
+export function calculateSeriesData({
+  timeseries = [],
+  calculations = [],
+  thresholds = [],
+  timeseriesData = [],
+  calculationsData = [],
+  mergeUnits = false,
+}: {
+  timeseries: ChartTimeSeries[];
+  calculations: ChartWorkflow[];
+  thresholds: ChartThreshold[];
+  timeseriesData: TimeseriesEntry[];
+  calculationsData: WorkflowState[];
+  mergeUnits: boolean;
+}): SeriesData[] {
   const seriesData: SeriesData[] = [
-    ...timeSeriesCollection
+    ...timeseries
       .map((t) => {
         const unitLabel =
           units.find(
             (unitOption) => unitOption.value === t.preferredUnit?.toLowerCase()
           )?.label || t.preferredUnit;
 
-        const timeseriesState = timeseries.find(
+        const timeseriesState = timeseriesData.find(
           (ts) => ts.externalId === t.tsExternalId
         );
 
@@ -79,7 +84,7 @@ export function calculateSeriesData(
           hasRawPoints(timeseriesState?.series?.datapoints)
         );
 
-        const hasOutdatedData = timeseries.find(
+        const hasOutdatedData = timeseriesData.find(
           (ts) => ts.externalId === t.tsExternalId
         )?.loading;
 
@@ -90,7 +95,7 @@ export function calculateSeriesData(
         );
 
         const unitConvertedThresolds = convertThresholdUnits(
-          thresholdCollection || [],
+          thresholds || [],
           t.unit,
           t.preferredUnit
         );
@@ -118,14 +123,16 @@ export function calculateSeriesData(
         };
       })
       .filter((t) => t.enabled),
-    ...workflowCollection
+    ...calculations
       .map((workflow) => {
         const unitLabel = units.find(
           (unitOption) =>
             unitOption.value === workflow.preferredUnit?.toLowerCase()
         )?.label;
 
-        const workflowState = workflows?.find(({ id }) => id === workflow.id);
+        const workflowState = calculationsData?.find(
+          ({ id }) => id === workflow.id
+        );
 
         const mode = getMode(
           workflow.displayMode,
@@ -134,7 +141,7 @@ export function calculateSeriesData(
             : hasRawPoints(workflowState?.datapoints)
         );
 
-        const hasOutdatedData = workflows?.find(
+        const hasOutdatedData = calculationsData?.find(
           ({ id }) => id === workflow.id
         )?.loading;
 
@@ -145,7 +152,7 @@ export function calculateSeriesData(
         );
 
         const unitConvertedThresolds = convertThresholdUnits(
-          thresholdCollection || [],
+          thresholds || [],
           workflow.unit,
           workflow.preferredUnit
         );
@@ -193,8 +200,8 @@ export function calculateSeriesData(
             []
           ),
           thresholds: seriesGrouppedByUnit[unit].reduce(
-            (result: any[], { thresholds }: SeriesData) =>
-              result.concat(...thresholds),
+            (result: any[], groupedSeries: SeriesData) =>
+              result.concat(...groupedSeries.thresholds),
             []
           ),
         });
@@ -204,7 +211,7 @@ export function calculateSeriesData(
   }
 
   // Check if there is a workflow to be grouped
-  const workflowsToBeAttached = workflowCollection.filter(
+  const workflowsToBeAttached = calculations.filter(
     (t) => t.enabled && t.attachTo
   );
 
@@ -693,69 +700,4 @@ export const cleanWorkflowCollection = (wfCollection?: ChartWorkflow[]) => {
       calls: undefined,
     };
   }) as ChartWorkflow[];
-};
-
-export const useAllowedToUpdateChart = () => {
-  const [isAllowedToUpdate, setIsAllowedToUpdate] = useState(true);
-
-  /**
-   * Debounced callback that turns on updates again (scrolling)
-   */
-  const allowUpdatesScroll = useDebouncedCallback(() => {
-    setIsAllowedToUpdate(true);
-  }, 100);
-
-  /**
-   * Debounced callback that turns on updates again (click and drag)
-   */
-  const allowUpdatesClick = useDebouncedCallback(() => {
-    setIsAllowedToUpdate(true);
-  }, 100);
-
-  /**
-   * Disallow updates when scrolling
-   */
-  const handleMouseWheel = useCallback(() => {
-    setIsAllowedToUpdate(false);
-    allowUpdatesScroll();
-    allowUpdatesClick.cancel();
-  }, [allowUpdatesScroll, allowUpdatesClick]);
-
-  useEffect(() => {
-    window.addEventListener('mousewheel', handleMouseWheel);
-    return () => {
-      window.removeEventListener('mousewheel', handleMouseWheel);
-    };
-  }, [handleMouseWheel]);
-
-  /**
-   * Disallow updates when clicking and holding mouse (navigating chart)
-   */
-  const handleMouseDown = useCallback(() => {
-    setIsAllowedToUpdate(false);
-    allowUpdatesScroll.cancel();
-  }, [allowUpdatesScroll]);
-
-  useEffect(() => {
-    window.addEventListener('mousedown', handleMouseDown);
-    return () => {
-      window.removeEventListener('mousedown', handleMouseDown);
-    };
-  });
-
-  /**
-   * Allow updates when releasing mouse button (no longer navigating chart)
-   */
-  const handleMouseUp = useCallback(() => {
-    allowUpdatesClick();
-  }, [allowUpdatesClick]);
-
-  useEffect(() => {
-    window.addEventListener('mouseup', handleMouseUp);
-    return () => {
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  });
-
-  return isAllowedToUpdate;
 };

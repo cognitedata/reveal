@@ -21,7 +21,7 @@ import {
 } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
-import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChart';
+import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChartContainer';
 import DateRangeSelector from 'components/DateRangeSelector';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import { v4 as uuidv4 } from 'uuid';

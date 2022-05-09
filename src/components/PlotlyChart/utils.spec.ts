@@ -1,70 +1,23 @@
 import { addMinutes } from 'date-fns';
+import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import {
   getYaxisUpdatesFromEventData,
   getXaxisUpdateFromEventData,
-  SeriesData,
   calculateMaxRange,
+  calculateSeriesData,
+  formatPlotlyData,
+  generateLayout,
+  cleanTimeseriesCollection,
+  cleanWorkflowCollection,
 } from './utils';
-
-const seriesData: SeriesData[] = [
-  {
-    unit: 'PSI',
-    range: [1459.8294756630028, 1491.8053766553744],
-    series: [
-      {
-        id: 'VAL_RESERVOIR_PT_well01',
-        type: 'timeseries',
-        color: '#8E44AD',
-        name: 'VAL_RESERVOIR_PT_well01',
-        width: 2,
-        dash: 'solid',
-        mode: 'lines',
-        datapoints: [
-          { average: 1, timestamp: new Date('2021-01-01T00:00:00.000Z') },
-          { average: 1, timestamp: new Date('2021-01-01T00:10:00.000Z') },
-        ],
-      },
-    ],
-  },
-  {
-    unit: 'PSI',
-    range: [1456.247265175954, 1488.6541100613447],
-    series: [
-      {
-        id: 'VAL_RESERVOIR_PT_well09',
-        type: 'timeseries',
-        color: '#e1b12c',
-        name: 'VAL_RESERVOIR_PT_well09',
-        width: 2,
-        dash: 'solid',
-        mode: 'lines',
-        datapoints: [
-          { average: 1, timestamp: new Date('2021-01-01T00:10:00.000Z') },
-          { average: 1, timestamp: new Date('2021-01-01T00:20:00.000Z') },
-        ],
-      },
-    ],
-  },
-  {
-    unit: 'PSI',
-    range: [1523.9999095776425, 1523.9999896001514],
-    series: [
-      {
-        id: 'VAL_RESERVOIR_PT_well07',
-        type: 'timeseries',
-        name: 'VAL_RESERVOIR_PT_well07',
-        color: '#0097e6',
-        width: 2,
-        dash: 'solid',
-        mode: 'lines',
-        datapoints: [
-          { average: 1, timestamp: new Date('2021-01-01T00:00:00.000Z') },
-          { average: 1, timestamp: new Date('2021-01-01T00:30:00.000Z') },
-        ],
-      },
-    ],
-  },
-];
+import {
+  calculateSeriesDataCase1,
+  calculateSeriesDataCase2,
+  formatSeriesDataCase1,
+  formatSeriesDataCase2,
+  seriesDataExample1,
+  seriesDataExample2,
+} from './utils.mocks';
 
 describe('getYaxisUpdatesFromEventData', () => {
   it('handles valid input', () => {
@@ -79,7 +32,10 @@ describe('getYaxisUpdatesFromEventData', () => {
       'yaxis3.range[1]': 1523.9999670154064,
     };
 
-    const axisUpdates = getYaxisUpdatesFromEventData(seriesData, eventdata);
+    const axisUpdates = getYaxisUpdatesFromEventData(
+      seriesDataExample1,
+      eventdata
+    );
 
     expect(axisUpdates).toEqual([
       {
@@ -105,7 +61,10 @@ describe('getYaxisUpdatesFromEventData', () => {
       'yaxis.range[1]': 500,
     };
 
-    const axisUpdates = getYaxisUpdatesFromEventData(seriesData, eventdata);
+    const axisUpdates = getYaxisUpdatesFromEventData(
+      seriesDataExample1,
+      eventdata
+    );
 
     expect(axisUpdates).toEqual([
       {
@@ -121,7 +80,10 @@ describe('getYaxisUpdatesFromEventData', () => {
       'yaxis.range[0]': 500,
     };
 
-    const axisUpdates = getYaxisUpdatesFromEventData(seriesData, eventdata);
+    const axisUpdates = getYaxisUpdatesFromEventData(
+      seriesDataExample1,
+      eventdata
+    );
 
     expect(axisUpdates).toEqual([
       {
@@ -137,7 +99,10 @@ describe('getYaxisUpdatesFromEventData', () => {
       'yaxis.range[0]': 0,
     };
 
-    const axisUpdates = getYaxisUpdatesFromEventData(seriesData, eventdata);
+    const axisUpdates = getYaxisUpdatesFromEventData(
+      seriesDataExample1,
+      eventdata
+    );
 
     expect(axisUpdates).toEqual([
       {
@@ -153,7 +118,10 @@ describe('getYaxisUpdatesFromEventData', () => {
       'yaxis.range[1]': 0,
     };
 
-    const axisUpdates = getYaxisUpdatesFromEventData(seriesData, eventdata);
+    const axisUpdates = getYaxisUpdatesFromEventData(
+      seriesDataExample1,
+      eventdata
+    );
 
     expect(axisUpdates).toEqual([
       {
@@ -167,7 +135,10 @@ describe('getYaxisUpdatesFromEventData', () => {
   it('handles empty input', () => {
     const eventdata = {};
 
-    const axisUpdates = getYaxisUpdatesFromEventData(seriesData, eventdata);
+    const axisUpdates = getYaxisUpdatesFromEventData(
+      seriesDataExample1,
+      eventdata
+    );
 
     expect(axisUpdates).toEqual([]);
   });
@@ -211,128 +182,946 @@ describe('getXaxisUpdate', () => {
 
 describe('calculateMaxRange', () => {
   it('should work for valid input', () => {
-    const series = [
-      {
-        enabled: true,
-        range: [0, 0.0032101851758732937],
-        unit: '°C',
-        series: [
-          {
-            type: 'timeseries',
-            originalUnit: '',
-            tsId: 4582687667743262,
-            displayMode: 'lines',
-            description: '-',
-            unit: 'c',
-            color: '#005d5d',
-            lineWeight: 1,
-            preferredUnit: 'c',
-            name: 'VAL_21_PI_1017_04:Z.X.Value',
-            createdAt: 1639571652630,
-            range: [0, 0.0032101851758732937],
-            lineStyle: 'solid',
-            enabled: true,
-            id: '455e160b-233a-43e2-9fb7-6179cae2830e',
-            tsExternalId: 'VAL_21_PI_1017_04:Z.X.Value',
-            width: 1,
-            outdatedData: false,
-            datapoints: [
-              {
-                timestamp: '2021-11-23T01:53:00.000Z',
-                count: 6,
-                sum: 0.016170318076615554,
-                average: 0.0024455253893306754,
-                min: 0.0024242157248303385,
-                max: 0.0029570103896282155,
-              },
-            ],
-            dash: 'solid',
-            mode: 'lines',
-          },
-        ],
-      },
-      {
-        enabled: true,
-        range: [0, 0.0032101851758732937],
-        unit: '°C',
-        series: [
-          {
-            preferredUnit: 'c',
-            color: '#9f1853',
-            id: 'a66b0f37-e235-4f9a-b6a6-dea285fdc058',
-            unit: 'c',
-            displayMode: 'lines',
-            enabled: true,
-            tsId: 8070156109692675,
-            name: 'VAL_21_PI_1032_04:Z.X.Value',
-            originalUnit: '',
-            type: 'timeseries',
-            tsExternalId: 'VAL_21_PI_1032_04:Z.X.Value',
-            lineWeight: 1,
-            description: '-',
-            createdAt: 1639571653988,
-            range: [0, 0.0032101851758732937],
-            lineStyle: 'solid',
-            width: 1,
-            outdatedData: false,
-            datapoints: [
-              {
-                timestamp: '2021-11-23T01:53:00.000Z',
-                count: 6,
-                sum: 0.016346799645127898,
-                average: 0.0029324450621639347,
-                min: 0.002453353290949048,
-                max: 0.0029866909628944935,
-              },
-            ],
-            dash: 'solid',
-            mode: 'lines',
-          },
-        ],
-      },
-      {
-        enabled: true,
-        range: [0, 0.0032101851758732937],
-        unit: '°C',
-        series: [
-          {
-            enabled: true,
-            tsExternalId: 'VAL_21_PI_1069_04:Z.X.Value',
-            lineStyle: 'solid',
-            tsId: 8167271477847540,
-            color: '#fa4d56',
-            preferredUnit: 'c',
-            lineWeight: 1,
-            name: 'VAL_21_PI_1069_04:Z.X.Value',
-            type: 'timeseries',
-            unit: 'c',
-            originalUnit: '',
-            displayMode: 'lines',
-            description: '-',
-            createdAt: 1639571654886,
-            id: '3f3db2ed-d795-4976-b6d1-effd415b5336',
-            range: [0, 0.0032101851758732937],
-            width: 1,
-            outdatedData: false,
-            datapoints: [
-              {
-                timestamp: '2021-11-23T01:53:00.000Z',
-                count: 6,
-                sum: 0.016718545636842694,
-                average: 0.002706336103206125,
-                min: 0.0026845359448666333,
-                max: 0.0029769111467828012,
-              },
-            ],
-            dash: 'solid',
-            mode: 'lines',
-          },
-        ],
-      },
-    ] as SeriesData[];
-
-    const calculatedMaxRange = calculateMaxRange(series);
-
+    const calculatedMaxRange = calculateMaxRange(seriesDataExample2);
     expect(calculatedMaxRange).toEqual([0, 0.0032101851758732937]);
+  });
+});
+
+describe('calculateSeriesData', () => {
+  it('should generate correct result for timeseries, calculations and thresholds, as inputs and no axis merging', () => {
+    const result = calculateSeriesData(calculateSeriesDataCase1.input);
+    expect(result).toEqual(calculateSeriesDataCase1.result);
+  });
+
+  it('should generate correct result for timeseries and calculations as inputs with axis merging', () => {
+    const result = calculateSeriesData(calculateSeriesDataCase2.input);
+    expect(result).toEqual(calculateSeriesDataCase2.result);
+  });
+});
+
+describe('formatPlotlyData', () => {
+  it('should generate correct result for timeseries and calculations as inputs using raw data (show min/max)', () => {
+    const result = formatPlotlyData(
+      formatSeriesDataCase1.input.seriesData,
+      false
+    );
+
+    expect(result).toEqual(formatSeriesDataCase1.output);
+  });
+
+  it('should generate correct result for timeseries and calculations as inputs using aggregated data (show min/max)', () => {
+    const result = formatPlotlyData(
+      formatSeriesDataCase2.input.seriesData,
+      false
+    );
+
+    expect(result).toEqual(formatSeriesDataCase2.output);
+  });
+});
+
+describe('generateLayout', () => {
+  it('should generate correct layout for given settings (case 1)', () => {
+    const result = generateLayout({
+      isPreview: false,
+      isGridlinesShown: false,
+      yAxisLocked: false,
+      showYAxis: false,
+      stackedMode: false,
+      seriesData: seriesDataExample1,
+      yAxisValues: { width: 0.05, margin: 0.01 },
+      dateFrom: new Date('2021-01-01T00:00:00.000'),
+      dateTo: new Date('2021-01-01T00:10:00.000'),
+      dragmode: 'zoom',
+    });
+
+    expect(result).toEqual({
+      margin: {
+        l: 20,
+        r: 20,
+        b: 30,
+        t: 30,
+      },
+      xaxis: {
+        type: 'date',
+        autorange: false,
+        domain: [0, 1],
+        range: ['2021-01-01 00:00:00.000', '2021-01-01 00:10:00.000'],
+        showspikes: true,
+        spikemode: 'across',
+        spikethickness: 1,
+        spikecolor: '#bfbfbf',
+        spikedash: 'solid',
+        showgrid: false,
+      },
+      spikedistance: -1,
+      hovermode: 'x',
+      showlegend: false,
+      dragmode: 'zoom',
+      annotations: [],
+      shapes: [],
+      yaxis: {
+        hoverformat: '.3g',
+        zeroline: false,
+        type: 'linear',
+        fixedrange: false,
+        visible: false,
+        linecolor: '#8E44AD',
+        linewidth: 1,
+        tickcolor: '#8E44AD',
+        tickwidth: 1,
+        side: 'left',
+        anchor: 'free',
+        position: 0.019,
+        range: [1459.8294756630028, 1491.8053766553744],
+        showgrid: false,
+      },
+      yaxis2: {
+        hoverformat: '.3g',
+        zeroline: false,
+        type: 'linear',
+        fixedrange: false,
+        visible: false,
+        linecolor: '#e1b12c',
+        linewidth: 1,
+        tickcolor: '#e1b12c',
+        tickwidth: 1,
+        side: 'left',
+        overlaying: 'y',
+        anchor: 'free',
+        position: 0.069,
+        range: [1456.247265175954, 1488.6541100613447],
+        showgrid: false,
+      },
+      yaxis3: {
+        hoverformat: '.3g',
+        zeroline: false,
+        type: 'linear',
+        fixedrange: false,
+        visible: false,
+        linecolor: '#0097e6',
+        linewidth: 1,
+        tickcolor: '#0097e6',
+        tickwidth: 1,
+        tickvals: [
+          1523.9999095776425, 1523.9999255821442, 1523.999941586646,
+          1523.999957591148, 1523.9999735956496, 1523.9999896001514,
+        ],
+        ticktext: [1520, 1520, 1520, 1520, 1520, 1520],
+        side: 'left',
+        overlaying: 'y',
+        anchor: 'free',
+        position: 0.11900000000000001,
+        range: [1523.9999095776425, 1523.9999896001514],
+        showgrid: false,
+      },
+    });
+  });
+
+  it('should generate correct layout for given settings (case 2)', () => {
+    const result = generateLayout({
+      isPreview: false,
+      isGridlinesShown: true,
+      yAxisLocked: false,
+      showYAxis: false,
+      stackedMode: false,
+      seriesData: seriesDataExample1,
+      yAxisValues: { width: 0.05, margin: 0.01 },
+      dateFrom: new Date('2021-01-01T00:00:00.000'),
+      dateTo: new Date('2021-01-01T00:10:00.000'),
+      dragmode: 'zoom',
+    });
+
+    expect(result).toEqual({
+      margin: {
+        l: 20,
+        r: 20,
+        b: 30,
+        t: 30,
+      },
+      xaxis: {
+        type: 'date',
+        autorange: false,
+        domain: [0, 1],
+        range: ['2021-01-01 00:00:00.000', '2021-01-01 00:10:00.000'],
+        showspikes: true,
+        spikemode: 'across',
+        spikethickness: 1,
+        spikecolor: '#bfbfbf',
+        spikedash: 'solid',
+        showgrid: true,
+      },
+      spikedistance: -1,
+      hovermode: 'x',
+      showlegend: false,
+      dragmode: 'zoom',
+      annotations: [],
+      shapes: [],
+      yaxis: {
+        hoverformat: '.3g',
+        zeroline: false,
+        type: 'linear',
+        fixedrange: false,
+        visible: false,
+        linecolor: '#8E44AD',
+        linewidth: 1,
+        tickcolor: '#8E44AD',
+        tickwidth: 1,
+        side: 'left',
+        anchor: 'free',
+        position: 0.019,
+        range: [1459.8294756630028, 1491.8053766553744],
+        showgrid: true,
+      },
+      yaxis2: {
+        hoverformat: '.3g',
+        zeroline: false,
+        type: 'linear',
+        fixedrange: false,
+        visible: false,
+        linecolor: '#e1b12c',
+        linewidth: 1,
+        tickcolor: '#e1b12c',
+        tickwidth: 1,
+        side: 'left',
+        overlaying: 'y',
+        anchor: 'free',
+        position: 0.069,
+        range: [1456.247265175954, 1488.6541100613447],
+        showgrid: true,
+      },
+      yaxis3: {
+        hoverformat: '.3g',
+        zeroline: false,
+        type: 'linear',
+        fixedrange: false,
+        visible: false,
+        linecolor: '#0097e6',
+        linewidth: 1,
+        tickcolor: '#0097e6',
+        tickwidth: 1,
+        tickvals: [
+          1523.9999095776425, 1523.9999255821442, 1523.999941586646,
+          1523.999957591148, 1523.9999735956496, 1523.9999896001514,
+        ],
+        ticktext: [1520, 1520, 1520, 1520, 1520, 1520],
+        side: 'left',
+        overlaying: 'y',
+        anchor: 'free',
+        position: 0.11900000000000001,
+        range: [1523.9999095776425, 1523.9999896001514],
+        showgrid: true,
+      },
+    });
+  });
+
+  it('should generate correct layout for given settings (case 3)', () => {
+    const result = generateLayout({
+      isPreview: false,
+      isGridlinesShown: true,
+      yAxisLocked: false,
+      showYAxis: true,
+      stackedMode: false,
+      seriesData: seriesDataExample1,
+      yAxisValues: { width: 0.05, margin: 0.01 },
+      dateFrom: new Date('2021-01-01T00:00:00.000'),
+      dateTo: new Date('2021-01-01T00:10:00.000'),
+      dragmode: 'zoom',
+    });
+
+    expect(result).toEqual({
+      margin: {
+        l: 20,
+        r: 20,
+        b: 30,
+        t: 30,
+      },
+      xaxis: {
+        type: 'date',
+        autorange: false,
+        domain: [0.11, 1],
+        range: ['2021-01-01 00:00:00.000', '2021-01-01 00:10:00.000'],
+        showspikes: true,
+        spikemode: 'across',
+        spikethickness: 1,
+        spikecolor: '#bfbfbf',
+        spikedash: 'solid',
+        showgrid: true,
+      },
+      spikedistance: -1,
+      hovermode: 'x',
+      showlegend: false,
+      dragmode: 'zoom',
+      annotations: [
+        {
+          xref: 'paper',
+          yref: 'paper',
+          x: 0,
+          xanchor: 'left',
+          y: 1,
+          yanchor: 'bottom',
+          text: 'PSI',
+          showarrow: false,
+          xshift: 15,
+          yshift: 7,
+        },
+        {
+          xref: 'paper',
+          yref: 'paper',
+          x: 0.05,
+          xanchor: 'left',
+          y: 1,
+          yanchor: 'bottom',
+          text: 'PSI',
+          showarrow: false,
+          xshift: 15,
+          yshift: 7,
+        },
+        {
+          xref: 'paper',
+          yref: 'paper',
+          x: 0.1,
+          xanchor: 'left',
+          y: 1,
+          yanchor: 'bottom',
+          text: 'PSI',
+          showarrow: false,
+          xshift: 15,
+          yshift: 7,
+        },
+      ],
+      shapes: [
+        {
+          type: 'line',
+          xref: 'paper',
+          yref: 'paper',
+          x0: 0.015,
+          y0: 1,
+          x1: 0.019,
+          y1: 1,
+          line: {
+            color: '#8E44AD',
+            width: 1,
+          },
+        },
+        {
+          type: 'line',
+          xref: 'paper',
+          yref: 'paper',
+          x0: 0.015,
+          y0: 0,
+          x1: 0.019,
+          y1: 0,
+          line: {
+            color: '#8E44AD',
+            width: 1,
+          },
+        },
+        {
+          type: 'line',
+          xref: 'paper',
+          yref: 'paper',
+          x0: 0.065,
+          y0: 1,
+          x1: 0.069,
+          y1: 1,
+          line: {
+            color: '#e1b12c',
+            width: 1,
+          },
+        },
+        {
+          type: 'line',
+          xref: 'paper',
+          yref: 'paper',
+          x0: 0.065,
+          y0: 0,
+          x1: 0.069,
+          y1: 0,
+          line: {
+            color: '#e1b12c',
+            width: 1,
+          },
+        },
+        {
+          type: 'line',
+          xref: 'paper',
+          yref: 'paper',
+          x0: 0.115,
+          y0: 1,
+          x1: 0.11900000000000001,
+          y1: 1,
+          line: {
+            color: '#0097e6',
+            width: 1,
+          },
+        },
+        {
+          type: 'line',
+          xref: 'paper',
+          yref: 'paper',
+          x0: 0.115,
+          y0: 0,
+          x1: 0.11900000000000001,
+          y1: 0,
+          line: {
+            color: '#0097e6',
+            width: 1,
+          },
+        },
+      ],
+      yaxis: {
+        hoverformat: '.3g',
+        zeroline: false,
+        type: 'linear',
+        fixedrange: false,
+        visible: true,
+        linecolor: '#8E44AD',
+        linewidth: 1,
+        tickcolor: '#8E44AD',
+        tickwidth: 1,
+        side: 'left',
+        anchor: 'free',
+        position: 0.019,
+        range: [1459.8294756630028, 1491.8053766553744],
+        showgrid: true,
+      },
+      yaxis2: {
+        hoverformat: '.3g',
+        zeroline: false,
+        type: 'linear',
+        fixedrange: false,
+        visible: true,
+        linecolor: '#e1b12c',
+        linewidth: 1,
+        tickcolor: '#e1b12c',
+        tickwidth: 1,
+        side: 'left',
+        overlaying: 'y',
+        anchor: 'free',
+        position: 0.069,
+        range: [1456.247265175954, 1488.6541100613447],
+        showgrid: true,
+      },
+      yaxis3: {
+        hoverformat: '.3g',
+        zeroline: false,
+        type: 'linear',
+        fixedrange: false,
+        visible: true,
+        linecolor: '#0097e6',
+        linewidth: 1,
+        tickcolor: '#0097e6',
+        tickwidth: 1,
+        tickvals: [
+          1523.9999095776425, 1523.9999255821442, 1523.999941586646,
+          1523.999957591148, 1523.9999735956496, 1523.9999896001514,
+        ],
+        ticktext: [1520, 1520, 1520, 1520, 1520, 1520],
+        side: 'left',
+        overlaying: 'y',
+        anchor: 'free',
+        position: 0.11900000000000001,
+        range: [1523.9999095776425, 1523.9999896001514],
+        showgrid: true,
+      },
+    });
+  });
+
+  it('should generate correct layout for given settings (case 4)', () => {
+    const result = generateLayout({
+      isPreview: false,
+      isGridlinesShown: true,
+      yAxisLocked: true,
+      showYAxis: true,
+      stackedMode: false,
+      seriesData: seriesDataExample1,
+      yAxisValues: { width: 0.05, margin: 0.01 },
+      dateFrom: new Date('2021-01-01T00:00:00.000'),
+      dateTo: new Date('2021-01-01T00:10:00.000'),
+      dragmode: 'zoom',
+    });
+
+    expect(result).toEqual({
+      margin: {
+        l: 20,
+        r: 20,
+        b: 30,
+        t: 30,
+      },
+      xaxis: {
+        type: 'date',
+        autorange: false,
+        domain: [0.11, 1],
+        range: ['2021-01-01 00:00:00.000', '2021-01-01 00:10:00.000'],
+        showspikes: true,
+        spikemode: 'across',
+        spikethickness: 1,
+        spikecolor: '#bfbfbf',
+        spikedash: 'solid',
+        showgrid: true,
+      },
+      spikedistance: -1,
+      hovermode: 'x',
+      showlegend: false,
+      dragmode: 'zoom',
+      annotations: [
+        {
+          xref: 'paper',
+          yref: 'paper',
+          x: 0,
+          xanchor: 'left',
+          y: 1,
+          yanchor: 'bottom',
+          text: 'PSI',
+          showarrow: false,
+          xshift: 15,
+          yshift: 7,
+        },
+        {
+          xref: 'paper',
+          yref: 'paper',
+          x: 0.05,
+          xanchor: 'left',
+          y: 1,
+          yanchor: 'bottom',
+          text: 'PSI',
+          showarrow: false,
+          xshift: 15,
+          yshift: 7,
+        },
+        {
+          xref: 'paper',
+          yref: 'paper',
+          x: 0.1,
+          xanchor: 'left',
+          y: 1,
+          yanchor: 'bottom',
+          text: 'PSI',
+          showarrow: false,
+          xshift: 15,
+          yshift: 7,
+        },
+      ],
+      shapes: [
+        {
+          type: 'line',
+          xref: 'paper',
+          yref: 'paper',
+          x0: 0.015,
+          y0: 1,
+          x1: 0.019,
+          y1: 1,
+          line: {
+            color: '#8E44AD',
+            width: 1,
+          },
+        },
+        {
+          type: 'line',
+          xref: 'paper',
+          yref: 'paper',
+          x0: 0.015,
+          y0: 0,
+          x1: 0.019,
+          y1: 0,
+          line: {
+            color: '#8E44AD',
+            width: 1,
+          },
+        },
+        {
+          type: 'line',
+          xref: 'paper',
+          yref: 'paper',
+          x0: 0.065,
+          y0: 1,
+          x1: 0.069,
+          y1: 1,
+          line: {
+            color: '#e1b12c',
+            width: 1,
+          },
+        },
+        {
+          type: 'line',
+          xref: 'paper',
+          yref: 'paper',
+          x0: 0.065,
+          y0: 0,
+          x1: 0.069,
+          y1: 0,
+          line: {
+            color: '#e1b12c',
+            width: 1,
+          },
+        },
+        {
+          type: 'line',
+          xref: 'paper',
+          yref: 'paper',
+          x0: 0.115,
+          y0: 1,
+          x1: 0.11900000000000001,
+          y1: 1,
+          line: {
+            color: '#0097e6',
+            width: 1,
+          },
+        },
+        {
+          type: 'line',
+          xref: 'paper',
+          yref: 'paper',
+          x0: 0.115,
+          y0: 0,
+          x1: 0.11900000000000001,
+          y1: 0,
+          line: {
+            color: '#0097e6',
+            width: 1,
+          },
+        },
+      ],
+      yaxis: {
+        hoverformat: '.3g',
+        zeroline: false,
+        type: 'linear',
+        fixedrange: true,
+        visible: true,
+        linecolor: '#8E44AD',
+        linewidth: 1,
+        tickcolor: '#8E44AD',
+        tickwidth: 1,
+        side: 'left',
+        anchor: 'free',
+        position: 0.019,
+        range: [1459.8294756630028, 1491.8053766553744],
+        showgrid: true,
+      },
+      yaxis2: {
+        hoverformat: '.3g',
+        zeroline: false,
+        type: 'linear',
+        fixedrange: true,
+        visible: true,
+        linecolor: '#e1b12c',
+        linewidth: 1,
+        tickcolor: '#e1b12c',
+        tickwidth: 1,
+        side: 'left',
+        overlaying: 'y',
+        anchor: 'free',
+        position: 0.069,
+        range: [1456.247265175954, 1488.6541100613447],
+        showgrid: true,
+      },
+      yaxis3: {
+        hoverformat: '.3g',
+        zeroline: false,
+        type: 'linear',
+        fixedrange: true,
+        visible: true,
+        linecolor: '#0097e6',
+        linewidth: 1,
+        tickcolor: '#0097e6',
+        tickwidth: 1,
+        tickvals: [
+          1523.9999095776425, 1523.9999255821442, 1523.999941586646,
+          1523.999957591148, 1523.9999735956496, 1523.9999896001514,
+        ],
+        ticktext: [1520, 1520, 1520, 1520, 1520, 1520],
+        side: 'left',
+        overlaying: 'y',
+        anchor: 'free',
+        position: 0.11900000000000001,
+        range: [1523.9999095776425, 1523.9999896001514],
+        showgrid: true,
+      },
+    });
+  });
+
+  it('should generate correct layout for given settings (case 5)', () => {
+    const result = generateLayout({
+      isPreview: false,
+      isGridlinesShown: true,
+      yAxisLocked: false,
+      showYAxis: true,
+      stackedMode: true,
+      seriesData: seriesDataExample1,
+      yAxisValues: { width: 0.05, margin: 0.01 },
+      dateFrom: new Date('2021-01-01T00:00:00.000'),
+      dateTo: new Date('2021-01-01T00:10:00.000'),
+      dragmode: 'zoom',
+    });
+
+    expect(result).toEqual({
+      margin: {
+        l: 20,
+        r: 20,
+        b: 30,
+        t: 30,
+      },
+      xaxis: {
+        type: 'date',
+        autorange: false,
+        domain: [0.11, 1],
+        range: ['2021-01-01 00:00:00.000', '2021-01-01 00:10:00.000'],
+        showspikes: true,
+        spikemode: 'across',
+        spikethickness: 1,
+        spikecolor: '#bfbfbf',
+        spikedash: 'solid',
+        showgrid: true,
+      },
+      spikedistance: -1,
+      hovermode: 'x',
+      showlegend: false,
+      dragmode: 'zoom',
+      annotations: [
+        {
+          xref: 'paper',
+          yref: 'paper',
+          x: 0,
+          xanchor: 'left',
+          y: 1,
+          yanchor: 'bottom',
+          text: 'PSI',
+          showarrow: false,
+          xshift: 15,
+          yshift: 7,
+        },
+        {
+          xref: 'paper',
+          yref: 'paper',
+          x: 0.05,
+          xanchor: 'left',
+          y: 1,
+          yanchor: 'bottom',
+          text: 'PSI',
+          showarrow: false,
+          xshift: 15,
+          yshift: 7,
+        },
+        {
+          xref: 'paper',
+          yref: 'paper',
+          x: 0.1,
+          xanchor: 'left',
+          y: 1,
+          yanchor: 'bottom',
+          text: 'PSI',
+          showarrow: false,
+          xshift: 15,
+          yshift: 7,
+        },
+      ],
+      shapes: [
+        {
+          type: 'line',
+          xref: 'paper',
+          yref: 'paper',
+          x0: 0.015,
+          y0: 1,
+          x1: 0.019,
+          y1: 1,
+          line: {
+            color: '#8E44AD',
+            width: 1,
+          },
+        },
+        {
+          type: 'line',
+          xref: 'paper',
+          yref: 'paper',
+          x0: 0.015,
+          y0: 0,
+          x1: 0.019,
+          y1: 0,
+          line: {
+            color: '#8E44AD',
+            width: 1,
+          },
+        },
+        {
+          type: 'line',
+          xref: 'paper',
+          yref: 'paper',
+          x0: 0.065,
+          y0: 1,
+          x1: 0.069,
+          y1: 1,
+          line: {
+            color: '#e1b12c',
+            width: 1,
+          },
+        },
+        {
+          type: 'line',
+          xref: 'paper',
+          yref: 'paper',
+          x0: 0.065,
+          y0: 0,
+          x1: 0.069,
+          y1: 0,
+          line: {
+            color: '#e1b12c',
+            width: 1,
+          },
+        },
+        {
+          type: 'line',
+          xref: 'paper',
+          yref: 'paper',
+          x0: 0.115,
+          y0: 1,
+          x1: 0.11900000000000001,
+          y1: 1,
+          line: {
+            color: '#0097e6',
+            width: 1,
+          },
+        },
+        {
+          type: 'line',
+          xref: 'paper',
+          yref: 'paper',
+          x0: 0.115,
+          y0: 0,
+          x1: 0.11900000000000001,
+          y1: 0,
+          line: {
+            color: '#0097e6',
+            width: 1,
+          },
+        },
+      ],
+      yaxis: {
+        hoverformat: '.3g',
+        zeroline: false,
+        type: 'linear',
+        fixedrange: false,
+        visible: true,
+        linecolor: '#8E44AD',
+        linewidth: 1,
+        tickcolor: '#8E44AD',
+        tickwidth: 1,
+        tickvals: [1, 1, 1, 1, 1, 1],
+        ticktext: [1, 1, 1, 1, 1, 1],
+        side: 'left',
+        anchor: 'free',
+        position: 0.019,
+        range: [1, 1],
+        showgrid: true,
+      },
+      yaxis2: {
+        hoverformat: '.3g',
+        zeroline: false,
+        type: 'linear',
+        fixedrange: false,
+        visible: true,
+        linecolor: '#e1b12c',
+        linewidth: 1,
+        tickcolor: '#e1b12c',
+        tickwidth: 1,
+        tickvals: [1, 1, 1, 1, 1, 1],
+        ticktext: [1, 1, 1, 1, 1, 1],
+        side: 'left',
+        overlaying: 'y',
+        anchor: 'free',
+        position: 0.069,
+        range: [1, 1],
+        showgrid: true,
+      },
+      yaxis3: {
+        hoverformat: '.3g',
+        zeroline: false,
+        type: 'linear',
+        fixedrange: false,
+        visible: true,
+        linecolor: '#0097e6',
+        linewidth: 1,
+        tickcolor: '#0097e6',
+        tickwidth: 1,
+        tickvals: [1, 1, 1, 1, 1, 1],
+        ticktext: [1, 1, 1, 1, 1, 1],
+        side: 'left',
+        overlaying: 'y',
+        anchor: 'free',
+        position: 0.11900000000000001,
+        range: [1, 1],
+        showgrid: true,
+      },
+    });
+  });
+});
+
+describe('cleanTimeseriesCollection', () => {
+  it('should remove callIds', () => {
+    const tsCollection: ChartTimeSeries[] = [
+      {
+        id: 'abc-123',
+        name: 'Timeseries 1',
+        color: '#FFF',
+        tsId: 123,
+        enabled: true,
+        createdAt: 0,
+        statisticsCalls: [{ callId: '1', callDate: 0 }],
+      },
+    ];
+
+    const cleanCollection = cleanTimeseriesCollection(tsCollection);
+
+    expect(cleanCollection).toEqual([
+      {
+        id: 'abc-123',
+        name: 'Timeseries 1',
+        color: '#FFF',
+        tsId: 123,
+        enabled: true,
+        createdAt: 0,
+      },
+    ]);
+  });
+});
+
+describe('cleanWorkflowCollection', () => {
+  it('should remove callIds', () => {
+    const wfCollection: ChartWorkflow[] = [
+      {
+        version: 'v2',
+        id: 'abc-123',
+        name: 'Timeseries 1',
+        color: '#FFF',
+        enabled: true,
+        createdAt: 0,
+        flow: {
+          elements: [],
+          position: [0, 0],
+          zoom: 1,
+        },
+        statisticsCalls: [{ callId: '1', callDate: 0 }],
+        calls: [{ id: '2', callId: '2', callDate: 1, status: 'Success' }],
+        settings: { autoAlign: true },
+      },
+    ];
+
+    const cleanCollection = cleanWorkflowCollection(wfCollection);
+
+    expect(cleanCollection).toEqual([
+      {
+        version: 'v2',
+        id: 'abc-123',
+        name: 'Timeseries 1',
+        color: '#FFF',
+        enabled: true,
+        createdAt: 0,
+        flow: {
+          elements: [],
+          position: [0, 0],
+          zoom: 1,
+        },
+        settings: { autoAlign: true },
+      },
+    ]);
   });
 });
