@@ -7,7 +7,7 @@ import {
   AnnotationUpdateRequest,
 } from 'src/api/annotation/types';
 
-export class AnnotationApi {
+export class AnnotationApiV1 {
   public static listCursor = async (
     request: AnnotationListRequest
   ): Promise<{
@@ -50,7 +50,7 @@ export class AnnotationApi {
       }
 
       // eslint-disable-next-line no-await-in-loop
-      const response = await AnnotationApi.listCursor({
+      const response = await AnnotationApiV1.listCursor({
         limit: currentLimit,
         cursor,
         filter: request.filter,

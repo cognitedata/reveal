@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
+import { AnnotationApiV1 } from 'src/api/annotation/AnnotationApiV1';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 
 const BATCH_SIZE = 10;
@@ -25,7 +25,7 @@ export const DeleteAnnotationsForDeletedFiles = createAsyncThunk<
       filter: filterPayload,
       limit: -1,
     };
-    return AnnotationApi.list(annotationListRequest); // TODO: use pagination
+    return AnnotationApiV1.list(annotationListRequest); // TODO: use pagination
   });
 
   if (requests.length) {

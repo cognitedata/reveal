@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
+import { AnnotationApiV1 } from 'src/api/annotation/AnnotationApiV1';
 import {
   getFieldOrSetNull,
   validateAnnotation,
@@ -42,7 +42,7 @@ export const UpdateAnnotations = createAsyncThunk<
       },
     })),
   };
-  const response = await AnnotationApi.update(annotationUpdateRequest);
+  const response = await AnnotationApiV1.update(annotationUpdateRequest);
   const responseAnnotations = response.data.items;
 
   const updatedVisionAnnotations =

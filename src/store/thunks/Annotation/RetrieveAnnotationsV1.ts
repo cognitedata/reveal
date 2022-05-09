@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
+import { AnnotationApiV1 } from 'src/api/annotation/AnnotationApiV1';
 import {
   AnnotationUtilsV1,
   VisionAnnotationV1,
@@ -32,7 +32,7 @@ export const RetrieveAnnotationsV1 = createAsyncThunk<
       limit: -1,
     };
 
-    return AnnotationApi.list(annotationListRequest);
+    return AnnotationApiV1.list(annotationListRequest);
   });
   if (requests.length) {
     const responses = from(requests).pipe(

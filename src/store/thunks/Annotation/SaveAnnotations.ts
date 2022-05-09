@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
+import { AnnotationApiV1 } from 'src/api/annotation/AnnotationApiV1';
 import { UnsavedAnnotation, CDFAnnotationV1 } from 'src/api/annotation/types';
 import { validateAnnotation } from 'src/api/annotation/utils';
 
@@ -15,6 +15,6 @@ export const SaveAnnotations = createAsyncThunk<
 
   const data = { items: filteredAnnotations };
 
-  const response = await AnnotationApi.create(data);
+  const response = await AnnotationApiV1.create(data);
   return response.data.items;
 });

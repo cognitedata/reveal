@@ -5,7 +5,7 @@ import {
   Shape,
 } from 'src/modules/Review/types';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
+import { AnnotationApiV1 } from 'src/api/annotation/AnnotationApiV1';
 import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 
@@ -23,7 +23,7 @@ export const PopulateAnnotationTemplates = createAsyncThunk<
     filter: filterPayload,
     limit: -1,
   };
-  const templateAnnotations = await AnnotationApi.list(annotationListRequest);
+  const templateAnnotations = await AnnotationApiV1.list(annotationListRequest);
   const keypointCollections: KeypointCollection[] = [];
   const shapes: Shape[] = [];
 
