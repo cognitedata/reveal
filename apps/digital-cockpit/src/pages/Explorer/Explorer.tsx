@@ -16,7 +16,7 @@ const Explorer = () => {
 
   const onAssetSelect = (asset: Asset) => {
     addToRecentAssets(asset);
-    history.push(`/explore/${asset.id}/${activeTab || 'detail'}`);
+    history.push(`/explore/${asset.id}/${activeTab || 'overview'}`);
   };
   const onTabChange = (nextTab: AssetTabKey) => {
     history.push(`/explore/${assetId}/${nextTab}`);

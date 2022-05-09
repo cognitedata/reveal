@@ -4,4 +4,5 @@ export type AssetTabKey =
   | 'events'
   | '3d'
   | 'timeseries'
-  | 'boards';
+  | 'boards'
+  | 'overview';

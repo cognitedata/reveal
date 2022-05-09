@@ -16,6 +16,7 @@ import ThreeDPreview from '../ThreeDPreview';
 import EventTab from '../EventTab';
 import TimeSeriesTab from '../TimeSeriesTab';
 import AssetDetailsTab from '../AssetDetailsTab';
+import AssetMetadataTab from '../AssetMetadataTab';
 
 import { AssetTabKey } from './types';
 import {
@@ -69,10 +70,16 @@ const AssetTabs: React.FC<AssetTabsProps> = ({
     badge?: React.ReactElement | null;
   }[] = [
     {
-      title: 'Detail',
+      title: 'Overview',
+      key: 'overview',
+      icon: 'DataTable',
+      content: <AssetDetailsTab assetId={currentAsset.id} />,
+    },
+    {
+      title: 'Details',
       key: 'detail',
       icon: 'List',
-      content: <AssetDetailsTab assetId={currentAsset.id} />,
+      content: <AssetMetadataTab assetId={currentAsset.id} />,
     },
     {
       title: 'Documents',
