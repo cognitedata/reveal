@@ -6,11 +6,15 @@ import { setupServer } from 'msw/node';
 import { renderHookWithStore } from '__test-utils/renderer';
 import { USER_MANAGEMENT_SYSTEM_KEY } from 'constants/react-query';
 
+import {
+  getMockUmsUsers,
+  getMockUmsUserProfilePreference,
+} from '../__fixtures/umsUsers';
 import { getMockUserMePatch } from '../__mocks/getMockUserMePatch';
-import { responseData } from '../__mocks/mockUmsMe';
-import { useUserPreferencesMutate } from '../query';
+import { getMockUserSearch } from '../__mocks/mockUmsSearch';
+import { useAdminUsers, useUserPreferencesMutate } from '../query';
 
-const mockServer = setupServer(getMockUserMePatch());
+const mockServer = setupServer(getMockUserMePatch(), getMockUserSearch());
 
 describe('useUpdateMyPreferences', () => {
   beforeAll(() => mockServer.listen());
@@ -28,8 +32,22 @@ describe('useUpdateMyPreferences', () => {
 
     await act(() =>
       mutateAsync({}).then((response) => {
-        expect(response).toEqual(responseData());
+        expect(response).toEqual(getMockUmsUserProfilePreference());
       })
     );
+  });
+});
+
+describe('useAdminUsers', () => {
+  beforeAll(() => mockServer.listen());
+  afterAll(() => mockServer.close());
+
+  it('should return expected output', async () => {
+    const { result, waitForNextUpdate } = renderHookWithStore(() =>
+      useAdminUsers()
+    );
+    await waitForNextUpdate();
+
+    expect(result.current.data).toMatchObject(getMockUmsUsers());
   });
 });

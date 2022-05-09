@@ -74,12 +74,17 @@ export const AdminList: React.FC<Props> = ({
         fullWidth
         onChange={onChange}
         value={searchValue}
+        data-testid="search-bar"
       />
       <AdminUsersWrapper>
         {users.length ? (
           users.map((user: UMSUser) => {
             return user.id === assigneeId ? (
-              <MenuItemAssigned key={user.id} appendIcon="Checkmark">
+              <MenuItemAssigned
+                key={user.id}
+                appendIcon="Checkmark"
+                data-testid="assigned-item"
+              >
                 <UserNameSubtitle user={user} currentUserId={currentUserId} />
               </MenuItemAssigned>
             ) : (
