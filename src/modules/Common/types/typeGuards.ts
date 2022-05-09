@@ -1,6 +1,6 @@
 import {
   VisionAnnotationDataType,
-  Images,
+  ImageAnnotationType,
 } from 'src/modules/Common/types/annotation';
 import {
   ImageAssetLink,
@@ -60,20 +60,20 @@ export const isImageClassificationData = (
 };
 
 export const getTypeGuardForVisionAnnotationDataType = (
-  visionAnnotationType: Images
+  visionAnnotationType: ImageAnnotationType
 ) => {
   switch (visionAnnotationType) {
-    case Images.ObjectDetectionPolygon:
+    case ImageAnnotationType.ObjectDetectionPolygon:
       return isImageObjectDetectionPolygonData;
-    case Images.ExtractedText:
+    case ImageAnnotationType.ExtractedText:
       return isImageExtractedTextData;
-    case Images.AssetLink:
+    case ImageAnnotationType.AssetLink:
       return isImageAssetLinkData;
-    case Images.KeypointCollection:
+    case ImageAnnotationType.KeypointCollection:
       return isImageKeypointCollectionData;
-    case Images.Classification:
+    case ImageAnnotationType.Classification:
       return isImageClassificationData;
-    case Images.ObjectDetectionBoundingBox:
+    case ImageAnnotationType.ObjectDetectionBoundingBox:
       return isImageObjectDetectionBoundingBoxData;
     default:
       console.error(
