@@ -21,8 +21,8 @@ export const FieldDirectiveDisplay = ({
         </div>
       ))}
       {/* FILL REST OF DIRECTIVES BOXES BASED ON INITIAL LENGTH OF VALUES */}
-      {Array.from({ length: MAX_LENGTH - directives.length }).map((_) => (
-        <div />
+      {Array.from({ length: MAX_LENGTH - directives.length }).map((_, i) => (
+        <div key={i} />
       ))}
     </Container>
   );
