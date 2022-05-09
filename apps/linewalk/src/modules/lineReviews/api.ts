@@ -1,6 +1,5 @@
 import {
   DIAGRAM_PARSER_SOURCE,
-  DIAGRAM_PARSER_TYPE,
   getLineReviewEventExternalId,
   LINE_REVIEW_EVENT_TYPE,
   getLineNumberKey,
@@ -9,9 +8,11 @@ import {
   GraphDocument,
   getGraphExternalIdKey,
   parseGraphs,
+  LINEWALK_FRONTEND_VERSION,
+  getDiagramParserTypeFromFileInfo,
 } from '@cognite/pid-tools';
 import type { CogniteClient, FileInfo } from '@cognite/sdk';
-import zipWith from 'lodash/zipWith';
+import zipObject from 'lodash/zipObject';
 import * as PDFJS from 'pdfjs-dist';
 import { PDFDocumentProxy } from 'pdfjs-dist/types/display/api';
 import sortBy from 'lodash/sortBy';
@@ -20,16 +21,14 @@ import groupByArray from '../../utils/groupByArray';
 import isNotUndefined from '../../utils/isNotUndefined';
 
 import {
+  DocumentType,
   LineReview,
   WorkspaceDocument,
-  DocumentType,
   LineReviewStatus,
   ParsedDocument,
 } from './types';
 
 PDFJS.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js`;
-
-export const LINEWALK_FRONTEND_VERSION = '0.0.19';
 
 export const getJsonsByExternalIds = async <T = unknown>(
   client: CogniteClient,
@@ -48,21 +47,24 @@ export const getJsonsByExternalIds = async <T = unknown>(
   return Promise.all(responses.map((response) => response.json()));
 };
 
-export const getPdfsByExternalIds = async (
+const getPdfsByExternalIds = async (
   client: CogniteClient,
   externalIds: string[]
-): Promise<PDFDocumentProxy[]> => {
+): Promise<Record<string, PDFDocumentProxy>> => {
   if (externalIds.length === 0) {
-    return [];
+    return {};
   }
 
   const downloadUrls = await client.files.getDownloadUrls(
     externalIds.map((externalId) => ({ externalId }))
   );
 
-  return Promise.all(
-    downloadUrls.map(
-      ({ downloadUrl }) => PDFJS.getDocument(downloadUrl).promise
+  return zipObject(
+    externalIds,
+    await Promise.all(
+      downloadUrls.map(
+        ({ downloadUrl }) => PDFJS.getDocument(downloadUrl).promise
+      )
     )
   );
 };
@@ -203,40 +205,54 @@ export const removeLineNumberFromDocumentMetadata = async (
   ]);
 };
 
-export const getWorkspaceDocuments = async (
+export const getWorkspaceDocumentsFromPdfFileInfos = async (
   client: CogniteClient,
-  files: FileInfo[]
+  pdfFileInfos: FileInfo[]
 ): Promise<WorkspaceDocument[]> => {
   const pdfDocuments = await getPdfsByExternalIds(
     client,
-    files.map(({ externalId }) => externalId).filter(isNotUndefined)
+    pdfFileInfos.map(({ externalId }) => externalId).filter(isNotUndefined)
   );
 
-  const workspaceDocuments: WorkspaceDocument[] = zipWith<
-    FileInfo,
-    PDFDocumentProxy,
-    WorkspaceDocument
-  >(files, pdfDocuments, (file, pdf) => {
-    const type = file.metadata?.[DIAGRAM_PARSER_TYPE] as
-      | DocumentType
-      | undefined;
-    const pdfExternalId = file.externalId;
-    if (type === undefined) {
-      throw new Error('Missing type');
-    }
+  return pdfFileInfos
+    .map((pdfFileInfo) => {
+      const pdfExternalId = pdfFileInfo.externalId;
+      if (pdfExternalId === undefined) {
+        console.warn(
+          'Skipped malformed data! pdfExternalId missing',
+          pdfFileInfo
+        );
+        return undefined;
+      }
 
-    if (pdfExternalId === undefined) {
-      throw new Error('Missing pdf external id');
-    }
+      const type = getDiagramParserTypeFromFileInfo(pdfFileInfo) as
+        | DocumentType
+        | undefined;
+      if (type === undefined) {
+        console.warn(
+          'Skipped malformed data! Missing diagram parser type',
+          pdfFileInfo
+        );
+        return undefined;
+      }
 
-    return {
-      pdfExternalId,
-      pdf,
-      type,
-    };
-  });
+      const pdf = pdfDocuments[pdfExternalId];
+      if (pdf === undefined) {
+        console.warn(
+          'Skipped malformed data! Missing pdf document',
+          pdfFileInfo,
+          pdfDocuments
+        );
+        return undefined;
+      }
 
-  return workspaceDocuments;
+      return {
+        pdfExternalId,
+        pdf,
+        type,
+      };
+    })
+    .filter(isNotUndefined);
 };
 
 export const getLineReviewDocuments = async (
@@ -259,7 +275,7 @@ export const getLineReviewDocuments = async (
     (file) => file.externalId
   );
 
-  return getWorkspaceDocuments(client, files);
+  return getWorkspaceDocumentsFromPdfFileInfos(client, files);
 };
 
 export const updateLineReview = async (

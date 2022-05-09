@@ -224,12 +224,6 @@ export const ReactPid = ({
   }, [documentMetadata]);
 
   useEffect(() => {
-    if (documentMetadata.type === DiagramType.isometric) {
-      setLineNumbersWrapper([documentMetadata.lineNumber]);
-    }
-  }, [hasDocumentLoaded]);
-
-  useEffect(() => {
     if (activeTool !== 'addEquipmentTag' && activeTagId !== null) {
       pidViewer.current?.setActiveTagId(null);
     }

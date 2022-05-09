@@ -50,6 +50,7 @@ DEPENDENCIES = [
     "@npm//svg-path-parser",
     "@npm//uuid",
     "@npm//kd-tree-javascript",
+    "@npm//@cognite/sdk",
 ]
 
 # Type dependencies from package.json

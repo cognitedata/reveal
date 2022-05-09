@@ -1,3 +1,5 @@
+import { FileInfo } from '@cognite/sdk';
+
 export const SVG_ID = 'svg-id';
 export const PATH_REPLACEMENT_GROUP = 'path_replacement_group';
 export const T_JUNCTION = 'tjunction';
@@ -90,6 +92,7 @@ export const DIAGRAM_PARSER_OUTPUT_TYPE = 'graph';
 export const DIAGRAM_PARSER_TYPE = 'COGNITE_DIAGRAM_PARSER_TYPE';
 
 export const LINEWALK_VERSION_KEY = 'LINEWALK_VERSION';
+export const LINEWALK_FRONTEND_VERSION = '0.0.20';
 export const LINEWALK_DATA_VERSION = '0.0.20';
 export const LINE_REVIEW_EVENT_TYPE = 'LINE_REVIEW';
 export const DIAGRAM_PARSER_PARSED_DOCUMENT_EXTERNAL_ID_PREFIX =
@@ -117,3 +120,6 @@ export const getGraphExternalIdKey = (version: string) =>
 
 export const getLineNumberKey = (version: string, lineNumber: string): string =>
   `${getLineLabelPrefix(version)}${lineNumber}`;
+
+export const getDiagramParserTypeFromFileInfo = (fileInfo: FileInfo) =>
+  fileInfo.metadata?.[DIAGRAM_PARSER_TYPE];

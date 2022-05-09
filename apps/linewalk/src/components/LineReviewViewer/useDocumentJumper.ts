@@ -8,7 +8,7 @@ import { FileInfo } from '@cognite/sdk';
 
 import {
   addLineNumberToDocumentMetadata,
-  getWorkspaceDocuments,
+  getWorkspaceDocumentsFromPdfFileInfos,
 } from '../../modules/lineReviews/api';
 import {
   DocumentType,
@@ -141,9 +141,8 @@ const useDocumentJumper = (
             return;
           }
 
-          const [workspaceDocument] = await getWorkspaceDocuments(client, [
-            file,
-          ]);
+          const [workspaceDocument] =
+            await getWorkspaceDocumentsFromPdfFileInfos(client, [file]);
 
           await addLineNumberToDocumentMetadata(
             client,
