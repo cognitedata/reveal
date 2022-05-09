@@ -1,6 +1,8 @@
 import {
   allApplications as allCogniteApplications,
+  clusterNoDotPlaceholder,
   clusterPlaceholder,
+  tenantPlaceholder,
 } from 'constants/applications';
 
 import { useContext, useMemo } from 'react';
@@ -22,14 +24,13 @@ function useCogniteApplications() {
     ...app,
     url:
       // add cluster to the url by replacing the placeholder
-      (
-        app.urlTemplate?.replace(
+      app.urlTemplate
+        ?.replace(
           clusterPlaceholder,
           sidecar.cdfCluster ? `.${sidecar.cdfCluster}` : ''
-        ) || app.url
-      )
-        // add tenant name
-        .concat(`/${tenant}`),
+        )
+        .replace(tenantPlaceholder, tenant)
+        .replace(clusterNoDotPlaceholder, sidecar.cdfCluster || '') || app.url,
   });
   const allApplications = useMemo(
     () => allCogniteApplications.map<ApplicationItem>(mapURLTemplateToUrl),

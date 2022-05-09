@@ -8,6 +8,8 @@ import bestday from 'images/applications/bestday.png';
 import infield from 'images/applications/infield.png';
 
 export const clusterPlaceholder = '__CLUSTER__';
+export const clusterNoDotPlaceholder = '__CLUSTER_NO_DOT__';
+export const tenantPlaceholder = '__TENANT__';
 
 export const allApplications: ApplicationItem[] = [
   {
@@ -29,7 +31,7 @@ export const allApplications: ApplicationItem[] = [
       return null;
     },
     installedCheckFunc: async () => true,
-    urlTemplate: `https://charts${clusterPlaceholder}.cogniteapp.com`,
+    urlTemplate: `https://charts.cogniteapp.com/${tenantPlaceholder}?env=${clusterNoDotPlaceholder}`,
     viewLink: 'https://hub.cognite.com/groups/charts-early-adopter-164',
   },
   {
@@ -53,7 +55,7 @@ export const allApplications: ApplicationItem[] = [
       window.open(
         `https://blueprint${
           sidecar.cdfCluster ? `.${sidecar.cdfCluster}` : ''
-        }.cogniteapp.com`,
+        }.cogniteapp.com/${tenantPlaceholder}`,
         '_blank'
       );
     },
@@ -70,7 +72,7 @@ export const allApplications: ApplicationItem[] = [
         return false;
       }
     },
-    urlTemplate: `https://blueprint${clusterPlaceholder}.cogniteapp.com`,
+    urlTemplate: `https://blueprint${clusterPlaceholder}.cogniteapp.com/${tenantPlaceholder}`,
   },
   {
     key: 'infield',
@@ -81,7 +83,7 @@ export const allApplications: ApplicationItem[] = [
     description:
       'Cognite InFields collects, cleans, and contextualizes all kinds of industrial data to make it accessible and meaningful. ',
     url: '',
-    urlTemplate: `https://infield${clusterPlaceholder}.cogniteapp.com`,
+    urlTemplate: `https://infield${clusterPlaceholder}.cogniteapp.com/${tenantPlaceholder}`,
     viewLink: 'https://www.cognite.com/en/product/applications/cognite_infield',
   },
   {
@@ -93,7 +95,7 @@ export const allApplications: ApplicationItem[] = [
     description:
       'Cognite BestDay is a central hub for decision support, providing a more continous, datadriven approach to optimization in your day-to-day operations. ',
     url: '',
-    urlTemplate: `http://bestday${clusterPlaceholder}.cogniteapp.com`,
+    urlTemplate: `http://bestday${clusterPlaceholder}.cogniteapp.com/${tenantPlaceholder}`,
     viewLink: 'https://www.cognite.com/en/product/applications/cognite_bestday',
   },
   {
@@ -105,7 +107,7 @@ export const allApplications: ApplicationItem[] = [
     description:
       'Discover is the CDF SaaS that provides instant access to your document, seismic and well data, as well as other subsurface data types.',
     url: '',
-    urlTemplate: `http://discover${clusterPlaceholder}.cogniteapp.com`,
+    urlTemplate: `http://discover${clusterPlaceholder}.cogniteapp.com/${tenantPlaceholder}`,
   },
   {
     key: 'maintain',
@@ -115,7 +117,7 @@ export const allApplications: ApplicationItem[] = [
     categories: ['Cognite Application', 'Maintenance & Planning'],
     description:
       'Cognite Maintain lets you construct, optimize, and analyze maintenance plans flexibly, intuitively, and automatically. ',
-    url: `https://mp.cogniteapp.com`,
+    url: `https://mp.cogniteapp.com/${tenantPlaceholder}`,
     viewLink:
       'https://www.cognite.com/en/product/applications/cognite_maintain',
   },
