@@ -7,7 +7,7 @@ import {
 } from 'src/modules/Common/store/annotation/__test__/getDummyAnnotations';
 import {
   filterAnnotations,
-  getAnnotationInstanceLabel,
+  getAnnotationLabelOrText,
   getAnnotationsBadgeCounts,
 } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
@@ -17,8 +17,8 @@ import {
 } from 'src/modules/Common/types/index';
 import { Status } from 'src/api/annotation/types';
 
-const ANN_WITH_PUMP_LABEL_COUNT = 4;
-const ANN_WITH_SUGGESTED_PUMP_COUNT = 3;
+const ANN_WITH_PUMP_LABEL_OR_TEXT_COUNT = 6;
+const ANN_WITH_SUGGESTED_PUMP_COUNT = 5;
 const SUGGESTED_ANN_COUNT = 5;
 const REJECTED_ANN_COUNT = 2;
 const APPROVED_ANN_COUNT = 3;
@@ -67,14 +67,14 @@ const dummyAnnotations: VisionAnnotation<VisionAnnotationDataType>[] = [
 ];
 
 describe('Test AnnotationUtils', () => {
-  describe('Test getAnnotationInstanceLabel', () => {
+  describe('Test getAnnotationLabelOrText', () => {
     test('get label for ImageClassification', () => {
       const label = 'pump';
       const annotation = getDummyImageClassificationAnnotation({
         label,
       });
 
-      expect(getAnnotationInstanceLabel(annotation)).toEqual(label);
+      expect(getAnnotationLabelOrText(annotation)).toEqual(label);
     });
 
     test('get label for ImageObjectDetectionBoundingBox', () => {
@@ -83,7 +83,7 @@ describe('Test AnnotationUtils', () => {
         label,
       });
 
-      expect(getAnnotationInstanceLabel(annotation)).toEqual(label);
+      expect(getAnnotationLabelOrText(annotation)).toEqual(label);
     });
 
     test('get label for ImageObjectDetectionPolygon', () => {
@@ -92,7 +92,25 @@ describe('Test AnnotationUtils', () => {
         label,
       });
 
-      expect(getAnnotationInstanceLabel(annotation)).toEqual(label);
+      expect(getAnnotationLabelOrText(annotation)).toEqual(label);
+    });
+
+    test('get label for ImageExtractedText', () => {
+      const extractedText = 'pump';
+      const annotation = getDummyImageExtractedTextAnnotation({
+        extractedText,
+      });
+
+      expect(getAnnotationLabelOrText(annotation)).toEqual(extractedText);
+    });
+
+    test('get label for ImageAssetLink', () => {
+      const text = 'pump';
+      const annotation = getDummyImageAssetLinkAnnotation({
+        text,
+      });
+
+      expect(getAnnotationLabelOrText(annotation)).toEqual(text);
     });
   });
 
@@ -107,21 +125,30 @@ describe('Test AnnotationUtils', () => {
       expect(filterAnnotations({ annotations: [] }).length).toBe(0);
     });
 
-    describe('test with annotationText filter', () => {
+    describe('test with annotationLabelOrText filter', () => {
       test('filter pump as label, extractedText and text', () => {
         expect(
           filterAnnotations({
             annotations: dummyAnnotations,
-            filter: { annotationText: 'pump' },
+            filter: { annotationLabelOrText: 'pump' },
           }).length
-        ).toBe(ANN_WITH_PUMP_LABEL_COUNT);
+        ).toBe(ANN_WITH_PUMP_LABEL_OR_TEXT_COUNT);
       });
 
       test('filter pump3 as extractedText', () => {
         expect(
           filterAnnotations({
             annotations: dummyAnnotations,
-            filter: { annotationText: 'pump3' },
+            filter: { annotationLabelOrText: 'pump3' },
+          }).length
+        ).toBe(1);
+      });
+
+      test('filter pumpLink as text', () => {
+        expect(
+          filterAnnotations({
+            annotations: dummyAnnotations,
+            filter: { annotationLabelOrText: 'pumpLink' },
           }).length
         ).toBe(1);
       });
@@ -156,13 +183,13 @@ describe('Test AnnotationUtils', () => {
       });
     });
 
-    describe('test with annotationText & annotationState filter', () => {
+    describe('test with annotationLabelOrText & annotationState filter', () => {
       test('filter Suggested annotations', () => {
         expect(
           filterAnnotations({
             annotations: dummyAnnotations,
             filter: {
-              annotationText: 'pump',
+              annotationLabelOrText: 'pump',
               annotationState: Status.Suggested,
             },
           }).length

@@ -140,7 +140,7 @@ describe('filterAnnotations', () => {
   });
   test('filter annotation text', () => {
     expect(
-      AnnotationUtilsV1.filterAnnotations(annotations, { annotationText: 'a' })
+      AnnotationUtilsV1.filterAnnotations(annotations, { annotationLabelOrText: 'a' })
     ).toEqual(expect.arrayContaining(annotations.slice(0, 2)));
   });
 });

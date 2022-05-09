@@ -260,9 +260,9 @@ export class AnnotationUtilsV1 {
           (item) => item.status === filter.annotationState
         );
       }
-      if (filter.annotationText) {
+      if (filter.annotationLabelOrText) {
         filteredAnnotations = filteredAnnotations.filter(
-          (item) => item.text === filter.annotationText
+          (item) => item.text === filter.annotationLabelOrText
         );
       }
     }

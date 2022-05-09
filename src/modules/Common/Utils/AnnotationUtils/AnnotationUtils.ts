@@ -1,6 +1,8 @@
 import {
   AnnotatedResourceId,
+  ImageAssetLink,
   ImageClassification,
+  ImageExtractedText,
   ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
@@ -43,13 +45,15 @@ export const createVisionAnnotationStub = <T>({
   ...data,
 });
 
-export const getAnnotationInstanceLabel = (
+export const getAnnotationLabelOrText = (
   annotation: VisionAnnotation<VisionAnnotationDataType>
 ): string =>
   (annotation as ImageClassification).label ||
   (annotation as ImageObjectDetectionBoundingBox).label ||
   (annotation as ImageObjectDetectionPolygon).label ||
-  (annotation as ImageKeypointCollection).label;
+  (annotation as ImageKeypointCollection).label ||
+  (annotation as ImageExtractedText).extractedText ||
+  (annotation as ImageAssetLink).text;
 
 export const filterAnnotations = ({
   annotations,
@@ -65,10 +69,10 @@ export const filterAnnotations = ({
         (item) => item.status === filter.annotationState
       );
     }
-    if (filter.annotationText) {
+    if (filter.annotationLabelOrText) {
       filteredAnnotations = filteredAnnotations.filter(
         (annotation) =>
-          getAnnotationInstanceLabel(annotation) === filter.annotationText
+          getAnnotationLabelOrText(annotation) === filter.annotationLabelOrText
       );
     }
   }

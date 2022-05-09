@@ -176,7 +176,7 @@ describe('Test annotation selectors', () => {
     test('should return the annotations filtered by text for provided file ids', () => {
       expect(
         selectAnnotationsForFileIds(mockState, [10, 20, 30], {
-          annotationText: 'foo',
+          annotationLabelOrText: 'foo',
         })
       ).toEqual({
         '10': [annotations[0]],
