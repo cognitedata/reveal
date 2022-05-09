@@ -504,7 +504,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                 </Tooltip>
                 <Tooltip
                   content={`${
-                    showMinMax ? ['Hide min/max'] : t['Show min/max']
+                    showMinMax ? t['Hide min/max'] : t['Show min/max']
                   }`}
                 >
                   <Button
