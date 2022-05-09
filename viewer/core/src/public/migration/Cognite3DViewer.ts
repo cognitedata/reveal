@@ -273,10 +273,7 @@ export class Cognite3DViewer {
       this._renderables.cadModels
     );
 
-    this.revealManager.setRenderTarget(
-      options.renderTargetOptions?.target || null,
-      options.renderTargetOptions?.autoSetSize
-    );
+    this.revealManager.setRenderTarget(options.renderTargetOptions?.target ?? null);
 
     this._subscription.add(
       fromEventPattern<LoadingState>(
@@ -362,6 +359,8 @@ export class Cognite3DViewer {
       model.dispose();
     }
     this._models.splice(0);
+    this._renderables.cadModels.splice(0);
+    this._renderables.customObjects.splice(0);
     this.spinner.dispose();
 
     this._events.disposed.fire();
@@ -1231,6 +1230,7 @@ function createCanvasWrapper(): HTMLElement {
 function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): RevealOptions {
   const revealOptions: RevealOptions = {
     continuousModelStreaming: viewerOptions.continuousModelStreaming,
+    autoResizeOutputRenderTarget: viewerOptions.renderTargetOptions.autoSetSize,
     internal: {}
   };
   revealOptions.internal.cad = { sectorCuller: viewerOptions._sectorCuller };

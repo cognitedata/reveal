@@ -22,10 +22,8 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
   private readonly _renderTargetData: RenderTargetData;
   private readonly _cadModels: IdentifiedModel[];
   private readonly _customObjects: THREE.Object3D[];
-  private _outputRenderTarget: { target: THREE.WebGLRenderTarget; autoUpdateSize: boolean } = {
-    target: null,
-    autoUpdateSize: true
-  };
+  private readonly _autoResizeOutputTarget: boolean;
+  private _outputRenderTarget: THREE.WebGLRenderTarget = null;
   private _currentRendererState: {
     autoClear: boolean;
     clearColor: THREE.Color;
@@ -47,12 +45,8 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     this._blitToScreenPass.blitEffect = blitEffect;
   }
 
-  get outputRenderTarget(): { target: THREE.WebGLRenderTarget; autoUpdateSize: boolean } {
-    return this._outputRenderTarget;
-  }
-
-  public setOutputRenderTarget(renderTarget: THREE.WebGLRenderTarget, autoUpdateSize = true): void {
-    this._outputRenderTarget = { target: renderTarget, autoUpdateSize: autoUpdateSize };
+  set outputRenderTarget(renderTarget: THREE.WebGLRenderTarget) {
+    this._outputRenderTarget = renderTarget;
   }
 
   constructor(
@@ -60,9 +54,11 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     scene: THREE.Scene,
     renderOptions: RenderOptions,
     cadModels?: IdentifiedModel[],
-    customObjects?: THREE.Object3D[]
+    customObjects?: THREE.Object3D[],
+    autoResizeOutputTarget = true
   ) {
     this._cadScene = scene;
+    this._autoResizeOutputTarget = autoResizeOutputTarget;
 
     this._renderTargetData = {
       currentRenderSize: new THREE.Vector2(1, 1),
@@ -115,7 +111,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     renderer.clear();
     yield this._postProcessingRenderPipeline;
 
-    renderer.setRenderTarget(this._outputRenderTarget.target);
+    renderer.setRenderTarget(this._outputRenderTarget);
     yield this._blitToScreenPass;
 
     this.pipelineTearDown(renderer);
@@ -164,8 +160,8 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     this._renderTargetData.ssaoRenderTarget.setSize(width, height);
     this._renderTargetData.currentRenderSize.set(width, height);
 
-    if (this._outputRenderTarget.target !== null && this._outputRenderTarget.autoUpdateSize) {
-      this._outputRenderTarget.target.setSize(width, height);
+    if (this._outputRenderTarget !== null && this._autoResizeOutputTarget) {
+      this._outputRenderTarget.setSize(width, height);
     }
   }
 }

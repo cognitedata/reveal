@@ -15,6 +15,7 @@ export type RevealOptions = {
   logMetrics?: boolean;
   renderOptions?: RenderOptions;
   continuousModelStreaming?: boolean;
+  autoResizeOutputRenderTarget?: boolean;
   internal?: {
     cad?: InternalRevealCadOptions;
   };

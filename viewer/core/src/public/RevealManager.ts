@@ -199,10 +199,9 @@ export class RevealManager {
   /**
    * Overrides the default rendering target.
    * @param target New rendering target.
-   * @param autoSetTargetSize Auto size target to fit canvas.
    */
-  public setRenderTarget(target: THREE.WebGLRenderTarget | null, autoSetTargetSize: boolean = true): void {
-    this._renderPipeline.setOutputRenderTarget(target, autoSetTargetSize);
+  public setRenderTarget(target: THREE.WebGLRenderTarget | null): void {
+    this._renderPipeline.outputRenderTarget = target;
   }
 
   public addModel(type: 'cad', modelIdentifier: ModelIdentifier, options?: AddCadModelOptions): Promise<CadNode>;

@@ -127,7 +127,8 @@ export function createRevealManager(
     scene,
     renderOptions,
     renderables.cadModels,
-    renderables.customObjects
+    renderables.customObjects,
+    revealOptions.autoResizeOutputRenderTarget
   );
   const depthRenderPipeline = new GeometryDepthRenderPipeline(
     RenderMode.DepthBufferOnly,
