@@ -14,7 +14,7 @@ import { CodeDefinition } from '../types';
 
 import { CodeDefinitionsList } from './CodeDefinitionsList';
 
-interface Props {
+export interface Props {
   title: string;
   isLoading: boolean;
   codeDefinitions: CodeDefinition[];
@@ -47,7 +47,7 @@ export const CodeDefinitionsView: React.FC<Props> = ({
 
   return (
     <CodeDefinitionsWrapper>
-      <BreadcrumbWrapper>
+      <BreadcrumbWrapper data-testid="breadcrumbs">
         <Body level={2}>Code definitions</Body>
         <Icon type="Breadcrumb" />
         <Body level={2} strong>

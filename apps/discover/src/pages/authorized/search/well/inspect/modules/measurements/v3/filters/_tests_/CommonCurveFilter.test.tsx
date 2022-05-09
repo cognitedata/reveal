@@ -53,8 +53,8 @@ describe('CommonCurveFilter tests', () => {
       grouped: true,
     });
 
-    userEvent.click(screen.getByText(TITLE));
-    userEvent.click(
+    await userEvent.click(screen.getByText(TITLE));
+    await userEvent.click(
       screen.getByText(getMockPpfgsColumns()[1].columnExternalId)
     );
     expect(onChange).toBeCalledWith([

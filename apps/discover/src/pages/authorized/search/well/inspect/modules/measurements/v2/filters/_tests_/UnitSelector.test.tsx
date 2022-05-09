@@ -17,7 +17,8 @@ describe('View Mode Selector', () => {
       onReferenceChange: jest.fn(),
     });
 
-    userEvent.hover(screen.getByTestId('menu-button'));
+    // TODO(PP-2915): replace with .hover()
+    await userEvent.click(screen.getByTestId('menu-button'));
 
     expect(screen.getByText('PPG')).toBeInTheDocument();
     expect(screen.getByText('MD')).toBeInTheDocument();

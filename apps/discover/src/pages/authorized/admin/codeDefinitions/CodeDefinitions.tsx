@@ -54,15 +54,13 @@ export const CodeDefinitions = () => {
     WellLegendNptType.Code
   );
 
-  const codes =
-    nptCodes && nptCodesLegend
-      ? mapLegendValuesToCodes(nptCodes, nptCodesLegend?.items)
-      : [];
+  const codes = nptCodes
+    ? mapLegendValuesToCodes(nptCodes, nptCodesLegend?.items || [])
+    : [];
 
-  const detailCodes =
-    nptDetailCodes && nptDetailCodesLegend
-      ? mapLegendValuesToCodes(nptDetailCodes, nptDetailCodesLegend.items)
-      : [];
+  const detailCodes = nptDetailCodes
+    ? mapLegendValuesToCodes(nptDetailCodes, nptDetailCodesLegend?.items || [])
+    : [];
 
   const history = useHistory();
   const { search } = useLocation();
@@ -92,7 +90,7 @@ export const CodeDefinitions = () => {
 
   return (
     <Wrapper>
-      <LeftPanel>
+      <LeftPanel data-testid="left-panel">
         {NptMenuItems.map(({ label, key }) => {
           return (
             <CodeDefinitionsMenuItem
@@ -105,7 +103,7 @@ export const CodeDefinitions = () => {
         })}
       </LeftPanel>
 
-      <RightPanel>
+      <RightPanel data-testid="right-panel">
         {activeItem === WellLegendNptType.Code && (
           <CodeDefinitionsView
             title={NptMenuItems[0].label}

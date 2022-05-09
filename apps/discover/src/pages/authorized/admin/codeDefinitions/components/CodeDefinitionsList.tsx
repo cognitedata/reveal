@@ -3,7 +3,7 @@ import { CodeDefinition } from '../types';
 
 import { CodeDefinitionItem } from './CodeDefinitionItem';
 
-interface Props {
+export interface Props {
   codeDefinitions: CodeDefinition[];
   onLegendUpdated: ({
     code,
@@ -19,12 +19,12 @@ export const CodeDefinitionsList: React.FC<Props> = ({
 }) => {
   return (
     <CodeDefinitionsListWrapper>
-      {codeDefinitions.map((codeDefinition, index) => {
+      {codeDefinitions.map(({ code, definition }, index) => {
         return (
           <CodeDefinitionItem
-            key={codeDefinition.code}
-            code={codeDefinition.code}
-            definition={codeDefinition.definition}
+            key={code}
+            code={code}
+            definition={definition}
             showLabels={index === 0}
             onLegendUpdated={onLegendUpdated}
           />

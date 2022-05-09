@@ -29,7 +29,7 @@ describe('UnitFilter tests', () => {
       onChange: jest.fn(),
     });
 
-    userEvent.click(screen.getByText(PressureUnit.PPG));
+    await userEvent.click(screen.getByText(PressureUnit.PPG));
 
     expect(screen.getByText(PressureUnit.PSI)).toBeInTheDocument();
   });
@@ -43,9 +43,9 @@ describe('UnitFilter tests', () => {
       onChange,
     });
 
-    userEvent.click(screen.getByText(PressureUnit.PPG));
+    await userEvent.click(screen.getByText(PressureUnit.PPG));
     expect(screen.getByText(PressureUnit.PSI)).toBeInTheDocument();
-    userEvent.click(screen.getByText(PressureUnit.PSI));
+    await userEvent.click(screen.getByText(PressureUnit.PSI));
     expect(onChange).toBeCalledWith(PressureUnit.PSI);
   });
 });

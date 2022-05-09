@@ -8,10 +8,10 @@ import { MSWRequest } from '__test-utils/types';
 
 import { WellLegendNptType } from '../legend/types';
 
-export const getMockWellLegendGet = (
+export const getMockDetailCodeLegendGet = (
   customResponse?: WellEventLegend[]
 ): MSWRequest => {
-  const url = getNptLegendEndpoint(TEST_PROJECT, WellLegendNptType.Code);
+  const url = getNptLegendEndpoint(TEST_PROJECT, WellLegendNptType.DetailCode);
 
   // console.log('STARTING MOCK', url);
 

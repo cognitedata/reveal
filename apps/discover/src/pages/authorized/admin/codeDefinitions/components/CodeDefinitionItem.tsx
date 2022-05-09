@@ -12,7 +12,7 @@ import { useDebounce } from 'hooks/useDebounce';
 
 import { CodeDefinitionItemWrapper } from '../elements';
 
-interface Props {
+export interface Props {
   code: string;
   definition?: string;
   showLabels?: boolean;
@@ -30,14 +30,13 @@ const DEFINITION_TOO_LONG_ERROR_MESSAGE = `Definition can't be longer than ${DEF
 
 export const CodeDefinitionItem: React.FC<Props> = ({
   code,
-  definition,
+  definition = '',
   showLabels,
   onLegendUpdated,
 }) => {
   const [codeInputValue, setCodeInputValue] = useState(code);
-  const [definitionInputValue, setDefinitionInputValue] = useState(
-    definition || ''
-  );
+  const [definitionInputValue, setDefinitionInputValue] =
+    useState<string>(definition);
   const [isBeingUpdated, setIsBeingUpdated] = useState<boolean>(false);
   const [isSuccessState, setIsSuccessState] = useState<boolean>(false);
 
@@ -86,6 +85,7 @@ export const CodeDefinitionItem: React.FC<Props> = ({
   return (
     <CodeDefinitionItemWrapper hasLabel={showLabels}>
       <Input
+        data-testid="code-input"
         title={showLabels ? 'Code' : ''}
         disabled
         value={codeInputValue}
@@ -94,6 +94,7 @@ export const CodeDefinitionItem: React.FC<Props> = ({
         onChange={handleCodeChange}
       />
       <Input
+        data-testid="definition-input"
         title={showLabels ? 'Definition' : ''}
         onBlur={handleLegendUpdate}
         onKeyDown={(event) => handleKeyDown(event)}

@@ -30,10 +30,11 @@ describe('DocumentResultTableHoverComponent', () => {
   const renderPage = () =>
     testRenderer(DocumentResultTableHoverComponent, store, getDefaultProps());
 
-  it('should fire callbacks on click', () => {
-    renderPage();
+  it('should fire callbacks on click', async () => {
+    await renderPage();
 
-    userEvent.hover(screen.getByTestId('menu-button'));
+    // TODO(PP-2915): replace with .hover()
+    await userEvent.click(screen.getByTestId('menu-button'));
 
     fireEvent.click(screen.getByTestId('button-preview-document'));
     fireEvent.click(screen.getByText(OPEN_PARENT_FOLDER_OPTION_TEXT));
