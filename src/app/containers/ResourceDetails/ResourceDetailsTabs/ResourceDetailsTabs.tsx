@@ -69,11 +69,7 @@ export const ResourceDetailsTabs = ({
   additionalTabs = [],
   excludedTypes = [],
   onTabChange,
-  style = {
-    paddingLeft: '16px',
-    flex: 1,
-    overflow: 'auto',
-  },
+  style = {},
 }: ResouceDetailsTabsProps) => {
   const { counts } = useRelatedResourceCounts(parentResource);
 
@@ -131,6 +127,9 @@ export const ResourceDetailsTabs = ({
 };
 
 const StyledTabs = styled(Tabs)`
+  padding-left: 16px;
+  flex: 1;
+  overflow: auto;
   .rc-tabs-nav-wrap {
     border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
   }
