@@ -1,6 +1,6 @@
 import React from 'react';
 import { ResourceType } from 'types';
-import { Tabs } from 'components';
+import { Colors, Tabs } from '@cognite/cogs.js';
 import { ResourceIcons } from 'components/ResourceIcons/ResourceIcons';
 import styled from 'styled-components';
 
@@ -32,16 +32,16 @@ export const ResourceTypeTabs = ({
   setCurrentResourceType,
   resourceTypes = defaultResourceTypes,
 }: Props) => (
-  <Tabs
-    tab={currentResourceType}
-    onTabChange={tab => setCurrentResourceType(tab as ResourceType)}
+  <StyledTabs
+    activeKey={currentResourceType}
+    onChange={tab => setCurrentResourceType(tab as ResourceType)}
   >
     {resourceTypes.map(key => {
       const type = key as ResourceType;
       return (
-        <Tabs.Pane
+        <Tabs.TabPane
           key={type}
-          title={
+          tab={
             <TabContainer>
               <ResourceIcons style={{ marginRight: 12 }} type={type} />
               {resourceTypeMap[type]}
@@ -50,8 +50,14 @@ export const ResourceTypeTabs = ({
         />
       );
     })}
-  </Tabs>
+  </StyledTabs>
 );
+
+const StyledTabs = styled(Tabs)`
+  .rc-tabs-nav-wrap {
+    border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+  }
+`;
 
 const TabContainer = styled.div`
   display: flex;

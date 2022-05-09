@@ -13,32 +13,32 @@ const IconBackground = styled.div`
 
 const AssetIcon = ({ style }: { style?: React.CSSProperties }) => (
   <IconBackground style={style}>
-    <Icon type="Assets" />
+    <Icon type="Assets" style={{ marginRight: 0 }} />
   </IconBackground>
 );
 const TimeseriesIcon = ({ style }: { style?: React.CSSProperties }) => (
   <IconBackground style={style}>
-    <Icon type="Timeseries" />
+    <Icon type="Timeseries" style={{ marginRight: 0 }} />
   </IconBackground>
 );
 const FileIcon = ({ style }: { style?: React.CSSProperties }) => (
   <IconBackground style={style}>
-    <Icon type="Document" />
+    <Icon type="Document" style={{ marginRight: 0 }} />
   </IconBackground>
 );
 const SequenceIcon = ({ style }: { style?: React.CSSProperties }) => (
   <IconBackground style={style}>
-    <Icon type="Sequences" />
+    <Icon type="Sequences" style={{ marginRight: 0 }} />
   </IconBackground>
 );
 const EventIcon = ({ style }: { style?: React.CSSProperties }) => (
   <IconBackground style={style}>
-    <Icon type="Events" />
+    <Icon type="Events" style={{ marginRight: 0 }} />
   </IconBackground>
 );
 const ThreeDIcon = ({ style }: { style?: React.CSSProperties }) => (
   <IconBackground style={style}>
-    <Icon type="Cube" />
+    <Icon type="Cube" style={{ marginRight: 0 }} />
   </IconBackground>
 );
 export const ResourceIcons = ({

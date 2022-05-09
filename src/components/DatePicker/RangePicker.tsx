@@ -68,16 +68,13 @@ export const RangePicker = ({
       <SegmentedControl
         style={{ marginBottom: 8 }}
         currentKey={mode}
+        fullWidth
         onButtonClicked={key => setMode(key as 'range' | 'calendar')}
       >
-        <SegmentedControl.Button style={{ flex: 1 }} key="range" icon="Events">
+        <SegmentedControl.Button key="range" icon="Events">
           Range
         </SegmentedControl.Button>
-        <SegmentedControl.Button
-          style={{ flex: 1 }}
-          key="calendar"
-          icon="Calendar"
-        >
+        <SegmentedControl.Button key="calendar" icon="Calendar">
           Calendar
         </SegmentedControl.Button>
       </SegmentedControl>
