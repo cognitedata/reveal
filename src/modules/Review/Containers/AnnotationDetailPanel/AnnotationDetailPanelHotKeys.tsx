@@ -28,6 +28,8 @@ import {
 import { useHotkeys } from 'react-hotkeys-hook';
 import { selectCategory } from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
 import { HotKeys } from 'src/constants/HotKeys';
+import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 export const AnnotationDetailPanelHotKeys = ({
   scrollId,
@@ -57,6 +59,18 @@ export const AnnotationDetailPanelHotKeys = ({
   useHotkeys(
     HotKeys.move_into_annotation_collection,
     () => moveIntoAnnotationCollection(),
+    [nodeTree, scrollId]
+  );
+
+  useHotkeys(
+    HotKeys.approve_annotation,
+    () => setStatusOnSelectedAnnotation(true),
+    [nodeTree, scrollId]
+  );
+
+  useHotkeys(
+    HotKeys.reject_annotation,
+    () => setStatusOnSelectedAnnotation(false),
     [nodeTree, scrollId]
   );
 
@@ -135,6 +149,29 @@ export const AnnotationDetailPanelHotKeys = ({
       }
     }
   }, [nodeTree]);
+
+  const setStatusOnSelectedAnnotation = useCallback(
+    (status: boolean) => {
+      if (nodeTree.length) {
+        let annotationId;
+        const activeNode = getActiveNode(nodeTree);
+        if (activeNode) {
+          annotationId = activeNode.id;
+        }
+        if (annotationId) {
+          dispatch(
+            AnnotationStatusChange({
+              id: +annotationId,
+              status: status
+                ? AnnotationStatus.Verified
+                : AnnotationStatus.Rejected,
+            })
+          );
+        }
+      }
+    },
+    [nodeTree]
+  );
 
   return <>{children}</>;
 };
