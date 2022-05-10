@@ -4,20 +4,28 @@
 
 import { Cognite3DViewer } from '@reveal/core';
 import * as THREE from 'three';
-import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
+import { HtmlOverlayTool, HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOverlayTool';
 import labelCSS from './styles/Label.css';
 
 export class MeasurementLabel {
   private readonly _htmlOverlay: HtmlOverlayTool;
   private _labelElement: HTMLDivElement;
+  private readonly _handleClustering = this.createEmptyClusterElement.bind(this);
+  private readonly options: HtmlOverlayToolOptions = {
+    clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback: this._handleClustering }
+  };
   private static readonly stylesId = 'reveal-viewer-label';
-
   private static readonly classnames = {
     label: 'reveal-viewer-label'
   };
 
   constructor(viewer: Cognite3DViewer) {
-    this._htmlOverlay = new HtmlOverlayTool(viewer);
+    this._htmlOverlay = new HtmlOverlayTool(viewer, this.options);
+  }
+
+  private createEmptyClusterElement() {
+    const element = document.createElement('div');
+    return element;
   }
 
   /**
