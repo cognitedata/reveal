@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import includes from 'lodash/includes';
 import { downloadFileFromUrl } from 'services/documentPreview/utils';
-import { openExternalPage } from 'utils/url';
+import { openExternalPage } from 'utils/openExternalPage';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { getTenantInfo } from '@cognite/react-container';

@@ -1,7 +1,9 @@
 import isEmpty from 'lodash/isEmpty';
 import pickBy from 'lodash/pickBy';
+import { getSearchParamsFromCurrentUrl } from 'utils/url/getSearchParamsFromCurrentUrl';
+import { serializeParams } from 'utils/url/serializeParams';
 
-import { BooleanSelection } from 'modules/wellInspect/types';
+import { BooleanSelection } from './types';
 
 export const getInspectUrlSearchParams = ({
   selectedWellIds,
@@ -27,18 +29,6 @@ export const getInspectUrlSearchParams = ({
   };
 
   return serializeParams(params);
-};
-
-export const serializeParams = (params: Record<string, string>) => {
-  return Object.keys(params)
-    .map((key) => `${key}=${encodeURIComponent(params[key])}`)
-    .join('&');
-};
-
-export const getSearchParamsFromCurrentUrl = () => {
-  const urlSearchParams = new URLSearchParams(window.location.search);
-  const params = Object.fromEntries(urlSearchParams.entries());
-  return params;
 };
 
 export const getSearchParamValuesFromCurrentUrl = () => {

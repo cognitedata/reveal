@@ -1,6 +1,6 @@
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
-import { openExternalPage } from 'utils/url';
+import { openExternalPage } from 'utils/openExternalPage';
 
 import { InternalId, ExternalId, IdEither, FileLink } from '@cognite/sdk';
 

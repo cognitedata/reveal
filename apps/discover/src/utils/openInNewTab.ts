@@ -1,6 +1,6 @@
 import { MouseEvent } from 'react';
 
-import { openExternalPage } from './url';
+import { openExternalPage } from './openExternalPage';
 
 export const openInNewTab = (event: MouseEvent, links: string[]) => {
   event.preventDefault();

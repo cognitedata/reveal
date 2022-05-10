@@ -2,7 +2,7 @@ import React from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { useTranslation } from 'react-i18next';
 
-import { openExternalPage } from 'utils/url';
+import { openExternalPage } from 'utils/openExternalPage';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
 
