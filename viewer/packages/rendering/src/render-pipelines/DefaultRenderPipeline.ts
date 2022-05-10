@@ -109,7 +109,6 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     });
 
     this._blitToScreenMesh = createFullScreenTriangleMesh(this._blitToScreenMaterial);
-    this._blitToScreenMesh.frustumCulled = false;
 
     this.renderOptions = cloneDeep(renderOptions);
   }

@@ -15,7 +15,9 @@ export const unitOrthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1,
 
 export function createFullScreenTriangleMesh(shaderMaterial: THREE.RawShaderMaterial): THREE.Mesh {
   const renderTriangle = createRenderTriangle();
-  return new THREE.Mesh(renderTriangle, shaderMaterial);
+  const mesh = new THREE.Mesh(renderTriangle, shaderMaterial);
+  mesh.frustumCulled = false;
+  return mesh;
 }
 
 export function createRenderTarget(width = 1, height = 1, multiSampleCount = 1): THREE.WebGLRenderTarget {

@@ -27,7 +27,6 @@ export class PostProcessingPipeline implements RenderPass {
 
     const inFrontEarlyZBlitObject = createFullScreenTriangleMesh(inFrontEarlyZBlitMaterial);
     inFrontEarlyZBlitObject.renderOrder = 0;
-    inFrontEarlyZBlitObject.frustumCulled = false;
 
     const backBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.back.texture,
@@ -39,7 +38,6 @@ export class PostProcessingPipeline implements RenderPass {
     });
     const backBlitObject = createFullScreenTriangleMesh(backBlitMaterial);
     backBlitObject.renderOrder = 2;
-    backBlitObject.frustumCulled = false;
 
     const ghostBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.ghost.texture,
@@ -49,7 +47,6 @@ export class PostProcessingPipeline implements RenderPass {
 
     const ghostBlitObject = createFullScreenTriangleMesh(ghostBlitMaterial);
     ghostBlitObject.renderOrder = 3;
-    ghostBlitObject.frustumCulled = false;
 
     const inFrontBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.inFront.texture,
@@ -59,7 +56,6 @@ export class PostProcessingPipeline implements RenderPass {
     });
     const inFrontBlitObject = createFullScreenTriangleMesh(inFrontBlitMaterial);
     inFrontBlitObject.renderOrder = 4;
-    inFrontBlitObject.frustumCulled = false;
 
     this._postProcessingScene.add(inFrontEarlyZBlitObject);
     this._postProcessingScene.add(backBlitObject);
