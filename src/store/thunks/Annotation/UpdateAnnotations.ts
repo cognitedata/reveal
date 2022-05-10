@@ -3,7 +3,7 @@ import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationApiV1 } from 'src/api/annotation/AnnotationApiV1';
 import {
   getFieldOrSetNull,
-  validateAnnotation,
+  validateAnnotationV1,
 } from 'src/api/annotation/utils';
 import {
   AnnotationUtilsV1,
@@ -21,7 +21,7 @@ export const UpdateAnnotations = createAsyncThunk<
   }
 
   const filteredAnnotations = annotations.filter((annotation) =>
-    validateAnnotation(annotation)
+    validateAnnotationV1(annotation)
   ); // validate annotations
 
   const annotationUpdateRequest = {

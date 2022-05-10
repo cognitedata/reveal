@@ -1,7 +1,7 @@
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
 import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { AnnotationApiV1 } from 'src/api/annotation/AnnotationApiV1';
-import { validateAnnotation } from 'src/api/annotation/utils';
+import { validateAnnotationV1 } from 'src/api/annotation/utils';
 import { FileInfo } from '@cognite/sdk';
 import {
   ANNOTATION_FETCH_BULK_SIZE,
@@ -29,7 +29,7 @@ const getAnnotations = async (
 
   const validAnnotations = annotations.filter((annotation: CDFAnnotationV1) => {
     try {
-      return validateAnnotation(annotation);
+      return validateAnnotationV1(annotation);
     } catch (error) {
       return false;
     }

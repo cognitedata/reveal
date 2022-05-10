@@ -6,7 +6,7 @@ import {
   VisionAnnotationV1,
 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { CDFAnnotationV1 } from 'src/api/annotation/types';
-import { validateAnnotation } from 'src/api/annotation/utils';
+import { validateAnnotationV1 } from 'src/api/annotation/utils';
 import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
 import { splitListIntoChunks } from 'src/utils/generalUtils';
 import { from, lastValueFrom } from 'rxjs';
@@ -41,7 +41,7 @@ export const RetrieveAnnotationsV1 = createAsyncThunk<
         const filteredAnnotations = annotations.filter(
           (annotation: CDFAnnotationV1) => {
             try {
-              return validateAnnotation(annotation);
+              return validateAnnotationV1(annotation);
             } catch (error) {
               console.warn(
                 'Annotation is invalid, will not be visible',

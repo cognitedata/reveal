@@ -1,6 +1,6 @@
 import { AnnotationRegion } from 'src/api/vision/detectionModels/types';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
-import { enforceRegionValidity, validateAnnotation } from './utils';
+import { enforceRegionValidity, validateAnnotationV1 } from './utils';
 
 describe('enforce valid regions', () => {
   it('should cap vertex coordinates within 0 and 1', () => {
@@ -176,7 +176,7 @@ describe('should check validity of annotations', () => {
 
   it('should not accept annotations without region', () => {
     expect(
-      validateAnnotation(requiredAnnotationFields as UnsavedAnnotation)
+      validateAnnotationV1(requiredAnnotationFields as UnsavedAnnotation)
     ).toBeFalsy();
   });
 
@@ -185,37 +185,37 @@ describe('should check validity of annotations', () => {
 
   it('should not accept annotations if vertex coordinates are not within 0 and 1', async () => {
     await expect(() =>
-      validateAnnotation({
+      validateAnnotationV1({
         ...requiredAnnotationFields,
         region: invalidPoint1,
       } as UnsavedAnnotation)
     ).toThrow(coordinatesOutOfBounds);
     await expect(() =>
-      validateAnnotation({
+      validateAnnotationV1({
         ...requiredAnnotationFields,
         region: invalidPoint2,
       } as UnsavedAnnotation)
     ).toThrow(coordinatesOutOfBounds);
     await expect(() =>
-      validateAnnotation({
+      validateAnnotationV1({
         ...requiredAnnotationFields,
         region: invalidPoint3,
       } as UnsavedAnnotation)
     ).toThrow(coordinatesOutOfBounds);
     await expect(() =>
-      validateAnnotation({
+      validateAnnotationV1({
         ...requiredAnnotationFields,
         region: invalidPoint4,
       } as UnsavedAnnotation)
     ).toThrow(coordinatesOutOfBounds);
     await expect(() =>
-      validateAnnotation({
+      validateAnnotationV1({
         ...requiredAnnotationFields,
         region: invalidPoint5,
       } as UnsavedAnnotation)
     ).toThrow(coordinatesOutOfBounds);
     await expect(() =>
-      validateAnnotation({
+      validateAnnotationV1({
         ...requiredAnnotationFields,
         region: invalidPoint6,
       } as UnsavedAnnotation)
@@ -223,7 +223,7 @@ describe('should check validity of annotations', () => {
   });
   it('should not accept annotations if vertex coordinates are duplicated', async () => {
     await expect(() =>
-      validateAnnotation({
+      validateAnnotationV1({
         ...requiredAnnotationFields,
         region: duplicatedVerticesPoint,
       } as UnsavedAnnotation)
@@ -231,7 +231,7 @@ describe('should check validity of annotations', () => {
   });
   it('should accept annotations if vertex coordinates are valid', () => {
     expect(
-      validateAnnotation({
+      validateAnnotationV1({
         ...requiredAnnotationFields,
         region: desiredRectangle1,
       } as UnsavedAnnotation)

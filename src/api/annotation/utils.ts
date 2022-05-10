@@ -88,7 +88,7 @@ export function enforceRegionValidity(region: AnnotationRegion) {
   return validRegionWithoutDuplicates;
 }
 
-export function validateAnnotation(
+export function validateAnnotationV1(
   annotation: CDFAnnotationV1 | UnsavedAnnotation
 ): boolean {
   if (annotation.region) {
