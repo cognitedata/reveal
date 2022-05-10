@@ -16,7 +16,9 @@ function UserRenderTargetTestPage() {
         renderTarget.depthTexture.format = THREE.DepthFormat;
         renderTarget.depthTexture.type = THREE.UnsignedIntType;
 
-        revealManager.setRenderTarget(renderTarget);
+        // TODO christjt - 10-05-2022: The rendertarget should be added in the initialization options
+        // for the revealManager, but that is not available to be here.
+        (revealManager as any)._renderPipeline._outputRenderTarget = renderTarget;
 
         const orthographicCamera = new THREE.OrthographicCamera(
           -1,

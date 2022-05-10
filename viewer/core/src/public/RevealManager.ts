@@ -13,7 +13,7 @@ import { PointCloudManager, PointCloudNode } from '@reveal/pointclouds';
 import { SupportedModelTypes, LoadingState } from '@reveal/model-base';
 import { CadModelBudget } from '@reveal/cad-geometry-loaders';
 import { NodeAppearanceProvider } from '@reveal/cad-styling';
-import { CadNode, RenderMode, PipelineExecutor, DefaultRenderPipeline, CadMaterialManager } from '@reveal/rendering';
+import { CadNode, RenderMode, PipelineExecutor, CadMaterialManager, RenderPipelineProvider } from '@reveal/rendering';
 import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
 
@@ -30,7 +30,7 @@ export class RevealManager {
   private readonly _cadManager: CadManager;
   private readonly _pointCloudManager: PointCloudManager;
   private readonly _pipelineExecutor: PipelineExecutor;
-  private readonly _renderPipeline: DefaultRenderPipeline;
+  private readonly _renderPipeline: RenderPipelineProvider;
 
   private readonly _lastCamera = {
     position: new THREE.Vector3(NaN, NaN, NaN),
@@ -51,7 +51,7 @@ export class RevealManager {
     cadManager: CadManager,
     pointCloudManager: PointCloudManager,
     pipelineExecutor: PipelineExecutor,
-    renderPipeline: DefaultRenderPipeline,
+    renderPipeline: RenderPipelineProvider,
     materialManager: CadMaterialManager
   ) {
     this._pipelineExecutor = pipelineExecutor;
@@ -178,14 +178,6 @@ export class RevealManager {
   public render(camera: THREE.PerspectiveCamera): void {
     this._pipelineExecutor.render(this._renderPipeline, camera);
     this.resetRedraw();
-  }
-
-  /**
-   * Overrides the default rendering target.
-   * @param target New rendering target.
-   */
-  public setRenderTarget(target: THREE.WebGLRenderTarget | null): void {
-    this._renderPipeline.outputRenderTarget = target;
   }
 
   public addModel(type: 'cad', modelIdentifier: ModelIdentifier, options?: AddCadModelOptions): Promise<CadNode>;

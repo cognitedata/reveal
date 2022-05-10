@@ -23,7 +23,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
   private readonly _cadModels: IdentifiedModel[];
   private readonly _customObjects: THREE.Object3D[];
   private readonly _autoResizeOutputTarget: boolean;
-  private _outputRenderTarget: THREE.WebGLRenderTarget = null;
+  private readonly _outputRenderTarget: THREE.WebGLRenderTarget;
   private _currentRendererState: {
     autoClear: boolean;
     clearColor: THREE.Color;
@@ -45,20 +45,20 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     this._blitToScreenPass.blitEffect = blitEffect;
   }
 
-  set outputRenderTarget(renderTarget: THREE.WebGLRenderTarget) {
-    this._outputRenderTarget = renderTarget;
-  }
-
   constructor(
     materialManager: CadMaterialManager,
     scene: THREE.Scene,
     renderOptions: RenderOptions,
     cadModels?: IdentifiedModel[],
     customObjects?: THREE.Object3D[],
-    autoResizeOutputTarget = true
+    outputRenderTarget?: {
+      target: THREE.WebGLRenderTarget;
+      autoSize?: boolean;
+    }
   ) {
     this._cadScene = scene;
-    this._autoResizeOutputTarget = autoResizeOutputTarget;
+    this._autoResizeOutputTarget = outputRenderTarget?.autoSize ?? true;
+    this._outputRenderTarget = outputRenderTarget?.target ?? null;
 
     this._renderTargetData = {
       currentRenderSize: new THREE.Vector2(1, 1),

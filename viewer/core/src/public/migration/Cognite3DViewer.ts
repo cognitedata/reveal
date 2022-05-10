@@ -273,8 +273,6 @@ export class Cognite3DViewer {
       this._renderables.cadModels
     );
 
-    this.revealManager.setRenderTarget(options.renderTargetOptions?.target ?? null);
-
     this._subscription.add(
       fromEventPattern<LoadingState>(
         h => this.revealManager.on('loadingStateChanged', h),
@@ -1230,7 +1228,10 @@ function createCanvasWrapper(): HTMLElement {
 function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): RevealOptions {
   const revealOptions: RevealOptions = {
     continuousModelStreaming: viewerOptions.continuousModelStreaming,
-    autoResizeOutputRenderTarget: viewerOptions.renderTargetOptions?.autoSetSize,
+    outputRenderTarget: {
+      target: viewerOptions.renderTargetOptions?.target,
+      autoSize: viewerOptions.renderTargetOptions?.autoSetSize
+    },
     internal: {}
   };
   revealOptions.internal.cad = { sectorCuller: viewerOptions._sectorCuller };

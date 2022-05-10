@@ -5,6 +5,7 @@
 import { LoadingState } from '@reveal/model-base';
 import { RenderOptions } from '@reveal/rendering';
 import { InternalRevealCadOptions } from '@reveal/cad-model';
+import { WebGLRenderTarget } from 'three';
 
 /**
  * @property logMetrics Might be used to disable usage statistics.
@@ -15,7 +16,7 @@ export type RevealOptions = {
   logMetrics?: boolean;
   renderOptions?: RenderOptions;
   continuousModelStreaming?: boolean;
-  autoResizeOutputRenderTarget?: boolean;
+  outputRenderTarget?: { target: WebGLRenderTarget; autoSize?: boolean };
   internal?: {
     cad?: InternalRevealCadOptions;
   };
