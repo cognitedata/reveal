@@ -4,16 +4,16 @@ import { DataSetId, DocumentType, EquipmentDocument } from 'scarlet/types';
 export const getEquipmentDocuments = async (
   client: CogniteClient,
   {
-    unitName,
-    equipmentName,
+    unitId,
+    equipmentId,
   }: {
-    unitName: string;
-    equipmentName: string;
+    unitId: string;
+    equipmentId: string;
   }
 ): Promise<EquipmentDocument[]> => {
   const filesResponse = await client.files.list({
     filter: {
-      externalIdPrefix: `${unitName}_${equipmentName}`,
+      externalIdPrefix: `${unitId}_${equipmentId}`,
       uploaded: true,
       dataSetIds: [{ id: DataSetId.P66_EquipmentScans }],
     },

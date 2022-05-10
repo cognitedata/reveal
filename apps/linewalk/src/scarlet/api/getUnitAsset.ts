@@ -1,14 +1,20 @@
 import { CogniteClient } from '@cognite/sdk';
+import { Facility } from 'scarlet/types';
 
 export const getUnitAsset = async (
   client: CogniteClient,
-  { unitName }: { unitName: string }
+  { facility, unitId }: { facility?: Facility; unitId: string }
 ) => {
+  if (!facility) throw Error('Facility is not set');
+
   const unitAsset = await client.assets
     .list({
       filter: {
-        name: unitName,
+        name: unitId,
         externalIdPrefix: 'Unit',
+        metadata: {
+          facility_seqno: facility.sequenceNumber,
+        },
       },
     })
     .then((result) =>

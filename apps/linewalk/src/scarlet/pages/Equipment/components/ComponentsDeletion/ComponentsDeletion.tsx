@@ -1,6 +1,5 @@
 import { Button, Checkbox } from '@cognite/cogs.js';
 import { useEffect, useState } from 'react';
-import { useComponentName } from 'scarlet/hooks';
 import { EquipmentComponent, EquipmentComponentGroup } from 'scarlet/types';
 
 import * as Styled from './style';
@@ -20,7 +19,6 @@ export const ComponentsDeletion = ({
   loading,
   onDelete,
 }: ComponentsDeletionProps) => {
-  const getComponentName = useComponentName();
   const [selectedComponentIds, setSelectedComponentIds] = useState<string[]>(
     []
   );
@@ -67,7 +65,7 @@ export const ComponentsDeletion = ({
               >
                 <Styled.ComponentContent>
                   <Styled.ComponentName className="cogs-body-3 strong">
-                    {getComponentName(component)}
+                    {component.name}
                   </Styled.ComponentName>
                   <Styled.ComponentFields className="cogs-micro">
                     {component.componentElements.length} fields

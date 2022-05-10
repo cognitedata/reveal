@@ -7,11 +7,14 @@ import {
   AppActionType,
   DataElementState,
   EquipmentData,
+  Facility,
 } from 'scarlet/types';
 
 export const useSaveEquipment = (
-  unitName: string,
-  equipmentName: string,
+  facility: Facility,
+  unitId: string,
+  equipmentId: string,
+  skipModifiedBy: boolean,
   saveApiState: APIState<EquipmentData>,
   dispatch: Dispatch<AppAction>
 ) => {
@@ -28,11 +31,14 @@ export const useSaveEquipment = (
       equipment.isApproved = isApproved;
     }
 
+    const equipmentToSave = getEquipmentWithoutUnapprovedDetections(equipment);
+
     saveEquipment(client!, {
-      unitName,
-      equipmentName,
-      equipment,
-      authState: authState!,
+      facility,
+      unitId,
+      equipmentId,
+      equipment: equipmentToSave,
+      modifiedBy: !skipModifiedBy ? authState?.email : undefined,
     })
       .then(() => {
         dispatch({
@@ -53,7 +59,7 @@ export const useSaveEquipment = (
   }, [saveApiState.data]);
 };
 
-export const getIsApproved = (equipment: EquipmentData) => {
+const getIsApproved = (equipment: EquipmentData) => {
   return Boolean(
     equipment.isApproved &&
       equipment.equipmentElements.every(
@@ -67,3 +73,20 @@ export const getIsApproved = (equipment: EquipmentData) => {
       )
   );
 };
+
+const getEquipmentWithoutUnapprovedDetections = (
+  equipment: EquipmentData
+): EquipmentData => ({
+  ...equipment,
+  equipmentElements: equipment.equipmentElements.map((dataElement) => ({
+    ...dataElement,
+    detections: dataElement.detections.filter((detection) => detection.state),
+  })),
+  components: equipment.components.map((component) => ({
+    ...component,
+    componentElements: component.componentElements.map((dataElement) => ({
+      ...dataElement,
+      detections: dataElement.detections.filter((detection) => detection.state),
+    })),
+  })),
+});

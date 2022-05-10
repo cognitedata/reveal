@@ -1,30 +1,33 @@
-import { AuthenticatedUser } from '@cognite/auth-utils';
 import { CogniteClient } from '@cognite/sdk';
-import { DataSetId, EquipmentData } from 'scarlet/types';
+import { DataSetId, EquipmentData, Facility } from 'scarlet/types';
 import { getEquipmentProgress } from 'scarlet/utils';
 import config from 'utils/config';
-
-const isDevelopment = config.env === 'development';
 
 export const saveEquipment = async (
   client: CogniteClient,
   {
-    unitName,
-    equipmentName,
+    facility,
+    unitId,
+    equipmentId,
     equipment,
-    authState,
+    modifiedBy = '',
   }: {
-    unitName: string;
-    equipmentName: string;
+    facility?: Facility;
+    unitId: string;
+    equipmentId: string;
     equipment: EquipmentData;
-    authState: AuthenticatedUser;
+    modifiedBy?: string;
   }
 ): Promise<boolean> => {
-  const fileParts = [unitName, equipmentName, 'state'];
+  if (!facility) throw Error('Facility is not set');
 
-  if (isDevelopment) {
-    fileParts.unshift('dev');
-  }
+  const fileParts = [
+    config.env,
+    facility.sequenceNumber,
+    unitId,
+    equipmentId,
+    'state',
+  ];
 
   const id = fileParts.join('_');
 
@@ -36,11 +39,12 @@ export const saveEquipment = async (
         mimeType: 'application/json',
         dataSetId: DataSetId.P66_ScarletViewState,
         metadata: {
-          unitName,
-          equipmentName,
-          completed: equipment.isApproved ? 'Y' : 'N',
+          env: config.env,
+          facilitySeqNo: facility.sequenceNumber,
+          unitId,
+          equipmentId,
           progress: getEquipmentProgress(equipment)?.toString() || '',
-          modifiedBy: authState.email ?? '',
+          modifiedBy,
         },
         source: 'p66-scarlet-view',
       },

@@ -1,4 +1,5 @@
 export enum RoutePath {
-  EQUIPMENT_LIST = '/scarlet/:unitName',
-  EQUIPMENT = '/scarlet/:unitName/:equipmentName',
+  FACILITY = '/scarlet/:facility',
+  EQUIPMENT_LIST = '/scarlet/:facility/:unitId',
+  EQUIPMENT = '/scarlet/:facility/:unitId/:equipmentId',
 }

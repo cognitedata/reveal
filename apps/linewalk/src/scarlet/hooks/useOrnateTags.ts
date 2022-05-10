@@ -7,6 +7,7 @@ import {
   DetectionState,
   OrnateTag,
 } from 'scarlet/types';
+import { isSameAnnotation } from 'scarlet/utils';
 
 import { useAppState, useDataPanelState } from '.';
 
@@ -41,58 +42,77 @@ export const useOrnateTags = (): {
     [equipment.data, visibleDataElement]
   );
 
-  const tags: OrnateTag[] = useMemo(() => {
-    let result: OrnateTag[] = [];
+  const { tags, activeTag }: { tags: OrnateTag[]; activeTag?: OrnateTag } =
+    useMemo(() => {
+      let allTags: OrnateTag[] = [];
 
-    dataElements?.forEach((dataElement) => {
-      dataElement.detections
-        ?.filter(
-          (detection) =>
-            detection.boundingBox &&
-            detection.documentExternalId &&
-            detection.state !== DetectionState.OMITTED
-        )
-        .forEach((detection) => {
-          if (detection.connectedId) {
-            if (
-              visibleDataElement &&
-              dataElement.id === visibleDataElement?.id
-            ) {
-              result = result.filter(
-                (tag) =>
-                  !tag.detection.connectedId ||
-                  tag.detection.connectedId !== detection.connectedId
-              );
-            } else if (
-              result.some(
-                (tag) => tag.detection.connectedId === detection.connectedId
-              )
-            ) {
-              return;
+      dataElements?.forEach((dataElement) => {
+        dataElement.detections
+          ?.filter(
+            (detection) =>
+              detection.boundingBox &&
+              detection.documentExternalId &&
+              detection.state !== DetectionState.OMITTED
+          )
+          .forEach((detection) => {
+            if (detection.connectedId) {
+              if (
+                visibleDataElement &&
+                dataElement.id === visibleDataElement?.id
+              ) {
+                allTags = allTags.filter(
+                  (tag) =>
+                    !tag.detection.connectedId ||
+                    tag.detection.connectedId !== detection.connectedId
+                );
+              } else if (
+                allTags.some(
+                  (tag) => tag.detection.connectedId === detection.connectedId
+                )
+              ) {
+                return;
+              }
             }
-          }
 
-          const tag = getOrnateTag({ detection, dataElement, activeDetection });
-          result.push(tag);
-        });
-    });
-
-    if (newDetection && visibleDataElement) {
-      const tag = getOrnateTag({
-        detection: newDetection,
-        dataElement: visibleDataElement,
-        activeDetection,
+            const tag = getOrnateTag({
+              detection,
+              dataElement,
+              activeDetection,
+            });
+            allTags.push(tag);
+          });
       });
-      result.push(tag);
-    }
 
-    return result;
-  }, [dataElements, activeDetection, newDetection]);
+      if (newDetection && visibleDataElement) {
+        const tag = getOrnateTag({
+          detection: newDetection,
+          dataElement: visibleDataElement,
+          activeDetection,
+        });
+        allTags.push(tag);
+      }
 
-  const activeTag = useMemo(() => {
-    const tag = tags.find((tag) => tag.isActive);
-    return tag && (JSON.parse(JSON.stringify(tag)) as OrnateTag);
-  }, [tags, activeDetection]);
+      const tag = allTags.find((tag) => tag.isActive);
+      const activeTag = tag && (JSON.parse(JSON.stringify(tag)) as OrnateTag);
+
+      allTags.sort((a) => (!a.detection.state ? -1 : 1));
+
+      const tags = [activeTag, ...allTags].filter(
+        (tag, index, self) =>
+          tag &&
+          self.findIndex((item) =>
+            isSameAnnotation(
+              item?.detection.boundingBox,
+              tag.detection.boundingBox
+            )
+          ) === index
+      ) as OrnateTag[];
+
+      return {
+        tags,
+        activeTag,
+      };
+    }, [dataElements, activeDetection, newDetection]);
 
   return { tags, activeTag };
 };

@@ -1,11 +1,7 @@
 import { useMemo } from 'react';
 import { CellProps } from 'react-table';
 import { Checkbox, Icon, Table } from '@cognite/cogs.js';
-import {
-  useAppContext,
-  useComponentName,
-  useDataElementConfig,
-} from 'scarlet/hooks';
+import { useAppContext, useDataElementConfig } from 'scarlet/hooks';
 import { DataElement, DataElementOrigin, Detection } from 'scarlet/types';
 import {
   getDataElementConfig,
@@ -40,7 +36,6 @@ export const ConnectedElements = ({
   onChange,
 }: ConnectedElementsProps) => {
   const { appState } = useAppContext();
-  const geComponentName = useComponentName();
   const dataElementConfig = useDataElementConfig(dataElement);
 
   const defaultSelectedIds = useMemo(
@@ -72,7 +67,7 @@ export const ConnectedElements = ({
             id: item.id,
             label: itemElementConfig?.label,
             type: getDataElementTypeLabel(item),
-            componentName: component ? geComponentName(component) : '-',
+            componentName: component ? component.name : '-',
             isCurrentDataElement,
             sortBy: isCurrentDataElement ? 0 : 1,
             isSelectDisabled: isCurrentDataElement,

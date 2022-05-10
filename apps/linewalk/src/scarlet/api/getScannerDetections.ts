@@ -4,12 +4,12 @@ import { DataSetId, ScannerDetection } from 'scarlet/types';
 
 export const getScannerDetections = async (
   client: CogniteClient,
-  { unitName, equipmentName }: { unitName: string; equipmentName: string }
+  { unitId, equipmentId }: { unitId: string; equipmentId: string }
 ): Promise<ScannerDetection[]> => {
   const file = await client.files
     .list({
       filter: {
-        externalIdPrefix: `${unitName}_${equipmentName}`,
+        externalIdPrefix: `${unitId}_${equipmentId}`,
         dataSetIds: [{ id: DataSetId.P66_ScarletScannerResults }],
       },
     })

@@ -1,7 +1,7 @@
-import { Metadata } from '@cognite/sdk';
+import { Asset } from '@cognite/sdk';
 
 export type PCMSData = {
   equipmentAssetExternalId?: string;
-  components: Metadata[];
-  equipment?: Metadata;
+  components: Asset[];
+  equipment?: Asset;
 };

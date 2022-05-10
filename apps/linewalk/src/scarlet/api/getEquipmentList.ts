@@ -1,19 +1,30 @@
 import { CogniteClient } from '@cognite/sdk';
-import { DataSetId, EquipmentListItem, EquipmentStatus } from 'scarlet/types';
+import {
+  DataSetId,
+  EquipmentListItem,
+  EquipmentStatus,
+  Facility,
+} from 'scarlet/types';
 import { getEquipmentType, getEquipmentTypeLabel } from 'scarlet/utils';
 import config from 'utils/config';
 
 import { getUnitAsset } from '.';
 
-const isDevelopment = config.env === 'development';
-
 export const getEquipmentList = async (
   client: CogniteClient,
-  { unitName }: { unitName: string }
+  { facility, unitId }: { facility?: Facility; unitId: string }
 ): Promise<EquipmentListItem[]> => {
+  if (!facility) throw Error('Facility is not set');
+
   let equipments: EquipmentListItem[] = [];
-  const equipmentStates = await getEquipmentStates(client, { unitName });
-  const pcmsEquipmentIds = await getPCMSEquipmentIds(client, { unitName });
+  const equipmentStates = await getEquipmentStates(client, {
+    facility,
+    unitId,
+  });
+  const pcmsEquipmentIds = await getPCMSEquipmentIds(client, {
+    facility,
+    unitId,
+  });
 
   equipments = pcmsEquipmentIds
     .filter((item) => /^\d+-/.test(item))
@@ -41,20 +52,18 @@ export const getEquipmentList = async (
 
 const getEquipmentStates = async (
   client: CogniteClient,
-  { unitName }: { unitName: string }
+  { facility, unitId }: { facility: Facility; unitId: string }
 ) => {
   const equipmentStates: Record<string, any> = {};
 
-  const fileParts = [unitName];
-  if (isDevelopment) {
-    fileParts.unshift('dev');
-  }
-  const externalIdPrefix = `${fileParts.join('_')}_`;
-
   let list = await client.files.list({
     filter: {
-      externalIdPrefix,
       dataSetIds: [{ id: DataSetId.P66_ScarletViewState }],
+      metadata: {
+        env: config.env,
+        facilitySeqNo: facility.sequenceNumber,
+        unitId,
+      },
     },
     limit: 1000,
   });
@@ -64,24 +73,26 @@ const getEquipmentStates = async (
   do {
     if (next) list = await next(); // eslint-disable-line no-await-in-loop
     list.items.forEach((item) => {
-      if (item.metadata?.equipmentName) {
-        equipmentStates[item.metadata.equipmentName] = item.metadata;
+      if (item.metadata?.equipmentId) {
+        equipmentStates[item.metadata.equipmentId] = item.metadata;
       }
     });
     next = list.next;
   } while (list.next);
+
+  // await client.files.delete(list.items.map((item) => ({ id: item.id })));
 
   return equipmentStates;
 };
 
 const getPCMSEquipmentIds = async (
   client: CogniteClient,
-  { unitName }: { unitName: string }
+  { facility, unitId }: { facility: Facility; unitId: string }
 ) => {
   const equipments: string[] = [];
 
   try {
-    const unitAsset = await getUnitAsset(client, { unitName });
+    const unitAsset = await getUnitAsset(client, { unitId, facility });
     if (!unitAsset) return equipments;
 
     let list = await client.assets.list({
@@ -102,7 +113,7 @@ const getPCMSEquipmentIds = async (
     } while (list.next);
   } catch (e) {
     // not critical data to fetch
-    console.error(`Failed to load equipment ids for unit: ${unitName}`, e);
+    console.error(`Failed to load equipment ids for unit: ${unitId}`, e);
   }
 
   return equipments;

@@ -1,7 +1,7 @@
 import { EquipmentElementKey } from 'scarlet/types';
 
 export const sortedKeys = [
-  EquipmentElementKey.UNIT,
+  EquipmentElementKey.UNIT_ID,
   EquipmentElementKey.EQUIP_ID,
   EquipmentElementKey.EQUIP_TYPE_DESCRIPTION,
   EquipmentElementKey.EQUIP_TYPE,

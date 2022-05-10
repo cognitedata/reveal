@@ -12,7 +12,7 @@ import {
 import { useAppDispatch, useAppState } from '.';
 
 export const useAddComponent = () => {
-  const { equipment, equipmentConfig } = useAppState();
+  const { equipment, equipmentId, equipmentConfig } = useAppState();
   const appDispatch = useAppDispatch();
   const equipmentType = equipment.data?.type;
 
@@ -48,6 +48,7 @@ export const useAddComponent = () => {
 
       const component: EquipmentComponent = {
         id: componentId,
+        name: `${equipmentId}-${componentId.substring(0, 7)}`,
         type: componentType,
         componentElements,
       };

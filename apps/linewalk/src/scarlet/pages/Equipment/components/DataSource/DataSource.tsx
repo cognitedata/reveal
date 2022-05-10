@@ -67,6 +67,7 @@ export const DataSource = ({
 
   const externalSourceId = `data-field-source-${detection!.id}`;
   const inputId = `data-field-input-${detection!.id}`;
+  const editable = !isPCMS && detection.type !== DetectionType.MAL;
 
   const removeDetection = () => {
     if (isDraft) {
@@ -225,12 +226,12 @@ export const DataSource = ({
             type={dataElementConfig!.type}
             unit={dataElementConfig!.unit}
             values={dataElementConfig!.values}
-            disabled={isPCMS}
+            disabled={!editable}
           />
 
           {!isPCMS && (
             <Styled.ButtonContainer>
-              {detection?.state === DetectionState.APPROVED ? (
+              {editable && detection?.state === DetectionState.APPROVED && (
                 <Styled.Button
                   type="primary"
                   htmlType="submit"
@@ -241,7 +242,8 @@ export const DataSource = ({
                 >
                   Save
                 </Styled.Button>
-              ) : (
+              )}
+              {detection?.state !== DetectionState.APPROVED && (
                 <Styled.Button
                   type="primary"
                   htmlType="submit"
@@ -265,49 +267,52 @@ export const DataSource = ({
             </Styled.ButtonContainer>
           )}
 
-          <Styled.Delimiter />
+          {!isDraft && (
+            <>
+              <Styled.Delimiter />
+              <Styled.PrimaryValueContainer>
+                <div>
+                  <Styled.PrimaryValueLabel className="cogs-detail">
+                    Set as primary value
+                  </Styled.PrimaryValueLabel>
+                  <Checkbox
+                    name={`detection-${detection?.id}`}
+                    onChange={(isPrimary: boolean) =>
+                      updatePrimaryValue(values, isPrimary)
+                    }
+                    checked={isPrimary}
+                    disabled={
+                      (!isPCMS && dirty) ||
+                      isActionsDisabled ||
+                      (!isPCMS && detection?.state !== DetectionState.APPROVED)
+                    }
+                  >
+                    <span className="cogs-detail">For this field</span>
+                    {isPrimaryLoading && (
+                      <Styled.LoaderContainer>
+                        <Icon type="Loader" />
+                      </Styled.LoaderContainer>
+                    )}
+                  </Checkbox>
+                </div>
 
-          <Styled.PrimaryValueContainer>
-            <div>
-              <Styled.PrimaryValueLabel className="cogs-detail">
-                Set as primary value
-              </Styled.PrimaryValueLabel>
-              <Checkbox
-                name={`detection-${detection?.id}`}
-                onChange={(isPrimary: boolean) =>
-                  updatePrimaryValue(values, isPrimary)
-                }
-                checked={isPrimary}
-                disabled={
-                  (!isPCMS && dirty) ||
-                  isActionsDisabled ||
-                  (!isPCMS && detection?.state !== DetectionState.APPROVED)
-                }
-              >
-                <span className="cogs-detail">For this field</span>
-                {isPrimaryLoading && (
-                  <Styled.LoaderContainer>
-                    <Icon type="Loader" />
-                  </Styled.LoaderContainer>
+                {hasConnectedElements && (
+                  <Button
+                    type="tertiary"
+                    htmlType="button"
+                    icon="Edit"
+                    onClick={() => openConnectedModal(values)}
+                    aria-label="Open connected data-elements"
+                    disabled={
+                      (!isPCMS && dirty) ||
+                      isActionsDisabled ||
+                      (!isPCMS && detection?.state !== DetectionState.APPROVED)
+                    }
+                  />
                 )}
-              </Checkbox>
-            </div>
-
-            {hasConnectedElements && (
-              <Button
-                type="tertiary"
-                htmlType="button"
-                icon="Edit"
-                onClick={() => openConnectedModal(values)}
-                aria-label="Open connected data-elements"
-                disabled={
-                  dirty ||
-                  isActionsDisabled ||
-                  (!isPCMS && detection?.state !== DetectionState.APPROVED)
-                }
-              />
-            )}
-          </Styled.PrimaryValueContainer>
+              </Styled.PrimaryValueContainer>
+            </>
+          )}
 
           <DataSourceSavingHelper
             dataElementKey={dataElement.key}

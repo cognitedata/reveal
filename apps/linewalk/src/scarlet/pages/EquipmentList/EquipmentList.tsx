@@ -1,12 +1,13 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import { v4 as uuid } from 'uuid';
 import { Table, Input, Graphic } from '@cognite/cogs.js';
 import debounce from 'lodash/debounce';
 import { useHistory, useParams, generatePath } from 'react-router-dom';
 import { getEquipmentList } from 'scarlet/api';
-import { useApi } from 'scarlet/hooks';
+import { useApi, useFacility } from 'scarlet/hooks';
 import { RoutePath } from 'scarlet/routes';
 
-import { TopBar } from './components';
+import { ExportBar, TopBar } from './components';
 import * as Styled from './style';
 import { ColumnAccessor, EquipmentListItem } from './types';
 import {
@@ -17,13 +18,17 @@ import {
 } from './utils';
 
 export const EquipmentList = () => {
-  const { unitName } = useParams<{ unitName: string }>();
+  const { unitId } = useParams<{ unitId: string }>();
   const history = useHistory();
   const TableContainerRef = useRef<HTMLDivElement>(null);
+  const [tableKeyToReset, setTableKeyToReset] = useState(uuid());
+
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const facility = useFacility();
 
   const { data, loading, error } = useApi<EquipmentListItem[]>(
     getEquipmentList,
-    { unitName }
+    { facility, unitId }
   );
 
   const [search, setSearch] = useState('');
@@ -55,7 +60,7 @@ export const EquipmentList = () => {
     if (tableContainer) {
       const height = tableContainer.offsetHeight;
       const pagination = 60;
-      const rowHeight = 54;
+      const rowHeight = 50;
       let pageSize = Math.floor((height - pagination - rowHeight) / rowHeight);
       if (pageSize < 5) {
         pageSize = 5;
@@ -71,9 +76,19 @@ export const EquipmentList = () => {
     }));
   }, []);
 
+  const onSelectionChange = useCallback((items: EquipmentListItem[]) => {
+    setSelectedIds((selectedIds) =>
+      selectedIds.length === items.length
+        ? selectedIds
+        : items.map((item) => item.id)
+    );
+  }, []);
+
+  if (!facility) return null;
+
   return (
     <Styled.Container>
-      <TopBar unitName={unitName} />
+      <TopBar unitId={unitId} />
 
       {error ? (
         <Styled.ContentWrapper empty>
@@ -106,6 +121,7 @@ export const EquipmentList = () => {
           <Styled.TableContainer isLoading={loading} ref={TableContainerRef}>
             {pageSize && (
               <Table<EquipmentListItem>
+                key={tableKeyToReset}
                 dataSource={loading ? skeletonList : equipmentList || []}
                 pageSize={pageSize}
                 columns={[
@@ -139,8 +155,9 @@ export const EquipmentList = () => {
                     : ({ original: { id } }) => {
                         history.push(
                           generatePath(RoutePath.EQUIPMENT, {
-                            unitName,
-                            equipmentName: id,
+                            facility: facility!.path,
+                            unitId,
+                            equipmentId: id,
                           })
                         );
                       }
@@ -151,9 +168,20 @@ export const EquipmentList = () => {
                   width: 300,
                   maxWidth: 500,
                 }}
+                onSelectionChange={onSelectionChange}
+                defaultSelectedIds={{}}
               />
             )}
           </Styled.TableContainer>
+          {Boolean(selectedIds.length) && (
+            <ExportBar
+              equipmentIds={selectedIds}
+              onUnselect={() => {
+                setSelectedIds([]);
+                setTableKeyToReset(uuid());
+              }}
+            />
+          )}
         </Styled.ContentWrapper>
       )}
     </Styled.Container>

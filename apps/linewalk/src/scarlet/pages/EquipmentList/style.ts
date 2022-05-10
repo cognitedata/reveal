@@ -9,10 +9,12 @@ export const Container = styled.div`
 `;
 
 export const ContentWrapper = styled.div<{ empty?: boolean }>`
-  padding: 32px;
+  margin: 32px 32px 0;
+  padding-bottom: 32px;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  position: relative;
 
   ${({ empty }) =>
     empty &&
@@ -40,10 +42,26 @@ export const LoaderContainer = styled.div`
 export const TableContainer = styled.div<{ isLoading: boolean }>`
   flex-grow: 1;
 
-  td {
-    padding: 10px;
+  td,
+  th {
+    padding: 10px 16px 10px 0;
     display: flex;
     align-items: center;
+
+    &:first-child {
+      padding-left: 16px;
+      flex: 50 0 auto !important;
+      min-width: 0 !important;
+      width: 48px !important;
+    }
+  }
+
+  th {
+    padding: 13px 16px 13px 0;
+
+    span {
+      line-height: 0;
+    }
   }
 `;
 

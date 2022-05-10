@@ -1,6 +1,6 @@
 import { Button, Skeleton } from '@cognite/cogs.js';
 import { generatePath, useHistory } from 'react-router-dom';
-import { useAppState } from 'scarlet/hooks';
+import { useAppState, useFacility } from 'scarlet/hooks';
 import { RoutePath } from 'scarlet/routes';
 
 import { EquipmentStateBar } from '..';
@@ -8,15 +8,17 @@ import { EquipmentStateBar } from '..';
 import * as Styled from './style';
 
 type TopBarProps = {
-  unitName: string;
-  equipmentName: string;
+  unitId: string;
+  equipmentId: string;
 };
 
-export const TopBar = ({ unitName, equipmentName }: TopBarProps) => {
+export const TopBar = ({ unitId, equipmentId }: TopBarProps) => {
   const { documents } = useAppState();
   const history = useHistory();
+  const facility = useFacility();
   const equipmentListPath = generatePath(RoutePath.EQUIPMENT_LIST, {
-    unitName,
+    facility: facility!.path,
+    unitId,
   });
 
   return (
@@ -24,7 +26,7 @@ export const TopBar = ({ unitName, equipmentName }: TopBarProps) => {
       <Button icon="ArrowLeft" onClick={() => history.push(equipmentListPath)}>
         Dashboard
       </Button>
-      <Styled.Title level={3}>{equipmentName}</Styled.Title>
+      <Styled.Title level={3}>{equipmentId}</Styled.Title>
       {documents.loading && <Skeleton.Rectangle width="90px" height="24px" />}
       {!(documents.loading || documents.error) && (
         <Styled.DocumentsAmount>

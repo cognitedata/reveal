@@ -40,5 +40,5 @@ export enum EquipmentElementKey {
   SERVICE = 'service',
   SYSTEM = 'system',
   U1_ON_FILE_YN = 'u1_on_file_yn',
-  UNIT = 'unit',
+  UNIT_ID = 'unit_id',
 }

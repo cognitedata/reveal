@@ -3,23 +3,30 @@ import { useParams } from 'react-router';
 import { toast, ToastContainer } from '@cognite/cogs.js';
 import { transformEquipmentData } from 'scarlet/transformations';
 import { AppActionType } from 'scarlet/types';
-import { useApi, useAppContext } from 'scarlet/hooks';
+import { useApi, useAppContext, useFacility } from 'scarlet/hooks';
 import { DataPanelProvider } from 'scarlet/contexts';
 import {
   getEquipmentConfig,
   getEquipmentDocuments,
+  getEquipmentMAL,
   getEquipmentPCMS,
   getEquipmentState,
   getScannerDetections,
 } from 'scarlet/api';
-import { getEquipmentType, getEquipmentTypeLabel } from 'scarlet/utils';
+import {
+  findU1Document,
+  getEquipmentType,
+  getEquipmentTypeLabel,
+  preApproveDataElements,
+} from 'scarlet/utils';
 
 import { BreadcrumbBar, PageBody } from './components';
 import * as Styled from './style';
 
 export const Equipment = () => {
-  const { unitName, equipmentName } =
-    useParams<{ unitName: string; equipmentName: string }>();
+  const facility = useFacility();
+  const { unitId, equipmentId } =
+    useParams<{ unitId: string; equipmentId: string }>();
 
   const { appState, appDispatch } = useAppContext();
 
@@ -30,27 +37,34 @@ export const Equipment = () => {
   );
 
   const scannerDetectionsQuery = useApi(getScannerDetections, {
-    unitName,
-    equipmentName,
+    unitId,
+    equipmentId,
   });
   const pcmsQuery = useApi(getEquipmentPCMS, {
-    unitName,
-    equipmentName,
+    facility,
+    unitId,
+    equipmentId,
+  });
+  const malQuery = useApi(getEquipmentMAL, {
+    unitId,
+    equipmentId,
   });
   const documentsQuery = useApi(getEquipmentDocuments, {
-    unitName,
-    equipmentName,
+    unitId,
+    equipmentId,
   });
   const equipmentStateQuery = useApi(getEquipmentState, {
-    unitName,
-    equipmentName,
+    facility,
+    unitId,
+    equipmentId,
   });
 
   useEffect(() => {
     appDispatch({
       type: AppActionType.INIT_EQUIPMENT,
-      unitName,
-      equipmentName,
+      facility: facility!,
+      unitId,
+      equipmentId,
     });
 
     return () => {
@@ -65,32 +79,50 @@ export const Equipment = () => {
       configQuery.loading ||
       scannerDetectionsQuery.loading ||
       pcmsQuery.loading ||
+      malQuery.loading ||
       equipmentStateQuery.loading ||
       documentsQuery.loading;
 
-    const equipmentData = loading
-      ? undefined
-      : transformEquipmentData({
-          config: configQuery.data,
-          scannerDetections: scannerDetectionsQuery.data,
-          equipmentState: equipmentStateQuery.data,
-          pcms: pcmsQuery.data,
-          type: getEquipmentType(equipmentName),
-          documents: documentsQuery.data,
-        });
+    const error =
+      configQuery.error || equipmentStateQuery.error || pcmsQuery.error;
+
+    const equipmentData =
+      loading || error
+        ? undefined
+        : transformEquipmentData({
+            config: configQuery.data!,
+            scannerDetections: scannerDetectionsQuery.data,
+            equipmentState: equipmentStateQuery.data,
+            pcms: pcmsQuery.data!,
+            mal: malQuery.data,
+            type: getEquipmentType(equipmentId),
+            documents: documentsQuery.data,
+          });
+
+    let isInitialSave = false;
+
+    if (equipmentData && !equipmentStateQuery.data) {
+      const hasU1Document = Boolean(findU1Document(documentsQuery.data));
+
+      preApproveDataElements(equipmentData, hasU1Document, unitId);
+
+      isInitialSave = true;
+    }
 
     appDispatch({
       type: AppActionType.SET_EQUIPMENT,
       equipment: {
         data: equipmentData,
         loading,
-        error: configQuery.error,
+        error,
       },
+      isInitialSave,
     });
   }, [
     configQuery,
     scannerDetectionsQuery,
     pcmsQuery,
+    malQuery,
     documentsQuery,
     equipmentStateQuery,
   ]);
@@ -99,11 +131,6 @@ export const Equipment = () => {
     if (pcmsQuery.error) {
       toast.error('Failed to load pcms data');
     }
-
-    appDispatch({
-      type: AppActionType.SET_PCMS,
-      pcms: pcmsQuery,
-    });
   }, [pcmsQuery]);
 
   useEffect(() => {
@@ -134,15 +161,17 @@ export const Equipment = () => {
     }
   }, [scannerDetectionsQuery.error]);
 
+  if (!facility) return null;
+
   return (
     <Styled.Container>
       <BreadcrumbBar
-        unitName={unitName}
-        equipmentType={getEquipmentTypeLabel(getEquipmentType(equipmentName))}
+        unitId={unitId}
+        equipmentType={getEquipmentTypeLabel(getEquipmentType(equipmentId))}
       />
 
       <DataPanelProvider>
-        <PageBody unitName={unitName} equipmentName={equipmentName} />
+        <PageBody unitId={unitId} equipmentId={equipmentId} />
       </DataPanelProvider>
       <ToastContainer position="bottom-left" />
     </Styled.Container>

@@ -4,6 +4,7 @@ export enum DetectionType {
   SCANNER = 'scanner',
   MANUAL = 'manual',
   PCMS = 'pcms',
+  MAL = 'mal',
   MANUAL_INPUT = 'manual-input',
   MANUAL_EXTERNAL = 'manuel-external',
 }
@@ -21,7 +22,6 @@ export type Detection = Partial<Annotation> & {
   externalSource?: string;
   state?: DetectionState;
   isPrimary?: boolean;
-  isModified?: boolean;
   scannerComponent?: {
     id: string;
     type: EquipmentComponentType;

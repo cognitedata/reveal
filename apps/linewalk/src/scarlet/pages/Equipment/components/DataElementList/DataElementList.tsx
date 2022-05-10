@@ -1,7 +1,8 @@
 import { Button } from '@cognite/cogs.js';
 import { useMemo, useState } from 'react';
+import { useAppState } from 'scarlet/hooks';
 import { DataElement } from 'scarlet/types';
-import { getDataElementValue } from 'scarlet/utils';
+import { getDataElementConfig, getDataElementValue } from 'scarlet/utils';
 
 import {
   DataElement as DataElementComponent,
@@ -22,7 +23,6 @@ type DataElementListProps = {
   data?: DataElement[];
   loading: boolean;
   skeletonAmount: number;
-  sortedKeys: string[];
   partial?: boolean;
 };
 
@@ -30,9 +30,9 @@ export const DataElementList = ({
   data,
   loading,
   skeletonAmount,
-  sortedKeys,
   partial = false,
 }: DataElementListProps) => {
+  const { equipmentConfig } = useAppState();
   const sortedList = useMemo(
     () =>
       (data &&
@@ -40,8 +40,11 @@ export const DataElementList = ({
           .map((dataElement) => ({
             dataElement,
             value: getDataElementValue(dataElement),
+            label:
+              getDataElementConfig(equipmentConfig.data, dataElement)?.label ||
+              dataElement.key,
           }))
-          .sort(sortDataElements(sortedKeys))
+          .sort(sortDataElements)
           .map((item) => item.dataElement)) ||
       [],
     [data]

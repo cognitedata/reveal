@@ -1,7 +1,7 @@
 import { EquipmentType } from 'scarlet/types';
 
-export const getEquipmentType = (equipmentName: string) => {
-  const typeId = equipmentName.split('-')[0];
+export const getEquipmentType = (equipmentId: string) => {
+  const typeId = equipmentId.split('-')[0];
   switch (typeId) {
     case '24':
       return EquipmentType.AIR_COOLER;

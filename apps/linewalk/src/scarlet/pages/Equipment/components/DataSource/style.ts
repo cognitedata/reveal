@@ -17,6 +17,7 @@ export const Button = styled(CogsButton)`
       color: var(--cogs-red-2);
       border-color: currentColor;
       flex-grow: 0;
+      margin-left: auto;
     `}
 `;
 

@@ -1,4 +1,4 @@
-import { Metadata } from '@cognite/sdk';
+import { Asset } from '@cognite/sdk';
 import { v4 as uuid } from 'uuid';
 import {
   DataElement,
@@ -10,20 +10,21 @@ import {
   DataElementState,
   PCMSData,
   EquipmentDocument,
-  DocumentType,
   DetectionType,
-  EquipmentComponent,
-  EquipmentComponentType,
   DetectionState,
   ScannerDetection,
+  EquipmentComponent,
+  EquipmentComponentType,
+  MALData,
 } from 'scarlet/types';
-import { isSameScannerDetection } from 'scarlet/utils';
+import { findU1Document } from 'scarlet/utils';
 
 export const transformEquipmentData = ({
   config,
   scannerDetections = [],
   equipmentState,
   pcms,
+  mal,
   documents = [],
   type,
 }: {
@@ -31,13 +32,14 @@ export const transformEquipmentData = ({
   scannerDetections?: ScannerDetection[];
   equipmentState?: EquipmentData;
   pcms?: PCMSData;
+  mal?: MALData;
   documents?: EquipmentDocument[];
   type?: EquipmentType;
 }): EquipmentData | undefined => {
   if (!type || !config || !config.equipmentTypes[type]) return undefined;
 
-  const U1Document = getU1Document(documents);
-  const transformedScannerDetections = transformScannerDetections(
+  const U1Document = findU1Document(documents);
+  const transformedScannerDetections = scannerDetectionsWithExternalId(
     scannerDetections,
     U1Document?.externalId
   );
@@ -47,37 +49,60 @@ export const transformEquipmentData = ({
     config,
     transformedScannerDetections,
     equipmentState?.equipmentElements,
-    pcms?.equipment
+    pcms?.equipment,
+    mal
   );
 
-  let components = equipmentState?.components;
-  if (!components?.length) {
-    components = getInitializedEquipmentComponents(
-      type,
-      config,
-      transformedScannerDetections,
-      pcms?.components
-    );
-  }
-  fixUndefinedComponentElementsId(components);
+  const equipmentComponents = getEquipmentComponents(
+    type,
+    config,
+    transformedScannerDetections,
+    equipmentState?.components,
+    pcms?.components
+  );
 
   const created = equipmentState?.created || Date.now();
   const isApproved = equipmentState?.isApproved || false;
 
-  return { created, isApproved, type, equipmentElements, components };
+  return {
+    created,
+    isApproved,
+    type,
+    equipmentElements,
+    components: equipmentComponents,
+  };
 };
+
+const scannerDetectionsWithExternalId = (
+  detections: ScannerDetection[],
+  documentExternalId?: string
+) =>
+  documentExternalId
+    ? detections.map((item) => ({
+        ...item,
+        documentExternalId: item.documentExternalId || documentExternalId,
+      }))
+    : detections;
 
 const getEquipmentElements = (
   type: EquipmentType,
   config: EquipmentConfig,
   scannerDetections: ScannerDetection[] = [],
-  savedElements: DataElement[] = [],
-  pcms: { [key: string]: string } = {}
+  equipmentStateElements: DataElement[] = [],
+  pcms?: Asset,
+  mal?: MALData
 ): DataElement[] => {
-  const { equipmentElementKeys } = config.equipmentTypes[type];
+  const equipmentTypeData = config.equipmentTypes[type];
+
+  if (!equipmentTypeData)
+    throw Error(`Equipment type "${type}" is not set in configuration`);
+
+  const { equipmentElementKeys } = equipmentTypeData;
 
   const equipmentElements = equipmentElementKeys
     .map((key) => {
+      if (!config.equipmentElements[key]) return undefined;
+
       const itemScannerDetections = scannerDetections.filter(
         (detection) =>
           detection.key === key &&
@@ -85,25 +110,27 @@ const getEquipmentElements = (
           !detection.scannerComponent
       );
 
-      if (!config.equipmentElements[key]) return undefined;
-
-      const savedElement = savedElements.find((item) => item.key === key);
+      const equipmentStateElement = equipmentStateElements.find(
+        (item) => item.key === key
+      );
 
       const pcmsDetection = getPCMSDetection(key, pcms);
+      const malDetection = getMALDetection(key, mal);
 
       const detections = mergeDetections(
-        savedElement?.detections,
+        equipmentStateElement?.detections,
         itemScannerDetections,
-        pcmsDetection
+        pcmsDetection,
+        malDetection
       );
 
       return {
-        id: savedElement?.id || uuid(),
+        ...equipmentStateElement,
+        id: equipmentStateElement?.id || uuid(),
         key,
-        ...savedElement,
         origin: DataElementOrigin.EQUIPMENT,
         detections,
-        state: savedElement?.state || DataElementState.PENDING,
+        state: equipmentStateElement?.state ?? DataElementState.PENDING,
       } as DataElement;
     })
     .filter((item) => item);
@@ -111,244 +138,234 @@ const getEquipmentElements = (
   return equipmentElements as DataElement[];
 };
 
-const getU1Document = (documents: EquipmentDocument[]) =>
-  documents?.find((document) => document.type === DocumentType.U1);
+const getPCMSDetection = (key: string, pcms?: Asset) => {
+  if (!pcms?.metadata || pcms.metadata[key] === undefined) return undefined;
 
-const transformScannerDetections = (
-  detections: ScannerDetection[],
-  documentExternalId?: string
-) =>
-  documentExternalId
-    ? detections.map((item) => ({
-        ...item,
-        documentExternalId,
-      }))
-    : detections;
+  return {
+    id: uuid(),
+    type: DetectionType.PCMS,
+    value: pcms.metadata[key].trim(),
+    state: DetectionState.APPROVED,
+  } as Detection;
+};
+
+const getMALDetection = (key: string, mal?: MALData) => {
+  if (!mal || mal[key] === undefined) return undefined;
+
+  return {
+    id: uuid(),
+    type: DetectionType.MAL,
+    value: mal[key],
+  } as Detection;
+};
 
 const mergeDetections = (
-  detections: Detection[] = [],
+  equipmentStateDetections: Detection[] = [],
   scannerDetections: ScannerDetection[] = [],
-  pcmsDetection?: Detection
+  pcmsDetection?: Detection,
+  malDetection?: Detection
 ) => {
-  const lockedDetections = detections.filter(
-    (d) =>
-      d.type === DetectionType.MANUAL ||
-      d.type === DetectionType.PCMS ||
-      d.isModified
-  );
-  const newScannerDetections = scannerDetections
-    .filter((sd) =>
-      lockedDetections.every((d) => !isSameScannerDetection(sd, d))
-    )
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    .map(({ key, ...detection }) => detection);
+  const detections = [...equipmentStateDetections];
 
-  const mergedDetections = [...lockedDetections, ...newScannerDetections];
-
+  // update pcms detection if it's not primary,
+  // otherwise add it
   if (pcmsDetection) {
-    const prevPCMSDetection = mergedDetections.find(
-      (d) => d.type === DetectionType.PCMS
+    const existingPCMSDetection = detections.find(
+      (detection) => detection.type === DetectionType.PCMS
     );
-    if (prevPCMSDetection) {
-      if (prevPCMSDetection.state !== DetectionState.APPROVED) {
-        prevPCMSDetection.value = pcmsDetection.value;
-      }
-    } else {
-      mergedDetections.unshift(pcmsDetection);
+    if (!existingPCMSDetection) {
+      detections.push(pcmsDetection);
+    } else if (!existingPCMSDetection.isPrimary) {
+      existingPCMSDetection.value = pcmsDetection.value;
     }
   }
 
-  return mergedDetections;
+  // add scanner detections if there are no detections approved or omitted
+  if (
+    !detections.some((detection) => detection.type === DetectionType.SCANNER)
+  ) {
+    detections.push(...scannerDetections);
+  }
+
+  if (malDetection) {
+    const existingMALDetection = detections.find(
+      (detection) => detection.type === DetectionType.MAL
+    );
+    if (!existingMALDetection) {
+      detections.push(malDetection);
+    } else if (!existingMALDetection.isPrimary) {
+      existingMALDetection.value = malDetection.value;
+    }
+  }
+
+  return detections;
 };
 
-const getInitializedEquipmentComponents = (
+const getEquipmentComponents = (
   equipmentType: EquipmentType,
   config: EquipmentConfig,
   scannerDetections: ScannerDetection[] = [],
-  pcmsComponents?: Metadata[]
-): EquipmentComponent[] => {
-  // if pcms components are not available
-  if (!pcmsComponents) {
-    return getInitializedEquipmentComponentsByScannerDetections(
-      equipmentType,
-      config,
-      scannerDetections
-    );
-  }
+  equipmentStateComponents?: EquipmentComponent[],
+  pcmsComponents?: Asset[]
+) => {
+  let components: EquipmentComponent[] = [];
+  if (equipmentStateComponents) {
+    components = equipmentStateComponents.map(
+      (component: EquipmentComponent) => {
+        const pcmsComponent = component.pcmsExternalId
+          ? pcmsComponents?.find(
+              (pcmsComponent) =>
+                pcmsComponent.externalId === component.pcmsExternalId
+            )
+          : undefined;
 
-  return getInitializedEquipmentComponentsByPCMS(
-    equipmentType,
-    config,
-    scannerDetections,
-    pcmsComponents
-  );
-};
-
-const getInitializedEquipmentComponentsByScannerDetections = (
-  equipmentType: EquipmentType,
-  config: EquipmentConfig,
-  scannerDetections: ScannerDetection[] = []
-): EquipmentComponent[] => {
-  const components: EquipmentComponent[] = [];
-
-  const groupedDetections = scannerDetections.reduce(
-    (result, detection) => {
-      if (!detection.scannerComponent) return result;
-      const id =
-        detection.scannerComponent.type + detection.scannerComponent.id;
-      if (!result[id]) {
-        // eslint-disable-next-line no-param-reassign
-        result[id] = {
-          ...detection.scannerComponent,
-          componentDetections: [],
+        return {
+          ...component,
+          componentElements: getComponentElements(
+            equipmentType,
+            config,
+            component,
+            pcmsComponent
+          ),
         };
       }
-      result[id].componentDetections.push(detection);
-      return result;
-    },
-    {} as {
-      [key: string]: {
-        id: string;
-        type: EquipmentComponentType;
-        componentDetections: ScannerDetection[];
-      };
-    }
-  );
-
-  Object.values(groupedDetections).forEach(({ type, componentDetections }) => {
-    pushComponent({
-      components,
-      equipmentType,
-      componentType: type,
-      config,
-      componentDetections,
-    });
-  });
-
-  return components;
-};
-
-const getInitializedEquipmentComponentsByPCMS = (
-  equipmentType: EquipmentType,
-  config: EquipmentConfig,
-  scannerDetections: ScannerDetection[] = [],
-  pcmsComponents: Metadata[] = []
-): EquipmentComponent[] => {
-  const components: EquipmentComponent[] = [];
-
-  pcmsComponents.forEach((pcmsComponent) => {
-    const pcmsType = pcmsComponent.component_master.toLowerCase();
-
-    const componentType = Object.values(EquipmentComponentType).find(
-      (item: EquipmentComponentType) => pcmsType.includes(item)
     );
-    if (!componentType) return;
+  } else if (pcmsComponents) {
+    components = pcmsComponents.map((pcmsComponent) => {
+      const pcmsType = pcmsComponent.metadata?.component_master.toLowerCase();
+      const componentType =
+        pcmsType &&
+        Object.values(EquipmentComponentType).find((item) =>
+          pcmsType.includes(item)
+        );
 
-    const componentDetections = scannerDetections.filter(
+      if (!componentType) {
+        throw new Error(`Component type ${pcmsType} can't be defined`);
+      }
+
+      const component: EquipmentComponent = {
+        id: uuid(),
+        name: pcmsComponent.name,
+        pcmsExternalId: pcmsComponent.externalId,
+        type: componentType,
+        componentElements: [],
+      };
+
+      component.componentElements = getComponentElements(
+        equipmentType,
+        config,
+        component,
+        pcmsComponent
+      );
+
+      return component;
+    });
+  }
+
+  // add scanner detections
+  components.forEach((component) => {
+    const scannerComponentId = getScannerComponentId(component);
+    const componentIdsToSkip = !scannerComponentId
+      ? components
+          .filter(
+            (item) => item.type === component.type && item.id !== component.id
+          )
+          .reduce((list, component) => {
+            const scannerComponentId = getScannerComponentId(component);
+            if (scannerComponentId) list.push(scannerComponentId);
+
+            return list;
+          }, [] as string[])
+      : [];
+
+    const scannerComponentDetections = scannerDetections.filter(
       (detection) =>
         detection.scannerComponent &&
-        detection.scannerComponent?.type === componentType
+        detection.scannerComponent?.type === component.type &&
+        (!scannerComponentId ||
+          detection.scannerComponent.id === scannerComponentId) &&
+        !componentIdsToSkip.includes(detection.scannerComponent.id)
     );
 
-    pushComponent({
-      components,
-      equipmentType,
-      componentType,
-      config,
-      pcmsComponent,
-      componentDetections,
+    component.componentElements.forEach((dataElement) => {
+      const isScannerDetectionAvailable = dataElement.detections.some(
+        (detection) => detection.type === DetectionType.SCANNER
+      );
+      if (isScannerDetectionAvailable) return;
+
+      const scannerDataElementDetections = scannerComponentDetections.filter(
+        (detection) => detection.key === dataElement.key
+      );
+      if (scannerDataElementDetections) {
+        // eslint-disable-next-line no-param-reassign
+        dataElement.detections = [
+          ...dataElement.detections,
+          ...scannerDataElementDetections,
+        ];
+      }
     });
   });
 
   return components;
 };
 
-const pushComponent = ({
-  components,
-  equipmentType,
-  componentType,
-  config,
-  pcmsComponent,
-  componentDetections,
-}: {
-  components: EquipmentComponent[];
-  equipmentType: EquipmentType;
-  componentType: EquipmentComponentType;
-  config: EquipmentConfig;
-  pcmsComponent?: Metadata;
-  componentDetections: ScannerDetection[];
-}) => {
+const getComponentElements = (
+  equipmentType: EquipmentType,
+  config: EquipmentConfig,
+  component: EquipmentComponent,
+  pcmsComponent?: Asset
+): DataElement[] => {
   const configComponentTypes = Object.values(
     config.equipmentTypes[equipmentType].componentTypes
   );
 
   const componentConfig = configComponentTypes.find(
-    (item) => item.type === componentType
+    (item) => item.type === component.type
   );
 
-  if (!componentConfig) return;
-
-  const componentId = uuid();
+  if (!componentConfig)
+    throw Error(
+      `Component config is not set for ${equipmentType}:${component.type}`
+    );
 
   const componentElements = componentConfig.componentElementKeys.map(
-    (dataElementKey): DataElement | undefined => {
-      const detections = componentDetections
-        .filter((detection) => detection.key === dataElementKey)
-        .map((detection) => {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { key, ...rest } = detection;
-          return {
-            ...rest,
-            id: uuid(),
-            connectedId: detection.id,
-          } as Detection;
-        });
-
-      const pcmsDetection = getPCMSDetection(dataElementKey, pcmsComponent);
-      if (pcmsDetection) {
-        detections.unshift(pcmsDetection);
-      }
-
-      const dataElement: DataElement = {
+    (dataElementKey): DataElement =>
+      component.componentElements.find(
+        (element) => element.key === dataElementKey
+      ) || {
         id: uuid(),
         key: dataElementKey,
         origin: DataElementOrigin.COMPONENT,
         state: DataElementState.PENDING,
-        detections,
-        componentId,
-      };
-
-      // eslint-disable-next-line consistent-return
-      return dataElement;
-    }
-  ) as DataElement[];
-
-  components.push({
-    id: componentId,
-    pcmsName: pcmsComponent?.name,
-    type: componentConfig.type,
-    componentElements,
-  });
-};
-
-const getPCMSDetection = (key: string, pcms?: { [key: string]: string }) => {
-  if (!pcms || pcms[key] === undefined) return undefined;
-
-  return {
-    id: uuid(),
-    type: DetectionType.PCMS,
-    value: pcms[key],
-    status: DetectionState.APPROVED,
-  } as Detection;
-};
-
-const fixUndefinedComponentElementsId = (
-  components: EquipmentComponent[] = []
-) => {
-  components.forEach((component) =>
-    component.componentElements.forEach((dataElement: DataElement) => {
-      // eslint-disable-next-line no-param-reassign
-      if (!dataElement.id) dataElement.id = uuid();
-    })
+        detections: [],
+        componentId: component.id,
+      }
   );
+
+  componentElements.forEach((dataElement) => {
+    const pcmsDetection = getPCMSDetection(dataElement.key, pcmsComponent);
+
+    if (pcmsDetection) {
+      const existingPCMSDetection = dataElement.detections.find(
+        (detection) => detection.type === DetectionType.PCMS
+      );
+
+      if (!existingPCMSDetection) {
+        dataElement.detections.unshift(pcmsDetection);
+      } else if (!existingPCMSDetection.isPrimary) {
+        existingPCMSDetection.value = pcmsDetection.value;
+      }
+    }
+  });
+
+  return componentElements;
 };
+
+const getScannerComponentId = (component: EquipmentComponent) =>
+  component.componentElements
+    .flatMap((dataElement) => dataElement.detections)
+    .find(
+      (detection) =>
+        detection.state === DetectionState.APPROVED &&
+        detection.scannerComponent?.id
+    )?.scannerComponent?.id;

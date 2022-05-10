@@ -1,33 +1,31 @@
-import { CogniteClient, Metadata } from '@cognite/sdk';
-import { DataSetId } from 'scarlet/types';
+import { CogniteClient } from '@cognite/sdk';
+import { DataSetId, Facility } from 'scarlet/types';
 
 import { getUnitAsset } from '.';
 
 export const getEquipmentPCMS = async (
   client: CogniteClient,
   {
-    unitName,
-    equipmentName,
+    facility,
+    unitId,
+    equipmentId,
   }: {
-    unitName: string;
-    equipmentName: string;
+    facility?: Facility;
+    unitId: string;
+    equipmentId: string;
   }
 ) => {
-  let equipment: Metadata | undefined;
-  let components: Metadata[] = [];
+  if (!facility) throw Error('Facility is not set');
 
-  const unitAsset = await getUnitAsset(client, { unitName });
+  const unitAsset = await getUnitAsset(client, { facility, unitId });
 
   if (!unitAsset) {
-    return Promise.resolve({
-      equipment,
-      components,
-    });
+    throw Error('Unit asset is not available');
   }
 
   const equipmentAssets = await client.assets.list({
     filter: {
-      name: equipmentName,
+      name: equipmentId,
       externalIdPrefix: 'Equip',
       parentIds: [unitAsset.id],
       dataSetIds: [{ id: DataSetId.PCMS }],
@@ -35,14 +33,11 @@ export const getEquipmentPCMS = async (
   });
 
   if (!equipmentAssets.items.length) {
-    return Promise.resolve({
-      equipment,
-      components,
-    });
+    throw Error('Equipment asset is not available');
   }
 
   const equipmentAsset = equipmentAssets.items[0];
-  equipment = equipmentAsset.metadata;
+  const equipment = equipmentAsset;
 
   const componentAssets = await client.assets.list({
     filter: {
@@ -52,9 +47,7 @@ export const getEquipmentPCMS = async (
     },
   });
 
-  components = componentAssets.items
-    .map((item) => item.metadata)
-    .filter((item) => item) as Metadata[];
+  const components = componentAssets.items;
 
   return {
     equipmentAssetExternalId: equipmentAsset.externalId,

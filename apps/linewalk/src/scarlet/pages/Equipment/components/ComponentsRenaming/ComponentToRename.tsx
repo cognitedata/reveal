@@ -1,6 +1,5 @@
 import { Input } from '@cognite/cogs.js';
 import { useRef, useState } from 'react';
-import { useComponentName } from 'scarlet/hooks';
 import { EquipmentComponent } from 'scarlet/types';
 
 type ComponentToRenameProps = {
@@ -14,8 +13,7 @@ export const ComponentToRename = ({
   onChange,
   groupLabel,
 }: ComponentToRenameProps) => {
-  const getComponentName = useComponentName();
-  const initialValue = useRef(getComponentName(component)).current;
+  const initialValue = useRef(component.name).current;
   const [value, setValue] = useState<string>(initialValue);
   const isError = value.trim() === '';
 

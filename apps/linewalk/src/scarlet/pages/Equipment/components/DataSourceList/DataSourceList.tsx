@@ -219,7 +219,7 @@ export const DataSourceList = ({
           detection={detection}
           dataElement={dataElement}
           isApproved={detection.state === DetectionState.APPROVED}
-          isPrimaryOnApproval={detections.length === 1}
+          isPrimaryOnApproval
           focused={detection.id === activeDetectionId}
           hasConnectedElements={hasConnectedElements}
           collapseProps={{

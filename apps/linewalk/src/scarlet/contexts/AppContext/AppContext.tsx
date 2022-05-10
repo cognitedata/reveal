@@ -1,12 +1,5 @@
-import React, { useReducer } from 'react';
+import React, { Reducer, useReducer } from 'react';
 import { useSaveEquipment } from 'scarlet/hooks';
-import {
-  APIState,
-  EquipmentConfig,
-  EquipmentData,
-  EquipmentDocument,
-  PCMSData,
-} from 'scarlet/types';
 
 import { AppAction, AppActionType, AppState } from '.';
 import {
@@ -22,15 +15,13 @@ import {
   setConnectedDataElements,
 } from './utils';
 
-const equipmentInitialState = {
-  unitName: '',
-  equipmentName: '',
-  pcms: { loading: true } as APIState<PCMSData>,
-  documents: { loading: true } as APIState<EquipmentDocument[]>,
-  equipment: { loading: true } as APIState<EquipmentData>,
-  equipmentConfig: { loading: true } as APIState<EquipmentConfig>,
-  dataElementModal: undefined,
-  saveState: { loading: false } as APIState<EquipmentData>,
+const equipmentInitialState: AppState = {
+  unitId: '',
+  equipmentId: '',
+  documents: { loading: true },
+  equipment: { loading: true },
+  equipmentConfig: { loading: true },
+  saveState: { loading: false },
 };
 
 const initialState: AppState = {
@@ -47,13 +38,9 @@ function reducer(state: AppState, action: AppAction) {
     case AppActionType.INIT_EQUIPMENT:
       return {
         ...state,
-        unitName: action.unitName,
-        equipmentName: action.equipmentName,
-      };
-    case AppActionType.SET_PCMS:
-      return {
-        ...state,
-        pcms: action.pcms,
+        facility: action.facility,
+        unitId: action.unitId,
+        equipmentId: action.equipmentId,
       };
     case AppActionType.SET_DOCUMENTS:
       return {
@@ -64,6 +51,13 @@ function reducer(state: AppState, action: AppAction) {
       return {
         ...state,
         equipment: action.equipment,
+        saveState: action.isInitialSave
+          ? {
+              loading: true,
+              data: action.equipment.data,
+              isInitial: action.isInitialSave,
+            }
+          : state.saveState,
       };
     case AppActionType.SET_EQUIPMENT_CONFIG:
       return {
@@ -76,14 +70,16 @@ function reducer(state: AppState, action: AppAction) {
         saveState: action.saveState,
       };
     case AppActionType.UPDATE_DETECTION: {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { type, dataElement, detection, isApproved, ...detectionProps } =
+        action;
+
       const equipmentToSave = updateDetection(
         state.saveState.data || state.equipment.data!,
-        action.dataElement,
-        action.detection,
-        action.value,
-        action.externalSource,
-        action.isApproved,
-        action.isPrimary
+        dataElement,
+        detection,
+        isApproved,
+        detectionProps
       );
 
       return {
@@ -256,11 +252,16 @@ function reducer(state: AppState, action: AppAction) {
 }
 
 export const AppProvider: React.FC = (props) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer<Reducer<AppState, AppAction>>(
+    reducer,
+    initialState
+  );
 
   useSaveEquipment(
-    state.unitName,
-    state.equipmentName,
+    state.facility!,
+    state.unitId,
+    state.equipmentId,
+    state.saveState.isInitial || false,
     state.saveState,
     dispatch
   );

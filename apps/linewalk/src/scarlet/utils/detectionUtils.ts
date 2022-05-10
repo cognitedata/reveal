@@ -1,14 +1,23 @@
-import { Detection, DetectionType } from 'scarlet/types';
+import { AnnotationBoundingBox, Detection, DetectionType } from 'scarlet/types';
 
 export const isSameScannerDetection = (a: Detection, b: Detection) =>
   a.type === DetectionType.SCANNER &&
   b.type === DetectionType.SCANNER &&
   a.documentExternalId === b.documentExternalId &&
   a.pageNumber === b.pageNumber &&
-  a.boundingBox?.x === b.boundingBox?.x &&
-  a.boundingBox?.y === b.boundingBox?.y &&
-  a.boundingBox?.width === b?.boundingBox?.width &&
-  a.boundingBox?.height === b?.boundingBox?.height;
+  isSameAnnotation(a.boundingBox, b.boundingBox);
+
+export const isSameAnnotation = (
+  a?: AnnotationBoundingBox,
+  b?: AnnotationBoundingBox
+) =>
+  (a &&
+    b &&
+    a.x === b.x &&
+    a.y === b.y &&
+    a.width === b.width &&
+    a.height === b.height) ||
+  false;
 
 export const getDetectionSourceLabel = (detection: Detection) => {
   const defaultLabel = 'No source';
@@ -23,6 +32,8 @@ export const getDetectionSourceLabel = (detection: Detection) => {
     case DetectionType.MANUAL:
     case DetectionType.SCANNER:
       return detection.documentExternalId || defaultLabel;
+    case DetectionType.MAL:
+      return 'Master Asset List';
     default:
       return defaultLabel;
   }
@@ -36,6 +47,8 @@ export const getDetectionSourceAcronym = (detection: Detection) => {
       return 'Input';
     case DetectionType.MANUAL_EXTERNAL:
       return 'Ext.';
+    case DetectionType.MAL:
+      return 'MAL';
   }
 
   const type = detection.documentExternalId

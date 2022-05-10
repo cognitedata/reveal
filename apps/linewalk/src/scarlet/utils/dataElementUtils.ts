@@ -54,6 +54,17 @@ export const getDataElementPCMSDetection = (
     : detection;
 };
 
+export const getDataElementMALDetection = (
+  dataElement: DataElement
+): Detection | undefined => {
+  const detection = dataElement.detections.find(
+    (item) => item.type === DetectionType.PCMS
+  );
+  return ['', 'N/A', undefined].includes(detection?.value)
+    ? undefined
+    : detection;
+};
+
 export const getDataElementValue = (
   dataElement: DataElement
 ): string | undefined => {

@@ -5,7 +5,6 @@ import { DataElementState, DataPanelActionType } from 'scarlet/types';
 
 import { DataElementList } from '..';
 
-import { sortedKeys } from './utils';
 import * as Styled from './style';
 
 const states = [
@@ -140,7 +139,6 @@ export const EquipmentPanel = () => {
                 data={equipmentElements}
                 loading={equipment.loading}
                 skeletonAmount={20}
-                sortedKeys={sortedKeys}
               />
             )}
           </Styled.ListContainer>

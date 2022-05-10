@@ -15,11 +15,11 @@ import * as Styled from './style';
 export const SIDE_PANEL_RIGHT_WIDTH = 450;
 
 type PageBodyProps = {
-  unitName: string;
-  equipmentName: string;
+  unitId: string;
+  equipmentId: string;
 };
 
-export const PageBody = ({ unitName, equipmentName }: PageBodyProps) => {
+export const PageBody = ({ unitId, equipmentId }: PageBodyProps) => {
   const dataPanelState = useDataPanelState();
   const { documents } = useAppState();
 
@@ -31,7 +31,7 @@ export const PageBody = ({ unitName, equipmentName }: PageBodyProps) => {
         sidePanelRightWidth={SIDE_PANEL_RIGHT_WIDTH}
       >
         <Styled.MainContainer>
-          <TopBar unitName={unitName} equipmentName={equipmentName} />
+          <TopBar unitId={unitId} equipmentId={equipmentId} />
           <Styled.OrnateContainer>
             <Ornate documents={documents?.data} fullwidth />
             <DataPanelControllers />

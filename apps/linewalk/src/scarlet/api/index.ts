@@ -2,6 +2,7 @@ export * from './exportToExcel';
 export * from './getEquipmentConfig';
 export * from './getEquipmentDocuments';
 export * from './getEquipmentList';
+export * from './getEquipmentMAL';
 export * from './getEquipmentPCMS';
 export * from './getEquipmentState';
 export * from './getScannerDetections';

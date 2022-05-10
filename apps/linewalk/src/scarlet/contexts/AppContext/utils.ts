@@ -57,15 +57,11 @@ export const addDetection = (
   );
   dataElement.detections.push(detection);
 
-  return updateDetection(
-    equipment,
-    dataElementOrigin,
-    detection,
+  return updateDetection(equipment, dataElementOrigin, detection, isApproved, {
     value,
     externalSource,
-    isApproved,
-    isPrimary
-  );
+    isPrimary,
+  });
 };
 
 export const removeDetection = (
@@ -85,7 +81,6 @@ export const removeDetection = (
   if (detection.type === DetectionType.SCANNER) {
     dataElement.detections![detectionIndex!] = {
       ...detection,
-      isModified: true,
       state: DetectionState.OMITTED,
       isPrimary: false,
     };
@@ -106,10 +101,8 @@ export const updateDetection = (
   equipmentOrigin: EquipmentData,
   dataElementOrigin: DataElement,
   detectionOriginal: Detection,
-  value: string,
-  externalSource: string | undefined,
   isApproved: boolean,
-  isPrimary: boolean
+  detectionProps: Partial<Detection>
 ): EquipmentData => {
   const equipment: EquipmentData = deepCopy(equipmentOrigin);
 
@@ -125,7 +118,7 @@ export const updateDetection = (
 
   if (!detection) return equipment;
 
-  if (isPrimary) {
+  if (detectionProps.isPrimary) {
     dataElement.detections.forEach((detection, i) => {
       if (detection.isPrimary) {
         dataElement.detections[i].isPrimary = false;
@@ -133,14 +126,9 @@ export const updateDetection = (
     });
   }
 
-  detection.isModified = true;
-  detection.value = value;
-  detection.state = isApproved ? DetectionState.APPROVED : undefined;
-  detection.isPrimary = isPrimary;
+  Object.assign(detection, detectionProps);
 
-  if (externalSource !== undefined) {
-    detection.externalSource = externalSource;
-  }
+  detection.state = isApproved ? DetectionState.APPROVED : undefined;
 
   dataElement.state = dataElement.detections.some(
     (detection) => detection.isPrimary
@@ -269,28 +257,33 @@ export const setConnectedDataElements = (
   equipmentOrigin: EquipmentData,
   dataElementsOrigin: DataElement[],
   currentDataElementId: string,
-  detection: Detection,
+  detectionOrigin: Detection,
   isApproved: boolean,
   isPrimary: boolean
 ) => {
-  const connectedId = detection.connectedId || uuid();
+  const connectedId = detectionOrigin.connectedId || uuid();
   let equipment = equipmentOrigin;
   dataElementsOrigin.forEach((dataElement) => {
-    const itemDetection = dataElement.detections.find(
-      (detection) => detection.connectedId === connectedId
+    const detection = dataElement.detections.find(
+      (detection) =>
+        detection.connectedId === connectedId ||
+        detection.id === detectionOrigin.id
     );
-    if (itemDetection) {
+    if (detection) {
       equipment = updateDetection(
         equipment,
         dataElement,
-        itemDetection,
-        detection.value!,
-        detection.externalSource,
+        detection,
         isApproved,
-        isPrimary
+        {
+          value: detectionOrigin.value!,
+          externalSource: detectionOrigin.externalSource,
+          isPrimary,
+          connectedId,
+        }
       );
     } else {
-      let detectionType = detection.type;
+      let detectionType = detectionOrigin.type;
       const isCurrentDataElement = dataElement.id === currentDataElementId;
       if (!isCurrentDataElement && detectionType === DetectionType.PCMS) {
         detectionType = DetectionType.MANUAL_INPUT;
@@ -300,16 +293,14 @@ export const setConnectedDataElements = (
         equipment,
         dataElement,
         {
-          ...detection,
-          id: isCurrentDataElement ? detection.id : uuid(),
+          ...detectionOrigin,
+          id: isCurrentDataElement ? detectionOrigin.id : uuid(),
           type: detectionType,
           connectedId,
-          scannerComponent: isCurrentDataElement
-            ? detection.scannerComponent
-            : undefined,
+          scannerComponent: undefined,
         },
-        detection.value!,
-        detection.externalSource,
+        detectionOrigin.value!,
+        detectionOrigin.externalSource,
         isApproved,
         isPrimary
       );

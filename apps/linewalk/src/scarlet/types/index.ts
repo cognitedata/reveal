@@ -11,6 +11,8 @@ export * from './equipmentConfig';
 export * from './equipmentDocument';
 export * from './equipmentElement';
 export * from './equipmentList';
+export * from './facility';
+export * from './mal';
 export * from './ornate';
 export * from './pcms';
 export * from './remark';

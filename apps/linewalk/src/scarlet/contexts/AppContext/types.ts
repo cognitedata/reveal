@@ -2,7 +2,6 @@ import {
   APIState,
   EquipmentData,
   EquipmentListItem,
-  PCMSData,
   EquipmentConfig,
   EquipmentDocument,
   DataElement,
@@ -10,10 +9,11 @@ import {
   Detection,
   EquipmentComponent,
   Remark,
+  Facility,
 } from 'scarlet/types';
 
 export type AppStateEquipmentList = {
-  unitName: string;
+  unitId: string;
   equipments: EquipmentListItem[];
 };
 
@@ -23,26 +23,23 @@ export type AppStateDataElementModal = {
 };
 
 export type AppState = {
-  unitName: string;
-  equipmentName: string;
-  pcms: APIState<PCMSData>;
+  facility?: Facility;
+  unitId: string;
+  equipmentId: string;
   documents: APIState<EquipmentDocument[]>;
   equipment: APIState<EquipmentData>;
   equipmentConfig: APIState<EquipmentConfig>;
   equipmentList?: AppStateEquipmentList;
   dataElementModal?: AppStateDataElementModal;
-  saveState: APIState<EquipmentData>;
+  saveState: APIState<EquipmentData> & { isInitial?: boolean };
 };
 
 export type AppAction =
   | {
       type: AppActionType.INIT_EQUIPMENT;
-      unitName: string;
-      equipmentName: string;
-    }
-  | {
-      type: AppActionType.SET_PCMS;
-      pcms: APIState<PCMSData>;
+      facility: Facility;
+      unitId: string;
+      equipmentId: string;
     }
   | {
       type: AppActionType.SET_DOCUMENTS;
@@ -51,6 +48,7 @@ export type AppAction =
   | {
       type: AppActionType.SET_EQUIPMENT;
       equipment: APIState<EquipmentData>;
+      isInitialSave?: boolean;
     }
   | {
       type: AppActionType.CLEANUP_EQUIPMENT_DATA;
@@ -132,7 +130,6 @@ export type AppAction =
 export enum AppActionType {
   // equipment
   INIT_EQUIPMENT = 'init-equipment',
-  SET_PCMS = 'set-pcms',
   SET_DOCUMENTS = 'set-documents',
   SET_EQUIPMENT = 'set-equipment',
   SET_EQUIPMENT_CONFIG = 'set-equipment-config',
