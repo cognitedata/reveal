@@ -87,19 +87,9 @@ export const NumericRangeFilter: React.FC<Props> = ({
 
   const isValid = () => !getMinValueError() && !getMaxValueError();
 
-  const handleMinBlur = () => {
+  const handleInputBlur = () => {
     if (isValid()) {
-      if (fastMinMax[0] !== selectedMin) {
-        onValueChange([fastMinMax[0], fastMinMax[1]]);
-      }
-    }
-  };
-
-  const handleMaxBlur = () => {
-    if (isValid()) {
-      if (fastMinMax[1] !== selectedMax) {
-        onValueChange([fastMinMax[0], fastMinMax[1]]);
-      }
+      onValueChange([fastMinMax[0], fastMinMax[1]]);
     }
   };
 
@@ -153,9 +143,9 @@ export const NumericRangeFilter: React.FC<Props> = ({
           value={(fastMinMax[0] ?? min).toString()}
           onChange={handleMinChange}
           onFocus={() => setFocusedField('min')}
-          onBlur={handleMinBlur}
+          onBlur={handleInputBlur}
           onKeyDown={(event) => {
-            handleEnterPress(event, handleMinBlur);
+            handleEnterPress(event, handleInputBlur);
           }}
           type="number"
           error={getMinValueError()}
@@ -168,10 +158,10 @@ export const NumericRangeFilter: React.FC<Props> = ({
           title="To"
           value={(fastMinMax[1] ?? min).toString()}
           onFocus={() => setFocusedField('max')}
-          onBlur={handleMaxBlur}
+          onBlur={handleInputBlur}
           onChange={handleMaxChange}
           onKeyDown={(event) => {
-            handleEnterPress(event, handleMaxBlur);
+            handleEnterPress(event, handleInputBlur);
           }}
           type="number"
           error={getMaxValueError()}

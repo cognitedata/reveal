@@ -27,7 +27,7 @@ interface Props {
   resultFacets: DocumentQueryFacet[];
 }
 
-const DEFAULT_MIN_VALUE = 0;
+const DEFAULT_MIN_VALUE = 1;
 
 export const NumericFacetRangeFilter: React.FC<Props> = React.memo(
   ({ title, docQueryFacetType, categoryData, ...rest }) => {
