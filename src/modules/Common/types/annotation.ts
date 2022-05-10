@@ -5,8 +5,7 @@ import {
   ImageClassification,
   ImageExtractedText,
   ImageKeypointCollection,
-  ImageObjectDetectionBoundingBox,
-  ImageObjectDetectionPolygon,
+  ImageObjectDetection,
   Status,
 } from 'src/api/annotation/types';
 
@@ -16,8 +15,7 @@ import {
 
 export type VisionAnnotationDataType =
   | ImageClassification
-  | ImageObjectDetectionBoundingBox
-  | ImageObjectDetectionPolygon
+  | ImageObjectDetection
   | ImageExtractedText
   | ImageAssetLink;
 
@@ -37,10 +35,8 @@ export type UnsavedVisionAnnotation = VisionAnnotationDataType & {
 
 export type VisionImageClassificationAnnotation =
   VisionAnnotation<ImageClassification>;
-export type VisionImageObjectDetectionBoundingBoxAnnotation =
-  VisionAnnotation<ImageObjectDetectionBoundingBox>;
-export type VisionImageObjectDetectionPolygonAnnotation =
-  VisionAnnotation<ImageObjectDetectionPolygon>;
+export type VisionImageObjectDetectionAnnotation =
+  VisionAnnotation<ImageObjectDetection>;
 export type VisionImageExtractedTextAnnotation =
   VisionAnnotation<ImageExtractedText>;
 export type VisionImageAssetLinkAnnotation = VisionAnnotation<ImageAssetLink>;
