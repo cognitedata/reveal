@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Cognite3DViewer } from '@reveal/core';
+import { Cognite3DViewer, Intersection } from '@reveal/core';
 import * as THREE from 'three';
 import { MeasurementGizmo } from './MeasurementGizmo';
 import { MeasurementLabel } from './MeasurementLabel';
@@ -74,20 +74,29 @@ export class MeasurementControls {
       this._measurementGizmo.add(intersection.point, this._pointSize);
 
       if (!this._measurement.isActive()) {
-        this._viewer.domElement.addEventListener('mousemove', this._handleonPointerMove);
-        this._startPosition.copy(intersection.point);
-        this._measurement.start(intersection.point);
-        this._measurement.assignDistanceStartPointToCamera(intersection.distanceToCamera);
+        this.startMeasurement(intersection);
       } else {
-        this.updateMeasurement(0, 0, intersection.point);
-        this._measurement.end();
-        const labelPosition = this.calculateMidpoint(this._startPosition, intersection.point);
-        const distanceValue = this._measurement.getMeasurementValue().toFixed(2).toString() + ' m';
-        this._measurementLabel.add(labelPosition, distanceValue);
-        this._viewer.domElement.removeEventListener('mousemove', this._handleonPointerMove);
+        this.endMeasurement(intersection.point);
       }
       this._viewer.requestRedraw();
     }
+  }
+
+  private startMeasurement(intersection: Intersection) {
+    this._viewer.domElement.addEventListener('mousemove', this._handleonPointerMove);
+    this._startPosition.copy(intersection.point);
+    this._measurement.start(intersection.point);
+    this._measurement.assignDistanceStartPointToCamera(intersection.distanceToCamera);
+  }
+
+  private endMeasurement(point: THREE.Vector3) {
+    this.updateMeasurement(0, 0, point);
+    this._measurement.end();
+
+    const labelPosition = this.calculateMidpoint(this._startPosition, point);
+    const distanceValue = this._measurement.getMeasurementValue().toFixed(2).toString() + ' m';
+    this._measurementLabel.add(labelPosition, distanceValue);
+    this._viewer.domElement.removeEventListener('mousemove', this._handleonPointerMove);
   }
 
   private onPointerMove(event: MouseEvent) {
