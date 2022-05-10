@@ -39,16 +39,10 @@ function main() {
       }
     )
     .command(
-      'save-missing-keys-to-remote [apiKey] [projectId] [namespace] [stagingVersion] [path]',
+      'save-missing-keys-to-remote [projectId] [namespace] [stagingVersion] [path]',
       'saves missing keys to remote staging version (does not update the existing values in locize)',
       (yargs) => {
         return yargs
-          .option('apiKey', {
-            alias: 'k',
-            describe: 'The api key to use for operations',
-            type: 'string',
-            demandOption: true,
-          })
           .option('stagingVersion', {
             describe: 'The staging version to use for operations',
             default: 'latest',
@@ -72,16 +66,10 @@ function main() {
       }
     )
     .command(
-      'remove-deleted-keys-from-remote [apiKey] [projectId] [namespace] [stagingVersion] [path]',
+      'remove-deleted-keys-from-remote [projectId] [namespace] [stagingVersion] [path]',
       'removes deleted keys from remote staging version',
       (yargs) => {
         return yargs
-          .option('apiKey', {
-            alias: 'k',
-            describe: 'The api key to use for operations',
-            type: 'string',
-            demandOption: true,
-          })
           .option('stagingVersion', {
             describe: 'The staging version to use for operations',
             default: 'latest',

@@ -3,6 +3,10 @@ const spawn = require('cross-spawn');
 const path = require('path');
 
 module.exports = async function (options) {
+  if (!options.apiKey) {
+    throw new Error('environment variable is missing: LOCIZE_API_KEY');
+  }
+
   const remoteTranslations = await fetch(
     `https://api.locize.app/${options.projectId}/${options.version}/en/${options.namespace}`
   ).then((rawResponse) => rawResponse.json());
@@ -42,8 +46,6 @@ module.exports = async function (options) {
       [
         'locize',
         'remove',
-        '--api-key',
-        options.apiKey,
         '--project-id',
         options.projectId,
         '--ver',
