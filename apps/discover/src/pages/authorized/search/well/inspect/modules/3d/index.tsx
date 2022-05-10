@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Loading } from 'components/Loading';
 
-const ThreeDeeLazy = React.lazy(() => import('./threeDee'));
+const ThreeDeeLazy = React.lazy(() => import('./ThreeDeePreview'));
 
 const ThreeDee = () => (
   <React.Suspense fallback={<Loading />}>
