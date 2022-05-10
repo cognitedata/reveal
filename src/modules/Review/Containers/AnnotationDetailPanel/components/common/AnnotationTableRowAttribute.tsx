@@ -10,12 +10,11 @@ export const AnnotationTableRowAttribute = ({
 }) => {
   return (
     <AttributesContainer>
-      <StyledDetail>
-        confidence:{' '}
-        {annotation.data?.confidence
-          ? annotation.data.confidence.toFixed(2)
-          : '-'}
-      </StyledDetail>
+      {annotation.data?.confidence !== undefined && (
+        <StyledDetail>
+          confidence: {annotation.data.confidence.toFixed(2)}
+        </StyledDetail>
+      )}
 
       {Object.entries(annotation.data?.attributes || []).map(([key, value]) => (
         <StyledDetail>
