@@ -14,7 +14,7 @@ export class MeasurementLabel {
 
   private static readonly classnames = {
     label: 'reveal-viewer-label'
-  }
+  };
 
   constructor(viewer: Cognite3DViewer) {
     this._htmlOverlay = new HtmlOverlayTool(viewer);
