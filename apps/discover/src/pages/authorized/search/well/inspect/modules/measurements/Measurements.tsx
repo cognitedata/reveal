@@ -1,22 +1,103 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
-import { useEnabledWellSdkV3 } from 'modules/wellSearch/hooks/useEnabledWellSdkV3';
+import isEmpty from 'lodash/isEmpty';
+import { areAllSetValuesEmpty } from 'utils/areAllSetValuesEmpty';
 
-import { Measurements as MeasurementsV2 } from './v2/Measurements';
-import { Measurements as MeasurementsV3 } from './v3/Measurements';
+import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
+
+import { NoDataAvailable } from 'components/Charts/common/NoDataAvailable';
+import { Loading } from 'components/Loading';
+import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
+import { inspectTabsActions } from 'modules/inspectTabs/actions';
+import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQueryV3';
+import { FlexGrow } from 'styles/layout';
+
+import {
+  DEFAULT_MEASUREMENTS_REFERENCE,
+  DEFAULT_PRESSURE_UNIT,
+} from './constants';
+import CurveCentricView from './curveCentricView/CurveCentricView';
+import { MeasurementsTopBar, MeasurementsWrapper } from './elements';
+import { GeomechanicsCurveFilter } from './filters/GeomechanicsCurveFilter';
+import { OtherFilter } from './filters/OtherFilter';
+import { PPFGCurveFilter } from './filters/PPFGCurveFilter';
+import { UnitSelector } from './filters/UnitSelector';
+import { ViewModeSelector } from './filters/ViewModeSelector';
+import { getMeasurementDataFetchErrors } from './utils';
+import WellCentricView from './wellCentricView/WellCentricView';
 
 export const Measurements: React.FC = () => {
-  const wellSdkV3Enabled = useEnabledWellSdkV3();
+  const dispatch = useDispatch();
+  const [viewMode, setViewMode] = useState<string>('Wells');
+  const [geomechanicsCurves, setGeomechanicsCurves] = useState<
+    DepthMeasurementColumn[]
+  >([]);
+  const [ppfgCurves, setPPFGCurves] = useState<DepthMeasurementColumn[]>([]);
+  const [otherTypes, setOtherTypes] = useState<DepthMeasurementColumn[]>([]);
+  const [pressureUnit, setPressureUnit] = useState<PressureUnit>(
+    DEFAULT_PRESSURE_UNIT
+  );
+  const [measurementReference, setMeasurementReference] =
+    useState<DepthMeasurementUnit>(DEFAULT_MEASUREMENTS_REFERENCE);
 
-  if (wellSdkV3Enabled) {
-    return (
-      <>
-        <MeasurementsV3 />
-      </>
-    );
+  const { isLoading, data } = useMeasurementsQuery();
+
+  useEffect(() => {
+    if (!data) return;
+    const wellboreErrors = getMeasurementDataFetchErrors(data);
+
+    if (!isEmpty(wellboreErrors)) {
+      dispatch(inspectTabsActions.setErrors(wellboreErrors));
+    }
+  }, [JSON.stringify(data)]);
+
+  if (isLoading) {
+    return <Loading />;
   }
 
-  return <MeasurementsV2 />;
+  if (data && areAllSetValuesEmpty(data)) {
+    return <NoDataAvailable />;
+  }
+
+  return (
+    <MeasurementsWrapper>
+      <MeasurementsTopBar>
+        <ViewModeSelector onChange={setViewMode} activeViewMode={viewMode} />
+        <FlexGrow />
+        <GeomechanicsCurveFilter
+          selectedCurves={geomechanicsCurves}
+          onChange={setGeomechanicsCurves}
+        />
+        <PPFGCurveFilter selectedCurves={ppfgCurves} onChange={setPPFGCurves} />
+        <OtherFilter selectedCurves={otherTypes} onChange={setOtherTypes} />
+        <UnitSelector
+          unit={pressureUnit}
+          reference={measurementReference}
+          onUnitChange={setPressureUnit}
+          onReferenceChange={setMeasurementReference}
+        />
+      </MeasurementsTopBar>
+
+      {viewMode === 'Wells' ? (
+        <WellCentricView
+          geomechanicsCurves={geomechanicsCurves}
+          ppfgCurves={ppfgCurves}
+          otherTypes={otherTypes}
+          pressureUnit={pressureUnit}
+          measurementReference={measurementReference}
+        />
+      ) : (
+        <CurveCentricView
+          geomechanicsCurves={geomechanicsCurves}
+          ppfgCurves={ppfgCurves}
+          otherTypes={otherTypes}
+          pressureUnit={pressureUnit}
+          measurementReference={measurementReference}
+        />
+      )}
+    </MeasurementsWrapper>
+  );
 };
 
-export default Measurements;
+export default Measurements; // for lazy loading
