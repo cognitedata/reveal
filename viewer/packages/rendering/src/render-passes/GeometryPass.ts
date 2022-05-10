@@ -13,6 +13,7 @@ export class GeometryPass implements RenderPass {
   private readonly _materialManager: CadMaterialManager;
   private readonly _renderMode: RenderMode;
   private readonly _overrideRenderLayer: number;
+  private readonly _renderLayer: number;
 
   constructor(
     scene: THREE.Object3D,
@@ -24,13 +25,13 @@ export class GeometryPass implements RenderPass {
     this._renderMode = renderMode;
     this._materialManager = materialManager;
     this._overrideRenderLayer = overrideLayerMask;
+    this._renderLayer = this._overrideRenderLayer ?? getLayerMask(this._renderMode);
   }
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {
     const currentCameraMask = camera.layers.mask;
 
-    const renderLayer = this._overrideRenderLayer ?? getLayerMask(this._renderMode);
-    camera.layers.mask = renderLayer;
+    camera.layers.mask = this._renderLayer;
     this._materialManager.setRenderMode(this._renderMode);
     renderer.render(this._geometryScene, camera);
 

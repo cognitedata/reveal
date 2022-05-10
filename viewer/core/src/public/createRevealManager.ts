@@ -13,7 +13,7 @@ import {
   BasicPipelineExecutor,
   DefaultRenderPipeline,
   IdentifiedModel,
-  GeometryDepthRenderPipeline,
+  CadGeometryCustomRenderModePipeline,
   RenderMode
 } from '@reveal/rendering';
 import { createCadManager } from '@reveal/cad-model';
@@ -130,7 +130,7 @@ export function createRevealManager(
     renderables.customObjects,
     revealOptions.outputRenderTarget
   );
-  const depthRenderPipeline = new GeometryDepthRenderPipeline(
+  const depthRenderPipeline = new CadGeometryCustomRenderModePipeline(
     RenderMode.DepthBufferOnly,
     materialManager,
     scene,

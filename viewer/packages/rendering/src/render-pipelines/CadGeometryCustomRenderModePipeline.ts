@@ -12,7 +12,7 @@ import { IdentifiedModel } from '../utilities/types';
 import { RenderMode } from '../rendering/RenderMode';
 import { WebGLRenderTarget } from 'three';
 
-export class GeometryDepthRenderPipeline implements RenderPipelineProvider {
+export class CadGeometryCustomRenderModePipeline implements RenderPipelineProvider {
   private readonly _materialManager: CadMaterialManager;
   private readonly _cadModels: IdentifiedModel[];
   private readonly _renderTargetData: { currentRenderSize: THREE.Vector2 };

@@ -8,7 +8,7 @@ import {
   BasicPipelineExecutor,
   CadMaterialManager,
   CadNode,
-  GeometryDepthRenderPipeline,
+  CadGeometryCustomRenderModePipeline,
   IdentifiedModel,
   RenderMode,
   RenderPipelineProvider
@@ -55,8 +55,8 @@ export class PickingHandler {
     255 / 256
   );
   private readonly _pipelineExecutor: BasicPipelineExecutor;
-  private readonly _depthRenderPipeline: GeometryDepthRenderPipeline;
-  private readonly _treeIndexRenderPipeline: GeometryDepthRenderPipeline;
+  private readonly _depthRenderPipeline: CadGeometryCustomRenderModePipeline;
+  private readonly _treeIndexRenderPipeline: CadGeometryCustomRenderModePipeline;
 
   constructor(
     renderer: THREE.WebGLRenderer,
@@ -73,14 +73,14 @@ export class PickingHandler {
     };
 
     this._pipelineExecutor = new BasicPipelineExecutor(renderer);
-    this._depthRenderPipeline = new GeometryDepthRenderPipeline(
+    this._depthRenderPipeline = new CadGeometryCustomRenderModePipeline(
       RenderMode.Depth,
       materialManager,
       scene,
       cadModels,
       false
     );
-    this._treeIndexRenderPipeline = new GeometryDepthRenderPipeline(
+    this._treeIndexRenderPipeline = new CadGeometryCustomRenderModePipeline(
       RenderMode.TreeIndex,
       materialManager,
       scene,

@@ -7,7 +7,7 @@ import { CadModelFactory } from './CadModelFactory';
 import { InternalRevealCadOptions } from './InternalRevealCadOptions';
 
 import { CadModelUpdateHandler, createV8SectorCuller } from '@reveal/cad-geometry-loaders';
-import { CadMaterialManager, GeometryDepthRenderPipeline } from '@reveal/rendering';
+import { CadMaterialManager, CadGeometryCustomRenderModePipeline } from '@reveal/rendering';
 import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
 
 export function createCadManager(
@@ -15,7 +15,7 @@ export function createCadManager(
   modelDataProvider: ModelDataProvider,
   renderer: THREE.WebGLRenderer,
   materialManager: CadMaterialManager,
-  depthOnlyRenderPipeline: GeometryDepthRenderPipeline,
+  depthOnlyRenderPipeline: CadGeometryCustomRenderModePipeline,
   cadOptions: InternalRevealCadOptions & { continuousModelStreaming?: boolean }
 ): CadManager {
   const cadModelFactory = new CadModelFactory(materialManager, modelMetadataProvider, modelDataProvider);

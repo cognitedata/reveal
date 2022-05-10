@@ -57,11 +57,11 @@ void updateFragmentColor(
             // no saturation - grayscale
             a = hsv.z * 0.09;
         }
-        outputColor = vec4(packNormalToRgb(normal.rgb), a);
+        outputColor = vec4(packNormalToRgb(normal.rgb), color.a);
     } else if (renderMode == RenderTypeNormal) {
-        outputColor = vec4(packNormalToRgb(normal), 1.0);
+        outputColor = vec4(packNormalToRgb(normal), color.a);
     } else if (renderMode == RenderTypeTreeIndex) {
-        outputColor = vec4(packIntToColor(treeIndex), 1.0);
+        outputColor = vec4(packIntToColor(treeIndex), color.a);
     } else if (renderMode == RenderTypeDepth) {
         outputColor = packDepthToRGBA(depth);
     } else if (renderMode == RenderTypeLOD) {
@@ -77,7 +77,7 @@ void updateFragmentColor(
             float(geometryType == 2) * vec3(0.0, 1.0, 0.0) + // Primitives
             float(geometryType == 3) * vec3(0.0, 0.0, 1.0) + // Triangle meshes
             float(geometryType == 4) * vec3(1.0, 1.0, 0.0);  // Instance meshes
-        outputColor = vec4(geometryColor * mc, 1.0);
+        outputColor = vec4(geometryColor * mc, color.a);
     } else {
         // Unknown render mode - should not happen. 
         outputColor = vec4(1.0, 0.0, 1.0, 1.0);

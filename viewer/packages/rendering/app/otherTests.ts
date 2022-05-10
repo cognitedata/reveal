@@ -18,7 +18,7 @@ import { StepPipelineExecutor } from '../src/pipeline-executors/StepPipelineExec
 import { IdentifiedModel } from '../src/utilities/types';
 import { CognitePointCloudModel, createPointCloudManager } from '@reveal/pointclouds';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
-import { GeometryDepthRenderPipeline } from '../src/render-pipelines/GeometryDepthRenderPipeline';
+import { CadGeometryCustomRenderModePipeline } from '../src/render-pipelines/CadGeometryCustomRenderModePipeline';
 
 revealEnv.publicPath = 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.2.0/';
 
@@ -126,7 +126,7 @@ async function init() {
   const pipelineExecutor = new StepPipelineExecutor(renderer);
   pipelineExecutor.numberOfSteps = guiData.steps;
 
-  let defaultRenderPipeline = new GeometryDepthRenderPipeline(
+  let defaultRenderPipeline = new CadGeometryCustomRenderModePipeline(
     RenderMode[guiData.renderMode],
     materialManager,
     scene,
@@ -197,7 +197,7 @@ async function init() {
     .add(guiData, 'renderMode', renderModes)
     .name('Render mode')
     .onChange(() => {
-      defaultRenderPipeline = new GeometryDepthRenderPipeline(
+      defaultRenderPipeline = new CadGeometryCustomRenderModePipeline(
         RenderMode[guiData.renderMode],
         materialManager,
         scene,
