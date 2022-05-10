@@ -10,7 +10,7 @@ import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations
 import { clearAnnotationState } from 'src/store/commonActions';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import {
-  clearStates,
+  clearAnnotationStates,
   repopulateAnnotationState,
 } from 'src/modules/Common/store/annotation/util';
 
@@ -52,7 +52,7 @@ const annotationSlice = createSlice({
         const { fileIds, clearCache } = meta.arg;
 
         // clear states
-        clearStates(state, fileIds, clearCache);
+        clearAnnotationStates(state, fileIds, clearCache);
 
         // update annotations
         // ToDo (VIS-794): conversion logic from V1 to V2 in the new slice can be moved into thunks.
@@ -107,16 +107,7 @@ const annotationSlice = createSlice({
     builder.addMatcher(
       isAnyOf(DeleteFilesById.fulfilled, clearAnnotationState),
       (state: AnnotationState, action) => {
-        action.payload.forEach((fileId) => {
-          const fileAnnotations = state.files.byId[fileId];
-
-          if (fileAnnotations && fileAnnotations.length) {
-            fileAnnotations.forEach((annotationId) => {
-              delete state.annotations.byId[annotationId];
-            });
-            delete state.files.byId[fileId];
-          }
-        });
+        clearAnnotationStates(state, action.payload, false);
       }
     );
   },

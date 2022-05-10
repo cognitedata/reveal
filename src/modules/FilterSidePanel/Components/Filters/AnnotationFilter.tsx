@@ -33,13 +33,13 @@ export const AnnotationFilter = ({
     let updatedAnnotation: AnnotationFilterType | undefined = {};
     updatedAnnotation = {
       ...annotation,
-      annotationText: newAnnotation.label,
+      annotationLabelOrText: newAnnotation.label,
     };
 
     // To clear filter
     if (
       annotation?.annotationState === undefined &&
-      updatedAnnotation.annotationText === undefined
+      updatedAnnotation.annotationLabelOrText === undefined
     )
       updatedAnnotation = undefined;
 
@@ -62,9 +62,9 @@ export const AnnotationFilter = ({
     });
   };
 
-  const getValue = (annotationText?: string) => {
-    if (annotationText)
-      return [{ label: annotationText, value: annotationText }];
+  const getValue = (annotationLabelOrText?: string) => {
+    if (annotationLabelOrText)
+      return [{ label: annotationLabelOrText, value: annotationLabelOrText }];
     return [];
   };
 
@@ -93,7 +93,7 @@ export const AnnotationFilter = ({
         <Body level={3}>Search annotations</Body>
         {/* using Multi select to enable un-select option and logically accept last option */}
         <Select
-          value={getValue(annotation?.annotationText)}
+          value={getValue(annotation?.annotationLabelOrText)}
           onChange={setAnnotationText}
           options={annotationLabels}
           isClearable

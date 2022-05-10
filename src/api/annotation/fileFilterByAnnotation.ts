@@ -11,13 +11,13 @@ import { splitListIntoChunks } from 'src/utils/generalUtils';
 import { CDFAnnotationV1 } from './types';
 
 const getAnnotations = async (
-  annotationText?: string,
+  annotationLabelOrText?: string,
   annotationState?: string,
   fileIds?: number[]
 ) => {
   const filterPayload: any = {
     annotatedResourceType: 'file',
-    text: annotationText,
+    text: annotationLabelOrText,
     status: annotationState,
     annotatedResourceIds: fileIds && fileIds.map((id) => ({ id })),
   };
@@ -42,7 +42,7 @@ export const fileFilterByAnnotation = async (
   annotation: AnnotationFilterType,
   items: FileInfo[]
 ): Promise<FileInfo[]> => {
-  const { annotationText, annotationState } = annotation;
+  const { annotationLabelOrText, annotationState } = annotation;
   const bulkedIds = splitListIntoChunks(
     items.map((file) => file.id),
     ANNOTATION_FETCH_BULK_SIZE
@@ -51,7 +51,7 @@ export const fileFilterByAnnotation = async (
   const relatedAnnotations = (
     await Promise.all(
       bulkedIds.map((ids) =>
-        getAnnotations(annotationText, annotationState, ids)
+        getAnnotations(annotationLabelOrText, annotationState, ids)
       )
     )
   ).flat();

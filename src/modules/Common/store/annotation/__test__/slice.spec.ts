@@ -1,14 +1,9 @@
 /* eslint-disable jest/no-disabled-tests */
-import {
-  ImageObjectDetectionBoundingBox,
-  Status,
-} from 'src/api/annotation/types';
+
 import reducer, {
   initialState,
 } from 'src/modules/Common/store/annotation/slice';
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
-import { VisionAnnotation } from 'src/modules/Common/types';
-import { createVisionAnnotationStub } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import { clearAnnotationState } from 'src/store/commonActions';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
@@ -16,33 +11,7 @@ import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnot
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
-
-export const getDummyImageObjectDetectionBoundingBoxAnnotation = ({
-  id = 1,
-  annotatedResourceId = 10,
-}: {
-  id?: number;
-  annotatedResourceId?: number;
-}): VisionAnnotation<ImageObjectDetectionBoundingBox> => {
-  const data: ImageObjectDetectionBoundingBox = {
-    label: 'pump',
-    boundingBox: {
-      xMin: 0.25,
-      yMin: 0.25,
-      xMax: 0.75,
-      yMax: 0.75,
-    },
-  };
-
-  return createVisionAnnotationStub<ImageObjectDetectionBoundingBox>({
-    id,
-    createdTime: 123,
-    lastUpdatedTime: 123,
-    status: Status.Suggested,
-    resourceId: { annotatedResourceId },
-    data,
-  });
-};
+import { getDummyImageObjectDetectionBoundingBoxAnnotation } from 'src/__test-utils/getDummyAnnotations';
 
 describe('Test annotation reducer', () => {
   test('should return the initial state', () => {

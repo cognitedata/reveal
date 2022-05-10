@@ -1,13 +1,13 @@
 import { initialState } from 'src/modules/Common/store/annotation/slice';
 import {
-  clearStates,
+  clearAnnotationStates,
   repopulateAnnotationState,
 } from 'src/modules/Common/store/annotation/util';
 import {
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
-import { getDummyImageObjectDetectionBoundingBoxAnnotation } from './slice.spec';
+import { getDummyImageObjectDetectionBoundingBoxAnnotation } from 'src/__test-utils/getDummyAnnotations';
 
 const mockState = {
   ...initialState,
@@ -50,10 +50,10 @@ const mockState = {
 };
 
 describe('Test annotation utils', () => {
-  describe('Test clearStates fn', () => {
+  describe('Test clearAnnotationStates fn', () => {
     test('when clear cache is true', () => {
       const annotationState = { ...mockState };
-      clearStates(annotationState, [], true);
+      clearAnnotationStates(annotationState, [], true);
       expect(annotationState).toStrictEqual(initialState);
     });
 
@@ -63,7 +63,7 @@ describe('Test annotation utils', () => {
         const clearCache = false;
 
         const fileIds = [10];
-        clearStates(annotationState, fileIds, clearCache);
+        clearAnnotationStates(annotationState, fileIds, clearCache);
         expect(annotationState.files.byId[10]).toStrictEqual(undefined);
 
         expect(annotationState.annotations.byId[1]).toStrictEqual(undefined);
@@ -75,7 +75,7 @@ describe('Test annotation utils', () => {
         const clearCache = false;
 
         const fileIds = [20, 30];
-        clearStates(annotationState, fileIds, clearCache);
+        clearAnnotationStates(annotationState, fileIds, clearCache);
         expect(annotationState.files.byId[20]).toStrictEqual(undefined);
         expect(annotationState.files.byId[30]).toStrictEqual(undefined);
 

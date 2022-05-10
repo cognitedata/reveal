@@ -1,5 +1,6 @@
 import { VisionAnnotationDataType } from 'src/modules/Common/types/annotation';
 import {
+  CDFAnnotationTypeEnum,
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
@@ -63,4 +64,27 @@ export const isImageClassificationData = (
     !isImageAssetLinkData(data) &&
     !isImageExtractedTextData(data)
   );
+};
+
+export const getTypeGuardForVisionAnnotationDataType = (
+  visionAnnotationType: CDFAnnotationTypeEnum
+) => {
+  switch (visionAnnotationType) {
+    case CDFAnnotationTypeEnum.ImagesObjectDetection:
+      return isImageObjectDetectionData;
+    case CDFAnnotationTypeEnum.ImagesTextRegion:
+      return isImageExtractedTextData;
+    case CDFAnnotationTypeEnum.ImagesAssetLink:
+      return isImageAssetLinkData;
+    case CDFAnnotationTypeEnum.ImagesKeypointCollection:
+      return isImageKeypointCollectionData;
+    case CDFAnnotationTypeEnum.ImagesClassification:
+      return isImageClassificationData;
+    default:
+      console.error(
+        'type guard not found for provided vision annotation data type!',
+        visionAnnotationType
+      );
+      return (_data: VisionAnnotationDataType) => false;
+  }
 };
