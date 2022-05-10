@@ -1,3 +1,8 @@
+## 1.3.0 May 9 2022
+
+- Add functions for logging success/failure metrics in Prometheus
+-
+
 ## 1.2.4 May 4 2022
 
 - Enable passing appId on initialize for legacy projects

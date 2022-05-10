@@ -1,8 +1,11 @@
 import { MutableRefObject } from 'react';
 import debounce from 'lodash/debounce';
-import { MetricIncrementBody } from '@cognite/frontend-metrics-types';
+import {
+  MetricIncrementBody,
+  SuccessOrFailureMetricBody,
+} from '@cognite/frontend-metrics-types';
 
-import { PerfMonitor, PerfMonitorResultsData, Properties } from './types';
+import { PerfMonitor, PerfMonitorResultsData } from './types';
 import { findInMutation } from './perfMetrics.helper';
 
 const perfMetricsInstance = (() => {
@@ -14,6 +17,7 @@ const perfMetricsInstance = (() => {
   let project: string;
   let applicationId: string | undefined;
   let initialized = false;
+  let headers: Headers;
   //  Slow buckets [0.2, 0.4, 1, 3, 5];
   //  Fast buckets [1, 2.5, 4, 10, 25];
 
@@ -41,6 +45,16 @@ const perfMetricsInstance = (() => {
     );
     observer.observe({ entryTypes: ['mark', 'measure'] });
     initialized = true;
+
+    headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+      'x-cdp-project': project,
+    });
+
+    if (applicationId) {
+      headers.set('x-cdp-app', applicationId);
+    }
   }
 
   function processMonitorResults(list: PerformanceObserverEntryList): void {
@@ -67,7 +81,7 @@ const perfMetricsInstance = (() => {
           monitoredData[element.name].end = element.duration;
           monitoredData[element.name].duration =
             monitoredData[element.name].end - monitoredData[element.name].start;
-          pushEventToServer({
+          pushMetricIncrementToServer({
             name: element.name,
             tags: registeredMonitors[element.name].tags || '',
             seconds: monitoredData[element.name].duration / 1000,
@@ -87,25 +101,28 @@ const perfMetricsInstance = (() => {
     enabled = false;
   }
 
-  function pushEventToServer(
-    body: MetricIncrementBody | Properties
+  function pushMetricIncrementToServer(
+    body: MetricIncrementBody
   ): Promise<Response> {
-    const headers = new Headers({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-      'x-cdp-project': project,
-    });
-
-    if (applicationId) {
-      headers.set('x-cdp-app', applicationId);
-    }
-
     const requestOptions = {
       method: 'POST',
       headers,
       body: JSON.stringify(body),
     };
+
     return fetch(`${frontendMetricsBaseUrl}/metrics`, requestOptions);
+  }
+
+  function pushSuccessOrFailureToServer(
+    body: SuccessOrFailureMetricBody
+  ): Promise<Response> {
+    const requestOptions = {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+    };
+
+    return fetch(`${frontendMetricsBaseUrl}/metrics/counter`, requestOptions);
   }
 
   function updateRegisteredMonitors(data: PerfMonitor): void {
@@ -236,6 +253,40 @@ const perfMetricsInstance = (() => {
   }
 
   /**
+   * Log a success event
+   *
+   * @param {string} name   : Name of tracking event
+   * @param {string} tags   : Can be useful for grouping of events for example all events that belong under search can have the search tag
+   */
+  function logSuccessEvent(name: string, tags?: string): void {
+    checkInitialization();
+    if (enabled) {
+      pushSuccessOrFailureToServer({
+        name,
+        tags,
+        success: true,
+      });
+    }
+  }
+
+  /**
+   * Log a failure event
+   *
+   * @param {string} name   : Name of tracking event
+   * @param {string} tags   : Can be useful for grouping of events for example all events that belong under search can have the search tag
+   */
+  function logFailureEvent(name: string, tags?: string): void {
+    checkInitialization();
+    if (enabled) {
+      pushSuccessOrFailureToServer({
+        name,
+        tags,
+        success: false,
+      });
+    }
+  }
+
+  /**
    * Observe the DOM and fire a callback when there are changes
    *
    * @param {MutableRefObject<HTMLElement | null>} ref : A reference to part of the DOM to observe
@@ -276,8 +327,11 @@ const perfMetricsInstance = (() => {
     trackPerfEnd,
     observeDom,
     findInMutation,
-    pushEventToServer,
+    pushMetricIncrementToServer,
+    pushSuccessOrFailureToServer,
     logPerfEntry,
+    logSuccessEvent,
+    logFailureEvent,
   };
 })();
 

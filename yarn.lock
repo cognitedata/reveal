@@ -3170,10 +3170,10 @@
     semver "7.3.5"
     shelljs "0.8.5"
 
-"@cognite/frontend-metrics-types@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/frontend-metrics-types/-/frontend-metrics-types-0.0.1.tgz#280f83aa7147dde467fe32bc8ad693b884991ff2"
-  integrity sha512-HyZmEP8yn9cT2OVrc55/AaR4kMQPjcu68uO06fWFWot9V3fXfw5YgyX4a90M4UXP8XxoUoRRM0aWo79L8+67cA==
+"@cognite/frontend-metrics-types@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@cognite/frontend-metrics-types/-/frontend-metrics-types-0.0.2.tgz#b6684a39222194e8a2a5f4e372d84404edd881f2"
+  integrity sha512-i064sawWl1uKgfJ6QckXKutw3y+y8KpWuoerX3c/PlaEW/eC/gV6SHkK7q0ltxZcRxBZXhD8wlNMeh+vPxt1gA==
 
 "@cognite/gcs-browser-upload@^1.1.1":
   version "1.1.1"
