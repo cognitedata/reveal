@@ -1,10 +1,11 @@
-import { assets } from 'stubs/assets';
+import { assets, rootAssets } from 'stubs/assets';
 import { timeseries } from 'stubs/timeseries';
 import { sequences } from 'stubs/sequences';
 import { events } from 'stubs/events';
 import { files } from 'stubs/files';
 import styled from 'styled-components';
 import { datapoints } from 'stubs/timeseriesData';
+import { AssetListScope } from '@cognite/sdk';
 import {
   ResourcePreviewObserver,
   ResourcePreviewProps,
@@ -66,6 +67,23 @@ export const sdkMock = {
       return { data: { items: events } };
     }
     return { data: { items: [] } };
+  },
+  assets: {
+    retrieve: async () => {
+      return { items: rootAssets };
+    },
+    list: async (params?: AssetListScope) => {
+      const { filter: { parentIds, root } = {} } = params as AssetListScope;
+      if (root) {
+        return { items: rootAssets };
+      }
+      if (parentIds) {
+        return {
+          items: assets.filter(asset => asset.parentId === parentIds[0]),
+        };
+      }
+      return { items: assets };
+    },
   },
   datasets: {
     list: async () => ({ data: { items: [] } }),

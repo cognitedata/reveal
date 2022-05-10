@@ -1,6 +1,6 @@
 {
   "name": "@cognite/data-exploration",
-  "version": "3.0.6",
+  "version": "3.1.0",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "typings": "dist/index.d.ts",
@@ -38,7 +38,9 @@
     "react-router-dom": "^6.2.2",
     "react-select": "^4.3.0",
     "react-splitter-layout": "^4.0.0",
+    "react-virtualized": "^9.21.2",
     "react-virtualized-auto-sizer": "^1.0.5",
+    "react-virtualized-tree": "^3.4.1",
     "react-window": "^1.8.6",
     "react-window-infinite-loader": "^1.0.7",
     "styled-components": "^5.3.1",
