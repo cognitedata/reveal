@@ -8,7 +8,17 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { CadModelFactory } from '../../cad-model/src/CadModelFactory';
 import { AntiAliasingMode, CadMaterialManager, defaultRenderOptions, DefaultRenderPipeline } from '@reveal/rendering';
-import { CdfModelDataProvider, CdfModelIdentifier, CdfModelMetadataProvider } from '@reveal/modeldata-api';
+import {
+  CdfModelDataProvider,
+  CdfModelIdentifier,
+  CdfModelMetadataProvider,
+  LocalModelDataProvider,
+  LocalModelIdentifier,
+  LocalModelMetadataProvider,
+  ModelDataProvider,
+  ModelIdentifier,
+  ModelMetadataProvider
+} from '@reveal/modeldata-api';
 import { CadManager } from '../../cad-model/src/CadManager';
 import { NumericRange, revealEnv } from '@reveal/utilities';
 import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
@@ -35,29 +45,12 @@ async function init() {
     clearAlpha: 1
   };
 
-  const client = await createApplicationSDK('reveal.example.simple', {
-    project: '3d-test',
-    cluster: 'greenfield',
-    clientId: 'a03a8caf-7611-43ac-87f3-1d493c085579',
-    tenantId: '20a88741-8181-4275-99d9-bd4451666d6e'
-  });
-
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-
-  // Defaults to all-primitives model on 3d-test
-  const modelId = parseInt(urlParams.get('modelId') ?? '1791160622840317');
-  // const modelId = parseInt(urlParams.get('modelId') ?? '7029437408438765');
-
-  const revisionId = parseInt(urlParams.get('revisionId') ?? '498427137020189');
-  // const revisionId = parseInt(urlParams.get('revisionId') ?? '1994234928723810');
-
-  const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
-  const cdfModelMetadataProvider = new CdfModelMetadataProvider(client);
-  const cdfModelDataProvider = new CdfModelDataProvider(client);
+  const { metadataProvider, dataProvider, modelIdentifier } = await createModelProviders(urlParams);
 
   const materialManager = new CadMaterialManager();
-  const cadModelFactory = new CadModelFactory(materialManager, cdfModelMetadataProvider, cdfModelDataProvider);
+  const cadModelFactory = new CadModelFactory(materialManager, metadataProvider, dataProvider);
   const cadModelUpdateHandler = new CadModelUpdateHandler(new ByScreenSizeSectorCuller(), false);
 
   const renderer = new THREE.WebGLRenderer();
@@ -66,13 +59,13 @@ async function init() {
   renderer.setClearAlpha(guiData.clearAlpha);
 
   const scene = new THREE.Scene();
-  const pointCloudManager = createPointCloudManager(cdfModelMetadataProvider, cdfModelDataProvider, scene, renderer);
+  const pointCloudManager = createPointCloudManager(metadataProvider, dataProvider, scene, renderer);
   pointCloudManager.pointBudget = 1_000_000;
   const cadManager = new CadManager(materialManager, cadModelFactory, cadModelUpdateHandler);
   cadManager.budget = defaultDesktopCadModelBudget;
   const customObjects: THREE.Object3D[] = [];
 
-  const modelOutputs = (await cdfModelMetadataProvider.getModelOutputs(modelIdentifier)).map(outputs => outputs.format);
+  const modelOutputs = (await metadataProvider.getModelOutputs(modelIdentifier)).map(outputs => outputs.format);
 
   let model: THREE.Object3D;
   let boundingBox: THREE.Box3;
@@ -102,7 +95,7 @@ async function init() {
     });
   } else if (modelOutputs.includes('ept-pointcloud')) {
     const pointCloudNode = await pointCloudManager.addModel(modelIdentifier);
-    const pointcloudModel = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
+    const pointcloudModel = new CognitePointCloudModel(0, 0, pointCloudNode);
     boundingBox = pointcloudModel.getModelBoundingBox();
     customObjects.push(pointCloudNode);
     model = pointCloudNode;
@@ -288,4 +281,38 @@ function fitCameraToBoundingBox(
 
   camera.position.copy(position);
   controls.target.copy(target);
+}
+
+async function createModelProviders(urlParams): Promise<{
+  metadataProvider: ModelMetadataProvider;
+  dataProvider: ModelDataProvider;
+  modelIdentifier: ModelIdentifier;
+}> {
+  if (urlParams.has('modelUrl')) {
+    const modelUrl = urlParams.get('modelUrl')!;
+    const modelIdentifier = new LocalModelIdentifier(modelUrl);
+    const metadataProvider = new LocalModelMetadataProvider();
+    const dataProvider = new LocalModelDataProvider();
+    return { metadataProvider, dataProvider, modelIdentifier };
+  } else {
+    const client = await createApplicationSDK('reveal.example.simple', {
+      project: '3d-test',
+      cluster: 'greenfield',
+      clientId: 'a03a8caf-7611-43ac-87f3-1d493c085579',
+      tenantId: '20a88741-8181-4275-99d9-bd4451666d6e'
+    });
+
+    // Defaults to all-primitives model on 3d-test
+    const modelId = parseInt(urlParams.get('modelId') ?? '1791160622840317');
+    // const modelId = parseInt(urlParams.get('modelId') ?? '7029437408438765');
+
+    const revisionId = parseInt(urlParams.get('revisionId') ?? '498427137020189');
+    // const revisionId = parseInt(urlParams.get('revisionId') ?? '1994234928723810');
+
+    const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
+    const metadataProvider = new CdfModelMetadataProvider(client);
+    const dataProvider = new CdfModelDataProvider(client);
+
+    return { metadataProvider, dataProvider, modelIdentifier };
+  }
 }

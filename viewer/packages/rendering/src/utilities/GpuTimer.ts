@@ -19,6 +19,7 @@ export class GpuTimer {
   constructor(context: WebGL2RenderingContext) {
     this._gl = context;
     this._ext = context.getExtension('EXT_disjoint_timer_query_webgl2');
+    const isSupported = this._ext !== null;
 
     this._freeQueries = []; // pool of free queries
     this._frameQueries = []; // current frame's queries
@@ -27,7 +28,7 @@ export class GpuTimer {
     this._timings = [];
     this._prevTimings = [];
 
-    this.enabled = true;
+    this.enabled = isSupported;
   }
 
   // called when context was lost, function releases all context related resources
