@@ -207,6 +207,7 @@ export const EventsCountBadgeWrapper = styled(Flex)`
   height: ${SCALE_BLOCK_HEIGHT}px;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 `;
 
 export const EventsCodesWrapper = styled(FlexColumn)`

@@ -71,14 +71,14 @@ export const NPTGraph: React.FC<Props> = React.memo(
       []
     );
 
-    const setFormatTooltip = useCallback(
+    const getFormatTooltip = useCallback(
       (event: NPTEvent) => (
         <NptTooltip event={event} definitions={nptCodeDefinitions} />
       ),
       []
     );
 
-    const setInfoIcon = useCallback(
+    const getInfoIcon = useCallback(
       (option: string) => (
         <NptCodeDefinition
           nptCodeDefinition={nptCodeDefinitions[option]}
@@ -104,8 +104,8 @@ export const NPTGraph: React.FC<Props> = React.memo(
           subtitle={chartSubtitle}
           options={{
             ...NPT_GRAPH_OPTIONS,
-            formatTooltip: setFormatTooltip,
-            getInfoIcon: setInfoIcon,
+            formatTooltip: getFormatTooltip,
+            getInfoIcon,
           }}
           onUpdate={handleOnUpdateGraph}
           onSelectBar={handleOnSelectBar}

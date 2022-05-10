@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import { getEndTimeDisplay } from 'dataLayers/wells/npt/decorators/getEndTimeDisplay';
 import { getStartTimeDisplay } from 'dataLayers/wells/npt/decorators/getStartTimeDisplay';
+import { getCodeDefinition } from 'dataLayers/wells/npt/selectors/getCodeDefinition';
 import get from 'lodash/get';
 import uniqueId from 'lodash/uniqueId';
 import { formatDate, getTimeDuration } from 'utils/date';
@@ -36,6 +37,7 @@ import {
   HalfColumn,
   CardSection,
   IconStyle,
+  InfoIconStyle,
 } from './elements';
 
 export const Card = ({
@@ -61,7 +63,7 @@ export const NPTEventsGraph: React.FC<{
 }> = React.memo(({ events, nptCodeDefinitions }) => {
   const { data: unit } = useUserPreferencesMeasurement();
 
-  const setInfoIcon = useCallback(
+  const getInfoIcon = useCallback(
     (option: string) => (
       <NptCodeDefinition
         nptCodeDefinition={nptCodeDefinitions && nptCodeDefinitions[option]}
@@ -83,7 +85,7 @@ export const NPTEventsGraph: React.FC<{
       legendOptions: {
         isolate: false,
       },
-      getInfoIcon: setInfoIcon,
+      getInfoIcon,
     }),
     []
   );
@@ -95,6 +97,10 @@ export const NPTEventsGraph: React.FC<{
   const renderPlotHoverComponent = (nptEvent: NPTEvent) => {
     const nptCode = get(nptEvent, accessors.NPT_CODE);
     const nptCodeIndicatorColor = get(colors, nptCode, DEFAULT_NPT_COLOR);
+    const nptCodeDefinition = getCodeDefinition(
+      nptEvent.nptCode,
+      nptCodeDefinitions
+    );
 
     return (
       <NPTEventCard key={uniqueId(nptCode)}>
@@ -102,7 +108,13 @@ export const NPTEventsGraph: React.FC<{
           <NPTCodeIndicator color={nptCodeIndicatorColor} />
           <FlexColumn>
             <SectionTitle>NPT code</SectionTitle>
-            <SectionData>{nptCode}</SectionData>
+            <SectionData>
+              {nptCode}
+              <NptCodeDefinition
+                nptCodeDefinition={nptCodeDefinition}
+                iconStyle={InfoIconStyle}
+              />
+            </SectionData>
           </FlexColumn>
         </NPTCodeContainer>
 

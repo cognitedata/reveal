@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 
-import groupBy from 'lodash/groupBy';
-
 import { Dropdown } from '@cognite/cogs.js';
 
 import { NPTEvent } from 'modules/wellSearch/types';
@@ -12,10 +10,9 @@ import {
   EventsCountBadgeWrapper,
   EventsCodesWrapper,
   EventsCodesHeader,
-  EventsCodeRow,
-  EventsCodeName,
-  EventsCodeCount,
 } from './elements';
+import { NptEventCodeList } from './NptEventCodeList';
+import { useDataLayer } from './useDataLayer';
 
 export type Props = {
   events: NPTEvent[];
@@ -41,8 +38,7 @@ const NptEventsBadge: React.FC<Props> = ({ events }: Props) => {
    * Hence, handling the visibility state manually.
    */
   const [isVisible, setVisible] = useState<boolean>(false);
-
-  const groupedEvents = groupBy(events, 'nptCode');
+  const { nptCodeDefinitions } = useDataLayer();
 
   let badgeSize = MAX_SIZE_PERCENTAGE;
 
@@ -57,21 +53,19 @@ const NptEventsBadge: React.FC<Props> = ({ events }: Props) => {
       placement="left-start"
       appendTo={document.body}
       visible={isVisible}
+      onClickOutside={() => setVisible(false)}
       content={
         <EventsCodesWrapper>
           <EventsCodesHeader>{NPT_EVENT_CODES_TITLE}</EventsCodesHeader>
-          {Object.keys(groupedEvents).map((code) => (
-            <EventsCodeRow key={code}>
-              <EventsCodeName>{code}</EventsCodeName>
-              <EventsCodeCount>{groupedEvents[code].length}</EventsCodeCount>
-            </EventsCodeRow>
-          ))}
+          <NptEventCodeList
+            events={events}
+            nptCodeDefinitions={nptCodeDefinitions}
+          />
         </EventsCodesWrapper>
       }
     >
       <EventsCountBadgeWrapper
-        onMouseEnter={() => setVisible(true)}
-        onMouseLeave={() => setVisible(false)}
+        onClick={() => setVisible((prevState) => !prevState)}
       >
         <EventsCountBadge size={badgeSize}>
           <span>{events.length}</span>

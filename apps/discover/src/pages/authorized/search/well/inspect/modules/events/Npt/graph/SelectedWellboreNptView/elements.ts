@@ -1,3 +1,5 @@
+import { CSSProperties } from 'react';
+
 import styled from 'styled-components/macro';
 import layers from 'utils/zindex';
 
@@ -144,6 +146,13 @@ export const HalfColumn = styled(CardColumn)`
 
 export const IconStyle = {
   marginLeft: '5px',
+  verticalAlign: 'middle',
+  color: 'rgba(0, 0, 0, 0.55)',
+};
+
+export const InfoIconStyle: CSSProperties = {
+  marginLeft: '9px',
+  pointerEvents: 'auto',
   verticalAlign: 'middle',
   color: 'rgba(0, 0, 0, 0.55)',
 };

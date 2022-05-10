@@ -1,4 +1,7 @@
+import { useState } from 'react';
+
 import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
 
 import { DataObject } from 'components/Charts/types';
 
@@ -16,6 +19,7 @@ export const Plots = <T extends DataObject<T>>({
 }: PlotsProps<T>) => {
   const { x: xScale, y: yScale } = scales;
   const { x: xAccessor, y: yAccessor } = accessors;
+  const [selected, setSelected] = useState<string>('');
 
   return (
     <g>
@@ -34,10 +38,19 @@ export const Plots = <T extends DataObject<T>>({
           : tooltip;
 
         return (
-          <PlotContainer key={key} x={xScale(xValue)} y={yScale(yValue)}>
+          <PlotContainer
+            key={key}
+            x={xScale(xValue)}
+            y={yScale(yValue)}
+            onClick={() =>
+              setSelected((prevValue) => (prevValue === key ? '' : key))
+            }
+          >
             <PlotTooltip
               content={tooltipContent}
               placement={renderPlotHoverComponent ? 'auto' : 'top'}
+              visible={isEqual(selected, key)}
+              onClickOutside={() => setSelected('')}
               inverted
             >
               <Plot data-testid="plot" style={{ background: plotColor }} />

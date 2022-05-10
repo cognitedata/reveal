@@ -8,6 +8,7 @@ import {
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../../constants';
+import { NptCodeDefinition } from '../../NptCodeDefinition';
 import { NptCodeDefinitionType } from '../../types';
 import { NPT_GRAPH_OPTIONS } from '../constants';
 import { adaptEventsToDaysDuration } from '../utils';
@@ -17,16 +18,26 @@ import {
   NPT_DURATION_GRAPH_TITLE,
   NPT_DURATION_GRAPH_X_AXIS_TITLE,
 } from './constants';
-import { ChartWrapper } from './elements';
+import { ChartWrapper, IconStyle } from './elements';
 import { NptTooltip } from './NptTooltip';
 
 export const NPTDurationGraph: React.FC<{
   events: NPTEvent[];
   nptCodeDefinitions?: NptCodeDefinitionType;
 }> = React.memo(({ events, nptCodeDefinitions }) => {
-  const setFormatTooltip = useCallback(
+  const getFormatTooltip = useCallback(
     (event: NPTEvent) => (
       <NptTooltip event={event} definitions={nptCodeDefinitions} />
+    ),
+    []
+  );
+
+  const getInfoIcon = useCallback(
+    (option: string) => (
+      <NptCodeDefinition
+        nptCodeDefinition={nptCodeDefinitions && nptCodeDefinitions[option]}
+        iconStyle={IconStyle}
+      />
     ),
     []
   );
@@ -42,7 +53,8 @@ export const NPTDurationGraph: React.FC<{
       margins: {
         top: -7,
       },
-      formatTooltip: setFormatTooltip,
+      formatTooltip: getFormatTooltip,
+      getInfoIcon,
     }),
     []
   );

@@ -4,10 +4,8 @@ import {
 } from 'pages/authorized/search/well/inspect/modules/events/Npt/types';
 
 export const getCodeDefinition = (
-  code: string,
+  code?: string,
   definitionList?: NptCodeDefinitionType | NptCodeDetailsDefinitionType
 ) => {
-  return definitionList && definitionList[code] && code
-    ? definitionList[code]
-    : '';
+  return code && definitionList?.[code] ? definitionList[code] : '';
 };
