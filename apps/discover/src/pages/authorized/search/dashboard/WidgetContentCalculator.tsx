@@ -3,7 +3,7 @@
 // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-unused-prop-types.md#false-positives-sfc
 import * as React from 'react';
 
-import { getFixedPercent } from 'utils/getPercent';
+import { getFixedPercent } from 'utils/number';
 
 import { WidgetContentWithLoading } from './WidgetContentWithLoading';
 

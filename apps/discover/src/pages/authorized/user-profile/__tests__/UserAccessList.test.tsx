@@ -9,9 +9,8 @@ const getMockInput = (): AllAccess => ({
   files: { missing: ['READ', 'WRITE'], error: '' },
   sequences: { missing: ['READ'], error: '' },
   assets: { missing: ['READ'], error: '' },
-  groups: { missing: ['LIST'], error: '' },
   'discover-api': { missing: ['LIST'], error: '' },
-  'wells-api': { missing: ['LIST'], error: '' },
+  wells: { missing: ['LIST'], error: '' },
 });
 
 const getMockOutput = () => ({
@@ -19,13 +18,12 @@ const getMockOutput = () => ({
   datasets: { error: '', missing: ['READ'] },
   files: { error: '', missing: ['READ, WRITE'] },
   geospatial: { error: '', missing: ['READ'] },
-  groups: { error: '', missing: ['LIST'] },
   labels: { error: '', missing: ['READ'] },
   relationships: { error: '', missing: ['READ'] },
   seismic: { error: '', missing: ['READ'] },
   sequences: { error: '', missing: ['READ'] },
   'discover-api': { error: '', missing: ['LIST'] },
-  'wells-api': { error: '', missing: ['LIST'] },
+  wells: { error: '', missing: ['LIST'] },
 });
 
 describe('UserAccessList', () => {

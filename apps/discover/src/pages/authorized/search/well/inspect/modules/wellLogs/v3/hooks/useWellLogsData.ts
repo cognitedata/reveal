@@ -1,6 +1,6 @@
 import { Unit } from 'convert-units';
 import isEmpty from 'lodash/isEmpty';
-import { minMax } from 'utils/minMax';
+import { minMax } from 'utils/number/minMax';
 import { changeUnitTo } from 'utils/units';
 import { getConvertibleUnit } from 'utils/units/getConvertibleUnit';
 

@@ -1,4 +1,4 @@
-import { minMax } from 'utils/minMax';
+import { minMax } from 'utils/number/minMax';
 import layers from 'utils/zindex';
 
 import { Body } from '@cognite/cogs.js';
