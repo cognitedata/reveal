@@ -7,15 +7,14 @@ import cloneDeep from 'lodash/cloneDeep';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { RenderPass } from '../RenderPass';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
-import { createRenderTarget } from '../utilities/renderUtilities';
+import { createFullScreenTriangleMesh, createRenderTarget } from '../utilities/renderUtilities';
 import { IdentifiedModel } from '../utilities/types';
 import { RenderTargetData } from './types';
-import { BlitEffect } from '../render-passes/types';
 import { AntiAliasingMode, defaultRenderOptions, RenderOptions } from '../rendering/types';
 import { CadGeometryRenderPipeline } from './CadGeometryRenderPipeline';
 import { PostProcessingPipeline } from './PostProcessingPipeline';
-import { BlitPass } from '../render-passes/BlitPass';
 import { SSAOPass } from '../render-passes/SSAOPass';
+import { blitShaders } from '../rendering/shaders';
 
 export class DefaultRenderPipeline implements RenderPipelineProvider {
   private readonly _cadScene: THREE.Scene;
@@ -31,18 +30,27 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
   };
   private readonly _cadGeometryRenderPipeline: CadGeometryRenderPipeline;
   private readonly _postProcessingRenderPipeline: PostProcessingPipeline;
-  private readonly _blitToScreenPass: BlitPass;
   private readonly _ssaoPass: SSAOPass;
+  private readonly _blitToScreenMaterial: THREE.RawShaderMaterial;
+  private readonly _blitToScreenMesh: THREE.Mesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>;
 
   set renderOptions(renderOptions: RenderOptions) {
     const { ssaoRenderParameters } = renderOptions;
     this._ssaoPass.ssaoParameters = ssaoRenderParameters ?? defaultRenderOptions.ssaoRenderParameters;
 
-    const blitEffect =
-      AntiAliasingMode[renderOptions.antiAliasing] === AntiAliasingMode[AntiAliasingMode.FXAA]
-        ? BlitEffect.Fxaa
-        : BlitEffect.None;
-    this._blitToScreenPass.blitEffect = blitEffect;
+    const shouldAddFxaa = AntiAliasingMode[renderOptions.antiAliasing] === AntiAliasingMode[AntiAliasingMode.FXAA];
+
+    if (shouldAddFxaa === this._blitToScreenMaterial.defines.FXAA ?? false) {
+      return;
+    }
+
+    if (shouldAddFxaa) {
+      this._blitToScreenMaterial.defines.FXAA = true;
+    } else {
+      delete this._blitToScreenMaterial.defines.FXAA;
+    }
+
+    this._blitToScreenMaterial.needsUpdate = true;
   }
 
   constructor(
@@ -86,10 +94,22 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
       customObjects
     );
 
-    this._blitToScreenPass = new BlitPass({
-      texture: this._renderTargetData.postProcessingRenderTarget.texture,
-      depthTexture: this._renderTargetData.postProcessingRenderTarget.depthTexture
+    this._blitToScreenMaterial = new THREE.RawShaderMaterial({
+      vertexShader: blitShaders.vertex,
+      fragmentShader: blitShaders.fragment,
+      uniforms: {
+        tDiffuse: { value: this._renderTargetData.postProcessingRenderTarget.texture },
+        tDepth: { value: this._renderTargetData.postProcessingRenderTarget.depthTexture }
+      },
+      glslVersion: THREE.GLSL3,
+      defines: {
+        DEPTH_WRITE: true,
+        FXAA: true
+      }
     });
+
+    this._blitToScreenMesh = createFullScreenTriangleMesh(this._blitToScreenMaterial);
+    this._blitToScreenMesh.frustumCulled = false;
 
     this.renderOptions = cloneDeep(renderOptions);
   }
@@ -112,7 +132,13 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     yield this._postProcessingRenderPipeline;
 
     renderer.setRenderTarget(this._outputRenderTarget);
-    yield this._blitToScreenPass;
+    renderer.clear();
+
+    yield {
+      render: (renderer, camera) => {
+        renderer.render(this._blitToScreenMesh, camera);
+      }
+    };
 
     this.pipelineTearDown(renderer);
   }
