@@ -593,8 +593,6 @@ export class Cognite3DViewer {
 
     this.scene.add(model);
     this._extraObjects.push(model);
-    model.updateMatrix();
-    model.updateWorldMatrix(true, true);
 
     return model;
   }

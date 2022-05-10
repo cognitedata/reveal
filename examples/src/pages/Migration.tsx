@@ -19,7 +19,6 @@ import {
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
-import { CadNode } from '@cognite/reveal/internals';
 import { ClippingUI } from '../utils/ClippingUI';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
 import { BulkHtmlOverlayUI } from '../utils/BulkHtmlOverlayUI';
@@ -191,10 +190,7 @@ export function Migration() {
       const renderModes = ['Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD', 'DepthBufferOnly (N/A)', 'GeometryType'];
       renderGui.add(guiState, 'renderMode', renderModes).name('Render mode').onFinishChange(value => {
         const renderMode = renderModes.indexOf(value) + 1;
-        modelUi.cadModels.forEach(m => {
-          const cadNode: CadNode = (m as any).cadNode;
-          cadNode.renderMode = renderMode;
-        });
+        (viewer as any).revealManager._renderPipeline._cadGeometryRenderPipeline._cadGeometryRenderPasses.back._renderMode = renderMode;
         viewer.requestRedraw();
       });
       renderGui.add(guiState, 'antiAliasing',

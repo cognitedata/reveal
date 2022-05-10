@@ -3,12 +3,12 @@
  */
 
 import * as THREE from 'three';
-import { transparentBlendOptions } from '../render-passes/types';
+import { transparentBlendOptions } from './types';
 import { RenderPass } from '../RenderPass';
 import { createFullScreenTriangleMesh, getBlitMaterial } from '../utilities/renderUtilities';
-import { PostProcessingPipelineOptions } from './types';
+import { PostProcessingPipelineOptions } from '../render-pipelines/types';
 
-export class PostProcessingPipeline implements RenderPass {
+export class PostProcessingPass implements RenderPass {
   private readonly _postProcessingScene: THREE.Scene;
   private readonly _customObjects: THREE.Object3D[];
   private _takenCustomObjects: { object: THREE.Object3D; parent: THREE.Object3D }[];
@@ -27,7 +27,6 @@ export class PostProcessingPipeline implements RenderPass {
 
     const inFrontEarlyZBlitObject = createFullScreenTriangleMesh(inFrontEarlyZBlitMaterial);
     inFrontEarlyZBlitObject.renderOrder = 0;
-    inFrontEarlyZBlitObject.frustumCulled = false;
 
     const backBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.back.texture,
@@ -39,7 +38,6 @@ export class PostProcessingPipeline implements RenderPass {
     });
     const backBlitObject = createFullScreenTriangleMesh(backBlitMaterial);
     backBlitObject.renderOrder = 2;
-    backBlitObject.frustumCulled = false;
 
     const ghostBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.ghost.texture,
@@ -49,7 +47,6 @@ export class PostProcessingPipeline implements RenderPass {
 
     const ghostBlitObject = createFullScreenTriangleMesh(ghostBlitMaterial);
     ghostBlitObject.renderOrder = 3;
-    ghostBlitObject.frustumCulled = false;
 
     const inFrontBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.inFront.texture,
@@ -59,7 +56,6 @@ export class PostProcessingPipeline implements RenderPass {
     });
     const inFrontBlitObject = createFullScreenTriangleMesh(inFrontBlitMaterial);
     inFrontBlitObject.renderOrder = 4;
-    inFrontBlitObject.frustumCulled = false;
 
     this._postProcessingScene.add(inFrontEarlyZBlitObject);
     this._postProcessingScene.add(backBlitObject);

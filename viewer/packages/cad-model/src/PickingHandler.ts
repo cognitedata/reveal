@@ -8,9 +8,10 @@ import {
   BasicPipelineExecutor,
   CadMaterialManager,
   CadNode,
-  GeometryDepthRenderPipeline,
+  CadGeometryCustomRenderModePipeline,
   IdentifiedModel,
-  RenderMode
+  RenderMode,
+  RenderPipelineProvider
 } from '@reveal/rendering';
 import { WebGLRendererStateHelper } from '@reveal/utilities';
 
@@ -54,8 +55,8 @@ export class PickingHandler {
     255 / 256
   );
   private readonly _pipelineExecutor: BasicPipelineExecutor;
-  private readonly _depthRenderPipeline: GeometryDepthRenderPipeline;
-  private readonly _treeIndexRenderPipeline: GeometryDepthRenderPipeline;
+  private readonly _depthRenderPipeline: CadGeometryCustomRenderModePipeline;
+  private readonly _treeIndexRenderPipeline: CadGeometryCustomRenderModePipeline;
 
   constructor(
     renderer: THREE.WebGLRenderer,
@@ -72,14 +73,14 @@ export class PickingHandler {
     };
 
     this._pipelineExecutor = new BasicPipelineExecutor(renderer);
-    this._depthRenderPipeline = new GeometryDepthRenderPipeline(
+    this._depthRenderPipeline = new CadGeometryCustomRenderModePipeline(
       RenderMode.Depth,
       materialManager,
       scene,
       cadModels,
       false
     );
-    this._treeIndexRenderPipeline = new GeometryDepthRenderPipeline(
+    this._treeIndexRenderPipeline = new CadGeometryCustomRenderModePipeline(
       RenderMode.TreeIndex,
       materialManager,
       scene,
@@ -138,7 +139,7 @@ export class PickingHandler {
     cadNode.renderMode = RenderMode.TreeIndex;
     let pixelBuffer: Uint8Array;
     try {
-      pixelBuffer = this.pickTreeIndexPixel(input, this._clearColor, this._clearAlpha);
+      pixelBuffer = this.pickPixel(input, this._treeIndexRenderPipeline, this._clearColor, this._clearAlpha);
     } finally {
       cadNode.renderMode = previousRenderMode;
     }
@@ -160,7 +161,7 @@ export class PickingHandler {
     const { cadNode } = input;
     const previousRenderMode = cadNode.renderMode;
     cadNode.renderMode = RenderMode.Depth;
-    const pixelBuffer = this.pickDepthPixel(input, this._clearColor, this._clearAlpha);
+    const pixelBuffer = this.pickPixel(input, this._depthRenderPipeline, this._clearColor, this._clearAlpha);
     cadNode.renderMode = previousRenderMode;
 
     const depth = this.unpackRGBAToDepth(pixelBuffer);
@@ -177,7 +178,12 @@ export class PickingHandler {
     return position;
   }
 
-  private pickTreeIndexPixel(input: PickingInput, clearColor: THREE.Color, clearAlpha: number) {
+  private pickPixel(
+    input: PickingInput,
+    renderPipeline: RenderPipelineProvider,
+    clearColor: THREE.Color,
+    clearAlpha: number
+  ) {
     const { renderTarget, pixelBuffer } = this._pickPixelColorStorage;
     const { camera, normalizedCoords, renderer, domElement } = input;
 
@@ -193,31 +199,7 @@ export class PickingHandler {
     try {
       stateHelper.setClearColor(clearColor, clearAlpha);
       renderer.clearColor();
-      this._pipelineExecutor.render(this._treeIndexRenderPipeline, pickCamera);
-      renderer.readRenderTargetPixels(renderTarget, 0, 0, 1, 1, pixelBuffer);
-    } finally {
-      stateHelper.resetState();
-    }
-    return pixelBuffer;
-  }
-
-  private pickDepthPixel(input: PickingInput, clearColor: THREE.Color, clearAlpha: number) {
-    const { renderTarget, pixelBuffer } = this._pickPixelColorStorage;
-    const { camera, normalizedCoords, renderer, domElement } = input;
-
-    // Prepare camera that only renders the single pixel we are interested in
-    const pickCamera = camera.clone() as THREE.PerspectiveCamera;
-    const absoluteCoords = {
-      x: ((normalizedCoords.x + 1.0) / 2.0) * domElement.clientWidth,
-      y: ((1.0 - normalizedCoords.y) / 2.0) * domElement.clientHeight
-    };
-    pickCamera.setViewOffset(domElement.clientWidth, domElement.clientHeight, absoluteCoords.x, absoluteCoords.y, 1, 1);
-
-    const stateHelper = new WebGLRendererStateHelper(renderer);
-    try {
-      stateHelper.setClearColor(clearColor, clearAlpha);
-      renderer.clearColor();
-      this._pipelineExecutor.render(this._depthRenderPipeline, pickCamera);
+      this._pipelineExecutor.render(renderPipeline, pickCamera);
       renderer.readRenderTargetPixels(renderTarget, 0, 0, 1, 1, pixelBuffer);
     } finally {
       stateHelper.resetState();
