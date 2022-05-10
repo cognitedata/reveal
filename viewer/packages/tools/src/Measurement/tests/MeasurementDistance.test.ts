@@ -38,8 +38,8 @@ describe(MeasurementDistance.name, () => {
     const xPosition = 100;
     const yPosition = 101;
     const zPosition = 102;
-    const addSpyOn = jest.spyOn(measurementDistance, 'add');
-    measurementDistance.add(new THREE.Vector3(xPosition, yPosition, zPosition));
+    const addSpyOn = jest.spyOn(measurementDistance, 'start');
+    measurementDistance.start(new THREE.Vector3(xPosition, yPosition, zPosition));
 
     expect(addSpyOn).toBeCalled();
 
@@ -57,8 +57,8 @@ describe(MeasurementDistance.name, () => {
     const screenY = 101;
     const cameraDistance = 10;
     const updateSpyOn = jest.spyOn(measurementDistance, 'update');
-    measurementDistance.add(new THREE.Vector3(0, 0, 0));
-    measurementDistance.setCameraDistance(cameraDistance);
+    measurementDistance.start(new THREE.Vector3(0, 0, 0));
+    measurementDistance.assignDistanceStartPointToCamera(cameraDistance);
     measurementDistance.update(screenX, screenY);
 
     const endPosition = calculatePositionFromScreenPosition(screenX, screenY, cameraDistance, viewer);
@@ -71,10 +71,10 @@ describe(MeasurementDistance.name, () => {
   });
 
   test('Complete the line', () => {
-    const completeSpyOn = jest.spyOn(measurementDistance, 'complete');
+    const completeSpyOn = jest.spyOn(measurementDistance, 'end');
 
     expect(measurementDistance.isActive()).toBeFalse();
-    measurementDistance.complete();
+    measurementDistance.end();
 
     expect(completeSpyOn).toBeCalled();
 
@@ -88,8 +88,8 @@ describe(MeasurementDistance.name, () => {
     const cameraDistance = 10;
     const distanceSpyOn = jest.spyOn(measurementDistance, 'getMeasurementValue');
 
-    measurementDistance.add(startPosition);
-    measurementDistance.setCameraDistance(cameraDistance);
+    measurementDistance.start(startPosition);
+    measurementDistance.assignDistanceStartPointToCamera(cameraDistance);
     measurementDistance.update(screenX, screenY);
 
     const distance = measurementDistance.getMeasurementValue();
