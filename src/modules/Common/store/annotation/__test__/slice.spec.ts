@@ -11,7 +11,7 @@ import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotat
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
-import { getDummyImageObjectDetectionBoundingBoxAnnotation } from 'src/modules/Common/store/annotation/__test__/getDummyAnnotations';
+import { getDummyImageObjectDetectionBoundingBoxAnnotation } from 'src/__test-utils/getDummyAnnotations';
 
 describe('Test annotation reducer', () => {
   test('should return the initial state', () => {

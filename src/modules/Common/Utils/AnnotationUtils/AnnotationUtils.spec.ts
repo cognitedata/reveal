@@ -4,7 +4,7 @@ import {
   getDummyImageExtractedTextAnnotation,
   getDummyImageObjectDetectionBoundingBoxAnnotation,
   getDummyImageObjectDetectionPolygonAnnotation,
-} from 'src/modules/Common/store/annotation/__test__/getDummyAnnotations';
+} from 'src/__test-utils/getDummyAnnotations';
 import {
   filterAnnotations,
   getAnnotationLabelOrText,
