@@ -60,7 +60,6 @@ export class MeasurementControls {
    */
   remove(): void {
     if (this._measurement) {
-      this._measurement.remove();
       this._measurement = null;
       this.removeEventHandling();
     }
@@ -68,9 +67,8 @@ export class MeasurementControls {
 
   private async onPointerClick(event: MouseEvent) {
     const { offsetX, offsetY } = event;
-    const pointer = new THREE.Vector2(offsetX, offsetY);
 
-    const intersection = await this._viewer.getIntersectionFromPixel(pointer.x, pointer.y);
+    const intersection = await this._viewer.getIntersectionFromPixel(offsetX, offsetY);
 
     if (intersection) {
       this._measurementGizmo.add(intersection.point, this._pointSize);
@@ -78,13 +76,13 @@ export class MeasurementControls {
       if (!this._measurement.isActive()) {
         this._viewer.domElement.addEventListener('mousemove', this._handleonPointerMove);
         this._startPosition.copy(intersection.point);
-        this._measurement.add(intersection.point);
-        this._measurement.setCameraDistance(intersection.distanceToCamera);
+        this._measurement.start(intersection.point);
+        this._measurement.assignDistanceStartPointToCamera(intersection.distanceToCamera);
       } else {
         this.updateMeasurement(0, 0, intersection.point);
-        this._measurement.complete();
+        this._measurement.end();
         const labelPosition = this.calculateMidpoint(this._startPosition, intersection.point);
-        const distanceValue = this._measurement.getMeasurementValue().toFixed(1).toString() + ' M';
+        const distanceValue = this._measurement.getMeasurementValue().toFixed(2).toString() + ' m';
         this._measurementLabel.add(labelPosition, distanceValue);
         this._viewer.domElement.removeEventListener('mousemove', this._handleonPointerMove);
       }
@@ -116,9 +114,10 @@ export class MeasurementControls {
    */
   updateLineOptions(options: MeasurementLineOptions): void {
     if (this._measurement) {
-      const distanceMeasurement = this._measurement as MeasurementDistance;
-      distanceMeasurement.setLineOptions(options);
-      this._pointSize = options?.lineWidth || this._pointSize;
+      if (this._measurement instanceof MeasurementDistance) {
+        this._measurement.setLineOptions(options);
+        this._pointSize = options?.lineWidth || this._pointSize;
+      }
     }
   }
 

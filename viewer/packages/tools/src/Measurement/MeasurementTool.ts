@@ -42,4 +42,13 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       this._measurementControls.updateLineOptions(lineOptions);
     }
   }
+
+  /**
+   * Removes all measurements and detaches from the viewer.
+   * @override
+   */
+  dispose(): void {
+    this._measurementControls.dispose();
+    super.dispose();
+  }
 }

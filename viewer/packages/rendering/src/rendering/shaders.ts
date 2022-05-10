@@ -117,10 +117,3 @@ export const coverageShaders = {
   vertex: glsl(require('../glsl/sector/sectorCoverage.vert').default)
 };
 
-/**
- * Line shader.
- */
-export const lineShaders = {
-  fragment: glsl(require('../glsl/sector/primitives/line.frag').default),
-  vertex: glsl(require('../glsl/sector/primitives/line.vert').default)
-};

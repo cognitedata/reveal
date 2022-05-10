@@ -7,7 +7,6 @@ uniform mat4 viewMatrix;
 in vec3 position;
 in vec3 instanceStart;
 in vec3 instanceEnd;
-in vec2 uv;
 
 out vec4 worldPos;
 out vec3 worldStart;

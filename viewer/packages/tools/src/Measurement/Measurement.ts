@@ -5,39 +5,31 @@
 export interface Measurement {
   /**
    * Add a measurement
-   * @param point Start point of the Measurement
+   * @param point point for the Measurement
    */
-  add(point: THREE.Vector3): void;
+  start(point: THREE.Vector3): void;
   /**
-   * Remove a measurement
-   */
-  remove(): void;
-  /**
-   * Update the measurement
-   * @param x screen X Position
-   * @param y screen Y Position
+   * Update the measurement at Mouse X & Y or at a point
+   * @param x mouse X position
+   * @param y mouse Y position
+   * @param point start point
    */
   update(x?: number, y?: number, point?: THREE.Vector3): void;
   /**
-   * Complete the measurement calculation
+   * Complete the measurement
    */
-  complete(): void;
+  end(): void;
   /**
-   * Is the measurement active or inactive
+   * Is the measurement active
    */
   isActive(): boolean;
   /**
    * Get respective measurement value such as distance/angle/thickness
    */
   getMeasurementValue(): number;
-
   /**
-   * Get the end point if exists
+   * Assign distance of Camera distance to start point
+   * @param distance Camera distance to Start Point
    */
-  getEndPoint(): THREE.Vector3;
-
-  /**
-   * Set Camera distance from startPoint
-   */
-  setCameraDistance(cameraDistance: number): void;
+  assignDistanceStartPointToCamera(distance: number): void;
 }

@@ -10,13 +10,11 @@ export class LineGeometrySegment extends THREE.InstancedBufferGeometry {
   constructor() {
     super();
     const positions = [-1, 2, 0, 1, 2, 0, -1, 1, 0, 1, 1, 0, -1, 0, 0, 1, 0, 0, -1, -1, 0, 1, -1, 0];
-    const uvs = [-1, 2, 1, 2, -1, 1, 1, 1, -1, -1, 1, -1, -1, -2, 1, -2];
     const index = [0, 2, 1, 2, 3, 1, 2, 4, 3, 4, 5, 3, 4, 6, 5, 6, 7, 5];
     this._box = new THREE.Box3();
     this._vector = new THREE.Vector3();
     this.setIndex(index);
     this.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    this.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
   }
 
   /**

@@ -5,54 +5,52 @@
 import { Cognite3DViewer } from '@reveal/core';
 import * as THREE from 'three';
 import { LineGeometry } from './LineGeometry';
-import { lineShaders } from '@reveal/rendering';
-import { Line } from './Line';
 import { Measurement } from './Measurement';
 import { MeasurementLineOptions } from './types';
+import glsl from 'glslify';
 
 export class MeasurementDistance implements Measurement {
   private readonly _viewer: Cognite3DViewer;
-  private _measurementLine: Line | undefined;
+  private _measurementLine: THREE.Mesh | undefined;
   private _lineGeometry: LineGeometry;
   private _isActive: boolean;
-  private readonly _startPoint: THREE.Vector3;
-  private readonly _endPoint: THREE.Vector3;
   private _positions: Float32Array;
+  private readonly _raycaster: THREE.Raycaster;
+  private _cameraDistanceFromStartPoint: number;
+
+  private readonly lineShaders = {
+    fragment: glsl(require('./shaders/line.frag').default),
+    vertex: glsl(require('./shaders/line.vert').default)
+  };
+
   private _lineOptions: MeasurementLineOptions = {
     lineWidth: 0.02,
     color: new THREE.Color(0x00ffff)
   };
-  private readonly _raycaster: THREE.Raycaster;
-  private _cameraDistance: number;
 
-  private readonly LineUniforms: any = {
+  private readonly LineUniforms = {
     linewidth: { value: this._lineOptions.lineWidth },
     resolution: { value: new THREE.Vector2(1, 1) },
-    color: { value: this._lineOptions.color }
-  };
-
-  private readonly ShaderUniforms: any = {
-    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.common, THREE.UniformsLib.fog, this.LineUniforms])
+    color: { value: this._lineOptions.color },
+    opacity: { value: 1.0 }
   };
 
   constructor(viewer: Cognite3DViewer, lineOptions?: MeasurementLineOptions) {
     this._viewer = viewer;
     this._isActive = false;
-    this._startPoint = new THREE.Vector3();
-    this._endPoint = new THREE.Vector3();
     this._positions = new Float32Array(6);
     this._lineOptions = lineOptions ?? this._lineOptions;
     this._raycaster = new THREE.Raycaster();
-    this._cameraDistance = 0;
+    this._cameraDistanceFromStartPoint = 0;
   }
 
   private initializeLine(): void {
     if (this._measurementLine === undefined) {
       this._lineGeometry = new LineGeometry();
       const lineMaterial = new THREE.RawShaderMaterial({
-        uniforms: THREE.UniformsUtils.clone(this.ShaderUniforms.uniforms),
-        vertexShader: lineShaders.vertex,
-        fragmentShader: lineShaders.fragment,
+        uniforms: THREE.UniformsUtils.clone(this.LineUniforms),
+        vertexShader: this.lineShaders.vertex,
+        fragmentShader: this.lineShaders.fragment,
         clipping: true,
         glslVersion: THREE.GLSL3
       });
@@ -62,17 +60,17 @@ export class MeasurementDistance implements Measurement {
 
       this._lineGeometry.setPositions(this._positions);
 
-      this._measurementLine = new Line(this._lineGeometry, lineMaterial);
+      this._measurementLine = new THREE.Mesh(this._lineGeometry, lineMaterial);
 
       this._viewer.addObject3D(this._measurementLine);
     }
   }
 
   /**
-   * Add/Start the line of the distance measurement
+   * Start the line of the distance measurement
    * @param point Start point of the Line
    */
-  add(point: THREE.Vector3): void {
+  start(point: THREE.Vector3): void {
     this.initializeLine();
     this.addStartPoint(point);
   }
@@ -87,25 +85,16 @@ export class MeasurementDistance implements Measurement {
   }
 
   /**
-   * Remove the measurement line
+   * End the line for distance measurement
    */
-  remove(): void {
-    this.clearLine();
-  }
-
-  /**
-   * Completes a line for distance measurement
-   */
-  complete(): void {
+  end(): void {
     this.clearLine();
   }
 
   private addStartPoint(point: THREE.Vector3): void {
-    this._startPoint.copy(point);
-    this._endPoint.copy(point);
-    this._positions[0] = this._startPoint.x;
-    this._positions[1] = this._startPoint.y;
-    this._positions[2] = this._startPoint.z;
+    this._positions[0] = point.x;
+    this._positions[1] = point.y;
+    this._positions[2] = point.z;
     this._isActive = true;
   }
 
@@ -114,7 +103,9 @@ export class MeasurementDistance implements Measurement {
    * @returns Distance between the two points
    */
   getMeasurementValue(): number {
-    return this._endPoint.distanceTo(this._startPoint);
+    const startPoint = new THREE.Vector3(this._positions[0], this._positions[1], this._positions[2]);
+    const endPoint = new THREE.Vector3(this._positions[3], this._positions[4], this._positions[5]);
+    return endPoint.distanceTo(startPoint);
   }
 
   /**
@@ -122,7 +113,7 @@ export class MeasurementDistance implements Measurement {
    * @param x Screen X Position
    * @param y Screen Y Position
    */
-  update(x: number, y: number, endPoint?: THREE.Vector3): void {
+  update(x?: number, y?: number, endPoint?: THREE.Vector3): void {
     const position = new THREE.Vector3();
     if (endPoint) {
       position.copy(endPoint);
@@ -132,14 +123,13 @@ export class MeasurementDistance implements Measurement {
       mouse.y = -(y / this._viewer.domElement.clientHeight) * 2 + 1;
       this._raycaster.setFromCamera(mouse, this._viewer.getCamera());
 
-      this._raycaster.ray.at(this._cameraDistance, position);
+      this._raycaster.ray.at(this._cameraDistanceFromStartPoint, position);
     }
 
     this._positions[3] = position.x;
     this._positions[4] = position.y;
     this._positions[5] = position.z;
     this._lineGeometry.setPositions(this._positions);
-    this._endPoint.copy(position);
   }
 
   /**
@@ -151,29 +141,21 @@ export class MeasurementDistance implements Measurement {
   }
 
   /**
-   * Get the end point
-   * @returns End point
-   */
-  getEndPoint(): THREE.Vector3 {
-    return this._endPoint;
-  }
-
-  /**
    * Sets the line width & color
    * @param options MeasurementLineOptions.lineWidth or MeasurementLineOptions.color or both
    */
   setLineOptions(options: MeasurementLineOptions): void {
-    this.ShaderUniforms.uniforms.linewidth.value = options?.lineWidth ?? this._lineOptions.lineWidth;
-    this.ShaderUniforms.uniforms.color.value = new THREE.Color(options?.color ?? this._lineOptions.color);
-    this._lineOptions.color = this.ShaderUniforms.uniforms.color.value;
-    this._lineOptions.lineWidth = this.ShaderUniforms.uniforms.linewidth.value;
+    this.LineUniforms.linewidth.value = options?.lineWidth ?? this._lineOptions.lineWidth;
+    this.LineUniforms.color.value = new THREE.Color(options?.color ?? this._lineOptions.color);
+    this._lineOptions.color = this.LineUniforms.color.value;
+    this._lineOptions.lineWidth = this.LineUniforms.linewidth.value;
   }
 
   /**
-   * Set the distance from camera
-   * @param cameraDistance distance from the camera to the startPoint
+   * Assign distance of Camera distance to start point
+   * @param distance Camera distance to Start Point
    */
-  setCameraDistance(cameraDistance: number): void {
-    this._cameraDistance = cameraDistance;
+  assignDistanceStartPointToCamera(distance: number): void {
+    this._cameraDistanceFromStartPoint = distance;
   }
 }

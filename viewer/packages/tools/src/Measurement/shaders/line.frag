@@ -4,7 +4,6 @@ uniform vec3 color;
 uniform float opacity;
 uniform float linewidth;
 
-in float vLineDistance;
 in vec4 worldPos;
 in vec3 worldStart;
 in vec3 worldEnd;

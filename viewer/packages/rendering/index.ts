@@ -26,4 +26,3 @@ export { coverageShaders } from './src/rendering/shaders';
 
 export { Materials } from './src/rendering/materials';
 export { createPrimitives } from './src/rendering/primitives';
-export { lineShaders } from './src/rendering/shaders';

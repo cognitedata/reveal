@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css?family=Inter&display=swap');
+
+.reveal-viewer-label {
+	position: absolute;
+
+  /* Anchor to the center of the element and ignore events */
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  touch-action: none;
+  user-select: none;
+  border-radius: 6px;
+
+  /* Make it look nice */
+  padding: 6px;
+  color: #fff;
+  background: #232323da;
+  border: #ffffff22 solid 1px;
+  overflow: hidden;
+
+  /*Font*/
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+}
