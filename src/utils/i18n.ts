@@ -1,3 +1,6 @@
+import { TOptions, StringMap } from 'i18next';
+import { useTranslation } from 'react-i18next';
+
 import { SELECTED_LANGUAGE_LS_KEY } from '../common/constants';
 
 export const getLanguage = (): string | undefined => {
@@ -26,4 +29,15 @@ export const selectLanguage = (language: string) => {
     // eslint-disable-next-line no-console
     console.error('An error has occured while setting the language', e);
   }
+};
+
+export const useTypedTranslation = <K extends string>() => {
+  const { t: oldT, ...rest } = useTranslation();
+
+  const t = (key: K, options?: TOptions<StringMap> | string) => {
+    const translation = oldT(key, options);
+    return translation;
+  };
+
+  return { t, ...rest };
 };
