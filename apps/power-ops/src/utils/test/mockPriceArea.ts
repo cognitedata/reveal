@@ -1,4 +1,7 @@
 import { PriceAreaWithData } from 'types';
+import { rest } from 'msw';
+import sidecar from 'utils/sidecar';
+import { MSWRequest } from 'utils/test';
 
 export const mockPriceArea: PriceAreaWithData = {
   externalId: 'mock_price_area_NO1',
@@ -141,4 +144,12 @@ export const mockPriceArea: PriceAreaWithData = {
       ],
     },
   ],
+};
+
+export const getMockPriceArea = (project: string | undefined): MSWRequest => {
+  const url = `${sidecar.powerOpsApiBaseUrl}/${project}/price-area-with-data/${mockPriceArea.externalId}`;
+
+  return rest.get<Request>(url, (_req, res, ctx) => {
+    return res(ctx.json(mockPriceArea));
+  });
 };

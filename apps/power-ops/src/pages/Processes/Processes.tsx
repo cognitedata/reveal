@@ -58,6 +58,7 @@ const ProcessesPage = ({
       case EVENT_TYPES.BID_PROCESS:
       case EVENT_TYPES.SHOP_RUN:
       case EVENT_TYPES.FUNCTION_CALL:
+      case EVENT_TYPES.PROCESS_STARTED:
       case EVENT_TYPES.PROCESS_FAILED:
       case EVENT_TYPES.PROCESS_FINISHED:
         refetchProcesses();

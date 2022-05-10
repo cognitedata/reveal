@@ -2,9 +2,34 @@ import { Button, Label } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import { downloadBidMatrices } from 'utils/utils';
 import { PriceAreaWithData } from 'types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
+import { CogniteClient } from '@cognite/sdk';
 
 import { Header, StyledTitle } from './elements';
+
+export const useBidMatrixProcessStartDate = (
+  externalId: string | undefined,
+  client: CogniteClient | undefined
+) => {
+  const [startDate, setStartDate] = useState<string>('');
+
+  const getStartDate = (): void => {
+    if (!client || !externalId) return;
+
+    client.events
+      .retrieve([{ externalId }], {
+        ignoreUnknownIds: true,
+      })
+      .then(([event]) => {
+        setStartDate(dayjs(event.createdTime).format('MMM DD, YYYY @ HH:mm'));
+      });
+  };
+
+  useEffect(() => getStartDate(), []);
+
+  return { startDate, getStartDate };
+};
 
 export const PortfolioHeader = ({
   priceArea,
@@ -14,11 +39,18 @@ export const PortfolioHeader = ({
   const { client } = useAuthContext();
   const { authState } = useAuthContext();
 
-  const startDate = priceArea
-    ? new Date(priceArea?.totalMatrixes?.[0].startTime).toLocaleString()
-    : undefined;
-
   const [downloading, setDownloading] = useState<boolean>(false);
+
+  const { startDate, getStartDate } = useBidMatrixProcessStartDate(
+    priceArea?.bidProcessExternalId,
+    client
+  );
+
+  useEffect(() => {
+    if (priceArea?.bidProcessExternalId) {
+      getStartDate();
+    }
+  }, [priceArea]);
 
   return (
     <Header>

@@ -200,7 +200,7 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
                 {matrix?.method}
               </Label> */}
               </span>
-              <Detail>{`Generated for: ${bidDate.format('DD/MMM/YYYY Z')} - ${
+              <Detail>{`Generated for ${bidDate.format('MMM DD, YYYY')} - ${
                 currentMatrix?.externalId
               }`}</Detail>
             </div>
