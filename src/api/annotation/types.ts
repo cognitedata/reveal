@@ -118,10 +118,13 @@ export type ImageKeypointCollection = Label &
 
 // Annotation API V2 types todo: remove this and import correct type from @cognite/sdk when v2 becomes available
 
+type Not<T> = {
+  [P in keyof T]?: void;
+};
+
 export type ImageObjectDetection =
-  | ImageObjectDetectionBoundingBox
-  | ImageObjectDetectionPolygon
-  | ImageKeypointCollection;
+  | (ImageObjectDetectionBoundingBox & Not<ImageObjectDetectionPolygon>)
+  | (ImageObjectDetectionPolygon & Not<ImageObjectDetectionBoundingBox>);
 
 export type CDFAnnotationStatus =
   | `${Status.Suggested}`
@@ -133,16 +136,19 @@ export enum CDFAnnotationTypeEnum {
   ImagesClassification = 'images.Classification',
   ImagesTextRegion = 'images.TextRegion',
   ImagesAssetLink = 'images.AssetLink',
+  ImagesKeypointCollection = 'images.KeypointCollection',
 }
 
 export type CDFAnnotationType<Type> = Type extends ImageObjectDetection
   ? CDFAnnotationTypeEnum.ImagesObjectDetection
-  : Type extends ImageClassification
-  ? CDFAnnotationTypeEnum.ImagesClassification
   : Type extends ImageExtractedText
   ? CDFAnnotationTypeEnum.ImagesTextRegion
   : Type extends ImageAssetLink
   ? CDFAnnotationTypeEnum.ImagesAssetLink
+  : Type extends ImageKeypointCollection
+  ? CDFAnnotationTypeEnum.ImagesKeypointCollection
+  : Type extends ImageClassification
+  ? CDFAnnotationTypeEnum.ImagesClassification
   : never;
 
 export type CDFAnnotationV2<Type> = AnnotatedResourceId & {
