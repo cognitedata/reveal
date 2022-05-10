@@ -11,7 +11,7 @@ import { ScrollButtons } from '../common/ScrollButtons';
 import { DEFAULT_ACTIVE_VIEW_MODE, VIEW_MODES } from '../events/Npt/constants';
 import { ViewModes } from '../events/Npt/types';
 
-import CasingGraphView from './CasingGraphView';
+import { CasingGraph } from './CasingGraphView';
 import CasingTableView from './CasingTableView';
 import { SideModes } from './CasingView/types';
 import { DEFAULT_ACTIVE_SIDE_MODE, SIDE_MODES } from './constants';
@@ -77,7 +77,7 @@ export const Casing: React.FC = () => {
       </TopBarWrapper>
 
       {viewMode === VIEW_MODES.Graph && (
-        <CasingGraphView
+        <CasingGraph
           casings={casings}
           scrollRef={scrollRef}
           sideMode={activeSideMode}

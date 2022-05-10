@@ -15,8 +15,8 @@ const props: CasingViewTypeProps = {
   waterDepth: 10,
   rkbLevel: 20,
   unit: UserPreferredUnit.FEET,
-  events: [],
-  isEventsLoading: true,
+  nptEvents: [],
+  ndsEvents: [],
   casings: [
     {
       id: 0,
