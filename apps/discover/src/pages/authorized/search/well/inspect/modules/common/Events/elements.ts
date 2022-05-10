@@ -1,7 +1,5 @@
 import styled from 'styled-components/macro';
 
-import { Label } from '@cognite/cogs.js';
-
 import { SubTitleText } from 'components/EmptyState/elements';
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
@@ -278,8 +276,4 @@ export const EmptyCasingsStateWrapper = styled(Flex)`
     padding-top: 0;
     justify-content: center;
   }
-`;
-
-export const NdsRiskTypeCountLabel = styled(Label)`
-  background: rgba(102, 102, 102, 0.12);
 `;

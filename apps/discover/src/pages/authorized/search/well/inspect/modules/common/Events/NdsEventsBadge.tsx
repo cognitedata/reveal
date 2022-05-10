@@ -15,7 +15,6 @@ import {
   EventsCodeRow,
   EventsCodeName,
   EventsCodeCount,
-  NdsRiskTypeCountLabel,
 } from './elements';
 
 export type Props = {
@@ -64,11 +63,7 @@ const NdsEventsBadge: React.FC<Props> = ({ events }: Props) => {
           {Object.keys(groupedEvents).map((code) => (
             <EventsCodeRow key={code}>
               <EventsCodeName>{code}</EventsCodeName>
-              <EventsCodeCount>
-                <NdsRiskTypeCountLabel variant="unknown">
-                  {groupedEvents[code].length}
-                </NdsRiskTypeCountLabel>
-              </EventsCodeCount>
+              <EventsCodeCount>{groupedEvents[code].length}</EventsCodeCount>
             </EventsCodeRow>
           ))}
         </EventsCodesWrapper>
