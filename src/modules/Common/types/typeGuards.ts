@@ -1,8 +1,6 @@
+import { VisionAnnotationDataType } from 'src/modules/Common/types/annotation';
 import {
-  VisionAnnotationDataType,
-  ImageAnnotationType,
-} from 'src/modules/Common/types/annotation';
-import {
+  CDFAnnotationTypeEnum,
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
@@ -69,21 +67,19 @@ export const isImageClassificationData = (
 };
 
 export const getTypeGuardForVisionAnnotationDataType = (
-  visionAnnotationType: ImageAnnotationType
+  visionAnnotationType: CDFAnnotationTypeEnum
 ) => {
   switch (visionAnnotationType) {
-    case ImageAnnotationType.ImagesObjectDetectionPolygon:
-      return isImageObjectDetectionPolygonData;
-    case ImageAnnotationType.ImagesExtractedText:
+    case CDFAnnotationTypeEnum.ImagesObjectDetection:
+      return isImageObjectDetectionData;
+    case CDFAnnotationTypeEnum.ImagesTextRegion:
       return isImageExtractedTextData;
-    case ImageAnnotationType.ImagesAssetLink:
+    case CDFAnnotationTypeEnum.ImagesAssetLink:
       return isImageAssetLinkData;
-    case ImageAnnotationType.ImagesKeypointCollection:
+    case CDFAnnotationTypeEnum.ImagesKeypointCollection:
       return isImageKeypointCollectionData;
-    case ImageAnnotationType.ImagesClassification:
+    case CDFAnnotationTypeEnum.ImagesClassification:
       return isImageClassificationData;
-    case ImageAnnotationType.ImagesObjectDetectionBoundingBox:
-      return isImageObjectDetectionBoundingBoxData;
     default:
       console.error(
         'type guard not found for provided vision annotation data type!',

@@ -12,16 +12,6 @@ import {
 /**
  * Annotation types used within vision sub app
  */
-
-export enum ImageAnnotationType {
-  ImagesClassification = 'images.Classification',
-  ImagesObjectDetectionBoundingBox = 'images.ObjectDetectionBoundingBox',
-  ImagesObjectDetectionPolygon = 'images.ObjectDetectionPolygon',
-  ImagesExtractedText = 'images.ExtractedText',
-  ImagesAssetLink = 'images.AssetLink',
-  ImagesKeypointCollection = 'images.KeypointCollection',
-}
-
 export type VisionAnnotationDataType =
   | ImageClassification
   | ImageObjectDetection

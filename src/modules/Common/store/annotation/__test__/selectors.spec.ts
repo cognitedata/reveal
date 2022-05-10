@@ -17,8 +17,7 @@ import {
   makeSelectFileAnnotationsByType,
   makeSelectTotalAnnotationCountForFileIds,
 } from 'src/modules/Common/store/annotation/selectors';
-import { Status } from 'src/api/annotation/types';
-import { ImageAnnotationType } from 'src/modules/Common/types';
+import { CDFAnnotationTypeEnum, Status } from 'src/api/annotation/types';
 
 const annotations = [
   getDummyImageClassificationAnnotation({
@@ -200,20 +199,24 @@ describe('Test annotation selectors', () => {
   describe('Test makeSelectFileAnnotationsByType', () => {
     const selectFileAnnotationsByType = makeSelectFileAnnotationsByType();
 
-    test('should select annotations with specified type', () => {
+    describe('should select annotations with specified type', () => {
       // select annotations for file id 10 with model type imageClassification
-      expect(
-        selectFileAnnotationsByType(mockState, 10, [
-          ImageAnnotationType.ImagesClassification,
-        ])
-      ).toEqual([annotations[0]]);
+      test('get ImagesClassifications for file 10', () => {
+        expect(
+          selectFileAnnotationsByType(mockState, 10, [
+            CDFAnnotationTypeEnum.ImagesClassification,
+          ])
+        ).toEqual([annotations[0]]);
+      });
 
-      // select annotations for file id 20 with model type imageObjectDetectionBoundingBox
-      expect(
-        selectFileAnnotationsByType(mockState, 20, [
-          ImageAnnotationType.ImagesObjectDetectionBoundingBox,
-        ])
-      ).toEqual([annotations[6], annotations[7], annotations[8]]);
+      test('get ImagesObjectDetections for file 20', () => {
+        // select annotations for file id 20 with model type imageObjectDetectionBoundingBox
+        expect(
+          selectFileAnnotationsByType(mockState, 20, [
+            CDFAnnotationTypeEnum.ImagesObjectDetection,
+          ])
+        ).toEqual([annotations[6], annotations[7], annotations[8]]);
+      });
     });
   });
 
