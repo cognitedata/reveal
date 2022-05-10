@@ -1,7 +1,7 @@
 import get from 'lodash/get';
 import { getTimeDuration } from 'utils/date';
 import { HOURS_IN_A_DAY } from 'utils/date/constants';
-import { caseInsensitiveSort } from 'utils/sort';
+import { sortByCaseInsensitive } from 'utils/sort';
 
 import { LegendCheckboxState } from 'components/Charts/common/Legend';
 import { DataObject } from 'components/Charts/types';
@@ -21,7 +21,7 @@ export const getNptCodeCheckboxOptions = <T extends DataObject<T>>(
 ) => {
   const dataOption = [
     ...new Set(data.map((dataElement: T) => dataElement[accessor])),
-  ].sort(caseInsensitiveSort);
+  ].sort(sortByCaseInsensitive);
 
   const checkboxState = dataOption.reduce(
     (acc, key) => ({ ...acc, [key]: true }),

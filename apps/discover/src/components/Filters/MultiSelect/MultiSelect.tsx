@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import get from 'lodash/get';
 import isUndefined from 'lodash/isUndefined';
-import { caseInsensitiveSort } from 'utils/sort';
+import { sortByCaseInsensitive } from 'utils/sort';
 
 import { Select, OptionType } from '@cognite/cogs.js';
 
@@ -53,7 +53,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
 
     return isOptionsSorted
       ? processedOptions.sort((optionA, optionB) =>
-          caseInsensitiveSort(
+          sortByCaseInsensitive(
             getValueFromOption(optionA),
             getValueFromOption(optionB)
           )

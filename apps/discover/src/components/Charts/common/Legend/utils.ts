@@ -1,6 +1,6 @@
 import isUndefined from 'lodash/isUndefined';
 import pickBy from 'lodash/pickBy';
-import { caseInsensitiveSort } from 'utils/sort';
+import { sortByCaseInsensitive } from 'utils/sort';
 
 import { DataObject } from 'components/Charts/types';
 
@@ -13,7 +13,7 @@ export const getLegendInitialCheckboxState = <T extends DataObject<T>>(
   const checkboxOptions = [
     ...new Set(data.map((dataElement) => dataElement[accessor])),
   ]
-    .sort(caseInsensitiveSort)
+    .sort(sortByCaseInsensitive)
     .filter((option) => !isUndefined(option));
 
   const checkboxState: LegendCheckboxState = {};

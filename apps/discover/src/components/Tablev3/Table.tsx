@@ -13,7 +13,7 @@ import { TS_FIX_ME } from 'core';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
-import { alphanumeric } from 'utils/sort';
+import { sortByAlphanumeric } from 'utils/sort';
 
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
 import { EMPTY_ARRAY, EMPTY_OBJECT } from 'constants/empty';
@@ -150,7 +150,7 @@ const TableInner = <T extends Object>({
       data,
       columns,
       sortTypes: {
-        alphanumeric: useCallback(alphanumeric, []),
+        alphanumeric: useCallback(sortByAlphanumeric, []),
       },
       initialState: {
         // @ts-expect-error overrides outdated react table types

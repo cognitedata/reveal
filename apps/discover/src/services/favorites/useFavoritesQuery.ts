@@ -1,7 +1,7 @@
 import { useQuery, UseQueryResult } from 'react-query';
 
 import cloneDeep from 'lodash/cloneDeep';
-import { caseInsensitiveSort } from 'utils/sort';
+import { sortByCaseInsensitive } from 'utils/sort';
 
 import { getTenantInfo } from '@cognite/react-container';
 
@@ -49,7 +49,7 @@ export function useFavoritesSortedByName() {
     ...result,
     data: result.data
       ? cloneDeep(result.data).sort((a, b) =>
-          caseInsensitiveSort(a.name, b.name)
+          sortByCaseInsensitive(a.name, b.name)
         )
       : result.data,
   };
