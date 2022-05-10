@@ -3,12 +3,12 @@
  */
 
 import * as THREE from 'three';
-import { transparentBlendOptions } from '../render-passes/types';
+import { transparentBlendOptions } from './types';
 import { RenderPass } from '../RenderPass';
 import { createFullScreenTriangleMesh, getBlitMaterial } from '../utilities/renderUtilities';
-import { PostProcessingPipelineOptions } from './types';
+import { PostProcessingPipelineOptions } from '../render-pipelines/types';
 
-export class PostProcessingPipeline implements RenderPass {
+export class PostProcessingPass implements RenderPass {
   private readonly _postProcessingScene: THREE.Scene;
   private readonly _customObjects: THREE.Object3D[];
   private _takenCustomObjects: { object: THREE.Object3D; parent: THREE.Object3D }[];

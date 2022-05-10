@@ -12,7 +12,7 @@ import { IdentifiedModel } from '../utilities/types';
 import { RenderTargetData } from './types';
 import { AntiAliasingMode, defaultRenderOptions, RenderOptions } from '../rendering/types';
 import { CadGeometryRenderPipeline } from './CadGeometryRenderPipeline';
-import { PostProcessingPipeline } from './PostProcessingPipeline';
+import { PostProcessingPass } from '../render-passes/PostProcessingPass';
 import { SSAOPass } from '../render-passes/SSAOPass';
 import { blitShaders } from '../rendering/shaders';
 
@@ -29,7 +29,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     clearAlpha: number;
   };
   private readonly _cadGeometryRenderPipeline: CadGeometryRenderPipeline;
-  private readonly _postProcessingRenderPipeline: PostProcessingPipeline;
+  private readonly _postProcessingRenderPipeline: PostProcessingPass;
   private readonly _ssaoPass: SSAOPass;
   private readonly _blitToScreenMaterial: THREE.RawShaderMaterial;
   private readonly _blitToScreenMesh: THREE.Mesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>;
@@ -85,7 +85,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
       ssaoParameters
     );
 
-    this._postProcessingRenderPipeline = new PostProcessingPipeline(
+    this._postProcessingRenderPipeline = new PostProcessingPass(
       {
         ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
         edges: edges.enabled,

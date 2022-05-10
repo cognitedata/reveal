@@ -122,7 +122,7 @@ export const defaultAxisBoxConfig: Required<AxisBoxConfig> = {
   size: 128,
   position: {
     corner: Corner.BottomRight,
-    padding: new THREE.Vector2(0, 0)
+    padding: new THREE.Vector2()
   },
   animationSpeed: 200,
   faces: {
