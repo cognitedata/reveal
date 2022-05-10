@@ -27,8 +27,7 @@ import {
   VisionImageAssetLinkAnnotation,
   VisionImageExtractedTextAnnotation,
   VisionImageKeypointCollectionAnnotation,
-  VisionImageObjectDetectionBoundingBoxAnnotation,
-  VisionImageObjectDetectionPolygonAnnotation,
+  VisionImageObjectDetectionAnnotation,
 } from 'src/modules/Common/types';
 import { getDummyAnnotation } from 'src/__test-utils/annotations';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
@@ -455,7 +454,7 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
         xMax: cdfAnnotationWithObjectDetection.region?.vertices[1].x,
         yMax: cdfAnnotationWithObjectDetection.region?.vertices[1].y,
       },
-    } as VisionImageObjectDetectionBoundingBoxAnnotation);
+    } as VisionImageObjectDetectionAnnotation);
 
     const cdfAnnotationWithPolygon = getDummyAnnotation(
       1,
@@ -483,6 +482,6 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
       polygon: {
         vertices: cdfAnnotationWithPolygon.region?.vertices,
       },
-    } as VisionImageObjectDetectionPolygonAnnotation);
+    } as VisionImageObjectDetectionAnnotation);
   });
 });

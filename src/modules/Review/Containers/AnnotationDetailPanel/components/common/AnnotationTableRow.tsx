@@ -59,15 +59,18 @@ export const AnnotationTableRow = ({
           />
         ) : undefined}
       </ShowHideIconContainer>
-      <AttributesIconContainer>
-        <Detail style={{ color: '#595959' }}>
-          <Tooltip
-            content={<AnnotationTableRowAttribute annotation={annotation} />}
-          >
-            <Icon type="Info" />
-          </Tooltip>
-        </Detail>
-      </AttributesIconContainer>
+      {(annotation.data?.attributes !== undefined ||
+        annotation.data?.confidence !== undefined) && (
+        <AttributesIconContainer>
+          <Detail style={{ color: '#595959' }}>
+            <Tooltip
+              content={<AnnotationTableRowAttribute annotation={annotation} />}
+            >
+              <Icon type="Info" />
+            </Tooltip>
+          </Detail>
+        </AttributesIconContainer>
+      )}
       <ApproveBtnContainer onClick={(evt) => evt.stopPropagation()}>
         <StyledSegmentedControl
           status={annotation.status}

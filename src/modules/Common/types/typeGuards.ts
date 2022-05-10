@@ -7,6 +7,7 @@ import {
   ImageClassification,
   ImageExtractedText,
   ImageKeypointCollection,
+  ImageObjectDetection,
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
 } from 'src/api/annotation/types';
@@ -31,6 +32,15 @@ export const isImageObjectDetectionPolygonData = (
 ): data is ImageObjectDetectionPolygon => {
   return hasLabel(data) && 'polygon' in data;
 };
+
+export const isImageObjectDetectionData = (
+  data: VisionAnnotationDataType
+): data is ImageObjectDetection => {
+  return (
+    isImageObjectDetectionBoundingBoxData(data) ||
+    isImageObjectDetectionPolygonData(data)
+  );
+};
 export const isImageExtractedTextData = (
   data: VisionAnnotationDataType
 ): data is ImageExtractedText => {
@@ -52,8 +62,7 @@ export const isImageClassificationData = (
   return (
     hasLabel(data) &&
     !isImageKeypointCollectionData(data) &&
-    !isImageObjectDetectionPolygonData(data) &&
-    !isImageObjectDetectionBoundingBoxData(data) &&
+    !isImageObjectDetectionData(data) &&
     !isImageAssetLinkData(data) &&
     !isImageExtractedTextData(data)
   );
