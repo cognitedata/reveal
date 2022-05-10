@@ -120,7 +120,8 @@ export type ImageKeypointCollection = Label &
 
 export type ImageObjectDetection =
   | ImageObjectDetectionBoundingBox
-  | ImageObjectDetectionPolygon;
+  | ImageObjectDetectionPolygon
+  | ImageKeypointCollection;
 
 export type CDFAnnotationStatus =
   | `${Status.Suggested}`
@@ -129,13 +130,19 @@ export type CDFAnnotationStatus =
 
 export enum CDFAnnotationTypeEnum {
   ImagesObjectDetection = 'images.ObjectDetection',
-  ImageClassification = 'images.Classification',
+  ImagesClassification = 'images.Classification',
+  ImagesTextRegion = 'images.TextRegion',
+  ImagesAssetLink = 'images.AssetLink',
 }
 
 export type CDFAnnotationType<Type> = Type extends ImageObjectDetection
   ? CDFAnnotationTypeEnum.ImagesObjectDetection
   : Type extends ImageClassification
-  ? CDFAnnotationTypeEnum.ImageClassification
+  ? CDFAnnotationTypeEnum.ImagesClassification
+  : Type extends ImageExtractedText
+  ? CDFAnnotationTypeEnum.ImagesTextRegion
+  : Type extends ImageAssetLink
+  ? CDFAnnotationTypeEnum.ImagesAssetLink
   : never;
 
 export type CDFAnnotationV2<Type> = AnnotatedResourceId & {

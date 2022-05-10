@@ -1,5 +1,13 @@
-import { AnnotatedResourceId, Status } from 'src/api/annotation/types';
-import { VisionAnnotation } from 'src/modules/Common/types';
+import {
+  AnnotatedResourceId,
+  CDFAnnotationTypeEnum,
+  CDFAnnotationV2,
+  Status,
+} from 'src/api/annotation/types';
+import {
+  VisionAnnotation,
+  VisionAnnotationDataType,
+} from 'src/modules/Common/types';
 
 export const createVisionAnnotationStub = <T>({
   id,
@@ -23,3 +31,11 @@ export const createVisionAnnotationStub = <T>({
   ...resourceId,
   ...data,
 });
+
+export const convertToVisionAnnotations = (
+  ann: CDFAnnotationV2<CDFAnnotationTypeEnum>[]
+): VisionAnnotation<VisionAnnotationDataType>[] => {
+  console.warn('havent finished yet');
+
+  return [] as VisionAnnotation<VisionAnnotationDataType>[];
+};

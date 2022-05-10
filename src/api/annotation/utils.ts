@@ -11,6 +11,8 @@ import {
   AnnotationMetadataV1,
   AnnotationSourceV1,
   UnsavedAnnotation,
+  CDFAnnotationTypeEnum,
+  CDFAnnotationV2,
 } from 'src/api/annotation/types';
 
 export function getUnsavedAnnotation(
@@ -113,6 +115,14 @@ export function validateAnnotationV1(
     return true;
   }
   return false;
+}
+
+export function validateAnnotation(
+  annotation: CDFAnnotationV2<CDFAnnotationTypeEnum>
+): boolean {
+  console.warn('havent finished yet');
+
+  return true;
 }
 
 export const getFieldOrSetNull = (
