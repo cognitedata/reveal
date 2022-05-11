@@ -11,17 +11,12 @@ import { useDeepEffect } from 'hooks/useDeep';
 import { TimeLogStages } from 'hooks/useTimeLog';
 import { useSearchPhrase } from 'modules/sidebar/selectors';
 
-import {
-  getAllByFilters,
-  getByFilters,
-  getWellsWithWellbores,
-} from '../service';
+import { getAllByFilters } from '../service';
 import { Well } from '../types';
 import { handleWellSearchError } from '../utils/wellSearch';
 
 import { useAddToWellsCache } from './useAddToWellsCache';
 import { useCommonWellFilter } from './useCommonWellFilter';
-import { useEnabledWellSdkV3 } from './useEnabledWellSdkV3';
 import { useWellConfig } from './useWellConfig';
 
 const wellSearchMetric = Metrics.create(LOG_WELL_SEARCH);
@@ -53,41 +48,22 @@ export type WellSearchResult = {
 };
 export const useWellSearchResultQuery =
   (): UseQueryResult<WellSearchResult> => {
-    const wellFilter = useCommonWellFilter();
     const wellFilterV3 = useWellFilters();
     const { data: wellConfig } = useWellConfig();
-    const enabledWellSdkV3 = useEnabledWellSdkV3();
     const addToWellsCache = useAddToWellsCache();
     const searchPhrase = useSearchPhrase();
 
     return useQuery(
-      WELL_QUERY_KEY.SEARCH([
-        enabledWellSdkV3 ? wellFilterV3 : wellFilter,
-        searchPhrase,
-      ]),
+      WELL_QUERY_KEY.SEARCH([wellFilterV3, searchPhrase]),
       () => {
         const timer = wellSearchMetric.start(LOG_WELL_SEARCH_NAMESPACE, {
           stage: TimeLogStages.Network,
         });
 
-        if (enabledWellSdkV3) {
-          return searchWells(wellFilterV3, searchPhrase)
-            .then(({ wells, ...rest }) => {
-              addToWellsCache(wells);
-              return { wells, ...rest };
-            })
-            .catch(handleWellSearchError)
-            .finally(() => timer.stop());
-        }
-
-        // v2
-        return getByFilters(wellFilter)
-          .then((wells) => {
-            return getWellsWithWellbores(wells);
-          })
-          .then((wells) => {
+        return searchWells(wellFilterV3, searchPhrase)
+          .then(({ wells, ...rest }) => {
             addToWellsCache(wells);
-            return { wells, totalWells: wells.length, totalWellbores: 0 };
+            return { wells, ...rest };
           })
           .catch(handleWellSearchError)
           .finally(() => timer.stop());

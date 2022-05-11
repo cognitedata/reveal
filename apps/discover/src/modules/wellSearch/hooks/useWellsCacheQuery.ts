@@ -10,14 +10,9 @@ import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useDeepMemo } from 'hooks/useDeep';
 
 import { ERROR_LOADING_WELLS_ERROR } from '../constants';
-import {
-  getWellsByWellIdsv3,
-  getWellsByWellIds,
-  getWellsWithWellbores,
-} from '../service';
+import { getWellsByWellIdsv3 } from '../service';
 import { Well, WellId } from '../types';
 
-import { useEnabledWellSdkV3 } from './useEnabledWellSdkV3';
 import { useWellConfig } from './useWellConfig';
 
 /**
@@ -34,7 +29,6 @@ export const useWellsCacheQuery = (
 ): UseQueryResult<Well[]> => {
   const queryClient = useQueryClient();
   const { data: wellConfig } = useWellConfig();
-  const enabledWellSdkV3 = useEnabledWellSdkV3();
 
   const cachedWells =
     queryClient.getQueryData<Well[]>(WELL_QUERY_KEY.WELLS_CACHE) || [];
@@ -58,12 +52,7 @@ export const useWellsCacheQuery = (
       let uncachedWells: Well[];
 
       try {
-        if (enabledWellSdkV3) {
-          uncachedWells = await getWellsByWellIdsv3(uncachedWellIds);
-        } else {
-          uncachedWells = await getWellsByWellIds(uncachedWellIds);
-          uncachedWells = await getWellsWithWellbores(uncachedWells);
-        }
+        uncachedWells = await getWellsByWellIdsv3(uncachedWellIds);
       } catch (error) {
         // console.log('Error loading wells:', error);
         return handleServiceError<Well[]>(
@@ -81,7 +70,7 @@ export const useWellsCacheQuery = (
       return updatedCache;
     },
     {
-      enabled: wellConfig?.disabled !== true && enabledWellSdkV3 !== undefined,
+      enabled: wellConfig?.disabled !== true,
       select: React.useCallback(
         (wells) => {
           return wells.filter((well: Well) =>
