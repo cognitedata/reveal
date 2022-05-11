@@ -1,23 +1,24 @@
 import React from 'react';
 import styled from 'styled-components';
-import { SDKProvider } from '@cognite/sdk-provider';
 import { CdfCount } from './CdfCount';
+
+const sdkMock = {
+  post: async () => ({ data: { items: [{ count: 100 }] } }),
+};
 
 export default {
   title: 'Component/Uses Context/CdfCount',
   component: CdfCount,
-  decorators: [
-    (storyFn: any) => (
-      <Container>
-        <SDKProvider sdk={sdkMock}>{storyFn()}</SDKProvider>
-      </Container>
-    ),
-  ],
+  parameters: {
+    explorerConfig: { sdkMockOverride: sdkMock },
+  },
 };
-const sdkMock = {
-  post: async () => ({ data: { items: [{ count: 1 }] } }),
-};
-export const Example = () => <CdfCount type="assets" />;
+
+export const Example = () => (
+  <Container>
+    <CdfCount type="assets" />
+  </Container>
+);
 
 const Container = styled.div`
   padding: 20px;

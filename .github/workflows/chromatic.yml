@@ -1,6 +1,6 @@
 name: Chromatic
 on:
-  pull_request_target:
+  pull_request:
     types:
       - opened
       - reopened
@@ -32,3 +32,5 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          onlyChanged: true
+          exitOnceUploaded: true
