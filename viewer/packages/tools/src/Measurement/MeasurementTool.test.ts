@@ -4,9 +4,9 @@
 import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@reveal/core';
 import * as THREE from 'three';
-import { createGlContext, mockClientAuthentication } from '../../../../../test-utilities';
+import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
 
-import { MeasurementTool } from '../MeasurementTool';
+import { MeasurementTool } from './MeasurementTool';
 
 describe(MeasurementTool.name, () => {
   let viewer: Cognite3DViewer;
@@ -36,18 +36,30 @@ describe(MeasurementTool.name, () => {
   });
 
   test('Add Point to point distance measurement', () => {
-    const addSpyOn = jest.spyOn(measurementTool, 'addMeasurementDistance');
-    measurementTool.addMeasurementDistance();
+    const addSpyOn = jest.spyOn(measurementTool, 'add');
+
+    measurementTool.add();
 
     expect(addSpyOn).toBeCalled();
-    expect((measurementTool as any)._measurementControls._measurementDistance).toBeDefined();
   });
 
   test('Remove distance memasurement', () => {
-    const removeSpyOn = jest.spyOn(measurementTool, 'removeMeasurementDistance');
-    measurementTool.removeMeasurementDistance();
+    const removeSpyOn = jest.spyOn(measurementTool, 'remove');
+    measurementTool.remove();
 
     expect(removeSpyOn).toBeCalled();
-    expect((measurementTool as any)._measurementControls._measurementDistance).toBeUndefined();
+  });
+
+  test('Set Line Options width and color', () => {
+    const setLineOptionsSpyOn = jest.spyOn(measurementTool, 'updateLineOptions');
+    const lineOptions = {
+      lineWidth: 1.0,
+      color: 0xff0000
+    };
+    measurementTool.updateLineOptions(lineOptions);
+
+    expect(setLineOptionsSpyOn).toBeCalled();
+    expect((measurementTool as any)._lineOptions.lineWidth).toBe(lineOptions.lineWidth);
+    expect((measurementTool as any)._lineOptions.color).toBe(lineOptions.color);
   });
 });

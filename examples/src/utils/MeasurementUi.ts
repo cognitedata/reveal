@@ -32,19 +32,19 @@ export class MeasurementUi {
 
     if (enable && this._guiController.length === 0) {
       //add the point to point measurement distance
-      this._measurementTool.addMeasurementDistance();
+      this._measurementTool.add();
       this._guiController.push(this._gui.add(this.state, 'linewidth').name('Line Width').onFinishChange(linewidth => {
         const options: MeasurementLineOptions = {
           lineWidth: linewidth
         }
-        this._measurementTool.setLineOptions(options);
+        this._measurementTool.updateLineOptions(options);
         this.state.linewidth = linewidth;
       }));
       this._guiController.push(this._gui.addColor(this.state, 'color').name('Line Color').onFinishChange(color => {
         const options: MeasurementLineOptions = {
           color: color
         }
-        this._measurementTool.setLineOptions(options);
+        this._measurementTool.updateLineOptions(options);
         this.state.color = color;
       }));
     } else if(!enable && this._guiController.length > 0) {
@@ -52,7 +52,7 @@ export class MeasurementUi {
         guiController.remove();
       });
       this._guiController.splice(0, this._guiController.length)
-      this._measurementTool.removeMeasurementDistance();
+      this._measurementTool.remove();
     }
   }
 
