@@ -17,7 +17,7 @@ const createEventForLineNumberIfDoesntExist = async (
   try {
     const events = await client.events.retrieve([
       {
-        externalId: getLineReviewEventExternalId(version, lineNumber),
+        externalId: getLineReviewEventExternalId(version, lineNumber, unit),
       },
     ]);
 
@@ -36,7 +36,7 @@ const createEventForLineNumberIfDoesntExist = async (
     // eslint-disable-next-line no-await-in-loop
     await client.events.delete([
       {
-        externalId: getLineReviewEventExternalId(version, lineNumber),
+        externalId: getLineReviewEventExternalId(version, lineNumber, unit),
       },
     ]);
   } catch (error) {
@@ -46,7 +46,7 @@ const createEventForLineNumberIfDoesntExist = async (
   // Create new
   await client.events.create([
     {
-      externalId: getLineReviewEventExternalId(version, lineNumber),
+      externalId: getLineReviewEventExternalId(version, lineNumber, unit),
       type: LINE_REVIEW_EVENT_TYPE,
       metadata: {
         [LINEWALK_VERSION_KEY]: version,

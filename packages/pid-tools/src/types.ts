@@ -161,11 +161,10 @@ export interface DiagramLabelOutputFormat {
 }
 
 export enum DiagramType {
-  pid = 'P&ID',
-  isometric = 'Isometric',
-  unknown = 'Unknown',
+  PID = 'p&id',
+  ISO = 'iso',
+  UNKNOWN = 'unknown',
 }
-
 export interface Legend {
   symbols: DiagramSymbol[];
 }
@@ -189,18 +188,18 @@ interface DocumentMetadataBase {
 }
 
 export interface PidDocumentMetadata extends DocumentMetadataBase {
-  type: DiagramType.pid;
+  type: DiagramType.PID;
   documentNumber: number; // i.e MF_34, MF_034 -> 34
 }
 
 export interface IsoDocumentMetadata extends DocumentMetadataBase {
-  type: DiagramType.isometric;
+  type: DiagramType.ISO;
   lineNumber: string; // i.e L032, L132, L132-1 -> L132
   pageNumber: number; // i.e. L132-1 -> 1
 }
 
 export interface UnknownDocumentMetadata extends DocumentMetadataBase {
-  type: DiagramType.unknown;
+  type: DiagramType.UNKNOWN;
 }
 
 export type DocumentMetadata =

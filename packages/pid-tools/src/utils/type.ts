@@ -60,13 +60,13 @@ export const isLine = (
 export const isPid = (
   documentMetadata: DocumentMetadata
 ): documentMetadata is PidDocumentMetadata => {
-  return documentMetadata.type === DiagramType.pid;
+  return documentMetadata.type === DiagramType.PID;
 };
 
 export const isIso = (
   documentMetadata: DocumentMetadata
 ): documentMetadata is IsoDocumentMetadata => {
-  return documentMetadata.type === DiagramType.isometric;
+  return documentMetadata.type === DiagramType.ISO;
 };
 
 export const isLineSegment = (
@@ -78,5 +78,5 @@ export const isLineSegment = (
 export const isIsoDocumentMetadata = (
   documentMetadata: DocumentMetadata
 ): documentMetadata is IsoDocumentMetadata => {
-  return documentMetadata.type === DiagramType.isometric;
+  return documentMetadata.type === DiagramType.ISO;
 };

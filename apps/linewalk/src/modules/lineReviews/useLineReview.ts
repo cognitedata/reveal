@@ -8,7 +8,8 @@ import { LineReview, TextAnnotation, WorkspaceDocument } from './types';
 
 const useLineReview = (
   client: CogniteClient | undefined,
-  id: string
+  id: string,
+  unit: string
 ): {
   isLoading: boolean;
   lineReview: LineReview | undefined;
@@ -50,7 +51,7 @@ const useLineReview = (
 
       const [lineReviews, lineReviewDocuments] = await Promise.all([
         getLineReviews(client),
-        getLineReviewDocuments(client, id),
+        getLineReviewDocuments(client, id, unit),
       ]);
 
       const lineReview = lineReviews.find((l) => l.id === id);

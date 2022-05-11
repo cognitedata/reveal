@@ -216,7 +216,7 @@ export const ReactPid = ({
 
   useEffect(() => {
     if (
-      documentMetadata.type !== DiagramType.unknown &&
+      documentMetadata.type !== DiagramType.UNKNOWN &&
       activeTool === 'selectDiagramType'
     ) {
       setActiveToolWrapper('addSymbol');

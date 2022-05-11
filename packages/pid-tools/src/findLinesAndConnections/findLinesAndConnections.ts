@@ -32,13 +32,13 @@ export const getPotentialLines = (
     pathIdsInInstances.has(path.pathId);
 
   const isPathValidForDiagramType = (path: PidPath) =>
-    diagramType !== DiagramType.isometric ||
+    diagramType !== DiagramType.ISO ||
     path.segmentList.some(
       (pathSegment) => pathSegment.pathType === 'CurveSegment'
     ) === false;
 
   const isPathStrokeValid = (path: PidPath) =>
-    diagramType === DiagramType.isometric
+    diagramType === DiagramType.ISO
       ? path.style?.strokeLinejoin === 'miter'
       : path.style?.stroke !== null;
 

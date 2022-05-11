@@ -79,7 +79,7 @@ const parseDocument = (
     inferLineNumbersToLabels(annotation);
   });
 
-  if (graph.documentMetadata.type === DiagramType.isometric) {
+  if (graph.documentMetadata.type === DiagramType.ISO) {
     inferIsoLineNumberToAnnotations(
       graph.documentMetadata.lineNumber,
       annotations
@@ -106,7 +106,7 @@ const parseDocument = (
     linking,
     pdfExternalId,
     potentialDiscrepancies: [],
-    type: graph.documentMetadata.type === DiagramType.pid ? 'p&id' : 'iso',
+    type: graph.documentMetadata.type === DiagramType.PID ? 'p&id' : 'iso',
     viewBox: graph.viewBox,
     lineNumbers: graph.lineNumbers,
     unit: graph.documentMetadata.unit,

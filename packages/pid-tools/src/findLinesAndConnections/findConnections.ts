@@ -202,7 +202,7 @@ export const getClosePidInstances = (
   diagramType: DiagramType
 ) => {
   const threshold =
-    diagramType === DiagramType.pid
+    diagramType === DiagramType.PID
       ? AUTO_ANALYSIS_DISTANCE_THRESHOLD_PID
       : AUTO_ANALYSIS_DISTANCE_THRESHOLD_ISO;
 

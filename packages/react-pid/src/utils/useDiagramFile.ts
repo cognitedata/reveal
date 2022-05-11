@@ -12,7 +12,7 @@ const useDiagramFile = (
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [documentMetadata, setDocumentMetadata] = useState<DocumentMetadata>({
-    type: DiagramType.unknown,
+    type: DiagramType.UNKNOWN,
     name: 'Unknown',
     unit: 'Unknown',
   });

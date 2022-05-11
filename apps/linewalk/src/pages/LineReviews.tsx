@@ -173,6 +173,10 @@ const LineReviewTable: React.FC<LineReviewTableProps> = ({
       <Table
         columns={[
           {
+            Header: 'Unit',
+            accessor: 'unit',
+          },
+          {
             Header: 'Name',
             accessor: 'name',
           },
@@ -493,7 +497,7 @@ const LineReviews = () => {
         <LineReviewTable
           lineReviews={filteredLineReviews}
           onRowClick={(lineReview) => {
-            history.push(`/LineReview/${lineReview.id}`);
+            history.push(`/LineReview/${lineReview.unit}/${lineReview.id}`);
           }}
         />
       </div>

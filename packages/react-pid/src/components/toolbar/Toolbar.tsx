@@ -74,7 +74,7 @@ export const Toolbar = ({
     ],
   ];
 
-  if (diagramType === DiagramType.pid) {
+  if (diagramType === DiagramType.PID) {
     toolBarButtonGroups[0].push({
       icon: 'Number',
       onClick: () => setActiveTool('setLineNumber'),

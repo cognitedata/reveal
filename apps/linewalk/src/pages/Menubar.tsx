@@ -4,7 +4,7 @@ import { TopBar } from '@cognite/cogs.js';
 
 export const PagePath = {
   LINE_REVIEWS: '/lineReviews',
-  LINE_REVIEW: '/lineReview/:id',
+  LINE_REVIEW: '/lineReview/:unit/:id',
   SCARLET: '/scarlet',
   DIAGRAM_PARSER: '/diagramParser',
 };

@@ -36,10 +36,10 @@ export const DiagramTypeSelector = ({
     <SidePanelOverlay>
       <h2>Please select document type</h2>
       <ButtonWrapper>
-        <SelectButton onClick={() => selectType(DiagramType.pid)}>
+        <SelectButton onClick={() => selectType(DiagramType.PID)}>
           P&ID
         </SelectButton>
-        <SelectButton onClick={() => selectType(DiagramType.isometric)}>
+        <SelectButton onClick={() => selectType(DiagramType.ISO)}>
           ISO
         </SelectButton>
       </ButtonWrapper>

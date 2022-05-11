@@ -9,6 +9,7 @@ import {
   LINEWALK_DATA_VERSION,
   DiagramType,
   getGraphExternalIdKey,
+  DIAGRAM_PARSER_TYPE,
 } from '@cognite/pid-tools';
 
 import createEventForLineNumberIfDoesntExist from './createEventForLineNumberIfDoesntExist';
@@ -33,8 +34,9 @@ const useCdfDiagrams = () => {
       .list({
         filter: { mimeType: 'image/svg+xml', source: DIAGRAM_PARSER_SOURCE },
       })
-      .then((response) => {
-        setDiagrams(response.items);
+      .autoPagingToArray({ limit: Infinity })
+      .then((fileInfoList) => {
+        setDiagrams(fileInfoList);
       });
   }, []);
 
@@ -64,6 +66,7 @@ const useCdfDiagrams = () => {
       mimeType: 'application/json',
       source: DIAGRAM_PARSER_SOURCE,
       metadata: {
+        [DIAGRAM_PARSER_SOURCE]: 'true',
         type: DIAGRAM_PARSER_OUTPUT_TYPE,
         diagramType: graph.documentMetadata.type,
         unit: graph.documentMetadata.unit,
@@ -79,10 +82,12 @@ const useCdfDiagrams = () => {
           update: {
             metadata: {
               add: {
+                [DIAGRAM_PARSER_TYPE]: graph.documentMetadata.type,
                 [getGraphExternalIdKey(LINEWALK_DATA_VERSION)]: externalId,
                 ...lineNumbersMetadata(
                   LINEWALK_DATA_VERSION,
-                  graph.lineNumbers
+                  graph.lineNumbers,
+                  graph.documentMetadata.unit
                 ),
               },
               remove: [],
@@ -91,7 +96,7 @@ const useCdfDiagrams = () => {
         },
       ]);
 
-      if (graph.documentMetadata.type === DiagramType.isometric) {
+      if (graph.documentMetadata.type === DiagramType.ISO) {
         await Promise.all(
           graph.lineNumbers.map((lineNumber) =>
             createEventForLineNumberIfDoesntExist(client, {

@@ -94,10 +94,10 @@ export const graphMatching = (
   const combinedStartObjects = [];
 
   const pidGraphs = globalGraphList.filter(
-    (g) => g.documentMetadata.type === DiagramType.pid
+    (g) => g.documentMetadata.type === DiagramType.PID
   );
   const isoGraphs = globalGraphList.filter(
-    (g) => g.documentMetadata.type === DiagramType.isometric
+    (g) => g.documentMetadata.type === DiagramType.ISO
   );
 
   const pidCombinedGraph = mergeGraphs(pidGraphs);

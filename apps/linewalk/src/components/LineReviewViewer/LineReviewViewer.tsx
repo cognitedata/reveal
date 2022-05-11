@@ -4,8 +4,8 @@ import { useAuthContext } from '@cognite/react-container';
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 import keyBy from 'lodash/keyBy';
+import { DiagramType } from '@cognite/pid-tools';
 import {
-  DocumentType,
   LineReview,
   ParsedDocument,
   TextAnnotation,
@@ -314,8 +314,12 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     setJumpToDocumentValue,
     inputValue,
     onInputChange,
-  } = useDocumentJumper(lineReview.id, documents, ornateRef, (document) =>
-    setDocuments((prevDocuments) => [...prevDocuments, document])
+  } = useDocumentJumper(
+    lineReview.id,
+    lineReview.unit,
+    documents,
+    ornateRef,
+    (document) => setDocuments((prevDocuments) => [...prevDocuments, document])
   );
   const [selectedFileConnectionId, setSelectedFileConnectionId] = useState<
     string | undefined
@@ -325,7 +329,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   const pdfDocuments = useMemo(
     () => [
       ...documents
-        .filter(({ type }) => type === DocumentType.PID)
+        .filter(({ type }) => type === DiagramType.PID)
         .map((document, index) => ({
           id: getKonvaSelectorSlugByExternalId(document.pdfExternalId),
           pageNumber: 1,
@@ -337,7 +341,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
           pdf: document.pdf,
         })),
       ...documents
-        .filter(({ type }) => type === DocumentType.ISO)
+        .filter(({ type }) => type === DiagramType.ISO)
         .map((document, index) => ({
           id: getKonvaSelectorSlugByExternalId(document.pdfExternalId),
           pageNumber: 1,
@@ -353,7 +357,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   );
 
   const isoDocuments = useMemo(
-    () => documents.filter(({ type }) => type === DocumentType.ISO),
+    () => documents.filter(({ type }) => type === DiagramType.ISO),
     [documents]
   );
 
@@ -493,8 +497,8 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       ornateViewer: ornateRef,
       connections: getFileConnections(
         parsedDocuments,
-        DocumentType.PID,
-        DocumentType.PID
+        DiagramType.PID,
+        DiagramType.PID
       ),
       columnGap: SLIDE_COLUMN_GAP,
       rowGap: SLIDE_ROW_GAP,
@@ -526,7 +530,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     const link = links[0];
     const isLinkedAnnotationInIso =
       getDocumentByExternalId(parsedDocuments, link.to.documentId).type ===
-      DocumentType.ISO;
+      DiagramType.ISO;
     if (isLinkedAnnotationInIso && !isIsoModalOpen) {
       setIsIsoModalOpen(true);
     }
@@ -567,7 +571,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
                 parsedDocumentsByExternalId[from.documentId] !== undefined &&
                 parsedDocumentsByExternalId[to.documentId] !== undefined &&
                 parsedDocumentsByExternalId[from.documentId].type ===
-                  DocumentType.PID
+                  DiagramType.PID
             )
             .flatMap(({ from, to }) => [from.annotationId, to.annotationId]),
           '',
@@ -601,7 +605,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
   };
 
   const overlays = parsedDocuments
-    .filter(({ type }) => type === DocumentType.PID)
+    .filter(({ type }) => type === DiagramType.PID)
     .flatMap((document) =>
       getDrawingsByDocumentId(parsedDocuments, document.externalId)
     );
@@ -629,7 +633,8 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       removeLineNumberFromDocumentMetadata(
         client,
         pdfExternalId,
-        lineReview.id
+        lineReview.id,
+        lineReview.unit
       );
     }
   };

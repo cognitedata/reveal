@@ -2,11 +2,9 @@ import { CogniteOrnate, downloadURL, OrnatePDFDocument } from '@cognite/ornate';
 import { PDFDocument } from 'pdf-lib';
 import Konva from 'konva';
 import sortBy from 'lodash/sortBy';
+import { DiagramType } from '@cognite/pid-tools';
 
-import {
-  DocumentType,
-  WorkspaceDocument,
-} from '../../modules/lineReviews/types';
+import { WorkspaceDocument } from '../../modules/lineReviews/types';
 
 import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId';
 import { Discrepancy, DiscrepancyAnnotation } from './LineReviewViewer';
@@ -37,11 +35,11 @@ const exportDocumentsToPdf = async (
 
   const sortedDocuments = [
     ...sortBy(
-      documents.filter((document) => document.type === DocumentType.PID),
+      documents.filter((document) => document.type === DiagramType.PID),
       (document) => document.pdfExternalId
     ),
     ...sortBy(
-      documents.filter((document) => document.type === DocumentType.ISO),
+      documents.filter((document) => document.type === DiagramType.ISO),
       (document) => document.pdfExternalId
     ),
   ];

@@ -7,8 +7,8 @@ import {
 
 const getFileConnections = (
   documents: ParsedDocument[],
-  sourceDocumentType: string,
-  targetDocumentType: string
+  sourceDiagramType: string,
+  targetDiagramType: string
 ) => {
   const annotationsById = keyBy(
     documents.flatMap((document) => document.annotations),
@@ -53,8 +53,8 @@ const getFileConnections = (
         const shamefulIsOutwardLink = externalId === link.from.documentId;
         return (
           shamefulIsOutwardLink &&
-          sourceDocument.type === sourceDocumentType &&
-          targetDocument.type === targetDocumentType &&
+          sourceDocument.type === sourceDiagramType &&
+          targetDocument.type === targetDiagramType &&
           sourceAnnotation?.type === 'fileConnection' &&
           targetAnnotation?.type === 'fileConnection'
         );

@@ -1,4 +1,4 @@
-import { lineWalkSymbolTypes } from '@cognite/pid-tools';
+import { lineWalkSymbolTypes, DiagramType } from '@cognite/pid-tools';
 import { PDFDocumentProxy } from 'pdfjs-dist/types/display/api';
 
 import { Discrepancy } from '../../components/LineReviewViewer/LineReviewViewer';
@@ -36,11 +36,6 @@ export type Comment = {
 
 export type DocumentConnection = [string, string]; // List of annotation ids to connect
 
-export enum DocumentType {
-  PID = 'p&id',
-  ISO = 'iso',
-}
-
 export type Link = {
   from: {
     documentId: string;
@@ -54,7 +49,7 @@ export type Link = {
 
 export type WorkspaceDocument = {
   pdfExternalId: string;
-  type: DocumentType;
+  type: DiagramType;
   pdf: PDFDocumentProxy;
 };
 

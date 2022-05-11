@@ -1,10 +1,8 @@
 /* eslint-disable no-console */
 /* eslint-disable no-param-reassign */
 import { v4 as uuid } from 'uuid';
-import minBy from 'lodash/minBy';
 import uniqBy from 'lodash/uniqBy';
 
-import { BoundingBox } from './geometry';
 import {
   getPathReplacementDescendants,
   getLineNumberFromText,
@@ -42,7 +40,6 @@ import {
   DiagramConnection,
   DiagramInstanceId,
   DiagramInstanceWithPaths,
-  DiagramLineConnectionTag,
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
@@ -74,7 +71,7 @@ import {
   pruneSymbolOverlappingPathsFromLines,
 } from './utils/diagramInstanceUtils';
 import { isLine } from './utils/type';
-import { EQUIPMENT_TAG_REGEX, LINE_CONNECTION_LETTER_REGEX } from './constants';
+import { EQUIPMENT_TAG_REGEX } from './constants';
 import { getMetadataFromFileName } from './utils/fileNameUtils';
 
 const hoverBoldStrokeScale = 1.5;
@@ -873,7 +870,7 @@ export class CognitePid {
     }
     if (this.activeTool === 'connectLabels') {
       this.drawLabelVisualizations();
-    } else if (this.documentMetadata?.type === DiagramType.pid) {
+    } else if (this.documentMetadata?.type === DiagramType.PID) {
       this.drawLineVisualizations();
     }
   }
@@ -945,7 +942,7 @@ export class CognitePid {
 
     if (
       this.activeTool !== 'connectLabels' &&
-      this.documentMetadata?.type === DiagramType.pid
+      this.documentMetadata?.type === DiagramType.PID
     ) {
       if (node instanceof SVGTSpanElement) {
         const lineNumber = getLineNumberFromText(node.innerHTML);
@@ -1225,50 +1222,8 @@ export class CognitePid {
   parseLineConnectionTags() {
     if (this.pidDocument === undefined) return;
 
-    const tags = [...this.tags];
-
-    const sameOrLineNumberLabels = this.pidDocument.pidLabels.filter(
-      (pidLabel) =>
-        pidLabel.text.includes('SAME') || getLineNumberFromText(pidLabel.text)
-    );
-    const letterLabels = this.pidDocument.pidLabels.filter((pidLabel) =>
-      pidLabel.text.match(LINE_CONNECTION_LETTER_REGEX)
-    );
-
-    for (let i = 0; i < sameOrLineNumberLabels.length; i++) {
-      const sameOrLineNumberLabel = sameOrLineNumberLabels[i];
-
-      const potLabelWithDistance = minBy(
-        letterLabels.map((label) => {
-          return {
-            label,
-            distance: BoundingBox.fromRect(label.boundingBox).distance(
-              BoundingBox.fromRect(sameOrLineNumberLabel.boundingBox)
-            ),
-          };
-        }),
-        (labelAndDistance) => labelAndDistance.distance
-      );
-
-      // eslint-disable-next-line no-continue
-      if (potLabelWithDistance === undefined) continue;
-
-      const { distance } = potLabelWithDistance;
-      const potLabel = potLabelWithDistance.label;
-
-      if (distance < 20) {
-        const newTag: DiagramLineConnectionTag = {
-          id: `lcTag-${sameOrLineNumberLabel.id}-${potLabel.id}`,
-          labelIds: [sameOrLineNumberLabel.id, potLabel.id],
-          type: 'Line Connection Tag',
-          lineNumbers: [],
-          inferedLineNumbers: [],
-        };
-        tags.push(newTag);
-      }
-    }
-
-    this.setTags(tags, false);
+    const lineConnectionTags = this.pidDocument.parseLineConnectionTags();
+    this.setTags([...this.tags, ...lineConnectionTags], false);
   }
 
   autoAnalysis(documentMetadata: DocumentMetadata) {

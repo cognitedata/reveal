@@ -17,7 +17,7 @@ const getPidDocumentMetaDataFromFileName = (
     : -1;
 
   return {
-    type: DiagramType.pid,
+    type: DiagramType.PID,
     name: fileName,
     unit,
     documentNumber,
@@ -34,7 +34,7 @@ const getIsoDocumentMetaDataFromFileName = (
 ) => {
   const { lineNumber, pageNumber } = lineNumberAndPage;
   return {
-    type: DiagramType.isometric,
+    type: DiagramType.ISO,
     name: fileName,
     unit,
     lineNumber,
@@ -44,7 +44,7 @@ const getIsoDocumentMetaDataFromFileName = (
 
 export const getMetadataFromFileName = (
   fileName: string,
-  selectedDiagramType: DiagramType = DiagramType.unknown
+  selectedDiagramType: DiagramType = DiagramType.UNKNOWN
 ) => {
   const isoLineNumberAndText = getLineNumberAndPageFromText(fileName);
   const pidFileNameMatchArray = fileName.match(/MF_[0-9]{1,}/);
@@ -53,11 +53,11 @@ export const getMetadataFromFileName = (
   const unit = unitMatchArray ? unitMatchArray[0] : 'Unknown';
 
   const isPid =
-    selectedDiagramType === DiagramType.pid ||
+    selectedDiagramType === DiagramType.PID ||
     (pidFileNameMatchArray && !isoLineNumberAndText);
 
   const isIso =
-    selectedDiagramType === DiagramType.isometric ||
+    selectedDiagramType === DiagramType.ISO ||
     (isoLineNumberAndText && !pidFileNameMatchArray);
 
   if (isPid) {
@@ -75,7 +75,7 @@ export const getMetadataFromFileName = (
     );
   }
   return {
-    type: DiagramType.unknown,
+    type: DiagramType.UNKNOWN,
     name: fileName,
     unit,
   } as DocumentMetadata;

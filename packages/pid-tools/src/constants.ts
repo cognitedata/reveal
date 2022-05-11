@@ -4,12 +4,15 @@ export const SVG_ID = 'svg-id';
 export const PATH_REPLACEMENT_GROUP = 'path_replacement_group';
 export const T_JUNCTION = 'tjunction';
 
-export const T_JUNCTION_SIZE = 2;
-export const AUTO_ANALYSIS_DISTANCE_THRESHOLD_PID = 1;
-export const AUTO_ANALYSIS_LINE_JUMP_THRESHOLD = 30;
-export const AUTO_ANALYSIS_DISTANCE_THRESHOLD_ISO = 2;
-export const AUTO_ANALYSIS_LABEL_THRESHOLD_PID = 10;
-export const AUTO_ANALYSIS_LABEL_THRESHOLD_ISO = 40;
+const TYPICAL_DOCUMENT_WIDTH = 1632;
+export const T_JUNCTION_SIZE = 2; // fix: Normalize
+export const AUTO_ANALYSIS_DISTANCE_THRESHOLD_PID = 1; // fix: Normalize
+export const AUTO_ANALYSIS_LINE_JUMP_THRESHOLD = 30; // fix: Normalize
+export const AUTO_ANALYSIS_DISTANCE_THRESHOLD_ISO = 2; // fix: Normalize
+export const AUTO_ANALYSIS_LABEL_THRESHOLD_PID = 10 / TYPICAL_DOCUMENT_WIDTH;
+export const AUTO_ANALYSIS_LABEL_THRESHOLD_ISO = 40 / TYPICAL_DOCUMENT_WIDTH;
+export const AUTO_ANALYSIS_LINE_CONNECTION_TAG_THRESHOLD =
+  20 / TYPICAL_DOCUMENT_WIDTH;
 
 export const pidSymbolTypes = [
   'File Connection',
@@ -92,8 +95,8 @@ export const DIAGRAM_PARSER_OUTPUT_TYPE = 'graph';
 export const DIAGRAM_PARSER_TYPE = 'COGNITE_DIAGRAM_PARSER_TYPE';
 
 export const LINEWALK_VERSION_KEY = 'LINEWALK_VERSION';
-export const LINEWALK_FRONTEND_VERSION = '0.0.20';
-export const LINEWALK_DATA_VERSION = '0.0.20';
+export const LINEWALK_FRONTEND_VERSION = '0.0.22h';
+export const LINEWALK_DATA_VERSION = '0.0.22h';
 export const LINE_REVIEW_EVENT_TYPE = 'LINE_REVIEW';
 export const DIAGRAM_PARSER_PARSED_DOCUMENT_EXTERNAL_ID_PREFIX =
   'COGNITE_DIAGRAM_PARSER_PARSED_DOCUMENT_EXTERNAL_ID';
@@ -105,21 +108,25 @@ const LINEWALK_LINE_REVIEW_EVENT_EXTERNAL_ID_PREFIX =
   'COGNITE_LINEWALK_LINE_REVIEW_EVENT';
 export const getLineReviewEventExternalId = (
   version: string,
-  lineNumber: string
+  lineNumber: string,
+  unit: string
 ): string =>
-  `${LINEWALK_LINE_REVIEW_EVENT_EXTERNAL_ID_PREFIX}_${version}_${lineNumber}`;
+  `${LINEWALK_LINE_REVIEW_EVENT_EXTERNAL_ID_PREFIX}_${version}_${unit}_${lineNumber}`;
 
 const LINE_LABEL_PREFIX = 'COGNITE_LINE_LABEL';
 export const getLineLabelPrefix = (version: string) =>
-  `${LINE_LABEL_PREFIX}_${version}_`;
+  `${LINE_LABEL_PREFIX}_${version}`;
 
 const DIAGRAM_PARSER_GRAPH_EXTERNAL_ID =
   'COGNITE_DIAGRAM_PARSER_GRAPH_EXTERNAL_ID';
 export const getGraphExternalIdKey = (version: string) =>
   `${DIAGRAM_PARSER_GRAPH_EXTERNAL_ID}_${version}_`;
 
-export const getLineNumberKey = (version: string, lineNumber: string): string =>
-  `${getLineLabelPrefix(version)}${lineNumber}`;
+export const getLineNumberKey = (
+  version: string,
+  lineNumber: string,
+  unit: string
+): string => `${getLineLabelPrefix(version)}_${unit}_${lineNumber}`;
 
 export const getDiagramParserTypeFromFileInfo = (fileInfo: FileInfo) =>
   fileInfo.metadata?.[DIAGRAM_PARSER_TYPE];

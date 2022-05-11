@@ -58,14 +58,14 @@ export const AddSymbolController: React.FC<AddSymbolControllerProps> = ({
 }) => {
   let symbolTypeOptions: OptionType<SymbolType>[];
 
-  if (diagramType === DiagramType.pid) {
+  if (diagramType === DiagramType.PID) {
     symbolTypeOptions = [...bothSymbolTypes, ...pidSymbolTypes]
       .sort()
       .map((symbolType) => ({
         label: symbolType,
         value: symbolType,
       }));
-  } else if (diagramType === DiagramType.isometric) {
+  } else if (diagramType === DiagramType.ISO) {
     symbolTypeOptions = [...bothSymbolTypes, ...isoSymbolTypes]
       .sort()
       .map((symbolType) => ({

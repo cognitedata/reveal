@@ -23,7 +23,7 @@ describe('findConnectionsByTraversal', () => {
       symbolInstances,
       lineInstances,
       pidDocument,
-      DiagramType.pid
+      DiagramType.PID
     );
     expect(connections.length).toBe(2);
   });
@@ -46,7 +46,7 @@ describe('findConnectionsByTraversal', () => {
       symbolInstances,
       lineInstances,
       pidDocument,
-      DiagramType.pid
+      DiagramType.PID
     );
     expect(connections.length).toBe(1);
   });
@@ -73,7 +73,7 @@ describe('findConnectionsByTraversal', () => {
       symbolInstances,
       lineInstances,
       pidDocument,
-      DiagramType.pid
+      DiagramType.PID
     );
     expect(connections.length).toBe(4);
   });
@@ -102,7 +102,7 @@ describe('findConnectionsByTraversal', () => {
       symbolInstances,
       lineInstances,
       pidDocument,
-      DiagramType.pid
+      DiagramType.PID
     );
     expect(connections.length).toBe(4);
   });

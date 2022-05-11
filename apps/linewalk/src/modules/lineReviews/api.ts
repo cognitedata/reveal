@@ -8,6 +8,7 @@ import {
   GraphDocument,
   getGraphExternalIdKey,
   parseGraphs,
+  DiagramType,
   LINEWALK_FRONTEND_VERSION,
   getDiagramParserTypeFromFileInfo,
 } from '@cognite/pid-tools';
@@ -21,7 +22,6 @@ import groupByArray from '../../utils/groupByArray';
 import isNotUndefined from '../../utils/isNotUndefined';
 
 import {
-  DocumentType,
   LineReview,
   WorkspaceDocument,
   LineReviewStatus,
@@ -108,16 +108,11 @@ const lineNumbersFromFileMetadata = (file: FileInfo): string[] => {
     throw new Error();
   }
 
+  const lineLabelPrefix = `${getLineLabelPrefix(LINEWALK_FRONTEND_VERSION)}_`;
   return Object.entries(file.metadata)
-    .filter(
-      ([key, value]) =>
-        key.includes(getLineLabelPrefix(LINEWALK_FRONTEND_VERSION)) &&
-        value === 'true'
-    )
+    .filter(([key, value]) => key.includes(lineLabelPrefix) && value === 'true')
     .map(([key]) => key)
-    .map((key) =>
-      key.replace(getLineLabelPrefix(LINEWALK_FRONTEND_VERSION), '')
-    );
+    .map((key) => key.replace(lineLabelPrefix, ''));
 };
 
 export const getLineReviews = async (client: CogniteClient) => {
@@ -156,7 +151,11 @@ export const getLineReviews = async (client: CogniteClient) => {
     lineReviewEvents.map((event) =>
       lineReviewFromEvent(
         event,
-        (lineReviewFilesByLineNumbers[event.metadata.lineNumber] ?? [])
+        (
+          lineReviewFilesByLineNumbers[
+            `${event.metadata.unit}_${event.metadata.lineNumber}`
+          ] ?? []
+        )
           .map((file) => file.externalId)
           .filter(isNotUndefined)
       )
@@ -170,7 +169,8 @@ export const getLineReviews = async (client: CogniteClient) => {
 export const addLineNumberToDocumentMetadata = async (
   client: CogniteClient,
   externalId: string,
-  lineNumber: string
+  lineNumber: string,
+  unit: string
 ) => {
   await client.files.update([
     {
@@ -178,7 +178,8 @@ export const addLineNumberToDocumentMetadata = async (
       update: {
         metadata: {
           add: {
-            [getLineNumberKey(LINEWALK_FRONTEND_VERSION, lineNumber)]: 'true',
+            [getLineNumberKey(LINEWALK_FRONTEND_VERSION, lineNumber, unit)]:
+              'true',
           },
           remove: [],
         },
@@ -190,7 +191,8 @@ export const addLineNumberToDocumentMetadata = async (
 export const removeLineNumberFromDocumentMetadata = async (
   client: CogniteClient,
   externalId: string,
-  lineNumber: string
+  lineNumber: string,
+  unit: string
 ) => {
   await client.files.update([
     {
@@ -198,7 +200,9 @@ export const removeLineNumberFromDocumentMetadata = async (
       update: {
         metadata: {
           add: {},
-          remove: [getLineNumberKey(LINEWALK_FRONTEND_VERSION, lineNumber)],
+          remove: [
+            getLineNumberKey(LINEWALK_FRONTEND_VERSION, lineNumber, unit),
+          ],
         },
       },
     },
@@ -226,7 +230,7 @@ export const getWorkspaceDocumentsFromPdfFileInfos = async (
       }
 
       const type = getDiagramParserTypeFromFileInfo(pdfFileInfo) as
-        | DocumentType
+        | DiagramType
         | undefined;
       if (type === undefined) {
         console.warn(
@@ -257,7 +261,8 @@ export const getWorkspaceDocumentsFromPdfFileInfos = async (
 
 export const getLineReviewDocuments = async (
   client: CogniteClient,
-  lineNumber: string
+  lineNumber: string,
+  unit: string
 ) => {
   const files = sortBy(
     await client.files
@@ -265,7 +270,8 @@ export const getLineReviewDocuments = async (
         filter: {
           mimeType: 'application/pdf',
           metadata: {
-            [getLineNumberKey(LINEWALK_FRONTEND_VERSION, lineNumber)]: 'true',
+            [getLineNumberKey(LINEWALK_FRONTEND_VERSION, lineNumber, unit)]:
+              'true',
           },
         },
       })
@@ -281,13 +287,15 @@ export const getLineReviewDocuments = async (
 export const updateLineReview = async (
   client: CogniteClient,
   lineNumber: string,
+  unit: string,
   update: { comment: string; status: LineReviewStatus; state: any }
 ) =>
   client.events.update([
     {
       externalId: getLineReviewEventExternalId(
         LINEWALK_FRONTEND_VERSION,
-        lineNumber
+        lineNumber,
+        unit
       ),
       update: {
         metadata: {

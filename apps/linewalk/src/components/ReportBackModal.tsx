@@ -3,8 +3,9 @@ import { CogniteOrnate } from '@cognite/ornate';
 import keyBy from 'lodash/keyBy';
 import uniq from 'lodash/uniq';
 import React, { useState } from 'react';
+import { DiagramType } from '@cognite/pid-tools';
 
-import { DocumentType, WorkspaceDocument } from '../modules/lineReviews/types';
+import { WorkspaceDocument } from '../modules/lineReviews/types';
 
 import exportDocumentsToPdf from './LineReviewViewer/exportDocumentsToPdf';
 import getKonvaSelectorSlugByExternalId from './LineReviewViewer/getKonvaSelectorSlugByExternalId';
@@ -62,11 +63,11 @@ const ReportBackModal: React.FC<Props> = ({
         );
 
         const pidDocuments = targetDocuments.filter(
-          (document) => document.type === DocumentType.PID
+          (document) => document.type === DiagramType.PID
         );
 
         const isoDocuments = targetDocuments.filter(
-          (document) => document.type === DocumentType.ISO
+          (document) => document.type === DiagramType.ISO
         );
 
         return (

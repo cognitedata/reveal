@@ -50,7 +50,7 @@ export type DiscrepancyModalState = {
 };
 
 const LineReview = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id, unit } = useParams<{ id: string; unit: string }>();
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
   const history = useHistory();
   const [isReportBackModalOpen, setIsReportBackModalOpen] = useState(false);
@@ -76,7 +76,7 @@ const LineReview = () => {
     setDiscrepancies,
     textAnnotations,
     setDocuments,
-  } = useLineReview(client, id);
+  } = useLineReview(client, id, unit);
 
   if (isLoading || !client) {
     return (
@@ -107,7 +107,7 @@ const LineReview = () => {
       return;
     }
 
-    await updateLineReview(client, lineReview.id, {
+    await updateLineReview(client, lineReview.id, lineReview.unit, {
       status: LineReviewStatus.COMPLETED,
       comment,
       state: getExportableLineState(ornateRef, discrepancies),

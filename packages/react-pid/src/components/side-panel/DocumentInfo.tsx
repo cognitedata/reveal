@@ -31,7 +31,7 @@ export interface DocumentInfoProps {
 export const DocumentInfo: React.FC<DocumentInfoProps> = ({
   documentMetadata,
 }) => {
-  if (documentMetadata.type !== DiagramType.unknown) {
+  if (documentMetadata.type !== DiagramType.UNKNOWN) {
     return (
       <div>
         <CollapseSeperator>Document info</CollapseSeperator>

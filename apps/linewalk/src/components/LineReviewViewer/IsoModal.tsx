@@ -6,11 +6,11 @@ import sortBy from 'lodash/sortBy';
 import React, { useEffect, useMemo, useState } from 'react';
 import layers from 'utils/z';
 import styled from 'styled-components';
+import { DiagramType } from '@cognite/pid-tools';
 
 import WorkSpaceTools from '../WorkSpaceTools/WorkSpaceTools';
 import {
   Annotation,
-  DocumentType,
   Link,
   ParsedDocument,
   WorkspaceDocument,
@@ -232,7 +232,7 @@ const IsoModal: React.FC<IsoModalProps> = ({
 
   const isoParsedDocuments: ParsedDocument[] = useMemo(
     () =>
-      parsedDocuments.filter((document) => document.type === DocumentType.ISO),
+      parsedDocuments.filter((document) => document.type === DiagramType.ISO),
     [parsedDocuments]
   );
 
@@ -275,7 +275,7 @@ const IsoModal: React.FC<IsoModalProps> = ({
     );
     const isLinkedAnnotationInIso =
       getDocumentByExternalId(parsedDocuments, link.to.documentId).type ===
-      DocumentType.ISO;
+      DiagramType.ISO;
 
     centerOnAnnotationByAnnotationId(
       parsedDocuments,

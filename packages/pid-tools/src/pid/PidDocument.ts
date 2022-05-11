@@ -31,6 +31,7 @@ import { PidTspan } from './PidTspan';
 import { PidPath } from './PidPath';
 import { PidGroup, PidInstance } from './PidGroup';
 import { getFileConnectionsWithPosition } from './fileConnectionUtils';
+import parseLineConnectionTags from './parseLineConnectionTags';
 
 export type LabelInstanceConnection = {
   labelId: string;
@@ -314,9 +315,10 @@ export class PidDocument {
     );
 
     const labelThreshold =
-      diagramType === DiagramType.isometric
+      this.viewBox.width *
+      (diagramType === DiagramType.ISO
         ? AUTO_ANALYSIS_LABEL_THRESHOLD_ISO
-        : AUTO_ANALYSIS_LABEL_THRESHOLD_PID;
+        : AUTO_ANALYSIS_LABEL_THRESHOLD_PID);
 
     pidLabelsToConnect.forEach((pidLabel) => {
       const labelMidPoint = pidLabel.getMidPoint();
@@ -357,6 +359,10 @@ export class PidDocument {
     });
 
     return labelInstanceConnections;
+  }
+
+  parseLineConnectionTags() {
+    return parseLineConnectionTags(this);
   }
 
   static inferLineNumbers(

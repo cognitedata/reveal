@@ -1,6 +1,10 @@
 import { OptionType } from '@cognite/cogs.js';
 import { CogniteOrnate } from '@cognite/ornate';
-import { DIAGRAM_PARSER_SOURCE, DIAGRAM_PARSER_TYPE } from '@cognite/pid-tools';
+import {
+  DIAGRAM_PARSER_SOURCE,
+  DIAGRAM_PARSER_TYPE,
+  DiagramType,
+} from '@cognite/pid-tools';
 import Konva from 'konva';
 import { useEffect, useState } from 'react';
 import { useAuthContext } from '@cognite/react-container';
@@ -10,10 +14,7 @@ import {
   addLineNumberToDocumentMetadata,
   getWorkspaceDocumentsFromPdfFileInfos,
 } from '../../modules/lineReviews/api';
-import {
-  DocumentType,
-  WorkspaceDocument,
-} from '../../modules/lineReviews/types';
+import { WorkspaceDocument } from '../../modules/lineReviews/types';
 
 import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId';
 import withoutFileExtension from './withoutFileExtension';
@@ -33,6 +34,7 @@ const fileToOption = (
 
 const useDocumentJumper = (
   lineNumber: string,
+  unit: string,
   documents: WorkspaceDocument[],
   ornateRef: CogniteOrnate | undefined,
   onAddWorkspaceDocument: (document: WorkspaceDocument) => void
@@ -71,12 +73,12 @@ const useDocumentJumper = (
       value: '',
       options: [
         ...documents
-          .filter((document) => document.type === DocumentType.PID)
+          .filter((document) => document.type === DiagramType.PID)
           .map((document) =>
             fileToOption(document.pdfExternalId, document.type)
           ),
         ...documents
-          .filter((document) => document.type === DocumentType.ISO)
+          .filter((document) => document.type === DiagramType.ISO)
           .map((document) =>
             fileToOption(document.pdfExternalId, document.type)
           ),
@@ -147,7 +149,8 @@ const useDocumentJumper = (
           await addLineNumberToDocumentMetadata(
             client,
             workspaceDocument.pdfExternalId,
-            lineNumber
+            lineNumber,
+            unit
           );
 
           onAddWorkspaceDocument(workspaceDocument);
