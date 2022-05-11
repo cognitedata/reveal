@@ -6,14 +6,12 @@ import {
   PrimaryTooltip,
   Row,
   Title,
+  Tooltip,
 } from '@cognite/cogs.js';
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsCustomModel } from 'src/api/vision/detectionModels/types';
-import {
-  setCustomModelName,
-  setUnsavedDetectionModelSettings,
-} from 'src/modules/Process/store/slice';
+import { setUnsavedDetectionModelSettings } from 'src/modules/Process/store/slice';
 import { RootState } from 'src/store/rootReducer';
 import { ColorsObjectDetection } from 'src/constants/Colors';
 import CustomModelIllustration from 'src/assets/visualDescriptions/CustomModelIllustration.svg';
@@ -21,6 +19,8 @@ import CustomModelIllustration from 'src/assets/visualDescriptions/CustomModelIl
 import { AutoMLModelSelectFilter } from 'src/modules/Process/Components/AutoMLModelSelectFilter';
 import { AutoMLModelCore } from 'src/api/vision/autoML/types';
 import { getLink, workflowRoutes } from 'src/utils/workflowRoutes';
+import { AutoMLAPI } from 'src/api/vision/autoML/AutoMLAPI';
+import styled from 'styled-components';
 import {
   ColorBox,
   NameContainer,
@@ -40,8 +40,24 @@ export const description = () => {
     </Detail>
   );
 };
-export const badge = (modelName: string, hideText: boolean = false) => {
-  return (
+export const badge = ({
+  modelName,
+  hideText = false,
+  disabled = false,
+}: {
+  modelName: string;
+  hideText?: boolean;
+  disabled?: boolean;
+}) => {
+  return disabled ? (
+    <>
+      <Tooltip placement="bottom" content="Model is not configured correctly">
+        <Button icon="Scan" size="small" disabled>
+          {!hideText && modelName}
+        </Button>
+      </Tooltip>
+    </>
+  ) : (
     <Button
       icon="Scan"
       size="small"
@@ -59,6 +75,7 @@ export const content = (
   modelIndex: number,
   customModels?: AutoMLModelCore[]
 ) => {
+  const [verifyingModel, setVerifyingModel] = useState<boolean>();
   const dispatch = useDispatch();
   const params: ParamsCustomModel = useSelector(
     ({ processSlice }: RootState) => {
@@ -74,23 +91,29 @@ export const content = (
   );
 
   // Model configuration validators
+  const isValidCustomModel = params.isValid;
   const isValidThreshold = !!(
     params.threshold >= 0.4 && params.threshold <= 1.0
   );
 
   const onModelJobChange = async (jobId?: number, name?: string) => {
     if (jobId) {
-      const newParams = {
-        modelIndex,
-        params: {
-          modelJobId: jobId,
-          threshold: params.threshold,
-        },
-      };
-      dispatch(setUnsavedDetectionModelSettings(newParams));
-    }
-    if (name) {
-      dispatch(setCustomModelName({ modelIndex, modelName: name }));
+      setVerifyingModel(true);
+      await AutoMLAPI.getAutoMLModel(jobId).then((job) => {
+        if (job.status === 'Completed') {
+          const newParams = {
+            modelIndex,
+            params: {
+              modelJobId: jobId,
+              threshold: params.threshold,
+              isValid: true,
+              modelName: name,
+            },
+          };
+          setVerifyingModel(false);
+          dispatch(setUnsavedDetectionModelSettings(newParams));
+        }
+      });
     }
   };
 
@@ -106,6 +129,19 @@ export const content = (
       dispatch(setUnsavedDetectionModelSettings(newParams));
     }
   };
+
+  const showLoadingMessage =
+    verifyingModel || customModels === undefined || !isValidCustomModel;
+
+  // eslint-disable-next-line no-nested-ternary
+  const loadingMessage = verifyingModel
+    ? 'Verifying model...'
+    : !isValidCustomModel
+    ? 'Invalid model'
+    : 'Loading models';
+
+  const iconType =
+    !isValidCustomModel && !verifyingModel ? 'WarningTriangle' : 'Loading';
 
   return (
     <ModelDetailSettingContainer>
@@ -133,14 +169,25 @@ export const content = (
                     </PrimaryTooltip>
                   </td>
                   <th>
-                    <AutoMLModelSelectFilter
-                      closeMenuOnSelect
-                      isMulti={false}
-                      placeholder="Search model job"
-                      onJobSelected={onModelJobChange}
-                      models={customModels}
-                      selectedModelId={params.modelJobId}
-                    />
+                    <>
+                      <AutoMLModelSelectFilter
+                        closeMenuOnSelect
+                        isMulti={false}
+                        placeholder="Search model job"
+                        onJobSelected={onModelJobChange}
+                        models={customModels}
+                        selectedModelId={params.modelJobId}
+                      />
+                      {showLoadingMessage && (
+                        <ModelSelectContainer>
+                          <Icon
+                            type={iconType}
+                            style={{ marginRight: '5px' }}
+                          />
+                          {loadingMessage}
+                        </ModelSelectContainer>
+                      )}
+                    </>
                   </th>
                 </tr>
                 <tr>
@@ -196,7 +243,7 @@ export const content = (
         <StyledCol span={1}>
           <div>
             <NameContainer>
-              {badge('Custom model')}
+              {badge({ modelName: 'Custom model' })}
               {description()}
             </NameContainer>
             <img
@@ -209,3 +256,9 @@ export const content = (
     </ModelDetailSettingContainer>
   );
 };
+
+const ModelSelectContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;

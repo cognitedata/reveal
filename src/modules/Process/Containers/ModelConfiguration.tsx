@@ -7,7 +7,10 @@ import styled from 'styled-components';
 
 import { RootState } from 'src/store/rootReducer';
 import { useSelector } from 'react-redux';
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
+import {
+  ParamsCustomModel,
+  VisionDetectionModelType,
+} from 'src/api/vision/detectionModels/types';
 import { AutoMLModelCore } from 'src/api/vision/autoML/types';
 import { BUILT_IN_MODEL_COUNT } from 'src/modules/Process/store/slice';
 import * as tagDetectionModelDetails from './ModelDetails/TagDetectionModelDetails';
@@ -114,8 +117,12 @@ export const ModelConfiguration = (props: {
         case VisionDetectionModelType.CustomModel:
           labelAndContent = {
             label: BadgeWrapper(
-              item.modelName,
-              customModelDetails.badge(item.modelName, hideText)
+              (item.unsavedSettings as ParamsCustomModel).modelName,
+              customModelDetails.badge({
+                modelName: item.modelName,
+                hideText,
+                disabled: !(item.unsavedSettings as ParamsCustomModel).isValid,
+              })
             ),
             content: customModelDetailsContent,
           };

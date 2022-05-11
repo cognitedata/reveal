@@ -4,7 +4,6 @@ import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import {
   addToAvailableDetectionModels,
   BUILT_IN_MODEL_COUNT,
-  setCustomModelName,
   setDetectionModelParameters,
   setSelectedDetectionModels,
   setUnsavedDetectionModelSettings,
@@ -34,15 +33,12 @@ export const PopulateCustomModel = createAsyncThunk<
     params: {
       modelJobId: model.jobId,
       threshold: DEFAULT_THRESHOLD,
+      modelName: model.name,
+      isValid: true,
     },
   };
   dispatch(setUnsavedDetectionModelSettings(newParams));
-  dispatch(
-    setCustomModelName({
-      modelIndex,
-      modelName: `${model.name || 'Untitled model'}`,
-    })
-  );
+
   // Save configuration and set model selection
   dispatch(setDetectionModelParameters());
   dispatch(setSelectedDetectionModels([VisionDetectionModelType.CustomModel]));
