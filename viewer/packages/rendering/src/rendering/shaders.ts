@@ -80,32 +80,11 @@ export const sectorShaders = {
   }
 };
 
-export const outlineDetectionShaders = {
-  fragment: glsl(require('../glsl/post-processing/outline-detect-combine.frag').default),
-  vertex: glsl(require('../glsl/post-processing/outline-detection.vert').default)
-};
-
-/**
- * FXAA anti-aliasing shader
- */
-export const fxaaShaders = {
-  fragment: glsl(require('../glsl/post-processing/fxaa.frag').default),
-  vertex: glsl(require('../glsl/post-processing/fxaa.vert').default)
-};
-
 /**
  * Screen space ambient occlusion shader
  */
 export const ssaoShaders = {
   fragment: glsl(require('../glsl/post-processing/pure-depth-ssao.frag').default),
-  vertex: glsl(require('../glsl/post-processing/passthrough.vert').default)
-};
-
-/**
- * Full one-pass SSAO blur shader
- */
-export const ssaoBlurCombineShaders = {
-  fragment: glsl(require('../glsl/post-processing/ssao-blur-combine.frag').default),
   vertex: glsl(require('../glsl/post-processing/passthrough.vert').default)
 };
 
