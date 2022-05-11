@@ -82,11 +82,17 @@ export const useMapContent = () => {
 
         if (!isUndefined((layers[id] as ProjectConfigMapLayers).disabled)) {
           promises.push(
-            geospatial.getGeoJSON(id).then((geoJSON) => {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore need to update FeatureCollection to be used from geojson
-              pushResponse(geoJSON);
-            })
+            geospatial
+              .getGeoJSON(id)
+              .then((geoJSON) => {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore need to update FeatureCollection to be used from geojson
+                pushResponse(geoJSON);
+              })
+              .catch((error) => {
+                log('Could not load layer from geospatial');
+                handleServiceError(error);
+              })
           );
         }
       });
