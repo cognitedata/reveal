@@ -31,26 +31,17 @@ import { mapWellInfo } from '../utils/trajectory';
 import { useEnabledWellSdkV3 } from './useEnabledWellSdkV3';
 import { useWellConfig } from './useWellConfig';
 
-export const useTrajectoriesMetadataQuery = (enabledWellSDKV3?: boolean) => {
+export const useTrajectoriesMetadataQuery = () => {
   const wellboreIds = useWellInspectSelectedWellboreIds();
 
-  // V2
-  const { trajectories, isLoading } = useTrajectoriesQuery(!enabledWellSDKV3);
-
-  // V3
   const trajectoriesMetadata = useQuery(
     [WELL_QUERY_KEY.TRAJECTORIES_LIST, wellboreIds],
     async () => {
       return listTrajectoriesUsingWellsSDK(wellboreIds);
-    },
-    { enabled: !!enabledWellSDKV3 }
+    }
   );
 
-  if (enabledWellSDKV3) {
-    return trajectoriesMetadata;
-  }
-
-  return { data: trajectories, isLoading };
+  return trajectoriesMetadata;
 };
 
 // NOTE: ignoreEmptyRows seems to always be true everywhere, perhaps we should remove this option

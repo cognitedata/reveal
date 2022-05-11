@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import layers from 'utils/zindex';
 
 import { Tooltip } from 'components/PopperTooltip';
-import { useEnabledWellSdkV3 } from 'modules/wellSearch/hooks/useEnabledWellSdkV3';
 import { PreviewCasingType } from 'modules/wellSearch/types';
 
 import { DEPTH_INDICATOR_END_HEIGHT, TOOLTIP_PLACEMENT } from './constants';
@@ -24,14 +23,11 @@ const DepthIndicator: React.FC<DepthIndicatorProps> = ({
   normalizedCasing,
   isTied,
 }) => {
-  const enableWellSdkV3 = useEnabledWellSdkV3();
-
   const [zIndex, setZIndex] = useState<number>(layers.MAIN_LAYER);
 
   const {
     casingStartDepth = 0,
     casingDepth,
-    casingDescription,
     outerDiameter,
     liner = false,
     leftEnd,
@@ -39,12 +35,6 @@ const DepthIndicator: React.FC<DepthIndicatorProps> = ({
 
   const startHeight = `${casingStartDepth}px`;
   const middleHeight = `calc(${casingDepth}px - ${DEPTH_INDICATOR_END_HEIGHT})`;
-
-  const tooltipContent = enableWellSdkV3 ? (
-    <TooltipContent {...normalizedCasing} />
-  ) : (
-    casingDescription
-  );
 
   return (
     <DepthIndicatorWrapper
@@ -61,7 +51,7 @@ const DepthIndicator: React.FC<DepthIndicatorProps> = ({
       <DepthSegment.Start height={startHeight} />
       <Tooltip
         followCursor
-        content={tooltipContent}
+        content={<TooltipContent {...normalizedCasing} />}
         placement={TOOLTIP_PLACEMENT}
       >
         <DepthSegment.Middle

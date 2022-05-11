@@ -17,7 +17,6 @@ import {
   REGION_FIELD_BLOCK,
   DATA_AVAILABILITY,
 } from 'modules/wellSearch/constantsSidebarFilters';
-import { useEnabledWellSdkV3 } from 'modules/wellSearch/hooks/useEnabledWellSdkV3';
 import { useFilterConfigByCategory } from 'modules/wellSearch/hooks/useFilterConfigByCategory';
 import { useWellFilterOptions } from 'modules/wellSearch/hooks/useWellFilterOptionsQuery';
 import {
@@ -47,7 +46,6 @@ export const WellsFilter = () => {
   const filters = useAppliedWellFilters();
   const setWellsFilters = useSetWellsFiltersAsync();
   const clearWellFilters = useClearWellsFilters();
-  const enabledWellSDKV3 = useEnabledWellSdkV3();
 
   const filterConfigsByCategory = useFilterConfigByCategory();
   const metrics = useGlobalMetrics('search');
@@ -130,10 +128,8 @@ export const WellsFilter = () => {
     return (
       <>
         {filterConfigsByCategory.map((category, index) => {
-          const isRegionFieldBlock =
-            enabledWellSDKV3 && category.title === REGION_FIELD_BLOCK;
-          const isDataAvailability =
-            enabledWellSDKV3 && category.title === DATA_AVAILABILITY;
+          const isRegionFieldBlock = category.title === REGION_FIELD_BLOCK;
+          const isDataAvailability = category.title === DATA_AVAILABILITY;
 
           const hasCustom = isDataAvailability || isRegionFieldBlock;
 

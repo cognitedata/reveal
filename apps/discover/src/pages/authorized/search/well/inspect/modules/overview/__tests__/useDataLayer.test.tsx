@@ -11,10 +11,6 @@ import { getMockedStore } from '__test-utils/store.utils';
 
 import { useDataLayer } from '../useDataLayer';
 
-jest.mock('modules/wellSearch/hooks/useEnabledWellSdkV3', () => ({
-  useEnabledWellSdkV3: () => true,
-}));
-
 const mockServer = setupServer(
   getMockConfigGet(),
   getMockUserMe(),
