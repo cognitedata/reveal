@@ -10,7 +10,7 @@ export class MeasurementUi {
   private _guiController: any[];
 
   private state = {
-    linewidth: 0.02,
+    linewidth: 0.002,
     color: '#00FFFF'
   };
 

@@ -6,7 +6,6 @@ import { Cognite3DViewer } from '@reveal/core';
 import * as THREE from 'three';
 import { createGlContext, mockClientAuthentication } from '../../../../../test-utilities';
 import { MeasurementControls } from '../MeasurementControls';
-import { MeasurementDistance } from '../MeasurementDistance';
 
 describe(MeasurementControls.name, () => {
   let viewer: Cognite3DViewer;
@@ -37,7 +36,7 @@ describe(MeasurementControls.name, () => {
 
   test('Add a distance measurement type to the controls', () => {
     const addSpyOn = jest.spyOn(measurementControls, 'add');
-    measurementControls.add(new MeasurementDistance(viewer));
+    measurementControls.add();
 
     expect(addSpyOn).toBeCalled();
   });
@@ -51,7 +50,7 @@ describe(MeasurementControls.name, () => {
 
   test('Check multiple removal of measurement type', () => {
     const removeSpyOn = jest.spyOn(measurementControls, 'remove');
-    measurementControls.add(new MeasurementDistance(viewer));
+    measurementControls.add();
 
     expect((measurementControls as any)._measurementDistance).toBeDefined();
     measurementControls.remove();
@@ -65,15 +64,15 @@ describe(MeasurementControls.name, () => {
   test('Update Line width & color', () => {
     const updateLineOptionsSpyOn = jest.spyOn(measurementControls, 'updateLineOptions');
     const lineOptions = {
-      color: new THREE.Color('red'),
+      color: 0xff0000,
       lineWidth: 1.0
     };
 
-    measurementControls.add(new MeasurementDistance(viewer));
+    measurementControls.add();
     measurementControls.updateLineOptions(lineOptions);
 
     expect(updateLineOptionsSpyOn).toBeCalled();
-    expect((measurementControls as any)._measurementDistance._lineOptions.color).toStrictEqual(new THREE.Color('red'));
-    expect((measurementControls as any)._measurementDistance._lineOptions.lineWidth).toBe(lineOptions.lineWidth);
+    expect((measurementControls as any)._lineOptions.color).toStrictEqual(lineOptions.color);
+    expect((measurementControls as any)._lineOptions.lineWidth).toBe(lineOptions.lineWidth);
   });
 });

@@ -33,14 +33,14 @@ measurement.addMeasurementDistance();
 ### Change width and color of the measuring line
 To change width and color of the line, use `MeasurementTool.setLineOptions(lineOptions: MeasurementLineOptions)`. MeasurementLineOptions expects
   - `lineWidth` : number,
-  - `color` : THREE.Color
+  - `color` : number
 
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
 const lineOptions = {
-  lineWidth: 0.04,
-  color: new THREE.Color('red')
+  lineWidth: 0.004,
+  color: 0xff0000
 }
 const measurement = new MeasurementTool(viewer);
 measurement.addMeasurementDistance();
