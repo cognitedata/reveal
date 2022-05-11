@@ -28,7 +28,7 @@ export interface SectorCuller {
    * @param input Same input as used in {@link determineSectors}.
    * @param wantedSectorsBatch A set of sectors from {@link determineSectors}, e.g. in batches of 5-10.
    */
-  filterSectorsToLoad(input: DetermineSectorsInput, wantedSectorsBatch: WantedSector[]): WantedSector[];
+  filterSectorsToLoad(input: DetermineSectorsInput, wantedSectorsBatch: WantedSector[]): Promise<WantedSector[]>;
 
   /**
    * Dispose all non-GCed resoures held.

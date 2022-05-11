@@ -67,9 +67,9 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     return { spentBudget, wantedSectors: wanted };
   }
 
-  filterSectorsToLoad(_input: DetermineSectorsInput, wantedSectorsBatch: WantedSector[]): WantedSector[] {
+  filterSectorsToLoad(_input: DetermineSectorsInput, wantedSectorsBatch: WantedSector[]): Promise<WantedSector[]> {
     // TODO 2021-09-27 larsmoa: Implement pre-load occlusion culling in ByScreenSizeSectorCuller
-    return wantedSectorsBatch;
+    return Promise.resolve(wantedSectorsBatch);
   }
 
   dispose(): void {}

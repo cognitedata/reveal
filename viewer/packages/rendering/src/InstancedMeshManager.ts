@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { DynamicDefragmentedBuffer } from '@reveal/utilities';
+import { decrementOrDeleteIndex, DynamicDefragmentedBuffer, incrementOrInsertIndex } from '@reveal/utilities';
 import { InstancedMesh, InstancedMeshFile } from '@reveal/cad-parsers';
 
 import { CadMaterialManager } from './CadMaterialManager';
@@ -68,6 +68,13 @@ export class InstancedMeshManager {
       } else {
         const currentAttributes = this._instancedAttributeMap.get(instanceIdentifier)!;
 
+        const instanceMesh = currentAttributes.mesh;
+
+        const treeIndexMap = instanceMesh.userData.treeIndices as Map<number, number>;
+        instance.treeIndices.forEach(treeIndex => {
+          incrementOrInsertIndex(treeIndexMap, treeIndex);
+        });
+
         const treeAdd = currentAttributes.treeIndexBuffer.add(instance.treeIndices);
         const colorAdd = currentAttributes.colorBuffer.add(instance.colors);
         const matrixAdd = currentAttributes.instanceMatrixBuffer.add(instance.instanceMatrices);
@@ -97,6 +104,23 @@ export class InstancedMeshManager {
       if (attributeBuffers === undefined) {
         throw new Error(`Cannot resolve instance identifier for sector ${sectorId}`);
       }
+
+      const instancedMesh = attributeBuffers.mesh;
+
+      const treeIndexBatchRange = attributeBuffers.treeIndexBuffer.getRangeForBatchId(
+        sectorBatchDescriptor.treeIndicesbatchId
+      );
+
+      const treeIndices = new Float32Array(
+        attributeBuffers.treeIndexBuffer.bufferView.buffer,
+        treeIndexBatchRange.byteOffset * 4,
+        treeIndexBatchRange.byteCount
+      );
+
+      const treeIndexMap = instancedMesh.userData.treeIndices as Map<number, number>;
+      treeIndices.forEach(treeIndex => {
+        decrementOrDeleteIndex(treeIndexMap, treeIndex);
+      });
 
       attributeBuffers.treeIndexBuffer.remove(sectorBatchDescriptor.treeIndicesbatchId);
       attributeBuffers.colorBuffer.remove(sectorBatchDescriptor.colorsBatchId);
@@ -219,6 +243,8 @@ export class InstancedMeshManager {
     const instanceMesh = new THREE.InstancedMesh(instanceGeometry, material, dynamicTreeIndicesBuffer.length);
 
     instanceMesh.frustumCulled = false;
+
+    instanceMesh.userData.treeIndices = new Map<number, number>();
 
     this._instancedAttributeMap.set(instanceIdentifier, {
       mesh: instanceMesh,
