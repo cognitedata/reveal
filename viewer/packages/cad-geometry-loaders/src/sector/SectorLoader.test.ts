@@ -175,8 +175,8 @@ class StubSectorCuller implements SectorCuller {
     return { wantedSectors, spentBudget: noBudget };
   }
 
-  filterSectorsToLoad(_input: DetermineSectorsInput, wantedSectorsBatch: WantedSector[]): WantedSector[] {
-    return wantedSectorsBatch.filter(x => this.filterCallback(x));
+  filterSectorsToLoad(_input: DetermineSectorsInput, wantedSectorsBatch: WantedSector[]): Promise<WantedSector[]> {
+    return Promise.resolve(wantedSectorsBatch.filter(x => this.filterCallback(x)));
   }
 
   dispose(): void {}

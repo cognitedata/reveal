@@ -18,15 +18,15 @@ import {
   ModelDataProvider,
   ModelIdentifier,
   ModelMetadataProvider
-} from '@reveal/modeldata-api';
+} from '../../modeldata-api';
 import { CadManager } from '../../cad-model/src/CadManager';
 import { NumericRange, revealEnv } from '@reveal/utilities';
 import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
-import { CadModelUpdateHandler, defaultDesktopCadModelBudget } from '@reveal/cad-geometry-loaders';
-import { ByScreenSizeSectorCuller } from '@reveal/cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
+import { CadModelUpdateHandler, defaultDesktopCadModelBudget } from '../../cad-geometry-loaders';
+import { ByScreenSizeSectorCuller } from '../../cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
 import { StepPipelineExecutor } from '../src/pipeline-executors/StepPipelineExecutor';
 import { IdentifiedModel } from '../src/utilities/types';
-import { CognitePointCloudModel, createPointCloudManager } from '@reveal/pointclouds';
+import { CognitePointCloudModel, createPointCloudManager } from '../../pointclouds';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 
 revealEnv.publicPath = 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.2.0/';
