@@ -60,7 +60,7 @@
     "proj4": "^2.8.0",
     "rxjs": "7.5.5",
     "skmeans": "0.11.3",
-    "three": "0.140.0"
+    "three": "0.140.2"
   },
   "devDependencies": {
     "@azure/msal-browser": "2.24.0",
@@ -84,7 +84,7 @@
     "core-js": "3.22.4",
     "cross-var": "1.1.0",
     "dat.gui": "0.7.9",
-    "eslint": "8.14.0",
+    "eslint": "8.15.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-header": "3.1.1",
     "eslint-plugin-jsdoc": "39.1.1",
@@ -95,7 +95,7 @@
     "gl": "5.0.0",
     "glslify-loader": "2.0.0",
     "html-webpack-plugin": "4.5.2",
-    "husky": "7.0.4",
+    "husky": "8.0.0",
     "jest": "27.5.1",
     "jest-canvas-mock": "2.4.0",
     "jest-extended": "0.11.5",
