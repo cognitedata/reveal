@@ -38,8 +38,13 @@ export const FileToolbar = ({
     return selectIsPollingComplete(state.processSlice);
   });
 
-  const onDelete = () => {
-    dispatch(DeleteFilesById(selectedFileIds));
+  const onDelete = (setIsDeletingState: (val: boolean) => void) => {
+    dispatch(
+      DeleteFilesById({
+        fileIds: selectedFileIds,
+        setIsDeletingState,
+      })
+    );
   };
 
   const onDownload = () => {

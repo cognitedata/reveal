@@ -109,7 +109,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         );
       },
       onFileDelete: (id: number) => {
-        dispatch(DeleteFilesById([id]));
+        dispatch(DeleteFilesById({ fileIds: [id] }));
       },
     }),
     [dispatch, processFileIds]

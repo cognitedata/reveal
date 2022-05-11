@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Detail,
@@ -30,12 +30,15 @@ export const BulkActionMenu = ({
   onContextualise?: () => void;
   onReview?: () => void;
   onBulkEdit?: () => void;
-  onDelete?: () => void;
+  onDelete?: (setIsDeletingState: (val: boolean) => void) => void;
   onTrainModel?: () => void;
   handleCancelOtherEdits: () => void;
   style?: any;
   processingFiles?: boolean;
 }) => {
+  const [bulkActionInProgress, setBulkActionInProgress] =
+    useState<boolean>(false);
+
   const count = selectedCount ? `[${selectedCount}]` : null;
   const inLimit =
     selectedCount && maxSelectCount ? selectedCount <= maxSelectCount : true;
@@ -119,7 +122,7 @@ export const BulkActionMenu = ({
         <Popconfirm
           icon="WarningFilled"
           placement="bottom-end"
-          onConfirm={onDelete}
+          onConfirm={() => onDelete(setBulkActionInProgress)}
           content="Are you sure you want to permanently delete this file?"
           disabled={
             processingFiles !== undefined ? !count || processingFiles : !count
@@ -147,9 +150,10 @@ export const BulkActionMenu = ({
           type="primary"
           icon="ChevronDownCompact"
           aria-label="dropdown button"
-          disabled={!count}
+          disabled={!count || bulkActionInProgress}
           iconPlacement="right"
           style={{ marginLeft: 14 }}
+          loading={bulkActionInProgress}
         >
           Bulk actions {count}
         </Button>

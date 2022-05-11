@@ -18,7 +18,7 @@ type ExplorerToolbarProps = ExplorerToolbarContainerProps & {
   onContextualise: () => void;
   onReview: () => void;
   onBulkEdit: () => void;
-  onDelete: () => void;
+  onDelete: (setIsDeletingState: (val: boolean) => void) => void;
   onTrainModel: () => void;
   onAutoMLModelPage: () => void;
   handleCancelOtherEdits: () => void;
