@@ -17,7 +17,7 @@ export class MeasurementControls {
   private _measurementDistance: MeasurementDistance;
   private _pointSize: number;
   private _distanceValue: string;
-  private _options: MeasurementOptions;
+  private readonly _options: MeasurementOptions;
 
   private readonly _handleonPointerClick = this.onPointerClick.bind(this);
   private readonly _handleonPointerMove = this.onPointerMove.bind(this);
