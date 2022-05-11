@@ -33,8 +33,8 @@ describe('OrderSectorsByVisibilityCoverage', () => {
     const renderPassMock = new Mock<RenderPass>().setup(e => e.render(It.IsAny(), It.IsAny())).returns();
 
     depthOnlyPipelineProvider = new Mock<CadGeometryCustomRenderModePipeline>()
-      .setup(e => e.outputRenderTarget)
-      .returns(renderer.getRenderTarget())
+      .setup(e => e.setOutputRenderTarget(It.IsAny()))
+      .returns()
       .setup(e => e.pipeline(It.IsAny()))
       .returns(
         (function* (): Generator<RenderPass> {

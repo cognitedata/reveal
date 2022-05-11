@@ -28,15 +28,6 @@ describe('RenderAlreadyLoadedGeometryProvider', () => {
     target = new THREE.WebGLRenderTarget(size.width, size.height);
   });
 
-  test('renderOccludingGeometry() restores render target after completion', () => {
-    const target = depthRenderPipelineProvider.outputRenderTarget;
-
-    const provider = new RenderAlreadyLoadedGeometryProvider(renderer, depthRenderPipelineProvider);
-    provider.renderOccludingGeometry(target, new THREE.PerspectiveCamera());
-
-    expect(depthRenderPipelineProvider.outputRenderTarget).toEqual(target);
-  });
-
   test('renderOccludingGeometry() renders depth', () => {
     const renderDetailedToDepthOnlySpy = jest.spyOn(depthRenderPipelineProvider, 'pipeline');
     const provider = new RenderAlreadyLoadedGeometryProvider(renderer, depthRenderPipelineProvider);

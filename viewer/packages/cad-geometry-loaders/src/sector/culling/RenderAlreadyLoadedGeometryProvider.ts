@@ -24,7 +24,7 @@ export class RenderAlreadyLoadedGeometryProvider {
       }
     });
 
-    this._depthOnlyRenderPipeline.outputRenderTarget = target;
+    this._depthOnlyRenderPipeline.setOutputRenderTarget(target);
     this._basicPipelineExecutor.render(this._depthOnlyRenderPipeline, camera);
 
     scene?.traverse(x => {

@@ -77,19 +77,17 @@ export class PickingHandler {
       RenderMode.Depth,
       materialManager,
       scene,
-      cadModels,
-      false
+      cadModels
     );
     this._treeIndexRenderPipeline = new CadGeometryCustomRenderModePipeline(
       RenderMode.TreeIndex,
       materialManager,
       scene,
-      cadModels,
-      false
+      cadModels
     );
 
-    this._treeIndexRenderPipeline.outputRenderTarget = this._pickPixelColorStorage.renderTarget;
-    this._depthRenderPipeline.outputRenderTarget = this._pickPixelColorStorage.renderTarget;
+    this._treeIndexRenderPipeline.setOutputRenderTarget(this._pickPixelColorStorage.renderTarget, false);
+    this._depthRenderPipeline.setOutputRenderTarget(this._pickPixelColorStorage.renderTarget, false);
   }
 
   public intersectCadNodes(cadNodes: CadNode[], input: IntersectInput): IntersectCadNodesResult[] {
