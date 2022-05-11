@@ -71,7 +71,7 @@ export const LineChart = ({
   enableTooltip = true,
   showPoints = true,
   minRowTicks = 5,
-  margin = { top: 0, right: 40, bottom: 40, left: 40 },
+  margin = { top: 0, right: 40, bottom: 40, left: 10 },
 }: LineChartProps) => {
   const {
     showTooltip,
