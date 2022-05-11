@@ -1,6 +1,5 @@
 import {
   AnnotatedResourceId,
-  CDFAnnotationTypeEnum,
   CDFAnnotationV2,
   ImageAssetLink,
   ImageClassification,
@@ -12,6 +11,7 @@ import {
 } from 'src/api/annotation/types';
 import {
   AnnotationsBadgeCounts,
+  CDFInheritedFields,
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
@@ -49,11 +49,18 @@ export const createVisionAnnotationStub = <T>({
 
 export const convertToVisionAnnotations = (
   annotations: CDFAnnotationV2<VisionAnnotationDataType>[]
-): VisionAnnotation<VisionAnnotationDataType>[] => {
-  console.warn('havent finished yet');
+): VisionAnnotation<VisionAnnotationDataType>[] =>
+  annotations.map((annotation) => {
+    const cdfInheritedFields: CDFInheritedFields = {
+      id: annotation.id,
+      createdTime: annotation.createdTime,
+      lastUpdatedTime: annotation.lastUpdatedTime,
+      status: annotation.status,
+      annotatedResourceId: annotation.annotatedResourceId,
+    };
+    return { ...cdfInheritedFields, ...annotation.data };
+  });
 
-  return [] as VisionAnnotation<VisionAnnotationDataType>[];
-};
 export const getAnnotationLabelOrText = (
   annotation: VisionAnnotation<VisionAnnotationDataType>
 ): string =>
