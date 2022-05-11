@@ -10,7 +10,11 @@ import {
   toast,
 } from '@cognite/cogs.js';
 import { Chart } from 'models/chart/types';
-import { useMyCharts, usePublicCharts, useUpdateChart } from 'hooks/firebase';
+import {
+  useMyCharts,
+  usePublicCharts,
+  useUpdateChart,
+} from 'hooks/charts-storage';
 import { v4 as uuidv4 } from 'uuid';
 import { subDays } from 'date-fns';
 import { useNavigate } from 'hooks/navigation';

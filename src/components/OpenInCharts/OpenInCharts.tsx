@@ -21,7 +21,7 @@ import {
   useNavigate,
   useClearSearchParams,
 } from 'hooks/navigation';
-import { useMyCharts, useUpdateChart, useChart } from 'hooks/firebase';
+import { useMyCharts, useUpdateChart, useChart } from 'hooks/charts-storage';
 import { Timeseries } from '@cognite/sdk';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { addTimeseries, convertTSToChartTS } from 'models/chart/updates';

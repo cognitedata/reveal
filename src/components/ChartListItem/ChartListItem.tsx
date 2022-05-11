@@ -1,7 +1,7 @@
 import { ComponentProps, useEffect, useState } from 'react';
 import { toast } from '@cognite/cogs.js';
 import { Chart } from 'models/chart/types';
-import { useDeleteChart, useUpdateChart } from 'hooks/firebase';
+import { useDeleteChart, useUpdateChart } from 'hooks/charts-storage';
 import { useNavigate } from 'hooks/navigation';
 import { duplicate } from 'models/chart/updates';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';

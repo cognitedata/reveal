@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import styled from 'styled-components/macro';
 import { Button, Popconfirm, toast, Tooltip } from '@cognite/cogs.js';
 import { useNavigate } from 'hooks/navigation';
-import { useDeleteChart, useUpdateChart } from 'hooks/firebase';
+import { useDeleteChart, useUpdateChart } from 'hooks/charts-storage';
 import { duplicate } from 'models/chart/updates';
 import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
 import { trackUsage } from 'services/metrics';
