@@ -1,8 +1,6 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bulkConverters';
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
-import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
-import { VisionAnnotationV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
@@ -13,6 +11,11 @@ import {
   clearAnnotationStates,
   repopulateAnnotationState,
 } from 'src/modules/Common/store/annotation/util';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import {
+  VisionAnnotation,
+  VisionAnnotationDataType,
+} from 'src/modules/Common/types/index';
 
 export const initialState: AnnotationState = {
   files: {
@@ -30,7 +33,7 @@ const annotationSlice = createSlice({
   /* eslint-disable no-param-reassign */
   extraReducers: (builder) => {
     builder.addCase(
-      RetrieveAnnotationsV1.fulfilled,
+      RetrieveAnnotations.fulfilled,
       (
         state: AnnotationState,
         {
@@ -38,7 +41,7 @@ const annotationSlice = createSlice({
           meta,
         }: {
           // ToDo (VIS-794): change to new type VisionAnnotation
-          payload: VisionAnnotationV1[];
+          payload: VisionAnnotation<VisionAnnotationDataType>[];
           meta: {
             arg: {
               fileIds: number[];
@@ -54,11 +57,7 @@ const annotationSlice = createSlice({
         // clear states
         clearAnnotationStates(state, fileIds, clearCache);
 
-        // update annotations
-        // ToDo (VIS-794): conversion logic from V1 to V2 in the new slice can be moved into thunks.
-        const annotations = convertCDFAnnotationV1ToVisionAnnotations(payload);
-
-        repopulateAnnotationState(state, annotations);
+        repopulateAnnotationState(state, payload);
       }
     );
 
