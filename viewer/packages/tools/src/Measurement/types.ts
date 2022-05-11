@@ -4,7 +4,7 @@
 
 export type MeasurementLineOptions = {
   lineWidth?: number;
-  color?: THREE.Color;
+  color?: number;
 };
 
 export type MeasurementUnitUpdateDelegate = () => MeasurementUnits;

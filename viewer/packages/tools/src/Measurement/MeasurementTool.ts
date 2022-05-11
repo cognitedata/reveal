@@ -4,14 +4,12 @@
 import { Cognite3DViewer } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { MeasurementControls } from './MeasurementControls';
-import { MeasurementDistance } from './MeasurementDistance';
 import { MeasurementLineOptions, MeasurementOptions } from './types';
 
 export class MeasurementTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
   private readonly _measurementControls: MeasurementControls;
   private readonly _options: MeasurementOptions;
-  private _measurementDistance: MeasurementDistance;
 
   constructor(viewer: Cognite3DViewer, options?: MeasurementOptions) {
     super();
@@ -24,8 +22,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Add Distance measurement
    */
   addMeasurementDistance(): void {
-    this._measurementDistance = new MeasurementDistance(this._viewer);
-    this._measurementControls.add(this._measurementDistance);
+    this._measurementControls.add();
   }
 
   /**
