@@ -5,11 +5,10 @@
 import { Cognite3DViewer } from '@reveal/core';
 import * as THREE from 'three';
 import { LineGeometry } from './LineGeometry';
-import { Measurement } from './Measurement';
 import { MeasurementLineOptions } from './types';
 import glsl from 'glslify';
 
-export class MeasurementDistance implements Measurement {
+export class MeasurementDistance {
   private readonly _viewer: Cognite3DViewer;
   private _measurementLine: THREE.Mesh | undefined;
   private _lineGeometry: LineGeometry;

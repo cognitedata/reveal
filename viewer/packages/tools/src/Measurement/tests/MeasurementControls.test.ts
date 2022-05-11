@@ -53,10 +53,10 @@ describe(MeasurementControls.name, () => {
     const removeSpyOn = jest.spyOn(measurementControls, 'remove');
     measurementControls.add(new MeasurementDistance(viewer));
 
-    expect((measurementControls as any)._measurement).toBeDefined();
+    expect((measurementControls as any)._measurementDistance).toBeDefined();
     measurementControls.remove();
 
-    expect((measurementControls as any)._measurement).toBeNull();
+    expect((measurementControls as any)._measurementDistance).toBeNull();
     measurementControls.remove();
 
     expect(removeSpyOn).toBeCalledTimes(2);
@@ -73,7 +73,7 @@ describe(MeasurementControls.name, () => {
     measurementControls.updateLineOptions(lineOptions);
 
     expect(updateLineOptionsSpyOn).toBeCalled();
-    expect((measurementControls as any)._measurement._lineOptions.color).toStrictEqual(new THREE.Color('red'));
-    expect((measurementControls as any)._measurement._lineOptions.lineWidth).toBe(lineOptions.lineWidth);
+    expect((measurementControls as any)._measurementDistance._lineOptions.color).toStrictEqual(new THREE.Color('red'));
+    expect((measurementControls as any)._measurementDistance._lineOptions.lineWidth).toBe(lineOptions.lineWidth);
   });
 });

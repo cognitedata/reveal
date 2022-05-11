@@ -40,7 +40,7 @@ describe(MeasurementTool.name, () => {
     measurementTool.addMeasurementDistance();
 
     expect(addSpyOn).toBeCalled();
-    expect((measurementTool as any)._measurementControls._measurement).toBeDefined();
+    expect((measurementTool as any)._measurementControls._measurementDistance).toBeDefined();
   });
 
   test('Remove distance memasurement', () => {
@@ -48,6 +48,6 @@ describe(MeasurementTool.name, () => {
     measurementTool.removeMeasurementDistance();
 
     expect(removeSpyOn).toBeCalled();
-    expect((measurementTool as any)._measurementControls._measurement).toBeUndefined();
+    expect((measurementTool as any)._measurementControls._measurementDistance).toBeUndefined();
   });
 });

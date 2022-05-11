@@ -1,6 +1,6 @@
 import { Cognite3DViewer } from "@cognite/reveal";
 import { MeasurementLineOptions } from "@cognite/reveal/tools";
-import { MeasurementTool } from "@cognite/reveal/tools";
+import { MeasurementTool, MeasurementUnits } from "@cognite/reveal/tools";
 import dat from "dat.gui";
 
 export class MeasurementUi {
@@ -20,7 +20,7 @@ export class MeasurementUi {
 
   constructor(viewer: Cognite3DViewer, ui: dat.GUI) {
     this._viewer = viewer;
-    this._measurementTool = new MeasurementTool(this._viewer);
+    this._measurementTool = new MeasurementTool(this._viewer, {unitsUpdateCallback: () => { return MeasurementUnits.Feets}});
     this._gui = ui.addFolder('Types');
     this._guiController = [];
     const addDistanceOptions = this.addDistanceOptions.bind(this);
