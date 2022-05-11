@@ -23,14 +23,13 @@ module.exports = env => {
 
     devServer: {
       host: '0.0.0.0',
-      contentBase: path.resolve(env.dir, './app'),
+      contentBase: path.resolve(__dirname, '../../examples/public'),
       disableHostCheck: true,
       watchContentBase: true,
       https: true,
       watchOptions: {
         poll: true
-      },
-      contentBase: path.resolve(__dirname, '../../examples/public')
+      }
     },
 
     node: {
