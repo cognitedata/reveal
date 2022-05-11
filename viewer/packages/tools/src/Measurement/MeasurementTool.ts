@@ -58,14 +58,14 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Add an measurement to the control.
+   * Add an measurement.
    */
   add(): void {
     this.setupEventHandling();
   }
 
   /**
-   * Remove measurement from control.
+   * Remove measurement.
    */
   remove(): void {
     this.clearLineObjects();
@@ -118,7 +118,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Start generating Line geometry.
+   * Generating Line geometry and create the mesh.
    * @param point Point from where the line will be generated.
    */
   private startLine(point: THREE.Vector3) {
