@@ -16,11 +16,6 @@ static final Map<String, String> CONTEXTS = [
   publishStorybook: "continuous-integration/jenkins/publish-storybook",
   publishFAS: "continuous-integration/jenkins/publish-fas",
   publishPackages: "continuous-integration/jenkins/publish-packages",
-  baker_bake: "cicd/jenkins/baker-bake",
-  spinnaker_deployments: 'cicd/jenkins/spinnaker-deployments',
-  spinnaker_pipeline: 'cicd/jenkins/spinnaker-pipeline',
-  docker_push: 'cicd/jenkins/docker-push',
-
 ]
 
 void bazelPod(Map params = new HashMap(), body) {
@@ -94,31 +89,29 @@ def pods = { body ->
     ]
   ) {
     bazelPod(bazelVersion: '5.0.0') {
-      spinnaker.pod() {
-        yarn.pod(nodeVersion: NODE_VERSION) {
-          previewServer.pod(nodeVersion: NODE_VERSION) {
-            fas.pod(
-              nodeVersion: NODE_VERSION,
-              envVars: [
-                envVar(key: 'BRANCH_NAME', value: env.BRANCH_NAME),
-                envVar(key: 'CHANGE_ID', value: env.CHANGE_ID)
-              ]
-            ) {
-              codecov.pod {
-                fakeIdp.pod(
-                  fakeIdpEnvVars: fakeIdpEnvVars,
-                ) {
-                  properties([
-                    buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '100'))
-                  ])
+      yarn.pod(nodeVersion: NODE_VERSION) {
+        previewServer.pod(nodeVersion: NODE_VERSION) {
+          fas.pod(
+            nodeVersion: NODE_VERSION,
+            envVars: [
+              envVar(key: 'BRANCH_NAME', value: env.BRANCH_NAME),
+              envVar(key: 'CHANGE_ID', value: env.CHANGE_ID)
+            ]
+          ) {
+            codecov.pod {
+              fakeIdp.pod(
+                fakeIdpEnvVars: fakeIdpEnvVars,
+              ) {
+                properties([
+                  buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '100'))
+                ])
 
-                  node(POD_LABEL) {
-                      stageWithNotify('Checkout code', CONTEXTS.checkout) {
-                        checkout(scm)
-                        sh('./rules/test/version_info.sh > ./rules/test/version_info.bzl')
-                      }
-                    body()
-                  }
+                node(POD_LABEL) {
+                    stageWithNotify('Checkout code', CONTEXTS.checkout) {
+                      checkout(scm)
+                      sh('./rules/test/version_info.sh > ./rules/test/version_info.bzl')
+                    }
+                  body()
                 }
               }
             }
@@ -211,41 +204,6 @@ pods {
     stageWithNotify("Bazel build", CONTEXTS.bazelBuild) {
       container('bazel') {
         sh(label: 'bazel build //...', script: "bazel --bazelrc=.ci.bazelrc build //...")
-      }
-    }
-
-    if (!isProduction) {
-      stageWithNotify("Baker bake", CONTEXTS.baker_bake) {
-        container('bazel') {
-          def changedManifests = sh(
-            label: "Which manifests were changed?",
-            // Find the commit hash on the master branch that the PR branch is originated from
-            // If we would want to also run this check in cd.jenkins we would need to change ref to HEAD^1
-            script: "bazel run //:has-changed -- -ref=\$(git merge-base refs/remotes/origin/master HEAD) 'kind(baker_bake, //...)'",
-            returnStdout: true
-          )
-          print(changedManifests)
-          if (changedManifests) {
-            def serviceNames = []
-            changedManifests.split('\n').each {
-              def jsonString = sh(script: "bazel run ${it}", returnStdout: true)
-              def params = readJSON text: jsonString
-              print(params)
-              serviceNames.add(params.name)
-            }
-            def serviceNamesStr = serviceNames.join(',')
-            sh(label: './bake_manifests.sh bake --services', script: "./bake_manifests.sh bake --services ${serviceNamesStr} --parallel 32")
-            try {
-              def gitStatus = sh(
-                script: 'test -z "$(git status -s .baker/manifests --porcelain)"',
-                returnStdout: true
-              ).trim()
-            } catch(ex) {
-              exMessage = "There are some untracked changes to .baker/manifests files. Run ./bake_manifests.sh locally and check in the changes."
-              throw new Exception("${exMessage}\n${ex}")
-            }
-          }
-        }
       }
     }
 
@@ -452,76 +410,6 @@ pods {
                   }
                 }
               }
-            }
-          }
-        }
-      }
-    }
-
-    if (isProduction) {
-      stageWithNotify("Spinnaker pipelines", CONTEXTS.spinnaker_pipeline) {
-        container('bazel') {
-          def changedApps = sh(label: "Which spinnaker apps were changed?", script: "bazel run //:has-changed -- -ref=HEAD^1 'kind(spinnaker_pipeline, //...)'", returnStdout: true)
-          print(changedApps)
-          if (changedApps) {
-            def tobeDeployedApp = []
-            changedApps.split('\n').each {
-              def file = sh(script: "bazel run ${it}", returnStdout: true)
-              print(file)
-              tobeDeployedApp.add(file)
-            }
-            deploySpinnakerPipelineConfigs.upload(
-              tobeDeployedApp: tobeDeployedApp // ['spinnaker-config/<app>/app-config.yaml']
-            )
-          }
-        }
-      }
-    }
-
-    if (isProduction) {
-      stageWithNotify("Spinnaker deployments", CONTEXTS.spinnaker_deployments) {
-        container('bazel') {
-          def getReleases = sh(
-            label: "Prepare docker builds",
-            script: "bazel query \"attr(name, 'prepare_docker_build\$', //apps/...)\"",
-            returnStdout: true
-          )
-          if (getReleases) {
-            getReleases.split('\n').each {
-              sh(
-                label: "Run docker build",
-                script: "bazel build ${it}",
-              )
-            }
-          }
-          def changedApps = sh(
-            label: "Which apps were changed?",
-            script: "bazel run //:has-changed -- -ref=${hasChangedRef} 'kind(spinnaker_deployment, //...)'",
-            returnStdout: true
-          )
-          print(changedApps)
-          if (changedApps) {
-            changedApps.split('\n').each {
-              def target = it.split(':')[0]
-              def environment = it.split('spinnaker_deployment_')[1]
-              def nameTag = sh(
-                label: "Push ${target} Docker image",
-                script: "bazel --bazelrc=.ci.bazelrc run ${target}:push_${environment} 2>&1 | grep 'Successfully pushed Docker image to' | awk '{ print \$NF }'",
-                returnStdout: true
-              ).trim()
-              print("Pushed Docker image $nameTag")
-
-              def jsonString = sh(script: "bazel run ${it}", returnStdout: true)
-              print(jsonString)
-              // JSON object is on the last line
-              def params = readJSON text: jsonString.split('\n').last()
-              print(params)
-              params.pipelines.each({ pipeline ->
-                print("Spinnaker deploy ${params.name} ${pipeline} ${nameTag}")
-                spinnaker.deploy(params.name, pipeline, nameTag ? [nameTag] : [])
-              })
-
-              slackMessages.add("- `${params.name}` (<https://spinnaker.cognite.ai/#/applications/${params.name}/executions|pipeline>)")
             }
           }
         }

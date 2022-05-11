@@ -6,8 +6,6 @@ load("@npm//vite:index.bzl", "vite")
 load("//rules/test:jest.bzl", "jest_test")
 load("@npm//jest:index.bzl", "jest")
 load("@npm//cypress:index.bzl", "cypress")
-load("@com_github_cognitedata_bazel_tools//k8s/kubeval:kubeval.bzl", "kubeval_test")
-load("//rules:baker_bake.bzl", "baker_bake")
 load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
 load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
 load("//rules/publish:publish_fas.bzl", "publish_fas")
@@ -451,45 +449,3 @@ publish_fas(
     staging_app_id = "explorer-staging",
     versioning_strategy = "single-branch",
 )
-
-kubeval_test(
-    name = "kubeval_test",
-    srcs = ["//.baker:explorer-manifests"],
-)
-
-baker_bake(
-    name = "baker_bake",
-    manifests = glob(["kustomize/**/*"]),
-    service_name = "explorer",
-)
-
-### FAS BUILD ###
-# container_build(
-#     name = "fas_release",
-#     app_id = "explorer-release",
-#     app_name = "explorer",
-#     build_layer = ":build",
-#     config_map = "config/config-release.json",
-#     docker_repo = "cognitedata/apps/explorer",
-#     environment = "release",
-# )
-
-# container_build(
-#     name = "fas_staging",
-#     app_id = "explorer",
-#     app_name = "explorer",
-#     build_layer = ":build",
-#     config_map = "config/config-staging.json",
-#     docker_repo = "cognitedata/apps/explorer-staging",
-#     environment = "staging",
-# )
-
-# container_build(
-#     name = "fas_prod",
-#     app_id = "explorer",
-#     app_name = "explorer",
-#     build_layer = ":build",
-#     config_map = "config/config-prod.json",
-#     docker_repo = "cognitedata/apps/explorer",
-#     environment = "production",
-# )
