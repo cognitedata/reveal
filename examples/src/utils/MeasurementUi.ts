@@ -20,7 +20,7 @@ export class MeasurementUi {
 
   constructor(viewer: Cognite3DViewer, ui: dat.GUI) {
     this._viewer = viewer;
-    this._measurementTool = new MeasurementTool(this._viewer, {unitsUpdateCallback: () => { return MeasurementUnits.Feets}});
+    this._measurementTool = new MeasurementTool(this._viewer, {unitsUpdateCallback: () => { return MeasurementUnits.Meters}});
     this._gui = ui.addFolder('Types');
     this._guiController = [];
     const addDistanceOptions = this.addDistanceOptions.bind(this);

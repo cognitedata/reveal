@@ -114,15 +114,16 @@ export class MeasurementControls {
   private updateMeasurementUnits(options: MeasurementUnitUpdateDelegate) {
     const units = options();
     switch (units) {
-      case MeasurementUnits.Centimeters:
+      case MeasurementUnits.Centimeter:
         this._distanceValue = (this._measurementDistance.getMeasurementValue() * 100).toFixed(2).toString() + ' cm';
         break;
-      case MeasurementUnits.Feets:
+      case MeasurementUnits.Feet:
         this._distanceValue = (this._measurementDistance.getMeasurementValue() * 3.281).toFixed(2).toString() + ' ft';
         break;
       case MeasurementUnits.Inches:
         this._distanceValue = (this._measurementDistance.getMeasurementValue() * 39.37).toFixed(2).toString() + ' in';
         break;
+      case MeasurementUnits.Meter:
       default:
         this._distanceValue = this._measurementDistance.getMeasurementValue().toFixed(2).toString() + ' m';
         break;

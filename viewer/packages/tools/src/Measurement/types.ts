@@ -14,8 +14,8 @@ export type MeasurementOptions = {
 };
 
 export enum MeasurementUnits {
-  Meters = 'meters',
-  Feets = 'feets',
+  Meter = 'meter',
+  Feet = 'feet',
   Inches = 'inches',
-  Centimeters = 'centimeters'
+  Centimeter = 'centimeter'
 }

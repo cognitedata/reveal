@@ -1,0 +1,63 @@
+---
+id: point-to-point-measurement
+title: Point to Point Measurement
+description: Demo shows how to measure point to point distance in Reveal.
+---
+
+import { DemoWrapper } from '@site/docs/components/DemoWrapper';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+The `MeasurementTool` is a measuring tool for point to point distance with the 3D objects.
+This can be achieved by selecting a point on the 3D Object and drag the pointer to the destined point to get measurement of the distance.
+The tool default measures in "Meters" as supported in Reveal, but the user can choose options to measure distance in "Feet", "Inches" & Centimeter"
+based on their convinience, the tool will calculate the measuring distance value respectively.
+
+The tool provides ability to change measuring line width & color.
+
+:::note
+The tool supports only point to point measurement
+:::
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+## Point to point distance measurment
+To add point to point measurement, use `MeasurementTool.addMeasurementDistance()` which will have default line width & color.
+
+```jsx runnable
+// import { MeasurementTool } from '@cognite/reveal/tools';
+
+const measurement = new MeasurementTool(viewer);
+measurement.addMeasurementDistance();
+```
+
+### Change width and color of the measuring line
+To change width and color of the line, use `MeasurementTool.setLineOptions(lineOptions: MeasurementLineOptions)`. MeasurementLineOptions expects
+  - `lineWidth` : number,
+  - `color` : THREE.Color
+
+```jsx runnable
+// import { MeasurementTool } from '@cognite/reveal/tools';
+
+const lineOptions = {
+  lineWidth: 0.04,
+  color: new THREE.Color('red')
+}
+const measurement = new MeasurementTool(viewer);
+measurement.addMeasurementDistance();
+measurement.setLineOptions(lineOptions);
+```
+
+### Measure with different units
+To change the units of measuring distance, the tool supports feet, inches and centimeters units other than the default meters. For changing to different
+units, we can pass a callback as option to the tool with `MeasurementUnits`.
+  - MeasurementUnits.Feet
+  - MeasurementUnits.Inches
+  - MeasurementUnits.Centimeter
+  - MeasurementUnits.Meter
+
+```jsx runnable
+// import { MeasurementTool, MeasurementUnits } from '@cognite/reveal/tools';
+
+const measurement = new MeasurementTool(viewer, {unitsUpdateCallback: () => { return MeasurementUnits.Feet}});
+measurement.addMeasurementDistance();
+```
