@@ -19,7 +19,7 @@ function main() {
         return yargs
           .option('productionVersion', {
             describe: 'The production version to pull translations',
-            default: 'latest',
+            default: 'production',
             type: 'string',
           })
           .option('path', {
