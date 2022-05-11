@@ -1,4 +1,4 @@
-import { makeSelectTotalAnnotationCountForFileIds } from 'src/modules/Common/store/annotationV1/selectors';
+import { makeSelectTotalAnnotationCountForFileIds } from 'src/modules/Common/store/annotation/selectors';
 import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -16,8 +16,8 @@ export function NameAndAnnotationRenderer({
     makeSelectTotalAnnotationCountForFileIds,
     []
   );
-  const annotationCounts = useSelector(({ annotationV1Reducer }: RootState) =>
-    selectTotalAnnotationCountForFileIds(annotationV1Reducer, [id])
+  const annotationCounts = useSelector(({ annotationReducer }: RootState) =>
+    selectTotalAnnotationCountForFileIds(annotationReducer, [id])
   );
 
   const selectAnnotationStatuses = useMemo(makeSelectJobStatusForFile, []);
