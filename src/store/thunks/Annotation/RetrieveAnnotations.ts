@@ -9,10 +9,7 @@ import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import { from, lastValueFrom } from 'rxjs';
 import { map, mergeMap, reduce } from 'rxjs/operators';
-import {
-  CDFAnnotationTypeEnum,
-  CDFAnnotationV2,
-} from 'src/api/annotation/types';
+import { CDFAnnotationV2 } from 'src/api/annotation/types';
 import { validateAnnotation } from 'src/api/annotation/utils';
 import { convertToVisionAnnotations } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 
@@ -43,7 +40,7 @@ export const RetrieveAnnotations = createAsyncThunk<
       mergeMap((request) => from(request)),
       map((annotations) => {
         const filteredAnnotations = annotations.filter(
-          (annotation: CDFAnnotationV2<CDFAnnotationTypeEnum>) => {
+          (annotation: CDFAnnotationV2<VisionAnnotationDataType>) => {
             try {
               return validateAnnotation(annotation);
             } catch (error) {

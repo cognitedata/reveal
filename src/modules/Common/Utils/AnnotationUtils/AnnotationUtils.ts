@@ -48,7 +48,7 @@ export const createVisionAnnotationStub = <T>({
 });
 
 export const convertToVisionAnnotations = (
-  ann: CDFAnnotationV2<CDFAnnotationTypeEnum>[]
+  annotations: CDFAnnotationV2<VisionAnnotationDataType>[]
 ): VisionAnnotation<VisionAnnotationDataType>[] => {
   console.warn('havent finished yet');
 

@@ -1,7 +1,9 @@
 import {
   CDFAnnotationV1,
+  CDFAnnotationV2,
   CDFLinkedAnnotationV1,
 } from 'src/api/annotation/types';
+import { VisionAnnotationDataType } from 'src/modules/Common/types';
 
 /* type guards are functions that can differentiate annotations using their exclusive features
 useful for selecting a correct validator or for narrowing typescript types */
@@ -34,3 +36,11 @@ export const isPolygon = (ann: CDFAnnotationV1): boolean => {
 };
 
 // todo: add tests and typeguards for valve and gauge reader
+
+// CDFAnnotationV2 type guards
+
+export const isAssetLinkedAnnotationV2 = (
+  ann: CDFAnnotationV2<VisionAnnotationDataType>
+): boolean => {
+  return !!('assetRef' in ann.data);
+};

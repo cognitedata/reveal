@@ -11,9 +11,9 @@ import {
   AnnotationMetadataV1,
   AnnotationSourceV1,
   UnsavedAnnotation,
-  CDFAnnotationTypeEnum,
   CDFAnnotationV2,
 } from 'src/api/annotation/types';
+import { VisionAnnotationDataType } from 'src/modules/Common/types';
 
 export function getUnsavedAnnotation(
   text: string,
@@ -118,7 +118,7 @@ export function validateAnnotationV1(
 }
 
 export function validateAnnotation(
-  annotation: CDFAnnotationV2<CDFAnnotationTypeEnum>
+  annotation: CDFAnnotationV2<VisionAnnotationDataType>
 ): boolean {
   console.warn('havent finished yet');
 
