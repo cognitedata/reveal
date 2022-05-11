@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import intercomInitialization from './core/initialization';
 import intercomHelper from './methods';
 import type { IntercomBootSettings } from './types';

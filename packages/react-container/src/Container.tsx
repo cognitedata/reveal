@@ -90,7 +90,7 @@ const RawContainer: React.FC<Props> = ({
     },
   };
 
-  // this handles the login redirect from azure
+  // This handles the login redirect from azure
   const publicClientApplication = new PublicClientApplication(configuration);
   publicClientApplication
     .handleRedirectPromise()
