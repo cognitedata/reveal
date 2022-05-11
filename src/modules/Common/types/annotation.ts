@@ -12,12 +12,12 @@ import {
 /**
  * Annotation types used within vision sub app
  */
-
 export type VisionAnnotationDataType =
   | ImageClassification
   | ImageObjectDetection
   | ImageExtractedText
-  | ImageAssetLink;
+  | ImageAssetLink
+  | ImageKeypointCollection;
 
 // Vision Annotation Type
 

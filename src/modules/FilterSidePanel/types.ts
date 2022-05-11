@@ -32,7 +32,7 @@ export type VisionFileFilterProps = FileFilterProps & {
 };
 
 export type AnnotationFilterType = {
-  annotationText?: string;
+  annotationLabelOrText?: string;
   annotationState?: string;
 };
 

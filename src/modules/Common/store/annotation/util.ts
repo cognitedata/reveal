@@ -5,7 +5,7 @@ import {
   VisionAnnotationDataType,
 } from 'src/modules/Common/types/index';
 
-export const clearStates = (
+export const clearAnnotationStates = (
   state: AnnotationState,
   fileIds: number[],
   clearCache?: boolean
