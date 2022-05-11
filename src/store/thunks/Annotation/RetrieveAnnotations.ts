@@ -9,8 +9,6 @@ import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import { from, lastValueFrom } from 'rxjs';
 import { map, mergeMap, reduce } from 'rxjs/operators';
-import { CDFAnnotationV2 } from 'src/api/annotation/types';
-import { validateAnnotation } from 'src/api/annotation/utils';
 import { convertToVisionAnnotations } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 
 export const RetrieveAnnotations = createAsyncThunk<
@@ -38,24 +36,7 @@ export const RetrieveAnnotations = createAsyncThunk<
   if (requests.length) {
     const responses = from(requests).pipe(
       mergeMap((request) => from(request)),
-      map((annotations) => {
-        const filteredAnnotations = annotations.filter(
-          (annotation: CDFAnnotationV2<VisionAnnotationDataType>) => {
-            try {
-              return validateAnnotation(annotation);
-            } catch (error) {
-              console.warn(
-                'Annotation is invalid, will not be visible',
-                annotation
-              );
-              return false;
-            }
-          }
-        );
-        const visionAnnotations =
-          convertToVisionAnnotations(filteredAnnotations);
-        return visionAnnotations;
-      }),
+      map((annotations) => convertToVisionAnnotations(annotations)),
       reduce((allAnnotations, annotationsPerFile) => {
         return allAnnotations.concat(annotationsPerFile);
       })

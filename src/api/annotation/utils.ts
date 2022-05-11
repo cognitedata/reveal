@@ -11,9 +11,7 @@ import {
   AnnotationMetadataV1,
   AnnotationSourceV1,
   UnsavedAnnotation,
-  CDFAnnotationV2,
 } from 'src/api/annotation/types';
-import { VisionAnnotationDataType } from 'src/modules/Common/types';
 
 export function getUnsavedAnnotation(
   text: string,
@@ -115,14 +113,6 @@ export function validateAnnotationV1(
     return true;
   }
   return false;
-}
-
-export function validateAnnotation(
-  annotation: CDFAnnotationV2<VisionAnnotationDataType>
-): boolean {
-  console.warn('havent finished yet');
-
-  return true;
 }
 
 export const getFieldOrSetNull = (
