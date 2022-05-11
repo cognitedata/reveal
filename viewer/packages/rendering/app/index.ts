@@ -76,7 +76,6 @@ async function init() {
     model = cadModel;
     boundingBox = (cadModel as any)._cadModelMetadata.scene.getBoundsOfMostGeometry().clone();
     boundingBox.applyMatrix4(model.children[0].matrix);
-    scene.add(model);
 
     const nodeAppearanceProvider = materialManager.getModelNodeAppearanceProvider('0');
     nodeAppearanceProvider.assignStyledNodeCollection(
@@ -103,6 +102,7 @@ async function init() {
     throw Error(`Unknown output format ${modelOutputs}`);
   }
 
+  scene.add(model);
   model.updateMatrix();
   model.updateWorldMatrix(true, true);
 
