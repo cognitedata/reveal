@@ -1,4 +1,4 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import {
   VisionAnnotation,
@@ -10,13 +10,15 @@ import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import { from, lastValueFrom } from 'rxjs';
 import { map, mergeMap, reduce } from 'rxjs/operators';
 import { convertToVisionAnnotations } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bulkConverters';
+import { RetrieveAnnotationsV1 } from './RetrieveAnnotationsV1';
 
 export const RetrieveAnnotations = createAsyncThunk<
   VisionAnnotation<VisionAnnotationDataType>[],
   { fileIds: number[]; clearCache?: boolean },
   ThunkConfig
->('RetrieveAnnotationsV1', async (payload) => {
-  const { fileIds: fetchFileIds } = payload;
+>('RetrieveAnnotations', async (payload, { dispatch }) => {
+  const { fileIds: fetchFileIds, clearCache } = payload;
   const fileIdBatches = splitListIntoChunks(
     fetchFileIds,
     ANNOTATION_FETCH_BULK_SIZE
@@ -33,6 +35,7 @@ export const RetrieveAnnotations = createAsyncThunk<
     return AnnotationApi.list(annotationListRequest);
   });
 
+  let visionAnnotations: VisionAnnotation<VisionAnnotationDataType>[] = [];
   if (requests.length) {
     const responses = from(requests).pipe(
       mergeMap((request) => from(request)),
@@ -42,8 +45,22 @@ export const RetrieveAnnotations = createAsyncThunk<
       })
     );
 
-    return lastValueFrom(responses);
+    visionAnnotations = await lastValueFrom(responses);
   }
 
-  return [] as VisionAnnotation<VisionAnnotationDataType>[];
+  /**
+   * fetch V1 type annotations using visionAnnotationV1 thunk
+   * convert them into VisionAnnotation(s)
+   * combine the results with annotations received from new API
+   * return the final combined results
+   */
+  const annotationFromV1 = await dispatch(
+    RetrieveAnnotationsV1({ fileIds: fetchFileIds, clearCache })
+  );
+  const resultsFromV1 = unwrapResult(annotationFromV1);
+  const visionAnnotationFromV1 =
+    convertCDFAnnotationV1ToVisionAnnotations(resultsFromV1);
+  visionAnnotations.concat(visionAnnotationFromV1);
+
+  return visionAnnotations as VisionAnnotation<VisionAnnotationDataType>[];
 });
