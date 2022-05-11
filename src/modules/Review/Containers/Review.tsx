@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PageTitle } from '@cognite/cdf-utilities';
 import { selectFileById } from 'src/modules/Common/store/files/selectors';
 import { RootState } from 'src/store/rootReducer';
@@ -20,7 +20,10 @@ import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import { CustomPrompt } from 'src/modules/Common/Components/CustomPrompt/CustomPrompt';
 import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
 
-const DeleteButton = (props: { onConfirm: () => void }) => (
+const DeleteButton = (props: {
+  onConfirm: () => void;
+  isDeleteInProgress: boolean;
+}) => (
   <div style={{ minWidth: '120px' }}>
     <Popconfirm
       icon="WarningFilled"
@@ -28,7 +31,11 @@ const DeleteButton = (props: { onConfirm: () => void }) => (
       onConfirm={props.onConfirm}
       content="Are you sure you want to permanently delete this file?"
     >
-      <Button type="ghost-danger" icon="Trash">
+      <Button
+        type="ghost-danger"
+        loading={props.isDeleteInProgress}
+        icon="Trash"
+      >
         Delete file
       </Button>
     </Popconfirm>
@@ -36,6 +43,8 @@ const DeleteButton = (props: { onConfirm: () => void }) => (
 );
 
 const Review = (props: RouteComponentProps<{ fileId: string }>) => {
+  const [isDeleteInProgress, setIsDeleteInProgress] = useState<boolean>(false);
+
   const history = useHistory();
   const dispatch = useDispatch();
   const { fileId } = props.match.params;
@@ -74,7 +83,12 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
         { from: previousPage }
       );
     }
-    dispatch(DeleteFilesById([file!.id]));
+    dispatch(
+      DeleteFilesById({
+        fileIds: [file!.id],
+        setIsDeletingState: setIsDeleteInProgress,
+      })
+    );
   };
 
   useEffect(() => {
@@ -134,7 +148,12 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
                   <></>
                 )
               }
-              right={<DeleteButton onConfirm={handleFileDelete} />}
+              right={
+                <DeleteButton
+                  onConfirm={handleFileDelete}
+                  isDeleteInProgress={isDeleteInProgress}
+                />
+              }
             />
           </ToolBar>
           <ReviewBody file={file} prev={previousPage} />

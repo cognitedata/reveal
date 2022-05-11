@@ -70,7 +70,7 @@ export const ResultTableLoader = <T extends Resource>({
         );
       },
       onFileDelete: (id: number) => {
-        dispatch(DeleteFilesById([id]));
+        dispatch(DeleteFilesById({ fileIds: [id] }));
       },
     }),
     [dispatch, history]

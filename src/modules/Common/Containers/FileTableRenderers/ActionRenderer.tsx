@@ -31,7 +31,7 @@ export function ActionRenderer(
 
   const handleFileDelete = () => {
     const { id } = rowData;
-    dispatch(DeleteFilesById([id]));
+    dispatch(DeleteFilesById({ fileIds: [id] }));
   };
 
   const handleReview = () => {
