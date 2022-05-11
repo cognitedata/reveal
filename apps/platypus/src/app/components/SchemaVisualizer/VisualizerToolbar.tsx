@@ -1,4 +1,11 @@
-import { Icon, IconType, Input, Switch, ToolBar } from '@cognite/cogs.js';
+import {
+  Icon,
+  IconType,
+  Input,
+  Switch,
+  ToolBar,
+  Checkbox,
+} from '@cognite/cogs.js';
 import { ToolbarMenu } from './ToolbarMenu';
 import { DirectiveBuiltInType } from '@platypus/platypus-core';
 
@@ -53,35 +60,38 @@ export const VisualizerToolbar = ({
         <ToolbarMenu.Header>Attributes</ToolbarMenu.Header>
       )}
       {fieldDirectives.map((fieldDirective) => {
+        const toggleDirective = () => {
+          if (
+            visibleFieldDirectives.some(
+              (directive) => directive.name === fieldDirective.name
+            )
+          ) {
+            setVisibleFieldDirectives(
+              visibleFieldDirectives.filter(
+                (directive) => directive.name !== fieldDirective.name
+              )
+            );
+          } else {
+            setVisibleFieldDirectives([
+              ...visibleFieldDirectives,
+              fieldDirective,
+            ]);
+          }
+        };
         return (
-          <ToolbarMenu.Item
-            key={fieldDirective.name}
-            onClick={() => {
-              if (
-                visibleFieldDirectives.some(
-                  (directive) => directive.name === fieldDirective.name
-                )
-              ) {
-                setVisibleFieldDirectives(
-                  visibleFieldDirectives.filter(
-                    (directive) => directive.name !== fieldDirective.name
-                  )
-                );
-              } else {
-                setVisibleFieldDirectives([
-                  ...visibleFieldDirectives,
-                  fieldDirective,
-                ]);
-              }
-            }}
-            appendIcon={
-              isDirectiveVisible(fieldDirective) ? 'Checkmark' : undefined
-            }
-          >
+          <ToolbarMenu.Item key={fieldDirective.name} onClick={toggleDirective}>
             {fieldDirective.icon && (
               <Icon type={fieldDirective.icon as IconType} />
             )}
-            {fieldDirective.name}
+            {fieldDirective.name}{' '}
+            <Checkbox
+              checked={isDirectiveVisible(fieldDirective)}
+              name={`${fieldDirective.name}-checkbox`}
+              onClick={(e) => {
+                e.preventDefault();
+                toggleDirective();
+              }}
+            />
           </ToolbarMenu.Item>
         );
       })}

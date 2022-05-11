@@ -11,7 +11,24 @@ export const ToolbarMenu = styled(Menu)`
     margin-right: 0;
   }
 
-  .switch-ui {
+  .cogs-switch .switch-ui {
     margin-right: 0;
+    width: 28px;
+    height: 16px;
+  }
+
+  .cogs-switch .switch-ui:after {
+    width: 12px;
+    height: 12px;
+    margin: 2px;
+  }
+
+  label.cogs-checkbox {
+    margin: auto;
+    margin-right: 0;
+  }
+
+  label.cogs-checkbox .checkbox-ui {
+    margin: 0;
   }
 `;
