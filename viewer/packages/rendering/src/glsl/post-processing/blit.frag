@@ -55,7 +55,7 @@ void main() {
   #endif
   #if defined(EDGES)
     float edgeStrength = edgeDetectionFilter(tDiffuse);
-    fragColor.rgb *= mix(pow(1.0 - edgeStrength, 2.0), 1.0, isnan(edgeStrength));
+    fragColor.rgb *= isnan(edgeStrength) ? 1.0 : pow(1.0 - edgeStrength, 2.0);
   #endif
   #if defined(OUTLINE)
     int outline = fetchOutlineIndex(tDiffuse);
