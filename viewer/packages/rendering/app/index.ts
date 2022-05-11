@@ -146,7 +146,7 @@ async function init() {
       color: new THREE.Color(1, 0, 0),
       transparent: true,
       opacity: 0.5,
-      depthTest: true
+      depthTest: false
     })
   );
 

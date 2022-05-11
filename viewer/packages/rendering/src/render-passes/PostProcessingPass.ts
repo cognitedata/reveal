@@ -9,14 +9,17 @@ import { createFullScreenTriangleMesh, getBlitMaterial } from '../utilities/rend
 import { PostProcessingPipelineOptions } from '../render-pipelines/types';
 
 export class PostProcessingPass implements RenderPass {
-  private readonly _postProcessingScene: THREE.Scene;
+  private readonly _scene: THREE.Scene;
   private readonly _customObjects: THREE.Object3D[];
-  private _takenCustomObjects: { object: THREE.Object3D; parent: THREE.Object3D }[];
+  private readonly _postProcessingObjects: THREE.Mesh[];
 
-  constructor(postProcessingPipelineOptions: PostProcessingPipelineOptions, customObjects: THREE.Object3D[]) {
-    this._postProcessingScene = new THREE.Scene();
+  constructor(
+    customObjects: THREE.Object3D[],
+    scene: THREE.Scene,
+    postProcessingPipelineOptions: PostProcessingPipelineOptions
+  ) {
+    this._scene = scene;
     this._customObjects = customObjects;
-    this._takenCustomObjects = [];
 
     const inFrontEarlyZBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.inFront.texture,
@@ -37,7 +40,7 @@ export class PostProcessingPass implements RenderPass {
       outline: true
     });
     const backBlitObject = createFullScreenTriangleMesh(backBlitMaterial);
-    backBlitObject.renderOrder = 2;
+    backBlitObject.renderOrder = 1;
 
     const ghostBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.ghost.texture,
@@ -57,34 +60,38 @@ export class PostProcessingPass implements RenderPass {
     const inFrontBlitObject = createFullScreenTriangleMesh(inFrontBlitMaterial);
     inFrontBlitObject.renderOrder = 4;
 
-    this._postProcessingScene.add(inFrontEarlyZBlitObject);
-    this._postProcessingScene.add(backBlitObject);
-    this._postProcessingScene.add(ghostBlitObject);
-    this._postProcessingScene.add(inFrontBlitObject);
+    this._scene.add(inFrontEarlyZBlitObject);
+    this._scene.add(backBlitObject);
+    this._scene.add(ghostBlitObject);
+    this._scene.add(inFrontBlitObject);
+
+    this._postProcessingObjects = [inFrontEarlyZBlitObject, backBlitObject, ghostBlitObject, inFrontBlitObject];
   }
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {
-    this.takeCustomObjects();
+    this.pushCustomObjectsRenderOrder();
     renderer.sortObjects = true;
-    renderer.render(this._postProcessingScene, camera);
-    this.releaseCustomObjects();
+    camera.layers.mask = 1 | 0;
+    renderer.render(this._scene, camera);
+    this.popCustomObjectsRenderOrder();
   }
 
-  private takeCustomObjects(): void {
+  public dispose(): void {
+    this._postProcessingObjects.forEach(postProcessingObject => {
+      postProcessingObject.geometry.dispose();
+      this._scene.remove(postProcessingObject);
+    });
+  }
+
+  private pushCustomObjectsRenderOrder(): void {
     this._customObjects.forEach(customObject => {
-      this._takenCustomObjects.push({ object: customObject, parent: customObject.parent });
-      this._postProcessingScene.add(customObject);
-      customObject.updateMatrixWorld(true);
-      customObject.renderOrder = customObject.renderOrder > 0 ? customObject.renderOrder + 4 : 1;
+      customObject.renderOrder = customObject.renderOrder > 0 ? customObject.renderOrder + 4 : 2;
     });
   }
 
-  private releaseCustomObjects(): void {
-    this._takenCustomObjects.forEach(takenCustomObject => {
-      const { object, parent } = takenCustomObject;
-      parent.add(object);
-      object.renderOrder = object.renderOrder > 1 ? object.renderOrder - 4 : 0;
+  private popCustomObjectsRenderOrder(): void {
+    this._customObjects.forEach(customObject => {
+      customObject.renderOrder = customObject.renderOrder > 2 ? customObject.renderOrder - 4 : 0;
     });
-    this._takenCustomObjects = [];
   }
 }

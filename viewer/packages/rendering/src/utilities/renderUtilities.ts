@@ -133,24 +133,14 @@ function initializeBlendingOptions(blendOptions: BlendOptions) {
 export enum RenderLayer {
   Back = RenderMode.Color,
   InFront = RenderMode.Effects,
-  Ghost = RenderMode.Ghost,
-  CustomNormal,
-  CustomDeferred
+  Ghost = RenderMode.Ghost
 }
 
-export function setupGeometryLayers(
+export function setupCadModelsGeometryLayers(
   materialManager: CadMaterialManager,
-  identifiedModels?: IdentifiedModel[],
-  customObjects?: THREE.Object3D[]
+  identifiedModels?: IdentifiedModel[]
 ): void {
   identifiedModels?.forEach(identifiedModel => setModelRenderLayers(identifiedModel, materialManager));
-
-  customObjects?.forEach(customObject => {
-    customObject.traverse(node => {
-      const customRenderOrder = node.renderOrder > 0 ? RenderLayer.CustomDeferred : RenderLayer.CustomNormal;
-      node.layers.set(customRenderOrder);
-    });
-  });
 }
 
 export function getLayerMask(renderLayer: number): number {

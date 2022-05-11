@@ -9,7 +9,7 @@ import { RenderMode } from '../rendering/RenderMode';
 import { RenderOptions } from '../rendering/types';
 import { RenderPass } from '../RenderPass';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
-import { createRenderTarget, RenderLayer } from '../utilities/renderUtilities';
+import { createRenderTarget, setupCadModelsGeometryLayers } from '../utilities/renderUtilities';
 import { IdentifiedModel } from '../utilities/types';
 import { CadGeometryRenderTargets } from './types';
 
@@ -68,6 +68,8 @@ export class CadGeometryRenderPipeline implements RenderPipelineProvider {
     this.pipelineTearDown(renderer);
   }
 
+  public dispose(): void {}
+
   private pipelineSetup(renderer: THREE.WebGLRenderer) {
     this._currentRendererState = {
       autoClear: renderer.autoClear,
@@ -80,8 +82,7 @@ export class CadGeometryRenderPipeline implements RenderPipelineProvider {
     renderer.setClearAlpha(0.0);
 
     this.updateRenderTargetSizes(renderer);
-
-    this._cadModels.forEach(model => this.setModelRenderLayers(model, this._materialManager));
+    setupCadModelsGeometryLayers(this._materialManager, this._cadModels);
   }
 
   private pipelineTearDown(renderer: THREE.WebGLRenderer) {
@@ -123,30 +124,5 @@ export class CadGeometryRenderPipeline implements RenderPipelineProvider {
     this._cadGeometryRenderTargets.inFront.setSize(width, height);
 
     this._cadGeometryRenderTargets.currentRenderSize.set(width, height);
-  }
-
-  private setModelRenderLayers(identifiedModel: IdentifiedModel, materialManager: CadMaterialManager) {
-    const { model, modelIdentifier } = identifiedModel;
-
-    const backSet = materialManager.getModelBackTreeIndices(modelIdentifier);
-    const ghostSet = materialManager.getModelGhostedTreeIndices(modelIdentifier);
-    const inFrontSet = materialManager.getModelInFrontTreeIndices(modelIdentifier);
-
-    model.traverse(node => {
-      node.layers.disableAll();
-      const objectTreeIndices = node.userData?.treeIndices as Map<number, number> | undefined;
-      if (objectTreeIndices === undefined) {
-        return;
-      }
-      if (backSet.hasIntersectionWith(objectTreeIndices)) {
-        node.layers.enable(RenderLayer.Back);
-      }
-      if (ghostSet.hasIntersectionWith(objectTreeIndices)) {
-        node.layers.enable(RenderLayer.Ghost);
-      }
-      if (inFrontSet.hasIntersectionWith(objectTreeIndices)) {
-        node.layers.enable(RenderLayer.InFront);
-      }
-    });
   }
 }

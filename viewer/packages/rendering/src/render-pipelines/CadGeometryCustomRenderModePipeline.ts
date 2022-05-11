@@ -7,7 +7,7 @@ import { CadMaterialManager } from '../CadMaterialManager';
 import { GeometryPass } from '../render-passes/GeometryPass';
 import { RenderPass } from '../RenderPass';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
-import { getLayerMask, RenderLayer, setupGeometryLayers } from '../utilities/renderUtilities';
+import { getLayerMask, RenderLayer, setupCadModelsGeometryLayers } from '../utilities/renderUtilities';
 import { IdentifiedModel } from '../utilities/types';
 import { RenderMode } from '../rendering/RenderMode';
 
@@ -48,10 +48,12 @@ export class CadGeometryCustomRenderModePipeline implements RenderPipelineProvid
 
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
     this.updateRenderTargetSizes(renderer);
-    setupGeometryLayers(this._materialManager, this._cadModels);
+    setupCadModelsGeometryLayers(this._materialManager, this._cadModels);
     renderer.setRenderTarget(this._outputRenderTarget);
     yield this._geometryPass;
   }
+
+  public dispose(): void {}
 
   private updateRenderTargetSizes(renderer: THREE.WebGLRenderer): void {
     const renderSize = new THREE.Vector2();

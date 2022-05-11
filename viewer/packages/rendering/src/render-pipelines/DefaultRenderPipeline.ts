@@ -85,14 +85,11 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
       ssaoParameters
     );
 
-    this._postProcessingRenderPipeline = new PostProcessingPass(
-      {
-        ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
-        edges: edges.enabled,
-        ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
-      },
-      customObjects
-    );
+    this._postProcessingRenderPipeline = new PostProcessingPass(customObjects, scene, {
+      ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
+      edges: edges.enabled,
+      ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
+    });
 
     this._blitToScreenMaterial = new THREE.RawShaderMaterial({
       vertexShader: blitShaders.vertex,
@@ -140,6 +137,10 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     };
 
     this.pipelineTearDown(renderer);
+  }
+
+  public dispose(): void {
+    this._postProcessingRenderPipeline.dispose();
   }
 
   private pipelineTearDown(renderer: THREE.WebGLRenderer) {
