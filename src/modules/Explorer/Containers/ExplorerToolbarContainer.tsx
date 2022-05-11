@@ -90,8 +90,13 @@ export const ExplorerToolbarContainer = (
   const onAutoMLModelPage = () => {
     history.push(getLink(workflowRoutes.models), { from: 'explorer' });
   };
-  const onDelete = () => {
-    dispatch(DeleteFilesById(selectedFileIds));
+  const onDelete = (setIsDeletingState: (val: boolean) => void) => {
+    dispatch(
+      DeleteFilesById({
+        fileIds: selectedFileIds,
+        setIsDeletingState,
+      })
+    );
   };
   const onBulkEdit = () => {
     dispatch(setBulkEditModalVisibility(true));

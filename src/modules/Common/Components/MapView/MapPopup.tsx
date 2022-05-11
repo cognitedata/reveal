@@ -44,7 +44,7 @@ export const MapPopup = ({
   };
 
   const handleFileDelete = () => {
-    dispatch(DeleteFilesById([item.id]));
+    dispatch(DeleteFilesById({ fileIds: [item.id] }));
   };
 
   const selectTotalAnnotationCountForFileIds = useMemo(
