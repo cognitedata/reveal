@@ -21,17 +21,27 @@ The tool supports only point to point measurement
 <DemoWrapper name="Cognite3DViewerDemo" />
 
 ## Point to point distance measurment
-To add point to point measurement, use `MeasurementTool.addMeasurementDistance()` which will have default line width & color.
+To add point to point measurement, use `MeasurementTool.add()` which will have default line width & color.
 
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
 const measurement = new MeasurementTool(viewer);
-measurement.addMeasurementDistance();
+measurement.add();
+```
+### Remove measurement
+To remove point to point measurement, use `MeasurementTool.remove()`.
+
+```jsx runnable
+// import { MeasurementTool } from '@cognite/reveal/tools';
+
+const measurement = new MeasurementTool(viewer);
+measurement.add();
+measurement.remove();
 ```
 
 ### Change width and color of the measuring line
-To change width and color of the line, use `MeasurementTool.setLineOptions(lineOptions: MeasurementLineOptions)`. MeasurementLineOptions expects
+To change width and color of the line, use `MeasurementTool.updateLineOptions(lineOptions: MeasurementLineOptions)`. MeasurementLineOptions expects
   - `lineWidth` : number,
   - `color` : number
 
@@ -43,8 +53,8 @@ const lineOptions = {
   color: 0xff0000
 }
 const measurement = new MeasurementTool(viewer);
-measurement.addMeasurementDistance();
-measurement.setLineOptions(lineOptions);
+measurement.add();
+measurement.updateLineOptions(lineOptions);
 ```
 
 ### Measure with different units
@@ -59,5 +69,5 @@ units, we can pass a callback as option to the tool with `MeasurementUnits`.
 // import { MeasurementTool, MeasurementUnits } from '@cognite/reveal/tools';
 
 const measurement = new MeasurementTool(viewer, {unitsUpdateCallback: () => { return MeasurementUnits.Feet}});
-measurement.addMeasurementDistance();
+measurement.add();
 ```
