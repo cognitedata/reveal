@@ -42,9 +42,10 @@ const FilterDropdown = ({
 
   const facilityOptions: { value: string; label: string }[] = [
     { value: '', label: 'All' },
-    ...availableFacilities.map((facility) => ({
-      value: facility.externalId!,
+    ...availableFacilities.map((facility, index) => ({
+      value: facility.externalId || `facility-${index}`,
       label: facility.name,
+      disabled: !facility.externalId,
     })),
   ];
 

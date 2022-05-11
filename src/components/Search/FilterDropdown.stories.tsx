@@ -1,6 +1,9 @@
 import { ComponentProps } from 'react';
 import { Meta, Story } from '@storybook/react';
-import { rootAssetsMock } from 'models/facility/mocks';
+import {
+  rootAssetsMissingExternalIdMock,
+  rootAssetsMock,
+} from 'models/facility/mocks';
 import FilterDropdown from './FilterDropdown';
 
 export default {
@@ -109,5 +112,20 @@ InvalidSelectedFacilityFilterDropdown.args = {
   onFilterChange: () => {},
   onFacilityChange: () => {},
   availableFacilities: rootAssetsMock,
+  selectedFacility: 'does-not-exist',
+};
+
+export const MissingExternalIdFacilityFilterDropdown = Template.bind({});
+
+MissingExternalIdFacilityFilterDropdown.args = {
+  settings: {
+    isTimeseriesChecked: true,
+    isStepChecked: false,
+    isStringChecked: false,
+    isShowEmptyChecked: false,
+  },
+  onFilterChange: () => {},
+  onFacilityChange: () => {},
+  availableFacilities: rootAssetsMissingExternalIdMock,
   selectedFacility: 'does-not-exist',
 };
