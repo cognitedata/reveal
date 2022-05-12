@@ -95,7 +95,7 @@
     "gl": "5.0.0",
     "glslify-loader": "2.0.0",
     "html-webpack-plugin": "4.5.2",
-    "husky": "8.0.0",
+    "husky": "8.0.1",
     "jest": "27.5.1",
     "jest-canvas-mock": "2.4.0",
     "jest-extended": "0.11.5",
