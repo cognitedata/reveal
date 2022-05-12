@@ -30,8 +30,7 @@ export const StyledIcon = styled(Icon)`
   color: ${(props) => props.color};
 `;
 
-const calcColWidth = 140;
-const shopColWidth = 105;
+const colWidth = 70;
 
 export const StyledTable = styled.div`
   display: flex;
@@ -73,7 +72,7 @@ export const StyledTable = styled.div`
         th {
           color: var(--cogs-text-primary);
           &:not(:first-child) {
-            max-width: 245px;
+            max-width: ${colWidth * 2}px;
           }
         }
       }
@@ -85,16 +84,7 @@ export const StyledTable = styled.div`
             font-weight: 400;
             font-size: 12px;
             line-height: 16px;
-          }
-
-          // Auction matrix columns
-          &:nth-child(even) {
-            max-width: ${calcColWidth}px;
-          }
-
-          // Shop columns
-          &:nth-child(odd):not(:first-child) {
-            max-width: ${shopColWidth}px;
+            max-width: ${colWidth}px;
           }
         }
       }
@@ -117,15 +107,13 @@ export const StyledTable = styled.div`
           box-shadow: 1px 0px 0px var(--cogs-bg-control--disabled);
         }
 
-        // Auction matrix columns
-        &:nth-child(even) {
-          max-width: ${calcColWidth}px;
-          border-left: 1px solid var(--cogs-bg-control--disabled);
+        &:not(:first-child) {
+          max-width: ${colWidth}px;
         }
 
-        // Shop columns
-        &:nth-child(odd):not(:first-child) {
-          max-width: ${shopColWidth}px;
+        // Auction matrix columns
+        &:nth-child(even) {
+          border-left: 1px solid var(--cogs-bg-control--disabled);
         }
       }
     }

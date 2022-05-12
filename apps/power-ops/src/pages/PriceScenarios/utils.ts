@@ -17,7 +17,7 @@ export function getActiveColumns(
         accessor: `scenario-${index}`,
         columns: [
           {
-            Header: 'Auction Matrix',
+            Header: 'Matrix',
             accessor: `calc-${index}`,
           },
           {
@@ -44,7 +44,7 @@ export function getActiveColumns(
           accessor: `scenario-${index}`,
           columns: [
             {
-              Header: 'Auction Matrix',
+              Header: 'Matrix',
               accessor: `calc-${index}`,
             },
             {
@@ -68,7 +68,7 @@ export function getActiveColumns(
               accessor: `plant-${plantIndex}`,
               columns: [
                 {
-                  Header: 'Auction Matrix',
+                  Header: 'Matrix',
                   accessor: `calc-plant-${plantIndex}`,
                 },
                 {
