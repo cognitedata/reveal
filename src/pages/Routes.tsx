@@ -115,7 +115,15 @@ const AppRoutes = () => {
               .then(async (gotToken) => {
                 if (!gotToken) {
                   const wasAuthenticated = await sdk.authenticate();
-                  sdk.getAzureADAccessToken();
+                  const azureADToken = await sdk.getAzureADAccessToken();
+                  if (azureADToken)
+                    localStorage.setItem(
+                      '@cognite/charts/azureAdToken',
+                      azureADToken
+                    );
+                  const cdfToken = await sdk.getCDFToken();
+                  if (cdfToken)
+                    localStorage.setItem('@cognite/charts/cdfToken', cdfToken);
                   setAuthenticated(wasAuthenticated);
                   sdk.setProject(project);
                   if (wasAuthenticated) {
@@ -128,6 +136,15 @@ const AppRoutes = () => {
                   identifyUser(loginInfo, project, cluster, options?.directory);
                   setAuthenticated(true);
                   sdk.setProject(project);
+                  const azureADToken = await sdk.getAzureADAccessToken();
+                  if (azureADToken)
+                    localStorage.setItem(
+                      '@cognite/charts/azureAdToken',
+                      azureADToken
+                    );
+                  const cdfToken = await sdk.getCDFToken();
+                  if (cdfToken)
+                    localStorage.setItem('@cognite/charts/cdfToken', cdfToken);
                   setInitializing(false);
                 }
               });
@@ -148,6 +165,9 @@ const AppRoutes = () => {
               .then(() => sdk.authenticate())
               .then(async (wasAuthenticated) => {
                 setAuthenticated(wasAuthenticated);
+                const token = await sdk.getCDFToken();
+                if (token)
+                  localStorage.setItem('@cognite/charts/cdfToken', token);
                 if (wasAuthenticated) {
                   const login = await loginStatus(sdk);
                   identifyUser(login, project, cluster);

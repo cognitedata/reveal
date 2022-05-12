@@ -13,14 +13,13 @@ import {
 import { useProject } from './config';
 
 export const useMyCharts = () => {
-  const { data } = useUserInfo();
+  const { data: { id, email } = {} } = useUserInfo();
   const project = useProject();
-  const userId = data?.id || '';
 
   return useQuery(
     ['charts', 'mine'],
-    async () => fetchUserCharts(project, userId),
-    { enabled: !!userId }
+    async () => (id ? fetchUserCharts(project, id, email) : []),
+    { enabled: !!id }
   );
 };
 

@@ -1,6 +1,13 @@
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { Button, Flex, Icon, Select } from '@cognite/cogs.js';
+import {
+  Button,
+  Collapse,
+  Display,
+  Flex,
+  Icon,
+  Select,
+} from '@cognite/cogs.js';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
@@ -9,6 +16,8 @@ import { useResetRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
 import { isProduction } from 'utils/environment';
 import config from 'config/config';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 const UserProfileWrap = styled(Flex)`
   width: 100%;
@@ -75,6 +84,21 @@ type LocizeLanguages = Record<
   }
 >;
 
+function parseJwt(token: string | null) {
+  if (!token) return '';
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(
+    window
+      .atob(base64)
+      .split('')
+      .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+      .join('')
+  );
+
+  return JSON.stringify(JSON.parse(jsonPayload), null, 2);
+}
+
 const defaultTranslations = makeDefaultTranslations(
   'Charts User settings',
   'Logout',
@@ -128,7 +152,15 @@ const UserProfile = () => {
           <p className="tags">{user?.displayName}</p>
         </article>
         <article className="last-col">
-          <Button type="tertiary">{t.Logout}</Button>
+          <Button
+            type="tertiary"
+            onClick={() => {
+              localStorage.clear();
+              window.location.reload();
+            }}
+          >
+            {t.Logout}
+          </Button>
           <p className="tags">
             {t['Cognite Charts Version']} {config.version.substring(0, 7)}
           </p>
@@ -158,6 +190,29 @@ const UserProfile = () => {
           />
         </article>
       </LangAreaWrap>
+
+      <Collapse>
+        <Collapse.Panel header="Advanced information">
+          <Display level={3}>User Information</Display>
+          <pre>{JSON.stringify(user, null, 2)}</pre>
+          <Display level={3}>Firebase User Information</Display>
+          <pre>
+            {JSON.stringify(firebase.auth()?.currentUser ?? {}, null, 2)}
+          </pre>
+          <Display level={3}>Firebase Token Information</Display>
+          <pre>
+            {parseJwt(localStorage.getItem('@cognite/charts/firebaseToken'))}
+          </pre>
+          <Display level={3}>CDF Token Information</Display>
+          <pre>
+            {parseJwt(localStorage.getItem('@cognite/charts/cdfToken'))}
+          </pre>
+          <Display level={3}>Azure AD Token Information</Display>
+          <pre>
+            {parseJwt(localStorage.getItem('@cognite/charts/azureAdToken'))}
+          </pre>
+        </Collapse.Panel>
+      </Collapse>
     </div>
   );
 };

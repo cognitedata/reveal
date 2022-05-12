@@ -48,6 +48,7 @@ export const fetchFirebaseToken = (
       const {
         data: { firebaseToken: nextFirebaseToken },
       } = result;
+      localStorage.setItem('@cognite/charts/firebaseToken', nextFirebaseToken);
       return nextFirebaseToken as string;
     });
 };
