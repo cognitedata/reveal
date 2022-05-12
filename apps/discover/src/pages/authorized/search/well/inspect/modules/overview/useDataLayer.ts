@@ -9,8 +9,6 @@ import {
 import { getWaterDepth } from 'dataLayers/wells/wells/selectors/getWaterDepth';
 import flatten from 'lodash/flatten';
 
-import { Trajectory } from '@cognite/sdk-wells-v3';
-
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
 import { useTrajectoriesMetadataQuery } from 'modules/wellSearch/hooks/useTrajectoriesQuery';
@@ -46,7 +44,7 @@ export const useDataLayer = () => {
 
           if (trajectories) {
             const trajectory = getTrajectoryForWellbore(
-              trajectories as Trajectory[], // remove cast when @sdk-wells-v2 is removed
+              trajectories,
               wellbore.id
             );
 

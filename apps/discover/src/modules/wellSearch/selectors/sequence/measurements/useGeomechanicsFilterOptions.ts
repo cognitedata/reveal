@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQueryV3';
+import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 
 import { getUniqGeomechanicsCurves } from './utils';
 

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
-import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQueryV3';
+import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 
 import { getUniqOtherCurves } from './utils';
 

@@ -14,7 +14,7 @@ import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { BooleanSelection } from 'modules/wellInspect/types';
-import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQueryV3';
+import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 import {
   WellboreId,
   WellboreChartData,

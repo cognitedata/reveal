@@ -11,7 +11,7 @@ import { OverlayNavigation } from 'components/OverlayNavigation';
 import { PressureUnit, DepthMeasurementUnit } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
-import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQueryV3';
+import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 import { Wellbore, WellboreProcessedData } from 'modules/wellSearch/types';
 import { FlexColumn } from 'styles/layout';
 

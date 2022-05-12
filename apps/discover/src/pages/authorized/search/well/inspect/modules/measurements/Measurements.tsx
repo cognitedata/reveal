@@ -10,7 +10,7 @@ import { NoDataAvailable } from 'components/Charts/common/NoDataAvailable';
 import { Loading } from 'components/Loading';
 import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
-import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQueryV3';
+import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 import { FlexGrow } from 'styles/layout';
 
 import {

@@ -14,7 +14,7 @@ import { PressureUnit } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
-import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQueryV3';
+import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 import {
   MeasurementChartDataV3 as MeasurementChartData,
   MeasurementTypeV3 as MeasurementType,
