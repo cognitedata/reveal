@@ -368,7 +368,11 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
     onDiscrepancyInteraction
   );
 
-  const { tool, onToolChange } = useWorkspaceTools([ornateRef, isoOrnateRef], {
+  const ornateRefsStable = useMemo(
+    () => [ornateRef, isoOrnateRef],
+    [ornateRef, isoOrnateRef]
+  );
+  const { tool, onToolChange } = useWorkspaceTools(ornateRefsStable, {
     onDiscrepancyCreate: (
       nodeId: string,
       targetExternalId: string,

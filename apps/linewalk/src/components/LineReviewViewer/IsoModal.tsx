@@ -328,8 +328,6 @@ const IsoModal: React.FC<IsoModalProps> = ({
       : getFileConnectionLine(document, hoveredFileConnectionAnnotationId)),
   ]);
 
-  console.log('discrepancies', discrepancies);
-
   return (
     <div
       ref={(ref) => setModalRef(ref)}

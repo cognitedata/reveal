@@ -221,7 +221,7 @@ const ReactOrnate = ({
     (async () => {
       const ornateRef = ornateViewer.current;
 
-      if (ornateRef && documents?.length) {
+      if (ornateRef) {
         await Promise.all(
           documents.map(
             async ({
@@ -267,6 +267,7 @@ const ReactOrnate = ({
                 id: `${getKonvaSelectorSlugByExternalId(id)}-label-group`,
                 x,
                 y: 0,
+                unselectable: true,
               });
 
               // Note: The styling values here don't match the design since the
@@ -280,6 +281,7 @@ const ReactOrnate = ({
                 fill: 'rgba(0,0,0,0.45)',
                 x: 0,
                 y: 0,
+                unselectable: true,
               });
 
               const documentLabelTypeClientRect =
@@ -294,6 +296,7 @@ const ReactOrnate = ({
                 fill: 'rgba(0,0,0,0.45)',
                 x: documentLabelTypeClientRect.width,
                 y: 0,
+                unselectable: true,
               });
 
               documentLabelGroup.add(documentLabelType);
@@ -326,9 +329,8 @@ const ReactOrnate = ({
         );
 
         onDocumentChange?.();
-
-        setIsInitialized(true);
       }
+      setIsInitialized(true);
     })();
   }, [documents]);
 
@@ -338,9 +340,11 @@ const ReactOrnate = ({
       setTimeout(() => {
         // This is a temporary solution as the logic for adding/removing PDFs will be changing
         // soon
-        ornateViewer.current?.zoomToGroup(ornateViewer.current?.baseLayer, {
-          scaleFactor: 0.95,
-        });
+        if (documents.length > 0) {
+          ornateViewer.current?.zoomToGroup(ornateViewer.current?.baseLayer, {
+            scaleFactor: 0.95,
+          });
+        }
       }, 200);
     }
   }, [isInitialized, documents]);

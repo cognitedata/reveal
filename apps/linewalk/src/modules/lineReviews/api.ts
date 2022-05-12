@@ -338,6 +338,10 @@ export const getParsedDocumentsByWorkspaceDocuments = async (
   client: CogniteClient,
   documents: WorkspaceDocument[]
 ): Promise<ParsedDocument[]> => {
+  if (documents.length === 0) {
+    return [];
+  }
+
   const graphs = await getGraphsByWorkspaceDocuments(client, documents);
   const parsedFiles = await parseGraphs(graphs);
   const parsedDocuments = parsedFiles.map(

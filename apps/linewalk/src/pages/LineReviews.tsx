@@ -342,6 +342,7 @@ const useFilters = (
       setAssignee(
         getInitialAssignee(searchQueryParams.assignee, assigneeOptions)
       );
+      setUnit(getInitialUnit(searchQueryParams.unit, unitOptions));
     }
   }, [isLoading]);
 
