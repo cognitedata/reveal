@@ -1,6 +1,7 @@
 import { useState, createContext, useEffect } from 'react';
 import sidecar from 'utils/sidecar';
-import { Observable } from 'rxjs';
+import { Observable, fromEvent, from } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { SnifferEvent } from '@cognite/power-ops-api-types';
 import { useAuthContext } from '@cognite/react-container';
 import { CogniteEvent } from '@cognite/sdk';
@@ -23,20 +24,19 @@ export const EventStreamProvider: React.FC = ({ children }) => {
     const source = new EventSource(eventsSourceURL, {
       withCredentials: false,
     });
+
     if (client) {
-      const observable = new Observable<CogniteEvent>((subscriber) => {
-        source.addEventListener(client.project, async (e: MessageEvent) => {
+      const observable = fromEvent<MessageEvent>(source, client.project).pipe(
+        switchMap((e) => {
           const snifferEvent: SnifferEvent = JSON.parse(e.data);
-          if (!snifferEvent?.id) return;
-
-          const [event] = await client.events.retrieve([
-            { id: snifferEvent.id },
-          ]);
-          if (!event) return;
-
-          subscriber.next(event);
-        });
-      });
+          return from(client.events.retrieve([{ id: snifferEvent.id }])).pipe(
+            map((events) => {
+              const [event] = events;
+              return event;
+            })
+          );
+        })
+      );
 
       setEventContextValue({ eventStore: observable });
     }
