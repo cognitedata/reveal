@@ -273,6 +273,7 @@ vite(
     ],
     env = {
         "NODE_OPTIONS": "--max_old_space_size=4096",
+        "REACT_APP_CLUSTER": "westeurope-1",
     },
 )
 

@@ -81,7 +81,7 @@ export default function App() {
         defaultPendingElement={<Loader />}
         defaultPendingMs={50}
         location={location}
-        routes={routes(dispatch)}
+        routes={routes(dispatch, client.project)}
       >
         <RoutedAppContainer>
           <MenuBar />

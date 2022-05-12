@@ -3,7 +3,7 @@
   "version": "1.2.0",
   "private": true,
   "scripts": {
-    "start": "REACT_APP_CLUSTER=westeurope-1 ./scripts/start.sh",
+    "start": "./scripts/start.sh",
     "start:local": "REACT_APP_LOCAL_SERVICE=true ./scripts/start.sh",
     "build": "bazel build :build_sed",
     "build:manual": "./script/build.sh",

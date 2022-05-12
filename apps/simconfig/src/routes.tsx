@@ -39,14 +39,16 @@ export type AppLocationGenerics = MakeGenerics<{
 }>;
 
 export function routes(
-  dispatch: ThunkDispatch<StoreState, null, AnyAction>
+  dispatch: ThunkDispatch<StoreState, null, AnyAction>,
+  project: string
 ): Route<AppLocationGenerics>[] {
   return [
     {
       path: 'model-library',
       loader: async () => ({
-        definitions: (await dispatch(api.endpoints.getDefinitions.initiate()))
-          .data,
+        definitions: (
+          await dispatch(api.endpoints.getDefinitions.initiate({ project }))
+        ).data,
       }),
       meta: {
         title: () => 'Model library',
@@ -107,8 +109,9 @@ export function routes(
     {
       path: 'calculations',
       loader: async () => ({
-        definitions: (await dispatch(api.endpoints.getDefinitions.initiate()))
-          .data,
+        definitions: (
+          await dispatch(api.endpoints.getDefinitions.initiate({ project }))
+        ).data,
       }),
       children: [
         {
