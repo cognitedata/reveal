@@ -178,16 +178,23 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     return endPoint.distanceTo(startPoint);
   }
 
+  /**
+   * Check if their is a request to show the measurment in feet, inches or centimeter unit, if not assign distance value to meters.
+   */
   private assignMeasurementValue() {
     const options = this._options.unitsUpdateCallback;
     if (options === undefined) {
       this._distanceValue = this.getMeasurementValue().toFixed(2).toString() + ' m';
     } else {
-      this.updateMeasurementUnit(options);
+      this.updateUnits(options);
     }
   }
 
-  private updateMeasurementUnit(options: MeasurementUnitUpdateDelegate) {
+  /**
+   * Update the measurement units and calculate respective measuring values in passed units.
+   * @param options Callback function which provides type of measuring unit.
+   */
+  private updateUnits(options: MeasurementUnitUpdateDelegate) {
     const units = options();
     switch (units) {
       case MeasurementUnits.Centimeter:
