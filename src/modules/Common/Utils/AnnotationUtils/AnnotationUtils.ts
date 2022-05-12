@@ -1,12 +1,10 @@
 import {
-  AnnotatedResourceId,
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
   ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
-  Status,
 } from 'src/api/annotation/types';
 import {
   AnnotationsBadgeCounts,
@@ -21,29 +19,6 @@ import {
   isImageObjectDetectionPolygonData,
   isImageKeypointCollectionData,
 } from 'src/modules/Common/types/typeGuards';
-
-export const createVisionAnnotationStub = <T>({
-  id,
-  createdTime,
-  lastUpdatedTime,
-  status = Status.Suggested,
-  resourceId,
-  data,
-}: {
-  id: number;
-  createdTime: number;
-  lastUpdatedTime: number;
-  status: Status;
-  resourceId: AnnotatedResourceId;
-  data: T;
-}): VisionAnnotation<T> => ({
-  id,
-  createdTime,
-  lastUpdatedTime,
-  status,
-  ...resourceId,
-  ...data,
-});
 
 export const getAnnotationLabelOrText = (
   annotation: VisionAnnotation<VisionAnnotationDataType>
