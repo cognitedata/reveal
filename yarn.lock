@@ -1245,10 +1245,10 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/data-exploration@^3.0.3":
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-3.0.3.tgz#6366ccbdf8c138b6096d1d26fd2d98a88a308711"
-  integrity sha512-bYByZV0xhRLVUlbzX7CvVI7t9Z1VV4t3pb64YEZLOBA8CJgGxWj/ffDRXQAzgx1HPrljQscJxYH85t4dadv5RA==
+"@cognite/data-exploration@^3.0.6":
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-3.0.6.tgz#27136e8c98e3faf179f5615a9188866f086a4d3e"
+  integrity sha512-jEqVmsafDXKaX26QuLj6KP2xbTDyswiP8lDy1t0Q4vIou7QRlUyUVX5nsDvYbV/8xa4rFgRyFF3tIrY8IiOI7Q==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"

@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
+import { Tabs } from '@cognite/cogs.js';
 import {
   SequenceDetails,
   SequencePreview as SequenceTabPreview,
   ErrorFeedback,
   Loader,
-  Tabs,
   Metadata,
 } from '@cognite/data-exploration';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
@@ -76,17 +76,17 @@ export const SequencePreview = ({
         tab={activeTab}
         onTabChange={onTabChange}
         additionalTabs={[
-          <Tabs.Pane
-            title={<TabTitle>Preview</TabTitle>}
+          <Tabs.TabPane
+            tab={<TabTitle>Preview</TabTitle>}
             style={{ padding: '20px 16px' }}
             key="preview"
           >
             <SequenceTabPreview sequence={sequence} />
-          </Tabs.Pane>,
-          <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
+          </Tabs.TabPane>,
+          <Tabs.TabPane tab={<TabTitle>Details</TabTitle>} key="details">
             <SequenceDetails sequence={sequence} />
             <Metadata metadata={sequence.metadata} />
-          </Tabs.Pane>,
+          </Tabs.TabPane>,
         ]}
       />
     </>

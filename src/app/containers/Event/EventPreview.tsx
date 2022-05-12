@@ -7,9 +7,9 @@ import {
   EventDetails,
   ErrorFeedback,
   Loader,
-  Tabs,
   Metadata,
 } from '@cognite/data-exploration';
+import { Tabs } from '@cognite/cogs.js';
 import { renderTitle } from 'app/utils/EventsUtils';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteEvent } from '@cognite/sdk';
@@ -82,10 +82,10 @@ export const EventPreview = ({
         tab={activeTab}
         onTabChange={onTabChange}
         additionalTabs={[
-          <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
+          <Tabs.TabPane tab={<TabTitle>Details</TabTitle>} key="details">
             <EventDetails event={event} />
             <Metadata metadata={event.metadata} />
-          </Tabs.Pane>,
+          </Tabs.TabPane>,
         ]}
       />
     </>

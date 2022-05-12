@@ -1,14 +1,12 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import {
-  Tabs,
-  TabPaneProps,
   useRelatedResourceCounts,
   ResourceType,
   ResourceItem,
   getTitle,
 } from '@cognite/data-exploration';
-import { Badge, Colors } from '@cognite/cogs.js';
+import { Badge, Colors, Tabs, TabPaneProps } from '@cognite/cogs.js';
 import { useNavigate } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
@@ -71,7 +69,7 @@ export const ResourceDetailsTabs = ({
   additionalTabs = [],
   excludedTypes = [],
   onTabChange,
-  style = { paddingLeft: '16px' },
+  style = {},
 }: ResouceDetailsTabsProps) => {
   const { counts } = useRelatedResourceCounts(parentResource);
 
@@ -94,34 +92,58 @@ export const ResourceDetailsTabs = ({
   }
 
   const relationshipTabs = filteredTabs.map(key => (
-    <Tabs.Pane
+    <Tabs.TabPane
+      style={{ flex: 1, overflow: 'auto' }}
       key={key}
-      title={
-        <>
-          <TabTitle>{getTitle(key)}</TabTitle>
+      tab={
+        <TabWrapper>
+          <div>{getTitle(key)}</div>
           <Badge
+            style={{ alignSelf: 'flex-end' }}
             text={key === 'asset' ? assetCount : counts[key]!}
             background={Colors['greyscale-grey3'].hex()}
           />
-        </>
+        </TabWrapper>
       }
     >
       <ResourceDetailTabContent
         resource={parentResource}
         type={key as ResourceType}
       />
-    </Tabs.Pane>
+    </Tabs.TabPane>
   ));
   const tabs = [...additionalTabs, ...relationshipTabs];
 
   return (
-    <Tabs tab={tab} onTabChange={onTabChange} style={style}>
+    <StyledTabs
+      padding="default"
+      style={style}
+      activeKey={tab}
+      onChange={onTabChange}
+    >
       {tabs}
-    </Tabs>
+    </StyledTabs>
   );
 };
+
+const StyledTabs = styled(Tabs)`
+  padding-left: 16px;
+  flex: 1;
+  overflow: auto;
+  .rc-tabs-nav-wrap {
+    border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+  }
+  .rc-tabs-content-holder {
+    display: flex;
+  }
+`;
 
 export const TabTitle = styled.span`
   font-size: 14px;
   font-weight: 600;
+`;
+
+const TabWrapper = styled.div`
+  display: flex;
+  align-items: center;
 `;

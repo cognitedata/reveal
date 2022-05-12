@@ -26,10 +26,9 @@ export const Explorer = () => {
                 <Route path=":tabType" element={<SearchResultsPage />} />
               </Route>
             </Route>
-            <Route
-              path="/:resourceType/:id/*"
-              element={<ResourceDetailsPage />}
-            />
+            <Route path="/:resourceType/:id" element={<ResourceDetailsPage />}>
+              <Route path=":tabType" element={<ResourceDetailsPage />} />
+            </Route>
             <Route path="/" element={<SearchRedirect />} />
           </Routes>
         </ResourceSelectorProvider>
