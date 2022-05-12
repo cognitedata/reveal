@@ -3,9 +3,11 @@
  */
 
 import * as THREE from 'three';
-import * as Potree from '@cognite/potree-core';
+
 import { IntersectInput } from '@reveal/model-base';
 import { PointCloudNode } from './PointCloudNode';
+
+import { PointCloudOctree } from './potree-three-loader';
 
 export interface IntersectPointCloudNodeResult {
   /**
@@ -67,9 +69,8 @@ function determinePointCloudNode(node: THREE.Object3D, candidates: PointCloudNod
   while (node.type === 'Points' && node.parent !== null) {
     node = node.parent;
   }
-  if (node instanceof Potree.PointCloudOctree) {
-    const root = (node as any).root;
-    return candidates.find(x => root.pointcloud === x.potreeNode.octtree) || null;
+  if (node instanceof PointCloudOctree) {
+    return candidates.find(x => node === x.potreeNode.octree) || null;
   }
   return null;
 }
