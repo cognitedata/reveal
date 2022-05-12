@@ -27,6 +27,7 @@ export const isObjectAnnotation = (ann: CDFAnnotationV1): boolean => {
     (ann as CDFLinkedAnnotationV1).annotationType ===
       'vision/objectdetection' ||
     (ann as CDFLinkedAnnotationV1).annotationType === 'vision/custommodel' ||
+    (ann as CDFLinkedAnnotationV1).annotationType === 'vision/gaugereader' ||
     (ann as CDFLinkedAnnotationV1).annotationType === 'user_defined'
   );
 };
