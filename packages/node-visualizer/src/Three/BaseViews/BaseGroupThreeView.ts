@@ -90,6 +90,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView {
       this.object3D,
       this.transformer
     );
+
     if (!boundingBox) return undefined;
 
     return boundingBox;

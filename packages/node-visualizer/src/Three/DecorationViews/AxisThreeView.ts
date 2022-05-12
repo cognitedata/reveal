@@ -14,6 +14,7 @@
 import * as Color from 'color';
 import isEqual from 'lodash/isEqual';
 import * as THREE from 'three';
+import { ViewModes } from '../Nodes/ViewModes';
 
 import { Range1 } from '../../Core/Geometry/Range1';
 import { Range3 } from '../../Core/Geometry/Range3';
@@ -188,19 +189,23 @@ export class AxisThreeView extends BaseGroupThreeView {
       this.addWall(group, useWall, wallIndex);
 
     const inc = AxisThreeView.getGridInc(boundingBox, style.numTicks);
-    if (boundingBox.x.hasSpan) {
-      this.addAxis(group, style, useWall, inc, tickLength, 0, 1, 0, 1, 2);
-      this.addAxis(group, style, useWall, inc, tickLength, 3, 2, 0, 2, 4);
-      this.addAxis(group, style, useWall, inc, tickLength, 7, 6, 0, 4, 5);
-      this.addAxis(group, style, useWall, inc, tickLength, 4, 5, 0, 1, 5);
+
+    if (target.viewMode !== ViewModes.Overlay) {
+      if (boundingBox.x.hasSpan) {
+        this.addAxis(group, style, useWall, inc, tickLength, 0, 1, 0, 1, 2);
+        this.addAxis(group, style, useWall, inc, tickLength, 3, 2, 0, 2, 4);
+        this.addAxis(group, style, useWall, inc, tickLength, 7, 6, 0, 4, 5);
+        this.addAxis(group, style, useWall, inc, tickLength, 4, 5, 0, 1, 5);
+      }
+      // Add Y axis
+      if (boundingBox.y.hasSpan) {
+        this.addAxis(group, style, useWall, inc, tickLength, 3, 0, 1, 0, 2);
+        this.addAxis(group, style, useWall, inc, tickLength, 1, 2, 1, 2, 3);
+        this.addAxis(group, style, useWall, inc, tickLength, 5, 6, 1, 3, 5);
+        this.addAxis(group, style, useWall, inc, tickLength, 7, 4, 1, 0, 5);
+      }
     }
-    // Add Y axis
-    if (boundingBox.y.hasSpan) {
-      this.addAxis(group, style, useWall, inc, tickLength, 3, 0, 1, 0, 2);
-      this.addAxis(group, style, useWall, inc, tickLength, 1, 2, 1, 2, 3);
-      this.addAxis(group, style, useWall, inc, tickLength, 5, 6, 1, 3, 5);
-      this.addAxis(group, style, useWall, inc, tickLength, 7, 4, 1, 0, 5);
-    }
+
     // Add Z axis
     if (boundingBox.z.hasSpan) {
       this.addAxis(group, style, useWall, inc, tickLength, 0, 4, 2, 0, 1);

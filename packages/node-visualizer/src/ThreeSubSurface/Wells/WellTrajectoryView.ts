@@ -425,19 +425,20 @@ export class WellTrajectoryView extends BaseGroupThreeView {
     );
 
     const samples = trajectory.createRenderSamples(color, style.radius.value);
+
     const { transformer } = this;
     for (const sample of samples)
       transformer.transformRelativeTo3D(sample.point);
     {
       const geometry = new TrajectoryBufferGeometry(samples);
       const material = new THREE.MeshPhongMaterial({
-        color: ThreeConverter.toThreeColor(Colors.white),
+        color: ThreeConverter.toThreeColor(wellNode.color),
         shininess: this.renderTarget.is2D ? 0 : 75,
         vertexColors: true,
       });
 
       if (!this.renderTarget.is2D) {
-        material.emissive = ThreeConverter.toThreeColor(Colors.cyan);
+        material.emissive = ThreeConverter.toThreeColor(wellNode.color);
         material.emissiveIntensity = 0.25;
       }
       const mesh = new THREE.Mesh(geometry, material);

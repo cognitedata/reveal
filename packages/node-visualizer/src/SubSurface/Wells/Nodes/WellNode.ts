@@ -15,6 +15,8 @@ import { Vector3 } from '../../../Core/Geometry/Vector3';
 import { BaseNode } from '../../../Core/Nodes/BaseNode';
 import WellNodeIcon from '../../../images/Nodes/WellNode.png';
 import { BasePropertyFolder } from '../../../Core/Property/Base/BasePropertyFolder';
+import { ThreeRenderTargetNode } from '../../../Three/Nodes/ThreeRenderTargetNode';
+import { ViewModes } from '../../../Three/Nodes/ViewModes';
 
 export class WellNode extends BaseNode {
   //= =================================================
@@ -34,6 +36,12 @@ export class WellNode extends BaseNode {
   public elevationType: string = '';
 
   public get origin(): Vector3 {
+    if (this.activeTarget instanceof ThreeRenderTargetNode) {
+      if (this.activeTarget.viewMode === ViewModes.Overlay) {
+        return new Vector3(0, 0, 0);
+      }
+    }
+
     return new Vector3(this.wellHead.x, this.wellHead.y, 0);
   }
 

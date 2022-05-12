@@ -33,7 +33,6 @@ export abstract class BaseThreeView extends Base3DView {
   public get transformer(): ThreeTransformer {
     return this.renderTarget.transformer;
   }
-
   protected get renderTarget(): ThreeRenderTargetNode {
     return super.getTarget() as ThreeRenderTargetNode;
   }

@@ -47,6 +47,8 @@ import { ToolController } from '../Nodes/ToolController';
 import { ThreeConverter } from '../Utilities/ThreeConverter';
 import { ThreeMiniWindow } from '../Utilities/ThreeMiniWindow';
 import { ThreeTransformer } from '../Utilities/ThreeTransformer';
+import { ViewModeCommand } from '../Commands/ViewModeCommand';
+import { ViewModes } from './ViewModes';
 
 const directionalLightName = 'DirectionalLight';
 
@@ -80,6 +82,8 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   private _raycaster = new THREE.Raycaster();
 
   private _transformer = new ThreeTransformer();
+
+  private _viewMode: ViewModes = ViewModes.Normal;
 
   // ==================================================
   // INSTANCE PROPERTIES: Tools
@@ -136,6 +140,19 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     // Clear the views
     this._transformer.zScale = value;
     this.updateAllViews();
+  }
+
+  public get viewMode(): ViewModes {
+    return this._viewMode;
+  }
+
+  public set viewMode(value: ViewModes) {
+    if (this._viewMode === value) return;
+
+    this._viewMode = value;
+    this.updateAllViews();
+
+    this.viewFrom(-1);
   }
 
   public get scene(): THREE.Scene {
@@ -313,6 +330,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
         new ViewFromCommand(this, viewFrom)
       );
 
+    this.addTool(toolbar, ToolbarGroupIds.Settings, new ViewModeCommand(this));
     this.addTool(toolbar, ToolbarGroupIds.Settings, new ZScaleCommand(this));
   }
 
