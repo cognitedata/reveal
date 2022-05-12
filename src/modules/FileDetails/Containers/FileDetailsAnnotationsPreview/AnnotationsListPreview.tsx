@@ -1,12 +1,18 @@
+/* eslint-disable no-nested-ternary */
 import { AllIconTypes, Col, Icon, Row } from '@cognite/cogs.js';
 import React from 'react';
 import styled from 'styled-components';
 import {
-  ModelTypeIconMap,
-  ModelTypeStyleMap,
-} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { AnnotationPreview } from 'src/modules/Common/types';
+  VisionAnnotation,
+  VisionAnnotationDataType,
+} from 'src/modules/Common/types';
 import { AnnotationActionMenu } from 'src/modules/Common/Components/AnnotationActionMenu/AnnotationActionMenu';
+
+import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import {
+  AnnotationTypeIconMap,
+  AnnotationTypeStyleMap,
+} from 'src/utils/visionAnnotationUtils';
 
 export const AnnotationsListPreview = ({
   annotations,
@@ -14,7 +20,7 @@ export const AnnotationsListPreview = ({
   handleReview,
   onAnnotationDeleteClick,
 }: {
-  annotations: AnnotationPreview[];
+  annotations: VisionAnnotation<VisionAnnotationDataType>[];
   reviewDisabled: boolean;
   handleReview: () => void;
   onAnnotationDeleteClick: (annotationId: number) => void;
@@ -25,25 +31,30 @@ export const AnnotationsListPreview = ({
     <AnnotationContainer>
       {annotationsAvailable &&
         annotations.map((annotation) => {
+          const text = getAnnotationLabelOrText(annotation);
+
           return (
             <Row cols={10} key={annotation.id}>
               <StyledCol span={2}>
                 <Icon
                   type={
-                    annotation.text === 'person'
+                    text === 'person'
                       ? 'Personrounded'
-                      : (ModelTypeIconMap[annotation.modelType] as AllIconTypes)
+                      : (AnnotationTypeIconMap[
+                          annotation.annotationType
+                        ] as AllIconTypes)
                   }
                   style={{
                     color:
-                      annotation.text === 'person'
+                      text === 'person'
                         ? '#1AA3C1'
-                        : ModelTypeStyleMap[annotation.modelType].color,
+                        : AnnotationTypeStyleMap[annotation.annotationType]
+                            .color,
                   }}
                 />
               </StyledCol>
               <StyledCol span={7}>
-                <AnnotationLbl>{annotation.text}</AnnotationLbl>
+                <AnnotationLbl>{text}</AnnotationLbl>
               </StyledCol>
               <StyledCol span={1}>
                 <AnnotationActionMenu
