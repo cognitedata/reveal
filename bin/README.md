@@ -106,4 +106,4 @@ Options:
 
 ## Environment Variables
 
-As an alternative to command options, you can use environment variables with the `LOCIZE` prefix. For example, instead of passing `--project-id` option, you can set an environment variable with the name `LOCIZE_PROJECT_ID`.
+As an alternative to command options, you can use environment variables with the `LOCIZE` prefix. For example, instead of passing `--projectId` option, you can set an environment variable with the name `LOCIZE_PROJECT_ID`.
