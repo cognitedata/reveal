@@ -23,7 +23,7 @@ export async function getTimeseriesOptionByExternalId(
 export async function timeseriesSearch({
   query,
   client,
-  itemLimit = 10,
+  itemLimit = 30,
   filter = { isString: false },
   window = 1440,
   endOffset = 0,
