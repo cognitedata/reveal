@@ -1,7 +1,7 @@
 import {
   ColumnLogData,
   LogData,
-} from 'pages/authorized/search/well/inspect/modules/wellLogs/v3/LogViewer/Log/interfaces';
+} from 'pages/authorized/search/well/inspect/modules/wellLogs/LogViewer/Log/interfaces';
 
 export const commonColumnLogDataMock: ColumnLogData = {
   measurementType: 'measurementType',

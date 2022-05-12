@@ -26,6 +26,7 @@ _TESTS = [
     "src/**/__fixtures/*",
     "src/utils/test/*",
     "src/__test-utils/**/*",
+    "src/**/__test-utils/**/*",
 ]
 
 _STORYBOOK = [

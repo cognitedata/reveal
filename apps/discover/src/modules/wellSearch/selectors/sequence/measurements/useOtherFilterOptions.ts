@@ -7,7 +7,7 @@ import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQu
 import { getUniqOtherCurves } from './utils';
 
 /**
- * Find uniqe LOT and FIT measurement types from the awailable data
+ * Find unique LOT and FIT measurement types from the available data
  */
 export const useOtherFilterOptions = () => {
   const { data } = useMeasurementsQuery();

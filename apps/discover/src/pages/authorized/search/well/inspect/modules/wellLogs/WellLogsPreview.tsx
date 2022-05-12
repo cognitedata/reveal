@@ -12,7 +12,7 @@ import { Loading } from 'components/Loading';
 import { useWellLogsRowDataKeyBySource } from 'modules/wellInspect/hooks/useWellLogsRowDataSelectors';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 
-import { ModuleFilterDropdownWrapper } from '../../common/elements';
+import { ModuleFilterDropdownWrapper } from '../common/elements';
 
 import {
   CustomMenu,

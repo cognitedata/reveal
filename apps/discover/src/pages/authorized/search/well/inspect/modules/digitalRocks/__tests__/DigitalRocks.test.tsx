@@ -7,7 +7,7 @@ import { getMockedStore } from '__test-utils/store.utils';
 import { LOADING_TEXT } from 'components/Loading/constants';
 import { useSelectedWellBoresDigitalRocks } from 'modules/wellSearch/selectors/asset/digitalRocks';
 
-import DigitalRocks from './DigitalRocks';
+import DigitalRocks from '../DigitalRocks';
 
 jest.mock('modules/wellSearch/selectors/asset/digitalRocks', () => ({
   useSelectedWellBoresDigitalRocks: jest.fn(),

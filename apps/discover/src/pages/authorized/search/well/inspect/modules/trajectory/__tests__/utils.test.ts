@@ -1,6 +1,6 @@
 import { mockedSequencesResultFixture } from '__test-utils/fixtures/well';
 
-import { getWellboreNameForTrajectory } from '../../utils';
+import { getWellboreNameForTrajectory } from '../utils';
 
 describe('Trajectory2D util', () => {
   it('getWellboreNameForTrajectory', () => {

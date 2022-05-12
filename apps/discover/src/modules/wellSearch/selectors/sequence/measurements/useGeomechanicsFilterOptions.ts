@@ -5,7 +5,7 @@ import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQu
 import { getUniqGeomechanicsCurves } from './utils';
 
 /**
- * Find uniqe geomechanics measurement types from the awailable data
+ * Find unique geomechanics measurement types from the available data
  */
 export const useGeomechanicsFilterOptions = () => {
   const { data } = useMeasurementsQuery();

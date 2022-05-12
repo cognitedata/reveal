@@ -13,6 +13,7 @@ import { ConditionalWrapper } from '@cognite/react-container';
 
 import { render } from '__test-utils/custom-render';
 import { getMockedStore } from '__test-utils/store.utils';
+import { PartialStoreState } from 'core/types';
 
 export const getWrapper =
   (store: Store<any, AnyAction> | undefined) =>
@@ -132,5 +133,18 @@ export const renderHookWithStore = <TProps, TResult>(
 ) =>
   renderHook<TProps, TResult>(callback, {
     wrapper: ({ children }) => testWrapper({ store, children }),
+    ...options,
+  });
+
+// use a custom store
+// this is the more useful helper
+export const renderHookWithStoreChanges = <TProps, TResult>(
+  callback: (props: TProps) => TResult,
+  extraState: PartialStoreState,
+  options?: RenderHookOptions<TProps>
+) =>
+  renderHook<TProps, TResult>(callback, {
+    wrapper: ({ children }) =>
+      testWrapper({ store: getMockedStore(extraState), children }),
     ...options,
   });

@@ -8,7 +8,6 @@ import { MEASUREMENT_EXTERNAL_ID_CONFIG } from 'modules/wellSearch/constants';
 import {
   WellboreMeasurementsMapV3 as WellboreMeasurementsMap,
   MeasurementTypeV3 as MeasurementType,
-  WdlMeasurementType,
 } from 'modules/wellSearch/types';
 
 export const getSortedUniqCurves = (
@@ -23,18 +22,22 @@ export const getSortedUniqCurves = (
 export const filterCurvesByMeasurementTypes = (
   measurementTypes: Array<MeasurementType>,
   curves: Array<DepthMeasurementColumn>
-) =>
-  curves.filter((column) =>
-    Object.values(
-      flatten(
-        measurementTypes.map(
-          (measurementType) => MEASUREMENT_EXTERNAL_ID_CONFIG[measurementType]
-        )
+) => {
+  const chosenTypes = Object.values(
+    flatten(
+      measurementTypes.map(
+        (measurementType) => MEASUREMENT_EXTERNAL_ID_CONFIG[measurementType]
       )
-    ).find((type) => {
-      return type === (column.measurementType as WdlMeasurementType);
-    })
+    )
   );
+  return curves.filter((column) => {
+    const found = chosenTypes.find((type) => {
+      return type === column.measurementType;
+    });
+
+    return found;
+  });
+};
 
 export const getUniqCurvesOfMeasurementType = (
   measurementTypes: Array<MeasurementType>,

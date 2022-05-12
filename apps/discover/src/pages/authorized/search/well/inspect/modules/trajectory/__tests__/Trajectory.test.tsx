@@ -5,7 +5,7 @@ import { Store } from 'redux';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 
-import Trajectory from './Trajectory';
+import Trajectory from '../Trajectory';
 
 describe('Trajectory Page', () => {
   const setupStore = () => {

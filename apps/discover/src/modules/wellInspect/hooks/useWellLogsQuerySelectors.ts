@@ -3,7 +3,7 @@ import { getDateOrDefaultText } from 'utils/date';
 
 import { useDeepMemo } from 'hooks/useDeep';
 import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/hooks/useWellInspect';
-import { WellLog } from 'pages/authorized/search/well/inspect/modules/wellLogs/v3/types';
+import { WellLog } from 'pages/authorized/search/well/inspect/modules/wellLogs/types';
 
 import {
   useWellInspectWellboreIdNameMap,

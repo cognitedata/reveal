@@ -9,7 +9,9 @@ import { getIndeterminateWells } from 'modules/wellSearch/utils/wells';
 import { useWellInspectWells } from './hooks/useWellInspect';
 
 export const useWellInspect = () => {
-  return useSelector((state) => state.wellInspect);
+  return useSelector((state) => {
+    return state.wellInspect;
+  });
 };
 
 export const useWellInspectWellIds = () => {

@@ -4,7 +4,7 @@ import { OptionType } from '@cognite/cogs.js';
 import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
 import { useDeepEffect } from 'hooks/useDeep';
-import { useGeomechanicsFilterOptions } from 'modules/wellSearch/selectors/sequence/measurements/v3/useGeomechanicsFilterOptions';
+import { useGeomechanicsFilterOptions } from 'modules/wellSearch/selectors/sequence/measurements/useGeomechanicsFilterOptions';
 
 import { CommonCurveFilter } from './CommonCurveFilter';
 import { mapCurvesToOptions } from './utils';

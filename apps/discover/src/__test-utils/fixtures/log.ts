@@ -1,30 +1,8 @@
 import { CreatedAndLastUpdatedTime, Sequence } from '@cognite/sdk';
 
 import { SequenceData, SequenceRow } from 'modules/wellSearch/types';
-import { SequenceLogType } from 'pages/authorized/search/well/inspect/modules/wellLogs/v2/interfaces';
-import { LogData } from 'pages/authorized/search/well/inspect/modules/wellLogs/v2/LogViewer/Log/interfaces';
 
 export const mdValues = [0, 5];
-export const mockLogDataMD: LogData = {
-  MD: {
-    values: mdValues,
-    unit: 'ft',
-    domain: [15096],
-  },
-};
-export const mockLogDataFRM: LogData = {
-  Frm: {
-    values: mdValues,
-    unit: 'ft',
-  },
-};
-
-export const mockLogDataTVD: LogData = {
-  TVD: {
-    values: [[0, 1]],
-    unit: 'm',
-  },
-};
 
 export const createdAndLastUpdatedTime: CreatedAndLastUpdatedTime = {
   createdTime: new Date(),
@@ -56,25 +34,6 @@ export const sequence: Sequence = {
   ],
   ...createdAndLastUpdatedTime,
 };
-
-export const MockSequenceLogTypeData: SequenceLogType[] = [
-  {
-    ...sequence,
-    ...{
-      id: 1,
-      logType: 'logType',
-      assetId: 11111,
-    },
-  },
-  {
-    ...sequence,
-    ...{
-      id: 1,
-      logType: 'ppfg',
-      assetId: 11111,
-    },
-  },
-];
 
 export const sequenceData: SequenceData[] = [
   {
