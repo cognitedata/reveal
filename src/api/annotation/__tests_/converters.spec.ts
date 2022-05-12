@@ -1,4 +1,5 @@
 import {
+  CDFAnnotationTypeEnum,
   CDFAnnotationV1,
   ImageAssetLink,
   ImageClassification,
@@ -308,6 +309,7 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
       annotatedResourceId: cdfAnnotationWithIdV1.annotatedResourceId,
       status: Status.Suggested,
       confidence: cdfAnnotationWithIdV1.data?.confidence,
+      annotationType: CDFAnnotationTypeEnum.ImagesTextRegion,
       extractedText: cdfAnnotationWithIdV1.text,
       textRegion: {
         xMin: cdfAnnotationWithIdV1.region?.vertices[0].x,
@@ -348,6 +350,7 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
       status: Status.Suggested,
       confidence: cdfAnnotationWithOCR.data?.confidence,
       extractedText: cdfAnnotationWithOCR.text,
+      annotationType: CDFAnnotationTypeEnum.ImagesTextRegion,
       textRegion: {
         xMin: cdfAnnotationWithOCR.region?.vertices[0].x,
         yMin: cdfAnnotationWithOCR.region?.vertices[0].y,
@@ -379,6 +382,7 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
       lastUpdatedTime: cdfAnnotationWithTag.lastUpdatedTime,
       status: Status.Suggested,
       confidence: cdfAnnotationWithTag.data?.confidence,
+      annotationType: CDFAnnotationTypeEnum.ImagesAssetLink,
       textRegion: {
         xMin: cdfAnnotationWithTag.region?.vertices[0].x,
         yMin: cdfAnnotationWithTag.region?.vertices[0].y,
@@ -416,6 +420,7 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
       status: Status.Suggested,
       confidence: cdfAnnotationWithKeypoint.data?.confidence,
       label: cdfAnnotationWithKeypoint.text,
+      annotationType: CDFAnnotationTypeEnum.ImagesKeypointCollection,
       keypoints: cdfAnnotationWithKeypoint.region!.vertices.map(
         (item, index) => ({
           point: item,
@@ -448,6 +453,8 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
       confidence: cdfAnnotationWithObjectDetection.data?.confidence,
       status: Status.Suggested,
       label: cdfAnnotationWithObjectDetection.text,
+      annotationType: CDFAnnotationTypeEnum.ImagesObjectDetection,
+
       boundingBox: {
         xMin: cdfAnnotationWithObjectDetection.region?.vertices[0].x,
         yMin: cdfAnnotationWithObjectDetection.region?.vertices[0].y,
@@ -479,6 +486,7 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
       confidence: cdfAnnotationWithPolygon.data?.confidence,
       status: Status.Suggested,
       label: cdfAnnotationWithPolygon.text,
+      annotationType: CDFAnnotationTypeEnum.ImagesObjectDetection,
       polygon: {
         vertices: cdfAnnotationWithPolygon.region?.vertices,
       },

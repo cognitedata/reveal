@@ -1,6 +1,7 @@
 import { InternalId, ExternalId, CogniteInternalId } from '@cognite/sdk';
 import {
   BoundingBox,
+  CDFAnnotationTypeEnum,
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
@@ -35,6 +36,7 @@ export const getDummyImageClassificationAnnotation = ({
     lastUpdatedTime: 123,
     status,
     annotatedResourceId,
+    annotationType: CDFAnnotationTypeEnum.ImagesClassification,
     ...data,
   };
 };
@@ -63,6 +65,7 @@ export const getDummyImageObjectDetectionBoundingBoxAnnotation = ({
     lastUpdatedTime: 123,
     status,
     annotatedResourceId,
+    annotationType: CDFAnnotationTypeEnum.ImagesObjectDetection,
     ...data,
   };
 };
@@ -100,6 +103,7 @@ export const getDummyImageObjectDetectionPolygonAnnotation = ({
     lastUpdatedTime: 123,
     status,
     annotatedResourceId,
+    annotationType: CDFAnnotationTypeEnum.ImagesObjectDetection,
     ...data,
   };
 };
@@ -136,6 +140,7 @@ export const getDummyImageExtractedTextAnnotation = ({
     lastUpdatedTime: 123,
     status,
     annotatedResourceId,
+    annotationType: CDFAnnotationTypeEnum.ImagesTextRegion,
     ...data,
   };
 };
@@ -172,6 +177,7 @@ export const getDummyImageAssetLinkAnnotation = ({
     lastUpdatedTime: 123,
     status,
     annotatedResourceId,
+    annotationType: CDFAnnotationTypeEnum.ImagesAssetLink,
     ...data,
   };
 };

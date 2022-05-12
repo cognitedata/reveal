@@ -90,15 +90,17 @@ export interface AnnotatedResourceId {
 // Image types
 export type ImageClassification = Label & Partial<Confidence>;
 
-export type ImageObjectDetectionBoundingBox = Label &
-  Partial<Confidence> & {
-    boundingBox: BoundingBox;
-  };
+export type ImageObjectDetectionBoundingBox = ImageClassification & {
+  boundingBox: BoundingBox;
+};
 
-export type ImageObjectDetectionPolygon = Label &
-  Partial<Confidence> & {
-    polygon: Polygon;
-  };
+export type ImageObjectDetectionPolygon = ImageClassification & {
+  polygon: Polygon;
+};
+
+export type ImageObjectDetection =
+  | ImageObjectDetectionBoundingBox
+  | ImageObjectDetectionPolygon;
 
 export type ImageExtractedText = TextRegion &
   Partial<Confidence> & {
@@ -117,15 +119,6 @@ export type ImageKeypointCollection = Label &
   };
 
 // Annotation API V2 types todo: remove this and import correct type from @cognite/sdk when v2 becomes available
-
-type Not<T> = {
-  [P in keyof T]?: void;
-};
-
-export type ImageObjectDetection =
-  | (ImageObjectDetectionBoundingBox & Not<ImageObjectDetectionPolygon>)
-  | (ImageObjectDetectionPolygon & Not<ImageObjectDetectionBoundingBox>);
-
 export type CDFAnnotationStatus =
   | `${Status.Suggested}`
   | `${Status.Approved}`

@@ -111,7 +111,13 @@ export const getAnnotationsBadgeCounts = (
             isImageKeypointCollectionData(annotation)) &&
           annotation.label !== 'person'
         ) {
-          return acc.concat(annotation);
+          return acc.concat(
+            annotation as VisionAnnotation<
+              | ImageObjectDetectionBoundingBox
+              | ImageObjectDetectionPolygon
+              | ImageKeypointCollection
+            >
+          );
         }
         return acc;
       },
