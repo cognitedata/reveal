@@ -27,6 +27,7 @@ import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import dataModelServices from '@platypus-app/di';
 import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
 import { ErrorPlaceholder } from '../components/ErrorBoundary/ErrorPlaceholder';
+import { DiscardButton } from './elements';
 const dataModelService = dataModelServices().solutionDataModelService;
 
 export const DataModelPage = () => {
@@ -147,7 +148,7 @@ export const DataModelPage = () => {
     if (mode === SchemaEditorMode.Edit) {
       return (
         <div data-cy="data-model-toolbar-actions" style={{ display: 'flex' }}>
-          <Button
+          <DiscardButton
             type="secondary"
             data-cy="discard-btn"
             onClick={() => {
@@ -160,10 +161,9 @@ export const DataModelPage = () => {
               setIsDirty(false);
               setCurrentType(null);
             }}
-            style={{ marginRight: '10px' }}
           >
             {t('discard_changes', 'Discard changes')}
-          </Button>
+          </DiscardButton>
 
           <Button
             type="primary"
