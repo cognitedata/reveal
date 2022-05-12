@@ -62,4 +62,13 @@ describe(MeasurementTool.name, () => {
     expect((measurementTool as any)._lineOptions.lineWidth).toBe(lineOptions.lineWidth);
     expect((measurementTool as any)._lineOptions.color).toBe(lineOptions.color);
   });
+
+  test('Calculate midpoint', () => {
+    const firstPoint = new THREE.Vector3(100, 100, 100);
+    const secondPoint = new THREE.Vector3(200, 200, 200);
+    const calculateMidpointSpyOn = jest.spyOn(MeasurementTool.prototype as any, 'calculateMidpoint');
+    const calculateMidpointImplementation = calculateMidpointSpyOn.getMockImplementation();
+
+    expect(calculateMidpointImplementation(firstPoint, secondPoint)).toEqual(new THREE.Vector3(150, 150, 150));
+  });
 });
