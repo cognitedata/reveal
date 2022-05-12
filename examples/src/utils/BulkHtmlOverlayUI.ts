@@ -60,13 +60,13 @@ export class BulkHtmlOverlayUI {
 
   private async createTagOverlays() {
     const { modelId, revisionId } = this._model;
-    const { filterCategory, filterKey, filterValue, levelBelowToTag } = this._uiState;
+    const { filterCategory, filterKey, filterValue } = this._uiState;
 
     const matchedNodes = await this._sdk.revisions3D.list3DNodes(modelId, revisionId, { limit: 1000, properties: { [filterCategory]: { [filterKey]: filterValue } } }).autoPagingToArray();
 
 
     for (let i = 0; i < matchedNodes.length; ++i) {
-      const { id, depth } = matchedNodes[i];
+      const { id } = matchedNodes[i];
       const nodesToTag = await this._sdk.revisions3D.list3DNodes(modelId, revisionId, { depth: 1, nodeId: id, limit: 1000 }).autoPagingToArray();
       for (const nodeToTag of nodesToTag) {
         if (nodeToTag.boundingBox === undefined) {
