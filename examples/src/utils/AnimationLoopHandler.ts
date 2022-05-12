@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 
 export class AnimationLoopHandler {
   private _animationFrameHandle?: number;

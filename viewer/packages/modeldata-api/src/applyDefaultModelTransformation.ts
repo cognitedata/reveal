@@ -13,11 +13,8 @@ export function applyDefaultModelTransformation(matrix: THREE.Matrix4, format: F
   switch (format) {
     case File3dFormat.RevealCadModel:
     case File3dFormat.GltfCadModel:
-      matrix.premultiply(cadFromCdfToThreeMatrix);
-      break;
-
     case File3dFormat.EptPointCloud:
-      // No action, identity transform
+      matrix.premultiply(cadFromCdfToThreeMatrix);
       break;
 
     default:
