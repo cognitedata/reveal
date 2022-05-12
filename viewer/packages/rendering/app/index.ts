@@ -170,6 +170,7 @@ async function init() {
   document.body.appendChild(renderer.domElement);
 
   const updateRenderOptions = async () => {
+    defaultRenderPipeline.dispose();
     defaultRenderPipeline = new DefaultRenderPipeline(materialManager, scene, renderOptions, cadModels, customObjects);
     needsRedraw = true;
   };
@@ -205,14 +206,7 @@ async function init() {
     .add(renderOptions, 'multiSampleCountHint', [0, 2, 4, 8, 16])
     .name('MSAA count')
     .onChange(async () => {
-      defaultRenderPipeline = new DefaultRenderPipeline(
-        materialManager,
-        scene,
-        renderOptions,
-        cadModels,
-        customObjects
-      );
-      needsRedraw = true;
+      updateRenderOptions();
     });
   antiAliasingGui.open();
 
