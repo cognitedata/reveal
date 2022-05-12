@@ -32,3 +32,5 @@ Merging to `master` branch will automatically trigger a release of the subapp. A
 If you are releasing a new version of the subapp (ie. version in `package.json` has been updated), make sure the import map for the environment ([staging](https://github.com/cognitedata/cdf-hub/blob/release-staging/packages/fas-apps/config/staging.fas-apps.import-map.json) or [production](https://github.com/cognitedata/cdf-hub/blob/release-production/config/fusion.import-map.prod.json)) matches the version you want to release. If not, you need to update the version with a PR in cdf-hub repo to deploy your changes.
 
 [Example PR (staging)](https://github.com/cognitedata/cdf-hub/pull/1328) • [Example PR (production)](https://github.com/cognitedata/cdf-hub/pull/1359)
+
+Production releases are performed in two steps. After the deployment is triggered on the `release-production` branch CD (via a pull request or on Jenkins manually as mentioned above), the changes will be directly deployed to staging.fusion.cognite.com. fusion.cognite.com will only be updated after you press the manual OK in [Spinnaker](https://spinnaker.cognite.ai/#/applications/fusion-app-prod/executions).
