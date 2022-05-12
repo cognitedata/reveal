@@ -1,8 +1,8 @@
 import { memo, useContext, useEffect, useMemo } from 'react';
 import { AuthConsumer, AuthContext } from '@cognite/react-container';
 import { AuthenticatedUser } from '@cognite/auth-utils';
-import { CogniteClient } from '@cognite/sdk';
-import { EVENT_TYPES, SnifferEvent } from '@cognite/power-ops-api-types';
+import { CogniteClient, CogniteEvent } from '@cognite/sdk';
+import { EVENT_TYPES } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { useFetchProcesses } from 'queries/useFetchProcesses';
 
@@ -48,12 +48,7 @@ const ProcessesPage = ({
     token: authState?.token,
   });
 
-  const processEvent = async (e: SnifferEvent): Promise<void> => {
-    if (!e.id) return;
-
-    const event = (await client?.events.retrieve([{ id: e.id }]))?.[0];
-    if (!event) return;
-
+  const processEvent = async (event: CogniteEvent): Promise<void> => {
     switch (event.type) {
       case EVENT_TYPES.BID_PROCESS:
       case EVENT_TYPES.SHOP_RUN:

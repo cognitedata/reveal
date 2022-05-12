@@ -1,4 +1,4 @@
-import { DoubleDatapoint } from '@cognite/sdk';
+import { CogniteEvent, DoubleDatapoint } from '@cognite/sdk';
 import { useState, useEffect, useContext } from 'react';
 import { Button, Tooltip, Detail } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
@@ -6,7 +6,7 @@ import { Column } from 'react-table';
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { TableData, PriceAreaWithData, MatrixWithData } from 'types';
-import { EVENT_TYPES, SnifferEvent } from '@cognite/power-ops-api-types';
+import { EVENT_TYPES } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { HeadlessTable } from 'components/HeadlessTable';
 
@@ -90,16 +90,10 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
     setMainScenarioData(scenarioData);
   };
 
-  const processEvent = async (e: SnifferEvent): Promise<void> => {
-    if (!client || !e.id) return;
-
-    const event = (await client?.events.retrieve([{ id: e.id }]))?.[0];
-    if (!event) return;
-
+  const processEvent = async (event: CogniteEvent): Promise<void> => {
     if (event.type === EVENT_TYPES.PROCESS_FINISHED) {
-      const status = await isNewBidMatrixAvailable(
+      const status = isNewBidMatrixAvailable(
         event,
-        client,
         priceArea?.bidProcessExternalId || ''
       );
       setNewMatrixAvailable(status);

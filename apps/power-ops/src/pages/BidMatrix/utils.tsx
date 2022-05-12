@@ -200,24 +200,16 @@ export const formatScenarioData = async (
   return dataArray;
 };
 
-export const isNewBidMatrixAvailable = async (
+export const isNewBidMatrixAvailable = (
   processFinishEvent: CogniteEvent,
-  client: CogniteClient,
   currentBidProcessExternalId: string
-): Promise<boolean> => {
+): boolean => {
   const parentProcessEventExternalId =
     processFinishEvent.metadata?.event_external_id;
 
-  if (!parentProcessEventExternalId || !client) {
-    return false;
-  }
-
-  const [parentProcessEvent] = await client.events.retrieve([
-    { externalId: parentProcessEventExternalId },
-  ]);
-  return (
-    (parentProcessEvent.type === EVENT_TYPES.BID_PROCESS &&
-      parentProcessEvent.externalId !== currentBidProcessExternalId) ||
-    false
+  return !!(
+    parentProcessEventExternalId &&
+    parentProcessEventExternalId !== currentBidProcessExternalId &&
+    parentProcessEventExternalId.includes(EVENT_TYPES.BID_PROCESS)
   );
 };

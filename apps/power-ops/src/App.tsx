@@ -22,36 +22,41 @@ import { Monitoring } from 'pages/Monitoring';
 const App = () => (
   <Providers>
     <Container sidecar={sidecar}>
-      <EventStreamProvider>
+      <>
         <GlobalStyles />
         <AuthConsumer>
           {({ client, authState }: AuthContext) =>
             client && authState ? (
-              <PriceAreaProvider client={client} authState={authState}>
-                <MenuBar />
-                <Switch>
-                  <Route path={PAGES.LOGOUT} render={() => <Logout />} />
-                  <Route
-                    path={PAGES.MONITORING}
-                    render={() => <Monitoring />}
-                  />
-                  <Route path={PAGES.PROCESSES} render={() => <Processes />} />
-                  <Route
-                    path={[
-                      `${PAGES.PORTFOLIO}/:priceAreaExternalId`,
-                      `${PAGES.PORTFOLIO}`,
-                    ]}
-                    render={() => <Portfolio />}
-                  />
-                  <Redirect from="" to={PAGES.PORTFOLIO} />
-                  <Redirect from="/" to={PAGES.PORTFOLIO} />
-                  <Route render={() => <NotFoundPage />} />
-                </Switch>
-              </PriceAreaProvider>
+              <EventStreamProvider>
+                <PriceAreaProvider client={client} authState={authState}>
+                  <MenuBar />
+                  <Switch>
+                    <Route path={PAGES.LOGOUT} render={() => <Logout />} />
+                    <Route
+                      path={PAGES.MONITORING}
+                      render={() => <Monitoring />}
+                    />
+                    <Route
+                      path={PAGES.PROCESSES}
+                      render={() => <Processes />}
+                    />
+                    <Route
+                      path={[
+                        `${PAGES.PORTFOLIO}/:priceAreaExternalId`,
+                        `${PAGES.PORTFOLIO}`,
+                      ]}
+                      render={() => <Portfolio />}
+                    />
+                    <Redirect from="" to={PAGES.PORTFOLIO} />
+                    <Redirect from="/" to={PAGES.PORTFOLIO} />
+                    <Route render={() => <NotFoundPage />} />
+                  </Switch>
+                </PriceAreaProvider>
+              </EventStreamProvider>
             ) : null
           }
         </AuthConsumer>
-      </EventStreamProvider>
+      </>
     </Container>
   </Providers>
 );

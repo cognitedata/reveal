@@ -1,4 +1,5 @@
 import { Flex, Label, Pagination } from '@cognite/cogs.js';
+import dayjs from 'dayjs';
 import { useEffect, useMemo, useRef } from 'react';
 import {
   useTable,
@@ -10,6 +11,15 @@ import {
 
 import { StyledTable } from './elements';
 import { Process } from './Processes';
+
+function durationAccessor(row: any) {
+  const eventStartTime = Date.parse(row?.eventStartTime)?.valueOf() || 0;
+  const eventEndTime = Date.parse(row?.eventEndTime)?.valueOf() || 0;
+  if (eventStartTime && eventEndTime) {
+    return dayjs(eventEndTime - eventStartTime).format('mm:ss');
+  }
+  return '';
+}
 
 const ProcessList = (props: { processes: Process[] | undefined }) => {
   const { processes } = props;
@@ -40,6 +50,10 @@ const ProcessList = (props: { processes: Process[] | undefined }) => {
       Header: 'Finished/Failed',
       Cell: ({ value }) =>
         Date.parse(value) ? new Date(value).toLocaleString() : value,
+    },
+    {
+      Header: 'Duration',
+      accessor: durationAccessor,
     },
     {
       accessor: 'status',
