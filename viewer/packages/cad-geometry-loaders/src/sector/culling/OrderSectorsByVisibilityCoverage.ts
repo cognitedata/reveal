@@ -442,7 +442,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
         const b = renderTargetBuffer[4 * i + 2];
         const distance = renderTargetBuffer[4 * i + 3]; // Distance stored in alpha
         if (r !== 255 || g !== 255 || b !== 255) {
-          const rx = (y - halfWidth) / halfWidth;
+          const rx = (x - halfWidth) / halfWidth;
 
           const sectorIdWithOffset = b + g * 255 + r * 255 * 255;
           const value = sectorVisibility[sectorIdWithOffset] || { sectorIdWithOffset, weight: 0, distance };
