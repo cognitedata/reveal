@@ -54,15 +54,12 @@ export class CadGeometryRenderPipeline implements RenderPipelineProvider {
     this.pipelineSetup(renderer);
 
     renderer.setRenderTarget(this._cadGeometryRenderTargets.back);
-    renderer.clear();
     yield this._cadGeometryRenderPasses.back;
 
     renderer.setRenderTarget(this._cadGeometryRenderTargets.ghost);
-    renderer.clear();
     yield this._cadGeometryRenderPasses.ghost;
 
     renderer.setRenderTarget(this._cadGeometryRenderTargets.inFront);
-    renderer.clear();
     yield this._cadGeometryRenderPasses.inFront;
 
     this.pipelineTearDown(renderer);
@@ -77,7 +74,7 @@ export class CadGeometryRenderPipeline implements RenderPipelineProvider {
       clearAlpha: renderer.getClearAlpha()
     };
 
-    renderer.autoClear = false;
+    renderer.autoClear = true;
     renderer.setClearColor(this._currentRendererState.clearColor);
     renderer.setClearAlpha(0.0);
 

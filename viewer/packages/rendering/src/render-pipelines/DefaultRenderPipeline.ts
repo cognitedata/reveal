@@ -118,17 +118,14 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     renderer.setRenderTarget(this._renderTargetData.ssaoRenderTarget);
     renderer.setClearColor('#FFFFFF');
     renderer.setClearAlpha(1.0);
-    renderer.clear();
     yield this._ssaoPass;
 
     renderer.setRenderTarget(this._renderTargetData.postProcessingRenderTarget);
     renderer.setClearColor(this._currentRendererState.clearColor);
     renderer.setClearAlpha(this._currentRendererState.clearAlpha);
-    renderer.clear();
     yield this._postProcessingRenderPipeline;
 
     renderer.setRenderTarget(this._outputRenderTarget);
-    renderer.clear();
 
     yield {
       render: (renderer, camera) => {
@@ -157,7 +154,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     };
 
     renderer.sortObjects = false;
-    renderer.autoClear = false;
+    renderer.autoClear = true;
     renderer.setClearColor(this._currentRendererState.clearColor);
     renderer.setClearAlpha(0.0);
 
