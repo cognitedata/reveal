@@ -50,6 +50,7 @@ import { IntersectInput, SupportedModelTypes, CogniteModelBase, LoadingState } f
 
 import { CogniteClient } from '@cognite/sdk';
 import log from '@reveal/logger';
+import { restrictViewerOptionsToDevice } from './restrictViewerOptionsToDevice';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -220,6 +221,7 @@ export class Cognite3DViewer {
       this._events.cameraChange.fire(position.clone(), target.clone());
     });
 
+    restrictViewerOptionsToDevice(options);
     const revealOptions = createRevealManagerOptions(options);
     if (options._localModels === true) {
       this._dataSource = new LocalDataSource();
