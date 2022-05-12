@@ -43,18 +43,21 @@ export function SimulatorStatus() {
     <SimulatorStatusContainer>
       {simulators.map((simulator, index) => (
         <div
+          id={`simulator-status-${index}`}
           // eslint-disable-next-line react/no-array-index-key
           key={`
           ${simulator.connectorName ?? Math.random()}
           -${simulator.dataSetId ?? Math.random()}
-          -simulator-status-${index}`}
+          -simulator-status-${index}
+          `}
         >
           <SimulatorTooltip
             content={
               <SimulatorList
+                // eslint-disable-next-line react/no-array-index-key
                 key={`${
                   simulator.connectorName ?? Math.random()
-                }-simulator-tooltip-list`}
+                }-simulator-tooltip-list-${index}`}
                 simulators={[simulator]}
               />
             }

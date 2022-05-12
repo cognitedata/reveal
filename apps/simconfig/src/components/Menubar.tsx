@@ -27,7 +27,7 @@ export function MenuBar() {
     <TopBar>
       <TopBar.Left>
         <TopBar.Logo
-          subtitle={<div>{project}</div>}
+          subtitle={<div id="project-name">{project}</div>}
           title="Cognite Simulator Configuration"
         />
         <TopBar.Navigation

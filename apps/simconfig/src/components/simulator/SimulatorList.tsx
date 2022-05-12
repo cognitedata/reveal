@@ -29,20 +29,28 @@ export function SimulatorList({
           setActiveKey(key);
         }}
       >
-        {simulators.map((simulator) => (
+        {simulators.map((simulator, index) => (
           <Collapse.Panel
             header={
-              <div className="simulator-header">
+              <div
+                className="simulator-header"
+                id={`simulator-header-${index}`}
+              >
                 <span className="simulator">{simulator.simulator}</span>
                 <span className="connector">{simulator.connectorName}</span>
                 <SimulatorStatusLabel simulator={simulator} />
               </div>
             }
+            // eslint-disable-next-line react/no-array-index-key
             key={`${
               simulator.connectorName ?? Math.random()
             }-simulator-list-entry-collapse`}
           >
-            <SimulatorInformation simulatorInstance={simulator} />
+            <SimulatorInformation
+              // eslint-disable-next-line react/no-array-index-key
+              key={`simulator-info-${index}`}
+              simulatorInstance={simulator}
+            />
           </Collapse.Panel>
         ))}
       </Collapse>

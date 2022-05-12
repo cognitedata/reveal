@@ -31,5 +31,6 @@ cypress/plugins
 cypress/screenshots
 cypress/support
 cypress/videos
+cypress/downloads
 *.jwk-key.json
 res.xml
