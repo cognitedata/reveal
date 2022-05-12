@@ -416,8 +416,26 @@ export class Cognite3DViewer {
    * ```
    */
   off(event: 'click' | 'hover', callback: PointerEventDelegate): void;
+  /**
+   * @example
+   * ```js
+   * viewer.off('cameraChange', onCameraChange);
+   * ```
+   */
   off(event: 'cameraChange', callback: CameraChangeDelegate): void;
+  /**
+   * @example
+   * ```js
+   * viewer.off('sceneRendered', updateStats);
+   * ```
+   */
   off(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
+  /**
+   * @example
+   * ```js
+   * viewer.off('disposed', clearAll);
+   * ```
+   */
   off(event: 'disposed', callback: DisposedDelegate): void;
 
   /**
@@ -1065,7 +1083,9 @@ export class Cognite3DViewer {
     return intersections.length > 0 ? intersections[0] : null;
   }
 
+  /** @private */
   private getModels(type: 'cad'): Cognite3DModel[];
+  /** @private */
   private getModels(type: 'pointcloud'): CognitePointCloudModel[];
   /** @private */
   private getModels(type: SupportedModelTypes): CogniteModelBase[] {

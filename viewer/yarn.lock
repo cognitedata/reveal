@@ -617,7 +617,7 @@ __metadata:
     eslint: 8.15.0
     eslint-config-prettier: 8.5.0
     eslint-plugin-header: 3.1.1
-    eslint-plugin-jsdoc: 39.1.1
+    eslint-plugin-jsdoc: 39.2.0
     eslint-plugin-lodash: 7.4.0
     eslint-plugin-prettier: 4.0.0
     eslint-plugin-unused-imports: 2.0.0
@@ -5358,9 +5358,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:39.1.1":
-  version: 39.1.1
-  resolution: "eslint-plugin-jsdoc@npm:39.1.1"
+"eslint-plugin-jsdoc@npm:39.2.0":
+  version: 39.2.0
+  resolution: "eslint-plugin-jsdoc@npm:39.2.0"
   dependencies:
     "@es-joy/jsdoccomment": ~0.22.1
     comment-parser: 1.3.1
@@ -5371,7 +5371,7 @@ __metadata:
     spdx-expression-parse: ^3.0.1
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
-  checksum: 8a3c6d6db90938ab04baadd57930d7012c9d0b705fe916079436c2c949c7e9bc004c70ff737df46a66ce46aca58514a62f7d5fb3fee9644ea7bc2a36a97c8528
+  checksum: a6441ca6a6ef45f5e6053824551a994bcabea6c4d4b267ba1b3821cf9ced9e04abed41eea13fc99b12043eb35ca486b6ee2d9f2be8279892f9c50b26def4ab10
   languageName: node
   linkType: hard
 
