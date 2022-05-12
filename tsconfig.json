@@ -14,21 +14,16 @@
     "esModuleInterop": true,
     "downlevelIteration": true,
     "allowSyntheticDefaultImports": true,
-    "lib": [
-      "es2015",
-      "dom",
-      "dom.iterable"
-    ],
+    "lib": ["es2015", "dom", "dom.iterable"],
     "jsx": "react-jsx",
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "noEmit": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*","cypress/e2e"],
   "exclude": [
     "node_modules",
     "tests/*",

@@ -1,0 +1,9 @@
+{
+  "include": ["e2e/*.ts"],
+
+  "compilerOptions": {
+    "lib": ["ES2015", "dom"],
+    "types": ["cypress", "node", "@testing-library/cypress"],
+    "esModuleInterop": true
+  }
+}
