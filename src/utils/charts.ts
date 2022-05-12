@@ -1,3 +1,9 @@
+import { uuid4 } from '@sentry/utils';
+import { SourceNodeData } from 'components/NodeEditor/V2/Nodes/SourceNode';
+import { NodeDataVariants } from 'components/NodeEditor/V2/types';
+import { ChartWorkflow, ChartWorkflowV2 } from 'models/chart/types';
+import { FlowElement, FlowExportObject } from 'react-flow-renderer';
+
 export const toggleDownloadChartElements = (hide: boolean, height?: number) => {
   const elementsToHide = document.getElementsByClassName('downloadChartHide');
   const chartViewEl = document.getElementById('chart-view');
@@ -65,5 +71,74 @@ export const downloadImage = (
   const a = document.createElement('a');
   a.href = image;
   a.download = `${chartName}.png`;
+  a.click();
+};
+
+export const formatCalculationsForDownload = (
+  calculations: ChartWorkflow[] = [],
+  getId: () => string = uuid4
+) => {
+  const filteredCalculations = calculations.filter(
+    (calc) => calc.version === 'v2'
+  ) as ChartWorkflowV2[];
+
+  const formattedCalculations = filteredCalculations.reduce(
+    (resultingCalculations, currentCalculation) => {
+      const newId = getId();
+      return resultingCalculations.map((selectedCalculation) => {
+        return {
+          ...selectedCalculation,
+          id:
+            selectedCalculation.id === currentCalculation.id
+              ? newId
+              : selectedCalculation.id,
+          flow: {
+            ...selectedCalculation.flow,
+            elements: (
+              (selectedCalculation.flow?.elements ||
+                []) as FlowElement<NodeDataVariants>[]
+            ).map((item) => {
+              if (
+                item.type === 'CalculationInput' &&
+                (item as FlowElement<SourceNodeData>).data?.type ===
+                  'workflow' &&
+                (item as FlowElement<SourceNodeData>).data?.selectedSourceId ===
+                  currentCalculation.id
+              ) {
+                return {
+                  ...item,
+                  data: {
+                    ...item.data,
+                    selectedSourceId: newId,
+                  },
+                } as FlowElement<SourceNodeData>;
+              }
+              return item;
+            }),
+          } as FlowExportObject<NodeDataVariants>,
+        };
+      });
+    },
+    filteredCalculations
+  );
+
+  return formattedCalculations;
+};
+
+export const downloadCalculations = (
+  calculations: ChartWorkflow[],
+  calculationName: string | undefined
+) => {
+  if (!calculations.length) {
+    return;
+  }
+
+  const formattedCalculations = formatCalculationsForDownload(calculations);
+  const a = document.createElement('a');
+  const url = window.URL.createObjectURL(
+    new Blob([JSON.stringify(formattedCalculations)])
+  );
+  a.href = url;
+  a.download = `Calculations from ${calculationName}.json`;
   a.click();
 };

@@ -1,6 +1,12 @@
 import { fullListOfOperations } from 'models/operations/mocks';
 import { v4 as uuidv4 } from 'uuid';
-import { Chart, ChartTimeSeries, ChartWorkflow, ChartThreshold } from './types';
+import {
+  Chart,
+  ChartTimeSeries,
+  ChartWorkflow,
+  ChartThreshold,
+  ChartWorkflowV2,
+} from './types';
 import {
   addTimeseries,
   addWorkflow,
@@ -23,6 +29,7 @@ import {
   updateChartThresholdUpperLimit,
   updateChartThresholdVisibility,
   updateChartThresholdProperties,
+  addWorkflows,
 } from './updates';
 
 describe('charts util', () => {
@@ -2650,6 +2657,249 @@ describe('charts util', () => {
         createdAt: 1647350374178,
         updatedAt: 1651506075740,
       });
+    });
+  });
+});
+
+describe('addWorkflows', () => {
+  it('should add empty list of workflows to chart', () => {
+    const chart: Chart = {
+      id: 'abc-1',
+      version: 1,
+      name: 'Chart 1',
+      user: 'abc@cognite.com',
+      createdAt: 0,
+      updatedAt: 0,
+      dateTo: '2021-11-12T20:21:40.881Z',
+      dateFrom: '2020-04-25T07:05:31.547Z',
+    };
+
+    const workflows: ChartWorkflow[] = [];
+    const updatedChart: Chart = addWorkflows(chart, workflows);
+
+    expect(updatedChart).toEqual({
+      id: 'abc-1',
+      version: 1,
+      name: 'Chart 1',
+      user: 'abc@cognite.com',
+      createdAt: 0,
+      updatedAt: 0,
+      dateTo: '2021-11-12T20:21:40.881Z',
+      dateFrom: '2020-04-25T07:05:31.547Z',
+    });
+  });
+
+  it('should add non-empty list of workflows to chart without any existing workflows', () => {
+    const chart: Chart = {
+      id: 'abc-1',
+      version: 1,
+      name: 'Chart 1',
+      user: 'abc@cognite.com',
+      createdAt: 0,
+      updatedAt: 0,
+      dateTo: '2021-11-12T20:21:40.881Z',
+      dateFrom: '2020-04-25T07:05:31.547Z',
+    };
+
+    const workflows: ChartWorkflowV2[] = [
+      {
+        type: 'workflow',
+        id: 'wf-1',
+        version: 'v2',
+        name: 'Calc 1',
+        color: 'red',
+        enabled: true,
+        settings: {
+          autoAlign: true,
+        },
+      },
+      {
+        type: 'workflow',
+        id: 'wf-2',
+        version: 'v2',
+        name: 'Calc 2',
+        color: 'blue',
+        enabled: true,
+        settings: {
+          autoAlign: true,
+        },
+      },
+    ];
+    const updatedChart: Chart = addWorkflows(chart, workflows);
+
+    expect(updatedChart).toEqual({
+      id: 'abc-1',
+      version: 1,
+      name: 'Chart 1',
+      user: 'abc@cognite.com',
+      createdAt: 0,
+      updatedAt: 0,
+      dateTo: '2021-11-12T20:21:40.881Z',
+      dateFrom: '2020-04-25T07:05:31.547Z',
+      sourceCollection: [
+        {
+          type: 'workflow',
+          id: 'wf-2',
+        },
+        {
+          type: 'workflow',
+          id: 'wf-1',
+        },
+      ],
+      workflowCollection: [
+        {
+          type: 'workflow',
+          id: 'wf-1',
+          version: 'v2',
+          name: 'Calc 1',
+          color: 'red',
+          enabled: true,
+          settings: {
+            autoAlign: true,
+          },
+        },
+        {
+          type: 'workflow',
+          id: 'wf-2',
+          version: 'v2',
+          name: 'Calc 2',
+          color: 'blue',
+          enabled: true,
+          settings: {
+            autoAlign: true,
+          },
+        },
+      ],
+    });
+  });
+
+  it('should add non-empty list of workflows to chart with existing workflows', () => {
+    const chart: Chart = {
+      id: 'abc-1',
+      version: 1,
+      name: 'Chart 1',
+      user: 'abc@cognite.com',
+      createdAt: 0,
+      updatedAt: 0,
+      dateTo: '2021-11-12T20:21:40.881Z',
+      dateFrom: '2020-04-25T07:05:31.547Z',
+      workflowCollection: [
+        {
+          type: 'workflow',
+          id: 'wf-1',
+          version: 'v2',
+          name: 'Calc 1',
+          color: 'red',
+          enabled: true,
+          settings: {
+            autoAlign: true,
+          },
+        },
+        {
+          type: 'workflow',
+          id: 'wf-2',
+          version: 'v2',
+          name: 'Calc 2',
+          color: 'blue',
+          enabled: true,
+          settings: {
+            autoAlign: true,
+          },
+        },
+      ],
+    };
+
+    const workflows: ChartWorkflowV2[] = [
+      {
+        type: 'workflow',
+        id: 'wf-3',
+        version: 'v2',
+        name: 'Calc 3',
+        color: 'red',
+        enabled: true,
+        settings: {
+          autoAlign: true,
+        },
+      },
+      {
+        type: 'workflow',
+        id: 'wf-4',
+        version: 'v2',
+        name: 'Calc 4',
+        color: 'blue',
+        enabled: true,
+        settings: {
+          autoAlign: true,
+        },
+      },
+    ];
+    const updatedChart: Chart = addWorkflows(chart, workflows);
+
+    expect(updatedChart).toEqual({
+      id: 'abc-1',
+      version: 1,
+      name: 'Chart 1',
+      user: 'abc@cognite.com',
+      createdAt: 0,
+      updatedAt: 0,
+      dateTo: '2021-11-12T20:21:40.881Z',
+      dateFrom: '2020-04-25T07:05:31.547Z',
+      sourceCollection: [
+        {
+          type: 'workflow',
+          id: 'wf-4',
+        },
+        {
+          type: 'workflow',
+          id: 'wf-3',
+        },
+      ],
+      workflowCollection: [
+        {
+          type: 'workflow',
+          id: 'wf-1',
+          version: 'v2',
+          name: 'Calc 1',
+          color: 'red',
+          enabled: true,
+          settings: {
+            autoAlign: true,
+          },
+        },
+        {
+          type: 'workflow',
+          id: 'wf-2',
+          version: 'v2',
+          name: 'Calc 2',
+          color: 'blue',
+          enabled: true,
+          settings: {
+            autoAlign: true,
+          },
+        },
+        {
+          type: 'workflow',
+          id: 'wf-3',
+          version: 'v2',
+          name: 'Calc 3',
+          color: 'red',
+          enabled: true,
+          settings: {
+            autoAlign: true,
+          },
+        },
+        {
+          type: 'workflow',
+          id: 'wf-4',
+          version: 'v2',
+          name: 'Calc 4',
+          color: 'blue',
+          enabled: true,
+          settings: {
+            autoAlign: true,
+          },
+        },
+      ],
     });
   });
 });

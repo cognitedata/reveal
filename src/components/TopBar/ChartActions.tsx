@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
 import { Button, Popconfirm, toast, Tooltip } from '@cognite/cogs.js';
 import { useNavigate } from 'hooks/navigation';
@@ -12,6 +12,13 @@ import chartAtom from 'models/chart/atom';
 import DownloadDropdown from 'components/DownloadDropdown/DownloadDropdown';
 import { useTranslations } from 'hooks/translations';
 import { useIsChartOwner } from 'hooks/user';
+import {
+  downloadCalculations,
+  downloadImage,
+  toggleDownloadChartElements,
+} from 'utils/charts';
+import useScreenshot from 'use-screenshot-hook';
+import CSVModal from 'components/DownloadDropdown/CSVModal';
 
 export const ChartActions = () => {
   const { t } = useTranslations(
@@ -32,10 +39,9 @@ export const ChartActions = () => {
     'DownloadDropdown'
   );
   const { t: CSVModalTranslations } = useTranslations(
-    DownloadDropdown.csvModalTranslationKeys,
+    CSVModal.translationKeys,
     'DownloadCSVModal'
   );
-
   const { t: sharingDropdownTranslations } = useTranslations(
     SharingDropdown.translationKeys,
     'SharingDropdown'
@@ -44,6 +50,8 @@ export const ChartActions = () => {
   const move = useNavigate();
   const [chart] = useRecoilState(chartAtom);
   const { data: login } = useUserInfo();
+  const { takeScreenshot } = useScreenshot();
+  const [isCSVModalVisible, setIsCSVModalVisible] = useState(false);
 
   const {
     mutateAsync: updateChart,
@@ -114,6 +122,19 @@ export const ChartActions = () => {
     });
   };
 
+  const handleDownloadCalculations = () => {
+    const calculations = chart?.workflowCollection || [];
+    downloadCalculations(calculations, chart?.name);
+  };
+
+  const handleDownloadImage = () => {
+    const height = toggleDownloadChartElements(true);
+    takeScreenshot('png').then((image) => {
+      toggleDownloadChartElements(false, height);
+      downloadImage(image, chart?.name);
+    });
+  };
+
   if (!chart) {
     return <></>;
   }
@@ -133,9 +154,10 @@ export const ChartActions = () => {
       <Divider />
       <Tooltip content={t['Download Chart']}>
         <DownloadDropdown
-          chart={chart}
           translations={dropdownTranslations}
-          csvModalTranslations={CSVModalTranslations}
+          onDownloadCalculations={handleDownloadCalculations}
+          onDownloadImage={handleDownloadImage}
+          onCsvDownload={() => setIsCSVModalVisible(true)}
         />
       </Tooltip>
       <Divider />
@@ -162,6 +184,11 @@ export const ChartActions = () => {
           />
         </Popconfirm>
       </Tooltip>
+      <CSVModal
+        isOpen={isCSVModalVisible}
+        onClose={() => setIsCSVModalVisible(false)}
+        translations={CSVModalTranslations}
+      />
     </div>
   );
 };

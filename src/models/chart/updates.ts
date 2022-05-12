@@ -152,6 +152,13 @@ export function addWorkflow(chart: Chart, wf: ChartWorkflow): Chart {
   return addItem(chart, 'workflowCollection', wf);
 }
 
+export function addWorkflows(chart: Chart, wfs: ChartWorkflow[]): Chart {
+  return wfs.reduce(
+    (oldChart, wf) => addItem(oldChart, 'workflowCollection', wf),
+    chart
+  );
+}
+
 export function convertTSToChartTS(
   ts: Timeseries,
   chartId: string,

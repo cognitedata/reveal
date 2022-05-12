@@ -39,6 +39,7 @@ import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import {
   addWorkflow,
+  addWorkflows,
   updateChartDateRange,
   updateSourceCollectionOrder,
   updateVisibilityForAllSources,
@@ -63,6 +64,7 @@ import DetailsSidebar from 'components/DetailsSidebar/DetailsSidebar';
 import ThresholdSidebar from 'components/Thresholds/ThresholdSidebar';
 import SearchSidebar from 'components/Search/SearchSidebar';
 import TimePeriodSelector from 'components/TimePeriodSelector/TimePeriodSelector';
+import { useFilePicker } from 'use-file-picker';
 import SourceRows from './SourceRows';
 
 import {
@@ -104,7 +106,9 @@ const defaultTranslations = makeDefaultTranslations(
   'Show Y axes',
   'Merge units',
   'Disable stacking',
-  'Enable stacking'
+  'Enable stacking',
+  'Imports',
+  'Import calculations'
 );
 
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
@@ -428,6 +432,42 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     );
   }, [setChart, isEveryRowHidden]);
 
+  /**
+   * File upload handling
+   */
+  const [openFileSelector, { filesContent, loading }] = useFilePicker({
+    accept: '.json',
+    readAs: 'Text',
+  });
+
+  const handleImportCalculations = useCallback(
+    (string) => {
+      let calculations: ChartWorkflowV2[] = [];
+      try {
+        calculations = JSON.parse(string);
+      } catch (err) {
+        toast.error('Invalid file format or content');
+      }
+      setChart((oldChart) => addWorkflows(oldChart!, calculations));
+      toast.success('Calculations imported successfully!');
+    },
+    [setChart]
+  );
+
+  const handleImportCalculationsClick = useCallback(async () => {
+    openFileSelector();
+  }, [openFileSelector]);
+
+  useEffect(() => {
+    if (loading) {
+      return;
+    }
+    if (!filesContent.length) {
+      return;
+    }
+    handleImportCalculations(filesContent[0].content);
+  }, [filesContent, loading, handleImportCalculations]);
+
   if (!isFetched || (isFetched && originalChart && !chart)) {
     return <Loader />;
   }
@@ -471,6 +511,28 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                   >
                     {t['Add calculation']}
                   </Button>
+                  <Dropdown
+                    content={
+                      <Menu>
+                        <Menu.Header>{t.Imports}</Menu.Header>
+                        <Menu.Item
+                          appendIcon="Function"
+                          onClick={handleImportCalculationsClick}
+                        >
+                          <MenuItemText>
+                            {t['Import calculations']}
+                          </MenuItemText>
+                        </Menu.Item>
+                      </Menu>
+                    }
+                  >
+                    <Button
+                      icon="EllipsisHorizontal"
+                      type="ghost"
+                      aria-label="view"
+                      style={{ paddingRight: 8, marginLeft: 4 }}
+                    />
+                  </Dropdown>
                 </section>
               )}
               {login?.id && !isChartOwner && (
@@ -715,6 +777,10 @@ const RangeWrapper = styled.div`
 
 const RangeColumn = styled.div`
   margin: 2px 6px;
+`;
+
+const MenuItemText = styled.div`
+  padding-right: 10px;
 `;
 
 export default ChartView;
