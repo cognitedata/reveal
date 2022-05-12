@@ -68,6 +68,8 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Remove measurement.
    */
   remove(): void {
+    //remove measurement label, clear all mesh, geometry & event handling
+    this._measurementLabel.remove();
     this.clearLineObjects();
     this.removeEventHandling();
   }
@@ -96,7 +98,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     const intersection = await this._viewer.getIntersectionFromPixel(offsetX, offsetY);
 
     if (intersection) {
-      this.addSphere(intersection.point, this._pointSize);
+      this.addSphere(intersection.point);
 
       if (!this._lineMesh) {
         this.startMeasurement(intersection);
@@ -245,15 +247,14 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   /**
    * Creates sphere at given position.
    * @param position Position.
-   * @param size Size of the sphere to align with lineWidth.
    */
-  private addSphere(position: THREE.Vector3, size: number) {
+  private addSphere(position: THREE.Vector3) {
     const mesh = new THREE.Mesh(
       new THREE.SphereGeometry(1),
       new THREE.MeshBasicMaterial({ color: 0xff0000, opacity: 0.5, transparent: true })
     );
     mesh.position.copy(position);
-    mesh.scale.copy(mesh.scale.multiplyScalar(size));
+    mesh.scale.copy(mesh.scale.multiplyScalar(this._pointSize));
 
     this._viewer.addObject3D(mesh);
   }
@@ -265,7 +266,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   updateLineOptions(options: MeasurementLineOptions): void {
     this._lineOptions.lineWidth = options?.lineWidth ?? this._lineOptions.lineWidth;
     this._lineOptions.color = options?.color ?? this._lineOptions.color;
-    this._pointSize = options?.lineWidth || this._pointSize;
+    this._pointSize = options?.lineWidth * 10.0 || this._pointSize;
   }
 
   /**

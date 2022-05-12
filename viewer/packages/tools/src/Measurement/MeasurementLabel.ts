@@ -64,33 +64,9 @@ export class MeasurementLabel {
   /**
    * Remove the label
    */
-  removeLabel(): void {
+  remove(): void {
     if (this._labelElement) {
       this._htmlOverlay.remove(this._labelElement);
     }
-  }
-
-  /**
-   * Update the label position & text
-   * @param label Text to update in the element
-   * @param startPoint start point
-   * @param endPoint end point
-   */
-  update(label: string, startPoint: THREE.Vector3, endPoint: THREE.Vector3): void {
-    //Return if the endPoint is not available from the Point Cloud
-    if (endPoint.equals(new THREE.Vector3(0))) {
-      return;
-    }
-    let direction = endPoint.clone().sub(startPoint);
-    const length = direction.length();
-    direction = direction.normalize().multiplyScalar(length * 0.5);
-    const midPoint = startPoint.clone().add(direction);
-
-    this._htmlOverlay.elements.forEach(htmlElement => {
-      if (htmlElement.element === this._labelElement) {
-        htmlElement.position3D.set(midPoint.x, midPoint.y, midPoint.z);
-        htmlElement.element.innerText = label;
-      }
-    });
   }
 }
