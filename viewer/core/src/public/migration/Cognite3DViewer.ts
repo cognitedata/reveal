@@ -277,6 +277,8 @@ export class Cognite3DViewer {
     MetricsLogger.trackEvent('construct3dViewer', {
       constructorOptions: omit(options, [
         'sdk',
+        'cameraManager',
+        'customDataSource',
         'domElement',
         'renderer',
         'renderTargetOptions',
