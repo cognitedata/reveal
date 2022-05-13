@@ -32,14 +32,20 @@ export const fetchUserCharts = async (
       .get()
   ).docs.map((doc) => doc.data()) as Chart[];
 
-  const chartsWhereUserMatchesEmail = !userEmail
-    ? []
-    : ((
-        await charts(projectId)
-          .where('version', '==', 1)
-          .where('user', '==', userEmail)
-          .get()
-      ).docs.map((doc) => doc.data()) as Chart[]);
+  let chartsWhereUserMatchesEmail: Chart[];
+
+  try {
+    chartsWhereUserMatchesEmail = !userEmail
+      ? []
+      : ((
+          await charts(projectId)
+            .where('version', '==', 1)
+            .where('user', '==', userEmail)
+            .get()
+        ).docs.map((doc) => doc.data()) as Chart[]);
+  } catch (err) {
+    chartsWhereUserMatchesEmail = [];
+  }
 
   const userCharts = uniqBy(
     [...chartsWhereUserMatchesId, ...chartsWhereUserMatchesEmail],
