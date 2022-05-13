@@ -88,17 +88,20 @@ export interface AnnotatedResourceId {
 // Data field Types
 
 // Image types
-export type ImageClassification = Label & Partial<Confidence>;
+export type ImageClassification = Label &
+  Partial<Confidence & AnnotationAttributes>;
 
-export type ImageObjectDetectionBoundingBox = Label &
-  Partial<Confidence> & {
-    boundingBox: BoundingBox;
-  };
+export type ImageObjectDetectionBoundingBox = ImageClassification & {
+  boundingBox: BoundingBox;
+};
 
-export type ImageObjectDetectionPolygon = Label &
-  Partial<Confidence> & {
-    polygon: Polygon;
-  };
+export type ImageObjectDetectionPolygon = ImageClassification & {
+  polygon: Polygon;
+};
+
+export type ImageObjectDetection =
+  | ImageObjectDetectionBoundingBox
+  | ImageObjectDetectionPolygon;
 
 export type ImageExtractedText = TextRegion &
   Partial<Confidence> & {
@@ -111,21 +114,11 @@ export type ImageAssetLink = TextRegion &
     assetRef: InternalId & Partial<ExternalId>;
   };
 
-export type ImageKeypointCollection = Label &
-  Partial<Confidence & AnnotationAttributes> & {
-    keypoints: ImageKeypoint[];
-  };
-
-// Annotation API V2 types todo: remove this and import correct type from @cognite/sdk when v2 becomes available
-
-type Not<T> = {
-  [P in keyof T]?: void;
+export type ImageKeypointCollection = ImageClassification & {
+  keypoints: ImageKeypoint[];
 };
 
-export type ImageObjectDetection =
-  | (ImageObjectDetectionBoundingBox & Not<ImageObjectDetectionPolygon>)
-  | (ImageObjectDetectionPolygon & Not<ImageObjectDetectionBoundingBox>);
-
+// Annotation API V2 types todo: remove this and import correct type from @cognite/sdk when v2 becomes available
 export type CDFAnnotationStatus =
   | `${Status.Suggested}`
   | `${Status.Approved}`

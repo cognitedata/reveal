@@ -21,13 +21,13 @@ export type VisionAnnotationDataType =
 
 // Vision Annotation Type
 
-export type CDFInheritedFields = AnnotatedResourceId & // also available in CDFAnnotationV2, cannot be used in Pick operation due to One of relationship
+export type CDFInheritedFields<Type> = AnnotatedResourceId & // also available in CDFAnnotationV2, cannot be used in Pick operation due to One of relationship
   Pick<
-    CDFAnnotationV2<ImageClassification>,
-    'id' | 'createdTime' | 'lastUpdatedTime' | 'status'
+    CDFAnnotationV2<Type>,
+    'id' | 'createdTime' | 'lastUpdatedTime' | 'status' | 'annotationType'
   >;
 
-export type VisionAnnotation<Type> = CDFInheritedFields & Type;
+export type VisionAnnotation<Type> = CDFInheritedFields<Type> & Type;
 
 export type UnsavedVisionAnnotation = VisionAnnotationDataType & {
   status: Status;
