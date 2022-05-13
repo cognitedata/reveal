@@ -7,6 +7,27 @@ import {
   AnnotationStatus,
   KeypointItem,
 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import { VisionAnnotation } from 'src/modules/Common/types';
+import { ImageKeypoint } from 'src/api/annotation/types';
+
+type TurnKeypointType<Type> = {
+  [Property in keyof Type]: Type[Property] extends ImageKeypoint[]
+    ? ReviewKeypoint[]
+    : Type[Property];
+};
+
+export type ReviewAnnotation<Type> = TurnKeypointType<
+  Omit<VisionAnnotation<Type>, 'id'>
+> & {
+  id: string | number;
+  show: boolean;
+};
+
+export type ReviewKeypoint = ImageKeypoint & {
+  id: string;
+  show: boolean;
+  selected: boolean;
+};
 
 export type KeypointItemCollection = {
   id: string;
