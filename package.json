@@ -117,7 +117,7 @@
     "@types/styled-components": "5.1.23",
     "@types/uuid": "8.3.4",
     "babel-loader": "8.1.0",
-    "chromatic": "6.5.1",
+    "chromatic": "6.5.4",
     "cypress": "9.5.0",
     "cypress-cucumber-preprocessor": "4.3.1",
     "eslint": "7.32.0",
