@@ -2,7 +2,7 @@
 import { GraphOutputFormat } from '../graph/types';
 import { DiagramInstanceId, DiagramInstanceOutputFormat } from '../types';
 import {
-  getLineNumberFromText,
+  getUnitAndLineNumberString,
   isEquipment,
   isEquipmentTag,
   isInstrument,
@@ -48,8 +48,8 @@ export const isCrossConnection = (
   if (pidInstance.type === 'Line Break' && isoInstance.type === 'Line Break') {
     const pidLineNumbers = new Set<string>();
     pidInstance.labels.forEach((label) => {
-      const lineNumber = getLineNumberFromText(label.text);
-      if (lineNumber !== null) {
+      const lineNumber = getUnitAndLineNumberString(label.text);
+      if (lineNumber) {
         pidLineNumbers.add(lineNumber);
       }
     });
@@ -58,8 +58,8 @@ export const isCrossConnection = (
 
     const isoLineNumbers = new Set<string>();
     isoInstance.labels.forEach((label) => {
-      const lineNumber = getLineNumberFromText(label.text);
-      if (lineNumber !== null) {
+      const lineNumber = getUnitAndLineNumberString(label.text);
+      if (lineNumber) {
         isoLineNumbers.add(lineNumber);
       }
     });

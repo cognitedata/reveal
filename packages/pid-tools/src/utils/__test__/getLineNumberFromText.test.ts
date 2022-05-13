@@ -1,4 +1,4 @@
-import { getLineNumberFromText } from '..';
+import { getLineNumberAndUnitFromText } from '..';
 
 const validLineNumbers = ['L132', 'IP132', 'UT001', 'UL456'];
 
@@ -13,8 +13,8 @@ const notLineNumbers = [
 
 describe('Line numbers are correctly identified', () => {
   test('Finds standalone line numbers', () => {
-    const matchedLineNumbers = validLineNumbers.map((lineNumber) =>
-      getLineNumberFromText(lineNumber)
+    const matchedLineNumbers = validLineNumbers.map(
+      (lineNumber) => getLineNumberAndUnitFromText(lineNumber).lineNumber
     );
 
     expect(matchedLineNumbers).toEqual(validLineNumbers);
@@ -29,16 +29,16 @@ describe('Line numbers are correctly identified', () => {
 
     const expectedMatches = ['L132', 'L132', 'L055'];
 
-    const matchedLineNumbers = stringWithLineNumbers.map((text) =>
-      getLineNumberFromText(text)
+    const matchedLineNumbers = stringWithLineNumbers.map(
+      (text) => getLineNumberAndUnitFromText(text).lineNumber
     );
 
     expect(matchedLineNumbers).toEqual(expectedMatches);
   });
 
   test('Does not match any invalid line numbers', () => {
-    const matchedLineNumbers = notLineNumbers.filter((lineNumber) =>
-      getLineNumberFromText(lineNumber)
+    const matchedLineNumbers = notLineNumbers.filter(
+      (lineNumber) => getLineNumberAndUnitFromText(lineNumber).lineNumber
     );
 
     expect(matchedLineNumbers).toEqual([]);

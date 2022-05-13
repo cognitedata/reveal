@@ -4,6 +4,7 @@ import {
   PidDocumentMetadata,
   DiagramType,
 } from '../types';
+import { UNIT_REGEX } from '../constants';
 
 import getLineNumberAndPageFromText from './getLineNumberAndPageFromText';
 
@@ -49,7 +50,7 @@ export const getMetadataFromFileName = (
   const isoLineNumberAndText = getLineNumberAndPageFromText(fileName);
   const pidFileNameMatchArray = fileName.match(/MF_[0-9]{1,}/);
 
-  const unitMatchArray = fileName.match(/G[0-9]{4}/);
+  const unitMatchArray = fileName.match(UNIT_REGEX);
   const unit = unitMatchArray ? unitMatchArray[0] : 'Unknown';
 
   const isPid =

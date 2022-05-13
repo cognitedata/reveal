@@ -2,10 +2,10 @@
 /* eslint-disable no-param-reassign */
 import { v4 as uuid } from 'uuid';
 import uniqBy from 'lodash/uniqBy';
+import uniq from 'lodash/uniq';
 
 import {
   getPathReplacementDescendants,
-  getLineNumberFromText,
   ConnectionVisualization,
   LabelVisualization,
   loadGraphFromJson,
@@ -13,6 +13,7 @@ import {
   isValidLegendJson,
   computeSymbolInstances,
   getGraphFormat,
+  getLineNumberAndUnitFromText,
 } from './utils';
 import {
   applyPathReplacementInSvg,
@@ -679,9 +680,9 @@ export class CognitePid {
     this.render();
 
     this.splitPaths();
-    this.parseLineNumbers();
     this.parseEquipmentTags();
     this.parseLineConnectionTags();
+    this.parseLineNumbers();
 
     this.emit(EventType.LOAD);
     this.refresh();
@@ -940,23 +941,6 @@ export class CognitePid {
       return;
     }
 
-    if (
-      this.activeTool !== 'connectLabels' &&
-      this.documentMetadata?.type === DiagramType.PID
-    ) {
-      if (node instanceof SVGTSpanElement) {
-        const lineNumber = getLineNumberFromText(node.innerHTML);
-        if (lineNumber) {
-          if (!this.lineNumbers.includes(lineNumber)) {
-            this.setLineNumbers([...this.lineNumbers, lineNumber]);
-          }
-          this.setActiveLineNumber(lineNumber, false);
-          this.setActiveTool('setLineNumber');
-          return;
-        }
-      }
-    }
-
     if (this.activeTool === 'addSymbol') {
       if (!(node instanceof SVGTSpanElement)) {
         if (!this.symbolSelection.includes(node.id)) {
@@ -1181,19 +1165,20 @@ export class CognitePid {
   }
 
   parseLineNumbers() {
-    if (this.pidDocument === undefined) return;
+    if (this.pidDocument === undefined || this.documentMetadata === undefined)
+      return;
 
-    const newLineNumbers = [...this.lineNumbers];
-
-    this.pidDocument.pidLabels.forEach((pidLabel) => {
-      const lineNumber = getLineNumberFromText(pidLabel.text);
-      if (lineNumber === null) return;
-      if (newLineNumbers.includes(lineNumber)) return;
-
-      newLineNumbers.push(lineNumber);
+    const { unit } = this.documentMetadata;
+    const lineNumbersWithUnit = this.pidDocument.parseLineNumbersWithUnit();
+    const newLineNumbers = lineNumbersWithUnit.map((lineNumbersWithUnit) => {
+      const relevantUnit = lineNumbersWithUnit.unit ?? unit;
+      return `${relevantUnit}-${lineNumbersWithUnit.lineNumber}`;
     });
 
-    this.setLineNumbers(newLineNumbers.sort(), false);
+    this.setLineNumbers(
+      uniq([...this.lineNumbers, ...newLineNumbers]).sort(),
+      false
+    );
   }
 
   parseEquipmentTags() {
@@ -1580,9 +1565,9 @@ export class CognitePid {
     }
 
     this.lineNumberVisualizationIds = this.pidDocument.pidLabels
-      .filter((pidLabel) => {
-        return getLineNumberFromText(pidLabel.text);
-      })
+      .filter(
+        (pidLabel) => getLineNumberAndUnitFromText(pidLabel.text).lineNumber
+      )
       .map(
         (pidTspan) =>
           visualizeBoundingBoxBehind({

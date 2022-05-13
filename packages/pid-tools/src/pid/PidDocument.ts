@@ -32,6 +32,7 @@ import { PidPath } from './PidPath';
 import { PidGroup, PidInstance } from './PidGroup';
 import { getFileConnectionsWithPosition } from './fileConnectionUtils';
 import parseLineConnectionTags from './parseLineConnectionTags';
+import parseLineNumbersWithUnit from './parseLineNumbersWithUnit';
 
 export type LabelInstanceConnection = {
   labelId: string;
@@ -363,6 +364,10 @@ export class PidDocument {
 
   parseLineConnectionTags() {
     return parseLineConnectionTags(this);
+  }
+
+  parseLineNumbersWithUnit() {
+    return parseLineNumbersWithUnit(this);
   }
 
   static inferLineNumbers(

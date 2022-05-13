@@ -1,4 +1,4 @@
-import { EQUIPMENT_TAG_REGEX } from '../constants';
+import { EQUIPMENT_TAG_REGEX, UNIT_REGEX } from '../constants';
 import { PidDocument } from '../pid/PidDocument';
 import {
   DiagramConnection,
@@ -207,7 +207,7 @@ export function addOrRemoveLabelToInstance(
         [instance.toPosition] = toPositionRegex;
       }
 
-      const unit = labelText.match(/G[0-9]{4}/);
+      const unit = labelText.match(UNIT_REGEX);
       if (unit) {
         [instance.unit] = unit;
       }

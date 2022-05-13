@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { Button, Select, OptionType } from '@cognite/cogs.js';
-import { getLineNumberFromText } from '@cognite/pid-tools';
+import { getUnitAndLineNumberString } from '@cognite/pid-tools';
 
 import { StyledInput } from './elements';
 
@@ -40,9 +40,9 @@ export const AddLineNumberController: React.FC<AddLineNumberControllerProps> =
     };
 
     const addNewLineNumber = (inputString: string) => {
-      const match = getLineNumberFromText(inputString);
-      if (match) {
-        setNewLineNumber(match[0]);
+      const lineNumberWithUnit = getUnitAndLineNumberString(inputString);
+      if (lineNumberWithUnit) {
+        setNewLineNumber(lineNumberWithUnit);
       }
     };
 

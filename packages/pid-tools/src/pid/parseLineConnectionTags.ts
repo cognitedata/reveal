@@ -6,7 +6,7 @@ import {
 } from '../constants';
 import { BoundingBox } from '../geometry';
 import { DiagramLineConnectionTag } from '../types';
-import { getLineNumberFromText } from '../utils';
+import { getLineNumberAndUnitFromText } from '../utils';
 
 import { PidDocument } from './PidDocument';
 
@@ -15,7 +15,8 @@ const parseLineConnectionTags = (pidDocument: PidDocument) => {
 
   const sameOrLineNumberLabels = pidDocument.pidLabels.filter(
     (pidLabel) =>
-      pidLabel.text.includes('SAME') || getLineNumberFromText(pidLabel.text)
+      pidLabel.text.includes('SAME') ||
+      getLineNumberAndUnitFromText(pidLabel.text).lineNumber
   );
   const letterLabels = pidDocument.pidLabels.filter((pidLabel) =>
     pidLabel.text.match(LINE_CONNECTION_LETTER_REGEX)

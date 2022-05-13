@@ -85,18 +85,18 @@ export const COLORS = {
   splitLine: 'Peru',
 };
 
-export const LINE_CONNECTION_LETTER_REGEX = /('[A-Z]'|"[A-Z]")/;
-
-export const EQUIPMENT_TAG_REGEX = /^[0-9]{2}-[A-Z0-9]{4,5}$/;
 export const VALID_LINE_NUMBER_PREFIXES = ['L', 'UT', 'IP', 'UL'];
+export const LINE_CONNECTION_LETTER_REGEX = /('[A-Z]'|"[A-Z]")/;
+export const EQUIPMENT_TAG_REGEX = /^[0-9]{2}-[A-Z0-9]{4,5}$/;
+export const UNIT_REGEX = /G[0-9]{4}/;
 
 export const DIAGRAM_PARSER_SOURCE = 'COGNITE_DIAGRAM_PARSER';
 export const DIAGRAM_PARSER_OUTPUT_TYPE = 'graph';
 export const DIAGRAM_PARSER_TYPE = 'COGNITE_DIAGRAM_PARSER_TYPE';
 
 export const LINEWALK_VERSION_KEY = 'LINEWALK_VERSION';
-export const LINEWALK_FRONTEND_VERSION = '0.0.22h';
-export const LINEWALK_DATA_VERSION = '0.0.22h';
+export const LINEWALK_FRONTEND_VERSION = '0.0.25';
+export const LINEWALK_DATA_VERSION = '0.0.25';
 export const LINE_REVIEW_EVENT_TYPE = 'LINE_REVIEW';
 export const DIAGRAM_PARSER_PARSED_DOCUMENT_EXTERNAL_ID_PREFIX =
   'COGNITE_DIAGRAM_PARSER_PARSED_DOCUMENT_EXTERNAL_ID';

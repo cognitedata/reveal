@@ -76,6 +76,12 @@ const useCdfDiagrams = () => {
     try {
       await client?.files.upload(fileInfo, JSON.stringify(graph), true);
       setSaveStatus(SaveState.Saved);
+
+      const lineNumbersToAddToPdfMetadata =
+        graph.documentMetadata.type === DiagramType.ISO
+          ? [graph.documentMetadata.lineNumber]
+          : graph.lineNumbers;
+
       await client?.files.update([
         {
           externalId: pdfExternalId,
@@ -86,7 +92,7 @@ const useCdfDiagrams = () => {
                 [getGraphExternalIdKey(LINEWALK_DATA_VERSION)]: externalId,
                 ...lineNumbersMetadata(
                   LINEWALK_DATA_VERSION,
-                  graph.lineNumbers,
+                  lineNumbersToAddToPdfMetadata,
                   graph.documentMetadata.unit
                 ),
               },
@@ -97,15 +103,11 @@ const useCdfDiagrams = () => {
       ]);
 
       if (graph.documentMetadata.type === DiagramType.ISO) {
-        await Promise.all(
-          graph.lineNumbers.map((lineNumber) =>
-            createEventForLineNumberIfDoesntExist(client, {
-              version: LINEWALK_DATA_VERSION,
-              lineNumber,
-              unit: graph.documentMetadata.unit,
-            })
-          )
-        );
+        createEventForLineNumberIfDoesntExist(client, {
+          version: LINEWALK_DATA_VERSION,
+          lineNumber: graph.documentMetadata.lineNumber,
+          unit: graph.documentMetadata.unit,
+        });
       }
     } catch (error) {
       setSaveStatus(SaveState.Error);
