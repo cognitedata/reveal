@@ -6,6 +6,7 @@ import { useTranslation } from '@cognite/react-i18n';
 import { CloseButton } from 'components/Buttons';
 import { FlexGrow } from 'styles/layout';
 
+import { CONTINUE_EDITING, EXIT_DELETE } from './constants';
 import { DialogHeader, DialogHeaderLabel, DialogFooter } from './elements';
 
 const MODAL_STYLE = {
@@ -36,14 +37,14 @@ export const LeaveConfirmModal: React.FC<Props> = ({
             onClick={onCancel}
             data-testid="map-leave-modal-cancel-btn"
           >
-            {t('Exit & delete')}
+            {t(EXIT_DELETE)}
           </Button>
           <Button
             type="primary"
             onClick={onOk}
             data-testid="map-leave-modal-ok-btn"
           >
-            {t('Continue editing')}
+            {t(CONTINUE_EDITING)}
           </Button>
         </DialogFooter>
       }

@@ -186,7 +186,7 @@ export const WellResultTable: React.FC = () => {
   return (
     <WellsContainer>
       <SearchTableResultActionContainer>
-        <SearchResultsContainer>
+        <SearchResultsContainer data-testid="well-search-result-container">
           <SearchBreadcrumb stats={wellsStats} />
           <WellAppliedFilters showClearTag showSearchPhraseTag showGeoFilters />
         </SearchResultsContainer>

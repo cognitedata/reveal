@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 
 import { AllIconTypes, Button, Tooltip } from '@cognite/cogs.js';
 
+import { CANCEL_POLYGON, POLYGON_TOOL } from '../constants';
+
 import { ButtonContainer } from './elements';
 
 interface Props {
@@ -24,7 +26,7 @@ export const PolygonButton: React.FC<Props> = React.memo(
             onClick={onToggle}
             aria-label="Freedraw button"
           >
-            {t(isActive ? 'Cancel polygon search' : 'Polygon tool')}
+            {t(isActive ? CANCEL_POLYGON : POLYGON_TOOL)}
           </Button>
         </Tooltip>
       </ButtonContainer>

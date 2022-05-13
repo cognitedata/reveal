@@ -2,6 +2,8 @@ import React, { Fragment } from 'react';
 
 import { Icons } from '@cognite/cogs.js';
 
+import { POLYGON_EDIT_MESSAGE } from '../constants';
+
 import { InfoContainer, InfoKey, InfoMessage, InfoSeparator } from './elements';
 
 export type InfoCode = 'finish' | 'cancel' | 'edit';
@@ -29,7 +31,7 @@ const infoMessages = [
   },
   {
     code: 'edit',
-    element: 'Click on the polygon to edit it',
+    element: POLYGON_EDIT_MESSAGE,
   },
 ];
 

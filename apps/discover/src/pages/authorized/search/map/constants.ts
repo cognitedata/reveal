@@ -32,3 +32,10 @@ export const SUBSURFACE_FACILITY_ICON = 'subsurface_facility_icon';
 
 export const FAVORITE_ON_ICON = 'FavoriteFilled';
 export const FAVORITE_OFF_ICON = 'Favorite';
+
+export const CANCEL_POLYGON = 'Cancel polygon search';
+export const POLYGON_TOOL = 'Polygon tool';
+export const POLYGON_EDIT_MESSAGE = 'Click on the polygon to edit it';
+
+export const CONTINUE_EDITING = 'Continue editing';
+export const EXIT_DELETE = 'Exit & delete';

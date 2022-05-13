@@ -141,7 +141,10 @@ const FilterItemTitle: React.FC<TitleProps> = ({
   };
 
   return (
-    <CategoryWrapper onClick={handleFilterClick}>
+    <CategoryWrapper
+      onClick={handleFilterClick}
+      data-testid={`${title}-title-id`}
+    >
       <Container>
         <FilterTitle title={title} iconElement={iconElement}>
           <CategoryHeader category={category} {...rest} displayClear />

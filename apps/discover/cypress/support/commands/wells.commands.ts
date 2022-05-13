@@ -74,6 +74,13 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add('clickClearAllFilterButtonInWellsTable', () => {
+  cy.log('Click clear all button in well result table');
+  cy.findByTestId('well-search-result-container')
+    .findByTestId('clear-all-filter-button')
+    .click();
+});
+
 export interface WellsCommands {
   goToWellsInspectTab(tab: any): void;
   openInspectView(selectedWells?: number): void;
@@ -83,4 +90,5 @@ export interface WellsCommands {
     wellCount: number,
     wellboresCount?: number
   ): void;
+  clickClearAllFilterButtonInWellsTable(): void;
 }
