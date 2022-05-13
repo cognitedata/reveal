@@ -24,8 +24,6 @@ export type ReviewId = { id: string };
 
 // derivations
 
-export type Reviewable = Visible & Selectable;
-
 type TurnKeypointType<Type> = {
   [Property in keyof Type]: Type[Property] extends ImageKeypoint[]
     ? ReviewKeypoint[]
@@ -33,14 +31,16 @@ type TurnKeypointType<Type> = {
 };
 
 export type ReviewAnnotation<Type> = TurnKeypointType<VisionAnnotation<Type>> &
-  Reviewable;
+  Visible &
+  Selectable;
 
-export type ReviewKeypoint = ImageKeypoint & ReviewId & Reviewable;
+export type ReviewKeypoint = ImageKeypoint & ReviewId & Selectable;
 
 // type for temp keypoint collections
 export type TempKeypointCollection = Label &
   ReviewId &
-  Reviewable & {
+  Visible &
+  Selectable & {
     keypoints: ReviewKeypoint[];
     status: Status;
   };
