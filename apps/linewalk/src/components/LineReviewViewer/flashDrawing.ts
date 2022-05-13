@@ -5,7 +5,7 @@ import delayMs from '../../utils/delayMs';
 const flashDrawing = async (
   ornateRef: CogniteOrnate,
   drawing: Drawing,
-  times = 3,
+  times = 4,
   delay = 200
 ) => {
   for (let i = 0; i < times; i++) {

@@ -31,7 +31,7 @@ const getConnectionGroupByPath = (
         y: path[i].y,
       },
     ];
-    const color = selectedId === pathId ? 'magenta' : 'black';
+    const color = selectedId === pathId ? 'magenta' : '#404040';
     drawings.push({
       id: getIdByPath(points),
       type: 'arrow',
@@ -39,10 +39,10 @@ const getConnectionGroupByPath = (
         tension: 0,
         points: points.flatMap(({ x, y }) => [x, y]),
         stroke: color,
-        pointerLength: 20,
-        pointerWidth: 20,
+        pointerLength: 15,
+        pointerWidth: 15,
         dash: [6, 6],
-        strokeWidth: 3,
+        strokeWidth: 2,
         hitStrokeWidth: 10,
         userGenerated: true,
         fill: color,

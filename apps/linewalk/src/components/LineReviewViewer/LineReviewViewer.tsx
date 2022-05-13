@@ -33,7 +33,10 @@ import getFileConnectionGroups from '../../utils/getFileConnectionDrawings';
 import WorkSpaceTools from '../WorkSpaceTools';
 
 import centerOnAnnotationByAnnotationId from './centerOnAnnotationByAnnotationId';
-import { BOUNDING_BOX_PADDING_PX } from './constants';
+import {
+  LINE_NUMBER_ANNOTATION_STYLE,
+  NAVIGATIABLE_ANNOTATION_STYLE,
+} from './constants';
 import DiscrepancyModal from './DiscrepancyModal';
 import DiscrepancyTool from './DiscrepancyTool';
 import DocumentJumper from './DocumentJumper';
@@ -579,13 +582,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
             )
             .flatMap(({ from, to }) => [from.annotationId, to.annotationId]),
           '',
-          {
-            fill: 'rgba(24, 175, 142, 0.2)',
-            stroke: '#00665C',
-            strokeWidth: 3,
-            dash: [3, 3],
-            padding: BOUNDING_BOX_PADDING_PX,
-          },
+          NAVIGATIABLE_ANNOTATION_STYLE,
           tool === WorkspaceTool.DEFAULT ? onLinkClick : undefined
         ),
         ...getAnnotationBoundingBoxOverlay(
@@ -599,10 +596,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
             )
             .map((annotation) => annotation.id),
           'line-number-bounding-box-',
-          {
-            fill: 'rgba(74, 103, 251, 0.2)',
-            padding: 3,
-          }
+          LINE_NUMBER_ANNOTATION_STYLE
         ),
       ],
     ];

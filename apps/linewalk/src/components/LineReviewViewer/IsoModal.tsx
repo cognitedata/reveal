@@ -17,7 +17,10 @@ import {
 } from '../../modules/lineReviews/types';
 
 import centerOnAnnotationByAnnotationId from './centerOnAnnotationByAnnotationId';
-import { BOUNDING_BOX_PADDING_PX } from './constants';
+import {
+  BOUNDING_BOX_PADDING_PX,
+  NAVIGATIABLE_ANNOTATION_STYLE,
+} from './constants';
 import getAnnotationBoundingBoxOverlay from './getAnnotationBoundingBoxOverlay';
 import getAnnotationsForLineByDocument from './getAnnotationsForLineByDocument';
 import getDiscrepancyCircleMarkers from './getDiscrepancyCircleMarkers';
@@ -293,13 +296,7 @@ const IsoModal: React.FC<IsoModalProps> = ({
         link.from.annotationId,
       ]),
       'navigatable',
-      {
-        fill: 'rgba(24, 175, 142, 0.2)',
-        stroke: '#00665C',
-        strokeWidth: 3,
-        dash: [3, 3],
-        padding: BOUNDING_BOX_PADDING_PX,
-      }
+      NAVIGATIABLE_ANNOTATION_STYLE
     ),
     ...getAnnotationBoundingBoxOverlay(
       undefined,
