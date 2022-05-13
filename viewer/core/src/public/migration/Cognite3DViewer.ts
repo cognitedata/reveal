@@ -50,6 +50,7 @@ import { IntersectInput, SupportedModelTypes, CogniteModelBase, LoadingState } f
 
 import { CogniteClient } from '@cognite/sdk';
 import log from '@reveal/logger';
+import { pick } from 'lodash';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -275,16 +276,17 @@ export class Cognite3DViewer {
     this.animate(0);
 
     MetricsLogger.trackEvent('construct3dViewer', {
-      constructorOptions: omit(options, [
-        'sdk',
-        'cameraManager',
-        'customDataSource',
-        'domElement',
-        'renderer',
-        'renderTargetOptions',
-        'onLoading',
-        '_sectorCuller'
-      ])
+      constructorOptions: {
+        ...pick(options, [
+          'logMetrics',
+          'antiAliasingHint',
+          'ssaoQualityHint',
+          'enableEdges',
+          'continuousModelStreaming',
+        ]),
+        'cameraManager': options.cameraManager ? true : false,
+        'customDataSource': options.customDataSource ? true : false,
+      }
     });
   }
 
