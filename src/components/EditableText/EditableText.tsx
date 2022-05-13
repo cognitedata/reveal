@@ -7,15 +7,15 @@ import ClickBoundary from './ClickBoundary';
 
 export interface EditableTextProps {
   value: string;
-  onChange: (value: string) => void;
-  onCancel?: () => void;
+  focus?: boolean;
   editing?: boolean;
-  hideButtons?: boolean;
-  hideEdit?: boolean;
   isError?: boolean;
+  hideEdit?: boolean;
+  hideButtons?: boolean;
   translations?: typeof defaultTranslations;
   placeholder?: string;
-  focus?: boolean;
+  onChange: (value: string) => void;
+  onCancel?: () => void;
 }
 
 export const defaultTranslations = makeDefaultTranslations(

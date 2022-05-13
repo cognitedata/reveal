@@ -17,7 +17,7 @@ const Template: Story<Props> = (args) => {
   return (
     <div
       style={{
-        maxWidth: '25rem',
+        maxWidth: '15rem',
         border: '1px solid var(--cogs-border-default)',
         borderRadius: '4px',
         padding: '1rem',
@@ -29,44 +29,68 @@ const Template: Story<Props> = (args) => {
 };
 
 const ActionTemplate: Story<Props> = (args) => {
-  const [value, setValue] = useState('Text here...');
-  const onChange = (val: string) => {
-    setValue(val);
+  const [localValue, setLocalValue] = useState(args.value);
+  const [localArgs, setLocalArgs] = useState(args);
+  const handleOnChange = (val: string) => {
+    setLocalValue(val);
+    setLocalArgs((obj) => ({
+      ...obj,
+      editing: false,
+    }));
   };
   return (
     <div
       style={{
-        maxWidth: '15rem',
+        maxWidth: '25rem',
         border: '1px solid var(--cogs-border-default)',
         borderRadius: '4px',
         padding: '1rem',
       }}
     >
-      <EditableText {...args} value={value} onChange={(val) => onChange(val)} />
+      <EditableText
+        {...localArgs}
+        value={localValue}
+        onChange={(val) => handleOnChange(val)}
+      />
     </div>
   );
 };
 
-export const EditableTexts = ActionTemplate.bind({});
-export const EditableTextWithButtons = Template.bind({});
-export const EditableTextIsEditing = Template.bind({});
-export const EditableTextWithError = Template.bind({});
+export const Default = Template.bind({});
+export const Editing = ActionTemplate.bind({});
+export const Focused = ActionTemplate.bind({});
+export const ErrorState = ActionTemplate.bind({});
+export const ButtonsVisible = ActionTemplate.bind({});
+export const ButtonsHidden = ActionTemplate.bind({});
 
-EditableTexts.args = {
+Default.args = {
+  value: 'Text value',
   hideButtons: true,
+  onChange: () => {},
 };
 
-EditableTextWithButtons.args = {
-  value: 'Text field value ...',
-  hideButtons: false,
-};
-
-EditableTextIsEditing.args = {
+Editing.args = {
   value: 'Text field value ...',
   editing: true,
 };
 
-EditableTextWithError.args = {
+Focused.args = {
+  value: 'Text field value ...',
+  editing: true,
+  focus: true,
+};
+
+ErrorState.args = {
   value: 'Text value with error',
   isError: true,
+};
+
+ButtonsVisible.args = {
+  value: 'Text field value ...',
+  hideButtons: false,
+};
+
+ButtonsHidden.args = {
+  value: 'Save text on blur or enter',
+  hideButtons: true,
 };
