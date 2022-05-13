@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { CogniteAnnotation } from '@cognite/annotations';
 import styled from 'styled-components';
 import {
@@ -17,6 +17,8 @@ import {
   useSelectedAnnotations,
 } from '@cognite/react-picture-annotation';
 import capitalize from 'lodash/capitalize';
+import { useCdfItems } from '@cognite/sdk-react-query-hooks';
+import { Asset } from '@cognite/sdk';
 
 interface AnnotationsListProps {
   annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
@@ -35,6 +37,32 @@ const AnnotationsList = ({
   const [filteredList, setFilteredList] = useState<
     Array<CogniteAnnotation | ProposedCogniteAnnotation>
   >([]);
+
+  const set = new Set<number>();
+  filteredList.forEach(({ resourceId = 0 }) => {
+    set.add(+resourceId);
+  });
+  const { data: assetsResources = [] } = useCdfItems<Asset>(
+    'assets',
+    Array.from(set).map(id => ({ id })),
+    false,
+    {
+      enabled: filteredList.length > 0,
+    }
+  );
+  const filteredItemWithName = useMemo(
+    () =>
+      filteredList.map(item => {
+        const assetDetail = assetsResources.find(
+          resource => resource.id === item.resourceId!
+        );
+        return {
+          ...item,
+          label: item.label ? item.label : assetDetail?.name ?? '',
+        };
+      }),
+    [assetsResources, filteredList]
+  );
 
   const { setSelectedAnnotations } = useSelectedAnnotations();
 
@@ -130,10 +158,10 @@ const AnnotationsList = ({
           <div>
             {filteredList.length} {type}{' '}
           </div>
-          {filteredList.length ? (
-            filteredList.map(an => (
-              <AnnotationItem key={an.id} annotation={an} />
-            ))
+          {filteredItemWithName.length ? (
+            filteredItemWithName.map(an =>
+              an ? <AnnotationItem key={an.id} annotation={an} /> : null
+            )
           ) : (
             <EmptyState type={filterType} />
           )}

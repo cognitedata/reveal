@@ -53,6 +53,7 @@ export const FilePreview = ({
   const { data: file, isFetched: fileFetched } = useCdfItem<FileInfo>('files', {
     id: fileId,
   });
+
   const isMimeTypeSet = file && file.mimeType;
   const canPreviewFile = file && isFilePreviewable(file);
 
