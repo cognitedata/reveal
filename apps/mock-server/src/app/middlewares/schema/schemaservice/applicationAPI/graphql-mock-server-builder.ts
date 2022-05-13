@@ -98,7 +98,7 @@ export const buildFromMockDb = (db: CdfMockDatabase) => {
     'schema'
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ).getState() as any as Api[];
-  if (solutionsMock.length) {
+  if (solutionsMock?.length) {
     solutionsMock.forEach((solution) => {
       solution.versions.forEach((solutionVersion) => {
         if (
