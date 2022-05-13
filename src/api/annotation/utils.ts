@@ -134,7 +134,7 @@ export const getFieldOrSetNull = (
   };
 };
 
-export const convertToVisionAnnotations = (
+export const convertCDFAnnotationV2ToVisionAnnotations = (
   annotations: CDFAnnotationV2<VisionAnnotationDataType>[]
 ): VisionAnnotation<VisionAnnotationDataType>[] =>
   annotations.map((annotation) => {
