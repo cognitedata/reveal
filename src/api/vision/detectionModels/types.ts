@@ -155,7 +155,9 @@ export interface ParamsGaugeReader {
 }
 export interface ParamsCustomModel {
   modelJobId?: number;
+  modelName: string;
   threshold: number;
+  isValid: boolean;
 }
 
 export type DetectionModelParams =

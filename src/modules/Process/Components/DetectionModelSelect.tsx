@@ -2,7 +2,10 @@
 import React, { useState } from 'react';
 import { Select, Button } from '@cognite/cogs.js';
 import { Props as SelectProps } from 'react-select';
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
+import {
+  ParamsCustomModel,
+  VisionDetectionModelType,
+} from 'src/api/vision/detectionModels/types';
 
 import * as tagDetectionModelDetails from 'src/modules/Process/Containers/ModelDetails/TagDetectionModelDetails';
 import * as objectDetectionModelDetails from 'src/modules/Process/Containers/ModelDetails/ObjectDetectionModelDetails';
@@ -111,13 +114,19 @@ export function DetectionModelSelect({
             value: VisionDetectionModelType.GaugeReader,
             backgroundColor: ColorsObjectDetection.backgroundColor,
             isSelectable: true,
+            divider: availableDetectionModels.length < BUILT_IN_MODEL_COUNT,
           };
         case VisionDetectionModelType.CustomModel:
           return {
-            label: customModelDetails.badge(item.modelName),
+            label: customModelDetails.badge({
+              modelName: (item.settings as ParamsCustomModel).modelName,
+              hideText: false,
+              disabled: !(item.settings as ParamsCustomModel).isValid,
+            }),
             value: VisionDetectionModelType.CustomModel,
             backgroundColor: ColorsObjectDetection.backgroundColor,
-            isSelectable: true,
+            isSelectable: (item.settings as ParamsCustomModel).isValid,
+            divider: availableDetectionModels.length > BUILT_IN_MODEL_COUNT,
           };
       }
     }

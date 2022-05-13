@@ -8,7 +8,6 @@ import reducer, {
   removeJobById,
   resetDetectionModelParameters,
   revertDetectionModelParameters,
-  setCustomModelName,
   setDetectionModelParameters,
   setProcessFileIds,
   setProcessViewFileUploadModalVisibility,
@@ -57,9 +56,13 @@ describe('Test process reducers', () => {
         type: VisionDetectionModelType.CustomModel,
         settings: {
           threshold: 0.8,
+          modelName: 'Custom model',
+          isValid: false,
         },
         unsavedSettings: {
           threshold: 0.8,
+          modelName: 'Custom model',
+          isValid: false,
         },
       },
     ],
@@ -344,27 +347,6 @@ describe('Test process reducers', () => {
           ).toEqual(
             mockProcessState.availableDetectionModels[modelIndex].settings
           );
-        }
-      });
-    });
-
-    // Function should works for all the model indexes
-    // but only use for update name of custom model in the UI
-    describe('action setCustomModelName', () => {
-      test('Update the Modal name', () => {
-        const newModelName = 'New Name';
-        for (
-          let modelIndex = 0;
-          modelIndex < BUILT_IN_MODEL_COUNT + 1; // built-in models + custom model
-          modelIndex++
-        ) {
-          const newState = reducer(
-            mockProcessState,
-            setCustomModelName({ modelIndex, modelName: newModelName })
-          );
-          expect(
-            newState.availableDetectionModels[modelIndex].modelName
-          ).toEqual(newModelName);
         }
       });
     });
