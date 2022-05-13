@@ -73,7 +73,7 @@ export function calculateSeriesData({
         const unitLabel =
           units.find(
             (unitOption) => unitOption.value === t.preferredUnit?.toLowerCase()
-          )?.label || t.preferredUnit;
+          )?.label || t.customUnitLabel;
 
         const timeseriesState = timeseriesData.find(
           (ts) => ts.externalId === t.tsExternalId
@@ -125,10 +125,11 @@ export function calculateSeriesData({
       .filter((t) => t.enabled),
     ...calculations
       .map((workflow) => {
-        const unitLabel = units.find(
-          (unitOption) =>
-            unitOption.value === workflow.preferredUnit?.toLowerCase()
-        )?.label;
+        const unitLabel =
+          units.find(
+            (unitOption) =>
+              unitOption.value === workflow.preferredUnit?.toLowerCase()
+          )?.label || workflow.customUnitLabel;
 
         const workflowState = calculationsData?.find(
           ({ id }) => id === workflow.id

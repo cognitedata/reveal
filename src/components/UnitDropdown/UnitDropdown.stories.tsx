@@ -12,12 +12,50 @@ export default {
   title: 'Components/Unit Dropdown',
 } as Meta;
 
-const Template: Story<Props> = (args) => <UnitDropdown {...args} />;
+const Template: Story<Props> = (args) => (
+  <UnitDropdown style={{ whiteSpace: 'nowrap' }} {...args} />
+);
 
-export const UnitDropdowns = Template.bind({});
+export const Default = Template.bind({});
+export const Disabled = Template.bind({});
+export const CustomUnitLabel = Template.bind({});
+export const InputOutputSelected = Template.bind({});
 
-UnitDropdowns.args = {
+Default.args = {
+  open: true,
   onOverrideUnitClick: () => {},
   onConversionUnitClick: () => {},
+  onCustomUnitLabelClick: () => {},
+  onResetUnitClick: () => {},
+};
+
+Disabled.args = {
+  disabled: true,
+  onOverrideUnitClick: () => {},
+  onConversionUnitClick: () => {},
+  onCustomUnitLabelClick: () => {},
+  onResetUnitClick: () => {},
+};
+
+CustomUnitLabel.args = {
+  open: true,
+  unit: '',
+  originalUnit: 'psi',
+  preferredUnit: '',
+  customUnitLabel: 'NmX',
+  onOverrideUnitClick: () => {},
+  onConversionUnitClick: () => {},
+  onCustomUnitLabelClick: () => {},
+  onResetUnitClick: () => {},
+};
+
+InputOutputSelected.args = {
+  open: true,
+  unit: 'bar',
+  originalUnit: 'psi',
+  preferredUnit: 'psi',
+  onOverrideUnitClick: () => {},
+  onConversionUnitClick: () => {},
+  onCustomUnitLabelClick: () => {},
   onResetUnitClick: () => {},
 };

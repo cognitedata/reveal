@@ -93,6 +93,7 @@ function TimeSeriesRow({
     interpolation = 'linear',
     preferredUnit,
     originalUnit,
+    customUnitLabel,
     enabled,
     tsExternalId,
   } = timeseries;
@@ -178,6 +179,14 @@ function TimeSeriesRow({
     });
   };
 
+  const updateCustomUnitLabel = async (label: string) => {
+    update(id, {
+      customUnitLabel: label,
+      preferredUnit: '',
+      unit: '',
+    });
+  };
+
   const resetUnit = async () => {
     const currentInputUnit = timeseries.unit;
     const currentOutputUnit = timeseries.preferredUnit;
@@ -195,6 +204,7 @@ function TimeSeriesRow({
     update(id, {
       unit: originalUnit,
       preferredUnit: originalUnit,
+      customUnitLabel: '',
       range,
     });
   };
@@ -389,8 +399,10 @@ function TimeSeriesRow({
               unit={unit}
               originalUnit={originalUnit}
               preferredUnit={preferredUnit}
+              customUnitLabel={customUnitLabel}
               onOverrideUnitClick={updateUnit}
               onConversionUnitClick={updatePrefferedUnit}
+              onCustomUnitLabelClick={updateCustomUnitLabel}
               onResetUnitClick={resetUnit}
               translations={unitDropdownTranslations}
             />

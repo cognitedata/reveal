@@ -13,6 +13,7 @@ import {
 import {
   calculateSeriesDataCase1,
   calculateSeriesDataCase2,
+  calculateSeriesDataCase3,
   formatSeriesDataCase1,
   formatSeriesDataCase2,
   seriesDataExample1,
@@ -193,9 +194,14 @@ describe('calculateSeriesData', () => {
     expect(result).toEqual(calculateSeriesDataCase1.result);
   });
 
-  it('should generate correct result for timeseries and calculations as inputs with axis merging', () => {
+  it('should generate correct result for timeseries and calculations as inputs with axis merging (all in one)', () => {
     const result = calculateSeriesData(calculateSeriesDataCase2.input);
     expect(result).toEqual(calculateSeriesDataCase2.result);
+  });
+
+  it('should generate correct result for timeseries and calculations as inputs with axis merging (multiple)', () => {
+    const result = calculateSeriesData(calculateSeriesDataCase3.input);
+    expect(result).toEqual(calculateSeriesDataCase3.result);
   });
 });
 

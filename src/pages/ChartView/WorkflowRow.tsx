@@ -112,6 +112,7 @@ function WorkflowRow({
     calls,
     unit,
     preferredUnit,
+    customUnitLabel,
   } = workflow;
   const call = [...(calls || [])].sort((c) => c.callDate)[0];
   const isWorkspaceMode = mode === 'workspace';
@@ -385,6 +386,14 @@ function WorkflowRow({
     });
   };
 
+  const updateCustomUnitLabel = async (label: string) => {
+    update(id, {
+      customUnitLabel: label,
+      preferredUnit: '',
+      unit: '',
+    });
+  };
+
   const resetUnit = async () => {
     const currentInputUnit = workflow.unit;
     const currentOutputUnit = workflow.preferredUnit;
@@ -565,9 +574,11 @@ function WorkflowRow({
             <UnitDropdown
               unit={unit}
               preferredUnit={preferredUnit}
+              customUnitLabel={customUnitLabel}
               onOverrideUnitClick={updateUnit}
               onConversionUnitClick={updatePrefferedUnit}
               onResetUnitClick={resetUnit}
+              onCustomUnitLabelClick={updateCustomUnitLabel}
               translations={unitDropdownTranslations}
             />
           </td>

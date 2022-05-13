@@ -92,8 +92,9 @@ export const SourceTable = styled.table`
 
     &.col-unit {
       padding-right: 8px;
-      .cogs-btn {
+      .unit-btn {
         min-width: 120px;
+        height: 28px;
         justify-content: space-between;
       }
     }

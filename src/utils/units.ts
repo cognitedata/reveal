@@ -2,6 +2,7 @@ import { DatapointAggregate, DoubleDatapoint } from '@cognite/sdk';
 import { ChartThreshold } from 'models/chart/types';
 
 export enum UnitTypes {
+  CUSTOM = 'Custom',
   TEMPERATURE = 'Temperature',
   PRESSURE = 'Pressure',
   VOLUMETRIC_FLOW = 'Volumetric flow',

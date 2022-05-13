@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import * as React from 'react';
 import styled from 'styled-components';
 import { Button, Icon, Input, Tooltip } from '@cognite/cogs.js';
@@ -14,6 +14,8 @@ export interface EditableTextProps {
   hideEdit?: boolean;
   isError?: boolean;
   translations?: typeof defaultTranslations;
+  placeholder?: string;
+  focus?: boolean;
 }
 
 export const defaultTranslations = makeDefaultTranslations(
@@ -31,10 +33,16 @@ const EditableText = ({
   hideButtons,
   hideEdit,
   translations,
+  placeholder,
+  focus,
 }: EditableTextProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>(value);
   const t = { ...defaultTranslations, ...translations };
+
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
 
   const finishEditing = () => {
     onChange(inputValue);
@@ -72,7 +80,8 @@ const EditableText = ({
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={finishOnEnter}
               onBlur={hideButtons ? finishEditing : undefined}
-              autoFocus
+              placeholder={placeholder}
+              autoFocus={focus}
               fullWidth
             />
           </div>
@@ -111,7 +120,11 @@ const EditableText = ({
         <div className="edit-button" style={{ marginLeft: 4 }}>
           <ClickBoundary>
             <Tooltip content={t.Rename}>
-              <Button type="ghost" onClick={startEditing}>
+              <Button
+                type="ghost"
+                onClick={startEditing}
+                style={{ minWidth: '2.625rem' }}
+              >
                 <Icon type="Edit" />
               </Button>
             </Tooltip>

@@ -53,6 +53,7 @@ export type ChartTimeSeries = {
   unit?: string;
   originalUnit?: string;
   preferredUnit?: string;
+  customUnitLabel?: string;
   description?: string;
   range?: number[];
   statisticsCalls?: StatisticsCallRef[];
@@ -69,6 +70,7 @@ type ChartWorkflowBase = {
   displayMode?: 'lines' | 'markers';
   unit?: string;
   preferredUnit?: string;
+  customUnitLabel?: string;
   color: string;
   enabled: boolean;
   range?: number[];

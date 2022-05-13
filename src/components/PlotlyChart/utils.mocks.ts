@@ -180,6 +180,7 @@ export const calculateSeriesDataCase1: {
         lineWeight: 1,
         unit: '',
         preferredUnit: '',
+        customUnitLabel: '',
         enabled: true,
         id: 'e2c66ee8-dc6f-4351-a971-46b0fc499f40',
         type: 'timeseries',
@@ -209,6 +210,7 @@ export const calculateSeriesDataCase1: {
         description: '-',
         unit: '',
         preferredUnit: '',
+        customUnitLabel: '',
         tsExternalId: 'VAL_21_PI_1111:Z.X.Value',
         originalUnit: '',
         id: '84289091-6420-49ea-9d75-cd5ae70b1803',
@@ -224,6 +226,7 @@ export const calculateSeriesDataCase1: {
         name: 'Calc 1',
         lineWeight: 1,
         preferredUnit: '',
+        customUnitLabel: '',
         lineStyle: 'solid' as LineStyle,
         id: '59f6e099-cddd-4786-a8a8-e74494ece2dd',
         enabled: true,
@@ -275,6 +278,7 @@ export const calculateSeriesDataCase1: {
         id: 'c7ee18d4-6526-4910-ac26-dbeaeadc6eeb',
         version: 'v2' as 'v2',
         preferredUnit: '',
+        customUnitLabel: '',
         name: 'Calc 2',
         unit: '',
         lineWeight: 1,
@@ -3647,18 +3651,19 @@ export const calculateSeriesDataCase1: {
           lineWeight: 1,
           unit: '',
           preferredUnit: '',
+          customUnitLabel: '',
           enabled: true,
           id: 'e2c66ee8-dc6f-4351-a971-46b0fc499f40',
           type: 'timeseries',
           color: '#6929c4',
           tsId: 8070156109692675,
-          displayMode: 'lines' as 'lines' | 'markers' | undefined,
+          displayMode: 'lines',
           originalUnit: '',
           range: [-0.004209428514817475, 0.008946288902060182],
           tsExternalId: 'VAL_21_PI_1032_04:Z.X.Value',
           description: '-',
-          interpolation: 'linear' as Interpolation,
-          lineStyle: 'solid' as LineStyle as LineStyle,
+          interpolation: 'linear',
+          lineStyle: 'solid',
           createdAt: 1651753321354,
           width: 1,
           outdatedData: false,
@@ -4524,9 +4529,9 @@ export const calculateSeriesDataCase1: {
         {
           tsId: 433289095073112,
           createdAt: 1651753332310,
-          interpolation: 'linear' as Interpolation,
-          lineStyle: 'solid' as LineStyle,
-          displayMode: 'lines' as 'lines' | 'markers' | undefined,
+          interpolation: 'linear',
+          lineStyle: 'solid',
+          displayMode: 'lines',
           name: 'VAL_21_PI_1111:Z.X.Value',
           range: [-0.00038689823642818226, 0.004379047213922834],
           lineWeight: 1,
@@ -4536,6 +4541,7 @@ export const calculateSeriesDataCase1: {
           description: '-',
           unit: '',
           preferredUnit: '',
+          customUnitLabel: '',
           tsExternalId: 'VAL_21_PI_1111:Z.X.Value',
           originalUnit: '',
           id: '84289091-6420-49ea-9d75-cd5ae70b1803',
@@ -5389,6 +5395,7 @@ export const calculateSeriesDataCase1: {
     },
     {
       enabled: true,
+      unit: '',
       series: [
         {
           enabled: true,
@@ -6199,6 +6206,7 @@ export const calculateSeriesDataCase1: {
     },
     {
       enabled: true,
+      unit: '',
       series: [
         {
           enabled: true,
@@ -7046,6 +7054,7 @@ export const calculateSeriesDataCase2: {
         lineWeight: 1,
         unit: '',
         preferredUnit: '',
+        customUnitLabel: 'custom',
         enabled: true,
         id: 'e2c66ee8-dc6f-4351-a971-46b0fc499f40',
         type: 'timeseries',
@@ -7075,6 +7084,7 @@ export const calculateSeriesDataCase2: {
         description: '-',
         unit: '',
         preferredUnit: '',
+        customUnitLabel: 'custom',
         tsExternalId: 'VAL_21_PI_1111:Z.X.Value',
         originalUnit: '',
         id: '84289091-6420-49ea-9d75-cd5ae70b1803',
@@ -7090,6 +7100,7 @@ export const calculateSeriesDataCase2: {
         name: 'Calc 1',
         lineWeight: 1,
         preferredUnit: '',
+        customUnitLabel: 'custom',
         lineStyle: 'solid' as LineStyle,
         id: '59f6e099-cddd-4786-a8a8-e74494ece2dd',
         enabled: true,
@@ -7141,6 +7152,7 @@ export const calculateSeriesDataCase2: {
         id: 'c7ee18d4-6526-4910-ac26-dbeaeadc6eeb',
         version: 'v2' as 'v2',
         preferredUnit: '',
+        customUnitLabel: 'custom',
         name: 'Calc 2',
         unit: '',
         lineWeight: 1,
@@ -9305,7 +9317,7 @@ export const calculateSeriesDataCase2: {
   result: [
     {
       enabled: true,
-      unit: '',
+      unit: 'custom',
       range: [-0.004209428514817475, 0.008946288902060182],
       series: [
         {
@@ -9313,6 +9325,7 @@ export const calculateSeriesDataCase2: {
           lineWeight: 1,
           unit: '',
           preferredUnit: '',
+          customUnitLabel: 'custom',
           enabled: true,
           id: 'e2c66ee8-dc6f-4351-a971-46b0fc499f40',
           type: 'timeseries',
@@ -9861,6 +9874,4462 @@ export const calculateSeriesDataCase2: {
           description: '-',
           unit: '',
           preferredUnit: '',
+          customUnitLabel: 'custom',
+          tsExternalId: 'VAL_21_PI_1111:Z.X.Value',
+          originalUnit: '',
+          id: '84289091-6420-49ea-9d75-cd5ae70b1803',
+          width: 1,
+          outdatedData: false,
+          datapoints: [
+            {
+              timestamp: new Date('2022-04-18T14:01:10.454Z'),
+              value: 0.002734108803718137,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:01:11.761Z'),
+              value: 0.002038575482226275,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:01:12.761Z'),
+              value: 0.0021824749280304825,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:01:13.761Z'),
+              value: 0.0025182403015736334,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:01:14.761Z'),
+              value: 0.0025901900244757374,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:01:15.761Z'),
+              value: 0.0023983240967367938,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:01:16.761Z'),
+              value: 0.0023983240967367938,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:01:17.487Z'),
+              value: 0.002182471978100317,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:01:18.487Z'),
+              value: 0.002446287272156399,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:01:19.487Z'),
+              value: 0.0023983208550552933,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:01:20.487Z'),
+              value: 0.002470270480706952,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:01:21.487Z'),
+              value: 0.0027580689833135875,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:01:22.487Z'),
+              value: 0.0027101025662124812,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:55.388Z'),
+              value: 0.00237432262099836,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:56.388Z'),
+              value: 0.0026381362455537333,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:57.388Z'),
+              value: 0.0021824581667762703,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:58.388Z'),
+              value: 0.0022304242803317924,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:59.388Z'),
+              value: 0.0022544073371095538,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:07:00.388Z'),
+              value: 0.0027580515294425394,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:01:30.918Z'),
+              value: 0.0024942394733872752,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:01:31.918Z'),
+              value: 0.002734070191982205,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:01:32.918Z'),
+              value: 0.002278391826651838,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:01:33.918Z'),
+              value: 0.0021584764673543725,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:01:34.918Z'),
+              value: 0.00237432411408981,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:01:35.918Z'),
+              value: 0.0027100871201227125,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:01:24.169Z'),
+              value: 0.0020385817325220034,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:01:25.169Z'),
+              value: 0.0024942647080269218,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:01:26.169Z'),
+              value: 0.002470281393526663,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:01:27.169Z'),
+              value: 0.0025662146515276984,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:01:28.169Z'),
+              value: 0.002158498305023298,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:01:29.169Z'),
+              value: 0.0020625650470222625,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:01:28.199Z'),
+              value: 0.002662142693626115,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:01:29.199Z'),
+              value: 0.002230443878443502,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:01:30.199Z'),
+              value: 0.002230443878443502,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:01:31.199Z'),
+              value: 0.0021824773434232113,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:01:32.199Z'),
+              value: 0.002518243088565244,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:01:33.199Z'),
+              value: 0.0024702765535449538,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:01:28.696Z'),
+              value: 0.00215848856289855,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:01:29.696Z'),
+              value: 0.0026861191004959734,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:01:30.696Z'),
+              value: 0.002542219862969403,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:01:31.696Z'),
+              value: 0.0025662030692238315,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:01:32.696Z'),
+              value: 0.0025662030692238315,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:01:33.696Z'),
+              value: 0.0022544213879162633,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:01:16.172Z'),
+              value: 0.0020625455379641453,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:01:17.172Z'),
+              value: 0.0026381396415820465,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:01:18.172Z'),
+              value: 0.0022064440638686206,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:01:19.172Z'),
+              value: 0.0027340719921850297,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:01:20.172Z'),
+              value: 0.0027580550798357757,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:01:21.172Z'),
+              value: 0.0025901734662805544,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:01:13.538Z'),
+              value: 0.0026381061137612286,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:01:14.538Z'),
+              value: 0.002422261068089855,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:01:15.538Z'),
+              value: 0.002590140548056479,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:01:16.538Z'),
+              value: 0.002206416022418482,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:01:17.538Z'),
+              value: 0.002326329936680356,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:01:18.538Z'),
+              value: 0.002110484891008983,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:01:17.586Z'),
+              value: 0.0021584725715083817,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:01:18.586Z'),
+              value: 0.002038557428646805,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:01:19.586Z'),
+              value: 0.00206254045721912,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:01:20.586Z'),
+              value: 0.00273406525724395,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:01:21.586Z'),
+              value: 0.0023503368000869045,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:01:22.586Z'),
+              value: 0.002398302857231535,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:01:41.388Z'),
+              value: 0.0022064553294677994,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:01:42.388Z'),
+              value: 0.0021345056991590667,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:01:43.388Z'),
+              value: 0.002614169901217284,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:01:44.388Z'),
+              value: 0.002638153111320195,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:01:45.388Z'),
+              value: 0.002302388169879443,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:01:46.388Z'),
+              value: 0.0022544217496736213,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:01:24.299Z'),
+              value: 0.002614154766791415,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:01:25.299Z'),
+              value: 0.0026621209093013495,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:01:26.299Z'),
+              value: 0.002350340982986777,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:01:27.299Z'),
+              value: 0.0020385610566722046,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:01:28.299Z'),
+              value: 0.002302374840476843,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:01:29.299Z'),
+              value: 0.0020385610566722046,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:01:22.434Z'),
+              value: 0.0021824636142744307,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:01:23.434Z'),
+              value: 0.0025901765971608624,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:01:24.434Z'),
+              value: 0.002734075297003133,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:01:25.434Z'),
+              value: 0.002494244130599349,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:01:26.434Z'),
+              value: 0.0023263623141167008,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:01:27.434Z'),
+              value: 0.0023983116640378358,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:01:34.371Z'),
+              value: 0.0026620818220397173,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:01:35.371Z'),
+              value: 0.002062513844102844,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:01:36.371Z'),
+              value: 0.0026380991029222424,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:01:37.371Z'),
+              value: 0.002758012698509617,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:01:38.371Z'),
+              value: 0.002086496563220319,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:01:39.371Z'),
+              value: 0.0022303928779251686,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:01:08.485Z'),
+              value: 0.002614135830881459,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:01:09.485Z'),
+              value: 0.0024942213432263462,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:01:10.485Z'),
+              value: 0.0022543923679161208,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:01:11.485Z'),
+              value: 0.002086512085198963,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:01:12.485Z'),
+              value: 0.002518204240757369,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:01:13.485Z'),
+              value: 0.002134477880261008,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:01:29.783Z'),
+              value: 0.0025661731846163068,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:01:30.783Z'),
+              value: 0.0021584634263127813,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:01:31.783Z'),
+              value: 0.002302360988066967,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:01:32.783Z'),
+              value: 0.002278378061107936,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:01:33.783Z'),
+              value: 0.0026381219654934,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:01:34.783Z'),
+              value: 0.0023982926959030906,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:01:06.180Z'),
+              value: 0.0024222688004698076,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:01:07.180Z'),
+              value: 0.0022304059251850705,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:01:08.180Z'),
+              value: 0.0025661659569333603,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:01:09.180Z'),
+              value: 0.0023982859410592154,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:01:10.180Z'),
+              value: 0.002518200238112176,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:01:11.180Z'),
+              value: 0.002494217378701584,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:01:16.638Z'),
+              value: 0.0025421845408829555,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:01:17.638Z'),
+              value: 0.0025182016678557575,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:01:18.638Z'),
+              value: 0.0026381160329917463,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:01:19.638Z'),
+              value: 0.0021344756994205946,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:01:20.638Z'),
+              value: 0.002398287302719769,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:01:21.638Z'),
+              value: 0.002470235921801362,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:01:50.665Z'),
+              value: 0.0024222860083086034,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:01:51.665Z'),
+              value: 0.002062540561530098,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:01:52.665Z'),
+              value: 0.002614150246590473,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:01:53.665Z'),
+              value: 0.002446269038093837,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:01:54.665Z'),
+              value: 0.002278387829597201,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:01:55.665Z'),
+              value: 0.0024222860083086034,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:07:04.705Z'),
+              value: 0.0024462751707139785,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:07:05.705Z'),
+              value: 0.0024462751707139785,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:07:06.705Z'),
+              value: 0.0022783935413512547,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:07:07.705Z'),
+              value: 0.002710089159712545,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:07:08.705Z'),
+              value: 0.0024942413505319,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:07:09.705Z'),
+              value: 0.002038562642261649,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:01:06.925Z'),
+              value: 0.00268610649502094,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:01:07.925Z'),
+              value: 0.0023743262768488667,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:01:08.925Z'),
+              value: 0.0025661910264932197,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:01:09.925Z'),
+              value: 0.0023743262768488667,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:01:10.925Z'),
+              value: 0.0020865291523823374,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:01:11.925Z'),
+              value: 0.0025182248390821314,
+            },
+            {
+              timestamp: new Date('2022-04-19T10:01:16.478Z'),
+              value: 0.002590169184083577,
+            },
+          ],
+          dash: 'solid',
+          mode: 'lines+markers',
+          shape: 'linear',
+        },
+        {
+          enabled: true,
+          outdatedData: false,
+          id: '59f6e099-cddd-4786-a8a8-e74494ece2dd',
+          type: 'workflow',
+          name: 'Calc 1',
+          color: '#005d5d',
+          mode: 'lines+markers',
+          width: 1,
+          dash: 'solid',
+          datapoints: [
+            {
+              timestamp: new Date('2022-04-18T15:01:11.760Z'),
+              value: 0.002038575482226275,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:01:12.760Z'),
+              value: 0.0021824749280304825,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:01:13.760Z'),
+              value: 0.0025182403015736334,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:01:14.760Z'),
+              value: 0.0025901900244757374,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:01:15.760Z'),
+              value: 0.0023983240967367938,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:01:16.760Z'),
+              value: 0.0023983240967367938,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:01:17.487Z'),
+              value: 0.002182471978100317,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:01:18.487Z'),
+              value: 0.002446287272156399,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:01:19.487Z'),
+              value: 0.0023983208550552933,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:01:20.487Z'),
+              value: 0.002470270480706952,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:01:21.487Z'),
+              value: 0.0027580689833135875,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:01:22.487Z'),
+              value: 0.0027101025662124812,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:55.388Z'),
+              value: 0.00237432262099836,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:56.388Z'),
+              value: 0.0026381362455537333,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:57.388Z'),
+              value: 0.0021824581667762703,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:58.388Z'),
+              value: 0.0022304242803317924,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:59.388Z'),
+              value: 0.0022544073371095538,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:07:00.388Z'),
+              value: 0.0027580515294425394,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:01:30.918Z'),
+              value: 0.0024942394733872752,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:01:31.918Z'),
+              value: 0.002734070191982205,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:01:32.918Z'),
+              value: 0.002278391826651838,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:01:33.918Z'),
+              value: 0.0021584764673543725,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:01:34.918Z'),
+              value: 0.00237432411408981,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:01:35.918Z'),
+              value: 0.0027100871201227125,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:01:24.168Z'),
+              value: 0.0020385817325220034,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:01:25.168Z'),
+              value: 0.0024942647080269218,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:01:26.168Z'),
+              value: 0.002470281393526663,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:01:27.168Z'),
+              value: 0.0025662146515276984,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:01:28.168Z'),
+              value: 0.002158498305023298,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:01:29.168Z'),
+              value: 0.0020625650470222625,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:01:28.199Z'),
+              value: 0.002662142693626115,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:01:29.199Z'),
+              value: 0.002230443878443502,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:01:30.199Z'),
+              value: 0.002230443878443502,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:01:31.199Z'),
+              value: 0.0021824773434232113,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:01:32.199Z'),
+              value: 0.002518243088565244,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:01:33.199Z'),
+              value: 0.0024702765535449538,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:01:28.696Z'),
+              value: 0.00215848856289855,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:01:29.696Z'),
+              value: 0.0026861191004959734,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:01:30.696Z'),
+              value: 0.002542219862969403,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:01:31.696Z'),
+              value: 0.0025662030692238315,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:01:32.696Z'),
+              value: 0.0025662030692238315,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:01:33.696Z'),
+              value: 0.0022544213879162633,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:01:16.172Z'),
+              value: 0.0020625455379641453,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:01:17.172Z'),
+              value: 0.0026381396415820465,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:01:18.172Z'),
+              value: 0.0022064440638686206,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:01:19.172Z'),
+              value: 0.0027340719921850297,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:01:20.172Z'),
+              value: 0.0027580550798357757,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:01:21.172Z'),
+              value: 0.0025901734662805544,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:01:13.537Z'),
+              value: 0.0026381061137612286,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:01:14.537Z'),
+              value: 0.002422261068089855,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:01:15.537Z'),
+              value: 0.002590140548056479,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:01:16.537Z'),
+              value: 0.002206416022418482,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:01:17.537Z'),
+              value: 0.002326329936680356,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:01:18.537Z'),
+              value: 0.002110484891008983,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:01:17.585Z'),
+              value: 0.0021584725715083817,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:01:18.585Z'),
+              value: 0.002038557428646805,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:01:19.585Z'),
+              value: 0.00206254045721912,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:01:20.585Z'),
+              value: 0.00273406525724395,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:01:21.585Z'),
+              value: 0.0023503368000869045,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:01:22.585Z'),
+              value: 0.002398302857231535,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:01:41.388Z'),
+              value: 0.0022064553294677994,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:01:42.388Z'),
+              value: 0.0021345056991590667,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:01:43.388Z'),
+              value: 0.002614169901217284,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:01:44.388Z'),
+              value: 0.002638153111320195,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:01:45.388Z'),
+              value: 0.002302388169879443,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:01:46.388Z'),
+              value: 0.0022544217496736213,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:01:24.299Z'),
+              value: 0.002614154766791415,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:01:25.299Z'),
+              value: 0.0026621209093013495,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:01:26.299Z'),
+              value: 0.002350340982986777,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:01:27.299Z'),
+              value: 0.0020385610566722046,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:01:28.299Z'),
+              value: 0.002302374840476843,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:01:29.299Z'),
+              value: 0.0020385610566722046,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:01:22.433Z'),
+              value: 0.0021824636142744307,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:01:23.433Z'),
+              value: 0.0025901765971608624,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:01:24.433Z'),
+              value: 0.002734075297003133,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:01:25.433Z'),
+              value: 0.002494244130599349,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:01:26.433Z'),
+              value: 0.0023263623141167008,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:01:27.433Z'),
+              value: 0.0023983116640378358,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:01:34.371Z'),
+              value: 0.0026620818220397173,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:01:35.371Z'),
+              value: 0.002062513844102844,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:01:36.371Z'),
+              value: 0.0026380991029222424,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:01:37.371Z'),
+              value: 0.002758012698509617,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:01:38.371Z'),
+              value: 0.002086496563220319,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:01:39.371Z'),
+              value: 0.0022303928779251686,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:01:08.484Z'),
+              value: 0.002614135830881459,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:01:09.484Z'),
+              value: 0.0024942213432263462,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:01:10.484Z'),
+              value: 0.0022543923679161208,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:01:11.484Z'),
+              value: 0.002086512085198963,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:01:12.484Z'),
+              value: 0.002518204240757369,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:01:13.484Z'),
+              value: 0.002134477880261008,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:01:29.783Z'),
+              value: 0.0025661731846163068,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:01:30.783Z'),
+              value: 0.0021584634263127813,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:01:31.783Z'),
+              value: 0.002302360988066967,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:01:32.783Z'),
+              value: 0.002278378061107936,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:01:33.783Z'),
+              value: 0.0026381219654934,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:01:34.783Z'),
+              value: 0.0023982926959030906,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:01:06.180Z'),
+              value: 0.0024222688004698076,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:01:07.180Z'),
+              value: 0.0022304059251850705,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:01:08.180Z'),
+              value: 0.0025661659569333603,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:01:09.180Z'),
+              value: 0.0023982859410592154,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:01:10.180Z'),
+              value: 0.002518200238112176,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:01:11.180Z'),
+              value: 0.002494217378701584,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:01:16.638Z'),
+              value: 0.0025421845408829555,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:01:17.638Z'),
+              value: 0.0025182016678557575,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:01:18.638Z'),
+              value: 0.0026381160329917463,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:01:19.638Z'),
+              value: 0.0021344756994205946,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:01:20.638Z'),
+              value: 0.002398287302719769,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:01:21.638Z'),
+              value: 0.002470235921801362,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:01:50.664Z'),
+              value: 0.0024222860083086034,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:01:51.664Z'),
+              value: 0.002062540561530098,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:01:52.664Z'),
+              value: 0.002614150246590473,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:01:53.664Z'),
+              value: 0.002446269038093837,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:01:54.664Z'),
+              value: 0.002278387829597201,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:01:55.664Z'),
+              value: 0.0024222860083086034,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:07:04.704Z'),
+              value: 0.0024462751707139785,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:07:05.704Z'),
+              value: 0.0024462751707139785,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:07:06.704Z'),
+              value: 0.0022783935413512547,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:07:07.704Z'),
+              value: 0.002710089159712545,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:07:08.704Z'),
+              value: 0.0024942413505319,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:07:09.704Z'),
+              value: 0.002038562642261649,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:01:06.924Z'),
+              value: 0.00268610649502094,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:01:07.924Z'),
+              value: 0.0023743262768488667,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:01:08.924Z'),
+              value: 0.0025661910264932197,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:01:09.924Z'),
+              value: 0.0023743262768488667,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:01:10.924Z'),
+              value: 0.0020865291523823374,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:01:11.924Z'),
+              value: 0.0025182248390821314,
+            },
+          ],
+        },
+        {
+          enabled: true,
+          outdatedData: false,
+          id: 'c7ee18d4-6526-4910-ac26-dbeaeadc6eeb',
+          type: 'workflow',
+          name: 'Calc 2',
+          color: '#9f1853',
+          mode: 'lines+markers',
+          width: 1,
+          dash: 'solid',
+          datapoints: [
+            {
+              timestamp: new Date('2022-04-18T15:06:02.694Z'),
+              value: 0.0024239977568267105,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:06:03.694Z'),
+              value: 0.002450635094813817,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:06:04.694Z'),
+              value: 0.002530547108775137,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:06:05.694Z'),
+              value: 0.002637096460723564,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:06:06.694Z'),
+              value: 0.0026637337987106707,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:06:07.694Z'),
+              value: 0.0025039097707880305,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:14.904Z'),
+              value: 0.002956736396315989,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:15.904Z'),
+              value: 0.0023707165700191262,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:16.904Z'),
+              value: 0.0027436382776625844,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:17.904Z'),
+              value: 0.0027170010128309088,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:18.904Z'),
+              value: 0.00301001092597934,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:19.904Z'),
+              value: 0.00301001092597934,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:11:41.468Z'),
+              value: 0.0025039118097958425,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:11:42.468Z'),
+              value: 0.00226417557268773,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:11:43.468Z'),
+              value: 0.0026637359678679177,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:11:44.468Z'),
+              value: 0.0030366590033694264,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:11:45.468Z'),
+              value: 0.002690373327546597,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:11:46.468Z'),
+              value: 0.0030366590033694264,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:06:21.364Z'),
+              value: 0.002823561334902819,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:06:22.364Z'),
+              value: 0.0027969239638188305,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:06:23.364Z'),
+              value: 0.0023440886553910195,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:06:24.364Z'),
+              value: 0.002264176542139053,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:06:25.364Z'),
+              value: 0.002690374479482875,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:06:26.364Z'),
+              value: 0.003063297674658719,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:06:24.600Z'),
+              value: 0.002290840619456912,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:06:25.600Z'),
+              value: 0.002370753664321688,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:06:26.600Z'),
+              value: 0.002903507296753528,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:06:27.600Z'),
+              value: 0.0026637681621592,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:06:28.600Z'),
+              value: 0.00253057975405124,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:06:29.600Z'),
+              value: 0.002424029027564872,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:06:30.872Z'),
+              value: 0.0026637706417773415,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:06:31.872Z'),
+              value: 0.002690408348195115,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:06:32.872Z'),
+              value: 0.00226420504551074,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:06:33.872Z'),
+              value: 0.002557219816106248,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:06:34.872Z'),
+              value: 0.0027969591738662087,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:06:35.872Z'),
+              value: 0.002317480458346287,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:06:17.332Z'),
+              value: 0.002663756743273864,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:06:18.332Z'),
+              value: 0.0030366826873322052,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:06:19.332Z'),
+              value: 0.002450656203811955,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:06:20.332Z'),
+              value: 0.0027969445804375574,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:06:21.332Z'),
+              value: 0.0029301324176012507,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:06:22.332Z'),
+              value: 0.002876857282735773,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:06:03.476Z'),
+              value: 0.002903472963826521,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:06:04.476Z'),
+              value: 0.0022908135310924843,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:06:05.476Z'),
+              value: 0.0029833850637483515,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:06:06.476Z'),
+              value: 0.002903472963826521,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:06:07.476Z'),
+              value: 0.0030366597970295723,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:06:08.476Z'),
+              value: 0.002930110330467131,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:06:07.409Z'),
+              value: 0.002397388519772205,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:06:08.409Z'),
+              value: 0.0027436779726281906,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:06:09.409Z'),
+              value: 0.0029301415241660285,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:06:10.409Z'),
+              value: 0.002823590923287264,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:06:11.409Z'),
+              value: 0.002903503873946337,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:06:12.409Z'),
+              value: 0.002663765021969117,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:05:48.724Z'),
+              value: 0.002583852916816947,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:05:49.724Z'),
+              value: 0.0025039399400081756,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:05:50.724Z'),
+              value: 0.0030633307776695767,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:05:51.724Z'),
+              value: 0.0023174763274543754,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:05:52.724Z'),
+              value: 0.002583852916816947,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:05:53.724Z'),
+              value: 0.002583852916816947,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:06:29.712Z'),
+              value: 0.0025570903392266226,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:06:30.712Z'),
+              value: 0.002423908550725236,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:06:31.712Z'),
+              value: 0.0030631811355318916,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:06:32.712Z'),
+              value: 0.0030099084201313368,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:06:33.712Z'),
+              value: 0.0027435448431285636,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:06:34.712Z'),
+              value: 0.0029566357047307824,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:06:27.316Z'),
+              value: 0.002450533245467289,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:06:28.316Z'),
+              value: 0.0029033491712601575,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:06:29.316Z'),
+              value: 0.002770168016615196,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:06:30.316Z'),
+              value: 0.003036530325905119,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:06:31.316Z'),
+              value: 0.0027435317856862036,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:06:32.316Z'),
+              value: 0.003063166556834111,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:06:14.816Z'),
+              value: 0.002983264563165782,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:06:15.816Z'),
+              value: 0.002770174237225369,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:06:16.816Z'),
+              value: 0.0025038113297998527,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:06:17.816Z'),
+              value: 0.0027968105279679205,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:06:18.816Z'),
+              value: 0.002983264563165782,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:06:19.816Z'),
+              value: 0.0026103564927700594,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:06:34.720Z'),
+              value: 0.0022641267441246647,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:06:35.720Z'),
+              value: 0.0025837681668246172,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:06:36.720Z'),
+              value: 0.0023174003145746565,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:06:37.720Z'),
+              value: 0.003063230300874546,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:06:38.720Z'),
+              value: 0.002370673885024649,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:06:39.720Z'),
+              value: 0.00303659351564955,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:05:58.531Z'),
+              value: 0.00269028411847244,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:05:59.531Z'),
+              value: 0.002583738212790363,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:06:00.531Z'),
+              value: 0.002850102976995555,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:06:01.531Z'),
+              value: 0.0027968300241545166,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:06:02.531Z'),
+              value: 0.0026103746892108823,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:06:03.531Z'),
+              value: 0.002850102976995555,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:07:12.128Z'),
+              value: 0.0028767685891196455,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:07:13.128Z'),
+              value: 0.0028501318429240935,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:07:14.128Z'),
+              value: 0.0022641234266219433,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:07:15.128Z'),
+              value: 0.0028767685891196455,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:07:16.128Z'),
+              value: 0.003036589066292959,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:07:17.128Z'),
+              value: 0.0028767685891196455,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:06:13.891Z'),
+              value: 0.0026637020642312106,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:06:14.891Z'),
+              value: 0.0028501612087273955,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:06:15.891Z'),
+              value: 0.0028767982293697075,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:06:16.891Z'),
+              value: 0.0027169761055158346,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:06:17.891Z'),
+              value: 0.002956709291296644,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:06:18.891Z'),
+              value: 0.0022907837752388412,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:06:38.828Z'),
+              value: 0.002930087554457459,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:06:39.828Z'),
+              value: 0.0025838044798397594,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:06:40.828Z'),
+              value: 0.002930087554457459,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:06:41.828Z'),
+              value: 0.0024772558414958516,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:06:42.828Z'),
+              value: 0.0030632733523873433,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:06:43.828Z'),
+              value: 0.0026370787990117133,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:06:51.639Z'),
+              value: 0.002770257053573895,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:06:52.639Z'),
+              value: 0.00279689414062749,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:06:53.639Z'),
+              value: 0.0023174265736627775,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:06:54.639Z'),
+              value: 0.0023707007477699674,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:06:55.639Z'),
+              value: 0.0027169828794667045,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:06:56.639Z'),
+              value: 0.0025305232700915383,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:12:06.387Z'),
+              value: 0.002397342447952599,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:12:07.387Z'),
+              value: 0.0026637138310584433,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:12:08.387Z'),
+              value: 0.0025571652778161053,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:12:09.387Z'),
+              value: 0.002983359490785456,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:12:10.387Z'),
+              value: 0.002503891001194937,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:12:11.387Z'),
+              value: 0.002503891001194937,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:06:38.020Z'),
+              value: 0.002557163088622751,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:06:39.020Z'),
+              value: 0.002503888857609777,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:06:40.020Z'),
+              value: 0.002930082705713569,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:06:41.020Z'),
+              value: 0.002956719821220056,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:06:42.020Z'),
+              value: 0.002397340395583829,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:06:43.020Z'),
+              value: 0.002637074435142212,
+            },
+          ],
+        },
+      ],
+      thresholds: [
+        {
+          sourceId: 'e2c66ee8-dc6f-4351-a971-46b0fc499f40',
+          type: 'between',
+          id: '824d2fcd-419d-465d-883c-62816dfaba49',
+          visible: true,
+          lowerLimit: 0,
+          filter: {
+            maxUnit: 'hours',
+            minUnit: 'seconds',
+          },
+          upperLimit: 0.004,
+          name: 'Threshold 2',
+          calls: [
+            {
+              hash: 184946504,
+              callId: '6e8ec3a4-5776-4eab-9633-38ee9d63e274',
+              callDate: 1651753473973,
+            },
+          ],
+        },
+        {
+          name: 'Threshold 1',
+          calls: [
+            {
+              callDate: 1651754294387,
+              callId: '8e071805-31ce-4e4c-868e-c0d30814ab84',
+              hash: 1252301306,
+            },
+          ],
+          type: 'between',
+          sourceId: '84289091-6420-49ea-9d75-cd5ae70b1803',
+          filter: {
+            maxUnit: 'hours',
+            minUnit: 'seconds',
+          },
+          lowerLimit: 0,
+          visible: true,
+          id: 'd0214696-ea87-4719-8707-fd992609e93a',
+          upperLimit: 0.003,
+        },
+      ],
+    },
+  ],
+} as unknown as {
+  input: {
+    timeseries: ChartTimeSeries[];
+    calculations: ChartWorkflow[];
+    thresholds: ChartThreshold[];
+    timeseriesData: TimeseriesEntry[];
+    calculationsData: WorkflowState[];
+    mergeUnits: boolean;
+  };
+  result: SeriesData[];
+};
+
+export const calculateSeriesDataCase3: {
+  input: {
+    timeseries: ChartTimeSeries[];
+    calculations: ChartWorkflow[];
+    thresholds: ChartThreshold[];
+    timeseriesData: TimeseriesEntry[];
+    calculationsData: WorkflowState[];
+    mergeUnits: boolean;
+  };
+  result: SeriesData[];
+} = {
+  input: {
+    timeseries: [
+      {
+        name: 'VAL_21_PI_1032_04:Z.X.Value',
+        lineWeight: 1,
+        unit: '',
+        preferredUnit: '',
+        customUnitLabel: 'custom-1',
+        enabled: true,
+        id: 'e2c66ee8-dc6f-4351-a971-46b0fc499f40',
+        type: 'timeseries',
+        color: '#6929c4',
+        tsId: 8070156109692675,
+        displayMode: 'lines' as 'lines' | 'markers' | undefined,
+        originalUnit: '',
+        range: [-0.004209428514817475, 0.008946288902060182],
+        tsExternalId: 'VAL_21_PI_1032_04:Z.X.Value',
+        description: '-',
+        interpolation: 'linear' as Interpolation,
+        lineStyle: 'solid' as LineStyle,
+        createdAt: 1651753321354,
+      },
+      {
+        tsId: 433289095073112,
+        createdAt: 1651753332310,
+        interpolation: 'linear' as Interpolation,
+        lineStyle: 'solid' as LineStyle,
+        displayMode: 'lines' as 'lines' | 'markers' | undefined,
+        name: 'VAL_21_PI_1111:Z.X.Value',
+        range: [-0.00038689823642818226, 0.004379047213922834],
+        lineWeight: 1,
+        type: 'timeseries',
+        enabled: true,
+        color: '#1192e8',
+        description: '-',
+        unit: '',
+        preferredUnit: '',
+        customUnitLabel: 'custom-1',
+        tsExternalId: 'VAL_21_PI_1111:Z.X.Value',
+        originalUnit: '',
+        id: '84289091-6420-49ea-9d75-cd5ae70b1803',
+      },
+    ],
+    calculations: [
+      {
+        version: 'v2' as 'v2',
+        settings: {
+          autoAlign: true,
+        },
+        color: '#005d5d',
+        name: 'Calc 1',
+        lineWeight: 1,
+        preferredUnit: '',
+        customUnitLabel: 'custom-2',
+        range: [-0.5, 0.5],
+        lineStyle: 'solid' as LineStyle,
+        id: '59f6e099-cddd-4786-a8a8-e74494ece2dd',
+        enabled: true,
+        unit: '',
+        flow: {
+          zoom: 1,
+          position: [0, 0] as [number, number],
+          elements: [
+            {
+              position: {
+                y: 150,
+                x: 593,
+              },
+              type: 'CalculationOutput',
+              id: 'f4d4e0d5-b209-4620-b97a-b2b5b6b0da52',
+            },
+            {
+              type: 'CalculationInput',
+              position: {
+                y: 141.87841796875,
+                x: 90.99996948242188,
+              },
+              data: {
+                selectedSourceId: '84289091-6420-49ea-9d75-cd5ae70b1803',
+                type: 'timeseries',
+              },
+              id: '59b174ff-5e55-45ff-9070-df44e978c27d',
+            },
+            {
+              targetHandle: 'datapoints',
+              source: '59b174ff-5e55-45ff-9070-df44e978c27d',
+              sourceHandle: 'result',
+              id: 'reactflow__edge-59b174ff-5e55-45ff-9070-df44e978c27dresult-f4d4e0d5-b209-4620-b97a-b2b5b6b0da52datapoints',
+              target: 'f4d4e0d5-b209-4620-b97a-b2b5b6b0da52',
+            },
+          ],
+        },
+        createdAt: 1651753338069,
+        type: 'workflow',
+      },
+      {
+        type: 'workflow',
+        settings: {
+          autoAlign: true,
+        },
+        range: [-0.5, 0.5],
+        color: '#9f1853',
+        enabled: true,
+        lineStyle: 'solid' as LineStyle,
+        id: 'c7ee18d4-6526-4910-ac26-dbeaeadc6eeb',
+        version: 'v2' as 'v2',
+        preferredUnit: '',
+        customUnitLabel: 'custom-2',
+        name: 'Calc 2',
+        unit: '',
+        lineWeight: 1,
+        createdAt: 1651753344942,
+        flow: {
+          zoom: 1,
+          position: [0, 0] as [number, number],
+          elements: [
+            {
+              position: {
+                x: 617,
+                y: 116,
+              },
+              id: '0a566a97-e120-46fc-ab86-645cb00b84b5',
+              type: 'CalculationOutput',
+            },
+            {
+              data: {
+                type: 'timeseries',
+                selectedSourceId: 'e2c66ee8-dc6f-4351-a971-46b0fc499f40',
+              },
+              id: '810f0ac5-e6dd-406e-b2d1-c1e853fa6a2c',
+              type: 'CalculationInput',
+              position: {
+                y: 98.87841796875,
+                x: 160.99996948242188,
+              },
+            },
+            {
+              id: 'reactflow__edge-810f0ac5-e6dd-406e-b2d1-c1e853fa6a2cresult-0a566a97-e120-46fc-ab86-645cb00b84b5datapoints',
+              targetHandle: 'datapoints',
+              sourceHandle: 'result',
+              source: '810f0ac5-e6dd-406e-b2d1-c1e853fa6a2c',
+              target: '0a566a97-e120-46fc-ab86-645cb00b84b5',
+            },
+          ],
+        },
+      },
+    ],
+    thresholds: [
+      {
+        name: 'Threshold 1',
+        calls: [
+          {
+            callDate: 1651754294387,
+            callId: '8e071805-31ce-4e4c-868e-c0d30814ab84',
+            hash: 1252301306,
+          },
+        ],
+        type: 'between',
+        sourceId: '84289091-6420-49ea-9d75-cd5ae70b1803',
+        filter: {
+          maxUnit: 'hours',
+          minUnit: 'seconds',
+        },
+        lowerLimit: 0,
+        visible: true,
+        id: 'd0214696-ea87-4719-8707-fd992609e93a',
+        upperLimit: 0.003,
+      },
+      {
+        sourceId: 'e2c66ee8-dc6f-4351-a971-46b0fc499f40',
+        type: 'between',
+        id: '824d2fcd-419d-465d-883c-62816dfaba49',
+        visible: true,
+        lowerLimit: 0,
+        filter: {
+          maxUnit: 'hours',
+          minUnit: 'seconds',
+        },
+        upperLimit: 0.004,
+        name: 'Threshold 2',
+        calls: [
+          {
+            hash: 184946504,
+            callId: '6e8ec3a4-5776-4eab-9633-38ee9d63e274',
+            callDate: 1651753473973,
+          },
+        ],
+      },
+    ],
+    timeseriesData: [
+      {
+        externalId: 'VAL_21_PI_1032_04:Z.X.Value',
+        loading: false,
+        series: {
+          id: 8070156109692675,
+          externalId: 'VAL_21_PI_1032_04:Z.X.Value',
+          isString: false,
+          isStep: false,
+          datapoints: [
+            {
+              timestamp: new Date('2022-04-18T14:06:02.371Z'),
+              value: 0.002770285513799023,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:06:02.694Z'),
+              value: 0.0024239977568267105,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:06:03.694Z'),
+              value: 0.002450635094813817,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:06:04.694Z'),
+              value: 0.002530547108775137,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:06:05.694Z'),
+              value: 0.002637096460723564,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:06:06.694Z'),
+              value: 0.0026637337987106707,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:06:07.694Z'),
+              value: 0.0025039097707880305,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:14.905Z'),
+              value: 0.002956736396315989,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:15.905Z'),
+              value: 0.0023707165700191262,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:16.905Z'),
+              value: 0.0027436382776625844,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:17.905Z'),
+              value: 0.0027170010128309088,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:18.905Z'),
+              value: 0.00301001092597934,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:19.905Z'),
+              value: 0.00301001092597934,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:11:41.468Z'),
+              value: 0.0025039118097958425,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:11:42.468Z'),
+              value: 0.00226417557268773,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:11:43.468Z'),
+              value: 0.0026637359678679177,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:11:44.468Z'),
+              value: 0.0030366590033694264,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:11:45.468Z'),
+              value: 0.002690373327546597,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:11:46.468Z'),
+              value: 0.0030366590033694264,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:06:21.364Z'),
+              value: 0.002823561334902819,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:06:22.364Z'),
+              value: 0.0027969239638188305,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:06:23.364Z'),
+              value: 0.0023440886553910195,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:06:24.364Z'),
+              value: 0.002264176542139053,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:06:25.364Z'),
+              value: 0.002690374479482875,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:06:26.364Z'),
+              value: 0.003063297674658719,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:06:24.601Z'),
+              value: 0.002290840619456912,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:06:25.601Z'),
+              value: 0.002370753664321688,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:06:26.601Z'),
+              value: 0.002903507296753528,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:06:27.601Z'),
+              value: 0.0026637681621592,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:06:28.601Z'),
+              value: 0.00253057975405124,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:06:29.601Z'),
+              value: 0.002424029027564872,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:06:30.873Z'),
+              value: 0.0026637706417773415,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:06:31.873Z'),
+              value: 0.002690408348195115,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:06:32.873Z'),
+              value: 0.00226420504551074,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:06:33.873Z'),
+              value: 0.002557219816106248,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:06:34.873Z'),
+              value: 0.0027969591738662087,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:06:35.873Z'),
+              value: 0.002317480458346287,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:06:17.332Z'),
+              value: 0.002663756743273864,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:06:18.332Z'),
+              value: 0.0030366826873322052,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:06:19.332Z'),
+              value: 0.002450656203811955,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:06:20.332Z'),
+              value: 0.0027969445804375574,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:06:21.332Z'),
+              value: 0.0029301324176012507,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:06:22.332Z'),
+              value: 0.002876857282735773,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:06:03.477Z'),
+              value: 0.002903472963826521,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:06:04.477Z'),
+              value: 0.0022908135310924843,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:06:05.477Z'),
+              value: 0.0029833850637483515,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:06:06.477Z'),
+              value: 0.002903472963826521,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:06:07.477Z'),
+              value: 0.0030366597970295723,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:06:08.477Z'),
+              value: 0.002930110330467131,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:06:07.410Z'),
+              value: 0.002397388519772205,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:06:08.410Z'),
+              value: 0.0027436779726281906,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:06:09.410Z'),
+              value: 0.0029301415241660285,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:06:10.410Z'),
+              value: 0.002823590923287264,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:06:11.410Z'),
+              value: 0.002903503873946337,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:06:12.410Z'),
+              value: 0.002663765021969117,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:05:48.725Z'),
+              value: 0.002583852916816947,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:05:49.725Z'),
+              value: 0.0025039399400081756,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:05:50.725Z'),
+              value: 0.0030633307776695767,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:05:51.725Z'),
+              value: 0.0023174763274543754,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:05:52.725Z'),
+              value: 0.002583852916816947,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:05:53.725Z'),
+              value: 0.002583852916816947,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:06:29.712Z'),
+              value: 0.0025570903392266226,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:06:30.712Z'),
+              value: 0.002423908550725236,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:06:31.712Z'),
+              value: 0.0030631811355318916,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:06:32.712Z'),
+              value: 0.0030099084201313368,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:06:33.712Z'),
+              value: 0.0027435448431285636,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:06:34.712Z'),
+              value: 0.0029566357047307824,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:06:27.316Z'),
+              value: 0.002450533245467289,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:06:28.316Z'),
+              value: 0.0029033491712601575,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:06:29.316Z'),
+              value: 0.002770168016615196,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:06:30.316Z'),
+              value: 0.003036530325905119,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:06:31.316Z'),
+              value: 0.0027435317856862036,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:06:32.316Z'),
+              value: 0.003063166556834111,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:06:14.817Z'),
+              value: 0.002983264563165782,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:06:15.817Z'),
+              value: 0.002770174237225369,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:06:16.817Z'),
+              value: 0.0025038113297998527,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:06:17.817Z'),
+              value: 0.0027968105279679205,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:06:18.817Z'),
+              value: 0.002983264563165782,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:06:19.817Z'),
+              value: 0.0026103564927700594,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:06:34.720Z'),
+              value: 0.0022641267441246647,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:06:35.720Z'),
+              value: 0.0025837681668246172,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:06:36.720Z'),
+              value: 0.0023174003145746565,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:06:37.720Z'),
+              value: 0.003063230300874546,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:06:38.720Z'),
+              value: 0.002370673885024649,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:06:39.720Z'),
+              value: 0.00303659351564955,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:05:58.531Z'),
+              value: 0.00269028411847244,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:05:59.531Z'),
+              value: 0.002583738212790363,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:06:00.531Z'),
+              value: 0.002850102976995555,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:06:01.531Z'),
+              value: 0.0027968300241545166,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:06:02.531Z'),
+              value: 0.0026103746892108823,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:06:03.531Z'),
+              value: 0.002850102976995555,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:07:12.129Z'),
+              value: 0.0028767685891196455,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:07:13.129Z'),
+              value: 0.0028501318429240935,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:07:14.129Z'),
+              value: 0.0022641234266219433,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:07:15.129Z'),
+              value: 0.0028767685891196455,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:07:16.129Z'),
+              value: 0.003036589066292959,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:07:17.129Z'),
+              value: 0.0028767685891196455,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:06:13.891Z'),
+              value: 0.0026637020642312106,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:06:14.891Z'),
+              value: 0.0028501612087273955,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:06:15.891Z'),
+              value: 0.0028767982293697075,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:06:16.891Z'),
+              value: 0.0027169761055158346,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:06:17.891Z'),
+              value: 0.002956709291296644,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:06:18.891Z'),
+              value: 0.0022907837752388412,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:06:38.828Z'),
+              value: 0.002930087554457459,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:06:39.828Z'),
+              value: 0.0025838044798397594,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:06:40.828Z'),
+              value: 0.002930087554457459,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:06:41.828Z'),
+              value: 0.0024772558414958516,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:06:42.828Z'),
+              value: 0.0030632733523873433,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:06:43.828Z'),
+              value: 0.0026370787990117133,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:06:51.639Z'),
+              value: 0.002770257053573895,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:06:52.639Z'),
+              value: 0.00279689414062749,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:06:53.639Z'),
+              value: 0.0023174265736627775,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:06:54.639Z'),
+              value: 0.0023707007477699674,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:06:55.639Z'),
+              value: 0.0027169828794667045,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:06:56.639Z'),
+              value: 0.0025305232700915383,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:12:06.387Z'),
+              value: 0.002397342447952599,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:12:07.387Z'),
+              value: 0.0026637138310584433,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:12:08.387Z'),
+              value: 0.0025571652778161053,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:12:09.387Z'),
+              value: 0.002983359490785456,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:12:10.387Z'),
+              value: 0.002503891001194937,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:12:11.387Z'),
+              value: 0.002503891001194937,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:06:38.021Z'),
+              value: 0.002557163088622751,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:06:39.021Z'),
+              value: 0.002503888857609777,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:06:40.021Z'),
+              value: 0.002930082705713569,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:06:41.021Z'),
+              value: 0.002956719821220056,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:06:42.021Z'),
+              value: 0.002397340395583829,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:06:43.021Z'),
+              value: 0.002637074435142212,
+            },
+            {
+              timestamp: new Date('2022-04-19T10:06:14.848Z'),
+              value: 0.0025571477982464404,
+            },
+          ],
+        },
+      },
+      {
+        externalId: 'VAL_21_PI_1111:Z.X.Value',
+        loading: false,
+        series: {
+          id: 433289095073112,
+          externalId: 'VAL_21_PI_1111:Z.X.Value',
+          isString: false,
+          isStep: false,
+          datapoints: [
+            {
+              timestamp: new Date('2022-04-18T14:01:10.454Z'),
+              value: 0.002734108803718137,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:01:11.761Z'),
+              value: 0.002038575482226275,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:01:12.761Z'),
+              value: 0.0021824749280304825,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:01:13.761Z'),
+              value: 0.0025182403015736334,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:01:14.761Z'),
+              value: 0.0025901900244757374,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:01:15.761Z'),
+              value: 0.0023983240967367938,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:01:16.761Z'),
+              value: 0.0023983240967367938,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:01:17.487Z'),
+              value: 0.002182471978100317,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:01:18.487Z'),
+              value: 0.002446287272156399,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:01:19.487Z'),
+              value: 0.0023983208550552933,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:01:20.487Z'),
+              value: 0.002470270480706952,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:01:21.487Z'),
+              value: 0.0027580689833135875,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:01:22.487Z'),
+              value: 0.0027101025662124812,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:55.388Z'),
+              value: 0.00237432262099836,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:56.388Z'),
+              value: 0.0026381362455537333,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:57.388Z'),
+              value: 0.0021824581667762703,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:58.388Z'),
+              value: 0.0022304242803317924,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:59.388Z'),
+              value: 0.0022544073371095538,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:07:00.388Z'),
+              value: 0.0027580515294425394,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:01:30.918Z'),
+              value: 0.0024942394733872752,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:01:31.918Z'),
+              value: 0.002734070191982205,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:01:32.918Z'),
+              value: 0.002278391826651838,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:01:33.918Z'),
+              value: 0.0021584764673543725,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:01:34.918Z'),
+              value: 0.00237432411408981,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:01:35.918Z'),
+              value: 0.0027100871201227125,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:01:24.169Z'),
+              value: 0.0020385817325220034,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:01:25.169Z'),
+              value: 0.0024942647080269218,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:01:26.169Z'),
+              value: 0.002470281393526663,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:01:27.169Z'),
+              value: 0.0025662146515276984,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:01:28.169Z'),
+              value: 0.002158498305023298,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:01:29.169Z'),
+              value: 0.0020625650470222625,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:01:28.199Z'),
+              value: 0.002662142693626115,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:01:29.199Z'),
+              value: 0.002230443878443502,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:01:30.199Z'),
+              value: 0.002230443878443502,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:01:31.199Z'),
+              value: 0.0021824773434232113,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:01:32.199Z'),
+              value: 0.002518243088565244,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:01:33.199Z'),
+              value: 0.0024702765535449538,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:01:28.696Z'),
+              value: 0.00215848856289855,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:01:29.696Z'),
+              value: 0.0026861191004959734,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:01:30.696Z'),
+              value: 0.002542219862969403,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:01:31.696Z'),
+              value: 0.0025662030692238315,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:01:32.696Z'),
+              value: 0.0025662030692238315,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:01:33.696Z'),
+              value: 0.0022544213879162633,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:01:16.172Z'),
+              value: 0.0020625455379641453,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:01:17.172Z'),
+              value: 0.0026381396415820465,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:01:18.172Z'),
+              value: 0.0022064440638686206,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:01:19.172Z'),
+              value: 0.0027340719921850297,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:01:20.172Z'),
+              value: 0.0027580550798357757,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:01:21.172Z'),
+              value: 0.0025901734662805544,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:01:13.538Z'),
+              value: 0.0026381061137612286,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:01:14.538Z'),
+              value: 0.002422261068089855,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:01:15.538Z'),
+              value: 0.002590140548056479,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:01:16.538Z'),
+              value: 0.002206416022418482,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:01:17.538Z'),
+              value: 0.002326329936680356,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:01:18.538Z'),
+              value: 0.002110484891008983,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:01:17.586Z'),
+              value: 0.0021584725715083817,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:01:18.586Z'),
+              value: 0.002038557428646805,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:01:19.586Z'),
+              value: 0.00206254045721912,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:01:20.586Z'),
+              value: 0.00273406525724395,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:01:21.586Z'),
+              value: 0.0023503368000869045,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:01:22.586Z'),
+              value: 0.002398302857231535,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:01:41.388Z'),
+              value: 0.0022064553294677994,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:01:42.388Z'),
+              value: 0.0021345056991590667,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:01:43.388Z'),
+              value: 0.002614169901217284,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:01:44.388Z'),
+              value: 0.002638153111320195,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:01:45.388Z'),
+              value: 0.002302388169879443,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:01:46.388Z'),
+              value: 0.0022544217496736213,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:01:24.299Z'),
+              value: 0.002614154766791415,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:01:25.299Z'),
+              value: 0.0026621209093013495,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:01:26.299Z'),
+              value: 0.002350340982986777,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:01:27.299Z'),
+              value: 0.0020385610566722046,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:01:28.299Z'),
+              value: 0.002302374840476843,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:01:29.299Z'),
+              value: 0.0020385610566722046,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:01:22.434Z'),
+              value: 0.0021824636142744307,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:01:23.434Z'),
+              value: 0.0025901765971608624,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:01:24.434Z'),
+              value: 0.002734075297003133,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:01:25.434Z'),
+              value: 0.002494244130599349,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:01:26.434Z'),
+              value: 0.0023263623141167008,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:01:27.434Z'),
+              value: 0.0023983116640378358,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:01:34.371Z'),
+              value: 0.0026620818220397173,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:01:35.371Z'),
+              value: 0.002062513844102844,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:01:36.371Z'),
+              value: 0.0026380991029222424,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:01:37.371Z'),
+              value: 0.002758012698509617,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:01:38.371Z'),
+              value: 0.002086496563220319,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:01:39.371Z'),
+              value: 0.0022303928779251686,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:01:08.485Z'),
+              value: 0.002614135830881459,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:01:09.485Z'),
+              value: 0.0024942213432263462,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:01:10.485Z'),
+              value: 0.0022543923679161208,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:01:11.485Z'),
+              value: 0.002086512085198963,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:01:12.485Z'),
+              value: 0.002518204240757369,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:01:13.485Z'),
+              value: 0.002134477880261008,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:01:29.783Z'),
+              value: 0.0025661731846163068,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:01:30.783Z'),
+              value: 0.0021584634263127813,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:01:31.783Z'),
+              value: 0.002302360988066967,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:01:32.783Z'),
+              value: 0.002278378061107936,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:01:33.783Z'),
+              value: 0.0026381219654934,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:01:34.783Z'),
+              value: 0.0023982926959030906,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:01:06.180Z'),
+              value: 0.0024222688004698076,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:01:07.180Z'),
+              value: 0.0022304059251850705,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:01:08.180Z'),
+              value: 0.0025661659569333603,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:01:09.180Z'),
+              value: 0.0023982859410592154,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:01:10.180Z'),
+              value: 0.002518200238112176,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:01:11.180Z'),
+              value: 0.002494217378701584,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:01:16.638Z'),
+              value: 0.0025421845408829555,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:01:17.638Z'),
+              value: 0.0025182016678557575,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:01:18.638Z'),
+              value: 0.0026381160329917463,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:01:19.638Z'),
+              value: 0.0021344756994205946,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:01:20.638Z'),
+              value: 0.002398287302719769,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:01:21.638Z'),
+              value: 0.002470235921801362,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:01:50.665Z'),
+              value: 0.0024222860083086034,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:01:51.665Z'),
+              value: 0.002062540561530098,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:01:52.665Z'),
+              value: 0.002614150246590473,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:01:53.665Z'),
+              value: 0.002446269038093837,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:01:54.665Z'),
+              value: 0.002278387829597201,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:01:55.665Z'),
+              value: 0.0024222860083086034,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:07:04.705Z'),
+              value: 0.0024462751707139785,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:07:05.705Z'),
+              value: 0.0024462751707139785,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:07:06.705Z'),
+              value: 0.0022783935413512547,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:07:07.705Z'),
+              value: 0.002710089159712545,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:07:08.705Z'),
+              value: 0.0024942413505319,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:07:09.705Z'),
+              value: 0.002038562642261649,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:01:06.925Z'),
+              value: 0.00268610649502094,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:01:07.925Z'),
+              value: 0.0023743262768488667,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:01:08.925Z'),
+              value: 0.0025661910264932197,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:01:09.925Z'),
+              value: 0.0023743262768488667,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:01:10.925Z'),
+              value: 0.0020865291523823374,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:01:11.925Z'),
+              value: 0.0025182248390821314,
+            },
+            {
+              timestamp: new Date('2022-04-19T10:01:16.478Z'),
+              value: 0.002590169184083577,
+            },
+          ],
+        },
+      },
+    ],
+    calculationsData: [
+      {
+        id: 'c7ee18d4-6526-4910-ac26-dbeaeadc6eeb',
+        loading: false,
+        datapoints: [
+          {
+            timestamp: new Date('2022-04-18T15:06:02.694Z'),
+            value: 0.0024239977568267105,
+          },
+          {
+            timestamp: new Date('2022-04-18T15:06:03.694Z'),
+            value: 0.002450635094813817,
+          },
+          {
+            timestamp: new Date('2022-04-18T15:06:04.694Z'),
+            value: 0.002530547108775137,
+          },
+          {
+            timestamp: new Date('2022-04-18T15:06:05.694Z'),
+            value: 0.002637096460723564,
+          },
+          {
+            timestamp: new Date('2022-04-18T15:06:06.694Z'),
+            value: 0.0026637337987106707,
+          },
+          {
+            timestamp: new Date('2022-04-18T15:06:07.694Z'),
+            value: 0.0025039097707880305,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:06:14.904Z'),
+            value: 0.002956736396315989,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:06:15.904Z'),
+            value: 0.0023707165700191262,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:06:16.904Z'),
+            value: 0.0027436382776625844,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:06:17.904Z'),
+            value: 0.0027170010128309088,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:06:18.904Z'),
+            value: 0.00301001092597934,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:06:19.904Z'),
+            value: 0.00301001092597934,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:11:41.468Z'),
+            value: 0.0025039118097958425,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:11:42.468Z'),
+            value: 0.00226417557268773,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:11:43.468Z'),
+            value: 0.0026637359678679177,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:11:44.468Z'),
+            value: 0.0030366590033694264,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:11:45.468Z'),
+            value: 0.002690373327546597,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:11:46.468Z'),
+            value: 0.0030366590033694264,
+          },
+          {
+            timestamp: new Date('2022-04-18T17:06:21.364Z'),
+            value: 0.002823561334902819,
+          },
+          {
+            timestamp: new Date('2022-04-18T17:06:22.364Z'),
+            value: 0.0027969239638188305,
+          },
+          {
+            timestamp: new Date('2022-04-18T17:06:23.364Z'),
+            value: 0.0023440886553910195,
+          },
+          {
+            timestamp: new Date('2022-04-18T17:06:24.364Z'),
+            value: 0.002264176542139053,
+          },
+          {
+            timestamp: new Date('2022-04-18T17:06:25.364Z'),
+            value: 0.002690374479482875,
+          },
+          {
+            timestamp: new Date('2022-04-18T17:06:26.364Z'),
+            value: 0.003063297674658719,
+          },
+          {
+            timestamp: new Date('2022-04-18T18:06:24.600Z'),
+            value: 0.002290840619456912,
+          },
+          {
+            timestamp: new Date('2022-04-18T18:06:25.600Z'),
+            value: 0.002370753664321688,
+          },
+          {
+            timestamp: new Date('2022-04-18T18:06:26.600Z'),
+            value: 0.002903507296753528,
+          },
+          {
+            timestamp: new Date('2022-04-18T18:06:27.600Z'),
+            value: 0.0026637681621592,
+          },
+          {
+            timestamp: new Date('2022-04-18T18:06:28.600Z'),
+            value: 0.00253057975405124,
+          },
+          {
+            timestamp: new Date('2022-04-18T18:06:29.600Z'),
+            value: 0.002424029027564872,
+          },
+          {
+            timestamp: new Date('2022-04-18T19:06:30.872Z'),
+            value: 0.0026637706417773415,
+          },
+          {
+            timestamp: new Date('2022-04-18T19:06:31.872Z'),
+            value: 0.002690408348195115,
+          },
+          {
+            timestamp: new Date('2022-04-18T19:06:32.872Z'),
+            value: 0.00226420504551074,
+          },
+          {
+            timestamp: new Date('2022-04-18T19:06:33.872Z'),
+            value: 0.002557219816106248,
+          },
+          {
+            timestamp: new Date('2022-04-18T19:06:34.872Z'),
+            value: 0.0027969591738662087,
+          },
+          {
+            timestamp: new Date('2022-04-18T19:06:35.872Z'),
+            value: 0.002317480458346287,
+          },
+          {
+            timestamp: new Date('2022-04-18T20:06:17.332Z'),
+            value: 0.002663756743273864,
+          },
+          {
+            timestamp: new Date('2022-04-18T20:06:18.332Z'),
+            value: 0.0030366826873322052,
+          },
+          {
+            timestamp: new Date('2022-04-18T20:06:19.332Z'),
+            value: 0.002450656203811955,
+          },
+          {
+            timestamp: new Date('2022-04-18T20:06:20.332Z'),
+            value: 0.0027969445804375574,
+          },
+          {
+            timestamp: new Date('2022-04-18T20:06:21.332Z'),
+            value: 0.0029301324176012507,
+          },
+          {
+            timestamp: new Date('2022-04-18T20:06:22.332Z'),
+            value: 0.002876857282735773,
+          },
+          {
+            timestamp: new Date('2022-04-18T21:06:03.476Z'),
+            value: 0.002903472963826521,
+          },
+          {
+            timestamp: new Date('2022-04-18T21:06:04.476Z'),
+            value: 0.0022908135310924843,
+          },
+          {
+            timestamp: new Date('2022-04-18T21:06:05.476Z'),
+            value: 0.0029833850637483515,
+          },
+          {
+            timestamp: new Date('2022-04-18T21:06:06.476Z'),
+            value: 0.002903472963826521,
+          },
+          {
+            timestamp: new Date('2022-04-18T21:06:07.476Z'),
+            value: 0.0030366597970295723,
+          },
+          {
+            timestamp: new Date('2022-04-18T21:06:08.476Z'),
+            value: 0.002930110330467131,
+          },
+          {
+            timestamp: new Date('2022-04-18T22:06:07.409Z'),
+            value: 0.002397388519772205,
+          },
+          {
+            timestamp: new Date('2022-04-18T22:06:08.409Z'),
+            value: 0.0027436779726281906,
+          },
+          {
+            timestamp: new Date('2022-04-18T22:06:09.409Z'),
+            value: 0.0029301415241660285,
+          },
+          {
+            timestamp: new Date('2022-04-18T22:06:10.409Z'),
+            value: 0.002823590923287264,
+          },
+          {
+            timestamp: new Date('2022-04-18T22:06:11.409Z'),
+            value: 0.002903503873946337,
+          },
+          {
+            timestamp: new Date('2022-04-18T22:06:12.409Z'),
+            value: 0.002663765021969117,
+          },
+          {
+            timestamp: new Date('2022-04-18T23:05:48.724Z'),
+            value: 0.002583852916816947,
+          },
+          {
+            timestamp: new Date('2022-04-18T23:05:49.724Z'),
+            value: 0.0025039399400081756,
+          },
+          {
+            timestamp: new Date('2022-04-18T23:05:50.724Z'),
+            value: 0.0030633307776695767,
+          },
+          {
+            timestamp: new Date('2022-04-18T23:05:51.724Z'),
+            value: 0.0023174763274543754,
+          },
+          {
+            timestamp: new Date('2022-04-18T23:05:52.724Z'),
+            value: 0.002583852916816947,
+          },
+          {
+            timestamp: new Date('2022-04-18T23:05:53.724Z'),
+            value: 0.002583852916816947,
+          },
+          {
+            timestamp: new Date('2022-04-19T00:06:29.712Z'),
+            value: 0.0025570903392266226,
+          },
+          {
+            timestamp: new Date('2022-04-19T00:06:30.712Z'),
+            value: 0.002423908550725236,
+          },
+          {
+            timestamp: new Date('2022-04-19T00:06:31.712Z'),
+            value: 0.0030631811355318916,
+          },
+          {
+            timestamp: new Date('2022-04-19T00:06:32.712Z'),
+            value: 0.0030099084201313368,
+          },
+          {
+            timestamp: new Date('2022-04-19T00:06:33.712Z'),
+            value: 0.0027435448431285636,
+          },
+          {
+            timestamp: new Date('2022-04-19T00:06:34.712Z'),
+            value: 0.0029566357047307824,
+          },
+          {
+            timestamp: new Date('2022-04-19T01:06:27.316Z'),
+            value: 0.002450533245467289,
+          },
+          {
+            timestamp: new Date('2022-04-19T01:06:28.316Z'),
+            value: 0.0029033491712601575,
+          },
+          {
+            timestamp: new Date('2022-04-19T01:06:29.316Z'),
+            value: 0.002770168016615196,
+          },
+          {
+            timestamp: new Date('2022-04-19T01:06:30.316Z'),
+            value: 0.003036530325905119,
+          },
+          {
+            timestamp: new Date('2022-04-19T01:06:31.316Z'),
+            value: 0.0027435317856862036,
+          },
+          {
+            timestamp: new Date('2022-04-19T01:06:32.316Z'),
+            value: 0.003063166556834111,
+          },
+          {
+            timestamp: new Date('2022-04-19T02:06:14.816Z'),
+            value: 0.002983264563165782,
+          },
+          {
+            timestamp: new Date('2022-04-19T02:06:15.816Z'),
+            value: 0.002770174237225369,
+          },
+          {
+            timestamp: new Date('2022-04-19T02:06:16.816Z'),
+            value: 0.0025038113297998527,
+          },
+          {
+            timestamp: new Date('2022-04-19T02:06:17.816Z'),
+            value: 0.0027968105279679205,
+          },
+          {
+            timestamp: new Date('2022-04-19T02:06:18.816Z'),
+            value: 0.002983264563165782,
+          },
+          {
+            timestamp: new Date('2022-04-19T02:06:19.816Z'),
+            value: 0.0026103564927700594,
+          },
+          {
+            timestamp: new Date('2022-04-19T03:06:34.720Z'),
+            value: 0.0022641267441246647,
+          },
+          {
+            timestamp: new Date('2022-04-19T03:06:35.720Z'),
+            value: 0.0025837681668246172,
+          },
+          {
+            timestamp: new Date('2022-04-19T03:06:36.720Z'),
+            value: 0.0023174003145746565,
+          },
+          {
+            timestamp: new Date('2022-04-19T03:06:37.720Z'),
+            value: 0.003063230300874546,
+          },
+          {
+            timestamp: new Date('2022-04-19T03:06:38.720Z'),
+            value: 0.002370673885024649,
+          },
+          {
+            timestamp: new Date('2022-04-19T03:06:39.720Z'),
+            value: 0.00303659351564955,
+          },
+          {
+            timestamp: new Date('2022-04-19T04:05:58.531Z'),
+            value: 0.00269028411847244,
+          },
+          {
+            timestamp: new Date('2022-04-19T04:05:59.531Z'),
+            value: 0.002583738212790363,
+          },
+          {
+            timestamp: new Date('2022-04-19T04:06:00.531Z'),
+            value: 0.002850102976995555,
+          },
+          {
+            timestamp: new Date('2022-04-19T04:06:01.531Z'),
+            value: 0.0027968300241545166,
+          },
+          {
+            timestamp: new Date('2022-04-19T04:06:02.531Z'),
+            value: 0.0026103746892108823,
+          },
+          {
+            timestamp: new Date('2022-04-19T04:06:03.531Z'),
+            value: 0.002850102976995555,
+          },
+          {
+            timestamp: new Date('2022-04-19T05:07:12.128Z'),
+            value: 0.0028767685891196455,
+          },
+          {
+            timestamp: new Date('2022-04-19T05:07:13.128Z'),
+            value: 0.0028501318429240935,
+          },
+          {
+            timestamp: new Date('2022-04-19T05:07:14.128Z'),
+            value: 0.0022641234266219433,
+          },
+          {
+            timestamp: new Date('2022-04-19T05:07:15.128Z'),
+            value: 0.0028767685891196455,
+          },
+          {
+            timestamp: new Date('2022-04-19T05:07:16.128Z'),
+            value: 0.003036589066292959,
+          },
+          {
+            timestamp: new Date('2022-04-19T05:07:17.128Z'),
+            value: 0.0028767685891196455,
+          },
+          {
+            timestamp: new Date('2022-04-19T06:06:13.891Z'),
+            value: 0.0026637020642312106,
+          },
+          {
+            timestamp: new Date('2022-04-19T06:06:14.891Z'),
+            value: 0.0028501612087273955,
+          },
+          {
+            timestamp: new Date('2022-04-19T06:06:15.891Z'),
+            value: 0.0028767982293697075,
+          },
+          {
+            timestamp: new Date('2022-04-19T06:06:16.891Z'),
+            value: 0.0027169761055158346,
+          },
+          {
+            timestamp: new Date('2022-04-19T06:06:17.891Z'),
+            value: 0.002956709291296644,
+          },
+          {
+            timestamp: new Date('2022-04-19T06:06:18.891Z'),
+            value: 0.0022907837752388412,
+          },
+          {
+            timestamp: new Date('2022-04-19T07:06:38.828Z'),
+            value: 0.002930087554457459,
+          },
+          {
+            timestamp: new Date('2022-04-19T07:06:39.828Z'),
+            value: 0.0025838044798397594,
+          },
+          {
+            timestamp: new Date('2022-04-19T07:06:40.828Z'),
+            value: 0.002930087554457459,
+          },
+          {
+            timestamp: new Date('2022-04-19T07:06:41.828Z'),
+            value: 0.0024772558414958516,
+          },
+          {
+            timestamp: new Date('2022-04-19T07:06:42.828Z'),
+            value: 0.0030632733523873433,
+          },
+          {
+            timestamp: new Date('2022-04-19T07:06:43.828Z'),
+            value: 0.0026370787990117133,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:06:51.639Z'),
+            value: 0.002770257053573895,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:06:52.639Z'),
+            value: 0.00279689414062749,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:06:53.639Z'),
+            value: 0.0023174265736627775,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:06:54.639Z'),
+            value: 0.0023707007477699674,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:06:55.639Z'),
+            value: 0.0027169828794667045,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:06:56.639Z'),
+            value: 0.0025305232700915383,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:12:06.387Z'),
+            value: 0.002397342447952599,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:12:07.387Z'),
+            value: 0.0026637138310584433,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:12:08.387Z'),
+            value: 0.0025571652778161053,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:12:09.387Z'),
+            value: 0.002983359490785456,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:12:10.387Z'),
+            value: 0.002503891001194937,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:12:11.387Z'),
+            value: 0.002503891001194937,
+          },
+          {
+            timestamp: new Date('2022-04-19T09:06:38.020Z'),
+            value: 0.002557163088622751,
+          },
+          {
+            timestamp: new Date('2022-04-19T09:06:39.020Z'),
+            value: 0.002503888857609777,
+          },
+          {
+            timestamp: new Date('2022-04-19T09:06:40.020Z'),
+            value: 0.002930082705713569,
+          },
+          {
+            timestamp: new Date('2022-04-19T09:06:41.020Z'),
+            value: 0.002956719821220056,
+          },
+          {
+            timestamp: new Date('2022-04-19T09:06:42.020Z'),
+            value: 0.002397340395583829,
+          },
+          {
+            timestamp: new Date('2022-04-19T09:06:43.020Z'),
+            value: 0.002637074435142212,
+          },
+        ],
+        warnings: [],
+        error: null,
+        isDownsampled: false,
+      },
+      {
+        id: '59f6e099-cddd-4786-a8a8-e74494ece2dd',
+        loading: false,
+        datapoints: [
+          {
+            timestamp: new Date('2022-04-18T15:01:11.760Z'),
+            value: 0.002038575482226275,
+          },
+          {
+            timestamp: new Date('2022-04-18T15:01:12.760Z'),
+            value: 0.0021824749280304825,
+          },
+          {
+            timestamp: new Date('2022-04-18T15:01:13.760Z'),
+            value: 0.0025182403015736334,
+          },
+          {
+            timestamp: new Date('2022-04-18T15:01:14.760Z'),
+            value: 0.0025901900244757374,
+          },
+          {
+            timestamp: new Date('2022-04-18T15:01:15.760Z'),
+            value: 0.0023983240967367938,
+          },
+          {
+            timestamp: new Date('2022-04-18T15:01:16.760Z'),
+            value: 0.0023983240967367938,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:01:17.487Z'),
+            value: 0.002182471978100317,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:01:18.487Z'),
+            value: 0.002446287272156399,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:01:19.487Z'),
+            value: 0.0023983208550552933,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:01:20.487Z'),
+            value: 0.002470270480706952,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:01:21.487Z'),
+            value: 0.0027580689833135875,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:01:22.487Z'),
+            value: 0.0027101025662124812,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:06:55.388Z'),
+            value: 0.00237432262099836,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:06:56.388Z'),
+            value: 0.0026381362455537333,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:06:57.388Z'),
+            value: 0.0021824581667762703,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:06:58.388Z'),
+            value: 0.0022304242803317924,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:06:59.388Z'),
+            value: 0.0022544073371095538,
+          },
+          {
+            timestamp: new Date('2022-04-18T16:07:00.388Z'),
+            value: 0.0027580515294425394,
+          },
+          {
+            timestamp: new Date('2022-04-18T17:01:30.918Z'),
+            value: 0.0024942394733872752,
+          },
+          {
+            timestamp: new Date('2022-04-18T17:01:31.918Z'),
+            value: 0.002734070191982205,
+          },
+          {
+            timestamp: new Date('2022-04-18T17:01:32.918Z'),
+            value: 0.002278391826651838,
+          },
+          {
+            timestamp: new Date('2022-04-18T17:01:33.918Z'),
+            value: 0.0021584764673543725,
+          },
+          {
+            timestamp: new Date('2022-04-18T17:01:34.918Z'),
+            value: 0.00237432411408981,
+          },
+          {
+            timestamp: new Date('2022-04-18T17:01:35.918Z'),
+            value: 0.0027100871201227125,
+          },
+          {
+            timestamp: new Date('2022-04-18T18:01:24.168Z'),
+            value: 0.0020385817325220034,
+          },
+          {
+            timestamp: new Date('2022-04-18T18:01:25.168Z'),
+            value: 0.0024942647080269218,
+          },
+          {
+            timestamp: new Date('2022-04-18T18:01:26.168Z'),
+            value: 0.002470281393526663,
+          },
+          {
+            timestamp: new Date('2022-04-18T18:01:27.168Z'),
+            value: 0.0025662146515276984,
+          },
+          {
+            timestamp: new Date('2022-04-18T18:01:28.168Z'),
+            value: 0.002158498305023298,
+          },
+          {
+            timestamp: new Date('2022-04-18T18:01:29.168Z'),
+            value: 0.0020625650470222625,
+          },
+          {
+            timestamp: new Date('2022-04-18T19:01:28.199Z'),
+            value: 0.002662142693626115,
+          },
+          {
+            timestamp: new Date('2022-04-18T19:01:29.199Z'),
+            value: 0.002230443878443502,
+          },
+          {
+            timestamp: new Date('2022-04-18T19:01:30.199Z'),
+            value: 0.002230443878443502,
+          },
+          {
+            timestamp: new Date('2022-04-18T19:01:31.199Z'),
+            value: 0.0021824773434232113,
+          },
+          {
+            timestamp: new Date('2022-04-18T19:01:32.199Z'),
+            value: 0.002518243088565244,
+          },
+          {
+            timestamp: new Date('2022-04-18T19:01:33.199Z'),
+            value: 0.0024702765535449538,
+          },
+          {
+            timestamp: new Date('2022-04-18T20:01:28.696Z'),
+            value: 0.00215848856289855,
+          },
+          {
+            timestamp: new Date('2022-04-18T20:01:29.696Z'),
+            value: 0.0026861191004959734,
+          },
+          {
+            timestamp: new Date('2022-04-18T20:01:30.696Z'),
+            value: 0.002542219862969403,
+          },
+          {
+            timestamp: new Date('2022-04-18T20:01:31.696Z'),
+            value: 0.0025662030692238315,
+          },
+          {
+            timestamp: new Date('2022-04-18T20:01:32.696Z'),
+            value: 0.0025662030692238315,
+          },
+          {
+            timestamp: new Date('2022-04-18T20:01:33.696Z'),
+            value: 0.0022544213879162633,
+          },
+          {
+            timestamp: new Date('2022-04-18T21:01:16.172Z'),
+            value: 0.0020625455379641453,
+          },
+          {
+            timestamp: new Date('2022-04-18T21:01:17.172Z'),
+            value: 0.0026381396415820465,
+          },
+          {
+            timestamp: new Date('2022-04-18T21:01:18.172Z'),
+            value: 0.0022064440638686206,
+          },
+          {
+            timestamp: new Date('2022-04-18T21:01:19.172Z'),
+            value: 0.0027340719921850297,
+          },
+          {
+            timestamp: new Date('2022-04-18T21:01:20.172Z'),
+            value: 0.0027580550798357757,
+          },
+          {
+            timestamp: new Date('2022-04-18T21:01:21.172Z'),
+            value: 0.0025901734662805544,
+          },
+          {
+            timestamp: new Date('2022-04-18T22:01:13.537Z'),
+            value: 0.0026381061137612286,
+          },
+          {
+            timestamp: new Date('2022-04-18T22:01:14.537Z'),
+            value: 0.002422261068089855,
+          },
+          {
+            timestamp: new Date('2022-04-18T22:01:15.537Z'),
+            value: 0.002590140548056479,
+          },
+          {
+            timestamp: new Date('2022-04-18T22:01:16.537Z'),
+            value: 0.002206416022418482,
+          },
+          {
+            timestamp: new Date('2022-04-18T22:01:17.537Z'),
+            value: 0.002326329936680356,
+          },
+          {
+            timestamp: new Date('2022-04-18T22:01:18.537Z'),
+            value: 0.002110484891008983,
+          },
+          {
+            timestamp: new Date('2022-04-18T23:01:17.585Z'),
+            value: 0.0021584725715083817,
+          },
+          {
+            timestamp: new Date('2022-04-18T23:01:18.585Z'),
+            value: 0.002038557428646805,
+          },
+          {
+            timestamp: new Date('2022-04-18T23:01:19.585Z'),
+            value: 0.00206254045721912,
+          },
+          {
+            timestamp: new Date('2022-04-18T23:01:20.585Z'),
+            value: 0.00273406525724395,
+          },
+          {
+            timestamp: new Date('2022-04-18T23:01:21.585Z'),
+            value: 0.0023503368000869045,
+          },
+          {
+            timestamp: new Date('2022-04-18T23:01:22.585Z'),
+            value: 0.002398302857231535,
+          },
+          {
+            timestamp: new Date('2022-04-19T00:01:41.388Z'),
+            value: 0.0022064553294677994,
+          },
+          {
+            timestamp: new Date('2022-04-19T00:01:42.388Z'),
+            value: 0.0021345056991590667,
+          },
+          {
+            timestamp: new Date('2022-04-19T00:01:43.388Z'),
+            value: 0.002614169901217284,
+          },
+          {
+            timestamp: new Date('2022-04-19T00:01:44.388Z'),
+            value: 0.002638153111320195,
+          },
+          {
+            timestamp: new Date('2022-04-19T00:01:45.388Z'),
+            value: 0.002302388169879443,
+          },
+          {
+            timestamp: new Date('2022-04-19T00:01:46.388Z'),
+            value: 0.0022544217496736213,
+          },
+          {
+            timestamp: new Date('2022-04-19T01:01:24.299Z'),
+            value: 0.002614154766791415,
+          },
+          {
+            timestamp: new Date('2022-04-19T01:01:25.299Z'),
+            value: 0.0026621209093013495,
+          },
+          {
+            timestamp: new Date('2022-04-19T01:01:26.299Z'),
+            value: 0.002350340982986777,
+          },
+          {
+            timestamp: new Date('2022-04-19T01:01:27.299Z'),
+            value: 0.0020385610566722046,
+          },
+          {
+            timestamp: new Date('2022-04-19T01:01:28.299Z'),
+            value: 0.002302374840476843,
+          },
+          {
+            timestamp: new Date('2022-04-19T01:01:29.299Z'),
+            value: 0.0020385610566722046,
+          },
+          {
+            timestamp: new Date('2022-04-19T02:01:22.433Z'),
+            value: 0.0021824636142744307,
+          },
+          {
+            timestamp: new Date('2022-04-19T02:01:23.433Z'),
+            value: 0.0025901765971608624,
+          },
+          {
+            timestamp: new Date('2022-04-19T02:01:24.433Z'),
+            value: 0.002734075297003133,
+          },
+          {
+            timestamp: new Date('2022-04-19T02:01:25.433Z'),
+            value: 0.002494244130599349,
+          },
+          {
+            timestamp: new Date('2022-04-19T02:01:26.433Z'),
+            value: 0.0023263623141167008,
+          },
+          {
+            timestamp: new Date('2022-04-19T02:01:27.433Z'),
+            value: 0.0023983116640378358,
+          },
+          {
+            timestamp: new Date('2022-04-19T03:01:34.371Z'),
+            value: 0.0026620818220397173,
+          },
+          {
+            timestamp: new Date('2022-04-19T03:01:35.371Z'),
+            value: 0.002062513844102844,
+          },
+          {
+            timestamp: new Date('2022-04-19T03:01:36.371Z'),
+            value: 0.0026380991029222424,
+          },
+          {
+            timestamp: new Date('2022-04-19T03:01:37.371Z'),
+            value: 0.002758012698509617,
+          },
+          {
+            timestamp: new Date('2022-04-19T03:01:38.371Z'),
+            value: 0.002086496563220319,
+          },
+          {
+            timestamp: new Date('2022-04-19T03:01:39.371Z'),
+            value: 0.0022303928779251686,
+          },
+          {
+            timestamp: new Date('2022-04-19T04:01:08.484Z'),
+            value: 0.002614135830881459,
+          },
+          {
+            timestamp: new Date('2022-04-19T04:01:09.484Z'),
+            value: 0.0024942213432263462,
+          },
+          {
+            timestamp: new Date('2022-04-19T04:01:10.484Z'),
+            value: 0.0022543923679161208,
+          },
+          {
+            timestamp: new Date('2022-04-19T04:01:11.484Z'),
+            value: 0.002086512085198963,
+          },
+          {
+            timestamp: new Date('2022-04-19T04:01:12.484Z'),
+            value: 0.002518204240757369,
+          },
+          {
+            timestamp: new Date('2022-04-19T04:01:13.484Z'),
+            value: 0.002134477880261008,
+          },
+          {
+            timestamp: new Date('2022-04-19T05:01:29.783Z'),
+            value: 0.0025661731846163068,
+          },
+          {
+            timestamp: new Date('2022-04-19T05:01:30.783Z'),
+            value: 0.0021584634263127813,
+          },
+          {
+            timestamp: new Date('2022-04-19T05:01:31.783Z'),
+            value: 0.002302360988066967,
+          },
+          {
+            timestamp: new Date('2022-04-19T05:01:32.783Z'),
+            value: 0.002278378061107936,
+          },
+          {
+            timestamp: new Date('2022-04-19T05:01:33.783Z'),
+            value: 0.0026381219654934,
+          },
+          {
+            timestamp: new Date('2022-04-19T05:01:34.783Z'),
+            value: 0.0023982926959030906,
+          },
+          {
+            timestamp: new Date('2022-04-19T06:01:06.180Z'),
+            value: 0.0024222688004698076,
+          },
+          {
+            timestamp: new Date('2022-04-19T06:01:07.180Z'),
+            value: 0.0022304059251850705,
+          },
+          {
+            timestamp: new Date('2022-04-19T06:01:08.180Z'),
+            value: 0.0025661659569333603,
+          },
+          {
+            timestamp: new Date('2022-04-19T06:01:09.180Z'),
+            value: 0.0023982859410592154,
+          },
+          {
+            timestamp: new Date('2022-04-19T06:01:10.180Z'),
+            value: 0.002518200238112176,
+          },
+          {
+            timestamp: new Date('2022-04-19T06:01:11.180Z'),
+            value: 0.002494217378701584,
+          },
+          {
+            timestamp: new Date('2022-04-19T07:01:16.638Z'),
+            value: 0.0025421845408829555,
+          },
+          {
+            timestamp: new Date('2022-04-19T07:01:17.638Z'),
+            value: 0.0025182016678557575,
+          },
+          {
+            timestamp: new Date('2022-04-19T07:01:18.638Z'),
+            value: 0.0026381160329917463,
+          },
+          {
+            timestamp: new Date('2022-04-19T07:01:19.638Z'),
+            value: 0.0021344756994205946,
+          },
+          {
+            timestamp: new Date('2022-04-19T07:01:20.638Z'),
+            value: 0.002398287302719769,
+          },
+          {
+            timestamp: new Date('2022-04-19T07:01:21.638Z'),
+            value: 0.002470235921801362,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:01:50.664Z'),
+            value: 0.0024222860083086034,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:01:51.664Z'),
+            value: 0.002062540561530098,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:01:52.664Z'),
+            value: 0.002614150246590473,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:01:53.664Z'),
+            value: 0.002446269038093837,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:01:54.664Z'),
+            value: 0.002278387829597201,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:01:55.664Z'),
+            value: 0.0024222860083086034,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:07:04.704Z'),
+            value: 0.0024462751707139785,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:07:05.704Z'),
+            value: 0.0024462751707139785,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:07:06.704Z'),
+            value: 0.0022783935413512547,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:07:07.704Z'),
+            value: 0.002710089159712545,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:07:08.704Z'),
+            value: 0.0024942413505319,
+          },
+          {
+            timestamp: new Date('2022-04-19T08:07:09.704Z'),
+            value: 0.002038562642261649,
+          },
+          {
+            timestamp: new Date('2022-04-19T09:01:06.924Z'),
+            value: 0.00268610649502094,
+          },
+          {
+            timestamp: new Date('2022-04-19T09:01:07.924Z'),
+            value: 0.0023743262768488667,
+          },
+          {
+            timestamp: new Date('2022-04-19T09:01:08.924Z'),
+            value: 0.0025661910264932197,
+          },
+          {
+            timestamp: new Date('2022-04-19T09:01:09.924Z'),
+            value: 0.0023743262768488667,
+          },
+          {
+            timestamp: new Date('2022-04-19T09:01:10.924Z'),
+            value: 0.0020865291523823374,
+          },
+          {
+            timestamp: new Date('2022-04-19T09:01:11.924Z'),
+            value: 0.0025182248390821314,
+          },
+        ],
+        warnings: [],
+        error: null,
+        isDownsampled: false,
+      },
+    ],
+    mergeUnits: true,
+  },
+  result: [
+    {
+      enabled: true,
+      unit: 'custom-1',
+      range: [-0.004209428514817475, 0.008946288902060182],
+      series: [
+        {
+          name: 'VAL_21_PI_1032_04:Z.X.Value',
+          lineWeight: 1,
+          unit: '',
+          preferredUnit: '',
+          customUnitLabel: 'custom-1',
+          enabled: true,
+          id: 'e2c66ee8-dc6f-4351-a971-46b0fc499f40',
+          type: 'timeseries',
+          color: '#6929c4',
+          tsId: 8070156109692675,
+          displayMode: 'lines',
+          originalUnit: '',
+          range: [-0.004209428514817475, 0.008946288902060182],
+          tsExternalId: 'VAL_21_PI_1032_04:Z.X.Value',
+          description: '-',
+          interpolation: 'linear',
+          lineStyle: 'solid',
+          createdAt: 1651753321354,
+          width: 1,
+          outdatedData: false,
+          datapoints: [
+            {
+              timestamp: new Date('2022-04-18T14:06:02.371Z'),
+              value: 0.002770285513799023,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:06:02.694Z'),
+              value: 0.0024239977568267105,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:06:03.694Z'),
+              value: 0.002450635094813817,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:06:04.694Z'),
+              value: 0.002530547108775137,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:06:05.694Z'),
+              value: 0.002637096460723564,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:06:06.694Z'),
+              value: 0.0026637337987106707,
+            },
+            {
+              timestamp: new Date('2022-04-18T15:06:07.694Z'),
+              value: 0.0025039097707880305,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:14.905Z'),
+              value: 0.002956736396315989,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:15.905Z'),
+              value: 0.0023707165700191262,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:16.905Z'),
+              value: 0.0027436382776625844,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:17.905Z'),
+              value: 0.0027170010128309088,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:18.905Z'),
+              value: 0.00301001092597934,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:06:19.905Z'),
+              value: 0.00301001092597934,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:11:41.468Z'),
+              value: 0.0025039118097958425,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:11:42.468Z'),
+              value: 0.00226417557268773,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:11:43.468Z'),
+              value: 0.0026637359678679177,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:11:44.468Z'),
+              value: 0.0030366590033694264,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:11:45.468Z'),
+              value: 0.002690373327546597,
+            },
+            {
+              timestamp: new Date('2022-04-18T16:11:46.468Z'),
+              value: 0.0030366590033694264,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:06:21.364Z'),
+              value: 0.002823561334902819,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:06:22.364Z'),
+              value: 0.0027969239638188305,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:06:23.364Z'),
+              value: 0.0023440886553910195,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:06:24.364Z'),
+              value: 0.002264176542139053,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:06:25.364Z'),
+              value: 0.002690374479482875,
+            },
+            {
+              timestamp: new Date('2022-04-18T17:06:26.364Z'),
+              value: 0.003063297674658719,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:06:24.601Z'),
+              value: 0.002290840619456912,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:06:25.601Z'),
+              value: 0.002370753664321688,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:06:26.601Z'),
+              value: 0.002903507296753528,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:06:27.601Z'),
+              value: 0.0026637681621592,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:06:28.601Z'),
+              value: 0.00253057975405124,
+            },
+            {
+              timestamp: new Date('2022-04-18T18:06:29.601Z'),
+              value: 0.002424029027564872,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:06:30.873Z'),
+              value: 0.0026637706417773415,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:06:31.873Z'),
+              value: 0.002690408348195115,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:06:32.873Z'),
+              value: 0.00226420504551074,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:06:33.873Z'),
+              value: 0.002557219816106248,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:06:34.873Z'),
+              value: 0.0027969591738662087,
+            },
+            {
+              timestamp: new Date('2022-04-18T19:06:35.873Z'),
+              value: 0.002317480458346287,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:06:17.332Z'),
+              value: 0.002663756743273864,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:06:18.332Z'),
+              value: 0.0030366826873322052,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:06:19.332Z'),
+              value: 0.002450656203811955,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:06:20.332Z'),
+              value: 0.0027969445804375574,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:06:21.332Z'),
+              value: 0.0029301324176012507,
+            },
+            {
+              timestamp: new Date('2022-04-18T20:06:22.332Z'),
+              value: 0.002876857282735773,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:06:03.477Z'),
+              value: 0.002903472963826521,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:06:04.477Z'),
+              value: 0.0022908135310924843,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:06:05.477Z'),
+              value: 0.0029833850637483515,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:06:06.477Z'),
+              value: 0.002903472963826521,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:06:07.477Z'),
+              value: 0.0030366597970295723,
+            },
+            {
+              timestamp: new Date('2022-04-18T21:06:08.477Z'),
+              value: 0.002930110330467131,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:06:07.410Z'),
+              value: 0.002397388519772205,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:06:08.410Z'),
+              value: 0.0027436779726281906,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:06:09.410Z'),
+              value: 0.0029301415241660285,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:06:10.410Z'),
+              value: 0.002823590923287264,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:06:11.410Z'),
+              value: 0.002903503873946337,
+            },
+            {
+              timestamp: new Date('2022-04-18T22:06:12.410Z'),
+              value: 0.002663765021969117,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:05:48.725Z'),
+              value: 0.002583852916816947,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:05:49.725Z'),
+              value: 0.0025039399400081756,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:05:50.725Z'),
+              value: 0.0030633307776695767,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:05:51.725Z'),
+              value: 0.0023174763274543754,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:05:52.725Z'),
+              value: 0.002583852916816947,
+            },
+            {
+              timestamp: new Date('2022-04-18T23:05:53.725Z'),
+              value: 0.002583852916816947,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:06:29.712Z'),
+              value: 0.0025570903392266226,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:06:30.712Z'),
+              value: 0.002423908550725236,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:06:31.712Z'),
+              value: 0.0030631811355318916,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:06:32.712Z'),
+              value: 0.0030099084201313368,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:06:33.712Z'),
+              value: 0.0027435448431285636,
+            },
+            {
+              timestamp: new Date('2022-04-19T00:06:34.712Z'),
+              value: 0.0029566357047307824,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:06:27.316Z'),
+              value: 0.002450533245467289,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:06:28.316Z'),
+              value: 0.0029033491712601575,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:06:29.316Z'),
+              value: 0.002770168016615196,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:06:30.316Z'),
+              value: 0.003036530325905119,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:06:31.316Z'),
+              value: 0.0027435317856862036,
+            },
+            {
+              timestamp: new Date('2022-04-19T01:06:32.316Z'),
+              value: 0.003063166556834111,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:06:14.817Z'),
+              value: 0.002983264563165782,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:06:15.817Z'),
+              value: 0.002770174237225369,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:06:16.817Z'),
+              value: 0.0025038113297998527,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:06:17.817Z'),
+              value: 0.0027968105279679205,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:06:18.817Z'),
+              value: 0.002983264563165782,
+            },
+            {
+              timestamp: new Date('2022-04-19T02:06:19.817Z'),
+              value: 0.0026103564927700594,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:06:34.720Z'),
+              value: 0.0022641267441246647,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:06:35.720Z'),
+              value: 0.0025837681668246172,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:06:36.720Z'),
+              value: 0.0023174003145746565,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:06:37.720Z'),
+              value: 0.003063230300874546,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:06:38.720Z'),
+              value: 0.002370673885024649,
+            },
+            {
+              timestamp: new Date('2022-04-19T03:06:39.720Z'),
+              value: 0.00303659351564955,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:05:58.531Z'),
+              value: 0.00269028411847244,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:05:59.531Z'),
+              value: 0.002583738212790363,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:06:00.531Z'),
+              value: 0.002850102976995555,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:06:01.531Z'),
+              value: 0.0027968300241545166,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:06:02.531Z'),
+              value: 0.0026103746892108823,
+            },
+            {
+              timestamp: new Date('2022-04-19T04:06:03.531Z'),
+              value: 0.002850102976995555,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:07:12.129Z'),
+              value: 0.0028767685891196455,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:07:13.129Z'),
+              value: 0.0028501318429240935,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:07:14.129Z'),
+              value: 0.0022641234266219433,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:07:15.129Z'),
+              value: 0.0028767685891196455,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:07:16.129Z'),
+              value: 0.003036589066292959,
+            },
+            {
+              timestamp: new Date('2022-04-19T05:07:17.129Z'),
+              value: 0.0028767685891196455,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:06:13.891Z'),
+              value: 0.0026637020642312106,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:06:14.891Z'),
+              value: 0.0028501612087273955,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:06:15.891Z'),
+              value: 0.0028767982293697075,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:06:16.891Z'),
+              value: 0.0027169761055158346,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:06:17.891Z'),
+              value: 0.002956709291296644,
+            },
+            {
+              timestamp: new Date('2022-04-19T06:06:18.891Z'),
+              value: 0.0022907837752388412,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:06:38.828Z'),
+              value: 0.002930087554457459,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:06:39.828Z'),
+              value: 0.0025838044798397594,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:06:40.828Z'),
+              value: 0.002930087554457459,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:06:41.828Z'),
+              value: 0.0024772558414958516,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:06:42.828Z'),
+              value: 0.0030632733523873433,
+            },
+            {
+              timestamp: new Date('2022-04-19T07:06:43.828Z'),
+              value: 0.0026370787990117133,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:06:51.639Z'),
+              value: 0.002770257053573895,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:06:52.639Z'),
+              value: 0.00279689414062749,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:06:53.639Z'),
+              value: 0.0023174265736627775,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:06:54.639Z'),
+              value: 0.0023707007477699674,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:06:55.639Z'),
+              value: 0.0027169828794667045,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:06:56.639Z'),
+              value: 0.0025305232700915383,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:12:06.387Z'),
+              value: 0.002397342447952599,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:12:07.387Z'),
+              value: 0.0026637138310584433,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:12:08.387Z'),
+              value: 0.0025571652778161053,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:12:09.387Z'),
+              value: 0.002983359490785456,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:12:10.387Z'),
+              value: 0.002503891001194937,
+            },
+            {
+              timestamp: new Date('2022-04-19T08:12:11.387Z'),
+              value: 0.002503891001194937,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:06:38.021Z'),
+              value: 0.002557163088622751,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:06:39.021Z'),
+              value: 0.002503888857609777,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:06:40.021Z'),
+              value: 0.002930082705713569,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:06:41.021Z'),
+              value: 0.002956719821220056,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:06:42.021Z'),
+              value: 0.002397340395583829,
+            },
+            {
+              timestamp: new Date('2022-04-19T09:06:43.021Z'),
+              value: 0.002637074435142212,
+            },
+            {
+              timestamp: new Date('2022-04-19T10:06:14.848Z'),
+              value: 0.0025571477982464404,
+            },
+          ],
+          dash: 'solid',
+          mode: 'lines+markers',
+          shape: 'linear',
+        },
+        {
+          tsId: 433289095073112,
+          createdAt: 1651753332310,
+          interpolation: 'linear',
+          lineStyle: 'solid',
+          displayMode: 'lines',
+          name: 'VAL_21_PI_1111:Z.X.Value',
+          range: [-0.00038689823642818226, 0.004379047213922834],
+          lineWeight: 1,
+          type: 'timeseries',
+          enabled: true,
+          color: '#1192e8',
+          description: '-',
+          unit: '',
+          preferredUnit: '',
+          customUnitLabel: 'custom-1',
           tsExternalId: 'VAL_21_PI_1111:Z.X.Value',
           originalUnit: '',
           id: '84289091-6420-49ea-9d75-cd5ae70b1803',
@@ -10430,6 +14899,8 @@ export const calculateSeriesDataCase2: {
     },
     {
       enabled: true,
+      unit: 'custom-2',
+      range: [-0.5, 0.5],
       series: [
         {
           enabled: true,
@@ -10948,12 +15419,6 @@ export const calculateSeriesDataCase2: {
             },
           ],
         },
-      ],
-      thresholds: [],
-    },
-    {
-      enabled: true,
-      series: [
         {
           enabled: true,
           outdatedData: false,
@@ -11517,83 +15982,83 @@ export const formatSeriesDataCase1 = {
             outdatedData: false,
             datapoints: [
               {
-                timestamp: '2022-04-16T01:04:07.747Z',
+                timestamp: new Date('2022-04-16T01:04:07.747Z'),
                 value: 0.0019628775968262347,
               },
               {
-                timestamp: '2022-04-16T02:04:16.381Z',
+                timestamp: new Date('2022-04-16T02:04:16.381Z'),
                 value: 0.002133559174638432,
               },
               {
-                timestamp: '2022-04-16T02:04:17.381Z',
+                timestamp: new Date('2022-04-16T02:04:17.381Z'),
                 value: 0.0019628744406673575,
               },
               {
-                timestamp: '2022-04-16T02:04:18.381Z',
+                timestamp: new Date('2022-04-16T02:04:18.381Z'),
                 value: 0.0020482168076528945,
               },
               {
-                timestamp: '2022-04-16T02:04:19.381Z',
+                timestamp: new Date('2022-04-16T02:04:19.381Z'),
                 value: 0.0021122235828920474,
               },
               {
-                timestamp: '2022-04-16T02:04:20.381Z',
+                timestamp: new Date('2022-04-16T02:04:20.381Z'),
                 value: 0.0019628744406673575,
               },
               {
-                timestamp: '2022-04-16T02:04:21.381Z',
+                timestamp: new Date('2022-04-16T02:04:21.381Z'),
                 value: 0.002432257459087812,
               },
               {
-                timestamp: '2022-04-16T03:04:03.073Z',
+                timestamp: new Date('2022-04-16T03:04:03.073Z'),
                 value: 0.002389570867947929,
               },
               {
-                timestamp: '2022-04-16T03:04:04.073Z',
+                timestamp: new Date('2022-04-16T03:04:04.073Z'),
                 value: 0.002218887234523077,
               },
               {
-                timestamp: '2022-04-16T03:04:05.073Z',
+                timestamp: new Date('2022-04-16T03:04:05.073Z'),
                 value: 0.0021975517803449703,
               },
               {
-                timestamp: '2022-04-16T03:04:06.073Z',
+                timestamp: new Date('2022-04-16T03:04:06.073Z'),
                 value: 0.002133545417810651,
               },
               {
-                timestamp: '2022-04-16T03:04:07.073Z',
+                timestamp: new Date('2022-04-16T03:04:07.073Z'),
                 value: 0.0022402226887011834,
               },
               {
-                timestamp: '2022-04-16T03:04:08.073Z',
+                timestamp: new Date('2022-04-16T03:04:08.073Z'),
                 value: 0.0023255645054136094,
               },
               {
-                timestamp: '2022-04-16T04:03:57.006Z',
+                timestamp: new Date('2022-04-16T04:03:57.006Z'),
                 value: 0.002432282435372322,
               },
               {
-                timestamp: '2022-04-16T04:03:58.006Z',
+                timestamp: new Date('2022-04-16T04:03:58.006Z'),
                 value: 0.002090909461986733,
               },
               {
-                timestamp: '2022-04-16T04:03:59.006Z',
+                timestamp: new Date('2022-04-16T04:03:59.006Z'),
                 value: 0.002410946624535723,
               },
               {
-                timestamp: '2022-04-16T04:04:00.006Z',
+                timestamp: new Date('2022-04-16T04:04:00.006Z'),
                 value: 0.0024536182462089216,
               },
               {
-                timestamp: '2022-04-16T04:04:01.006Z',
+                timestamp: new Date('2022-04-16T04:04:01.006Z'),
                 value: 0.002410946624535723,
               },
               {
-                timestamp: '2022-04-16T04:04:02.006Z',
+                timestamp: new Date('2022-04-16T04:04:02.006Z'),
                 value: 0.001962894596967137,
               },
               {
-                timestamp: '2022-04-16T05:04:16.943Z',
+                timestamp: new Date('2022-04-16T05:04:16.943Z'),
                 value: 0.0022189565266141536,
               },
             ],
@@ -11623,83 +16088,83 @@ export const formatSeriesDataCase1 = {
             outdatedData: false,
             datapoints: [
               {
-                timestamp: '2022-04-16T01:03:48.305Z',
+                timestamp: new Date('2022-04-16T01:03:48.305Z'),
                 value: 0.0024221646264243166,
               },
               {
-                timestamp: '2022-04-16T02:03:55.064Z',
+                timestamp: new Date('2022-04-16T02:03:55.064Z'),
                 value: 0.0026883389101643946,
               },
               {
-                timestamp: '2022-04-16T02:03:56.064Z',
+                timestamp: new Date('2022-04-16T02:03:56.064Z'),
                 value: 0.002581870042435112,
               },
               {
-                timestamp: '2022-04-16T02:03:57.064Z',
+                timestamp: new Date('2022-04-16T02:03:57.064Z'),
                 value: 0.002342315090044225,
               },
               {
-                timestamp: '2022-04-16T02:03:58.064Z',
+                timestamp: new Date('2022-04-16T02:03:58.064Z'),
                 value: 0.0027149561270967152,
               },
               {
-                timestamp: '2022-04-16T02:03:59.064Z',
+                timestamp: new Date('2022-04-16T02:03:59.064Z'),
                 value: 0.002635104476299753,
               },
               {
-                timestamp: '2022-04-16T02:04:00.064Z',
+                timestamp: new Date('2022-04-16T02:04:00.064Z'),
                 value: 0.0028746594286906397,
               },
               {
-                timestamp: '2022-04-16T03:03:42.493Z',
+                timestamp: new Date('2022-04-16T03:03:42.493Z'),
                 value: 0.0026617075958285984,
               },
               {
-                timestamp: '2022-04-16T03:03:43.493Z',
+                timestamp: new Date('2022-04-16T03:03:43.493Z'),
                 value: 0.0027149417477451703,
               },
               {
-                timestamp: '2022-04-16T03:03:44.493Z',
+                timestamp: new Date('2022-04-16T03:03:44.493Z'),
                 value: 0.002768175899661742,
               },
               {
-                timestamp: '2022-04-16T03:03:45.493Z',
+                timestamp: new Date('2022-04-16T03:03:45.493Z'),
                 value: 0.0025552392919954547,
               },
               {
-                timestamp: '2022-04-16T03:03:46.493Z',
+                timestamp: new Date('2022-04-16T03:03:46.493Z'),
                 value: 0.0027415588237034564,
               },
               {
-                timestamp: '2022-04-16T03:03:47.493Z',
+                timestamp: new Date('2022-04-16T03:03:47.493Z'),
                 value: 0.0026617075958285984,
               },
               {
-                timestamp: '2022-04-16T04:03:37.676Z',
+                timestamp: new Date('2022-04-16T04:03:37.676Z'),
                 value: 0.002714957085773523,
               },
               {
-                timestamp: '2022-04-16T04:03:38.676Z',
+                timestamp: new Date('2022-04-16T04:03:38.676Z'),
                 value: 0.0022624642381446026,
               },
               {
-                timestamp: '2022-04-16T04:03:39.676Z',
+                timestamp: new Date('2022-04-16T04:03:39.676Z'),
                 value: 0.002448784822462393,
               },
               {
-                timestamp: '2022-04-16T04:03:40.676Z',
+                timestamp: new Date('2022-04-16T04:03:40.676Z'),
                 value: 0.0030609810280779913,
               },
               {
-                timestamp: '2022-04-16T04:03:41.676Z',
+                timestamp: new Date('2022-04-16T04:03:41.676Z'),
                 value: 0.00268833985944241,
               },
               {
-                timestamp: '2022-04-16T04:03:42.676Z',
+                timestamp: new Date('2022-04-16T04:03:42.676Z'),
                 value: 0.0030609810280779913,
               },
               {
-                timestamp: '2022-04-16T05:03:55.517Z',
+                timestamp: new Date('2022-04-16T05:03:55.517Z'),
                 value: 0.0029278994060574865,
               },
             ],
@@ -11718,75 +16183,75 @@ export const formatSeriesDataCase1 = {
             dash: 'solid',
             datapoints: [
               {
-                timestamp: '2022-04-16T02:04:16.380Z',
+                timestamp: new Date('2022-04-16T02:04:16.380Z'),
                 value: 0.002133559174638432,
               },
               {
-                timestamp: '2022-04-16T02:04:17.380Z',
+                timestamp: new Date('2022-04-16T02:04:17.380Z'),
                 value: 0.0019628744406673575,
               },
               {
-                timestamp: '2022-04-16T02:04:18.380Z',
+                timestamp: new Date('2022-04-16T02:04:18.380Z'),
                 value: 0.0020482168076528945,
               },
               {
-                timestamp: '2022-04-16T02:04:19.380Z',
+                timestamp: new Date('2022-04-16T02:04:19.380Z'),
                 value: 0.0021122235828920474,
               },
               {
-                timestamp: '2022-04-16T02:04:20.380Z',
+                timestamp: new Date('2022-04-16T02:04:20.380Z'),
                 value: 0.0019628744406673575,
               },
               {
-                timestamp: '2022-04-16T02:04:21.380Z',
+                timestamp: new Date('2022-04-16T02:04:21.380Z'),
                 value: 0.002432257459087812,
               },
               {
-                timestamp: '2022-04-16T03:04:03.072Z',
+                timestamp: new Date('2022-04-16T03:04:03.072Z'),
                 value: 0.002389570867947929,
               },
               {
-                timestamp: '2022-04-16T03:04:04.072Z',
+                timestamp: new Date('2022-04-16T03:04:04.072Z'),
                 value: 0.002218887234523077,
               },
               {
-                timestamp: '2022-04-16T03:04:05.072Z',
+                timestamp: new Date('2022-04-16T03:04:05.072Z'),
                 value: 0.0021975517803449703,
               },
               {
-                timestamp: '2022-04-16T03:04:06.072Z',
+                timestamp: new Date('2022-04-16T03:04:06.072Z'),
                 value: 0.002133545417810651,
               },
               {
-                timestamp: '2022-04-16T03:04:07.072Z',
+                timestamp: new Date('2022-04-16T03:04:07.072Z'),
                 value: 0.0022402226887011834,
               },
               {
-                timestamp: '2022-04-16T03:04:08.072Z',
+                timestamp: new Date('2022-04-16T03:04:08.072Z'),
                 value: 0.0023255645054136094,
               },
               {
-                timestamp: '2022-04-16T04:03:57.006Z',
+                timestamp: new Date('2022-04-16T04:03:57.006Z'),
                 value: 0.002432282435372322,
               },
               {
-                timestamp: '2022-04-16T04:03:58.006Z',
+                timestamp: new Date('2022-04-16T04:03:58.006Z'),
                 value: 0.002090909461986733,
               },
               {
-                timestamp: '2022-04-16T04:03:59.006Z',
+                timestamp: new Date('2022-04-16T04:03:59.006Z'),
                 value: 0.002410946624535723,
               },
               {
-                timestamp: '2022-04-16T04:04:00.006Z',
+                timestamp: new Date('2022-04-16T04:04:00.006Z'),
                 value: 0.0024536182462089216,
               },
               {
-                timestamp: '2022-04-16T04:04:01.006Z',
+                timestamp: new Date('2022-04-16T04:04:01.006Z'),
                 value: 0.002410946624535723,
               },
               {
-                timestamp: '2022-04-16T04:04:02.006Z',
+                timestamp: new Date('2022-04-16T04:04:02.006Z'),
                 value: 0.001962894596967137,
               },
             ],
@@ -11810,75 +16275,75 @@ export const formatSeriesDataCase1 = {
             dash: 'solid',
             datapoints: [
               {
-                timestamp: '2022-04-16T02:03:55.064Z',
+                timestamp: new Date('2022-04-16T02:03:55.064Z'),
                 value: 0.0026883389101643946,
               },
               {
-                timestamp: '2022-04-16T02:03:56.064Z',
+                timestamp: new Date('2022-04-16T02:03:56.064Z'),
                 value: 0.002581870042435112,
               },
               {
-                timestamp: '2022-04-16T02:03:57.064Z',
+                timestamp: new Date('2022-04-16T02:03:57.064Z'),
                 value: 0.002342315090044225,
               },
               {
-                timestamp: '2022-04-16T02:03:58.064Z',
+                timestamp: new Date('2022-04-16T02:03:58.064Z'),
                 value: 0.0027149561270967152,
               },
               {
-                timestamp: '2022-04-16T02:03:59.064Z',
+                timestamp: new Date('2022-04-16T02:03:59.064Z'),
                 value: 0.002635104476299753,
               },
               {
-                timestamp: '2022-04-16T02:04:00.064Z',
+                timestamp: new Date('2022-04-16T02:04:00.064Z'),
                 value: 0.0028746594286906397,
               },
               {
-                timestamp: '2022-04-16T03:03:42.492Z',
+                timestamp: new Date('2022-04-16T03:03:42.492Z'),
                 value: 0.0026617075958285984,
               },
               {
-                timestamp: '2022-04-16T03:03:43.492Z',
+                timestamp: new Date('2022-04-16T03:03:43.492Z'),
                 value: 0.0027149417477451703,
               },
               {
-                timestamp: '2022-04-16T03:03:44.492Z',
+                timestamp: new Date('2022-04-16T03:03:44.492Z'),
                 value: 0.002768175899661742,
               },
               {
-                timestamp: '2022-04-16T03:03:45.492Z',
+                timestamp: new Date('2022-04-16T03:03:45.492Z'),
                 value: 0.0025552392919954547,
               },
               {
-                timestamp: '2022-04-16T03:03:46.492Z',
+                timestamp: new Date('2022-04-16T03:03:46.492Z'),
                 value: 0.0027415588237034564,
               },
               {
-                timestamp: '2022-04-16T03:03:47.492Z',
+                timestamp: new Date('2022-04-16T03:03:47.492Z'),
                 value: 0.0026617075958285984,
               },
               {
-                timestamp: '2022-04-16T04:03:37.676Z',
+                timestamp: new Date('2022-04-16T04:03:37.676Z'),
                 value: 0.002714957085773523,
               },
               {
-                timestamp: '2022-04-16T04:03:38.676Z',
+                timestamp: new Date('2022-04-16T04:03:38.676Z'),
                 value: 0.0022624642381446026,
               },
               {
-                timestamp: '2022-04-16T04:03:39.676Z',
+                timestamp: new Date('2022-04-16T04:03:39.676Z'),
                 value: 0.002448784822462393,
               },
               {
-                timestamp: '2022-04-16T04:03:40.676Z',
+                timestamp: new Date('2022-04-16T04:03:40.676Z'),
                 value: 0.0030609810280779913,
               },
               {
-                timestamp: '2022-04-16T04:03:41.676Z',
+                timestamp: new Date('2022-04-16T04:03:41.676Z'),
                 value: 0.00268833985944241,
               },
               {
-                timestamp: '2022-04-16T04:03:42.676Z',
+                timestamp: new Date('2022-04-16T04:03:42.676Z'),
                 value: 0.0030609810280779913,
               },
             ],
@@ -12570,7 +17035,7 @@ export const formatSeriesDataCase2 = {
             outdatedData: false,
             datapoints: [
               {
-                timestamp: '2022-04-14T04:01:00.000Z',
+                timestamp: new Date('2022-04-14T04:01:00.000Z'),
                 count: 6,
                 sum: 0.012972874983130857,
                 average: 0.0019497348441738763,
@@ -12578,7 +17043,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002368403163038693,
               },
               {
-                timestamp: '2022-04-14T05:04:00.000Z',
+                timestamp: new Date('2022-04-14T05:04:00.000Z'),
                 count: 6,
                 sum: 0.012311303295976355,
                 average: 0.0018964822171993266,
@@ -12586,7 +17051,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023257054753230894,
               },
               {
-                timestamp: '2022-04-14T06:00:00.000Z',
+                timestamp: new Date('2022-04-14T06:00:00.000Z'),
                 count: 6,
                 sum: 0.013719518660942627,
                 average: 0.002168015173963838,
@@ -12594,7 +17059,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002453724177307002,
               },
               {
-                timestamp: '2022-04-14T07:03:00.000Z',
+                timestamp: new Date('2022-04-14T07:03:00.000Z'),
                 count: 6,
                 sum: 0.013399378721855738,
                 average: 0.0020016971122890693,
@@ -12602,7 +17067,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024323712966426024,
               },
               {
-                timestamp: '2022-04-14T07:59:00.000Z',
+                timestamp: new Date('2022-04-14T07:59:00.000Z'),
                 count: 6,
                 sum: 0.012460503244306047,
                 average: 0.0021276590589295085,
@@ -12610,7 +17075,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002176320772121947,
               },
               {
-                timestamp: '2022-04-14T09:02:00.000Z',
+                timestamp: new Date('2022-04-14T09:02:00.000Z'),
                 count: 6,
                 sum: 0.012055142563083574,
                 average: 0.0018878320974501518,
@@ -12618,7 +17083,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023896919771068323,
               },
               {
-                timestamp: '2022-04-14T09:58:00.000Z',
+                timestamp: new Date('2022-04-14T09:58:00.000Z'),
                 count: 6,
                 sum: 0.013441904826278012,
                 average: 0.002419442391730747,
@@ -12626,7 +17091,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002453681039717415,
               },
               {
-                timestamp: '2022-04-14T11:01:00.000Z',
+                timestamp: new Date('2022-04-14T11:01:00.000Z'),
                 count: 6,
                 sum: 0.012183092468820426,
                 average: 0.0019980205667137767,
@@ -12634,7 +17099,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002389678382675811,
               },
               {
-                timestamp: '2022-04-14T12:04:00.000Z',
+                timestamp: new Date('2022-04-14T12:04:00.000Z'),
                 count: 6,
                 sum: 0.013591357663527164,
                 average: 0.0019115914408647694,
@@ -12642,7 +17107,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023896892595212595,
               },
               {
-                timestamp: '2022-04-14T13:00:00.000Z',
+                timestamp: new Date('2022-04-14T13:00:00.000Z'),
                 count: 6,
                 sum: 0.012353872231108353,
                 average: 0.002384294885855366,
@@ -12650,7 +17115,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024110320589209736,
               },
               {
-                timestamp: '2022-04-14T14:03:00.000Z',
+                timestamp: new Date('2022-04-14T14:03:00.000Z'),
                 count: 6,
                 sum: 0.01220451626932476,
                 average: 0.0019435712944164704,
@@ -12658,7 +17123,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023896954932943588,
               },
               {
-                timestamp: '2022-04-14T14:59:00.000Z',
+                timestamp: new Date('2022-04-14T14:59:00.000Z'),
                 count: 6,
                 sum: 0.012972789567090408,
                 average: 0.0024052857514678433,
@@ -12666,7 +17131,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024323980438294515,
               },
               {
-                timestamp: '2022-04-14T16:02:00.000Z',
+                timestamp: new Date('2022-04-14T16:02:00.000Z'),
                 count: 6,
                 sum: 0.012759444352054243,
                 average: 0.0024031952155231925,
@@ -12674,7 +17139,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024110655715420225,
               },
               {
-                timestamp: '2022-04-14T16:58:00.000Z',
+                timestamp: new Date('2022-04-14T16:58:00.000Z'),
                 count: 6,
                 sum: 0.012716873440332184,
                 average: 0.002373876876724102,
@@ -12682,7 +17147,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024324221010031356,
               },
               {
-                timestamp: '2022-04-14T18:01:00.000Z',
+                timestamp: new Date('2022-04-14T18:01:00.000Z'),
                 count: 6,
                 sum: 0.013037111580597624,
                 average: 0.0021073322482377398,
@@ -12690,7 +17155,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024324561705206696,
               },
               {
-                timestamp: '2022-04-14T18:57:00.000Z',
+                timestamp: new Date('2022-04-14T18:57:00.000Z'),
                 count: 6,
                 sum: 0.013250506763663504,
                 average: 0.0018844561957732928,
@@ -12698,7 +17163,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024324601788367787,
               },
               {
-                timestamp: '2022-04-14T20:00:00.000Z',
+                timestamp: new Date('2022-04-14T20:00:00.000Z'),
                 count: 6,
                 sum: 0.012482297965235442,
                 average: 0.002417117182338729,
@@ -12706,7 +17171,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024324478086099836,
               },
               {
-                timestamp: '2022-04-14T21:03:00.000Z',
+                timestamp: new Date('2022-04-14T21:03:00.000Z'),
                 count: 6,
                 sum: 0.013164990712175945,
                 average: 0.0020631189103502232,
@@ -12714,7 +17179,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023684181021904863,
               },
               {
-                timestamp: '2022-04-14T21:59:00.000Z',
+                timestamp: new Date('2022-04-14T21:59:00.000Z'),
                 count: 6,
                 sum: 0.012482359883386732,
                 average: 0.002087615025448769,
@@ -12722,7 +17187,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023257730381011175,
               },
               {
-                timestamp: '2022-04-14T23:02:00.000Z',
+                timestamp: new Date('2022-04-14T23:02:00.000Z'),
                 count: 6,
                 sum: 0.012482289753321118,
                 average: 0.0020782479008093625,
@@ -12730,7 +17195,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002347097218573202,
               },
               {
-                timestamp: '2022-04-15T00:05:00.000Z',
+                timestamp: new Date('2022-04-15T00:05:00.000Z'),
                 count: 12,
                 sum: 0.025667526383475782,
                 average: 0.0023516926053900977,
@@ -12738,7 +17203,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002453663390442568,
               },
               {
-                timestamp: '2022-04-15T01:01:00.000Z',
+                timestamp: new Date('2022-04-15T01:01:00.000Z'),
                 count: 6,
                 sum: 0.01363393032650667,
                 average: 0.0023226805516771004,
@@ -12746,7 +17211,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024536807316874287,
               },
               {
-                timestamp: '2022-04-15T02:04:00.000Z',
+                timestamp: new Date('2022-04-15T02:04:00.000Z'),
                 count: 6,
                 sum: 0.013399344595087506,
                 average: 0.002362972781994372,
@@ -12754,7 +17219,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002368355493717696,
               },
               {
-                timestamp: '2022-04-15T03:00:00.000Z',
+                timestamp: new Date('2022-04-15T03:00:00.000Z'),
                 count: 6,
                 sum: 0.013015323176456746,
                 average: 0.0023030971132821433,
@@ -12762,7 +17227,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002453708467692665,
               },
               {
-                timestamp: '2022-04-15T04:03:00.000Z',
+                timestamp: new Date('2022-04-15T04:03:00.000Z'),
                 count: 6,
                 sum: 0.013036818880516077,
                 average: 0.0021848940316936925,
@@ -12770,7 +17235,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024537384144997522,
               },
               {
-                timestamp: '2022-04-15T04:59:00.000Z',
+                timestamp: new Date('2022-04-15T04:59:00.000Z'),
                 count: 6,
                 sum: 0.012418032377315398,
                 average: 0.0021326654740788783,
@@ -12778,7 +17243,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002325713967572815,
               },
               {
-                timestamp: '2022-04-15T06:02:00.000Z',
+                timestamp: new Date('2022-04-15T06:02:00.000Z'),
                 count: 6,
                 sum: 0.013122164370609497,
                 average: 0.002338187202124976,
@@ -12786,7 +17251,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024324012004056633,
               },
               {
-                timestamp: '2022-04-15T06:58:00.000Z',
+                timestamp: new Date('2022-04-15T06:58:00.000Z'),
                 count: 6,
                 sum: 0.012759513411601654,
                 average: 0.0020910239370183306,
@@ -12794,7 +17259,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023470676844083308,
               },
               {
-                timestamp: '2022-04-15T08:01:00.000Z',
+                timestamp: new Date('2022-04-15T08:01:00.000Z'),
                 count: 6,
                 sum: 0.0123327315670964,
                 average: 0.0020135553984347906,
@@ -12802,7 +17267,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0022403751116697613,
               },
               {
-                timestamp: '2022-04-15T08:57:00.000Z',
+                timestamp: new Date('2022-04-15T08:57:00.000Z'),
                 count: 6,
                 sum: 0.01235399379836765,
                 average: 0.0022245019211800015,
@@ -12810,7 +17275,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0022403615696521646,
               },
               {
-                timestamp: '2022-04-15T10:00:00.000Z',
+                timestamp: new Date('2022-04-15T10:00:00.000Z'),
                 count: 6,
                 sum: 0.012908732765209537,
                 average: 0.0023637522862001155,
@@ -12818,7 +17283,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002368379069319436,
               },
               {
-                timestamp: '2022-04-15T11:03:00.000Z',
+                timestamp: new Date('2022-04-15T11:03:00.000Z'),
                 count: 6,
                 sum: 0.013527330626595608,
                 average: 0.002414714389579518,
@@ -12826,7 +17291,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024323591347506297,
               },
               {
-                timestamp: '2022-04-15T11:59:00.000Z',
+                timestamp: new Date('2022-04-15T11:59:00.000Z'),
                 count: 6,
                 sum: 0.012375351830735322,
                 average: 0.002054735140172089,
@@ -12834,7 +17299,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023683862986407255,
               },
               {
-                timestamp: '2022-04-15T13:02:00.000Z',
+                timestamp: new Date('2022-04-15T13:02:00.000Z'),
                 count: 6,
                 sum: 0.011777867010080366,
                 average: 0.0018412233810938252,
@@ -12842,7 +17307,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024110488625707998,
               },
               {
-                timestamp: '2022-04-15T13:58:00.000Z',
+                timestamp: new Date('2022-04-15T13:58:00.000Z'),
                 count: 6,
                 sum: 0.012140773182506294,
                 average: 0.001977001984310446,
@@ -12850,7 +17315,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002283062795304347,
               },
               {
-                timestamp: '2022-04-15T15:01:00.000Z',
+                timestamp: new Date('2022-04-15T15:01:00.000Z'),
                 count: 6,
                 sum: 0.012353975242405321,
                 average: 0.0023197593475148487,
@@ -12858,7 +17323,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.00232570518380342,
               },
               {
-                timestamp: '2022-04-15T16:04:00.000Z',
+                timestamp: new Date('2022-04-15T16:04:00.000Z'),
                 count: 6,
                 sum: 0.012652569520213444,
                 average: 0.0019141392188324448,
@@ -12866,7 +17331,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023683561833789074,
               },
               {
-                timestamp: '2022-04-15T17:00:00.000Z',
+                timestamp: new Date('2022-04-15T17:00:00.000Z'),
                 count: 6,
                 sum: 0.01348485410662412,
                 average: 0.002168321984017747,
@@ -12874,7 +17339,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023897209809207306,
               },
               {
-                timestamp: '2022-04-15T18:03:00.000Z',
+                timestamp: new Date('2022-04-15T18:03:00.000Z'),
                 count: 6,
                 sum: 0.013399415556828161,
                 average: 0.0022339471477705554,
@@ -12882,7 +17347,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024537146322217178,
               },
               {
-                timestamp: '2022-04-15T18:59:00.000Z',
+                timestamp: new Date('2022-04-15T18:59:00.000Z'),
                 count: 6,
                 sum: 0.01243942831130132,
                 average: 0.0020611471267096186,
@@ -12890,7 +17355,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023897357990836157,
               },
               {
-                timestamp: '2022-04-15T20:02:00.000Z',
+                timestamp: new Date('2022-04-15T20:02:00.000Z'),
                 count: 6,
                 sum: 0.012332803115808658,
                 average: 0.0019599489973858414,
@@ -12898,7 +17363,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0021763770204368217,
               },
               {
-                timestamp: '2022-04-15T20:58:00.000Z',
+                timestamp: new Date('2022-04-15T20:58:00.000Z'),
                 count: 6,
                 sum: 0.012780722421066317,
                 average: 0.0018261566663106104,
@@ -12906,7 +17371,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024110544801009912,
               },
               {
-                timestamp: '2022-04-15T22:01:00.000Z',
+                timestamp: new Date('2022-04-15T22:01:00.000Z'),
                 count: 6,
                 sum: 0.013015239520472573,
                 average: 0.0018342170009028305,
@@ -12914,7 +17379,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002453692696482534,
               },
               {
-                timestamp: '2022-04-15T22:57:00.000Z',
+                timestamp: new Date('2022-04-15T22:57:00.000Z'),
                 count: 6,
                 sum: 0.013591250058145873,
                 average: 0.002196457957552519,
@@ -12922,7 +17387,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023896703398937793,
               },
               {
-                timestamp: '2022-04-16T00:00:00.000Z',
+                timestamp: new Date('2022-04-16T00:00:00.000Z'),
                 count: 6,
                 sum: 0.012203919952922568,
                 average: 0.002009703326745247,
@@ -12930,7 +17395,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002261565585681455,
               },
               {
-                timestamp: '2022-04-16T01:03:00.000Z',
+                timestamp: new Date('2022-04-16T01:03:00.000Z'),
                 count: 6,
                 sum: 0.012481341240688558,
                 average: 0.0022261604113194737,
@@ -12938,7 +17403,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002346918865770498,
               },
               {
-                timestamp: '2022-04-16T01:59:00.000Z',
+                timestamp: new Date('2022-04-16T01:59:00.000Z'),
                 count: 6,
                 sum: 0.0126520059056059,
                 average: 0.002414402189528144,
@@ -12946,7 +17411,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002432257459087812,
               },
               {
-                timestamp: '2022-04-16T03:02:00.000Z',
+                timestamp: new Date('2022-04-16T03:02:00.000Z'),
                 count: 6,
                 sum: 0.01350534249474142,
                 average: 0.0023464090501471952,
@@ -12954,7 +17419,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002389570867947929,
               },
               {
-                timestamp: '2022-04-16T03:58:00.000Z',
+                timestamp: new Date('2022-04-16T03:58:00.000Z'),
                 count: 6,
                 sum: 0.013761597989606559,
                 average: 0.0024253976536610425,
@@ -12962,7 +17427,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024536182462089216,
               },
               {
-                timestamp: '2022-04-16T05:01:00.000Z',
+                timestamp: new Date('2022-04-16T05:01:00.000Z'),
                 count: 6,
                 sum: 0.013207058557443857,
                 average: 0.0019347272479721452,
@@ -12970,7 +17435,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002432317731096284,
               },
               {
-                timestamp: '2022-04-16T06:04:00.000Z',
+                timestamp: new Date('2022-04-16T06:04:00.000Z'),
                 count: 6,
                 sum: 0.013014984220322648,
                 average: 0.0021814699044733032,
@@ -12978,7 +17443,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023896364470100597,
               },
               {
-                timestamp: '2022-04-16T07:00:00.000Z',
+                timestamp: new Date('2022-04-16T07:00:00.000Z'),
                 count: 6,
                 sum: 0.013270932038984317,
                 average: 0.0021349205616904583,
@@ -12986,7 +17451,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024109571067608164,
               },
               {
-                timestamp: '2022-04-16T08:03:00.000Z',
+                timestamp: new Date('2022-04-16T08:03:00.000Z'),
                 count: 6,
                 sum: 0.012972207732873272,
                 average: 0.0020972502404910413,
@@ -12994,7 +17459,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023896172139503393,
               },
               {
-                timestamp: '2022-04-16T08:59:00.000Z',
+                timestamp: new Date('2022-04-16T08:59:00.000Z'),
                 count: 6,
                 sum: 0.013206872142737802,
                 average: 0.002200135056990805,
@@ -13002,7 +17467,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023256043030022945,
               },
               {
-                timestamp: '2022-04-16T10:02:00.000Z',
+                timestamp: new Date('2022-04-16T10:02:00.000Z'),
                 count: 6,
                 sum: 0.013633691537561263,
                 average: 0.0024010162157192317,
@@ -13010,7 +17475,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002453637757151088,
               },
               {
-                timestamp: '2022-04-16T10:58:00.000Z',
+                timestamp: new Date('2022-04-16T10:58:00.000Z'),
                 count: 6,
                 sum: 0.012801707543379627,
                 average: 0.002120816216353225,
@@ -13018,7 +17483,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002304307357808333,
               },
               {
-                timestamp: '2022-04-16T12:01:00.000Z',
+                timestamp: new Date('2022-04-16T12:01:00.000Z'),
                 count: 6,
                 sum: 0.012759129410351237,
                 average: 0.0020885333910911526,
@@ -13026,7 +17491,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024110060591466384,
               },
               {
-                timestamp: '2022-04-16T13:04:00.000Z',
+                timestamp: new Date('2022-04-16T13:04:00.000Z'),
                 count: 6,
                 sum: 0.012268493143415094,
                 average: 0.00219862113079428,
@@ -13034,7 +17499,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002432362118868384,
               },
               {
-                timestamp: '2022-04-16T14:00:00.000Z',
+                timestamp: new Date('2022-04-16T14:00:00.000Z'),
                 count: 6,
                 sum: 0.012908454560419648,
                 average: 0.002399473098517181,
@@ -13042,7 +17507,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002411000603846976,
               },
               {
-                timestamp: '2022-04-16T15:03:00.000Z',
+                timestamp: new Date('2022-04-16T15:03:00.000Z'),
                 count: 6,
                 sum: 0.011607052307653519,
                 average: 0.0018355881299784188,
@@ -13050,7 +17515,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.00224033178732283,
               },
               {
-                timestamp: '2022-04-16T15:59:00.000Z',
+                timestamp: new Date('2022-04-16T15:59:00.000Z'),
                 count: 6,
                 sum: 0.012588298996473703,
                 average: 0.002198605079566661,
@@ -13058,7 +17523,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002389643199330601,
               },
               {
-                timestamp: '2022-04-16T17:02:00.000Z',
+                timestamp: new Date('2022-04-16T17:02:00.000Z'),
                 count: 6,
                 sum: 0.013142967958390407,
                 average: 0.002313650711468618,
@@ -13066,7 +17531,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024536384987254817,
               },
               {
-                timestamp: '2022-04-16T17:58:00.000Z',
+                timestamp: new Date('2022-04-16T17:58:00.000Z'),
                 count: 6,
                 sum: 0.013292307041734324,
                 average: 0.0023658812170659913,
@@ -13074,7 +17539,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002410964198581025,
               },
               {
-                timestamp: '2022-04-16T19:01:00.000Z',
+                timestamp: new Date('2022-04-16T19:01:00.000Z'),
                 count: 6,
                 sum: 0.01243895636097054,
                 average: 0.002339598880927322,
@@ -13082,7 +17547,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002346972898296328,
               },
               {
-                timestamp: '2022-04-16T20:04:00.000Z',
+                timestamp: new Date('2022-04-16T20:04:00.000Z'),
                 count: 6,
                 sum: 0.013463256913858534,
                 average: 0.0023855074176171664,
@@ -13090,7 +17555,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024323475248492436,
               },
               {
-                timestamp: '2022-04-16T21:00:00.000Z',
+                timestamp: new Date('2022-04-16T21:00:00.000Z'),
                 count: 6,
                 sum: 0.01342052031355121,
                 average: 0.002345999244463394,
@@ -13098,7 +17563,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002389663394463808,
               },
               {
-                timestamp: '2022-04-16T22:03:00.000Z',
+                timestamp: new Date('2022-04-16T22:03:00.000Z'),
                 count: 6,
                 sum: 0.011969799038946755,
                 average: 0.00201176100866567,
@@ -13106,7 +17571,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0021336540176375676,
               },
               {
-                timestamp: '2022-04-16T22:59:00.000Z',
+                timestamp: new Date('2022-04-16T22:59:00.000Z'),
                 count: 6,
                 sum: 0.013271217095959782,
                 average: 0.002129728777389987,
@@ -13114,7 +17579,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002453681617420217,
               },
               {
-                timestamp: '2022-04-17T00:02:00.000Z',
+                timestamp: new Date('2022-04-17T00:02:00.000Z'),
                 count: 6,
                 sum: 0.012460973327805686,
                 average: 0.0022501672296143796,
@@ -13122,7 +17587,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0022617520081291143,
               },
               {
-                timestamp: '2022-04-17T00:58:00.000Z',
+                timestamp: new Date('2022-04-17T00:58:00.000Z'),
                 count: 6,
                 sum: 0.013250453605458744,
                 average: 0.002097301949600002,
@@ -13130,7 +17595,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024537877047145825,
               },
               {
-                timestamp: '2022-04-17T02:01:00.000Z',
+                timestamp: new Date('2022-04-17T02:01:00.000Z'),
                 count: 6,
                 sum: 0.013143768127398238,
                 average: 0.0022604512600073712,
@@ -13138,7 +17603,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002432450595005518,
               },
               {
-                timestamp: '2022-04-17T03:04:00.000Z',
+                timestamp: new Date('2022-04-17T03:04:00.000Z'),
                 count: 6,
                 sum: 0.012823814802646813,
                 average: 0.002294663747311213,
@@ -13146,7 +17611,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002347120845742345,
               },
               {
-                timestamp: '2022-04-17T04:00:00.000Z',
+                timestamp: new Date('2022-04-17T04:00:00.000Z'),
                 count: 6,
                 sum: 0.012418284445313586,
                 average: 0.0018356483360170445,
@@ -13154,7 +17619,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023257611761841592,
               },
               {
-                timestamp: '2022-04-17T05:03:00.000Z',
+                timestamp: new Date('2022-04-17T05:03:00.000Z'),
                 count: 6,
                 sum: 0.012567578339792492,
                 average: 0.0021379819179069737,
@@ -13162,7 +17627,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002432434517379192,
               },
               {
-                timestamp: '2022-04-17T05:59:00.000Z',
+                timestamp: new Date('2022-04-17T05:59:00.000Z'),
                 count: 6,
                 sum: 0.01254620885459233,
                 average: 0.002107717876464803,
@@ -13170,7 +17635,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0022403944383200592,
               },
               {
-                timestamp: '2022-04-17T07:02:00.000Z',
+                timestamp: new Date('2022-04-17T07:02:00.000Z'),
                 count: 6,
                 sum: 0.012332715941246034,
                 average: 0.0018684548526018813,
@@ -13178,7 +17643,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002261709151854809,
               },
               {
-                timestamp: '2022-04-17T07:58:00.000Z',
+                timestamp: new Date('2022-04-17T07:58:00.000Z'),
                 count: 6,
                 sum: 0.012930014388031949,
                 average: 0.0021486014007835266,
@@ -13186,7 +17651,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002325695657253271,
               },
               {
-                timestamp: '2022-04-17T09:01:00.000Z',
+                timestamp: new Date('2022-04-17T09:01:00.000Z'),
                 count: 6,
                 sum: 0.01367678286879344,
                 average: 0.0023428192559308892,
@@ -13194,7 +17659,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024323763604406435,
               },
               {
-                timestamp: '2022-04-17T10:04:00.000Z',
+                timestamp: new Date('2022-04-17T10:04:00.000Z'),
                 count: 6,
                 sum: 0.013292840137521817,
                 average: 0.00218451994414718,
@@ -13202,7 +17667,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024537345358186338,
               },
               {
-                timestamp: '2022-04-17T11:00:00.000Z',
+                timestamp: new Date('2022-04-17T11:00:00.000Z'),
                 count: 6,
                 sum: 0.01246081912288021,
                 average: 0.0020178282505238843,
@@ -13210,7 +17675,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024110831522011363,
               },
               {
-                timestamp: '2022-04-17T12:03:00.000Z',
+                timestamp: new Date('2022-04-17T12:03:00.000Z'),
                 count: 6,
                 sum: 0.012866149915390748,
                 average: 0.002131694797812811,
@@ -13218,7 +17683,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002432406451665913,
               },
               {
-                timestamp: '2022-04-17T12:59:00.000Z',
+                timestamp: new Date('2022-04-17T12:59:00.000Z'),
                 count: 6,
                 sum: 0.01224736639081439,
                 average: 0.0020270031483055175,
@@ -13226,7 +17691,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002197698150268087,
               },
               {
-                timestamp: '2022-04-17T14:02:00.000Z',
+                timestamp: new Date('2022-04-17T14:02:00.000Z'),
                 count: 6,
                 sum: 0.01293020663387811,
                 average: 0.002370614521129059,
@@ -13234,7 +17699,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.00245375208398677,
               },
               {
-                timestamp: '2022-04-17T14:58:00.000Z',
+                timestamp: new Date('2022-04-17T14:58:00.000Z'),
                 count: 6,
                 sum: 0.012908920842629507,
                 average: 0.0020583110328525034,
@@ -13242,7 +17707,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002411087694573776,
               },
               {
-                timestamp: '2022-04-17T16:01:00.000Z',
+                timestamp: new Date('2022-04-17T16:01:00.000Z'),
                 count: 6,
                 sum: 0.012759595102512476,
                 average: 0.0022609963779747504,
@@ -13250,7 +17715,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024110940578326253,
               },
               {
-                timestamp: '2022-04-17T16:57:00.000Z',
+                timestamp: new Date('2022-04-17T16:57:00.000Z'),
                 count: 6,
                 sum: 0.013079758902484365,
                 average: 0.0023814492812620444,
@@ -13258,7 +17723,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023897765042059523,
               },
               {
-                timestamp: '2022-04-17T18:00:00.000Z',
+                timestamp: new Date('2022-04-17T18:00:00.000Z'),
                 count: 6,
                 sum: 0.011351572417275305,
                 average: 0.001822695483118841,
@@ -13266,7 +17731,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.001984391418809405,
               },
               {
-                timestamp: '2022-04-17T19:03:00.000Z',
+                timestamp: new Date('2022-04-17T19:03:00.000Z'),
                 count: 6,
                 sum: 0.012375613872607183,
                 average: 0.002073982186926583,
@@ -13274,7 +17739,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002240412856247852,
               },
               {
-                timestamp: '2022-04-17T19:59:00.000Z',
+                timestamp: new Date('2022-04-17T19:59:00.000Z'),
                 count: 6,
                 sum: 0.012012822016465982,
                 average: 0.0019280824325424413,
@@ -13282,7 +17747,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0022404019746517373,
               },
               {
-                timestamp: '2022-04-17T21:02:00.000Z',
+                timestamp: new Date('2022-04-17T21:02:00.000Z'),
                 count: 6,
                 sum: 0.013250176387643326,
                 average: 0.0022898135900149227,
@@ -13290,7 +17755,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023897258541321293,
               },
               {
-                timestamp: '2022-04-17T21:58:00.000Z',
+                timestamp: new Date('2022-04-17T21:58:00.000Z'),
                 count: 6,
                 sum: 0.012908703589204687,
                 average: 0.0024443499764893357,
@@ -13298,7 +17763,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002453720516956263,
               },
               {
-                timestamp: '2022-04-17T23:01:00.000Z',
+                timestamp: new Date('2022-04-17T23:01:00.000Z'),
                 count: 6,
                 sum: 0.012268774093144514,
                 average: 0.0020718225468597086,
@@ -13306,7 +17771,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0022830588312460227,
               },
               {
-                timestamp: '2022-04-18T00:04:00.000Z',
+                timestamp: new Date('2022-04-18T00:04:00.000Z'),
                 count: 6,
                 sum: 0.012652998327984815,
                 average: 0.002228174955792875,
@@ -13314,7 +17779,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023897737145603696,
               },
               {
-                timestamp: '2022-04-18T01:00:00.000Z',
+                timestamp: new Date('2022-04-18T01:00:00.000Z'),
                 count: 6,
                 sum: 0.012332854361663505,
                 average: 0.0020145695522185147,
@@ -13322,7 +17787,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024537686013690364,
               },
               {
-                timestamp: '2022-04-18T02:03:00.000Z',
+                timestamp: new Date('2022-04-18T02:03:00.000Z'),
                 count: 6,
                 sum: 0.012887597686536845,
                 average: 0.00195766217269475,
@@ -13330,7 +17795,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002411090295660039,
               },
               {
-                timestamp: '2022-04-18T02:59:00.000Z',
+                timestamp: new Date('2022-04-18T02:59:00.000Z'),
                 count: 6,
                 sum: 0.013143719488054421,
                 average: 0.002207294378598227,
@@ -13338,7 +17803,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024111043866073857,
               },
               {
-                timestamp: '2022-04-18T04:02:00.000Z',
+                timestamp: new Date('2022-04-18T04:02:00.000Z'),
                 count: 6,
                 sum: 0.012844941994252596,
                 average: 0.00238305521088627,
@@ -13346,7 +17811,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002389756650093506,
               },
               {
-                timestamp: '2022-04-18T04:58:00.000Z',
+                timestamp: new Date('2022-04-18T04:58:00.000Z'),
                 count: 6,
                 sum: 0.013293034757591585,
                 average: 0.002347459735533225,
@@ -13354,7 +17819,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023684219231021927,
               },
               {
-                timestamp: '2022-04-18T06:01:00.000Z',
+                timestamp: new Date('2022-04-18T06:01:00.000Z'),
                 count: 6,
                 sum: 0.012887806475807922,
                 average: 0.002223157558112421,
@@ -13362,7 +17827,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0023897919292888863,
               },
               {
-                timestamp: '2022-04-18T07:04:00.000Z',
+                timestamp: new Date('2022-04-18T07:04:00.000Z'),
                 count: 6,
                 sum: 0.01301583405753808,
                 average: 0.0019268402019200347,
@@ -13370,7 +17835,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024324673484579363,
               },
               {
-                timestamp: '2022-04-18T08:00:00.000Z',
+                timestamp: new Date('2022-04-18T08:00:00.000Z'),
                 count: 6,
                 sum: 0.012418519990401767,
                 average: 0.0021284101313923183,
@@ -13378,7 +17843,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0022831299638711154,
               },
               {
-                timestamp: '2022-04-18T09:03:00.000Z',
+                timestamp: new Date('2022-04-18T09:03:00.000Z'),
                 count: 6,
                 sum: 0.012695795022260606,
                 average: 0.0023810070284574266,
@@ -13386,7 +17851,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0024324716513238805,
               },
               {
-                timestamp: '2022-04-18T09:59:00.000Z',
+                timestamp: new Date('2022-04-18T09:59:00.000Z'),
                 count: 6,
                 sum: 0.0125464680329721,
                 average: 0.0020233338605137098,
@@ -13394,7 +17859,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002432478496188468,
               },
               {
-                timestamp: '2022-04-18T11:02:00.000Z',
+                timestamp: new Date('2022-04-18T11:02:00.000Z'),
                 count: 6,
                 sum: 0.012439806965969379,
                 average: 0.002189897091197895,
@@ -13416,7 +17881,7 @@ export const formatSeriesDataCase2 = {
             dash: 'solid',
             datapoints: [
               {
-                timestamp: '2022-04-14T04:02:00.000Z',
+                timestamp: new Date('2022-04-14T04:02:00.000Z'),
                 average: 0.0021621458305218096,
                 min: 0.0019416638543830727,
                 max: 0.002368403163038693,
@@ -13424,7 +17889,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012972874983130859,
               },
               {
-                timestamp: '2022-04-14T04:58:00.000Z',
+                timestamp: new Date('2022-04-14T04:58:00.000Z'),
                 average: 0.002051883882662726,
                 min: 0.0018776337782424944,
                 max: 0.0023257054753230894,
@@ -13432,7 +17897,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012311303295976355,
               },
               {
-                timestamp: '2022-04-14T06:01:00.000Z',
+                timestamp: new Date('2022-04-14T06:01:00.000Z'),
                 average: 0.002286586443490438,
                 min: 0.0021336731976582626,
                 max: 0.002453724177307002,
@@ -13440,7 +17905,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013719518660942629,
               },
               {
-                timestamp: '2022-04-14T07:04:00.000Z',
+                timestamp: new Date('2022-04-14T07:04:00.000Z'),
                 average: 0.0022332297869759564,
                 min: 0.001962966309571223,
                 max: 0.0024323712966426024,
@@ -13448,7 +17913,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013399378721855738,
               },
               {
-                timestamp: '2022-04-14T08:00:00.000Z',
+                timestamp: new Date('2022-04-14T08:00:00.000Z'),
                 average: 0.0020767505407176747,
                 min: 0.001984292468699422,
                 max: 0.002176320772121947,
@@ -13456,7 +17921,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012460503244306049,
               },
               {
-                timestamp: '2022-04-14T09:03:00.000Z',
+                timestamp: new Date('2022-04-14T09:03:00.000Z'),
                 average: 0.0020091904271805953,
                 min: 0.001834942053849889,
                 max: 0.0023896919771068323,
@@ -13464,7 +17929,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012055142563083572,
               },
               {
-                timestamp: '2022-04-14T09:59:00.000Z',
+                timestamp: new Date('2022-04-14T09:59:00.000Z'),
                 average: 0.0022403174710463355,
                 min: 0.001962944831773932,
                 max: 0.002453681039717415,
@@ -13472,7 +17937,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013441904826278014,
               },
               {
-                timestamp: '2022-04-14T11:02:00.000Z',
+                timestamp: new Date('2022-04-14T11:02:00.000Z'),
                 average: 0.0020305154114700712,
                 min: 0.0018349316152689262,
                 max: 0.002389678382675811,
@@ -13480,7 +17945,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012183092468820428,
               },
               {
-                timestamp: '2022-04-14T11:58:00.000Z',
+                timestamp: new Date('2022-04-14T11:58:00.000Z'),
                 average: 0.002265226277254527,
                 min: 0.0018776129896238467,
                 max: 0.0023896892595212595,
@@ -13488,7 +17953,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013591357663527162,
               },
               {
-                timestamp: '2022-04-14T13:01:00.000Z',
+                timestamp: new Date('2022-04-14T13:01:00.000Z'),
                 average: 0.0020589787051847257,
                 min: 0.0018136081859140068,
                 max: 0.0024110320589209736,
@@ -13496,7 +17961,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012353872231108353,
               },
               {
-                timestamp: '2022-04-14T14:04:00.000Z',
+                timestamp: new Date('2022-04-14T14:04:00.000Z'),
                 average: 0.00203408604488746,
                 min: 0.001834944753779597,
                 max: 0.0023896954932943588,
@@ -13504,7 +17969,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01220451626932476,
               },
               {
-                timestamp: '2022-04-14T15:00:00.000Z',
+                timestamp: new Date('2022-04-14T15:00:00.000Z'),
                 average: 0.002162131594515068,
                 min: 0.0018136301203991523,
                 max: 0.0024323980438294515,
@@ -13512,7 +17977,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012972789567090408,
               },
               {
-                timestamp: '2022-04-14T16:03:00.000Z',
+                timestamp: new Date('2022-04-14T16:03:00.000Z'),
                 average: 0.002126574058675707,
                 min: 0.0019203177118476285,
                 max: 0.0024110655715420225,
@@ -13520,7 +17985,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012759444352054243,
               },
               {
-                timestamp: '2022-04-14T16:59:00.000Z',
+                timestamp: new Date('2022-04-14T16:59:00.000Z'),
                 average: 0.0021194789067220305,
                 min: 0.0018349850937392073,
                 max: 0.0024324221010031356,
@@ -13528,7 +17993,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012716873440332182,
               },
               {
-                timestamp: '2022-04-14T18:02:00.000Z',
+                timestamp: new Date('2022-04-14T18:02:00.000Z'),
                 average: 0.002172851930099604,
                 min: 0.0018990227997924527,
                 max: 0.0024324561705206696,
@@ -13536,7 +18001,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013037111580597624,
               },
               {
-                timestamp: '2022-04-14T18:58:00.000Z',
+                timestamp: new Date('2022-04-14T18:58:00.000Z'),
                 average: 0.002208417793943918,
                 min: 0.0018563511891122786,
                 max: 0.0024324601788367787,
@@ -13544,7 +18009,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013250506763663506,
               },
               {
-                timestamp: '2022-04-14T20:01:00.000Z',
+                timestamp: new Date('2022-04-14T20:01:00.000Z'),
                 average: 0.0020803829942059072,
                 min: 0.0018136672257179703,
                 max: 0.0024324478086099836,
@@ -13552,7 +18017,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012482297965235443,
               },
               {
-                timestamp: '2022-04-14T21:04:00.000Z',
+                timestamp: new Date('2022-04-14T21:04:00.000Z'),
                 average: 0.0021941651186959906,
                 min: 0.0020056874018550062,
                 max: 0.0023684181021904863,
@@ -13560,7 +18025,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013164990712175945,
               },
               {
-                timestamp: '2022-04-14T22:00:00.000Z',
+                timestamp: new Date('2022-04-14T22:00:00.000Z'),
                 average: 0.0020803933138977887,
                 min: 0.0018350135896944599,
                 max: 0.0023257730381011175,
@@ -13568,7 +18033,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012482359883386732,
               },
               {
-                timestamp: '2022-04-14T23:03:00.000Z',
+                timestamp: new Date('2022-04-14T23:03:00.000Z'),
                 average: 0.0020803816255535196,
                 min: 0.0018776777748585613,
                 max: 0.002347097218573202,
@@ -13576,7 +18041,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012482289753321118,
               },
               {
-                timestamp: '2022-04-15T00:06:00.000Z',
+                timestamp: new Date('2022-04-15T00:06:00.000Z'),
                 average: 0.002138960531956315,
                 min: 0.0018135772885879851,
                 max: 0.002453663390442568,
@@ -13584,7 +18049,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.02566752638347578,
               },
               {
-                timestamp: '2022-04-15T01:02:00.000Z',
+                timestamp: new Date('2022-04-15T01:02:00.000Z'),
                 average: 0.0022723217210844446,
                 min: 0.0020056172937271155,
                 max: 0.0024536807316874287,
@@ -13592,7 +18057,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013633930326506668,
               },
               {
-                timestamp: '2022-04-15T01:58:00.000Z',
+                timestamp: new Date('2022-04-15T01:58:00.000Z'),
                 average: 0.002233224099181251,
                 min: 0.0021123170619644317,
                 max: 0.002368355493717696,
@@ -13600,7 +18065,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013399344595087506,
               },
               {
-                timestamp: '2022-04-15T03:01:00.000Z',
+                timestamp: new Date('2022-04-15T03:01:00.000Z'),
                 average: 0.0021692205294094576,
                 min: 0.001813610606555448,
                 max: 0.002453708467692665,
@@ -13608,7 +18073,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013015323176456746,
               },
               {
-                timestamp: '2022-04-15T04:04:00.000Z',
+                timestamp: new Date('2022-04-15T04:04:00.000Z'),
                 average: 0.002172803146752679,
                 min: 0.0018989801642650256,
                 max: 0.0024537384144997522,
@@ -13616,7 +18081,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013036818880516075,
               },
               {
-                timestamp: '2022-04-15T05:00:00.000Z',
+                timestamp: new Date('2022-04-15T05:00:00.000Z'),
                 average: 0.0020696720628858994,
                 min: 0.0018349669835895604,
                 max: 0.002325713967572815,
@@ -13624,7 +18089,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012418032377315397,
               },
               {
-                timestamp: '2022-04-15T06:03:00.000Z',
+                timestamp: new Date('2022-04-15T06:03:00.000Z'),
                 average: 0.002187027395101583,
                 min: 0.001834969326621816,
                 max: 0.0024324012004056633,
@@ -13632,7 +18097,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013122164370609498,
               },
               {
-                timestamp: '2022-04-15T06:59:00.000Z',
+                timestamp: new Date('2022-04-15T06:59:00.000Z'),
                 average: 0.0021265855686002752,
                 min: 0.0018776541475266644,
                 max: 0.0023470676844083308,
@@ -13640,7 +18105,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012759513411601652,
               },
               {
-                timestamp: '2022-04-15T08:02:00.000Z',
+                timestamp: new Date('2022-04-15T08:02:00.000Z'),
                 average: 0.0020554552611827333,
                 min: 0.0018349739009866615,
                 max: 0.0022403751116697613,
@@ -13648,7 +18113,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.0123327315670964,
               },
               {
-                timestamp: '2022-04-15T08:58:00.000Z',
+                timestamp: new Date('2022-04-15T08:58:00.000Z'),
                 average: 0.0020589989663946083,
                 min: 0.0018562995862832221,
                 max: 0.0022403615696521646,
@@ -13656,7 +18121,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01235399379836765,
               },
               {
-                timestamp: '2022-04-15T10:01:00.000Z',
+                timestamp: new Date('2022-04-15T10:01:00.000Z'),
                 average: 0.0021514554608682564,
                 min: 0.001877633856757751,
                 max: 0.002368379069319436,
@@ -13664,7 +18129,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012908732765209537,
               },
               {
-                timestamp: '2022-04-15T10:57:00.000Z',
+                timestamp: new Date('2022-04-15T10:57:00.000Z'),
                 average: 0.002254555104432601,
                 min: 0.002026965945625525,
                 max: 0.0024323591347506297,
@@ -13672,7 +18137,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013527330626595608,
               },
               {
-                timestamp: '2022-04-15T12:00:00.000Z',
+                timestamp: new Date('2022-04-15T12:00:00.000Z'),
                 average: 0.002062558638455887,
                 min: 0.0018349659611090305,
                 max: 0.0023683862986407255,
@@ -13680,7 +18145,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012375351830735322,
               },
               {
-                timestamp: '2022-04-15T13:03:00.000Z',
+                timestamp: new Date('2022-04-15T13:03:00.000Z'),
                 average: 0.0019629778350133947,
                 min: 0.0018136208258275929,
                 max: 0.0024110488625707998,
@@ -13688,7 +18153,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.011777867010080368,
               },
               {
-                timestamp: '2022-04-15T13:59:00.000Z',
+                timestamp: new Date('2022-04-15T13:59:00.000Z'),
                 average: 0.0020234621970843824,
                 min: 0.0018989961568419333,
                 max: 0.002283062795304347,
@@ -13696,7 +18161,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012140773182506294,
               },
               {
-                timestamp: '2022-04-15T15:02:00.000Z',
+                timestamp: new Date('2022-04-15T15:02:00.000Z'),
                 average: 0.0020589958737342205,
                 min: 0.0018349600532760928,
                 max: 0.00232570518380342,
@@ -13704,7 +18169,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012353975242405323,
               },
               {
-                timestamp: '2022-04-15T15:58:00.000Z',
+                timestamp: new Date('2022-04-15T15:58:00.000Z'),
                 average: 0.0021087615867022404,
                 min: 0.001856279170756441,
                 max: 0.0023683561833789074,
@@ -13712,7 +18177,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012652569520213442,
               },
               {
-                timestamp: '2022-04-15T17:01:00.000Z',
+                timestamp: new Date('2022-04-15T17:01:00.000Z'),
                 average: 0.0022474756844373537,
                 min: 0.0020269954748881195,
                 max: 0.0023897209809207306,
@@ -13720,7 +18185,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013484854106624122,
               },
               {
-                timestamp: '2022-04-15T18:04:00.000Z',
+                timestamp: new Date('2022-04-15T18:04:00.000Z'),
                 average: 0.002233235926138027,
                 min: 0.0020269816527048973,
                 max: 0.0024537146322217178,
@@ -13728,7 +18193,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013399415556828163,
               },
               {
-                timestamp: '2022-04-15T19:00:00.000Z',
+                timestamp: new Date('2022-04-15T19:00:00.000Z'),
                 average: 0.0020732380518835537,
                 min: 0.0018136387760902442,
                 max: 0.0023897357990836157,
@@ -13736,7 +18201,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012439428311301322,
               },
               {
-                timestamp: '2022-04-15T20:03:00.000Z',
+                timestamp: new Date('2022-04-15T20:03:00.000Z'),
                 average: 0.0020554671859681095,
                 min: 0.0019630067243155648,
                 max: 0.0021763770204368217,
@@ -13744,7 +18209,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012332803115808658,
               },
               {
-                timestamp: '2022-04-15T20:59:00.000Z',
+                timestamp: new Date('2022-04-15T20:59:00.000Z'),
                 average: 0.002130120403511053,
                 min: 0.0018136250514034005,
                 max: 0.0024110544801009912,
@@ -13752,7 +18217,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012780722421066317,
               },
               {
-                timestamp: '2022-04-15T22:02:00.000Z',
+                timestamp: new Date('2022-04-15T22:02:00.000Z'),
                 average: 0.0021692065867454286,
                 min: 0.001813598949574047,
                 max: 0.002453692696482534,
@@ -13760,7 +18225,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013015239520472573,
               },
               {
-                timestamp: '2022-04-15T22:58:00.000Z',
+                timestamp: new Date('2022-04-15T22:58:00.000Z'),
                 average: 0.0022652083430243115,
                 min: 0.002069625205086577,
                 max: 0.0023896703398937793,
@@ -13768,7 +18233,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01359125005814587,
               },
               {
-                timestamp: '2022-04-16T00:01:00.000Z',
+                timestamp: new Date('2022-04-16T00:01:00.000Z'),
                 average: 0.002033986658820428,
                 min: 0.0018348550978170295,
                 max: 0.002261565585681455,
@@ -13776,7 +18241,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012203919952922568,
               },
               {
-                timestamp: '2022-04-16T01:04:00.000Z',
+                timestamp: new Date('2022-04-16T01:04:00.000Z'),
                 average: 0.0020802235401147597,
                 min: 0.0019202063447213169,
                 max: 0.002346918865770498,
@@ -13784,7 +18249,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01248134124068856,
               },
               {
-                timestamp: '2022-04-16T02:00:00.000Z',
+                timestamp: new Date('2022-04-16T02:00:00.000Z'),
                 average: 0.0021086676509343167,
                 min: 0.0019628744406673575,
                 max: 0.002432257459087812,
@@ -13792,7 +18257,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.0126520059056059,
               },
               {
-                timestamp: '2022-04-16T03:03:00.000Z',
+                timestamp: new Date('2022-04-16T03:03:00.000Z'),
                 average: 0.0022508904157902366,
                 min: 0.002133545417810651,
                 max: 0.002389570867947929,
@@ -13800,7 +18265,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01350534249474142,
               },
               {
-                timestamp: '2022-04-16T03:59:00.000Z',
+                timestamp: new Date('2022-04-16T03:59:00.000Z'),
                 average: 0.0022935996649344264,
                 min: 0.001962894596967137,
                 max: 0.0024536182462089216,
@@ -13808,7 +18273,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013761597989606559,
               },
               {
-                timestamp: '2022-04-16T05:02:00.000Z',
+                timestamp: new Date('2022-04-16T05:02:00.000Z'),
                 average: 0.002201176426240643,
                 min: 0.0019202508403391714,
                 max: 0.002432317731096284,
@@ -13816,7 +18281,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013207058557443857,
               },
               {
-                timestamp: '2022-04-16T05:58:00.000Z',
+                timestamp: new Date('2022-04-16T05:58:00.000Z'),
                 average: 0.0021691640367204413,
                 min: 0.0018348994146684388,
                 max: 0.0023896364470100597,
@@ -13824,7 +18289,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013014984220322648,
               },
               {
-                timestamp: '2022-04-16T07:01:00.000Z',
+                timestamp: new Date('2022-04-16T07:01:00.000Z'),
                 average: 0.002211822006497386,
                 min: 0.0019842390347677517,
                 max: 0.0024109571067608164,
@@ -13832,7 +18297,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013270932038984317,
               },
               {
-                timestamp: '2022-04-16T07:57:00.000Z',
+                timestamp: new Date('2022-04-16T07:57:00.000Z'),
                 average: 0.0021506554925553056,
                 min: 0.0019415639863346506,
                 max: 0.0023896172139503393,
@@ -13840,7 +18305,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.010753277462776527,
               },
               {
-                timestamp: '2022-04-16T08:04:00.000Z',
+                timestamp: new Date('2022-04-16T08:04:00.000Z'),
                 average: 0.0022189302700967436,
                 min: 0.0022189302700967436,
                 max: 0.0022189302700967436,
@@ -13848,7 +18313,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.0022189302700967436,
               },
               {
-                timestamp: '2022-04-16T09:00:00.000Z',
+                timestamp: new Date('2022-04-16T09:00:00.000Z'),
                 average: 0.002201145357122967,
                 min: 0.002112246110066304,
                 max: 0.0023256043030022945,
@@ -13856,7 +18321,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.0132068721427378,
               },
               {
-                timestamp: '2022-04-16T10:03:00.000Z',
+                timestamp: new Date('2022-04-16T10:03:00.000Z'),
                 average: 0.002272281922926877,
                 min: 0.0020269181472117683,
                 max: 0.002453637757151088,
@@ -13864,7 +18329,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013633691537561263,
               },
               {
-                timestamp: '2022-04-16T10:59:00.000Z',
+                timestamp: new Date('2022-04-16T10:59:00.000Z'),
                 average: 0.0021336179238966046,
                 min: 0.0019202561315069442,
                 max: 0.002304307357808333,
@@ -13872,7 +18337,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012801707543379628,
               },
               {
-                timestamp: '2022-04-16T12:02:00.000Z',
+                timestamp: new Date('2022-04-16T12:02:00.000Z'),
                 average: 0.0021265215683918728,
                 min: 0.0018989339757880604,
                 max: 0.0024110060591466384,
@@ -13880,7 +18345,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012759129410351237,
               },
               {
-                timestamp: '2022-04-16T12:58:00.000Z',
+                timestamp: new Date('2022-04-16T12:58:00.000Z'),
                 average: 0.002044748857235849,
                 min: 0.0018562763538732402,
                 max: 0.002432362118868384,
@@ -13888,7 +18353,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012268493143415094,
               },
               {
-                timestamp: '2022-04-16T14:01:00.000Z',
+                timestamp: new Date('2022-04-16T14:01:00.000Z'),
                 average: 0.0021514090934032747,
                 min: 0.0018349208135472557,
                 max: 0.002411000603846976,
@@ -13896,7 +18361,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012908454560419648,
               },
               {
-                timestamp: '2022-04-16T15:04:00.000Z',
+                timestamp: new Date('2022-04-16T15:04:00.000Z'),
                 average: 0.0019345087179422533,
                 min: 0.0018136019230708626,
                 max: 0.00224033178732283,
@@ -13904,7 +18369,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01160705230765352,
               },
               {
-                timestamp: '2022-04-16T16:00:00.000Z',
+                timestamp: new Date('2022-04-16T16:00:00.000Z'),
                 average: 0.002098049832745617,
                 min: 0.001898912899468067,
                 max: 0.002389643199330601,
@@ -13912,7 +18377,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012588298996473702,
               },
               {
-                timestamp: '2022-04-16T17:03:00.000Z',
+                timestamp: new Date('2022-04-16T17:03:00.000Z'),
                 average: 0.0021904946597317344,
                 min: 0.002005582772871263,
                 max: 0.0024536384987254817,
@@ -13920,7 +18385,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013142967958390407,
               },
               {
-                timestamp: '2022-04-16T17:59:00.000Z',
+                timestamp: new Date('2022-04-16T17:59:00.000Z'),
                 average: 0.002215384506955721,
                 min: 0.0018135571405255497,
                 max: 0.002410964198581025,
@@ -13928,7 +18393,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013292307041734324,
               },
               {
-                timestamp: '2022-04-16T19:02:00.000Z',
+                timestamp: new Date('2022-04-16T19:02:00.000Z'),
                 average: 0.00207315939349509,
                 min: 0.0018349060841225838,
                 max: 0.002346972898296328,
@@ -13936,7 +18401,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01243895636097054,
               },
               {
-                timestamp: '2022-04-16T19:58:00.000Z',
+                timestamp: new Date('2022-04-16T19:58:00.000Z'),
                 average: 0.002243876152309755,
                 min: 0.0018562652163323175,
                 max: 0.0024323475248492436,
@@ -13944,7 +18409,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013463256913858532,
               },
               {
-                timestamp: '2022-04-16T21:01:00.000Z',
+                timestamp: new Date('2022-04-16T21:01:00.000Z'),
                 average: 0.002236753385591868,
                 min: 0.002005610348924982,
                 max: 0.002389663394463808,
@@ -13952,7 +18417,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013420520313551208,
               },
               {
-                timestamp: '2022-04-16T22:04:00.000Z',
+                timestamp: new Date('2022-04-16T22:04:00.000Z'),
                 average: 0.001994966506491126,
                 min: 0.001856278995344684,
                 max: 0.0021336540176375676,
@@ -13960,7 +18425,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.011969799038946755,
               },
               {
-                timestamp: '2022-04-16T23:00:00.000Z',
+                timestamp: new Date('2022-04-16T23:00:00.000Z'),
                 average: 0.002211869515993297,
                 min: 0.002090963465279837,
                 max: 0.002453681617420217,
@@ -13968,7 +18433,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013271217095959784,
               },
               {
-                timestamp: '2022-04-17T00:03:00.000Z',
+                timestamp: new Date('2022-04-17T00:03:00.000Z'),
                 average: 0.002076828887967614,
                 min: 0.0018350063462179607,
                 max: 0.0022617520081291143,
@@ -13976,7 +18441,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012460973327805686,
               },
               {
-                timestamp: '2022-04-17T00:59:00.000Z',
+                timestamp: new Date('2022-04-17T00:59:00.000Z'),
                 average: 0.0022084089342431245,
                 min: 0.002048379301326956,
                 max: 0.0024537877047145825,
@@ -13984,7 +18449,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013250453605458746,
               },
               {
-                timestamp: '2022-04-17T02:02:00.000Z',
+                timestamp: new Date('2022-04-17T02:02:00.000Z'),
                 average: 0.0021906280212330397,
                 min: 0.0019843675906623965,
                 max: 0.002432450595005518,
@@ -13992,7 +18457,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013143768127398238,
               },
               {
-                timestamp: '2022-04-17T02:58:00.000Z',
+                timestamp: new Date('2022-04-17T02:58:00.000Z'),
                 average: 0.002137302467107802,
                 min: 0.001835021752125833,
                 max: 0.002347120845742345,
@@ -14000,7 +18465,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012823814802646811,
               },
               {
-                timestamp: '2022-04-17T04:01:00.000Z',
+                timestamp: new Date('2022-04-17T04:01:00.000Z'),
                 average: 0.0020697140742189308,
                 min: 0.0018136669722537023,
                 max: 0.0023257611761841592,
@@ -14008,7 +18473,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012418284445313585,
               },
               {
-                timestamp: '2022-04-17T05:04:00.000Z',
+                timestamp: new Date('2022-04-17T05:04:00.000Z'),
                 average: 0.002094596389965415,
                 min: 0.0018136573155897483,
                 max: 0.002432434517379192,
@@ -14016,7 +18481,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01256757833979249,
               },
               {
-                timestamp: '2022-04-17T06:00:00.000Z',
+                timestamp: new Date('2022-04-17T06:00:00.000Z'),
                 average: 0.002091034809098722,
                 min: 0.0018136526405448097,
                 max: 0.0022403944383200592,
@@ -14024,7 +18489,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01254620885459233,
               },
               {
-                timestamp: '2022-04-17T07:03:00.000Z',
+                timestamp: new Date('2022-04-17T07:03:00.000Z'),
                 average: 0.002055452656874339,
                 min: 0.00185630845482423,
                 max: 0.002261709151854809,
@@ -14032,7 +18497,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012332715941246034,
               },
               {
-                timestamp: '2022-04-17T07:59:00.000Z',
+                timestamp: new Date('2022-04-17T07:59:00.000Z'),
                 average: 0.0021550023980053245,
                 min: 0.0020056457961633713,
                 max: 0.002325695657253271,
@@ -14040,7 +18505,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012930014388031947,
               },
               {
-                timestamp: '2022-04-17T09:02:00.000Z',
+                timestamp: new Date('2022-04-17T09:02:00.000Z'),
                 average: 0.002279463811465574,
                 min: 0.00204831693510791,
                 max: 0.0024323763604406435,
@@ -14048,7 +18513,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013676782868793442,
               },
               {
-                timestamp: '2022-04-17T09:58:00.000Z',
+                timestamp: new Date('2022-04-17T09:58:00.000Z'),
                 average: 0.0022154733562536363,
                 min: 0.0018563035184019229,
                 max: 0.0024537345358186338,
@@ -14056,7 +18521,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013292840137521817,
               },
               {
-                timestamp: '2022-04-17T11:01:00.000Z',
+                timestamp: new Date('2022-04-17T11:01:00.000Z'),
                 average: 0.0020768031871467012,
                 min: 0.0018776576760504424,
                 max: 0.0024110831522011363,
@@ -14064,7 +18529,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012460819122880207,
               },
               {
-                timestamp: '2022-04-17T11:57:00.000Z',
+                timestamp: new Date('2022-04-17T11:57:00.000Z'),
                 average: 0.0021443583192317915,
                 min: 0.0018349732880988464,
                 max: 0.002432406451665913,
@@ -14072,7 +18537,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01286614991539075,
               },
               {
-                timestamp: '2022-04-17T13:00:00.000Z',
+                timestamp: new Date('2022-04-17T13:00:00.000Z'),
                 average: 0.0020412277318023983,
                 min: 0.0018136343958523049,
                 max: 0.002197698150268087,
@@ -14080,7 +18545,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012247366390814389,
               },
               {
-                timestamp: '2022-04-17T14:03:00.000Z',
+                timestamp: new Date('2022-04-17T14:03:00.000Z'),
                 average: 0.0021550344389796848,
                 min: 0.0018563167939725997,
                 max: 0.00245375208398677,
@@ -14088,7 +18553,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01293020663387811,
               },
               {
-                timestamp: '2022-04-17T14:59:00.000Z',
+                timestamp: new Date('2022-04-17T14:59:00.000Z'),
                 average: 0.0021514868071049183,
                 min: 0.00194167239120543,
                 max: 0.002411087694573776,
@@ -14096,7 +18561,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012908920842629509,
               },
               {
-                timestamp: '2022-04-17T16:02:00.000Z',
+                timestamp: new Date('2022-04-17T16:02:00.000Z'),
                 average: 0.0021265991837520794,
                 min: 0.0018136548222634791,
                 max: 0.0024110940578326253,
@@ -14104,7 +18569,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012759595102512476,
               },
               {
-                timestamp: '2022-04-17T16:58:00.000Z',
+                timestamp: new Date('2022-04-17T16:58:00.000Z'),
                 average: 0.0021799598170807277,
                 min: 0.0020270425705318346,
                 max: 0.0023897765042059523,
@@ -14112,7 +18577,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013079758902484365,
               },
               {
-                timestamp: '2022-04-17T18:01:00.000Z',
+                timestamp: new Date('2022-04-17T18:01:00.000Z'),
                 average: 0.001891928736212551,
                 min: 0.0018136910817075208,
                 max: 0.001984391418809405,
@@ -14120,7 +18585,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.011351572417275305,
               },
               {
-                timestamp: '2022-04-17T19:04:00.000Z',
+                timestamp: new Date('2022-04-17T19:04:00.000Z'),
                 average: 0.002062602312101197,
                 min: 0.0018563420808910774,
                 max: 0.002240412856247852,
@@ -14128,7 +18593,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012375613872607183,
               },
               {
-                timestamp: '2022-04-17T20:00:00.000Z',
+                timestamp: new Date('2022-04-17T20:00:00.000Z'),
                 average: 0.0020021370027443306,
                 min: 0.0018136587413847397,
                 max: 0.0022404019746517373,
@@ -14136,7 +18601,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012012822016465982,
               },
               {
-                timestamp: '2022-04-17T21:03:00.000Z',
+                timestamp: new Date('2022-04-17T21:03:00.000Z'),
                 average: 0.0022083627312738875,
                 min: 0.0019203154184990324,
                 max: 0.0023897258541321293,
@@ -14144,7 +18609,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013250176387643324,
               },
               {
-                timestamp: '2022-04-17T21:59:00.000Z',
+                timestamp: new Date('2022-04-17T21:59:00.000Z'),
                 average: 0.002151450598200781,
                 min: 0.0018349562126803358,
                 max: 0.002453720516956263,
@@ -14152,7 +18617,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012908703589204687,
               },
               {
-                timestamp: '2022-04-17T23:02:00.000Z',
+                timestamp: new Date('2022-04-17T23:02:00.000Z'),
                 average: 0.0020447956821907525,
                 min: 0.0018349818643659621,
                 max: 0.0022830588312460227,
@@ -14160,7 +18625,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012268774093144514,
               },
               {
-                timestamp: '2022-04-18T00:05:00.000Z',
+                timestamp: new Date('2022-04-18T00:05:00.000Z'),
                 average: 0.0021088330546641357,
                 min: 0.0018350048165374265,
                 max: 0.0023897737145603696,
@@ -14168,7 +18633,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012652998327984815,
               },
               {
-                timestamp: '2022-04-18T01:01:00.000Z',
+                timestamp: new Date('2022-04-18T01:01:00.000Z'),
                 average: 0.0020554757269439176,
                 min: 0.0018776664080041323,
                 max: 0.0024537686013690364,
@@ -14176,7 +18641,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012332854361663505,
               },
               {
-                timestamp: '2022-04-18T02:04:00.000Z',
+                timestamp: new Date('2022-04-18T02:04:00.000Z'),
                 average: 0.0021479329477561405,
                 min: 0.001856326156835605,
                 max: 0.002411090295660039,
@@ -14184,7 +18649,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012887597686536844,
               },
               {
-                timestamp: '2022-04-18T03:00:00.000Z',
+                timestamp: new Date('2022-04-18T03:00:00.000Z'),
                 average: 0.002190619914675737,
                 min: 0.002027034661307094,
                 max: 0.0024111043866073857,
@@ -14192,7 +18657,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013143719488054421,
               },
               {
-                timestamp: '2022-04-18T04:03:00.000Z',
+                timestamp: new Date('2022-04-18T04:03:00.000Z'),
                 average: 0.002140823665708766,
                 min: 0.0019203401652537104,
                 max: 0.002389756650093506,
@@ -14200,7 +18665,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012844941994252596,
               },
               {
-                timestamp: '2022-04-18T04:59:00.000Z',
+                timestamp: new Date('2022-04-18T04:59:00.000Z'),
                 average: 0.002215505792931931,
                 min: 0.0020483649064667615,
                 max: 0.0023684219231021927,
@@ -14208,7 +18673,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013293034757591585,
               },
               {
-                timestamp: '2022-04-18T06:02:00.000Z',
+                timestamp: new Date('2022-04-18T06:02:00.000Z'),
                 average: 0.0021479677459679872,
                 min: 0.001877693658726982,
                 max: 0.0023897919292888863,
@@ -14216,7 +18681,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012887806475807922,
               },
               {
-                timestamp: '2022-04-18T06:58:00.000Z',
+                timestamp: new Date('2022-04-18T06:58:00.000Z'),
                 average: 0.0021693056762563463,
                 min: 0.0018136817949028473,
                 max: 0.0024324673484579363,
@@ -14224,7 +18689,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.013015834057538079,
               },
               {
-                timestamp: '2022-04-18T08:01:00.000Z',
+                timestamp: new Date('2022-04-18T08:01:00.000Z'),
                 average: 0.0020697533317336277,
                 min: 0.0018350390363823918,
                 max: 0.0022831299638711154,
@@ -14232,7 +18697,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012418519990401767,
               },
               {
-                timestamp: '2022-04-18T09:04:00.000Z',
+                timestamp: new Date('2022-04-18T09:04:00.000Z'),
                 average: 0.002115965837043434,
                 min: 0.0018990348856826786,
                 max: 0.0024324716513238805,
@@ -14240,7 +18705,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012695795022260606,
               },
               {
-                timestamp: '2022-04-18T10:00:00.000Z',
+                timestamp: new Date('2022-04-18T10:00:00.000Z'),
                 average: 0.00209107800549535,
                 min: 0.001856365168143831,
                 max: 0.002432478496188468,
@@ -14248,7 +18713,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.012546468032972099,
               },
               {
-                timestamp: '2022-04-18T11:03:00.000Z',
+                timestamp: new Date('2022-04-18T11:03:00.000Z'),
                 average: 0.0020733011609948963,
                 min: 0.0018136939830315562,
                 max: 0.0023257958135345837,
@@ -14287,7 +18752,7 @@ export const formatSeriesDataCase2 = {
             outdatedData: false,
             datapoints: [
               {
-                timestamp: '2022-04-14T04:01:00.000Z',
+                timestamp: new Date('2022-04-14T04:01:00.000Z'),
                 count: 6,
                 sum: 0.015838035654434188,
                 average: 0.0023282431644699015,
@@ -14295,7 +18760,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030078958469765766,
               },
               {
-                timestamp: '2022-04-14T05:04:00.000Z',
+                timestamp: new Date('2022-04-14T05:04:00.000Z'),
                 count: 6,
                 sum: 0.015624853942715237,
                 average: 0.002407323728785668,
@@ -14303,7 +18768,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.003034469079164458,
               },
               {
-                timestamp: '2022-04-14T06:00:00.000Z',
+                timestamp: new Date('2022-04-14T06:00:00.000Z'),
                 count: 6,
                 sum: 0.015278838538142306,
                 average: 0.0026057052389904557,
@@ -14311,7 +18776,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002848145859897608,
               },
               {
-                timestamp: '2022-04-14T07:03:00.000Z',
+                timestamp: new Date('2022-04-14T07:03:00.000Z'),
                 count: 6,
                 sum: 0.01538515825038389,
                 average: 0.0026977653891524906,
@@ -14319,7 +18784,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029279712933256543,
               },
               {
-                timestamp: '2022-04-14T07:59:00.000Z',
+                timestamp: new Date('2022-04-14T07:59:00.000Z'),
                 count: 6,
                 sum: 0.01581106634491331,
                 average: 0.002657509345030387,
@@ -14327,7 +18792,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029013572922484015,
               },
               {
-                timestamp: '2022-04-14T09:02:00.000Z',
+                timestamp: new Date('2022-04-14T09:02:00.000Z'),
                 count: 6,
                 sum: 0.015039126134812628,
                 average: 0.002304358756927213,
@@ -14335,7 +18800,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0027682639257000236,
               },
               {
-                timestamp: '2022-04-14T09:58:00.000Z',
+                timestamp: new Date('2022-04-14T09:58:00.000Z'),
                 count: 6,
                 sum: 0.016183540787103625,
                 average: 0.002307142811780916,
@@ -14343,7 +18808,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.003061031563350192,
               },
               {
-                timestamp: '2022-04-14T11:01:00.000Z',
+                timestamp: new Date('2022-04-14T11:01:00.000Z'),
                 count: 6,
                 sum: 0.01623676733233534,
                 average: 0.0030311191009098517,
@@ -14351,7 +18816,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030610299069156787,
               },
               {
-                timestamp: '2022-04-14T12:04:00.000Z',
+                timestamp: new Date('2022-04-14T12:04:00.000Z'),
                 count: 6,
                 sum: 0.014772788553441737,
                 average: 0.0023900725590727447,
@@ -14359,7 +18824,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0026883813403560637,
               },
               {
-                timestamp: '2022-04-14T13:00:00.000Z',
+                timestamp: new Date('2022-04-14T13:00:00.000Z'),
                 count: 6,
                 sum: 0.016076940899218402,
                 average: 0.0027034829861464276,
@@ -14367,7 +18832,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.00295453715200868,
               },
               {
-                timestamp: '2022-04-14T14:03:00.000Z',
+                timestamp: new Date('2022-04-14T14:03:00.000Z'),
                 count: 6,
                 sum: 0.017327853616369633,
                 average: 0.00302363988808357,
@@ -14375,7 +18840,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030343706793642673,
               },
               {
-                timestamp: '2022-04-14T14:59:00.000Z',
+                timestamp: new Date('2022-04-14T14:59:00.000Z'),
                 count: 6,
                 sum: 0.015491185155569095,
                 average: 0.0028506026845575975,
@@ -14383,7 +18848,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.00287465291546643,
               },
               {
-                timestamp: '2022-04-14T16:02:00.000Z',
+                timestamp: new Date('2022-04-14T16:02:00.000Z'),
                 count: 6,
                 sum: 0.015118736473401045,
                 average: 0.002719711527689947,
@@ -14391,7 +18856,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0027149843667022997,
               },
               {
-                timestamp: '2022-04-14T16:58:00.000Z',
+                timestamp: new Date('2022-04-14T16:58:00.000Z'),
                 count: 6,
                 sum: 0.015943730612484386,
                 average: 0.0028314096957575015,
@@ -14399,7 +18864,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029278971074679174,
               },
               {
-                timestamp: '2022-04-14T18:01:00.000Z',
+                timestamp: new Date('2022-04-14T18:01:00.000Z'),
                 count: 6,
                 sum: 0.01652942493855901,
                 average: 0.0025593349188510342,
@@ -14407,7 +18872,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.003034387186788611,
               },
               {
-                timestamp: '2022-04-14T18:57:00.000Z',
+                timestamp: new Date('2022-04-14T18:57:00.000Z'),
                 count: 6,
                 sum: 0.01549117548911536,
                 average: 0.002510292034614093,
@@ -14415,7 +18880,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0027149482815975374,
               },
               {
-                timestamp: '2022-04-14T20:00:00.000Z',
+                timestamp: new Date('2022-04-14T20:00:00.000Z'),
                 count: 6,
                 sum: 0.01471920965168121,
                 average: 0.002279293932821973,
@@ -14423,7 +18888,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029811057522392327,
               },
               {
-                timestamp: '2022-04-14T21:03:00.000Z',
+                timestamp: new Date('2022-04-14T21:03:00.000Z'),
                 count: 6,
                 sum: 0.016741942186967743,
                 average: 0.002981483847756423,
@@ -14431,7 +18896,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030609274268700963,
               },
               {
-                timestamp: '2022-04-14T21:59:00.000Z',
+                timestamp: new Date('2022-04-14T21:59:00.000Z'),
                 count: 6,
                 sum: 0.01660872327570378,
                 average: 0.00235296405248059,
@@ -14439,7 +18904,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.003034285983061268,
               },
               {
-                timestamp: '2022-04-14T23:02:00.000Z',
+                timestamp: new Date('2022-04-14T23:02:00.000Z'),
                 count: 6,
                 sum: 0.01461249641578236,
                 average: 0.0024167844709527104,
@@ -14447,7 +18912,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002581807199145517,
               },
               {
-                timestamp: '2022-04-15T00:05:00.000Z',
+                timestamp: new Date('2022-04-15T00:05:00.000Z'),
                 count: 12,
                 sum: 0.03175609005703453,
                 average: 0.0025478602608642415,
@@ -14455,7 +18920,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030078984230167624,
               },
               {
-                timestamp: '2022-04-15T01:01:00.000Z',
+                timestamp: new Date('2022-04-15T01:01:00.000Z'),
                 count: 6,
                 sum: 0.016876164010337494,
                 average: 0.002843274707958002,
@@ -14463,7 +18928,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030345152952341867,
               },
               {
-                timestamp: '2022-04-15T01:57:00.000Z',
+                timestamp: new Date('2022-04-15T01:57:00.000Z'),
                 count: 6,
                 sum: 0.01629061300548734,
                 average: 0.0027822803212387043,
@@ -14471,7 +18936,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029812886545989904,
               },
               {
-                timestamp: '2022-04-15T03:00:00.000Z',
+                timestamp: new Date('2022-04-15T03:00:00.000Z'),
                 count: 6,
                 sum: 0.015332244480342774,
                 average: 0.0024152656133189657,
@@ -14479,7 +18944,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030078882400672454,
               },
               {
-                timestamp: '2022-04-15T04:03:00.000Z',
+                timestamp: new Date('2022-04-15T04:03:00.000Z'),
                 count: 6,
                 sum: 0.016743010520322538,
                 average: 0.002792276317300213,
@@ -14487,7 +18952,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030078858327447482,
               },
               {
-                timestamp: '2022-04-15T04:59:00.000Z',
+                timestamp: new Date('2022-04-15T04:59:00.000Z'),
                 count: 6,
                 sum: 0.01639683548290554,
                 average: 0.0028648472761503745,
@@ -14495,7 +18960,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0028747698573925295,
               },
               {
-                timestamp: '2022-04-15T06:02:00.000Z',
+                timestamp: new Date('2022-04-15T06:02:00.000Z'),
                 count: 6,
                 sum: 0.015598444691041977,
                 average: 0.0026874588565263063,
@@ -14503,7 +18968,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029546541991564155,
               },
               {
-                timestamp: '2022-04-15T06:58:00.000Z',
+                timestamp: new Date('2022-04-15T06:58:00.000Z'),
                 count: 6,
                 sum: 0.01714241850059266,
                 average: 0.0028641680600369097,
@@ -14511,7 +18976,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030345274985521167,
               },
               {
-                timestamp: '2022-04-15T08:01:00.000Z',
+                timestamp: new Date('2022-04-15T08:01:00.000Z'),
                 count: 6,
                 sum: 0.015518677825774731,
                 average: 0.002771243548939542,
@@ -14519,7 +18984,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0027683404697779962,
               },
               {
-                timestamp: '2022-04-15T08:57:00.000Z',
+                timestamp: new Date('2022-04-15T08:57:00.000Z'),
                 count: 6,
                 sum: 0.01637049387055191,
                 average: 0.0030161258606923357,
@@ -14527,7 +18992,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.003034530571126696,
               },
               {
-                timestamp: '2022-04-15T10:00:00.000Z',
+                timestamp: new Date('2022-04-15T10:00:00.000Z'),
                 count: 6,
                 sum: 0.014826778782950023,
                 average: 0.0025715902862207866,
@@ -14535,7 +19000,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0028482321899024284,
               },
               {
-                timestamp: '2022-04-15T11:03:00.000Z',
+                timestamp: new Date('2022-04-15T11:03:00.000Z'),
                 count: 6,
                 sum: 0.01482657234062528,
                 average: 0.0023180185478839607,
@@ -14543,7 +19008,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002794955288627746,
               },
               {
-                timestamp: '2022-04-15T11:59:00.000Z',
+                timestamp: new Date('2022-04-15T11:59:00.000Z'),
                 count: 6,
                 sum: 0.015917759649505443,
                 average: 0.0026644945500259106,
@@ -14551,7 +19016,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029280159890394623,
               },
               {
-                timestamp: '2022-04-15T13:02:00.000Z',
+                timestamp: new Date('2022-04-15T13:02:00.000Z'),
                 count: 6,
                 sum: 0.01703545276937967,
                 average: 0.002816987806849558,
@@ -14559,7 +19024,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.003061057919497909,
               },
               {
-                timestamp: '2022-04-15T13:58:00.000Z',
+                timestamp: new Date('2022-04-15T13:58:00.000Z'),
                 count: 6,
                 sum: 0.015944088504912524,
                 average: 0.002594730201279734,
@@ -14567,7 +19032,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.003007816362362463,
               },
               {
-                timestamp: '2022-04-15T15:01:00.000Z',
+                timestamp: new Date('2022-04-15T15:01:00.000Z'),
                 count: 6,
                 sum: 0.016130443640760238,
                 average: 0.002336393000809666,
@@ -14575,7 +19040,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002981204105223014,
               },
               {
-                timestamp: '2022-04-15T15:57:00.000Z',
+                timestamp: new Date('2022-04-15T15:57:00.000Z'),
                 count: 5,
                 sum: 0.013655177930437707,
                 average: 0.002692561411125956,
@@ -14583,7 +19048,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.003034483984541713,
               },
               {
-                timestamp: '2022-04-15T16:04:00.000Z',
+                timestamp: new Date('2022-04-15T16:04:00.000Z'),
                 count: 1,
                 sum: 0.002688446337181693,
                 average: 0.002703758314130545,
@@ -14591,7 +19056,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002688446337181693,
               },
               {
-                timestamp: '2022-04-15T17:00:00.000Z',
+                timestamp: new Date('2022-04-15T17:00:00.000Z'),
                 count: 6,
                 sum: 0.01607733059044401,
                 average: 0.0029398280542329,
@@ -14599,7 +19064,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029546087674491477,
               },
               {
-                timestamp: '2022-04-15T18:03:00.000Z',
+                timestamp: new Date('2022-04-15T18:03:00.000Z'),
                 count: 6,
                 sum: 0.015119190684277167,
                 average: 0.0025287378785322726,
@@ -14607,7 +19072,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002768302519656383,
               },
               {
-                timestamp: '2022-04-15T18:59:00.000Z',
+                timestamp: new Date('2022-04-15T18:59:00.000Z'),
                 count: 6,
                 sum: 0.015970846382132912,
                 average: 0.00265914592262513,
@@ -14615,7 +19080,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002901370426087479,
               },
               {
-                timestamp: '2022-04-15T20:02:00.000Z',
+                timestamp: new Date('2022-04-15T20:02:00.000Z'),
                 count: 6,
                 sum: 0.015092384717872479,
                 average: 0.0023326570397341627,
@@ -14623,7 +19088,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0026085603216075893,
               },
               {
-                timestamp: '2022-04-15T20:58:00.000Z',
+                timestamp: new Date('2022-04-15T20:58:00.000Z'),
                 count: 6,
                 sum: 0.016077288832366206,
                 average: 0.0026456644222982483,
@@ -14631,7 +19096,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029546010933653123,
               },
               {
-                timestamp: '2022-04-15T22:01:00.000Z',
+                timestamp: new Date('2022-04-15T22:01:00.000Z'),
                 count: 6,
                 sum: 0.016476431038276573,
                 average: 0.0026277028477107445,
@@ -14639,7 +19104,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002981195922919186,
               },
               {
-                timestamp: '2022-04-15T22:57:00.000Z',
+                timestamp: new Date('2022-04-15T22:57:00.000Z'),
                 count: 6,
                 sum: 0.015012451628973626,
                 average: 0.002285996279468475,
@@ -14647,7 +19112,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0027416356698302903,
               },
               {
-                timestamp: '2022-04-16T00:00:00.000Z',
+                timestamp: new Date('2022-04-16T00:00:00.000Z'),
                 count: 6,
                 sum: 0.015384845887559166,
                 average: 0.0023881932467827854,
@@ -14655,7 +19120,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002848059705828427,
               },
               {
-                timestamp: '2022-04-16T01:03:00.000Z',
+                timestamp: new Date('2022-04-16T01:03:00.000Z'),
                 count: 6,
                 sum: 0.016422808511030805,
                 average: 0.002953197118966674,
@@ -14663,7 +19128,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.003060977275151609,
               },
               {
-                timestamp: '2022-04-16T01:59:00.000Z',
+                timestamp: new Date('2022-04-16T01:59:00.000Z'),
                 count: 6,
                 sum: 0.01583724407473084,
                 average: 0.0028606915694601273,
@@ -14671,7 +19136,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0028746594286906397,
               },
               {
-                timestamp: '2022-04-16T03:02:00.000Z',
+                timestamp: new Date('2022-04-16T03:02:00.000Z'),
                 count: 6,
                 sum: 0.01610333095476302,
                 average: 0.0026644922535063484,
@@ -14679,7 +19144,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002768175899661742,
               },
               {
-                timestamp: '2022-04-16T03:58:00.000Z',
+                timestamp: new Date('2022-04-16T03:58:00.000Z'),
                 count: 6,
                 sum: 0.016236508061978912,
                 average: 0.002711829190129066,
@@ -14687,7 +19152,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030609810280779913,
               },
               {
-                timestamp: '2022-04-16T05:01:00.000Z',
+                timestamp: new Date('2022-04-16T05:01:00.000Z'),
                 count: 6,
                 sum: 0.015704187723399245,
                 average: 0.0024519472312208453,
@@ -14695,7 +19160,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029278994060574865,
               },
               {
-                timestamp: '2022-04-16T05:57:00.000Z',
+                timestamp: new Date('2022-04-16T05:57:00.000Z'),
                 count: 4,
                 sum: 0.009848556519240069,
                 average: 0.0024487907731674243,
@@ -14703,7 +19168,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002661772032227046,
               },
               {
-                timestamp: '2022-04-16T06:04:00.000Z',
+                timestamp: new Date('2022-04-16T06:04:00.000Z'),
                 count: 2,
                 sum: 0.005163837742520469,
                 average: 0.0025391198025439235,
@@ -14711,7 +19176,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002794860633838398,
               },
               {
-                timestamp: '2022-04-16T07:00:00.000Z',
+                timestamp: new Date('2022-04-16T07:00:00.000Z'),
                 count: 6,
                 sum: 0.0157042884809556,
                 average: 0.0023318783061901226,
@@ -14719,7 +19184,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.00279483100084803,
               },
               {
-                timestamp: '2022-04-16T08:03:00.000Z',
+                timestamp: new Date('2022-04-16T08:03:00.000Z'),
                 count: 6,
                 sum: 0.014959051870792982,
                 average: 0.002592006301351301,
@@ -14727,7 +19192,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002688370531939664,
               },
               {
-                timestamp: '2022-04-16T08:59:00.000Z',
+                timestamp: new Date('2022-04-16T08:59:00.000Z'),
                 count: 6,
                 sum: 0.01698181985704697,
                 average: 0.0027402616610791523,
@@ -14735,7 +19200,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030077517928625507,
               },
               {
-                timestamp: '2022-04-16T10:02:00.000Z',
+                timestamp: new Date('2022-04-16T10:02:00.000Z'),
                 count: 6,
                 sum: 0.01570426576341568,
                 average: 0.0024847582981801035,
@@ -14743,7 +19208,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030077661546880873,
               },
               {
-                timestamp: '2022-04-16T10:58:00.000Z',
+                timestamp: new Date('2022-04-16T10:58:00.000Z'),
                 count: 6,
                 sum: 0.0157840794288518,
                 average: 0.0026484247945543914,
@@ -14751,7 +19216,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002981141477287355,
               },
               {
-                timestamp: '2022-04-16T12:01:00.000Z',
+                timestamp: new Date('2022-04-16T12:01:00.000Z'),
                 count: 6,
                 sum: 0.015597841763993158,
                 average: 0.0026332251336034923,
@@ -14759,7 +19224,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002848070083186464,
               },
               {
-                timestamp: '2022-04-16T13:04:00.000Z',
+                timestamp: new Date('2022-04-16T13:04:00.000Z'),
                 count: 6,
                 sum: 0.015411480573590201,
                 average: 0.0026370703432529825,
@@ -14767,7 +19232,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0027149758523423153,
               },
               {
-                timestamp: '2022-04-16T14:00:00.000Z',
+                timestamp: new Date('2022-04-16T14:00:00.000Z'),
                 count: 6,
                 sum: 0.015304994000454434,
                 average: 0.002683813345108186,
@@ -14775,7 +19240,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029811466574798198,
               },
               {
-                timestamp: '2022-04-16T15:03:00.000Z',
+                timestamp: new Date('2022-04-16T15:03:00.000Z'),
                 count: 6,
                 sum: 0.015890578542371952,
                 average: 0.0025598031604799395,
@@ -14783,7 +19248,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002954529678732473,
               },
               {
-                timestamp: '2022-04-16T15:59:00.000Z',
+                timestamp: new Date('2022-04-16T15:59:00.000Z'),
                 count: 6,
                 sum: 0.015783848853606498,
                 average: 0.002717362803510372,
@@ -14791,7 +19256,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030343318200862406,
               },
               {
-                timestamp: '2022-04-16T17:02:00.000Z',
+                timestamp: new Date('2022-04-16T17:02:00.000Z'),
                 count: 6,
                 sum: 0.016129813565521425,
                 average: 0.0025440238216078792,
@@ -14799,7 +19264,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002927853947536892,
               },
               {
-                timestamp: '2022-04-16T17:58:00.000Z',
+                timestamp: new Date('2022-04-16T17:58:00.000Z'),
                 count: 6,
                 sum: 0.016449291667388406,
                 average: 0.002448193044800119,
@@ -14807,7 +19272,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.003060952332928264,
               },
               {
-                timestamp: '2022-04-16T19:01:00.000Z',
+                timestamp: new Date('2022-04-16T19:01:00.000Z'),
                 count: 6,
                 sum: 0.015384587765794586,
                 average: 0.0023014772550854073,
@@ -14815,7 +19280,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002848011922041558,
               },
               {
-                timestamp: '2022-04-16T20:04:00.000Z',
+                timestamp: new Date('2022-04-16T20:04:00.000Z'),
                 count: 6,
                 sum: 0.01642242206925866,
                 average: 0.002751980695646523,
@@ -14823,7 +19288,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029278224110509767,
               },
               {
-                timestamp: '2022-04-16T21:00:00.000Z',
+                timestamp: new Date('2022-04-16T21:00:00.000Z'),
                 count: 6,
                 sum: 0.016369174214774657,
                 average: 0.0029169423380282344,
@@ -14831,7 +19296,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029278197782523774,
               },
               {
-                timestamp: '2022-04-16T22:03:00.000Z',
+                timestamp: new Date('2022-04-16T22:03:00.000Z'),
                 count: 6,
                 sum: 0.015810355201314217,
                 average: 0.002275804427103962,
@@ -14839,7 +19304,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002927843555798929,
               },
               {
-                timestamp: '2022-04-16T22:59:00.000Z',
+                timestamp: new Date('2022-04-16T22:59:00.000Z'),
                 count: 6,
                 sum: 0.015517696920057913,
                 average: 0.002418809069859887,
@@ -14847,7 +19312,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0028746333917088413,
               },
               {
-                timestamp: '2022-04-17T00:02:00.000Z',
+                timestamp: new Date('2022-04-17T00:02:00.000Z'),
                 count: 6,
                 sum: 0.015573140924368683,
                 average: 0.002458633848484011,
@@ -14855,7 +19320,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029016621551387805,
               },
               {
-                timestamp: '2022-04-17T00:58:00.000Z',
+                timestamp: new Date('2022-04-17T00:58:00.000Z'),
                 count: 6,
                 sum: 0.015253615225567835,
                 average: 0.002566231229836731,
@@ -14863,7 +19328,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002928268193389986,
               },
               {
-                timestamp: '2022-04-17T02:01:00.000Z',
+                timestamp: new Date('2022-04-17T02:01:00.000Z'),
                 count: 6,
                 sum: 0.01581256591017175,
                 average: 0.002404101273737249,
@@ -14871,7 +19336,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002981493908988613,
               },
               {
-                timestamp: '2022-04-17T02:57:00.000Z',
+                timestamp: new Date('2022-04-17T02:57:00.000Z'),
                 count: 6,
                 sum: 0.016504452409112184,
                 average: 0.0026012989420941693,
@@ -14879,7 +19344,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030613097210450023,
               },
               {
-                timestamp: '2022-04-17T04:00:00.000Z',
+                timestamp: new Date('2022-04-17T04:00:00.000Z'),
                 count: 6,
                 sum: 0.01533308819986713,
                 average: 0.002654693943131723,
@@ -14887,7 +19352,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0028749540374750867,
               },
               {
-                timestamp: '2022-04-17T05:03:00.000Z',
+                timestamp: new Date('2022-04-17T05:03:00.000Z'),
                 count: 6,
                 sum: 0.017116582204269114,
                 average: 0.0028536510300118953,
@@ -14895,7 +19360,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.003061286086300074,
               },
               {
-                timestamp: '2022-04-17T05:59:00.000Z',
+                timestamp: new Date('2022-04-17T05:59:00.000Z'),
                 count: 6,
                 sum: 0.015838927946557706,
                 average: 0.002838663855993116,
@@ -14903,7 +19368,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030346853544665183,
               },
               {
-                timestamp: '2022-04-17T07:02:00.000Z',
+                timestamp: new Date('2022-04-17T07:02:00.000Z'),
                 count: 6,
                 sum: 0.015493170459157787,
                 average: 0.0029111144725712363,
@@ -14911,7 +19376,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029282624579164197,
               },
               {
-                timestamp: '2022-04-17T07:58:00.000Z',
+                timestamp: new Date('2022-04-17T07:58:00.000Z'),
                 count: 6,
                 sum: 0.015333630265472789,
                 average: 0.002566253398596487,
@@ -14919,7 +19384,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002928297446531262,
               },
               {
-                timestamp: '2022-04-17T09:01:00.000Z',
+                timestamp: new Date('2022-04-17T09:01:00.000Z'),
                 count: 6,
                 sum: 0.015892459008402044,
                 average: 0.002609159636943286,
@@ -14927,7 +19392,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029282587787675457,
               },
               {
-                timestamp: '2022-04-17T09:57:00.000Z',
+                timestamp: new Date('2022-04-17T09:57:00.000Z'),
                 count: 6,
                 sum: 0.01701063411972055,
                 average: 0.0026179278714077944,
@@ -14935,7 +19400,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.00303476101666376,
               },
               {
-                timestamp: '2022-04-17T11:00:00.000Z',
+                timestamp: new Date('2022-04-17T11:00:00.000Z'),
                 count: 6,
                 sum: 0.015573086501925527,
                 average: 0.0025220076650811674,
@@ -14943,7 +19408,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002795169372140479,
               },
               {
-                timestamp: '2022-04-17T12:03:00.000Z',
+                timestamp: new Date('2022-04-17T12:03:00.000Z'),
                 count: 6,
                 sum: 0.015280318917966312,
                 average: 0.002494798746866876,
@@ -14951,7 +19416,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030347671718609047,
               },
               {
-                timestamp: '2022-04-17T12:59:00.000Z',
+                timestamp: new Date('2022-04-17T12:59:00.000Z'),
                 count: 6,
                 sum: 0.016717734038877406,
                 average: 0.0027898384192266753,
@@ -14959,7 +19424,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002875024325157261,
               },
               {
-                timestamp: '2022-04-17T14:02:00.000Z',
+                timestamp: new Date('2022-04-17T14:02:00.000Z'),
                 count: 6,
                 sum: 0.016238481446733205,
                 average: 0.0025874465441809535,
@@ -14967,7 +19432,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029282507526895945,
               },
               {
-                timestamp: '2022-04-17T14:58:00.000Z',
+                timestamp: new Date('2022-04-17T14:58:00.000Z'),
                 count: 6,
                 sum: 0.015173799500393369,
                 average: 0.002633341457533035,
@@ -14975,7 +19440,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029815184983229075,
               },
               {
-                timestamp: '2022-04-17T16:01:00.000Z',
+                timestamp: new Date('2022-04-17T16:01:00.000Z'),
                 count: 6,
                 sum: 0.01629184904127599,
                 average: 0.0027307259674049246,
@@ -14983,7 +19448,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030613768623312726,
               },
               {
-                timestamp: '2022-04-17T16:57:00.000Z',
+                timestamp: new Date('2022-04-17T16:57:00.000Z'),
                 count: 6,
                 sum: 0.014907445440555967,
                 average: 0.0026149936352476127,
@@ -14991,7 +19456,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0028750073349643654,
               },
               {
-                timestamp: '2022-04-17T18:00:00.000Z',
+                timestamp: new Date('2022-04-17T18:00:00.000Z'),
                 count: 6,
                 sum: 0.015998973973096436,
                 average: 0.002907901962307397,
@@ -14999,7 +19464,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002981505965036274,
               },
               {
-                timestamp: '2022-04-17T19:03:00.000Z',
+                timestamp: new Date('2022-04-17T19:03:00.000Z'),
                 count: 6,
                 sum: 0.01589251232417736,
                 average: 0.0026514141163954184,
@@ -15007,7 +19472,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030347510970790935,
               },
               {
-                timestamp: '2022-04-17T19:59:00.000Z',
+                timestamp: new Date('2022-04-17T19:59:00.000Z'),
                 count: 6,
                 sum: 0.015652927670459976,
                 average: 0.0028364790610336263,
@@ -15015,7 +19480,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.003008130657758465,
               },
               {
-                timestamp: '2022-04-17T21:02:00.000Z',
+                timestamp: new Date('2022-04-17T21:02:00.000Z'),
                 count: 6,
                 sum: 0.016158474072311423,
                 average: 0.002875782003951671,
@@ -15023,7 +19488,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002954844517341957,
               },
               {
-                timestamp: '2022-04-17T21:58:00.000Z',
+                timestamp: new Date('2022-04-17T21:58:00.000Z'),
                 count: 6,
                 sum: 0.015998842212231003,
                 average: 0.0026749782026777467,
@@ -15031,7 +19496,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0028217591921738546,
               },
               {
-                timestamp: '2022-04-17T23:01:00.000Z',
+                timestamp: new Date('2022-04-17T23:01:00.000Z'),
                 count: 6,
                 sum: 0.016211923419777997,
                 average: 0.002659394334377376,
@@ -15039,7 +19504,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030081237215680025,
               },
               {
-                timestamp: '2022-04-18T00:04:00.000Z',
+                timestamp: new Date('2022-04-18T00:04:00.000Z'),
                 count: 6,
                 sum: 0.015224330666887399,
                 average: 0.002419523821900226,
@@ -15047,7 +19512,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029809878228870433,
               },
               {
-                timestamp: '2022-04-18T01:00:00.000Z',
+                timestamp: new Date('2022-04-18T01:00:00.000Z'),
                 count: 6,
                 sum: 0.01631575621005772,
                 average: 0.0028649979624274556,
@@ -15055,7 +19520,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029810190791622585,
               },
               {
-                timestamp: '2022-04-18T02:03:00.000Z',
+                timestamp: new Date('2022-04-18T02:03:00.000Z'),
                 count: 6,
                 sum: 0.01602298259172558,
                 average: 0.002390204174580521,
@@ -15063,7 +19528,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029810200170652243,
               },
               {
-                timestamp: '2022-04-18T02:59:00.000Z',
+                timestamp: new Date('2022-04-18T02:59:00.000Z'),
                 count: 6,
                 sum: 0.015570607083006461,
                 average: 0.002271946172126849,
@@ -15071,7 +19536,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029011900376883833,
               },
               {
-                timestamp: '2022-04-18T04:02:00.000Z',
+                timestamp: new Date('2022-04-18T04:02:00.000Z'),
                 count: 6,
                 sum: 0.01626235242923141,
                 average: 0.002690271086086421,
@@ -15079,7 +19544,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.003034219602180656,
               },
               {
-                timestamp: '2022-04-18T04:58:00.000Z',
+                timestamp: new Date('2022-04-18T04:58:00.000Z'),
                 count: 6,
                 sum: 0.015463994855370696,
                 average: 0.0027365809165692864,
@@ -15087,7 +19552,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002821314035575377,
               },
               {
-                timestamp: '2022-04-18T06:01:00.000Z',
+                timestamp: new Date('2022-04-18T06:01:00.000Z'),
                 count: 6,
                 sum: 0.015464051749192732,
                 average: 0.0024590467029426506,
@@ -15095,7 +19560,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029011732197280686,
               },
               {
-                timestamp: '2022-04-18T07:04:00.000Z',
+                timestamp: new Date('2022-04-18T07:04:00.000Z'),
                 count: 6,
                 sum: 0.016049507192602685,
                 average: 0.002622542263747692,
@@ -15103,7 +19568,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002981002994314263,
               },
               {
-                timestamp: '2022-04-18T08:00:00.000Z',
+                timestamp: new Date('2022-04-18T08:00:00.000Z'),
                 count: 6,
                 sum: 0.01549051312094624,
                 average: 0.0023859191423819606,
@@ -15111,7 +19576,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0029543762137887158,
               },
               {
-                timestamp: '2022-04-18T09:03:00.000Z',
+                timestamp: new Date('2022-04-18T09:03:00.000Z'),
                 count: 6,
                 sum: 0.015650112257892805,
                 average: 0.0026152486540703137,
@@ -15119,7 +19584,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.002927742089061579,
               },
               {
-                timestamp: '2022-04-18T09:59:00.000Z',
+                timestamp: new Date('2022-04-18T09:59:00.000Z'),
                 count: 6,
                 sum: 0.01663489400439066,
                 average: 0.002640158548705461,
@@ -15127,7 +19592,7 @@ export const formatSeriesDataCase2 = {
                 max: 0.0030608204968078814,
               },
               {
-                timestamp: '2022-04-18T11:02:00.000Z',
+                timestamp: new Date('2022-04-18T11:02:00.000Z'),
                 count: 6,
                 sum: 0.01583632291290936,
                 average: 0.0024715522921612476,
@@ -15149,7 +19614,7 @@ export const formatSeriesDataCase2 = {
             dash: 'solid',
             datapoints: [
               {
-                timestamp: '2022-04-14T04:02:00.000Z',
+                timestamp: new Date('2022-04-14T04:02:00.000Z'),
                 average: 0.0026396726090723646,
                 min: 0.0023158136166987805,
                 max: 0.0030078958469765766,
@@ -15157,7 +19622,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015838035654434188,
               },
               {
-                timestamp: '2022-04-14T04:58:00.000Z',
+                timestamp: new Date('2022-04-14T04:58:00.000Z'),
                 average: 0.002604142323785873,
                 min: 0.00228916088428196,
                 max: 0.003034469079164458,
@@ -15165,7 +19630,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015624853942715237,
               },
               {
-                timestamp: '2022-04-14T06:01:00.000Z',
+                timestamp: new Date('2022-04-14T06:01:00.000Z'),
                 average: 0.0025464730896903845,
                 min: 0.0023690185189802534,
                 max: 0.002848145859897608,
@@ -15173,7 +19638,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015278838538142308,
               },
               {
-                timestamp: '2022-04-14T06:57:00.000Z',
+                timestamp: new Date('2022-04-14T06:57:00.000Z'),
                 average: 0.0025641930417306487,
                 min: 0.002262523272115278,
                 max: 0.0029279712933256543,
@@ -15181,7 +19646,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015385158250383892,
               },
               {
-                timestamp: '2022-04-14T08:00:00.000Z',
+                timestamp: new Date('2022-04-14T08:00:00.000Z'),
                 average: 0.002635177724152218,
                 min: 0.002262526328817561,
                 max: 0.0029013572922484015,
@@ -15189,7 +19654,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01581106634491331,
               },
               {
-                timestamp: '2022-04-14T09:03:00.000Z',
+                timestamp: new Date('2022-04-14T09:03:00.000Z'),
                 average: 0.0025065210224687715,
                 min: 0.0022625234008125193,
                 max: 0.0027682639257000236,
@@ -15197,7 +19662,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015039126134812628,
               },
               {
-                timestamp: '2022-04-14T09:59:00.000Z',
+                timestamp: new Date('2022-04-14T09:59:00.000Z'),
                 average: 0.002697256797850604,
                 min: 0.0022625015903023162,
                 max: 0.003061031563350192,
@@ -15205,7 +19670,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.016183540787103625,
               },
               {
-                timestamp: '2022-04-14T11:02:00.000Z',
+                timestamp: new Date('2022-04-14T11:02:00.000Z'),
                 average: 0.0027061278887225565,
                 min: 0.002422206274168059,
                 max: 0.0030610299069156787,
@@ -15213,7 +19678,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01623676733233534,
               },
               {
-                timestamp: '2022-04-14T11:58:00.000Z',
+                timestamp: new Date('2022-04-14T11:58:00.000Z'),
                 average: 0.002462131425573623,
                 min: 0.0022891167848576384,
                 max: 0.0026883813403560637,
@@ -15221,7 +19686,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.014772788553441737,
               },
               {
-                timestamp: '2022-04-14T13:01:00.000Z',
+                timestamp: new Date('2022-04-14T13:01:00.000Z'),
                 average: 0.002679490149869734,
                 min: 0.0023689532119709235,
                 max: 0.00295453715200868,
@@ -15229,7 +19694,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.016076940899218402,
               },
               {
-                timestamp: '2022-04-14T14:04:00.000Z',
+                timestamp: new Date('2022-04-14T14:04:00.000Z'),
                 average: 0.0028879756027282723,
                 min: 0.0026617286661090064,
                 max: 0.0030343706793642673,
@@ -15237,7 +19702,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.017327853616369633,
               },
               {
-                timestamp: '2022-04-14T15:00:00.000Z',
+                timestamp: new Date('2022-04-14T15:00:00.000Z'),
                 average: 0.002581864192594849,
                 min: 0.0023156926263479577,
                 max: 0.00287465291546643,
@@ -15245,7 +19710,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015491185155569095,
               },
               {
-                timestamp: '2022-04-14T16:03:00.000Z',
+                timestamp: new Date('2022-04-14T16:03:00.000Z'),
                 average: 0.002519789412233507,
                 min: 0.0022891044660431157,
                 max: 0.0027149843667022997,
@@ -15253,7 +19718,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015118736473401043,
               },
               {
-                timestamp: '2022-04-14T16:59:00.000Z',
+                timestamp: new Date('2022-04-14T16:59:00.000Z'),
                 average: 0.0026572884354140645,
                 min: 0.002289083193111281,
                 max: 0.0029278971074679174,
@@ -15261,7 +19726,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015943730612484386,
               },
               {
-                timestamp: '2022-04-14T18:02:00.000Z',
+                timestamp: new Date('2022-04-14T18:02:00.000Z'),
                 average: 0.0027549041564265023,
                 min: 0.002448803694601335,
                 max: 0.003034387186788611,
@@ -15269,7 +19734,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.016529424938559013,
               },
               {
-                timestamp: '2022-04-14T18:58:00.000Z',
+                timestamp: new Date('2022-04-14T18:58:00.000Z'),
                 average: 0.0025818625815192267,
                 min: 0.0024753940214565784,
                 max: 0.0027149482815975374,
@@ -15277,7 +19742,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01549117548911536,
               },
               {
-                timestamp: '2022-04-14T20:01:00.000Z',
+                timestamp: new Date('2022-04-14T20:01:00.000Z'),
                 average: 0.002453201608613535,
                 min: 0.0022624463298244173,
                 max: 0.0029811057522392327,
@@ -15285,7 +19750,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01471920965168121,
               },
               {
-                timestamp: '2022-04-14T20:57:00.000Z',
+                timestamp: new Date('2022-04-14T20:57:00.000Z'),
                 average: 0.0027903236978279572,
                 min: 0.0022624246198605057,
                 max: 0.0030609274268700963,
@@ -15293,7 +19758,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.016741942186967743,
               },
               {
-                timestamp: '2022-04-14T22:00:00.000Z',
+                timestamp: new Date('2022-04-14T22:00:00.000Z'),
                 average: 0.002768120545950631,
                 min: 0.002289022759151483,
                 max: 0.003034285983061268,
@@ -15301,7 +19766,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.016608723275703785,
               },
               {
-                timestamp: '2022-04-14T23:03:00.000Z',
+                timestamp: new Date('2022-04-14T23:03:00.000Z'),
                 average: 0.00243541606929706,
                 min: 0.0023422580775753145,
                 max: 0.002581807199145517,
@@ -15309,7 +19774,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01461249641578236,
               },
               {
-                timestamp: '2022-04-15T00:06:00.000Z',
+                timestamp: new Date('2022-04-15T00:06:00.000Z'),
                 average: 0.0026463408380862107,
                 min: 0.0022625984811376967,
                 max: 0.0030078984230167624,
@@ -15317,7 +19782,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.03175609005703453,
               },
               {
-                timestamp: '2022-04-15T01:02:00.000Z',
+                timestamp: new Date('2022-04-15T01:02:00.000Z'),
                 average: 0.0028126940017229158,
                 min: 0.0023158143042576688,
                 max: 0.0030345152952341867,
@@ -15325,7 +19790,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.016876164010337494,
               },
               {
-                timestamp: '2022-04-15T01:58:00.000Z',
+                timestamp: new Date('2022-04-15T01:58:00.000Z'),
                 average: 0.0027151021675812233,
                 min: 0.002448915680563456,
                 max: 0.0029812886545989904,
@@ -15333,7 +19798,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01629061300548734,
               },
               {
-                timestamp: '2022-04-15T03:01:00.000Z',
+                timestamp: new Date('2022-04-15T03:01:00.000Z'),
                 average: 0.002555374080057129,
                 min: 0.002342426240052368,
                 max: 0.0030078882400672454,
@@ -15341,7 +19806,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015332244480342774,
               },
               {
-                timestamp: '2022-04-15T03:57:00.000Z',
+                timestamp: new Date('2022-04-15T03:57:00.000Z'),
                 average: 0.002708428172405116,
                 min: 0.0026618458696856177,
                 max: 0.002821556621866755,
@@ -15349,7 +19814,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.010833712689620464,
               },
               {
-                timestamp: '2022-04-15T04:04:00.000Z',
+                timestamp: new Date('2022-04-15T04:04:00.000Z'),
                 average: 0.0029546489153510357,
                 min: 0.002901411997957323,
                 max: 0.0030078858327447482,
@@ -15357,7 +19822,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.005909297830702071,
               },
               {
-                timestamp: '2022-04-15T05:00:00.000Z',
+                timestamp: new Date('2022-04-15T05:00:00.000Z'),
                 average: 0.0027328059138175902,
                 min: 0.002502114505508313,
                 max: 0.0028747698573925295,
@@ -15365,7 +19830,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01639683548290554,
               },
               {
-                timestamp: '2022-04-15T06:03:00.000Z',
+                timestamp: new Date('2022-04-15T06:03:00.000Z'),
                 average: 0.0025997407818403296,
                 min: 0.002315810047987461,
                 max: 0.0029546541991564155,
@@ -15373,7 +19838,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015598444691041978,
               },
               {
-                timestamp: '2022-04-15T06:59:00.000Z',
+                timestamp: new Date('2022-04-15T06:59:00.000Z'),
                 average: 0.0028570697500987763,
                 min: 0.0024222982663880933,
                 max: 0.0030345274985521167,
@@ -15381,7 +19846,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.017142418500592657,
               },
               {
-                timestamp: '2022-04-15T08:02:00.000Z',
+                timestamp: new Date('2022-04-15T08:02:00.000Z'),
                 average: 0.0025864463042957883,
                 min: 0.0023956792526924967,
                 max: 0.0027683404697779962,
@@ -15389,7 +19854,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01551867782577473,
               },
               {
-                timestamp: '2022-04-15T08:58:00.000Z',
+                timestamp: new Date('2022-04-15T08:58:00.000Z'),
                 average: 0.002728415645091985,
                 min: 0.002342444651396046,
                 max: 0.003034530571126696,
@@ -15397,7 +19862,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01637049387055191,
               },
               {
-                timestamp: '2022-04-15T10:01:00.000Z',
+                timestamp: new Date('2022-04-15T10:01:00.000Z'),
                 average: 0.0024711297971583375,
                 min: 0.0022892333488935407,
                 max: 0.0028482321899024284,
@@ -15405,7 +19870,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.014826778782950025,
               },
               {
-                timestamp: '2022-04-15T10:57:00.000Z',
+                timestamp: new Date('2022-04-15T10:57:00.000Z'),
                 average: 0.0024710953901042137,
                 min: 0.0022892014744951062,
                 max: 0.002794955288627746,
@@ -15413,7 +19878,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.014826572340625281,
               },
               {
-                timestamp: '2022-04-15T12:00:00.000Z',
+                timestamp: new Date('2022-04-15T12:00:00.000Z'),
                 average: 0.0026529599415842397,
                 min: 0.002289176136885398,
                 max: 0.0029280159890394623,
@@ -15421,7 +19886,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01591775964950544,
               },
               {
-                timestamp: '2022-04-15T13:03:00.000Z',
+                timestamp: new Date('2022-04-15T13:03:00.000Z'),
                 average: 0.002839242128229945,
                 min: 0.0023423747557897046,
                 max: 0.003061057919497909,
@@ -15429,7 +19894,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01703545276937967,
               },
               {
-                timestamp: '2022-04-15T13:59:00.000Z',
+                timestamp: new Date('2022-04-15T13:59:00.000Z'),
                 average: 0.002657348084152087,
                 min: 0.0023956059523240853,
                 max: 0.003007816362362463,
@@ -15437,7 +19902,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015944088504912524,
               },
               {
-                timestamp: '2022-04-15T15:02:00.000Z',
+                timestamp: new Date('2022-04-15T15:02:00.000Z'),
                 average: 0.0026884072734600396,
                 min: 0.002315756760307163,
                 max: 0.002981204105223014,
@@ -15445,7 +19910,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.016130443640760238,
               },
               {
-                timestamp: '2022-04-15T15:58:00.000Z',
+                timestamp: new Date('2022-04-15T15:58:00.000Z'),
                 average: 0.0027239373779365667,
                 min: 0.0024488818120862945,
                 max: 0.003034483984541713,
@@ -15453,7 +19918,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.0163436242676194,
               },
               {
-                timestamp: '2022-04-15T17:01:00.000Z',
+                timestamp: new Date('2022-04-15T17:01:00.000Z'),
                 average: 0.002679555098407336,
                 min: 0.0022891563423479886,
                 max: 0.0029546087674491477,
@@ -15461,7 +19926,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.016077330590444014,
               },
               {
-                timestamp: '2022-04-15T17:57:00.000Z',
+                timestamp: new Date('2022-04-15T17:57:00.000Z'),
                 average: 0.0025198651140461944,
                 min: 0.002262554943949928,
                 max: 0.002768302519656383,
@@ -15469,7 +19934,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015119190684277167,
               },
               {
-                timestamp: '2022-04-15T19:00:00.000Z',
+                timestamp: new Date('2022-04-15T19:00:00.000Z'),
                 average: 0.0026618077303554853,
                 min: 0.0022625365708021624,
                 max: 0.002901370426087479,
@@ -15477,7 +19942,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015970846382132912,
               },
               {
-                timestamp: '2022-04-15T20:03:00.000Z',
+                timestamp: new Date('2022-04-15T20:03:00.000Z'),
                 average: 0.002515397452978747,
                 min: 0.00231576273448837,
                 max: 0.0026085603216075893,
@@ -15485,7 +19950,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01509238471787248,
               },
               {
-                timestamp: '2022-04-15T20:59:00.000Z',
+                timestamp: new Date('2022-04-15T20:59:00.000Z'),
                 average: 0.0026795481387277002,
                 min: 0.002369004480265881,
                 max: 0.0029546010933653123,
@@ -15493,7 +19958,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.016077288832366202,
               },
               {
-                timestamp: '2022-04-15T22:02:00.000Z',
+                timestamp: new Date('2022-04-15T22:02:00.000Z'),
                 average: 0.002746071839712762,
                 min: 0.0026351642532946376,
                 max: 0.002981195922919186,
@@ -15501,7 +19966,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.016476431038276573,
               },
               {
-                timestamp: '2022-04-15T22:58:00.000Z',
+                timestamp: new Date('2022-04-15T22:58:00.000Z'),
                 average: 0.0025020752714956045,
                 min: 0.0022625148731609188,
                 max: 0.0027416356698302903,
@@ -15509,7 +19974,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015012451628973628,
               },
               {
-                timestamp: '2022-04-16T00:01:00.000Z',
+                timestamp: new Date('2022-04-16T00:01:00.000Z'),
                 average: 0.002564140981259861,
                 min: 0.002368946858118972,
                 max: 0.002848059705828427,
@@ -15517,7 +19982,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015384845887559166,
               },
               {
-                timestamp: '2022-04-16T00:57:00.000Z',
+                timestamp: new Date('2022-04-16T00:57:00.000Z'),
                 average: 0.0027371347518384674,
                 min: 0.0024221646264243166,
                 max: 0.003060977275151609,
@@ -15525,7 +19990,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.016422808511030805,
               },
               {
-                timestamp: '2022-04-16T02:00:00.000Z',
+                timestamp: new Date('2022-04-16T02:00:00.000Z'),
                 average: 0.0026395406791218066,
                 min: 0.002342315090044225,
                 max: 0.0028746594286906397,
@@ -15533,7 +19998,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01583724407473084,
               },
               {
-                timestamp: '2022-04-16T03:03:00.000Z',
+                timestamp: new Date('2022-04-16T03:03:00.000Z'),
                 average: 0.0026838884924605035,
                 min: 0.0025552392919954547,
                 max: 0.002768175899661742,
@@ -15541,7 +20006,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01610333095476302,
               },
               {
-                timestamp: '2022-04-16T03:59:00.000Z',
+                timestamp: new Date('2022-04-16T03:59:00.000Z'),
                 average: 0.0027060846769964854,
                 min: 0.0022624642381446026,
                 max: 0.0030609810280779913,
@@ -15549,7 +20014,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.016236508061978912,
               },
               {
-                timestamp: '2022-04-16T05:02:00.000Z',
+                timestamp: new Date('2022-04-16T05:02:00.000Z'),
                 average: 0.0026173646205665414,
                 min: 0.0023423195248459894,
                 max: 0.0029278994060574865,
@@ -15557,7 +20022,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015704187723399248,
               },
               {
-                timestamp: '2022-04-16T05:58:00.000Z',
+                timestamp: new Date('2022-04-16T05:58:00.000Z'),
                 average: 0.002502065710293423,
                 min: 0.00231574166803753,
                 max: 0.002794860633838398,
@@ -15565,7 +20030,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015012394261760539,
               },
               {
-                timestamp: '2022-04-16T07:01:00.000Z',
+                timestamp: new Date('2022-04-16T07:01:00.000Z'),
                 average: 0.0026173814134925998,
                 min: 0.002315717114988368,
                 max: 0.00279483100084803,
@@ -15573,7 +20038,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.0157042884809556,
               },
               {
-                timestamp: '2022-04-16T07:57:00.000Z',
+                timestamp: new Date('2022-04-16T07:57:00.000Z'),
                 average: 0.00249317531179883,
                 min: 0.002289107581651595,
                 max: 0.002688370531939664,
@@ -15581,7 +20046,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01495905187079298,
               },
               {
-                timestamp: '2022-04-16T09:00:00.000Z',
+                timestamp: new Date('2022-04-16T09:00:00.000Z'),
                 average: 0.002830303309507828,
                 min: 0.002448789070295174,
                 max: 0.0030077517928625507,
@@ -15589,7 +20054,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.016981819857046967,
               },
               {
-                timestamp: '2022-04-16T10:03:00.000Z',
+                timestamp: new Date('2022-04-16T10:03:00.000Z'),
                 average: 0.002617377627235946,
                 min: 0.0023689485643118564,
                 max: 0.0030077661546880873,
@@ -15597,7 +20062,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015704265763415676,
               },
               {
-                timestamp: '2022-04-16T10:59:00.000Z',
+                timestamp: new Date('2022-04-16T10:59:00.000Z'),
                 average: 0.0026306799048086333,
                 min: 0.002368942781058702,
                 max: 0.002981141477287355,
@@ -15605,7 +20070,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.0157840794288518,
               },
               {
-                timestamp: '2022-04-16T12:02:00.000Z',
+                timestamp: new Date('2022-04-16T12:02:00.000Z'),
                 average: 0.00259964029399886,
                 min: 0.002368955489753227,
                 max: 0.002848070083186464,
@@ -15613,7 +20078,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015597841763993158,
               },
               {
-                timestamp: '2022-04-16T12:58:00.000Z',
+                timestamp: new Date('2022-04-16T12:58:00.000Z'),
                 average: 0.002568580095598367,
                 min: 0.0024221843388544185,
                 max: 0.0027149758523423153,
@@ -15621,7 +20086,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015411480573590201,
               },
               {
-                timestamp: '2022-04-16T14:01:00.000Z',
+                timestamp: new Date('2022-04-16T14:01:00.000Z'),
                 average: 0.0025508323334090723,
                 min: 0.0022624773739802206,
                 max: 0.0029811466574798198,
@@ -15629,7 +20094,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015304994000454434,
               },
               {
-                timestamp: '2022-04-16T15:04:00.000Z',
+                timestamp: new Date('2022-04-16T15:04:00.000Z'),
                 average: 0.0026484297570619915,
                 min: 0.0022624776819122542,
                 max: 0.002954529678732473,
@@ -15637,7 +20102,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01589057854237195,
               },
               {
-                timestamp: '2022-04-16T16:00:00.000Z',
+                timestamp: new Date('2022-04-16T16:00:00.000Z'),
                 average: 0.002630641475601083,
                 min: 0.002262440392169565,
                 max: 0.0030343318200862406,
@@ -15645,7 +20110,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015783848853606498,
               },
               {
-                timestamp: '2022-04-16T17:03:00.000Z',
+                timestamp: new Date('2022-04-16T17:03:00.000Z'),
                 average: 0.002688302260920237,
                 min: 0.002422133720235065,
                 max: 0.002927853947536892,
@@ -15653,7 +20118,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01612981356552142,
               },
               {
-                timestamp: '2022-04-16T17:59:00.000Z',
+                timestamp: new Date('2022-04-16T17:59:00.000Z'),
                 average: 0.0027415486112314018,
                 min: 0.0023689109359183954,
                 max: 0.003060952332928264,
@@ -15661,7 +20126,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01644929166738841,
               },
               {
-                timestamp: '2022-04-16T19:02:00.000Z',
+                timestamp: new Date('2022-04-16T19:02:00.000Z'),
                 average: 0.002564097960965764,
                 min: 0.0022890563111735884,
                 max: 0.002848011922041558,
@@ -15669,7 +20134,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015384587765794584,
               },
               {
-                timestamp: '2022-04-16T19:58:00.000Z',
+                timestamp: new Date('2022-04-16T19:58:00.000Z'),
                 average: 0.0027370703448764432,
                 min: 0.0025019573330799256,
                 max: 0.0029278224110509767,
@@ -15677,7 +20142,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01642242206925866,
               },
               {
-                timestamp: '2022-04-16T21:01:00.000Z',
+                timestamp: new Date('2022-04-16T21:01:00.000Z'),
                 average: 0.002728195702462443,
                 min: 0.002342255822601902,
                 max: 0.0029278197782523774,
@@ -15685,7 +20150,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.016369174214774657,
               },
               {
-                timestamp: '2022-04-16T21:57:00.000Z',
+                timestamp: new Date('2022-04-16T21:57:00.000Z'),
                 average: 0.002635059200219036,
                 min: 0.0022624245658446267,
                 max: 0.002927843555798929,
@@ -15693,7 +20158,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015810355201314217,
               },
               {
-                timestamp: '2022-04-16T23:00:00.000Z',
+                timestamp: new Date('2022-04-16T23:00:00.000Z'),
                 average: 0.002586282820009652,
                 min: 0.0023422938747257225,
                 max: 0.0028746333917088413,
@@ -15701,7 +20166,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015517696920057911,
               },
               {
-                timestamp: '2022-04-17T00:03:00.000Z',
+                timestamp: new Date('2022-04-17T00:03:00.000Z'),
                 average: 0.002595523487394781,
                 min: 0.002449109341951998,
                 max: 0.0029016621551387805,
@@ -15709,7 +20174,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015573140924368685,
               },
               {
-                timestamp: '2022-04-17T00:59:00.000Z',
+                timestamp: new Date('2022-04-17T00:59:00.000Z'),
                 average: 0.002542269204261306,
                 min: 0.0023159939347720798,
                 max: 0.002928268193389986,
@@ -15717,7 +20182,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015253615225567835,
               },
               {
-                timestamp: '2022-04-17T02:02:00.000Z',
+                timestamp: new Date('2022-04-17T02:02:00.000Z'),
                 average: 0.002635427651695292,
                 min: 0.0023159818757322263,
                 max: 0.002981493908988613,
@@ -15725,7 +20190,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01581256591017175,
               },
               {
-                timestamp: '2022-04-17T02:58:00.000Z',
+                timestamp: new Date('2022-04-17T02:58:00.000Z'),
                 average: 0.002750742068185364,
                 min: 0.002315947354181871,
                 max: 0.0030613097210450023,
@@ -15733,7 +20198,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.016504452409112184,
               },
               {
-                timestamp: '2022-04-17T04:01:00.000Z',
+                timestamp: new Date('2022-04-17T04:01:00.000Z'),
                 average: 0.002555514699977855,
                 min: 0.002395795031229239,
                 max: 0.0028749540374750867,
@@ -15741,7 +20206,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01533308819986713,
               },
               {
-                timestamp: '2022-04-17T04:57:00.000Z',
+                timestamp: new Date('2022-04-17T04:57:00.000Z'),
                 average: 0.0028527637007115182,
                 min: 0.0026353680221191944,
                 max: 0.003061286086300074,
@@ -15749,7 +20214,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01711658220426911,
               },
               {
-                timestamp: '2022-04-17T06:00:00.000Z',
+                timestamp: new Date('2022-04-17T06:00:00.000Z'),
                 average: 0.0026398213244262845,
                 min: 0.0023159440863033958,
                 max: 0.0030346853544665183,
@@ -15757,7 +20222,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015838927946557706,
               },
               {
-                timestamp: '2022-04-17T07:03:00.000Z',
+                timestamp: new Date('2022-04-17T07:03:00.000Z'),
                 average: 0.0025821950765262977,
                 min: 0.0023692305341323763,
                 max: 0.0029282624579164197,
@@ -15765,7 +20230,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015493170459157785,
               },
               {
-                timestamp: '2022-04-17T07:59:00.000Z',
+                timestamp: new Date('2022-04-17T07:59:00.000Z'),
                 average: 0.0025556050442454652,
                 min: 0.0022627752995923386,
                 max: 0.002928297446531262,
@@ -15773,7 +20238,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01533363026547279,
               },
               {
-                timestamp: '2022-04-17T09:02:00.000Z',
+                timestamp: new Date('2022-04-17T09:02:00.000Z'),
                 average: 0.0026487431680670068,
                 min: 0.002289365954309172,
                 max: 0.0029282587787675457,
@@ -15781,7 +20246,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01589245900840204,
               },
               {
-                timestamp: '2022-04-17T09:58:00.000Z',
+                timestamp: new Date('2022-04-17T09:58:00.000Z'),
                 average: 0.0028351056866200916,
                 min: 0.002608829645903934,
                 max: 0.00303476101666376,
@@ -15789,7 +20254,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01701063411972055,
               },
               {
-                timestamp: '2022-04-17T11:01:00.000Z',
+                timestamp: new Date('2022-04-17T11:01:00.000Z'),
                 average: 0.002595514416987588,
                 min: 0.0023426181404605922,
                 max: 0.002795169372140479,
@@ -15797,7 +20262,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015573086501925527,
               },
               {
-                timestamp: '2022-04-17T11:57:00.000Z',
+                timestamp: new Date('2022-04-17T11:57:00.000Z'),
                 average: 0.0025467198196610515,
                 min: 0.0023160065258938482,
                 max: 0.0030347671718609047,
@@ -15805,7 +20270,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01528031891796631,
               },
               {
-                timestamp: '2022-04-17T13:00:00.000Z',
+                timestamp: new Date('2022-04-17T13:00:00.000Z'),
                 average: 0.0027862890064795677,
                 min: 0.002608818369124181,
                 max: 0.002875024325157261,
@@ -15813,7 +20278,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.016717734038877406,
               },
               {
-                timestamp: '2022-04-17T14:03:00.000Z',
+                timestamp: new Date('2022-04-17T14:03:00.000Z'),
                 average: 0.0027064135744555343,
                 min: 0.0024224619863159372,
                 max: 0.0029282507526895945,
@@ -15821,7 +20286,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.016238481446733205,
               },
               {
-                timestamp: '2022-04-17T14:59:00.000Z',
+                timestamp: new Date('2022-04-17T14:59:00.000Z'),
                 average: 0.002528966583398895,
                 min: 0.00231600097637583,
                 max: 0.0029815184983229075,
@@ -15829,7 +20294,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015173799500393369,
               },
               {
-                timestamp: '2022-04-17T16:02:00.000Z',
+                timestamp: new Date('2022-04-17T16:02:00.000Z'),
                 average: 0.0027153081735459984,
                 min: 0.002342618816392626,
                 max: 0.0030613768623312726,
@@ -15837,7 +20302,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01629184904127599,
               },
               {
-                timestamp: '2022-04-17T16:58:00.000Z',
+                timestamp: new Date('2022-04-17T16:58:00.000Z'),
                 average: 0.0024845742400926613,
                 min: 0.002289357692656809,
                 max: 0.0028750073349643654,
@@ -15845,7 +20310,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.014907445440555969,
               },
               {
-                timestamp: '2022-04-17T18:01:00.000Z',
+                timestamp: new Date('2022-04-17T18:01:00.000Z'),
                 average: 0.0026664956621827393,
                 min: 0.002289370651724282,
                 max: 0.002981505965036274,
@@ -15853,7 +20318,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015998973973096436,
               },
               {
-                timestamp: '2022-04-17T18:57:00.000Z',
+                timestamp: new Date('2022-04-17T18:57:00.000Z'),
                 average: 0.0026487520540295593,
                 min: 0.0022627530109800256,
                 max: 0.0030347510970790935,
@@ -15861,7 +20326,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015892512324177356,
               },
               {
-                timestamp: '2022-04-17T20:00:00.000Z',
+                timestamp: new Date('2022-04-17T20:00:00.000Z'),
                 average: 0.002608821278409996,
                 min: 0.002289373774931221,
                 max: 0.003008130657758465,
@@ -15869,7 +20334,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015652927670459976,
               },
               {
-                timestamp: '2022-04-17T21:03:00.000Z',
+                timestamp: new Date('2022-04-17T21:03:00.000Z'),
                 average: 0.002693079012051904,
                 min: 0.002395819878925911,
                 max: 0.002954844517341957,
@@ -15877,7 +20342,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.016158474072311423,
               },
               {
-                timestamp: '2022-04-17T21:59:00.000Z',
+                timestamp: new Date('2022-04-17T21:59:00.000Z'),
                 average: 0.002666473702038501,
                 min: 0.0022627314276865815,
                 max: 0.0028217591921738546,
@@ -15885,7 +20350,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015998842212231006,
               },
               {
-                timestamp: '2022-04-17T23:02:00.000Z',
+                timestamp: new Date('2022-04-17T23:02:00.000Z'),
                 average: 0.0027019872366296663,
                 min: 0.0024224713155990107,
                 max: 0.0030081237215680025,
@@ -15893,7 +20358,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.016211923419777997,
               },
               {
-                timestamp: '2022-04-18T00:05:00.000Z',
+                timestamp: new Date('2022-04-18T00:05:00.000Z'),
                 average: 0.0025373884444812333,
                 min: 0.0023155887552783285,
                 max: 0.0029809878228870433,
@@ -15901,7 +20366,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.0152243306668874,
               },
               {
-                timestamp: '2022-04-18T01:01:00.000Z',
+                timestamp: new Date('2022-04-18T01:01:00.000Z'),
                 average: 0.0027192927016762864,
                 min: 0.0024486942435975696,
                 max: 0.0029810190791622585,
@@ -15909,7 +20374,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01631575621005772,
               },
               {
-                timestamp: '2022-04-18T01:57:00.000Z',
+                timestamp: new Date('2022-04-18T01:57:00.000Z'),
                 average: 0.0027348197031558195,
                 min: 0.002528543764474967,
                 max: 0.0029810200170652243,
@@ -15917,7 +20382,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.010939278812623278,
               },
               {
-                timestamp: '2022-04-18T02:04:00.000Z',
+                timestamp: new Date('2022-04-18T02:04:00.000Z'),
                 average: 0.002541851889551151,
                 min: 0.0023422300134083906,
                 max: 0.0027414737656939114,
@@ -15925,7 +20390,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.005083703779102302,
               },
               {
-                timestamp: '2022-04-18T03:00:00.000Z',
+                timestamp: new Date('2022-04-18T03:00:00.000Z'),
                 average: 0.002595101180501077,
                 min: 0.002262395900949657,
                 max: 0.0029011900376883833,
@@ -15933,7 +20398,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015570607083006461,
               },
               {
-                timestamp: '2022-04-18T04:03:00.000Z',
+                timestamp: new Date('2022-04-18T04:03:00.000Z'),
                 average: 0.0027103920715385687,
                 min: 0.002288972682346811,
                 max: 0.003034219602180656,
@@ -15941,7 +20406,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01626235242923141,
               },
               {
-                timestamp: '2022-04-18T04:59:00.000Z',
+                timestamp: new Date('2022-04-18T04:59:00.000Z'),
                 average: 0.002577332475895116,
                 min: 0.002368839143077439,
                 max: 0.002821314035575377,
@@ -15949,7 +20414,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015463994855370696,
               },
               {
-                timestamp: '2022-04-18T06:02:00.000Z',
+                timestamp: new Date('2022-04-18T06:02:00.000Z'),
                 average: 0.0025773419581987885,
                 min: 0.0023156153221682747,
                 max: 0.0029011732197280686,
@@ -15957,7 +20422,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015464051749192732,
               },
               {
-                timestamp: '2022-04-18T06:58:00.000Z',
+                timestamp: new Date('2022-04-18T06:58:00.000Z'),
                 average: 0.0026749178654337804,
                 min: 0.002315600540226258,
                 max: 0.002981002994314263,
@@ -15965,7 +20430,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01604950719260268,
               },
               {
-                timestamp: '2022-04-18T08:01:00.000Z',
+                timestamp: new Date('2022-04-18T08:01:00.000Z'),
                 average: 0.0025817521868243733,
                 min: 0.002342208169490153,
                 max: 0.0029543762137887158,
@@ -15973,7 +20438,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01549051312094624,
               },
               {
-                timestamp: '2022-04-18T08:57:00.000Z',
+                timestamp: new Date('2022-04-18T08:57:00.000Z'),
                 average: 0.0026083520429821343,
                 min: 0.002395425345595837,
                 max: 0.002927742089061579,
@@ -15981,7 +20446,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.015650112257892805,
               },
               {
-                timestamp: '2022-04-18T10:00:00.000Z',
+                timestamp: new Date('2022-04-18T10:00:00.000Z'),
                 average: 0.00277248233406511,
                 min: 0.002448656397446305,
                 max: 0.0030608204968078814,
@@ -15989,7 +20454,7 @@ export const formatSeriesDataCase2 = {
                 sum: 0.01663489400439066,
               },
               {
-                timestamp: '2022-04-18T11:03:00.000Z',
+                timestamp: new Date('2022-04-18T11:03:00.000Z'),
                 average: 0.00263938715215156,
                 min: 0.00242202585726849,
                 max: 0.002847876557447565,
