@@ -1,3 +1,9 @@
+## 5.0.4 May 13 2022
+
+- react-project-selector version bump
+
+> make browsers autofill work for the project name input, by adding input `name` attribute
+
 ## 5.0.2 May 2 2022
 
 - Removed -rc from version

@@ -9,6 +9,7 @@ interface InputProps {
   title?: string;
   details?: string | React.ReactNode;
   value?: string;
+  name?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string;
   placeholder?: string;
@@ -20,6 +21,7 @@ const Input = ({
   title,
   details,
   value,
+  name,
   onChange,
   error,
   placeholder,
@@ -39,7 +41,7 @@ const Input = ({
         <InputElWithoutErrorBelow
           type="text"
           fullWidth
-          {...{ value, onChange, placeholder, error, onKeyUp }}
+          {...{ value, name, onChange, placeholder, error, onKeyUp }}
         />
         {error && (
           <Box p={5}>

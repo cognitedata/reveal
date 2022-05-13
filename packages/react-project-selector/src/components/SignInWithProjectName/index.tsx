@@ -37,6 +37,8 @@ const SignInWithProjectName = () => {
           <Input
             value={projectName}
             title="CDF project name"
+            // input name is important for browser autofill to work
+            name="project-name"
             error={isError ? 'Invalid project name.' : undefined}
             onChange={(v) => setProjectName(v.target.value)}
             onKeyUp={(e) => e.key === 'Enter' && doLogin()}
