@@ -18,7 +18,7 @@ describe('Test annotation reducer', () => {
     expect(reducer(undefined, { type: undefined })).toEqual(initialState);
   });
 
-  describe('Test RetrieveAnnotations.fulfilled action', () => {
+  describe.skip('Test RetrieveAnnotations.fulfilled action', () => {
     test('should clear entire state when clear cache is true and response is empty', () => {
       const previousState: AnnotationState = {
         files: {

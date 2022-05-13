@@ -11,11 +11,8 @@ import {
   clearAnnotationStates,
   repopulateAnnotationState,
 } from 'src/modules/Common/store/annotation/util';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
-import {
-  VisionAnnotation,
-  VisionAnnotationDataType,
-} from 'src/modules/Common/types/index';
+import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
+import { VisionAnnotationV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 export const initialState: AnnotationState = {
   files: {
@@ -33,14 +30,15 @@ const annotationSlice = createSlice({
   /* eslint-disable no-param-reassign */
   extraReducers: (builder) => {
     builder.addCase(
-      RetrieveAnnotations.fulfilled,
+      // ToDo : use RetrieveAnnotations
+      RetrieveAnnotationsV1.fulfilled,
       (
         state: AnnotationState,
         {
           payload,
           meta,
         }: {
-          payload: VisionAnnotation<VisionAnnotationDataType>[];
+          payload: VisionAnnotationV1[];
           meta: {
             arg: {
               fileIds: number[];
@@ -56,7 +54,10 @@ const annotationSlice = createSlice({
         // clear states
         clearAnnotationStates(state, fileIds, clearCache);
 
-        repopulateAnnotationState(state, payload);
+        // ToDo : remove this conversion
+        const annotations = convertCDFAnnotationV1ToVisionAnnotations(payload);
+
+        repopulateAnnotationState(state, annotations);
       }
     );
 
