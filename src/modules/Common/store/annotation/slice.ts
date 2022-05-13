@@ -40,7 +40,6 @@ const annotationSlice = createSlice({
           payload,
           meta,
         }: {
-          // ToDo (VIS-794): change to new type VisionAnnotation
           payload: VisionAnnotation<VisionAnnotationDataType>[];
           meta: {
             arg: {

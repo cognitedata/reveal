@@ -1,6 +1,5 @@
 import {
   AnnotatedResourceId,
-  CDFAnnotationV2,
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
@@ -11,7 +10,6 @@ import {
 } from 'src/api/annotation/types';
 import {
   AnnotationsBadgeCounts,
-  CDFInheritedFields,
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
@@ -46,20 +44,6 @@ export const createVisionAnnotationStub = <T>({
   ...resourceId,
   ...data,
 });
-
-export const convertToVisionAnnotations = (
-  annotations: CDFAnnotationV2<VisionAnnotationDataType>[]
-): VisionAnnotation<VisionAnnotationDataType>[] =>
-  annotations.map((annotation) => {
-    const cdfInheritedFields: CDFInheritedFields = {
-      id: annotation.id,
-      createdTime: annotation.createdTime,
-      lastUpdatedTime: annotation.lastUpdatedTime,
-      status: annotation.status,
-      annotatedResourceId: annotation.annotatedResourceId,
-    };
-    return { ...cdfInheritedFields, ...annotation.data };
-  });
 
 export const getAnnotationLabelOrText = (
   annotation: VisionAnnotation<VisionAnnotationDataType>
