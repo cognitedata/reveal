@@ -70,7 +70,7 @@ const getUpdater =
     }
 
     if (defaultGroup && projectData) {
-      await sdk.projects.updateProject(projectData.name, {
+      await sdk.projects.updateProject(projectData.urlName, {
         update: {
           defaultGroupId: { set: newGroup.id },
         },
