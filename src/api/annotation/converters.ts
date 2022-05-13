@@ -1,5 +1,7 @@
 import {
   AnnotatedResourceId,
+  CDFAnnotationType,
+  CDFAnnotationTypeEnum,
   CDFAnnotationV1,
   ImageAssetLink,
   ImageClassification,
@@ -195,21 +197,18 @@ export function convertCDFAnnotationV1ToVisionAnnotation(
     return null;
   }
 
-  const cdfInheritedFields: CDFInheritedFields = {
-    ...annotatedResourceId,
-    id: annotation.id,
-    createdTime: annotation.createdTime,
-    lastUpdatedTime: annotation.lastUpdatedTime,
-    status: convertCDFAnnotationV1StatusToStatus(annotation.status),
-  };
-
+  let annotationType: CDFAnnotationType<VisionAnnotationDataType> | null = null;
   if (isAssetLinkedAnnotation(annotation)) {
     data = convertCDFAnnotationV1ToImageAssetLink(annotation);
+    annotationType = CDFAnnotationTypeEnum.ImagesAssetLink;
   } else if (isKeyPointAnnotation(annotation)) {
     data = convertCDFAnnotationV1ToImageKeypointCollection(annotation);
+    annotationType = CDFAnnotationTypeEnum.ImagesKeypointCollection;
   } else if (isTextAnnotation(annotation)) {
     data = convertCDFAnnotationV1ToImageExtractedText(annotation);
+    annotationType = CDFAnnotationTypeEnum.ImagesTextRegion;
   } else if (isObjectAnnotation(annotation)) {
+    annotationType = CDFAnnotationTypeEnum.ImagesObjectDetection;
     if (isPolygon(annotation)) {
       data = convertCDFAnnotationV1ToImageObjectDetectionPolygon(annotation);
     } else {
@@ -218,8 +217,17 @@ export function convertCDFAnnotationV1ToVisionAnnotation(
     }
   } else {
     data = convertCDFAnnotationV1ToImageClassification(annotation);
+    annotationType = CDFAnnotationTypeEnum.ImagesClassification;
   }
   if (data) {
+    const cdfInheritedFields: CDFInheritedFields<VisionAnnotationDataType> = {
+      ...annotatedResourceId,
+      id: annotation.id,
+      createdTime: annotation.createdTime,
+      lastUpdatedTime: annotation.lastUpdatedTime,
+      status: convertCDFAnnotationV1StatusToStatus(annotation.status),
+      annotationType,
+    };
     return { ...cdfInheritedFields, ...data };
   }
   return null;
