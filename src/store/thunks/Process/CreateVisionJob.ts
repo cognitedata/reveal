@@ -3,6 +3,7 @@ import {
   VisionJob,
   DetectionModelParams,
   VisionDetectionModelType,
+  ParamsCustomModel,
 } from 'src/api/vision/detectionModels/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { postVisionJob } from 'src/api/vision/detectionModels/visionJob';
@@ -29,6 +30,14 @@ const getDetectionModelParameters = (
   state: ProcessState,
   modelType: VisionDetectionModelType
 ): DetectionModelParams | undefined => {
-  return state.availableDetectionModels.find((item) => item.type === modelType)
-    ?.settings;
+  const settings = state.availableDetectionModels.find(
+    (item) => item.type === modelType
+  )?.settings;
+
+  // HACK: remove internal parameters used in the app
+  if (modelType === VisionDetectionModelType.CustomModel) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    return (({ isValid, modelName, ..._ }) => _)(settings as ParamsCustomModel);
+  }
+  return settings;
 };
