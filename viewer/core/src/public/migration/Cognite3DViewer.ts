@@ -1,11 +1,11 @@
 /*!
  * Copyright 2021 Cognite AS
- */
+*/
 import * as THREE from 'three';
 
 import TWEEN from '@tweenjs/tween.js';
-import omit from 'lodash/omit';
 import { Subscription, fromEventPattern } from 'rxjs';
+import pick from 'lodash/pick';
 
 import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
@@ -50,7 +50,6 @@ import { IntersectInput, SupportedModelTypes, CogniteModelBase, LoadingState } f
 
 import { CogniteClient } from '@cognite/sdk';
 import log from '@reveal/logger';
-import { pick } from 'lodash';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -282,10 +281,10 @@ export class Cognite3DViewer {
           'antiAliasingHint',
           'ssaoQualityHint',
           'enableEdges',
-          'continuousModelStreaming',
+          'continuousModelStreaming'
         ]),
-        'cameraManager': options.cameraManager ? true : false,
-        'customDataSource': options.customDataSource ? true : false,
+        cameraManager: options.cameraManager ? true : false,
+        customDataSource: options.customDataSource ? true : false
       }
     });
   }
