@@ -138,12 +138,13 @@ export const convertCDFAnnotationV2ToVisionAnnotations = (
   annotations: CDFAnnotationV2<VisionAnnotationDataType>[]
 ): VisionAnnotation<VisionAnnotationDataType>[] =>
   annotations.map((annotation) => {
-    const cdfInheritedFields: CDFInheritedFields = {
+    const cdfInheritedFields: CDFInheritedFields<VisionAnnotationDataType> = {
       id: annotation.id,
       createdTime: annotation.createdTime,
       lastUpdatedTime: annotation.lastUpdatedTime,
       status: annotation.status,
       annotatedResourceId: annotation.annotatedResourceId,
+      annotationType: annotation.annotationType,
     };
     return { ...cdfInheritedFields, ...annotation.data };
   });
