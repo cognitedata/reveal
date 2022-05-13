@@ -6,6 +6,8 @@ import {
   Collapse,
   Menu,
   Icon,
+  toast,
+  Modal,
   Detail,
 } from '@cognite/cogs.js';
 import {
@@ -14,7 +16,7 @@ import {
   useExtractFromCanvas,
 } from '@cognite/react-picture-annotation';
 import { Divider, InfoGrid, InfoCell } from 'components';
-import { Modal, notification, Dropdown, Pagination, Spin } from 'antd';
+import { Dropdown, Pagination, Spin } from 'antd';
 import {
   AnnotationStatus,
   CogniteAnnotation,
@@ -41,11 +43,11 @@ import { lightGrey } from 'utils/Colors';
 import { ResourcePreviewSidebar } from 'containers';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { AppContext } from 'context/AppContext';
-
 import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
 import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
 import capitalize from 'lodash/capitalize';
-import { useReviewFile } from '../hooks';
+import { useDisclosure } from 'hooks';
+
 import { ContextualizationData } from './ContextualizationModule';
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
 import ReviewTagBar from './ReviewTagBar';
@@ -62,6 +64,13 @@ type Props = {
   fileIcon?: React.ReactNode;
 };
 
+interface AnnotationModalStateProps {
+  okText?: string;
+  title?: string;
+  content: React.ReactElement;
+  onOk?: () => void;
+  onCancel?: () => void;
+}
 const AnnotationPreviewSidebar = ({
   file,
   setPendingAnnotations,
@@ -75,12 +84,20 @@ const AnnotationPreviewSidebar = ({
   const context = useContext(AppContext);
   const email = context?.userInfo?.email || 'UNKNOWN';
 
+  const { isOpen, onOpen, onClose: onModalClose } = useDisclosure();
+
+  const [annotationModalState, setAnnotationModalState] =
+    useState<AnnotationModalStateProps>({
+      okText: '',
+      content: <> </>,
+    });
+
   const [editing, setEditing] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(3);
   const [viewingAnnotations, setViewingAnnotations] = useState<
     'assets' | 'files' | undefined
   >();
-  const { isLoading: isApprovingFile } = useReviewFile(file?.id);
+
   const { selectedAnnotations = [], setSelectedAnnotations } =
     useSelectedAnnotations();
 
@@ -158,9 +175,7 @@ const AnnotationPreviewSidebar = ({
     setPendingAnnotations(pendingAnnotations =>
       pendingAnnotations.filter(el => el.id !== selectedAnnotation?.id)
     );
-    notification.success({
-      message: `Tag ${action} successfully`,
-    });
+    toast.success(`Tag ${action} successfully`);
   };
 
   const { mutate: createEvent } = useCreate('events', {
@@ -263,20 +278,18 @@ const AnnotationPreviewSidebar = ({
         <Body level={2}>The tag will be removed from the diagram.</Body>
       </>
     );
-
-    Modal.confirm({
-      icon: <></>,
-      width: 320,
-      maskClosable: true,
+    setAnnotationModalState({
       okText,
       content,
       onOk: async () => {
         updateAnnotationStatus({ annotation, status });
         await linkFileToAssetIds(sdk, [annotation]);
         setSelectedAnnotations([]);
+        onModalClose();
       },
-      okButtonProps: { loading: isApprovingFile },
+      onCancel: onModalClose,
     });
+    onOpen();
   };
 
   const onDeleteAnnotation = (
@@ -289,7 +302,7 @@ const AnnotationPreviewSidebar = ({
       return pendingAnnotations;
     });
     if (Number.isFinite(annotation.id)) {
-      Modal.confirm({
+      setAnnotationModalState({
         title: 'Are you sure?',
         content: (
           <span>
@@ -301,8 +314,9 @@ const AnnotationPreviewSidebar = ({
           deleteAnnotations([annotation as CogniteAnnotation]);
           setSelectedAnnotations([]);
         },
-        onCancel: () => {},
+        onCancel: onModalClose,
       });
+      onOpen();
     }
   };
 
@@ -478,13 +492,15 @@ const AnnotationPreviewSidebar = ({
         </InfoGrid>
       );
     }
-
     return <></>;
   };
 
   if (selectedAnnotation) {
     return (
       <div style={{ width: 360, borderLeft: `1px solid ${lightGrey}` }}>
+        <Modal visible={isOpen} {...annotationModalState}>
+          {annotationModalState.content}
+        </Modal>
         <ResourcePreviewSidebar
           hideTitle
           closable={false}

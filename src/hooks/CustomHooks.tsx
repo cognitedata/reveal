@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
@@ -30,4 +30,31 @@ export const useEnv = (): string | undefined => {
 export const useUserStatus = () => {
   const sdk = useSDK();
   return useQuery(['login'], () => sdk.login.status());
+};
+
+interface UseDisclosureProps {
+  isOpen?: boolean;
+}
+
+/**
+ * This hooks can be use to deal with modal visible state and return the function to open and close functions
+ * @param props {isOpen:Boolean}
+ * @returns
+ */
+
+export const useDisclosure = (props?: UseDisclosureProps) => {
+  const [isOpen, setIsOpen] = useState(false || !!props?.isOpen);
+
+  const onOpen = () => {
+    setIsOpen(true);
+  };
+  const onClose = () => {
+    setIsOpen(false);
+  };
+
+  const onToggle = () => {
+    setIsOpen(prev => !prev);
+  };
+
+  return { isOpen, onOpen, onClose, onToggle };
 };

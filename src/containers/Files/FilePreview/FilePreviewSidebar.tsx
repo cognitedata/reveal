@@ -2,8 +2,8 @@ import { ResourcePreviewSidebar } from 'containers';
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { lightGrey } from 'utils/Colors';
-import { Detail, Icon, Title } from '@cognite/cogs.js';
-import { Modal } from 'antd';
+import { Detail, Icon, Title, Modal } from '@cognite/cogs.js';
+
 import { FileInfo } from '@cognite/sdk';
 import {
   AnnotationStatus,
@@ -18,6 +18,7 @@ import {
 } from '@cognite/react-picture-annotation';
 import { AppContext } from 'context/AppContext';
 import AnnotationsList from 'components/AnnotationsList';
+import { useDisclosure } from 'hooks';
 import { useReviewFile } from '../hooks';
 import DiagramReviewStatus from './DiagramStatus';
 import FileReview from './FileReview';
@@ -47,40 +48,31 @@ const FilePreviewSidebar = ({
 
   const { onApproveFile } = useReviewFile(file?.id);
 
-  const onApproveAllAnnotations = () => {
-    Modal.confirm({
-      okText: 'Approve tags',
-      title: 'Are you sure?',
-      content: (
-        <span>
-          Are you sure you want to approve all tags for this file? Changes will
-          be saved to CDF.
-        </span>
-      ),
-      onOk: async () => {
-        const unhandledAnnotations = annotations.filter(
-          a => a.status === 'unhandled'
-        ) as Array<CogniteAnnotation>;
-        const updatePatch = unhandledAnnotations.map(annotation => ({
-          id: Number(annotation.id),
-          annotation,
-          update: {
-            status: {
-              set: 'verified' as AnnotationStatus,
-            },
-            checkedBy: {
-              set: email,
-            },
-          },
-        }));
-        approveAnnotations(updatePatch);
-        await onApproveFile();
-        await linkFileToAssetIds(sdk, unhandledAnnotations);
-        setSelectedAnnotations([]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const onApproveAllAnnotations = async () => {
+    const unhandledAnnotations = annotations.filter(
+      a => a.status === 'unhandled'
+    ) as Array<CogniteAnnotation>;
+    const updatePatch = unhandledAnnotations.map(annotation => ({
+      id: Number(annotation.id),
+      annotation,
+      update: {
+        status: {
+          set: 'verified' as AnnotationStatus,
+        },
+        checkedBy: {
+          set: email,
+        },
       },
-      onCancel: () => {},
-    });
+    }));
+    approveAnnotations(updatePatch);
+    await onApproveFile();
+    await linkFileToAssetIds(sdk, unhandledAnnotations);
+    setSelectedAnnotations([]);
+    onClose();
   };
+
   if (viewingAnnotations) {
     return (
       <AnnotationsList
@@ -96,6 +88,18 @@ const FilePreviewSidebar = ({
   }
   return (
     <div style={{ width: 360, borderLeft: `1px solid ${lightGrey}` }}>
+      <Modal
+        okText="Approve tags"
+        title="Are you sure?"
+        onCancel={onClose}
+        visible={isOpen}
+        onOk={onApproveAllAnnotations}
+      >
+        <span>
+          Are you sure you want to approve all tags for this file? Changes will
+          be saved to CDF.
+        </span>
+      </Modal>
       <ResourcePreviewSidebar
         hideTitle
         hideContent
@@ -112,7 +116,7 @@ const FilePreviewSidebar = ({
             )}
             <FileReview
               annotations={annotations}
-              onApprove={onApproveAllAnnotations}
+              onApprove={onOpen}
               onTypeClick={(type: 'assets' | 'files') =>
                 setViewingAnnotations(type)
               }
