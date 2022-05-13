@@ -1,5 +1,4 @@
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
-import { makeSelectFileAnnotations } from 'src/modules/Common/store/annotationV1/selectors';
 import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -13,6 +12,7 @@ import VideoWithExifIcon from 'src/assets/VideoWithExifIcon.svg';
 import ImageWithAnnotationsIcon from 'src/assets/ImageWithAnnotationsIcon.svg';
 import ImageWithAnnotationsAndExifIcon from 'src/assets/ImageWithAnnotationsAndExifIcon.svg';
 import { FileInfo } from '@cognite/sdk';
+import { makeSelectFileAnnotations } from 'src/modules/Common/store/annotation/selectors';
 
 export const FileNameText = styled.div`
   text-overflow: ellipsis;
@@ -44,8 +44,8 @@ export function NameRenderer({
 }: CellRenderer) {
   const selectFileAnnotations = useMemo(makeSelectFileAnnotations, []);
   const hasAnnotations = useSelector(
-    ({ annotationV1Reducer }: RootState) =>
-      !!selectFileAnnotations(annotationV1Reducer, id).length
+    ({ annotationReducer }: RootState) =>
+      !!selectFileAnnotations(annotationReducer, id).length
   );
 
   const renderIcon = () => {

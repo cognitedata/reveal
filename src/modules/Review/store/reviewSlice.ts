@@ -18,9 +18,14 @@ import {
   KeypointVertex,
   VisionAnnotationV1,
 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { makeSelectFileAnnotations } from 'src/modules/Common/store/annotationV1/selectors';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { makeSelectFileAnnotations as makeSelectFileAnnotationsV1 } from 'src/modules/Common/store/annotationV1/selectors';
+import { makeSelectFileAnnotations } from 'src/modules/Common/store/annotation/selectors';
+import {
+  isImageClassificationData,
+  isImageKeypointCollectionData,
+} from 'src/modules/Common/types/typeGuards';
 
 export interface VisibleAnnotation extends VisionAnnotationV1 {
   show: boolean;
@@ -195,11 +200,11 @@ export const selectAllReviewFiles = createSelector(
   }
 );
 
-const fileAnnotationsSelector = makeSelectFileAnnotations();
+const fileAnnotationsSelectorV1 = makeSelectFileAnnotationsV1();
 
 export const selectVisibleAnnotationsForFile = createSelector(
   (state: RootState, fileId: number) =>
-    fileAnnotationsSelector(state.annotationV1Reducer, fileId),
+    fileAnnotationsSelectorV1(state.annotationV1Reducer, fileId),
   (state: RootState) => state.reviewSlice.selectedAnnotationIds,
   (state: RootState) => state.reviewSlice.hiddenAnnotationIds,
   (state: RootState) => state.annotationLabelReducer.keypointMap.selectedIds,
@@ -257,5 +262,58 @@ export const selectAnnotationSettingsState = createSelector(
         !annotationSettingsState.createNew.color && { createNew: {} }),
     };
     return settingsState;
+  }
+);
+
+const fileAnnotationsSelector = makeSelectFileAnnotations();
+
+export const selectReviewAnnotationsForFile = createSelector(
+  (state: RootState, fileId: number) =>
+    fileAnnotationsSelector(state.annotationReducer, fileId),
+  (state: RootState) => state.reviewSlice.selectedAnnotationIds,
+  (state: RootState) => state.reviewSlice.hiddenAnnotationIds,
+  (state: RootState) => state.annotationLabelReducer.keypointMap.selectedIds,
+
+  (
+    fileAnnotations,
+    selectedAnnotationIds,
+    hiddenAnnotationIds,
+    selectedKeypointIds
+  ) => {
+    return fileAnnotations
+      .map((ann) => ({
+        ...ann,
+        show: !hiddenAnnotationIds.includes(ann.id),
+        selected: selectedAnnotationIds.includes(ann.id),
+      }))
+      .map((ann) => {
+        if (isImageKeypointCollectionData(ann)) {
+          const keypoints = ann.keypoints.map((keypoint) => {
+            const id = `${ann.id}-${keypoint.label}`;
+            return {
+              ...keypoint,
+              id,
+              selected: selectedKeypointIds.includes(id),
+            };
+          });
+          return {
+            ...ann,
+            keypoints,
+          };
+        }
+        return ann;
+      });
+  }
+);
+
+export const selectNonRejectedReviewAnnotationsForFile = createSelector(
+  selectReviewAnnotationsForFile,
+  (allVisibleAnnotations) => {
+    return allVisibleAnnotations.filter(
+      (ann) =>
+        ann.show &&
+        !!isImageClassificationData(ann) &&
+        ann.status !== AnnotationStatus.Rejected
+    );
   }
 );
