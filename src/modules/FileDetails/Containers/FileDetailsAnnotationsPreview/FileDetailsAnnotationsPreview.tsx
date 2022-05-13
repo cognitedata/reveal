@@ -1,15 +1,15 @@
 import React, { useMemo } from 'react';
 import { Button, Title } from '@cognite/cogs.js';
-import { makeSelectFileAnnotationsByType } from 'src/modules/Common/store/annotationV1/selectors';
+import { makeSelectFileAnnotationsByType } from 'src/modules/Common/store/annotation/selectors';
 import { VisionFileDetails } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import { AnnotationsListPreview } from 'src/modules/FileDetails/Containers/FileDetailsAnnotationsPreview/AnnotationsListPreview';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { isProcessingFile } from 'src/modules/Process/store/utils';
 import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
 import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
+import { CDFAnnotationTypeEnum } from 'src/api/annotation/types';
 
 export const FileDetailsAnnotationsPreview = ({
   fileInfo,
@@ -31,16 +31,17 @@ export const FileDetailsAnnotationsPreview = ({
   );
 
   const textAndObjectAnnotations = useSelector(
-    ({ annotationV1Reducer }: RootState) =>
-      selectFileAnnotationsByOcrObjectTypes(annotationV1Reducer, fileInfo.id, [
-        VisionDetectionModelType.OCR,
-        VisionDetectionModelType.ObjectDetection,
+    ({ annotationReducer }: RootState) =>
+      selectFileAnnotationsByOcrObjectTypes(annotationReducer, fileInfo.id, [
+        CDFAnnotationTypeEnum.ImagesTextRegion,
+        CDFAnnotationTypeEnum.ImagesObjectDetection,
+        CDFAnnotationTypeEnum.ImagesKeypointCollection,
       ])
   );
 
-  const tagAnnotations = useSelector(({ annotationV1Reducer }: RootState) =>
-    selectFileAnnotationsByTagDetectionType(annotationV1Reducer, fileInfo.id, [
-      VisionDetectionModelType.TagDetection,
+  const tagAnnotations = useSelector(({ annotationReducer }: RootState) =>
+    selectFileAnnotationsByTagDetectionType(annotationReducer, fileInfo.id, [
+      CDFAnnotationTypeEnum.ImagesAssetLink,
     ])
   );
 
