@@ -19,7 +19,7 @@ export class CadGeometryCustomRenderModePipeline implements RenderPipelineProvid
   private _outputRenderTarget: THREE.WebGLRenderTarget = null;
   private _autoSizeRenderTarget = false;
 
-  public scene: THREE.Scene;
+  public readonly scene: THREE.Scene;
 
   constructor(
     renderMode: RenderMode,

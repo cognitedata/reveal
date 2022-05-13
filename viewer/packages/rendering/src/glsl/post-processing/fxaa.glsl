@@ -1,3 +1,10 @@
+/*!
+ *
+ * Adapted from:
+ * https://github.com/mattdesl/three-shader-fxaa
+ * MIT License (MIT) Copyright (c) 2014 Matt DesLauriers
+ */
+ 
 #ifndef FXAA_REDUCE_MIN
     #define FXAA_REDUCE_MIN   (1.0/ 128.0)
 #endif
