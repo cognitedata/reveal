@@ -35,7 +35,9 @@ const initialDetectionModelParameters = {
   },
   customModel: {
     modelJobId: undefined,
+    modelName: 'Custom model',
     threshold: 0.8,
+    isValid: false,
   },
 };
 
@@ -152,30 +154,14 @@ const processSlice = createGenericTabularDataSlice({
       });
     },
     addToAvailableDetectionModels(state) {
-      const modelCount = state.availableDetectionModels.length;
-      const modelName =
-        modelCount - BUILT_IN_MODEL_COUNT
-          ? `Custom model (${modelCount - BUILT_IN_MODEL_COUNT})`
-          : 'Custom model';
       state.availableDetectionModels.push({
-        modelName,
+        modelName: initialDetectionModelParameters.customModel.modelName,
         type: VisionDetectionModelType.CustomModel,
         settings: initialDetectionModelParameters.customModel,
         unsavedSettings: initialDetectionModelParameters.customModel,
       });
     },
-    // setCustomModelName should works for all the model indexes
-    // but only use for update name of custom model in the UI
-    setCustomModelName(
-      state,
-      action: PayloadAction<{
-        modelIndex: number;
-        modelName: string;
-      }>
-    ) {
-      const { modelIndex, modelName } = action.payload;
-      state.availableDetectionModels[modelIndex].modelName = modelName;
-    },
+
     removeJobById(state, action: PayloadAction<number>) {
       if (state.jobs.byId[action.payload]) {
         removeJobFromFiles(state, action.payload);
@@ -339,7 +325,6 @@ export const {
   setDetectionModelParameters,
   revertDetectionModelParameters,
   resetDetectionModelParameters,
-  setCustomModelName,
   addToAvailableDetectionModels,
   setProcessViewFileUploadModalVisibility,
   setSelectFromExploreModalVisibility,
