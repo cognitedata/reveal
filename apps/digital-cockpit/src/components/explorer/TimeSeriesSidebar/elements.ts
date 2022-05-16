@@ -14,6 +14,7 @@ export const Header = styled.section`
   margin-bottom: 9px;
 
   .timeseries-sidebar--title {
+    user-select: all;
     margin-left: 8px;
     text-transform: uppercase;
     word-break: break-word;

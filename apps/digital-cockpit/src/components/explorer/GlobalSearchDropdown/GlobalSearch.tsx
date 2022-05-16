@@ -1,4 +1,4 @@
-import { Button, Drawer } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 import { FileInfo, Timeseries } from '@cognite/sdk';
 import IconContainer from 'components/icons';
 import Loading from 'components/utils/Loading';
@@ -9,7 +9,6 @@ import { useHistory } from 'react-router-dom';
 import { ResourceType, SdkResourceType } from 'types/core';
 import { mapResourceTypeToLabel } from 'utils/resourceTypes';
 
-import DocumentSidebar from '../DocumentSidebar';
 import SearchResult from '../SearchResult';
 
 import {
@@ -64,7 +63,6 @@ const ResourceTypeSelector = ({
 const GlobalSearch = ({ query = '', onResultSelected }: GlobalSearchProps) => {
   const history = useHistory();
   const [selectedType, setSelectedType] = useState<ResourceType | undefined>();
-  const [selectedFile, setSelectedFile] = useState<FileInfo | undefined>();
 
   const { data: results, isLoading } = useGlobalSearchQuery(
     query,
@@ -88,68 +86,50 @@ const GlobalSearch = ({ query = '', onResultSelected }: GlobalSearchProps) => {
   };
 
   const handleFileSelected = (file: FileInfo) => {
-    setSelectedFile(file);
+    openDocumentView(file.id);
     if (onResultSelected) {
       onResultSelected();
     }
   };
 
   return (
-    <>
-      <GlobalSearchMenu>
-        <ResourceTypeSelector
-          selectedType={selectedType}
-          onTypeSelected={setSelectedType}
-        />
-        {isLoading && <Loading />}
-        {!isLoading && (
-          <ResultContainer>
-            {results?.assets?.map((asset) => (
-              <SearchResult
-                type="assets"
-                key={asset.id}
-                name={asset.name}
-                description={asset.description}
-                onClick={() => handleAssetSelected(asset.id)}
-              />
-            ))}
-            {results?.timeseries?.map((ts) => (
-              <SearchResult
-                type="timeseries"
-                key={ts.id}
-                name={ts.name}
-                description={ts.description}
-                onClick={() => handleTimeSeriesSelected(ts)}
-              />
-            ))}
-            {results?.files?.map((file) => (
-              <SearchResult
-                type="files"
-                key={file.id}
-                name={file.name}
-                onClick={() => handleFileSelected(file)}
-              />
-            ))}
-          </ResultContainer>
-        )}
-      </GlobalSearchMenu>
-      <Drawer
-        visible={Boolean(selectedFile)}
-        onCancel={() => setSelectedFile(undefined)}
-        footer={null}
-      >
-        {selectedFile && (
-          <DocumentSidebar
-            document={selectedFile}
-            onExpandDocument={() => {
-              openDocumentView(selectedFile.id);
-              setSelectedFile(undefined);
-            }}
-            onSelect={() => setSelectedFile(undefined)}
-          />
-        )}
-      </Drawer>
-    </>
+    <GlobalSearchMenu>
+      <ResourceTypeSelector
+        selectedType={selectedType}
+        onTypeSelected={setSelectedType}
+      />
+      {isLoading && <Loading />}
+      {!isLoading && (
+        <ResultContainer>
+          {results?.assets?.map((asset) => (
+            <SearchResult
+              type="assets"
+              key={asset.id}
+              name={asset.name}
+              description={asset.description}
+              onClick={() => handleAssetSelected(asset.id)}
+            />
+          ))}
+          {results?.timeseries?.map((ts) => (
+            <SearchResult
+              type="timeseries"
+              key={ts.id}
+              name={ts.name}
+              description={ts.description}
+              onClick={() => handleTimeSeriesSelected(ts)}
+            />
+          ))}
+          {results?.files?.map((file) => (
+            <SearchResult
+              type="files"
+              key={file.id}
+              name={file.name}
+              onClick={() => handleFileSelected(file)}
+            />
+          ))}
+        </ResultContainer>
+      )}
+    </GlobalSearchMenu>
   );
 };
 

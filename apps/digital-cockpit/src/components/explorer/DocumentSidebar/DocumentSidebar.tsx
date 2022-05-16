@@ -29,6 +29,8 @@ export type DocumentSidebarProps = {
   onExpandDocument?: () => void; // show expand btn & handle onclick
 };
 
+const maxAssetsInFilter = 100;
+
 const DocumentDownloadButton = ({ document }: { document: FileInfo }) => {
   const { data: downloadUrl, isLoading } = useDocumentDownloadUrl(document);
 
@@ -62,12 +64,12 @@ const DocumentSidebar = ({
   };
 
   const assetRetrieveQuery = useAssetRetrieveQuery(
-    document.assetIds?.map((id) => ({ id }))
+    document.assetIds?.slice(0, maxAssetsInFilter).map((id) => ({ id }))
   );
   const timeseriesQuery = useTimeSeriesQuery(
     document.assetIds?.length
       ? {
-          filter: { assetIds: document.assetIds },
+          filter: { assetIds: document.assetIds?.slice(0, maxAssetsInFilter) },
         }
       : undefined
   );
@@ -118,7 +120,11 @@ const DocumentSidebar = ({
         {assetRetrieveQuery.data?.length ? (
           <Collapse accordion ghost>
             <Collapse.Panel
-              header={`Assets (${assetRetrieveQuery.data.length})`}
+              header={`Assets (${
+                assetRetrieveQuery.data.length === maxAssetsInFilter
+                  ? `${maxAssetsInFilter}+`
+                  : assetRetrieveQuery.data.length
+              })`}
               key="sidebar-assets"
               className="sidebar-details-collapsable"
             >
@@ -142,7 +148,11 @@ const DocumentSidebar = ({
         {timeseriesQuery.data?.length ? (
           <Collapse accordion ghost>
             <Collapse.Panel
-              header={`Timeseries (${timeseriesQuery.data.length})`}
+              header={`Timeseries (${
+                timeseriesQuery.data.length === maxAssetsInFilter
+                  ? `${maxAssetsInFilter}+`
+                  : timeseriesQuery.data.length
+              })`}
               key="sidebar-timeseries"
               className="sidebar-details-collapsable"
             >

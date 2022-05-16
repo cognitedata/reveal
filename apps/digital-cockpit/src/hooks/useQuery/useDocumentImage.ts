@@ -21,7 +21,9 @@ export const useDocumentImage = (document: FileInfo | undefined) => {
           )}`;
         }),
     {
-      enabled: document && Boolean(document.id),
+      enabled:
+        Boolean(document?.id) &&
+        !document?.mimeType?.toLowerCase().includes('svg'), // svg is currently not supported
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,

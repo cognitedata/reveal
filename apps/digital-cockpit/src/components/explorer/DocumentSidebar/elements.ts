@@ -13,6 +13,7 @@ export const Header = styled.section`
   padding: 14px;
 
   .document-sidebar--title {
+    user-select: all;
     margin-left: 8px;
     text-transform: uppercase;
     word-break: break-word;
