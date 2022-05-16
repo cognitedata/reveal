@@ -20,26 +20,24 @@ export const getWrapper =
   ({ children }: { children: React.ReactNode }) =>
     testWrapper({ store, children });
 
-export const testWrapper: React.FC<{ store?: Store }> = ({
-  store,
-  children,
-}) => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        // ✅ turns retries off for tests
-        retry: false,
+export const testWrapper: React.FC<React.PropsWithChildren<{ store?: Store }>> =
+  ({ store, children }) => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          // ✅ turns retries off for tests
+          retry: false,
+        },
       },
-    },
-  });
-  return (
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <Provider store={store || getMockedStore()}>{children}</Provider>
-      </QueryClientProvider>
-    </BrowserRouter>
-  );
-};
+    });
+    return (
+      <BrowserRouter>
+        <QueryClientProvider client={queryClient}>
+          <Provider store={store || getMockedStore()}>{children}</Provider>
+        </QueryClientProvider>
+      </BrowserRouter>
+    );
+  };
 
 interface Props {
   component: React.FC<any>;
@@ -131,7 +129,7 @@ export const renderHookWithStore = <TProps, TResult>(
   store?: Store,
   options?: RenderHookOptions<TProps>
 ) =>
-  renderHook<TProps, TResult>(callback, {
+  renderHook<React.PropsWithChildren<TProps>, TResult>(callback, {
     wrapper: ({ children }) => testWrapper({ store, children }),
     ...options,
   });
@@ -143,7 +141,7 @@ export const renderHookWithStoreChanges = <TProps, TResult>(
   extraState: PartialStoreState,
   options?: RenderHookOptions<TProps>
 ) =>
-  renderHook<TProps, TResult>(callback, {
+  renderHook<React.PropsWithChildren<TProps>, TResult>(callback, {
     wrapper: ({ children }) =>
       testWrapper({ store: getMockedStore(extraState), children }),
     ...options,

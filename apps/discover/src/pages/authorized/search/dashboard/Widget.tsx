@@ -32,7 +32,11 @@ interface Props {
   title: string;
   subtitle: string;
 }
-export const Widget: React.FC<Props> = ({ title, subtitle, children }) => {
+export const Widget: React.FC<React.PropsWithChildren<Props>> = ({
+  title,
+  subtitle,
+  children,
+}) => {
   return (
     <WidgetWrapper>
       <WidgetHeader>

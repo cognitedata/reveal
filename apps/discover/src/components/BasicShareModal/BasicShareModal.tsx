@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 
 import { Button } from '@cognite/cogs.js';
 import { useTranslation } from '@cognite/react-i18n';
@@ -21,6 +21,7 @@ export interface Props {
   title: string;
   onCancel: () => void;
   onShare: (users: UserOption[]) => void;
+  children: ReactNode;
 }
 
 export const BasicShareModal: React.FC<Props> = ({

@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import { OverlayNavigationContainer } from './elements';
 
 export interface OverlayNavigationProps {
   mount?: boolean;
   backgroundInvisibleMount?: boolean;
+  children?: ReactNode;
 }
 
 export const OverlayNavigation: React.FC<OverlayNavigationProps> = ({

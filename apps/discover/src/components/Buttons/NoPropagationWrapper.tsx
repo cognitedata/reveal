@@ -12,44 +12,42 @@ interface Props {
   className?: string;
 }
 
-export const NoPropagationWrapper: React.FC<Props> = React.forwardRef<
-  any,
-  Props
->(
-  (
-    {
-      children,
-      classes,
-      onClick,
-      dataTestId,
-      onMouseOver,
-      onMouseLeave,
-      onFocus,
-      className,
-    },
-    ref
-  ) => {
-    return (
-      // eslint-disable-next-line jsx-a11y/click-events-have-key-events
-      <div
-        data-testid={dataTestId}
-        ref={ref}
-        className={classNames(classes, className)}
-        onClick={(event) => {
-          event.stopPropagation();
+export const NoPropagationWrapper: React.FC<React.PropsWithChildren<Props>> =
+  React.forwardRef<any, Props>(
+    (
+      {
+        children,
+        classes,
+        onClick,
+        dataTestId,
+        onMouseOver,
+        onMouseLeave,
+        onFocus,
+        className,
+      },
+      ref
+    ) => {
+      return (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+        <div
+          data-testid={dataTestId}
+          ref={ref}
+          className={classNames(classes, className)}
+          onClick={(event) => {
+            event.stopPropagation();
 
-          if (onClick) {
-            onClick();
-          }
-        }}
-        role="button"
-        tabIndex={0}
-        onMouseOver={onMouseOver}
-        onMouseLeave={onMouseLeave}
-        onFocus={onFocus}
-      >
-        {children}
-      </div>
-    );
-  }
-);
+            if (onClick) {
+              onClick();
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          onMouseOver={onMouseOver}
+          onMouseLeave={onMouseLeave}
+          onFocus={onFocus}
+        >
+          {children}
+        </div>
+      );
+    }
+  );

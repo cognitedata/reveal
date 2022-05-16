@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import styled from 'styled-components/macro';
@@ -8,6 +9,7 @@ export interface Props {
   href?: string;
   onClick?: () => void;
   underlined?: boolean;
+  children?: ReactNode;
 }
 
 const StyledButton = styled(Button)`

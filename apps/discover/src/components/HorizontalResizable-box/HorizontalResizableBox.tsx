@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { ResizableBox, ResizeCallbackData } from 'react-resizable';
 
 import { ResizeHandle } from './elements';
@@ -8,6 +8,7 @@ export interface Props {
   minWidth: number;
   maxWidth: number;
   onResize: (width: number) => void;
+  children?: ReactNode;
 }
 
 export const HorizontalResizableBox: React.FC<Props> = ({

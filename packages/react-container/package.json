@@ -19,9 +19,9 @@
   ],
   "scripts": {
     "build": "bazel build :react-container",
-    "test": "../../node_modules/.bin/jest",
+    "test": "bazel test :jest_test",
     "test:watch": "yarn test --watchAll",
-    "test:bazel": "bazel test :jest_test",
+    "test:old": "../../node_modules/.bin/jest",
     "test:bazel-run": "ibazel run :jest --",
     "lint": "bazel test :eslint_test :prettier_test",
     "eslint": "bazel test :eslint_test",

@@ -9,7 +9,9 @@ const StyledText = styled(Detail)`
   display: block;
 `;
 
-export const Subtitle: React.FC = ({ children }) => {
+export const Subtitle: React.FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   if (!children) {
     return null;
   }

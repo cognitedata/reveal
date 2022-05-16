@@ -23,7 +23,7 @@ interface Props {
   settings?: ReactNode;
 }
 
-export const Card: React.FC<Props> = ({
+export const Card: React.FC<React.PropsWithChildren<Props>> = ({
   title,
   children,
   text,

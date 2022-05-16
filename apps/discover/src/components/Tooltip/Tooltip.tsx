@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import { Tooltip as DefaultTooltip } from '@cognite/cogs.js';
 
@@ -10,6 +10,7 @@ export interface Props {
   enterDelay?: number;
   enabled?: boolean;
   className?: string;
+  children?: ReactNode;
 }
 
 export const Tooltip: React.FC<Props> = ({

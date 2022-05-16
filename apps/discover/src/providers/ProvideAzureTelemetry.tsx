@@ -8,7 +8,9 @@ import { useAuthContext } from '@cognite/react-container';
 
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 
-const AuthenticatedUserContext: React.FC = ({ children }) => {
+const AuthenticatedUserContext: React.FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   const { authState } = useAuthContext();
 
   React.useEffect(() => {
@@ -23,19 +25,20 @@ const AuthenticatedUserContext: React.FC = ({ children }) => {
   return <>{children}</>;
 };
 
-export const ProvideAzureTelemetry: React.FC = ({ children }) => {
-  const { data: azureConfig } = useProjectConfigByKey('azureConfig');
+export const ProvideAzureTelemetry: React.FC<React.PropsWithChildren<unknown>> =
+  ({ children }) => {
+    const { data: azureConfig } = useProjectConfigByKey('azureConfig');
 
-  if (!azureConfig) {
-    return <>{children}</>;
-  }
+    if (!azureConfig) {
+      return <>{children}</>;
+    }
 
-  return (
-    <AzureTelemetryProvider
-      instrumentationKey={azureConfig?.instrumentationKey}
-      options={azureConfig.options}
-    >
-      <AuthenticatedUserContext>{children}</AuthenticatedUserContext>
-    </AzureTelemetryProvider>
-  );
-};
+    return (
+      <AzureTelemetryProvider
+        instrumentationKey={azureConfig?.instrumentationKey}
+        options={azureConfig.options}
+      >
+        <AuthenticatedUserContext>{children}</AuthenticatedUserContext>
+      </AzureTelemetryProvider>
+    );
+  };

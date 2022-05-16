@@ -63,7 +63,7 @@ interface Props {
   landing?: boolean; // is landing page (/"category")
   title: string;
 }
-export const HeaderTitle: React.FC<Props> = ({
+export const HeaderTitle: React.FC<React.PropsWithChildren<Props>> = ({
   children,
   landing = false,
   title,

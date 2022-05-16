@@ -3,7 +3,7 @@ import { CommonProps, components, OptionTypeBase } from 'react-select';
 import { SearchBarIconWrapper, SearchBarTextWrapper } from './elements';
 
 export const SearchValueContainer: React.FC<
-  CommonProps<OptionTypeBase, boolean>
+  React.PropsWithChildren<CommonProps<OptionTypeBase, boolean>>
 > = ({ children, ...props }) => {
   const { ValueContainer } = components;
 

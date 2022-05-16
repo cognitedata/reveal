@@ -15,6 +15,7 @@ const defaultProps = {
   title: 'Test Title',
   onShare,
   onCancel,
+  children: <div />,
 };
 
 describe('Basic Share modal', () => {

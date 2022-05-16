@@ -36,7 +36,7 @@ export interface Props {
   collapseTopbar?: boolean;
 }
 
-export const Page: React.FC<Props> = React.memo(
+export const Page: React.FC<React.PropsWithChildren<Props>> = React.memo(
   ({ collapseTopbar, scrollPage, hideTopbar, children }) => {
     return (
       <PageWrapper id="page-wrapper" scrollPage={scrollPage}>

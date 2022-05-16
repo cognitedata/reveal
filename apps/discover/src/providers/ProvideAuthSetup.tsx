@@ -9,9 +9,11 @@ import { useProjectConfig } from 'hooks/useProjectConfig';
 import { authenticateSeismicSDK } from 'modules/seismicSearch/service';
 import { authenticateWellSDK } from 'modules/wellSearch/sdk';
 
-export const ProvideAuthSetup: React.FC<{
-  authState: AuthContext;
-}> = ({ authState, children }) => {
+export const ProvideAuthSetup: React.FC<
+  React.PropsWithChildren<{
+    authState: AuthContext;
+  }>
+> = ({ authState, children }) => {
   const [doneAuth, setDoneAuth] = React.useState(false);
   const [project] = getTenantInfo();
 

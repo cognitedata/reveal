@@ -8,10 +8,12 @@ import { CARD_WIDTH } from 'components/Card/PreviewCard/constants';
 
 import { MapDocumentPreviewContainer } from '../elements';
 
-export const MapPreviewContainer: React.FC<{
-  point?: Point;
-  map: mapboxgl.Map;
-}> = ({ point, map, children }) => {
+export const MapPreviewContainer: React.FC<
+  React.PropsWithChildren<{
+    point?: Point;
+    map: mapboxgl.Map;
+  }>
+> = ({ point, map, children }) => {
   const getRightByGeo = ({
     coordinates,
   }: { coordinates?: Point['coordinates'] } = {}) => {

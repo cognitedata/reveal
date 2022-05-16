@@ -10,7 +10,10 @@ export interface Props {
 
 const SCROLL_PER_CLICK = 200;
 
-export const ScrollButtons: React.FC<Props> = ({ children, scrollRef }) => {
+export const ScrollButtons: React.FC<React.PropsWithChildren<Props>> = ({
+  children,
+  scrollRef,
+}) => {
   const [scrollButtonDisplay, setScrollButtonDisplay] = useState({
     left: false,
     right: true,

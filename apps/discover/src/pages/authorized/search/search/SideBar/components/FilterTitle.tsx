@@ -36,7 +36,7 @@ interface Props {
   header?: boolean;
 }
 // Show font 2 and filter label
-export const FilterTitle: React.FC<Props> = React.memo(
+export const FilterTitle: React.FC<React.PropsWithChildren<Props>> = React.memo(
   ({ children, title, iconElement, handleFilterClick, header }) => {
     const TitleWrapper = header ? BaseTitle : FilterItemTitle;
     const renderTitle = React.useMemo(

@@ -20,7 +20,10 @@ const Content = styled.div`
 interface Props {
   testid?: string;
 }
-export const CenterLayout: React.FC<Props> = ({ children, testid }) => {
+export const CenterLayout: React.FC<React.PropsWithChildren<Props>> = ({
+  children,
+  testid,
+}) => {
   return (
     <Container data-testid={testid}>
       <Content>{children}</Content>

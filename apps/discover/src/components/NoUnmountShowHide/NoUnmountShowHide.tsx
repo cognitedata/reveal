@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import { NoUnmountShowHideContainer } from './elements';
 
 export interface NoUnmountShowHideProps {
   show: boolean;
   fullHeight?: boolean;
+  children?: ReactNode;
 }
 
 export const NoUnmountShowHide: React.FC<NoUnmountShowHideProps> = React.memo(

@@ -11,7 +11,9 @@ import { ProvideMixpanelSetup } from './ProvideMixpanelSetup';
 import { ProvideProjectConfig } from './ProvideProjectConfig';
 import { ProvideUnleash } from './ProvideUnleash';
 
-export const Providers: React.FC = ({ children }) => {
+export const Providers: React.FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   return (
     <ConditionalWrapper condition={!!SIDECAR.unleash} wrap={ProvideUnleash}>
       <AuthConsumer>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import { Illustration, IllustrationType } from 'components/Illustration';
 
@@ -20,6 +20,7 @@ interface Props {
   emptySubtitle?: string;
   img?: IllustrationType;
   isLoading?: boolean;
+  children?: ReactNode;
 }
 
 const EmptyState: React.FC<Props> = ({

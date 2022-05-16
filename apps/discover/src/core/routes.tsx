@@ -10,7 +10,9 @@ import { showErrorMessage } from '../components/Toast';
 
 import { INSUFFICIENT_ACCESS_RIGHTS_MESSAGE } from './constants';
 
-const PageLayout: React.FC<RouteProps> = ({ children }) => <>{children}</>;
+const PageLayout: React.FC<React.PropsWithChildren<RouteProps>> = ({
+  children,
+}) => <>{children}</>;
 
 export const PageRoute = ({ ...rest }: RouteProps) => {
   return (

@@ -22,7 +22,9 @@ export const convertPath = (path: string) => {
   return path;
 };
 
-export const FilePath: React.FC = ({ children }) => {
+export const FilePath: React.FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   const metrics = useGlobalMetrics('feedback');
   const { t } = useTranslation('Documents');
   const title = t('Copy to clipboard');
