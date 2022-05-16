@@ -1,8 +1,6 @@
 import { Unit } from 'convert-units';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
-import head from 'lodash/head';
-import last from 'lodash/last';
 import set from 'lodash/set';
 import {
   endOf,
@@ -114,17 +112,6 @@ export const getRangeLimitInUnit = (
     Math.floor(changeUnitTo(limitMin, FEET, preferredUnit) || 0),
     Math.ceil(changeUnitTo(limitMax, FEET, preferredUnit) || 0),
   ];
-};
-
-export const getLimitRangeInUserPreferredUnit = (
-  limitRange: number[],
-  unit: UserPreferredUnit
-) => {
-  return getRangeLimitInUnit(
-    head(limitRange) || DEFAULT_MIN_LIMIT,
-    last(limitRange) || DEFAULT_MAX_LIMIT,
-    unit
-  );
 };
 
 export const processSpudDateLimits = (spudDateLimits: SpudDateLimits) => {

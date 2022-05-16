@@ -26,10 +26,6 @@ import {
 
 const selectedLayers = [WELL_HEADS_LAYER_ID, DOCUMENT_LAYER_ID];
 
-jest.mock('modules/wellSearch/hooks/useEnabledWellSdkV3', () => ({
-  useEnabledWellSdkV3: () => true,
-}));
-
 const mockServer = setupServer(
   getMockUserMe(),
   getMockWellsGeometry(),

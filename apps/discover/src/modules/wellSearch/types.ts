@@ -286,15 +286,14 @@ export type FilterConfig = {
   key: string;
   category: string;
   type: FilterTypes;
-  fetcher?: (
-    v3: boolean
-  ) => Promise<any | string[] | number[] | (Date | undefined)[]> | undefined;
+  fetcher?: () =>
+    | Promise<any | string[] | number[] | (Date | undefined)[]>
+    | undefined;
   filterParameters?: (
     filters: string[] | Date[] | number[],
     userPreferredUnit: UserPreferredUnit
   ) => CommonWellFilter;
   isTextCapitalized?: boolean;
-  enableOnlySdkV3?: boolean;
 };
 
 export type FilterConfigMap = {

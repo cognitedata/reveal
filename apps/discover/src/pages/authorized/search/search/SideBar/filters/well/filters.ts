@@ -47,7 +47,6 @@ import {
 } from 'modules/wellSearch/types';
 import {
   getFilterRangeInUserPreferredUnit,
-  getLimitRangeInUserPreferredUnit,
   getWaterDepthLimitsInUnit,
   processSpudDateLimits,
 } from 'modules/wellSearch/utils';
@@ -173,7 +172,6 @@ export const filterConfigs = (
         unit: unitToLengthUnitEnum(userPreferredUnit),
       },
     }),
-    enableOnlySdkV3: true,
   },
   {
     id: FilterIDs.MD,
@@ -181,22 +179,16 @@ export const filterConfigs = (
     key: 'well_characteristics_filter.md',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
-    fetcher: (v3enabled) => {
-      if (v3enabled) {
-        return wellFilterFetchers
-          ?.mdLimits()
-          .then((response) =>
-            getFilterRangeInUserPreferredUnit(
-              [response.min, response.max],
-              response.unit,
-              unit
-            )
-          );
-      }
-
+    fetcher: () => {
       return wellFilterFetchers
         ?.mdLimits()
-        .then((response) => getLimitRangeInUserPreferredUnit(response, unit));
+        .then((response) =>
+          getFilterRangeInUserPreferredUnit(
+            [response.min, response.max],
+            response.unit,
+            unit
+          )
+        );
     },
     filterParameters: (values, userPreferredUnit): WellFilter => ({
       hasTrajectory: {
@@ -214,22 +206,16 @@ export const filterConfigs = (
     key: 'well_characteristics_filter.tvd',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
-    fetcher: (v3enabled) => {
-      if (v3enabled) {
-        return wellFilterFetchers
-          ?.tvdLimits()
-          .then((response) =>
-            getFilterRangeInUserPreferredUnit(
-              [response.min, response.max],
-              response.unit,
-              unit
-            )
-          );
-      }
-
+    fetcher: () => {
       return wellFilterFetchers
         ?.tvdLimits()
-        .then((response) => getLimitRangeInUserPreferredUnit(response, unit));
+        .then((response) =>
+          getFilterRangeInUserPreferredUnit(
+            [response.min, response.max],
+            response.unit,
+            unit
+          )
+        );
     },
     filterParameters: (values, userPreferredUnit): FiltersOnlySupportSdkV3 => ({
       trajectories: {
@@ -240,7 +226,6 @@ export const filterConfigs = (
         },
       },
     }),
-    enableOnlySdkV3: true,
   },
   {
     id: FilterIDs.DOG_LEG_SEVERITY,
@@ -252,22 +237,16 @@ export const filterConfigs = (
     key: 'well_characteristics_filter.dls',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
-    fetcher: (v3enabled) => {
-      if (v3enabled) {
-        return wellFilterFetchers
-          ?.dogLegSeverityLimits()
-          .then((response) =>
-            getFilterRangeInUserPreferredUnit(
-              [response.min, response.max],
-              response.unit.distanceUnit,
-              unit
-            )
-          );
-      }
-
+    fetcher: () => {
       return wellFilterFetchers
         ?.dogLegSeverityLimits()
-        .then((response) => getLimitRangeInUserPreferredUnit(response, unit));
+        .then((response) =>
+          getFilterRangeInUserPreferredUnit(
+            [response.min, response.max],
+            response.unit.distanceUnit,
+            unit
+          )
+        );
     },
     filterParameters: (values, userPreferredUnit): FiltersOnlySupportSdkV3 => ({
       trajectories: {
@@ -285,7 +264,6 @@ export const filterConfigs = (
         },
       },
     }),
-    enableOnlySdkV3: true,
   },
   {
     id: FilterIDs.WATER_DEPTH,

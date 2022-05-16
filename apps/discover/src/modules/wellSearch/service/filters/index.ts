@@ -2,8 +2,7 @@ import { UserPreferredUnit } from 'constants/units';
 import { filterConfigs } from 'pages/authorized/search/search/SideBar/filters/well/filters';
 
 export function getFilterOptions(
-  prefferedUnit: UserPreferredUnit | undefined,
-  v3Enabled: boolean
+  prefferedUnit: UserPreferredUnit | undefined
 ): Promise<any> {
   const filterFetchers = filterConfigs(prefferedUnit).filter(
     (filterConfig) => filterConfig.fetcher
@@ -11,7 +10,7 @@ export function getFilterOptions(
   return Promise.all(
     filterFetchers.map(
       (filterConfig) =>
-        filterConfig.fetcher && filterConfig.fetcher(v3Enabled)?.catch(() => [])
+        filterConfig.fetcher && filterConfig.fetcher()?.catch(() => [])
     )
   ).then(
     (responses) =>
