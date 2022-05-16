@@ -1,4 +1,10 @@
-import React, { ReactText, useCallback } from 'react';
+import React, {
+  CSSProperties,
+  ReactText,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react';
 import {
   keypointSelectStatusChange,
   selectCollection,
@@ -30,17 +36,31 @@ import { selectCategory } from 'src/modules/Review/Containers/AnnotationDetailPa
 import { HotKeys } from 'src/constants/HotKeys';
 import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
 import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import { Modal } from 'antd';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
+import { FileInfo } from '@cognite/sdk';
 
 export const AnnotationDetailPanelHotKeys = ({
   scrollId,
   children,
   nodeTree,
+  file,
 }: {
   nodeTree: TreeNode<Data>[];
   children: any;
   scrollId: ReactText;
+  file: FileInfo;
 }) => {
   const dispatch = useDispatch();
+  const modalRef = useRef<{ destroy: () => void } | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (modalRef.current) {
+        modalRef.current?.destroy();
+      }
+    };
+  }, [file]);
 
   useHotkeys(HotKeys.move_down_annotation_list, () => selectNextRow(), [
     nodeTree,
@@ -73,6 +93,11 @@ export const AnnotationDetailPanelHotKeys = ({
     () => setStatusOnSelectedAnnotation(false),
     [nodeTree, scrollId]
   );
+
+  useHotkeys(HotKeys.delete_annotation, () => deleteSelectedAnnotation(), [
+    nodeTree,
+    scrollId,
+  ]);
 
   const setSelectedNodeAsActive = (id: string, node: TreeNode<Data>) => {
     dispatch(deselectAllSelectionsReviewPage());
@@ -172,6 +197,49 @@ export const AnnotationDetailPanelHotKeys = ({
     },
     [nodeTree]
   );
+
+  const deleteSelectedAnnotation = useCallback(() => {
+    if (nodeTree.length) {
+      let annotationId: string;
+      const activeNode = getActiveNode(nodeTree);
+      if (activeNode && isAnnotationData(activeNode.additionalData)) {
+        annotationId = activeNode.id;
+      }
+
+      const onConfirmDelete = async () => {
+        await dispatch(
+          DeleteAnnotationsAndHandleLinkedAssetsOfFile({
+            annotationIds: [+annotationId!],
+            showWarnings: true,
+          })
+        );
+      };
+
+      // @ts-ignore
+      if (annotationId) {
+        modalRef.current = Modal.confirm({
+          title: 'Confirm Delete',
+          content: 'Are you sure you want delete this annotation?',
+          autoFocusButton: 'ok',
+          okText: 'Confirm',
+          okButtonProps: {
+            style: {
+              backgroundColor: 'var(--cogs-red)',
+              color: 'white',
+              '&:focus': {
+                borderColor: 'var(--cogs-red)',
+              },
+            } as CSSProperties,
+          },
+          keyboard: true,
+          getContainer: '.confirm-delete-modal-anchor',
+          maskClosable: true,
+          onOk: onConfirmDelete,
+          onCancel: () => {},
+        });
+      }
+    }
+  }, [nodeTree]);
 
   return <>{children}</>;
 };
