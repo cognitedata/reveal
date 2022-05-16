@@ -7,43 +7,6 @@ import {
   AnnotationStatus,
   KeypointItem,
 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { VisionAnnotation } from 'src/modules/Common/types';
-import { ImageKeypoint, Label, Status } from 'src/api/annotation/types';
-
-// primitives
-
-export type Visible = {
-  show: boolean;
-};
-
-export type Selectable = {
-  selected: boolean;
-};
-
-export type ReviewId = { id: string };
-
-// derivations
-
-type TurnKeypointType<Type> = {
-  [Property in keyof Type]: Type[Property] extends ImageKeypoint[]
-    ? ReviewKeypoint[]
-    : Type[Property];
-};
-
-export type ReviewAnnotation<Type> = TurnKeypointType<VisionAnnotation<Type>> &
-  Visible &
-  Selectable;
-
-export type ReviewKeypoint = ImageKeypoint & ReviewId & Selectable;
-
-// type for temp keypoint collections
-export type TempKeypointCollection = Label &
-  ReviewId &
-  Visible &
-  Selectable & {
-    keypoints: ReviewKeypoint[];
-    status: Status;
-  };
 
 export type KeypointItemCollection = {
   id: string;
