@@ -1,14 +1,21 @@
-import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
-import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
-import {
-  AnnotationStatus,
-  VisionAnnotationV1,
-} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { ToastUtils } from 'src/utils/ToastUtils';
-import { fetchAssets } from 'src/store/thunks/fetchAssets';
+import { filterAssetIdsLinkedToGivenFile } from 'src/api/utils/filterAssetIdsLinkedToGivenFile';
+import { removeAssetIdsFromFile } from 'src/store/util/removeAssetIdsFromFile';
+import { groupAnnotationsByFile } from 'src/api/utils/groupAnnotationsByFile';
+import { isAssetLinkedAnnotation } from 'src/api/annotation/typeGuards';
 
+/**
+ * Deletes annotations, if assetRef annotations are also available remove asset links from files with user consent
+ *
+ * {
+ *   annotationIds: annotationIds from annotationState,
+ *   showWarnings: if true, user confirmation is required to update files
+ * }
+ */
 export const DeleteAnnotationsAndHandleLinkedAssetsOfFile = createAsyncThunk<
   void,
   {
@@ -22,17 +29,10 @@ export const DeleteAnnotationsAndHandleLinkedAssetsOfFile = createAsyncThunk<
     const annotations = annotationIds.map(
       (id) => getState().annotationV1Reducer.annotations.byId[id]
     );
-    const linkedAnnotations: VisionAnnotationV1[] = [];
-
-    annotations.forEach((annotation) => {
-      if (
-        annotation &&
-        annotation.status === AnnotationStatus.Verified &&
-        (annotation.linkedResourceId || annotation.linkedResourceExternalId)
-      ) {
-        linkedAnnotations.push(annotation);
-      }
-    });
+    const verifiedAssetRefAnnotations = annotations.filter(
+      (ann) =>
+        isAssetLinkedAnnotation(ann) && ann.status === AnnotationStatus.Verified
+    );
 
     const savedAnnotationIds = annotations
       .filter((ann) => !!ann.lastUpdatedTime)
@@ -42,41 +42,45 @@ export const DeleteAnnotationsAndHandleLinkedAssetsOfFile = createAsyncThunk<
       dispatch(DeleteAnnotations(savedAnnotationIds));
     }
 
-    const removeAssetIdsFromFile = async (
-      fileId: number,
-      assetExternalIds: string[]
-    ) => {
-      const assetResponse = await dispatch(
-        fetchAssets(assetExternalIds.map((externalId) => ({ externalId })))
+    if (verifiedAssetRefAnnotations.length) {
+      // group assetRefAnnotations by file id
+      const fileAnnotationMap = groupAnnotationsByFile(
+        verifiedAssetRefAnnotations
       );
-      const assets = unwrapResult(assetResponse);
 
-      dispatch(
-        UpdateFiles([
-          {
-            id: fileId,
-            update: {
-              assetIds: {
-                remove: assets.map((asset) => asset.id),
-              },
-            },
-          },
-        ])
-      );
-    };
+      // remove linked assets for each file
+      await Promise.all(
+        Array.from(fileAnnotationMap).map(
+          async ([fileId, fileAssetRefAnnotations]) => {
+            const assetIdsLinkedToFile = await filterAssetIdsLinkedToGivenFile(
+              fileAssetRefAnnotations.map((ann) => ann.linkedResourceId!),
+              fileId
+            );
 
-    if (linkedAnnotations.length && showWarnings) {
-      const fileId = linkedAnnotations[0].annotatedResourceId;
-      const assetExternalIds = linkedAnnotations.map(
-        (ann) => ann.linkedResourceExternalId!
-      );
-      ToastUtils.onWarn(
-        'Rejecting detected asset tag',
-        'Do you want to remove the link between the file and the asset as well?',
-        () => {
-          removeAssetIdsFromFile(fileId, assetExternalIds);
-        },
-        'Remove asset link'
+            if (assetIdsLinkedToFile.length) {
+              if (showWarnings) {
+                ToastUtils.onWarn(
+                  'Rejecting detected asset tag',
+                  'Do you want to remove the link between the file and the asset as well?',
+                  () => {
+                    removeAssetIdsFromFile(
+                      fileId,
+                      assetIdsLinkedToFile,
+                      dispatch
+                    );
+                  },
+                  'Remove asset link'
+                );
+              } else {
+                await removeAssetIdsFromFile(
+                  fileId,
+                  assetIdsLinkedToFile,
+                  dispatch
+                );
+              }
+            }
+          }
+        )
       );
     }
   }

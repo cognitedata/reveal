@@ -279,7 +279,11 @@ export const AnnotationDetailPanel = (props: {
   );
 
   return (
-    <AnnotationDetailPanelHotKeys nodeTree={rootNodeArr} scrollId={scrollId}>
+    <AnnotationDetailPanelHotKeys
+      nodeTree={rootNodeArr}
+      scrollId={scrollId}
+      file={file}
+    >
       <Container ref={props.reference}>
         <Detail style={{ color: '#595959' }}>
           {'Approve and reject detected annotations '}

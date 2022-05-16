@@ -14,7 +14,7 @@ export enum AssetWarnTypes {
   RejectedAnnotationAssetLinkedToFile,
 }
 
-const ANNOTATION_STATUS_ERROR_VISIBILITY_DELAY = 2000;
+const ANNOTATION_STATUS_ERROR_VISIBILITY_DELAY = 1000;
 
 const useAssetLinkWarning = (
   annotation: AnnotationTableItem,
