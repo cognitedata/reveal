@@ -152,8 +152,6 @@ class BlueprintService {
       true
     );
 
-    this.deleteOrphanFiles(blueprint, dataSetId);
-
     return {
       id: newFile.id,
       externalId,
@@ -168,10 +166,7 @@ class BlueprintService {
     name: 'Untitled Blueprint',
     createdBy: this.user,
     lastOpened: Date.now(),
-    ornateJSON: {
-      documents: [],
-      connectedLines: [],
-    },
+    ornateShapes: [],
     nonPDFFiles: [],
     timeSeriesTags: [],
   });
@@ -226,11 +221,12 @@ class BlueprintService {
       id: f.fileId,
       externalId: f.fileExternalId,
     }));
-    const pdfFiles = blueprint.ornateJSON.documents.map((d) => ({
-      id: d.metadata.fileId,
-      externalId: d.metadata.fileExternalId,
+    const pdfFiles = blueprint.ornateShapes.map((d) => ({
+      id: d.attrs.fileReference.fileId,
+      externalId: d.attrs.fileReferences.fileExternalId,
     }));
-    const filesInBlueprint = [...nonPdfFiles, ...pdfFiles];
+
+    const filesInBlueprint = [...pdfFiles, ...nonPdfFiles];
     const orphanFiles = filesForBlueprint.filter(
       (cdfFile) =>
         !filesInBlueprint.some(

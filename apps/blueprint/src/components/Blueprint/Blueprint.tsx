@@ -1,11 +1,3 @@
-import {
-  CogniteOrnate,
-  DefaultTool,
-  LineTool,
-  RectTool,
-  OrnateTransformer,
-  UpdateKeyType,
-} from '@cognite/ornate';
 import { CogniteClient } from '@cognite/sdk';
 import OrnateTimeSeriesTag from 'components/TimeseriesTag/OrnateTimeSeriesTag';
 import {
@@ -23,19 +15,21 @@ import {
   RuleOutput,
   RuleSet,
 } from 'typings';
-import { BlueprintToolbar } from 'components/BlueprintToolbar/BlueprintToolbar';
 import { NodeConfig, Node } from 'konva/lib/Node';
-import ContextMenu from 'components/ContextMenu';
-import debounce from 'lodash/debounce';
-import Konva from 'konva';
 import { Drawer } from '@cognite/cogs.js';
 import { RuleSetsDrawer } from 'components/RuleSetDrawer/RuleSetsDrawer';
 import { useQueries } from 'react-query';
 import { resolveAttributeValue } from 'models/rulesEngine/api';
 import { compileExpression } from 'filtrex';
 import { useAuthContext } from '@cognite/react-container';
+import { CogniteOrnate, defaultColor, ToolNodeStyle, ToolType } from 'ornate';
+import { Ornate } from 'ornate/react';
+import { NodeStyle, StyleSelector, Toolbar } from 'ornate/react/components';
+import BaseAttributesControl from 'components/ContextMenu/ContextMenuItems/AttributesControl';
+import { ControlProps } from 'ornate/react/components/context-menu/controls';
 
 import { BlueprintWrapper } from './elements';
+import { BaseRuleControl } from './RuleControl/RuleControl';
 
 export type BlueprintProps = {
   client: CogniteClient;
@@ -146,6 +140,13 @@ const useRuleSetEvaluation = (
   );
 };
 
+const DEFAULT_STYLE: NodeStyle = {
+  fill: defaultColor.rgb().string(),
+  stroke: defaultColor.alpha(1).rgb().string(),
+  strokeWidth: 12,
+  fontSize: '18',
+};
+
 const Blueprint = ({
   client,
   blueprint,
@@ -156,10 +157,10 @@ const Blueprint = ({
   isAllMinimized,
 }: BlueprintProps) => {
   const ornateViewer = useRef<CogniteOrnate>();
+  const [activeStyle, setActiveStyle] = useState(DEFAULT_STYLE);
   const [isReady, setIsReady] = useState(false);
   const [loadedBlueprint, setLoadedBlueprint] = useState<BlueprintDefinition>();
-  const [activeTool, setActiveTool] = useState<string>('default');
-  const [selectedNodes, setSelectedNodes] = useState<Node<NodeConfig>[]>([]);
+  const [activeTool, setActiveTool] = useState<ToolType>('HAND');
   const [isCreatingNewRuleSet, setIsCreatingNewRuleSet] = useState(false);
   const [errors, setErrors] = useState<Record<string, string | undefined>>({});
 
@@ -185,103 +186,49 @@ const Blueprint = ({
   );
 
   useEffect(() => {
-    ornateViewer.current = new CogniteOrnate({
-      container: '#ornate-container',
-    });
-
-    const ornateTransformer = new OrnateTransformer(ornateViewer.current);
-    ornateViewer.current.transformer = ornateTransformer;
-    ornateViewer.current.baseLayer.add(ornateViewer.current.transformer);
-    ornateTransformer.onSelectNodes = (nodes) => {
-      setSelectedNodes(nodes);
-    };
-
-    ornateViewer.current.tools = {
-      default: new DefaultTool(ornateViewer.current),
-      line: new LineTool(ornateViewer.current),
-      rect: new RectTool(ornateViewer.current),
-    };
-    ornateViewer.current.currentTool = ornateViewer.current.tools.default;
-    setIsReady(true);
-    if (onReady) {
-      onReady(ornateViewer);
-    }
-  }, []);
-
-  const setTool = (tool: string) => {
-    if (ornateViewer.current) {
-      ornateViewer.current.currentTool = ornateViewer.current.tools[tool];
-      setActiveTool(tool);
-    }
-  };
-
-  useEffect(() => {
     if (blueprint && loadedBlueprint?.id !== blueprint.id) {
       setLoadedBlueprint(blueprint);
     }
   }, [blueprint, loadedBlueprint]);
+  const handleStyleChange = (nextStyle: ToolNodeStyle) => {
+    if (ornateViewer.current) {
+      ornateViewer.current.style = nextStyle;
+    }
+    setActiveStyle({ ...activeStyle, ...nextStyle });
+  };
 
-  const updateShape = debounce(
-    (
-      shape: Node<NodeConfig>,
-      updateKey: UpdateKeyType,
-      updateValue: string | number
-    ) => {
-      ornateViewer.current?.updateShape(shape, updateKey, updateValue);
-    },
-    1000
-  );
-
-  const onDeleteNode = useCallback(
-    (node: Konva.Node) => {
-      (ornateViewer.current?.tools.default as DefaultTool).onDelete();
-      const docToDelete = ornateViewer.current?.documents.filter(
-        (doc) => doc.group.id() === node.id()
-      );
-      if (docToDelete?.[0]) {
-        ornateViewer.current?.removeDocument(docToDelete[0]);
+  const getSecondaryToolbar = () => {
+    if (['CIRCLE', 'LINE', 'RECT', 'TEXT'].includes(activeTool)) {
+      const style = { ...activeStyle };
+      if (['CIRCLE', 'RECT'].includes(activeTool)) {
+        delete style.fontSize;
       }
-    },
-    [ornateViewer, blueprint]
-  );
+      if (activeTool === 'LINE') {
+        delete style.fill;
+        delete style.fontSize;
+      }
+      if (activeTool === 'TEXT') {
+        delete style.stroke;
+        delete style.strokeWidth;
+      }
+      return <StyleSelector style={style} onChange={handleStyleChange} />;
+    }
+    return null;
+  };
 
-  return (
-    <BlueprintWrapper>
-      <div id="ornate-container" />
-      <div id="ornate-toolbar" />
-      <BlueprintToolbar setActiveTool={setTool} activeTool={activeTool} />
-      {isReady && selectedNodes.length > 0 && (
-        <ContextMenu
-          selectedNode={selectedNodes[0]}
-          onDeleteNode={onDeleteNode}
-          updateShape={updateShape}
-          shapeAttributes={
-            blueprint?.shapeAttributes?.[selectedNodes[0].id()] || []
-          }
-          onSetShapeAttributes={(nextAttributes) => {
-            if (onUpdate && blueprint) {
-              const nextBlueprint: BlueprintDefinition = {
-                ...blueprint,
-                shapeAttributes: {
-                  ...(blueprint?.shapeAttributes || {}),
-                  [selectedNodes[0].id()]: nextAttributes,
-                },
-              };
-
-              onUpdate(nextBlueprint);
-            }
-          }}
+  const RuleControl: React.FC<ControlProps> = useCallback(
+    ({ nodes }) => {
+      return (
+        <BaseRuleControl
           ruleSets={blueprint?.ruleSets}
-          shapeRuleSetsIds={
-            blueprint?.shapeRuleSets?.[selectedNodes[0].id()] || []
-          }
+          shapeRuleSetsIds={blueprint?.shapeRuleSets?.[nodes[0].id()] || []}
           onNewRuleSet={() => {
             setIsCreatingNewRuleSet(true);
           }}
           onClickRuleSet={(nextRuleSetId: string) => {
             if (onUpdate && blueprint) {
               const currentSelectedRuleSetsForShape =
-                blueprint?.shapeRuleSets?.[selectedNodes[0].id()] || [];
+                blueprint?.shapeRuleSets?.[nodes[0].id()] || [];
               let nextRulesForShape = [...currentSelectedRuleSetsForShape];
               if (currentSelectedRuleSetsForShape.includes(nextRuleSetId)) {
                 nextRulesForShape = nextRulesForShape.filter(
@@ -292,17 +239,85 @@ const Blueprint = ({
               }
               const nextBlueprint: BlueprintDefinition = {
                 ...blueprint,
-                shapeRuleSets: {
-                  ...(blueprint.shapeRuleSets || {}),
-                  [selectedNodes[0].id()]: nextRulesForShape,
-                },
+                shapeRuleSets: nodes.reduce(
+                  (acc, node) => ({
+                    ...acc,
+                    [node.id()]: nextRulesForShape,
+                  }),
+                  blueprint.shapeRuleSets
+                ),
               };
 
               onUpdate(nextBlueprint);
             }
           }}
         />
-      )}
+      );
+    },
+    [blueprint]
+  );
+
+  const AttributeControl: React.FC<ControlProps> = useCallback(
+    ({ nodes }) => {
+      return (
+        <BaseAttributesControl
+          attributes={blueprint?.shapeAttributes?.[nodes[0].id()] || []}
+          onChange={(nextAttributes) => {
+            if (onUpdate && blueprint) {
+              const nextBlueprint: BlueprintDefinition = {
+                ...blueprint,
+                shapeAttributes: nodes.reduce(
+                  (acc, node) => ({
+                    ...acc,
+                    [node.id()]: nextAttributes,
+                  }),
+                  blueprint?.shapeAttributes || {}
+                ),
+              };
+
+              onUpdate(nextBlueprint);
+            }
+          }}
+        />
+      );
+    },
+    [blueprint]
+  );
+
+  return (
+    <BlueprintWrapper>
+      <Ornate
+        shapes={[]}
+        activeTool={activeTool}
+        onReady={(instance) => {
+          ornateViewer.current = instance;
+          setIsReady(true);
+          if (onReady) {
+            onReady(ornateViewer);
+          }
+        }}
+        contextMenuProps={{
+          additionalControls: (shapeTypes) =>
+            shapeTypes.some((type) => ['CIRCLE', 'RECT', 'LINE'].includes(type))
+              ? [RuleControl, AttributeControl]
+              : [],
+        }}
+      />
+      <Toolbar
+        activeTool={activeTool}
+        setActiveTool={setActiveTool}
+        tools={[
+          'HAND',
+          'SELECT',
+          'DIVIDER',
+          'RECT',
+          'CIRCLE',
+          'PATH',
+          'LINE',
+          'TEXT',
+        ]}
+        secondaryToolbar={getSecondaryToolbar()}
+      />
       {isReady &&
         blueprint?.timeSeriesTags.map((tag) => (
           <OrnateTimeSeriesTag

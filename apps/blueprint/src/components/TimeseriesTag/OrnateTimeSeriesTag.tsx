@@ -5,11 +5,11 @@ import {
   useState,
   useCallback,
 } from 'react';
-import { CogniteOrnate } from '@cognite/ornate';
 import { CogniteClient, Timeseries } from '@cognite/sdk';
 import { makeKonvaTimeSeries } from 'components/Blueprint/utils';
 import Konva from 'konva';
 import { TimeSeriesTag } from 'typings';
+import { CogniteOrnate } from 'ornate';
 
 import TimeseriesTag, { TimeSeriesTagProps } from './TimeseriesTag';
 
@@ -81,7 +81,7 @@ const OrnateTimeSeriesTag = ({
     );
 
     const { tag, point, line } = konvaObjects.current;
-    ornateViewer.current?.topLayer.add(tag, point, line);
+    ornateViewer.current?.layers.top.add(tag, point, line);
 
     minimize(isMinimized);
 

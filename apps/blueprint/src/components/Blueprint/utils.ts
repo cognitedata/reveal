@@ -1,8 +1,8 @@
 // zIndexes here must be set to 999 for konva to work
 import { Timeseries } from '@cognite/sdk';
 import Konva from 'konva';
+import { CogniteOrnate } from 'ornate';
 import { TimeSeriesTag } from 'typings';
-import { CogniteOrnate } from '@cognite/ornate';
 
 const LINE_TAG_POS_PADDING = 48;
 const ZINDEX = 999;

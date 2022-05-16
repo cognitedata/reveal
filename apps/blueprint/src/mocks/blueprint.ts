@@ -35,8 +35,5 @@ export const MOCK_BLUEPRINT: BlueprintDefinition = {
       },
     },
   ],
-  ornateJSON: {
-    documents: [],
-    connectedLines: [],
-  },
+  ornateShapes: [],
 };

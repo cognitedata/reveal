@@ -2,8 +2,8 @@ import { Button, Flex, Input } from '@cognite/cogs.js';
 import { v4 as uuid } from 'uuid';
 import { useState } from 'react';
 import { Rule, RuleOutput, RuleSet } from 'typings';
-import { ColorPicker } from 'components/ColorPicker';
 import styled from 'styled-components';
+import { StyleSelector } from 'ornate/react/components';
 
 import { RuleStylePreview } from './RuleStylePreview';
 
@@ -38,16 +38,18 @@ const RuleFormWrapper = styled.div`
   }
 `;
 
+const STYLE_DEFAULT = {
+  fill: 'rgba(255,255,255, 0)',
+  stroke: 'rgba(255,255,255, 0)',
+};
+
 export const RuleForm = ({ existingRule, onDone }: RuleFormProps) => {
   const [rule, setRule] = useState(
     existingRule ||
       ({
         id: uuid(),
         expression: '',
-        output: {
-          fill: 'rgba(0, 0, 255)',
-          fillOpacity: '0.5',
-        },
+        output: STYLE_DEFAULT,
       } as Rule<RuleOutput>)
   );
 
@@ -66,17 +68,13 @@ export const RuleForm = ({ existingRule, onDone }: RuleFormProps) => {
       />
 
       <div className="label">then</div>
-
-      <ColorPicker
-        color={rule.output.fill || 'rgba(0, 0, 0, .3)'}
-        onColorChange={(next) => {
+      <StyleSelector
+        style={{ ...STYLE_DEFAULT, ...rule.output }}
+        onChange={(nextStyle) =>
           handleChange({
-            output: {
-              ...rule.output,
-              fill: next,
-            },
-          });
-        }}
+            output: nextStyle,
+          })
+        }
       />
 
       <Button type="primary" block onClick={() => onDone(rule)}>

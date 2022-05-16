@@ -5,7 +5,7 @@ import Konva from 'konva';
 import { useMetrics } from '@cognite/metrics';
 import { Node, NodeConfig } from 'konva/lib/Node';
 import { UpdateKeyType } from '@cognite/ornate';
-import { RuleSet, ShapeAttribute } from 'typings';
+import { RuleSet } from 'typings';
 
 import {
   ThicknessControl,
@@ -18,7 +18,6 @@ import { getPositionX } from './ContextMenuItems/utils';
 import { ContextMenuWrapper } from './elements';
 import { ImageColoroizer } from './ContextMenuItems/ImageColoroizer';
 import { ResetFilters } from './ContextMenuItems/ResetFilters';
-import AttributesControl from './ContextMenuItems/AttributesControl';
 
 type ContextMenuProps = {
   selectedNode: Konva.Node;
@@ -28,8 +27,6 @@ type ContextMenuProps = {
     updateKey: UpdateKeyType,
     updateValue: string | number
   ) => void;
-  shapeAttributes: ShapeAttribute[];
-  onSetShapeAttributes: (next: ShapeAttribute[]) => void;
   ruleSets?: RuleSet[];
   shapeRuleSetsIds?: string[];
   onClickRuleSet: (nextRuleSetId: string) => void;
@@ -40,8 +37,6 @@ const ContextMenu = ({
   selectedNode,
   onDeleteNode,
   updateShape,
-  shapeAttributes,
-  onSetShapeAttributes,
   ruleSets,
   shapeRuleSetsIds,
   onClickRuleSet,
@@ -248,13 +243,6 @@ const ContextMenu = ({
     </Dropdown>
   );
 
-  const attributesControl = (
-    <AttributesControl
-      attributes={shapeAttributes || []}
-      onChange={onSetShapeAttributes}
-    />
-  );
-
   const getMenuItems = useCallback(() => {
     if (isDocumentGroup) {
       return [deleteNodeButton];
@@ -271,7 +259,6 @@ const ContextMenu = ({
           thicknessControl,
           strokeControlButton,
           deleteNodeButton,
-          attributesControl,
           ruleControlButton,
         ];
       case 'stamp':
@@ -283,7 +270,6 @@ const ContextMenu = ({
           strokeControlButton,
           fillControlButton,
           deleteNodeButton,
-          attributesControl,
           ruleControlButton,
         ];
       default:

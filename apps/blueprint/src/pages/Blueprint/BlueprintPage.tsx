@@ -12,8 +12,7 @@ import Blueprint from 'components/Blueprint';
 import FileSidebar from 'components/FileSidebar';
 import TimeSeriesSidebar from 'components/TimeSeriesSearchSidebar';
 import TimeSeriesTagSidebar from 'components/TimeSeriesTagSidebar';
-import { BlueprintDefinition, TimeSeriesTag, NonPDFFile } from 'typings';
-import { CogniteOrnate } from '@cognite/ornate';
+import { BlueprintDefinition, TimeSeriesTag } from 'typings';
 import { v4 as uuid } from 'uuid';
 import { PRESET_COLORS } from 'consts';
 import { AuthContext } from 'providers/AuthProvider';
@@ -23,6 +22,7 @@ import useFetchBlueprintDefinition from 'hooks/useQuery/useFetchBlueprintDefinit
 import StatusMessage from 'components/StatusMessage';
 import useSaveBlueprintMutation from 'hooks/useMutation/useSaveBlueprintMutation';
 import z from 'utils/z';
+import { CogniteOrnate, getAnnotationsFromCDF, getFileFromCDF } from 'ornate';
 
 import useBlueprint from './useBlueprint';
 import { FullScreenOverlay, PageWrapper, TopLeft, TopRight } from './elements';
@@ -37,7 +37,7 @@ const BlueprintPage: React.FC = () => {
   const [selectedTagId, setSelectedTagId] = useState<string>();
   const history = useHistory();
   const { externalId } = useParams<{ externalId: string }>();
-  const { addImage, addPDF, addFileFromSave } = useBlueprint(ornateViewer);
+  const { addFile } = useBlueprint(ornateViewer);
   const saveBlueprintMutation = useSaveBlueprintMutation();
   const { data: blueprintDefinition, isLoading } =
     useFetchBlueprintDefinition(externalId);
@@ -47,34 +47,18 @@ const BlueprintPage: React.FC = () => {
 
     setBlueprint(blueprintDefinition);
 
-    // NEXT: Move to blueprint component
-    (blueprintDefinition.nonPDFFiles || []).forEach((file) => {
-      client.files
-        .getDownloadUrls([
-          file.fileExternalId
-            ? { externalId: file.fileExternalId }
-            : { id: file.fileId },
-        ])
-        .then((res) => {
-          addImage(
-            res[0].downloadUrl,
-            { ...file },
-            { initialPosition: { x: file.x, y: file.y } }
-          );
-        });
-    });
-    (blueprintDefinition.ornateJSON?.documents || []).forEach(async (doc) => {
-      const loadedDoc = await addFileFromSave(doc);
-      ornateViewer.current?.addDrawings(
-        ...doc.drawings
-          .filter((x) => !!x.type)
-          .map((x) => ({
-            ...x,
-            groupId: loadedDoc?.group.id(),
-          }))
-      );
-    });
-    ornateViewer.current?.addDrawings(...(blueprintDefinition.drawings || []));
+    if (
+      ornateViewer.current &&
+      blueprintDefinition.ornateShapes &&
+      blueprintDefinition.ornateShapes.length > 0
+    ) {
+      ornateViewer.current.load(blueprintDefinition.ornateShapes, {
+        fileUrl: {
+          getURLFunc: getFileFromCDF(client),
+          getAnnotationsFunc: getAnnotationsFromCDF(client),
+        },
+      });
+    }
   }, [blueprintDefinition]);
 
   useEffect(() => {
@@ -86,27 +70,11 @@ const BlueprintPage: React.FC = () => {
   const onSave = useCallback(
     async (nextBlueprint?: BlueprintDefinition) => {
       if (!nextBlueprint && !blueprint) return;
-      const images = ornateViewer.current?.stage.find('.blueprint-image');
       const next: BlueprintDefinition = {
         ...((nextBlueprint || blueprint) as BlueprintDefinition),
         externalId,
-        nonPDFFiles:
-          images?.map(
-            (image) => ({ ...image.attrs, image: undefined } as NonPDFFile)
-          ) || [],
-        ornateJSON: ornateViewer.current?.exportToJSON() || {
-          documents: [],
-          connectedLines: [],
-        },
-        drawings: ornateViewer.current?.baseLayer.children
-          ?.filter((c) => c.attrs.userGenerated)
-          .map((d) => ({
-            id: d.id(),
-            type: d.attrs.type,
-            attrs: d.attrs,
-          })),
+        ornateShapes: ornateViewer.current!.export(),
       };
-
       saveBlueprintMutation.mutate(next);
     },
     [blueprint]
@@ -173,19 +141,7 @@ const BlueprintPage: React.FC = () => {
 
   const onFileClick = async (file: FileInfo) => {
     toggleCDFSidebar(false);
-    const fileURL = await client.files
-      .getDownloadUrls([{ id: file.id }])
-      .then((res) => res[0].downloadUrl);
-    if (file.mimeType?.includes('pdf')) {
-      addPDF(fileURL, { ...file, type: 'CDF' });
-      return;
-    }
-    if (file.mimeType?.includes('image')) {
-      addImage(fileURL, {
-        fileExternalId: file.externalId || '',
-        fileId: file.id,
-      });
-    }
+    addFile(file);
   };
 
   const onDeleteTag = (tagToDelete: TimeSeriesTag) => {

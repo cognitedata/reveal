@@ -9,6 +9,7 @@ export const RuleStylePreview = ({ rule }: { rule: Rule<RuleOutput> }) => {
         marginRight: 16,
         background: rule.output?.fill || 'transparent',
         display: 'inline-block',
+        border: `2px solid ${rule.output?.stroke || 'transparent'}`,
       }}
     />
   );
