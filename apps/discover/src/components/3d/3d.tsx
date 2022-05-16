@@ -12,6 +12,7 @@ import {
 } from '@cognite/node-visualizer';
 
 import { useDeepEffect } from 'hooks/useDeep';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { getSeismicSDKClient } from 'modules/seismicSearch/service';
 import { ThreeDeeTheme } from 'styles/ThreeDeeTheme';
 
@@ -31,6 +32,7 @@ const ThreeDee: React.FC<ThreeDeeProps> = ({
   fileId,
 }) => {
   const [root, setRoot] = useState<BaseRootNode>();
+  const { data } = useUserPreferencesMeasurement();
 
   useDeepEffect(() => {
     Modules.instance.clearModules();
@@ -69,7 +71,9 @@ const ThreeDee: React.FC<ThreeDeeProps> = ({
   return (
     <React.StrictMode>
       <ThemeProvider theme={ThreeDeeTheme}>
-        {root && <NodeVisualizerProvider root={root} toolbar={Toolbar} />}
+        {root && (
+          <NodeVisualizerProvider root={root} toolbar={Toolbar} unit={data} />
+        )}
       </ThemeProvider>
     </React.StrictMode>
   );

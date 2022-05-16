@@ -1,3 +1,4 @@
+import { ThreeDUnits } from '../Primitives/Units';
 import { Range3 } from '../Geometry/Range3';
 import { IToolbar } from '../Interfaces/IToolbar';
 import { Appearance } from '../States/Appearance';
@@ -22,6 +23,8 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode {
   private _fractionRange: Range3;
 
   private _viewInfo = new ViewInfo();
+
+  private _unit: ThreeDUnits = 'ft';
 
   //= =================================================
   // INSTANCE PROPERTIES
@@ -96,6 +99,14 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode {
 
   public get isInvalidated(): boolean {
     return this._isInvalidated;
+  }
+
+  public get unit(): ThreeDUnits {
+    return this._unit;
+  }
+
+  public setUnit(value: ThreeDUnits) {
+    this._unit = value;
   }
 
   //= =================================================

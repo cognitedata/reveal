@@ -11,6 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
+import { ThreeDUnits } from '../Primitives/Units';
 import { Ma } from '../Primitives/Ma';
 import { Random } from '../Primitives/Random';
 
@@ -346,14 +347,14 @@ export class Vector3 {
     }
   }
 
-  public static getAxisName(dimension: number): string {
+  public static getAxisName(dimension: number, unit?: ThreeDUnits): string {
     switch (dimension) {
       case 0:
         return 'X';
       case 1:
         return 'Y';
       case 2:
-        return 'Z';
+        return unit ? `Z (${unit})` : 'Z';
       default:
         return 'Undefined';
     }

@@ -1,3 +1,5 @@
+export type ThreeDUnits = 'ft' | 'm';
+
 export class Units {
   public static readonly Feet = 0.3048;
 
@@ -27,5 +29,16 @@ export class Units {
 
   public static convertFeetToMeter(value: number): number {
     return value * Units.Feet;
+  }
+
+  public static convertFeetToUnit(
+    unit: string | undefined,
+    value: number
+  ): string {
+    if (unit && this.isMeter(unit)) {
+      return this.covertFeetToMeterAndRounded(value);
+    }
+
+    return `${value}`;
   }
 }

@@ -10,10 +10,15 @@ import { getStore } from '../State/store';
 
 export const NodeVisualizerProvider: React.FC<
   { root: BaseRootNode } & Exclude<NodeVisualizerProps, 'root'>
-> = ({ root, toolbar, explorer, children }) => {
+> = ({ root, toolbar, explorer, unit, children }) => {
   return (
     <Provider store={getStore()}>
-      <NodeVisualizer root={root} toolbar={toolbar} explorer={explorer} />
+      <NodeVisualizer
+        root={root}
+        toolbar={toolbar}
+        explorer={explorer}
+        unit={unit}
+      />
       {children}
     </Provider>
   );

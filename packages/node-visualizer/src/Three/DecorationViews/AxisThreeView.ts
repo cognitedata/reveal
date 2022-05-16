@@ -27,6 +27,7 @@ import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
 import { BaseGroupThreeView } from '../BaseViews/BaseGroupThreeView';
 import { SpriteCreator } from '../Utilities/SpriteCreator';
 import { ThreeConverter } from '../Utilities/ThreeConverter';
+import { ThreeDUnits, Units } from '../../Core/Primitives/Units';
 
 const wallIndex0Name = 'wallIndex0';
 const wallIndex1Name = 'wallIndex1';
@@ -152,6 +153,8 @@ export class AxisThreeView extends BaseGroupThreeView {
   protected /* override */ createObject3DCore(): THREE.Object3D | null {
     const target = this.renderTarget;
     const boundingBox = this.boundingBoxFromViews;
+    const { unit } = target;
+
     if (!boundingBox) return null;
 
     if (boundingBox.isEmpty) return null;
@@ -208,10 +211,10 @@ export class AxisThreeView extends BaseGroupThreeView {
 
     // Add Z axis
     if (boundingBox.z.hasSpan) {
-      this.addAxis(group, style, useWall, inc, tickLength, 0, 4, 2, 0, 1);
-      this.addAxis(group, style, useWall, inc, tickLength, 1, 5, 2, 1, 3);
-      this.addAxis(group, style, useWall, inc, tickLength, 2, 6, 2, 3, 4);
-      this.addAxis(group, style, useWall, inc, tickLength, 3, 7, 2, 0, 4);
+      this.addAxis(group, style, useWall, inc, tickLength, 0, 4, 2, 0, 1, unit);
+      this.addAxis(group, style, useWall, inc, tickLength, 1, 5, 2, 1, 3, unit);
+      this.addAxis(group, style, useWall, inc, tickLength, 2, 6, 2, 3, 4, unit);
+      this.addAxis(group, style, useWall, inc, tickLength, 3, 7, 2, 0, 4, unit);
     }
 
     // Add Grid
@@ -240,7 +243,8 @@ export class AxisThreeView extends BaseGroupThreeView {
     i1: number,
     dimension: number,
     wallIndex0: number,
-    wallIndex1: number
+    wallIndex1: number,
+    unit?: ThreeDUnits
   ): void {
     if (!usedWall[wallIndex0] && !usedWall[wallIndex1]) return;
 
@@ -328,7 +332,7 @@ export class AxisThreeView extends BaseGroupThreeView {
 
             // Add label
             const label = SpriteCreator.createByPositionAndDirection(
-              `${tick}`,
+              Units.convertFeetToUnit(unit, tick), // Label value for axis
               end,
               tickDirection,
               tickFontSize,
@@ -379,7 +383,7 @@ export class AxisThreeView extends BaseGroupThreeView {
 
         // Align the text
         const label = SpriteCreator.createByPositionAndDirection(
-          Vector3.getAxisName(dimension),
+          Vector3.getAxisName(dimension, unit),
           position,
           tickDirection,
           labelFontSize,

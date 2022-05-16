@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { Modules } from '../../Core/Module/Modules';
 import { BaseRootNode } from '../../Core/Nodes/BaseRootNode';
 import { Appearance } from '../../Core/States/Appearance';
+import { ThreeDUnits } from '../../Core/Primitives/Units';
 import { VirtualUserInterface } from '../../Core/States/VirtualUserInterface';
 import { NotificationsToActionsAdaptor } from '../Adapters/NotificationToAction';
 import { UserInterfaceListener } from '../Adapters/UserInterfaceListener';
@@ -41,6 +42,7 @@ export interface NodeVisualizerProps {
    * toolbar render prop - uses for customisation of visualizer toolbar
    */
   toolbar?: React.ComponentType<VisualizerToolbarProps>;
+  unit: ThreeDUnits;
 }
 
 /**
@@ -50,7 +52,7 @@ export interface NodeVisualizerProps {
 export const NodeVisualizer: React.FC<NodeVisualizerProps> = (props) => {
   const dispatch = useDispatch();
   const common = useSelector((state: State) => state.common); // -TODO: Remove state reference
-  const { root, explorer, toolbar } = props;
+  const { root, explorer, toolbar, unit } = props;
 
   if (root) {
     BaseRootNode.active = root;
@@ -79,6 +81,7 @@ export const NodeVisualizer: React.FC<NodeVisualizerProps> = (props) => {
 
         targetNode.addTools(toolbarTools);
         targetNode.setName(viewer.getName());
+        targetNode.setUnit(unit);
         viewer.setTarget(targetNode);
         viewer.setToolbarCommands(toolbarTools);
         root.targets.addChild(targetNode);
@@ -98,7 +101,7 @@ export const NodeVisualizer: React.FC<NodeVisualizerProps> = (props) => {
       dispatch(initializeToolbarStatus());
       dispatch(generateNodeTree());
     },
-    [root]
+    [root, unit]
   );
 
   const renderExplorer = useMemo(
