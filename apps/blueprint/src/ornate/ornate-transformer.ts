@@ -108,15 +108,18 @@ export class OrnateTransformer extends Konva.Transformer {
     if (this.clipboard.length === 0 || !this.ornateInstance) {
       return;
     }
+    const minX = Math.min(...this.clipboard.map((c) => c.x()));
+    const minY = Math.min(...this.clipboard.map((c) => c.y()));
     const nodesFromClipboard = this.clipboard
       .map((node: Node<NodeConfig>) => {
         if (!this.ornateInstance) return null;
 
-        const { x, y } = node.getRelativePointerPosition();
+        const { x, y } = this.ornateInstance.stage.getRelativePointerPosition();
+
         return node.clone({
           id: uuid(),
-          x,
-          y,
+          x: x + node.x() - minX,
+          y: y + node.y() - minY,
         });
       })
       .filter(Boolean) as (Konva.Shape | Konva.Group)[];

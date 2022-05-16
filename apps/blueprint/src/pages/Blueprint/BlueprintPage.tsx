@@ -22,7 +22,13 @@ import useFetchBlueprintDefinition from 'hooks/useQuery/useFetchBlueprintDefinit
 import StatusMessage from 'components/StatusMessage';
 import useSaveBlueprintMutation from 'hooks/useMutation/useSaveBlueprintMutation';
 import z from 'utils/z';
-import { CogniteOrnate, getAnnotationsFromCDF, getFileFromCDF } from 'ornate';
+import {
+  CogniteOrnate,
+  getAnnotationsFromCDF,
+  getFileFromCDF,
+  OrnateExport,
+} from 'ornate';
+import { NavigationPanel } from 'components/NavigationPanel/NavigationPanel';
 
 import useBlueprint from './useBlueprint';
 import { FullScreenOverlay, PageWrapper, TopLeft, TopRight } from './elements';
@@ -32,9 +38,11 @@ const BlueprintPage: React.FC = () => {
   const ornateViewer = useRef<CogniteOrnate>();
   const [blueprint, setBlueprint] = useState<BlueprintDefinition>();
   const [isMinimized, toggleMinimized] = useState(false);
+  const [isNavigationActive, setIsNavigationActive] = useState(false);
   const [isCDFSidebarOpen, toggleCDFSidebar] = useState(false);
   const [isTimeSeriesSidebarOpen, toggleTimseriesSidebar] = useState(false);
   const [selectedTagId, setSelectedTagId] = useState<string>();
+  const [shapes, setShapes] = useState<OrnateExport>();
   const history = useHistory();
   const { externalId } = useParams<{ externalId: string }>();
   const { addFile } = useBlueprint(ornateViewer);
@@ -162,7 +170,11 @@ const BlueprintPage: React.FC = () => {
   );
 
   return (
-    <PageWrapper>
+    <PageWrapper
+      onKeyDown={(e) => {
+        e.stopPropagation();
+      }}
+    >
       <TopBar
         title={blueprint?.name}
         subtitle={`by ${blueprint?.createdBy.email}`}
@@ -191,7 +203,17 @@ const BlueprintPage: React.FC = () => {
       )}
       {/* Navigation */}
       <TopLeft>
-        <Button icon="Tree">Navigation</Button>
+        <Button
+          icon="Tree"
+          onClick={() => setIsNavigationActive((prev) => !prev)}
+        >
+          Navigation
+        </Button>
+        <NavigationPanel
+          isInfobarActive={isNavigationActive}
+          ornateViewer={ornateViewer}
+          shapes={shapes || []}
+        />
       </TopLeft>
 
       {/* Edit & Add */}
@@ -273,6 +295,12 @@ const BlueprintPage: React.FC = () => {
         blueprint={blueprint}
         onReady={(viewer) => {
           ornateViewer.current = viewer.current;
+          ornateViewer.current?.stage.on(
+            ornateViewer.current.SAVE_EVENT,
+            () => {
+              setShapes(ornateViewer.current?.export());
+            }
+          );
         }}
         onUpdate={setBlueprint}
         onSelectTag={setSelectedTagId}
