@@ -15,10 +15,7 @@ import {
   useWellInspectSelectedWellboreIds,
   useWellInspectSelectedWells,
 } from 'modules/wellInspect/hooks/useWellInspect';
-import {
-  useWellInspectWellboreAssetIdMap,
-  useWellInspectWellboreExternalIdMap,
-} from 'modules/wellInspect/hooks/useWellInspectIdMap';
+import { useWellInspectWellboreExternalIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 
 import {
   getTrajectoriesByWellboreIds,
@@ -28,7 +25,6 @@ import { TrajectoryData, TrajectoryRows } from '../types';
 import { trimCachedData } from '../utils/common';
 import { mapWellInfo } from '../utils/trajectory';
 
-import { useEnabledWellSdkV3 } from './useEnabledWellSdkV3';
 import { useWellConfig } from './useWellConfig';
 
 export const useTrajectoriesMetadataQuery = () => {
@@ -59,15 +55,12 @@ export const useTrajectoriesQuery = (enabled = true) => {
     LOG_WELLS_TRAJECTORY_NAMESPACE
   );
 
-  const enabledWellSDKV3 = useEnabledWellSdkV3();
   const wellboreIds = useWellInspectSelectedWellboreIds();
   const wells = useWellInspectSelectedWells();
-  const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
   const wellboresSourceExternalIdMap = useWellInspectWellboreExternalIdMap();
   const [fetchingNewData, setFetchingNewData] = useState<boolean>(false);
 
   const { data: config } = useWellConfig();
-  const query = (config?.trajectory?.queries || [])[0];
   const columns = config?.trajectory?.columns;
   const isTrajectoriesDisabled = config?.trajectory?.enabled === false; // checking false because we want to fetch for undefined
 
@@ -80,12 +73,9 @@ export const useTrajectoriesQuery = (enabled = true) => {
     () =>
       getTrajectoriesByWellboreIds(
         wellboreIds,
-        wellboreAssetIdMap,
         wellboresSourceExternalIdMap,
-        query,
         columns,
-        metricLogger,
-        enabledWellSDKV3
+        metricLogger
       ),
     { enabled: !isTrajectoriesDisabled && enabled }
   );
@@ -124,12 +114,9 @@ export const useTrajectoriesQuery = (enabled = true) => {
       setFetchingNewData(true);
       getTrajectoriesByWellboreIds(
         newIds,
-        wellboreAssetIdMap,
         wellboresSourceExternalIdMap,
-        query,
         columns,
-        newDataMetricLogger,
-        enabledWellSDKV3
+        newDataMetricLogger
       ).then((response) => {
         queryClient.setQueryData(WELL_QUERY_KEY.TRAJECTORIES, {
           ...response,
@@ -140,12 +127,5 @@ export const useTrajectoriesQuery = (enabled = true) => {
     }
 
     return { isLoading: true, trajectories, trajectoryRows };
-  }, [
-    wellboreIds,
-    isLoading,
-    data,
-    wellboreAssetIdMap,
-    enabledWellSDKV3,
-    enabled,
-  ]);
+  }, [wellboreIds, isLoading, data, enabled]);
 };

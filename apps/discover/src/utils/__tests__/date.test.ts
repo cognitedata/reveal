@@ -10,7 +10,6 @@ import {
   getYear,
   getYearFromNumber,
   isValidDate,
-  longDate,
   now,
   shortDate,
   shortDateTime,
@@ -114,14 +113,6 @@ describe('date helpers', () => {
       expect(shortDate(date)).toEqual('12-Feb-2000');
       expect(shortDate(date.toISOString())).toEqual('12-Feb-2000');
       expect(shortDate(date.getTime())).toEqual('12-Feb-2000');
-    });
-
-    test('should return long date', () => {
-      const date = new Date(2000, 1, 12);
-
-      expect(longDate(date)).toEqual('12 February, 2000');
-      expect(longDate(date.toISOString())).toEqual('12 February, 2000');
-      expect(longDate(date.getTime())).toEqual('12 February, 2000');
     });
 
     test('should return date for short date string', () => {

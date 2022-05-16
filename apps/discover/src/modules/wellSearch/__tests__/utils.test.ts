@@ -2,8 +2,6 @@ import get from 'lodash/get';
 import round from 'lodash/round';
 import { convertPressure } from 'utils/units';
 
-import { Sequence } from '@cognite/sdk';
-
 import {
   CENTIMETER,
   FEET,
@@ -15,9 +13,7 @@ import {
   UserPreferredUnit,
 } from 'constants/units';
 
-import { TrajectoryColumnR } from '../types';
 import { convertObject, toBooleanMap, getRangeLimitInUnit } from '../utils';
-import { getExistColumns } from '../utils/trajectory';
 
 const cmToftFactor = 30.48;
 const mmtoCmFactor = 10;
@@ -145,38 +141,6 @@ describe('Pressure Converter', () => {
   it('should convert sg to ppg', () => {
     const value = convertPressure(sgValue, SG, undefined, undefined, PPG);
     expect(round(value)).toEqual(ppgValue);
-  });
-});
-
-describe('Trajectory Utils', () => {
-  it('should return columns only if exist in sequence', () => {
-    const sequence = {
-      id: 396678522851928,
-      columns: [
-        { name: 'md', externalId: 'md' },
-        { name: 'inclination', externalId: 'inclination' },
-        { name: 'azimuth', externalId: 'azimuth' },
-        { name: 'tvd', externalId: 'tvd' },
-        { name: 'dogleg_severity', externalId: 'dogleg_severity' },
-      ],
-    } as Sequence;
-    const columns = [
-      { name: 'md' },
-      { name: 'azimuth' },
-      { name: 'inclination' },
-      { name: 'tvd' },
-      { name: 'x_offset' },
-      { name: 'y_offset' },
-      {
-        name: 'equivalent_departure',
-      },
-    ] as TrajectoryColumnR[];
-    expect(getExistColumns(sequence, columns)).toEqual([
-      { name: 'md' },
-      { name: 'azimuth' },
-      { name: 'inclination' },
-      { name: 'tvd' },
-    ]);
   });
 });
 

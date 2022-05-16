@@ -59,14 +59,6 @@ export const shortDate = (
   currentFormat?: MomentFormatSpecification
 ): string => formatDate(date || now(), SHORT_DATE_FORMAT, currentFormat);
 
-/**
- * @deprecated The method should not be used, use getDateOrDefaultText instead
- */
-export const longDate = (
-  date?: MomentInput,
-  currentFormat?: MomentFormatSpecification
-): string => formatDate(date || now(), LONG_DATE_FORMAT, currentFormat);
-
 export const getYearFromNumber = (date: string | number) => moment(date).year();
 
 export const shortDateTime = (

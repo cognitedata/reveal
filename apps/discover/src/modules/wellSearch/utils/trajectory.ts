@@ -14,7 +14,7 @@ import { TrajectoryData as TrajectoryDataV3 } from '@cognite/sdk-wells-v3';
 import { FEET, UserPreferredUnit } from 'constants/units';
 
 import { TRAJECTORY_COLUMN_NAME_MAP } from '../service/sequence/constants';
-import { SequenceRow, TrajectoryRow, TrajectoryRows, Well } from '../types';
+import { TrajectoryRow, TrajectoryRows, Well } from '../types';
 
 export const getExistColumns = (
   sequence: Sequence,
@@ -22,30 +22,6 @@ export const getExistColumns = (
 ) => {
   const trajColNames = sequence.columns.map((col) => col.name);
   return columns.filter((col) => trajColNames.includes(col.name));
-};
-
-export function mapDataToTrajectoryRowType(
-  trajectory: Sequence,
-  trajRowDataList: SequenceRow[],
-  trajColmns: ProjectConfigWellsTrajectoryColumns[] = []
-): TrajectoryRows {
-  return {
-    id: trajectory.id,
-    wellboreId: trajectory.assetId as number,
-    externalId: trajectory.externalId || '',
-    columns: trajColmns,
-    rows: getValues(trajColmns.length, trajRowDataList) || [],
-  };
-}
-
-// extract values array from SequenceRow object array.
-const getValues = (rowSize: number, rows: SequenceRow[]): TrajectoryRow[] => {
-  return rows.map((row) => {
-    return {
-      values: [...Array(rowSize)].map((_, i) => Number(get(row, i) || 0)),
-      rowNumber: row.rowNumber,
-    };
-  });
 };
 
 export const mapWellInfo = (

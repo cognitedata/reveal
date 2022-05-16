@@ -1,9 +1,7 @@
 import chunk from 'lodash/chunk';
-import find from 'lodash/find';
 import flatten from 'lodash/flatten';
 import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
-import invert from 'lodash/invert';
 import max from 'lodash/max';
 import noop from 'lodash/noop';
 import uniqueId from 'lodash/uniqueId';
@@ -11,7 +9,7 @@ import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
 import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
 import { ProjectConfigWellsTrajectoryColumns } from '@cognite/discover-api-types';
-import { Sequence, SequenceColumn, SequenceFilter } from '@cognite/sdk';
+import { Sequence, SequenceColumn } from '@cognite/sdk';
 import {
   Trajectory,
   TrajectoryData as TrajectoryDataV3,
@@ -26,15 +24,10 @@ import {
   TrajectoryData,
   TrajectoryRow,
   TrajectoryRows,
-  WellboreAssetIdMap,
   WellboreId,
   WellboreSourceExternalIdMap,
 } from 'modules/wellSearch/types';
-import {
-  getExistColumns,
-  mapDataToTrajectoryRowType,
-  mapMetadataUnit,
-} from 'modules/wellSearch/utils/trajectory';
+import { mapMetadataUnit } from 'modules/wellSearch/utils/trajectory';
 
 import { TRAJECTORY_COLUMNS, TRAJECTORY_COLUMN_NAME_MAP } from './constants';
 
@@ -42,28 +35,18 @@ const CHUNK_LIMIT = 100;
 
 export async function getTrajectoriesByWellboreIds(
   wellboreIds: WellboreId[],
-  wellboreAssetIdMap: WellboreAssetIdMap,
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap,
-  sequenceFilter: SequenceFilter = {},
   columns: ProjectConfigWellsTrajectoryColumns[] = [],
-  metricLogger: MetricLogger = [noop, noop],
-  enableWellSDKV3?: boolean
+  metricLogger: MetricLogger = [noop, noop]
 ) {
   const [startNetworkTimer, stopNetworkTimer] = metricLogger;
   startNetworkTimer();
 
-  const trajectoryData = enableWellSDKV3
-    ? await fetchTrajectoriesUsingWellsSDK(
-        wellboreIds,
-        wellboreSourceExternalIdMap,
-        columns
-      )
-    : await fetchTrajectoriesUsingCogniteSDK(
-        wellboreIds,
-        wellboreAssetIdMap,
-        sequenceFilter,
-        columns
-      );
+  const trajectoryData = await fetchTrajectoriesUsingWellsSDK(
+    wellboreIds,
+    wellboreSourceExternalIdMap,
+    columns
+  );
 
   stopNetworkTimer({
     noOfWellbores: wellboreIds.length,
@@ -182,84 +165,6 @@ export const convertToTrajectoryRow = (
     return value;
   });
   return { rowNumber, values };
-};
-
-export const fetchTrajectoriesUsingCogniteSDK = async (
-  wellboreIds: WellboreId[],
-  wellboreAssetIdMap: WellboreAssetIdMap,
-  sequenceFilter: SequenceFilter = {},
-  columns: ProjectConfigWellsTrajectoryColumns[] = []
-) => {
-  const wellboreAssetIdReverseMap = invert(wellboreAssetIdMap);
-  const idChunkList = chunk(wellboreIds, CHUNK_LIMIT);
-  const sequences = Promise.all(
-    idChunkList.map((idChunk) =>
-      getCogniteSDKClient()
-        .sequences.list({
-          filter: {
-            assetIds: idChunk.map((id) => wellboreAssetIdMap[id]),
-            ...sequenceFilter.filter,
-          },
-        })
-        .then((list) => {
-          return Promise.all(
-            list.items.map((sequence) => {
-              const existColumns = getExistColumns(sequence, columns);
-              return getTrajectoryDataById(
-                sequence.id,
-                existColumns.reduce((columns: string[], column) => {
-                  if (column.name) {
-                    return [...columns, column.name];
-                  }
-
-                  return columns;
-                }, [])
-              ).then((rowData) => {
-                const convertedRowData = mapDataToTrajectoryRowType(
-                  sequence,
-                  rowData,
-                  existColumns
-                );
-                return {
-                  sequence: {
-                    ...{
-                      ...sequence,
-                      metadata: {
-                        ...sequence.metadata,
-                        bh_md_unit: get(
-                          find(sequence.columns, { externalId: 'md' })
-                            ?.metadata,
-                          'unit',
-                          'ft'
-                        ),
-                        bh_tvd_unit: get(
-                          find(sequence.columns, { externalId: 'tvd' })
-                            ?.metadata,
-                          'unit',
-                          'ft'
-                        ),
-                      },
-                    },
-                    assetId: Number(
-                      wellboreAssetIdReverseMap[Number(sequence.assetId)]
-                    ),
-                  },
-                  rowData: {
-                    ...convertedRowData,
-                    wellboreId:
-                      wellboreAssetIdReverseMap[convertedRowData.wellboreId],
-                  },
-                };
-              });
-            })
-          );
-        })
-    )
-  );
-
-  const trajectoryData = ([] as TrajectoryData[]).concat(...(await sequences));
-
-  return getGroupedTrajectoryData(trajectoryData, wellboreIds);
 };
 
 export const getGroupedTrajectoryData = (
