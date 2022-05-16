@@ -282,14 +282,14 @@ export const selectReviewAnnotationsForFile = createSelector(
   ) => {
     return fileAnnotations
       .map((ann) => ({
-        ...ann,
+        annotation: ann,
         show: !hiddenAnnotationIds.includes(ann.id),
         selected: selectedAnnotationIds.includes(ann.id),
       }))
-      .map((ann) => {
-        if (isImageKeypointCollectionData(ann)) {
-          const keypoints = ann.keypoints.map((keypoint) => {
-            const id = `${ann.id}-${keypoint.label}`;
+      .map((reviewAnn) => {
+        if (isImageKeypointCollectionData(reviewAnn.annotation)) {
+          const keypoints = reviewAnn.annotation.keypoints.map((keypoint) => {
+            const id = `${reviewAnn.annotation.id}-${keypoint.label}`;
             return {
               ...keypoint,
               id,
@@ -297,11 +297,14 @@ export const selectReviewAnnotationsForFile = createSelector(
             };
           });
           return {
-            ...ann,
-            keypoints,
+            ...reviewAnn,
+            annotation: {
+              ...reviewAnn.annotation,
+              keypoints,
+            },
           };
         }
-        return ann;
+        return reviewAnn;
       });
   }
 );
@@ -312,8 +315,8 @@ export const selectNonRejectedReviewAnnotationsForFile = createSelector(
     return allVisibleAnnotations.filter(
       (ann) =>
         ann.show &&
-        !!isImageClassificationData(ann) &&
-        ann.status !== AnnotationStatus.Rejected
+        !!isImageClassificationData(ann.annotation) &&
+        ann.annotation.status !== AnnotationStatus.Rejected
     );
   }
 );
