@@ -48,6 +48,7 @@ import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId
 import getLinksByAnnotationId from './getLinksByAnnotationId';
 import IsoModal from './IsoModal';
 import ReactOrnate, { SLIDE_COLUMN_GAP, SLIDE_ROW_GAP } from './ReactOrnate';
+import RemoveDocumentModal from './RemoveDocumentModal';
 import { DiscrepancyInteractionHandler } from './types';
 import useDocumentJumper from './useDocumentJumper';
 import useForceUpdate from './useForceUpdate';
@@ -304,7 +305,14 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
 }) => {
   const forceUpdate = useForceUpdate();
   const { client } = useAuthContext();
+  const [documentPendingRemoval, setDocumentPendingRemoval] = useState<
+    string | undefined
+  >(undefined);
   const [isIsoModalOpen, setIsIsoModalOpen] = useState(false);
+  const [annotationClickTracker, setAnnotationClickTracker] = useState<{
+    clicks: number;
+    annotationId: string;
+  }>({ clicks: 0, annotationId: '' });
   const [isoOrnateRef, setIsoOrnateRef] = useState<CogniteOrnate | undefined>(
     undefined
   );
@@ -534,7 +542,18 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       return;
     }
 
-    const link = links[0];
+    const hasAnnotationBeenClickedPreviously =
+      annotationClickTracker.annotationId === annotationId;
+    const clicks = hasAnnotationBeenClickedPreviously
+      ? annotationClickTracker.clicks + 1
+      : 1;
+
+    setAnnotationClickTracker(() => ({
+      clicks,
+      annotationId,
+    }));
+
+    const link = links[clicks % links.length];
     const isLinkedAnnotationInIso =
       getDocumentByExternalId(parsedDocuments, link.to.documentId).type ===
       DiagramType.ISO;
@@ -620,7 +639,7 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
 
   const onOpenIsoButtonPress = () => setIsIsoModalOpen(true);
 
-  const onRemovePress = (pdfExternalId: string) => {
+  const onRemoveDocument = (pdfExternalId: string) => {
     setDocuments((prevDocuments) =>
       prevDocuments.filter(
         (document) => document.pdfExternalId !== pdfExternalId
@@ -635,6 +654,10 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
         lineReview.unit
       );
     }
+  };
+
+  const onRemovePress = (pdfExternalId: string) => {
+    setDocumentPendingRemoval(pdfExternalId);
   };
 
   const foundDiscrepancyIndex = discrepancies.findIndex(
@@ -676,6 +699,17 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
             onClosePress={onDiscrepancyModalClosePress}
           />
         )}
+
+      {documentPendingRemoval !== undefined && (
+        <RemoveDocumentModal
+          documentName={documentPendingRemoval}
+          onOkPress={() => {
+            onRemoveDocument(documentPendingRemoval);
+            setDocumentPendingRemoval(undefined);
+          }}
+          onCancelPress={() => setDocumentPendingRemoval(undefined)}
+        />
+      )}
 
       <IsoModal
         onDiscrepancyInteraction={onDiscrepancyInteraction}
@@ -723,7 +757,9 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
                 marginLeft: 20,
               }}
             >
-              <Button onClick={onOpenSidePanelButtonPress} icon="PanelLeft" />
+              <Button onClick={onOpenSidePanelButtonPress}>
+                Discrepancy list
+              </Button>
             </div>
           )}
         </div>

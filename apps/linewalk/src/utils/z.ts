@@ -2,6 +2,7 @@ import { createLayers } from '@cognite/z-index';
 
 const LAYERS = [
   'MAXIMUM',
+  'REMOVE_DOCUMENT_MODAL',
   'OVERLAY',
   'ISO_MODAL',
   'DISCREPANCY_MODAL',

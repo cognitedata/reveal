@@ -28,7 +28,7 @@ const WorkSpaceTools = ({
       <Button
         type="ghost"
         size="small"
-        title="Move M"
+        title="Select"
         onClick={() => onToolChange(WorkspaceTool.DEFAULT)}
         disabled={tool === WorkspaceTool.DEFAULT}
       >
@@ -39,7 +39,7 @@ const WorkSpaceTools = ({
       <Button
         type="ghost"
         size="small"
-        title="Rectangle R"
+        title="Mark discrepancy area"
         onClick={() => onToolChange(WorkspaceTool.RECTANGLE)}
         disabled={tool === WorkspaceTool.RECTANGLE}
       >
@@ -50,7 +50,7 @@ const WorkSpaceTools = ({
       <Button
         type="ghost"
         size="small"
-        title="Text T"
+        title="Text"
         onClick={() => onToolChange(WorkspaceTool.TEXT)}
         disabled={tool === WorkspaceTool.TEXT}
       >
@@ -61,7 +61,7 @@ const WorkSpaceTools = ({
       <Button
         type="ghost"
         size="small"
-        title="Move M"
+        title="Move"
         onClick={() => onToolChange(WorkspaceTool.MOVE)}
         disabled={tool === 'move'}
       >

@@ -2,7 +2,6 @@ import { Button } from '@cognite/cogs.js';
 import { CogniteOrnate, Drawing } from '@cognite/ornate';
 import { KonvaEventObject } from 'konva/lib/Node';
 import keyBy from 'lodash/keyBy';
-import sortBy from 'lodash/sortBy';
 import React, { useEffect, useMemo, useState } from 'react';
 import layers from 'utils/z';
 import styled from 'styled-components';
@@ -10,8 +9,6 @@ import { DiagramType } from '@cognite/pid-tools';
 
 import WorkSpaceTools from '../WorkSpaceTools/WorkSpaceTools';
 import {
-  Annotation,
-  Link,
   ParsedDocument,
   WorkspaceDocument,
 } from '../../modules/lineReviews/types';
@@ -43,23 +40,6 @@ const INITIAL_WIDTH = 643;
 const INITIAL_HEIGHT = 526;
 const MODAL_PADDING_TOP = 20;
 const RESIZABLE_CORNER_SIZE = 15;
-
-const findCenterLink = (links: Link[], annotations: Annotation[]): Link => {
-  if (links.length === 1) {
-    return links[0];
-  }
-
-  const annotationsById = keyBy(annotations, (annotation) => annotation.id);
-  const linksAnnotations = sortBy(
-    links.map<[Link, Annotation]>((link) => [
-      link,
-      annotationsById[link.to.annotationId],
-    ]),
-    ([, annotation]) => annotation.boundingBox.y
-  );
-
-  return links[Math.floor(linksAnnotations.length / 2)];
-};
 
 const TitleContainer = styled.div`
   display: flex;
@@ -191,6 +171,10 @@ const IsoModal: React.FC<IsoModalProps> = ({
   onToolChange,
   ornateRef,
 }) => {
+  const [annotationClickTracker, setAnnotationClickTracker] = useState<{
+    clicks: number;
+    annotationId: string;
+  }>({ clicks: 0, annotationId: '' });
   const [isoOrnateRef, setIsoOrnateRef] = useState<CogniteOrnate | undefined>(
     undefined
   );
@@ -272,10 +256,19 @@ const IsoModal: React.FC<IsoModalProps> = ({
       return;
     }
 
-    const link = findCenterLink(
-      links,
-      parsedDocuments.flatMap((document) => document.annotations)
-    );
+    const hasAnnotationBeenClickedPreviously =
+      annotationClickTracker.annotationId === annotationId;
+    const clicks = hasAnnotationBeenClickedPreviously
+      ? annotationClickTracker.clicks + 1
+      : 1;
+
+    setAnnotationClickTracker(() => ({
+      clicks,
+      annotationId,
+    }));
+
+    const link = links[clicks % links.length];
+
     const isLinkedAnnotationInIso =
       getDocumentByExternalId(parsedDocuments, link.to.documentId).type ===
       DiagramType.ISO;

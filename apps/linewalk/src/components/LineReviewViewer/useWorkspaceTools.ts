@@ -72,16 +72,18 @@ const useWorkspaceTools = (
             options.onDiscrepancyCreate
           );
         }
-
-        return () => {
-          if (options.onDiscrepancyCreate) {
-            toolsRefs.current[index]?.rect.removeEventListener(
-              EventType.ON_CREATE_END,
-              options.onDiscrepancyCreate
-            );
-          }
-        };
       });
+
+    return () => {
+      ornateRefs.forEach((ornateRef, index) => {
+        if (options.onDiscrepancyCreate) {
+          toolsRefs.current[index]?.rect.removeEventListener(
+            EventType.ON_CREATE_END,
+            options.onDiscrepancyCreate
+          );
+        }
+      });
+    };
   }, [options.onDiscrepancyCreate]);
 
   useEffect(() => {
