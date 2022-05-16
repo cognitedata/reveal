@@ -5,23 +5,14 @@ import { LOG_CASING, LOG_WELLS_CASING_NAMESPACE } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
 import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/hooks/useWellInspect';
-import {
-  useWellInspectWellboreAssetIdMap,
-  useWellInspectWellboreExternalIdMap,
-} from 'modules/wellInspect/hooks/useWellInspectIdMap';
+import { useWellInspectWellboreExternalIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 
 import { getCasingByWellboreIds } from '../service';
 import { WellboreSequencesMap } from '../types';
 import { trimCachedData } from '../utils/common';
 
-import { useEnabledWellSdkV3 } from './useEnabledWellSdkV3';
-import { useWellConfig } from './useWellConfig';
-
 export const useSelectedWellboresCasingsQuery = () => {
-  const enabledWellSDKV3 = useEnabledWellSdkV3();
   const wellboreIds = useWellInspectSelectedWellboreIds();
-  const { data: config } = useWellConfig();
-  const wellboreAssetIdMap = useWellInspectWellboreAssetIdMap();
   const wellboresSourceExternalIdMap = useWellInspectWellboreExternalIdMap();
   const cache = useQueryClient();
   const [fetchingNewData, setFetchingNewData] = useState<boolean>(false);
@@ -40,11 +31,8 @@ export const useSelectedWellboresCasingsQuery = () => {
   const { data, isLoading } = useQuery(WELL_QUERY_KEY.CASINGS, () =>
     getCasingByWellboreIds(
       wellboreIds,
-      wellboreAssetIdMap,
       wellboresSourceExternalIdMap,
-      config?.casing?.queries?.[0],
-      metricLogger,
-      enabledWellSDKV3
+      metricLogger
     )
   );
 
@@ -63,11 +51,8 @@ export const useSelectedWellboresCasingsQuery = () => {
     setFetchingNewData(true);
     getCasingByWellboreIds(
       newIds,
-      wellboreAssetIdMap,
       wellboresSourceExternalIdMap,
-      config?.casing?.queries?.[0],
-      newDataMetricLogger,
-      enabledWellSDKV3
+      newDataMetricLogger
     ).then((response) => {
       cache.setQueryData(WELL_QUERY_KEY.CASINGS, {
         ...response,

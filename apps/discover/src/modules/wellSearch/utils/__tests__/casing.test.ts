@@ -3,9 +3,7 @@ import { Sequence } from '@cognite/sdk';
 import { sequence } from '__test-utils/fixtures/log';
 
 import {
-  convertToPreviewData,
   doesCasingHaveReportDescription,
-  filterValidCasings,
   getDupIdsBySize,
   orderedCasingsByBase,
 } from '../casings';
@@ -56,43 +54,6 @@ describe('normalize casings', () => {
     );
   });
 
-  it(`should return true when name includes liner`, async () => {
-    expect(convertToPreviewData(casingViewProps.casing, [])[0].liner).toEqual(
-      true
-    );
-  });
-
-  it(`should sort casings on basis of outerDiameter`, async () => {
-    casingViewProps.casing[1].name = 'SURFACE CASING';
-    expect(convertToPreviewData(casingViewProps.casing, [])[0].name).toEqual(
-      'SURFACE CASING'
-    );
-    expect(convertToPreviewData(casingViewProps.casing, [])[1].name).toEqual(
-      'DRILLING LINER 2'
-    );
-  });
-
-  it(`should return false when casing name  doesnot include liner`, async () => {
-    casingViewProps.casing[1].name = 'SURFACE CASING';
-    expect(convertToPreviewData(casingViewProps.casing, [])[0].liner).toEqual(
-      false
-    );
-  });
-
-  it(`should include casing in the description when  name not consists Casing`, async () => {
-    casingViewProps.casing[1].name = 'DRILLING LINER 1';
-    expect(
-      convertToPreviewData(casingViewProps.casing, [])[0].casingDescription
-    ).toEqual('18" DRILLING LINER 1 Casing at 11084ft depth');
-  });
-
-  it(`should not include casing in the description when  name not consist Casing`, async () => {
-    casingViewProps.casing[1].name = 'SURFACE CASING';
-    expect(
-      convertToPreviewData(casingViewProps.casing, [])[0].casingDescription
-    ).toEqual('18" SURFACE CASING  at 11084ft depth');
-  });
-
   it(`should return casings ordered by Base`, async () => {
     const mockSequence: Sequence = sequence;
     const casings = [
@@ -110,37 +71,6 @@ describe('normalize casings', () => {
       },
     ];
     expect(orderedCasingsByBase(casings)).toEqual(casings.reverse());
-  });
-
-  it(`should return valid casings`, async () => {
-    const mockSequence: Sequence = sequence;
-    const validCasing = {
-      metadata: {
-        assy_name: 'Test Name',
-        assy_original_md_top: '10',
-        assy_original_md_base: '1000',
-      },
-    };
-    const casings: Sequence[] = [
-      { ...mockSequence, ...{ ...validCasing }, ...{ id: 1 } },
-      { ...mockSequence, ...{ ...validCasing }, ...{ id: 2 } },
-
-      {
-        ...{ id: 3 },
-        ...mockSequence,
-        ...{
-          metadata: {
-            assy_name: 'Test Assy',
-            assy_original_md_top: '1000',
-            assy_original_md_base: '10',
-          },
-        },
-      },
-    ];
-
-    expect(filterValidCasings(casings)).toEqual([
-      { ...mockSequence, ...{ ...validCasing }, ...{ id: 1 } },
-    ]);
   });
 
   it(`should return duplicated casing ids by assy_size`, async () => {

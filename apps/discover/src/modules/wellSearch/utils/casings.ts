@@ -1,6 +1,5 @@
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
-import uniqBy from 'lodash/uniqBy';
 import { toFraction } from 'utils/number/toFraction';
 
 import { Sequence } from '@cognite/sdk';
@@ -15,44 +14,6 @@ import { PreviewCasingType } from '../types';
  * This holds lengthiest casing description
  */
 let maxDescription = '';
-
-/**
- *
- * This returns casings with valid depths
- */
-export const filterValidCasings = (casings: Sequence[]): Sequence[] => {
-  // get unique casings by name
-  const uniqueByAssyName = uniqBy(casings, 'metadata.assy_name');
-  const filteredCasingsByDepth = uniqueByAssyName.filter(
-    (casing) =>
-      casing.metadata &&
-      Number(casing.metadata.assy_original_md_top) >= 0 &&
-      Number(casing.metadata.assy_original_md_base) >= 0 &&
-      Number(casing.metadata.assy_original_md_top) <
-        Number(casing.metadata.assy_original_md_base)
-  );
-
-  // Remove casings not having 'TIANDI' in assy_name from duplicated casings
-  let dupIdsBySize = getDupIdsBySize(filteredCasingsByDepth);
-  const filteredCasingsByAssyName = filteredCasingsByDepth.filter(
-    (casing) =>
-      !dupIdsBySize.includes(casing.id) ||
-      (casing.metadata && casing.metadata.assy_name.includes('TIANDI'))
-  );
-
-  // Remove casings having 'LINER' in assy_report_desc from duplicated casings
-  dupIdsBySize = getDupIdsBySize(filteredCasingsByAssyName);
-  const filteredCasingsByAssyReportDesc = filteredCasingsByAssyName.filter(
-    (casing) =>
-      !(
-        dupIdsBySize.includes(casing.id) &&
-        casing.metadata &&
-        doesCasingHaveReportDescription(casing)
-      )
-  );
-
-  return filteredCasingsByAssyReportDesc;
-};
 
 /**
  *

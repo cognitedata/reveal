@@ -8,10 +8,9 @@ import keyBy from 'lodash/keyBy';
 import noop from 'lodash/noop';
 import uniqueId from 'lodash/uniqueId';
 import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
-import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 import { changeUnitTo } from 'utils/units';
 
-import { Sequence, SequenceColumn, SequenceFilter } from '@cognite/sdk';
+import { Sequence, SequenceColumn } from '@cognite/sdk';
 import {
   CasingAssembly,
   CasingItems,
@@ -26,12 +25,9 @@ import { toIdentifier } from 'modules/wellSearch/sdk/utils';
 import {
   CasingAssemblyWithTVD,
   CasingSchematicWithTVDs,
-  WellboreAssetIdMap,
   WellboreId,
   WellboreSourceExternalIdMap,
 } from 'modules/wellSearch/types';
-import { filterValidCasings } from 'modules/wellSearch/utils/casings';
-import { getWellboreAssetIdReverseMap } from 'modules/wellSearch/utils/common';
 
 import {
   CASINGS_COLUMN_NAME_MAP,
@@ -48,22 +44,16 @@ const CHUNK_LIMIT = 100;
 // refactor to use generic log fetcher.
 export const getCasingByWellboreIds = async (
   wellboreIds: WellboreId[],
-  wellboreAssetIdMap: WellboreAssetIdMap,
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap,
-  filter: SequenceFilter['filter'] = {},
-  metricLogger: MetricLogger = [noop, noop],
-  enableWellSDKV3?: boolean
+  metricLogger: MetricLogger = [noop, noop]
 ) => {
   const [startNetworkTimer, stopNetworkTimer] = metricLogger;
   startNetworkTimer();
 
-  const casingsData = enableWellSDKV3
-    ? await fetchCasingsUsingWellsSDK(wellboreIds, wellboreSourceExternalIdMap)
-    : await fetchCasingsUsingCogniteSDK(
-        wellboreIds,
-        wellboreAssetIdMap,
-        filter
-      );
+  const casingsData = await fetchCasingsUsingWellsSDK(
+    wellboreIds,
+    wellboreSourceExternalIdMap
+  );
 
   stopNetworkTimer({
     noOfWellbores: wellboreIds.length,
@@ -279,48 +269,4 @@ export const getSequenceMetadata = (casingAssembly: CasingAssemblyWithTVD) => {
       : undefined,
     assy_tvd_base_unit: trueVerticalDepthBase?.unit,
   };
-};
-
-export const fetchCasingsUsingCogniteSDK = async (
-  wellboreIds: WellboreId[],
-  wellboreAssetIdMap: WellboreAssetIdMap,
-  filter: SequenceFilter['filter'] = {}
-) => {
-  const wellboreAssetIdReverseMap =
-    getWellboreAssetIdReverseMap(wellboreAssetIdMap);
-  const idChunkList = chunk(wellboreIds, CHUNK_LIMIT);
-
-  const casings = Promise.all(
-    idChunkList.map((wellboreIdChunk) =>
-      getCogniteSDKClient()
-        .sequences.list({
-          filter: {
-            assetIds: wellboreIdChunk.map((id) => wellboreAssetIdMap[id]),
-            ...filter,
-          },
-        })
-        .then((list) =>
-          list.items.map((item) => ({
-            ...item,
-            assetId: wellboreAssetIdReverseMap[item.assetId as number],
-          }))
-        )
-    )
-  );
-
-  const results = ([] as Sequence[]).concat(...(await casings));
-
-  return getGroupedSequenceData(results, wellboreIds);
-};
-
-export const getGroupedSequenceData = (
-  data: Sequence[],
-  wellboreIds: WellboreId[]
-) => {
-  const groupedData: Record<string, Sequence[]> = groupBy(data, 'assetId');
-  wellboreIds.forEach((wellboreId) => {
-    const isValid = filterValidCasings(groupedData[wellboreId] || []);
-    groupedData[wellboreId] = isValid;
-  });
-  return groupedData;
 };
