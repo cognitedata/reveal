@@ -1,16 +1,13 @@
-import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import isUndefined from 'lodash/isUndefined';
 import keyBy from 'lodash/keyBy';
 import { normalizeCoords } from 'services/wellSearch/utils/normalizeCoords';
 
-import { Well as SDKWell } from '@cognite/sdk-wells-v2';
-
 import { TableResults } from 'components/Tablev3';
 
 import { Well, Wellbore, WellId, WellMap } from '../types';
 
-export const normalizeWell = (well: SDKWell): Well => {
+export const normalizeWell = (well: Well): Well => {
   return {
     ...well,
     ...(well.wellhead
@@ -19,16 +16,10 @@ export const normalizeWell = (well: SDKWell): Well => {
     name: well.externalId
       ? `${well.description || well.name} (${well.externalId})`
       : well.name,
-    /**
-     * @sdk-wells-v3
-     * If using the Wells SDK V3, set the wellbores included in the wells list response data.
-     * Otherwise set to `undefined` since `_wellbores` is not included in the well data object.
-     */
-    wellbores: get(well, '_wellbores'),
   };
 };
 
-export const normalizeWells = (wells: SDKWell[]) => {
+export const normalizeWells = (wells: Well[]) => {
   return wells.map(normalizeWell);
 };
 

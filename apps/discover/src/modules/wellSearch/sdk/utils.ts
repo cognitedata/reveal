@@ -5,9 +5,7 @@ import isUndefined from 'lodash/isUndefined';
 import {
   WaterDepthLimits as WaterDepthLimitsV2,
   SpudDateLimits as SpudDateLimitsV2,
-  Well as WellV2,
   WellFilter as WellFilterV2,
-  WellItems as WellItemsV2,
   PolygonFilter as PolygonFilterV2,
   Wellbore as WellboreV2,
   NPTFilter as NPTFilterV2,
@@ -41,6 +39,8 @@ import {
   SummaryCount,
   AngleUnitEnum,
 } from '@cognite/sdk-wells-v3';
+
+import { Well } from 'modules/wellSearch/types';
 
 import { EMPTY_ARRAY } from '../../../constants/empty';
 import { adaptLocalDateToISOString } from '../../../utils/date';
@@ -79,7 +79,7 @@ export const mapSummaryCountsToStringArray = (
   return summaryCounts.map((summaryCount) => summaryCount.property);
 };
 
-export const mapV3ToV2Well = (well: WellV3): WellV2 => {
+export const mapV3ToV2Well = (well: WellV3): Well => {
   const wellbores = well.wellbores?.map(mapV3ToV2Wellbore) || [];
   return {
     ...well,
@@ -87,10 +87,10 @@ export const mapV3ToV2Well = (well: WellV3): WellV2 => {
     spudDate: new Date(well.spudDate || ''),
     wellhead: { id: 0, ...well.wellhead },
     sources: well.sources.map((source) => source.sourceName),
-    wellbores: () => Promise.resolve(wellbores),
-    _wellbores: wellbores, // This is a backup of wellbores without making them into a promise.
+    wellbores,
+    // wellbores: () => Promise.resolve(wellbores),
     sourceAssets: () => Promise.resolve([]),
-  } as WellV2;
+  } as Well;
 };
 
 export const toPropertyFilter = (
@@ -230,7 +230,7 @@ export const mapWellFilterToWellFilterRequest = (
   };
 };
 
-export const mapV3ToV2WellItems = (wellItems: WellItemsV3): WellItemsV2 => {
+export const mapV3ToV2WellItems = (wellItems: WellItemsV3) => {
   return {
     ...wellItems,
     items: wellItems.items.map(mapV3ToV2Well),

@@ -148,10 +148,15 @@ export const dateToEpoch = (
 ) => toEpoch(isString(date) ? toDate(date, currentFormat) : date);
 
 export const isValidDate = (
-  date: Date | string | number,
+  date?: Date | string | number,
   currentFormat?: MomentFormatSpecification
 ): boolean => {
+  if (!date) {
+    return false;
+  }
+
   let checkingDate;
+
   if (
     (isString(date) || isNumber(date)) &&
     moment(date, currentFormat).isValid()

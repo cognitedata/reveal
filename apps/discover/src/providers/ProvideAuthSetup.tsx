@@ -3,15 +3,11 @@ import * as React from 'react';
 import { setClient, setEmail, setReAuth } from 'utils/getCogniteSDKClient';
 
 import { getTenantInfo, AuthContext } from '@cognite/react-container';
-import { Cluster } from '@cognite/sdk-wells-v2';
 
 import { SIDECAR } from 'constants/app';
 import { useProjectConfig } from 'hooks/useProjectConfig';
 import { authenticateSeismicSDK } from 'modules/seismicSearch/service';
-import {
-  authenticateWellSDK,
-  setEnableWellSDKV3,
-} from 'modules/wellSearch/sdk';
+import { authenticateWellSDK } from 'modules/wellSearch/sdk';
 
 export const ProvideAuthSetup: React.FC<{
   authState: AuthContext;
@@ -32,14 +28,10 @@ export const ProvideAuthSetup: React.FC<{
     setEmail(email);
 
     if (project && !projectConfig?.wells?.disabled) {
-      // setting wells v3 enabled before authentication
-      setEnableWellSDKV3(projectConfig?.general?.enableWellSDKV3);
-
       authenticateWellSDK(
         SIDECAR.applicationId,
         SIDECAR.cdfApiBaseUrl,
         project,
-        SIDECAR.cdfCluster as Cluster,
         token
       );
     }

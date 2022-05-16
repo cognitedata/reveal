@@ -1,12 +1,10 @@
-import isUndefined from 'lodash/isUndefined';
 import {
-  authenticateWellSDK as authenticateWellSDKV3,
-  getWellSDKClient as getWellSDKClientV3,
+  authenticateWellSDK,
+  getWellSDKClient,
 } from 'services/wellSearch/sdk/authenticate';
 import { fetchAllCursors, FetchOptions } from 'utils/fetchAllCursors';
 
-import { ProjectConfigGeneral } from '@cognite/discover-api-types';
-import { Cluster, NPTFilter } from '@cognite/sdk-wells-v2';
+import { NPTFilter } from '@cognite/sdk-wells-v2';
 
 import { CommonWellFilter } from 'modules/wellSearch/types';
 
@@ -23,183 +21,95 @@ import {
   toIdentifier,
   toIdentifierItems,
 } from './utils';
-import {
-  authenticateWellSDK as authenticateWellSDKV2,
-  getWellSDKClient as getWellSDKClientV2,
-} from './v2';
 
-let globalEnableWellSDKV3: ProjectConfigGeneral['enableWellSDKV3'];
-
-export const setEnableWellSDKV3 = (
-  enableWellSDKV3?: ProjectConfigGeneral['enableWellSDKV3']
-) => {
-  globalEnableWellSDKV3 = isUndefined(enableWellSDKV3)
-    ? false
-    : enableWellSDKV3;
-};
-
-export const authenticateWellSDK = async (
-  appId: string,
-  baseUrl: string,
-  project: string,
-  cluster: Cluster,
-  accessToken?: string
-) => {
-  if (globalEnableWellSDKV3) {
-    authenticateWellSDKV3(appId, baseUrl, project, accessToken);
-  } else {
-    authenticateWellSDKV2(project, cluster, accessToken);
-  }
-};
+export { authenticateWellSDK };
 
 export const isWellSDKAuthenticated = () => {
-  return globalEnableWellSDKV3
-    ? getWellSDKClientV3().isLoggedIn
-    : getWellSDKClientV2().isLoggedIn;
+  return !!getWellSDKClient()?.isLoggedIn;
 };
 
 export const getWellFilterFetchers = () => {
   if (!isWellSDKAuthenticated()) return null;
 
-  const mdLimits = () => Promise.resolve([0, 50000]);
-  const tvdLimits = () => Promise.resolve([0, 50000]);
-  const kbLimits = () => Promise.resolve([0, 100]);
-  const dogLegSeverityLimits = () => Promise.resolve([0, 100]);
-
-  if (!globalEnableWellSDKV3) {
-    const { fields, blocks, operators, measurements, regions } =
-      getWellSDKClientV2().wells;
-    return {
-      fields,
-      blocks,
-      operators,
-      measurements,
-      regions,
-      mdLimits,
-      tvdLimits,
-      kbLimits,
-      dogLegSeverityLimits,
-      welltypes: () =>
-        Promise.resolve(['exploration', 'development', 'abandoned', 'shallow']),
-    };
-  }
-
   return {
     fields: () =>
       // unused now, take from discover-api groups instead
-      getWellSDKClientV3()
-        .summaries.fields()
-        .then(mapSummaryCountsToStringArray),
+      getWellSDKClient().summaries.fields().then(mapSummaryCountsToStringArray),
     blocks: () =>
       // unused now, take from discover-api groups instead
-      getWellSDKClientV3()
-        .summaries.blocks()
-        .then(mapSummaryCountsToStringArray),
+      getWellSDKClient().summaries.blocks().then(mapSummaryCountsToStringArray),
     operators: () =>
-      getWellSDKClientV3()
+      getWellSDKClient()
         .summaries.operators()
         .then(mapSummaryCountsToStringArray),
     welltypes: () =>
-      getWellSDKClientV3()
+      getWellSDKClient()
         .summaries.welltypes()
         .then(mapSummaryCountsToStringArray),
     measurements: () =>
-      getWellSDKClientV3()
+      getWellSDKClient()
         .summaries.measurementTypes()
         .then((results) => {
           return results.map((result) => result.type);
         }),
     regions: async () => {
       // unused now, take from discover-api groups instead
-      const regions = await getWellSDKClientV3().summaries.regions();
+      const regions = await getWellSDKClient().summaries.regions();
       return mapSummaryCountsToStringArray(regions);
     },
     mdLimits: () =>
-      getWellSDKClientV3().summaries.trajectoriesMeasuredDepthLimits(),
+      getWellSDKClient().summaries.trajectoriesMeasuredDepthLimits(),
     tvdLimits: () =>
-      getWellSDKClientV3().summaries.trajectoriesTrueVerticalDepthLimits(),
-    kbLimits: () => getWellSDKClientV3().summaries.datumLimits(),
+      getWellSDKClient().summaries.trajectoriesTrueVerticalDepthLimits(),
+    kbLimits: () => getWellSDKClient().summaries.datumLimits(),
     dogLegSeverityLimits: () =>
-      getWellSDKClientV3().summaries.trajectoriesDoglegSeverityLimits(),
+      getWellSDKClient().summaries.trajectoriesDoglegSeverityLimits(),
     inclinationAngleLimits: () =>
-      getWellSDKClientV3().summaries.trajectoriesDoglegSeverityLimits(),
+      getWellSDKClient().summaries.trajectoriesDoglegSeverityLimits(),
   };
 };
 
 export const getSources = () => {
-  return globalEnableWellSDKV3
-    ? getWellSDKClientV3().sources.list().then(mapV3ToV2SourceItems)
-    : getWellSDKClientV2().wells.sources();
+  return getWellSDKClient().sources.list().then(mapV3ToV2SourceItems);
 };
 
 export const getWellsWaterDepthLimits = () => {
-  return globalEnableWellSDKV3
-    ? getWellSDKClientV3()
-        .summaries.waterDepthLimits()
-        .then(mapV3ToV2WellsWaterDepthLimits)
-    : getWellSDKClientV2()
-        .wells.limits()
-        .then((response) => response.waterDepth);
+  return getWellSDKClient()
+    .summaries.waterDepthLimits()
+    .then(mapV3ToV2WellsWaterDepthLimits);
 };
 
 export const getWellsSpudDateLimits = () => {
-  return globalEnableWellSDKV3
-    ? getWellSDKClientV3()
-        .summaries.spudDateLimits()
-        .then(mapV3ToV2SpudDateLimits)
-    : getWellSDKClientV2()
-        .wells.limits()
-        .then((response) => response.spudDate);
+  return getWellSDKClient()
+    .summaries.spudDateLimits()
+    .then(mapV3ToV2SpudDateLimits);
 };
 
 export const getNPTDurationLimits = () => {
-  return globalEnableWellSDKV3
-    ? getWellSDKClientV3()
-        .summaries.nptDurations()
-        .then((response) => [
-          Math.ceil(Number(response.min)),
-          Math.floor(Number(response.max)),
-        ])
-    : getWellSDKClientV2()
-        .wells.limits()
-        .then((response) => [
-          Math.ceil(Number(response.nptDuration.min)),
-          Math.floor(Number(response.nptDuration.max)),
-        ]);
+  return getWellSDKClient()
+    .summaries.nptDurations()
+    .then((response) => [
+      Math.ceil(Number(response.min)),
+      Math.floor(Number(response.max)),
+    ]);
 };
 
 export const getNPTCodes = () => {
-  return globalEnableWellSDKV3
-    ? getWellSDKClientV3()
-        .summaries.nptCodes()
-        .then(mapSummaryCountsToStringArray)
-    : getWellSDKClientV2().events.nptCodes();
+  return getWellSDKClient()
+    .summaries.nptCodes()
+    .then(mapSummaryCountsToStringArray);
 };
 
 export const getNPTDetailCodes = () => {
-  return globalEnableWellSDKV3
-    ? getWellSDKClientV3()
-        .summaries.nptDetailCodes()
-        .then(mapSummaryCountsToStringArray)
-    : getWellSDKClientV2().events.nptDetailCodes();
+  return getWellSDKClient()
+    .summaries.nptDetailCodes()
+    .then(mapSummaryCountsToStringArray);
 };
 
 export const getNDSRiskTypes = () => {
-  return globalEnableWellSDKV3
-    ? getWellSDKClientV3()
-        .summaries.ndsRiskTypes()
-        .then(mapSummaryCountsToStringArray)
-    : getWellSDKClientV2().events.ndsRiskTypes();
-};
-
-// v2 only
-export const getWellById = (wellId: number) => {
-  return getWellSDKClientV2().wells.getById(wellId);
-};
-
-// v2 only
-export const getWellItemsByFilter = (wellFilter: CommonWellFilter) => {
-  return getWellSDKClientV2().wells.filter(wellFilter);
+  return getWellSDKClient()
+    .summaries.ndsRiskTypes()
+    .then(mapSummaryCountsToStringArray);
 };
 
 export const getAllWellItemsByFilter = (
@@ -208,7 +118,7 @@ export const getAllWellItemsByFilter = (
 ) => {
   return fetchAllCursors<unknown>({
     signal: options?.signal,
-    action: getWellSDKClientV3().wells.list,
+    action: getWellSDKClient().wells.list,
     actionProps: {
       ...mapWellFilterToWellFilterRequest(wellFilter),
       // limit: 101,
@@ -217,26 +127,20 @@ export const getAllWellItemsByFilter = (
 };
 
 export const getWellboresFromWells = (wellIds: number[]) => {
-  return globalEnableWellSDKV3
-    ? getWellSDKClientV3()
-        .wellbores.retrieveMultipleByWells(
-          toIdentifierItems(wellIds.map(toIdentifier))
-        )
-        .then(extractWellboresFromWells)
-        .then((wellbores) => wellbores.map(mapV3ToV2Wellbore))
-    : getWellSDKClientV2().wellbores.getFromWells(wellIds);
+  return getWellSDKClient()
+    .wellbores.retrieveMultipleByWells(
+      toIdentifierItems(wellIds.map(toIdentifier))
+    )
+    .then(extractWellboresFromWells)
+    .then((wellbores) => wellbores.map(mapV3ToV2Wellbore));
 };
 
 export const getWellboresByIds = (wellboreIds: number[]) => {
-  return globalEnableWellSDKV3
-    ? getWellSDKClientV3()
-        .wellbores.retrieveMultiple(
-          toIdentifierItems(wellboreIds.map(toIdentifier))
-        )
-        .then((wellboreItems) => wellboreItems.items.map(mapV3ToV2Wellbore))
-    : Promise.all(
-        wellboreIds.map((item) => getWellSDKClientV2().wellbores.getById(item))
-      );
+  return getWellSDKClient()
+    .wellbores.retrieveMultiple(
+      toIdentifierItems(wellboreIds.map(toIdentifier))
+    )
+    .then((wellboreItems) => wellboreItems.items.map(mapV3ToV2Wellbore));
 };
 
 export const getNPTItems = ({
@@ -248,13 +152,11 @@ export const getNPTItems = ({
   cursor?: string;
   limit?: number;
 }) => {
-  return globalEnableWellSDKV3
-    ? getWellSDKClientV3()
-        .npt.list({
-          filter: mapV2toV3NPTFilter(filter),
-          cursor,
-          limit,
-        })
-        .then(mapV3ToV2NPTItems)
-    : getWellSDKClientV2().events.listNPT(filter, cursor, limit);
+  return getWellSDKClient()
+    .npt.list({
+      filter: mapV2toV3NPTFilter(filter),
+      cursor,
+      limit,
+    })
+    .then(mapV3ToV2NPTItems);
 };

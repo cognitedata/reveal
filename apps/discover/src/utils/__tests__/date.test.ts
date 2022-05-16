@@ -170,6 +170,9 @@ describe('date helpers', () => {
         });
       });
       describe('isValidDate', () => {
+        test('empty date', () => {
+          expect(isValidDate()).toBeFalsy();
+        });
         test('unix date', () => {
           expect(isValidDate(1572698222600)).toBeTruthy();
         });

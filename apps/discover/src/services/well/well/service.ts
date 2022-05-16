@@ -1,5 +1,5 @@
 import get from 'lodash/get';
-import { getWellSDKClient as getWellSDKClientV3 } from 'services/wellSearch/sdk/authenticate';
+import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
 
 import { WellFilter } from '@cognite/sdk-wells-v3';
 
@@ -11,7 +11,7 @@ export const getListWells = async (
   wellFilter: WellFilter,
   query: string
 ): Promise<WellSearchResult> => {
-  const fetching = getWellSDKClientV3().wells.list({
+  const fetching = getWellSDKClient().wells.list({
     filter: wellFilter,
     search: { query },
     outputCrs: undefined,
@@ -27,8 +27,10 @@ export const getListWells = async (
   };
 
   const normalizedResponse = mapV3ToV2WellItems(fetchResponse);
+  const wellItems = normalizedResponse.items;
+  // const wellItems = get<Well[]>(normalizedResponse, 'items', [])
 
-  const wellsResponse = normalizeWells(get(normalizedResponse, 'items', []));
+  const wellsResponse = normalizeWells(wellItems);
 
   return {
     wells: wellsResponse,
@@ -37,7 +39,7 @@ export const getListWells = async (
 };
 
 export const searchWells = async (filter: WellFilter, query: string) => {
-  const results = await getWellSDKClientV3().wells.search({
+  const results = await getWellSDKClient().wells.search({
     filter,
     search: query ? { query } : undefined,
     outputCrs: undefined,

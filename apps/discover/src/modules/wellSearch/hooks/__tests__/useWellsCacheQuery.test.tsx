@@ -8,7 +8,6 @@ import { getMockWellsById } from 'services/wellSearch/__mocks/getMockWellsById';
 
 import { testRendererForHooks } from '__test-utils/renderer';
 import { WELL_QUERY_KEY } from 'constants/react-query';
-import { setEnableWellSDKV3 } from 'modules/wellSearch/sdk';
 
 import { useWellsCacheQuery } from '../useWellsCacheQuery';
 
@@ -21,8 +20,6 @@ describe('useWellsCacheQuery', () => {
   const queryClient = new QueryClient();
 
   it('should return correct wells after cache changes', async () => {
-    setEnableWellSDKV3();
-
     const Component = () => {
       const { data, isLoading } = useWellsCacheQuery(['test-well-1']);
 

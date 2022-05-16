@@ -1,7 +1,7 @@
 import { addColor } from 'dataLayers/wells/wellbores/selectors/addColor';
 import { addTitle } from 'dataLayers/wells/wellbores/selectors/addTitle';
 
-import { Wellbore } from '@cognite/sdk-wells-v2';
+import { Wellbore } from 'modules/wellSearch/types';
 
 export const wellboreAdapter = (
   wellbore: Wellbore,

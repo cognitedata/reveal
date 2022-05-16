@@ -1,5 +1,4 @@
-import { Wellbore } from '@cognite/sdk-wells-v2';
-
+import { Wellbore } from 'modules/wellSearch/types';
 import { DEFAULT_WELLBORE_COLOR } from 'pages/authorized/search/well/inspect/Sidebar/constants';
 
 export const addColor =
