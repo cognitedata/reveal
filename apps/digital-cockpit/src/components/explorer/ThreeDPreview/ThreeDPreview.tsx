@@ -9,7 +9,7 @@ import {
   CadIntersection,
   NodeOutlineColor,
   THREE,
-} from '@cognite/reveal';
+} from '@cognite/reveal-v2';
 import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 import styled from 'styled-components';
 import StatusMessage from 'components/utils/StatusMessage';

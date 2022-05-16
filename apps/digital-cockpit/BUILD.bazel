@@ -62,7 +62,7 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
-    "@npm//@cognite/reveal",
+    "@npm//@cognite/reveal-v2",
     "@npm//@cognite/sdk",
     "@npm//@cognite/sdk-v5",
     "@npm//@dnd-kit/core",
