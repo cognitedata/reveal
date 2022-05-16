@@ -1,4 +1,3 @@
-import { Modal } from '@cognite/cogs.js';
 import { FileInfo, Timeseries } from '@cognite/sdk';
 import DocumentGlobalView from 'components/explorer/DocumentGlobalView';
 import TimeSeriesGlobalView from 'components/explorer/TimeSeriesGlobalView';
@@ -7,6 +6,8 @@ import useFilesByIdQuery from 'hooks/useQuery/useFilesByIdQuery';
 import useTimeSeriesByIdQuery from 'hooks/useQuery/useTimeSeriesByIdQuery';
 import isNil from 'lodash/isNil';
 import { useEffect, useState } from 'react';
+
+import { FullScreenModalContainer } from './elements';
 
 type Props = {
   visible: boolean;
@@ -67,7 +68,7 @@ const FullScreenModal = ({ visible, docId, timeseriesId, onCancel }: Props) => {
   };
 
   return (
-    <Modal
+    <FullScreenModalContainer
       visible={isVisible}
       title={getTitle()}
       onCancel={onCancel}
@@ -76,7 +77,7 @@ const FullScreenModal = ({ visible, docId, timeseriesId, onCancel }: Props) => {
       closable
     >
       {renderContent()}
-    </Modal>
+    </FullScreenModalContainer>
   );
 };
 

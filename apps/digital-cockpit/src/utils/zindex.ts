@@ -5,6 +5,7 @@ const LAYERS = [
   //
   // things closer to here are shown on TOP (ie: have high z-index)
   //
+  'SELECTED_ANNOTATION',
   'LEFT_SIDEBAR',
   'TILE_ACTIONS_MENU',
   'COLLAPSE_EXPAND_ICON',

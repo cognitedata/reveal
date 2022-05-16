@@ -11,8 +11,10 @@ export type DocumentPreviewProps = {
 };
 
 const DocumentPreview = ({ document, onClick }: DocumentPreviewProps) => {
-  const [isBroken, setBroken] = useState(false);
-  const { data: image } = useDocumentImage(document);
+  const { data: image, isError } = useDocumentImage(document);
+  const [isBroken, setBroken] = useState(isError);
+
+  if (document?.mimeType?.includes('svg')) return null;
 
   if (image && !isBroken) {
     return (
