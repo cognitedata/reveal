@@ -53,11 +53,11 @@ export const getFilterPanelItems = (
   {
     key: '2',
     headerText: 'Asset',
-    disableClear: !filter.assetIds,
+    disableClear: !filter.assetSubtreeIds,
     clear: () => {
       setFilter({
         ...filter,
-        assetIds: undefined,
+        assetSubtreeIds: undefined,
       });
     },
     filterItem: <AssetSelectFilter filter={filter} setFilter={setFilter} />,
