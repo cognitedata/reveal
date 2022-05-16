@@ -1,7 +1,5 @@
-import invert from 'lodash/invert';
 import set from 'lodash/set';
 import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
-import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
 import { CogniteEvent } from '@cognite/sdk';
 import { Nds, NdsItems } from '@cognite/sdk-wells-v3';
@@ -16,13 +14,12 @@ import {
   getTVDForMD,
 } from '../sequence/trajectoryInterpolate';
 
-import { EVENT_LIMIT, EVENT_PER_PAGE, groupEventsByAssetId } from './common';
+import { EVENT_PER_PAGE, groupEventsByAssetId } from './common';
 
 export function getNdsEventsByWellboreIds(
   wellboreIds: number[],
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap,
   metricLogger: MetricLogger,
-  enableWellSDKV3?: boolean,
   cursor?: string
 ) {
   const [startNetworkTimer, stopNetworkTimer] = metricLogger;
@@ -30,13 +27,11 @@ export function getNdsEventsByWellboreIds(
   startNetworkTimer();
 
   const doFetchNdsEvents = () =>
-    enableWellSDKV3
-      ? fetchNdsEventsUsingWellsSDK(
-          wellboreIds,
-          wellboreSourceExternalIdMap,
-          cursor
-        )
-      : fetchNdsEventsCogniteSDK(wellboreIds, wellboreSourceExternalIdMap);
+    fetchNdsEventsUsingWellsSDK(
+      wellboreIds,
+      wellboreSourceExternalIdMap,
+      cursor
+    );
 
   return doFetchNdsEvents().finally(() => {
     stopNetworkTimer({
@@ -69,38 +64,6 @@ export const fetchNdsEventsUsingWellsSDK = async (
       );
     }
   );
-
-  return getGroupedNdsEvents(
-    ndsEvents,
-    wellboreIds,
-    wellboreSourceExternalIdMap
-  );
-};
-
-export const fetchNdsEventsCogniteSDK = async (
-  wellboreIds: number[],
-  wellboreSourceExternalIdMap: WellboreSourceExternalIdMap
-) => {
-  const wellboresSourceExternalIdReverseMap = invert(
-    wellboreSourceExternalIdMap
-  );
-
-  const ndsEventsRequestBody = {
-    filter: {
-      assetExternalIds: wellboreIds.map(
-        (id) => wellboresSourceExternalIdReverseMap[id]
-      ),
-      source: 'NDS',
-      metadata: {
-        type: 'Risk',
-      },
-    },
-    limit: EVENT_PER_PAGE,
-  };
-
-  const ndsEvents = await getCogniteSDKClient()
-    .events.list(ndsEventsRequestBody)
-    .autoPagingToArray({ limit: EVENT_LIMIT });
 
   return getGroupedNdsEvents(
     ndsEvents,

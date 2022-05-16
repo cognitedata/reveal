@@ -14,7 +14,6 @@ import {
 } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
 
 import { FavoriteContentWells } from '../../../favorite/types';
-import { useEnabledWellSdkV3 } from '../../hooks/useEnabledWellSdkV3';
 
 import {
   selectedWellIdsSelector,
@@ -47,12 +46,8 @@ export const useSelectedWellsForFavorites = () => {
   });
 };
 
-// @sdk-wells-v3
 export const useSelectedWellIds = () => {
-  const enabledWellSDKV3 = useEnabledWellSdkV3();
-  return useSelector((state) =>
-    selectedWellIdsSelector(state, !!enabledWellSDKV3)
-  );
+  return useSelector((state) => selectedWellIdsSelector(state));
 };
 
 export const useIndeterminateWells = () => {

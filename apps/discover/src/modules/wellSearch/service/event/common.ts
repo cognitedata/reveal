@@ -2,7 +2,6 @@ import groupBy from 'lodash/groupBy';
 
 import { CogniteEvent } from '@cognite/sdk';
 
-export const EVENT_LIMIT = 10000;
 export const EVENT_PER_PAGE = 1000;
 
 export const groupEventsByAssetId = (events: CogniteEvent[]) => {

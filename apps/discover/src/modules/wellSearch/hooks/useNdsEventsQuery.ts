@@ -16,8 +16,6 @@ import {
 import { WellboreEventsMap, WellboreSourceExternalIdMap } from '../types';
 import { trimCachedData } from '../utils/common';
 
-import { useEnabledWellSdkV3 } from './useEnabledWellSdkV3';
-
 interface Props {
   wellboreIds: string[];
 }
@@ -43,7 +41,6 @@ interface NdsQueryProps {
 export const useNdsQuery = ({
   wellboreIds,
   wellboresSourceExternalIdMap,
-  enabledWellSDKV3,
 }: NdsQueryProps) => {
   const metricLogger = useMetricLogger(
     LOG_EVENTS_NDS,
@@ -54,19 +51,13 @@ export const useNdsQuery = ({
   return useQuery(
     WELL_QUERY_KEY.NDS_EVENTS,
     () => {
-      return service(
-        wellboreIds,
-        wellboresSourceExternalIdMap,
-        metricLogger,
-        enabledWellSDKV3
-      );
+      return service(wellboreIds, wellboresSourceExternalIdMap, metricLogger);
     },
     { enabled: wellboreIds.length > 0 }
   );
 };
 
 export const useNdsEventsQuery = () => {
-  const enabledWellSDKV3 = useEnabledWellSdkV3();
   const wellboreIds = useWellInspectSelectedWellboreIds();
   const wellboresSourceExternalIdMap = useWellInspectWellboreExternalIdMap();
   const queryClient = useQueryClient();
@@ -74,7 +65,6 @@ export const useNdsEventsQuery = () => {
   const { data, isLoading } = useNdsQuery({
     wellboreIds,
     wellboresSourceExternalIdMap,
-    enabledWellSDKV3,
   });
 
   const newDataMetricLogger = useMetricLogger(
@@ -96,18 +86,15 @@ export const useNdsEventsQuery = () => {
   // If there are ids not in the cached data, do a search for new ids and update the cache
   if (newIds.length && !fetchingNewData) {
     setFetchingNewData(true);
-    service(
-      newIds,
-      wellboresSourceExternalIdMap,
-      newDataMetricLogger,
-      enabledWellSDKV3
-    ).then((response) => {
-      queryClient.setQueryData(WELL_QUERY_KEY.NDS_EVENTS, {
-        ...response,
-        ...data,
-      });
-      setFetchingNewData(false);
-    });
+    service(newIds, wellboresSourceExternalIdMap, newDataMetricLogger).then(
+      (response) => {
+        queryClient.setQueryData(WELL_QUERY_KEY.NDS_EVENTS, {
+          ...response,
+          ...data,
+        });
+        setFetchingNewData(false);
+      }
+    );
   }
 
   return { isLoading: true };

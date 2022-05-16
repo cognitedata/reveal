@@ -8,12 +8,9 @@ import { getIndeterminateWells } from 'modules/wellSearch/utils/wells';
 export const selectedWellIdsSelector = createSelector(
   (state: StoreState) => state.wellSearch.selectedWellIds,
   (state: StoreState) => Object.keys(state.wellSearch.selectedWellIds),
-  (_state: StoreState, enabledWellSDKV3: boolean) => enabledWellSDKV3,
-  (selectedWellIds, enabledWellSDKV3) => {
+  (selectedWellIds) => {
     const selectedIds = Object.keys(pickBy(selectedWellIds));
-    return enabledWellSDKV3
-      ? (selectedIds as unknown as number[])
-      : selectedIds.map(Number);
+    return selectedIds as unknown as number[]; // <--- hrmmm this looks dodgy
   }
 );
 
