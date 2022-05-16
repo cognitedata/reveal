@@ -39,6 +39,7 @@ export const mockFileList: FileInfo[] = [
     createdTime: new Date(2021, 0, 1, 15, 0, 0, 0),
     lastUpdatedTime: new Date(2021, 0, 1, 15, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 1, 15, 0, 0, 0),
+    assetIds: [1],
   },
   {
     id: 4,

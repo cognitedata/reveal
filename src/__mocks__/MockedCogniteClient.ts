@@ -1,6 +1,7 @@
 import noop from 'lodash/noop';
-import { CogniteEvent } from '@cognite/sdk';
+import { CogniteEvent, InternalId } from '@cognite/sdk';
 import { mockCogniteAssetList } from 'src/__test-utils/fixtures/assets';
+import { mockFileList } from 'src/__test-utils/fixtures/files';
 
 export const MOCK_PROJECT_NAME = 'test-project';
 
@@ -60,6 +61,15 @@ export class MockedCogniteClient {
         resolve({ items: [] });
       }),
     retrieve: () => Promise.resolve(mockCogniteAssetList),
+  };
+
+  files = {
+    retrieve: (fileIds: InternalId[]) =>
+      Promise.resolve(
+        mockFileList.filter((file) =>
+          fileIds.map((internalId) => internalId.id).includes(file.id)
+        )
+      ),
   };
 
   events = {
