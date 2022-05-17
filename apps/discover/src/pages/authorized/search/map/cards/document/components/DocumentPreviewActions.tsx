@@ -17,6 +17,7 @@ import {
   CogniteButton,
   FeedbackButton,
 } from 'components/Buttons';
+import { FavoriteDropdown } from 'components/Dropdown/FavoriteDropdown';
 import { useDocumentLabelsByExternalIds } from 'hooks/useDocumentLabels';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useDocumentConfig } from 'modules/documentSearch/hooks';
@@ -30,7 +31,6 @@ import {
 import { setObjectFeedbackModalDocumentId } from 'modules/feedback/actions';
 import { FlexGrow, FlexAlignItems } from 'styles/layout';
 
-import { AddToFavoritesButton } from './AddToFavoritesButton';
 import { ActionContainer, FavouriteTooltip } from './elements';
 
 interface Props {
@@ -94,7 +94,7 @@ const DocumentPreviewActionsComponent: React.FC<Props> = ({
         content={t(ADD_TO_FAVOURITES) as string}
         placement="top"
       >
-        <AddToFavoritesButton document={doc} isFavored={isFavored} />
+        <FavoriteDropdown isFavored={isFavored} documentId={doc.doc.id} />
       </FavouriteTooltip>
 
       <Tooltip content={t('Explore Parent Folder') as string} placement="top">

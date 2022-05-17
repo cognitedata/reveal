@@ -7,6 +7,7 @@ import { useTranslation } from '@cognite/react-i18n';
 
 import { ADD_TO_FAVOURITES } from 'components/AddToFavoriteSetMenu/constants';
 import { FeedbackButton } from 'components/Buttons';
+import { FavoriteDropdown } from 'components/Dropdown/FavoriteDropdown';
 import GeneralFeedback from 'components/Modals/general-feedback/GeneralFeedback';
 import { useDeepMemo } from 'hooks/useDeep';
 import { FavoriteContentWells } from 'modules/favorite/types';
@@ -16,8 +17,6 @@ import { Well } from 'modules/wellSearch/types';
 import { FlexAlignItems, FlexGrow } from 'styles/layout';
 
 import { ActionContainer } from '../document/components/elements';
-
-import { WellCardAddToFavorites } from './WellCardAddToFavorites';
 
 interface Props {
   well: Well | null;
@@ -48,9 +47,11 @@ export const WellPreviewAction: React.FC<Props> = (props) => {
 
   return (
     <ActionContainer>
-      <Tooltip content={t(ADD_TO_FAVOURITES) as string} placement="top">
-        <WellCardAddToFavorites well={well} isFavored={isFavored} />
-      </Tooltip>
+      {well && (
+        <Tooltip content={t(ADD_TO_FAVOURITES) as string} placement="top">
+          <FavoriteDropdown isFavored={isFavored} well={{ [well.id]: [] }} />
+        </Tooltip>
+      )}
       <FeedbackButton
         onClick={() => setFeedbackIsVisible(true)}
         data-testid="well-button-feedback"

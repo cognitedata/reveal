@@ -29,10 +29,12 @@ import { useHandleSelectFavourite } from './useFavorite';
 export interface Props {
   documentIds?: number[];
   wells?: FavoriteContentWells;
+  handleSelectOption?: () => void;
 }
 export const AddToFavoriteSetMenu: React.FC<Props> = ({
   documentIds = [],
   wells,
+  handleSelectOption,
 }) => {
   const { data: favorites } = useFavoritesSortedByName();
   const { t } = useTranslation();
@@ -93,6 +95,8 @@ export const AddToFavoriteSetMenu: React.FC<Props> = ({
       () => showSuccessMessage(t(NOTIFICATION_MESSAGE)),
       () => showSuccessMessage(t(NOTIFICATION_MESSAGE))
     );
+
+    if (handleSelectOption) handleSelectOption();
   };
 
   return (

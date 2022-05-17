@@ -36,15 +36,13 @@ export const WellboreCardDetails: React.FC<{
         <>
           <PathHeader>{t('Wellbores')}</PathHeader>
           {wellbores?.map((wellbore) => (
-            <WellboreRow
-              key={wellbore.id}
-              onClick={() => handleClickView(wellbore.id)}
-            >
+            <WellboreRow key={wellbore.id}>
               <WellboreTitle>{wellbore.name}</WellboreTitle>
               <WellboreDetailIcon
                 favoriteWellIds={favoriteWellIds}
                 wellId={wellId}
                 wellboreId={wellbore.id}
+                navigateInspect={handleClickView}
               />
             </WellboreRow>
           ))}
