@@ -3,15 +3,15 @@ import { ImageKeypoint, Label } from 'src/api/annotation/types';
 
 // primitives
 
-export type Visible = {
+type Visible = {
   show: boolean;
 };
 
-export type Selectable = {
+type Selectable = {
   selected: boolean;
 };
 
-export type KeypointId = { id: string };
+type KeypointId = { id: string };
 
 // derivations
 
