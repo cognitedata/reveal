@@ -7,24 +7,26 @@ import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotat
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
-import { Region } from '@cognite/react-image-annotate';
 import { Point } from '@cognite/react-image-annotate/Types/ImageCanvas/region-tools';
 import {
   AnnotationStatus,
   createUniqueId,
-  KeypointVertex,
 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { ReactText } from 'react';
-import {
-  AnnotationLabelState,
-  KeyPointState,
-} from 'src/modules/Review/store/annotationLabel/types';
-import { deleteCollection } from 'src/modules/Review/store/annotationLabel/utils';
+import { deleteCollection } from 'src/modules/Review/store/annotator/utils';
 import { AnnotatorState } from 'src/modules/Review/store/annotator/type';
+import { ReviewKeypoint } from 'src/modules/Review/store/review/types';
+import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bulkConverters';
+import {
+  VisionAnnotation,
+  VisionAnnotationDataType,
+} from 'src/modules/Common/types';
+import { ImageKeypointCollection } from 'src/api/annotation/types';
+import { isImageKeypointCollectionData } from 'src/modules/Common/types/typeGuards';
 
 export const initialState: AnnotatorState = {
   predefinedAnnotations: {
-    predefinedKeypoints: [],
+    predefinedKeypointCollections: [],
     predefinedShapes: [],
   },
   keypointMap: {
@@ -102,31 +104,37 @@ const annotatorSlice = createSlice({
         action: PayloadAction<{
           id: string;
           collectionName: string;
-          orderNumber?: string;
           positionX: number;
           positionY: number;
+          orderNumber?: number;
         }>
       ) => {
-        const predefinedCollection =
-          state.predefinedAnnotations.predefinedKeypoints.find(
-            (col) => col.collectionName === action.payload.collectionName
+        const predefinedKeypointCollection =
+          state.predefinedAnnotations.predefinedKeypointCollections.find(
+            (collection) =>
+              collection.collectionName === action.payload.collectionName
           );
 
-        if (predefinedCollection) {
+        if (predefinedKeypointCollection) {
           state.lastKeyPoint = action.payload.id;
           state.lastCollectionName = action.payload.collectionName;
 
-          const predefinedKeypoint = predefinedCollection?.keypoints!.find(
-            (kp) => kp.order === (action.payload.orderNumber || '1')
-          );
+          const predefinedKeypoint =
+            predefinedKeypointCollection.keypoints![
+              action.payload.orderNumber || 0
+            ];
 
-          const keypoint = {
-            ...predefinedKeypoint,
+          const reviewKeypoint: ReviewKeypoint = {
             id: action.payload.id.toString(),
-            defaultPosition: [
-              action.payload.positionX,
-              action.payload.positionY,
-            ],
+            selected: false,
+            keypoint: {
+              ...predefinedKeypoint,
+              label: predefinedKeypoint.caption,
+              point: {
+                x: action.payload.positionX,
+                y: action.payload.positionY,
+              },
+            },
           };
 
           if (!state.lastCollectionId) {
@@ -135,7 +143,7 @@ const annotatorSlice = createSlice({
             const collection = {
               id: collectionId,
               keypointIds: [],
-              name: action.payload.collectionName,
+              label: action.payload.collectionName,
               selected: true,
               status: AnnotationStatus.Verified,
               show: true,
@@ -147,9 +155,9 @@ const annotatorSlice = createSlice({
             state.collections.selectedIds = [collectionId];
           }
           state.collections.byId[state.lastCollectionId].keypointIds.push(
-            keypoint.id
+            reviewKeypoint.id
           );
-          state.keypointMap.byId[keypoint.id] = keypoint as KeyPointState;
+          state.keypointMap.byId[reviewKeypoint.id] = reviewKeypoint;
           state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
         }
       },
@@ -158,7 +166,7 @@ const annotatorSlice = createSlice({
         collectionName: string,
         x: number,
         y: number,
-        orderNumber?: string
+        orderNumber?: number
       ) => {
         return {
           payload: {
@@ -172,13 +180,10 @@ const annotatorSlice = createSlice({
       },
     },
 
-    onUpdateKeyPoint(state, action: PayloadAction<Region>) {
-      const keypointItem = state.keypointMap.byId[action.payload.id];
-      if (keypointItem) {
-        keypointItem.defaultPosition = [
-          (action.payload as Point).x,
-          (action.payload as Point).y,
-        ];
+    onUpdateKeyPoint(state, action: PayloadAction<Point>) {
+      const reviewKeypoint = state.keypointMap.byId[action.payload.id];
+      if (reviewKeypoint) {
+        reviewKeypoint.keypoint.point = action.payload;
       }
     },
     deleteCollectionById(state, action: PayloadAction<string>) {
@@ -192,7 +197,7 @@ const annotatorSlice = createSlice({
     },
     removeLabels(state) {
       state.predefinedAnnotations = {
-        predefinedKeypoints: [],
+        predefinedKeypointCollections: [],
         predefinedShapes: [],
       };
     },
@@ -214,7 +219,10 @@ const annotatorSlice = createSlice({
         RetrieveAnnotations.fulfilled
       ),
       (state, action) => {
-        const annotations = action.payload;
+        // ToDo (VIS-794): conversion logic from V1 to V2 in the new slice can be moved into thunks.
+        const annotations: VisionAnnotation<VisionAnnotationDataType>[] =
+          convertCDFAnnotationV1ToVisionAnnotations(action.payload);
+        // const annotations = convertCDFAnnotationV1ToVisionAnnotations(keypointAnnotations);
 
         // HACK: only update states if annotations belong to one single file
         // to avoid costly state update if thunks are triggered by other pages than review page
@@ -225,47 +233,70 @@ const annotatorSlice = createSlice({
           return;
         }
 
-        const keypointAnnotations = annotations.filter(
-          (annotation) => annotation.data?.keypoint
+        // get only the keypoint annotations
+        const keypointAnnotationCollections = annotations.reduce(
+          (
+            keypointCollections: VisionAnnotation<ImageKeypointCollection>[],
+            ann
+          ) => {
+            if (isImageKeypointCollectionData(ann)) {
+              // ToDo: Remove casting by improving type guards
+              keypointCollections.concat(
+                ann as VisionAnnotation<ImageKeypointCollection>
+              );
+            }
+            return keypointCollections;
+          },
+          []
         );
 
-        keypointAnnotations.forEach((keypointAnnotation) => {
-          const keypointIds: string[] = [];
-          keypointAnnotation.region?.vertices.forEach((keypoint) => {
-            keypointIds.push((keypoint as KeypointVertex).id);
-            state.keypointMap.byId[(keypoint as KeypointVertex).id] = {
-              ...(keypoint as KeypointVertex),
-            };
+        keypointAnnotationCollections.forEach(
+          (keypointAnnotationCollection) => {
+            const collectionId = keypointAnnotationCollection.id.toString();
+            const keypointIds: string[] = [];
+
+            keypointAnnotationCollection.keypoints.forEach((keypoint) => {
+              const keypointId = `${keypointAnnotationCollection.id}-${keypoint.label}`;
+              keypointIds.push(keypointId);
+
+              state.keypointMap.byId[keypointId] = {
+                id: keypointId,
+                selected: false,
+                keypoint,
+              };
+            });
+
             state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
-          });
 
-          const collection = {
-            id: keypointAnnotation.id.toString(),
-            keypointIds,
-            name: keypointAnnotation.text,
-            status: AnnotationStatus.Verified,
-            show: true,
-          };
-
-          state.collections.byId[keypointAnnotation.id.toString()] = collection;
-          state.collections.allIds = Object.keys(state.collections.byId);
-        });
+            state.collections.byId[collectionId] = {
+              id: collectionId,
+              keypointIds,
+              label: keypointAnnotationCollection.label,
+              show: true,
+              status: AnnotationStatus.Verified,
+            };
+          }
+        );
+        state.collections.allIds = Object.keys(state.collections.byId);
       }
     );
-
     builder.addMatcher(
       isAnyOf(
         PopulateAnnotationTemplates.fulfilled,
         SaveAnnotationTemplates.fulfilled
       ),
       (state, action) => {
-        state.predefinedAnnotations = action.payload;
+        // ToDo: thunk should return PredefinedAnnotations type data
+        state.predefinedAnnotations = {
+          predefinedKeypointCollections: action.payload.predefinedKeypoints,
+          predefinedShapes: action.payload.predefinedShapes,
+        };
       }
     );
   },
 });
 
-export type { AnnotationLabelState as AnnotationLabelReducerState };
+export type { AnnotatorState as AnnotatorReducerState };
 
 export const {
   selectCollection,

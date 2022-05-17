@@ -1,25 +1,24 @@
 import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { AnnotationCollection, Tool } from 'src/modules/Review/types';
+import { KeypointCollection, Shape, Tool } from 'src/modules/Review/types';
+import { ReviewKeypoint } from 'src/modules/Review/store/review/types';
 
-export type KeyPointState = {
-  id: string;
-  caption: string;
-  order: string;
-  color: string;
-  defaultPosition?: [number, number];
-};
-type KeypointCollectionState = {
+export type KeypointCollectionState = {
   id: string;
   keypointIds: string[];
-  name: string;
+  label: string;
   show: boolean;
   status: AnnotationStatus;
 };
 
+type PredefinedAnnotations = {
+  predefinedKeypointCollections: KeypointCollection[];
+  predefinedShapes: Shape[];
+};
+
 export type AnnotatorState = {
-  predefinedAnnotations: AnnotationCollection;
+  predefinedAnnotations: PredefinedAnnotations;
   keypointMap: {
-    byId: Record<string, KeyPointState>;
+    byId: Record<string, ReviewKeypoint>;
     allIds: string[];
     selectedIds: string[];
   };
