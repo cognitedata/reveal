@@ -16,7 +16,7 @@ type KeypointCollectionState = {
   status: AnnotationStatus;
 };
 
-export type AnnotationWrapperState = {
+export type AnnotatorState = {
   predefinedAnnotations: AnnotationCollection;
   keypointMap: {
     byId: Record<string, KeyPointState>;

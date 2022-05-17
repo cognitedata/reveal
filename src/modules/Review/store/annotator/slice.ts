@@ -20,9 +20,9 @@ import {
   KeyPointState,
 } from 'src/modules/Review/store/annotationLabel/types';
 import { deleteCollection } from 'src/modules/Review/store/annotationLabel/utils';
-import { AnnotationWrapperState } from 'src/modules/Review/store/annotationWrapper/type';
+import { AnnotatorState } from 'src/modules/Review/store/annotator/type';
 
-export const initialState: AnnotationWrapperState = {
+export const initialState: AnnotatorState = {
   predefinedAnnotations: {
     predefinedKeypoints: [],
     predefinedShapes: [],
@@ -45,8 +45,8 @@ export const initialState: AnnotationWrapperState = {
   keepUnsavedRegion: false,
 };
 
-const annotationWrapperSlice = createSlice({
-  name: 'annotationWrapperSlice',
+const annotatorSlice = createSlice({
+  name: 'annotatorSlice',
   initialState,
   /* eslint-disable no-param-reassign */
   reducers: {
@@ -281,6 +281,6 @@ export const {
   deleteCurrentCollection,
   removeLabels,
   setKeepUnsavedRegion,
-} = annotationWrapperSlice.actions;
+} = annotatorSlice.actions;
 
-export default annotationWrapperSlice.reducer;
+export default annotatorSlice.reducer;
