@@ -57,6 +57,7 @@ const NdsEventsBadge: React.FC<Props> = ({ events }: Props) => {
       placement="left-start"
       appendTo={document.body}
       visible={isVisible}
+      onClickOutside={() => setVisible(false)}
       content={
         <EventsCodesWrapper>
           <EventsCodesHeader>{NDS_EVENT_CODES_TITLE}</EventsCodesHeader>
@@ -70,8 +71,7 @@ const NdsEventsBadge: React.FC<Props> = ({ events }: Props) => {
       }
     >
       <EventsCountBadgeWrapper
-        onMouseEnter={() => setVisible(true)}
-        onMouseLeave={() => setVisible(false)}
+        onClick={() => setVisible((previousState) => !previousState)}
       >
         <NdsEventsCountBadge size={badgeSize}>
           <span>{events.length}</span>
