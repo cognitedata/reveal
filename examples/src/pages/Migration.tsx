@@ -97,6 +97,14 @@ export function Migration() {
       // Prepare viewer
       viewer = new Cognite3DViewer(viewerOptions);
       (window as any).viewer = viewer;
+      (window as any).createViewer = () => {
+        viewer = new Cognite3DViewer(viewerOptions);
+        (window as any).viewer = viewer;
+        viewer.addModel({
+          modelId: parseInt(urlParams.get('modelId') ?? '', 10),
+          revisionId: parseInt(urlParams.get('revisionId') ?? '', 10)
+        })
+      };
 
       const controlsOptions: CameraControlsOptions = {
         changeCameraTargetOnClick: true,

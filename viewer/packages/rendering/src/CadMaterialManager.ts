@@ -116,13 +116,16 @@ export class CadMaterialManager {
 
   removeModelMaterials(modelIdentifier: string): void {
     const modelData = this.materialsMap.get(modelIdentifier);
-    for (const mat of Object.values(modelData.materials)) {
-      mat.dispose();
-    }
+    
+    if (modelData) {
+      for (const mat of Object.values(modelData.materials)) {
+        mat.dispose();
+      }
 
-    this.materialsMap.delete(modelIdentifier);
-    modelData.nodeTransformTextureBuilder.dispose();
-    modelData.nodeAppearanceTextureBuilder.dispose();
+      this.materialsMap.delete(modelIdentifier);
+      modelData.nodeTransformTextureBuilder.dispose();
+      modelData.nodeAppearanceTextureBuilder.dispose();
+    }
   }
 
   getModelMaterials(modelIdentifier: string): Materials {
