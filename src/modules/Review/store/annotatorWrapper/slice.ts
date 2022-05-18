@@ -217,7 +217,6 @@ const annotatorWrapperSlice = createSlice({
         // ToDo (VIS-794): conversion logic from V1 to V2 in the new slice can be moved into thunks.
         const annotations: VisionAnnotation<VisionAnnotationDataType>[] =
           convertCDFAnnotationV1ToVisionAnnotations(action.payload);
-        // const annotations = convertCDFAnnotationV1ToVisionAnnotations(keypointAnnotations);
 
         // HACK: only update states if annotations belong to one single file
         // to avoid costly state update if thunks are triggered by other pages than review page
