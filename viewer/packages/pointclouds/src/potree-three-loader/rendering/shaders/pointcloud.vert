@@ -609,7 +609,7 @@ void main() {
             vec3 colorTexel = texelFetch(objectIdLUT, ivec2(lutX, lutY), 0).rgb;
 
             if (colorTexel.r + colorTexel.g + colorTexel.b > 0.0) {
-                vColor = colorTexel;
+                vColor = 0.5 * (colorTexel + vColor);
             }
         }
 }
