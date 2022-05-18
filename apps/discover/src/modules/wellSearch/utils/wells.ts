@@ -16,6 +16,19 @@ export const normalizeWell = (well: Well): Well => {
     name: well.externalId
       ? `${well.description || well.name} (${well.externalId})`
       : well.name,
+    wellbores: well.wellbores?.map((wellbore) =>
+      normalizeWellbore(wellbore, well)
+    ),
+  };
+};
+
+// This should be moved to data layer (under wellbore)
+export const normalizeWellbore = (wellbore: Wellbore, well: Well): Wellbore => {
+  return {
+    ...wellbore,
+    name: wellbore.name || wellbore.description || '',
+    wellName: well.name || well.description || '',
+    wellId: well.id,
   };
 };
 

@@ -1,4 +1,4 @@
-import convert from 'convert-units';
+import convert, { Distance } from 'convert-units';
 
 export const OTHER_CONVERSION_UNITS = {
   ftUS: 'ft-us',
@@ -17,3 +17,8 @@ export const UNITS_TO_STANDARD = OTHER_CONVERSION_UNITS as Record<
   OtherConversionUnit,
   convert.Unit
 >;
+
+export interface ConvertedDistance {
+  value: number;
+  unit: Distance;
+}

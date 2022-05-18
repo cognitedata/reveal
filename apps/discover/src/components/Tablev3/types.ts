@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import React from 'react';
 import { Cell, Row, TableOptions } from 'react-table';
 
@@ -51,11 +52,8 @@ export interface TableProps<T extends Object> extends TableOptions<T> {
   selectedIds?: SelectedIds;
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export interface ColumnType<T extends Object> {
+interface ColumnTypeBase<T extends Object> {
   Header: string | '() => void' | React.ReactElement;
-  accessor: string | ((value: T) => string) | JSX.Element;
-  id?: string;
   title?: string;
   /**
    * The width of the column as a string. Defaults to '140px'.
@@ -98,6 +96,27 @@ export interface ColumnType<T extends Object> {
    */
   stickyColumn?: boolean;
 }
+
+interface ColumnTypeWithAccessor<T extends Object> extends ColumnTypeBase<T> {
+  id?: string;
+  accessor: string | ((value: T) => string) | JSX.Element;
+}
+
+interface ColumnTypeWithCustomCell<T extends Object> extends ColumnTypeBase<T> {
+  id: string;
+  accessor?: string | ((value: T) => string) | JSX.Element;
+}
+
+/**
+ * ColumnType must have one of `id` or `accessor`.
+ *
+ * `id` is required when `Cell` is passed to render a custom cell content.
+ * `accessor` is required otherwise to render the cell content by the table component itself.
+ * If both are provided, `accessor` has precedence over `id`.
+ */
+export type ColumnType<T extends Object> =
+  | ColumnTypeWithAccessor<T>
+  | ColumnTypeWithCustomCell<T>;
 
 export interface RowOptions {
   selectedStyle?: string;

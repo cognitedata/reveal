@@ -55,6 +55,14 @@ export const changeUnit = <Item>(
         accessor,
         convertedValue
       );
+
+      if (fromAccessor) {
+        set(
+          convertedObj as unknown as Record<string, unknown>,
+          fromAccessor,
+          to
+        );
+      }
     }
   }
   return convertedObj;

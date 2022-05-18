@@ -183,8 +183,9 @@ export interface Wellbore
   extends Omit<WellboreV2, 'id' | 'wellId'>,
     Partial<Omit<WellboreV3, 'name' | 'matchingId'>> {
   id: WellboreId;
+  wellName?: string;
   matchingId?: string;
-  wellId?: number;
+  wellId?: WellId;
   sequences?: WellSequence[];
   metadata?: Metadata;
   parentExternalId?: string;
