@@ -15,12 +15,18 @@ export class Units {
     return comparator === 'ft' || comparator === 'feet';
   }
 
-  public static covertMeterToFeetAndRounded(value: number): string {
-    return this.convertMeterToFeet(value).toFixed(2);
+  public static covertMeterToFeetAndRounded(
+    value: number,
+    decimals = 2
+  ): string {
+    return this.convertMeterToFeet(value).toFixed(decimals);
   }
 
-  public static covertFeetToMeterAndRounded(value: number): string {
-    return this.convertFeetToMeter(value).toFixed(2);
+  public static covertFeetToMeterAndRounded(
+    value: number,
+    decimals = 2
+  ): string {
+    return this.convertFeetToMeter(value).toFixed(decimals);
   }
 
   public static convertMeterToFeet(value: number): number {
@@ -33,10 +39,15 @@ export class Units {
 
   public static convertFeetToUnit(
     unit: string | undefined,
-    value: number
+    value: number,
+    decimals?: number
   ): string {
     if (unit && this.isMeter(unit)) {
-      return this.covertFeetToMeterAndRounded(value);
+      return this.covertFeetToMeterAndRounded(value, decimals);
+    }
+
+    if (decimals) {
+      return value.toFixed(decimals);
     }
 
     return `${value}`;

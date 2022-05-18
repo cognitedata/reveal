@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //= ====================================================================================
 
-import { ThreeDUnits } from '../Primitives/Units';
+import { ThreeDUnits, Units } from '../Primitives/Units';
 import { Ma } from '../Primitives/Ma';
 import { Random } from '../Primitives/Random';
 
@@ -134,10 +134,12 @@ export class Vector3 {
     return `(${this.x}, ${this.y}, ${this.z})`;
   }
 
-  public getString(decimals: number): string {
-    return `(${this.x.toFixed(decimals)}, ${this.y.toFixed(
-      decimals
-    )}, ${this.z.toFixed(decimals)})`;
+  public getString(decimals: number, unit?: ThreeDUnits): string {
+    const x = this.x.toFixed(decimals);
+    const y = this.y.toFixed(decimals);
+    const z = Units.convertFeetToUnit(unit, this.z, decimals);
+
+    return `X: ${x}, Y: ${y}, Z: ${z}`;
   }
 
   public squareDistance(other: Vector3): number {

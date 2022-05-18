@@ -1,3 +1,4 @@
+import { Units } from '../../../Core/Primitives/Units';
 import { Polyline } from '../../../Core/Geometry/Polyline';
 import { Vector3 } from '../../../Core/Geometry/Vector3';
 import MeasureDistanceToolIcon from '../../../images/Commands/MeasureDistanceTool.png';
@@ -109,18 +110,35 @@ export class MeasureDistanceTool extends BaseTool {
       const worldEndPosition =
         this._worldCoordinates.list[this._worldCoordinates.length - 1].clone();
       worldEndPosition.add(transformer.translation);
+      const decimalPosition = 2;
+
+      const twoDeeDistance = Units.convertFeetToUnit(
+        target.unit,
+        this._worldCoordinates.getLength(2),
+        decimalPosition
+      );
+
+      const threeDeeDistance = Units.convertFeetToUnit(
+        target.unit,
+        this._worldCoordinates.getLength(3),
+        decimalPosition
+      );
 
       const sumDelta = this._worldCoordinates.getSumDelta();
       viewInfo.addValue(
         '2D / 3D distance',
-        `${this._worldCoordinates
-          .getLength(2)
-          .toFixed(2)} / ${this._worldCoordinates.getLength(3).toFixed(2)}`
+        `${twoDeeDistance} ${target.unit} / ${threeDeeDistance} ${target.unit}`
       );
-      viewInfo.addValue('Sum delta X,Y,Z', sumDelta.getString(2));
+      viewInfo.addValue('Sum delta', sumDelta.getString(2));
       viewInfo.addValue('2D area', this._worldCoordinates.getArea().toFixed(2));
-      viewInfo.addValue('Start Position', worldStartPosition.getString(2));
-      viewInfo.addValue('End Position', worldEndPosition.getString(2));
+      viewInfo.addValue(
+        'Start Position',
+        worldStartPosition.getString(decimalPosition, target.unit)
+      );
+      viewInfo.addValue(
+        'End Position',
+        worldEndPosition.getString(decimalPosition, target.unit)
+      );
     }
     viewInfo.setPolyline(this._pixelCoordinates);
     target.invalidate();
