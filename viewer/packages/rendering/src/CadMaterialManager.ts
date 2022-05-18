@@ -116,7 +116,7 @@ export class CadMaterialManager {
 
   removeModelMaterials(modelIdentifier: string): void {
     const modelData = this.materialsMap.get(modelIdentifier);
-    
+
     if (modelData) {
       for (const mat of Object.values(modelData.materials)) {
         mat.dispose();
