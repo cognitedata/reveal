@@ -8,6 +8,7 @@ import {
   isValidDate,
   startOf,
 } from 'utils/date';
+import { toFixedNumberFromNumber } from 'utils/number';
 import {
   changeUnit,
   changeUnits as changeSomeUnits,
@@ -28,7 +29,8 @@ const DEFAULT_MAX_LIMIT = 0;
  */
 export const convertToFixedDecimal = <Item>(
   dataObj: Item,
-  accessors: string[]
+  accessors: string[],
+  toFixed = 2
 ): Item => {
   const copiedEvent = { ...dataObj };
   accessors.forEach((accessor) => {
@@ -37,7 +39,7 @@ export const convertToFixedDecimal = <Item>(
       set(
         copiedEvent as unknown as Record<string, unknown>,
         accessor,
-        numValue.toFixed(2)
+        toFixedNumberFromNumber(numValue, toFixed)
       );
     }
   });
@@ -63,8 +65,8 @@ export const convertTimeStampsToDates = <Item>(
 export const convertObject = <Item>(object: Item) => {
   let clonedObj = cloneDeep(object);
   const allFunctions = {
-    toFixedDecimals: (accessors: string[]) => {
-      clonedObj = convertToFixedDecimal(clonedObj, accessors);
+    toFixedDecimals: (accessors: string[], toFixed?: number) => {
+      clonedObj = convertToFixedDecimal(clonedObj, accessors, toFixed);
       return allFunctions;
     },
     toClosestInteger: (accessors: string[]) => {

@@ -174,7 +174,7 @@ export const useCasingsForTable = () => {
     const casingList = casings.map((casingdata) =>
       convertObject(casingdata)
         .changeUnits(getCasingUnitChangeAccessors(preferredUnit))
-        .toFixedDecimals(casingAccessorsToFixedDecimal)
+        .toFixedDecimals(casingAccessorsToFixedDecimal, 3)
         .get()
     );
     return { casings: casingList, isLoading };
