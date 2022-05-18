@@ -10,7 +10,11 @@ import {
   Spin,
   message,
 } from 'antd';
-import { Icon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import {
+  Icon,
+  Tooltip as CogsTooltip,
+  Modal as CogsModal,
+} from '@cognite/cogs.js';
 
 import affixStyle from 'antd/es/affix/style/index.less';
 import alertStyle from 'antd/es/alert/style/index.less';
@@ -143,6 +147,11 @@ notification.config({
 message.config({
   getContainer: () => document.getElementsByClassName(ids.styleScope).item(0)!,
 });
+
+CogsModal.defaultProps = {
+  ...CogsModal.defaultProps,
+  getContainer: () => document.getElementsByClassName(ids.styleScope).item(0)!,
+};
 
 Dropdown.defaultProp = {
   ...Dropdown.defaultProps,

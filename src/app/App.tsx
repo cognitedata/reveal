@@ -15,8 +15,8 @@ import {
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 import RootApp from 'app/containers/App';
-import AntStyles from 'app/styles/AntStyles';
-import { Loader } from '@cognite/cogs.js';
+import AntStyles from 'app/styles/Styles';
+import { Loader, ToastContainer } from '@cognite/cogs.js';
 import collapseStyle from 'rc-collapse/assets/index.css';
 import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
 import theme from './styles/theme';
@@ -80,6 +80,7 @@ export default () => {
               <GlobalStyle theme={theme} />
             </AuthWrapper>
           </SubAppWrapper>
+          <ToastContainer />
         </AntStyles>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
