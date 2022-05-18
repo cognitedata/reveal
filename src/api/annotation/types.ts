@@ -22,11 +22,11 @@ export enum Status {
 }
 
 // Primitives
-type Label = {
+export type Label = {
   label: string;
 };
 
-type Confidence = {
+export type Confidence = {
   confidence: number;
 };
 
