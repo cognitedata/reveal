@@ -21,6 +21,6 @@ export function fromRawShape(rawShape: IRawShape): IShape {
       const rawComposite = rawShape as RawCompositeShape;
       return new CompositeShape(rawComposite.shapes.map(fromRawShape));
     default:
-      assertNever(rawShape.type);
+      throw Error(`Could not recognize raw shape type ${rawShape.type}`);
   }
 }
