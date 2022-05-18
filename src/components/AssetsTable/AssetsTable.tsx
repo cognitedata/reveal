@@ -43,7 +43,7 @@ const AssetsTable = ({ dataSetId }: assetsTableProps) => {
       key: 'source',
     },
     {
-      title: t('actions'),
+      title: t('action_other'),
       render: (record: Asset) => (
         <span>
           <Link to={createLink(`/explore/asset/${record.id}`)}>

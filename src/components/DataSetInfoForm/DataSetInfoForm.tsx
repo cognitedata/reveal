@@ -159,7 +159,9 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
           {error ? (
             <Alert
               type="error"
-              message={t('dataset-info-form-cdf-groups-fetch-failed')}
+              message={`${t('fetch-cdf-groups-failed')} ${t(
+                'please-try-again'
+              )}`}
             />
           ) : (
             <Select<any>
