@@ -68,7 +68,14 @@ export const SchemaTypeField = ({
   );
   const isFirstField = index === 0;
   return (
-    <Flex gap={8} justifyContent="space-between" className="pl-4 pr-2.5">
+    <Flex
+      gap={8}
+      justifyContent="space-between"
+      style={{
+        paddingLeft: 16,
+        paddingRight: 10,
+      }}
+    >
       <InputWrapper>
         {isFirstField && (
           <Label level="2"> {t('field_name_label', 'Field name')}</Label>
