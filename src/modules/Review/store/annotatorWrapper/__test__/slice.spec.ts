@@ -1,4 +1,3 @@
-/* eslint-disable jest/no-disabled-tests */
 import reducer, {
   initialState,
   keypointSelectStatusChange,
@@ -429,5 +428,7 @@ describe('Test annotator slice', () => {
     });
   });
 
-  describe('Test extraReducers', () => {});
+  describe('Test extraReducers', () => {
+    // ToDo: add tests for extraReducers after thunks were migrated to V2 types
+  });
 });
