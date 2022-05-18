@@ -1916,7 +1916,7 @@
     fs-extra "^9.0.1"
     mixpanel "^0.13.0"
 
-"@cognite/cdf-utilities@^1.0.0", "@cognite/cdf-utilities@^1.4.6":
+"@cognite/cdf-utilities@^1.4.6":
   version "1.4.6"
   resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-1.4.6.tgz#5ad2743911085ff81ae42572dea00028101951bf"
   integrity sha512-7Db7bW1ip+h5Qm6wchEpaLRENe4+15XWUngvUYJnSj1seBinMbbxVoRPLnvhVEQP1s/54EjuKuon0BS2cyFmJA==
