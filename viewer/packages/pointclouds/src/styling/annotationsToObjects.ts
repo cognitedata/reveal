@@ -33,8 +33,6 @@ function isBox(geometry: Geometry): geometry is BoxPrimitive {
 }
 
 export function annotationsToObjects(bvs: BoundingVolume[]): StyledObject[] {
-  let numUnrecognized = 0;
-  let numTotal = 0;
   let idCounter = 0;
 
   const resultObjects: StyledObject[] = [];
@@ -44,14 +42,10 @@ export function annotationsToObjects(bvs: BoundingVolume[]): StyledObject[] {
     const shapes: IShape[] = [];
 
     for (const primitive of bv.region) {
-      numTotal++;
-
       if (isCylinder(primitive)) {
         shapes.push(translateCylinder(primitive));
       } else if (isBox(primitive)) {
         shapes.push(translateBox(primitive));
-      } else {
-        numUnrecognized++;
       }
     }
 
@@ -64,21 +58,8 @@ export function annotationsToObjects(bvs: BoundingVolume[]): StyledObject[] {
     resultObjects.push(styledObject);
   }
 
-  if (numUnrecognized > 0) {
-    console.log(
-      'Found a total of',
-      numTotal,
-      'primitives from annotations, did not translate',
-      numUnrecognized,
-      'unrecognized objects'
-    );
-  } else {
-    console.log('Fetched annotations, returning', numTotal, 'objects');
-  }
-
   return resultObjects;
 }
-
 
 export function annotationsToObjectInfo(annotations: BoundingVolume[]): StyledObjectInfo {
   const styledObjects = annotationsToObjects(annotations);

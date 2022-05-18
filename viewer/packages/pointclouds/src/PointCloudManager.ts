@@ -180,11 +180,7 @@ export class PointCloudManager {
 
     const nodeWrapper = await this._pointCloudFactory.createModel(metadata, styledObjectInfo);
     this._pointCloudGroupWrapper.addPointCloud(nodeWrapper);
-    const node = new PointCloudNode(
-      this._pointCloudGroupWrapper,
-      nodeWrapper,
-      metadata.cameraConfiguration
-    );
+    const node = new PointCloudNode(this._pointCloudGroupWrapper, nodeWrapper, metadata.cameraConfiguration);
     node.setModelTransformation(metadata.modelMatrix);
 
     this._modelSubject.next({ modelIdentifier, operation: 'add' });

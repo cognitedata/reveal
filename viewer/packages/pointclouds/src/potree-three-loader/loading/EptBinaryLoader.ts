@@ -36,9 +36,7 @@ export class EptBinaryLoader implements ILoader {
     if (node.loaded) return;
 
     const fullFileName = node.fileName() + this.extension();
-      return this._dataLoader
-        .getBinaryFile(node.baseUrl(), fullFileName)
-        .then(data => this.parse(node, data));
+    return this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName).then(data => this.parse(node, data));
   }
 
   parse(node: PointCloudEptGeometryNode, data: ArrayBuffer): Promise<void> {

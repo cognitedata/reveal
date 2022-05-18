@@ -229,11 +229,6 @@ function m4Invert4x3(m: Mat4): Mat4 {
 
   const res = m4Multiply(invScaleMatrix, m4Multiply(invRotation, invTranslation));
 
-  console.log('Had input matrix: ', m, 'returning inverted 4x3: ', res);
-  console.log('Inv scale matrix: ', invScaleMatrix);
-  console.log('Inv rotation: ', invRotation);
-  console.log('Inv translation: ', invTranslation);
-
   return res;
 }
 

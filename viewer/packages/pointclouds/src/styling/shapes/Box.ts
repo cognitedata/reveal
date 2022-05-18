@@ -35,10 +35,10 @@ export class Box implements IShape {
   containsPoint(point: Vec3): boolean {
     const transformedPoint = m4MultiplyV3WithTranslation(this.invMatrix, point);
 
-    return Math.max(
-      Math.abs(transformedPoint[0]),
-      Math.max(Math.abs(transformedPoint[1]), Math.abs(transformedPoint[2]))
-    ) <= 0.5;
+    return (
+      Math.max(Math.abs(transformedPoint[0]), Math.max(Math.abs(transformedPoint[1]), Math.abs(transformedPoint[2]))) <=
+      0.5
+    );
   }
 
   toRawShape(): RawBox {
