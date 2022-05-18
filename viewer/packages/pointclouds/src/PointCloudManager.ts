@@ -18,7 +18,6 @@ import { asyncScheduler, combineLatest, Observable, scan, Subject, throttleTime 
 import { CdfModelIdentifier, ModelIdentifier } from '@reveal/modeldata-api';
 import { MetricsLogger } from '@reveal/metrics';
 import { SupportedModelTypes } from '@reveal/model-base';
-import { hardCodedObjects } from './styling/staticObjects';
 import { StyledObjectInfo } from './styling/StyledObjectInfo';
 import { CogniteClientPlayground } from '@cognite/sdk-playground';
 import { BoundingVolume } from './annotationTypes';
