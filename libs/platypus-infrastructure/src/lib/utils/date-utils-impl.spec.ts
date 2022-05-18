@@ -50,4 +50,16 @@ describe('DateUtilsTest', () => {
       '23.03.2022'
     );
   });
+
+  test('Check if date is valid', () => {
+    const dateUtils = new DateUtilsImpl();
+    expect(dateUtils.isValid(new Date('2021-11-05'))).toBeTruthy();
+    expect(dateUtils.isValid(NaN)).toBeFalsy();
+  });
+  test('Check date distance from now', () => {
+    const dateUtils = new DateUtilsImpl();
+    expect(dateUtils.toTimeDiffString(new Date())).toMatch('seconds ago');
+    const yesterdayTimeStamp = new Date().getTime() - 24 * 60 * 60 * 1000;
+    expect(dateUtils.toTimeDiffString(yesterdayTimeStamp)).toMatch('1 day ago');
+  });
 });

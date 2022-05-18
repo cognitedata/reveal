@@ -8,15 +8,14 @@ import {
   SolutionDataModelType,
   UpdateSolutionDataModelFieldDTO,
 } from '@platypus/platypus-core';
-import { useCallback, useEffect, useState } from 'react';
-import services from '@platypus-app/di';
+import { useEffect, useState } from 'react';
 import { SchemaTypeField } from '../SchemaTypeAndField/SchemaTypeField';
 import { SchemaTypeList } from '../SchemaTypeAndField/SchemaTypeList';
 import { SchemaTypeView } from '../SchemaTypeAndField/SchemaTypeView';
 import { useErrorLogger } from '@platypus-app/hooks/useErrorLogger';
 import { ErrorPlaceholder } from '../ErrorBoundary/ErrorPlaceholder';
-
-const dataModelService = services().solutionDataModelService;
+import dataModelServices from '../../di';
+const dataModelService = dataModelServices.dataModelService;
 
 interface UIEditorProps {
   builtInTypes: BuiltInType[];
@@ -49,12 +48,21 @@ export function UIEditor({
   const errorLogger = useErrorLogger();
 
   useEffect(() => {
-    if (graphQLSchemaString !== currentGraphqlSchema) {
+    if (graphQLSchemaString === '') {
+      dataModelService.clear();
+    }
+    if (
+      graphQLSchemaString !== currentGraphqlSchema &&
+      graphQLSchemaString !== ''
+    ) {
       try {
         const newState = dataModelService.parseSchema(graphQLSchemaString);
         setSolutionDataModel(newState);
         setCustomTypesNames(dataModelService.getCustomTypesNames(newState));
         setCurrentGraphqlSchema(graphQLSchemaString);
+        setCurrentType(
+          newState.types.find((type) => type.name === currentType?.name) || null
+        );
       } catch (err) {
         errorLogger.log(err as any);
         setHasError(true);
@@ -64,20 +72,20 @@ export function UIEditor({
     // eslint-disable-next-line
   }, [graphQLSchemaString]);
 
-  const updateUiState = useCallback(
-    (newState: SolutionDataModel, updatedTypeName: string) => {
-      const updatedType = newState.types.find(
-        (type) => type.name === updatedTypeName
-      ) as SolutionDataModelType;
-      setSolutionDataModel(newState);
-      setCurrentType(updatedType);
-      const updatedGqlSchema = dataModelService.buildSchemaString();
-      setCurrentGraphqlSchema(updatedGqlSchema);
-      onSchemaChange(updatedGqlSchema);
-      setCustomTypesNames(dataModelService.getCustomTypesNames(newState));
-    },
-    []
-  );
+  const updateUiState = (
+    newState: SolutionDataModel,
+    updatedTypeName: string
+  ) => {
+    const updatedType = newState.types.find(
+      (type) => type.name === updatedTypeName
+    ) as SolutionDataModelType;
+    setSolutionDataModel(newState);
+    setCurrentType(updatedType);
+    const updatedGqlSchema = dataModelService.buildSchemaString();
+    setCurrentGraphqlSchema(updatedGqlSchema);
+    onSchemaChange(updatedGqlSchema);
+    setCustomTypesNames(dataModelService.getCustomTypesNames(newState));
+  };
 
   const onFieldUpdated = (
     typeName: string,
@@ -92,7 +100,6 @@ export function UIEditor({
     );
     updateUiState(newState, currentType!.name);
   };
-
   const onFieldRemoved = (typeName: string, fieldName: string) => {
     const newState = dataModelService.removeField(
       solutionDataModel,
@@ -101,7 +108,6 @@ export function UIEditor({
     );
     updateUiState(newState, currentType!.name);
   };
-
   const createSchemaType = (typeName: string) => {
     const capitalizedTypeName =
       typeName.charAt(0).toUpperCase() + typeName.slice(1);

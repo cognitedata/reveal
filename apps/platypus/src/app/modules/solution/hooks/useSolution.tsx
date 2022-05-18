@@ -34,10 +34,18 @@ export const useSolution = () => {
     [dispatch]
   );
 
+  const selectVersion = useCallback(
+    (version: string) => {
+      dispatch(solutionActions.selectVersion({ version }));
+    },
+    [dispatch]
+  );
+
   return {
     fetchSolution,
     fetchVersions,
     updateSchema,
     insertSchema,
+    selectVersion,
   };
 };

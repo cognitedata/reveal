@@ -1,20 +1,21 @@
 import { useState } from 'react';
 import { Checkbox } from '@cognite/cogs.js';
 
-import { Solution } from '@platypus/platypus-core';
+import { Solution, StorageProviderType } from '@platypus/platypus-core';
 
 import { Notification } from '@platypus-app/components/Notification/Notification';
 
 import { useTranslation } from '../../hooks/useTranslation';
 import services from '@platypus-app/di';
 import { StyledModalDialog } from './elements';
+import { getLocalDraftKey } from '@platypus-app/utils/local-storage-utils';
 
 export const DeleteSolution = ({
   solution,
   onCancel,
   onAfterDeleting,
 }: {
-  solution: Solution | undefined;
+  solution: Solution;
   onCancel: VoidFunction;
   onAfterDeleting: VoidFunction;
 }) => {
@@ -37,9 +38,14 @@ export const DeleteSolution = ({
           type: 'info',
           message: t(
             'success_solution_deleted',
-            `Solution «${solution?.name}» was deleted.`
+            `Solution «${solution.name}» was deleted.`
           ),
         });
+        const localStorageProvider =
+          services().storageProviderFactory.getProvider(
+            StorageProviderType.localStorage
+          );
+        localStorageProvider.removeItem(getLocalDraftKey(solution.id));
         onCancel();
         onAfterDeleting();
       }
@@ -55,7 +61,7 @@ export const DeleteSolution = ({
         onCancel();
         setConfirmDelete(false);
       }}
-      onOk={() => solution && onDeleteSolution(solution.id)}
+      onOk={() => onDeleteSolution(solution.id)}
       okDisabled={!confirmDelete}
       okButtonName={t('delete', 'Delete')}
       okProgress={deleting}
@@ -66,7 +72,7 @@ export const DeleteSolution = ({
           'are_you_sure_to_delete_solution_1',
           'Are you sure you want to delete «'
         )}
-        <strong>{solution?.name}</strong>
+        <strong>{solution.name}</strong>
         {t(
           'are_you_sure_to_delete_solution_2',
           '»? You will lose all of the data, and will not be able to restore it later.'

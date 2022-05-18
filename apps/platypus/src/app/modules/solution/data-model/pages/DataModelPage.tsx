@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Prompt, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
@@ -13,6 +13,8 @@ import {
   SolutionDataModelType,
   ErrorType,
   BuiltInType,
+  SolutionSchemaStatus,
+  SolutionSchema,
 } from '@platypus/platypus-core';
 
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
@@ -24,19 +26,22 @@ import { DataModelHeader } from '../components/DataModelHeader';
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { SchemaVisualizer } from '@platypus-app/components/SchemaVisualizer/SchemaVisualizer';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import dataModelServices from '@platypus-app/di';
 import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
 import { ErrorPlaceholder } from '../components/ErrorBoundary/ErrorPlaceholder';
+import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
 import { DiscardButton } from './elements';
-const dataModelService = dataModelServices().solutionDataModelService;
+import dataModelServices from '../di';
+const dataModelService = dataModelServices.dataModelService;
 
 export const DataModelPage = () => {
   const history = useHistory();
 
   const { t } = useTranslation('SolutionDataModel');
-  const { solution, schemas, selectedSchema } = useSelector<SolutionState>(
-    (state) => state.solution
-  );
+  const {
+    solution,
+    schemas,
+    selectedSchema: selectedReduxSchema,
+  } = useSelector<SolutionState>((state) => state.solution);
   const [mode, setMode] = useState<SchemaEditorMode>(
     schemas.length ? SchemaEditorMode.View : SchemaEditorMode.Edit
   );
@@ -50,7 +55,29 @@ export const DataModelPage = () => {
   const [currentType, setCurrentType] = useState<null | SolutionDataModelType>(
     null
   );
-  const { insertSchema, updateSchema } = useSolution();
+  const [selectedSchema, setSelectedSchema] = useState(selectedReduxSchema);
+  const { insertSchema, updateSchema, selectVersion } = useSolution();
+  const {
+    setLocalDraft,
+    removeLocalDraft,
+    getRemoteAndLocalSchemas,
+    getLocalDraft,
+  } = useLocalDraft(solution!.id);
+
+  const onSelectedSchemaChanged = (changedSchema: SolutionSchema) => {
+    dataModelService.clear();
+    setProjectSchema(changedSchema!.schema);
+    setIsDirty(false);
+    setCurrentType(null);
+    // removeLocalDraft(draft);
+    selectVersion(changedSchema.version);
+    setSelectedSchema(changedSchema);
+    setMode(
+      changedSchema.status === SolutionSchemaStatus.DRAFT
+        ? SchemaEditorMode.Edit
+        : SchemaEditorMode.View
+    );
+  };
 
   useEffect(() => {
     function fetchSchemaAndTypes() {
@@ -58,23 +85,39 @@ export const DataModelPage = () => {
       setBuiltInTypes(builtInTypesResponse);
       dataModelService.clear();
       setProjectSchema(selectedSchema!.schema);
-      setIsDirty(false);
       setInit(true);
     }
 
-    fetchSchemaAndTypes();
-  }, [selectedSchema]);
+    if (!isInit) {
+      fetchSchemaAndTypes();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedSchema, isInit]);
+
+  useEffect(() => {
+    const draft = getLocalDraft(selectedReduxSchema.version);
+    if (draft) {
+      dataModelService.clear();
+      setSelectedSchema(draft);
+      setProjectSchema(draft.schema);
+      setMode(SchemaEditorMode.Edit);
+    }
+  }, []);
 
   const onSaveOrPublish = async () => {
     try {
       const publishNewVersion = breakingChanges || !schemas.length;
+      let version = selectedSchema?.version;
       let result;
       if (publishNewVersion) {
         setUpdating(true);
+        version = schemas.length
+          ? (parseInt(selectedSchema?.version) + 1).toString()
+          : '1';
         result = await services().solutionSchemaHandler.publish({
           solutionId: solution!.id,
           schema: projectSchema,
-          version: '1',
+          version: version,
         });
         setBreakingChanges('');
       } else {
@@ -82,7 +125,7 @@ export const DataModelPage = () => {
         result = await services().solutionSchemaHandler.update({
           solutionId: solution!.id,
           schema: projectSchema,
-          version: selectedSchema?.version,
+          version: version,
         });
       }
 
@@ -91,24 +134,40 @@ export const DataModelPage = () => {
       } else if (result.error?.type as ErrorType) {
         Notification({
           type: 'error',
+          title: 'Error: could not update data model',
           message: result.error.message,
         });
       }
 
       if (result.isSuccess) {
+        removeLocalDraft(selectedSchema);
         setIsDirty(false);
 
         updateSchema(result.getValue());
-
+        setSelectedSchema(result.getValue());
         if (publishNewVersion) {
           insertSchema(result.getValue());
           history.replace(
             `/solutions/${solution?.id}/${DEFAULT_VERSION_PATH}/data`
           );
         }
+
         Notification({
           type: 'success',
-          message: t('schema_saved', 'Schema was succesfully saved.'),
+          title: t(
+            `data_model_${
+              publishNewVersion ? 'published' : 'updated'
+            }_toast_title`,
+            `Data model ${publishNewVersion ? 'published' : 'updated'}`
+          ),
+          message: `${t('version', 'version')} ${version} ${t(
+            'of_your_data_model_was_successfully',
+            'of your data model was successfully'
+          )} ${
+            publishNewVersion
+              ? t('published', 'published')
+              : t('updated', 'updated')
+          }.`,
         });
         // Must be located here for fetching versions correctly and updating schema version selector.
         //
@@ -117,6 +176,7 @@ export const DataModelPage = () => {
     } catch (error) {
       Notification({
         type: 'error',
+        title: 'Error: could not save data model',
         message: t(
           'schema_save_error',
           `Saving of the schema failed. ${error}`
@@ -137,30 +197,47 @@ export const DataModelPage = () => {
           !selectedSchema)
       ) {
         setIsDirty(true);
+        setLocalDraft({
+          ...selectedSchema,
+          schema: schemaString,
+          status: SolutionSchemaStatus.DRAFT,
+        });
       } else if (selectedSchema && selectedSchema.schema === schemaString) {
         setIsDirty(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedSchema]
   );
 
   const renderTools = () => {
+    const draft = getLocalDraft(selectedSchema.version) || {
+      ...selectedSchema,
+      status: SolutionSchemaStatus.DRAFT,
+    };
+    const onEditClick = () => {
+      setLocalDraft(draft);
+      setSelectedSchema(draft);
+      setMode(SchemaEditorMode.Edit);
+    };
+    const onDiscardClick = () => {
+      setMode(SchemaEditorMode.View);
+      setIsDirty(false);
+      setCurrentType(null);
+      removeLocalDraft(draft);
+      dataModelService.clear();
+      setSelectedSchema(selectedReduxSchema);
+      selectVersion('latest');
+      setInit(false);
+    };
     if (mode === SchemaEditorMode.Edit) {
       return (
         <div data-cy="data-model-toolbar-actions" style={{ display: 'flex' }}>
           <DiscardButton
             type="secondary"
             data-cy="discard-btn"
-            onClick={() => {
-              setProjectSchema(
-                selectedSchema && selectedSchema.schema
-                  ? selectedSchema!.schema
-                  : ''
-              );
-              setMode(SchemaEditorMode.View);
-              setIsDirty(false);
-              setCurrentType(null);
-            }}
+            onClick={onDiscardClick}
+            style={{ marginRight: '10px' }}
           >
             {t('discard_changes', 'Discard changes')}
           </DiscardButton>
@@ -171,9 +248,10 @@ export const DataModelPage = () => {
             onClick={() => onSaveOrPublish()}
             loading={saving}
             disabled={
-              !isDirty ||
+              (!isDirty &&
+                selectedSchema.status !== SolutionSchemaStatus.DRAFT) ||
               !projectSchema ||
-              (selectedSchema && selectedSchema?.schema === projectSchema)
+              selectedReduxSchema.schema === projectSchema
             }
           >
             {t('publish', 'Publish')}
@@ -186,7 +264,7 @@ export const DataModelPage = () => {
       <Button
         type="primary"
         data-cy="edit-schema-btn"
-        onClick={() => setMode(SchemaEditorMode.Edit)}
+        onClick={onEditClick}
         className="editButton"
         style={{ minWidth: '140px' }}
       >
@@ -202,7 +280,9 @@ export const DataModelPage = () => {
           <DataModelHeader
             solutionId={solution!.id}
             editorMode={mode}
-            schemas={schemas}
+            schemas={getRemoteAndLocalSchemas(schemas)}
+            draftSaved={isDirty}
+            selectSchema={onSelectedSchemaChanged}
             selectedSchema={selectedSchema!}
           >
             {renderTools()}
@@ -263,13 +343,6 @@ export const DataModelPage = () => {
           isUpdating={updating}
         />
       )}
-      <Prompt
-        when={mode === SchemaEditorMode.Edit && isDirty}
-        message={t(
-          'unsaved_changes',
-          'You have unsaved changes, are you sure you want to leave?'
-        )}
-      />
     </>
   );
 };

@@ -1,5 +1,11 @@
 import { DataUtils, DateFormat, DateUtils } from '@platypus/platypus-core';
-import { addDays, format, parse } from 'date-fns';
+import {
+  addDays,
+  format,
+  parse,
+  isValid,
+  formatDistanceToNowStrict,
+} from 'date-fns';
 
 export class DateUtilsImpl implements DateUtils {
   addDays(date: Date, days: number): Date;
@@ -31,6 +37,14 @@ export class DateUtilsImpl implements DateUtils {
       console.error(err, inputDate);
     }
     return parsedDate;
+  }
+
+  toTimeDiffString(date: Date | number): string {
+    return formatDistanceToNowStrict(date, { addSuffix: true });
+  }
+
+  isValid(date: Date | number): boolean {
+    return isValid(date);
   }
 
   private normalizeDateFormat(format: string): string {

@@ -8,11 +8,11 @@ describe('SolutionSchemaVersionDataMapperTest', () => {
 
   const templateSchemaMock = {
     version: 1,
-    createdTime: 1635936707155,
-    lastUpdatedTime: 1635936707155,
+    createdTime: '2022-05-12T07:46:48.206Z',
+    lastUpdatedTime: '2022-05-12T07:46:48.206Z',
     dataModel: {
       version: 1,
-      createdTime: 1635936707155,
+      createdTime: '2022-05-12T07:46:48.206Z',
       graphqlRepresentation: `type Person { firstName: string }`,
       types: [],
     },
@@ -30,8 +30,8 @@ describe('SolutionSchemaVersionDataMapperTest', () => {
       externalId: '123',
       status: SolutionSchemaStatus.PUBLISHED,
       schema: `type Person { firstName: string }`,
-      createdTime: 1635936707155,
-      lastUpdatedTime: 1635936707155,
+      createdTime: 1652341608206,
+      lastUpdatedTime: 1652341608206,
     });
   });
 });

@@ -1,6 +1,6 @@
 import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { StyledBreakingChanges } from './elements';
+import { StyledBody, StyledBreakingChanges } from './elements';
 
 export interface BreakingChangesModalProps {
   breakingChanges: string;
@@ -22,13 +22,21 @@ export const BreakingChangesModal = (props: BreakingChangesModalProps) => {
       okProgress={props.isUpdating}
       okType="primary"
     >
+      <StyledBody>
+        <div>
+          {t(
+            'breaking_changes_text',
+            'There are breaking change(s) in your data model.'
+          )}
+        </div>
+        <div>
+          {t(
+            'breaking_changes_new_version',
+            'A new version of the data model will be created when publishing.'
+          )}
+        </div>
+      </StyledBody>
       <StyledBreakingChanges>{props.breakingChanges}</StyledBreakingChanges>
-      <div>
-        {t(
-          'breaking_changes_text',
-          'A new version of the data model will be created when publishing.'
-        )}
-      </div>
     </ModalDialog>
   );
 };

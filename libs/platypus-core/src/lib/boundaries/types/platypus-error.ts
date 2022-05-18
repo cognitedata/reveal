@@ -4,6 +4,19 @@ export interface ValidationError {
   errorMessage?: string;
   missing: Record<string, string>[];
   locations?: { line: number; column: number }[];
+  extensions?: {
+    breakingChangeInfo?: {
+      typeOfChange:
+        | 'constraintChanged'
+        | 'fieldTypeChanged'
+        | 'typeRemoved'
+        | 'fieldRemoved';
+      typeName?: string;
+      fieldName?: string;
+      previousValue: string;
+      currentValue: string;
+    };
+  };
 }
 export interface SdkError {
   status: number;
@@ -70,8 +83,18 @@ export class PlatypusError {
 
     switch (err.status) {
       case 400: {
+        // Handle breaking changes for templates API
         if (err.errorMessage && err.errorMessage.includes('breaking changes')) {
           platypusErrorMsg.message = err.errorMessage;
+          platypusErrorMsg.type = 'BREAKING_CHANGE';
+          break;
+        }
+        // Handle breaking changes for mixer API
+        if (err.errors?.some((error) => error.extensions?.breakingChangeInfo)) {
+          const breakingChangeList = err.errors
+            .map((error) => `* ${error.message}`)
+            .join('\n');
+          platypusErrorMsg.message = `Breaking change(s): \n\n${breakingChangeList}`;
           platypusErrorMsg.type = 'BREAKING_CHANGE';
           break;
         }

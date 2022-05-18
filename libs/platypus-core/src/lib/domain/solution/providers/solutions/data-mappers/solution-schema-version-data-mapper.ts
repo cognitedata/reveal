@@ -4,7 +4,7 @@ import { ApiVersion } from '../../../dto';
 export class SolutionSchemaVersionDataMapper {
   serialize(externalId: string, solutionSchema: SolutionSchema): ApiVersion {
     return {
-      createdTime: +solutionSchema.schema,
+      createdTime: new Date(solutionSchema.createdTime).toISOString(),
       dataModel: {
         graphqlRepresentation: solutionSchema.schema,
       },
@@ -17,8 +17,8 @@ export class SolutionSchemaVersionDataMapper {
       externalId,
       status: SolutionSchemaStatus.PUBLISHED,
       version: apiSpecVersion.version.toString(),
-      createdTime: +apiSpecVersion.createdTime,
-      lastUpdatedTime: +apiSpecVersion.createdTime,
+      createdTime: new Date(apiSpecVersion.createdTime).getTime(),
+      lastUpdatedTime: new Date(apiSpecVersion.createdTime).getTime(),
       schema: apiSpecVersion.dataModel.graphqlRepresentation,
     };
   }

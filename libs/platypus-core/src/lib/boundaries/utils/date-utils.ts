@@ -21,4 +21,8 @@ export abstract class DateUtils {
    * @param format - DateFormat or string, default DateFormat.DISPLAY_DATE_FORMAT
    */
   abstract format(date: Date, format?: DateFormat | string): string;
+
+  abstract toTimeDiffString(date: Date): string;
+
+  abstract isValid(date: Date): boolean;
 }

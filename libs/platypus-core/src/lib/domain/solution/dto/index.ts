@@ -90,7 +90,7 @@ export interface ApiVersionBindings {
 }
 export interface ApiVersion {
   version: number;
-  createdTime: number;
+  createdTime: string;
   dataModel: ApiVersionDataModel;
   bindings?: [ApiVersionBindings];
 }

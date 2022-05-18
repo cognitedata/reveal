@@ -36,7 +36,10 @@ const solutionStateSlice = createSlice({
           ) as SolutionSchema;
         }
       } else {
-        state.selectedSchema = initialState.selectedSchema;
+        state.selectedSchema = {
+          ...initialState.selectedSchema,
+          externalId: state.solution!.id,
+        };
       }
     },
     setSchema: (state, action: PayloadAction<SolutionSchema>) => {

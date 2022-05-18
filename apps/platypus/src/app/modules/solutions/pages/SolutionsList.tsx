@@ -97,11 +97,13 @@ export const SolutionsList = () => {
         createSolution={createSolution}
         onCancel={() => setCreateSolution(false)}
       />
-      <DeleteSolution
-        solution={solutionToDelete}
-        onCancel={() => setSolutionToDelete(undefined)}
-        onAfterDeleting={() => fetchSolutions()}
-      />
+      {solutionToDelete && (
+        <DeleteSolution
+          solution={solutionToDelete}
+          onCancel={() => setSolutionToDelete(undefined)}
+          onAfterDeleting={() => fetchSolutions()}
+        />
+      )}
     </StyledSolutionListWrapper>
   );
 };
