@@ -16,7 +16,7 @@ export interface TreeMapData {
 
 export interface Props {
   data: TreeMapData;
-  onTileClicked: (data: TreeMapData) => void;
+  onTileClicked?: (data: TreeMapData) => void;
 }
 
 export const Treemap: React.FC<Props> = ({ data, onTileClicked }) => {
@@ -45,7 +45,11 @@ export const Treemap: React.FC<Props> = ({ data, onTileClicked }) => {
       .data(treemapRoot.leaves())
       .enter()
       .append('div')
-      .on('click', (_event, node) => onTileClicked(node.data))
+      .on('click', (_event, node) => {
+        if (onTileClicked) {
+          onTileClicked(node.data);
+        }
+      })
       .attr('class', 'node rect')
       .style('left', (node) => `${node.x0}px`)
       .style('top', (node) => `${node.y0}px`)
