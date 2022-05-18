@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 import { THREE } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
+import { CogniteClientPlayground } from '@cognite/sdk-playground';
 import dat from 'dat.gui';
 import {
   Cognite3DViewer,
@@ -27,7 +28,7 @@ import { InspectNodeUI } from '../utils/InspectNodeUi';
 import { CameraUI } from '../utils/CameraUI';
 import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
-import { createSDKFromEnvironment } from '../utils/example-helpers';
+import { createPlaygroundSDKFromEnvironment, createSDKFromEnvironment } from '../utils/example-helpers';
 import { PointCloudClassificationFilterUI } from '../utils/PointCloudClassificationFilterUI';
 import { PointCloudObjectStylingUI } from '../utils/PointCloudObjectStylingUI';
 
@@ -64,16 +65,22 @@ export function Migration() {
       };
 
       let client: CogniteClient;
+      let clientPlayground: CogniteClientPlayground;
       if (project && environmentParam) {
         client = await createSDKFromEnvironment('reveal.example.example', project, environmentParam);
+        clientPlayground = await createPlaygroundSDKFromEnvironment('reveal.example.example', project, environmentParam);
       } else {
         client = new CogniteClient({ appId: 'reveal.example.example',
                                      project: 'dummy',
                                      getToken: async () => 'dummy' });
+        clientPlayground = new CogniteClientPlayground({ appId: 'reveal.example.example',
+                                                         project: 'dummy',
+                                                         getToken: async () => 'dummy' });
       }
 
       let viewerOptions: Cognite3DViewerOptions = {
         sdk: client,
+        sdkPlayground: clientPlayground,
         domElement: canvasWrapperRef.current!,
         onLoading: progress,
         logMetrics: false,

@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { CognitePointCloudModel } from '@cognite/reveal';
+import { CognitePointCloudModel, PointCloudObjectCollection } from '@cognite/reveal';
 import * as THREE from 'three';
 
 export class PointCloudObjectStylingUI {
@@ -25,7 +25,7 @@ export class PointCloudObjectStylingUI {
     };
 
     uiFolder.addColor(state, 'color').name('Color').onFinishChange(color => {
-      this._model.setObjectStyle(objectId, hexStringToColor(color));
+      this._model.setObjectStyle(objectId, { color: hexStringToColor(color) });
     });
   }
 };
