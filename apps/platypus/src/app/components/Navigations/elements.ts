@@ -22,6 +22,15 @@ export const StyledTopBar = styled(TopBar)`
     background-color: var(--cogs-bg-backdrop);
   }
 
+  .rc-tabs-tab-disabled .rc-tabs-tab-btn span {
+    color: rgba(255, 255, 255, 0.72);
+    opacity: 0.4;
+  }
+
+  .rc-tabs-tab-disabled .rc-tabs-tab-btn:hover {
+    background-color: var(--cogs-bg-inverted) !important;
+  }
+
   .rc-tabs-tab-btn {
     background-color: var(--cogs-bg-inverted);
     color: var(--cogs-text-inverted);

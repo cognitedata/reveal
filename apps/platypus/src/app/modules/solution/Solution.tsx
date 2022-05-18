@@ -92,19 +92,22 @@ export const Solution = () => {
             exact
             path={[
               '/solutions/:solutionId?/:version?',
+              '/solutions/:solutionId?/:version?/data/:solutionPage?/:subSolutionPage?',
+            ]}
+          >
+            <Suspense fallback={<Spinner />}>
+              <DataPage />
+            </Suspense>
+          </Route>
+          <Route
+            exact
+            path={[
+              // '/solutions/:solutionId?/:version?',
               '/solutions/:solutionId?/:version?/overview/:solutionPage?',
             ]}
           >
             <Suspense fallback={<Spinner />}>
               <OverviewPage />
-            </Suspense>
-          </Route>
-          <Route
-            exact
-            path="/solutions/:solutionId?/:version?/data/:solutionPage?/:subSolutionPage?"
-          >
-            <Suspense fallback={<Spinner />}>
-              <DataPage />
             </Suspense>
           </Route>
           <Route exact path="/solutions/:solutionId?/:version?/tools">

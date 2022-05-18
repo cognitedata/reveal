@@ -37,11 +37,21 @@ export const NavigationMain = () => {
     isActive:
       pathname.startsWith(`/${tab.slug}`) ||
       (tab.slug === 'solutions' && pathname === '/'),
-    onClick: () => {
-      history.push({
-        pathname: `/${tab.slug}`,
-      });
-    },
+    disabled: tab.slug !== 'solutions',
+    tooltipProps:
+      tab.slug !== 'solutions'
+        ? {
+            content: 'Coming Soon',
+          }
+        : undefined,
+    onClick:
+      tab.slug === 'solutions'
+        ? () => {
+            history.push({
+              pathname: `/${tab.slug}`,
+            });
+          }
+        : undefined,
   }));
 
   const renderLinks = () => <NavigationButton links={projectManagementLinks} />;
@@ -90,5 +100,8 @@ const NavigationButton = styled(TopBar.Navigation)`
   .navigation-item.active {
     margin-top: 0 !important;
     height: 100% !important;
+  }
+  .rc-tabs-tab-disabled {
+    background-color: transparent;
   }
 `;

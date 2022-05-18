@@ -46,12 +46,22 @@ export const NavigationSolution = () => {
 
   const projectManagementLinks: TopBarNavigationLink[] = tabs.map((tab) => ({
     name: t(tab.title, tab.title),
-    isActive: tabKey === tab.slug || (tab.slug === 'overview' && !tabKey),
-    onClick: () => {
-      history.push({
-        pathname: `/solutions/${solutionId}/${version}/${tab.slug}`,
-      });
-    },
+    isActive: tabKey === tab.slug || (tab.slug === 'data' && !tabKey),
+    disabled: tab.slug !== 'data',
+    tooltipProps:
+      tab.slug !== 'data'
+        ? {
+            content: 'Coming Soon',
+          }
+        : undefined,
+    onClick:
+      tab.slug === 'data'
+        ? () => {
+            history.push({
+              pathname: `/solutions/${solutionId}/${version}/${tab.slug}`,
+            });
+          }
+        : undefined,
   }));
 
   const renderLinks = () => (

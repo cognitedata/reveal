@@ -1,11 +1,10 @@
 import React, { lazy, Suspense, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import { Tabs } from '@cognite/cogs.js';
+import { useParams } from 'react-router-dom';
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { StyledPage, StyledTabs } from '../data-model/pages/elements';
+import { StyledPage } from '../data-model/pages/elements';
 
 type TabType = 'preview' | 'pipelines' | 'data-quality';
 
@@ -28,7 +27,7 @@ const DataQualityPage = lazy<any>(() =>
 );
 
 export const DataManagementPage = () => {
-  const history = useHistory();
+  // const history = useHistory();
   const { t } = useTranslation('SolutionDataPreview');
 
   const { subSolutionPage } = useParams<{
@@ -36,7 +35,7 @@ export const DataManagementPage = () => {
   }>();
 
   const initialPage: TabType = (subSolutionPage as TabType) || 'preview';
-  const [tab, setTab] = useState<TabType>(initialPage);
+  const [tab] = useState<TabType>(initialPage);
 
   const Preview = (
     <StyledPage style={tab !== 'preview' ? { display: 'none' } : {}}>
@@ -66,21 +65,6 @@ export const DataManagementPage = () => {
     <PageContentLayout>
       <PageContentLayout.Header>
         <PageToolbar title={t('data_management_title', 'Data management')} />
-        <StyledTabs
-          size="default"
-          onChange={(key) => {
-            setTab(key as TabType);
-            history.push(`${!subSolutionPage ? 'data-management/' : ''}${key}`);
-          }}
-          activeKey={tab}
-        >
-          <Tabs.TabPane key="preview" tab={t('preview', 'Preview')} />
-          <Tabs.TabPane key="pipelines" tab={t('pipelines', 'Pipelines')} />
-          <Tabs.TabPane
-            key="data-quality"
-            tab={t('data_quality', 'Data quality')}
-          />
-        </StyledTabs>
       </PageContentLayout.Header>
       <PageContentLayout.Body>
         {Preview}
