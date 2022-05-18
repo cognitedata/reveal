@@ -1,3 +1,9 @@
+## 5.0.5 May 16 2022
+
+- react-project-selector version bump
+
+> make browsers autofill work for the tenant id input, by adding input `name` attribute
+
 ## 5.0.4 May 13 2022
 
 - react-project-selector version bump

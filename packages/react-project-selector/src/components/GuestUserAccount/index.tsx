@@ -90,6 +90,7 @@ const GuestUserAccount = ({
           <Input
             value={directory}
             title="Tenant ID"
+            name="tenant-id"
             error={
               isError
                 ? 'Not a valid name. Check your spelling and try again.'
