@@ -1,5 +1,5 @@
 import type { ChangeEvent } from 'react';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useMatch } from 'react-location';
 import { useSelector } from 'react-redux';
 
@@ -8,10 +8,12 @@ import styled from 'styled-components/macro';
 
 import { Button, Input, Select, toast } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
+import type { DataSet } from '@cognite/sdk';
 import type {
   CreateMetadata,
   DefinitionMap,
   FileInfo,
+  SimulatorInstance,
   UpdateMetadata,
 } from '@cognite/simconfig-api-sdk/rtk';
 import {
@@ -23,6 +25,7 @@ import {
 
 import { FileInput } from 'components/forms/controls/FileInput';
 import { HEARTBEAT_POLL_INTERVAL } from 'components/simulator/constants';
+import { SimulatorStatusLabel } from 'components/simulator/SimulatorStatusLabel';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 import { isAuthenticated } from 'utils/authUtils';
 import {
@@ -36,6 +39,7 @@ import {
   DEFAULT_MODEL_SOURCE,
   DEFAULT_UNIT_SYSTEM,
   FileExtensionToSimulator,
+  Simulator,
   UnitSystem,
 } from './constants';
 import { InputRow } from './elements';
@@ -67,6 +71,29 @@ const getSimulatorFromFileName = (fileName: string) => {
   return isValidExtension(ext) && FileExtensionToSimulator[ext];
 };
 
+function SimulatorStatusDropdown({
+  dataset,
+  simulators,
+}: {
+  dataset: DataSet | undefined;
+  simulators: SimulatorInstance[];
+}) {
+  const associatedSimulator = simulators.find(
+    ({ dataSetId }) => dataSetId === dataset?.id
+  );
+  return (
+    <SimulatorStatusDropdownContainer>
+      {dataset?.name} - {dataset?.id}
+      {associatedSimulator && (
+        <SimulatorStatusLabel
+          simulator={associatedSimulator}
+          title={associatedSimulator.simulator}
+        />
+      )}
+    </SimulatorStatusDropdownContainer>
+  );
+}
+
 const acceptedFileTypes = Object.keys(FileExtensionToSimulator);
 
 interface ComponentProps {
@@ -79,7 +106,8 @@ export function ModelForm({
   onUpload,
 }: React.PropsWithoutRef<ComponentProps>) {
   const inputFile = useRef<HTMLInputElement>(null);
-  const { authState } = useAuthContext();
+  const [datasets, setDatasets] = useState<DataSet[]>();
+  const { authState, client } = useAuthContext();
 
   const {
     data: { definitions },
@@ -90,6 +118,16 @@ export function ModelForm({
     { project },
     { pollingInterval: HEARTBEAT_POLL_INTERVAL }
   );
+
+  useEffect(() => {
+    const getDatasets = async () => {
+      if (client) {
+        const { items } = await client.datasets.list();
+        setDatasets(items);
+      }
+    };
+    void getDatasets();
+  }, [client]);
 
   const isNewModel = !initialModelFormState;
   const modelFormState = !initialModelFormState
@@ -141,16 +179,11 @@ export function ModelForm({
         throw new Error(`Missing required property: 'unitSystem'`);
       }
 
-      const availableSimulator = simulatorsList?.simulators?.find(
-        (connectorSimulator) => connectorSimulator.simulator === simulator
-      );
-
       const fileInfo: FileInfo = {
         ...formFileInfo,
         // Override linked values from metadata
         name: metadata.modelName,
         source: simulator,
-        dataSetId: availableSimulator?.dataSetId ?? 0,
       };
 
       const response = await createModel({
@@ -209,10 +242,21 @@ export function ModelForm({
     return isValidExtension(ext);
   };
 
+  const getLatestSimulatorByFileExtension = (fileName: string | undefined) => {
+    const extensionToSimulator =
+      FileExtensionToSimulator[
+        fileName ? getFileExtensionFromFileName(fileName) : 'UNKNOWN'
+      ];
+    return simulatorsList?.simulators?.find(
+      (connectorSimulator) =>
+        connectorSimulator.simulator === extensionToSimulator
+    )?.dataSetId;
+  };
+
   return (
     <Formik initialValues={modelFormState} onSubmit={onSubmit}>
       {({
-        values: { file, metadata },
+        values: { file, metadata, fileInfo },
         setFieldValue,
         isSubmitting,
         errors,
@@ -252,6 +296,10 @@ export function ModelForm({
                   setFieldValue('file', file);
                   setFieldValue('metadata.fileName', file?.name);
                   setFieldValue(
+                    'fileInfo.dataSetId',
+                    getLatestSimulatorByFileExtension(file?.name)
+                  );
+                  setFieldValue(
                     'metadata.simulator',
                     FileExtensionToSimulator[
                       file?.name
@@ -270,6 +318,10 @@ export function ModelForm({
               type="file"
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
                 const file = event.currentTarget.files?.[0];
+                setFieldValue(
+                  'fileInfo.dataSetId',
+                  getLatestSimulatorByFileExtension(file?.name)
+                );
                 setFieldValue('file', file);
                 setFieldValue('metadata.fileName', file?.name);
               }}
@@ -309,6 +361,40 @@ export function ModelForm({
             </InputRow>
           ) : (
             <>
+              <InputRow>
+                <Field
+                  as={Select}
+                  name="fileInfo.dataSetId"
+                  options={datasets?.map((dataset) => ({
+                    label: (
+                      <SimulatorStatusDropdown
+                        dataset={dataset}
+                        simulators={simulatorsList?.simulators ?? []}
+                      />
+                    ),
+                    value: dataset.id,
+                  }))}
+                  title="Data set"
+                  value={
+                    fileInfo.dataSetId && {
+                      value: fileInfo.dataSetId,
+                      label: (
+                        <SimulatorStatusDropdown
+                          dataset={datasets?.find(
+                            (dataset) => dataset.id === fileInfo.dataSetId
+                          )}
+                          simulators={simulatorsList?.simulators ?? []}
+                        />
+                      ),
+                    }
+                  }
+                  closeMenuOnSelect
+                  required
+                  onChange={({ value }: { value: string }) => {
+                    setFieldValue('fileInfo.dataSetId', value);
+                  }}
+                />
+              </InputRow>
               <InputRow>
                 <Field
                   as={Select}
@@ -367,4 +453,9 @@ const HiddenInputFile = styled.input`
   overflow: hidden;
   position: absolute;
   z-index: -1;
+`;
+
+const SimulatorStatusDropdownContainer = styled.div`
+  display: flex;
+  gap: 12px;
 `;

@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { isAfter } from 'date-fns/esm';
+import styled from 'styled-components/macro';
 
 import { Label } from '@cognite/cogs.js';
 import type { SimulatorInstance } from '@cognite/simconfig-api-sdk/rtk';
@@ -20,27 +21,22 @@ export function SimulatorStatusLabel({
     new Date(Date.now() - HEARTBEAT_TIMEOUT_SECONDS)
   );
 
-  if (isSimulatorAvailable) {
-    return (
+  return (
+    <SimulatorStatusLabelContainer>
       <Label
         className={classNames({ 'cogs-label--is-interactive': title })}
-        icon="CheckmarkAlternative"
+        icon={isSimulatorAvailable ? 'CheckmarkAlternative' : 'Warning'}
         size="small"
-        variant="success"
+        variant={isSimulatorAvailable ? 'success' : 'danger'}
       >
-        {title ?? 'Available'}
+        {title ?? 'Unavailable'}
       </Label>
-    );
-  }
-
-  return (
-    <Label
-      className={classNames({ 'cogs-label--is-interactive': title })}
-      icon="Warning"
-      size="small"
-      variant="danger"
-    >
-      {title ?? 'Unavailable'}
-    </Label>
+    </SimulatorStatusLabelContainer>
   );
 }
+
+const SimulatorStatusLabelContainer = styled.div`
+  .cogs-label {
+    column-gap: 6px;
+  }
+`;

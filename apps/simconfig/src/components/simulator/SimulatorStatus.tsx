@@ -100,9 +100,6 @@ const SimulatorStatusContainer = styled.div`
     display: flex;
     align-items: center;
   }
-  .cogs-label {
-    column-gap: 6px;
-  }
 `;
 
 const SimulatorTooltip = styled(Tooltip).attrs(() => ({
