@@ -61,6 +61,7 @@ export function createLocalRevealManager(
  * @param renderer
  * @param sceneHandler
  * @param revealOptions
+ * @param sdkClientPlayground
  */
 export function createCdfRevealManager(
   client: CogniteClient,
@@ -94,6 +95,7 @@ export function createCdfRevealManager(
  * @param renderer
  * @param sceneHandler
  * @param revealOptions
+ * @param sdkPlayground
  */
 export function createRevealManager(
   project: string,

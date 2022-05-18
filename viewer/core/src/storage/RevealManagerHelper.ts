@@ -78,7 +78,7 @@ export class RevealManagerHelper {
     sceneHandler: SceneHandler,
     revealOptions: RevealOptions,
     sdkClient: CogniteClient,
-    sdkClientPlayground?: CogniteClientPlayground,
+    sdkClientPlayground?: CogniteClientPlayground
   ): RevealManagerHelper {
     const revealManager = createCdfRevealManager(sdkClient, renderer, sceneHandler, revealOptions, sdkClientPlayground);
     return new RevealManagerHelper('cdf', revealManager);
