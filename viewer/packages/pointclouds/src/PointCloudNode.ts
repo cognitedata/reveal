@@ -33,7 +33,6 @@ export class PointCloudNode extends THREE.Group {
     this._potreeNode = potreeNode;
     this._cameraConfiguration = cameraConfiguration;
     this.add(this._potreeNode.octree);
-    this._potreeNode.octree;
 
     this.matrixAutoUpdate = false;
   }

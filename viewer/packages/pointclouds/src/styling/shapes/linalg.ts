@@ -88,27 +88,6 @@ export function createM4Raw(
   return createM4([a00, a01, a02, a03, a10, a11, a12, a13, a20, a21, a22, a23, a30, a31, a32, a33]);
 }
 
-function createM4FromRowsV3(row0: Vec3, row1: Vec3, row2: Vec3): Mat4 {
-  return createM4Raw(
-    row0[0],
-    row0[1],
-    row0[2],
-    0,
-    row1[0],
-    row1[1],
-    row1[2],
-    0,
-    row2[0],
-    row2[1],
-    row2[2],
-    0,
-    0,
-    0,
-    0,
-    1
-  );
-}
-
 function createM4FromColumnsV3(row0: Vec3, row1: Vec3, row2: Vec3): Mat4 {
   return createM4Raw(
     row0[0],
