@@ -2,7 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import { BoundingVolume, CylinderPrimitive, Geometry } from '../annotationTypes';
+import { BoundingVolume, BoxPrimitive, CylinderPrimitive, Geometry } from '../annotationTypes';
+import { Box } from './shapes/Box';
 import { CompositeShape } from './shapes/CompositeShape';
 import { Cylinder } from './shapes/Cylinder';
 import { IShape } from './shapes/IShape';
@@ -16,11 +17,22 @@ function translateCylinder(cylinder: CylinderPrimitive): Cylinder {
     cylinder.radius
   );
 }
+
+function translateBox(box: BoxPrimitive): Box {
+  const tr = box.matrix.clone().transpose();
+
+  return new Box(tr.toArray());
+}
+
 function isCylinder(geometry: Geometry): geometry is CylinderPrimitive {
   return (geometry as any).center_a != undefined;
 }
 
-function annotationsToObjects(bvs: BoundingVolume[]): StyledObject[] {
+function isBox(geometry: Geometry): geometry is BoxPrimitive {
+  return (geometry as any).matrix != undefined;
+}
+
+export function annotationsToObjects(bvs: BoundingVolume[]): StyledObject[] {
   let numUnrecognized = 0;
   let numTotal = 0;
   let idCounter = 0;
@@ -36,6 +48,8 @@ function annotationsToObjects(bvs: BoundingVolume[]): StyledObject[] {
 
       if (isCylinder(primitive)) {
         shapes.push(translateCylinder(primitive));
+      } else if (isBox(primitive)) {
+        shapes.push(translateBox(primitive));
       } else {
         numUnrecognized++;
       }

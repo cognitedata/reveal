@@ -4,13 +4,7 @@
 
 import { IShape } from './IShape';
 
-import { Vec3, v3Scale, v3Middle, v3Length, v3Sub, v3Normalized, v3Dot, Box3 } from './linalg';
-
-// import * as THREE from 'three';
-
-// import { fromThreeVector3 } from '@reveal/utilities';
-
-// const utilVector: THREE.Vector3 = new THREE.Vector3();
+import { Vec3, v3Scale, v3Middle, v3Length, v3Sub, v3Normalized, v3Dot, AABB } from './linalg';
 
 export type RawCylinder = {
   type: 'cylinder';
@@ -54,7 +48,7 @@ export class Cylinder implements IShape {
     return v3Normalized(v3Sub(this._centerA, this._centerB));
   }
 
-  computeBoundingBox(): Box3 {
+  computeBoundingBox(): AABB {
     /* const halfHeight = this.getHalfHeight();
     const middle = this.getMiddle();
 

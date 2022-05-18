@@ -11,6 +11,7 @@ import { IShape } from './IShape';
 import { RawCylinder, Cylinder } from './Cylinder';
 import { RawAxisAlignedBox, AxisAlignedBox } from './AxisAlignedBox';
 import { RawCompositeShape, CompositeShape } from './CompositeShape';
+import { Box, RawBox } from './Box';
 
 export function fromRawShape(rawShape: IRawShape): IShape {
   switch (rawShape.type) {
@@ -18,8 +19,11 @@ export function fromRawShape(rawShape: IRawShape): IShape {
       const rawCylinder = rawShape as RawCylinder;
       return new Cylinder(rawCylinder.centerA, rawCylinder.centerB, rawCylinder.radius);
     case 'aabb':
-      const rawBox = rawShape as RawAxisAlignedBox;
-      return new AxisAlignedBox(rawBox.box);
+      const rawAabb = rawShape as RawAxisAlignedBox;
+      return new AxisAlignedBox(rawAabb.box);
+    case 'box':
+      const rawBox = rawShape as RawBox;
+      return new Box(rawBox.invMatrix.data, true);
     case 'composite':
       const rawComposite = rawShape as RawCompositeShape;
       return new CompositeShape(rawComposite.shapes.map(fromRawShape));

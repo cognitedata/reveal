@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-export type ShapeType = 'cylinder' | 'aabb' | 'composite';
+export type ShapeType = 'cylinder' | 'box' | 'aabb' | 'composite';
 
 export interface IRawShape {
   type: ShapeType;

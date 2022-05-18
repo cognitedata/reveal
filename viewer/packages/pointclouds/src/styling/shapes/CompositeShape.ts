@@ -6,7 +6,7 @@ import { IShape } from './IShape';
 import { IRawShape } from './IRawShape';
 
 // import * as THREE from 'three';
-import { Vec3, Box3, b3Union, emptyBox3 } from './linalg';
+import { Vec3, AABB, b3Union, emptyBox3 } from './linalg';
 
 export type RawCompositeShape = {
   type: 'composite';
@@ -20,7 +20,7 @@ export class CompositeShape implements IShape {
     this._innerShapes = shapes.slice();
   }
 
-  computeBoundingBox(): Box3 {
+  computeBoundingBox(): AABB {
     let newBox = emptyBox3();
     for (const shape of this._innerShapes) {
       newBox = b3Union(newBox, shape.computeBoundingBox());

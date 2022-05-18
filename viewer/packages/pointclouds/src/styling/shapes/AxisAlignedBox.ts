@@ -6,17 +6,17 @@ import { IShape } from './IShape';
 
 // import * as THREE from 'three';
 
-import { Vec3, Box3, b3ContainsPoint } from './linalg';
+import { Vec3, AABB, b3ContainsPoint } from './linalg';
 
 export type RawAxisAlignedBox = {
   type: 'aabb';
-  box: Box3;
+  box: AABB;
 };
 
 export class AxisAlignedBox implements IShape {
-  private readonly _box: Box3;
+  private readonly _box: AABB;
 
-  constructor(box: Box3) {
+  constructor(box: AABB) {
     this._box = box;
   }
 
@@ -28,7 +28,7 @@ export class AxisAlignedBox implements IShape {
     return this._box.max;
   }
 
-  computeBoundingBox(): Box3 {
+  computeBoundingBox(): AABB {
     return this._box;
   }
 
