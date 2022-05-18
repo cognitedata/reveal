@@ -47,7 +47,7 @@ export const toKonva = (
 
     case 'GROUP': {
       const group = new Konva.Group(obj.attrs);
-      console.log('breaking', obj, group);
+
       if (obj.children.length > 0) {
         group.add(...obj.children.map((c) => toKonva(c, shapeSpecifics)));
       }

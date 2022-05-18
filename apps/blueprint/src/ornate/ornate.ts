@@ -256,8 +256,7 @@ export class CogniteOrnate {
   public reset() {
     Object.values(this.layers).forEach((layer) => layer.removeChildren());
     renderBackgroundIntoLayer(this.layers.background);
-
-    this.transformer = new OrnateTransformer(this);
+    this.transformer.setSelectedNodes([]);
     this.layers.top.add(this.transformer);
   }
 

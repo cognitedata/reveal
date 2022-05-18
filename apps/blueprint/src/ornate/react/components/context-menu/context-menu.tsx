@@ -93,12 +93,12 @@ export const ContextMenu: React.FC<OrnateContextMenuProps> = ({
 
   useEffect(() => {
     if (!instance) return () => null;
-    setTimeout(() => {
-      instance.transformer.on('nodes-update', onNodeUpdate);
-      instance.transformer.on('dragstart transformstart', onDragStart);
-      instance.transformer.on('dragend transformend', onDragEnd);
-      instance.stage.on('wheel', onMouseWheel);
-    }, 1000);
+
+    instance.transformer.on('nodes-update', onNodeUpdate);
+    instance.transformer.on('dragstart transformstart', onDragStart);
+    instance.transformer.on('dragend transformend', onDragEnd);
+    instance.stage.on('wheel', onMouseWheel);
+
     return () => {
       instance.transformer.off('nodes-update', onNodeUpdate);
       instance.transformer.off('dragstart transformstart', onDragStart);
