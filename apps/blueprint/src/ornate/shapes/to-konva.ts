@@ -20,6 +20,7 @@ export const toKonva = (
   }
 ): Konva.Shape | Konva.Group => {
   const { type } = obj.attrs;
+
   switch (type) {
     case 'CIRCLE':
       return new Circle(obj.attrs).shape;
@@ -46,7 +47,11 @@ export const toKonva = (
 
     case 'GROUP': {
       const group = new Konva.Group(obj.attrs);
-      group.add(...obj.children.map((c) => toKonva(c, shapeSpecifics)));
+      console.log('breaking', obj, group);
+      if (obj.children.length > 0) {
+        group.add(...obj.children.map((c) => toKonva(c, shapeSpecifics)));
+      }
+
       return group;
     }
     default:
