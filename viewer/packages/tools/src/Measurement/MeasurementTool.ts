@@ -6,7 +6,7 @@ import { Cognite3DViewer, Intersection } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import * as THREE from 'three';
 import { MeasurementLabel } from './MeasurementLabel';
-import { MeasurementLineOptions, MeasurementOptions, MeasurementUnits, MeasurementUnitUpdateDelegate } from './types';
+import { MeasurementLineOptions, MeasurementOptions, MeasurementLabelUpdateDelegate } from './types';
 import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
 
@@ -182,11 +182,11 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Check if their is a request to show the measurment in feet, inches or centimeter unit, if not assign distance value to meters.
    */
   private assignMeasurementValue() {
-    const options = this._options.unitsUpdateCallback;
+    const options = this._options.transformMeasurementLabel;
     if (options === undefined) {
-      this._distanceValue = this.getMeasurementValue().toFixed(2).toString() + ' m';
+      this._distanceValue = this.getMeasurementValue().toFixed(2) + ' m';
     } else {
-      this.updateUnits(options);
+      this.updateMeasurementValue(options);
     }
   }
 
@@ -194,26 +194,9 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Update the measurement units and calculate respective measuring values in passed units.
    * @param options Callback function which provides type of measuring unit.
    */
-  private updateUnits(options: MeasurementUnitUpdateDelegate) {
-    const units = options();
-    switch (units) {
-      case MeasurementUnits.Centimeter:
-        // 1 meters = 100 centimeter
-        this._distanceValue = (this.getMeasurementValue() * 100).toFixed(2).toString() + ' cm';
-        break;
-      case MeasurementUnits.Feet:
-        // 1 meters = 3.281 feet
-        this._distanceValue = (this.getMeasurementValue() * 3.281).toFixed(2).toString() + ' ft';
-        break;
-      case MeasurementUnits.Inches:
-        // 1 meters = 32.37 inches
-        this._distanceValue = (this.getMeasurementValue() * 39.37).toFixed(2).toString() + ' in';
-        break;
-      case MeasurementUnits.Meter:
-      default:
-        this._distanceValue = this.getMeasurementValue().toFixed(2).toString() + ' m';
-        break;
-    }
+  private updateMeasurementValue(options: MeasurementLabelUpdateDelegate) {
+    const units = options(this.getMeasurementValue());
+    this._distanceValue = units.distance.toFixed(2) + units.units;
   }
 
   private onPointerMove(event: MouseEvent) {
@@ -267,13 +250,20 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Update the Measurement Line width & color
-   * @param options Line Options of width & color
+   * Update the measurement line width.
+   * @param width Line width
    */
-  updateLineOptions(options: MeasurementLineOptions): void {
-    this._lineOptions.lineWidth = options?.lineWidth ?? this._lineOptions.lineWidth;
-    this._lineOptions.color = options?.color ?? this._lineOptions.color;
-    this._pointSize = options?.lineWidth * 10.0 || this._pointSize;
+  updateLineWidth(width: number): void {
+    this._lineOptions.lineWidth = width ?? this._lineOptions.lineWidth;
+    this._pointSize = width * 10.0 || this._pointSize;
+  }
+
+  /**
+   * Update measurement line color.
+   * @param color Line color.
+   */
+  updateLineColor(color: number): void {
+    this._lineOptions.color = color;
   }
 
   /**

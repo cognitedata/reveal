@@ -141,15 +141,7 @@ module.exports = env => {
             });
           });
         }
-      },
-      new CopyWebpackPlugin({
-        patterns: [
-          {
-            from: './packages/tools/src/Measurement/styles/',
-            to: './packages/tools/src/Measurement/styles/'
-          }
-        ]
-      })
+      }
     ]
   };
 };

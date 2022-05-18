@@ -7,15 +7,13 @@ export type MeasurementLineOptions = {
   color?: number;
 };
 
-export type MeasurementUnitUpdateDelegate = () => MeasurementUnits;
+export type MeasurementLabelUpdateDelegate = (distance: number) => MeasurementData;
 
 export type MeasurementOptions = {
-  unitsUpdateCallback?: MeasurementUnitUpdateDelegate;
+  transformMeasurementLabel?: MeasurementLabelUpdateDelegate;
 };
 
-export enum MeasurementUnits {
-  Meter = 'meter',
-  Feet = 'feet',
-  Inches = 'inches',
-  Centimeter = 'centimeter'
-}
+export type MeasurementData = {
+  distance: number;
+  units: string;
+};

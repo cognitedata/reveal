@@ -41,33 +41,36 @@ measurement.remove();
 ```
 
 ### Change width and color of the measuring line
-To change width and color of the line, use `MeasurementTool.updateLineOptions(lineOptions: MeasurementLineOptions)`. MeasurementLineOptions expects
-  - `lineWidth` : number,
-  - `color` : number
+To change width of the measuring line, use `MeasurementTool.updateLineWidth(lineWidth: number)`.
 
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
-const lineOptions = {
-  lineWidth: 0.004,
-  color: 0xff0000
-}
 const measurement = new MeasurementTool(viewer);
 measurement.add();
-measurement.updateLineOptions(lineOptions);
+measurement.updateLineWidth(0.005);
 ```
 
-### Measure with different units
-To change the units of measuring distance, the tool supports feet, inches and centimeters units other than the default meters. For changing to different
-units, we can pass a callback as option to the tool with `MeasurementUnits`.
-  - MeasurementUnits.Feet
-  - MeasurementUnits.Inches
-  - MeasurementUnits.Centimeter
-  - MeasurementUnits.Meter
+To change color of the measuring line, use `MeasurementTool.updateLineColor(color: number)`.
+```jsx runnable
+// import { MeasurementTool } from '@cognite/reveal/tools';
+
+const measurement = new MeasurementTool(viewer);
+measurement.add();
+measurement.updateLineColor(0x00ff00);
+```
+
+It's also possible to apply custom label content for the measurment.
+The tool provides option of custom callback for the users. 'MeasurementOptions.transformMeasurementLabel` can be
+used to trigger custom operation like change the measuring units to feet. 
 
 ```jsx runnable
 // import { MeasurementTool, MeasurementUnits } from '@cognite/reveal/tools';
 
-const measurement = new MeasurementTool(viewer, {unitsUpdateCallback: () => { return MeasurementUnits.Feet}});
+const measurement = new MeasurementTool(viewer, {transformMeasurementLabel: (distance: number) => {
+      // 1 meters = 3.281 feet
+      const distanceInFeet = distance * 3.281;
+      return { distance: distanceInFeet, units: 'ft'};
+     }});
 measurement.add();
 ```
