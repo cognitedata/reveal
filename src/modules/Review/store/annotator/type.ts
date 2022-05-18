@@ -8,6 +8,7 @@ export type KeypointCollectionState = {
   label: string;
   show: boolean;
   status: AnnotationStatus;
+  // do we have to have selected state here?
 };
 
 type PredefinedAnnotations = {

@@ -7,7 +7,6 @@ import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotat
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
-import { Point } from '@cognite/react-image-annotate/Types/ImageCanvas/region-tools';
 import {
   AnnotationStatus,
   createUniqueId,
@@ -107,6 +106,7 @@ const annotatorSlice = createSlice({
           positionX: number;
           positionY: number;
           orderNumber?: number;
+          // confidence?
         }>
       ) => {
         const predefinedKeypointCollection =
@@ -126,9 +126,8 @@ const annotatorSlice = createSlice({
 
           const reviewKeypoint: ReviewKeypoint = {
             id: action.payload.id.toString(),
-            selected: false,
+            selected: true, // select the keypoint after creating
             keypoint: {
-              ...predefinedKeypoint,
               label: predefinedKeypoint.caption,
               point: {
                 x: action.payload.positionX,
@@ -144,7 +143,6 @@ const annotatorSlice = createSlice({
               id: collectionId,
               keypointIds: [],
               label: action.payload.collectionName,
-              selected: true,
               status: AnnotationStatus.Verified,
               show: true,
             };
@@ -180,11 +178,8 @@ const annotatorSlice = createSlice({
       },
     },
 
-    onUpdateKeyPoint(state, action: PayloadAction<Point>) {
-      const reviewKeypoint = state.keypointMap.byId[action.payload.id];
-      if (reviewKeypoint) {
-        reviewKeypoint.keypoint.point = action.payload;
-      }
+    onUpdateKeyPoint(state, action: PayloadAction<ReviewKeypoint>) {
+      state.keypointMap.byId[action.payload.id] = action.payload;
     },
     deleteCollectionById(state, action: PayloadAction<string>) {
       deleteCollection(state, action.payload);
@@ -261,7 +256,7 @@ const annotatorSlice = createSlice({
 
               state.keypointMap.byId[keypointId] = {
                 id: keypointId,
-                selected: false,
+                selected: true,
                 keypoint,
               };
             });
