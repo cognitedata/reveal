@@ -10,6 +10,7 @@ import {
   EquipmentComponent,
   Remark,
   Facility,
+  UnitListByFacility,
 } from 'scarlet/types';
 
 export type AppStateEquipmentList = {
@@ -32,9 +33,14 @@ export type AppState = {
   equipmentList?: AppStateEquipmentList;
   dataElementModal?: AppStateDataElementModal;
   saveState: APIState<EquipmentData> & { isInitial?: boolean };
+  unitListByFacility: APIState<UnitListByFacility>;
 };
 
 export type AppAction =
+  | {
+      type: AppActionType.INIT_UNITS;
+      unitListByFacility: APIState<UnitListByFacility>;
+    }
   | {
       type: AppActionType.INIT_EQUIPMENT;
       facility: Facility;
@@ -128,6 +134,7 @@ export type AppAction =
     };
 
 export enum AppActionType {
+  INIT_UNITS = 'init-units',
   // equipment
   INIT_EQUIPMENT = 'init-equipment',
   SET_DOCUMENTS = 'set-documents',

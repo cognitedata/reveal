@@ -1,18 +1,21 @@
 import { Skeleton } from '@cognite/cogs.js';
 import { CellProps } from 'react-table';
 import { EquipmentListItem } from 'scarlet/types';
+import { getEquipmentTypeLabel } from 'scarlet/utils';
 
-import { ColumnAccessor, EquipmentStatus } from './types';
+import { ColumnAccessor, EquipmentStatus, EquipmentType } from './types';
 import * as Styled from './style';
 
 export const getCellValue = ({
   value,
   cell,
-}: CellProps<EquipmentListItem, string>) => {
-  if (value !== undefined) return <Styled.Value>{value}</Styled.Value>;
+}: CellProps<EquipmentListItem, string | undefined>) => {
+  if (value !== undefined && value !== '')
+    return <Styled.Value>{value}</Styled.Value>;
   switch (cell.column.id) {
     case ColumnAccessor.TYPE:
-      return '—';
+    case ColumnAccessor.MODIFIED_BY:
+      return '-';
     default:
       return '';
   }
@@ -28,6 +31,12 @@ export const getCellStatus = ({
       : value;
   return <Styled.StatusLabel status={value}>{message}</Styled.StatusLabel>;
 };
+
+export const getCellType = ({
+  value,
+  ...props
+}: CellProps<EquipmentListItem, EquipmentType>) =>
+  getCellValue({ ...props, value: getEquipmentTypeLabel(value) });
 
 export const getCellSkeleton = ({
   cell,

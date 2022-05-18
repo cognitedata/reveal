@@ -15,7 +15,7 @@ import {
   setConnectedDataElements,
 } from './utils';
 
-const equipmentInitialState: AppState = {
+const equipmentInitialState = {
   unitId: '',
   equipmentId: '',
   documents: { loading: true },
@@ -26,6 +26,7 @@ const equipmentInitialState: AppState = {
 
 const initialState: AppState = {
   ...equipmentInitialState,
+  unitListByFacility: { loading: true },
 };
 
 export const AppDispatchContext = React.createContext<
@@ -35,6 +36,11 @@ export const AppContext = React.createContext(initialState);
 
 function reducer(state: AppState, action: AppAction) {
   switch (action.type) {
+    case AppActionType.INIT_UNITS:
+      return {
+        ...state,
+        unitListByFacility: action.unitListByFacility,
+      };
     case AppActionType.INIT_EQUIPMENT:
       return {
         ...state,

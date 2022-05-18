@@ -15,7 +15,7 @@ export const Title = styled(CogsTitle)`
   padding: 0 12px;
 `;
 
-export const DocumentsAmount = styled(Detail)`
+export const DocumentsNumber = styled(Detail)`
   color: var(--cogs-greyscale-grey6);
   background-color: var(--cogs-greyscale-grey2);
   padding: 4px 8px;

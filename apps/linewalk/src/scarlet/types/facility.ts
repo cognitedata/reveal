@@ -3,4 +3,6 @@ export type Facility = {
   path: string;
   name: string;
   shortName: string;
+  unitPattern: RegExp;
+  env: string[];
 };

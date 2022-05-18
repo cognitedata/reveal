@@ -5,7 +5,7 @@ import {
   EquipmentStatus,
   Facility,
 } from 'scarlet/types';
-import { getEquipmentType, getEquipmentTypeLabel } from 'scarlet/utils';
+import { getEquipmentType } from 'scarlet/utils';
 import config from 'utils/config';
 
 import { getUnitAsset } from '.';
@@ -15,8 +15,9 @@ export const getEquipmentList = async (
   { facility, unitId }: { facility?: Facility; unitId: string }
 ): Promise<EquipmentListItem[]> => {
   if (!facility) throw Error('Facility is not set');
+  if (!unitId) throw Error('UnitId is not set');
 
-  let equipments: EquipmentListItem[] = [];
+  let equipmentList: EquipmentListItem[] = [];
   const equipmentStates = await getEquipmentStates(client, {
     facility,
     unitId,
@@ -26,20 +27,20 @@ export const getEquipmentList = async (
     unitId,
   });
 
-  equipments = pcmsEquipmentIds
+  equipmentList = pcmsEquipmentIds
     .filter((item) => /^\d+-/.test(item))
     .filter((item, i, self) => self.indexOf(item) === i)
     .map((id) => {
       const equipmentState = equipmentStates[id];
-      const completed = equipmentState?.completed === 'Y';
       const progress = equipmentState?.progress ?? 0;
+      const completed = equipmentState?.progress === '100';
       let status = EquipmentStatus.NOT_STARTED;
       if (completed) status = EquipmentStatus.COMPLETED;
-      else if (progress > 0) status = EquipmentStatus.ONGOING;
+      else if (equipmentState?.modifiedBy) status = EquipmentStatus.ONGOING;
 
       return {
         id,
-        type: getEquipmentTypeLabel(getEquipmentType(id)),
+        type: getEquipmentType(id),
         status,
         progress,
         modifiedBy: equipmentState?.modifiedBy,
@@ -47,7 +48,7 @@ export const getEquipmentList = async (
     })
     .sort((a, b) => (a.id < b.id ? -1 : 1));
 
-  return equipments;
+  return equipmentList;
 };
 
 const getEquipmentStates = async (
@@ -89,11 +90,11 @@ const getPCMSEquipmentIds = async (
   client: CogniteClient,
   { facility, unitId }: { facility: Facility; unitId: string }
 ) => {
-  const equipments: string[] = [];
+  const equipmentList: string[] = [];
 
   try {
     const unitAsset = await getUnitAsset(client, { unitId, facility });
-    if (!unitAsset) return equipments;
+    if (!unitAsset) return equipmentList;
 
     let list = await client.assets.list({
       filter: {
@@ -108,7 +109,7 @@ const getPCMSEquipmentIds = async (
 
     do {
       if (next) list = await next(); // eslint-disable-line no-await-in-loop
-      equipments.push(...list.items.map((item) => item.name));
+      equipmentList.push(...list.items.map((item) => item.name));
       next = list.next;
     } while (list.next);
   } catch (e) {
@@ -116,5 +117,5 @@ const getPCMSEquipmentIds = async (
     console.error(`Failed to load equipment ids for unit: ${unitId}`, e);
   }
 
-  return equipments;
+  return equipmentList;
 };

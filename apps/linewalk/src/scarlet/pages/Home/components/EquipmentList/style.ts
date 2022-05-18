@@ -6,10 +6,11 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  flex-grow: 1;
 `;
 
 export const ContentWrapper = styled.div<{ empty?: boolean }>`
-  margin: 32px 32px 0;
+  margin: 0 32px;
   padding-bottom: 32px;
   flex-grow: 1;
   display: flex;

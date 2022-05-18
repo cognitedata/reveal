@@ -1,27 +1,14 @@
 import { useMemo } from 'react';
-import { generatePath, useHistory, useParams } from 'react-router-dom';
-import { defaultFacility, facility as facilityConfig } from 'scarlet/config';
-import { RoutePath } from 'scarlet/routes';
+import { useParams } from 'react-router-dom';
+import { facilityList } from 'scarlet/config';
 
 export const useFacility = () => {
-  const { facility: facilityPath } = useParams<{ facility: string }>();
-  const history = useHistory();
+  const params = useParams<{ facility: string }>();
 
-  const facility = useMemo(() => {
-    const facility = facilityConfig.find(
-      (facility) => facility.path === facilityPath
-    );
-
-    if (!facility) {
-      history.replace(
-        generatePath(RoutePath.FACILITY, {
-          facility: defaultFacility.path,
-        })
-      );
-    }
-
-    return facility;
-  }, [facilityPath]);
+  const facility = useMemo(
+    () => facilityList.find((facility) => facility.path === params.facility),
+    [params.facility]
+  );
 
   return facility;
 };

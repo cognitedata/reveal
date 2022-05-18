@@ -4,21 +4,22 @@ import { DataElementOrigin } from 'scarlet/types';
 import { DataPanelAction, DataPanelActionType, DataPanelState } from './types';
 import { getDetection, toggleDataElement } from './utils';
 
-const getAppName = (value: string) => ['scarlet', 'dataPanel', value].join('_');
+const getStorageName = (value: string) =>
+  ['scarlet', 'dataPanel', value].join('_');
 
 const getInitialState = (): DataPanelState => ({
   isVisible:
-    sessionStorage?.getItem(getAppName('isVisible')) === 'true' || true,
+    sessionStorage?.getItem(getStorageName('isVisible')) === 'true' || true,
   currentOrigin:
     (sessionStorage?.getItem(
-      getAppName('currentOrigin')
+      getStorageName('currentOrigin')
     ) as DataElementOrigin) || DataElementOrigin.EQUIPMENT,
   isActiveNewDataSource: false,
   checkedDataElements: [],
 });
 
 const saveCurrentOrigin = (origin: DataElementOrigin) => {
-  sessionStorage?.setItem(getAppName('currentOrigin'), origin);
+  sessionStorage?.setItem(getStorageName('currentOrigin'), origin);
 };
 
 export const DataPanelDispatchContext = React.createContext<
@@ -31,7 +32,10 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
   switch (action.type) {
     case DataPanelActionType.TOGGLE_PANEL: {
       const isVisible = !state.isVisible;
-      sessionStorage?.setItem(getAppName('isVisible'), isVisible.toString());
+      sessionStorage?.setItem(
+        getStorageName('isVisible'),
+        isVisible.toString()
+      );
 
       return {
         ...state,

@@ -16,4 +16,5 @@ export * from './mal';
 export * from './ornate';
 export * from './pcms';
 export * from './remark';
+export * from './sortOrder';
 export * from './unit';

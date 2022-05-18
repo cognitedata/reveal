@@ -138,7 +138,7 @@ export const EquipmentPanel = () => {
               <DataElementList
                 data={equipmentElements}
                 loading={equipment.loading}
-                skeletonAmount={20}
+                skeletonLength={20}
               />
             )}
           </Styled.ListContainer>

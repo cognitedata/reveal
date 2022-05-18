@@ -9,6 +9,8 @@ export * from './useDataElementConfig';
 export * from './useDataPanelContext';
 export * from './useEquipmentComponentsByType';
 export * from './useFacility';
+export * from './useHomePageContext';
 export * from './useOrnateTags';
+export * from './usePoolExportFileId';
 export * from './useSaveEquipment';
 export * from './useWorkspaceTools';

@@ -29,7 +29,7 @@ export const useOrnateTags = (): {
       ]
         .flat()
         .filter((item) => {
-          // filter by state and amount of detections
+          // filter by state and number of detections
           if (
             item.state === DataElementState.OMITTED &&
             !item.detections?.length

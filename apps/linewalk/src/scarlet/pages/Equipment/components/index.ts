@@ -1,6 +1,7 @@
 export * from 'scarlet/components';
 
 export * from './AutoCompleteField';
+export * from './BreadcrumbBar';
 export * from './DataElement';
 export * from './Card';
 export * from './CardHeader';
@@ -24,7 +25,7 @@ export * from './DataSourcePanel';
 export * from './DateField';
 export * from './EquipmentPanel';
 export * from './EquipmentStateBar';
-export * from './Modal';
+export * from '../../../components/Modal';
 export * from './NewCanvasDataSource';
 export * from './NewDataSource';
 export * from './Ornate';

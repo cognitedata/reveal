@@ -66,7 +66,7 @@ export const ComponentList = ({ components, loading }: ComponentListProps) => {
                 <DataElementList
                   data={component.componentElements}
                   loading={false}
-                  skeletonAmount={20}
+                  skeletonLength={20}
                   partial
                 />
               </Styled.Panel>

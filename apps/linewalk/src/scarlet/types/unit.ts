@@ -1,7 +1,9 @@
-import { EquipmentData } from '.';
+export type UnitListItem = {
+  id: string;
+  cdfId: number;
+  number: number;
+};
 
-export type UnitData = {
-  equipments: {
-    [equipmentId: string]: Partial<EquipmentData>;
-  };
+export type UnitListByFacility = {
+  [facilitySequenceNumber: string]: UnitListItem[];
 };

@@ -1,6 +1,9 @@
 import { CogniteClient } from '@cognite/sdk';
 import { DataSetId, EquipmentData, Facility } from 'scarlet/types';
-import { getEquipmentProgress } from 'scarlet/utils';
+import {
+  getEquipmentProgress,
+  getEquipmentStateExternalId,
+} from 'scarlet/utils';
 import config from 'utils/config';
 
 export const saveEquipment = async (
@@ -21,21 +24,13 @@ export const saveEquipment = async (
 ): Promise<boolean> => {
   if (!facility) throw Error('Facility is not set');
 
-  const fileParts = [
-    config.env,
-    facility.sequenceNumber,
-    unitId,
-    equipmentId,
-    'state',
-  ];
-
-  const id = fileParts.join('_');
+  const externalId = getEquipmentStateExternalId(facility, unitId, equipmentId);
 
   try {
     await client.files.upload(
       {
-        externalId: id,
-        name: `${id}.json`,
+        externalId,
+        name: `${externalId}.json`,
         mimeType: 'application/json',
         dataSetId: DataSetId.P66_ScarletViewState,
         metadata: {

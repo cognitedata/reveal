@@ -14,6 +14,7 @@ export const useApi = <T>(
   props?: any,
   options?: {
     data?: T;
+    skip?: boolean;
   }
 ) => {
   const { client } = useAuthContext();
@@ -24,7 +25,7 @@ export const useApi = <T>(
   });
 
   useEffect(() => {
-    if (client && !options?.data) {
+    if (client && !options?.data && !options?.skip) {
       setState((state) => (state.loading ? state : initialState));
       func(client, props)
         .then((data) => {
@@ -34,7 +35,7 @@ export const useApi = <T>(
           setState((state) => ({ ...state, error, loading: false }));
         });
     }
-  }, [client, JSON.stringify(props)]);
+  }, [client, JSON.stringify(props), options?.skip]);
 
   return state;
 };

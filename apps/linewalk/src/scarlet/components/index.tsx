@@ -1,1 +1,1 @@
-export * from './BreadcrumbBar';
+export * from './Modal';

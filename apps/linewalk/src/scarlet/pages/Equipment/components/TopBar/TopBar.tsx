@@ -14,9 +14,9 @@ type TopBarProps = {
 
 export const TopBar = ({ unitId, equipmentId }: TopBarProps) => {
   const { documents } = useAppState();
-  const history = useHistory();
   const facility = useFacility();
-  const equipmentListPath = generatePath(RoutePath.EQUIPMENT_LIST, {
+  const history = useHistory();
+  const equipmentListPath = generatePath(RoutePath.UNIT, {
     facility: facility!.path,
     unitId,
   });
@@ -29,10 +29,10 @@ export const TopBar = ({ unitId, equipmentId }: TopBarProps) => {
       <Styled.Title level={3}>{equipmentId}</Styled.Title>
       {documents.loading && <Skeleton.Rectangle width="90px" height="24px" />}
       {!(documents.loading || documents.error) && (
-        <Styled.DocumentsAmount>
+        <Styled.DocumentsNumber>
           {documents.data?.length}
           {documents.data?.length === 1 ? ' document' : ' documents'}
-        </Styled.DocumentsAmount>
+        </Styled.DocumentsNumber>
       )}
       <Styled.StateContainer>
         <EquipmentStateBar />

@@ -231,35 +231,38 @@ const getEquipmentComponents = (
       }
     );
   } else if (pcmsComponents) {
-    components = pcmsComponents.map((pcmsComponent) => {
-      const pcmsType = pcmsComponent.metadata?.component_master.toLowerCase();
-      const componentType =
-        pcmsType &&
-        Object.values(EquipmentComponentType).find((item) =>
-          pcmsType.includes(item)
+    components = pcmsComponents
+      .map((pcmsComponent) => {
+        const pcmsType = pcmsComponent.metadata?.component_master.toLowerCase();
+        const componentType =
+          pcmsType &&
+          Object.values(EquipmentComponentType).find((item) =>
+            pcmsType.includes(item)
+          );
+
+        if (!componentType) {
+          console.error(`Component type ${pcmsType} can't be defined`);
+          return undefined;
+        }
+
+        const component: EquipmentComponent = {
+          id: uuid(),
+          name: pcmsComponent.name,
+          pcmsExternalId: pcmsComponent.externalId,
+          type: componentType,
+          componentElements: [],
+        };
+
+        component.componentElements = getComponentElements(
+          equipmentType,
+          config,
+          component,
+          pcmsComponent
         );
 
-      if (!componentType) {
-        throw new Error(`Component type ${pcmsType} can't be defined`);
-      }
-
-      const component: EquipmentComponent = {
-        id: uuid(),
-        name: pcmsComponent.name,
-        pcmsExternalId: pcmsComponent.externalId,
-        type: componentType,
-        componentElements: [],
-      };
-
-      component.componentElements = getComponentElements(
-        equipmentType,
-        config,
-        component,
-        pcmsComponent
-      );
-
-      return component;
-    });
+        return component;
+      })
+      .filter((item) => item) as EquipmentComponent[];
   }
 
   // add scanner detections

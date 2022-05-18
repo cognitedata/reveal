@@ -3,7 +3,7 @@ import { EquipmentStatus } from './equipment';
 export type EquipmentListItem = {
   id: string;
   type?: string;
-  status?: EquipmentStatus;
+  status: EquipmentStatus;
   progress?: number;
   modifiedBy?: string;
 };

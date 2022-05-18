@@ -1,13 +1,13 @@
 import * as Styled from './style';
 
 export type DataElementsSkeletonProps = {
-  amount?: number;
+  length?: number;
 };
 
 export const DataElementListSkeleton = ({
-  amount = 5,
+  length = 5,
 }: DataElementsSkeletonProps) => {
-  const keys = Array.from(Array(amount).keys());
+  const keys = Array.from(Array(length).keys());
 
   return (
     <>

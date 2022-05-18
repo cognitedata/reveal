@@ -1,2 +1,3 @@
 export * from './Equipment';
-export * from './EquipmentList';
+export * from './Home';
+export * from './Support';

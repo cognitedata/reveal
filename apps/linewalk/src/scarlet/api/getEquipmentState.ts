@@ -29,6 +29,8 @@ export const getEquipmentState = async (
 
     if (!file) return Promise.resolve();
 
+    // await client.files.delete([{ id: file.id }]);
+
     const url = await client.files
       .getDownloadUrls([{ id: file.id }])
       .then((response) => response[0].downloadUrl);
@@ -39,6 +41,4 @@ export const getEquipmentState = async (
     if (error?.message?.includes('Files not uploaded')) return undefined;
     throw error;
   }
-
-  // await client.files.delete([{ id: 7015130600440692 }]);
 };

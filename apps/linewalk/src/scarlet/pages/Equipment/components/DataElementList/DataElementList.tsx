@@ -13,23 +13,23 @@ import { sortDataElements } from './utils';
 
 const DATA_ELEMENT_HEIGHT = 64;
 const SIDE_OFFSET = 350;
-let PARTIAL_AMOUNT =
+let PARTIAL_LENGTH =
   Math.floor((window.innerHeight - SIDE_OFFSET) / DATA_ELEMENT_HEIGHT) - 1;
-if (PARTIAL_AMOUNT < 6) {
-  PARTIAL_AMOUNT = 6;
+if (PARTIAL_LENGTH < 6) {
+  PARTIAL_LENGTH = 6;
 }
 
 type DataElementListProps = {
   data?: DataElement[];
   loading: boolean;
-  skeletonAmount: number;
+  skeletonLength: number;
   partial?: boolean;
 };
 
 export const DataElementList = ({
   data,
   loading,
-  skeletonAmount,
+  skeletonLength,
   partial = false,
 }: DataElementListProps) => {
   const { equipmentConfig } = useAppState();
@@ -49,15 +49,15 @@ export const DataElementList = ({
       [],
     [data]
   );
-  const isPartialActive = partial && sortedList.length - PARTIAL_AMOUNT > 4;
+  const isPartialActive = partial && sortedList.length - PARTIAL_LENGTH > 4;
   const [isPartial, setIsPartial] = useState(isPartialActive);
   const visibleDataElements = useMemo(() => {
     if (!isPartial) return sortedList;
-    return sortedList?.slice(0, PARTIAL_AMOUNT);
+    return sortedList?.slice(0, PARTIAL_LENGTH);
   }, [isPartial, sortedList]);
 
   if (loading) {
-    return <DataElementListSkeleton amount={skeletonAmount} />;
+    return <DataElementListSkeleton length={skeletonLength} />;
   }
 
   return (
