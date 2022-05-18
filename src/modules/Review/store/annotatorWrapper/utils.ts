@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
 
-import { AnnotatorState } from 'src/modules/Review/store/annotator/type';
+import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
 
 export const deleteCollection = (
-  state: AnnotatorState,
+  state: AnnotatorWrapperState,
   collectionId: string
 ) => {
   const collection = state.collections.byId[collectionId];

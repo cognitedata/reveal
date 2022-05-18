@@ -12,8 +12,8 @@ import {
   createUniqueId,
 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { ReactText } from 'react';
-import { deleteCollection } from 'src/modules/Review/store/annotator/utils';
-import { AnnotatorState } from 'src/modules/Review/store/annotator/type';
+import { deleteCollection } from 'src/modules/Review/store/annotatorWrapper/utils';
+import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
 import { ReviewKeypoint } from 'src/modules/Review/store/review/types';
 import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bulkConverters';
 import {
@@ -23,7 +23,7 @@ import {
 import { ImageKeypointCollection } from 'src/api/annotation/types';
 import { isImageKeypointCollectionData } from 'src/modules/Common/types/typeGuards';
 
-export const initialState: AnnotatorState = {
+export const initialState: AnnotatorWrapperState = {
   predefinedAnnotations: {
     predefinedKeypointCollections: [],
     predefinedShapes: [],
@@ -46,8 +46,8 @@ export const initialState: AnnotatorState = {
   keepUnsavedRegion: false,
 };
 
-const annotatorSlice = createSlice({
-  name: 'annotatorSlice',
+const annotatorWrapperSlice = createSlice({
+  name: 'annotatorWrapperSlice',
   initialState,
   /* eslint-disable no-param-reassign */
   reducers: {
@@ -291,7 +291,7 @@ const annotatorSlice = createSlice({
   },
 });
 
-export type { AnnotatorState as AnnotatorReducerState };
+export type { AnnotatorWrapperState as AnnotatorWrapperReducerState };
 
 export const {
   selectCollection,
@@ -307,6 +307,6 @@ export const {
   deleteCurrentCollection,
   removeLabels,
   setKeepUnsavedRegion,
-} = annotatorSlice.actions;
+} = annotatorWrapperSlice.actions;
 
-export default annotatorSlice.reducer;
+export default annotatorWrapperSlice.reducer;

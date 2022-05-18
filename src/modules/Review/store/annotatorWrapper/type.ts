@@ -16,7 +16,7 @@ type PredefinedAnnotations = {
   predefinedShapes: Shape[];
 };
 
-export type AnnotatorState = {
+export type AnnotatorWrapperState = {
   predefinedAnnotations: PredefinedAnnotations;
   keypointMap: {
     byId: Record<string, ReviewKeypoint>;

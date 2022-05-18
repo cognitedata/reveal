@@ -7,12 +7,12 @@ import reducer, {
   selectCollection,
   setCollectionStatus,
   toggleCollectionVisibility,
-} from 'src/modules/Review/store/annotator/slice';
+} from 'src/modules/Review/store/annotatorWrapper/slice';
 import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
-  AnnotatorState,
+  AnnotatorWrapperState,
   KeypointCollectionState,
-} from 'src/modules/Review/store/annotator/type';
+} from 'src/modules/Review/store/annotatorWrapper/type';
 import { ReviewKeypoint } from 'src/modules/Review/store/review/types';
 import { Keypoint, KeypointCollection } from 'src/modules/Review/types';
 
@@ -316,7 +316,7 @@ describe('Test annotator slice', () => {
           },
         };
 
-        const updatedState: AnnotatorState = {
+        const updatedState: AnnotatorWrapperState = {
           ...previousState,
           lastCollectionName: payload.collectionName,
           lastKeyPoint: payload.id,
@@ -382,7 +382,7 @@ describe('Test annotator slice', () => {
           },
         };
 
-        const updatedState: AnnotatorState = {
+        const updatedState: AnnotatorWrapperState = {
           ...previousState,
           lastCollectionName: payload.collectionName,
           lastKeyPoint: payload.id,
