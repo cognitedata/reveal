@@ -15,6 +15,8 @@ interface CreationFlowSectionProps {
   name: string;
 }
 
+// TODO
+// move those to i18n as well
 const DataInStatusFields = [
   {
     field: 'Tell us which source your data comes from',

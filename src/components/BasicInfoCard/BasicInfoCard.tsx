@@ -15,6 +15,7 @@ import Typography from 'antd/lib/typography';
 import Tag from 'antd/lib/tag';
 import WriteProtectedIcon from '../WriteProtectedIcon';
 import InfoTooltip from '../InfoTooltip';
+import { useTranslation } from 'common/i18n';
 
 const { Text } = Typography;
 
@@ -22,6 +23,7 @@ interface BasicInfoCardProps {
   dataSet: DataSet;
 }
 const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
+  const { t } = useTranslation();
   const {
     writeProtected,
     name,
@@ -42,41 +44,39 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
 
   return (
     <BasicInfoPane>
-      <PaneTitle>Basic information</PaneTitle>
-      <ItemLabel>Name</ItemLabel>{' '}
+      <PaneTitle>{t('basic-information')}</PaneTitle>
+      <ItemLabel>{t('name')}</ItemLabel>{' '}
       <ItemValue>
         {writeProtected && <WriteProtectedIcon />}
         {name}
       </ItemValue>
-      <ItemLabel>Data set ID</ItemLabel>{' '}
+      <ItemLabel>{t('data-set-id')}</ItemLabel>{' '}
       <InfoTooltip
         tooltipText={
           <span data-testid="id-tooltip">
-            Use this data set ID to attach data objects to this data set through
-            the API
+            {t('basic-info-tooltip-data-set-id')}
           </span>
         }
         url="https://docs.cognite.com/cdf/data_governance/guides/datasets/create_data_sets.html#step-3a-ingest-new-data-into-the-data-set"
-        urlTitle="Learn more in our docs."
+        urlTitle={t('learn-more-in-our-docs')}
         showIcon={false}
       >
         <Tag color="blue" style={{ marginBottom: '10px' }}>
-          {' '}
           <Text copyable={{ text: String(id) }}>{id}</Text>
         </Tag>
       </InfoTooltip>
-      <ItemLabel>External ID</ItemLabel>{' '}
+      <ItemLabel>{t('external-id')}</ItemLabel>
       <ItemValue>
         {externalId ? (
           <Typography.Paragraph ellipsis={{ rows: 1, expandable: true }}>
             {externalId}
           </Typography.Paragraph>
         ) : (
-          <NoDataText>No external ID</NoDataText>
+          <NoDataText>{t('external-id-no')}</NoDataText>
         )}
       </ItemValue>
       <ThinBorderLine />
-      <ItemLabel>Description</ItemLabel>
+      <ItemLabel>{t('description')}</ItemLabel>
       <ItemValue>
         <Typography.Paragraph ellipsis={{ rows: 2, expandable: true }}>
           {description}
@@ -86,10 +86,10 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
         <>
           <ItemLabel>
             <InfoTooltip
-              title="Governance status"
-              tooltipText="Governed indicates that the data set has a designated owner and follows the governance processes for data in your organization."
+              title={t('governance-status')}
+              tooltipText={t('basic-info-tooltip-governance-status')}
               url="https://docs.cognite.com/cdf/data_governance/guides/datasets/edit_explore_data_sets.html#explore-data-sets"
-              urlTitle="Learn more in our docs."
+              urlTitle={t('learn-more-in-our-docs')}
               showIcon={false}
             />
           </ItemLabel>
@@ -99,22 +99,22 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
                 {consoleGoverned ? (
                   <>
                     <ApprovedDot />
-                    Governed
+                    {t('governed')}
                   </>
                 ) : (
                   <span>
                     <UnApprovedDot />
-                    Ungoverned
+                    {t('ungoverned')}
                   </span>
                 )}
               </>
             ) : (
-              <NoDataText>Quality has not been defined</NoDataText>
+              <NoDataText>{t('quality-not-defined')}</NoDataText>
             )}
           </ItemValue>
 
           <ItemLabel>
-            Owner
+            {t('owner')}
             {Array.isArray(consoleOwners) && consoleOwners.length > 1 && 's'}
           </ItemLabel>
           {Array.isArray(consoleOwners) && consoleOwners.length > 0 ? (
@@ -122,15 +122,14 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
               <span key={owner.name}>
                 <ItemValue>{owner.name}</ItemValue>
                 <ItemValue>
-                  {' '}
                   <a href={`mailto:${owner.email}`}>{owner.email}</a>
                 </ItemValue>
               </span>
             ))
           ) : (
-            <NoDataText>No owners set</NoDataText>
+            <NoDataText>{t('no-owners-set')}</NoDataText>
           )}
-          <ItemLabel>Labels</ItemLabel>
+          <ItemLabel>{t('label_other')}</ItemLabel>
           <ItemValue>
             {Array.isArray(consoleLabels) && consoleLabels.length > 0 ? (
               <>
@@ -139,30 +138,30 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
                 ))}
               </>
             ) : (
-              <NoDataText>Not labels assigned</NoDataText>
+              <NoDataText>{t('no-labels-assigned')}</NoDataText>
             )}
           </ItemValue>
         </>
       )}
       <ThinBorderLine />
-      <ItemLabel>Created by</ItemLabel>
+      <ItemLabel>{t('created-by')}</ItemLabel>
       <ItemValue>
         {consoleCreatedBy ? (
           <>{consoleCreatedBy.username}</>
         ) : (
-          <NoDataText>Not available</NoDataText>
+          <NoDataText>{t('not-available')}</NoDataText>
         )}
       </ItemValue>
-      <ItemLabel>Last updated</ItemLabel>
+      <ItemLabel>{t('last-updated')}</ItemLabel>
       <ItemValue>{moment(lastUpdatedTime).calendar()}</ItemValue>
       {archived && (
         <InfoTooltip
-          tooltipText="This data set has been archived which means it is hidden from the UI by default but can still be accessed through the api."
+          tooltipText={t('basic-info-tooltip-data-set-archived')}
           url="https://docs.cognite.com/cdf/data_governance/guides/datasets/edit_explore_data_sets.html"
-          urlTitle="Learn more in our docs."
+          urlTitle={t('learn-more-in-our-docs')}
           showIcon={false}
         >
-          <Tag color="red">Archived</Tag>
+          <Tag color="red">{t('archived')}</Tag>
         </InfoTooltip>
       )}
     </BasicInfoPane>

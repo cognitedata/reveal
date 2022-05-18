@@ -7,6 +7,7 @@ import {
   isGroupScopedOnDataSets,
   getContainer,
 } from 'utils/shared';
+import { useTranslation } from 'common/i18n';
 
 interface GroupsWithAccessProps {
   dataSetId: number;
@@ -74,16 +75,17 @@ const createGroupScopedOnDataSets = (group: Group, dataSetId: number) => {
 };
 
 const GroupsWithAccess = (props: GroupsWithAccessProps) => {
+  const { t } = useTranslation();
   const { dataSetId, groups } = props;
 
   const resourceColumns = [
     {
-      title: 'Group',
+      title: t('group'),
       key: 'group',
       dataIndex: 'groupName',
     },
     {
-      title: 'Capabilities',
+      title: t('capabilities'),
       key: 'capabilities',
       render: (row: GroupWithResources) => (
         <div>

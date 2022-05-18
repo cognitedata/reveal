@@ -9,42 +9,46 @@ import handleError from 'utils/handleError';
 import { getContainer } from 'utils/shared';
 import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
 import ColumnWrapper from '../ColumnWrapper';
+import { useTranslation } from 'common/i18n';
 
 interface assetsTableProps {
   dataSetId: number;
 }
 
 const AssetsTable = ({ dataSetId }: assetsTableProps) => {
+  const { t } = useTranslation();
   const [assets, setAssets] = useState<Asset[]>();
 
   const assetColumns = [
     {
-      title: 'Name',
+      title: t('name'),
       dataIndex: 'name',
       key: 'name',
       render: (value: any) => <ColumnWrapper title={value} />,
     },
     {
-      title: 'ID',
+      title: t('id'),
       dataIndex: 'id',
       key: 'id',
       render: (value: any) => <ColumnWrapper title={value} />,
     },
     {
-      title: 'Parent external ID',
+      title: t('parent-external-id'),
       dataIndex: 'parentExternalId',
       key: 'parentExternalId',
     },
     {
-      title: 'Source',
+      title: t('source'),
       dataIndex: 'source',
       key: 'source',
     },
     {
-      title: 'Actions',
+      title: t('actions'),
       render: (record: Asset) => (
         <span>
-          <Link to={createLink(`/explore/asset/${record.id}`)}>View</Link>
+          <Link to={createLink(`/explore/asset/${record.id}`)}>
+            {t('view')}
+          </Link>
         </span>
       ),
     },
@@ -57,13 +61,13 @@ const AssetsTable = ({ dataSetId }: assetsTableProps) => {
         setAssets(res.items);
       })
       .catch((e) => {
-        handleError({ message: 'Failed to fetch assets', ...e });
+        handleError({ message: t('assets-failed-to-fetch'), ...e });
       });
-  }, [dataSetId]);
+  }, [dataSetId, t]);
 
   return (
     <div>
-      <ItemLabel>Assets</ItemLabel>
+      <ItemLabel>{t('assets')}</ItemLabel>
       <Table
         rowKey="id"
         columns={assetColumns}

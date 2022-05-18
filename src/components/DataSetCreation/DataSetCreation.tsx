@@ -29,6 +29,7 @@ import DataSetInfo from '../DataSetInfo';
 import CreationFlowSection from '../CreationFlowSection';
 import ConsumerPage from '../ConsumerPage';
 import { CONSUMER_KEY } from '../CreationFlowSection/CreationFlowSection';
+import { useTranslation } from 'common/i18n';
 
 interface DataSetCreationProps {
   loading: boolean;
@@ -46,6 +47,7 @@ interface DataSetCreationProps {
 }
 
 const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
+  const { t } = useTranslation();
   const { datasetCreated, datasetCreatedError, setChangesSaved } = props;
   const { data: userData } = useUserInformation();
 
@@ -99,32 +101,50 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
     switch (key) {
       case 'source':
         if (dataSet?.metadata?.consoleSource?.names?.length)
-          return <StatusPane color="green" message="Source(s) specified" />;
+          return (
+            <StatusPane color="green" message={t('source-specified_other')} />
+          );
         return keyToStatus(key);
-      case 'raw':
-        if (dataSet.metadata.rawTables && dataSet.metadata.rawTables.length)
+      case 'raw': {
+        const rawTablesQuantity = dataSet.metadata.rawTables?.length ?? 0;
+        if (rawTablesQuantity)
           return (
             <StatusPane
               color="green"
-              message={`${dataSet.metadata.rawTables.length} RAW table${
-                dataSet.metadata.rawTables.length > 1 ? 's' : ''
-              }`}
+              message={
+                rawTablesQuantity > 1
+                  ? t('dataset-creation-raw-table-quantity_other', {
+                      rawTablesQuantity,
+                    })
+                  : t('dataset-creation-raw-table-quantity_one', {
+                      rawTablesQuantity,
+                    })
+              }
             />
           );
         return keyToStatus(key);
-      case 'transform':
-        if (dataSet?.metadata?.transformations?.length)
+      }
+      case 'transform': {
+        const transformationsQuantity =
+          dataSet?.metadata?.transformations?.length ?? 0;
+        if (transformationsQuantity)
           return (
             <StatusPane
               color="green"
-              message={`${
-                dataSet.metadata.transformations.length
-              } transformation${
-                dataSet.metadata.transformations.length > 1 ? 's' : ''
-              } applied`}
+              message={
+                transformationsQuantity > 1
+                  ? t(
+                      'dataset-creation-transformations-applied-quantity_other',
+                      { transformationsQuantity }
+                    )
+                  : t('dataset-creation-transformations-applied-quantity_one', {
+                      transformationsQuantity,
+                    })
+              }
             />
           );
         return keyToStatus(key);
+      }
       case 'owners':
         if (
           Array.isArray(dataSet.metadata.consoleOwners) &&
@@ -133,57 +153,69 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
           return (
             <StatusPane
               color="green"
-              message={`Owner ${dataSet.metadata.consoleOwners[0].name}`}
+              message={t('owner-with-name', {
+                ownerName: dataSet.metadata.consoleOwners[0].name,
+              })}
             />
           );
         return keyToStatus(key);
-      case 'docs':
-        if (
-          Array.isArray(dataSet.metadata.consoleAdditionalDocs) &&
-          getDocumentationLength(dataSet.metadata.consoleAdditionalDocs)
-        )
+      case 'docs': {
+        const additionalDocs = dataSet.metadata.consoleAdditionalDocs;
+        const docsQuantity = getDocumentationLength(additionalDocs);
+        if (Array.isArray(additionalDocs) && docsQuantity)
           return (
             <StatusPane
               color="green"
-              message={`${getDocumentationLength(
-                dataSet.metadata.consoleAdditionalDocs
-              )}
-            document${
-              getDocumentationLength(dataSet.metadata.consoleAdditionalDocs) > 1
-                ? 's'
-                : ''
-            } attached`}
+              message={
+                docsQuantity > 1
+                  ? t('dataset-creation-documents-attached-quantity_other', {
+                      docsQuantity,
+                    })
+                  : t('dataset-creation-documents-attached-quantity_one', {
+                      docsQuantity,
+                    })
+              }
             />
           );
         return keyToStatus(key);
+      }
       case 'quality':
         if (dataSet.metadata.consoleGoverned !== undefined)
           return (
             <StatusPane
               color={dataSet.metadata.consoleGoverned ? 'green' : 'red'}
-              message={`This data set is ${
-                dataSet.metadata.consoleGoverned ? 'governed' : 'ungoverned'
-              }`}
+              message={
+                dataSet.metadata.consoleGoverned
+                  ? t('dataset-creation-dataset-governed')
+                  : t('dataset-creation-dataset-ungoverned')
+              }
             />
           );
         return keyToStatus(key);
-      case CONSUMER_KEY:
-        if (
-          dataSet.metadata.consumers &&
-          dataSet.metadata.consumers.length > 0
-        ) {
+      case CONSUMER_KEY: {
+        const consumersQuantity = dataSet.metadata.consumers?.length ?? 0;
+        if (consumersQuantity > 0) {
           return (
             <StatusPane
-              color={dataSet.metadata.consumers.length > 0 ? 'green' : 'red'}
-              message={`${dataSet.metadata.consumers.length} ${
-                dataSet.metadata.consumers.length > 1 ? 'consumers' : 'consumer'
-              }`}
+              color={consumersQuantity > 0 ? 'green' : 'red'}
+              message={
+                consumersQuantity > 1
+                  ? t('dataset-creation-consumers-quantity_other', {
+                      consumersQuantity,
+                    })
+                  : t('dataset-creation-consumers-quantity_one', {
+                      consumersQuantity,
+                    })
+              }
             />
           );
         }
         return keyToStatus(key);
+      }
       default:
-        return <StatusPane color={theme.noStatusColor} message="Not defined" />;
+        return (
+          <StatusPane color={theme.noStatusColor} message={t('not-defined')} />
+        );
     }
   };
 
@@ -193,64 +225,69 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
         return (
           <StatusPane
             color={theme.noStatusColor}
-            message="No source specified"
+            message={t('no-source-specified')}
           />
         );
       case 'raw':
         return (
           <StatusPane
             color={theme.noStatusColor}
-            message="No RAW table specified"
+            message={t('no-rawtable-specified')}
           />
         );
       case 'transform':
         return (
           <StatusPane
             color={theme.noStatusColor}
-            message="No transformation applied"
+            message={t('no-transformation-applied')}
           />
         );
       case 'owners':
         return (
           <StatusPane
             color={theme.noStatusColor}
-            message="No owner specified"
+            message={t('no-owner-specified')}
           />
         );
       case 'docs':
         return (
           <StatusPane
             color={theme.noStatusColor}
-            message="No documents attached"
+            message={t('no-documents-attached')}
           />
         );
       case 'quality':
         return (
           <StatusPane
             color={theme.noStatusColor}
-            message="Governance status not defined not defined"
+            message={t('governance-status-not-defined')}
           />
         );
       case CONSUMER_KEY:
         return (
           <StatusPane
             color={theme.noStatusColor}
-            message="No consumer registered"
+            message={t('no-consumer-registered')}
           />
         );
       default:
-        return <StatusPane color={theme.noStatusColor} message="N/A" />;
+        return (
+          <StatusPane
+            color={theme.noStatusColor}
+            message={t('not-applicable')}
+          />
+        );
     }
   };
 
   const StatusColumns = [
     {
-      title: 'Status',
+      title: t('status'),
       key: 'key',
       render: (row: { key: string }) => getFieldStatus(row.key),
       width: '250px',
     },
-    { title: 'What you need to do', dataIndex: 'field', key: 'field' },
+    { title: t('what-you-need-to-do'), dataIndex: 'field', key: 'field' },
   ];
 
   useEffect(() => {
@@ -385,7 +422,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
             }
             type="primary"
           >
-            Save
+            {t('save')}
           </CreateButton>
         )}
         {!props.dataSet && isEditing && (
@@ -394,7 +431,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
               style={{ float: 'right' }}
               title={
                 dataSetName === '' || dataSetDescription === ''
-                  ? 'Please fill in data set name & description to create'
+                  ? t('dataset-creation-please-fill-in')
                   : ''
               }
               getPopupContainer={getContainer}
@@ -408,35 +445,35 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
                 }
                 type="primary"
               >
-                Create
+                {t('create')}
               </CreateButton>
             </Tooltip>
           </span>
         )}
         {!isEditing && (
           <CreateButton onClick={() => setIsEditing(true)} type="primary">
-            Edit
+            {t('edit')}
           </CreateButton>
         )}
       </Card>
       {props.dataSet && (
         <>
           <CreationFlowSection
-            title="1. Document data extraction"
+            title={t('section-creation-flow-title-1')}
             setSelection={() => setSelectedSection('Document data extraction')}
             icon={getDataInIcon}
             columns={StatusColumns}
             name="GetDataIn"
           />
           <CreationFlowSection
-            title="2. Document data transformations"
+            title={t('section-creation-flow-title-2')}
             setSelection={() => setSelectedSection('Transformations')}
             icon={jetfireIcon}
             columns={StatusColumns}
             name="Transformations"
           />
           <CreationFlowSection
-            title="3. Add documentation"
+            title={t('section-creation-flow-title-3')}
             setSelection={() => setSelectedSection('Documentation')}
             icon={documentationIcon}
             columns={StatusColumns}
@@ -444,7 +481,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
           />
           {isFlagExtpipeConsumers && (
             <CreationFlowSection
-              title="4. Document consumer(s)"
+              title={t('section-creation-flow-title-4')}
               setSelection={() => setSelectedSection('Consumers')}
               icon={dataConsumerIcon}
               columns={StatusColumns}
@@ -506,12 +543,12 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
       </div>
       {props.loading && (
         <ChangesSavedWrapper style={{ background: theme.pillBackground }}>
-          <Spin /> Saving
+          <Spin /> {t('saving')}
         </ChangesSavedWrapper>
       )}
       {!props.changesSaved && !props.loading && (
         <ChangesSavedWrapper style={{ background: theme.noStatusColor }}>
-          <Icon type="WarningFilled" /> Unsaved changes
+          <Icon type="WarningFilled" /> {t('unsaved-changes')}
         </ChangesSavedWrapper>
       )}
       {!props.changesSaved && props.dataSet && (
@@ -520,7 +557,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
           type="primary"
           onClick={() => updateDataSetFields()}
         >
-          Save All
+          {t('save-all')}
         </SaveButton>
       )}
       {props.changesSaved && props.dataSet && (
@@ -530,7 +567,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
             props.closeModal();
           }}
         >
-          Done
+          {t('done')}
         </SaveButton>
       )}
     </div>
