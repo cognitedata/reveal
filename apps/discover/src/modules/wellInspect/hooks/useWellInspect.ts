@@ -1,5 +1,6 @@
 import flatMap from 'lodash/flatMap';
 import map from 'lodash/map';
+import { sortObjectsAscending } from 'utils/sort';
 
 import { useDeepMemo } from 'hooks/useDeep';
 import { useWellsByIds } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
@@ -22,16 +23,22 @@ export const useWellInspectWells = () => {
   return useDeepMemo(() => {
     if (!wells) return [];
 
-    return wells.map((well) => ({
-      ...well,
-      wellbores:
+    const unsortedWells = wells.map((well) => {
+      const unsortedWellbores =
         well.wellbores
           ?.filter((wellbore) =>
             // @sdk-wells-v3 [String]
             inspectWellboreIds.includes(String(wellbore.id))
           )
-          .map(toColoredWellbore) || [],
-    }));
+          .map(toColoredWellbore) || [];
+
+      return {
+        ...well,
+        wellbores: sortObjectsAscending(unsortedWellbores, 'name'), // Move to data layer when refactoring.
+      };
+    });
+
+    return sortObjectsAscending(unsortedWells, 'name'); // Move to data layer when refactoring.
   }, [wells, inspectWellIds, inspectWellboreIds]);
 };
 
@@ -54,22 +61,19 @@ export const useWellInspectSelectedWells = () => {
 };
 
 export const useWellInspectSelectedWellbores = (filterByIds?: WellboreId[]) => {
-  const wells = useWellInspectWells();
-  const { selectedWellboreIds } = useWellInspectSelection();
+  const wells = useWellInspectSelectedWells();
 
   return useDeepMemo(() => {
     const wellbores: Wellbore[] = flatMap(wells, 'wellbores');
 
     if (filterByIds) {
-      return wellbores.filter(
-        (wellbore) =>
-          selectedWellboreIds[wellbore.id] &&
-          filterByIds.includes(String(wellbore.id))
+      return wellbores.filter((wellbore) =>
+        filterByIds.includes(String(wellbore.id))
       );
     }
 
-    return wellbores.filter((wellbore) => selectedWellboreIds[wellbore.id]);
-  }, [wells, selectedWellboreIds, filterByIds]);
+    return wellbores;
+  }, [wells, filterByIds]);
 };
 
 export const useWellInspectSelectedWellboreIds = () => {
