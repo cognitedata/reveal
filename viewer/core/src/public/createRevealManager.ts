@@ -28,6 +28,7 @@ import {
 
 import { CogniteClient } from '@cognite/sdk';
 import { SceneHandler } from '@reveal/utilities';
+import { CogniteClientPlayground } from '@cognite/sdk-playground';
 
 /**
  * Used to create an instance of reveal manager that works with localhost.
@@ -65,7 +66,8 @@ export function createCdfRevealManager(
   client: CogniteClient,
   renderer: THREE.WebGLRenderer,
   sceneHandler: SceneHandler,
-  revealOptions: RevealOptions = {}
+  revealOptions: RevealOptions = {},
+  sdkClientPlayground?: CogniteClientPlayground | undefined
 ): RevealManager {
   const applicationId = getSdkApplicationId(client);
   const modelMetadataProvider = new CdfModelMetadataProvider(client);
@@ -77,7 +79,8 @@ export function createCdfRevealManager(
     modelDataProvider,
     renderer,
     sceneHandler,
-    revealOptions
+    revealOptions,
+    sdkClientPlayground
   );
 }
 
@@ -99,7 +102,8 @@ export function createRevealManager(
   modelDataProvider: ModelDataProvider,
   renderer: THREE.WebGLRenderer,
   sceneHandler: SceneHandler,
-  revealOptions: RevealOptions = {}
+  revealOptions: RevealOptions = {},
+  sdkPlayground?: CogniteClientPlayground | undefined
 ): RevealManager {
   MetricsLogger.init(revealOptions.logMetrics !== false, project, applicationId, {
     constructorOptions: revealOptions
@@ -123,7 +127,8 @@ export function createRevealManager(
     modelMetadataProvider,
     modelDataProvider,
     sceneHandler.scene,
-    renderer
+    renderer,
+    sdkPlayground
   );
   sceneHandler.customObjects.push(pointCloudManager.pointCloudGroupWrapper);
   const cadManager = createCadManager(

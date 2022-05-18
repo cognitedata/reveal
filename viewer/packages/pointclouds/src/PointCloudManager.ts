@@ -15,15 +15,21 @@ import { PointCloudOctree } from './potree-three-loader';
 
 import { asyncScheduler, combineLatest, Observable, scan, Subject, throttleTime } from 'rxjs';
 
-import { ModelIdentifier } from '@reveal/modeldata-api';
+import { CdfModelIdentifier, ModelIdentifier } from '@reveal/modeldata-api';
 import { MetricsLogger } from '@reveal/metrics';
 import { SupportedModelTypes } from '@reveal/model-base';
 import { hardCodedObjects } from './styling/staticObjects';
+import { StyledObjectInfo } from './styling/StyledObjectInfo';
+import { CogniteClientPlayground } from '@cognite/sdk-playground';
+import { BoundingVolume } from './annotationTypes';
+import { annotationsToObjectInfo } from './styling/annotationsToObjects';
 
 export class PointCloudManager {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository;
   private readonly _pointCloudFactory: PointCloudFactory;
   private readonly _pointCloudGroupWrapper: PotreeGroupWrapper;
+
+  private readonly _sdkPlayground: CogniteClientPlayground | undefined;
 
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
   private readonly _modelSubject: Subject<{ modelIdentifier: ModelIdentifier; operation: 'add' | 'remove' }> =
@@ -38,11 +44,14 @@ export class PointCloudManager {
     metadataRepository: PointCloudMetadataRepository,
     modelFactory: PointCloudFactory,
     scene: THREE.Scene,
-    renderer: THREE.WebGLRenderer
+    renderer: THREE.WebGLRenderer,
+    sdkPlayground?: CogniteClientPlayground
   ) {
     this._pointCloudMetadataRepository = metadataRepository;
     this._pointCloudFactory = modelFactory;
     this._pointCloudGroupWrapper = new PotreeGroupWrapper(modelFactory.potreeInstance);
+
+    this._sdkPlayground = sdkPlayground;
 
     scene.add(this._pointCloudGroupWrapper);
 
@@ -118,8 +127,48 @@ export class PointCloudManager {
     this._pointCloudGroupWrapper.requestRedraw();
   }
 
+  private async getAnnotations(modelIdentifier: ModelIdentifier): Promise<BoundingVolume[]> {
+    const modelAnnotations = await this._sdkPlayground.annotations.list({
+      filter: {
+        // @ts-ignore
+        annotatedResourceType: 'threedmodel',
+        annotatedResourceIds: [{ id: (modelIdentifier as CdfModelIdentifier).modelId }]
+      }
+    });
+
+    const bvs: BoundingVolume[] = [];
+
+    for (const annotation of modelAnnotations.items) {
+      const bv: BoundingVolume = {
+        annotationId: annotation.id,
+        region: []
+      };
+
+      for (const geometry of (annotation.data as any).region) {
+        if (geometry.box) {
+          bv.region.push({
+            matrix: new THREE.Matrix4().fromArray(geometry.box.matrix)
+          });
+        }
+        if (geometry.cylinder) {
+          bv.region.push(geometry.cylinder);
+        }
+      }
+
+      bvs.push(bv);
+    }
+
+    return bvs;
+  }
+
   async addModel(modelIdentifier: ModelIdentifier): Promise<PointCloudNode> {
     const metadata = await this._pointCloudMetadataRepository.loadData(modelIdentifier);
+
+    let styledObjectInfo: StyledObjectInfo | undefined = undefined;
+    if (this._sdkPlayground) {
+      const annotations = await this.getAnnotations(modelIdentifier);
+      styledObjectInfo = annotationsToObjectInfo(annotations);
+    }
 
     const modelType: SupportedModelTypes = 'pointcloud';
     MetricsLogger.trackLoadModel(
@@ -130,9 +179,13 @@ export class PointCloudManager {
       metadata.formatVersion
     );
 
-    const nodeWrapper = await this._pointCloudFactory.createModel(metadata, hardCodedObjects);
+    const nodeWrapper = await this._pointCloudFactory.createModel(metadata, styledObjectInfo);
     this._pointCloudGroupWrapper.addPointCloud(nodeWrapper);
-    const node = new PointCloudNode(this._pointCloudGroupWrapper, nodeWrapper, metadata.cameraConfiguration);
+    const node = new PointCloudNode(
+      this._pointCloudGroupWrapper,
+      nodeWrapper,
+      metadata.cameraConfiguration
+    );
     node.setModelTransformation(metadata.modelMatrix);
 
     this._modelSubject.next({ modelIdentifier, operation: 'add' });

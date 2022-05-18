@@ -36,11 +36,12 @@ export class EptBinaryLoader implements ILoader {
     if (node.loaded) return;
 
     const fullFileName = node.fileName() + this.extension();
-
-    return this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName).then(data => this.parse(node, data));
+      return this._dataLoader
+        .getBinaryFile(node.baseUrl(), fullFileName)
+        .then(data => this.parse(node, data));
   }
 
-  parse(node: PointCloudEptGeometryNode, buffer: ArrayBuffer): Promise<void> {
+  parse(node: PointCloudEptGeometryNode, data: ArrayBuffer): Promise<void> {
     return EptBinaryLoader.WORKER_POOL.getWorker().then(
       autoTerminatingWorker =>
         new Promise<void>(res => {
@@ -98,7 +99,7 @@ export class EptBinaryLoader implements ILoader {
 
           const toArray = (v: THREE.Vector3): [number, number, number] => [v.x, v.y, v.z];
           const eptData: EptInputData = {
-            buffer: buffer,
+            buffer: data,
             schema: node.ept.schema,
             scale: node.ept.eptScale,
             offset: node.ept.eptOffset,

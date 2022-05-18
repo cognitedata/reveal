@@ -12,11 +12,6 @@ import { RawCylinder, Cylinder } from './Cylinder';
 import { RawAxisAlignedBox, AxisAlignedBox } from './AxisAlignedBox';
 import { RawCompositeShape, CompositeShape } from './CompositeShape';
 
-/* function toThreeBox(box: { min: number[], max: number[] }) {
-  return new THREE.Box3(new THREE.Vector3().set(box.min[0], box.min[1], box.min[2]),
-                        new THREE.Vector3().set(box.max[0], box.max[1], box.max[2]));
-} */
-
 export function fromRawShape(rawShape: IRawShape): IShape {
   switch (rawShape.type) {
     case 'cylinder':

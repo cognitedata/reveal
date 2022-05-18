@@ -46,6 +46,7 @@ import {
 import { generateClassificationTexture, generateDataTexture, generateGradientTexture } from './texture-generation';
 import { IClassification, IUniform } from './types';
 import { SpectralGradient } from './gradients/SpectralGradient';
+import { PointCloudAppearance } from '../../styling/PointCloudAppearance';
 
 export interface IPointCloudMaterialParameters {
   size: number;
@@ -514,10 +515,10 @@ export class PointCloudMaterial extends RawShaderMaterial {
     this.setUniform('clipBoxes', clipBoxesArray);
   }
 
-  setObjectColor(objectId: number, color: Color): void {
+  setObjectAppearance(objectId: number, appearance: PointCloudAppearance): void {
     const data = this._objectTexture.image.data;
 
-    const colorData = [color.r, color.g, color.b];
+    const colorData = [appearance.color[0], appearance.color[1], appearance.color[2]];
     data.set(colorData, 4 * objectId);
 
     this._objectTexture.needsUpdate = true;

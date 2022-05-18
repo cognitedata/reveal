@@ -13,6 +13,7 @@ import { createPointClassKey } from './createPointClassKey';
 import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from './potree-three-loader';
 
 import { StyledObjectInfo } from './styling/StyledObjectInfo';
+import { PointCloudAppearance } from './styling/PointCloudAppearance';
 
 const PotreeDefaultPointClass = 'DEFAULT';
 
@@ -97,12 +98,12 @@ export class PointCloudNode extends THREE.Group {
     this._potreeNode.pointShape = value;
   }
 
-  get stylingInfo(): StyledObjectInfo {
+  get styledObjectInfo(): StyledObjectInfo {
     return this._potreeNode.styledObjectInfo;
   }
 
-  setObjectStyle(objectId: number, color: [number, number, number]): void {
-    this.potreeNode.setObjectStyle(objectId, color);
+  setObjectStyle(objectId: number, appearance: PointCloudAppearance): void {
+    this.potreeNode.setObjectStyle(objectId, appearance);
     this.requestRedraw();
   }
 

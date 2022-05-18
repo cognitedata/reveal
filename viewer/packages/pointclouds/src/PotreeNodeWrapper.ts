@@ -6,11 +6,17 @@ import * as THREE from 'three';
 
 export type PotreeClassification = { [pointClass: number]: { x: number; y: number; z: number; w: number } };
 
-import { PointCloudOctree, PotreePointColorType, PotreePointShape, IClassification } from './potree-three-loader';
+import {
+  PointCloudOctree,
+  PotreePointColorType,
+  PotreePointShape,
+  IClassification
+} from './potree-three-loader';
 import { WellKnownAsprsPointClassCodes } from './types';
 
 import { createPointClassKey } from './createPointClassKey';
 import { StyledObjectInfo } from './styling/StyledObjectInfo';
+import { PointCloudAppearance } from './styling/PointCloudAppearance';
 
 /**
  * Wrapper around `Potree.PointCloudOctree` with some convenience functions.
@@ -79,8 +85,8 @@ export class PotreeNodeWrapper {
     return this._styledObjectInfo;
   }
 
-  setObjectStyle(objectId: number, color: [number, number, number]): void {
-    this.octree.material.setObjectColor(objectId, new THREE.Color(color[0], color[1], color[2]));
+  setObjectStyle(objectId: number, appearance: PointCloudAppearance): void {
+    this.octree.material.setObjectAppearance(objectId, appearance);
     this._needsRedraw = true;
   }
 

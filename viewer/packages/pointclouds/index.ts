@@ -20,3 +20,5 @@ export { PotreeNodeWrapper } from './src/PotreeNodeWrapper';
 export { PotreeGroupWrapper } from './src/PotreeGroupWrapper';
 
 export { Potree, PointCloudOctree } from './src/PotreePnextLoader';
+
+export { PointCloudAppearance } from './src/styling/PointCloudAppearance';

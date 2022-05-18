@@ -6,7 +6,6 @@
 
 import * as THREE from 'three';
 
-import { ILoader } from '../loading/ILoader';
 import { EptBinaryLoader } from '../loading/EptBinaryLoader';
 
 import { PointCloudEptGeometryNode } from './PointCloudEptGeometryNode';
@@ -42,18 +41,16 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
 
   private readonly _offset: THREE.Vector3;
 
+  readonly loader: EptBinaryLoader;
+
   private readonly _span: number;
   private readonly _spacing: number;
-
-  private readonly _loader: ILoader;
 
   private readonly _schema: EptSchemaEntry[];
 
   private _root: PointCloudEptGeometryNode | undefined;
 
   private readonly _projection: string | null;
-
-  private readonly _styledObjectInfo: StyledObjectInfo | undefined;
 
   get root(): PointCloudEptGeometryNode | undefined {
     return this._root;
@@ -93,10 +90,6 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
 
   get eptOffset(): THREE.Vector3 {
     return this._eptOffset;
-  }
-
-  get loader(): ILoader {
-    return this._loader;
   }
 
   constructor(url: string, info: any, dataLoader: ModelDataProvider, styledInfo?: StyledObjectInfo) {
@@ -145,7 +138,7 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
       throw new Error('Could not read data type: ' + info.dataType);
     }
 
-    this._loader = new EptBinaryLoader(dataLoader, styledInfo);
+    this.loader = new EptBinaryLoader(dataLoader, styledInfo);
   }
 
   dispose(): void {}
