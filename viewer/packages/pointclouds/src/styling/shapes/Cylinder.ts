@@ -73,11 +73,8 @@ export class Cylinder implements IShape {
     const middle = this.getMiddle();
     const dir = this.getAxis();
     const distAlongAxis = v3Dot(v3Sub(point, middle), dir);
-    // const distAlongAxis = utilVector.copy(point).sub(middle).dot(dir);
     const axisRelativeMiddle = v3Sub(point, v3Scale(dir, distAlongAxis));
-    // const axisRelativeMiddle = point.clone().sub(dir.clone().multiplyScalar(distAlongAxis));
 
-    // const distToAxis = axisRelativeMiddle.distanceTo(middle);
     const distToAxis = v3Length(v3Sub(axisRelativeMiddle, middle));
 
     return Math.abs(distAlongAxis) < halfHeight && distToAxis < this._radius;
@@ -86,9 +83,7 @@ export class Cylinder implements IShape {
   toRawShape(): RawCylinder {
     return {
       type: 'cylinder',
-      // centerA: fromThreeVector3(this._centerA),
       centerA: this._centerA,
-      // centerB: fromThreeVector3(this._centerB),
       centerB: this._centerB,
       radius: this._radius
     };
