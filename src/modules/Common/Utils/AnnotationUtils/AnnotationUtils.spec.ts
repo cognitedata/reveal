@@ -4,6 +4,7 @@ import {
   getDummyImageExtractedTextAnnotation,
   getDummyImageObjectDetectionBoundingBoxAnnotation,
   getDummyImageObjectDetectionPolygonAnnotation,
+  getDummyImageObjectDetectionPolylineAnnotation,
 } from 'src/__test-utils/getDummyAnnotations';
 import {
   filterAnnotations,
@@ -89,6 +90,15 @@ describe('Test AnnotationUtils', () => {
     test('get label for ImageObjectDetectionPolygon', () => {
       const label = 'pump';
       const annotation = getDummyImageObjectDetectionPolygonAnnotation({
+        label,
+      });
+
+      expect(getAnnotationLabelOrText(annotation)).toEqual(label);
+    });
+
+    test('get label for ImageObjectDetectionPolyline', () => {
+      const label = 'bar';
+      const annotation = getDummyImageObjectDetectionPolylineAnnotation({
         label,
       });
 
