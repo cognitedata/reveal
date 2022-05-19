@@ -8,6 +8,8 @@ import {
 } from 'src/__test-utils/getDummyAnnotations';
 import {
   filterAnnotations,
+  filterAnnotationIdsByAnnotationStatus,
+  filterAnnotationIdsByConfidence,
   getAnnotationLabelOrText,
   getAnnotationsBadgeCounts,
 } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
@@ -15,7 +17,7 @@ import {
   AnnotationsBadgeCounts,
   VisionAnnotation,
   VisionAnnotationDataType,
-} from 'src/modules/Common/types/index';
+} from 'src/modules/Common/types';
 import { Status } from 'src/api/annotation/types';
 
 const ANN_WITH_PUMP_LABEL_OR_TEXT_COUNT = 6;
@@ -205,6 +207,100 @@ describe('Test AnnotationUtils', () => {
           }).length
         ).toBe(ANN_WITH_SUGGESTED_PUMP_COUNT);
       });
+    });
+  });
+
+  describe('filterAnnotationIdsByAnnotationStatus', () => {
+    const statuses = [Status.Approved, Status.Rejected, Status.Suggested];
+    const annotations = statuses.map((annotationStatus, index) =>
+      getDummyImageExtractedTextAnnotation({
+        id: index + 1,
+        status: annotationStatus,
+        extractedText: `${index + 1}`,
+      })
+    );
+    test('get ids by rejected, verified and unhandled statuses', () => {
+      expect(filterAnnotationIdsByAnnotationStatus(annotations)).toEqual({
+        rejectedAnnotationIds: [2],
+        acceptedAnnotationIds: [1],
+        unhandledAnnotationIds: [3],
+      });
+    });
+  });
+
+  describe('filterAnnotationIdsByConfidence', () => {
+    const statuses = [Status.Suggested, Status.Suggested, Status.Suggested];
+    const confidences = [0.9, 0.4, 0.1];
+    const annotations = statuses.map((annotationStatus, index) =>
+      getDummyImageExtractedTextAnnotation({
+        id: index + 1,
+        status: annotationStatus,
+        extractedText: `${index + 1}`,
+        confidence: confidences[index],
+      })
+    );
+    describe('filter annotations with confidences: [0.9, 0.4, 0.1]', () => {
+      test('rejectedThreshold: 0.25, acceptedThreshold: 0.75', () => {
+        expect(
+          filterAnnotationIdsByConfidence(annotations, 0.25, 0.75)
+        ).toEqual({
+          rejectedAnnotationIds: [3],
+          acceptedAnnotationIds: [1],
+          unhandledAnnotationIds: [2],
+        });
+      });
+      test('rejectedThreshold: 0.00, acceptedThreshold: 0.00', () => {
+        expect(filterAnnotationIdsByConfidence(annotations, 0.0, 0.0)).toEqual({
+          rejectedAnnotationIds: [],
+          acceptedAnnotationIds: [1, 2, 3],
+          unhandledAnnotationIds: [],
+        });
+      });
+      test('rejectedThreshold: 0.00, acceptedThreshold: 1.00', () => {
+        expect(filterAnnotationIdsByConfidence(annotations, 0.0, 1.0)).toEqual({
+          rejectedAnnotationIds: [],
+          acceptedAnnotationIds: [],
+          unhandledAnnotationIds: [1, 2, 3],
+        });
+      });
+      test('rejectedThreshold: 1.00, acceptedThreshold: 1.00', () => {
+        expect(filterAnnotationIdsByConfidence(annotations, 1.0, 1.0)).toEqual({
+          rejectedAnnotationIds: [1, 2, 3],
+          acceptedAnnotationIds: [],
+          unhandledAnnotationIds: [],
+        });
+      });
+      test('rejectedThreshold: 0.50, acceptedThreshold: 0.50', () => {
+        expect(filterAnnotationIdsByConfidence(annotations, 0.5, 0.5)).toEqual({
+          rejectedAnnotationIds: [2, 3],
+          acceptedAnnotationIds: [1],
+          unhandledAnnotationIds: [],
+        });
+      });
+    });
+    statuses.push(
+      // Fallback options when confidences are undefined
+      Status.Approved,
+      Status.Suggested,
+      Status.Rejected
+    );
+    confidences.push(NaN, NaN, NaN);
+    const annotations2 = statuses.map((annotationStatus, index) =>
+      getDummyImageExtractedTextAnnotation({
+        id: index + 1,
+        status: annotationStatus,
+        extractedText: `${index + 1}`,
+        confidence: confidences[index],
+      })
+    );
+    test('Should use status as fallback if confidence is undefined', () => {
+      expect(filterAnnotationIdsByConfidence(annotations2, 0.25, 0.75)).toEqual(
+        {
+          rejectedAnnotationIds: [3, 6],
+          acceptedAnnotationIds: [1, 4],
+          unhandledAnnotationIds: [2, 5],
+        }
+      );
     });
   });
 
