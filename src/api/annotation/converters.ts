@@ -1,5 +1,6 @@
 import {
   AnnotatedResourceId,
+  CDFAnnotationStatus,
   CDFAnnotationType,
   CDFAnnotationTypeEnum,
   CDFAnnotationV1,
@@ -257,6 +258,25 @@ export function convertCDFAnnotationV1ToVisionAnnotation(
   return null;
 }
 
+const convertCDFAnnotationStatusToStatus = (
+  status: CDFAnnotationStatus
+): Status => {
+  switch (status) {
+    case 'suggested':
+      return Status.Suggested;
+    case 'approved':
+      return Status.Approved;
+    case 'rejected':
+      return Status.Rejected;
+    default:
+      console.error(
+        'Status not found for provided CDFAnnotationStatus!',
+        status
+      );
+      return 'unknownStatus' as Status;
+  }
+};
+
 export const convertCDFAnnotationV2ToVisionAnnotations = (
   annotations: CDFAnnotationV2<VisionAnnotationDataType>[]
 ): VisionAnnotation<VisionAnnotationDataType>[] =>
@@ -265,7 +285,7 @@ export const convertCDFAnnotationV2ToVisionAnnotations = (
       id: annotation.id,
       createdTime: annotation.createdTime,
       lastUpdatedTime: annotation.lastUpdatedTime,
-      status: annotation.status,
+      status: convertCDFAnnotationStatusToStatus(annotation.status),
       annotatedResourceId: annotation.annotatedResourceId,
       annotationType: annotation.annotationType,
     };
