@@ -17,8 +17,8 @@
   border: #ffffff22 solid 1px;
   overflow: hidden;
 
-  /*Font*/
-  font-family: 'Inter';
+  /*Font - fallback to generic font if Inter not available*/
+  font-family: 'Inter', sans-serif;
   font-style: normal;
   font-weight: 500;
 }

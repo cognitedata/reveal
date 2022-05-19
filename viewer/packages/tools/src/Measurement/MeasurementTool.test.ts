@@ -60,7 +60,7 @@ describe(MeasurementTool.name, () => {
 
   test('update measure line width', () => {
     const lineWidthUpdateSpyOn = jest.spyOn(measurementTool, 'updateLineWidth');
-    measurementTool.updateLineColor(1.0);
+    measurementTool.updateLineWidth(1.0);
 
     expect(lineWidthUpdateSpyOn).toBeCalled();
     expect((measurementTool as any)._lineOptions.lineWidth).toBe(1.0);

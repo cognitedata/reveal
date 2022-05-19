@@ -211,7 +211,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * @param offsetY Y Coordinate of the mouse pointer.
    * @param endPoint Second point of the line to end the measurement.
    */
-  private updateMeasurement(offsetX: number, offsetY: number, endPoint?: THREE.Vector3): void {
+  private updateMeasurement(offsetX: number, offsetY: number, endPoint?: THREE.Vector3) {
     const position = new THREE.Vector3();
     //Check if measurement is ended.
     if (endPoint) {
