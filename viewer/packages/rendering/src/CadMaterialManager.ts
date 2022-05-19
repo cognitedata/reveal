@@ -125,7 +125,7 @@ export class CadMaterialManager {
       this.materialsMap.delete(modelIdentifier);
       modelData.nodeTransformTextureBuilder.dispose();
       modelData.nodeAppearanceTextureBuilder.dispose();
-    }
+    } else throw new Error(`Model identifier: ${modelIdentifier} not found`);
   }
 
   getModelMaterials(modelIdentifier: string): Materials {
