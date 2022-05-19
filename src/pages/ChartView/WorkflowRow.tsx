@@ -171,7 +171,9 @@ function WorkflowRow({
   const stringifiedComputation = JSON.stringify(computation);
 
   const runComputation = useCallback(() => {
-    const computationCopy: Calculation = JSON.parse(stringifiedComputation);
+    if (!enabled) {
+      return;
+    }
 
     if (!isStepsValid) {
       mutate((oldChart) =>
@@ -189,6 +191,8 @@ function WorkflowRow({
       }));
       return;
     }
+
+    const computationCopy: Calculation = JSON.parse(stringifiedComputation);
 
     createCalculation(
       { definition: computationCopy },
@@ -232,6 +236,7 @@ function WorkflowRow({
     mutate,
     workflow.id,
     isStepsValid,
+    enabled,
   ]);
 
   const currentCallStatus = useCalculationStatus(call?.callId!);
