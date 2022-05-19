@@ -8,6 +8,7 @@ import {
   ImageObjectDetection,
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
+  ImageObjectDetectionPolyline,
 } from 'src/api/annotation/types';
 
 // VisionAnnotationDataType typeGuards
@@ -30,7 +31,11 @@ export const isImageObjectDetectionPolygonData = (
 ): data is ImageObjectDetectionPolygon => {
   return hasLabel(data) && 'polygon' in data;
 };
-
+export const isImageObjectDetectionPolylineData = (
+  data: VisionAnnotationDataType
+): data is ImageObjectDetectionPolyline => {
+  return hasLabel(data) && 'polyline' in data;
+};
 export const isImageObjectDetectionData = (
   data: VisionAnnotationDataType
 ): data is ImageObjectDetection => {

@@ -34,4 +34,8 @@ export const isPolygon = (ann: CDFAnnotationV1): boolean => {
   return (ann as CDFLinkedAnnotationV1)?.region?.shape === 'polygon';
 };
 
+export const isPolyline = (ann: CDFAnnotationV1): boolean => {
+  return (ann as CDFLinkedAnnotationV1)?.region?.shape === 'polyline';
+};
+
 // todo: add tests and typeguards for valve and gauge reader
