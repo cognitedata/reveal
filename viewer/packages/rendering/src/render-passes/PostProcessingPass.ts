@@ -29,7 +29,7 @@ export class PostProcessingPass implements RenderPass {
     });
 
     const inFrontEarlyZBlitObject = createFullScreenTriangleMesh(inFrontEarlyZBlitMaterial);
-    inFrontEarlyZBlitObject.renderOrder = 0;
+    inFrontEarlyZBlitObject.renderOrder = -2;
 
     const backBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.back.texture,
@@ -40,7 +40,7 @@ export class PostProcessingPass implements RenderPass {
       outline: true
     });
     const backBlitObject = createFullScreenTriangleMesh(backBlitMaterial);
-    backBlitObject.renderOrder = 1;
+    backBlitObject.renderOrder = -1;
 
     const ghostBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.ghost.texture,
@@ -49,7 +49,7 @@ export class PostProcessingPass implements RenderPass {
     });
 
     const ghostBlitObject = createFullScreenTriangleMesh(ghostBlitMaterial);
-    ghostBlitObject.renderOrder = 3;
+    ghostBlitObject.renderOrder = 1;
 
     const inFrontBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.inFront.texture,
@@ -58,7 +58,7 @@ export class PostProcessingPass implements RenderPass {
       outline: true
     });
     const inFrontBlitObject = createFullScreenTriangleMesh(inFrontBlitMaterial);
-    inFrontBlitObject.renderOrder = 4;
+    inFrontBlitObject.renderOrder = 2;
 
     this._scene.add(inFrontEarlyZBlitObject);
     this._scene.add(backBlitObject);
@@ -69,29 +69,15 @@ export class PostProcessingPass implements RenderPass {
   }
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {
-    this.pushCustomObjectsRenderOrder();
     renderer.sortObjects = true;
     camera.layers.mask = getLayerMask(RenderLayer.Default);
     renderer.render(this._scene, camera);
-    this.popCustomObjectsRenderOrder();
   }
 
   public dispose(): void {
     this._postProcessingObjects.forEach(postProcessingObject => {
       postProcessingObject.geometry.dispose();
       this._scene.remove(postProcessingObject);
-    });
-  }
-
-  private pushCustomObjectsRenderOrder(): void {
-    this._customObjects.forEach(customObject => {
-      customObject.renderOrder = customObject.renderOrder > 0 ? customObject.renderOrder + 4 : 2;
-    });
-  }
-
-  private popCustomObjectsRenderOrder(): void {
-    this._customObjects.forEach(customObject => {
-      customObject.renderOrder = customObject.renderOrder > 2 ? customObject.renderOrder - 4 : 0;
     });
   }
 }
