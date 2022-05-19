@@ -26,6 +26,7 @@ import {
   isImageClassificationData,
   isImageKeypointCollectionData,
 } from 'src/modules/Common/types/typeGuards';
+import { Status } from 'src/api/annotation/types';
 
 export interface VisibleAnnotation extends VisionAnnotationV1 {
   show: boolean;
@@ -316,7 +317,7 @@ export const selectNonRejectedVisionReviewAnnotationsForFile = createSelector(
       (ann) =>
         ann.show &&
         !!isImageClassificationData(ann.annotation) && // todo: remove this once imageClassification annotations are supported
-        ann.annotation.status !== AnnotationStatus.Rejected
+        ann.annotation.status !== Status.Rejected
     );
   }
 );

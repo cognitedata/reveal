@@ -13,6 +13,7 @@ export enum RegionShape {
   Points = 'points',
   Rectangle = 'rectangle',
   Polygon = 'polygon',
+  Polyline = 'polyline',
 }
 
 export enum Status {
@@ -43,6 +44,10 @@ export type BoundingBox = {
 };
 
 export type Polygon = {
+  vertices: Point[];
+};
+
+export type Polyline = {
   vertices: Point[];
 };
 
@@ -99,9 +104,14 @@ export type ImageObjectDetectionPolygon = ImageClassification & {
   polygon: Polygon;
 };
 
+export type ImageObjectDetectionPolyline = ImageClassification & {
+  polyline: Polyline;
+};
+
 export type ImageObjectDetection =
   | ImageObjectDetectionBoundingBox
-  | ImageObjectDetectionPolygon;
+  | ImageObjectDetectionPolygon
+  | ImageObjectDetectionPolyline;
 
 export type ImageExtractedText = TextRegion &
   Partial<Confidence> & {

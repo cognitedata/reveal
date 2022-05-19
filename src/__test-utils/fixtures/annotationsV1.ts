@@ -161,4 +161,31 @@ export const mockAnnotationList = [
     status: 'verified',
     text: 'Polygon',
   },
+  {
+    annotatedResourceId: 1,
+    annotatedResourceType: 'file',
+    annotationType: 'vision/objectdetection',
+    createdTime: 1634306934375,
+    data: {
+      color: '#C3A238',
+    },
+    id: 6,
+    lastUpdatedTime: 1634306934375,
+    region: {
+      shape: 'polyline',
+      vertices: [
+        {
+          x: 0.17833632555356074,
+          y: 0.19780547048262753,
+        },
+        {
+          x: 0.7390783961699581,
+          y: 0.2339634597106347,
+        },
+      ],
+    },
+    source: 'user',
+    status: 'verified',
+    text: 'valve',
+  },
 ];

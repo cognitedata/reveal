@@ -10,6 +10,7 @@ import {
   ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
+  ImageObjectDetectionPolyline,
   Status,
 } from 'src/api/annotation/types';
 import {
@@ -23,6 +24,7 @@ import {
   isKeyPointAnnotation,
   isObjectAnnotation,
   isPolygon,
+  isPolyline,
   isTextAnnotation,
 } from 'src/api/annotation/typeGuards';
 import {
@@ -30,6 +32,7 @@ import {
   validImageAssetLink,
   validKeypointCollection,
   validPolygon,
+  validPolyline,
 } from './typeValidators';
 
 function conversionWarningMessage(type: string) {
@@ -93,6 +96,24 @@ export function convertCDFAnnotationV1ToImageObjectDetectionPolygon(
     },
   };
   return imageObjectDetectionPolygon;
+}
+
+export function convertCDFAnnotationV1ToImageObjectDetectionPolyline(
+  annotation: CDFAnnotationV1
+): ImageObjectDetectionPolyline | null {
+  if (!validPolyline(annotation)) {
+    console.warn(conversionWarningMessage('ImageObjectDetectionPolyline'));
+    return null;
+  }
+
+  const imageObjectDetectionPolyline: ImageObjectDetectionPolyline = {
+    label: annotation.text,
+    confidence: annotation.data?.confidence,
+    polyline: {
+      vertices: annotation.region!.vertices,
+    },
+  };
+  return imageObjectDetectionPolyline;
 }
 
 export function convertCDFAnnotationV1ToImageExtractedText(
@@ -212,6 +233,8 @@ export function convertCDFAnnotationV1ToVisionAnnotation(
     annotationType = CDFAnnotationTypeEnum.ImagesObjectDetection;
     if (isPolygon(annotation)) {
       data = convertCDFAnnotationV1ToImageObjectDetectionPolygon(annotation);
+    } else if (isPolyline(annotation)) {
+      data = convertCDFAnnotationV1ToImageObjectDetectionPolyline(annotation);
     } else {
       data =
         convertCDFAnnotationV1ToImageObjectDetectionBoundingBox(annotation);
