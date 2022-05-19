@@ -7,13 +7,13 @@ import reducer, {
   setCollectionStatus,
   toggleCollectionVisibility,
 } from 'src/modules/Review/store/annotatorWrapper/slice';
-import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   AnnotatorWrapperState,
   KeypointCollectionState,
 } from 'src/modules/Review/store/annotatorWrapper/type';
 import { Keypoint, KeypointCollection } from 'src/modules/Review/types';
 import { ReviewImageKeypoint } from 'src/modules/Review/store/review/types';
+import { Status } from 'src/api/annotation/types';
 
 jest.mock('src/utils/AnnotationUtilsV1/AnnotationUtilsV1', () => ({
   ...jest.requireActual('src/utils/AnnotationUtilsV1/AnnotationUtilsV1'),
@@ -40,7 +40,7 @@ describe('Test annotator slice', () => {
       keypointIds,
       label: 'gauge',
       show: true,
-      status: AnnotationStatus.Verified,
+      status: Status.Approved,
     };
   };
 
@@ -134,18 +134,18 @@ describe('Test annotator slice', () => {
         expect(
           reducer(
             previousState,
-            setCollectionStatus({ id: 'c1', status: AnnotationStatus.Rejected })
+            setCollectionStatus({ id: 'c1', status: Status.Rejected })
           ).collections.byId.c1.status
-        ).toEqual(AnnotationStatus.Rejected);
+        ).toEqual(Status.Rejected);
       });
 
       test('should not effect others when non existing id used', () => {
         expect(
           reducer(
             previousState,
-            setCollectionStatus({ id: 'c3', status: AnnotationStatus.Rejected })
+            setCollectionStatus({ id: 'c3', status: Status.Rejected })
           ).collections.byId.c1.status
-        ).toEqual(AnnotationStatus.Verified);
+        ).toEqual(Status.Approved);
       });
     });
 

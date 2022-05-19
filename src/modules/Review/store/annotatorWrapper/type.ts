@@ -1,13 +1,13 @@
-import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { KeypointCollection, Shape, Tool } from 'src/modules/Review/types';
 import { ReviewImageKeypoint } from 'src/modules/Review/store/review/types';
+import { Status } from 'src/api/annotation/types';
 
 export type KeypointCollectionState = {
   id: string;
   keypointIds: string[];
   label: string;
   show: boolean;
-  status: AnnotationStatus;
+  status: Status;
   // do we have to have selected state here?
 };
 

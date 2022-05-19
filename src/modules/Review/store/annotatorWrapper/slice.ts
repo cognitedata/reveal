@@ -7,10 +7,7 @@ import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotat
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
-import {
-  AnnotationStatus,
-  createUniqueId,
-} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import { createUniqueId } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { ReactText } from 'react';
 import { deleteCollection } from 'src/modules/Review/store/annotatorWrapper/utils';
 import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
@@ -20,7 +17,7 @@ import {
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
-import { ImageKeypointCollection } from 'src/api/annotation/types';
+import { ImageKeypointCollection, Status } from 'src/api/annotation/types';
 import { isImageKeypointCollectionData } from 'src/modules/Common/types/typeGuards';
 
 export const initialState: AnnotatorWrapperState = {
@@ -70,7 +67,7 @@ const annotatorWrapperSlice = createSlice({
     },
     setCollectionStatus(
       state,
-      action: PayloadAction<{ id: string; status: AnnotationStatus }>
+      action: PayloadAction<{ id: string; status: Status }>
     ) {
       const collection = state.collections.byId[action.payload.id];
       if (collection) {
@@ -143,7 +140,7 @@ const annotatorWrapperSlice = createSlice({
               id: collectionId,
               keypointIds: [],
               label: action.payload.collectionName,
-              status: AnnotationStatus.Verified,
+              status: Status.Approved,
               show: true,
             };
 
@@ -267,7 +264,7 @@ const annotatorWrapperSlice = createSlice({
               keypointIds,
               label: keypointAnnotationCollection.label,
               show: true,
-              status: AnnotationStatus.Verified,
+              status: Status.Approved,
             };
           }
         );
