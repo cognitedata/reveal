@@ -11,12 +11,12 @@ import { createFullScreenTriangleMesh, createRenderTarget } from '../utilities/r
 import { IdentifiedModel } from '../utilities/types';
 import { RenderTargetData } from './types';
 import { AntiAliasingMode, defaultRenderOptions, RenderOptions } from '../rendering/types';
-import { CadGeometryRenderPipeline } from './CadGeometryRenderPipeline';
+import { CadGeometryRenderPipelineProvider } from './CadGeometryRenderPipelineProvider';
 import { PostProcessingPass } from '../render-passes/PostProcessingPass';
 import { SSAOPass } from '../render-passes/SSAOPass';
 import { blitShaders } from '../rendering/shaders';
 
-export class DefaultRenderPipeline implements RenderPipelineProvider {
+export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _cadScene: THREE.Scene;
   private readonly _renderTargetData: RenderTargetData;
   private readonly _cadModels: IdentifiedModel[];
@@ -28,7 +28,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     clearColor: THREE.Color;
     clearAlpha: number;
   };
-  private readonly _cadGeometryRenderPipeline: CadGeometryRenderPipeline;
+  private readonly _cadGeometryRenderPipeline: CadGeometryRenderPipelineProvider;
   private readonly _postProcessingRenderPipeline: PostProcessingPass;
   private readonly _ssaoPass: SSAOPass;
   private readonly _blitToScreenMaterial: THREE.RawShaderMaterial;
@@ -79,7 +79,12 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
     const ssaoParameters = renderOptions.ssaoRenderParameters ?? defaultRenderOptions.ssaoRenderParameters;
     const edges = renderOptions.edgeDetectionParameters ?? defaultRenderOptions.edgeDetectionParameters;
 
-    this._cadGeometryRenderPipeline = new CadGeometryRenderPipeline(scene, cadModels, materialManager, renderOptions);
+    this._cadGeometryRenderPipeline = new CadGeometryRenderPipelineProvider(
+      scene,
+      cadModels,
+      materialManager,
+      renderOptions
+    );
     this._ssaoPass = new SSAOPass(
       this._cadGeometryRenderPipeline.cadGeometryRenderTargets.back.depthTexture,
       ssaoParameters

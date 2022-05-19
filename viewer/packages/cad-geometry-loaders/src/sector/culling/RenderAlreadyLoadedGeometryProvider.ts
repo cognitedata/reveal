@@ -3,14 +3,14 @@
  */
 
 import * as THREE from 'three';
-import { BasicPipelineExecutor, CadGeometryCustomRenderModePipeline } from '@reveal/rendering';
+import { BasicPipelineExecutor, CadGeometryRenderModePipelineProvider } from '@reveal/rendering';
 import { LevelOfDetail, SectorNode } from '@reveal/cad-parsers';
 
 export class RenderAlreadyLoadedGeometryProvider {
-  private readonly _depthOnlyRenderPipeline: CadGeometryCustomRenderModePipeline;
+  private readonly _depthOnlyRenderPipeline: CadGeometryRenderModePipelineProvider;
   private readonly _basicPipelineExecutor: BasicPipelineExecutor;
 
-  constructor(renderer: THREE.WebGLRenderer, depthOnlyRenderPipeline: CadGeometryCustomRenderModePipeline) {
+  constructor(renderer: THREE.WebGLRenderer, depthOnlyRenderPipeline: CadGeometryRenderModePipelineProvider) {
     this._basicPipelineExecutor = new BasicPipelineExecutor(renderer);
     this._depthOnlyRenderPipeline = depthOnlyRenderPipeline;
   }

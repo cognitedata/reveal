@@ -11,7 +11,7 @@ import { getLayerMask, RenderLayer, setupCadModelsGeometryLayers } from '../util
 import { IdentifiedModel } from '../utilities/types';
 import { RenderMode } from '../rendering/RenderMode';
 
-export class CadGeometryCustomRenderModePipeline implements RenderPipelineProvider {
+export class CadGeometryRenderModePipelineProvider implements RenderPipelineProvider {
   private readonly _materialManager: CadMaterialManager;
   private readonly _cadModels: IdentifiedModel[];
   private readonly _renderTargetData: { currentRenderSize: THREE.Vector2 };

@@ -11,7 +11,7 @@ import { createV8SectorMetadata, SectorTree, createGlContext } from '../../../..
 import { File3dFormat } from '@reveal/modeldata-api';
 
 import { Mock, It } from 'moq.ts';
-import { CadGeometryCustomRenderModePipeline } from '@reveal/rendering';
+import { CadGeometryRenderModePipelineProvider } from '@reveal/rendering';
 import { RenderPass } from '@reveal/rendering/src/RenderPass';
 
 describe('OrderSectorsByVisibilityCoverage', () => {
@@ -25,14 +25,14 @@ describe('OrderSectorsByVisibilityCoverage', () => {
   ]);
   const cadModel = createStubModel('model', singleSectorScene, identityMatrix);
 
-  let depthOnlyPipelineProvider: CadGeometryCustomRenderModePipeline;
+  let depthOnlyPipelineProvider: CadGeometryRenderModePipelineProvider;
 
   beforeEach(() => {
     renderer = new THREE.WebGLRenderer({ context: glContext });
     renderer.render = jest.fn();
     const renderPassMock = new Mock<RenderPass>().setup(e => e.render(It.IsAny(), It.IsAny())).returns();
 
-    depthOnlyPipelineProvider = new Mock<CadGeometryCustomRenderModePipeline>()
+    depthOnlyPipelineProvider = new Mock<CadGeometryRenderModePipelineProvider>()
       .setup(e => e.setOutputRenderTarget(It.IsAny()))
       .returns()
       .setup(e => e.pipeline(It.IsAny()))

@@ -7,7 +7,7 @@ import dat from 'dat.gui';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { CadModelFactory } from '../../cad-model/src/CadModelFactory';
-import { AntiAliasingMode, CadMaterialManager, defaultRenderOptions, DefaultRenderPipeline } from '@reveal/rendering';
+import { AntiAliasingMode, CadMaterialManager, defaultRenderOptions, DefaultRenderPipelineProvider } from '@reveal/rendering';
 import {
   CdfModelDataProvider,
   CdfModelIdentifier,
@@ -116,7 +116,7 @@ async function init() {
   const pipelineExecutor = new StepPipelineExecutor(renderer);
   pipelineExecutor.numberOfSteps = guiData.steps;
 
-  let defaultRenderPipeline = new DefaultRenderPipeline(
+  let defaultRenderPipeline = new DefaultRenderPipelineProvider(
     materialManager,
     scene,
     defaultRenderOptions,
@@ -171,7 +171,7 @@ async function init() {
 
   const updateRenderOptions = async () => {
     defaultRenderPipeline.dispose();
-    defaultRenderPipeline = new DefaultRenderPipeline(materialManager, scene, renderOptions, cadModels, customObjects);
+    defaultRenderPipeline = new DefaultRenderPipelineProvider(materialManager, scene, renderOptions, cadModels, customObjects);
     needsRedraw = true;
   };
 

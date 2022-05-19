@@ -25,7 +25,7 @@ type RenderState = {
   clearAlpha: number;
 };
 
-export class CadGeometryRenderPipeline implements RenderPipelineProvider {
+export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _cadGeometryRenderTargets: CadGeometryRenderTargets;
   private readonly _cadGeometryRenderPasses: CadGeometryRenderPasses;
   private readonly _cadModels: IdentifiedModel[];

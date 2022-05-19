@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { WebGLRendererStateHelper } from '@reveal/utilities';
 import { CadModelMetadata, V8SectorMetadata, WantedSector } from '@reveal/cad-parsers';
-import { coverageShaders, CadGeometryCustomRenderModePipeline } from '@reveal/rendering';
+import { coverageShaders, CadGeometryRenderModePipelineProvider } from '@reveal/rendering';
 
 import assert from 'assert';
 import { RenderAlreadyLoadedGeometryProvider } from './RenderAlreadyLoadedGeometryProvider';
@@ -52,7 +52,7 @@ export interface OrderSectorsByVisibleCoverageOptions {
   /**
    * GeometryDepthRenderPipeline used to initialize the RenderAlreadyLoadedGeometryProvider
    */
-  depthOnlyRenderPipeline: CadGeometryCustomRenderModePipeline;
+  depthOnlyRenderPipeline: CadGeometryRenderModePipelineProvider;
 }
 
 export type PrioritizedSectorIdentifier = {

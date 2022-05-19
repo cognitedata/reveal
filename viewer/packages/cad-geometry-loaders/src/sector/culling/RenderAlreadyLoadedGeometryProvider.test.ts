@@ -3,12 +3,12 @@
  */
 import * as THREE from 'three';
 import { createGlContext } from '../../../../../test-utilities';
-import { CadMaterialManager, CadGeometryCustomRenderModePipeline, RenderMode } from '@reveal/rendering';
+import { CadMaterialManager, CadGeometryRenderModePipelineProvider, RenderMode } from '@reveal/rendering';
 
 import { RenderAlreadyLoadedGeometryProvider } from './RenderAlreadyLoadedGeometryProvider';
 
 describe('RenderAlreadyLoadedGeometryProvider', () => {
-  let depthRenderPipelineProvider: CadGeometryCustomRenderModePipeline;
+  let depthRenderPipelineProvider: CadGeometryRenderModePipelineProvider;
   let materialManager: CadMaterialManager;
   let scene: THREE.Scene;
   const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
@@ -18,7 +18,7 @@ describe('RenderAlreadyLoadedGeometryProvider', () => {
   beforeEach(() => {
     scene = new THREE.Scene();
     materialManager = new CadMaterialManager();
-    depthRenderPipelineProvider = new CadGeometryCustomRenderModePipeline(
+    depthRenderPipelineProvider = new CadGeometryRenderModePipelineProvider(
       RenderMode.DepthBufferOnly,
       materialManager,
       scene
