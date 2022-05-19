@@ -65,7 +65,7 @@ export function determineSsaoRenderParameters(
   qualityHint: SsaoQualityHintOption,
   device: DeviceDescriptor
 ): SsaoParameters {
-  const quality = restrictSsaoOption(qualityHint, device);
+  const quality = restrictSsaoOptionBasedOnDevice(qualityHint, device);
   const ssaoParameters = { ...defaultRenderOptions.ssaoRenderParameters };
   switch (quality) {
     case undefined:
@@ -122,7 +122,10 @@ function restrictAntiAliasingModeBasedOnDevice(
   }
 }
 
-function restrictSsaoOption(ssaoQualityHint: SsaoQualityHintOption, device: DeviceDescriptor): SsaoQualityHintOption {
+function restrictSsaoOptionBasedOnDevice(
+  ssaoQualityHint: SsaoQualityHintOption,
+  device: DeviceDescriptor
+): SsaoQualityHintOption {
   if (device.deviceType === 'desktop') {
     return ssaoQualityHint;
   }
