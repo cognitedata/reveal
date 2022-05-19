@@ -15,6 +15,7 @@ import { CadGeometryRenderPipelineProvider } from './CadGeometryRenderPipelinePr
 import { PostProcessingPass } from '../render-passes/PostProcessingPass';
 import { SSAOPass } from '../render-passes/SSAOPass';
 import { blitShaders } from '../rendering/shaders';
+import { WebGLRendererStateHelper } from '@reveal/utilities';
 
 export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _cadScene: THREE.Scene;
@@ -23,16 +24,12 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _customObjects: THREE.Object3D[];
   private readonly _autoResizeOutputTarget: boolean;
   private readonly _outputRenderTarget: THREE.WebGLRenderTarget;
-  private _currentRendererState: {
-    autoClear: boolean;
-    clearColor: THREE.Color;
-    clearAlpha: number;
-  };
   private readonly _cadGeometryRenderPipeline: CadGeometryRenderPipelineProvider;
   private readonly _postProcessingRenderPipeline: PostProcessingPass;
   private readonly _ssaoPass: SSAOPass;
   private readonly _blitToScreenMaterial: THREE.RawShaderMaterial;
   private readonly _blitToScreenMesh: THREE.Mesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>;
+  private _rendererStateHelper: WebGLRendererStateHelper;
 
   set renderOptions(renderOptions: RenderOptions) {
     const { ssaoRenderParameters } = renderOptions;
@@ -127,8 +124,8 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
       yield this._ssaoPass;
 
       renderer.setRenderTarget(this._renderTargetData.postProcessingRenderTarget);
-      renderer.setClearColor(this._currentRendererState.clearColor);
-      renderer.setClearAlpha(this._currentRendererState.clearAlpha);
+      this._rendererStateHelper.resetState();
+      this._rendererStateHelper.autoClear = true;
       yield this._postProcessingRenderPipeline;
 
       renderer.setRenderTarget(this._outputRenderTarget);
@@ -139,7 +136,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
         }
       };
     } finally {
-      this.pipelineTearDown(renderer);
+      this._rendererStateHelper.resetState();
     }
   }
 
@@ -147,23 +144,10 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
     this._postProcessingRenderPipeline.dispose();
   }
 
-  private pipelineTearDown(renderer: THREE.WebGLRenderer) {
-    renderer.autoClear = this._currentRendererState.autoClear;
-    renderer.setClearColor(this._currentRendererState.clearColor);
-    renderer.setClearAlpha(this._currentRendererState.clearAlpha);
-  }
-
   private pipelineSetup(renderer: THREE.WebGLRenderer) {
-    this._currentRendererState = {
-      autoClear: renderer.autoClear,
-      clearColor: renderer.getClearColor(new THREE.Color()),
-      clearAlpha: renderer.getClearAlpha()
-    };
-
-    renderer.sortObjects = false;
-    renderer.autoClear = true;
-    renderer.setClearColor(this._currentRendererState.clearColor);
-    renderer.setClearAlpha(0.0);
+    this._rendererStateHelper = new WebGLRendererStateHelper(renderer);
+    this._rendererStateHelper.autoClear = true;
+    this._rendererStateHelper.setClearColor(renderer.getClearColor(new THREE.Color()), 0);
 
     this._cadModels?.forEach(identifiedModel => {
       identifiedModel.model.matrixAutoUpdate = false;

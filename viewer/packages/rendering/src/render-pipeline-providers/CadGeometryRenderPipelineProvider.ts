@@ -2,6 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
+import { WebGLRendererStateHelper } from '@reveal/utilities';
 import * as THREE from 'three';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { GeometryPass } from '../render-passes/GeometryPass';
@@ -19,18 +20,12 @@ type CadGeometryRenderPasses = {
   inFront: GeometryPass;
 };
 
-type RenderState = {
-  autoClear: boolean;
-  clearColor: THREE.Color;
-  clearAlpha: number;
-};
-
 export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _cadGeometryRenderTargets: CadGeometryRenderTargets;
   private readonly _cadGeometryRenderPasses: CadGeometryRenderPasses;
   private readonly _cadModels: IdentifiedModel[];
-  private _currentRendererState: RenderState;
   private readonly _materialManager: CadMaterialManager;
+  private _rendererStateHelper: WebGLRendererStateHelper;
 
   get cadGeometryRenderTargets(): CadGeometryRenderTargets {
     return this._cadGeometryRenderTargets;
@@ -63,31 +58,19 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
       renderer.setRenderTarget(this._cadGeometryRenderTargets.inFront);
       yield this._cadGeometryRenderPasses.inFront;
     } finally {
-      this.pipelineTearDown(renderer);
+      this._rendererStateHelper.resetState();
     }
   }
 
   public dispose(): void {}
 
   private pipelineSetup(renderer: THREE.WebGLRenderer) {
-    this._currentRendererState = {
-      autoClear: renderer.autoClear,
-      clearColor: renderer.getClearColor(new THREE.Color()),
-      clearAlpha: renderer.getClearAlpha()
-    };
-
-    renderer.autoClear = true;
-    renderer.setClearColor(this._currentRendererState.clearColor);
-    renderer.setClearAlpha(0.0);
+    this._rendererStateHelper = new WebGLRendererStateHelper(renderer);
+    this._rendererStateHelper.autoClear = true;
+    this._rendererStateHelper.setClearColor(renderer.getClearColor(new THREE.Color()), 0);
 
     this.updateRenderTargetSizes(renderer);
     setupCadModelsGeometryLayers(this._materialManager, this._cadModels);
-  }
-
-  private pipelineTearDown(renderer: THREE.WebGLRenderer) {
-    renderer.autoClear = this._currentRendererState.autoClear;
-    renderer.setClearColor(this._currentRendererState.clearColor);
-    renderer.setClearAlpha(this._currentRendererState.clearAlpha);
   }
 
   private initializeRenderTargets(multisampleCount: number): CadGeometryRenderTargets {
