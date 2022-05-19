@@ -13,7 +13,13 @@ import { PointCloudManager, PointCloudNode } from '@reveal/pointclouds';
 import { SupportedModelTypes, LoadingState } from '@reveal/model-base';
 import { CadModelBudget } from '@reveal/cad-geometry-loaders';
 import { NodeAppearanceProvider } from '@reveal/cad-styling';
-import { CadNode, RenderMode, PipelineExecutor, CadMaterialManager, RenderPipelineProvider } from '@reveal/rendering';
+import {
+  CadNode,
+  RenderMode,
+  RenderPipelineExecutor,
+  CadMaterialManager,
+  RenderPipelineProvider
+} from '@reveal/rendering';
 import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
 
@@ -29,7 +35,7 @@ export type AddCadModelOptions = {
 export class RevealManager {
   private readonly _cadManager: CadManager;
   private readonly _pointCloudManager: PointCloudManager;
-  private readonly _pipelineExecutor: PipelineExecutor;
+  private readonly _pipelineExecutor: RenderPipelineExecutor;
   private readonly _renderPipeline: RenderPipelineProvider;
 
   private readonly _lastCamera = {
@@ -50,7 +56,7 @@ export class RevealManager {
   constructor(
     cadManager: CadManager,
     pointCloudManager: PointCloudManager,
-    pipelineExecutor: PipelineExecutor,
+    pipelineExecutor: RenderPipelineExecutor,
     renderPipeline: RenderPipelineProvider,
     materialManager: CadMaterialManager
   ) {

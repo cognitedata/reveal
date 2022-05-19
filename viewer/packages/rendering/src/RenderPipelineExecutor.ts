@@ -5,6 +5,6 @@
 import * as THREE from 'three';
 import { RenderPipelineProvider } from './RenderPipelineProvider';
 
-export interface PipelineExecutor {
+export interface RenderPipelineExecutor {
   render(renderPipeline: RenderPipelineProvider, camera: THREE.Camera): void;
 }

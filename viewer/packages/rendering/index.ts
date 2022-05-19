@@ -29,5 +29,5 @@ export { IdentifiedModel } from './src/utilities/types';
 export { DefaultRenderPipeline } from './src/render-pipelines/DefaultRenderPipeline';
 export { CadGeometryCustomRenderModePipeline } from './src/render-pipelines/CadGeometryCustomRenderModePipeline';
 export { BasicPipelineExecutor } from './src/pipeline-executors/BasicPipelineExecutor';
-export { PipelineExecutor } from './src/PipelineExecutor';
+export { RenderPipelineExecutor } from './src/RenderPipelineExecutor';
 export { RenderPipelineProvider } from './src/RenderPipelineProvider';

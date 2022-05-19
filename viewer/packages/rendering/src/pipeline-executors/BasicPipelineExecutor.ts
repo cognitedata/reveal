@@ -3,10 +3,10 @@
  */
 
 import * as THREE from 'three';
-import { PipelineExecutor } from '../PipelineExecutor';
+import { RenderPipelineExecutor } from '../RenderPipelineExecutor';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
 
-export class BasicPipelineExecutor implements PipelineExecutor {
+export class BasicPipelineExecutor implements RenderPipelineExecutor {
   private readonly _renderer: THREE.WebGLRenderer;
 
   constructor(renderer: THREE.WebGLRenderer) {

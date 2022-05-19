@@ -3,11 +3,11 @@
  */
 
 import * as THREE from 'three';
-import { PipelineExecutor } from '../PipelineExecutor';
+import { RenderPipelineExecutor } from '../RenderPipelineExecutor';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { GpuTimer } from '../utilities/GpuTimer';
 
-export class StepPipelineExecutor implements PipelineExecutor {
+export class StepPipelineExecutor implements RenderPipelineExecutor {
   private readonly _renderer: THREE.WebGLRenderer;
   private _numSteps: number | undefined;
   private readonly _gpuTimer: GpuTimer;
