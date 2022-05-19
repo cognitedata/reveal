@@ -1,4 +1,5 @@
 import { Tooltip } from '@cognite/cogs.js';
+import Markdown from 'components/Markdown/Markdown';
 import styled from 'styled-components/macro';
 
 const FunctionParameterFormLabel = ({
@@ -11,21 +12,20 @@ const FunctionParameterFormLabel = ({
   return (
     <Label>
       <Tooltip maxWidth={350} content={description} disabled={!description}>
-        <>{label}</>
+        <StyledMarkdown>{label || ''}</StyledMarkdown>
       </Tooltip>
     </Label>
   );
 };
 
-const Label = styled.label`
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 20px;
-  margin: 5px 10px 0 0;
+const Label = styled.label``;
 
-  span {
-    vertical-align: sub;
-    margin-left: 5px;
+const StyledMarkdown = styled(Markdown)`
+  & > p {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+    margin: 5px 10px 0 5px;
   }
 `;
 

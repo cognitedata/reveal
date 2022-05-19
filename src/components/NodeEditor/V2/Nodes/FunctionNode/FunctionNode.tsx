@@ -5,6 +5,7 @@ import { NodeProps, Position } from 'react-flow-renderer';
 import styled from 'styled-components/macro';
 import { Flex } from '@cognite/cogs.js';
 import { defaultTranslations } from 'components/NodeEditor/translations';
+import Markdown from 'components/Markdown/Markdown';
 import { NodeTypes } from '../../types';
 import {
   AUTO_ALIGN_PARAM,
@@ -128,12 +129,12 @@ const FunctionNode = memo(
             <Flex gap={8} justifyContent="space-between" alignItems="center">
               <div>
                 {selectedOperationVersion.inputs.map(({ param, name }) => (
-                  <InputName key={param}>{name}</InputName>
+                  <StyledMarkdown key={param}>{name || ''}</StyledMarkdown>
                 ))}
               </div>
               <div>
                 {selectedOperationVersion.outputs.map(({ name }) => (
-                  <InputName key={name}>{name}</InputName>
+                  <StyledMarkdown key={name}>{name || ''}</StyledMarkdown>
                 ))}
               </div>
             </Flex>
@@ -190,12 +191,14 @@ const FunctionName = styled.span`
   font-weight: 500;
 `;
 
-const InputName = styled.p`
-  font-size: 10px;
-  font-weight: 400;
-  line-height: 24px;
-  color: var(--cogs-text-color-secondary);
-  margin-bottom: 0;
+const StyledMarkdown = styled(Markdown)`
+  & > p {
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 24px;
+    color: var(--cogs-text-color-secondary);
+    margin-bottom: 0;
+  }
 `;
 
 export default FunctionNode;
