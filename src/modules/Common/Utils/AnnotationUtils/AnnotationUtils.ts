@@ -1,10 +1,13 @@
+import isFinite from 'lodash-es/isFinite';
 import {
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
   ImageKeypointCollection,
+  ImageObjectDetection,
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
+  Status,
 } from 'src/api/annotation/types';
 import {
   AnnotationsBadgeCounts,
@@ -19,13 +22,13 @@ import {
   isImageObjectDetectionPolygonData,
   isImageKeypointCollectionData,
 } from 'src/modules/Common/types/typeGuards';
+import { AnnotationIdsByStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 export const getAnnotationLabelOrText = (
   annotation: VisionAnnotation<VisionAnnotationDataType>
 ): string =>
   (annotation as ImageClassification).label ||
-  (annotation as ImageObjectDetectionBoundingBox).label ||
-  (annotation as ImageObjectDetectionPolygon).label ||
+  (annotation as ImageObjectDetection).label ||
   (annotation as ImageKeypointCollection).label ||
   (annotation as ImageExtractedText).extractedText ||
   (annotation as ImageAssetLink).text;
@@ -52,6 +55,62 @@ export const filterAnnotations = ({
     }
   }
   return filteredAnnotations;
+};
+
+export const filterAnnotationIdsByAnnotationStatus = (
+  annotations: VisionAnnotation<VisionAnnotationDataType>[]
+): AnnotationIdsByStatus => {
+  const rejectedAnnotationIds: number[] = [];
+  const acceptedAnnotationIds: number[] = [];
+  const unhandledAnnotationIds: number[] = [];
+  annotations.forEach((annotation) => {
+    const annotationId = annotation.id;
+    if (annotation.status === Status.Approved)
+      acceptedAnnotationIds.push(annotationId);
+    else if (annotation.status === Status.Rejected)
+      rejectedAnnotationIds.push(annotationId);
+    else unhandledAnnotationIds.push(annotationId);
+  });
+  return {
+    rejectedAnnotationIds,
+    acceptedAnnotationIds,
+    unhandledAnnotationIds,
+  };
+};
+
+export const filterAnnotationIdsByConfidence = (
+  annotations: VisionAnnotation<VisionAnnotationDataType>[],
+  rejectedThreshold: number,
+  acceptedThreshold: number
+): AnnotationIdsByStatus => {
+  const rejectedAnnotationIds: number[] = [];
+  const acceptedAnnotationIds: number[] = [];
+  const unhandledAnnotationIds: number[] = [];
+  annotations.forEach((annotation) => {
+    const annotationId = annotation.id;
+    const { confidence } = annotation;
+    if (confidence !== undefined && isFinite(confidence)) {
+      if (confidence > acceptedThreshold)
+        acceptedAnnotationIds.push(annotationId);
+      else if (confidence < rejectedThreshold)
+        rejectedAnnotationIds.push(annotationId);
+      else unhandledAnnotationIds.push(annotationId);
+    } else {
+      // Fallback to filter by status if there's no confidence value.
+      // This is the case for manually labelled annotations.
+      const filteredByStatus = filterAnnotationIdsByAnnotationStatus([
+        annotation,
+      ]);
+      acceptedAnnotationIds.push(...filteredByStatus.acceptedAnnotationIds);
+      rejectedAnnotationIds.push(...filteredByStatus.rejectedAnnotationIds);
+      unhandledAnnotationIds.push(...filteredByStatus.unhandledAnnotationIds);
+    }
+  });
+  return {
+    rejectedAnnotationIds,
+    acceptedAnnotationIds,
+    unhandledAnnotationIds,
+  };
 };
 
 const getAnnotationCountsPerInstanceLabel = (

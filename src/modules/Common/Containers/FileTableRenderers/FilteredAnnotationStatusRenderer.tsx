@@ -1,12 +1,15 @@
 import React, { useMemo } from 'react';
-import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotationV1/selectors';
 import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import styled from 'styled-components';
 import { DEFAULT_THRESHOLDS } from 'src/modules/Common/Components/BulkEdit/Annotation/AnnotationStatusPanel';
 import { Body } from '@cognite/cogs.js';
-import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
+import {
+  filterAnnotationIdsByAnnotationStatus,
+  filterAnnotationIdsByConfidence,
+} from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import { createTag } from './AnnotationStatusRenderer';
 
 export function FilteredAnnotationStatusRenderer({
@@ -16,8 +19,8 @@ export function FilteredAnnotationStatusRenderer({
     makeSelectAnnotationsForFileIds,
     []
   );
-  const annotationsMap = useSelector(({ annotationV1Reducer }: RootState) =>
-    selectAnnotationsForFileIds(annotationV1Reducer, [id])
+  const annotationsMap = useSelector(({ annotationReducer }: RootState) =>
+    selectAnnotationsForFileIds(annotationReducer, [id])
   );
 
   const [rejectedThreshold, acceptedThreshold] = annotationThresholds || [
@@ -30,12 +33,11 @@ export function FilteredAnnotationStatusRenderer({
   const acceptedAnnotationIdsFromConfidence: number[] = [];
   const unhandledAnnotationIdsFromConfidence: number[] = [];
   Object.entries(annotationsMap).forEach(([_, annotations]) => {
-    const annotationIdsByStatus =
-      AnnotationUtilsV1.filterAnnotationsIdsByConfidence(
-        annotations,
-        rejectedThreshold,
-        acceptedThreshold
-      );
+    const annotationIdsByStatus = filterAnnotationIdsByConfidence(
+      annotations,
+      rejectedThreshold,
+      acceptedThreshold
+    );
     rejectedAnnotationIdsFromConfidence.push(
       ...annotationIdsByStatus.rejectedAnnotationIds
     );
@@ -53,7 +55,7 @@ export function FilteredAnnotationStatusRenderer({
   const unhandledAnnotationIdsFromStatus: number[] = [];
   Object.entries(annotationsMap).forEach(([_, annotations]) => {
     const annotationIdsByStatus =
-      AnnotationUtilsV1.filterAnnotationsIdsByAnnotationStatus(annotations);
+      filterAnnotationIdsByAnnotationStatus(annotations);
     rejectedAnnotationIdsFromStatus.push(
       ...annotationIdsByStatus.rejectedAnnotationIds
     );
