@@ -4,8 +4,8 @@
 import * as THREE from 'three';
 
 import TWEEN from '@tweenjs/tween.js';
-import omit from 'lodash/omit';
 import { Subscription, fromEventPattern } from 'rxjs';
+import pick from 'lodash/pick';
 
 import {
   defaultRenderOptions,
@@ -295,14 +295,17 @@ export class Cognite3DViewer {
     this.animate(0);
 
     MetricsLogger.trackEvent('construct3dViewer', {
-      constructorOptions: omit(options, [
-        'sdk',
-        'domElement',
-        'renderer',
-        'renderTargetOptions',
-        'onLoading',
-        '_sectorCuller'
-      ])
+      constructorOptions: {
+        ...pick(options, [
+          'logMetrics',
+          'antiAliasingHint',
+          'ssaoQualityHint',
+          'enableEdges',
+          'continuousModelStreaming'
+        ]),
+        cameraManager: options.cameraManager ? true : false,
+        customDataSource: options.customDataSource ? true : false
+      }
     });
   }
 
