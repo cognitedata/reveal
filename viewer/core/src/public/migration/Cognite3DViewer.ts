@@ -7,7 +7,7 @@ import TWEEN from '@tweenjs/tween.js';
 import { Subscription, fromEventPattern } from 'rxjs';
 import pick from 'lodash/pick';
 
-import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
+import { defaultRenderOptions } from '@reveal/rendering';
 
 import {
   assertNever,
@@ -18,7 +18,8 @@ import {
   worldToViewportCoordinates,
   PointerEventDelegate,
   SceneRenderedDelegate,
-  DisposedDelegate
+  DisposedDelegate,
+  determineCurrentDevice
 } from '@reveal/utilities';
 
 import { MetricsLogger } from '@reveal/metrics';
@@ -39,7 +40,6 @@ import { RevealOptions } from '../types';
 import { Spinner } from '../../utilities/Spinner';
 
 import { CadIntersection, IntersectionFromPixelOptions } from '../..';
-import { PropType } from '../../utilities/reflection';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
@@ -50,7 +50,7 @@ import { IntersectInput, SupportedModelTypes, CogniteModelBase, LoadingState } f
 
 import { CogniteClient } from '@cognite/sdk';
 import log from '@reveal/logger';
-import { restrictViewerOptionsToDevice } from './restrictViewerOptionsToDevice';
+import { determineAntiAliasingMode, determineSsaoRenderParameters } from './renderOptionsHelpers';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -221,7 +221,6 @@ export class Cognite3DViewer {
       this._events.cameraChange.fire(position.clone(), target.clone());
     });
 
-    restrictViewerOptionsToDevice(options);
     const revealOptions = createRevealManagerOptions(options);
     if (options._localModels === true) {
       this._dataSource = new LocalDataSource();
@@ -1245,8 +1244,9 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
     internal: {}
   };
   revealOptions.internal.cad = { sectorCuller: viewerOptions._sectorCuller };
-  const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint);
-  const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint);
+  const device = determineCurrentDevice();
+  const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint, device);
+  const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint, device);
   const edgeDetectionParameters = {
     enabled: viewerOptions.enableEdges ?? defaultRenderOptions.edgeDetectionParameters.enabled
   };
@@ -1260,63 +1260,4 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
     edgeDetectionParameters
   };
   return revealOptions;
-}
-
-function determineAntiAliasingMode(mode: PropType<Cognite3DViewerOptions, 'antiAliasingHint'>): {
-  antiAliasing: AntiAliasingMode;
-  multiSampleCount: number;
-} {
-  mode = mode || 'fxaa';
-
-  switch (mode) {
-    case 'disabled':
-      return { antiAliasing: AntiAliasingMode.NoAA, multiSampleCount: 1 };
-    case 'fxaa':
-      return { antiAliasing: AntiAliasingMode.FXAA, multiSampleCount: 1 };
-    case 'msaa2':
-      return { antiAliasing: AntiAliasingMode.NoAA, multiSampleCount: 2 };
-    case 'msaa4':
-      return { antiAliasing: AntiAliasingMode.NoAA, multiSampleCount: 4 };
-    case 'msaa8':
-      return { antiAliasing: AntiAliasingMode.NoAA, multiSampleCount: 8 };
-    case 'msaa16':
-      return { antiAliasing: AntiAliasingMode.NoAA, multiSampleCount: 16 };
-    case 'msaa2+fxaa':
-      return { antiAliasing: AntiAliasingMode.FXAA, multiSampleCount: 2 };
-    case 'msaa4+fxaa':
-      return { antiAliasing: AntiAliasingMode.FXAA, multiSampleCount: 4 };
-    case 'msaa8+fxaa':
-      return { antiAliasing: AntiAliasingMode.FXAA, multiSampleCount: 8 };
-    case 'msaa16+fxaa':
-      return { antiAliasing: AntiAliasingMode.FXAA, multiSampleCount: 16 };
-    default:
-      // Ensures there is a compile error if a case is missing
-      assertNever(mode, `Unsupported anti-aliasing mode: ${mode}`);
-  }
-}
-
-type SsaoQuality = PropType<Cognite3DViewerOptions, 'ssaoQualityHint'>;
-function determineSsaoRenderParameters(quality: SsaoQuality): SsaoParameters {
-  const ssaoParameters = { ...defaultRenderOptions.ssaoRenderParameters };
-  switch (quality) {
-    case undefined:
-      break;
-    case 'medium':
-      ssaoParameters.sampleSize = SsaoSampleQuality.Medium;
-      break;
-    case 'high':
-      ssaoParameters.sampleSize = SsaoSampleQuality.High;
-      break;
-    case 'veryhigh':
-      ssaoParameters.sampleSize = SsaoSampleQuality.VeryHigh;
-      break;
-    case 'disabled':
-      ssaoParameters.sampleSize = SsaoSampleQuality.None;
-      break;
-
-    default:
-      assertNever(quality, `Unexpected SSAO quality mode: '${quality}'`);
-  }
-
-  return ssaoParameters;
 }
