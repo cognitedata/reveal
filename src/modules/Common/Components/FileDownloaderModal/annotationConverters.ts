@@ -1,13 +1,21 @@
 import { FileInfo } from '@cognite/sdk';
-import { Vertex } from 'src/api/vision/detectionModels/types';
-import { AnnotationPreview } from 'src/modules/Common/types';
-import { Keypoint } from 'src/modules/Review/types';
-import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import {
+  VisionAnnotation,
+  VisionAnnotationDataType,
+} from 'src/modules/Common/types';
+import { Status } from 'src/api/annotation/types';
+import {
+  isImageKeypointCollectionData,
+  isImageObjectDetectionBoundingBoxData,
+  isImageObjectDetectionPolygonData,
+  isImageObjectDetectionPolylineData,
+} from 'src/modules/Common/types/typeGuards';
+import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 
 export const convertAnnotationsToAutoML = async (
   files: FileInfo[],
-  annotations: Record<number, AnnotationPreview[]>,
-  annotationStatus: AnnotationStatus[]
+  annotations: Record<number, VisionAnnotation<VisionAnnotationDataType>[]>,
+  annotationStatus: Status[]
 ) => {
   // https://cloud.google.com/vision/automl/object-detection/docs/csv-format#csv
   const data = [] as any;
@@ -16,19 +24,15 @@ export const convertAnnotationsToAutoML = async (
     annotations[file.id].forEach((annotation) => {
       if (
         annotationStatus.includes(annotation.status) &&
-        annotation.region?.shape === 'rectangle'
+        isImageObjectDetectionBoundingBoxData(annotation)
       ) {
         data.push([
           file.name,
-          annotation.text,
-          ...(annotation.region
-            ? ([] as number[]).concat(
-                ...annotation.region.vertices.map((vertex) => [
-                  vertex.x,
-                  vertex.y,
-                ])
-              )
-            : []),
+          annotation.label,
+          annotation.boundingBox.xMin,
+          annotation.boundingBox.yMin,
+          annotation.boundingBox.xMax,
+          annotation.boundingBox.yMax,
         ]);
       }
     });
@@ -50,19 +54,22 @@ export const convertAnnotationsToAutoML = async (
 
 export const convertAnnotationsToCOCO = async (
   files: FileInfo[],
-  annotations: Record<number, AnnotationPreview[]>,
-  annotationStatus: AnnotationStatus[]
+  annotations: Record<number, VisionAnnotation<VisionAnnotationDataType>[]>,
+  annotationStatus: Status[]
 ) => {
-  const filteredAnnotations: Record<number, AnnotationPreview[]> = {};
+  const filteredAnnotationsByFileMap: Record<
+    number,
+    VisionAnnotation<VisionAnnotationDataType>[]
+  > = {};
   const filteredFiles: FileInfo[] = [];
 
   files.forEach((file) => {
     annotations[file.id].forEach((annotation) => {
       if (annotationStatus.includes(annotation.status)) {
-        if (filteredAnnotations[file.id]) {
-          filteredAnnotations[file.id]?.push(annotation);
+        if (filteredAnnotationsByFileMap[file.id]) {
+          filteredAnnotationsByFileMap[file.id]?.push(annotation);
         } else {
-          filteredAnnotations[file.id] = [annotation];
+          filteredAnnotationsByFileMap[file.id] = [annotation];
         }
       }
 
@@ -72,30 +79,35 @@ export const convertAnnotationsToCOCO = async (
     });
   });
 
-  const unqiueAnnotations = [] as AnnotationPreview[];
-  Object.entries(filteredAnnotations).filter(([_, annotationPreviews]) => {
-    annotationPreviews.forEach((annotation) => {
-      const i = unqiueAnnotations.findIndex(
-        (x) => annotation.text.toLowerCase() === x.text.toLowerCase()
-      );
-      if (i <= -1) {
-        unqiueAnnotations.push(annotation);
-      }
-    });
-    return null;
-  });
+  const uniqueAnnotations: VisionAnnotation<VisionAnnotationDataType>[] = [];
+  Object.entries(filteredAnnotationsByFileMap).filter(
+    ([_, filteredAnnotationsForFile]) => {
+      filteredAnnotationsForFile.forEach((annotation) => {
+        const text = getAnnotationLabelOrText(annotation);
+        const i = uniqueAnnotations.findIndex(
+          (x) =>
+            text.toLowerCase() === getAnnotationLabelOrText(x).toLowerCase()
+        );
+        if (i <= -1) {
+          uniqueAnnotations.push(annotation);
+        }
+      });
+      return null;
+    }
+  );
 
-  const categories = unqiueAnnotations.map((item, index) => {
-    const extendedVertices = item.region?.vertices as (Vertex & Keypoint)[];
-    const keyPoints = extendedVertices.map((v) =>
-      v?.caption ? v.caption : null
-    );
-    const colors = extendedVertices.map((v) => (v?.color ? v.color : null));
+  const categories = uniqueAnnotations.map((item, index) => {
+    const text = getAnnotationLabelOrText(item);
+    const keypointLabels = isImageKeypointCollectionData(item)
+      ? item.keypoints.map((keypoint) => keypoint.label)
+      : [];
+    const colors: never[] = [];
+
     return {
       id: index,
-      name: item.text,
-      ...(!keyPoints.includes(null) && { keyPoints }),
-      ...(!colors.includes(null) && { keypoint_colors: colors }),
+      name: text,
+      ...(keypointLabels.length && { keyPoints: keypointLabels }),
+      ...(keypointLabels.length && { keypoint_colors: colors }),
     };
   });
 
@@ -108,22 +120,49 @@ export const convertAnnotationsToCOCO = async (
   });
 
   let annotationId = 0;
-  const content = Object.entries(filteredAnnotations)
+  const content = Object.entries(filteredAnnotationsByFileMap)
     .map(([key, items]) => {
       return items.map((annotation) => {
-        const vertices: number[] = annotation.region
-          ? ([] as number[]).concat(
-              ...annotation.region.vertices.map((vertex) => [
-                vertex.x,
-                vertex.y,
-              ])
-            )
-          : [];
         annotationId += 1;
-        const isRectangle = annotation.region?.shape === 'rectangle';
-        const isPolygon = annotation.region?.shape === 'polygon';
-        const isPoints = annotation.region?.shape === 'points';
-        const isLine = annotation.region?.shape === 'polyline';
+
+        const isRectangle = isImageObjectDetectionBoundingBoxData(annotation);
+        const isPolygon = isImageObjectDetectionPolygonData(annotation);
+        const isPoints = isImageKeypointCollectionData(annotation);
+        const isLine = isImageObjectDetectionPolylineData(annotation);
+
+        let vertices: number[] = [];
+
+        if (isImageObjectDetectionBoundingBoxData(annotation)) {
+          vertices = [
+            annotation.boundingBox.xMin,
+            annotation.boundingBox.yMin,
+            annotation.boundingBox.xMax,
+            annotation.boundingBox.yMax,
+          ];
+        }
+        if (isImageKeypointCollectionData(annotation)) {
+          vertices = ([] as number[]).concat(
+            ...annotation.keypoints.map((keypoint) => [
+              keypoint.point.x,
+              keypoint.point.y,
+            ])
+          );
+        }
+
+        if (isImageObjectDetectionPolygonData(annotation)) {
+          vertices = ([] as number[]).concat(
+            ...annotation.polygon.vertices.map((vertex) => [vertex.x, vertex.y])
+          );
+        }
+
+        if (isImageObjectDetectionPolylineData(annotation)) {
+          vertices = ([] as number[]).concat(
+            ...annotation.polyline.vertices.map((vertex) => [
+              vertex.x,
+              vertex.y,
+            ])
+          );
+        }
 
         return {
           id: annotationId,
@@ -131,7 +170,9 @@ export const convertAnnotationsToCOCO = async (
             (file) => file.id.toString() === key
           ),
           category_id: categories.findIndex(
-            (category) => category.name === annotation.text.toLowerCase()
+            (category) =>
+              category.name ===
+              getAnnotationLabelOrText(annotation).toLowerCase()
           ),
           ...(isRectangle && { bbox: vertices }),
           ...(isPoints && { keypoints: vertices }),

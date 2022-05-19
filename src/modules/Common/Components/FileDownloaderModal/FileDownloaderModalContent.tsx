@@ -9,10 +9,10 @@ import styled from 'styled-components';
 import JSZip from 'jszip';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { ToastUtils } from 'src/utils/ToastUtils';
-import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotationV1/selectors';
 import { renameDuplicates } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
+import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
+import { Status } from 'src/api/annotation/types';
 import { getDownloadControls } from './DownloadControlButtons';
 import {
   AnnotationChoice,
@@ -45,22 +45,18 @@ export const FileDownloaderModalContent = ({
     makeSelectAnnotationsForFileIds,
     []
   );
-  const annotations = useSelector(({ annotationV1Reducer }: RootState) =>
-    selectAnnotationsForFileIds(annotationV1Reducer, fileIds)
+  const annotations = useSelector(({ annotationReducer }: RootState) =>
+    selectAnnotationsForFileIds(annotationReducer, fileIds)
   );
 
   const annotationStatusMap = () => {
     if (currentAnnotationChoice === AnnotationChoice.OnlyRejected) {
-      return [AnnotationStatus.Rejected];
+      return [Status.Rejected];
     }
     if (currentAnnotationChoice === AnnotationChoice.VerifiedAndUnreviewed) {
-      return [AnnotationStatus.Verified, AnnotationStatus.Unhandled];
+      return [Status.Approved, Status.Suggested];
     }
-    return [
-      AnnotationStatus.Verified,
-      AnnotationStatus.Unhandled,
-      AnnotationStatus.Rejected,
-    ];
+    return [Status.Approved, Status.Suggested, Status.Rejected];
   };
 
   const downloadFiles = async () => {
