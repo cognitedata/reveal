@@ -133,7 +133,8 @@ function initializeBlendingOptions(blendOptions: BlendOptions) {
 export enum RenderLayer {
   Back = RenderMode.Color,
   InFront = RenderMode.Effects,
-  Ghost = RenderMode.Ghost
+  Ghost = RenderMode.Ghost,
+  Default = 0
 }
 
 export function setupCadModelsGeometryLayers(

@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { transparentBlendOptions } from './types';
 import { RenderPass } from '../RenderPass';
-import { createFullScreenTriangleMesh, getBlitMaterial } from '../utilities/renderUtilities';
+import { createFullScreenTriangleMesh, getBlitMaterial, getLayerMask, RenderLayer } from '../utilities/renderUtilities';
 import { PostProcessingPipelineOptions } from '../render-pipelines/types';
 
 export class PostProcessingPass implements RenderPass {
@@ -71,7 +71,7 @@ export class PostProcessingPass implements RenderPass {
   public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {
     this.pushCustomObjectsRenderOrder();
     renderer.sortObjects = true;
-    camera.layers.mask = 1 | 0;
+    camera.layers.mask = getLayerMask(RenderLayer.Default);
     renderer.render(this._scene, camera);
     this.popCustomObjectsRenderOrder();
   }
