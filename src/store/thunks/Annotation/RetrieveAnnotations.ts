@@ -1,4 +1,4 @@
-import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import {
   VisionAnnotation,
@@ -58,11 +58,11 @@ export const RetrieveAnnotations = createAsyncThunk<
    */
   const annotationFromV1 = await dispatch(
     RetrieveAnnotationsV1({ fileIds: fetchFileIds, clearCache })
-  );
-  const resultsFromV1 = unwrapResult(annotationFromV1);
+  ).unwrap();
+
   const visionAnnotationFromV1 =
-    convertCDFAnnotationV1ToVisionAnnotations(resultsFromV1);
+    convertCDFAnnotationV1ToVisionAnnotations(annotationFromV1);
   visionAnnotations.concat(visionAnnotationFromV1);
 
-  return visionAnnotations as VisionAnnotation<VisionAnnotationDataType>[];
+  return visionAnnotations;
 });
