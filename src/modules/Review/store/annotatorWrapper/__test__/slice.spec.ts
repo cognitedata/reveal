@@ -7,13 +7,14 @@ import reducer, {
   setCollectionStatus,
   toggleCollectionVisibility,
 } from 'src/modules/Review/store/annotatorWrapper/slice';
-import {
-  AnnotatorWrapperState,
-  KeypointCollectionState,
-} from 'src/modules/Review/store/annotatorWrapper/type';
-import { Keypoint, KeypointCollection } from 'src/modules/Review/types';
+import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
 import { ReviewImageKeypoint } from 'src/modules/Review/store/review/types';
 import { Status } from 'src/api/annotation/types';
+import { getDummyPredefinedKeypoint } from 'src/modules/Review/store/annotatorWrapper/__test__/utils';
+import {
+  getDummyKeypointCollectionState,
+  getDummyKeypointState,
+} from 'src/__test-utils/annotations';
 
 jest.mock('src/utils/AnnotationUtilsV1/AnnotationUtilsV1', () => ({
   ...jest.requireActual('src/utils/AnnotationUtilsV1/AnnotationUtilsV1'),
@@ -23,27 +24,6 @@ jest.mock('src/utils/AnnotationUtilsV1/AnnotationUtilsV1', () => ({
 }));
 
 describe('Test annotator slice', () => {
-  const dummyKeypointState = (id: string): ReviewImageKeypoint => {
-    return {
-      id,
-      selected: true,
-      keypoint: { label: 'center', confidence: 1, point: { x: 0.5, y: 0.5 } },
-    };
-  };
-
-  const dummyKeypointCollectionState = (
-    id: string,
-    keypointIds: string[]
-  ): KeypointCollectionState => {
-    return {
-      id,
-      keypointIds,
-      label: 'gauge',
-      show: true,
-      status: Status.Approved,
-    };
-  };
-
   test('reducer should return the initial state', () => {
     expect(reducer(undefined, { type: undefined })).toEqual(initialState);
   });
@@ -54,8 +34,8 @@ describe('Test annotator slice', () => {
         ...initialState,
         collections: {
           byId: {
-            c1: dummyKeypointCollectionState('c1', ['k1']),
-            c2: dummyKeypointCollectionState('c2', ['k2']),
+            c1: getDummyKeypointCollectionState('c1', ['k1']),
+            c2: getDummyKeypointCollectionState('c2', ['k2']),
           },
         },
       };
@@ -96,7 +76,7 @@ describe('Test annotator slice', () => {
         ...initialState,
         collections: {
           byId: {
-            c1: dummyKeypointCollectionState('c1', ['k1']),
+            c1: getDummyKeypointCollectionState('c1', ['k1']),
           },
           allIds: ['c1'],
           selectedIds: ['c1'],
@@ -123,7 +103,7 @@ describe('Test annotator slice', () => {
         ...initialState,
         collections: {
           byId: {
-            c1: dummyKeypointCollectionState('c1', ['k1']),
+            c1: getDummyKeypointCollectionState('c1', ['k1']),
           },
           allIds: ['c1'],
           selectedIds: ['c1'],
@@ -154,14 +134,17 @@ describe('Test annotator slice', () => {
         ...initialState,
         collections: {
           byId: {
-            c1: dummyKeypointCollectionState('c1', ['k1']),
-            c2: dummyKeypointCollectionState('c2', ['k2']),
+            c1: getDummyKeypointCollectionState('c1', ['k1']),
+            c2: getDummyKeypointCollectionState('c2', ['k2']),
           },
           allIds: ['c1', 'c2'],
           selectedIds: ['c1'],
         },
         keypointMap: {
-          byId: { k1: dummyKeypointState('k1'), k2: dummyKeypointState('k2') },
+          byId: {
+            k1: getDummyKeypointState('k1'),
+            k2: getDummyKeypointState('k2'),
+          },
           allIds: ['k1', 'k2'],
           selectedIds: ['k1'],
         },
@@ -208,14 +191,17 @@ describe('Test annotator slice', () => {
         ...initialState,
         collections: {
           byId: {
-            c1: dummyKeypointCollectionState('c1', ['k1']),
-            c2: dummyKeypointCollectionState('c2', ['k2']),
+            c1: getDummyKeypointCollectionState('c1', ['k1']),
+            c2: getDummyKeypointCollectionState('c2', ['k2']),
           },
           allIds: ['c1', 'c2'],
           selectedIds: ['c1'],
         },
         keypointMap: {
-          byId: { k1: dummyKeypointState('k1'), k2: dummyKeypointState('k2') },
+          byId: {
+            k1: getDummyKeypointState('k1'),
+            k2: getDummyKeypointState('k2'),
+          },
           allIds: ['k1', 'k2'],
           selectedIds: ['k1'],
         },
@@ -263,20 +249,6 @@ describe('Test annotator slice', () => {
     });
 
     describe('Test onCreateKeyPoint reducer', () => {
-      const dummyKeypoint = (): Keypoint => {
-        return {
-          caption: 'center',
-          order: '1',
-          color: 'red',
-        };
-      };
-      const dummyKeypointCollection = (id: string): KeypointCollection => {
-        return {
-          id,
-          collectionName: 'gauge',
-          keypoints: [dummyKeypoint()],
-        };
-      };
       const payload = {
         id: 'k2',
         collectionName: 'gauge',
@@ -289,7 +261,7 @@ describe('Test annotator slice', () => {
         const previousState = {
           ...initialState,
           predefinedAnnotations: {
-            predefinedKeypointCollections: [dummyKeypointCollection('c1')],
+            predefinedKeypointCollections: [getDummyPredefinedKeypoint('c1')],
             predefinedShapes: [],
           },
         };
@@ -310,7 +282,7 @@ describe('Test annotator slice', () => {
         const previousState = {
           ...initialState,
           predefinedAnnotations: {
-            predefinedKeypointCollections: [dummyKeypointCollection('c1')],
+            predefinedKeypointCollections: [getDummyPredefinedKeypoint('c1')],
             predefinedShapes: [],
           },
         };
@@ -323,7 +295,7 @@ describe('Test annotator slice', () => {
           collections: {
             byId: {
               [payload.collectionName]: {
-                ...dummyKeypointCollectionState(payload.collectionName, [
+                ...getDummyKeypointCollectionState(payload.collectionName, [
                   payload.id,
                 ]),
               },
@@ -334,9 +306,9 @@ describe('Test annotator slice', () => {
           keypointMap: {
             byId: {
               k2: {
-                ...dummyKeypointState(payload.id),
+                ...getDummyKeypointState(payload.id),
                 keypoint: {
-                  label: dummyKeypointState(payload.id).keypoint.label,
+                  label: getDummyKeypointState(payload.id).keypoint.label,
                   point: { x: payload.positionX, y: payload.positionY },
                   confidence: 1,
                 },
@@ -366,18 +338,18 @@ describe('Test annotator slice', () => {
           lastCollectionId: 'c1',
           collections: {
             byId: {
-              c1: dummyKeypointCollectionState('c1', ['k1']),
+              c1: getDummyKeypointCollectionState('c1', ['k1']),
             },
             allIds: ['c1'],
             selectedIds: ['c1'],
           },
           keypointMap: {
-            byId: { k1: dummyKeypointState('k1') },
+            byId: { k1: getDummyKeypointState('k1') },
             allIds: ['k1'],
             selectedIds: ['k1'],
           },
           predefinedAnnotations: {
-            predefinedKeypointCollections: [dummyKeypointCollection('c1')],
+            predefinedKeypointCollections: [getDummyPredefinedKeypoint('c1')],
             predefinedShapes: [],
           },
         };
@@ -404,9 +376,9 @@ describe('Test annotator slice', () => {
             byId: {
               ...previousState.keypointMap.byId,
               k2: {
-                ...dummyKeypointState(payload.id),
+                ...getDummyKeypointState(payload.id),
                 keypoint: {
-                  label: dummyKeypointState(payload.id).keypoint.label,
+                  label: getDummyKeypointState(payload.id).keypoint.label,
                   point: { x: payload.positionX, y: payload.positionY },
                   confidence: 1,
                 },
