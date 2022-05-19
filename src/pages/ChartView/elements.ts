@@ -8,8 +8,7 @@ export const Header = styled.header`
   border-bottom: 1px solid var(--cogs-greyscale-grey4);
   display: flex;
   align-items: center;
-  justify-content: ${(props: { inSearch: boolean }) =>
-    props.inSearch ? 'flex-end' : 'space-between'};
+  justify-content: space-between;
   .actions {
     display: flex;
     margin-right: 24px;

@@ -23,7 +23,6 @@ type Props = {
   isMinMaxShown?: boolean;
   isGridlinesShown?: boolean;
   isPreview?: boolean;
-  isInSearch?: boolean;
   stackedMode?: boolean;
   mergeUnits?: boolean;
 };
@@ -34,7 +33,6 @@ const PlotlyChartContainer = ({
   isMinMaxShown = false,
   isGridlinesShown = false,
   isPreview = false,
-  isInSearch = false,
   stackedMode = false,
   mergeUnits = false,
 }: Props) => {
@@ -127,7 +125,7 @@ const PlotlyChartContainer = ({
       setChart((oldChart) =>
         updateSourceAxisForChart(oldChart!, {
           x,
-          y: !(stackedMode || isInSearch) ? y : [],
+          y: !stackedMode ? y : [],
         })
       );
 
@@ -135,10 +133,10 @@ const PlotlyChartContainer = ({
         setDragmode(newDragmode);
       }
     },
-    [setChart, isPreview, isInSearch, stackedMode]
+    [setChart, isPreview, stackedMode]
   );
 
-  const isYAxisShownOverride = !isInSearch && !isPreview && isYAxisShown;
+  const isYAxisShownOverride = !isPreview && isYAxisShown;
 
   const hasValidDates =
     !Number.isNaN(new Date(dateFrom || '').getTime()) &&
@@ -160,7 +158,6 @@ const PlotlyChartContainer = ({
     isMinMaxShown,
     isGridlinesShown,
     isPreview,
-    isInSearch,
     stackedMode,
     mergeUnits,
     dragmode,

@@ -498,43 +498,41 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             <SearchSidebar visible={showSearch} onClose={handleCloseSearch} />
           )}
           <ContentWrapper showSearch={showSearch}>
-            <Header className="downloadChartHide" inSearch={showSearch}>
-              {!showSearch && (
-                <section className="actions">
+            <Header className="downloadChartHide">
+              <section className="actions">
+                {!showSearch && (
                   <Button icon="Add" type="primary" onClick={handleOpenSearch}>
                     {t['Add time series']}
                   </Button>
+                )}
+                <Button
+                  icon="Function"
+                  type="ghost"
+                  onClick={handleClickNewWorkflow}
+                >
+                  {t['Add calculation']}
+                </Button>
+                <Dropdown
+                  content={
+                    <Menu>
+                      <Menu.Header>{t.Imports}</Menu.Header>
+                      <Menu.Item
+                        appendIcon="Function"
+                        onClick={handleImportCalculationsClick}
+                      >
+                        <MenuItemText>{t['Import calculations']}</MenuItemText>
+                      </Menu.Item>
+                    </Menu>
+                  }
+                >
                   <Button
-                    icon="Function"
+                    icon="EllipsisHorizontal"
                     type="ghost"
-                    onClick={handleClickNewWorkflow}
-                  >
-                    {t['Add calculation']}
-                  </Button>
-                  <Dropdown
-                    content={
-                      <Menu>
-                        <Menu.Header>{t.Imports}</Menu.Header>
-                        <Menu.Item
-                          appendIcon="Function"
-                          onClick={handleImportCalculationsClick}
-                        >
-                          <MenuItemText>
-                            {t['Import calculations']}
-                          </MenuItemText>
-                        </Menu.Item>
-                      </Menu>
-                    }
-                  >
-                    <Button
-                      icon="EllipsisHorizontal"
-                      type="ghost"
-                      aria-label="view"
-                      style={{ paddingRight: 8, marginLeft: 4 }}
-                    />
-                  </Dropdown>
-                </section>
-              )}
+                    aria-label="view"
+                    style={{ paddingRight: 8, marginLeft: 4 }}
+                  />
+                </Dropdown>
+              </section>
               {login?.id && !isChartOwner && (
                 <section>
                   <WarningAlert
@@ -660,7 +658,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                     <PlotlyChartComponent
                       key={chartId}
                       chart={chart}
-                      isInSearch={showSearch}
                       isYAxisShown={showYAxis}
                       isMinMaxShown={showMinMax}
                       isGridlinesShown={showGridlines}
