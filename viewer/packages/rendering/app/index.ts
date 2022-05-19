@@ -309,10 +309,7 @@ async function createModelProviders(urlParams): Promise<{
 
     // Defaults to all-primitives model on 3d-test
     const modelId = parseInt(urlParams.get('modelId') ?? '1791160622840317');
-    // const modelId = parseInt(urlParams.get('modelId') ?? '7029437408438765');
-
     const revisionId = parseInt(urlParams.get('revisionId') ?? '498427137020189');
-    // const revisionId = parseInt(urlParams.get('revisionId') ?? '1994234928723810');
 
     const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
     const metadataProvider = new CdfModelMetadataProvider(client);
