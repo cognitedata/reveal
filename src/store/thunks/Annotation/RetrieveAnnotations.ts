@@ -11,7 +11,7 @@ import { from, lastValueFrom } from 'rxjs';
 import { map, mergeMap, reduce } from 'rxjs/operators';
 import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bulkConverters';
 import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
-import { convertCDFAnnotationV2ToVisionAnnotations } from 'src/api/annotation/utils';
+import { convertCDFAnnotationV2ToVisionAnnotations } from 'src/api/annotation/converters';
 
 export const RetrieveAnnotations = createAsyncThunk<
   VisionAnnotation<VisionAnnotationDataType>[],

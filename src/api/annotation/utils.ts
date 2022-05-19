@@ -11,13 +11,7 @@ import {
   AnnotationMetadataV1,
   AnnotationSourceV1,
   UnsavedAnnotation,
-  CDFAnnotationV2,
 } from 'src/api/annotation/types';
-import {
-  VisionAnnotationDataType,
-  VisionAnnotation,
-  CDFInheritedFields,
-} from 'src/modules/Common/types';
 
 export function getUnsavedAnnotation(
   text: string,
@@ -133,18 +127,3 @@ export const getFieldOrSetNull = (
     set: value,
   };
 };
-
-export const convertCDFAnnotationV2ToVisionAnnotations = (
-  annotations: CDFAnnotationV2<VisionAnnotationDataType>[]
-): VisionAnnotation<VisionAnnotationDataType>[] =>
-  annotations.map((annotation) => {
-    const cdfInheritedFields: CDFInheritedFields<VisionAnnotationDataType> = {
-      id: annotation.id,
-      createdTime: annotation.createdTime,
-      lastUpdatedTime: annotation.lastUpdatedTime,
-      status: annotation.status,
-      annotatedResourceId: annotation.annotatedResourceId,
-      annotationType: annotation.annotationType,
-    };
-    return { ...cdfInheritedFields, ...annotation.data };
-  });
