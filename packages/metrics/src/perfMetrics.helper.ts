@@ -28,69 +28,76 @@ export function findInMutation({
   searchValue,
   callback,
 }: MutationSearchProps) {
-  const filterCondition = (() => {
-    if (searchIn.includes('addedNodes') && searchIn.includes('removedNodes')) {
-      return (mutation: MutationSearchResults) => {
-        return mutation.addedNodes || mutation.removedNodes;
-      };
-    }
-    if (searchIn.includes('addedNodes')) {
-      return (mutation: MutationSearchResults) => {
-        return mutation.addedNodes;
-      };
-    }
-    if (searchIn.includes('removedNodes')) {
-      return (mutation: MutationSearchResults) => {
-        return mutation.removedNodes;
-      };
-    }
-    return (_mutation: MutationSearchResults) => true;
-  })();
+  try {
+    const filterCondition = (() => {
+      if (
+        searchIn.includes('addedNodes') &&
+        searchIn.includes('removedNodes')
+      ) {
+        return (mutation: MutationSearchResults) => {
+          return mutation.addedNodes || mutation.removedNodes;
+        };
+      }
+      if (searchIn.includes('addedNodes')) {
+        return (mutation: MutationSearchResults) => {
+          return mutation.addedNodes;
+        };
+      }
+      if (searchIn.includes('removedNodes')) {
+        return (mutation: MutationSearchResults) => {
+          return mutation.removedNodes;
+        };
+      }
+      return (_mutation: MutationSearchResults) => true;
+    })();
 
-  const getFirst = (mutation: MutationRecord, type: mutationType) => {
-    const item =
-      mutation[type].length > 0
-        ? (mutation[type].item(0) as HTMLElement)
-        : undefined;
-    return item;
-  };
+    const getFirst = (mutation: MutationRecord, type: mutationType) => {
+      const item =
+        mutation[type].length > 0
+          ? (mutation[type].item(0) as HTMLElement)
+          : undefined;
+      return item;
+    };
 
-  mutations
-    .filter((mutation: MutationRecord) => {
-      return (
-        mutation.type === type &&
-        filterCondition({
-          addedNodes: mutation.addedNodes.length > 0,
-          removedNodes: mutation.removedNodes.length > 0,
-        })
-      );
-    })
-    .forEach((mutation: MutationRecord) => {
-      const output: MutationSearchResults =
-        searchIn.reduce<MutationSearchResults>(
-          (
-            searchResults: MutationSearchResults,
-            mutationType: mutationType
-          ) => {
-            const item = getFirst(mutation, mutationType);
-            if (item) {
-              switch (searchFor) {
-                case 'attribute':
-                  return {
-                    ...searchResults,
-                    [mutationType]: item
-                      .getAttribute(searchBy)
-                      ?.toLocaleLowerCase()
-                      .includes(searchValue),
-                  } as MutationSearchResults;
-                default:
-                  return searchResults;
-              }
-            }
-            return searchResults;
-          },
-          { addedNodes: false, removedNodes: false }
+    mutations
+      .filter((mutation: MutationRecord) => {
+        return (
+          mutation.type === type &&
+          filterCondition({
+            addedNodes: mutation.addedNodes.length > 0,
+            removedNodes: mutation.removedNodes.length > 0,
+          })
         );
-      callback(output);
-    });
+      })
+      .forEach((mutation: MutationRecord) => {
+        const output: MutationSearchResults =
+          searchIn.reduce<MutationSearchResults>(
+            (
+              searchResults: MutationSearchResults,
+              mutationType: mutationType
+            ) => {
+              const item = getFirst(mutation, mutationType);
+              if (item) {
+                switch (searchFor) {
+                  case 'attribute':
+                    return {
+                      ...searchResults,
+                      [mutationType]: item
+                        .getAttribute(searchBy)
+                        ?.toLocaleLowerCase()
+                        .includes(searchValue),
+                    } as MutationSearchResults;
+                  default:
+                    return searchResults;
+                }
+              }
+              return searchResults;
+            },
+            { addedNodes: false, removedNodes: false }
+          );
+        callback(output);
+      });
+  } catch (_error) {
+    callback({ addedNodes: false, removedNodes: false });
+  }
 }

@@ -10,7 +10,7 @@ import { findInMutation } from './perfMetrics.helper';
 
 const perfMetricsInstance = (() => {
   let frontendMetricsBaseUrl = '';
-  let enabled = true;
+  let enabled = false;
   const monitoredData: { [key: string]: PerfMonitorResultsData } = {};
   let registeredMonitors: { [key: string]: PerfMonitor } = Object.freeze({});
   let accessToken: string;
@@ -134,12 +134,6 @@ const perfMetricsInstance = (() => {
       }, {});
   }
 
-  function checkInitialization() {
-    if (!initialized) {
-      throw new Error('PerfMetrics has not been intialized');
-    }
-  }
-
   /**
    * Used to attach an event listener to a specific DOM event and calculate event durations
    *
@@ -156,8 +150,7 @@ const perfMetricsInstance = (() => {
     domSelector?: string,
     selectIndex = 0
   ): void {
-    checkInitialization();
-    if (!enabled) {
+    if (!enabled || !initialized) {
       return;
     }
     if (ref.current) {
@@ -228,8 +221,7 @@ const perfMetricsInstance = (() => {
    *                          for this event to be stored in a separate slow bucket on Prometheus
    */
   function trackPerfStart(name: string, tags?: string, slow?: boolean): void {
-    checkInitialization();
-    if (enabled) {
+    if (enabled && initialized) {
       performance.mark(name);
       updateRegisteredMonitors({ name, tags, slow });
     }
@@ -259,8 +251,7 @@ const perfMetricsInstance = (() => {
    * @param {string} tags   : Can be useful for grouping of events for example all events that belong under search can have the search tag
    */
   function logSuccessEvent(name: string, tags?: string): void {
-    checkInitialization();
-    if (enabled) {
+    if (enabled && initialized) {
       pushSuccessOrFailureToServer({
         name,
         tags,
@@ -276,8 +267,7 @@ const perfMetricsInstance = (() => {
    * @param {string} tags   : Can be useful for grouping of events for example all events that belong under search can have the search tag
    */
   function logFailureEvent(name: string, tags?: string): void {
-    checkInitialization();
-    if (enabled) {
+    if (enabled && initialized) {
       pushSuccessOrFailureToServer({
         name,
         tags,
