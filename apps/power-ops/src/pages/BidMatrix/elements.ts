@@ -19,6 +19,7 @@ const GeneralTableInternalStyles = css`
   font-size: 12px;
   line-height: 16px;
   background: #f5f5f5;
+  text-align: right;
 `;
 
 export const Main = styled(MainPanel)`
@@ -99,7 +100,6 @@ export const StyledPriceScenarioTable = styled.div`
     ${GeneralTableInternalStyles}
 
     table-layout: fixed;
-    text-align: right;
 
     thead {
       width: 100%;
@@ -113,10 +113,10 @@ export const StyledPriceScenarioTable = styled.div`
           letter-spacing: -0.004em;
 
           &:first-child {
-            max-width: 60%;
+            width: 60%;
           }
           &:last-child {
-            max-width: 40%;
+            width: 40%;
           }
         }
       }
@@ -136,11 +136,11 @@ export const StyledPriceScenarioTable = styled.div`
           padding: 4px;
 
           &:first-child {
-            max-width: 60%;
+            width: 60%;
           }
 
           &:last-child {
-            max-width: 40%;
+            width: 40%;
           }
         }
 
@@ -158,8 +158,6 @@ export const StyledBidMatrixTable = styled.div`
 
   table {
     ${GeneralTableInternalStyles}
-
-    text-align: left;
 
     thead {
       tr {

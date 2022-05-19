@@ -46,14 +46,14 @@ export const PriceScenarios = ({
   const getFormattedProductionColumn = (
     datapoints: DoubleDatapoint[] | CalculatedProduction[],
     accessor: string
-  ): { [accesor: string]: number }[] => {
-    const formatedData: { [accesor: string]: number }[] = Array(24).fill({
+  ): { [accesor: string]: string }[] => {
+    const formatedData: { [accesor: string]: string }[] = Array(24).fill({
       [accessor]: undefined,
     });
     datapoints.forEach((point) => {
       const hour = point.timestamp.getHours();
       formatedData[hour] = {
-        [accessor]: roundWithDec(point.value),
+        [accessor]: roundWithDec(point.value, 1),
       };
     });
     return formatedData || [];
@@ -136,7 +136,7 @@ export const PriceScenarios = ({
         )
       : [];
 
-    let calcProductionData: { [accessor: string]: number }[][];
+    let calcProductionData: { [accessor: string]: string }[][];
     if (activeTab === 'total') {
       const priceTimeseries =
         priceExternalIds &&
@@ -280,6 +280,7 @@ export const PriceScenarios = ({
             tableHeader={tableColumns}
             tableData={tableData}
             className="price-scenario-table"
+            defaultColumnSize={{ min: 70, width: 70, max: 140 }}
           />
         )}
       </StyledTable>

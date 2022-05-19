@@ -41,7 +41,7 @@ export const getFormattedBidMatrixData = async (
   let columnHeaders: Cols[] = sequenceRows.map(
     (row: SequenceRow, index: number) => {
       const formattedValue =
-        typeof row[0] === 'number' ? `${roundWithDec(row[0])}` : row[0];
+        typeof row[0] === 'number' ? `${roundWithDec(row[0], 1)}` : row[0];
       const accessor = row[0]?.toString().replace('.', '');
       return {
         Header: `${formattedValue}`,
@@ -93,7 +93,7 @@ export const getFormattedBidMatrixData = async (
       }
       const accessor = `${col?.accessor || 0}`;
       const formattedValue =
-        typeof value === 'number' ? `${roundWithDec(value)}` : value;
+        typeof value === 'number' ? `${roundWithDec(value, 1)}` : value;
       tableData[index][accessor] = formattedValue || 0;
     });
   });
@@ -159,8 +159,8 @@ export const copyMatrixToClipboard = async (
 export const formatScenarioData = async (
   scenarioPricePerHour: DoubleDatapoint[],
   sequenceRows: SequenceRow[]
-): Promise<{ id: number; base: number; production: number }[]> => {
-  const dataArray: { id: number; base: number; production: number }[] = [];
+): Promise<{ id: number; base: string; production: string }[]> => {
+  const dataArray: { id: number; base: string; production: string }[] = [];
   const production = calculateScenarioProduction(
     scenarioPricePerHour,
     sequenceRows
@@ -178,23 +178,24 @@ export const formatScenarioData = async (
       )
         dataArray.push({
           id: index,
-          base: roundWithDec(scenarioPricePerHour[index].value as number),
-          production: roundWithDec(production[index].value as number),
+          base: roundWithDec(scenarioPricePerHour[index].value as number, 2),
+          production: roundWithDec(production[index].value as number, 1),
         });
     }
   }
 
   // Add total production and average base price
   const averageBasePrice =
-    dataArray.reduce((total, next) => total + next.base, 0) / dataArray.length;
+    dataArray.reduce((total, next) => total + parseFloat(next.base), 0) /
+    dataArray.length;
   const totalProduction = dataArray.reduce(
-    (total, next) => total + next.production,
+    (total, next) => total + parseFloat(next.production),
     0
   );
   dataArray.push({
     id: 24,
-    base: Math.round(averageBasePrice * 100) / 100,
-    production: Math.round(totalProduction * 100) / 100,
+    base: roundWithDec(averageBasePrice, 2),
+    production: roundWithDec(totalProduction, 2),
   });
 
   return dataArray;

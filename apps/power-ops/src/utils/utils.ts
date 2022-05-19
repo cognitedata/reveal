@@ -75,8 +75,8 @@ export const linearInterpolation = (
   );
 };
 
-export const roundWithDec = (number: number) => {
-  return Math.round(number * 100) / 100;
+export const roundWithDec = (number: number, decimals: number) => {
+  return number.toFixed(decimals);
 };
 
 export const calculateScenarioProduction = (

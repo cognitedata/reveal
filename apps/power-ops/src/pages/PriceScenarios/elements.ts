@@ -30,7 +30,7 @@ export const StyledIcon = styled(Icon)`
   color: ${(props) => props.color};
 `;
 
-const colWidth = 70;
+const colWidth = 140;
 
 export const StyledTable = styled.div`
   display: flex;
@@ -71,6 +71,8 @@ export const StyledTable = styled.div`
       &:first-child {
         th {
           color: var(--cogs-text-primary);
+          border-right: 1px solid var(--cogs-bg-control--disabled);
+
           &:not(:first-child) {
             max-width: ${colWidth * 2}px;
           }
@@ -83,8 +85,11 @@ export const StyledTable = styled.div`
             color: rgba(0, 0, 0, 0.7);
             font-weight: 400;
             font-size: 12px;
-            line-height: 16px;
             max-width: ${colWidth}px;
+          }
+
+          &:nth-child(odd) {
+            border-right: 1px solid var(--cogs-bg-control--disabled);
           }
         }
       }
@@ -104,16 +109,15 @@ export const StyledTable = styled.div`
         &:first-child {
           max-width: 65px;
           background: var(--cogs-bg-default);
-          box-shadow: 1px 0px 0px var(--cogs-bg-control--disabled);
         }
 
         &:not(:first-child) {
           max-width: ${colWidth}px;
         }
 
-        // Auction matrix columns
-        &:nth-child(even) {
-          border-left: 1px solid var(--cogs-bg-control--disabled);
+        // Shop matrix columns
+        &:nth-child(odd) {
+          border-right: 1px solid var(--cogs-bg-control--disabled);
         }
       }
     }
