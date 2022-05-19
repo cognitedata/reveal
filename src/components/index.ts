@@ -2,7 +2,6 @@ export * from './Chart';
 export * from './Common';
 export * from './Search';
 export * from './InfoGrid/InfoGrid';
-export * from './Popover/Popover';
 export * from './FilterForm/FilterForm';
 export * from './Splitter/Splitter';
 export * from './CdfCount/CdfCount';
