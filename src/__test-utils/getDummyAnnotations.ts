@@ -1,16 +1,20 @@
-import { InternalId, ExternalId, CogniteInternalId } from '@cognite/sdk';
+import { CogniteInternalId, ExternalId, InternalId } from '@cognite/sdk';
 import {
   BoundingBox,
   CDFAnnotationTypeEnum,
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
+  ImageKeypoint,
+  ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
+  ImageObjectDetectionPolyline,
   Polygon,
+  Polyline,
   Status,
 } from 'src/api/annotation/types';
-import { VisionAnnotation } from 'src/modules/Common/types/index';
+import { VisionAnnotation } from 'src/modules/Common/types';
 
 export const getDummyImageClassificationAnnotation = ({
   id = 1,
@@ -104,6 +108,80 @@ export const getDummyImageObjectDetectionPolygonAnnotation = ({
     status,
     annotatedResourceId,
     annotationType: CDFAnnotationTypeEnum.ImagesObjectDetection,
+    ...data,
+  };
+};
+
+export const getDummyImageObjectDetectionPolylineAnnotation = ({
+  id = 1,
+  status = Status.Suggested,
+  annotatedResourceId = 10,
+  label = 'bar',
+  confidence = 0.5,
+  polyline = {
+    vertices: [
+      { x: 0.1, y: 0.1 },
+      { x: 0.2, y: 0.2 },
+      { x: 0.3, y: 0.3 },
+    ],
+  },
+}: {
+  id?: number;
+  status?: Status;
+  annotatedResourceId?: CogniteInternalId;
+  label?: string;
+  confidence?: number;
+  polyline?: Polyline;
+}): VisionAnnotation<ImageObjectDetectionPolyline> => {
+  const data: ImageObjectDetectionPolyline = {
+    label,
+    confidence,
+    polyline,
+  };
+
+  return {
+    id,
+    createdTime: 123,
+    lastUpdatedTime: 123,
+    status,
+    annotatedResourceId,
+    annotationType: CDFAnnotationTypeEnum.ImagesObjectDetection,
+    ...data,
+  };
+};
+
+export const getDummyImageKeypointCollectionAnnotation = ({
+  id = 1,
+  status = Status.Suggested,
+  annotatedResourceId = 10,
+  label = 'gauge',
+  confidence = 0.5,
+  keypoints = [
+    { label: 'start', point: { x: 0.1, y: 0.1 } },
+    { label: 'center', point: { x: 0.2, y: 0.2 } },
+    { label: 'end', point: { x: 0.3, y: 0.3 } },
+  ],
+}: {
+  id?: number;
+  status?: Status;
+  annotatedResourceId?: CogniteInternalId;
+  label?: string;
+  confidence?: number;
+  keypoints?: ImageKeypoint[];
+}): VisionAnnotation<ImageKeypointCollection> => {
+  const data: ImageKeypointCollection = {
+    label,
+    confidence,
+    keypoints,
+  };
+
+  return {
+    id,
+    createdTime: 123,
+    lastUpdatedTime: 123,
+    status,
+    annotatedResourceId,
+    annotationType: CDFAnnotationTypeEnum.ImagesKeypointCollection,
     ...data,
   };
 };

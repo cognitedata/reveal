@@ -1,7 +1,9 @@
+import { Status } from 'src/api/annotation/types';
+
 export type AnnotationEditOptionType = {
   value: string;
   label: string;
-  annotationState?: string;
+  annotationState?: Status;
 };
 
 export const annotationEditOptions: AnnotationEditOptionType[] = [
@@ -12,16 +14,16 @@ export const annotationEditOptions: AnnotationEditOptionType[] = [
   {
     label: 'All rejected',
     value: 'allRejected',
-    annotationState: 'rejected',
+    annotationState: Status.Rejected,
   },
   {
     label: 'All unhandled',
     value: 'allUnhandled',
-    annotationState: 'unhandled',
+    annotationState: Status.Suggested,
   },
   {
     label: 'All verified',
     value: 'allVerified',
-    annotationState: 'verified',
+    annotationState: Status.Approved,
   },
 ];

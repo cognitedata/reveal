@@ -18,16 +18,16 @@ type KeypointId = { id: string };
 // Casts ImageKeypoint to ReviewKeypoint[] if Type is ImageKeypoint[]
 type TurnKeypointType<Type> = {
   [Property in keyof Type]: Type[Property] extends ImageKeypoint[]
-    ? ReviewKeypoint[]
+    ? ReviewImageKeypoint[]
     : Type[Property];
 };
 
-export type ReviewAnnotation<Type> = Visible &
+export type VisionReviewAnnotation<Type> = Visible &
   Selectable & {
     annotation: TurnKeypointType<VisionAnnotation<Type>>;
   };
 
-export type ReviewKeypoint = KeypointId &
+export type ReviewImageKeypoint = KeypointId &
   Selectable & {
     keypoint: ImageKeypoint;
   };
@@ -36,5 +36,5 @@ export type ReviewKeypoint = KeypointId &
 export type UnsavedKeypointCollection = Label &
   Visible &
   Selectable & {
-    keypoints: ReviewKeypoint[];
+    keypoints: ReviewImageKeypoint[];
   };

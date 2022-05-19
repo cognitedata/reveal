@@ -26,6 +26,7 @@ import {
   isImageClassificationData,
   isImageKeypointCollectionData,
 } from 'src/modules/Common/types/typeGuards';
+import { Status } from 'src/api/annotation/types';
 
 export interface VisibleAnnotation extends VisionAnnotationV1 {
   show: boolean;
@@ -267,7 +268,7 @@ export const selectAnnotationSettingsState = createSelector(
 
 const fileAnnotationsSelector = makeSelectFileAnnotations();
 
-export const selectReviewAnnotationsForFile = createSelector(
+export const selectVisionReviewAnnotationsForFile = createSelector(
   (state: RootState, fileId: number) =>
     fileAnnotationsSelector(state.annotationReducer, fileId),
   (state: RootState) => state.reviewSlice.selectedAnnotationIds,
@@ -309,14 +310,14 @@ export const selectReviewAnnotationsForFile = createSelector(
   }
 );
 
-export const selectNonRejectedReviewAnnotationsForFile = createSelector(
-  selectReviewAnnotationsForFile,
+export const selectNonRejectedVisionReviewAnnotationsForFile = createSelector(
+  selectVisionReviewAnnotationsForFile,
   (allVisibleAnnotations) => {
     return allVisibleAnnotations.filter(
       (ann) =>
         ann.show &&
-        !!isImageClassificationData(ann.annotation) &&
-        ann.annotation.status !== AnnotationStatus.Rejected
+        !!isImageClassificationData(ann.annotation) && // todo: remove this once imageClassification annotations are supported
+        ann.annotation.status !== Status.Rejected
     );
   }
 );

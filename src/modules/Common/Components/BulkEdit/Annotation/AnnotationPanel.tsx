@@ -3,12 +3,12 @@ import { Body, Select } from '@cognite/cogs.js';
 import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotationV1/selectors';
 import { RootState } from 'src/store/rootReducer';
-import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
+import { filterAnnotations } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
-  AnnotationEditOptionType,
   annotationEditOptions,
+  AnnotationEditOptionType,
 } from './annotationEditOptions';
 
 export const AnnotationPanel = ({
@@ -24,9 +24,9 @@ export const AnnotationPanel = ({
     makeSelectAnnotationsForFileIds,
     []
   );
-  const annotationsMap = useSelector(({ annotationV1Reducer }: RootState) =>
+  const annotationsMap = useSelector(({ annotationReducer }: RootState) =>
     selectAnnotationsForFileIds(
-      annotationV1Reducer,
+      annotationReducer,
       selectedFiles.map((item) => item.id)
     )
   );
@@ -37,10 +37,10 @@ export const AnnotationPanel = ({
     };
     const annotationIds: number[] = [];
     Object.entries(annotationsMap).forEach(([_, annotations]) => {
-      const filteredAnnotations = AnnotationUtilsV1.filterAnnotations(
+      const filteredAnnotations = filterAnnotations({
         annotations,
-        annotationFilterType
-      );
+        filter: annotationFilterType,
+      });
       annotationIds.push(...filteredAnnotations.map((item) => item.id));
     });
     // Disable apply button if there are no changes to be made

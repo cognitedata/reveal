@@ -6,6 +6,7 @@ import {
   ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
+  ImageObjectDetectionPolyline,
   RegionShape,
   Status,
 } from 'src/api/annotation/types';
@@ -17,6 +18,7 @@ import {
   convertCDFAnnotationV1ToImageKeypointCollection,
   convertCDFAnnotationV1ToImageObjectDetectionBoundingBox,
   convertCDFAnnotationV1ToImageObjectDetectionPolygon,
+  convertCDFAnnotationV1ToImageObjectDetectionPolyline,
   convertCDFAnnotationV1ToVisionAnnotation,
 } from 'src/api/annotation/converters';
 import { mockAnnotationList } from 'src/__test-utils/fixtures/annotationsV1';
@@ -123,6 +125,37 @@ describe('Test convertCDFAnnotationV1ToImageObjectDetectionPolygon', () => {
         vertices: cdfObjectAnnotationV1.region?.vertices,
       },
     } as ImageObjectDetectionPolygon);
+  });
+});
+
+describe('Test convertCDFAnnotationV1ToImageObjectDetectionPolyline', () => {
+  test('Missing vertices', () => {
+    const cdfAnnotationV1 = {} as CDFAnnotationV1;
+    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+    expect(
+      convertCDFAnnotationV1ToImageObjectDetectionPolyline(cdfAnnotationV1)
+    ).toStrictEqual(null);
+    expect(consoleSpy).toHaveBeenCalled();
+  });
+
+  test('Should return converted type', () => {
+    const cdfObjectAnnotationV1 = mockAnnotationList.find(
+      (annotation) =>
+        annotation.annotationType === 'vision/objectdetection' &&
+        annotation.region.shape === 'polyline'
+    ) as CDFAnnotationV1;
+    expect(
+      convertCDFAnnotationV1ToImageObjectDetectionPolyline(
+        cdfObjectAnnotationV1
+      )
+    ).toStrictEqual({
+      confidence: cdfObjectAnnotationV1.data?.confidence,
+      label: cdfObjectAnnotationV1.text,
+      polyline: {
+        vertices: cdfObjectAnnotationV1.region?.vertices,
+      },
+    } as ImageObjectDetectionPolyline);
   });
 });
 
@@ -471,7 +504,8 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
         shape: RegionShape.Polygon,
         vertices: [
           { x: 0, y: 0.1 },
-          { x: 1, y: 0.3 },
+          { x: 0.3, y: 0.5 },
+          { x: 1, y: 1 },
         ],
       }
     );
@@ -489,6 +523,35 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
       annotationType: CDFAnnotationTypeEnum.ImagesObjectDetection,
       polygon: {
         vertices: cdfAnnotationWithPolygon.region?.vertices,
+      },
+    } as VisionImageObjectDetectionAnnotation);
+
+    const cdfAnnotationWithPolyline = getDummyAnnotation(
+      1,
+      VisionDetectionModelType.ObjectDetection,
+      {
+        confidence: 0.8,
+        shape: RegionShape.Polyline,
+        vertices: [
+          { x: 0, y: 0.1 },
+          { x: 1, y: 0.3 },
+        ],
+      }
+    );
+
+    expect(
+      convertCDFAnnotationV1ToVisionAnnotation(cdfAnnotationWithPolyline)
+    ).toStrictEqual({
+      id: cdfAnnotationWithPolyline.id,
+      annotatedResourceId: cdfAnnotationWithPolyline.annotatedResourceId,
+      createdTime: cdfAnnotationWithPolyline.createdTime,
+      lastUpdatedTime: cdfAnnotationWithPolyline.lastUpdatedTime,
+      confidence: cdfAnnotationWithPolyline.data?.confidence,
+      status: Status.Suggested,
+      label: cdfAnnotationWithPolyline.text,
+      annotationType: CDFAnnotationTypeEnum.ImagesObjectDetection,
+      polyline: {
+        vertices: cdfAnnotationWithPolyline.region?.vertices,
       },
     } as VisionImageObjectDetectionAnnotation);
   });

@@ -3,59 +3,113 @@ import {
   validBoundingBox,
   validImageAssetLink,
   validKeypointCollection,
+  validPolygon,
+  validPolyline,
 } from 'src/api/annotation/typeValidators';
 
-describe('validBoundingBox', () => {
+describe('validBoundingBox, validPolygon and validPolyline', () => {
   test('Missing region', () => {
     const cdfAnnotationV1 = {} as CDFAnnotationV1;
     expect(validBoundingBox(cdfAnnotationV1)).toBe(false);
+    expect(validPolygon(cdfAnnotationV1)).toBe(false);
+    expect(validPolyline(cdfAnnotationV1)).toBe(false);
   });
 
   test('Missing shape', () => {
     const cdfAnnotationV1 = { region: {} } as CDFAnnotationV1;
     expect(validBoundingBox(cdfAnnotationV1)).toBe(false);
+    expect(validPolygon(cdfAnnotationV1)).toBe(false);
+    expect(validPolyline(cdfAnnotationV1)).toBe(false);
   });
 
   test('Invalid shape', () => {
-    const cdfAnnotationV1 = {
+    const cdfBoundingBoxAnnotationV1 = {
+      region: { shape: RegionShape.Rectangle },
+    } as CDFAnnotationV1;
+    const cdfPolygonAnnotationV1 = {
       region: { shape: RegionShape.Polygon },
     } as CDFAnnotationV1;
-    expect(validBoundingBox(cdfAnnotationV1)).toBe(false);
+    const cdfPolylineAnnotationV1 = {
+      region: { shape: RegionShape.Polyline },
+    } as CDFAnnotationV1;
+
+    expect(validBoundingBox(cdfPolygonAnnotationV1)).toBe(false);
+    expect(validBoundingBox(cdfPolylineAnnotationV1)).toBe(false);
+
+    expect(validPolygon(cdfBoundingBoxAnnotationV1)).toBe(false);
+    expect(validPolygon(cdfPolylineAnnotationV1)).toBe(false);
+
+    expect(validPolyline(cdfBoundingBoxAnnotationV1)).toBe(false);
+    expect(validPolyline(cdfPolygonAnnotationV1)).toBe(false);
   });
 
   test('Missing vertices', () => {
-    const cdfAnnotationV1 = {
+    const cdfBoundingBoxAnnotationV1 = {
       region: { shape: RegionShape.Rectangle },
     } as CDFAnnotationV1;
-    expect(validBoundingBox(cdfAnnotationV1)).toBe(false);
+    const cdfPolygonAnnotationV1 = {
+      region: { shape: RegionShape.Polygon },
+    } as CDFAnnotationV1;
+    const cdfPolylineAnnotationV1 = {
+      region: { shape: RegionShape.Polyline },
+    } as CDFAnnotationV1;
+
+    expect(validBoundingBox(cdfBoundingBoxAnnotationV1)).toBe(false);
+    expect(validPolygon(cdfPolygonAnnotationV1)).toBe(false);
+    expect(validPolyline(cdfPolylineAnnotationV1)).toBe(false);
   });
 
   test('Too few items in vertices', () => {
-    const cdfAnnotationV1 = {
+    const cdfBoundingBoxAnnotationV1 = {
       region: { shape: RegionShape.Rectangle, vertices: [{}] },
     } as CDFAnnotationV1;
-    expect(validBoundingBox(cdfAnnotationV1)).toBe(false);
+    const cdfPolygonAnnotationV1 = {
+      region: { shape: RegionShape.Polygon, vertices: [{}] },
+    } as CDFAnnotationV1;
+    const cdfPolylineAnnotationV1 = {
+      region: { shape: RegionShape.Polyline, vertices: [{}] },
+    } as CDFAnnotationV1;
+
+    expect(validBoundingBox(cdfBoundingBoxAnnotationV1)).toBe(false);
+    expect(validPolygon(cdfPolygonAnnotationV1)).toBe(false);
+    expect(validPolyline(cdfPolylineAnnotationV1)).toBe(false);
   });
 
-  test('Too many items in vertices', () => {
+  test('Too many items in vertices - Bounding Box only', () => {
     const cdfAnnotationV1 = {
       region: { shape: RegionShape.Rectangle, vertices: [{}, {}, {}] },
     } as CDFAnnotationV1;
+
     expect(validBoundingBox(cdfAnnotationV1)).toBe(false);
   });
 
   test('Invalid vertex', () => {
-    const cdfAnnotationV1 = {
+    const cdfBoundingBoxAnnotationV1 = {
       region: {
         shape: RegionShape.Rectangle,
-        vertices: [{ x: 1 }, { x: 1, y: 2 }],
+        vertices: [{ x: 1 }, { x: 0.1, y: 0.3 }],
       },
     } as CDFAnnotationV1;
-    expect(validBoundingBox(cdfAnnotationV1)).toBe(false);
+    const cdfPolygonAnnotationV1 = {
+      region: {
+        shape: RegionShape.Polygon,
+        vertices: [{ x: 1 }, { x: 0.1, y: 0.3 }, { x: 0.5, y: 0.8 }],
+      },
+    } as CDFAnnotationV1;
+    const cdfPolylineAnnotationV1 = {
+      region: {
+        shape: RegionShape.Polyline,
+        vertices: [{ x: 1 }, { x: 0.1, y: 0.3 }],
+      },
+    } as CDFAnnotationV1;
+
+    expect(validBoundingBox(cdfBoundingBoxAnnotationV1)).toBe(false);
+    expect(validPolygon(cdfPolygonAnnotationV1)).toBe(false);
+    expect(validPolyline(cdfPolylineAnnotationV1)).toBe(false);
   });
 
   test('Non-normalized vertices', () => {
-    const cdfAnnotationV1 = {
+    const cdfBoundingBoxAnnotationV1 = {
       region: {
         shape: RegionShape.Rectangle,
         vertices: [
@@ -64,11 +118,33 @@ describe('validBoundingBox', () => {
         ],
       },
     } as CDFAnnotationV1;
-    expect(validBoundingBox(cdfAnnotationV1)).toBe(false);
+    const cdfPolygonAnnotationV1 = {
+      region: {
+        shape: RegionShape.Polygon,
+        vertices: [
+          { x: 0, y: 0.1 },
+          { x: 0.5, y: 2 },
+          { x: 1, y: 2 },
+        ],
+      },
+    } as CDFAnnotationV1;
+    const cdfPolylineAnnotationV1 = {
+      region: {
+        shape: RegionShape.Polyline,
+        vertices: [
+          { x: 0, y: 0.1 },
+          { x: 1, y: 2 },
+        ],
+      },
+    } as CDFAnnotationV1;
+
+    expect(validBoundingBox(cdfBoundingBoxAnnotationV1)).toBe(false);
+    expect(validPolygon(cdfPolygonAnnotationV1)).toBe(false);
+    expect(validPolyline(cdfPolylineAnnotationV1)).toBe(false);
   });
 
   test('Overlapping vertices', () => {
-    const cdfAnnotationV1 = {
+    const cdfBoundingBoxAnnotationV1 = {
       region: {
         shape: RegionShape.Rectangle,
         vertices: [
@@ -77,11 +153,33 @@ describe('validBoundingBox', () => {
         ],
       },
     } as CDFAnnotationV1;
-    expect(validBoundingBox(cdfAnnotationV1)).toBe(false);
+    const cdfPolygonAnnotationV1 = {
+      region: {
+        shape: RegionShape.Polygon,
+        vertices: [
+          { x: 0, y: 0.1 },
+          { x: 0, y: 0.1 },
+          { x: 0.1, y: 0.3 },
+        ],
+      },
+    } as CDFAnnotationV1;
+    const cdfPolylineAnnotationV1 = {
+      region: {
+        shape: RegionShape.Polyline,
+        vertices: [
+          { x: 0, y: 0.1 },
+          { x: 0, y: 0.1 },
+        ],
+      },
+    } as CDFAnnotationV1;
+
+    expect(validBoundingBox(cdfBoundingBoxAnnotationV1)).toBe(false);
+    expect(validPolygon(cdfPolygonAnnotationV1)).toBe(false);
+    expect(validPolyline(cdfPolylineAnnotationV1)).toBe(false);
   });
 
   test('Valid bounding box', () => {
-    const cdfAnnotationV1 = {
+    const cdfAnnotationBoundingBox1 = {
       region: {
         shape: RegionShape.Rectangle,
         vertices: [
@@ -90,7 +188,47 @@ describe('validBoundingBox', () => {
         ],
       },
     } as CDFAnnotationV1;
-    expect(validBoundingBox(cdfAnnotationV1)).toBe(true);
+    const cdfAnnotationBoundingBox2 = {
+      region: {
+        shape: RegionShape.Rectangle,
+        vertices: [
+          { x: 0.1, y: 0 },
+          { x: 0.3, y: 1 },
+        ],
+      },
+    } as CDFAnnotationV1;
+    expect(validBoundingBox(cdfAnnotationBoundingBox1)).toBe(true);
+    expect(validBoundingBox(cdfAnnotationBoundingBox2)).toBe(true);
+  });
+  test('Valid polygon', () => {
+    const cdfAnnotationPolygon = {
+      region: {
+        shape: RegionShape.Polygon,
+        vertices: [
+          { x: 0, y: 0 },
+          { x: 0.1, y: 0.1 },
+          { x: 0.3, y: 0.2 },
+          { x: 1, y: 0.3 },
+          { x: 1, y: 1 },
+        ],
+      },
+    } as CDFAnnotationV1;
+    expect(validPolygon(cdfAnnotationPolygon)).toBe(true);
+  });
+  test('Valid polyline', () => {
+    const cdfAnnotationPolyline = {
+      region: {
+        shape: RegionShape.Polyline,
+        vertices: [
+          { x: 0, y: 0 },
+          { x: 0.1, y: 0.1 },
+          { x: 0.3, y: 0.2 },
+          { x: 1, y: 0.3 },
+          { x: 1, y: 1 },
+        ],
+      },
+    } as CDFAnnotationV1;
+    expect(validPolyline(cdfAnnotationPolyline)).toBe(true);
   });
 });
 

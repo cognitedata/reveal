@@ -18,7 +18,19 @@ export function validPolygon(annotationV1: CDFAnnotationV1) {
   return (
     !!annotationV1.region &&
     annotationV1.region.shape === RegionShape.Polygon &&
-    annotationV1.region.vertices?.length > 0 &&
+    annotationV1.region.vertices?.length >= 3 &&
+    annotationV1.region.vertices.every(
+      (item) => 'x' in item && 'y' in item && vertexIsNormalized(item)
+    ) &&
+    uniqueVertices(annotationV1.region.vertices)
+  );
+}
+
+export function validPolyline(annotationV1: CDFAnnotationV1) {
+  return (
+    !!annotationV1.region &&
+    annotationV1.region.shape === RegionShape.Polyline &&
+    annotationV1.region.vertices?.length >= 2 &&
     annotationV1.region.vertices.every(
       (item) => 'x' in item && 'y' in item && vertexIsNormalized(item)
     ) &&

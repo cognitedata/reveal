@@ -7,6 +7,7 @@ import {
   getDummyImageExtractedTextAnnotation,
   getDummyImageObjectDetectionBoundingBoxAnnotation,
   getDummyImageObjectDetectionPolygonAnnotation,
+  getDummyImageObjectDetectionPolylineAnnotation,
 } from 'src/__test-utils/getDummyAnnotations';
 import {
   annotatedFilesById,
@@ -65,6 +66,10 @@ const annotations = [
     id: 10,
     annotatedResourceId: 30,
   }),
+  getDummyImageObjectDetectionPolylineAnnotation({
+    id: 11,
+    annotatedResourceId: 30,
+  }),
 ];
 
 const mockState: AnnotationState = {
@@ -73,7 +78,7 @@ const mockState: AnnotationState = {
     byId: {
       '10': [1, 2, 3, 4, 5, 6],
       '20': [7, 8, 9],
-      '30': [10],
+      '30': [10, 11],
       '40': [],
     },
   },
@@ -89,6 +94,7 @@ const mockState: AnnotationState = {
       '8': annotations[7],
       '9': annotations[8],
       '10': annotations[9],
+      '11': annotations[10],
     },
   },
 };

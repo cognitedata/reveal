@@ -1,6 +1,6 @@
 import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { KeypointCollection, Shape, Tool } from 'src/modules/Review/types';
-import { ReviewKeypoint } from 'src/modules/Review/store/review/types';
+import { ReviewImageKeypoint } from 'src/modules/Review/store/review/types';
 
 export type KeypointCollectionState = {
   id: string;
@@ -19,7 +19,7 @@ type PredefinedAnnotations = {
 export type AnnotatorWrapperState = {
   predefinedAnnotations: PredefinedAnnotations;
   keypointMap: {
-    byId: Record<string, ReviewKeypoint>;
+    byId: Record<string, ReviewImageKeypoint>;
     allIds: string[];
     selectedIds: string[];
   };

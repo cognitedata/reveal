@@ -14,7 +14,7 @@ import {
 import { ReactText } from 'react';
 import { deleteCollection } from 'src/modules/Review/store/annotatorWrapper/utils';
 import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
-import { ReviewKeypoint } from 'src/modules/Review/store/review/types';
+import { ReviewImageKeypoint } from 'src/modules/Review/store/review/types';
 import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bulkConverters';
 import {
   VisionAnnotation,
@@ -124,7 +124,7 @@ const annotatorWrapperSlice = createSlice({
               action.payload.orderNumber || 0
             ];
 
-          const reviewKeypoint: ReviewKeypoint = {
+          const reviewKeypoint: ReviewImageKeypoint = {
             id: action.payload.id.toString(),
             selected: true, // select the keypoint after creating
             keypoint: {
@@ -178,7 +178,7 @@ const annotatorWrapperSlice = createSlice({
       },
     },
 
-    onUpdateKeyPoint(state, action: PayloadAction<ReviewKeypoint>) {
+    onUpdateKeyPoint(state, action: PayloadAction<ReviewImageKeypoint>) {
       state.keypointMap.byId[action.payload.id] = action.payload;
     },
     deleteCollectionById(state, action: PayloadAction<string>) {
