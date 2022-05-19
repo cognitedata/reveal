@@ -97,7 +97,6 @@ export class Cognite3DViewer {
   }
 
   private readonly _cdfSdkClient: CogniteClient | undefined;
-  private readonly _cdfSdkClientPlayground: CogniteClientPlayground | undefined;
   private readonly _dataSource: DataSource;
 
   private readonly camera: THREE.PerspectiveCamera;
@@ -229,11 +228,10 @@ export class Cognite3DViewer {
     if (options._localModels === true) {
       this._dataSource = new LocalDataSource();
       this._cdfSdkClient = undefined;
-      this._cdfSdkClientPlayground = undefined;
       this._revealManagerHelper = RevealManagerHelper.createLocalHelper(
         this._renderer,
         this._sceneHandler,
-        revealOptions
+        revealOptions,
       );
     } else if (options.customDataSource !== undefined) {
       this._dataSource = options.customDataSource;
@@ -247,7 +245,6 @@ export class Cognite3DViewer {
       // CDF - default mode
       this._dataSource = new CdfDataSource(options.sdk);
       this._cdfSdkClient = options.sdk;
-      this._cdfSdkClientPlayground = options.sdkPlayground;
       this._revealManagerHelper = RevealManagerHelper.createCdfHelper(
         this._renderer,
         this._sceneHandler,
