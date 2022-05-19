@@ -103,7 +103,6 @@ const annotatorWrapperSlice = createSlice({
           positionX: number;
           positionY: number;
           orderNumber?: number;
-          // confidence?
         }>
       ) => {
         const predefinedKeypointCollection =
@@ -130,6 +129,7 @@ const annotatorWrapperSlice = createSlice({
                 x: action.payload.positionX,
                 y: action.payload.positionY,
               },
+              confidence: 1, // 100% confident about manually created keypoints
             },
           };
 

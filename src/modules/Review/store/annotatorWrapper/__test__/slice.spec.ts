@@ -338,6 +338,7 @@ describe('Test annotator slice', () => {
                 keypoint: {
                   label: dummyKeypointState(payload.id).keypoint.label,
                   point: { x: payload.positionX, y: payload.positionY },
+                  confidence: 1,
                 },
               },
             },
@@ -407,6 +408,7 @@ describe('Test annotator slice', () => {
                 keypoint: {
                   label: dummyKeypointState(payload.id).keypoint.label,
                   point: { x: payload.positionX, y: payload.positionY },
+                  confidence: 1,
                 },
               },
             },
