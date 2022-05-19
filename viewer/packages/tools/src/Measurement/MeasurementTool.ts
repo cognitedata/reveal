@@ -42,20 +42,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Set input handling.
-   */
-  private setupEventHandling() {
-    this._viewer.on('click', this._handleonPointerClick);
-  }
-
-  /**
-   * Remove input handling
-   */
-  private removeEventHandling() {
-    this._viewer.off('click', this._handleonPointerClick);
-  }
-
-  /**
    * Add an measurement.
    */
   add(): void {
@@ -66,14 +52,53 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Remove measurement.
    */
   remove(): void {
-    //remove measurement label, clear all mesh, geometry & event handling
+    //remove measurement label, clear all mesh, geometry & event handling.
     this._measurementLabel.remove();
     this.clearLineObjects();
     this.removeEventHandling();
   }
 
   /**
-   * Clear all line objects mesh, geometry & material
+   * Update the measurement line width.
+   * @param width Line width
+   */
+  updateLineWidth(width: number): void {
+    this._lineOptions.lineWidth = width;
+    this._pointSize = width * 10.0;
+  }
+
+  /**
+   * Update measurement line color.
+   * @param color Line color.
+   */
+  updateLineColor(color: number): void {
+    this._lineOptions.color = color;
+  }
+
+  /**
+   * Dispose Measurement Tool.
+   */
+  dispose(): void {
+    this.remove();
+    super.dispose();
+  }
+
+  /**
+   * Set input handling.
+   */
+  private setupEventHandling() {
+    this._viewer.on('click', this._handleonPointerClick);
+  }
+
+  /**
+   * Remove input handling.
+   */
+  private removeEventHandling() {
+    this._viewer.off('click', this._handleonPointerClick);
+  }
+
+  /**
+   * Clear all line objects mesh, geometry & material.
    */
   private clearLineObjects() {
     if (this._lineMesh) {
@@ -99,9 +124,11 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       this.addSphere(intersection.point);
 
       if (!this._lineMesh) {
+        this._viewer.domElement.addEventListener('mousemove', this._handleonPointerMove);
         this.startMeasurement(intersection);
       } else {
         this.endMeasurement(intersection.point);
+        this._viewer.domElement.removeEventListener('mousemove', this._handleonPointerMove);
       }
       this._viewer.requestRedraw();
     }
@@ -112,7 +139,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * @param intersection Intersection Object containing point & camera distance.
    */
   private startMeasurement(intersection: Intersection) {
-    this._viewer.domElement.addEventListener('mousemove', this._handleonPointerMove);
     this.startLine(intersection.point);
     this._distanceToCamera = intersection.distanceToCamera;
   }
@@ -148,7 +174,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     );
     this.assignMeasurementValue();
     this._measurementLabel.add(labelPosition, this._distanceValue);
-    this._viewer.domElement.removeEventListener('mousemove', this._handleonPointerMove);
     this.clearLineObjects();
   }
 
@@ -225,13 +250,13 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       const ray = new THREE.Ray();
       const origin = new THREE.Vector3();
 
-      //Set the origin of the Ray to camera
+      //Set the origin of the Ray to camera.
       origin.setFromMatrixPosition(camera.matrixWorld);
       ray.origin.copy(origin);
-      //Calculate the camera direction
+      //Calculate the camera direction.
       direction.set(mouse.x, mouse.y, 0.5).unproject(camera).sub(ray.origin).normalize();
       ray.direction.copy(direction);
-      //Note: Using the initial/start point as reference for emiting a ray.
+      //Note: Using the initial/start point as reference for ray to emit till that distance from camera.
       ray.at(this._distanceToCamera, position);
     }
 
@@ -255,30 +280,5 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     mesh.scale.copy(mesh.scale.multiplyScalar(this._pointSize));
 
     this._viewer.addObject3D(mesh);
-  }
-
-  /**
-   * Update the measurement line width.
-   * @param width Line width
-   */
-  updateLineWidth(width: number): void {
-    this._lineOptions.lineWidth = width;
-    this._pointSize = width * 10.0;
-  }
-
-  /**
-   * Update measurement line color.
-   * @param color Line color.
-   */
-  updateLineColor(color: number): void {
-    this._lineOptions.color = color;
-  }
-
-  /**
-   * Dispose Measurement Tool
-   */
-  dispose(): void {
-    this.remove();
-    super.dispose();
   }
 }

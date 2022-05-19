@@ -36,18 +36,17 @@ describe(MeasurementTool.name, () => {
   });
 
   test('Add Point to point distance measurement', () => {
-    const addSpyOn = jest.spyOn(measurementTool, 'add');
-
+    const onSetEventHandlingSpyOn = jest.spyOn(viewer, 'on');
     measurementTool.add();
 
-    expect(addSpyOn).toBeCalled();
+    expect(onSetEventHandlingSpyOn).toHaveBeenCalled();
   });
 
   test('Remove distance memasurement', () => {
-    const removeSpyOn = jest.spyOn(measurementTool, 'remove');
+    const onRemoveEventHandlingSpyOn = jest.spyOn(viewer, 'off');
     measurementTool.remove();
 
-    expect(removeSpyOn).toBeCalled();
+    expect(onRemoveEventHandlingSpyOn).toHaveBeenCalled();
   });
 
   test('update measure line color', () => {
