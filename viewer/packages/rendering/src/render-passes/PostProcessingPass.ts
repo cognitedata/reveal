@@ -8,6 +8,12 @@ import { RenderPass } from '../RenderPass';
 import { createFullScreenTriangleMesh, getBlitMaterial, getLayerMask, RenderLayer } from '../utilities/renderUtilities';
 import { PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
 
+/**
+ * Single pass that applies post processing effects and
+ * combines results from geometry passes.
+ * This is done by intentionally layering full screen-space
+ * triangles in a specific render order.
+ */
 export class PostProcessingPass implements RenderPass {
   private readonly _scene: THREE.Scene;
   private readonly _postProcessingObjects: THREE.Mesh[];
@@ -22,6 +28,9 @@ export class PostProcessingPass implements RenderPass {
       writeColor: false
     });
 
+    // Fills the depth buffer with infront objects
+    // to prevent infront objects to blend with other objects
+    // that are behind
     const inFrontEarlyZBlitObject = createFullScreenTriangleMesh(inFrontEarlyZBlitMaterial);
     inFrontEarlyZBlitObject.renderOrder = -2;
 
@@ -33,6 +42,8 @@ export class PostProcessingPass implements RenderPass {
       edges: postProcessingPipelineOptions.edges,
       outline: true
     });
+
+    // Normal un-styled opaque geometry
     const backBlitObject = createFullScreenTriangleMesh(backBlitMaterial);
     backBlitObject.renderOrder = -1;
 
@@ -42,6 +53,7 @@ export class PostProcessingPass implements RenderPass {
       blendOptions: transparentBlendOptions
     });
 
+    // Ghosted geometry
     const ghostBlitObject = createFullScreenTriangleMesh(ghostBlitMaterial);
     ghostBlitObject.renderOrder = 1;
 
@@ -51,6 +63,8 @@ export class PostProcessingPass implements RenderPass {
       overrideAlpha: 0.5,
       outline: true
     });
+
+    //In front geometry
     const inFrontBlitObject = createFullScreenTriangleMesh(inFrontBlitMaterial);
     inFrontBlitObject.renderOrder = 2;
 
