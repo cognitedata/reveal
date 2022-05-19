@@ -179,10 +179,10 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Check if their is a request to show the measurment in feet, inches or centimeter unit, if not assign distance value to meters.
+   * Check if their is a request to show the measurment with custom callback from the user.
    */
   private assignMeasurementValue() {
-    const options = this._options.transformMeasurementLabel;
+    const options = this._options.changeMeasurementLabelMetrics;
     if (options === undefined) {
       this._distanceValue = this.getMeasurementValue().toFixed(2) + ' m';
     } else {
@@ -191,12 +191,12 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Update the measurement units and calculate respective measuring values in passed units.
-   * @param options Callback function which provides type of measuring unit.
+   * Update the measurement data.
+   * @param options Callback function which get user value to be added into label.
    */
   private updateMeasurementValue(options: MeasurementLabelUpdateDelegate) {
-    const units = options(this.getMeasurementValue());
-    this._distanceValue = units.distance.toFixed(2) + units.units;
+    const measurementData = options(this.getMeasurementValue());
+    this._distanceValue = measurementData.distance.toFixed(2) + ' ' + measurementData.units;
   }
 
   private onPointerMove(event: MouseEvent) {
@@ -254,8 +254,8 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * @param width Line width
    */
   updateLineWidth(width: number): void {
-    this._lineOptions.lineWidth = width ?? this._lineOptions.lineWidth;
-    this._pointSize = width * 10.0 || this._pointSize;
+    this._lineOptions.lineWidth = width;
+    this._pointSize = width * 10.0;
   }
 
   /**

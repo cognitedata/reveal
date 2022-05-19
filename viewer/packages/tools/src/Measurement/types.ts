@@ -10,7 +10,7 @@ export type MeasurementLineOptions = {
 export type MeasurementLabelUpdateDelegate = (distance: number) => MeasurementData;
 
 export type MeasurementOptions = {
-  transformMeasurementLabel?: MeasurementLabelUpdateDelegate;
+  changeMeasurementLabelMetrics?: MeasurementLabelUpdateDelegate;
 };
 
 export type MeasurementData = {

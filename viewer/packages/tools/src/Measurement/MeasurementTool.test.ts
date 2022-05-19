@@ -50,17 +50,20 @@ describe(MeasurementTool.name, () => {
     expect(removeSpyOn).toBeCalled();
   });
 
-  test('Set Line Options width and color', () => {
-    const setLineOptionsSpyOn = jest.spyOn(measurementTool, 'updateLineOptions');
-    const lineOptions = {
-      lineWidth: 1.0,
-      color: 0xff0000
-    };
-    measurementTool.updateLineOptions(lineOptions);
+  test('update measure line color', () => {
+    const lineColorUpdateSpyOn = jest.spyOn(measurementTool, 'updateLineColor');
+    measurementTool.updateLineColor(0xff0000);
 
-    expect(setLineOptionsSpyOn).toBeCalled();
-    expect((measurementTool as any)._lineOptions.lineWidth).toBe(lineOptions.lineWidth);
-    expect((measurementTool as any)._lineOptions.color).toBe(lineOptions.color);
+    expect(lineColorUpdateSpyOn).toBeCalled();
+    expect((measurementTool as any)._lineOptions.color).toBe(0xff0000);
+  });
+
+  test('update measure line width', () => {
+    const lineWidthUpdateSpyOn = jest.spyOn(measurementTool, 'updateLineWidth');
+    measurementTool.updateLineColor(1.0);
+
+    expect(lineWidthUpdateSpyOn).toBeCalled();
+    expect((measurementTool as any)._lineOptions.lineWidth).toBe(1.0);
   });
 
   test('Calculate midpoint', () => {

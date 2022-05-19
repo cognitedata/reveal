@@ -19,7 +19,7 @@ export class MeasurementUi {
 
   constructor(viewer: Cognite3DViewer, ui: dat.GUI) {
     this._viewer = viewer;
-    this._measurementTool = new MeasurementTool(this._viewer, {transformMeasurementLabel: (distance: number) => {
+    this._measurementTool = new MeasurementTool(this._viewer, {changeMeasurementLabelMetrics: (distance: number) => {
       // 1 meters = 3.281 feet
       const distanceInFeet = distance * 3.281;
       return { distance: distanceInFeet, units: 'ft'};
@@ -36,6 +36,7 @@ export class MeasurementUi {
     if (enable && this._guiController.length === 0) {
       //add the point to point measurement distance
       this._measurementTool.add();
+
       this._guiController.push(this._gui.add(this.state, 'linewidth').name('Line Width').onFinishChange(linewidth => {
         this._measurementTool.updateLineWidth(linewidth);
         this.state.linewidth = linewidth;
@@ -51,18 +52,5 @@ export class MeasurementUi {
       this._guiController.splice(0, this._guiController.length)
       this._measurementTool.remove();
     }
-  }
-
-  getController(name: string): dat.GUIController | null {
-    let controller = null;
-    const controllers = this._gui.__controllers;
-    for (let i = 0; i < controllers.length; i++) {
-      let c = controllers[i];
-      if (c.property === name) {
-        controller = c;
-        break;
-      }
-    }
-    return controller;
   }
 }

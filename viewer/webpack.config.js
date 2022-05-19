@@ -10,7 +10,6 @@ const workerPackageJSON = require('./node_modules/@cognite/reveal-parser-worker/
 const webpack = require('webpack');
 const { publicPath, getWorkerCdnUrl, getEnvArg } = require('../parser-worker/buildUtils');
 const exec = require('child_process').exec;
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const MIXPANEL_TOKEN_DEV = '00193ed55feefdfcf8a70a76bc97ec6f';
 const MIXPANEL_TOKEN_PROD = '8c900bdfe458e32b768450c20750853d';

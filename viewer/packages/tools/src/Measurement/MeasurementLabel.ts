@@ -24,8 +24,7 @@ export class MeasurementLabel {
   }
 
   private createEmptyClusterElement() {
-    const element = document.createElement('div');
-    return element;
+    return document.createElement('div');
   }
 
   /**

@@ -61,13 +61,13 @@ measurement.updateLineColor(0x00ff00);
 ```
 
 It's also possible to apply custom label content for the measurment.
-The tool provides option of custom callback for the users. 'MeasurementOptions.transformMeasurementLabel` can be
+The tool provides option of custom callback for the users. 'MeasurementOptions.changeMeasurementLabelMetrics` can be
 used to trigger custom operation like change the measuring units to feet. 
 
 ```jsx runnable
 // import { MeasurementTool, MeasurementUnits } from '@cognite/reveal/tools';
 
-const measurement = new MeasurementTool(viewer, {transformMeasurementLabel: (distance: number) => {
+const measurement = new MeasurementTool(viewer, {changeMeasurementLabelMetrics: (distance: number) => {
       // 1 meters = 3.281 feet
       const distanceInFeet = distance * 3.281;
       return { distance: distanceInFeet, units: 'ft'};
