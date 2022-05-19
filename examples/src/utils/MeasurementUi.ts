@@ -31,26 +31,33 @@ export class MeasurementUi {
     this._gui.add(this.pointToPointMeasurement, 'pointDistance').name('Point To Point Distance').onChange(addDistanceOptions);
   }
 
-  addDistanceOptions(enable: boolean) {
+  private addDistanceOptions(enable: boolean) {
 
     if (enable && this._guiController.length === 0) {
       //add the point to point measurement distance
       this._measurementTool.add();
-
-      this._guiController.push(this._gui.add(this.state, 'linewidth').name('Line Width').onFinishChange(linewidth => {
-        this._measurementTool.updateLineWidth(linewidth);
-        this.state.linewidth = linewidth;
-      }));
-      this._guiController.push(this._gui.addColor(this.state, 'color').name('Line Color').onFinishChange(color => {
-        this._measurementTool.updateLineColor(color);
-        this.state.color = color;
-      }));
+      this.addGUI();
     } else if(!enable && this._guiController.length > 0) {
-      this._guiController.forEach(guiController => {
-        guiController.remove();
-      });
-      this._guiController.splice(0, this._guiController.length)
-      this._measurementTool.remove();
+      this.removeGUI();
     }
+  }
+
+  private addGUI() {
+    this._guiController.push(this._gui.add(this.state, 'linewidth').name('Line Width').onFinishChange(linewidth => {
+      this._measurementTool.updateLineWidth(linewidth);
+      this.state.linewidth = linewidth;
+    }));
+    this._guiController.push(this._gui.addColor(this.state, 'color').name('Line Color').onFinishChange(color => {
+      this._measurementTool.updateLineColor(color);
+      this.state.color = color;
+    }));
+  }
+
+  private removeGUI() {
+    this._guiController.forEach(guiController => {
+      guiController.remove();
+    });
+    this._guiController.splice(0, this._guiController.length)
+    this._measurementTool.remove();
   }
 }
