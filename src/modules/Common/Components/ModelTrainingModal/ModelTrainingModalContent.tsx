@@ -6,9 +6,9 @@ import { AutoMLModelType } from 'src/api/vision/autoML/types';
 import { useHistory } from 'react-router-dom';
 import { getLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import { AutoMLAPI } from 'src/api/vision/autoML/AutoMLAPI';
-import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotationV1/selectors';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
+import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
 import { ModelTrainingSettings } from './ModelTrainingSettings';
 import { ModelTrainingFileTable } from './ModelTrainingFileTable';
 import { validateDataset } from './datasetValidators';
@@ -35,9 +35,9 @@ export const ModelTrainingModalContent = ({
     makeSelectAnnotationsForFileIds,
     []
   );
-  const annotationsMap = useSelector(({ annotationV1Reducer }: RootState) =>
+  const annotationsMap = useSelector(({ annotationReducer }: RootState) =>
     selectAnnotationsForFileIds(
-      annotationV1Reducer,
+      annotationReducer,
       selectedFiles.map((item) => item.id)
     )
   );
@@ -177,7 +177,7 @@ const BodyContainer = styled.div`
   display: flex;
   flex-direction: row;
   grid-gap: 18px;
-  margin: 17px 0px;
+  margin: 17px 0;
 `;
 
 const Footer = styled.div`

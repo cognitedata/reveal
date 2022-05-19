@@ -5,11 +5,11 @@ import { fireEvent, screen } from '@testing-library/react';
 import { testRenderer } from 'src/__test-utils/renderer';
 import { ModelTrainingModalContent } from 'src/modules/Common/Components/ModelTrainingModal/ModelTrainingModalContent';
 import { getMockedStore } from 'src/__test-utils/store.utils';
-import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   MAX_AUTOML_ANNOTATIONS_TYPE,
   MIN_AUTOML_FILES_PER_ANNOTATIONS_TYPE,
 } from 'src/api/vision/autoML/constants';
+import { getDummyImageObjectDetectionBoundingBoxAnnotation } from 'src/__test-utils/getDummyAnnotations';
 
 jest.mock('src/modules/Process/store/slice', () => ({
   ...jest.requireActual('src/modules/Process/store/slice'),
@@ -45,18 +45,6 @@ describe('ModelTrainingModalContent', () => {
   };
 
   const getMockData = (data: MockDataType[]) => {
-    const getDummyAnnotation = (id: number, text: string, fileId: number) => {
-      return AnnotationUtilsV1.createVisionAnnotationStubV1(
-        id || 1,
-        text || 'pump',
-        1,
-        fileId,
-        123,
-        124,
-        { shape: 'rectangle', vertices: [] }
-      );
-    };
-
     const props = {
       onCancel: () => {},
       selectedFiles: data.map((item: MockDataType) => {
@@ -90,11 +78,12 @@ describe('ModelTrainingModalContent', () => {
           ...data
             .map((item: MockDataType) =>
               item.annotations.map((annotation) => ({
-                [annotation.id]: getDummyAnnotation(
-                  annotation.id,
-                  annotation.text,
-                  item.id
-                ),
+                [annotation.id]:
+                  getDummyImageObjectDetectionBoundingBoxAnnotation({
+                    id: annotation.id,
+                    label: annotation.text,
+                    annotatedResourceId: item.id,
+                  }),
               }))
             )
             .flat()
@@ -129,7 +118,7 @@ describe('ModelTrainingModalContent', () => {
     const { props, annotationState } = getMockData(data);
 
     const store = getMockedStore({
-      annotationV1Reducer: annotationState,
+      annotationReducer: annotationState,
     });
 
     testRenderer(TestComponent, store, props);
@@ -183,7 +172,7 @@ describe('ModelTrainingModalContent', () => {
     const { props, annotationState } = getMockData(data);
 
     const store = getMockedStore({
-      annotationV1Reducer: annotationState,
+      annotationReducer: annotationState,
     });
 
     testRenderer(TestComponent, store, props);
@@ -224,7 +213,7 @@ describe('ModelTrainingModalContent', () => {
     const { props, annotationState } = getMockData(data);
 
     const store = getMockedStore({
-      annotationV1Reducer: annotationState,
+      annotationReducer: annotationState,
     });
 
     testRenderer(TestComponent, store, props);
@@ -267,7 +256,7 @@ describe('ModelTrainingModalContent', () => {
     const { props, annotationState } = getMockData(data);
 
     const store = getMockedStore({
-      annotationV1Reducer: annotationState,
+      annotationReducer: annotationState,
     });
 
     testRenderer(TestComponent, store, props);
@@ -311,7 +300,7 @@ describe('ModelTrainingModalContent', () => {
     const { props, annotationState } = getMockData(data);
 
     const store = getMockedStore({
-      annotationV1Reducer: annotationState,
+      annotationReducer: annotationState,
     });
 
     testRenderer(TestComponent, store, props);

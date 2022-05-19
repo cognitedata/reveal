@@ -1,11 +1,14 @@
+import mime from 'mime-types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import {
   MAX_AUTOML_ANNOTATIONS_TYPE,
   MIN_AUTOML_FILES_PER_ANNOTATIONS_TYPE,
 } from 'src/api/vision/autoML/constants';
-import { VisionAnnotationV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-
-import mime from 'mime-types';
+import {
+  VisionAnnotation,
+  VisionAnnotationDataType,
+} from 'src/modules/Common/types';
+import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 
 export interface DatasetValidationType {
   valid: boolean;
@@ -19,26 +22,26 @@ export const fileTypesValid = (files: VisionFile[]) => {
 };
 
 export const annotationTypeCountIsValid = (
-  annotations: VisionAnnotationV1[]
+  annotations: VisionAnnotation<VisionAnnotationDataType>[]
 ) => {
   return (
-    [...new Set(annotations.map((item) => item.text))].length <=
-    MAX_AUTOML_ANNOTATIONS_TYPE
+    [...new Set(annotations.map((item) => getAnnotationLabelOrText(item)))]
+      .length <= MAX_AUTOML_ANNOTATIONS_TYPE
   );
 };
 
 export const imageCountPerAnnotationTypeIsValid = (
-  annotations: VisionAnnotationV1[]
+  annotations: VisionAnnotation<VisionAnnotationDataType>[]
 ) => {
   const uniqueAnnotationLabels = [
-    ...new Set(annotations.map((item) => item.text)),
+    ...new Set(annotations.map((item) => getAnnotationLabelOrText(item))),
   ];
 
   const counts = uniqueAnnotationLabels.map((a) => {
     return [
       ...new Set(
         annotations
-          .filter((item) => item.text === a)
+          .filter((item) => getAnnotationLabelOrText(item) === a)
           .map((item) => item.annotatedResourceId)
       ),
     ].length;
@@ -47,7 +50,7 @@ export const imageCountPerAnnotationTypeIsValid = (
 };
 
 export const imagesHaveAnnotations = (
-  annotationsMap: Record<number, VisionAnnotationV1[]>
+  annotationsMap: Record<number, VisionAnnotation<VisionAnnotationDataType>[]>
 ) => {
   const counts = Object.entries(annotationsMap).map(([_, item]) => {
     return item.length;
@@ -57,7 +60,7 @@ export const imagesHaveAnnotations = (
 
 export const validateDataset = (
   files: VisionFile[],
-  annotationsMap: Record<number, VisionAnnotationV1[]>
+  annotationsMap: Record<number, VisionAnnotation<VisionAnnotationDataType>[]>
 ): DatasetValidationType => {
   if (!fileTypesValid(files)) {
     return {
