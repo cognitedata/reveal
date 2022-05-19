@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Body, Micro } from '@cognite/cogs.js';
 import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
 import { RangeSlider } from 'src/modules/Common/Components/Slider/rangeSlider';
-import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotationV1/selectors';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
+import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
+import { filterAnnotationIdsByConfidence } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 
 // Constants
 export const DEFAULT_THRESHOLDS: [number, number] = [0.25, 0.75];
@@ -69,9 +69,9 @@ export const AnnotationStatusPanel = ({
     makeSelectAnnotationsForFileIds,
     []
   );
-  const annotationsMap = useSelector(({ annotationV1Reducer }: RootState) =>
+  const annotationsMap = useSelector(({ annotationReducer }: RootState) =>
     selectAnnotationsForFileIds(
-      annotationV1Reducer,
+      annotationReducer,
       selectedFiles.map((item) => item.id)
     )
   );
@@ -101,12 +101,11 @@ export const AnnotationStatusPanel = ({
     const verifiedAnnotationIds: number[] = [];
     const unhandledAnnotationIds: number[] = [];
     Object.entries(annotationsMap).forEach(([_, annotations]) => {
-      const filteredAnnotations =
-        AnnotationUtilsV1.filterAnnotationsIdsByConfidence(
-          annotations,
-          rejectThreshold,
-          acceptThreshold
-        );
+      const filteredAnnotations = filterAnnotationIdsByConfidence(
+        annotations,
+        rejectThreshold,
+        acceptThreshold
+      );
       rejectedAnnotationIds.push(...filteredAnnotations.rejectedAnnotationIds);
       verifiedAnnotationIds.push(...filteredAnnotations.acceptedAnnotationIds);
       unhandledAnnotationIds.push(
