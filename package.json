@@ -24,7 +24,7 @@
     "@cognite/auth-utils": "1.0.15",
     "@cognite/calculation-backend": "4.0.0-alpha.1",
     "@cognite/cdf-hub-tenant-selector": "0.14.1",
-    "@cognite/cogs.js": "5.19.1",
+    "@cognite/cogs.js": "5.19.5",
     "@cognite/connect": "0.0.8",
     "@cognite/data-exploration": "1.7.7",
     "@cognite/react-picture-annotation": "1.16.3",
