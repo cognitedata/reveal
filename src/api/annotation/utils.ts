@@ -11,10 +11,7 @@ import {
   AnnotationMetadataV1,
   AnnotationSourceV1,
   UnsavedAnnotation,
-  CDFAnnotationV2,
-  CDFAnnotationTypeEnum,
 } from 'src/api/annotation/types';
-import { AnnotationPayload, AnnotationType } from '@cognite/sdk-playground';
 
 export function getUnsavedAnnotation(
   text: string,
@@ -130,10 +127,3 @@ export const getFieldOrSetNull = (
     set: value,
   };
 };
-
-const validateAnnotationType = (annotationType: AnnotationType): boolean =>
-  annotationType in Object.values(CDFAnnotationTypeEnum);
-
-export const validCDFAnnotation = (
-  annotation: CDFAnnotationV2<AnnotationPayload>
-): boolean => validateAnnotationType(annotation.annotationType);

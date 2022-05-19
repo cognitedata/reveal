@@ -1,15 +1,12 @@
 import sdk from '@cognite/cdf-sdk-singleton';
-import { AnnotationPayload } from '@cognite/sdk-playground';
-import {
-  AnnotationListRequest,
-  CDFAnnotationV2,
-} from 'src/api/annotation/types';
+import { AnnotationModel } from '@cognite/sdk-playground';
+import { AnnotationListRequest } from 'src/api/annotation/types';
 
 export class AnnotationApi {
   public static listCursor = async (
     request: AnnotationListRequest
   ): Promise<{
-    items: CDFAnnotationV2<AnnotationPayload>[];
+    items: AnnotationModel[];
     nextCursor?: string;
   }> => {
     const { limit } = request;
@@ -34,10 +31,10 @@ export class AnnotationApi {
 
   public static list = async (
     request: AnnotationListRequest
-  ): Promise<CDFAnnotationV2<AnnotationPayload>[]> => {
+  ): Promise<AnnotationModel[]> => {
     const { limit } = request;
     const limitVar = limit === -1 ? undefined : limit;
-    const result: CDFAnnotationV2<AnnotationPayload>[] = [];
+    const result: AnnotationModel[] = [];
     let remaining: number | undefined = limitVar;
     let cursor: string | undefined;
     let currentLimit: number = 1000;

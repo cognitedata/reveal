@@ -4,7 +4,6 @@ import {
   CDFAnnotationType,
   CDFAnnotationTypeEnum,
   CDFAnnotationV1,
-  CDFAnnotationV2,
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
@@ -28,8 +27,7 @@ import {
   isPolyline,
   isTextAnnotation,
 } from 'src/api/annotation/typeGuards';
-import { AnnotationPayload } from '@cognite/sdk-playground';
-import { validCDFAnnotation } from 'src/api/annotation/utils';
+import { AnnotationModel, AnnotationType } from '@cognite/sdk-playground';
 import {
   validBoundingBox,
   validImageAssetLink,
@@ -271,28 +269,34 @@ const convertCDFAnnotationStatusToStatus = (
     case 'rejected':
       return Status.Rejected;
     default:
-      console.error(
-        'Status not found for provided CDFAnnotationStatus!',
-        status
-      );
-      return 'unknownStatus' as Status;
+      throw new Error('Invalid Annotation status. Annotation rejected!');
   }
+};
+const convertCDFAnnotationTypeToAnnotationType = (
+  annotationType: AnnotationType
+): CDFAnnotationTypeEnum => {
+  if (annotationType in Object.values(CDFAnnotationTypeEnum)) {
+    return annotationType as CDFAnnotationTypeEnum;
+  }
+  throw new Error('Invalid Annotation Type. Annotation rejected!');
 };
 
 export const convertCDFAnnotationV2ToVisionAnnotations = (
-  annotations: CDFAnnotationV2<AnnotationPayload>[]
+  annotations: AnnotationModel[]
 ): VisionAnnotation<VisionAnnotationDataType>[] =>
   annotations.reduce<VisionAnnotation<VisionAnnotationDataType>[]>(
     (ann, nextAnnotation) => {
-      if (validCDFAnnotation(nextAnnotation)) {
+      try {
         const cdfInheritedFields: CDFInheritedFields<VisionAnnotationDataType> =
           {
             id: nextAnnotation.id,
-            createdTime: nextAnnotation.createdTime,
-            lastUpdatedTime: nextAnnotation.lastUpdatedTime,
+            createdTime: nextAnnotation.createdTime.getTime(),
+            lastUpdatedTime: nextAnnotation.lastUpdatedTime.getTime(),
             status: convertCDFAnnotationStatusToStatus(nextAnnotation.status),
-            annotatedResourceId: nextAnnotation.annotatedResourceId,
-            annotationType: nextAnnotation.annotationType,
+            annotatedResourceId: nextAnnotation.annotatedResourceId || 0, // is annotatedResourceId should be mandatory?
+            annotationType: convertCDFAnnotationTypeToAnnotationType(
+              nextAnnotation.annotationType
+            ),
           };
         const nextVisionAnnotation: VisionAnnotation<VisionAnnotationDataType> =
           {
@@ -300,8 +304,10 @@ export const convertCDFAnnotationV2ToVisionAnnotations = (
             ...(nextAnnotation.data as VisionAnnotationDataType),
           };
         return [...ann, nextVisionAnnotation];
+      } catch (error) {
+        console.warn(error, ' ', nextAnnotation);
       }
-      console.warn('Invalid Annotation rejected!, ', nextAnnotation);
+
       return ann;
     },
     []
