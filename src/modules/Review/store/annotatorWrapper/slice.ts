@@ -120,7 +120,7 @@ const annotatorWrapperSlice = createSlice({
               action.payload.orderNumber || 0
             ];
 
-          const reviewKeypoint: ReviewImageKeypoint = {
+          const reviewImageKeypoint: ReviewImageKeypoint = {
             id: action.payload.id.toString(),
             selected: true, // select the keypoint after creating
             keypoint: {
@@ -150,9 +150,9 @@ const annotatorWrapperSlice = createSlice({
             state.collections.selectedIds = [collectionId];
           }
           state.collections.byId[state.lastCollectionId].keypointIds.push(
-            reviewKeypoint.id
+            reviewImageKeypoint.id
           );
-          state.keypointMap.byId[reviewKeypoint.id] = reviewKeypoint;
+          state.keypointMap.byId[reviewImageKeypoint.id] = reviewImageKeypoint;
           state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
         }
       },
