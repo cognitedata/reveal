@@ -118,27 +118,29 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
     this.pipelineSetup(renderer);
 
-    yield* this._cadGeometryRenderPipeline.pipeline(renderer);
+    try {
+      yield* this._cadGeometryRenderPipeline.pipeline(renderer);
 
-    renderer.setRenderTarget(this._renderTargetData.ssaoRenderTarget);
-    renderer.setClearColor('#FFFFFF');
-    renderer.setClearAlpha(1.0);
-    yield this._ssaoPass;
+      renderer.setRenderTarget(this._renderTargetData.ssaoRenderTarget);
+      renderer.setClearColor('#FFFFFF');
+      renderer.setClearAlpha(1.0);
+      yield this._ssaoPass;
 
-    renderer.setRenderTarget(this._renderTargetData.postProcessingRenderTarget);
-    renderer.setClearColor(this._currentRendererState.clearColor);
-    renderer.setClearAlpha(this._currentRendererState.clearAlpha);
-    yield this._postProcessingRenderPipeline;
+      renderer.setRenderTarget(this._renderTargetData.postProcessingRenderTarget);
+      renderer.setClearColor(this._currentRendererState.clearColor);
+      renderer.setClearAlpha(this._currentRendererState.clearAlpha);
+      yield this._postProcessingRenderPipeline;
 
-    renderer.setRenderTarget(this._outputRenderTarget);
+      renderer.setRenderTarget(this._outputRenderTarget);
 
-    yield {
-      render: (renderer, camera) => {
-        renderer.render(this._blitToScreenMesh, camera);
-      }
-    };
-
-    this.pipelineTearDown(renderer);
+      yield {
+        render: (renderer, camera) => {
+          renderer.render(this._blitToScreenMesh, camera);
+        }
+      };
+    } finally {
+      this.pipelineTearDown(renderer);
+    }
   }
 
   public dispose(): void {

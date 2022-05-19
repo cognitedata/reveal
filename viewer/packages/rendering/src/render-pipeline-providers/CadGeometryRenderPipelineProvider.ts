@@ -53,16 +53,18 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
     this.pipelineSetup(renderer);
 
-    renderer.setRenderTarget(this._cadGeometryRenderTargets.back);
-    yield this._cadGeometryRenderPasses.back;
+    try {
+      renderer.setRenderTarget(this._cadGeometryRenderTargets.back);
+      yield this._cadGeometryRenderPasses.back;
 
-    renderer.setRenderTarget(this._cadGeometryRenderTargets.ghost);
-    yield this._cadGeometryRenderPasses.ghost;
+      renderer.setRenderTarget(this._cadGeometryRenderTargets.ghost);
+      yield this._cadGeometryRenderPasses.ghost;
 
-    renderer.setRenderTarget(this._cadGeometryRenderTargets.inFront);
-    yield this._cadGeometryRenderPasses.inFront;
-
-    this.pipelineTearDown(renderer);
+      renderer.setRenderTarget(this._cadGeometryRenderTargets.inFront);
+      yield this._cadGeometryRenderPasses.inFront;
+    } finally {
+      this.pipelineTearDown(renderer);
+    }
   }
 
   public dispose(): void {}

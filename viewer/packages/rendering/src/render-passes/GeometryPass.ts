@@ -30,11 +30,12 @@ export class GeometryPass implements RenderPass {
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {
     const currentCameraMask = camera.layers.mask;
-
-    camera.layers.mask = this._renderLayer;
-    this._materialManager.setRenderMode(this._renderMode);
-    renderer.render(this._geometryScene, camera);
-
-    camera.layers.mask = currentCameraMask;
+    try {
+      camera.layers.mask = this._renderLayer;
+      this._materialManager.setRenderMode(this._renderMode);
+      renderer.render(this._geometryScene, camera);
+    } finally {
+      camera.layers.mask = currentCameraMask;
+    }
   }
 }
