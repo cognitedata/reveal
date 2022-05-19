@@ -52,6 +52,7 @@ export const EllipsisMenu = ({
       <EllipsisButton
         type="ghost"
         icon="EllipsisVertical"
+        disabled={disabled}
         aria-label={`Additional actions for ${typeName}`}
         onClick={(e) => {
           e.stopPropagation();

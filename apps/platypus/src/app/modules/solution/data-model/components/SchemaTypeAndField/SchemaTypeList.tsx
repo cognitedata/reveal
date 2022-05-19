@@ -97,13 +97,15 @@ export const SchemaTypeList = ({
                 {el.directives?.map((directive) => (
                   <Tag key={directive.name}>{directive.name}</Tag>
                 ))}
-                <div style={{ padding: 2, width: 80 }}>
-                  <EllipsisMenu
-                    disabled={disabled}
-                    typeName={el.name}
-                    onRename={openRenameModal}
-                    onDelete={openDeleteModal}
-                  />
+                <div style={{ padding: 2 }}>
+                  {!disabled && (
+                    <EllipsisMenu
+                      disabled={disabled}
+                      typeName={el.name}
+                      onRename={openRenameModal}
+                      onDelete={openDeleteModal}
+                    />
+                  )}
                   <ChevronButton
                     type="ghost"
                     icon="ArrowRight"
@@ -115,37 +117,41 @@ export const SchemaTypeList = ({
               </Flex>
             </ListItem>
           ))}
-          <Button
-            icon="Add"
-            iconPlacement="left"
-            type="ghost"
-            aria-label="Add type"
-            data-cy="add-type-btn"
-            disabled={disabled}
-            style={{
-              marginLeft: '8px',
-              marginTop: '16px',
-              padding: '4px 8px 4px 8px',
-            }}
-            onClick={openCreateModal}
-          >
-            {t('add_type', 'Add Type')}
-          </Button>
+          {!disabled && (
+            <Button
+              icon="Add"
+              iconPlacement="left"
+              type="ghost"
+              aria-label="Add type"
+              data-cy="add-type-btn"
+              disabled={disabled}
+              style={{
+                marginLeft: '8px',
+                marginTop: '16px',
+                padding: '4px 8px 4px 8px',
+              }}
+              onClick={openCreateModal}
+            >
+              {t('add_type', 'Add Type')}
+            </Button>
+          )}
         </>
       ) : (
         <Flex direction="column" justifyContent="center" alignItems="center">
           <EmptyText>
             {t('empty_text', 'There are currently no types.')}
           </EmptyText>
-          <Button
-            icon="Add"
-            iconPlacement="left"
-            aria-label="Add type"
-            disabled={disabled}
-            onClick={openCreateModal}
-          >
-            {t('add_type', 'Add Type')}
-          </Button>
+          {!disabled && (
+            <Button
+              icon="Add"
+              iconPlacement="left"
+              aria-label="Add type"
+              disabled={disabled}
+              onClick={openCreateModal}
+            >
+              {t('add_type', 'Add Type')}
+            </Button>
+          )}
         </Flex>
       )}
     </>
