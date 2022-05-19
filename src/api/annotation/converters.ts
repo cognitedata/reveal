@@ -27,7 +27,11 @@ import {
   isPolyline,
   isTextAnnotation,
 } from 'src/api/annotation/typeGuards';
-import { AnnotationModel, AnnotationType } from '@cognite/sdk-playground';
+import {
+  AnnotationModel,
+  AnnotationPayload,
+  AnnotationType,
+} from '@cognite/sdk-playground';
 import {
   validBoundingBox,
   validImageAssetLink,
@@ -298,10 +302,39 @@ export const convertCDFAnnotationV2ToVisionAnnotations = (
               nextAnnotation.annotationType
             ),
           };
+
+        // HACK: converting Data, due to the type of data of a CDFImageKeypointCollection,
+        // is not matching with ImageKeypointCollection data
+        // should change Vision internal type and remove this hack
+        let annotationData: AnnotationPayload = nextAnnotation.data;
+        if (
+          cdfInheritedFields.annotationType ===
+          CDFAnnotationTypeEnum.ImagesKeypointCollection
+        ) {
+          const convertedAnnotationData: ImageKeypointCollection = {
+            ...(nextAnnotation.data as ImageKeypointCollection),
+            // @ts-ignore
+            keypoints: Object.keys(nextAnnotation.data.keypoints).map(
+              (keypointName) => ({
+                label: keypointName,
+                // @ts-ignore
+                confidence: keypoints[keypointName].confidence,
+                point: {
+                  // @ts-ignore
+                  x: keypoints[keypointName].x,
+                  // @ts-ignore
+                  y: keypoints[keypointName].y,
+                },
+              })
+            ),
+          };
+          annotationData = convertedAnnotationData;
+        }
+
         const nextVisionAnnotation: VisionAnnotation<VisionAnnotationDataType> =
           {
             ...cdfInheritedFields,
-            ...(nextAnnotation.data as VisionAnnotationDataType),
+            ...(annotationData as VisionAnnotationDataType),
           };
         return [...ann, nextVisionAnnotation];
       } catch (error) {
