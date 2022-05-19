@@ -29,9 +29,9 @@ export function determineAntiAliasingMode(
 
   switch (modeHint) {
     case 'disabled':
-      return { antiAliasing: AntiAliasingMode.NoAA, multiSampleCount: 1 };
+      return { antiAliasing: AntiAliasingMode.NoAA, multiSampleCount: 0 };
     case 'fxaa':
-      return { antiAliasing: AntiAliasingMode.FXAA, multiSampleCount: 1 };
+      return { antiAliasing: AntiAliasingMode.FXAA, multiSampleCount: 0 };
     case 'msaa2':
       return { antiAliasing: AntiAliasingMode.NoAA, multiSampleCount: 2 };
     case 'msaa4':
