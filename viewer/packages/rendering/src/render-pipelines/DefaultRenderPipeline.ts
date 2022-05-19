@@ -85,7 +85,7 @@ export class DefaultRenderPipeline implements RenderPipelineProvider {
       ssaoParameters
     );
 
-    this._postProcessingRenderPipeline = new PostProcessingPass(customObjects, scene, {
+    this._postProcessingRenderPipeline = new PostProcessingPass(scene, {
       ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
       edges: edges.enabled,
       ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets

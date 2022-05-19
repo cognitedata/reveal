@@ -10,16 +10,10 @@ import { PostProcessingPipelineOptions } from '../render-pipelines/types';
 
 export class PostProcessingPass implements RenderPass {
   private readonly _scene: THREE.Scene;
-  private readonly _customObjects: THREE.Object3D[];
   private readonly _postProcessingObjects: THREE.Mesh[];
 
-  constructor(
-    customObjects: THREE.Object3D[],
-    scene: THREE.Scene,
-    postProcessingPipelineOptions: PostProcessingPipelineOptions
-  ) {
+  constructor(scene: THREE.Scene, postProcessingPipelineOptions: PostProcessingPipelineOptions) {
     this._scene = scene;
-    this._customObjects = customObjects;
 
     const inFrontEarlyZBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.inFront.texture,
