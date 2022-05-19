@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { transparentBlendOptions } from './types';
 import { RenderPass } from '../RenderPass';
 import { createFullScreenTriangleMesh, getBlitMaterial, getLayerMask, RenderLayer } from '../utilities/renderUtilities';
-import { PostProcessingPipelineOptions } from '../render-pipelines/types';
+import { PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
 
 export class PostProcessingPass implements RenderPass {
   private readonly _scene: THREE.Scene;

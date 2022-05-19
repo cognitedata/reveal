@@ -26,8 +26,8 @@ export { Materials } from './src/rendering/materials';
 export { createPrimitives } from './src/rendering/primitives';
 
 export { IdentifiedModel } from './src/utilities/types';
-export { DefaultRenderPipelineProvider } from './src/render-pipelines/DefaultRenderPipelineProvider';
-export { CadGeometryRenderModePipelineProvider } from './src/render-pipelines/CadGeometryRenderModePipelineProvider';
+export { DefaultRenderPipelineProvider } from './src/render-pipeline-providers/DefaultRenderPipelineProvider';
+export { CadGeometryRenderModePipelineProvider } from './src/render-pipeline-providers/CadGeometryRenderModePipelineProvider';
 export { BasicPipelineExecutor } from './src/pipeline-executors/BasicPipelineExecutor';
 export { RenderPipelineExecutor } from './src/RenderPipelineExecutor';
 export { RenderPipelineProvider } from './src/RenderPipelineProvider';
