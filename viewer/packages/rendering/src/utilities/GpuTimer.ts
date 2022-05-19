@@ -122,7 +122,7 @@ export class GpuTimer {
     }
 
     for (let i = 0; i < frame.length; ++i) {
-      timings[i] = [frame[i][0], this._gl.getQueryParameter(frame[i][1], this._gl.QUERY_RESULT) * 0.000001];
+      timings[i] = [frame[i][0], this._gl.getQueryParameter(frame[i][1], this._gl.QUERY_RESULT) * 1e-6];
     }
 
     return true;
