@@ -28,6 +28,8 @@ import {
   isPolyline,
   isTextAnnotation,
 } from 'src/api/annotation/typeGuards';
+import { AnnotationPayload } from '@cognite/sdk-playground';
+import { validCDFAnnotation } from 'src/api/annotation/utils';
 import {
   validBoundingBox,
   validImageAssetLink,
@@ -278,16 +280,29 @@ const convertCDFAnnotationStatusToStatus = (
 };
 
 export const convertCDFAnnotationV2ToVisionAnnotations = (
-  annotations: CDFAnnotationV2<VisionAnnotationDataType>[]
+  annotations: CDFAnnotationV2<AnnotationPayload>[]
 ): VisionAnnotation<VisionAnnotationDataType>[] =>
-  annotations.map((annotation) => {
-    const cdfInheritedFields: CDFInheritedFields<VisionAnnotationDataType> = {
-      id: annotation.id,
-      createdTime: annotation.createdTime,
-      lastUpdatedTime: annotation.lastUpdatedTime,
-      status: convertCDFAnnotationStatusToStatus(annotation.status),
-      annotatedResourceId: annotation.annotatedResourceId,
-      annotationType: annotation.annotationType,
-    };
-    return { ...cdfInheritedFields, ...annotation.data };
-  });
+  annotations.reduce<VisionAnnotation<VisionAnnotationDataType>[]>(
+    (ann, nextAnnotation) => {
+      if (validCDFAnnotation(nextAnnotation)) {
+        const cdfInheritedFields: CDFInheritedFields<VisionAnnotationDataType> =
+          {
+            id: nextAnnotation.id,
+            createdTime: nextAnnotation.createdTime,
+            lastUpdatedTime: nextAnnotation.lastUpdatedTime,
+            status: convertCDFAnnotationStatusToStatus(nextAnnotation.status),
+            annotatedResourceId: nextAnnotation.annotatedResourceId,
+            annotationType: nextAnnotation.annotationType,
+          };
+        const nextVisionAnnotation: VisionAnnotation<VisionAnnotationDataType> =
+          {
+            ...cdfInheritedFields,
+            ...(nextAnnotation.data as VisionAnnotationDataType),
+          };
+        return [...ann, nextVisionAnnotation];
+      }
+      console.warn('Invalid Annotation rejected!, ', nextAnnotation);
+      return ann;
+    },
+    []
+  );
