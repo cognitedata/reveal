@@ -12,8 +12,8 @@ import {
   AnnotatorWrapperState,
   KeypointCollectionState,
 } from 'src/modules/Review/store/annotatorWrapper/type';
-import { ReviewKeypoint } from 'src/modules/Review/store/review/types';
 import { Keypoint, KeypointCollection } from 'src/modules/Review/types';
+import { ReviewImageKeypoint } from 'src/modules/Review/store/review/types';
 
 jest.mock('src/utils/AnnotationUtilsV1/AnnotationUtilsV1', () => ({
   ...jest.requireActual('src/utils/AnnotationUtilsV1/AnnotationUtilsV1'),
@@ -23,7 +23,7 @@ jest.mock('src/utils/AnnotationUtilsV1/AnnotationUtilsV1', () => ({
 }));
 
 describe('Test annotator slice', () => {
-  const dummyKeypointState = (id: string): ReviewKeypoint => {
+  const dummyKeypointState = (id: string): ReviewImageKeypoint => {
     return {
       id,
       selected: true,
@@ -222,7 +222,7 @@ describe('Test annotator slice', () => {
       };
 
       test('deselect selected keypoint', () => {
-        const pointToUpdate: ReviewKeypoint = {
+        const pointToUpdate: ReviewImageKeypoint = {
           id: 'k1',
           selected: true,
           keypoint: {
@@ -238,7 +238,7 @@ describe('Test annotator slice', () => {
       });
 
       test('should not effect others when non existing id used', () => {
-        const pointToUpdate: ReviewKeypoint = {
+        const pointToUpdate: ReviewImageKeypoint = {
           id: 'k3',
           selected: true,
           keypoint: {
