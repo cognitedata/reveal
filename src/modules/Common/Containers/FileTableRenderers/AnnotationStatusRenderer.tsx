@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
-import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotationV1/selectors';
 import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { Tag } from 'antd';
 import styled from 'styled-components';
-import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { Body } from '@cognite/cogs.js';
+import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
+import { filterAnnotationIdsByAnnotationStatus } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 
 export const createTag = (status: string, count: number, color: string) => {
   return (
@@ -21,8 +21,8 @@ export function AnnotationStatusRenderer({ rowData: { id } }: CellRenderer) {
     makeSelectAnnotationsForFileIds,
     []
   );
-  const annotationsMap = useSelector(({ annotationV1Reducer }: RootState) =>
-    selectAnnotationsForFileIds(annotationV1Reducer, [id])
+  const annotationsMap = useSelector(({ annotationReducer }: RootState) =>
+    selectAnnotationsForFileIds(annotationReducer, [id])
   );
 
   const rejectedAnnotationIds: number[] = [];
@@ -30,7 +30,7 @@ export function AnnotationStatusRenderer({ rowData: { id } }: CellRenderer) {
   const unhandledAnnotationIds: number[] = [];
   Object.entries(annotationsMap).forEach(([_, annotations]) => {
     const annotationIdsByStatus =
-      AnnotationUtilsV1.filterAnnotationsIdsByAnnotationStatus(annotations);
+      filterAnnotationIdsByAnnotationStatus(annotations);
     rejectedAnnotationIds.push(...annotationIdsByStatus.rejectedAnnotationIds);
     acceptedAnnotationIds.push(...annotationIdsByStatus.acceptedAnnotationIds);
     unhandledAnnotationIds.push(
