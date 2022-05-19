@@ -82,7 +82,19 @@ export function ModelVersionList({
                   v{modelFile.metadata.version}
                 </Label>
                 <span className="description">
-                  {modelFile.metadata.description || '(no description)'}
+                  {modelFile.metadata.description.length >= 50 ? (
+                    <>
+                      {`${modelFile.metadata.description.slice(0, 50)}…`}
+                      <Tooltip
+                        content={modelFile.metadata.description}
+                        maxWidth={200}
+                      >
+                        <Icon type="Info" />
+                      </Tooltip>
+                    </>
+                  ) : (
+                    modelFile.metadata.description || '(no description)'
+                  )}
                 </span>
                 {modelFile.metadata.errorMessage && (
                   <Tooltip content={modelFile.metadata.errorMessage}>
