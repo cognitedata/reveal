@@ -17,7 +17,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private _lineMesh: THREE.Mesh;
   private _lineMaterial: LineMaterial;
   private readonly _linePosition: Float32Array;
-  private readonly _raycaster: THREE.Raycaster;
   private readonly _options: MeasurementOptions;
   private _pointSize: number;
   private _distanceValue: string;
@@ -37,7 +36,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._options = options ?? {};
     this._measurementLabel = new MeasurementLabel(this._viewer);
     this._linePosition = new Float32Array(6);
-    this._raycaster = new THREE.Raycaster();
     this._pointSize = 0.02;
     this._distanceValue = '';
     this._distanceToCamera = 0;
@@ -221,10 +219,20 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       const mouse = new THREE.Vector2();
       mouse.x = (offsetX / this._viewer.domElement.clientWidth) * 2 - 1;
       mouse.y = -(offsetY / this._viewer.domElement.clientHeight) * 2 + 1;
-      this._raycaster.setFromCamera(mouse, this._viewer.getCamera());
 
-      //Note: Using the initial/start point as reference for depth for ray casting.
-      this._raycaster.ray.at(this._distanceToCamera, position);
+      const camera = this._viewer.getCamera();
+      const direction = new THREE.Vector3();
+      const ray = new THREE.Ray();
+      const origin = new THREE.Vector3();
+
+      //Set the origin of the Ray to camera
+      origin.setFromMatrixPosition(camera.matrixWorld);
+      ray.origin.copy(origin);
+      //Calculate the camera direction
+      direction.set(mouse.x, mouse.y, 0.5).unproject(camera).sub(ray.origin).normalize();
+      ray.direction.copy(direction);
+      //Note: Using the initial/start point as reference for emiting a ray.
+      ray.at(this._distanceToCamera, position);
     }
 
     this._linePosition[3] = position.x;
