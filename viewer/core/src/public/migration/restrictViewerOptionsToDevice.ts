@@ -31,6 +31,8 @@ function restrictAntialiasOption(antiAliasingHint: AntiAliasingHint): AntiAliasi
     case 'msaa4':
     case 'msaa8':
     case 'msaa16':
+      log.warn(`Anti-aliasing mode '${antiAliasingHint}' is not supported on mobile devices, anti-aliasing disabled'`);
+      return 'disabled';
     case 'msaa2+fxaa':
     case 'msaa4+fxaa':
     case 'msaa8+fxaa':
