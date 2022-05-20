@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { testRenderer } from '__test-utils/renderer';
@@ -18,8 +18,7 @@ describe('View Mode Selector', () => {
       onReferenceChange: jest.fn(),
     });
 
-    // TODO(PP-2915): replace with .hover()
-    await userEvent.click(screen.getByTestId('menu-button'));
+    fireEvent.mouseEnter(screen.getByTestId('menu-button'), { bubbles: true });
     expect(screen.getByText(PressureUnit.PPG)).toBeInTheDocument();
   });
 
@@ -31,9 +30,8 @@ describe('View Mode Selector', () => {
       onReferenceChange: jest.fn(),
     });
 
-    // TODO(PP-2915): replace with .hover()
-    await userEvent.click(screen.getByTestId('menu-button'));
-    await userEvent.click(screen.getByText(PressureUnit.PPG));
+    fireEvent.mouseEnter(screen.getByTestId('menu-button'), { bubbles: true });
+    fireEvent.mouseEnter(screen.getByText(PressureUnit.PPG), { bubbles: true });
 
     expect(screen.getByText(PressureUnit.PSI)).toBeInTheDocument();
   });
@@ -47,11 +45,9 @@ describe('View Mode Selector', () => {
       onReferenceChange: jest.fn(),
     });
 
-    // TODO(PP-2915): replace with .hover()
-    await userEvent.click(screen.getByTestId('menu-button'));
+    fireEvent.mouseEnter(screen.getByTestId('menu-button'), { bubbles: true });
 
-    // TODO(PP-2915): replace with .hover()
-    await userEvent.click(screen.getByText(PressureUnit.PPG));
+    fireEvent.mouseEnter(screen.getByText(PressureUnit.PPG), { bubbles: true });
     await userEvent.click(screen.getByText(PressureUnit.PSI));
     expect(onUnitChange).toBeCalledWith(PressureUnit.PSI);
   });

@@ -33,7 +33,6 @@ describe('DocumentResultTableHoverComponent', () => {
   it('should fire callbacks on click', async () => {
     await renderPage();
 
-    // TODO(PP-2915): replace with .hover()
     await userEvent.click(screen.getByTestId('menu-button'));
 
     fireEvent.click(screen.getByTestId('button-preview-document'));
