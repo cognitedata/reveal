@@ -14,6 +14,7 @@ import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from './p
 
 import { PointCloudAppearance } from './styling/PointCloudAppearance';
 import { RawStylableObject } from './styling/StylableObject';
+import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
 
 const PotreeDefaultPointClass = 'DEFAULT';
 
@@ -101,8 +102,8 @@ export class PointCloudNode extends THREE.Group {
     return this._potreeNode.stylableObjects;
   }
 
-  setObjectStyle(objectId: number, appearance: PointCloudAppearance): void {
-    this.potreeNode.setObjectStyle(objectId, appearance);
+  setObjectStyle(styledCollection: StyledPointCloudObjectCollection): void {
+    this.potreeNode.setObjectStyle(styledCollection);
     this.requestRedraw();
   }
 
@@ -170,5 +171,21 @@ export class PointCloudNode extends THREE.Group {
 
   getModelTransformation(out = new THREE.Matrix4()): THREE.Matrix4 {
     return out.copy(this.matrix);
+  }
+
+  get defaultAppearance(): PointCloudAppearance {
+    return this._potreeNode.octree.material.objectAppearanceTexture.defaultAppearance;
+  }
+
+  set defaultAppearance(appearance: PointCloudAppearance) {
+    this._potreeNode.octree.material.objectAppearanceTexture.defaultAppearance = appearance;
+  }
+
+  assignStyledPointCloudObjectCollection(styledCollection: StyledPointCloudObjectCollection): void {
+    this._potreeNode.setObjectStyle(styledCollection);
+  }
+
+  removeAllStyledPointCloudOjects(): void {
+    this._potreeNode.octree.material.objectAppearanceTexture.removeAllStyledObjectSets();
   }
 }

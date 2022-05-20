@@ -2,31 +2,72 @@
  * Copyright 2022 Cognite AS
  */
 
-import { CognitePointCloudModel } from '@cognite/reveal';
+import { CognitePointCloudModel, IndexPointCloudObjectCollection, PointCloudAppearance } from '@cognite/reveal';
 import * as THREE from 'three';
 
 export class PointCloudObjectStylingUI {
-
-  static readonly MAX_OBJECTS = 10;
 
   private readonly _model: CognitePointCloudModel;
 
   constructor(uiFolder: dat.GUI, model: CognitePointCloudModel) {
     this._model = model;
 
-    const objects = model.stylableObjects;
+    this.createDefaultStyleUi(uiFolder.addFolder('Default styling'));
+    this.createByObjectIndexUi(uiFolder.addFolder('By object index styling'));
 
-    objects.slice(0, PointCloudObjectStylingUI.MAX_OBJECTS).map(obj => this.createObjectUi(uiFolder.addFolder('Object #' + obj.objectId), obj.objectId));
+    const actions = {
+      reset: () => {
+        this._model.removeAllStyledObjectCollections();
+      }
+    };
+
+    uiFolder.add(actions, 'reset').name('Remove all styles');
   }
 
-  createObjectUi(uiFolder: dat.GUI, objectId: number): void {
+  private createObjectAppearanceUi(uiFolder: dat.GUI): () => PointCloudAppearance {
+    const appearance: PointCloudAppearance = { color: [255, 255, 255] }
+
     const state = {
       color: '#ffffff',
     };
 
     uiFolder.addColor(state, 'color').name('Color').onFinishChange(color => {
-      this._model.setObjectStyle(objectId, { color: hexStringToColor(color) });
+      appearance.color = hexStringToColor(color);
     });
+
+    return () => {
+      const clone: PointCloudAppearance = { ...appearance };
+      return clone;
+    };
+  }
+
+  private createDefaultStyleUi(ui: dat.GUI) {
+
+    const createAppearanceCb = this.createObjectAppearanceUi(ui);
+    const actions = {
+      apply: () => {
+        const appearance = createAppearanceCb();
+        this._model.setDefaultPointCloudAppearance(appearance);
+      }
+    };
+    ui.add(actions, 'apply').name('Apply');
+  }
+
+
+  private createByObjectIndexUi(ui: dat.GUI) {
+    const state = { from: 1, count: 1 };
+    const createAppearanceCb = this.createObjectAppearanceUi(ui);
+    const actions = {
+      apply: () => {
+        const numIndices = Math.min(state.count, this._model.stylableObjectCount - state.from + 1);
+        const objects = new IndexPointCloudObjectCollection([...Array(numIndices).keys()].map(i => i + state.from))
+        const appearance = createAppearanceCb();
+        this._model.assignStyledObjectCollection(objects, appearance);
+      }
+    };
+    ui.add(state, 'from', 1, this._model.stylableObjectCount, 1).name('First object ID');
+    ui.add(state, 'count', 1, this._model.stylableObjectCount, 1).name('Object ID count');
+    ui.add(actions, 'apply').name('Apply');
   }
 };
 

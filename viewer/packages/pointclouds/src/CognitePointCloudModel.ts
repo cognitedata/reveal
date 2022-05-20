@@ -13,6 +13,8 @@ import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
 
 import { PointCloudAppearance } from './styling/PointCloudAppearance';
 import { RawStylableObject } from './styling/StylableObject';
+import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
+import { PointCloudObjectCollection } from './styling/PointCloudObjectCollection';
 
 /**
  * Represents a point clouds model loaded from CDF.
@@ -31,6 +33,8 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * @internal
    */
   readonly pointCloudNode: PointCloudNode;
+
+  private readonly _styledObjectCollections: StyledPointCloudObjectCollection[] = [];
 
   /**
    * @param modelId
@@ -212,16 +216,77 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   }
 
   /**
-   * Gets the stylable objects associated with this point cloud.
+   * Gets default point appearance
    */
-  get stylableObjects(): RawStylableObject[] {
-    return this.pointCloudNode.stylableObjects;
+  getDefaultPointCloudAppearance(): PointCloudAppearance {
+    return this.pointCloudNode.defaultAppearance;
   }
 
   /**
-   * Sets the style of one object
+   * Sets default apparance for points that are
+   * not styled otherwise
    */
-  setObjectStyle(objectId: number, appearance: PointCloudAppearance): void {
-    this.pointCloudNode.setObjectStyle(objectId, appearance);
+  setDefaultPointCloudAppearance(appearance: PointCloudAppearance): void {
+    this.pointCloudNode.defaultAppearance = appearance;
+  }
+
+  get styledCollections(): StyledPointCloudObjectCollection[] {
+    return this._styledObjectCollections;
+  }
+
+  /**
+   * Assign a style to a collection of objects
+   */
+  assignStyledObjectCollection(objectCollection: PointCloudObjectCollection, appearance: PointCloudAppearance): void {
+    const index = this._styledObjectCollections.findIndex(x => x.objectCollection === objectCollection);
+    if (index !== -1) {
+      this._styledObjectCollections[index].style = appearance;
+      this.pointCloudNode.assignStyledPointCloudObjectCollection(this._styledObjectCollections[index]);
+    } else {
+      const newObjectCollection = new StyledPointCloudObjectCollection(objectCollection, appearance);
+
+      this._styledObjectCollections.push(newObjectCollection);
+      this.pointCloudNode.assignStyledPointCloudObjectCollection(newObjectCollection);
+    }
+  }
+
+  /**
+   * Unassign style from an already styled object collection
+   */
+  unassignStyledObjectCollection(objectCollection: PointCloudObjectCollection): void {
+    const styledCollectionIndex = this._styledObjectCollections.findIndex(x => x.objectCollection === objectCollection);
+
+    if (styledCollectionIndex !== -1) {
+      this._styledObjectCollections.splice(styledCollectionIndex, 1);
+
+      this.pointCloudNode.removeAllStyledPointCloudOjects();
+
+      for (const styledObjectCollection of this._styledObjectCollections) {
+        this.pointCloudNode.assignStyledPointCloudObjectCollection(styledObjectCollection);
+      }
+    }
+  }
+
+  /**
+   * Remove style from all styled object collections
+   */
+  removeAllStyledObjectCollections(): void {
+    this.pointCloudNode.removeAllStyledPointCloudOjects();
+  }
+
+  /**
+   * return the number of stylable objects
+   */
+  get stylableObjectCount(): number {
+    return this.pointCloudNode.potreeNode.stylableObjects.length;
+  }
+
+  /**
+   * iterates through all stylable objects for this model
+   */
+  traverseStylableObjects(callback: (obj: RawStylableObject) => void): void {
+    for (const obj of this.pointCloudNode.potreeNode.stylableObjects) {
+      callback(obj);
+    }
   }
 }

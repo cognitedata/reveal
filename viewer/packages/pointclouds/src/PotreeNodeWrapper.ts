@@ -10,8 +10,8 @@ import { PointCloudOctree, PotreePointColorType, PotreePointShape, IClassificati
 import { WellKnownAsprsPointClassCodes } from './types';
 
 import { createPointClassKey } from './createPointClassKey';
-import { PointCloudAppearance } from './styling/PointCloudAppearance';
 import { RawStylableObject } from './styling/StylableObject';
+import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
 
 /**
  * Wrapper around `Potree.PointCloudOctree` with some convenience functions.
@@ -80,8 +80,8 @@ export class PotreeNodeWrapper {
     return this._stylableObjects;
   }
 
-  setObjectStyle(objectId: number, appearance: PointCloudAppearance): void {
-    this.octree.material.setObjectAppearance(objectId, appearance);
+  setObjectStyle(styledCollection: StyledPointCloudObjectCollection): void {
+    this.octree.material.objectAppearanceTexture.assignStyledObjectSet(styledCollection);
     this._needsRedraw = true;
   }
 

@@ -600,16 +600,14 @@ void main() {
 	#endif
 
         if (isClipped((modelViewMatrix * vec4(position, 1.0)).xyz)) {
-                 gl_Position = vec4(1000.0, 1000.0, 1000.0, 1.0);
+                gl_Position = vec4(1000.0, 1000.0, 1000.0, 1.0);
         }
 
-        if (objectId > 0.0) {
-            int lutX = int(objectId) % OBJECT_STYLING_TEXTURE_WIDTH;
-            int lutY = int(objectId) / OBJECT_STYLING_TEXTURE_WIDTH;
-            vec3 colorTexel = texelFetch(objectIdLUT, ivec2(lutX, lutY), 0).rgb;
+        int lutX = int(objectId) % OBJECT_STYLING_TEXTURE_WIDTH;
+        int lutY = int(objectId) / OBJECT_STYLING_TEXTURE_WIDTH;
+        vec3 colorTexel = texelFetch(objectIdLUT, ivec2(lutX, lutY), 0).rgb;
 
-            if (any(greaterThan(colorTexel, vec3(0.0)))) {
+        if (any(greaterThan(colorTexel, vec3(0.0)))) {
                 vColor = 0.5 * (colorTexel + vColor);
-            }
         }
 }
