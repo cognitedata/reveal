@@ -94,7 +94,7 @@ export function SchemaVersionDropdown({
         <DropdownButton
           open={isOpen}
           type="ghost"
-          onClick={() => setOpen(true)}
+          onClick={() => setOpen(!isOpen)}
         >
           <Flex
             justifyContent="space-between"
