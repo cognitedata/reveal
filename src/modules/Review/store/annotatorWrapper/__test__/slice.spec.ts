@@ -9,11 +9,12 @@ import reducer, {
 } from 'src/modules/Review/store/annotatorWrapper/slice';
 import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
 import { ImageKeypoint, Status } from 'src/api/annotation/types';
-import { getDummyPredefinedKeypoint } from 'src/modules/Review/store/annotatorWrapper/__test__/utils';
 import {
   getDummyKeypointCollectionState,
   getDummyKeypointState,
+  getDummyPredefinedKeypoint,
 } from 'src/__test-utils/annotations';
+import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 
 jest.mock('src/utils/AnnotationUtilsV1/AnnotationUtilsV1', () => ({
   ...jest.requireActual('src/utils/AnnotationUtilsV1/AnnotationUtilsV1'),
@@ -186,49 +187,59 @@ describe('Test annotator slice', () => {
     });
 
     describe('Test onUpdateKeyPoint reducer', () => {
+      const k1Id = generateKeypointId('c1', 'left');
+      const k2Id = generateKeypointId('c2', 'center');
+
       const previousState = {
         ...initialState,
         collections: {
           byId: {
-            c1: getDummyKeypointCollectionState('c1', ['c1-label1']),
-            c2: getDummyKeypointCollectionState('c2', ['c2-label2']),
+            c1: getDummyKeypointCollectionState('c1', [k1Id]),
+            c2: getDummyKeypointCollectionState('c2', [k2Id]),
           },
           allIds: ['c1', 'c2'],
           selectedIds: ['c1'],
         },
         keypointMap: {
           byId: {
-            // ${keypointAnnotationCollection.id}-${keypoint.label}
-            'c1-label1': getDummyKeypointState('label1'),
-            'c2-label2': getDummyKeypointState('label2'),
+            k1Id: getDummyKeypointState('left'),
+            k2Id: getDummyKeypointState('center'),
           },
-          allIds: ['c1-label1', 'c2-label2'],
-          selectedIds: ['c1-label1'],
+          allIds: [k1Id, k2Id],
+          selectedIds: [k1Id],
         },
       };
 
-      test('deselect selected keypoint', () => {
+      test('should update confidence and point', () => {
         const pointToUpdate: ImageKeypoint = {
-          label: 'label1',
+          label: 'left',
           confidence: 0.5,
           point: { x: 0.25, y: 0.75 },
         };
+        const collectionId = 'c1';
+
         expect(
           reducer(
             previousState,
             onUpdateKeyPoint({
-              keypointAnnotationCollectionId: 'c1',
+              keypointAnnotationCollectionId: collectionId,
               label: pointToUpdate.label,
               newConfidence: pointToUpdate.confidence,
               newPoint: pointToUpdate.point,
             })
-          ).keypointMap.byId['c1-label1']
-        ).toEqual(pointToUpdate);
+          )
+        ).toEqual({
+          ...previousState,
+          keypointMap: {
+            ...previousState.keypointMap,
+            byId: { ...previousState.keypointMap.byId, [k1Id]: pointToUpdate },
+          },
+        });
       });
 
-      test('should not effect others when non existing id used', () => {
+      test('should not effect others when non existing label used', () => {
         const pointToUpdate: ImageKeypoint = {
-          label: 'point',
+          label: 'non-existing-label',
           confidence: 0.5,
           point: { x: 0.25, y: 0.75 },
         };
@@ -241,12 +252,8 @@ describe('Test annotator slice', () => {
               newConfidence: pointToUpdate.confidence,
               newPoint: pointToUpdate.point,
             })
-          ).keypointMap.byId['c1-label1']
-        ).toEqual({
-          label: 'label1',
-          confidence: 1,
-          point: { x: 0.5, y: 0.5 },
-        });
+          )
+        ).toEqual(previousState);
       });
     });
 
@@ -287,13 +294,17 @@ describe('Test annotator slice', () => {
           },
         };
 
-        const newKeypointId = `${payload.collectionName}-${payload.keypointLabel}`;
+        // collection Name is used to create new keypoint collection id and newKeypointId
+        const newKeypointId = generateKeypointId(
+          getDummyPredefinedKeypoint('c1').collectionName,
+          payload.keypointLabel
+        );
 
         const updatedState: AnnotatorWrapperState = {
           ...previousState,
           lastCollectionName: payload.collectionName,
           lastKeyPoint: payload.keypointLabel,
-          lastCollectionId: payload.collectionName,
+          lastCollectionId: payload.collectionName, // actually generated ID by using collectionName
           collections: {
             byId: {
               [payload.collectionName]: {
@@ -352,8 +363,7 @@ describe('Test annotator slice', () => {
           },
         };
 
-        const newKeypointId = `${payload.collectionName}-${payload.keypointLabel}`;
-
+        const newKeypointId = generateKeypointId('c1', payload.keypointLabel);
         const updatedState: AnnotatorWrapperState = {
           ...previousState,
           lastCollectionName: payload.collectionName,

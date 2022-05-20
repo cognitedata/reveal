@@ -192,3 +192,8 @@ export const getAnnotationsBadgeCounts = (
 
   return annotationsBadgeProps;
 };
+
+export const generateKeypointId = (
+  collectionId: string,
+  keypointLabel: string
+): string => `${collectionId} - ${keypointLabel}`;

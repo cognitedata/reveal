@@ -22,6 +22,7 @@ import {
   Status,
 } from 'src/api/annotation/types';
 import { isImageKeypointCollectionData } from 'src/modules/Common/types/typeGuards';
+import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 
 export const initialState: AnnotatorWrapperState = {
   predefinedAnnotations: {
@@ -157,7 +158,10 @@ const annotatorWrapperSlice = createSlice({
           }
 
           // add new keypoint to the state
-          const newKeypointId = `${collectionName}-${imageKeypointToAdd.label}`;
+          const newKeypointId = generateKeypointId(
+            state.lastCollectionId,
+            imageKeypointToAdd.label
+          );
           state.lastKeyPoint = predefinedKeypoint.caption;
           state.collections.byId[state.lastCollectionId].keypointIds.push(
             newKeypointId
@@ -178,12 +182,17 @@ const annotatorWrapperSlice = createSlice({
     ) {
       const { keypointAnnotationCollectionId, label, newConfidence, newPoint } =
         action.payload;
-      const keypointId = `${keypointAnnotationCollectionId}-${label}`;
-      state.keypointMap.byId[keypointId] = {
-        label,
-        confidence: newConfidence,
-        point: newPoint,
-      };
+      const keypointId = generateKeypointId(
+        keypointAnnotationCollectionId,
+        label
+      );
+      if (state.keypointMap.allIds.includes(keypointId)) {
+        state.keypointMap.byId[keypointId] = {
+          label,
+          confidence: newConfidence,
+          point: newPoint,
+        };
+      }
     },
     deleteCollectionById(state, action: PayloadAction<string>) {
       deleteCollection(state, action.payload);
@@ -254,7 +263,10 @@ const annotatorWrapperSlice = createSlice({
             const keypointIds: string[] = [];
 
             keypointAnnotationCollection.keypoints.forEach((keypoint) => {
-              const keypointId = `${keypointAnnotationCollection.id}-${keypoint.label}`;
+              const keypointId = generateKeypointId(
+                collectionId,
+                keypoint.label
+              );
               keypointIds.push(keypointId);
 
               state.keypointMap.byId[keypointId] = keypoint;

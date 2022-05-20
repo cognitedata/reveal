@@ -16,6 +16,7 @@ import {
   Status,
 } from 'src/api/annotation/types';
 import { KeypointCollectionState } from 'src/modules/Review/store/annotatorWrapper/type';
+import { Keypoint, KeypointCollection } from 'src/modules/Review/types';
 
 export const getDummyAnnotation = (
   id?: number,
@@ -69,8 +70,27 @@ export const getDummyKeypointCollectionState = (
   return {
     id,
     keypointIds,
-    label: 'gauge',
+    label: getDummyPredefinedKeypoint(id).collectionName,
     show: true,
     status: Status.Approved,
+  };
+};
+
+const dummyKeypoint = (caption?: string): Keypoint => {
+  return {
+    caption: caption || 'center',
+    order: '1',
+    color: 'red',
+  };
+};
+export const getDummyPredefinedKeypoint = (id: string): KeypointCollection => {
+  return {
+    id,
+    collectionName: 'gauge',
+    keypoints: [
+      dummyKeypoint('left'),
+      dummyKeypoint('center'),
+      dummyKeypoint('right'),
+    ],
   };
 };
