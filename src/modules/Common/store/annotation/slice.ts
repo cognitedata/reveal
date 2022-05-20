@@ -2,9 +2,9 @@ import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bulkConverters';
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
-import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
+import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { clearAnnotationState } from 'src/store/commonActions';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import {
@@ -90,9 +90,9 @@ const annotationSlice = createSlice({
     builder.addMatcher(
       // TODO: refactor -> same as RetrieveAnnotationsV1.fulfilled
       isAnyOf(
-        CreateAnnotations.fulfilled,
+        CreateAnnotationsV1.fulfilled,
         VisionJobUpdate.fulfilled,
-        UpdateAnnotations.fulfilled
+        UpdateAnnotationsV1.fulfilled
       ),
       (state: AnnotationState, { payload }) => {
         // update annotations

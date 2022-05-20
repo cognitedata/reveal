@@ -9,7 +9,7 @@ import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations
 import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
 import { ToastUtils } from 'src/utils/ToastUtils';
 import { PollJobs } from 'src/store/thunks/Process/PollJobs';
@@ -50,7 +50,7 @@ const commonSlice = createSlice({
       isFulfilled(
         SaveAnnotations,
         DeleteAnnotations,
-        UpdateAnnotations,
+        UpdateAnnotationsV1,
         UpdateFiles
       ),
       (state) => {
@@ -64,7 +64,7 @@ const commonSlice = createSlice({
         SaveAnnotations,
         RetrieveAnnotationsV1,
         DeleteAnnotations,
-        UpdateAnnotations,
+        UpdateAnnotationsV1,
         SaveAnnotationTemplates
       ),
       (state, { error }) => {

@@ -11,11 +11,11 @@ import reducer, {
   setCollectionStatus,
   toggleCollectionVisibility,
 } from 'src/modules/Review/store/annotationLabel/slice';
-import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
+import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
 import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import {
   AnnotationStatus,
@@ -522,9 +522,9 @@ describe('Test annotationLabel reducer', () => {
 
       test('Should not update state when annotations are from multiple files', () => {
         [
-          CreateAnnotations.fulfilled.type,
+          CreateAnnotationsV1.fulfilled.type,
           VisionJobUpdate.fulfilled.type,
-          UpdateAnnotations.fulfilled.type,
+          UpdateAnnotationsV1.fulfilled.type,
           RetrieveAnnotationsV1.fulfilled.type,
         ].forEach((type) => {
           const action = {
@@ -542,9 +542,9 @@ describe('Test annotationLabel reducer', () => {
 
       test('Should populate keypoint collection related fields in state', () => {
         [
-          CreateAnnotations.fulfilled.type,
+          CreateAnnotationsV1.fulfilled.type,
           VisionJobUpdate.fulfilled.type,
-          UpdateAnnotations.fulfilled.type,
+          UpdateAnnotationsV1.fulfilled.type,
           RetrieveAnnotationsV1.fulfilled.type,
         ].forEach((type) => {
           const action = { type, payload: [generateDummyAnnotations()] };
