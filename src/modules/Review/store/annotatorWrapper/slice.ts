@@ -1,11 +1,11 @@
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
 import { Keypoint, KeypointCollection, Tool } from 'src/modules/Review/types';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
-import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
+import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { createUniqueId } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { deleteCollection } from 'src/modules/Review/store/annotatorWrapper/utils';
@@ -221,9 +221,9 @@ const annotatorWrapperSlice = createSlice({
     // Matchers
     builder.addMatcher(
       isAnyOf(
-        CreateAnnotations.fulfilled,
+        CreateAnnotationsV1.fulfilled,
         VisionJobUpdate.fulfilled,
-        UpdateAnnotations.fulfilled,
+        UpdateAnnotationsV1.fulfilled,
         RetrieveAnnotations.fulfilled
       ),
       (state, action) => {
