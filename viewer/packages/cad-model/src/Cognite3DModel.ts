@@ -284,7 +284,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase, 
    * Cleans up used resources.
    */
   dispose(): void {
-    this.children = [];
+    this.cadNode.dispose();
+    this.clear();
   }
 
   /**
