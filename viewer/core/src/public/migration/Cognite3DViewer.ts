@@ -331,16 +331,16 @@ export class Cognite3DViewer {
       cancelAnimationFrame(this.latestRequestId);
     }
 
+    for (const model of this._models.values()) {
+      this.removeModel(model);
+    }
+
     this.renderController.dispose();
     this._subscription.unsubscribe();
     this._cameraManager.dispose();
     this.revealManager.dispose();
     this.domElement.removeChild(this.canvas);
     this.renderer.dispose();
-    for (const model of this._models.values()) {
-      model.dispose();
-    }
-    this._models.splice(0);
     this.spinner.dispose();
 
     this._events.disposed.fire();
