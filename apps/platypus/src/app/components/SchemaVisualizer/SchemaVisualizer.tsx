@@ -35,14 +35,10 @@ export const SchemaVisualizer = React.memo(
   ({
     graphQLSchemaString,
     active,
-    config = {
-      knownTypes: [],
-    },
   }: {
     graphQLSchemaString?: string;
     active?: string;
     /* Customize the Visualizer rendering */
-    config?: SchemaVisualizerConfig;
   }) => {
     const { t } = useTranslation('Schema Visualizer');
     const [nodes, setNodes] = useState<(Node & SchemaDefinitionNode)[]>([]);

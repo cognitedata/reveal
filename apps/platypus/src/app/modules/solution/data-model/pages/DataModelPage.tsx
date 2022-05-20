@@ -321,9 +321,6 @@ export const DataModelPage = () => {
                     <SchemaVisualizer
                       graphQLSchemaString={projectSchema}
                       active={currentType?.name}
-                      config={{
-                        knownTypes: builtInTypes,
-                      }}
                     />
                   </ErrorBoundary>
                 </Flex>
