@@ -4,7 +4,7 @@ import SplitPane from 'react-split-pane';
 import Layers from 'utils/z-index';
 import handle from '../../assets/dragHandle.svg';
 
-const StyledSplitPane = styled(SplitPane)`
+const StyledSplitPane = styled(SplitPane)<SplitPaneProps>`
   .Pane {
     max-width: 100vw;
     max-height: 100vh;

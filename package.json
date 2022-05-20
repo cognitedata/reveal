@@ -84,7 +84,7 @@
     "remark-math": "5.1.1",
     "resize-observer-polyfill": "^1.5.1",
     "rrweb": "1.1.3",
-    "styled-components": "5.3.3",
+    "styled-components": "5.3.5",
     "use-file-picker": "^1.4.2",
     "use-screenshot-hook": "1.0.2",
     "uuid": "8.3.2"
@@ -114,7 +114,7 @@
     "@types/react-highlight-words": "0.16.4",
     "@types/react-plotly.js": "2.5.0",
     "@types/react-router-dom": "5.3.3",
-    "@types/styled-components": "5.1.23",
+    "@types/styled-components": "5.1.25",
     "@types/uuid": "8.3.4",
     "babel-loader": "8.1.0",
     "chromatic": "6.5.4",
