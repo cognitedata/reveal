@@ -7,13 +7,7 @@ import TWEEN from '@tweenjs/tween.js';
 import { Subscription, fromEventPattern } from 'rxjs';
 import pick from 'lodash/pick';
 
-import {
-  defaultRenderOptions,
-  SsaoParameters,
-  SsaoSampleQuality,
-  AntiAliasingMode,
-  IdentifiedModel
-} from '@reveal/rendering';
+import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
 import {
   assertNever,
@@ -125,7 +119,6 @@ export class Cognite3DViewer {
   private readonly _mouseHandler: InputHandler;
 
   private readonly _models: CogniteModelBase[] = [];
-  private readonly _renderables: { cadModels: IdentifiedModel[]; customObjects: THREE.Object3D[] };
   private readonly _extraObjects: THREE.Object3D[] = [];
 
   private isDisposed = false;
@@ -218,8 +211,6 @@ export class Cognite3DViewer {
 
     this._sceneHandler = new SceneHandler();
 
-    this._renderables = { cadModels: [], customObjects: this._extraObjects };
-
     this._mouseHandler = new InputHandler(this.canvas);
 
     this._cameraManager =
@@ -237,16 +228,14 @@ export class Cognite3DViewer {
       this._cdfSdkClient = undefined;
       this._revealManagerHelper = RevealManagerHelper.createLocalHelper(
         this._renderer,
-        this._sceneHandler.scene,
-        this._renderables,
+        this._sceneHandler,
         revealOptions
       );
     } else if (options.customDataSource !== undefined) {
       this._dataSource = options.customDataSource;
       this._revealManagerHelper = RevealManagerHelper.createCustomDataSourceHelper(
         this._renderer,
-        this._sceneHandler.scene,
-        this._renderables,
+        this._sceneHandler,
         revealOptions,
         options.customDataSource
       );
@@ -256,8 +245,7 @@ export class Cognite3DViewer {
       this._cdfSdkClient = options.sdk;
       this._revealManagerHelper = RevealManagerHelper.createCdfHelper(
         this._renderer,
-        this._sceneHandler.scene,
-        this._renderables,
+        this._sceneHandler,
         revealOptions,
         options.sdk
       );
@@ -269,8 +257,7 @@ export class Cognite3DViewer {
     this._pickingHandler = new PickingHandler(
       this._renderer,
       this._revealManagerHelper.revealManager.materialManager,
-      this._sceneHandler.scene,
-      this._renderables.cadModels
+      this._sceneHandler
     );
 
     this._subscription.add(
@@ -361,8 +348,6 @@ export class Cognite3DViewer {
     this.domElement.removeChild(this.canvas);
     this.renderer.dispose();
 
-    this._renderables.cadModels.splice(0);
-    this._renderables.customObjects.splice(0);
     this.spinner.dispose();
 
     this._sceneHandler.dispose();
@@ -584,7 +569,6 @@ export class Cognite3DViewer {
 
     const model3d = new Cognite3DModel(modelId, revisionId, cadNode, nodesApiClient);
     this._models.push(model3d);
-    this._renderables.cadModels.push({ model: model3d, modelIdentifier: cadNode.cadModelIdentifier });
     this._sceneHandler.addCadModel(model3d, cadNode.cadModelIdentifier);
 
     return model3d;
@@ -637,8 +621,6 @@ export class Cognite3DViewer {
     switch (model.type) {
       case 'cad':
         const cadModel = model as Cognite3DModel;
-        const cadModelIdx = this._renderables.cadModels.map(p => p.model).indexOf(cadModel);
-        this._renderables.cadModels.splice(cadModelIdx, 1);
         this._sceneHandler.removeCadModel(cadModel);
         model.dispose();
         this.revealManager.removeModel(model.type, cadModel.cadNode);
@@ -651,8 +633,6 @@ export class Cognite3DViewer {
 
       case 'pointcloud':
         const pcModel = model as CognitePointCloudModel;
-        const pointCloudIdx = this._renderables.customObjects.indexOf(pcModel);
-        this._renderables.customObjects.splice(pointCloudIdx, 1);
         this._sceneHandler.removeCustomObject(pcModel);
         this.revealManager.removeModel(model.type, pcModel.pointCloudNode);
         break;

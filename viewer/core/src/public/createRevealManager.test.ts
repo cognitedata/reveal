@@ -9,6 +9,7 @@ import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api'
 import { It, Mock, SetPropertyExpression } from 'moq.ts';
 
 import * as THREE from 'three';
+import { SceneHandler } from '@reveal/utilities';
 
 describe('createRevealManager', () => {
   test('createRevealManager does not throw on empty internal options', () => {
@@ -22,8 +23,7 @@ describe('createRevealManager', () => {
           .setup(_ => It.Is((expression: SetPropertyExpression) => expression.name == 'info'))
           .returns({})
           .object(),
-        new THREE.Scene(),
-        { cadModels: [], customObjects: [] },
+        new SceneHandler(),
         {}
       )
     ).not.toThrow();

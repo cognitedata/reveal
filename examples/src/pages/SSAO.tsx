@@ -39,8 +39,7 @@ export function SSAO() {
                                      getToken: async () => 'dummy' });
       }
 
-      const scene = new THREE.Scene();
-
+      const sceneHandler = new reveal.SceneHandler();
 
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current!,
@@ -48,9 +47,8 @@ export function SSAO() {
       renderer.setClearColor('#444');
       renderer.setSize(window.innerWidth, window.innerHeight);
 
-      const { revealManager, model } = await createManagerAndLoadModel(client, renderer, scene, 'cad', modelRevision, modelUrl);
-
-      scene.add(model);
+      const { revealManager, model } = await createManagerAndLoadModel(client, renderer, sceneHandler, 'cad', modelRevision, modelUrl);
+      sceneHandler.addCadModel(model, model.cadModelIdentifier);
 
       const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
                                                                   model.getModelTransformation());

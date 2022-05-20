@@ -10,6 +10,7 @@ import { IntersectInput } from '@reveal/model-base';
 import { createGlContext } from '../../../test-utilities';
 import { PickingHandler } from './PickingHandler';
 import { It, Mock } from 'moq.ts';
+import { SceneHandler } from '@reveal/utilities';
 
 describe(PickingHandler.name, () => {
   let pickingHandler: PickingHandler;
@@ -33,7 +34,7 @@ describe(PickingHandler.name, () => {
 
   beforeEach(() => {
     const materialManagerMock = new Mock<CadMaterialManager>().setup(p => p.setRenderMode(It.IsAny())).returns();
-    pickingHandler = new PickingHandler(renderer, materialManagerMock.object(), new THREE.Scene(), []);
+    pickingHandler = new PickingHandler(renderer, materialManagerMock.object(), new SceneHandler());
   });
 
   test('no nodes, returns empty array', () => {

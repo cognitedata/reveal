@@ -8,12 +8,15 @@ import { GeometryPass } from '../render-passes/GeometryPass';
 import { RenderPass } from '../RenderPass';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { getLayerMask, RenderLayer, setupCadModelsGeometryLayers } from '../utilities/renderUtilities';
-import { IdentifiedModel } from '../utilities/types';
 import { RenderMode } from '../rendering/RenderMode';
+import { SceneHandler } from '@reveal/utilities';
 
 export class CadGeometryRenderModePipelineProvider implements RenderPipelineProvider {
   private readonly _materialManager: CadMaterialManager;
-  private readonly _cadModels: IdentifiedModel[];
+  private readonly _cadModels: {
+    object: THREE.Object3D<THREE.Event>;
+    modelIdentifier: string;
+  }[];
   private readonly _renderTargetData: { currentRenderSize: THREE.Vector2 };
   private readonly _geometryPass: GeometryPass;
   private _outputRenderTarget: THREE.WebGLRenderTarget = null;
@@ -21,21 +24,16 @@ export class CadGeometryRenderModePipelineProvider implements RenderPipelineProv
 
   public readonly scene: THREE.Scene;
 
-  constructor(
-    renderMode: RenderMode,
-    materialManager: CadMaterialManager,
-    scene: THREE.Scene,
-    cadModels?: IdentifiedModel[]
-  ) {
-    this.scene = scene;
+  constructor(renderMode: RenderMode, materialManager: CadMaterialManager, sceneHandler: SceneHandler) {
+    this.scene = sceneHandler.scene;
     this._materialManager = materialManager;
-    this._cadModels = cadModels;
+    this._cadModels = sceneHandler.cadModels;
     this._renderTargetData = {
       currentRenderSize: new THREE.Vector2(1, 1)
     };
 
     const layerMask = getLayerMask(RenderLayer.InFront) | getLayerMask(RenderLayer.Back);
-    this._geometryPass = new GeometryPass(scene, materialManager, renderMode, layerMask);
+    this._geometryPass = new GeometryPass(sceneHandler.scene, materialManager, renderMode, layerMask);
   }
 
   // TODO 2022-05-11 christjt: This should ideally set in the constructor,

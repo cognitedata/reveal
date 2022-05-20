@@ -8,19 +8,21 @@ import { CadMaterialManager } from '../CadMaterialManager';
 import { RenderPass } from '../RenderPass';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { createFullScreenTriangleMesh, createRenderTarget } from '../utilities/renderUtilities';
-import { IdentifiedModel } from '../utilities/types';
 import { RenderTargetData } from './types';
 import { AntiAliasingMode, defaultRenderOptions, RenderOptions } from '../rendering/types';
 import { CadGeometryRenderPipelineProvider } from './CadGeometryRenderPipelineProvider';
 import { PostProcessingPass } from '../render-passes/PostProcessingPass';
 import { SSAOPass } from '../render-passes/SSAOPass';
 import { blitShaders } from '../rendering/shaders';
-import { WebGLRendererStateHelper } from '@reveal/utilities';
+import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 
 export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _cadScene: THREE.Scene;
   private readonly _renderTargetData: RenderTargetData;
-  private readonly _cadModels: IdentifiedModel[];
+  private readonly _cadModels: {
+    object: THREE.Object3D;
+    modelIdentifier: string;
+  }[];
   private readonly _customObjects: THREE.Object3D[];
   private readonly _autoResizeOutputTarget: boolean;
   private readonly _outputRenderTarget: THREE.WebGLRenderTarget;
@@ -28,7 +30,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _postProcessingRenderPipeline: PostProcessingPass;
   private readonly _ssaoPass: SSAOPass;
   private readonly _blitToScreenMaterial: THREE.RawShaderMaterial;
-  private readonly _blitToScreenMesh: THREE.Mesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>;
+  private readonly _blitToScreenMesh: THREE.Mesh;
   private _rendererStateHelper: WebGLRendererStateHelper;
 
   set renderOptions(renderOptions: RenderOptions) {
@@ -52,16 +54,14 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
 
   constructor(
     materialManager: CadMaterialManager,
-    scene: THREE.Scene,
+    sceneHandler: SceneHandler,
     renderOptions: RenderOptions,
-    cadModels?: IdentifiedModel[],
-    customObjects?: THREE.Object3D[],
     outputRenderTarget?: {
       target: THREE.WebGLRenderTarget;
       autoSize?: boolean;
     }
   ) {
-    this._cadScene = scene;
+    this._cadScene = sceneHandler.scene;
     this._autoResizeOutputTarget = outputRenderTarget?.autoSize ?? true;
     this._outputRenderTarget = outputRenderTarget?.target ?? null;
 
@@ -70,15 +70,14 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
       ssaoRenderTarget: createRenderTarget(),
       postProcessingRenderTarget: createRenderTarget()
     };
-    this._cadModels = cadModels;
-    this._customObjects = customObjects;
+    this._cadModels = sceneHandler.cadModels;
+    this._customObjects = sceneHandler.customObjects;
 
     const ssaoParameters = renderOptions.ssaoRenderParameters ?? defaultRenderOptions.ssaoRenderParameters;
     const edges = renderOptions.edgeDetectionParameters ?? defaultRenderOptions.edgeDetectionParameters;
 
     this._cadGeometryRenderPipeline = new CadGeometryRenderPipelineProvider(
-      scene,
-      cadModels,
+      sceneHandler,
       materialManager,
       renderOptions
     );
@@ -87,7 +86,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
       ssaoParameters
     );
 
-    this._postProcessingRenderPipeline = new PostProcessingPass(scene, {
+    this._postProcessingRenderPipeline = new PostProcessingPass(sceneHandler.scene, {
       ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
       edges: edges.enabled,
       ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
@@ -155,8 +154,8 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
     this._rendererStateHelper.autoClear = true;
     this._rendererStateHelper.setClearColor(renderer.getClearColor(new THREE.Color()), 0);
 
-    this._cadModels?.forEach(identifiedModel => {
-      identifiedModel.model.matrixAutoUpdate = false;
+    this._cadModels.forEach(cadModel => {
+      cadModel.object.matrixAutoUpdate = false;
     });
     this._cadScene.autoUpdate = false;
 

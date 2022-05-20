@@ -25,12 +25,11 @@ import {
   ModelMetadataProvider
 } from '../../modeldata-api';
 import { CadManager } from '../../cad-model/src/CadManager';
-import { NumericRange, revealEnv } from '@reveal/utilities';
+import { NumericRange, revealEnv, SceneHandler } from '@reveal/utilities';
 import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
 import { CadModelUpdateHandler, defaultDesktopCadModelBudget } from '../../cad-geometry-loaders';
 import { ByScreenSizeSectorCuller } from '../../cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
 import { StepPipelineExecutor } from '../src/pipeline-executors/StepPipelineExecutor';
-import { IdentifiedModel } from '../src/utilities/types';
 import { CognitePointCloudModel, createPointCloudManager } from '../../pointclouds';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 
@@ -63,21 +62,22 @@ async function init() {
   renderer.setClearColor(guiData.clearColor);
   renderer.setClearAlpha(guiData.clearAlpha);
 
-  const scene = new THREE.Scene();
-  const pointCloudManager = createPointCloudManager(metadataProvider, dataProvider, scene, renderer);
+  const sceneHandler = new SceneHandler();
+
+  const pointCloudManager = createPointCloudManager(metadataProvider, dataProvider, sceneHandler.scene, renderer);
   pointCloudManager.pointBudget = 1_000_000;
   const cadManager = new CadManager(materialManager, cadModelFactory, cadModelUpdateHandler);
   cadManager.budget = defaultDesktopCadModelBudget;
-  const customObjects: THREE.Object3D[] = [];
+  // const customObjects: THREE.Object3D[] = [];
 
   const modelOutputs = (await metadataProvider.getModelOutputs(modelIdentifier)).map(outputs => outputs.format);
 
   let model: THREE.Object3D;
   let boundingBox: THREE.Box3;
-  const cadModels: IdentifiedModel[] = [];
   if (modelOutputs.includes('gltf-directory') || modelOutputs.includes('reveal-directory')) {
     const cadModel = await cadManager.addModel(modelIdentifier);
-    cadModels.push({ model: cadModel, modelIdentifier: cadModel.cadModelIdentifier });
+    sceneHandler.addCadModel(cadModel, cadModel.cadModelIdentifier);
+    // cadModels.push({ model: cadModel, modelIdentifier: cadModel.cadModelIdentifier });
     model = cadModel;
     boundingBox = (cadModel as any)._cadModelMetadata.scene.getBoundsOfMostGeometry().clone();
     boundingBox.applyMatrix4(model.children[0].matrix);
@@ -101,13 +101,12 @@ async function init() {
     const pointCloudNode = await pointCloudManager.addModel(modelIdentifier);
     const pointcloudModel = new CognitePointCloudModel(0, 0, pointCloudNode);
     boundingBox = pointcloudModel.getModelBoundingBox();
-    customObjects.push(pointCloudNode);
+    sceneHandler.addCustomObject(pointCloudNode);
     model = pointCloudNode;
   } else {
     throw Error(`Unknown output format ${modelOutputs}`);
   }
 
-  scene.add(model);
   model.updateMatrix();
   model.updateWorldMatrix(true, true);
 
@@ -121,13 +120,7 @@ async function init() {
   const pipelineExecutor = new StepPipelineExecutor(renderer);
   pipelineExecutor.numberOfSteps = guiData.steps;
 
-  let defaultRenderPipeline = new DefaultRenderPipelineProvider(
-    materialManager,
-    scene,
-    defaultRenderOptions,
-    cadModels,
-    customObjects
-  );
+  let defaultRenderPipeline = new DefaultRenderPipelineProvider(materialManager, sceneHandler, defaultRenderOptions);
   gui.add(guiData, 'steps', 1, pipelineExecutor.calcNumSteps(defaultRenderPipeline), 1).onChange(async () => {
     pipelineExecutor.numberOfSteps = guiData.steps;
     renderer.setClearColor(guiData.clearColor);
@@ -142,8 +135,7 @@ async function init() {
 
   const grid = new THREE.GridHelper(30, 40);
   grid.position.set(14, -1, -14);
-  scene.add(grid);
-  customObjects.push(grid);
+  sceneHandler.addCustomObject(grid);
 
   const customBox = new THREE.Mesh(
     new THREE.BoxGeometry(10, 10, 30),
@@ -156,13 +148,11 @@ async function init() {
   );
 
   customBox.position.set(15, 0, -15);
-  scene.add(customBox);
-  customObjects.push(customBox);
+  sceneHandler.addCustomObject(customBox);
 
   const controlsTest = new TransformControls(camera, renderer.domElement);
   controlsTest.attach(customBox);
-  scene.add(controlsTest);
-  customObjects.push(controlsTest);
+  sceneHandler.addCustomObject(controlsTest);
 
   renderer.domElement.style.backgroundColor = guiData.canvasColor;
 
@@ -176,13 +166,7 @@ async function init() {
 
   const updateRenderOptions = async () => {
     defaultRenderPipeline.dispose();
-    defaultRenderPipeline = new DefaultRenderPipelineProvider(
-      materialManager,
-      scene,
-      renderOptions,
-      cadModels,
-      customObjects
-    );
+    defaultRenderPipeline = new DefaultRenderPipelineProvider(materialManager, sceneHandler, renderOptions);
     needsRedraw = true;
   };
 

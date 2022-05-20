@@ -11,8 +11,8 @@ import { createCdfRevealManager, createLocalRevealManager, PointCloudNode, Revea
 
 import { CdfModelIdentifier, LocalModelIdentifier } from '@reveal/modeldata-api';
 import { DataSource } from '@reveal/data-source';
-import { assertNever } from '@reveal/utilities';
-import { CadNode, IdentifiedModel } from '@reveal/rendering';
+import { assertNever, SceneHandler } from '@reveal/utilities';
+import { CadNode } from '@reveal/rendering';
 
 import { CogniteClient } from '@cognite/sdk';
 
@@ -53,47 +53,38 @@ export class RevealManagerHelper {
    * Create helper for RevealManager that loads models from local storage. This is only
    * meant for use in debugging and development.
    * @param renderer
-   * @param scene
-   * @param renderables
-   * @param renderables.cadModels
-   * @param renderables.customObjects
+   * @param sceneHandler
    * @param revealOptions
    */
   static createLocalHelper(
     renderer: THREE.WebGLRenderer,
-    scene: THREE.Scene,
-    renderables: { cadModels: IdentifiedModel[]; customObjects: THREE.Object3D[] },
+    sceneHandler: SceneHandler,
     revealOptions: RevealOptions
   ): RevealManagerHelper {
-    const revealManager = createLocalRevealManager(renderer, scene, renderables, revealOptions);
+    const revealManager = createLocalRevealManager(renderer, sceneHandler, revealOptions);
     return new RevealManagerHelper('local', revealManager);
   }
 
   /**
    * Creates a helper for RevealManager that loads models from CDF.
    * @param renderer
-   * @param scene
-   * @param renderables
-   * @param renderables.cadModels
-   * @param renderables.customObjects
+   * @param sceneHandler
    * @param revealOptions
    * @param sdkClient
    */
   static createCdfHelper(
     renderer: THREE.WebGLRenderer,
-    scene: THREE.Scene,
-    renderables: { cadModels: IdentifiedModel[]; customObjects: THREE.Object3D[] },
+    sceneHandler: SceneHandler,
     revealOptions: RevealOptions,
     sdkClient: CogniteClient
   ): RevealManagerHelper {
-    const revealManager = createCdfRevealManager(sdkClient, renderer, scene, renderables, revealOptions);
+    const revealManager = createCdfRevealManager(sdkClient, renderer, sceneHandler, revealOptions);
     return new RevealManagerHelper('cdf', revealManager);
   }
 
   static createCustomDataSourceHelper(
     renderer: THREE.WebGLRenderer,
-    scene: THREE.Scene,
-    renderables: { cadModels: IdentifiedModel[]; customObjects: THREE.Object3D[] },
+    sceneHandler: SceneHandler,
     revealOptions: RevealOptions,
     dataSource: DataSource
   ): RevealManagerHelper {
@@ -103,8 +94,7 @@ export class RevealManagerHelper {
       dataSource.getModelMetadataProvider(),
       dataSource.getModelDataProvider(),
       renderer,
-      scene,
-      renderables,
+      sceneHandler,
       revealOptions
     );
     // Note! We consider custom data sources 'CDF-type' as we use CDF model identifiers

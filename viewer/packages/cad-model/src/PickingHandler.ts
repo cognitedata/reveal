@@ -9,11 +9,10 @@ import {
   CadMaterialManager,
   CadNode,
   CadGeometryRenderModePipelineProvider,
-  IdentifiedModel,
   RenderMode,
   RenderPipelineProvider
 } from '@reveal/rendering';
-import { WebGLRendererStateHelper } from '@reveal/utilities';
+import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 
 type PickingInput = {
   normalizedCoords: {
@@ -58,12 +57,7 @@ export class PickingHandler {
   private readonly _depthRenderPipeline: CadGeometryRenderModePipelineProvider;
   private readonly _treeIndexRenderPipeline: CadGeometryRenderModePipelineProvider;
 
-  constructor(
-    renderer: THREE.WebGLRenderer,
-    materialManager: CadMaterialManager,
-    scene: THREE.Scene,
-    cadModels: IdentifiedModel[]
-  ) {
+  constructor(renderer: THREE.WebGLRenderer, materialManager: CadMaterialManager, sceneHandler: SceneHandler) {
     this._clearColor = new THREE.Color('black');
     this._clearAlpha = 0;
 
@@ -76,14 +70,12 @@ export class PickingHandler {
     this._depthRenderPipeline = new CadGeometryRenderModePipelineProvider(
       RenderMode.Depth,
       materialManager,
-      scene,
-      cadModels
+      sceneHandler
     );
     this._treeIndexRenderPipeline = new CadGeometryRenderModePipelineProvider(
       RenderMode.TreeIndex,
       materialManager,
-      scene,
-      cadModels
+      sceneHandler
     );
 
     this._treeIndexRenderPipeline.setOutputRenderTarget(this._pickPixelColorStorage.renderTarget, false);

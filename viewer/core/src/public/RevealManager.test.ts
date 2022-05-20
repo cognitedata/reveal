@@ -10,6 +10,7 @@ import { createGlContext } from '../../../test-utilities';
 
 import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
 import { SectorCuller } from '@reveal/cad-geometry-loaders';
+import { SceneHandler } from '@reveal/utilities';
 
 describe('RevealManager', () => {
   const stubMetadataProvider: ModelMetadataProvider = {} as any;
@@ -30,8 +31,7 @@ describe('RevealManager', () => {
       stubMetadataProvider,
       stubDataProvider,
       renderer,
-      new THREE.Scene(),
-      { cadModels: [], customObjects: [] },
+      new SceneHandler(),
       {
         internal: { cad: { sectorCuller } }
       }

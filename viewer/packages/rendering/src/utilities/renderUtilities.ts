@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { createRenderTriangle } from '@reveal/utilities';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { RenderMode } from '../rendering/RenderMode';
-import { CogniteColors, IdentifiedModel, RevealColors } from './types';
+import { CogniteColors, RevealColors } from './types';
 import { BlendOptions, BlitEffect, BlitOptions, ThreeUniforms } from '../render-passes/types';
 import { blitShaders } from '../rendering/shaders';
 import { NodeOutlineColor } from '@reveal/cad-styling';
@@ -139,7 +139,10 @@ export enum RenderLayer {
 
 export function setupCadModelsGeometryLayers(
   materialManager: CadMaterialManager,
-  identifiedModels?: IdentifiedModel[]
+  identifiedModels?: {
+    object: THREE.Object3D<THREE.Event>;
+    modelIdentifier: string;
+  }[]
 ): void {
   identifiedModels?.forEach(identifiedModel => setModelRenderLayers(identifiedModel, materialManager));
 }
@@ -148,8 +151,14 @@ export function getLayerMask(renderLayer: number): number {
   return ((1 << renderLayer) | 0) >>> 0;
 }
 
-function setModelRenderLayers(identifiedModel: IdentifiedModel, materialManager: CadMaterialManager) {
-  const { model, modelIdentifier } = identifiedModel;
+function setModelRenderLayers(
+  identifiedModel: {
+    object: THREE.Object3D<THREE.Event>;
+    modelIdentifier: string;
+  },
+  materialManager: CadMaterialManager
+) {
+  const { object: model, modelIdentifier } = identifiedModel;
 
   const backSet = materialManager.getModelBackTreeIndices(modelIdentifier);
   const ghostSet = materialManager.getModelGhostedTreeIndices(modelIdentifier);

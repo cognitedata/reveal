@@ -8,7 +8,7 @@ import { CanvasWrapper } from '../../components/styled';
 import * as reveal from '@cognite/reveal/internals';
 import { SuggestedCameraConfig, suggestCameraConfig } from '../../utils/cameraConfig';
 
-import { defaultRenderOptions, RenderOptions } from '@cognite/reveal/internals';
+import { defaultRenderOptions, RenderOptions, SceneHandler } from '@cognite/reveal/internals';
 
 type CadModelEnv = {
   modelType: 'cad';
@@ -22,9 +22,8 @@ type PointCloudModelEnv = {
 export type TestEnv = {
   camera: THREE.PerspectiveCamera;
   revealManager: reveal.RevealManager;
-  scene: THREE.Scene;
+  sceneHandler: SceneHandler;
   renderer: THREE.WebGLRenderer;
-  customObjects: THREE.Object3D[];
 };
 
 export type TestEnvCad = TestEnv & CadModelEnv;
@@ -122,11 +121,7 @@ export function TestViewer(props: Props) {
         modelUrl: props.modelName || 'primitives',
       });
 
-      let scene = new THREE.Scene();
-      let renderables: { cadModels: {
-        modelIdentifier: string;
-        model: THREE.Object3D;
-    }[], customObjects: THREE.Object3D[] } = { cadModels: [], customObjects: [] };
+      let sceneHandler = new SceneHandler();
 
       const renderOptions: RenderOptions = {
         ...defaultRenderOptions,
@@ -144,7 +139,7 @@ export function TestViewer(props: Props) {
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.localClippingEnabled = true;
 
-      revealManager = reveal.createLocalRevealManager(renderer, scene, renderables, { logMetrics: false, renderOptions: renderOptions });
+      revealManager = reveal.createLocalRevealManager(renderer, sceneHandler, { logMetrics: false, renderOptions: renderOptions });
       setupLoadingStateHandler(revealManager);
 
       let model: reveal.PointCloudNode | reveal.CadNode;
@@ -153,7 +148,7 @@ export function TestViewer(props: Props) {
         const modelIdentifier = new reveal.LocalModelIdentifier(modelUrl.fileName!);
         model = await revealManager.addModel('pointcloud', modelIdentifier);
         model.pointColorType = props.pointColorType ? props.pointColorType : reveal.PotreePointColorType.Rgb;
-        renderables.customObjects.push(model);
+        sceneHandler.addCustomObject(model);
       } else {
         const modelIdentifier = new reveal.LocalModelIdentifier(modelUrl.fileName!);
         model = await revealManager.addModel(
@@ -161,11 +156,9 @@ export function TestViewer(props: Props) {
           modelIdentifier
         );
         
-        renderables.cadModels.push({model, modelIdentifier: model.cadModelIdentifier});
+        sceneHandler.addCadModel(model, model.cadModelIdentifier);
       }
       
-      scene.add(model);
-
       let cameraConfig = getCameraConfig(model);
 
       let camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(
@@ -183,8 +176,7 @@ export function TestViewer(props: Props) {
           model,
           renderer,
           revealManager,
-          scene,
-          customObjects: renderables.customObjects,
+          sceneHandler
         };
         testEnv = props.modifyTestEnv(defaultTestEnv) || testEnv;
 
@@ -195,7 +187,7 @@ export function TestViewer(props: Props) {
         };
         renderer = testEnv.renderer || renderer;
         revealManager = testEnv.revealManager || revealManager;
-        scene = testEnv.scene || scene;
+        sceneHandler = testEnv.sceneHandler || sceneHandler;
       }
 
       const controls = new CameraControls(camera, renderer.domElement);
@@ -234,7 +226,7 @@ export function TestViewer(props: Props) {
       animationLoopHandler.start();
 
       const w = window as any;
-      w.scene = scene;
+      w.sceneHandler = sceneHandler;
       w.THREE = THREE;
       w.camera = camera;
       w.controls = controls;
