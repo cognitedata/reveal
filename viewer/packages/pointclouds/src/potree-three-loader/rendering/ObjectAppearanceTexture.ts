@@ -8,7 +8,6 @@ import * as THREE from 'three';
 import { StyledPointCloudObjectCollection } from '../../styling/StyledPointCloudObjectCollection';
 import { PointCloudObjectCollection } from '../../styling/PointCloudObjectCollection';
 import { DefaultPointCloudAppearance, PointCloudAppearance } from '../../styling/PointCloudAppearance';
-import { COLOR_BLACK } from './constants';
 
 export class ObjectAppearanceTexture {
   private _objectStyleTexture: THREE.DataTexture;
@@ -22,17 +21,26 @@ export class ObjectAppearanceTexture {
   private readonly _height: number;
 
   constructor(width: number, height: number) {
-    this._objectStyleTexture = generateDataTexture(width, height, COLOR_BLACK);
+
+
+    this._objectStyleTexture = generateDataTexture(width,
+                                                   height,
+                                                   new THREE.Color(0x01000000)); // Initialize with visibility bit set
 
     this._width = width;
     this._height = height;
   }
 
+  private appearanceToRgba(appearance: PointCloudAppearance): [number, number, number, number] {
+    const alpha = appearance.visible ? 1 << 0 : 0;
+    return [appearance.color[0], appearance.color[1], appearance.color[2], alpha];
+  }
+
   private setObjectStyle(objectId: number, appearance: PointCloudAppearance): void {
     const data = this._objectStyleTexture.image.data;
 
-    const colorData = [appearance.color[0], appearance.color[1], appearance.color[2]];
-    data.set(colorData, 4 * objectId);
+    const styleData = this.appearanceToRgba(appearance);
+    data.set(styleData, 4 * objectId);
   }
 
   private setObjectCollectionStyle(styledObjectSet: StyledPointCloudObjectCollection): void {
@@ -42,10 +50,10 @@ export class ObjectAppearanceTexture {
   }
 
   private resetTexture(): void {
-    const colorData = this._defaultAppearance.color;
+    const styleData = this.appearanceToRgba(this._defaultAppearance);
 
     for (let i = 0; i < this._width * this._height; i++) {
-      this._objectStyleTexture.image.data.set(colorData, 4 * i);
+      this._objectStyleTexture.image.data.set(styleData, 4 * i);
     }
   }
 

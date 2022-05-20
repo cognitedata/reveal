@@ -59,5 +59,6 @@ export {
   CognitePointCloudModel,
   PointCloudAppearance,
   PointCloudObjectCollection,
-  IndexPointCloudObjectCollection
+  IndexPointCloudObjectCollection,
+  DefaultPointCloudAppearance
 } from './packages/pointclouds';

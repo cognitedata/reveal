@@ -25,3 +25,4 @@ export { StyledObject } from './src/styling/StyledObject';
 export { PointCloudAppearance } from './src/styling/PointCloudAppearance';
 export { PointCloudObjectCollection } from './src/styling/PointCloudObjectCollection';
 export { IndexPointCloudObjectCollection } from './src/styling/IndexPointCloudObjectCollection';
+export { DefaultPointCloudAppearance } from './src/styling/PointCloudAppearance';

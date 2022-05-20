@@ -605,9 +605,20 @@ void main() {
 
         int lutX = int(objectId) % OBJECT_STYLING_TEXTURE_WIDTH;
         int lutY = int(objectId) / OBJECT_STYLING_TEXTURE_WIDTH;
-        vec3 colorTexel = texelFetch(objectIdLUT, ivec2(lutX, lutY), 0).rgb;
+
+        vec4 styleTexel = texelFetch(objectIdLUT, ivec2(lutX, lutY), 0);
+        vec3 styleColor = styleTexel.rgb;
+
+        float alphaUnwrapped = floor((styleTexel.a * 255.0) + 0.5);
+
+        // Visibility
+        if (mod(alphaUnwrapped, 2.0) == 0.0) {
+                gl_Position = vec4(100.0, 100.0, 100.0, 0.0);
+                return;
+        }
 
         if (any(greaterThan(colorTexel, vec3(0.0)))) {
-                vColor = 0.5 * (colorTexel + vColor);
+                vColor = 0.5 * (styleColor + vColor);
+>>>>>>> feat: add visibility as appearance option
         }
 }

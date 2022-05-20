@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { CognitePointCloudModel, IndexPointCloudObjectCollection, PointCloudAppearance } from '@cognite/reveal';
+import { CognitePointCloudModel, IndexPointCloudObjectCollection, PointCloudAppearance, DefaultPointCloudAppearance } from '@cognite/reveal';
 import * as THREE from 'three';
 
 export class PointCloudObjectStylingUI {
@@ -25,12 +25,16 @@ export class PointCloudObjectStylingUI {
   }
 
   private createObjectAppearanceUi(uiFolder: dat.GUI): () => PointCloudAppearance {
-    const appearance: PointCloudAppearance = { color: [255, 255, 255] }
+    const appearance: PointCloudAppearance = { ... DefaultPointCloudAppearance };
 
     const state = {
       color: '#ffffff',
+      visible: true
     };
 
+    uiFolder.add(state, 'visible').name('Visible').onFinishChange(visibility => {
+      appearance.visible = visibility;
+    });
     uiFolder.addColor(state, 'color').name('Color').onFinishChange(color => {
       appearance.color = hexStringToColor(color);
     });
