@@ -166,11 +166,6 @@ export function SectorWithPointcloud() {
       const pointCloudNode = pointCloud.potreeNode;
       sceneHandler.addCustomObject(pointCloudGroup);
 
-      // const cadModelOffsetRoot = new THREE.Group();
-      // cadModelOffsetRoot.name = 'Sector model offset root';
-      // cadModelOffsetRoot.add(model);
-      // scene.add(cadModelOffsetRoot);
-
       let settingsChanged = false;
       function handleSettingsChanged() {
         settingsChanged = true;
