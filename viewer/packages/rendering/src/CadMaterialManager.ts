@@ -116,6 +116,11 @@ export class CadMaterialManager {
 
   removeModelMaterials(modelIdentifier: string): void {
     const modelData = this.materialsMap.get(modelIdentifier);
+
+    if (modelData === undefined) {
+      throw new Error(`Model identifier: ${modelIdentifier} not found`);
+    }
+
     for (const mat of Object.values(modelData.materials)) {
       mat.dispose();
     }
