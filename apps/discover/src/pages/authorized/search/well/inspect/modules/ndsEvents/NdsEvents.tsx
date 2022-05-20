@@ -1,3 +1,5 @@
+import { useNdsAggregatesByWellboreIdsQuery } from 'domain/wells/service/nds/queries/useNdsAggregatesByWellboreIdsQuery';
+
 import React, { useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
@@ -8,30 +10,30 @@ import EmptyState from 'components/EmptyState';
 import { Modal } from 'components/Modal';
 import { Treemap, TreeMapData } from 'components/Treemap/Treemap';
 import { useDeepEffect } from 'hooks/useDeep';
-import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
+import {
+  useWellInspectSelectedWellbores,
+  useWellInspectSelectedWellboreIds,
+} from 'modules/wellInspect/hooks/useWellInspect';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 
 import { DetailedView } from './detailedView';
 import { NdsControlWrapper, WellboreTableWrapper } from './elements';
 import { NdsTable } from './table';
-import { NdsView } from './types';
+import { NdsView, FilterData } from './types';
 import { useNdsData } from './useNdsData';
+import { generateNdsFilterDataFromAggregate } from './utils/generateNdsFilterDataFromAggregate';
 import { generateNdsTreemapData } from './utils/generateNdsTreemapData';
 
 type SelectedView = 'treemap' | 'table';
 
 const NdsEvents: React.FC = () => {
-  const { data, isLoading } = useNdsData();
-
   // data
-  const { data: ndsEventsQuery } = useNdsEventsQuery();
   const selectedWellbores = useWellInspectSelectedWellbores();
-
-  useDeepEffect(() => {
-    setTreemapData(
-      generateNdsTreemapData(selectedWellbores, ndsEventsQuery || {})
-    );
-  }, [selectedWellbores, ndsEventsQuery]);
+  const wellboreIds = useWellInspectSelectedWellboreIds();
+  const { data: ndsEventsQuery } = useNdsEventsQuery();
+  const { data, isLoading } = useNdsData();
+  const { data: ndsAggregates } =
+    useNdsAggregatesByWellboreIdsQuery(wellboreIds);
 
   // state
   const [selectedView, setSelectedView] = useState<SelectedView>('treemap');
@@ -41,6 +43,19 @@ const NdsEvents: React.FC = () => {
   const [otherWellbores, setOtherWellbores] = useState<
     { name: string; id: string; numberOfEvents: number }[]
   >([]);
+  const [riskTypeFilters, setRiskTypeFilters] = useState<FilterData[]>([]);
+  console.log(riskTypeFilters);
+  useDeepEffect(() => {
+    setTreemapData(
+      generateNdsTreemapData(selectedWellbores, ndsEventsQuery || {})
+    );
+  }, [selectedWellbores, ndsEventsQuery]);
+
+  useDeepEffect(() => {
+    if (ndsAggregates) {
+      setRiskTypeFilters(generateNdsFilterDataFromAggregate(ndsAggregates));
+    }
+  }, [ndsAggregates]);
 
   const [detailedViewNdsData, setDetailedViewNdsData] = useState<NdsView[]>();
 

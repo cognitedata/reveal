@@ -8,3 +8,9 @@ export interface NdsView extends NdsDataLayer {
   holeStartTvd?: ConvertedDistance;
   holeEndTvd?: ConvertedDistance;
 }
+
+export interface FilterData {
+  label: string;
+  value: string;
+  options?: FilterData[];
+}

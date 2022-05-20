@@ -11,7 +11,7 @@ import { getNptDetailCodeSummaries } from '../__fixtures/nptDetailCodeSummaries'
 export const getMockNPTDetailCodeSummaries = (
   customResponse?: SummaryCount[]
 ): MSWRequest => {
-  const url = `${SIDECAR.cdfApiBaseUrl}/api/playground/projects/${TEST_PROJECT}/wdl/summaries/npt/detailcodes`;
+  const url = `${SIDECAR.cdfApiBaseUrl}/api/playground/projects/${TEST_PROJECT}/wdl/summaries/npt/codedetails`;
 
   return rest.get<Request>(url, (_req, res, ctx) => {
     return res(
