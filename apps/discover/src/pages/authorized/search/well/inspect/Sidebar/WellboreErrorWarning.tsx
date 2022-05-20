@@ -22,7 +22,7 @@ export const WellboreErrorWarning: React.FC<Props> = ({ errors }) => {
         <WellboreErrorsWrapper>
           <ul>
             {errors.map((error) => (
-              <li key={`${error.value}-${uuid()}`}>{error.value}</li>
+              <li key={`${error.message}-${uuid()}`}>{error.message}</li>
             ))}
           </ul>
         </WellboreErrorsWrapper>

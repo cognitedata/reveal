@@ -57,7 +57,7 @@ describe('SidebarContent tests', () => {
         errors: {
           [wellbore.matchingId]: [
             {
-              value: 'Some error',
+              message: 'Some error',
             },
           ],
         },

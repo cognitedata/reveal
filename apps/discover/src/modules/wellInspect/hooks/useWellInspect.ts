@@ -17,11 +17,15 @@ import { useMapToColoredWellbore } from './useMapToColoredWellbore';
 export const useWellInspectWells = () => {
   const inspectWellboreIds = useWellInspectWellboreIds();
   const inspectWellIds = useWellInspectWellIds();
-  const wells = useWellsByIds(inspectWellIds);
+  const { wells, error } = useWellsByIds(inspectWellIds);
   const toColoredWellbore = useMapToColoredWellbore();
 
   return useDeepMemo(() => {
-    if (!wells) return [];
+    if (!wells)
+      return {
+        wells: [],
+        error,
+      };
 
     const unsortedWells = wells.map((well) => {
       const unsortedWellbores =
@@ -38,12 +42,15 @@ export const useWellInspectWells = () => {
       };
     });
 
-    return sortObjectsAscending(unsortedWells, 'name'); // Move to data layer when refactoring.
-  }, [wells, inspectWellIds, inspectWellboreIds]);
+    return {
+      wells: sortObjectsAscending(unsortedWells, 'name'),
+      error,
+    }; // Move to data layer when refactoring.
+  }, [wells, inspectWellIds, inspectWellboreIds, error]);
 };
 
 export const useWellInspectSelectedWells = () => {
-  const wells = useWellInspectWells();
+  const { wells } = useWellInspectWells();
   const { selectedWellIds, selectedWellboreIds } = useWellInspectSelection();
 
   return useDeepMemo(

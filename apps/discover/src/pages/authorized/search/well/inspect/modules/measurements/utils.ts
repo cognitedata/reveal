@@ -122,7 +122,7 @@ export const mapMeasurementToPlotly = (
       chartData: [],
       errors: [
         {
-          value: `Cannot resolve measurement type ${column.measurementType}`,
+          message: `Cannot resolve measurement type ${column.measurementType}`,
         },
       ],
     };
@@ -263,7 +263,7 @@ export const mapCurveToPlotly = (
       chartData: [],
       errors: [
         {
-          value: `Line config for ${depthMeasurementColumn.columnExternalId} does not exist or data not found for curve`,
+          message: `Line config for ${depthMeasurementColumn.columnExternalId} does not exist or data not found for curve`,
         },
       ],
     };
@@ -291,7 +291,7 @@ export const mapCurveToPlotly = (
     );
     if (!convertedYValue) {
       errors.push({
-        value: `${yValue} of unit ${tvdUnit} could not converted to ${userPreferedDepthMeasurementUnit}`,
+        message: `${yValue} of unit ${tvdUnit} could not converted to ${userPreferedDepthMeasurementUnit}`,
       });
     }
 

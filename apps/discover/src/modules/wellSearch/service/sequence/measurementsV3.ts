@@ -62,7 +62,7 @@ export const getMeasurementsByWellboreIds = async (
             ...measurement,
             errors: [
               {
-                value: `Error fetching row data of '${measurement.source.sequenceExternalId}': ${errorString}`,
+                message: `Error fetching row data of '${measurement.source.sequenceExternalId}': ${errorString}`,
               },
             ],
           };

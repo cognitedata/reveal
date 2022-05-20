@@ -49,7 +49,7 @@ export const useWellInspectSelectionStats = () => {
 };
 
 export const useWellInspectIndeterminateWells = () => {
-  const wells = useWellInspectWells();
+  const { wells } = useWellInspectWells();
   return useSelector((state) =>
     getIndeterminateWells(wells, state.wellInspect.selectedWellboreIds)
   );

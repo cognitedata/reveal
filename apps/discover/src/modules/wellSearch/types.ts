@@ -171,6 +171,11 @@ export interface Well extends Omit<SDKWell, 'id' | 'wellbores'> {
   spudDate?: any;
 }
 
+export interface WellResult {
+  wells: Well[];
+  error?: Error;
+}
+
 export interface WellName {
   id: number;
   name: string;

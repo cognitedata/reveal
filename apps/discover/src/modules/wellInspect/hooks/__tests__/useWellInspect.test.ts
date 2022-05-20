@@ -50,16 +50,17 @@ describe('useWellInspect', () => {
     };
 
     it('should return an empty array when no wells', () => {
-      const inspectWells = getHookResult();
+      (useWellsByIds as jest.Mock).mockImplementation(() => ({ wells: [] }));
+      const { wells: inspectWells } = getHookResult();
       expect(inspectWells).toEqual([]);
     });
 
     it('should return an empty array for wellbores when they are undefined', () => {
       const wells = [getMockWell({ wellbores: undefined })];
       const mockStore = getMockedStoreWithWellInspect();
-      (useWellsByIds as jest.Mock).mockImplementation(() => wells);
+      (useWellsByIds as jest.Mock).mockImplementation(() => ({ wells }));
 
-      const inspectWells = getHookResult(mockStore);
+      const { wells: inspectWells } = getHookResult(mockStore);
       const expectedResult = wells.map((well) => ({
         ...well,
         wellbores: [],
@@ -73,16 +74,22 @@ describe('useWellInspect', () => {
         wellbores: [inspectWellbore],
       });
       const mockStore = getMockedStoreWithWellInspect();
-      (useWellsByIds as jest.Mock).mockImplementation(() => [inspectWell]);
+      (useWellsByIds as jest.Mock).mockImplementation(() => ({
+        wells: [inspectWell],
+      }));
 
       const inspectWells = getHookResult(mockStore);
 
-      expect(inspectWells).toEqual([
-        {
-          ...inspectWell,
-          wellbores: [{ ...inspectWellbore, ...inspectWellboreMetadata }],
-        },
-      ]);
+      expect(inspectWells).toEqual(
+        expect.objectContaining({
+          wells: [
+            {
+              ...inspectWell,
+              wellbores: [{ ...inspectWellbore, ...inspectWellboreMetadata }],
+            },
+          ],
+        })
+      );
     });
   });
 
@@ -104,7 +111,7 @@ describe('useWellInspect', () => {
       });
       const wells = [getMockWell({ id: '1234567890' }), inspectWell];
       const mockStore = getMockedStoreWithWellInspect();
-      (useWellsByIds as jest.Mock).mockImplementation(() => wells);
+      (useWellsByIds as jest.Mock).mockImplementation(() => ({ wells }));
 
       const selectedWells = getHookResult(mockStore);
       expect(selectedWells).toEqual([
@@ -136,7 +143,7 @@ describe('useWellInspect', () => {
         }),
       ];
       const mockStore = getMockedStoreWithWellInspect();
-      (useWellsByIds as jest.Mock).mockImplementation(() => wells);
+      (useWellsByIds as jest.Mock).mockImplementation(() => ({ wells }));
 
       const selectedWells = getHookResult(mockStore);
       expect(selectedWells).toEqual([
@@ -161,7 +168,7 @@ describe('useWellInspect', () => {
           [inspectWellboreId]: true,
         },
       });
-      (useWellsByIds as jest.Mock).mockImplementation(() => wells);
+      (useWellsByIds as jest.Mock).mockImplementation(() => ({ wells }));
 
       const selectedWells = getHookResult(mockStore, [filterWellboreId]);
       expect(selectedWells).toEqual([

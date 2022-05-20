@@ -13,15 +13,27 @@ export const useWellsByIds = (wellIds?: WellId) => {
 
   return useDeepMemo(() => {
     // If required wells are empty, return an empty array.
-    if (!wellIds || isEmpty(wellIds) || !fetchedWells) return [];
-
+    if (
+      !wellIds ||
+      isEmpty(wellIds) ||
+      !fetchedWells?.wells ||
+      fetchedWells.error
+    ) {
+      return {
+        wells: [],
+        error: fetchedWells?.error,
+      };
+    }
     // Filter cached data by required ids and return.
-    return getWellsOfWellIds(fetchedWells, wellIds);
+    return {
+      wells: getWellsOfWellIds(fetchedWells.wells, wellIds),
+      error: fetchedWells.error,
+    };
   }, [wellIds, fetchedWells]);
 };
 
 export const useWellById = (wellId?: WellId) => {
-  const wells = useWellsByIds(wellId ? [wellId] : []);
+  const { wells } = useWellsByIds(wellId ? [wellId] : []);
   return !wellId ? null : head(wells) || null;
 };
 

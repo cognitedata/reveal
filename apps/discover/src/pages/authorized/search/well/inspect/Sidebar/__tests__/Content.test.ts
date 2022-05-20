@@ -7,19 +7,21 @@ import { getMockedStore } from '__test-utils/store.utils';
 import { SidebarContent } from '../SidebarContent';
 
 jest.mock('modules/wellInspect/hooks/useWellInspect', () => ({
-  useWellInspectWells: () => [
-    {
-      id: '0',
-      name: 'WellA',
-      wellbores: [
-        {
-          id: '1',
-          name: 'WellboreA',
-          description: 'WellboreDescription',
-        },
-      ],
-    },
-  ],
+  useWellInspectWells: () => ({
+    wells: [
+      {
+        id: '0',
+        name: 'WellA',
+        wellbores: [
+          {
+            id: '1',
+            name: 'WellboreA',
+            description: 'WellboreDescription',
+          },
+        ],
+      },
+    ],
+  }),
 }));
 
 describe('Well Inspect Sidebar Content', () => {

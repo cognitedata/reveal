@@ -4,7 +4,7 @@ export type SearchInput = string;
 export type NumericRange = number[];
 export type MultiSelect = string[];
 export type SelectedMap = { [key: string]: boolean };
-export type Error = { value: string };
+export type Error = { message: string };
 export type Errors = { [key: string]: Error[] };
 
 export interface InspectTabsState {

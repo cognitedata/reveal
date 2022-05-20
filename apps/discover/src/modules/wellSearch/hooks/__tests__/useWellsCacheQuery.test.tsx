@@ -25,7 +25,7 @@ describe('useWellsCacheQuery', () => {
 
       return (
         <>
-          <div>{`data: ${data && data[0].id}`}</div>
+          <div>{`data: ${data && data.wells[0].id}`}</div>
           <div>{`isLoading: ${isLoading ? 'yes' : 'no'}`}</div>
         </>
       );
@@ -41,7 +41,7 @@ describe('useWellsCacheQuery', () => {
 
       return (
         <>
-          <div>{`data: ${data && data[0].id}`}</div>
+          <div>{`data: ${data && data.wells[0].id}`}</div>
           <div>{`isLoading: ${isLoading ? 'yes' : 'no'}`}</div>
         </>
       );

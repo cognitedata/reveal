@@ -11,7 +11,7 @@ import { useDeepMemo } from 'hooks/useDeep';
 
 import { ERROR_LOADING_WELLS_ERROR } from '../constants';
 import { getWellsByWellIdsv3 } from '../service';
-import { Well, WellId } from '../types';
+import { Well, WellId, WellResult } from '../types';
 
 import { useWellConfig } from './useWellConfig';
 
@@ -26,7 +26,7 @@ import { useWellConfig } from './useWellConfig';
  */
 export const useWellsCacheQuery = (
   requiredWellIds: WellId[] = []
-): UseQueryResult<Well[]> => {
+): UseQueryResult<WellResult> => {
   const queryClient = useQueryClient();
   const { data: wellConfig } = useWellConfig();
 
@@ -40,13 +40,16 @@ export const useWellsCacheQuery = (
 
   // console.log('Existing wells:', cachedWellIds);
 
-  return useQuery<Well[]>(
+  return useQuery<WellResult>(
     [WELL_QUERY_KEY.WELLS_ONE, requiredWellIds],
     async () => {
       const uncachedWellIds = difference(requiredWellIds, cachedWellIds);
       // console.log('uncachedWellIds', uncachedWellIds);
 
-      if (isEmpty(uncachedWellIds)) return cachedWells;
+      if (isEmpty(uncachedWellIds))
+        return {
+          wells: cachedWells,
+        };
 
       // console.log('Fetching wells:', uncachedWellIds);
       let uncachedWells: Well[];
@@ -55,9 +58,14 @@ export const useWellsCacheQuery = (
         uncachedWells = await getWellsByWellIdsv3(uncachedWellIds);
       } catch (error) {
         // console.log('Error loading wells:', error);
-        return handleServiceError<Well[]>(
+        return handleServiceError<WellResult>(
           error as PossibleError,
-          [],
+          {
+            wells: [],
+            error: {
+              message: 'Error fetching wells',
+            },
+          },
           ERROR_LOADING_WELLS_ERROR
         );
       }
@@ -67,16 +75,20 @@ export const useWellsCacheQuery = (
       // console.log('Updated cache:', updatedCache);
 
       queryClient.setQueryData(WELL_QUERY_KEY.WELLS_CACHE, updatedCache);
-      return updatedCache;
+      return {
+        wells: updatedCache,
+      };
     },
     {
       enabled: wellConfig?.disabled !== true,
       select: React.useCallback(
-        (wells) => {
-          return wells.filter((well: Well) =>
-            // @sdk-wells-v3
-            requiredWellIds.map(String).includes(String(well.id))
-          );
+        (result: WellResult) => {
+          return {
+            wells: result.wells.filter((well: Well) =>
+              requiredWellIds.map(String).includes(String(well.id))
+            ),
+            error: result.error,
+          };
         },
         [requiredWellIds]
       ),

@@ -31,7 +31,7 @@ import {
 import { WellboreErrorWarning } from './WellboreErrorWarning';
 
 export const SidebarContent: React.FC = () => {
-  const wells = useWellInspectWells();
+  const { wells } = useWellInspectWells();
   const errors = useOverviewPageErrors();
   const isColoredWellbores = useColoredWellbores();
   const { selectedWellIds, selectedWellboreIds } = useWellInspectSelection();

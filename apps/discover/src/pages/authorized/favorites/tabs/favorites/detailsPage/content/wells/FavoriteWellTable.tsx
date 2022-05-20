@@ -67,8 +67,8 @@ export const FavoriteWellsTable: React.FC<Props> = ({ wells, favoriteId }) => {
 
   // filter out the wellbores that are not in the favorite wells list of added wellbores
   useDeepEffect(() => {
-    if (data && wells) {
-      setWellsData(filterWellboresFromWellsData(data, wells));
+    if (data?.wells && wells) {
+      setWellsData(filterWellboresFromWellsData(data.wells, wells));
     }
   }, [data, wells]);
 
@@ -281,7 +281,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({ wells, favoriteId }) => {
     return <EmptyState emptyTitle={t(LOADING_TEXT)} />;
   }
 
-  if (data.length === 0) {
+  if (isEmpty(data.wells)) {
     return <EmptyState emptyTitle={t(FAVORITE_SET_NO_WELLS)} />;
   }
 

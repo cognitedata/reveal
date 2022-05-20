@@ -1,13 +1,15 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 
 import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
 
 import { Button, Icon, Menu, Tabs, Dropdown, Loader } from '@cognite/cogs.js';
 
 import { WELL_INSPECT_ID } from 'constants/metrics';
+import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useHorizontalScroll } from 'hooks/useHorizontalScroll';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
@@ -45,9 +47,19 @@ export const WellInspect: React.FC = () => {
 
   useInspectStateFromUrl();
 
-  const wells = useWellInspectWells();
+  const { wells, error } = useWellInspectWells();
   const wellboreIds = useWellInspectSelectedWellboreIds();
   const tabs = useTabs();
+
+  useEffect(() => {
+    if (isUndefined(error)) return;
+    /**
+     * If wells are not fetched and error is present, redirect to home page
+     */
+    if (isEmpty(wells) && !isUndefined(error)) {
+      history.push(navigation.SEARCH);
+    }
+  }, [error]);
 
   const [isOpen, setIsOpen] = useState(true);
   const [inspectSidebarWidth, setInspectSidebarWidth] = useState(
