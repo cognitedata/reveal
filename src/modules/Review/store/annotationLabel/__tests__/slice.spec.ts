@@ -11,7 +11,7 @@ import reducer, {
   setCollectionStatus,
   toggleCollectionVisibility,
 } from 'src/modules/Review/store/annotationLabel/slice';
-import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
+import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
@@ -522,7 +522,7 @@ describe('Test annotationLabel reducer', () => {
 
       test('Should not update state when annotations are from multiple files', () => {
         [
-          CreateAnnotations.fulfilled.type,
+          CreateAnnotationsV1.fulfilled.type,
           VisionJobUpdate.fulfilled.type,
           UpdateAnnotationsV1.fulfilled.type,
           RetrieveAnnotations.fulfilled.type,
@@ -542,7 +542,7 @@ describe('Test annotationLabel reducer', () => {
 
       test('Should populate keypoint collection related fields in state', () => {
         [
-          CreateAnnotations.fulfilled.type,
+          CreateAnnotationsV1.fulfilled.type,
           VisionJobUpdate.fulfilled.type,
           UpdateAnnotationsV1.fulfilled.type,
           RetrieveAnnotations.fulfilled.type,

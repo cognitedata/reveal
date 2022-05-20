@@ -2,7 +2,7 @@ import reducer, {
   initialState,
 } from 'src/modules/Common/store/annotationV1/slice';
 import { clearAnnotationState } from 'src/store/commonActions';
-import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
+import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
@@ -299,7 +299,7 @@ describe('Test annotationV1 reducer', () => {
   describe('Test populator actions', () => {
     // TODO: same test as for RetrieveAnnotations.fulfilled, should be removed after refactoring
     const actionTypes = [
-      CreateAnnotations.fulfilled.type,
+      CreateAnnotationsV1.fulfilled.type,
       VisionJobUpdate.fulfilled.type,
       UpdateAnnotationsV1.fulfilled.type,
     ];

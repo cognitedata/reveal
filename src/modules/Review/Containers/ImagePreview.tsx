@@ -32,7 +32,7 @@ import {
 import { AppDispatch } from 'src/store';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { RootState } from 'src/store/rootReducer';
-import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
+import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import { pushMetric } from 'src/utils/pushMetric';
@@ -113,7 +113,7 @@ export const ImagePreview = ({
       pushMetric('Vision.Review.CreateAnnotation.Line');
     }
     const res = await dispatch(
-      CreateAnnotations({ fileId: file.id, annotation })
+      CreateAnnotationsV1({ fileId: file.id, annotation })
     );
     const createdAnnotations = unwrapResult(res);
 

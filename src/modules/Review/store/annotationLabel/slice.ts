@@ -1,7 +1,7 @@
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
 import { Tool } from 'src/modules/Review/types';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
-import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
+import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
@@ -204,7 +204,7 @@ const annotationLabelSlice = createSlice({
     // Matchers
     builder.addMatcher(
       isAnyOf(
-        CreateAnnotations.fulfilled,
+        CreateAnnotationsV1.fulfilled,
         VisionJobUpdate.fulfilled,
         UpdateAnnotationsV1.fulfilled,
         RetrieveAnnotations.fulfilled

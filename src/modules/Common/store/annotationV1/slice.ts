@@ -1,5 +1,5 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
-import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
+import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
@@ -94,7 +94,7 @@ const annotationSliceV1 = createSlice({
     builder.addMatcher(
       // TODO: refactor -> same as RetrieveAnnotations.fulfilled
       isAnyOf(
-        CreateAnnotations.fulfilled,
+        CreateAnnotationsV1.fulfilled,
         VisionJobUpdate.fulfilled,
         UpdateAnnotationsV1.fulfilled
       ),
