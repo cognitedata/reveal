@@ -10,11 +10,14 @@ import { useDeepCallback, useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { SortBy } from 'pages/types';
 
 import { useNdsWellsTableColumns } from './columns/useNdsTableColumns';
-import { NdsEventsTable } from './NdsEventsTable';
+import { NdsWellboresTable } from './NdsWellboresTable';
 import { NdsWellsTableData, NdsTableProps } from './types';
 import { sortNdsEvents } from './utils';
 
-export const NdsWellsTable: React.FC<NdsTableProps> = ({ data }) => {
+export const NdsWellsTable: React.FC<NdsTableProps> = ({
+  data,
+  onClickView,
+}) => {
   const columns = useNdsWellsTableColumns();
 
   const [tableData, setTableData] = useState<NdsWellsTableData[]>([]);
@@ -77,7 +80,7 @@ export const NdsWellsTable: React.FC<NdsTableProps> = ({ data }) => {
   const renderRowSubComponent = useDeepCallback(
     ({ row }) => {
       const { data } = row.original;
-      return <NdsEventsTable data={data} />;
+      return <NdsWellboresTable data={data} onClickView={onClickView} />;
     },
     [tableData]
   );

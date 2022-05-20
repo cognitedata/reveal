@@ -13,7 +13,8 @@ export const getCommonColumns = (
     {
       Header: 'Risk Type',
       accessor: NDS_ACCESSORS.RISK_TYPE,
-      width: '140px',
+      width: '160px',
+      maxWidth: 'auto',
     },
     {
       Header: 'Severity',
@@ -50,12 +51,12 @@ export const getCommonColumns = (
     {
       Header: `TVD offset hole start (${unit})`,
       accessor: NDS_ACCESSORS.TVD_HOLE_START,
-      width: '140px',
+      width: '160px',
     },
     {
       Header: `TVD offset hole end (${unit})`,
       accessor: NDS_ACCESSORS.TVD_HOLE_END,
-      width: '140px',
+      width: '160px',
     },
   ];
 };

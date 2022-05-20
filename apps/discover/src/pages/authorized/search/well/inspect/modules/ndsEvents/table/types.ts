@@ -2,6 +2,7 @@ import { NdsView } from '../types';
 
 export interface NdsTableProps {
   data: NdsView[];
+  onClickView: (detailedViewNdsData: NdsView[]) => void;
 }
 
 export interface NdsWellsTableData {

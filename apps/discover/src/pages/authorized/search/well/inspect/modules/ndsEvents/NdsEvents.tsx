@@ -11,8 +11,10 @@ import { useDeepEffect } from 'hooks/useDeep';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 
+import { DetailedView } from './detailedView';
 import { NdsControlWrapper, WellboreTableWrapper } from './elements';
 import { NdsTable } from './table';
+import { NdsView } from './types';
 import { useNdsData } from './useNdsData';
 import { generateNdsTreemapData } from './utils/generateNdsTreemapData';
 
@@ -39,6 +41,8 @@ const NdsEvents: React.FC = () => {
   const [otherWellbores, setOtherWellbores] = useState<
     { name: string; id: string; numberOfEvents: number }[]
   >([]);
+
+  const [detailedViewNdsData, setDetailedViewNdsData] = useState<NdsView[]>();
 
   if (isEmpty(data)) {
     return <EmptyState isLoading={isLoading} />;
@@ -102,7 +106,16 @@ const NdsEvents: React.FC = () => {
           </Modal>
         </>
       )}
-      {selectedView === 'table' && <NdsTable data={data} />}
+
+      {selectedView === 'table' && (
+        <NdsTable data={data} onClickView={setDetailedViewNdsData} />
+      )}
+
+      <DetailedView
+        data={data}
+        detailedViewNdsData={detailedViewNdsData}
+        setDetailedViewNdsData={setDetailedViewNdsData}
+      />
     </>
   );
 };
