@@ -205,7 +205,6 @@ export class CadManager {
     }
     model.removeEventListener('update', this._markNeedsRedrawBound);
     this._cadModelUpdateHandler.removeModel(model);
-    model.dispose();
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
