@@ -52,7 +52,6 @@ import { IntersectInput, SupportedModelTypes, CogniteModelBase, LoadingState } f
 import { CogniteClient } from '@cognite/sdk';
 import log from '@reveal/logger';
 import { determineAntiAliasingMode, determineSsaoRenderParameters } from './renderOptionsHelpers';
-import { CogniteClientPlayground } from '@cognite/sdk-playground';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
