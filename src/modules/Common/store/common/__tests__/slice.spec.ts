@@ -3,14 +3,14 @@ import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
 
 describe('Test common reducer', () => {
   const fulfilledActionTypes = [
     SaveAnnotations.fulfilled.type,
     DeleteAnnotations.fulfilled.type,
-    UpdateAnnotations.fulfilled.type,
+    UpdateAnnotationsV1.fulfilled.type,
     UpdateFiles.fulfilled.type,
   ];
 
@@ -18,7 +18,7 @@ describe('Test common reducer', () => {
     SaveAnnotations.rejected.type,
     RetrieveAnnotations.rejected.type,
     DeleteAnnotations.rejected.type,
-    UpdateAnnotations.rejected.type,
+    UpdateAnnotationsV1.rejected.type,
     UpdateFiles.rejected.type,
     SaveAnnotationTemplates.rejected.type,
   ];

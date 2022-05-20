@@ -10,11 +10,11 @@ import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { getUnsavedAnnotation } from 'src/api/annotation/utils';
 
-export const CreateAnnotations = createAsyncThunk<
+export const CreateAnnotationsV1 = createAsyncThunk<
   VisionAnnotationV1[],
   { fileId: number; annotation: UnsavedAnnotation },
   ThunkConfig
->('CreateAnnotations', async (payload, { dispatch }) => {
+>('CreateAnnotationsV1', async (payload, { dispatch }) => {
   const { fileId, annotation } = payload;
   const unsavedAnnotations: UnsavedAnnotation[] = [
     getUnsavedAnnotation(
