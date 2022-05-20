@@ -11,7 +11,6 @@ import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
 
 /**
-
  * Enables {@see Cognite3DViewer} to perform a point to point measurement.
  * This can be achieved by selecting a point on the 3D Object and drag the pointer to
  * required point to get measurement of the distance.
