@@ -74,11 +74,7 @@ describe('ProjectConfigForm', () => {
         target: { value: JSON.stringify(mockFilters) },
       });
 
-      expect(props.onChange).toHaveBeenCalled();
-      const onChangeArgs = props.onChange.mock.calls[0];
-      expect(onChangeArgs[0]).toBe('map.layers');
-
-      expect(onChangeArgs[1]).toStrictEqual([
+      expect(props.onChange).toHaveBeenCalledWith('map.layers', [
         { ...mockConfigDataWithLayers.map.layers[0], filters: mockFilters },
         ...mockConfigDataWithLayers.map.layers.splice(1),
       ]);
@@ -107,11 +103,7 @@ describe('ProjectConfigForm', () => {
         target: { value: JSON.stringify(mockQuery) },
       });
 
-      expect(props.onChange).toHaveBeenCalled();
-      const onChangeArgs = props.onChange.mock.calls[0];
-      expect(onChangeArgs[0]).toBe('wells.trajectory.columns');
-
-      expect(onChangeArgs[1]).toStrictEqual([
+      expect(props.onChange).toHaveBeenCalledWith('wells.trajectory.columns', [
         {
           ...mockConfigDataWithQueries.wells.trajectory.columns[0],
           queries: mockQuery,

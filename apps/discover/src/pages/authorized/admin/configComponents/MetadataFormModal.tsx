@@ -3,15 +3,16 @@ import { useTranslation } from 'react-i18next';
 
 import { Modal } from 'components/Modal';
 
-import { CustomComponent, ConfigFormFields } from '../projectConfig';
+import { ConfigFormFields } from '../projectConfig';
 
 import { CustomForm } from './elements';
+import { FormModalProps } from './types';
 
-export const MetadataFormModal: CustomComponent = ({
+export const MetadataFormModal = ({
   onClose,
   onOk,
   metadataValue,
-}) => {
+}: FormModalProps) => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({});
 
@@ -21,11 +22,6 @@ export const MetadataFormModal: CustomComponent = ({
     []
   );
 
-  const handleOk = useCallback(() => {
-    onOk(formData);
-    onClose();
-  }, [formData, onClose]);
-
   return (
     <Modal
       thirdWidth
@@ -33,13 +29,15 @@ export const MetadataFormModal: CustomComponent = ({
       title={`New ${metadataValue?.label}`}
       onCancel={onClose}
       okText={t('Create')}
-      onOk={handleOk}
+      onOk={() => {
+        onOk(formData);
+      }}
       className="project-config-modal-form"
     >
       <CustomForm direction="column" gap={16}>
         <ConfigFormFields
           metadataValue={metadataValue}
-          value={formData}
+          values={formData}
           onChange={handleChange}
         />
       </CustomForm>

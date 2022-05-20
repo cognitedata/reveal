@@ -17,7 +17,8 @@ export const ConfigInputField: React.FC<{
   onChange: HandleConfigChange;
   value?: unknown;
   error?: string | boolean;
-}> = ({ field, onChange, value, changeKey, error }) => {
+  shouldDisable?: boolean;
+}> = ({ field, onChange, value, changeKey, error, shouldDisable }) => {
   const handleTextChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       onChange(changeKey, event.target.value);
@@ -86,6 +87,7 @@ export const ConfigInputField: React.FC<{
           value={isUndefined(value) ? '' : (value as string)}
           onChange={handleTextChange}
           data-testid={`${changeKey}-value`}
+          disabled={shouldDisable && field.disabled}
         />
       );
     case 'number':
@@ -101,6 +103,7 @@ export const ConfigInputField: React.FC<{
           value={value as number}
           onChange={handleNumberChange}
           data-testid={`${changeKey}-value`}
+          disabled={shouldDisable && field.disabled}
         />
       );
     case 'boolean':
@@ -132,6 +135,7 @@ export const ConfigInputField: React.FC<{
             onChange={handleJSONChange}
             onBlur={handleJSONBlur}
             data-testid={`${changeKey}-value`}
+            disabled={shouldDisable && field.disabled}
           />
         );
       }

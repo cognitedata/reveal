@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, PropsWithChildren } from 'react';
 
 export type PrimitiveValue = string | number | boolean;
 
@@ -11,6 +11,9 @@ export type Config = {
     | undefined;
 };
 
+// todo(PP-2934): remove this and use Config
+type ConfigValues = { [index: string | number]: unknown } | [];
+
 export type Metadata = {
   [key: string]: {
     children?: Metadata;
@@ -22,6 +25,9 @@ export type Metadata = {
     type?: 'boolean' | 'string' | 'number' | 'object' | 'array';
     renderAsJSON?: boolean;
     dataLabelIdentifier?: string;
+    hidden?: boolean;
+    editInline?: boolean;
+    disabled?: boolean;
   };
 };
 
@@ -35,34 +41,39 @@ export type HandleConfigUpdate = () => void;
 
 export type HandleConfigDelete = (key: string, value: unknown) => void;
 
-export type CustomComponent = FC<{
+export type CustomComponentProps = {
   onClose: () => void;
+  onChangeAndUpdate: HandleConfigChange;
+  values?: ConfigValues;
   type: string;
-  onOk: (datum: unknown) => void;
+  valuePath: string;
   metadataValue?: MetadataValue;
-}>;
+  value?: unknown;
+  mode: 'EDIT' | 'NEW';
+};
 
-export type CustomDeleteComponent = FC<{
+export type CustomDeleteProps = {
   onClose: () => void;
-  onOk: () => void;
+  onDelete: () => void;
   type: string;
   label?: string;
   id?: string;
-}>;
+  featureTypeId?: string;
+};
 
 export type ConfigFormProps = {
   metadataValue?: MetadataValue;
   onChange: HandleConfigChange;
-  onDelete: HandleConfigDelete;
+  onUpdate: HandleConfigUpdate;
+  onChangeAndUpdate: HandleConfigChange;
   valuePath: string;
   metadataPath: string;
-  value?: Record<string, unknown> | [];
-  renderCustomComponent: CustomComponent;
-  renderDeleteComponent: CustomDeleteComponent;
+  values?: ConfigValues;
+  renderCustomComponent: FC<PropsWithChildren<CustomComponentProps>>;
+  renderDeleteComponent: FC<PropsWithChildren<CustomDeleteProps>>;
   hasChanges: boolean;
 };
 
 export type RightPanelProps = ConfigFormProps & {
-  onUpdate: HandleConfigUpdate;
   onReset: () => void;
 };

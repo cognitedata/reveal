@@ -1,4 +1,4 @@
-import { FeatureCollection } from '@turf/helpers';
+import { FeatureCollection } from 'geojson';
 import isFunction from 'lodash/isFunction';
 import { fetchGet } from 'utils/fetch';
 

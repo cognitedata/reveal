@@ -1,2 +1,2 @@
-export { customConfigComponent } from './customConfigComponent';
-export { customDeleteComponent } from './customDeleteComponent';
+export { CustomConfigComponent } from './CustomConfigComponent';
+export { CustomDeleteComponent } from './CustomDeleteComponent';

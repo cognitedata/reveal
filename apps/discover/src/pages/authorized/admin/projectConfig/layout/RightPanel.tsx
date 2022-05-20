@@ -20,10 +20,10 @@ export const RightPanel = ({
   metadataPath,
   metadataValue,
   valuePath,
-  value,
+  values,
   onReset,
   onChange,
-  onDelete,
+  onChangeAndUpdate,
   onUpdate,
   hasChanges,
   renderCustomComponent,
@@ -38,16 +38,17 @@ export const RightPanel = ({
     <RightPanelContainer direction="column" justifyContent="space-between">
       <FormContainer direction="column" gap={24}>
         <Title level={2}>
-          {get(value, metadataValue?.dataLabelIdentifier || '') ??
+          {get(values, metadataValue?.dataLabelIdentifier || '') ??
             metadataValue?.label}
         </Title>
         <ConfigForm
           metadataPath={metadataPath}
           metadataValue={metadataValue}
-          value={value}
+          values={values}
           valuePath={valuePath}
           onChange={onChange}
-          onDelete={onDelete}
+          onChangeAndUpdate={onChangeAndUpdate}
+          onUpdate={onUpdate}
           hasDataAsChildren={hasDataAsChildren}
           renderCustomComponent={renderCustomComponent}
           renderDeleteComponent={renderDeleteComponent}

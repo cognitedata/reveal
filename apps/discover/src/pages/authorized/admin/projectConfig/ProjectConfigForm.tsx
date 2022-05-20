@@ -10,11 +10,10 @@ import { useSelectedPath } from './hooks/useSelectedPath';
 import { RightPanel, LeftPanel } from './layout';
 import {
   HandleConfigChange,
-  HandleConfigDelete,
   HandleConfigUpdate,
   Metadata,
-  CustomComponent,
-  CustomDeleteComponent,
+  CustomComponentProps,
+  CustomDeleteProps,
 } from './types';
 import { adaptSelectedPathToMetadataPath } from './utils/adaptSelectedPathToMetadataPath';
 import { getArrayChangeDetail } from './utils/getArrayChangeDetail';
@@ -23,18 +22,18 @@ export interface Props {
   config: ProjectConfig;
   onChange: HandleConfigChange;
   onUpdate: HandleConfigUpdate;
-  onDelete: HandleConfigDelete;
   onReset: () => void;
   hasChanges: boolean;
   metadata: Metadata;
-  renderCustomComponent: CustomComponent;
-  renderDeleteComponent: CustomDeleteComponent;
+  renderCustomComponent: React.FC<
+    React.PropsWithChildren<CustomComponentProps>
+  >;
+  renderDeleteComponent: React.FC<React.PropsWithChildren<CustomDeleteProps>>;
 }
 
 export const ProjectConfigForm: React.FC<Props> = ({
   onChange,
   onUpdate,
-  onDelete,
   onReset,
   hasChanges,
   config,
@@ -43,6 +42,7 @@ export const ProjectConfigForm: React.FC<Props> = ({
   renderDeleteComponent,
 }) => {
   const { selectedPath, setSelectedPath } = useSelectedPath(metadata);
+  const shouldUpdate = React.useRef<boolean>(false);
 
   const metadataPath = React.useMemo(
     () => adaptSelectedPathToMetadataPath(selectedPath),
@@ -73,6 +73,21 @@ export const ProjectConfigForm: React.FC<Props> = ({
     [onChange, hasArrayChange, arrayChangePath, selectedPath, config]
   );
 
+  const handleChangeAndUpdate = React.useCallback(
+    (key: string, value: unknown) => {
+      shouldUpdate.current = true;
+      handleChange(key, value);
+    },
+    [handleChange]
+  );
+
+  React.useEffect(() => {
+    if (shouldUpdate.current) {
+      shouldUpdate.current = false;
+      onUpdate();
+    }
+  }, [config, onUpdate]);
+
   return (
     <FullContainer>
       <LeftPanel
@@ -84,15 +99,15 @@ export const ProjectConfigForm: React.FC<Props> = ({
       <RightPanel
         metadataValue={selectedMetadata}
         onChange={handleChange}
+        onChangeAndUpdate={handleChangeAndUpdate}
         onUpdate={onUpdate}
         onReset={onReset}
         hasChanges={hasChanges}
-        value={get(config, valuePath)}
+        values={get(config, valuePath)}
         valuePath={valuePath}
         metadataPath={metadataPath}
         renderCustomComponent={renderCustomComponent}
         renderDeleteComponent={renderDeleteComponent}
-        onDelete={onDelete}
       />
     </FullContainer>
   );

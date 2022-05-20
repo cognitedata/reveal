@@ -11,10 +11,13 @@ import {
 } from './constants';
 
 export const geospatial = {
-  createLayer: (featureCollection: FeatureCollection, layerId: string) => {
+  createLayer: (
+    featureCollection: FeatureCollection,
+    featureTypeId: string
+  ) => {
     const { featureType, featureItems } = adaptGeoJSONToGeospatial(
       featureCollection,
-      layerId
+      featureTypeId
     );
 
     return getCogniteSDKClient()
@@ -30,28 +33,31 @@ export const geospatial = {
             featureItems
           )
           .catch((error) => {
-            geospatial.deleteFeatureType(layerId);
+            geospatial.deleteFeatureType(featureTypeId);
             log(error?.message);
             throw new Error(FEATURE_ERROR);
           });
       });
   },
-  getGeoJSON: (id: string) => {
+  getGeoJSON: (featureTypeId: string) => {
     return getCogniteSDKClient()
-      .geospatial.feature.search(`${DISCOVER_FEATURE_TYPE_PREFIX}${id}`, {
-        output: { geometryFormat: 'GEOJSON' },
-      })
+      .geospatial.feature.search(
+        `${DISCOVER_FEATURE_TYPE_PREFIX}${featureTypeId}`,
+        {
+          output: { geometryFormat: 'GEOJSON' },
+        }
+      )
       .then((features) => adaptGeospatialToGeoJSON(features));
   },
-  deleteFeatureType: (id: string, params = { recursive: true }) => {
+  deleteFeatureType: (featureTypeId: string, params = { recursive: true }) => {
     return getCogniteSDKClient().geospatial.featureType.delete(
-      [{ externalId: `${DISCOVER_FEATURE_TYPE_PREFIX}${id}` }],
+      [{ externalId: `${DISCOVER_FEATURE_TYPE_PREFIX}${featureTypeId}` }],
       params
     );
   },
-  getFeatureType: (id: string) => {
+  getFeatureType: (featureTypeId: string) => {
     return getCogniteSDKClient().geospatial.featureType.retrieve([
-      { externalId: `${DISCOVER_FEATURE_TYPE_PREFIX}${id}` },
+      { externalId: `${DISCOVER_FEATURE_TYPE_PREFIX}${featureTypeId}` },
     ]);
   },
 };

@@ -12,10 +12,11 @@ type Props = ConfigFormProps & {
 export const ConfigForm: React.FC<Props> = ({
   metadataPath,
   metadataValue,
-  value,
+  values,
   valuePath,
   onChange,
-  onDelete,
+  onChangeAndUpdate,
+  onUpdate,
   hasDataAsChildren,
   renderCustomComponent,
   renderDeleteComponent,
@@ -28,19 +29,21 @@ export const ConfigForm: React.FC<Props> = ({
           renderCustomComponent={renderCustomComponent}
           renderDeleteComponent={renderDeleteComponent}
           metadataValue={metadataValue}
-          value={value}
+          values={values}
           onChange={onChange}
+          onChangeAndUpdate={onChangeAndUpdate}
+          onUpdate={onUpdate}
           valuePath={valuePath}
           metadataPath={metadataPath}
           hasChanges={hasChanges}
-          onDelete={onDelete}
         />
       ) : (
         <ConfigFormFields
           metadataValue={metadataValue}
-          value={value}
+          values={values}
           valuePath={valuePath}
           onChange={onChange}
+          shouldDisable
         />
       )}
     </>

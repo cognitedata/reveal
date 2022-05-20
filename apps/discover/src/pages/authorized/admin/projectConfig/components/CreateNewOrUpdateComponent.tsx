@@ -2,35 +2,34 @@ import React, { Dispatch, SetStateAction } from 'react';
 
 import { ConfigFormProps } from '../types';
 
-type Props = Omit<
-  ConfigFormProps,
-  'hasChanges' | 'onDelete' | 'renderDeleteComponent'
-> & {
+type Props = Omit<ConfigFormProps, 'hasChanges' | 'renderDeleteComponent'> & {
   opened: boolean;
   setOpened: Dispatch<SetStateAction<boolean>>;
+  value?: unknown;
+  mode: 'EDIT' | 'NEW';
 };
 
-export const CreateNewComponent: React.FC<Props> = ({
+export const CreateNewOrUpdateComponent: React.FC<Props> = ({
   opened,
   renderCustomComponent,
   setOpened,
-  value,
+  values,
   valuePath,
   metadataPath,
-  onChange,
+  onChangeAndUpdate,
   metadataValue,
+  value,
+  mode,
 }) =>
   opened
     ? renderCustomComponent({
         onClose: () => setOpened(false),
-        onOk: (datum: unknown) => {
-          if (value) {
-            onChange(valuePath, [...(value as []), datum]);
-          } else {
-            onChange(valuePath, [datum]);
-          }
-        },
+        onChangeAndUpdate,
         type: metadataPath,
         metadataValue,
+        value,
+        mode,
+        valuePath,
+        values,
       })
     : null;

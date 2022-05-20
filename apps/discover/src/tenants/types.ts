@@ -2,7 +2,7 @@
 
 // Todo(PP-678): refactor camelcase ids eslint disable while refactoring config structure
 
-import { FeatureCollection } from '@turf/helpers';
+import { FeatureCollection } from 'geojson';
 import type {
   MapboxOptions,
   AnyLayer,

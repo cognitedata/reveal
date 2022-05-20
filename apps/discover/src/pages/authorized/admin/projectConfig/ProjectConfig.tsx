@@ -15,8 +15,8 @@ import EmptyState from 'components/EmptyState';
 import { showErrorMessage } from 'components/Toast';
 
 import {
-  customConfigComponent,
-  customDeleteComponent,
+  CustomConfigComponent,
+  CustomDeleteComponent,
 } from '../configComponents';
 
 import { ProjectConfigForm } from './ProjectConfigForm';
@@ -54,9 +54,10 @@ export const ProjectConfig = () => {
   const handleUpdate = useCallback(async () => {
     setHasChanges(false);
     try {
-      await updateConfig(configChanges);
+      return updateConfig(configChanges);
     } catch (e) {
       showErrorMessage('Could not update config.');
+      return Promise.reject(new Error('Could not update config.'));
     }
   }, [updateConfig, configChanges, setHasChanges]);
 
@@ -64,18 +65,6 @@ export const ProjectConfig = () => {
     setConfigChanges((state) => Map(state).setIn(key.split('.'), value).toJS());
     setHasChanges(true);
   }, []);
-
-  const handleDelete = useCallback(
-    async (key: string, value: unknown) => {
-      const changes = Map({}).setIn(key.split('.'), value).toJS();
-      try {
-        await updateConfig(changes);
-      } catch (e) {
-        showErrorMessage('Could not delete entity.');
-      }
-    },
-    [updateConfig]
-  );
 
   if (isLoading || isMetadataLoading) {
     return (
@@ -95,11 +84,10 @@ export const ProjectConfig = () => {
       config={config}
       onChange={handleChange}
       onUpdate={handleUpdate}
-      onDelete={handleDelete}
       onReset={handleReset}
       hasChanges={hasChanges}
-      renderCustomComponent={customConfigComponent}
-      renderDeleteComponent={customDeleteComponent}
+      renderCustomComponent={CustomConfigComponent}
+      renderDeleteComponent={CustomDeleteComponent}
     />
   );
 };
