@@ -24,7 +24,8 @@ import {
   worldToViewportCoordinates,
   PointerEventDelegate,
   SceneRenderedDelegate,
-  DisposedDelegate
+  DisposedDelegate,
+  SceneHandler
 } from '@reveal/utilities';
 
 import { MetricsLogger } from '@reveal/metrics';
@@ -103,7 +104,7 @@ export class Cognite3DViewer {
   private readonly _dataSource: DataSource;
 
   private readonly camera: THREE.PerspectiveCamera;
-  private readonly scene: THREE.Scene;
+  private readonly _sceneHandler: SceneHandler;
   private readonly _cameraManager: CameraManager;
   private readonly _subscription = new Subscription();
   private readonly _revealManagerHelper: RevealManagerHelper;
@@ -215,8 +216,7 @@ export class Cognite3DViewer {
     this.spinner.placement = options.loadingIndicatorStyle?.placement ?? 'topLeft';
     this.spinner.opacity = Math.max(0.2, options.loadingIndicatorStyle?.opacity ?? 1.0);
 
-    this.scene = new THREE.Scene();
-    this.scene.autoUpdate = false;
+    this._sceneHandler = new SceneHandler();
 
     this._renderables = { cadModels: [], customObjects: this._extraObjects };
 
@@ -237,7 +237,7 @@ export class Cognite3DViewer {
       this._cdfSdkClient = undefined;
       this._revealManagerHelper = RevealManagerHelper.createLocalHelper(
         this._renderer,
-        this.scene,
+        this._sceneHandler.scene,
         this._renderables,
         revealOptions
       );
@@ -245,7 +245,7 @@ export class Cognite3DViewer {
       this._dataSource = options.customDataSource;
       this._revealManagerHelper = RevealManagerHelper.createCustomDataSourceHelper(
         this._renderer,
-        this.scene,
+        this._sceneHandler.scene,
         this._renderables,
         revealOptions,
         options.customDataSource
@@ -256,7 +256,7 @@ export class Cognite3DViewer {
       this._cdfSdkClient = options.sdk;
       this._revealManagerHelper = RevealManagerHelper.createCdfHelper(
         this._renderer,
-        this.scene,
+        this._sceneHandler.scene,
         this._renderables,
         revealOptions,
         options.sdk
@@ -269,7 +269,7 @@ export class Cognite3DViewer {
     this._pickingHandler = new PickingHandler(
       this._renderer,
       this._revealManagerHelper.revealManager.materialManager,
-      this.scene,
+      this._sceneHandler.scene,
       this._renderables.cadModels
     );
 
@@ -582,7 +582,7 @@ export class Cognite3DViewer {
     const model3d = new Cognite3DModel(modelId, revisionId, cadNode, nodesApiClient);
     this._models.push(model3d);
     this._renderables.cadModels.push({ model: model3d, modelIdentifier: cadNode.cadModelIdentifier });
-    this.scene.add(model3d);
+    this._sceneHandler.addCadModel(model3d, cadNode.cadModelIdentifier);
 
     return model3d;
   }
@@ -612,7 +612,7 @@ export class Cognite3DViewer {
     const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this._models.push(model);
 
-    this.scene.add(model);
+    this._sceneHandler.addCustomObject(model);
     this._extraObjects.push(model);
 
     return model;
@@ -634,7 +634,9 @@ export class Cognite3DViewer {
     switch (model.type) {
       case 'cad':
         const cadModel = model as Cognite3DModel;
-        this.scene.remove(cadModel);
+        const cadModelIdx = this._renderables.cadModels.map(p => p.model).indexOf(cadModel);
+        this._renderables.cadModels.splice(cadModelIdx, 1);
+        this._sceneHandler.removeCadModel(cadModel);
         model.dispose();
         this.revealManager.removeModel(model.type, cadModel.cadNode);
 
@@ -646,7 +648,9 @@ export class Cognite3DViewer {
 
       case 'pointcloud':
         const pcModel = model as CognitePointCloudModel;
-        this.scene.remove(pcModel);
+        const pointCloudIdx = this._renderables.customObjects.indexOf(pcModel);
+        this._renderables.customObjects.splice(pointCloudIdx, 1);
+        this._sceneHandler.removeCustomObject(pcModel);
         this.revealManager.removeModel(model.type, pcModel.pointCloudNode);
         break;
 
@@ -721,7 +725,7 @@ export class Cognite3DViewer {
     }
     object.updateMatrixWorld(true);
     this._extraObjects.push(object);
-    this.scene.add(object);
+    this._sceneHandler.addCustomObject(object);
     this.renderController.redraw();
     this.recalculateBoundingBox();
   }
@@ -740,7 +744,7 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return;
     }
-    this.scene.remove(object);
+    this._sceneHandler.removeCustomObject(object);
     const index = this._extraObjects.indexOf(object);
     if (index >= 0) {
       this._extraObjects.splice(index, 1);
@@ -818,7 +822,7 @@ export class Cognite3DViewer {
    * @returns The THREE.Scene used for rendering.
    */
   getScene(): THREE.Scene {
-    return this.scene;
+    return this._sceneHandler.scene;
   }
 
   /**
@@ -981,12 +985,12 @@ export class Cognite3DViewer {
     adjustCamera(screenshotCamera, width, height);
 
     this.renderer.setSize(width, height);
-    this.renderer.render(this.scene, screenshotCamera);
+    this.renderer.render(this._sceneHandler.scene, screenshotCamera);
     this.revealManager.render(screenshotCamera);
     const url = this.renderer.domElement.toDataURL();
 
     this.renderer.setSize(originalWidth, originalHeight);
-    this.renderer.render(this.scene, this.camera);
+    this.renderer.render(this._sceneHandler.scene, this.camera);
 
     this.requestRedraw();
 

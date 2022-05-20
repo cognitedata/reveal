@@ -42,3 +42,5 @@ export { calculateVolumeOfMesh } from './src/calculateVolumeOfMesh';
 export { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from './src/worldToViewport';
 
 export { DeferredPromise } from './src/DeferredPromise';
+
+export { SceneHandler } from './src/SceneHandler';
