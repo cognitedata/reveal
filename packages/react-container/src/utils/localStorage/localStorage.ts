@@ -40,7 +40,11 @@ export const init = ({ tenant, appName }: InitOptions) => {
 
 export const ASSET_ID_STORAGE_KEY = 'selected-asset-id';
 
+/**
+ * @deprecated - use KEY_LAST_PROJECT
+ */
 export const KEY_LAST_TENANT = 'last_CDF_project';
+export const KEY_LAST_PROJECT = 'last_CDF_project';
 
 /** Create a key useful to store things at the root level. */
 const createRootKey = (key: string) => `${BASE_KEY}/${key}`;

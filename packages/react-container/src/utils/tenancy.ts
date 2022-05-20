@@ -34,6 +34,9 @@ export const getLastTenant = (): string =>
 export const setLastTenant = (tenant: string) =>
   storage.setRootItem(KEY_LAST_TENANT, tenant);
 
+/**
+ * @deprecated - use getProjectInfo
+ */
 export const getTenantInfo = (location?: Location) => {
   const possibleTenant = getTenancy(location);
   const sanitizedTenant = sanitizeTenant(possibleTenant);

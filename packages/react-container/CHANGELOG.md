@@ -1,3 +1,9 @@
+## 5.0.6 May 20 2022
+
+- deprecate `getTenantInfo` in favor of `getProjectInfo`
+
+note: this is only a naming change, functionality is not affected
+
 ## 5.0.5 May 16 2022
 
 - react-project-selector version bump
