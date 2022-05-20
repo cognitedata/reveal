@@ -34,7 +34,7 @@ import {
 import { useHotkeys } from 'react-hotkeys-hook';
 import { selectCategory } from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
 import { HotKeys } from 'src/constants/HotKeys';
-import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
+import { AnnotationStatusChangeV1 } from 'src/store/thunks/Annotation/AnnotationStatusChangeV1';
 import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { Modal } from 'antd';
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
@@ -185,7 +185,7 @@ export const AnnotationDetailPanelHotKeys = ({
         }
         if (annotationId) {
           dispatch(
-            AnnotationStatusChange({
+            AnnotationStatusChangeV1({
               id: +annotationId,
               status: status
                 ? AnnotationStatus.Verified

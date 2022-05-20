@@ -5,7 +5,7 @@ import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/R
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
+import { AnnotationStatusChangeV1 } from 'src/store/thunks/Annotation/AnnotationStatusChangeV1';
 import { UpdateFiles } from './UpdateFiles';
 
 export const getUpdatedValue = ({
@@ -89,7 +89,7 @@ export const updateBulk = createAsyncThunk<
       await Promise.all(
         annotationIds.map((id) => {
           return dispatch(
-            AnnotationStatusChange({
+            AnnotationStatusChangeV1({
               id,
               status,
             })

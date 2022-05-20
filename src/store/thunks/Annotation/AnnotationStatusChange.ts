@@ -1,49 +1,52 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
 import { VisionAsset, VisionFile } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
+import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
-import {
-  AnnotationStatus,
-  VisionAnnotationV1,
-} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { ToastUtils } from 'src/utils/ToastUtils';
+import { Status } from 'src/api/annotation/types';
+import { InternalId } from '@cognite/sdk';
+import { isImageAssetLinkData } from 'src/modules/Common/types/typeGuards';
+
+/**
+ * ## Example
+ * ```typescript
+ *   dispatch(AnnotationStatusChange({ id: 1, status: Status.Suggested }));
+ * ```
+ */
 
 export const AnnotationStatusChange = createAsyncThunk<
   void,
-  { id: number; status: AnnotationStatus },
+  { id: number; status: Status },
   ThunkConfig
 >('AnnotationStatusChange', async (payload, { getState, dispatch }) => {
-  const updateTagAnnotationAndFileAssetLinks = async (
-    file: VisionFile,
-    updatedAnnotation: VisionAnnotationV1
-  ) => {
-    // eslint-disable-next-line no-nested-ternary
-    const assetsToFetch = updatedAnnotation.linkedResourceId
-      ? { id: updatedAnnotation.linkedResourceId }
-      : updatedAnnotation.linkedResourceExternalId
-      ? { externalId: updatedAnnotation.linkedResourceExternalId }
-      : { externalId: updatedAnnotation.text };
-
-    const assetResponse = await dispatch(fetchAssets([assetsToFetch]));
+  const updateFileLinkedAssets = async ({
+    visionFile,
+    status,
+    assetRefId,
+  }: {
+    visionFile: VisionFile;
+    status: Status;
+    assetRefId: InternalId;
+  }) => {
+    const assetResponse = await dispatch(fetchAssets([assetRefId]));
     const assets = unwrapResult(assetResponse);
     const asset = assets && assets.length ? assets[0] : null; // get the first (and only) asset
 
+    // just return if asset does not exist in CDF
     if (!asset) {
-      // preempt if asset is empty
       return;
     }
 
     if (
-      updatedAnnotation.status === AnnotationStatus.Verified &&
-      !fileIsLinkedToAsset(file, asset) // annotation is verified and file is not linked to asset
+      status === Status.Approved &&
+      !fileIsLinkedToAsset(visionFile, asset) // annotation is verified and file is not linked to asset
     ) {
       dispatch(
         UpdateFiles([
           {
-            id: Number(file.id),
+            id: Number(visionFile.id),
             update: {
               assetIds: {
                 add: [asset.id],
@@ -53,8 +56,8 @@ export const AnnotationStatusChange = createAsyncThunk<
         ])
       );
     } else if (
-      unSavedAnnotation.status === AnnotationStatus.Rejected &&
-      fileIsLinkedToAsset(file, asset) // annotation is rejected and file linked to asset
+      status === Status.Rejected &&
+      fileIsLinkedToAsset(visionFile, asset) // annotation is rejected and file linked to asset
     ) {
       const removeAssetIds = async (fileId: number, assetId: number) => {
         await dispatch(
@@ -74,27 +77,32 @@ export const AnnotationStatusChange = createAsyncThunk<
         'Rejecting detected asset tag',
         'Do you want to remove the link between the file and the asset as well?',
         () => {
-          removeAssetIds(file.id, asset.id);
+          removeAssetIds(visionFile.id, asset.id);
         },
         'Remove asset link'
       );
     }
   };
 
-  const annotationState =
-    getState().annotationV1Reducer.annotations.byId[payload.id];
-  const file =
-    getState().fileReducer.files.byId[annotationState.annotatedResourceId];
+  const visionAnnotation =
+    getState().annotationReducer.annotations.byId[payload.id];
+  const visionFile =
+    getState().fileReducer.files.byId[visionAnnotation.annotatedResourceId];
 
-  const unSavedAnnotation = {
-    ...annotationState,
-    status: payload.status,
-  };
+  dispatch(
+    UpdateAnnotations([
+      { id: payload.id, update: { status: { set: payload.status } } },
+    ])
+  );
 
-  dispatch(UpdateAnnotationsV1([unSavedAnnotation]));
-
-  if (unSavedAnnotation.modelType === VisionDetectionModelType.TagDetection) {
-    await updateTagAnnotationAndFileAssetLinks(file, unSavedAnnotation); // update tag annotations and asset links in file
+  // if annotation represents an asset link, also update the file's linked assets
+  if (isImageAssetLinkData(visionAnnotation)) {
+    const assetRefId = { id: visionAnnotation.assetRef.id };
+    await updateFileLinkedAssets({
+      visionFile,
+      status: payload.status,
+      assetRefId,
+    });
   }
 });
 
