@@ -35,33 +35,27 @@ describe(MeasurementTool.name, () => {
     measurementTool = new MeasurementTool(viewer);
   });
 
-  test('Add Point to point distance measurement', () => {
+  test('Enter into point to point distance measurement mode', () => {
     const onSetEventHandlingSpyOn = jest.spyOn(viewer, 'on');
-    measurementTool.add();
+    measurementTool.enterMeasurementMode();
 
     expect(onSetEventHandlingSpyOn).toHaveBeenCalled();
   });
 
-  test('Remove distance memasurement', () => {
+  test('Exit measurement mode', () => {
     const onRemoveEventHandlingSpyOn = jest.spyOn(viewer, 'off');
-    measurementTool.remove();
+    measurementTool.exitMeasurementMode();
 
     expect(onRemoveEventHandlingSpyOn).toHaveBeenCalled();
   });
 
-  test('update measure line color', () => {
-    const lineColorUpdateSpyOn = jest.spyOn(measurementTool, 'updateLineColor');
-    measurementTool.updateLineColor(0xff0000);
+  test('Set measurement line width and color', () => {
+    const setLineOptionsSpyOn = jest.spyOn(measurementTool, 'setLineOptions');
+    const lineOptions = { lineWidth: 1.0, color: 0xff0000 };
+    measurementTool.setLineOptions(lineOptions);
 
-    expect(lineColorUpdateSpyOn).toBeCalled();
+    expect(setLineOptionsSpyOn).toBeCalled();
     expect((measurementTool as any)._lineOptions.color).toBe(0xff0000);
-  });
-
-  test('update measure line width', () => {
-    const lineWidthUpdateSpyOn = jest.spyOn(measurementTool, 'updateLineWidth');
-    measurementTool.updateLineWidth(1.0);
-
-    expect(lineWidthUpdateSpyOn).toBeCalled();
     expect((measurementTool as any)._lineOptions.lineWidth).toBe(1.0);
   });
 

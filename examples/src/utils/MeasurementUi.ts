@@ -9,8 +9,8 @@ export class MeasurementUi {
   private _guiController: any[];
 
   private state = {
-    linewidth: 0.002,
-    color: '#00FFFF'
+    lineWidth: 0.002,
+    color: 0x00FFFF
   };
 
   private pointToPointMeasurement = {
@@ -35,7 +35,7 @@ export class MeasurementUi {
 
     if (enable && this._guiController.length === 0) {
       //add the point to point measurement distance
-      this._measurementTool.add();
+      this._measurementTool.enterMeasurementMode();
       this.addGUI();
     } else if(!enable && this._guiController.length > 0) {
       this.removeGUI();
@@ -43,13 +43,13 @@ export class MeasurementUi {
   }
 
   private addGUI() {
-    this._guiController.push(this._gui.add(this.state, 'linewidth').name('Line Width').onFinishChange(linewidth => {
-      this._measurementTool.updateLineWidth(linewidth);
-      this.state.linewidth = linewidth;
+    this._guiController.push(this._gui.add(this.state, 'lineWidth').name('Line Width').onFinishChange(linewidth => {
+      this.state.lineWidth = linewidth;
+      this.setMeasurementLineOptions();
     }));
     this._guiController.push(this._gui.addColor(this.state, 'color').name('Line Color').onFinishChange(color => {
-      this._measurementTool.updateLineColor(color);
       this.state.color = color;
+      this.setMeasurementLineOptions();
     }));
   }
 
@@ -58,6 +58,10 @@ export class MeasurementUi {
       guiController.remove();
     });
     this._guiController.splice(0, this._guiController.length)
-    this._measurementTool.remove();
+    this._measurementTool.exitMeasurementMode();
+  }
+
+  private setMeasurementLineOptions() {
+    this._measurementTool.setLineOptions(this.state);
   }
 }

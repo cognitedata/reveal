@@ -1263,10 +1263,10 @@
   version "0.0.0"
   uid ""
 
-"@cognite/sdk-core@^4.1.1":
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.1.1.tgz#c0793c68be3c965707a1b7948669f9401885951e"
-  integrity sha512-4/7f0xgIVN/tJXD+0fyEu0mOZeAg0tRiYucx3IngLT9jXAjMuk1SeJbrQPWk3lRyuNj8BkW/2SlUtsvGnleljQ==
+"@cognite/sdk-core@^4.1.3":
+  version "4.1.4"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.1.4.tgz#0c54efe3ddad0aa43c412cdfa60631f29d194202"
+  integrity sha512-sqW/WlnuzAOlQDhiIECkiH9JzQGw0t45Bomq6eSFLoxv9ng3zkwHZwlNt7u1kucqqkp8oDzUFA2F00TGlxUWqw==
   dependencies:
     cross-fetch "^3.0.4"
     is-buffer "^2.0.5"

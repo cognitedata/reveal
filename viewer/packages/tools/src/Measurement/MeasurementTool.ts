@@ -5,14 +5,33 @@
 import { Cognite3DViewer, Intersection } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import * as THREE from 'three';
-import { MeasurementLabel } from './MeasurementLabel';
+import { MeasurementLabels } from './MeasurementLabels';
 import { MeasurementLineOptions, MeasurementOptions, MeasurementLabelUpdateDelegate } from './types';
 import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
 
+/**
+
+ * Enables {@see Cognite3DViewer} to perform a point to point measurement.
+ * This can be achieved by selecting a point on the 3D Object and drag the pointer to
+ * required point to get measurement of the distance.
+ * The tools default measurement is in "Meters" as supported in Reveal, but it also provides
+ * user to customise the measuring units based on their convinience with the callback.
+ *
+ * @example
+ * ```js
+ * const measurementTool = new MeasurementTool(viewer);
+ * measurementTool.enterMeasurementMode();
+ * // ...
+ * measurementTool.exitMeasurementMode();
+ *
+ * // detach the tool from the viewer
+ * measurementTool.dispose();
+ * ```
+ */
 export class MeasurementTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
-  private readonly _measurementLabel: MeasurementLabel;
+  private readonly _measurementLabel: MeasurementLabels;
   private _lineGeometry: LineGeometry;
   private _lineMesh: THREE.Mesh;
   private _lineMaterial: LineMaterial;
@@ -34,7 +53,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     super();
     this._viewer = viewer;
     this._options = options ?? {};
-    this._measurementLabel = new MeasurementLabel(this._viewer);
+    this._measurementLabel = new MeasurementLabels(this._viewer);
     this._linePosition = new Float32Array(6);
     this._pointSize = 0.02;
     this._distanceValue = '';
@@ -42,44 +61,37 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Add an measurement.
+   * Enter into point to point measurement mode.
    */
-  add(): void {
+  enterMeasurementMode(): void {
     this.setupEventHandling();
   }
 
   /**
-   * Remove measurement.
+   * Exit measurement mode.
    */
-  remove(): void {
+  exitMeasurementMode(): void {
     //remove measurement label, clear all mesh, geometry & event handling.
-    this._measurementLabel.remove();
+    this._measurementLabel.clearLabels();
     this.clearLineObjects();
     this.removeEventHandling();
   }
 
   /**
-   * Update the measurement line width.
-   * @param width Line width
+   * Sets Measurement line width and color with @options value.
+   * @param options MeasurementLineOptions to set line width and color.
    */
-  updateLineWidth(width: number): void {
-    this._lineOptions.lineWidth = width;
-    this._pointSize = width * 10.0;
-  }
-
-  /**
-   * Update measurement line color.
-   * @param color Line color.
-   */
-  updateLineColor(color: number): void {
-    this._lineOptions.color = color;
+  setLineOptions(options: MeasurementLineOptions): void {
+    this._lineOptions.lineWidth = options?.lineWidth ?? this._lineOptions.lineWidth;
+    this._lineOptions.color = options?.color ?? this._lineOptions.color;
+    this._pointSize = options?.lineWidth * 10.0 || this._pointSize;
   }
 
   /**
    * Dispose Measurement Tool.
    */
   dispose(): void {
-    this.remove();
+    this.exitMeasurementMode();
     super.dispose();
   }
 
@@ -172,8 +184,8 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       new THREE.Vector3(this._linePosition[0], this._linePosition[1], this._linePosition[2]),
       point
     );
-    this.assignMeasurementValue();
-    this._measurementLabel.add(labelPosition, this._distanceValue);
+    this.updateMeasurementValue(this._options.changeMeasurementLabelMetrics);
+    this._measurementLabel.addLabel(labelPosition, this._distanceValue);
     this.clearLineObjects();
   }
 
@@ -195,22 +207,10 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Get the distance between the measuring line start point & end point.
    * @returns Return distance between start & end point of the line.
    */
-  private getMeasurementValue() {
+  private getMeasuredDistance() {
     const startPoint = new THREE.Vector3(this._linePosition[0], this._linePosition[1], this._linePosition[2]);
     const endPoint = new THREE.Vector3(this._linePosition[3], this._linePosition[4], this._linePosition[5]);
     return endPoint.distanceTo(startPoint);
-  }
-
-  /**
-   * Check if their is a request to show the measurment with custom callback from the user.
-   */
-  private assignMeasurementValue() {
-    const options = this._options.changeMeasurementLabelMetrics;
-    if (options === undefined) {
-      this._distanceValue = this.getMeasurementValue().toFixed(2) + ' m';
-    } else {
-      this.updateMeasurementValue(options);
-    }
   }
 
   /**
@@ -218,8 +218,11 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * @param options Callback function which get user value to be added into label.
    */
   private updateMeasurementValue(options: MeasurementLabelUpdateDelegate) {
-    const measurementData = options(this.getMeasurementValue());
-    this._distanceValue = measurementData.distance.toFixed(2) + ' ' + measurementData.units;
+    const measurementLabelData = options(this.getMeasuredDistance()) || {
+      distance: this.getMeasuredDistance(),
+      units: 'm'
+    };
+    this._distanceValue = measurementLabelData.distance.toFixed(2) + ' ' + measurementLabelData.units;
   }
 
   private onPointerMove(event: MouseEvent) {

@@ -7,36 +7,46 @@ import * as THREE from 'three';
 import { HtmlOverlayTool, HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOverlayTool';
 import labelCSS from './styles/Label.css';
 
-export class MeasurementLabel {
+export class MeasurementLabels {
   private readonly _htmlOverlay: HtmlOverlayTool;
-  private _labelElement: HTMLDivElement;
   private readonly _handleClustering = this.createEmptyClusterElement.bind(this);
   private readonly options: HtmlOverlayToolOptions = {
     clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback: this._handleClustering }
   };
-  private static readonly stylesId = 'reveal-viewer-label';
+  private static readonly stylesId = 'reveal-measurement-label';
 
   constructor(viewer: Cognite3DViewer) {
     this._htmlOverlay = new HtmlOverlayTool(viewer, this.options);
+    MeasurementLabels.ensureStylesLoaded();
   }
 
   /**
-   * Add a label.
+   * Creates a measurement label, add it to HTMLOverlay and return the created label element.
    * @param position Label position.
    * @param label Label text.
+   * @returns Label HTML element.
    */
-  add(position: THREE.Vector3, label: string): void {
-    this._labelElement = this.createLabel(label);
-    this._htmlOverlay.add(this._labelElement, position);
+  addLabel(position: THREE.Vector3, label: string): HTMLDivElement {
+    const labelElement = this.createLabel(label);
+    this._htmlOverlay.add(labelElement, position);
+    return labelElement;
   }
 
   /**
-   * Remove the label.
+   * Remove a label.
+   * @param labelElement Label element to be removed.
    */
-  remove(): void {
-    if (this._labelElement) {
-      this._htmlOverlay.remove(this._labelElement);
+  removeLabel(labelElement: HTMLDivElement): void {
+    if (labelElement) {
+      this._htmlOverlay.remove(labelElement);
     }
+  }
+
+  /**
+   * Removes all measurements labels
+   */
+  clearLabels(): void {
+    this._htmlOverlay.clear();
   }
 
   /**
@@ -52,12 +62,12 @@ export class MeasurementLabel {
    * @returns Return if styles already loaded.
    */
   private static ensureStylesLoaded(): HTMLStyleElement {
-    if (document.getElementById(MeasurementLabel.stylesId)) {
+    if (document.getElementById(MeasurementLabels.stylesId)) {
       return;
     }
 
     const style = document.createElement('style');
-    style.id = MeasurementLabel.stylesId;
+    style.id = MeasurementLabels.stylesId;
     style.appendChild(document.createTextNode(labelCSS));
     document.head.appendChild(style);
   }
@@ -70,8 +80,7 @@ export class MeasurementLabel {
   private createLabel(label: string) {
     const element = document.createElement('div');
     element.innerText = label;
-    MeasurementLabel.ensureStylesLoaded();
-    element.className = MeasurementLabel.stylesId;
+    element.className = MeasurementLabels.stylesId;
     return element;
   }
 }

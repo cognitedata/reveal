@@ -9,8 +9,8 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 The `MeasurementTool` is a measuring tool for point to point distance with the 3D objects.
 This can be achieved by selecting a point on the 3D Object and drag the pointer to the destined point to get measurement of the distance.
-The tool default measures in "Meters" as supported in Reveal, but the user can choose options to measure distance in "Feet", "Inches" & Centimeter"
-based on their convinience, the tool will calculate the measuring distance value respectively.
+The tools default measurement is in "Meters" as supported in Reveal, but the tool provides user to customise the measuring units
+based on their convinience.
 
 The tool provides ability to change measuring line width & color.
 
@@ -21,43 +21,40 @@ The tool supports only point to point measurement
 <DemoWrapper name="Cognite3DViewerDemo" />
 
 ## Point to point distance measurment
-To add point to point measurement, use `MeasurementTool.add()` which will have default line width & color.
+To enter into point to point measurement mode, use `MeasurementTool.enterMeasurementMode()` which will have default line width & color.
 
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
-const measurement = new MeasurementTool(viewer);
-measurement.add();
+const measurementTool = new MeasurementTool(viewer);
+measurementTool.enterMeasurementMode();
 ```
-### Remove measurement
-To remove point to point measurement, use `MeasurementTool.remove()`.
+### Exit measurement
+To exit from measurement mode, use `MeasurementTool.exitMeasurementMode()`.
 
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
-const measurement = new MeasurementTool(viewer);
-measurement.add();
-measurement.remove();
-```
-
-### Change width and color of the measuring line
-To change width of the measuring line, use `MeasurementTool.updateLineWidth(lineWidth: number)`.
-
-```jsx runnable
-// import { MeasurementTool } from '@cognite/reveal/tools';
-
-const measurement = new MeasurementTool(viewer);
-measurement.add();
-measurement.updateLineWidth(0.005);
+const measurementTool = new MeasurementTool(viewer);
+measurementTool.enterMeasurementMode();
+measurementTool.exitMeasurementMode();
 ```
 
-To change color of the measuring line, use `MeasurementTool.updateLineColor(color: number)`.
+### Set width and color of the measuring line
+To change width and color of the line, use `MeasurementTool.setLineOptions(lineOptions: MeasurementLineOptions)`. MeasurementLineOptions expects
+  - `lineWidth` : number,
+  - `color` : number
+
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
-const measurement = new MeasurementTool(viewer);
-measurement.add();
-measurement.updateLineColor(0x00ff00);
+const lineOptions = {
+  lineWidth: 0.004,
+  color: 0xff0000
+};
+const measurementTool = new MeasurementTool(viewer);
+measurementTool.enterMeasurementMode();
+measurementTool.setLineOptions(lineOptions);
 ```
 
 It's also possible to apply custom label content for the measurment.
@@ -65,12 +62,12 @@ The tool provides option of custom callback for the users. 'MeasurementOptions.c
 used to trigger custom operation like change the measuring units to feet. 
 
 ```jsx runnable
-// import { MeasurementTool, MeasurementUnits } from '@cognite/reveal/tools';
+// import { MeasurementTool } from '@cognite/reveal/tools';
 
-const measurement = new MeasurementTool(viewer, {changeMeasurementLabelMetrics: (distance: number) => {
+const measurementTool = new MeasurementTool(viewer, {changeMeasurementLabelMetrics: (distance: number) => {
       // 1 meters = 3.281 feet
       const distanceInFeet = distance * 3.281;
       return { distance: distanceInFeet, units: 'ft'};
      }});
-measurement.add();
+measurementTool.enterMeasurementMode();
 ```

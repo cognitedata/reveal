@@ -13,7 +13,7 @@ export type MeasurementLineOptions = {
 /**
  * Custom callback for users to change measurement label content.
  */
-export type MeasurementLabelUpdateDelegate = (distance: number) => MeasurementData;
+export type MeasurementLabelUpdateDelegate = (distance: number) => MeasurementLabelData;
 
 export type MeasurementOptions = {
   changeMeasurementLabelMetrics?: MeasurementLabelUpdateDelegate;
@@ -22,7 +22,7 @@ export type MeasurementOptions = {
 /**
  * Measurement data the user can change for the label.
  */
-export type MeasurementData = {
-  distance: number;
+export type MeasurementLabelData = {
+  distance?: number;
   units: string;
 };
