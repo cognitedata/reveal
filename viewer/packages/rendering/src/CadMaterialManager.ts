@@ -117,15 +117,17 @@ export class CadMaterialManager {
   removeModelMaterials(modelIdentifier: string): void {
     const modelData = this.materialsMap.get(modelIdentifier);
 
-    if (modelData) {
-      for (const mat of Object.values(modelData.materials)) {
-        mat.dispose();
-      }
+    if (modelData === undefined) {
+      throw new Error(`Model identifier: ${modelIdentifier} not found`);
+    }
 
-      this.materialsMap.delete(modelIdentifier);
-      modelData.nodeTransformTextureBuilder.dispose();
-      modelData.nodeAppearanceTextureBuilder.dispose();
-    } else throw new Error(`Model identifier: ${modelIdentifier} not found`);
+    for (const mat of Object.values(modelData.materials)) {
+      mat.dispose();
+    }
+
+    this.materialsMap.delete(modelIdentifier);
+    modelData.nodeTransformTextureBuilder.dispose();
+    modelData.nodeAppearanceTextureBuilder.dispose();
   }
 
   getModelMaterials(modelIdentifier: string): Materials {
