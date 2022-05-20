@@ -139,12 +139,12 @@ export enum RenderLayer {
 
 export function setupCadModelsGeometryLayers(
   materialManager: CadMaterialManager,
-  identifiedModels?: {
+  cadModels?: {
     object: THREE.Object3D<THREE.Event>;
     modelIdentifier: string;
   }[]
 ): void {
-  identifiedModels?.forEach(identifiedModel => setModelRenderLayers(identifiedModel, materialManager));
+  cadModels?.forEach(cadModel => setModelRenderLayers(cadModel, materialManager));
 }
 
 export function getLayerMask(renderLayer: number): number {
@@ -152,13 +152,13 @@ export function getLayerMask(renderLayer: number): number {
 }
 
 function setModelRenderLayers(
-  identifiedModel: {
+  cadModels: {
     object: THREE.Object3D<THREE.Event>;
     modelIdentifier: string;
   },
   materialManager: CadMaterialManager
 ) {
-  const { object: model, modelIdentifier } = identifiedModel;
+  const { object: model, modelIdentifier } = cadModels;
 
   const backSet = materialManager.getModelBackTreeIndices(modelIdentifier);
   const ghostSet = materialManager.getModelGhostedTreeIndices(modelIdentifier);
