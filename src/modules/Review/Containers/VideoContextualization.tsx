@@ -7,7 +7,7 @@ import {
   VisibleAnnotation,
 } from 'src/modules/Review/store/reviewSlice';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
-import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
+import { AnnotationStatusChangeV1 } from 'src/store/thunks/Annotation/AnnotationStatusChangeV1';
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import styled from 'styled-components';
 import { AnnotationsTable } from 'src/modules/Review/Components/AnnotationsTable/AnnotationsTable';
@@ -46,7 +46,7 @@ export const VideoContextualization = (props: {
     id: ReactText,
     status: AnnotationStatus
   ) => {
-    await dispatch(AnnotationStatusChange({ id: +id, status }));
+    await dispatch(AnnotationStatusChangeV1({ id: +id, status }));
   };
 
   const handleOnAnnotationSelect = (id: ReactText, nextState: boolean) => {
