@@ -1,4 +1,4 @@
-import { BuiltInType, DirectiveBuiltInType } from '@platypus/platypus-core';
+import { BuiltInType } from '@platypus/platypus-core';
 import { editor, languages, Position } from 'monaco-editor';
 
 import ProviderResult = languages.ProviderResult;
@@ -39,10 +39,7 @@ const getCodeCompletitionItems = (
   // filter code completition items from type
   return builtInTypes
     .filter((builtInType) => {
-      if (
-        builtInType.type === 'DIRECTIVE' &&
-        (builtInType as DirectiveBuiltInType).fieldDirective === fieldDirective
-      ) {
+      if (builtInType.type === 'DIRECTIVE') {
         return true;
       }
       return builtInType.type === completitionType;
@@ -97,22 +94,6 @@ export const autoCompleteProvider = (builtInTypes: BuiltInType[]) => {
             builtInTypes,
             'DIRECTIVE',
             false
-          ),
-        };
-      }
-
-      // handle case when user request code completition
-      // for field directives. In this case we are expecting user to have type
-      // we need to return all field directives
-      if (
-        textUntilPosition.trim().match(/[a-zA-Z0-9_]+:\s{1,}[A-Z][a-zA-Z0-9_]+/)
-      ) {
-        return {
-          suggestions: getCodeCompletitionItems(
-            textUntilPosition,
-            builtInTypes,
-            'DIRECTIVE',
-            true
           ),
         };
       }

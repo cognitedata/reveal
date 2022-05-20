@@ -3,7 +3,6 @@ import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import {
   BuiltInType,
-  DirectiveBuiltInType,
   SolutionDataModel,
   SolutionDataModelType,
   UpdateSolutionDataModelFieldDTO,
@@ -113,9 +112,7 @@ export function UIEditor({
       typeName.charAt(0).toUpperCase() + typeName.slice(1);
 
     const defaultDirective = builtInTypes.find(
-      (type) =>
-        type.type === 'DIRECTIVE' &&
-        !(type as DirectiveBuiltInType).fieldDirective
+      (type) => type.type === 'DIRECTIVE'
     );
 
     const newState = defaultDirective

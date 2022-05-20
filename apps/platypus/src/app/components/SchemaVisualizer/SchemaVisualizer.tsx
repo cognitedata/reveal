@@ -23,7 +23,7 @@ import { connectorsGenerator } from './connectors';
 import { VisualizerToolbar } from './VisualizerToolbar';
 import { Spinner } from '../Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { BuiltInType, DirectiveBuiltInType } from '@platypus/platypus-core';
+import { BuiltInType } from '@platypus/platypus-core';
 import { usePersistedState } from '@platypus-app/hooks/usePersistedState';
 
 export interface SchemaVisualizerConfig {
@@ -128,20 +128,6 @@ export const SchemaVisualizer = React.memo(
       [nodes, links, showHeaderOnly]
     );
 
-    const fieldDirectives = config.knownTypes
-      ? (config.knownTypes.filter(
-          (knownType) =>
-            knownType.type === 'DIRECTIVE' &&
-            (knownType as DirectiveBuiltInType).fieldDirective
-        ) as DirectiveBuiltInType[])
-      : [];
-
-    const [visibleFieldDirectives, setVisibleFieldDirectives] =
-      usePersistedState<DirectiveBuiltInType[]>(
-        fieldDirectives,
-        'VISIBLE_FIELD_DIRECTIVES'
-      );
-
     const renderGraph = () => (
       <Wrapper direction="column">
         {!isLoaded && (
@@ -172,9 +158,6 @@ export const SchemaVisualizer = React.memo(
             fitHandler={() => {
               graphRef.current?.fitContent();
             }}
-            fieldDirectives={fieldDirectives}
-            visibleFieldDirectives={visibleFieldDirectives}
-            setVisibleFieldDirectives={setVisibleFieldDirectives}
           />
           {isVisualizerExpanded && (
             <Button
@@ -265,30 +248,12 @@ export const SchemaVisualizer = React.memo(
               }
               const nodeWidth = getNodeWidth(item);
               let content = <p>Loading&hellip;</p>;
-              const isActive = active === item.id;
               switch (item.kind) {
                 case 'ObjectTypeDefinition': {
                   if (showHeaderOnly) {
                     content = <SmallNode key={item.name.value} item={item} />;
                   } else {
-                    content = (
-                      <FullNode
-                        key={item.name.value}
-                        item={item}
-                        isActive={isActive}
-                        knownTypeDirectives={
-                          config.knownTypes
-                            ? (config.knownTypes.filter(
-                                (knownType) =>
-                                  knownType.type === 'DIRECTIVE' &&
-                                  !(knownType as DirectiveBuiltInType)
-                                    .fieldDirective
-                              ) as DirectiveBuiltInType[])
-                            : []
-                        }
-                        knownFieldDirectives={visibleFieldDirectives}
-                      />
-                    );
+                    content = <FullNode key={item.name.value} item={item} />;
                   }
                   break;
                 }

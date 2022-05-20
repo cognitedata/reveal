@@ -78,18 +78,10 @@ export type SolutionDataModel = {
   types: SolutionDataModelType[];
 };
 
-export type BaseBuiltInType = {
+export type BuiltInType = {
   name: string;
   type: 'SCALAR' | 'DIRECTIVE' | 'OBJECT' | 'ENUM';
 };
-
-export type DirectiveBuiltInType = BaseBuiltInType & {
-  fieldDirective: boolean;
-  icon?: string;
-};
-
-export type BuiltInType = BaseBuiltInType | DirectiveBuiltInType;
-/* SOLUTION DATA MODEL TYPES */
 
 export type PaginatedResponse = {
   pageInfo: { cursor: string; hasNextPage: boolean };

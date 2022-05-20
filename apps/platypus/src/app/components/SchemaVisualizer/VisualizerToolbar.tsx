@@ -1,13 +1,5 @@
-import {
-  Icon,
-  IconType,
-  Input,
-  Switch,
-  ToolBar,
-  Checkbox,
-} from '@cognite/cogs.js';
+import { Input, Switch, ToolBar } from '@cognite/cogs.js';
 import { ToolbarMenu } from './ToolbarMenu';
-import { DirectiveBuiltInType } from '@platypus/platypus-core';
 
 export const VisualizerToolbar = ({
   isCollapsed,
@@ -19,9 +11,6 @@ export const VisualizerToolbar = ({
   zoomInHandler,
   zoomOutHandler,
   fitHandler,
-  fieldDirectives,
-  visibleFieldDirectives,
-  setVisibleFieldDirectives,
 }: {
   isCollapsed: boolean;
   setIsCollapsed: (newValue: boolean) => void;
@@ -32,16 +21,7 @@ export const VisualizerToolbar = ({
   zoomInHandler: () => void;
   zoomOutHandler: () => void;
   fitHandler: () => void;
-  fieldDirectives: DirectiveBuiltInType[];
-  visibleFieldDirectives: DirectiveBuiltInType[];
-  setVisibleFieldDirectives: (
-    visibleFieldDirectives: DirectiveBuiltInType[]
-  ) => void;
 }) => {
-  // eslint-disable-next-line
-  const isDirectiveVisible = (directive: DirectiveBuiltInType) =>
-    visibleFieldDirectives.some((f) => f.name === directive.name);
-
   const filterDropdownMenu = (
     <ToolbarMenu>
       <ToolbarMenu.Item onClick={() => setIsCollapsed(!isCollapsed)}>
@@ -55,46 +35,6 @@ export const VisualizerToolbar = ({
           name="Collapse details"
         ></Switch>
       </ToolbarMenu.Item>
-
-      {!!fieldDirectives.length && <ToolbarMenu.Divider /> && (
-        <ToolbarMenu.Header>Attributes</ToolbarMenu.Header>
-      )}
-      {fieldDirectives.map((fieldDirective) => {
-        const toggleDirective = () => {
-          if (
-            visibleFieldDirectives.some(
-              (directive) => directive.name === fieldDirective.name
-            )
-          ) {
-            setVisibleFieldDirectives(
-              visibleFieldDirectives.filter(
-                (directive) => directive.name !== fieldDirective.name
-              )
-            );
-          } else {
-            setVisibleFieldDirectives([
-              ...visibleFieldDirectives,
-              fieldDirective,
-            ]);
-          }
-        };
-        return (
-          <ToolbarMenu.Item key={fieldDirective.name} onClick={toggleDirective}>
-            {fieldDirective.icon && (
-              <Icon type={fieldDirective.icon as IconType} />
-            )}
-            {fieldDirective.name}{' '}
-            <Checkbox
-              checked={isDirectiveVisible(fieldDirective)}
-              name={`${fieldDirective.name}-checkbox`}
-              onClick={(e) => {
-                e.preventDefault();
-                toggleDirective();
-              }}
-            />
-          </ToolbarMenu.Item>
-        );
-      })}
     </ToolbarMenu>
   );
 

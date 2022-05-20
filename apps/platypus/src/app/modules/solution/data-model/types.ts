@@ -1,6 +1,3 @@
-import { DirectiveBuiltInType } from '@platypus/platypus-core';
-import { IconType } from '@cognite/cogs.js';
-
 export enum SchemaEditorMode {
   View,
   Edit,
@@ -13,8 +10,4 @@ export type TypeFieldValues = {
     label: string;
   };
   required: boolean;
-};
-
-export type FieldSchemaDirectiveType = Omit<DirectiveBuiltInType, 'icon'> & {
-  icon: IconType;
 };

@@ -4,9 +4,8 @@ import {
   MainTitle,
   Wrapper,
 } from '@platypus-app/components/Styles/storybook';
-import { DirectiveBuiltInType } from '@platypus/platypus-core';
 import { ObjectTypeDefinitionNode } from 'graphql';
-import React from 'react';
+
 import { NodeWrapper } from '../SchemaVisualizer';
 import { FullNode } from './FullNode';
 
@@ -60,14 +59,8 @@ const mockCustomType = {
 
 export const Default = ({
   item = mockCustomType,
-  isActive = false,
-  knownTypeDirectives = [],
-  knownFieldDirectives = [],
 }: {
   item: ObjectTypeDefinitionNode;
-  isActive?: boolean;
-  knownTypeDirectives?: DirectiveBuiltInType[];
-  knownFieldDirectives?: DirectiveBuiltInType[];
 }) => {
   return (
     <Wrapper>
@@ -91,12 +84,7 @@ export const Default = ({
             title={'title'}
             style={{}}
           >
-            <FullNode
-              item={item}
-              knownTypeDirectives={knownTypeDirectives}
-              knownFieldDirectives={knownFieldDirectives}
-              isActive={isActive}
-            />
+            <FullNode item={item} />
           </NodeWrapper>
         </div>
       </Group>
@@ -167,9 +155,6 @@ export const WithListField = () => (
 
 export const WithTypeDirective = () => (
   <Default
-    knownTypeDirectives={[
-      { name: 'view', type: 'DIRECTIVE', fieldDirective: false },
-    ]}
     item={{
       ...mockCustomType,
       directives: [
@@ -187,20 +172,6 @@ export const WithTypeDirective = () => (
 
 export const WithFieldDirectives = () => (
   <Default
-    knownFieldDirectives={[
-      {
-        name: 'searchable',
-        type: 'DIRECTIVE',
-        fieldDirective: true,
-        icon: 'Search',
-      },
-      {
-        name: 'filterable',
-        type: 'DIRECTIVE',
-        fieldDirective: true,
-        icon: 'Filter',
-      },
-    ]}
     item={{
       ...mockCustomType,
       fields: [

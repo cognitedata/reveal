@@ -11,9 +11,6 @@ import { SolutionDataModelFieldNameValidator } from '@platypus/platypus-core';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import debounce from 'lodash/debounce';
 import { v4 } from 'uuid';
-import { FieldDirectiveSelect } from '../FieldDirective/FieldDirectiveSelect';
-import config from '@platypus-app/config/config';
-
 export interface SchemaTypeFieldProps {
   index: number;
   field: SolutionDataModelField;
@@ -113,43 +110,15 @@ export const SchemaTypeField = ({
           }}
         />
       </InputWrapper>
-      {config.USE_MIXER_API && (
-        <div>
+      <Flex style={{ width: 110 }}>
+        <div style={{ width: 70 }}>
           {isFirstField && (
-            <Label level="2">{t('field_label_attributes', 'Attributes')}</Label>
-          )}
-          <FieldDirectiveSelect
-            disabled={disabled}
-            builtInTypes={builtInTypes}
-            field={field}
-            onSelect={(directive) => {
-              if (field.directives?.some((d) => d.name === directive)) {
-                onFieldUpdated({
-                  directives: field.directives.filter(
-                    (d) => d.name !== directive
-                  ),
-                });
-              } else {
-                onFieldUpdated({
-                  directives: [
-                    ...(field.directives || []),
-                    { name: directive, arguments: [] },
-                  ],
-                });
-              }
-            }}
-          />
-        </div>
-      )}
-      <Flex style={{ width: 80 }}>
-        <div style={{ width: 40 }}>
-          {isFirstField && (
-            <Label level="2">{t('field_label_req', 'Rqd[!].')}</Label>
+            <Label level="2">{t('field_label_req', 'Required')}</Label>
           )}
           <Checkbox
             name={`required_${v4()}`}
             data-cy="checkbox-field-required"
-            style={{ height: 36, marginLeft: 16 }}
+            style={{ height: 36, marginLeft: 20 }}
             disabled={disabled}
             onChange={(isChecked) => {
               onFieldUpdated({
