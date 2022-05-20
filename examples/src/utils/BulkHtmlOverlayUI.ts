@@ -21,8 +21,7 @@ export class BulkHtmlOverlayUI {
   private readonly _uiState = {
     filterCategory: 'PDMS',
     filterKey: 'Description',
-    filterValue: 'Tagged equipment',
-    levelBelowToTag: 1
+    filterValue: 'Tagged equipment'
   };
 
   constructor(uiFolder: dat.GUI, viewer: Cognite3DViewer, model: Cognite3DModel, sdk: CogniteClient) {
@@ -51,7 +50,6 @@ export class BulkHtmlOverlayUI {
     uiFolder.add(this._uiState, 'filterCategory').name('Filter category');
     uiFolder.add(this._uiState, 'filterKey').name('Filter key');
     uiFolder.add(this._uiState, 'filterValue').name('Filter property value');
-    uiFolder.add(this._uiState, 'levelBelowToTag').name('Level # below to tag');
     uiFolder.add(actions, 'createTagOverlays').name('Create overlays');
     uiFolder.add(actions, 'clearOverlays').name('Clear');
 
