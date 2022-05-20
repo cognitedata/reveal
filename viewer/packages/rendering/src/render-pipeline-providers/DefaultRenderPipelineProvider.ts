@@ -141,7 +141,13 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   }
 
   public dispose(): void {
+    this._cadGeometryRenderPipeline.dispose();
     this._postProcessingRenderPipeline.dispose();
+
+    this._renderTargetData.postProcessingRenderTarget.dispose();
+
+    this._blitToScreenMesh.geometry.dispose();
+    (this._blitToScreenMesh.material as THREE.Material).dispose();
   }
 
   private pipelineSetup(renderer: THREE.WebGLRenderer) {

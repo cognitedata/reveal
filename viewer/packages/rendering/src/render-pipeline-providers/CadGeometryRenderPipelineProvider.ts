@@ -62,7 +62,11 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
     }
   }
 
-  public dispose(): void {}
+  public dispose(): void {
+    this._cadGeometryRenderTargets.back.dispose();
+    this._cadGeometryRenderTargets.ghost.dispose();
+    this._cadGeometryRenderTargets.inFront.dispose();
+  }
 
   private pipelineSetup(renderer: THREE.WebGLRenderer) {
     this._rendererStateHelper = new WebGLRendererStateHelper(renderer);

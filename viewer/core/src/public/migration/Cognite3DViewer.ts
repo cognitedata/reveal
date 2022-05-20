@@ -365,6 +365,8 @@ export class Cognite3DViewer {
     this._renderables.customObjects.splice(0);
     this.spinner.dispose();
 
+    this._sceneHandler.dispose();
+
     this._events.disposed.fire();
     disposeOfAllEventListeners(this._events);
     this._mouseHandler.dispose();

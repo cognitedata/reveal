@@ -85,6 +85,7 @@ export class PostProcessingPass implements RenderPass {
   public dispose(): void {
     this._postProcessingObjects.forEach(postProcessingObject => {
       postProcessingObject.geometry.dispose();
+      (postProcessingObject.material as THREE.Material).dispose();
       this._scene.remove(postProcessingObject);
     });
   }
