@@ -11,11 +11,11 @@ import {
 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { CDFAnnotationV1 } from 'src/api/annotation/types';
 
-export const UpdateAnnotations = createAsyncThunk<
+export const UpdateAnnotationsV1 = createAsyncThunk<
   VisionAnnotationV1[],
   CDFAnnotationV1[],
   ThunkConfig
->('UpdateAnnotations', async (annotations) => {
+>('UpdateAnnotationsV1', async (annotations) => {
   if (!annotations.length) {
     return [];
   }

@@ -19,7 +19,7 @@ import {
   VisionAnnotationV1,
 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { makeSelectFileAnnotations as makeSelectFileAnnotationsV1 } from 'src/modules/Common/store/annotationV1/selectors';
 import { makeSelectFileAnnotations } from 'src/modules/Common/store/annotation/selectors';
 import {
@@ -161,7 +161,7 @@ const reviewSlice = createSlice({
 
     // select created or updated annotations if no other annotation is already selected
     builder.addMatcher(
-      isAnyOf(CreateAnnotations.fulfilled, UpdateAnnotations.fulfilled),
+      isAnyOf(CreateAnnotations.fulfilled, UpdateAnnotationsV1.fulfilled),
       (state, { payload }) => {
         payload.forEach((annotation) => {
           if (!state.selectedAnnotationIds.length) {

@@ -5,7 +5,7 @@ import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { Region } from '@cognite/react-image-annotate';
 import { Point } from '@cognite/react-image-annotate/Types/ImageCanvas/region-tools';
@@ -206,7 +206,7 @@ const annotationLabelSlice = createSlice({
       isAnyOf(
         CreateAnnotations.fulfilled,
         VisionJobUpdate.fulfilled,
-        UpdateAnnotations.fulfilled,
+        UpdateAnnotationsV1.fulfilled,
         RetrieveAnnotations.fulfilled
       ),
       (state, action) => {

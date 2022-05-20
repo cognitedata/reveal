@@ -8,7 +8,7 @@ import { clearAnnotationState } from 'src/store/commonActions';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { getDummyImageObjectDetectionBoundingBoxAnnotation } from 'src/__test-utils/getDummyAnnotations';
@@ -320,7 +320,7 @@ describe('Test annotation reducer', () => {
     const actionTypes = [
       CreateAnnotations.fulfilled.type,
       VisionJobUpdate.fulfilled.type,
-      UpdateAnnotations.fulfilled.type,
+      UpdateAnnotationsV1.fulfilled.type,
     ];
 
     /**

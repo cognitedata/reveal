@@ -15,7 +15,7 @@ import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import {
   AnnotationStatus,
@@ -524,7 +524,7 @@ describe('Test annotationLabel reducer', () => {
         [
           CreateAnnotations.fulfilled.type,
           VisionJobUpdate.fulfilled.type,
-          UpdateAnnotations.fulfilled.type,
+          UpdateAnnotationsV1.fulfilled.type,
           RetrieveAnnotations.fulfilled.type,
         ].forEach((type) => {
           const action = {
@@ -544,7 +544,7 @@ describe('Test annotationLabel reducer', () => {
         [
           CreateAnnotations.fulfilled.type,
           VisionJobUpdate.fulfilled.type,
-          UpdateAnnotations.fulfilled.type,
+          UpdateAnnotationsV1.fulfilled.type,
           RetrieveAnnotations.fulfilled.type,
         ].forEach((type) => {
           const action = { type, payload: [generateDummyAnnotations()] };

@@ -1,7 +1,7 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
 import { VisionAsset, VisionFile } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
 import {
@@ -91,7 +91,7 @@ export const AnnotationStatusChange = createAsyncThunk<
     status: payload.status,
   };
 
-  dispatch(UpdateAnnotations([unSavedAnnotation]));
+  dispatch(UpdateAnnotationsV1([unSavedAnnotation]));
 
   if (unSavedAnnotation.modelType === VisionDetectionModelType.TagDetection) {
     await updateTagAnnotationAndFileAssetLinks(file, unSavedAnnotation); // update tag annotations and asset links in file
