@@ -8,8 +8,7 @@ import reducer, {
   toggleCollectionVisibility,
 } from 'src/modules/Review/store/annotatorWrapper/slice';
 import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
-import { ReviewImageKeypoint } from 'src/modules/Review/store/review/types';
-import { Status } from 'src/api/annotation/types';
+import { ImageKeypoint, Status } from 'src/api/annotation/types';
 import { getDummyPredefinedKeypoint } from 'src/modules/Review/store/annotatorWrapper/__test__/utils';
 import {
   getDummyKeypointCollectionState,
@@ -191,72 +190,67 @@ describe('Test annotator slice', () => {
         ...initialState,
         collections: {
           byId: {
-            c1: getDummyKeypointCollectionState('c1', ['k1']),
-            c2: getDummyKeypointCollectionState('c2', ['k2']),
+            c1: getDummyKeypointCollectionState('c1', ['c1-label1']),
+            c2: getDummyKeypointCollectionState('c2', ['c2-label2']),
           },
           allIds: ['c1', 'c2'],
           selectedIds: ['c1'],
         },
         keypointMap: {
           byId: {
-            k1: getDummyKeypointState('k1'),
-            k2: getDummyKeypointState('k2'),
+            // ${keypointAnnotationCollection.id}-${keypoint.label}
+            'c1-label1': getDummyKeypointState('label1'),
+            'c2-label2': getDummyKeypointState('label2'),
           },
-          allIds: ['k1', 'k2'],
-          selectedIds: ['k1'],
+          allIds: ['c1-label1', 'c2-label2'],
+          selectedIds: ['c1-label1'],
         },
       };
 
       test('deselect selected keypoint', () => {
-        const pointToUpdate: ReviewImageKeypoint = {
-          id: 'k1',
-          selected: true,
-          keypoint: {
-            label: 'point',
-            confidence: 0.5,
-            point: { x: 0.25, y: 0.75 },
-          },
+        const pointToUpdate: ImageKeypoint = {
+          label: 'label1',
+          confidence: 0.5,
+          point: { x: 0.25, y: 0.75 },
         };
         expect(
-          reducer(previousState, onUpdateKeyPoint(pointToUpdate)).keypointMap
-            .byId.k1
+          reducer(
+            previousState,
+            onUpdateKeyPoint({
+              keypointAnnotationCollectionId: 'c1',
+              label: pointToUpdate.label,
+              newConfidence: pointToUpdate.confidence,
+              newPoint: pointToUpdate.point,
+            })
+          ).keypointMap.byId['c1-label1']
         ).toEqual(pointToUpdate);
       });
 
       test('should not effect others when non existing id used', () => {
-        const pointToUpdate: ReviewImageKeypoint = {
-          id: 'k3',
-          selected: true,
-          keypoint: {
-            label: 'point',
-            confidence: 0.5,
-            point: { x: 0.25, y: 0.75 },
-          },
+        const pointToUpdate: ImageKeypoint = {
+          label: 'point',
+          confidence: 0.5,
+          point: { x: 0.25, y: 0.75 },
         };
         expect(
-          reducer(previousState, onUpdateKeyPoint(pointToUpdate)).keypointMap
-            .byId.k1
+          reducer(
+            previousState,
+            onUpdateKeyPoint({
+              keypointAnnotationCollectionId: 'c1',
+              label: pointToUpdate.label,
+              newConfidence: pointToUpdate.confidence,
+              newPoint: pointToUpdate.point,
+            })
+          ).keypointMap.byId['c1-label1']
         ).toEqual({
-          id: 'k1',
-          selected: true,
-          keypoint: {
-            label: 'center',
-            confidence: 1,
-            point: { x: 0.5, y: 0.5 },
-          },
+          label: 'label1',
+          confidence: 1,
+          point: { x: 0.5, y: 0.5 },
         });
       });
     });
 
     describe('Test onCreateKeyPoint reducer', () => {
-      const payload = {
-        id: 'k2',
-        collectionName: 'gauge',
-        positionX: 1,
-        positionY: 2,
-        orderNumber: 1,
-      };
-
       test('Should not create keypoint collection, invalid collection name', () => {
         const previousState = {
           ...initialState,
@@ -268,17 +262,23 @@ describe('Test annotator slice', () => {
         expect(
           reducer(
             previousState,
-            onCreateKeyPoint(
-              payload.id,
-              'non-existing-collection-name',
-              payload.positionX,
-              payload.positionY
-            )
+            onCreateKeyPoint({
+              collectionName: 'non-existing-collection-name',
+              keypointLabel: 'left',
+              positionX: 0.25,
+              positionY: 0.25,
+            })
           )
         ).toEqual(previousState);
       });
 
-      test('Should create keypoint collection', () => {
+      test('Should create keypoint collection, for valid collection name', () => {
+        const payload = {
+          collectionName: 'gauge',
+          keypointLabel: 'left', // this will always be the fist on of the collection as we get this from nextKeypoint selector
+          positionX: 0.25,
+          positionY: 0.25,
+        };
         const previousState = {
           ...initialState,
           predefinedAnnotations: {
@@ -287,16 +287,18 @@ describe('Test annotator slice', () => {
           },
         };
 
+        const newKeypointId = `${payload.collectionName}-${payload.keypointLabel}`;
+
         const updatedState: AnnotatorWrapperState = {
           ...previousState,
           lastCollectionName: payload.collectionName,
-          lastKeyPoint: payload.id,
+          lastKeyPoint: payload.keypointLabel,
           lastCollectionId: payload.collectionName,
           collections: {
             byId: {
               [payload.collectionName]: {
                 ...getDummyKeypointCollectionState(payload.collectionName, [
-                  payload.id,
+                  newKeypointId,
                 ]),
               },
             },
@@ -305,37 +307,37 @@ describe('Test annotator slice', () => {
           },
           keypointMap: {
             byId: {
-              k2: {
-                ...getDummyKeypointState(payload.id),
-                keypoint: {
-                  label: getDummyKeypointState(payload.id).keypoint.label,
-                  point: { x: payload.positionX, y: payload.positionY },
-                  confidence: 1,
-                },
+              [newKeypointId]: {
+                ...getDummyKeypointState(payload.keypointLabel, 1, {
+                  x: payload.positionX,
+                  y: payload.positionY,
+                }),
               },
             },
-            allIds: [payload.id],
+            allIds: [newKeypointId],
             selectedIds: [], // TODO: should keypoint also be selected?
           },
         };
 
-        expect(
-          reducer(
-            previousState,
-            onCreateKeyPoint(
-              payload.id,
-              payload.collectionName,
-              payload.positionX,
-              payload.positionY
-            )
-          )
-        ).toEqual(updatedState);
+        expect(reducer(previousState, onCreateKeyPoint(payload))).toEqual(
+          updatedState
+        );
       });
 
       test('Should create keypoint collection with lastCollectionId set', () => {
+        const payload = {
+          collectionName: 'gauge',
+          keypointLabel: 'center', // this will always be the fist on of the collection as we get this from nextKeypoint selector
+          positionX: 0.25,
+          positionY: 0.25,
+        };
         const previousState = {
           ...initialState,
           lastCollectionId: 'c1',
+          predefinedAnnotations: {
+            predefinedKeypointCollections: [getDummyPredefinedKeypoint('c1')],
+            predefinedShapes: [],
+          },
           collections: {
             byId: {
               c1: getDummyKeypointCollectionState('c1', ['k1']),
@@ -348,16 +350,14 @@ describe('Test annotator slice', () => {
             allIds: ['k1'],
             selectedIds: ['k1'],
           },
-          predefinedAnnotations: {
-            predefinedKeypointCollections: [getDummyPredefinedKeypoint('c1')],
-            predefinedShapes: [],
-          },
         };
+
+        const newKeypointId = `${payload.collectionName}-${payload.keypointLabel}`;
 
         const updatedState: AnnotatorWrapperState = {
           ...previousState,
           lastCollectionName: payload.collectionName,
-          lastKeyPoint: payload.id,
+          lastKeyPoint: payload.keypointLabel,
           collections: {
             ...previousState.collections,
             byId: {
@@ -365,39 +365,29 @@ describe('Test annotator slice', () => {
                 ...previousState.collections.byId.c1,
                 keypointIds: [
                   ...previousState.collections.byId.c1.keypointIds,
-                  payload.id,
+                  newKeypointId,
                 ],
               },
             },
           },
           keypointMap: {
             ...previousState.keypointMap,
-            allIds: [...previousState.keypointMap.allIds, payload.id],
+            allIds: [...previousState.keypointMap.allIds, newKeypointId],
             byId: {
               ...previousState.keypointMap.byId,
-              k2: {
-                ...getDummyKeypointState(payload.id),
-                keypoint: {
-                  label: getDummyKeypointState(payload.id).keypoint.label,
-                  point: { x: payload.positionX, y: payload.positionY },
-                  confidence: 1,
-                },
+              [newKeypointId]: {
+                ...getDummyKeypointState(payload.keypointLabel, 1, {
+                  x: payload.positionX,
+                  y: payload.positionY,
+                }),
               },
             },
           },
         };
 
-        expect(
-          reducer(
-            previousState,
-            onCreateKeyPoint(
-              payload.id,
-              payload.collectionName,
-              payload.positionX,
-              payload.positionY
-            )
-          )
-        ).toEqual(updatedState);
+        expect(reducer(previousState, onCreateKeyPoint(payload))).toEqual(
+          updatedState
+        );
       });
     });
   });

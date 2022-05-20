@@ -11,10 +11,11 @@ import {
 import {
   AnnotationMetadataV1,
   AnnotationTypeV1,
+  ImageKeypoint,
+  Point,
   Status,
 } from 'src/api/annotation/types';
 import { KeypointCollectionState } from 'src/modules/Review/store/annotatorWrapper/type';
-import { ReviewImageKeypoint } from 'src/modules/Review/store/review/types';
 
 export const getDummyAnnotation = (
   id?: number,
@@ -49,11 +50,15 @@ export const getDummyAnnotation = (
   );
 };
 
-export const getDummyKeypointState = (id: string): ReviewImageKeypoint => {
+export const getDummyKeypointState = (
+  label: string,
+  confidence?: number,
+  point?: Point
+): ImageKeypoint => {
   return {
-    id,
-    selected: true,
-    keypoint: { label: 'center', confidence: 1, point: { x: 0.5, y: 0.5 } },
+    label,
+    confidence: confidence || 1,
+    point: point || { x: 0.5, y: 0.5 },
   };
 };
 

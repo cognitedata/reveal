@@ -1,8 +1,8 @@
 import { Keypoint, KeypointCollection } from 'src/modules/Review/types';
 
-const dummyKeypoint = (): Keypoint => {
+const dummyKeypoint = (caption?: string): Keypoint => {
   return {
-    caption: 'center',
+    caption: caption || 'center',
     order: '1',
     color: 'red',
   };
@@ -11,6 +11,10 @@ export const getDummyPredefinedKeypoint = (id: string): KeypointCollection => {
   return {
     id,
     collectionName: 'gauge',
-    keypoints: [dummyKeypoint()],
+    keypoints: [
+      dummyKeypoint('left'),
+      dummyKeypoint('center'),
+      dummyKeypoint('right'),
+    ],
   };
 };

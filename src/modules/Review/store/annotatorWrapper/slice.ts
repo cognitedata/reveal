@@ -1,5 +1,5 @@
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
-import { Tool } from 'src/modules/Review/types';
+import { Keypoint, KeypointCollection, Tool } from 'src/modules/Review/types';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
@@ -8,16 +8,19 @@ import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotat
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { createUniqueId } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { ReactText } from 'react';
 import { deleteCollection } from 'src/modules/Review/store/annotatorWrapper/utils';
 import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
-import { ReviewImageKeypoint } from 'src/modules/Review/store/review/types';
 import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bulkConverters';
 import {
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
-import { ImageKeypointCollection, Status } from 'src/api/annotation/types';
+import {
+  ImageKeypoint,
+  ImageKeypointCollection,
+  Point,
+  Status,
+} from 'src/api/annotation/types';
 import { isImageKeypointCollectionData } from 'src/modules/Common/types/typeGuards';
 
 export const initialState: AnnotatorWrapperState = {
@@ -94,89 +97,93 @@ const annotatorWrapperSlice = createSlice({
     setSelectedTool(state, action: PayloadAction<Tool>) {
       state.currentTool = action.payload;
     },
-    onCreateKeyPoint: {
-      reducer: (
-        state,
-        action: PayloadAction<{
-          id: string;
-          collectionName: string;
-          positionX: number;
-          positionY: number;
-          orderNumber?: number;
-        }>
-      ) => {
-        const predefinedKeypointCollection =
-          state.predefinedAnnotations.predefinedKeypointCollections.find(
-            (collection) =>
-              collection.collectionName === action.payload.collectionName
-          );
+    onCreateKeyPoint(
+      state,
+      action: PayloadAction<{
+        collectionName: string;
+        // use nextKeypoint selector to get keypointLabel
+        keypointLabel: string;
+        positionX: number;
+        positionY: number;
+      }>
+    ) {
+      const { collectionName, keypointLabel, positionX, positionY } =
+        action.payload;
 
-        if (predefinedKeypointCollection) {
-          state.lastKeyPoint = action.payload.id;
-          state.lastCollectionName = action.payload.collectionName;
+      const predefinedKeypointCollection: KeypointCollection | undefined =
+        state.predefinedAnnotations.predefinedKeypointCollections.find(
+          (collection) => collection.collectionName === collectionName
+        );
 
-          const predefinedKeypoint =
-            predefinedKeypointCollection.keypoints![
-              action.payload.orderNumber || 0
-            ];
+      // validPredefinedKeypointCollection
+      if (predefinedKeypointCollection) {
+        const { keypoints } = predefinedKeypointCollection;
+        state.lastCollectionName = predefinedKeypointCollection.collectionName;
 
-          const reviewImageKeypoint: ReviewImageKeypoint = {
-            id: action.payload.id.toString(),
-            selected: true, // select the keypoint after creating
-            keypoint: {
-              label: predefinedKeypoint.caption,
-              point: {
-                x: action.payload.positionX,
-                y: action.payload.positionY,
-              },
-              confidence: 1, // 100% confident about manually created keypoints
+        // collection has keypoints
+        if (keypoints) {
+          // get the matching keypoint or the first one
+          const predefinedKeypoint: Keypoint =
+            keypoints.find((keypoint) => keypoint.caption === keypointLabel) ||
+            keypoints[0];
+
+          const imageKeypointToAdd: ImageKeypoint = {
+            label: predefinedKeypoint.caption,
+            point: {
+              x: positionX,
+              y: positionY,
             },
+            confidence: 1, // 100% confident about manually created keypoints
           };
 
+          // if last Collection Id not Set
+          // start by adding new collection to the state
+          // set that collection as last collection
+          // and select it
           if (!state.lastCollectionId) {
-            const collectionId = createUniqueId(action.payload.collectionName);
-
-            const collection = {
+            const collectionId = createUniqueId(collectionName);
+            const collectionToAdd = {
               id: collectionId,
               keypointIds: [],
-              label: action.payload.collectionName,
+              label: collectionName,
               status: Status.Approved,
               show: true,
             };
 
-            state.collections.byId[collectionId] = collection;
+            state.collections.byId[collectionId] = collectionToAdd;
             state.collections.allIds = Object.keys(state.collections.byId);
             state.lastCollectionId = collectionId;
             state.collections.selectedIds = [collectionId];
           }
+
+          // add new keypoint to the state
+          const newKeypointId = `${collectionName}-${imageKeypointToAdd.label}`;
+          state.lastKeyPoint = predefinedKeypoint.caption;
           state.collections.byId[state.lastCollectionId].keypointIds.push(
-            reviewImageKeypoint.id
+            newKeypointId
           );
-          state.keypointMap.byId[reviewImageKeypoint.id] = reviewImageKeypoint;
+          state.keypointMap.byId[newKeypointId] = imageKeypointToAdd;
           state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
         }
-      },
-      prepare: (
-        id: ReactText,
-        collectionName: string,
-        x: number,
-        y: number,
-        orderNumber?: number
-      ) => {
-        return {
-          payload: {
-            id: id.toString(),
-            collectionName,
-            positionX: x,
-            positionY: y,
-            orderNumber,
-          },
-        };
-      },
+      }
     },
-
-    onUpdateKeyPoint(state, action: PayloadAction<ReviewImageKeypoint>) {
-      state.keypointMap.byId[action.payload.id] = action.payload;
+    onUpdateKeyPoint(
+      state,
+      action: PayloadAction<{
+        keypointAnnotationCollectionId: string;
+        label: string;
+        newConfidence: number | undefined;
+        newPoint: Point;
+      }>
+    ) {
+      const { keypointAnnotationCollectionId, label, newConfidence, newPoint } =
+        action.payload;
+      const keypointId = `${keypointAnnotationCollectionId}-${label}`;
+      state.keypointMap.byId[keypointId] = {
+        label,
+        confidence: newConfidence,
+        point: newPoint,
+      };
     },
     deleteCollectionById(state, action: PayloadAction<string>) {
       deleteCollection(state, action.payload);
@@ -250,11 +257,7 @@ const annotatorWrapperSlice = createSlice({
               const keypointId = `${keypointAnnotationCollection.id}-${keypoint.label}`;
               keypointIds.push(keypointId);
 
-              state.keypointMap.byId[keypointId] = {
-                id: keypointId,
-                selected: true,
-                keypoint,
-              };
+              state.keypointMap.byId[keypointId] = keypoint;
             });
 
             state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
