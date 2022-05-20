@@ -1,4 +1,6 @@
 import { NDS_ACCESSORS } from 'domain/wells/dataLayer/nds/selectors/accessors';
+import { getProbabilityTableSort } from 'domain/wells/dataLayer/nds/selectors/getProbabilitySort';
+import { getSeverityTableSort } from 'domain/wells/dataLayer/nds/selectors/getSeveritySort';
 
 import { ColumnType } from 'components/Tablev3';
 import { UserPreferredUnit } from 'constants/units';
@@ -21,12 +23,14 @@ export const getCommonColumns = (
       id: NDS_ACCESSORS.SEVERITY,
       Cell: ({ row }) => ValueLabel(row.original.severity),
       width: '140px',
+      sortType: getSeverityTableSort,
     },
     {
       Header: 'Probability',
       id: NDS_ACCESSORS.PROBABILITY,
       Cell: ({ row }) => ValueLabel(row.original.probability),
       width: '140px',
+      sortType: getProbabilityTableSort,
     },
     {
       Header: 'Subtype',

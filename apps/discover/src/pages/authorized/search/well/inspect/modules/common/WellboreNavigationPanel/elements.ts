@@ -13,7 +13,6 @@ export const DetailsContainer = styled(FlexColumn)`
 export const NavigationPanelContainer = styled(FlexRow)`
   background: var(--cogs-bg-accent);
   padding: ${sizes.normal};
-  margin-bottom: ${sizes.normal};
   align-items: center;
   z-index: ${layers.TOP_BAR};
 `;

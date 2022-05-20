@@ -4,6 +4,7 @@ export interface WellboreNavigationPanelProps<
   data: T[];
   currentWellboreName?: string;
   onNavigate?: (data: T[]) => void;
+  onChangeData?: (updatedDataForCurrentWellbore?: T[]) => void;
   onClickBack: () => void;
   disableNavigation?: boolean;
 }

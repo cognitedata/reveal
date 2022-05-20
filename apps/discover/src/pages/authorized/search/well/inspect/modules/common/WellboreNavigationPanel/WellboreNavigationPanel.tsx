@@ -4,7 +4,7 @@ import groupBy from 'lodash/groupBy';
 import head from 'lodash/head';
 
 import { BackButton, BaseButton } from 'components/Buttons';
-import { useDeepMemo } from 'hooks/useDeep';
+import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 
 import {
   DetailsContainer,
@@ -18,6 +18,7 @@ export const WellboreNavigationPanel = <T extends NavigationPanelDataType>({
   data,
   currentWellboreName,
   onNavigate,
+  onChangeData,
   onClickBack,
   disableNavigation,
 }: WellboreNavigationPanelProps<T>) => {
@@ -27,6 +28,13 @@ export const WellboreNavigationPanel = <T extends NavigationPanelDataType>({
     () => Object.keys(groupedData),
     [groupedData]
   );
+
+  useDeepEffect(() => {
+    if (!currentWellboreName) return;
+
+    const updatedDataForCurrentWellbore = groupedData[currentWellboreName];
+    onChangeData?.(updatedDataForCurrentWellbore);
+  }, [data]);
 
   if (!currentWellboreName) {
     return null;
@@ -57,7 +65,7 @@ export const WellboreNavigationPanel = <T extends NavigationPanelDataType>({
 
   return (
     <NavigationPanelContainer>
-      <BackButton onClick={onClickBack} />
+      <BackButton type="secondary" onClick={onClickBack} />
 
       <DetailsContainer>
         <WellboreName>{wellboreName}</WellboreName>

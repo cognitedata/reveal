@@ -6,6 +6,8 @@ import { OverlayNavigation } from 'components/OverlayNavigation';
 
 import { WellboreNavigationPanel } from '../../common/WellboreNavigationPanel';
 
+import { DetailedViewContent } from './elements';
+import { DetailedViewTable } from './table';
 import { DetailedViewProps } from './types';
 
 export const DetailedView: React.FC<DetailedViewProps> = ({
@@ -24,7 +26,12 @@ export const DetailedView: React.FC<DetailedViewProps> = ({
         currentWellboreName={currentWellboreName}
         onClickBack={clearDetailedViewNdsData}
         onNavigate={setDetailedViewNdsData}
+        onChangeData={setDetailedViewNdsData}
       />
+
+      <DetailedViewContent>
+        <DetailedViewTable data={detailedViewNdsData || []} />
+      </DetailedViewContent>
     </OverlayNavigation>
   );
 };
