@@ -1,21 +1,21 @@
 import reducer, { initialState } from 'src/modules/Common/store/common/slice';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
-import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
+import { SaveAnnotationsV1 } from 'src/store/thunks/Annotation/SaveAnnotationsV1';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
 
 describe('Test common reducer', () => {
   const fulfilledActionTypes = [
-    SaveAnnotations.fulfilled.type,
+    SaveAnnotationsV1.fulfilled.type,
     DeleteAnnotations.fulfilled.type,
     UpdateAnnotationsV1.fulfilled.type,
     UpdateFiles.fulfilled.type,
   ];
 
   const rejectedActionTypes = [
-    SaveAnnotations.rejected.type,
+    SaveAnnotationsV1.rejected.type,
     RetrieveAnnotations.rejected.type,
     DeleteAnnotations.rejected.type,
     UpdateAnnotationsV1.rejected.type,

@@ -8,7 +8,7 @@ import {
 } from 'src/api/vision/detectionModels/types';
 
 import { UnsavedAnnotation } from 'src/api/annotation/types';
-import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
+import { SaveAnnotationsV1 } from 'src/store/thunks/Annotation/SaveAnnotationsV1';
 import {
   AnnotationStatus,
   AnnotationUtilsV1,
@@ -175,7 +175,7 @@ export const VisionJobUpdate = createAsyncThunk<
 
       if (unsavedAnnotations.length) {
         const savedAnnotationResponse = await dispatch(
-          SaveAnnotations(unsavedAnnotations)
+          SaveAnnotationsV1(unsavedAnnotations)
         );
         const savedAnnotations = unwrapResult(savedAnnotationResponse);
         savedVisionAnnotation =
