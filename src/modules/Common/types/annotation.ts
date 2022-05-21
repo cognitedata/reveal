@@ -1,5 +1,6 @@
 import {
   AnnotatedResourceId,
+  CDFAnnotationType,
   CDFAnnotationV2,
   ImageAssetLink,
   ImageClassification,
@@ -31,9 +32,11 @@ export type CDFInheritedFields<Type> = AnnotatedResourceId & {
 
 export type VisionAnnotation<Type> = CDFInheritedFields<Type> & Type;
 
-export type UnsavedVisionAnnotation = VisionAnnotationDataType & {
+export type UnsavedVisionAnnotation<Type> = AnnotatedResourceId & {
+  annotationType: CDFAnnotationType<Type>;
+} & {
   status: Status;
-};
+} & { data: Type };
 
 export type VisionImageClassificationAnnotation =
   VisionAnnotation<ImageClassification>;

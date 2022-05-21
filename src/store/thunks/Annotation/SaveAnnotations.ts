@@ -1,20 +1,41 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
-import { UnsavedAnnotation, CDFAnnotationV1 } from 'src/api/annotation/types';
-import { validateAnnotation } from 'src/api/annotation/utils';
+
+import {
+  VisionAnnotation,
+  VisionAnnotationDataType,
+  UnsavedVisionAnnotation,
+} from 'src/modules/Common/types';
+import { useCognitePlaygroundClient } from 'src/hooks/useCognitePlaygroundClient';
+import {
+  ANNOTATED_RESOURCE_TYPE,
+  CREATING_APP,
+  CREATING_APP_VERSION,
+} from 'src/constants/annotationMetadata';
 
 export const SaveAnnotations = createAsyncThunk<
-  CDFAnnotationV1[],
-  UnsavedAnnotation[],
+  VisionAnnotation<VisionAnnotationDataType>[],
+  UnsavedVisionAnnotation<VisionAnnotationDataType>[],
   ThunkConfig
->('SaveAnnotations', async (annotations) => {
-  const filteredAnnotations = annotations.filter((annotation) =>
-    validateAnnotation(annotation)
-  ); // validate annotations
+>('SaveAnnotations', async (unsavedAnnotations) => {
+  const sdk = useCognitePlaygroundClient();
 
-  const data = { items: filteredAnnotations };
+  const items = unsavedAnnotations.map((item) => {
+    return {
+      ...item,
+      annotatedResourceType: ANNOTATED_RESOURCE_TYPE,
+      creatingApp: CREATING_APP,
+      creatingAppVersion: CREATING_APP_VERSION,
+      creatingUser: null,
+    };
+  });
 
-  const response = await AnnotationApi.create(data);
-  return response.data.items;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const annotations = await sdk.annotations.create(items);
+
+  const visionAnnotations: VisionAnnotation<VisionAnnotationDataType>[] = [];
+  // visionAnnotations = annotations.map((annotations) =>
+  //     convertCDFAnnotationV2ToVisionAnnotations(annotations)
+  //   ),
+  return visionAnnotations;
 });
