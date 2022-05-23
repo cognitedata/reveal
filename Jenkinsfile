@@ -19,7 +19,7 @@ def pods = { body ->
       ],
       volumes: []) {
       properties([
-        buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
+        
       ])
       node(POD_LABEL) {
         body()
