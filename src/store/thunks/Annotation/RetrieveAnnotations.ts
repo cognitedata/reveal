@@ -6,12 +6,12 @@ import {
 } from 'src/modules/Common/types';
 import { splitListIntoChunks } from 'src/utils/generalUtils';
 import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
-import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import { from, lastValueFrom } from 'rxjs';
 import { map, mergeMap, reduce } from 'rxjs/operators';
 import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bulkConverters';
 import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
-import { convertCDFAnnotationV2ToVisionAnnotations } from 'src/api/annotation/converters';
+import { convertCDFAnnotationToVisionAnnotations } from 'src/api/annotation/converters';
+import { useCognitePlaygroundClient } from 'src/hooks/useCognitePlaygroundClient';
 
 export const RetrieveAnnotations = createAsyncThunk<
   VisionAnnotation<VisionAnnotationDataType>[],
@@ -19,6 +19,11 @@ export const RetrieveAnnotations = createAsyncThunk<
   ThunkConfig
 >('RetrieveAnnotations', async (payload, { dispatch }) => {
   const { fileIds: fetchFileIds, clearCache } = payload;
+
+  /**
+   * fetch new (V2 annotators using sdk)
+   */
+  const sdk = useCognitePlaygroundClient();
   const fileIdBatches = splitListIntoChunks(
     fetchFileIds,
     ANNOTATION_FETCH_BULK_SIZE
@@ -32,21 +37,21 @@ export const RetrieveAnnotations = createAsyncThunk<
       filter: filterPayload,
       limit: -1,
     };
-    return AnnotationApi.list(annotationListRequest);
+    return sdk.annotations.list(annotationListRequest);
   });
 
   let visionAnnotations: VisionAnnotation<VisionAnnotationDataType>[] = [];
   if (requests.length) {
-    const responses = from(requests).pipe(
+    const annotationsPerBatch = Promise.all(requests);
+    const responses = from(annotationsPerBatch).pipe(
       mergeMap((request) => from(request)),
       map((annotations) =>
-        convertCDFAnnotationV2ToVisionAnnotations(annotations)
+        convertCDFAnnotationToVisionAnnotations(annotations.items)
       ),
       reduce((allAnnotations, annotationsPerFile) => {
         return allAnnotations.concat(annotationsPerFile);
       })
     );
-
     visionAnnotations = await lastValueFrom(responses);
   }
 

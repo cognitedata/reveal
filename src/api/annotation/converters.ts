@@ -285,7 +285,7 @@ const convertCDFAnnotationTypeToAnnotationType = (
   throw new Error('Invalid Annotation Type. Annotation rejected!');
 };
 
-export const convertCDFAnnotationV2ToVisionAnnotations = (
+export const convertCDFAnnotationToVisionAnnotations = (
   annotations: AnnotationModel[]
 ): VisionAnnotation<VisionAnnotationDataType>[] =>
   annotations.reduce<VisionAnnotation<VisionAnnotationDataType>[]>(
