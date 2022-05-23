@@ -31,6 +31,10 @@ jobs:
           yarn install --frozen-lockfile
           rm .npmrc
 
+      - name: Run unit tests
+        run: |
+          yarn test
+
       - name: Cypress run
         uses: cypress-io/github-action@v2
         # let's give this action an ID so we can refer
@@ -39,6 +43,8 @@ jobs:
         # Continue the build in case of an error, as we need to set the
         # commit status in the next step, both in case of success and failure
         continue-on-error: false
+        env:
+          NODE_ENV: mock
         # execute Cypress using a custom test command
         with:
           # let's make sure our tests pass on Chrome browser
@@ -49,4 +55,15 @@ jobs:
           # wait for 1 minute for the server to respond
           wait-on-timeout: 60
           # Run the cypress tests
-          command: yarn nx e2e platypus-e2e --headless
+          command: yarn nx e2e platypus-e2e
+
+      - name: Combine CodeCov reports
+        run: |
+          yarn cpdir
+          yarn summarize-codecov
+
+      - name: Upload CodeCov reports
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./coverage/

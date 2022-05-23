@@ -6,7 +6,7 @@ static final String STAGING_APP_ID = 'platypus-staging'
 
 // This is your FAS production app id.
 // At this time, there is no production build for the demo app.
-static final String PRODUCTION_APP_ID = 'platypus'
+static final String PRODUCTION_APP_ID = 'cdf-solutions-ui'
 
 // This is your FAS app identifier (repo) shared across both production and staging apps
 // in order to do a commit lookup (commits are shared between apps).
@@ -54,11 +54,11 @@ static final String SLACK_CHANNEL = 'alerts-platypus'
 //    which are named release-[NNN].
 //
 // No other options are supported at this time.
-static final String VERSIONING_STRATEGY = "multi-branch"
+static final String VERSIONING_STRATEGY = "single-branch"
 
 // == End of customization. Everything below here is common. == \\
 
-static final String NODE_VERSION = 'node:12'
+static final String NODE_VERSION = 'node:14'
 
 static final Map<String, String> CONTEXTS = [
   checkout: "continuous-integration/jenkins/checkout",
@@ -81,7 +81,6 @@ static final String[] DIRS = [
   'unit-tests',
   'storybook',
   'preview',
-  'staging',
   'production',
 ]
 
@@ -132,12 +131,11 @@ def pods = { body ->
 }
 
 pods {
-  final boolean isStaging = env.BRANCH_NAME == 'master'
-  final boolean isProduction = env.BRANCH_NAME.startsWith('release-')
+  final boolean isRelease = env.BRANCH_NAME == 'master'
   final boolean isPullRequest = !!env.CHANGE_ID
   app.safeRun(
     slackChannel: SLACK_CHANNEL,
-    logErrors: isStaging || isProduction
+    logErrors: isRelease
   ) {
     threadPool(
       tasks: [
@@ -160,13 +158,6 @@ pods {
                 retry(3) {
                   sh('yarn test')
                   junit(allowEmptyResults: true, testResults: '**/junit.xml')
-                  if (isPullRequest) {
-                    sh('yarn summarize-codecov')
-                    summarizeTestResults()
-                  }
-                  stage("Upload coverage reports") {
-                    codecov.uploadCoverageReport()
-                  }
                 }
               }
             }
@@ -183,100 +174,58 @@ pods {
 
         'Preview': {
           dir('preview') {
-            stage('Build for preview') {
-              fas.build(
-                appId: "${STAGING_APP_ID}-pr-${env.CHANGE_ID}",
-                repo: APPLICATION_REPO_ID,
-                buildCommand: 'yarn build preview',
-                shouldExecute: isPullRequest,
-                sourceMapPath: ''
-              )
+            if(!isPullRequest) {
+              print "No PR previews for release builds"
+              return;
             }
-          }
-        },
 
-        'Staging': {
-          dir('staging') {
-            stage('Build for staging') {
-              fas.build(
-                appId: STAGING_APP_ID,
-                repo: APPLICATION_REPO_ID,
-                buildCommand: 'yarn build staging',
-                shouldExecute: isStaging,
-                sourceMapPath: ''
+            stageWithNotify('Build and deploy PR') {
+              def package_name = "@cognite/cdf-solutions-ui";
+              def prefix = jenkinsHelpersUtil.determineRepoName();
+              def domain = "fusion-preview";
+              previewServer(
+                repo: domain,
+                prefix: prefix,
+                buildCommand: 'yarn build preview platypus',
+                buildFolder: 'build',
               )
+              deleteComments("[FUSION_PREVIEW_URL]")
+              deleteComments("[pr-server]")
+              def url = "https://next-release.fusion.cognite.com/?externalOverride=${package_name}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
+              pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url)");
             }
+
           }
         },
 
         'Production': {
           dir('production') {
+            if (isPullRequest) {
+              println "Skipping build for pull requests"
+              return
+            }
+
             stage('Build for production') {
               fas.build(
                 appId: PRODUCTION_APP_ID,
                 repo: APPLICATION_REPO_ID,
                 buildCommand: 'yarn build production',
-                shouldExecute: isProduction,
-                sourceMapPath: ''
+                shouldPublishSourceMap: false
               )
             }
           }
         },
-
-        // TBA
-        // 'E2e': {
-        //   testcafe.runE2EStage(
-        //     shouldExecute: !isRelease,
-        //     buildCommand: 'yarn testcafe:build',
-        //     runCommand: 'yarn testcafe:start'
-        //   )
-        // },
       ],
       workers: 4,
     )
 
-    stage('Publish preview build') {
-      if (!isPullRequest) {
-        print "Not a PR, no need to preview"
-        return
-      }
-      dir('preview') {
-        fas.publish(
-          previewSubdomain: 'platypus'
-        )
-      }
-    }
 
-    stage('Publish staging build') {
-      if (!isStaging) {
-        print "Not pushing to staging, no need to preview"
-        return
-      }
-      dir('staging') {
-        fas.publish()
-      }
-
-      // in 'single-branch' mode we always publish 'staging' and 'master' builds
-      // from the main branch, but we only need to notify about one of them.
-      // so it is ok to skip this message in that case
-      //
-      // note: the actual deployment of each is determined by versionSpec in FAS
-      if (VERSIONING_STRATEGY != "single-branch") {
-        dir('main') {
-          slack.send(
-            channel: SLACK_CHANNEL,
-              message: "Deployment of ${env.BRANCH_NAME} complete!"
-          )
-        }
-      }
-    }
-
-
-    if (isProduction && PRODUCTION_APP_ID) {
+    if (isRelease) {
       stage('Publish production build') {
         dir('production') {
-          fas.publish()
-
+          fas.publish(
+            shouldPublishSourceMap: false
+          )
         }
 
         dir('main') {

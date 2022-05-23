@@ -52,8 +52,3 @@ export NX_SENTRY_DSN="${SENTRY_DSN:-}"
 
 nx build ${project} ${configuration} --deployUrl=${baseHref}
 
-# hack for now until this is properly solved
-#if [ "$project" == "platypus" ]; then
-#nx postbuild ${project}
-#fi
-

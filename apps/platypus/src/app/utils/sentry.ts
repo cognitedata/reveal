@@ -4,7 +4,7 @@ import { environment } from '../../environments/environment';
 
 if (
   config.SENTRY_DSN &&
-  !['development', 'mock'].includes(environment.APP_ENV)
+  !['development', 'mock', 'fusion'].includes(environment.APP_ENV)
 ) {
   Sentry.init({
     dsn: config.SENTRY_DSN,

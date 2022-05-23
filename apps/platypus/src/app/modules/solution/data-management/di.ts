@@ -8,7 +8,7 @@ import {
   TemplatesApiService,
 } from '@platypus/platypus-core';
 import config from '@platypus-app/config/config';
-import { getCogniteSDKClient } from '@platypus-app/utils/cogniteSdk';
+import { getCogniteSDKClient } from '../../../../environments/cogniteSdk';
 
 export default () => {
   const solutionsApiService = config.USE_MIXER_API

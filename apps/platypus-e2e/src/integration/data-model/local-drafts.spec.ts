@@ -36,6 +36,7 @@ describe('Data Model Page - Local Drafts', () => {
   beforeEach(() => cy.visit('/platypus/solutions/new-schema/latest/data'));
 
   it('persists unpublished changes after page refresh', () => {
+    cy.getBySel('discard-btn').should('not.exist');
     addType();
     ensureCurrentVersionIsDraft();
 

@@ -14,7 +14,7 @@ import {
   TimeUtilsImpl,
 } from '@platypus/platypus-infrastructure';
 import config from './config/config';
-import { getCogniteSDKClient } from './utils/cogniteSdk';
+import { getCogniteSDKClient } from '../environments/cogniteSdk';
 
 export default () => {
   const solutionsApiService = config.USE_MIXER_API

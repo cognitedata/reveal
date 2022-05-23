@@ -64,6 +64,11 @@ The output can be found in the `dist` folder.
 
 You can find the code under `apps/platypus`.
 
+## Running Platypus locally
+
+For development, you can use either `development` or `fusion` environments.
+The default environment is `development`. To use this environment, just run `yarn start`.
+
 To run:
 
 `nx serve platypus`
@@ -75,6 +80,61 @@ To build:
 To test:
 
 `nx test platypus`
+
+## How to run Platypus app in Fusion app
+
+You can run app as part of the Fusion UI (CDF Fusion platform app).
+This is the best way to test and verify you app, however, it doesn't provide the best experience for developing locally.
+
+To use it, First serve your bundle locally by running `yarn start fusion` or `yarn start fusion platypus`.
+
+MAKE SURE YOURE USING NODE v14!!!!
+(some bug with the `cdf-utilities` requiremnet...)
+
+```
+yarn
+yarn start
+```
+
+Your bundle should now be hosted at https://localhost:3000/index.js. You can go there to verify. A bunch of javascript should show up.
+
+Then show it in unified CDF UI by following these steps:
+
+Go to [https://cog-appdev.next-release.fusion.cognite.com/](https://cog-appdev.next-release.fusion.cognite.com/)
+Open devtools
+In the console type: `importMapOverrides.enableUI()` (This sets some variables in localstorage)
+On the bottom right click the "{...}"-button
+Select @cognite/cdf-solutions-ui
+Type in "https://localhost:3000/index.js"
+Refresh the browser
+
+Voila!
+
+## Running Platypus app against mock environment
+
+You can run platypus as standalone application against mock server. This means that the app will be running as any other regular CRA application, however the requests to cdf will be mocked and instead will be sent to mock server.
+
+How to use the mock environment:
+
+- Run the app with `yarn start mock`
+- Run mock server `nx serve mock-server`
+- Open app as regularly you do on [https://localhost:3000/platypus](https://localhost:3000/platypus)
+- Everything should be there and working
+
+# Running Preview Server in PR
+
+A link it is going to be generated into each pull request with dynamic link that will allow you to live preview your changes.
+The link it will be something like this:
+https://next-release.fusion.cognite.com/?externalOverride=@cognite/cdf-solutions-ui&overrideUrl=https://platypus-123.fusion-preview.preview.cogniteapp.com/index.js
+
+Once you click on it, you will be asked to enter a domain. Use `cog-appdev`.
+Once you are logged in, just click on solutions from dashboard and you should be able to see platypus app.
+
+Breakdown:
+
+- next-release - server where the app is running
+- externalOverride - overrides the `signle-spa` import mapping to load the file from `overrideUrl`
+- overrideUrl - url where your compiled js files are deployed
 
 # Platypus CLI
 

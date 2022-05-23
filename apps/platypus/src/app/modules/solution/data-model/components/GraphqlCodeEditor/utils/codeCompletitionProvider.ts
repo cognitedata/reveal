@@ -24,8 +24,7 @@ const toCompletitionItem = (
 const getCodeCompletitionItems = (
   textUntilPosition: string,
   builtInTypes: BuiltInType[],
-  completitionType: string,
-  fieldDirective: boolean
+  completitionType: string
 ) => {
   const iconsMap = {
     DIRECTIVE: languages.CompletionItemKind.Interface,
@@ -92,8 +91,7 @@ export const autoCompleteProvider = (builtInTypes: BuiltInType[]) => {
           suggestions: getCodeCompletitionItems(
             textUntilPosition,
             builtInTypes,
-            'DIRECTIVE',
-            false
+            'DIRECTIVE'
           ),
         };
       }
@@ -105,24 +103,17 @@ export const autoCompleteProvider = (builtInTypes: BuiltInType[]) => {
           suggestions: getCodeCompletitionItems(
             textUntilPosition,
             builtInTypes,
-            'SCALAR',
-            false
+            'SCALAR'
           )
             .concat(
               getCodeCompletitionItems(
                 textUntilPosition,
                 builtInTypes,
-                'OBJECT',
-                false
+                'OBJECT'
               )
             )
             .concat(
-              getCodeCompletitionItems(
-                textUntilPosition,
-                customTypes,
-                'OBJECT',
-                false
-              )
+              getCodeCompletitionItems(textUntilPosition, customTypes, 'OBJECT')
             ) as CompletionItem[],
         };
       }

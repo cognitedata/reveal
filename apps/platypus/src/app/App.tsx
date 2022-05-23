@@ -1,15 +1,8 @@
-import { Container } from '@cognite/react-container';
 import { BrowserRouter as Router } from 'react-router-dom';
 import styled from 'styled-components/macro';
-import { AuthContainer } from './AuthContainer';
 import { ToastContainer } from '@cognite/cogs.js';
 
 import Routes from './Routes';
-import sidecar from './utils/sidecar';
-import store from './redux/store';
-import { environment } from '../environments/environment';
-import { ConditionalReduxProvider } from './utils/ReactContainerMock';
-import { AuthContainerMock } from './AuthContainerMock';
 import { getTenant } from './utils/tenant-utils';
 
 // Globally defined global
@@ -17,27 +10,17 @@ import { getTenant } from './utils/tenant-utils';
 (window as any).global = window;
 
 function App() {
-  const ContainerComponent =
-    environment.APP_ENV === 'mock' ? ConditionalReduxProvider : Container;
-
-  const AuthContainerComponent =
-    environment.APP_ENV === 'mock' ? AuthContainerMock : AuthContainer;
-
   const tenant = getTenant();
   return (
     <>
       <ToastContainer />
-      <ContainerComponent sidecar={sidecar} store={store}>
-        <AuthContainerComponent>
-          <StyledWrapper>
-            <Router basename={tenant}>
-              <StyledPage>
-                <Routes />
-              </StyledPage>
-            </Router>
-          </StyledWrapper>
-        </AuthContainerComponent>
-      </ContainerComponent>
+      <StyledWrapper>
+        <Router basename={tenant}>
+          <StyledPage>
+            <Routes />
+          </StyledPage>
+        </Router>
+      </StyledWrapper>
     </>
   );
 }

@@ -19,36 +19,35 @@ export interface DataModelHeaderProps {
 export const DataModelHeader = (props: DataModelHeaderProps) => {
   const { t } = useTranslation('DataModelHeader');
   const history = useHistory();
-  const versionsSelector =
-    props.schemas.length && props.selectedSchema ? (
-      <div key="versions-selector">
-        <SchemaVersionDropdown
-          onVersionSelect={(solutionSchema) => {
-            history.replace(
-              `/solutions/${props.solutionId}/${solutionSchema.version}/data`
-            );
-            props.selectSchema(solutionSchema);
-          }}
-          selectedVersion={props.selectedSchema}
-          versions={props.schemas}
-        />
-      </div>
-    ) : null;
-
-  const behindTitle = [versionsSelector];
-  if (props.draftSaved) {
-    behindTitle.push(
-      <span data-cy="changes-saved-status-text" style={{ marginLeft: 15 }}>
-        {t('all_changes_saved', 'All changes saved')}
-      </span>
-    );
-  }
 
   return (
     <div>
       <PageToolbar
         title={t('data_model_title', 'Data model')}
-        behindTitle={<SelectorWrapper>{behindTitle}</SelectorWrapper>}
+        behindTitle={
+          <SelectorWrapper>
+            {props.schemas.length && props.selectedSchema && (
+              <SchemaVersionDropdown
+                onVersionSelect={(solutionSchema) => {
+                  history.replace(
+                    `/solutions/${props.solutionId}/${solutionSchema.version}/data`
+                  );
+                  props.selectSchema(solutionSchema);
+                }}
+                selectedVersion={props.selectedSchema}
+                versions={props.schemas}
+              />
+            )}
+            {props.draftSaved && (
+              <span
+                data-cy="changes-saved-status-text"
+                style={{ marginLeft: 15 }}
+              >
+                {t('all_changes_saved', 'All changes saved')}
+              </span>
+            )}
+          </SelectorWrapper>
+        }
       >
         <PageToolbar.Tools>{props.children}</PageToolbar.Tools>
       </PageToolbar>

@@ -1,8 +1,8 @@
 import { useDispatch } from 'react-redux';
-import globalStateSlice from './redux/reducers/global/globalReducer';
-import { setCogniteSDKClient } from './utils/cogniteSdk';
+import globalStateSlice from '../../app/redux/reducers/global/globalReducer';
+import { setCogniteSDKClient } from '../cogniteSdk';
 import { CogniteClient } from '@cognite/sdk';
-import config from './config/config';
+import config from '../../app/config/config';
 
 type AuthContainerProps = {
   children: React.ReactNode;

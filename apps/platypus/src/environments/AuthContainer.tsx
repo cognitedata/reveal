@@ -1,7 +1,7 @@
 import { useAuthContext } from '@cognite/react-container';
 import { useDispatch } from 'react-redux';
-import globalStateSlice from './redux/reducers/global/globalReducer';
-import { setCogniteSDKClient } from './utils/cogniteSdk';
+import globalStateSlice from '@platypus-app/redux/reducers/global/globalReducer';
+import { setCogniteSDKClient } from './cogniteSdk';
 
 type AuthContainerProps = {
   children: React.ReactNode;

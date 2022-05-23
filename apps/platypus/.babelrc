@@ -1,12 +1,18 @@
 {
-    "presets": [
-        [
-        "@nrwl/react/babel",
-        {
-            "runtime": "automatic"
-        }
-        ]
-    ],
-    "plugins": []
+  "presets": [
+    [
+      "@nrwl/react/babel",
+      {
+        "runtime": "automatic"
+      }
+    ]
+  ],
+  "env": {
+    "mock": {
+      "plugins": [
+        "istanbul"
+      ]
+    }
+  },
+  "plugins": []
 }
-  

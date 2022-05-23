@@ -10,33 +10,45 @@ configuration=""
 
 case "$variant": in
   dev*) # development
-    configuration=""
+    configuration="--configuration=development"
     export REACT_APP_ENV="development"
+    export NODE_ENV="development"
     ;;
 
   s*) # staging
     configuration="--configuration=staging"
     export REACT_APP_ENV="staging"
+    export NODE_ENV="staging"
     ;;
 
   prod*) # production
   configuration="--configuration=production"
     export REACT_APP_ENV="production"
+    export NODE_ENV="production"
     ;;
 
   pr*) # Preview server builds
     configuration="--configuration=preview"
     export REACT_APP_ENV="preview"
+    export NODE_ENV="preview"
     ;;
 
   test*)
     configuration="--configuration=staging"
     export REACT_APP_ENV="staging"
+    export NODE_ENV="staging"
     ;;
 
   mock*)
     configuration="--configuration=mock"
     export REACT_APP_ENV="mock"
+    export NODE_ENV="mock"
+    ;;
+
+  fusion*)
+    configuration="--configuration=fusion"
+    export REACT_APP_ENV="fusion"
+    export NODE_ENV="fusion"
     ;;
 
   *)

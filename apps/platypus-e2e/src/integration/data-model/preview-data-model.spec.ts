@@ -36,28 +36,28 @@ describe('Data Model Page - Existing Solution Preview', () => {
     cy.get('div#Category.node').should('be.visible');
   });
 
-  it('Adds type with template directive using ui editor', () => {
-    cy.get('[aria-label="UI editor"]').click();
-    cy.getBySel('edit-schema-btn').should('be.visible').click();
-    cy.getBySel('add-type-btn').should('be.visible').click();
-    cy.getBySel('type-name-input').should('be.visible').type('CypressTestType');
-    cy.getBySel('modal-ok-button').should('be.visible').click();
+  // it('Adds type with template directive using ui editor', () => {
+  //   cy.get('[aria-label="UI editor"]').click();
+  //   cy.getBySel('edit-schema-btn').should('be.visible').click();
+  //   cy.getBySel('add-type-btn').should('be.visible').click();
+  //   cy.getBySel('type-name-input').should('be.visible').type('CypressTestType');
+  //   cy.getBySel('modal-ok-button').should('be.visible').click();
 
-    cy.getBySel('schema-type-field').type('name');
-    cy.getBySel('checkbox-field-required').click();
-    cy.getBySel('type-view-back-button').should('be.visible').click();
-    cy.getBySel('type-list-item-CypressTestType').should('be.visible');
-    //Test UI Editor type list
-    cy.getBySel('type-list-item-CypressTestType')
-      .contains('span', 'template')
-      .should('be.visible');
+  //   cy.getBySel('schema-type-field').type('name');
+  //   cy.getBySel('checkbox-field-required').click();
+  //   cy.getBySel('type-view-back-button').should('be.visible').click();
+  //   cy.getBySel('type-list-item-CypressTestType').should('be.visible');
+  //   //Test UI Editor type list
+  //   cy.getBySel('type-list-item-CypressTestType')
+  //     .contains('span', 'template')
+  //     .should('be.visible');
 
-    //Test visualizer
-    cy.get('div.node#CypressTestType').should('be.visible');
-    cy.get('div.node#CypressTestType')
-      .contains('span', 'Template')
-      .should('be.visible');
-  });
+  //   //Test visualizer
+  //   cy.get('div.node#CypressTestType').should('be.visible');
+  //   cy.get('div.node#CypressTestType')
+  //     .contains('span', 'Template')
+  //     .should('be.visible');
+  // });
 
   it('should enter the type in UI editor and add new field & see changes in visualizer', () => {
     cy.get('[aria-label="UI editor"]').click();

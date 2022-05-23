@@ -25,6 +25,9 @@
       "@cognite/cog-data-grid": [
         "libs/cog-data-grid/src/index.ts"
       ],
+      "@cognite/cog-data-grid-root/*": [
+        "libs/cog-data-grid/src/*"
+      ],
       "@cognite/graph": [
         "libs/graph/src/index.ts"
       ],

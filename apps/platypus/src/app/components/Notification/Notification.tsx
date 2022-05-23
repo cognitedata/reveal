@@ -19,14 +19,19 @@ export const Notification = ({
 }) => {
   const toastBody: JSX.Element[] = [];
   if (title) {
-    toastBody.push(<h3 data-cy="toast-title">{title}</h3>);
+    toastBody.push(
+      <h3 key="title" data-cy="toast-title">
+        {title}
+      </h3>
+    );
   }
 
-  toastBody.push(<p>{message}</p>);
+  toastBody.push(<p key="message">{message}</p>);
 
   if (validationErrors && validationErrors.length) {
     toastBody.push(
       <div
+        key="errors"
         style={{
           display: 'block',
           overflowX: 'hidden',
