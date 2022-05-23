@@ -1,26 +1,30 @@
 import { Button } from '@cognite/cogs.js';
+import { useTranslation } from 'common/i18n';
 import styled from 'styled-components';
 import theme from 'styles/theme';
 
-export const ColumnFilterIcon = ({ filtered }: { filtered: boolean }) => (
-  <FilterWrapper
-    filtered={filtered}
-    style={{
-      position: 'relative',
-      width: 'auto',
-      padding: '0',
-      marginLeft: '16px',
-    }}
-  >
-    <Button
-      icon="Filter"
-      iconPlacement="right"
-      style={{ color: filtered ? theme.actionText : 'black' }}
+export const ColumnFilterIcon = ({ filtered }: { filtered: boolean }) => {
+  const { t } = useTranslation();
+  return (
+    <FilterWrapper
+      filtered={filtered}
+      style={{
+        position: 'relative',
+        width: 'auto',
+        padding: '0',
+        marginLeft: '16px',
+      }}
     >
-      Filter
-    </Button>
-  </FilterWrapper>
-);
+      <Button
+        icon="Filter"
+        iconPlacement="right"
+        style={{ color: filtered ? theme.actionText : 'black' }}
+      >
+        {t('filter')}
+      </Button>
+    </FilterWrapper>
+  );
+};
 
 export const FilterWrapper = styled.div`
   width: auto;

@@ -2,8 +2,10 @@ import { useState, useMemo } from 'react';
 import { Input, Table } from 'antd';
 import { Checkbox } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { useTranslation } from 'common/i18n';
 
 export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const [hideEmpty, setHideEmpty] = useState(false);
 
@@ -29,12 +31,12 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
   return (
     <>
       <MetadataHeader>
-        <h3>Metadata</h3>
+        <h3>{t('metadata')}</h3>
         <FilterContainer>
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Filter metadata"
+            placeholder={t('filter-metadata')}
             allowClear
             style={{ maxWidth: '300px', marginRight: '16px' }}
           />
@@ -43,7 +45,7 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
             value={hideEmpty}
             onChange={(nextState: boolean) => setHideEmpty(nextState)}
           >
-            Hide empty
+            {t('hide-empty')}
           </Checkbox>
         </FilterContainer>
       </MetadataHeader>
@@ -55,13 +57,13 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
           }))}
           columns={[
             {
-              title: 'Key',
+              title: t('key'),
               dataIndex: 'key',
               key: 'key',
               width: '50%',
             },
             {
-              title: 'Value',
+              title: t('value'),
               dataIndex: 'value',
               key: 'value',
               width: '50%',
