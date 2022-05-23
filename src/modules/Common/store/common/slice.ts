@@ -5,7 +5,7 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import { CDFStatusModes } from 'src/modules/Common/Components/CDFStatus/CDFStatus';
-import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
+import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotationsV1';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { SaveAnnotationsV1 } from 'src/store/thunks/Annotation/SaveAnnotationsV1';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
@@ -49,7 +49,7 @@ const commonSlice = createSlice({
     builder.addMatcher(
       isFulfilled(
         SaveAnnotationsV1,
-        DeleteAnnotations,
+        DeleteAnnotationsV1,
         UpdateAnnotationsV1,
         UpdateFiles
       ),
@@ -63,7 +63,7 @@ const commonSlice = createSlice({
       isRejected(
         SaveAnnotationsV1,
         RetrieveAnnotations,
-        DeleteAnnotations,
+        DeleteAnnotationsV1,
         UpdateAnnotationsV1,
         SaveAnnotationTemplates
       ),

@@ -10,7 +10,7 @@ import {
   deselectAllSelectionsReviewPage,
 } from 'src/store/commonActions';
 import { RootState } from 'src/store/rootReducer';
-import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
+import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotationsV1';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { createFileInfo } from 'src/store/util/StateUtils';
 import {
@@ -139,7 +139,7 @@ const reviewSlice = createSlice({
       state.scrollToId = '';
     });
 
-    builder.addCase(DeleteAnnotations.fulfilled, (state, { payload }) => {
+    builder.addCase(DeleteAnnotationsV1.fulfilled, (state, { payload }) => {
       state.selectedAnnotationIds = state.selectedAnnotationIds.filter(
         (id) => !payload.includes(id)
       );

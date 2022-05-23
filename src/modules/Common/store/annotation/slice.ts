@@ -3,7 +3,7 @@ import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bu
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { VisionAnnotationV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
+import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotationsV1';
 import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
@@ -63,7 +63,7 @@ const annotationSlice = createSlice({
     );
 
     builder.addCase(
-      DeleteAnnotations.fulfilled,
+      DeleteAnnotationsV1.fulfilled,
       (state: AnnotationState, { payload }: { payload: number[] }) => {
         payload.forEach((annotationId) => {
           const annotation = state.annotations.byId[annotationId];

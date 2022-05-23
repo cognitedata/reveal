@@ -1,25 +1,30 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
-import sdk from '@cognite/cdf-sdk-singleton';
+import { InternalId } from '@cognite/sdk';
+import { useCognitePlaygroundClient } from 'src/hooks/useCognitePlaygroundClient';
+
+/**
+ * ## Example
+ * ```typescript
+ * dispatch(
+ *   DeleteAnnotations([
+ *     {
+ *       id: 1,
+ *     }
+ *   ])
+ * );
+ * ```
+ */
 
 export const DeleteAnnotations = createAsyncThunk<
-  number[],
-  number[],
+  InternalId[],
+  InternalId[],
   ThunkConfig
->('DeleteAnnotations', async (annotationIds) => {
+>('DeleteAnnotations', async (annotationIds: InternalId[]) => {
   if (annotationIds && annotationIds.length) {
-    const data = {
-      data: {
-        items: annotationIds.map((id) => ({ id })),
-      },
-    };
-    await sdk.post(
-      `${sdk.getBaseUrl()}/api/playground/projects/${
-        sdk.project
-      }/context/annotations/delete`,
-      data
-    );
+    const sdk = useCognitePlaygroundClient();
+    await sdk.annotations.delete(annotationIds);
     return annotationIds;
   }
-  return [];
+  return []; // TODO: should this really return input ids?
 });

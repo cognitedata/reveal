@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
+import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotationsV1';
 import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { ToastUtils } from 'src/utils/ToastUtils';
 import { filterAssetIdsLinkedToGivenFile } from 'src/api/utils/filterAssetIdsLinkedToGivenFile';
@@ -39,7 +39,7 @@ export const DeleteAnnotationsAndHandleLinkedAssetsOfFile = createAsyncThunk<
       .map((ann) => ann.id);
 
     if (savedAnnotationIds && savedAnnotationIds.length) {
-      dispatch(DeleteAnnotations(savedAnnotationIds));
+      dispatch(DeleteAnnotationsV1(savedAnnotationIds));
     }
 
     if (verifiedAssetRefAnnotations.length) {
