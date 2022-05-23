@@ -38,8 +38,9 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
     this._ssaoPass.ssaoParameters = ssaoRenderParameters ?? defaultRenderOptions.ssaoRenderParameters;
 
     const shouldAddFxaa = AntiAliasingMode[renderOptions.antiAliasing] === AntiAliasingMode[AntiAliasingMode.FXAA];
+    const hasFxaa = this._blitToScreenMaterial.defines.FXAA ?? false;
 
-    if (shouldAddFxaa === this._blitToScreenMaterial.defines.FXAA ?? false) {
+    if (shouldAddFxaa === hasFxaa) {
       return;
     }
 
