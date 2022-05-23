@@ -23,6 +23,10 @@ export const visualTests: VisualTest[] = [
     category: 'cad'
   },
   {
+    testKey: 'customObjectBlending',
+    category: 'cad'
+  },
+  {
     testKey: 'default',
     category: 'cad'
   },
