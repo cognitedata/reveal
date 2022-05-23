@@ -8,6 +8,7 @@ import { requestReprocessing } from 'utils/sdk/3dApiUtils';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpError, CogniteMultiError, Revision3D } from '@cognite/sdk';
 import { useHistory } from 'react-router-dom';
+import { useFlag } from '@cognite/react-feature-flags';
 
 type Props = Omit<ModalProps, 'onOk' | 'onCancel'> & {
   modelId: number;
@@ -21,6 +22,8 @@ type Props = Omit<ModalProps, 'onOk' | 'onCancel'> & {
 const MAGIC_DATE = new Date(2020, 0, 1);
 const ERR_DURATION = 5; // in seconds
 
+const forceNewRevision = useFlag('3DM_reprocess_force_new_revision');
+
 export const ReprocessingModal = ({
   modelId,
   revision,
@@ -29,7 +32,7 @@ export const ReprocessingModal = ({
   ...restProps
 }: Props) => {
   const history = useHistory();
-  const isReprocessable = revision.createdTime > MAGIC_DATE;
+  const isReprocessable = revision.createdTime > MAGIC_DATE && !forceNewRevision;
 
   const onOk = async () => {
     const progressMessage = message.loading('Requesting reprocessing...');
