@@ -18,7 +18,7 @@ import reducer, {
 } from 'src/modules/Explorer/store/slice';
 import { ExplorerState } from 'src/modules/Explorer/types';
 import { clearExplorerFileState } from 'src/store/commonActions';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
 import { VisionFilesToFileState } from 'src/store/util/StateUtils';
@@ -291,9 +291,9 @@ describe('Test explorer reducers', () => {
       });
     });
 
-    test('action RetrieveAnnotations.fulfilled', () => {
+    test('action RetrieveAnnotationsV1.fulfilled', () => {
       const action = {
-        type: RetrieveAnnotations.fulfilled,
+        type: RetrieveAnnotationsV1.fulfilled,
         payload: {},
       };
       const newState = reducer(mockState, action);

@@ -1,7 +1,7 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
 import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotationsV1';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
@@ -23,7 +23,7 @@ const annotationSliceV1 = createSlice({
   /* eslint-disable no-param-reassign */
   extraReducers: (builder) => {
     builder.addCase(
-      RetrieveAnnotations.fulfilled,
+      RetrieveAnnotationsV1.fulfilled,
       (state: AnnotationStateV1, { payload, meta }) => {
         const { fileIds, clearCache } = meta.arg;
 
@@ -92,7 +92,7 @@ const annotationSliceV1 = createSlice({
     });
 
     builder.addMatcher(
-      // TODO: refactor -> same as RetrieveAnnotations.fulfilled
+      // TODO: refactor -> same as RetrieveAnnotationsV1.fulfilled
       isAnyOf(
         CreateAnnotationsV1.fulfilled,
         VisionJobUpdate.fulfilled,

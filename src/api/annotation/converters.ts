@@ -1,5 +1,6 @@
 import {
   AnnotatedResourceId,
+  CDFAnnotationStatus,
   CDFAnnotationType,
   CDFAnnotationTypeEnum,
   CDFAnnotationV1,
@@ -26,6 +27,11 @@ import {
   isPolyline,
   isTextAnnotation,
 } from 'src/api/annotation/typeGuards';
+import {
+  AnnotationModel,
+  AnnotationPayload,
+  AnnotationType,
+} from '@cognite/sdk-playground';
 import {
   validBoundingBox,
   validImageAssetLink,
@@ -255,3 +261,89 @@ export function convertCDFAnnotationV1ToVisionAnnotation(
   }
   return null;
 }
+
+const convertCDFAnnotationStatusToStatus = (
+  status: CDFAnnotationStatus
+): Status | undefined => {
+  switch (status) {
+    case 'suggested':
+      return Status.Suggested;
+    case 'approved':
+      return Status.Approved;
+    case 'rejected':
+      return Status.Rejected;
+    default:
+      return undefined;
+  }
+};
+const convertCDFAnnotationTypeToAnnotationType = (
+  annotationType: AnnotationType
+): CDFAnnotationTypeEnum | undefined => {
+  if (annotationType in Object.values(CDFAnnotationTypeEnum)) {
+    return annotationType as CDFAnnotationTypeEnum;
+  }
+  return undefined;
+};
+
+export const convertCDFAnnotationToVisionAnnotations = (
+  annotations: AnnotationModel[]
+): VisionAnnotation<VisionAnnotationDataType>[] =>
+  annotations.reduce<VisionAnnotation<VisionAnnotationDataType>[]>(
+    (ann, nextAnnotation) => {
+      const status = convertCDFAnnotationStatusToStatus(nextAnnotation.status);
+      const annotationType = convertCDFAnnotationTypeToAnnotationType(
+        nextAnnotation.annotationType
+      );
+
+      // if CDF annotation has valid status and annotation type
+      if (status && annotationType) {
+        const cdfInheritedFields: CDFInheritedFields<VisionAnnotationDataType> =
+          {
+            id: nextAnnotation.id,
+            createdTime: nextAnnotation.createdTime.getTime(),
+            lastUpdatedTime: nextAnnotation.lastUpdatedTime.getTime(),
+            status,
+            annotatedResourceId: nextAnnotation.annotatedResourceId!, // annotatedResourceId will be mandatory in api soon
+            annotationType,
+          };
+
+        // HACK: VIS-859 converting Data, due to the type of data of a CDFImageKeypointCollection,
+        // is not matching with ImageKeypointCollection data
+        // should change Vision internal type and remove this hack
+        let annotationData: AnnotationPayload = nextAnnotation.data;
+        if (
+          cdfInheritedFields.annotationType ===
+          CDFAnnotationTypeEnum.ImagesKeypointCollection
+        ) {
+          const convertedAnnotationData: ImageKeypointCollection = {
+            ...(nextAnnotation.data as ImageKeypointCollection),
+            // @ts-ignore
+            keypoints: Object.keys(nextAnnotation.data.keypoints).map(
+              (keypointName) => ({
+                label: keypointName,
+                // @ts-ignore
+                confidence: keypoints[keypointName].confidence,
+                point: {
+                  // @ts-ignore
+                  x: keypoints[keypointName].x,
+                  // @ts-ignore
+                  y: keypoints[keypointName].y,
+                },
+              })
+            ),
+          };
+          annotationData = convertedAnnotationData;
+        }
+
+        const nextVisionAnnotation: VisionAnnotation<VisionAnnotationDataType> =
+          {
+            ...cdfInheritedFields,
+            ...(annotationData as VisionAnnotationDataType),
+          };
+        return [...ann, nextVisionAnnotation];
+      }
+
+      return ann;
+    },
+    []
+  );
