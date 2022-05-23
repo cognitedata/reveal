@@ -2,7 +2,7 @@ import { useDispatch } from 'react-redux';
 import React, { ReactElement, useEffect, useMemo } from 'react';
 import { ResultData } from 'src/modules/Common/types';
 import { setLoadingAnnotations } from 'src/modules/Explorer/store/slice';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 
 // todo: remove if not needed
 /**
@@ -22,7 +22,7 @@ export function AnnotationLoader(props: {
   useEffect(() => {
     if (fileIds && fileIds.length) {
       dispatch(setLoadingAnnotations());
-      dispatch(RetrieveAnnotations({ fileIds, clearCache: true }));
+      dispatch(RetrieveAnnotationsV1({ fileIds, clearCache: true }));
     }
   }, [fileIds]);
 

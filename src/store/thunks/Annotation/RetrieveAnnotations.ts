@@ -1,23 +1,29 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import {
-  AnnotationUtilsV1,
-  VisionAnnotationV1,
-} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { CDFAnnotationV1 } from 'src/api/annotation/types';
-import { validateAnnotation } from 'src/api/annotation/utils';
-import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
+  VisionAnnotation,
+  VisionAnnotationDataType,
+} from 'src/modules/Common/types';
 import { splitListIntoChunks } from 'src/utils/generalUtils';
+import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
 import { from, lastValueFrom } from 'rxjs';
 import { map, mergeMap, reduce } from 'rxjs/operators';
+import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bulkConverters';
+import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
+import { convertCDFAnnotationToVisionAnnotations } from 'src/api/annotation/converters';
+import { useCognitePlaygroundClient } from 'src/hooks/useCognitePlaygroundClient';
 
 export const RetrieveAnnotations = createAsyncThunk<
-  VisionAnnotationV1[],
+  VisionAnnotation<VisionAnnotationDataType>[],
   { fileIds: number[]; clearCache?: boolean },
   ThunkConfig
->('RetrieveAnnotations', async (payload) => {
-  const { fileIds: fetchFileIds } = payload;
+>('RetrieveAnnotations', async (payload, { dispatch }) => {
+  const { fileIds: fetchFileIds, clearCache } = payload;
+
+  /**
+   * fetch new (V2 annotators using sdk)
+   */
+  const sdk = useCognitePlaygroundClient();
   const fileIdBatches = splitListIntoChunks(
     fetchFileIds,
     ANNOTATION_FETCH_BULK_SIZE
@@ -31,36 +37,37 @@ export const RetrieveAnnotations = createAsyncThunk<
       filter: filterPayload,
       limit: -1,
     };
-
-    return AnnotationApi.list(annotationListRequest);
+    return sdk.annotations.list(annotationListRequest);
   });
+
+  let visionAnnotations: VisionAnnotation<VisionAnnotationDataType>[] = [];
   if (requests.length) {
-    const responses = from(requests).pipe(
+    const annotationsPerBatch = Promise.all(requests);
+    const responses = from(annotationsPerBatch).pipe(
       mergeMap((request) => from(request)),
-      map((annotations) => {
-        const filteredAnnotations = annotations.filter(
-          (annotation: CDFAnnotationV1) => {
-            try {
-              return validateAnnotation(annotation);
-            } catch (error) {
-              console.warn(
-                'Annotation is invalid, will not be visible',
-                annotation
-              );
-              return false;
-            }
-          }
-        );
-        const visionAnnotations =
-          AnnotationUtilsV1.convertToVisionAnnotationsV1(filteredAnnotations);
-        return visionAnnotations;
-      }),
+      map((annotations) =>
+        convertCDFAnnotationToVisionAnnotations(annotations.items)
+      ),
       reduce((allAnnotations, annotationsPerFile) => {
         return allAnnotations.concat(annotationsPerFile);
       })
     );
-
-    return lastValueFrom(responses);
+    visionAnnotations = await lastValueFrom(responses);
   }
-  return [];
+
+  /**
+   * fetch V1 type annotations using visionAnnotationV1 thunk
+   * convert them into VisionAnnotation(s)
+   * combine the results with annotations received from new API
+   * return the final combined results
+   */
+  const annotationFromV1 = await dispatch(
+    RetrieveAnnotationsV1({ fileIds: fetchFileIds, clearCache })
+  ).unwrap();
+
+  const visionAnnotationFromV1 =
+    convertCDFAnnotationV1ToVisionAnnotations(annotationFromV1);
+  visionAnnotations.concat(visionAnnotationFromV1);
+
+  return visionAnnotations;
 });

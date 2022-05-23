@@ -3,7 +3,7 @@ import { PageTitle } from '@cognite/cdf-utilities';
 import { selectFileById } from 'src/modules/Common/store/files/selectors';
 import { RootState } from 'src/store/rootReducer';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
 import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
@@ -104,7 +104,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
     }
 
     if (file) {
-      dispatch(RetrieveAnnotations({ fileIds: [+fileId], clearCache: true }));
+      dispatch(RetrieveAnnotationsV1({ fileIds: [+fileId], clearCache: true }));
     }
   }, [file, fileId, reviewFileIds]);
 

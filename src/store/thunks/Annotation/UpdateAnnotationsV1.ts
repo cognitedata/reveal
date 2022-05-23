@@ -1,9 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
+import { AnnotationApiV1 } from 'src/api/annotation/AnnotationApiV1';
 import {
   getFieldOrSetNull,
-  validateAnnotation,
+  validateAnnotationV1,
 } from 'src/api/annotation/utils';
 import {
   AnnotationUtilsV1,
@@ -21,7 +21,7 @@ export const UpdateAnnotationsV1 = createAsyncThunk<
   }
 
   const filteredAnnotations = annotations.filter((annotation) =>
-    validateAnnotation(annotation)
+    validateAnnotationV1(annotation)
   ); // validate annotations
 
   const annotationUpdateRequest = {
@@ -42,7 +42,7 @@ export const UpdateAnnotationsV1 = createAsyncThunk<
       },
     })),
   };
-  const response = await AnnotationApi.update(annotationUpdateRequest);
+  const response = await AnnotationApiV1.update(annotationUpdateRequest);
   const responseAnnotations = response.data.items;
 
   const updatedVisionAnnotations =

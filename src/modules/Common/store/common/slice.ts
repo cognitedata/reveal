@@ -6,7 +6,7 @@ import {
 } from '@reduxjs/toolkit';
 import { CDFStatusModes } from 'src/modules/Common/Components/CDFStatus/CDFStatus';
 import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotationsV1';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { SaveAnnotationsV1 } from 'src/store/thunks/Annotation/SaveAnnotationsV1';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
@@ -62,7 +62,7 @@ const commonSlice = createSlice({
     builder.addMatcher(
       isRejected(
         SaveAnnotationsV1,
-        RetrieveAnnotations,
+        RetrieveAnnotationsV1,
         DeleteAnnotationsV1,
         UpdateAnnotationsV1,
         SaveAnnotationTemplates

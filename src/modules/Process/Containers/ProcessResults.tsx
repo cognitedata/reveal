@@ -52,7 +52,7 @@ import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginatio
 import { PaginatedTableProps } from 'src/modules/Common/Components/FileTable/types';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { PollJobs } from 'src/store/thunks/Process/PollJobs';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const dispatch = useDispatch();
@@ -130,7 +130,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     if (processFileIds.length) {
       dispatch(FetchFilesById(processFileIds));
       dispatch(
-        RetrieveAnnotations({ fileIds: processFileIds, clearCache: true })
+        RetrieveAnnotationsV1({ fileIds: processFileIds, clearCache: true })
       );
     }
   }, [processFileIds, showSelectFromExploreModal]); // requires to fetch annotations when explorer modal is closed

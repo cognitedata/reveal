@@ -103,7 +103,7 @@ describe('ProcessResults', () => {
               payload: undefined,
             }),
             expect.objectContaining({
-              type: 'RetrieveAnnotations/pending',
+              type: 'RetrieveAnnotationsV1/pending',
               payload: undefined,
               meta: expect.objectContaining({
                 arg: expect.objectContaining({
