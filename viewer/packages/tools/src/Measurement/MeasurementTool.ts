@@ -57,7 +57,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._pointSize = 0.02;
     this._distanceValue = '';
     this._distanceToCamera = 0;
-    this._secondPoint = new THREE.Vector3();
   }
 
   /**
@@ -308,6 +307,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
     //Depth distance line
     const zAxisLinePosition = new Float32Array(6);
+    zAxisLinePosition[4] += verticalDistance;
     zAxisLinePosition.set(xAxisLinePosition.slice(3, 6), 0);
     zAxisLinePosition[3] = xAxisLinePosition[3] - verticalDistance;
     zAxisLinePosition[4] = xAxisLinePosition[4];
