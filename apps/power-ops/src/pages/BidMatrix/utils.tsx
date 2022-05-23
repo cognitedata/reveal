@@ -68,7 +68,7 @@ export const getFormattedBidMatrixData = async (
   let transposedColumns = sequenceRows.map(
     (row: SequenceRow, index: number) => {
       const accessor = row[0]?.toString().replace('.', '');
-      return { accessor, id: index + 1, values: row.slice(1) };
+      return { accessor, id: index + 1, values: Array.from(row).slice(1) };
     }
   );
   transposedColumns = [

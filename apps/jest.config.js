@@ -20,7 +20,7 @@ module.exports = {
       '../../../packages/$1/dist/mocks',
     ],
     // we don't want external private packages to be treated as local
-    '^@cognite/(?!cogs.js|sdk|reveal|potree-core)(.*)$': [
+    '^@cognite/(?!cogs.js|sdk|power-ops-api-types|reveal|potree-core)(.*)$': [
       '../../../packages/$1/src',
       '../../../packages/$1/dist',
       '<rootDir>/../../packages/$1/src',
