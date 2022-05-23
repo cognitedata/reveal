@@ -77,7 +77,6 @@ async function init() {
   if (modelOutputs.includes('gltf-directory') || modelOutputs.includes('reveal-directory')) {
     const cadModel = await cadManager.addModel(modelIdentifier);
     sceneHandler.addCadModel(cadModel, cadModel.cadModelIdentifier);
-    // cadModels.push({ model: cadModel, modelIdentifier: cadModel.cadModelIdentifier });
     model = cadModel;
     boundingBox = (cadModel as any)._cadModelMetadata.scene.getBoundsOfMostGeometry().clone();
     boundingBox.applyMatrix4(model.children[0].matrix);

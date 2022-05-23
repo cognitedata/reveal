@@ -5,8 +5,8 @@
 import * as THREE from 'three';
 import { It, Mock, Times } from 'moq.ts';
 import { BasicPipelineExecutor } from './BasicPipelineExecutor';
-import { RenderPipelineProvider } from 'dist/packages/rendering';
 import { RenderPass } from '../RenderPass';
+import { RenderPipelineProvider } from '../RenderPipelineProvider';
 
 describe(BasicPipelineExecutor.name, () => {
   let basicPipelineExecutor: BasicPipelineExecutor;

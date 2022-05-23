@@ -20,7 +20,7 @@ describe('createRevealManager', () => {
         new Mock<ModelMetadataProvider>().object(),
         new Mock<ModelDataProvider>().object(),
         new Mock<THREE.WebGLRenderer>()
-          .setup(_ => It.Is((expression: SetPropertyExpression) => expression.name == 'info'))
+          .setup(_ => It.Is((expression: SetPropertyExpression) => expression.name === 'info'))
           .returns({})
           .object(),
         new SceneHandler(),
