@@ -2,8 +2,6 @@
  * Copyright 2022 Cognite AS
  */
 
-import assert from 'assert';
-
 export function incrementOrInsertIndex(indexMap: Map<number, number>, index: number): void {
   const count = indexMap.get(index);
 
@@ -16,7 +14,13 @@ export function incrementOrInsertIndex(indexMap: Map<number, number>, index: num
 
 export function decrementOrDeleteIndex(indexMap: Map<number, number>, index: number): void {
   const count = indexMap.get(index);
-  assert(count !== undefined);
+
+  // Should ideally not happend, but as of now,
+  // a sector can potensially be discarded before loaded,
+  // which then causes treeIndex to be removed (before it is added)
+  if (count === undefined) {
+    return;
+  }
 
   if (count <= 1) {
     indexMap.delete(index);
