@@ -22,8 +22,6 @@ type Props = Omit<ModalProps, 'onOk' | 'onCancel'> & {
 const MAGIC_DATE = new Date(2020, 0, 1);
 const ERR_DURATION = 5; // in seconds
 
-const forceNewRevision = useFlag('3DM_reprocess_force_new_revision');
-
 export const ReprocessingModal = ({
   modelId,
   revision,
@@ -32,6 +30,7 @@ export const ReprocessingModal = ({
   ...restProps
 }: Props) => {
   const history = useHistory();
+  const forceNewRevision = useFlag('3DM_reprocess_force_new_revision');
   const isReprocessable = revision.createdTime > MAGIC_DATE && !forceNewRevision;
 
   const onOk = async () => {
