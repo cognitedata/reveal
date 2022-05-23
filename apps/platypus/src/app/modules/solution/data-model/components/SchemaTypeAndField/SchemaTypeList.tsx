@@ -58,14 +58,17 @@ export const SchemaTypeList = ({
 
   return (
     <>
-      <TypeFormModal
-        visible={currentModal === 'create' || currentModal === 'rename'}
-        closeModal={closeModal}
-        onOk={formModalOkMethod}
-        mode={currentModal}
-        typeValue={typeValue}
-        existingTypes={objectTypes}
-      />
+      {(currentModal === 'create' || currentModal === 'rename') && (
+        <TypeFormModal
+          visible={currentModal === 'create' || currentModal === 'rename'}
+          closeModal={closeModal}
+          onOk={formModalOkMethod}
+          mode={currentModal}
+          typeValue={typeValue}
+          existingTypes={objectTypes}
+        />
+      )}
+
       <TypeDeleteModal
         typeValue={typeValue}
         visible={currentModal === 'delete'}
