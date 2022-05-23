@@ -57,6 +57,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._pointSize = 0.02;
     this._distanceValue = '';
     this._distanceToCamera = 0;
+    this._secondPoint = new THREE.Vector3();
   }
 
   /**
@@ -178,6 +179,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    */
   private endMeasurement(point: THREE.Vector3) {
     this.updateMeasurement(0, 0, point);
+    this.generateAxesDistance();
 
     const labelPosition = this.calculateMidpoint(
       new THREE.Vector3(this._linePosition[0], this._linePosition[1], this._linePosition[2]),
@@ -282,5 +284,43 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     mesh.scale.copy(mesh.scale.multiplyScalar(this._pointSize));
 
     this._viewer.addObject3D(mesh);
+  }
+
+  private generateAxesDistance() {
+    const verticalDistance = this._linePosition[0] - this._linePosition[3];
+    const horizontalDistance = this._linePosition[1] - this._linePosition[4];
+    const depthDistance = this._linePosition[2] - this._linePosition[5];
+
+    //Vertical distance line
+    let yAxisLinePosition = new Float32Array(6);
+    yAxisLinePosition = this._linePosition.slice();
+    yAxisLinePosition[3] += verticalDistance;
+    yAxisLinePosition[5] += depthDistance;
+    this.addLine(yAxisLinePosition, 0x00ff00);
+
+    //Horizontal distance line
+    const xAxisLinePosition = new Float32Array(6);
+    xAxisLinePosition.set(yAxisLinePosition.slice(3, 6), 0);
+    xAxisLinePosition[3] = yAxisLinePosition[3];
+    xAxisLinePosition[4] = yAxisLinePosition[4];
+    xAxisLinePosition[5] = yAxisLinePosition[5] - depthDistance;
+    this.addLine(xAxisLinePosition, 0xff0000);
+
+    //Depth distance line
+    const zAxisLinePosition = new Float32Array(6);
+    zAxisLinePosition.set(xAxisLinePosition.slice(3, 6), 0);
+    zAxisLinePosition[3] = xAxisLinePosition[3] - verticalDistance;
+    zAxisLinePosition[4] = xAxisLinePosition[4];
+    zAxisLinePosition[5] = xAxisLinePosition[5];
+    this.addLine(zAxisLinePosition, 0x0000ff);
+  }
+
+  private addLine(position: Float32Array, color: number) {
+    const axesLine = new LineGeometry();
+    axesLine.setPositions(position);
+    const axesLineMaterial = new LineMaterial({ color: color, linewidth: this._lineOptions.lineWidth / 2 });
+    const axesLineMesh = new THREE.Mesh(axesLine, axesLineMaterial);
+
+    this._viewer.addObject3D(axesLineMesh);
   }
 }
