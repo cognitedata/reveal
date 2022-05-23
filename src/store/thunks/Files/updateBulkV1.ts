@@ -1,11 +1,11 @@
 import { Label } from '@cognite/sdk';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFileV1 } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFileV1';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
-import { Status } from 'src/api/annotation/types';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import { AnnotationStatusChangeV1 } from 'src/store/thunks/Annotation/AnnotationStatusChangeV1';
 import { UpdateFiles } from './UpdateFiles';
 
 export const getUpdatedValue = ({
@@ -27,33 +27,11 @@ export const getUpdatedValue = ({
   return undefined;
 };
 
-/**
- * ## Example
- * ```typescript
- *  dispatch(
- *    updateBulk({
- *      selectedFiles: [
- *        {
- *          id: 1,
- *          ...
- *        },
- *      ],
- *      bulkEditUnsaved: {
- *        directory: '/tmp',
- *        metadata: {
- *          key: 'value',
- *        },
- *      },
- *    })
- *  )
- * ```
- */
-
-export const updateBulk = createAsyncThunk<
+export const updateBulkV1 = createAsyncThunk<
   void,
   { selectedFiles: VisionFile[]; bulkEditUnsaved: BulkEditUnsavedState },
   ThunkConfig
->('updateBulk', async ({ selectedFiles, bulkEditUnsaved }, { dispatch }) => {
+>('updateBulkV1', async ({ selectedFiles, bulkEditUnsaved }, { dispatch }) => {
   const payload: {
     id: number;
     update: {};
@@ -104,14 +82,14 @@ export const updateBulk = createAsyncThunk<
 
   if (bulkEditUnsaved.annotationIds) {
     const updateAnnotationStatuses = async (
-      status: Status,
+      status: AnnotationStatus,
       annotationIds?: number[]
     ) => {
       if (!annotationIds) return;
       await Promise.all(
         annotationIds.map((id) => {
           return dispatch(
-            AnnotationStatusChange({
+            AnnotationStatusChangeV1({
               id,
               status,
             })
@@ -122,23 +100,21 @@ export const updateBulk = createAsyncThunk<
     const { annotationIds } = bulkEditUnsaved;
     // Update annotation statuses
     updateAnnotationStatuses(
-      Status.Rejected,
+      AnnotationStatus.Rejected,
       annotationIds.rejectedAnnotationIds
     );
     updateAnnotationStatuses(
-      Status.Approved,
+      AnnotationStatus.Verified,
       annotationIds.verifiedAnnotationIds
     );
     updateAnnotationStatuses(
-      Status.Suggested,
+      AnnotationStatus.Unhandled,
       annotationIds.unhandledAnnotationIds
     );
     // Delete annotations
     await dispatch(
-      DeleteAnnotationsAndHandleLinkedAssetsOfFile({
-        annotationIds:
-          annotationIds.annotationIdsToDelete?.map((item) => ({ id: item })) ||
-          [],
+      DeleteAnnotationsAndHandleLinkedAssetsOfFileV1({
+        annotationIds: annotationIds.annotationIdsToDelete || [],
         showWarnings: true,
       })
     );
