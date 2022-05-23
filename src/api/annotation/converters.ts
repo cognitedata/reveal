@@ -303,7 +303,7 @@ export const convertCDFAnnotationToVisionAnnotations = (
             createdTime: nextAnnotation.createdTime.getTime(),
             lastUpdatedTime: nextAnnotation.lastUpdatedTime.getTime(),
             status,
-            annotatedResourceId: nextAnnotation.annotatedResourceId || 0, // is annotatedResourceId should be mandatory?
+            annotatedResourceId: nextAnnotation.annotatedResourceId!, // annotatedResourceId will be mandatory in api soon
             annotationType,
           };
 
