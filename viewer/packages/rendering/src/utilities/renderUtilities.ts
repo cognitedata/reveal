@@ -151,6 +151,28 @@ export function getLayerMask(renderLayer: number): number {
   return ((1 << renderLayer) | 0) >>> 0;
 }
 
+export function hasStyledNodes(
+  modelIdentifiers: string[],
+  materialManager: CadMaterialManager
+): { back: boolean; inFront: boolean; ghost: boolean } {
+  const totalBackIndices = modelIdentifiers.reduce(
+    (sum, modelIdentifier) => sum + materialManager.getModelBackTreeIndices(modelIdentifier).count,
+    0
+  );
+
+  const totalInFrontIndices = modelIdentifiers.reduce(
+    (sum, modelIdentifier) => sum + materialManager.getModelInFrontTreeIndices(modelIdentifier).count,
+    0
+  );
+
+  const totalGhostIndices = modelIdentifiers.reduce(
+    (sum, modelIdentifier) => sum + materialManager.getModelGhostedTreeIndices(modelIdentifier).count,
+    0
+  );
+
+  return { back: totalBackIndices > 0, ghost: totalGhostIndices > 0, inFront: totalInFrontIndices > 0 };
+}
+
 function setModelRenderLayers(
   cadModels: {
     object: THREE.Object3D<THREE.Event>;

@@ -121,7 +121,13 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
       renderer.setRenderTarget(this._renderTargetData.ssaoRenderTarget);
       renderer.setClearColor('#FFFFFF');
       renderer.setClearAlpha(1.0);
-      yield this._ssaoPass;
+      renderer.clear();
+      if (
+        this.renderOptions?.ssaoRenderParameters?.sampleSize ??
+        defaultRenderOptions.ssaoRenderParameters.sampleSize > 0
+      ) {
+        yield this._ssaoPass;
+      }
 
       renderer.setRenderTarget(this._renderTargetData.postProcessingRenderTarget);
       this._rendererStateHelper.resetState();
