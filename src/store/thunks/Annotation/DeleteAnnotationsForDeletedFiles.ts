@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationApiV1 } from 'src/api/annotation/AnnotationApiV1';
-import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
+import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotationsV1';
 
 const BATCH_SIZE = 10;
 
@@ -34,7 +34,7 @@ export const DeleteAnnotationsForDeletedFiles = createAsyncThunk<
       return acc.concat(rs);
     });
     await dispatch(
-      DeleteAnnotations(annotations.map((annotation) => annotation.id))
+      DeleteAnnotationsV1(annotations.map((annotation) => annotation.id))
     );
   }
 });

@@ -3,7 +3,7 @@ import reducer, {
 } from 'src/modules/Common/store/annotationV1/slice';
 import { clearAnnotationState } from 'src/store/commonActions';
 import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
-import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
+import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotationsV1';
 import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
@@ -186,7 +186,7 @@ describe('Test annotationV1 reducer', () => {
   describe('Test DeleteAnnotations.fulfilled action', () => {
     test('should not change state for nonexistent annotation id', () => {
       const action = {
-        type: DeleteAnnotations.fulfilled.type,
+        type: DeleteAnnotationsV1.fulfilled.type,
         payload: [3], // annotation ids to delete
       };
 
@@ -208,7 +208,7 @@ describe('Test annotationV1 reducer', () => {
 
     test('should clean entire state since all annotation ids in state given in payload', () => {
       const action = {
-        type: DeleteAnnotations.fulfilled.type,
+        type: DeleteAnnotationsV1.fulfilled.type,
         payload: [1, 2], // annotation ids to delete
       };
 
@@ -232,7 +232,7 @@ describe('Test annotationV1 reducer', () => {
 
   test('should only remove annotations with specified ids', () => {
     const action = {
-      type: DeleteAnnotations.fulfilled.type,
+      type: DeleteAnnotationsV1.fulfilled.type,
       payload: [2], // annotation ids to delete
     };
 
@@ -266,7 +266,7 @@ describe('Test annotationV1 reducer', () => {
 
   test('should delete annotation with non existing file id', () => {
     const action = {
-      type: DeleteAnnotations.fulfilled.type,
+      type: DeleteAnnotationsV1.fulfilled.type,
       payload: [1], // annotation ids to delete
     };
 

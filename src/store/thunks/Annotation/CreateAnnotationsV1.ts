@@ -1,6 +1,6 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
+import { SaveAnnotationsV1 } from 'src/store/thunks/Annotation/SaveAnnotationsV1';
 import {
   AnnotationStatus,
   AnnotationUtilsV1,
@@ -30,7 +30,7 @@ export const CreateAnnotationsV1 = createAsyncThunk<
 
   if (unsavedAnnotations.length) {
     const savedAnnotationResponse = await dispatch(
-      SaveAnnotations(unsavedAnnotations)
+      SaveAnnotationsV1(unsavedAnnotations)
     );
     const savedAnnotations = unwrapResult(savedAnnotationResponse);
 

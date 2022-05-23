@@ -1,7 +1,9 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bulkConverters';
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
-import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
+import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
+import { VisionAnnotationV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotationsV1';
 import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
@@ -11,8 +13,6 @@ import {
   clearAnnotationStates,
   repopulateAnnotationState,
 } from 'src/modules/Common/store/annotation/util';
-import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
-import { VisionAnnotationV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 export const initialState: AnnotationState = {
   files: {
@@ -62,7 +62,7 @@ const annotationSlice = createSlice({
     );
 
     builder.addCase(
-      DeleteAnnotations.fulfilled,
+      DeleteAnnotationsV1.fulfilled,
       (state: AnnotationState, { payload }: { payload: number[] }) => {
         payload.forEach((annotationId) => {
           const annotation = state.annotations.byId[annotationId];

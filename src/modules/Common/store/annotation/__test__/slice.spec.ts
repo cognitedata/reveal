@@ -6,7 +6,7 @@ import reducer, {
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
 import { clearAnnotationState } from 'src/store/commonActions';
 import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
-import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
+import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotationsV1';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
@@ -208,7 +208,7 @@ describe('Test annotation reducer', () => {
       };
 
       const action = {
-        type: DeleteAnnotations.fulfilled.type,
+        type: DeleteAnnotationsV1.fulfilled.type,
         payload: [3], // annotation ids to delete
       };
 
@@ -231,7 +231,7 @@ describe('Test annotation reducer', () => {
       };
 
       const action = {
-        type: DeleteAnnotations.fulfilled.type,
+        type: DeleteAnnotationsV1.fulfilled.type,
         payload: [1, 2], // annotation ids to delete
       };
 
@@ -254,7 +254,7 @@ describe('Test annotation reducer', () => {
       };
 
       const action = {
-        type: DeleteAnnotations.fulfilled.type,
+        type: DeleteAnnotationsV1.fulfilled.type,
         payload: [2], // annotation ids to delete
       };
 
@@ -290,7 +290,7 @@ describe('Test annotation reducer', () => {
       };
 
       const action = {
-        type: DeleteAnnotations.fulfilled.type,
+        type: DeleteAnnotationsV1.fulfilled.type,
         payload: [1], // annotation ids to delete
       };
 

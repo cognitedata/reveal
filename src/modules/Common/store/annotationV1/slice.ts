@@ -1,6 +1,6 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
-import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
+import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotationsV1';
 import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
@@ -69,7 +69,7 @@ const annotationSliceV1 = createSlice({
       }
     );
 
-    builder.addCase(DeleteAnnotations.fulfilled, (state, { payload }) => {
+    builder.addCase(DeleteAnnotationsV1.fulfilled, (state, { payload }) => {
       payload.forEach((annotationId) => {
         const annotation = state.annotations.byId[annotationId];
 
