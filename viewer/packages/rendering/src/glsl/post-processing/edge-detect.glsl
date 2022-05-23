@@ -10,9 +10,8 @@ const mat3 g6 = mat3( 0.1666666716337204, -0.3333333432674408, 0.166666671633720
 const mat3 g7 = mat3( -0.3333333432674408, 0.1666666716337204, -0.3333333432674408, 0.1666666716337204, 0.6666666865348816, 0.1666666716337204, -0.3333333432674408, 0.1666666716337204, -0.3333333432674408 );
 const mat3 g8 = mat3( 0.3333333432674408, 0.3333333432674408, 0.3333333432674408, 0.3333333432674408, 0.3333333432674408, 0.3333333432674408, 0.3333333432674408, 0.3333333432674408, 0.3333333432674408 );
 
-float edgeDetectionFilter(sampler2D baseTexture, vec2 uv, vec2 resolution) {
-
-  vec2 texel = vec2(1.0 / resolution.x, 1.0 / resolution.y);
+float edgeDetectionFilter(sampler2D baseTexture) {
+  ivec2 fragCoord = ivec2(gl_FragCoord.xy);
 
 	G[0] = g0,
 	G[1] = g1,
@@ -26,13 +25,11 @@ float edgeDetectionFilter(sampler2D baseTexture, vec2 uv, vec2 resolution) {
 
 	mat3 I;
 	float cnv[9];
-	vec3 neighbour;
 
 	/* fetch the 3x3 neighbourhood and use the RGB vector's length as intensity value */
 	for (int i=0; i<3; i++) {
 		for (int j=0; j<3; j++) {
-			neighbour = texture(baseTexture, uv + texel * vec2(float(i)-1.0,float(j)-1.0) ).rgb;
-			I[i][j] = length(neighbour);
+			I[i][j] = length(texelFetch(baseTexture, fragCoord + ivec2(i - 1, j - 1), 0).rgb);
 		}
 	}
 
@@ -45,7 +42,5 @@ float edgeDetectionFilter(sampler2D baseTexture, vec2 uv, vec2 resolution) {
 	float M = (cnv[0] + cnv[1]) + (cnv[2] + cnv[3]);
 	float S = (cnv[4] + cnv[5]) + (cnv[6] + cnv[7]) + (cnv[8] + M);
 
-  float edgeStrength = sqrt(M/S);
-
-  return edgeStrength;
+  return sqrt(M/S);
 }

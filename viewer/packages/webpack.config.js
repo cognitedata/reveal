@@ -5,10 +5,11 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = env => {
+  const entryFile = env.example ?? './app/index.ts';
   return {
     mode: 'development',
 
-    entry: path.resolve(env.dir, './app/index.ts'),
+    entry: path.resolve(env.dir, entryFile),
 
     output: {
       path: path.resolve(env.dir, 'dist'),
@@ -21,7 +22,8 @@ module.exports = env => {
     },
 
     devServer: {
-      contentBase: path.resolve(env.dir, './app'),
+      host: '0.0.0.0',
+      contentBase: path.resolve(__dirname, '../../examples/public'),
       disableHostCheck: true,
       watchContentBase: true,
       https: true,
@@ -37,6 +39,13 @@ module.exports = env => {
     module: {
       rules: [
         {
+          test: /\.worker\.ts$/,
+          loader: 'worker-loader',
+          options: {
+            inline: 'no-fallback'
+          }
+        },
+        {
           test: /\.tsx?/,
           use: {
             loader: 'ts-loader',
@@ -48,7 +57,8 @@ module.exports = env => {
                 noUnusedParameters: false
               }
             }
-          }
+          },
+          exclude: [/.*\.test\.tsx?/g, /.*\/stubs\//]
         },
         {
           test: /\.(glsl|vert|frag)$/,
