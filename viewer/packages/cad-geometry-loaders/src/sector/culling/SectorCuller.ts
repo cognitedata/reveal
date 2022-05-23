@@ -15,7 +15,10 @@ export interface SectorCuller {
    * what sectors we should load. Use {@link filterSectorsToLoad} to improve this estimate as new data is loaded.
    * @param input
    */
-  determineSectors(input: DetermineSectorsInput): { wantedSectors: WantedSector[]; spentBudget: SectorLoadingSpent };
+  determineSectors(input: DetermineSectorsInput): {
+    wantedSectors: WantedSector[];
+    spentBudget: SectorLoadingSpent;
+  };
 
   /**
    * Evaluates if sectors provided should be loaded or not, e.g. based on geometry we have now loaded

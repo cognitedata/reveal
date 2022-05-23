@@ -19,6 +19,8 @@ export { AutoDisposeGroup } from './src/three/AutoDisposeGroup';
 export { BoundingBoxLOD } from './src/three/BoundingBoxLOD';
 export { toThreeBox3 } from './src/three/toThreeBox3';
 export { unionBoxes } from './src/three/unionBoxes';
+export { determineCurrentDevice, DeviceDescriptor } from './src/device';
+export { createRenderTriangle } from './src/three/createFullScreenTriangleGeometry';
 
 export { isBox3OnPositiveSideOfPlane } from './src/three/isBox3OnPositiveSideOfPlane';
 export { visitBox3CornerPoints } from './src/three/visitBox3CornerPoints';
@@ -41,3 +43,5 @@ export { calculateVolumeOfMesh } from './src/calculateVolumeOfMesh';
 export { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from './src/worldToViewport';
 
 export { DeferredPromise } from './src/DeferredPromise';
+
+export { SceneHandler } from './src/SceneHandler';
