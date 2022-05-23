@@ -1,9 +1,21 @@
+import {
+  VisionAnnotation,
+  VisionAnnotationDataType,
+} from 'src/modules/Common/types';
 import { VisionAnnotationV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 export const groupAnnotationsByFile = (
-  annotations: VisionAnnotationV1[]
-): Map<number, VisionAnnotationV1[]> => {
-  const fileAnnotationMap = new Map<number, VisionAnnotationV1[]>();
+  annotations:
+    | VisionAnnotationV1[]
+    | VisionAnnotation<VisionAnnotationDataType>[]
+): Map<
+  number,
+  (VisionAnnotationV1 | VisionAnnotation<VisionAnnotationDataType>)[]
+> => {
+  const fileAnnotationMap = new Map<
+    number,
+    (VisionAnnotationV1 | VisionAnnotation<VisionAnnotationDataType>)[]
+  >();
 
   // eslint-disable-next-line no-restricted-syntax
   for (const annotation of annotations) {

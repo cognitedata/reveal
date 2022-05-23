@@ -1,7 +1,7 @@
 import { Label } from '@cognite/sdk';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFileV1 } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFileV1';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
@@ -113,7 +113,7 @@ export const updateBulk = createAsyncThunk<
     );
     // Delete annotations
     await dispatch(
-      DeleteAnnotationsAndHandleLinkedAssetsOfFile({
+      DeleteAnnotationsAndHandleLinkedAssetsOfFileV1({
         annotationIds: annotationIds.annotationIdsToDelete || [],
         showWarnings: true,
       })

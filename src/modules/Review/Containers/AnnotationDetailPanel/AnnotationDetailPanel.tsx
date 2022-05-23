@@ -15,7 +15,7 @@ import {
 } from 'src/modules/Review/store/reviewSlice';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { AnnotationStatusChangeV1 } from 'src/store/thunks/Annotation/AnnotationStatusChangeV1';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFileV1 } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFileV1';
 import styled from 'styled-components';
 import { RootState } from 'src/store/rootReducer';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
@@ -135,7 +135,7 @@ export const AnnotationDetailPanel = (props: {
         dispatch(deleteCollectionById(id.toString()));
       } else {
         dispatch(
-          DeleteAnnotationsAndHandleLinkedAssetsOfFile({
+          DeleteAnnotationsAndHandleLinkedAssetsOfFileV1({
             annotationIds: [+id],
             showWarnings: true,
           })
