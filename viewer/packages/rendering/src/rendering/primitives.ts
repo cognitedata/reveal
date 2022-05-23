@@ -558,6 +558,8 @@ function createTorusSegments(
     };
   }
 
+  lod.userData = lod.children[0].userData;
+
   return lod;
 }
 

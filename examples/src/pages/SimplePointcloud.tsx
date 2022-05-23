@@ -106,15 +106,15 @@ export function SimplePointcloud() {
                                      getToken: async () => 'dummy' });
       }
 
-      const scene = new THREE.Scene();
+      const sceneHandler = new reveal.SceneHandler();
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current!,
       });
       renderer.setClearColor('#444444');
       renderer.setSize(window.innerWidth, window.innerHeight);
 
-      const { revealManager, model: pointCloudNode } = await createManagerAndLoadModel(client, renderer, scene, 'pointcloud', modelRevision, modelUrl);
-      scene.add(pointCloudNode);
+      const { revealManager, model: pointCloudNode } = await createManagerAndLoadModel(client, renderer, sceneHandler, 'pointcloud', modelRevision, modelUrl);
+      sceneHandler.addCustomObject(pointCloudNode);
       revealManager.on('loadingStateChanged', setLoadingState);
 
       const classesGui = gui.addFolder('Class filters');
@@ -150,7 +150,7 @@ export function SimplePointcloud() {
       // Create a bounding box around the point cloud for debugging
       const bbox: THREE.Box3 = pointCloudNode.getBoundingBox();
       const bboxHelper = new THREE.Box3Helper(bbox);
-      scene.add(bboxHelper);
+      sceneHandler.addCustomObject(bboxHelper);
 
       const controls = new CameraControls(camera, renderer.domElement);
 
@@ -181,7 +181,7 @@ export function SimplePointcloud() {
       });
       animationLoopHandler.start();
 
-      (window as any).scene = scene;
+      (window as any).sceneHandler = sceneHandler;
       (window as any).renderer = renderer;
       (window as any).THREE = THREE;
       (window as any).camera = camera;
