@@ -6,7 +6,8 @@ import {
   CdfModelIdentifier,
   LocalModelIdentifier,
   createCdfRevealManager,
-  createLocalRevealManager
+  createLocalRevealManager,
+  SceneHandler
 } from "@cognite/reveal/internals";
 
 import { CogniteClient } from "@cognite/sdk";
@@ -14,7 +15,7 @@ import { CogniteClient } from "@cognite/sdk";
 export async function createManagerAndLoadModel(
   sdkClient: CogniteClient,
   renderer: THREE.WebGLRenderer,
-  scene: THREE.Scene,
+  sceneHandler: SceneHandler,
   modelType: 'cad',
   modelRevision: { modelId: number, revisionId: number } | undefined,
   modelUrl: { fileName: string | undefined } | undefined
@@ -22,7 +23,7 @@ export async function createManagerAndLoadModel(
 export async function createManagerAndLoadModel(
   sdkClient: CogniteClient,
   renderer: THREE.WebGLRenderer,
-  scene: THREE.Scene,
+  sceneHandler: SceneHandler,
   modelType: 'pointcloud',
   modelRevision: { modelId: number, revisionId: number } | undefined,
   modelUrl: { fileName: string | undefined } | undefined
@@ -31,13 +32,13 @@ export async function createManagerAndLoadModel(
 export async function createManagerAndLoadModel(
   sdkClient: CogniteClient,
   renderer: THREE.WebGLRenderer,
-  scene: THREE.Scene,
+  sceneHandler: SceneHandler,
   modelType: 'cad' | 'pointcloud',
   modelRevision: { modelId: number, revisionId: number } | undefined,
   modelUrl: { fileName: string | undefined } | undefined
 ): Promise<{ revealManager: RevealManager, model: CadNode | PointCloudNode }> {
   if (modelRevision) {
-    const revealManager = createCdfRevealManager(sdkClient, renderer, scene, { logMetrics: false });
+    const revealManager = createCdfRevealManager(sdkClient, renderer, sceneHandler, { logMetrics: false });
     switch (modelType) {
       case 'cad': {
           const modelIdentifier = new CdfModelIdentifier(modelRevision.modelId, modelRevision.revisionId);
@@ -53,7 +54,7 @@ export async function createManagerAndLoadModel(
         throw new Error(`Unsupported model type '${modelType}'`);
     }
   } else if (modelUrl) {
-    const revealManager = createLocalRevealManager(renderer, scene, { logMetrics: false });
+    const revealManager = createLocalRevealManager(renderer, sceneHandler, { logMetrics: false });
     switch (modelType) {
       case 'cad': {
           const modelIdentifier = new LocalModelIdentifier(modelUrl.fileName!);

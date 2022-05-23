@@ -15,7 +15,7 @@ import { registerVisualTest } from '../../../visual_tests';
 function CustomObjectWithHighlightAndGhosted() {
   return (
     <TestViewer
-      modifyTestEnv={({scene, model }: TestEnvCad) => {
+      modifyTestEnv={({sceneHandler, model }: TestEnvCad) => {
         const highlightedNodes = new TreeIndexNodeCollection([0, 2, 4, 6, 8, 10]);
         model.nodeAppearanceProvider.assignStyledNodeCollection(highlightedNodes, DefaultNodeAppearance.Highlighted);
 
@@ -25,7 +25,7 @@ function CustomObjectWithHighlightAndGhosted() {
         const sphere = new THREE.SphereBufferGeometry(5, 32, 16);
         const sphereMesh = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color: 'red'}));
         sphereMesh.position.set(12, 0, -5);
-        scene.add(sphereMesh);
+        sceneHandler.addCustomObject(sphereMesh);
 
         return {
           cameraConfig: {

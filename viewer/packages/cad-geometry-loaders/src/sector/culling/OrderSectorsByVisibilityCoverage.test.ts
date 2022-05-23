@@ -10,9 +10,9 @@ import { GpuOrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityC
 import { createV8SectorMetadata, SectorTree, createGlContext } from '../../../../../test-utilities';
 import { File3dFormat } from '@reveal/modeldata-api';
 
-import { EffectRenderManager } from '@reveal/rendering';
-
 import { Mock, It } from 'moq.ts';
+import { CadGeometryRenderModePipelineProvider } from '@reveal/rendering';
+import { RenderPass } from '@reveal/rendering/src/RenderPass';
 
 describe('OrderSectorsByVisibilityCoverage', () => {
   const glContext = createGlContext(64, 64);
@@ -25,22 +25,22 @@ describe('OrderSectorsByVisibilityCoverage', () => {
   ]);
   const cadModel = createStubModel('model', singleSectorScene, identityMatrix);
 
-  let renderManager: EffectRenderManager;
+  let depthOnlyPipelineProvider: CadGeometryRenderModePipelineProvider;
 
   beforeEach(() => {
     renderer = new THREE.WebGLRenderer({ context: glContext });
     renderer.render = jest.fn();
-    renderManager = new Mock<EffectRenderManager>()
-      .setup(e => e.getRenderTarget)
-      .returns(renderer.getRenderTarget)
-      .setup(e => e.getRenderTargetAutoSize())
-      .returns(true)
-      .setup(e => e.setRenderTarget(It.IsAny()))
+    const renderPassMock = new Mock<RenderPass>().setup(e => e.render(It.IsAny(), It.IsAny())).returns();
+
+    depthOnlyPipelineProvider = new Mock<CadGeometryRenderModePipelineProvider>()
+      .setup(e => e.setOutputRenderTarget(It.IsAny()))
       .returns()
-      .setup(e => e.setRenderTargetAutoSize(It.IsAny()))
-      .returns()
-      .setup(e => e.renderDetailedToDepthOnly(It.IsAny()))
-      .returns()
+      .setup(e => e.pipeline(It.IsAny()))
+      .returns(
+        (function* (): Generator<RenderPass> {
+          yield renderPassMock.object();
+        })()
+      )
       .object();
   });
 
@@ -51,7 +51,10 @@ describe('OrderSectorsByVisibilityCoverage', () => {
   test('orderSectorsByVisibility() returns empty array when there are no models', () => {
     // Arrange
     const camera = new THREE.PerspectiveCamera();
-    const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({ renderer, renderManager });
+    const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({
+      renderer,
+      depthOnlyRenderPipeline: depthOnlyPipelineProvider
+    });
 
     // Act
     glContext.clearColor(1, 1, 1, 1);
@@ -68,7 +71,10 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 
   test('rendered result has no sectors, returns empty array', () => {
     // Arrange
-    const util = new GpuOrderSectorsByVisibilityCoverage({ renderer, renderManager });
+    const util = new GpuOrderSectorsByVisibilityCoverage({
+      renderer,
+      depthOnlyRenderPipeline: depthOnlyPipelineProvider
+    });
     util.setModels([cadModel]);
     const camera = new THREE.PerspectiveCamera();
 
@@ -86,7 +92,10 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 
   test('rendered result has one sector, returns array with priority 1', () => {
     // Arrange
-    const util = new GpuOrderSectorsByVisibilityCoverage({ renderer, renderManager });
+    const util = new GpuOrderSectorsByVisibilityCoverage({
+      renderer,
+      depthOnlyRenderPipeline: depthOnlyPipelineProvider
+    });
     util.setModels([cadModel]);
     const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 20.0);
     camera.position.set(0, 0, -10);
@@ -114,7 +123,10 @@ describe('OrderSectorsByVisibilityCoverage', () => {
     const scene2 = createStubScene([1, [], new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1))]);
     const model1 = createStubModel('model1', singleSectorScene, identityMatrix);
     const model2 = createStubModel('model2', scene2, identityMatrix);
-    const util = new GpuOrderSectorsByVisibilityCoverage({ renderer, renderManager });
+    const util = new GpuOrderSectorsByVisibilityCoverage({
+      renderer,
+      depthOnlyRenderPipeline: depthOnlyPipelineProvider
+    });
     util.setModels([model1, model2]);
     const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 20.0);
     camera.position.set(0, 0, -10);

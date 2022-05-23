@@ -50,12 +50,10 @@ export function Simple() {
       renderer.setClearColor('#444');
       renderer.setPixelRatio(window.devicePixelRatio);
 
-      const scene = new THREE.Scene();
-      const { revealManager, model } = await createManagerAndLoadModel(client, renderer, scene, 'cad', modelRevision, modelUrl);
-
+      const sceneHandler = new reveal.SceneHandler();
+      const { revealManager, model } = await createManagerAndLoadModel(client, renderer, sceneHandler, 'cad', modelRevision, modelUrl);
+      sceneHandler.addCadModel(model, model.cadModelIdentifier)
       revealManager.on('loadingStateChanged', setLoadingState);
-
-      scene.add(model);
 
       const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
                                                                   model.getModelTransformation());
@@ -87,7 +85,7 @@ export function Simple() {
       });
       animationLoopHandler.start();
 
-      (window as any).scene = scene;
+      (window as any).sceneHandler = sceneHandler;
       (window as any).THREE = THREE;
       (window as any).camera = camera;
       (window as any).controls = controls;

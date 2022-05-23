@@ -11,9 +11,9 @@ import dat from 'dat.gui';
 import { createSDKFromEnvironment, getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
-import { defaultRenderOptions } from '@cognite/reveal/internals';
 import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
 import { suggestCameraConfig } from '../utils/cameraConfig';
+import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
 
 CameraControls.install({ THREE });
 
@@ -39,8 +39,7 @@ export function SSAO() {
                                      getToken: async () => 'dummy' });
       }
 
-      const scene = new THREE.Scene();
-
+      const sceneHandler = new reveal.SceneHandler();
 
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current!,
@@ -48,22 +47,8 @@ export function SSAO() {
       renderer.setClearColor('#444');
       renderer.setSize(window.innerWidth, window.innerHeight);
 
-      let model: reveal.CadNode;
-      if (modelRevision) {
-        const modelIdentifier = new reveal.CdfModelIdentifier(modelRevision.modelId, modelRevision.revisionId);
-        revealManager = reveal.createCdfRevealManager(client, renderer, scene, { logMetrics: false });
-        model = await revealManager.addModel('cad', modelIdentifier);
-      } else if (modelUrl) {
-        const modelIdentifier = new reveal.LocalModelIdentifier(modelUrl.fileName!);
-        revealManager = reveal.createLocalRevealManager(renderer, scene, { logMetrics: false });
-        model = await revealManager.addModel('cad', modelIdentifier);
-      } else {
-        throw new Error(
-          'Need to provide either project & model OR modelUrl as query parameters'
-        );
-      }
-
-      scene.add(model);
+      const { revealManager, model } = await createManagerAndLoadModel(client, renderer, sceneHandler, 'cad', modelRevision, modelUrl);
+      sceneHandler.addCadModel(model, model.cadModelIdentifier);
 
       const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
                                                                   model.getModelTransformation());
@@ -85,18 +70,6 @@ export function SSAO() {
       controls.update(0.0);
       camera.updateMatrixWorld();
       revealManager.update(camera);
-
-      const renderOptions = defaultRenderOptions;
-
-      const updateEffect = () => {
-        revealManager.renderOptions = renderOptions;
-      };
-
-      gui.add(renderOptions.ssaoRenderParameters, 'sampleRadius').min(0.0).max(30.0).onChange(updateEffect);
-
-      gui.add(renderOptions.ssaoRenderParameters, 'sampleSize').min(1).max(256).step(1).onChange(updateEffect);
-
-      gui.add(renderOptions.ssaoRenderParameters, 'depthCheckBias').min(0.0).max(1.0).onChange(updateEffect);
 
       animationLoopHandler.setOnAnimationFrameListener(async (deltaTime: number) => {
         let needsResize = resizeRendererToDisplaySize(renderer, camera);

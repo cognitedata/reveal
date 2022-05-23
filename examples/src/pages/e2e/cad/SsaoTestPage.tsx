@@ -13,7 +13,7 @@ function SsaoTestPage() {
     <TestViewer
       modifyTestEnv={({revealManager }: TestEnvCad) => {
 
-        revealManager.renderOptions = defaultRenderOptions;
+        (revealManager as any)._renderPipeline.renderOptions = defaultRenderOptions;
 
         return {
           cameraConfig: {
