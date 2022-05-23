@@ -5,28 +5,31 @@ properties([
 ])
 static final String NODE_VERSION = 'node:16'
 
-static final String PR_COMMENT_MARKER = "[pr-server]\n"
-static final String STORYBOOK_COMMENT_MARKER = "[storybook-server]\n"
+static final String PR_COMMENT_MARKER = '[pr-server]\n'
+static final String STORYBOOK_COMMENT_MARKER = '[storybook-server]\n'
 
 static final Map<String, String> CONTEXTS = [
-  checkout: "continuous-integration/jenkins/checkout",
-  bazelSetup: "continuous-integration/jenkins/bazel-setup",
-  bazelBuild: "continuous-integration/jenkins/bazel-build",
-  bazelTests: "continuous-integration/jenkins/bazel-tests",
-  publishStorybook: "continuous-integration/jenkins/publish-storybook",
-  publishFAS: "continuous-integration/jenkins/publish-fas",
-  publishPackages: "continuous-integration/jenkins/publish-packages",
+  checkout: 'continuous-integration/jenkins/checkout',
+  bazelSetup: 'continuous-integration/jenkins/bazel-setup',
+  bazelBuild: 'continuous-integration/jenkins/bazel-build',
+  bazelTests: 'continuous-integration/jenkins/bazel-tests',
+  publishStorybook: 'continuous-integration/jenkins/publish-storybook',
+  publishFAS: 'continuous-integration/jenkins/publish-fas',
+  publishPackages: 'continuous-integration/jenkins/publish-packages',
+]
+
+static final Map<String, String[]> PREVIEW_CLUSTERS = [
+  'power-ops': ['azure-dev', 'bluefield', 'az-power-no-northeurope'],
+  'discover': ['bluefield', 'greenfield', 'bp-northeurope'],
 ]
 
 void bazelPod(Map params = new HashMap(), body) {
-  def bazelVersion = params.bazelVersion ?: '5.0.0'
-
   podTemplate(
       containers: [
           containerTemplate(
               name: 'bazel',
               // TODO: Define custom docker image to include bazel instead of installing
-              image: "eu.gcr.io/cognitedata/apps-tools/bazel-applications:5.0.0-1",
+              image: 'eu.gcr.io/cognitedata/apps-tools/bazel-applications:5.0.0-1',
               command: '/bin/cat -',
               resourceRequestCpu: '3000m',
               resourceLimitCpu: '16000m',
@@ -53,7 +56,7 @@ void bazelPod(Map params = new HashMap(), body) {
       ],
   ) {
         body()
-    }
+  }
 }
 
 def fakeIdpEnvVars = [
@@ -66,8 +69,8 @@ def fakeIdpEnvVars = [
 def pods = { body ->
   podTemplate(
     annotations: [
-      podAnnotation(key: "jenkins/build-url", value: env.BUILD_URL ?: ""),
-      podAnnotation(key: "jenkins/github-pr-url", value: env.CHANGE_URL ?: ""),
+      podAnnotation(key: 'jenkins/build-url', value: env.BUILD_URL ?: ''),
+      podAnnotation(key: 'jenkins/github-pr-url', value: env.CHANGE_URL ?: ''),
     ],
     volumes: [
       secretVolume(
@@ -88,7 +91,7 @@ def pods = { body ->
       ),
     ]
   ) {
-    bazelPod(bazelVersion: '5.0.0') {
+    bazelPod() {
       yarn.pod(nodeVersion: NODE_VERSION) {
         previewServer.pod(nodeVersion: NODE_VERSION) {
           fas.pod(
@@ -124,13 +127,13 @@ def pods = { body ->
 
 def handleError = { err ->
   container('bazel') {
-    sh("mkdir -p artifacts")
+    sh('mkdir -p artifacts')
     sh("find -L `readlink dist/testlogs` -type f -name '*.zip' | xargs -n1 unzip -uo -d artifacts")
     // We execute the find command in a subcommand to actually preserve directory structure
     sh("CURRENTDIR=\$(pwd) && (cd `readlink dist/testlogs` && find -type f -wholename '*cypress_test*/*.log' | xargs cp --parents -t \$CURRENTDIR/artifacts)")
     sh("CURRENTDIR=\$(pwd) && (cd `readlink dist/testlogs` && find -type f -wholename '*unit_test*/*.log' | xargs cp --parents -t \$CURRENTDIR/artifacts)")
 
-    def artifactPaths = "artifacts/**/screenshots/**/*.png,artifacts/**/video/**/*.mp4,artifacts/**/cypress/**/*.mp4,artifacts/**/*unit_test*/**/*.log,artifacts/**/*cypress_test*/**/*.log"
+    def artifactPaths = 'artifacts/**/screenshots/**/*.png,artifacts/**/video/**/*.mp4,artifacts/**/cypress/**/*.mp4,artifacts/**/*unit_test*/**/*.log,artifacts/**/*cypress_test*/**/*.log'
 
     archiveArtifacts allowEmptyArchive: true, artifacts: artifactPaths
   }
@@ -140,18 +143,17 @@ def handleError = { err ->
 void registerNightly() {
   def triggers = []
   // add nightly run cron on master only
-  if (env.BRANCH_NAME == "master") {
-
-      // run at minute 0 past every 3rd hour from 4 through 19.
-      triggers += [parameterizedCron("0 4-19/3 * * * %NIGHTLY=true")]
-      properties([
+  if (env.BRANCH_NAME == 'master') {
+    // run at minute 0 past every 3rd hour from 4 through 19.
+    triggers += [parameterizedCron('0 4-19/3 * * * %NIGHTLY=true')]
+    properties([
         disableConcurrentBuilds(),
         parameters([
-          booleanParam(name: "NIGHTLY", defaultValue: false, description: "Nightly long running tasks"),
+          booleanParam(name: 'NIGHTLY', defaultValue: false, description: 'Nightly long running tasks'),
         ]),
         pipelineTriggers(triggers)
       ])
-  }  
+  }
 }
 
 pods {
@@ -161,7 +163,7 @@ pods {
     // for PRs use the commit hash on the master branch that the PR branch is originated from
     "\$(git merge-base refs/remotes/origin/master HEAD)" :
     // for staging/production compare current and previous commit hashes
-    "HEAD^1"
+    'HEAD^1'
 
   registerNightly()
 
@@ -178,42 +180,42 @@ pods {
       }
       bazel.dockerAuth()
       container('bazel') {
-        sh("cp .ci.bazelrc ~/.bazelrc")
-        sh("cd /var/run && ln -s /var/run/docker/docker.sock")
+        sh('cp .ci.bazelrc ~/.bazelrc')
+        sh('cd /var/run && ln -s /var/run/docker/docker.sock')
         sh(label: 'Set up NPM', script: 'cp /npm-credentials/npm-public-credentials.txt ~/.npmrc')
         // For cloning Blazier and fetching master
         withCredentials([usernamePassword(credentialsId: scm.userRemoteConfigs[0].credentialsId, passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GH_USER')]) {
             sh("git config --global credential.helper '!f() { sleep 1; echo \"username=$GH_USER\"; echo \"password=$GITHUB_TOKEN\"; }; f'")
             // Override ssh access with https which is supported by Jenkins
             sh('git config --global url."https://github.com/".insteadOf git@github.com:')
-            sh("git fetch --no-tags --force --progress -- https://github.com/cognitedata/applications.git +refs/heads/master:refs/remotes/origin/master")
+            sh('git fetch --no-tags --force --progress -- https://github.com/cognitedata/applications.git +refs/heads/master:refs/remotes/origin/master')
         }
       }
     }
 
     // run the long running things on master if the nightly flag enabled
-    if (env.BRANCH_NAME == "master" && params.NIGHTLY) {
+    if (env.BRANCH_NAME == 'master' && params.NIGHTLY) {
       stageWithNotify('Nightly tests', CONTEXTS.bazelTests) {
         container('bazel') {
-          sh(label: 'bazel test discover', script: "bazel --bazelrc=.ci.bazelrc test //apps/discover/... --test_tag_filters=nightly")
+          sh(label: 'bazel test discover', script: 'bazel --bazelrc=.ci.bazelrc test //apps/discover/... --test_tag_filters=nightly')
         }
       }
       return
     }
 
-    stageWithNotify("Bazel build", CONTEXTS.bazelBuild) {
+    stageWithNotify('Bazel build', CONTEXTS.bazelBuild) {
       container('bazel') {
-        sh(label: 'bazel build //...', script: "bazel --bazelrc=.ci.bazelrc build //...")
+        sh(label: 'bazel build //...', script: 'bazel --bazelrc=.ci.bazelrc build //...')
       }
     }
 
     stageWithNotify('Bazel test', CONTEXTS.bazelTests) {
       container('bazel') {
-        sh(label: 'lint bazel files', script: "bazel --bazelrc=.ci.bazelrc run //:buildifier_check")
-        if (isProduction || (!isPullRequest && env.BRANCH_NAME.startsWith("release-"))) {
-          sh(label: 'bazel test //...', script: "bazel --bazelrc=.ci.bazelrc test //... --test_tag_filters=-ignore_test_in_cd,-nightly")
+        sh(label: 'lint bazel files', script: 'bazel --bazelrc=.ci.bazelrc run //:buildifier_check')
+        if (isProduction || (!isPullRequest && env.BRANCH_NAME.startsWith('release-'))) {
+          sh(label: 'bazel test //...', script: 'bazel --bazelrc=.ci.bazelrc test //... --test_tag_filters=-ignore_test_in_cd,-nightly')
         } else {
-          sh(label: 'bazel test //...', script: "bazel --bazelrc=.ci.bazelrc test //... --test_tag_filters=-nightly")
+          sh(label: 'bazel test //...', script: 'bazel --bazelrc=.ci.bazelrc test //... --test_tag_filters=-nightly')
         }
 
         // Bazel stores test outputs as zip files
@@ -226,7 +228,7 @@ pods {
         if (isPullRequest) {
           summarizeTestResults()
         }
-        stage("Upload coverage reports") {
+        stage('Upload coverage reports') {
           codecov.uploadCoverageReport()
         }
       }
@@ -236,7 +238,7 @@ pods {
       stageWithNotify('Publish storybook', CONTEXTS.publishStorybook) {
         container('bazel') {
           def changedStorybooks = sh(
-            label: "Which storybooks were changed?",
+            label: 'Which storybooks were changed?',
             script: "bazel run //:has-changed -- -ref=${hasChangedRef} 'kind(publish_storybook, //...)'",
             returnStdout: true
           )
@@ -264,7 +266,7 @@ pods {
     stageWithNotify('Publish FAS', CONTEXTS.publishFAS) {
       container('bazel') {
         def changedApps = sh(
-          label: "Which apps were changed?",
+          label: 'Which apps were changed?',
           script: "bazel run //:has-changed -- -ref=${hasChangedRef} 'kind(publish_fas, //...)'",
           returnStdout: true
         )
@@ -282,7 +284,7 @@ pods {
                   // clean up after the previous run
                   sh("rm -rf build && cp -r `readlink dist/bin`/${args.src}/build build")
                   def fasBuildJsonString = sh(
-                    script: "cat .fas-build.json",
+                    script: 'cat .fas-build.json',
                     returnStdout: true
                   )
                   def fasBuildJson = readJSON text: fasBuildJsonString
@@ -295,7 +297,7 @@ pods {
                   // We are setting REACT_APP_ENV/NODE_ENV based on the build target, similarly to scripts/build.sh
                   def variant = args.variant ?: 'development'
                   sh("find build -type f | xargs sed -i 's,REACT_APP_ENV_VALUE,${variant},g'")
-                  sh("find build -type f | xargs sed -i 's,NODE_ENV_VALUE,${variant},g'")                  
+                  sh("find build -type f | xargs sed -i 's,NODE_ENV_VALUE,${variant},g'")
                 }
               }
               fas.build(
@@ -309,6 +311,7 @@ pods {
               )
               fas.publish(
                 previewSubdomain: args.previewSubdomain,
+                previewClusters: PREVIEW_CLUSTERS[args.previewSubdomain] ?: false,
                 shouldPublishSourceMap: args.shouldPublishSourceMap,
               )
             }
@@ -324,12 +327,12 @@ pods {
                 repo: params.repo_id,
                 sentryProjectName: params.sentry_project_name,
                 variant: 'preview',
-                previewSubdomain: params.preview_subdomain != "" ? params.preview_subdomain : null,
+                previewSubdomain: params.preview_subdomain != '' ? params.preview_subdomain : null,
                 baseVersion: params.base_version,
                 shouldPublishSourceMap: params.should_publish_source_map == 'true',
-                // sourceMapPath: 'assets',
+              // sourceMapPath: 'assets',
               )
-              print("FAS preview published")
+              print('FAS preview published')
             }
 
             if (version.isStaging) {
@@ -341,9 +344,9 @@ pods {
                 variant: 'staging',
                 baseVersion: params.base_version,
                 shouldPublishSourceMap: params.should_publish_source_map == 'true',
-                // sourceMapPath: 'assets',
+              // sourceMapPath: 'assets',
               )
-              print("FAS staging published")
+              print('FAS staging published')
               slackMessages.add("- `${params.staging_app_id}`")
             }
 
@@ -356,9 +359,9 @@ pods {
                 variant: 'production',
                 baseVersion: params.base_version,
                 shouldPublishSourceMap: params.should_publish_source_map == 'true',
-                // sourceMapPath: 'assets',
+              // sourceMapPath: 'assets',
               )
-              print("FAS production published")
+              print('FAS production published')
               slackMessages.add("- `${params.production_app_id}`")
             }
           }
@@ -366,10 +369,10 @@ pods {
       }
     }
 
-    stageWithNotify("Publish to NPM", CONTEXTS.publishPackages) {
+    stageWithNotify('Publish to NPM', CONTEXTS.publishPackages) {
       container('bazel') {
         def publishPackages = sh(
-          label: "Which packages were changed?",
+          label: 'Which packages were changed?',
           script: "bazel run //:has-changed -- -ref=${hasChangedRef} 'kind(package_info, //...)'",
           returnStdout: true
         )
@@ -378,7 +381,7 @@ pods {
         catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
           if (publishPackages) {
             publishPackages.split('\n').each {
-              container("bazel") {
+              container('bazel') {
                 def jsonString = sh(
                   label: "Executes ${it} to retrieve package info",
                   script: "bazel run ${it}",
@@ -419,9 +422,7 @@ pods {
     if (!slackMessages.isEmpty()) {
       slack.send(
         channel: '#frontend-firehose',
-        message: """:tada: New application deployments :tada:
-${slackMessages.join('\n')}
-"""
+        message: """:tada: New application deployments :tada:${slackMessages.join('\n')}"""
       )
     }
   }

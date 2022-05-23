@@ -129,7 +129,7 @@ export const PriceScenariosChart = ({
     setTooltipData({
       color: event.points[0].data.line.color?.toString(),
       scenario: event.points[0].data.text.toString(),
-      hour: `${hour.toString().padStart(2, '0')}:00`,
+      hour: `${hour + 1}`,
       price: Math.round(Number(event.points[0].y)),
       auctionMatrix: tableData[hour][`calc-${index}`]
         ? tableData[hour][`calc-${index}`].toString()

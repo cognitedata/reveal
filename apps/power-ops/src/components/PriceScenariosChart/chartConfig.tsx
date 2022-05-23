@@ -29,7 +29,7 @@ export const layout: Partial<Plotly.Layout> = {
     color: 'rgba(0, 0, 0, 0.45)',
     gridcolor: '#E8E8E8',
     title: {
-      text: 'Hour',
+      text: 'Time',
       font: {
         size: 10,
       },
