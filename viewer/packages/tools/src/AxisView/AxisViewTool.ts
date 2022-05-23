@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
 import TWEEN from '@tweenjs/tween.js';
+import glsl from 'glslify';
 
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import {
@@ -29,7 +30,6 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
   private readonly _axisGroup: THREE.Group;
 
   private readonly _interactiveObjects: THREE.Mesh[];
-  private readonly _raycastCamera: THREE.OrthographicCamera;
   private readonly _raycaster: THREE.Raycaster;
 
   private readonly _screenPosition: THREE.Vector2;
@@ -43,16 +43,18 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     super();
 
     this._screenPosition = new THREE.Vector2();
-    this._boxFaceGeometry = new THREE.PlaneGeometry(0.85, 0.85, 1, 1);
+    this._boxFaceGeometry = new THREE.PlaneGeometry(0.9, 0.9, 1, 1);
 
-    this._raycastCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
     this._raycaster = new THREE.Raycaster();
+    this._raycaster.layers.enableAll();
 
     this._viewer = viewer;
 
     this._layoutConfig = merge(cloneDeep(defaultAxisBoxConfig), config);
 
     this._axisGroup = new THREE.Group();
+    this._axisGroup.name = 'Axis View Tool';
+    this._axisGroup.renderOrder = 1;
     this._interactiveObjects = this.createAxisCross(this._axisGroup);
 
     [this._updateClickDiv, this._disposeClickDiv] = this.createClickDiv(viewer);
@@ -63,7 +65,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
   public dispose(): void {
     super.dispose();
-    this._viewer.removeUiObject(this._axisGroup);
+    this._viewer.removeObject3D(this._axisGroup);
     this._disposeClickDiv();
   }
 
@@ -171,7 +173,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
       this._dynamicUpdatePosition();
     }
 
-    this._viewer.addUiObject(axisGroup, this._screenPosition, new THREE.Vector2(size, size));
+    this._viewer.addObject3D(axisGroup);
 
     function isAbsolute(position: AbsolutePosition | RelativePosition): position is AbsolutePosition {
       return (
@@ -183,7 +185,6 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
   private handleClick(xScreenPos: number, yScreenPos: number, boundingRect: DOMRect): boolean {
     const xNdc = (2 * (xScreenPos - this._screenPosition.x)) / this._layoutConfig.size - 1;
     const yNdc = (2 * (boundingRect.height - yScreenPos - this._screenPosition.y)) / this._layoutConfig.size - 1;
-    this._raycaster.setFromCamera({ x: xNdc, y: yNdc }, this._raycastCamera);
     const rayOrigin = new THREE.Vector3(xNdc, yNdc, 1);
     const rayDirection = new THREE.Vector3(0, 0, -1).normalize();
     this._raycaster.set(rayOrigin, rayDirection);
@@ -201,11 +202,11 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
   }
 
   private createAxisCross(axisGroup: THREE.Group) {
-    const interactiveObjects = this.createBoxFaces();
-    axisGroup.add(...interactiveObjects);
-
     const compass = this.createCompass();
     axisGroup.add(compass);
+
+    const interactiveObjects = this.createBoxFaces();
+    axisGroup.add(...interactiveObjects);
 
     this.setupTransformOnRender(axisGroup);
 
@@ -213,11 +214,33 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
   }
 
   private setupTransformOnRender(axisGroup: THREE.Group) {
-    axisGroup.children[0].onBeforeRender = () => {
+    axisGroup.children[0].onBeforeRender = (renderer: THREE.WebGLRenderer) => {
       this._dynamicUpdatePosition();
       axisGroup.quaternion.copy(this._viewer.getCamera().quaternion).invert();
       axisGroup.updateMatrixWorld();
       this._updateClickDiv();
+
+      const cWidth = renderer.domElement.clientWidth;
+      const cHeight = renderer.domElement.clientHeight;
+
+      const renderSize = new THREE.Vector2();
+      renderer.getSize(renderSize);
+
+      const size = this._layoutConfig.size;
+
+      const scale = new THREE.Vector2(size / cWidth, size / cHeight);
+      const offset = new THREE.Vector2(
+        (this._screenPosition.x / cWidth) * 2 + size / cWidth,
+        (this._screenPosition.y / cHeight) * 2 + size / cHeight
+      );
+
+      axisGroup.traverse(node => {
+        if (node instanceof THREE.Mesh) {
+          (node.material as THREE.RawShaderMaterial).uniforms.offset.value = offset;
+          (node.material as THREE.RawShaderMaterial).uniforms.scale.value = scale;
+          (node.material as THREE.RawShaderMaterial).uniformsNeedUpdate = true;
+        }
+      });
     };
   }
 
@@ -245,20 +268,33 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
   }
 
   private createCompass() {
-    const compassPlaneGeometry = new THREE.PlaneGeometry(2.1, 2.1, 1, 1);
+    const compassPlaneGeometry = new THREE.PlaneGeometry(2, 2, 1, 1);
     const compass = new THREE.Mesh(
       compassPlaneGeometry,
-      new THREE.MeshBasicMaterial({
-        map: this.createCompassTexture(),
+      new THREE.RawShaderMaterial({
+        vertexShader: glsl(require('./shaders/axisTool.vert').default),
+        fragmentShader: glsl(require('./shaders/axisTool.frag').default),
+        uniforms: {
+          offset: { value: new THREE.Vector2() },
+          scale: { value: new THREE.Vector2() },
+          tex: { value: this.createCompassTexture() }
+        },
         side: THREE.DoubleSide,
-        transparent: true
+        glslVersion: THREE.GLSL3,
+        depthTest: false,
+        blending: THREE.CustomBlending,
+        blendDst: THREE.OneMinusSrcAlphaFactor,
+        blendSrc: THREE.SrcAlphaFactor
       })
     );
+
+    compass.frustumCulled = false;
+    compass.renderOrder = 1;
 
     const x = Math.sin(this._layoutConfig.compass.labelDelta!);
     const z = Math.cos(this._layoutConfig.compass.labelDelta!);
 
-    compass.position.y = -0.5;
+    compass.position.y = -0.45;
     compass.up.copy(new THREE.Vector3(x, 0, z));
     compass.lookAt(0, 0, 0);
 
@@ -328,8 +364,21 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
   private createBoxFace(position: THREE.Vector3, faceConfig: AxisBoxFaceConfig, upVector = new THREE.Vector3(0, 1, 0)) {
     const face = new THREE.Mesh(
       this._boxFaceGeometry,
-      new THREE.MeshBasicMaterial({ map: this.getFaceTexture(faceConfig, this._layoutConfig.size) })
+      new THREE.RawShaderMaterial({
+        vertexShader: glsl(require('./shaders/axisTool.vert').default),
+        fragmentShader: glsl(require('./shaders/axisTool.frag').default),
+        uniforms: {
+          offset: { value: new THREE.Vector2() },
+          scale: { value: new THREE.Vector2() },
+          tex: { value: this.getFaceTexture(faceConfig, this._layoutConfig.size) }
+        },
+        depthTest: false,
+        glslVersion: THREE.GLSL3
+      })
     );
+
+    face.frustumCulled = false;
+    face.renderOrder = 1;
 
     face.position.copy(position.multiplyScalar(0.5 * this._boxFaceGeometry.parameters.width));
     face.lookAt(position.multiplyScalar(2));

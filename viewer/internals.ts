@@ -13,4 +13,4 @@ export { Potree } from './packages/pointclouds';
 
 export { CadNode, RenderOptions, defaultRenderOptions } from './packages/rendering';
 export { NodeAppearanceProvider } from './packages/cad-styling';
-export { revealEnv } from './packages/utilities';
+export { revealEnv, SceneHandler } from './packages/utilities';

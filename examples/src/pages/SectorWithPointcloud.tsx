@@ -138,7 +138,7 @@ export function SectorWithPointcloud() {
                                      getToken: async () => 'dummy' });
       }
 
-      const scene = new THREE.Scene();
+      const sceneHandler = new reveal.SceneHandler();
 
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current!,
@@ -146,8 +146,8 @@ export function SectorWithPointcloud() {
       renderer.setClearColor('#000000');
       renderer.setSize(window.innerWidth, window.innerHeight);
 
-      const { revealManager, model } = await createManagerAndLoadModel(client, renderer, scene, 'cad', modelRevision, modelUrl);
-      scene.add(model);
+      const { revealManager, model } = await createManagerAndLoadModel(client, renderer, sceneHandler, 'cad', modelRevision, modelUrl);
+      sceneHandler.addCadModel(model, model.cadModelIdentifier);
 
       let pointCloud
       if (pointCloudModelRevision) {
@@ -164,12 +164,7 @@ export function SectorWithPointcloud() {
 
       const pointCloudGroup = pointCloud.potreeGroup;
       const pointCloudNode = pointCloud.potreeNode;
-      scene.add(pointCloudGroup);
-
-      const cadModelOffsetRoot = new THREE.Group();
-      cadModelOffsetRoot.name = 'Sector model offset root';
-      cadModelOffsetRoot.add(model);
-      scene.add(cadModelOffsetRoot);
+      sceneHandler.addCustomObject(pointCloudGroup);
 
       let settingsChanged = false;
       function handleSettingsChanged() {
@@ -218,7 +213,7 @@ export function SectorWithPointcloud() {
               settingsChanged));
 
         if (needsUpdate) {
-          applyRenderingFilters(scene, renderOptions.renderFilter);
+          applyRenderingFilters(sceneHandler.scene, renderOptions.renderFilter);
           revealManager.render(camera);
           settingsChanged = false;
           revealManager.resetRedraw();
@@ -226,7 +221,7 @@ export function SectorWithPointcloud() {
       });
       animationLoopHandler.start();
 
-      (window as any).scene = scene;
+      (window as any).sceneHandler = sceneHandler;
       (window as any).THREE = THREE;
       (window as any).camera = camera;
       (window as any).controls = controls;

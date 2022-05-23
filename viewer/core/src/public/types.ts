@@ -2,6 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
+import * as THREE from 'three';
+
 import { LoadingState } from '@reveal/model-base';
 import { RenderOptions } from '@reveal/rendering';
 import { InternalRevealCadOptions } from '@reveal/cad-model';
@@ -15,6 +17,7 @@ export type RevealOptions = {
   logMetrics?: boolean;
   renderOptions?: RenderOptions;
   continuousModelStreaming?: boolean;
+  outputRenderTarget?: { target: THREE.WebGLRenderTarget; autoSize?: boolean };
   internal?: {
     cad?: InternalRevealCadOptions;
   };
