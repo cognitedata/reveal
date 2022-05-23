@@ -31,7 +31,7 @@ export const ReprocessingModal = ({
 }: Props) => {
   const history = useHistory();
   const forceNewRevision = useFlag('3DM_reprocess_force_new_revision');
-  const isReprocessable = 
+  const isReprocessable =
     revision.createdTime > MAGIC_DATE && !forceNewRevision;
 
   const onOk = async () => {
