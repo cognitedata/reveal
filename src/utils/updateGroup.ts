@@ -51,6 +51,7 @@ export const updateGroup = async (
   const originalGroup: Group | undefined = allGroups.find((g) => g.id === id);
 
   if (!originalGroup) {
+    // TODO CDFUX-1573 - figure out translation
     throw new Error('Group does not exist');
   }
 
@@ -78,6 +79,7 @@ export const updateGroup = async (
   } catch (error) {
     const deleteNewGroup = async () => sdk.groups.delete([newGroup.id]);
     await retry(deleteNewGroup, null, NUMBER_OF_RETRIES);
+    // TODO CDFUX-1573 - figure out translation
     throw new Error('Cannot edit the default group');
   }
 

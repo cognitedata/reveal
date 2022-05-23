@@ -27,10 +27,12 @@ import {
   useUpdateDataSetVisibility,
 } from '../../actions/index';
 import { useSelectedDataSet } from '../../context/index';
+import { useTranslation } from 'common/i18n';
 
 const { TabPane } = Tabs;
 
 const DataSetDetails = (): JSX.Element => {
+  const { t } = useTranslation();
   const [editDrawerVisible, setEditDrawerVisible] = useState<boolean>(false);
   const [changesSaved, setChangesSaved] = useState<boolean>(true);
 
@@ -59,7 +61,7 @@ const DataSetDetails = (): JSX.Element => {
     useUpdateDataSetVisibility();
 
   const archiveButton = (
-    <Tooltip content="Archived data is not deleted. You can restore archived data sets later.">
+    <Tooltip content={t('dataset-details-archived-data-tooltip')}>
       <Button
         disabled={!hasWritePermissions}
         onClick={() => archiveDataSet()}
@@ -68,13 +70,13 @@ const DataSetDetails = (): JSX.Element => {
         }}
         loading={isUpdatingDataSetVisibility}
       >
-        Archive
+        {t('archive')}
       </Button>
     </Tooltip>
   );
 
   const restoreButton = (
-    <Tooltip content="Archived data is not deleted. You can restore archived data sets later.">
+    <Tooltip content={'dataset-details-archived-data-tooltip'}>
       <Button
         disabled={!hasWritePermissions}
         onClick={() => restoreDataSet()}
@@ -83,7 +85,7 @@ const DataSetDetails = (): JSX.Element => {
         }}
         loading={isUpdatingDataSetVisibility}
       >
-        Restore
+        {t('restore')}
       </Button>
     </Tooltip>
   );
@@ -99,7 +101,7 @@ const DataSetDetails = (): JSX.Element => {
         marginLeft: '10px',
       }}
     >
-      Edit
+      {t('edit')}
     </Button>
   );
 
@@ -114,7 +116,7 @@ const DataSetDetails = (): JSX.Element => {
           notification.close('navigateAway');
         }}
       >
-        Discard changes
+        {t('discard-changes')}
       </Button>
     </div>
   );
@@ -127,7 +129,9 @@ const DataSetDetails = (): JSX.Element => {
         message: 'Warning',
         description: (
           <div>
-            You have unsaved changes, are you sure you want to navigate away?
+            {t(
+              'you-have-unsaved-changes-are-you-sure-you-want-to-navigate-away'
+            )}
             {discardChangesButton}
           </div>
         ),
@@ -185,7 +189,7 @@ const DataSetDetails = (): JSX.Element => {
           title={dataSet.name}
           ornamentColor={theme.specificTitleOrnamentColor}
           breadcrumbs={[
-            { title: 'Data sets', path: `/${appPath}` },
+            { title: t('data-set_other'), path: `/${appPath}` },
             { title: dataSet.name },
           ]}
           help="https://docs.cognite.com/cdf/data_governance/concepts/datasets"
@@ -237,11 +241,11 @@ const DataSetDetails = (): JSX.Element => {
   return (
     <div>
       <NewHeader
-        title="Data set details"
+        title={t('data-set-details')}
         ornamentColor={theme.specificTitleOrnamentColor}
         breadcrumbs={[
-          { title: 'Data sets', path: `/${appPath}` },
-          { title: 'Data set details' },
+          { title: t('data-set_other'), path: `/${appPath}` },
+          { title: t('data-set-details') },
         ]}
       />
       {renderLoadingError(loading)}

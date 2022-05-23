@@ -15,6 +15,7 @@ import {
   useUpdateDataSetOwners,
 } from '../../actions/index';
 import { useSelectedDataSet } from '../../context/index';
+import { useTranslation } from 'common/i18n';
 
 interface DataSetEditorProps {
   visible: boolean;
@@ -33,6 +34,7 @@ const DataSetEditor = ({
   sourceSuggestions,
   handleCloseModal,
 }: DataSetEditorProps): JSX.Element => {
+  const { t } = useTranslation();
   const { selectedDataSet, setSelectedDataSet } = useSelectedDataSet();
 
   const { dataSetWithExtpipes, isLoading: isFetchingDataSet } =
@@ -55,9 +57,9 @@ const DataSetEditor = ({
 
   useEffect(() => {
     if (datasetCreated) {
-      notification.success({ message: 'Dataset Created!' });
+      notification.success({ message: t('data-set-created') });
     }
-  }, [datasetCreated]);
+  }, [datasetCreated, t]);
 
   const [editedOwners, setEditedOwners] = useState<Group[]>(owners);
 
@@ -97,7 +99,7 @@ const DataSetEditor = ({
       }}
       title={
         <DrawerHeader>
-          {dataSetWithExtpipes?.dataSet?.name ?? 'Create data set'}
+          {dataSetWithExtpipes?.dataSet?.name ?? t('create-data-set')}
         </DrawerHeader>
       }
       width="60%"

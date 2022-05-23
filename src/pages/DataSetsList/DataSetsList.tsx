@@ -27,8 +27,11 @@ import {
 } from '../../actions/index';
 import { useWithExtpipes } from '../../hooks/useWithExtpipes';
 import { useDataSetMode, useSelectedDataSet } from '../../context/index';
+import { useTranslation } from 'common/i18n';
 
 const DataSetsList = (): JSX.Element => {
+  const { t } = useTranslation();
+  console.log(t('edit'));
   const { data: withExtpipes, isFetched: didFetchWithExtpipes } =
     useWithExtpipes();
 
@@ -137,7 +140,7 @@ const DataSetsList = (): JSX.Element => {
         <DropdownMenuContent
           actions={[
             {
-              label: 'Edit',
+              label: t('edit'),
               onClick: () => {
                 editDataSet(row.key);
               },
@@ -147,7 +150,7 @@ const DataSetsList = (): JSX.Element => {
               key: 'edit',
             },
             {
-              label: row.archived ? 'Restore' : 'Archive',
+              label: row.archived ? t('restore') : t('archive'),
               onClick: () =>
                 row.archived
                   ? restoreDataSet(row.key)
@@ -164,15 +167,19 @@ const DataSetsList = (): JSX.Element => {
   );
 
   const statusColumn = {
-    title: 'Status',
+    title: t('status'),
     key: 'status',
     width: '5%',
     render: (row: DataSetRow) =>
-      row.archived && <Tag color="red">Archived</Tag>,
+      row.archived && <Tag color="red">{t('archived')}</Tag>,
   };
 
   const actionsColumn = {
-    title: <div style={{ textAlign: 'center', width: '100%' }}>Actions</div>,
+    title: (
+      <div style={{ textAlign: 'center', width: '100%' }}>
+        {t('action_other')}
+      </div>
+    ),
     width: '5%',
     key: 'id',
     render: actionsRender,
@@ -211,18 +218,17 @@ const DataSetsList = (): JSX.Element => {
           notification.close('navigateAway');
         }}
       >
-        Discard changes
+        {t('discard-changes')}
       </Button>
     </div>
   );
-  const title = 'Data sets';
 
   const QualitySelector = (
     <SelectorFilter
       filterName="data-sets-governance"
       selectionOptions={[
-        { name: 'Governed', value: 'governed' },
-        { name: 'Ungoverned', value: 'ungoverned' },
+        { name: t('governed'), value: 'governed' },
+        { name: t('ungoverned'), value: 'ungoverned' },
       ]}
       setSelection={setQualityFilter}
       defaultValue={qualityFilter}
@@ -240,12 +246,12 @@ const DataSetsList = (): JSX.Element => {
       }}
       disabled={!hasWritePermissions}
     >
-      Create
+      {t('create')}
     </Button>
   );
   const SearchBar = (
     <Input
-      placeholder="Search by name, description, or labels"
+      placeholder={t('search-by-name-description-or-labels')}
       value={searchValue}
       onChange={(e) => setSearchValue(e.currentTarget.value)}
       icon="Search"
@@ -262,7 +268,7 @@ const DataSetsList = (): JSX.Element => {
         onChange={(e) => setShowArchived(e.target.checked)}
         checked={showArchived}
       >
-        Show archived data sets
+        {t('show-archived-data-sets')}
       </Checkbox>
     </div>
   );
@@ -277,7 +283,9 @@ const DataSetsList = (): JSX.Element => {
         message: 'Warning',
         description: (
           <div>
-            You have unsaved changes, are you sure you want to navigate away?
+            {t(
+              'you-have-unsaved-changes-are-you-sure-you-want-to-navigate-away'
+            )}
             {discardChangesButton}
           </div>
         ),
@@ -294,10 +302,10 @@ const DataSetsList = (): JSX.Element => {
   return (
     <div>
       <NewHeader
-        title={title}
+        title={t('data-set_other')}
         leftItem={SearchBar}
         rightItem={ActionToolbar}
-        breadcrumbs={[{ title: 'Data sets', path: `/${appPath}` }]}
+        breadcrumbs={[{ title: t('data-set_other'), path: `/${appPath}` }]}
         help="https://docs.cognite.com/cdf/data_governance/concepts/datasets"
       />
       <DataSetEditor

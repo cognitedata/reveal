@@ -23,7 +23,8 @@ export const generateStatusMessage = (error: DataSetError) => {
     case 400: {
       const missingIds = error.missing?.map((m) => m.id).join(', ');
       return error.missing?.length
-        ? `Data set with id: ${missingIds} not found`
+        ? // TODO CDFUX-1573 - figure out translation
+          `Data set with id: ${missingIds} not found`
         : error.message;
     }
     default: {

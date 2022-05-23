@@ -4,12 +4,14 @@ import { Icons, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { useTranslation } from 'common/i18n';
 
 type AccessCheckProps = {
   children: ReactNode;
 };
 
 const AccessCheck = ({ children }: AccessCheckProps): JSX.Element => {
+  const { t } = useTranslation();
   const { flow } = getFlow();
   const { data: hasReadAccess, isFetched } = usePermissions(
     flow,
@@ -26,23 +28,20 @@ const AccessCheck = ({ children }: AccessCheckProps): JSX.Element => {
       <NoAccessContent>
         <Warning>
           <Icons.WarningFilled />
-          <div>You have insufficient access rights to access this feature</div>
+          <div>{t('access-check-insufficient-access-rights')}</div>
         </Warning>
-        <Instructions>
-          Check the access rights needed below and ask the person responsible
-          for access management in your organization to grant them to you.
-        </Instructions>
+        <Instructions>{t('access-check-instructions')}</Instructions>
         <AccessInfoWrapper className="z-4">
           <AccessInfo>
             <p>
-              It is a prerequisite to have <strong>groups:list</strong> scoped
-              at least for the current user to access any feature.
+              {t('access-check-info-1-p1')} <strong>groups:list</strong>{' '}
+              {t('access-check-info-1-p2')}
             </p>
             <p>
-              To view data sets, you need the capability{' '}
-              <strong>data-sets:read</strong>. To create new data sets or edit
-              existing data sets, you also need the capability{' '}
-              <strong>data-sets:write</strong>.
+              {t('access-check-info-2-p1')} <strong>data-sets:read</strong>.
+            </p>
+            <p>
+              {t('access-check-info-2-p2')} <strong>data-sets:write</strong>.
             </p>
           </AccessInfo>
         </AccessInfoWrapper>
