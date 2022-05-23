@@ -86,9 +86,7 @@ export interface LineConnectionInstance
   type: 'Line Connection';
 }
 
-export interface DiagramInstrumentInstance
-  extends DiagramSymbolInstance,
-    EquipmentTagInfo {
+export interface DiagramInstrumentInstance extends DiagramSymbolInstance {
   type: 'Instrument';
 }
 
@@ -147,6 +145,9 @@ export type DiagramLineInstanceOutputFormat = DiagramLineInstance &
   DiagramInstanceOutputFields;
 
 export type DiagramEquipmentInstanceOutputFormat = DiagramEquipmentInstance &
+  DiagramInstanceOutputFields;
+
+export type DiagramInstrumentInstanceOutputFormat = DiagramInstrumentInstance &
   DiagramInstanceOutputFields;
 
 export type DiagramTagOutputFormat = DiagramTag & DiagramInstanceOutputFields;

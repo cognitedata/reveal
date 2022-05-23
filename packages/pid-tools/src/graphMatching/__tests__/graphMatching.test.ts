@@ -6,7 +6,7 @@ import {
   SymbolType,
 } from '../../types';
 import {
-  getUniqueCrossConnections,
+  getAllCrossConnections,
   isCrossConnection,
   matchGraphs,
 } from '../graphMatching';
@@ -112,7 +112,7 @@ describe('cross conncetion', () => {
     expect(isCrossConnection(pidInstrument2, isoInstrument2)).toBe(true);
   });
 
-  test('getUniqueCrossConnections', async () => {
+  test('getAllCrossConnections', async () => {
     const pidInstrument1 = createSymbolInstance('pid-i1', 'Instrument', [
       'ABC',
       '123',
@@ -135,14 +135,12 @@ describe('cross conncetion', () => {
       '234',
     ]);
 
-    const uniqueCrossConnections = getUniqueCrossConnections(
+    const crossConnections = getAllCrossConnections(
       [pidInstrument1, pidInstrument2],
       [isoInstrument1, isoInstrument2, isoInstrument3]
     );
 
-    expect(uniqueCrossConnections.length).toBe(1);
-    expect(uniqueCrossConnections[0].pidInstanceId).toBe('pid-i2');
-    expect(uniqueCrossConnections[0].isoInstanceId).toBe('iso-i3');
+    expect(crossConnections.length).toBe(3);
   });
 });
 

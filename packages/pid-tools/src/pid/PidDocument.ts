@@ -1,5 +1,4 @@
 import { ElementNode, parse } from 'svg-parser';
-import sortBy from 'lodash/sortBy';
 import { kdTree } from 'kd-tree-javascript';
 
 import { parseStyleString } from '../utils';
@@ -19,7 +18,7 @@ import {
 import { findLinesAndConnections } from '../findLinesAndConnections';
 import { svgCommandsToSegments } from '../matcher/svgPathParser';
 import { findAllInstancesOfSymbol } from '../matcher';
-import { PathSegment, Point } from '../geometry';
+import { BoundingBox, PathSegment, Point } from '../geometry';
 import {
   AUTO_ANALYSIS_LABEL_THRESHOLD_ISO,
   AUTO_ANALYSIS_LABEL_THRESHOLD_PID,
@@ -29,7 +28,7 @@ import { traverse } from '../graph/traversal';
 import { calculatePidPathsBoundingBox, createSvgRepresentation } from './utils';
 import { PidTspan } from './PidTspan';
 import { PidPath } from './PidPath';
-import { PidGroup, PidInstance } from './PidGroup';
+import { PidGroup } from './PidGroup';
 import { getFileConnectionsWithPosition } from './fileConnectionUtils';
 import parseLineConnectionTags from './parseLineConnectionTags';
 import parseLineNumbersWithUnit from './parseLineNumbersWithUnit';
@@ -296,24 +295,26 @@ export class PidDocument {
     instances: DiagramInstanceWithPaths[],
     excludedLabelConnections: [DiagramInstanceWithPaths, string][]
   ): LabelInstanceConnection[] {
-    const pidLabelIdsAlreadyConnected = new Set<string>();
     if (instances.length === 0) return [];
-
-    instances.forEach((instance) => {
-      instance.labelIds.forEach((labelId) => {
-        pidLabelIdsAlreadyConnected.add(labelId);
-      });
-    });
-
-    const pidLabelsToConnect = this.pidLabels.filter((pidLabel) => {
-      return !pidLabelIdsAlreadyConnected.has(pidLabel.id);
-    });
 
     const labelInstanceConnections: LabelInstanceConnection[] = [];
 
-    const instanceGroups = instances.map((instance) =>
-      PidInstance.fromDiagramInstance(this, instance)
+    const pidLabelIdsAlreadyConnected = new Set<string>(
+      instances.flatMap((instance) => instance.labelIds)
     );
+
+    const pidLabelsToConnect = this.pidLabels.filter(
+      (pidLabel) => !pidLabelIdsAlreadyConnected.has(pidLabel.id)
+    );
+
+    const isNotExcludedInstanceLabelConnection = (
+      diagramInstance: DiagramInstanceWithPaths,
+      pidLabel: PidTspan
+    ) =>
+      !excludedLabelConnections.some(
+        ([instance, labelId]) =>
+          pidLabel.id === labelId && instance.id === diagramInstance.id
+      );
 
     const labelThreshold =
       this.viewBox.width *
@@ -321,42 +322,67 @@ export class PidDocument {
         ? AUTO_ANALYSIS_LABEL_THRESHOLD_ISO
         : AUTO_ANALYSIS_LABEL_THRESHOLD_PID);
 
-    pidLabelsToConnect.forEach((pidLabel) => {
-      const labelMidPoint = pidLabel.getMidPoint();
-
-      const isNotExcludedInstanceLabelConnection = ({
-        instanceGroup,
-      }: {
-        instanceGroup: PidInstance;
-      }) =>
-        !excludedLabelConnections.some(
-          ([instance, labelId]) =>
-            pidLabel.id === labelId && instance.id === instanceGroup.id
-        );
-
-      const filteredInstanceGroups = instanceGroups
-        .map((instanceGroup) => ({
-          instanceGroup,
-          distance: instanceGroup.distance(labelMidPoint),
-        }))
-        .filter(({ distance }) => distance < labelThreshold)
-        .filter(isNotExcludedInstanceLabelConnection);
-
-      if (filteredInstanceGroups.length < 1) {
-        return;
-      }
-
-      const sortedInstanceGroups = sortBy(
-        filteredInstanceGroups,
-        (instanceGroupWithDistance) => instanceGroupWithDistance.distance
+    const connectIfEnclosing = (
+      instance: DiagramInstanceWithPaths,
+      pidLabels: PidTspan[]
+    ): PidTspan[] => {
+      const instanceBoundingBox = BoundingBox.fromRect(
+        this.getBoundingBoxToPaths(instance.pathIds)
       );
+      return pidLabels.filter((pidLabel) =>
+        instanceBoundingBox.encloses(pidLabel.getMidPoint())
+      );
+    };
 
-      const closestInstanceGroup = sortedInstanceGroups[0].instanceGroup;
-      labelInstanceConnections.push({
-        labelId: pidLabel.id,
-        labelText: pidLabel.text,
-        instanceId: closestInstanceGroup.id,
+    const connectIfWithinDistance = (
+      instance: DiagramInstanceWithPaths,
+      pidLabels: PidTspan[],
+      distanceThreshold: number
+    ): PidTspan[] => {
+      const instanceBoundingBox = BoundingBox.fromRect(
+        this.getBoundingBoxToPaths(instance.pathIds)
+      );
+      return pidLabels.filter((pidLabel) => {
+        const distance = pidLabel
+          .getMidPoint()
+          .distance(instanceBoundingBox.midPoint());
+        return distance < distanceThreshold;
       });
+    };
+
+    instances.forEach((instance) => {
+      switch (instance.type) {
+        case 'Instrument':
+        case 'Shared Instrument':
+        case 'File Connection':
+          connectIfEnclosing(instance, pidLabelsToConnect)
+            .filter((pidLabel) =>
+              isNotExcludedInstanceLabelConnection(instance, pidLabel)
+            )
+            .forEach((pidLabel) => {
+              labelInstanceConnections.push({
+                labelId: pidLabel.id,
+                labelText: pidLabel.text,
+                instanceId: instance.id,
+              });
+            });
+          break;
+        case 'Line Connection':
+          connectIfWithinDistance(instance, pidLabelsToConnect, labelThreshold)
+            .filter((pidLabel) =>
+              isNotExcludedInstanceLabelConnection(instance, pidLabel)
+            )
+            .forEach((pidLabel) => {
+              labelInstanceConnections.push({
+                labelId: pidLabel.id,
+                labelText: pidLabel.text,
+                instanceId: instance.id,
+              });
+            });
+          break;
+        default:
+          break;
+      }
     });
 
     return labelInstanceConnections;

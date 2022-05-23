@@ -10,6 +10,7 @@ import {
 import { calculateShortestPaths, PathOutputFormat } from '../graph';
 import areSetsEqual from '../utils/areSetsEqual';
 
+import getCrossConnections from './utils/getCrossConnections';
 import {
   getEditDistanceBetweenPaths,
   getOptimalEditDistanceMapping,
@@ -23,7 +24,7 @@ export interface CrossDocumentConnection {
 export const isCrossConnection = (
   pidInstance: DiagramInstanceOutputFormat,
   isoInstance: DiagramInstanceOutputFormat
-) => {
+): boolean => {
   if (isInstrument(pidInstance) && isInstrument(isoInstance)) {
     if (pidInstance.labels.length !== isoInstance.labels.length) return false;
 
@@ -40,7 +41,7 @@ export const isCrossConnection = (
     (isEquipment(isoInstance) || isEquipmentTag(isoInstance))
   ) {
     return (
-      pidInstance.equipmentTag &&
+      pidInstance.equipmentTag !== undefined &&
       pidInstance.equipmentTag === isoInstance.equipmentTag
     );
   }
@@ -71,26 +72,35 @@ export const isCrossConnection = (
   return false;
 };
 
-export const getUniqueCrossConnections = (
+export const getAllCrossConnections = (
   pidInstances: DiagramInstanceOutputFormat[],
   isoInstances: DiagramInstanceOutputFormat[]
 ): CrossDocumentConnection[] => {
-  const crossDocumentConnections: CrossDocumentConnection[] = [];
-  for (let i = 0; i < pidInstances.length; i++) {
-    const pidInstance = pidInstances[i];
+  const instrumentsCrossConnections = getCrossConnections(
+    pidInstances.filter(isInstrument),
+    isoInstances.filter(isInstrument),
+    isCrossConnection
+  );
 
-    const matchedIsoInstances = isoInstances.filter((isoInstance) =>
-      isCrossConnection(pidInstance, isoInstance)
-    );
-    if (matchedIsoInstances.length !== 1) continue;
+  const isEquipmentLike = (instance: DiagramInstanceOutputFormat) =>
+    isEquipment(instance) || isEquipmentTag(instance);
 
-    const isoInstance = matchedIsoInstances[0];
-    crossDocumentConnections.push({
-      pidInstanceId: pidInstance.id,
-      isoInstanceId: isoInstance.id,
-    });
-  }
-  return crossDocumentConnections;
+  const equipmentTagCrossConnections = getCrossConnections(
+    pidInstances.filter(isEquipmentLike),
+    isoInstances.filter(isEquipmentLike),
+    isCrossConnection
+  );
+
+  // eslint-disable-next-line no-console
+  console.log(
+    `GRAPH MATCHING: Found ${instrumentsCrossConnections.length} instrument connections`
+  );
+  // eslint-disable-next-line no-console
+  console.log(
+    `GRAPH MATCHING: Found ${equipmentTagCrossConnections.length} equipment tag connections`
+  );
+
+  return [...instrumentsCrossConnections, ...equipmentTagCrossConnections];
 };
 
 export const matchGraphs = (
@@ -110,7 +120,7 @@ export const matchGraphs = (
     ...isoGraph.diagramTags,
   ];
 
-  const startObjects = getUniqueCrossConnections(
+  const startObjects = getAllCrossConnections(
     potentialPidStartObjects,
     potentialIsoStartObjects
   );
