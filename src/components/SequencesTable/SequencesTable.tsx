@@ -9,37 +9,41 @@ import { handleError } from 'utils/handleError';
 import { getContainer } from 'utils/shared';
 import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
 import ColumnWrapper from '../ColumnWrapper';
+import { useTranslation } from 'common/i18n';
 
 interface sequencesTableProps {
   dataSetId: number;
 }
 
 const SequencesTable = ({ dataSetId }: sequencesTableProps) => {
+  const { t } = useTranslation();
   const [sequences, setSequences] = useState<Sequence[]>();
 
   const sequencesColumns = [
     {
-      title: 'Name',
+      title: t('name'),
       dataIndex: 'name',
       key: 'name',
       render: (value: any) => <ColumnWrapper title={value} />,
     },
     {
-      title: 'ID',
+      title: t('id'),
       dataIndex: 'id',
       key: 'id',
       render: (value: any) => <ColumnWrapper title={value} />,
     },
     {
-      title: 'Description',
+      title: t('description'),
       dataIndex: 'description',
       key: 'description',
     },
     {
-      title: 'Actions',
+      title: t('action_other'),
       render: (record: Sequence) => (
         <span>
-          <Link to={createLink(`/explore/sequence/${record.id}`)}>View</Link>
+          <Link to={createLink(`/explore/sequence/${record.id}`)}>
+            {t('view')}
+          </Link>
         </span>
       ),
     },
@@ -51,13 +55,13 @@ const SequencesTable = ({ dataSetId }: sequencesTableProps) => {
         setSequences(res.items);
       })
       .catch((e) => {
-        handleError({ message: 'Failed to fetch sequences', ...e });
+        handleError({ message: t('fetch-sequences-failed'), ...e });
       });
-  }, [dataSetId]);
+  }, [dataSetId, t]);
 
   return (
     <div id="#sequences">
-      <ItemLabel>Sequences</ItemLabel>
+      <ItemLabel>{t('sequence_other')}</ItemLabel>
       <Table
         rowKey="id"
         columns={sequencesColumns}

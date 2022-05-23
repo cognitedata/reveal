@@ -13,6 +13,7 @@ import { UploadFile } from 'antd/lib/upload/interface';
 import { ErrorMessageBox } from 'components/ErrorMessage/ErrorMessage';
 import { FileInfo } from 'utils/types';
 import { getContainer, nameToAclTypeMap } from 'utils/shared';
+import { useTranslation } from 'common/i18n';
 
 interface UploadFileProps {
   setFileList: Dispatch<SetStateAction<FileInfo[]>>;
@@ -63,6 +64,7 @@ const createDataSet = async () => {
       {
         externalId: 'COGNITE_GENERATED_SYSTEM_FILES',
         name: 'COGNITE_GENERATED_SYSTEM_FILES',
+        // TODO does this need to be translated as well?
         description:
           'This data set contains files uploaded as documentation for other data sets.',
         metadata: {
@@ -91,6 +93,7 @@ const UploadFiles = ({
   setFileList,
   setChangesSaved,
 }: UploadFileProps): JSX.Element => {
+  const { t } = useTranslation();
   const { flow } = getFlow();
   const filesReadCapability = usePermissions(
     flow,
@@ -126,11 +129,11 @@ const UploadFiles = ({
       if (status === 'done') {
         // setFileList([{ name: file.name, id: info.file. }, ...fileList]);
         notification.success({
-          message: `${info.file.name} file uploaded successfully.`,
+          message: t('upload-file-msg-success', { name: info.file.name }),
         });
       } else if (status === 'error') {
         notification.error({
-          message: `${info.file.name} file upload failed.`,
+          message: t('upload-file-msg-failed', { name: info.file.name }),
         });
       }
     },
@@ -156,12 +159,14 @@ const UploadFiles = ({
               const { status } = xhr;
               if (status >= 200 && status < 300) {
                 setUploadError(null);
-                notification.success({ message: 'File is uploaded' });
+                notification.success({
+                  message: t('upload-file-msg-uploaded'),
+                });
                 setIsUploading(false);
                 if (onSuccess) onSuccess('Ok', xhr);
                 setFileList([{ name: fileName, id: fileId }, ...fileList]);
               } else {
-                notification.error({ message: 'Something went wrong!' });
+                notification.error({ message: t('something-went-wrong') });
               }
             };
             xhr.setRequestHeader('Content-Type', file.type);
@@ -169,11 +174,9 @@ const UploadFiles = ({
           }
         })
         .catch(() => {
-          setUploadError(
-            'Failed to upload. Make sure you have access, and try again.'
-          );
+          setUploadError(t('upload-file-msg-error'));
           setIsUploading(false);
-          if (onError) onError(new Error('Upload failed'));
+          if (onError) onError(new Error(t('upload-failed')));
         });
     },
   };
@@ -200,9 +203,7 @@ const UploadFiles = ({
             <p className="ant-upload-drag-icon">
               <Icon type="Upload" />
             </p>
-            <p className="ant-upload-text">
-              Click to select a file or drag it here to upload.
-            </p>
+            <p className="ant-upload-text">{t('upload-file-click-or-drag')}</p>
           </>
         ) : (
           <Spin />
@@ -210,9 +211,7 @@ const UploadFiles = ({
       </Upload.Dragger>
       {isMissingReadAccess && (
         <div css="margin: 1rem 0;">
-          <ErrorMessageBox>
-            You do not have access to read/download files.
-          </ErrorMessageBox>
+          <ErrorMessageBox>{t('upload-file-no-access')}</ErrorMessageBox>
         </div>
       )}
       <List>
@@ -234,7 +233,9 @@ const UploadFiles = ({
               getPopupContainer={getContainer}
               onConfirm={removeFileFromDataSet(file)}
               placement="topLeft"
-              title={`Are you sure you want to remove ${file.name} from this data set?`}
+              title={t('upload-file-remove-file-confirm', {
+                fileName: file.name,
+              })}
             >
               <Button icon="Delete" type="ghost" />
             </Popconfirm>
