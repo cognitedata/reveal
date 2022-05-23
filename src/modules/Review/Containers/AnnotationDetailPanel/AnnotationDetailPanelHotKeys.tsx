@@ -37,7 +37,7 @@ import { HotKeys } from 'src/constants/HotKeys';
 import { AnnotationStatusChangeV1 } from 'src/store/thunks/Annotation/AnnotationStatusChangeV1';
 import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { Modal } from 'antd';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFileV1 } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFileV1';
 import { FileInfo } from '@cognite/sdk';
 
 export const AnnotationDetailPanelHotKeys = ({
@@ -208,7 +208,7 @@ export const AnnotationDetailPanelHotKeys = ({
 
       const onConfirmDelete = async () => {
         await dispatch(
-          DeleteAnnotationsAndHandleLinkedAssetsOfFile({
+          DeleteAnnotationsAndHandleLinkedAssetsOfFileV1({
             annotationIds: [+annotationId!],
             showWarnings: true,
           })

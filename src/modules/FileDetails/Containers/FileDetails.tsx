@@ -8,7 +8,7 @@ import { RootState } from 'src/store/rootReducer';
 import isEqual from 'lodash-es/isEqual';
 import { VisionFileDetails } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import { updateFileInfoField } from 'src/store/thunks/Files/updateFileInfoField';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFileV1 } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFileV1';
 import styled from 'styled-components';
 import {
   metadataEditMode,
@@ -74,7 +74,7 @@ export const FileDetails = ({
 
   const onAnnotationDeleteClick = (annotationId: number) => {
     dispatch(
-      DeleteAnnotationsAndHandleLinkedAssetsOfFile({
+      DeleteAnnotationsAndHandleLinkedAssetsOfFileV1({
         annotationIds: [annotationId],
         showWarnings: true,
       })
