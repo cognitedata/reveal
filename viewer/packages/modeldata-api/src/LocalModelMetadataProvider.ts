@@ -15,6 +15,9 @@ export class LocalModelMetadataProvider implements ModelMetadataProvider {
     if (!(modelIdentifier instanceof LocalModelIdentifier)) {
       throw new Error(`Model must be a ${LocalModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
     }
+    if (modelIdentifier.localPath.startsWith('http')) {
+      return Promise.resolve(modelIdentifier.localPath);
+    }
     return Promise.resolve(`${location.origin}/${modelIdentifier.localPath}`);
   }
 
