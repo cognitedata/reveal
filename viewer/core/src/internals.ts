@@ -7,7 +7,7 @@ export { RevealManager } from './public/RevealManager';
 export { createLocalRevealManager, createCdfRevealManager } from './public/createRevealManager';
 
 // CAD
-export { CadModelSectorLoadStatistics, intersectCadNodes } from '@reveal/cad-model';
+export { CadModelSectorLoadStatistics, PickingHandler } from '@reveal/cad-model';
 
 // Point cloud
 export {

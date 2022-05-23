@@ -54,10 +54,10 @@ export function TwoModels() {
       renderer.setClearColor('#444');
       renderer.setSize(window.innerWidth, window.innerHeight);
 
-      const scene = new THREE.Scene();
+      const sceneHandler = new reveal.SceneHandler();
 
-      const { revealManager, model } = await createManagerAndLoadModel(client, renderer, scene, 'cad', modelRevision, modelUrl);
-      scene.add(model);
+      const { revealManager, model } = await createManagerAndLoadModel(client, renderer, sceneHandler, 'cad', modelRevision, modelUrl);
+      sceneHandler.addCadModel(model, model.cadModelIdentifier);
 
       let model2: reveal.CadNode;
       if (modelRevision2) {
@@ -71,7 +71,7 @@ export function TwoModels() {
           'Need to provide either project & modelId2/revisionId2 OR modelUrl2 as query parameters'
         );
       }      
-      scene.add(model2);
+      sceneHandler.addCadModel(model2, model2.cadModelIdentifier);
 
       const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
                                                                   model.getModelTransformation());
@@ -97,8 +97,8 @@ export function TwoModels() {
       const model2Offset = new THREE.Group();
       model2Offset.position.set(-2, -2, 0);
       model2Offset.add(model2);
-      scene.add(model);
-      scene.add(model2Offset);
+      sceneHandler.addCadModel(model, model.cadModelIdentifier);
+      sceneHandler.addCadModel(model2Offset, model2.cadModelIdentifier);
 
       revealManager.update(camera);
 
@@ -116,7 +116,7 @@ export function TwoModels() {
       });
       animationLoopHandler.start();
 
-      (window as any).scene = scene;
+      (window as any).sceneHandler = sceneHandler;
       (window as any).THREE = THREE;
       (window as any).camera = camera;
       (window as any).controls = controls;
