@@ -264,7 +264,7 @@ export function convertCDFAnnotationV1ToVisionAnnotation(
 
 const convertCDFAnnotationStatusToStatus = (
   status: CDFAnnotationStatus
-): Status => {
+): Status | undefined => {
   switch (status) {
     case 'suggested':
       return Status.Suggested;
@@ -273,16 +273,16 @@ const convertCDFAnnotationStatusToStatus = (
     case 'rejected':
       return Status.Rejected;
     default:
-      throw new Error('Invalid Annotation status. Annotation rejected!');
+      return undefined;
   }
 };
 const convertCDFAnnotationTypeToAnnotationType = (
   annotationType: AnnotationType
-): CDFAnnotationTypeEnum => {
+): CDFAnnotationTypeEnum | undefined => {
   if (annotationType in Object.values(CDFAnnotationTypeEnum)) {
     return annotationType as CDFAnnotationTypeEnum;
   }
-  throw new Error('Invalid Annotation Type. Annotation rejected!');
+  return undefined;
 };
 
 export const convertCDFAnnotationToVisionAnnotations = (
@@ -290,20 +290,24 @@ export const convertCDFAnnotationToVisionAnnotations = (
 ): VisionAnnotation<VisionAnnotationDataType>[] =>
   annotations.reduce<VisionAnnotation<VisionAnnotationDataType>[]>(
     (ann, nextAnnotation) => {
-      try {
+      const status = convertCDFAnnotationStatusToStatus(nextAnnotation.status);
+      const annotationType = convertCDFAnnotationTypeToAnnotationType(
+        nextAnnotation.annotationType
+      );
+
+      // if CDF annotation has valid status and annotation type
+      if (status && annotationType) {
         const cdfInheritedFields: CDFInheritedFields<VisionAnnotationDataType> =
           {
             id: nextAnnotation.id,
             createdTime: nextAnnotation.createdTime.getTime(),
             lastUpdatedTime: nextAnnotation.lastUpdatedTime.getTime(),
-            status: convertCDFAnnotationStatusToStatus(nextAnnotation.status),
+            status,
             annotatedResourceId: nextAnnotation.annotatedResourceId || 0, // is annotatedResourceId should be mandatory?
-            annotationType: convertCDFAnnotationTypeToAnnotationType(
-              nextAnnotation.annotationType
-            ),
+            annotationType,
           };
 
-        // HACK: converting Data, due to the type of data of a CDFImageKeypointCollection,
+        // HACK: VIS-859 converting Data, due to the type of data of a CDFImageKeypointCollection,
         // is not matching with ImageKeypointCollection data
         // should change Vision internal type and remove this hack
         let annotationData: AnnotationPayload = nextAnnotation.data;
@@ -337,8 +341,6 @@ export const convertCDFAnnotationToVisionAnnotations = (
             ...(annotationData as VisionAnnotationDataType),
           };
         return [...ann, nextVisionAnnotation];
-      } catch (error) {
-        console.warn(error, ' ', nextAnnotation);
       }
 
       return ann;
