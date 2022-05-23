@@ -6,7 +6,6 @@ uniform mat4 projMatrix;
 uniform mat4 inverseProjectionMatrix;
 uniform vec3 kernel[MAX_KERNEL_SIZE];
 uniform sampler2D tDepth;
-uniform vec2 resolution;
 uniform float sampleRadius;
 uniform float bias;
 
@@ -65,7 +64,9 @@ vec3 computeWorldNormalFromDepth(sampler2D depthTexture, vec2 resolution, vec2 u
 void main(){
   float d = texture(tDepth, vUv).r;
 
-  vec3 viewNormal = computeWorldNormalFromDepth(tDepth, resolution, vUv, d);
+  ivec2 textureSize = textureSize(tDepth, 0);
+
+  vec3 viewNormal = computeWorldNormalFromDepth(tDepth, vec2(float(textureSize.x), float(textureSize.y)), vUv, d);
 
   vec3 viewPosition = viewPosFromDepth(d, vUv);
 
@@ -98,5 +99,5 @@ void main(){
 
   float occlusionFactor = 1.0 - clamp(occlusion / float(MAX_KERNEL_SIZE), 0.0, 1.0);
 
-  outputColor = vec4(vec3(occlusionFactor), 1.0);
+  outputColor = vec4(occlusionFactor);
 }

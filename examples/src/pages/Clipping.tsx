@@ -39,7 +39,7 @@ export function Clipping() {
                                      getToken: async () => 'dummy' });
       }
 
-      const scene = new THREE.Scene();
+      const sceneHandler = new reveal.SceneHandler();
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current!,
       });
@@ -47,8 +47,8 @@ export function Clipping() {
       renderer.setClearColor('#444');
       renderer.setSize(window.innerWidth, window.innerHeight);
 
-      const { revealManager, model } = await createManagerAndLoadModel(client, renderer, scene, 'cad', modelRevision, modelUrl);
-      scene.add(model);
+      const { revealManager, model } = await createManagerAndLoadModel(client, renderer, sceneHandler, 'cad', modelRevision, modelUrl);
+      sceneHandler.addCadModel(model, model.cadModelIdentifier);
 
       const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
                                                                   model.getModelTransformation());
@@ -123,7 +123,7 @@ export function Clipping() {
         new THREE.PlaneHelper(boxClipper.clippingPlanes[5], 2, 0x0000ff)
       );
       updateClippingPlanes();
-      scene.add(helpers);
+      sceneHandler.addCustomObject(helpers);
 
       animationLoopHandler.setOnAnimationFrameListener(async (deltaTime) => {
         const controlsNeedUpdate = controls.update(deltaTime);
@@ -207,7 +207,7 @@ export function Clipping() {
           guiNeedsUpdate = true;
         });
 
-      (window as any).scene = scene;
+      (window as any).sceneHandler = sceneHandler;
       (window as any).THREE = THREE;
       (window as any).camera = camera;
       (window as any).controls = controls;

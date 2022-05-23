@@ -77,15 +77,15 @@ export function WalkablePath() {
                                      getToken: async () => 'dummy' });
       }
 
-      const scene = new THREE.Scene();
+      const sceneHandler = new reveal.SceneHandler();
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current!,
       });
       renderer.setClearColor('#444');
       renderer.setSize(window.innerWidth, window.innerHeight);
 
-      const { revealManager, model } = await createManagerAndLoadModel(client, renderer, scene, 'cad', modelRevision, modelUrl);
-      scene.add(model);
+      const { revealManager, model } = await createManagerAndLoadModel(client, renderer, sceneHandler, 'cad', modelRevision, modelUrl);
+      sceneHandler.addCadModel(model, model.cadModelIdentifier);
 
       const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
                                                                   model.getModelTransformation());
@@ -114,7 +114,7 @@ export function WalkablePath() {
 
       const removeWalkablePath = () => {
         for (const pathMesh of pathMeshes) {
-          scene.remove(pathMesh);
+          sceneHandler.removeCustomObject(pathMesh);
         }
         pathMeshes.splice(0, pathMeshes.length);
         updated = true;
@@ -132,7 +132,7 @@ export function WalkablePath() {
           );
           const meshes = createWalkablePathMeshes(vector3Path);
           for (const mesh of meshes) {
-            scene.add(mesh);
+            sceneHandler.addCustomObject(mesh);
             pathMeshes.push(mesh);
           }
           updated = true;
@@ -159,7 +159,7 @@ export function WalkablePath() {
       });
       animationLoopHandler.start();
       revealManager.update(camera);
-      (window as any).scene = scene;
+      (window as any).sceneHandler = sceneHandler;
       (window as any).THREE = THREE;
       (window as any).camera = camera;
       (window as any).controls = controls;

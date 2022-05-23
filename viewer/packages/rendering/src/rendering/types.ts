@@ -48,7 +48,7 @@ export enum SsaoSampleQuality {
   Medium = 32,
   High = 64,
   VeryHigh = 128,
-  None = 1,
+  None = 0,
   Default = Medium
 }
 
