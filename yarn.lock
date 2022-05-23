@@ -4002,10 +4002,10 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk-core@^4.1.1":
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.1.1.tgz#c0793c68be3c965707a1b7948669f9401885951e"
-  integrity sha512-4/7f0xgIVN/tJXD+0fyEu0mOZeAg0tRiYucx3IngLT9jXAjMuk1SeJbrQPWk3lRyuNj8BkW/2SlUtsvGnleljQ==
+"@cognite/sdk-core@^4.1.7":
+  version "4.1.7"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.1.7.tgz#6925e7bae64b0114cb94ddda262a07a9a285e7b9"
+  integrity sha512-WA7GKXVHlbeqvtGFhe+sYphb5bq68VzF5yxs99fRmjJWzab1OvJv2n1lXPlDk6OUBNzoLqrxZ1fBVxrBTfr95g==
   dependencies:
     cross-fetch "^3.0.4"
     is-buffer "^2.0.5"
@@ -4013,13 +4013,13 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk-playground@^5.1.0":
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-playground/-/sdk-playground-5.1.0.tgz#0a56b4650b8d720daaaf7f8d1dd0857a6b1ff525"
-  integrity sha512-IAfgazUYcARbgvZzUNSIoLsAW1kiOZkDhcKhlVofr4No1DHUnGXfxMMs2CGzjYh2tvab1zwY0ST0cqQokKfDfA==
+"@cognite/sdk-playground@^5.2.0":
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-playground/-/sdk-playground-5.2.0.tgz#d50b8998aae11882cdd2050f5d7b8612df5dd45c"
+  integrity sha512-qKC11cPU1c8aw1LBMd05FK98RQ4ZwBkmjAOTGfSYKBgyoij/MOyJsRx7J8fHIZzZChGHi4vX+3XaboYbXl2JFg==
   dependencies:
-    "@cognite/sdk" "^7.2.2"
-    "@cognite/sdk-core" "^4.1.1"
+    "@cognite/sdk" "^7.3.4"
+    "@cognite/sdk-core" "^4.1.7"
 
 "@cognite/sdk-provider@^1.0.0":
   version "1.0.0"
@@ -4044,12 +4044,12 @@
     "@cognite/sdk-core" "^4.1.0"
     lodash "^4.17.11"
 
-"@cognite/sdk@^7.2.2":
-  version "7.2.2"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.2.2.tgz#60d0d6a4b66c18c9f32fe3900d45811aa34ae1a2"
-  integrity sha512-5fXpqJJs4NIw8I7R0cuSkbI9tXe6TihVNkoLp129i5gj9C++b/doEdLeoXg5ZjL57j6bYmfBwTVFBTfh84guVA==
+"@cognite/sdk@^7.3.4":
+  version "7.3.4"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.3.4.tgz#2ef69060d894a66e1637a15277aaa6babb029ba9"
+  integrity sha512-txRDgdVlKoZbCrh8gAWYd1Bw06CtyoV8uiLPPxOmveS5RR+QdKHmIKMkDbgGv0Chae2gAkFzM7xGai+ieajlig==
   dependencies:
-    "@cognite/sdk-core" "^4.1.1"
+    "@cognite/sdk-core" "^4.1.7"
     geojson "^0.5.0"
     lodash "^4.17.11"
 
@@ -8662,17 +8662,7 @@ caniuse-api@^3.0.0:
     lodash.memoize "^4.1.2"
     lodash.uniq "^4.5.0"
 
-caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000929, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001219:
-  version "1.0.30001341"
-  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001341.tgz"
-  integrity sha512-2SodVrFFtvGENGCv0ChVJIDQ0KPaS1cg7/qtfMaICgeMolDdo/Z2OD32F0Aq9yl6F4YFwGPBS5AaPqNYiW4PoA==
-
-caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001125, caniuse-lite@^1.0.30001286:
-  version "1.0.30001341"
-  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001341.tgz"
-  integrity sha512-2SodVrFFtvGENGCv0ChVJIDQ0KPaS1cg7/qtfMaICgeMolDdo/Z2OD32F0Aq9yl6F4YFwGPBS5AaPqNYiW4PoA==
-
-caniuse-lite@^1.0.30001280:
+caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000929, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001125, caniuse-lite@^1.0.30001219, caniuse-lite@^1.0.30001280, caniuse-lite@^1.0.30001286:
   version "1.0.30001341"
   resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001341.tgz"
   integrity sha512-2SodVrFFtvGENGCv0ChVJIDQ0KPaS1cg7/qtfMaICgeMolDdo/Z2OD32F0Aq9yl6F4YFwGPBS5AaPqNYiW4PoA==
@@ -9458,11 +9448,11 @@ cross-env@^7.0.3:
     cross-spawn "^7.0.1"
 
 cross-fetch@^3.0.4:
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.4.tgz#9723f3a3a247bf8b89039f3a380a9244e8fa2f39"
-  integrity sha512-1eAtFWdIubi6T4XPy6ei9iUFoKpUkIF971QLN8lIvvvwueI65+Nw5haMNKUwfJxabqlIIDODJKGrQ66gxC0PbQ==
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.5.tgz#e1389f44d9e7ba767907f7af8454787952ab534f"
+  integrity sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw==
   dependencies:
-    node-fetch "2.6.1"
+    node-fetch "2.6.7"
 
 cross-spawn@6.0.5, cross-spawn@^6.0.0:
   version "6.0.5"
@@ -15601,7 +15591,14 @@ node-dir@^0.1.17:
   dependencies:
     minimatch "^3.0.2"
 
-node-fetch@2.6.1, node-fetch@^2.3.0, node-fetch@^2.6.1:
+node-fetch@2.6.7:
+  version "2.6.7"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
+  integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
+  dependencies:
+    whatwg-url "^5.0.0"
+
+node-fetch@^2.3.0, node-fetch@^2.6.1:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
   integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
@@ -21280,6 +21277,11 @@ tr46@^2.0.2:
   dependencies:
     punycode "^2.1.1"
 
+tr46@~0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/tr46/-/tr46-0.0.3.tgz#8184fd347dac9cdc185992f3a6622e14b9d9ab6a"
+  integrity sha1-gYT9NH2snNwYWZLzpmIuFLnZq2o=
+
 transformation-matrix-js@^2.7.6:
   version "2.7.6"
   resolved "https://registry.yarnpkg.com/transformation-matrix-js/-/transformation-matrix-js-2.7.6.tgz#25c7ff055c99b8528ffbd4c4a2684be6c9d5ef60"
@@ -22139,6 +22141,11 @@ web-namespaces@^1.0.0:
   resolved "https://registry.yarnpkg.com/web-namespaces/-/web-namespaces-1.1.4.tgz#bc98a3de60dadd7faefc403d1076d529f5e030ec"
   integrity sha512-wYxSGajtmoP4WxfejAPIr4l0fVh+jeMXZb08wNc0tMg6xsfZXj3cECqIK0G7ZAqUq0PP8WlMDtaOGVBTAWztNw==
 
+webidl-conversions@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-3.0.1.tgz#24534275e2a7bc6be7bc86611cc16ae0a5654871"
+  integrity sha1-JFNCdeKnvGvnvIZhHMFq4KVlSHE=
+
 webidl-conversions@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-5.0.0.tgz#ae59c8a00b121543a2acc65c0434f57b0fc11aff"
@@ -22284,6 +22291,14 @@ whatwg-mimetype@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/whatwg-mimetype/-/whatwg-mimetype-2.3.0.tgz#3d4b1e0312d2079879f826aff18dbeeca5960fbf"
   integrity sha512-M4yMwr6mAnQz76TbJm914+gPpB/nCwvZbJU28cUD6dR004SAxDLOOSUaB1JDRqLtaOV/vi0IC5lEAGFgrjGv/g==
+
+whatwg-url@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/whatwg-url/-/whatwg-url-5.0.0.tgz#966454e8765462e37644d3626f6742ce8b70965d"
+  integrity sha1-lmRU6HZUYuN2RNNib2dCzotwll0=
+  dependencies:
+    tr46 "~0.0.3"
+    webidl-conversions "^3.0.0"
 
 whatwg-url@^8.0.0, whatwg-url@^8.5.0:
   version "8.5.0"

@@ -22,7 +22,7 @@
     "@cognite/react-image-annotate": "^1.8.0-v3-3",
     "@cognite/react-picture-annotation": "2.1.0-beta.4",
     "@cognite/sdk": "6.3.4",
-    "@cognite/sdk-playground": "^5.1.0",
+    "@cognite/sdk-playground": "^5.2.0",
     "@cognite/sdk-react-query-hooks": "^6.0.2",
     "@reduxjs/toolkit": "^1.6.2",
     "@sentry/browser": "^6.2.3",
