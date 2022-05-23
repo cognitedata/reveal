@@ -25,6 +25,7 @@ export const updateRawTableWithLastUpdate = async (
       databaseName,
       tableName,
       extpipes,
+      // TODO CDFUX-1573 - figure out translation
       lastUpdate: 'This RAW table may be deleted.',
     } as RawExtpipeWithUpdateTime;
   }

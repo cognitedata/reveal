@@ -1,5 +1,6 @@
 import { Flex, Icon } from '@cognite/cogs.js';
 import Popover from 'antd/lib/popover';
+import { useTranslation } from 'common/i18n';
 import { TransformationDetails } from '../../utils/types';
 
 interface HiddenTransformationProps {
@@ -9,10 +10,12 @@ interface HiddenTransformationProps {
 const HiddenTransformation = ({
   transformation,
 }: HiddenTransformationProps) => {
+  const { t } = useTranslation();
   const message = (
     <div>
-      Transformation of ID <strong>{transformation?.name}</strong> is not
-      visible. This may be due to it being deleted or private to another user.
+      {t('lineage-hidden-transformation-p1')}{' '}
+      <strong>{transformation?.name}</strong>{' '}
+      {t('lineage-hidden-transformation-p2')}
     </div>
   );
   return (

@@ -1,3 +1,4 @@
+import { useTranslation } from 'common/i18n';
 import { FunctionComponent, PropsWithChildren } from 'react';
 import {
   LineageTag,
@@ -5,8 +6,6 @@ import {
   NoStyleList,
 } from '../../../utils/styledComponents';
 
-export const EXTRACTOR_TEXT: Readonly<string> =
-  'The service accounts/service accounts IDs below are used in data extraction.';
 export interface ExtractorProps {
   extractorAccounts: string[];
 }
@@ -14,6 +13,7 @@ export interface ExtractorProps {
 export const Extractor: FunctionComponent<ExtractorProps> = ({
   extractorAccounts,
 }: PropsWithChildren<ExtractorProps>) => {
+  const { t } = useTranslation();
   return (
     <NoStyleList>
       {extractorAccounts && extractorAccounts.length ? (
@@ -23,7 +23,7 @@ export const Extractor: FunctionComponent<ExtractorProps> = ({
           </li>
         ))
       ) : (
-        <NoDataText>No extractors set</NoDataText>
+        <NoDataText>{t('no-extractors-set')}</NoDataText>
       )}
     </NoStyleList>
   );

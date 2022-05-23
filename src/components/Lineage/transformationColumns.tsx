@@ -7,6 +7,7 @@ import { Button, Icon, Popconfirm } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import HiddenTransformation from './HiddenTranformation';
 
+// TODO CDFUX-1573 - figure out translation
 const transformationsColumns = (
   onDeleteTransformationClick: (transformation: any) => void
 ) => [

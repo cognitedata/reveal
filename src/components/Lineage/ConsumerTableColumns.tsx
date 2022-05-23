@@ -11,6 +11,7 @@ const LinksUl = styled.ul`
   }
 `;
 
+// TODO CDFUX-1573 - figure out translation
 export const ConsumerTableColumns = [
   {
     title: 'Data consumer',

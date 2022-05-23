@@ -25,6 +25,7 @@ import { useQueryClient } from 'react-query';
 import Spin from 'antd/lib/spin';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { listRawDatabasesKey, listRawTablesKey } from '../../../actions/keys';
+import { useTranslation } from 'common/i18n';
 
 interface RawSectionProps {
   selectedDb: string;
@@ -40,6 +41,7 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
   setSelectedTables,
   setChangesSaved,
 }: PropsWithChildren<RawSectionProps>) => {
+  const { t } = useTranslation();
   const [createModal, setCreateModal] = useState<string>('');
   const [createVisible, setCreateVisible] = useState<boolean>(false);
   const [nameField, setNameField] = useState<string>('');
@@ -68,16 +70,14 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
           setCreateModal('');
           setCreateVisible(false);
           notification.success({
-            message: `Database ${res[0].name} has been created!`,
+            message: t('raw-section-database-created', { name: res[0].name }),
           });
           setSelectedDb(nameField);
           invalidateList();
         })
         .catch((err) => {
           notification.error({
-            message:
-              err.message ||
-              'Database could not be created, a database with the same name already exists.',
+            message: err.message || t('raw-section-database-created-error'),
           });
         });
     } else {
@@ -92,15 +92,13 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
             { databaseName: selectedDb, tableName: nameField },
           ]);
           notification.success({
-            message: `Table ${res[0].name} has been created!`,
+            message: t('raw-section-table-created', { name: res[0].name }),
           });
           invalidateList();
         })
         .catch((err) => {
           notification.error({
-            message:
-              err.message ||
-              'Table could not be created, a database with the same name already exists.',
+            message: err.message || t('raw-section-table-created-error'),
           });
         });
     }
@@ -120,26 +118,23 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
         getContainer={getContainer}
       >
         <Row>
-          <Col span={6}> Unique name </Col>
+          <Col span={6}>{t('unique-name')}</Col>
           <Col span={16}>
             <Input
               autoFocus
               value={nameField}
               onChange={(e) => setNameField(e.currentTarget.value)}
-              placeholder="Please enter database name"
+              placeholder={t('raw-section-enter-database-name')}
             />
           </Col>
         </Row>
       </Modal>
-      <FieldLabel>
-        If your data already exists in the RAW staging area, document the tables
-        that you use in your new data set
-      </FieldLabel>
+      <FieldLabel>{t('raw-section-document-tables')}</FieldLabel>
       {!hasRawPermissions ? (
         <BlockedInformationWrapper style={{ marginTop: '20px' }}>
           <p>
-            You have insufficient rights to view RAW tables in this project.
-            <br /> Please request the following from your project administrator:
+            {t('raw-section-insufficient-rights-p1')}
+            <br /> {t('raw-section-insufficient-rights-p2')}
             <br />
             <Tag>raw:read</Tag>
             <Tag>raw:list</Tag>
@@ -159,15 +154,14 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
         />
       )}
       <MiniInfoTitle>
-        Learn more on how to ingest data to your RAW tables{' '}
+        {t('raw-section-learn-more')}
         <a
           href="https://docs.cognite.com/cdf/integration/"
           target="_blank"
           rel="noopener noreferrer"
         >
-          here
+          {t('here')}
         </a>
-        .{' '}
       </MiniInfoTitle>
     </>
   );

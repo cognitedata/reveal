@@ -38,7 +38,7 @@ const AssetsTable = ({ dataSetId }: assetsTableProps) => {
       key: 'parentExternalId',
     },
     {
-      title: t('source'),
+      title: t('source_one'),
       dataIndex: 'source',
       key: 'source',
     },

@@ -21,7 +21,7 @@ interface AggregateObject {
 
 const AggregateColumns = (aggregate: string) => [
   {
-    // TODO check this for translation
+    // TODO CDFUX-1573 - figure out translation
     title: `${aggregate}`,
     dataIndex: 'value',
     key: 'value',

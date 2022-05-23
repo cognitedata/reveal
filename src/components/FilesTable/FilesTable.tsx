@@ -38,7 +38,7 @@ const FilesTable = ({ dataSetId }: filesTableProps) => {
       render: (value: any) => <ColumnWrapper title={value} />,
     },
     {
-      title: t('source'),
+      title: t('source_one'),
       dataIndex: 'source',
       key: 'source',
     },
