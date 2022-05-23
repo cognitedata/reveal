@@ -8,7 +8,7 @@ import {
 } from 'src/modules/Review/store/reviewSlice';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { AnnotationStatusChangeV1 } from 'src/store/thunks/Annotation/AnnotationStatusChangeV1';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFileV1 } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFileV1';
 import styled from 'styled-components';
 import { AnnotationsTable } from 'src/modules/Review/Components/AnnotationsTable/AnnotationsTable';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
@@ -35,7 +35,7 @@ export const VideoContextualization = (props: {
 
   const handleDeleteAnnotations = (id: ReactText) => {
     dispatch(
-      DeleteAnnotationsAndHandleLinkedAssetsOfFile({
+      DeleteAnnotationsAndHandleLinkedAssetsOfFileV1({
         annotationIds: [+id],
         showWarnings: true,
       })

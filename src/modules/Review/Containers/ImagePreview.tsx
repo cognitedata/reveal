@@ -34,7 +34,7 @@ import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { RootState } from 'src/store/rootReducer';
 import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFileV1 } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFileV1';
 import { pushMetric } from 'src/utils/pushMetric';
 import styled from 'styled-components';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
@@ -129,7 +129,7 @@ export const ImagePreview = ({
 
   const handleDeleteAnnotation = (annotation: CDFAnnotationV1) => {
     dispatch(
-      DeleteAnnotationsAndHandleLinkedAssetsOfFile({
+      DeleteAnnotationsAndHandleLinkedAssetsOfFileV1({
         annotationIds: [annotation.id],
         showWarnings: true,
       })
