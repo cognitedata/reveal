@@ -5,7 +5,12 @@ import {
   useDataElementConfig,
   useDataPanelDispatch,
 } from 'scarlet/hooks';
-import { AppActionType, DataElement, DataPanelActionType } from 'scarlet/types';
+import {
+  AppActionType,
+  DataElement,
+  DataPanelActionType,
+  DetectionState,
+} from 'scarlet/types';
 import { getDataElementPrimaryDetection } from 'scarlet/utils';
 
 import { Modal } from '../..';
@@ -66,12 +71,13 @@ export const ApproveModal = ({
       if (!detection || detection.value === undefined) return;
 
       appDispatch({
-        type: AppActionType.UPDATE_DETECTION,
+        type: AppActionType.REPLACE_DETECTION,
         dataElement,
-        detection,
-        value: detection.value,
-        isApproved: true,
-        isPrimary: true,
+        detection: {
+          ...detection,
+          state: DetectionState.APPROVED,
+          isPrimary: true,
+        },
       });
     });
   };

@@ -6,6 +6,7 @@ import {
   DataElement,
   DataPanelActionType,
   Detection,
+  DetectionState,
 } from 'scarlet/types';
 import {
   getConnectedDataElements,
@@ -56,7 +57,7 @@ export const MultiConnectedElementsModal = ({
 
       const connectedElements = getConnectedDataElements(
         equipment,
-        dataElement.key,
+        dataElement,
         ignoreDataElementIds
       );
 
@@ -128,32 +129,42 @@ export const MultiConnectedElementsModal = ({
       if (!detection || detection.value === undefined) return;
 
       appDispatch({
-        type: AppActionType.UPDATE_DETECTION,
+        type: AppActionType.REPLACE_DETECTION,
         dataElement,
-        detection,
-        value: detection.value,
-        isApproved: true,
-        isPrimary: true,
+        detection: {
+          ...detection,
+          state: DetectionState.APPROVED,
+          isPrimary: true,
+        },
       });
     });
 
     totalSavingAmount += unconnectedDataElements.length;
 
     steps.forEach((step, stepIndex) => {
-      const dataElements = step.connectedElements.filter((dataElement) =>
-        stepSelectedIds[stepIndex]?.includes(dataElement.id)
+      const linkedElements = step.connectedElements.filter(
+        (connectedElement) =>
+          connectedElement.id !== step.dataElement.id &&
+          stepSelectedIds[stepIndex]?.includes(connectedElement.id)
       );
 
       appDispatch({
-        type: AppActionType.SET_CONNECTED_DATA_ELEMENTS,
-        dataElements,
-        currentDataElementId: step.dataElement.id,
-        detection: step.detection,
-        isApproved: true,
-        isPrimary: true,
+        type: AppActionType.REPLACE_DETECTION,
+        dataElement: step.dataElement,
+        detection: {
+          ...step.detection,
+          state: DetectionState.APPROVED,
+          isPrimary: true,
+        },
       });
 
-      totalSavingAmount += dataElements.length;
+      appDispatch({
+        type: AppActionType.SET_LINKED_DATA_ELEMENTS,
+        detection: step.detection,
+        dataElements: linkedElements,
+      });
+
+      totalSavingAmount += linkedElements.length + 1;
     });
 
     setTotalSavingAmount(totalSavingAmount);

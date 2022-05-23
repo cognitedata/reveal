@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useReducer } from 'react';
 import { DataElementOrigin } from 'scarlet/types';
 
 import { DataPanelAction, DataPanelActionType, DataPanelState } from './types';
@@ -10,17 +10,10 @@ const getStorageName = (value: string) =>
 const getInitialState = (): DataPanelState => ({
   isVisible:
     sessionStorage?.getItem(getStorageName('isVisible')) === 'true' || true,
-  currentOrigin:
-    (sessionStorage?.getItem(
-      getStorageName('currentOrigin')
-    ) as DataElementOrigin) || DataElementOrigin.EQUIPMENT,
+  currentOrigin: DataElementOrigin.EQUIPMENT,
   isActiveNewDataSource: false,
   checkedDataElements: [],
 });
-
-const saveCurrentOrigin = (origin: DataElementOrigin) => {
-  sessionStorage?.setItem(getStorageName('currentOrigin'), origin);
-};
 
 export const DataPanelDispatchContext = React.createContext<
   React.Dispatch<DataPanelAction>
@@ -151,10 +144,6 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
 
 export const DataPanelProvider: React.FC = (props) => {
   const [state, dispatch] = useReducer(reducer, getInitialState());
-
-  useEffect(() => {
-    saveCurrentOrigin(state.currentOrigin);
-  }, [state.currentOrigin]);
 
   return (
     <DataPanelContext.Provider value={state}>

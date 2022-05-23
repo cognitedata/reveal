@@ -1,5 +1,5 @@
 import { Collapse as CogsCollapse } from '@cognite/cogs.js';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 export const Collapse = styled(CogsCollapse)`
   background-color: transparent;
@@ -7,6 +7,12 @@ export const Collapse = styled(CogsCollapse)`
   flex-direction: column;
   gap: 12px;
 `;
+
+// fixes overflow issue when dropdown is in panel
+const showCollapseContent = keyframes`{
+  0% {overflow: hidden;}
+  100% {overflow: visible;}
+}`;
 
 export const Panel = styled(CogsCollapse.Panel)`
   border: 1px solid var(--cogs-greyscale-grey4) !important;
@@ -25,6 +31,12 @@ export const Panel = styled(CogsCollapse.Panel)`
   > .rc-collapse-content {
     border-top: 1px solid var(--cogs-greyscale-grey4) !important;
     padding: 0 12px;
-    overflow: visible;
+  }
+
+  > .rc-collapse-content-inactive {
+    animation: ${showCollapseContent} 1s backwards;
+  }
+  > .rc-collapse-content-active {
+    animation: ${showCollapseContent} 1s forwards;
   }
 `;

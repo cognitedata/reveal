@@ -1,24 +1,63 @@
+/* eslint-disable no-nested-ternary */
+import { Detection, DetectionState, DetectionType } from 'scarlet/types';
+import { getDetectionSourceLabel } from 'scarlet/utils';
+
 import * as Styled from './style';
 
 type DataSourceHeaderProps = {
-  label: string;
-  disabled?: boolean;
-  isApproved?: boolean;
+  label?: string;
+  detection?: Detection;
+  isDiscrepancy?: boolean;
 };
 
 export const DataSourceHeader = ({
   label,
-  disabled,
-  isApproved,
+  detection,
+  isDiscrepancy,
 }: DataSourceHeaderProps) => (
   <Styled.Container>
     <Styled.IconContainer>
-      <Styled.Icon
-        checkmark={!disabled ? 1 : 0}
-        approved={isApproved ? 1 : 0}
-        type={disabled ? 'Info' : 'CheckmarkFilled'}
-      />
+      <DataSourceIcon detection={detection} isDiscrepancy={isDiscrepancy} />
     </Styled.IconContainer>
-    <Styled.Label>{label}</Styled.Label>
+    <Styled.Label>{label ?? getDetectionSourceLabel(detection)}</Styled.Label>
   </Styled.Container>
 );
+
+type DataSourceIconProps = {
+  detection?: Detection;
+  isDiscrepancy?: boolean;
+};
+
+const DataSourceIcon = ({ detection, isDiscrepancy }: DataSourceIconProps) => {
+  if (!detection)
+    return <Styled.Icon state={Styled.IconState.CRITICAL} type="Info" />;
+
+  if (detection?.isPrimary)
+    return (
+      <Styled.PrimaryTag className="cogs-micro strong">
+        Primary
+      </Styled.PrimaryTag>
+    );
+
+  if (detection.type === DetectionType.PCMS) {
+    return (
+      <Styled.Icon
+        type={isDiscrepancy ? 'WarningTriangle' : 'Info'}
+        state={
+          isDiscrepancy ? Styled.IconState.CRITICAL : Styled.IconState.NEUTRAL
+        }
+      />
+    );
+  }
+
+  return (
+    <Styled.Icon
+      type="CheckmarkFilled"
+      state={
+        detection.state === DetectionState.APPROVED
+          ? Styled.IconState.APPROVED
+          : Styled.IconState.PENDING
+      }
+    />
+  );
+};

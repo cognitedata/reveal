@@ -9,7 +9,6 @@ export const ProgressContainer = styled.div<{ progress: number }>`
   width: 210px;
   position: relative;
   height: 36px;
-  margin-right: 24px;
   display: flex;
   justify-content: space-between;
 

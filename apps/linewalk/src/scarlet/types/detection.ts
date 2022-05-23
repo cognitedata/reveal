@@ -5,8 +5,11 @@ export enum DetectionType {
   MANUAL = 'manual',
   PCMS = 'pcms',
   MAL = 'mal',
+  MS2 = 'MS2',
+  MS3 = 'MS3',
   MANUAL_INPUT = 'manual-input',
   MANUAL_EXTERNAL = 'manuel-external',
+  LINKED = 'LINKED',
 }
 
 export enum DetectionState {
@@ -16,8 +19,8 @@ export enum DetectionState {
 
 export type Detection = Partial<Annotation> & {
   id: string;
-  connectedId?: string;
   type: DetectionType;
+  detectionOriginId?: string;
   value?: string;
   externalSource?: string;
   state?: DetectionState;

@@ -1,6 +1,7 @@
 import { EquipmentComponentType, EquipmentConfig } from 'scarlet/types';
 
 export const transformEquipmentConfig = (data: any): EquipmentConfig => ({
+  creatingAppVersions: data.creating_app_versions || [],
   equipmentElements: data.equipment_properties.reduce(
     (result: any, item: any) => ({ ...result, [item.key]: item }),
     {}

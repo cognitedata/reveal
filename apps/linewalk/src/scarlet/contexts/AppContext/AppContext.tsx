@@ -4,15 +4,13 @@ import { useSaveEquipment } from 'scarlet/hooks';
 import { AppAction, AppActionType, AppState } from '.';
 import {
   addComponent,
-  addDetection,
   addRemark,
-  updateDetection,
-  approveEquipment,
+  replaceDetection,
   deleteComponents,
   removeDetection,
   updateComponents,
   updateDataElementState,
-  setConnectedDataElements,
+  setLinkedDetections,
 } from './utils';
 
 const equipmentInitialState = {
@@ -57,11 +55,11 @@ function reducer(state: AppState, action: AppAction) {
       return {
         ...state,
         equipment: action.equipment,
-        saveState: action.isInitialSave
+        saveState: action.isAutoSave
           ? {
               loading: true,
               data: action.equipment.data,
-              isInitial: action.isInitialSave,
+              isAutoSave: action.isAutoSave,
             }
           : state.saveState,
       };
@@ -75,17 +73,13 @@ function reducer(state: AppState, action: AppAction) {
         ...state,
         saveState: action.saveState,
       };
-    case AppActionType.UPDATE_DETECTION: {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { type, dataElement, detection, isApproved, ...detectionProps } =
-        action;
+    case AppActionType.REPLACE_DETECTION: {
+      const { dataElement, detection } = action;
 
-      const equipmentToSave = updateDetection(
+      const equipmentToSave = replaceDetection(
         state.saveState.data || state.equipment.data!,
         dataElement,
-        detection,
-        isApproved,
-        detectionProps
+        detection
       );
 
       return {
@@ -93,25 +87,6 @@ function reducer(state: AppState, action: AppAction) {
         saveState: {
           loading: true,
           data: equipmentToSave,
-        },
-      };
-    }
-    case AppActionType.ADD_DETECTION: {
-      const equipment = addDetection(
-        state.equipment.data!,
-        action.dataElement,
-        action.detection,
-        action.value,
-        action.externalSource,
-        action.isApproved,
-        action.isPrimary
-      );
-
-      return {
-        ...state,
-        saveState: {
-          loading: true,
-          data: equipment,
         },
       };
     }
@@ -223,25 +198,11 @@ function reducer(state: AppState, action: AppAction) {
         },
       };
     }
-    case AppActionType.APPROVE_EQUIPMENT: {
-      const equipmentToSave = approveEquipment(state.equipment.data!);
-
-      return {
-        ...state,
-        saveState: {
-          loading: true,
-          data: equipmentToSave,
-        },
-      };
-    }
-    case AppActionType.SET_CONNECTED_DATA_ELEMENTS: {
-      const equipmentToSave = setConnectedDataElements(
+    case AppActionType.SET_LINKED_DATA_ELEMENTS: {
+      const equipmentToSave = setLinkedDetections(
         state.saveState.data || state.equipment.data!,
-        action.dataElements,
-        action.currentDataElementId,
         action.detection,
-        action.isApproved,
-        action.isPrimary
+        action.dataElements
       );
 
       return {
@@ -267,7 +228,7 @@ export const AppProvider: React.FC = (props) => {
     state.facility!,
     state.unitId,
     state.equipmentId,
-    state.saveState.isInitial || false,
+    state.saveState.isAutoSave || false,
     state.saveState,
     dispatch
   );

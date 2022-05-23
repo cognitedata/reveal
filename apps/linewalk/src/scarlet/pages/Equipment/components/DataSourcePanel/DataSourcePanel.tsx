@@ -1,6 +1,5 @@
 import { CollapsePanelProps, CollapseProps, Icon } from '@cognite/cogs.js';
 import { DataElement, Detection } from 'scarlet/types';
-import { getDetectionSourceLabel } from 'scarlet/utils';
 
 import { DataSource, DataSourceHeader } from '..';
 
@@ -9,10 +8,9 @@ import * as Styled from './style';
 type DataSourcePanelProps = {
   detection: Detection;
   dataElement: DataElement;
-  isPrimaryOnApproval?: boolean;
   focused?: boolean;
-  isApproved?: boolean;
   isDraft?: boolean;
+  isDiscrepancy?: boolean;
   hasConnectedElements: boolean;
   collapseProps?: Omit<CollapseProps, 'children'>;
 };
@@ -20,10 +18,9 @@ type DataSourcePanelProps = {
 export const DataSourcePanel = ({
   detection,
   dataElement,
-  isPrimaryOnApproval = false,
   focused = false,
-  isApproved = false,
   isDraft = false,
+  isDiscrepancy = false,
   hasConnectedElements,
   collapseProps,
 }: DataSourcePanelProps) => (
@@ -32,8 +29,8 @@ export const DataSourcePanel = ({
       header={
         <DataSourceHeader
           key={detection.id}
-          label={getDetectionSourceLabel(detection)}
-          isApproved={isApproved}
+          detection={detection}
+          isDiscrepancy={isDiscrepancy}
         />
       }
       key={detection.id}
@@ -44,7 +41,6 @@ export const DataSourcePanel = ({
         dataElement={dataElement}
         detection={detection}
         focused={focused}
-        isPrimaryOnApproval={isPrimaryOnApproval}
         isDraft={isDraft}
         hasConnectedElements={hasConnectedElements}
       />

@@ -1,5 +1,5 @@
 import { CogniteClient } from '@cognite/sdk';
-import { EquipmentElementKey, MALData } from 'scarlet/types';
+import { EquipmentElementKey, Facility, MALData } from 'scarlet/types';
 
 enum MAL_COLUMNS {
   UNIT_ID = 'Unit',
@@ -9,13 +9,25 @@ enum MAL_COLUMNS {
 
 export const getEquipmentMAL = async (
   client: CogniteClient,
-  { unitId, equipmentId }: { unitId: string; equipmentId: string }
+  {
+    facility,
+    unitId,
+    equipmentId,
+  }: { facility: Facility; unitId: string; equipmentId: string }
 ): Promise<MALData | undefined> => {
+  if (!facility) throw Error('Facility is not set');
+  if (!unitId) throw Error('Unit id is not set');
+  if (!equipmentId) throw Error('Equipment id is not set');
+
   const tableName = `${unitId}_MAL`;
   const rows = (
     await client.raw.listRows('PCMS', tableName, {
+      columns: [
+        MAL_COLUMNS.UNIT_ID,
+        MAL_COLUMNS.EQUIP_ID,
+        MAL_COLUMNS.OPERATING_STATUS,
+      ],
       limit: 1000,
-      columns: ['Unit', 'Equipment ID', MAL_COLUMNS.OPERATING_STATUS],
     })
   ).items;
 

@@ -6,12 +6,13 @@ import { AppActionType } from 'scarlet/types';
 import { useApi, useAppContext, useFacility } from 'scarlet/hooks';
 import { DataPanelProvider } from 'scarlet/contexts';
 import {
+  getEquipmentAnnotations,
   getEquipmentConfig,
   getEquipmentDocuments,
   getEquipmentMAL,
+  getEquipmentMS,
   getEquipmentPCMS,
   getEquipmentState,
-  getScannerDetections,
 } from 'scarlet/api';
 import {
   findU1Document,
@@ -36,16 +37,8 @@ export const Equipment = () => {
     { data: appState.equipmentConfig.data }
   );
 
-  const scannerDetectionsQuery = useApi(getScannerDetections, {
-    unitId,
-    equipmentId,
-  });
   const pcmsQuery = useApi(getEquipmentPCMS, {
     facility,
-    unitId,
-    equipmentId,
-  });
-  const malQuery = useApi(getEquipmentMAL, {
     unitId,
     equipmentId,
   });
@@ -58,6 +51,22 @@ export const Equipment = () => {
     unitId,
     equipmentId,
   });
+  const malQuery = useApi(getEquipmentMAL, {
+    facility,
+    unitId,
+    equipmentId,
+  });
+  const msQuery = useApi(getEquipmentMS, {
+    facility,
+    unitId,
+    equipmentId,
+  });
+
+  const scannerDetectionsQuery = useApi(
+    getEquipmentAnnotations,
+    { config: configQuery.data, documents: documentsQuery.data },
+    { skip: !configQuery.data || !documentsQuery.data }
+  );
 
   useEffect(() => {
     appDispatch({
@@ -80,8 +89,8 @@ export const Equipment = () => {
       scannerDetectionsQuery.loading ||
       pcmsQuery.loading ||
       malQuery.loading ||
-      equipmentStateQuery.loading ||
-      documentsQuery.loading;
+      msQuery.loading ||
+      equipmentStateQuery.loading;
 
     const error =
       configQuery.error || equipmentStateQuery.error || pcmsQuery.error;
@@ -95,19 +104,15 @@ export const Equipment = () => {
             equipmentState: equipmentStateQuery.data,
             pcms: pcmsQuery.data!,
             mal: malQuery.data,
+            ms: msQuery.data,
             type: getEquipmentType(equipmentId),
-            documents: documentsQuery.data,
           });
 
-    let isInitialSave = false;
+    const hasU1Document = Boolean(findU1Document(documentsQuery.data));
 
-    if (equipmentData && !equipmentStateQuery.data) {
-      const hasU1Document = Boolean(findU1Document(documentsQuery.data));
-
-      preApproveDataElements(equipmentData, hasU1Document, unitId);
-
-      isInitialSave = true;
-    }
+    const hasChanged = equipmentData
+      ? preApproveDataElements(equipmentData, hasU1Document, unitId)
+      : false;
 
     appDispatch({
       type: AppActionType.SET_EQUIPMENT,
@@ -116,13 +121,14 @@ export const Equipment = () => {
         loading,
         error,
       },
-      isInitialSave,
+      isAutoSave: hasChanged,
     });
   }, [
     configQuery,
     scannerDetectionsQuery,
     pcmsQuery,
     malQuery,
+    msQuery,
     documentsQuery,
     equipmentStateQuery,
   ]);

@@ -37,6 +37,10 @@ export const ExternalSourceContainer = styled.div`
   margin-bottom: 8px;
 `;
 
+export const LinkedSourceContainer = styled.div`
+  margin-bottom: 16px;
+`;
+
 export const PrimaryValueContainer = styled.div`
   display: flex;
   align-items: center;

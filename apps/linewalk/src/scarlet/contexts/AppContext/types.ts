@@ -32,7 +32,7 @@ export type AppState = {
   equipmentConfig: APIState<EquipmentConfig>;
   equipmentList?: AppStateEquipmentList;
   dataElementModal?: AppStateDataElementModal;
-  saveState: APIState<EquipmentData> & { isInitial?: boolean };
+  saveState: APIState<EquipmentData> & { isAutoSave?: boolean };
   unitListByFacility: APIState<UnitListByFacility>;
 };
 
@@ -54,7 +54,7 @@ export type AppAction =
   | {
       type: AppActionType.SET_EQUIPMENT;
       equipment: APIState<EquipmentData>;
-      isInitialSave?: boolean;
+      isAutoSave?: boolean;
     }
   | {
       type: AppActionType.CLEANUP_EQUIPMENT_DATA;
@@ -74,22 +74,9 @@ export type AppAction =
       stateReason?: string;
     }
   | {
-      type: AppActionType.ADD_DETECTION;
+      type: AppActionType.REPLACE_DETECTION;
       dataElement: DataElement;
       detection: Detection;
-      value: string;
-      externalSource?: string;
-      isApproved: boolean;
-      isPrimary: boolean;
-    }
-  | {
-      type: AppActionType.UPDATE_DETECTION;
-      dataElement: DataElement;
-      detection: Detection;
-      value: string;
-      externalSource?: string;
-      isApproved: boolean;
-      isPrimary: boolean;
     }
   | {
       type: AppActionType.REMOVE_DETECTION;
@@ -122,15 +109,9 @@ export type AppAction =
       components: Partial<EquipmentComponent>[];
     }
   | {
-      type: AppActionType.APPROVE_EQUIPMENT;
-    }
-  | {
-      type: AppActionType.SET_CONNECTED_DATA_ELEMENTS;
-      currentDataElementId: string;
-      dataElements: DataElement[];
+      type: AppActionType.SET_LINKED_DATA_ELEMENTS;
       detection: Detection;
-      isApproved: boolean;
-      isPrimary: boolean;
+      dataElements: DataElement[];
     };
 
 export enum AppActionType {
@@ -142,8 +123,7 @@ export enum AppActionType {
   SET_EQUIPMENT_CONFIG = 'set-equipment-config',
   SET_SAVE_SATE = 'set-save-state',
   UPDATE_DATA_ELEMENTS_STATE = 'update-data-elements-state',
-  ADD_DETECTION = 'add-detection',
-  UPDATE_DETECTION = 'update-detection',
+  REPLACE_DETECTION = 'replace-detection',
   REMOVE_DETECTION = 'remove-detection',
   SHOW_DATA_ELEMENT_STATE_MODAL = 'show-data-element-state-modal',
   HIDE_DATA_ELEMENT_STATE_MODAL = 'hide-data-element-state-modal',
@@ -152,6 +132,5 @@ export enum AppActionType {
   DELETE_COMPONENTS = 'delete-components',
   UPDATE_COMPONENTS = 'update-components',
   ADD_REMARK = 'add-remark',
-  APPROVE_EQUIPMENT = 'approve-equipment',
-  SET_CONNECTED_DATA_ELEMENTS = 'set-connected-data-elements',
+  SET_LINKED_DATA_ELEMENTS = 'set-linked-data-elements',
 }

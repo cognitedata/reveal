@@ -122,7 +122,7 @@ const getApprovedModal = (
   const ignoreDataElementIds = dataElements.map((item) => item.id);
   const hasConnectedElements = dataElements.some(
     (dataElement) =>
-      getConnectedDataElements(equipment, dataElement.key, ignoreDataElementIds)
+      getConnectedDataElements(equipment, dataElement, ignoreDataElementIds)
         .length
   );
 

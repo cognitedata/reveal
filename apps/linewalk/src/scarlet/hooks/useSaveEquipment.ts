@@ -14,7 +14,7 @@ export const useSaveEquipment = (
   facility: Facility,
   unitId: string,
   equipmentId: string,
-  skipModifiedBy: boolean,
+  isAutoSave: boolean,
   saveApiState: APIState<EquipmentData>,
   dispatch: Dispatch<AppAction>
 ) => {
@@ -32,7 +32,7 @@ export const useSaveEquipment = (
       unitId,
       equipmentId,
       equipment: equipmentToSave,
-      modifiedBy: !skipModifiedBy ? authState?.email : undefined,
+      modifiedBy: isAutoSave ? undefined : authState?.email,
     })
       .then(() => {
         dispatch({

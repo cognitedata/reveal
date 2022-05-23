@@ -19,8 +19,10 @@ export const isSameAnnotation = (
     a.height === b.height) ||
   false;
 
-export const getDetectionSourceLabel = (detection: Detection) => {
+export const getDetectionSourceLabel = (detection?: Detection) => {
   const defaultLabel = 'No source';
+
+  if (!detection) return defaultLabel;
 
   switch (detection.type) {
     case DetectionType.PCMS:
@@ -34,6 +36,12 @@ export const getDetectionSourceLabel = (detection: Detection) => {
       return detection.documentExternalId || defaultLabel;
     case DetectionType.MAL:
       return 'Master Asset List';
+    case DetectionType.MS2:
+      return 'MS2';
+    case DetectionType.MS3:
+      return 'MS3';
+    case DetectionType.LINKED:
+      return 'Linked field';
     default:
       return defaultLabel;
   }
@@ -49,6 +57,12 @@ export const getDetectionSourceAcronym = (detection: Detection) => {
       return 'Ext.';
     case DetectionType.MAL:
       return 'MAL';
+    case DetectionType.MS2:
+      return 'MS2';
+    case DetectionType.MS3:
+      return 'MS3';
+    case DetectionType.LINKED:
+      return 'Linked';
   }
 
   const type = detection.documentExternalId

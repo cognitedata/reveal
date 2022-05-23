@@ -1,6 +1,33 @@
-import { Checkbox as CogsCheckbox } from '@cognite/cogs.js';
-import { DataElementState } from 'scarlet/types';
 import styled, { css } from 'styled-components';
+import { Color } from 'scarlet/config';
+import { Button as CogsButton } from '@cognite/cogs.js';
+
+export const Container = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 4px 10px 4px 12px;
+  margin: 8px 0;
+  border: 1px solid rgba(83, 88, 127, 0.16);
+  border-radius: 6px;
+`;
+
+export const Content = styled.div<{ isLink?: boolean }>`
+  overflow: hidden;
+  padding: 5px 4px 5px 6px;
+
+  ${({ isLink }) =>
+    isLink &&
+    css`
+      cursor: pointer;
+      background-color: var(--cogs-white)
+      transition: background-color var(--cogs-transition-time-fast);
+      border-radius: 4px;
+
+      &:hover {
+        background-color: var(--cogs-greyscale-grey2);
+      }
+    `};
+`;
 
 const oneLineText = css`
   width: 100%;
@@ -8,189 +35,61 @@ const oneLineText = css`
   white-space: nowrap;
   overflow: hidden;
 `;
+
 export const Label = styled.div`
-  color: inherit;
+  color: rgba(0, 0, 0, 0.7);
   ${oneLineText}
 `;
 
-export const DataContainer = styled.div<{ isLink?: boolean }>`
+export const Value = styled.div<{ secondary?: boolean }>`
+  ${oneLineText}
+  color: rgba(0, 0, 0, ${({ secondary }) => (secondary ? 0.55 : 0.9)});
+`;
+
+export const DataContainer = styled.div`
   display: flex;
   gap: 4px;
   align-items: center;
-
-  ${({ isLink }) =>
-    isLink &&
-    css`
-      cursor: pointer;
-      transition: opacity var(--cogs-transition-time-fast);
-      &:hover {
-        opacity: 0.8;
-      }
-    `}
 `;
 
-export const Value = styled.div<{ noValue?: boolean }>`
-  color: inherit;
-
-  ${({ noValue }) =>
-    noValue
-      ? css`
-          opacity: 0.5;
-        `
-      : oneLineText}
-`;
+const getDataSourceBgColor = ({
+  isDiscrepancy,
+  isApproved,
+  isOmitted,
+}: {
+  isDiscrepancy?: boolean;
+  isApproved?: boolean;
+  isOmitted?: boolean;
+}) => {
+  if (isApproved) return Color.APPROVED;
+  if (isDiscrepancy) return Color.CRITICAL;
+  if (isOmitted) return Color.IGNORED;
+  return Color.PENDING;
+};
 
 export const DataSource = styled.div<{
-  isDiscrepancy: boolean;
-  isApproved: boolean;
+  isDiscrepancy?: boolean;
+  isApproved?: boolean;
+  isOmitted?: boolean;
 }>`
   display: flex;
-  color: var(--cogs-midorange-5);
-  background-color: var(--cogs-white);
-  border: 1px solid currentColor;
+  color: var(--cogs-white);
   border-radius: 4px;
-  padding: 0 4px;
+  padding: 1px 4px;
   align-items: center;
-  gap: 2px;
-
-  ${({ isDiscrepancy, isApproved }) =>
-    isDiscrepancy &&
-    (isApproved
-      ? css`
-          color: var(--cogs-green-3) !important;
-        `
-      : css`
-          background-color: var(--cogs-red-4);
-          color: var(--cogs-white);
-        `)}
-`;
-
-export const Content = styled.div`
-  flex-grow: 1;
-  overflow: hidden;
+  gap: 4px;
+  background-color: ${getDataSourceBgColor};
 `;
 
 export const Actions = styled.div`
   flex-shrink: 0;
-  margin: 0 -2px 0 6px;
+  margin-left: auto;
   display: flex;
+  gap: 4px;
+  padding-left: 8px;
 `;
 
-export const Button = styled.button`
+export const Button = styled(CogsButton)`
   width: 28px;
-  height: 28px;
-  background-color: var(--cogs-white);
-  border-radius: 4px;
-  margin: 0 2px;
-  border-width: 1px;
-  border-style: solid;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  outline: none;
-  transition: all 0.2s;
-
-  &:focus-visible {
-    box-shadow: 0px 0px 0px 4px currentColor;
-  }
-}
-`;
-
-const buttonHoverStyles = css`
-  &:hover:not([disabled]) {
-    background-color: inherit;
-    color: inherit;
-    border-color: currentColor;
-  }
-`;
-
-export const Container = styled.div<{
-  state: DataElementState;
-}>`
-  border-radius: 6px;
-  border-width: 1px;
-  border-style: solid;
-  padding: 10px;
-  margin: 8px 0;
-  display: flex;
-  align-items: center;
-
-  ${({ state }) => {
-    switch (state) {
-      case DataElementState.APPROVED:
-        return css`
-          background-color: var(--cogs-green-8);
-          border-color: var(--cogs-green-3);
-          color: var(--cogs-green-2);
-
-          ${Button} {
-            color: var(--cogs-green-5);
-            border-color: currentColor;
-
-            ${buttonHoverStyles}
-          }
-
-          ${DataSource} {
-            color: var(--cogs-green-5);
-          }
-        `;
-
-      case DataElementState.OMITTED:
-        return css`
-          background-color: var(--cogs-greyscale-grey1);
-          border-color: var(--cogs-greyscale-grey3);
-          color: var(--cogs-greyscale-grey6);
-
-          ${Button} {
-            color: var(--cogs-greyscale-grey5);
-            border-color: currentColor;
-
-            ${buttonHoverStyles}
-          }
-
-          ${DataSource} {
-            color: var(--cogs-greyscale-grey5);
-          }
-        `;
-    }
-
-    return css`
-      background-color: var(--cogs-midorange-8);
-      border-color: var(--cogs-midorange-6);
-      color: var(--cogs-midorange-2);
-
-      ${Button} {
-        color: var(--cogs-midorange-4);
-        border-color: var(--cogs-midorange-4);
-
-        ${buttonHoverStyles}
-      }
-    `;
-  }}}
-`;
-
-export const CheckboxContainer = styled.div`
-  flex-shrink: 0;
-`;
-
-export const Checkbox = styled(CogsCheckbox)`
-  .cogs-checkbox input[type='checkbox']:not(:checked) + & {
-    border-color: var(--cogs-state-base);
-    background: transparent;
-  }
-
-  .cogs-checkbox input[type='checkbox']:not(:checked):disabled + & {
-    border-color: var(--cogs-state-base);
-    background: transparent;
-    color: transparent;
-    opacity: 0.3;
-  }
-
-  .cogs-checkbox input[type='checkbox']:checked:disabled + & {
-    border-color: var(--cogs-state-base);
-    background: var(--cogs-state-base);
-    color: var(--cogs-white);
-    opacity: 0.3;
-  }
+  color: rgba(0, 0, 0, 0.9);
 `;

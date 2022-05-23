@@ -25,6 +25,7 @@ export type EquipmentConfig = {
     [key: string]: DataElementConfig;
   };
 } & {
+  creatingAppVersions: string[];
   equipmentTypes: {
     [key in EquipmentType]: {
       type: EquipmentType;

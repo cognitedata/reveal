@@ -19,7 +19,7 @@ import {
 } from 'scarlet/hooks';
 import { getPrettifiedDataElementValue } from 'scarlet/utils';
 
-import { DataSourceField } from '..';
+import { DataSourceField, DataSourceOrigin } from '..';
 
 import * as Styled from './style';
 
@@ -27,7 +27,6 @@ export type DataSourceProps = {
   dataElement: DataElement;
   detection: Detection;
   focused?: boolean;
-  isPrimaryOnApproval?: boolean;
   isDraft?: boolean;
   hasConnectedElements: boolean;
 };
@@ -37,11 +36,18 @@ export type DataSourceFormValues = {
   externalSource?: string;
 };
 
+const readOnlyDetectionTypes = [
+  DetectionType.PCMS,
+  DetectionType.MAL,
+  DetectionType.MS2,
+  DetectionType.MS3,
+  DetectionType.LINKED,
+];
+
 export const DataSource = ({
   dataElement,
   detection,
   focused,
-  isPrimaryOnApproval = false,
   isDraft = false,
   hasConnectedElements,
 }: DataSourceProps) => {
@@ -67,7 +73,8 @@ export const DataSource = ({
 
   const externalSourceId = `data-field-source-${detection!.id}`;
   const inputId = `data-field-input-${detection!.id}`;
-  const editable = !isPCMS && detection.type !== DetectionType.MAL;
+  const isReadOnly = readOnlyDetectionTypes.includes(detection.type);
+  const isLinkedSource = detection.type === DetectionType.LINKED;
 
   const removeDetection = () => {
     if (isDraft) {
@@ -85,7 +92,7 @@ export const DataSource = ({
   };
 
   const approveDetection = (values: DataSourceFormValues) => {
-    if (isPrimaryOnApproval && hasConnectedElements) {
+    if (hasConnectedElements) {
       openConnectedModal(values);
       return;
     }
@@ -93,30 +100,19 @@ export const DataSource = ({
     setApproving(true);
     setIsApproved(isApproved);
 
-    if (isPrimaryOnApproval) {
-      setIsPrimaryLoading(true);
-      setIsPrimary(true);
-    }
+    setIsPrimaryLoading(true);
+    setIsPrimary(true);
 
-    if (isDraft) {
-      appDispatch({
-        type: AppActionType.ADD_DETECTION,
-        dataElement,
-        detection: detection!,
-        isApproved: true,
-        isPrimary: isPrimaryOnApproval,
+    appDispatch({
+      type: AppActionType.REPLACE_DETECTION,
+      dataElement,
+      detection: {
+        ...detection!,
         ...values,
-      });
-    } else {
-      appDispatch({
-        type: AppActionType.UPDATE_DETECTION,
-        dataElement,
-        detection: detection!,
-        isApproved: true,
-        isPrimary: isPrimaryOnApproval,
-        ...values,
-      });
-    }
+        state: DetectionState.APPROVED,
+        isPrimary: true,
+      },
+    });
   };
 
   const updatePrimaryValue = (
@@ -133,12 +129,14 @@ export const DataSource = ({
     setIsApproved(isApproved);
 
     appDispatch({
-      type: AppActionType.UPDATE_DETECTION,
+      type: AppActionType.REPLACE_DETECTION,
       dataElement,
-      detection: detection!,
-      isApproved: true,
-      isPrimary,
-      ...values,
+      detection: {
+        ...detection!,
+        ...values,
+        state: DetectionState.APPROVED,
+        isPrimary,
+      },
     });
   };
 
@@ -151,12 +149,14 @@ export const DataSource = ({
     if (isPrimary) setIsPrimaryLoading(true);
 
     appDispatch({
-      type: AppActionType.UPDATE_DETECTION,
+      type: AppActionType.REPLACE_DETECTION,
       dataElement,
-      detection: detection!,
-      isApproved: true,
-      isPrimary,
-      ...values,
+      detection: {
+        ...detection!,
+        ...values,
+        state: DetectionState.APPROVED,
+        isPrimary,
+      },
     });
   };
 
@@ -182,7 +182,7 @@ export const DataSource = ({
   }, [isDraft]);
 
   const onFocus = () => {
-    if (detection) {
+    if (detection?.boundingBox) {
       dataPanelDispatch({
         type: DataPanelActionType.SET_ACTIVE_DETECTION,
         detection,
@@ -213,6 +213,12 @@ export const DataSource = ({
     >
       {({ values, isValid, dirty, setSubmitting, resetForm }) => (
         <Form onFocus={onFocus}>
+          {isLinkedSource && (
+            <Styled.LinkedSourceContainer>
+              <DataSourceOrigin detection={detection} />
+            </Styled.LinkedSourceContainer>
+          )}
+
           {isExternalSource && (
             <Styled.ExternalSourceContainer>
               <DataSourceField name="externalSource" label="Source" />
@@ -226,21 +232,23 @@ export const DataSource = ({
             type={dataElementConfig!.type}
             unit={dataElementConfig!.unit}
             values={dataElementConfig!.values}
-            disabled={!editable}
+            disabled={isReadOnly}
           />
 
-          {!isPCMS && (
+          {!isReadOnly && (
             <Styled.ButtonContainer>
-              {editable && detection?.state === DetectionState.APPROVED && (
+              {detection?.state === DetectionState.APPROVED && (
                 <Styled.Button
                   type="primary"
                   htmlType="submit"
                   iconPlacement="left"
                   icon="Checkmark"
                   loading={isSaving}
-                  disabled={isActionsDisabled || !isValid || !dirty}
+                  disabled={
+                    !isSaving && (isActionsDisabled || !isValid || !dirty)
+                  }
                 >
-                  Save
+                  {dirty ? 'Save' : 'Approved'}
                 </Styled.Button>
               )}
               {detection?.state !== DetectionState.APPROVED && (
@@ -250,7 +258,7 @@ export const DataSource = ({
                   iconPlacement="left"
                   icon="Checkmark"
                   loading={isApproving}
-                  disabled={isActionsDisabled || !isValid}
+                  disabled={!isApproving && (isActionsDisabled || !isValid)}
                 >
                   {isDraft ? 'Approve' : 'Add as data source'}
                 </Styled.Button>
@@ -267,7 +275,58 @@ export const DataSource = ({
             </Styled.ButtonContainer>
           )}
 
-          {!isDraft && (
+          {!isDraft &&
+            !isLinkedSource &&
+            detection.state === DetectionState.APPROVED && (
+              <>
+                <Styled.Delimiter />
+                <Styled.PrimaryValueContainer>
+                  <div>
+                    <Styled.PrimaryValueLabel className="cogs-detail">
+                      Set as primary value
+                    </Styled.PrimaryValueLabel>
+                    <Checkbox
+                      name={`detection-${detection?.id}`}
+                      onChange={(isPrimary: boolean) =>
+                        updatePrimaryValue(values, isPrimary)
+                      }
+                      checked={isPrimary}
+                      disabled={
+                        (!isReadOnly && dirty) ||
+                        isActionsDisabled ||
+                        (!isReadOnly &&
+                          detection?.state !== DetectionState.APPROVED)
+                      }
+                    >
+                      <span className="cogs-detail">For this field</span>
+                      {isPrimaryLoading && (
+                        <Styled.LoaderContainer>
+                          <Icon type="Loader" />
+                        </Styled.LoaderContainer>
+                      )}
+                    </Checkbox>
+                  </div>
+
+                  {hasConnectedElements && (
+                    <Button
+                      type="tertiary"
+                      htmlType="button"
+                      icon="Edit"
+                      onClick={() => openConnectedModal(values)}
+                      aria-label="Open connected data-elements"
+                      disabled={
+                        (!isReadOnly && dirty) ||
+                        isActionsDisabled ||
+                        (!isReadOnly &&
+                          detection?.state !== DetectionState.APPROVED)
+                      }
+                    />
+                  )}
+                </Styled.PrimaryValueContainer>
+              </>
+            )}
+
+          {isLinkedSource && (
             <>
               <Styled.Delimiter />
               <Styled.PrimaryValueContainer>
@@ -277,39 +336,22 @@ export const DataSource = ({
                   </Styled.PrimaryValueLabel>
                   <Checkbox
                     name={`detection-${detection?.id}`}
-                    onChange={(isPrimary: boolean) =>
-                      updatePrimaryValue(values, isPrimary)
-                    }
-                    checked={isPrimary}
-                    disabled={
-                      (!isPCMS && dirty) ||
-                      isActionsDisabled ||
-                      (!isPCMS && detection?.state !== DetectionState.APPROVED)
-                    }
+                    checked
+                    disabled
                   >
                     <span className="cogs-detail">For this field</span>
-                    {isPrimaryLoading && (
-                      <Styled.LoaderContainer>
-                        <Icon type="Loader" />
-                      </Styled.LoaderContainer>
-                    )}
                   </Checkbox>
                 </div>
 
-                {hasConnectedElements && (
-                  <Button
-                    type="tertiary"
-                    htmlType="button"
-                    icon="Edit"
-                    onClick={() => openConnectedModal(values)}
-                    aria-label="Open connected data-elements"
-                    disabled={
-                      (!isPCMS && dirty) ||
-                      isActionsDisabled ||
-                      (!isPCMS && detection?.state !== DetectionState.APPROVED)
-                    }
-                  />
-                )}
+                <Styled.Button
+                  type="tertiary"
+                  htmlType="button"
+                  iconPlacement="left"
+                  icon={isRemoving ? 'Loader' : 'Delete'}
+                  disabled={isActionsDisabled}
+                  onClick={removeDetection}
+                  aria-label="Remove data source"
+                />
               </Styled.PrimaryValueContainer>
             </>
           )}

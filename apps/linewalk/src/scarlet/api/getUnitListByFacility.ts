@@ -45,7 +45,7 @@ export const getUnitListByFacility = async (
 
 const getUnitNumber = (unitId: string, unitPattern: RegExp) => {
   const matches = unitId.match(unitPattern);
-  if (matches) return parseInt(matches[1], 10);
+  if (matches) return parseFloat(matches[1]);
 
   return undefined;
 };

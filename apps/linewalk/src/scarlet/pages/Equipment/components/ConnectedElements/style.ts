@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Color } from 'scarlet/config';
 
 export const Header = styled.div`
   color: var(--cogs-text-secondary);
@@ -6,23 +7,32 @@ export const Header = styled.div`
 `;
 
 export const Detection = styled.div`
-  background: var(--cogs-midorange-8);
-  border: 1px solid var(--cogs-midorange-6);
-  color: var(--cogs-midorange-2);
+  border: 1px solid rgba(83, 88, 127, 0.16);
+  color: rgba(0, 0, 0, 0.7);
   border-radius: 6px;
   padding: 10px 12px;
   display: inline-flex;
+  align-items: center;
   gap: 10px;
   margin: 0 10px;
   max-width: 520px;
 `;
 
-export const DetectionSource = styled.div`
-  color: var(--cogs-midorange-5);
-  background-color: var(--cogs-white);
-  border: 1px solid currentColor;
+export const DetectionSource = styled.div<{
+  isPrimary?: boolean;
+}>`
+  display: flex;
+  align-items: center;
+  color: var(--cogs-white);
   border-radius: 4px;
-  padding: 2px 8px;
+  padding: 1px 4px;
+  align-items: center;
+  gap: 4px;
+  background-color: ${({ isPrimary }) => {
+    if (isPrimary) return Color.APPROVED;
+
+    return Color.PENDING;
+  }};
   flex-shrink: 0;
 `;
 

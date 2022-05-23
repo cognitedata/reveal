@@ -9,15 +9,14 @@ import {
   EquipmentType,
   DataElementState,
   PCMSData,
-  EquipmentDocument,
   DetectionType,
   DetectionState,
   ScannerDetection,
   EquipmentComponent,
   EquipmentComponentType,
   MALData,
+  MSData,
 } from 'scarlet/types';
-import { findU1Document } from 'scarlet/utils';
 
 export const transformEquipmentData = ({
   config,
@@ -25,7 +24,7 @@ export const transformEquipmentData = ({
   equipmentState,
   pcms,
   mal,
-  documents = [],
+  ms,
   type,
 }: {
   config?: EquipmentConfig;
@@ -33,56 +32,38 @@ export const transformEquipmentData = ({
   equipmentState?: EquipmentData;
   pcms?: PCMSData;
   mal?: MALData;
-  documents?: EquipmentDocument[];
+  ms?: MSData;
   type?: EquipmentType;
 }): EquipmentData | undefined => {
   if (!type || !config || !config.equipmentTypes[type]) return undefined;
 
-  const U1Document = findU1Document(documents);
-  const transformedScannerDetections = scannerDetectionsWithExternalId(
-    scannerDetections,
-    U1Document?.externalId
-  );
-
   const equipmentElements = getEquipmentElements(
     type,
     config,
-    transformedScannerDetections,
+    scannerDetections,
     equipmentState?.equipmentElements,
     pcms?.equipment,
-    mal
+    mal,
+    ms
   );
 
   const equipmentComponents = getEquipmentComponents(
     type,
     config,
-    transformedScannerDetections,
+    scannerDetections,
     equipmentState?.components,
     pcms?.components
   );
 
   const created = equipmentState?.created || Date.now();
-  const isApproved = equipmentState?.isApproved || false;
 
   return {
     created,
-    isApproved,
     type,
     equipmentElements,
     components: equipmentComponents,
   };
 };
-
-const scannerDetectionsWithExternalId = (
-  detections: ScannerDetection[],
-  documentExternalId?: string
-) =>
-  documentExternalId
-    ? detections.map((item) => ({
-        ...item,
-        documentExternalId: item.documentExternalId || documentExternalId,
-      }))
-    : detections;
 
 const getEquipmentElements = (
   type: EquipmentType,
@@ -90,7 +71,8 @@ const getEquipmentElements = (
   scannerDetections: ScannerDetection[] = [],
   equipmentStateElements: DataElement[] = [],
   pcms?: Asset,
-  mal?: MALData
+  mal?: MALData,
+  ms?: MSData
 ): DataElement[] => {
   const equipmentTypeData = config.equipmentTypes[type];
 
@@ -116,12 +98,14 @@ const getEquipmentElements = (
 
       const pcmsDetection = getPCMSDetection(key, pcms);
       const malDetection = getMALDetection(key, mal);
+      const msDetection = getMSDetection(key, ms);
 
       const detections = mergeDetections(
         equipmentStateElement?.detections,
         itemScannerDetections,
         pcmsDetection,
-        malDetection
+        malDetection,
+        msDetection
       );
 
       return {
@@ -155,7 +139,19 @@ const getMALDetection = (key: string, mal?: MALData) => {
   return {
     id: uuid(),
     type: DetectionType.MAL,
-    value: mal[key],
+    value: mal[key].toString().trim(),
+    state: DetectionState.APPROVED,
+  } as Detection;
+};
+
+const getMSDetection = (key: string, ms?: MSData) => {
+  if (!ms || ms[key] === undefined) return undefined;
+
+  return {
+    id: uuid(),
+    type: DetectionType.MS2,
+    value: ms[key].toString().trim(),
+    state: DetectionState.APPROVED,
   } as Detection;
 };
 
@@ -163,7 +159,8 @@ const mergeDetections = (
   equipmentStateDetections: Detection[] = [],
   scannerDetections: ScannerDetection[] = [],
   pcmsDetection?: Detection,
-  malDetection?: Detection
+  malDetection?: Detection,
+  msDetection?: Detection
 ) => {
   const detections = [...equipmentStateDetections];
 
@@ -195,6 +192,17 @@ const mergeDetections = (
       detections.push(malDetection);
     } else if (!existingMALDetection.isPrimary) {
       existingMALDetection.value = malDetection.value;
+    }
+  }
+
+  if (msDetection) {
+    const existingMSDetection = detections.find((detection) =>
+      [DetectionType.MS2, DetectionType.MS3].includes(detection.type)
+    );
+    if (!existingMSDetection) {
+      detections.push(msDetection);
+    } else if (!existingMSDetection.isPrimary) {
+      existingMSDetection.value = msDetection.value;
     }
   }
 

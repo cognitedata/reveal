@@ -7,7 +7,7 @@ export const facilityList: Facility[] = [
     path: 'borger',
     name: 'Borger Refinery',
     shortName: 'Borger',
-    unitPattern: /^G(\d+)$/,
+    unitPattern: /^G(\d+(\.\d+)?)$/,
     env: ['development', 'staging', 'production'],
   },
   {
@@ -15,7 +15,7 @@ export const facilityList: Facility[] = [
     path: 'bayway',
     name: 'Bayway plan',
     shortName: 'Bayway',
-    unitPattern: /^G(\d+)$/,
+    unitPattern: /^G(\d+(\.\d+)?)$/,
     env: ['development'],
   },
 ].filter((item) => item.env.includes(config.env));

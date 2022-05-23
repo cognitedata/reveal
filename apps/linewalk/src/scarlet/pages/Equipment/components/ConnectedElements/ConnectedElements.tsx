@@ -2,11 +2,17 @@ import { useMemo } from 'react';
 import { CellProps } from 'react-table';
 import { Checkbox, Icon, Table } from '@cognite/cogs.js';
 import { useAppContext, useDataElementConfig } from 'scarlet/hooks';
-import { DataElement, DataElementOrigin, Detection } from 'scarlet/types';
+import {
+  DataElement,
+  DataElementOrigin,
+  Detection,
+  DetectionType,
+} from 'scarlet/types';
 import {
   getDataElementConfig,
+  getDataElementHasDiscrepancy,
   getDataElementTypeLabel,
-  getDetectionSourceLabel,
+  getDetectionSourceAcronym,
   getPrettifiedDataElementValue,
 } from 'scarlet/utils';
 
@@ -37,13 +43,28 @@ export const ConnectedElements = ({
 }: ConnectedElementsProps) => {
   const { appState } = useAppContext();
   const dataElementConfig = useDataElementConfig(dataElement);
+  const isDiscrepancy = useMemo(
+    () =>
+      getDataElementHasDiscrepancy(
+        dataElement,
+        dataElementConfig?.unit,
+        dataElementConfig?.type
+      ),
+    [dataElement]
+  );
 
   const defaultSelectedIds = useMemo(
     () =>
-      connectedElements.reduce(
-        (result, item) => ({ ...result, [item.id]: true }),
-        {}
-      ),
+      connectedElements.reduce((result, connectedElement) => {
+        const isSelected =
+          connectedElement.id === dataElement.id ||
+          connectedElement.detections.find(
+            (d) =>
+              d.type === DetectionType.LINKED &&
+              d.detectionOriginId === detection.id
+          );
+        return { ...result, [connectedElement.id]: isSelected };
+      }, {}),
     [connectedElements]
   );
 
@@ -85,8 +106,17 @@ export const ConnectedElements = ({
       <Styled.Header className="cogs-body-1">
         Set
         <Styled.Detection>
-          <Styled.DetectionSource className="cogs-micro strong">
-            {getDetectionSourceLabel(detection)}
+          <Styled.DetectionSource
+            isPrimary={detection.isPrimary}
+            className="cogs-micro strong"
+          >
+            {getDetectionSourceAcronym(detection)}
+            {isDiscrepancy && !detection.isPrimary && (
+              <Icon type="WarningTriangle" size={8} />
+            )}
+            {isDiscrepancy && detection.isPrimary && (
+              <Icon type="Info" size={10} />
+            )}
           </Styled.DetectionSource>
           <Styled.DetectionValue className="cogs-body-2 strong">
             {getPrettifiedDataElementValue(

@@ -10,6 +10,7 @@ import {
   DataElement,
   DataPanelActionType,
   Detection,
+  DetectionState,
 } from 'scarlet/types';
 
 import { ConnectedElements, Modal } from '../..';
@@ -30,7 +31,7 @@ export const ConnectedElementsModal = ({
   const { appState, appDispatch } = useAppContext();
   const dataPanelDispatch = useDataPanelDispatch();
   const [loading, setLoading] = useState(false);
-  const connectedElements = useConnectedDataElements(dataElement.key);
+  const connectedElements = useConnectedDataElements(dataElement);
   const [selectedDataElementIds, setSelectedDataElementIds] = useState<
     string[]
   >([]);
@@ -65,20 +66,29 @@ export const ConnectedElementsModal = ({
     setLoading(true);
 
     appDispatch({
-      type: AppActionType.SET_CONNECTED_DATA_ELEMENTS,
-      dataElements: connectedElements.filter((dataElement) =>
-        selectedDataElementIds.includes(dataElement.id)
-      ),
-      currentDataElementId: dataElement.id,
+      type: AppActionType.REPLACE_DETECTION,
+      dataElement,
+      detection: {
+        ...detection,
+        state: DetectionState.APPROVED,
+        isPrimary: true,
+      },
+    });
+
+    appDispatch({
+      type: AppActionType.SET_LINKED_DATA_ELEMENTS,
       detection,
-      isApproved: true,
-      isPrimary: true,
+      dataElements: connectedElements.filter(
+        (connectedElement) =>
+          connectedElement.id !== dataElement.id &&
+          selectedDataElementIds.includes(connectedElement.id)
+      ),
     });
   };
 
   const onChange = (values: string[]) => {
     setSelectedDataElementIds((currentSelected) =>
-      values.length !== selectedDataElementIds.length ? values : currentSelected
+      values.length !== currentSelected.length ? values : currentSelected
     );
   };
   return (

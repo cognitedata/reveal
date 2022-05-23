@@ -1,1 +1,1 @@
-export type MALData = { [key: string]: string };
+export type MALData = { [key: string]: string | number };

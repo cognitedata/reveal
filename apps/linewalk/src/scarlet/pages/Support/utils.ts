@@ -3,6 +3,7 @@ import {
   getEquipmentConfig,
   getEquipmentDocuments,
   getEquipmentMAL,
+  getEquipmentMS,
   getEquipmentPCMS,
   getEquipmentState,
   saveEquipment,
@@ -23,6 +24,7 @@ export const preapproveEquipmentList = async (
   equipmentsPerUnit: Record<number, string[]>
 ) => {
   const savedEquipments = [];
+  const skippedEquipments = [];
   const failedEquipments = [];
   console.log('Preapprove start...', { facility, unitList, equipmentsPerUnit });
 
@@ -41,14 +43,18 @@ export const preapproveEquipmentList = async (
           'color: orange; '
         );
         // eslint-disable-next-line no-await-in-loop
-        await preapproveEquipment(
+        const isSaved = await preapproveEquipment(
           client,
           facility,
           unit.id,
           equipmentId,
           equipmentConfig
         );
-        savedEquipments.push(equipmentName);
+        if (isSaved) {
+          savedEquipments.push(equipmentName);
+        } else {
+          skippedEquipments.push(equipmentName);
+        }
       } catch {
         console.debug(`%cFailed to preapprove ${equipmentName}`, 'color: red;');
         failedEquipments.push(equipmentName);
@@ -58,6 +64,12 @@ export const preapproveEquipmentList = async (
     console.debug('%c###########################', 'color: orange;');
     console.debug(`%c#Summary:`, 'color: orange;');
     console.debug('%c#Saved equipments:', 'color: orange;', savedEquipments);
+    console.debug(
+      '%c#Skipped equipments:',
+      'color: orange;',
+      skippedEquipments
+    );
+
     console.debug('%c#Failed equipments:', 'color: orange;', failedEquipments);
     console.debug('%c###########################', 'color: orange;');
   }
@@ -69,7 +81,7 @@ const preapproveEquipment = async (
   unitId: string,
   equipmentId: string,
   equipmentConfig: EquipmentConfig
-) => {
+): Promise<boolean> => {
   const pcms = await getEquipmentPCMS(client, {
     facility,
     unitId,
@@ -78,10 +90,18 @@ const preapproveEquipment = async (
   console.debug('    PCMS is fetched');
 
   const mal = await getEquipmentMAL(client, {
+    facility,
     unitId,
     equipmentId,
   }).catch(() => undefined);
   console.debug(`    MAL is ${mal ? 'fetched' : 'absent'}`);
+
+  const ms = await getEquipmentMS(client, {
+    facility,
+    unitId,
+    equipmentId,
+  }).catch(() => undefined);
+  console.debug(`    MS is ${ms ? 'fetched' : 'absent'}`);
 
   const documents = await getEquipmentDocuments(client, {
     unitId,
@@ -104,26 +124,36 @@ const preapproveEquipment = async (
     equipmentState,
     pcms,
     mal,
+    ms,
     type: getEquipmentType(equipmentId),
-    documents,
   });
 
   if (!equipment) {
-    console.error("    Equipment can't be transformed");
-    return;
+    const errorMessage = "Equipment can't be transformed";
+    console.error(`    ${errorMessage}`);
+    throw Error(errorMessage);
   }
 
   const hasU1Document = Boolean(findU1Document(documents));
-  preApproveDataElements(equipment, hasU1Document, unitId);
+  const hasToBeSaved =
+    preApproveDataElements(equipment, hasU1Document, unitId) || !equipmentState;
   const equipmentToSave = getEquipmentToSave(equipment);
 
-  await saveEquipment(client, {
-    facility,
-    unitId,
-    equipmentId,
-    equipment: equipmentToSave,
-    modifiedBy: equipmentState?.modifiedBy,
-  });
+  if (hasToBeSaved) {
+    await saveEquipment(client, {
+      facility,
+      unitId,
+      equipmentId,
+      equipment: equipmentToSave,
+      modifiedBy: equipmentState?.modifiedBy,
+    });
+    console.log('%c    Equipment is saved', 'color: green;');
+  } else {
+    console.log(
+      '%c    Equipment has no changes, no need to save',
+      'color: yellow;'
+    );
+  }
 
-  console.log('%c    Equipment is saved', 'color: green;');
+  return hasToBeSaved;
 };

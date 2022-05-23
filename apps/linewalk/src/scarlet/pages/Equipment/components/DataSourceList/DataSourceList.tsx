@@ -15,11 +15,13 @@ import * as Styled from './style';
 type DataSourceListProps = {
   dataElement: DataElement;
   hasConnectedElements: boolean;
+  isDiscrepancy: boolean;
 };
 
 export const DataSourceList = ({
   dataElement,
   hasConnectedElements,
+  isDiscrepancy,
 }: DataSourceListProps) => {
   const [activeDetectionId, setActiveDetectionId] = useState<string>();
   const [sortingIds, setSortingIds] = useState<string[]>([]);
@@ -182,10 +184,8 @@ export const DataSourceList = ({
           key={detection.id}
           detection={detection}
           dataElement={dataElement}
-          isApproved={detection.state === DetectionState.APPROVED}
           focused={detection.id === activeDetectionId}
           isDraft={!detection.state}
-          isPrimaryOnApproval
           hasConnectedElements={hasConnectedElements}
           collapseProps={{
             activeKey: activeDetectionId,
@@ -199,7 +199,7 @@ export const DataSourceList = ({
         <DataSourcePanel
           detection={PCMSDetection}
           dataElement={dataElement}
-          isApproved={isPCMSDetectionPrimary}
+          isDiscrepancy={isDiscrepancy}
           hasConnectedElements={hasConnectedElements}
           collapseProps={{
             defaultActiveKey: PCMSDetection.id,
@@ -208,7 +208,7 @@ export const DataSourceList = ({
       ) : (
         <Styled.EmptySource>
           <Styled.EmptySourceHead>
-            <DataSourceHeader label="PCMS" disabled />
+            <DataSourceHeader label="PCMS" />
           </Styled.EmptySourceHead>
           <Styled.EmptySourceBody>Not available</Styled.EmptySourceBody>
         </Styled.EmptySource>
@@ -218,8 +218,6 @@ export const DataSourceList = ({
           key={detection.id}
           detection={detection}
           dataElement={dataElement}
-          isApproved={detection.state === DetectionState.APPROVED}
-          isPrimaryOnApproval
           focused={detection.id === activeDetectionId}
           hasConnectedElements={hasConnectedElements}
           collapseProps={{

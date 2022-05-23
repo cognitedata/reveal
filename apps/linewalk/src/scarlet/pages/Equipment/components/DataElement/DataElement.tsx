@@ -1,4 +1,4 @@
-import { Icon, Tooltip } from '@cognite/cogs.js';
+import { Checkbox, Icon, Tooltip } from '@cognite/cogs.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   useAppDispatch,
@@ -124,42 +124,42 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
   }, []);
 
   return (
-    <Styled.Container state={dataElement.state}>
-      <Styled.CheckboxContainer>
-        <Styled.Checkbox
-          disabled={isCheckboxDisabled}
-          name={`data-element-${dataElement.id}`}
-          checked={checked}
-          onChange={toggle}
-          color={getCheckboxColor(dataElement.state)}
-        />
-      </Styled.CheckboxContainer>
-      <Styled.Content>
+    <Styled.Container>
+      <Checkbox
+        disabled={isCheckboxDisabled}
+        name={`data-element-${dataElement.id}`}
+        checked={checked}
+        onChange={toggle}
+      />
+      <Styled.Content
+        isLink={!!primaryDetection?.boundingBox}
+        onClick={zoomDetection}
+      >
         <Styled.Label className="cogs-detail">
           {dataElementConfig?.label}
         </Styled.Label>
-        {isOmitted && (
+        {isOmitted ? (
           <Styled.DataContainer>
-            <Styled.Value noValue className="cogs-body-3 strong">
-              {dataElement.stateReason
-                ? `"${dataElement.stateReason}"`
-                : 'No comment'}
+            <Styled.DataSource className="cogs-micro" isOmitted>
+              IGN
+            </Styled.DataSource>
+            <Styled.Value secondary className="cogs-body-3 strong">
+              {dataElement.stateReason || 'No comment'}
             </Styled.Value>
           </Styled.DataContainer>
-        )}
-        {!isOmitted && (
+        ) : (
           <>
             {!hasValue ? (
               <Styled.DataContainer>
-                <Styled.Value noValue className="cogs-body-3 strong">
+                <Styled.DataSource className="cogs-micro">
+                  N/A
+                </Styled.DataSource>
+                <Styled.Value secondary className="cogs-body-3 strong">
                   No value
                 </Styled.Value>
               </Styled.DataContainer>
             ) : (
-              <Styled.DataContainer
-                isLink={!!primaryDetection?.boundingBox}
-                onClick={zoomDetection}
-              >
+              <Styled.DataContainer>
                 <Tooltip
                   disabled={!isDiscrepancy}
                   content={
@@ -193,34 +193,33 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
       </Styled.Content>
       <Styled.Actions>
         {!isApproved && !isOmitted && !isDiscrepancy && hasValue && (
-          <Styled.Button aria-label="Approve" onClick={onApprove}>
-            <Icon type="Checkmark" />
-          </Styled.Button>
+          <Styled.Button
+            type="tertiary"
+            icon="Checkmark"
+            size="small"
+            aria-label="Approve"
+            onClick={onApprove}
+          />
         )}
         {!isOmitted && (
           <Styled.Button
+            type="tertiary"
+            icon={isApproved ? 'EyeShow' : 'Edit'}
+            size="small"
             aria-label={isApproved ? 'View' : 'Edit'}
             onClick={openDataElementCard}
-          >
-            <Icon type={isApproved ? 'EyeShow' : 'Edit'} />
-          </Styled.Button>
+          />
         )}
         {isOmitted && (
-          <Styled.Button aria-label="Restore" onClick={onRestore}>
-            <Icon type="Restore" />
-          </Styled.Button>
+          <Styled.Button
+            type="tertiary"
+            icon="Restore"
+            size="small"
+            aria-label="Restore"
+            onClick={onRestore}
+          />
         )}
       </Styled.Actions>
     </Styled.Container>
   );
-};
-
-const getCheckboxColor = (state: DataElementState) => {
-  switch (state) {
-    case DataElementState.APPROVED:
-      return '#6ED8BE';
-    case DataElementState.OMITTED:
-      return '#8C8C8C';
-  }
-  return '#FF6918';
 };

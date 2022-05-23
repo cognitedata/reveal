@@ -7,6 +7,7 @@ export * from './useComponent';
 export * from './useConnectedDataElements';
 export * from './useDataElementConfig';
 export * from './useDataPanelContext';
+export * from './useDetectionOrigin';
 export * from './useEquipmentComponentsByType';
 export * from './useFacility';
 export * from './useHomePageContext';

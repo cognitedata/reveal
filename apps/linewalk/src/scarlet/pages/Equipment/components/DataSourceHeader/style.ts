@@ -1,5 +1,6 @@
-import styled, { css } from 'styled-components';
-import { Icon as CogsIcon, IconProps } from '@cognite/cogs.js';
+import styled from 'styled-components';
+import { Icon as CogsIcon } from '@cognite/cogs.js';
+import { Color } from 'scarlet/config';
 
 export const Container = styled.div`
   display: flex;
@@ -25,18 +26,32 @@ export const Label = styled.div`
   color: var(--cogs-text-color);
 `;
 
-export const Icon = styled(CogsIcon)<
-  IconProps & { checkmark?: number; approved?: number }
->`
-  ${({ checkmark }) =>
-    checkmark &&
-    css`
-      color: var(--cogs-greyscale-grey4);
-    `}
+export const PrimaryTag = styled.div`
+  background-color: #2a7a4b;
+  border-radius: 4px;
+  text-transform: uppercase;
+  color: var(--cogs-white);
+  padding: 1px 4px;
+`;
 
-  ${({ approved }) =>
-    approved &&
-    css`
-      color: var(--cogs-green-3);
-    `}
+export enum IconState {
+  APPROVED = 'approved',
+  CRITICAL = 'critical',
+  NEUTRAL = 'neutral',
+  PENDING = 'pending',
+}
+
+export const Icon = styled(CogsIcon)<{ state?: IconState }>`
+  color: ${({ state }) => {
+    switch (state) {
+      case IconState.APPROVED:
+        return Color.APPROVED;
+      case IconState.CRITICAL:
+        return Color.CRITICAL;
+      case IconState.PENDING:
+        return Color.PENDING;
+      default:
+        return Color.NEUTRAL;
+    }
+  }};
 `;

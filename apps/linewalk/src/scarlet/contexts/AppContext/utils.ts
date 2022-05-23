@@ -19,7 +19,7 @@ export const updateDataElementState = (
   state: DataElementState,
   stateReason?: string
 ): EquipmentData => {
-  const equipment: EquipmentData = deepCopy(equipmentOrigin);
+  let equipment: EquipmentData = deepCopy(equipmentOrigin);
 
   dataElementsOrigin.forEach((dataElementOrigin) => {
     const dataElementList = getDataElementList(equipment, dataElementOrigin);
@@ -39,29 +39,59 @@ export const updateDataElementState = (
     }
   });
 
+  equipment = removeLinkedDetectionsWithoutOrigin(equipment);
+
   return equipment;
 };
 
-export const addDetection = (
+export const replaceDetection = (
   equipmentOrigin: EquipmentData,
   dataElementOrigin: DataElement,
-  detection: Detection,
-  value: string,
-  externalSource: string | undefined,
-  isApproved: boolean,
-  isPrimary: boolean
+  detectionOrigin: Detection
 ): EquipmentData => {
-  const { equipment, dataElement } = getCopy(
-    equipmentOrigin,
-    dataElementOrigin
-  );
-  dataElement.detections.push(detection);
+  let equipment: EquipmentData = deepCopy(equipmentOrigin);
+  const detection = deepCopy(detectionOrigin);
 
-  return updateDetection(equipment, dataElementOrigin, detection, isApproved, {
-    value,
-    externalSource,
-    isPrimary,
-  });
+  if (!detection.isPrimary) {
+    equipment = removeLinkedDetections(equipment, detection.id);
+  } else {
+    updateLinkedDetections(equipment, detectionOrigin);
+  }
+
+  const dataElement = getDataElement(equipment, dataElementOrigin);
+
+  if (detection.isPrimary) {
+    dataElement.detections = dataElement.detections
+      .filter(
+        (itemDetection) =>
+          itemDetection.type !== DetectionType.LINKED ||
+          detection.id === itemDetection.id
+      )
+      .map((itemDetection) => ({
+        ...itemDetection,
+        isPrimary: false,
+      }));
+  }
+
+  const detectionIndex = dataElement.detections!.findIndex(
+    (item) => item.id === detection.id
+  );
+
+  if (detectionIndex === -1) {
+    dataElement.detections.push(detection);
+  } else {
+    dataElement.detections[detectionIndex] = detection;
+  }
+
+  dataElement.state = dataElement.detections.some(
+    (detection) => detection.isPrimary
+  )
+    ? DataElementState.APPROVED
+    : DataElementState.PENDING;
+
+  updateComponentScannerDetectionsOnApproval(equipment, dataElement);
+
+  return equipment;
 };
 
 export const removeDetection = (
@@ -69,10 +99,8 @@ export const removeDetection = (
   dataElementOrigin: DataElement,
   detection: Detection
 ): EquipmentData => {
-  const { equipment, dataElement } = getCopy(
-    equipmentOrigin,
-    dataElementOrigin
-  );
+  const equipment = removeLinkedDetections(equipmentOrigin, detection.id);
+  const dataElement = getDataElement(equipment, dataElementOrigin);
 
   const detectionIndex = dataElement.detections!.findIndex(
     (item) => item.id === detection.id
@@ -88,55 +116,13 @@ export const removeDetection = (
     dataElement.detections.splice(detectionIndex, 1);
   }
 
-  const isApproved = dataElement.detections.some((item) => item.isPrimary);
-
-  dataElement.state = isApproved
-    ? DataElementState.APPROVED
-    : DataElementState.PENDING;
-
-  return equipment;
-};
-
-export const updateDetection = (
-  equipmentOrigin: EquipmentData,
-  dataElementOrigin: DataElement,
-  detectionOriginal: Detection,
-  isApproved: boolean,
-  detectionProps: Partial<Detection>
-): EquipmentData => {
-  const equipment: EquipmentData = deepCopy(equipmentOrigin);
-
-  const dataElementList = getDataElementList(equipment, dataElementOrigin);
-
-  const dataElementIndex = dataElementList.findIndex(
-    (item) => item.key === dataElementOrigin.key
-  );
-  const dataElement = dataElementList[dataElementIndex];
-  const detection = dataElement.detections!.find(
-    (item) => item.id === detectionOriginal.id
+  const hasPrimaryDetection = dataElement.detections.some(
+    (item) => item.isPrimary
   );
 
-  if (!detection) return equipment;
-
-  if (detectionProps.isPrimary) {
-    dataElement.detections.forEach((detection, i) => {
-      if (detection.isPrimary) {
-        dataElement.detections[i].isPrimary = false;
-      }
-    });
-  }
-
-  Object.assign(detection, detectionProps);
-
-  detection.state = isApproved ? DetectionState.APPROVED : undefined;
-
-  dataElement.state = dataElement.detections.some(
-    (detection) => detection.isPrimary
-  )
+  dataElement.state = hasPrimaryDetection
     ? DataElementState.APPROVED
     : DataElementState.PENDING;
-  dataElementList[dataElementIndex] = dataElement;
-  updateComponentScannerDetectionsOnApproval(equipment, dataElement);
 
   return equipment;
 };
@@ -154,10 +140,11 @@ export const deleteComponents = (
   equipmentOrigin: EquipmentData,
   componentIds: string[]
 ) => {
-  const equipment: EquipmentData = deepCopy(equipmentOrigin);
+  let equipment: EquipmentData = deepCopy(equipmentOrigin);
   equipment.components = equipment.components.filter(
     (c) => !componentIds.includes(c.id)
   );
+  equipment = removeLinkedDetectionsWithoutOrigin(equipment);
   return equipment;
 };
 
@@ -196,13 +183,6 @@ export const addRemark = (
   return equipment;
 };
 
-export const approveEquipment = (equipmentOrigin: EquipmentData) => {
-  const equipment = deepCopy(equipmentOrigin);
-  equipment.isApproved = true;
-
-  return equipment;
-};
-
 const getCopy = (
   equipmentOrigin: EquipmentData,
   dataElementOrigin: DataElement
@@ -215,6 +195,19 @@ const getCopy = (
   );
 
   return { equipment, dataElement: dataElement! };
+};
+
+const getDataElement = (
+  equipment: EquipmentData,
+  dataElementOrigin: DataElement
+): DataElement => {
+  const dataElementList = getDataElementList(equipment, dataElementOrigin);
+
+  const dataElement = dataElementList.find(
+    (item) => item.key === dataElementOrigin.key
+  );
+
+  return dataElement!;
 };
 
 const getDataElementList = (
@@ -253,58 +246,102 @@ const updateComponentScannerDetectionsOnApproval = (
   }
 };
 
-export const setConnectedDataElements = (
+export const setLinkedDetections = (
   equipmentOrigin: EquipmentData,
-  dataElementsOrigin: DataElement[],
-  currentDataElementId: string,
-  detectionOrigin: Detection,
-  isApproved: boolean,
-  isPrimary: boolean
-) => {
-  const connectedId = detectionOrigin.connectedId || uuid();
-  let equipment = equipmentOrigin;
-  dataElementsOrigin.forEach((dataElement) => {
-    const detection = dataElement.detections.find(
-      (detection) =>
-        detection.connectedId === connectedId ||
-        detection.id === detectionOrigin.id
-    );
-    if (detection) {
-      equipment = updateDetection(
-        equipment,
-        dataElement,
-        detection,
-        isApproved,
-        {
-          value: detectionOrigin.value!,
-          externalSource: detectionOrigin.externalSource,
-          isPrimary,
-          connectedId,
-        }
-      );
-    } else {
-      let detectionType = detectionOrigin.type;
-      const isCurrentDataElement = dataElement.id === currentDataElementId;
-      if (!isCurrentDataElement && detectionType === DetectionType.PCMS) {
-        detectionType = DetectionType.MANUAL_INPUT;
-      }
+  detection: Detection,
+  dataElements: DataElement[]
+): EquipmentData => {
+  const equipment = removeLinkedDetections(equipmentOrigin, detection.id);
 
-      equipment = addDetection(
-        equipment,
-        dataElement,
-        {
-          ...detectionOrigin,
-          id: isCurrentDataElement ? detectionOrigin.id : uuid(),
-          type: detectionType,
-          connectedId,
-          scannerComponent: undefined,
-        },
-        detectionOrigin.value!,
-        detectionOrigin.externalSource,
-        isApproved,
-        isPrimary
-      );
+  return dataElements.reduce(
+    (equipment, dataElement) =>
+      replaceDetection(equipment, dataElement, {
+        id: uuid(),
+        type: DetectionType.LINKED,
+        detectionOriginId: detection.id,
+        state: DetectionState.APPROVED,
+        value: detection.value!,
+        externalSource: detection.externalSource,
+        isPrimary: true,
+      }),
+    equipment
+  );
+};
+
+const removeLinkedDetections = (
+  equipmentOrigin: EquipmentData,
+  detectionOriginId: string,
+  ignoreDetectionIds: string[] = []
+): EquipmentData =>
+  [
+    ...equipmentOrigin.equipmentElements,
+    ...equipmentOrigin.components.flatMap((c) => c.componentElements),
+  ].reduce((equipment, equipmentElement) => {
+    const detectionToDelete = equipmentElement.detections.find(
+      (d) => d.detectionOriginId === detectionOriginId
+    );
+
+    if (
+      detectionToDelete &&
+      !ignoreDetectionIds.includes(detectionToDelete.id)
+    ) {
+      return removeDetection(equipment, equipmentElement, detectionToDelete);
     }
+    return equipment;
+  }, deepCopy(equipmentOrigin) as EquipmentData);
+
+const removeLinkedDetectionsWithoutOrigin = (
+  equipmentOrigin: EquipmentData
+): EquipmentData => {
+  let equipment: EquipmentData = deepCopy(equipmentOrigin);
+
+  const allDataElements = [
+    ...equipment.equipmentElements,
+    ...equipment.components.flatMap((component) => component.componentElements),
+  ].filter((dataElement) => dataElement.state !== DataElementState.OMITTED);
+
+  const activeDetectionIds = allDataElements
+    .flatMap((dataElement) => dataElement.detections)
+    .filter(
+      (detection) =>
+        detection.state === DetectionState.APPROVED && detection.isPrimary
+    )
+    .map((detection) => detection.id);
+
+  allDataElements.forEach((dataElement) => {
+    dataElement.detections
+      .filter(
+        (detection) =>
+          detection.type === DetectionType.LINKED &&
+          detection.detectionOriginId &&
+          !activeDetectionIds.includes(detection.detectionOriginId!)
+      )
+      .forEach((detection) => {
+        equipment = removeDetection(equipment, dataElement, detection);
+      });
   });
+
   return equipment;
+};
+
+const updateLinkedDetections = (
+  equipment: EquipmentData,
+  detectionOrigin: Detection
+) => {
+  [
+    ...equipment.equipmentElements,
+    ...equipment.components.flatMap((component) => component.componentElements),
+  ]
+    .flatMap((dataElement) => dataElement.detections)
+    .filter(
+      (detection) =>
+        detection.type === DetectionType.LINKED &&
+        detection.detectionOriginId === detectionOrigin.id
+    )
+    .forEach((detection) => {
+      /* eslint-disable no-param-reassign */
+      detection.value = detectionOrigin.value;
+      detection.externalSource = detectionOrigin.externalSource;
+      /* eslint-enable no-param-reassign */
+    });
 };

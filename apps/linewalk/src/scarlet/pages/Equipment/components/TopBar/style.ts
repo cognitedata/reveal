@@ -8,11 +8,11 @@ export const Container = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: 12px;
 `;
 
 export const Title = styled(CogsTitle)`
   color: var(--cogs-greyscale-grey7);
-  padding: 0 12px;
 `;
 
 export const DocumentsNumber = styled(Detail)`

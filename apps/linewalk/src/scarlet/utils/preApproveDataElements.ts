@@ -16,8 +16,8 @@ export const preApproveDataElements = (
   equipment: EquipmentData,
   hasU1Document: boolean,
   unitId: string
-) => {
-  preApproveEquipmentElements(
+): boolean => {
+  return preApproveEquipmentElements(
     equipment.equipmentElements,
     hasU1Document,
     unitId
@@ -28,8 +28,10 @@ const preApproveEquipmentElements = (
   dataElements: DataElement[],
   hasU1Document: boolean,
   unitId: string
-) => {
+): boolean => {
+  let hasChanged = false;
   dataElements.forEach((dataElement) => {
+    if (dataElement.state === DataElementState.OMITTED) return;
     const hasPrimaryDetection = dataElement.detections.some(
       (detection) => detection.isPrimary
     );
@@ -37,38 +39,50 @@ const preApproveEquipmentElements = (
     if (hasPrimaryDetection) return;
 
     switch (dataElement.key) {
+      case EquipmentElementKey.ASSET_NO:
       case EquipmentElementKey.EQUIP_ID:
       case EquipmentElementKey.EQUIP_TYPE:
-      case EquipmentElementKey.ASSET_NO:
-        approvePCMSDetection(dataElement);
+      case EquipmentElementKey.EQUIP_TYPE_DESCRIPTION:
+        hasChanged = approvePCMSDetection(dataElement) || hasChanged;
         break;
       case EquipmentElementKey.CLASS:
-        setNotApplicableDetection(dataElement);
+        hasChanged = setNotApplicableDetection(dataElement) || hasChanged;
         break;
       case EquipmentElementKey.U1_ON_FILE_YN:
       case EquipmentElementKey.CODE_STAMP_YN:
-        approveAfterU1Document(dataElement, hasU1Document);
+        hasChanged =
+          approveAfterU1Document(dataElement, hasU1Document) || hasChanged;
         break;
       case EquipmentElementKey.UNIT_ID:
-        approveUnitID(dataElement, unitId);
+        hasChanged = approveUnitID(dataElement, unitId) || hasChanged;
         break;
       case EquipmentElementKey.OPERATING_STATUS:
-        approveMALDetection(dataElement);
+        hasChanged = approveMALDetection(dataElement) || hasChanged;
+        break;
+
+      case EquipmentElementKey.SYSTEM:
+      case EquipmentElementKey.P_ID_DRAWING_NO:
+      case EquipmentElementKey.OPERATING_PRESSURE:
+      case EquipmentElementKey.OPERATING_TEMP:
+        hasChanged = approveMSDetection(dataElement) || hasChanged;
         break;
     }
   });
+  return hasChanged;
 };
 
-const approvePCMSDetection = (dataElement: DataElement) => {
+const approvePCMSDetection = (dataElement: DataElement): boolean => {
   const pcmsDetection = getDataElementPCMSDetection(dataElement);
   if (pcmsDetection) {
     pcmsDetection.state = DetectionState.APPROVED;
     pcmsDetection.isPrimary = true;
     dataElement.state = DataElementState.APPROVED;
+    return true;
   }
+  return false;
 };
 
-const setNotApplicableDetection = (dataElement: DataElement) => {
+const setNotApplicableDetection = (dataElement: DataElement): boolean => {
   dataElement.detections.push({
     id: uuid(),
     type: DetectionType.MANUAL_INPUT,
@@ -77,12 +91,13 @@ const setNotApplicableDetection = (dataElement: DataElement) => {
     isPrimary: true,
   });
   dataElement.state = DataElementState.APPROVED;
+  return true;
 };
 
 const approveAfterU1Document = (
   dataElement: DataElement,
   hasU1Document: boolean
-) => {
+): boolean => {
   if (hasU1Document) {
     const pcmsDetection = getDataElementPCMSDetection(dataElement);
     if (pcmsDetection && pcmsDetection.value === BooleanDetectionValue.YES) {
@@ -98,10 +113,12 @@ const approveAfterU1Document = (
       });
     }
     dataElement.state = DataElementState.APPROVED;
+    return true;
   }
+  return false;
 };
 
-const approveUnitID = (dataElement: DataElement, unitId: string) => {
+const approveUnitID = (dataElement: DataElement, unitId: string): boolean => {
   const pcmsDetection = getDataElementPCMSDetection(dataElement);
   if (pcmsDetection && pcmsDetection.value === unitId) {
     pcmsDetection.state = DetectionState.APPROVED;
@@ -117,9 +134,10 @@ const approveUnitID = (dataElement: DataElement, unitId: string) => {
   }
 
   dataElement.state = DataElementState.APPROVED;
+  return true;
 };
 
-const approveMALDetection = (dataElement: DataElement) => {
+const approveMALDetection = (dataElement: DataElement): boolean => {
   const malDetection = dataElement.detections.find(
     (detection) => detection.type === DetectionType.MAL
   );
@@ -128,5 +146,21 @@ const approveMALDetection = (dataElement: DataElement) => {
     malDetection.state = DetectionState.APPROVED;
     malDetection.isPrimary = true;
     dataElement.state = DataElementState.APPROVED;
+    return true;
   }
+  return false;
+};
+
+const approveMSDetection = (dataElement: DataElement): boolean => {
+  const msDetection = dataElement.detections.find((detection) =>
+    [DetectionType.MS2, DetectionType.MS3].includes(detection.type)
+  );
+
+  if (msDetection) {
+    msDetection.state = DetectionState.APPROVED;
+    msDetection.isPrimary = true;
+    dataElement.state = DataElementState.APPROVED;
+    return true;
+  }
+  return false;
 };
