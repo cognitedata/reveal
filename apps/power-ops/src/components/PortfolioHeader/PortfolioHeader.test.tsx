@@ -33,7 +33,7 @@ describe('Portfolio header tests', () => {
   });
 
   it('Should calculate the correct start date of the matrix generation process', async () => {
-    const startDate = formatDate(mockCreatedTime, true);
+    const startDate = formatDate(mockCreatedTime);
 
     const TestComponent: React.FC = () => {
       const { startDate } = useBidMatrixProcessStartDate(

@@ -21,7 +21,7 @@ export const useBidMatrixProcessStartDate = (
         ignoreUnknownIds: true,
       })
       .then(([event]) => {
-        setStartDate(formatDate(event.createdTime, true));
+        setStartDate(formatDate(event.createdTime));
       });
   };
 
