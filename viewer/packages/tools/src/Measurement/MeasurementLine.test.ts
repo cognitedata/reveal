@@ -2,10 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Mock, Times } from 'moq.ts';
 import * as THREE from 'three';
-import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry';
-import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
 import { MeasurementLine } from './MeasurementLine';
 
 describe(MeasurementLine.name, () => {

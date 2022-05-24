@@ -108,18 +108,20 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
     const intersection = await this._viewer.getIntersectionFromPixel(offsetX, offsetY);
 
-    if (intersection) {
-      this.addSphere(intersection.point);
-
-      if (!this._lineMesh) {
-        this._viewer.domElement.addEventListener('mousemove', this._handleonPointerMove);
-        this.startMeasurement(intersection);
-      } else {
-        this.endMeasurement(intersection.point);
-        this._viewer.domElement.removeEventListener('mousemove', this._handleonPointerMove);
-      }
-      this._viewer.requestRedraw();
+    if (!intersection) {
+      return;
     }
+
+    this.addSphere(intersection.point);
+
+    if (!this._lineMesh) {
+      this._viewer.domElement.addEventListener('mousemove', this._handleonPointerMove);
+      this.startMeasurement(intersection);
+    } else {
+      this.endMeasurement(intersection.point);
+      this._viewer.domElement.removeEventListener('mousemove', this._handleonPointerMove);
+    }
+    this._viewer.requestRedraw();
   }
 
   /**

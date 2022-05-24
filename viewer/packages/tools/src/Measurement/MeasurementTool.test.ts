@@ -35,14 +35,14 @@ describe(MeasurementTool.name, () => {
     measurementTool = new MeasurementTool(viewer);
   });
 
-  test('Enter into point to point distance measurement mode', () => {
+  test('Initiate Cognite3DViewer ON click for measurement', () => {
     const onSetEventHandlingSpyOn = jest.spyOn(viewer, 'on');
     measurementTool.enterMeasurementMode();
 
     expect(onSetEventHandlingSpyOn).toHaveBeenCalled();
   });
 
-  test('Exit measurement mode', () => {
+  test('Remove Cognite3DViewer click for measurement', () => {
     const onRemoveEventHandlingSpyOn = jest.spyOn(viewer, 'off');
     measurementTool.exitMeasurementMode();
 
