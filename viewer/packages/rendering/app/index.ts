@@ -25,12 +25,13 @@ import {
   ModelMetadataProvider
 } from '../../modeldata-api';
 import { CadManager } from '../../cad-model/src/CadManager';
-import { revealEnv, SceneHandler } from '@reveal/utilities';
+import { NumericRange, revealEnv, SceneHandler } from '@reveal/utilities';
 import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
 import { CadModelUpdateHandler, defaultDesktopCadModelBudget } from '../../cad-geometry-loaders';
 import { ByScreenSizeSectorCuller } from '../../cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
 import { StepPipelineExecutor } from '../src/pipeline-executors/StepPipelineExecutor';
 import { CognitePointCloudModel, createPointCloudManager } from '../../pointclouds';
+import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 
 revealEnv.publicPath = 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.2.0/';
 
@@ -67,7 +68,6 @@ async function init() {
   pointCloudManager.pointBudget = 1_000_000;
   const cadManager = new CadManager(materialManager, cadModelFactory, cadModelUpdateHandler);
   cadManager.budget = defaultDesktopCadModelBudget;
-  // const customObjects: THREE.Object3D[] = [];
 
   const modelOutputs = (await metadataProvider.getModelOutputs(modelIdentifier)).map(outputs => outputs.format);
 
@@ -80,21 +80,21 @@ async function init() {
     boundingBox = (cadModel as any)._cadModelMetadata.scene.getBoundsOfMostGeometry().clone();
     boundingBox.applyMatrix4(model.children[0].matrix);
 
-    // const nodeAppearanceProvider = materialManager.getModelNodeAppearanceProvider('0');
-    // nodeAppearanceProvider.assignStyledNodeCollection(
-    //   new TreeIndexNodeCollection(new NumericRange(0, 10)),
-    //   DefaultNodeAppearance.Ghosted
-    // );
+    const nodeAppearanceProvider = materialManager.getModelNodeAppearanceProvider('0');
+    nodeAppearanceProvider.assignStyledNodeCollection(
+      new TreeIndexNodeCollection(new NumericRange(0, 10)),
+      DefaultNodeAppearance.Ghosted
+    );
 
-    // nodeAppearanceProvider.assignStyledNodeCollection(
-    //   new TreeIndexNodeCollection(new NumericRange(10, 20)),
-    //   DefaultNodeAppearance.Highlighted
-    // );
+    nodeAppearanceProvider.assignStyledNodeCollection(
+      new TreeIndexNodeCollection(new NumericRange(10, 20)),
+      DefaultNodeAppearance.Highlighted
+    );
 
-    // nodeAppearanceProvider.assignStyledNodeCollection(new TreeIndexNodeCollection(new NumericRange(40, 41)), {
-    //   ...DefaultNodeAppearance.Default,
-    //   outlineColor: 6
-    // });
+    nodeAppearanceProvider.assignStyledNodeCollection(new TreeIndexNodeCollection(new NumericRange(40, 41)), {
+      ...DefaultNodeAppearance.Default,
+      outlineColor: 6
+    });
   } else if (modelOutputs.includes('ept-pointcloud')) {
     const pointCloudNode = await pointCloudManager.addModel(modelIdentifier);
     const pointcloudModel = new CognitePointCloudModel(0, 0, pointCloudNode);
@@ -119,8 +119,10 @@ async function init() {
 
   let defaultRenderPipeline = new DefaultRenderPipelineProvider(materialManager, sceneHandler, defaultRenderOptions);
 
-  guiData.steps = pipelineExecutor.calcNumSteps(defaultRenderPipeline);
-  pipelineExecutor.numberOfSteps = guiData.steps;
+  setTimeout(() => {
+    guiData.steps = pipelineExecutor.calcNumSteps(defaultRenderPipeline);
+    pipelineExecutor.numberOfSteps = guiData.steps;
+  }, 1000);
 
   const stepController = gui
     .add(guiData, 'steps', 1, pipelineExecutor.calcNumSteps(defaultRenderPipeline), 1)
@@ -170,11 +172,6 @@ async function init() {
   const updateRenderOptions = async () => {
     defaultRenderPipeline.dispose();
     defaultRenderPipeline = new DefaultRenderPipelineProvider(materialManager, sceneHandler, renderOptions);
-
-    const numberOfSteps = pipelineExecutor.calcNumSteps(defaultRenderPipeline);
-    stepController.max(numberOfSteps);
-    guiData.steps = Math.min(numberOfSteps, guiData.steps);
-    stepController.updateDisplay();
 
     needsRedraw = true;
   };
@@ -241,6 +238,11 @@ async function init() {
         timings.push(pipelineExecutor.timings[pipelineExecutor.timings.length - 1]);
       }
     }
+
+    const numberOfSteps = pipelineExecutor.calcNumSteps(defaultRenderPipeline);
+    stepController.max(numberOfSteps);
+    guiData.steps = Math.min(numberOfSteps, guiData.steps);
+    stepController.updateDisplay();
   };
 
   const animate = () => {
@@ -281,7 +283,7 @@ function fitCameraToBoundingBox(
   controls.target.copy(target);
 }
 
-async function createModelProviders(urlParams): Promise<{
+async function createModelProviders(urlParams: URLSearchParams): Promise<{
   metadataProvider: ModelMetadataProvider;
   dataProvider: ModelDataProvider;
   modelIdentifier: ModelIdentifier;
