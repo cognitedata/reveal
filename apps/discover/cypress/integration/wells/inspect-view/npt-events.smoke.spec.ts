@@ -31,7 +31,7 @@ describe('Wells: NPT Events', () => {
       select: 'ALL',
     });
 
-    cy.openInspectView(1);
+    cy.openInspectView(2);
 
     cy.goToWellsInspectTab(TAB_NAMES.NPT_EVENTS);
 

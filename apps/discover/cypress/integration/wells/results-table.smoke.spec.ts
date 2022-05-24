@@ -74,7 +74,10 @@ describe('Wells: Search table', () => {
 
   describe('Map card', () => {
     it('should display the well card on the map accordingly', () => {
-      cy.performWellsSearch({ search: { query: STATIC_LOCATION_WELL } });
+      cy.performWellsSearch({
+        search: { query: STATIC_LOCATION_WELL },
+        select: { wells: [`Well ${STATIC_LOCATION_WELL}`] },
+      });
 
       cy.log(
         'Double clicking the well in the table should center it on the map'
@@ -89,7 +92,7 @@ describe('Wells: Search table', () => {
       cy.wait(6000);
       cy.findByText('Click to expand the map').should('be.visible').click();
 
-      cy.log('Opend well card bi clicking on the well pin in the map');
+      cy.log('Open well card by clicking on the well pin in the map');
       cy.findAllByRole('region').first().as('map').click(754, 512);
 
       cy.log('Check well card is opened on the map');

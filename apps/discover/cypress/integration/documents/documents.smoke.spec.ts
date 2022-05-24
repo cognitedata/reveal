@@ -4,7 +4,6 @@ import { PROJECT } from '../../app.constants';
 const QUERY_DUPLICATED_FILENAME = 'Volve_Well_Summary_15_9-19.pdf';
 const SOURCE_DRIVE = 'volve';
 const FILE_TYPE = 'PDF';
-const DOCUMENT_CATEGORY = 'Drilling Report';
 export const filename = '15_9_19_A_1980_01_01';
 
 describe('Documents', () => {
@@ -106,12 +105,6 @@ describe('Documents', () => {
       .should('be.visible')
       .click();
 
-    // cy.contains('Document Category').click();
-    cy.findAllByTestId('filter-checkbox-label')
-      .contains(DOCUMENT_CATEGORY)
-      .should('be.visible')
-      .click();
-
     cy.findAllByTestId('filter-checkbox-label')
       .contains(SOURCE_DRIVE)
       .should('be.visible')
@@ -147,9 +140,6 @@ describe('Documents', () => {
     cy.log('Go back to Search page');
     cy.findByTestId('top-bar').contains('Search').click();
     cy.get(`input[type=checkbox][id*="${FILE_TYPE}"]`).should('be.checked');
-    cy.get(`input[type=checkbox][id*="${DOCUMENT_CATEGORY}"]`).should(
-      'be.checked'
-    );
     cy.get(`input[type=checkbox][id*="${SOURCE_DRIVE}"]`).should('be.checked');
 
     cy.log(
@@ -157,7 +147,6 @@ describe('Documents', () => {
     );
     cy.findByTestId('side-bar').findByLabelText('Go back').click();
     cy.findAllByTestId('filter-tag').contains(FILE_TYPE);
-    cy.findAllByTestId('filter-tag').contains(DOCUMENT_CATEGORY);
     cy.findAllByTestId('filter-tag').contains(SOURCE_DRIVE);
     cy.findAllByTestId('filter-tag').contains(FILE_TYPE).click();
 
@@ -180,6 +169,9 @@ describe('Documents', () => {
       .findByText('Documents')
       .should('be.visible')
       .click();
+
+    cy.log('Apply input filter');
+    cy.performSearch(filename.substring(0, 3));
 
     cy.log(`Apply File Type filter: ${FILE_TYPE}`);
     cy.contains('File Type').should('be.visible').click({ force: true });
