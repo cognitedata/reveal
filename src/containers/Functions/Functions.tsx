@@ -13,12 +13,13 @@ import FunctionPanelContent from 'containers/Functions/FunctionPanelContent';
 import UploadFunctionButton from 'components/buttons/UploadFunctionButton';
 
 import {
-  // useActivateFunction,
+  useActivateFunction,
   useCheckActivateFunction,
   useFunctions,
   useMultipleCalls,
   useRefreshApp,
 } from 'utils/hooks';
+import { Loader } from 'components/Common';
 
 const CollapseDiv = styled.div`
   .ant-collapse-header[aria-expanded='true'] {
@@ -27,10 +28,7 @@ const CollapseDiv = styled.div`
 `;
 
 const FunctionActivationAlert = styled(Alert)`
-  min-height: 100px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin: 2rem 0;
 `;
 
 const FUNCTIONS_PER_PAGE = 10;
@@ -66,9 +64,8 @@ function Functions() {
       : recentlyCreated;
 
   const { data: activation, isLoading, isError } = useCheckActivateFunction();
-  // const [mutate] = useActivateFunction();
+  const [mutate] = useActivateFunction();
 
-  console.log({ activation, isLoading, isError });
   const sortedFunctions = functions?.sort(sortFn);
   const filteredFunctions = sortedFunctions?.filter((f: CogFunction) =>
     [f.name, f.externalId || '', f.owner || '']
@@ -80,6 +77,9 @@ function Functions() {
   const isProjectFunctionActivated =
     !isLoading && !isError && activation?.activated;
 
+  if (isLoading) {
+    return <Loader />;
+  }
   return (
     <>
       <PageTitle title="Functions" />
@@ -107,34 +107,44 @@ function Functions() {
           </div>
         )}
       </Row>
-      <Input
-        name="filter"
-        prefix={
-          <Icon
-            type="Search"
+      {isProjectFunctionActivated && (
+        <Input
+          name="filter"
+          prefix={
+            <Icon
+              type="Search"
+              style={{
+                height: '16px',
+                width: '16px',
+              }}
+            />
+          }
+          placeholder="Search by name, external id, or owner"
+          value={functionFilter}
+          onChange={evt => setFunctionFilter(evt.target.value)}
+          allowClear
+        />
+      )}
+      {isProjectFunctionActivated && (
+        <div>
+          <b>Sort by: </b>
+          <Select
             style={{
-              height: '16px',
-              width: '16px',
+              width: '200px',
+              marginTop: '8px',
             }}
-          />
-        }
-        placeholder="Search by name, external id, or owner"
-        value={functionFilter}
-        onChange={evt => setFunctionFilter(evt.target.value)}
-        allowClear
-      />
-      <b>Sort by: </b>
-      <Select
-        style={{
-          width: '200px',
-          marginTop: '8px',
-        }}
-        value={sortFunctionCriteria}
-        onChange={(value: SortFunctions) => setSortFunctionCriteria(value)}
-      >
-        <Select.Option value="recentlyCalled">Recently Called</Select.Option>
-        <Select.Option value="recentlyCreated">Recently Created</Select.Option>
-      </Select>
+            value={sortFunctionCriteria}
+            onChange={(value: SortFunctions) => setSortFunctionCriteria(value)}
+          >
+            <Select.Option value="recentlyCalled">
+              Recently Called
+            </Select.Option>
+            <Select.Option value="recentlyCreated">
+              Recently Created
+            </Select.Option>
+          </Select>
+        </div>
+      )}
       <div style={{ marginTop: '8px' }}>
         {isProjectFunctionActivated && (
           <CollapseDiv>
@@ -177,17 +187,20 @@ function Functions() {
             />
           </CollapseDiv>
         )}
-        {activation?.requested && (
-          <Alert
+        {!activation?.activated && activation?.requested && (
+          <FunctionActivationAlert
+            showIcon
             description="Cognite function is getting ready.This might take sometime"
             message="Activation in Progress"
             type="warning"
           />
         )}
-        {!activation?.activated && (
+        {!activation?.requested && !activation?.activated && (
           <FunctionActivationAlert
             type="error"
             message="Cognite Functions is not activated for the project"
+            showIcon
+            description={<Button onClick={() => mutate()}>Activate</Button>}
           />
         )}
       </div>

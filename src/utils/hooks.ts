@@ -125,9 +125,9 @@ export const useCheckActivateFunction = (
   return useQuery<ActivationResponse>(
     ['activation', project],
     () =>
-      new Promise(resolve =>
-        resolve({ activated: false, project, requested: false })
-      ),
+      sdk
+        .get(`api/playground/projects/${project}/functions/status`)
+        .then(res => res.data),
     config
   );
 };
