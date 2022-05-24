@@ -1,136 +1,91 @@
 import groupBy from 'lodash/groupBy';
 import noop from 'lodash/noop';
 import set from 'lodash/set';
-import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
+import {
+  getDepthMeasurements,
+  getDepthMeasurementData,
+} from 'services/well/measurements/service';
 
 import { ProjectConfigWells } from '@cognite/discover-api-types';
-import { Sequence } from '@cognite/sdk';
 
 import { MetricLogger } from 'hooks/useTimeLog';
-import { Measurement, WellboreAssetIdMap } from 'modules/wellSearch/types';
-import { getWellboreAssetIdReverseMap } from 'modules/wellSearch/utils/common';
-
-import { getChunkNumberList } from './common';
+import {
+  MeasurementV3 as Measurement,
+  WdlMeasurementType,
+} from 'modules/wellSearch/types';
 
 // refactor to use generic log fetcher.
-export async function getMeasurementsByWellboreIds(
-  wellboreIds: number[],
-  wellboreAssetIdMap: WellboreAssetIdMap,
+export const getMeasurementsByWellboreIds = async (
+  wellboreMatchingIds: string[],
   config?: ProjectConfigWells,
   metricLogger: MetricLogger = [noop, noop]
-) {
-  const wellboreAssetIdReverseMap =
-    getWellboreAssetIdReverseMap(wellboreAssetIdMap);
-
+) => {
   const [startNetworkTimer, stopNetworkTimer] = metricLogger;
+
+  if (!config?.measurements || !config?.measurements?.enabled) return {};
 
   startNetworkTimer();
 
-  const idChunkList = getChunkNumberList(wellboreIds, 100);
+  // console.log('wellboreMatchingIds: ', wellboreMatchingIds);
 
-  const promises: Promise<Sequence[]>[] = [];
+  const depthMeasurementPromises = getDepthMeasurements(wellboreMatchingIds, [
+    WdlMeasurementType.GEOMECHANNICS,
+    WdlMeasurementType.PRESSURE,
+    WdlMeasurementType.FIT,
+    WdlMeasurementType.LOT,
+  ]);
 
-  const dataTypes: (keyof ProjectConfigWells)[] = [
-    'geomechanic',
-    'ppfg',
-    'fit',
-    'lot',
-  ];
-  const moduleConfig = config?.measurements;
+  const depthMeasurements = await depthMeasurementPromises;
 
-  if (moduleConfig?.enabled && moduleConfig?.metadata) {
-    idChunkList.forEach((wellIdChunk: number[]) => {
-      const baseFilters = {
-        assetIds: wellIdChunk.map((id) => wellboreAssetIdMap[id]),
-      };
-      dataTypes.forEach((dataType) => {
-        const dataTypeFilter = moduleConfig.metadata[dataType];
-        if (dataTypeFilter) {
-          promises.push(
-            getCogniteSDKClient()
-              .sequences.search({
-                ...dataTypeFilter,
-                filter: {
-                  ...dataTypeFilter.filter,
-                  ...baseFilters,
-                },
-              })
-              .then((sequences) =>
-                processSequenceResponse(
-                  sequences,
-                  wellboreAssetIdReverseMap,
-                  dataType
-                )
-              )
-          );
-        }
-      });
-    });
-  }
+  // console.log('depthmeasurements: ', depthMeasurements);
 
-  const results = ([] as Measurement[]).concat(
-    ...(await Promise.all(promises))
-  );
+  const results = ([] as Measurement[]).concat(...depthMeasurements);
 
-  const rowsPromises: Promise<void>[] = [];
-  results.forEach((sequence) => {
-    rowsPromises.push(
-      getCogniteSDKClient()
-        .sequences.retrieveRows({
-          id: sequence.id,
-          start: 0,
-          end: 1000,
-          limit: 1000,
+  /**
+   * Fetch row data for previously fetched sequences
+   */
+  const promiseMeasurements: Promise<Measurement>[] = [];
+  results.forEach((measurement) => {
+    promiseMeasurements.push(
+      getDepthMeasurementData(measurement.source.sequenceExternalId)
+        .then((depthMeasurementData) => {
+          // console.log('response: ', depthMeasurementData);
+          return {
+            ...measurement,
+            data: depthMeasurementData,
+          };
         })
-        .autoPagingToArray({ limit: 1000 })
-        .then((response) => {
-          // eslint-disable-next-line no-param-reassign
-          sequence.rows = response;
+        .catch((error) => {
+          // console.log('error: ', error);
+          const errorString = error.message as string;
+          return {
+            ...measurement,
+            errors: [
+              {
+                message: `Error fetching row data of '${measurement.source.sequenceExternalId}': ${errorString}`,
+              },
+            ],
+          };
         })
     );
   });
 
-  await Promise.all(rowsPromises);
+  const measurements = await Promise.all(promiseMeasurements);
 
-  const groupedData = groupBy(results, 'assetId');
-  wellboreIds.forEach((wellboreId) => {
+  // console.log('measurements: ', measurements);
+
+  const groupedData = groupBy(measurements, 'wellboreMatchingId');
+  wellboreMatchingIds.forEach((wellboreId) => {
     if (!groupedData[wellboreId]) {
       set(groupedData, wellboreId, []);
     }
   });
 
   stopNetworkTimer({
-    noOfWellbores: wellboreIds.length,
+    noOfWellbores: wellboreMatchingIds.length,
   });
 
+  // console.log('grouped: ', groupedData);
+
   return groupedData;
-}
-
-export const processSequenceResponse = (
-  sequences: Sequence[],
-  wellboreAssetIdMap: WellboreAssetIdMap,
-  dataType: string
-) => {
-  return sequences
-    .filter((sequence) => cleanPpfgResults(sequence, dataType))
-    .map((sequence) => ({
-      ...sequence,
-      assetId: wellboreAssetIdMap[sequence.assetId as number],
-      metadata: {
-        ...sequence.metadata,
-        dataType,
-      },
-    }));
-};
-
-/**
- * Filter out sequences if metadata description doesn't includes `ppfg`
- */
-export const cleanPpfgResults = (sequence: Sequence, dataType: string) => {
-  if (dataType !== 'ppfg') return true;
-  return sequence.columns.some(
-    (column) =>
-      column.metadata &&
-      column.metadata.description.toLowerCase().includes(dataType)
-  );
 };

@@ -1,66 +1,56 @@
+import 'services/wellSearch/__mocks/setupWellsMockSDK';
+import flatten from 'lodash/flatten';
+import { setupServer } from 'msw/node';
 import {
-  mockedPpfgSequenceUnwantedGeomechanicsSequence,
-  mockedPpfgSequenceValidPpfgSequence,
-  mockLotSequence,
-  mockWellboreAssetIdReverseMap,
-} from '__test-utils/fixtures/well';
+  getMockDepthMeasurements,
+  getMockDepthMeasurementData,
+  getMockDepthMeasurementDataRejectAll,
+} from 'services/well/measurements/__mocks/mockMeasurements';
 
-import { cleanPpfgResults, processSequenceResponse } from '../measurements';
+import { getMeasurementsByWellboreIds } from '../measurements';
 
-describe('Filter out unwanted geomechanics curves in the sequence. (cleanPpfgResults)', () => {
-  it('should return true since data type is not ppfg', async () => {
-    const result = cleanPpfgResults(
-      mockedPpfgSequenceUnwantedGeomechanicsSequence,
-      'lot'
-    );
-    expect(result).toBeTruthy();
-  });
+const mockServer = setupServer(
+  getMockDepthMeasurements(),
+  getMockDepthMeasurementData()
+);
 
-  it('should return false since sequence is a geomechanins', async () => {
-    const result = cleanPpfgResults(
-      mockedPpfgSequenceUnwantedGeomechanicsSequence,
-      'ppfg'
-    );
-    expect(result).toBeFalsy();
-  });
+const mockServerWithErrorApiCalls = setupServer(
+  getMockDepthMeasurements(),
+  getMockDepthMeasurementDataRejectAll()
+);
 
-  it('should return true since sequence is a ppfg', async () => {
-    const result = cleanPpfgResults(
-      mockedPpfgSequenceValidPpfgSequence,
-      'ppfg'
-    );
-    expect(result).toBeTruthy();
+describe('Measurement service', () => {
+  beforeAll(() => mockServer.listen());
+  afterAll(() => mockServer.close());
+
+  test('fetch measurments', async () => {
+    const matchingIds = ['pequin-wellbore-OMN2000002000'];
+    const result = await getMeasurementsByWellboreIds(matchingIds, {
+      measurements: { enabled: true },
+    });
+    expect(result).not.toBeUndefined();
+    const wellMeasurements = result[matchingIds[0]];
+    expect(wellMeasurements.length).toBe(1);
+    expect(wellMeasurements[0].data?.rows).not.toBe([]);
   });
 });
 
-describe('Should filter out geomechanics in ppfg result. (processSequenceResponse)', () => {
-  it('Should not alter geomechanics sequence', async () => {
-    const result = processSequenceResponse(
-      [mockedPpfgSequenceUnwantedGeomechanicsSequence],
-      mockWellboreAssetIdReverseMap,
-      'geomechanic'
-    );
-    expect(result.length).toBe(1);
-  });
+describe('Measurement service with error codes', () => {
+  beforeAll(() => mockServerWithErrorApiCalls.listen());
+  afterAll(() => mockServerWithErrorApiCalls.close());
 
-  it('Should not alter LOT sequence', async () => {
-    const result = processSequenceResponse(
-      [mockLotSequence],
-      mockWellboreAssetIdReverseMap,
-      'lot'
-    );
-    expect(result.length).toBe(1);
-  });
+  test('fetch measurments while 50% of row data calls failing', async () => {
+    const matchingIds = ['pequin-wellbore-OMN2000002000'];
+    const result = await getMeasurementsByWellboreIds(matchingIds, {
+      measurements: { enabled: true },
+    });
+    expect(result).not.toBeUndefined();
+    const wellMeasurements = result[matchingIds[0]];
+    expect(wellMeasurements.length).toBe(1);
 
-  it('Should filter out geomechanics from ppfg sequence', async () => {
-    const result = processSequenceResponse(
-      [
-        mockedPpfgSequenceUnwantedGeomechanicsSequence,
-        mockedPpfgSequenceValidPpfgSequence,
-      ],
-      mockWellboreAssetIdReverseMap,
-      'ppfg'
-    );
-    expect(result.length).toBe(1);
+    const errors = flatten(Object.values(result))
+      .filter((measurement) => measurement.errors)
+      .map((result) => result.errors);
+    expect(errors).not.toEqual([]);
   });
 });

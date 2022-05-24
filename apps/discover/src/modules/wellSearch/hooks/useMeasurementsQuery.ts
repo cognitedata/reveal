@@ -12,7 +12,7 @@ import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
 import { useWellInspectSelectedWellboreMatchingIds } from 'modules/wellInspect/hooks/useWellInspect';
 
-import { getMeasurementsByWellboreIds } from '../service/sequence/measurementsV3';
+import { getMeasurementsByWellboreIds } from '../service/sequence';
 import { WellboreMeasurementsMapV3 as WellboreMeasurementsMap } from '../types';
 import { trimCachedDataV3 as trimCachedData } from '../utils/common';
 

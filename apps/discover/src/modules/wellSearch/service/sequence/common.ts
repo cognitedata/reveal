@@ -2,42 +2,11 @@ import flatten from 'lodash/flatten';
 import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 import { log } from 'utils/log';
 
-import { Sequence } from '@cognite/sdk';
-
 import { showErrorMessage } from '../../../../components/Toast';
 
 export interface SequenceFilter {
   exclude?: string;
   filter?: any;
-}
-export async function getSequenceByWellboreIds(
-  wellboreIds: number[],
-  options: SequenceFilter = {}
-): Promise<Sequence[]> {
-  // console.log('Searching with filter:', options.filter);
-
-  const idChunkList = getChunkNumberList(wellboreIds, 100);
-  const sequences = Promise.all(
-    idChunkList.map((idChunk: number[]) =>
-      getCogniteSDKClient()
-        .sequences.list({
-          filter: {
-            assetIds: idChunk,
-            ...options.filter,
-          },
-        })
-        .then((list) => {
-          if (options.exclude) {
-            return list.items.filter((item) =>
-              item.name!.startsWith(options.exclude as string)
-            );
-          }
-
-          return list.items;
-        })
-    )
-  );
-  return ([] as Sequence[]).concat(...(await sequences));
 }
 
 export const getChunkNumberList = (list: number[], size: number) => {
