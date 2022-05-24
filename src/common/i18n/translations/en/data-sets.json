@@ -257,6 +257,10 @@
     "raw-section-insufficient-rights-p2": "Please request the following from your project administrator:",
     "raw-section-learn-more": "Learn more on how to ingest data to your RAW tables",
 
+    "resource-count-p1-1": "Count is not available. This may be due to insufficient access rights, to view the counts for {{resourceName}} you need",
+    "resource-count-p1-2": "capability.",
+    "resource-count-p2": "If your dataset is new, it may also be empty",
+
     "section-creation-flow-title-1": "1. Document data extraction",
     "section-creation-flow-title-2": "2. Document data transformations",
     "section-creation-flow-title-3": "3. Add documentation",
