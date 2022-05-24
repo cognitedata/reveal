@@ -50,21 +50,10 @@ describe(MeasurementTool.name, () => {
   });
 
   test('Set measurement line width and color', () => {
-    const setLineOptionsSpyOn = jest.spyOn(measurementTool, 'setLineOptions');
     const lineOptions = { lineWidth: 1.0, color: 0xff0000 };
     measurementTool.setLineOptions(lineOptions);
 
-    expect(setLineOptionsSpyOn).toBeCalled();
-    expect((measurementTool as any)._lineOptions.color).toBe(0xff0000);
-    expect((measurementTool as any)._lineOptions.lineWidth).toBe(1.0);
-  });
-
-  test('Calculate midpoint', () => {
-    const firstPoint = new THREE.Vector3(100, 100, 100);
-    const secondPoint = new THREE.Vector3(200, 200, 200);
-    const calculateMidpointSpyOn = jest.spyOn(MeasurementTool.prototype as any, 'calculateMidpoint');
-    const calculateMidpointImplementation = calculateMidpointSpyOn.getMockImplementation();
-
-    expect(calculateMidpointImplementation(firstPoint, secondPoint)).toEqual(new THREE.Vector3(150, 150, 150));
+    expect((measurementTool as any)._line._options.color).toBe(0xff0000);
+    expect((measurementTool as any)._line._options.lineWidth).toBe(1.0);
   });
 });
