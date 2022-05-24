@@ -81,7 +81,7 @@
     "@typescript-eslint/parser": "5.25.0",
     "copy-pkg-json-webpack-plugin": "0.0.40",
     "copy-webpack-plugin": "11.0.0",
-    "core-js": "3.22.6",
+    "core-js": "3.22.7",
     "cross-var": "1.1.0",
     "dat.gui": "0.7.9",
     "eslint": "8.16.0",
