@@ -2,7 +2,6 @@ import { screen, fireEvent } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { configure, mount } from 'enzyme';
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
-import dayjs from 'dayjs';
 import {
   mockPriceArea,
   getMockPriceArea,
@@ -10,6 +9,7 @@ import {
 } from 'utils/test';
 import { testRenderer } from 'utils/test/render';
 import * as utils from 'utils/utils';
+import { formatDate } from 'utils/utils';
 
 import {
   PortfolioHeader,
@@ -33,7 +33,7 @@ describe('Portfolio header tests', () => {
   });
 
   it('Should calculate the correct start date of the matrix generation process', async () => {
-    const startDate = dayjs(mockCreatedTime).format('MMM DD, YYYY @ HH:mm');
+    const startDate = formatDate(mockCreatedTime, true);
 
     const TestComponent: React.FC = () => {
       const { startDate } = useBidMatrixProcessStartDate(

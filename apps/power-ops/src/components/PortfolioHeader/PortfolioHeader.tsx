@@ -1,9 +1,8 @@
 import { Button, Label } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
-import { downloadBidMatrices } from 'utils/utils';
+import { downloadBidMatrices, formatDate } from 'utils/utils';
 import { PriceAreaWithData } from 'types';
 import { useEffect, useState } from 'react';
-import dayjs from 'dayjs';
 import { CogniteClient } from '@cognite/sdk';
 
 import { Header, StyledTitle } from './elements';
@@ -22,7 +21,7 @@ export const useBidMatrixProcessStartDate = (
         ignoreUnknownIds: true,
       })
       .then(([event]) => {
-        setStartDate(dayjs(event.createdTime).format('MMM DD, YYYY @ HH:mm'));
+        setStartDate(formatDate(event.createdTime, true));
       });
   };
 

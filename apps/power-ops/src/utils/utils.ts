@@ -3,6 +3,10 @@ import { DoubleDatapoint } from '@cognite/sdk';
 import { PriceAreaWithData, SequenceRow } from 'types';
 import sidecar from 'utils/sidecar';
 import axios from 'axios';
+import dayjs from 'dayjs';
+import isToday from 'dayjs/plugin/isToday';
+import isYesterday from 'dayjs/plugin/isYesterday';
+import isTomorrow from 'dayjs/plugin/isTomorrow';
 
 export const CHART_COLORS: string[] = [
   '#008b8b',
@@ -148,4 +152,24 @@ export const triggerDownloadFromBlob = (fileName: string, blob: Blob) => {
   document.body.appendChild(link);
   link.click();
   link.parentNode?.removeChild(link);
+};
+
+export const formatDate = (date: Date | dayjs.Dayjs, withHour?: boolean) => {
+  const formatDate = dayjs(date);
+  dayjs.extend(isToday);
+  dayjs.extend(isYesterday);
+  dayjs.extend(isTomorrow);
+
+  if (formatDate.isToday()) {
+    return withHour ? `Today ${dayjs(date).format('HH:mm')}` : 'Today';
+  }
+  if (formatDate.isYesterday()) {
+    return withHour ? `Yesterday ${dayjs(date).format('HH:mm')}` : 'Yesterday';
+  }
+  if (formatDate.isTomorrow()) {
+    return withHour ? `Tomorrow ${dayjs(date).format('HH:mm')}` : 'Tomorrow';
+  }
+  return withHour
+    ? formatDate.format('MMM DD, YYYY HH:mm')
+    : formatDate.format('MMM DD, YYYY');
 };
