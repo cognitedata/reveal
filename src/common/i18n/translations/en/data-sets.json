@@ -169,6 +169,14 @@
     "basic-info-tooltip-governance-status": "Governed indicates that the data set has a designated owner and follows the governance processes for data in your organization.",
     "basic-info-tooltip-data-set-archived": "This data set has been archived which means it is hidden from the UI by default but can still be accessed through the api.",
 
+    "creation-flow-field-source": "Tell us which source your data comes from",
+    "creation-flow-field-raw": "Document any RAW tables used",
+    "creation-flow-field-transform": "Document any transformations used",
+    "creation-flow-field-owners": "Specify owner(s)",
+    "creation-flow-field-docs": "Upload documentation or add links",
+    "creation-flow-field-quality": "Set governance status",
+    "creation-flow-field-consumer": "Register consumer(s)",
+
     "dataset-creation-raw-table-quantity_one": "{{rawTablesQuantity}} RAW table",
     "dataset-creation-raw-table-quantity_other": "{{rawTablesQuantity}} RAW tables",
     "dataset-creation-transformations-applied-quantity_one": "{{transformationsQuantity}} transformation applied",
