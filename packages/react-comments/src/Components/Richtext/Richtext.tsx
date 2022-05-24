@@ -181,7 +181,7 @@ export const Richtext: React.FC<RichtextProps> = ({
               className="cogs-comment--send-button"
               onClick={() => handlePost(value)}
             >
-              {editMode ? 'Edit' : 'Send'}
+              {editMode ? 'Save' : 'Send'}
             </Button>
           </ActionButtons>
         </Portal>
