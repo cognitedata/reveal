@@ -4,7 +4,6 @@ import Plotly from 'plotly.js-basic-dist';
 import { StatisticsResultResults } from '@cognite/calculation-backend';
 import { getUnitConverter } from 'utils/units';
 import { formatValueForDisplay } from 'utils/numbers';
-import { getDisplayUnit } from './utils';
 
 const Plot = createPlotlyComponent(Plotly);
 
@@ -12,6 +11,7 @@ type HistogramProps = {
   data?: StatisticsResultResults['histogram'];
   unit?: string;
   preferredUnit?: string;
+  unitLabel?: string;
   noDataText?: string;
 };
 
@@ -19,6 +19,7 @@ export const Histogram = ({
   data,
   unit,
   preferredUnit,
+  unitLabel,
   noDataText = 'No histogram data available',
 }: HistogramProps) => {
   if (!data || !data.length) {
@@ -62,7 +63,7 @@ export const Histogram = ({
           ticks: 'outside',
           tickangle: 45,
           title: {
-            text: getDisplayUnit(preferredUnit),
+            text: unitLabel,
             standoff: 60,
           },
         },

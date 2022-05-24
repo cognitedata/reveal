@@ -42,9 +42,9 @@ const UnitDropdown = ({
     (unitOption) => unitOption.value === unit?.toLowerCase()
   );
 
-  const [selectedUnitType, setSelectedUnitType] = useState<UnitTypes>(
-    inputUnitOption?.type || UnitTypes.CUSTOM
-  );
+  const [selectedUnitType, setSelectedUnitType] = useState<
+    UnitTypes | undefined
+  >(inputUnitOption?.type);
 
   const preferredUnitOption = units.find(
     (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
@@ -59,14 +59,8 @@ const UnitDropdown = ({
       ?.label || originalUnit;
 
   const unitTypeMenuItems = [
-    <Menu.Item
-      key="reset-unit"
-      onClick={() => onResetUnitClick()}
-      style={{
-        color: 'var(--cogs-danger)',
-      }}
-    >
-      Set to default ({originalUnitLabel || 'none'})
+    <Menu.Item key="reset-unit" onClick={() => onResetUnitClick()}>
+      Set to default ({originalUnitLabel || 'N/A'})
     </Menu.Item>,
     ...Object.values(UnitTypes).map((unitType) => {
       if (unitType === 'Custom') {
@@ -82,7 +76,7 @@ const UnitDropdown = ({
               e.stopPropagation();
             }}
             style={
-              selectedUnitType === UnitTypes.CUSTOM
+              !!customUnitLabel && selectedUnitType === UnitTypes.CUSTOM
                 ? {
                     color: 'var(--cogs-midblue-3)',
                     backgroundColor: 'var(--cogs-midblue-6)',
@@ -204,7 +198,11 @@ const UnitDropdown = ({
         iconPlacement="right"
         className="unit-btn"
       >
-        {preferredUnitOption?.label || preferredUnit || customUnitLabel || '-'}
+        {preferredUnitOption?.label ||
+          preferredUnit ||
+          customUnitLabel ||
+          originalUnit ||
+          '-'}
         {preferredUnit !== originalUnit && ' *'}
       </Button>
     </Dropdown>

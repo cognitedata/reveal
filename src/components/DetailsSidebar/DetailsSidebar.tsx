@@ -196,7 +196,8 @@ const Statistics = ({
   const { results: statistics } = useStatistics(sourceItem);
   const unit = sourceItem?.unit;
   const preferredUnit = sourceItem?.preferredUnit;
-  const displayUnit = getDisplayUnit(preferredUnit);
+  const customUnitLabel = sourceItem?.customUnitLabel;
+  const displayUnit = getDisplayUnit(preferredUnit, customUnitLabel);
   const convertUnit = getUnitConverter(unit, preferredUnit);
 
   const t = {
@@ -277,6 +278,7 @@ const Statistics = ({
             data={statistics?.histogram}
             unit={unit}
             preferredUnit={preferredUnit}
+            unitLabel={displayUnit}
             noDataText={t['No histogram data available']}
           />
         </HistogramWrapper>

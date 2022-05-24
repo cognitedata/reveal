@@ -73,7 +73,9 @@ export function calculateSeriesData({
         const unitLabel =
           units.find(
             (unitOption) => unitOption.value === t.preferredUnit?.toLowerCase()
-          )?.label || t.customUnitLabel;
+          )?.label ||
+          t.customUnitLabel ||
+          t.originalUnit;
 
         const timeseriesState = timeseriesData.find(
           (ts) => ts.externalId === t.tsExternalId

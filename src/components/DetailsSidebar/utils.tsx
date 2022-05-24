@@ -200,12 +200,17 @@ export const useStatistics = (
   return { results: statisticsData?.results };
 };
 
-export const getDisplayUnit = (preferredUnit?: string) => {
+export const getDisplayUnit = (
+  preferredUnit: string | undefined,
+  defaultLabel?: string
+) => {
   return (
     (
       units.find(
         (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
       ) || {}
-    ).label || preferredUnit
+    ).label ||
+    preferredUnit ||
+    defaultLabel
   );
 };
