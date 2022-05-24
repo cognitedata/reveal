@@ -1,6 +1,6 @@
 import React from 'react';
-import { Icon } from 'antd';
-import { Tooltip } from '@cognite/cogs.js';
+
+import { Icon, Tooltip } from '@cognite/cogs.js';
 import { useSchedules } from 'utils/hooks';
 
 type Props = {
@@ -19,8 +19,7 @@ export default function FunctionScheduleIndicator({ id, externalId }: Props) {
     return (
       <Tooltip placement="top" content={`Has ${schedules.length} schedules`}>
         <Icon
-          type="clock-circle"
-          theme="twoTone"
+          type="Clock"
           style={{ marginLeft: '8px', verticalAlign: 'text-top' }}
         />
       </Tooltip>

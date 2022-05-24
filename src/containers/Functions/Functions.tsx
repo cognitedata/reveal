@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Row, Collapse, Input, Pagination, Select } from 'antd';
+import { Row, Collapse, Input, Pagination, Select, Alert } from 'antd';
 import { Colors, Button, Icon } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
@@ -12,12 +12,25 @@ import FunctionPanelHeader from 'containers/Functions/FunctionPanelHeader';
 import FunctionPanelContent from 'containers/Functions/FunctionPanelContent';
 import UploadFunctionButton from 'components/buttons/UploadFunctionButton';
 
-import { useFunctions, useMultipleCalls, useRefreshApp } from 'utils/hooks';
+import {
+  // useActivateFunction,
+  useCheckActivateFunction,
+  useFunctions,
+  useMultipleCalls,
+  useRefreshApp,
+} from 'utils/hooks';
 
 const CollapseDiv = styled.div`
   .ant-collapse-header[aria-expanded='true'] {
     background-color: ${Colors['midblue-6'].hex()};
   }
+`;
+
+const FunctionActivationAlert = styled(Alert)`
+  min-height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const FUNCTIONS_PER_PAGE = 10;
@@ -52,6 +65,10 @@ function Functions() {
       ? sortLastCall(calls)
       : recentlyCreated;
 
+  const { data: activation, isLoading, isError } = useCheckActivateFunction();
+  // const [mutate] = useActivateFunction();
+
+  console.log({ activation, isLoading, isError });
   const sortedFunctions = functions?.sort(sortFn);
   const filteredFunctions = sortedFunctions?.filter((f: CogFunction) =>
     [f.name, f.externalId || '', f.owner || '']
@@ -60,29 +77,35 @@ function Functions() {
       .includes(functionFilter.toLowerCase())
   );
 
+  const isProjectFunctionActivated =
+    !isLoading && !isError && activation?.activated;
+
   return (
     <>
       <PageTitle title="Functions" />
       <Row>
         <h1 style={{ display: 'inline-block' }}>Functions</h1>
-        <div
-          style={{
-            float: 'right',
-            marginTop: '8px',
-            display: 'inline-flex',
-          }}
-        >
-          <UploadFunctionButton />
 
-          <Button
-            icon={isFetching || !callsDone ? 'Loading' : 'Refresh'}
-            disabled={isFetching}
-            onClick={() => refresh()}
-            style={{ marginLeft: '8px' }}
+        {isProjectFunctionActivated && (
+          <div
+            style={{
+              float: 'right',
+              marginTop: '8px',
+              display: 'inline-flex',
+            }}
           >
-            Refresh
-          </Button>
-        </div>
+            <UploadFunctionButton />
+
+            <Button
+              icon={isFetching || !callsDone ? 'Loading' : 'Refresh'}
+              disabled={isFetching}
+              onClick={() => refresh()}
+              style={{ marginLeft: '8px' }}
+            >
+              Refresh
+            </Button>
+          </div>
+        )}
       </Row>
       <Input
         name="filter"
@@ -113,45 +136,60 @@ function Functions() {
         <Select.Option value="recentlyCreated">Recently Created</Select.Option>
       </Select>
       <div style={{ marginTop: '8px' }}>
-        <CollapseDiv>
-          <Collapse>
-            {filteredFunctions
-              ? filteredFunctions
-                  .slice(
-                    (currentPage - 1) * FUNCTIONS_PER_PAGE,
-                    currentPage * FUNCTIONS_PER_PAGE
-                  )
-                  .map(({ id, name, externalId, error }: CogFunction) => {
-                    return (
-                      <Panel
-                        key={id}
-                        header={
-                          <FunctionPanelHeader
+        {isProjectFunctionActivated && (
+          <CollapseDiv>
+            <Collapse>
+              {filteredFunctions
+                ? filteredFunctions
+                    .slice(
+                      (currentPage - 1) * FUNCTIONS_PER_PAGE,
+                      currentPage * FUNCTIONS_PER_PAGE
+                    )
+                    .map(({ id, name, externalId, error }: CogFunction) => {
+                      return (
+                        <Panel
+                          key={id}
+                          header={
+                            <FunctionPanelHeader
+                              id={id}
+                              name={name}
+                              externalId={externalId}
+                            />
+                          }
+                        >
+                          <FunctionPanelContent
                             id={id}
                             name={name}
                             externalId={externalId}
+                            error={error}
                           />
-                        }
-                      >
-                        <FunctionPanelContent
-                          id={id}
-                          name={name}
-                          externalId={externalId}
-                          error={error}
-                        />
-                      </Panel>
-                    );
-                  })
-              : null}
-          </Collapse>
-          <Pagination
-            current={currentPage}
-            total={filteredFunctions?.length}
-            defaultPageSize={FUNCTIONS_PER_PAGE}
-            onChange={page => setCurrentPage(page)}
-            style={{ float: 'right', marginTop: '8px' }}
+                        </Panel>
+                      );
+                    })
+                : null}
+            </Collapse>
+            <Pagination
+              current={currentPage}
+              total={filteredFunctions?.length}
+              defaultPageSize={FUNCTIONS_PER_PAGE}
+              onChange={page => setCurrentPage(page)}
+              style={{ float: 'right', marginTop: '8px' }}
+            />
+          </CollapseDiv>
+        )}
+        {activation?.requested && (
+          <Alert
+            description="Cognite function is getting ready.This might take sometime"
+            message="Activation in Progress"
+            type="warning"
           />
-        </CollapseDiv>
+        )}
+        {!activation?.activated && (
+          <FunctionActivationAlert
+            type="error"
+            message="Cognite Functions is not activated for the project"
+          />
+        )}
       </div>
     </>
   );
