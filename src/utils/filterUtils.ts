@@ -45,6 +45,7 @@ const handleDataSetsSearch = (
             ))
       );
     } catch (e) {
+      // TODO CDFUX-1573 - figure out translation
       notification.error({ message: 'Invalid search value' });
       setSearchValue('');
       return dataSetsList;

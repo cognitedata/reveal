@@ -20,6 +20,7 @@ import FilesTable from '../FilesTable/FilesTable';
 import SequencesTable from '../SequencesTable';
 import EventsProfile from '../EventsProfile';
 import ResourceCountBox from '../ResourceCountBox';
+import { useTranslation } from 'common/i18n';
 
 interface ExploreDataProps {
   loading: boolean;
@@ -27,6 +28,7 @@ interface ExploreDataProps {
 }
 
 const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
+  const { t } = useTranslation();
   const [exploreView, setExploreView] = useState<ExploreViewConfig>({
     visible: false,
   });
@@ -111,7 +113,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
     return (
       <Spin spinning={loading}>
         <ContentView>
-          <ItemLabel>Data profile</ItemLabel>
+          <ItemLabel>{t('data-profile')}</ItemLabel>
           <Col
             span={24}
             style={{ display: 'flex', flexWrap: 'wrap', marginBottom: '20px' }}
@@ -145,7 +147,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
     <div style={{ marginTop: '10%' }}>
       <EmptyState
         type="DataSets"
-        text="This data set contains no data"
+        text={t('this-data-set-contains-no-data')}
         extra={
           <div>
             <a
@@ -153,9 +155,9 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Click here
+              {t('click-here')}
             </a>{' '}
-            to learn more on how to add data to your data set
+            {t('learn-more-how-to-add-data')}
           </div>
         }
       />

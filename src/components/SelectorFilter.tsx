@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import styled from 'styled-components';
 import Radio from 'antd/lib/radio';
 import useLocalStorage from 'hooks/useLocalStorage';
+import { useTranslation } from 'common/i18n';
 
 interface SelectorFilterProps {
   filterName: string;
@@ -23,6 +24,7 @@ const SelectorFilter = ({
   filterName,
   persistSelection = true,
 }: SelectorFilterProps): JSX.Element => {
+  const { t } = useTranslation();
   const [storageValue, setStorageValue] = useLocalStorage(
     filterName,
     defaultValue
@@ -45,7 +47,7 @@ const SelectorFilter = ({
         }
         defaultValue={storageValue}
       >
-        <Radio.Button value="all">All</Radio.Button>
+        <Radio.Button value="all">{t('all')}</Radio.Button>
         {selectionOptions &&
           selectionOptions.map((selection) => (
             <Radio.Button key={selection.name} value={selection.value}>

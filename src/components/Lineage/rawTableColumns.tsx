@@ -5,6 +5,7 @@ import { RawExtpipeWithUpdateTime } from 'components/Lineage/Extpipe/ExtpipeRawT
 import { ExtpipeLink } from 'components/Lineage/Extpipe/ExtpipeLink';
 import { NoStyleList } from 'utils/styledComponents';
 
+// TODO CDFUX-1573 - figure out translation
 export const rawTablesColumns = [
   {
     title: 'Database name',

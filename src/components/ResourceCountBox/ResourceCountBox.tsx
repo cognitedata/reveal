@@ -9,6 +9,7 @@ import Tooltip from 'antd/lib/tooltip';
 import { abbreviateNumber, getContainer } from 'utils/shared';
 import { Icons } from '@cognite/cogs.js';
 import { ExploreViewConfig } from 'utils/types';
+import { useTranslation } from 'common/i18n';
 
 interface ResourceCountBoxProps {
   count: number;
@@ -23,6 +24,7 @@ const ResourceCountBox = ({
   setExploreView,
   dataSetId,
 }: ResourceCountBoxProps) => {
+  const { t } = useTranslation();
   const handleOnClick = () => {
     if (resourceName === 'Events' && setExploreView && dataSetId) {
       setExploreView({
@@ -37,7 +39,7 @@ const ResourceCountBox = ({
     <Col xs={24} sm={16} md={12} lg={6} xl={6} xxl={6}>
       {count > 0 && (
         <Tooltip
-          title={isEvents() && <p>View events profile</p>}
+          title={isEvents() && <p>{t('view-events-profile')}</p>}
           getPopupContainer={getContainer}
         >
           <BorderedBox
@@ -63,7 +65,7 @@ const ResourceCountBox = ({
           <EmptyValueTag>{count}</EmptyValueTag>
         </EmptyBorderedBox>
       )}
-
+      {/* TODO CDFUX-1573 - figure out translation */}
       {count === -1 && (
         <Tooltip
           title={

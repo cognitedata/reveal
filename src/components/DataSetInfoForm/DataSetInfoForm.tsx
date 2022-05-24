@@ -23,6 +23,7 @@ import { useCdfGroups, useLabelSuggestions } from 'actions';
 import Alert from 'antd/lib/alert';
 
 import { NAME_MAX_LENGTH, DESC_MAX_LENGTH } from 'utils/constants';
+import { useTranslation } from 'common/i18n';
 
 const { Panel } = Collapse;
 
@@ -51,23 +52,26 @@ declare module 'antd/lib/select' {
 }
 
 const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
+  const { t } = useTranslation();
   const { groups: groupsList, isLoading, error } = useCdfGroups();
   const { labels: labelSuggestions } = useLabelSuggestions();
 
   const nameTooLongError =
     (props.dataSetName?.length ?? 0) > NAME_MAX_LENGTH
-      ? `Name cannot exceed ${NAME_MAX_LENGTH} characters`
+      ? t('dataset-info-form-too-long-name', { maxLength: NAME_MAX_LENGTH })
       : false;
   const descTooLongError =
     (props.dataSetDescription?.length ?? 0) > DESC_MAX_LENGTH
-      ? `Description cannot exceed ${DESC_MAX_LENGTH} characters`
+      ? t('dataset-info-form-too-long-description', {
+          maxLength: DESC_MAX_LENGTH,
+        })
       : false;
 
   return (
     <Col span={24}>
-      <SectionTitle>Basic information</SectionTitle>
+      <SectionTitle>{t('basic-information')}</SectionTitle>
       <TitleOrnament />
-      <RequiredFieldLabel>Name</RequiredFieldLabel>
+      <RequiredFieldLabel>{t('name')}</RequiredFieldLabel>
       <InputField
         value={props.dataSetName}
         onChange={(e) => {
@@ -77,11 +81,11 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
           }
         }}
         type="text"
-        placeholder="Name"
+        placeholder={t('name')}
         error={nameTooLongError}
       />
 
-      <RequiredFieldLabel>Description</RequiredFieldLabel>
+      <RequiredFieldLabel>{t('description')}</RequiredFieldLabel>
       <InputField
         style={{ height: ' 60px' }}
         value={props.dataSetDescription}
@@ -91,12 +95,12 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
             props.setChangesSaved(false);
           }
         }}
-        placeholder="Description"
+        placeholder={t('description')}
         size="large"
         error={descTooLongError}
       />
 
-      <FieldLabel>Labels</FieldLabel>
+      <FieldLabel>{t('label_other')}</FieldLabel>
       <Select
         mode="tags"
         style={{ width: '600px', background: theme.blandColor }}
@@ -107,8 +111,8 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
             props.setChangesSaved(false);
           }
         }}
-        notFoundContent="Enter labels to add to your data set"
-        placeholder="Labels"
+        notFoundContent={t('dataset-info-form-enter-labels')}
+        placeholder={t('label_other')}
         getPopupContainer={getContainer}
       >
         {Array.isArray(props.selectedLabels) &&
@@ -134,12 +138,11 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
       </Select>
       <FieldLabel>
         <InfoTooltip
-          title="Write-protected"
-          tooltipText="Only members of groups that you explicitly grant access, can write
-      data to a write-protected data set."
+          title={t('write-protected')}
+          tooltipText={t('dataset-info-form-permissions-tooltip')}
           showIcon
           url="https://docs.cognite.com/cdf/data_governance/concepts/datasets/#write-protection"
-          urlTitle="Learn more in our docs."
+          urlTitle={t('learn-more-in-our-docs')}
         />
       </FieldLabel>
       <Switch
@@ -152,13 +155,13 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
 
       {props.writeProtected && (
         <div>
-          <FieldLabel>
-            Owners (only owners can write data to a write-protected data set)
-          </FieldLabel>
+          <FieldLabel>{t('dataset-info-form-owners')}</FieldLabel>
           {error ? (
             <Alert
               type="error"
-              message="Failed to fetch CDF groups. Please try again"
+              message={`${t('fetch-cdf-groups-failed')} ${t(
+                'please-try-again'
+              )}`}
             />
           ) : (
             <Select<any>
@@ -219,10 +222,10 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
       >
         <Panel
           style={{ border: '0px', padding: '0px' }}
-          header="Advanced options"
+          header={t('advanced-options')}
           key="1"
         >
-          <FieldLabel>External ID</FieldLabel>
+          <FieldLabel>{t('external-id')}</FieldLabel>
           <InputField
             value={props.externalId}
             onChange={(e) => {
@@ -232,7 +235,7 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
               }
             }}
             type="text"
-            placeholder="External ID"
+            placeholder={t('external-id')}
           />
         </Panel>
       </Collapse>

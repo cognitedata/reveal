@@ -1,12 +1,9 @@
 import { FunctionComponent, PropsWithChildren } from 'react';
 import styled from 'styled-components';
-import {
-  Extractor,
-  EXTRACTOR_TEXT,
-  ExtractorProps,
-} from '../Extractor/Extractor';
-import { Source, SOURCE_TEXT, SourceProps } from '../Source/Source';
+import { Extractor, ExtractorProps } from '../Extractor/Extractor';
+import { Source, SourceProps } from '../Source/Source';
 import { LineageSubTitle } from '../../../utils/styledComponents';
+import { useTranslation } from 'common/i18n';
 
 const ExtpipeSourceExtractorTitle = styled.h4`
   text-transform: uppercase;
@@ -24,13 +21,18 @@ export const ExtpipeSourceExtractor: FunctionComponent<ExtpipeSourceExtractorPro
     extractorAccounts,
     sourceNames,
   }: PropsWithChildren<ExtpipeSourceExtractorProps>) => {
+    const { t } = useTranslation();
     return (
       <Wrapper>
-        <ExtpipeSourceExtractorTitle>Source</ExtpipeSourceExtractorTitle>
-        <LineageSubTitle>{SOURCE_TEXT}</LineageSubTitle>
+        <ExtpipeSourceExtractorTitle>
+          {t('source_one')}
+        </ExtpipeSourceExtractorTitle>
+        <LineageSubTitle>{t('lineage-source-text')}</LineageSubTitle>
         <Source sourceNames={sourceNames} />
-        <ExtpipeSourceExtractorTitle>Extractor</ExtpipeSourceExtractorTitle>
-        <LineageSubTitle>{EXTRACTOR_TEXT}</LineageSubTitle>
+        <ExtpipeSourceExtractorTitle>
+          {t('extractor_one')}
+        </ExtpipeSourceExtractorTitle>
+        <LineageSubTitle>{t('lineage-extractor-text')}</LineageSubTitle>
         <Extractor extractorAccounts={extractorAccounts} />
       </Wrapper>
     );

@@ -15,6 +15,7 @@ interface CreationFlowSectionProps {
   name: string;
 }
 
+// TODO CDFUX-1573 - figure out translation
 const DataInStatusFields = [
   {
     field: 'Tell us which source your data comes from',

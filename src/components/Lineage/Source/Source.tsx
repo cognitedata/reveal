@@ -1,9 +1,7 @@
 import { FunctionComponent, PropsWithChildren } from 'react';
 import Tag from 'antd/lib/tag';
 import { NoDataText, NoStyleList } from 'utils/styledComponents';
-
-export const SOURCE_TEXT: Readonly<string> =
-  'The data set comes from a data source which can be a source system, a file, or an application.';
+import { useTranslation } from 'common/i18n';
 
 export interface SourceProps {
   sourceNames?: string[];
@@ -12,6 +10,7 @@ export interface SourceProps {
 export const Source: FunctionComponent<SourceProps> = ({
   sourceNames,
 }: PropsWithChildren<SourceProps>) => {
+  const { t } = useTranslation();
   return (
     <NoStyleList>
       {sourceNames ? (
@@ -21,7 +20,7 @@ export const Source: FunctionComponent<SourceProps> = ({
           </li>
         ))
       ) : (
-        <NoDataText>No source set</NoDataText>
+        <NoDataText>{t('no-source-set')}</NoDataText>
       )}
     </NoStyleList>
   );

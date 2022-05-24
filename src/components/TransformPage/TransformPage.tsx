@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { JetfireApi } from 'jetfire/JetfireApi';
 import { DataSet } from 'utils/types';
 import { getJetfireUrl, getStringCdfEnv, getContainer } from 'utils/shared';
+import { useTranslation } from 'common/i18n';
 import Drawer from 'components/Drawer';
 import {
   InfoSubtitle,
@@ -23,6 +24,7 @@ import { notification } from 'antd';
 
 const jetfire = new JetfireApi(sdk, sdk.project, getJetfireUrl());
 
+// TODO CDFUX-1573 - figure out translation
 const columns = [
   {
     key: 'name',
@@ -67,6 +69,7 @@ interface TransformPageProps {
 }
 
 const TransformPage = (props: TransformPageProps): JSX.Element => {
+  const { t } = useTranslation();
   const [transformationsList, setTransformationsList] = useState<any[]>([]);
   const [selectedTransforms, setSelectedTransforms] = useState<any[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
@@ -103,9 +106,9 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
 
   const cdfTransformations = () => (
     <>
-      <MiniInfoTitle>Select CDF SQL transformations used</MiniInfoTitle>
+      <MiniInfoTitle>{t('transform-select-transformations')}</MiniInfoTitle>
       <Input
-        placeholder="Search for transformations"
+        placeholder={t('transform-search-placeholder')}
         value={searchValue}
         onChange={(e) => setSearchValue(e.currentTarget.value)}
         style={{
@@ -121,21 +124,22 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
         dataSource={transformationsList}
         rowSelection={rowSelection}
         locale={{
-          emptyText:
-            'No transformations, click New transformation to create a new transformation',
+          emptyText: t('transform-no-transformations'),
         }}
         getPopupContainer={getContainer}
       />
-      <Button onClick={() => handleNewTransform()}>New transformation</Button>
+      <Button onClick={() => handleNewTransform()}>
+        {t('new-transformation')}
+      </Button>
       <MiniInfoTitle style={{ marginTop: '20px' }}>
-        Learn more about CDF SQL transformations{' '}
+        {t('transform-learn-more')}
         <a
           href="https://docs.cognite.com/cdf/integration/guides/transformation/transformations.html#cdf-transformations"
           target="_blank"
           rel="noopener noreferrer"
         >
-          here.
-        </a>{' '}
+          {t('here')}
+        </a>
       </MiniInfoTitle>
     </>
   );
@@ -179,7 +183,7 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
           )
         );
       } catch (e) {
-        notification.error({ message: 'Invalid search value' });
+        notification.error({ message: t('invalid-search-value') });
         setSearchValue('');
       }
     } else {
@@ -218,7 +222,9 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
 
   const handleNewTransform = () => {
     trackEvent('DataSets.CreationFlow.Created new transform');
-    const name = `New Transform ${props.dataSet ? props.dataSet.name : ''}`;
+    const name = t('transform-new-transform', {
+      dataSetName: props.dataSet ? props.dataSet.name : '',
+    });
     jetfire
       .postTransformConfig({ name })
       .then((config) => {
@@ -233,7 +239,7 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
 
   return (
     <Drawer
-      title={<div>Document data transformations</div>}
+      title={<div>{t('transform-drawer-title')}</div>}
       width="50%"
       onClose={() => props.closeModal()}
       visible={props.visible}
@@ -244,13 +250,15 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
       <div style={{ padding: '5px' }}>
         <Col span={24}>
           <Col span={18}>
-            <MiniInfoTitle>External tranformations</MiniInfoTitle>
+            <MiniInfoTitle>{t('external-tranformations')}</MiniInfoTitle>
             <InfoSubtitle>
-              Document any tranformations done outside of CDF.
+              {t('transform-document-external-transformations')}
             </InfoSubtitle>
             <Input
               style={{ height: '40px', width: '400px' }}
-              placeholder="Ex: Python script..."
+              placeholder={t(
+                'transform-external-transformation-search-placeholder'
+              )}
               value={externalTransformation}
               onChange={(e) => {
                 setExternalTransformations(e.currentTarget.value);
@@ -260,7 +268,7 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
           </Col>
           <Col span={6}>
             <IconWrapper>
-              <img src={jetfireIcon} alt="Add data " />
+              <img src={jetfireIcon} alt={t('add-data')} />
             </IconWrapper>
           </Col>
         </Col>
@@ -269,14 +277,11 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
             cdfTransformations()
           ) : (
             <MiniInfoTitle>
-              CDF Transformations for this data set
+              {t('transform-info-title')}
               <BlockedInformationWrapper style={{ marginTop: '20px' }}>
                 <p>
-                  You have insufficient rights to view transformations in this
-                  project.
-                  <br /> Please request from your project administrator to be
-                  added to the &quot;transformations&quot; access management
-                  group
+                  {t('transform-info-p1')}
+                  <br /> {t('transform-info-p2')}
                 </p>
               </BlockedInformationWrapper>
             </MiniInfoTitle>

@@ -9,12 +9,14 @@ import { getContainer } from 'utils/shared';
 import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
 import sdk from '@cognite/cdf-sdk-singleton';
 import ColumnWrapper from '../ColumnWrapper';
+import { useTranslation } from 'common/i18n';
 
 interface TimeseriesPreviewProps {
   dataSetId: number;
 }
 
 const TimeseriesPreview = ({ dataSetId }: TimeseriesPreviewProps) => {
+  const { t } = useTranslation();
   const [timeseries, setTimeseries] = useState<Timeseries[]>();
 
   useEffect(() => {
@@ -22,47 +24,47 @@ const TimeseriesPreview = ({ dataSetId }: TimeseriesPreviewProps) => {
       .list({ filter: { dataSetIds: [{ id: dataSetId }] } })
       .then((res) => setTimeseries(res.items))
       .catch((e) =>
-        handleError({ message: 'Failed to fetch timeseries', ...e })
+        handleError({ message: t('fetch-timeseries-failed'), ...e })
       );
-  }, [dataSetId]);
+  }, [dataSetId, t]);
 
   const timeseriesColumns = [
     {
-      title: 'Name',
+      title: t('name'),
       dataIndex: 'name',
       key: 'name',
       render: (value: any) => <ColumnWrapper title={value} />,
     },
     {
-      title: 'ID',
+      title: t('id'),
       dataIndex: 'id',
       key: 'id',
       render: (value: any) => <ColumnWrapper title={value} />,
     },
     {
-      title: 'External ID',
+      title: t('external-id'),
       dataIndex: 'externalId',
       key: 'externalId',
       render: (value: any) => <ColumnWrapper title={value} />,
     },
     {
-      title: 'Description',
+      title: t('description'),
       dataIndex: 'description',
       key: 'description',
     },
     {
-      title: 'Asset ID',
+      title: t('asset-id'),
       dataIndex: 'assetId',
       key: 'assetId',
       render: (value: any) => <ColumnWrapper title={value} />,
     },
     {
-      title: 'Actions',
+      title: t('action_other'),
       render: (record: Timeseries) => {
         return (
           <span>
             <Link to={createLink(`/explore/timeSeries/${record.id}`)}>
-              View
+              {t('view')}
             </Link>
           </span>
         );
@@ -72,7 +74,7 @@ const TimeseriesPreview = ({ dataSetId }: TimeseriesPreviewProps) => {
 
   return (
     <div id="#timeseries">
-      <ItemLabel>Timeseries</ItemLabel>
+      <ItemLabel>{t('time-series')}</ItemLabel>
       <Table
         rowKey="id"
         columns={timeseriesColumns}

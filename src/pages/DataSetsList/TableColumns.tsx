@@ -49,6 +49,7 @@ const getLabelsList = (dataSets: DataSet[], showArchived: boolean) => {
   return labels.sort();
 };
 
+// TODO CDFUX-1573 - figure out translation
 const getTableColumns = (
   dataSets: DataSet[],
   showArchived: boolean,

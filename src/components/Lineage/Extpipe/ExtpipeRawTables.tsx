@@ -21,6 +21,7 @@ import {
   combineDataSetAndExtpipesRawTables,
   updateRawTableWithLastUpdate,
 } from 'components/Lineage/Extpipe/rawTablesUtils';
+import { useTranslation } from 'common/i18n';
 
 export interface RawExtpipeWithUpdateTime extends RawTable {
   lastUpdate: string;
@@ -36,6 +37,7 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
   dataSet,
   isExtpipesFetched,
 }: PropsWithChildren<ExtpipeRawTablesProps>) => {
+  const { t } = useTranslation();
   const [rawList, setRawList] = useState<RawExtpipeWithUpdateTime[]>([]);
   const [loadingRaw, setLoadingRaw] = useState<boolean>(true);
 
@@ -55,10 +57,8 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
 
   return (
     <Timeline.Item dot={<LineageDot />}>
-      <LineageTitle>Raw Tables</LineageTitle>
-      <LineageSubTitle>
-        The RAW tables below are used in this data extpipe.
-      </LineageSubTitle>
+      <LineageTitle>{t('raw-table_other')}</LineageTitle>
+      <LineageSubTitle>{t('extpipe-raw-tables-title')}</LineageSubTitle>
       {isExtpipesFetched ? (
         <Table
           loading={loadingRaw}

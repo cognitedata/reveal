@@ -6,6 +6,7 @@ import sdk from '@cognite/cdf-sdk-singleton';
 import Table from 'antd/lib/table';
 import handleError from 'utils/handleError';
 import { getContainer } from 'utils/shared';
+import { useTranslation } from 'common/i18n';
 
 interface EventsProfileProps {
   dataSetId: string | number;
@@ -20,6 +21,7 @@ interface AggregateObject {
 
 const AggregateColumns = (aggregate: string) => [
   {
+    // TODO CDFUX-1573 - figure out translation
     title: `${aggregate}`,
     dataIndex: 'value',
     key: 'value',
@@ -34,6 +36,7 @@ const AggregateColumns = (aggregate: string) => [
 const AGGREGATE_EVENTS_PATH = `/api/playground/projects/${sdk.project}/events/aggregate`;
 
 const EventsProfile = (props: EventsProfileProps) => {
+  const { t } = useTranslation();
   const [types, setTypes] = useState<AggregateObject[]>([]);
   const [subtypes, setSubtypes] = useState<AggregateObject[]>([]);
 
@@ -50,7 +53,7 @@ const EventsProfile = (props: EventsProfileProps) => {
         setTypes(res.data.items);
       })
       .catch((err) =>
-        handleError({ message: 'Failed to aggregate event types', ...err })
+        handleError({ message: t('events-profile-failed-event-types'), ...err })
       );
     sdk
       .post(AGGREGATE_EVENTS_PATH, {
@@ -64,9 +67,12 @@ const EventsProfile = (props: EventsProfileProps) => {
         setSubtypes(res.data.items);
       })
       .catch((err) =>
-        handleError({ message: 'Failed to aggregate event subtypes', ...err })
+        handleError({
+          message: t('events-profile-failed-event-subtypes'),
+          ...err,
+        })
       );
-  }, [props.dataSetId]);
+  }, [props.dataSetId, t]);
 
   return (
     <Drawer
@@ -77,20 +83,20 @@ const EventsProfile = (props: EventsProfileProps) => {
         color: 'white',
         fontSize: '16px',
       }}
-      title={<DrawerHeader>Events profile </DrawerHeader>}
+      title={<DrawerHeader>{t('events-profile')}</DrawerHeader>}
       width={700}
       visible={props.visible}
       onClose={() => props.closeDrawer()}
     >
       <div>
-        <ItemLabel>Event types in this data set</ItemLabel>
+        <ItemLabel>{t('events-profile-types')}</ItemLabel>
         <Table
           rowKey="value"
           columns={AggregateColumns('Type')}
           dataSource={types}
           getPopupContainer={getContainer}
         />
-        <ItemLabel>Event subtypes in this data set</ItemLabel>
+        <ItemLabel>{t('events-profile-subtypes')}</ItemLabel>
 
         <Table
           rowKey="value"

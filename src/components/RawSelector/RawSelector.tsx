@@ -15,6 +15,7 @@ import {
 } from 'utils/styledComponents';
 import { RawTable } from 'utils/types';
 import Tooltip from 'antd/lib/tooltip';
+import { useTranslation } from 'common/i18n';
 
 type DatabaseWithTablesItem = {
   database: RawDB;
@@ -33,6 +34,7 @@ interface RawSelectorProps {
   selectedDb: string;
 }
 
+// TODO CDFUX-1573 - figure out translation
 const SelectionColumns = [
   {
     title: 'Database selected',
@@ -68,6 +70,7 @@ const SelectionColumns = [
 ];
 
 const RawSelector = (props: RawSelectorProps): JSX.Element => {
+  const { t } = useTranslation();
   const [dbSearch, setDbSearch] = useState<string>('');
   const [tableSearch, setTableSearch] = useState<string>('');
 
@@ -143,7 +146,7 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
         .map((item) => (
           <StyledMenuItem key={item.name}>
             <Tooltip
-              title="Select all tables in this database"
+              title={t('select-all-tables-in-this-database')}
               getPopupContainer={getContainer}
             >
               <Checkbox
@@ -165,7 +168,7 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
     return props.databaseList.map((item) => (
       <StyledMenuItem key={item.name}>
         <Tooltip
-          title="Select all tables in this database"
+          title={t('select-all-tables-in-this-database')}
           getPopupContainer={getContainer}
         >
           <Checkbox
@@ -209,19 +212,19 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
       <div style={{ padding: '5px' }}>
         <Col span={24}>
           <Col span={12}>
-            <h3>Databases</h3>
+            <h3>{t('database_other')}</h3>
             <RawCreateButton
               onClick={() => {
                 props.setCreateModal('database');
                 props.setCreateVisible(true);
               }}
             >
-              Create database
+              {t('create-database')}
             </RawCreateButton>
             {props.databaseList && (
               <ListBox>
                 <SearchField
-                  placeholder="Filter databases"
+                  placeholder={t('filter-databases')}
                   style={{ width: '100%' }}
                   allowClear
                   onChange={(val) => setDbSearch(val.currentTarget.value)}
@@ -237,7 +240,7 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
             )}
           </Col>
           <Col span={12}>
-            <h3>Tables</h3>
+            <h3>{t('table_other')}</h3>
             <RawCreateButton
               onClick={() => {
                 props.setCreateModal('table');
@@ -245,13 +248,13 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
               }}
               disabled={!props.selectedDb}
             >
-              Create table
+              {t('create-table')}
             </RawCreateButton>
             {props.selectedDb !== '' ? (
               <ListBox>
                 <SearchWrapper>
                   <SearchField
-                    placeholder="Filter tables"
+                    placeholder={t('filter-tables')}
                     style={{ width: '100%' }}
                     allowClear
                     onChange={(val) => setTableSearch(val.currentTarget.value)}
@@ -304,7 +307,7 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
                           }}
                         >
                           <Tooltip
-                            title="View or ingest data to this RAW table"
+                            title={t('view-or-ingest-data-to-this-raw-table')}
                             getPopupContainer={getContainer}
                           >
                             <a
@@ -328,7 +331,7 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
                   ) : (
                     <div style={{ paddingTop: '20%' }}>
                       <p style={{ fontStyle: 'italic', textAlign: 'center' }}>
-                        No tables in this database
+                        {t('no-tables-in-this-database')}
                       </p>
                     </div>
                   )}
@@ -338,7 +341,7 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
               <ListBox>
                 <div style={{ paddingTop: '20%' }}>
                   <p style={{ fontStyle: 'italic', textAlign: 'center' }}>
-                    Select database to view tables in
+                    {t('select-database-to-view-tables-in')}
                   </p>
                 </div>
               </ListBox>

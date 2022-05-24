@@ -62,6 +62,7 @@ export const isScheduleOfType = (
   });
 };
 
+// TODO CDFUX-1573 - figure out translation
 export const ExtpipeTableColumns = [
   {
     title: 'Name',

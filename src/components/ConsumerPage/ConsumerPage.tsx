@@ -13,6 +13,7 @@ import {
   updateConsumerContactEmail,
   updateConsumerExternalLink,
 } from './consumerPageUtils';
+import { useTranslation } from 'common/i18n';
 
 const Label = styled.label`
   margin-top: 0.7rem;
@@ -60,8 +61,6 @@ const Hint = styled.span`
   margin-bottom: 0.2rem;
 `;
 
-export const REMOVE_CONSUMER_BTN: Readonly<string> = 'Remove consumer';
-export const ADD_CONSUMER_BTN: Readonly<string> = 'Add consumer';
 interface ConsumerProps {
   dataSet?: DataSet;
   updateDataSet(dataSet: DataSet): void;
@@ -74,6 +73,7 @@ interface ConsumerProps {
 
 const ConsumerPage = (props: ConsumerProps): JSX.Element => {
   const [consumers, setConsumers] = useState<Consumer[]>([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (props.saveSection) {
@@ -168,11 +168,11 @@ const ConsumerPage = (props: ConsumerProps): JSX.Element => {
 
   return (
     <Drawer
-      title={<StyledTitle2>Document consumers</StyledTitle2>}
+      title={<StyledTitle2>{t('document-consumers')}</StyledTitle2>}
       width="50%"
       onClose={() => props.closeModal()}
       visible={props.visible}
-      okText={props.changesSaved ? 'Done' : 'Save'}
+      okText={props.changesSaved ? t('done') : t('save')}
       onOk={props.changesSaved ? props.closeModal : handleSaveChanges}
       cancelHidden
     >
@@ -185,28 +185,28 @@ const ConsumerPage = (props: ConsumerProps): JSX.Element => {
                 <Col span={24}>
                   <LocalCol span={18}>
                     <Label htmlFor={`consumer-name-${consumersIndex}`}>
-                      Consumer name
+                      {t('consumer-name')}
                     </Label>
-                    <Hint>The name of the consuming system or application</Hint>
+                    <Hint>{t('consumer-name-hint')}</Hint>
                     <InputField
                       id={`consumer-name-${consumersIndex}`}
                       style={{ width: '400px' }}
                       value={name}
                       type="text"
-                      placeholder="Name"
+                      placeholder={t('name')}
                       onChange={(e) => {
                         setConsumerName(e.target.value, consumersIndex);
                       }}
                     />
                     <Label htmlFor={`consumer-contact-email-${consumersIndex}`}>
-                      Contact email
+                      {t('contact-email')}
                     </Label>
                     <InputField
                       style={{ width: '400px' }}
                       value={contact?.email}
                       type="email"
                       id={`consumer-contact-email-${consumersIndex}`}
-                      placeholder="Contact email"
+                      placeholder={t('contact-email')}
                       onChange={(e) => {
                         setConsumerContactEmail(e.target.value, consumersIndex);
                       }}
@@ -224,15 +224,13 @@ const ConsumerPage = (props: ConsumerProps): JSX.Element => {
                       type="secondary"
                       onClick={() => removeConsumer(consumersIndex)}
                     >
-                      {REMOVE_CONSUMER_BTN}
+                      {t('remove-consumer')}
                     </Button>
                   </ImgCol>
                 </Col>
                 <LinksCol span={24}>
-                  <Label>Add external links</Label>
-                  <Hint>
-                    Links relating to the consuming system or application
-                  </Hint>
+                  <Label>{t('add-external-links')}</Label>
+                  <Hint>{t('add-external-links-hint')}</Hint>
                   {externalLinks.map(({ rel, href }, i) => {
                     const listKey = `external-link-${i}`;
                     return (
@@ -252,15 +250,14 @@ const ConsumerPage = (props: ConsumerProps): JSX.Element => {
                     type="secondary"
                     onClick={() => addLink(consumersIndex)}
                   >
-                    {' '}
-                    Add new external link
+                    {t('add-new-external-link')}
                   </Button>
                 </LinksCol>
               </Wrapper>
             );
           })}
         <Button type="primary" variant="outline" onClick={addConsumer}>
-          {ADD_CONSUMER_BTN}
+          {t('add-consumer')}
         </Button>
       </form>
     </Drawer>
