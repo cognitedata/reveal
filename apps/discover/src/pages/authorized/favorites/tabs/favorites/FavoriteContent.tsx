@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
+import isEmpty from 'lodash/isEmpty';
 import {
   useFavoriteDuplicateMutate,
   useFavoritesDeleteMutate,
@@ -57,7 +58,16 @@ export const FavoriteContent: React.FC<Props> = ({
   const { isOwner } = useIsOwner();
 
   const handleNavigateFavoriteSet = (item: FavoriteSummary) => {
-    history.push(navigation.FAVORITE_TAB_DOCUMENTS(item.id));
+    const favoriteContainDocuments = !isEmpty(item.content.documentIds);
+    const favoriteNotContainWells = isEmpty(item.content.wells);
+    const showDocumentsTab =
+      favoriteContainDocuments || favoriteNotContainWells;
+
+    if (showDocumentsTab) {
+      history.push(navigation.FAVORITE_TAB_DOCUMENTS(item.id));
+    } else {
+      history.push(navigation.FAVORITE_TAB_WELLS(item.id));
+    }
   };
 
   const dispatchRemoveFavouriteSet = (item: FavoriteSummary) => {
