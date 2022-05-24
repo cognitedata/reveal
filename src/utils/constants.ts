@@ -21,4 +21,4 @@ export const SIDEBAR_PROFILING_CLOSE_BUTTON_SPACE = 64;
 
 export const TOOLTIP_DELAY_IN_MS = 300;
 
-export const RAW_PAGE_SIZE_LIMIT = 10000;
+export const RAW_PAGE_SIZE_LIMIT = 100000;

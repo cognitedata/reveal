@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ColumnShape } from 'react-base-table';
 import isUndefined from 'lodash/isUndefined';
 
@@ -159,10 +159,31 @@ export const useTableData = (pageSize = PAGE_SIZE) => {
 };
 
 export const useDownloadData = (size: number) => {
+  const [isDownloading, setIsDownloading] = useState(true);
   const { rows: currentRows } = useTableData();
-  const { rows: fetchedRows, isFetching } = useTableData(size);
+  const {
+    rows: fetchedRows,
+    isFetching,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+  } = useTableData(Math.min(size, 10000));
 
-  return { currentRows, fetchedRows, isFetching };
+  useEffect(() => {
+    setIsDownloading(true);
+  }, [size]);
+
+  useEffect(() => {
+    if (!isFetching) {
+      if (size > fetchedRows.length && hasNextPage) {
+        fetchNextPage();
+      } else {
+        setIsDownloading(false);
+      }
+    }
+  }, [fetchNextPage, fetchedRows.length, hasNextPage, isFetching, size]);
+
+  return { currentRows, fetchedRows, isDownloading, isError };
 };
 
 export const useIsTableEmpty = (database: string, table: string) => {
