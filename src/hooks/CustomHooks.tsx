@@ -3,6 +3,10 @@ import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import queryString from 'query-string';
+import { IdEither } from '@cognite/sdk';
+import { extractUniqueIds } from 'utils/idUtils';
+import { SdkResourceType, useCdfItems } from '@cognite/sdk-react-query-hooks';
+import { unionBy } from 'lodash';
 
 export function usePrevious<T>(value: T) {
   const ref = useRef<T>();
@@ -58,3 +62,43 @@ export const useDisclosure = (props?: UseDisclosureProps) => {
 
   return { isOpen, onOpen, onClose, onToggle };
 };
+
+export function useUniqueCdfItems<T>(
+  type: SdkResourceType,
+  ids: IdEither[],
+  ignoreUnknownIds = false
+) {
+  const { uniqueExternalIds, uniqueIds } = extractUniqueIds(ids);
+  const itemsEnabled = uniqueIds && uniqueIds.length > 0;
+
+  const itemsWithExternaIdEnabled =
+    uniqueExternalIds && uniqueExternalIds.length > 0;
+
+  const {
+    data: items = [],
+    isLoading: isItemLoading,
+    isError: itemsWithExternalIdError,
+  } = useCdfItems<T & { id: number }>(type, uniqueIds, ignoreUnknownIds, {
+    enabled: itemsEnabled,
+  });
+
+  const {
+    data: itemsWithExternalId = [],
+    isLoading: isItemWithExternalIdLoading,
+    isError: itemsError,
+  } = useCdfItems<T & { id: number }>(
+    type,
+    uniqueExternalIds,
+    ignoreUnknownIds,
+    {
+      enabled: itemsWithExternaIdEnabled,
+    }
+  );
+  const uniqueItems = unionBy(items, itemsWithExternalId, file => file.id);
+
+  return {
+    isError: itemsWithExternalIdError || itemsError,
+    data: uniqueItems,
+    isLoading: isItemWithExternalIdLoading || isItemLoading,
+  };
+}

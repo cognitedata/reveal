@@ -26,6 +26,7 @@ import { getIdParam } from 'utils';
 import { DetailsItem, InfoGrid } from 'components';
 import { useResourcePreview } from 'context';
 import { FileDetails } from 'containers/Files';
+import { extractUniqueIds } from 'utils/idUtils';
 import {
   AssetItem,
   EventItem,
@@ -194,7 +195,7 @@ export const FilePreviewOverview = ({
   const fileIds = Array.from(categorizedAnnotations.file.ids);
   const { data: files = [] } = useCdfItems<FileInfo>(
     'files',
-    fileIds.map(getIdParam),
+    extractUniqueIds(fileIds.map(getIdParam)).uniqueIds,
     false,
     { enabled: fileIds && fileIds.length > 0 }
   );
@@ -202,7 +203,7 @@ export const FilePreviewOverview = ({
   const assetIds = Array.from(categorizedAnnotations.asset.ids);
   const { data: assets = [] } = useCdfItems<Asset>(
     'assets',
-    assetIds.map(getIdParam),
+    extractUniqueIds(assetIds.map(getIdParam)).uniqueIds,
     false,
     { enabled: assetIds && assetIds.length > 0 }
   );
@@ -210,7 +211,7 @@ export const FilePreviewOverview = ({
   const timeseriesIds = Array.from(categorizedAnnotations.timeSeries.ids);
   const { data: timeseries = [] } = useCdfItems<Timeseries>(
     'timeseries',
-    timeseriesIds.map(getIdParam),
+    extractUniqueIds(timeseriesIds.map(getIdParam)).uniqueIds,
     false,
     { enabled: timeseriesIds && timeseriesIds.length > 0 }
   );
@@ -218,7 +219,7 @@ export const FilePreviewOverview = ({
   const eventIds = Array.from(categorizedAnnotations.event.ids);
   const { data: events = [] } = useCdfItems<CogniteEvent>(
     'events',
-    eventIds.map(getIdParam),
+    extractUniqueIds(eventIds.map(getIdParam)).uniqueIds,
     false,
     { enabled: eventIds && eventIds.length > 0 }
   );
@@ -226,7 +227,7 @@ export const FilePreviewOverview = ({
   const sequenceIds = Array.from(categorizedAnnotations.sequence.ids);
   const { data: sequences = [] } = useCdfItems<Sequence>(
     'sequences',
-    sequenceIds.map(getIdParam),
+    extractUniqueIds(sequenceIds.map(getIdParam)).uniqueIds,
     false,
     { enabled: sequenceIds && sequenceIds.length > 0 }
   );

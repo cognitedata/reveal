@@ -1,14 +1,14 @@
 import React, { useMemo } from 'react';
 import { SelectableItemsProps } from 'CommonProps';
 import { ResourceItem } from 'types';
+import { FileInfo, IdEither } from '@cognite/sdk';
 import { useFilesAnnotatedWithResource } from 'hooks/RelationshipHooks';
 import { uniqBy } from 'lodash';
 import { ANNOTATION_METADATA_PREFIX as PREFIX } from '@cognite/annotations';
-import { IdEither } from '@cognite/sdk';
-import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { Alert } from 'antd';
 import { Loader } from 'components';
 import { FileTable } from 'containers';
+import { useUniqueCdfItems } from 'hooks';
 
 export const AnnotatedWithTable = ({
   resource,
@@ -49,17 +49,18 @@ export const AnnotatedWithTable = ({
   );
 
   const itemsEnabled = ids && ids.length > 0;
+
   const {
     data: items = [],
-    isFetched: itemsFetched,
+    isLoading: itemsLoading,
     isError: itemsError,
-  } = useCdfItems('files', ids, false, { enabled: itemsEnabled });
+  } = useUniqueCdfItems<FileInfo>('files', ids, false);
 
   if (isError || itemsError) {
     return <Alert type="warning" message="Error fetching files" />;
   }
 
-  if (!isFetched || (!itemsFetched && itemsEnabled)) {
+  if (!isFetched || (itemsLoading && itemsEnabled)) {
     return <Loader />;
   }
 

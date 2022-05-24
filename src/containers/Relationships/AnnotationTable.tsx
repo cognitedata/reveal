@@ -12,10 +12,10 @@ import {
   SequenceTable,
 } from 'containers';
 
-import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { ANNOTATION_METADATA_PREFIX as PREFIX } from '@cognite/annotations';
 import { IdEither } from '@cognite/sdk';
 import { useAnnotations } from 'hooks/RelationshipHooks';
+import { useUniqueCdfItems } from 'hooks';
 
 type Props = {
   fileId: number;
@@ -61,17 +61,15 @@ export function AnnotationTable({
   const itemsEnabled = ids && ids.length > 0;
   const {
     data: items = [],
-    isFetched: itemsFetched,
+    isLoading: itemsLoading,
     isError: itemsError,
-  } = useCdfItems(convertResourceType(resourceType), ids, true, {
-    enabled: itemsEnabled,
-  });
+  } = useUniqueCdfItems(convertResourceType(resourceType), ids, true);
 
   if (isError || itemsError) {
     return <Alert type="warning" message="Error fetching annotations" />;
   }
 
-  if (!isFetched || (!itemsFetched && itemsEnabled)) {
+  if (!isFetched || (itemsLoading && itemsEnabled)) {
     return <Loader />;
   }
 
