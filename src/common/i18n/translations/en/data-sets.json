@@ -37,6 +37,7 @@
     "data-set-id": "Data set ID",
     "data-set-is-updated": "Data set \"{{datasetName}}\" is updated",
     "data-set-is-not-updated": "Data set \"{{datasetName}}\" is not updated",
+    "data-set-with-id-not-found": "Data set with id: {{datasetId}} not found",
     "data-set_one": "Data set",
     "data-set_other": "Data sets",
     "data-set-details": "Data set details",
