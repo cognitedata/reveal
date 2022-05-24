@@ -310,6 +310,11 @@ export const DatePickerWrapper = styled.div<{
       background-color: ${Colors['midblue-5'].hex()};
       font-weight: 800;
     }
+    .react-datepicker__day-names {
+      display: flex;
+      justify-content: space-around;
+      margin: 0 9px;
+    }
     ${props.mode === 'start' &&
     css`
       .react-datepicker__day--selecting-range-start {
