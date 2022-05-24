@@ -14,7 +14,7 @@ export class MeasurementUi {
   };
 
   private measurement = {
-    distance: false
+    enable: false
   }
 
   constructor(viewer: Cognite3DViewer, ui: dat.GUI) {
@@ -28,7 +28,7 @@ export class MeasurementUi {
     this._guiController = [];
     const addDistanceOptions = this.addDistanceOptions.bind(this);
 
-    this._gui.add(this.measurement, 'distance').name('Point To Point Distance').onChange(addDistanceOptions);
+    this._gui.add(this.measurement, 'enable').name('Point To Point Distance').onChange(addDistanceOptions);
   }
 
   private addDistanceOptions(enable: boolean) {
