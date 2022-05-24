@@ -3,6 +3,7 @@ import { Tooltip } from '@cognite/cogs.js';
 import { toString as cronstureToString } from 'cronstrue';
 import { Extpipe, SupportedSchedule } from 'utils/types';
 import { ExtpipeLink } from 'components/Lineage/Extpipe/ExtpipeLink';
+import { useTranslation } from 'common/i18n';
 
 type LastStatuses = Pick<Extpipe, 'lastSuccess' | 'lastFailure'>;
 
@@ -62,68 +63,73 @@ export const isScheduleOfType = (
   });
 };
 
-// TODO CDFUX-1573 - figure out translation
-export const ExtpipeTableColumns = [
-  {
-    title: 'Name',
-    key: 'name',
-    render: (row: Extpipe) => {
-      return <ExtpipeLink extpipe={row} />;
+export const useExtpipeTableColumns = () => {
+  const { t } = useTranslation();
+
+  const extpipeTableColumns = [
+    {
+      title: t('name'),
+      key: 'name',
+      render: (row: Extpipe) => {
+        return <ExtpipeLink extpipe={row} />;
+      },
     },
-  },
-  {
-    title: 'Schedule',
-    key: 'schedule',
-    render: ({ schedule }: Extpipe) => {
-      if (!schedule) {
-        return 'Not defined';
-      }
-      if (
-        isScheduleOfType(schedule, [
-          SupportedSchedule.CONTINUOUS,
-          SupportedSchedule.ON_TRIGGER,
-        ])
-      ) {
-        return <>{schedule}</>;
-      }
-      return renderScheduled(schedule);
+    {
+      title: t('schedule'),
+      key: 'schedule',
+      render: ({ schedule }: Extpipe) => {
+        if (!schedule) {
+          return 'Not defined';
+        }
+        if (
+          isScheduleOfType(schedule, [
+            SupportedSchedule.CONTINUOUS,
+            SupportedSchedule.ON_TRIGGER,
+          ])
+        ) {
+          return <>{schedule}</>;
+        }
+        return renderScheduled(schedule);
+      },
+      ellipsis: true,
     },
-    ellipsis: true,
-  },
-  {
-    title: 'Last run time',
-    key: 'latestRun',
-    render: ({ lastFailure, lastSuccess }: Extpipe) => {
-      const lastRunTime = calculate({ lastFailure, lastSuccess });
-      return lastRunTime > 0 ? moment(lastRunTime).fromNow() : '–';
+    {
+      title: t('last-run-time'),
+      key: 'latestRun',
+      render: ({ lastFailure, lastSuccess }: Extpipe) => {
+        const lastRunTime = calculate({ lastFailure, lastSuccess });
+        return lastRunTime > 0 ? moment(lastRunTime).fromNow() : '–';
+      },
+      ellipsis: true,
     },
-    ellipsis: true,
-  },
-  {
-    title: 'Source',
-    key: 'source',
-    render: ({ source }: Extpipe) => {
-      return source ?? '–';
+    {
+      title: t('source_one'),
+      key: 'source',
+      render: ({ source }: Extpipe) => {
+        return source ?? '–';
+      },
+      ellipsis: true,
     },
-    ellipsis: true,
-  },
-  {
-    title: 'Owner',
-    key: 'owner',
-    render: (extpipe: Extpipe) => {
-      const owner = extpipe.contacts?.find(
-        (contact) => !!contact.role && contact.role.toLowerCase() === 'owner'
-      );
-      if (owner) {
-        const mailtoLink = `mailto:${owner.email}`;
-        return (
-          <a href={mailtoLink} target="_blank" rel="noopener noreferrer">
-            {owner.name}
-          </a>
+    {
+      title: t('owner'),
+      key: 'owner',
+      render: (extpipe: Extpipe) => {
+        const owner = extpipe.contacts?.find(
+          (contact) => !!contact.role && contact.role.toLowerCase() === 'owner'
         );
-      }
-      return '–';
+        if (owner) {
+          const mailtoLink = `mailto:${owner.email}`;
+          return (
+            <a href={mailtoLink} target="_blank" rel="noopener noreferrer">
+              {owner.name}
+            </a>
+          );
+        }
+        return '–';
+      },
+      ellipsis: true,
     },
-    ellipsis: true,
-  },
-];
+  ];
+
+  return { extpipeTableColumns };
+};

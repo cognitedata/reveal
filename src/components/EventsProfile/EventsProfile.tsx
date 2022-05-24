@@ -19,26 +19,25 @@ interface AggregateObject {
   value: string;
 }
 
-const AggregateColumns = (aggregate: string) => [
-  {
-    // TODO CDFUX-1573 - figure out translation
-    title: `${aggregate}`,
-    dataIndex: 'value',
-    key: 'value',
-  },
-  {
-    title: 'Number of events',
-    dataIndex: 'count',
-    key: 'count',
-  },
-];
-
 const AGGREGATE_EVENTS_PATH = `/api/playground/projects/${sdk.project}/events/aggregate`;
 
 const EventsProfile = (props: EventsProfileProps) => {
   const { t } = useTranslation();
   const [types, setTypes] = useState<AggregateObject[]>([]);
   const [subtypes, setSubtypes] = useState<AggregateObject[]>([]);
+
+  const AggregateColumns = (aggregate: string) => [
+    {
+      title: `${aggregate}`,
+      dataIndex: 'value',
+      key: 'value',
+    },
+    {
+      title: t('number-of-events'),
+      dataIndex: 'count',
+      key: 'count',
+    },
+  ];
 
   useEffect(() => {
     sdk
@@ -92,7 +91,7 @@ const EventsProfile = (props: EventsProfileProps) => {
         <ItemLabel>{t('events-profile-types')}</ItemLabel>
         <Table
           rowKey="value"
-          columns={AggregateColumns('Type')}
+          columns={AggregateColumns(t('type'))}
           dataSource={types}
           getPopupContainer={getContainer}
         />
@@ -100,7 +99,7 @@ const EventsProfile = (props: EventsProfileProps) => {
 
         <Table
           rowKey="value"
-          columns={AggregateColumns('Subtype')}
+          columns={AggregateColumns(t('subtype'))}
           dataSource={subtypes}
           getPopupContainer={getContainer}
         />

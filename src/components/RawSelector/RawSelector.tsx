@@ -34,43 +34,49 @@ interface RawSelectorProps {
   selectedDb: string;
 }
 
-// TODO CDFUX-1573 - figure out translation
-const SelectionColumns = [
-  {
-    title: 'Database selected',
-    key: 'databaseName',
-    render: (row: RawTable) => (
-      <a
-        href={`raw/${row.databaseName}${
-          getStringCdfEnv() ? `?env=${getStringCdfEnv()}` : ''
-        }`}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {row.databaseName}
-      </a>
-    ),
-  },
-  {
-    title: 'Table Selected',
-    key: 'tableName',
-    render: (row: RawTable) => (
-      <a
-        data-testid="selected-table"
-        href={`raw/${row.databaseName}/${row.tableName}${
-          getStringCdfEnv() ? `?env=${getStringCdfEnv()}` : ''
-        }`}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {row.tableName}
-      </a>
-    ),
-  },
-];
+const useSelectionColumns = () => {
+  const { t } = useTranslation();
+
+  const selectionColumns = [
+    {
+      title: t('database-selected'),
+      key: 'databaseName',
+      render: (row: RawTable) => (
+        <a
+          href={`raw/${row.databaseName}${
+            getStringCdfEnv() ? `?env=${getStringCdfEnv()}` : ''
+          }`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {row.databaseName}
+        </a>
+      ),
+    },
+    {
+      title: t('table-selected'),
+      key: 'tableName',
+      render: (row: RawTable) => (
+        <a
+          data-testid="selected-table"
+          href={`raw/${row.databaseName}/${row.tableName}${
+            getStringCdfEnv() ? `?env=${getStringCdfEnv()}` : ''
+          }`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {row.tableName}
+        </a>
+      ),
+    },
+  ];
+
+  return { selectionColumns };
+};
 
 const RawSelector = (props: RawSelectorProps): JSX.Element => {
   const { t } = useTranslation();
+  const { selectionColumns } = useSelectionColumns();
   const [dbSearch, setDbSearch] = useState<string>('');
   const [tableSearch, setTableSearch] = useState<string>('');
 
@@ -351,7 +357,7 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
             <Table
               style={{ marginBottom: '20px' }}
               pagination={{ pageSize: 4 }}
-              columns={SelectionColumns}
+              columns={selectionColumns}
               dataSource={props.selectedTables}
               rowKey={(record: RawTable) =>
                 `${record.databaseName}/${record.tableName}`

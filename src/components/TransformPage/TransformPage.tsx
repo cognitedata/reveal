@@ -24,39 +24,44 @@ import { notification } from 'antd';
 
 const jetfire = new JetfireApi(sdk, sdk.project, getJetfireUrl());
 
-// TODO CDFUX-1573 - figure out translation
-const columns = [
-  {
-    key: 'name',
-    title: 'Transform',
-    sorter: (a: any, b: any) => a.name.localeCompare(b.name),
-    render: (_text: string, transform: any) => (
-      <a
-        href={`/${sdk.project}/transformations/${transform.id}${
-          getStringCdfEnv() ? `?env=${getStringCdfEnv()}` : ''
-        }`}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {transform.name}
-      </a>
-    ),
-  },
-  {
-    key: 'created',
-    title: 'Created',
-    render: (_text: string, transform: any) => (
-      <p>{moment(transform.createdTime).toString()}</p>
-    ),
-  },
-  {
-    key: 'updated',
-    title: 'Updated',
-    render: (_text: string, transform: any) => (
-      <p>{moment(transform.lastUpdatedTime).toString()}</p>
-    ),
-  },
-];
+const useTransformColumns = () => {
+  const { t } = useTranslation();
+
+  const transformColumns = [
+    {
+      title: t('transform'),
+      key: 'name',
+      sorter: (a: any, b: any) => a.name.localeCompare(b.name),
+      render: (_text: string, transform: any) => (
+        <a
+          href={`/${sdk.project}/transformations/${transform.id}${
+            getStringCdfEnv() ? `?env=${getStringCdfEnv()}` : ''
+          }`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {transform.name}
+        </a>
+      ),
+    },
+    {
+      title: t('created'),
+      key: 'created',
+      render: (_text: string, transform: any) => (
+        <p>{moment(transform.createdTime).toString()}</p>
+      ),
+    },
+    {
+      title: t('updated'),
+      key: 'updated',
+      render: (_text: string, transform: any) => (
+        <p>{moment(transform.lastUpdatedTime).toString()}</p>
+      ),
+    },
+  ];
+
+  return { transformColumns };
+};
 
 interface TransformPageProps {
   dataSet?: DataSet;
@@ -70,6 +75,7 @@ interface TransformPageProps {
 
 const TransformPage = (props: TransformPageProps): JSX.Element => {
   const { t } = useTranslation();
+  const { transformColumns } = useTransformColumns();
   const [transformationsList, setTransformationsList] = useState<any[]>([]);
   const [selectedTransforms, setSelectedTransforms] = useState<any[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
@@ -120,7 +126,7 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
       />
       <Table
         rowKey="id"
-        columns={columns}
+        columns={transformColumns}
         dataSource={transformationsList}
         rowSelection={rowSelection}
         locale={{

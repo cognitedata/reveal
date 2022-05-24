@@ -19,7 +19,7 @@ import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { useParams, useNavigate } from 'react-router-dom';
 import isArray from 'lodash/isArray';
-import getTableColumns, { DataSetRow } from './TableColumns';
+import { useTableColumns, DataSetRow } from './TableColumns';
 import {
   DataSetWithExtpipes,
   useDataSetsList,
@@ -31,6 +31,7 @@ import { useTranslation } from 'common/i18n';
 
 const DataSetsList = (): JSX.Element => {
   const { t } = useTranslation();
+  const { getTableColumns } = useTableColumns();
   const { data: withExtpipes, isFetched: didFetchWithExtpipes } =
     useWithExtpipes();
 
