@@ -41,7 +41,7 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
 
   private readonly _offset: THREE.Vector3;
 
-  readonly loader: EptBinaryLoader;
+  private readonly _loader: EptBinaryLoader;
 
   private readonly _span: number;
   private readonly _spacing: number;
@@ -51,6 +51,10 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
   private _root: PointCloudEptGeometryNode | undefined;
 
   private readonly _projection: string | null;
+
+  get loader(): EptBinaryLoader {
+    return this._loader;
+  }
 
   get root(): PointCloudEptGeometryNode | undefined {
     return this._root;
