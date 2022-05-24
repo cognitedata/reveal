@@ -349,7 +349,9 @@ export const getDefaultWellbore = () => ({
   wellId: mockedWellResultFixture[0].id,
 });
 
-export const getMockFilterConfig = (extras?: any): FilterConfig => ({
+export const getMockFilterConfig = (
+  extras?: Partial<FilterConfig>
+): FilterConfig => ({
   id: 12345,
   name: 'filter-name',
   key: 'filter-key',

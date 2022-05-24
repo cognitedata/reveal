@@ -199,7 +199,7 @@ const typographyStyles = {
 };
 
 interface DefaultHeadlineMapping {
-  [x: string]: any;
+  [x: string]: string;
 }
 
 interface Props {

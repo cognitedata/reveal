@@ -5,14 +5,13 @@ import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { UserAvatar } from 'components/UserAvatar/UserAvatar';
 
+import { Props } from './UserAvatar';
+
 describe('UserAvatar', () => {
-  const page = (viewStore: Store, viewProps?: any) =>
+  const page = (viewStore: Store, viewProps?: Props) =>
     testRenderer(UserAvatar, viewStore, viewProps);
 
-  const defaultTestInit = async (props: {
-    displayName?: string;
-    email?: string;
-  }) => {
+  const defaultTestInit = async (props: Props) => {
     const store = getMockedStore();
     return {
       ...page(store, props),

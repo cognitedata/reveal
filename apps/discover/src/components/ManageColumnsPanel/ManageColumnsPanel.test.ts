@@ -5,7 +5,7 @@ import { store } from 'utils/store';
 
 import { testRenderer } from '__test-utils/renderer';
 
-import ManageColumnsPanel from './ManageColumnsPanel';
+import ManageColumnsPanel, { Props } from './ManageColumnsPanel';
 
 const defaultProps = {
   isOpen: true,
@@ -15,10 +15,11 @@ const defaultProps = {
     { selected: true, disabled: true, name: 'Field3', field: 'field3' },
   ],
   handleDisplayToggle: noop,
+  handleColumnSelection: noop,
 };
 
 describe('ManageColumnsPanel', () => {
-  const Page = (viewStore: Store, props: any) =>
+  const Page = (viewStore: Store, props: Props) =>
     testRenderer(ManageColumnsPanel, viewStore, props);
 
   // All tests will go here

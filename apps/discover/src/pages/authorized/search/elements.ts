@@ -105,7 +105,7 @@ export const MapBoxContainer = styled(Flex)`
 
 export const MainSearchContainer = styled(FlexColumn)`
   height: 100%;
-  width: ${(props: any) =>
+  width: ${(props: { isOpen: boolean }) =>
     `calc(100% - ${getFilterSizeStateInPX(props.isOpen)})`};
 `;
 

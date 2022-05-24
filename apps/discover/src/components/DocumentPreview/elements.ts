@@ -5,11 +5,15 @@ import { Icon } from '@cognite/cogs.js';
 import { Label, TitleStyle } from 'components/MetadataTable/elements';
 import { Ellipsis, sizes } from 'styles/layout';
 
+type Prop = {
+  showCursor: boolean;
+};
+
 export const PathContainer = styled.div`
   background-color: #f3f3f3;
   margin-top: ${sizes.extraSmall};
   padding: 5px 8px;
-  cursor: ${(props: any) => (props.showCursor ? 'pointer' : 'default')};
+  cursor: ${(props: Prop) => (props.showCursor ? 'pointer' : 'default')};
   border-radius: ${sizes.extraSmall};
 `;
 

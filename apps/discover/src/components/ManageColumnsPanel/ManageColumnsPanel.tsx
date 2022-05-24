@@ -27,7 +27,7 @@ export interface GroupedColumn {
 
 type ComplexColumns = SimpleColumn[] | GroupedColumn[];
 
-interface Props {
+export interface Props {
   /** Optional, used to customize the button to open the dialog. */
   //   children: PropTypes.node,
   /** An array of selectable options (NB: when using standard render, the objects needs to include a selected field.) */

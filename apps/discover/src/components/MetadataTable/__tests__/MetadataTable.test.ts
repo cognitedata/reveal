@@ -6,11 +6,15 @@ import { getMockedStore } from '__test-utils/store.utils';
 
 import MetadataTable from '../MetadataTable';
 
+type Prop = {
+  metadata: { label: string; value: string }[];
+};
+
 describe('meta data table', () => {
-  const page = (viewStore: Store, viewProps?: any) =>
+  const page = (viewStore: Store, viewProps?: Prop) =>
     testRenderer(MetadataTable, viewStore, viewProps);
 
-  const defaultTestInit = async (viewProps?: any) => {
+  const defaultTestInit = async (viewProps?: Prop) => {
     const store = getMockedStore();
     return { ...page(store, viewProps), store };
   };

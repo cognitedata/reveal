@@ -5,7 +5,7 @@ import { testRenderer } from '__test-utils/renderer';
 import { LoadingSpinner } from '../LoadingSpinner';
 
 describe('LoadingSpinner', () => {
-  const defaultTestInit = async (props?: any) => ({
+  const defaultTestInit = async (props?: { isLoading: boolean }) => ({
     ...testRenderer(LoadingSpinner, undefined, props),
   });
 

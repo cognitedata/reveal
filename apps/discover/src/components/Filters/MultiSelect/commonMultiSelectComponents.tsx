@@ -40,7 +40,7 @@ export const renderMultiSelectDropdown =
   };
 
 export const renderPlaceholderSelectElement = (
-  placeholderSelectElement: any,
+  placeholderSelectElement: React.ReactNode,
   displayValue: string | undefined
 ) => {
   if (placeholderSelectElement) {

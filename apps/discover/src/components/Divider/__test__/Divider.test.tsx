@@ -9,8 +9,7 @@ const DividerComponent = () => {
 };
 
 describe('Divider Tests', () => {
-  const testInit = async (viewProps?: any) =>
-    testRenderer(DividerComponent, undefined, viewProps);
+  const testInit = async () => testRenderer(DividerComponent);
   it('should render content', async () => {
     await testInit();
     expect(screen.getByTestId('divider')).toBeInTheDocument();

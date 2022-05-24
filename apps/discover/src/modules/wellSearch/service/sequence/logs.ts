@@ -280,6 +280,8 @@ const findValuedStartMargin = async (
   } catch (error) {
     log('error', String(error));
   }
+  // eslint-disable-next-line consistent-return
+  return undefined;
 };
 
 /**
@@ -325,6 +327,8 @@ const findValuedEndMargin = async (
   } catch (error) {
     log('error', error as string);
   }
+  // eslint-disable-next-line consistent-return
+  return undefined;
 };
 
 // This returns only rows which has values
@@ -341,7 +345,7 @@ const binarySearchForStart = async (
   end: number,
   columns: string[],
   searchedValuedRows: SequenceRow[][]
-) => {
+): Promise<number | undefined> => {
   let finalSearch = false;
   // If the search range is less than Minimum search range, this will consider as the final search
   if (start + MIN_SEARCH_RANGE > end) {
@@ -360,7 +364,7 @@ const binarySearchForStart = async (
     }
   } else if (rows.length === rowData.length) {
     // Do binary search again in left
-    const rowNumber: any = await binarySearchForStart(
+    const rowNumber = await binarySearchForStart(
       logId,
       start,
       newStart,
@@ -370,7 +374,7 @@ const binarySearchForStart = async (
     return rowNumber;
   } else if (rows.length === 0) {
     // Do binary search again in right
-    const rowNumber: any = await binarySearchForStart(
+    const rowNumber = await binarySearchForStart(
       logId,
       newEnd,
       end,
@@ -391,7 +395,7 @@ const binarySearchForEnd = async (
   end: number,
   columns: string[],
   searchedValuedRows: SequenceRow[][]
-) => {
+): Promise<number | undefined> => {
   let finalSearch = false;
   // If the search range is less than Minimum search range, this will consider as the final search
   if (start + MIN_SEARCH_RANGE > end) {
@@ -410,7 +414,7 @@ const binarySearchForEnd = async (
     }
   } else if (rows.length === rowData.length) {
     // Do binary search again in right
-    const rowNumber: any = await binarySearchForEnd(
+    const rowNumber = await binarySearchForEnd(
       logId,
       newEnd,
       end,
@@ -420,7 +424,7 @@ const binarySearchForEnd = async (
     return rowNumber;
   } else if (rows.length === 0) {
     // Do binary search again in left
-    const rowNumber: any = await binarySearchForEnd(
+    const rowNumber = await binarySearchForEnd(
       logId,
       start,
       newStart,

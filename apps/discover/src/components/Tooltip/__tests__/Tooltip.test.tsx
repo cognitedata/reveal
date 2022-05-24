@@ -16,8 +16,7 @@ const TooltipComponent = () => {
 };
 
 describe('Tooltip Tests', () => {
-  const testInit = async (viewProps?: any) =>
-    testRenderer(TooltipComponent, undefined, viewProps);
+  const testInit = async () => testRenderer(TooltipComponent);
   it('should render tooltip', async () => {
     await testInit();
 

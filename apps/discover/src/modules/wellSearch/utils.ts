@@ -81,7 +81,7 @@ export const convertObject = <Item>(object: Item) => {
       clonedObj = changeSomeUnits(clonedObj, unitAccessors);
       return allFunctions;
     },
-    add: (extraValues: { [key: string]: any }) => {
+    add: (extraValues: { [key: string]: string | number }) => {
       clonedObj = { ...clonedObj, ...extraValues };
       return allFunctions;
     },

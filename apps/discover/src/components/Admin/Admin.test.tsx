@@ -18,8 +18,7 @@ const AdminTestComponent = () => {
 };
 
 describe('Admin', () => {
-  const page = (viewProps?: any) =>
-    testRenderer(AdminTestComponent, undefined, viewProps);
+  const page = () => testRenderer(AdminTestComponent);
 
   const defaultTestInit = async () => {
     return { ...page() };

@@ -11,7 +11,7 @@ import {
 import { useGroupedData } from '../useGroupedData';
 
 describe('useGroupedData hook', () => {
-  const getHookResult = (args?: any) => {
+  const getHookResult = (args?: { groupDataInsideBarsBy: string }) => {
     const { waitForNextUpdate, result } = renderHook(() =>
       useGroupedData<Data>({
         data,

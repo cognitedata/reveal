@@ -37,7 +37,7 @@ const renderGroup = (
       const key = getIconId(groupId, index);
       const buttonHandler = () =>
         onToolbarButtonClick(visualizerId, groupId, index);
-      const selectHandler = (event: any) =>
+      const selectHandler = (event: string) =>
         onToolbarSelectionChange(visualizerId, groupId, index, event);
 
       if (!isVisible) return null;
@@ -57,7 +57,7 @@ const renderGroup = (
 
 const renderDropdown = (
   { value, dropdownOptions }: IToolbarButton,
-  handler: (event: any) => void
+  handler: (event: string) => void
 ) => {
   return (
     <Dropdown

@@ -53,8 +53,8 @@ interface Props {
   events: MapEvent[];
   features: FeatureCollection;
   flyTo: {
-    zoom: number;
     center: number[];
+    zoom?: number;
   } | null;
   focusedFeature: Feature | null;
   layers: SelectableLayer[];

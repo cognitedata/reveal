@@ -24,7 +24,7 @@ describe('EntityFeedbackModal Tests', () => {
 
   const store = getMockedStore();
 
-  const testInit = async (viewProps?: any) =>
+  const testInit = async (viewProps?: { open: boolean }) =>
     testRendererModal(EntityFeedbackModal, store, viewProps);
 
   it('should render modal content as expected', async () => {

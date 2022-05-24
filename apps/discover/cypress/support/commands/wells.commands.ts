@@ -82,7 +82,7 @@ Cypress.Commands.add('clickClearAllFilterButtonInWellsTable', () => {
 });
 
 export interface WellsCommands {
-  goToWellsInspectTab(tab: any): void;
+  goToWellsInspectTab(tab: string): void;
   openInspectView(selectedWells?: number): void;
   clearWellsSelection(): void;
   selectFirstWellInResults(): void;

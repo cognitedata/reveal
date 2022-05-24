@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { Avatar } from '@cognite/cogs.js';
 
-interface Props {
+export interface Props {
   displayName?: string;
   email?: string;
   size?: number;

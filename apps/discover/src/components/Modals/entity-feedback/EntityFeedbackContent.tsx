@@ -44,8 +44,11 @@ export interface Props {
   freeText: string;
   currentDocumentType: string;
   documentTypes: DocumentPayload[];
-  handleSetCorrectDocumentType: (event: any) => void;
-  handleTextChanged: (event: any) => void;
+  handleSetCorrectDocumentType: (event: {
+    label: string;
+    value?: string;
+  }) => void;
+  handleTextChanged: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 export const EntityFeedbackContent: React.FC<Props> = (props) => {

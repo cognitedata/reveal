@@ -60,11 +60,15 @@ export const ActionContainer = styled(FlexRow)`
   }
 `;
 
+type Props = {
+  showCursor: boolean;
+};
+
 export const TextContainer = styled.div`
   background-color: #f3f3f3;
   padding: ${sizes.small} 12px;
   line-height: 20px;
-  cursor: ${(props: any) => (props.showCursor ? 'pointer' : 'default')};
+  cursor: ${(props: Props) => (props.showCursor ? 'pointer' : 'default')};
   display: flex;
   justify-content: space-between;
   align-items: center;

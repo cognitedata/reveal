@@ -5,8 +5,11 @@ import { testRenderer } from '__test-utils/renderer';
 import { MultiSelectOption } from '../MultiSelectOption';
 
 describe('MultiSelectOption', () => {
-  const page = (viewProps?: any) =>
-    testRenderer(MultiSelectOption, undefined, viewProps);
+  const page = (viewProps?: {
+    value: string;
+    count: number;
+    isTextCapitalized: boolean;
+  }) => testRenderer(MultiSelectOption, undefined, viewProps);
 
   const defaultTestInit = async (isTextCapitalized = true) => {
     return {

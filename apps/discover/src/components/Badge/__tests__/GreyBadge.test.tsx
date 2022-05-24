@@ -11,8 +11,7 @@ const GrayBadgeComponent = () => {
 };
 
 describe('GreyBadge Tests', () => {
-  const testInit = async (viewProps?: any) =>
-    testRenderer(GrayBadgeComponent, undefined, viewProps);
+  const testInit = async () => testRenderer(GrayBadgeComponent);
   it('should render content', async () => {
     await testInit();
     expect(screen.getByText(TEST_TEXT)).toBeInTheDocument();

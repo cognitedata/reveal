@@ -22,8 +22,7 @@ const ElevationComponent = () => {
 };
 
 describe('HorizontalResizableBox Tests', () => {
-  const testInit = async (viewProps?: any) =>
-    testRenderer(ElevationComponent, undefined, viewProps);
+  const testInit = async () => testRenderer(ElevationComponent);
   it('should render content', async () => {
     await testInit();
     expect(screen.getByText(TEST_TEXT)).toBeInTheDocument();

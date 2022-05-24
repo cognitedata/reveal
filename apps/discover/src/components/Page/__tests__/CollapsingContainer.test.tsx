@@ -15,8 +15,7 @@ const PageTestComponent = ({ ...rest }) => {
 };
 
 describe('CollapsingContainer Tests', () => {
-  const testInit = async (viewProps?: any) =>
-    testRenderer(PageTestComponent, undefined, viewProps);
+  const testInit = async () => testRenderer(PageTestComponent);
   it('should render content', async () => {
     await testInit();
     expect(screen.getByText(TEST_TEXT)).toBeInTheDocument();

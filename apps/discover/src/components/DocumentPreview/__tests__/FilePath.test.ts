@@ -10,7 +10,8 @@ import { FilePath } from '../FilePath';
 describe('FilePath', () => {
   const store = getMockedStore();
 
-  const page = (viewProps?: any) => testRenderer(FilePath, store, viewProps);
+  const page = (viewProps?: { paths: string[] }) =>
+    testRenderer(FilePath, store, viewProps);
 
   test('should not render anything if there is no filepath value provided or empty', async () => {
     const mockDocument = getMockDocument();

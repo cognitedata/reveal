@@ -9,8 +9,7 @@ const IllustrationComponent = () => {
 };
 
 describe('Illustration Tests', () => {
-  const testInit = async (viewProps?: any) =>
-    testRenderer(IllustrationComponent, undefined, viewProps);
+  const testInit = async () => testRenderer(IllustrationComponent);
   it('should render image', async () => {
     await testInit();
     const element = screen.getByAltText('Illustration of favorites');

@@ -81,15 +81,15 @@ export const EntityFeedbackModal: React.FC<Props> = ({ documentId }) => {
     }
   };
 
-  const handleTextChanged = (event: any) => {
+  const handleTextChanged = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setFreeText(event.target.value);
   };
 
-  const handleSetCorrectDocumentType = (value: {
+  const handleSetCorrectDocumentType = (event: {
     label: string;
-    value: string;
+    value?: string;
   }) => {
-    setCorrectDocType(value);
+    setCorrectDocType({ ...event, value: event.value || '' });
   };
 
   const handleSendClick = () => {

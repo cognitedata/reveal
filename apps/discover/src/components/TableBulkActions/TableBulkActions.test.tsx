@@ -28,8 +28,7 @@ const TableBulkActionsComponent = ({ ...rest }) => {
 };
 
 describe('TableBulkActions Tests', () => {
-  const testInit = async (viewProps?: any) =>
-    testRenderer(TableBulkActionsComponent, undefined, viewProps);
+  const testInit = async () => testRenderer(TableBulkActionsComponent);
 
   it('should render component content and count', () => {
     testInit();

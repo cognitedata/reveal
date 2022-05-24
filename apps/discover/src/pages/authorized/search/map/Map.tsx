@@ -100,7 +100,10 @@ export const Map: React.FC = () => {
   const { selectableLayers } = useLayers();
   const { data: selectedSurveyData } = useSelectedSurvey();
   const metrics = useGlobalMetrics('map');
-  const [flyTo, setFlyTo] = useState<{ zoom: any; center: any } | null>(null);
+  const [flyTo, setFlyTo] = useState<{
+    center: number[];
+    zoom?: number;
+  } | null>(null);
   const [mapReference, setMapReference] = useState<mapboxgl.Map>();
   const [focusedFeature, setFocusedFeature] = useState<Feature | null>(null);
   const { showSearchResults } = useSearchState();
@@ -262,17 +265,17 @@ export const Map: React.FC = () => {
   );
 
   const zoomToAsset = (point: Point, changeZoom?: number | false) => {
-    let zoom = changeZoom;
+    let zoom: number | undefined;
 
     // default zoom
     if (isUndefined(changeZoom)) {
       // since the data is clustered we zoom in one level deeper to "get out" of the cluster
       zoom = DEFAULT_CLUSTER_ZOOM_LEVEL + 1;
-    }
-
-    // allow option to NOT change zoom
-    if (changeZoom === false) {
+    } else if (changeZoom === false) {
+      // allow option to NOT change zoom
       zoom = undefined;
+    } else {
+      zoom = changeZoom;
     }
 
     setFlyTo({

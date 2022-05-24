@@ -12,7 +12,7 @@ import BaseFavoriteCreationModal from '../baseFavoriteCreationModal';
 
 interface Props {
   item?: Omit<FavoriteSummary, 'id' | 'owner' | 'members' | 'isOwner'>;
-  onConfirm: (state: any) => void;
+  onConfirm: (state: { name: string; description?: string }) => void;
   onCancel: () => void;
   isOpen: boolean;
 }
