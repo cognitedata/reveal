@@ -24,11 +24,9 @@ describe('User Profile', () => {
   });
 
   it('shows access rights for various APIs', () => {
-    cy.get('[data-testid^="access-list-item-"]').should('not.exist');
+    cy.get('[data-testid="access-list-item-geospatial"]').should('not.exist');
     cy.findByText('Show my access').should('be.visible').click();
-    cy.get('[data-testid^="access-list-item-"]')
-      .should('be.visible')
-      .should('have.length', 10);
+    cy.get('[data-testid="access-list-item-geospatial"]').should('be.visible');
   });
 
   it('can be used to logout of current project', () => {

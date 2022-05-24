@@ -132,6 +132,7 @@ DEPENDENCIES = [
     "@npm//web-vitals",
     "//packages/metrics",
     "//packages/node-visualizer",
+    "//packages/react-acl",
     "//packages/react-tenant-selector",
     "//packages/react-azure-telemetry",
     "//packages/react-container",
