@@ -6,6 +6,8 @@ import {
   FileLink,
   InternalId,
   ExternalId,
+  DocumentSearchItem,
+  DocumentSearchAggregate,
   DocumentSearchResponse,
 } from '@cognite/sdk';
 
@@ -88,8 +90,8 @@ export const getMockFileInfo = (extras?: Partial<FileInfo>): FileInfo => ({
 });
 
 export const getMockAPIResponse = (
-  items: DocumentSearchResponse['items'] = [],
-  aggregates: DocumentSearchResponse['aggregates'] = []
+  items: DocumentSearchItem[] = [],
+  aggregates: DocumentSearchAggregate[] = []
 ): DocumentSearchResponse => ({
   items: items || [],
   aggregates: [

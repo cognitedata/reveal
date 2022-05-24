@@ -13,7 +13,9 @@ export const getDocumentFixture = (
   language: 'en',
   type: 'PDF',
   title: 'Chapter 5 pressure tests.xlsx',
-  geoLocation: getMockGeometry() as any, // Remove any once its fixed in sdk
+  geoLocation: getMockGeometry(),
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore the type is wrong in the SDK, will be fixed soon
   labels: [{ externalId: 'Unknown' }, { externalId: 'Label-1-ID' }],
   ...extras,
 

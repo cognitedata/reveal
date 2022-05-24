@@ -1,11 +1,11 @@
 import compact from 'lodash/compact';
 
-import { DocumentSearchResponse } from '@cognite/sdk';
+import { DocumentSearchAggregate } from '@cognite/sdk';
 
 import { FacetsCounts } from '../types';
 
 export const getFacetsCounts = (
-  aggregates?: DocumentSearchResponse['aggregates']
+  aggregates?: DocumentSearchAggregate[]
 ): FacetsCounts =>
   compact(aggregates).reduce((countMap, aggregate) => {
     return {

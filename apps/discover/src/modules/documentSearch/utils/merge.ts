@@ -2,7 +2,7 @@ import concat from 'lodash/concat';
 import groupBy from 'lodash/groupBy';
 import { mergeUniqueArray } from 'utils/merge';
 
-import { DocumentSearchResponse } from '@cognite/sdk';
+import { DocumentSearchAggregate } from '@cognite/sdk';
 
 import {
   AggregateNames,
@@ -54,17 +54,17 @@ export const mergeDocumentResults = (
         concat(mergedResult.facets, result.facets)
       ),
       aggregates: mergeDocumentsAggregates(
-        mergedResult?.aggregates,
-        result?.aggregates
+        mergedResult?.aggregates || [],
+        result?.aggregates || []
       ),
     };
   }, emptyDocumentResult);
 };
 
 const mergeDocumentsAggregates = (
-  previousAggregates: DocumentSearchResponse['aggregates'],
-  newAggregates: DocumentSearchResponse['aggregates']
-): DocumentSearchResponse['aggregates'] => {
+  previousAggregates: DocumentSearchAggregate[],
+  newAggregates: DocumentSearchAggregate[]
+): DocumentSearchAggregate[] => {
   return previousAggregates?.map((aggregate) => {
     const newAggregate = newAggregates?.find(
       (agg) => agg.name === aggregate.name

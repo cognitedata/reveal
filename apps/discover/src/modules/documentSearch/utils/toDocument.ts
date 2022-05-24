@@ -1,6 +1,6 @@
 import { normalize } from 'dataLayers/documents/adapters/normalize';
 
-import { DocumentSearchResponse, DocumentHighlight } from '@cognite/sdk';
+import { DocumentHighlight, DocumentSearchItem } from '@cognite/sdk';
 
 import { DocumentType } from '../types';
 
@@ -21,7 +21,7 @@ export const getHighlight = (info?: DocumentHighlight) => {
 export const toDocument = ({
   item,
   highlight,
-}: DocumentSearchResponse['items'][number]): DocumentType => {
+}: DocumentSearchItem): DocumentType => {
   const documentResponse = {
     ...normalize(item),
     highlight: {

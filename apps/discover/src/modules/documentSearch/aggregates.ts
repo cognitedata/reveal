@@ -1,4 +1,4 @@
-import { DocumentCountAggregate } from '@cognite/sdk';
+import { DocumentSearchCountAggregate } from '@cognite/sdk';
 
 import {
   FILE_TYPE_KEY,
@@ -8,7 +8,7 @@ import {
   TOTAL_COUNT_KEY,
 } from './constants';
 
-export const aggregates: DocumentCountAggregate[] = [
+export const aggregates: DocumentSearchCountAggregate[] = [
   {
     name: 'labels',
     aggregate: 'count',

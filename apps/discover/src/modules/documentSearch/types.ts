@@ -1,7 +1,7 @@
 import {
   DocumentFilter,
-  DocumentSearchResponse,
   DocumentSearch,
+  DocumentSearchAggregate,
 } from '@cognite/sdk';
 import { Geometry, GeoJson } from '@cognite/seismic-sdk-js';
 
@@ -39,7 +39,7 @@ export interface DocumentResult {
   nextCursor?: string;
   hits: DocumentType[];
   facets: DocumentResultFacets;
-  aggregates?: DocumentSearchResponse['aggregates'];
+  aggregates?: DocumentSearchAggregate[];
 }
 
 export interface DocumentLabel {
@@ -165,8 +165,6 @@ export interface FormattedFacet {
   facetNameDisplayFormat: string;
   facetValueDisplayFormat: string;
 }
-
-export type DocumentsAggregatesResponse = DocumentSearchResponse['aggregates'];
 
 export type CategoryResponse = {
   facets: DocumentQueryFacet[];
