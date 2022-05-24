@@ -1,4 +1,4 @@
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import dayjs from 'dayjs';
 import { useParams } from 'react-router-dom';
 import { mockPriceArea, testRenderer } from 'utils/test';
@@ -34,12 +34,12 @@ describe('Bidmatrix tests', () => {
   });
 
   describe('Bidmatrix header tests', () => {
-    it('Should display the correct display name in Bidmatrix title', () => {
+    it('Should display the correct display name in Bidmatrix title', async () => {
       const { rerender } = testRenderer(
         <BidMatrix priceArea={mockPriceArea} />
       );
 
-      let title = screen.getByRole('heading', { name: /Bidmatrix:/i });
+      let title = await screen.findByRole('heading', { name: /Bidmatrix:/i });
       expect(title).toHaveTextContent('Total');
 
       // First plant bidmatrix
@@ -49,25 +49,25 @@ describe('Bidmatrix tests', () => {
       }));
       rerender(<BidMatrix priceArea={mockPriceArea} />);
 
-      title = screen.getByRole('heading', { name: /Bidmatrix:/i });
+      title = await screen.findByRole('heading', { name: /Bidmatrix:/i });
       expect(title).toHaveTextContent(testPlant.displayName);
     });
 
-    it('Should display the correct date generated', () => {
+    it('Should display the correct date generated', async () => {
       testRenderer(<BidMatrix priceArea={mockPriceArea} />);
 
-      const dateGenerated = screen.getByText(/Generated/i);
+      const dateGenerated = await screen.findByText(/Generated/i);
       expect(dateGenerated).toHaveTextContent(
         dayjs(mockPriceArea.bidDate).format('MMM DD, YYYY')
       );
     });
 
-    it('Should display the correct external id', () => {
+    it('Should display the correct external id', async () => {
       const { rerender } = testRenderer(
         <BidMatrix priceArea={mockPriceArea} />
       );
 
-      let externalId = screen.getByText(/Generated/i);
+      let externalId = await screen.findByText(/Generated/i);
       // TODO(POWEROPS-223):
       // For now, we select always the first method available
       expect(externalId).toHaveTextContent(
@@ -87,7 +87,7 @@ describe('Bidmatrix tests', () => {
       // TODO(POWEROPS-223):
       // For now, we select always the first method available
       const expectedExternalId = plant?.matrixesWithData[0]?.externalId;
-      externalId = screen.getByText(/Generated/i);
+      externalId = await screen.findByText(/Generated/i);
 
       expect(expectedExternalId).not.toBeUndefined();
       expect(externalId).toHaveTextContent(expectedExternalId || '');
@@ -149,32 +149,32 @@ describe('Bidmatrix tests', () => {
   describe('Copy bidmatrix tests', () => {
     const handleCopy = jest.spyOn(utils, 'copyMatrixToClipboard');
 
-    it('Should render copy button', () => {
+    it('Should render copy button', async () => {
       testRenderer(<BidMatrix priceArea={mockPriceArea} />);
 
-      const copyButton = screen.getByRole('button');
+      const copyButton = await screen.findByRole('button');
       expect(copyButton).toBeInTheDocument();
     });
 
-    it('Should display informational tooltip on hover', () => {
+    it('Should display informational tooltip on hover', async () => {
       testRenderer(<BidMatrix priceArea={mockPriceArea} />);
 
-      const copyButton = screen.getByRole('button');
+      const copyButton = await screen.findByRole('button');
       fireEvent.mouseEnter(copyButton);
 
-      const tooltip = screen.getByRole('tooltip');
+      const tooltip = await screen.findByRole('tooltip');
       expect(tooltip).toBeInTheDocument();
     });
 
-    it('Should change tooltip text on click', () => {
+    it('Should change tooltip text on click', async () => {
       testRenderer(<BidMatrix priceArea={mockPriceArea} />);
 
-      const copyButton = screen.getByRole('button');
+      const copyButton = await screen.findByRole('button');
       fireEvent.mouseEnter(copyButton);
 
-      const tooltipText = screen.getByRole('tooltip').textContent;
+      const tooltipText = (await screen.findByRole('tooltip')).textContent;
       fireEvent.click(copyButton);
-      const newTooltipText = screen.getByRole('tooltip').textContent;
+      const newTooltipText = (await screen.findByRole('tooltip')).textContent;
 
       expect(tooltipText).not.toEqual(newTooltipText);
     });
@@ -185,7 +185,9 @@ describe('Bidmatrix tests', () => {
       const copyButton = await screen.findByRole('button');
       fireEvent.click(copyButton);
 
-      expect(handleCopy).toBeCalled();
+      await waitFor(() => {
+        expect(handleCopy).toBeCalled();
+      });
       expect(navigator.clipboard.writeText).toBeCalled();
     });
 
