@@ -9,6 +9,7 @@ import { ModelDataProvider } from '@reveal/modeldata-api';
 
 import { PointCloudOctree, Potree } from './potree-three-loader';
 import { StyledObjectInfo } from './styling/StyledObjectInfo';
+import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
 
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
@@ -28,7 +29,7 @@ export class PointCloudFactory {
     const { modelBaseUrl } = modelMetadata;
 
     return this._potreeInstance
-      .loadPointCloud(modelBaseUrl, 'ept.json', styledObjectInfo)
+      .loadPointCloud(modelBaseUrl, DEFAULT_POINT_CLOUD_METADATA_FILE, styledObjectInfo)
       .then((pco: PointCloudOctree) => {
         pco.name = `PointCloudOctree: ${modelBaseUrl}`;
         return new PotreeNodeWrapper(pco, styledObjectInfo);
