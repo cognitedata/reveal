@@ -73,10 +73,6 @@ describe('FilterCategoryValues', () => {
               casing: defaultWellsConfig.wells?.casing,
             },
           };
-        case 'general.enableWellSDKV3':
-          return {
-            data: true,
-          };
         default:
           return {
             data: undefined,

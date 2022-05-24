@@ -20,19 +20,23 @@ import {
 
 const responseData: ProjectConfig = getMockConfig();
 
-const initiateTest = async (hook: any, parameter?: any) => {
+const initiateTest = async (hook: any, parameter?: unknown) => {
   const { result, waitForNextUpdate } = renderHookWithStore(() =>
     hook(parameter)
   );
   return { result, waitForNextUpdate };
 };
 
+const originalConsole = global.console;
+
 describe('useProjectConfigUpdateMutate', () => {
   const mockServer = setupServer(getMockConfigGet(), getMockConfigPatch(200));
   const onSuccess = jest.fn();
   const onError = jest.fn();
 
-  beforeAll(() => mockServer.listen());
+  beforeAll(() => {
+    mockServer.listen();
+  });
   afterAll(() => {
     jest.clearAllMocks();
     mockServer.close();
@@ -45,7 +49,7 @@ describe('useProjectConfigUpdateMutate', () => {
     });
 
     await act(() =>
-      result.current.mutateAsync({}).then((response: any) => {
+      result.current.mutateAsync({}).then((response: unknown) => {
         expect(onSuccess).toHaveBeenCalledTimes(1);
         expect(onError).toHaveBeenCalledTimes(0);
         expect(response).toEqual(responseData);
@@ -58,30 +62,33 @@ describe('useProjectConfigUpdateMutate fail', () => {
   const mockServer = setupServer(getMockConfigPatch(400));
   const onSuccess = jest.fn();
   const onError = jest.fn();
+  const error = jest.fn();
 
-  beforeAll(() => mockServer.listen());
+  beforeAll(() => {
+    mockServer.listen();
+    // @ts-expect-error - missing other keys
+    global.console = { error };
+  });
   afterAll(() => {
     jest.clearAllMocks();
     mockServer.close();
+    global.console = originalConsole;
   });
 
   it('should call the error function', async () => {
-    const { result, waitForNextUpdate } = await initiateTest(
-      useProjectConfigUpdateMutate,
-      {
-        onSuccess,
-        onError,
-      }
-    );
+    const { result } = await initiateTest(useProjectConfigUpdateMutate, {
+      onSuccess,
+      onError,
+    });
 
     await act(() => {
-      result.current.mutateAsync({}).catch((error: any) => {
-        console.log(error);
+      return result.current.mutateAsync({}).catch((_error: unknown) => {
+        // console.log(error);
       });
     });
-    await waitForNextUpdate();
     expect(onSuccess).toHaveBeenCalledTimes(0);
     expect(onError).toHaveBeenCalledTimes(1);
+    expect(error).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -110,7 +117,7 @@ describe('useProjectConfigDeleteQuery', () => {
     const { result } = await initiateTest(useProjectConfigDeleteQuery);
 
     await act(() =>
-      result.current.mutateAsync().then((response: any) => {
+      result.current.mutateAsync().then((response: unknown) => {
         expect(response).toEqual(responseData);
       })
     );

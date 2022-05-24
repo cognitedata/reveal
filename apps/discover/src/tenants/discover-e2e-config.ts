@@ -14,8 +14,6 @@ const defaultTestConfig: TenantConfig = {
     ...testAzureConfig,
   },
 
-  enableWellSDKV3: true,
-
   // Override the default config
   wells: {
     overview: {

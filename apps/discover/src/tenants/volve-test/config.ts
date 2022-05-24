@@ -10,7 +10,6 @@ const defaultConfig: TenantConfig = {
   seismic: {
     disabled: true,
   },
-  enableWellSDKV3: true,
 };
 
 export default defaultConfig;

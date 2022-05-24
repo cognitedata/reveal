@@ -341,5 +341,4 @@ export interface TenantConfig extends ModuleConfig {
   favorites?: FavoritesConfig;
   externalLinks?: ExternalLinksConfig;
   showProjectConfig?: boolean;
-  enableWellSDKV3?: boolean;
 }
