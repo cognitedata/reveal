@@ -124,8 +124,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
       yield* this._cadGeometryRenderPipeline.pipeline(renderer);
 
       renderer.setRenderTarget(this._renderTargetData.ssaoRenderTarget);
-      renderer.setClearColor('#FFFFFF');
-      renderer.setClearAlpha(1.0);
+      renderer.setClearColor('#FFFFFF', 1.0);
       renderer.clear();
 
       if (this.shouldRenderSsao(hasStyling.back)) {
