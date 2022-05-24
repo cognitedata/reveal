@@ -1,7 +1,4 @@
 {
-    "data-set-updated": "Data set \"{{datasetName}}\" is updated",
-    "data-set-updated-not": "Data set \"{{datasetName}}\" is not updated",
-
     "action_one": "Action",
     "action_other": "Actions",
     "add-data": "Add data",
@@ -34,6 +31,8 @@
     "data-profile": "Data profile",
     "data-set-created": "Data set created!",
     "data-set-id": "Data set ID",
+    "data-set-is-updated": "Data set \"{{datasetName}}\" is updated",
+    "data-set-is-not-updated": "Data set \"{{datasetName}}\" is not updated",
     "data-set_one": "Data set",
     "data-set_other": "Data sets",
     "data-set-details": "Data set details",

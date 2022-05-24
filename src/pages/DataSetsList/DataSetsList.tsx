@@ -31,7 +31,6 @@ import { useTranslation } from 'common/i18n';
 
 const DataSetsList = (): JSX.Element => {
   const { t } = useTranslation();
-  console.log(t('edit'));
   const { data: withExtpipes, isFetched: didFetchWithExtpipes } =
     useWithExtpipes();
 

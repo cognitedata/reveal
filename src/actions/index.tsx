@@ -124,7 +124,7 @@ export const useUpdateDataSetMutation = () => {
       onSuccess: (_, dataset: DataSet) => {
         notification.success({
           message: (
-            <p>{t('data-set-updated', { datasetName: dataset?.name })}</p>
+            <p>{t('data-set-is-updated', { datasetName: dataset?.name })}</p>
           ),
         });
       },
@@ -132,7 +132,9 @@ export const useUpdateDataSetMutation = () => {
         notification.error({
           message: (
             <>
-              <p>{t('data-set-updated-not', { datasetName: dataset?.name })}</p>
+              <p>
+                {t('data-set-is-not-updated', { datasetName: dataset?.name })}
+              </p>
               <Typography.Paragraph ellipsis={{ rows: 2, expandable: true }}>
                 <pre>{JSON.stringify(error.errors, null, 2)}`</pre>
               </Typography.Paragraph>

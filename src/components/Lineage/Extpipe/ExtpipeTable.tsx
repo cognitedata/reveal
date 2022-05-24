@@ -27,13 +27,6 @@ interface ExtpipeTableProps extends ExtpipeSourceExtractorProps {
   isExtpipesFetched?: boolean;
 }
 
-// export const EXTPIPES_HEADING: Readonly<string> = 'Extraction pipelines';
-// export const CREATE_EXTRACTION_PIPELINE: Readonly<string> =
-//   'Create extraction pipeline';
-// export const EXTPIPE_SUB_HEADING: Readonly<string> =
-//   'Use this section to create, troubleshoot and view details on extraction pipelines that ingest data from extractors into this data set.';
-// const PERMISSION_TEXT: Readonly<string> = `You must have the 'extractionPipelinesAcl:read' permission to see extraction pipelines in your project`;
-
 const StyledButton = styled(Button)`
   margin-top: 8px;
 
