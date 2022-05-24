@@ -36,28 +36,24 @@ export const FooterPaginationServer = ({
   const showRefineSearch =
     !showLoadMoreExternalAction && allResultsSeen && !lessThanOnePage;
 
-  // console.log('Debug:', {
-  //   showingResults,
-  //   totalResults,
-  //   lessThanOnePage,
-  //   allResultsSeen,
-  //   showLoadMoreExternalAction,
-  //   showRefineSearch,
-  // });
+  const isFooterVisible =
+    isLoading || !!showLoadMoreExternalAction || showRefineSearch;
 
   return (
     <FooterWrapper>
-      <Footer>
-        {isLoading && <LoadingSpinner isLoading />}
+      {isFooterVisible && (
+        <Footer>
+          {isLoading && <LoadingSpinner isLoading />}
 
-        {showLoadMoreExternalAction && (
-          <LoadMoreButton onClick={handleLoadMore} />
-        )}
+          {showLoadMoreExternalAction && (
+            <LoadMoreButton onClick={handleLoadMore} />
+          )}
 
-        {showRefineSearch && (
-          <EndPaginationText level={2}>{NO_MORE_RESULTS}</EndPaginationText>
-        )}
-      </Footer>
+          {showRefineSearch && (
+            <EndPaginationText level={2}>{NO_MORE_RESULTS}</EndPaginationText>
+          )}
+        </Footer>
+      )}
     </FooterWrapper>
   );
 };
