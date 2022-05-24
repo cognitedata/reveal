@@ -1,3 +1,9 @@
+import { UserPreferredUnit } from '../../../src/constants/units';
+import {
+  WATER_DEPTH,
+  KB_ELEVATION,
+} from '../../../src/pages/authorized/search/well/content/constants';
+
 describe('Wells: result_table', () => {
   beforeEach(() => {
     cy.deleteAllFavorites();
@@ -92,5 +98,60 @@ describe('Wells: result_table', () => {
     cy.findByTestId('favorite-wells-table')
       .findAllByTestId('table-row')
       .should('have.length', 1);
+  });
+
+  it('Measurement unit changes should apply to "water depth" & "KB elevation" column', () => {
+    cy.performSearch('');
+    cy.goToTab('Wells');
+
+    cy.log('click on settings button');
+    cy.get('[aria-label="Settings"]').as('settingsBtn');
+    cy.get('@settingsBtn').click();
+
+    cy.log('settings window should display');
+    cy.findByText('Settings').should('be.visible');
+
+    cy.log('verify select option - Meter');
+    cy.getButton('Meter').click({ force: true }).should('be.focused');
+
+    cy.log('close the settings window');
+    cy.findAllByRole('img').eq(0).click();
+
+    cy.log(`verify ${WATER_DEPTH} column header`);
+    cy.findByTestId('table-header-row')
+      .findByText(`${WATER_DEPTH} (${UserPreferredUnit.METER})`)
+      .should('be.visible');
+
+    cy.log(`Enable the ${KB_ELEVATION} column from column settings`);
+    cy.findByTestId('organize-columns').click();
+    cy.findByLabelText(`${KB_ELEVATION} (${UserPreferredUnit.METER})`).click({
+      force: true,
+    });
+    cy.findByTestId('organize-columns').click();
+
+    cy.log(`verify ${KB_ELEVATION} column header`);
+    cy.findByTestId('table-header-row')
+      .findByText(`${KB_ELEVATION} (${UserPreferredUnit.METER})`)
+      .should('be.visible');
+
+    cy.log(
+      'water depth value should change according to selected measurement unit'
+    );
+    cy.findAllByTestId('table-cell')
+      .eq(5)
+      .invoke('text')
+      .then(parseFloat)
+      .then((valInMeter) => {
+        cy.get('@settingsBtn').click();
+        cy.getButton('Feet').click({ force: true });
+
+        cy.findAllByTestId('table-cell')
+          .eq(5)
+          .invoke('text')
+          .then(parseFloat)
+          .then((valInFeet) => {
+            expect(valInFeet).to.greaterThan(valInMeter);
+          });
+      });
   });
 });

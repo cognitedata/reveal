@@ -9,6 +9,7 @@ export const OPERATOR = 'Operator'; // deprecated, use: apps/discover/src/dataLa
 export const WATER_DEPTH = 'Water depth'; // deprecated, use: apps/discover/src/dataLayers/wells/wells/titles.ts
 export const BLOCK_NAME = 'Block name'; // deprecated, use: apps/discover/src/dataLayers/wells/wells/titles.ts
 export const FIELD_NAME = 'Field name'; // deprecated, use: apps/discover/src/dataLayers/wells/wells/titles.ts
+export const KB_ELEVATION = 'KB elevation';
 export const NO_WELLS_AND_WELLBORE_ERROR_MESSAGE = `No wellbores are selected with wells. At least one wellbore has to be selected with a well.`;
 export const FETCHING_SELECTED_WELBORE_MESSAGE =
   'Fetching selected wellbores...';
