@@ -20,8 +20,9 @@ import { MetricsLogger } from '@reveal/metrics';
 import { SupportedModelTypes } from '@reveal/model-base';
 import { StyledObjectInfo } from './styling/StyledObjectInfo';
 import { CogniteClientPlayground } from '@cognite/sdk-playground';
-import { BoundingVolume } from './annotationTypes';
+import { BoundingVolume, Geometry } from './annotationTypes';
 import { annotationsToObjectInfo } from './styling/annotationsToObjects';
+import { BoxPrimitive } from 'dist/packages/pointclouds/src/annotationTypes';
 
 export class PointCloudManager {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository;
@@ -126,6 +127,18 @@ export class PointCloudManager {
     this._pointCloudGroupWrapper.requestRedraw();
   }
 
+  private annotationGeometryToLocalGeometry(geometry: any): Geometry {
+    if (geometry.box) {
+      return {
+        matrix: new THREE.Matrix4().fromArray(geometry.box.matrix)
+      } as BoxPrimitive;
+    }
+
+    if (geometry.cylinder) {
+      return geometry.cylinder;
+    }
+  }
+
   private async getAnnotations(modelIdentifier: ModelIdentifier): Promise<BoundingVolume[]> {
     const modelAnnotations = await this._sdkPlayground.annotations.list({
       filter: {
@@ -135,27 +148,16 @@ export class PointCloudManager {
       }
     });
 
-    const bvs: BoundingVolume[] = [];
+    const bvs = modelAnnotations.items.map(annotation => {
+      const region = (annotation.data as any).region.map((geometry: any) => {
+        return this.annotationGeometryToLocalGeometry(geometry);
+      });
 
-    for (const annotation of modelAnnotations.items) {
-      const bv: BoundingVolume = {
+      return {
         annotationId: annotation.id,
-        region: []
-      };
-
-      for (const geometry of (annotation.data as any).region) {
-        if (geometry.box) {
-          bv.region.push({
-            matrix: new THREE.Matrix4().fromArray(geometry.box.matrix)
-          });
-        }
-        if (geometry.cylinder) {
-          bv.region.push(geometry.cylinder);
-        }
-      }
-
-      bvs.push(bv);
-    }
+        region
+      } as BoundingVolume;
+    });
 
     return bvs;
   }
