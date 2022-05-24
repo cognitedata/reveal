@@ -99,7 +99,7 @@ def pods = { body ->
         codecov.pod {
           testcafe.pod() {
             properties([
-              buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
+              
             ])
 
             node(POD_LABEL) {
