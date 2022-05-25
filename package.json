@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cognite-charts",
-  "version": "0.22.0",
+  "version": "0.23.0",
   "private": true,
   "scripts": {
     "build": "react-scripts build",
