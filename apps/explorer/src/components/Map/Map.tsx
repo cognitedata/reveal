@@ -18,7 +18,7 @@ const projectModels: Record<string, AddModelOptions> = {
   },
 };
 
-const Home: React.FC = () => {
+const Map: React.FC = () => {
   const { client } = useAuthContext();
   const viewer = React.useRef<Cognite3DViewer>();
   const [treeIndex, setTI] = React.useState<number>();
@@ -85,4 +85,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default Map;

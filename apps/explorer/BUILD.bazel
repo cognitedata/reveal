@@ -77,6 +77,7 @@ DEPENDENCIES = [
     "@npm//@cognite/reveal",
     "@npm//@cognite/sdk",
     "@npm//@sentry/browser",
+    "@npm//@apollo/client",
     "@npm//react",
     "@npm//react-dom",
     "@npm//react-i18next",

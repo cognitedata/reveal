@@ -15,6 +15,7 @@
     "deploy": "./scripts/deploy.sh"
   },
   "dependencies": {
+    "@apollo/client": "^3.5.5",
     "@azure/msal-browser": "^2.22.0",
     "@babel/runtime": "^7.16.7",
     "@cognite/cogs.js": "6.15.2",

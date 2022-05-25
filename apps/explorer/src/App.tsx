@@ -1,26 +1,18 @@
-import { Switch, Redirect, Route } from 'react-router-dom';
 import GlobalStyles from 'global-styles';
 import sidecar from 'utils/sidecar';
-import { Container, Logout } from '@cognite/react-container';
-import NotFoundPage from 'pages/Error404';
-import Home from 'pages/Home';
-import { MenuBar, PAGES } from 'pages/Menubar';
+import { Container } from '@cognite/react-container';
+import { MenuBar } from 'components/Menubar';
+import { AppRouter } from 'pages/routers/AppRouter';
+
+import { ApolloProviderWrapper } from './providers/ApolloProviderWrapper';
 
 const App = () => (
   <Container sidecar={sidecar}>
-    <>
+    <ApolloProviderWrapper>
       <GlobalStyles />
       <MenuBar />
-
-      <Switch>
-        <Route path={PAGES.HOME} render={() => <Home />} />
-        <Route path={PAGES.LOGOUT} render={() => <Logout />} />
-
-        <Redirect from="" to={PAGES.HOME} />
-        <Redirect from="/" to={PAGES.HOME} />
-        <Route render={() => <NotFoundPage />} />
-      </Switch>
-    </>
+      <AppRouter />
+    </ApolloProviderWrapper>
   </Container>
 );
 

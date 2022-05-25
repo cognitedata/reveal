@@ -9,7 +9,8 @@ import { SidecarConfig, getDefaultSidecar, CDFCluster } from '@cognite/sidecar';
 // #
 // #
 const PROD = false;
-const CLUSTER: CDFCluster = 'azure-dev';
+const CLUSTER: CDFCluster =
+  (process.env.REACT_APP_CLUSTER as CDFCluster) || 'azure-dev';
 const LOCAL_COMMENTS_API = false;
 // #
 // #
@@ -66,6 +67,9 @@ const getAadApplicationId = (cluster: string) => {
   enableUserManagement: false,
   disableLegacyLogin: true,
   ...((window as any).__cogniteSidecar || {}),
+  reactQueryDevtools: {
+    disabled: true,
+  },
 } as SidecarConfig;
 
 export default (window as any).__cogniteSidecar;
