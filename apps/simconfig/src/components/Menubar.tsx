@@ -34,7 +34,7 @@ export function MenuBar() {
           links={[
             {
               name: 'Model library',
-              isActive: !!matchRoute({ to: 'model-library' }),
+              isActive: !!matchRoute({ to: '/model-library/*' }),
               onClick: () => {
                 navigate({ to: '/model-library' });
               },
