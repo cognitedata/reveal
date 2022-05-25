@@ -1,8 +1,10 @@
 /*
   Takes a linear depth value between 0 and 1 and maps 
   it between the near and far plane.
+
+  Adapted from https://stackoverflow.com/questions/6652253/getting-the-true-z-value-from-the-depth-buffer
 */
+
 float toViewZ(float depth, float near, float far){
-  float normalizedDepth = depth * 2.0 - 1.0;
-  return 2.0 * near * far / (far + near - normalizedDepth * (far - near)); 
+  return near * far / (far - depth * (far - near)); 
 }
