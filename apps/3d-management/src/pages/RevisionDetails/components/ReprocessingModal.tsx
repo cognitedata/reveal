@@ -120,39 +120,39 @@ export const ReprocessingModal = ({
         </p>
       </Modal>
     );
-  } else {
-    return (
-      <Modal
-        title="New revision for model"
-        onOk={onOk}
-        onCancel={onClose}
-        okText="Crete new revision"
-        getContainer={getContainer}
-        {...restProps}
-      >
-        <p>This model doesn&apos;t use the latest 3d format.</p>
-        <p>
-          We recommend you always use the latest 3D format to ensure all the
-          latest features are available. You can click the &quot;Create new revision&quot;
-          button below to update the model.
-        </p>
-        <p>
-          This model doesn&apos;t have the data necessary to reprocess the
-          revision.
-        </p>
-
-        <p>
-          If you continue, <b>a new model revision will be generated</b> from the
-          original source file. The current revision will remain unchanged.
-        </p>
-        <p>
-          <b>
-            The new revision won&apos;t be published automatically and asset
-            mappings will not be migrated to the new revision
-          </b>
-          .
-        </p>
-      </Modal>
-    );
   }
+  
+  return (
+    <Modal
+      title="New revision for model"
+      onOk={onOk}
+      onCancel={onClose}
+      okText="Crete new revision"
+      getContainer={getContainer}
+      {...restProps}
+    >
+      <p>This model doesn&apos;t use the latest 3d format.</p>
+      <p>
+        We recommend you always use the latest 3D format to ensure all the
+        latest features are available. You can click the &quot;Create new 
+        revision&quot; button below to update the model.
+      </p>
+      <p>
+        This model doesn&apos;t have the data necessary to reprocess the
+        revision.
+      </p>
+
+      <p>
+        If you continue, <b>a new model revision will be generated</b> from
+        the original source file. The current revision will remain unchanged.
+      </p>
+      <p>
+        <b>
+          The new revision won&apos;t be published automatically and asset
+          mappings will not be migrated to the new revision
+        </b>
+        .
+      </p>
+    </Modal>
+  );
 };
