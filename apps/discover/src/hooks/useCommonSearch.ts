@@ -1,4 +1,3 @@
-import { QueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 import isUndefined from 'lodash/isUndefined';
@@ -25,7 +24,6 @@ export const useCommonSearch = () => {
 
   const doCommonSearch = (
     searchQuery: Partial<SavedSearchContent>,
-    queryClient: QueryClient,
     headers?: FetchHeaders
   ) => {
     dispatch(startSearching());
@@ -62,7 +60,7 @@ export const useCommonSearch = () => {
     }
 
     if (projectConfig && !projectConfig.seismic?.disabled && headers) {
-      doSeismicSearch(searchQuery, headers, queryClient);
+      doSeismicSearch(searchQuery, headers);
     }
   };
 

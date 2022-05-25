@@ -1,4 +1,4 @@
-import { QueryClient } from 'react-query';
+import { useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 import isUndefined from 'lodash/isUndefined';
@@ -10,11 +10,11 @@ import { prefetchSurveys } from 'modules/seismicSearch/hooks';
 
 export const useSeismicSearch = () => {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   const doSeismicSearch = (
     searchQuery: SavedSearchQuery,
-    headers: FetchHeaders,
-    queryClient: QueryClient
+    headers: FetchHeaders
   ) => {
     if (!isUndefined(searchQuery.phrase) && searchQuery.phrase === '') {
       dispatch(seismicSearchActions.resetDataSearch());

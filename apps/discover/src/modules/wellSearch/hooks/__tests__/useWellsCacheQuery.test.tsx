@@ -1,5 +1,5 @@
 import 'services/wellSearch/__mocks/setupWellsMockSDK';
-import { QueryClient } from 'react-query';
+import { QueryClient, useQueryClient } from 'react-query';
 
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
@@ -17,7 +17,14 @@ describe('useWellsCacheQuery', () => {
   beforeAll(() => mockServer.listen());
   afterAll(() => mockServer.close());
 
-  const queryClient = new QueryClient();
+  // INFO: we need the same instance in this test, otherwise avoid creating new QueryClients
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
 
   it('should return correct wells after cache changes', async () => {
     const Component = () => {
@@ -31,31 +38,33 @@ describe('useWellsCacheQuery', () => {
       );
     };
 
-    testRendererForHooks(Component, queryClient);
+    testRendererForHooks(Component, {}, queryClient);
 
     expect(await screen.findByText('isLoading: no')).toBeInTheDocument();
     expect(await screen.findByText('data: test-well-1')).toBeInTheDocument();
 
     const ComponentTwo = () => {
       const { data, isLoading } = useWellsCacheQuery(['test-well-2']);
+      const cachedWells =
+        useQueryClient().getQueryData<unknown[]>(WELL_QUERY_KEY.WELLS_CACHE) ||
+        [];
 
       return (
         <>
           <div>{`data: ${data && data.wells[0].id}`}</div>
           <div>{`isLoading: ${isLoading ? 'yes' : 'no'}`}</div>
+          <div>{`cached wells: ${cachedWells.length}`}</div>
         </>
       );
     };
 
-    testRendererForHooks(ComponentTwo, queryClient);
+    testRendererForHooks(ComponentTwo, {}, queryClient);
 
     expect(await screen.findByText('isLoading: no')).toBeInTheDocument();
     // still only return the one requested well
     expect(await screen.findByText('data: test-well-2')).toBeInTheDocument();
 
     // but confirm that we have now cached both:
-    const cachedWells =
-      queryClient.getQueryData<unknown[]>(WELL_QUERY_KEY.WELLS_CACHE) || [];
-    expect(cachedWells.length).toEqual(2);
+    expect(await screen.findByText('cached wells: 2')).toBeInTheDocument();
   });
 });

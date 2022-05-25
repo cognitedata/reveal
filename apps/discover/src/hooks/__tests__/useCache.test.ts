@@ -1,8 +1,18 @@
+import { QueryClient } from 'react-query';
+
 import { renderHook } from '@testing-library/react-hooks';
 
 import { QueryClientWrapper } from '__test-utils/queryClientWrapper';
 
 import { useCache } from '../useCache';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 describe('useCache', () => {
   const dynamicFetchAction = (items: Set<string>) => {
@@ -43,7 +53,7 @@ describe('useCache', () => {
           items: new Set(['1', '2', '3']),
           fetchAction: dynamicFetchAction,
         }),
-      { wrapper: QueryClientWrapper }
+      { wrapper: QueryClientWrapper, initialProps: { queryClient } }
     );
 
     await waitForNextUpdate();
@@ -55,7 +65,7 @@ describe('useCache', () => {
           items: new Set(['1', '2', '3', '4', '5']),
           fetchAction: async () => ({ '4': ['sub-4-a'], '5': ['sub-5-a'] }),
         }),
-      { wrapper: QueryClientWrapper }
+      { wrapper: QueryClientWrapper, initialProps: { queryClient } }
     );
 
     await waitAgain();

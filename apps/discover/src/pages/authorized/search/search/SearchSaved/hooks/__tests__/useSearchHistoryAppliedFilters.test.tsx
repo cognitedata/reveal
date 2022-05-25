@@ -1,5 +1,4 @@
 import '__mocks/mockContainerAuth';
-import { QueryClient } from 'react-query';
 
 import { screen } from '@testing-library/react'; // should be first
 import { renderHook } from '@testing-library/react-hooks';
@@ -39,7 +38,7 @@ const mockServer = setupServer(
 describe('useSearchHistoryAppliedFilters', () => {
   beforeAll(() => mockServer.listen());
   afterAll(() => mockServer.close());
-  const queryClient = new QueryClient();
+
   it('Curates the correct document filters based on saved search history', async () => {
     const getSearchHistoryFilters = await getHookResult();
 
@@ -121,7 +120,7 @@ describe('useSearchHistoryAppliedFilters', () => {
       );
     };
 
-    testRendererForHooks(Component, queryClient);
+    testRendererForHooks(Component);
 
     await screen.findByText(`count: 9`);
     expect(screen.queryAllByTestId('document-filter')).toEqual([]);

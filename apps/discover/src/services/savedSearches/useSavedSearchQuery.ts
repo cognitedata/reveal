@@ -129,7 +129,7 @@ export const useMutatePatchSavedSearch = (
 
         if (doSearch) {
           // this is what activates the 'saved search'
-          doCommonSearch(data, queryClient, headers);
+          doCommonSearch(data, headers);
         }
 
         if (seismicConfig && !seismicConfig?.disabled)

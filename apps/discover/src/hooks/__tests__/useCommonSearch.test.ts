@@ -1,4 +1,3 @@
-import { QueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 import { renderHook } from '@testing-library/react-hooks';
@@ -11,6 +10,7 @@ import { useProjectConfig } from 'hooks/useProjectConfig';
 import { setGeo } from 'modules/map/actions';
 import { SET_SEARCH_PHRASE } from 'modules/sidebar/constants';
 
+import { QueryClientWrapper } from '../../__test-utils/queryClientWrapper';
 import { useCommonSearch } from '../useCommonSearch';
 import { useDocumentSearch } from '../useDocumentSearch';
 import { useSeismicSearch } from '../useSeismicSearch';
@@ -45,7 +45,6 @@ jest.mock('hooks/useWellsSearch', () => ({
 }));
 
 const headers: FetchHeaders = { headers: 'headers' };
-const queryClient = new QueryClient();
 const geometry: Geometry = {
   type: 'Point',
   coordinates: [0, 0],
@@ -60,7 +59,9 @@ describe('useCommonSearch hook', () => {
   });
 
   const getHookResult = async () => {
-    const { result, waitForNextUpdate } = renderHook(() => useCommonSearch());
+    const { result, waitForNextUpdate } = renderHook(() => useCommonSearch(), {
+      wrapper: QueryClientWrapper,
+    });
     waitForNextUpdate();
     return result.current;
   };
@@ -68,28 +69,28 @@ describe('useCommonSearch hook', () => {
   it('should call dispatch as expected for empty search query', async () => {
     const doCommonSearch = await getHookResult();
 
-    doCommonSearch({}, queryClient, headers);
+    doCommonSearch({}, headers);
     expect(dispatch).toHaveBeenCalledTimes(2);
   });
 
   it('should call convertGeometryToGeoJson as expected', async () => {
     const doCommonSearch = await getHookResult();
 
-    doCommonSearch({}, queryClient, headers);
+    doCommonSearch({}, headers);
     expect(convertGeometryToGeoJson).not.toHaveBeenCalled();
 
     // @ts-expect-error hack for the deprecated field
-    doCommonSearch({ geometry }, queryClient, headers);
+    doCommonSearch({ geometry }, headers);
     expect(convertGeometryToGeoJson).toHaveBeenCalledTimes(1);
   });
 
   it('should dispatch setGeo as expected', async () => {
     const doCommonSearch = await getHookResult();
 
-    doCommonSearch({}, queryClient, headers);
+    doCommonSearch({}, headers);
     expect(setGeo).not.toHaveBeenCalled();
 
-    doCommonSearch({ geoJson: [{ geometry }] }, queryClient, headers);
+    doCommonSearch({ geoJson: [{ geometry }] }, headers);
     expect(setGeo).toHaveBeenCalledTimes(1);
     expect(setGeo).toHaveBeenCalledWith([{ geometry }], true);
   });
@@ -102,7 +103,7 @@ describe('useCommonSearch hook', () => {
       type: SET_SEARCH_PHRASE,
     };
 
-    doCommonSearch({ query }, queryClient, headers);
+    doCommonSearch({ query }, headers);
     expect(dispatch).toHaveBeenCalledWith(expectedSearchPhraseAction);
   });
 });
@@ -136,7 +137,7 @@ describe('useCommonSearch hook -> inner hook callbacks test', () => {
   it('should call inner hook callbacks as expected', async () => {
     const doCommonSearch = await getHookResult();
 
-    doCommonSearch({}, queryClient, headers);
+    doCommonSearch({}, headers);
     expect(doDocumentSearch).toHaveBeenCalledTimes(1);
     expect(doSeismicSearch).toHaveBeenCalledTimes(1);
     expect(doWellsSearch).toHaveBeenCalledTimes(1);

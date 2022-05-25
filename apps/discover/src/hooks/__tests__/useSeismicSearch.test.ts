@@ -1,4 +1,3 @@
-import { QueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 import { renderHook } from '@testing-library/react-hooks';
@@ -6,6 +5,7 @@ import { FetchHeaders } from 'utils/fetch';
 
 import { prefetchSurveys } from 'modules/seismicSearch/hooks';
 
+import { QueryClientWrapper } from '../../__test-utils/queryClientWrapper';
 import { useSeismicSearch } from '../useSeismicSearch';
 
 jest.mock('react-redux', () => ({
@@ -17,7 +17,6 @@ jest.mock('modules/seismicSearch/hooks', () => ({
 }));
 
 const headers: FetchHeaders = { headers: 'headers' };
-const queryClient = new QueryClient();
 
 describe('useSeismicSearch hook', () => {
   const dispatch = jest.fn();
@@ -27,7 +26,9 @@ describe('useSeismicSearch hook', () => {
   });
 
   const getHookResult = async () => {
-    const { result, waitForNextUpdate } = renderHook(() => useSeismicSearch());
+    const { result, waitForNextUpdate } = renderHook(() => useSeismicSearch(), {
+      wrapper: QueryClientWrapper,
+    });
     waitForNextUpdate();
     return result.current;
   };
@@ -35,18 +36,18 @@ describe('useSeismicSearch hook', () => {
   it('should call prefetchSurveys as expected', async () => {
     const doSeismicSearch = await getHookResult();
 
-    doSeismicSearch({}, headers, queryClient);
+    doSeismicSearch({}, headers);
     expect(prefetchSurveys).toHaveBeenCalledTimes(1);
-    expect(prefetchSurveys).toHaveBeenCalledWith(headers, queryClient);
+    expect(prefetchSurveys).toHaveBeenCalledWith(headers, expect.anything());
   });
 
   it('should not call dispatch as expected', async () => {
     const doSeismicSearch = await getHookResult();
 
-    doSeismicSearch({}, headers, queryClient);
+    doSeismicSearch({}, headers);
     expect(dispatch).not.toHaveBeenCalled();
 
-    doSeismicSearch({ phrase: '' }, headers, queryClient);
+    doSeismicSearch({ phrase: '' }, headers);
     expect(dispatch).toHaveBeenCalledTimes(1);
   });
 });

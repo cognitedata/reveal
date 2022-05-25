@@ -1,11 +1,22 @@
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-const queryClient = new QueryClient();
+export const QueryClientWrapper: React.FC<
+  React.PropsWithChildren<{ queryClient?: QueryClient }>
+> = ({ children, queryClient }) => {
+  const testQueryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        // ✅ turns retries off for tests
+        retry: false,
+        cacheTime: 0,
+        staleTime: 0,
+      },
+    },
+  });
 
-export const QueryClientWrapper: React.FC<React.PropsWithChildren<unknown>> = ({
-  children,
-}) => {
   return (
-    <QueryClientProvider client={queryClient}> {children} </QueryClientProvider>
+    <QueryClientProvider client={queryClient || testQueryClient}>
+      {children}
+    </QueryClientProvider>
   );
 };

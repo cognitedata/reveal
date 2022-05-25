@@ -1,4 +1,3 @@
-import { QueryClient } from 'react-query';
 import { batch } from 'react-redux';
 
 import { SavedSearchContent } from 'services/savedSearches';
@@ -11,9 +10,8 @@ export const useSearchActions = () => {
 
   const doCommonSearchBatched = (
     searchQuery: Partial<SavedSearchContent>,
-    queryClient: QueryClient,
     headers?: FetchHeaders
-  ) => batch(() => doCommonSearch(searchQuery, queryClient, headers));
+  ) => batch(() => doCommonSearch(searchQuery, headers));
 
   return { doCommonSearch: doCommonSearchBatched };
 };
