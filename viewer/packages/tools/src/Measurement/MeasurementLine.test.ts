@@ -48,7 +48,7 @@ describe(MeasurementLine.name, () => {
   });
 
   test('distance between the measuring line start point & end point', () => {
-    const startPosition = new THREE.Vector3(0, 0, 0);
+    const startPosition = new THREE.Vector3();
     const endPosition = new THREE.Vector3(100, 100, 100);
 
     line.startLine(startPosition, 0);
