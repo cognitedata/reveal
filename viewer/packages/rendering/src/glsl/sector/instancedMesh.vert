@@ -30,7 +30,7 @@ void main()
     v_color = a_color;
 
     vec3 transformed = (a_instanceMatrix * vec4(position, 1.0)).xyz;
-    vec4 modelViewPosition = viewMatrix * modelMatrix * vec4(transformed, 1.0);
+    vec4 modelViewPosition = viewMatrix * treeIndexWorldTransform * modelMatrix * vec4(transformed, 1.0);
     v_viewPosition = modelViewPosition.xyz;
     v_treeIndex = a_treeIndex;
     gl_Position = projectionMatrix * modelViewPosition;
