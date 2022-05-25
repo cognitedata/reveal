@@ -6,6 +6,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "jsx": "react",
+    "experimentalDecorators": true,
     "lib": [
       "DOM",
       "DOM.Iterable",

@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@cognite/reveal';
 import { TestEnvCad, TestViewer } from '../TestViewer';
 import { registerVisualTest } from '../../../visual_tests';
@@ -16,7 +16,7 @@ function CustomObjectWithHighlightAndGhostedV8() {
   return (
     <TestViewer
       modelName={"primitives_v8"}
-      modifyTestEnv={({scene, model }: TestEnvCad) => {
+      modifyTestEnv={({sceneHandler, model }: TestEnvCad) => {
         const highlightedNodes = new TreeIndexNodeCollection([0, 2, 4, 6, 8, 10]);
         model.nodeAppearanceProvider.assignStyledNodeCollection(highlightedNodes, DefaultNodeAppearance.Highlighted);
 
@@ -26,7 +26,7 @@ function CustomObjectWithHighlightAndGhostedV8() {
         const sphere = new THREE.SphereBufferGeometry(5, 32, 16);
         const sphereMesh = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color: 'red'}));
         sphereMesh.position.set(12, 0, -5);
-        scene.add(sphereMesh);
+        sceneHandler.addCustomObject(sphereMesh);
 
         return {
           cameraConfig: {

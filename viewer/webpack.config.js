@@ -9,6 +9,7 @@ const packageJSON = require('./package.json');
 const workerPackageJSON = require('./node_modules/@cognite/reveal-parser-worker/package.json');
 const webpack = require('webpack');
 const { publicPath, getWorkerCdnUrl, getEnvArg } = require('../parser-worker/buildUtils');
+const exec = require('child_process').exec;
 
 const MIXPANEL_TOKEN_DEV = '00193ed55feefdfcf8a70a76bc97ec6f';
 const MIXPANEL_TOKEN_PROD = '8c900bdfe458e32b768450c20750853d';
@@ -27,6 +28,7 @@ module.exports = env => {
 
   logger.info('Viewer build config:');
   logger.info({ development, publicPathViewer });
+
   return {
     mode: development ? 'development' : 'production',
     // Internals is not part of prod builds
@@ -49,6 +51,13 @@ module.exports = env => {
     },
     module: {
       rules: [
+        {
+          test: /\.worker\.ts$/,
+          loader: 'worker-loader',
+          options: {
+            inline: 'no-fallback'
+          }
+        },
         {
           test: /\.tsx?$/,
           use: {
@@ -121,7 +130,17 @@ module.exports = env => {
           MIXPANEL_TOKEN: development ? MIXPANEL_TOKEN_DEV : MIXPANEL_TOKEN_PROD,
           IS_DEVELOPMENT_MODE: development
         })
-      })
+      }),
+      {
+        apply: compiler => {
+          compiler.hooks.afterEmit.tapPromise('AfterEmitPlugin', async compilation => {
+            await exec('yarn run retarget-types', (err, stdout, stderr) => {
+              if (stdout) process.stdout.write(stdout);
+              if (stderr) process.stderr.write(stderr);
+            });
+          });
+        }
+      }
     ]
   };
 };

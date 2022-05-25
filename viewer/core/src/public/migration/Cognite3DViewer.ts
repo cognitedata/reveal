@@ -4,10 +4,10 @@
 import * as THREE from 'three';
 
 import TWEEN from '@tweenjs/tween.js';
-import omit from 'lodash/omit';
 import { Subscription, fromEventPattern } from 'rxjs';
+import pick from 'lodash/pick';
 
-import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
+import { defaultRenderOptions } from '@reveal/rendering';
 
 import {
   assertNever,
@@ -15,11 +15,16 @@ import {
   InputHandler,
   disposeOfAllEventListeners,
   worldToNormalizedViewportCoordinates,
-  worldToViewportCoordinates
+  worldToViewportCoordinates,
+  PointerEventDelegate,
+  SceneRenderedDelegate,
+  DisposedDelegate,
+  determineCurrentDevice,
+  SceneHandler
 } from '@reveal/utilities';
 
 import { MetricsLogger } from '@reveal/metrics';
-import { intersectCadNodes, CadModelSectorLoadStatistics, Cognite3DModel } from '@reveal/cad-model';
+import { PickingHandler, CadModelSectorLoadStatistics, Cognite3DModel } from '@reveal/cad-model';
 import {
   intersectPointClouds,
   PointCloudIntersection,
@@ -27,33 +32,26 @@ import {
   CognitePointCloudModel
 } from '@reveal/pointclouds';
 
-import {
-  AddModelOptions,
-  Cognite3DViewerOptions,
-  Intersection,
-  CameraChangeDelegate,
-  PointerEventDelegate,
-  CadModelBudget
-} from './types';
+import { AddModelOptions, Cognite3DViewerOptions, Intersection, CadModelBudget } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
 import { RevealManager } from '../RevealManager';
-import { DisposedDelegate, SceneRenderedDelegate, RevealOptions } from '../types';
+import { RevealOptions } from '../types';
 
 import { Spinner } from '../../utilities/Spinner';
 
 import { CadIntersection, IntersectionFromPixelOptions } from '../..';
-import { PropType } from '../../utilities/reflection';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
-import { DefaultCameraManager, CameraManager } from '@reveal/camera-manager';
+import { DefaultCameraManager, CameraManager, CameraChangeDelegate } from '@reveal/camera-manager';
 import { CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 import { IntersectInput, SupportedModelTypes, CogniteModelBase, LoadingState } from '@reveal/model-base';
 
 import { CogniteClient } from '@cognite/sdk';
 import log from '@reveal/logger';
+import { determineAntiAliasingMode, determineSsaoRenderParameters } from './renderOptionsHelpers';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -101,12 +99,14 @@ export class Cognite3DViewer {
   private readonly _dataSource: DataSource;
 
   private readonly camera: THREE.PerspectiveCamera;
-  private readonly scene: THREE.Scene;
+  private readonly _sceneHandler: SceneHandler;
   private readonly _cameraManager: CameraManager;
   private readonly _subscription = new Subscription();
   private readonly _revealManagerHelper: RevealManagerHelper;
   private readonly _domElement: HTMLElement;
   private readonly _renderer: THREE.WebGLRenderer;
+
+  private readonly _pickingHandler: PickingHandler;
 
   private readonly _boundAnimate = this.animate.bind(this);
 
@@ -210,8 +210,7 @@ export class Cognite3DViewer {
     this.spinner.placement = options.loadingIndicatorStyle?.placement ?? 'topLeft';
     this.spinner.opacity = Math.max(0.2, options.loadingIndicatorStyle?.opacity ?? 1.0);
 
-    this.scene = new THREE.Scene();
-    this.scene.autoUpdate = false;
+    this._sceneHandler = new SceneHandler();
 
     this._mouseHandler = new InputHandler(this.canvas);
 
@@ -228,12 +227,16 @@ export class Cognite3DViewer {
     if (options._localModels === true) {
       this._dataSource = new LocalDataSource();
       this._cdfSdkClient = undefined;
-      this._revealManagerHelper = RevealManagerHelper.createLocalHelper(this._renderer, this.scene, revealOptions);
+      this._revealManagerHelper = RevealManagerHelper.createLocalHelper(
+        this._renderer,
+        this._sceneHandler,
+        revealOptions
+      );
     } else if (options.customDataSource !== undefined) {
       this._dataSource = options.customDataSource;
       this._revealManagerHelper = RevealManagerHelper.createCustomDataSourceHelper(
         this._renderer,
-        this.scene,
+        this._sceneHandler,
         revealOptions,
         options.customDataSource
       );
@@ -243,7 +246,7 @@ export class Cognite3DViewer {
       this._cdfSdkClient = options.sdk;
       this._revealManagerHelper = RevealManagerHelper.createCdfHelper(
         this._renderer,
-        this.scene,
+        this._sceneHandler,
         revealOptions,
         options.sdk
       );
@@ -252,9 +255,10 @@ export class Cognite3DViewer {
     this.renderController = new RenderController(this.camera);
     this.startPointerEventListeners();
 
-    this.revealManager.setRenderTarget(
-      options.renderTargetOptions?.target || null,
-      options.renderTargetOptions?.autoSetSize
+    this._pickingHandler = new PickingHandler(
+      this._renderer,
+      this._revealManagerHelper.revealManager.materialManager,
+      this._sceneHandler
     );
 
     this._subscription.add(
@@ -279,14 +283,17 @@ export class Cognite3DViewer {
     this.animate(0);
 
     MetricsLogger.trackEvent('construct3dViewer', {
-      constructorOptions: omit(options, [
-        'sdk',
-        'domElement',
-        'renderer',
-        'renderTargetOptions',
-        'onLoading',
-        '_sectorCuller'
-      ])
+      constructorOptions: {
+        ...pick(options, [
+          'logMetrics',
+          'antiAliasingHint',
+          'ssaoQualityHint',
+          'enableEdges',
+          'continuousModelStreaming'
+        ]),
+        cameraManager: options.cameraManager ? true : false,
+        customDataSource: options.customDataSource ? true : false
+      }
     });
   }
 
@@ -331,17 +338,20 @@ export class Cognite3DViewer {
       cancelAnimationFrame(this.latestRequestId);
     }
 
+    for (const model of this._models.values()) {
+      this.removeModel(model);
+    }
+
     this.renderController.dispose();
     this._subscription.unsubscribe();
     this._cameraManager.dispose();
     this.revealManager.dispose();
     this.domElement.removeChild(this.canvas);
     this.renderer.dispose();
-    for (const model of this._models.values()) {
-      model.dispose();
-    }
-    this._models.splice(0);
+
     this.spinner.dispose();
+
+    this._sceneHandler.dispose();
 
     this._events.disposed.fire();
     disposeOfAllEventListeners(this._events);
@@ -420,8 +430,26 @@ export class Cognite3DViewer {
    * ```
    */
   off(event: 'click' | 'hover', callback: PointerEventDelegate): void;
+  /**
+   * @example
+   * ```js
+   * viewer.off('cameraChange', onCameraChange);
+   * ```
+   */
   off(event: 'cameraChange', callback: CameraChangeDelegate): void;
+  /**
+   * @example
+   * ```js
+   * viewer.off('sceneRendered', updateStats);
+   * ```
+   */
   off(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
+  /**
+   * @example
+   * ```js
+   * viewer.off('disposed', clearAll);
+   * ```
+   */
   off(event: 'disposed', callback: DisposedDelegate): void;
 
   /**
@@ -542,7 +570,7 @@ export class Cognite3DViewer {
 
     const model3d = new Cognite3DModel(modelId, revisionId, cadNode, nodesApiClient);
     this._models.push(model3d);
-    this.scene.add(model3d);
+    this._sceneHandler.addCadModel(model3d, cadNode.cadModelIdentifier);
 
     return model3d;
   }
@@ -571,7 +599,10 @@ export class Cognite3DViewer {
     const pointCloudNode = await this._revealManagerHelper.addPointCloudModel(options);
     const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this._models.push(model);
-    this.scene.add(model);
+
+    this._sceneHandler.addCustomObject(model);
+    this._extraObjects.push(model);
+
     return model;
   }
 
@@ -591,7 +622,7 @@ export class Cognite3DViewer {
     switch (model.type) {
       case 'cad':
         const cadModel = model as Cognite3DModel;
-        this.scene.remove(cadModel);
+        this._sceneHandler.removeCadModel(cadModel);
         model.dispose();
         this.revealManager.removeModel(model.type, cadModel.cadNode);
 
@@ -603,7 +634,7 @@ export class Cognite3DViewer {
 
       case 'pointcloud':
         const pcModel = model as CognitePointCloudModel;
-        this.scene.remove(pcModel);
+        this._sceneHandler.removeCustomObject(pcModel);
         this.revealManager.removeModel(model.type, pcModel.pointCloudNode);
         break;
 
@@ -676,9 +707,9 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return;
     }
-    this.scene.add(object);
     object.updateMatrixWorld(true);
     this._extraObjects.push(object);
+    this._sceneHandler.addCustomObject(object);
     this.renderController.redraw();
     this.recalculateBoundingBox();
   }
@@ -697,34 +728,13 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return;
     }
-    this.scene.remove(object);
+    this._sceneHandler.removeCustomObject(object);
     const index = this._extraObjects.indexOf(object);
     if (index >= 0) {
       this._extraObjects.splice(index, 1);
     }
     this.renderController.redraw();
     this.recalculateBoundingBox();
-  }
-
-  /**
-   * Add an object that will be considered a UI object. It will be rendered in the last stage and with orthographic projection.
-   * @param object
-   * @param screenPos Screen space position of object (in pixels).
-   * @param size Pixel width and height of the object.
-   */
-  addUiObject(object: THREE.Object3D, screenPos: THREE.Vector2, size: THREE.Vector2): void {
-    if (this.isDisposed) return;
-
-    this.revealManager.addUiObject(object, screenPos, size);
-  }
-
-  /** Removes the UI object from the viewer.
-   * @param object
-   */
-  removeUiObject(object: THREE.Object3D): void {
-    if (this.isDisposed) return;
-
-    this.revealManager.removeUiObject(object);
   }
 
   /**
@@ -796,7 +806,7 @@ export class Cognite3DViewer {
    * @returns The THREE.Scene used for rendering.
    */
   getScene(): THREE.Scene {
-    return this.scene;
+    return this._sceneHandler.scene;
   }
 
   /**
@@ -959,12 +969,12 @@ export class Cognite3DViewer {
     adjustCamera(screenshotCamera, width, height);
 
     this.renderer.setSize(width, height);
-    this.renderer.render(this.scene, screenshotCamera);
+    this.renderer.render(this._sceneHandler.scene, screenshotCamera);
     this.revealManager.render(screenshotCamera);
     const url = this.renderer.domElement.toDataURL();
 
     this.renderer.setSize(originalWidth, originalHeight);
-    this.renderer.render(this.scene, this.camera);
+    this.renderer.render(this._sceneHandler.scene, this.camera);
 
     this.requestRedraw();
 
@@ -1028,7 +1038,7 @@ export class Cognite3DViewer {
       clippingPlanes: this.getClippingPlanes(),
       domElement: this.renderer.domElement
     };
-    const cadResults = intersectCadNodes(cadNodes, input);
+    const cadResults = this._pickingHandler.intersectCadNodes(cadNodes, input);
     const pointCloudResults = intersectPointClouds(pointCloudNodes, input, options?.pointIntersectionThreshold);
 
     const intersections: Intersection[] = [];
@@ -1069,7 +1079,9 @@ export class Cognite3DViewer {
     return intersections.length > 0 ? intersections[0] : null;
   }
 
+  /** @private */
   private getModels(type: 'cad'): Cognite3DModel[];
+  /** @private */
   private getModels(type: 'pointcloud'): CognitePointCloudModel[];
   /** @private */
   private getModels(type: SupportedModelTypes): CogniteModelBase[] {
@@ -1087,7 +1099,7 @@ export class Cognite3DViewer {
   }
 
   /** @private */
-  private async animate(time: number) {
+  private animate(time: number) {
     if (this.isDisposed) {
       return;
     }
@@ -1145,7 +1157,11 @@ export class Cognite3DViewer {
         combinedBbox.union(bbox);
       }
     });
+
     this._extraObjects.forEach(obj => {
+      if (obj instanceof CognitePointCloudModel) {
+        return;
+      }
       bbox.setFromObject(obj);
       if (!bbox.isEmpty()) {
         combinedBbox.union(bbox);
@@ -1221,11 +1237,16 @@ function createCanvasWrapper(): HTMLElement {
 function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): RevealOptions {
   const revealOptions: RevealOptions = {
     continuousModelStreaming: viewerOptions.continuousModelStreaming,
+    outputRenderTarget: {
+      target: viewerOptions.renderTargetOptions?.target,
+      autoSize: viewerOptions.renderTargetOptions?.autoSetSize
+    },
     internal: {}
   };
   revealOptions.internal.cad = { sectorCuller: viewerOptions._sectorCuller };
-  const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint);
-  const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint);
+  const device = determineCurrentDevice();
+  const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint, device);
+  const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint, device);
   const edgeDetectionParameters = {
     enabled: viewerOptions.enableEdges ?? defaultRenderOptions.edgeDetectionParameters.enabled
   };
@@ -1239,63 +1260,4 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
     edgeDetectionParameters
   };
   return revealOptions;
-}
-
-function determineAntiAliasingMode(mode: PropType<Cognite3DViewerOptions, 'antiAliasingHint'>): {
-  antiAliasing: AntiAliasingMode;
-  multiSampleCount: number;
-} {
-  mode = mode || 'fxaa';
-
-  switch (mode) {
-    case 'disabled':
-      return { antiAliasing: AntiAliasingMode.NoAA, multiSampleCount: 1 };
-    case 'fxaa':
-      return { antiAliasing: AntiAliasingMode.FXAA, multiSampleCount: 1 };
-    case 'msaa2':
-      return { antiAliasing: AntiAliasingMode.NoAA, multiSampleCount: 2 };
-    case 'msaa4':
-      return { antiAliasing: AntiAliasingMode.NoAA, multiSampleCount: 4 };
-    case 'msaa8':
-      return { antiAliasing: AntiAliasingMode.NoAA, multiSampleCount: 8 };
-    case 'msaa16':
-      return { antiAliasing: AntiAliasingMode.NoAA, multiSampleCount: 16 };
-    case 'msaa2+fxaa':
-      return { antiAliasing: AntiAliasingMode.FXAA, multiSampleCount: 2 };
-    case 'msaa4+fxaa':
-      return { antiAliasing: AntiAliasingMode.FXAA, multiSampleCount: 4 };
-    case 'msaa8+fxaa':
-      return { antiAliasing: AntiAliasingMode.FXAA, multiSampleCount: 8 };
-    case 'msaa16+fxaa':
-      return { antiAliasing: AntiAliasingMode.FXAA, multiSampleCount: 16 };
-    default:
-      // Ensures there is a compile error if a case is missing
-      assertNever(mode, `Unsupported anti-aliasing mode: ${mode}`);
-  }
-}
-
-type SsaoQuality = PropType<Cognite3DViewerOptions, 'ssaoQualityHint'>;
-function determineSsaoRenderParameters(quality: SsaoQuality): SsaoParameters {
-  const ssaoParameters = { ...defaultRenderOptions.ssaoRenderParameters };
-  switch (quality) {
-    case undefined:
-      break;
-    case 'medium':
-      ssaoParameters.sampleSize = SsaoSampleQuality.Medium;
-      break;
-    case 'high':
-      ssaoParameters.sampleSize = SsaoSampleQuality.High;
-      break;
-    case 'veryhigh':
-      ssaoParameters.sampleSize = SsaoSampleQuality.VeryHigh;
-      break;
-    case 'disabled':
-      ssaoParameters.sampleSize = SsaoSampleQuality.None;
-      break;
-
-    default:
-      assertNever(quality, `Unexpected SSAO quality mode: '${quality}'`);
-  }
-
-  return ssaoParameters;
 }

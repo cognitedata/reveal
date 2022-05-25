@@ -67,7 +67,10 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     this.options.coverageUtil.dispose();
   }
 
-  determineSectors(input: DetermineSectorsInput): { wantedSectors: WantedSector[]; spentBudget: SectorLoadingSpent } {
+  determineSectors(input: DetermineSectorsInput): {
+    wantedSectors: WantedSector[];
+    spentBudget: SectorLoadingSpent;
+  } {
     const takenSectors = this.update(input.camera, input.cadModelsMetadata, input.clippingPlanes, input.budget);
     const wanted = takenSectors.collectWantedSectors();
     const spentBudget = takenSectors.computeSpentBudget();

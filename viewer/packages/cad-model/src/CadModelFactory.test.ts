@@ -72,7 +72,8 @@ describe('CadModelFactory', () => {
 
   test('createModel() initializes model materials', async () => {
     const addModelMaterialsSpy = jest.spyOn(materialManager, 'addModelMaterials');
-    const node = await factory.createModel(mockIdentifierObject);
+    const modelMetadata = await factory.loadModelMetadata(mockIdentifierObject);
+    const node = await factory.createModel(modelMetadata);
 
     expect(node).toBeTruthy();
     expect(addModelMaterialsSpy).toBeCalledTimes(1);
@@ -86,7 +87,8 @@ describe('CadModelFactory', () => {
       isBoundingBoxInModelCoordinates: true
     };
 
-    await factory.createModel(mockIdentifierObject, geometryFilter);
+    const modelMetadata = await factory.loadModelMetadata(mockIdentifierObject);
+    await factory.createModel(modelMetadata, geometryFilter);
 
     expect(setModelClippingPlanesSpy).toBeCalledTimes(1);
     expect(setModelClippingPlanesSpy).toBeCalledWith(expect.toBeString(), expect.toBeArrayOfSize(6));

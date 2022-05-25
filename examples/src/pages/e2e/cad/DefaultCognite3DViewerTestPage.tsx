@@ -4,7 +4,7 @@
 
 import { Cognite3DViewer } from '@cognite/reveal';
 import React from 'react';
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 import { registerVisualTest } from '../../../visual_tests';
 
 import { Cognite3DTestViewer } from '../Cognite3DTestViewer';

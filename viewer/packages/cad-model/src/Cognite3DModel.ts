@@ -8,13 +8,14 @@ import { WellKnownUnit } from './WellKnownUnit';
 
 import { callActionWithIndicesAsync } from './callActionWithIndicesAsync';
 
-import { NodeIdAndTreeIndexMaps, SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
+import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
 import { NodesApiClient } from '@reveal/nodes-api';
 import { CadModelMetadata, getDistanceToMeterConversionFactor } from '@reveal/cad-parsers';
 import { NumericRange, CameraConfiguration } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
 import { CadNode, NodeTransformProvider } from '@reveal/rendering';
 import { NodeAppearance, NodeCollection, CdfModelNodeCollectionDataProvider } from '@reveal/cad-styling';
+import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -283,7 +284,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase, 
    * Cleans up used resources.
    */
   dispose(): void {
-    this.children = [];
+    this.cadNode.dispose();
+    this.clear();
   }
 
   /**

@@ -4,7 +4,7 @@
 
 import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
 import {
@@ -19,7 +19,6 @@ import {
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
-import { CadNode } from '@cognite/reveal/internals';
 import { ClippingUI } from '../utils/ClippingUI';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
 import { BulkHtmlOverlayUI } from '../utils/BulkHtmlOverlayUI';
@@ -149,8 +148,7 @@ export function Migration() {
         controls: {
           mouseWheelAction: 'zoomToCursor',
           changeCameraTargetOnClick: true
-        },
-        debugRenderStageTimings: false
+        }
       };
       const guiActions = {
         showSectorBoundingBoxes: () => {
@@ -191,10 +189,7 @@ export function Migration() {
       const renderModes = ['Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD', 'DepthBufferOnly (N/A)', 'GeometryType'];
       renderGui.add(guiState, 'renderMode', renderModes).name('Render mode').onFinishChange(value => {
         const renderMode = renderModes.indexOf(value) + 1;
-        modelUi.cadModels.forEach(m => {
-          const cadNode: CadNode = (m as any).cadNode;
-          cadNode.renderMode = renderMode;
-        });
+        (viewer as any).revealManager._renderPipeline._cadGeometryRenderPipeline._cadGeometryRenderPasses.back._renderMode = renderMode;
         viewer.requestRedraw();
       });
       renderGui.add(guiState, 'antiAliasing',
@@ -212,11 +207,6 @@ export function Migration() {
           urlParams.set('ssao', v);
           window.location.href = url.toString();
         });
-      renderGui.add(guiState, 'debugRenderStageTimings')
-        .name('Debug timings')
-        .onChange(enabled => {
-          (viewer as any).revealManager.debugRenderTiming = enabled;
-        });
 
       const debugGui = gui.addFolder('Debug');
       const debugStatsGui = debugGui.addFolder('Statistics');
@@ -227,7 +217,7 @@ export function Migration() {
       debugStatsGui.add(guiState.debug.stats, 'textures').name('Textures');
       debugStatsGui.add(guiState.debug.stats, 'renderTime').name('Ms/frame');
 
-      viewer.on('sceneRendered', sceneRenderedEventArgs => {
+      viewer.on('sceneRendered', (sceneRenderedEventArgs) => {
         guiState.debug.stats.drawCalls = sceneRenderedEventArgs.renderer.info.render.calls;
         guiState.debug.stats.points = sceneRenderedEventArgs.renderer.info.render.points;
         guiState.debug.stats.triangles = sceneRenderedEventArgs.renderer.info.render.triangles;
@@ -369,8 +359,8 @@ export function Migration() {
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client);
 
-      viewer.on('click', async event => {
-        const { offsetX, offsetY } = event;
+      viewer.on('click', async (event) => {
+        const { offsetX, offsetY } = event; 
         console.log('2D coordinates', event);
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {

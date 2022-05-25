@@ -2,7 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as Potree from '@cognite/potree-core';
 import { LoadingState } from '@reveal/model-base';
 
 import { combineLatest, interval, Observable, of, pipe, Subject } from 'rxjs';
@@ -10,6 +9,7 @@ import { delay, distinctUntilChanged, map, share, startWith, switchMap } from 'r
 import * as THREE from 'three';
 
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
+import { Potree, PointCloudOctree, numPointCloudNodesLoading } from './potree-three-loader';
 
 /**
  * Wrapper around Potree.Group with type information and
@@ -20,29 +20,36 @@ export class PotreeGroupWrapper extends THREE.Object3D {
   private _lastDrawPointBuffersHash = 0;
   private readonly _forceLoadingSubject = new Subject<void>();
   private readonly _loadingObservable: Observable<LoadingState>;
+  private readonly _pointClouds: PointCloudOctree[];
 
   get needsRedraw(): boolean {
     return (
       this._needsRedraw ||
       this._lastDrawPointBuffersHash !== this.pointBuffersHash ||
-      Potree.Global.numNodesLoading !== this.numNodesLoadingAfterLastRedraw ||
+      numPointCloudNodesLoading !== this.numNodesLoadingAfterLastRedraw ||
       this.numChildrenAfterLastRedraw !== this.potreeGroup.children.length ||
       this.nodes.some(n => n.needsRedraw)
     );
   }
 
   private readonly nodes: PotreeNodeWrapper[] = [];
-  private readonly potreeGroup: Potree.Group;
+
+  private readonly potreeGroup: THREE.Group;
+  private readonly _potreeInstance: Potree;
+
   private numNodesLoadingAfterLastRedraw = 0;
   private numChildrenAfterLastRedraw = 0;
 
   /**
+   * @param potreeInstance Main instance of the Potree library in this Reveal instance
    * @param pollLoadingStatusInterval Controls how often the wrapper checks for loading status. Used for testing.
    */
-  constructor(pollLoadingStatusInterval: number = 200) {
+  constructor(potreeInstance: Potree, pollLoadingStatusInterval: number = 200) {
     super();
-    this.potreeGroup = new Potree.Group();
+    this.potreeGroup = new THREE.Group();
+    this._potreeInstance = potreeInstance;
     this.potreeGroup.name = 'Potree.Group';
+    this._pointClouds = [];
     this.name = 'Potree point cloud wrapper';
     this.add(this.potreeGroup);
 
@@ -65,11 +72,19 @@ export class PotreeGroupWrapper extends THREE.Object3D {
   }
 
   get pointBudget(): number {
-    return this.potreeGroup.pointBudget;
+    return this._potreeInstance.pointBudget;
   }
 
   set pointBudget(points: number) {
-    this.potreeGroup.pointBudget = points;
+    this._potreeInstance.pointBudget = points;
+  }
+
+  get pointClouds(): PointCloudOctree[] {
+    return this._pointClouds;
+  }
+
+  get potreeInstance(): Potree {
+    return this._potreeInstance;
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
@@ -77,8 +92,11 @@ export class PotreeGroupWrapper extends THREE.Object3D {
   }
 
   addPointCloud(node: PotreeNodeWrapper): void {
-    this.potreeGroup.add(node.octtree);
+    this.potreeGroup.add(node.octree);
     this.nodes.push(node);
+
+    this._pointClouds.push(node.octree);
+
     this._forceLoadingSubject.next();
     this.requestRedraw();
   }
@@ -88,8 +106,14 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     if (index === -1) {
       throw new Error('Point cloud is not added - cannot remove it');
     }
-    this.potreeGroup.remove(node.octtree);
+    this.potreeGroup.remove(node.octree);
     this.nodes.splice(index, 1);
+  }
+
+  traversePointClouds(callback: (pointCloud: PointCloudOctree) => void): void {
+    for (const pointCloud of this._pointClouds) {
+      callback(pointCloud);
+    }
   }
 
   requestRedraw(): void {
@@ -98,7 +122,7 @@ export class PotreeGroupWrapper extends THREE.Object3D {
 
   resetRedraw(): void {
     this._needsRedraw = false;
-    this.numNodesLoadingAfterLastRedraw = Potree.Global.numNodesLoading;
+    this.numNodesLoadingAfterLastRedraw = numPointCloudNodesLoading;
     this.numChildrenAfterLastRedraw = this.potreeGroup.children.length;
     this.nodes.forEach(n => n.resetRedraw());
   }
@@ -134,9 +158,8 @@ export class PotreeGroupWrapper extends THREE.Object3D {
    * loaded data since last redraw.
    */
   private get pointBuffersHash() {
-    const pointClouds = this.potreeGroup.pointclouds;
     let pointHash = 0xbaadf00d; // Kind of random bit pattern
-    for (const pointCloud of pointClouds) {
+    for (const pointCloud of this._pointClouds) {
       pointCloud.traverseVisible((x: THREE.Points) => {
         // Note! We pretend everything in the scene graph is THREE.Points,
         // but verify that we only visit Points nodes here.
@@ -161,7 +184,7 @@ function trueForDuration(milliseconds: number) {
 }
 
 function getLoadingStateFromPotree(nodes: PotreeNodeWrapper[]): LoadingState {
-  const numNodesLoading: number = Potree.Global.numNodesLoading;
+  const numNodesLoading: number = numPointCloudNodesLoading;
   return {
     isLoading: numNodesLoading > 0,
     itemsLoaded: nodes.length - numNodesLoading,
