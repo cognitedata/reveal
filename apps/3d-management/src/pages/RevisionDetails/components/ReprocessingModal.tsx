@@ -118,8 +118,6 @@ export const ReprocessingModal = ({
           latest features are available. You can click the &quot;Reprocess&quot;
           button below to update the model.
         </p>
-
-        {!isReprocessable && <TooOldToReprocessMessage />}
       </Modal>
     );
   } else {
