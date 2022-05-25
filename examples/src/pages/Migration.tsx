@@ -358,7 +358,7 @@ export function Migration() {
         cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), changeCameraTargetOnClick: value });
       });
 
-      const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client);
+      const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client, viewer);
 
       viewer.on('click', async (event) => {
         const { offsetX, offsetY } = event; 
