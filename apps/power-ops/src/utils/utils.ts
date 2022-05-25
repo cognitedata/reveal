@@ -166,3 +166,7 @@ export const formatDate = (date: Date) => {
   }
   return formatDate.format('MMM DD, YYYY HH:mm');
 };
+
+export const handleLogout = (history: any) => {
+  history.push('/logout');
+};

@@ -4,6 +4,7 @@ import { Dropdown, Icon, Menu, TopBar } from '@cognite/cogs.js';
 import { LogoutButton, useAuthContext } from '@cognite/react-container';
 import { PriceArea } from '@cognite/power-ops-api-types';
 import { PriceAreasContext } from 'providers/priceAreaProvider';
+import { handleLogout } from 'utils/utils';
 
 import {
   StyledTopBar,
@@ -46,10 +47,6 @@ export const MenuBar = () => {
   const toggleDropdown = () => {
     setVisible(!visible);
   };
-
-  function handleClick() {
-    history.push('/logout');
-  }
 
   useEffect(() => {
     // setup initial selection on page load
@@ -127,7 +124,7 @@ export const MenuBar = () => {
       </TopBar.Left>
       <TopBar.Right>
         <LogOutButtonContainer>
-          <LogoutButton handleClick={handleClick} />
+          <LogoutButton handleClick={() => handleLogout(history)} />
         </LogOutButtonContainer>
       </TopBar.Right>
     </StyledTopBar>
