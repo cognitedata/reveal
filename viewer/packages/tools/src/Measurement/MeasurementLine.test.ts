@@ -32,7 +32,7 @@ describe(MeasurementLine.name, () => {
 
   test('update the line end point', () => {
     const position = new THREE.Vector3(100, 100, 100);
-    const mesh = line.startLine(new THREE.Vector3(0, 0, 0), 0);
+    const mesh = line.startLine(new THREE.Vector3(), 0);
 
     let points = mesh.geometry.getAttribute('instanceStart').array;
     let endPoint = new THREE.Vector3(points[3], points[4], points[5]);
