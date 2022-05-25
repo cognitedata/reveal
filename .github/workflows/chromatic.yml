@@ -1,14 +1,17 @@
 name: Chromatic
 on:
+  push:
+    branches:
+    - master
   pull_request:
     types:
       - opened
       - reopened
       - synchronize
 jobs:
-  visual-testing:
+  publish:
     runs-on: ubuntu-latest
-    name: Visual testing
+    name: Publish
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
@@ -27,10 +30,23 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
 
-      - name: Publish to Chromatic 🎬
+      # Runs and accepts all changes in Chromatic
+      # We can disable auto-accept in the future if we decide to incorporate it in our workflow
+      - name: Publish to Chromatic and auto accept changes
+        id: chromatic
         uses: chromaui/action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          onlyChanged: true
+          autoAcceptChanges: true # Option to accept all changes
           exitOnceUploaded: true
+
+
+      - name: Comment on PR 💬
+        if: github.ref != 'refs/heads/master'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          recreate: true
+          message: |
+            Chromatic has published your changes! 🎉
+            Storybook preview: ${{steps.chromatic.outputs.storybookUrl}}

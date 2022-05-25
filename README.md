@@ -2,7 +2,7 @@
 
 ## Using the library
 
-To use the `@cognite/data-exploration` library, check out the [storybook](https://cognitedata.github.io/data-exploration-components/).
+To use the `@cognite/data-exploration` library, check out the [storybook](https://master--61a5d50c73e912003a269bc9.chromatic.com/).
 
 ## Developing locally
 

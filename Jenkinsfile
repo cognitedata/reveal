@@ -69,12 +69,6 @@ pods {
     }
 
     container('node') {
-      stageWithNotify('Build Storybook', context_build) {
-        sh('yarn build:storybook');
-      }
-    }
-
-    container('node') {
       stageWithNotify('Lint', context_build) {
         sh('yarn lint');
       }
