@@ -142,7 +142,7 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
       throw new Error('Could not read data type: ' + info.dataType);
     }
 
-    this.loader = new EptBinaryLoader(dataLoader, styledInfo);
+    this._loader = new EptBinaryLoader(dataLoader, styledInfo);
   }
 
   dispose(): void {}
