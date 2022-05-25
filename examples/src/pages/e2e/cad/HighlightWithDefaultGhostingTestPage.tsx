@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 import { DefaultNodeAppearance, TreeIndexNodeCollection, Cognite3DViewer, Cognite3DModel } from '@cognite/reveal';
 import { registerVisualTest } from '../../../visual_tests';
 
@@ -20,7 +20,7 @@ function HighlightWithDefaultGhostingTestPage() {
   return (
     <Cognite3DTestViewer
       modelUrls={['primitives']}
-      modelAddedCallback={handleModelAdded}
+      cadModelAddedCallback={handleModelAdded}
       initializeCallback={(viewer: Cognite3DViewer) => {
           viewer.cameraManager.setCameraState({ position: new THREE.Vector3(12, -4, -45) });
 

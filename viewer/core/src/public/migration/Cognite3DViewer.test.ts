@@ -10,7 +10,7 @@ import { SectorCuller } from '@reveal/cad-geometry-loaders';
 import { Cognite3DViewer } from './Cognite3DViewer';
 
 import nock from 'nock';
-import { DisposedDelegate, SceneRenderedDelegate } from '../types';
+import { DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
 import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
 
 const sceneJson = require('./Cognite3DViewer.test-scene.json');
@@ -21,6 +21,7 @@ describe('Cognite3DViewer', () => {
   const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
 
   const renderer = new THREE.WebGLRenderer({ context });
+  renderer.render = jest.fn();
   const _sectorCuller: SectorCuller = {
     determineSectors: jest.fn(),
     filterSectorsToLoad: jest.fn(),
@@ -28,7 +29,6 @@ describe('Cognite3DViewer', () => {
   };
 
   beforeAll(() => {
-    jest.useFakeTimers();
     nock.disableNetConnect();
 
     nock('https://api-js.mixpanel.com')
@@ -56,7 +56,6 @@ describe('Cognite3DViewer', () => {
 
   afterAll(() => {
     nock.enableNetConnect();
-    jest.useRealTimers();
   });
 
   test('dispose disposes WebGL resources', () => {

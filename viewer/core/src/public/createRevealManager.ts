@@ -7,7 +7,14 @@ import { RevealOptions } from './types';
 import { RevealManager } from './RevealManager';
 
 import { MetricsLogger } from '@reveal/metrics';
-import { RenderOptions, EffectRenderManager, CadMaterialManager } from '@reveal/rendering';
+import {
+  RenderOptions,
+  CadMaterialManager,
+  BasicPipelineExecutor,
+  DefaultRenderPipelineProvider,
+  CadGeometryRenderModePipelineProvider,
+  RenderMode
+} from '@reveal/rendering';
 import { createCadManager } from '@reveal/cad-model';
 import { createPointCloudManager } from '@reveal/pointclouds';
 import {
@@ -20,17 +27,18 @@ import {
 } from '@reveal/modeldata-api';
 
 import { CogniteClient } from '@cognite/sdk';
+import { SceneHandler } from '@reveal/utilities';
 
 /**
  * Used to create an instance of reveal manager that works with localhost.
  * @param renderer
- * @param scene
+ * @param sceneHandler
  * @param revealOptions
  * @returns RevealManager instance.
  */
 export function createLocalRevealManager(
   renderer: THREE.WebGLRenderer,
-  scene: THREE.Scene,
+  sceneHandler: SceneHandler,
   revealOptions: RevealOptions = {}
 ): RevealManager {
   const modelMetadataProvider = new LocalModelMetadataProvider();
@@ -41,7 +49,7 @@ export function createLocalRevealManager(
     modelMetadataProvider,
     modelDataProvider,
     renderer,
-    scene,
+    sceneHandler,
     revealOptions
   );
 }
@@ -50,13 +58,13 @@ export function createLocalRevealManager(
  * Used to create an instance of reveal manager that works with the CDF.
  * @param client
  * @param renderer
- * @param scene
+ * @param sceneHandler
  * @param revealOptions
  */
 export function createCdfRevealManager(
   client: CogniteClient,
   renderer: THREE.WebGLRenderer,
-  scene: THREE.Scene,
+  sceneHandler: SceneHandler,
   revealOptions: RevealOptions = {}
 ): RevealManager {
   const applicationId = getSdkApplicationId(client);
@@ -68,7 +76,7 @@ export function createCdfRevealManager(
     modelMetadataProvider,
     modelDataProvider,
     renderer,
-    scene,
+    sceneHandler,
     revealOptions
   );
 }
@@ -81,7 +89,7 @@ export function createCdfRevealManager(
  * @param modelMetadataProvider
  * @param modelDataProvider
  * @param renderer
- * @param scene
+ * @param sceneHandler
  * @param revealOptions
  */
 export function createRevealManager(
@@ -90,7 +98,7 @@ export function createRevealManager(
   modelMetadataProvider: ModelMetadataProvider,
   modelDataProvider: ModelDataProvider,
   renderer: THREE.WebGLRenderer,
-  scene: THREE.Scene,
+  sceneHandler: SceneHandler,
   revealOptions: RevealOptions = {}
 ): RevealManager {
   MetricsLogger.init(revealOptions.logMetrics !== false, project, applicationId, {
@@ -99,20 +107,37 @@ export function createRevealManager(
 
   const renderOptions: RenderOptions = revealOptions.renderOptions || {};
   const materialManager = new CadMaterialManager();
-  const renderManager = new EffectRenderManager(renderer, scene, materialManager, renderOptions);
+  const pipelineExecutor = new BasicPipelineExecutor(renderer);
+  const defaultRenderPipeline = new DefaultRenderPipelineProvider(
+    materialManager,
+    sceneHandler,
+    renderOptions,
+    revealOptions.outputRenderTarget
+  );
+  const depthRenderPipeline = new CadGeometryRenderModePipelineProvider(
+    RenderMode.DepthBufferOnly,
+    materialManager,
+    sceneHandler
+  );
+  const pointCloudManager = createPointCloudManager(
+    modelMetadataProvider,
+    modelDataProvider,
+    sceneHandler.scene,
+    renderer
+  );
+  sceneHandler.customObjects.push(pointCloudManager.pointCloudGroupWrapper);
   const cadManager = createCadManager(
     modelMetadataProvider,
     modelDataProvider,
     renderer,
     materialManager,
-    renderManager,
+    depthRenderPipeline,
     {
       ...revealOptions.internal?.cad,
       continuousModelStreaming: revealOptions.continuousModelStreaming
     }
   );
-  const pointCloudManager = createPointCloudManager(modelMetadataProvider, modelDataProvider);
-  return new RevealManager(cadManager, renderManager, pointCloudManager);
+  return new RevealManager(cadManager, pointCloudManager, pipelineExecutor, defaultRenderPipeline, materialManager);
 }
 
 /**

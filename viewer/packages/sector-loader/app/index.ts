@@ -21,6 +21,7 @@ import { revealEnv, assertNever } from '../../utilities';
 import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
 import { ConsumedSector } from '@reveal/cad-parsers';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
+import { CadSceneRootMetadata, BoundingBox } from '@reveal/cad-parsers/src/metadata/parsers/types';
 
 revealEnv.publicPath = 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.2.0/';
 
@@ -111,10 +112,10 @@ async function loadSectors(
 
   const output = outputs.find(output => output.format === wantedFormat && output.version === formatVersion);
 
-  const sceneJson = await modelDataClient.getJsonFile(
+  const sceneJson = (await modelDataClient.getJsonFile(
     `${client.getBaseUrl()}/api/v1/projects/${client.project}/3d/files/${output?.blobId}`,
     'scene.json'
-  );
+  )) as CadSceneRootMetadata;
 
   cadMaterialManager.addModelMaterials(output!.blobId.toString(), sceneJson.maxTreeIndex);
 
@@ -123,20 +124,30 @@ async function loadSectors(
       ? new GltfSectorRepository(modelDataClient, cadMaterialManager)
       : new V8SectorRepository(modelDataClient, cadMaterialManager);
 
-  const sector = sceneJson.sectors[0];
-  sector.bounds = new THREE.Box3(sector.boundingBox.min, sector.boundingBox.max);
-
   const model = new THREE.Group();
 
   const modelIdentifier = output!.blobId.toString();
 
+  function toThreeBox(box: BoundingBox) {
+    return new THREE.Box3(
+      new THREE.Vector3(box.min.x, box.min.y, box.min.z),
+      new THREE.Vector3(box.max.x, box.max.y, box.max.z)
+    );
+  }
+
   await Promise.all(
-    sceneJson.sectors.map(async (sector: any) => {
-      sector.bounds = new THREE.Box3(sector.boundingBox.min, sector.boundingBox.max);
+    sceneJson.sectors.map(async sector => {
+      const threeBoundingBox = toThreeBox(sector.boundingBox);
       const consumedSector = await sectorRepository.loadSector({
         modelBaseUrl: `${client.getBaseUrl()}/api/v1/projects/${client.project}/3d/files/${output?.blobId}`,
         modelIdentifier,
-        metadata: sector,
+        metadata: {
+          ...sector,
+          subtreeBoundingBox: threeBoundingBox,
+          geometryBoundingBox: undefined,
+          children: [],
+          estimatedRenderCost: 0
+        },
         levelOfDetail: 2,
         geometryClipBox: null
       });
@@ -170,10 +181,6 @@ function createGltfSectorGroup(consumedSector: ConsumedSector, materials: Materi
         material.uniforms.renderMode.value = 1;
       }
       (material.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld).invert();
-      (material.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
-      (material.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
-      (material.uniforms.projectionMatrix?.value as THREE.Matrix4)?.copy(camera.projectionMatrix);
-      (material.uniforms.normalMatrix?.value as THREE.Matrix3)?.copy(mesh.normalMatrix);
       (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
       material.needsUpdate = true;
     };

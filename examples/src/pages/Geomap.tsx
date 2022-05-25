@@ -5,7 +5,7 @@
 import React, { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 import { createSDKFromEnvironment } from '../utils/example-helpers';
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
 import {
@@ -177,7 +177,7 @@ export function Geomap() {
       const selectedSet = new TreeIndexNodeCollection([]);
 
       new AxisViewTool(viewer);
-      viewer.on('click', async event => {
+      viewer.on('click', async (event) => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);

@@ -57,11 +57,11 @@ void updateFragmentColor(
             // no saturation - grayscale
             a = hsv.z * 0.09;
         }
-        outputColor = vec4(packNormalToRgb(normal.rgb), a);
+        outputColor = vec4(packNormalToRgb(normal.rgb), color.a);
     } else if (renderMode == RenderTypeNormal) {
-        outputColor = vec4(packNormalToRgb(normal), 1.0);
+        outputColor = vec4(packNormalToRgb(normal), color.a);
     } else if (renderMode == RenderTypeTreeIndex) {
-        outputColor = vec4(packIntToColor(treeIndex), 1.0);
+        outputColor = vec4(packIntToColor(treeIndex), color.a);
     } else if (renderMode == RenderTypeDepth) {
         outputColor = packDepthToRGBA(depth);
     } else if (renderMode == RenderTypeLOD) {
@@ -71,7 +71,7 @@ void updateFragmentColor(
         outputColor = isHighDetail ? vec4(vec3(0.0, 1.0, 0.0) * mc, color.a) : vec4(vec3(1.0, 1.0, 0.0) * mc, color.a);
     } else if (renderMode == RenderTypeGeometryType) {
         vec2 cap = normal.xy * 0.5 + 0.5;
-        vec3 mc = texture(matCapTexture, cap).rgb * 1.5;
+        vec3 mc = texture(matCapTexture, cap).rgb;
         vec3 geometryColor = 
             float(geometryType == 1) * vec3(1.0, 0.0, 0.0) + // Quads
             float(geometryType == 2) * vec3(0.0, 1.0, 0.0) + // Primitives

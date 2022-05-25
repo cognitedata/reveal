@@ -11,7 +11,7 @@ import { createCdfRevealManager, createLocalRevealManager, PointCloudNode, Revea
 
 import { CdfModelIdentifier, LocalModelIdentifier } from '@reveal/modeldata-api';
 import { DataSource } from '@reveal/data-source';
-import { assertNever } from '@reveal/utilities';
+import { assertNever, SceneHandler } from '@reveal/utilities';
 import { CadNode } from '@reveal/rendering';
 
 import { CogniteClient } from '@cognite/sdk';
@@ -41,9 +41,7 @@ export class RevealManagerHelper {
       case 'local':
         {
           this.addCadModel = model => RevealManagerHelper.addLocalCadModel(model, manager);
-          this.addPointCloudModel = () => {
-            throw new Error('Local point cloud models are not supported');
-          };
+          this.addPointCloudModel = model => RevealManagerHelper.addLocalPointCloudModel(model, manager);
         }
         break;
       default:
@@ -55,38 +53,38 @@ export class RevealManagerHelper {
    * Create helper for RevealManager that loads models from local storage. This is only
    * meant for use in debugging and development.
    * @param renderer
-   * @param scene
+   * @param sceneHandler
    * @param revealOptions
    */
   static createLocalHelper(
     renderer: THREE.WebGLRenderer,
-    scene: THREE.Scene,
+    sceneHandler: SceneHandler,
     revealOptions: RevealOptions
   ): RevealManagerHelper {
-    const revealManager = createLocalRevealManager(renderer, scene, revealOptions);
+    const revealManager = createLocalRevealManager(renderer, sceneHandler, revealOptions);
     return new RevealManagerHelper('local', revealManager);
   }
 
   /**
    * Creates a helper for RevealManager that loads models from CDF.
    * @param renderer
-   * @param scene
+   * @param sceneHandler
    * @param revealOptions
    * @param sdkClient
    */
   static createCdfHelper(
     renderer: THREE.WebGLRenderer,
-    scene: THREE.Scene,
+    sceneHandler: SceneHandler,
     revealOptions: RevealOptions,
     sdkClient: CogniteClient
   ): RevealManagerHelper {
-    const revealManager = createCdfRevealManager(sdkClient, renderer, scene, revealOptions);
+    const revealManager = createCdfRevealManager(sdkClient, renderer, sceneHandler, revealOptions);
     return new RevealManagerHelper('cdf', revealManager);
   }
 
   static createCustomDataSourceHelper(
     renderer: THREE.WebGLRenderer,
-    scene: THREE.Scene,
+    sceneHandler: SceneHandler,
     revealOptions: RevealOptions,
     dataSource: DataSource
   ): RevealManagerHelper {
@@ -96,7 +94,7 @@ export class RevealManagerHelper {
       dataSource.getModelMetadataProvider(),
       dataSource.getModelDataProvider(),
       renderer,
-      scene,
+      sceneHandler,
       revealOptions
     );
     // Note! We consider custom data sources 'CDF-type' as we use CDF model identifiers
@@ -132,6 +130,17 @@ export class RevealManagerHelper {
     }
     const modelIdentifier = new CdfModelIdentifier(model.modelId, model.revisionId);
     return revealManager.addModel('cad', modelIdentifier, { geometryFilter: model.geometryFilter });
+  }
+
+  private static addLocalPointCloudModel(
+    model: AddModelOptions,
+    revealManager: RevealManager
+  ): Promise<PointCloudNode> {
+    if (model.localPath === undefined) {
+      throw new Error('addLocalPointCloudModel only works with local models');
+    }
+    const modelIdentifier = new LocalModelIdentifier(model.localPath);
+    return revealManager.addModel('pointcloud', modelIdentifier);
   }
 
   /**

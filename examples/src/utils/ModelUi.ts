@@ -1,7 +1,8 @@
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 import { AddModelOptions, Cognite3DModel, Cognite3DViewer, CogniteModelBase, CognitePointCloudModel, ViewerState } from "@cognite/reveal";
 
 import * as dat from 'dat.gui';
+import { isLocalUrlPointCloudModel } from './isLocalUrlPointCloudModel';
 
 export class ModelUi {
   private readonly _viewer: Cognite3DViewer;
@@ -38,6 +39,10 @@ export class ModelUi {
           : { center: new THREE.Vector3(), size: new THREE.Vector3(), enabled: false },
     };
     const guiActions = {
+      removeLastModel: () => {
+        viewer.removeModel(this._cadModels[0]);
+        this._cadModels.splice(0,1);
+      },
       addModel: () =>
         this.addModel({
           modelId: this._guiState.modelId,
@@ -56,6 +61,7 @@ export class ModelUi {
     modelGui.add(this._guiState, 'modelId').name('Model ID');
     modelGui.add(this._guiState, 'revisionId').name('Revision ID');
     modelGui.add(guiActions, 'addModel').name('Load model');
+    modelGui.add(guiActions, 'removeLastModel').name('Remove last model');
     modelGui.add(guiActions, 'fitToModel').name('Fit camera');
     modelGui.add(guiActions, 'saveModelStateToUrl').name('Save model state to url');
 
@@ -114,7 +120,7 @@ export class ModelUi {
 
   async addModel(options: AddModelOptions) {
     try {
-      const model = options.localPath !== undefined ? await this._viewer.addCadModel(options) : await this._viewer.addModel(options);
+      const model = options.localPath !== undefined ? await addLocalModel(this._viewer, options) : await this._viewer.addModel(options);
       if (model instanceof Cognite3DModel) {
         this._cadModels.push(model);
       } else if (model instanceof CognitePointCloudModel) {
@@ -134,6 +140,11 @@ export class ModelUi {
     }
   }
 
+}
+
+async function addLocalModel(viewer: Cognite3DViewer, addModelOptions: AddModelOptions): Promise<CognitePointCloudModel | Cognite3DModel> {
+  const isPointCloud = addModelOptions.localPath !== undefined && await isLocalUrlPointCloudModel(addModelOptions.localPath);
+  return isPointCloud ? viewer.addPointCloudModel(addModelOptions) : viewer.addCadModel(addModelOptions);
 }
 
 function createGeometryFilterStateFromBounds(bounds: THREE.Box3, out: { center: THREE.Vector3, size: THREE.Vector3 }) {

@@ -35,8 +35,8 @@ export const sectorShaders = {
   // Primitives
   // ----------------
   boxPrimitive: {
-    fragment: glsl(require('../glsl/sector/primitives/instanced.frag').default),
-    vertex: glsl(require('../glsl/sector/primitives/instanced.vert').default)
+    fragment: glsl(require('../glsl/sector/instancedMesh.frag').default),
+    vertex: glsl(require('../glsl/sector/instancedMesh.vert').default)
   },
   circlePrimitive: {
     fragment: glsl(require('../glsl/sector/primitives/circle.frag').default),
@@ -63,12 +63,12 @@ export const sectorShaders = {
     vertex: glsl(require('../glsl/sector/primitives/generalring.vert').default)
   },
   nutPrimitive: {
-    fragment: glsl(require('../glsl/sector/primitives/instanced.frag').default),
-    vertex: glsl(require('../glsl/sector/primitives/instanced.vert').default)
+    fragment: glsl(require('../glsl/sector/instancedMesh.frag').default),
+    vertex: glsl(require('../glsl/sector/instancedMesh.vert').default)
   },
   quadPrimitive: {
-    fragment: glsl(require('../glsl/sector/primitives/instanced.frag').default),
-    vertex: glsl(require('../glsl/sector/primitives/instanced.vert').default)
+    fragment: glsl(require('../glsl/sector/instancedMesh.frag').default),
+    vertex: glsl(require('../glsl/sector/instancedMesh.vert').default)
   },
   torusSegmentPrimitive: {
     fragment: glsl(require('../glsl/sector/primitives/torusSegment.frag').default),
@@ -80,19 +80,6 @@ export const sectorShaders = {
   }
 };
 
-export const outlineDetectionShaders = {
-  fragment: glsl(require('../glsl/post-processing/outline-detect-combine.frag').default),
-  vertex: glsl(require('../glsl/post-processing/outline-detection.vert').default)
-};
-
-/**
- * FXAA anti-aliasing shader
- */
-export const fxaaShaders = {
-  fragment: glsl(require('../glsl/post-processing/fxaa.frag').default),
-  vertex: glsl(require('../glsl/post-processing/fxaa.vert').default)
-};
-
 /**
  * Screen space ambient occlusion shader
  */
@@ -101,12 +88,9 @@ export const ssaoShaders = {
   vertex: glsl(require('../glsl/post-processing/passthrough.vert').default)
 };
 
-/**
- * Full one-pass SSAO blur shader
- */
-export const ssaoBlurCombineShaders = {
-  fragment: glsl(require('../glsl/post-processing/ssao-blur-combine.frag').default),
-  vertex: glsl(require('../glsl/post-processing/passthrough.vert').default)
+export const blitShaders = {
+  fragment: glsl(require('../glsl/post-processing/blit.frag').default),
+  vertex: glsl(require('../glsl/post-processing/unit-orthographic-passthrough.vert').default)
 };
 
 /**

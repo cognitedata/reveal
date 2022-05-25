@@ -5,8 +5,8 @@ export type VisualTest = {
 }
 
 // TODO 2021-09-15 larsmoa: Figure out how we can do create this automatically
-// I failed to implement one registry of tests, because we need all logic to work 
-// both in the server hosting the HTTP server used for visual tests and the 
+// I failed to implement one registry of tests, because we need all logic to work
+// both in the server hosting the HTTP server used for visual tests and the
 // Jest/Puppeteer test runner.
 
 export const visualTests: VisualTest[] = [
@@ -20,6 +20,10 @@ export const visualTests: VisualTest[] = [
   },
   {
     testKey: 'customObjectWithHighlightAndGhostedV8',
+    category: 'cad'
+  },
+  {
+    testKey: 'customObjectBlending',
     category: 'cad'
   },
   {
@@ -37,6 +41,14 @@ export const visualTests: VisualTest[] = [
   {
     testKey: 'default-cognite3dviewer',
     category: 'cad'
+  },
+  {
+    testKey: 'default-cognite3dviewer-pointcloud',
+    category: 'pointcloud'
+  },
+  {
+    testKey: 'clipping-planes-cognite3dviewer-pointcloud',
+    category: 'pointcloud'
   },
   {
     testKey: 'default-cognite3dviewer-v8',
@@ -61,10 +73,6 @@ export const visualTests: VisualTest[] = [
   {
     testKey: 'userRenderTarget',
     category: 'cad'
-  },
-  {
-    testKey: 'default',
-    category: 'pointcloud'
   },
   {
     testKey: 'two-models-one-ghosted',

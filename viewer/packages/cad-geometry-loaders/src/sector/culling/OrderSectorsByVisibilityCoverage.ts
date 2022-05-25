@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { WebGLRendererStateHelper } from '@reveal/utilities';
 import { CadModelMetadata, V8SectorMetadata, WantedSector } from '@reveal/cad-parsers';
-import { coverageShaders, EffectRenderManager } from '@reveal/rendering';
+import { coverageShaders, CadGeometryRenderModePipelineProvider } from '@reveal/rendering';
 
 import assert from 'assert';
 import { RenderAlreadyLoadedGeometryProvider } from './RenderAlreadyLoadedGeometryProvider';
@@ -50,9 +50,9 @@ export interface OrderSectorsByVisibleCoverageOptions {
   renderer: THREE.WebGLRenderer;
 
   /**
-   * EffectRenderManager used to initialize the RenderAlreadyLoadedGeometryProvider
+   * GeometryDepthRenderPipeline used to initialize the RenderAlreadyLoadedGeometryProvider
    */
-  renderManager: EffectRenderManager;
+  depthOnlyRenderPipeline: CadGeometryRenderModePipelineProvider;
 }
 
 export type PrioritizedSectorIdentifier = {
@@ -137,15 +137,6 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     uniforms: {
       instanceMatrix: {
         value: new THREE.Matrix4()
-      },
-      modelMatrix: {
-        value: new THREE.Matrix4()
-      },
-      viewMatrix: {
-        value: new THREE.Matrix4()
-      },
-      projectionMatrix: {
-        value: new THREE.Matrix4()
       }
     },
     glslVersion: THREE.GLSL3
@@ -153,7 +144,10 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
 
   constructor(options: OrderSectorsByVisibleCoverageOptions) {
     this._renderer = options.renderer;
-    this._alreadyLoadedProvider = new RenderAlreadyLoadedGeometryProvider(options.renderManager);
+    this._alreadyLoadedProvider = new RenderAlreadyLoadedGeometryProvider(
+      options.renderer,
+      options.depthOnlyRenderPipeline
+    );
 
     // Note! Rener target will be resize before actual use
     this.renderTarget = new THREE.WebGLRenderTarget(1, 1, {
@@ -451,7 +445,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
         const b = renderTargetBuffer[4 * i + 2];
         const distance = renderTargetBuffer[4 * i + 3]; // Distance stored in alpha
         if (r !== 255 || g !== 255 || b !== 255) {
-          const rx = (y - halfWidth) / halfWidth;
+          const rx = (x - halfWidth) / halfWidth;
 
           const sectorIdWithOffset = b + g * 255 + r * 255 * 255;
           const value = sectorVisibility[sectorIdWithOffset] || { sectorIdWithOffset, weight: 0, distance };
@@ -462,12 +456,6 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
       }
     }
     return sectorVisibility;
-  }
-
-  private updateMaterialUniforms(mesh: THREE.Mesh, camera: THREE.PerspectiveCamera) {
-    (this.coverageMaterial.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
-    (this.coverageMaterial.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
-    (this.coverageMaterial.uniforms.projectionMatrix?.value as THREE.Matrix4)?.copy(camera.projectionMatrix);
   }
 
   private createSectorTreeGeometry(
@@ -481,9 +469,6 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     const instanceValues = new Float32Array(5 * sectorCount); // sectorId, coverageFactor[3], visibility
     const boxGeometry = new THREE.BoxBufferGeometry();
     const mesh = new THREE.InstancedMesh(boxGeometry, this.coverageMaterial, sectorCount);
-    mesh.onBeforeRender = (_0, _1, camera: THREE.PerspectiveCamera) => {
-      this.updateMaterialUniforms(mesh, camera);
-    };
 
     const addSector = (sectorBounds: THREE.Box3, sectorIndex: number, sectorId: number, coverage: THREE.Vector3) => {
       sectorBounds.getCenter(translation);

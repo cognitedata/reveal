@@ -5,7 +5,7 @@
 import React from 'react';
 
 import { TestEnvCad, TestViewer } from '../TestViewer';
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@cognite/reveal';
 import { registerVisualTest } from '../../../visual_tests';
 

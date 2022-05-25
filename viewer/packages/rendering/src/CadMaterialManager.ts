@@ -114,6 +114,22 @@ export class CadMaterialManager {
     this.updateClippingPlanesForModel(modelIdentifier);
   }
 
+  removeModelMaterials(modelIdentifier: string): void {
+    const modelData = this.materialsMap.get(modelIdentifier);
+
+    if (modelData === undefined) {
+      throw new Error(`Model identifier: ${modelIdentifier} not found`);
+    }
+
+    for (const mat of Object.values(modelData.materials)) {
+      mat.dispose();
+    }
+
+    this.materialsMap.delete(modelIdentifier);
+    modelData.nodeTransformTextureBuilder.dispose();
+    modelData.nodeAppearanceTextureBuilder.dispose();
+  }
+
   getModelMaterials(modelIdentifier: string): Materials {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     return wrapper.materials;
@@ -145,32 +161,6 @@ export class CadMaterialManager {
     materialWrapper.perModelClippingPlanes = clippingPlanes;
     this.updateClippingPlanesForModel(modelIdentifier);
     this.triggerMaterialsChanged();
-  }
-
-  private updateClippingPlanesForModel(modelIdentifier: string) {
-    const materialWrapper = this.materialsMap.get(modelIdentifier);
-    if (materialWrapper === undefined) {
-      throw new Error(
-        `Materials for model ${modelIdentifier} has not been added, call ${this.addModelMaterials.name} first`
-      );
-    }
-
-    const clippingPlanes = [...materialWrapper.perModelClippingPlanes, ...this.clippingPlanes];
-    const clippingPlanesAsUniform = clippingPlanes.map(
-      p => new THREE.Vector4(p.normal.x, p.normal.y, p.normal.z, -p.constant)
-    );
-
-    applyToModelMaterials(materialWrapper.materials, m => {
-      m.clipping = clippingPlanes.length > 0;
-      m.clipIntersection = false;
-      m.clippingPlanes = clippingPlanes;
-      m.defines = {
-        ...m.defines,
-        NUM_CLIPPING_PLANES: clippingPlanesAsUniform.length,
-        UNION_CLIPPING_PLANES: 0
-      };
-      m.needsUpdate = true;
-    });
   }
 
   setModelDefaultNodeAppearance(modelIdentifier: string, defaultAppearance: NodeAppearance): void {
@@ -205,6 +195,39 @@ export class CadMaterialManager {
 
   getRenderMode(): RenderMode {
     return this._renderMode;
+  }
+
+  dispose(): void {
+    for (const [_, wrapper] of this.materialsMap) {
+      wrapper.nodeAppearanceTextureBuilder.dispose();
+      wrapper.nodeTransformTextureBuilder.dispose();
+    }
+  }
+
+  private updateClippingPlanesForModel(modelIdentifier: string) {
+    const materialWrapper = this.materialsMap.get(modelIdentifier);
+    if (materialWrapper === undefined) {
+      throw new Error(
+        `Materials for model ${modelIdentifier} has not been added, call ${this.addModelMaterials.name} first`
+      );
+    }
+
+    const clippingPlanes = [...materialWrapper.perModelClippingPlanes, ...this.clippingPlanes];
+    const clippingPlanesAsUniform = clippingPlanes.map(
+      p => new THREE.Vector4(p.normal.x, p.normal.y, p.normal.z, -p.constant)
+    );
+
+    applyToModelMaterials(materialWrapper.materials, m => {
+      m.clipping = clippingPlanes.length > 0;
+      m.clipIntersection = false;
+      m.clippingPlanes = clippingPlanes;
+      m.defines = {
+        ...m.defines,
+        NUM_CLIPPING_PLANES: clippingPlanesAsUniform.length,
+        UNION_CLIPPING_PLANES: 0
+      };
+      m.needsUpdate = true;
+    });
   }
 
   private updateMaterials(modelIdentifier: string) {

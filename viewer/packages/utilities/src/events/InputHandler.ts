@@ -6,8 +6,7 @@ import { EventTrigger } from './EventTrigger';
 import debounce from 'lodash/debounce';
 import { assertNever } from '../assertNever';
 import { Vector2 } from 'three';
-
-type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
+import { PointerEventDelegate } from './types';
 
 export type EventCollection = { [eventName: string]: EventTrigger<(...args: any[]) => void> };
 
@@ -141,7 +140,12 @@ export class InputHandler {
     const isProperClick = this.isProperClick(e, startOffset, pointerDown, validClick, pointerDownTimestamp);
 
     if (isProperClick) {
-      this._events.click.fire(clickOrTouchEventOffset(e, this.domElement));
+      const firedEvent = {
+        ...clickOrTouchEventOffset(e, this.domElement),
+        button: e instanceof MouseEvent ? e.button : undefined
+      };
+
+      this._events.click.fire(firedEvent);
     }
   }
 

@@ -19,10 +19,14 @@ export {
   AntiAliasingMode
 } from './src/rendering/types';
 
-export { EffectRenderManager } from './src/rendering/EffectRenderManager';
-
 export { RenderMode } from './src/rendering/RenderMode';
 export { coverageShaders } from './src/rendering/shaders';
 
 export { Materials } from './src/rendering/materials';
 export { createPrimitives } from './src/rendering/primitives';
+
+export { DefaultRenderPipelineProvider } from './src/render-pipeline-providers/DefaultRenderPipelineProvider';
+export { CadGeometryRenderModePipelineProvider } from './src/render-pipeline-providers/CadGeometryRenderModePipelineProvider';
+export { BasicPipelineExecutor } from './src/pipeline-executors/BasicPipelineExecutor';
+export { RenderPipelineExecutor } from './src/RenderPipelineExecutor';
+export { RenderPipelineProvider } from './src/RenderPipelineProvider';

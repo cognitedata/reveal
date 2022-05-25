@@ -10,6 +10,7 @@ import { createGlContext } from '../../../test-utilities';
 
 import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
 import { SectorCuller } from '@reveal/cad-geometry-loaders';
+import { SceneHandler } from '@reveal/utilities';
 
 describe('RevealManager', () => {
   const stubMetadataProvider: ModelMetadataProvider = {} as any;
@@ -30,17 +31,17 @@ describe('RevealManager', () => {
       stubMetadataProvider,
       stubDataProvider,
       renderer,
-      new THREE.Scene(),
+      new SceneHandler(),
       {
         internal: { cad: { sectorCuller } }
       }
     );
+    jest.useFakeTimers();
   });
 
   beforeAll(() => {
     const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
     renderer = new THREE.WebGLRenderer({ context });
-    jest.useFakeTimers();
   });
 
   afterAll(() => {
@@ -91,27 +92,5 @@ describe('RevealManager', () => {
     jest.advanceTimersByTime(10000);
 
     expect(loadingStateChangedCb).toBeCalledTimes(1);
-  });
-
-  test('addUiObject() and removeUiObject() requests redraw', () => {
-    manager = createRevealManager(
-      'test',
-      'myAppId',
-      stubMetadataProvider,
-      stubDataProvider,
-      renderer,
-      new THREE.Scene(),
-      {
-        internal: { cad: { sectorCuller } }
-      }
-    );
-    expect(manager).not.toBeUndefined();
-    expect(manager.needsRedraw).toBeFalse();
-    const uiObject = new THREE.Object3D();
-    manager.addUiObject(uiObject, new THREE.Vector2(0, 0), new THREE.Vector2(100, 100));
-    expect(manager.needsRedraw).toBeTrue();
-    manager.resetRedraw();
-    manager.removeUiObject(uiObject);
-    expect(manager.needsRedraw).toBeTrue();
   });
 });

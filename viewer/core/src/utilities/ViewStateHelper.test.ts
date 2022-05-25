@@ -19,6 +19,7 @@ describe(ViewStateHelper.name, () => {
     mockClientAuthentication(sdk);
     const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
     const renderer = new THREE.WebGLRenderer({ context });
+    renderer.render = jest.fn();
 
     viewer = new Cognite3DViewer({ sdk, renderer });
     helper = new ViewStateHelper(viewer, sdk);
