@@ -35,19 +35,17 @@ function isBox(geometry: Geometry): geometry is BoxPrimitive {
 export function annotationsToObjects(bvs: BoundingVolume[]): StyledObject[] {
   let idCounter = 0;
 
-  const resultObjects: StyledObject[] = [];
-
-  for (const bv of bvs) {
+  const resultObjects = bvs.map((bv) => {
     idCounter++;
     const shapes: IShape[] = [];
 
-    for (const primitive of bv.region) {
+    bv.region.map(primitive => {
       if (isCylinder(primitive)) {
         shapes.push(translateCylinder(primitive));
       } else if (isBox(primitive)) {
         shapes.push(translateBox(primitive));
       }
-    }
+    });
 
     const compShape = new CompositeShape(shapes);
     const styledObject: StyledObject = {
@@ -55,8 +53,8 @@ export function annotationsToObjects(bvs: BoundingVolume[]): StyledObject[] {
       objectId: idCounter
     };
 
-    resultObjects.push(styledObject);
-  }
+    return styledObject;
+  });
 
   return resultObjects;
 }
