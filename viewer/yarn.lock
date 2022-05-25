@@ -721,13 +721,13 @@ __metadata:
     comlink: 4.3.1
     copy-pkg-json-webpack-plugin: 0.0.40
     copy-webpack-plugin: 11.0.0
-    core-js: 3.22.6
+    core-js: 3.22.7
     cross-var: 1.1.0
     dat.gui: 0.7.9
     eslint: 8.16.0
     eslint-config-prettier: 8.5.0
     eslint-plugin-header: 3.1.1
-    eslint-plugin-jsdoc: 39.3.2
+    eslint-plugin-jsdoc: 39.3.1
     eslint-plugin-lodash: 7.4.0
     eslint-plugin-prettier: 4.0.0
     eslint-plugin-unused-imports: 2.0.0
@@ -4607,10 +4607,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:3.22.6":
-  version: 3.22.6
-  resolution: "core-js@npm:3.22.6"
-  checksum: 3600235a29cae4c066fbbca595b17f33707b3827f9c2e838ec1bd34f450b62f438da271717bd8de19a2a0d4e382b3d3310a048ee1c22617d09fbfeaf67faaf7e
+"core-js@npm:3.22.7":
+  version: 3.22.7
+  resolution: "core-js@npm:3.22.7"
+  checksum: c5f1d8a96b6d1828d02583603d9df1fcbf45f95454585ff9d49ba7ea1470bf1422d00561044939bf4952465ae4ae2bf30a39b4874da8ed2741a3f3996bd175ab
   languageName: node
   linkType: hard
 
@@ -5569,9 +5569,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:39.3.2":
-  version: 39.3.2
-  resolution: "eslint-plugin-jsdoc@npm:39.3.2"
+"eslint-plugin-jsdoc@npm:39.3.1":
+  version: 39.3.1
+  resolution: "eslint-plugin-jsdoc@npm:39.3.1"
   dependencies:
     "@es-joy/jsdoccomment": ~0.31.0
     comment-parser: 1.3.1
@@ -5582,7 +5582,7 @@ __metadata:
     spdx-expression-parse: ^3.0.1
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
-  checksum: 2fd3adb23f97c5cc8c03bd8c7338c12074e4e6d49eaee042db65317a69abd389a4c4992fbc9075fa3deabd1d89393b639683f612deac06d89950767571c03457
+  checksum: 5d3f9aba488922e3c6e5f809ddc3fdab4c3720177d3686aba258863e9766e758063476255d5269b8ab5e2b86a446a77d239690d22432ad2333cc761e5b3b0671
   languageName: node
   linkType: hard
 
