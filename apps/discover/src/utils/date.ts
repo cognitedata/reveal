@@ -2,7 +2,6 @@ import isDate from 'lodash/isDate';
 import isNumber from 'lodash/isNumber';
 import isString from 'lodash/isString';
 import moment, {
-  Moment,
   MomentFormatSpecification,
   MomentInput,
   unitOfTime,
@@ -110,8 +109,6 @@ export const getDateByMatchingRegex = (
   }
   return moment(date).format(SHORT_DATE_FORMAT);
 };
-
-export type PossibleDateRangeDate = Moment | Date | null;
 
 /*
  * Moment to epoch - Convert moment into: 1586951847577

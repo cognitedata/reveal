@@ -30,7 +30,6 @@ import { CasingType } from 'pages/authorized/search/well/inspect/modules/casing/
 
 import { TableResults } from '../../components/Tablev3/resultTypes';
 import { UserPreferredUnit } from '../../constants/units';
-import { PossibleDateRangeDate } from '../../utils/date';
 import { DocumentType } from '../documentSearch/types';
 
 import { FilterIDs } from './constants';
@@ -210,7 +209,7 @@ interface WellSequenceMetadata {
   fileType: string;
 }
 
-export type WellFilterOptionValue = string | number | PossibleDateRangeDate;
+export type WellFilterOptionValue = string | number;
 
 export type WellFilterOption = {
   value: WellFilterOptionValue;

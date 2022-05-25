@@ -1,12 +1,10 @@
-import { PossibleDateRangeDate } from 'utils/date';
-
 import { SelectProps } from '@cognite/cogs.js';
 
 import { ExtraLabels } from '../interfaces';
 
 export interface MultiSelectProps
   extends Omit<SelectProps<MultiSelectOptionType>, 'value' | 'options'> {
-  options: MultiSelectOptionType[];
+  options?: MultiSelectOptionType[];
   selectedOptions?: MultiSelectOptionValue[];
   onValueChange: (values: string[]) => void;
   isTextCapitalized?: boolean;
@@ -23,7 +21,7 @@ export interface MultiSelectGroupProps
   groupedOptions?: { label: string; options: MultiSelectOptionType[] }[];
 }
 
-export type MultiSelectOptionValue = string | number | PossibleDateRangeDate;
+export type MultiSelectOptionValue = string | number;
 
 export type MultiSelectOptionObject = {
   value: MultiSelectOptionValue;

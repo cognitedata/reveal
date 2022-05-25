@@ -16,7 +16,7 @@ import {
 
 import { Checkboxes } from '../../components/Checkboxes';
 
-import { DateRange, DateRangeFilter } from './DateRangeFilter';
+import { DateRangeFilter } from './DateRangeFilter';
 import { MultiSelectWrapper } from './elements';
 
 export type Props = {
@@ -67,7 +67,11 @@ export const CommonFilter = ({
     <DateRangeFilter
       title={filterName}
       minMaxRange={map(options, 'value')}
-      range={selectedOptions as DateRange}
+      range={
+        isArray(selectedOptions)
+          ? selectedOptions.map((option) => new Date(option))
+          : [new Date(selectedOptions)]
+      }
       onChange={(range) => {
         onValueChange(filterId, range);
       }}

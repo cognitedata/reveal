@@ -5,6 +5,7 @@ import { NumericRangeFilter } from './NumericRange/NumericRangeFilter';
 export { CheckBoxes } from './CheckBoxes/CheckBoxes';
 export { NumericRangeFilter } from './NumericRange/NumericRangeFilter';
 export { MultiSelect } from './MultiSelect/MultiSelect';
+export { MultiSelectCategorized } from './MultiSelectCategorized/MultiSelectCategorized';
 export { NumericRangeDropdown } from './NumericRangeDropdown/NumericRangeDropdown';
 export { SearchBox } from './SearchBox/SearchBox';
 
