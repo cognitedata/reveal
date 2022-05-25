@@ -37,7 +37,7 @@ describe(MeasurementLine.name, () => {
     let points = mesh.geometry.getAttribute('instanceStart').array;
     let endPoint = new THREE.Vector3(points[3], points[4], points[5]);
 
-    expect(endPoint).toEqual(new THREE.Vector3(0, 0, 0));
+    expect(endPoint).toEqual(new THREE.Vector3());
 
     line.updateLine(0, 0, domElement, camera, position);
 
