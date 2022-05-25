@@ -72,7 +72,6 @@ import { useMapSources } from './hooks/useMapSources';
 import { useTouchedEvent } from './hooks/useTouchedEvent';
 import { useVisibleLayers } from './hooks/useVisibleLayers';
 import LeaveConfirmModal from './LeaveConfirmModal';
-import { MapNavigationPanel } from './map-overlay-actions';
 import { Map as MapboxMap } from './MapboxMap';
 import MapPopup from './MapPopup';
 import { PolygonBar } from './polygon/PolygonBar';
@@ -498,9 +497,6 @@ export const Map: React.FC = () => {
                     />
                   </MapBlockExpander>
                 )}
-
-                {/* When bigger than 70 pixels, show the zoom controls */}
-                {mapWidth > 70 && <MapNavigationPanel map={mapReference} />}
 
                 <PolygonBar
                   polygon={polygon}

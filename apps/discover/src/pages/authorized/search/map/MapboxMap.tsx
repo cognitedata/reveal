@@ -91,6 +91,7 @@ export const Map: React.FC<Props> = ({
 
   const [draw, setDraw] = useState<any>(null);
   const [map, setMap] = useState<any>(null);
+  const [, setNavigation] = useState<boolean | undefined>(false);
 
   const { data: mapSettings } = useMapConfig();
 
@@ -141,6 +142,7 @@ export const Map: React.FC<Props> = ({
       });
 
       const scaleControl = new mapboxgl.ScaleControl({ maxWidth: 200 });
+      const navigationButtons = new mapboxgl.NavigationControl();
 
       const oilgasPattern = new Image();
       oilgasPattern.src = oilgasImage;
@@ -176,16 +178,37 @@ export const Map: React.FC<Props> = ({
 
       mapInstance.on('resize', () => {
         const mapWidth = mapInstance.getCanvasContainer().offsetWidth;
-        if (isUndefined(miniMap)) return;
-        const miniMapExists = !!miniMap._parentMap; // eslint-disable-line no-underscore-dangle
 
-        if (!miniMapExists && mapWidth > 400) {
-          mapInstance.addControl(scaleControl, 'bottom-right');
-          mapInstance.addControl(miniMap, 'bottom-left');
-        } else if (miniMapExists && mapWidth < 400) {
-          mapInstance.removeControl(scaleControl);
-          mapInstance.removeControl(miniMap);
+        if (!isUndefined(miniMap)) {
+          const miniMapExists = !!miniMap._parentMap; // eslint-disable-line no-underscore-dangle
+
+          if (!miniMapExists && mapWidth > 400) {
+            mapInstance.addControl(scaleControl, 'bottom-right');
+            mapInstance.addControl(miniMap, 'bottom-left');
+          } else if (miniMapExists && mapWidth < 400) {
+            mapInstance.removeControl(scaleControl);
+            mapInstance.removeControl(miniMap);
+          }
         }
+
+        /*
+         *
+         * This used for memorize and track the updated previousState.
+         * since the state is being changing very fast with the resize event and the useState also asynchronous,
+         * unable to pick the the updated state. so that's why useState has been used in a little bit different way here.
+         *
+         */
+        setNavigation((previousState) => {
+          if (mapWidth > 80) {
+            mapInstance.addControl(navigationButtons, 'bottom-right');
+            return true;
+          }
+          if (previousState && mapWidth < 80) {
+            mapInstance.removeControl(navigationButtons);
+            return !previousState;
+          }
+          return undefined;
+        });
       });
     };
 

@@ -16,6 +16,7 @@ import { Loader, Tabs } from '@cognite/cogs.js';
 import { HorizontalResizableBox } from 'components/HorizontalResizable-box/HorizontalResizableBox';
 import navigation from 'constants/navigation';
 import { useAnythingHasSearched } from 'hooks/useAnythingHasSearched';
+import { useDebounce } from 'hooks/useDebounce';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useProjectConfig } from 'hooks/useProjectConfig';
 import { useResponsive } from 'hooks/useResponsive';
@@ -80,6 +81,10 @@ export const Search: React.FC = () => {
   const isOpen = useFilterBarIsOpen();
   const anythingHasSearched = useAnythingHasSearched();
   const responsive = useResponsive();
+  const debouncedStateUpdate = useDebounce(
+    (width: number) => dispatch(setResultPanelWidth(width)),
+    500
+  );
 
   const { t } = useTranslation();
 
@@ -199,7 +204,7 @@ export const Search: React.FC = () => {
    * Fire window resize event to expand the map svg elements
    */
   const onResize = (width: number) => {
-    dispatch(setResultPanelWidth(width));
+    debouncedStateUpdate(width);
     if (mapContainer) {
       mapContainer.style.width = `calc(100% - ${width}px)`;
       window.dispatchEvent(new Event('resize'));
