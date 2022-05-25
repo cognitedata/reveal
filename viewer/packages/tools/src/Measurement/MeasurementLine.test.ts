@@ -17,7 +17,7 @@ describe(MeasurementLine.name, () => {
   });
 
   test('Generate line geometry and mesh', () => {
-    const position = new THREE.Vector3(0, 0, 0);
+    const position = new THREE.Vector3();
     const mesh = line.startLine(position, 0);
 
     expect(mesh.geometry).not.toBeNull();
