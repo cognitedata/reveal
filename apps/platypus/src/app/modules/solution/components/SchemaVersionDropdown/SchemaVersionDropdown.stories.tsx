@@ -4,7 +4,7 @@ import {
   MainTitle,
   Wrapper,
 } from '@platypus-app/components/Styles/storybook';
-import { SolutionSchema } from '@platypus/platypus-core';
+import { DataModelVersion } from '@platypus/platypus-core';
 import { useState } from 'react';
 import { SchemaVersionDropdown } from './SchemaVersionDropdown';
 
@@ -38,7 +38,7 @@ const schemaVersions = [
     createdTime: date.setDate(date.getDate() - 2),
     lastUpdatedTime: date.setDate(date.getDate() - 2),
   },
-] as SolutionSchema[];
+] as DataModelVersion[];
 
 export const Default = () => {
   const [version, setVersion] = useState(schemaVersions[1]);

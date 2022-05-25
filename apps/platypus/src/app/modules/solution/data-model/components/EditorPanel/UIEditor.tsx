@@ -3,8 +3,8 @@ import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import {
   BuiltInType,
-  SolutionDataModel,
-  SolutionDataModelType,
+  DataModelTypeDefs,
+  DataModelTypeDefsType,
   UpdateSolutionDataModelFieldDTO,
 } from '@platypus/platypus-core';
 import { useEffect, useState } from 'react';
@@ -21,8 +21,8 @@ interface UIEditorProps {
   graphQLSchemaString: string;
   disabled?: boolean;
   onSchemaChange: (typeName: string) => void;
-  currentType: null | SolutionDataModelType;
-  setCurrentType: (type: null | SolutionDataModelType) => void;
+  currentType: null | DataModelTypeDefsType;
+  setCurrentType: (type: null | DataModelTypeDefsType) => void;
 }
 
 export function UIEditor({
@@ -39,7 +39,7 @@ export function UIEditor({
   const [currentGraphqlSchema, setCurrentGraphqlSchema] = useState('');
   const [customTypesNames, setCustomTypesNames] = useState<string[]>([]);
 
-  const [solutionDataModel, setSolutionDataModel] = useState<SolutionDataModel>(
+  const [solutionDataModel, setSolutionDataModel] = useState<DataModelTypeDefs>(
     {
       types: [],
     }
@@ -72,12 +72,12 @@ export function UIEditor({
   }, [graphQLSchemaString]);
 
   const updateUiState = (
-    newState: SolutionDataModel,
+    newState: DataModelTypeDefs,
     updatedTypeName: string
   ) => {
     const updatedType = newState.types.find(
       (type) => type.name === updatedTypeName
-    ) as SolutionDataModelType;
+    ) as DataModelTypeDefsType;
     setSolutionDataModel(newState);
     setCurrentType(updatedType);
     const updatedGqlSchema = dataModelService.buildSchemaString();

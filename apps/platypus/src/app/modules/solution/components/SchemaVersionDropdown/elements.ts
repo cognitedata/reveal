@@ -1,5 +1,5 @@
 import { Button, Menu, Body } from '@cognite/cogs.js';
-import { SolutionSchemaStatus } from '@platypus/platypus-core';
+import { DataModelVersionStatus } from '@platypus/platypus-core';
 import styled from 'styled-components/macro';
 
 export const DropdownButton = styled(Button)<{ open: boolean }>`
@@ -24,11 +24,11 @@ export const MenuItem = styled(Menu.Item)<{ selected: boolean }>`
   height: 40px;
   overflow: visible;
 `;
-export const VersionTag = styled.span<{ status: SolutionSchemaStatus }>`
+export const VersionTag = styled.span<{ status: DataModelVersionStatus }>`
   color: ${(props) =>
-    props.status === SolutionSchemaStatus.DRAFT ? '#595959' : '#2B3A88'};
+    props.status === DataModelVersionStatus.DRAFT ? '#595959' : '#2B3A88'};
   background: ${(props) =>
-    props.status === SolutionSchemaStatus.DRAFT
+    props.status === DataModelVersionStatus.DRAFT
       ? 'rgba(102, 102, 102, 0.12)'
       : 'rgba(110, 133, 252, 0.12)'};
   font-size: 12px;
@@ -38,7 +38,7 @@ export const VersionTag = styled.span<{ status: SolutionSchemaStatus }>`
   border-radius: 4px;
   height: 20px;
   width: ${(props) =>
-    props.status === SolutionSchemaStatus.DRAFT ? '74px' : '48px'};
+    props.status === DataModelVersionStatus.DRAFT ? '74px' : '48px'};
   padding: 2px 6px;
 `;
 export const LastTimeText = styled(Body)`

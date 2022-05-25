@@ -2,26 +2,26 @@ import { PlatypusError } from '@platypus-core/boundaries/types';
 import { Result } from '../../boundaries/types/result';
 import { Validator } from '../../boundaries/validation';
 import { RequiredFieldValidator } from '../common/validators/required-field.validator';
-import { ISolutionsApiService } from './boundaries';
+import { IDataModelsApiService } from './boundaries';
 import { CreateSolutionDTO, DeleteSolutionDTO, FetchSolutionDTO } from './dto';
-import { Solution } from './types';
+import { DataModel } from './types';
 
-export class SolutionsHandler {
-  constructor(private solutionsService: ISolutionsApiService) {}
+export class DataModelsHandler {
+  constructor(private solutionsService: IDataModelsApiService) {}
 
-  list(): Promise<Result<Solution[]>> {
+  list(): Promise<Result<DataModel[]>> {
     return this.solutionsService
-      .listSolutions()
+      .list()
       .then((solutions) => Result.ok(solutions));
   }
 
-  fetch(dto: FetchSolutionDTO): Promise<Result<Solution>> {
+  fetch(dto: FetchSolutionDTO): Promise<Result<DataModel>> {
     return this.solutionsService
-      .fetchSolution(dto)
+      .fetch(dto)
       .then((solutions) => Result.ok(solutions));
   }
 
-  create(dto: CreateSolutionDTO): Promise<Result<Solution>> {
+  create(dto: CreateSolutionDTO): Promise<Result<DataModel>> {
     const validator = new Validator(dto);
     validator.addRule('name', new RequiredFieldValidator());
     const validationResult = validator.validate();
@@ -31,8 +31,8 @@ export class SolutionsHandler {
       return Promise.resolve(Result.fail(validationResult.errors));
     }
     return this.solutionsService
-      .createSolution(dto)
-      .then((solution: Solution) => Result.ok(solution))
+      .create(dto)
+      .then((solution: DataModel) => Result.ok(solution))
       .catch((err: PlatypusError) => {
         if (err.code === 409) {
           return Result.fail({
@@ -46,7 +46,7 @@ export class SolutionsHandler {
 
   delete(dto: DeleteSolutionDTO): Promise<Result<unknown>> {
     return this.solutionsService
-      .deleteSolution(dto)
+      .delete(dto)
       .then((res) => Result.ok(res))
       .catch((err: PlatypusError) => {
         if (err.code === 403) {

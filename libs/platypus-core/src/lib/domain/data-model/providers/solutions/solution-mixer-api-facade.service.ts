@@ -1,9 +1,9 @@
 import {
-  ISolutionsApiService,
-  ISolutionSchemaApiService,
+  IDataModelsApiService,
+  IDataModelVersionApiService,
 } from '../../boundaries';
 
-import { Solution } from '../../types';
+import { DataModel } from '../../types';
 import {
   CreateSolutionDTO,
   DeleteSolutionDTO,
@@ -15,14 +15,14 @@ import {
   SolutionApiOutputDTO,
   FetchVersionDTO,
 } from '../../dto';
-import { SolutionSchema } from '../../types';
+import { DataModelVersion } from '../../types';
 import { SolutionsApiService } from './solutions-api.service';
 import { SolutionDataMapper } from './data-mappers/solution-data-mapper';
 import { PlatypusError } from '@platypus-core/boundaries/types';
 import { SolutionSchemaVersionDataMapper } from './data-mappers/solution-schema-version-data-mapper';
 
 export class SolutionMixerApiFacadeService
-  implements ISolutionsApiService, ISolutionSchemaApiService
+  implements IDataModelsApiService, IDataModelVersionApiService
 {
   private solutionDataMapper: SolutionDataMapper;
   private apiSpecVersionMapper: SolutionSchemaVersionDataMapper;
@@ -30,7 +30,7 @@ export class SolutionMixerApiFacadeService
     this.solutionDataMapper = new SolutionDataMapper();
     this.apiSpecVersionMapper = new SolutionSchemaVersionDataMapper();
   }
-  createSolution(dto: CreateSolutionDTO): Promise<Solution> {
+  create(dto: CreateSolutionDTO): Promise<DataModel> {
     return this.solutionsApiService
       .upsertApi({
         externalId: dto.name,
@@ -42,10 +42,10 @@ export class SolutionMixerApiFacadeService
         this.solutionDataMapper.deserialize(createApiResponse)
       );
   }
-  deleteSolution(dto: DeleteSolutionDTO): Promise<unknown> {
+  delete(dto: DeleteSolutionDTO): Promise<unknown> {
     return this.solutionsApiService.deleteApi(dto.id);
   }
-  listSolutions(): Promise<Solution[]> {
+  list(): Promise<DataModel[]> {
     return this.solutionsApiService
       .listApis()
       .then((results: SolutionApiOutputDTO[]) => {
@@ -54,7 +54,7 @@ export class SolutionMixerApiFacadeService
         );
       });
   }
-  fetchSolution(dto: FetchSolutionDTO): Promise<Solution> {
+  fetch(dto: FetchSolutionDTO): Promise<DataModel> {
     return this.solutionsApiService
       .getApisByIds(dto.solutionId, false)
       .then((results) => {
@@ -69,17 +69,17 @@ export class SolutionMixerApiFacadeService
         return this.solutionDataMapper.deserialize(results[0]);
       });
   }
-  fetchSchemaVersion(dto: FetchVersionDTO): Promise<SolutionSchema> {
-    return this.listSchemaVersions(dto).then(
+  fetchVersion(dto: FetchVersionDTO): Promise<DataModelVersion> {
+    return this.listVersions(dto).then(
       (versions) =>
         versions.find(
           (apiSpecVersion) =>
             apiSpecVersion.version.toString() === dto.version.toString()
-        ) as SolutionSchema
+        ) as DataModelVersion
     );
   }
 
-  listSchemaVersions(dto: ListVersionsDTO): Promise<SolutionSchema[]> {
+  listVersions(dto: ListVersionsDTO): Promise<DataModelVersion[]> {
     return this.solutionsApiService
       .getApisByIds(dto.solutionId, true)
       .then((results: SolutionApiOutputDTO[]) => {
@@ -98,7 +98,7 @@ export class SolutionMixerApiFacadeService
         );
       });
   }
-  publishSchema(dto: CreateSchemaDTO): Promise<SolutionSchema> {
+  publishVersion(dto: CreateSchemaDTO): Promise<DataModelVersion> {
     return this.solutionsApiService
       .publishVersion({
         apiExternalId: dto.solutionId,
@@ -110,7 +110,7 @@ export class SolutionMixerApiFacadeService
         this.apiSpecVersionMapper.deserialize(dto.solutionId, version)
       );
   }
-  updateSchema(dto: CreateSchemaDTO): Promise<SolutionSchema> {
+  updateVersion(dto: CreateSchemaDTO): Promise<DataModelVersion> {
     return this.solutionsApiService
       .updateVersion({
         apiExternalId: dto.solutionId,

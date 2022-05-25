@@ -1,12 +1,12 @@
 import { fetchVersions, fetchSolution } from './actions';
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { SolutionSchema, Solution } from '@platypus/platypus-core';
+import { DataModelVersion, DataModel } from '@platypus/platypus-core';
 import { ActionStatus } from '@platypus-app/types';
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 
 const initialState = {
-  solution: undefined as Solution | undefined,
+  solution: undefined as DataModel | undefined,
   solutionStatus: ActionStatus.IDLE,
   solutionError: '',
   selectedSchema: {
@@ -16,8 +16,8 @@ const initialState = {
     version: '1',
     createdTime: Date.now(),
     lastUpdatedTime: Date.now(),
-  } as SolutionSchema,
-  schemas: [] as SolutionSchema[],
+  } as DataModelVersion,
+  schemas: [] as DataModelVersion[],
   schemasStatus: ActionStatus.IDLE,
   schemasError: '',
 };
@@ -33,7 +33,7 @@ const solutionStateSlice = createSlice({
         } else {
           state.selectedSchema = state.schemas.find(
             (schema) => schema.version === action.payload.version
-          ) as SolutionSchema;
+          ) as DataModelVersion;
         }
       } else {
         state.selectedSchema = {
@@ -42,10 +42,10 @@ const solutionStateSlice = createSlice({
         };
       }
     },
-    setSchema: (state, action: PayloadAction<SolutionSchema>) => {
+    setSchema: (state, action: PayloadAction<DataModelVersion>) => {
       state.selectedSchema = action.payload;
     },
-    insertSchema: (state, action: PayloadAction<SolutionSchema>) => {
+    insertSchema: (state, action: PayloadAction<DataModelVersion>) => {
       state.schemas = [action.payload, ...state.schemas];
     },
   },

@@ -5,7 +5,7 @@ import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceh
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import config from '@platypus-app/config/config';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { KeyValueMap, SolutionDataModelType } from '@platypus/platypus-core';
+import { KeyValueMap, DataModelTypeDefsType } from '@platypus/platypus-core';
 import { GridReadyEvent, IDatasource, IGetRowsParams } from 'ag-grid-community';
 import { useCallback, useEffect, useState } from 'react';
 import dataManagmentServices from '../../di';
@@ -19,7 +19,7 @@ import noRowsOverlay from './NoRowsOverlay';
 const pageSizeLimit = 100;
 
 export interface DataPreviewTableProps {
-  dataModelType: SolutionDataModelType;
+  dataModelType: DataModelTypeDefsType;
   solutionId: string;
   version: string;
 }

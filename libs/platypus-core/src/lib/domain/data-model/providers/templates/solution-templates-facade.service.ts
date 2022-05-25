@@ -1,6 +1,6 @@
 import {
-  ISolutionsApiService,
-  ISolutionSchemaApiService,
+  IDataModelsApiService,
+  IDataModelVersionApiService,
 } from '../../boundaries';
 import {
   CreateSchemaDTO,
@@ -12,13 +12,13 @@ import {
   ListVersionsDTO,
   RunQueryDTO,
 } from '../../dto';
-import { Solution, SolutionSchema } from '../../types';
+import { DataModel, DataModelVersion } from '../../types';
 import { TemplateSchemaDataMapper } from './template-schema-data-mapper';
 import { TemplatesApiService } from './templates-api.service';
 import { TemplatesDataMapper } from './templates-data-mapper';
 
 export class SolutionTemplatesFacadeService
-  implements ISolutionsApiService, ISolutionSchemaApiService
+  implements IDataModelsApiService, IDataModelVersionApiService
 {
   private templatesDataMapper: TemplatesDataMapper;
   private templateSchemaDataMapper: TemplateSchemaDataMapper;
@@ -27,7 +27,7 @@ export class SolutionTemplatesFacadeService
     this.templateSchemaDataMapper = new TemplateSchemaDataMapper();
   }
 
-  createSolution(dto: CreateSolutionDTO): Promise<Solution> {
+  create(dto: CreateSolutionDTO): Promise<DataModel> {
     return this.templatesApiService
       .createTemplateGroup(dto)
       .then((templateGroup) =>
@@ -35,11 +35,11 @@ export class SolutionTemplatesFacadeService
       );
   }
 
-  deleteSolution(dto: DeleteSolutionDTO): Promise<unknown> {
+  delete(dto: DeleteSolutionDTO): Promise<unknown> {
     return this.templatesApiService.deleteTemplateGroup(dto);
   }
 
-  listSolutions(): Promise<Solution[]> {
+  list(): Promise<DataModel[]> {
     return this.templatesApiService
       .listTemplateGroups()
       .then((templateGroups) =>
@@ -49,7 +49,7 @@ export class SolutionTemplatesFacadeService
       );
   }
 
-  fetchSolution(dto: FetchSolutionDTO): Promise<Solution> {
+  fetch(dto: FetchSolutionDTO): Promise<DataModel> {
     return this.templatesApiService
       .fetchTemplateGroup({ solutionId: dto.solutionId })
       .then((templateGroup) =>
@@ -57,7 +57,7 @@ export class SolutionTemplatesFacadeService
       );
   }
 
-  fetchSchemaVersion(dto: FetchVersionDTO): Promise<SolutionSchema> {
+  fetchVersion(dto: FetchVersionDTO): Promise<DataModelVersion> {
     return this.templatesApiService
       .fetchSchemaVersion(dto)
       .then((version) =>
@@ -65,7 +65,7 @@ export class SolutionTemplatesFacadeService
       );
   }
 
-  listSchemaVersions(dto: ListVersionsDTO): Promise<SolutionSchema[]> {
+  listVersions(dto: ListVersionsDTO): Promise<DataModelVersion[]> {
     return this.templatesApiService.listSchemaVersions(dto).then((versions) => {
       return versions.map((templateSchemaVersion) =>
         this.templateSchemaDataMapper.deserialize(
@@ -76,7 +76,7 @@ export class SolutionTemplatesFacadeService
     });
   }
 
-  publishSchema(dto: CreateSchemaDTO): Promise<SolutionSchema> {
+  publishVersion(dto: CreateSchemaDTO): Promise<DataModelVersion> {
     return this.templatesApiService
       .publishSchema(dto)
       .then((res) =>
@@ -84,7 +84,7 @@ export class SolutionTemplatesFacadeService
       );
   }
 
-  updateSchema(dto: CreateSchemaDTO): Promise<SolutionSchema> {
+  updateVersion(dto: CreateSchemaDTO): Promise<DataModelVersion> {
     return this.templatesApiService
       .updateSchema(dto)
       .then((res) =>

@@ -12,15 +12,15 @@ import {
 } from '@cognite/cogs.js';
 
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { Solution } from '@platypus/platypus-core';
+import { DataModel } from '@platypus/platypus-core';
 import { StyledSolutionCard } from './elements';
 import services from '@platypus-app/di';
 
 type SoluionCardProps = {
-  solution: Solution;
-  onOpen: (solution: Solution) => void;
-  onEdit: (solution: Solution) => void;
-  onDelete: (solution: Solution) => void;
+  solution: DataModel;
+  onOpen: (solution: DataModel) => void;
+  onEdit: (solution: DataModel) => void;
+  onDelete: (solution: DataModel) => void;
 };
 
 export const SolutionCard = ({

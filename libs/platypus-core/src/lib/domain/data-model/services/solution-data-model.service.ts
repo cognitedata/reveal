@@ -2,9 +2,9 @@ import { IGraphQlUtilsService } from '../boundaries';
 import { schemaServiceBuiltInTypes, templatesBiltInTypes } from '../constants';
 import { UpdateSolutionDataModelFieldDTO } from '../dto';
 import {
-  SolutionDataModelField,
-  SolutionDataModel,
-  SolutionDataModelType,
+  DataModelTypeDefsField,
+  DataModelTypeDefs,
+  DataModelTypeDefsType,
   BuiltInType,
 } from '../types';
 export class SolutionDataModelService {
@@ -13,7 +13,7 @@ export class SolutionDataModelService {
     private backend: 'templates' | 'schema-service' = 'templates'
   ) {}
 
-  parseSchema(graphQlSchema: string): SolutionDataModel {
+  parseSchema(graphQlSchema: string): DataModelTypeDefs {
     return this.graphqlService.parseSchema(graphQlSchema);
   }
 
@@ -23,10 +23,10 @@ export class SolutionDataModelService {
   }
 
   addType(
-    state: SolutionDataModel,
+    state: DataModelTypeDefs,
     name: string,
     directive?: string
-  ): SolutionDataModel {
+  ): DataModelTypeDefs {
     const newType = this.graphqlService.addType(name, directive);
     let newState = {
       ...state,
@@ -40,13 +40,13 @@ export class SolutionDataModelService {
   }
 
   renameType(
-    state: SolutionDataModel,
+    state: DataModelTypeDefs,
     oldTypeName: string,
     newTypeName: string
-  ): SolutionDataModel {
+  ): DataModelTypeDefs {
     let newState = state;
-    state.types.forEach((type: SolutionDataModelType) => {
-      type.fields.forEach((field: SolutionDataModelField) => {
+    state.types.forEach((type: DataModelTypeDefsType) => {
+      type.fields.forEach((field: DataModelTypeDefsField) => {
         if (field.type.name === oldTypeName) {
           newState = this.updateField(newState, type.name, field.name, {
             ...field,
@@ -72,10 +72,10 @@ export class SolutionDataModelService {
     };
   }
 
-  removeType(state: SolutionDataModel, typeName: string): SolutionDataModel {
+  removeType(state: DataModelTypeDefs, typeName: string): DataModelTypeDefs {
     let newState = state;
-    state.types.forEach((type: SolutionDataModelType) => {
-      type.fields.forEach((field: SolutionDataModelField) => {
+    state.types.forEach((type: DataModelTypeDefsType) => {
+      type.fields.forEach((field: DataModelTypeDefsField) => {
         if (field.type.name === typeName) {
           newState = this.removeField(state, type.name, field.name);
         }
@@ -91,15 +91,15 @@ export class SolutionDataModelService {
   }
 
   addField(
-    state: SolutionDataModel,
+    state: DataModelTypeDefs,
     typeName: string,
     fieldName: string,
     props: Partial<UpdateSolutionDataModelFieldDTO>
-  ): SolutionDataModel {
+  ): DataModelTypeDefs {
     const newField = this.graphqlService.addField(typeName, fieldName, props);
     return {
       ...state,
-      types: state.types.map((type: SolutionDataModelType) =>
+      types: state.types.map((type: DataModelTypeDefsType) =>
         type.name === typeName
           ? { ...type, fields: [...type.fields, newField] }
           : type
@@ -108,20 +108,20 @@ export class SolutionDataModelService {
   }
 
   updateField(
-    state: SolutionDataModel,
+    state: DataModelTypeDefs,
     typeName: string,
     fieldName: string,
     updates: Partial<UpdateSolutionDataModelFieldDTO>
-  ): SolutionDataModel {
+  ): DataModelTypeDefs {
     const updatedField = this.graphqlService.updateTypeField(
       typeName,
       fieldName,
       updates
-    ) as SolutionDataModelField;
+    ) as DataModelTypeDefsField;
 
     return {
       ...state,
-      types: state.types.map((type: SolutionDataModelType) =>
+      types: state.types.map((type: DataModelTypeDefsType) =>
         type.name === typeName
           ? {
               ...type,
@@ -135,14 +135,14 @@ export class SolutionDataModelService {
   }
 
   removeField(
-    state: SolutionDataModel,
+    state: DataModelTypeDefs,
     typeName: string,
     fieldName: string
-  ): SolutionDataModel {
+  ): DataModelTypeDefs {
     this.graphqlService.removeField(typeName, fieldName);
     const newState = {
       ...state,
-      types: state.types.map((type: SolutionDataModelType) =>
+      types: state.types.map((type: DataModelTypeDefsType) =>
         type.name === typeName
           ? {
               ...type,
@@ -155,7 +155,7 @@ export class SolutionDataModelService {
     return newState;
   }
 
-  getCustomTypesNames(state: SolutionDataModel): string[] {
+  getCustomTypesNames(state: DataModelTypeDefs): string[] {
     // this should be extended to filter types and get built in types as well
     return state.types.map((type) => type.name);
   }

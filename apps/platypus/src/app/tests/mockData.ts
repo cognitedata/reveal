@@ -1,4 +1,4 @@
-import { Solution, SolutionSchema } from '@platypus/platypus-core';
+import { DataModel, DataModelVersion } from '@platypus/platypus-core';
 
 export const mockSolutions = [
   {
@@ -10,7 +10,7 @@ export const mockSolutions = [
     owners: ['Ola Nordmann'],
     version: '1.2',
   },
-] as Solution[];
+] as DataModel[];
 
 export const mockSchemas = [
   {
@@ -22,4 +22,4 @@ export const mockSchemas = [
     createdTime: 1638891917037,
     lastUpdatedTime: 1638891917037,
   },
-] as SolutionSchema[];
+] as DataModelVersion[];

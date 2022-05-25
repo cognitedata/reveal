@@ -1,5 +1,5 @@
-export * from './solutions-handler';
-export * from './solution-schema-handler';
+export * from './data-models-handler';
+export * from './data-model-version-handler';
 export * from './data-managment-handler';
 export * from './providers/templates';
 export * from './providers/solutions';

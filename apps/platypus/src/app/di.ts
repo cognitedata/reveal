@@ -1,6 +1,6 @@
 import {
-  SolutionsHandler,
-  SolutionSchemaHandler,
+  DataModelsHandler,
+  DataModelVersionHandler,
   SolutionTemplatesFacadeService,
   TemplatesApiService,
   SolutionMixerApiFacadeService,
@@ -28,8 +28,8 @@ export default () => {
     dateUtils: new DateUtilsImpl(),
     timeUtils: new TimeUtilsImpl(),
     storageProviderFactory: new StorageProviderFactoryImpl(),
-    solutionHandler: new SolutionsHandler(solutionsApiService),
-    solutionSchemaHandler: new SolutionSchemaHandler(solutionsApiService),
+    solutionHandler: new DataModelsHandler(solutionsApiService),
+    solutionSchemaHandler: new DataModelVersionHandler(solutionsApiService),
     solutionDataModelService: new SolutionDataModelService(
       new GraphQlUtilsService(),
       config.USE_MIXER_API ? 'schema-service' : 'templates'

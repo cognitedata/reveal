@@ -1,10 +1,10 @@
 import { TemplateGroupVersion } from '@cognite/sdk';
-import { SolutionSchema, SolutionSchemaStatus } from '../../types';
+import { DataModelVersion, DataModelVersionStatus } from '../../types';
 
 export class TemplateSchemaDataMapper {
   serialize(
     externalId: string,
-    solutionSchema: SolutionSchema
+    solutionSchema: DataModelVersion
   ): TemplateGroupVersion {
     return {
       createdTime: +solutionSchema.schema,
@@ -17,10 +17,10 @@ export class TemplateSchemaDataMapper {
   deserialize(
     externalId: string,
     templateGroupVersion: TemplateGroupVersion
-  ): SolutionSchema {
+  ): DataModelVersion {
     return {
       externalId,
-      status: SolutionSchemaStatus.PUBLISHED,
+      status: DataModelVersionStatus.PUBLISHED,
       version: templateGroupVersion.version.toString(),
       createdTime: +templateGroupVersion.createdTime,
       lastUpdatedTime: +templateGroupVersion.lastUpdatedTime,

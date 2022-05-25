@@ -1,7 +1,7 @@
 import {
-  SolutionDataModelField,
-  SolutionDataModelFieldType,
-  SolutionDataModelType,
+  DataModelTypeDefsField,
+  DataModelTypeDefsFieldType,
+  DataModelTypeDefsType,
 } from '../types';
 
 export interface CreateSolutionDTO {
@@ -113,8 +113,8 @@ export interface SolutionApiOutputDTO {
 }
 
 export interface UpdateSolutionDataModelFieldDTO
-  extends Omit<SolutionDataModelField, 'type'> {
-  type: SolutionDataModelFieldType | string;
+  extends Omit<DataModelTypeDefsField, 'type'> {
+  type: DataModelTypeDefsFieldType | string;
 }
 
 export interface SolutionStorageDataModelDTO {
@@ -151,14 +151,14 @@ export interface StorageInstanceDTO {
 }
 
 export interface BuildQueryDTO {
-  dataModelType: SolutionDataModelType;
+  dataModelType: DataModelTypeDefsType;
   limit: number;
   cursor: string;
   hasNextPage: boolean;
 }
 
 export interface FetchDataDTO {
-  dataModelType: SolutionDataModelType;
+  dataModelType: DataModelTypeDefsType;
   limit: number;
   cursor: string;
   hasNextPage: boolean;

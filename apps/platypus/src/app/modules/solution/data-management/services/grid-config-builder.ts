@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import { ColumnConfig, GridConfig } from '@cognite/cog-data-grid';
-import { KeyValueMap, SolutionDataModelType } from '@platypus/platypus-core';
+import { KeyValueMap, DataModelTypeDefsType } from '@platypus/platypus-core';
 
 const colTypesMap = {
   Boolean: 'BOOLEAN',
@@ -19,7 +19,7 @@ export const getInitialGridConfig = () => {
 
 export const buildGridConfig = (
   instanceIdCol: string,
-  dataModelType: SolutionDataModelType
+  dataModelType: DataModelTypeDefsType
 ): GridConfig => {
   return {
     ...getInitialGridConfig(),

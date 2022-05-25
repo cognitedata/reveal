@@ -1,8 +1,8 @@
 import { TemplateGroup } from '@cognite/sdk';
-import { Solution } from '../../types';
+import { DataModel } from '../../types';
 
 export class TemplatesDataMapper {
-  serialize(solution: Solution): TemplateGroup {
+  serialize(solution: DataModel): TemplateGroup {
     return {
       externalId: solution.id,
       description: solution.description,
@@ -12,7 +12,7 @@ export class TemplatesDataMapper {
     } as TemplateGroup;
   }
 
-  deserialize(templateGroup: TemplateGroup): Solution {
+  deserialize(templateGroup: TemplateGroup): DataModel {
     return {
       id: templateGroup.externalId,
       name: templateGroup.externalId,
@@ -20,6 +20,6 @@ export class TemplatesDataMapper {
       createdTime: templateGroup.createdTime,
       updatedTime: templateGroup.lastUpdatedTime,
       owners: templateGroup.owners,
-    } as Solution;
+    } as DataModel;
   }
 }

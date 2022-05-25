@@ -1,8 +1,8 @@
 import { ActionStatus } from '@platypus-app/types';
-import { Solution } from '@platypus/platypus-core';
+import { DataModel } from '@platypus/platypus-core';
 
 export interface SolutionsStateVM {
-  solutions: Solution[];
+  solutions: DataModel[];
   solutionsStatus: ActionStatus;
   error: string;
 }

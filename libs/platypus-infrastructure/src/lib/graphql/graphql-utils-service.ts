@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { IGraphQlUtilsService } from '@platypus-core/domain/solution/boundaries';
+import { IGraphQlUtilsService } from '@platypus-core/domain/data-model/boundaries';
 import {
   DirectiveProps,
-  SolutionDataModel,
-  SolutionDataModelField,
-  SolutionDataModelFieldArgument,
-  SolutionDataModelType,
+  DataModelTypeDefs,
+  DataModelTypeDefsField,
+  DataModelTypeDefsFieldArgument,
+  DataModelTypeDefsType,
   UpdateSolutionDataModelFieldDTO,
 } from '@platypus/platypus-core';
 import { ObjectTypeDefinitionNode } from 'graphql';
@@ -25,7 +25,7 @@ import {
 export class GraphQlUtilsService implements IGraphQlUtilsService {
   private schemaAst: DocumentApi | null = null;
 
-  addType(name: string, directive?: string): SolutionDataModelType {
+  addType(name: string, directive?: string): DataModelTypeDefsType {
     this.createIfEmpty();
     const newType = this.schemaAst!.createObjectType({
       name: name,
@@ -37,8 +37,8 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
 
   updateType(
     typeName: string,
-    updates: Partial<SolutionDataModelType>
-  ): SolutionDataModelType {
+    updates: Partial<DataModelTypeDefsType>
+  ): DataModelTypeDefsType {
     this.createIfEmpty();
 
     const type = this.schemaAst!.getObjectType(typeName);
@@ -81,7 +81,7 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
     this.schemaAst!.removeType(typeName);
   }
 
-  getType(typeName: string): SolutionDataModelType {
+  getType(typeName: string): DataModelTypeDefsType {
     return this.toSolutionDataModelType(
       this.schemaAst!.getObjectType(typeName)
     );
@@ -90,8 +90,8 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
   addField(
     typeName: string,
     fieldName: string,
-    fieldProps: Partial<SolutionDataModelField>
-  ): SolutionDataModelField {
+    fieldProps: Partial<DataModelTypeDefsField>
+  ): DataModelTypeDefsField {
     this.createIfEmpty();
     const updatedFieldName = fieldProps.name ? fieldProps.name : fieldName;
     const createdType = this.schemaAst!.getObjectType(typeName).createField(
@@ -106,7 +106,7 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
     typeName: string,
     fieldName: string,
     updates: Partial<UpdateSolutionDataModelFieldDTO>
-  ): SolutionDataModelField {
+  ): DataModelTypeDefsField {
     this.createIfEmpty();
     const updatedFieldName = updates.name ? updates.name : fieldName;
     const updatedType = this.schemaAst!.getObjectType(typeName).updateField(
@@ -123,14 +123,14 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
     this.schemaAst!.getObjectType(typeName).removeField(fieldName);
   }
 
-  parseSchema(graphQlSchema: string): SolutionDataModel {
+  parseSchema(graphQlSchema: string): DataModelTypeDefs {
     this.schemaAst = documentApi().addSDL(graphQlSchema);
 
     const types = [...this.schemaAst.typeMap.keys()].map((type) =>
       this.schemaAst!.typeMap.get(type)
     );
 
-    const mappedTypes: SolutionDataModelType[] = types.map((type) => {
+    const mappedTypes: DataModelTypeDefsType[] = types.map((type) => {
       const typeDef = type as ObjectTypeDefinitionNode;
       const typeApi = objectTypeApi(typeDef);
       const mappedType = this.toSolutionDataModelType(typeApi);
@@ -145,7 +145,7 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
 
     return {
       types: mappedTypes,
-    } as SolutionDataModel;
+    } as DataModelTypeDefs;
   }
 
   hasType(typeName: string): boolean {
@@ -163,7 +163,7 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
     return this.schemaAst!.toSDLString();
   }
 
-  private toSolutionDataModelType(type: ObjectTypeApi): SolutionDataModelType {
+  private toSolutionDataModelType(type: ObjectTypeApi): DataModelTypeDefsType {
     return {
       name: type.getName(),
       description: type.getDescription(),
@@ -174,12 +174,12 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
         (typeInterface) => typeInterface.name
       ),
       directives: this.mapDirectives(type.getDirectives()),
-    } as SolutionDataModelType;
+    } as DataModelTypeDefsType;
   }
 
   private toSolutionDataModelField(
     field: FieldDefinitionApi
-  ): SolutionDataModelField {
+  ): DataModelTypeDefsField {
     return {
       name: field.getName(),
       description: field.getDescription(),
@@ -191,12 +191,12 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
       nonNull: field.isNonNullType(),
       directives: this.mapDirectives(field.getDirectives()),
       arguments: this.mapArguments(field.getArguments()),
-    } as SolutionDataModelField;
+    } as DataModelTypeDefsField;
   }
 
   private mapArguments(
     args: InputValueApi[]
-  ): SolutionDataModelFieldArgument[] {
+  ): DataModelTypeDefsFieldArgument[] {
     return (args || []).map(
       (arg) =>
         ({
@@ -209,7 +209,7 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
             list: arg.isListType(),
             nonNull: arg.isNonNullType(),
           },
-        } as SolutionDataModelFieldArgument)
+        } as DataModelTypeDefsFieldArgument)
     );
   }
 

@@ -1,12 +1,12 @@
 import { Input, Title } from '@cognite/cogs.js';
-import { SolutionDataModelType } from '@platypus/platypus-core';
+import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import { useState } from 'react';
 import styled from 'styled-components/macro';
 
 export type TypeListProps = {
-  items?: SolutionDataModelType[];
+  items?: DataModelTypeDefsType[];
   placeholder?: string;
-  onClick: (item: SolutionDataModelType) => void;
+  onClick: (item: DataModelTypeDefsType) => void;
 };
 
 export const TypeList = ({ items, placeholder, onClick }: TypeListProps) => {

@@ -10,43 +10,43 @@ import {
   UpdateSolutionDataModelFieldDTO,
 } from '../dto';
 import {
-  SolutionSchema,
-  Solution,
-  SolutionDataModel,
-  SolutionDataModelType,
-  SolutionDataModelField,
+  DataModelVersion,
+  DataModel,
+  DataModelTypeDefs,
+  DataModelTypeDefsType,
+  DataModelTypeDefsField,
 } from '../types';
 
-export interface ISolutionsApiService {
-  createSolution(dto: CreateSolutionDTO): Promise<Solution>;
-  deleteSolution(dto: DeleteSolutionDTO): Promise<unknown>;
-  listSolutions(): Promise<Solution[]>;
-  fetchSolution(dto: FetchSolutionDTO): Promise<Solution>;
+export interface IDataModelsApiService {
+  create(dto: CreateSolutionDTO): Promise<DataModel>;
+  delete(dto: DeleteSolutionDTO): Promise<unknown>;
+  list(): Promise<DataModel[]>;
+  fetch(dto: FetchSolutionDTO): Promise<DataModel>;
 }
 
-export interface ISolutionSchemaApiService {
+export interface IDataModelVersionApiService {
   /**
    * Fetch solution (template group)
    * @param dto
    */
-  fetchSchemaVersion(dto: FetchSolutionDTO): Promise<SolutionSchema>;
+  fetchVersion(dto: FetchSolutionDTO): Promise<DataModelVersion>;
   /**
    * List Solution schema (template groups) versions
    * @param dto
    */
-  listSchemaVersions(dto: ListVersionsDTO): Promise<SolutionSchema[]>;
+  listVersions(dto: ListVersionsDTO): Promise<DataModelVersion[]>;
 
   /**
    * Publish new schema by bumping the version.
    * @param dto
    */
-  publishSchema(dto: CreateSchemaDTO): Promise<SolutionSchema>;
+  publishVersion(dto: CreateSchemaDTO): Promise<DataModelVersion>;
 
   /**
    * Patch the existing version, but will fail if there are breaking changes.
    * @param dto
    */
-  updateSchema(dto: CreateSchemaDTO): Promise<SolutionSchema>;
+  updateVersion(dto: CreateSchemaDTO): Promise<DataModelVersion>;
 
   /**
    * Run GraphQL Query.
@@ -61,7 +61,7 @@ export interface IGraphQlUtilsService {
    * and converts into SolutonDataModel
    * @param graphQlSchema
    */
-  parseSchema(graphQlSchema: string): SolutionDataModel;
+  parseSchema(graphQlSchema: string): DataModelTypeDefs;
 
   /**
    * Converts SolutonDataModel back into graphql SDL string
@@ -73,15 +73,15 @@ export interface IGraphQlUtilsService {
    * Adds new type into AST
    * @param name
    */
-  addType(name: string, directive?: string): SolutionDataModelType;
+  addType(name: string, directive?: string): DataModelTypeDefsType;
 
   /**
    * Update specified type in AST
    */
   updateType(
     typeName: string,
-    updates: Partial<SolutionDataModelType>
-  ): SolutionDataModelType;
+    updates: Partial<DataModelTypeDefsType>
+  ): DataModelTypeDefsType;
 
   /**
    * Removes specified type from AST
@@ -99,7 +99,7 @@ export interface IGraphQlUtilsService {
     typeName: string,
     fieldName: string,
     fieldProps: Partial<UpdateSolutionDataModelFieldDTO>
-  ): SolutionDataModelField;
+  ): DataModelTypeDefsField;
 
   /**
    * Updates the field for the specified type into AST
@@ -111,7 +111,7 @@ export interface IGraphQlUtilsService {
     typeName: string,
     fieldName: string,
     updates: Partial<UpdateSolutionDataModelFieldDTO>
-  ): SolutionDataModelField;
+  ): DataModelTypeDefsField;
 
   /**
    * Removes field from specified type from AST

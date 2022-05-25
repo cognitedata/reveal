@@ -1,8 +1,8 @@
 import { Button, Flex, Title } from '@cognite/cogs.js';
-import { SolutionDataModelType } from '@platypus/platypus-core';
+import { DataModelTypeDefsType } from '@platypus/platypus-core';
 
 type SchemaTypeViewProps = {
-  currentType: SolutionDataModelType;
+  currentType: DataModelTypeDefsType;
   onNavigateBack: () => void;
   children?: React.ReactNode;
 };

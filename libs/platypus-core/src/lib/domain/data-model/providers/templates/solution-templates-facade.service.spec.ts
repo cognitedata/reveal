@@ -52,7 +52,7 @@ describe('SolutionsTemplatesFacadeServiceTest', () => {
 
   it('should load template groups as solutions', async () => {
     const service = createInstance();
-    const solutions = await service.listSolutions();
+    const solutions = await service.list();
     expect(templatesApiServiceMock.listTemplateGroups).toBeCalled();
 
     expect(solutions).toEqual([expectedMock]);
@@ -60,7 +60,7 @@ describe('SolutionsTemplatesFacadeServiceTest', () => {
 
   it('should create template group as solution', async () => {
     const service = createInstance();
-    const solutions = await service.createSolution({
+    const solutions = await service.create({
       name: templateGroupMock.externalId,
       description: templateGroupMock.description,
       owner: 'test-user@cognite.com',
@@ -72,7 +72,7 @@ describe('SolutionsTemplatesFacadeServiceTest', () => {
 
   it('should delete template group', async () => {
     const service = createInstance();
-    await service.deleteSolution({
+    await service.delete({
       id: templateGroupMock.externalId,
     });
     expect(templatesApiServiceMock.deleteTemplateGroup).toBeCalled();
@@ -80,7 +80,7 @@ describe('SolutionsTemplatesFacadeServiceTest', () => {
 
   it('should list template schema versions', async () => {
     const service = createInstance();
-    await service.listSchemaVersions({
+    await service.listVersions({
       solutionId: templateGroupMock.externalId,
       version: '1',
     });
@@ -89,7 +89,7 @@ describe('SolutionsTemplatesFacadeServiceTest', () => {
 
   it('should create schema', async () => {
     const service = createInstance();
-    await service.publishSchema({
+    await service.publishVersion({
       solutionId: templateGroupMock.externalId,
       version: '1',
       schema: templateSchemaMock.schema,

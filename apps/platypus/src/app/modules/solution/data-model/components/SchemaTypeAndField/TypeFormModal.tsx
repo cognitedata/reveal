@@ -1,7 +1,7 @@
 import { Input } from '@cognite/cogs.js';
 import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { SolutionDataModelType } from '@platypus/platypus-core';
+import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import { useController, useForm, SubmitHandler } from 'react-hook-form';
 
 type FormInput = {
@@ -14,7 +14,7 @@ type BaseModalProps = {
   onOk: (typeName: string) => void;
   typeValue: string;
   mode: string;
-  existingTypes: SolutionDataModelType[];
+  existingTypes: DataModelTypeDefsType[];
 };
 
 export const TypeFormModal = ({

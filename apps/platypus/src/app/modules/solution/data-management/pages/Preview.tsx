@@ -8,8 +8,8 @@ import useSelector from '@platypus-app/hooks/useSelector';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { SolutionState } from '@platypus-app/redux/reducers/global/solutionReducer';
 import {
-  SolutionDataModel,
-  SolutionDataModelType,
+  DataModelTypeDefs,
+  DataModelTypeDefsType,
 } from '@platypus/platypus-core';
 import { useEffect, useState } from 'react';
 import { DataPreviewTable } from '../components/DataPreviewTable/DataPreviewTable';
@@ -18,7 +18,7 @@ import { TypeList } from '../components/TypeList/TypeList';
 const dataModelService = services().solutionDataModelService;
 
 export const Preview = () => {
-  const [selectedType, setSelected] = useState<SolutionDataModelType | null>(
+  const [selectedType, setSelected] = useState<DataModelTypeDefsType | null>(
     null
   );
   const errorLogger = useErrorLogger();
@@ -26,7 +26,7 @@ export const Preview = () => {
   const { selectedSchema } = useSelector<SolutionState>(
     (state) => state.solution
   );
-  const [solutionDataModel, setSolutionDataModel] = useState<SolutionDataModel>(
+  const [solutionDataModel, setSolutionDataModel] = useState<DataModelTypeDefs>(
     {
       types: [],
     }

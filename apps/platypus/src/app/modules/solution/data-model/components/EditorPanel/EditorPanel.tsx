@@ -9,7 +9,7 @@ import { UIEditor } from './UIEditor';
 import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
 import { BuiltInType } from '@platypus/platypus-core';
 import services from '@platypus-app/di';
-import { SolutionDataModelType } from '@platypus/platypus-core';
+import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import { ErrorPlaceholder } from '../ErrorBoundary/ErrorPlaceholder';
 
 const GraphqlCodeEditor = React.lazy(() =>
@@ -23,8 +23,8 @@ export interface EditorPanelProps {
   editorMode: SchemaEditorMode;
   builtInTypes: BuiltInType[];
   onSchemaChanged: (schemaString: string) => void;
-  currentType: null | SolutionDataModelType;
-  setCurrentType: (type: null | SolutionDataModelType) => void;
+  currentType: null | DataModelTypeDefsType;
+  setCurrentType: (type: null | DataModelTypeDefsType) => void;
 }
 
 export const EditorPanel = (props: EditorPanelProps) => {

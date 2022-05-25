@@ -1,8 +1,8 @@
-import { SolutionSchema, SolutionSchemaStatus } from '../../../types';
+import { DataModelVersion, DataModelVersionStatus } from '../../../types';
 import { ApiVersion } from '../../../dto';
 
 export class SolutionSchemaVersionDataMapper {
-  serialize(externalId: string, solutionSchema: SolutionSchema): ApiVersion {
+  serialize(externalId: string, solutionSchema: DataModelVersion): ApiVersion {
     return {
       createdTime: new Date(solutionSchema.createdTime).toISOString(),
       dataModel: {
@@ -12,10 +12,13 @@ export class SolutionSchemaVersionDataMapper {
     } as ApiVersion;
   }
 
-  deserialize(externalId: string, apiSpecVersion: ApiVersion): SolutionSchema {
+  deserialize(
+    externalId: string,
+    apiSpecVersion: ApiVersion
+  ): DataModelVersion {
     return {
       externalId,
-      status: SolutionSchemaStatus.PUBLISHED,
+      status: DataModelVersionStatus.PUBLISHED,
       version: apiSpecVersion.version.toString(),
       createdTime: new Date(apiSpecVersion.createdTime).getTime(),
       lastUpdatedTime: new Date(apiSpecVersion.createdTime).getTime(),

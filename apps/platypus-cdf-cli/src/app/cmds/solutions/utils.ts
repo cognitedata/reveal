@@ -1,8 +1,8 @@
 import {
   SolutionMixerApiFacadeService,
   SolutionsApiService,
-  SolutionSchemaHandler,
-  SolutionsHandler,
+  DataModelVersionHandler,
+  DataModelsHandler,
 } from '@platypus/platypus-core';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 
@@ -12,13 +12,13 @@ export const getSchemaApiService = () => {
 };
 
 export const getSolutionHandler = () => {
-  return new SolutionsHandler(
+  return new DataModelsHandler(
     new SolutionMixerApiFacadeService(getSchemaApiService())
   );
 };
 
 export const getSolutionSchemaHandler = () => {
-  return new SolutionSchemaHandler(
+  return new DataModelVersionHandler(
     new SolutionMixerApiFacadeService(getSchemaApiService())
   );
 };

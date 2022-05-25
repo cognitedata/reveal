@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Checkbox } from '@cognite/cogs.js';
 
-import { Solution, StorageProviderType } from '@platypus/platypus-core';
+import { DataModel, StorageProviderType } from '@platypus/platypus-core';
 
 import { Notification } from '@platypus-app/components/Notification/Notification';
 
@@ -15,7 +15,7 @@ export const DeleteSolution = ({
   onCancel,
   onAfterDeleting,
 }: {
-  solution: Solution;
+  solution: DataModel;
   onCancel: VoidFunction;
   onAfterDeleting: VoidFunction;
 }) => {

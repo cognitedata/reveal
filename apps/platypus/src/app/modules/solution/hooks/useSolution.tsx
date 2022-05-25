@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import * as solutionAsyncActions from '@platypus-app/redux/reducers/global/actions';
 import { actions as solutionActions } from '@platypus-app/redux/reducers/global/solutionReducer';
-import { SolutionSchema } from '@platypus/platypus-core';
+import { DataModelVersion } from '@platypus/platypus-core';
 
 export const useSolution = () => {
   const dispatch = useDispatch();
@@ -21,14 +21,14 @@ export const useSolution = () => {
   );
 
   const updateSchema = useCallback(
-    (solutionSchema: SolutionSchema) => {
+    (solutionSchema: DataModelVersion) => {
       dispatch(solutionActions.setSchema(solutionSchema));
     },
     [dispatch]
   );
 
   const insertSchema = useCallback(
-    (solutionSchema: SolutionSchema) => {
+    (solutionSchema: DataModelVersion) => {
       dispatch(solutionActions.insertSchema(solutionSchema));
     },
     [dispatch]

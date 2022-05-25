@@ -4,7 +4,7 @@ import {
   ValidatorResult,
 } from '@platypus-core/boundaries/validation';
 import { RequiredFieldValidator } from '../common/validators/required-field.validator';
-import { ISolutionSchemaApiService } from './boundaries';
+import { IDataModelVersionApiService } from './boundaries';
 import {
   CreateSchemaDTO,
   FetchSolutionDTO,
@@ -12,16 +12,16 @@ import {
   ListVersionsDTO,
   RunQueryDTO,
 } from './dto';
-import { SolutionSchema } from './types';
+import { DataModelVersion } from './types';
 
-export class SolutionSchemaHandler {
-  constructor(private solutionSchemaService: ISolutionSchemaApiService) {}
+export class DataModelVersionHandler {
+  constructor(private solutionSchemaService: IDataModelVersionApiService) {}
 
   /**
    * Fetch solution (template group) schema
    * @param dto
    */
-  version(dto: FetchSolutionDTO): Promise<Result<SolutionSchema>> {
+  version(dto: FetchSolutionDTO): Promise<Result<DataModelVersion>> {
     const validationResult = this.validate(dto, ['solutionId']);
 
     if (!validationResult.valid) {
@@ -29,9 +29,9 @@ export class SolutionSchemaHandler {
     }
 
     return this.solutionSchemaService
-      .fetchSchemaVersion(dto)
-      .then((solution: SolutionSchema) =>
-        Result.ok(solution as SolutionSchema)
+      .fetchVersion(dto)
+      .then((solution: DataModelVersion) =>
+        Result.ok(solution as DataModelVersion)
       );
   }
 
@@ -39,14 +39,14 @@ export class SolutionSchemaHandler {
    * List Solution schema (template groups) versions
    * @param dto
    */
-  versions(dto: ListVersionsDTO): Promise<Result<SolutionSchema[]>> {
+  versions(dto: ListVersionsDTO): Promise<Result<DataModelVersion[]>> {
     const validationResult = this.validate(dto, ['solutionId']);
     if (!validationResult.valid) {
       return Promise.reject(Result.fail(validationResult.errors));
     }
 
     return this.solutionSchemaService
-      .listSchemaVersions(dto)
+      .listVersions(dto)
       .then((versions) => Result.ok(versions));
   }
 
@@ -54,7 +54,7 @@ export class SolutionSchemaHandler {
    * Publish new schema by bumping the version.
    * @param dto
    */
-  publish(dto: CreateSchemaDTO): Promise<Result<SolutionSchema>> {
+  publish(dto: CreateSchemaDTO): Promise<Result<DataModelVersion>> {
     const validationResult = this.validate(dto, ['solutionId']);
 
     if (!validationResult.valid) {
@@ -62,7 +62,7 @@ export class SolutionSchemaHandler {
     }
 
     return this.solutionSchemaService
-      .publishSchema(dto)
+      .publishVersion(dto)
       .then((version) => Result.ok(version))
       .catch((err) => Result.fail(err));
   }
@@ -71,9 +71,9 @@ export class SolutionSchemaHandler {
    * Patch the existing version, but will fail if there are breaking changes.
    * @param dto
    */
-  update(dto: CreateSchemaDTO): Promise<Result<SolutionSchema>> {
+  update(dto: CreateSchemaDTO): Promise<Result<DataModelVersion>> {
     return this.solutionSchemaService
-      .updateSchema(dto)
+      .updateVersion(dto)
       .then((version) => Result.ok(version))
       .catch((err) => Result.fail(err));
   }

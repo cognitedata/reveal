@@ -1,4 +1,4 @@
-import { SolutionSchemaStatus } from '../../../types';
+import { DataModelVersionStatus } from '../../../types';
 import { SolutionSchemaVersionDataMapper } from './solution-schema-version-data-mapper';
 
 describe('SolutionSchemaVersionDataMapperTest', () => {
@@ -28,7 +28,7 @@ describe('SolutionSchemaVersionDataMapperTest', () => {
     expect(service.deserialize('123', templateSchemaMock)).toEqual({
       version: '1',
       externalId: '123',
-      status: SolutionSchemaStatus.PUBLISHED,
+      status: DataModelVersionStatus.PUBLISHED,
       schema: `type Person { firstName: string }`,
       createdTime: 1652341608206,
       lastUpdatedTime: 1652341608206,

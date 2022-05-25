@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { KeyValueMap } from '@platypus-core/boundaries/types';
 
-export interface Solution {
+export interface DataModel {
   id: string;
   name: string;
   description?: string;
@@ -11,14 +11,14 @@ export interface Solution {
   version: string;
 }
 
-export enum SolutionSchemaStatus {
+export enum DataModelVersionStatus {
   DRAFT = 'DRAFT',
   PUBLISHED = 'PUBLISHED',
 }
 
-export interface SolutionSchema {
+export interface DataModelVersion {
   externalId: string;
-  status: SolutionSchemaStatus;
+  status: DataModelVersionStatus;
   version: string;
   /** GraphQL Schema String */
   schema: string;
@@ -43,39 +43,39 @@ export interface DirectiveProps {
   arguments?: ArgumentNodeProps[];
 }
 
-export interface SolutionDataModelFieldType {
+export interface DataModelTypeDefsFieldType {
   name: string;
   list?: boolean;
   nonNull?: boolean;
 }
 
-export type SolutionDataModelFieldArgument = {
+export type DataModelTypeDefsFieldArgument = {
   name: string;
   description?: string;
-  type: SolutionDataModelFieldType;
+  type: DataModelTypeDefsFieldType;
   defaultValue?: any;
   directives?: DirectiveProps[];
 };
 
-export type SolutionDataModelField = {
+export type DataModelTypeDefsField = {
   name: string;
   description?: string;
-  arguments?: SolutionDataModelFieldArgument[];
-  type: SolutionDataModelFieldType;
+  arguments?: DataModelTypeDefsFieldArgument[];
+  type: DataModelTypeDefsFieldType;
   directives?: DirectiveProps[];
   nonNull?: boolean;
   list?: string;
 };
 
-export type SolutionDataModelType = {
+export type DataModelTypeDefsType = {
   name: string;
   description?: string;
   interfaces?: string[];
   directives?: DirectiveProps[];
-  fields: SolutionDataModelField[];
+  fields: DataModelTypeDefsField[];
 };
-export type SolutionDataModel = {
-  types: SolutionDataModelType[];
+export type DataModelTypeDefs = {
+  types: DataModelTypeDefsType[];
 };
 
 export type BuiltInType = {

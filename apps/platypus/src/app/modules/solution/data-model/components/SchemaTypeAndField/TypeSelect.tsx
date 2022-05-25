@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { Flex, Select, SegmentedControl, OptionType } from '@cognite/cogs.js';
 import { useEffect, useState } from 'react';
-import { BuiltInType, SolutionDataModelField } from '@platypus/platypus-core';
+import { BuiltInType, DataModelTypeDefsField } from '@platypus/platypus-core';
 import { groupOptions } from './utils';
 
 type OptionValue = {
@@ -13,7 +13,7 @@ type OptionValue = {
 
 type TypeSelectProps = {
   disabled: boolean;
-  field: SolutionDataModelField;
+  field: DataModelTypeDefsField;
   builtInTypes: BuiltInType[];
   customTypesNames: string[];
   onValueChanged: (value: OptionValue) => void;

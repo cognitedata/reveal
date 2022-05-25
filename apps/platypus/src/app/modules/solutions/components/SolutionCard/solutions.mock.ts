@@ -1,6 +1,6 @@
-import { Solution } from '@platypus/platypus-core';
+import { DataModel } from '@platypus/platypus-core';
 
-export const Solutions: Solution[] = [
+export const Solutions: DataModel[] = [
   {
     id: '1',
     name: 'BestDay',

@@ -1,5 +1,8 @@
 import { Flex, Body, Dropdown, Icon, Menu } from '@cognite/cogs.js';
-import { SolutionSchema, SolutionSchemaStatus } from '@platypus/platypus-core';
+import {
+  DataModelVersion,
+  DataModelVersionStatus,
+} from '@platypus/platypus-core';
 import { useState } from 'react';
 
 import { MenuItem, DropdownButton, LastTimeText, VersionTag } from './elements';
@@ -7,24 +10,24 @@ import { MenuItem, DropdownButton, LastTimeText, VersionTag } from './elements';
 import services from '@platypus-app/di';
 
 type Props = {
-  selectedVersion: SolutionSchema;
-  versions: SolutionSchema[];
-  onVersionSelect?: (version: SolutionSchema) => void;
+  selectedVersion: DataModelVersion;
+  versions: DataModelVersion[];
+  onVersionSelect?: (version: DataModelVersion) => void;
 };
 
 const VersionType = ({
   status,
   isLatest,
 }: {
-  status: SolutionSchemaStatus;
+  status: DataModelVersionStatus;
   isLatest: boolean;
 }) => {
   return (
     <>
-      {status === SolutionSchemaStatus.PUBLISHED && isLatest && (
+      {status === DataModelVersionStatus.PUBLISHED && isLatest && (
         <VersionTag status={status}>Latest</VersionTag>
       )}
-      {status === SolutionSchemaStatus.DRAFT && (
+      {status === DataModelVersionStatus.DRAFT && (
         <VersionTag status={status}>Local draft</VersionTag>
       )}
     </>
@@ -38,7 +41,7 @@ export function SchemaVersionDropdown({
 }: Props) {
   const [isOpen, setOpen] = useState(false);
   const latestVersion =
-    versions.filter((v) => v.status === SolutionSchemaStatus.PUBLISHED)[0]
+    versions.filter((v) => v.status === DataModelVersionStatus.PUBLISHED)[0]
       ?.version || '999999';
   return (
     <div data-cy="schema-version-select">

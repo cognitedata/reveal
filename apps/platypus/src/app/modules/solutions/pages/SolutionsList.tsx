@@ -7,7 +7,7 @@ import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { SolutionCard } from '@platypus-app/modules/solutions/components/SolutionCard/SolutionCard';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { ActionStatus } from '@platypus-app/types';
-import { Solution } from '@platypus/platypus-core';
+import { DataModel } from '@platypus/platypus-core';
 import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 
 import { StyledRow, StyledSolutionListWrapper } from '../elements';
@@ -23,7 +23,7 @@ export const SolutionsList = () => {
 
   const [createSolution, setCreateSolution] = useState(false);
   const [solutionToDelete, setSolutionToDelete] = useState<
-    Solution | undefined
+    DataModel | undefined
   >(undefined);
   const { solutionsStatus, solutions } = useSelector<SolutionsState>(
     (state) => state.solutions

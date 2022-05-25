@@ -1,6 +1,6 @@
 import { Body, Button, Title, Flex } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { SolutionDataModelType } from '@platypus/platypus-core';
+import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import { useState } from 'react';
 import styled from 'styled-components';
 
@@ -10,8 +10,8 @@ import { TypeFormModal } from './TypeFormModal';
 
 type Props = {
   disabled?: boolean;
-  objectTypes: SolutionDataModelType[];
-  setCurrentType: (type: SolutionDataModelType) => void;
+  objectTypes: DataModelTypeDefsType[];
+  setCurrentType: (type: DataModelTypeDefsType) => void;
   createSchemaType: (schema: string) => void;
   renameSchemaType: (oldTypeName: string, newTypeName: string) => void;
   deleteSchemaType: (typeName: string) => void;

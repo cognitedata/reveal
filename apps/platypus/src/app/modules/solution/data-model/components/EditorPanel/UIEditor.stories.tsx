@@ -5,7 +5,7 @@ import {
   Wrapper,
 } from '@platypus-app/components/Styles/storybook';
 import { mockComplexGraphqlModel } from '@platypus-app/mocks/graphqlModels';
-import { SolutionDataModelType } from '@platypus/platypus-core';
+import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import { useState } from 'react';
 import { UIEditor } from './UIEditor';
 
@@ -16,7 +16,7 @@ export default {
 
 export const Default = () => {
   const [schema, setSchema] = useState<string>(mockComplexGraphqlModel);
-  const [currentType, setCurrentType] = useState<null | SolutionDataModelType>(
+  const [currentType, setCurrentType] = useState<null | DataModelTypeDefsType>(
     null
   );
   return (

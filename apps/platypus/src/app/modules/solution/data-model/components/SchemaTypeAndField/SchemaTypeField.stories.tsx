@@ -4,7 +4,7 @@ import {
   MainTitle,
   Wrapper,
 } from '@platypus-app/components/Styles/storybook';
-import { SolutionDataModelField } from '@platypus/platypus-core';
+import { DataModelTypeDefsField } from '@platypus/platypus-core';
 import { useState } from 'react';
 import { SchemaTypeField } from './SchemaTypeField';
 
@@ -14,13 +14,13 @@ export default {
 };
 
 export const Default = () => {
-  const [field, setField] = useState<SolutionDataModelField>({
+  const [field, setField] = useState<DataModelTypeDefsField>({
     name: 'test',
     type: {
       name: 'String',
       list: false,
     },
-  } as SolutionDataModelField);
+  } as DataModelTypeDefsField);
 
   return (
     <Wrapper>
@@ -44,7 +44,7 @@ export const Default = () => {
             onFieldUpdated={(updatedField) => {
               setField({
                 ...field,
-                ...(updatedField as SolutionDataModelField),
+                ...(updatedField as DataModelTypeDefsField),
               });
             }}
           />

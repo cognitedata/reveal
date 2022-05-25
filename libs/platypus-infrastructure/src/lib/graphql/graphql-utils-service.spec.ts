@@ -1,6 +1,6 @@
 import { GraphQlUtilsService } from './graphql-utils-service';
 import { postsGraphQlSchema } from '@platypus/mock-data';
-import { SolutionDataModelField } from '@platypus/platypus-core';
+import { DataModelTypeDefsField } from '@platypus/platypus-core';
 
 const schemaMock = postsGraphQlSchema;
 
@@ -23,7 +23,7 @@ describe('GraphQlUtilsServiceTest', () => {
 
     const idField = postType?.fields.find(
       (field) => field.name === 'id'
-    ) as SolutionDataModelField;
+    ) as DataModelTypeDefsField;
 
     expect(idField).toEqual(
       expect.objectContaining({
@@ -36,7 +36,7 @@ describe('GraphQlUtilsServiceTest', () => {
 
     const commentsField = postType?.fields.find(
       (field) => field.name === 'comments'
-    ) as SolutionDataModelField;
+    ) as DataModelTypeDefsField;
 
     expect(commentsField).toEqual(
       expect.objectContaining({
@@ -48,7 +48,7 @@ describe('GraphQlUtilsServiceTest', () => {
     );
   });
 
-  it('should convert SolutionDataModelField and map directives and args', () => {
+  it('should convert DataModelTypeDefsField and map directives and args', () => {
     const service = createInstance();
     const customMockSchema = `type Post {
       name(qry: String): String @searchable

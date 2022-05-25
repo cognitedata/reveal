@@ -1,12 +1,15 @@
 import { FetchDataDTO } from './dto';
 import { PaginatedResponse } from './types';
 import { Result } from '../../boundaries/types';
-import { IQueryBuilderService, ISolutionSchemaApiService } from './boundaries';
+import {
+  IQueryBuilderService,
+  IDataModelVersionApiService,
+} from './boundaries';
 
 export class DataManagmentHandler {
   constructor(
     private queryBuilder: IQueryBuilderService,
-    private solutionSchemaService: ISolutionSchemaApiService,
+    private solutionSchemaService: IDataModelVersionApiService,
     private backend: 'templates' | 'schema-service' = 'templates'
   ) {}
 

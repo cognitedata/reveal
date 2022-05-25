@@ -1,6 +1,6 @@
 import services from '@platypus-app/di';
 import { getLocalDraftKey } from '@platypus-app/utils/local-storage-utils';
-import { SolutionSchema, StorageProviderType } from '@platypus/platypus-core';
+import { DataModelVersion, StorageProviderType } from '@platypus/platypus-core';
 
 const localStorageProvider = services().storageProviderFactory.getProvider(
   StorageProviderType.localStorage
@@ -12,19 +12,19 @@ export const useLocalDraft = (solutionId: string) => {
   const getLocalDraft = (version: string) => {
     const localDrafts = localStorageProvider.getItem(
       DRAFT_KEY
-    ) as SolutionSchema[];
+    ) as DataModelVersion[];
     if (localDrafts && localDrafts.length) {
       return localDrafts.find((draft) => draft.version === version);
     }
     return null;
   };
 
-  const getLocalDrafts = (): SolutionSchema[] => {
+  const getLocalDrafts = (): DataModelVersion[] => {
     const draftSchema = localStorageProvider.getItem(DRAFT_KEY);
     return draftSchema || [];
   };
 
-  const setLocalDraft = (solutionSchema: SolutionSchema) => {
+  const setLocalDraft = (solutionSchema: DataModelVersion) => {
     const index = getLocalDrafts().findIndex(
       (schema) => schema.version === solutionSchema.version
     );
@@ -39,7 +39,7 @@ export const useLocalDraft = (solutionId: string) => {
     localStorageProvider.setItem(DRAFT_KEY, appendedOrReplaced);
   };
 
-  const removeLocalDraft = (solutionSchema: SolutionSchema) => {
+  const removeLocalDraft = (solutionSchema: DataModelVersion) => {
     const schemas = getLocalDrafts().filter(
       (schema) =>
         schema.version !== solutionSchema.version ||
@@ -48,7 +48,7 @@ export const useLocalDraft = (solutionId: string) => {
     localStorageProvider.setItem(DRAFT_KEY, schemas);
   };
 
-  const getRemoteAndLocalSchemas = (remoteSchemas: SolutionSchema[]) => {
+  const getRemoteAndLocalSchemas = (remoteSchemas: DataModelVersion[]) => {
     return [...getLocalDrafts(), ...remoteSchemas].sort((a, b) =>
       b.version.localeCompare(a.version)
     );

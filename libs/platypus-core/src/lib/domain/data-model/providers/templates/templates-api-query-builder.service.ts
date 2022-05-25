@@ -1,7 +1,7 @@
 import { IQueryBuilderService } from '../../boundaries';
 import { templatesBiltInTypes } from '../../constants';
 import { BuildQueryDTO } from '../../dto';
-import { SolutionDataModelField } from '../../types';
+import { DataModelTypeDefsField } from '../../types';
 
 export class TemplatesApiQueryBuilderService implements IQueryBuilderService {
   getOperationName(typeName: string): string {
@@ -30,7 +30,7 @@ export class TemplatesApiQueryBuilderService implements IQueryBuilderService {
   }`;
   }
 
-  private buildQryItem(field: SolutionDataModelField): string {
+  private buildQryItem(field: DataModelTypeDefsField): string {
     const isPrimitive = templatesBiltInTypes
       .filter((t) => t.type === 'SCALAR')
       .map((t) => t.name)

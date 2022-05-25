@@ -10,11 +10,11 @@ import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLay
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import services from '@platypus-app/di';
 import {
-  SolutionDataModelType,
+  DataModelTypeDefsType,
   ErrorType,
   BuiltInType,
-  SolutionSchemaStatus,
-  SolutionSchema,
+  DataModelVersionStatus,
+  DataModelVersion,
 } from '@platypus/platypus-core';
 
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
@@ -52,7 +52,7 @@ export const DataModelPage = () => {
   const [isInit, setInit] = useState(false);
   const [breakingChanges, setBreakingChanges] = useState('');
   const [builtInTypes, setBuiltInTypes] = useState<BuiltInType[]>([]);
-  const [currentType, setCurrentType] = useState<null | SolutionDataModelType>(
+  const [currentType, setCurrentType] = useState<null | DataModelTypeDefsType>(
     null
   );
   const [selectedSchema, setSelectedSchema] = useState(selectedReduxSchema);
@@ -64,7 +64,7 @@ export const DataModelPage = () => {
     getLocalDraft,
   } = useLocalDraft(solution!.id);
 
-  const onSelectedSchemaChanged = (changedSchema: SolutionSchema) => {
+  const onSelectedSchemaChanged = (changedSchema: DataModelVersion) => {
     dataModelService.clear();
     setProjectSchema(changedSchema!.schema);
     setIsDirty(false);
@@ -73,7 +73,7 @@ export const DataModelPage = () => {
     selectVersion(changedSchema.version);
     setSelectedSchema(changedSchema);
     setMode(
-      changedSchema.status === SolutionSchemaStatus.DRAFT
+      changedSchema.status === DataModelVersionStatus.DRAFT
         ? SchemaEditorMode.Edit
         : SchemaEditorMode.View
     );
@@ -200,7 +200,7 @@ export const DataModelPage = () => {
         setLocalDraft({
           ...selectedSchema,
           schema: schemaString,
-          status: SolutionSchemaStatus.DRAFT,
+          status: DataModelVersionStatus.DRAFT,
         });
       } else if (selectedSchema && selectedSchema.schema === schemaString) {
         setIsDirty(false);
@@ -213,7 +213,7 @@ export const DataModelPage = () => {
   const renderTools = () => {
     const draft = getLocalDraft(selectedSchema.version) || {
       ...selectedSchema,
-      status: SolutionSchemaStatus.DRAFT,
+      status: DataModelVersionStatus.DRAFT,
     };
     const onEditClick = () => {
       setLocalDraft(draft);
@@ -249,7 +249,7 @@ export const DataModelPage = () => {
             loading={saving}
             disabled={
               (!isDirty &&
-                selectedSchema.status !== SolutionSchemaStatus.DRAFT) ||
+                selectedSchema.status !== DataModelVersionStatus.DRAFT) ||
               !projectSchema ||
               selectedReduxSchema.schema === projectSchema
             }
