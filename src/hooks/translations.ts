@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { isDevelopment } from 'utils/environment';
+import { translationKeys } from 'utils/translations';
 
 type TranslationKey = string | number | symbol;
 /**
@@ -26,34 +26,20 @@ export function useTranslations<TranslationKeys extends TranslationKey>(
   };
 }
 
-interface TranslatableComponent {
-  displayName?: string;
-  translationKeys: TranslationKey[];
+interface TranslationProperties {
+  defaultTranslations: Record<string | number | symbol, string>;
+  translationNamespace: string;
 }
 
-export function useComponentTranslations<
-  ComponentType extends TranslatableComponent
->(component: ComponentType) {
-  if (!component.displayName && isDevelopment) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      'Component has no displayName. Using the default namespace for i18n'
-    );
+export function useComponentTranslations(component: TranslationProperties) {
+  if (!component.defaultTranslations) {
+    throw new Error('Component has no defaultTranslations defined in it.');
   }
-  if (!component.translationKeys) {
-    throw new Error('Component has no translationKeys defined in it.');
+  if (!component.translationNamespace) {
+    throw new Error('Component has no translationNamespace defined in it.');
   }
-  const { t, ready } = useTranslation(component.displayName, {
-    useSuspense: false,
-  });
-  return {
-    t: component.translationKeys.reduce(
-      (prev, curr) => ({
-        ...prev,
-        [curr]: ready ? t(String(curr)) : String(curr),
-      }),
-      {} as Record<keyof TranslatableComponent['translationKeys'], string>
-    ),
-    translationReady: ready,
-  };
+  return useTranslations(
+    translationKeys(component.defaultTranslations),
+    component.translationNamespace
+  ).t;
 }

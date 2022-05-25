@@ -11,9 +11,8 @@ const ComponentWithTranslationsProp = ({ translations }: Props) => {
   return <div>{t.Test}</div>;
 };
 
-// Arrow functions would need displayName
-ComponentWithTranslationsProp.displayName = 'ComponentWithTranslationsProp';
-ComponentWithTranslationsProp.translationKeys =
-  Object.keys(defaultTranslations);
+ComponentWithTranslationsProp.translationNamespace =
+  'ComponentWithTranslationsProp';
+ComponentWithTranslationsProp.defaultTranslations = defaultTranslations;
 
 export default ComponentWithTranslationsProp;

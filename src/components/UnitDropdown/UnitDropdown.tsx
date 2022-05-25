@@ -209,7 +209,8 @@ const UnitDropdown = ({
   );
 };
 
-UnitDropdown.translationKeys = Object.keys(defaultTranslations);
+UnitDropdown.defaultTranslations = defaultTranslations;
+UnitDropdown.translationNamespace = 'UnitDropdown';
 
 const MenuContainer = styled.div`
   display: flex;

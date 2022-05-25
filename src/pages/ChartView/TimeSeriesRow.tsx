@@ -23,7 +23,7 @@ import { DatapointsMultiQuery } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { timeseriesAtom } from 'models/timeseries/atom';
 import { StyleButton } from 'components/StyleButton/StyleButton';
-import { useTranslations } from 'hooks/translations';
+import { useComponentTranslations, useTranslations } from 'hooks/translations';
 import { makeDefaultTranslations } from 'utils/translations';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
 import Dropdown from 'components/Dropdown/Dropdown';
@@ -268,10 +268,7 @@ function TimeSeriesRow({
   /**
    * Unit Dropdown translations
    */
-  const { t: unitDropdownTranslations } = useTranslations(
-    UnitDropdown.translationKeys,
-    'UnitDropdown'
-  );
+  const unitDropdownTranslations = useComponentTranslations(UnitDropdown);
   /**
    * Apperance Dropdown translations
    */

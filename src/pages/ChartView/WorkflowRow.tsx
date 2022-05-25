@@ -33,7 +33,7 @@ import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
 import { getStepsFromWorkflow } from 'components/NodeEditor/transforms';
 import { validateSteps } from 'components/NodeEditor/V2/calculations';
 import { StyleButton } from 'components/StyleButton/StyleButton';
-import { useTranslations } from 'hooks/translations';
+import { useComponentTranslations, useTranslations } from 'hooks/translations';
 import { makeDefaultTranslations } from 'utils/translations';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
 import Dropdown from 'components/Dropdown/Dropdown';
@@ -325,10 +325,7 @@ function WorkflowRow({
   /**
    * Unit Dropdown translations
    */
-  const { t: unitDropdownTranslations } = useTranslations(
-    UnitDropdown.translationKeys,
-    'UnitDropdown'
-  );
+  const unitDropdownTranslations = useComponentTranslations(UnitDropdown);
 
   const remove = () => mutate((oldChart) => removeWorkflow(oldChart!, id));
 

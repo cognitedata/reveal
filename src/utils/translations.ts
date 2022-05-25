@@ -18,3 +18,9 @@ export interface FunctionComponentWithTranslationKeys<T = {}>
   extends FunctionComponent<T> {
   translationKeys: string[];
 }
+
+export function translationKeys<
+  TranslationKeys extends string | symbol | number
+>(translations: Record<TranslationKeys, string>): TranslationKeys[] {
+  return Object.keys(translations) as Array<keyof typeof translations>;
+}
