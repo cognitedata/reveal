@@ -37,9 +37,17 @@ export class MeasurementLine {
     this._geometry = new LineGeometry();
     this._geometry.setPositions(this._position);
 
-    this._material = new LineMaterial({ color: this._options.color, linewidth: this._options.lineWidth });
+    this._material = new LineMaterial({
+      color: this._options.color,
+      linewidth: this._options.lineWidth,
+      depthTest: false
+    });
 
-    return new THREE.Mesh(this._geometry, this._material);
+    const mesh = new THREE.Mesh(this._geometry, this._material);
+    //Make sure line are rendered in-front of other objects
+    mesh.renderOrder = 1;
+
+    return mesh;
   }
 
   /**
