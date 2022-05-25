@@ -22,7 +22,7 @@ import { StyledObjectInfo } from './styling/StyledObjectInfo';
 import { CogniteClientPlayground } from '@cognite/sdk-playground';
 import { BoundingVolume, Geometry } from './annotationTypes';
 import { annotationsToObjectInfo } from './styling/annotationsToObjects';
-import { BoxPrimitive } from 'dist/packages/pointclouds/src/annotationTypes';
+import { BoxPrimitive } from './annotationTypes';
 
 export class PointCloudManager {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository;
