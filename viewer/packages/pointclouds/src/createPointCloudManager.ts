@@ -16,7 +16,7 @@ export function createPointCloudManager(
   modelDataProvider: ModelDataProvider,
   scene: THREE.Scene,
   renderer: THREE.WebGLRenderer,
-  sdkPlayground: CogniteClientPlayground
+  sdkPlayground?: CogniteClientPlayground | undefined
 ): PointCloudManager {
   const metadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataProvider);
   const modelFactory = new PointCloudFactory(modelDataProvider);

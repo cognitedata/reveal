@@ -45,7 +45,7 @@ export class PointCloudManager {
     modelFactory: PointCloudFactory,
     scene: THREE.Scene,
     renderer: THREE.WebGLRenderer,
-    sdkPlayground?: CogniteClientPlayground
+    sdkPlayground?: CogniteClientPlayground | undefined
   ) {
     this._pointCloudMetadataRepository = metadataRepository;
     this._pointCloudFactory = modelFactory;
