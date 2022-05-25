@@ -56,15 +56,14 @@ describe(MeasurementLine.name, () => {
 
     const distance = line.getMeasuredDistance();
 
-    expect(endPosition.distanceTo(startPosition)).toBe(distance);
+    expect(distance).toBe(endPosition.distanceTo(startPosition));
   });
 
   test('set measurement line width and color', () => {
     const lineOptions = { lineWidth: 1.0, color: 0xff0000 };
     line.setOptions(lineOptions);
 
-    expect((line as any)._options.color).toBe(lineOptions.color);
-    expect((line as any)._options.lineWidth).toBe(lineOptions.lineWidth);
+    expect((line as any)._options).toEqual(lineOptions);
   });
 
   test('mid point between the line', () => {
@@ -75,15 +74,9 @@ describe(MeasurementLine.name, () => {
     line.updateLine(0, 0, domElement, camera, endPosition);
 
     const midPoint = line.getMidPointOnLine();
+    const expectedMidPoint = new THREE.Vector3(50, 50, 50);
 
-    expect(midPoint).toEqual(lineMidPoint(startPosition, endPosition));
+    //Have to roundToZero to remove floating comparison error
+    expect(expectedMidPoint).toEqual(midPoint.roundToZero());
   });
 });
-
-function lineMidPoint(startPoint: THREE.Vector3, endPoint: THREE.Vector3): THREE.Vector3 {
-  let direction = endPoint.clone().sub(startPoint);
-  const length = direction.length();
-  direction = direction.normalize().multiplyScalar(length * 0.5);
-
-  return startPoint.clone().add(direction);
-}
