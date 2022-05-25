@@ -1,0 +1,15 @@
+# Check if PR title follows conventional commit format
+name: Validate PR
+on:
+  pull_request:
+    types: [edited, opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  title-check:
+    name: Check title
+    runs-on: ubuntu-latest
+    if: ${{ ! github.event.pull_request.draft }}
+    steps:
+      - uses: naveenk1223/action-pr-title@master
+        with:
+          regex: '^(fix|feat|chore|refactor|style|docs)(\([\w.]+\))?(!)?:.+$'

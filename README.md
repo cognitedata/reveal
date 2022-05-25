@@ -46,6 +46,11 @@ Now the changes made in data-exploration components should trigger a reload of d
 
 ## Releasing new version of @cognite/data-exploration
 
-1. Bump version in `package.json`
-2. Create a PR with `Release ...`
-3. Get ✅ and 🚀
+We use [semantic-release](https://github.com/semantic-release/semantic-release) to automate releases. Each merge to `master` will trigger the release workflow. To version correctly, make sure your PR title follows the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) format.
+
+
+| PR title | Release type | Version |
+|----------|--------------|---------|
+| `fix(AssetPreview): make assetId selectable` | [Patch] Fix Release | x.x.1 |
+| `feat(MetadataTable): enable sorting` | [Minor] Feature Release | x.1.x |
+| `feat(Table)!: implement new interface` | [Major] Breaking Release | 1.x.x |

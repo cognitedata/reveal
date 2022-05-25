@@ -33,7 +33,8 @@ jobs:
       - name: Build package 🏗️
         run: yarn build
 
-      - name: Publish 🎬
-        run: yarn publish
+      - name: Publish to NPM 🚀
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+        run: npx semantic-release

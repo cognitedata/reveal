@@ -1,0 +1,25 @@
+{
+  "branches": [
+    "master",
+    "alpha",
+    "beta"
+  ],
+  "plugins": [
+    // Essentials to determine the version, generate changelog, create release on Github and publish to NPM
+    // https://semantic-release.gitbook.io/semantic-release/extending/plugins-list
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "preset": "conventionalcommits"
+      }
+    ],
+    [
+      "@semantic-release/release-notes-generator",
+      {
+        "preset": "conventionalcommits"
+      }
+    ],
+    "@semantic-release/npm",
+    "@semantic-release/github"
+  ]
+}
