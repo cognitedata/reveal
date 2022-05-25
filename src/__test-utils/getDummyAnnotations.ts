@@ -14,7 +14,16 @@ import {
   Polyline,
   Status,
 } from 'src/api/annotation/types';
-import { VisionAnnotation } from 'src/modules/Common/types';
+import {
+  VisionAnnotation,
+  VisionAnnotationDataType,
+} from 'src/modules/Common/types';
+import {
+  TurnKeypointType,
+  VisionReviewAnnotation,
+} from 'src/modules/Review/store/review/types';
+import { isImageKeypointCollectionData } from 'src/modules/Common/types/typeGuards';
+import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 
 export const getDummyImageClassificationAnnotation = ({
   id = 1,
@@ -257,5 +266,28 @@ export const getDummyImageAssetLinkAnnotation = ({
     annotatedResourceId,
     annotationType: CDFAnnotationTypeEnum.ImagesAssetLink,
     ...data,
+  };
+};
+
+export const getDummyVisionReviewAnnotation = (
+  annotation: VisionAnnotation<VisionAnnotationDataType>,
+  selected?: boolean,
+  show?: boolean
+): VisionReviewAnnotation<VisionAnnotationDataType> => {
+  return {
+    annotation: (isImageKeypointCollectionData(annotation)
+      ? {
+          ...annotation,
+          keypoints: annotation.keypoints.map((keypoint) => ({
+            id: generateKeypointId(annotation.id, keypoint.label),
+            keypoint,
+            selected,
+          })),
+        }
+      : annotation) as TurnKeypointType<
+      VisionAnnotation<VisionAnnotationDataType>
+    >,
+    show: show!!,
+    selected: selected!!,
   };
 };

@@ -32,8 +32,8 @@ import {
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/components';
 import { AnnotationDetailPanelHotKeys } from 'src/modules/Review/Containers/AnnotationDetailPanel/AnnotationDetailPanelHotKeys';
 import { ReviewAnnotation } from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
-import { convertKeyPointCollectionToAnnotationStub } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ConversionUtils';
 import { selectCategory } from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
+import { convertKeyPointCollectionToAnnotationStub } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ConversionUtilsV1';
 
 export const AnnotationDetailPanel = (props: {
   file: FileInfo;
