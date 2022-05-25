@@ -1,7 +1,23 @@
 import React, { useState, useMemo } from 'react';
-import { Input, Table } from 'antd';
-import { Checkbox } from '@cognite/cogs.js';
+import { Input } from 'antd';
+import { Checkbox, Table } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+type RowType = {
+  [key: string]: string;
+};
+
+const sortTypes = {
+  alphanumeric: (row1: RowType, row2: RowType, columnName: number) => {
+    const value1 = row1.values[columnName];
+    const value2 = row2.values[columnName];
+    const string1 = value1.toLowerCase();
+    const string2 = value2.toLowerCase();
+    if (string1 < string2) return -1;
+    if (string1 > string2) return 1;
+    return 0;
+  },
+};
 
 export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
   const [query, setQuery] = useState('');
@@ -10,22 +26,25 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
   const filteredMetadata = useMemo(
     () =>
       metadata
-        ? Object.entries(metadata).filter(([key, value]) => {
-            if (hideEmpty && !value) {
-              return false;
-            }
-            return (
-              query.length === 0 ||
-              key.toLowerCase().includes(query.toLowerCase()) ||
-              value.toLowerCase().includes(query.toLowerCase())
-            );
-          })
+        ? Object.entries(metadata)
+            .filter(([key, value]) => {
+              if (hideEmpty && !value) {
+                return false;
+              }
+              return (
+                query.length === 0 ||
+                key.toLowerCase().includes(query.toLowerCase()) ||
+                value.toLowerCase().includes(query.toLowerCase())
+              );
+            })
+            .map(([key, value]) => [key.trim(), value.trim()])
         : [],
     [metadata, query, hideEmpty]
   );
   if (!metadata || Object.keys(metadata).length === 0) {
     return null;
   }
+
   return (
     <>
       <MetadataHeader>
@@ -51,25 +70,23 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
         <Table
           dataSource={filteredMetadata.map(item => ({
             key: item[0],
+            id: item[0],
             value: item[1],
           }))}
+          tableConfig={{ sortTypes }}
           columns={[
             {
-              title: 'Key',
-              dataIndex: 'key',
-              key: 'key',
+              Header: 'Key',
+              accessor: 'key',
               width: '50%',
             },
             {
-              title: 'Value',
-              dataIndex: 'value',
-              key: 'value',
+              Header: 'Value',
+              accessor: 'value',
               width: '50%',
             },
           ]}
           pagination={false}
-          bordered
-          rowClassName="metadata-table-row"
         />
       </MetadataTableContainer>
     </>
