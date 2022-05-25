@@ -33,7 +33,7 @@ def pods = { body ->
         // If you don't want codecoverage, then you can just remove this.
         testcafe.pod() {
           properties([
-            buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
+            
           ])
 
           node(POD_LABEL) {
