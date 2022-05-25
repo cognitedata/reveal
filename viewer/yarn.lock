@@ -721,7 +721,7 @@ __metadata:
     comlink: 4.3.1
     copy-pkg-json-webpack-plugin: 0.0.40
     copy-webpack-plugin: 11.0.0
-    core-js: 3.22.6
+    core-js: 3.22.7
     cross-var: 1.1.0
     dat.gui: 0.7.9
     eslint: 8.16.0
@@ -4607,10 +4607,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:3.22.6":
-  version: 3.22.6
-  resolution: "core-js@npm:3.22.6"
-  checksum: 3600235a29cae4c066fbbca595b17f33707b3827f9c2e838ec1bd34f450b62f438da271717bd8de19a2a0d4e382b3d3310a048ee1c22617d09fbfeaf67faaf7e
+"core-js@npm:3.22.7":
+  version: 3.22.7
+  resolution: "core-js@npm:3.22.7"
+  checksum: c5f1d8a96b6d1828d02583603d9df1fcbf45f95454585ff9d49ba7ea1470bf1422d00561044939bf4952465ae4ae2bf30a39b4874da8ed2741a3f3996bd175ab
   languageName: node
   linkType: hard
 
