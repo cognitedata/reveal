@@ -52,7 +52,9 @@ export const transformEquipmentData = ({
     config,
     scannerDetections,
     equipmentState?.components,
-    pcms?.components
+    pcms?.components,
+    mal,
+    ms
   );
 
   const created = equipmentState?.created || Date.now();
@@ -134,7 +136,7 @@ const getPCMSDetection = (key: string, pcms?: Asset) => {
 };
 
 const getMALDetection = (key: string, mal?: MALData) => {
-  if (!mal || mal[key] === undefined) return undefined;
+  if (!mal || mal[key] === undefined || mal[key] === '') return undefined;
 
   return {
     id: uuid(),
@@ -145,7 +147,7 @@ const getMALDetection = (key: string, mal?: MALData) => {
 };
 
 const getMSDetection = (key: string, ms?: MSData) => {
-  if (!ms || ms[key] === undefined) return undefined;
+  if (!ms || ms[key] === undefined || ms[key] === '') return undefined;
 
   return {
     id: uuid(),
@@ -214,7 +216,9 @@ const getEquipmentComponents = (
   config: EquipmentConfig,
   scannerDetections: ScannerDetection[] = [],
   equipmentStateComponents?: EquipmentComponent[],
-  pcmsComponents?: Asset[]
+  pcmsComponents?: Asset[],
+  mal?: MALData,
+  ms?: MSData
 ) => {
   let components: EquipmentComponent[] = [];
   if (equipmentStateComponents) {
@@ -233,7 +237,9 @@ const getEquipmentComponents = (
             equipmentType,
             config,
             component,
-            pcmsComponent
+            pcmsComponent,
+            mal,
+            ms
           ),
         };
       }
@@ -265,7 +271,8 @@ const getEquipmentComponents = (
           equipmentType,
           config,
           component,
-          pcmsComponent
+          pcmsComponent,
+          ms
         );
 
         return component;
@@ -324,7 +331,9 @@ const getComponentElements = (
   equipmentType: EquipmentType,
   config: EquipmentConfig,
   component: EquipmentComponent,
-  pcmsComponent?: Asset
+  pcmsComponent?: Asset,
+  mal?: MALData,
+  ms?: MSData
 ): DataElement[] => {
   const configComponentTypes = Object.values(
     config.equipmentTypes[equipmentType].componentTypes
@@ -365,6 +374,31 @@ const getComponentElements = (
         dataElement.detections.unshift(pcmsDetection);
       } else if (!existingPCMSDetection.isPrimary) {
         existingPCMSDetection.value = pcmsDetection.value;
+      }
+    }
+
+    const malDetection = getMALDetection(dataElement.key, mal);
+
+    if (malDetection) {
+      const existingMALDetection = dataElement.detections.find(
+        (detection) => detection.type === DetectionType.MAL
+      );
+      if (!existingMALDetection) {
+        dataElement.detections.push(malDetection);
+      } else if (!existingMALDetection.isPrimary) {
+        existingMALDetection.value = malDetection.value;
+      }
+    }
+
+    const msDetection = getMSDetection(dataElement.key, ms);
+    if (msDetection) {
+      const existingMSDetection = dataElement.detections.find((detection) =>
+        [DetectionType.MS2, DetectionType.MS3].includes(detection.type)
+      );
+      if (!existingMSDetection) {
+        dataElement.detections.push(msDetection);
+      } else if (!existingMSDetection.isPrimary) {
+        existingMSDetection.value = msDetection.value;
       }
     }
   });

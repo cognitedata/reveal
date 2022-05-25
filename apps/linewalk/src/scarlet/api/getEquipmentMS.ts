@@ -1,23 +1,33 @@
 import { CogniteClient } from '@cognite/sdk';
-import { EquipmentElementKey, Facility, MSData } from 'scarlet/types';
+import {
+  ComponentElementKey,
+  EquipmentElementKey,
+  Facility,
+  MSData,
+} from 'scarlet/types';
 
 const MS_COLUMNS = {
   [EquipmentElementKey.UNIT_ID]: 'Unit',
   [EquipmentElementKey.EQUIP_ID]: 'Equipment',
   [EquipmentElementKey.SYSTEM]: 'System #',
   [EquipmentElementKey.P_ID_DRAWING_NO]: 'PID #',
+  [ComponentElementKey.P_ID_DRAWING_NO]: 'PID #',
   [EquipmentElementKey.OPERATING_TEMP]: 'OP TEMP\n(Modeled In RBI)',
   [EquipmentElementKey.OPERATING_PRESSURE]: 'OP PRESS\n(Modeled In DB)',
-} as Record<EquipmentElementKey, string>;
+  [ComponentElementKey.INSTALL_DATE]: 'In Service Date',
+} as Record<EquipmentElementKey | ComponentElementKey, string>;
 
 const msEquipmentElementKeys = (
   Object.keys(MS_COLUMNS) as EquipmentElementKey[]
-)
-  // skip help columns
-  .filter(
-    (key) =>
-      ![EquipmentElementKey.UNIT_ID, EquipmentElementKey.EQUIP_ID].includes(key)
-  );
+).filter(
+  (key, i, self) =>
+    // skip help columns
+    ![EquipmentElementKey.UNIT_ID, EquipmentElementKey.EQUIP_ID].includes(
+      key
+    ) &&
+    // unique keys
+    self.indexOf(key) === i
+);
 
 export const getEquipmentMS = async (
   client: CogniteClient,

@@ -1,10 +1,16 @@
 import { CogniteClient } from '@cognite/sdk';
-import { EquipmentElementKey, Facility, MALData } from 'scarlet/types';
+import {
+  ComponentElementKey,
+  EquipmentElementKey,
+  Facility,
+  MALData,
+} from 'scarlet/types';
 
 enum MAL_COLUMNS {
   UNIT_ID = 'Unit',
   EQUIP_ID = 'Equipment ID',
   OPERATING_STATUS = 'SAP Status\n(Active or Inactive)',
+  SYS_GOVERN_CODE = 'Design Code',
 }
 
 export const getEquipmentMAL = async (
@@ -26,6 +32,7 @@ export const getEquipmentMAL = async (
         MAL_COLUMNS.UNIT_ID,
         MAL_COLUMNS.EQUIP_ID,
         MAL_COLUMNS.OPERATING_STATUS,
+        MAL_COLUMNS.SYS_GOVERN_CODE,
       ],
       limit: 1000,
     })
@@ -40,6 +47,9 @@ export const getEquipmentMAL = async (
   return {
     [EquipmentElementKey.OPERATING_STATUS]: equipmentRow?.columns[
       MAL_COLUMNS.OPERATING_STATUS
+    ] as string,
+    [ComponentElementKey.SYS_GOVERN_CODE]: equipmentRow?.columns[
+      MAL_COLUMNS.SYS_GOVERN_CODE
     ] as string,
   };
 };

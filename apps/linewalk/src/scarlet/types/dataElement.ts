@@ -34,6 +34,7 @@ export type DataElement = {
   origin: DataElementOrigin;
   detections: Detection[];
   state: DataElementState;
+  touched?: boolean;
   stateReason?: string;
   componentId?: string;
   remarks?: Remark[];

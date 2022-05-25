@@ -2,12 +2,15 @@
 import { v4 as uuid } from 'uuid';
 import {
   BooleanDetectionValue,
+  ComponentElementKey,
   DataElement,
+  DataElementOrigin,
   DataElementState,
   DetectionState,
   DetectionType,
   EquipmentData,
   EquipmentElementKey,
+  EquipmentType,
 } from 'scarlet/types';
 
 import { getDataElementPCMSDetection } from '.';
@@ -17,58 +20,99 @@ export const preApproveDataElements = (
   hasU1Document: boolean,
   unitId: string
 ): boolean => {
-  return preApproveEquipmentElements(
+  let hasChanged = approveDataElements(
     equipment.equipmentElements,
     hasU1Document,
     unitId
   );
+
+  if (equipment.type === EquipmentType.VESSEL) {
+    equipment.components.forEach((component) => {
+      hasChanged =
+        approveDataElements(component.componentElements) || hasChanged;
+    });
+  }
+
+  return hasChanged;
 };
 
-const preApproveEquipmentElements = (
+const approveDataElements = (
   dataElements: DataElement[],
-  hasU1Document: boolean,
-  unitId: string
+  hasU1Document?: boolean,
+  unitId?: string
 ): boolean => {
   let hasChanged = false;
   dataElements.forEach((dataElement) => {
-    if (dataElement.state === DataElementState.OMITTED) return;
+    if (dataElement.state === DataElementState.OMITTED || dataElement.touched)
+      return;
     const hasPrimaryDetection = dataElement.detections.some(
       (detection) => detection.isPrimary
     );
 
     if (hasPrimaryDetection) return;
 
-    switch (dataElement.key) {
-      case EquipmentElementKey.ASSET_NO:
-      case EquipmentElementKey.EQUIP_ID:
-      case EquipmentElementKey.EQUIP_TYPE:
-      case EquipmentElementKey.EQUIP_TYPE_DESCRIPTION:
-        hasChanged = approvePCMSDetection(dataElement) || hasChanged;
-        break;
-      case EquipmentElementKey.CLASS:
-        hasChanged = setNotApplicableDetection(dataElement) || hasChanged;
-        break;
-      case EquipmentElementKey.U1_ON_FILE_YN:
-      case EquipmentElementKey.CODE_STAMP_YN:
-        hasChanged =
-          approveAfterU1Document(dataElement, hasU1Document) || hasChanged;
-        break;
-      case EquipmentElementKey.UNIT_ID:
-        hasChanged = approveUnitID(dataElement, unitId) || hasChanged;
-        break;
-      case EquipmentElementKey.OPERATING_STATUS:
-        hasChanged = approveMALDetection(dataElement) || hasChanged;
-        break;
-
-      case EquipmentElementKey.SYSTEM:
-      case EquipmentElementKey.P_ID_DRAWING_NO:
-      case EquipmentElementKey.OPERATING_PRESSURE:
-      case EquipmentElementKey.OPERATING_TEMP:
-        hasChanged = approveMSDetection(dataElement) || hasChanged;
-        break;
+    if (dataElement.origin === DataElementOrigin.EQUIPMENT) {
+      hasChanged =
+        approveEquipmentElement(dataElement, hasU1Document!, unitId!) ||
+        hasChanged;
+    } else {
+      hasChanged = approveComponentElement(dataElement) || hasChanged;
     }
   });
   return hasChanged;
+};
+
+const approveEquipmentElement = (
+  dataElement: DataElement,
+  hasU1Document: boolean,
+  unitId: string
+): boolean => {
+  switch (dataElement.key) {
+    case EquipmentElementKey.ASSET_NO:
+    case EquipmentElementKey.EQUIP_ID:
+    case EquipmentElementKey.EQUIP_TYPE:
+    case EquipmentElementKey.EQUIP_TYPE_DESCRIPTION:
+      return approvePCMSDetection(dataElement);
+
+    case EquipmentElementKey.CLASS:
+      return setNotApplicableDetection(dataElement);
+
+    case EquipmentElementKey.U1_ON_FILE_YN:
+    case EquipmentElementKey.CODE_STAMP_YN:
+      return approveAfterU1Document(dataElement, hasU1Document);
+
+    case EquipmentElementKey.UNIT_ID:
+      return approveUnitID(dataElement, unitId);
+
+    case EquipmentElementKey.OPERATING_STATUS:
+      return approveMALDetection(dataElement);
+
+    case EquipmentElementKey.SYSTEM:
+    case EquipmentElementKey.P_ID_DRAWING_NO:
+    case EquipmentElementKey.OPERATING_PRESSURE:
+    case EquipmentElementKey.OPERATING_TEMP:
+      return approveMSDetection(dataElement);
+  }
+  return false;
+};
+
+const approveComponentElement = (dataElement: DataElement): boolean => {
+  switch (dataElement.key) {
+    case ComponentElementKey.COMPONENT_ID:
+    case ComponentElementKey.DESCRIPTION:
+    case ComponentElementKey.COMPONENT_MASTER:
+    case ComponentElementKey.MAX_STRESS:
+    case ComponentElementKey.OVERRIDE_MAX_STRESS_YN:
+      return approvePCMSDetection(dataElement);
+
+    case ComponentElementKey.SYS_GOVERN_CODE:
+      return approveMALDetection(dataElement);
+
+    case ComponentElementKey.P_ID_DRAWING_NO:
+    case ComponentElementKey.INSTALL_DATE:
+      return approveMSDetection(dataElement);
+  }
+  return false;
 };
 
 const approvePCMSDetection = (dataElement: DataElement): boolean => {

@@ -28,8 +28,7 @@ export const updateDataElementState = (
     );
     if (!dataElement) return;
 
-    dataElement.state = state;
-    dataElement.stateReason = stateReason?.trim();
+    setDataElementState(dataElement, state, stateReason);
 
     if (state === DataElementState.OMITTED) {
       dataElement.detections.forEach((detection) => {
@@ -83,11 +82,11 @@ export const replaceDetection = (
     dataElement.detections[detectionIndex] = detection;
   }
 
-  dataElement.state = dataElement.detections.some(
-    (detection) => detection.isPrimary
-  )
+  const state = dataElement.detections.some((detection) => detection.isPrimary)
     ? DataElementState.APPROVED
     : DataElementState.PENDING;
+
+  setDataElementState(dataElement, state);
 
   updateComponentScannerDetectionsOnApproval(equipment, dataElement);
 
@@ -106,7 +105,14 @@ export const removeDetection = (
     (item) => item.id === detection.id
   );
 
-  if (detection.type === DetectionType.SCANNER) {
+  if (
+    [
+      DetectionType.SCANNER,
+      DetectionType.MAL,
+      DetectionType.MS2,
+      DetectionType.MS3,
+    ].includes(detection.type)
+  ) {
     dataElement.detections![detectionIndex!] = {
       ...detection,
       state: DetectionState.OMITTED,
@@ -120,9 +126,11 @@ export const removeDetection = (
     (item) => item.isPrimary
   );
 
-  dataElement.state = hasPrimaryDetection
+  const state = hasPrimaryDetection
     ? DataElementState.APPROVED
     : DataElementState.PENDING;
+
+  setDataElementState(dataElement, state);
 
   return equipment;
 };
@@ -344,4 +352,16 @@ const updateLinkedDetections = (
       detection.externalSource = detectionOrigin.externalSource;
       /* eslint-enable no-param-reassign */
     });
+};
+
+const setDataElementState = (
+  dataElement: DataElement,
+  state: DataElementState,
+  stateReason?: string
+) => {
+  /* eslint-disable no-param-reassign */
+  dataElement.state = state;
+  dataElement.stateReason = stateReason?.trim();
+  dataElement.touched = true;
+  /* eslint-enable no-param-reassign */
 };
