@@ -9,7 +9,7 @@ import * as typescriptApolloAngularPlugin from '@graphql-codegen/typescript-apol
 import { BaseArgs, CommandArgument, CommandArgumentType } from '../../types';
 import { cwd } from 'process';
 import { SupportedGraphQLGeneratorPlugins } from '../../constants';
-import { SolutionsApiService } from '@platypus/platypus-core';
+import { MixerApiService } from '@platypus/platypus-core';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 import { CONSTANTS } from '../../constants';
 import {
@@ -90,7 +90,7 @@ class SolutionGenerateCommand extends CLICommand {
     try {
       const client = getCogniteSDKClient();
       DEBUG('Initialize the Cognite SDK client');
-      const solutions = new SolutionsApiService(client);
+      const solutions = new MixerApiService(client);
       DEBUG('Fetching the introspection query from the server');
       const response = await solutions.runQuery({
         solutionId: args['project-name'],

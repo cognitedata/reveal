@@ -16,17 +16,17 @@ import {
   FetchVersionDTO,
 } from '../../dto';
 import { DataModelVersion } from '../../types';
-import { SolutionsApiService } from './solutions-api.service';
+import { MixerApiService } from './mixer-api.service';
 import { SolutionDataMapper } from './data-mappers/solution-data-mapper';
 import { PlatypusError } from '@platypus-core/boundaries/types';
 import { SolutionSchemaVersionDataMapper } from './data-mappers/solution-schema-version-data-mapper';
 
-export class SolutionMixerApiFacadeService
+export class DataModelApiFacadeService
   implements IDataModelsApiService, IDataModelVersionApiService
 {
   private solutionDataMapper: SolutionDataMapper;
   private apiSpecVersionMapper: SolutionSchemaVersionDataMapper;
-  constructor(private solutionsApiService: SolutionsApiService) {
+  constructor(private solutionsApiService: MixerApiService) {
     this.solutionDataMapper = new SolutionDataMapper();
     this.apiSpecVersionMapper = new SolutionSchemaVersionDataMapper();
   }

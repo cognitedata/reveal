@@ -3,8 +3,8 @@ import {
   DataModelVersionHandler,
   SolutionTemplatesFacadeService,
   TemplatesApiService,
-  SolutionMixerApiFacadeService,
-  SolutionsApiService,
+  DataModelApiFacadeService,
+  MixerApiService,
   SolutionDataModelService,
 } from '@platypus/platypus-core';
 import {
@@ -18,9 +18,7 @@ import { getCogniteSDKClient } from '../environments/cogniteSdk';
 
 export default () => {
   const solutionsApiService = config.USE_MIXER_API
-    ? new SolutionMixerApiFacadeService(
-        new SolutionsApiService(getCogniteSDKClient())
-      )
+    ? new DataModelApiFacadeService(new MixerApiService(getCogniteSDKClient()))
     : new SolutionTemplatesFacadeService(
         new TemplatesApiService(getCogniteSDKClient())
       );

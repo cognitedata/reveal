@@ -1,8 +1,8 @@
 import {
   DataManagmentHandler,
   MixerApiQueryBuilderService,
-  SolutionMixerApiFacadeService,
-  SolutionsApiService,
+  DataModelApiFacadeService,
+  MixerApiService,
   SolutionTemplatesFacadeService,
   TemplatesApiQueryBuilderService,
   TemplatesApiService,
@@ -12,9 +12,7 @@ import { getCogniteSDKClient } from '../../../../environments/cogniteSdk';
 
 export default () => {
   const solutionsApiService = config.USE_MIXER_API
-    ? new SolutionMixerApiFacadeService(
-        new SolutionsApiService(getCogniteSDKClient())
-      )
+    ? new DataModelApiFacadeService(new MixerApiService(getCogniteSDKClient()))
     : new SolutionTemplatesFacadeService(
         new TemplatesApiService(getCogniteSDKClient())
       );

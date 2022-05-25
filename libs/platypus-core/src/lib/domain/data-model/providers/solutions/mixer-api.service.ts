@@ -14,7 +14,7 @@ import {
   StorageInstanceDTO,
 } from '../../dto';
 
-export class SolutionsApiService {
+export class MixerApiService {
   private schemaServiceBaseUrl: string;
   constructor(private readonly cdfClient: CogniteClient) {
     this.schemaServiceBaseUrl = `/api/v1/projects/${this.cdfClient.project}/schema/graphql`;
