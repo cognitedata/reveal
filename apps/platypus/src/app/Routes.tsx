@@ -7,8 +7,10 @@ import { NavigationMain } from './components/Navigations/NavigationMain';
 import { Solution } from './modules/solution/Solution';
 import { NavigationSolution } from './components/Navigations/NavigationSolution';
 import { Spinner } from './components/Spinner/Spinner';
+import { useFusionQuery } from './hooks/useFusionQuery';
 
 const Routes = () => {
+  useFusionQuery();
   return (
     <React.Suspense fallback={<Spinner />}>
       <Switch>
