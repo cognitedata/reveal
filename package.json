@@ -12,7 +12,10 @@
     "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
     "eslint:changed": "eslint --config .eslintrc.production.js",
     "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
-    "prettier:fix": "prettier --write .prettierrc -l \"src/**/*.{js,ts,tsx}\""
+    "prettier:fix": "prettier --write .prettierrc -l \"src/**/*.{js,ts,tsx}\"",
+    "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace data-sets",
+    "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace data-sets",
+    "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace data-sets"
   },
   "dependencies": {
     "@cognite/cdf-i18n-utils": "^0.0.5",
@@ -28,11 +31,9 @@
     "antd": "^4.16.13",
     "cronstrue": "^1.119.0",
     "eslint-plugin-promise": "^5.1.1",
-    "i18next": "^21.6.12",
     "query-string": "^7.1.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-i18next": "^11.15.5",
     "react-iframe": "^1.8.0",
     "react-query": "^3.34.16",
     "react-router-dom": "^6.2.2",
