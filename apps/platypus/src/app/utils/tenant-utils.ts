@@ -1,5 +1,3 @@
-import config from '@platypus-app/config/config';
-
 export const getTenant = (location = window.location) => {
   const { pathname } = location;
   const defaultTenant = 'platypus';
@@ -11,9 +9,5 @@ export const getTenant = (location = window.location) => {
     return defaultTenant;
   }
 
-  if (!config.WHITELISTED_TENANTS.includes(match[1])) {
-    window.location.href = `${window.location.origin}/${defaultTenant}`;
-    return;
-  }
   return match[1].trim();
 };
