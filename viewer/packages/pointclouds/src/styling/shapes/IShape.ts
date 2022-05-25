@@ -2,8 +2,6 @@
  * Copyright 2022 Cognite AS
  */
 
-// import * as THREE from 'three';
-
 import { IRawShape } from './IRawShape';
 
 import { Vec3, AABB } from './linalg';
