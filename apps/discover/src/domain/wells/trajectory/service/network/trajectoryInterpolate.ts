@@ -18,6 +18,15 @@ export interface ResponseItemType {
   wellboreAssetExternalId: string;
 }
 
+/**
+ * DEPRECATED!
+ * @todo(PP-2984)
+ * DEPRECATED!
+ */
+
+/**
+ * @deprecated use useInterpolateTvdQuery
+ */
 export const getTrajectoryInterpolateTVDs = async (
   responseItems: ResponseItemType[],
   trajectoryInterpolationRequests: TrajectoryInterpolationRequest[]
@@ -50,6 +59,9 @@ export const getTrajectoryInterpolateTVDs = async (
     });
 };
 
+/**
+ * @deprecated use useInterpolateTvdQuery
+ */
 export const getDummyTrueVerticalDepths = (
   responseItems: ResponseItemType[]
 ): TrueVerticalDepths[] => {
@@ -68,6 +80,9 @@ export const getDummyTrueVerticalDepths = (
   }));
 };
 
+/**
+ * @deprecated use useInterpolateTvdQuery
+ */
 export const getTVDForMD = (
   tvdsForWellbore: TrueVerticalDepths,
   md: number

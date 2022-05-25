@@ -7,8 +7,8 @@ import {
   TrueVerticalDepths,
 } from '@cognite/sdk-wells-v3';
 
-import { ResponseItemType } from '../types';
-import { getEmptyTvd } from '../utils/getEmptyTvd';
+import { getEmptyTvd } from '../../../utils/getEmptyTvd';
+import { ResponseItemType } from '../../types';
 
 export const getInterpolateTvd = async (
   responseItems: ResponseItemType[],

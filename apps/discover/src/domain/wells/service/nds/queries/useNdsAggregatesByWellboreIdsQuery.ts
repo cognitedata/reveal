@@ -1,3 +1,5 @@
+import { convertToIdentifiers } from 'domain/wells/utils/convertToIdentifiers';
+
 import { useQuery } from 'react-query';
 
 import { getWellSDKClient } from 'services/wellSearch/sdk';
@@ -5,8 +7,6 @@ import { getWellSDKClient } from 'services/wellSearch/sdk';
 import { NdsAggregate, NdsAggregateEnum } from '@cognite/sdk-wells-v3';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
-
-import { convertToIdentifiers } from '../../../sdk/utils/identifier';
 
 export const useNdsAggregatesByWellboreIdsQuery = (wellboreIds: string[]) => {
   const wellboreIdsSet = new Set(wellboreIds);

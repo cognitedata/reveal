@@ -1,3 +1,4 @@
+// disable reason: import order - should be first
 // eslint-disable-next-line
 import * as MockContainer from '__mocks/mockContainerAuth';
 

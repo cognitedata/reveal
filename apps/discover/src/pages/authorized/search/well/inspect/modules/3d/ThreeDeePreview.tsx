@@ -1,3 +1,5 @@
+import { useTrajectoriesQuery } from 'domain/wells/trajectory/dataLayer/queries/useTrajectoriesQuery';
+
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -14,7 +16,6 @@ import { useWellLogsWithRowData } from 'modules/wellInspect/hooks/useWellLogsWit
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 import { useNptEventsQuery } from 'modules/wellSearch/hooks/useNptEventsQuery';
 import { useSelectedWellboresCasingsQuery } from 'modules/wellSearch/hooks/useSelectedWellboresCasingsQuery';
-import { useTrajectoriesQuery } from 'modules/wellSearch/hooks/useTrajectoriesQuery';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { orderedCasingsByBase } from 'modules/wellSearch/utils/casings';
 import { keyBySource } from 'modules/wellSearch/utils/groupBySource';

@@ -1,3 +1,5 @@
+import { useTrajectoriesMetadataQuery } from 'domain/wells/trajectory/dataLayer/queries/useTrajectoriesMetadataQuery';
+
 import { useMemo } from 'react';
 
 import { getMd, getMdUnit } from 'dataLayers/wells/trajectory/selectors/getMd';
@@ -11,7 +13,6 @@ import flatten from 'lodash/flatten';
 
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
-import { useTrajectoriesMetadataQuery } from 'modules/wellSearch/hooks/useTrajectoriesQuery';
 import { OverviewModel } from 'pages/authorized/search/well/inspect/modules/overview/types';
 
 export const useDataLayer = () => {

@@ -6,7 +6,7 @@ import { Nds } from '@cognite/sdk-wells-v3';
 
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
-import { useInterpolateTvdQuery } from '../../trajectory/queries/useInterpolateTvdQuery';
+import { useInterpolateTvdQuery } from '../../../trajectory/dataLayer/queries/useInterpolateTvdQuery';
 import { getInterpolateRequests } from '../utils/getInterpolateRequests';
 
 export const useNdsTvdDataQuery = (ndsData: Nds[]) => {

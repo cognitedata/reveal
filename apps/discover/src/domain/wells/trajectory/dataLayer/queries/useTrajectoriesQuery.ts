@@ -16,29 +16,12 @@ import {
   useWellInspectSelectedWells,
 } from 'modules/wellInspect/hooks/useWellInspect';
 import { useWellInspectWellboreExternalIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
+import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
+import { TrajectoryData, TrajectoryRows } from 'modules/wellSearch/types';
+import { trimCachedData } from 'modules/wellSearch/utils/common';
+import { mapWellInfo } from 'modules/wellSearch/utils/trajectory';
 
-import {
-  getTrajectoriesByWellboreIds,
-  listTrajectoriesUsingWellsSDK,
-} from '../service';
-import { TrajectoryData, TrajectoryRows } from '../types';
-import { trimCachedData } from '../utils/common';
-import { mapWellInfo } from '../utils/trajectory';
-
-import { useWellConfig } from './useWellConfig';
-
-export const useTrajectoriesMetadataQuery = () => {
-  const wellboreIds = useWellInspectSelectedWellboreIds();
-
-  const trajectoriesMetadata = useQuery(
-    [WELL_QUERY_KEY.TRAJECTORIES_LIST, wellboreIds],
-    async () => {
-      return listTrajectoriesUsingWellsSDK(wellboreIds);
-    }
-  );
-
-  return trajectoriesMetadata;
-};
+import { getTrajectoriesByWellboreIds } from '../../service/network/getTrajectoriesData';
 
 // NOTE: ignoreEmptyRows seems to always be true everywhere, perhaps we should remove this option
 export const useTrajectoriesQuery = (enabled = true) => {

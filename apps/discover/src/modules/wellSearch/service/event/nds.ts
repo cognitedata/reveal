@@ -1,3 +1,8 @@
+import {
+  getTrajectoryInterpolateTVDs,
+  getTVDForMD,
+} from 'domain/wells/trajectory/service/network/trajectoryInterpolate';
+
 import set from 'lodash/set';
 import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
 
@@ -8,11 +13,6 @@ import { MetricLogger } from 'hooks/useTimeLog';
 import { toIdentifier } from 'modules/wellSearch/sdk/utils';
 import { WellboreSourceExternalIdMap } from 'modules/wellSearch/types';
 import { getTrajectoryInterpolationRequests } from 'modules/wellSearch/utils/nds';
-
-import {
-  getTrajectoryInterpolateTVDs,
-  getTVDForMD,
-} from '../sequence/trajectoryInterpolate';
 
 import { EVENT_PER_PAGE, groupEventsByAssetId } from './common';
 

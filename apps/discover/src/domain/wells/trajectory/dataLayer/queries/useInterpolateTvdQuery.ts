@@ -10,9 +10,9 @@ import { TrajectoryInterpolationRequest } from '@cognite/sdk-wells-v3';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
 
-import { SOMETHING_WENT_WRONG_FETCHING_TVD } from '../constants';
-import { getInterpolateTvd } from '../network/getInterpolateTvd';
-import { ResponseItemType } from '../types';
+import { SOMETHING_WENT_WRONG_FETCHING_TVD } from '../../constants';
+import { getInterpolateTvd } from '../../service/network/getInterpolateTvd';
+import { ResponseItemType } from '../../types';
 
 export const useInterpolateTvdQuery = (
   responseItems: ResponseItemType[],

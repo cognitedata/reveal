@@ -1,26 +1,28 @@
+import '__mocks/mockContainerAuth'; // should be first
+import '__mocks/mockCogniteSDK';
 import { fireEvent, screen } from '@testing-library/react';
+import { setupServer } from 'msw/node';
+import { getMockDocumentCategoriesResult } from 'services/documents/__mocks/getMockDocumentCategoriesGet';
+import { getMockDocumentSearch } from 'services/documentSearch/__mocks/getMockDocumentSearch';
+import { getMockFeedbackObjectPost } from 'services/feedback/__mocks/getMockFeedbackObjectPost';
+import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
-import { getMockDocument } from '__test-utils/fixtures/document';
 import { testRendererModal } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { FEEDBACK_CONFIRM_TOAST } from 'constants/feedback';
-import { useDocument } from 'hooks/useDocument';
 
 import { EntityFeedbackModal } from '../EntityFeedbackModal';
 
-jest.mock('hooks/useDocument', () => ({
-  useDocument: jest.fn(),
-}));
+const mockServer = setupServer(
+  getMockDocumentSearch(),
+  getMockFeedbackObjectPost(),
+  getMockConfigGet(),
+  getMockDocumentCategoriesResult()
+);
 
 describe('EntityFeedbackModal Tests', () => {
-  beforeEach(() => {
-    const mockDocument = getMockDocument();
-    (useDocument as jest.Mock).mockImplementation(() => [
-      mockDocument,
-      false,
-      undefined,
-    ]);
-  });
+  beforeAll(() => mockServer.listen());
+  afterAll(() => mockServer.close());
 
   const store = getMockedStore();
 

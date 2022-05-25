@@ -1,26 +1,23 @@
-import chunk from 'lodash/chunk';
-import flatten from 'lodash/flatten';
 import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import max from 'lodash/max';
 import noop from 'lodash/noop';
 import uniqueId from 'lodash/uniqueId';
 import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
-import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
 import { ProjectConfigWellsTrajectoryColumns } from '@cognite/discover-api-types';
 import { Sequence, SequenceColumn } from '@cognite/sdk';
 import {
-  Trajectory,
   TrajectoryData as TrajectoryDataV3,
   TrajectoryDataRow,
-  TrajectoryItems,
 } from '@cognite/sdk-wells-v3';
 
 import { MetricLogger } from 'hooks/useTimeLog';
-import { toIdentifier } from 'modules/wellSearch/sdk/utils';
 import {
-  SequenceRow,
+  TRAJECTORY_COLUMNS,
+  TRAJECTORY_COLUMN_NAME_MAP,
+} from 'modules/wellSearch/service/sequence/constants';
+import {
   TrajectoryData,
   TrajectoryRow,
   TrajectoryRows,
@@ -29,9 +26,9 @@ import {
 } from 'modules/wellSearch/types';
 import { mapMetadataUnit } from 'modules/wellSearch/utils/trajectory';
 
-import { TRAJECTORY_COLUMNS, TRAJECTORY_COLUMN_NAME_MAP } from './constants';
+import { getTrajectories } from './getTrajectories';
 
-const CHUNK_LIMIT = 100;
+export const CHUNK_LIMIT = 100;
 
 export async function getTrajectoriesByWellboreIds(
   wellboreIds: WellboreId[],
@@ -42,7 +39,7 @@ export async function getTrajectoriesByWellboreIds(
   const [startNetworkTimer, stopNetworkTimer] = metricLogger;
   startNetworkTimer();
 
-  const trajectoryData = await fetchTrajectoriesUsingWellsSDK(
+  const trajectoryData = await getTrajectoriesData(
     wellboreIds,
     wellboreSourceExternalIdMap,
     columns
@@ -55,26 +52,7 @@ export async function getTrajectoriesByWellboreIds(
   return trajectoryData;
 }
 
-export const listTrajectoriesUsingWellsSDK = async (
-  wellboreIds: WellboreId[]
-): Promise<Trajectory[]> => {
-  const idChunkList = chunk(wellboreIds, CHUNK_LIMIT);
-
-  return flatten(
-    await Promise.all(
-      idChunkList.map((wellboreIdChunk) =>
-        getWellSDKClient()
-          .trajectories.list({
-            filter: { wellboreIds: wellboreIdChunk.map(toIdentifier) },
-            limit: CHUNK_LIMIT,
-          })
-          .then((trajectoryItems: TrajectoryItems) => trajectoryItems.items)
-      )
-    )
-  );
-};
-
-export const fetchTrajectoriesUsingWellsSDK = async (
+export const getTrajectoriesData = async (
   wellboreIds: WellboreId[],
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap,
   columns: ProjectConfigWellsTrajectoryColumns[] = []
@@ -84,7 +62,7 @@ export const fetchTrajectoriesUsingWellsSDK = async (
     column.name ? availableColumnNames.includes(column.name) : false
   );
 
-  const trajectories = await listTrajectoriesUsingWellsSDK(wellboreIds);
+  const trajectories = await getTrajectories(wellboreIds);
 
   const trajectoryData = await Promise.all(
     trajectories.map((trajectory) =>
@@ -177,22 +155,3 @@ export const getGroupedTrajectoryData = (
   });
   return groupedData;
 };
-
-export function getTrajectoryDataById(
-  trajId: number,
-  columns: string[]
-): Promise<SequenceRow[]> {
-  return getCogniteSDKClient()
-    .sequences.retrieveRows({
-      id: trajId,
-      start: 0,
-      end: 1000,
-      limit: 1000,
-      columns,
-    })
-    .autoPagingToArray({ limit: 1000 })
-    .catch((error) => {
-      console.error('error', error);
-      return [];
-    });
-}

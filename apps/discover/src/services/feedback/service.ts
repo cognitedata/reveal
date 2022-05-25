@@ -1,6 +1,9 @@
 import { fetchGet, FetchHeaders, fetchPatch, fetchPost } from 'utils/fetch';
 
-import { FeedbackPostBody } from '@cognite/discover-api-types';
+import {
+  FeedbackPostBody,
+  FeedbackPostResponse,
+} from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 
 import { SIDECAR } from 'constants/app';
@@ -39,7 +42,7 @@ export const feedback = {
   ) => {
     const [tenant] = getTenantInfo();
 
-    return fetchPost(
+    return fetchPost<FeedbackPostResponse>(
       `${SIDECAR.discoverApiBaseUrl}/${tenant}/feedback/${feedbackType}`,
       payload,
       { headers }

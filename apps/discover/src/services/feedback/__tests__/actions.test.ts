@@ -91,7 +91,12 @@ describe('feedback actions', () => {
  * Following was the only way to cover the lines.
  */
 describe('feedback api error handling', () => {
+  const originalConsole = global.console;
+
   beforeEach(() => {
+    // @ts-expect-error - missing other keys
+    global.console = { error: jest.fn() };
+
     mutate.mockImplementation(() => {
       try {
         throw new Error('error');
@@ -99,6 +104,10 @@ describe('feedback api error handling', () => {
         return Promise.reject(error);
       }
     });
+  });
+
+  afterAll(() => {
+    global.console = originalConsole;
   });
 
   it('should handle error on call `updateFeedbackStatus` as expected', async () => {

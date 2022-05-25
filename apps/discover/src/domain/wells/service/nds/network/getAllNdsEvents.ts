@@ -1,5 +1,5 @@
-import { GetAllInspectDataProps } from 'domain/wells/sdk/types';
-import { convertToIdentifiers } from 'domain/wells/sdk/utils/identifier';
+import { GetAllInspectDataProps } from 'domain/wells/types';
+import { convertToIdentifiers } from 'domain/wells/utils/convertToIdentifiers';
 
 import { getWellSDKClient } from 'services/wellSearch/sdk';
 import { fetchAllCursors } from 'utils/fetchAllCursors';

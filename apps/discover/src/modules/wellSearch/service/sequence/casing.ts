@@ -30,14 +30,15 @@ import {
 } from 'modules/wellSearch/types';
 
 import {
+  getTrajectoryInterpolateTVDs,
+  getTVDForMD,
+} from '../../../../domain/wells/trajectory/service/network/trajectoryInterpolate';
+
+import {
   CASINGS_COLUMN_NAME_MAP,
   CASING_SIZE_UNIT,
   SEQUENCE_COLUMNS,
 } from './constants';
-import {
-  getTrajectoryInterpolateTVDs,
-  getTVDForMD,
-} from './trajectoryInterpolate';
 
 const CHUNK_LIMIT = 100;
 

@@ -71,6 +71,11 @@ const useData = ({ casings, sideMode, scrollRef }: PublicProps): ViewProps => {
   };
 };
 
+export const CasingGraph: React.FC<PublicProps> = (props) => {
+  const data = useData(props);
+  return <CasingGraphView {...data} />;
+};
+
 export const CasingGraphView: React.FC<ViewProps> = ({ data, scrollRef }) => {
   if (isEmpty(data)) {
     return <EmptyState />;
@@ -83,9 +88,4 @@ export const CasingGraphView: React.FC<ViewProps> = ({ data, scrollRef }) => {
       })}
     </CasingViewListWrapper>
   );
-};
-
-export const CasingGraph: React.FC<PublicProps> = (props) => {
-  const data = useData(props);
-  return <CasingGraphView {...data} />;
 };

@@ -5,7 +5,7 @@ import { Wellbore, Trajectory } from '@cognite/sdk-wells-v3';
 
 import { toIdentifier } from 'modules/wellSearch/sdk/utils';
 
-export const fetchAllTrajectories = async ({
+export const getAllTrajectories = async ({
   wellboreIds,
   options,
 }: {

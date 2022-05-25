@@ -1,3 +1,5 @@
+import { useTrajectoriesQuery } from 'domain/wells/trajectory/dataLayer/queries/useTrajectoriesQuery';
+
 import React, { useMemo, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -10,7 +12,6 @@ import { Table, ColumnType, RowProps } from 'components/Tablev3';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useFilterDataTrajectory } from 'modules/inspectTabs/selectors';
 import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
-import { useTrajectoriesQuery } from 'modules/wellSearch/hooks/useTrajectoriesQuery';
 
 import { Trajectory2D } from './Trajectory2D/Trajectory2D';
 

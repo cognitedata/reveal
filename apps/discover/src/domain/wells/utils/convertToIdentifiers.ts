@@ -1,5 +1,8 @@
 import { Identifier, Wellbore, AssetSource } from '@cognite/sdk-wells-v3';
 
+import { toIdentifierWithAssetExternalId } from './toIdentifierWithAssetExternalId';
+import { toIdentifierWithMatchingId } from './toIdentifierWithMatchingId';
+
 export const convertToIdentifiers = (
   ids: Set<Wellbore['matchingId']> | Set<AssetSource['assetExternalId']>,
   mapToMatchingID = true
@@ -9,16 +12,4 @@ export const convertToIdentifiers = (
     return idsArray.map(toIdentifierWithMatchingId);
   }
   return idsArray.map(toIdentifierWithAssetExternalId);
-};
-
-export const toIdentifierWithMatchingId = (
-  matchingId: Wellbore['matchingId']
-): Identifier => {
-  return { matchingId };
-};
-
-export const toIdentifierWithAssetExternalId = (
-  assetExternalId: AssetSource['assetExternalId']
-): Identifier => {
-  return { assetExternalId };
 };

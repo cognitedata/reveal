@@ -1,7 +1,7 @@
 import { normalizeNds } from 'domain/wells/dataLayer/nds/adapters/normalizeNds';
 import { NdsDataLayer } from 'domain/wells/dataLayer/nds/types';
 import { groupByWellbore } from 'domain/wells/dataLayer/wellbore/adapters/groupByWellbore';
-import { AllCursorsProps } from 'domain/wells/sdk/types';
+import { AllCursorsProps } from 'domain/wells/types';
 
 import { handleServiceError } from 'utils/errors';
 

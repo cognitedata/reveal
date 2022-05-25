@@ -1,6 +1,6 @@
-import * as React from 'react';
+import { useAllTrajectoriesQuery } from 'domain/wells/trajectory/dataLayer/queries/useAllTrajectoriesQuery';
 
-import { useAllTrajectoriesQuery } from 'modules/wellSearch/hooks/useAllTrajectoriesQuery';
+import * as React from 'react';
 
 import { WidgetLoader } from '../WidgetLoader';
 
