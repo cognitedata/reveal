@@ -18,6 +18,13 @@ export class PostProcessingPass implements RenderPass {
   private readonly _scene: THREE.Scene;
   private readonly _postProcessingObjects: THREE.Mesh[];
 
+  public updateRenderObjectsVisability(hasStyling: { back: boolean; inFront: boolean; ghost: boolean }): void {
+    this._postProcessingObjects[0].visible = hasStyling.inFront;
+    this._postProcessingObjects[1].visible = hasStyling.back;
+    this._postProcessingObjects[2].visible = hasStyling.ghost;
+    this._postProcessingObjects[3].visible = hasStyling.inFront;
+  }
+
   constructor(scene: THREE.Scene, postProcessingPipelineOptions: PostProcessingPipelineOptions) {
     this._scene = scene;
 
@@ -32,6 +39,7 @@ export class PostProcessingPass implements RenderPass {
     // to prevent infront objects to blend with other objects
     // that are behind
     const inFrontEarlyZBlitObject = createFullScreenTriangleMesh(inFrontEarlyZBlitMaterial);
+    inFrontEarlyZBlitObject.name = 'Early In-front Z Pass';
     inFrontEarlyZBlitObject.renderOrder = -2;
 
     const backBlitMaterial = getBlitMaterial({
@@ -45,6 +53,7 @@ export class PostProcessingPass implements RenderPass {
 
     // Normal un-styled opaque geometry
     const backBlitObject = createFullScreenTriangleMesh(backBlitMaterial);
+    backBlitObject.name = 'Back Styling';
     backBlitObject.renderOrder = -1;
 
     const ghostBlitMaterial = getBlitMaterial({
@@ -55,6 +64,7 @@ export class PostProcessingPass implements RenderPass {
 
     // Ghosted geometry
     const ghostBlitObject = createFullScreenTriangleMesh(ghostBlitMaterial);
+    ghostBlitObject.name = 'Ghost Styling';
     ghostBlitObject.renderOrder = 1;
 
     const inFrontBlitMaterial = getBlitMaterial({
@@ -66,6 +76,7 @@ export class PostProcessingPass implements RenderPass {
 
     //In front geometry
     const inFrontBlitObject = createFullScreenTriangleMesh(inFrontBlitMaterial);
+    inFrontBlitObject.name = 'In-front Styling';
     inFrontBlitObject.renderOrder = 2;
 
     this._scene.add(inFrontEarlyZBlitObject);
