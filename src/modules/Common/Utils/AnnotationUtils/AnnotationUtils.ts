@@ -1,3 +1,4 @@
+import isEmpty from 'lodash-es/isEmpty';
 import isFinite from 'lodash-es/isFinite';
 import {
   ImageAssetLink,
@@ -191,4 +192,16 @@ export const getAnnotationsBadgeCounts = (
   }
 
   return annotationsBadgeProps;
+};
+
+export const getKeypointId = (
+  parentAnnotationId: string | number,
+  keypointLabel: string
+) => {
+  if (isEmpty(parentAnnotationId.toString()) || isEmpty(keypointLabel)) {
+    throw Error(
+      'Cannot generate keypointId. Parent annotation id or keypoint label not provided'
+    );
+  }
+  return `${parentAnnotationId}-${keypointLabel}`;
 };

@@ -32,7 +32,7 @@ import {
   convertKeyPointCollectionToAnnotationStub,
   convertToAnnotation,
   RegionTagsIndex,
-} from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ConversionUtils';
+} from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ConversionUtilsV1';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { CreateKeypointAnnotation } from 'src/store/thunks/Annotation/CreateKeypointAnnotation';
 import { RetrieveKeypointCollection } from 'src/store/thunks/Review/RetrieveKeypointCollection';

@@ -3,15 +3,6 @@ import { getDummyAnnotation } from 'src/__test-utils/annotations';
 import { Categories } from 'src/modules/Review/types';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import {
-  AnnotationReviewCallbacks,
-  Category,
-  CommonProps,
-  Data,
-  ReviewAnnotation,
-  RowData,
-  TreeNode,
-} from 'src/modules/Review/Components/AnnotationReviewDetailComponents/types';
-import {
   getActiveNode,
   getActiveNodeIndexFromArray,
   getActiveNodeParent,
@@ -23,6 +14,15 @@ import {
   selectNextOrFirstIndexArr,
   selectPrevOrFirstIndexArr,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/utils/nodeTreeUtils';
+import {
+  AnnotationReviewCallbacks,
+  Category,
+  CommonProps,
+  Data,
+  ReviewAnnotation,
+  RowData,
+  TreeNode,
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
 
 const getDummyDataObject = (
   data: Category | ReviewAnnotation | KeypointVertex

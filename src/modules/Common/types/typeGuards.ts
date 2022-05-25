@@ -41,7 +41,8 @@ export const isImageObjectDetectionData = (
 ): data is ImageObjectDetection => {
   return (
     isImageObjectDetectionBoundingBoxData(data) ||
-    isImageObjectDetectionPolygonData(data)
+    isImageObjectDetectionPolygonData(data) ||
+    isImageObjectDetectionPolylineData(data)
   );
 };
 export const isImageExtractedTextData = (
