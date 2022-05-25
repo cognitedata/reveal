@@ -53,8 +53,8 @@ export class EptBinaryLoader implements ILoader {
           name: string,
           componentCount: number,
           data?: ArrayBuffer | undefined,
-          normalized: boolean = false): void {
-
+          normalized: boolean = false
+        ): void {
           if (data) {
             const typedArray = new typedArrayConstructor(data);
             g.setAttribute(name, new THREE.BufferAttribute(typedArray, componentCount, normalized));

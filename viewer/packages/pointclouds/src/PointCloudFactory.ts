@@ -28,8 +28,11 @@ export class PointCloudFactory {
   ): Promise<PotreeNodeWrapper> {
     const { modelBaseUrl } = modelMetadata;
 
-    const pointCloudOctree = await this._potreeInstance
-      .loadPointCloud(modelBaseUrl, DEFAULT_POINT_CLOUD_METADATA_FILE, styledObjectInfo)
+    const pointCloudOctree = await this._potreeInstance.loadPointCloud(
+      modelBaseUrl,
+      DEFAULT_POINT_CLOUD_METADATA_FILE,
+      styledObjectInfo
+    );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;
     return new PotreeNodeWrapper(pointCloudOctree, styledObjectInfo);

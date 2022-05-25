@@ -35,7 +35,7 @@ function isBox(geometry: Geometry): geometry is BoxPrimitive {
 export function annotationsToObjects(bvs: BoundingVolume[]): StyledObject[] {
   let idCounter = 0;
 
-  const resultObjects = bvs.map((bv) => {
+  const resultObjects = bvs.map(bv => {
     idCounter++;
     const shapes: IShape[] = [];
 
