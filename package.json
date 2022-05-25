@@ -130,6 +130,7 @@
     "@types/uuid": "^8.3.0",
     "babel-loader": "^8.1.0",
     "chromatic": "^6.1.0",
+    "conventional-changelog-conventionalcommits": "^4.6.3",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-prettier": "~6.0.0",
     "eslint-plugin-import": "^2.22",
