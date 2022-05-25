@@ -9,7 +9,7 @@ export class MeasurementUi {
   private _guiController: any[];
 
   private state = {
-    lineWidth: 0.002,
+    lineWidth: 0.01,
     color: 0x00FFFF
   };
 

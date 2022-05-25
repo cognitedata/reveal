@@ -37,7 +37,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private _distanceValue: string;
   private readonly _domElement: HTMLElement;
   private readonly _camera: THREE.Camera;
-  private readonly _sphereScaleFactor: number;
 
   private readonly _handleonPointerClick = this.onPointerClick.bind(this);
   private readonly _handleonPointerMove = this.onPointerMove.bind(this);
@@ -50,9 +49,8 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._measurementLabel = new MeasurementLabels(this._viewer);
     this._domElement = this._viewer.domElement;
     this._camera = this._viewer.getCamera();
-    this._sphereSize = 0.02;
+    this._sphereSize = 0.01;
     this._distanceValue = '';
-    this._sphereScaleFactor = 10;
   }
 
   /**
@@ -78,7 +76,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    */
   setLineOptions(options: MeasurementLineOptions): void {
     this._line.setOptions(options);
-    this._sphereSize = options?.lineWidth * this._sphereScaleFactor || this._sphereSize;
+    this._sphereSize = options?.lineWidth || this._sphereSize;
   }
 
   /**

@@ -99,7 +99,7 @@ export function Migration() {
       (window as any).viewer = viewer;
 
       const controlsOptions: CameraControlsOptions = {
-        changeCameraTargetOnClick: true,
+        changeCameraTargetOnClick: false,
         mouseWheelAction: 'zoomToCursor',
       };
       cameraManager = viewer.cameraManager as DefaultCameraManager;
@@ -148,7 +148,7 @@ export function Migration() {
         renderMode: 'Color',
         controls: {
           mouseWheelAction: 'zoomToCursor',
-          changeCameraTargetOnClick: true
+          changeCameraTargetOnClick: false
         }
       };
       const guiActions = {

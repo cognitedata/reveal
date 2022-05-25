@@ -14,7 +14,7 @@ export class MeasurementLine {
   private _distanceToCamera: number;
 
   private readonly _options: MeasurementLineOptions = {
-    lineWidth: 0.002,
+    lineWidth: 0.01,
     color: 0x00ffff
   };
 
@@ -40,7 +40,8 @@ export class MeasurementLine {
     this._material = new LineMaterial({
       color: this._options.color,
       linewidth: this._options.lineWidth,
-      depthTest: false
+      depthTest: false,
+      worldUnits: true
     });
 
     const mesh = new THREE.Mesh(this._geometry, this._material);
