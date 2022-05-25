@@ -3,13 +3,13 @@
  */
 
 import { IShape } from './IShape';
-import { IRawShape } from './IRawShape';
+import { IRawShape, ShapeType } from './IRawShape';
 
 // import * as THREE from 'three';
 import { Vec3, AABB, b3Union, emptyBox3 } from './linalg';
 
 export type RawCompositeShape = {
-  type: 'composite';
+  type: ShapeType.Composite;
   shapes: IRawShape[];
 };
 
@@ -40,7 +40,7 @@ export class CompositeShape implements IShape {
 
   toRawShape(): RawCompositeShape {
     return {
-      type: 'composite',
+      type: ShapeType.Composite,
       shapes: this._innerShapes.map(shape => shape.toRawShape())
     };
   }

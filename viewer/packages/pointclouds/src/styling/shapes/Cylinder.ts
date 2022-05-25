@@ -2,12 +2,13 @@
  * Copyright 2022 Cognite AS
  */
 
+import { ShapeType } from './IRawShape';
 import { IShape } from './IShape';
 
 import { Vec3, v3Scale, v3Middle, v3Length, v3Sub, v3Normalized, v3Dot, AABB } from './linalg';
 
 export type RawCylinder = {
-  type: 'cylinder';
+  type: ShapeType.Cylinder;
   centerA: Vec3;
   centerB: Vec3;
   radius: number;
@@ -82,7 +83,7 @@ export class Cylinder implements IShape {
 
   toRawShape(): RawCylinder {
     return {
-      type: 'cylinder',
+      type: ShapeType.Cylinder,
       centerA: this._centerA,
       centerB: this._centerB,
       radius: this._radius

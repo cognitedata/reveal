@@ -2,6 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
+import { ShapeType } from './IRawShape';
 import { IShape } from './IShape';
 import {
   AABB,
@@ -12,7 +13,7 @@ import {
 } from './linalg';
 
 export type RawBox = {
-  type: 'box';
+  type: ShapeType.Box;
   invMatrix: Mat4;
 };
 
@@ -43,7 +44,7 @@ export class Box implements IShape {
 
   toRawShape(): RawBox {
     return {
-      type: 'box',
+      type: ShapeType.Box,
       invMatrix: this.invMatrix
     };
   }

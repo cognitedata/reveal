@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { IRawShape } from './IRawShape';
+import { IRawShape, ShapeType } from './IRawShape';
 
 import { IShape } from './IShape';
 import { RawCylinder, Cylinder } from './Cylinder';
@@ -11,13 +11,13 @@ import { Box, RawBox } from './Box';
 
 export function fromRawShape(rawShape: IRawShape): IShape {
   switch (rawShape.type) {
-    case 'cylinder':
+    case ShapeType.Cylinder:
       const rawCylinder = rawShape as RawCylinder;
       return new Cylinder(rawCylinder.centerA, rawCylinder.centerB, rawCylinder.radius);
-    case 'box':
+    case ShapeType.Box:
       const rawBox = rawShape as RawBox;
       return new Box(rawBox.invMatrix.data, true);
-    case 'composite':
+    case ShapeType.Composite:
       const rawComposite = rawShape as RawCompositeShape;
       return new CompositeShape(rawComposite.shapes.map(fromRawShape));
     default:
