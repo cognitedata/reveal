@@ -1,15 +1,11 @@
 import { useTypedTranslation } from '@cognite/cdf-utilities';
 
-import en from 'common/i18n/en.json';
-import no from 'common/i18n/no.json';
+import en from 'common/i18n/translations/en/raw-explorer.json';
 
 export const translations = {
-  en: { translation: en },
-  no: { translation: no },
+  en: { 'raw-explorer': en },
 };
 
-export const languages = Object.keys(translations);
-
-export type TranslationKeys = keyof typeof en & keyof typeof no;
+export type TranslationKeys = keyof typeof en;
 
 export const useTranslation = () => useTypedTranslation<TranslationKeys>();
