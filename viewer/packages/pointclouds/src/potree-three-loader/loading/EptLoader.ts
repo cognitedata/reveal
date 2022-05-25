@@ -8,7 +8,7 @@ export class EptLoader {
     baseUrl: string,
     fileName: string,
     modelDataProvider: ModelDataProvider,
-    styledObjectInfo?: StyledObjectInfo
+    styledObjectInfo?: StyledObjectInfo | undefined
   ): Promise<PointCloudEptGeometry> {
     return modelDataProvider.getJsonFile(baseUrl, fileName).then(async (json: any) => {
       const url = baseUrl + '/';

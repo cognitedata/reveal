@@ -96,7 +96,7 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
     return this._eptOffset;
   }
 
-  constructor(url: string, info: any, dataLoader: ModelDataProvider, styledInfo?: StyledObjectInfo) {
+  constructor(url: string, info: any, dataLoader: ModelDataProvider, styledInfo?: StyledObjectInfo | undefined) {
     const schema = info.schema;
     const bounds = info.bounds;
     const boundsConforming = info.boundsConforming;

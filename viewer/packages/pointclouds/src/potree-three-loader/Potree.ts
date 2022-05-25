@@ -61,7 +61,7 @@ export class Potree implements IPotree {
   async loadPointCloud(
     baseUrl: string,
     fileName: string,
-    styledObjectInfo?: StyledObjectInfo
+    styledObjectInfo?: StyledObjectInfo | undefined
   ): Promise<PointCloudOctree> {
     return EptLoader.load(baseUrl, fileName, this._modelDataProvider, styledObjectInfo).then(
       geometry => new PointCloudOctree(this, geometry)

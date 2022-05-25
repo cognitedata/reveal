@@ -9,7 +9,7 @@ export interface IPotree {
   maxNumNodesLoading: number;
   lru: LRU;
 
-  loadPointCloud(baseUrl: string, fileName: string, styledObjectInfo?: StyledObjectInfo): Promise<PointCloudOctree>;
+  loadPointCloud(baseUrl: string, fileName: string, styledObjectInfo?: StyledObjectInfo | undefined): Promise<PointCloudOctree>;
 
   updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): IVisibilityUpdateResult;
 }

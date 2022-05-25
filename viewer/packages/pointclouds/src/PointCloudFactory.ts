@@ -7,7 +7,7 @@ import { PointCloudMetadata } from './PointCloudMetadata';
 
 import { ModelDataProvider } from '@reveal/modeldata-api';
 
-import { PointCloudOctree, Potree } from './potree-three-loader';
+import { Potree } from './potree-three-loader';
 import { StyledObjectInfo } from './styling/StyledObjectInfo';
 import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
 
@@ -24,7 +24,7 @@ export class PointCloudFactory {
 
   async createModel(
     modelMetadata: PointCloudMetadata,
-    styledObjectInfo?: StyledObjectInfo
+    styledObjectInfo?: StyledObjectInfo | undefined
   ): Promise<PotreeNodeWrapper> {
     const { modelBaseUrl } = modelMetadata;
 

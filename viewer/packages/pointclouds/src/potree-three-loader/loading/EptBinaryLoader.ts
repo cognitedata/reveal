@@ -27,7 +27,7 @@ export class EptBinaryLoader implements ILoader {
     return '.bin';
   }
 
-  constructor(dataLoader: ModelDataProvider, styledObjectInfo?: StyledObjectInfo) {
+  constructor(dataLoader: ModelDataProvider, styledObjectInfo?: StyledObjectInfo | undefined) {
     this._dataLoader = dataLoader;
     this._styledObjectInfo = styledObjectInfo;
   }
@@ -52,7 +52,7 @@ export class EptBinaryLoader implements ILoader {
           typedArrayConstructor: { new (data: ArrayBuffer): TypedArray },
           name: string,
           componentCount: number,
-          data?: ArrayBuffer,
+          data?: ArrayBuffer | undefined,
           normalized: boolean = false): void {
 
           if (data) {
