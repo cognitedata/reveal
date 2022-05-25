@@ -101,14 +101,14 @@ const annotatorWrapperSlice = createSlice({
     onCreateKeyPoint(
       state,
       action: PayloadAction<{
+        id: string; // id from region
         collectionName: string;
-        // use nextKeypoint selector to get keypointLabel
-        keypointLabel: string;
+        keypointLabel: string; // use nextKeypoint selector to get keypointLabel
         positionX: number;
         positionY: number;
       }>
     ) {
-      const { collectionName, keypointLabel, positionX, positionY } =
+      const { id, collectionName, keypointLabel, positionX, positionY } =
         action.payload;
 
       const predefinedKeypointCollection: KeypointCollection | undefined =
@@ -157,16 +157,9 @@ const annotatorWrapperSlice = createSlice({
             state.collections.selectedIds = [collectionId];
           }
 
-          // add new keypoint to the state
-          const newKeypointId = generateKeypointId(
-            state.lastCollectionId,
-            imageKeypointToAdd.label
-          );
           state.lastKeyPoint = predefinedKeypoint.caption;
-          state.collections.byId[state.lastCollectionId].keypointIds.push(
-            newKeypointId
-          );
-          state.keypointMap.byId[newKeypointId] = imageKeypointToAdd;
+          state.collections.byId[state.lastCollectionId].keypointIds.push(id);
+          state.keypointMap.byId[id] = imageKeypointToAdd;
           state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
         }
       }

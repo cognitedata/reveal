@@ -270,6 +270,7 @@ describe('Test annotator slice', () => {
           reducer(
             previousState,
             onCreateKeyPoint({
+              id: 'random-id',
               collectionName: 'non-existing-collection-name',
               keypointLabel: 'left',
               positionX: 0.25,
@@ -280,7 +281,9 @@ describe('Test annotator slice', () => {
       });
 
       test('Should create keypoint collection, for valid collection name', () => {
+        const idFromRegion = 'id-from-region';
         const payload = {
+          id: idFromRegion,
           collectionName: 'gauge',
           keypointLabel: 'left', // this will always be the fist on of the collection as we get this from nextKeypoint selector
           positionX: 0.25,
@@ -294,12 +297,6 @@ describe('Test annotator slice', () => {
           },
         };
 
-        // collection Name is used to create new keypoint collection id and newKeypointId
-        const newKeypointId = generateKeypointId(
-          getDummyPredefinedKeypoint('c1').collectionName,
-          payload.keypointLabel
-        );
-
         const updatedState: AnnotatorWrapperState = {
           ...previousState,
           lastCollectionName: payload.collectionName,
@@ -309,7 +306,7 @@ describe('Test annotator slice', () => {
             byId: {
               [payload.collectionName]: {
                 ...getDummyKeypointCollectionState(payload.collectionName, [
-                  newKeypointId,
+                  idFromRegion,
                 ]),
               },
             },
@@ -318,14 +315,14 @@ describe('Test annotator slice', () => {
           },
           keypointMap: {
             byId: {
-              [newKeypointId]: {
+              [idFromRegion]: {
                 ...getDummyKeypointState(payload.keypointLabel, 1, {
                   x: payload.positionX,
                   y: payload.positionY,
                 }),
               },
             },
-            allIds: [newKeypointId],
+            allIds: [idFromRegion],
             selectedIds: [], // TODO: should keypoint also be selected?
           },
         };
@@ -336,7 +333,9 @@ describe('Test annotator slice', () => {
       });
 
       test('Should create keypoint collection with lastCollectionId set', () => {
+        const idFromRegion = 'id-from-region';
         const payload = {
+          id: idFromRegion,
           collectionName: 'gauge',
           keypointLabel: 'center', // this will always be the fist on of the collection as we get this from nextKeypoint selector
           positionX: 0.25,
@@ -363,7 +362,6 @@ describe('Test annotator slice', () => {
           },
         };
 
-        const newKeypointId = generateKeypointId('c1', payload.keypointLabel);
         const updatedState: AnnotatorWrapperState = {
           ...previousState,
           lastCollectionName: payload.collectionName,
@@ -375,17 +373,17 @@ describe('Test annotator slice', () => {
                 ...previousState.collections.byId.c1,
                 keypointIds: [
                   ...previousState.collections.byId.c1.keypointIds,
-                  newKeypointId,
+                  idFromRegion,
                 ],
               },
             },
           },
           keypointMap: {
             ...previousState.keypointMap,
-            allIds: [...previousState.keypointMap.allIds, newKeypointId],
+            allIds: [...previousState.keypointMap.allIds, idFromRegion],
             byId: {
               ...previousState.keypointMap.byId,
-              [newKeypointId]: {
+              [idFromRegion]: {
                 ...getDummyKeypointState(payload.keypointLabel, 1, {
                   x: payload.positionX,
                   y: payload.positionY,
