@@ -608,7 +608,7 @@ void main() {
             int lutY = int(objectId) / OBJECT_STYLING_TEXTURE_WIDTH;
             vec3 colorTexel = texelFetch(objectIdLUT, ivec2(lutX, lutY), 0).rgb;
 
-            if (any(greaterThan(colorTexel, vec3(0.0))) {
+            if (any(greaterThan(colorTexel, vec3(0.0)))) {
                 vColor = 0.5 * (colorTexel + vColor);
             }
         }
