@@ -11,6 +11,7 @@ import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { isNotNilOrWhitespace } from 'utils/shared';
 import { TitleOrnament, MiniInfoTitle } from '../../utils/styledComponents';
+import { useTranslation } from 'common/i18n';
 
 interface DocumentationsTabProps {
   dataSet?: DataSet;
@@ -86,6 +87,7 @@ const renderDocumenation = (documentation: Documentation) => {
 };
 
 const DocumentationsTab = ({ dataSet }: DocumentationsTabProps) => {
+  const { t } = useTranslation();
   const files = Array.isArray(dataSet?.metadata?.consoleAdditionalDocs)
     ? dataSet?.metadata?.consoleAdditionalDocs?.filter(
         (doc) => doc.type !== 'url'
@@ -100,20 +102,20 @@ const DocumentationsTab = ({ dataSet }: DocumentationsTabProps) => {
   if (dataSet?.metadata) {
     return (
       <ContentView>
-        <MiniInfoTitle>Files</MiniInfoTitle>
+        <MiniInfoTitle>{t('files')}</MiniInfoTitle>
         <TitleOrnament />
         {files?.length ? (
           files.map((doc) => renderDocumenation(doc))
         ) : (
-          <NoDataText>No documentation files uploaded </NoDataText>
+          <NoDataText>{t('no-documentation-files-uploaded')}</NoDataText>
         )}
 
-        <MiniInfoTitle>Links</MiniInfoTitle>
+        <MiniInfoTitle>{t('links')}</MiniInfoTitle>
         <TitleOrnament />
         {links?.length ? (
           links.map((doc) => renderDocumenation(doc))
         ) : (
-          <NoDataText>No documentation links</NoDataText>
+          <NoDataText>{t('no-documentation-links')}</NoDataText>
         )}
       </ContentView>
     );

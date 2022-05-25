@@ -20,18 +20,12 @@ import { Extpipe } from '../../../utils/types';
 import { ExtpipeTableColumns } from './ExtpipeTableColumns';
 import { ExtpipeSourceExtractorProps } from './ExtpipeSourceExtractor';
 import { getExtractionPipelineUIUrl } from '../../../utils/extpipeUtils';
+import { useTranslation } from 'common/i18n';
 
 interface ExtpipeTableProps extends ExtpipeSourceExtractorProps {
   dataSetWithExtpipes: DataSetWithExtpipes;
   isExtpipesFetched?: boolean;
 }
-
-export const EXTPIPES_HEADING: Readonly<string> = 'Extraction pipelines';
-export const CREATE_EXTRACTION_PIPELINE: Readonly<string> =
-  'Create extraction pipeline';
-export const EXTPIPE_SUB_HEADING: Readonly<string> =
-  'Use this section to create, troubleshoot and view details on extraction pipelines that ingest data from extractors into this data set.';
-const PERMISSION_TEXT: Readonly<string> = `You must have the 'extractionPipelinesAcl:read' permission to see extraction pipelines in your project`;
 
 const StyledButton = styled(Button)`
   margin-top: 8px;
@@ -45,6 +39,7 @@ const ExtpipeTable: FunctionComponent<ExtpipeTableProps> = ({
   dataSetWithExtpipes,
   isExtpipesFetched,
 }: PropsWithChildren<ExtpipeTableProps>) => {
+  const { t } = useTranslation();
   const { extpipes, dataSet } = dataSetWithExtpipes;
 
   const { flow } = getFlow();
@@ -63,28 +58,25 @@ const ExtpipeTable: FunctionComponent<ExtpipeTableProps> = ({
 
   const createExtpipeButton = canEditExtractionPipelines ? (
     <StyledButton href={addExtpipeLink()} type="primary" icon="Plus">
-      {CREATE_EXTRACTION_PIPELINE}
+      {t('extpipe-create-extpipe')}
     </StyledButton>
   ) : (
-    <InfoTooltip
-      showIcon={false}
-      tooltipText="You have insufficient access rights to create an extraction pipeline."
-    >
+    <InfoTooltip showIcon={false} tooltipText={t('extpipe-permissions-write')}>
       <Button disabled icon="Plus">
-        {CREATE_EXTRACTION_PIPELINE}
+        {t('extpipe-create-extpipe')}
       </Button>
     </InfoTooltip>
   );
 
   return (
     <Timeline.Item dot={extpipes.length ? <LineageDot /> : <EmptyLineageDot />}>
-      <LineageTitle>{EXTPIPES_HEADING}</LineageTitle>
+      <LineageTitle>{t('extpipe-extpipes-title')}</LineageTitle>
       <LineageSubTitle>
-        <span>{EXTPIPE_SUB_HEADING}</span>
+        <span>{t('extpipe-extpipes-subtitle')}</span>
         <span css="flex-shrink: 0">{createExtpipeButton}</span>
       </LineageSubTitle>
       {!extpipes ? (
-        <NoDataText>{PERMISSION_TEXT}</NoDataText>
+        <NoDataText>{t('extpipe-permissions-read')}</NoDataText>
       ) : (
         <>
           {isExtpipesFetched ? (

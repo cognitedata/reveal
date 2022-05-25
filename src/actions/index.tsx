@@ -32,6 +32,7 @@ import {
   listRawTablesKey,
   getListExtpipesKey,
 } from './keys';
+import { useTranslation } from 'common/i18n';
 
 export const invalidateDataSetQueries = (
   client: QueryClient,
@@ -96,6 +97,7 @@ export const useUpdateDataSetOwners = () => {
 };
 
 export const useUpdateDataSetMutation = () => {
+  const { t } = useTranslation();
   const client = useQueryClient();
   const { mutate: updateDataSet, ...rest } = useMutation(
     'update-dataset',
@@ -121,14 +123,18 @@ export const useUpdateDataSetMutation = () => {
     {
       onSuccess: (_, dataset: DataSet) => {
         notification.success({
-          message: <p>Data set &quot;{dataset?.name}&quot; is updated</p>,
+          message: (
+            <p>{t('data-set-is-updated', { datasetName: dataset?.name })}</p>
+          ),
         });
       },
       onError: (error: any, dataset: DataSet) => {
         notification.error({
           message: (
             <>
-              <p>Data set &quot;{dataset?.name}&quot; is not updated</p>
+              <p>
+                {t('data-set-is-not-updated', { datasetName: dataset?.name })}
+              </p>
               <Typography.Paragraph ellipsis={{ rows: 2, expandable: true }}>
                 <pre>{JSON.stringify(error.errors, null, 2)}`</pre>
               </Typography.Paragraph>

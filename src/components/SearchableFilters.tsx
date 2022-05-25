@@ -7,6 +7,7 @@ import Menu from 'antd/lib/menu';
 import styled from 'styled-components';
 import theme from 'styles/theme';
 import { FilterDropdownProps } from 'antd/lib/table/interface';
+import { useTranslation } from 'common/i18n';
 
 const StickyFooter = styled.div`
   bottom: 0;
@@ -26,6 +27,7 @@ const SearchableFilters = ({
   setSelectedKeys,
   selectedKeys,
 }: FilterDropdownProps): JSX.Element => {
+  const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState<string>('');
   const [filterValues, setFilterValues] = useState<any[]>([]);
 
@@ -51,7 +53,7 @@ const SearchableFilters = ({
             )
           );
         } catch (e) {
-          notification.error({ message: 'Invalid search value' });
+          notification.error({ message: t('invalid-search-value') });
           setSearchValue('');
         }
       }
@@ -75,7 +77,7 @@ const SearchableFilters = ({
             top: 0,
             background: 'white',
           }}
-          placeholder="Find filter"
+          placeholder={t('find-filter')}
           value={searchValue}
           onChange={(e) => setSearchValue(e.currentTarget.value)}
           icon="Search"
@@ -110,14 +112,14 @@ const SearchableFilters = ({
             type="primary"
             onClick={() => confirm()}
           >
-            Confirm
+            {t('confirm')}
           </Button>
           <Button
             type="secondary"
             style={{ float: 'left', textAlign: 'left', width: '100%' }}
             onClick={() => clearFilters()}
           >
-            Reset
+            {t('reset')}
           </Button>
         </StickyFooter>
       </div>

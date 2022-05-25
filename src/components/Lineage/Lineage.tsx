@@ -22,12 +22,10 @@ import handleError from 'utils/handleError';
 import transformationsColumns from 'components/Lineage/transformationColumns';
 import ConsumerTable from 'components/Lineage/ConsumerTable';
 import ExtpipeTable from 'components/Lineage/Extpipe/ExtpipeTable';
-import { Source, SOURCE_TEXT } from 'components/Lineage/Source/Source';
-import {
-  Extractor,
-  EXTRACTOR_TEXT,
-} from 'components/Lineage/Extractor/Extractor';
+import { Source } from 'components/Lineage/Source/Source';
+import { Extractor } from 'components/Lineage/Extractor/Extractor';
 import { DataSetWithExtpipes, useUpdateDataSetTransformations } from 'actions';
+import { useTranslation } from 'common/i18n';
 
 const jetfire = new JetfireApi(sdk, sdk.project, getJetfireUrl());
 
@@ -41,6 +39,7 @@ export interface RawWithUpdateTime extends RawTable {
 }
 
 const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
+  const { t } = useTranslation();
   const { updateDataSetTransformations } = useUpdateDataSetTransformations();
   const [transformationsData, setTransformationsData] = useState<any[]>([]);
   const [disableTransformations, setDisableTransformations] =
@@ -68,7 +67,7 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
       if (externalTransformation && externalTransformation[0]) {
         return (
           <span>
-            <strong>External transformation documentation</strong>
+            <strong>{t('lineage-documentation')}</strong>
             <Typography.Paragraph ellipsis={{ rows: 1, expandable: true }}>
               {externalTransformation[0].details}
             </Typography.Paragraph>
@@ -108,12 +107,12 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
         (e as any)?.requestStatus !== 403
       ) {
         handleError({
-          message: 'Failed to fetch transformations',
+          message: t('fetch-transformations-failed'),
           ...(e as any),
         });
       }
     }
-  }, [dataSetWithExtpipes]);
+  }, [dataSetWithExtpipes, t]);
 
   const onDeleteTransformationClick = (transformation: any) => {
     if (!dataSetWithExtpipes) return;
@@ -149,15 +148,15 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
         <Timeline>
           {hasSources ? (
             <Timeline.Item dot={<LineageDot />}>
-              <LineageTitle>Source</LineageTitle>
-              <LineageSubTitle>{SOURCE_TEXT}</LineageSubTitle>
+              <LineageTitle>{t('source_one')}</LineageTitle>
+              <LineageSubTitle>{t('lineage-source-text')}</LineageSubTitle>
               <Source sourceNames={sourceNames} />
             </Timeline.Item>
           ) : null}
           {hasExtractorAccounts ? (
             <Timeline.Item dot={<LineageDot />}>
-              <LineageTitle>Extractor</LineageTitle>
-              <LineageSubTitle>{EXTRACTOR_TEXT}</LineageSubTitle>
+              <LineageTitle>{t('extractor_one')}</LineageTitle>
+              <LineageSubTitle>{t('lineage-extractor-text')}</LineageSubTitle>
               <Extractor extractorAccounts={extractorAccounts} />
             </Timeline.Item>
           ) : null}
@@ -173,18 +172,14 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
           />
           {usedTransformations && (
             <Timeline.Item dot={<LineageDot />}>
-              <LineageTitle>Transformations</LineageTitle>
+              <LineageTitle>{t('transformation_one')}</LineageTitle>
               <LineageSubTitle>
-                The below transformations modify data to fit into the Cognite
-                Data Fusion data model in this data set.
+                {t('lineage-transformations-subtitle')}
               </LineageSubTitle>
-              <strong>CDF SQL transformations</strong>
+              <strong>{t}</strong>
 
               {disableTransformations ? (
-                <NoDataText>
-                  You must be in the IAM group &apos;transformations&apos; in
-                  order to be able to see transformations in your project.
-                </NoDataText>
+                <NoDataText>{t('lineage-transformations-disabled')}</NoDataText>
               ) : (
                 <Table
                   columns={transformationsColumns(onDeleteTransformationClick)}

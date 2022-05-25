@@ -15,7 +15,8 @@
     "prettier:fix": "prettier --write .prettierrc -l \"src/**/*.{js,ts,tsx}\""
   },
   "dependencies": {
-    "@cognite/cdf-utilities": "^0.12.1",
+    "@cognite/cdf-i18n-utils": "^0.0.5",
+    "@cognite/cdf-utilities": "^1.4.6",
     "@cognite/cogs.js": "^5.17.0",
     "@cognite/metrics": "^1.2.1",
     "@cognite/react-feature-flags": "^1.0.0",

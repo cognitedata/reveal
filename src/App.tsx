@@ -5,6 +5,7 @@ import {
   AuthWrapper,
   getEnv,
   getProject,
+  setupTranslations,
   I18nWrapper,
   SubAppWrapper,
 } from '@cognite/cdf-utilities';
@@ -16,7 +17,7 @@ import { SDKProvider } from '@cognite/sdk-provider';
 import { Loader } from '@cognite/cogs.js';
 import { DataSetsContextProvider } from 'context';
 import AccessCheck from 'AccessCheck';
-import { languages, setupTranslations } from 'utils/i18n';
+import { languages, translations } from 'common/i18n';
 import i18next from 'i18next';
 import styled from 'styled-components';
 
@@ -28,7 +29,7 @@ const DataSetDetails = lazy(
 const project = getProject();
 const env = getEnv();
 
-setupTranslations();
+setupTranslations(translations);
 
 const queryClient = new QueryClient({
   defaultOptions: {

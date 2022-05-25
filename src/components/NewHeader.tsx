@@ -9,6 +9,7 @@ import Drawer from 'antd/lib/drawer';
 import Iframe from 'react-iframe';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import { getProject } from '@cognite/cdf-utilities';
+import { useTranslation } from 'common/i18n';
 
 const Title = styled.h5`
   color: black;
@@ -82,12 +83,13 @@ const NewHeader = ({
   ornamentColor,
   help,
 }: NewHeaderProps) => {
+  const { t } = useTranslation();
   const [helpVisible, setHelpVisible] = useState(false);
   return (
     <div style={{ marginBottom: '22px', width: '100%' }}>
       {help && (
         <Drawer
-          title="Cognite Docs"
+          title={t('cognite-docs')}
           visible={helpVisible}
           onClose={() => setHelpVisible(false)}
           width="60%"
@@ -113,7 +115,7 @@ const NewHeader = ({
             <Breadcrumbs breadcrumbs={breadcrumbs} />
             {help && (
               <Tooltip
-                title="Help"
+                title={t('help')}
                 placement="left"
                 getPopupContainer={getContainer}
               >

@@ -15,15 +15,16 @@ import {
 } from '../../utils/styledComponents';
 import { ConsumerTableColumns } from './ConsumerTableColumns';
 import { Consumer, DataSet } from '../../utils/types';
+import { useTranslation } from 'common/i18n';
 
 interface ConsumerTableProps {
   dataSet?: DataSet;
 }
 
-export const CONSUMER_HEADING: Readonly<string> = 'Data consumers';
 const ConsumerTable: FunctionComponent<ConsumerTableProps> = ({
   dataSet,
 }: PropsWithChildren<ConsumerTableProps>) => {
+  const { t } = useTranslation();
   const [consumerList, setConsumerList] = useState<Consumer[]>([]);
   const setConsumers = (consumers: Consumer[] = []) => {
     setConsumerList(consumers);
@@ -44,12 +45,8 @@ const ConsumerTable: FunctionComponent<ConsumerTableProps> = ({
         )
       }
     >
-      <LineageTitle>{CONSUMER_HEADING}</LineageTitle>
-      <LineageSubTitle>
-        The below information shows what system or project are data consumers
-        using the data. For now this information needs to be manually
-        registered.
-      </LineageSubTitle>
+      <LineageTitle>{t('data-consumer_other')}</LineageTitle>
+      <LineageSubTitle>{t('lineage-data-consumers-subtitle')}</LineageSubTitle>
       <Table
         columns={ConsumerTableColumns}
         dataSource={consumerList}

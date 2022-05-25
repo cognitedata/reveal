@@ -9,12 +9,14 @@ import { getContainer } from 'utils/shared';
 import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
 import handleError from 'utils/handleError';
 import ColumnWrapper from '../ColumnWrapper';
+import { useTranslation } from 'common/i18n';
 
 interface filesTableProps {
   dataSetId: number;
 }
 
 const FilesTable = ({ dataSetId }: filesTableProps) => {
+  const { t } = useTranslation();
   const [files, setFiles] = useState<FileInfo[]>();
 
   useEffect(() => {
@@ -24,33 +26,33 @@ const FilesTable = ({ dataSetId }: filesTableProps) => {
         setFiles(res.items);
       })
       .catch((e) => {
-        handleError({ message: 'Failed to fetch files', ...e });
+        handleError({ message: t('fetch-files-failed'), ...e });
       });
-  }, [dataSetId]);
+  }, [dataSetId, t]);
 
   const filesColumns = [
     {
-      title: 'Name',
+      title: t('name'),
       dataIndex: 'name',
       key: 'name',
       render: (value: any) => <ColumnWrapper title={value} />,
     },
     {
-      title: 'Source',
+      title: t('source_one'),
       dataIndex: 'source',
       key: 'source',
     },
     {
-      title: 'ID',
+      title: t('id'),
       dataIndex: 'id',
       key: 'id',
       render: (value: any) => <ColumnWrapper title={value} />,
     },
     {
-      title: 'Actions',
+      title: t('action_other'),
       render: (record: FileInfo) => (
         <span>
-          <Link to={createLink(`/explore/file/${record.id}`)}>View</Link>
+          <Link to={createLink(`/explore/file/${record.id}`)}>{t('view')}</Link>
         </span>
       ),
     },
@@ -58,7 +60,7 @@ const FilesTable = ({ dataSetId }: filesTableProps) => {
 
   return (
     <div id="#files">
-      <ItemLabel>Files</ItemLabel>
+      <ItemLabel>{t('files')}</ItemLabel>
       <Table
         rowKey="id"
         columns={filesColumns}

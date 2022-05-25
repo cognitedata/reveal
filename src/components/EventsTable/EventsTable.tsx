@@ -9,12 +9,14 @@ import handleError from 'utils/handleError';
 import { getContainer } from 'utils/shared';
 import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
 import ColumnWrapper from '../ColumnWrapper';
+import { useTranslation } from 'common/i18n';
 
 interface EventsPreviewProps {
   dataSetId: number;
 }
 
 const EventsPreview = ({ dataSetId }: EventsPreviewProps) => {
+  const { t } = useTranslation();
   const [events, setEvents] = useState<CogniteEvent[]>();
 
   useEffect(() => {
@@ -24,32 +26,34 @@ const EventsPreview = ({ dataSetId }: EventsPreviewProps) => {
         setEvents(res.items);
       })
       .catch((e) => {
-        handleError({ message: 'Failed to fetch events', ...e });
+        handleError({ message: t('fetch-events-failed'), ...e });
       });
-  }, [dataSetId]);
+  }, [dataSetId, t]);
 
   const eventsColumns = [
     {
-      title: 'Type',
+      title: t('type'),
       dataIndex: 'type',
       key: 'type',
     },
     {
-      title: 'Subtype',
+      title: t('subtype'),
       dataIndex: 'subtype',
       key: 'subtype',
     },
     {
-      title: 'ID',
+      title: t('id'),
       dataIndex: 'id',
       key: 'id',
       render: (value: any) => <ColumnWrapper title={value} />,
     },
     {
-      title: 'Actions',
+      title: t('action_other'),
       render: (record: CogniteEvent) => (
         <span>
-          <Link to={createLink(`/explore/event/${record.id}`)}>View</Link>
+          <Link to={createLink(`/explore/event/${record.id}`)}>
+            {t('view')}
+          </Link>
         </span>
       ),
     },
@@ -57,7 +61,7 @@ const EventsPreview = ({ dataSetId }: EventsPreviewProps) => {
 
   return (
     <div id="#events">
-      <ItemLabel>Events</ItemLabel>
+      <ItemLabel>{t('events')}</ItemLabel>
       <Table
         rowKey="id"
         columns={eventsColumns}

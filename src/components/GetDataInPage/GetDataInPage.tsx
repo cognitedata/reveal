@@ -10,6 +10,7 @@ import getDataInIcon from 'assets/getDataInIcon.svg';
 import { getContainer } from 'utils/shared';
 import { OidcCheck } from 'components/OidcCheck/OidcCheck';
 import { RawSection } from 'components/GetDataInPage/raw/RawSection';
+import { useTranslation } from 'common/i18n';
 
 const { Option } = Select;
 
@@ -24,6 +25,7 @@ interface GetDataInProps {
   saveSection: boolean;
 }
 const GetDataInPage = (props: GetDataInProps): JSX.Element => {
+  const { t } = useTranslation();
   const [selectedDb, setSelectedDb] = useState<string>('');
   const [selectedTables, setSelectedTables] = useState<RawTable[]>([]);
   const [selectedExtractors, setSelectedExtractors] = useState<string[]>([]);
@@ -96,18 +98,18 @@ const GetDataInPage = (props: GetDataInProps): JSX.Element => {
 
   return (
     <Drawer
-      title={<div>Document data extraction</div>}
+      title={<div>{t('document-data-extraction')}</div>}
       width="50%"
       onClose={() => props.closeModal()}
       visible={props.visible}
-      okText={props.changesSaved ? 'Done' : 'Save'}
+      okText={props.changesSaved ? t('done') : t('save')}
       onOk={props.changesSaved ? props.closeModal : handleSaveChanges}
       cancelHidden
     >
       <div>
         <Col span={24}>
           <Col span={18}>
-            <FieldLabel>Sources</FieldLabel>
+            <FieldLabel>{t('source_other')}</FieldLabel>
             <Select
               mode="tags"
               style={{ width: '100%', background: theme.blandColor }}
@@ -118,13 +120,13 @@ const GetDataInPage = (props: GetDataInProps): JSX.Element => {
                 }
               }}
               value={sourceNames}
-              notFoundContent="Enter sources to your data set"
-              placeholder="Sources"
+              notFoundContent={t('enter-sources-to-your-data-set')}
+              placeholder={t('source_other')}
               getPopupContainer={getContainer}
             >
               {props.sourceSuggestions && props.sourceSuggestions.length && (
                 <Option disabled value="Suggestions">
-                  Suggested options:
+                  {t('suggested-options')}
                 </Option>
               )}
               {sourceNames?.length &&
@@ -142,15 +144,12 @@ const GetDataInPage = (props: GetDataInProps): JSX.Element => {
                 ))}
             </Select>
             <OidcCheck>
-              <FieldLabel>
-                Service account(s) used to write to CDF RAW or CDF data objects
-                in this data integration
-              </FieldLabel>
+              <FieldLabel>{t('service-accounts')}</FieldLabel>
               <StyledSelect
                 value={selectedExtractors}
                 mode="tags"
                 optionFilterProp="children"
-                placeholder="Please select the service account(s)"
+                placeholder={t('please-select-the-service-accounts')}
                 onChange={(val: any) => {
                   setSelectedExtractors(val);
                   props.setChangesSaved(false);
@@ -174,7 +173,7 @@ const GetDataInPage = (props: GetDataInProps): JSX.Element => {
           </Col>
           <Col span={6}>
             <IconWrapper>
-              <img src={getDataInIcon} alt="Add data " />
+              <img src={getDataInIcon} alt={t('add-data')} />
             </IconWrapper>
           </Col>
         </Col>

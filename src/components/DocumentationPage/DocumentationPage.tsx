@@ -17,6 +17,7 @@ import { isNotNilOrWhitespace } from 'utils/shared';
 import UploadFiles from '../UploadFiles';
 import LinksList from '../LinksList';
 import InfoTooltip from '../InfoTooltip';
+import { useTranslation } from 'common/i18n';
 
 interface DocumentationProps {
   dataSet?: DataSet;
@@ -29,6 +30,7 @@ interface DocumentationProps {
 }
 
 const DocumentationPage = (props: DocumentationProps): JSX.Element => {
+  const { t } = useTranslation();
   const [fileList, setFileList] = useState<FileInfo[]>([]);
   const [urlList, setUrlList] = useState<{ name: string; id: string }[]>([]);
   const [ownerName, setOwnerName] = useState<string>('');
@@ -151,11 +153,11 @@ const DocumentationPage = (props: DocumentationProps): JSX.Element => {
 
   return (
     <Drawer
-      title={<div>Add documentation</div>}
+      title={<div>{t('add-documentation')}</div>}
       width="50%"
       onClose={() => props.closeModal()}
       visible={props.visible}
-      okText={props.changesSaved ? 'Done' : 'Save'}
+      okText={props.changesSaved ? t('done') : t('save')}
       onOk={props.changesSaved ? props.closeModal : handleSaveChanges}
       cancelHidden
     >
@@ -164,9 +166,9 @@ const DocumentationPage = (props: DocumentationProps): JSX.Element => {
           <Col span={18}>
             <FieldLabel>
               <InfoTooltip
-                title="Owner name"
+                title={t('owner-name')}
                 showIcon
-                tooltipText="The owner is responsible for the quality of the data in the data set and can answer questions about the data set."
+                tooltipText={t('documentation-page-owner-tooltip')}
                 placement="left"
               />
             </FieldLabel>
@@ -174,18 +176,18 @@ const DocumentationPage = (props: DocumentationProps): JSX.Element => {
               style={{ width: '400px' }}
               value={ownerName}
               type="text"
-              placeholder="owner"
+              placeholder={t('owner')}
               onChange={(e) => {
                 setOwnerName(e.currentTarget.value);
                 props.setChangesSaved(false);
               }}
             />
-            <FieldLabel>Owner email</FieldLabel>
+            <FieldLabel>{t('owner-email')}</FieldLabel>
             <InputField
               style={{ width: '400px' }}
               value={ownerEmail}
               type="email"
-              placeholder="email"
+              placeholder={t('email')}
               onChange={(e) => {
                 setOwnerEmail(e.currentTarget.value);
                 props.setChangesSaved(false);
@@ -194,18 +196,18 @@ const DocumentationPage = (props: DocumentationProps): JSX.Element => {
           </Col>
           <Col span={6}>
             <IconWrapper>
-              <img src={documentationIcon} alt="Add data " />
+              <img src={documentationIcon} alt="Add data" />
             </IconWrapper>
           </Col>
         </Col>
         <Col style={{ marginTop: '20px' }} span={24}>
-          <FieldLabel>Upload documents</FieldLabel>
+          <FieldLabel>{t('upload-documents')}</FieldLabel>
           <UploadFiles
             fileList={fileList}
             setFileList={setFileList}
             setChangesSaved={props.setChangesSaved}
           />
-          <FieldLabel>Add links</FieldLabel>
+          <FieldLabel>{t('add-link_other')}</FieldLabel>
           {urlList.map((url, index) => (
             <LinksList
               value={url}
@@ -216,20 +218,18 @@ const DocumentationPage = (props: DocumentationProps): JSX.Element => {
             />
           ))}
           <Button type="primary" onClick={() => addLink()}>
-            {' '}
-            Add new link
+            {t('add-new-link_one')}
           </Button>
 
-          <FieldLabel>Governance status</FieldLabel>
+          <FieldLabel>{t('governance-status')}</FieldLabel>
           <p>
-            Governed data sets have a designated owner and follows the
-            governance processes for data in your organization.{' '}
+            {t('documentation-page-governed-data-sets')}
             <a
               href="https://docs.cognite.com/cdf/data_governance/concepts/datasets/#governance-status"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Learn more in our docs.
+              {t('learn-more-in-our-docs')}
             </a>
           </p>
           <Radio.Group
@@ -243,14 +243,14 @@ const DocumentationPage = (props: DocumentationProps): JSX.Element => {
           >
             <Radio.Button value style={{ width: '50%', textAlign: 'center' }}>
               <ApprovedDot />
-              Governed
+              {t('governed')}
             </Radio.Button>
             <Radio.Button
               value={false}
               style={{ width: '50%', textAlign: 'center' }}
             >
               <UnApprovedDot />
-              Ungoverned
+              {t('ungoverned')}
             </Radio.Button>
           </Radio.Group>
         </Col>

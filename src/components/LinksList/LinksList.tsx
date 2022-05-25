@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Input from 'antd/lib/input';
 import { Icon } from '@cognite/cogs.js';
 import useDebounce from 'hooks/useDebounce';
+import { useTranslation } from 'common/i18n';
 
 interface UrlInputProps {
   value: { name: string; id: string };
@@ -12,6 +13,7 @@ interface UrlInputProps {
 }
 
 const LinksList = (props: UrlInputProps) => {
+  const { t } = useTranslation();
   const [name, setName] = useState<string>('');
   const [link, setLink] = useState<string>('');
   const debounceTime = 400;
@@ -40,7 +42,7 @@ const LinksList = (props: UrlInputProps) => {
     <Input.Group compact>
       <Input
         style={{ width: '35%' }}
-        placeholder="Link name"
+        placeholder={t('link-name')}
         value={name}
         onChange={(e) => {
           e.preventDefault();
