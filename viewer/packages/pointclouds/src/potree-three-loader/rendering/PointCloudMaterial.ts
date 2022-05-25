@@ -18,6 +18,8 @@ import {
   WebGLRenderer
 } from 'three';
 import {
+  COLOR_BLACK,
+  COLOR_WHITE,
   DEFAULT_HIGHLIGHT_COLOR,
   DEFAULT_MAX_POINT_SIZE,
   DEFAULT_MIN_POINT_SIZE,
@@ -183,7 +185,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
   private readonly _objectTexture: THREE.DataTexture = generateDataTexture(
     OBJECT_STYLING_TEXTURE_WIDTH,
     OBJECT_STYLING_TEXTURE_HEIGHT,
-    new Color(0x000000)
+    COLOR_BLACK
   );
 
   private _classification: IClassification = DEFAULT_CLASSIFICATION;
@@ -223,7 +225,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     spacing: makeUniform('f', 1.0),
     toModel: makeUniform('Matrix4f', []),
     transition: makeUniform('f', 0.5),
-    uColor: makeUniform('c', new Color(0xffffff)),
+    uColor: makeUniform('c', COLOR_WHITE),
     // @ts-ignore
     visibleNodes: makeUniform('t', this.visibleNodesTexture || new Texture()),
     vnStart: makeUniform('f', 0.0),
@@ -326,7 +328,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
       glslVersion: GLSL3
     });
 
-    const tex = (this.visibleNodesTexture = generateDataTexture(2048, 1, new Color(0xffffff)));
+    const tex = (this.visibleNodesTexture = generateDataTexture(2048, 1, COLOR_WHITE));
     tex.minFilter = NearestFilter;
     tex.magFilter = NearestFilter;
     this.setUniform('visibleNodes', tex);
