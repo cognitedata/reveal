@@ -18,7 +18,7 @@ import { FlexColumn } from 'styles/layout';
 import {
   DEFAULT_MEASUREMENTS_REFERENCE,
   DEFAULT_PRESSURE_UNIT,
-  MEASUREMENTS_REFERENCES,
+  // MEASUREMENTS_REFERENCES,
   PRESSURE_UNITS,
 } from '../../constants';
 import { GeomechanicsCurveFilter } from '../../filters/GeomechanicsCurveFilter';
@@ -63,8 +63,9 @@ export const CompareView: React.FC<Props> = ({ wellbores, onBack }) => {
   const [pressureUnit, setPressureUnit] = useState<PressureUnit>(
     DEFAULT_PRESSURE_UNIT
   );
-  const [measurementReference, setMeasurementReference] =
-    useState<DepthMeasurementUnit>(DEFAULT_MEASUREMENTS_REFERENCE);
+  const [measurementReference] = useState<DepthMeasurementUnit>(
+    DEFAULT_MEASUREMENTS_REFERENCE
+  );
 
   const [wellboreProcessedData, setWellboreProcessedData] =
     useState<WellboreProcessedData[]>();
@@ -105,7 +106,7 @@ export const CompareView: React.FC<Props> = ({ wellbores, onBack }) => {
     pressureUnit,
     geomechanicsCurves,
     ppfgCurves,
-    measurementReference,
+    // measurementReference,
     otherTypes,
     userPreferredUnit,
   ]);
@@ -174,12 +175,12 @@ export const CompareView: React.FC<Props> = ({ wellbores, onBack }) => {
           options={PRESSURE_UNITS}
           onChange={setPressureUnit}
         />
-        <UnitFilter<DepthMeasurementUnit>
+        {/* <UnitFilter<DepthMeasurementUnit>
           title="Measurement reference:"
           selected={measurementReference}
           options={MEASUREMENTS_REFERENCES}
           onChange={setMeasurementReference}
-        />
+        /> */}
       </TopBar>
       <CompareViewCardsWrapper>{graphCards}</CompareViewCardsWrapper>
     </OverlayNavigation>
