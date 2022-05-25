@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { debounce } from 'lodash';
 
 import { Button, Input } from '@cognite/cogs.js';
 import styled from 'styled-components';
@@ -27,7 +26,7 @@ const DownloadTableModal = ({
 }: DownloadTableModalProps): JSX.Element => {
   const [rowCount, setRowCount] = useState<string>('100');
   const [fetchRowCount, setFetchRowCount] = useState<string>(rowCount);
-  const { currentRows, fetchedRows, isFetching } = useDownloadData(
+  const { currentRows, fetchedRows, isDownloading, isError } = useDownloadData(
     Number(fetchRowCount)
   );
 
@@ -39,17 +38,6 @@ const DownloadTableModal = ({
     setRowCount(currentRows.length.toString());
     onCancel();
   };
-
-  const updateFetchedData = useMemo(
-    () => debounce(() => visible && setFetchRowCount(rowCount), 500),
-    [rowCount, visible]
-  );
-
-  useEffect(() => {
-    updateFetchedData();
-  }, [updateFetchedData, rowCount]);
-
-  useEffect(() => () => updateFetchedData.cancel(), [updateFetchedData]);
 
   const onDownloadData = useMemo(() => {
     return (
@@ -77,19 +65,29 @@ const DownloadTableModal = ({
         <StyledCancelButton onClick={handleClose} type="ghost">
           Cancel
         </StyledCancelButton>,
-        <CSVLink
-          filename={`cognite-${databaseName}-${tableName}.csv`}
-          data={onDownloadData}
-        >
+        rowCount !== fetchRowCount ? (
           <Button
             disabled={!isItValidRowNumber(rowCount)}
-            loading={isFetching || rowCount !== fetchRowCount}
-            onClick={handleClose}
+            onClick={() => setFetchRowCount(rowCount)}
             type="primary"
           >
-            Download
+            Create File
           </Button>
-        </CSVLink>,
+        ) : (
+          <CSVLink
+            filename={`cognite-${databaseName}-${tableName}.csv`}
+            data={onDownloadData}
+          >
+            <Button
+              disabled={isError}
+              loading={isDownloading}
+              onClick={handleClose}
+              type="primary"
+            >
+              Download
+            </Button>
+          </CSVLink>
+        ),
       ]}
       onCancel={handleClose}
       title={`Download as csv ${tableName}`}
@@ -103,6 +101,7 @@ const DownloadTableModal = ({
       <StyledRowsInputWrapper>
         Rows to download
         <Input
+          disabled={isDownloading}
           onChange={(event) => setRowCount(event.target.value)}
           value={rowCount}
         />
