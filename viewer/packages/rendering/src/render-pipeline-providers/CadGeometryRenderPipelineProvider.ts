@@ -10,7 +10,7 @@ import { RenderMode } from '../rendering/RenderMode';
 import { RenderOptions } from '../rendering/types';
 import { RenderPass } from '../RenderPass';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
-import { createRenderTarget, setupCadModelsGeometryLayers } from '../utilities/renderUtilities';
+import { createRenderTarget, hasStyledNodes, setupCadModelsGeometryLayers } from '../utilities/renderUtilities';
 import { CadGeometryRenderTargets } from './types';
 
 type CadGeometryRenderPasses = {
@@ -46,14 +46,23 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
     this.pipelineSetup(renderer);
 
     try {
-      renderer.setRenderTarget(this._cadGeometryRenderTargets.back);
-      yield this._cadGeometryRenderPasses.back;
+      const modelIdentifiers = this._cadModels.map(cadModel => cadModel.modelIdentifier);
+      const shouldRenderPasses = hasStyledNodes(modelIdentifiers, this._materialManager);
 
-      renderer.setRenderTarget(this._cadGeometryRenderTargets.ghost);
-      yield this._cadGeometryRenderPasses.ghost;
+      if (shouldRenderPasses.back) {
+        renderer.setRenderTarget(this._cadGeometryRenderTargets.back);
+        yield this._cadGeometryRenderPasses.back;
+      }
 
-      renderer.setRenderTarget(this._cadGeometryRenderTargets.inFront);
-      yield this._cadGeometryRenderPasses.inFront;
+      if (shouldRenderPasses.ghost) {
+        renderer.setRenderTarget(this._cadGeometryRenderTargets.ghost);
+        yield this._cadGeometryRenderPasses.ghost;
+      }
+
+      if (shouldRenderPasses.inFront) {
+        renderer.setRenderTarget(this._cadGeometryRenderTargets.inFront);
+        yield this._cadGeometryRenderPasses.inFront;
+      }
     } finally {
       this._rendererStateHelper.resetState();
     }
