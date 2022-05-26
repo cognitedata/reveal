@@ -18,7 +18,7 @@ export type KeypointItemCollection = {
 };
 
 export type Keypoint = {
-  caption: string;
+  caption: string; // ToDo: update to label
   order: string;
   color: string;
   defaultPosition?: [number, number];
@@ -89,7 +89,7 @@ export type VisionOptionType<T> = OptionType<T> & {
   icon?: string;
 };
 export type KeypointCollection = {
-  collectionName: string;
+  collectionName: string; // ToDo: change this to label
   keypoints?: Keypoint[];
   lastUpdated?: number;
   id?: ReactText;

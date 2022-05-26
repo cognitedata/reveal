@@ -194,10 +194,10 @@ export const getAnnotationsBadgeCounts = (
   return annotationsBadgeProps;
 };
 
-export const getKeypointId = (
+export const generateKeypointId = (
   parentAnnotationId: string | number,
   keypointLabel: string
-) => {
+): string => {
   if (isEmpty(parentAnnotationId.toString()) || isEmpty(keypointLabel)) {
     throw Error(
       'Cannot generate keypointId. Parent annotation id or keypoint label not provided'
