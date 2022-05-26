@@ -31,6 +31,7 @@ export type VisionReviewAnnotation<Type> = Visible &
     annotation: TurnKeypointType<VisionAnnotation<Type>>;
   };
 
+// TODO: should this have "Vision" prefix?
 export type ReviewImageKeypoint = KeypointId &
   Selectable & {
     keypoint: ImageKeypoint;

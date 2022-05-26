@@ -27,6 +27,8 @@ import {
   isImageKeypointCollectionData,
 } from 'src/modules/Common/types/typeGuards';
 import { Status } from 'src/api/annotation/types';
+import { VisionAnnotationDataType } from 'src/modules/Common/types';
+import { VisionReviewAnnotation } from './review/types';
 
 export interface VisibleAnnotation extends VisionAnnotationV1 {
   show: boolean;
@@ -280,7 +282,7 @@ export const selectVisionReviewAnnotationsForFile = createSelector(
     selectedAnnotationIds,
     hiddenAnnotationIds,
     selectedKeypointIds
-  ) => {
+  ): VisionReviewAnnotation<VisionAnnotationDataType>[] => {
     return fileAnnotations
       .map((ann) => ({
         annotation: ann,

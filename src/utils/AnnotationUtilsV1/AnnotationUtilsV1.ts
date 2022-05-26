@@ -29,6 +29,9 @@ import {
   isKeyPointAnnotation,
 } from 'src/api/annotation/typeGuards';
 
+/**
+ * @deprecated Use Status instead
+ */
 export enum AnnotationStatus {
   Verified = 'verified',
   Rejected = 'rejected',
