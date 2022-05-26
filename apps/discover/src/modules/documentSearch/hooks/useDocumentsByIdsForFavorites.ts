@@ -1,6 +1,7 @@
+import { normalize } from 'domain/documents/internal/transformers/normalize';
+
 import { useInfiniteQuery } from 'react-query';
 
-import { normalize } from 'dataLayers/documents/adapters/normalize';
 import chunk from 'lodash/chunk';
 
 import { MAX_FILTER_ITEMS_COUNT } from 'constants/app';

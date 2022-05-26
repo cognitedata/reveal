@@ -1,4 +1,5 @@
-import { useQueryDocumentLabels } from 'services/documents/useDocumentQuery';
+import { useQueryDocumentLabels } from 'domain/documents/service/queries/useDocumentQuery';
+
 import { useDocumentSearchResultQuery } from 'services/documentSearch/queries/useDocumentSearchResultQuery';
 
 import { useDeepMemo } from 'hooks/useDeep';

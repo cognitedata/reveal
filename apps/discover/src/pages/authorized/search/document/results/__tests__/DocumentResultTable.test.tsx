@@ -1,8 +1,9 @@
 import '__mocks/mockContainerAuth';
 import '__mocks/mockCogniteSDK';
+import { getMockDocumentCategoriesGet } from 'domain/documents/service/__mocks/getMockDocumentCategoriesGet';
+
 import { waitFor, screen, fireEvent, within } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import { getMockDocumentCategoriesGet } from 'services/documents/__mocks/getMockDocumentCategoriesGet';
 import { getMockDocumentSearch } from 'services/documentSearch/__mocks/getMockDocumentSearch';
 import { getMockFavoritesListGet } from 'services/favorites/__mocks/getMockFavoritesListGet';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';

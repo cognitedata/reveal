@@ -1,4 +1,4 @@
-import { LAST_CREATED_KEY, LAST_UPDATED_KEY } from 'dataLayers/documents/keys';
+import { LAST_CREATED_KEY, LAST_UPDATED_KEY } from 'domain/documents/constants';
 
 import { DocumentSortItem, DocumentFilterProperty } from '@cognite/sdk';
 

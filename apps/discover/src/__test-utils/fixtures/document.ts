@@ -1,4 +1,5 @@
-import { normalize } from 'dataLayers/documents/adapters/normalize';
+import { normalize } from 'domain/documents/internal/transformers/normalize';
+
 import uniqueId from 'lodash/uniqueId';
 
 import {

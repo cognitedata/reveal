@@ -1,7 +1,6 @@
 import { useQuery } from 'react-query';
 
-import { DocumentError } from 'services/documents/types';
-import { discoverAPI, useJsonHeaders } from 'services/service';
+import { useJsonHeaders } from 'services/service';
 
 import {
   DocumentCategories,
@@ -11,13 +10,16 @@ import { getTenantInfo } from '@cognite/react-container';
 
 import { DOCUMENT_CATEGORIES_QUERY_KEY } from 'constants/react-query';
 
+import { getCategories } from '../network/getCategories';
+import { DocumentError } from '../types';
+
 export const useDocumentCategoryQuery = () => {
   const headers = useJsonHeaders();
   const [tenant] = getTenantInfo();
 
   return useQuery<DocumentCategories | DocumentError>(
     DOCUMENT_CATEGORIES_QUERY_KEY,
-    () => discoverAPI.documents.category(headers, tenant),
+    () => getCategories(headers, tenant),
     {
       staleTime: Infinity,
       cacheTime: Infinity,

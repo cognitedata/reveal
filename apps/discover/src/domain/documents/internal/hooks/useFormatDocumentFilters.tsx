@@ -1,10 +1,10 @@
+import { DocumentFormatFilter } from 'domain/documents/service/types';
+
 import isEmpty from 'lodash/isEmpty';
 import merge from 'lodash/merge';
 
 import { AppliedFilterEntries } from 'modules/sidebar/types';
 import { getDocumentCategoryTitle, isRangeFacet } from 'modules/sidebar/utils';
-
-import { DocumentFormatFilter } from '../types';
 
 import { useDocumentFormatFilter } from './useDocumentFormatFilter';
 

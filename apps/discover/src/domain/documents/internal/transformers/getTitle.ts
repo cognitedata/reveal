@@ -1,6 +1,6 @@
 import { Document } from '@cognite/sdk';
 
-import { NOT_AVAILABLE } from '../../../constants/empty';
+import { NOT_AVAILABLE } from 'constants/empty';
 
 export const titleFilterList: string[] = [
   '1',

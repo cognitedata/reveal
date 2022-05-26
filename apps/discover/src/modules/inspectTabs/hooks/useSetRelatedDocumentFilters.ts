@@ -1,4 +1,5 @@
-import { documentValuesPayload } from 'services/documents/structure';
+import { documentValuesPayload } from 'domain/documents/utils/documentValuesPayload';
+
 import { useMutateRelatedDocumentPatch } from 'services/savedSearches/queries/useMutateRelatedDocumentPatch';
 import { getEmptyGeometry } from 'utils/geometry';
 

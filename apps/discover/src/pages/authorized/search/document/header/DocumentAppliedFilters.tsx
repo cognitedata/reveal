@@ -1,8 +1,9 @@
+import { useDocumentAppliedFilterEntries } from 'domain/documents/internal/hooks/useDocumentAppliedFilters';
+import { useDocumentFormatFilter } from 'domain/documents/internal/hooks/useDocumentFormatFilter';
+
 import React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
-import { useDocumentAppliedFilterEntries } from 'services/documents/hooks/useDocumentAppliedFilters';
-import { useDocumentFormatFilter } from 'services/documents/hooks/useDocumentFormatFilter';
 import { useClearAllDocumentFilters } from 'services/savedSearches/hooks/useClearAllDocumentFilters';
 import { useSetDocumentFilters } from 'services/savedSearches/hooks/useClearDocumentFilters';
 import { useClearPolygon } from 'services/savedSearches/hooks/useClearPolygon';

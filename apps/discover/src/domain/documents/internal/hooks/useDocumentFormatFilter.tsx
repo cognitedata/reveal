@@ -1,4 +1,5 @@
-import { formatFacetValue } from 'services/documents/utils/formatFacetValue';
+import { formatFacetValue } from 'domain/documents/utils/formatFacetValue';
+
 import { useLabelsQuery } from 'services/labels/useLabelsQuery';
 
 import { DocumentsFacets } from 'modules/documentSearch/types';

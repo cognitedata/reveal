@@ -3,7 +3,6 @@ import { getAuthHeaders } from '@cognite/react-container';
 
 import { useIdToken as useIdTokenHook } from 'hooks/useIdToken';
 
-import { documents } from './documents';
 import { favorites } from './favorites';
 import { feedback } from './feedback';
 import { projectConfig } from './projectConfig';
@@ -34,7 +33,6 @@ export const useJsonHeaders = (
 };
 
 export const discoverAPI = {
-  documents,
   favorites,
   feedback,
   projectConfig,

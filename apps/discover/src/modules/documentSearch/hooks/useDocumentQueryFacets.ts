@@ -1,4 +1,4 @@
-import { useDocumentCategoryQuery } from 'services/documents/useDocumentQuery';
+import { useDocumentCategoryQuery } from 'domain/documents/service/queries/useDocumentQuery';
 
 import { useDeepMemo } from 'hooks/useDeep';
 

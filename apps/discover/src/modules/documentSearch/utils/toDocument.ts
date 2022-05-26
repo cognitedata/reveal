@@ -1,4 +1,4 @@
-import { normalize } from 'dataLayers/documents/adapters/normalize';
+import { normalize } from 'domain/documents/internal/transformers/normalize';
 
 import { DocumentHighlight, DocumentSearchItem } from '@cognite/sdk';
 

@@ -1,4 +1,5 @@
-import { documentFacetsStructure as emptyFacets } from 'services/documents/structure';
+import { documentFacetsStructure as emptyFacets } from 'domain/documents/service/types';
+
 import { useMutatePatchSavedSearch } from 'services/savedSearches/useSavedSearchQuery';
 
 import { DocumentFilter } from '@cognite/sdk';

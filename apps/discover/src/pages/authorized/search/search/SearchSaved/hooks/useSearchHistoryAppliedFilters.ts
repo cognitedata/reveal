@@ -1,6 +1,7 @@
+import { useFormatDocumentFilters } from 'domain/documents/internal/hooks/useFormatDocumentFilters';
+import { DocumentFormatFilter } from 'domain/documents/service/types';
+
 import isEmpty from 'lodash/isEmpty';
-import { useFormatDocumentFilters } from 'services/documents/hooks/useFormatDocumentFilters';
-import { DocumentFormatFilter } from 'services/documents/types';
 import { SavedSearchContent } from 'services/savedSearches';
 
 import { AppliedFilterEntries } from 'modules/sidebar/types';

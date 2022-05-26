@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useQueryDocumentLabels } from 'domain/documents/service/queries/useDocumentQuery';
 
-import { useQueryDocumentLabels } from 'services/documents/useDocumentQuery';
+import { useMemo } from 'react';
 
 import { EMPTY_ARRAY } from 'constants/empty';
 import { DocumentLabel } from 'modules/documentSearch/types';

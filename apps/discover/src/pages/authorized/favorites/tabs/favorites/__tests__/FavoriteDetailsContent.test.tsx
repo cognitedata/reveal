@@ -1,10 +1,11 @@
 import '__mocks/mockCogniteSDK';
 import 'services/wellSearch/__mocks/setupWellsMockSDK';
 
+import { getMockDocumentCategoriesGet } from 'domain/documents/service/__mocks/getMockDocumentCategoriesGet';
+
 import { screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { getMockAssetsByIds } from 'services/assets/__mocks/getMockAssets';
-import { getMockDocumentCategoriesGet } from 'services/documents/__mocks/getMockDocumentCategoriesGet';
 import { getMockDocumentSearch } from 'services/documentSearch/__mocks/getMockDocumentSearch';
 import { getMockFavoriteSummary } from 'services/favorites/__fixtures/favorite';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';

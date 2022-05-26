@@ -2,13 +2,13 @@ import { Document } from '@cognite/sdk';
 
 import { DocumentType } from 'modules/documentSearch/types';
 
-import { getCreatedDate } from '../selectors/getCreatedDate';
-import { getCreatedDateDisplay } from '../selectors/getCreatedDateDisplay';
-import { getFilepath } from '../selectors/getFilepath';
-import { getFilesize } from '../selectors/getFilesize';
-import { getFullFilepath } from '../selectors/getFullFilepath';
-import { getModifiedDate } from '../selectors/getModifiedDate';
-import { getTitle } from '../selectors/getTitle';
+import { getCreatedDate } from './getCreatedDate';
+import { getCreatedDateDisplay } from './getCreatedDateDisplay';
+import { getFilepath } from './getFilepath';
+import { getFilesize } from './getFilesize';
+import { getFullFilepath } from './getFullFilepath';
+import { getModifiedDate } from './getModifiedDate';
+import { getTitle } from './getTitle';
 
 /*
  * Normalize document type

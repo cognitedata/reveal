@@ -1,5 +1,6 @@
+import { documentValuesPayload } from 'domain/documents/utils/documentValuesPayload';
+
 import get from 'lodash/get';
-import { documentValuesPayload } from 'services/documents/structure';
 import { useMutateRelatedDocumentPatch } from 'services/savedSearches/queries/useMutateRelatedDocumentPatch';
 import { useQuerySavedSearchRelatedDocuments } from 'services/savedSearches/useSavedSearchQuery';
 import { getEmptyGeometry } from 'utils/geometry';

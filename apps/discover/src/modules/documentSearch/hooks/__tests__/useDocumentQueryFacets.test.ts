@@ -1,9 +1,10 @@
 import '__mocks/mockContainerAuth';
 import '__mocks/mockCogniteSDK';
 
+import { getMockDocumentCategoriesGetWithStatus } from 'domain/documents/service/__mocks/getMockDocumentCategoriesGet';
+
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
-import { getMockDocumentCategoriesGetWithStatus } from 'services/documents/__mocks/getMockDocumentCategoriesGet';
 import { DocumentCategoriesFacets } from 'services/documents/types';
 import { getMockDocumentSearch } from 'services/documentSearch/__mocks/getMockDocumentSearch';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';

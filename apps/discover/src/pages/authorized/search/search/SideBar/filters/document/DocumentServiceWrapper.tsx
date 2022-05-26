@@ -1,10 +1,11 @@
-import React from 'react';
-
+import { useDocumentCategoryQuery } from 'domain/documents/service/queries/useDocumentQuery';
 import {
   DocumentCategoriesFacets,
   DocumentError,
-} from 'services/documents/types';
-import { useDocumentCategoryQuery } from 'services/documents/useDocumentQuery';
+} from 'domain/documents/service/types';
+
+import React from 'react';
+
 import styled from 'styled-components/macro';
 import { handleServiceError, PossibleError } from 'utils/errors';
 
