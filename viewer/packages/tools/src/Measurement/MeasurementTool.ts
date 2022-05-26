@@ -52,7 +52,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._viewer = viewer;
     this._options = {
       changeMeasurementLabelMetrics: this._handleDefaultOptions,
-      axisComponentMeasurment: false,
+      axisComponentMeasurement: false,
       ...options
     };
     this._line = new MeasurementLine();
@@ -147,20 +147,35 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private endMeasurement(point: THREE.Vector3) {
     //Update the line with final end point.
     this._line.updateLine(0, 0, this._domElement, this._camera, point);
-    this.updateMeasurementValue(this._options.changeMeasurementLabelMetrics);
+    this.getMeasurementValue(this._options.changeMeasurementLabelMetrics);
     //Add the measurement label.
     this._measurementLabel.addLabel(this._line.getMidPointOnLine(), this._distanceValue);
+
+    //Add axis component measurement data if enabled
+    if (this._options.axisComponentMeasurement) {
+      this.addAxisMeasurement();
+    }
     this._line.clearObjects();
     this._lineMesh = null;
   }
 
   /**
-   * Update the measurement data.
+   * Get the measurement data.
    * @param options Callback function which get user value to be added into label.
    */
-  private updateMeasurementValue(options: MeasurementLabelUpdateDelegate) {
+  private getMeasurementValue(options: MeasurementLabelUpdateDelegate) {
     const measurementLabelData = options(this._line.getMeasuredDistance());
     this._distanceValue = measurementLabelData.distance.toFixed(2) + ' ' + measurementLabelData.units;
+  }
+
+  /**
+   * Get and add axis measurement components for the point to point measurement
+   */
+  private addAxisMeasurement() {
+    const axisMeshes = this._line.getAxisLines();
+    axisMeshes.forEach(mesh => {
+      this._viewer.addObject3D(mesh);
+    });
   }
 
   private onPointerMove(event: MouseEvent) {

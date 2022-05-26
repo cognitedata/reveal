@@ -179,7 +179,12 @@ export class MeasurementLine {
   private addLine(position: Float32Array, color: number): THREE.Mesh {
     const axesLine = new LineGeometry();
     axesLine.setPositions(position);
-    const axesLineMaterial = new LineMaterial({ color: color, linewidth: this._options.lineWidth / 2 });
+    const axesLineMaterial = new LineMaterial({
+      color: color,
+      linewidth: this._options.lineWidth / 2,
+      depthTest: false,
+      worldUnits: true
+    });
     const axesLineMesh = new THREE.Mesh(axesLine, axesLineMaterial);
     axesLineMesh.renderOrder = 1;
 

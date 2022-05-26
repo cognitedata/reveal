@@ -23,7 +23,7 @@ export class MeasurementUi {
       // 1 meters = 3.281 feet
       const distanceInFeet = distance * 3.281;
       return { distance: distanceInFeet, units: 'ft'};
-     }});
+     }, axisComponentMeasurement: true});
     this._gui = ui.addFolder('Types');
     this._guiController = [];
     const addDistanceOptions = this.addDistanceOptions.bind(this);
