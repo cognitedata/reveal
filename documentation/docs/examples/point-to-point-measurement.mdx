@@ -64,7 +64,7 @@ used to trigger custom operation like change the measuring units to feet.
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
-const measurementTool = new MeasurementTool(viewer, {changeMeasurementLabelMetrics: (distance: number) => {
+const measurementTool = new MeasurementTool(viewer, {changeMeasurementLabelMetrics: (distance) => {
       // 1 meters = 3.281 feet
       const distanceInFeet = distance * 3.281;
       return { distance: distanceInFeet, units: 'ft'};

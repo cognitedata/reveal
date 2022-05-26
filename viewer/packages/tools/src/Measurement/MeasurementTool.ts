@@ -6,7 +6,12 @@ import { Cognite3DViewer, Intersection } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import * as THREE from 'three';
 import { MeasurementLabels } from './MeasurementLabels';
-import { MeasurementLineOptions, MeasurementOptions, MeasurementLabelUpdateDelegate } from './types';
+import {
+  MeasurementLineOptions,
+  MeasurementOptions,
+  MeasurementLabelUpdateDelegate,
+  MeasurementLabelData
+} from './types';
 import { MeasurementLine } from './MeasurementLine';
 
 /**
@@ -32,7 +37,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private readonly _measurementLabel: MeasurementLabels;
   private readonly _line: MeasurementLine;
   private _lineMesh: THREE.Mesh;
-  private readonly _options: MeasurementOptions;
+  private readonly _options: Required<MeasurementOptions>;
   private _sphereSize: number;
   private _distanceValue: string;
   private readonly _domElement: HTMLElement;
@@ -40,11 +45,12 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
   private readonly _handleonPointerClick = this.onPointerClick.bind(this);
   private readonly _handleonPointerMove = this.onPointerMove.bind(this);
+  private readonly _handleDefaultOptions = this.defaultOptions.bind(this);
 
   constructor(viewer: Cognite3DViewer, options?: MeasurementOptions) {
     super();
     this._viewer = viewer;
-    this._options = options ?? {};
+    this._options = { changeMeasurementLabelMetrics: this._handleDefaultOptions, ...options };
     this._line = new MeasurementLine();
     this._measurementLabel = new MeasurementLabels(this._viewer);
     this._domElement = this._viewer.domElement;
@@ -64,8 +70,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Exit measurement mode.
    */
   exitMeasurementMode(): void {
-    //remove measurement label, clear all mesh, geometry & event handling.
-    this._measurementLabel.clearLabels();
+    //clear all mesh, geometry & event handling.
     this._line.clearObjects();
     this.removeEventHandling();
   }
@@ -150,10 +155,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * @param options Callback function which get user value to be added into label.
    */
   private updateMeasurementValue(options: MeasurementLabelUpdateDelegate) {
-    const measurementLabelData = options(this._line.getMeasuredDistance()) || {
-      distance: this._line.getMeasuredDistance(),
-      units: 'm'
-    };
+    const measurementLabelData = options(this._line.getMeasuredDistance());
     this._distanceValue = measurementLabelData.distance.toFixed(2) + ' ' + measurementLabelData.units;
   }
 
@@ -176,5 +178,9 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     mesh.scale.copy(mesh.scale.multiplyScalar(this._sphereSize));
 
     this._viewer.addObject3D(mesh);
+  }
+
+  private defaultOptions(): MeasurementLabelData {
+    return { distance: this._line.getMeasuredDistance(), units: 'm' };
   }
 }
