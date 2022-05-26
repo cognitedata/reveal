@@ -23,7 +23,7 @@ import {
   VisionReviewAnnotation,
 } from 'src/modules/Review/store/review/types';
 import { isImageKeypointCollectionData } from 'src/modules/Common/types/typeGuards';
-import { getKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 
 export const getDummyImageClassificationAnnotation = ({
   id = 1,
@@ -279,7 +279,7 @@ export const getDummyVisionReviewAnnotation = (
       ? {
           ...annotation,
           keypoints: annotation.keypoints.map((keypoint) => ({
-            id: getKeypointId(annotation.id, keypoint.label),
+            id: generateKeypointId(annotation.id, keypoint.label),
             keypoint,
             selected,
           })),

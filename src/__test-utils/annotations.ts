@@ -11,7 +11,12 @@ import {
 import {
   AnnotationMetadataV1,
   AnnotationTypeV1,
+  ImageKeypoint,
+  Point,
+  Status,
 } from 'src/api/annotation/types';
+import { KeypointCollectionState } from 'src/modules/Review/store/annotatorWrapper/type';
+import { Keypoint, KeypointCollection } from 'src/modules/Review/types';
 
 export const getDummyAnnotation = (
   id?: number,
@@ -44,4 +49,48 @@ export const getDummyAnnotation = (
     undefined,
     other?.assetId
   );
+};
+
+export const getDummyKeypointState = (
+  label: string,
+  confidence?: number,
+  point?: Point
+): ImageKeypoint => {
+  return {
+    label,
+    confidence: confidence || 1,
+    point: point || { x: 0.5, y: 0.5 },
+  };
+};
+
+export const getDummyKeypointCollectionState = (
+  id: string,
+  keypointIds: string[]
+): KeypointCollectionState => {
+  return {
+    id,
+    keypointIds,
+    label: getDummyPredefinedKeypoint(id).collectionName,
+    show: true,
+    status: Status.Approved,
+  };
+};
+
+const dummyKeypoint = (caption?: string): Keypoint => {
+  return {
+    caption: caption || 'center',
+    order: '1',
+    color: 'red',
+  };
+};
+export const getDummyPredefinedKeypoint = (id: string): KeypointCollection => {
+  return {
+    id,
+    collectionName: 'gauge',
+    keypoints: [
+      dummyKeypoint('left'),
+      dummyKeypoint('center'),
+      dummyKeypoint('right'),
+    ],
+  };
 };

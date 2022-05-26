@@ -12,7 +12,7 @@ import {
   filterAnnotationIdsByConfidence,
   getAnnotationLabelOrText,
   getAnnotationsBadgeCounts,
-  getKeypointId,
+  generateKeypointId,
 } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
   AnnotationsBadgeCounts,
@@ -333,27 +333,29 @@ describe('Test AnnotationUtils', () => {
     );
     test('on empty parent annotation id should throw exception', () => {
       function testGetKeypointId() {
-        getKeypointId('', 'test');
+        generateKeypointId('', 'test');
       }
       expect(testGetKeypointId).toThrowError(exception);
     });
     test('on empty keypoint label should throw exception', () => {
       function testGetKeypointId() {
-        getKeypointId('test', '');
+        generateKeypointId('test', '');
       }
       expect(testGetKeypointId).toThrowError(exception);
     });
     test('when parent annotation id and keypoint label are both empty should throw exception', () => {
       function testGetKeypointId() {
-        getKeypointId('', '');
+        generateKeypointId('', '');
       }
       expect(testGetKeypointId).toThrowError(exception);
     });
     test('should return id when parent anntoation id and keypoint label is provided', () => {
       expect(
-        getKeypointId('test string annotation id', 'test keypoint')
+        generateKeypointId('test string annotation id', 'test keypoint')
       ).toEqual('test string annotation id-test keypoint');
-      expect(getKeypointId(12, 'test keypoint')).toEqual('12-test keypoint');
+      expect(generateKeypointId(12, 'test keypoint')).toEqual(
+        '12-test keypoint'
+      );
     });
   });
 });
