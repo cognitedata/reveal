@@ -5,6 +5,7 @@ import commonReducer from 'src/modules/Common/store/common/slice';
 import annotationV1Reducer from 'src/modules/Common/store/annotationV1/slice';
 import annotationReducer from 'src/modules/Common/store/annotation/slice';
 import annotationLabelReducer from 'src/modules/Review/store/annotationLabel/slice';
+import annotatorWrapperReducer from 'src/modules/Review/store/annotatorWrapper/slice';
 import fileDetailsSlice from 'src/modules/FileDetails/slice';
 import explorerReducer from 'src/modules/Explorer/store/slice';
 import processSlice from 'src/modules/Process/store/slice';
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   annotationReducer,
   explorerReducer,
   annotationLabelReducer,
+  annotatorWrapperReducer,
   annotationDetailPanelReducer,
 });
 

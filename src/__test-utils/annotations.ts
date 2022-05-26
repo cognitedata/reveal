@@ -76,7 +76,7 @@ export const getDummyKeypointCollectionState = (
   };
 };
 
-const dummyKeypoint = (caption?: string): Keypoint => {
+export const dummyKeypoint = (caption?: string): Keypoint => {
   return {
     caption: caption || 'center',
     order: '1',

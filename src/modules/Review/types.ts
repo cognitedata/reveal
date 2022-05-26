@@ -18,7 +18,7 @@ export type KeypointItemCollection = {
 };
 
 export type Keypoint = {
-  caption: string;
+  caption: string; // ToDo: update to label
   order: string;
   color: string;
   defaultPosition?: [number, number];
