@@ -121,7 +121,7 @@ export const ReprocessingModal = ({
       </Modal>
     );
   }
-  
+
   return (
     <Modal
       title="New revision for model"
@@ -134,7 +134,7 @@ export const ReprocessingModal = ({
       <p>This model doesn&apos;t use the latest 3d format.</p>
       <p>
         We recommend you always use the latest 3D format to ensure all the
-        latest features are available. You can click the &quot;Create new 
+        latest features are available. You can click the &quot;Create new
         revision&quot; button below to update the model.
       </p>
       <p>
@@ -143,8 +143,8 @@ export const ReprocessingModal = ({
       </p>
 
       <p>
-        If you continue, <b>a new model revision will be generated</b> from
-        the original source file. The current revision will remain unchanged.
+        If you continue, <b>a new model revision will be generated</b> from the
+        original source file. The current revision will remain unchanged.
       </p>
       <p>
         <b>
