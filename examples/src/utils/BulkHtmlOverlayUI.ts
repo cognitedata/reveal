@@ -21,8 +21,7 @@ export class BulkHtmlOverlayUI {
   private readonly _uiState = {
     filterCategory: 'PDMS',
     filterKey: 'Description',
-    filterValue: 'Tagged equipment',
-    levelBelowToTag: 1
+    filterValue: 'Tagged equipment'
   };
 
   constructor(uiFolder: dat.GUI, viewer: Cognite3DViewer, model: Cognite3DModel, sdk: CogniteClient) {
@@ -51,7 +50,6 @@ export class BulkHtmlOverlayUI {
     uiFolder.add(this._uiState, 'filterCategory').name('Filter category');
     uiFolder.add(this._uiState, 'filterKey').name('Filter key');
     uiFolder.add(this._uiState, 'filterValue').name('Filter property value');
-    uiFolder.add(this._uiState, 'levelBelowToTag').name('Level # below to tag');
     uiFolder.add(actions, 'createTagOverlays').name('Create overlays');
     uiFolder.add(actions, 'clearOverlays').name('Clear');
 
@@ -60,13 +58,13 @@ export class BulkHtmlOverlayUI {
 
   private async createTagOverlays() {
     const { modelId, revisionId } = this._model;
-    const { filterCategory, filterKey, filterValue, levelBelowToTag } = this._uiState;
+    const { filterCategory, filterKey, filterValue } = this._uiState;
 
     const matchedNodes = await this._sdk.revisions3D.list3DNodes(modelId, revisionId, { limit: 1000, properties: { [filterCategory]: { [filterKey]: filterValue } } }).autoPagingToArray();
 
 
     for (let i = 0; i < matchedNodes.length; ++i) {
-      const { id, depth } = matchedNodes[i];
+      const { id } = matchedNodes[i];
       const nodesToTag = await this._sdk.revisions3D.list3DNodes(modelId, revisionId, { depth: 1, nodeId: id, limit: 1000 }).autoPagingToArray();
       for (const nodeToTag of nodesToTag) {
         if (nodeToTag.boundingBox === undefined) {

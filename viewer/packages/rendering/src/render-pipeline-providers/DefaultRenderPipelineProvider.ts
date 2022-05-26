@@ -7,7 +7,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { RenderPass } from '../RenderPass';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
-import { createFullScreenTriangleMesh, createRenderTarget } from '../utilities/renderUtilities';
+import { createFullScreenTriangleMesh, createRenderTarget, hasStyledNodes } from '../utilities/renderUtilities';
 import { RenderTargetData } from './types';
 import { AntiAliasingMode, defaultRenderOptions, RenderOptions } from '../rendering/types';
 import { CadGeometryRenderPipelineProvider } from './CadGeometryRenderPipelineProvider';
@@ -31,6 +31,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _ssaoPass: SSAOPass;
   private readonly _blitToScreenMaterial: THREE.RawShaderMaterial;
   private readonly _blitToScreenMesh: THREE.Mesh;
+  private readonly _materialManager: CadMaterialManager;
   private _rendererStateHelper: WebGLRendererStateHelper;
 
   set renderOptions(renderOptions: RenderOptions) {
@@ -62,6 +63,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
       autoSize?: boolean;
     }
   ) {
+    this._materialManager = materialManager;
     this._cadScene = sceneHandler.scene;
     this._autoResizeOutputTarget = outputRenderTarget?.autoSize ?? true;
     this._outputRenderTarget = outputRenderTarget?.target ?? null;
@@ -115,14 +117,21 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
     this.pipelineSetup(renderer);
 
+    const modelIdentifiers = this._cadModels.map(cadModel => cadModel.modelIdentifier);
+    const hasStyling = hasStyledNodes(modelIdentifiers, this._materialManager);
+
     try {
       yield* this._cadGeometryRenderPipeline.pipeline(renderer);
 
       renderer.setRenderTarget(this._renderTargetData.ssaoRenderTarget);
-      renderer.setClearColor('#FFFFFF');
-      renderer.setClearAlpha(1.0);
-      yield this._ssaoPass;
+      renderer.setClearColor('#FFFFFF', 1.0);
+      renderer.clear();
 
+      if (this.shouldRenderSsao(hasStyling.back)) {
+        yield this._ssaoPass;
+      }
+
+      this._postProcessingRenderPipeline.updateRenderObjectsVisability(hasStyling);
       renderer.setRenderTarget(this._renderTargetData.postProcessingRenderTarget);
       this._rendererStateHelper.resetState();
       this._rendererStateHelper.autoClear = true;
@@ -183,5 +192,12 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
     if (this._outputRenderTarget !== null && this._autoResizeOutputTarget) {
       this._outputRenderTarget.setSize(width, height);
     }
+  }
+
+  private shouldRenderSsao(hasBackStyling: boolean): boolean {
+    const ssaoSampleSize =
+      this.renderOptions?.ssaoRenderParameters?.sampleSize ?? defaultRenderOptions.ssaoRenderParameters.sampleSize;
+
+    return ssaoSampleSize > 0 && hasBackStyling;
   }
 }

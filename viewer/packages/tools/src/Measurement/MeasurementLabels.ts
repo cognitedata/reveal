@@ -43,9 +43,9 @@ export class MeasurementLabels {
   }
 
   /**
-   * Removes all measurements labels
+   * Dispose all measurements labels
    */
-  clearLabels(): void {
+  dispose(): void {
     this._htmlOverlay.clear();
   }
 

@@ -99,7 +99,7 @@ export function Migration() {
       (window as any).viewer = viewer;
 
       const controlsOptions: CameraControlsOptions = {
-        changeCameraTargetOnClick: true,
+        changeCameraTargetOnClick: false,
         mouseWheelAction: 'zoomToCursor',
       };
       cameraManager = viewer.cameraManager as DefaultCameraManager;
@@ -148,7 +148,7 @@ export function Migration() {
         renderMode: 'Color',
         controls: {
           mouseWheelAction: 'zoomToCursor',
-          changeCameraTargetOnClick: true
+          changeCameraTargetOnClick: false
         }
       };
       const guiActions = {
@@ -358,7 +358,7 @@ export function Migration() {
         cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), changeCameraTargetOnClick: value });
       });
 
-      const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client);
+      const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client, viewer);
 
       viewer.on('click', async (event) => {
         const { offsetX, offsetY } = event; 

@@ -17,6 +17,7 @@ export type MeasurementLabelUpdateDelegate = (distance: number) => MeasurementLa
 
 export type MeasurementOptions = {
   changeMeasurementLabelMetrics?: MeasurementLabelUpdateDelegate;
+  axisComponentMeasurment: boolean;
 };
 
 /**
