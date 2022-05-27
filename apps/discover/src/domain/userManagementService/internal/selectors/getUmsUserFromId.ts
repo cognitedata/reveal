@@ -1,6 +1,6 @@
 import { UMSUser } from '@cognite/user-management-service-types';
 
-export const filterUmsUserFromId = (
+export const getUmsUserFromId = (
   users?: UMSUser[],
   userId?: string
 ): UMSUser | undefined => {

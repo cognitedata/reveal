@@ -1,7 +1,7 @@
-import { useUserInfo } from '../userManagementService/query';
+import { useUserInfoQuery } from 'domain/userManagementService/internal/queries/useUserInfoQuery';
 
 export function useIsOwner() {
-  const { data, isFetched } = useUserInfo();
+  const { data, isFetched } = useUserInfoQuery();
 
   const isOwner = (userId: string): boolean => {
     if (!data) {

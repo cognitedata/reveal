@@ -1,6 +1,6 @@
-import { getMockUmsUsers } from 'services/userManagementService/__fixtures/umsUsers';
+import { UNKNOWN } from 'domain/userManagementService/constants';
+import { getMockUmsUsers } from 'domain/userManagementService/service/__fixtures/getMockUmsUsers';
 
-import { UNKNOWN } from '../constants';
 import { getUmsUserName } from '../getUmsUserName';
 
 describe('getUmsUserName', () => {

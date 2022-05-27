@@ -1,3 +1,5 @@
+import { useUserInfoQuery } from 'domain/userManagementService/internal/queries/useUserInfoQuery';
+
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -8,7 +10,6 @@ import {
   useSavedSearchDeleteMutate,
 } from 'services/savedSearches/useSavedSearchesMutate';
 import { useQuerySavedSearchesList } from 'services/savedSearches/useSavedSearchQuery';
-import { useUserInfo } from 'services/userManagementService/query';
 import { shortDate } from 'utils/date';
 import { log } from 'utils/log';
 import { sortByDate } from 'utils/sort/sortByDate';
@@ -49,7 +50,7 @@ export const SavedSearches: React.FC<{
 }> = ({ setCommentTarget, commentTarget }) => {
   const { t } = useTranslation('Saved Searches');
   const options = { checkable: false, flex: false, disableSorting: true };
-  const { data: user } = useUserInfo();
+  const { data: user } = useUserInfoQuery();
   const [selectedItem, setSelectedItem] = useState<
     SavedSearchItem | undefined
   >();

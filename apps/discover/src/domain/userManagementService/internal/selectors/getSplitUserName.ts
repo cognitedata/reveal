@@ -2,7 +2,7 @@
 // This will works only for one pair of parentheses.
 // If there are more, then will return actual user name without splitting
 
-export const splitUserName = (userName?: string) => {
+export const getSplitUserName = (userName?: string) => {
   if (userName) {
     const splitWords = userName.split(/[()]/);
     if (splitWords.length === 3) {

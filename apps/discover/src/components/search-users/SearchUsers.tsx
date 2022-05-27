@@ -1,9 +1,10 @@
+import { getUmsUsers } from 'domain/userManagementService/service/network/getUmsUsers';
+
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import debounce from 'lodash/debounce';
 import { useJsonHeaders } from 'services/service';
-import { userManagement } from 'services/userManagementService/endpoints';
 
 import { AutoComplete, OptionsType, OptionTypeBase } from '@cognite/cogs.js';
 
@@ -27,7 +28,7 @@ export interface Props {
 export const SearchUsers: React.FC<Props> = (props) => {
   const { t } = useTranslation();
   const headers = useJsonHeaders({}, true);
-  const { search } = userManagement(headers);
+  const search = getUmsUsers(headers);
 
   const debouncedSearch = useCallback(
     debounce((value, updateAutocompleteResults) => {

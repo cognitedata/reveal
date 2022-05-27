@@ -1,9 +1,10 @@
+import { useUserInfoQuery } from 'domain/userManagementService/internal/queries/useUserInfoQuery';
+
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 
 import noop from 'lodash/noop';
-import { useUserInfo } from 'services/userManagementService/query';
 import { convertToCancellablePromise } from 'utils/cancellablePromise';
 
 import { Input } from '@cognite/cogs.js';
@@ -34,7 +35,7 @@ export const INPUT_NAME = 'Name';
 export const UserProfileOverlayContent: React.FC<Props> = ({ companyInfo }) => {
   const { t } = useTranslation('UserProfile');
   const history = useHistory();
-  const { data: user } = useUserInfo();
+  const { data: user } = useUserInfoQuery();
   const [displayName, setDisplayName] = useState<string>('');
   const [logo, setLogo] = useState<string | undefined>();
 

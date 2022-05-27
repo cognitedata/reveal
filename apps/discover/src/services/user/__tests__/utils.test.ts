@@ -5,7 +5,7 @@ import { setupServer } from 'msw/node';
 import { testWrapper } from '__test-utils/renderer';
 import { defaultTestUser } from '__test-utils/testdata.utils';
 
-import { getMockUserMe } from '../../userManagementService/__mocks/mockUmsMe';
+import { getMockUserMe } from '../../../domain/userManagementService/service/__mocks/getMockUserMe';
 import { useIsOwner } from '../utils';
 
 const networkMocks = setupServer(getMockUserMe({ id: defaultTestUser }));

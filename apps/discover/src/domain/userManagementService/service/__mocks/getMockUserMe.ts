@@ -5,7 +5,7 @@ import { UMSUserProfile } from '@cognite/user-management-service-types';
 import { MSWRequest } from '__test-utils/types';
 import { SIDECAR } from 'constants/app';
 
-import { getMockUmsUserProfile } from '../__fixtures/umsUsers';
+import { getMockUmsUserProfile } from '../__fixtures/getMockUmsUserProfile';
 
 const userMeUrl = `https://user-management-service.staging.${SIDECAR.cdfCluster}.cognite.ai/user/me`;
 

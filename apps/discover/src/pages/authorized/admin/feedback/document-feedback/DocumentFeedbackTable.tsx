@@ -1,8 +1,10 @@
+import { useAdminUsersQuery } from 'domain/userManagementService/internal/queries/useAdminUsersQuery';
+import { getUmsUserFromId } from 'domain/userManagementService/internal/selectors/getUmsUserFromId';
+
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Cell } from 'react-table';
 
-import { filterUmsUserFromId } from 'dataLayers/userManagementService/selectors/getUmsUserFromId';
 import compact from 'lodash/compact';
 import sortBy from 'lodash/sortBy';
 import {
@@ -11,7 +13,6 @@ import {
   deleteObjectFeedback,
   recoverObjectFeedback,
 } from 'services/feedback';
-import { useAdminUsers } from 'services/userManagementService/query';
 import { getDateOrDefaultText } from 'utils/date';
 import { sortByDate } from 'utils/sort/sortByDate';
 
@@ -69,10 +70,7 @@ const getRowAssigneeColumn =
   (cell: Cell<ObjectFeedbackResponse>) =>
     (
       <AssigneeColumn
-        assignee={filterUmsUserFromId(
-          adminUsers,
-          cell.row.original.assignee?.id
-        )}
+        assignee={getUmsUserFromId(adminUsers, cell.row.original.assignee?.id)}
         assignFeedback={(userId: string) =>
           updateFeedbackAssignee(cell.row.original, userId)
         }
@@ -100,7 +98,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
     useFeedbackUpdateMutate('object');
   const { mutateAsync: updateDocumentFeedback } =
     useFeedbackUpdateMutate('object');
-  const { data: adminUsers, isLoading } = useAdminUsers();
+  const { data: adminUsers, isLoading } = useAdminUsersQuery();
 
   const [highlightedIds, setHighlightedIds] = useState<TableResults>();
   const [expandedIds, setExpandedIds] = useState<TableResults>({});

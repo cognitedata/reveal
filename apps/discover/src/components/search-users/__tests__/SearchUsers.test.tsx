@@ -1,3 +1,5 @@
+import { getMockUserSearch } from 'domain/userManagementService/service/__mocks/getMockUserSearch';
+
 import {
   queryHelpers,
   fireEvent,
@@ -6,7 +8,6 @@ import {
   waitFor,
 } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import { getMockUserSearch } from 'services/userManagementService/__mocks/mockUmsSearch';
 
 import { testRenderer } from '__test-utils/renderer';
 

@@ -3,7 +3,7 @@ import { rest } from 'msw';
 import { MSWRequest } from '__test-utils/types';
 import { SIDECAR } from 'constants/app';
 
-import { getMockUmsUsers } from '../__fixtures/umsUsers';
+import { getMockUmsUsers } from '../__fixtures/getMockUmsUsers';
 
 export const getMockUserSearch = (): MSWRequest => {
   return rest.post<Request>(

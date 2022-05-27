@@ -1,7 +1,10 @@
+import { useAdminUsersQuery } from 'domain/userManagementService/internal/queries/useAdminUsersQuery';
+import { useUserInfoQuery } from 'domain/userManagementService/internal/queries/useUserInfoQuery';
+import { getUmsUserFromId } from 'domain/userManagementService/internal/selectors/getUmsUserFromId';
+
 import React, { useCallback, useState } from 'react';
 import { Cell } from 'react-table';
 
-import { filterUmsUserFromId } from 'dataLayers/userManagementService/selectors/getUmsUserFromId';
 import compact from 'lodash/compact';
 import isString from 'lodash/isString';
 import sortBy from 'lodash/sortBy';
@@ -13,10 +16,6 @@ import {
   recoverGeneralFeedback,
   useFeedbackGetAllQuery,
 } from 'services/feedback';
-import {
-  useAdminUsers,
-  useUserInfo,
-} from 'services/userManagementService/query';
 import { getDateOrDefaultText } from 'utils/date';
 import { sortByDate } from 'utils/sort/sortByDate';
 
@@ -57,9 +56,10 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
   const [isOpen, setOpen] = useState(false);
   const [feedback, setFeedback] = useState<GeneralFeedbackResponse>();
   const [expandedIds, setExpandedIds] = useState<TableResults>({});
-  const { data: user } = useUserInfo();
+  const { data: user } = useUserInfoQuery();
   const [highlightedIds, setHighlightedIds] = useState<TableResults>();
-  const { data: adminUsers, isLoading: isAdminUserLoading } = useAdminUsers();
+  const { data: adminUsers, isLoading: isAdminUserLoading } =
+    useAdminUsersQuery();
 
   /**
    * Reason for eslint-disable: components that are inline-rendered for React-Table cell,
@@ -257,7 +257,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
 
   const getRowAssigneeColumn = (cell: Cell<GeneralFeedbackResponse>) => (
     <AssigneeColumn
-      assignee={filterUmsUserFromId(adminUsers, cell.row.original.assignee?.id)}
+      assignee={getUmsUserFromId(adminUsers, cell.row.original.assignee?.id)}
       assignFeedback={(userId: string) =>
         assignFeedback(cell.row.original, userId)
       }

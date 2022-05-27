@@ -1,10 +1,11 @@
 import '__mocks/mockContainerAuth'; // should be first
 import 'services/wellSearch/__mocks/setupWellsMockSDK';
 import 'modules/map/__mocks/mockMapbox';
+import { getMockUserMe } from 'domain/userManagementService/service/__mocks/getMockUserMe';
+
 import { screen, waitFor, fireEvent } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
-import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
 import { getMockWellsById } from 'services/wellSearch/__mocks/getMockWellsById';
 
 import { getMockWell } from '__test-utils/fixtures/well/well';

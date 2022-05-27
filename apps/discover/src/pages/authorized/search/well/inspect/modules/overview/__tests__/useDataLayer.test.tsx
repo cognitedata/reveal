@@ -1,10 +1,10 @@
 import 'services/wellSearch/__mocks/setupWellsMockSDK';
+import { getMockUserMe } from 'domain/userManagementService/service/__mocks/getMockUserMe';
 import { getMockTrajectoriesList } from 'domain/wells/trajectory/service/__mocks/getMockWellTrajectories';
 
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
-import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
 import { getMockWellsById } from 'services/wellSearch/__mocks/getMockWellsById';
 
 import { testRenderer } from '__test-utils/renderer';

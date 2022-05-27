@@ -1,7 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import { useUserInfoQuery } from 'domain/userManagementService/internal/queries/useUserInfoQuery';
+import { getAssigneeName } from 'domain/userManagementService/internal/selectors/getAssigneeName';
 
-import { getAssigneeName } from 'dataLayers/userManagementService/adapters/getAssigneeName';
-import { useUserInfo } from 'services/userManagementService/query';
+import React, { useMemo, useState } from 'react';
 
 import { Dropdown, Menu, Label } from '@cognite/cogs.js';
 import { UMSUser } from '@cognite/user-management-service-types';
@@ -24,7 +24,7 @@ interface Props {
 
 export const AssigneeColumn: React.FC<Props> = (props) => {
   const { assignee, assignFeedback, unassignFeedback, adminUsers } = props;
-  const { data: user } = useUserInfo();
+  const { data: user } = useUserInfoQuery();
   const [visibleAssignee, setVisibleAssignee] = React.useState<
     UMSUser | undefined
   >(assignee);

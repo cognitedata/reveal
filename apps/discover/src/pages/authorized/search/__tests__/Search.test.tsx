@@ -2,6 +2,8 @@ import '__mocks/mockContainerAuth'; // should be first
 import '__mocks/mockCogniteSDK';
 import 'services/wellSearch/__mocks/setupWellsMockSDK';
 
+import { getMockUserMe } from 'domain/userManagementService/service/__mocks/getMockUserMe';
+
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { Store } from 'redux';
@@ -10,7 +12,6 @@ import { getMockLabelsPost } from 'services/labels/__mocks/getMockLabels';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockSavedSearchList } from 'services/savedSearches/__mocks/getMockSavedSearchList';
 import { getMockSearchHistoryGet } from 'services/searchHistory/__mocks/getMockSearchHistoryGet';
-import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
 import { getMockSummariesGet } from 'services/wellSearch/__mocks/getMockSummariesGet';
 import { getMockWellSourceGet } from 'services/wellSearch/__mocks/getMockWellsSourcesGet';
 

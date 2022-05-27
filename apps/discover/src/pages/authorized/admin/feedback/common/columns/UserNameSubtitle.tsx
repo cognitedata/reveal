@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
+import { getSplitUserName } from 'domain/userManagementService/internal/selectors/getSplitUserName';
+import { getUmsUserName } from 'domain/userManagementService/internal/selectors/getUmsUserName';
 
-import { splitUserName } from 'dataLayers/userManagementService/adapters/splitUserName';
-import { getUmsUserName } from 'dataLayers/userManagementService/selectors/getUmsUserName';
+import { useMemo } from 'react';
 
 import { UMSUser } from '@cognite/user-management-service-types';
 
@@ -12,7 +12,7 @@ export const UserNameSubtitle: React.FC<{
   currentUserId?: string;
 }> = ({ user, currentUserId }) => {
   const splittedUser = useMemo(
-    () => splitUserName(user?.displayName),
+    () => getSplitUserName(user?.displayName),
     [user.displayName]
   );
 

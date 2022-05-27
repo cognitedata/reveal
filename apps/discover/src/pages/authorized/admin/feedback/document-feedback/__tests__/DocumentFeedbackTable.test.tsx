@@ -1,9 +1,11 @@
 import '__mocks/mockContainerAuth'; // should be first
+
+import { getMockUserSearch } from 'domain/userManagementService/service/__mocks/getMockUserSearch';
+
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { Store } from 'redux';
 import { getMockedDocumentFeedbackItem } from 'services/feedback/__fixtures/feedback';
-import { getMockUserSearch } from 'services/userManagementService/__mocks/mockUmsSearch';
 
 import { testRendererModal } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';

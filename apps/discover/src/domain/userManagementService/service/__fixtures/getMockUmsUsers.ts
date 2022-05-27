@@ -1,22 +1,4 @@
-import {
-  UMSUser,
-  UMSUserProfile,
-} from '@cognite/user-management-service-types';
-
-export const getMockUmsUserProfile = (
-  preferences?: Partial<UMSUserProfile>
-): UMSUserProfile => ({
-  id: '1',
-  displayName: 'John Doe',
-  projects: [],
-  createdTime: '1',
-  lastUpdatedTime: '1',
-  preferences: {
-    hidden: false,
-    measurement: 'meter',
-  },
-  ...preferences,
-});
+import { UMSUser } from '@cognite/user-management-service-types';
 
 export const getMockUmsUsers = (extras: UMSUser[] = []): UMSUser[] => [
   {
@@ -60,18 +42,3 @@ export const getMockUmsUsers = (extras: UMSUser[] = []): UMSUser[] => [
   },
   ...extras,
 ];
-
-export const getMockUmsUserProfilePreference = (
-  preferences?: Partial<UMSUserProfile['preferences']>
-): UMSUserProfile => ({
-  id: '1',
-  displayName: 'John Doe',
-  projects: [],
-  createdTime: '1',
-  lastUpdatedTime: '1',
-  preferences: {
-    hidden: false,
-    measurement: 'meter',
-    ...preferences,
-  },
-});

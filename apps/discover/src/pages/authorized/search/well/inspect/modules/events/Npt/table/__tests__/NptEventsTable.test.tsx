@@ -1,6 +1,7 @@
+import { getMockUserMe } from 'domain/userManagementService/service/__mocks/getMockUserMe';
+
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
 
 import { mockNptEvents } from '__test-utils/fixtures/npt';
 import { testRenderer } from '__test-utils/renderer';

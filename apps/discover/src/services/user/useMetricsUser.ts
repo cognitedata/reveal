@@ -1,7 +1,7 @@
-import { useUserInfo } from '../userManagementService/query';
+import { useUserInfoQuery } from 'domain/userManagementService/internal/queries/useUserInfoQuery';
 
 export const useMetricsUser = () => {
-  const { data: user } = useUserInfo();
+  const { data: user } = useUserInfoQuery();
 
   const userId = user?.id;
   const email = user?.email;

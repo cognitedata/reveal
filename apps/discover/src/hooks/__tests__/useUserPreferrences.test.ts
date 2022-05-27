@@ -1,6 +1,7 @@
+import { getMockUserMe } from 'domain/userManagementService/service/__mocks/getMockUserMe';
+
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
-import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
 
 import {
   UMSUserProfile,

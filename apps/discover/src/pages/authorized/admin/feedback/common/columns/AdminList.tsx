@@ -1,9 +1,10 @@
+import { getProcessedAdminList } from 'domain/userManagementService/internal/selectors/getProcessedAdminList';
+import { getUmsUsers } from 'domain/userManagementService/service/network/getUmsUsers';
+
 import { useCallback, useState } from 'react';
 
-import { getProcessedAdminList } from 'dataLayers/userManagementService/selectors/getProcessedAdminList';
 import debounce from 'lodash/debounce';
 import { useJsonHeaders } from 'services/service';
-import { userManagement } from 'services/userManagementService/endpoints';
 
 import { Input, Menu } from '@cognite/cogs.js';
 import { UMSUser } from '@cognite/user-management-service-types';
@@ -39,7 +40,7 @@ export const AdminList: React.FC<Props> = ({
   const headers = useJsonHeaders({}, true);
   const [searchValue, setSearchValue] = useState<string>('');
 
-  const { search } = userManagement(headers);
+  const search = getUmsUsers(headers);
 
   const debouncedSearch = useCallback(
     debounce((value) => {

@@ -1,5 +1,6 @@
+import { getMockUmsUsers } from 'domain/userManagementService/service/__fixtures/getMockUmsUsers';
+
 import head from 'lodash/head';
-import { getMockUmsUsers } from 'services/userManagementService/__fixtures/umsUsers';
 
 import { getProcessedAdminList } from '../getProcessedAdminList';
 

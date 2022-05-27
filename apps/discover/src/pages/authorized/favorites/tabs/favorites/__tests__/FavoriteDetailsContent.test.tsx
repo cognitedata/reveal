@@ -3,13 +3,13 @@ import 'services/wellSearch/__mocks/setupWellsMockSDK';
 
 import { getMockDocumentCategoriesGet } from 'domain/documents/service/__mocks/getMockDocumentCategoriesGet';
 import { getMockFavoriteSummary } from 'domain/favorites/service/__fixtures/favorite';
+import { getMockUserMe } from 'domain/userManagementService/service/__mocks/getMockUserMe';
 
 import { screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { getMockAssetsByIds } from 'services/assets/__mocks/getMockAssets';
 import { getMockDocumentSearch } from 'services/documentSearch/__mocks/getMockDocumentSearch';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
-import { getMockUserMe } from 'services/userManagementService/__mocks/mockUmsMe';
 import { getMockWellsById } from 'services/wellSearch/__mocks/getMockWellsById';
 
 import { getMockWell } from '__test-utils/fixtures/well/well';

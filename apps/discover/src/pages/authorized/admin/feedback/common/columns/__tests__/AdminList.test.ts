@@ -1,6 +1,7 @@
+import { UNKNOWN } from 'domain/userManagementService/constants';
+import { getMockUmsUsers } from 'domain/userManagementService/service/__fixtures/getMockUmsUsers';
+
 import { fireEvent, screen } from '@testing-library/react';
-import { UNKNOWN } from 'dataLayers/userManagementService/selectors/constants';
-import { getMockUmsUsers } from 'services/userManagementService/__fixtures/umsUsers';
 
 import { testRendererModal } from '__test-utils/renderer';
 

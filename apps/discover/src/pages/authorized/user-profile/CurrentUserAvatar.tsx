@@ -1,6 +1,6 @@
-import React from 'react';
+import { useUserInfoQuery } from 'domain/userManagementService/internal/queries/useUserInfoQuery';
 
-import { useUserInfo } from 'services/userManagementService/query';
+import React from 'react';
 
 import { UserAvatar } from 'components/UserAvatar/UserAvatar';
 
@@ -8,7 +8,7 @@ interface Props {
   size?: number;
 }
 export const CurrentUserAvatar: React.FC<Props> = ({ size }) => {
-  const { data: user } = useUserInfo();
+  const { data: user } = useUserInfoQuery();
 
   return (
     <UserAvatar

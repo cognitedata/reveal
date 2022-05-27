@@ -1,7 +1,7 @@
+import { useUpdateMyPreferencesMutate } from 'domain/userManagementService/internal/actions/useUpdateMyPreferencesMutate';
+
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { useUpdateMyPreferences } from 'services/userManagementService/query';
 
 import { Dropdown, Title, Menu, TopBar, Icon } from '@cognite/cogs.js';
 import { UMSUserProfilePreferences } from '@cognite/user-management-service-types';
@@ -11,7 +11,7 @@ import { MeasurementSetting } from './settings';
 
 export const UserSettings: React.FC = () => {
   const { t } = useTranslation();
-  const updatePreferences = useUpdateMyPreferences();
+  const updatePreferences = useUpdateMyPreferencesMutate();
 
   const [visible, setVisible] = React.useState(false);
   const toggleVisibility = () => setVisible((prevState) => !prevState);

@@ -1,11 +1,11 @@
-import { useUserInfo } from 'services/userManagementService/query';
+import { useUserInfoQuery } from 'domain/userManagementService/internal/queries/useUserInfoQuery';
 
 import { UMSUserProfilePreferences } from '@cognite/user-management-service-types';
 
 import { UserPreferredUnit } from 'constants/units';
 
 export const useUserPreferencesMeasurement = () => {
-  const queryResult = useUserInfo();
+  const queryResult = useUserInfoQuery();
   return {
     ...queryResult,
     data: queryResult?.isFetched
@@ -18,7 +18,7 @@ export const useUserPreferencesMeasurement = () => {
 };
 
 export const useUserPreferencesMeasurementByMeasurementEnum = () => {
-  const { data } = useUserInfo();
+  const { data } = useUserInfoQuery();
   return (
     data?.preferences?.measurement ||
     UMSUserProfilePreferences.MeasurementEnum.Feet
