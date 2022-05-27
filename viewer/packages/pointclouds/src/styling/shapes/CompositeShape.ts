@@ -5,7 +5,6 @@
 import { IShape } from './IShape';
 import { IRawShape, ShapeType } from './IRawShape';
 
-// import * as THREE from 'three';
 import { Vec3, AABB, b3Union, emptyBox3 } from './linalg';
 
 export type RawCompositeShape = {
