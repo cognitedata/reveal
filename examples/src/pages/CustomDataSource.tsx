@@ -67,8 +67,6 @@ class MyModelMetadataProvider implements ModelMetadataProvider {
 }
 
 class MyModelDataProvider implements ModelDataProvider {
-  public readonly headers: HttpHeaders = {};
-
   async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
     const url = `${baseUrl}/${fileName}`;
     const response = await fetch(url);
