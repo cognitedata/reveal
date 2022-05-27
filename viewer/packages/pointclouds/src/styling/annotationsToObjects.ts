@@ -4,10 +4,10 @@
 
 import { BoundingVolume } from '../annotationTypes';
 import { CompositeShape } from './shapes/CompositeShape';
-import { StyledObject } from './StyledObject';
-import { StyledObjectInfo } from './StyledObjectInfo';
+import { StylableObject } from './StylableObject';
+import { StylableObjectInfo } from './StylableObjectInfo';
 
-function annotationsToObjects(bvs: BoundingVolume[]): StyledObject[] {
+function annotationsToObjects(bvs: BoundingVolume[]): StylableObject[] {
   let idCounter = 0;
 
   const resultObjects = bvs.map(bv => {
@@ -16,22 +16,22 @@ function annotationsToObjects(bvs: BoundingVolume[]): StyledObject[] {
     const shapes = bv.region.map(primitive => primitive.transformToShape());
 
     const compShape = new CompositeShape(shapes);
-    const styledObject: StyledObject = {
+    const stylableObject: StylableObject = {
       shape: compShape,
       objectId: idCounter
     };
 
-    return styledObject;
+    return stylableObject;
   });
 
   return resultObjects;
 }
 
-export function annotationsToObjectInfo(annotations: BoundingVolume[]): StyledObjectInfo {
-  const styledObjects = annotationsToObjects(annotations);
+export function annotationsToObjectInfo(annotations: BoundingVolume[]): StylableObjectInfo {
+  const stylableObjects = annotationsToObjects(annotations);
 
   return {
-    styledObjects: styledObjects.map(obj => {
+    stylableObjects: stylableObjects.map(obj => {
       return {
         objectId: obj.objectId,
         shape: obj.shape.toRawShape()

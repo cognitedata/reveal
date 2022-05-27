@@ -2,14 +2,14 @@
  * Copyright 2022 Cognite AS
  */
 
-import { RawStyledObject, StyledObject, rawToStyleObject } from '../../styling/StyledObject';
+import { RawStylableObject, StylableObject, rawToStylableObject } from '../../styling/StylableObject';
 
 import { parseEpt, EptInputData } from './parseEpt';
 import { Vec3 } from '../../styling/shapes/linalg';
 
 const ctx: Worker = self as any;
 
-let objectList: StyledObject[] = [];
+let objectList: StylableObject[] = [];
 let pointOffset: Vec3 = [0, 0, 0];
 
 type CommandType = 'objects' | 'parse';
@@ -20,7 +20,7 @@ export interface ICommand {
 
 export type ObjectsCommand = {
   type: 'objects';
-  objects: RawStyledObject[];
+  objects: RawStylableObject[];
   pointOffset: Vec3;
 };
 
@@ -35,7 +35,7 @@ ctx.onmessage = function (event: MessageEvent<ICommand>) {
   switch (command.type) {
     case 'objects':
       const objectsCommand = command as ObjectsCommand;
-      objectList = objectsCommand.objects.map(rawToStyleObject);
+      objectList = objectsCommand.objects.map(rawToStylableObject);
       pointOffset = objectsCommand.pointOffset;
       break;
     case 'parse':

@@ -12,7 +12,7 @@ import { annotationsToObjectInfo } from './styling/annotationsToObjects';
 import { BoxPrimitive } from './annotationTypes';
 
 import { Potree } from './potree-three-loader';
-import { StyledObjectInfo } from './styling/StyledObjectInfo';
+import { StylableObjectInfo } from './styling/StylableObjectInfo';
 import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
 
 import { CogniteClientPlayground } from '@cognite/sdk-playground';
@@ -77,19 +77,19 @@ export class PointCloudFactory {
   ): Promise<PotreeNodeWrapper> {
     const { modelBaseUrl } = modelMetadata;
 
-    let styledObjectInfo: StyledObjectInfo | undefined = undefined;
+    let stylableObjectInfo: StylableObjectInfo | undefined = undefined;
     if (this._sdkPlayground && modelIdentifier instanceof CdfModelIdentifier) {
       const annotations = await this.getAnnotations(modelIdentifier);
-      styledObjectInfo = annotationsToObjectInfo(annotations);
+      stylableObjectInfo = annotationsToObjectInfo(annotations);
     }
 
     const pointCloudOctree = await this._potreeInstance.loadPointCloud(
       modelBaseUrl,
       DEFAULT_POINT_CLOUD_METADATA_FILE,
-      styledObjectInfo
+      stylableObjectInfo
     );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;
-    return new PotreeNodeWrapper(pointCloudOctree, styledObjectInfo);
+    return new PotreeNodeWrapper(pointCloudOctree, stylableObjectInfo);
   }
 }

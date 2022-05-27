@@ -15,13 +15,13 @@ import { ParseCommand, ObjectsCommand } from '../workers/eptBinaryDecoder.worker
 
 import { ParsedEptData, EptInputData } from '../workers/parseEpt';
 
-import { StyledObjectInfo } from '../../styling/StyledObjectInfo';
+import { StylableObjectInfo } from '../../styling/StylableObjectInfo';
 
 import { fromThreeVector3 } from '@reveal/utilities';
 
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
-  private readonly _styledObjectInfo: StyledObjectInfo | undefined;
+  private readonly _stylableObjectInfo: StylableObjectInfo | undefined;
 
   static readonly WORKER_POOL = new WorkerPool(32, EptDecoderWorker);
 
@@ -29,9 +29,9 @@ export class EptBinaryLoader implements ILoader {
     return '.bin';
   }
 
-  constructor(dataLoader: ModelDataProvider, styledObjectInfo?: StyledObjectInfo | undefined) {
+  constructor(dataLoader: ModelDataProvider, stylableObjectInfo?: StylableObjectInfo | undefined) {
     this._dataLoader = dataLoader;
-    this._styledObjectInfo = styledObjectInfo;
+    this._stylableObjectInfo = stylableObjectInfo;
   }
 
   async load(node: PointCloudEptGeometryNode): Promise<void> {
@@ -62,10 +62,10 @@ export class EptBinaryLoader implements ILoader {
         res(e.data);
       }
 
-      if (this._styledObjectInfo) {
-        postStyledObjectInfo(autoTerminatingWorker,
+      if (this._stylableObjectInfo) {
+        postStylableObjectInfo(autoTerminatingWorker,
                              node,
-                             this._styledObjectInfo);
+                             this._stylableObjectInfo);
       }
 
       const eptData: EptInputData = {
@@ -99,15 +99,15 @@ function postParseCommand(autoTerminatingWorker: AutoTerminatingWorker,
       autoTerminatingWorker.worker.postMessage(parseMessage, [parseMessage.data.buffer]);
 }
 
-function postStyledObjectInfo(autoTerminatingWorker: AutoTerminatingWorker,
+function postStylableObjectInfo(autoTerminatingWorker: AutoTerminatingWorker,
                               node: PointCloudEptGeometryNode,
-                              styledObjectInfo: StyledObjectInfo): void {
+                              stylableObjectInfo: StylableObjectInfo): void {
 
   const offsetVec = node.boundingBox.min;
 
   const objectMessage: ObjectsCommand = {
     type: 'objects',
-    objects: styledObjectInfo.styledObjects,
+    objects: stylableObjectInfo.stylableObjects,
     pointOffset: [offsetVec.x, offsetVec.y, offsetVec.z] as [number, number, number]
   };
 

@@ -2,12 +2,12 @@
  * Copyright 2022 Cognite AS
  */
 
-import { StyledObject } from '../../styling/StyledObject';
+import { StylableObject } from '../../styling/StylableObject';
 import { Vec3, v3Add } from '../../styling/shapes/linalg';
 
 export function computeObjectIdBuffer(
   positionBuffer: Float32Array,
-  objectList: StyledObject[],
+  objectList: StylableObject[],
   pointOffset: Vec3
 ): ArrayBuffer {
   const numPoints = positionBuffer.length / 3;
