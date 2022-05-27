@@ -8,6 +8,8 @@ import { Cylinder } from './styling/shapes/Cylinder';
 import * as THREE from 'three';
 import { Box } from './styling/shapes/Box';
 
+import { createInvertedRevealTransformationFromCdfTransformation } from './styling/shapes/linalg';
+
 export class CylinderPrimitive {
 
   constructor(public center_a: THREE.Vector3, public center_b: THREE.Vector3, public radius: number) { }
@@ -24,9 +26,9 @@ export class BoxPrimitive {
   constructor(public instanceMatrix: THREE.Matrix4) { }
 
   transformToShape(): IShape {
-    return new Box(
-      this.instanceMatrix.clone().transpose().toArray()
-    );
+    const rawMatrix = { data: this.instanceMatrix.clone().transpose().toArray() };
+    const invertedMatrix = createInvertedRevealTransformationFromCdfTransformation(rawMatrix);
+    return new Box(invertedMatrix);
   }
 };
 

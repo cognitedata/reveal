@@ -6,7 +6,6 @@ import { ShapeType } from './IRawShape';
 import { IShape } from './IShape';
 import {
   AABB,
-  createInvertedRevealTransformationFromCdfTransformation,
   m4MultiplyV3WithTranslation,
   Mat4,
   Vec3
@@ -20,13 +19,8 @@ export type RawBox = {
 export class Box implements IShape {
   readonly invMatrix: Mat4;
 
-  constructor(instanceMatrix: number[], alreadyInverted: boolean = false) {
-    if (alreadyInverted) {
-      this.invMatrix = { data: instanceMatrix.slice() };
-    } else {
-      const mat: Mat4 = { data: instanceMatrix };
-      this.invMatrix = createInvertedRevealTransformationFromCdfTransformation(mat);
-    }
+  constructor(invertedInstanceMatrix: Mat4) {
+    this.invMatrix = invertedInstanceMatrix;
   }
 
   computeBoundingBox(): AABB {
