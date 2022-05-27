@@ -10,7 +10,7 @@ describe(calculateVolumeOfMesh.name, () => {
     const testBox = new THREE.BoxGeometry(1, 1, 1, 1, 1, 1);
     const volume = calculateVolumeOfMesh(
       Float32Array.from(testBox.getAttribute('position').array),
-      Uint32Array.from(testBox.getIndex().array)
+      Uint32Array.from(testBox.getIndex()!.array)
     );
 
     expect(Math.abs(1 - volume)).toBeLessThan(1e-6);
@@ -20,7 +20,7 @@ describe(calculateVolumeOfMesh.name, () => {
     const testSphere = new THREE.SphereGeometry(1, 200, 200);
     const calculatedVolume = calculateVolumeOfMesh(
       Float32Array.from(testSphere.getAttribute('position').array),
-      Uint32Array.from(testSphere.getIndex().array)
+      Uint32Array.from(testSphere.getIndex()!.array)
     );
 
     const realVolume = (4 / 3) * Math.PI;
@@ -33,7 +33,7 @@ describe(calculateVolumeOfMesh.name, () => {
 
     const calculatedVolume = calculateVolumeOfMesh(
       Float32Array.from(testCylinder.getAttribute('position').array),
-      Uint32Array.from(testCylinder.getIndex().array)
+      Uint32Array.from(testCylinder.getIndex()!.array)
     );
 
     const realVolume = Math.PI;
@@ -46,7 +46,7 @@ describe(calculateVolumeOfMesh.name, () => {
 
     const calculatedVolume = calculateVolumeOfMesh(
       Float32Array.from(testCylinder.getAttribute('position').array),
-      Uint32Array.from(testCylinder.getIndex().array)
+      Uint32Array.from(testCylinder.getIndex()!.array)
     );
 
     const realVolume = Math.PI / 3;
