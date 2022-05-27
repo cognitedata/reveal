@@ -2,7 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-import { HttpHeaders } from '@cognite/sdk-core';
 export interface JsonFileProvider {
   getJsonFile(baseUrl: string, fileName: string): Promise<any>;
 }
@@ -14,7 +13,7 @@ export interface BinaryFileProvider {
 /**
  * Provides data for 3D models.
  */
-export interface ModelDataProvider extends HttpHeadersProvider, JsonFileProvider, BinaryFileProvider {
+export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider {
   /**
    * Download and parse a JSON file and return the resulting struct.
    * @param baseUrl     Base URL of the model.
@@ -27,10 +26,6 @@ export interface ModelDataProvider extends HttpHeadersProvider, JsonFileProvider
    * @param fileName    Filename of binary file.
    */
   getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
-}
-
-export interface HttpHeadersProvider {
-  readonly headers: HttpHeaders;
 }
 
 export enum File3dFormat {
