@@ -12,7 +12,7 @@ export class GeometryPass implements RenderPass {
   private readonly _geometryScene: THREE.Object3D;
   private readonly _materialManager: CadMaterialManager;
   private readonly _renderMode: RenderMode;
-  private readonly _overrideRenderLayer: number;
+  private readonly _overrideRenderLayer: number | undefined;
   private readonly _renderLayer: number;
 
   constructor(

@@ -35,11 +35,11 @@ export function getBlitMaterial(options: BlitOptions): THREE.RawShaderMaterial {
   const { texture, effect, depthTexture, blendOptions, overrideAlpha, ssaoTexture, writeColor, edges, outline } =
     options;
 
-  const uniforms = {
+  const uniforms: Record<string, { value: THREE.Texture }> = {
     tDiffuse: { value: texture }
   };
 
-  const defines = {};
+  const defines: Record<string, boolean> = {};
   const depthTest = setDepthTestOptions(depthTexture, uniforms, defines);
   setAlphaOverride(overrideAlpha, uniforms, defines);
   setBlitEffect(effect, defines);
@@ -93,7 +93,7 @@ function setOutlineColor(outlineTextureData: Uint8ClampedArray, colorIndex: numb
   outlineTextureData[4 * colorIndex + 3] = 255;
 }
 
-function setDepthTestOptions(depthTexture: THREE.DepthTexture, uniforms: ThreeUniforms, defines: any) {
+function setDepthTestOptions(depthTexture: THREE.DepthTexture | undefined, uniforms: ThreeUniforms, defines: any) {
   if (depthTexture === undefined) {
     return false;
   }
@@ -104,7 +104,7 @@ function setDepthTestOptions(depthTexture: THREE.DepthTexture, uniforms: ThreeUn
   return true;
 }
 
-function setAlphaOverride(overrideAlpha: number, uniforms: ThreeUniforms, defines: any) {
+function setAlphaOverride(overrideAlpha: number | undefined, uniforms: ThreeUniforms, defines: any) {
   if (overrideAlpha === undefined) {
     return;
   }
@@ -112,7 +112,7 @@ function setAlphaOverride(overrideAlpha: number, uniforms: ThreeUniforms, define
   defines['ALPHA'] = true;
 }
 
-function setBlitEffect(effect: BlitEffect, defines: any) {
+function setBlitEffect(effect: BlitEffect | undefined, defines: any) {
   const blitEffect = effect ?? BlitEffect.None;
   if (blitEffect === BlitEffect.GaussianBlur) {
     defines['GAUSSIAN_BLUR'] = true;
@@ -121,12 +121,12 @@ function setBlitEffect(effect: BlitEffect, defines: any) {
   }
 }
 
-function initializeBlendingOptions(blendOptions: BlendOptions) {
+function initializeBlendingOptions(blendOptions: BlendOptions | undefined) {
   const blending = blendOptions !== undefined ? THREE.CustomBlending : THREE.NormalBlending;
   const blendDst = blendOptions?.blendDestination ?? THREE.OneMinusSrcAlphaFactor;
   const blendSrc = blendOptions?.blendSource ?? THREE.SrcAlphaFactor;
-  const blendSrcAlpha = blendOptions?.blendSourceAlpha ?? null; // Uses blendSrc value if null
-  const blendDstAlpha = blendOptions?.blendDestinationAlpha ?? null; // Uses blendDst value if null
+  const blendSrcAlpha = blendOptions?.blendSourceAlpha ?? undefined; // Uses blendSrc value if undefined
+  const blendDstAlpha = blendOptions?.blendDestinationAlpha ?? undefined; // Uses blendDst value if undefined
   return { blending, blendDst, blendSrc, blendSrcAlpha, blendDstAlpha };
 }
 
