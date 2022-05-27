@@ -8,10 +8,10 @@ import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
 import { MeasurementLineOptions } from './types';
 
 export class MeasurementLine {
-  private _geometry: LineGeometry;
-  private _material: LineMaterial;
+  private _geometry: LineGeometry | null;
+  private _material: LineMaterial | null;
   private _position: Float32Array;
-  private _distanceToCamera: number;
+  private _distanceToCamera: number = 0;
 
   private readonly _options: MeasurementLineOptions = {
     lineWidth: 0.01,
@@ -20,6 +20,8 @@ export class MeasurementLine {
 
   constructor() {
     this._position = new Float32Array(6);
+    this._geometry = null;
+    this._material = null;
   }
 
   /**
@@ -44,7 +46,7 @@ export class MeasurementLine {
       worldUnits: true
     });
 
-    const mesh = new THREE.Mesh(this._geometry, this._material);
+    const mesh = new THREE.Mesh(this._geometry as THREE.BufferGeometry, this._material);
     //Make sure line are rendered in-front of other objects
     mesh.renderOrder = 1;
 
@@ -94,7 +96,7 @@ export class MeasurementLine {
     this._position[4] = position.y;
     this._position[5] = position.z;
     //Update the line geometry end point.
-    this._geometry.setPositions(this._position);
+    this._geometry?.setPositions(this._position);
   }
 
   /**
