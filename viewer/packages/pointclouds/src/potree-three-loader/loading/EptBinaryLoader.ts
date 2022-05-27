@@ -17,6 +17,8 @@ import { ParsedEptData, EptInputData } from '../workers/parseEpt';
 
 import { StyledObjectInfo } from '../../styling/StyledObjectInfo';
 
+import { fromThreeVector3 } from '@reveal/utilities';
+
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
   private readonly _styledObjectInfo: StyledObjectInfo | undefined;
@@ -84,13 +86,12 @@ export class EptBinaryLoader implements ILoader {
         res();
       };
 
-      const toArray = (v: THREE.Vector3): [number, number, number] => [v.x, v.y, v.z];
       const eptData: EptInputData = {
         buffer: data,
         schema: node.ept.schema,
         scale: node.ept.eptScale,
         offset: node.ept.eptOffset,
-        mins: toArray(node.key.b.min)
+        mins: fromThreeVector3(node.key.b.min)
       };
 
       if (this._styledObjectInfo) {
