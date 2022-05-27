@@ -19,6 +19,6 @@ export function createPointCloudManager(
   sdkPlayground?: CogniteClientPlayground | undefined
 ): PointCloudManager {
   const metadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataProvider);
-  const modelFactory = new PointCloudFactory(modelDataProvider);
-  return new PointCloudManager(metadataRepository, modelFactory, scene, renderer, sdkPlayground);
+  const modelFactory = new PointCloudFactory(modelDataProvider, sdkPlayground);
+  return new PointCloudManager(metadataRepository, modelFactory, scene, renderer);
 }

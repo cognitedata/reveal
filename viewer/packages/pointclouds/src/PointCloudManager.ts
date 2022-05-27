@@ -15,21 +15,14 @@ import { PointCloudOctree } from './potree-three-loader';
 
 import { asyncScheduler, combineLatest, Observable, scan, Subject, throttleTime } from 'rxjs';
 
-import { CdfModelIdentifier, ModelIdentifier } from '@reveal/modeldata-api';
+import { ModelIdentifier } from '@reveal/modeldata-api';
 import { MetricsLogger } from '@reveal/metrics';
 import { SupportedModelTypes } from '@reveal/model-base';
-import { StyledObjectInfo } from './styling/StyledObjectInfo';
-import { CogniteClientPlayground } from '@cognite/sdk-playground';
-import { BoundingVolume, Geometry } from './annotationTypes';
-import { annotationsToObjectInfo } from './styling/annotationsToObjects';
-import { BoxPrimitive } from './annotationTypes';
 
 export class PointCloudManager {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository;
   private readonly _pointCloudFactory: PointCloudFactory;
   private readonly _pointCloudGroupWrapper: PotreeGroupWrapper;
-
-  private readonly _sdkPlayground: CogniteClientPlayground | undefined;
 
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
   private readonly _modelSubject: Subject<{ modelIdentifier: ModelIdentifier; operation: 'add' | 'remove' }> =
@@ -44,14 +37,11 @@ export class PointCloudManager {
     metadataRepository: PointCloudMetadataRepository,
     modelFactory: PointCloudFactory,
     scene: THREE.Scene,
-    renderer: THREE.WebGLRenderer,
-    sdkPlayground?: CogniteClientPlayground | undefined
+    renderer: THREE.WebGLRenderer
   ) {
     this._pointCloudMetadataRepository = metadataRepository;
     this._pointCloudFactory = modelFactory;
     this._pointCloudGroupWrapper = new PotreeGroupWrapper(modelFactory.potreeInstance);
-
-    this._sdkPlayground = sdkPlayground;
 
     scene.add(this._pointCloudGroupWrapper);
 
@@ -127,49 +117,8 @@ export class PointCloudManager {
     this._pointCloudGroupWrapper.requestRedraw();
   }
 
-  private annotationGeometryToLocalGeometry(geometry: any): Geometry {
-    if (geometry.box) {
-      return {
-        matrix: new THREE.Matrix4().fromArray(geometry.box.matrix)
-      } as BoxPrimitive;
-    }
-
-    if (geometry.cylinder) {
-      return geometry.cylinder;
-    }
-  }
-
-  private async getAnnotations(modelIdentifier: ModelIdentifier): Promise<BoundingVolume[]> {
-    const modelAnnotations = await this._sdkPlayground.annotations.list({
-      filter: {
-        // @ts-ignore
-        annotatedResourceType: 'threedmodel',
-        annotatedResourceIds: [{ id: (modelIdentifier as CdfModelIdentifier).modelId }]
-      }
-    });
-
-    const bvs = modelAnnotations.items.map(annotation => {
-      const region = (annotation.data as any).region.map((geometry: any) => {
-        return this.annotationGeometryToLocalGeometry(geometry);
-      });
-
-      return {
-        annotationId: annotation.id,
-        region
-      } as BoundingVolume;
-    });
-
-    return bvs;
-  }
-
   async addModel(modelIdentifier: ModelIdentifier): Promise<PointCloudNode> {
     const metadata = await this._pointCloudMetadataRepository.loadData(modelIdentifier);
-
-    let styledObjectInfo: StyledObjectInfo | undefined = undefined;
-    if (this._sdkPlayground) {
-      const annotations = await this.getAnnotations(modelIdentifier);
-      styledObjectInfo = annotationsToObjectInfo(annotations);
-    }
 
     const modelType: SupportedModelTypes = 'pointcloud';
     MetricsLogger.trackLoadModel(
@@ -180,7 +129,7 @@ export class PointCloudManager {
       metadata.formatVersion
     );
 
-    const nodeWrapper = await this._pointCloudFactory.createModel(metadata, styledObjectInfo);
+    const nodeWrapper = await this._pointCloudFactory.createModel(modelIdentifier, metadata);
     this._pointCloudGroupWrapper.addPointCloud(nodeWrapper);
     const node = new PointCloudNode(this._pointCloudGroupWrapper, nodeWrapper, metadata.cameraConfiguration);
     node.setModelTransformation(metadata.modelMatrix);

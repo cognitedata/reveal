@@ -5,28 +5,81 @@
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { PointCloudMetadata } from './PointCloudMetadata';
 
-import { ModelDataProvider } from '@reveal/modeldata-api';
+import { ModelDataProvider, ModelIdentifier, CdfModelIdentifier } from '@reveal/modeldata-api';
+
+import { BoundingVolume, Geometry } from './annotationTypes';
+import { annotationsToObjectInfo } from './styling/annotationsToObjects';
+import { BoxPrimitive } from './annotationTypes';
 
 import { Potree } from './potree-three-loader';
 import { StyledObjectInfo } from './styling/StyledObjectInfo';
 import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
 
+import { CogniteClientPlayground } from '@cognite/sdk-playground';
+
+import * as THREE from 'three';
+
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
+  private readonly _sdkPlayground: CogniteClientPlayground | undefined;
 
-  constructor(modelLoader: ModelDataProvider) {
+  constructor(modelLoader: ModelDataProvider,
+              sdkPlayground: CogniteClientPlayground | undefined) {
     this._potreeInstance = new Potree(modelLoader);
+    this._sdkPlayground = sdkPlayground;
   }
 
   get potreeInstance(): Potree {
     return this._potreeInstance;
   }
 
+
+  private annotationGeometryToLocalGeometry(geometry: any): Geometry {
+    if (geometry.box) {
+      return {
+        matrix: new THREE.Matrix4().fromArray(geometry.box.matrix)
+      } as BoxPrimitive;
+    }
+
+    if (geometry.cylinder) {
+      return geometry.cylinder;
+    }
+  }
+
+  private async getAnnotations(modelIdentifier: CdfModelIdentifier): Promise<BoundingVolume[]> {
+    const modelAnnotations = await this._sdkPlayground.annotations.list({
+      filter: {
+        // @ts-ignore
+        annotatedResourceType: 'threedmodel',
+        annotatedResourceIds: [{ id: modelIdentifier.modelId }]
+      }
+    });
+
+    const bvs = modelAnnotations.items.map(annotation => {
+      const region = (annotation.data as any).region.map((geometry: any) => {
+        return this.annotationGeometryToLocalGeometry(geometry);
+      });
+
+      return {
+        annotationId: annotation.id,
+        region
+      } as BoundingVolume;
+    });
+
+    return bvs;
+  }
+
   async createModel(
-    modelMetadata: PointCloudMetadata,
-    styledObjectInfo?: StyledObjectInfo | undefined
+    modelIdentifier: ModelIdentifier,
+    modelMetadata: PointCloudMetadata
   ): Promise<PotreeNodeWrapper> {
     const { modelBaseUrl } = modelMetadata;
+
+    let styledObjectInfo: StyledObjectInfo | undefined = undefined;
+    if (this._sdkPlayground && modelIdentifier instanceof CdfModelIdentifier) {
+      const annotations = await this.getAnnotations(modelIdentifier);
+      styledObjectInfo = annotationsToObjectInfo(annotations);
+    }
 
     const pointCloudOctree = await this._potreeInstance.loadPointCloud(
       modelBaseUrl,
