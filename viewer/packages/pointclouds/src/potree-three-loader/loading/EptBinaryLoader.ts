@@ -39,24 +39,28 @@ export class EptBinaryLoader implements ILoader {
 
     const fullFileName = node.fileName() + this.extension();
     const data = await this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName);
-    return this.parse(node, data);
+
+    const parsedData = await this.parse(node, data);
+    this.finalizeLoading(parsedData, node);
   }
 
-  async parse(node: PointCloudEptGeometryNode, data: ArrayBuffer): Promise<void> {
+  private finalizeLoading(parsedData: ParsedEptData, node: PointCloudEptGeometryNode) {
+    const geometry = createGeometryFromEptData(parsedData);
+
+    const tightBoundingBox = createTightBoundingBox(parsedData);
+
+    const numPoints = parsedData.numPoints;
+    node.doneLoading(geometry, tightBoundingBox, numPoints, new THREE.Vector3(...parsedData.mean));
+  }
+
+  async parse(node: PointCloudEptGeometryNode, data: ArrayBuffer): Promise<ParsedEptData> {
     const autoTerminatingWorker = await EptBinaryLoader.WORKER_POOL.getWorker();
 
-    return new Promise<void>(res => {
-      autoTerminatingWorker.worker.onmessage = function (e: { data: ParsedEptData }) {
-        const geometry = createGeometryFromEptData(e.data);
-
-        const tightBoundingBox = createTightBoundingBox(e.data);
-
-        const numPoints = e.data.numPoints;
-        node.doneLoading(geometry, tightBoundingBox, numPoints, new THREE.Vector3(...e.data.mean));
-
+    return new Promise<ParsedEptData>(res => {
+      autoTerminatingWorker.worker.onmessage = (e: { data: ParsedEptData }) => {
         EptBinaryLoader.WORKER_POOL.releaseWorker(autoTerminatingWorker);
-        res();
-      };
+        res(e.data);
+      }
 
       if (this._styledObjectInfo) {
         postStyledObjectInfo(autoTerminatingWorker,
