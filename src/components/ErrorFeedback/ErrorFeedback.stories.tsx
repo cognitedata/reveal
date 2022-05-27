@@ -1,11 +1,15 @@
 import React from 'react';
-import { text } from '@storybook/addon-knobs';
 import { ErrorFeedback } from './ErrorFeedback';
 
-export default { title: 'Component/ErrorFeedback', component: ErrorFeedback };
+export default {
+  title: 'Component/ErrorFeedback',
+  component: ErrorFeedback,
+  argTypes: { error: { control: 'text' } },
+};
 
-export const Simple = () => (
+export const Simple = args => (
   <div style={{ padding: '40px', background: 'lightgrey' }}>
-    <ErrorFeedback error={text('error', 'error')} />
+    <ErrorFeedback {...args} />
   </div>
 );
+Simple.args = { error: 'error' };

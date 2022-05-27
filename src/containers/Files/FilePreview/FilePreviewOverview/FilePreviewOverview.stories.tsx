@@ -1,16 +1,16 @@
 import React from 'react';
 import { CogniteAnnotation } from '@cognite/annotations';
-import { number } from '@storybook/addon-knobs';
 import { action } from '@storybook/addon-actions';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { CogniteClient } from '@cognite/sdk';
-import { files } from 'stubs/files';
+import { files } from '../../../../stubs/files';
 import { FilePreviewOverview } from './FilePreviewOverview';
 
 export default {
   title: 'Files/FilePreviewOverview',
   component: FilePreviewOverview,
   decorators: [(storyFn: any) => <Wrapper>{storyFn()}</Wrapper>],
+  argTypes: { page: { control: 'number' }, defaultValue: 0 },
 };
 
 const filler = {
@@ -63,33 +63,29 @@ const annotations = [
   } as CogniteAnnotation,
 ];
 
-export const Example = () => (
-  <FilePreviewOverview
-    file={files[0]}
-    annotations={[]}
-    page={number('page', 0)}
-    onPageChange={action('onPageChange')}
-    onAssetClicked={action('onAssetClicked')}
-    onFileClicked={action('onFileClicked')}
-    onTimeseriesClicked={action('onTimeseriesClicked')}
-    onEventClicked={action('onEventClicked')}
-    onSequenceClicked={action('onSequenceClicked')}
-  />
-);
+export const Example = args => <FilePreviewOverview {...args} />;
+Example.args = {
+  file: files[0],
+  annotations: [],
+  onPageChange: action('onPageChange'),
+  onAssetClicked: action('onAssetClicked'),
+  onFileClicked: action('onFileClicked'),
+  onTimeseriesClicked: action('onTimeseriesClicked'),
+  onEventClicked: action('onEventClicked'),
+  onSequenceClicked: action('onSequenceClicked'),
+};
 
-export const ExampleWithAnnotations = () => (
-  <FilePreviewOverview
-    file={files[0]}
-    page={number('page', 0)}
-    onPageChange={action('onPageChange')}
-    onAssetClicked={action('onAssetClicked')}
-    onFileClicked={action('onFileClicked')}
-    onTimeseriesClicked={action('onTimeseriesClicked')}
-    onEventClicked={action('onEventClicked')}
-    onSequenceClicked={action('onSequenceClicked')}
-    annotations={annotations}
-  />
-);
+export const ExampleWithAnnotations = args => <FilePreviewOverview {...args} />;
+ExampleWithAnnotations.args = {
+  annotations,
+  file: files[0],
+  onPageChange: action('onPageChange'),
+  onAssetClicked: action('onAssetClicked'),
+  onFileClicked: action('onFileClicked'),
+  onTimeseriesClicked: action('onTimeseriesClicked'),
+  onEventClicked: action('onEventClicked'),
+  onSequenceClicked: action('onSequenceClicked'),
+};
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
   const sdk = new CogniteClient({

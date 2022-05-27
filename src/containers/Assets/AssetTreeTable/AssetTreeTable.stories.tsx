@@ -1,32 +1,27 @@
 import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
-import { text } from '@storybook/addon-knobs';
 import { AssetTreeTable } from './AssetTreeTable';
 
 export default {
   title: 'Assets/AssetTreeTable',
   component: AssetTreeTable,
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
+  argTypes: { query: { control: 'string' } },
 };
 
-export const Example = () => (
-  <AssetTreeTable
-    filter={{}}
-    onAssetClicked={action('onAssetClicked')}
-    query={text('query', '')}
-    isSelected={() => {}}
-  />
-);
-export const ExampleSingleSelect = () => (
-  <AssetTreeTable
-    selectionMode="single"
-    filter={{}}
-    onAssetClicked={action('onAssetClicked')}
-    query={text('query', '')}
-    isSelected={() => {}}
-  />
-);
+export const Example = args => <AssetTreeTable {...args} />;
+Example.args = {
+  onAssetSelected: action('onAssetSelected'),
+  isSelected: () => {},
+};
+
+export const ExampleSingleSelect = args => <AssetTreeTable {...args} />;
+ExampleSingleSelect.args = {
+  selectionMode: 'single',
+  onAssetSelected: action('onAssetSelected'),
+  isSelected: () => {},
+};
 
 const Container = styled.div`
   padding: 20px;

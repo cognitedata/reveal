@@ -1,22 +1,26 @@
 import React, { useState } from 'react';
-import { text } from '@storybook/addon-knobs';
-import { assets } from 'stubs/assets';
+import { assets } from '../../../../stubs/assets';
 import { AggregatedFilter } from './AggregatedFilter';
 
 export default {
   title: 'Search Results/Filters/AggregatedFilter',
   component: AggregatedFilter,
+  argTypes: {
+    title: {
+      type: 'string',
+    },
+    aggregator: {
+      type: 'string',
+    },
+  },
 };
 
-export const Example = () => {
+export const Example = args => {
   const [value, setValue] = useState<string | undefined>(undefined);
-  return (
-    <AggregatedFilter
-      title={text('title', 'Source')}
-      items={assets}
-      aggregator={text('aggregator', 'source')}
-      value={value}
-      setValue={setValue}
-    />
-  );
+  return <AggregatedFilter {...args} value={value} setValue={setValue} />;
+};
+Example.args = {
+  title: 'Source',
+  aggregator: 'source',
+  items: assets,
 };

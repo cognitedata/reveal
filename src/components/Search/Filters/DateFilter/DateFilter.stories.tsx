@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
-import { text } from '@storybook/addon-knobs';
 import { DateFilter } from './DateFilter';
 
 export default {
   title: 'Search Results/Filters/DateFilter',
   component: DateFilter,
+  argTypes: {
+    title: {
+      type: 'string',
+    },
+  },
 };
-export const Example = () => {
+export const Example = args => {
   const [value, setValue] = useState<
     { min?: number; max?: number } | undefined
-  >(undefined);
-  return (
-    <DateFilter
-      title={text('title', 'Title')}
-      value={value}
-      setValue={setValue}
-    />
-  );
+  >();
+  return <DateFilter value={value} setValue={setValue} {...args} />;
+};
+Example.args = {
+  title: 'Title',
 };

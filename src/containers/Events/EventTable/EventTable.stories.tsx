@@ -1,31 +1,29 @@
 import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
-import { text } from '@storybook/addon-knobs';
-import { events } from 'stubs/events';
+import { events } from '../../../stubs/events';
 import { EventTable } from './EventTable';
 
 export default {
   title: 'Events/EventTable',
   component: EventTable,
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
+  argTypes: { query: { control: 'text' } },
 };
 
-export const Example = () => (
-  <EventTable
-    items={events}
-    onItemClicked={action('onItemClicked')}
-    query={text('query', '')}
-  />
-);
-export const ExampleSingleSelect = () => (
-  <EventTable
-    selectionMode="single"
-    items={events}
-    onItemClicked={action('onItemClicked')}
-    query={text('query', '')}
-  />
-);
+export const Example = args => <EventTable {...args} />;
+Example.args = {
+  items: events,
+  onItemClicked: action('onItemClicked'),
+};
+
+export const ExampleSingleSelect = args => <EventTable {...args} />;
+ExampleSingleSelect.args = {
+  selectionMode: 'single',
+  items: events,
+  onItemClicked: action('onItemClicked'),
+};
+
 const Container = styled.div`
   height: 600px;
 `;

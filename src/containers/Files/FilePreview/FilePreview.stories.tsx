@@ -1,24 +1,8 @@
 import React from 'react';
-import { DataExplorationProvider } from 'context';
-import { boolean } from '@storybook/addon-knobs';
-import { files } from 'stubs/files';
-import { sdkMock } from 'docs/stub';
+import { files } from '../../../stubs/files';
 import { FilePreview } from './FilePreview';
 
-export default {
-  title: 'Files/FilePreview',
-  component: FilePreview,
-  decorators: [
-    (storyFn: any) => (
-      <DataExplorationProvider sdk={tempSdk}>
-        {storyFn()}
-      </DataExplorationProvider>
-    ),
-  ],
-};
-
-const tempSdk = {
-  ...sdkMock,
+const sdkMock = {
   post: async (query: string) => {
     if (query.includes('aggregate')) {
       return { data: { items: [{ count: 1 }] } };
@@ -29,10 +13,16 @@ const tempSdk = {
     return { data: { items: [] } };
   },
 };
-export const Example = () => (
-  <FilePreview
-    fileId={files[0].id}
-    contextualization={boolean('contextualization', false)}
-    creatable={boolean('creatable', false)}
-  />
-);
+
+export default {
+  title: 'Files/FilePreview',
+  component: FilePreview,
+  parameters: {
+    explorerConfig: { sdkMockOverride: sdkMock },
+  },
+};
+
+export const Example = args => <FilePreview {...args} />;
+Example.args = {
+  fileId: files[0].id,
+};

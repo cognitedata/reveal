@@ -1,24 +1,21 @@
 import React, { useState } from 'react';
-import { select } from '@storybook/addon-knobs';
-import { ResourceType } from 'types';
 import { IdEither } from '@cognite/sdk';
 import { DataSetFilter } from './DataSetFilter';
 
 export default {
   title: 'Search Results/Filters/DataSetFilter',
   component: DataSetFilter,
+  argTypes: {
+    resourceType: {
+      type: 'select',
+      options: ['asset', 'timeSeries', 'sequence', 'file', 'event'],
+    },
+  },
 };
-export const Example = () => {
+export const Example = args => {
   const [value, setValue] = useState<IdEither[] | undefined>(undefined);
-  return (
-    <DataSetFilter
-      value={value}
-      setValue={setValue}
-      resourceType={select<ResourceType>(
-        'api',
-        ['asset', 'timeSeries', 'sequence', 'file', 'event'],
-        'asset'
-      )}
-    />
-  );
+  return <DataSetFilter value={value} setValue={setValue} {...args} />;
+};
+Example.args = {
+  resourceType: 'asset',
 };

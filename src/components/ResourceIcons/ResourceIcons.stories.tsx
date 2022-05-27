@@ -1,11 +1,26 @@
 import React from 'react';
-import { text } from '@storybook/addon-knobs';
 import { Overline } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { ResourceIcons } from './ResourceIcons';
 
-export default { title: 'Component/ResourceIcons', component: ResourceIcons };
-export const Simple = () => <ResourceIcons type={text('type', 'asset')} />;
+export default {
+  title: 'Component/ResourceIcons',
+  component: ResourceIcons,
+  argTypes: {
+    type: {
+      type: 'select',
+      options: ['asset', 'timeSeries', 'sequence', 'file', 'event', 'threeD'],
+    },
+  },
+};
+export const Simple = args => (
+  <Item>
+    <ResourceIcons {...args} />
+  </Item>
+);
+Simple.args = {
+  type: 'asset',
+};
 export const Typed = () => (
   <div>
     <Item>

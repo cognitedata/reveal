@@ -1,26 +1,32 @@
 import React from 'react';
-import { boolean, text } from '@storybook/addon-knobs';
 import { action } from '@storybook/addon-actions';
 import { ListItem } from './ListItem';
 
-export default { title: 'Component/ListItem', component: ListItem };
-export const Example = () => (
-  <div style={{ padding: '40px', background: 'lightgrey' }}>
-    <ListItem title="Item">
-      <p>Something random</p>
-    </ListItem>
-    <ListItem selected title="Item Selected" />
-  </div>
+export default {
+  title: 'Component/ListItem',
+  component: ListItem,
+  argTypes: {
+    title: {
+      type: 'string',
+    },
+    selected: {
+      type: 'boolean',
+    },
+    bordered: {
+      type: 'boolean',
+    },
+    children: {
+      type: 'string',
+    },
+  },
+};
+
+export const Example = args => (
+  <ListItem {...args} onClick={action('onClick')} />
 );
-export const Playground = () => (
-  <div style={{ padding: '40px', background: 'lightgrey' }}>
-    <ListItem
-      title={text('title', 'Item')}
-      selected={boolean('selected', false)}
-      bordered={boolean('bordered', false)}
-      onClick={action('onClick')}
-    >
-      {text('children', 'Children')}
-    </ListItem>
-  </div>
-);
+Example.args = {
+  title: 'Item',
+  selected: false,
+  bordered: false,
+  children: 'Children',
+};

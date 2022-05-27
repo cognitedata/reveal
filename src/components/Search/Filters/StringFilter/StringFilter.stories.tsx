@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
-import { text } from '@storybook/addon-knobs';
 import { StringFilter } from './StringFilter';
 
 export default {
   title: 'Search Results/Filters/StringFilter',
   component: StringFilter,
+  argTypes: {
+    title: {
+      type: 'string',
+    },
+  },
 };
-export const Example = () => {
-  const [value, setValue] = useState<string | undefined>(undefined);
-  return (
-    <StringFilter
-      title={text('title', 'Title')}
-      value={value}
-      setValue={setValue}
-    />
-  );
+export const Example = args => {
+  const [value, setValue] = useState<string | undefined>();
+  return <StringFilter {...args} value={value} setValue={setValue} />;
+};
+Example.args = {
+  title: 'Title',
 };

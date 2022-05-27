@@ -1,31 +1,28 @@
 import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
-import { text } from '@storybook/addon-knobs';
-import { sequences } from 'stubs/sequences';
+import { sequences } from '../../../stubs/sequences';
 import { SequenceTable } from './SequenceTable';
 
 export default {
   title: 'Sequences/SequenceTable',
   component: SequenceTable,
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
+  argTypes: { query: { control: 'text' } },
 };
 
-export const Example = () => (
-  <SequenceTable
-    items={sequences}
-    onItemClicked={action('onItemClicked')}
-    query={text('query', '')}
-  />
-);
-export const ExampleSingleSelect = () => (
-  <SequenceTable
-    selectionMode="single"
-    items={sequences}
-    onItemClicked={action('onItemClicked')}
-    query={text('query', '')}
-  />
-);
+export const Example = args => <SequenceTable {...args} />;
+Example.args = {
+  items: sequences,
+  onItemClicked: action('onItemClicked'),
+};
+
+export const ExampleSingleSelect = args => <SequenceTable {...args} />;
+ExampleSingleSelect.args = {
+  selectionMode: 'single',
+  items: sequences,
+  onItemClicked: action('onItemClicked'),
+};
 
 const Container = styled.div`
   padding: 20px;
