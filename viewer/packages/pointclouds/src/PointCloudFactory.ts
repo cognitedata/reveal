@@ -7,7 +7,7 @@ import { PointCloudMetadata } from './PointCloudMetadata';
 
 import { ModelDataProvider, ModelIdentifier, CdfModelIdentifier } from '@reveal/modeldata-api';
 
-import { BoundingVolume, Geometry } from './annotationTypes';
+import { BoundingVolume, CylinderPrimitive, Geometry } from './annotationTypes';
 import { annotationsToObjectInfo } from './styling/annotationsToObjects';
 import { BoxPrimitive } from './annotationTypes';
 
@@ -36,13 +36,15 @@ export class PointCloudFactory {
 
   private annotationGeometryToLocalGeometry(geometry: any): Geometry {
     if (geometry.box) {
-      return {
-        matrix: new THREE.Matrix4().fromArray(geometry.box.matrix)
-      } as BoxPrimitive;
+      return new BoxPrimitive(
+        new THREE.Matrix4().fromArray(geometry.box.matrix)
+      );
     }
 
     if (geometry.cylinder) {
-      return geometry.cylinder;
+      return new CylinderPrimitive(geometry.cylinder.center_a,
+                                   geometry.cylinder.center_b,
+                                   geometry.cylinder.radius);
     }
   }
 
