@@ -18,8 +18,8 @@ import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/Ann
 
 jest.mock('src/utils/AnnotationUtilsV1/AnnotationUtilsV1', () => ({
   ...jest.requireActual('src/utils/AnnotationUtilsV1/AnnotationUtilsV1'),
-  createUniqueId: (text: string) => {
-    return text;
+  createUniqueNumericId: () => {
+    return 'gauge';
   },
 }));
 

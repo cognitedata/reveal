@@ -518,9 +518,16 @@ export const isUnSavedAnnotation = (
   return !(ann as CDFAnnotationV1).lastUpdatedTime;
 };
 
-// ToDo: move this to new util file
+/**
+ * @deprecated
+ */
 export const createUniqueId = (text: string): string => {
   return `${text.replace(/(\s)/g, '_').trim()}-${uuidv4()}`;
+};
+
+// ToDo: move this to new util file
+export const createUniqueNumericId = (): number => {
+  return Date.now();
 };
 
 // todo: remove this function once they are not needed - start

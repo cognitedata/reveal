@@ -11,7 +11,7 @@ import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnot
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
-import { createUniqueId } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import { createUniqueNumericId } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { deleteCollection } from 'src/modules/Review/store/annotatorWrapper/utils';
 import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
 import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bulkConverters';
@@ -146,7 +146,7 @@ const annotatorWrapperSlice = createSlice({
           // set that collection as last collection
           // and select it
           if (!state.lastCollectionId) {
-            const collectionId = createUniqueId(collectionName);
+            const collectionId = createUniqueNumericId().toString(); // TODO make collection id numeric
             const collectionToAdd = {
               id: collectionId,
               keypointIds: [],
