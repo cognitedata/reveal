@@ -248,7 +248,7 @@ function parseEpt(event: MessageEvent): void {
   };
 
   function assertDefined(buffer: ArrayBuffer | undefined): buffer is ArrayBuffer {
-    return !!buffer;
+    return buffer !== undefined;
   }
 
   const transferables = [
