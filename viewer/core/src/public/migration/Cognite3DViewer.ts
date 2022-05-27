@@ -1235,15 +1235,19 @@ function createCanvasWrapper(): HTMLElement {
 }
 
 function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): RevealOptions {
+  const customTarget = viewerOptions.renderTargetOptions?.target;
+  const outputRenderTarget = customTarget ? {
+    target: customTarget,
+    autoSize: viewerOptions.renderTargetOptions?.autoSetSize
+  } : undefined;
+
   const revealOptions: RevealOptions = {
     continuousModelStreaming: viewerOptions.continuousModelStreaming,
-    outputRenderTarget: {
-      target: viewerOptions.renderTargetOptions?.target,
-      autoSize: viewerOptions.renderTargetOptions?.autoSetSize
-    },
+    outputRenderTarget,
     internal: {}
   };
-  revealOptions.internal.cad = { sectorCuller: viewerOptions._sectorCuller };
+
+  revealOptions.internal!.cad = { sectorCuller: viewerOptions._sectorCuller };
   const device = determineCurrentDevice();
   const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint, device);
   const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint, device);

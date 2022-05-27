@@ -639,7 +639,7 @@ export function determineBoundsFromInstanceMatrices(geometry: THREE.InstancedBuf
     const offset = attributeOffset + i * stride;
 
     instanceMatrix.set(
-      view[offset], view[offset + 4], view[offset + 8], view[offset + 12], 
+      view[offset], view[offset + 4], view[offset + 8], view[offset + 12],
       view[offset + 1], view[offset + 5], view[offset + 9], view[offset + 13],
       view[offset + 2], view[offset + 6], view[offset + 10], view[offset + 14],
       view[offset + 3], view[offset + 7], view[offset + 11], view[offset + 15]
