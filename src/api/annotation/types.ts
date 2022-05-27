@@ -55,7 +55,7 @@ export type TextRegion = {
   textRegion: BoundingBox;
 };
 
-export type ImageKeypoint = Label &
+export type Keypoint = Label &
   Partial<Confidence> & {
     point: Point;
   };
@@ -125,7 +125,7 @@ export type ImageAssetLink = TextRegion &
   };
 
 export type ImageKeypointCollection = ImageClassification & {
-  keypoints: ImageKeypoint[];
+  keypoints: Keypoint[];
 };
 
 // Annotation API V2 types todo: remove this and import correct type from @cognite/sdk when v2 becomes available

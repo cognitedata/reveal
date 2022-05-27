@@ -16,7 +16,7 @@ import {
   KeypointCollectionState,
 } from 'src/modules/Review/store/annotatorWrapper/type';
 import { KeypointCollection } from 'src/modules/Review/types';
-import { ImageKeypoint } from 'src/api/annotation/types';
+import { Keypoint } from 'src/api/annotation/types';
 import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
   dummyKeypoint,
@@ -24,7 +24,7 @@ import {
   getDummyKeypointState,
   getDummyPredefinedKeypoint,
 } from 'src/__test-utils/annotations';
-import { ReviewImageKeypoint } from 'src/modules/Review/store/review/types';
+import { ReviewKeypoint } from 'src/modules/Review/store/review/types';
 
 describe('Test annotationLabel selectors', () => {
   describe('Test nextKeypoint selector', () => {
@@ -60,7 +60,7 @@ describe('Test annotationLabel selectors', () => {
         '10': getDummyKeypointCollectionState('10', [k1Id, k2Id]),
       };
 
-      const imageKeypoints: Record<string, ImageKeypoint> = {
+      const imageKeypoints: Record<string, Keypoint> = {
         [k1Id]: getDummyKeypointState('left'),
         [k2Id]: getDummyKeypointState('center'),
       };
@@ -99,7 +99,7 @@ describe('Test annotationLabel selectors', () => {
         '10': getDummyKeypointCollectionState('10', [k1Id, k2Id, k3Id]),
       };
 
-      const imageKeypoints: Record<string, ImageKeypoint> = {
+      const imageKeypoints: Record<string, Keypoint> = {
         [k1Id]: getDummyKeypointState('left'),
         [k2Id]: getDummyKeypointState('center'),
         [k3Id]: getDummyKeypointState('right'),
@@ -141,7 +141,7 @@ describe('Test annotationLabel selectors', () => {
         '10': getDummyKeypointCollectionState('10', [k1Id, k2Id, k3Id]),
       };
 
-      const imageKeypoints: Record<string, ImageKeypoint> = {
+      const imageKeypoints: Record<string, Keypoint> = {
         [k1Id]: getDummyKeypointState('left'),
         [k2Id]: getDummyKeypointState('center'),
         [k3Id]: getDummyKeypointState('right'),
@@ -377,7 +377,7 @@ describe('Test annotationLabel selectors', () => {
       '20': unfinishedCollection,
     };
 
-    const imageKeypoints: Record<string, ImageKeypoint> = {
+    const imageKeypoints: Record<string, Keypoint> = {
       [k1Id]: getDummyKeypointState('left'),
       [k2Id]: getDummyKeypointState('center'),
       [k3Id]: getDummyKeypointState('right'),
@@ -414,7 +414,7 @@ describe('Test annotationLabel selectors', () => {
         },
       };
 
-      const keypoints: ReviewImageKeypoint[] = [
+      const keypoints: ReviewKeypoint[] = [
         {
           id: '20-left',
           selected: false,
@@ -445,7 +445,7 @@ describe('Test annotationLabel selectors', () => {
       '20': getDummyKeypointCollectionState('20', [k3Id]),
     };
 
-    const imageKeypoints: Record<string, ImageKeypoint> = {
+    const imageKeypoints: Record<string, Keypoint> = {
       [k1Id]: getDummyKeypointState('left'),
       [k2Id]: getDummyKeypointState('center'),
       [k3Id]: getDummyKeypointState('left'),

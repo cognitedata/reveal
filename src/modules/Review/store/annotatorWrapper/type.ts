@@ -3,7 +3,7 @@ import {
   LegacyShape,
   Tool,
 } from 'src/modules/Review/types';
-import { ImageKeypoint, Status } from 'src/api/annotation/types';
+import { Keypoint, Status } from 'src/api/annotation/types';
 
 export type KeypointCollectionState = {
   id: string;
@@ -22,7 +22,7 @@ type PredefinedAnnotations = {
 export type AnnotatorWrapperState = {
   predefinedAnnotations: PredefinedAnnotations;
   keypointMap: {
-    byId: Record<string, ImageKeypoint>;
+    byId: Record<string, Keypoint>;
     allIds: string[];
     selectedIds: string[];
   };

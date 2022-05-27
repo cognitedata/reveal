@@ -5,7 +5,7 @@ import {
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
-  ImageKeypoint,
+  Keypoint,
   ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
@@ -176,7 +176,7 @@ export const getDummyImageKeypointCollectionAnnotation = ({
   annotatedResourceId?: CogniteInternalId;
   label?: string;
   confidence?: number;
-  keypoints?: ImageKeypoint[];
+  keypoints?: Keypoint[];
 }): VisionAnnotation<ImageKeypointCollection> => {
   const data: ImageKeypointCollection = {
     label,

@@ -11,7 +11,7 @@ import {
 import {
   AnnotationMetadataV1,
   AnnotationTypeV1,
-  ImageKeypoint,
+  Keypoint,
   Point,
   Status,
 } from 'src/api/annotation/types';
@@ -55,7 +55,7 @@ export const getDummyKeypointState = (
   label: string,
   confidence?: number,
   point?: Point
-): ImageKeypoint => {
+): Keypoint => {
   return {
     label,
     confidence: confidence || 1,

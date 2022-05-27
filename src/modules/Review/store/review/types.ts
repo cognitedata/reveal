@@ -1,9 +1,5 @@
 import { VisionAnnotation } from 'src/modules/Common/types';
-import {
-  AnnotatedResourceId,
-  ImageKeypoint,
-  Label,
-} from 'src/api/annotation/types';
+import { AnnotatedResourceId, Keypoint, Label } from 'src/api/annotation/types';
 
 // primitives
 
@@ -19,10 +15,10 @@ type KeypointId = { id: string };
 
 // derivations
 
-// Casts ImageKeypoint to ReviewKeypoint[] if Type is ImageKeypoint[]
+// Casts Keypoint to ReviewKeypoint[] if Type is Keypoint[]
 export type TurnKeypointType<Type> = {
-  [Property in keyof Type]: Type[Property] extends ImageKeypoint[]
-    ? ReviewImageKeypoint[]
+  [Property in keyof Type]: Type[Property] extends Keypoint[]
+    ? ReviewKeypoint[]
     : Type[Property];
 };
 
@@ -31,10 +27,9 @@ export type VisionReviewAnnotation<Type> = Visible &
     annotation: TurnKeypointType<VisionAnnotation<Type>>;
   };
 
-// TODO: should this have "Vision" prefix?
-export type ReviewImageKeypoint = KeypointId &
+export type ReviewKeypoint = KeypointId &
   Selectable & {
-    keypoint: ImageKeypoint;
+    keypoint: Keypoint;
   };
 
 // type for temp keypoint collection
@@ -42,5 +37,5 @@ export type UnsavedKeypointCollection = Label &
   Visible &
   AnnotatedResourceId &
   Selectable & {
-    reviewKeypoints: ReviewImageKeypoint[];
+    reviewKeypoints: ReviewKeypoint[];
   };

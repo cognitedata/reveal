@@ -20,7 +20,7 @@ import {
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
 import {
-  ImageKeypoint,
+  Keypoint,
   ImageKeypointCollection,
   Point,
   Status,
@@ -132,7 +132,7 @@ const annotatorWrapperSlice = createSlice({
             keypoints.find((keypoint) => keypoint.caption === keypointLabel) ||
             keypoints[0];
 
-          const imageKeypointToAdd: ImageKeypoint = {
+          const imageKeypointToAdd: Keypoint = {
             label: predefinedKeypoint.caption,
             point: {
               x: positionX,

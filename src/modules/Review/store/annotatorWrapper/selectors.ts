@@ -5,7 +5,7 @@ import {
 } from 'src/modules/Review/store/annotatorWrapper/type';
 import { RootState } from 'src/store/rootReducer';
 import { LegacyKeypoint, KeypointCollection } from 'src/modules/Review/types';
-import { ReviewImageKeypoint } from 'src/modules/Review/store/review/types';
+import { ReviewKeypoint } from 'src/modules/Review/store/review/types';
 
 export const nextKeypoint = createSelector(
   (state: AnnotatorWrapperState) =>
@@ -108,12 +108,13 @@ export const currentCollection = createSelector(
   ) => {
     if (lastCollectionId) {
       const collection = allCollections[lastCollectionId];
-      const reviewImageKeypoints: ReviewImageKeypoint[] =
-        collection.keypointIds.map((keypointId: string) => ({
+      const reviewImageKeypoints: ReviewKeypoint[] = collection.keypointIds.map(
+        (keypointId: string) => ({
           id: keypointId,
           selected: selectedKeypointIds.includes(keypointId),
           keypoint: allKeypoints[keypointId],
-        }));
+        })
+      );
 
       const predefinedCollection: KeypointCollection | undefined =
         predefinedKeypointCollections.find(

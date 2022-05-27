@@ -8,7 +8,7 @@ import reducer, {
   toggleCollectionVisibility,
 } from 'src/modules/Review/store/annotatorWrapper/slice';
 import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
-import { ImageKeypoint, Status } from 'src/api/annotation/types';
+import { Keypoint, Status } from 'src/api/annotation/types';
 import {
   getDummyKeypointCollectionState,
   getDummyKeypointState,
@@ -211,7 +211,7 @@ describe('Test annotator slice', () => {
       };
 
       test('should update confidence and point', () => {
-        const pointToUpdate: ImageKeypoint = {
+        const pointToUpdate: Keypoint = {
           label: 'left',
           confidence: 0.5,
           point: { x: 0.25, y: 0.75 },
@@ -238,7 +238,7 @@ describe('Test annotator slice', () => {
       });
 
       test('should not effect others when non existing label used', () => {
-        const pointToUpdate: ImageKeypoint = {
+        const pointToUpdate: Keypoint = {
           label: 'non-existing-label',
           confidence: 0.5,
           point: { x: 0.25, y: 0.75 },
