@@ -8,6 +8,7 @@ import { requestReprocessing } from 'utils/sdk/3dApiUtils';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpError, CogniteMultiError, Revision3D } from '@cognite/sdk';
 import { useHistory } from 'react-router-dom';
+import { useFlag } from '@cognite/react-feature-flags';
 
 type Props = Omit<ModalProps, 'onOk' | 'onCancel'> & {
   modelId: number;
@@ -29,7 +30,9 @@ export const ReprocessingModal = ({
   ...restProps
 }: Props) => {
   const history = useHistory();
-  const isReprocessable = revision.createdTime > MAGIC_DATE;
+  const forceNewRevision = useFlag('3DM_reprocess_force_new_revision');
+  const isReprocessable =
+    revision.createdTime > MAGIC_DATE && !forceNewRevision;
 
   const onOk = async () => {
     const progressMessage = message.loading('Requesting reprocessing...');
@@ -99,8 +102,41 @@ export const ReprocessingModal = ({
     }
   };
 
-  const TooOldToReprocessMessage = () => (
-    <>
+  if (isReprocessable) {
+    return (
+      <Modal
+        title="Reprocess the model"
+        onOk={onOk}
+        onCancel={onClose}
+        okText="Reprocess"
+        getContainer={getContainer}
+        {...restProps}
+      >
+        <p>This model doesn&apos;t use the latest 3d format.</p>
+        <p>
+          We recommend you always use the latest 3D format to ensure all the
+          latest features are available. You can click the &quot;Reprocess&quot;
+          button below to update the model.
+        </p>
+      </Modal>
+    );
+  }
+
+  return (
+    <Modal
+      title="New revision for model"
+      onOk={onOk}
+      onCancel={onClose}
+      okText="Crete new revision"
+      getContainer={getContainer}
+      {...restProps}
+    >
+      <p>This model doesn&apos;t use the latest 3d format.</p>
+      <p>
+        We recommend you always use the latest 3D format to ensure all the
+        latest features are available. You can click the &quot;Create new
+        revision&quot; button below to update the model.
+      </p>
       <p>
         This model doesn&apos;t have the data necessary to reprocess the
         revision.
@@ -117,26 +153,6 @@ export const ReprocessingModal = ({
         </b>
         .
       </p>
-    </>
-  );
-
-  return (
-    <Modal
-      title="Reprocess the model"
-      onOk={onOk}
-      onCancel={onClose}
-      okText="Reprocess"
-      getContainer={getContainer}
-      {...restProps}
-    >
-      <p>This model doesn&apos;t use the latest 3d format.</p>
-      <p>
-        We recommend you always use the latest 3D format to ensure all the
-        latest features are available. You can click the &quot;Reprocess&quot;
-        button below to update the model.
-      </p>
-
-      {!isReprocessable && <TooOldToReprocessMessage />}
     </Modal>
   );
 };
