@@ -16,12 +16,12 @@ export class BinaryHeap<T> {
   pop(): T | undefined {
     // Store the first element so we can return it later.
     const result = this._content[0];
+    const end = this._content.pop();
 
     // If there are any elements left, put the end element at the
     // start, and let it sink down.
     if (this._content.length > 0) {
-      const end = this._content.pop()!;
-      this._content[0] = end;
+      this._content[0] = end!;
       this.sinkDown(0);
     }
     return result;
