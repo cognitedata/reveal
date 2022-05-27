@@ -12,32 +12,24 @@ import { getMockDocumentCategories } from '__test-utils/fixtures/documentCategor
 import { getMockDocumentCategoriesResult } from '../../__mocks/getMockDocumentCategoriesGet';
 import { getDocumentTypes } from '../getDocumentTypes';
 
-describe('Type Errors', () => {
-  const mockServer = setupServer(getMockDocumentCategoriesResult());
+describe('getDocumentTypes', () => {
+  const mockServer = setupServer();
 
   beforeAll(() => mockServer.listen());
   afterEach(() => mockServer.resetHandlers());
   afterAll(() => mockServer.close());
 
   it('should return error as expected in document types', async () => {
+    mockServer.use(getMockDocumentCategoriesResult());
     const result = await getDocumentTypes(
       getAuthHeaders(),
       MockContainer.TEST_PROJECT
     );
     expect(result).toEqual([]);
   });
-});
-
-describe('Document types return', () => {
-  const mockServer = setupServer(
-    getMockDocumentCategoriesResult({ success: 'true' })
-  );
-
-  beforeAll(() => mockServer.listen());
-  afterEach(() => mockServer.resetHandlers());
-  afterAll(() => mockServer.close());
 
   it('should return expected document type name', async () => {
+    mockServer.use(getMockDocumentCategoriesResult({ success: 'true' }));
     const result = await getDocumentTypes(
       getAuthHeaders(),
       MockContainer.TEST_PROJECT

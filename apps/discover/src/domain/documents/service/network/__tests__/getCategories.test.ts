@@ -11,32 +11,23 @@ import { getMockDocumentCategories } from '__test-utils/fixtures/documentCategor
 import { getMockDocumentCategoriesResult } from '../../__mocks/getMockDocumentCategoriesGet';
 import { getCategories, documentError } from '../getCategories';
 
-describe('Document Category and Type Errors', () => {
-  const mockServer = setupServer(getMockDocumentCategoriesResult());
-
+const mockServer = setupServer();
+describe('getCategories', () => {
   beforeAll(() => mockServer.listen());
   afterEach(() => mockServer.resetHandlers());
   afterAll(() => mockServer.close());
 
   it('should return error as expected in document category', async () => {
+    mockServer.use(getMockDocumentCategoriesResult());
     const result = await getCategories(
       getAuthHeaders(),
       MockContainer.TEST_PROJECT
     );
     expect(result).toEqual(documentError);
   });
-});
-
-describe('Categories return', () => {
-  const mockServer = setupServer(
-    getMockDocumentCategoriesResult({ success: 'true' })
-  );
-
-  beforeAll(() => mockServer.listen());
-  afterEach(() => mockServer.resetHandlers());
-  afterAll(() => mockServer.close());
 
   it('should return expecting result', async () => {
+    mockServer.use(getMockDocumentCategoriesResult({ success: 'true' }));
     const result = await getCategories(
       getAuthHeaders(),
       MockContainer.TEST_PROJECT
