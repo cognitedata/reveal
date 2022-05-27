@@ -73,7 +73,7 @@ export class MeasurementLabels {
    * Load the the styles from the CSS and appends them to the label.
    * @returns Return if styles already loaded.
    */
-  private static ensureStylesLoaded(): HTMLStyleElement {
+  private static ensureStylesLoaded() {
     if (document.getElementById(MeasurementLabels.stylesId)) {
       return;
     }

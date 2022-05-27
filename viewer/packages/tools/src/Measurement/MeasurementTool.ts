@@ -36,7 +36,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
   private readonly _measurementLabel: MeasurementLabels;
   private readonly _line: MeasurementLine;
-  private _lineMesh: THREE.Mesh;
+  private _lineMesh: THREE.Mesh | null;
   private readonly _options: Required<MeasurementOptions>;
   private _sphereSize: number;
   private readonly _domElement: HTMLElement;
@@ -54,6 +54,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       axisComponentMeasurement: false,
       ...options
     };
+    this._lineMesh = null;
     this._line = new MeasurementLine();
     this._measurementLabel = new MeasurementLabels(this._viewer);
     this._domElement = this._viewer.domElement;
@@ -98,17 +99,17 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Set input handling.
    */
   private setupEventHandling() {
-    this._viewer.on('click', this._handleonPointerClick);
+    this._viewer.domElement.addEventListener('click', this._handleonPointerClick);
   }
 
   /**
    * Remove input handling.
    */
   private removeEventHandling() {
-    this._viewer.off('click', this._handleonPointerClick);
+    this._viewer.domElement.removeEventListener('click', this._handleonPointerClick);
   }
 
-  private async onPointerClick(event: MouseEvent) {
+  private async onPointerClick(event: MouseEvent): Promise<void> {
     const { offsetX, offsetY } = event;
 
     const intersection = await this._viewer.getIntersectionFromPixel(offsetX, offsetY);
@@ -167,7 +168,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    */
   private setMeasurementValue(options: MeasurementLabelUpdateDelegate): string {
     const measurementLabelData = options(this._line.getMeasuredDistance());
-    return measurementLabelData.distance.toFixed(2) + ' ' + measurementLabelData.units;
+    return measurementLabelData.distance?.toFixed(2) + ' ' + measurementLabelData.units;
   }
 
   /**
