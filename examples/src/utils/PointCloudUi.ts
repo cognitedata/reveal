@@ -5,7 +5,7 @@ export class PointCloudUi {
   private readonly _viewer: Cognite3DViewer;
   private readonly _params =
     {
-      pointSize: 0.15,
+      pointSize: 1.0,
       pointSizeType: PotreePointSizeType.Adaptive,
       budget: 2_000_000,
       pointColorType: PotreePointColorType.Rgb,
