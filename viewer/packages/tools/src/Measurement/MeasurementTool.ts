@@ -143,7 +143,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private endMeasurement(point: THREE.Vector3) {
     //Update the line with final end point.
     this._line.updateLine(0, 0, this._domElement, this._camera, point);
-    this.updateMeasurementValue(this._options.changeMeasurementLabelMetrics);
+    this.setMeasurementValue(this._options.changeMeasurementLabelMetrics);
     //Add the measurement label.
     this._measurementLabel.addLabel(this._line.getMidPointOnLine(), this._distanceValue);
     this._line.clearObjects();
@@ -151,10 +151,10 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Update the measurement data.
+   * Set the measurement data.
    * @param options Callback function which get user value to be added into label.
    */
-  private updateMeasurementValue(options: MeasurementLabelUpdateDelegate) {
+  private setMeasurementValue(options: MeasurementLabelUpdateDelegate) {
     const measurementLabelData = options(this._line.getMeasuredDistance());
     this._distanceValue = measurementLabelData.distance.toFixed(2) + ' ' + measurementLabelData.units;
   }
