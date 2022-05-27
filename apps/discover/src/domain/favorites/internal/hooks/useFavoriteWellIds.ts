@@ -1,11 +1,11 @@
-import { useMemo } from 'react';
+import { useFavoritesQuery } from 'domain/favorites/internal/queries/useFavoritesQuery';
 
-import { useFavoritesGetAllQuery } from 'services/favorites/useFavoritesQuery';
+import { useMemo } from 'react';
 
 import { FavoriteContentWells } from 'modules/favorite/types';
 
 export const useFavoriteWellIds = (): FavoriteContentWells => {
-  const { data: favoriteSets } = useFavoritesGetAllQuery();
+  const { data: favoriteSets } = useFavoritesQuery();
 
   return useMemo(() => {
     if (!favoriteSets || 'error' in favoriteSets) {

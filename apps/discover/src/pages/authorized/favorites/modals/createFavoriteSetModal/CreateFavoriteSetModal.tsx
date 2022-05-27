@@ -1,8 +1,8 @@
+import { useFavoritesCreateMutate } from 'domain/favorites/internal/actions/useFavoritesMutate';
+
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-
-import { useFavoritesCreateMutate } from 'services/favorites/useFavoritesMutate';
 
 import { NOTIFICATION_MESSAGE } from 'components/AddToFavoriteSetMenu/constants';
 import { showSuccessMessage } from 'components/Toast';

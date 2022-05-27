@@ -1,10 +1,11 @@
+import { useFavoriteWellIds } from 'domain/favorites/internal/hooks/useFavoriteWellIds';
+
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Row } from 'react-table';
 
 import sortBy from 'lodash/sortBy';
-import { useFavoriteWellIds } from 'services/favorites/hooks/useFavoriteWellIds';
 import styled from 'styled-components/macro';
 
 import { Dropdown, Menu } from '@cognite/cogs.js';

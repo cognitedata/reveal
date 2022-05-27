@@ -1,10 +1,12 @@
 import '__mocks/mockContainerAuth'; // should be first
+
+import { getMockFavoritesRemoveSharePost } from 'domain/favorites/service/__mocks/getMockFavoritesRemoveSharePost';
+
 import { act } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
 
 import { renderHookWithStore } from '__test-utils/renderer';
 
-import { getMockFavoritesRemoveSharePost } from '../__mocks/getMockFavoritesRemoveSharePost';
 import { useFavoriteRemoveShareMutate } from '../useFavoritesMutate';
 
 const mockServer = setupServer(getMockFavoritesRemoveSharePost());
@@ -17,6 +19,7 @@ const initiateTest = (hook: any) => {
 describe('useFavoriteRemoveShareMutate', () => {
   beforeAll(() => mockServer.listen());
   afterAll(() => mockServer.close());
+
   it('should return expected output', async () => {
     const { mutateAsync } = initiateTest(useFavoriteRemoveShareMutate);
 

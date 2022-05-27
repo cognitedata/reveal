@@ -1,12 +1,13 @@
+import {
+  useFavoriteDuplicateMutate,
+  useFavoritesDeleteMutate,
+} from 'domain/favorites/internal/actions/useFavoritesMutate';
+import { useFavoritesQuery } from 'domain/favorites/internal/queries/useFavoritesQuery';
+
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import isEmpty from 'lodash/isEmpty';
-import {
-  useFavoriteDuplicateMutate,
-  useFavoritesDeleteMutate,
-} from 'services/favorites/useFavoritesMutate';
-import { useFavoritesGetAllQuery } from 'services/favorites/useFavoritesQuery';
 import { useIsOwner } from 'services/user/utils';
 
 import { CommentTarget, SetCommentTarget } from '@cognite/react-comments';
@@ -41,7 +42,7 @@ export const FavoriteContent: React.FC<Props> = ({
   >();
 
   const viewMode = useViewMode();
-  const { data: favoriteSets, status } = useFavoritesGetAllQuery();
+  const { data: favoriteSets, status } = useFavoritesQuery();
 
   const showEmptyCard = status === 'loading' || !favoriteSets?.length;
 

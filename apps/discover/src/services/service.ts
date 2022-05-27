@@ -1,9 +1,7 @@
-// import { getFlow } from '@cognite/auth-utils';
 import { getAuthHeaders } from '@cognite/react-container';
 
 import { useIdToken as useIdTokenHook } from 'hooks/useIdToken';
 
-import { favorites } from './favorites';
 import { feedback } from './feedback';
 import { projectConfig } from './projectConfig';
 import { savedSearches } from './savedSearches';
@@ -33,7 +31,6 @@ export const useJsonHeaders = (
 };
 
 export const discoverAPI = {
-  favorites,
   feedback,
   projectConfig,
   savedSearches,

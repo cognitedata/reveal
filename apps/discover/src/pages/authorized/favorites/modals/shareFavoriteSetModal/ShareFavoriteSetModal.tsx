@@ -1,11 +1,11 @@
-import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-
 import {
   useFavoriteShareMutate,
   useFavoriteRemoveShareMutate,
-} from 'services/favorites/useFavoritesMutate';
-import { useFavoritesGetOneQuery } from 'services/favorites/useFavoritesQuery';
+} from 'domain/favorites/internal/actions/useFavoritesMutate';
+import { useFavoriteQuery } from 'domain/favorites/internal/queries/useFavoriteQuery';
+
+import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { BasicShareModal } from 'components/BasicShareModal';
 import { SharedUsersList } from 'components/BasicShareModal/SharedUsersList';
@@ -28,7 +28,7 @@ const ShareFavoriteSetModal: React.FC<Props> = (props) => {
   const { mutateAsync: shareFavoriteMutate } = useFavoriteShareMutate();
   const { mutateAsync: removeShareFavoriteMutate } =
     useFavoriteRemoveShareMutate();
-  const { data: favorite } = useFavoritesGetOneQuery(favoriteId);
+  const { data: favorite } = useFavoriteQuery(favoriteId);
 
   const { t } = useTranslation();
 

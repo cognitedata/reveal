@@ -1,6 +1,7 @@
+import { getMockFavoriteSummary } from 'domain/favorites/service/__fixtures/favorite';
+
 import { waitFor } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
-import { getMockFavoriteSummary } from 'services/favorites/__fixtures/favorite';
 
 import { FavoriteSummary } from 'modules/favorite/types';
 
@@ -18,7 +19,7 @@ jest.mock('react-query', () => ({
   useQuery: () => ({ isLoading: false, error: {}, data: [] }),
 }));
 
-jest.mock('../../../services/favorites/useFavoritesMutate', () => ({
+jest.mock('domain/favorites/internal/actions/useFavoritesMutate', () => ({
   useFavoriteUpdateContent: () => ({
     mutateAsync: () => Promise.resolve(true),
   }),

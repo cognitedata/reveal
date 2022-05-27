@@ -1,8 +1,9 @@
+import { useFavoriteQuery } from 'domain/favorites/internal/queries/useFavoriteQuery';
+
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { zipAndDownloadDocumentsByIds } from 'services/documentPreview/utils';
-import { useFavoritesGetOneQuery } from 'services/favorites/useFavoritesQuery';
 import styled from 'styled-components/macro';
 
 import { SetCommentTarget } from '@cognite/react-comments';
@@ -30,7 +31,7 @@ export const FavoriteDetails: React.FC<{
     favoriteId: string;
   }>();
 
-  const { data: favorite, isFetching } = useFavoritesGetOneQuery(favoriteId);
+  const { data: favorite, isFetching } = useFavoriteQuery(favoriteId);
 
   const handleComment = () =>
     setCommentTarget({

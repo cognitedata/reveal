@@ -1,10 +1,11 @@
+import { useFavoriteWellIds } from 'domain/favorites/internal/hooks/useFavoriteWellIds';
+
 import React, { useCallback, useEffect, useRef } from 'react';
 import { batch, useDispatch } from 'react-redux';
 
 import { processedWellsAdapter } from 'dataLayers/wells/wells/adapters';
 import head from 'lodash/head';
 import map from 'lodash/map';
-import { useFavoriteWellIds } from 'services/favorites/hooks/useFavoriteWellIds';
 
 import { Menu, Dropdown } from '@cognite/cogs.js';
 

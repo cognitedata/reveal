@@ -1,5 +1,6 @@
+import { getMockFavoriteSummary } from 'domain/favorites/service/__fixtures/favorite';
+
 import { screen, fireEvent } from '@testing-library/react';
-import { getMockFavoriteSummary } from 'services/favorites/__fixtures/favorite';
 
 import { testRendererModal } from '__test-utils/renderer';
 

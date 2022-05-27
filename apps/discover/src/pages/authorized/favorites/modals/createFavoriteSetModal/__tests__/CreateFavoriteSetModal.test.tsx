@@ -20,7 +20,7 @@ jest.mock('@cognite/react-errors', () => ({
   reportException: jest.fn(),
 }));
 
-jest.mock('services/favorites/useFavoritesMutate', () => ({
+jest.mock('domain/favorites/internal/actions/useFavoritesMutate', () => ({
   useFavoritesCreateMutate: () => ({
     mutateAsync: (props: Props) =>
       new Promise((resolve, reject) => {

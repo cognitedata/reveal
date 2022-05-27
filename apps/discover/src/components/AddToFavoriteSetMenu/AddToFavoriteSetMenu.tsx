@@ -1,3 +1,5 @@
+import { useFavoritesSortedByName } from 'domain/favorites/internal/hooks/useFavoritesSortedByName';
+
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { batch, useDispatch } from 'react-redux';
@@ -17,7 +19,6 @@ import {
   FavoriteContentWells,
   FavoriteSummary,
 } from '../../modules/favorite/types';
-import { useFavoritesSortedByName } from '../../services/favorites/useFavoritesQuery';
 import { showSuccessMessage } from '../Toast';
 
 import { CREATE_NEW_SET, NOTIFICATION_MESSAGE } from './constants';

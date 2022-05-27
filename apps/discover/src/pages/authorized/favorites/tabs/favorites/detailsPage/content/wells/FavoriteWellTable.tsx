@@ -1,10 +1,11 @@
+import { useFavoriteUpdateContent } from 'domain/favorites/internal/actions/useFavoritesMutate';
+
 import React, { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
 import omit from 'lodash/omit';
-import { useFavoriteUpdateContent } from 'services/favorites/useFavoritesMutate';
 
 import { Menu, Dropdown } from '@cognite/cogs.js';
 

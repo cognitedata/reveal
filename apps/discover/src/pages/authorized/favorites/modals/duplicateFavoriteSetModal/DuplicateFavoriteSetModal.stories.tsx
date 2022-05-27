@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { getMockFavoriteSummary } from 'domain/favorites/service/__fixtures/favorite';
 
-import { getMockFavoriteSummary } from 'services/favorites/__fixtures/favorite';
+import { useState } from 'react';
 
 import { Button } from '@cognite/cogs.js';
 

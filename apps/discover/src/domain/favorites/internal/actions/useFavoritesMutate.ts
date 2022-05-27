@@ -1,4 +1,14 @@
+import { createFavorite } from 'domain/favorites/service/network/createFavorite';
+import { deleteFavorite } from 'domain/favorites/service/network/deleteFavorite';
+import { duplicateFavorite } from 'domain/favorites/service/network/duplicateFavorite';
+import { removeShareFavorite } from 'domain/favorites/service/network/removeShareFavorite';
+import { shareFavorite } from 'domain/favorites/service/network/shareFavorite';
+import { updateFavorite } from 'domain/favorites/service/network/updateFavorite';
+import { updateFavoriteContent } from 'domain/favorites/service/network/updateFavoriteContent';
+
 import { useMutation, useQueryClient } from 'react-query';
+
+import { useJsonHeaders } from 'services/service';
 
 import { FavoritePostSchema } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
@@ -13,8 +23,6 @@ import {
   UpdateFavoriteData,
 } from 'modules/favorite/types';
 
-import { discoverAPI, useJsonHeaders } from '../service';
-
 const handleErrorResponse = (error: any) => {
   showErrorMessage(SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN);
   reportException(error);
@@ -26,8 +34,7 @@ export function useFavoritesCreateMutate() {
   const [tenant] = getTenantInfo();
 
   return useMutation(
-    (payload: FavoritePostSchema) =>
-      discoverAPI.favorites.create(payload, headers, tenant),
+    (payload: FavoritePostSchema) => createFavorite(payload, headers, tenant),
     {
       onSuccess: () => {
         return queryClient.invalidateQueries(FAVORITE_KEY.ALL_FAVORITES);
@@ -44,7 +51,7 @@ export function useFavoriteDuplicateMutate() {
 
   return useMutation(
     (data: { id: string; payload: FavoritePostSchema }) =>
-      discoverAPI.favorites.duplicate(data.id, data.payload, headers, tenant),
+      duplicateFavorite(data.id, data.payload, headers, tenant),
     {
       onSuccess: () => {
         return queryClient.invalidateQueries(FAVORITE_KEY.ALL_FAVORITES);
@@ -77,12 +84,7 @@ export function useFavoritesUpdateMutate() {
         });
       }
 
-      return discoverAPI.favorites.update(
-        data.id,
-        data.updateData,
-        headers,
-        tenant
-      );
+      return updateFavorite(data.id, data.updateData, headers, tenant);
     },
 
     {
@@ -107,12 +109,7 @@ export function useFavoriteUpdateContent() {
 
   return useMutation(
     (data: UpdateFavoriteContentData) =>
-      discoverAPI.favorites.updateFavoriteContent(
-        data.id,
-        data.updateData,
-        headers,
-        tenant
-      ),
+      updateFavoriteContent(data.id, data.updateData, headers, tenant),
     {
       onSettled: (_data, _error, variables) => {
         queryClient.invalidateQueries([
@@ -132,8 +129,7 @@ export function useFavoritesDeleteMutate() {
   const queryClient = useQueryClient();
 
   return useMutation(
-    (favoriteId: string) =>
-      discoverAPI.favorites.delete(favoriteId, headers, tenant),
+    (favoriteId: string) => deleteFavorite(favoriteId, headers, tenant),
     {
       onSuccess: () => {
         return queryClient.invalidateQueries(FAVORITE_KEY.ALL_FAVORITES);
@@ -150,7 +146,7 @@ export function useFavoriteShareMutate() {
 
   return useMutation(
     (data: { favoriteId: string; userIds: string[] }) =>
-      discoverAPI.favorites.share(
+      shareFavorite(
         {
           id: data.favoriteId,
           shareWithUsers: data.userIds,
@@ -178,7 +174,7 @@ export function useFavoriteRemoveShareMutate() {
 
   return useMutation(
     (data: { favoriteId: string; user: string }) =>
-      discoverAPI.favorites.removeShare(
+      removeShareFavorite(
         {
           id: data.favoriteId,
           user: data.user,

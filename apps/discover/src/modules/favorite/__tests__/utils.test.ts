@@ -1,4 +1,4 @@
-import { getMockFavoriteSummary } from 'services/favorites/__fixtures/favorite';
+import { getMockFavoriteSummary } from 'domain/favorites/service/__fixtures/favorite';
 
 import { FavoriteSummary } from '../types';
 import {

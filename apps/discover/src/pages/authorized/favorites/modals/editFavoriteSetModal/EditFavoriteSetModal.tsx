@@ -1,7 +1,7 @@
+import { useFavoritesUpdateMutate } from 'domain/favorites/internal/actions/useFavoritesMutate';
+
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { useFavoritesUpdateMutate } from 'services/favorites/useFavoritesMutate';
 
 import { showErrorMessage } from 'components/Toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';

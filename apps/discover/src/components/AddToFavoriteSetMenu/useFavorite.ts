@@ -1,7 +1,8 @@
+import { useFavoriteUpdateContent } from 'domain/favorites/internal/actions/useFavoritesMutate';
+
 import { useMemo } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
-import { useFavoriteUpdateContent } from 'services/favorites/useFavoritesMutate';
 
 import { useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';

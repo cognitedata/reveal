@@ -1,3 +1,5 @@
+import { useFavoriteUpdateContent } from 'domain/favorites/internal/actions/useFavoritesMutate';
+
 import * as React from 'react';
 
 import flatten from 'lodash/flatten';
@@ -5,7 +7,6 @@ import {
   downloadFileFromUrl,
   zipFavoritesAndDownload,
 } from 'services/documentPreview/utils';
-import { useFavoriteUpdateContent } from 'services/favorites/useFavoritesMutate';
 import { useIsOwner } from 'services/user/utils';
 
 import { useTranslation } from '@cognite/react-i18n';

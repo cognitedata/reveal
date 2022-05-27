@@ -1,7 +1,7 @@
+import { useFavoriteWellIds } from 'domain/favorites/internal/hooks/useFavoriteWellIds';
+
 import { useLayoutEffect, Suspense } from 'react';
 import { useDispatch } from 'react-redux';
-
-import { useFavoriteWellIds } from 'services/favorites/hooks/useFavoriteWellIds';
 
 import BasePreviewCard from 'components/Card/PreviewCard';
 import { LoaderContainer } from 'components/Card/PreviewCard/elements';

@@ -1,13 +1,14 @@
+import { useFavoritesQuery } from 'domain/favorites/internal/queries/useFavoritesQuery';
+import { getMockFavoriteSummary } from 'domain/favorites/service/__fixtures/favorite';
+
 import { renderHook } from '@testing-library/react-hooks';
-import { getMockFavoriteSummary } from 'services/favorites/__fixtures/favorite';
-import { useFavoritesGetAllQuery } from 'services/favorites/useFavoritesQuery';
 
 import { FavoriteSummary } from 'modules/favorite/types';
 
 import { useFavoriteDocumentIds } from '../useFavoriteDocumentIds';
 
-jest.mock('services/favorites/useFavoritesQuery', () => ({
-  useFavoritesGetAllQuery: jest.fn(),
+jest.mock('domain/favorites/internal/queries/useFavoritesQuery', () => ({
+  useFavoritesQuery: jest.fn(),
 }));
 
 describe('useFavoriteDocumentIds hook', () => {
@@ -20,7 +21,7 @@ describe('useFavoriteDocumentIds hook', () => {
   };
 
   it('should return empty array when no favorite sets data', () => {
-    (useFavoritesGetAllQuery as jest.Mock).mockImplementation(() => ({
+    (useFavoritesQuery as jest.Mock).mockImplementation(() => ({
       data: undefined,
     }));
 
@@ -47,7 +48,7 @@ describe('useFavoriteDocumentIds hook', () => {
       }),
     ];
 
-    (useFavoritesGetAllQuery as jest.Mock).mockImplementation(() => ({
+    (useFavoritesQuery as jest.Mock).mockImplementation(() => ({
       data: mockedFavoriteData,
     }));
 
