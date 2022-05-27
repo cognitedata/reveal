@@ -10,8 +10,9 @@ export function computeObjectIdBuffer(
   objectList: StyledObject[],
   pointOffset: Vec3
 ): ArrayBuffer {
-  const rawArrayBuffer = new ArrayBuffer((2 * positionBuffer.length) / 3);
-  const objectIdBuffer = new Uint16Array(rawArrayBuffer);
+  const numPoints = positionBuffer.length / 3;
+  const rawObjectIdBuffer = new ArrayBuffer(2 * numPoints);
+  const objectIdBuffer = new Uint16Array(rawObjectIdBuffer);
 
   for (let i = 0; i < objectIdBuffer.length; i++) {
     // 0 is default / unassigned value
@@ -30,5 +31,5 @@ export function computeObjectIdBuffer(
     }
   }
 
-  return rawArrayBuffer;
+  return rawObjectIdBuffer;
 }
