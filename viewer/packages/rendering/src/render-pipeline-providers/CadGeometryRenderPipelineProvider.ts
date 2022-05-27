@@ -27,7 +27,7 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
     modelIdentifier: string;
   }[];
   private readonly _materialManager: CadMaterialManager;
-  private _rendererStateHelper: WebGLRendererStateHelper;
+  private _rendererStateHelper: WebGLRendererStateHelper | undefined;
 
   get cadGeometryRenderTargets(): CadGeometryRenderTargets {
     return this._cadGeometryRenderTargets;
@@ -64,7 +64,7 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
         yield this._cadGeometryRenderPasses.inFront;
       }
     } finally {
-      this._rendererStateHelper.resetState();
+      this._rendererStateHelper!.resetState();
     }
   }
 

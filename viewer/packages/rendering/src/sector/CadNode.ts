@@ -37,7 +37,7 @@ export class CadNode extends THREE.Object3D {
   // from the scene. Also possible to make the same thing only inside GeometryBatchingManager and RootSectorNode.
   private _rootSector: RootSectorNode;
   private _sectorScene: SectorScene;
-  private _geometryBatchingManager: GeometryBatchingManager;
+  private _geometryBatchingManager?: GeometryBatchingManager;
 
   constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
     super();
@@ -145,7 +145,7 @@ export class CadNode extends THREE.Object3D {
    * @param out Preallocated `THREE.Matrix4` (optional).
    */
   getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
-    return this._rootSector.getModelTransformation(out);
+    return this._rootSector!.getModelTransformation(out);
   }
 
   get prioritizedAreas(): PrioritizedArea[] {
@@ -167,11 +167,11 @@ export class CadNode extends THREE.Object3D {
   }
 
   public batchGeometry(geometryBatchingQueue: ParsedGeometry[], sectorId: number): void {
-    this._geometryBatchingManager.batchGeometries(geometryBatchingQueue, sectorId);
+    this._geometryBatchingManager?.batchGeometries(geometryBatchingQueue, sectorId);
   }
 
   public removeBatchedSectorGeometries(sectorId: number): void {
-    this._geometryBatchingManager.removeSectorBatches(sectorId);
+    this._geometryBatchingManager?.removeSectorBatches(sectorId);
   }
 
   public setCacheSize(sectorCount: number): void {
@@ -181,13 +181,15 @@ export class CadNode extends THREE.Object3D {
   public dispose(): void {
     this._sectorRepository.clearCache();
     this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier);
-    this._geometryBatchingManager.dispose();
-    this._rootSector.dereferenceAllNodes();
-    this._rootSector.clear();
+    this._geometryBatchingManager?.dispose();
+    this._rootSector?.dereferenceAllNodes();
+    this._rootSector?.clear();
     this.clear();
 
     delete this._geometryBatchingManager;
+    // @ts-ignore
     delete this._rootSector;
+    // @ts-ignore
     delete this._sectorScene;
   }
 }

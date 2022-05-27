@@ -50,6 +50,7 @@ export class TransformOverrideBuffer {
 
   dispose(): void {
     this._dataTexture.dispose();
+    // @ts-ignore
     delete this._dataTexture.image;
   }
 
