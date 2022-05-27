@@ -3,7 +3,7 @@ import '__mocks/mockCogniteSDK';
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
 
-import { getMockDocumentSearch } from '../../services/documentSearch/__mocks/getMockDocumentSearch';
+import { getMockDocumentSearch } from '../../domain/documents/service/__mocks/getMockDocumentSearch';
 import { useDocument } from '../useDocument';
 
 const mockServer = setupServer(getMockDocumentSearch());

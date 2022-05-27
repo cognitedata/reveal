@@ -1,4 +1,4 @@
-import { SearchRequestOptions } from 'services/documentSearch/service/searchDocument';
+import { SearchRequestOptions } from 'domain/documents/service/queries/searchDocument';
 
 import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/hooks/useWellInspect';
 

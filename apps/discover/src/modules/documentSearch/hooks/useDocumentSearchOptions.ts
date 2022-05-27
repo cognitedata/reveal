@@ -1,4 +1,4 @@
-import { SearchRequestOptions } from 'services/documentSearch/service/searchDocument';
+import { SearchRequestOptions } from 'domain/documents/service/queries/searchDocument';
 
 import { useProjectConfig } from 'hooks/useProjectConfig';
 import { useSortByOptions } from 'modules/resultPanel/selectors';

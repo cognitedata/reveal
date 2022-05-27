@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { getDocumentSDKClient } from 'domain/documents/service/network/getDocumentSDKClient';
 
-import { getDocumentSDKClient } from 'services/documentSearch/sdk';
+import { useEffect, useState } from 'react';
 
 import { DocumentType } from 'modules/documentSearch/types';
 import { toDocument } from 'modules/documentSearch/utils';

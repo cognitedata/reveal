@@ -1,8 +1,8 @@
+import { useDocumentSearchRelatedDocumentsQuery } from 'domain/documents/service/queries/useDocumentSearchRelatedDocumentsQuery';
+
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Row } from 'react-table';
-
-import { useDocumentSearchRelatedDocumentsQuery } from 'services/documentSearch/queries/useDocumentSearchRelatedDocumentsQuery';
 
 import DocumentViewModal from 'components/DocumentPreview/DocumentViewModal';
 import EmptyState from 'components/EmptyState';

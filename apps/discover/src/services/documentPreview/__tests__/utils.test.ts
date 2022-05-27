@@ -1,9 +1,10 @@
 import '__mocks/mockContainerAuth';
 import '__mocks/mockCogniteSDK';
+import { getMockFilesByIds } from 'domain/documents/service/__mocks/getMockFilesByIds';
+import { getMockFilesDownloadLink } from 'domain/documents/service/__mocks/getMockFilesDownloadLink';
+
 import { saveAs } from 'file-saver';
 import { setupServer } from 'msw/node';
-import { getMockFilesByIds } from 'services/documentSearch/__mocks/getMockFilesByIds';
-import { getMockFilesDownloadLink } from 'services/documentSearch/__mocks/getMockFilesDownloadLink';
 
 import { InternalId, ExternalId, FileLink } from '@cognite/sdk';
 

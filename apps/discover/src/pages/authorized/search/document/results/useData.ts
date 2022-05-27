@@ -1,6 +1,5 @@
 import { useQueryDocumentLabels } from 'domain/documents/service/queries/useDocumentQuery';
-
-import { useDocumentSearchResultQuery } from 'services/documentSearch/queries/useDocumentSearchResultQuery';
+import { useDocumentSearchResultQuery } from 'domain/documents/service/queries/useDocumentSearchResultQuery';
 
 import { useDeepMemo } from 'hooks/useDeep';
 import { getFilteredLabels } from 'hooks/utils/getFilteredLabels';

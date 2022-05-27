@@ -1,5 +1,6 @@
+import { useDocumentSearchRelatedDocumentsQuery } from 'domain/documents/service/queries/useDocumentSearchRelatedDocumentsQuery';
+
 import orderBy from 'lodash/orderBy';
-import { useDocumentSearchRelatedDocumentsQuery } from 'services/documentSearch/queries/useDocumentSearchRelatedDocumentsQuery';
 import { withThousandSeparator } from 'utils/number';
 
 import Histogram from 'components/Histogram/Histogram';

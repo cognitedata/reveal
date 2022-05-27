@@ -1,6 +1,7 @@
+import { useDocumentSearchRelatedDocumentsQuery } from 'domain/documents/service/queries/useDocumentSearchRelatedDocumentsQuery';
+
 import * as React from 'react';
 
-import { useDocumentSearchRelatedDocumentsQuery } from 'services/documentSearch/queries/useDocumentSearchRelatedDocumentsQuery';
 import { useLabelsQuery } from 'services/labels/useLabelsQuery';
 
 import { useDocumentResultRelatedCount } from 'modules/documentSearch/hooks/useDocumentResultRelatedCount';

@@ -1,4 +1,5 @@
-import { getDocumentSDKClient } from 'services/documentSearch/sdk';
+import { getDocumentSDKClient } from 'domain/documents/service/network/getDocumentSDKClient';
+
 import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
 import { bufferDataToImageUrl } from './utils';

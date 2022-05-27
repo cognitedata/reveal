@@ -1,10 +1,11 @@
 import '__mocks/mockCogniteSDK';
 import 'services/wellSearch/__mocks/setupWellsMockSDK';
 
+import { getMockDocumentSearch } from 'domain/documents/service/__mocks/getMockDocumentSearch';
+
 import { screen } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
-import { getMockDocumentSearch } from 'services/documentSearch/__mocks/getMockDocumentSearch';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockWellsGeometry } from 'services/well/__mocks/getMockWellsGeometry';
 

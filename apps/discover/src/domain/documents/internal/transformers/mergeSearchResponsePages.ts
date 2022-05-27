@@ -1,11 +1,11 @@
+import { InifniteQueryResponse } from 'domain/documents/service/queries/types';
+
 import { UseInfiniteQueryResult } from 'react-query';
 
 import add from 'lodash/add';
 
 import { DocumentResult } from 'modules/documentSearch/types';
 import { getEmptyDocumentResult } from 'modules/documentSearch/utils';
-
-import { InifniteQueryResponse } from '../queries/types';
 
 /**
  * The reason we add this new 'results' key is that react-query

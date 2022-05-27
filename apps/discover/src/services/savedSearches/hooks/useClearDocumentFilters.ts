@@ -1,4 +1,4 @@
-import { documentFacetsStructure as emptyFacets } from 'domain/documents/service/types';
+import { documentFacetsStructure as emptyFacets } from 'domain/documents/internal/types';
 
 import { useMutatePatchSavedSearch } from 'services/savedSearches/useSavedSearchQuery';
 

@@ -1,7 +1,8 @@
 import '__mocks/mockCogniteSDK'; // should be first
 
+import { getMockDocumentSearch } from 'domain/documents/service/__mocks/getMockDocumentSearch';
+
 import { setupServer } from 'msw/node';
-import { getMockDocumentSearch } from 'services/documentSearch/__mocks/getMockDocumentSearch';
 
 import { getMockDocumentEmptyFacets } from '__test-utils/fixtures/document';
 

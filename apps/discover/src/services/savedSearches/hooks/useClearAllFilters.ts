@@ -1,4 +1,4 @@
-import { documentFacetsStructure as facets } from 'domain/documents/service/types';
+import { documentFacetsStructure as facets } from 'domain/documents/internal/types';
 
 import { useMutatePatchSavedSearch } from 'services/savedSearches/useSavedSearchQuery';
 

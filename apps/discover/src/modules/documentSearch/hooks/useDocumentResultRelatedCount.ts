@@ -1,5 +1,5 @@
-import { useDocumentSearchRelatedDocumentsQuery } from 'services/documentSearch/queries/useDocumentSearchRelatedDocumentsQuery';
-import { getTotalFromFacets } from 'services/documentSearch/utils/getTotalFromFacets';
+import { getTotalFromFacets } from 'domain/documents/internal/transformers//getTotalFromFacets';
+import { useDocumentSearchRelatedDocumentsQuery } from 'domain/documents/service/queries/useDocumentSearchRelatedDocumentsQuery';
 
 import { useDeepMemo } from 'hooks/useDeep';
 

@@ -2,7 +2,7 @@ import { fetchGet, FetchHeaders } from 'utils/fetch';
 
 import { SIDECAR } from 'constants/app';
 
-import { DocumentError, DocumentCategoriesResult } from '../types';
+import { DocumentError, DocumentCategoriesResult } from '../../internal/types';
 
 export const documentError: DocumentError = {
   error: true,

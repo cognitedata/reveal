@@ -1,4 +1,4 @@
-import { getTotalFromFacets } from 'services/documentSearch/utils/getTotalFromFacets';
+import { getTotalFromFacets } from 'domain/documents/internal/transformers//getTotalFromFacets';
 
 import { useDeepMemo } from 'hooks/useDeep';
 

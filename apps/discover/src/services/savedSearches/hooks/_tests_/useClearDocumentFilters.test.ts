@@ -1,4 +1,4 @@
-import { documentFacetsStructure } from 'domain/documents/service/types';
+import { documentFacetsStructure } from 'domain/documents/internal/types';
 
 import { renderHook } from '@testing-library/react-hooks';
 import { useMutatePatchSavedSearch } from 'services/savedSearches/useSavedSearchQuery';

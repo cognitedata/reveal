@@ -1,6 +1,6 @@
-import { useTranslation } from 'react-i18next';
+import { useDocumentSearchRelatedDocumentsOnlyQuery } from 'domain/documents/service/queries/useDocumentSearchRelatedDocumentsOnlyQuery';
 
-import { useDocumentSearchRelatedDocumentsOnlyQuery } from 'services/documentSearch/queries/useDocumentSearchRelatedDocumentsOnlyQuery';
+import { useTranslation } from 'react-i18next';
 
 import { MultiSelect } from 'components/Filters';
 import { usePatchRelatedDocumentFilters } from 'modules/inspectTabs/hooks/usePatchRelatedDocumentFilters';

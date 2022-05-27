@@ -1,8 +1,8 @@
-import { useDocumentCategoryQuery } from 'domain/documents/service/queries/useDocumentQuery';
 import {
   DocumentCategoriesFacets,
   DocumentError,
-} from 'domain/documents/service/types';
+} from 'domain/documents/internal/types';
+import { useDocumentCategoryQuery } from 'domain/documents/service/queries/useDocumentQuery';
 
 import React from 'react';
 

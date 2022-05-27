@@ -1,6 +1,7 @@
 import '__mocks/mockCogniteSDK';
+import { getMockDocumentSearch } from 'domain/documents/service/__mocks/getMockDocumentSearch';
+
 import { setupServer } from 'msw/node';
-import { getMockDocumentSearch } from 'services/documentSearch/__mocks/getMockDocumentSearch';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import { renderHookWithStore } from '__test-utils/renderer';

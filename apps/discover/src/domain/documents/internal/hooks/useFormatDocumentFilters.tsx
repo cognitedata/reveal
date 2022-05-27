@@ -1,4 +1,4 @@
-import { DocumentFormatFilter } from 'domain/documents/service/types';
+import { DocumentFormatFilter } from 'domain/documents/internal/types';
 
 import isEmpty from 'lodash/isEmpty';
 import merge from 'lodash/merge';

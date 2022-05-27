@@ -1,7 +1,8 @@
+import { useDocumentSearchResultQuery } from 'domain/documents/service/queries/useDocumentSearchResultQuery';
+
 import { useQueryClient } from 'react-query';
 
 import { renderHook } from '@testing-library/react-hooks';
-import { useDocumentSearchResultQuery } from 'services/documentSearch/queries/useDocumentSearchResultQuery';
 
 import { getMockDocument } from '__test-utils/fixtures/document';
 import { DOCUMENTS_QUERY_KEY } from 'constants/react-query';
@@ -22,7 +23,7 @@ jest.mock('modules/documentSearch/hooks/useDocumentSearchQueryFull', () => ({
 }));
 
 jest.mock(
-  'services/documentSearch/queries/useDocumentSearchResultQuery',
+  'domain/documents/service/queries/useDocumentSearchResultQuery',
   () => ({
     useDocumentSearchResultQuery: jest.fn(),
   })

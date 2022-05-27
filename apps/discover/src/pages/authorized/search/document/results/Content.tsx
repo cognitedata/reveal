@@ -1,7 +1,8 @@
+import { useDocumentSearchResultQuery } from 'domain/documents/service/queries/useDocumentSearchResultQuery';
+
 import * as React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
-import { useDocumentSearchResultQuery } from 'services/documentSearch/queries/useDocumentSearchResultQuery';
 import styled from 'styled-components/macro';
 
 import { DocumentContentAppliedFilters } from 'pages/authorized/search/document/header/DocumentContentAppliedFilters';

@@ -1,6 +1,6 @@
-import { useQueryClient } from 'react-query';
+import { useDocumentSearchResultQuery } from 'domain/documents/service/queries/useDocumentSearchResultQuery';
 
-import { useDocumentSearchResultQuery } from 'services/documentSearch/queries/useDocumentSearchResultQuery';
+import { useQueryClient } from 'react-query';
 
 import { DOCUMENTS_QUERY_KEY } from 'constants/react-query';
 import { useDocumentSearchOptions } from 'modules/documentSearch/hooks/useDocumentSearchOptions';

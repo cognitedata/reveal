@@ -1,4 +1,4 @@
-import { documentFacetsStructure } from 'domain/documents/service/types';
+import { documentFacetsStructure } from 'domain/documents/internal/types';
 
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

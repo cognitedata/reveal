@@ -1,6 +1,7 @@
+import { getSearchQuery } from 'domain/documents/internal/transformers/getSearchQuery';
+import { getDocumentSDKClient } from 'domain/documents/service/network/getDocumentSDKClient';
+
 import isEmpty from 'lodash/isEmpty';
-import { getDocumentSDKClient } from 'services/documentSearch/sdk';
-import { getSearchQuery } from 'services/documentSearch/utils/getSearchQuery';
 import { handleServiceError } from 'utils/errors';
 import { mergeUniqueArray } from 'utils/merge';
 

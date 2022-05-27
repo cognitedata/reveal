@@ -8,7 +8,7 @@ import { getMockedStore } from '__test-utils/store.utils';
 
 import { useDocumentHighlightedContent } from '../useDocumentHighlightedContent';
 
-jest.mock('services/documentSearch/sdk', () => ({
+jest.mock('domain/documents/service/network/getDocumentSDKClient', () => ({
   getDocumentSDKClient: () => ({
     documents: {
       search: jest

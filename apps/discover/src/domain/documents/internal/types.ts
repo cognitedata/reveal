@@ -30,3 +30,8 @@ export const documentFacetsStructure: DocumentsFacets = {
   lastcreated: [],
   pageCount: [],
 };
+
+export type DateRange = {
+  min?: number;
+  max?: number;
+};

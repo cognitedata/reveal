@@ -1,9 +1,10 @@
 // import '__mocks/mockContainerAuth'; // should be first
 import '__mocks/mockCogniteSDK';
 
+import { getMockDocumentSearch } from 'domain/documents/service/__mocks/getMockDocumentSearch';
+
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
-import { getMockDocumentSearch } from 'services/documentSearch/__mocks/getMockDocumentSearch';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import { testWrapper as wrapper } from '__test-utils/renderer';

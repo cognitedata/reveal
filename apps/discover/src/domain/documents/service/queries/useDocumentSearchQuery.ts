@@ -1,3 +1,9 @@
+import { mergeSearchResponsePages } from 'domain/documents/internal/transformers/mergeSearchResponsePages';
+import {
+  searchDocument,
+  SearchRequestOptions,
+} from 'domain/documents/service/queries/searchDocument';
+
 import { useInfiniteQuery, useQueryClient } from 'react-query';
 
 import { Metrics } from '@cognite/metrics';
@@ -12,12 +18,6 @@ import { DOCUMENT_SEARCH_PAGE_LIMIT } from 'modules/documentSearch/constants';
 import { useDocumentSearchQueryFull } from 'modules/documentSearch/hooks/useDocumentSearchQueryFull';
 import { SearchQueryFull } from 'modules/documentSearch/types';
 import { handleDocumentSearchError } from 'modules/documentSearch/utils/documentSearch';
-
-import {
-  searchDocument,
-  SearchRequestOptions,
-} from '../service/searchDocument';
-import { mergeSearchResponsePages } from '../utils/mergeSearchResponsePages';
 
 import { InifniteQueryResponse } from './types';
 

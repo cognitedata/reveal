@@ -1,8 +1,9 @@
 import '__mocks/mockContainerAuth'; // should be first
 import '__mocks/mockCogniteSDK';
+import { getMockDocumentSearch } from 'domain/documents/service/__mocks/getMockDocumentSearch';
+
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import { getMockDocumentSearch } from 'services/documentSearch/__mocks/getMockDocumentSearch';
 import { getMockLabelsPost } from 'services/labels/__mocks/getMockLabels';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockSavedSearchRelatedGet } from 'services/savedSearches/__mocks/getMockSavedSearchRelatedGet';

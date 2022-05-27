@@ -10,8 +10,8 @@ import { getTenantInfo } from '@cognite/react-container';
 
 import { DOCUMENT_CATEGORIES_QUERY_KEY } from 'constants/react-query';
 
+import { DocumentError } from '../../internal/types';
 import { getCategories } from '../network/getCategories';
-import { DocumentError } from '../types';
 
 export const useDocumentCategoryQuery = () => {
   const headers = useJsonHeaders();
