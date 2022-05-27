@@ -97,17 +97,17 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Set input handling.
    */
   private setupEventHandling() {
-    this._viewer.domElement.addEventListener('click', this._handleonPointerClick);
+    this._viewer.on('click', this._handleonPointerClick);
   }
 
   /**
    * Remove input handling.
    */
   private removeEventHandling() {
-    this._viewer.domElement.removeEventListener('click', this._handleonPointerClick);
+    this._viewer.off('click', this._handleonPointerClick);
   }
 
-  private async onPointerClick(event: MouseEvent): Promise<void> {
+  private async onPointerClick(event: any): Promise<void> {
     const { offsetX, offsetY } = event;
 
     const intersection = await this._viewer.getIntersectionFromPixel(offsetX, offsetY);
@@ -160,7 +160,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._distanceValue = measurementLabelData.distance?.toFixed(2) + ' ' + measurementLabelData.units;
   }
 
-  private onPointerMove(event: MouseEvent) {
+  private onPointerMove(event: any) {
     const { offsetX, offsetY } = event;
     this._line.updateLine(offsetX, offsetY, this._domElement, this._camera);
     this._viewer.requestRedraw();
@@ -168,7 +168,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
   /**
    * Creates sphere at given position.
-   * @param position Position.
+   * @param position Position to place the sphere.
    */
   private addSphere(position: THREE.Vector3) {
     const mesh = new THREE.Mesh(
