@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { CogniteClient, HttpHeaders } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
 
 import { ModelDataProvider } from './types';
 
@@ -15,10 +15,6 @@ export class CdfModelDataProvider implements ModelDataProvider {
   constructor(client: CogniteClient) {
     this.client = client;
     this.authenticationPromise = client.authenticate();
-  }
-
-  get headers(): HttpHeaders {
-    return this.client.getDefaultRequestHeaders();
   }
 
   public async getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer> {
