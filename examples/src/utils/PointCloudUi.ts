@@ -15,13 +15,13 @@ export class PointCloudUi {
   constructor(viewer: Cognite3DViewer, ui: dat.GUI) {
     this._viewer = viewer;
 
-    ui.add(this._params, 'budget', 0, 20_000_000, 100_000).onFinishChange(() => this.applyToAllModels());
-    ui.add(this._params, 'pointSize', 0, 2, 0.025).onFinishChange(() => this.applyToAllModels());
+    ui.add(this._params, 'budget', 0, 20_000_000, 100_000).onChange(() => this.applyToAllModels());
+    ui.add(this._params, 'pointSize', 0, 2, 0.025).onChange(() => this.applyToAllModels());
     ui.add(this._params, 'pointSizeType', { 
       Adaptive: PotreePointSizeType.Adaptive, 
       Attenuated: PotreePointSizeType.Attenuated, 
       Fixed: PotreePointSizeType.Fixed 
-    }).onFinishChange(() => this.applyToAllModels());
+    }).onChange(() => this.applyToAllModels());
     ui.add(this._params, 'pointColorType', {
       Rgb: PotreePointColorType.Rgb,
       Depth: PotreePointColorType.Depth,
@@ -30,14 +30,14 @@ export class PointCloudUi {
       LevelOfDetail: PotreePointColorType.LevelOfDetail,
       Classification: PotreePointColorType.Classification,
       Intensity: PotreePointColorType.Intensity,
-    }).onFinishChange(valueStr => {
+    }).onChange(valueStr => {
       this._params.pointColorType = parseInt(valueStr, 10);
       this.applyToAllModels()
     });
     ui.add(this._params, 'pointShape', {
       Circle: PotreePointShape.Circle,
       Square: PotreePointShape.Square
-    }).onFinishChange(valueStr => {
+    }).onChange(valueStr => {
       this._params.pointShape = parseInt(valueStr, 10);
       this.applyToAllModels()
     });
