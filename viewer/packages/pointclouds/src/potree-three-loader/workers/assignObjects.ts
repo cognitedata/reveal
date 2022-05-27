@@ -12,12 +12,9 @@ export function computeObjectIdBuffer(
 ): ArrayBuffer {
   const numPoints = positionBuffer.length / 3;
   const rawObjectIdBuffer = new ArrayBuffer(2 * numPoints);
-  const objectIdBuffer = new Uint16Array(rawObjectIdBuffer);
+  const objectIdBufferView = new Uint16Array(rawObjectIdBuffer);
 
-  for (let i = 0; i < objectIdBuffer.length; i++) {
-    // 0 is default / unassigned value
-    objectIdBuffer[i] = 0;
-
+  for (let i = 0; i < objectIdBufferView.length; i++) {
     const position: Vec3 = v3Add(
       [positionBuffer[3 * i + 0], positionBuffer[3 * i + 1], positionBuffer[3 * i + 2]],
       pointOffset
@@ -25,7 +22,7 @@ export function computeObjectIdBuffer(
 
     for (const obj of objectList) {
       if (obj.shape.containsPoint(position)) {
-        objectIdBuffer[i] = obj.objectId;
+        objectIdBufferView[i] = obj.objectId;
         break;
       }
     }
