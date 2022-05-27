@@ -43,6 +43,18 @@ export class MeasurementLabels {
   }
 
   /**
+   * Set Style for Axis distance label.
+   */
+  setStyle(): void {
+    if (this._htmlOverlay) {
+      const style = document.getElementById(MeasurementLabels.stylesId).style;
+      style.fontWeight = '300';
+      style.padding = '8px';
+      style.color = '#999';
+    }
+  }
+
+  /**
    * Dispose all measurements labels
    */
   dispose(): void {

@@ -39,7 +39,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private _lineMesh: THREE.Mesh;
   private readonly _options: Required<MeasurementOptions>;
   private _sphereSize: number;
-  private _distanceValue: string;
   private readonly _domElement: HTMLElement;
   private readonly _camera: THREE.Camera;
 
@@ -60,7 +59,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._domElement = this._viewer.domElement;
     this._camera = this._viewer.getCamera();
     this._sphereSize = 0.01;
-    this._distanceValue = '';
   }
 
   /**
@@ -147,9 +145,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private endMeasurement(point: THREE.Vector3) {
     //Update the line with final end point.
     this._line.updateLine(0, 0, this._domElement, this._camera, point);
-    this.setMeasurementValue(this._options.changeMeasurementLabelMetrics);
-    //Add the measurement label.
-    this._measurementLabel.addLabel(this._line.getMidPointOnLine(), this._distanceValue);
+    this.addLabel(this._line.getMidPointOnLine());
 
     //Add axis component measurement data if enabled
     if (this._options.axisComponentMeasurement) {
@@ -159,17 +155,23 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._lineMesh = null;
   }
 
+  private addLabel(postion: THREE.Vector3) {
+    const distance = this.setMeasurementValue(this._options.changeMeasurementLabelMetrics);
+    //Add the measurement label.
+    this._measurementLabel.addLabel(postion, distance);
+  }
+
   /**
    * Set the measurement data.
    * @param options Callback function which get user value to be added into label.
    */
-  private setMeasurementValue(options: MeasurementLabelUpdateDelegate) {
+  private setMeasurementValue(options: MeasurementLabelUpdateDelegate): string {
     const measurementLabelData = options(this._line.getMeasuredDistance());
-    this._distanceValue = measurementLabelData.distance.toFixed(2) + ' ' + measurementLabelData.units;
+    return measurementLabelData.distance.toFixed(2) + ' ' + measurementLabelData.units;
   }
 
   /**
-   * Get and add axis measurement components for the point to point measurement
+   * Get and add axis components for the point to point measurement
    */
   private addAxisMeasurement() {
     if (this._line) {
@@ -177,13 +179,19 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       axisMeshes.forEach(mesh => {
         this._viewer.addObject3D(mesh);
       });
+      this.addAxisLabels();
     }
   }
 
   private addAxisLabels() {
-    // if (this._measurementLabel) {
-    //   this._measurementLabel.addLabel()
-    // }
+    if (this._measurementLabel) {
+      this._measurementLabel.setStyle();
+      const axisDistanceValues = this._line.getAxisDistances();
+      this.addLabel(this._line.getAxisMidPoints()[0]);
+      this._measurementLabel.addLabel(this._line.getAxisMidPoints()[0], Math.abs(axisDistanceValues.x).toFixed(2));
+      this._measurementLabel.addLabel(this._line.getAxisMidPoints()[1], Math.abs(axisDistanceValues.y).toFixed(2));
+      this._measurementLabel.addLabel(this._line.getAxisMidPoints()[2], Math.abs(axisDistanceValues.z).toFixed(2));
+    }
   }
 
   private onPointerMove(event: MouseEvent) {
