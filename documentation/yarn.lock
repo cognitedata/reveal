@@ -1629,9 +1629,9 @@
     url "^0.11.0"
 
 "@cognite/sdk-core@^4.1.7":
-  version "4.1.7"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.1.7.tgz#6925e7bae64b0114cb94ddda262a07a9a285e7b9"
-  integrity sha512-WA7GKXVHlbeqvtGFhe+sYphb5bq68VzF5yxs99fRmjJWzab1OvJv2n1lXPlDk6OUBNzoLqrxZ1fBVxrBTfr95g==
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.2.0.tgz#4988ebd9a3df83d21d86662862a7f27964caad3b"
+  integrity sha512-DJKThOLktoL9f3rE/td3ZiUIXIU2ztigZn+Z69fhzuF084Wsoksz2MnPRCG3dUaOA61LDdXoKPxUL9tdjumdMA==
   dependencies:
     cross-fetch "^3.0.4"
     is-buffer "^2.0.5"

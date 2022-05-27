@@ -5,7 +5,7 @@
 import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 import { THREE } from '@cognite/reveal';
-import { CogniteClient, HttpHeaders } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
 import {
   Cognite3DViewer,
   Cognite3DViewerOptions,
@@ -67,8 +67,6 @@ class MyModelMetadataProvider implements ModelMetadataProvider {
 }
 
 class MyModelDataProvider implements ModelDataProvider {
-  public readonly headers: HttpHeaders = {};
-
   async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
     const url = `${baseUrl}/${fileName}`;
     const response = await fetch(url);
