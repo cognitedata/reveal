@@ -62,7 +62,7 @@ export class EptBinaryLoader implements ILoader {
         }
 
         addAttributeIfPresent<Float32Array>(Float32Array, 'position', 3, e.data.position);
-        addAttributeIfPresent<Uint8Array>(Uint8Array, 'indices', 4, e.data.indices);
+        addAttributeIfPresent<Uint32Array>(Uint32Array, 'indices', 1, e.data.indices);
         addAttributeIfPresent<Uint8Array>(Uint8Array, 'color', 4, e.data.color, true);
         addAttributeIfPresent<Float32Array>(Float32Array, 'intensity', 1, e.data.intensity);
         addAttributeIfPresent<Uint8Array>(Uint8Array, 'classification', 1, e.data.classification);
