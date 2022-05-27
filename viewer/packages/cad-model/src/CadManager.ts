@@ -185,8 +185,8 @@ export class CadManager {
       throw Error(
         `The added model had format ${modelMetadata.format} and ` +
           `version ${modelMetadata.formatVersion} which is incompatible ` +
-          `with previously added models of format ${this._compatibleFileFormat.format} ` +
-          `and version ${this._compatibleFileFormat.version}`
+          `with previously added models of format ${this._compatibleFileFormat?.format} ` +
+          `and version ${this._compatibleFileFormat?.version}`
       );
     }
 

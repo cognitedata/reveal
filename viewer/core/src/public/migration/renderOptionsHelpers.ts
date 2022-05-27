@@ -8,7 +8,7 @@ import { assertNever, DeviceDescriptor } from '@reveal/utilities';
 import { PropType } from '../../utilities/reflection';
 import { Cognite3DViewerOptions } from './types';
 
-type AntiAliasingHintOption = PropType<Cognite3DViewerOptions, 'antiAliasingHint'>;
+type AntiAliasingHintOption = NonNullable<PropType<Cognite3DViewerOptions, 'antiAliasingHint'>>;
 type SsaoQualityHintOption = PropType<Cognite3DViewerOptions, 'ssaoQualityHint'>;
 
 /**
@@ -19,7 +19,7 @@ type SsaoQualityHintOption = PropType<Cognite3DViewerOptions, 'ssaoQualityHint'>
  * @returns Actual anti-aliasing mode to initialize the renderer with.
  */
 export function determineAntiAliasingMode(
-  modeHint: AntiAliasingHintOption,
+  modeHint: AntiAliasingHintOption | undefined,
   device: DeviceDescriptor
 ): {
   antiAliasing: AntiAliasingMode;
