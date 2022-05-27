@@ -6,7 +6,7 @@
 
 import * as THREE from 'three';
 
-import { WorkerPool } from '../utils/WorkerPool';
+import { AutoTerminatingWorker, WorkerPool } from '../utils/WorkerPool';
 import { ILoader } from './ILoader';
 import { ModelDataProvider } from '@reveal/modeldata-api';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
@@ -47,44 +47,22 @@ export class EptBinaryLoader implements ILoader {
 
     return new Promise<void>(res => {
       autoTerminatingWorker.worker.onmessage = function (e: { data: ParsedEptData }) {
-        const g = new THREE.BufferGeometry();
+        const geometry = createGeometryFromEptData(e.data);
+
+        const tightBoundingBox = createTightBoundingBox(e.data);
+
         const numPoints = e.data.numPoints;
-
-        function addAttributeIfPresent<TypedArray extends ArrayLike<number>>(
-          typedArrayConstructor: { new (data: ArrayBuffer): TypedArray },
-          name: string,
-          componentCount: number,
-          data?: ArrayBuffer | undefined,
-          normalized: boolean = false
-        ): void {
-          if (data) {
-            const typedArray = new typedArrayConstructor(data);
-            g.setAttribute(name, new THREE.BufferAttribute(typedArray, componentCount, normalized));
-          }
-        }
-
-        addAttributeIfPresent<Float32Array>(Float32Array, 'position', 3, e.data.position);
-        addAttributeIfPresent<Uint32Array>(Uint32Array, 'indices', 1, e.data.indices);
-        addAttributeIfPresent<Uint8Array>(Uint8Array, 'color', 4, e.data.color, true);
-        addAttributeIfPresent<Float32Array>(Float32Array, 'intensity', 1, e.data.intensity);
-        addAttributeIfPresent<Uint8Array>(Uint8Array, 'classification', 1, e.data.classification);
-        addAttributeIfPresent<Uint8Array>(Uint8Array, 'return number', 1, e.data.returnNumber);
-        addAttributeIfPresent<Uint8Array>(Uint8Array, 'number of returns', 1, e.data.numberOfReturns);
-        addAttributeIfPresent<Uint16Array>(Uint16Array, 'source id', 1, e.data.pointSourceId);
-        addAttributeIfPresent<Uint16Array>(Uint16Array, 'objectId', 1, e.data.objectId);
-
-        g.attributes.indices.normalized = true;
-
-        const tightBoundingBox = new THREE.Box3(
-          new THREE.Vector3().fromArray(e.data.tightBoundingBox.min),
-          new THREE.Vector3().fromArray(e.data.tightBoundingBox.max)
-        );
-
-        node.doneLoading(g, tightBoundingBox, numPoints, new THREE.Vector3(...e.data.mean));
+        node.doneLoading(geometry, tightBoundingBox, numPoints, new THREE.Vector3(...e.data.mean));
 
         EptBinaryLoader.WORKER_POOL.releaseWorker(autoTerminatingWorker);
         res();
       };
+
+      if (this._styledObjectInfo) {
+        postStyledObjectInfo(autoTerminatingWorker,
+                             node,
+                             this._styledObjectInfo);
+      }
 
       const eptData: EptInputData = {
         buffer: data,
@@ -94,24 +72,71 @@ export class EptBinaryLoader implements ILoader {
         mins: fromThreeVector3(node.key.b.min)
       };
 
-      if (this._styledObjectInfo) {
-        const offsetVec = node.boundingBox.min;
+      postParseCommand(autoTerminatingWorker, eptData);
+    });
+  }
+}
 
-        const objectMessage: ObjectsCommand = {
-          type: 'objects',
-          objects: this._styledObjectInfo.styledObjects,
-          pointOffset: [offsetVec.x, offsetVec.y, offsetVec.z] as [number, number, number]
-        };
+function createTightBoundingBox(data: ParsedEptData): THREE.Box3 {
+  return new THREE.Box3(
+    new THREE.Vector3().fromArray(data.tightBoundingBox.min),
+    new THREE.Vector3().fromArray(data.tightBoundingBox.max)
+  );
+}
 
-        autoTerminatingWorker.worker.postMessage(objectMessage);
-      }
+function postParseCommand(autoTerminatingWorker: AutoTerminatingWorker,
+                          data: EptInputData) {
 
       const parseMessage: ParseCommand = {
         type: 'parse',
-        data: eptData
+        data
       };
 
       autoTerminatingWorker.worker.postMessage(parseMessage, [parseMessage.data.buffer]);
-    });
+}
+
+function postStyledObjectInfo(autoTerminatingWorker: AutoTerminatingWorker,
+                              node: PointCloudEptGeometryNode,
+                              styledObjectInfo: StyledObjectInfo): void {
+
+  const offsetVec = node.boundingBox.min;
+
+  const objectMessage: ObjectsCommand = {
+    type: 'objects',
+    objects: styledObjectInfo.styledObjects,
+    pointOffset: [offsetVec.x, offsetVec.y, offsetVec.z] as [number, number, number]
+  };
+
+  autoTerminatingWorker.worker.postMessage(objectMessage);
+}
+
+function createGeometryFromEptData(data: ParsedEptData): THREE.BufferGeometry {
+  const geometry = new THREE.BufferGeometry();
+
+  function addAttributeIfPresent<TypedArray extends ArrayLike<number>>(
+    typedArrayConstructor: { new (data: ArrayBuffer): TypedArray },
+    name: string,
+    componentCount: number,
+    data?: ArrayBuffer | undefined,
+    normalized: boolean = false
+  ): void {
+    if (data) {
+      const typedArray = new typedArrayConstructor(data);
+      geometry.setAttribute(name, new THREE.BufferAttribute(typedArray, componentCount, normalized));
+    }
   }
+
+  addAttributeIfPresent<Float32Array>(Float32Array, 'position', 3, data.position);
+  addAttributeIfPresent<Uint32Array>(Uint32Array, 'indices', 1, data.indices);
+  addAttributeIfPresent<Uint8Array>(Uint8Array, 'color', 4, data.color, true);
+  addAttributeIfPresent<Float32Array>(Float32Array, 'intensity', 1, data.intensity);
+  addAttributeIfPresent<Uint8Array>(Uint8Array, 'classification', 1, data.classification);
+  addAttributeIfPresent<Uint8Array>(Uint8Array, 'return number', 1, data.returnNumber);
+  addAttributeIfPresent<Uint8Array>(Uint8Array, 'number of returns', 1, data.numberOfReturns);
+  addAttributeIfPresent<Uint16Array>(Uint16Array, 'source id', 1, data.pointSourceId);
+  addAttributeIfPresent<Uint16Array>(Uint16Array, 'objectId', 1, data.objectId);
+
+  geometry.attributes.indices.normalized = true;
+
+  return geometry;
 }
