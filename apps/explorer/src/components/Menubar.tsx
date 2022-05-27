@@ -6,14 +6,10 @@ import { TopBar } from '@cognite/cogs.js';
 //   findEquipment as Equipments,
 //   EquipmentsQuery,
 //   _ListEquipmentFilter,
-// } from 'queries/useListEquipment';
+// } from 'queries/useListEquipment';x
+import { PAGES } from 'pages/routers/AppRouter';
 
 import { SidebarIcon } from './Sidebar';
-
-export enum PAGES {
-  HOME = '/home',
-  LOGOUT = '/logout',
-}
 
 export const MenuBar = () => {
   const history = useHistory();

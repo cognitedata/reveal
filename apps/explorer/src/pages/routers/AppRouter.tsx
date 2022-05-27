@@ -1,8 +1,16 @@
 import { Switch, Redirect, Route } from 'react-router-dom';
 import { NotFoundPage } from 'pages/NotFoundPage';
 import { Home } from 'pages/Home';
+import { Search } from 'pages/Search';
+import { Profile } from 'pages/Profile';
 import { Logout } from '@cognite/react-container';
-import { PAGES } from 'components/Menubar';
+
+export enum PAGES {
+  HOME = '/home',
+  LOGOUT = '/logout',
+  SEARCH = '/search',
+  PROFILE = '/profile',
+}
 
 // Refactor https://dev.to/surajjadhav/how-should-we-structure-our-react-code-2-2-kgh
 export const AppRouter = () => {
@@ -10,6 +18,8 @@ export const AppRouter = () => {
     <Switch>
       <Route path={PAGES.HOME} render={() => <Home />} />
       <Route path={PAGES.LOGOUT} render={() => <Logout />} />
+      <Route path={PAGES.SEARCH} render={() => <Search />} />
+      <Route path={PAGES.PROFILE} render={() => <Profile />} />
 
       <Redirect from="" to={PAGES.HOME} />
       <Redirect from="/" to={PAGES.HOME} />

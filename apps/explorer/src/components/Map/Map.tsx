@@ -1,4 +1,3 @@
-import { useAuthContext, getTenantInfo } from '@cognite/react-container';
 import {
   AddModelOptions,
   CadIntersection,
@@ -9,7 +8,10 @@ import {
   NumericRange,
   TreeIndexNodeCollection,
 } from '@cognite/reveal';
-import * as React from 'react';
+import { CogniteClient } from '@cognite/sdk';
+import React from 'react';
+
+import { Popup } from './Popup';
 
 const projectModels: Record<string, AddModelOptions> = {
   'atlas-greenfield': {
@@ -18,20 +20,67 @@ const projectModels: Record<string, AddModelOptions> = {
   },
 };
 
-const Map: React.FC = () => {
-  const { client } = useAuthContext();
+interface Props {
+  client: CogniteClient;
+  project: string;
+}
+
+const Map: React.FC<Props> = ({ client, project }) => {
   const viewer = React.useRef<Cognite3DViewer>();
-  const [treeIndex, setTI] = React.useState<number>();
+  const [treeIndex, setTreeIndex] = React.useState<number>();
   const indexes: Record<number, string> = {
     2438: 'DMVP room',
     2436: 'Cylinder',
     2445: 'Pentagon',
   };
-  const [tenant] = getTenantInfo();
+
+  const handleClick = async (
+    event: { offsetX: any; offsetY: any },
+    model: Cognite3DModel
+  ) => {
+    const intersection = await viewer
+      .current!.getIntersectionFromPixel(event.offsetX, event.offsetY)
+      .then((res) => res as CadIntersection);
+    if (intersection) {
+      const myNodes = new TreeIndexNodeCollection();
+      const styledNodes = model.styledNodeCollections;
+      // determines if we should assign highlights to nodes
+      let updateStyles = true;
+
+      if (styledNodes[0]) {
+        // if there are styled nodes
+        const styledIndexSet = styledNodes[0].nodeCollection.getIndexSet();
+        const styledNodeTreeIndex = styledIndexSet.rootNode
+          ? styledIndexSet.rootNode.range.from
+          : undefined;
+
+        // reset
+        model.removeAllStyledNodeCollections();
+        if (styledNodeTreeIndex === intersection.treeIndex) {
+          updateStyles = false;
+        }
+      }
+
+      if (updateStyles) {
+        model.assignStyledNodeCollection(
+          myNodes,
+          DefaultNodeAppearance.Highlighted
+        );
+        myNodes.updateSet(
+          new IndexSet(new NumericRange(intersection.treeIndex, 1))
+        );
+        setTreeIndex(intersection.treeIndex);
+      } else {
+        setTreeIndex(undefined);
+      }
+    } else {
+      setTreeIndex(undefined);
+    }
+  };
 
   React.useEffect(() => {
     const main = async () => {
-      const modelInfo = projectModels[tenant];
+      const modelInfo = projectModels[project];
       if (!modelInfo) {
         // eslint-disable-next-line no-console
         console.warn('Missing model info for this CDF project');
@@ -40,7 +89,7 @@ const Map: React.FC = () => {
 
       viewer.current = new Cognite3DViewer({
         // @ts-expect-error client needs updates
-        sdk: client!,
+        sdk: client,
         domElement: document.getElementById('reveal')!,
       });
 
@@ -49,38 +98,18 @@ const Map: React.FC = () => {
         viewer.current?.fitCameraToModel(model);
         return model as Cognite3DModel;
       });
-
-      viewer.current.on('click', async (event) => {
-        const intersection = await viewer
-          .current!.getIntersectionFromPixel(event.offsetX, event.offsetY)
-          .then((res) => res as CadIntersection);
-        if (intersection) {
-          // console.log(intersection);
-          // const toPresent = {
-          //   treeIndex: intersection.treeIndex,
-          //   point: intersection.point,
-          // };
-          const myNodes = new TreeIndexNodeCollection();
-
-          model.assignStyledNodeCollection(
-            myNodes,
-            DefaultNodeAppearance.Highlighted
-          );
-          myNodes.clear();
-          myNodes.updateSet(
-            new IndexSet(new NumericRange(intersection.treeIndex, 1))
-          );
-          setTI(intersection.treeIndex);
-        }
-      });
+      viewer.current.on('click', (event) => handleClick(event, model));
     };
+
     main();
   }, [client]);
 
   return (
-    <div style={{ width: 800, height: 800 }}>
+    <div style={{ width: '100%', height: '100%' }}>
       <div id="reveal" style={{ width: '100%', height: '100%' }} />
-      {treeIndex ? indexes[treeIndex] : 'Select a room'}
+      {treeIndex && indexes[treeIndex] ? (
+        <Popup itemData={indexes[treeIndex]} />
+      ) : null}
     </div>
   );
 };

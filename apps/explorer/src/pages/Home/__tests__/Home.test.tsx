@@ -3,11 +3,13 @@ import '__mocks/mockCognite3DViewer';
 import { screen } from '@testing-library/react';
 import { render } from 'utils/test';
 
-import { Base } from '../Map.stories';
+import { Home } from '../Home';
 
 describe('<Home />', () => {
-  test('Select a room', async () => {
-    render(<Base />);
-    expect(await screen.findByText(/Select a room/i)).toBeInTheDocument();
+  test('Load Home screen', async () => {
+    render(<Home />);
+    expect(
+      await screen.findByText(/What are you looking for?/i)
+    ).toBeInTheDocument();
   });
 });

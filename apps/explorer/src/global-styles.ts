@@ -10,4 +10,9 @@ export default createGlobalStyle`
     padding: 0;
     font-family: "proxima-nova", sans-serif !important;
   }
+
+  #root {
+    height:100%;
+    width:100%;
+  }
 `;
