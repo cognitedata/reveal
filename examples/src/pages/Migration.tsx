@@ -181,6 +181,7 @@ export function Migration() {
           new BulkHtmlOverlayUI(gui.addFolder(`Node tagging #${modelUi.cadModels.length}`), viewer, model, client);
         } else if (model instanceof CognitePointCloudModel) {
           new PointCloudClassificationFilterUI(gui.addFolder(`Class filter #${modelUi.pointCloudModels.length}`), model);
+          pointCloudUi.applyToAllModels();
         }
       }
       const modelUi = new ModelUi(gui.addFolder('Models'), viewer, handleModelAdded);
@@ -295,7 +296,7 @@ export function Migration() {
 
       const clippingUi = new ClippingUI(gui.addFolder('Clipping'), planes => viewer.setClippingPlanes(planes));
       new CameraUI(viewer, gui.addFolder('Camera'));
-      new PointCloudUi(viewer, gui.addFolder('Point clouds'));
+      const pointCloudUi = new PointCloudUi(viewer, gui.addFolder('Point clouds'));
       await modelUi.restoreModelsFromUrl();
 
       let expandTool: ExplodedViewTool | null;
