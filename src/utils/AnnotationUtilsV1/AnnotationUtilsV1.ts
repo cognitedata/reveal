@@ -18,7 +18,7 @@ import {
   ColorsPersonDetection,
   ColorsTagDetection,
 } from 'src/constants/Colors';
-import { Keypoint } from 'src/modules/Review/types';
+import { LegacyKeypoint } from 'src/modules/Review/types';
 import { AnnotationsBadgeCounts } from 'src/modules/Common/types';
 import { AllIconTypes } from '@cognite/cogs.js';
 import { v4 as uuidv4 } from 'uuid';
@@ -39,7 +39,7 @@ export enum AnnotationStatus {
   Unhandled = 'unhandled',
 }
 
-export type KeypointItem = Required<Keypoint> & {
+export type KeypointItem = Required<LegacyKeypoint> & {
   id: string;
   selected: boolean;
 };

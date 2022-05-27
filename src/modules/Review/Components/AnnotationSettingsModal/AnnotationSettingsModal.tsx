@@ -2,13 +2,13 @@ import React from 'react';
 import { Modal } from 'antd';
 import { getContainer } from 'src/utils';
 import styled from 'styled-components';
-import { AnnotationCollection } from 'src/modules/Review/types';
+import { LegacyAnnotationCollection } from 'src/modules/Review/types';
 import { AnnotationSettingsModalContent } from './AnnotationSettingsModalContent';
 
 export type AnnotationSettingsModalProps = {
-  predefinedAnnotations: AnnotationCollection;
+  predefinedAnnotations: LegacyAnnotationCollection;
   showModal: boolean;
-  onDone: (collection: AnnotationCollection) => void;
+  onDone: (collection: LegacyAnnotationCollection) => void;
   onCancel: () => void;
   options?: {
     createNew: { text?: string; color?: string };

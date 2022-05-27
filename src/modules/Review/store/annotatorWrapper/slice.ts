@@ -1,5 +1,9 @@
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
-import { Keypoint, KeypointCollection, Tool } from 'src/modules/Review/types';
+import {
+  LegacyKeypoint,
+  KeypointCollection,
+  Tool,
+} from 'src/modules/Review/types';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
@@ -124,7 +128,7 @@ const annotatorWrapperSlice = createSlice({
         // collection has keypoints
         if (keypoints) {
           // get the matching keypoint or the first one
-          const predefinedKeypoint: Keypoint =
+          const predefinedKeypoint: LegacyKeypoint =
             keypoints.find((keypoint) => keypoint.caption === keypointLabel) ||
             keypoints[0];
 

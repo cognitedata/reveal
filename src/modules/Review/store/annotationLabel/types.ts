@@ -1,5 +1,5 @@
 import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { AnnotationCollection, Tool } from 'src/modules/Review/types';
+import { LegacyAnnotationCollection, Tool } from 'src/modules/Review/types';
 
 export type KeyPointState = {
   id: string;
@@ -17,7 +17,7 @@ type KeypointCollectionState = {
 };
 
 export type AnnotationLabelState = {
-  predefinedAnnotations: AnnotationCollection;
+  predefinedAnnotations: LegacyAnnotationCollection;
   collections: {
     byId: Record<string, KeypointCollectionState>;
     allIds: string[];

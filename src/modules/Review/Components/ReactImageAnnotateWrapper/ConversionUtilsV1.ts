@@ -19,7 +19,7 @@ import {
 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   AnnotationTableItem,
-  KeypointItemCollection,
+  LegacyKeypointItemCollection,
 } from 'src/modules/Review/types';
 
 export enum RegionTagsIndex {
@@ -75,7 +75,7 @@ export const convertToAnnotation = (region: Region): any => {
 };
 
 export const convertKeyPointCollectionToAnnotationStub = (
-  collection: Required<KeypointItemCollection>
+  collection: Required<LegacyKeypointItemCollection>
 ): AnnotationTableItem => {
   return {
     ...collection,
@@ -112,7 +112,7 @@ export const convertKeyPointCollectionToAnnotationStub = (
 };
 
 export const convertCollectionToRegions = (
-  collection: Required<KeypointItemCollection>
+  collection: Required<LegacyKeypointItemCollection>
 ): Region[] => {
   const regions: Region[] = collection.keypoints.map((keypoint) => ({
     ...collection,

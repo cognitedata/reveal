@@ -1,4 +1,8 @@
-import { KeypointCollection, Shape, Tool } from 'src/modules/Review/types';
+import {
+  KeypointCollection,
+  LegacyShape,
+  Tool,
+} from 'src/modules/Review/types';
 import { ImageKeypoint, Status } from 'src/api/annotation/types';
 
 export type KeypointCollectionState = {
@@ -12,7 +16,7 @@ export type KeypointCollectionState = {
 
 type PredefinedAnnotations = {
   predefinedKeypointCollections: KeypointCollection[];
-  predefinedShapes: Shape[];
+  predefinedShapes: LegacyShape[];
 };
 
 export type AnnotatorWrapperState = {

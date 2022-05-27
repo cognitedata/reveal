@@ -1,5 +1,5 @@
 import { NewKeypoints } from 'src/modules/Review/Components/AnnotationSettingsModal/types';
-import { Shape } from 'src/modules/Review/types';
+import { LegacyShape } from 'src/modules/Review/types';
 import isEmpty from 'lodash/isEmpty';
 
 export const getRandomColor = () => {
@@ -25,7 +25,7 @@ export const validNewKeypoint = (newKeypoints: NewKeypoints | undefined) => {
   return false;
 };
 
-export const validNewShapes = (newShapes: { [key: string]: Shape }) => {
+export const validNewShapes = (newShapes: { [key: string]: LegacyShape }) => {
   if (isEmpty(newShapes)) {
     return false;
   }

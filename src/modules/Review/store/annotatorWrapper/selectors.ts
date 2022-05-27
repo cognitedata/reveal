@@ -4,7 +4,7 @@ import {
   KeypointCollectionState,
 } from 'src/modules/Review/store/annotatorWrapper/type';
 import { RootState } from 'src/store/rootReducer';
-import { Keypoint, KeypointCollection } from 'src/modules/Review/types';
+import { LegacyKeypoint, KeypointCollection } from 'src/modules/Review/types';
 import { ReviewImageKeypoint } from 'src/modules/Review/store/review/types';
 
 export const nextKeypoint = createSelector(
@@ -24,7 +24,7 @@ export const nextKeypoint = createSelector(
 
       if (activeKeypoints && activeKeypoints.length) {
         const lastKeyPointIndex = activeKeypoints.findIndex(
-          (keypoint: Keypoint) => keypoint.caption === lastKeyPointLabel
+          (keypoint: LegacyKeypoint) => keypoint.caption === lastKeyPointLabel
         );
         if (
           lastKeyPointIndex &&

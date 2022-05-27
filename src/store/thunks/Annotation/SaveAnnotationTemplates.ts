@@ -1,8 +1,8 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
 import {
-  AnnotationCollection,
+  LegacyAnnotationCollection,
   KeypointCollection,
-  Shape,
+  LegacyShape,
 } from 'src/modules/Review/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
@@ -12,8 +12,8 @@ import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 
 export const SaveAnnotationTemplates = createAsyncThunk<
-  AnnotationCollection,
-  AnnotationCollection,
+  LegacyAnnotationCollection,
+  LegacyAnnotationCollection,
   ThunkConfig
 >('SaveAnnotationTemplates', async (templateData, { dispatch }) => {
   // first retrieve annotationTemplate data from CDF
@@ -22,7 +22,7 @@ export const SaveAnnotationTemplates = createAsyncThunk<
     PopulateAnnotationTemplates()
   );
   const savedConfiguration = unwrapResult(savedConfigurationsResponse);
-  const unsavedShapes: Shape[] = [];
+  const unsavedShapes: LegacyShape[] = [];
   const unsavedKeypointCollections: KeypointCollection[] = [];
   const unsavedAnnotations: UnsavedAnnotation[] = [];
 
@@ -104,7 +104,7 @@ export const SaveAnnotationTemplates = createAsyncThunk<
   const keypointCollections: KeypointCollection[] = [
     ...savedConfiguration.predefinedKeypoints,
   ];
-  const shapes: Shape[] = [...savedConfiguration.predefinedShapes];
+  const shapes: LegacyShape[] = [...savedConfiguration.predefinedShapes];
 
   if (unsavedAnnotations.length) {
     const data = { items: unsavedAnnotations };

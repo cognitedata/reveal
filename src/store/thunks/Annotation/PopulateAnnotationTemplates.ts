@@ -1,8 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
-  AnnotationCollection,
+  LegacyAnnotationCollection,
   KeypointCollection,
-  Shape,
+  LegacyShape,
 } from 'src/modules/Review/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationApiV1 } from 'src/api/annotation/AnnotationApiV1';
@@ -10,7 +10,7 @@ import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 
 export const PopulateAnnotationTemplates = createAsyncThunk<
-  AnnotationCollection,
+  LegacyAnnotationCollection,
   void,
   ThunkConfig
 >('PopulateAnnotationTemplates', async () => {
@@ -25,7 +25,7 @@ export const PopulateAnnotationTemplates = createAsyncThunk<
   };
   const templateAnnotations = await AnnotationApiV1.list(annotationListRequest);
   const keypointCollections: KeypointCollection[] = [];
-  const shapes: Shape[] = [];
+  const shapes: LegacyShape[] = [];
 
   if (templateAnnotations.length) {
     // eslint-disable-next-line no-restricted-syntax

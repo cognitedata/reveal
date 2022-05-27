@@ -4,7 +4,7 @@ import {
   validNewShapes,
 } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
 import { NewKeypoints } from 'src/modules/Review/Components/AnnotationSettingsModal/types';
-import { Shape } from 'src/modules/Review/types';
+import { LegacyShape } from 'src/modules/Review/types';
 
 describe('Test getRandomColor', () => {
   const HEX_COLOR_CODE_REGEX = /^((0x){0,1}|#{0,1})([0-9A-F]{8}|[0-9A-F]{6})$/g;
@@ -68,26 +68,26 @@ describe('Test validNewKeypoints function to validate new keypoint collections',
 });
 
 describe('Test validNewShapes function to validate new shapes', () => {
-  const isEmpty: { [key: string]: Shape } = {
+  const isEmpty: { [key: string]: LegacyShape } = {
     '': {
       shapeName: '',
       color: '#343434',
     },
   };
-  const isZero: { [key: string]: Shape } = {
+  const isZero: { [key: string]: LegacyShape } = {
     '0': {
       shapeName: '0',
       color: '#343434',
     },
   };
-  const validName: { [key: string]: Shape } = {
+  const validName: { [key: string]: LegacyShape } = {
     ' test- kp - 2 ': {
       shapeName: ' test- kp - 2 ',
       color: '#343434',
     },
   };
 
-  const withoutColor: { [key: string]: Shape } = {
+  const withoutColor: { [key: string]: LegacyShape } = {
     ' test- kp - 2 ': {
       shapeName: ' test- kp - 2 ',
       color: '',

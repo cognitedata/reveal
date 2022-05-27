@@ -5,7 +5,7 @@ import {
   InternalId,
 } from '@cognite/sdk';
 import { AnnotationRegion } from 'src/api/vision/detectionModels/types';
-import { Keypoint } from 'src/modules/Review/types';
+import { LegacyKeypoint } from 'src/modules/Review/types';
 import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 // Constants
@@ -178,7 +178,7 @@ export type AnnotationSourceV1 = 'context_api' | 'user';
 
 export type AnnotationMetadataV1 = Partial<AnnotationAttributes> & {
   keypoint?: boolean;
-  keypoints?: Keypoint[];
+  keypoints?: LegacyKeypoint[];
   color?: string;
   confidence?: number;
 };

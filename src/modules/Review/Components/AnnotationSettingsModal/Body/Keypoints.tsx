@@ -5,7 +5,7 @@ import {
   getRandomColor,
   validNewKeypoint,
 } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
-import { Keypoint, KeypointCollection } from 'src/modules/Review/types';
+import { LegacyKeypoint, KeypointCollection } from 'src/modules/Review/types';
 import styled from 'styled-components';
 import { CaretRightOutlined } from '@ant-design/icons';
 import { Body, Button, Detail, Tooltip } from '@cognite/cogs.js';
@@ -105,7 +105,7 @@ export const Keypoints = ({
   const onFinish = () => {
     if (newKeypoints) {
       const { collectionName, keypoints } = newKeypoints;
-      const structuredNewKeypoints: Keypoint[] = keypoints.map(
+      const structuredNewKeypoints: LegacyKeypoint[] = keypoints.map(
         (keypoint, index) => ({
           ...keypoint,
           order: `${index + 1}`,

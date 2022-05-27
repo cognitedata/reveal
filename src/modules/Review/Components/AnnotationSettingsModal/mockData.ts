@@ -1,4 +1,4 @@
-import { KeypointCollection, Shape } from 'src/modules/Review/types';
+import { KeypointCollection, LegacyShape } from 'src/modules/Review/types';
 
 export const predefinedKeypoints: KeypointCollection[] = [
   {
@@ -53,7 +53,7 @@ export const predefinedKeypoints: KeypointCollection[] = [
   },
 ];
 
-export const predefinedShapes: Shape[] = [
+export const predefinedShapes: LegacyShape[] = [
   { shapeName: 'Dial', color: '#00665c' },
   { shapeName: 'Gauge', color: '#6ED8BE' },
   { shapeName: 'Level', color: '#24D8ED' },

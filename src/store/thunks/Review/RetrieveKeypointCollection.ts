@@ -1,10 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { KeypointItemCollection } from 'src/modules/Review/types';
+import { LegacyKeypointItemCollection } from 'src/modules/Review/types';
 import { KeypointItem } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 export const RetrieveKeypointCollection = createAsyncThunk<
-  KeypointItemCollection | null,
+  LegacyKeypointItemCollection | null,
   string,
   ThunkConfig
 >('RetrieveKeypointCollection', async (collectionId, { getState }) => {

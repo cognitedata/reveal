@@ -12,7 +12,7 @@ import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import {
-  Keypoint,
+  LegacyKeypoint,
   KeypointCollection,
   VisionOptionType,
 } from 'src/modules/Review/types';
@@ -37,7 +37,7 @@ export const AnnotationEditPopup = (props: {
     color?: string
   ) => void;
   popupReference: any;
-  nextKeypoint: Keypoint | null;
+  nextKeypoint: LegacyKeypoint | null;
 }) => {
   const {
     region,

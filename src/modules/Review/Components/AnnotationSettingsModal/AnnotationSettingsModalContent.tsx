@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Detail, Tabs, Title } from '@cognite/cogs.js';
 import {
-  AnnotationCollection,
+  LegacyAnnotationCollection,
   KeypointCollection,
-  Shape,
+  LegacyShape,
 } from 'src/modules/Review/types';
 import styled from 'styled-components';
 import { Shapes } from './Body/Shapes';
@@ -15,8 +15,8 @@ export const AnnotationSettingsModalContent = ({
   onCancel,
   options,
 }: {
-  predefinedAnnotations: AnnotationCollection;
-  onDone: (collection: AnnotationCollection) => void;
+  predefinedAnnotations: LegacyAnnotationCollection;
+  onDone: (collection: LegacyAnnotationCollection) => void;
   onCancel: () => void;
   options?: {
     createNew: { text?: string; color?: string };
@@ -27,10 +27,11 @@ export const AnnotationSettingsModalContent = ({
     options?.activeView || 'shape'
   );
 
-  const [newCollection, setNewCollection] = useState<AnnotationCollection>({
-    predefinedKeypoints: [],
-    predefinedShapes: [],
-  });
+  const [newCollection, setNewCollection] =
+    useState<LegacyAnnotationCollection>({
+      predefinedKeypoints: [],
+      predefinedShapes: [],
+    });
 
   const [shapeCreationInProgress, setShapeCreationInProgress] = useState(false);
   const [keypointCreationInProgress, setKeypointCreationInProgress] =
@@ -43,7 +44,7 @@ export const AnnotationSettingsModalContent = ({
     setIsSaving(false);
   };
 
-  const setUnsavedShapes = (shapes: Shape[]) => {
+  const setUnsavedShapes = (shapes: LegacyShape[]) => {
     setNewCollection((collection) => ({
       ...collection,
       predefinedShapes: [...shapes],

@@ -8,7 +8,7 @@ import {
   KeypointItem,
 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
-export type KeypointItemCollection = {
+export type LegacyKeypointItemCollection = {
   id: string;
   keypoints: KeypointItem[];
   name: string;
@@ -17,21 +17,21 @@ export type KeypointItemCollection = {
   selected: boolean;
 };
 
-export type Keypoint = {
+export type LegacyKeypoint = {
   caption: string; // ToDo: update to label
   order: string;
   color: string;
   defaultPosition?: [number, number];
 };
-export type Shape = {
+export type LegacyShape = {
   shapeName: string;
   color: string;
   lastUpdated?: number;
   id?: number;
 };
-export type AnnotationCollection = {
+export type LegacyAnnotationCollection = {
   predefinedKeypoints: KeypointCollection[];
-  predefinedShapes: Shape[];
+  predefinedShapes: LegacyShape[];
 };
 
 export type FilePreviewProps = {
@@ -56,12 +56,12 @@ export type ReactImageAnnotateWrapperProps = FilePreviewProps & {
   editable?: boolean;
   creatable?: boolean;
   handleAddToFile?: () => void;
-  predefinedAnnotations: AnnotationCollection;
+  predefinedAnnotations: LegacyAnnotationCollection;
   lastShapeName: string;
   lastKeypointCollection: KeypointCollection;
   selectedTool: Tool;
-  nextToDoKeypointInCurrentCollection: Keypoint | null;
-  currentKeypointCollection: KeypointItemCollection | null;
+  nextToDoKeypointInCurrentCollection: LegacyKeypoint | null;
+  currentKeypointCollection: LegacyKeypointItemCollection | null;
   isLoading: (status: boolean) => void;
   onSelectTool: (tool: Tool) => void;
   focusIntoView: (annotation: AnnotationTableItem) => void;
@@ -90,7 +90,7 @@ export type VisionOptionType<T> = OptionType<T> & {
 };
 export type KeypointCollection = {
   collectionName: string; // ToDo: change this to label
-  keypoints?: Keypoint[];
+  keypoints?: LegacyKeypoint[];
   lastUpdated?: number;
   id?: ReactText;
 };

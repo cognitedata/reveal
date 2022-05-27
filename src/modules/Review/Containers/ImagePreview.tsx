@@ -25,7 +25,7 @@ import {
   showAnnotationSettingsModel,
 } from 'src/modules/Review/store/reviewSlice';
 import {
-  AnnotationCollection,
+  LegacyAnnotationCollection,
   AnnotationTableItem,
   Tool,
 } from 'src/modules/Review/types';
@@ -162,7 +162,7 @@ export const ImagePreview = ({
   };
 
   const onDoneAnnotationSettings = async (
-    newCollection: AnnotationCollection | null
+    newCollection: LegacyAnnotationCollection | null
   ) => {
     try {
       if (newCollection) {

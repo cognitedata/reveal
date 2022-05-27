@@ -16,7 +16,7 @@ import {
   Status,
 } from 'src/api/annotation/types';
 import { KeypointCollectionState } from 'src/modules/Review/store/annotatorWrapper/type';
-import { Keypoint, KeypointCollection } from 'src/modules/Review/types';
+import { LegacyKeypoint, KeypointCollection } from 'src/modules/Review/types';
 
 export const getDummyAnnotation = (
   id?: number,
@@ -76,7 +76,7 @@ export const getDummyKeypointCollectionState = (
   };
 };
 
-export const dummyKeypoint = (caption?: string): Keypoint => {
+export const dummyKeypoint = (caption?: string): LegacyKeypoint => {
   return {
     caption: caption || 'center',
     order: '1',

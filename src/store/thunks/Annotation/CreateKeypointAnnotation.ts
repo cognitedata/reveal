@@ -1,13 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { deleteCollectionById } from 'src/modules/Review/store/annotationLabel/slice';
-import { KeypointItemCollection } from 'src/modules/Review/types';
+import { LegacyKeypointItemCollection } from 'src/modules/Review/types';
 
 /**
  * Will return keypoint item collection is it's complete else returns null
  */
 export const CreateKeypointAnnotation = createAsyncThunk<
-  KeypointItemCollection | null,
+  LegacyKeypointItemCollection | null,
   void,
   ThunkConfig
 >('CreateKeypointAnnotation', async (payload, { dispatch, getState }) => {
@@ -48,7 +48,7 @@ export const CreateKeypointAnnotation = createAsyncThunk<
       return {
         ...collection,
         keypoints,
-      } as KeypointItemCollection;
+      } as LegacyKeypointItemCollection;
     }
   }
   return null;
