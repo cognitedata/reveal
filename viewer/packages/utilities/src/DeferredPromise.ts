@@ -3,7 +3,7 @@
  */
 
 export class DeferredPromise<T> implements Promise<T> {
-  [Symbol.toStringTag]: 'Promise';
+  [Symbol.toStringTag] = 'Promise';
 
   private readonly _promise: Promise<T>;
   private _resolve!: (value: T | PromiseLike<T>) => void;

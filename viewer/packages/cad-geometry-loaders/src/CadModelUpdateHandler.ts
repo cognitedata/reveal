@@ -37,7 +37,7 @@ export class CadModelUpdateHandler {
   private readonly _budgetSubject: Subject<CadModelBudget> = new Subject();
   private readonly _progressSubject: Subject<LoadingState> = new BehaviorSubject<LoadingState>(notLoadingState);
 
-  private _updateObservable: Observable<ConsumedSector>;
+  private _updateObservable: Observable<ConsumedSector> | undefined;
 
   constructor(sectorCuller: SectorCuller, continuousModelStreaming = false) {
     this._sectorCuller = sectorCuller;
@@ -160,7 +160,7 @@ export class CadModelUpdateHandler {
   }
 
   consumedSectorObservable(): Observable<ConsumedSector> {
-    return this._updateObservable.pipe(share());
+    return this._updateObservable!.pipe(share());
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
