@@ -20,6 +20,7 @@ import {
   useRefreshApp,
 } from 'utils/hooks';
 import { Loader } from 'components/Common';
+import { useFlag } from '@cognite/react-feature-flags';
 
 const CollapseDiv = styled.div`
   .ant-collapse-header[aria-expanded='true'] {
@@ -36,6 +37,12 @@ const FUNCTIONS_PER_PAGE = 10;
 function Functions() {
   const refresh = useRefreshApp();
   const [currentPage, setCurrentPage] = useState(1);
+  const { isEnabled: isActivationFunctionButtonEnabled } = useFlag(
+    'DSS_activation_function_button',
+    {
+      forceRerender: true,
+    }
+  );
 
   const [functionFilter, setFunctionFilter] = useState('');
   type SortFunctions = 'recentlyCreated' | 'recentlyCalled';
@@ -75,7 +82,8 @@ function Functions() {
   );
 
   const isProjectFunctionActivated =
-    !isLoading && !isError && activation?.activated;
+    isActivationFunctionButtonEnabled ||
+    (!isLoading && !isError && activation?.activated);
 
   if (isLoading) {
     return <Loader />;
@@ -187,22 +195,26 @@ function Functions() {
             />
           </CollapseDiv>
         )}
-        {!activation?.activated && activation?.requested && (
-          <FunctionActivationAlert
-            showIcon
-            description="Cognite function is getting ready.This might take sometime"
-            message="Activation in Progress"
-            type="warning"
-          />
-        )}
-        {!activation?.requested && !activation?.activated && (
-          <FunctionActivationAlert
-            type="error"
-            message="Cognite Functions is not activated for the project"
-            showIcon
-            description={<Button onClick={() => mutate()}>Activate</Button>}
-          />
-        )}
+        {isActivationFunctionButtonEnabled &&
+          !activation?.activated &&
+          activation?.requested && (
+            <FunctionActivationAlert
+              showIcon
+              description="Cognite function is getting ready.This might take sometime"
+              message="Activation in Progress"
+              type="warning"
+            />
+          )}
+        {isActivationFunctionButtonEnabled &&
+          !activation?.requested &&
+          !activation?.activated && (
+            <FunctionActivationAlert
+              type="error"
+              message="Cognite Functions is not activated for the project"
+              showIcon
+              description={<Button onClick={() => mutate()}>Activate</Button>}
+            />
+          )}
       </div>
     </>
   );
