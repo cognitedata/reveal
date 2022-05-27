@@ -206,7 +206,7 @@ export class MeasurementLine {
     axesLine.setPositions(position);
     const axesLineMaterial = new LineMaterial({
       color: color,
-      linewidth: this._options.lineWidth / 2,
+      linewidth: this._options.lineWidth! / 2,
       depthTest: false,
       worldUnits: true
     });

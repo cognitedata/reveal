@@ -47,10 +47,10 @@ export class MeasurementLabels {
    */
   setStyle(): void {
     if (this._htmlOverlay) {
-      const style = document.getElementById(MeasurementLabels.stylesId).style;
-      style.fontWeight = '300';
-      style.padding = '8px';
-      style.color = '#999';
+      const style = document.getElementById(MeasurementLabels.stylesId)?.style;
+      style!.fontWeight = '100';
+      style!.padding = '8px';
+      style!.color = '#999';
     }
   }
 
