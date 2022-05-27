@@ -1,5 +1,5 @@
 export class BinaryHeap<T> {
-  _content = [];
+  _content: T[] = [];
   _scoreFunction: (element: T) => number;
 
   constructor(scoreFunction: (element: T) => number) {
@@ -16,12 +16,12 @@ export class BinaryHeap<T> {
   pop(): T | undefined {
     // Store the first element so we can return it later.
     const result = this._content[0];
-    // Get the element at the end of the array.
     const end = this._content.pop();
+
     // If there are any elements left, put the end element at the
     // start, and let it sink down.
     if (this._content.length > 0) {
-      this._content[0] = end;
+      this._content[0] = end!;
       this.sinkDown(0);
     }
     return result;
@@ -32,10 +32,10 @@ export class BinaryHeap<T> {
     // To remove a value, we must search through the array to find
     // it.
     for (let i = 0; i < length; i++) {
-      if (this._content[i] != node) continue;
+      if (this._content[i] !== node) continue;
       // When it is found, the process seen in 'pop' is repeated
       // to fill up the hole.
-      const end = this._content.pop();
+      const end = this._content.pop()!;
       // If the element we popped was the one we needed to remove,
       // we're done.
       if (i == length - 1) break;
@@ -95,12 +95,13 @@ export class BinaryHeap<T> {
         child1Score = this._scoreFunction(child1);
         // If the score is less than our element's, we need to swap.
         if (child1Score < elemScore) swap = child1N;
-      }
-      // Do the same checks for the other child.
-      if (child2N < length) {
-        const child2 = this._content[child2N],
-          child2Score = this._scoreFunction(child2);
-        if (child2Score < (swap == null ? elemScore : child1Score)) swap = child2N;
+
+        // Do the same checks for the other child.
+        if (child2N < length) {
+          const child2 = this._content[child2N],
+            child2Score = this._scoreFunction(child2);
+          if (child2Score < (swap == null ? elemScore : child1Score)) swap = child2N;
+        }
       }
 
       // No need to swap further, we are done.

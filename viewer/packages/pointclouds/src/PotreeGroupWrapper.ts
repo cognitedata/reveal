@@ -160,10 +160,10 @@ export class PotreeGroupWrapper extends THREE.Object3D {
   private get pointBuffersHash() {
     let pointHash = 0xbaadf00d; // Kind of random bit pattern
     for (const pointCloud of this._pointClouds) {
-      pointCloud.traverseVisible((x: THREE.Points) => {
+      pointCloud.traverseVisible((x: THREE.Object3D) => {
         // Note! We pretend everything in the scene graph is THREE.Points,
         // but verify that we only visit Points nodes here.
-        if (x.isPoints) {
+        if (x instanceof THREE.Points) {
           const geometry = x.geometry as THREE.BufferGeometry;
           pointHash ^= geometry.getAttribute('position').count;
         }

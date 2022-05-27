@@ -39,7 +39,7 @@ export class QueueItem {
     public pointCloudIndex: number,
     public weight: number,
     public node: IPointCloudTreeNodeBase,
-    public parent?: IPointCloudTreeNodeBase | null
+    public parent?: IPointCloudTreeNodeBase | undefined
   ) {}
 }
 

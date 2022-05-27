@@ -114,7 +114,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     return this._index;
   }
 
-  set parent(_p: PointCloudEptGeometryNode) {
+  set parent(_p: PointCloudEptGeometryNode | undefined) {
     this._parent = _p;
   }
 
