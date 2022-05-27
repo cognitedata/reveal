@@ -240,7 +240,7 @@ export class GltfSectorParser {
     if (dracoCompression !== undefined) {
       const dracoBufferView = json.bufferViews[dracoCompression.bufferView];
 
-      const dracoMeshOffset = offsetToBinChunk + dracoBufferView.byteOffset ?? 0;
+      const dracoMeshOffset = offsetToBinChunk + (dracoBufferView.byteOffset ?? 0);
 
       const dracoMeshLength = dracoBufferView.byteLength;
 
