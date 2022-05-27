@@ -144,7 +144,11 @@ export class MeasurementLine {
     }
   }
 
-  public getAxisLines(): THREE.Mesh[] {
+  /**
+   * Create X, Y, Z axis line distance meshes.
+   * @returns Returns axis line mesh.
+   */
+  getAxisLines(): THREE.Mesh[] {
     const verticalDistance = this._position[0] - this._position[3];
     // const horizontalDistance = this._position[1] - this._position[4];
     const depthDistance = this._position[2] - this._position[5];

@@ -172,10 +172,18 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Get and add axis measurement components for the point to point measurement
    */
   private addAxisMeasurement() {
-    const axisMeshes = this._line.getAxisLines();
-    axisMeshes.forEach(mesh => {
-      this._viewer.addObject3D(mesh);
-    });
+    if (this._line) {
+      const axisMeshes = this._line.getAxisLines();
+      axisMeshes.forEach(mesh => {
+        this._viewer.addObject3D(mesh);
+      });
+    }
+  }
+
+  private addAxisLabels() {
+    // if (this._measurementLabel) {
+    //   this._measurementLabel.addLabel()
+    // }
   }
 
   private onPointerMove(event: MouseEvent) {
