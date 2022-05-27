@@ -9,10 +9,4 @@ export { LocalModelIdentifier } from './src/LocalModelIdentifier';
 export { LocalModelMetadataProvider } from './src/LocalModelMetadataProvider';
 export { ModelIdentifier } from './src/ModelIdentifier';
 export { ModelMetadataProvider } from './src/ModelMetadataProvider';
-export {
-  BinaryFileProvider,
-  File3dFormat,
-  HttpHeadersProvider,
-  ModelDataProvider,
-  BlobOutputMetadata
-} from './src/types';
+export { BinaryFileProvider, File3dFormat, ModelDataProvider, BlobOutputMetadata } from './src/types';
