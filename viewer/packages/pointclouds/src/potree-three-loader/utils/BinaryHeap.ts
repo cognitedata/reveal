@@ -99,7 +99,7 @@ export class BinaryHeap<T> {
         // Do the same checks for the other child.
         if (child2N < length) {
           const child2 = this._content[child2N],
-          child2Score = this._scoreFunction(child2);
+            child2Score = this._scoreFunction(child2);
           if (child2Score < (swap == null ? elemScore : child1Score)) swap = child2N;
         }
       }

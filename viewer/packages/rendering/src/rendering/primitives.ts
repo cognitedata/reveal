@@ -61,7 +61,7 @@ export function* createPrimitives(
       geometryClipBox
     );
 
-    if (eccentricCones) yield eccentricCones
+    if (eccentricCones) yield eccentricCones;
   }
   if (hasAny(primitives.ellipsoidSegmentCollection)) {
     const ellipsoidSegments = createEllipsoidSegments(

@@ -1236,10 +1236,12 @@ function createCanvasWrapper(): HTMLElement {
 
 function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): RevealOptions {
   const customTarget = viewerOptions.renderTargetOptions?.target;
-  const outputRenderTarget = customTarget ? {
-    target: customTarget,
-    autoSize: viewerOptions.renderTargetOptions?.autoSetSize
-  } : undefined;
+  const outputRenderTarget = customTarget
+    ? {
+        target: customTarget,
+        autoSize: viewerOptions.renderTargetOptions?.autoSetSize
+      }
+    : undefined;
 
   const revealOptions: RevealOptions = {
     continuousModelStreaming: viewerOptions.continuousModelStreaming,

@@ -90,7 +90,6 @@ function parseEpt(event: MessageEvent): void {
   const pointSize = schema.reduce((p: number, c) => p + c.size, 0);
   const numPoints = buffer.byteLength / pointSize;
 
-  let xyzBuffer: ArrayBuffer;
   let rgbBuffer: ArrayBuffer | undefined;
   let intensityBuffer: ArrayBuffer | undefined;
   let classificationBuffer: ArrayBuffer | undefined;
@@ -98,7 +97,6 @@ function parseEpt(event: MessageEvent): void {
   let numberOfReturnsBuffer: ArrayBuffer | undefined;
   let pointSourceIdBuffer: ArrayBuffer | undefined;
 
-  let xyz: Float32Array;
   let rgb: Uint8Array | undefined;
   let intensity: Float32Array | undefined;
   let classification: Uint8Array | undefined;
@@ -106,7 +104,6 @@ function parseEpt(event: MessageEvent): void {
   let numberOfReturns: Uint8Array | undefined;
   let pointSourceId: Uint16Array | undefined;
 
-  let xyzExtractor: ((name: number) => number)[];
   let rgbExtractor: ((name: number) => number)[];
   let intensityExtractor: (name: number) => number;
   let classificationExtractor: (name: number) => number;
@@ -120,9 +117,9 @@ function parseEpt(event: MessageEvent): void {
     throw Error('Point cloud did not contain position data');
   }
 
-  xyzBuffer = new ArrayBuffer(numPoints * 4 * 3);
-  xyz = new Float32Array(xyzBuffer);
-  xyzExtractor = [getExtractor('X'), getExtractor('Y'), getExtractor('Z')];
+  const xyzBuffer = new ArrayBuffer(numPoints * 4 * 3);
+  const xyz = new Float32Array(xyzBuffer);
+  const xyzExtractor = [getExtractor('X'), getExtractor('Y'), getExtractor('Z')];
 
   if (dimensions['Red'] && dimensions['Green'] && dimensions['Blue']) {
     rgbBuffer = new ArrayBuffer(numPoints * 4);
