@@ -188,7 +188,6 @@ export class PickingHandler {
     const stateHelper = new WebGLRendererStateHelper(renderer);
     try {
       stateHelper.setClearColor(clearColor, clearAlpha);
-      renderer.clearColor();
       this._pipelineExecutor.render(renderPipeline, pickCamera);
       renderer.readRenderTargetPixels(renderTarget, 0, 0, 1, 1, pixelBuffer);
     } finally {
