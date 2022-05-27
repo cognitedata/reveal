@@ -20,11 +20,10 @@ export class CompositeShape implements IShape {
   }
 
   computeBoundingBox(): AABB {
-    let newBox = emptyBox3();
-    for (const shape of this._innerShapes) {
-      newBox = b3Union(newBox, shape.computeBoundingBox());
-    }
-    return newBox;
+    const totalBoundingBox = this._innerShapes.reduce(
+      (newBox, shape) => b3Union(newBox, shape.computeBoundingBox()),
+      emptyBox3());
+    return totalBoundingBox;
   }
 
   containsPoint(point: Vec3): boolean {
