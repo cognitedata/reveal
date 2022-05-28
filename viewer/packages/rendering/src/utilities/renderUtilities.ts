@@ -125,8 +125,8 @@ function initializeBlendingOptions(blendOptions: BlendOptions | undefined) {
   const blending = blendOptions !== undefined ? THREE.CustomBlending : THREE.NormalBlending;
   const blendDst = blendOptions?.blendDestination ?? THREE.OneMinusSrcAlphaFactor;
   const blendSrc = blendOptions?.blendSource ?? THREE.SrcAlphaFactor;
-  const blendSrcAlpha = blendOptions?.blendSourceAlpha ?? undefined; // Uses blendSrc value if undefined
-  const blendDstAlpha = blendOptions?.blendDestinationAlpha ?? undefined; // Uses blendDst value if undefined
+  const blendSrcAlpha = blendOptions?.blendSourceAlpha ?? null; // Uses blendSrc value if undefined
+  const blendDstAlpha = blendOptions?.blendDestinationAlpha ?? null; // Uses blendDst value if undefined
   return { blending, blendDst, blendSrc, blendSrcAlpha, blendDstAlpha };
 }
 
