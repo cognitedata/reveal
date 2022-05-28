@@ -7,13 +7,19 @@ export class CameraUI {
 
   constructor(viewer: Cognite3DViewer, ui: dat.GUI) {
     this._viewer = viewer;
+    const params = {
+      flyDuration: 5000
+    };
     const actions = {
       saveCameraToUrl: () => this.saveCameraToUrl(),
-      restoreCameraFromUrl: () => this.restoreCameraFromUrl()
+      restoreCameraFromUrl: () => this.restoreCameraFromUrl(),
+      flyToSavedPositionFromUrl: () => this.flyToSavedPositionFromUrl(params.flyDuration),
     };
 
     ui.add(actions, 'saveCameraToUrl').name('Save camera to URL');
     ui.add(actions, 'restoreCameraFromUrl').name('Restore camera from URL');
+    ui.add(params, 'flyDuration', 0, 20000, 250).name('Fly duration');
+    ui.add(actions, 'flyToSavedPositionFromUrl').name('Fly to saved position');
 
     if (this.hasCameraInUrl()) {
       // Hack - since adding a model will load a camera in our examples
@@ -24,7 +30,7 @@ export class CameraUI {
 
   private saveCameraToUrl(): void {
     const { position, target } = this._viewer.cameraManager.getCameraState();
-    
+
     const url = new URL(window.location.href);
     url.searchParams.set('camPos', vector3ToString(position));
     url.searchParams.set('camTarget', vector3ToString(target));
@@ -39,21 +45,38 @@ export class CameraUI {
 
   private restoreCameraFromUrl(): void {
     try {
-      if (!this.hasCameraInUrl()) {
-        throw new Error('Must provide URL parameters "camPos" and "camTarget"');
-      }
-
-      const url = new URL(window.location.href);
-      const camPosParam = url.searchParams.get('camPos')!;
-      const camTargetParam = url.searchParams.get('camTarget')!;
-      const camPos = stringToVector3(camPosParam);
-      const camTarget = stringToVector3(camTargetParam);
-
-      this._viewer.cameraManager.setCameraState({ position: camPos, target: camTarget });
+      const { target, position } = this.getCameraStateFromUrl();
+      this._viewer.cameraManager.setCameraState({ position, target });
     }
     catch (error) {
       alert('Could not restore camera from URL: ' + error);
     }
+  }
+
+  private flyToSavedPositionFromUrl(durationInMs: number, stopDistance: number = .010): void {
+    try {
+      const { position } = this.getCameraStateFromUrl();
+      // Fake a bbox
+      const bbox = new THREE.Box3().setFromCenterAndSize(position, new THREE.Vector3(0.1,0.1,0.1));
+      this._viewer.cameraManager.fitCameraToBoundingBox(bbox, durationInMs, stopDistance);
+    }
+    catch (error) {
+      alert('Could not fly to camera stored in URL: ' + error);
+    }
+
+  }
+
+  private getCameraStateFromUrl(): { position: THREE.Vector3, target: THREE.Vector3 } {
+    if (!this.hasCameraInUrl()) {
+      throw new Error('Must provide URL parameters "camPos" and "camTarget"');
+    }
+    const url = new URL(window.location.href);
+    const camPosParam = url.searchParams.get('camPos')!;
+    const camTargetParam = url.searchParams.get('camTarget')!;
+    const position = stringToVector3(camPosParam);
+    const target = stringToVector3(camTargetParam);
+
+    return { position, target };
   }
 }
 
