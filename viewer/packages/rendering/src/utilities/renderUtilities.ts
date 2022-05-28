@@ -133,7 +133,6 @@ function initializeBlendingOptions(blendOptions: BlendOptions | undefined) {
     blendSrc,
     // TODO 2022-05-28 larsmoa: @types/three@0.140.0 wrongly defines these as type 'number | undefined', while
     // the correct type is 'number | null' (https://threejs.org/docs/index.html?q=Material#api/en/materials/Material.blendSrcAlpha)
-    // This has been fixed in an unreleased version of the type definitions.
     blendSrcAlpha: blendSrcAlpha as number | undefined,
     blendDstAlpha: blendDstAlpha as number | undefined
   };
