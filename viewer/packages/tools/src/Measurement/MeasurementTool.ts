@@ -83,6 +83,9 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   setLineOptions(options: MeasurementLineOptions): void {
     this._line.setOptions(options);
     this._sphereSize = options?.lineWidth || this._sphereSize;
+    if (this._viewer) {
+      this._viewer.requestRedraw();
+    }
   }
 
   /**
@@ -133,6 +136,8 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * @param intersection Intersection Object containing point & camera distance.
    */
   private startMeasurement(intersection: Intersection) {
+    //Clear the line objects if exists for new line
+    this._line.clearObjects();
     this._lineMesh = this._line.startLine(intersection.point, intersection.distanceToCamera);
     this._viewer.addObject3D(this._lineMesh);
   }
@@ -147,7 +152,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this.setMeasurementValue(this._options.changeMeasurementLabelMetrics);
     //Add the measurement label.
     this._measurementLabel.addLabel(this._line.getMidPointOnLine(), this._distanceValue);
-    this._line.clearObjects();
     this._lineMesh = null;
   }
 
@@ -177,6 +181,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     );
     mesh.position.copy(position);
     mesh.scale.copy(mesh.scale.multiplyScalar(this._sphereSize));
+    mesh.renderOrder = 1;
 
     this._viewer.addObject3D(mesh);
   }

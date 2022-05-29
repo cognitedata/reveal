@@ -42,15 +42,18 @@ measurementTool.exitMeasurementMode();
 
 ### Set width and color of the measuring line
 To change width and color of the line, use `MeasurementTool.setLineOptions(lineOptions: MeasurementLineOptions)`. MeasurementLineOptions expects
-  - `lineWidth` : number,
+  - `lineWidth` : number
   - `color` : number
+  - `currentLine` : boolean
+If `currentLine` is enabled (`true`), than line width & color changes will be applied to recently measured line and the new measurement lines.
 
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
 const lineOptions = {
   lineWidth: 0.04,
-  color: 0xff0000
+  color: 0xff0000,
+  currentLine: false
 };
 const measurementTool = new MeasurementTool(viewer);
 measurementTool.enterMeasurementMode();

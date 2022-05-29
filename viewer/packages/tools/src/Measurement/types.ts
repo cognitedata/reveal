@@ -8,6 +8,7 @@
 export type MeasurementLineOptions = {
   lineWidth?: number;
   color?: number;
+  currentLine?: boolean;
 };
 
 /**
