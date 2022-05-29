@@ -13028,10 +13028,10 @@ locize-lastused@3.0.13:
   dependencies:
     cross-fetch "3.1.5"
 
-locize@2.2.5:
-  version "2.2.5"
-  resolved "https://registry.yarnpkg.com/locize/-/locize-2.2.5.tgz#4098529941b1ac0bbfd91e385e94f6f9e90d5ff3"
-  integrity sha512-BtHTmCIfEXoeRMMwk/qoxRnxgBjSZ++cC+mO6jaxEd4u9FIkDxWjUYsgvaCGyKrT7x5d0FR1eo6Ka9MB0AL3kA==
+locize@2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/locize/-/locize-2.3.0.tgz#aa2a5c114803d2c8f6e6965ba60cfaad23650181"
+  integrity sha512-TEqcBP4mWwenVHhGK3nFjnFSJt5+FX8Xo5T1FPVt1YpYagTIFvl3sxWoWYlSQvB3xvcn9fLjr1ZNaZfq8MbGPg==
 
 lodash-es@^4.17.15:
   version "4.17.21"

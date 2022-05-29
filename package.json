@@ -55,7 +55,7 @@
     "i18next-locize-backend": "5.0.1",
     "joi": "17.6.0",
     "jszip": "3.9.1",
-    "locize": "2.2.5",
+    "locize": "2.3.0",
     "locize-lastused": "3.0.13",
     "lodash": "4.17.21",
     "mixpanel-browser": "2.45.0",
