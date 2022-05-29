@@ -85,6 +85,9 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   setLineOptions(options: MeasurementLineOptions): void {
     this._line.setOptions(options);
     this._sphereSize = options?.lineWidth || this._sphereSize;
+    if (this._viewer) {
+      this._viewer.requestRedraw();
+    }
   }
 
   /**
@@ -99,17 +102,17 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Set input handling.
    */
   private setupEventHandling() {
-    this._viewer.domElement.addEventListener('click', this._handleonPointerClick);
+    this._viewer.on('click', this._handleonPointerClick);
   }
 
   /**
    * Remove input handling.
    */
   private removeEventHandling() {
-    this._viewer.domElement.removeEventListener('click', this._handleonPointerClick);
+    this._viewer.off('click', this._handleonPointerClick);
   }
 
-  private async onPointerClick(event: MouseEvent): Promise<void> {
+  private async onPointerClick(event: any): Promise<void> {
     const { offsetX, offsetY } = event;
 
     const intersection = await this._viewer.getIntersectionFromPixel(offsetX, offsetY);
@@ -135,6 +138,8 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * @param intersection Intersection Object containing point & camera distance.
    */
   private startMeasurement(intersection: Intersection) {
+    //Clear the line objects if exists for new line
+    this._line.clearObjects();
     this._lineMesh = this._line.startLine(intersection.point, intersection.distanceToCamera);
     this._viewer.addObject3D(this._lineMesh);
   }
@@ -152,7 +157,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     if (this._options.axisComponentMeasurement) {
       this.addAxisMeasurement();
     }
-    this._line.clearObjects();
     this._lineMesh = null;
   }
 
@@ -195,7 +199,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     }
   }
 
-  private onPointerMove(event: MouseEvent) {
+  private onPointerMove(event: any) {
     const { offsetX, offsetY } = event;
     this._line.updateLine(offsetX, offsetY, this._domElement, this._camera);
     this._viewer.requestRedraw();
@@ -203,7 +207,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
   /**
    * Creates sphere at given position.
-   * @param position Position.
+   * @param position Position to place the sphere.
    */
   private addSphere(position: THREE.Vector3) {
     const mesh = new THREE.Mesh(
@@ -212,6 +216,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     );
     mesh.position.copy(position);
     mesh.scale.copy(mesh.scale.multiplyScalar(this._sphereSize));
+    mesh.renderOrder = 1;
 
     this._viewer.addObject3D(mesh);
   }

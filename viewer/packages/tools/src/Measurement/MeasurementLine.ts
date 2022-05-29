@@ -51,7 +51,10 @@ export class MeasurementLine {
       color: this._options.color,
       linewidth: this._options.lineWidth,
       depthTest: false,
-      worldUnits: true
+      worldUnits: true,
+      dashed: true,
+      transparent: true,
+      opacity: 1
     });
 
     const mesh = new THREE.Mesh(this._geometry as THREE.BufferGeometry, this._material);
@@ -80,6 +83,8 @@ export class MeasurementLine {
     //Check if measurement is ended.
     if (endPoint) {
       position.copy(endPoint);
+      this._material?.color.set(new THREE.Color(this._options.color));
+      this._material?.setValues({ opacity: 1.0 });
     } else {
       //Get position based on the mouse pointer X and Y value.
       const mouse = new THREE.Vector2();
@@ -98,6 +103,9 @@ export class MeasurementLine {
       ray.direction.copy(direction);
       //Note: Using the initial/start point as reference for ray to emit till that distance from camera.
       ray.at(this._distanceToCamera, position);
+      //Add transparent color when dragging to make other 3D objects visible for users
+      this._material?.color.set(new THREE.Color(this._options.color));
+      this._material?.setValues({ opacity: 0.2 });
     }
 
     this._position[3] = position.x;
@@ -114,6 +122,11 @@ export class MeasurementLine {
   setOptions(options: MeasurementLineOptions): void {
     this._options.lineWidth = options?.lineWidth ?? this._options.lineWidth;
     this._options.color = options?.color ?? this._options.color;
+    //Apply for current active line if set
+    if (this._material && options.currentLine) {
+      this._material?.setValues({ linewidth: this._options.lineWidth });
+      this._material?.color.set(new THREE.Color(this._options.color));
+    }
   }
 
   /**

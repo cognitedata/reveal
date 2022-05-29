@@ -10,7 +10,8 @@ export class MeasurementUi {
 
   private state = {
     lineWidth: 0.01,
-    color: 0x00FFFF
+    color: 0x00FFFF,
+    currentLine: false
   };
 
   private measurement = {
@@ -51,6 +52,10 @@ export class MeasurementUi {
       this.state.color = color;
       this.setMeasurementLineOptions();
     }));
+    this._guiController.push(this._gui.add(this.state, 'currentLine').name('Current Line').onChange(currentLine => {
+      this.state.currentLine = currentLine;
+      this.setMeasurementLineOptions();
+    }))
   }
 
   private removeGUI() {
