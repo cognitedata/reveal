@@ -22,7 +22,6 @@ export function computeObjectIdBuffer(
 
     for (const obj of objectList) {
       if (obj.shape.containsPoint(position)) {
-
         // NB: We use the first object that is found to contain the point
         objectIdBufferView[i] = obj.objectId;
         break;

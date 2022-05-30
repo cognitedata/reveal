@@ -30,9 +30,9 @@ export function annotationsToObjectInfo(annotations: BoundingVolume[]): RawStyla
   const stylableObjects = annotationsToObjects(annotations);
 
   return stylableObjects.map(obj => {
-      return {
-        objectId: obj.objectId,
-        shape: obj.shape.toRawShape()
-      };
+    return {
+      objectId: obj.objectId,
+      shape: obj.shape.toRawShape()
+    };
   });
 }
