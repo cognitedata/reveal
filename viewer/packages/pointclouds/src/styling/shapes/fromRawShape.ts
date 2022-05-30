@@ -16,7 +16,7 @@ export function fromRawShape(rawShape: IRawShape): IShape {
       return new Cylinder(rawCylinder.centerA, rawCylinder.centerB, rawCylinder.radius);
     case ShapeType.Box:
       const rawBox = rawShape as RawBox;
-      return new Box(rawBox.invMatrix)
+      return new Box(rawBox.invMatrix);
     case ShapeType.Composite:
       const rawComposite = rawShape as RawCompositeShape;
       return new CompositeShape(rawComposite.shapes.map(fromRawShape));

@@ -190,8 +190,7 @@ export function Migration() {
         } else if (model instanceof CognitePointCloudModel) {
           new PointCloudClassificationFilterUI(gui.addFolder(`Class filter #${modelUi.pointCloudModels.length}`), model);
           pointCloudUi.applyToAllModels();
-          new PointCloudObjectStylingUI(gui.addFolder(`Object styling (${PointCloudObjectStylingUI.MAX_OBJECTS} first objects) #${modelUi.pointCloudModels.length}`),
-                                        model);
+          new PointCloudObjectStylingUI(gui.addFolder(`Object styling (${PointCloudObjectStylingUI.MAX_OBJECTS} first objects) #${modelUi.pointCloudModels.length}`), model);
         }
       }
       const modelUi = new ModelUi(gui.addFolder('Models'), viewer, handleModelAdded);

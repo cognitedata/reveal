@@ -64,8 +64,7 @@ export class Potree implements IPotree {
     stylableObjectInfo?: StylableObjectInfo | undefined
   ): Promise<PointCloudOctree> {
     const geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, stylableObjectInfo);
-    return new PointCloudOctree(this, geometry)
-
+    return new PointCloudOctree(this, geometry);
   }
 
   updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): IVisibilityUpdateResult {

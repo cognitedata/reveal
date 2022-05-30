@@ -26,7 +26,7 @@ export class PotreeNodeWrapper {
     return this._needsRedraw;
   }
 
-  constructor(octree: PointCloudOctree, stylableObjectInfo: StylableObjectInfo) {
+  constructor(octree: PointCloudOctree, stylableObjectInfo: StylableObjectInfo | undefined) {
     this.octree = octree;
     this.pointSize = 2;
     this.pointColorType = PotreePointColorType.Rgb;
@@ -76,7 +76,7 @@ export class PotreeNodeWrapper {
     return this._classification;
   }
 
-  get stylableObjectInfo(): StylableObjectInfo {
+  get stylableObjectInfo(): StylableObjectInfo | undefined {
     return this._stylableObjectInfo;
   }
 

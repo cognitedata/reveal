@@ -22,7 +22,8 @@ export class CompositeShape implements IShape {
   computeBoundingBox(): AABB {
     const totalBoundingBox = this._innerShapes.reduce(
       (newBox, shape) => b3Union(newBox, shape.computeBoundingBox()),
-      emptyBox3());
+      emptyBox3()
+    );
     return totalBoundingBox;
   }
 

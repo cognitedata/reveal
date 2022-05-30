@@ -7,12 +7,12 @@ export type ParsedEptData = {
   tightBoundingBox: { min: number[]; max: number[] };
   mean: number[];
   position: ArrayBuffer;
-  color: ArrayBuffer;
-  intensity: ArrayBuffer;
-  classification: ArrayBuffer;
-  returnNumber: ArrayBuffer;
-  numberOfReturns: ArrayBuffer;
-  pointSourceId: ArrayBuffer;
+  color: ArrayBuffer | undefined;
+  intensity: ArrayBuffer | undefined;
+  classification: ArrayBuffer | undefined;
+  returnNumber: ArrayBuffer | undefined;
+  numberOfReturns: ArrayBuffer | undefined;
+  pointSourceId: ArrayBuffer | undefined;
   indices: ArrayBuffer;
   objectId: ArrayBuffer;
 };
@@ -48,7 +48,7 @@ export function parseEpt(worker: Worker, data: EptInputData, objects: StylableOb
   const dimensions: Record<string, SchemaEntry> = schema.reduce((p, c) => {
     p[c.name] = c;
     return p;
-  }, {});
+  }, {} as Record<string, SchemaEntry>);
 
   const dimOffset = (name: string) => {
     let offset = 0;
@@ -60,7 +60,7 @@ export function parseEpt(worker: Worker, data: EptInputData, objects: StylableOb
   };
 
   function getExtractor(name: string) {
-    const offset = dimOffset(name);
+    const offset = dimOffset(name)!;
     const type = dimensions[name].type;
     const size = dimensions[name].size;
 
@@ -103,23 +103,20 @@ export function parseEpt(worker: Worker, data: EptInputData, objects: StylableOb
   const pointSize = schema.reduce((p: number, c) => p + c.size, 0);
   const numPoints = buffer.byteLength / pointSize;
 
-  let xyzBuffer: ArrayBuffer;
-  let rgbBuffer: ArrayBuffer;
-  let intensityBuffer: ArrayBuffer;
-  let classificationBuffer: ArrayBuffer;
-  let returnNumberBuffer: ArrayBuffer;
-  let numberOfReturnsBuffer: ArrayBuffer;
-  let pointSourceIdBuffer: ArrayBuffer;
+  let rgbBuffer: ArrayBuffer | undefined;
+  let intensityBuffer: ArrayBuffer | undefined;
+  let classificationBuffer: ArrayBuffer | undefined;
+  let returnNumberBuffer: ArrayBuffer | undefined;
+  let numberOfReturnsBuffer: ArrayBuffer | undefined;
+  let pointSourceIdBuffer: ArrayBuffer | undefined;
 
-  let xyz: Float32Array;
-  let rgb: Uint8Array;
-  let intensity: Float32Array;
-  let classification: Uint8Array;
-  let returnNumber: Uint8Array;
-  let numberOfReturns: Uint8Array;
-  let pointSourceId: Uint16Array;
+  let rgb: Uint8Array | undefined;
+  let intensity: Float32Array | undefined;
+  let classification: Uint8Array | undefined;
+  let returnNumber: Uint8Array | undefined;
+  let numberOfReturns: Uint8Array | undefined;
+  let pointSourceId: Uint16Array | undefined;
 
-  let xyzExtractor: ((name: number) => number)[];
   let rgbExtractor: ((name: number) => number)[];
   let intensityExtractor: (name: number) => number;
   let classificationExtractor: (name: number) => number;
@@ -129,11 +126,9 @@ export function parseEpt(worker: Worker, data: EptInputData, objects: StylableOb
 
   let twoByteColor = false;
 
-  if (dimensions['X'] && dimensions['Y'] && dimensions['Z']) {
-    xyzBuffer = new ArrayBuffer(numPoints * 4 * 3);
-    xyz = new Float32Array(xyzBuffer);
-    xyzExtractor = [getExtractor('X'), getExtractor('Y'), getExtractor('Z')];
-  }
+  const xyzBuffer = new ArrayBuffer(numPoints * 4 * 3);
+  const xyz = new Float32Array(xyzBuffer);
+  const xyzExtractor = [getExtractor('X'), getExtractor('Y'), getExtractor('Z')];
 
   if (dimensions['Red'] && dimensions['Green'] && dimensions['Blue']) {
     rgbBuffer = new ArrayBuffer(numPoints * 4);
@@ -218,9 +213,9 @@ export function parseEpt(worker: Worker, data: EptInputData, objects: StylableOb
     }
 
     if (rgb) {
-      r = rgbExtractor[0](pos);
-      g = rgbExtractor[1](pos);
-      b = rgbExtractor[2](pos);
+      r = rgbExtractor![0](pos);
+      g = rgbExtractor![1](pos)!;
+      b = rgbExtractor![2](pos);
 
       if (twoByteColor) {
         r /= 256;
@@ -233,11 +228,11 @@ export function parseEpt(worker: Worker, data: EptInputData, objects: StylableOb
       rgb[4 * i + 2] = b;
     }
 
-    if (intensity) intensity[i] = intensityExtractor(pos);
-    if (classification) classification[i] = classificationExtractor(pos);
-    if (returnNumber) returnNumber[i] = returnNumberExtractor(pos);
-    if (numberOfReturns) numberOfReturns[i] = numberOfReturnsExtractor(pos);
-    if (pointSourceId) pointSourceId[i] = pointSourceIdExtractor(pos);
+    if (intensity) intensity[i] = intensityExtractor!(pos);
+    if (classification) classification[i] = classificationExtractor!(pos);
+    if (returnNumber) returnNumber[i] = returnNumberExtractor!(pos);
+    if (numberOfReturns) numberOfReturns[i] = numberOfReturnsExtractor!(pos);
+    if (pointSourceId) pointSourceId[i] = pointSourceIdExtractor!(pos);
   }
 
   const indicesBuffer = new ArrayBuffer(numPoints * 4);
@@ -264,6 +259,10 @@ export function parseEpt(worker: Worker, data: EptInputData, objects: StylableOb
     objectId: objectIdBuffer
   };
 
+  function assertDefined(buffer: ArrayBuffer | undefined): buffer is ArrayBuffer {
+    return buffer !== undefined;
+  }
+
   const transferables = [
     message.position,
     message.color,
@@ -274,7 +273,7 @@ export function parseEpt(worker: Worker, data: EptInputData, objects: StylableOb
     message.pointSourceId,
     message.indices,
     message.objectId
-  ].filter(v => v);
+  ].filter(assertDefined);
 
   worker.postMessage(message, transferables);
 }

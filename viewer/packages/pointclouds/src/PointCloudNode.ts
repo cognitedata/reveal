@@ -97,7 +97,7 @@ export class PointCloudNode extends THREE.Group {
     this._potreeNode.pointShape = value;
   }
 
-  get stylableObjectInfo(): StylableObjectInfo {
+  get stylableObjectInfo(): StylableObjectInfo | undefined {
     return this._potreeNode.stylableObjectInfo;
   }
 

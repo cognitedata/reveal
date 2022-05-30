@@ -4,12 +4,7 @@
 
 import { ShapeType } from './IRawShape';
 import { IShape } from './IShape';
-import {
-  AABB,
-  m4MultiplyV3WithTranslation,
-  Mat4,
-  Vec3
-} from './linalg';
+import { AABB, m4MultiplyV3WithTranslation, Mat4, Vec3 } from './linalg';
 
 export type RawBox = {
   type: ShapeType.Box;

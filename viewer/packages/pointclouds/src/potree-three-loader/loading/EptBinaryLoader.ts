@@ -60,12 +60,10 @@ export class EptBinaryLoader implements ILoader {
       autoTerminatingWorker.worker.onmessage = (e: { data: ParsedEptData }) => {
         EptBinaryLoader.WORKER_POOL.releaseWorker(autoTerminatingWorker);
         res(e.data);
-      }
+      };
 
       if (this._stylableObjectInfo) {
-        postStylableObjectInfo(autoTerminatingWorker,
-                             node,
-                             this._stylableObjectInfo);
+        postStylableObjectInfo(autoTerminatingWorker, node, this._stylableObjectInfo);
       }
 
       const eptData: EptInputData = {
@@ -88,21 +86,20 @@ function createTightBoundingBox(data: ParsedEptData): THREE.Box3 {
   );
 }
 
-function postParseCommand(autoTerminatingWorker: AutoTerminatingWorker,
-                          data: EptInputData) {
+function postParseCommand(autoTerminatingWorker: AutoTerminatingWorker, data: EptInputData) {
+  const parseMessage: ParseCommand = {
+    type: 'parse',
+    data
+  };
 
-      const parseMessage: ParseCommand = {
-        type: 'parse',
-        data
-      };
-
-      autoTerminatingWorker.worker.postMessage(parseMessage, [parseMessage.data.buffer]);
+  autoTerminatingWorker.worker.postMessage(parseMessage, [parseMessage.data.buffer]);
 }
 
-function postStylableObjectInfo(autoTerminatingWorker: AutoTerminatingWorker,
-                              node: PointCloudEptGeometryNode,
-                              stylableObjectInfo: StylableObjectInfo): void {
-
+function postStylableObjectInfo(
+  autoTerminatingWorker: AutoTerminatingWorker,
+  node: PointCloudEptGeometryNode,
+  stylableObjectInfo: StylableObjectInfo
+): void {
   const offsetVec = node.boundingBox.min;
 
   const objectMessage: ObjectsCommand = {

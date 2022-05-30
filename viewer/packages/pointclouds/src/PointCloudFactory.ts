@@ -23,8 +23,7 @@ export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
   private readonly _sdkPlayground: CogniteClientPlayground | undefined;
 
-  constructor(modelLoader: ModelDataProvider,
-              sdkPlayground: CogniteClientPlayground | undefined) {
+  constructor(modelLoader: ModelDataProvider, sdkPlayground: CogniteClientPlayground | undefined) {
     this._potreeInstance = new Potree(modelLoader);
     this._sdkPlayground = sdkPlayground;
   }
@@ -33,23 +32,20 @@ export class PointCloudFactory {
     return this._potreeInstance;
   }
 
-
   private annotationGeometryToLocalGeometry(geometry: any): Geometry {
     if (geometry.box) {
-      return new BoxPrimitive(
-        new THREE.Matrix4().fromArray(geometry.box.matrix)
-      );
+      return new BoxPrimitive(new THREE.Matrix4().fromArray(geometry.box.matrix));
     }
 
     if (geometry.cylinder) {
-      return new CylinderPrimitive(geometry.cylinder.center_a,
-                                   geometry.cylinder.center_b,
-                                   geometry.cylinder.radius);
+      return new CylinderPrimitive(geometry.cylinder.center_a, geometry.cylinder.center_b, geometry.cylinder.radius);
     }
+
+    throw Error('Annotation geometry type not recognized');
   }
 
   private async getAnnotations(modelIdentifier: CdfModelIdentifier): Promise<BoundingVolume[]> {
-    const modelAnnotations = await this._sdkPlayground.annotations.list({
+    const modelAnnotations = await this._sdkPlayground!.annotations.list({
       filter: {
         // @ts-ignore
         annotatedResourceType: 'threedmodel',
@@ -71,10 +67,7 @@ export class PointCloudFactory {
     return bvs;
   }
 
-  async createModel(
-    modelIdentifier: ModelIdentifier,
-    modelMetadata: PointCloudMetadata
-  ): Promise<PotreeNodeWrapper> {
+  async createModel(modelIdentifier: ModelIdentifier, modelMetadata: PointCloudMetadata): Promise<PotreeNodeWrapper> {
     const { modelBaseUrl } = modelMetadata;
 
     let stylableObjectInfo: StylableObjectInfo | undefined = undefined;

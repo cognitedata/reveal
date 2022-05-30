@@ -28,7 +28,7 @@ export function createPointCloudModel(modelId: number, revisionId: number): Cogn
     .returns(true)
     .setup(p => p.parent)
     .returns(null)
-    .setup(p => p.dispatchEvent)
+    .setup(p => p.dispatchEvent.bind(p))
     .returns((_: any) => {})
     .setup(p => p.material)
     .returns(new PointCloudMaterial())
