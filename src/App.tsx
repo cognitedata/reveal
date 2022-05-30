@@ -11,6 +11,7 @@ import 'antd/dist/antd.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import '@cognite/cogs.js/dist/cogs.css';
 import './config/i18n';
+import './config/locale';
 import 'services/metrics';
 
 // START SENTRY CODE

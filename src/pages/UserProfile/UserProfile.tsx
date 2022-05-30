@@ -6,6 +6,7 @@ import {
   Display,
   Flex,
   Icon,
+  Row,
   Select,
 } from '@cognite/cogs.js';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
@@ -18,6 +19,12 @@ import { isProduction } from 'utils/environment';
 import config from 'config/config';
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import dayjs from 'dayjs';
+import {
+  availableLocales,
+  changeDayJSLocale,
+  currentLocale,
+} from 'config/locale';
 
 const UserProfileWrap = styled(Flex)`
   width: 100%;
@@ -105,11 +112,15 @@ const defaultTranslations = makeDefaultTranslations(
   'Cognite Charts Version',
   'Select Language',
   'Select the preferred language of the application.',
+  'Select Locale',
+  'Select how dates and numbers are displayed in the application.',
+  'Example',
   'Language'
 );
 
 const UserProfile = () => {
   const [availableLanguages, setAvailableLanguages] = useState(fallbackOptions);
+  const [locale, setLocale] = useState(currentLocale);
 
   const { i18n, ready } = useTranslation(undefined, { useSuspense: false });
   const t = {
@@ -138,7 +149,6 @@ const UserProfile = () => {
         );
       });
     }
-    return () => {};
   }, [ready, i18n.services.backendConnector.backend.backends]);
 
   return (
@@ -172,7 +182,6 @@ const UserProfile = () => {
           <p>{t['Select the preferred language of the application.']}</p>
         </article>
         <article className="lang-col">
-          <p>{t.Language}</p>
           <Select
             disabled={!ready}
             value={
@@ -188,6 +197,35 @@ const UserProfile = () => {
             }
             options={availableLanguages}
           />
+        </article>
+      </LangAreaWrap>
+      <LangAreaWrap>
+        <article>
+          <h3>{t['Select Locale']}</h3>
+          <p>
+            {
+              t[
+                'Select how dates and numbers are displayed in the application.'
+              ]
+            }
+          </p>
+        </article>
+        <article className="lang-col">
+          <Row cols={2}>
+            <div>
+              <Select
+                value={locale}
+                onChange={(option: typeof locale) => {
+                  changeDayJSLocale(option.value);
+                  setLocale(option);
+                }}
+                options={availableLocales}
+              />
+            </div>
+            <div>
+              {t.Example}: {dayjs().format('LLLL')}
+            </div>
+          </Row>
         </article>
       </LangAreaWrap>
 
