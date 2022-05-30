@@ -13,6 +13,7 @@ interface ApiKey extends ApiKeyObject {
   serviceAccountName?: string;
 }
 
+// TODO CDFUX-1572 - figure out translation
 const columns: ColumnType<ApiKey>[] = [
   {
     title: 'ID',

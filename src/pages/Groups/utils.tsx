@@ -53,6 +53,7 @@ const nameToAclTypeMap = {
   wells: 'wellsAcl',
 };
 
+// TODO CDFUX-1572 - figure out translation
 const nameToFormattedName = {
   apikeys: 'API Keys',
   securitycategories: 'Security categories',

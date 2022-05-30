@@ -7,6 +7,7 @@ import { useQueryClient } from 'react-query';
 import { useRouteMatch } from 'react-router';
 import { useGroups, useUpdateGroup } from 'hooks';
 import CapabilitiesSelector from './CapabilitiesSelector';
+import { useTranslation } from 'common/i18n';
 
 const Button = styled(CogsButton)`
   margin-right: 8px;
@@ -19,6 +20,7 @@ type Props = {
   onCreate?: (_: GroupSpec) => Promise<void>;
 };
 export default function GroupDrawer({ group, onClose }: Props) {
+  const { t } = useTranslation();
   const client = useQueryClient();
   const { data: groups = [] } = useGroups(true);
   const [caps, setCaps] = useState(group?.capabilities || []);
@@ -28,26 +30,24 @@ export default function GroupDrawer({ group, onClose }: Props) {
     onMutate() {
       notification.info({
         key: 'group-update',
-        message: `${group ? 'Updating' : 'Creating'} group`,
+        message: group ? t('group-update') : t('group-create'),
       });
     },
     onSuccess() {
       client.invalidateQueries(['groups']);
       notification.success({
         key: 'group-update',
-        message: `Group ${group ? 'updated' : 'created'}`,
+        message: group ? t('group-update-success') : t('group-create-success'),
       });
       onClose();
     },
     onError(error) {
       notification.error({
         key: 'group-update',
-        message: `Group not ${group ? 'updated' : 'created'}`,
+        message: group ? t('group-update-fail') : t('group-create-fail'),
         description: (
           <>
-            <p>
-              An error occured when ${group ? 'updating' : 'creating'} the group
-            </p>
+            <p>{group ? t('group-update-error') : t('group-create-error')}</p>
             <pre>{JSON.stringify(error, null, 2)}</pre>
           </>
         ),
@@ -79,24 +79,22 @@ export default function GroupDrawer({ group, onClose }: Props) {
         <Form.Item
           hasFeedback={isLoading}
           name="name"
-          label="Unique name"
+          label={t('group-name-label')}
           rules={[
-            { required: true, message: 'Please input the group name!' },
+            { required: true, message: t('group-name-placeholder') },
             {
               validator: (_, value) => {
                 const isDuplicate = groups.some(
                   ({ name }) => name === value && name !== group?.name
                 );
                 if (isDuplicate) {
-                  return Promise.reject(
-                    new Error('The name should be unique.')
-                  );
+                  return Promise.reject(new Error(t('group-name-error')));
                 }
                 return Promise.resolve();
               },
             },
           ]}
-          extra="Enter a unique name for the group."
+          extra={t('group-name-info')}
         >
           <Input disabled={isLoading} />
         </Form.Item>
@@ -107,18 +105,16 @@ export default function GroupDrawer({ group, onClose }: Props) {
         <Form.Item
           hasFeedback={isLoading}
           validateStatus="validating"
-          label="Capability"
+          label={t('capability')}
           extra={
             <>
-              Select the capabilities to add to the group. These capabilities
-              grant access to the group to perform particular operations on some
-              data.{' '}
+              {t('capability-info')}{' '}
               <a
                 href="https://docs.cognite.com/dev/guides/iam/authorization.html#capabilities"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Learn more
+                {t('text-learn-more')}
               </a>
             </>
           }
@@ -132,31 +128,31 @@ export default function GroupDrawer({ group, onClose }: Props) {
           hasFeedback={isLoading}
           validateStatus="validating"
           name="sourceId"
-          label="Source ID"
-          extra=" Enter the ID of the group exactly as it exists in the source IdP system."
+          label={t('source-id')}
+          extra={t('source-id-info')}
         >
           <Input
             disabled={isLoading}
-            placeholder="e.g., Azure AD group global unique identifier"
+            placeholder={t('source-id-placeholder')}
           />
         </Form.Item>
         <Form.Item
           hasFeedback={isLoading}
           validateStatus="validating"
           name="source"
-          label="Source name"
-          extra="Enter the name of the group in the source IdP system."
+          label={t('source-name')}
+          extra={t('source-name-info')}
         >
           <Input
             disabled={isLoading}
-            placeholder="e.g., Azure AD group descriptor"
+            placeholder={t('source-name-placeholder')}
           />
         </Form.Item>
         <Form.Item>
           <Button disabled={isLoading} type="primary" htmlType="submit">
-            {group ? 'Update' : 'Create'}
+            {group ? t('text-update') : t('text-create')}
           </Button>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={onClose}>{t('text-cancel')}</Button>
         </Form.Item>
       </Form>
     </Drawer>

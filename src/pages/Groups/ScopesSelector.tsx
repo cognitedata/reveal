@@ -5,6 +5,7 @@ import { Radio, RadioChangeEvent } from 'antd';
 
 import { DataSet } from '@cognite/sdk';
 import { getScopeLabel, getCapabilityScopes } from './utils';
+import { RESOURCE_SELECTOR_LIMIT } from 'utils/constants';
 
 import SecurityCategoriesSelector from './SecurityCategoriesSelector';
 import PartitionSelector from './PartitionSelector';
@@ -154,7 +155,7 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
             value={selectedResources}
             onChange={onChangeResource}
             useSearchApi={false}
-            limit={1000}
+            limit={RESOURCE_SELECTOR_LIMIT}
             itemFilter={(ds: DataSet) => ds.metadata?.archived !== 'true'}
             downloadAll
           />
@@ -193,7 +194,7 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
             value={selectedResources}
             onChange={onChangeResource}
             useSearchApi={false}
-            limit={1000}
+            limit={RESOURCE_SELECTOR_LIMIT}
             downloadAll
           />
         );
@@ -207,7 +208,7 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
                 value={selectedResources}
                 onChange={onChangeResource}
                 useSearchApi={false}
-                limit={1000}
+                limit={RESOURCE_SELECTOR_LIMIT}
                 downloadAll
               />
             );
@@ -233,7 +234,7 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
                 value={selectedResources}
                 onChange={onChangeResource}
                 useSearchApi={false}
-                limit={1000}
+                limit={RESOURCE_SELECTOR_LIMIT}
                 itemFilter={(ds: DataSet) => ds.metadata?.archived !== 'true'}
                 downloadAll
               />

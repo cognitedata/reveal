@@ -8,6 +8,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { ServiceAccount } from '@cognite/sdk';
 import { useGroups, usePermissions, useRefreshToken } from 'hooks';
 import { stringContains } from '../Groups/utils';
+import { useTranslation } from 'common/i18n';
 
 function GroupTag({ id }: { id: number }) {
   const sdk = useSDK();
@@ -19,6 +20,7 @@ function GroupTag({ id }: { id: number }) {
 }
 
 export default function EditGroups({ account }: { account: ServiceAccount }) {
+  const { t } = useTranslation();
   const client = useQueryClient();
   const sdk = useSDK();
   const { refreshToken } = useRefreshToken();
@@ -48,7 +50,7 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
       onMutate() {
         notification.info({
           key: 'service-account-update',
-          message: 'Update service account',
+          message: t('service-account-update-progress'),
         });
       },
       onSuccess() {
@@ -56,7 +58,7 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
         client.invalidateQueries(['groups']);
         notification.success({
           key: 'service-account-update',
-          message: 'Service account updated',
+          message: t('service-account-update-success'),
         });
         refreshToken();
       },
@@ -65,7 +67,8 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
         client.invalidateQueries(['groups']);
         notification.error({
           key: 'service-account-update',
-          message: 'Service account not updated!',
+          message: t('service-account-update-fail'),
+          description: t('service-account-update-error'),
         });
       },
     }
@@ -75,7 +78,7 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
     account.groups && account.groups.length > 0 ? (
       account.groups.map((group) => <GroupTag key={group} id={group} />)
     ) : (
-      <>No groups</>
+      <>{t('text-no-groups')}</>
     );
 
   const button = editMode ? (
@@ -91,7 +94,7 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
         setEditMode(false);
       }}
     >
-      {!isLoading && 'Save'}
+      {!isLoading && t('text-save')}
     </Button>
   ) : (
     <Button
@@ -108,7 +111,7 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
         <Select
           mode="multiple"
           style={{ width: '90%' }}
-          placeholder="Select groups"
+          placeholder={t('group-select')}
           defaultValue={account.groups}
           filterOption={(input, option) => stringContains(option?.title, input)}
           optionLabelProp="title"

@@ -2,11 +2,13 @@ import React from 'react';
 import { SingleCogniteCapability } from '@cognite/sdk';
 import { Tag } from 'antd';
 import { getCapabilityName } from './utils';
+import { useTranslation } from 'common/i18n';
 
 type Props = {
   capability: SingleCogniteCapability;
 };
 export default function CapabilityTag({ capability }: Props) {
+  const { t } = useTranslation();
   const acl: string = Object.keys(capability)[0]!;
   // @ts-ignore
   const { actions = [], scope } = capability[acl];
@@ -23,7 +25,7 @@ export default function CapabilityTag({ capability }: Props) {
             borderRadius: 2,
           }}
         >
-          Scope: {scopeLabel}
+          {t('text-scope')}: {scopeLabel}
         </span>
       )}
       {getCapabilityName(capability)}:{`${a.toLowerCase()}`}

@@ -4,10 +4,12 @@ import { Icon } from '@cognite/cogs.js';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { usePermissions, useRefreshToken } from 'hooks';
+import { useTranslation } from 'common/i18n';
 
 const { Text } = Typography;
 
 export default function Actions({ id, name }: { id: number; name: string }) {
+  const { t } = useTranslation();
   const sdk = useSDK();
   const client = useQueryClient();
   const { refreshToken } = useRefreshToken();
@@ -17,7 +19,7 @@ export default function Actions({ id, name }: { id: number; name: string }) {
     {
       onSuccess(data) {
         Modal.success({
-          title: 'API key created',
+          title: t('create-api-key-success'),
           width: 300,
           content: (
             <div style={{ border: '1px solid grey', margin: 5, padding: 5 }}>
@@ -36,13 +38,13 @@ export default function Actions({ id, name }: { id: number; name: string }) {
     onMutate() {
       notification.info({
         key: 'service-account-delete',
-        message: 'Deleting service account',
+        message: t('service-account-delete-progress'),
       });
     },
     onSuccess() {
       notification.success({
         key: 'service-account-delete',
-        message: 'Service account deleted',
+        message: t('service-account-delete-success'),
       });
       client.invalidateQueries(['service-accounts']);
       refreshToken();
@@ -50,10 +52,10 @@ export default function Actions({ id, name }: { id: number; name: string }) {
     onError(error) {
       notification.error({
         key: 'service-account-delete',
-        message: 'Service account not deleted!',
+        message: t('service-account-delete-fail'),
         description: (
           <>
-            <p>An error occured when deleting the service account</p>
+            <p>{t('service-account-delete-error')}</p>
             <pre>{JSON.stringify(error, null, 2)}</pre>
           </>
         ),
@@ -68,25 +70,26 @@ export default function Actions({ id, name }: { id: number; name: string }) {
       overlay={
         <Menu>
           <Menu.Item onClick={() => generateNewKey()}>
-            Generate new key
+            {t('generate-api-key')}
           </Menu.Item>
           <Menu.Item
             disabled={!hasPermission}
             onClick={() =>
               Modal.confirm({
-                title: 'Confirm deletion',
-                okText: 'Delete',
+                title: t('confirm-delete'),
+                okText: t('text-delete'),
                 content: (
                   <>
-                    Are you sure you want to delete the service account{' '}
-                    <strong>{name}</strong>?
+                    {t('confirm-delete-service-account', {
+                      serviveAccount: <strong>{name}</strong>,
+                    })}
                   </>
                 ),
                 onOk: () => mutate(),
               })
             }
           >
-            Delete
+            {t('text-delete')}
           </Menu.Item>
         </Menu>
       }

@@ -39,10 +39,13 @@ import {
   FUSION_APPLICATION,
 } from './applications';
 import LegacyLoginFlowWarning from './LegacyLoginFlowWarning';
+import {
+  GOOGLE_LOGIN_URL,
+  GOOGLE_LOGOUT_URL,
+  GOOGLE_TOKEN_URL,
+} from 'utils/constants';
 
-export const GOOGLE_LOGIN_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
-export const GOOGLE_LOGOUT_URL = 'https://accounts.google.com/logout';
-export const GOOGLE_TOKEN_URL = 'https://www.googleapis.com/oauth2/v4/token';
+import { useTranslation } from 'common/i18n';
 
 export type CurrentAuth = {
   type: string | undefined;
@@ -86,6 +89,7 @@ const noLabelItemLayout = {
 };
 
 const LegacyIdentityProviderForm = () => {
+  const { t } = useTranslation();
   const sdk = useSDK();
   const { mutate } = useMutation(
     (update: UpdateBody) =>
@@ -98,20 +102,20 @@ const LegacyIdentityProviderForm = () => {
       onMutate() {
         notification.info({
           key: 'project-update',
-          message: 'Updating project settings',
+          message: t('idp-project-settings-update'),
         });
       },
       onSuccess() {
         notification.success({
           key: 'project-update',
-          message: 'Project settings updated',
+          message: t('idp-project-settings-update-success'),
         });
       },
       onError() {
         notification.error({
           key: 'project-update',
-          message: 'Project not updated!',
-          description: 'An error occured when updating the project',
+          message: t('idp-project-settings-update-fail'),
+          description: t('idp-project-settings-update-error'),
         });
       },
     }
@@ -292,33 +296,33 @@ const LegacyIdentityProviderForm = () => {
       <Form {...formItemLayout} onFinish={handleSubmit}>
         <Row style={{ marginBottom: '16px' }}>
           <Col {...noLabelItemLayout.wrapperCol}>
-            <div className="cogs-title-3">Identity provider</div>
+            <div className="cogs-title-3">{t('identity-provider')}</div>
           </Col>
         </Row>
 
-        <Form.Item label="Identity provider">
+        <Form.Item label={t('identity-provider')}>
           <Radio.Group
             disabled={!writeOk}
             buttonStyle="solid"
             value={identityProvider}
             onChange={(e) => setIdentityProvider(e.target.value)}
           >
-            <Radio.Button value="current">Use current</Radio.Button>
+            <Radio.Button value="current">{t('use-current')}</Radio.Button>
             &nbsp;
-            <Radio.Button value="azureAd">Azure AD</Radio.Button>
+            <Radio.Button value="azureAd">{t('azure-ad')}</Radio.Button>
             &nbsp;
-            <Radio.Button value="googleOauth2">Google</Radio.Button>
+            <Radio.Button value="googleOauth2">{t('google')}</Radio.Button>
             &nbsp;
-            <Radio.Button value="oauth2">OAuth 2</Radio.Button>
+            <Radio.Button value="oauth2">{t('Oauth')}</Radio.Button>
           </Radio.Group>
         </Form.Item>
 
         {providerItems}
 
         <Form.Item
-          label="Valid user domains"
+          label={t('idp-valid-user-domains')}
           validateStatus={validDomains.validateStatus}
-          extra="List of allowed user domains, like cognite.com. If the list is empty, all domains will be accepted."
+          extra={t('idp-valid-user-domains-desc')}
           help={validDomains.errorMsg}
         >
           <Select
@@ -334,7 +338,7 @@ const LegacyIdentityProviderForm = () => {
 
         <Row style={{ marginBottom: '16px' }}>
           <Col {...noLabelItemLayout.wrapperCol}>
-            <div className="cogs-title-3">Applications</div>
+            <div className="cogs-title-3">{t('applications')}</div>
           </Col>
         </Row>
 
@@ -344,27 +348,13 @@ const LegacyIdentityProviderForm = () => {
               <Alert
                 type="warning"
                 showIcon
-                message="Notice"
+                message={t('text-notice')}
                 description={
                   <>
-                    <div>
-                      This project does not currently have any allowed
-                      application domains enabled. For improved security we
-                      strongly encourage all projects to enable application
-                      domains by Aug. 15, 2020. The current behavior will be
-                      deprecated after this date.
-                    </div>
-
+                    <div>{t('idp-app-domain-info-1')}</div>
                     <br />
-
-                    <div>
-                      Enabling project-specific application domains will take
-                      effect upon saving the configuration. Once enabled, it
-                      cannot be disabled.
-                    </div>
-
+                    <div>{t('idp-app-domain-info-2')}</div>
                     <br />
-
                     <div>
                       <Button
                         type="primary"
@@ -381,7 +371,7 @@ const LegacyIdentityProviderForm = () => {
                           }
                         }}
                       >
-                        Enable project-specific application domains
+                        {t('idp-enable-project-specific-app-domain')}
                       </Button>
                     </div>
                   </>
@@ -393,8 +383,7 @@ const LegacyIdentityProviderForm = () => {
 
         <Row style={{ marginBottom: '16px' }}>
           <Col {...noLabelItemLayout.wrapperCol}>
-            Users can only log in to CDF through applications on allowed
-            domains. It is important that the list is accurate and up-to-date.
+            {t('idp-app-domain-info-3')}
           </Col>
         </Row>
 
@@ -407,9 +396,9 @@ const LegacyIdentityProviderForm = () => {
         </Form.Item>
 
         <Form.Item
-          label="Allowed application domains"
+          label={t('idp-allowed-app-domain')}
           validateStatus={appDomains.validateStatus}
-          extra="List of allowed application domains. Users can only log in to CDF through applications on allowed domains."
+          extra={t('idp-allowed-app-domain-desc')}
           help={appDomains.errorMsg}
         >
           <Select
@@ -425,7 +414,7 @@ const LegacyIdentityProviderForm = () => {
 
         <Form.Item {...noLabelItemLayout}>
           <Button type="primary" htmlType="submit" disabled={!writeOk}>
-            Save configuration
+            {t('text-save-configuration')}
           </Button>
         </Form.Item>
       </Form>

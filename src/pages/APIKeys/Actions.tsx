@@ -4,8 +4,10 @@ import { Icon } from '@cognite/cogs.js';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { usePermissions } from 'hooks';
+import { useTranslation } from 'common/i18n';
 
 export default function Actions({ id }: { id: number }) {
+  const { t } = useTranslation();
   const sdk = useSDK();
   const client = useQueryClient();
   const { data: canDelete } = usePermissions('apikeysAcl', 'DELETE');
@@ -14,23 +16,23 @@ export default function Actions({ id }: { id: number }) {
     onMutate() {
       notification.info({
         key: 'ap-keys-delete',
-        message: 'Deleting API key',
+        message: t('delete-api-key'),
       });
     },
     onSuccess() {
       notification.success({
         key: 'ap-keys-delete',
-        message: 'API key deleted',
+        message: t('delete-api-key-success'),
       });
       client.invalidateQueries(['api-keys']);
     },
     onError(error) {
       notification.error({
         key: 'ap-keys-delete',
-        message: 'API key not deleted!',
+        message: t('delete-api-key-failed'),
         description: (
           <>
-            <p>An error occured when deleting the service account</p>
+            <p>{t('delete-api-key-error')}</p>
             <pre>{JSON.stringify(error, null, 2)}</pre>
           </>
         ),
@@ -48,19 +50,18 @@ export default function Actions({ id }: { id: number }) {
             disabled={!canDelete}
             onClick={() =>
               Modal.confirm({
-                title: 'Confirm deletion',
-                okText: 'Delete',
+                title: t('confirm-delete'),
+                okText: t('text-delete'),
                 content: (
                   <>
-                    Are you sure you want to delete the API key{' '}
-                    <strong>{id}</strong>
+                    {t('confirm-delete-api')} <strong>{id}</strong>
                   </>
                 ),
                 onOk: () => mutate(),
               })
             }
           >
-            Delete
+            {t('text-delete')}
           </Menu.Item>
         </Menu>
       }

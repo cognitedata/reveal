@@ -16,6 +16,7 @@ export function validateDomain(
   return labels.every((label) => regex.test(label));
 }
 
+// TODO CDFUX-1572 - figure out translation
 export function validateDomainInput(
   domains: string[],
   wildcardSupported: boolean = false

@@ -3,6 +3,7 @@ import React from 'react';
 import { Form, Input } from 'antd';
 
 import { Value } from './common';
+import { useTranslation } from 'common/i18n';
 
 export type OAuthState = {
   clientId: Value<string>;
@@ -32,6 +33,7 @@ type OAuthFormProps = {
 
 const OAuthForm = (props: OAuthFormProps) => {
   const { clientId, clientSecret, loginUrl, logoutUrl, tokenUrl } = props.state;
+  const { t } = useTranslation();
 
   const setClientId = (value: Value<string>) =>
     props.onUpdate({ ...props.state, clientId: value });
@@ -46,10 +48,10 @@ const OAuthForm = (props: OAuthFormProps) => {
   return (
     <>
       <Form.Item
-        label="Client ID"
+        label={t('client-id')}
         required
         validateStatus={clientId.validateStatus}
-        extra="OAuth client ID."
+        extra={t('client-id-desc')}
         help={clientId.errorMsg}
       >
         <Input
@@ -59,10 +61,10 @@ const OAuthForm = (props: OAuthFormProps) => {
         />
       </Form.Item>
       <Form.Item
-        label="Client secret"
+        label={t('client-secret')}
         required
         validateStatus={clientSecret.validateStatus}
-        extra="OAuth client secret."
+        extra={t('client-secret-desc')}
         help={clientSecret.errorMsg}
       >
         <Input
@@ -72,10 +74,10 @@ const OAuthForm = (props: OAuthFormProps) => {
         />
       </Form.Item>
       <Form.Item
-        label="Login URL"
+        label={t('login-url')}
         required
         validateStatus={loginUrl.validateStatus}
-        extra="URL of OAuth authorization endpoint."
+        extra={t('login-url-desc')}
         help={loginUrl.errorMsg}
       >
         <Input
@@ -85,10 +87,10 @@ const OAuthForm = (props: OAuthFormProps) => {
         />
       </Form.Item>
       <Form.Item
-        label="Logout URL"
+        label={t('logout-url')}
         required
         validateStatus={logoutUrl.validateStatus}
-        extra="URL of OAuth logout endpoint."
+        extra={t('logout-url-desc')}
         help={logoutUrl.errorMsg}
       >
         <Input
@@ -98,10 +100,10 @@ const OAuthForm = (props: OAuthFormProps) => {
         />
       </Form.Item>
       <Form.Item
-        label="Token URL"
+        label={t('token-url')}
         required
         validateStatus={tokenUrl.validateStatus}
-        extra="URL of OAuth token endpoint."
+        extra={t('token-url-desc')}
         help={tokenUrl.errorMsg}
       >
         <Input
@@ -127,6 +129,7 @@ export const getOAuth2Configuration = (
   };
 };
 
+// TODO CDFUX-1572 - figure out translation
 export const validateOAuthState = (
   state: OAuthState,
   setState: (value: OAuthState) => void,

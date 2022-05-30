@@ -3,8 +3,10 @@ import { Menu, Modal, Dropdown, notification } from 'antd';
 import { Icon } from '@cognite/cogs.js';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
+import { useTranslation } from 'common/i18n';
 
 export default function Actions({ id }: { id: number }) {
+  const { t } = useTranslation();
   const sdk = useSDK();
   const client = useQueryClient();
   const { mutateAsync: deleteCategory } = useMutation(
@@ -13,23 +15,23 @@ export default function Actions({ id }: { id: number }) {
       onMutate() {
         notification.info({
           key: 'category-delete',
-          message: 'Deleting category',
+          message: t('category-delete-progress'),
         });
       },
       onSuccess() {
         notification.success({
           key: 'category-delete',
-          message: 'Category deleted',
+          message: t('category-delete-success'),
         });
         client.invalidateQueries(['security-categories']);
       },
       onError(error) {
         notification.error({
           key: 'category-delete',
-          message: 'Category not deleted!',
+          message: t('category-delete-fail'),
           description: (
             <>
-              <p>An error occured when deleting the security category</p>
+              <p>{t('category-delete-error')}</p>
               <pre>{JSON.stringify(error, null, 2)}</pre>
             </>
           ),
@@ -47,12 +49,13 @@ export default function Actions({ id }: { id: number }) {
           <Menu.Item
             onClick={() =>
               Modal.confirm({
-                title: 'Confirm deletion',
-                okText: 'Delete',
+                title: t('confirm-delete'),
+                okText: t('text-delete'),
                 content: (
                   <>
-                    Are you sure you want to delete the group{' '}
-                    <strong>{id}</strong>?
+                    {t('confirm-delete-group', {
+                      groupId: <strong>{id}</strong>,
+                    })}
                   </>
                 ),
                 onOk: () => deleteCategory(),

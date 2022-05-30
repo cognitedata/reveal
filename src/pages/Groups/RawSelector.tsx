@@ -8,15 +8,15 @@ import styled from 'styled-components';
 import unionBy from 'lodash/unionBy';
 
 import { getContainer } from 'utils/utils';
+import { DB_TABLE_SEPARATOR } from 'utils/constants';
+import { useTranslation } from 'common/i18n';
 
 const TreeLabel = styled.span`
   margin: 0 8px;
 `;
 
-const createDatabaseTitle = (name: string) => (
-  <Tooltip
-    title={`Scope to all current and future tables of ${name}. Specific table scopes will be ignored.`}
-  >
+const createDatabaseTitle = (name: string, title: string) => (
+  <Tooltip title={title}>
     <Icon type="DataTable" />
     <TreeLabel>{name}</TreeLabel>
   </Tooltip>
@@ -28,8 +28,6 @@ const createTableTitle = (name: string) => (
     <TreeLabel>{name}</TreeLabel>
   </>
 );
-
-const dbTableSeparator = '43jf5aBPMnMI';
 
 const flattenScopeList = (rawScopes: any[]) => {
   const dbsToTables = rawScopes.reduce((prev, cur) => {
@@ -59,11 +57,11 @@ const flattenScopeList = (rawScopes: any[]) => {
 };
 
 const extractDbTableInfo = (value: string) => {
-  const seperatorIdx = value.indexOf(dbTableSeparator);
+  const seperatorIdx = value.indexOf(DB_TABLE_SEPARATOR);
   if (seperatorIdx >= 0) {
     return {
       dbName: value.slice(0, seperatorIdx),
-      tableName: value.slice(seperatorIdx + dbTableSeparator.length),
+      tableName: value.slice(seperatorIdx + DB_TABLE_SEPARATOR.length),
     };
   }
   return {
@@ -83,7 +81,7 @@ const createInitialSelection = (scope: any) => {
       if (tables && tables.length > 0) {
         dbsToLoad.push(dbName);
         const newItems = tables.map(
-          (tableName: string) => `${dbName}${dbTableSeparator}${tableName}`
+          (tableName: string) => `${dbName}${DB_TABLE_SEPARATOR}${tableName}`
         );
         initialSelection.splice(initialSelection.length - 1, 0, ...newItems);
       } else {
@@ -100,9 +98,9 @@ const loadTreeTables = async (dbName: string, sdk: CogniteClient) => {
     .listTables(dbName)
     .autoPagingToArray({ limit: -1 });
   const treeTables = tables.map((table) => ({
-    id: `${dbName}${dbTableSeparator}${table.name}`,
+    id: `${dbName}${DB_TABLE_SEPARATOR}${table.name}`,
     pId: dbName,
-    value: `${dbName}${dbTableSeparator}${table.name}`,
+    value: `${dbName}${DB_TABLE_SEPARATOR}${table.name}`,
     title: createTableTitle(table.name),
     isLeaf: true,
   }));
@@ -114,6 +112,7 @@ type Props = {
   onChange: (_: any) => void;
 };
 const RawSelector = ({ value, onChange }: Props) => {
+  const { t } = useTranslation();
   const sdk = useSDK();
   const [selection, setSelection] = useState<any[]>([]);
   const [treeData, setTreeData] = useState<any[]>([]);
@@ -124,12 +123,18 @@ const RawSelector = ({ value, onChange }: Props) => {
       .listDatabases()
       .autoPagingToArray({ limit: -1 });
 
-    let tree = databases.map((database) => ({
-      id: database.name,
-      pId: 0,
-      value: database.name,
-      title: createDatabaseTitle(database.name),
-    }));
+    let tree = databases.map((database) => {
+      const databaseTitle = t('raw-selector-database-info', {
+        databaseName: database.name,
+      });
+
+      return {
+        id: database.name,
+        pId: 0,
+        value: database.name,
+        title: createDatabaseTitle(database.name, databaseTitle),
+      };
+    });
 
     const [initialSelection, dbsToLoad] = createInitialSelection(value);
 
@@ -173,7 +178,7 @@ const RawSelector = ({ value, onChange }: Props) => {
       treeData={treeData}
       value={selection}
       dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-      placeholder="Select databases or tables"
+      placeholder={t('raw-selector-placeholder')}
       allowClear
       multiple
       loadData={onLoadData}

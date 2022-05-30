@@ -4,7 +4,8 @@ import { Form, Input } from 'antd';
 
 import { Value } from './common';
 
-export const AZURE_APP_RESOURCE_ID = '00000002-0000-0000-c000-000000000000';
+import { AZURE_APP_RESOURCE_ID } from 'utils/constants';
+import { useTranslation } from 'common/i18n';
 
 export type AzureADState = {
   appId: Value<string>;
@@ -27,6 +28,7 @@ type AzureADFormProps = {
 
 const AzureADForm = (props: AzureADFormProps) => {
   const { appId, appSecret, tenantId } = props.state;
+  const { t } = useTranslation();
 
   const setAppId = (value: Value<string>) =>
     props.onUpdate({ ...props.state, appId: value });
@@ -38,10 +40,10 @@ const AzureADForm = (props: AzureADFormProps) => {
   return (
     <>
       <Form.Item
-        label="App ID"
+        label={t('app-id')}
         required
         validateStatus={appId.validateStatus}
-        extra="Azure application ID."
+        extra={t('app-id-desc')}
         help={appId.errorMsg}
       >
         <Input
@@ -51,10 +53,10 @@ const AzureADForm = (props: AzureADFormProps) => {
         />
       </Form.Item>
       <Form.Item
-        label="App secret"
+        label={t('app-secret')}
         required
         validateStatus={appSecret.validateStatus}
-        extra="Azure application secret."
+        extra={t('app-secret-desc')}
         help={appSecret.errorMsg}
       >
         <Input
@@ -64,10 +66,10 @@ const AzureADForm = (props: AzureADFormProps) => {
         />
       </Form.Item>
       <Form.Item
-        label="Tenant ID"
+        label={t('tenant-id')}
         required
         validateStatus={tenantId.validateStatus}
-        extra="Azure tenant ID."
+        extra={t('tenant-id-desc')}
         help={tenantId.errorMsg}
       >
         <Input
@@ -91,6 +93,7 @@ export const getAzureConfiguration = (
   };
 };
 
+// TODO CDFUX-1572 - figure out translation
 export const validateAzureState = (
   state: AzureADState,
   setState: (value: AzureADState) => void
