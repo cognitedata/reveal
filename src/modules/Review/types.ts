@@ -7,7 +7,10 @@ import {
   AnnotationStatus,
   KeypointItem,
 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import { VisionAnnotationDataType } from 'src/modules/Common/types';
+import { VisionReviewAnnotation } from 'src/modules/Review/store/review/types';
 
+/** @deprecated */
 export type LegacyKeypointItemCollection = {
   id: string;
   keypoints: KeypointItem[];
@@ -17,18 +20,23 @@ export type LegacyKeypointItemCollection = {
   selected: boolean;
 };
 
+/** @deprecated */
 export type LegacyKeypoint = {
   caption: string; // ToDo: update to label
   order: string;
   color: string;
   defaultPosition?: [number, number];
 };
+
+/** @deprecated */
 export type LegacyShape = {
   shapeName: string;
   color: string;
   lastUpdated?: number;
   id?: number;
 };
+
+/** @deprecated */
 export type LegacyAnnotationCollection = {
   predefinedKeypoints: KeypointCollection[];
   predefinedShapes: LegacyShape[];
@@ -69,7 +77,7 @@ export type ReactImageAnnotateWrapperProps = FilePreviewProps & {
 };
 
 export type AnnotationTableRowProps = {
-  annotation: AnnotationTableItem;
+  annotation: VisionReviewAnnotation<VisionAnnotationDataType>; // TODO: rename to reviewAnnotation
   onSelect: (id: ReactText, state: boolean) => void;
   onDelete: (id: ReactText) => void;
   onVisibilityChange: (id: ReactText) => void;
@@ -78,6 +86,7 @@ export type AnnotationTableRowProps = {
   expandByDefault?: boolean;
 };
 
+/** @deprecated */
 export type AnnotationTableItem = Omit<VisibleAnnotation, 'id'> & {
   id: ReactText;
   remainingKeypoints?: KeypointItem[];
@@ -88,6 +97,7 @@ export type VisionOptionType<T> = OptionType<T> & {
   color?: string;
   icon?: string;
 };
+/** @deprecated */
 export type KeypointCollection = {
   collectionName: string; // ToDo: change this to label
   keypoints?: LegacyKeypoint[];
@@ -97,6 +107,9 @@ export type KeypointCollection = {
 
 export type Tool = typeof tools[keyof typeof tools];
 
+/**
+ * @deprecated Its usage can likely be replaced by checking the type of `VisionAnnotationDataType`
+ */
 export enum Categories {
   Asset = 'Asset tags',
   Object = 'Objects',

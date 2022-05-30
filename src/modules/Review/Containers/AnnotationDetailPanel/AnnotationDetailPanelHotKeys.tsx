@@ -21,24 +21,25 @@ import {
   getActiveNodeIndexFromArray,
   getActiveNodeParent,
   getNodeFromRowSelect,
-  isAnnotationData,
-  isCategoryData,
-  isKeypointAnnotationData,
+  isVisionReviewAnnotationRowData,
+  isAnnotationTypeRowData,
+  isVisionReviewImageKeypointRowData,
   selectNextOrFirstIndexArr,
   selectPrevOrFirstIndexArr,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/utils/nodeTreeUtils';
 import {
-  Data,
+  AnnotationDetailPanelRowData,
   TreeNode,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { selectCategory } from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
 import { HotKeys } from 'src/constants/HotKeys';
-import { AnnotationStatusChangeV1 } from 'src/store/thunks/Annotation/AnnotationStatusChangeV1';
-import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+
 import { Modal } from 'antd';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFileV1 } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFileV1';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import { FileInfo } from '@cognite/sdk';
+import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
+import { Status } from 'src/api/annotation/types';
 
 export const AnnotationDetailPanelHotKeys = ({
   scrollId,
@@ -46,7 +47,7 @@ export const AnnotationDetailPanelHotKeys = ({
   nodeTree,
   file,
 }: {
-  nodeTree: TreeNode<Data>[];
+  nodeTree: TreeNode<AnnotationDetailPanelRowData>[];
   children: any;
   scrollId: ReactText;
   file: FileInfo;
@@ -99,14 +100,17 @@ export const AnnotationDetailPanelHotKeys = ({
     scrollId,
   ]);
 
-  const setSelectedNodeAsActive = (id: string, node: TreeNode<Data>) => {
+  const setSelectedNodeAsActive = (
+    id: string,
+    node: TreeNode<AnnotationDetailPanelRowData>
+  ) => {
     dispatch(deselectAllSelectionsReviewPage());
-    if (isCategoryData(node.additionalData)) {
+    if (isAnnotationTypeRowData(node.additionalData)) {
       dispatch(selectCategory({ category: id as Categories, selected: true }));
-    } else if (isAnnotationData(node.additionalData)) {
+    } else if (isVisionReviewAnnotationRowData(node.additionalData)) {
       if (
-        isKeypointAnnotationData(node.additionalData) && // if this is current Collection
-        !node.additionalData.lastUpdatedTime
+        isVisionReviewImageKeypointRowData(node.additionalData) && // if this is current Collection
+        !node.additionalData.annotation.lastUpdatedTime
       ) {
         dispatch(selectCollection(id));
       } else {
@@ -185,11 +189,9 @@ export const AnnotationDetailPanelHotKeys = ({
         }
         if (annotationId) {
           dispatch(
-            AnnotationStatusChangeV1({
+            AnnotationStatusChange({
               id: +annotationId,
-              status: status
-                ? AnnotationStatus.Verified
-                : AnnotationStatus.Rejected,
+              status: status ? Status.Approved : Status.Rejected,
             })
           );
         }
@@ -202,14 +204,17 @@ export const AnnotationDetailPanelHotKeys = ({
     if (nodeTree.length) {
       let annotationId: string;
       const activeNode = getActiveNode(nodeTree);
-      if (activeNode && isAnnotationData(activeNode.additionalData)) {
+      if (
+        activeNode &&
+        isVisionReviewAnnotationRowData(activeNode.additionalData)
+      ) {
         annotationId = activeNode.id;
       }
 
       const onConfirmDelete = async () => {
         await dispatch(
-          DeleteAnnotationsAndHandleLinkedAssetsOfFileV1({
-            annotationIds: [+annotationId!],
+          DeleteAnnotationsAndHandleLinkedAssetsOfFile({
+            annotationIds: [{ id: +annotationId! }],
             showWarnings: true,
           })
         );

@@ -2,13 +2,12 @@ import React, { ReactElement, useEffect } from 'react';
 import { FileInfo } from '@cognite/sdk';
 import { Icon, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import {
-  AnnotationTableItem,
-  AnnotationTableRowProps,
-} from 'src/modules/Review/types';
+import { AnnotationTableRowProps } from 'src/modules/Review/types';
 import useAssetLinkWarning, {
   AssetWarnTypes,
 } from 'src/store/hooks/useAssetLinkWarning';
+import { VisionReviewAnnotation } from 'src/modules/Review/store/review/types';
+import { VisionAnnotationDataType } from 'src/modules/Common/types/annotation';
 
 export const AssetWarnMessages = {
   [AssetWarnTypes.NoWarning]: '',
@@ -20,18 +19,22 @@ export const AssetWarnMessages = {
 
 export const AssetLinkWarning = ({
   file,
-  annotation,
-  allAnnotations,
+  reviewAnnotation,
+  allReviewAnnotations,
   onWarningStatusChange,
   children,
 }: {
   file: FileInfo;
-  annotation: AnnotationTableItem;
-  allAnnotations: AnnotationTableItem[];
+  reviewAnnotation: VisionReviewAnnotation<VisionAnnotationDataType>;
+  allReviewAnnotations: VisionReviewAnnotation<VisionAnnotationDataType>[];
   onWarningStatusChange?: (visible: boolean) => void;
   children: ReactElement<AnnotationTableRowProps>;
 }) => {
-  const warningStatus = useAssetLinkWarning(annotation, file, allAnnotations);
+  const warningStatus = useAssetLinkWarning(
+    reviewAnnotation,
+    file,
+    allReviewAnnotations
+  );
 
   useEffect(() => {
     // pass warning status to parent

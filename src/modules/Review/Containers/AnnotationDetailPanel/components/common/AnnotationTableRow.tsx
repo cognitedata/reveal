@@ -7,8 +7,15 @@ import { AnnotationTableRowProps } from 'src/modules/Review/types';
 import { pushMetric } from 'src/utils/pushMetric';
 import { createLink } from '@cognite/cdf-utilities';
 import { Link } from 'react-router-dom';
+import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import { Status } from 'src/api/annotation/types';
+import { isImageAssetLinkData } from 'src/modules/Common/types/typeGuards';
 import { AnnotationTableRowAttribute } from './AnnotationTableRowAttribute';
 
+/**
+ * @todo: Fix keypoint color [VIS-869]
+ * @todo: Fix attributes [VIS-868]
+ */
 export const AnnotationTableRow = ({
   annotation,
   onSelect,
@@ -19,31 +26,36 @@ export const AnnotationTableRow = ({
 }: AnnotationTableRowProps) => {
   return (
     <StyledRow
-      key={annotation.id}
-      onClick={() => onSelect(annotation.id, !annotation.selected)}
+      key={annotation.annotation.id}
+      onClick={() => onSelect(annotation.annotation.id, !annotation.selected)}
     >
       {showColorCircle && (
         <ColorCircleContainer>
-          <ColorCircle color={annotation.color} />
+          {/* <ColorCircle color={annotation.color} /> */}
+          <ColorCircle color="red" />
         </ColorCircleContainer>
       )}
       <AnnotationLabelContainer>
         <AnnotationLbl>
-          <Tooltip className="lbl-tooltip" content={annotation.text}>
-            <> {`${annotation.text}`}</>
+          <Tooltip
+            className="lbl-tooltip"
+            content={getAnnotationLabelOrText(annotation.annotation)}
+          >
+            <> {`${getAnnotationLabelOrText(annotation.annotation)}`}</>
           </Tooltip>
         </AnnotationLbl>
       </AnnotationLabelContainer>
-      {annotation.linkedResourceId && (
+      {isImageAssetLinkData(annotation.annotation) && (
         <Link
-          to={createLink(`/explore/asset/${annotation.linkedResourceId}`)}
+          to={createLink(`/explore/asset/${annotation.annotation.assetRef.id}`)}
           target="_blank"
           style={{ display: 'flex', alignItems: 'center' }}
         >
           <Icon
             type="ExternalLink"
             style={{
-              color: annotation.color,
+              color: 'red',
+              // color: annotation.color,
             }}
           />
         </Link>
@@ -54,43 +66,47 @@ export const AnnotationTableRow = ({
             type="EyeHide"
             style={{ color: '#595959' }}
             onClick={() => {
-              onVisibilityChange(annotation.id);
+              onVisibilityChange(annotation.annotation.id);
             }}
           />
         ) : undefined}
       </ShowHideIconContainer>
-      {(annotation.data?.attributes !== undefined ||
-        annotation.data?.confidence !== undefined) && (
-        <AttributesIconContainer>
-          <Detail style={{ color: '#595959' }}>
-            <Tooltip
-              content={<AnnotationTableRowAttribute annotation={annotation} />}
-            >
-              <Icon type="Info" />
-            </Tooltip>
-          </Detail>
-        </AttributesIconContainer>
-      )}
+      {
+        // annotation.annotation.attributes !== undefined ||
+        annotation.annotation?.confidence !== undefined && (
+          <AttributesIconContainer>
+            <Detail style={{ color: '#595959' }}>
+              <Tooltip
+                content={
+                  <AnnotationTableRowAttribute reviewAnnotation={annotation} />
+                }
+              >
+                <Icon type="Info" />
+              </Tooltip>
+            </Detail>
+          </AttributesIconContainer>
+        )
+      }
       <ApproveBtnContainer onClick={(evt) => evt.stopPropagation()}>
         <StyledSegmentedControl
-          status={annotation.status}
+          status={annotation.annotation.status}
           className="approvalButton"
           currentKey={
             // eslint-disable-next-line no-nested-ternary
-            annotation.status === AnnotationStatus.Verified
+            annotation.annotation.status === Status.Approved
               ? 'verified'
-              : annotation.status === AnnotationStatus.Rejected
+              : annotation.annotation.status === Status.Rejected
               ? 'rejected'
               : undefined
           }
           onButtonClicked={(key) => {
             if (key === 'verified') {
               pushMetric('Vision.Review.Annotation.Verified');
-              onApprove(annotation.id, AnnotationStatus.Verified);
+              onApprove(annotation.annotation.id, AnnotationStatus.Verified);
             }
             if (key === 'rejected') {
               pushMetric('Vision.Review.Annotation.Rejected');
-              onApprove(annotation.id, AnnotationStatus.Rejected);
+              onApprove(annotation.annotation.id, AnnotationStatus.Rejected);
             }
           }}
         >
@@ -120,12 +136,12 @@ export const AnnotationTableRow = ({
       >
         <AnnotationActionMenuExtended
           showPolygon={annotation.show}
-          disableShowPolygon={annotation.status === AnnotationStatus.Rejected}
+          disableShowPolygon={annotation.annotation.status === Status.Rejected}
           handleVisibility={() => {
-            onVisibilityChange(annotation.id);
+            onVisibilityChange(annotation.annotation.id);
           }}
           handleAnnotationDelete={() => {
-            onDelete(annotation.id);
+            onDelete(annotation.annotation.id);
           }}
         />
       </ActionMenuContainer>

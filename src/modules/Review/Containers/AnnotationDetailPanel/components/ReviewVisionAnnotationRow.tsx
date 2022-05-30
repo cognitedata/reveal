@@ -1,8 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {
-  ReviewAnnotation,
-  RowData,
+  AnnotationDetailPanelRowDataBase,
   VirtualizedTreeRowProps,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
 import {
@@ -11,31 +10,35 @@ import {
   KeyboardShortCutSelectable,
   SidePanelRow,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/components/common';
+import { VisionReviewAnnotation } from 'src/modules/Review/store/review/types';
+import { VisionAnnotationDataType } from 'src/modules/Common/types/annotation';
+import { CDFAnnotationTypeEnum } from 'src/api/annotation/types';
 
-/**
- * Special Annotation Detail row component for Keypoint annotations
- * @param additionalData
- * @constructor
- */
-export const KeypointAnnotationReviewRow = ({
+export const ReviewVisionAnnotationRow = ({
   additionalData,
-}: VirtualizedTreeRowProps<RowData<ReviewAnnotation>>) => {
+}: VirtualizedTreeRowProps<
+  AnnotationDetailPanelRowDataBase<
+    VisionReviewAnnotation<VisionAnnotationDataType>
+  >
+>) => {
   const {
     callbacks: { onSelect, onVisibilityChange, onApproveStateChange, onDelete },
-    ...keypointAnnotation
+    ...visionReviewImageKeypointRowData
   } = additionalData;
 
   const renderContent = () => {
     // collapse icon appears for KeypointAnnotations
     if (
-      keypointAnnotation.region?.shape === 'points' &&
-      keypointAnnotation.region.vertices.length
+      visionReviewImageKeypointRowData.annotation.annotationType ===
+      CDFAnnotationTypeEnum.ImagesKeypointCollection
     ) {
       return (
         <PanelHeader>
-          <ExpandIconComponent isActive={keypointAnnotation.selected} />
+          <ExpandIconComponent
+            isActive={visionReviewImageKeypointRowData.selected}
+          />
           <AnnotationTableRow
-            annotation={keypointAnnotation}
+            annotation={visionReviewImageKeypointRowData}
             onSelect={onSelect}
             onDelete={onDelete}
             onApprove={onApproveStateChange}
@@ -47,7 +50,7 @@ export const KeypointAnnotationReviewRow = ({
     }
     return (
       <AnnotationTableRow
-        annotation={keypointAnnotation}
+        annotation={visionReviewImageKeypointRowData}
         onSelect={onSelect}
         onDelete={onDelete}
         onApprove={onApproveStateChange}
@@ -59,8 +62,8 @@ export const KeypointAnnotationReviewRow = ({
 
   return (
     <KeyboardShortCutSelectable
-      id={keypointAnnotation.id}
-      selected={keypointAnnotation.selected}
+      id={visionReviewImageKeypointRowData.annotation.id}
+      selected={visionReviewImageKeypointRowData.selected}
     >
       <SidePanelRow>{renderContent()}</SidePanelRow>
     </KeyboardShortCutSelectable>

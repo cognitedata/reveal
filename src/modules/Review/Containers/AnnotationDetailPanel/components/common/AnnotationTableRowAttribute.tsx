@@ -1,26 +1,34 @@
 import { Detail } from '@cognite/cogs.js';
 import React from 'react';
-import { AnnotationTableItem } from 'src/modules/Review/types';
+import { VisionAnnotationDataType } from 'src/modules/Common/types';
+import { VisionReviewAnnotation } from 'src/modules/Review/store/review/types';
+
 import styled from 'styled-components';
 
+/**
+ * @todo: Fix attributes [VIS-868]
+ */
 export const AnnotationTableRowAttribute = ({
-  annotation,
+  reviewAnnotation,
 }: {
-  annotation: AnnotationTableItem;
+  reviewAnnotation: VisionReviewAnnotation<VisionAnnotationDataType>;
 }) => {
   return (
     <AttributesContainer>
-      {annotation.data?.confidence !== undefined && (
+      {reviewAnnotation.annotation.confidence !== undefined && (
         <StyledDetail>
-          confidence: {annotation.data.confidence.toFixed(2)}
+          confidence: {reviewAnnotation.annotation.confidence.toFixed(2)}
         </StyledDetail>
       )}
 
-      {Object.entries(annotation.data?.attributes || []).map(([key, value]) => (
-        <StyledDetail>
-          {key}: {value.value}
-        </StyledDetail>
-      ))}
+      {/**
+       *  {Object.entries(reviewAnnotation.data?.attributes || []).map(
+        ([key, value]) => (
+          <StyledDetail>
+            {key}: {value.value}
+          </StyledDetail>
+        )
+      )} */}
     </AttributesContainer>
   );
 };

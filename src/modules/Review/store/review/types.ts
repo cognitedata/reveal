@@ -7,7 +7,7 @@ type Visible = {
   show: boolean;
 };
 
-type Selectable = {
+export type Selectable = {
   selected: boolean;
 };
 

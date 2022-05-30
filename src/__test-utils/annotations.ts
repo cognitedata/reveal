@@ -17,6 +17,8 @@ import {
 } from 'src/api/annotation/types';
 import { KeypointCollectionState } from 'src/modules/Review/store/annotatorWrapper/type';
 import { LegacyKeypoint, KeypointCollection } from 'src/modules/Review/types';
+import { ReviewKeypoint } from 'src/modules/Review/store/review/types';
+import { getDummyImageKeypointCollectionAnnotation } from './getDummyAnnotations';
 
 export const getDummyAnnotation = (
   id?: number,
@@ -92,5 +94,16 @@ export const getDummyPredefinedKeypoint = (id: string): KeypointCollection => {
       dummyKeypoint('center'),
       dummyKeypoint('right'),
     ],
+  };
+};
+
+export const getDummyReviewImageKeypointObject = (
+  id: number,
+  selected = false
+): ReviewKeypoint => {
+  return {
+    id: id.toString(),
+    selected,
+    keypoint: getDummyImageKeypointCollectionAnnotation({ id }).keypoints[0],
   };
 };
