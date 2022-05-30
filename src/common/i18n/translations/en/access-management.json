@@ -154,7 +154,8 @@
     "service-account-update-fail": "Service account not updated!",
     "service-account-update-progress": "Updating service account",
     "service-account-update-success": "Service account updated",
-    "service-accounts": "Service accounts",
+    "service-account_one": "Service account",
+    "service-account_other": "Service accounts",
     "set-as-default": "Set as default",
     "single-capability-about-dataset": "about data sets.",
     "single-capability-action-info": "The possible actions vary according to the capability type. First select a capability type above.",
@@ -200,8 +201,11 @@
     "text-scope": "Scope",
     "text-update": "Update",
     "text-view-more": "+{{count}} more",
+    "text-status": "Status",
+    "text-created-at": "Created at",
     "token-url": "Token URL",
     "token-url-desc": "URL of OAuth token endpoint.",
     "token-url-error": "Token URL is required.",
-    "use-current": "Use current"
+    "use-current": "Use current",
+    "text-success": "Success"
 }

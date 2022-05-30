@@ -5,12 +5,13 @@ import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 
 import LegacyLoginFlowWarning from 'pages/IDP/LegacyLoginFlowWarning';
-import columns from './columns';
+import { useAPIKeyTableColumns } from './columns';
 import { stringContains } from '../Groups/utils';
 import { useTranslation } from 'common/i18n';
 
 export default function APIKeys() {
   const { t } = useTranslation();
+  const { columns } = useAPIKeyTableColumns();
   const sdk = useSDK();
 
   const [searchValue, setSearchValue] = useState('');

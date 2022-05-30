@@ -219,7 +219,7 @@ export default function Groups() {
     },
     legacyFlow
       ? {
-          title: t('service-accounts'),
+          title: t('service-account_other'),
           dataIndex: 'id',
           align: 'center',
           render(id: number) {
