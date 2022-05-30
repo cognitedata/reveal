@@ -17,7 +17,7 @@ import {
   useDataElementConfig,
   useDataPanelDispatch,
 } from 'scarlet/hooks';
-import { getPrettifiedDataElementValue } from 'scarlet/utils';
+import { getPrintedDataElementValue } from 'scarlet/utils';
 
 import { DataSourceField, DataSourceOrigin } from '..';
 
@@ -434,7 +434,7 @@ const DataSourceSavingHelper = ({
           toast.success(
             `"${
               label || dataElementKey
-            }" has been set to "${getPrettifiedDataElementValue(
+            }" has been set to "${getPrintedDataElementValue(
               values.value,
               unit,
               type

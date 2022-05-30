@@ -13,7 +13,6 @@ import {
   DataPanelActionType,
 } from 'scarlet/types';
 import {
-  getDataElementConfig,
   getDataElementHasDiscrepancy,
   getDataElementPrimaryDetection,
   getIsDataElementValueAvailable,
@@ -44,11 +43,9 @@ export const SelectedElementsBar = ({
 
   const isElementWithDiscrepancy = useMemo(
     () =>
-      dataElements.some((dataElement) => {
-        const { unit, type } =
-          getDataElementConfig(equipmentConfig.data, dataElement) ?? {};
-        return getDataElementHasDiscrepancy(dataElement, unit, type);
-      }),
+      dataElements.some((dataElement) =>
+        getDataElementHasDiscrepancy(dataElement)
+      ),
     [equipmentConfig.data, dataElements]
   );
 

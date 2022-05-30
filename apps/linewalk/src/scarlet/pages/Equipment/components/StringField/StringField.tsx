@@ -1,6 +1,6 @@
 import { Input } from '@cognite/cogs.js';
 import { Field, useFormikContext } from 'formik';
-import { getPrettifiedDataElementUnit } from 'scarlet/utils';
+import { getPrintedDataElementUnit } from 'scarlet/utils';
 
 import { DataSourceFieldProps, DataSourceFormValues } from '..';
 
@@ -13,7 +13,8 @@ export const StringField = ({
   disabled,
   unit,
   printedValue,
-}: DataSourceFieldProps & { printedValue?: string }) => {
+  htmlType = 'text',
+}: DataSourceFieldProps & { htmlType?: string; printedValue?: string }) => {
   const { setFieldValue, values } = useFormikContext<DataSourceFormValues>();
 
   return (
@@ -27,8 +28,9 @@ export const StringField = ({
         title={label}
         variant="titleAsPlaceholder"
         fullWidth
+        type={htmlType}
         style={{ height: '48px', borderWidth: '1px' }}
-        postfix={getPrettifiedDataElementUnit(unit)}
+        postfix={getPrintedDataElementUnit(unit)}
         validate={(value: string) => (!value?.trim() ? 'Empty' : undefined)}
         onChange={(e: Event) =>
           setFieldValue(name, (e.target as HTMLInputElement).value)

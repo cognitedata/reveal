@@ -16,7 +16,9 @@ import {
   EquipmentComponentType,
   MALData,
   MSData,
+  DataElementType,
 } from 'scarlet/types';
+import { getLocaleDateString } from 'scarlet/utils';
 
 export const transformEquipmentData = ({
   config,
@@ -85,25 +87,33 @@ const getEquipmentElements = (
 
   const equipmentElements = equipmentElementKeys
     .map((key) => {
-      if (!config.equipmentElements[key]) return undefined;
+      const dataElementConfig = config.equipmentElements[key];
+      if (!dataElementConfig) return undefined;
 
-      const itemScannerDetections = scannerDetections.filter(
-        (detection) =>
-          detection.key === key &&
-          detection.boundingBox &&
-          !detection.scannerComponent
-      );
+      const itemScannerDetections = scannerDetections
+        .filter(
+          (detection) =>
+            detection.key === key &&
+            detection.boundingBox &&
+            !detection.scannerComponent
+        )
+        .map((detection) =>
+          transformDetection(detection, dataElementConfig.type)
+        ) as ScannerDetection[];
 
       const equipmentStateElement = equipmentStateElements.find(
         (item) => item.key === key
       );
 
-      const pcmsDetection = getPCMSDetection(key, pcms);
-      const malDetection = getMALDetection(key, mal);
-      const msDetection = getMSDetection(key, ms);
+      const equipmentStateDetections = equipmentStateElement?.detections.map(
+        (detection) => transformDetection(detection, dataElementConfig.type)
+      );
+      const pcmsDetection = getPCMSDetection(key, pcms, dataElementConfig.type);
+      const malDetection = getMALDetection(key, mal, dataElementConfig.type);
+      const msDetection = getMSDetection(key, ms, dataElementConfig.type);
 
       const detections = mergeDetections(
-        equipmentStateElement?.detections,
+        equipmentStateDetections,
         itemScannerDetections,
         pcmsDetection,
         malDetection,
@@ -124,35 +134,47 @@ const getEquipmentElements = (
   return equipmentElements as DataElement[];
 };
 
-const getPCMSDetection = (key: string, pcms?: Asset) => {
+const getPCMSDetection = (
+  key: string,
+  pcms?: Asset,
+  dataElementType?: DataElementType
+) => {
   if (!pcms?.metadata || pcms.metadata[key] === undefined) return undefined;
 
   return {
     id: uuid(),
     type: DetectionType.PCMS,
-    value: pcms.metadata[key].trim(),
+    value: transformDetectionValue(pcms.metadata[key], dataElementType),
     state: DetectionState.APPROVED,
   } as Detection;
 };
 
-const getMALDetection = (key: string, mal?: MALData) => {
+const getMALDetection = (
+  key: string,
+  mal?: MALData,
+  dataElementType?: DataElementType
+) => {
   if (!mal || mal[key] === undefined || mal[key] === '') return undefined;
 
   return {
     id: uuid(),
     type: DetectionType.MAL,
-    value: mal[key].toString().trim(),
+    value: transformDetectionValue(mal[key], dataElementType),
     state: DetectionState.APPROVED,
   } as Detection;
 };
 
-const getMSDetection = (key: string, ms?: MSData) => {
+const getMSDetection = (
+  key: string,
+  ms?: MSData,
+  dataElementType?: DataElementType
+) => {
   if (!ms || ms[key] === undefined || ms[key] === '') return undefined;
 
   return {
     id: uuid(),
     type: DetectionType.MS2,
-    value: ms[key].toString().trim(),
+    value: transformDetectionValue(ms[key], dataElementType),
     state: DetectionState.APPROVED,
   } as Detection;
 };
@@ -306,14 +328,19 @@ const getEquipmentComponents = (
     );
 
     component.componentElements.forEach((dataElement) => {
+      const dataElementConfig = config.equipmentElements[dataElement.key];
+      if (!dataElementConfig) return;
+
       const isScannerDetectionAvailable = dataElement.detections.some(
         (detection) => detection.type === DetectionType.SCANNER
       );
       if (isScannerDetectionAvailable) return;
 
-      const scannerDataElementDetections = scannerComponentDetections.filter(
-        (detection) => detection.key === dataElement.key
-      );
+      const scannerDataElementDetections = scannerComponentDetections
+        .filter((detection) => detection.key === dataElement.key)
+        .map((detection) =>
+          transformDetection(detection, dataElementConfig.type)
+        );
       if (scannerDataElementDetections) {
         // eslint-disable-next-line no-param-reassign
         dataElement.detections = [
@@ -363,7 +390,14 @@ const getComponentElements = (
   );
 
   componentElements.forEach((dataElement) => {
-    const pcmsDetection = getPCMSDetection(dataElement.key, pcmsComponent);
+    const dataElementConfig = config.componentElements[dataElement.key];
+    if (!dataElementConfig) return;
+
+    const pcmsDetection = getPCMSDetection(
+      dataElement.key,
+      pcmsComponent,
+      dataElementConfig.type
+    );
 
     if (pcmsDetection) {
       const existingPCMSDetection = dataElement.detections.find(
@@ -377,7 +411,11 @@ const getComponentElements = (
       }
     }
 
-    const malDetection = getMALDetection(dataElement.key, mal);
+    const malDetection = getMALDetection(
+      dataElement.key,
+      mal,
+      dataElementConfig.type
+    );
 
     if (malDetection) {
       const existingMALDetection = dataElement.detections.find(
@@ -390,7 +428,11 @@ const getComponentElements = (
       }
     }
 
-    const msDetection = getMSDetection(dataElement.key, ms);
+    const msDetection = getMSDetection(
+      dataElement.key,
+      ms,
+      dataElementConfig.type
+    );
     if (msDetection) {
       const existingMSDetection = dataElement.detections.find((detection) =>
         [DetectionType.MS2, DetectionType.MS3].includes(detection.type)
@@ -414,3 +456,36 @@ const getScannerComponentId = (component: EquipmentComponent) =>
         detection.state === DetectionState.APPROVED &&
         detection.scannerComponent?.id
     )?.scannerComponent?.id;
+
+const transformDetection = (
+  detection: ScannerDetection | Detection,
+  dataElementType?: DataElementType
+) =>
+  ({
+    ...detection,
+    value: transformDetectionValue(detection.value, dataElementType),
+  } as ScannerDetection | Detection);
+
+const transformDetectionValue = (
+  value?: string | number,
+  dataElementType?: DataElementType
+) => {
+  if (value === undefined || value === null) return value;
+  const strValue = value.toString().trim();
+
+  switch (dataElementType) {
+    case DataElementType.FLOAT: {
+      const parsedValue = parseFloat(strValue);
+      return Number.isNaN(parsedValue) ? strValue : parsedValue.toString();
+    }
+    case DataElementType.INT: {
+      const parsedValue = parseInt(strValue, 10);
+      return Number.isNaN(parsedValue) ? strValue : parsedValue.toString();
+    }
+    case DataElementType.DATE:
+      return getLocaleDateString(strValue);
+
+    default:
+      return strValue;
+  }
+};

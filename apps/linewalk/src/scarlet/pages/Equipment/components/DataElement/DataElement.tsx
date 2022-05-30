@@ -17,7 +17,7 @@ import {
   getDataElementPrimaryDetection,
   getDetectionSourceAcronym,
   getIsDataElementValueAvailable,
-  getPrettifiedDataElementValue,
+  getPrintedDataElementValue,
 } from 'scarlet/utils';
 
 import * as Styled from './style';
@@ -45,7 +45,7 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
   } = useMemo(() => {
     const primaryDetection = getDataElementPrimaryDetection(dataElement);
 
-    const value = getPrettifiedDataElementValue(
+    const value = getPrintedDataElementValue(
       primaryDetection?.value,
       dataElementConfig!.unit,
       dataElementConfig!.type
@@ -53,11 +53,7 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
     const isApproved = dataElement.state === DataElementState.APPROVED;
     const isOmitted = dataElement.state === DataElementState.OMITTED;
 
-    const isDiscrepancy = getDataElementHasDiscrepancy(
-      dataElement,
-      dataElementConfig?.unit,
-      dataElementConfig?.type
-    );
+    const isDiscrepancy = getDataElementHasDiscrepancy(dataElement);
 
     const hasValue = getIsDataElementValueAvailable(value);
 

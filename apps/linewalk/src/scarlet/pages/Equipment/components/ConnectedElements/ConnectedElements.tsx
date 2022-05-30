@@ -13,7 +13,7 @@ import {
   getDataElementHasDiscrepancy,
   getDataElementTypeLabel,
   getDetectionSourceAcronym,
-  getPrettifiedDataElementValue,
+  getPrintedDataElementValue,
 } from 'scarlet/utils';
 
 import * as Styled from './style';
@@ -44,12 +44,7 @@ export const ConnectedElements = ({
   const { appState } = useAppContext();
   const dataElementConfig = useDataElementConfig(dataElement);
   const isDiscrepancy = useMemo(
-    () =>
-      getDataElementHasDiscrepancy(
-        dataElement,
-        dataElementConfig?.unit,
-        dataElementConfig?.type
-      ),
+    () => getDataElementHasDiscrepancy(dataElement),
     [dataElement]
   );
 
@@ -119,7 +114,7 @@ export const ConnectedElements = ({
             )}
           </Styled.DetectionSource>
           <Styled.DetectionValue className="cogs-body-2 strong">
-            {getPrettifiedDataElementValue(
+            {getPrintedDataElementValue(
               detection.value!,
               dataElementConfig?.unit,
               dataElementConfig?.type

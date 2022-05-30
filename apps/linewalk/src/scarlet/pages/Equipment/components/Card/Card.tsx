@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { SegmentedControl } from '@cognite/cogs.js';
-import { useConnectedDataElements, useDataElementConfig } from 'scarlet/hooks';
+import { useConnectedDataElements } from 'scarlet/hooks';
 import { DataElement } from 'scarlet/types';
 import { getDataElementHasDiscrepancy } from 'scarlet/utils';
 
@@ -22,14 +22,8 @@ export const Card = ({ dataElement }: CardProps) => {
   const connectedDataElements = useConnectedDataElements(dataElement);
   const hasConnectedElements = connectedDataElements.length > 1;
 
-  const dataElementConfig = useDataElementConfig(dataElement);
   const isDiscrepancy = useMemo(
-    () =>
-      getDataElementHasDiscrepancy(
-        dataElement,
-        dataElementConfig?.unit,
-        dataElementConfig?.type
-      ),
+    () => getDataElementHasDiscrepancy(dataElement),
     [dataElement]
   );
 

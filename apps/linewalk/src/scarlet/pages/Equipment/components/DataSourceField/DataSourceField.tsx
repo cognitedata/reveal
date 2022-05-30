@@ -3,7 +3,7 @@ import {
   DataElementType,
   DataElementUnit,
 } from 'scarlet/types';
-import { getPrettifiedBooleanDataElementValue } from 'scarlet/utils';
+import { getPrintedBooleanDataElementValue } from 'scarlet/utils';
 
 import { AutoCompleteField, DateField, RadioGroupField, StringField } from '..';
 
@@ -23,7 +23,7 @@ const booleanOptions = [
 ].reduce(
   (result, item) => ({
     ...result,
-    [item]: getPrettifiedBooleanDataElementValue(item),
+    [item]: getPrintedBooleanDataElementValue(item),
   }),
   {}
 );
@@ -48,6 +48,7 @@ export const DataSourceField = ({ type, ...props }: DataSourceFieldProps) => {
 };
 
 const renderEnumType = (props: DataSourceFieldProps) => {
+  // --TODO: add dropdown if needed if there are more than 2 values
   switch (props.values?.length ?? 0) {
     case 2: {
       const options = props.values!.reduce(

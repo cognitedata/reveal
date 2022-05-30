@@ -112,35 +112,32 @@ export const getDataElementTypeLabel = (
   }
 };
 
-export const getPrettifiedDataElementValue = (
+export const getPrintedDataElementValue = (
   value?: string,
   unit?: DataElementUnit,
   type?: DataElementType
 ) => {
   if (value === undefined || value === null) return value;
 
-  let result = getPrettifiedValue(value, type);
-  if (unit) result += getPrettifiedDataElementUnit(unit);
+  let result = getPrintedValue(value, type);
+  if (unit) result += getPrintedDataElementUnit(unit);
   return result;
 };
 
-export const getPrettifiedValue = (
-  value: string,
-  type?: DataElementType
-): string => {
+export const getPrintedValue = (value?: string, type?: DataElementType) => {
+  if (value === undefined || value === null) return value;
+
   switch (type) {
     case DataElementType.DATE:
       return getLocaleDateString(value);
     case DataElementType.BOOLEAN:
-      return getPrettifiedBooleanDataElementValue(
-        value as BooleanDetectionValue
-      );
+      return getPrintedBooleanDataElementValue(value as BooleanDetectionValue);
     default:
       return value;
   }
 };
 
-export const getPrettifiedBooleanDataElementValue = (
+export const getPrintedBooleanDataElementValue = (
   value: BooleanDetectionValue
 ) => {
   switch (value) {
@@ -153,7 +150,7 @@ export const getPrettifiedBooleanDataElementValue = (
   }
 };
 
-export const getPrettifiedDataElementUnit = (unit?: DataElementUnit) => {
+export const getPrintedDataElementUnit = (unit?: DataElementUnit) => {
   switch (unit) {
     case DataElementUnit.PSI:
       return 'psi';
@@ -169,32 +166,4 @@ export const getPrettifiedDataElementUnit = (unit?: DataElementUnit) => {
     default:
       return '';
   }
-};
-
-export const getDataElementHasDiscrepancy = (
-  dataElement: DataElement,
-  unit?: DataElementUnit,
-  type?: DataElementType
-): boolean => {
-  const primaryDetection = getDataElementPrimaryDetection(dataElement);
-  if (!primaryDetection || primaryDetection.type === DetectionType.PCMS) {
-    return false;
-  }
-
-  const pcmsDetection = getDataElementPCMSDetection(dataElement);
-  if (!pcmsDetection) return false;
-
-  const primaryDetectionValue = getPrettifiedDataElementValue(
-    primaryDetection?.value,
-    unit,
-    type
-  );
-
-  const pcmsDetectionValue = getPrettifiedDataElementValue(
-    pcmsDetection?.value,
-    unit,
-    type
-  );
-
-  return primaryDetectionValue !== pcmsDetectionValue;
 };

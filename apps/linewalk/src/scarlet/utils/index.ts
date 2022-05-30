@@ -3,6 +3,7 @@ export * from './dateUtils';
 export * from './detectionUtils';
 export * from './documentUtils';
 export * from './getConnectedDataElements';
+export * from './getDataElementHasDiscrepancy';
 export * from './getEquipmentProgress';
 export * from './getEquipmentStateExternalId';
 export * from './getEquipmentType';
