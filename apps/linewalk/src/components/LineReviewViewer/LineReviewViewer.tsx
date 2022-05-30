@@ -650,8 +650,9 @@ const LineReviewViewer: React.FC<LineReviewViewerProps> = ({
       removeLineNumberFromDocumentMetadata(
         client,
         pdfExternalId,
-        lineReview.id,
-        lineReview.unit
+        lineReview.site,
+        lineReview.unit,
+        lineReview.id
       );
     }
   };

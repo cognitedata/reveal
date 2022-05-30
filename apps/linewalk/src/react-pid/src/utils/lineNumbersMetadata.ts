@@ -5,8 +5,9 @@ import {
 
 const lineNumbersMetadata = (
   outputVersion: string,
-  lineNumbers: string[],
-  documentUnit: string
+  site: string,
+  documentUnit: string,
+  lineNumbers: string[]
 ): Record<string, string> =>
   lineNumbers.reduce<Record<string, string>>((acc, lineNumberText) => {
     const { lineNumber, unit } = getLineNumberAndUnitFromText(lineNumberText);
@@ -19,8 +20,9 @@ const lineNumbersMetadata = (
       );
       return acc;
     }
-    acc[getLineNumberKey(outputVersion, lineNumber, unit ?? documentUnit)] =
-      'true';
+    acc[
+      getLineNumberKey(outputVersion, site, unit ?? documentUnit, lineNumber)
+    ] = 'true';
     return acc;
   }, {});
 

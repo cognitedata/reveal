@@ -6,8 +6,10 @@ import LineReviewViewer from 'components/LineReviewViewer';
 import { NullView } from 'components/NullView/NullView';
 import SidePanel from 'components/SidePanel/SidePanel';
 import Konva from 'konva';
+import qs from 'query-string';
 import { useState } from 'react';
 import { useHistory, useParams } from 'react-router';
+import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import clamp from 'lodash/clamp';
 
@@ -50,7 +52,9 @@ export type DiscrepancyModalState = {
 };
 
 const LineReview = () => {
-  const { id, unit } = useParams<{ id: string; unit: string }>();
+  const { id } = useParams<{ id: string }>();
+  const { search } = useLocation();
+  const { site, unit } = qs.parse(search) as { site: string; unit: string };
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
   const history = useHistory();
   const [isReportBackModalOpen, setIsReportBackModalOpen] = useState(false);
@@ -76,7 +80,7 @@ const LineReview = () => {
     setDiscrepancies,
     textAnnotations,
     setDocuments,
-  } = useLineReview(client, id, unit);
+  } = useLineReview(client, site, unit, id);
 
   if (isLoading || !client) {
     return (
@@ -107,11 +111,17 @@ const LineReview = () => {
       return;
     }
 
-    await updateLineReview(client, lineReview.id, lineReview.unit, {
-      status: LineReviewStatus.COMPLETED,
-      comment,
-      state: getExportableLineState(ornateRef, discrepancies),
-    });
+    await updateLineReview(
+      client,
+      lineReview.site,
+      lineReview.unit,
+      lineReview.id,
+      {
+        status: LineReviewStatus.COMPLETED,
+        comment,
+        state: getExportableLineState(ornateRef, discrepancies),
+      }
+    );
 
     // This is a workaround to ensure that the data is updated before
     // we fetch it anew.

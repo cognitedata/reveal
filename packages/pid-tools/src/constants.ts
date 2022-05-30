@@ -93,11 +93,15 @@ export const UNIT_REGEX = /G[0-9]{4}/;
 export const DIAGRAM_PARSER_SOURCE = 'COGNITE_DIAGRAM_PARSER';
 export const DIAGRAM_PARSER_OUTPUT_TYPE = 'graph';
 export const DIAGRAM_PARSER_TYPE = 'COGNITE_DIAGRAM_PARSER_TYPE';
+export const DIAGRAM_PARSER_SITE_KEY = 'site';
+export const DIAGRAM_PARSER_UNIT_KEY = 'unit';
 
 export const LINEWALK_VERSION_KEY = 'LINEWALK_VERSION';
-export const LINEWALK_FRONTEND_VERSION = '0.0.25';
-export const LINEWALK_DATA_VERSION = '0.0.25';
+export const LINEWALK_FRONTEND_VERSION = '0.0.29';
+export const LINEWALK_DATA_VERSION = '0.0.29';
 export const LINE_REVIEW_EVENT_TYPE = 'LINE_REVIEW';
+export const LINE_REVIEW_SITE_EVENT_TYPE = 'LINE_REVIEW_SITE';
+export const LINE_REVIEW_UNIT_EVENT_TYPE = 'LINE_REVIEW_UNIT';
 export const DIAGRAM_PARSER_PARSED_DOCUMENT_EXTERNAL_ID_PREFIX =
   'COGNITE_DIAGRAM_PARSER_PARSED_DOCUMENT_EXTERNAL_ID';
 
@@ -108,10 +112,24 @@ const LINEWALK_LINE_REVIEW_EVENT_EXTERNAL_ID_PREFIX =
   'COGNITE_LINEWALK_LINE_REVIEW_EVENT';
 export const getLineReviewEventExternalId = (
   version: string,
-  lineNumber: string,
+  site: string,
+  unit: string,
+  lineNumber: string
+): string =>
+  `${LINEWALK_LINE_REVIEW_EVENT_EXTERNAL_ID_PREFIX}_${version}_${site}_${unit}_${lineNumber}`;
+
+const LINEWALK_UNIT_EVENT_EXTERNAL_ID_PREFIX = 'COGNITE_LINEWALK_UNIT_EVENT';
+
+export const getUnitEventExternalId = (
+  version: string,
+  site: string,
   unit: string
 ): string =>
-  `${LINEWALK_LINE_REVIEW_EVENT_EXTERNAL_ID_PREFIX}_${version}_${unit}_${lineNumber}`;
+  `${LINEWALK_UNIT_EVENT_EXTERNAL_ID_PREFIX}_${version}_${site}_${unit}`;
+
+const LINEWALK_SITE_EVENT_EXTERNAL_ID_PREFIX = 'COGNITE_LINEWALK_SITE_EVENT';
+export const getSiteEventExternalId = (version: string, site: string): string =>
+  `${LINEWALK_SITE_EVENT_EXTERNAL_ID_PREFIX}_${version}_${site}`;
 
 const LINE_LABEL_PREFIX = 'COGNITE_LINE_LABEL';
 export const getLineLabelPrefix = (version: string) =>
@@ -124,9 +142,10 @@ export const getGraphExternalIdKey = (version: string) =>
 
 export const getLineNumberKey = (
   version: string,
-  lineNumber: string,
-  unit: string
-): string => `${getLineLabelPrefix(version)}_${unit}_${lineNumber}`;
+  site: string,
+  unit: string,
+  lineNumber: string
+): string => `${getLineLabelPrefix(version)}_${site}_${unit}_${lineNumber}`;
 
 export const getDiagramParserTypeFromFileInfo = (fileInfo: FileInfo) =>
   fileInfo.metadata?.[DIAGRAM_PARSER_TYPE];

@@ -3,13 +3,14 @@ import { useEffect, useState, useCallback } from 'react';
 
 import { Discrepancy } from '../../components/LineReviewViewer/LineReviewViewer';
 
-import { getLineReviewDocuments, getLineReviews } from './api';
+import { getLineReview, getLineReviewDocuments } from './api';
 import { LineReview, TextAnnotation, WorkspaceDocument } from './types';
 
 const useLineReview = (
   client: CogniteClient | undefined,
-  id: string,
-  unit: string
+  site: string,
+  unit: string,
+  id: string
 ): {
   isLoading: boolean;
   lineReview: LineReview | undefined;
@@ -50,8 +51,8 @@ const useLineReview = (
       }
 
       const [lineReviews, lineReviewDocuments] = await Promise.all([
-        getLineReviews(client),
-        getLineReviewDocuments(client, id, unit),
+        getLineReview(client, site, unit, id),
+        getLineReviewDocuments(client, site, unit, id),
       ]);
 
       const lineReview = lineReviews.find((l) => l.id === id);
@@ -67,7 +68,7 @@ const useLineReview = (
         textAnnotations: lineReview?.textAnnotations ?? [],
       });
     })();
-  }, [client, id]);
+  }, [client, site, unit, id]);
 
   const setDiscrepancies = useCallback(
     (transform: (discrepancies: Discrepancy[]) => Discrepancy[]) => {

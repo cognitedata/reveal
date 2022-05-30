@@ -3,9 +3,11 @@ import fs from 'fs';
 import chunk from 'lodash/chunk';
 import { CogniteClient, FileInfo } from '@cognite/sdk';
 
+import { DIAGRAM_PARSER_SITE_KEY, DIAGRAM_PARSER_UNIT_KEY } from '../src';
 import getClient from '../src/utils/getClient';
 
 import createdirIfNotExists from './utils/createDirIfNotExists';
+import getDataDirPath from './utils/getDataDirPath';
 
 const sleep = (ms: number) => {
   return new Promise((resolve) => {
@@ -81,25 +83,28 @@ const convertChunk = async (
 };
 
 export const convertDwgToPdf = async (argv) => {
-  const { unit, dir } = argv as unknown as {
+  const { site, unit } = argv as unknown as {
+    site: string;
     unit: string;
-    dir: string;
   };
+  const dir = getDataDirPath(site, unit);
 
   const client = await getClient();
   const allFiles = await client.files
     .list({
       filter: {
         mimeType: 'application/octet-stream',
+        metadata: {
+          [DIAGRAM_PARSER_SITE_KEY]: site,
+          [DIAGRAM_PARSER_UNIT_KEY]: unit,
+        },
       },
     })
     .autoPagingToArray({
       limit: Infinity,
     });
 
-  const files = allFiles.filter(
-    (file) => file.name.includes(unit) && file.name.endsWith('.dwg')
-  );
+  const files = allFiles.filter((file) => file.name.endsWith('.dwg'));
 
   // eslint-disable-next-line no-console
   console.log(`Will convert ${files.length} DWGs...`);

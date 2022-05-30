@@ -3,9 +3,11 @@ import * as https from 'https';
 
 import chunk from 'lodash/chunk';
 
+import { DIAGRAM_PARSER_SITE_KEY, DIAGRAM_PARSER_UNIT_KEY } from '../src';
 import getClient from '../src/utils/getClient';
 
 import createdirIfNotExists from './utils/createDirIfNotExists';
+import getDataDirPath from './utils/getDataDirPath';
 
 const MAX_RETRIES = 3;
 
@@ -50,30 +52,33 @@ const downloadFileByUrl = (url: string, filePath: string, attempt = 0) => {
 };
 
 const downloadDwgFiles = async (argv: any) => {
-  const { unit, dir } = argv as unknown as {
+  const { unit, site } = argv as unknown as {
+    site: string;
     unit: string;
-    dir: string;
   };
+  const dir = getDataDirPath(site, unit);
 
   const client = await getClient();
   const allFiles = await client.files
     .list({
       filter: {
         mimeType: 'application/octet-stream',
+        metadata: {
+          [DIAGRAM_PARSER_SITE_KEY]: site,
+          [DIAGRAM_PARSER_UNIT_KEY]: unit,
+        },
       },
     })
     .autoPagingToArray({
       limit: Infinity,
     });
 
-  const files = allFiles.filter(
-    (file) => file.name.includes(unit) && file.name.endsWith('.dwg')
-  );
+  const files = allFiles.filter((file) => file.name.endsWith('.dwg'));
 
   // eslint-disable-next-line no-console
   console.log(`Downloading ${files.length} files...`);
 
-  createdirIfNotExists(dir);
+  createdirIfNotExists(`${dir}`);
 
   // eslint-disable-next-line no-restricted-syntax
   for (const chunkOfFiles of chunk(files, 10)) {

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useAuthContext } from '@cognite/react-container';
 import { ExternalFileInfo, FileInfo } from '@cognite/sdk';
 import {
@@ -10,7 +10,11 @@ import {
   DiagramType,
   getGraphExternalIdKey,
   DIAGRAM_PARSER_TYPE,
+  DIAGRAM_PARSER_SITE_KEY,
+  DIAGRAM_PARSER_UNIT_KEY,
 } from '@cognite/pid-tools';
+
+import SiteContext from '../../../components/SiteContext/SiteContext';
 
 import createEventForLineNumberIfDoesntExist from './createEventForLineNumberIfDoesntExist';
 import lineNumbersMetadata from './lineNumbersMetadata';
@@ -28,17 +32,35 @@ const useCdfDiagrams = () => {
   const [diagrams, setDiagrams] = useState<FileInfo[]>([]);
   const pidViewer = useRef<CognitePid>();
   const [saveStatus, setSaveStatus] = useState<SaveState>(SaveState.Ready);
+  const { site, unit } = useContext(SiteContext);
 
   useEffect(() => {
+    if (site === '') {
+      setDiagrams([]);
+      return;
+    }
+
+    if (unit === '') {
+      setDiagrams([]);
+      return;
+    }
+
     client?.files
       .list({
-        filter: { mimeType: 'image/svg+xml', source: DIAGRAM_PARSER_SOURCE },
+        filter: {
+          mimeType: 'image/svg+xml',
+          source: DIAGRAM_PARSER_SOURCE,
+          metadata: {
+            [DIAGRAM_PARSER_SITE_KEY]: site,
+            [DIAGRAM_PARSER_UNIT_KEY]: unit,
+          },
+        },
       })
       .autoPagingToArray({ limit: Infinity })
       .then((fileInfoList) => {
         setDiagrams(fileInfoList);
       });
-  }, []);
+  }, [site, unit]);
 
   const saveGraph = async () => {
     if (client === undefined) {
@@ -67,6 +89,7 @@ const useCdfDiagrams = () => {
       source: DIAGRAM_PARSER_SOURCE,
       metadata: {
         [DIAGRAM_PARSER_SOURCE]: 'true',
+        [DIAGRAM_PARSER_SITE_KEY]: site,
         type: DIAGRAM_PARSER_OUTPUT_TYPE,
         diagramType: graph.documentMetadata.type,
         unit: graph.documentMetadata.unit,
@@ -89,12 +112,15 @@ const useCdfDiagrams = () => {
             metadata: {
               add: {
                 [DIAGRAM_PARSER_TYPE]: graph.documentMetadata.type,
+                [DIAGRAM_PARSER_SITE_KEY]: site,
                 [getGraphExternalIdKey(LINEWALK_DATA_VERSION)]: externalId,
                 ...lineNumbersMetadata(
                   LINEWALK_DATA_VERSION,
-                  lineNumbersToAddToPdfMetadata,
-                  graph.documentMetadata.unit
+                  site,
+                  graph.documentMetadata.unit,
+                  lineNumbersToAddToPdfMetadata
                 ),
+                unit: graph.documentMetadata.unit,
               },
               remove: [],
             },
@@ -105,8 +131,9 @@ const useCdfDiagrams = () => {
       if (graph.documentMetadata.type === DiagramType.ISO) {
         createEventForLineNumberIfDoesntExist(client, {
           version: LINEWALK_DATA_VERSION,
-          lineNumber: graph.documentMetadata.lineNumber,
+          site,
           unit: graph.documentMetadata.unit,
+          lineNumber: graph.documentMetadata.lineNumber,
         });
       }
     } catch (error) {
@@ -115,7 +142,13 @@ const useCdfDiagrams = () => {
     }
   };
 
-  return { diagrams, pidViewer, saveGraph, saveState: saveStatus };
+  return {
+    diagrams,
+    pidViewer,
+    saveGraph,
+    saveState: saveStatus,
+    unit,
+  };
 };
 
 export default useCdfDiagrams;

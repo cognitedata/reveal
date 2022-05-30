@@ -1,7 +1,10 @@
-import { Table, TableData, Title, Button } from '@cognite/cogs.js';
+import { Table, TableData, Title, Button, Select } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
-import { Dispatch, useRef } from 'react';
+import React, { Dispatch, useContext, useRef } from 'react';
 
+import SiteContext from '../../../../components/SiteContext/SiteContext';
+import mapValueToOption from '../../../../utils/mapValueToOption';
+import pickOnChangeOptionValue from '../../../../utils/pickOnChangeOptionValue';
 import {
   DiagramsReducerAction,
   DiagramsReducerActionTypes,
@@ -54,7 +57,7 @@ const DiagramList = ({
     record[externalId] = true;
     return record;
   }, {} as Record<string, boolean>);
-
+  const { setUnit, unit, availableUnits } = useContext(SiteContext);
   const { setSelection, dispatchSelection } = useTableSelection(dispatch);
 
   const close = () => {
@@ -83,6 +86,14 @@ const DiagramList = ({
           <Title level={4}>Select diagrams</Title>
           <Button type="ghost" icon="CloseLarge" onClick={close} />
         </ListHeader>
+        <div style={{ marginBottom: 16 }}>
+          <Select
+            title="Unit"
+            value={mapValueToOption(unit)}
+            onChange={pickOnChangeOptionValue(setUnit)}
+            options={availableUnits.map(mapValueToOption)}
+          />
+        </div>{' '}
         <Table<DiagramTableData>
           columns={[
             { Header: 'Document name', accessor: 'externalId' },

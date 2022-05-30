@@ -94,5 +94,6 @@ export type LineReview = {
   status: LineReviewStatus;
   comment?: string;
   pdfExternalIds: string[];
+  site: string;
   unit: string;
 } & LineReviewState;

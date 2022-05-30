@@ -1,6 +1,6 @@
 import uploadFilesWithExtensions from './uploadFilesWithExtensions';
 
 const uploadPdfAndSvgFiles = (argv) =>
-  uploadFilesWithExtensions(argv, ['.svg', '.pdf']);
+  uploadFilesWithExtensions(argv, ['.dwg']);
 
 export default uploadPdfAndSvgFiles;

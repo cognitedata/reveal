@@ -1,10 +1,17 @@
 import uniqBy from 'lodash/uniqBy';
 
-import { DIAGRAM_PARSER_SOURCE } from '../src';
+import {
+  DIAGRAM_PARSER_SITE_KEY,
+  DIAGRAM_PARSER_SOURCE,
+  DIAGRAM_PARSER_UNIT_KEY,
+} from '../src';
 import getClient from '../src/utils/getClient';
 
 const deleteDiagramParserFiles = async (argv: any) => {
-  const { unit } = argv as unknown as { unit: string };
+  const { site, unit } = argv as unknown as {
+    site: string;
+    unit: string;
+  };
 
   const client = await getClient();
   const allFiles1 = await client.files
@@ -12,6 +19,8 @@ const deleteDiagramParserFiles = async (argv: any) => {
       filter: {
         metadata: {
           [DIAGRAM_PARSER_SOURCE]: 'true',
+          [DIAGRAM_PARSER_SITE_KEY]: site,
+          [DIAGRAM_PARSER_UNIT_KEY]: unit,
         },
       },
     })
@@ -21,14 +30,15 @@ const deleteDiagramParserFiles = async (argv: any) => {
     .list({
       filter: {
         source: DIAGRAM_PARSER_SOURCE,
+        metadata: {
+          [DIAGRAM_PARSER_SITE_KEY]: site,
+          [DIAGRAM_PARSER_UNIT_KEY]: unit,
+        },
       },
     })
     .autoPagingToArray({ limit: Infinity });
 
-  const relevantFiles = uniqBy(
-    [...allFiles2, ...allFiles1].filter((file) => file.name.includes(unit)),
-    (f) => f.id
-  );
+  const relevantFiles = uniqBy([...allFiles2, ...allFiles1], (f) => f.id);
 
   const relevantFileIds = relevantFiles.map((file) => ({ id: file.id }));
 

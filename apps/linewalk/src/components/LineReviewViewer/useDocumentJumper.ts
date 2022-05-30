@@ -6,7 +6,7 @@ import {
   DiagramType,
 } from '@cognite/pid-tools';
 import Konva from 'konva';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useAuthContext } from '@cognite/react-container';
 import { FileInfo } from '@cognite/sdk';
 
@@ -15,6 +15,7 @@ import {
   getWorkspaceDocumentsFromPdfFileInfos,
 } from '../../modules/lineReviews/api';
 import { WorkspaceDocument } from '../../modules/lineReviews/types';
+import SiteContext from '../SiteContext/SiteContext';
 
 import getKonvaSelectorSlugByExternalId from './getKonvaSelectorSlugByExternalId';
 import withoutFileExtension from './withoutFileExtension';
@@ -40,6 +41,7 @@ const useDocumentJumper = (
   onAddWorkspaceDocument: (document: WorkspaceDocument) => void
 ) => {
   const { client } = useAuthContext();
+  const { site } = useContext(SiteContext);
   const [inputValue, setInputValue] = useState('');
   const [jumpToDocumentValue, setJumpToDocumentValue] =
     useState<OptionType<string>>(DEFAULT_OPTION);
@@ -55,6 +57,7 @@ const useDocumentJumper = (
               mimeType: 'application/pdf',
               metadata: {
                 [DIAGRAM_PARSER_SOURCE]: 'true',
+                site,
               },
             },
           })
@@ -149,8 +152,9 @@ const useDocumentJumper = (
           await addLineNumberToDocumentMetadata(
             client,
             workspaceDocument.pdfExternalId,
-            lineNumber,
-            unit
+            site,
+            unit,
+            lineNumber
           );
 
           onAddWorkspaceDocument(workspaceDocument);
@@ -159,7 +163,7 @@ const useDocumentJumper = (
         setJumpToDocumentValue(DEFAULT_OPTION);
       }
     })();
-  }, [jumpToDocumentValue, ornateRef]);
+  }, [jumpToDocumentValue, ornateRef, site, unit]);
 
   return {
     documentJumperOptions,

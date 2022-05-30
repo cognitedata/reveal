@@ -11,7 +11,6 @@ export enum PAGES {
   SDK = '/sdk',
   INTERCOM = '/intercom',
   COMMENTS = '/comments',
-  PID = '/pid-tools',
   COMMENTS_DRAWER = '/comments/drawer',
   COMMENTS_SLIDER = '/comments/slider',
   LOGOUT = '/logout',
@@ -65,11 +64,6 @@ export const MenuBar = () => {
             name: 'Intercom',
             isActive: active === PAGES.INTERCOM,
             onClick: handleNavigate(PAGES.INTERCOM),
-          },
-          {
-            name: 'P&ID',
-            isActive: active === PAGES.PID,
-            onClick: handleNavigate(PAGES.PID),
           },
         ]}
       />

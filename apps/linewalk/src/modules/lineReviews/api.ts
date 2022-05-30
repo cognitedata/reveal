@@ -2,6 +2,7 @@ import {
   DIAGRAM_PARSER_SOURCE,
   getLineReviewEventExternalId,
   LINE_REVIEW_EVENT_TYPE,
+  LINE_REVIEW_UNIT_EVENT_TYPE,
   getLineNumberKey,
   LINEWALK_VERSION_KEY,
   getLineLabelPrefix,
@@ -11,6 +12,9 @@ import {
   DiagramType,
   LINEWALK_FRONTEND_VERSION,
   getDiagramParserTypeFromFileInfo,
+  LINE_REVIEW_SITE_EVENT_TYPE,
+  DIAGRAM_PARSER_SITE_KEY,
+  DIAGRAM_PARSER_UNIT_KEY,
 } from '@cognite/pid-tools';
 import type { CogniteClient, FileInfo } from '@cognite/sdk';
 import zipObject from 'lodash/zipObject';
@@ -78,7 +82,22 @@ type LineReviewEvent = {
     system: string;
     comment: string;
     state: string;
-    unit: string;
+    [DIAGRAM_PARSER_SITE_KEY]: string;
+    [DIAGRAM_PARSER_UNIT_KEY]: string;
+  };
+};
+
+type LineReviewUnitEvent = {
+  externalId: string;
+  metadata: {
+    [DIAGRAM_PARSER_UNIT_KEY]: string;
+  };
+};
+
+type SiteEvent = {
+  externalId: string;
+  metadata: {
+    [DIAGRAM_PARSER_SITE_KEY]: string;
   };
 };
 
@@ -96,7 +115,8 @@ const lineReviewFromEvent = (
     status: event.metadata.status,
     system: event.metadata.system,
     comment: event.metadata.comment,
-    unit: event.metadata.unit,
+    site: event.metadata[DIAGRAM_PARSER_SITE_KEY],
+    unit: event.metadata[DIAGRAM_PARSER_UNIT_KEY],
     discrepancies: state.discrepancies,
     textAnnotations: state.textAnnotations,
     pdfExternalIds,
@@ -115,13 +135,74 @@ const lineNumbersFromFileMetadata = (file: FileInfo): string[] => {
     .map((key) => key.replace(lineLabelPrefix, ''));
 };
 
-export const getLineReviews = async (client: CogniteClient) => {
+export const getLineReview = async (
+  client: CogniteClient,
+  site: string,
+  unit: string,
+  lineNumber: string
+) => {
+  const [lineReviewEvents, lineReviewFiles] = await Promise.all([
+    client.events.retrieve([
+      {
+        externalId: getLineReviewEventExternalId(
+          LINEWALK_FRONTEND_VERSION,
+          site,
+          unit,
+          lineNumber
+        ),
+      },
+    ]) as unknown as LineReviewEvent[],
+    client.files
+      .list({
+        filter: {
+          mimeType: 'application/pdf',
+          metadata: {
+            [DIAGRAM_PARSER_SOURCE]: 'true',
+            [DIAGRAM_PARSER_UNIT_KEY]: unit,
+            lineNumber,
+          },
+        },
+      })
+      .autoPagingToArray({ limit: Infinity }) as unknown as FileInfo[],
+  ]);
+
+  const lineReviewFilesByLineNumbers = groupByArray(
+    lineReviewFiles,
+    lineNumbersFromFileMetadata
+  );
+
+  const lineReviews = sortBy(
+    lineReviewEvents.map((event) =>
+      lineReviewFromEvent(
+        event,
+        (
+          lineReviewFilesByLineNumbers[
+            `${event.metadata.unit}_${event.metadata.lineNumber}`
+          ] ?? []
+        )
+          .map((file) => file.externalId)
+          .filter(isNotUndefined)
+      )
+    ),
+    (lineReview) => lineReview.name
+  );
+
+  return lineReviews;
+};
+
+export const getLineReviews = async (
+  client: CogniteClient,
+  site: string,
+  unit: string
+) => {
   const [lineReviewEvents, lineReviewFiles] = await Promise.all([
     client.events
       .list({
         filter: {
           metadata: {
             [LINEWALK_VERSION_KEY]: LINEWALK_FRONTEND_VERSION,
+            [DIAGRAM_PARSER_SITE_KEY]: site,
+            [DIAGRAM_PARSER_UNIT_KEY]: unit,
           },
           type: LINE_REVIEW_EVENT_TYPE,
         },
@@ -136,6 +217,8 @@ export const getLineReviews = async (client: CogniteClient) => {
           mimeType: 'application/pdf',
           metadata: {
             [DIAGRAM_PARSER_SOURCE]: 'true',
+            [DIAGRAM_PARSER_SITE_KEY]: site,
+            [DIAGRAM_PARSER_UNIT_KEY]: unit,
           },
         },
       })
@@ -169,8 +252,9 @@ export const getLineReviews = async (client: CogniteClient) => {
 export const addLineNumberToDocumentMetadata = async (
   client: CogniteClient,
   externalId: string,
-  lineNumber: string,
-  unit: string
+  site: string,
+  unit: string,
+  lineNumber: string
 ) => {
   await client.files.update([
     {
@@ -178,8 +262,12 @@ export const addLineNumberToDocumentMetadata = async (
       update: {
         metadata: {
           add: {
-            [getLineNumberKey(LINEWALK_FRONTEND_VERSION, lineNumber, unit)]:
-              'true',
+            [getLineNumberKey(
+              LINEWALK_FRONTEND_VERSION,
+              site,
+              unit,
+              lineNumber
+            )]: 'true',
           },
           remove: [],
         },
@@ -191,8 +279,9 @@ export const addLineNumberToDocumentMetadata = async (
 export const removeLineNumberFromDocumentMetadata = async (
   client: CogniteClient,
   externalId: string,
-  lineNumber: string,
-  unit: string
+  site: string,
+  unit: string,
+  lineNumber: string
 ) => {
   await client.files.update([
     {
@@ -201,7 +290,7 @@ export const removeLineNumberFromDocumentMetadata = async (
         metadata: {
           add: {},
           remove: [
-            getLineNumberKey(LINEWALK_FRONTEND_VERSION, lineNumber, unit),
+            getLineNumberKey(LINEWALK_FRONTEND_VERSION, site, unit, lineNumber),
           ],
         },
       },
@@ -261,8 +350,9 @@ export const getWorkspaceDocumentsFromPdfFileInfos = async (
 
 export const getLineReviewDocuments = async (
   client: CogniteClient,
-  lineNumber: string,
-  unit: string
+  site: string,
+  unit: string,
+  lineNumber: string
 ) => {
   const files = sortBy(
     await client.files
@@ -270,8 +360,12 @@ export const getLineReviewDocuments = async (
         filter: {
           mimeType: 'application/pdf',
           metadata: {
-            [getLineNumberKey(LINEWALK_FRONTEND_VERSION, lineNumber, unit)]:
-              'true',
+            [getLineNumberKey(
+              LINEWALK_FRONTEND_VERSION,
+              site,
+              unit,
+              lineNumber
+            )]: 'true',
           },
         },
       })
@@ -286,16 +380,18 @@ export const getLineReviewDocuments = async (
 
 export const updateLineReview = async (
   client: CogniteClient,
-  lineNumber: string,
+  site: string,
   unit: string,
+  lineNumber: string,
   update: { comment: string; status: LineReviewStatus; state: any }
 ) =>
   client.events.update([
     {
       externalId: getLineReviewEventExternalId(
         LINEWALK_FRONTEND_VERSION,
-        lineNumber,
-        unit
+        site,
+        unit,
+        lineNumber
       ),
       update: {
         metadata: {
@@ -348,4 +444,44 @@ export const getParsedDocumentsByWorkspaceDocuments = async (
     (parsedFile) => parsedFile.data
   ) as unknown as ParsedDocument[];
   return parsedDocuments;
+};
+
+export const getUnits = async (
+  client: CogniteClient,
+  site: string
+): Promise<string[]> => {
+  const lineReviewUnitEvents = (await client.events
+    .list({
+      filter: {
+        metadata: {
+          [LINEWALK_VERSION_KEY]: LINEWALK_FRONTEND_VERSION,
+          [DIAGRAM_PARSER_SITE_KEY]: site,
+        },
+        type: LINE_REVIEW_UNIT_EVENT_TYPE,
+      },
+      sort: {
+        createdTime: 'asc',
+      },
+    })
+    .autoPagingToArray({
+      limit: Infinity,
+    })) as unknown as LineReviewUnitEvent[];
+  return lineReviewUnitEvents.map(
+    (lineReviewUnitEvent) =>
+      lineReviewUnitEvent.metadata[DIAGRAM_PARSER_UNIT_KEY]
+  );
+};
+
+export const getSites = async (client: CogniteClient): Promise<string[]> => {
+  const siteEvents = (await client.events
+    .list({
+      filter: {
+        type: LINE_REVIEW_SITE_EVENT_TYPE,
+        metadata: {
+          [LINEWALK_VERSION_KEY]: LINEWALK_FRONTEND_VERSION,
+        },
+      },
+    })
+    .autoPagingToArray({ limit: Infinity })) as unknown as SiteEvent[];
+  return siteEvents.map(({ metadata }) => metadata.site);
 };

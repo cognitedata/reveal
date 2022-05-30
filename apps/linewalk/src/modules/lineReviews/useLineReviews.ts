@@ -1,12 +1,14 @@
-import uniq from 'lodash/uniq';
 import { useAuthContext } from '@cognite/react-container';
-import { LineReview, LineReviewStatus } from 'modules/lineReviews/types';
-import { useEffect, useState } from 'react';
+import { LineReview } from 'modules/lineReviews/types';
+import { useContext, useEffect, useState } from 'react';
+
+import SiteContext from '../../components/SiteContext/SiteContext';
 
 import { getLineReviews } from './api';
 
-const useLineReviews = () => {
+const useLineReviews = (unit: string | undefined) => {
   const { client } = useAuthContext();
+  const { site } = useContext(SiteContext);
 
   const [isLoading, setIsLoading] = useState(true);
   const [lineReviews, setLineReviews] = useState<LineReview[]>([]);
@@ -14,23 +16,22 @@ const useLineReviews = () => {
     if (client === undefined) {
       return;
     }
+
     (async () => {
-      const lineReviews = await getLineReviews(client);
+      if (unit === undefined) {
+        return;
+      }
+
+      setIsLoading(true);
+      const lineReviews = await getLineReviews(client, site, unit);
       setLineReviews(lineReviews);
       setIsLoading(false);
     })();
-  }, [client]);
+  }, [client, unit]);
 
   return {
     isLoading,
     lineReviews,
-    statuses: [
-      LineReviewStatus.OPEN,
-      LineReviewStatus.REVIEWED,
-      LineReviewStatus.COMPLETED,
-    ],
-    assignees: uniq(lineReviews.flatMap((lineReview) => lineReview.assignee)),
-    units: uniq(lineReviews.flatMap((lineReview) => lineReview.unit)),
   };
 };
 

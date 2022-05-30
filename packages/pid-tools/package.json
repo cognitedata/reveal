@@ -34,8 +34,5 @@
     "prettier": "bazel test :prettier_test",
     "prettier:fix": "bazel run :prettier_test -- --write",
     "update-helpers": "bazel run :generate_package_json_helpers"
-  },
-  "dependencies": {
-    "@cognite/sdk": "^5.4.0"
   }
 }

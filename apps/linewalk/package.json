@@ -62,7 +62,8 @@
     ]
   },
   "dependencies": {
-    "pdfjs-dist": "2.6.347"
+    "pdfjs-dist": "2.6.347",
+    "file-saver": "^2.0.5"
   },
   "resolutions": {
     "pdfjs-dist": "2.6.347"

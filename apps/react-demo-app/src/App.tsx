@@ -11,7 +11,6 @@ import Home from 'pages/Home';
 import Info from 'pages/Info';
 import Intercom from 'pages/Intercom';
 import { MenuBar, PAGES } from 'pages/Menubar';
-import PID from 'pages/PID';
 
 const App = () => (
   <Container sidecar={sidecar}>
@@ -25,7 +24,6 @@ const App = () => (
         <Route path={PAGES.SDK} render={() => <CogniteSDK />} />
         <Route path={PAGES.INTERCOM} render={() => <Intercom />} />
         <Route path={PAGES.LOGOUT} render={() => <Logout />} />
-        <Route path={PAGES.PID} exact render={() => <PID />} />
         <Route path={PAGES.COMMENTS} exact render={() => <Comments />} />
         <Route path={PAGES.COMMENTS_DRAWER} render={() => <CommentDrawer />} />
         <Route path={PAGES.COMMENTS_SLIDER} render={() => <CommentSlider />} />

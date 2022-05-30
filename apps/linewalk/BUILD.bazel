@@ -90,7 +90,6 @@ DEPENDENCIES = [
     "//packages/ornate",
     "//packages/z-index",
     "//packages/react-i18n",
-    "//packages/react-pid",
     "//packages/pid-tools",
 ]
 

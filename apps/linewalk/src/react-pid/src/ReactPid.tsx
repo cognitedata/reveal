@@ -13,7 +13,7 @@ import {
   PathReplacementGroup,
   DiagramTag,
 } from '@cognite/pid-tools';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Loader } from '@cognite/cogs.js';
 
 import { SaveState } from './utils/useCdfDiagrams';
@@ -27,7 +27,7 @@ import { enableExitWarning, disableExitWarning } from './utils/exitWarning';
 import { Viewport } from './components/viewport/Viewport';
 
 interface ReactPidProps {
-  pidViewer?: React.MutableRefObject<CognitePid | undefined>;
+  pidViewer: React.MutableRefObject<CognitePid | undefined>;
   saveState?: SaveState;
   diagramExternalId?: string;
   isAutoMode?: boolean;
@@ -35,7 +35,7 @@ interface ReactPidProps {
 }
 
 export const ReactPid = ({
-  pidViewer = useRef<CognitePid>(),
+  pidViewer,
   saveState = SaveState.Ready,
   isAutoMode = false,
   diagramExternalId,

@@ -1,5 +1,7 @@
 import { CogniteClient } from '@cognite/sdk';
 import {
+  DIAGRAM_PARSER_SITE_KEY,
+  DIAGRAM_PARSER_UNIT_KEY,
   getLineReviewEventExternalId,
   LINE_REVIEW_EVENT_TYPE,
   LINEWALK_VERSION_KEY,
@@ -10,14 +12,20 @@ const createEventForLineNumberIfDoesntExist = async (
   {
     version,
     lineNumber,
+    site,
     unit,
-  }: { version: string; lineNumber: string; unit: string }
+  }: { version: string; lineNumber: string; site: string; unit: string }
 ) => {
   // Delete existing
   try {
     const events = await client.events.retrieve([
       {
-        externalId: getLineReviewEventExternalId(version, lineNumber, unit),
+        externalId: getLineReviewEventExternalId(
+          version,
+          site,
+          unit,
+          lineNumber
+        ),
       },
     ]);
 
@@ -36,7 +44,12 @@ const createEventForLineNumberIfDoesntExist = async (
     // eslint-disable-next-line no-await-in-loop
     await client.events.delete([
       {
-        externalId: getLineReviewEventExternalId(version, lineNumber, unit),
+        externalId: getLineReviewEventExternalId(
+          version,
+          site,
+          unit,
+          lineNumber
+        ),
       },
     ]);
   } catch (error) {
@@ -46,12 +59,13 @@ const createEventForLineNumberIfDoesntExist = async (
   // Create new
   await client.events.create([
     {
-      externalId: getLineReviewEventExternalId(version, lineNumber, unit),
+      externalId: getLineReviewEventExternalId(version, site, unit, lineNumber),
       type: LINE_REVIEW_EVENT_TYPE,
       metadata: {
         [LINEWALK_VERSION_KEY]: version,
         lineNumber,
-        unit,
+        [DIAGRAM_PARSER_SITE_KEY]: site,
+        [DIAGRAM_PARSER_UNIT_KEY]: unit,
         assignee: 'Garima',
         status: 'OPEN',
         system: 'unknown',
