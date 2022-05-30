@@ -11,11 +11,11 @@ in lowp vec2 v_seed;
 in vec3 v_viewPosition;
 
 out vec4 outputColor;
-    
+
 const NodeAppearance dummyNodeAppearance = NodeAppearance(vec4(0.0), false, false, false);
 
 void main() {
-    if(v_visible != 1.0 || isClipped(dummyNodeAppearance, v_viewPosition)){
+    if((v_visible < 0.99999) || isClipped(dummyNodeAppearance, v_viewPosition)){
       discard;
     }
 
