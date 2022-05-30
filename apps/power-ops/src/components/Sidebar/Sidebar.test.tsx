@@ -1,7 +1,7 @@
-import { screen, render, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import React from 'react';
-import { BrowserRouter, useLocation } from 'react-router-dom';
-import { mockPriceArea } from 'utils/test';
+import { useLocation } from 'react-router-dom';
+import { mockPriceArea, testRenderer } from 'utils/test';
 
 import { Sidebar } from './Sidebar';
 
@@ -26,17 +26,15 @@ describe('Sidebar tests', () => {
       const [openedSidePanel, setOpenedSidePanel] = React.useState(true);
 
       return (
-        <BrowserRouter>
-          <Sidebar
-            priceArea={mockPriceArea}
-            opened={openedSidePanel}
-            setOpened={setOpenedSidePanel}
-          />
-        </BrowserRouter>
+        <Sidebar
+          priceArea={mockPriceArea}
+          opened={openedSidePanel}
+          setOpened={setOpenedSidePanel}
+        />
       );
     };
 
-    render(<MockSidebar />);
+    testRenderer(<MockSidebar />);
 
     expect(screen.getByText('Price area overview')).toBeInTheDocument();
   });
@@ -52,17 +50,15 @@ describe('Sidebar tests', () => {
         const [openedSidePanel, setOpenedSidePanel] = React.useState(true);
 
         return (
-          <BrowserRouter>
-            <Sidebar
-              priceArea={mockPriceArea}
-              opened={openedSidePanel}
-              setOpened={setOpenedSidePanel}
-            />
-          </BrowserRouter>
+          <Sidebar
+            priceArea={mockPriceArea}
+            opened={openedSidePanel}
+            setOpened={setOpenedSidePanel}
+          />
         );
       };
 
-      render(<MockSidebar />);
+      testRenderer(<MockSidebar />);
 
       const hideButton = screen.getByLabelText('Show or hide sidebar', {
         selector: 'button',
@@ -82,17 +78,15 @@ describe('Sidebar tests', () => {
         const [openedSidePanel, setOpenedSidePanel] = React.useState(false);
 
         return (
-          <BrowserRouter>
-            <Sidebar
-              priceArea={mockPriceArea}
-              opened={openedSidePanel}
-              setOpened={setOpenedSidePanel}
-            />
-          </BrowserRouter>
+          <Sidebar
+            priceArea={mockPriceArea}
+            opened={openedSidePanel}
+            setOpened={setOpenedSidePanel}
+          />
         );
       };
 
-      render(<MockSidebar />);
+      testRenderer(<MockSidebar />);
 
       const hideButton = screen.getByLabelText('Show or hide sidebar', {
         selector: 'button',
@@ -114,17 +108,15 @@ describe('Sidebar tests', () => {
         const [openedSidePanel, setOpenedSidePanel] = React.useState(false);
 
         return (
-          <BrowserRouter>
-            <Sidebar
-              priceArea={mockPriceArea}
-              opened={openedSidePanel}
-              setOpened={setOpenedSidePanel}
-            />
-          </BrowserRouter>
+          <Sidebar
+            priceArea={mockPriceArea}
+            opened={openedSidePanel}
+            setOpened={setOpenedSidePanel}
+          />
         );
       };
 
-      render(<MockSidebar />);
+      testRenderer(<MockSidebar />);
 
       const searchButton = screen.getByLabelText('Open search field', {
         selector: 'button',
@@ -144,17 +136,15 @@ describe('Sidebar tests', () => {
         const [openedSidePanel, setOpenedSidePanel] = React.useState(true);
 
         return (
-          <BrowserRouter>
-            <Sidebar
-              priceArea={mockPriceArea}
-              opened={openedSidePanel}
-              setOpened={setOpenedSidePanel}
-            />
-          </BrowserRouter>
+          <Sidebar
+            priceArea={mockPriceArea}
+            opened={openedSidePanel}
+            setOpened={setOpenedSidePanel}
+          />
         );
       };
 
-      render(<MockSidebar />);
+      testRenderer(<MockSidebar />);
 
       const results = (await screen.findAllByRole('link')).length;
       const expectedResults = mockPriceArea.plants.length + 2; // +2 for Total and Price Scenarios buttons
@@ -171,17 +161,15 @@ describe('Sidebar tests', () => {
         const [openedSidePanel, setOpenedSidePanel] = React.useState(true);
 
         return (
-          <BrowserRouter>
-            <Sidebar
-              priceArea={mockPriceArea}
-              opened={openedSidePanel}
-              setOpened={setOpenedSidePanel}
-            />
-          </BrowserRouter>
+          <Sidebar
+            priceArea={mockPriceArea}
+            opened={openedSidePanel}
+            setOpened={setOpenedSidePanel}
+          />
         );
       };
 
-      render(<MockSidebar />);
+      testRenderer(<MockSidebar />);
 
       const allButtons = await screen.findAllByRole('link');
       const plantButtons = allButtons
@@ -209,17 +197,15 @@ describe('Sidebar tests', () => {
         const [openedSidePanel, setOpenedSidePanel] = React.useState(true);
 
         return (
-          <BrowserRouter>
-            <Sidebar
-              priceArea={mockPriceArea}
-              opened={openedSidePanel}
-              setOpened={setOpenedSidePanel}
-            />
-          </BrowserRouter>
+          <Sidebar
+            priceArea={mockPriceArea}
+            opened={openedSidePanel}
+            setOpened={setOpenedSidePanel}
+          />
         );
       };
 
-      render(<MockSidebar />);
+      testRenderer(<MockSidebar />);
 
       const searchBar = screen.getByPlaceholderText('Search plants');
       // Search for the first plant in the price area
@@ -254,17 +240,15 @@ describe('Sidebar tests', () => {
         const [openedSidePanel, setOpenedSidePanel] = React.useState(true);
 
         return (
-          <BrowserRouter>
-            <Sidebar
-              priceArea={mockPriceArea}
-              opened={openedSidePanel}
-              setOpened={setOpenedSidePanel}
-            />
-          </BrowserRouter>
+          <Sidebar
+            priceArea={mockPriceArea}
+            opened={openedSidePanel}
+            setOpened={setOpenedSidePanel}
+          />
         );
       };
 
-      render(<MockSidebar />);
+      testRenderer(<MockSidebar />);
 
       const testPlant = mockPriceArea.plants[0];
       const testButton = screen.getByRole('link', {
