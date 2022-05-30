@@ -4,7 +4,7 @@ import { checkUrl } from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import i18next, { InitOptions, Resource } from 'i18next';
 import I18NextLocizeBackend from 'i18next-locize-backend';
-import { initReactI18next } from 'react-i18next';
+import { initReactI18next, useTranslation } from 'react-i18next';
 import { locizePlugin } from 'locize';
 
 import { LOCIZE_PROJECT_ID, useLanguage } from '../..';
@@ -91,12 +91,12 @@ const I18nWrapper = ({
 }: I18nWrapperProps) => {
   return (
     <FlagProvider {...flagProviderProps}>
-      <I18nInnerWrapper {...otherProps} />
+      <I18nInitWrapper {...otherProps} />
     </FlagProvider>
   );
 };
 
-const I18nInnerWrapper = ({
+const I18nInitWrapper = ({
   children,
   defaultNamespace,
   useLocizeBackend = ['next-release'],
@@ -140,7 +140,24 @@ const I18nInnerWrapper = ({
     return errorScreen(error);
   }
 
-  if (!didLoadTranslations && !error) {
+  if (!didLoadTranslations || !i18next) {
+    return <>{loadingScreen}</>;
+  }
+
+  return (
+    <I18nContentWrapper loadingScreen={loadingScreen}>
+      {children}
+    </I18nContentWrapper>
+  );
+};
+
+const I18nContentWrapper = ({
+  children,
+  loadingScreen,
+}: Pick<I18nWrapperProps, 'children' | 'loadingScreen'>) => {
+  const { ready } = useTranslation();
+
+  if (!ready) {
     return <>{loadingScreen}</>;
   }
 
