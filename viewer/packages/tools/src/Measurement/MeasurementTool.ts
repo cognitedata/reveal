@@ -192,7 +192,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     if (this._measurementLabel) {
       this._measurementLabel.setStyle();
       const axisDistanceValues = this._line.getAxisDistances();
-      this.addLabel(this._line.getAxisMidPoints()[0]);
+      // this.addLabel(this._line.getAxisMidPoints()[0]);
       this._measurementLabel.addLabel(this._line.getAxisMidPoints()[0], Math.abs(axisDistanceValues.x).toFixed(2));
       this._measurementLabel.addLabel(this._line.getAxisMidPoints()[1], Math.abs(axisDistanceValues.y).toFixed(2));
       this._measurementLabel.addLabel(this._line.getAxisMidPoints()[2], Math.abs(axisDistanceValues.z).toFixed(2));

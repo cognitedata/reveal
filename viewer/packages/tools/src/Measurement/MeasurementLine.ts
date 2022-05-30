@@ -221,7 +221,10 @@ export class MeasurementLine {
       color: color,
       linewidth: this._options.lineWidth! / 2,
       depthTest: false,
-      worldUnits: true
+      worldUnits: true,
+      dashed: true,
+      transparent: true,
+      opacity: 0.25
     });
     const axesLineMesh = new THREE.Mesh(axesLine, axesLineMaterial);
     axesLineMesh.renderOrder = 1;

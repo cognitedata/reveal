@@ -14,10 +14,16 @@ export class MeasurementLabels {
     clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback: this._handleClustering }
   };
   private static readonly stylesId = 'reveal-measurement-label';
+  private _style: string;
+  private static readonly classnames = {
+    label: 'reveal-measurement-label',
+    axis: 'reveal-measurement-label-axis'
+  };
 
   constructor(viewer: Cognite3DViewer) {
     this._htmlOverlay = new HtmlOverlayTool(viewer, this.options);
     MeasurementLabels.ensureStylesLoaded();
+    this._style = MeasurementLabels.classnames.label;
   }
 
   /**
@@ -47,10 +53,7 @@ export class MeasurementLabels {
    */
   setStyle(): void {
     if (this._htmlOverlay) {
-      const style = document.getElementById(MeasurementLabels.stylesId)?.style;
-      style!.fontWeight = '100';
-      style!.padding = '8px';
-      style!.color = '#999';
+      this._style = MeasurementLabels.classnames.axis;
     }
   }
 
@@ -92,7 +95,7 @@ export class MeasurementLabels {
   private createLabel(label: string) {
     const element = document.createElement('div');
     element.innerText = label;
-    element.className = MeasurementLabels.stylesId;
+    element.className = this._style;
     return element;
   }
 }
