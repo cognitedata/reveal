@@ -10,18 +10,6 @@ import { InstancedMeshManager } from './InstancedMeshManager';
 import { CadMaterialManager, Materials } from '@reveal/rendering';
 import { It, Mock } from 'moq.ts';
 
-// jest.mock('./CadMaterialManager', () => {
-//   return {
-//     CadMaterialManager: jest.fn().mockImplementation(() => {
-//       return {
-//         getModelMaterials: () => {
-//           return { instancedMesh: undefined };
-//         }
-//       };
-//     })
-//   };
-// });
-
 describe('intersectCadNodes', () => {
   let group: THREE.Group;
   let meshManager: InstancedMeshManager;
