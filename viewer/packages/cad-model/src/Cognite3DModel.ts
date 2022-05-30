@@ -13,9 +13,10 @@ import { NodesApiClient } from '@reveal/nodes-api';
 import { CadModelMetadata, getDistanceToMeterConversionFactor } from '@reveal/cad-parsers';
 import { NumericRange, CameraConfiguration } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
-import { CadNode, NodeTransformProvider } from '@reveal/rendering';
+import { NodeTransformProvider } from '@reveal/rendering';
 import { NodeAppearance, NodeCollection, CdfModelNodeCollectionDataProvider } from '@reveal/cad-styling';
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
+import { CadNode } from './CadNode';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.

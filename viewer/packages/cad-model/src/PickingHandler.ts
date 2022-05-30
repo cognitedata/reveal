@@ -7,12 +7,12 @@ import { IntersectInput } from '@reveal/model-base';
 import {
   BasicPipelineExecutor,
   CadMaterialManager,
-  CadNode,
   CadGeometryRenderModePipelineProvider,
   RenderMode,
   RenderPipelineProvider
 } from '@reveal/rendering';
 import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
+import { CadNode } from './CadNode';
 
 type PickingInput = {
   normalizedCoords: {

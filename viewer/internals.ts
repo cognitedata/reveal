@@ -11,6 +11,7 @@ export { PotreeGroupWrapper } from './packages/pointclouds/src/PotreeGroupWrappe
 
 export { Potree } from './packages/pointclouds';
 
-export { CadNode, RenderOptions, defaultRenderOptions } from './packages/rendering';
+export { CadNode } from './packages/cad-model';
+export { RenderOptions, defaultRenderOptions } from './packages/rendering';
 export { NodeAppearanceProvider } from './packages/cad-styling';
 export { revealEnv, SceneHandler } from './packages/utilities';

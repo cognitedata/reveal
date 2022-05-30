@@ -4,13 +4,14 @@
 
 import * as THREE from 'three';
 
-import { CadMaterialManager, CadNode } from '@reveal/rendering';
+import { CadMaterialManager } from '@reveal/rendering';
 import { IntersectInput } from '@reveal/model-base';
 
 import { createGlContext } from '../../../test-utilities';
 import { PickingHandler } from './PickingHandler';
 import { It, Mock } from 'moq.ts';
 import { SceneHandler } from '@reveal/utilities';
+import { CadNode } from './CadNode';
 
 describe(PickingHandler.name, () => {
   let pickingHandler: PickingHandler;
