@@ -3,9 +3,9 @@
  */
 import { ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import * as THREE from 'three';
-import { RenderMode } from './rendering/RenderMode';
 import { GeometryBatchingManager } from './GeometryBatchingManager';
-import { createMaterials } from './rendering/materials';
+import { RenderMode } from '@reveal/rendering';
+import { createMaterials } from '@reveal/rendering/src/rendering/materials';
 
 describe(GeometryBatchingManager.name, () => {
   let geometryGroup: THREE.Group;

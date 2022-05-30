@@ -4,9 +4,6 @@
 
 import * as THREE from 'three';
 
-import { InstancedMeshManager } from '../../rendering/src/InstancedMeshManager';
-import { GeometryBatchingManager } from '../../rendering/src/GeometryBatchingManager';
-
 import { NodeAppearanceProvider, NodeAppearance, PrioritizedArea } from '@reveal/cad-styling';
 import {
   SectorScene,
@@ -20,6 +17,8 @@ import {
 import { SectorRepository } from '@reveal/sector-loader';
 import { ParsedGeometry } from '@reveal/sector-parser';
 import { CadMaterialManager, NodeTransformProvider, RenderMode, SectorQuads } from '@reveal/rendering';
+import { InstancedMeshManager } from './InstancedMeshManager';
+import { GeometryBatchingManager } from './GeometryBatchingManager';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 

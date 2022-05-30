@@ -7,29 +7,32 @@ import * as THREE from 'three';
 import { InstancedMesh, InstancedMeshFile } from '@reveal/cad-parsers';
 
 import { InstancedMeshManager } from './InstancedMeshManager';
-import { CadMaterialManager } from './CadMaterialManager';
+import { CadMaterialManager, Materials } from '@reveal/rendering';
+import { It, Mock } from 'moq.ts';
 
-jest.mock('./CadMaterialManager', () => {
-  return {
-    CadMaterialManager: jest.fn().mockImplementation(() => {
-      return {
-        getModelMaterials: () => {
-          return { instancedMesh: undefined };
-        }
-      };
-    })
-  };
-});
+// jest.mock('./CadMaterialManager', () => {
+//   return {
+//     CadMaterialManager: jest.fn().mockImplementation(() => {
+//       return {
+//         getModelMaterials: () => {
+//           return { instancedMesh: undefined };
+//         }
+//       };
+//     })
+//   };
+// });
 
 describe('intersectCadNodes', () => {
   let group: THREE.Group;
   let meshManager: InstancedMeshManager;
 
   beforeEach(() => {
-    const materialManager = new CadMaterialManager();
+    const materialManager = new Mock<CadMaterialManager>()
+      .setup(p => p.getModelMaterials(It.IsAny()))
+      .returns(new Mock<Materials>().object());
     group = new THREE.Group();
 
-    meshManager = new InstancedMeshManager(group, materialManager);
+    meshManager = new InstancedMeshManager(group, materialManager.object());
   });
 
   test('Adding instanced mesh from sector is correctly managed', () => {

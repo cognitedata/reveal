@@ -16,6 +16,7 @@
     "@reveal/nodes-api": "workspace:*",
     "@reveal/rendering": "workspace:*",
     "@reveal/sector-loader": "workspace:*",
+    "@reveal/sector-parser": "workspace:*",
     "@reveal/utilities": "workspace:*"
   }
 }
