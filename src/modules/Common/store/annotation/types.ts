@@ -10,4 +10,7 @@ export type AnnotationState = {
   annotations: {
     byId: Record<number, VisionAnnotation<VisionAnnotationDataType>>;
   };
+  annotationColorMap: {
+    [colorKey: string]: string;
+  };
 };

@@ -38,7 +38,7 @@ export const ReviewVisionAnnotationRow = ({
             isActive={visionReviewImageKeypointRowData.selected}
           />
           <AnnotationTableRow
-            annotation={visionReviewImageKeypointRowData}
+            reviewAnnotation={visionReviewImageKeypointRowData}
             onSelect={onSelect}
             onDelete={onDelete}
             onApprove={onApproveStateChange}
@@ -50,7 +50,7 @@ export const ReviewVisionAnnotationRow = ({
     }
     return (
       <AnnotationTableRow
-        annotation={visionReviewImageKeypointRowData}
+        reviewAnnotation={visionReviewImageKeypointRowData}
         onSelect={onSelect}
         onDelete={onDelete}
         onApprove={onApproveStateChange}

@@ -114,12 +114,12 @@ export type ImageObjectDetection =
   | ImageObjectDetectionPolyline;
 
 export type ImageExtractedText = TextRegion &
-  Partial<Confidence> & {
+  Partial<Confidence & AnnotationAttributes> & {
     extractedText: string;
   };
 
 export type ImageAssetLink = TextRegion &
-  Partial<Confidence> & {
+  Partial<Confidence & AnnotationAttributes> & {
     text: string;
     assetRef: InternalId & Partial<ExternalId>;
   };

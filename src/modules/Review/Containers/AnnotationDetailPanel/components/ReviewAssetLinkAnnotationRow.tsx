@@ -53,7 +53,7 @@ export const ReviewAssetLinkAnnotationRow = ({
       >
         <AssetLinkSidePanelRow showWarning={warningShown}>
           <AnnotationTableRow
-            annotation={visionReviewAnnotationRowData}
+            reviewAnnotation={visionReviewAnnotationRowData}
             onSelect={onSelect}
             onDelete={onDelete}
             onApprove={onApproveStateChange}

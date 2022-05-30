@@ -21,6 +21,7 @@ export const initialState: AnnotationState = {
   annotations: {
     byId: {},
   },
+  annotationColorMap: {},
 };
 
 const annotationSlice = createSlice({

@@ -5,9 +5,6 @@ import { VisionReviewAnnotation } from 'src/modules/Review/store/review/types';
 
 import styled from 'styled-components';
 
-/**
- * @todo: Fix attributes [VIS-868]
- */
 export const AnnotationTableRowAttribute = ({
   reviewAnnotation,
 }: {
@@ -21,14 +18,13 @@ export const AnnotationTableRowAttribute = ({
         </StyledDetail>
       )}
 
-      {/**
-       *  {Object.entries(reviewAnnotation.data?.attributes || []).map(
+      {Object.entries(reviewAnnotation.annotation.attributes || []).map(
         ([key, value]) => (
           <StyledDetail>
             {key}: {value.value}
           </StyledDetail>
         )
-      )} */}
+      )}
     </AttributesContainer>
   );
 };

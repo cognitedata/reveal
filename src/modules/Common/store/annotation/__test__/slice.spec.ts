@@ -32,6 +32,7 @@ describe('Test annotation reducer', () => {
             '2': getDummyImageObjectDetectionBoundingBoxAnnotation({ id: 2 }),
           },
         },
+        annotationColorMap: {},
       };
       const action = {
         type: RetrieveAnnotations.fulfilled.type,
@@ -228,6 +229,7 @@ describe('Test annotation reducer', () => {
             '2': getDummyImageObjectDetectionBoundingBoxAnnotation({ id: 1 }),
           },
         },
+        annotationColorMap: {},
       };
 
       const action = {

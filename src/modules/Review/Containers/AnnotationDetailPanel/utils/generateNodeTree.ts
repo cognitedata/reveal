@@ -116,7 +116,6 @@ export const generateNodeTree = (
    */
   const reviewImageKeypoint =
     rowData as AnnotationDetailPanelRowDataBase<ReviewKeypoint>;
-  console.log(reviewImageKeypoint);
   return {
     id: reviewImageKeypoint.id.toString(),
     name: reviewImageKeypoint.keypoint.label,

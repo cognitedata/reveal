@@ -7,7 +7,7 @@ import { NewKeypoints } from 'src/modules/Review/Components/AnnotationSettingsMo
 import { LegacyShape } from 'src/modules/Review/types';
 
 describe('Test getRandomColor', () => {
-  const HEX_COLOR_CODE_REGEX = /^((0x){0,1}|#{0,1})([0-9A-F]{8}|[0-9A-F]{6})$/g;
+  const HEX_COLOR_CODE_REGEX = /^((0x){0,1}|#{0,1})([0-9a-f]{8}|[0-9a-f]{6})$/g;
 
   it('should return a valid color when called', () => {
     expect(getRandomColor()).toMatch(HEX_COLOR_CODE_REGEX);

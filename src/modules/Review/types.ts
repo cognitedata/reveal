@@ -77,7 +77,7 @@ export type ReactImageAnnotateWrapperProps = FilePreviewProps & {
 };
 
 export type AnnotationTableRowProps = {
-  annotation: VisionReviewAnnotation<VisionAnnotationDataType>; // TODO: rename to reviewAnnotation
+  reviewAnnotation: VisionReviewAnnotation<VisionAnnotationDataType>; // TODO: rename to reviewAnnotation
   onSelect: (id: ReactText, state: boolean) => void;
   onDelete: (id: ReactText) => void;
   onVisibilityChange: (id: ReactText) => void;
