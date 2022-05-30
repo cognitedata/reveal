@@ -1,4 +1,4 @@
-import { useEffect, lazy, Suspense, useState } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { Route, Switch, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
@@ -46,7 +46,6 @@ const SettingsPage = lazy(() =>
 export const Solution = () => {
   const { t } = useTranslation('Solution');
   const dispatch = useDispatch();
-  const [successLoaded, setSuccessLoaded] = useState(false);
 
   const { solutionId, version } = useParams<{
     solutionId: string;
@@ -64,27 +63,19 @@ export const Solution = () => {
   useEffect(() => {
     fetchVersions(solutionId);
   }, [fetchVersions, solutionId]);
-
+  const isLoadSucceeded =
+    solutionStatus === ActionStatus.SUCCESS &&
+    schemasStatus === ActionStatus.SUCCESS;
   useEffect(() => {
-    if (successLoaded) {
+    if (isLoadSucceeded) {
       dispatch(
         solutionStateSlice.actions.selectVersion({
           version,
         })
       );
     }
-  }, [dispatch, version, successLoaded]);
-
-  useEffect(() => {
-    if (
-      solutionStatus === ActionStatus.SUCCESS &&
-      schemasStatus === ActionStatus.SUCCESS
-    ) {
-      setSuccessLoaded(true);
-    }
-  }, [dispatch, schemasStatus, solutionStatus]);
-
-  if (successLoaded && (selectedSchema || !schemas.length)) {
+  }, [dispatch, version, isLoadSucceeded]);
+  if (isLoadSucceeded && (selectedSchema || !schemas.length)) {
     return (
       <StyledPageWrapper data-testid="solution_page_wrapper">
         <Switch>

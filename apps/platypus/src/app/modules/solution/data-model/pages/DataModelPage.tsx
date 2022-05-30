@@ -66,7 +66,7 @@ export const DataModelPage = () => {
 
   const onSelectedSchemaChanged = (changedSchema: DataModelVersion) => {
     dataModelService.clear();
-    setProjectSchema(changedSchema!.schema);
+    setProjectSchema(changedSchema.schema);
     setIsDirty(false);
     setCurrentType(null);
     // removeLocalDraft(draft);
@@ -78,13 +78,12 @@ export const DataModelPage = () => {
         : SchemaEditorMode.View
     );
   };
-
   useEffect(() => {
     function fetchSchemaAndTypes() {
       const builtInTypesResponse = dataModelService.getBuiltinTypes();
       setBuiltInTypes(builtInTypesResponse);
       dataModelService.clear();
-      setProjectSchema(selectedSchema!.schema);
+      setProjectSchema(selectedSchema.schema);
       setInit(true);
     }
 
@@ -197,11 +196,14 @@ export const DataModelPage = () => {
           !selectedSchema)
       ) {
         setIsDirty(true);
-        setLocalDraft({
-          ...selectedSchema,
-          schema: schemaString,
-          status: DataModelVersionStatus.DRAFT,
-        });
+
+        if (selectedSchema.status === DataModelVersionStatus.DRAFT) {
+          setLocalDraft({
+            ...selectedSchema,
+            schema: schemaString,
+            status: DataModelVersionStatus.DRAFT,
+          });
+        }
       } else if (selectedSchema && selectedSchema.schema === schemaString) {
         setIsDirty(false);
       }

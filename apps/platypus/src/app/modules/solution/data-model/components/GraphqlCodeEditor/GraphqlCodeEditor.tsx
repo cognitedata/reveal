@@ -1,10 +1,10 @@
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import Editor, { Monaco } from '@monaco-editor/react';
-import { useDebounce } from '@platypus-app/hooks/useDebounce';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { BuiltInType } from '@platypus/platypus-core';
 import { setupGraphql } from './utils/graphqlSetup';
 import { config } from './utils/config';
+import debounce from 'lodash/debounce';
 
 type Props = {
   code: string;
@@ -16,7 +16,6 @@ type Props = {
 export const GraphqlCodeEditor = React.memo(
   ({ onChange, code, builtInTypes, disabled = false }: Props) => {
     const [editorValue, setEditorValue] = useState(code);
-    const editorValueDebounced = useDebounce(editorValue, 500);
 
     function editorWillMount(monaco: Monaco) {
       const languageId = config.languageId;
@@ -24,11 +23,15 @@ export const GraphqlCodeEditor = React.memo(
         setupGraphql(monaco, builtInTypes);
       });
     }
-
+    const debouncedOnChange = useMemo(
+      () => debounce((value: string) => onChange(value), 500),
+      []
+    );
     useEffect(() => {
-      onChange(editorValueDebounced);
-    }, [editorValueDebounced, onChange]);
-
+      return () => {
+        debouncedOnChange.cancel();
+      };
+    }, [debouncedOnChange]);
     useEffect(() => {
       setEditorValue(code);
     }, [code]);
@@ -51,6 +54,7 @@ export const GraphqlCodeEditor = React.memo(
           beforeMount={editorWillMount}
           onChange={(value) => {
             const editCode = value || '';
+            debouncedOnChange(editCode);
             setEditorValue(editCode);
           }}
         />
