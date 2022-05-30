@@ -3,6 +3,7 @@
  */
 
 import { CogniteClient } from '@cognite/sdk';
+import { CogniteClientPlayground } from '@cognite/sdk-playground';
 
 import { EventType, PublicClientApplication } from '@azure/msal-browser';
 
@@ -100,15 +101,9 @@ export function getCredentialEnvironment(): CredentialEnvironment | undefined {
   return credentialEnvironmentList.environments[environmentParam];
 }
 
-export async function createSDKFromEnvironment(
-  appId: string,
-  project: string,
-  environmentParam: string): Promise<CogniteClient> {
-
-  const credentialEnvironmentList = JSON.parse(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS!) as CredentialEnvironmentList;
-  const credentialEnvironment = credentialEnvironmentList.environments[environmentParam];
-
-  const baseUrl = `https://${credentialEnvironment.cluster}.cognitedata.com`;
+async function getTokenSupplier(credentialEnvironment: CredentialEnvironment,
+                                baseUrl: string)
+: Promise<() => Promise<string>> {
   const cdfScopes = [
     `${baseUrl}/user_impersonation`,
     `${baseUrl}/IDENTITY`
@@ -172,10 +167,46 @@ export async function createSDKFromEnvironment(
     return accessToken;
   }
 
+  return getToken;
+}
+
+export async function createSDKFromEnvironment(
+  appId: string,
+  project: string,
+  environmentParam: string): Promise<CogniteClient> {
+
+  const credentialEnvironmentList = JSON.parse(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS!) as CredentialEnvironmentList;
+  const credentialEnvironment = credentialEnvironmentList.environments[environmentParam];
+
+  const baseUrl = `https://${credentialEnvironment.cluster}.cognitedata.com`;
+
+  const getToken = await getTokenSupplier(credentialEnvironment, baseUrl);
+
   const client = new CogniteClient({ appId,
                                      project,
                                      getToken,
-                                     baseUrl});
+                                     baseUrl });
+  await client.authenticate();
+  return client;
+}
+
+export async function createPlaygroundSDKFromEnvironment(
+  appId: string,
+  project: string,
+  environmentParam: string): Promise<CogniteClientPlayground> {
+
+
+  const credentialEnvironmentList = JSON.parse(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS!) as CredentialEnvironmentList;
+  const credentialEnvironment = credentialEnvironmentList.environments[environmentParam];
+
+  const baseUrl = `https://${credentialEnvironment.cluster}.cognitedata.com`;
+
+  const getToken = await getTokenSupplier(credentialEnvironment, baseUrl);
+
+  const client = new CogniteClientPlayground({ appId,
+                                               project,
+                                               getToken,
+                                               baseUrl });
   await client.authenticate();
   return client;
 }
