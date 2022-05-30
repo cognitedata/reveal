@@ -41,7 +41,7 @@ Options:
 ### pull-keys-from-remote
 
 ```sh
-$ cdf-i18n-utils-cli pull-keys-from-remote --hel
+$ cdf-i18n-utils-cli pull-keys-from-remote --help
 ```
 
 Help output:
