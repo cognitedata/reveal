@@ -7,7 +7,6 @@ import TestWrapper from 'utils/TestWrapper';
 
 import CallFunctionModal, { stuffForUnitTests } from './CallFunctionModal';
 
-
 const wrap = (node: React.ReactNode) =>
   mount(<TestWrapper>{node}</TestWrapper>);
 
