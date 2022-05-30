@@ -6,20 +6,17 @@ import {
   AuthWrapper,
   getEnv,
   getProject,
-  I18nWrapper,
-  setupTranslations,
   SubAppWrapper,
 } from '@cognite/cdf-utilities';
+import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { Loader } from '@cognite/cogs.js';
-import { FlagProvider } from '@cognite/react-feature-flags';
-import { SDKProvider } from '@cognite/sdk-provider'; // eslint-disable-line
+import { SDKProvider } from '@cognite/sdk-provider';
 import { createBrowserHistory } from 'history';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import i18next from 'i18next';
 
 import { RawExplorerProvider } from 'contexts';
-import { languages, translations } from 'common/i18n';
+import { translations } from 'common/i18n';
 import GlobalStyles from 'styles/GlobalStyles';
 import { AntStyles } from 'styles/AntStyles';
 import { setupMixpanel } from 'utils/config';
@@ -28,7 +25,6 @@ import RawExplorer from 'containers/RawExplorer';
 import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 
 setupMixpanel();
-setupTranslations(translations);
 
 const App = () => {
   const history = createBrowserHistory();
@@ -41,55 +37,51 @@ const App = () => {
     },
   });
 
-  const project = getProject();
+  const appName = 'cdf-raw-explorer';
+  const projectName = getProject();
   const env = getEnv();
 
-  const handleLanguageChange = (language: string) => {
-    if (languages.includes(language)) {
-      return i18next.changeLanguage(language);
-    }
-    return Promise.resolve();
-  };
-
   return (
-    <FlagProvider
-      apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-      appName="cdf-raw-explorer"
-      projectName={getProject()}
+    <I18nWrapper
+      flagProviderProps={{
+        apiToken: 'v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE',
+        appName,
+        projectName,
+      }}
+      translations={translations}
+      defaultNamespace="raw-explorer"
     >
       <StyleSheetManager
         disableVendorPrefixes={process.env.NODE_ENV === 'development'}
       >
         <SDKProvider sdk={sdk}>
-          <I18nWrapper onLanguageChange={handleLanguageChange}>
-            <QueryClientProvider client={queryClient}>
-              <GlobalStyles>
-                <AntStyles>
-                  <SubAppWrapper title="Raw Explorer">
-                    <AuthWrapper
-                      loadingScreen={<Loader />}
-                      login={() => loginAndAuthIfNeeded(project, env)}
-                    >
-                      <Router history={history}>
-                        <RawExplorerProvider>
-                          <Switch>
-                            <Route
-                              path={['/:project/:appPath']}
-                              component={RawExplorer}
-                            />
-                          </Switch>
-                        </RawExplorerProvider>
-                      </Router>
-                    </AuthWrapper>
-                  </SubAppWrapper>
-                </AntStyles>
-              </GlobalStyles>
-              <ReactQueryDevtools initialIsOpen={false} />
-            </QueryClientProvider>
-          </I18nWrapper>
+          <QueryClientProvider client={queryClient}>
+            <GlobalStyles>
+              <AntStyles>
+                <SubAppWrapper title="Raw Explorer">
+                  <AuthWrapper
+                    loadingScreen={<Loader />}
+                    login={() => loginAndAuthIfNeeded(projectName, env)}
+                  >
+                    <Router history={history}>
+                      <RawExplorerProvider>
+                        <Switch>
+                          <Route
+                            path={['/:project/:appPath']}
+                            component={RawExplorer}
+                          />
+                        </Switch>
+                      </RawExplorerProvider>
+                    </Router>
+                  </AuthWrapper>
+                </SubAppWrapper>
+              </AntStyles>
+            </GlobalStyles>
+            <ReactQueryDevtools initialIsOpen={false} />
+          </QueryClientProvider>
         </SDKProvider>
       </StyleSheetManager>
-    </FlagProvider>
+    </I18nWrapper>
   );
 };
 

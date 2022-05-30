@@ -7,9 +7,13 @@
     "build": "react-app-rewired --max_old_space_size=4096 build",
     "test": "react-app-rewired test --passWithNoTests",
     "lint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
-    "eslint:changed": "eslint --config .eslintrc.production.js"
+    "eslint:changed": "eslint --config .eslintrc.production.js",
+    "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace raw-explorer",
+    "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace raw-explorer",
+    "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace raw-explorer"
   },
   "dependencies": {
+    "@cognite/cdf-i18n-utils": "^0.0.5",
     "@cognite/cdf-utilities": "^1.0.0",
     "@cognite/cogs.js": "^5.2.1",
     "@cognite/login-utils": "^2.0.0",
@@ -27,7 +31,6 @@
     "@visx/tooltip": "^2.2.2",
     "antd": "^4.15.2",
     "formik": "^2.2.9",
-    "i18next": "^21.6.15",
     "lodash": "^4.17.21",
     "papaparse": "^5.3.1",
     "query-string": "^6.13.6",
@@ -36,7 +39,6 @@
     "react-csv": "^2.0.3",
     "react-dom": "^17.0.2",
     "react-draggable": "^4.4.4",
-    "react-i18next": "^11.16.5",
     "react-query": "^3.25.1",
     "react-router-dom": "^5.3.0",
     "react-scripts": "^5.0.0",
