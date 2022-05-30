@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 import React from 'react';
-import { Tooltip as CogsTooltip, Loader, Modal } from '@cognite/cogs.js';
+import {
+  Tooltip as CogsTooltip,
+  Loader,
+  Modal,
+  Dropdown,
+} from '@cognite/cogs.js';
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
@@ -29,6 +34,11 @@ CogsTooltip.defaultProps = {
 Modal.defaultProps = {
   ...Modal.defaultProps,
   getContainer,
+};
+
+Dropdown.defaultProps = {
+  ...Dropdown.defaultProps,
+  appendTo: getContainer,
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {

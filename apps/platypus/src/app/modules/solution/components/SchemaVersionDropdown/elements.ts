@@ -15,7 +15,7 @@ export const DropdownButton = styled(Button)<{ open: boolean }>`
   padding-right: 10px;
   white-space: nowrap;
   border: ${(props) =>
-    props.open ? '1px solid #4a67fb' : '1px solid #d9d9d9'};
+    props.open ? '1px solid #4a67fb' : '1px solid #d9d9d9'} !important;
 `;
 export const MenuItem = styled(Menu.Item)<{ selected: boolean }>`
   background: ${(props) => props.selected && 'rgba(74, 103, 251, 0.08)'};

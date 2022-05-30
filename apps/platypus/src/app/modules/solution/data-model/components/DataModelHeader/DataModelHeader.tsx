@@ -26,7 +26,7 @@ export const DataModelHeader = (props: DataModelHeaderProps) => {
         title={t('data_model_title', 'Data model')}
         behindTitle={
           <SelectorWrapper>
-            {props.schemas.length && props.selectedSchema && (
+            {props.schemas.length && props.selectedSchema ? (
               <SchemaVersionDropdown
                 onVersionSelect={(solutionSchema) => {
                   history.replace(
@@ -37,15 +37,15 @@ export const DataModelHeader = (props: DataModelHeaderProps) => {
                 selectedVersion={props.selectedSchema}
                 versions={props.schemas}
               />
-            )}
-            {props.draftSaved && (
+            ) : null}
+            {props.draftSaved ? (
               <span
                 data-cy="changes-saved-status-text"
                 style={{ marginLeft: 15 }}
               >
                 {t('all_changes_saved', 'All changes saved')}
               </span>
-            )}
+            ) : null}
           </SelectorWrapper>
         }
       >
