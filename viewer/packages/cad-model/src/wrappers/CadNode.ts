@@ -17,8 +17,8 @@ import {
 import { SectorRepository } from '@reveal/sector-loader';
 import { ParsedGeometry } from '@reveal/sector-parser';
 import { CadMaterialManager, NodeTransformProvider, RenderMode, SectorQuads } from '@reveal/rendering';
-import { InstancedMeshManager } from './InstancedMeshManager';
-import { GeometryBatchingManager } from './GeometryBatchingManager';
+import { InstancedMeshManager } from '../batching/InstancedMeshManager';
+import { GeometryBatchingManager } from '../batching/GeometryBatchingManager';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 

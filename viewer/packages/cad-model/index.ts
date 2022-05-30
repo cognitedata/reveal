@@ -2,11 +2,9 @@
  * Copyright 2022 Cognite AS
  */
 
-export { GeometryFilter } from './src/GeometryFilter';
-export { CadModelSectorLoadStatistics } from './src/CadModelSectorLoadStatistics';
-export { BoundingBoxClipper } from './src/BoundingBoxClipper';
-export { Cognite3DModel } from './src/Cognite3DModel';
-export { WellKnownUnit } from './src/WellKnownUnit';
-export { PickingHandler } from './src/PickingHandler';
-export { CadNode } from './src/CadNode';
+export { BoundingBoxClipper } from './src/utilities/BoundingBoxClipper';
+export { Cognite3DModel } from './src/wrappers/Cognite3DModel';
+export { PickingHandler } from './src/picking/PickingHandler';
+export { CadNode } from './src/wrappers/CadNode';
 export { CadModelFactory } from './src/CadModelFactory';
+export { WellKnownUnit, GeometryFilter, CadModelSectorLoadStatistics } from './src/types';

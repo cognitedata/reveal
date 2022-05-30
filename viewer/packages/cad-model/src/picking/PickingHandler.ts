@@ -12,7 +12,7 @@ import {
   RenderPipelineProvider
 } from '@reveal/rendering';
 import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
-import { CadNode } from './CadNode';
+import { CadNode } from '../wrappers/CadNode';
 
 type PickingInput = {
   normalizedCoords: {
