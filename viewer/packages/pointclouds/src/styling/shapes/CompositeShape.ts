@@ -5,7 +5,7 @@
 import { IShape } from './IShape';
 import { IRawShape, ShapeType } from './IRawShape';
 
-import { Vec3, AABB, b3Union, emptyBox3 } from './linalg';
+import { Vec3 } from './linalg';
 
 export type RawCompositeShape = {
   type: ShapeType.Composite;
@@ -17,14 +17,6 @@ export class CompositeShape implements IShape {
 
   constructor(shapes: IShape[]) {
     this._innerShapes = shapes.slice();
-  }
-
-  computeBoundingBox(): AABB {
-    const totalBoundingBox = this._innerShapes.reduce(
-      (newBox, shape) => b3Union(newBox, shape.computeBoundingBox()),
-      emptyBox3()
-    );
-    return totalBoundingBox;
   }
 
   containsPoint(point: Vec3): boolean {

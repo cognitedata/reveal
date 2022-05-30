@@ -5,7 +5,7 @@
 import { ShapeType } from './IRawShape';
 import { IShape } from './IShape';
 
-import { Vec3, v3Scale, v3Middle, v3Length, v3Sub, v3Normalized, v3Dot, AABB } from './linalg';
+import { Vec3, v3Scale, v3Middle, v3Length, v3Sub, v3Normalized, v3Dot } from './linalg';
 
 export type RawCylinder = {
   type: ShapeType.Cylinder;
@@ -47,26 +47,6 @@ export class Cylinder implements IShape {
 
   private getAxis(): Vec3 {
     return v3Normalized(v3Sub(this._centerA, this._centerB));
-  }
-
-  computeBoundingBox(): AABB {
-    /* const halfHeight = this.getHalfHeight();
-    const middle = this.getMiddle();
-
-    out.set(
-      utilVector.clone().set(-this._radius, -halfHeight, -this._radius),
-      utilVector.set(this._radius, halfHeight, this._radius)
-    );
-
-    const rotation = new THREE.Quaternion().setFromUnitVectors(
-      new THREE.Vector3(0.0, 1.0, 0.0),
-      utilVector.copy(this._centerA).sub(this._centerB).normalize()
-    );
-
-    out.applyMatrix4(new THREE.Matrix4().makeRotationFromQuaternion(rotation));
-    out.translate(middle);
-    return out; */
-    throw Error('[Cylinder] Bounding box not yet implemented');
   }
 
   containsPoint(point: Vec3): boolean {

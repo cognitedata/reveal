@@ -4,7 +4,7 @@
 
 import { ShapeType } from './IRawShape';
 import { IShape } from './IShape';
-import { AABB, m4MultiplyV3WithTranslation, Mat4, Vec3 } from './linalg';
+import { m4MultiplyV3WithTranslation, Mat4, Vec3 } from './linalg';
 
 export type RawBox = {
   type: ShapeType.Box;
@@ -16,10 +16,6 @@ export class Box implements IShape {
 
   constructor(invertedInstanceMatrix: Mat4) {
     this.invMatrix = invertedInstanceMatrix;
-  }
-
-  computeBoundingBox(): AABB {
-    throw Error('Bounding box not implemented for box primitive');
   }
 
   containsPoint(point: Vec3): boolean {
