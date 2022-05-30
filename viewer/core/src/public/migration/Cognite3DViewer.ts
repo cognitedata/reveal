@@ -212,11 +212,11 @@ export class Cognite3DViewer {
 
     this._sceneHandler = new SceneHandler();
 
-    this._mouseHandler = new InputHandler(this.canvas);
+    this._mouseHandler = new InputHandler(this._domElement);
 
     this._cameraManager =
       options.cameraManager ??
-      new DefaultCameraManager(this.canvas, this._mouseHandler, this.modelIntersectionCallback.bind(this));
+      new DefaultCameraManager(this._domElement, this._mouseHandler, this.modelIntersectionCallback.bind(this));
     this.camera = this._cameraManager.getCamera();
 
     this._cameraManager.on('cameraChange', (position: THREE.Vector3, target: THREE.Vector3) => {
