@@ -617,8 +617,7 @@ void main() {
                 return;
         }
 
-        if (any(greaterThan(colorTexel, vec3(0.0)))) {
+        if (any(greaterThan(styleColor, vec3(0.0)))) {
                 vColor = 0.5 * (styleColor + vColor);
->>>>>>> feat: add visibility as appearance option
         }
 }
