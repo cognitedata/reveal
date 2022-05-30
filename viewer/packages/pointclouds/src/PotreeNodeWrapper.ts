@@ -10,6 +10,8 @@ import { PointCloudOctree, PotreePointColorType, PotreePointShape, IClassificati
 import { WellKnownAsprsPointClassCodes } from './types';
 
 import { createPointClassKey } from './createPointClassKey';
+import { PointCloudAppearance } from './styling/PointCloudAppearance';
+import { RawStylableObject } from './styling/StylableObject';
 
 /**
  * Wrapper around `Potree.PointCloudOctree` with some convenience functions.
@@ -18,17 +20,19 @@ export class PotreeNodeWrapper {
   readonly octree: PointCloudOctree;
   private _needsRedraw = false;
   private readonly _classification: IClassification = {} as IClassification;
+  private readonly _stylableObjects: RawStylableObject[];
 
   get needsRedraw(): boolean {
     return this._needsRedraw;
   }
 
-  constructor(octree: PointCloudOctree) {
+  constructor(octree: PointCloudOctree, stylableObjects: RawStylableObject[]) {
     this.octree = octree;
     this.pointSize = 2;
     this.pointColorType = PotreePointColorType.Rgb;
     this.pointShape = PotreePointShape.Circle;
     this._classification = octree.material.classification;
+    this._stylableObjects = stylableObjects;
   }
 
   get pointSize(): number {
@@ -70,6 +74,15 @@ export class PotreeNodeWrapper {
 
   get classification(): PotreeClassification {
     return this._classification;
+  }
+
+  get stylableObjects(): RawStylableObject[] {
+    return this._stylableObjects;
+  }
+
+  setObjectStyle(objectId: number, appearance: PointCloudAppearance): void {
+    this.octree.material.setObjectAppearance(objectId, appearance);
+    this._needsRedraw = true;
   }
 
   setClassificationAndRecompute(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void {
