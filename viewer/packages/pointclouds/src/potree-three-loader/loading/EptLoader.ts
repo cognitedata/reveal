@@ -1,5 +1,5 @@
 import { ModelDataProvider } from '@reveal/modeldata-api';
-import { StylableObjectInfo } from '../../styling/StylableObjectInfo';
+import { RawStylableObject } from '../../styling/StylableObject';
 import { PointCloudEptGeometry } from '../geometry/PointCloudEptGeometry';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 
@@ -8,11 +8,11 @@ export class EptLoader {
     baseUrl: string,
     fileName: string,
     modelDataProvider: ModelDataProvider,
-    stylableObjectInfo?: StylableObjectInfo | undefined
+    stylableObjects: RawStylableObject[]
   ): Promise<PointCloudEptGeometry> {
     return modelDataProvider.getJsonFile(baseUrl, fileName).then(async (json: any) => {
       const url = baseUrl + '/';
-      const geometry = new PointCloudEptGeometry(url, json, modelDataProvider, stylableObjectInfo);
+      const geometry = new PointCloudEptGeometry(url, json, modelDataProvider, stylableObjects);
       const root = new PointCloudEptGeometryNode(geometry, modelDataProvider);
 
       geometry.root = root;

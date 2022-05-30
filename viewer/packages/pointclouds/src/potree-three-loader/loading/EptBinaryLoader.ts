@@ -15,13 +15,12 @@ import { ParseCommand, ObjectsCommand } from '../workers/eptBinaryDecoder.worker
 
 import { ParsedEptData, EptInputData } from '../workers/parseEpt';
 
-import { StylableObjectInfo } from '../../styling/StylableObjectInfo';
-
 import { fromThreeVector3 } from '@reveal/utilities';
+import { RawStylableObject } from '../../styling/StylableObject';
 
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
-  private readonly _stylableObjectInfo: StylableObjectInfo | undefined;
+  private readonly _stylableObjects: RawStylableObject[];
 
   static readonly WORKER_POOL = new WorkerPool(32, EptDecoderWorker);
 
@@ -29,9 +28,9 @@ export class EptBinaryLoader implements ILoader {
     return '.bin';
   }
 
-  constructor(dataLoader: ModelDataProvider, stylableObjectInfo?: StylableObjectInfo | undefined) {
+  constructor(dataLoader: ModelDataProvider, stylableObjects: RawStylableObject[]) {
     this._dataLoader = dataLoader;
-    this._stylableObjectInfo = stylableObjectInfo;
+    this._stylableObjects = stylableObjects;
   }
 
   async load(node: PointCloudEptGeometryNode): Promise<void> {
@@ -62,9 +61,7 @@ export class EptBinaryLoader implements ILoader {
         res(e.data);
       };
 
-      if (this._stylableObjectInfo) {
-        postStylableObjectInfo(autoTerminatingWorker, node, this._stylableObjectInfo);
-      }
+      postStylableObjectInfo(autoTerminatingWorker, node, this._stylableObjects);
 
       const eptData: EptInputData = {
         buffer: data,
@@ -98,13 +95,13 @@ function postParseCommand(autoTerminatingWorker: AutoTerminatingWorker, data: Ep
 function postStylableObjectInfo(
   autoTerminatingWorker: AutoTerminatingWorker,
   node: PointCloudEptGeometryNode,
-  stylableObjectInfo: StylableObjectInfo
+  stylableObjects: RawStylableObject[]
 ): void {
   const offsetVec = node.boundingBox.min;
 
   const objectMessage: ObjectsCommand = {
     type: 'objects',
-    objects: stylableObjectInfo.stylableObjects,
+    objects: stylableObjects,
     pointOffset: [offsetVec.x, offsetVec.y, offsetVec.z] as [number, number, number]
   };
 

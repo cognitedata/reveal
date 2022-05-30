@@ -215,7 +215,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * Gets the stylable objects associated with this point cloud.
    */
   get stylableObjects(): RawStylableObject[] {
-    return this.pointCloudNode.stylableObjectInfo?.stylableObjects ?? [];
+    return this.pointCloudNode.stylableObjects;
   }
 
   /**

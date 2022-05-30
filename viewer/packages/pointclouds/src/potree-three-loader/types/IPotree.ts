@@ -2,7 +2,7 @@ import { Camera, WebGLRenderer } from 'three';
 import { LRU } from '../utils/lru';
 import { PointCloudOctree } from '../tree/PointCloudOctree';
 import { IVisibilityUpdateResult } from './IVisibilityUpdateResult';
-import { StylableObjectInfo } from '../../styling/StylableObjectInfo';
+import { RawStylableObject } from '../../styling/StylableObject';
 
 export interface IPotree {
   pointBudget: number;
@@ -12,7 +12,7 @@ export interface IPotree {
   loadPointCloud(
     baseUrl: string,
     fileName: string,
-    stylableObjectInfo?: StylableObjectInfo | undefined
+    stylableObjects: RawStylableObject[]
   ): Promise<PointCloudOctree>;
 
   updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): IVisibilityUpdateResult;

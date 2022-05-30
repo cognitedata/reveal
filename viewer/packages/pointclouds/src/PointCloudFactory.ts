@@ -12,12 +12,12 @@ import { annotationsToObjectInfo } from './styling/annotationsToObjects';
 import { BoxPrimitive } from './annotationTypes';
 
 import { Potree } from './potree-three-loader';
-import { StylableObjectInfo } from './styling/StylableObjectInfo';
 import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
 
 import { CogniteClientPlayground } from '@cognite/sdk-playground';
 
 import * as THREE from 'three';
+import { RawStylableObject } from './styling/StylableObject';
 
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
@@ -70,19 +70,19 @@ export class PointCloudFactory {
   async createModel(modelIdentifier: ModelIdentifier, modelMetadata: PointCloudMetadata): Promise<PotreeNodeWrapper> {
     const { modelBaseUrl } = modelMetadata;
 
-    let stylableObjectInfo: StylableObjectInfo | undefined = undefined;
+    let stylableObjects: RawStylableObject[] = [];
     if (this._sdkPlayground && modelIdentifier instanceof CdfModelIdentifier) {
       const annotations = await this.getAnnotations(modelIdentifier);
-      stylableObjectInfo = annotationsToObjectInfo(annotations);
+      stylableObjects = annotationsToObjectInfo(annotations);
     }
 
     const pointCloudOctree = await this._potreeInstance.loadPointCloud(
       modelBaseUrl,
       DEFAULT_POINT_CLOUD_METADATA_FILE,
-      stylableObjectInfo
+      stylableObjects
     );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;
-    return new PotreeNodeWrapper(pointCloudOctree, stylableObjectInfo);
+    return new PotreeNodeWrapper(pointCloudOctree, stylableObjects);
   }
 }

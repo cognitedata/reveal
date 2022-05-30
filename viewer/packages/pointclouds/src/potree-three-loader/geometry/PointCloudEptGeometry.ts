@@ -14,7 +14,7 @@ import { IPointCloudTreeGeometry } from './IPointCloudTreeGeometry';
 import proj4 from 'proj4';
 import { ModelDataProvider } from '@reveal/modeldata-api';
 import { toVector3, toBox3 } from './translationUtils';
-import { StylableObjectInfo } from '../../styling/StylableObjectInfo';
+import { RawStylableObject } from '../../styling/StylableObject';
 
 type EptSchemaEntry = {
   name: string;
@@ -96,7 +96,7 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
     return this._eptOffset;
   }
 
-  constructor(url: string, info: any, dataLoader: ModelDataProvider, stylableInfo?: StylableObjectInfo | undefined) {
+  constructor(url: string, info: any, dataLoader: ModelDataProvider, stylableObjects: RawStylableObject[]) {
     const schema = info.schema;
     const bounds = info.bounds;
     const boundsConforming = info.boundsConforming;
@@ -142,7 +142,7 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
       throw new Error('Could not read data type: ' + info.dataType);
     }
 
-    this._loader = new EptBinaryLoader(dataLoader, stylableInfo);
+    this._loader = new EptBinaryLoader(dataLoader, stylableObjects);
   }
 
   dispose(): void {}

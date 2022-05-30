@@ -4,8 +4,7 @@
 
 import { BoundingVolume } from '../annotationTypes';
 import { CompositeShape } from './shapes/CompositeShape';
-import { StylableObject } from './StylableObject';
-import { StylableObjectInfo } from './StylableObjectInfo';
+import { RawStylableObject, StylableObject } from './StylableObject';
 
 function annotationsToObjects(bvs: BoundingVolume[]): StylableObject[] {
   let idCounter = 0;
@@ -27,15 +26,13 @@ function annotationsToObjects(bvs: BoundingVolume[]): StylableObject[] {
   return resultObjects;
 }
 
-export function annotationsToObjectInfo(annotations: BoundingVolume[]): StylableObjectInfo {
+export function annotationsToObjectInfo(annotations: BoundingVolume[]): RawStylableObject[] {
   const stylableObjects = annotationsToObjects(annotations);
 
-  return {
-    stylableObjects: stylableObjects.map(obj => {
+  return stylableObjects.map(obj => {
       return {
         objectId: obj.objectId,
         shape: obj.shape.toRawShape()
       };
-    })
-  };
+  });
 }

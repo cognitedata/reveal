@@ -10,8 +10,8 @@ import { PointCloudOctree, PotreePointColorType, PotreePointShape, IClassificati
 import { WellKnownAsprsPointClassCodes } from './types';
 
 import { createPointClassKey } from './createPointClassKey';
-import { StylableObjectInfo } from './styling/StylableObjectInfo';
 import { PointCloudAppearance } from './styling/PointCloudAppearance';
+import { RawStylableObject } from './styling/StylableObject';
 
 /**
  * Wrapper around `Potree.PointCloudOctree` with some convenience functions.
@@ -20,19 +20,19 @@ export class PotreeNodeWrapper {
   readonly octree: PointCloudOctree;
   private _needsRedraw = false;
   private readonly _classification: IClassification = {} as IClassification;
-  private readonly _stylableObjectInfo: StylableObjectInfo | undefined;
+  private readonly _stylableObjects: RawStylableObject[];
 
   get needsRedraw(): boolean {
     return this._needsRedraw;
   }
 
-  constructor(octree: PointCloudOctree, stylableObjectInfo: StylableObjectInfo | undefined) {
+  constructor(octree: PointCloudOctree, stylableObjects: RawStylableObject[]) {
     this.octree = octree;
     this.pointSize = 2;
     this.pointColorType = PotreePointColorType.Rgb;
     this.pointShape = PotreePointShape.Circle;
     this._classification = octree.material.classification;
-    this._stylableObjectInfo = stylableObjectInfo;
+    this._stylableObjects = stylableObjects;
   }
 
   get pointSize(): number {
@@ -76,8 +76,8 @@ export class PotreeNodeWrapper {
     return this._classification;
   }
 
-  get stylableObjectInfo(): StylableObjectInfo | undefined {
-    return this._stylableObjectInfo;
+  get stylableObjects(): RawStylableObject[] {
+    return this._stylableObjects;
   }
 
   setObjectStyle(objectId: number, appearance: PointCloudAppearance): void {
