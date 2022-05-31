@@ -7,4 +7,5 @@ export interface ModelFormState
   boundaryConditions: (OptionType<SimconfigApi.BoundaryCondition> & {
     value: SimconfigApi.BoundaryCondition;
   })[];
+  labels: ({ label: string; value: string } & { labelName: string })[];
 }

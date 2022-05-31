@@ -4,7 +4,12 @@ const ID_LIST = '__LIST__' as const;
 
 export const enhanceSimconfigApiEndpoints = () => {
   api.enhanceEndpoints({
-    addTagTypes: ['ModelCalculation', 'ModelFile', 'ModelFileVersion'],
+    addTagTypes: [
+      'ModelCalculation',
+      'ModelFile',
+      'ModelFileVersion',
+      'Labels',
+    ],
     endpoints: {
       getModelCalculationList: {
         providesTags: (result) => [
@@ -25,6 +30,24 @@ export const enhanceSimconfigApiEndpoints = () => {
       },
       upsertCalculation: {
         invalidatesTags: ['ModelCalculation'],
+      },
+
+      getLabelsList: {
+        providesTags: (result) => [
+          ...(result?.labels ?? []).map(({ externalId }) => ({
+            type: 'Labels' as const,
+            id: externalId,
+          })),
+          { type: 'Labels', id: ID_LIST },
+        ],
+      },
+
+      createLabel: {
+        invalidatesTags: ['Labels'],
+      },
+
+      deleteLabel: {
+        invalidatesTags: ['Labels'],
       },
 
       getModelFileList: {

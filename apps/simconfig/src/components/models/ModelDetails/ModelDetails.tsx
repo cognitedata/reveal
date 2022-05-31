@@ -19,6 +19,8 @@ import { useTitle } from 'hooks/useTitle';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
 
+import { ModelLabels } from './ModelLabels';
+
 import type { AppLocationGenerics } from 'routes';
 
 interface ModelDetailsProps {
@@ -36,15 +38,24 @@ export function ModelDetails({
     data: { definitions },
     params: { selectedTab = 'model-versions' },
   } = useMatch<AppLocationGenerics>();
+  const labelsFeature = definitions?.features.find(
+    (feature) => feature.name === 'Labels'
+  );
+  const isLabelsEnabled = labelsFeature?.capabilities?.every(
+    (capability) => capability.enabled
+  );
 
   const navigate = useNavigate();
   const [showCalculations, setShowCalculations] = useState('configured');
 
-  const { data: modelFile, isFetching: isFetchingModelFile } =
-    useGetModelFileQuery(
-      { project, modelName, simulator },
-      { skip: simulator === 'UNKNOWN' }
-    );
+  const {
+    data: modelFile,
+    isFetching: isFetchingModelFile,
+    refetch: refetchModelFile,
+  } = useGetModelFileQuery(
+    { project, modelName, simulator },
+    { skip: simulator === 'UNKNOWN' }
+  );
 
   useTitle(modelFile?.metadata.modelName);
 
@@ -53,7 +64,11 @@ export function ModelDetails({
       modelName: decodeURI(modelName),
       simulator,
     });
-  }, [modelName, simulator]);
+
+    return () => {
+      refetchModelFile();
+    };
+  }, [modelName, simulator, refetchModelFile]);
 
   if (!isFetchingModelFile && !modelFile) {
     // Uninitialized state
@@ -120,6 +135,7 @@ export function ModelDetails({
           </li>
         </ul>
       </div>
+      {isLabelsEnabled && <ModelLabels modelFile={modelFile} />}
       <Tabs
         activeKey={selectedTab}
         tabBarExtraContent={extraContent[selectedTab] ?? null}
@@ -176,6 +192,7 @@ export function ModelDetails({
                   ...modelFile.metadata,
                 },
                 boundaryConditions: [],
+                labels: [],
               }}
               onUpload={() => {
                 navigate({ to: '../model-versions' });

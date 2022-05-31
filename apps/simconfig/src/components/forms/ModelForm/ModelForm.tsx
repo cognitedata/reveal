@@ -26,6 +26,7 @@ import {
 import { FileInput } from 'components/forms/controls/FileInput';
 import { HEARTBEAT_POLL_INTERVAL } from 'components/simulator/constants';
 import { SimulatorStatusLabel } from 'components/simulator/SimulatorStatusLabel';
+import { selectCapabilities } from 'store/capabilities/selectors';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 import { isAuthenticated } from 'utils/authUtils';
 import {
@@ -35,11 +36,12 @@ import {
 } from 'utils/formUtils';
 import { isSuccessResponse } from 'utils/responseUtils';
 
+import { LabelsInput } from '../controls/LabelsInput';
+
 import {
   DEFAULT_MODEL_SOURCE,
   DEFAULT_UNIT_SYSTEM,
   FileExtensionToSimulator,
-  Simulator,
   UnitSystem,
 } from './constants';
 import { InputRow } from './elements';
@@ -51,6 +53,7 @@ const getInitialModelFormState = (
   boundaryConditionsData: DefinitionMap['type']['boundaryCondition'] | undefined
 ): ModelFormState => ({
   boundaryConditions: getSelectEntriesFromMap(boundaryConditionsData),
+  labels: [],
   file: undefined,
   metadata: {
     modelName: '',
@@ -105,10 +108,17 @@ export function ModelForm({
   initialModelFormState,
   onUpload,
 }: React.PropsWithoutRef<ComponentProps>) {
+  const capabilities = useSelector(selectCapabilities);
   const inputFile = useRef<HTMLInputElement>(null);
   const [datasets, setDatasets] = useState<DataSet[]>();
   const { authState, client } = useAuthContext();
 
+  const labelsFeature = capabilities.capabilities.find(
+    (feature) => feature.name === 'Labels'
+  );
+  const isLabelsEnabled = labelsFeature?.capabilities?.every(
+    (capability) => capability.enabled
+  );
   const {
     data: { definitions },
   } = useMatch<AppLocationGenerics>();
@@ -148,6 +158,7 @@ export function ModelForm({
     fileInfo: formFileInfo,
     metadata: formMetadata,
     boundaryConditions: formBoundaryConditions,
+    labels: formLabels,
   }: ModelFormState) => {
     if (!file) {
       throw new Error('Model file is missing');
@@ -169,6 +180,7 @@ export function ModelForm({
       simulator,
     };
 
+    const labels = formLabels.map((label) => ({ labelName: label.label }));
     const boundaryConditions = formBoundaryConditions.map(
       (boundaryCondition) => boundaryCondition.value
     );
@@ -185,11 +197,11 @@ export function ModelForm({
         name: metadata.modelName,
         source: simulator,
       };
-
       const response = await createModel({
         project: authState.project,
         createModelFileRequestModel: getTypedFormData({
           boundaryConditions,
+          labels,
           file,
           fileInfo,
           metadata,
@@ -361,6 +373,7 @@ export function ModelForm({
             </InputRow>
           ) : (
             <>
+              {isLabelsEnabled && <LabelsInput setFieldValue={setFieldValue} />}
               <InputRow>
                 <Field
                   as={Select}
@@ -453,6 +466,14 @@ const HiddenInputFile = styled.input`
   overflow: hidden;
   position: absolute;
   z-index: -1;
+`;
+
+export const InputButton = styled.div`
+  display: flex;
+  .cogs-select {
+    width: 86%;
+    margin-right: 1em;
+  }
 `;
 
 const SimulatorStatusDropdownContainer = styled.div`

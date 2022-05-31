@@ -1,20 +1,32 @@
+import { useState } from 'react';
 import { useMatchRoute, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { Avatar, Menu, TopBar } from '@cognite/cogs.js';
+import { Avatar, Button, Menu, TopBar } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 
 import { SimulatorStatus } from 'components/simulator/SimulatorStatus';
+import { selectCapabilities } from 'store/capabilities/selectors';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 import { getAuthenticatedUser } from 'utils/authUtils';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
 
+import { LabelsModal } from './LabelsModal';
+
 export function MenuBar() {
   const project = useSelector(selectProject);
+  const capabilities = useSelector(selectCapabilities);
+  const [isOpen, setOpen] = useState<boolean>(false);
   const { authState } = useAuthContext();
   const matchRoute = useMatchRoute();
   const navigate = useNavigate();
+  const labelsFeature = capabilities.capabilities.find(
+    (feature) => feature.name === 'Labels'
+  );
+  const isLabelsEnabled = labelsFeature?.capabilities?.every(
+    (capability) => capability.enabled
+  );
   const accountName = authState
     ? getAuthenticatedUser({ project, authState })?.name
     : '(no name)';
@@ -25,6 +37,7 @@ export function MenuBar() {
 
   return (
     <TopBar>
+      {isLabelsEnabled && <LabelsModal isOpen={isOpen} setOpen={setOpen} />}
       <TopBar.Left>
         <TopBar.Logo
           subtitle={<div id="project-name">{project}</div>}
@@ -56,6 +69,25 @@ export function MenuBar() {
         </div>
         <TopBar.Actions
           actions={[
+            ...(isLabelsEnabled
+              ? [
+                  {
+                    key: 'settings',
+                    component: (
+                      <Button
+                        icon="Tag"
+                        type="ghost"
+                        onClick={() => {
+                          setOpen(true);
+                        }}
+                      />
+                    ),
+                    onClick: () => {
+                      trackUsage(TRACKING_EVENTS.NAVBAR_LABELS_CLICK);
+                    },
+                  },
+                ]
+              : []),
             {
               key: 'avatar',
               component: (

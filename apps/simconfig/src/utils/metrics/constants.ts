@@ -16,6 +16,7 @@ export const TRACKING_EVENTS = {
   MODEL_CALC_VIEW_RUN_HISTORY: `${MODEL_DETAILS}.${CALCUATION_LIST}.ViewRunHistory`,
   RUN_BROWSER_VIEW: 'RunBrowserView',
   PROFILE_AVATAR_CLICK: 'ProfileAvatarClick',
+  NAVBAR_LABELS_CLICK: 'NavbarLabelsClick',
 };
 
 type TrackingEventKeys = keyof typeof TRACKING_EVENTS;
