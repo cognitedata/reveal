@@ -31,7 +31,7 @@
     "@cognite/power-ops-api-types": "^0.1.2",
     "@cognite/reveal": "^3.0.1",
     "@cognite/reveal-v2": "npm:@cognite/reveal@2.3.0",
-    "@cognite/sdk": "^7.3.4",
+    "@cognite/sdk": "^7.5.1",
     "@cognite/sdk-playground": "5.1.0",
     "@cognite/sdk-v5": "npm:@cognite/sdk@^5.6.2",
     "@cognite/sdk-wells-v2": "npm:@cognite/sdk-wells@2.0.14",
