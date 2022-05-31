@@ -10,7 +10,6 @@ export { createSimpleGeometryMesh } from './src/rendering/createSimpleGeometryMe
 
 export { NodeTransformProvider } from './src/transform/NodeTransformProvider';
 
-export { CadNode } from './src/sector/CadNode';
 export {
   RenderOptions,
   defaultRenderOptions,

@@ -4,18 +4,18 @@
 import * as THREE from 'three';
 import { CogniteInternalId } from '@cognite/sdk';
 
-import { WellKnownUnit } from './WellKnownUnit';
-
-import { callActionWithIndicesAsync } from './callActionWithIndicesAsync';
+import { callActionWithIndicesAsync } from '../utilities/callActionWithIndicesAsync';
 
 import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
 import { NodesApiClient } from '@reveal/nodes-api';
 import { CadModelMetadata, getDistanceToMeterConversionFactor } from '@reveal/cad-parsers';
 import { NumericRange, CameraConfiguration } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
-import { CadNode, NodeTransformProvider } from '@reveal/rendering';
+import { NodeTransformProvider } from '@reveal/rendering';
 import { NodeAppearance, NodeCollection, CdfModelNodeCollectionDataProvider } from '@reveal/cad-styling';
-import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
+import { NodeIdAndTreeIndexMaps } from '../utilities/NodeIdAndTreeIndexMaps';
+import { CadNode } from './CadNode';
+import { WellKnownUnit } from '../types';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
