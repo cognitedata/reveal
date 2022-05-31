@@ -4,6 +4,13 @@ import {
   KB_ELEVATION,
 } from '../../../src/pages/authorized/search/well/content/constants';
 
+import {
+  OPERATOR,
+  DATA_SOURCE,
+} from '../../../src/modules/wellSearch/constantsSidebarFilters';
+import { SOURCE_FILTER } from '../../support/selectors/wells.selectors';
+import { STATIC_WELL_1 } from '../../support/constants';
+
 describe('Wells: result_table', () => {
   beforeEach(() => {
     cy.deleteAllFavorites();
@@ -153,5 +160,83 @@ describe('Wells: result_table', () => {
             expect(valInFeet).to.greaterThan(valInMeter);
           });
       });
+  });
+
+  it('Should be able to load more items in result table', () => {
+    cy.performSearch('');
+    cy.goToTab('Wells');
+
+    cy.findAllByTestId('table-row')
+      .its('length')
+      .then((rowCount) => {
+        cy.log('click on `Load more` button');
+        cy.findAllByText('Load more').click();
+
+        cy.log('compare number of rows which visible on result table');
+        cy.findAllByTestId('table-row').its('length').should('be.gt', rowCount);
+      });
+    cy.log('scroll down result table');
+    cy.findAllByTestId('well-result-table').scrollTo('bottom', {
+      ensureScrollable: false,
+    });
+    cy.findByText('Use filters to refine your search').should('be.visible');
+  });
+
+  it('Should be able to clear all the filters by clicking `clear all` button', () => {
+    cy.performSearch('');
+    cy.goToTab('Wells');
+
+    cy.log('click on source filter section');
+    cy.clickOnFilterCategory(DATA_SOURCE);
+
+    cy.log('Checking source values');
+    cy.validateSelect(DATA_SOURCE, [SOURCE_FILTER], SOURCE_FILTER);
+    cy.contains(SOURCE_FILTER).should('be.visible').click();
+
+    cy.log('Minimize source section');
+    cy.clickOnFilterCategory(DATA_SOURCE);
+
+    cy.log('Open OPERATOR');
+    cy.clickOnFilterCategory(OPERATOR);
+
+    cy.validateSelect(OPERATOR, ['Pretty Polly ASA'], 'Pretty Polly ASA');
+    cy.clickOnFilterCategory(OPERATOR);
+
+    cy.log(`Clicking on clear all filters`);
+    cy.findAllByTestId('clear-all-filter-button').should('be.visible').click();
+    cy.findAllByTestId('filter-tag').should('not.exist');
+  });
+
+  it('Should be able to navigate overview page by clicking `view` buttons for both wells and wellbores', () => {
+    cy.performSearch(STATIC_WELL_1);
+    cy.goToTab('Wells');
+
+    cy.log('hover on well row');
+    cy.hoverOnNthWell(1);
+
+    cy.log('click view button');
+    cy.clickNthWellViewButton(0);
+
+    cy.log('result table should contain 4 rows');
+    cy.findAllByTestId('table-row').its('length').should('eq', 4);
+
+    cy.log('go back to well result table');
+    cy.findAllByTestId('well-inspect-back-btn').click();
+
+    cy.log('expand well row');
+    cy.findAllByTestId('table-cell')
+      .contains(`${STATIC_WELL_1}`)
+      .first()
+      .click();
+
+    cy.log('hover on wellbore row and click on `view` button');
+    cy.hoverOnNthWellbore(0);
+    cy.clickNthWellboreViewButton(0);
+
+    cy.log('result table should contain 1 row');
+    cy.findByTestId('overview-result-table')
+      .findAllByTestId('table-row')
+      .its('length')
+      .should('eq', 1);
   });
 });

@@ -1,3 +1,5 @@
+import { eq } from 'lodash';
+
 const getResultsTable = (tableDataTestId?: string) => {
   return tableDataTestId ? cy.findByTestId(tableDataTestId) : cy;
 };
@@ -25,6 +27,14 @@ const toggleSelectNthRow = (nth: number, tableDataTestId?: string) => {
     .click();
 };
 
+const clickNthWellViewButton = (nth: number) => {
+  cy.findAllByTestId('button-view-document').eq(nth).click({ force: true });
+};
+
+const clickNthWellboreViewButton = (nth: number) => {
+  cy.findAllByTestId('button-view-wellbore').eq(nth).click({ force: true });
+};
+
 const checkIfNthRowIsSelected = (
   nth: number,
   selected = true,
@@ -38,11 +48,28 @@ const checkIfNthRowIsSelected = (
     .should(selected ? 'be.checked' : 'not.be.checked');
 };
 
+const hoverOnNthWell = (nth: number) => {
+  cy.findAllByTestId('table-row').eq(nth).invoke('attr', 'style', 'opacity: 1');
+};
+
+const hoverOnNthWellbore = (nth: number) => {
+  cy.findByTestId('well-result-table')
+    .findAllByTestId('table-cell-expanded')
+    .first()
+    .findAllByTestId('table-row')
+    .eq(nth)
+    .invoke('attr', 'style', 'opacity: 1');
+};
+
 Cypress.Commands.add('getResultsTable', getResultsTable);
 Cypress.Commands.add('toggleSelectAllRows', toggleSelectAllRows);
 Cypress.Commands.add('checkIfAllRowsSelected', checkIfAllRowsSelected);
 Cypress.Commands.add('toggleSelectNthRow', toggleSelectNthRow);
 Cypress.Commands.add('checkIfNthRowIsSelected', checkIfNthRowIsSelected);
+Cypress.Commands.add('hoverOnNthWell', hoverOnNthWell);
+Cypress.Commands.add('hoverOnNthWellbore', hoverOnNthWellbore);
+Cypress.Commands.add('clickNthWellViewButton', clickNthWellViewButton);
+Cypress.Commands.add('clickNthWellboreViewButton', clickNthWellboreViewButton);
 
 export interface TableCommands {
   getResultsTable(
@@ -59,4 +86,8 @@ export interface TableCommands {
     selected?: boolean,
     tableDataTestId?: string
   ): void;
+  hoverOnNthWell(nth: number): void;
+  hoverOnNthWellbore(nth: number): void;
+  clickNthWellViewButton(nth: number): void;
+  clickNthWellboreViewButton(nth: number): void;
 }
