@@ -13,7 +13,7 @@ import {
   incrementOrInsertIndex,
   decrementOrDeleteIndex
 } from '@reveal/utilities';
-import { Materials } from './rendering/materials';
+import { Materials } from '@reveal/rendering';
 
 type BatchedBuffer = {
   defragBuffer: DynamicDefragmentedBuffer<Uint8Array>;

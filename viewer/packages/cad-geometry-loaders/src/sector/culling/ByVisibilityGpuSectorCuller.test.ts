@@ -9,7 +9,7 @@ import { ByVisibilityGpuSectorCuller } from './ByVisibilityGpuSectorCuller';
 import { CadModelBudget } from '../../CadModelBudget';
 import { PropType } from '../../utilities/reflection';
 
-import { CadMaterialManager, CadNode } from '@reveal/rendering';
+import { CadMaterialManager } from '@reveal/rendering';
 import { SectorMetadata, CadModelMetadata, LevelOfDetail } from '@reveal/cad-parsers';
 
 import { SectorRepository } from '@reveal/sector-loader';
@@ -21,6 +21,7 @@ import {
   createV9SectorMetadata
 } from '../../../../../test-utilities';
 import { Mock } from 'moq.ts';
+import { CadNode } from '@reveal/cad-model';
 
 describe('ByVisibilityGpuSectorCuller', () => {
   const materialManager = new CadMaterialManager();

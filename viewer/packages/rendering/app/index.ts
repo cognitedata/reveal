@@ -24,7 +24,7 @@ import {
   ModelIdentifier,
   ModelMetadataProvider
 } from '../../modeldata-api';
-import { CadManager } from '../../cad-model/src/CadManager';
+import { CadManager } from '../../cad-geometry-loaders/src/CadManager';
 import { NumericRange, revealEnv, SceneHandler } from '@reveal/utilities';
 import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
 import { CadModelUpdateHandler, defaultDesktopCadModelBudget } from '../../cad-geometry-loaders';
