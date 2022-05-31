@@ -1,5 +1,5 @@
 import { NewKeypoints } from 'src/modules/Review/Components/AnnotationSettingsModal/types';
-import { LegacyShape } from 'src/modules/Review/types';
+import { PredefinedShape } from 'src/modules/Review/types';
 import isEmpty from 'lodash/isEmpty';
 
 const hsvToRgb = (h: number, s: number, v: number) => {
@@ -78,7 +78,9 @@ export const validNewKeypoint = (newKeypoints: NewKeypoints | undefined) => {
   return false;
 };
 
-export const validNewShapes = (newShapes: { [key: string]: LegacyShape }) => {
+export const validNewShapes = (newShapes: {
+  [key: string]: PredefinedShape;
+}) => {
   if (isEmpty(newShapes)) {
     return false;
   }

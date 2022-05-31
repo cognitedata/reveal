@@ -1,8 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
-  LegacyAnnotationCollection,
-  KeypointCollection,
-  LegacyShape,
+  PredefinedVisionAnnotations,
+  PredefinedKeypointCollection,
+  PredefinedShape,
 } from 'src/modules/Review/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationApiV1 } from 'src/api/annotation/AnnotationApiV1';
@@ -10,7 +10,7 @@ import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 
 export const PopulateAnnotationTemplates = createAsyncThunk<
-  LegacyAnnotationCollection,
+  PredefinedVisionAnnotations,
   void,
   ThunkConfig
 >('PopulateAnnotationTemplates', async () => {
@@ -24,8 +24,8 @@ export const PopulateAnnotationTemplates = createAsyncThunk<
     limit: -1,
   };
   const templateAnnotations = await AnnotationApiV1.list(annotationListRequest);
-  const keypointCollections: KeypointCollection[] = [];
-  const shapes: LegacyShape[] = [];
+  const keypointCollections: PredefinedKeypointCollection[] = [];
+  const shapes: PredefinedShape[] = [];
 
   if (templateAnnotations.length) {
     // eslint-disable-next-line no-restricted-syntax
@@ -52,7 +52,7 @@ export const PopulateAnnotationTemplates = createAsyncThunk<
     }
   }
   return {
-    predefinedKeypoints: keypointCollections,
+    predefinedKeypointCollections: keypointCollections,
     predefinedShapes: shapes,
   };
 });

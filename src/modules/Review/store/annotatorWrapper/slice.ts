@@ -1,7 +1,7 @@
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
 import {
-  LegacyKeypoint,
-  KeypointCollection,
+  PredefinedKeypoint,
+  PredefinedKeypointCollection,
   Tool,
 } from 'src/modules/Review/types';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
@@ -115,10 +115,11 @@ const annotatorWrapperSlice = createSlice({
       const { id, collectionName, keypointLabel, positionX, positionY } =
         action.payload;
 
-      const predefinedKeypointCollection: KeypointCollection | undefined =
-        state.predefinedAnnotations.predefinedKeypointCollections.find(
-          (collection) => collection.collectionName === collectionName
-        );
+      const predefinedKeypointCollection:
+        | PredefinedKeypointCollection
+        | undefined = state.predefinedAnnotations.predefinedKeypointCollections.find(
+        (collection) => collection.collectionName === collectionName
+      );
 
       // validPredefinedKeypointCollection
       if (predefinedKeypointCollection) {
@@ -128,7 +129,7 @@ const annotatorWrapperSlice = createSlice({
         // collection has keypoints
         if (keypoints) {
           // get the matching keypoint or the first one
-          const predefinedKeypoint: LegacyKeypoint =
+          const predefinedKeypoint: PredefinedKeypoint =
             keypoints.find((keypoint) => keypoint.caption === keypointLabel) ||
             keypoints[0];
 
@@ -291,7 +292,8 @@ const annotatorWrapperSlice = createSlice({
       (state, action) => {
         // ToDo: thunk should return PredefinedAnnotations type data
         state.predefinedAnnotations = {
-          predefinedKeypointCollections: action.payload.predefinedKeypoints,
+          predefinedKeypointCollections:
+            action.payload.predefinedKeypointCollections,
           predefinedShapes: action.payload.predefinedShapes,
         };
       }

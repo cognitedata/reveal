@@ -74,7 +74,10 @@ export const AnnotationFilter = ({
         PopulateAnnotationTemplates()
       );
       const savedConfiguration = unwrapResult(savedConfigurationsResponse);
-      const { predefinedKeypoints, predefinedShapes } = savedConfiguration;
+      const {
+        predefinedKeypointCollections: predefinedKeypoints,
+        predefinedShapes,
+      } = savedConfiguration;
       const keypointOptions = predefinedKeypoints.map((keypoint) => ({
         value: keypoint.collectionName,
         label: keypoint.collectionName,

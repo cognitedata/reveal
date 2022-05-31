@@ -16,7 +16,10 @@ import {
   Status,
 } from 'src/api/annotation/types';
 import { KeypointCollectionState } from 'src/modules/Review/store/annotatorWrapper/type';
-import { LegacyKeypoint, KeypointCollection } from 'src/modules/Review/types';
+import {
+  PredefinedKeypoint,
+  PredefinedKeypointCollection,
+} from 'src/modules/Review/types';
 import { ReviewKeypoint } from 'src/modules/Review/store/review/types';
 import { getDummyImageKeypointCollectionAnnotation } from './getDummyAnnotations';
 
@@ -78,14 +81,16 @@ export const getDummyKeypointCollectionState = (
   };
 };
 
-export const dummyKeypoint = (caption?: string): LegacyKeypoint => {
+export const dummyKeypoint = (caption?: string): PredefinedKeypoint => {
   return {
     caption: caption || 'center',
     order: '1',
     color: 'red',
   };
 };
-export const getDummyPredefinedKeypoint = (id: string): KeypointCollection => {
+export const getDummyPredefinedKeypoint = (
+  id: string
+): PredefinedKeypointCollection => {
   return {
     id,
     collectionName: 'gauge',

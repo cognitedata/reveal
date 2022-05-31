@@ -1,8 +1,4 @@
-import {
-  KeypointCollection,
-  LegacyShape,
-  Tool,
-} from 'src/modules/Review/types';
+import { PredefinedVisionAnnotations, Tool } from 'src/modules/Review/types';
 import { Keypoint, Status } from 'src/api/annotation/types';
 
 export type KeypointCollectionState = {
@@ -14,13 +10,8 @@ export type KeypointCollectionState = {
   // do we have to have selected state here?
 };
 
-type PredefinedAnnotations = {
-  predefinedKeypointCollections: KeypointCollection[];
-  predefinedShapes: LegacyShape[];
-};
-
 export type AnnotatorWrapperState = {
-  predefinedAnnotations: PredefinedAnnotations;
+  predefinedAnnotations: PredefinedVisionAnnotations;
   keypointMap: {
     byId: Record<string, Keypoint>;
     allIds: string[];

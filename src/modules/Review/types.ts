@@ -20,26 +20,29 @@ export type LegacyKeypointItemCollection = {
   selected: boolean;
 };
 
-/** @deprecated */
-export type LegacyKeypoint = {
+export type PredefinedShape = {
+  shapeName: string;
+  color: string;
+  lastUpdated?: number;
+  id?: number;
+};
+export type PredefinedKeypoint = {
   caption: string; // ToDo: update to label
   order: string;
   color: string;
   defaultPosition?: [number, number];
 };
 
-/** @deprecated */
-export type LegacyShape = {
-  shapeName: string;
-  color: string;
+export type PredefinedKeypointCollection = {
+  collectionName: string; // ToDo: change this to label
+  keypoints?: PredefinedKeypoint[];
   lastUpdated?: number;
-  id?: number;
+  id?: ReactText;
 };
 
-/** @deprecated */
-export type LegacyAnnotationCollection = {
-  predefinedKeypoints: KeypointCollection[];
-  predefinedShapes: LegacyShape[];
+export type PredefinedVisionAnnotations = {
+  predefinedKeypointCollections: PredefinedKeypointCollection[];
+  predefinedShapes: PredefinedShape[];
 };
 
 export type FilePreviewProps = {
@@ -64,11 +67,11 @@ export type ReactImageAnnotateWrapperProps = FilePreviewProps & {
   editable?: boolean;
   creatable?: boolean;
   handleAddToFile?: () => void;
-  predefinedAnnotations: LegacyAnnotationCollection;
+  predefinedAnnotations: PredefinedVisionAnnotations;
   lastShapeName: string;
-  lastKeypointCollection: KeypointCollection;
+  lastKeypointCollection: PredefinedKeypointCollection;
   selectedTool: Tool;
-  nextToDoKeypointInCurrentCollection: LegacyKeypoint | null;
+  nextToDoKeypointInCurrentCollection: PredefinedKeypoint | null;
   currentKeypointCollection: LegacyKeypointItemCollection | null;
   isLoading: (status: boolean) => void;
   onSelectTool: (tool: Tool) => void;
@@ -96,13 +99,6 @@ export type VisionOptionType<T> = OptionType<T> & {
   order?: string;
   color?: string;
   icon?: string;
-};
-/** @deprecated */
-export type KeypointCollection = {
-  collectionName: string; // ToDo: change this to label
-  keypoints?: LegacyKeypoint[];
-  lastUpdated?: number;
-  id?: ReactText;
 };
 
 export type Tool = typeof tools[keyof typeof tools];

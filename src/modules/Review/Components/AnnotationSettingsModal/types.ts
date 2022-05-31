@@ -1,7 +1,7 @@
-import { KeypointCollection } from 'src/modules/Review/types';
+import { PredefinedKeypointCollection } from 'src/modules/Review/types';
 
 export type NewKeypoints = Pick<
-  KeypointCollection,
+  PredefinedKeypointCollection,
   'collectionName' | 'lastUpdated'
 > & {
   keypoints: {

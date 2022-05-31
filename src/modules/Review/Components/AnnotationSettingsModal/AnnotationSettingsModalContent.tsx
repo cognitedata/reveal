@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Detail, Tabs, Title } from '@cognite/cogs.js';
 import {
-  LegacyAnnotationCollection,
-  KeypointCollection,
-  LegacyShape,
+  PredefinedVisionAnnotations,
+  PredefinedKeypointCollection,
+  PredefinedShape,
 } from 'src/modules/Review/types';
 import styled from 'styled-components';
 import { Shapes } from './Body/Shapes';
@@ -15,8 +15,8 @@ export const AnnotationSettingsModalContent = ({
   onCancel,
   options,
 }: {
-  predefinedAnnotations: LegacyAnnotationCollection;
-  onDone: (collection: LegacyAnnotationCollection) => void;
+  predefinedAnnotations: PredefinedVisionAnnotations;
+  onDone: (collection: PredefinedVisionAnnotations) => void;
   onCancel: () => void;
   options?: {
     createNew: { text?: string; color?: string };
@@ -28,8 +28,8 @@ export const AnnotationSettingsModalContent = ({
   );
 
   const [newCollection, setNewCollection] =
-    useState<LegacyAnnotationCollection>({
-      predefinedKeypoints: [],
+    useState<PredefinedVisionAnnotations>({
+      predefinedKeypointCollections: [],
       predefinedShapes: [],
     });
 
@@ -44,7 +44,7 @@ export const AnnotationSettingsModalContent = ({
     setIsSaving(false);
   };
 
-  const setUnsavedShapes = (shapes: LegacyShape[]) => {
+  const setUnsavedShapes = (shapes: PredefinedShape[]) => {
     setNewCollection((collection) => ({
       ...collection,
       predefinedShapes: [...shapes],
@@ -52,11 +52,11 @@ export const AnnotationSettingsModalContent = ({
   };
 
   const setUnsavedKeypointCollections = (
-    keypointCollections: KeypointCollection[]
+    keypointCollections: PredefinedKeypointCollection[]
   ) => {
     setNewCollection((collection) => ({
       ...collection,
-      predefinedKeypoints: [...keypointCollections],
+      predefinedKeypointCollections: [...keypointCollections],
     }));
   };
 
@@ -102,9 +102,11 @@ export const AnnotationSettingsModalContent = ({
           <Body>
             <Keypoints
               predefinedKeypointCollections={
-                predefinedAnnotations.predefinedKeypoints
+                predefinedAnnotations.predefinedKeypointCollections
               }
-              unsavedKeypointCollections={newCollection.predefinedKeypoints}
+              unsavedKeypointCollections={
+                newCollection.predefinedKeypointCollections
+              }
               setUnsavedKeypointCollections={setUnsavedKeypointCollections}
               options={options?.activeView === 'keypoint' ? options : undefined}
               creationInProgress={setKeypointsInProgressState}

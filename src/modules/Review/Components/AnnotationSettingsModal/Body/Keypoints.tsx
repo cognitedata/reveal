@@ -5,7 +5,10 @@ import {
   getRandomColor,
   validNewKeypoint,
 } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
-import { LegacyKeypoint, KeypointCollection } from 'src/modules/Review/types';
+import {
+  PredefinedKeypoint,
+  PredefinedKeypointCollection,
+} from 'src/modules/Review/types';
 import styled from 'styled-components';
 import { CaretRightOutlined } from '@ant-design/icons';
 import { Body, Button, Detail, Tooltip } from '@cognite/cogs.js';
@@ -30,10 +33,10 @@ export const Keypoints = ({
   creationInProgress,
   options,
 }: {
-  predefinedKeypointCollections: KeypointCollection[];
-  unsavedKeypointCollections: KeypointCollection[];
+  predefinedKeypointCollections: PredefinedKeypointCollection[];
+  unsavedKeypointCollections: PredefinedKeypointCollection[];
   setUnsavedKeypointCollections: (
-    keypointCollections: KeypointCollection[]
+    keypointCollections: PredefinedKeypointCollection[]
   ) => void;
   creationInProgress: (inProgress: boolean) => void;
   options?: { createNew?: { text?: string } };
@@ -42,13 +45,14 @@ export const Keypoints = ({
     useState<NewKeypoints | undefined>(undefined);
   const keypointPanelRef = useRef<HTMLDivElement | null>(null);
 
-  const allKeypointCollections: (KeypointCollection & { unsaved?: boolean })[] =
-    useMemo(() => {
-      return [
-        ...predefinedKeypointCollections,
-        ...unsavedKeypointCollections.map((sp) => ({ ...sp, unsaved: true })),
-      ];
-    }, [predefinedKeypointCollections, unsavedKeypointCollections]);
+  const allKeypointCollections: (PredefinedKeypointCollection & {
+    unsaved?: boolean;
+  })[] = useMemo(() => {
+    return [
+      ...predefinedKeypointCollections,
+      ...unsavedKeypointCollections.map((sp) => ({ ...sp, unsaved: true })),
+    ];
+  }, [predefinedKeypointCollections, unsavedKeypointCollections]);
 
   const addNewKeypoint = () => {
     if (newKeypoints) {
@@ -105,7 +109,7 @@ export const Keypoints = ({
   const onFinish = () => {
     if (newKeypoints) {
       const { collectionName, keypoints } = newKeypoints;
-      const structuredNewKeypoints: LegacyKeypoint[] = keypoints.map(
+      const structuredNewKeypoints: PredefinedKeypoint[] = keypoints.map(
         (keypoint, index) => ({
           ...keypoint,
           order: `${index + 1}`,

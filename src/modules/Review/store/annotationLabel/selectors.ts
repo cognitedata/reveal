@@ -5,7 +5,7 @@ import { AnnotationLabelState } from './types';
 
 export const nextKeypoint = createSelector(
   (state: AnnotationLabelState) =>
-    state.predefinedAnnotations.predefinedKeypoints,
+    state.predefinedAnnotations.predefinedKeypointCollections,
   (state: AnnotationLabelState) => state.collections.byId,
   (state: AnnotationLabelState) => state.keypointMap.byId,
   (state: AnnotationLabelState) => state.lastCollectionName,
@@ -69,7 +69,8 @@ export const nextShape = createSelector(
 export const nextCollection = createSelector(
   (state: RootState) => state.reviewSlice.annotationSettings.createNew,
   (state: RootState) =>
-    state.annotationLabelReducer.predefinedAnnotations.predefinedKeypoints,
+    state.annotationLabelReducer.predefinedAnnotations
+      .predefinedKeypointCollections,
   (state: RootState) => state.annotationLabelReducer.lastCollectionName,
   (
     annotationSettingsNewLabel,
@@ -99,7 +100,7 @@ export const currentCollection = createSelector(
   (state: AnnotationLabelState) => state.keypointMap.byId,
   (state: AnnotationLabelState) => state.keypointMap.selectedIds,
   (state: AnnotationLabelState) =>
-    state.predefinedAnnotations.predefinedKeypoints,
+    state.predefinedAnnotations.predefinedKeypointCollections,
   (
     fileId,
     lastCollectionId,
@@ -142,7 +143,7 @@ export const keypointsCompleteInCollection = createSelector(
   (state: AnnotationLabelState) => state.collections.byId,
   (state: AnnotationLabelState) => state.keypointMap.byId,
   (state: AnnotationLabelState) =>
-    state.predefinedAnnotations.predefinedKeypoints,
+    state.predefinedAnnotations.predefinedKeypointCollections,
   (lastCollectionId, allCollections, allKeyPoints, collectionTemplate) => {
     if (lastCollectionId) {
       const collection = allCollections[lastCollectionId];

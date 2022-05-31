@@ -12,8 +12,8 @@ import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import {
-  LegacyKeypoint,
-  KeypointCollection,
+  PredefinedKeypoint,
+  PredefinedKeypointCollection,
   VisionOptionType,
 } from 'src/modules/Review/types';
 import { AnnotationEditPopupBody } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup/AnnotationEditPopupBody';
@@ -30,14 +30,14 @@ export const AnnotationEditPopup = (props: {
   collectionOptions?: VisionOptionType<string>[];
   shapeOptions?: VisionOptionType<string>[];
   lastShape?: string;
-  lastCollection: KeypointCollection;
+  lastCollection: PredefinedKeypointCollection;
   onOpenAnnotationSettings: (
     type: string,
     text?: string,
     color?: string
   ) => void;
   popupReference: any;
-  nextKeypoint: LegacyKeypoint | null;
+  nextKeypoint: PredefinedKeypoint | null;
 }) => {
   const {
     region,

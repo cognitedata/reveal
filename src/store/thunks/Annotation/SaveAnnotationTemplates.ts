@@ -1,8 +1,8 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
 import {
-  LegacyAnnotationCollection,
-  KeypointCollection,
-  LegacyShape,
+  PredefinedVisionAnnotations,
+  PredefinedKeypointCollection,
+  PredefinedShape,
 } from 'src/modules/Review/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
@@ -12,8 +12,8 @@ import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 
 export const SaveAnnotationTemplates = createAsyncThunk<
-  LegacyAnnotationCollection,
-  LegacyAnnotationCollection,
+  PredefinedVisionAnnotations,
+  PredefinedVisionAnnotations,
   ThunkConfig
 >('SaveAnnotationTemplates', async (templateData, { dispatch }) => {
   // first retrieve annotationTemplate data from CDF
@@ -22,8 +22,8 @@ export const SaveAnnotationTemplates = createAsyncThunk<
     PopulateAnnotationTemplates()
   );
   const savedConfiguration = unwrapResult(savedConfigurationsResponse);
-  const unsavedShapes: LegacyShape[] = [];
-  const unsavedKeypointCollections: KeypointCollection[] = [];
+  const unsavedShapes: PredefinedShape[] = [];
+  const unsavedKeypointCollections: PredefinedKeypointCollection[] = [];
   const unsavedAnnotations: UnsavedAnnotation[] = [];
 
   templateData.predefinedShapes.forEach((shape, index) => {
@@ -45,28 +45,30 @@ export const SaveAnnotationTemplates = createAsyncThunk<
     }
   });
 
-  templateData.predefinedKeypoints.forEach((keypointCollection, index) => {
-    if (!keypointCollection.id) {
-      if (
-        savedConfiguration.predefinedKeypoints.find(
-          (savedShape) =>
-            savedShape.collectionName.trim() ===
-            keypointCollection.collectionName.trim()
-        ) ||
-        templateData.predefinedKeypoints.findIndex(
-          (savedShape) =>
-            savedShape.collectionName.trim() ===
-            keypointCollection.collectionName.trim()
-        ) !== index
-      ) {
-        throw Error(
-          `Keypoint collection: ${keypointCollection.collectionName} cannot be added since it already exists`
-        );
-      } else {
-        unsavedKeypointCollections.push(keypointCollection);
+  templateData.predefinedKeypointCollections.forEach(
+    (keypointCollection, index) => {
+      if (!keypointCollection.id) {
+        if (
+          savedConfiguration.predefinedKeypointCollections.find(
+            (savedShape) =>
+              savedShape.collectionName.trim() ===
+              keypointCollection.collectionName.trim()
+          ) ||
+          templateData.predefinedKeypointCollections.findIndex(
+            (savedShape) =>
+              savedShape.collectionName.trim() ===
+              keypointCollection.collectionName.trim()
+          ) !== index
+        ) {
+          throw Error(
+            `Keypoint collection: ${keypointCollection.collectionName} cannot be added since it already exists`
+          );
+        } else {
+          unsavedKeypointCollections.push(keypointCollection);
+        }
       }
     }
-  });
+  );
 
   if (unsavedShapes.length) {
     unsavedShapes.forEach((unsavedShape) => {
@@ -101,10 +103,10 @@ export const SaveAnnotationTemplates = createAsyncThunk<
     });
   }
 
-  const keypointCollections: KeypointCollection[] = [
-    ...savedConfiguration.predefinedKeypoints,
+  const keypointCollections: PredefinedKeypointCollection[] = [
+    ...savedConfiguration.predefinedKeypointCollections,
   ];
-  const shapes: LegacyShape[] = [...savedConfiguration.predefinedShapes];
+  const shapes: PredefinedShape[] = [...savedConfiguration.predefinedShapes];
 
   if (unsavedAnnotations.length) {
     const data = { items: unsavedAnnotations };
@@ -134,7 +136,7 @@ export const SaveAnnotationTemplates = createAsyncThunk<
   }
 
   return {
-    predefinedKeypoints: keypointCollections,
+    predefinedKeypointCollections: keypointCollections,
     predefinedShapes: shapes,
   };
 });

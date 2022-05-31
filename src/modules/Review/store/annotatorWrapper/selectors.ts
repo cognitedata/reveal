@@ -4,7 +4,10 @@ import {
   KeypointCollectionState,
 } from 'src/modules/Review/store/annotatorWrapper/type';
 import { RootState } from 'src/store/rootReducer';
-import { LegacyKeypoint, KeypointCollection } from 'src/modules/Review/types';
+import {
+  PredefinedKeypoint,
+  PredefinedKeypointCollection,
+} from 'src/modules/Review/types';
 import { ReviewKeypoint } from 'src/modules/Review/store/review/types';
 
 export const nextKeypoint = createSelector(
@@ -24,7 +27,8 @@ export const nextKeypoint = createSelector(
 
       if (activeKeypoints && activeKeypoints.length) {
         const lastKeyPointIndex = activeKeypoints.findIndex(
-          (keypoint: LegacyKeypoint) => keypoint.caption === lastKeyPointLabel
+          (keypoint: PredefinedKeypoint) =>
+            keypoint.caption === lastKeyPointLabel
         );
         if (
           lastKeyPointIndex &&
@@ -116,7 +120,7 @@ export const currentCollection = createSelector(
         })
       );
 
-      const predefinedCollection: KeypointCollection | undefined =
+      const predefinedCollection: PredefinedKeypointCollection | undefined =
         predefinedKeypointCollections.find(
           (template) => template.collectionName === collection.label
         );
@@ -149,7 +153,7 @@ export const keypointsCompleteInCollection = createSelector(
     if (lastCollectionId) {
       const collection: KeypointCollectionState =
         allCollections[lastCollectionId];
-      const predefinedCollection: KeypointCollection | undefined =
+      const predefinedCollection: PredefinedKeypointCollection | undefined =
         predefinedKeypointCollections.find(
           (template) => template.collectionName === collection.label
         );

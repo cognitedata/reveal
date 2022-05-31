@@ -25,7 +25,7 @@ import {
   showAnnotationSettingsModel,
 } from 'src/modules/Review/store/reviewSlice';
 import {
-  LegacyAnnotationCollection,
+  PredefinedVisionAnnotations,
   AnnotationTableItem,
   Tool,
 } from 'src/modules/Review/types';
@@ -162,13 +162,13 @@ export const ImagePreview = ({
   };
 
   const onDoneAnnotationSettings = async (
-    newCollection: LegacyAnnotationCollection | null
+    newCollection: PredefinedVisionAnnotations | null
   ) => {
     try {
       if (newCollection) {
         if (
           newCollection.predefinedShapes.length ||
-          newCollection.predefinedKeypoints.length
+          newCollection.predefinedKeypointCollections.length
         ) {
           await dispatch(SaveAnnotationTemplates(newCollection)).unwrap();
           if (!isEmpty(annotationSettingsState.createNew)) {
@@ -185,12 +185,12 @@ export const ImagePreview = ({
               );
             } else if (
               annotationSettingsState.activeView === 'keypoint' &&
-              newCollection.predefinedKeypoints.length > 0
+              newCollection.predefinedKeypointCollections.length > 0
             ) {
               dispatch(
                 setLastCollectionName(
-                  newCollection.predefinedKeypoints[
-                    newCollection.predefinedKeypoints.length - 1
+                  newCollection.predefinedKeypointCollections[
+                    newCollection.predefinedKeypointCollections.length - 1
                   ].collectionName
                 )
               );

@@ -19,7 +19,8 @@ export const CreateKeypointAnnotation = createAsyncThunk<
     const selectedCollectionIds = state.collections.selectedIds;
     const allKeypoints = state.keypointMap.byId;
     const selectedKeypointIds = state.keypointMap.selectedIds;
-    const collectionTemplates = state.predefinedAnnotations.predefinedKeypoints;
+    const collectionTemplates =
+      state.predefinedAnnotations.predefinedKeypointCollections;
 
     const collection = {
       ...allCollections[currentCollectionId],

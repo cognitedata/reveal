@@ -81,8 +81,8 @@ export const ReactImageAnnotateWrapper = ({
       annotationLabelReducer.keepUnsavedRegion
   );
 
-  const collectionOptions = predefinedAnnotations?.predefinedKeypoints.map(
-    (keypoint) => ({
+  const collectionOptions =
+    predefinedAnnotations?.predefinedKeypointCollections.map((keypoint) => ({
       value: keypoint.collectionName,
       label: keypoint.collectionName,
       icon: AnnotationUtilsV1.getIconType({
@@ -94,8 +94,7 @@ export const ReactImageAnnotateWrapper = ({
         VisionDetectionModelType.ObjectDetection,
         { keypoint: true }
       ),
-    })
-  );
+    }));
   const shapeOptions = predefinedAnnotations?.predefinedShapes.map((shape) => ({
     value: shape.shapeName,
     label: shape.shapeName,

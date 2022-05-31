@@ -258,7 +258,7 @@ describe('Test annotationLabel reducer', () => {
       const previousState = {
         ...initialState,
         predefinedAnnotations: {
-          predefinedKeypoints: [dummyKeypointCollection('c1')],
+          predefinedKeypointCollections: [dummyKeypointCollection('c1')],
           predefinedShapes: [],
         },
       };
@@ -279,7 +279,7 @@ describe('Test annotationLabel reducer', () => {
       const previousState = {
         ...initialState,
         predefinedAnnotations: {
-          predefinedKeypoints: [dummyKeypointCollection('c1')],
+          predefinedKeypointCollections: [dummyKeypointCollection('c1')],
           predefinedShapes: [],
         },
       };
@@ -343,7 +343,7 @@ describe('Test annotationLabel reducer', () => {
           selectedIds: ['k1'],
         },
         predefinedAnnotations: {
-          predefinedKeypoints: [dummyKeypointCollection('c1')],
+          predefinedKeypointCollections: [dummyKeypointCollection('c1')],
           predefinedShapes: [],
         },
       };
@@ -460,14 +460,14 @@ describe('Test annotationLabel reducer', () => {
         const action = {
           type,
           payload: {
-            predefinedKeypoints: [keypointCollection],
+            predefinedKeypointCollections: [keypointCollection],
             predefinedShapes: [shape],
           },
         };
         expect(reducer(initialState, action)).toEqual({
           ...initialState,
           predefinedAnnotations: {
-            predefinedKeypoints: [keypointCollection],
+            predefinedKeypointCollections: [keypointCollection],
             predefinedShapes: [shape],
           },
         });

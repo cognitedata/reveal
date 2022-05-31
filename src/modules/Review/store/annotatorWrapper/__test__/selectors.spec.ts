@@ -15,7 +15,7 @@ import {
   AnnotatorWrapperState,
   KeypointCollectionState,
 } from 'src/modules/Review/store/annotatorWrapper/type';
-import { KeypointCollection } from 'src/modules/Review/types';
+import { PredefinedKeypointCollection } from 'src/modules/Review/types';
 import { Keypoint } from 'src/api/annotation/types';
 import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
@@ -36,7 +36,7 @@ describe('Test annotationLabel selectors', () => {
     });
 
     test('Should return first point in predefined collection since lastKeyPoint is not set', () => {
-      const predefinedKeypointCollection: KeypointCollection =
+      const predefinedKeypointCollection: PredefinedKeypointCollection =
         getDummyPredefinedKeypoint('123');
 
       const previousState: AnnotatorWrapperState = {
@@ -50,7 +50,7 @@ describe('Test annotationLabel selectors', () => {
     });
 
     test('Should return next point in predefined collection since lastKeyPoint is set', () => {
-      const predefinedKeypointCollection: KeypointCollection =
+      const predefinedKeypointCollection: PredefinedKeypointCollection =
         getDummyPredefinedKeypoint('123');
 
       const k1Id = generateKeypointId('10', 'left');
@@ -88,7 +88,7 @@ describe('Test annotationLabel selectors', () => {
     });
 
     test('Should return first point in predefined collection since lastKeyPoint is set to last keypoint in predefined collection', () => {
-      const predefinedKeypointCollection: KeypointCollection =
+      const predefinedKeypointCollection: PredefinedKeypointCollection =
         getDummyPredefinedKeypoint('123');
 
       const k1Id = generateKeypointId('10', 'left');
@@ -130,7 +130,7 @@ describe('Test annotationLabel selectors', () => {
     });
 
     test('Should return first point in predefined collection for invalid last keypoint label', () => {
-      const predefinedKeypointCollection: KeypointCollection =
+      const predefinedKeypointCollection: PredefinedKeypointCollection =
         getDummyPredefinedKeypoint('123');
 
       const k1Id = generateKeypointId('10', 'left');
@@ -362,7 +362,7 @@ describe('Test annotationLabel selectors', () => {
   });
 
   describe('Test currentCollection selector', () => {
-    const predefinedKeypointCollection: KeypointCollection =
+    const predefinedKeypointCollection: PredefinedKeypointCollection =
       getDummyPredefinedKeypoint('123');
 
     const k1Id = generateKeypointId('10', 'left');
@@ -433,7 +433,7 @@ describe('Test annotationLabel selectors', () => {
   });
 
   describe('Test keypointsCompleteInCollection selector', () => {
-    const predefinedKeypointCollection: KeypointCollection =
+    const predefinedKeypointCollection: PredefinedKeypointCollection =
       getDummyPredefinedKeypoint('123');
 
     const k1Id = generateKeypointId('10', 'left');
