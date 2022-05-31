@@ -6,10 +6,10 @@ import * as THREE from 'three';
 import { CadModelFactory } from './CadModelFactory';
 
 import { CadMaterialManager } from '@reveal/rendering';
-import { GeometryFilter } from './GeometryFilter';
 import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, BlobOutputMetadata } from '@reveal/modeldata-api';
 
 import { It, Mock } from 'moq.ts';
+import { GeometryFilter } from './types';
 
 describe('CadModelFactory', () => {
   let materialManager: CadMaterialManager;
