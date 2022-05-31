@@ -65,7 +65,11 @@ export const RelationshipTable = ({
           {...selectionMode}
         >
           {props => (
-            <AssetTable onRowClick={el => onItemClicked(el.id)} {...props} />
+            <AssetTable
+              onRowClick={el => onItemClicked(el.id)}
+              {...props}
+              relatedResourceType="relationship"
+            />
           )}
         </ResultTableLoader>
       );

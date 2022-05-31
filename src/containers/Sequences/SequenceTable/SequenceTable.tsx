@@ -1,8 +1,15 @@
 import React from 'react';
 import { Sequence } from '@cognite/sdk';
 import { Table, TableProps } from 'components';
+import { RelationshipLabels } from 'types';
+import { getColumnsWithRelationshipLabels } from 'utils';
 
-export const SequenceTable = (props: TableProps<Sequence>) => {
+type SequeceWithRelationshipLabels = Sequence & RelationshipLabels;
+export const SequenceTable = (
+  props: TableProps<SequeceWithRelationshipLabels>
+) => {
+  const { relatedResourceType } = props;
+
   const columns = [
     Table.Columns.name,
     Table.Columns.description,
@@ -13,5 +20,10 @@ export const SequenceTable = (props: TableProps<Sequence>) => {
     Table.Columns.createdTime,
   ];
 
-  return <Table<Sequence> columns={columns} {...props} />;
+  const updatedColumns = getColumnsWithRelationshipLabels(
+    columns,
+    relatedResourceType === 'relationship'
+  );
+
+  return <Table<Sequence> columns={updatedColumns} {...props} />;
 };

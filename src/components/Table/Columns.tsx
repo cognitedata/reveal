@@ -1,9 +1,11 @@
 import React from 'react';
 import { Column } from 'react-base-table';
-import { Body } from '@cognite/cogs.js';
+import { Body, Flex, Tag, Tooltip } from '@cognite/cogs.js';
 import { TimeDisplay } from 'components';
 import { RelationshipCell } from 'containers/Relationships/RelationshipCell';
 import { ResourceItem } from 'types';
+import styled from 'styled-components';
+import { uniqueId } from 'lodash';
 
 export const ResourceTableColumns = {
   name: {
@@ -11,6 +13,21 @@ export const ResourceTableColumns = {
     title: 'Name',
     dataKey: 'name',
     width: 200,
+  },
+  relationshipLabels: {
+    key: 'relationshipLabels',
+    title: 'Relationship Labels',
+    dataKey: 'relationshipLabels',
+    width: 250,
+    cellRenderer: ({ rowData }: { rowData: any }) => (
+      <Flex gap={2} wrap="wrap">
+        {rowData.relationshipLabels?.map((label: string) => (
+          <Tooltip content={label} key={uniqueId()}>
+            <StyledTag style={{ display: 'block' }}>{label}</StyledTag>
+          </Tooltip>
+        ))}
+      </Flex>
+    ),
   },
   root: {
     key: 'root',
@@ -106,3 +123,10 @@ export const ResourceTableColumns = {
     ),
   },
 };
+
+const StyledTag = styled(Tag)`
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;

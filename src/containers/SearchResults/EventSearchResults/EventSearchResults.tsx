@@ -51,7 +51,11 @@ export const EventSearchResults = ({
         {...extraProps}
       >
         {props => (
-          <EventTable {...props} onRowClick={event => onClick(event)} />
+          <EventTable
+            {...props}
+            onRowClick={event => onClick(event)}
+            relatedResourceType={relatedResourceType}
+          />
         )}
       </ResultTableLoader>
     </EnsureNonEmptyResource>

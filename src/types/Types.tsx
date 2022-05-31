@@ -114,3 +114,7 @@ export const isModelRunning = (s?: ModelStatus) => {
 };
 
 export const LocalStorageFileContextKey = 'LocalStorageFileContextKey';
+
+export interface RelationshipLabels {
+  relationshipLabels?: string[];
+}

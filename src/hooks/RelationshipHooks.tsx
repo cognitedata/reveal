@@ -38,6 +38,24 @@ export type Relationship = {
   targetExternalId: string;
   sourceType: ResourceType;
   sourceExternalId: string;
+  labels: {
+    externalId: string;
+  }[];
+};
+
+const extractRelationshipLabels = (
+  pages: { items: Relationship[] }[] = []
+): string[][] => {
+  const labels = pages.reduce(
+    (accl, page) =>
+      accl.concat(
+        page.items.map(({ labels: rlabels }) =>
+          rlabels.map(label => label.externalId)
+        )
+      ),
+    [] as string[][]
+  );
+  return labels;
 };
 
 export const useRelationships = (externalId?: string, type?: ResourceType) => {
@@ -136,6 +154,7 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
     { sourceExternalIds: [resourceExternalId], targetTypes: [type] },
     { enabled: fetchEnabled, staleTime: 60 * 1000 }
   );
+
   const sourceItems = useMemo(
     () => extractExternalIds(sourceData?.pages, 'source'),
     [sourceData]
@@ -149,6 +168,7 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
     }
   );
 
+  const sourceRelationshipLabels = extractRelationshipLabels(sourceData?.pages);
   const fetchTarget = !!sourceParams && !sourceParams.hasNextPage;
 
   const { data: targetData, ...targetParams } = useInfiniteList<Relationship>(
@@ -161,6 +181,8 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
       staleTime: 60 * 1000,
     }
   );
+
+  const targetRelationshipLabels = extractRelationshipLabels(targetData?.pages);
   const targetItems = useMemo(
     () => extractExternalIds(targetData?.pages, 'target'),
     [targetData]
@@ -175,9 +197,29 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
   );
 
   const rest = sourceParams.hasNextPage ? sourceParams : targetParams;
+  const sourceResourcesWithRelationshipLabels = sourceResources.map(
+    (item, idx) => ({
+      ...item,
+      ...(sourceRelationshipLabels && {
+        relationshipLabels: sourceRelationshipLabels[idx],
+      }),
+    })
+  );
 
+  const targetResourcesWithRelationshipLabels = targetResources.map(
+    (item, idx) => ({
+      ...item,
+      ...(targetRelationshipLabels && {
+        relationshipLabels: targetRelationshipLabels[idx],
+      }),
+    })
+  );
   return {
-    items: [...sourceResources, ...targetResources] as T[],
+    items: [
+      ...sourceResourcesWithRelationshipLabels,
+      ...targetResourcesWithRelationshipLabels,
+    ],
+
     ...rest,
   };
 };

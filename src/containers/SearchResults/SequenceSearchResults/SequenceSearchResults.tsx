@@ -54,6 +54,7 @@ export const SequenceSearchResults = ({
           <SequenceTable
             {...props}
             onRowClick={sequence => onClick(sequence)}
+            relatedResourceType={relatedResourceType}
           />
         )}
       </ResultTableLoader>

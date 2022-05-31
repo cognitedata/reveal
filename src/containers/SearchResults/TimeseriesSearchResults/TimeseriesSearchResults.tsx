@@ -110,6 +110,7 @@ export const TimeseriesSearchResults = ({
                   return true;
                 }}
                 dateRange={dateRange || stateDateRange}
+                relatedResourceType={relatedResourceType}
                 onDateRangeChange={onDateRangeChange || stateSetDateRange}
               />
             )

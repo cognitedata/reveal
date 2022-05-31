@@ -1,8 +1,14 @@
 import React from 'react';
 import { CogniteEvent } from '@cognite/sdk';
 import { Table, TableProps } from 'components';
+import { getColumnsWithRelationshipLabels } from 'utils';
 
-export const EventTable = (props: TableProps<CogniteEvent>) => {
+interface EventWithRelationshipLabels extends CogniteEvent {
+  relationshipLabels?: string[];
+}
+export const EventTable = (props: TableProps<EventWithRelationshipLabels>) => {
+  const { relatedResourceType } = props;
+
   const columns = [
     Table.Columns.type,
     Table.Columns.description,
@@ -13,5 +19,12 @@ export const EventTable = (props: TableProps<CogniteEvent>) => {
     Table.Columns.createdTime,
   ];
 
-  return <Table<CogniteEvent> columns={columns} {...props} />;
+  const isRelationshipTable = relatedResourceType === 'relationship';
+
+  return (
+    <Table<CogniteEvent>
+      columns={getColumnsWithRelationshipLabels(columns, isRelationshipTable)}
+      {...props}
+    />
+  );
 };

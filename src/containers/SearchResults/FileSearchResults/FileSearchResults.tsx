@@ -77,6 +77,7 @@ export const FileSearchResults = ({
                   onClick(file);
                   return true;
                 }}
+                relatedResourceType={relatedResourceType}
               />
             )
           }

@@ -5,11 +5,14 @@ import { TimeseriesChart } from 'containers/Timeseries';
 import { Body } from '@cognite/cogs.js';
 import { DateRangeProps } from 'CommonProps';
 import { TIME_SELECT } from 'containers';
+import { RelationshipLabels } from 'types';
+import { getColumnsWithRelationshipLabels } from 'utils';
 
+export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;
 export const TimeseriesTable = ({
   dateRange = TIME_SELECT['1Y'].getTime(),
   ...props
-}: TableProps<Timeseries> & DateRangeProps) => {
+}: TableProps<TimeseriesWithRelationshipLabels> & DateRangeProps) => {
   const startTime = dateRange[0];
   const endTime = dateRange[1];
   const sparkLineColumn = {
@@ -50,6 +53,9 @@ export const TimeseriesTable = ({
       );
     },
   };
+
+  const { relatedResourceType } = props;
+
   const columns = [
     { ...Table.Columns.name, lines: 3 },
     { ...Table.Columns.description, lines: 3 },
@@ -60,10 +66,14 @@ export const TimeseriesTable = ({
     Table.Columns.lastUpdatedTime,
     Table.Columns.createdTime,
   ];
+  const updatedColumns = getColumnsWithRelationshipLabels(
+    columns,
+    relatedResourceType === 'relationship'
+  );
 
   return (
     <Table<Timeseries>
-      columns={columns}
+      columns={updatedColumns}
       rowHeight={100}
       {...props}
       dateRange={dateRange}

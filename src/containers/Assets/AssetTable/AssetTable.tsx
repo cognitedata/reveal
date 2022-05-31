@@ -2,7 +2,10 @@ import React from 'react';
 import { Asset } from '@cognite/sdk';
 import { Button } from '@cognite/cogs.js';
 import { TableProps, Table } from 'components';
+
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { getColumnsWithRelationshipLabels } from 'utils';
+import { RelationshipLabels } from 'types';
 
 const ParentCell = ({
   rootId,
@@ -37,7 +40,8 @@ const ParentCell = ({
   );
 };
 
-export type AssetTableProps = TableProps<Asset>;
+type AssetWithRelationshipLabels = RelationshipLabels & Asset;
+export type AssetTableProps = TableProps<AssetWithRelationshipLabels>;
 
 export const AssetTable = (props: AssetTableProps) => {
   const { onRowClick = () => {} } = props;
@@ -54,5 +58,12 @@ export const AssetTable = (props: AssetTableProps) => {
     },
   ];
 
-  return <Table<Asset> columns={columns} {...props} />;
+  const isRelationshipTable = props?.relatedResourceType === 'relationship';
+
+  return (
+    <Table<AssetWithRelationshipLabels>
+      columns={getColumnsWithRelationshipLabels(columns, isRelationshipTable)}
+      {...props}
+    />
+  );
 };
