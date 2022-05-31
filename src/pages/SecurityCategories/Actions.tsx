@@ -53,9 +53,7 @@ export default function Actions({ id }: { id: number }) {
                 okText: t('text-delete'),
                 content: (
                   <>
-                    {t('confirm-delete-group', {
-                      groupId: <strong>{id}</strong>,
-                    })}
+                    {t('confirm-delete-group')} <strong>{id}</strong>?
                   </>
                 ),
                 onOk: () => deleteCategory(),

@@ -80,9 +80,8 @@ export default function Actions({ id, name }: { id: number; name: string }) {
                 okText: t('text-delete'),
                 content: (
                   <>
-                    {t('confirm-delete-service-account', {
-                      serviveAccount: <strong>{name}</strong>,
-                    })}
+                    {t('confirm-delete-service-account')}
+                    <strong>{name}</strong>?
                   </>
                 ),
                 onOk: () => mutate(),

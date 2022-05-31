@@ -138,9 +138,8 @@ export default function Groups() {
         message={t('capability-missing')}
         description={
           <>
-            {t('capability-missing-desc', {
-              capability: <strong>groupsAcl:READ</strong>,
-            })}
+            {t('capability-missing-desc')} <strong>groupsAcl:READ</strong>{' '}
+            {t('capability-missing-desc')}
           </>
         }
       />
@@ -205,7 +204,7 @@ export default function Groups() {
       },
     },
     {
-      title: t('capabilities'),
+      title: t('capability_other'),
       key: 'capability',
       render(g: Group) {
         if (g.capabilities && g.capabilities.length > 0) {

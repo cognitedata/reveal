@@ -105,7 +105,7 @@ export default function GroupDrawer({ group, onClose }: Props) {
         <Form.Item
           hasFeedback={isLoading}
           validateStatus="validating"
-          label={t('capability')}
+          label={t('capability_one')}
           extra={
             <>
               {t('capability-info')}{' '}

@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 import styled from 'styled-components';
 import { Title, Icon, Loader } from '@cognite/cogs.js';
-import { Menu } from 'antd';
+import Menu from 'antd/lib/menu';
 import { createLink } from '@cognite/cdf-utilities';
 import APIKeys from 'pages/APIKeys';
 import Groups from 'pages/Groups';
@@ -59,7 +59,7 @@ export default function () {
           onClick={() => client.invalidateQueries()}
         />
       </Title>
-      <StyledMeny
+      <Menu
         mode="horizontal"
         selectedKeys={[params.page || 'groups']}
         onClick={(e) => {
@@ -67,6 +67,7 @@ export default function () {
             history.push(createLink(`/${params.path}/${e.key}`));
           }
         }}
+        style={{ fontSize: '16px', marginBottom: '20px' }}
       >
         <Menu.Item disabled={!groupsRead} key="groups">
           {t('groups')}
@@ -82,7 +83,7 @@ export default function () {
           </Menu.Item>
         )}
         <Menu.Item key="security-categories" disabled={!secCatRead}>
-          {'security-categories'}
+          {t('security-categories')}
         </Menu.Item>
         <Menu.Item key="oidc" disabled={!projectsRead}>
           {t('open-id-connect')}
@@ -92,7 +93,7 @@ export default function () {
             {t('identity-provider-configuration')}
           </Menu.Item>
         )}
-      </StyledMeny>
+      </Menu>
       <Switch>
         <Redirect
           from="/:url*(/+)"
@@ -135,9 +136,4 @@ export default function () {
 
 const StyledAppContainerDiv = styled.div`
   padding: 18px 44px;
-`;
-
-const StyledMeny = styled(Menu)`
-  font-size: 16px;
-  margin-bottom: 20px;
 `;

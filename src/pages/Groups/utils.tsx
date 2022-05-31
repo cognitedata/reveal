@@ -98,7 +98,7 @@ const capabilityTypeGroups = [
     items: ['datasets', 'securitycategories'],
   },
   {
-    name: 'Permissions to access mgmt.',
+    name: 'Permissions to access management.',
     items: ['apikeys', 'groups', 'users', 'projects', 'sessions'],
   },
   {

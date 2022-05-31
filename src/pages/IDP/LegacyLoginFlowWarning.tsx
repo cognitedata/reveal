@@ -76,16 +76,6 @@ const LegacyLoginFlowWarning = () => {
     disableLegacyLoginFlow();
   };
 
-  const cdfDocsLink = (
-    <a
-      href="https://docs.cognite.com/cdf/access/"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      {t('legacy-login-flow-new-auth-flow')}
-    </a>
-  );
-
   if (!writeOk || !isAuthConfigurationFetched || !areGroupsFetched) {
     return <></>;
   }
@@ -94,7 +84,19 @@ const LegacyLoginFlowWarning = () => {
     <CustomInfo
       type="danger"
       alertTitle={t('legacy-login-flow-deprecate')}
-      alertMessage={<p>{t('legacy-login-flow-info', { link: cdfDocsLink })}</p>}
+      alertMessage={
+        <p>
+          {t('legacy-login-flow-info')}{' '}
+          <a
+            href="https://docs.cognite.com/cdf/access/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t('legacy-login-flow-new-auth-flow')}{' '}
+          </a>
+          {t('legacy-login-flow-info-more')}
+        </p>
+      }
       alertBtnLabel={t('legacy-login-flow-deprecate')}
       alertBtnDisabled={!writeOk || !canLegacyLoginFlowBeDisabled}
       helpEnabled
@@ -109,9 +111,8 @@ const LegacyLoginFlowWarning = () => {
           {t('legacy-login-flow-login-using-oidc')}
           <br />
           <StyledIcon $success={hasAnyValidGroup} />
-          {t('legacy-login-flow-valid-group-info', {
-            capability: <b>groups:create</b>,
-          })}
+          {t('legacy-login-flow-valid-group-info')} <b>groups:create</b>{' '}
+          {t('capability_one').toLocaleLowerCase()}
         </p>
       }
       confirmTitle={t('legacy-login-flow-deprecate')}

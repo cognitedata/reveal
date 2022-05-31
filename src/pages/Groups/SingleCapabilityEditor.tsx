@@ -17,7 +17,7 @@ import ScopesSelector from './ScopesSelector';
 import ActionsSelector from './ActionsSelector';
 import CapabilityTypeSelector from './CapabilityTypeSelector';
 
-import { TranslationKeys, useTranslation } from 'common/i18n';
+import { useTranslation } from 'common/i18n';
 
 interface SingleCapabilityEditorProps {
   visible: boolean;
@@ -31,7 +31,7 @@ type ValidateStatus = 'success' | 'warning' | 'error' | 'validating' | '';
 interface FormValue<T> {
   value: T;
   validateStatus: ValidateStatus;
-  errorMessage: string | TranslationKeys;
+  errorMessage: string;
 }
 
 const initialFormValue = <T extends {}>(value: T): FormValue<T> => ({
@@ -70,19 +70,20 @@ const validateActions = (
   };
 };
 
+// TODO CDFUX-1572 - figure out translation
 const validateScope = (value: any, capability: string): FormValue<object> => {
   if (value.assetIdScope && value.assetIdScope.subtreeIds.length === 0) {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'single-capability-validate-asset' as TranslationKeys,
+      errorMessage: 'Select at least one asset',
     };
   }
   if (value.assetRootIdScope && value.assetRootIdScope.rootIds.length === 0) {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'single-capability-validate-root-asset' as TranslationKeys,
+      errorMessage: 'Select at least one root asset',
     };
   }
   if (
@@ -93,7 +94,7 @@ const validateScope = (value: any, capability: string): FormValue<object> => {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'single-capability-validate-time-series' as TranslationKeys,
+      errorMessage: 'Select at least one time series',
     };
   }
   if (
@@ -104,8 +105,7 @@ const validateScope = (value: any, capability: string): FormValue<object> => {
     return {
       value,
       validateStatus: 'error',
-      errorMessage:
-        'single-capability-validate-security-category' as TranslationKeys,
+      errorMessage: 'Select at least one security category',
     };
   }
   if (
@@ -116,8 +116,7 @@ const validateScope = (value: any, capability: string): FormValue<object> => {
     return {
       value,
       validateStatus: 'error',
-      errorMessage:
-        'single-capability-validate-extraction-pipeline' as TranslationKeys,
+      errorMessage: 'Select at least one extraction pipeline',
     };
   }
   if (
@@ -128,14 +127,14 @@ const validateScope = (value: any, capability: string): FormValue<object> => {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'single-capability-validate-dataset' as TranslationKeys,
+      errorMessage: 'Select at least one data set',
     };
   }
   if (value.datasetScope && value.datasetScope.ids.length === 0) {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'single-capability-validate-dataset' as TranslationKeys,
+      errorMessage: 'Select at least one data set',
     };
   }
   if (
@@ -145,22 +144,21 @@ const validateScope = (value: any, capability: string): FormValue<object> => {
     return {
       value,
       validateStatus: 'error',
-      errorMessage:
-        'single-capability-validate-extraction-pipeline' as TranslationKeys,
+      errorMessage: 'Select at least one extraction pipeline',
     };
   }
   if (value.partition && value.partition.partitionIds.length === 0) {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'single-capability-validate-partition' as TranslationKeys,
+      errorMessage: 'Select at least one partition',
     };
   }
   if (value.tableScope && isEmpty(value.tableScope)) {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'single-capability-validate-table' as TranslationKeys,
+      errorMessage: 'Select at least one table',
     };
   }
   return {
@@ -205,11 +203,7 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
   };
 
   const handleScopeChange = (value: object) => {
-    let validationResult = validateScope(value, capabilityType.value);
-    validationResult = {
-      ...validationResult,
-      errorMessage: t(validationResult.errorMessage as TranslationKeys),
-    };
+    const validationResult = validateScope(value, capabilityType.value);
     setScope(validationResult);
   };
 
