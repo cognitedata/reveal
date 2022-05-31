@@ -33,7 +33,7 @@ type I18nWrapperProps = {
   locizeProjectId?: string;
 };
 
-const setupTranslations = (
+const initializeTranslations = (
   currentLanguage: string,
   translations: Resource,
   defaultNamespace: string,
@@ -105,14 +105,15 @@ const I18nInitWrapper = ({
   translations,
   locizeProjectId,
 }: Omit<I18nWrapperProps, 'flagProviderProps'>): JSX.Element => {
-  const [didLoadTranslations, setDidLoadTranslations] = useState(false);
+  const [didInitializedTranslations, setDidInitializedTranslations] =
+    useState(false);
   const [error, setError] = useState<Error | undefined>();
 
   const { data: language, isClientReady } = useLanguage();
 
   useEffect(() => {
-    if (isClientReady && !didLoadTranslations) {
-      setupTranslations(
+    if (isClientReady && !didInitializedTranslations) {
+      initializeTranslations(
         language,
         translations,
         defaultNamespace,
@@ -120,7 +121,7 @@ const I18nInitWrapper = ({
         locizeProjectId
       )
         .then(() => {
-          setDidLoadTranslations(true);
+          setDidInitializedTranslations(true);
         })
         .catch((e) => {
           setError(e);
@@ -128,7 +129,7 @@ const I18nInitWrapper = ({
     }
   }, [
     defaultNamespace,
-    didLoadTranslations,
+    didInitializedTranslations,
     useLocizeBackend,
     isClientReady,
     language,
@@ -140,7 +141,7 @@ const I18nInitWrapper = ({
     return errorScreen(error);
   }
 
-  if (!didLoadTranslations || !i18next) {
+  if (!didInitializedTranslations || !i18next) {
     return <>{loadingScreen}</>;
   }
 
