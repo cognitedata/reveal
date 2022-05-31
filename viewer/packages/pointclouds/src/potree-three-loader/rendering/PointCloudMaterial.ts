@@ -18,7 +18,6 @@ import {
   WebGLRenderer
 } from 'three';
 import {
-  COLOR_BLACK,
   COLOR_WHITE,
   DEFAULT_HIGHLIGHT_COLOR,
   DEFAULT_MAX_POINT_SIZE,
