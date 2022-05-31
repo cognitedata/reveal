@@ -125,9 +125,17 @@ function initializeBlendingOptions(blendOptions: BlendOptions | undefined) {
   const blending = blendOptions !== undefined ? THREE.CustomBlending : THREE.NormalBlending;
   const blendDst = blendOptions?.blendDestination ?? THREE.OneMinusSrcAlphaFactor;
   const blendSrc = blendOptions?.blendSource ?? THREE.SrcAlphaFactor;
-  const blendSrcAlpha = blendOptions?.blendSourceAlpha ?? undefined; // Uses blendSrc value if undefined
-  const blendDstAlpha = blendOptions?.blendDestinationAlpha ?? undefined; // Uses blendDst value if undefined
-  return { blending, blendDst, blendSrc, blendSrcAlpha, blendDstAlpha };
+  const blendSrcAlpha = blendOptions?.blendSourceAlpha ?? null; // Uses blendSrc value if undefined
+  const blendDstAlpha = blendOptions?.blendDestinationAlpha ?? null; // Uses blendDst value if undefined
+  return {
+    blending,
+    blendDst,
+    blendSrc,
+    // TODO 2022-05-28 larsmoa: @types/three@0.140.0 wrongly defines these as type 'number | undefined', while
+    // the correct type is 'number | null' (https://threejs.org/docs/index.html?q=Material#api/en/materials/Material.blendSrcAlpha)
+    blendSrcAlpha: blendSrcAlpha as number | undefined,
+    blendDstAlpha: blendDstAlpha as number | undefined
+  };
 }
 
 export enum RenderLayer {
