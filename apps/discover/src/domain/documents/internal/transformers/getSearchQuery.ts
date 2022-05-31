@@ -1,3 +1,4 @@
+import { DOCUMENT_KEYS } from 'dataLayers/documents/keys';
 import isEmpty from 'lodash/isEmpty';
 import set from 'lodash/set';
 import { adaptLocalEpochToUTC } from 'utils/date/adaptLocalEpochToUTC';
@@ -117,7 +118,7 @@ export const getSearchQuery = (query: SearchQueryFull) => {
     if (timeFilters.min && timeFilters.max) {
       appendFilter({
         range: {
-          property: ['modifiedTime'],
+          property: DOCUMENT_KEYS.MODIFIED_TIME,
           gte: timeFilters.min,
           lte: timeFilters.max,
         },
@@ -133,7 +134,7 @@ export const getSearchQuery = (query: SearchQueryFull) => {
     if (timeFilters.min && timeFilters.max) {
       appendFilter({
         range: {
-          property: ['createdTime'],
+          property: DOCUMENT_KEYS.CREATED_TIME,
           gte: timeFilters.min,
           lte: timeFilters.max,
         },

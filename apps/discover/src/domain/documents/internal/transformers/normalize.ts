@@ -8,6 +8,7 @@ import { getFilepath } from './getFilepath';
 import { getFilesize } from './getFilesize';
 import { getFullFilepath } from './getFullFilepath';
 import { getModifiedDate } from './getModifiedDate';
+import { getModifiedDateDisplay } from './getModifiedDateDisplay';
 import { getTitle } from './getTitle';
 
 /*
@@ -32,7 +33,7 @@ export const normalize = (rawAPIDoc: Document): DocumentType => {
     created: getCreatedDate(rawAPIDoc),
     modified: getModifiedDate(rawAPIDoc),
     createdDisplay: getCreatedDateDisplay(rawAPIDoc),
-    modifiedDisplay: getCreatedDateDisplay(rawAPIDoc),
+    modifiedDisplay: getModifiedDateDisplay(rawAPIDoc),
     fullFilePath: getFullFilepath(rawAPIDoc),
     doc: {
       id: String(rawAPIDoc.id),
