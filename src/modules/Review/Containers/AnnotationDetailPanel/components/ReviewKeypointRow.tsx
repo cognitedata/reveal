@@ -9,7 +9,7 @@ import {
   KeyboardShortCutSelectable,
   SidePanelRow,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/components/common';
-import { ReviewKeypoint } from 'src/modules/Review/store/review/types';
+import { ReviewKeypoint } from 'src/modules/Review/types';
 import { Col, Row } from '@cognite/cogs.js';
 
 /**

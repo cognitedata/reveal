@@ -7,8 +7,12 @@ import {
   AnnotationStatus,
   KeypointItem,
 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { VisionAnnotationDataType } from 'src/modules/Common/types';
-import { VisionReviewAnnotation } from 'src/modules/Review/store/review/types';
+import {
+  UnsavedVisionAnnotation,
+  VisionAnnotation,
+  VisionAnnotationDataType,
+} from 'src/modules/Common/types';
+import { ImageKeypointCollection, Keypoint } from 'src/api/annotation/types';
 
 /** @deprecated */
 export type LegacyKeypointItemCollection = {
@@ -113,3 +117,46 @@ export enum Categories {
   KeypointCollections = 'Keypoint collections',
   Classifications = 'Classification tags',
 }
+
+/**
+ * New Vision Review Types
+ */
+
+// primitives
+
+export type Visible = {
+  show: boolean;
+};
+export type Selectable = {
+  selected: boolean;
+};
+export type KeypointId = { id: string };
+
+// derivations
+
+// Casts Keypoint to ReviewKeypoint[] if Type is Keypoint[]
+export type TurnKeypointType<Type> = {
+  [Property in keyof Type]: Type[Property] extends Keypoint[]
+    ? ReviewKeypoint[]
+    : Type[Property];
+};
+export type VisionReviewAnnotation<Type> = Visible &
+  Selectable & {
+    annotation: TurnKeypointType<VisionAnnotation<Type>>;
+  };
+
+export type ReviewKeypoint = KeypointId &
+  Selectable & {
+    keypoint: Keypoint;
+  };
+
+/**
+ * Used for storing intermediate data **during** creation of keypoint collections.
+ * After the creation process, the data is converted into `UnsavedVisionAnnotation<ImageKeypointCollection>`
+ * before written to CDF. Once this is done, the created collection will become available as other existing collections
+ * as `VisionReviewAnnotation<ImageKeypointCollection>`
+ */
+export type TempKeypointCollection = Pick<
+  UnsavedVisionAnnotation<ImageKeypointCollection>,
+  'annotatedResourceId'
+> & { id: number; data: TurnKeypointType<ImageKeypointCollection> };

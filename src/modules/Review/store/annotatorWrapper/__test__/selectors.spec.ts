@@ -15,7 +15,10 @@ import {
   AnnotatorWrapperState,
   KeypointCollectionState,
 } from 'src/modules/Review/store/annotatorWrapper/type';
-import { PredefinedKeypointCollection } from 'src/modules/Review/types';
+import {
+  PredefinedKeypointCollection,
+  ReviewKeypoint,
+} from 'src/modules/Review/types';
 import { Keypoint } from 'src/api/annotation/types';
 import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
@@ -24,7 +27,6 @@ import {
   getDummyKeypointState,
   getDummyPredefinedKeypoint,
 } from 'src/__test-utils/annotations';
-import { ReviewKeypoint } from 'src/modules/Review/store/review/types';
 
 describe('Test annotationLabel selectors', () => {
   describe('Test nextKeypoint selector', () => {

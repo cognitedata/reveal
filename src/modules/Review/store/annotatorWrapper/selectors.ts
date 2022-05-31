@@ -7,8 +7,8 @@ import { RootState } from 'src/store/rootReducer';
 import {
   PredefinedKeypoint,
   PredefinedKeypointCollection,
+  ReviewKeypoint,
 } from 'src/modules/Review/types';
-import { ReviewKeypoint } from 'src/modules/Review/store/review/types';
 
 export const nextKeypoint = createSelector(
   (state: AnnotatorWrapperState) =>

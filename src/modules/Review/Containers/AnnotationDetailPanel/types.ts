@@ -7,7 +7,7 @@ import {
   ReviewKeypoint,
   Selectable,
   VisionReviewAnnotation,
-} from 'src/modules/Review/store/review/types';
+} from 'src/modules/Review/types';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
 
 export type AnnotationDetailPanelAnnotationType = Selectable & {

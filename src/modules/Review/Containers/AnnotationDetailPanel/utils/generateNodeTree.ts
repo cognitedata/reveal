@@ -20,7 +20,7 @@ import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUti
 import {
   ReviewKeypoint,
   VisionReviewAnnotation,
-} from 'src/modules/Review/store/review/types';
+} from 'src/modules/Review/types';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
 
 /**

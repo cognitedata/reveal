@@ -18,12 +18,12 @@ import {
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
+import { isImageKeypointCollectionData } from 'src/modules/Common/types/typeGuards';
+import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
   TurnKeypointType,
   VisionReviewAnnotation,
-} from 'src/modules/Review/store/review/types';
-import { isImageKeypointCollectionData } from 'src/modules/Common/types/typeGuards';
-import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+} from 'src/modules/Review/types';
 
 export const getDummyImageClassificationAnnotation = ({
   id = 1,

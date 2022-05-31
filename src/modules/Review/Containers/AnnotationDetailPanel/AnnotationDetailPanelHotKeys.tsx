@@ -34,7 +34,6 @@ import {
 import { useHotkeys } from 'react-hotkeys-hook';
 import { selectCategory } from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
 import { HotKeys } from 'src/constants/HotKeys';
-
 import { Modal } from 'antd';
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import { FileInfo } from '@cognite/sdk';

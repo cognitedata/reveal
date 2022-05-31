@@ -9,7 +9,7 @@ import {
   KeyboardShortCutSelectable,
   SidePanelRow,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/components/common';
-import { VisionReviewAnnotation } from 'src/modules/Review/store/review/types';
+import { VisionReviewAnnotation } from 'src/modules/Review/types';
 import { VisionAnnotationDataType } from 'src/modules/Common/types/annotation';
 import { AssetLinkWarning } from './AssetLinkWarning';
 

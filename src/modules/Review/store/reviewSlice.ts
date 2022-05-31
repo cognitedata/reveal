@@ -28,7 +28,7 @@ import {
 } from 'src/modules/Common/types/typeGuards';
 import { Status } from 'src/api/annotation/types';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
-import { VisionReviewAnnotation } from './review/types';
+import { VisionReviewAnnotation } from 'src/modules/Review/types';
 
 export interface VisibleAnnotation extends VisionAnnotationV1 {
   show: boolean;

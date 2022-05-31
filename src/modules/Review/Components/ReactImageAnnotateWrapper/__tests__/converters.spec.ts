@@ -205,7 +205,7 @@ const getDummyRegion = <
     annotationLabelOrText: getAnnotationLabelOrText(
       reviewAnnotation.annotation
     ),
-    annotation: reviewAnnotation,
+    annotationMeta: reviewAnnotation,
     tags: regionTags,
     highlighted,
     editingLabels,
@@ -279,9 +279,7 @@ describe('test convertVisionReviewAnnotationsToRegions', () => {
             ],
             regionProps: {
               type: AnnotatorRegionType.PointRegion,
-              parentAnnotationId: String(
-                dummyImageKeypointCollectionAnnotation.id
-              ),
+              parentAnnotationId: dummyImageKeypointCollectionAnnotation.id,
               keypointOrder: String(index + 1),
               keypointLabel: keypoint.keypoint.label,
               keypointConfidence: keypoint.keypoint.confidence,
@@ -472,9 +470,7 @@ describe('test convertVisionReviewAnnotationToRegions', () => {
               ],
               regionProps: {
                 type: AnnotatorRegionType.PointRegion,
-                parentAnnotationId: String(
-                  dummyImageKeypointCollectionAnnotation.id
-                ),
+                parentAnnotationId: dummyImageKeypointCollectionAnnotation.id,
                 keypointOrder: String(index + 1),
                 keypointLabel: keypoint.keypoint.label,
                 keypointConfidence: keypoint.keypoint.confidence,
@@ -517,9 +513,7 @@ describe('test convertVisionReviewAnnotationToRegions', () => {
             ],
             regionProps: {
               type: AnnotatorRegionType.PointRegion,
-              parentAnnotationId: String(
-                dummyImageKeypointCollectionAnnotation.id
-              ),
+              parentAnnotationId: dummyImageKeypointCollectionAnnotation.id,
               keypointOrder: String(index + 1),
               keypointLabel: keypoint.keypoint.label,
               keypointConfidence: keypoint.keypoint.confidence,
@@ -827,7 +821,7 @@ describe('test convertRegionToVisionAnnotationProperties', () => {
               dummyImageKeypointCollectionReviewAnnotation.annotation
                 .keypoints[0].keypoint.label,
             parentAnnotationId:
-              dummyImageKeypointCollectionReviewAnnotation.annotation.id.toString(),
+              dummyImageKeypointCollectionReviewAnnotation.annotation.id,
             keypointConfidence:
               dummyImageKeypointCollectionReviewAnnotation.annotation
                 .keypoints[0].keypoint.confidence,

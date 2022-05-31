@@ -23,7 +23,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FileInfo } from '@cognite/sdk';
 import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { generateNodeTree } from 'src/modules/Review/Containers/AnnotationDetailPanel/utils/generateNodeTree';
-import { Categories } from 'src/modules/Review/types';
+import { Categories, VisionReviewAnnotation } from 'src/modules/Review/types';
 import {
   ReviewVisionAnnotationRow,
   ReviewAssetLinkAnnotationRow,
@@ -36,7 +36,6 @@ import {
   ImageKeypointCollection,
 } from 'src/api/annotation/types';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
-import { VisionReviewAnnotation } from 'src/modules/Review/store/review/types';
 import {
   isImageAssetLinkData,
   isImageClassificationData,

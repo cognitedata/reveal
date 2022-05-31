@@ -19,8 +19,9 @@ import { KeypointCollectionState } from 'src/modules/Review/store/annotatorWrapp
 import {
   PredefinedKeypoint,
   PredefinedKeypointCollection,
+  ReviewKeypoint,
+  TempKeypointCollection,
 } from 'src/modules/Review/types';
-import { ReviewKeypoint } from 'src/modules/Review/store/review/types';
 import { getDummyImageKeypointCollectionAnnotation } from './getDummyAnnotations';
 
 export const getDummyAnnotation = (
@@ -110,5 +111,39 @@ export const getDummyReviewImageKeypointObject = (
     id: id.toString(),
     selected,
     keypoint: getDummyImageKeypointCollectionAnnotation({ id }).keypoints[0],
+  };
+};
+
+export const getDummyTempKeypointCollection = ({
+  id = 0,
+  label = 'pump',
+  annotatedResourceId = 1,
+  reviewKeypoints = [
+    {
+      id: 'pump-one',
+      selected: false,
+      keypoint: { label: 'one', confidence: 0.5, point: { x: 0, y: 0 } },
+    },
+    {
+      id: 'pump-two',
+      selected: false,
+      keypoint: { label: 'two', confidence: 0.5, point: { x: 1, y: 1 } },
+    },
+  ],
+}: {
+  id?: number;
+  label?: string;
+  show?: boolean;
+  selected?: boolean;
+  annotatedResourceId?: number;
+  reviewKeypoints?: ReviewKeypoint[];
+}): TempKeypointCollection => {
+  return {
+    id,
+    annotatedResourceId,
+    data: {
+      label,
+      keypoints: reviewKeypoints,
+    },
   };
 };

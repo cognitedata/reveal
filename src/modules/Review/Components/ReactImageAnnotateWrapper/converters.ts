@@ -86,9 +86,9 @@ export const convertVisionReviewAnnotationToRegions = (
 
   const baseRegionData: AnnotatorBaseRegion = {
     id: annotation.id,
-    annotation: reviewAnnotation,
-    highlighted: reviewAnnotation.selected,
-    editingLabels: reviewAnnotation.selected,
+    annotationMeta: reviewAnnotation,
+    highlighted: !!reviewAnnotation.selected,
+    editingLabels: !!reviewAnnotation.selected,
     tags: [getAnnotationLabelOrText(annotation), null, null, null], // todo: remove once library changes are done to remove tags array usages
     annotationType: annotation.annotationType,
     annotationLabelOrText: getAnnotationLabelOrText(annotation),
@@ -96,7 +96,7 @@ export const convertVisionReviewAnnotationToRegions = (
     color: 'red', // read this from reviewAnnotation.color once it is introduced.
     cls: '',
     locked: false,
-    visible: reviewAnnotation.show,
+    visible: !!reviewAnnotation.show,
   };
   if (isImageClassificationData(annotation)) {
     // no regions for classification
@@ -126,7 +126,7 @@ export const convertVisionReviewAnnotationToRegions = (
     regions.push({
       ...{
         type: AnnotatorRegionType.BoxRegion,
-        x: (annotation as ImageObjectDetectionBoundingBox).boundingBox.xMin,
+        x: (annotation as ImageObjectDetectionBoundingBox).boundingBox.xMin, // todo: update typescript version > 4.4 and remove these casts
         y: (annotation as ImageObjectDetectionBoundingBox).boundingBox.yMin,
         w:
           (annotation as ImageObjectDetectionBoundingBox).boundingBox.xMax -
@@ -143,7 +143,7 @@ export const convertVisionReviewAnnotationToRegions = (
         type: AnnotatorRegionType.PolygonRegion,
         points: (
           annotation as ImageObjectDetectionPolygon
-        ).polygon.vertices.map((pt) => [pt.x, pt.y]),
+        ).polygon.vertices.map((pt) => [pt.x, pt.y]), // todo: update typescript version > 4.4 and remove these casts
       },
       ...baseRegionData,
     } as AnnotatorPolygonRegion);
@@ -154,7 +154,7 @@ export const convertVisionReviewAnnotationToRegions = (
     regions.push({
       ...{
         type: AnnotatorRegionType.LineRegion,
-        x1: (annotation as ImageObjectDetectionPolyline).polyline.vertices[0].x,
+        x1: (annotation as ImageObjectDetectionPolyline).polyline.vertices[0].x, // todo: update typescript version > 4.4 and remove these casts
         y1: (annotation as ImageObjectDetectionPolyline).polyline.vertices[0].y,
         x2: (annotation as ImageObjectDetectionPolyline).polyline.vertices[1].x,
         y2: (annotation as ImageObjectDetectionPolyline).polyline.vertices[1].y,
@@ -173,24 +173,24 @@ export const convertVisionReviewAnnotationToRegions = (
         },
         ...baseRegionData,
         id: keypoint.id,
-        editingLabels: reviewAnnotation.selected || keypoint.selected,
-        highlighted: reviewAnnotation.selected || keypoint.selected,
+        editingLabels: !!reviewAnnotation.selected || keypoint.selected,
+        highlighted: !!reviewAnnotation.selected || keypoint.selected,
         tags: [
           getAnnotationLabelOrText(annotation),
           String(index + 1),
           String((annotation as VisionAnnotation<ImageKeypointCollection>).id),
           keypoint.keypoint.label,
         ], // todo: remove once library changes are done to remove tags array usages
-        parentAnnotationId: String(
-          (annotation as VisionAnnotation<ImageKeypointCollection>).id
-        ),
+        parentAnnotationId: (
+          annotation as VisionAnnotation<ImageKeypointCollection>
+        ).id,
         keypointLabel: keypoint.keypoint.label,
         keypointOrder: String(index + 1),
         keypointConfidence: keypoint.keypoint.confidence,
       } as AnnotatorPointRegion);
     });
   } else {
-    console.error('ReactImageAnnotateWrapper: Unknown Annotation type!');
+    console.error('ReactImageAnnotateWrapper: Unknown Annotation type');
   }
   return regions;
 };
@@ -198,10 +198,13 @@ export const convertVisionReviewAnnotationToRegions = (
 /**
  * Converts annotator region to appropriate VisionAnnotation attributes
  *
- * If region is point output is a ReviewKeypoint else it will be an VisionReviewAnnotation with correct data type
+ * If region is a point, output is a ReviewKeypoint else it will be an VisionReviewAnnotation with correct data type
  *
  * If annotation metadata is available in the region, output will be a complete review Annotation or review keypoint
  * If not it will be an UnsavedAnnotation or a review keypoint with confidence set to 1
+ *
+ * New regions created in Annotator tool will not contain annotationMeta since they did not originate from CDF
+ * So those will be output from this function as VisionReviewAnnotation or ReviewKeypoint
  * @param region
  */
 export const convertRegionToVisionAnnotationProperties = (
@@ -222,7 +225,8 @@ export const convertRegionToVisionAnnotationProperties = (
             xMax: region.x + region.w,
             yMax: region.y + region.h,
           },
-          assetRef: (region.annotation.annotation as ImageAssetLink).assetRef,
+          assetRef: (region.annotationMeta.annotation as ImageAssetLink)
+            .assetRef,
         } as ImageAssetLink;
         break;
       }
@@ -292,7 +296,7 @@ export const convertRegionToVisionAnnotationProperties = (
     return null;
   }
 
-  if (!!region.annotationType && region.annotation) {
+  if (region.annotationType && region.annotationMeta) {
     // if point region return keypoint
     if (isAnnotatorPointRegion(region)) {
       return {
@@ -302,7 +306,7 @@ export const convertRegionToVisionAnnotationProperties = (
     // if annotationType and annotation is available return vision review annotation
     return {
       annotation: {
-        ...region.annotation.annotation,
+        ...region.annotationMeta.annotation,
         id: +region.id,
         ...data,
       },

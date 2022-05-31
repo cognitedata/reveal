@@ -1,7 +1,7 @@
 import { Detail } from '@cognite/cogs.js';
 import React from 'react';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
-import { VisionReviewAnnotation } from 'src/modules/Review/store/review/types';
+import { VisionReviewAnnotation } from 'src/modules/Review/types';
 
 import styled from 'styled-components';
 

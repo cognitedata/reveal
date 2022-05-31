@@ -10,7 +10,7 @@ import isFinite from 'lodash-es/isFinite';
 import {
   ReviewKeypoint,
   VisionReviewAnnotation,
-} from 'src/modules/Review/store/review/types';
+} from 'src/modules/Review/types';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
 import {
   CDFAnnotationTypeEnum,

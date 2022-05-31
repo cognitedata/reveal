@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/store';
 import { FileInfo } from '@cognite/sdk';
 import { unwrapResult } from '@reduxjs/toolkit';
-import { VisionReviewAnnotation } from 'src/modules/Review/store/review/types';
+import { VisionReviewAnnotation } from 'src/modules/Review/types';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
 import { ImageAssetLink, Status } from 'src/api/annotation/types';
 import { isImageAssetLinkData } from 'src/modules/Common/types/typeGuards';

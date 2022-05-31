@@ -1,7 +1,7 @@
 import { BaseRegion as ReactImageAnnotateBaseRegion } from '@cognite/react-image-annotate';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
 import { CDFAnnotationTypeEnum, Status } from 'src/api/annotation/types';
-import { VisionReviewAnnotation } from 'src/modules/Review/store/review/types';
+import { VisionReviewAnnotation } from 'src/modules/Review/types';
 
 // This will always be a label or a text field of an annotation
 export type AnnotatorAnnotationLabelOrText = string;
@@ -29,6 +29,10 @@ export type AnnotatorRegionTags = [
   AnnotatorKeypointLabel
 ];
 
+/** @deprecated  do not use this property within library this should be used for annotation-region mapping only
+ */
+export type AnnotationMeta = VisionReviewAnnotation<VisionAnnotationDataType>;
+
 export enum AnnotatorRegionType {
   PointRegion = 'point',
   PolygonRegion = 'polygon',
@@ -40,7 +44,8 @@ export type AnnotatorBaseRegion = Omit<
   ReactImageAnnotateBaseRegion,
   'status' | 'source' | 'tags'
 > & {
-  annotation: VisionReviewAnnotation<VisionAnnotationDataType>;
+  /** @deprecated library specific property - should not be utilized anywhere but conversion functions */
+  annotationMeta: AnnotationMeta;
   status: Status;
   annotationType: CDFAnnotationTypeEnum;
   annotationLabelOrText: AnnotatorAnnotationLabelOrText;
@@ -59,7 +64,7 @@ export type AnnotatorPointRegion = AnnotatorBaseRegion & {
   type: AnnotatorRegionType.PointRegion;
   x: number;
   y: number;
-  parentAnnotationId: string;
+  parentAnnotationId: number;
   /** @deprecated  */
   keypointOrder: AnnotatorKeypointOrder;
   keypointLabel: string;
