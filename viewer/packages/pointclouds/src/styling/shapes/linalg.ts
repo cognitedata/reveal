@@ -88,19 +88,19 @@ export function createM4Raw(
   return createM4([a00, a01, a02, a03, a10, a11, a12, a13, a20, a21, a22, a23, a30, a31, a32, a33]);
 }
 
-function createM4FromColumnsV3(row0: Vec3, row1: Vec3, row2: Vec3): Mat4 {
+function createM4FromRowsV3(col0: Vec3, col1: Vec3, col2: Vec3): Mat4 {
   return createM4Raw(
-    row0[0],
-    row1[0],
-    row2[0],
+    col0[0],
+    col0[1],
+    col0[2],
     0,
-    row0[1],
-    row1[1],
-    row2[1],
+    col1[0],
+    col1[1],
+    col1[2],
     0,
-    row0[2],
-    row1[2],
-    row2[2],
+    col2[0],
+    col2[1],
+    col2[2],
     0,
     0,
     0,
@@ -191,19 +191,21 @@ function createM4Translation(p: Vec3): Mat4 {
  * NB: Expects matrix to be product of translation, rotation and (non-uniform) scale
  */
 function m4Invert4x3(m: Mat4): Mat4 {
-  // Norms of rows:
-  const sr0 = norm(m4Get(m, 0, 0), m4Get(m, 0, 1), m4Get(m, 0, 2));
-  const sr1 = norm(m4Get(m, 1, 0), m4Get(m, 1, 1), m4Get(m, 1, 2));
-  const sr2 = norm(m4Get(m, 2, 0), m4Get(m, 2, 1), m4Get(m, 2, 2));
+  // Norms of cols:
+  const sr0 = norm(m4Get(m, 0, 0), m4Get(m, 1, 0), m4Get(m, 2, 0));
+  const sr1 = norm(m4Get(m, 0, 1), m4Get(m, 1, 1), m4Get(m, 2, 1));
+  const sr2 = norm(m4Get(m, 0, 2), m4Get(m, 1, 2), m4Get(m, 2, 2));
 
-  const normalizedRow0 = v3Normalized([m4Get(m, 0, 0), m4Get(m, 0, 1), m4Get(m, 0, 2)]);
-  const normalizedRow1 = v3Normalized([m4Get(m, 1, 0), m4Get(m, 1, 1), m4Get(m, 1, 2)]);
-  const normalizedRow2 = v3Normalized([m4Get(m, 2, 0), m4Get(m, 2, 1), m4Get(m, 2, 2)]);
+  const normalizedColumn0 = v3Scale([m4Get(m, 0, 0), m4Get(m, 1, 0), m4Get(m, 2, 0)], 1.0 / sr0);
+  const normalizedColumn1 = v3Scale([m4Get(m, 0, 1), m4Get(m, 1, 1), m4Get(m, 2, 1)], 1.0 / sr1);
+  const normalizedColumn2 = v3Scale([m4Get(m, 0, 2), m4Get(m, 1, 2), m4Get(m, 2, 2)], 1.0 / sr2);
 
   const invScale: Vec3 = [1.0 / sr0, 1.0 / sr1, 1.0 / sr2];
 
   const invScaleMatrix = createM4Scale(invScale);
-  const invRotation = createM4FromColumnsV3(normalizedRow0, normalizedRow1, normalizedRow2);
+
+  // Transpose rotation matrix
+  const invRotation = createM4FromRowsV3(normalizedColumn0, normalizedColumn1, normalizedColumn2);
   const invTranslation = createM4Translation([-m4Get(m, 0, 3), -m4Get(m, 1, 3), -m4Get(m, 2, 3)]);
 
   const res = m4Multiply(invScaleMatrix, m4Multiply(invRotation, invTranslation));
