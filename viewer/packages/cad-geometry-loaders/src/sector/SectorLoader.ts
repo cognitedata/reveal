@@ -11,9 +11,9 @@ import chunk from 'lodash/chunk';
 import { PromiseUtils } from '../utilities/PromiseUtils';
 import { ByScreenSizeSectorCuller } from './culling/ByScreenSizeSectorCuller';
 
-import { CadNode } from '@reveal/rendering';
 import { File3dFormat } from '@reveal/modeldata-api';
 import { SectorDownloadScheduler } from './SectorDownloadScheduler';
+import { CadNode } from '@reveal/cad-model';
 
 /**
  * How many sectors to load per batch before doing another filtering pass, i.e. perform culling to determine
