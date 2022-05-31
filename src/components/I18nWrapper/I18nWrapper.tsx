@@ -4,7 +4,7 @@ import { checkUrl } from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import i18next, { InitOptions, Resource } from 'i18next';
 import I18NextLocizeBackend from 'i18next-locize-backend';
-import { initReactI18next } from 'react-i18next';
+import { initReactI18next, useTranslation } from 'react-i18next';
 import { locizePlugin } from 'locize';
 
 import { LOCIZE_PROJECT_ID, useLanguage } from '../..';
@@ -33,7 +33,7 @@ type I18nWrapperProps = {
   locizeProjectId?: string;
 };
 
-const setupTranslations = (
+const initializeTranslations = (
   currentLanguage: string,
   translations: Resource,
   defaultNamespace: string,
@@ -91,12 +91,12 @@ const I18nWrapper = ({
 }: I18nWrapperProps) => {
   return (
     <FlagProvider {...flagProviderProps}>
-      <I18nInnerWrapper {...otherProps} />
+      <I18nInitWrapper {...otherProps} />
     </FlagProvider>
   );
 };
 
-const I18nInnerWrapper = ({
+const I18nInitWrapper = ({
   children,
   defaultNamespace,
   useLocizeBackend = ['next-release'],
@@ -105,14 +105,15 @@ const I18nInnerWrapper = ({
   translations,
   locizeProjectId,
 }: Omit<I18nWrapperProps, 'flagProviderProps'>): JSX.Element => {
-  const [didLoadTranslations, setDidLoadTranslations] = useState(false);
+  const [didInitializedTranslations, setDidInitializedTranslations] =
+    useState(false);
   const [error, setError] = useState<Error | undefined>();
 
   const { data: language, isClientReady } = useLanguage();
 
   useEffect(() => {
-    if (isClientReady && !didLoadTranslations) {
-      setupTranslations(
+    if (isClientReady && !didInitializedTranslations) {
+      initializeTranslations(
         language,
         translations,
         defaultNamespace,
@@ -120,7 +121,7 @@ const I18nInnerWrapper = ({
         locizeProjectId
       )
         .then(() => {
-          setDidLoadTranslations(true);
+          setDidInitializedTranslations(true);
         })
         .catch((e) => {
           setError(e);
@@ -128,7 +129,7 @@ const I18nInnerWrapper = ({
     }
   }, [
     defaultNamespace,
-    didLoadTranslations,
+    didInitializedTranslations,
     useLocizeBackend,
     isClientReady,
     language,
@@ -140,7 +141,24 @@ const I18nInnerWrapper = ({
     return errorScreen(error);
   }
 
-  if (!didLoadTranslations && !error) {
+  if (!didInitializedTranslations || !i18next) {
+    return <>{loadingScreen}</>;
+  }
+
+  return (
+    <I18nContentWrapper loadingScreen={loadingScreen}>
+      {children}
+    </I18nContentWrapper>
+  );
+};
+
+const I18nContentWrapper = ({
+  children,
+  loadingScreen,
+}: Pick<I18nWrapperProps, 'children' | 'loadingScreen'>) => {
+  const { ready } = useTranslation();
+
+  if (!ready) {
     return <>{loadingScreen}</>;
   }
 
