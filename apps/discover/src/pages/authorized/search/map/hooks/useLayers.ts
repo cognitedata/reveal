@@ -15,7 +15,6 @@ import { LAYERS_QUERY_KEY } from 'constants/react-query';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useCategoryLayers } from 'modules/map/hooks/useCategoryLayers';
 import { SelectableLayer, MapDataSource } from 'modules/map/types';
-import { WELL_HEADS_LAYER_ID } from 'pages/authorized/search/map/constants';
 import { LegacyLayer, Layers } from 'tenants/types';
 
 import { getLayersByKey, getLayerById } from '../utils';
@@ -53,7 +52,10 @@ export const useLayers = () => {
 
   const defaultResponse = {
     layers: adaptedProjectConfigLayers,
-    selectableLayers: categoryLayers,
+    selectableLayers: [
+      ...categoryLayers,
+      ...getLayersByKey(adaptedProjectConfigLayers, 'alwaysOn'),
+    ],
   };
 
   const { data, isFetched: layersReady } = useQuery(LAYERS_QUERY_KEY.ALL, () =>
@@ -67,12 +69,7 @@ export const useLayers = () => {
           const alwaysOnLayers = getLayersByKey(combinedLayers, 'alwaysOn');
           return {
             layers: combinedLayers,
-            selectableLayers: [
-              ...categoryLayers,
-              ...alwaysOnLayers.filter(
-                (layer) => layer.id !== WELL_HEADS_LAYER_ID
-              ),
-            ],
+            selectableLayers: [...categoryLayers, ...alwaysOnLayers],
           };
         }
         return defaultResponse;
