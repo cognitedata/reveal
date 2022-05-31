@@ -46,7 +46,7 @@ export default function GroupDrawer({ group, onClose }: Props) {
         description: (
           <>
             <p>
-              An error occured when ${group ? 'updating' : 'creating'} the group
+              An error occured when {group ? 'updating' : 'creating'} the group
             </p>
             <pre>{JSON.stringify(error, null, 2)}</pre>
           </>
