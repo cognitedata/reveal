@@ -3,15 +3,16 @@ import { VisionAnnotationDataType } from 'src/modules/Common/types';
 import { CDFAnnotationTypeEnum, Status } from 'src/api/annotation/types';
 import { VisionReviewAnnotation } from 'src/modules/Review/store/review/types';
 
+// This will always be a label or a text field of an annotation
 export type AnnotatorAnnotationLabelOrText = string;
 /**
  * @deprecated Remove usages of AnnotatorKeypointOrder since it's no longer needed.
  * Keypoint labels are unique within a single annotation. parentAnnotationId and label
  * can be used to generate its unique id
  */
-export type AnnotatorKeypointOrder = string;
-export type AnnotatorParentAnnotationId = string;
-export type AnnotatorKeypointLabel = string;
+export type AnnotatorKeypointOrder = string | null; // todo: remove null once tag usages are removed;
+export type AnnotatorParentAnnotationId = string | null; // todo: remove null once tag usages are removed
+export type AnnotatorKeypointLabel = string | null; // todo: remove null once tag usages are removed
 
 /**
  * @deprecated use 'annotationLabelOrText' in AnnotatorBaseRegion and
@@ -43,7 +44,7 @@ export type AnnotatorBaseRegion = Omit<
   status: Status;
   annotationType: CDFAnnotationTypeEnum;
   annotationLabelOrText: AnnotatorAnnotationLabelOrText;
-  tags: AnnotatorRegionTags;
+  tags: AnnotatorRegionTags | String[];
 };
 
 export type AnnotatorBoxRegion = AnnotatorBaseRegion & {
@@ -58,9 +59,11 @@ export type AnnotatorPointRegion = AnnotatorBaseRegion & {
   type: AnnotatorRegionType.PointRegion;
   x: number;
   y: number;
-  parentAnnotationId: AnnotatorParentAnnotationId;
+  parentAnnotationId: string;
+  /** @deprecated  */
   keypointOrder: AnnotatorKeypointOrder;
-  keypointLabel: AnnotatorKeypointLabel;
+  keypointLabel: string;
+  keypointConfidence: number | undefined;
 };
 
 export type AnnotatorPolygonRegion = AnnotatorBaseRegion & {

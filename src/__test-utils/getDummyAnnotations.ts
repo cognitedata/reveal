@@ -5,11 +5,11 @@ import {
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
-  Keypoint,
   ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
   ImageObjectDetectionPolyline,
+  Keypoint,
   Polygon,
   Polyline,
   Status,
@@ -166,9 +166,9 @@ export const getDummyImageKeypointCollectionAnnotation = ({
   label = 'gauge',
   confidence = 0.5,
   keypoints = [
-    { label: 'start', point: { x: 0.1, y: 0.1 } },
-    { label: 'center', point: { x: 0.2, y: 0.2 } },
-    { label: 'end', point: { x: 0.3, y: 0.3 } },
+    { label: 'start', point: { x: 0.1, y: 0.1 }, confidence: 0.2 },
+    { label: 'center', point: { x: 0.2, y: 0.2 }, confidence: 0.2 },
+    { label: 'end', point: { x: 0.3, y: 0.3 }, confidence: 0.2 },
   ],
 }: {
   id?: number;
@@ -272,22 +272,25 @@ export const getDummyImageAssetLinkAnnotation = ({
 export const getDummyVisionReviewAnnotation = (
   annotation: VisionAnnotation<VisionAnnotationDataType>,
   selected?: boolean,
-  show?: boolean
+  show?: boolean,
+  selectedKeypointIndices?: number[]
 ): VisionReviewAnnotation<VisionAnnotationDataType> => {
   return {
     annotation: (isImageKeypointCollectionData(annotation)
       ? {
           ...annotation,
-          keypoints: annotation.keypoints.map((keypoint) => ({
+          keypoints: annotation.keypoints.map((keypoint, index) => ({
             id: generateKeypointId(annotation.id, keypoint.label),
             keypoint,
-            selected,
+            selected: selectedKeypointIndices?.length
+              ? selectedKeypointIndices.includes(index)
+              : false,
           })),
         }
       : annotation) as TurnKeypointType<
       VisionAnnotation<VisionAnnotationDataType>
     >,
-    show: show!!,
-    selected: selected!!,
+    show: !!show,
+    selected: !!selected,
   };
 };
