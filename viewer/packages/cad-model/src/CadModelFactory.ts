@@ -3,15 +3,16 @@
  */
 import * as THREE from 'three';
 
-import { BoundingBoxClipper } from './BoundingBoxClipper';
-import { GeometryFilter } from './GeometryFilter';
+import { BoundingBoxClipper } from './utilities/BoundingBoxClipper';
+import { GeometryFilter } from './types';
 
 import { SupportedModelTypes } from '@reveal/model-base';
 import { GltfSectorRepository, SectorRepository, V8SectorRepository } from '@reveal/sector-loader';
-import { CadMaterialManager, CadNode } from '@reveal/rendering';
+import { CadMaterialManager } from '@reveal/rendering';
 import { CadModelMetadata, CadModelMetadataRepository, CadModelClipper } from '@reveal/cad-parsers';
 import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 import { MetricsLogger } from '@reveal/metrics';
+import { CadNode } from './wrappers/CadNode';
 
 export class CadModelFactory {
   private readonly _materialManager: CadMaterialManager;
