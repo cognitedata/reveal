@@ -1,19 +1,24 @@
+import { NdsDataLayer } from 'domain/wells/dataLayer/nds/types';
+import { groupByWellbore } from 'domain/wells/dataLayer/wellbore/adapters/groupByWellbore';
+
 import isEmpty from 'lodash/isEmpty';
 import minBy from 'lodash/minBy';
 import sumBy from 'lodash/sumBy';
 import { getFixedPercent } from 'utils/number';
 
 import { TreeMapData } from 'components/Treemap/Treemap';
-import { Wellbore, WellboreEventsMap } from 'modules/wellSearch/types';
+import { Wellbore } from 'modules/wellSearch/types';
 
 export const generateNdsTreemapData = (
   wellbores: Wellbore[],
-  ndsEvents: WellboreEventsMap,
+  ndsEvents: NdsDataLayer[],
   maxNodes = 15
 ): TreeMapData => {
   let children: TreeMapData[];
 
-  if (isEmpty(wellbores) || isEmpty(ndsEvents)) {
+  const groupedNdsEvents = groupByWellbore(ndsEvents);
+
+  if (isEmpty(wellbores)) {
     children = [
       {
         title: 'No data',
@@ -28,7 +33,7 @@ export const generateNdsTreemapData = (
       wellbores: wellboresMapped,
     } = wellbores.reduce(
       (previousValue, currentValue) => {
-        const numberOfEvents = ndsEvents[currentValue.id]?.length || 0;
+        const numberOfEvents = groupedNdsEvents[currentValue.id]?.length || 0;
         return {
           ...previousValue,
           totalNumberOfEvents:

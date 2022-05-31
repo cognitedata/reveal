@@ -1,15 +1,14 @@
-import { CogniteEvent } from '@cognite/sdk';
+import { NdsDataLayer } from 'domain/wells/dataLayer/nds/types';
 
 import { getMockNdsEvent } from '__test-utils/fixtures/nds';
 import { getMockWellbore } from '__test-utils/fixtures/well/wellbore';
 import { mapV3ToV2Wellbore } from 'modules/wellSearch/sdk/utils';
-import { WellboreEventsMap } from 'modules/wellSearch/types';
 
-import { generateNdsTreemapData } from '../utils/generateNdsTreemapData';
+import { generateNdsTreemapData } from '../generateNdsTreemapData';
 
 describe('generateNdsTreemapData', () => {
   it('should generate no data node', () => {
-    const result = generateNdsTreemapData([], {});
+    const result = generateNdsTreemapData([], []);
     expect(result).toEqual({
       title: 'Wellbore NDS treemap',
       children: [{ title: 'No data', value: 100 }],
@@ -26,10 +25,10 @@ describe('generateNdsTreemapData', () => {
       ),
     ];
 
-    const ndsEvents: WellboreEventsMap = {
-      wellboreId1: [getMockNdsEvent() as unknown as CogniteEvent], // this is temporary until we get rid of the old types -_-
-      wellboreId2: [getMockNdsEvent() as unknown as CogniteEvent], // this is temporary until we get rid of the old types -_-
-    };
+    const ndsEvents = [
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId1' }),
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId2' }),
+    ] as NdsDataLayer[];
 
     const result = generateNdsTreemapData(wellbores, ndsEvents);
     expect(result).toEqual({
@@ -54,11 +53,10 @@ describe('generateNdsTreemapData', () => {
       ),
     ];
 
-    const ndsEvents: WellboreEventsMap = {
-      // this is temporary until we get rid of the old types -_-
-      wellboreId1: [getMockNdsEvent() as unknown as CogniteEvent],
-      wellboreId2: [getMockNdsEvent() as unknown as CogniteEvent],
-    };
+    const ndsEvents = [
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId1' }),
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId2' }),
+    ] as NdsDataLayer[];
 
     const result = generateNdsTreemapData(wellbores, ndsEvents);
     expect(result).toEqual({
@@ -98,27 +96,23 @@ describe('generateNdsTreemapData', () => {
       ),
     ];
 
-    const ndsEvents: WellboreEventsMap = {
-      // this is temporary until we get rid of the old types -_-
-      wellboreId1: [
-        getMockNdsEvent() as unknown as CogniteEvent,
-        getMockNdsEvent() as unknown as CogniteEvent,
-        getMockNdsEvent() as unknown as CogniteEvent,
-      ],
-      wellboreId2: [
-        getMockNdsEvent() as unknown as CogniteEvent,
-        getMockNdsEvent() as unknown as CogniteEvent,
-        getMockNdsEvent() as unknown as CogniteEvent,
-      ],
-      wellboreId4: [getMockNdsEvent() as unknown as CogniteEvent],
-      wellboreId5: [
-        getMockNdsEvent() as unknown as CogniteEvent,
-        getMockNdsEvent() as unknown as CogniteEvent,
-        getMockNdsEvent() as unknown as CogniteEvent,
-        getMockNdsEvent() as unknown as CogniteEvent,
-        getMockNdsEvent() as unknown as CogniteEvent,
-      ],
-    };
+    const ndsEvents = [
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId1' }),
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId1' }),
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId1' }),
+
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId2' }),
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId2' }),
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId2' }),
+
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId4' }),
+
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId5' }),
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId5' }),
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId5' }),
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId5' }),
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId5' }),
+    ] as NdsDataLayer[];
 
     const result = generateNdsTreemapData(wellbores, ndsEvents, 3);
 
@@ -155,12 +149,7 @@ describe('generateNdsTreemapData', () => {
       ),
     ];
 
-    const ndsEvents: WellboreEventsMap = {
-      // this is temporary until we get rid of the old types -_-
-      wellboreId1: [],
-      wellboreId2: [],
-      wellboreId3: [],
-    };
+    const ndsEvents: NdsDataLayer[] = [];
 
     const result = generateNdsTreemapData(wellbores, ndsEvents);
     expect(result).toEqual({

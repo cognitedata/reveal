@@ -1,6 +1,6 @@
 import { NdsAggregate } from '@cognite/sdk-wells-v3/dist/src';
 
-import { generateNdsFilterDataFromAggregate } from '../utils/generateNdsFilterDataFromAggregate';
+import { generateNdsFilterDataFromAggregate } from '../generateNdsFilterDataFromAggregate';
 
 describe('generateNdsFilterDataFromAggregate', () => {
   it('should return empty array for empty data', () => {
