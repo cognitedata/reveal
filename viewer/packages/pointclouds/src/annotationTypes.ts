@@ -11,12 +11,12 @@ import { Box } from './styling/shapes/Box';
 import { createInvertedRevealTransformationFromCdfTransformation } from './styling/shapes/linalg';
 
 export class CylinderPrimitive {
-  constructor(public center_a: THREE.Vector3, public center_b: THREE.Vector3, public radius: number) {}
+  constructor(public centerA: THREE.Vector3, public centerB: THREE.Vector3, public radius: number) {}
 
   transformToShape(): IShape {
     return new Cylinder(
-      [this.center_a.x, this.center_a.y, this.center_a.z],
-      [this.center_b.x, this.center_b.y, this.center_b.z],
+      [this.centerA.x, this.centerA.y, this.centerA.z],
+      [this.centerB.x, this.centerB.y, this.centerB.z],
       this.radius
     );
   }
