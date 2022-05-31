@@ -3,9 +3,9 @@
  */
 import { ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import * as THREE from 'three';
-import { RenderMode } from './rendering/RenderMode';
 import { GeometryBatchingManager } from './GeometryBatchingManager';
-import { createMaterials } from './rendering/materials';
+import { Mock } from 'moq.ts';
+import { Materials } from '@reveal/rendering';
 
 describe(GeometryBatchingManager.name, () => {
   let geometryGroup: THREE.Group;
@@ -13,13 +13,7 @@ describe(GeometryBatchingManager.name, () => {
 
   beforeEach(() => {
     geometryGroup = new THREE.Group();
-    const materials = createMaterials(
-      RenderMode.Color,
-      [],
-      new THREE.DataTexture(),
-      new THREE.DataTexture(),
-      new THREE.DataTexture()
-    );
+    const materials = new Mock<Materials>().object();
     manager = new GeometryBatchingManager(geometryGroup, materials);
   });
 
