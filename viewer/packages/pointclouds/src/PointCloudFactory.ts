@@ -38,7 +38,7 @@ export class PointCloudFactory {
     }
 
     if (geometry.cylinder) {
-      return new CylinderPrimitive(geometry.cylinder.center_a, geometry.cylinder.center_b, geometry.cylinder.radius);
+      return new CylinderPrimitive(geometry.cylinder.centerA, geometry.cylinder.centerA, geometry.cylinder.radius);
     }
 
     throw Error('Annotation geometry type not recognized');
