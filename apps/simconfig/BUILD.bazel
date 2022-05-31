@@ -357,7 +357,7 @@ cypress_batch_test(
     ],
     cypress_folder = "cypress",
     global_cypress_files = TESTS_CYPRESS,
-    starting_port = 12111,
+    starting_port = 12211,
     tags = [
         "ignore_test_in_cd",
     ],

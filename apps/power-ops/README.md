@@ -75,7 +75,7 @@ cypress_batch_test(
     # Every files needed for all your cypress tests (like utils)
     global_cypress_files = FILES,
     # Make sure your starting port does not interfere with existing ones in other apps
-    starting_port = 12111,
+    starting_port = 12011,
 )
 ```
 
