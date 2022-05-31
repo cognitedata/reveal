@@ -195,7 +195,7 @@ const CasingView: FC<CasingViewTypeProps> = ({
                 unit={unit}
                 measurementUnit={DepthMeasurementUnit.MD}
               />
-              <BodyColumn width={150}>
+              <BodyColumn width={150} data-testid="schema-column">
                 <BodyColumnHeaderWrapper>
                   <BodyColumnMainHeader>Schema</BodyColumnMainHeader>
 

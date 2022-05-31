@@ -29,7 +29,10 @@ const Middle: React.FC<{
     <>
       {isTied && (leftEnd ? <SideLineLeft /> : <SideLineRight />)}
       <DepthIndicatorLineWrapper height={height}>
-        <DepthIndicatorLine color={DEPTH_SEGMENT_COLOR} />
+        <DepthIndicatorLine
+          color={DEPTH_SEGMENT_COLOR}
+          data-testid="depth-indicator-line"
+        />
       </DepthIndicatorLineWrapper>
     </>
   );
