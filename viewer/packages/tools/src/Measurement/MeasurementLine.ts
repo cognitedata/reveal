@@ -12,6 +12,7 @@ export class MeasurementLine {
   private _material: LineMaterial | null;
   private _position: Float32Array;
   private _distanceToCamera: number = 0;
+  private _sphereSize: number;
 
   private readonly _options: MeasurementLineOptions = {
     lineWidth: 0.01,
@@ -22,6 +23,23 @@ export class MeasurementLine {
     this._position = new Float32Array(6);
     this._geometry = null;
     this._material = null;
+    this._sphereSize = 0.01;
+  }
+
+  /**
+   * Creates sphere at given position.
+   * @param position Position to place the sphere.
+   */
+  addSphere(position: THREE.Vector3): THREE.Mesh {
+    const mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(1),
+      new THREE.MeshBasicMaterial({ color: 0xff0000, opacity: 0.5, transparent: true })
+    );
+    mesh.position.copy(position);
+    mesh.scale.copy(mesh.scale.multiplyScalar(this._sphereSize));
+    mesh.renderOrder = 1;
+
+    return mesh;
   }
 
   /**
@@ -114,6 +132,7 @@ export class MeasurementLine {
   setOptions(options: MeasurementLineOptions): void {
     this._options.lineWidth = options?.lineWidth ?? this._options.lineWidth;
     this._options.color = options?.color ?? this._options.color;
+    this._sphereSize = options?.lineWidth || this._sphereSize;
     //Apply for current active line if set
     if (this._material && options.currentLine) {
       this._material?.setValues({ linewidth: this._options.lineWidth });

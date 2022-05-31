@@ -2,17 +2,10 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Cognite3DViewer, Intersection } from '@reveal/core';
+import { Cognite3DViewer } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
-import * as THREE from 'three';
-import { MeasurementLabels } from './MeasurementLabels';
-import {
-  MeasurementLineOptions,
-  MeasurementOptions,
-  MeasurementLabelUpdateDelegate,
-  MeasurementLabelData
-} from './types';
-import { MeasurementLine } from './MeasurementLine';
+import { MeasurementLineOptions, MeasurementOptions, MeasurementLabelData } from './types';
+import { Measurement } from './Measurement';
 
 /**
  * Enables {@see Cognite3DViewer} to perform a point to point measurement.
@@ -34,14 +27,10 @@ import { MeasurementLine } from './MeasurementLine';
  */
 export class MeasurementTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
-  private readonly _measurementLabel: MeasurementLabels;
-  private readonly _line: MeasurementLine;
-  private _lineMesh: THREE.Mesh | null;
-  private readonly _options: Required<MeasurementOptions>;
-  private _sphereSize: number;
-  private _distanceValue: string;
-  private readonly _domElement: HTMLElement;
-  private readonly _camera: THREE.Camera;
+  private readonly _measurements: Measurement[];
+  private readonly _options: MeasurementOptions | undefined;
+  private _currentMeasurementIndex: number;
+  private _measurementActive: boolean;
 
   private readonly _handleonPointerClick = this.onPointerClick.bind(this);
   private readonly _handleonPointerMove = this.onPointerMove.bind(this);
@@ -51,20 +40,21 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     super();
     this._viewer = viewer;
     this._options = { changeMeasurementLabelMetrics: this._handleDefaultOptions, ...options };
-    this._lineMesh = null;
-    this._line = new MeasurementLine();
-    this._measurementLabel = new MeasurementLabels(this._viewer);
-    this._domElement = this._viewer.domElement;
-    this._camera = this._viewer.getCamera();
-    this._sphereSize = 0.01;
-    this._distanceValue = '';
+    this._measurements = new Array<Measurement>();
+    this._currentMeasurementIndex = -1;
+    this._measurementActive = false;
   }
 
   /**
    * Enter into point to point measurement mode.
    */
-  enterMeasurementMode(): void {
+  enterMeasurementMode(): Measurement {
+    const measurement = new Measurement(this._viewer, this._options);
+    this._measurements.push(measurement);
     this.setupEventHandling();
+    this._currentMeasurementIndex++;
+
+    return measurement;
   }
 
   /**
@@ -72,17 +62,31 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    */
   exitMeasurementMode(): void {
     //clear all mesh, geometry & event handling.
-    this._line.clearObjects();
+    this._measurements[this._currentMeasurementIndex].clearObjects();
     this.removeEventHandling();
   }
+
+  removeMeasurement(measurement: Measurement): void {
+    const index = this._measurements.findIndex(obj => obj === measurement);
+    if (index > -1) {
+      // this._measurements[index].clearObjects();
+      this._measurements[index].removeMeasurement();
+      this._measurements.splice(index, 1);
+    }
+  }
+
+  getAllMeasurement(): Measurement[] {
+    return this._measurements;
+  }
+
+  removeAllMeasurement(): void {}
 
   /**
    * Sets Measurement line width and color with @options value.
    * @param options MeasurementLineOptions to set line width and color.
    */
   setLineOptions(options: MeasurementLineOptions): void {
-    this._line.setOptions(options);
-    this._sphereSize = options?.lineWidth || this._sphereSize;
+    this._measurements[this._currentMeasurementIndex].setLineOptions(options);
     if (this._viewer) {
       this._viewer.requestRedraw();
     }
@@ -119,74 +123,24 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       return;
     }
 
-    this.addSphere(intersection.point);
-
-    if (!this._lineMesh) {
+    if (!this._measurementActive) {
       this._viewer.domElement.addEventListener('mousemove', this._handleonPointerMove);
-      this.startMeasurement(intersection);
+      this._measurements[this._currentMeasurementIndex].startMeasurement(intersection);
+      this._measurementActive = true;
     } else {
-      this.endMeasurement(intersection.point);
+      this._measurements[this._currentMeasurementIndex].endMeasurement(intersection.point);
       this._viewer.domElement.removeEventListener('mousemove', this._handleonPointerMove);
+      this._measurementActive = false;
     }
     this._viewer.requestRedraw();
   }
 
-  /**
-   * Start the measurement.
-   * @param intersection Intersection Object containing point & camera distance.
-   */
-  private startMeasurement(intersection: Intersection) {
-    //Clear the line objects if exists for new line
-    this._line.clearObjects();
-    this._lineMesh = this._line.startLine(intersection.point, intersection.distanceToCamera);
-    this._viewer.addObject3D(this._lineMesh);
-  }
-
-  /**
-   * End the measurement.
-   * @param point Point at which measuring line ends.
-   */
-  private endMeasurement(point: THREE.Vector3) {
-    //Update the line with final end point.
-    this._line.updateLine(0, 0, this._domElement, this._camera, point);
-    this.setMeasurementValue(this._options.changeMeasurementLabelMetrics);
-    //Add the measurement label.
-    this._measurementLabel.addLabel(this._line.getMidPointOnLine(), this._distanceValue);
-    this._lineMesh = null;
-  }
-
-  /**
-   * Set the measurement data.
-   * @param options Callback function which get user value to be added into label.
-   */
-  private setMeasurementValue(options: MeasurementLabelUpdateDelegate) {
-    const measurementLabelData = options(this._line.getMeasuredDistance());
-    this._distanceValue = measurementLabelData.distance?.toFixed(2) + ' ' + measurementLabelData.units;
-  }
-
   private onPointerMove(event: any) {
-    const { offsetX, offsetY } = event;
-    this._line.updateLine(offsetX, offsetY, this._domElement, this._camera);
+    this._measurements[this._currentMeasurementIndex].update(event);
     this._viewer.requestRedraw();
   }
 
-  /**
-   * Creates sphere at given position.
-   * @param position Position to place the sphere.
-   */
-  private addSphere(position: THREE.Vector3) {
-    const mesh = new THREE.Mesh(
-      new THREE.SphereGeometry(1),
-      new THREE.MeshBasicMaterial({ color: 0xff0000, opacity: 0.5, transparent: true })
-    );
-    mesh.position.copy(position);
-    mesh.scale.copy(mesh.scale.multiplyScalar(this._sphereSize));
-    mesh.renderOrder = 1;
-
-    this._viewer.addObject3D(mesh);
-  }
-
   private defaultOptions(): MeasurementLabelData {
-    return { distance: this._line.getMeasuredDistance(), units: 'm' };
+    return this._measurements[this._currentMeasurementIndex].defaultOptions();
   }
 }
