@@ -134,7 +134,7 @@ export const currentCollection = createSelector(
         ) || [];
 
       return {
-        id: Number(collection.id), // todo: remove this cast and change id type to number
+        id: collection.id,
         annotatedResourceId: fileId,
         data: {
           keypoints: reviewImageKeypoints,
