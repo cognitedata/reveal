@@ -9,6 +9,7 @@ import { WhiteLoaderInline } from 'components/Loading';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { clearSelectedWell } from 'modules/map/actions';
 import { useWellById } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
+import { WellId } from 'modules/wellSearch/types';
 import { MarginBottomNormalContainer } from 'styles/layout';
 
 import { wellImage } from '../../icons/well';
@@ -19,7 +20,7 @@ import { WellMetadata } from './WellMetadata';
 import { WellPreviewAction } from './WellPreviewAction';
 
 export const WellPreviewCard: React.FC<{
-  wellId: number;
+  wellId: WellId;
   onPopupClose?: () => void;
 }> = ({ wellId, onPopupClose }) => {
   const dispatch = useDispatch();

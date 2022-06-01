@@ -1,7 +1,7 @@
+import { Well } from 'domain/wells/well/internal/types';
+
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
-
-import { CogniteEvent } from '@cognite/sdk';
 
 import { mockCogniteEvent } from '__test-utils/fixtures/events';
 import { mockNpt, mockNptEvents } from '__test-utils/fixtures/npt';
@@ -11,7 +11,10 @@ import {
   UNKNOWN_NPT_CODE,
   UNKNOWN_NPT_DETAIL_CODE,
 } from 'modules/wellSearch/constants';
-import { Well, WellboreNPTEventsMap } from 'modules/wellSearch/types';
+import {
+  CogniteEventV3ish,
+  WellboreNPTEventsMap,
+} from 'modules/wellSearch/types';
 
 import {
   getWellbore,
@@ -23,7 +26,7 @@ import {
 
 describe('Events utils', () => {
   it(`should map well informations to events`, () => {
-    const events = [{ assetIds: [1] }];
+    const events = [{ assetIds: ['1'] }];
     const wells = [
       {
         name: 'Test Well Name',
@@ -36,7 +39,7 @@ describe('Events utils', () => {
       },
     ];
     const mappedEvents = mapWellInfo(
-      events as CogniteEvent[],
+      events as CogniteEventV3ish[],
       wells as unknown as Well[]
     );
     expect(mappedEvents).toEqual([
@@ -61,7 +64,7 @@ describe('Events utils', () => {
     );
 
     const resultedWellbore = getWellbore(mockCogniteEvent, wellbores);
-    expect(resultedWellbore?.id).toEqual(759155409324883);
+    expect(resultedWellbore?.id).toEqual('759155409324883');
   });
 
   it(`should map well informations to npt events`, () => {

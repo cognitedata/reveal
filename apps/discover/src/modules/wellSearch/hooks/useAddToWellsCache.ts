@@ -1,11 +1,11 @@
+import { Well } from 'domain/wells/well/internal/types';
+
 import { useQueryClient } from 'react-query';
 
 import concat from 'lodash/concat';
 import differenceBy from 'lodash/differenceBy';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
-
-import { Well } from '../types';
 
 export const useAddToWellsCache = () => {
   const queryClient = useQueryClient();

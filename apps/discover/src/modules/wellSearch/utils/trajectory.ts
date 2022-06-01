@@ -1,3 +1,5 @@
+import { Well } from 'domain/wells/well/internal/types';
+
 import convert from 'convert-units';
 import get from 'lodash/get';
 import head from 'lodash/head';
@@ -8,13 +10,13 @@ import {
   ProjectConfigWells,
   ProjectConfigWellsTrajectoryColumns,
 } from '@cognite/discover-api-types';
-import { Sequence, SequenceColumn } from '@cognite/sdk';
+import { SequenceColumn } from '@cognite/sdk';
 import { TrajectoryData as TrajectoryDataV3 } from '@cognite/sdk-wells-v3';
 
 import { FEET, UserPreferredUnit } from 'constants/units';
 
 import { TRAJECTORY_COLUMN_NAME_MAP } from '../service/sequence/constants';
-import { TrajectoryRow, TrajectoryRows, Well } from '../types';
+import { Sequence, TrajectoryRow, TrajectoryRows } from '../types';
 
 export const getExistColumns = (
   sequence: Sequence,
@@ -32,12 +34,13 @@ export const mapWellInfo = (
     const well = wells.find(
       (well) =>
         well.wellbores &&
+        trajectory.assetId &&
         well.wellbores
           .map((wellbore) => wellbore.id)
-          .includes(trajectory.assetId as number)
+          .includes(trajectory.assetId)
     );
     const wellbore = well?.wellbores?.find(
-      (wellbore) => wellbore.id === (trajectory.assetId as number)
+      (wellbore) => wellbore.id === trajectory.assetId
     );
     return {
       ...trajectory,

@@ -1,4 +1,6 @@
 import { useFavoriteWellIds } from 'domain/favorites/internal/hooks/useFavoriteWellIds';
+import { useWellSearchResultQuery } from 'domain/wells/well/internal/queries/useWellSearchResultQuery';
+import { Well } from 'domain/wells/well/internal/types';
 
 import React, { useCallback, useEffect, useRef } from 'react';
 import { batch, useDispatch } from 'react-redux';
@@ -20,9 +22,7 @@ import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { moveToCoords, zoomToCoords } from 'modules/map/actions';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { wellSearchActions } from 'modules/wellSearch/actions';
-import { useWellSearchResultQuery } from 'modules/wellSearch/hooks/useWellSearchResultQuery';
 import { useWells, useIndeterminateWells } from 'modules/wellSearch/selectors';
-import { Well } from 'modules/wellSearch/types';
 import { WellResultTableOptions } from 'pages/authorized/constant';
 import { SearchBreadcrumb } from 'pages/authorized/search/common/searchResult';
 import { ADD_TO_FAVORITES_OPTION_TEXT } from 'pages/authorized/search/document/constants';

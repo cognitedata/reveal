@@ -1,3 +1,5 @@
+import { useWellSearchResultQuery } from 'domain/wells/well/internal/queries/useWellSearchResultQuery';
+
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
@@ -14,7 +16,6 @@ import {
 } from 'modules/map/actions';
 import { useGetTypeFromGeometry } from 'modules/map/selectors';
 import { useSearchPhrase } from 'modules/sidebar/selectors';
-import { useWellSearchResultQuery } from 'modules/wellSearch/hooks/useWellSearchResultQuery';
 import { WellFilterOptionValue } from 'modules/wellSearch/types';
 
 import {

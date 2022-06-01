@@ -1,3 +1,6 @@
+import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores';
+import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
+
 import { useMemo } from 'react';
 
 import difference from 'lodash/difference';
@@ -5,17 +8,12 @@ import groupBy from 'lodash/groupBy';
 import uniq from 'lodash/uniq';
 import { log } from 'utils/log';
 
-import { CogniteEvent } from '@cognite/sdk';
-
 import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
-import {
-  useWellInspectSelectedWellbores,
-  useWellInspectSelectedWells,
-} from 'modules/wellInspect/hooks/useWellInspect';
 import { useWellInspectSelection } from 'modules/wellInspect/selectors';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 import { useNptEventsQuery } from 'modules/wellSearch/hooks/useNptEventsQuery';
+import { CogniteEventV3ish } from 'modules/wellSearch/types';
 import {
   mapWellInfo,
   mapWellInfoToNPTEvents,
@@ -36,7 +34,7 @@ export const useNdsEventsForTable = () => {
       return { isLoading, events: [] };
     }
 
-    const events = ([] as CogniteEvent[]).concat(...Object.values(data));
+    const events = ([] as CogniteEventV3ish[]).concat(...Object.values(data));
     const errorList: string[] = [];
     const convertedEvents = mapWellInfo(events, wells).map(
       getConvertFunctionsForEvents('nds', (error) => errorList.push(error))

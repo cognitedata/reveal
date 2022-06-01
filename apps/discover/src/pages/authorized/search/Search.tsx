@@ -1,3 +1,5 @@
+import { useWellSearchResultQuery } from 'domain/wells/well/internal/queries/useWellSearchResultQuery';
+
 import React, { useMemo, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { batch, useDispatch } from 'react-redux';
@@ -35,7 +37,6 @@ import { useFilterBarIsOpen } from 'modules/sidebar/selectors';
 import { Modules, CategoryTypes } from 'modules/sidebar/types';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useIsWellConfigEnabled } from 'modules/wellSearch/hooks/useWellConfig';
-import { useWellSearchResultQuery } from 'modules/wellSearch/hooks/useWellSearchResultQuery';
 
 import {
   DOCUMENT_TAB_TITLE_KEY,

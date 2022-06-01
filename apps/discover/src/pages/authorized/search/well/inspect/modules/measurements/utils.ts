@@ -1,3 +1,5 @@
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
+
 import { getWellboreTitle } from 'dataLayers/wells/wellbores/decorators/getWellboreTitle';
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
@@ -24,7 +26,6 @@ import {
 import {
   MeasurementV3 as Measurement,
   MeasurementChartDataV3 as MeasurementChartData,
-  Wellbore,
   MeasurementTypeV3 as MeasurementType,
   WdlMeasurementType,
   GeoPpfgFilterTypes,

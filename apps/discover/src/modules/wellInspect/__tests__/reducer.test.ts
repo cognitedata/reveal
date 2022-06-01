@@ -1,4 +1,6 @@
-import { getMockWell, getMockWellbore } from '__test-utils/fixtures/well';
+import { getMockWellbore } from 'domain/wells/wellbore/internal/__fixtures/getMockWellbore';
+
+import { getMockWell } from '__test-utils/fixtures/well';
 
 import { initialState, wellInspect } from '../reducer';
 import {

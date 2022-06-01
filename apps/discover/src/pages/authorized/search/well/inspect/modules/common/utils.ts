@@ -1,3 +1,5 @@
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
+
 import find from 'lodash/find';
 import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
@@ -7,7 +9,6 @@ import map from 'lodash/map';
 import { OptionType } from '@cognite/cogs.js';
 
 import { GroupedColumn } from 'components/ManageColumnsPanel/ManageColumnsPanel';
-import { Wellbore } from 'modules/wellSearch/types';
 
 export const getFilteredOptionTypeValues = (
   options: OptionType<Wellbore>[]
@@ -44,15 +45,18 @@ export const getSelectedWellboresFromOptionType = (
 export const groupOptionTypes = (
   wellbores: Wellbore[]
 ): OptionType<Wellbore>[] =>
-  map(groupBy(wellbores, 'wellId'), (val: Wellbore[], key: string) => ({
-    label: get(find(wellbores, { wellId: +key }), 'metadata.wellDescription'),
+  map(
+    groupBy(wellbores, 'wellId'),
+    (groupedWellbores: Wellbore[], key: string) => ({
+      label: get(find(wellbores, { wellId: key }), 'metadata.wellDescription'),
 
-    options: val.map((wellbore: Wellbore, index: number) => ({
-      label: wellbore.description || '',
-      value: wellbore,
-      divider: val.length === index + 1, // divider to last item
-    })),
-  }));
+      options: groupedWellbores.map((wellbore: Wellbore, index: number) => ({
+        label: wellbore.description || '',
+        value: wellbore,
+        divider: groupedWellbores.length === index + 1, // divider to last item
+      })),
+    })
+  );
 
 export const searchByDescription = (
   allWellbores: Wellbore[],

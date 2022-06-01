@@ -6,13 +6,14 @@ import { PathHeader } from 'components/DocumentPreview/elements';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { useWellboresOfWellById } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
+import { WellboreId, WellId } from 'modules/wellSearch/types';
 import { FlexColumn } from 'styles/layout';
 
 import { WellboreRow, WellboreTitle } from './elements';
 import { WellboreDetailIcon } from './WellboreDetailIcon';
 
 export const WellboreCardDetails: React.FC<{
-  wellId: number;
+  wellId: WellId;
   favoriteWellIds: FavoriteContentWells;
 }> = ({ wellId, favoriteWellIds }) => {
   const wellbores = useWellboresOfWellById(wellId);
@@ -26,7 +27,7 @@ export const WellboreCardDetails: React.FC<{
     }
   }, [wellId]);
 
-  const handleClickView = (wellboreId: number) => {
+  const handleClickView = (wellboreId: WellboreId) => {
     navigateToWellInspect({ wellIds: [wellId], wellboreIds: [wellboreId] });
   };
 

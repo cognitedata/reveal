@@ -1,4 +1,4 @@
-import { Well } from 'modules/wellSearch/types';
+import { Well } from 'domain/wells/well/internal/types';
 
 import { waterDepthAdapter } from './waterDepthAdapter';
 

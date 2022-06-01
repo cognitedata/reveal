@@ -1,3 +1,5 @@
+import { Well } from 'domain/wells/well/internal/types';
+
 import { PartialStoreState } from 'core';
 import fetchMock from 'fetch-mock';
 
@@ -16,9 +18,7 @@ import { wellSearchActions } from '../actions';
 import {
   TOGGLE_EXPANDED_WELL_ID,
   TOGGLE_SELECTED_WELLS,
-  SET_WELLBORE_ASSETS,
   SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
-  Well,
   TOGGLE_SELECTED_WELLBORE_OF_WELL,
 } from '../types';
 
@@ -106,34 +106,6 @@ describe('Well search Actions', () => {
           well,
           wellboreId,
           isSelected,
-        },
-      ]);
-    });
-  });
-
-  describe('getWellboreAssets', () => {
-    it(`should fetch assets for the given Wellbores`, async () => {
-      const { store } = getDefaultTestValues();
-      const assetType = 'digitalRocks';
-      const fetcher: any = () =>
-        new Promise((resolve) => {
-          resolve([]);
-        });
-      const wellboreId = 123;
-
-      await store.dispatch(
-        wellSearchActions.getWellboreAssets(
-          [wellboreId],
-          {},
-          assetType,
-          fetcher
-        ) as any
-      );
-      expect(store.getActions()).toEqual([
-        {
-          type: SET_WELLBORE_ASSETS,
-          data: { [wellboreId]: [] },
-          assetType,
         },
       ]);
     });

@@ -1,8 +1,8 @@
+import { Well } from 'domain/wells/well/internal/types';
+
 import { Row } from 'react-table';
 
 import { sortByDate } from 'utils/sort/sortByDate';
-
-import { Well } from 'modules/wellSearch/types';
 
 type WellSpudDate = Pick<Well, 'spudDate'>;
 

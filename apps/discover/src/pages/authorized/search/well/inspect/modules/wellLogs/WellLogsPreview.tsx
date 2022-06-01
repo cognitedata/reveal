@@ -1,3 +1,5 @@
+import { useWellLogsRowDataKeyBySource } from 'domain/wells/log/internal/transformers/useWellLogsRowDataSelectors';
+
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -9,7 +11,6 @@ import { Dropdown, Menu } from '@cognite/cogs.js';
 
 import { ExpandButton } from 'components/Buttons';
 import { Loading } from 'components/Loading';
-import { useWellLogsRowDataKeyBySource } from 'modules/wellInspect/hooks/useWellLogsRowDataSelectors';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 
 import { ModuleFilterDropdownWrapper } from '../common/elements';

@@ -1,7 +1,8 @@
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
+
 import { useQuery } from 'react-query';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
-import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/hooks/useWellInspect';
 
 import { getTrajectories } from '../../service/network/getTrajectories';
 

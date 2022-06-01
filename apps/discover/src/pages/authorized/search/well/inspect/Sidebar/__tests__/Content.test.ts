@@ -6,7 +6,7 @@ import { getMockedStore } from '__test-utils/store.utils';
 
 import { SidebarContent } from '../SidebarContent';
 
-jest.mock('modules/wellInspect/hooks/useWellInspect', () => ({
+jest.mock('domain/wells/well/internal/transformers/useWellInspect', () => ({
   useWellInspectWells: () => ({
     wells: [
       {

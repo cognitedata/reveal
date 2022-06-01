@@ -5,7 +5,7 @@ import { createdAndLastUpdatedTime } from '__test-utils/fixtures/log';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { LOADING_TEXT } from 'components/EmptyState/constants';
-import { useDigitalRocksSamples } from 'modules/wellSearch/selectors/asset/digitalRocks';
+import { useDigitalRocksSamples } from 'modules/wellSearch/selectors/digitalRocks';
 
 import { DigitalRockSamplesTable, Props } from '../DigitalRockSamples';
 
@@ -19,7 +19,7 @@ const defaultProps: Props = {
   },
 };
 
-jest.mock('modules/wellSearch/selectors/asset/digitalRocks.ts', () => ({
+jest.mock('modules/wellSearch/selectors/digitalRocks', () => ({
   useDigitalRocksSamples: jest.fn(),
 }));
 

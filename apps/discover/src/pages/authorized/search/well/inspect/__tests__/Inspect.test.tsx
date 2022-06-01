@@ -1,3 +1,6 @@
+import { useWellInspectWells } from 'domain/wells/well/internal/transformers/useWellInspect';
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
+
 import { screen } from '@testing-library/react';
 import { Store } from 'redux';
 
@@ -8,10 +11,6 @@ import {
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import navigation from 'constants/navigation';
-import {
-  useWellInspectSelectedWellboreIds,
-  useWellInspectWells,
-} from 'modules/wellInspect/hooks/useWellInspect';
 
 import { WellInspect } from '../Inspect';
 
@@ -29,9 +28,14 @@ jest.mock('modules/wellSearch/hooks/useWellConfig', () => ({
   }),
 }));
 
-jest.mock('modules/wellInspect/hooks/useWellInspect', () => ({
+jest.mock(
+  'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds',
+  () => ({
+    useWellInspectSelectedWellboreIds: jest.fn(),
+  })
+);
+jest.mock('domain/wells/well/internal/transformers/useWellInspect', () => ({
   useWellInspectWells: jest.fn(),
-  useWellInspectSelectedWellboreIds: jest.fn(),
 }));
 
 jest.mock('modules/resultPanel/selectors', () => ({

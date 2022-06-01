@@ -1,4 +1,5 @@
-import { Wellbore } from 'modules/wellSearch/types';
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
+
 import { DEFAULT_WELLBORE_COLOR } from 'pages/authorized/search/well/inspect/Sidebar/constants';
 
 export const addColor =

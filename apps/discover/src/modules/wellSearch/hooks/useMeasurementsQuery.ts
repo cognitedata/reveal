@@ -1,3 +1,5 @@
+import { useWellInspectSelectedWellboreMatchingIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreMatchingIds';
+
 import { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 
@@ -10,7 +12,6 @@ import {
 } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
-import { useWellInspectSelectedWellboreMatchingIds } from 'modules/wellInspect/hooks/useWellInspect';
 
 import { getMeasurementsByWellboreIds } from '../service/sequence';
 import { WellboreMeasurementsMapV3 as WellboreMeasurementsMap } from '../types';

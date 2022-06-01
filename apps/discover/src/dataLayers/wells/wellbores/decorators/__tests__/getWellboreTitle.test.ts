@@ -1,6 +1,6 @@
 // remove when @sdk-wells-v2 is removed:
-import { getMockWellbore } from '__test-utils/fixtures/well/wellbore';
-import { Wellbore } from 'modules/wellSearch/types';
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { getMockWellbore } from 'domain/wells/wellbore/service/__fixtures/wellbore';
 // add when @sdk-wells-v2 is removed:
 // import { Wellbore } from '@cognite/sdk-wells-v3';
 

@@ -1,3 +1,5 @@
+import { useSelectedWellboreLogs } from 'domain/wells/log/internal/transformers/useWellLogsQuerySelectors';
+
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -13,7 +15,6 @@ import { RowProps, Table } from 'components/Tablev3';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useFilterDataLog } from 'modules/inspectTabs/selectors';
-import { useSelectedWellboreLogs } from 'modules/wellInspect/hooks/useWellLogsQuerySelectors';
 import { toBooleanMap } from 'modules/wellSearch/utils';
 
 import { COMMON_COLUMN_WIDTHS } from '../../constants';

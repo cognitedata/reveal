@@ -1,38 +1,24 @@
-import { Sequence } from '@cognite/sdk';
-
 import { mockCogniteEventList } from '__test-utils/fixtures/events';
 import { sequence } from '__test-utils/fixtures/log';
 import { groupEventsByAssetId } from 'modules/wellSearch/service/event/common';
+import { Sequence } from 'modules/wellSearch/types';
 
-import {
-  getWellboreAssetIdReverseMap,
-  mapLogType,
-  trimCachedData,
-} from '../common';
+import { mapLogType, trimCachedData } from '../common';
 
 describe('Common utils', () => {
   it(`should return trimmed data from query cache`, () => {
     const sequenceData = {
-      1111: [],
-      3333: [],
+      '1111': [],
+      '3333': [],
     };
-    const { trimmedData, newIds } = trimCachedData(sequenceData, [1111, 2222]);
+    const { trimmedData, newIds } = trimCachedData(sequenceData, [
+      '1111',
+      '2222',
+    ]);
     expect(trimmedData).toEqual({
-      1111: [],
+      '1111': [],
     });
-    expect(newIds).toEqual([2222]);
-  });
-
-  it(`should return reversed id map`, () => {
-    const idMap = {
-      11: 22,
-      33: 44,
-    };
-    const reverseMap = getWellboreAssetIdReverseMap(idMap);
-    expect(reverseMap).toEqual({
-      22: 11,
-      44: 33,
-    });
+    expect(newIds).toEqual(['2222']);
   });
 
   it(`should map log type to sequence`, () => {
@@ -41,7 +27,7 @@ describe('Common utils', () => {
       {
         ...mockSequence,
         ...{
-          id: 22,
+          id: '22',
         },
       },
     ];

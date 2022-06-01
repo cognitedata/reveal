@@ -20,7 +20,7 @@ export const getMockNPTEvent = (extras?: Partial<NPTEvent>): NPTEvent => ({
   startTime: 1096092000000,
   endTime: 1096209000000,
   duration: 1,
-  wellboreId: 123456789,
+  wellboreId: '123456789',
   nptCode: 'TEST-NPT-CODE',
   nptCodeColor: '#BFBFBF',
   ...extras,
@@ -36,7 +36,7 @@ export const mockNptEvents: NPTEvent[] = [
       unit: 'meter',
       value: 100,
     },
-    wellboreId: 12,
+    wellboreId: '12',
   }),
   getMockNPTEvent({
     wellName: 'WELL_B',
@@ -47,6 +47,6 @@ export const mockNptEvents: NPTEvent[] = [
       unit: 'meter',
       value: 100,
     },
-    wellboreId: 2,
+    wellboreId: '2',
   }),
 ];

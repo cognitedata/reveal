@@ -1,17 +1,16 @@
-import map from 'lodash/map';
+import { Well as OldWellType, Well } from 'domain/wells/well/internal/types';
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
-import { Sequence } from '@cognite/sdk';
+import map from 'lodash/map';
 
 import { REGION_FIELD_BLOCK } from 'modules/wellSearch/constantsSidebarFilters';
 import {
+  Sequence,
   SequenceRow,
-  Well as OldWellType,
   FilterConfig,
   FilterTypes,
   FilterCategoricalData,
-  Wellbore,
   Measurement,
-  Well,
 } from 'modules/wellSearch/types';
 
 import { StoreState } from '../../core';
@@ -23,42 +22,21 @@ export const WELL_TRAJ_COLUMNS = [
   { name: 'OFFSET_EAST', externalId: 'OFFSET_EAST', valueType: 'DOUBLE' },
 ];
 
+/**
+ * @deprecated - use domain/wells/well/service/__fixtures/well OR domain/wells/well/internal/__fixtures/well
+ */
 export const getMockWell = (extras?: Partial<Well>): Well => {
   return {
     name: 'test-well',
     description: 'test-well-desc',
-    id: 1234,
+    id: '1234',
     waterDepth: {
       value: 23.523422,
       unit: 'ft',
     },
     spudDate: new Date(1622190752316),
     sourceAssets: () => Promise.resolve([]),
-    ...extras,
-  };
-};
-
-export const getMockWellbore = (extras?: Partial<Wellbore>): Wellbore => {
-  return {
-    id: '1234',
-    name: 'test-wellbore',
-    description: 'test-wellbore-description',
-    sourceWellbores: [],
-    ...mockWellboreOptions,
-    ...extras,
-  };
-};
-
-export const getMockWellOld = (extras?: Partial<OldWellType>): OldWellType => {
-  return {
-    name: '16/1',
-    description: 'GC16',
-    sourceAssets: () => Promise.resolve([]),
-    id: 1234,
-    waterDepth: {
-      value: 23.523422,
-      unit: 'ft',
-    },
+    sourceList: 'source1',
     ...extras,
   };
 };
@@ -67,12 +45,12 @@ export const mockedWellResultFixture: OldWellType[] = [
   getMockWell({
     name: '16/1',
     description: 'A007',
-    id: 1234,
+    id: '1234',
   }),
   getMockWell({
     name: '16/2',
     description: 'A008',
-    id: 1235,
+    id: '1235',
   }),
 ];
 
@@ -87,21 +65,23 @@ export const mockWellboreOptions = {
 export const mockedWellboreResultFixture: Wellbore[] = [
   {
     name: 'wellbore B',
-    id: 759155409324883,
-    wellId: 1234,
+    id: '759155409324883',
+    wellId: '1234',
+    wellMatchingId: '1234',
     description: 'wellbore B desc',
     sourceWellbores: [],
     ...mockWellboreOptions,
   },
   {
     name: 'wellbore A',
-    id: 759155409324993,
+    id: '759155409324993',
     externalId: 'Wellbore A:759155409324993',
-    wellId: 1234,
+    wellId: '1234',
+    wellMatchingId: '1234',
     description: 'wellbore A desc',
     sourceWellbores: [
       {
-        id: 759155409324993,
+        id: '759155409324993',
         externalId: 'Wellbore A:759155409324993',
         source: 'Source A',
       },
@@ -143,7 +123,7 @@ export const mockedWellStateWithSelectedWells: StoreState = {
   wellSearch: {
     ...mockedWellStateFixture.wellSearch,
     selectedWellIds: {
-      1234: true,
+      '1234': true,
     },
     selectedWellboreIds: {
       '759155409324993': true,
@@ -304,7 +284,7 @@ export const mockedWellSearchState = {
 export const mockedSequencesResultFixture = [
   {
     parentId: 759155409324883,
-    assetId: 759155409324883,
+    assetId: '759155409324883',
     externalId: 'BBHLH0L1CT-POS7ICp7Al-0007I',
     id: 23891231812,
     columns: [],
@@ -320,7 +300,7 @@ export const mockedSequencesResultFixture = [
   },
   {
     parentId: 759155409324883,
-    assetId: 123214123312,
+    assetId: '123214123312',
     externalId: 'BBHLH0L1CT-POS7ICp7Al-0007I',
     id: 123213123,
     columns: [],
@@ -499,7 +479,7 @@ export const getMockWellFilterConfig = () => ({
 
 export const mockedMeasurementsResultFixture: Measurement[] = [
   {
-    assetId: 759155409324883,
+    assetId: '759155409324883',
     externalId: 'BBHLH0L1CT-POS7ICp7Al-0007I',
     id: 23891231812,
     columns: [
@@ -533,7 +513,7 @@ export const mockedMeasurementsResultFixture: Measurement[] = [
     },
   },
   {
-    assetId: 123214123312,
+    assetId: '123214123312',
     externalId: 'BBHLH0L1CT-POS7ICp7Al-0007I',
     id: 123213123,
     columns: [
@@ -572,7 +552,7 @@ export const mockedPpfgSequenceUnwantedGeomechanicsSequence: Sequence = {
   id: 4159684459572241,
   name: 'Geomechanic-POSTDRILL-AZE0000007600',
   description: 'Geomechanic log',
-  assetId: 5228257743324276,
+  assetId: '5228257743324276',
   externalId: 'Geomechanic-dab5caab-3433-46dc-a94d-8e636770c611',
   metadata: {
     source: 'PROD PPFG GEO',
@@ -648,7 +628,7 @@ export const mockedPpfgSequenceValidPpfgSequence: Sequence = {
   id: 8108006496375278,
   name: 'POSTDRILL-AZE0000007602',
   description: 'ppfg log',
-  assetId: 5764819862271496,
+  assetId: '5764819862271496',
   externalId: 'PPFG-0424fbfb-9d5b-4feb-ab3c-049915a4a700',
   metadata: {
     source: 'PROD PPFG GEO',
@@ -772,7 +752,7 @@ export const mockLotSequence: Sequence = {
   id: 6012889909952317,
   name: 'r0p8R',
   description: 'FormationTest',
-  assetId: 5764819862271496,
+  assetId: '5764819862271496',
   externalId: 'Z7q0J0n0Vv-wN2wjyr4uy-r0p8R',
   metadata: {
     stabilization_pressure: '',

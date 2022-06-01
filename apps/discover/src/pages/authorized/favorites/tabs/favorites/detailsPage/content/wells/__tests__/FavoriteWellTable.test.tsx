@@ -1,12 +1,12 @@
 import 'services/wellSearch/__mocks/setupWellsMockSDK';
 import { getMockUserMe } from 'domain/userManagementService/service/__mocks/getMockUserMe';
+import { getMockWell } from 'domain/wells/well/internal/__fixtures/well';
 
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockWellsById } from 'services/wellSearch/__mocks/getMockWellsById';
 
-import { getMockWell } from '__test-utils/fixtures/well/well';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { LOADING_TEXT } from 'components/EmptyState/constants';

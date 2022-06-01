@@ -1,10 +1,10 @@
+import { Well } from 'domain/wells/well/internal/types';
+
 import { Unit } from 'convert-units';
 import { toFixedNumberFromNumber } from 'utils/number/toFixedNumberFromNumber';
 import { changeUnitTo } from 'utils/units';
 
 import { DistanceUnitEnum } from '@cognite/sdk-wells-v3';
-
-import { Well } from 'modules/wellSearch/types';
 
 export const getWaterDepth = (
   well: Well,

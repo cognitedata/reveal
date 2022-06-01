@@ -1,9 +1,10 @@
 import { unsafeChangeUnitTo } from 'utils/units';
 
 import { INds } from '@cognite/node-visualizer';
-import { CogniteEvent } from '@cognite/sdk';
 
-export const mapNDSTo3D = (eventsMap: CogniteEvent[]): Partial<INds>[] => {
+import { CogniteEventV3ish } from 'modules/wellSearch/types';
+
+export const mapNDSTo3D = (eventsMap: CogniteEventV3ish[]): Partial<INds>[] => {
   return eventsMap.map((event) => {
     const metaData = event.metadata;
     if (!metaData) {

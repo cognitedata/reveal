@@ -1,11 +1,12 @@
+import { useWellInspectWellboreExternalIdMap } from 'domain/wells/well/internal/transformers/useWellInspectIdMap';
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
+
 import { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 
 import { LOG_CASING, LOG_WELLS_CASING_NAMESPACE } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
-import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/hooks/useWellInspect';
-import { useWellInspectWellboreExternalIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 
 import { getCasingByWellboreIds } from '../service';
 import { WellboreSequencesMap } from '../types';

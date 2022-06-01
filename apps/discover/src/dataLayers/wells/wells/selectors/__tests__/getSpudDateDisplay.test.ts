@@ -1,4 +1,4 @@
-import { getMockWell } from '__test-utils/fixtures/well/well';
+import { getMockWell } from 'domain/wells/well/service/__fixtures/well';
 
 import { getSpudDateDisplay } from '../getSpudDateDisplay';
 

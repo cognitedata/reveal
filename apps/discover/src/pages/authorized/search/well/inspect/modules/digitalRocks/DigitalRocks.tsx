@@ -1,3 +1,7 @@
+import { useWellInspectWellboreExternalAssetIdMap } from 'domain/wells/well/internal/transformers/useWellInspectIdMap';
+import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores';
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
+
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Row } from 'react-table';
 
@@ -13,11 +17,8 @@ import { Loading } from 'components/Loading/Loading';
 import { Table } from 'components/Tablev3';
 import { useDeepEffect } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
-import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
-import { useWellInspectWellboreExternalAssetIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 import { DIGITAL_ROCKS_ACCESSORS } from 'modules/wellSearch/constants';
-import { useSelectedWellBoresDigitalRocks } from 'modules/wellSearch/selectors/asset/digitalRocks';
-import { Wellbore } from 'modules/wellSearch/types';
+import { useSelectedWellBoresDigitalRocks } from 'modules/wellSearch/selectors/digitalRocks';
 import { getWellboreExternalAssetIdReverseMap } from 'modules/wellSearch/utils/common';
 
 import { DigitalRockSamplesTable } from './DigitalRockSamples';

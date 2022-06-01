@@ -1,4 +1,6 @@
 import { useFavoriteWellIds } from 'domain/favorites/internal/hooks/useFavoriteWellIds';
+import { Well } from 'domain/wells/well/internal/types';
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +22,6 @@ import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateT
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useWellQueryResultWellbores } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
 import { useWells } from 'modules/wellSearch/selectors';
-import { Wellbore, Well } from 'modules/wellSearch/types';
 import { isWellboreFavored } from 'modules/wellSearch/utils/isWellboreFavored';
 import { WellboreSubtableOptions } from 'pages/authorized/constant';
 import { ADD_TO_FAVORITES_OPTION_TEXT } from 'pages/authorized/search/document/constants';

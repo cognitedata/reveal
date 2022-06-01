@@ -1,3 +1,5 @@
+import { useWellSearchResultQuery } from 'domain/wells/well/internal/queries/useWellSearchResultQuery';
+
 import { screen, fireEvent } from '@testing-library/react';
 import constant from 'lodash/constant';
 
@@ -7,13 +9,15 @@ import { NO_RESULTS_TEXT } from 'components/EmptyState/constants';
 import * as mapActions from 'modules/map/actions';
 import { useGetTypeFromGeometry } from 'modules/map/selectors';
 import { useSearchPhrase } from 'modules/sidebar/selectors';
-import { useWellSearchResultQuery } from 'modules/wellSearch/hooks/useWellSearchResultQuery';
 
 import { TableEmpty, TableEmptyProps } from '../TableEmpty';
 
-jest.mock('modules/wellSearch/hooks/useWellSearchResultQuery', () => ({
-  useWellSearchResultQuery: jest.fn(),
-}));
+jest.mock(
+  'domain/wells/well/internal/queries/useWellSearchResultQuery',
+  () => ({
+    useWellSearchResultQuery: jest.fn(),
+  })
+);
 
 jest.mock('modules/sidebar/selectors', () => ({
   useSearchPhrase: jest.fn(),

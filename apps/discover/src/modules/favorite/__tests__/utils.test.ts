@@ -5,7 +5,6 @@ import {
   getDocumentIds,
   getWellIds,
   getWellbores,
-  getWellsWellboresExistInFavorite,
   getDocumentExistInFavorite,
   getWellsToAddAfterFavoriteCreation,
   getUpdatedWells,
@@ -42,8 +41,8 @@ describe('Util functions', () => {
   ];
 
   it(`should get well id list`, async () => {
-    const wells = getWellIds(123);
-    expect(wells).toEqual([123]);
+    const wells = getWellIds('123');
+    expect(wells).toEqual(['123']);
 
     const emptyWells = getWellIds();
     expect(emptyWells).toEqual([]);
@@ -65,28 +64,6 @@ describe('Util functions', () => {
     expect(emptyWellboreIds).toEqual([]);
   });
 
-  it('should return expected values with inputs in`getWellsWellboresExistInFavorite` function', () => {
-    const wellIdWithoutWellbore = getWellsWellboresExistInFavorite(
-      favorites,
-      '308f0eb7'
-    );
-    expect(wellIdWithoutWellbore).toEqual(['favoriteIdTwo']);
-
-    const wellIdWithWellbore = getWellsWellboresExistInFavorite(
-      favorites,
-      '35f456c8',
-      '8ae14b59'
-    );
-    expect(wellIdWithWellbore).toEqual(['favoriteIdOne']);
-
-    const wellIdWithoutWellboreInMultipleFavorites =
-      getWellsWellboresExistInFavorite(favorites, '4d8d5dae7');
-    expect(wellIdWithoutWellboreInMultipleFavorites).toEqual([
-      'favoriteIdOne',
-      'favoriteIdTwo',
-    ]);
-  });
-
   it('should return expected values with inputs in `getDocumentExistInFavorite` function', () => {
     const favoriteIds = getDocumentExistInFavorite(favorites, 6851377442822181);
     expect(favoriteIds).toEqual(['favoriteIdOne']);
@@ -106,7 +83,7 @@ describe('Util functions', () => {
     );
 
     const emptyFavoriteContentWells = getWellsToAddAfterFavoriteCreation([]);
-    expect(emptyFavoriteContentWells).toEqual(undefined);
+    expect(emptyFavoriteContentWells).toEqual({});
   });
 
   it('should return expected values with inputs in `getUpdatedWells` function', () => {

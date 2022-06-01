@@ -1,3 +1,6 @@
+import { useWellInspectWells } from 'domain/wells/well/internal/transformers/useWellInspect';
+import { Well } from 'domain/wells/well/internal/types';
+
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -8,13 +11,12 @@ import { Checkbox } from '@cognite/cogs.js';
 import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 import { useOverviewPageErrors } from 'modules/inspectTabs/selectors';
 import { wellInspectActions } from 'modules/wellInspect/actions';
-import { useWellInspectWells } from 'modules/wellInspect/hooks/useWellInspect';
 import {
   useColoredWellbores,
   useWellInspectIndeterminateWells,
   useWellInspectSelection,
 } from 'modules/wellInspect/selectors';
-import { Well } from 'modules/wellSearch/types';
+import { WellboreId } from 'modules/wellSearch/types';
 
 import { DEFAULT_WELLBORE_COLOR } from './constants';
 import { wellboreAdapter } from './domain';
@@ -44,7 +46,7 @@ export const SidebarContent: React.FC = () => {
   }, []);
 
   const handleClickWellbore = useCallback(
-    (well: Well, wellboreId: number, isSelected: boolean) => {
+    (well: Well, wellboreId: WellboreId, isSelected: boolean) => {
       dispatch(
         wellInspectActions.toggleSelectedWellboreOfWell({
           well,

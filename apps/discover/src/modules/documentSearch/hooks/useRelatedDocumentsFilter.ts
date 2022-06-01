@@ -1,6 +1,5 @@
 import { SearchRequestOptions } from 'domain/documents/service/queries/searchDocument';
-
-import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/hooks/useWellInspect';
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
 
 export const useRelatedDocumentsFilter = () => {
   const wellboreIds = useWellInspectSelectedWellboreIds();

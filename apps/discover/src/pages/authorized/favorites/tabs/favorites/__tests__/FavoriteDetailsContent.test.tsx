@@ -5,6 +5,7 @@ import { getMockDocumentCategoriesGet } from 'domain/documents/service/__mocks/g
 import { getMockDocumentSearch } from 'domain/documents/service/__mocks/getMockDocumentSearch';
 import { getMockFavoriteSummary } from 'domain/favorites/service/__fixtures/favorite';
 import { getMockUserMe } from 'domain/userManagementService/service/__mocks/getMockUserMe';
+import { getMockWell } from 'domain/wells/well/service/__fixtures/well';
 
 import { screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { setupServer } from 'msw/node';
@@ -12,7 +13,6 @@ import { getMockAssetsByIds } from 'services/assets/__mocks/getMockAssets';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockWellsById } from 'services/wellSearch/__mocks/getMockWellsById';
 
-import { getMockWell } from '__test-utils/fixtures/well/well';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { defaultTestUser } from '__test-utils/testdata.utils';

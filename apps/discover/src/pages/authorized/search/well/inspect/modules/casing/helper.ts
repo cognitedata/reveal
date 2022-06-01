@@ -5,9 +5,8 @@ import isUndefined from 'lodash/isUndefined';
 import last from 'lodash/last';
 import { UnitConverterItem } from 'utils/units';
 
-import { Sequence } from '@cognite/sdk';
-
 import { FEET, UserPreferredUnit } from 'constants/units';
+import { Sequence } from 'modules/wellSearch/types';
 import { convertObject } from 'modules/wellSearch/utils';
 
 import { COMMON_COLUMN_WIDTHS } from '../../constants';

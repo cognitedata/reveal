@@ -1,3 +1,5 @@
+import { useWellInspectWells } from 'domain/wells/well/internal/transformers/useWellInspect';
+
 import { useMemo } from 'react';
 
 import pickBy from 'lodash/pickBy';
@@ -5,8 +7,6 @@ import pickBy from 'lodash/pickBy';
 import { useDeepMemo } from 'hooks/useDeep';
 import useSelector from 'hooks/useSelector';
 import { getIndeterminateWells } from 'modules/wellSearch/utils/wells';
-
-import { useWellInspectWells } from './hooks/useWellInspect';
 
 export const useWellInspect = () => {
   return useSelector((state) => {

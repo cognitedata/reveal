@@ -1,3 +1,5 @@
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
+
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -12,7 +14,7 @@ import { PressureUnit, DepthMeasurementUnit } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
-import { Wellbore, WellboreProcessedData } from 'modules/wellSearch/types';
+import { WellboreProcessedData } from 'modules/wellSearch/types';
 import { FlexColumn } from 'styles/layout';
 
 import {

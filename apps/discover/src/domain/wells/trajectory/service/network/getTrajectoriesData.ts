@@ -6,7 +6,7 @@ import uniqueId from 'lodash/uniqueId';
 import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
 
 import { ProjectConfigWellsTrajectoryColumns } from '@cognite/discover-api-types';
-import { Sequence, SequenceColumn } from '@cognite/sdk';
+import { SequenceColumn } from '@cognite/sdk';
 import {
   TrajectoryData as TrajectoryDataV3,
   TrajectoryDataRow,
@@ -18,6 +18,7 @@ import {
   TRAJECTORY_COLUMN_NAME_MAP,
 } from 'modules/wellSearch/service/sequence/constants';
 import {
+  Sequence,
   TrajectoryData,
   TrajectoryRow,
   TrajectoryRows,

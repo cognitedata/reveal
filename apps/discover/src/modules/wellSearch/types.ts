@@ -1,21 +1,14 @@
+import { Well } from 'domain/wells/well/internal/types';
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
+
 import { Dictionary } from '@reduxjs/toolkit';
 import { PlotData } from 'plotly.js';
 
 import { ProjectConfigWellsTrajectoryColumns } from '@cognite/discover-api-types';
+import { Sequence as DefaultSequence, Asset, CogniteEvent } from '@cognite/sdk';
+import { NPT, WellFilter } from '@cognite/sdk-wells-v2';
 import {
-  Metadata,
-  Sequence as DefaultSequence,
-  Asset,
-  CogniteEvent,
-} from '@cognite/sdk';
-import {
-  NPT,
-  Well as SDKWell,
-  Wellbore as WellboreV2,
-  WellFilter,
-} from '@cognite/sdk-wells-v2';
-import {
-  Wellbore as WellboreV3,
+  AssetSource,
   WellFilter as WellFilterV3,
   DepthMeasurement,
   DepthMeasurementData,
@@ -23,7 +16,6 @@ import {
   Distance,
   CasingSchematic,
 } from '@cognite/sdk-wells-v3';
-import { Point } from '@cognite/seismic-sdk-js';
 
 import { Error } from 'modules/inspectTabs/types';
 import { CasingType } from 'pages/authorized/search/well/inspect/modules/casing/CasingView/interfaces';
@@ -66,8 +58,9 @@ export interface WellState {
 
 // other types:
 
-export interface Sequence extends DefaultSequence {
+export interface Sequence extends Omit<DefaultSequence, 'assetId'> {
   wellboreId?: WellboreId;
+  assetId?: AssetSource['assetExternalId'];
 }
 
 export interface TrajectoryColumnR {
@@ -100,7 +93,7 @@ export interface WellboreDigitalRockSamples {
 
 interface ToggleExpandedWellId {
   type: typeof TOGGLE_EXPANDED_WELL_ID;
-  id: number;
+  id: string;
   reset?: boolean;
 }
 
@@ -162,14 +155,6 @@ export type WellSearchAction =
   | RemoveSelectedColumn
   | SetSelectedColumn;
 
-export interface Well extends Omit<SDKWell, 'id' | 'wellbores'> {
-  id: WellId;
-  geometry?: Point;
-  wellbores?: Wellbore[];
-  description?: string;
-  spudDate?: any;
-}
-
 export interface WellResult {
   wells: Well[];
   error?: Error;
@@ -180,34 +165,8 @@ export interface WellName {
   name: string;
 }
 
-// @sdk-wells-v3
-export type WellId = any;
-export type WellboreId = any;
-export interface Wellbore
-  extends Omit<WellboreV2, 'id' | 'wellId'>,
-    Partial<Omit<WellboreV3, 'name' | 'matchingId'>> {
-  id: WellboreId;
-  wellName?: string;
-  matchingId?: string;
-  wellId?: WellId;
-  sequences?: WellSequence[];
-  metadata?: Metadata;
-  parentExternalId?: string;
-  description?: string;
-}
-
-export interface WellSequence {
-  name: string;
-  id: number;
-  metadata: WellSequenceMetadata;
-}
-
-interface WellSequenceMetadata {
-  subtype: string;
-  type: string;
-  source: string;
-  fileType: string;
-}
+export type WellId = string;
+export type WellboreId = string;
 
 export type WellFilterOptionValue = string | number;
 
@@ -273,6 +232,7 @@ export enum FilterTypes {
 }
 
 /**
+ * @deprecated
  * Certain filters are only available in Sdk v3, picking thoese filters to use with app well filter
  */
 export type FiltersOnlySupportSdkV3 = Pick<
@@ -281,6 +241,7 @@ export type FiltersOnlySupportSdkV3 = Pick<
 >;
 
 /**
+ * @deprecated
  * Type compiled sdk v2 and picked fitlers from sdk v3
  */
 export type CommonWellFilter = WellFilter & FiltersOnlySupportSdkV3;
@@ -310,7 +271,7 @@ export type WellboreSequencesMap = {
 };
 
 export type WellboreEventsMap = {
-  [key: string]: CogniteEvent[];
+  [key: string]: CogniteEventV3ish[];
 };
 
 export type WellboreNPTEventsMap = {
@@ -334,11 +295,11 @@ export class SequenceRow extends Array<SequenceItem> {
 }
 
 export type WellboreIdMap = {
-  [key: number]: number;
+  [key: WellboreId]: string;
 };
 
 export type WellboreAssetIdMap = {
-  [key: number]: number;
+  [key: WellboreId]: string;
 };
 
 export type WellboreExternalAssetIdMap = {
@@ -346,28 +307,32 @@ export type WellboreExternalAssetIdMap = {
 };
 
 export type WellboreExternalIdMap = {
-  [key: string]: number;
+  [key: string]: string;
 };
 
 export type WellboreSourceExternalIdMap = {
-  [key: string]: number;
+  [key: WellboreId]: string;
 };
 
-export type IdWellboreMap = Record<string | number, Wellbore>;
+export type IdWellboreMap = Record<string, Wellbore>;
 
 export interface NPTEvent extends NPT {
-  wellboreId: number;
+  wellboreId: string;
   wellName?: string;
   wellboreName?: string;
   nptCodeColor: string;
 }
 
-export interface NDSEvent extends CogniteEvent {
+export interface NDSEvent extends CogniteEventV3ish {
   wellboreId: string;
   wellName?: string;
   wellboreName?: string;
   riskType: string;
 }
+
+export type CogniteEventV3ish = Omit<CogniteEvent, 'assetIds'> & {
+  assetIds?: WellboreId[];
+};
 
 export interface FilterValues {
   id: number;

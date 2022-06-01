@@ -1,10 +1,10 @@
 import get from 'lodash/get';
 
-import { CogniteEvent } from '@cognite/sdk';
+import { CogniteEventV3ish } from 'modules/wellSearch/types';
 
 export const isEventsOverlap = (
-  parentEvent: CogniteEvent,
-  childEvent: CogniteEvent
+  parentEvent: CogniteEventV3ish,
+  childEvent: CogniteEventV3ish
 ) => {
   return (
     parentEvent.id !== childEvent.id &&

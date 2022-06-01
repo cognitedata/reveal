@@ -1,49 +1,11 @@
-import isEqual from 'lodash/isEqual';
+import { Well } from 'domain/wells/well/internal/types';
+
 import isUndefined from 'lodash/isUndefined';
 import keyBy from 'lodash/keyBy';
-import { normalizeCoords } from 'services/wellSearch/utils/normalizeCoords';
 
 import { TableResults } from 'components/Tablev3';
 
-import { Well, Wellbore, WellId, WellMap } from '../types';
-
-export const normalizeWell = (well: Well): Well => {
-  return {
-    ...well,
-    ...(well.wellhead
-      ? normalizeCoords(well.wellhead.x, well.wellhead.y, well.wellhead.crs)
-      : {}),
-    name: well.externalId
-      ? `${well.description || well.name} (${well.externalId})`
-      : well.name,
-    wellbores: well.wellbores?.map((wellbore) =>
-      normalizeWellbore(wellbore, well)
-    ),
-  };
-};
-
-// This should be moved to data layer (under wellbore)
-export const normalizeWellbore = (wellbore: Wellbore, well: Well): Wellbore => {
-  return {
-    ...wellbore,
-    name: wellbore.name || wellbore.description || '',
-    wellName: well.name || well.description || '',
-    wellId: well.id,
-  };
-};
-
-export const normalizeWells = (wells: Well[]) => {
-  return wells.map(normalizeWell);
-};
-
-export const getFilteredWellbores = (
-  wellbores: Wellbore[] | undefined,
-  wellboreId: string | undefined
-): Wellbore[] => {
-  return (
-    wellbores?.filter((wellbore) => isEqual(wellbore.id, wellboreId)) || []
-  );
-};
+import { WellId, WellMap } from '../types';
 
 export const getIndeterminateWells = (
   wells: Well[],
@@ -55,6 +17,7 @@ export const getIndeterminateWells = (
     const selectedWellboresCount = well.wellbores.filter(
       (wellbore) => selectedWellboreIds[wellbore.id]
     ).length;
+
     if (
       selectedWellboresCount > 0 &&
       selectedWellboresCount !== well.wellbores.length

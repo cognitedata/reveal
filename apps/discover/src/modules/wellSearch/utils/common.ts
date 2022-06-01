@@ -1,19 +1,21 @@
-import { CogniteEvent, ExternalEvent, Sequence } from '@cognite/sdk';
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
+
+import { ExternalEvent } from '@cognite/sdk';
 import { NPT } from '@cognite/sdk-wells-v2';
 
 import {
   TrajectoryData,
-  Wellbore,
-  WellboreAssetIdMap,
   WellboreExternalAssetIdMap,
   MeasurementV3,
+  CogniteEventV3ish,
+  Sequence,
 } from '../types';
 
 export const trimCachedData = (
   data: {
     [key: string]:
       | Sequence[]
-      | CogniteEvent[]
+      | CogniteEventV3ish[]
       | TrajectoryData[]
       | ExternalEvent[]
       | NPT[];
@@ -65,20 +67,6 @@ export const trimCachedDataV3 = (
     trimmedData,
     newIds,
   };
-};
-
-export const getWellboreAssetIdReverseMap = (
-  wellboreAssetIdMap: WellboreAssetIdMap
-) => {
-  return Object.keys(wellboreAssetIdMap)
-    .map((key) => Number(key))
-    .reduce(
-      (idMap, wellboreId) => ({
-        ...idMap,
-        [wellboreAssetIdMap[wellboreId]]: wellboreId,
-      }),
-      {} as WellboreAssetIdMap
-    );
 };
 
 export const getWellboreExternalAssetIdReverseMap = (

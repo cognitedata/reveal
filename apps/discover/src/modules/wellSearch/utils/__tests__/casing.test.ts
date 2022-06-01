@@ -1,6 +1,5 @@
-import { Sequence } from '@cognite/sdk';
-
 import { sequence } from '__test-utils/fixtures/log';
+import { Sequence } from 'modules/wellSearch/types';
 
 import {
   doesCasingHaveReportDescription,

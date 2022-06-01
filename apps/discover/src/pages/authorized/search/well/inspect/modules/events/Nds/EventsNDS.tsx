@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
-import { CogniteEvent } from '@cognite/sdk';
-
 import EmptyState from 'components/EmptyState';
 import { Loading } from 'components/Loading';
 import { Table } from 'components/Tablev3';
@@ -17,6 +15,7 @@ import {
   TimeLogStages,
 } from 'hooks/useTimeLog';
 import { useNdsEventsForTable } from 'modules/wellSearch/selectors';
+import { CogniteEventV3ish } from 'modules/wellSearch/types';
 
 import { NdsFilterWrapper } from '../elements';
 
@@ -45,7 +44,7 @@ export const EventsNds: React.FC = () => {
   const { events, isLoading } = useNdsEventsForTable();
   const ndsEvents = getDataLayer(events);
 
-  const [filteredEvents, setFilteredEvents] = useState<CogniteEvent[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<CogniteEventV3ish[]>([]);
 
   useStopTimeLogger(renderTimer);
   if (isLoading) return <Loading />;
@@ -63,7 +62,7 @@ export const EventsNds: React.FC = () => {
       {isEmpty(filteredEvents) ? (
         <EmptyState />
       ) : (
-        <Table<CogniteEvent>
+        <Table<CogniteEventV3ish>
           scrollTable
           id="events-nds-table"
           data={filteredEvents || []}

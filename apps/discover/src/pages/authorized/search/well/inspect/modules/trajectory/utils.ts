@@ -1,7 +1,7 @@
 import groupBy from 'lodash/groupBy';
 import head from 'lodash/head';
 
-import { Sequence } from '@cognite/sdk';
+import { Sequence } from 'modules/wellSearch/types';
 
 export const getWellboreNameForTrajectory = (
   trajId = '',

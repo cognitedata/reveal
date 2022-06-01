@@ -1,7 +1,8 @@
+import { Well } from 'domain/wells/well/internal/types';
+
 import isEmpty from 'lodash/isEmpty';
 
 import { FavoriteContentWells } from 'modules/favorite/types';
-import { Well } from 'modules/wellSearch/types';
 
 export const filterWellboresFromWellsData = (
   wells: Well[],

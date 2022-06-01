@@ -1,3 +1,5 @@
+import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
+
 import { useMemo } from 'react';
 
 import { getRkbLevel } from 'dataLayers/wells/wellbores/selectors/getRkbLevel';
@@ -14,7 +16,6 @@ import { LOG_CASING, LOG_WELLS_CASING_NAMESPACE } from 'constants/logging';
 import { FEET } from 'constants/units';
 import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
-import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
 import { useSelectedWellboresCasingsQuery } from 'modules/wellSearch/hooks/useSelectedWellboresCasingsQuery';
 import { convertObject } from 'modules/wellSearch/utils';
 import { CasingData } from 'pages/authorized/search/well/inspect/modules/casing/interfaces';

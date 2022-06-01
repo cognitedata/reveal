@@ -1,6 +1,7 @@
+import { Well } from 'domain/wells/well/internal/types';
+
 import { ColumnMap } from 'modules/documentSearch/utils/columns';
 import { useWells } from 'modules/wellSearch/selectors';
-import { Well } from 'modules/wellSearch/types';
 
 export const useWellColumnsWithSelectionStatus = (
   wellColumns: ColumnMap<Well>

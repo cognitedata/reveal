@@ -1,14 +1,20 @@
+import { Well } from 'domain/wells/well/internal/types';
+
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
 
 import { useDeepMemo } from 'hooks/useDeep';
 
-import { WellboreId, WellId } from '../types';
+import { WellboreId } from '../types';
 import { getWellsOfWellIds } from '../utils/wells';
 
 import { useWellsCacheQuery } from './useWellsCacheQuery';
 
-export const useWellsByIds = (wellIds?: WellId) => {
+type Result = {
+  wells: Well[];
+  error?: Error | undefined;
+};
+export const useWellsByIds = (wellIds?: Well['id'][]) => {
   const { data: fetchedWells } = useWellsCacheQuery(wellIds);
 
   return useDeepMemo(() => {
@@ -22,23 +28,23 @@ export const useWellsByIds = (wellIds?: WellId) => {
       return {
         wells: [],
         error: fetchedWells?.error,
-      };
+      } as Result;
     }
     // Filter cached data by required ids and return.
     return {
       wells: getWellsOfWellIds(fetchedWells.wells, wellIds),
       error: fetchedWells.error,
-    };
+    } as Result;
   }, [wellIds, fetchedWells]);
 };
 
-export const useWellById = (wellId?: WellId) => {
+export const useWellById = (wellId?: Well['id']) => {
   const { wells } = useWellsByIds(wellId ? [wellId] : []);
   return !wellId ? null : head(wells) || null;
 };
 
 export const useWellboresOfWellById = (
-  wellId?: WellId,
+  wellId?: Well['id'],
   filterWellboresByIds?: WellboreId[]
 ) => {
   const well = useWellById(wellId);

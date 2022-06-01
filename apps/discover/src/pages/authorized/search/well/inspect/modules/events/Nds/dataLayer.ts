@@ -1,5 +1,5 @@
-import { CogniteEvent } from '@cognite/sdk';
+import { CogniteEventV3ish } from 'modules/wellSearch/types';
 
-export const getDataLayer = (events: CogniteEvent[]) => {
+export const getDataLayer = (events: CogniteEventV3ish[]) => {
   return events;
 };

@@ -1,6 +1,4 @@
-import { Sequence } from '@cognite/sdk';
-
-import { TrajectoryRows } from 'modules/wellSearch/types';
+import { Sequence, TrajectoryRows } from 'modules/wellSearch/types';
 
 import { getWellboreNameForTrajectory } from '../../utils';
 

@@ -1,3 +1,5 @@
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
+
 import React, { useEffect, useState } from 'react';
 
 import { getWellboreTitle } from 'dataLayers/wells/wellbores/decorators/getWellboreTitle';
@@ -12,7 +14,6 @@ import { BaseButton } from 'components/Buttons';
 import {
   MeasurementChartDataV3 as MeasurementChartData,
   MeasurementTypeV3,
-  Wellbore,
   WellboreId,
 } from 'modules/wellSearch/types';
 import { ChartV2 } from 'pages/authorized/search/well/inspect/modules/common/ChartV2';

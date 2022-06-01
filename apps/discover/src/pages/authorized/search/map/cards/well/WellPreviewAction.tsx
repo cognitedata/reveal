@@ -1,8 +1,11 @@
+import { Well } from 'domain/wells/well/internal/types';
+
 import React from 'react';
 
 import map from 'lodash/map';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
+import { reportException } from '@cognite/react-errors';
 import { useTranslation } from '@cognite/react-i18n';
 
 import { ADD_TO_FAVOURITES } from 'components/AddToFavoriteSetMenu/constants';
@@ -13,7 +16,6 @@ import { useDeepMemo } from 'hooks/useDeep';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { useWellboresOfWellById } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
-import { Well } from 'modules/wellSearch/types';
 import { FlexAlignItems, FlexGrow } from 'styles/layout';
 
 import { ActionContainer } from '../document/components/elements';
@@ -33,6 +35,10 @@ export const WellPreviewAction: React.FC<Props> = (props) => {
     React.useState<boolean>(false);
 
   const handleClickView = () => {
+    if (!well?.id) {
+      reportException('Missing well on well preview');
+      return;
+    }
     navigateToWellInspect({
       wellIds: [well?.id],
       wellboreIds: map(wellbores, 'id'),
@@ -40,7 +46,7 @@ export const WellPreviewAction: React.FC<Props> = (props) => {
   };
 
   const isFavored = useDeepMemo(() => {
-    if (!favoriteWellIds) return false;
+    if (!favoriteWellIds || !well?.id) return false;
 
     return Object.keys(favoriteWellIds).includes(well?.id);
   }, [favoriteWellIds, well?.id]);

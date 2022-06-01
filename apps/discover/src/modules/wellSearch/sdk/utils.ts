@@ -7,11 +7,9 @@ import {
   SpudDateLimits as SpudDateLimitsV2,
   WellFilter as WellFilterV2,
   PolygonFilter as PolygonFilterV2,
-  Wellbore as WellboreV2,
   NPTFilter as NPTFilterV2,
   NPTItems as NPTItemsV2,
   NPT as NPTV2,
-  Survey,
   LengthUnitEnum,
 } from '@cognite/sdk-wells-v2';
 import { DoubleWithUnit } from '@cognite/sdk-wells-v2/dist/src/client/model/DoubleWithUnit';
@@ -19,10 +17,8 @@ import {
   SourceItems as SourceItemsV3,
   WaterDepthLimits as WaterDepthLimitsV3,
   SpudDateLimits as SpudDateLimitsV3,
-  Well as WellV3,
   WellFilter as WellFilterV3,
   WellFilterRequest,
-  WellItems as WellItemsV3,
   PropertyFilter,
   PolygonFilter as PolygonFilterV3,
   GeometryTypeEnum,
@@ -39,8 +35,6 @@ import {
   SummaryCount,
   AngleUnitEnum,
 } from '@cognite/sdk-wells-v3';
-
-import { Well } from 'modules/wellSearch/types';
 
 import { EMPTY_ARRAY } from '../../../constants/empty';
 import { adaptLocalDateToISOString } from '../../../utils/date';
@@ -77,20 +71,6 @@ export const mapSummaryCountsToStringArray = (
   summaryCounts: SummaryCount[]
 ): string[] => {
   return summaryCounts.map((summaryCount) => summaryCount.property);
-};
-
-export const mapV3ToV2Well = (well: WellV3): Well => {
-  const wellbores = well.wellbores?.map(mapV3ToV2Wellbore) || [];
-  return {
-    ...well,
-    id: well.matchingId as any,
-    spudDate: new Date(well.spudDate || ''),
-    wellhead: { id: 0, ...well.wellhead },
-    sources: well.sources.map((source) => source.sourceName),
-    wellbores,
-    // wellbores: () => Promise.resolve(wellbores),
-    sourceAssets: () => Promise.resolve([]),
-  } as Well;
 };
 
 export const toPropertyFilter = (
@@ -230,13 +210,6 @@ export const mapWellFilterToWellFilterRequest = (
   };
 };
 
-export const mapV3ToV2WellItems = (wellItems: WellItemsV3) => {
-  return {
-    ...wellItems,
-    items: wellItems.items.map(mapV3ToV2Well),
-  };
-};
-
 export const toContainsAllOrAny = (
   items?: string[]
 ): ContainsAllOrAny | undefined => {
@@ -265,25 +238,12 @@ export const extractWellboresFromWells = (response: WellItems) => {
   );
 };
 
-export const mapV3ToV2Wellbore = (wellbore: WellboreV3): WellboreV2 => {
-  return {
-    ...wellbore,
-    id: wellbore.matchingId as any,
-    wellId: wellbore.wellMatchingId as any,
-    sourceWellbores: wellbore.sources?.map((source) => ({
-      id: wellbore.matchingId as any,
-      externalId: source.assetExternalId,
-      source: source.sourceName,
-    })),
-    trajectory: () => Promise.resolve({} as Survey),
-    casings: () => Promise.resolve([]),
-    parentWell: () => Promise.resolve(undefined),
-    getWellhead: () => Promise.resolve(undefined),
-    sourceAssets: () => Promise.resolve([]),
-  };
+export type NPTFilterV2WithV3WellboreIds = Omit<NPTFilterV2, 'wellboreIds'> & {
+  wellboreIds?: string[];
 };
-
-export const mapV2toV3NPTFilter = (nptFilter: NPTFilterV2): NPTFilterV3 => {
+export const mapV2toV3NPTFilter = (
+  nptFilter: NPTFilterV2WithV3WellboreIds
+): NPTFilterV3 => {
   return {
     measuredDepth: nptFilter.measuredDepth,
     duration: mapDoubleRangeToDurationRange(nptFilter.duration),

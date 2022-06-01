@@ -2,10 +2,9 @@ import {
   ProjectConfigWells,
   ProjectConfigWellsTrajectoryCharts,
 } from '@cognite/discover-api-types';
-import { Sequence } from '@cognite/sdk';
 
 import { UserPreferredUnit } from 'constants/units';
-import { TrajectoryRows } from 'modules/wellSearch/types';
+import { Sequence, TrajectoryRows } from 'modules/wellSearch/types';
 
 import { getAddDataFn } from './addChartData';
 import { getChartObjectGenerateFn } from './getChartObject';

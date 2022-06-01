@@ -2,10 +2,12 @@ import { Feature, FeatureCollection } from '@turf/helpers';
 
 import { Geometry, Point, Polygon, GeoJson } from '@cognite/seismic-sdk-js';
 
+import { WellId } from 'modules/wellSearch/types';
+
 import { MapLayer } from '../../tenants/types';
 
 export interface NPDLayerItemResponse {
-  assetIds: number[];
+  assetIds: string[];
   name: string;
   attributes: {
     geometry: Polygon;
@@ -73,7 +75,7 @@ export interface MapState {
   zoomToFeature?: Geometry;
   selectedFeature: GeoJson | null;
   selectedDocument?: { id: string; point?: Point };
-  selectedWell?: { id: number; point?: Point };
+  selectedWell?: { id: WellId; point?: Point };
   drawMode: DrawMode;
   // change this to an array of types
   // so it can contain many?

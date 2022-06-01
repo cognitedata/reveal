@@ -1,3 +1,5 @@
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
+
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -12,7 +14,7 @@ import { RowProps, Table } from 'components/Tablev3';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { useVisibleWellboreColumns } from 'hooks/useVisibleWellboreColumns';
 import { SelectedMap } from 'modules/inspectTabs/types';
-import { Wellbore, WellboreId } from 'modules/wellSearch/types';
+import { WellboreId } from 'modules/wellSearch/types';
 import { WellboreSubtableOptions } from 'pages/authorized/constant';
 import { REMOVE_FROM_SET_TEXT } from 'pages/authorized/favorites/constants';
 import { DeleteWellFromSetModal } from 'pages/authorized/favorites/modals';

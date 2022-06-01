@@ -1,7 +1,8 @@
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
+
 import { changeUnits } from 'utils/units';
 
 import { UserPreferredUnit } from 'constants/units';
-import { Wellbore } from 'modules/wellSearch/types';
 import { convertToFixedDecimal } from 'modules/wellSearch/utils';
 
 export const getKbElevation = <T extends Wellbore>(

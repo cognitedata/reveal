@@ -1,3 +1,6 @@
+import { Well } from 'domain/wells/well/internal/types';
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
+
 import { Dictionary } from '@reduxjs/toolkit';
 import convert from 'convert-units';
 import compact from 'lodash/compact';
@@ -11,7 +14,6 @@ import { colorize } from 'utils/colorize';
 import { unsafeChangeUnitTo } from 'utils/units';
 import { UNITS_TO_STANDARD } from 'utils/units/constants';
 
-import { CogniteEvent } from '@cognite/sdk';
 import { DistanceUnitEnum } from '@cognite/sdk-wells-v3';
 
 import { DistanceUnit } from 'constants/units';
@@ -22,21 +24,20 @@ import {
   UNKNOWN_NPT_CODE,
   UNKNOWN_NPT_DETAIL_CODE,
 } from 'modules/wellSearch/constants';
+import { CogniteEventV3ish } from 'modules/wellSearch/types';
 
 import {
   IdWellboreMap,
   NDSEvent,
   NPTEvent,
-  Well,
-  Wellbore,
   WellboreEventsMap,
   WellboreNPTEventsMap,
 } from '../types';
 
 export const mapWellInfo = (
-  events: CogniteEvent[],
+  events: CogniteEventV3ish[],
   wells: Well[]
-): CogniteEvent[] => {
+): CogniteEventV3ish[] => {
   const wellbores = groupBy(
     flatten(
       wells.map((well) =>
@@ -65,7 +66,7 @@ export const mapWellInfo = (
 };
 
 export const getWellbore = (
-  event: CogniteEvent,
+  event: CogniteEventV3ish,
   wellbores: Dictionary<Wellbore[]>
 ) => {
   const eventWellboreId = event.assetIds?.length
@@ -97,7 +98,6 @@ export const getIdWellboreMap = (wells: Well[]): IdWellboreMap => {
   );
 };
 
-// @sdk-wells-v3
 export const mapWellInfoToNPTEvents = (
   eventsMap: WellboreNPTEventsMap,
   wells: Well[],

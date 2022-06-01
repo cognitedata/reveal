@@ -1,6 +1,6 @@
-import { CreatedAndLastUpdatedTime, Sequence } from '@cognite/sdk';
+import { CreatedAndLastUpdatedTime } from '@cognite/sdk';
 
-import { SequenceData, SequenceRow } from 'modules/wellSearch/types';
+import { Sequence, SequenceData, SequenceRow } from 'modules/wellSearch/types';
 
 export const mdValues = [0, 5];
 

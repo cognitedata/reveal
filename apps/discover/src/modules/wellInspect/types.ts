@@ -1,10 +1,7 @@
+import { Well } from 'domain/wells/well/internal/types';
+
 import { TableResults } from 'components/Tablev3';
-import {
-  SequenceData,
-  Well,
-  WellboreId,
-  WellId,
-} from 'modules/wellSearch/types';
+import { SequenceData, WellboreId, WellId } from 'modules/wellSearch/types';
 
 export const SET_PREREQUISITE_DATA = 'WELL_INSPECT_SET_PREREQUISITE_DATA';
 export const TOGGLE_SELECTED_WELL = 'WELL_INSPECT_TOGGLE_SELECTED_WELL';

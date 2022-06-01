@@ -1,10 +1,11 @@
+import { useWellInspectWellboreIdMap } from 'domain/wells/well/internal/transformers/useWellInspectIdMap';
+
 import { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 
 // import { LOG_EVENTS_NPT, LOG_EVENTS_NDS } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 // import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
-import { useWellInspectWellboreIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 
 import { getNptEventsByWellboreIds as service } from '../service';
 import { WellboreNPTEventsMap } from '../types';
@@ -33,7 +34,7 @@ export const useNptEventsQuery = () => {
   const { data, isLoading } = useQuery(WELL_QUERY_KEY.NPT_EVENTS, () =>
     Promise.all(
       Object.entries(wellboresMatchingIdMap).map(([matchingId, id]) =>
-        service({ [matchingId]: id as number })
+        service({ [matchingId]: id })
       )
     ).then((response) =>
       response.reduce(
@@ -63,7 +64,7 @@ export const useNptEventsQuery = () => {
     Promise.all(
       Object.entries(wellboresMatchingIdMap)
         .filter(([_, id]) => newIds.includes(id))
-        .map(([matchingId, id]) => service({ [matchingId]: id as number }))
+        .map(([matchingId, id]) => service({ [matchingId]: id }))
     ).then((response) => {
       queryClient.setQueryData(WELL_QUERY_KEY.NPT_EVENTS, {
         ...response.reduce(

@@ -1,6 +1,8 @@
-import { getMockWell, getMockWellbore } from '__test-utils/fixtures/well';
+import { Well } from 'domain/wells/well/internal/types';
+import { getMockWellbore } from 'domain/wells/wellbore/internal/__fixtures/getMockWellbore';
+
+import { getMockWell } from '__test-utils/fixtures/well';
 import { FavoriteContentWells } from 'modules/favorite/types';
-import { Well } from 'modules/wellSearch/types';
 
 import {
   filterWellboresFromWellsData,

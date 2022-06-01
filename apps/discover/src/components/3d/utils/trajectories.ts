@@ -1,5 +1,6 @@
 import { ITrajectory } from '@cognite/node-visualizer';
-import { Sequence } from '@cognite/sdk';
+
+import { Sequence } from 'modules/wellSearch/types';
 
 export const mapTrajectoriesTo3D = (
   trajectories: Sequence[]

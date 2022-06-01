@@ -6,18 +6,21 @@ import {
 import set from 'lodash/set';
 import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
 
-import { CogniteEvent } from '@cognite/sdk';
 import { Nds, NdsItems } from '@cognite/sdk-wells-v3';
 
 import { MetricLogger } from 'hooks/useTimeLog';
 import { toIdentifier } from 'modules/wellSearch/sdk/utils';
-import { WellboreSourceExternalIdMap } from 'modules/wellSearch/types';
+import {
+  CogniteEventV3ish,
+  WellboreId,
+  WellboreSourceExternalIdMap,
+} from 'modules/wellSearch/types';
 import { getTrajectoryInterpolationRequests } from 'modules/wellSearch/utils/nds';
 
 import { EVENT_PER_PAGE, groupEventsByAssetId } from './common';
 
 export function getNdsEventsByWellboreIds(
-  wellboreIds: number[],
+  wellboreIds: WellboreId[],
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap,
   metricLogger: MetricLogger,
   cursor?: string
@@ -41,7 +44,7 @@ export function getNdsEventsByWellboreIds(
 }
 
 export const fetchNdsEvents = async (
-  wellboreIds: number[],
+  wellboreIds: WellboreId[],
   cursor?: string
 ) => {
   return getWellSDKClient().nds.list({
@@ -52,16 +55,13 @@ export const fetchNdsEvents = async (
 };
 
 export const fetchNdsEventsUsingWellsSDK = async (
-  wellboreIds: number[],
+  wellboreIds: WellboreId[],
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap,
   cursor?: string
 ) => {
   const ndsEvents = await fetchNdsEvents(wellboreIds, cursor).then(
     (ndsItems: NdsItems) => {
-      return mapNdsItemsToCogniteEvents(
-        ndsItems.items,
-        wellboreSourceExternalIdMap
-      );
+      return mapNdsItemsToCogniteEvents(ndsItems.items);
     }
   );
 
@@ -72,10 +72,7 @@ export const fetchNdsEventsUsingWellsSDK = async (
   );
 };
 
-export const mapNdsItemsToCogniteEvents = async (
-  ndsEvents: Nds[],
-  wellboreSourceExternalIdMap: WellboreSourceExternalIdMap
-) => {
+export const mapNdsItemsToCogniteEvents = async (ndsEvents: Nds[]) => {
   const tvds = await getTrajectoryInterpolateTVDs(
     ndsEvents,
     getTrajectoryInterpolationRequests(ndsEvents)
@@ -86,7 +83,7 @@ export const mapNdsItemsToCogniteEvents = async (
     const tvdUnit = tvdsForWellbore.trueVerticalDepthUnit.unit;
 
     return {
-      id: wellboreSourceExternalIdMap[event.source.eventExternalId],
+      id: event.wellboreMatchingId,
       externalId: event.source.eventExternalId,
       type: event.subtype || '',
       subtype: event.riskType || '',
@@ -114,16 +111,16 @@ export const mapNdsItemsToCogniteEvents = async (
         tvd_offset_hole_end_unit: tvdUnit,
       },
       assetIds: [event.wellboreAssetExternalId],
-    } as unknown as CogniteEvent;
+    } as unknown as CogniteEventV3ish;
   });
 };
 
 export const getGroupedNdsEvents = (
-  response: CogniteEvent[],
-  wellboreIds: number[],
+  response: CogniteEventV3ish[],
+  wellboreIds: WellboreId[],
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap
-): Record<string, CogniteEvent[]> => {
-  const events: CogniteEvent[] = response
+): Record<string, CogniteEventV3ish[]> => {
+  const events = response
     .filter((event) => (event.assetIds || []).length)
     .map((event) => ({
       ...event,

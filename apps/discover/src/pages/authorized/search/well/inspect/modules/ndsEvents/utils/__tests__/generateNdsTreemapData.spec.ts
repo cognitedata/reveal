@@ -1,8 +1,7 @@
 import { NdsDataLayer } from 'domain/wells/dataLayer/nds/types';
+import { getMockWellbore } from 'domain/wells/wellbore/internal/__fixtures/getMockWellbore';
 
 import { getMockNdsEvent } from '__test-utils/fixtures/nds';
-import { getMockWellbore } from '__test-utils/fixtures/well/wellbore';
-import { mapV3ToV2Wellbore } from 'modules/wellSearch/sdk/utils';
 
 import { generateNdsTreemapData } from '../generateNdsTreemapData';
 
@@ -17,12 +16,8 @@ describe('generateNdsTreemapData', () => {
 
   it('should generate nodes correctly', () => {
     const wellbores = [
-      mapV3ToV2Wellbore(
-        getMockWellbore({ matchingId: 'wellboreId1', name: 'wellbore 1' })
-      ),
-      mapV3ToV2Wellbore(
-        getMockWellbore({ matchingId: 'wellboreId2', name: 'wellbore 2' })
-      ),
+      getMockWellbore({ id: 'wellboreId1', name: 'wellbore 1' }),
+      getMockWellbore({ id: 'wellboreId2', name: 'wellbore 2' }),
     ];
 
     const ndsEvents = [
@@ -42,15 +37,11 @@ describe('generateNdsTreemapData', () => {
 
   it('should generate nodes and the "other" helper node', () => {
     const wellbores = [
-      mapV3ToV2Wellbore(
-        getMockWellbore({ matchingId: 'wellboreId1', name: 'wellbore 1' })
-      ),
-      mapV3ToV2Wellbore(
-        getMockWellbore({ matchingId: 'wellboreId2', name: 'wellbore 2' })
-      ),
-      mapV3ToV2Wellbore(
-        getMockWellbore({ matchingId: 'wellboreId3', name: 'wellbore 3' })
-      ),
+      getMockWellbore({ id: 'wellboreId1', name: 'wellbore 1' }),
+
+      getMockWellbore({ id: 'wellboreId2', name: 'wellbore 2' }),
+
+      getMockWellbore({ id: 'wellboreId3', name: 'wellbore 3' }),
     ];
 
     const ndsEvents = [
@@ -79,21 +70,15 @@ describe('generateNdsTreemapData', () => {
 
   it('should generate "other" node if the number of nodes is to high', () => {
     const wellbores = [
-      mapV3ToV2Wellbore(
-        getMockWellbore({ matchingId: 'wellboreId1', name: 'wellbore 1' })
-      ),
-      mapV3ToV2Wellbore(
-        getMockWellbore({ matchingId: 'wellboreId2', name: 'wellbore 2' })
-      ),
-      mapV3ToV2Wellbore(
-        getMockWellbore({ matchingId: 'wellboreId3', name: 'wellbore 3' })
-      ),
-      mapV3ToV2Wellbore(
-        getMockWellbore({ matchingId: 'wellboreId4', name: 'wellbore 4' })
-      ),
-      mapV3ToV2Wellbore(
-        getMockWellbore({ matchingId: 'wellboreId5', name: 'wellbore 5' })
-      ),
+      getMockWellbore({ id: 'wellboreId1', name: 'wellbore 1' }),
+
+      getMockWellbore({ id: 'wellboreId2', name: 'wellbore 2' }),
+
+      getMockWellbore({ id: 'wellboreId3', name: 'wellbore 3' }),
+
+      getMockWellbore({ id: 'wellboreId4', name: 'wellbore 4' }),
+
+      getMockWellbore({ id: 'wellboreId5', name: 'wellbore 5' }),
     ];
 
     const ndsEvents = [
@@ -138,15 +123,11 @@ describe('generateNdsTreemapData', () => {
 
   it('should generate only the other node if there is data but no events', () => {
     const wellbores = [
-      mapV3ToV2Wellbore(
-        getMockWellbore({ matchingId: 'wellboreId1', name: 'wellbore 1' })
-      ),
-      mapV3ToV2Wellbore(
-        getMockWellbore({ matchingId: 'wellboreId2', name: 'wellbore 2' })
-      ),
-      mapV3ToV2Wellbore(
-        getMockWellbore({ matchingId: 'wellboreId3', name: 'wellbore 3' })
-      ),
+      getMockWellbore({ id: 'wellboreId1', name: 'wellbore 1' }),
+
+      getMockWellbore({ id: 'wellboreId2', name: 'wellbore 2' }),
+
+      getMockWellbore({ id: 'wellboreId3', name: 'wellbore 3' }),
     ];
 
     const ndsEvents: NdsDataLayer[] = [];

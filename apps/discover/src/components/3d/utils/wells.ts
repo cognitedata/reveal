@@ -1,6 +1,6 @@
-import { IWell } from '@cognite/node-visualizer';
+import { Well } from 'domain/wells/well/internal/types';
 
-import { Well } from 'modules/wellSearch/types';
+import { IWell } from '@cognite/node-visualizer';
 
 export const mapWellsTo3D = (wells: Well[]): Partial<IWell>[] => {
   return wells.map((well) => ({

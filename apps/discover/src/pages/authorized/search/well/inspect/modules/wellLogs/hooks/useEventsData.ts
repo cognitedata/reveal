@@ -3,18 +3,17 @@ import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import sortBy from 'lodash/sortBy';
 
-import { CogniteEvent } from '@cognite/sdk';
-
 import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { ndsAccessorsToFixedDecimal } from 'modules/wellSearch/selectors/event/constants';
 import { getNdsUnitChangeAccessors } from 'modules/wellSearch/selectors/event/helper';
+import { CogniteEventV3ish } from 'modules/wellSearch/types';
 import { convertObject } from 'modules/wellSearch/utils';
 
 import { EventData } from '../LogViewer/Log/interfaces';
 import { isEventsOverlap } from '../LogViewer/utils';
 
-export const useEventsData = (events: CogniteEvent[]): EventData[] => {
+export const useEventsData = (events: CogniteEventV3ish[]): EventData[] => {
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   return useDeepMemo(() => {

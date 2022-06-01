@@ -1,3 +1,6 @@
+import { useWellInspectWellboreExternalIdMap } from 'domain/wells/well/internal/transformers/useWellInspectIdMap';
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
+
 import { useState } from 'react';
 import { useInfiniteQuery, useQuery, useQueryClient } from 'react-query';
 
@@ -6,14 +9,16 @@ import isEmpty from 'lodash/isEmpty';
 import { LOG_EVENTS_NDS } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
-import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/hooks/useWellInspect';
-import { useWellInspectWellboreExternalIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 
 import {
   getNdsEventsByWellboreIds as service,
   fetchNdsEvents,
 } from '../service';
-import { WellboreEventsMap, WellboreSourceExternalIdMap } from '../types';
+import {
+  WellboreEventsMap,
+  WellboreId,
+  WellboreSourceExternalIdMap,
+} from '../types';
 import { trimCachedData } from '../utils/common';
 
 interface Props {
@@ -23,7 +28,7 @@ export const useNdsInfiniteQuery = ({ wellboreIds }: Props) => {
   return useInfiniteQuery(
     WELL_QUERY_KEY.NDS_EVENTS,
     ({ pageParam }) => {
-      return fetchNdsEvents(wellboreIds as unknown as number[], pageParam);
+      return fetchNdsEvents(wellboreIds, pageParam);
     },
     {
       getNextPageParam: (lastPage) => {
@@ -34,7 +39,7 @@ export const useNdsInfiniteQuery = ({ wellboreIds }: Props) => {
 };
 
 interface NdsQueryProps {
-  wellboreIds: number[];
+  wellboreIds: WellboreId[];
   wellboresSourceExternalIdMap: WellboreSourceExternalIdMap;
   enabledWellSDKV3?: boolean;
 }

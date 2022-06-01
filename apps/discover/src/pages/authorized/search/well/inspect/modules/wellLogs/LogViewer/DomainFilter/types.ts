@@ -1,5 +1,6 @@
-import { CogniteEvent } from '@cognite/sdk';
 import { DepthMeasurementData } from '@cognite/sdk-wells-v3';
+
+import { CogniteEventV3ish } from 'modules/wellSearch/types';
 
 import { WellLog } from '../../types';
 import { Domain } from '../Log/interfaces';
@@ -30,7 +31,7 @@ export interface DomainFilterRowProps {
 export interface LogViewerProps {
   wellLog: WellLog;
   wellLogRowData: DepthMeasurementData;
-  events: CogniteEvent[];
+  events: CogniteEventV3ish[];
   domainMap: DomainMap;
   setDomainList: (domainList: DomainListItem[]) => void;
 }

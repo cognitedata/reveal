@@ -8,7 +8,6 @@ import { FavoriteSummary } from 'modules/favorite/types';
 import {
   useDocumentExistInFavorite,
   useHandleSelectFavourite,
-  useWellExistInFavorite,
 } from '../useFavorite';
 
 jest.mock('react-query', () => ({
@@ -52,38 +51,6 @@ describe('Use Favorite', () => {
     };
     const { result } = renderHook(
       () => useDocumentExistInFavorite([favorite], 12),
-      {}
-    );
-
-    expect(result.current[0]).toEqual(undefined);
-  });
-
-  it(`should filter wells favorite ids`, async () => {
-    const favorite: FavoriteSummary = {
-      ...getMockFavoriteSummary(),
-      ...{
-        id: '12',
-        content: { documentIds: [], seismicIds: [], wells: { '12': [] } },
-      },
-    };
-    const { result } = renderHook(
-      () => useWellExistInFavorite([favorite], 12),
-      {}
-    );
-
-    expect(result.current[0]).toEqual('12');
-  });
-
-  it(`should not filter wells favorite ids`, async () => {
-    const favorite: FavoriteSummary = {
-      ...getMockFavoriteSummary(),
-      ...{
-        id: '12',
-        content: { documentIds: [], seismicIds: [], wells: { '23': [] } },
-      },
-    };
-    const { result } = renderHook(
-      () => useWellExistInFavorite([favorite], 12),
       {}
     );
 

@@ -1,5 +1,6 @@
 import { ICasing } from '@cognite/node-visualizer';
-import { Sequence } from '@cognite/sdk';
+
+import { Sequence } from 'modules/wellSearch/types';
 
 export const mapCasingsTo3D = (casings: Sequence[]) =>
   casings.map(mapCasingTo3D);

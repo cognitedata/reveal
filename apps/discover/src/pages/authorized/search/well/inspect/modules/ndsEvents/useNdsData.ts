@@ -1,15 +1,13 @@
 import { WellboreDataLayer } from 'domain/wells/dataLayer/wellbore/types';
 import { useNdsEventsQuery } from 'domain/wells/service/nds/queries/useNdsEventsQuery';
 import { useNdsTvdDataQuery } from 'domain/wells/service/nds/queries/useNdsTvdDataQuery';
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
+import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores';
 
 import keyBy from 'lodash/keyBy';
 
 import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
-import {
-  useWellInspectSelectedWellboreIds,
-  useWellInspectSelectedWellbores,
-} from 'modules/wellInspect/hooks/useWellInspect';
 
 import { processNdsData } from './utils/processNdsData';
 

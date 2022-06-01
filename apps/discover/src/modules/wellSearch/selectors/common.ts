@@ -1,18 +1,18 @@
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
+
 import { useMemo } from 'react';
 
-import { Sequence } from '@cognite/sdk';
+import { Sequence } from 'modules/wellSearch/types';
 
-import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/hooks/useWellInspect';
-
-import { useWellboreData } from './asset/wellbore';
+import { useWellboreData } from './wellbore';
 
 export const usePristineIds = () => {
   const wbIds = useWellInspectSelectedWellboreIds();
   const wellboreData = useWellboreData();
   return useMemo(() => {
-    const documentPristineIds: number[] = [];
+    const documentPristineIds: string[] = [];
     const logsRowPristineIds: Sequence[] = [];
-    const digitalRocksPristineIds: number[] = [];
+    const digitalRocksPristineIds: string[] = [];
 
     wbIds.forEach((wbid) => {
       if (!wellboreData[wbid]?.documents) {

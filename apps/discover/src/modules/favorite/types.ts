@@ -1,3 +1,5 @@
+import { Well } from 'domain/wells/well/internal/types';
+
 import {
   FavoriteLastUpdatedBy,
   FavoritePatchContentSchema,
@@ -7,7 +9,7 @@ import {
   FavoriteSummary as FavoriteSummaryApi,
 } from '@cognite/discover-api-types';
 
-import { Well } from '../wellSearch/types';
+import { WellId } from 'modules/wellSearch/types';
 
 export enum ViewModeType {
   Card = 'Card',
@@ -72,7 +74,7 @@ export interface UpdateFavoriteContentData {
 }
 
 export interface FavoriteWellData {
-  id: number;
+  id: WellId;
   name: string;
 }
 

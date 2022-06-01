@@ -9,6 +9,9 @@ export interface SequenceFilter {
   filter?: any;
 }
 
+/**
+ *  @deprecated this is only for v2 and only for digital rocks asset lookups
+ */
 export const getChunkNumberList = (list: number[], size: number) => {
   let i;
   let j;
@@ -21,6 +24,9 @@ export const getChunkNumberList = (list: number[], size: number) => {
   return chunkList;
 };
 
+/**
+ *  @deprecated this is only for v2 and only for digital rocks asset lookups
+ */
 export async function getSequencesByAssetIds(
   wellboreIds: number[],
   fetcher: any
@@ -28,7 +34,7 @@ export async function getSequencesByAssetIds(
   if (fetcher) {
     const idChunkList = getChunkNumberList(wellboreIds, 100);
     const responses = await Promise.all(
-      idChunkList.map((idChunk: number[]) =>
+      idChunkList.map((idChunk) =>
         fetcher({
           assetIds: idChunk,
         })

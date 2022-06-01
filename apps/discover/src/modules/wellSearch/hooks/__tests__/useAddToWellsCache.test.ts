@@ -1,3 +1,5 @@
+import { Well } from 'domain/wells/well/internal/types';
+
 import { useQueryClient } from 'react-query';
 
 import { renderHook } from '@testing-library/react-hooks';
@@ -5,7 +7,6 @@ import concat from 'lodash/concat';
 
 import { getMockWell } from '__test-utils/fixtures/well';
 import { WELL_QUERY_KEY } from 'constants/react-query';
-import { Well } from 'modules/wellSearch/types';
 
 import { useAddToWellsCache } from '../useAddToWellsCache';
 

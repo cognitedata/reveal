@@ -3,18 +3,18 @@ import { Store } from 'redux';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { initialState as wellState } from 'modules/wellSearch/reducer';
-import { WellState } from 'modules/wellSearch/types';
+import { WellId, WellState } from 'modules/wellSearch/types';
 
 import { WellboreCardDetails } from '../WellboreCardDetails';
 
 describe('Wellbore card details', () => {
-  const getPage = (viewStore: Store, viewProps: { wellId: number }) =>
+  const getPage = (viewStore: Store, viewProps: { wellId: WellId }) =>
     testRenderer(WellboreCardDetails, viewStore, viewProps);
   afterEach(async () => jest.clearAllMocks());
 
   const defaultTestInit = async (
     extra: WellState = wellState,
-    viewProps: { wellId: number } = { wellId: 0 }
+    viewProps: { wellId: WellId } = { wellId: '0' }
   ) => {
     const store = getMockedStore({ wellSearch: { ...extra } });
 
@@ -25,7 +25,7 @@ describe('Wellbore card details', () => {
   };
 
   it(`should not render wellbores`, async () => {
-    await defaultTestInit(wellState, { wellId: 4323 });
+    await defaultTestInit(wellState, { wellId: '4323' });
 
     // const title = await screen.findByAltText('Wellbores');
     // expect(title).not.toBeInTheDocument();

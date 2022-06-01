@@ -1,6 +1,7 @@
-import { IWellBore } from '@cognite/node-visualizer';
+import { Well } from 'domain/wells/well/internal/types';
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
-import { Well, Wellbore } from 'modules/wellSearch/types';
+import { IWellBore } from '@cognite/node-visualizer';
 
 export const mapWellboresTo3D = (wells: Well[]): Partial<IWellBore>[] => {
   return ([] as Wellbore[]).concat(
@@ -19,7 +20,7 @@ export const mapWellboresTo3D = (wells: Well[]): Partial<IWellBore>[] => {
                 bh_y_coordinate: String(row.wellhead?.y || ''),
               },
               id: String(wellbore.id),
-              parentId: String(wellbore.wellId),
+              parentId: String(wellbore.wellMatchingId),
             }))
           : []
       )

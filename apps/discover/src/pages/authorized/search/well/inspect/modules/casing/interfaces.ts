@@ -1,9 +1,9 @@
-import { Sequence } from '@cognite/sdk';
+import { Sequence, WellboreId } from 'modules/wellSearch/types';
 
 import { CasingType } from './CasingView/interfaces';
 
 export type FormattedCasings = {
-  key: number;
+  key: WellboreId; // wellbore id
   wellboreName: string;
   wellName: string;
   waterDepth: number;
@@ -12,7 +12,7 @@ export type FormattedCasings = {
 };
 
 export type CasingData = {
-  id: number; // wellbore id
+  id: WellboreId; // wellbore id
   wellboreName: string;
   wellName: string;
   topMD: number;

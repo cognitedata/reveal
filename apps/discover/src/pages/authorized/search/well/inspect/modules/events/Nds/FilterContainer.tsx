@@ -7,12 +7,11 @@ import map from 'lodash/map';
 import set from 'lodash/set';
 import uniq from 'lodash/uniq';
 
-import { CogniteEvent } from '@cognite/sdk';
-
 import { ExtraLabels } from 'components/Filters/interfaces';
 import { NOT_AVAILABLE } from 'constants/empty';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useFilterDataNds } from 'modules/inspectTabs/selectors';
+import { CogniteEventV3ish } from 'modules/wellSearch/types';
 
 import { hasCategoryFilterFulfilled } from '../common';
 import { accessors } from '../constants';
@@ -22,9 +21,9 @@ import { NdsSelectFilter } from './components/filters/NdsSelectFilter';
 import { NdsFilterContainer, NdsFilterRow } from './elements';
 
 interface Props {
-  events: CogniteEvent[];
-  filteredEvents: CogniteEvent[];
-  onChangeFilteredEvents: (events: CogniteEvent[]) => void;
+  events: CogniteEventV3ish[];
+  filteredEvents: CogniteEventV3ish[];
+  onChangeFilteredEvents: (events: CogniteEventV3ish[]) => void;
 }
 
 const convertToExtraLabels = (valuesMap: { [key: string]: number }) => {
@@ -36,8 +35,8 @@ const convertToExtraLabels = (valuesMap: { [key: string]: number }) => {
 };
 
 const getOptionsList = (
-  events: CogniteEvent[],
-  filteredEvents: CogniteEvent[],
+  events: CogniteEventV3ish[],
+  filteredEvents: CogniteEventV3ish[],
   accessor: string
 ): [string[], ExtraLabels] => {
   return [

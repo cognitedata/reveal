@@ -1,8 +1,8 @@
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
+
 import { Unit } from 'convert-units';
 import { toFixedNumberFromNumber } from 'utils/number/toFixedNumberFromNumber';
 import { changeUnitTo } from 'utils/units';
-
-import { Wellbore } from 'modules/wellSearch/types';
 
 const KB_REFERENCE_IDENTIFIER = 'KB';
 

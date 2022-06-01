@@ -8,16 +8,23 @@ This is where we keep all our domain logic
 domain
 └── wells
   └── nds
-    └── dataLayer <-- internal type
+    └── internal <-- internal type
       ├── \_\_fixtures
       |
       | ├── actions <-- react-query - calls service->network
       | | └── xxxMutate.ts
       |
-      | // has no logic, just calls a network function
-      | // returns an internal type
-      | ├── queries <-- react-query
+      | #
+      | # has no logic, just calls a network function
+      | # returns an internal type (this is the reason it is in 'internal' not 'service')
+      | #
+      | ├── queries <-- react-query, should return internal type!
       | | └── xxxQuery.ts
+      | #
+      | # any logic needed to change the above queries should be in these hooks
+      | #
+      | ├── hooks <-- these often are special versions of the above queries
+      | | └── xxxSelector.ts
       |
       ├── transformers
       | └── normalize.ts <- called inside the query
@@ -32,6 +39,8 @@ domain
     |
     | ├── network <-- axios - must return external API type
     | | └── getxxx.ts
+    | | └── createxxx.ts
+    | | └── deletexxx.ts
     |
     | ├── utils <---- generic stuff used by network etc.
     | | └── getxxx.ts

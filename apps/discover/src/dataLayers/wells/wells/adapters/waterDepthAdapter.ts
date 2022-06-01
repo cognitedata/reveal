@@ -1,7 +1,8 @@
+import { Well } from 'domain/wells/well/internal/types';
+
 import { changeUnits } from 'utils/units';
 
 import { UserPreferredUnit } from 'constants/units';
-import { Well } from 'modules/wellSearch/types';
 import { convertToFixedDecimal } from 'modules/wellSearch/utils';
 
 export const waterDepthAdapter = (well: Well, userPreferredUnit?: string) => {

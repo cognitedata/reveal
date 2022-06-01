@@ -1,3 +1,5 @@
+import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores';
+
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -13,7 +15,6 @@ import { Loading } from 'components/Loading';
 import { PressureUnit } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
-import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 import {
   MeasurementChartDataV3 as MeasurementChartData,

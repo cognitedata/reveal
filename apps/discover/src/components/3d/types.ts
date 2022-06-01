@@ -1,10 +1,11 @@
-import { CogniteEvent } from '@cognite/sdk';
+import { Well } from 'domain/wells/well/internal/types';
+
 import { DepthMeasurement, DepthMeasurementData } from '@cognite/sdk-wells-v3';
 
 import {
+  CogniteEventV3ish,
   Sequence,
   TrajectoryRows,
-  Well,
   WellboreNPTEventsMap,
 } from 'modules/wellSearch/types';
 
@@ -17,7 +18,7 @@ export interface WellsData {
   trajectories?: Sequence[];
   trajectoryData?: TrajectoryRows[];
   casings?: Sequence[];
-  ndsEvents?: CogniteEvent[];
+  ndsEvents?: CogniteEventV3ish[];
   nptEvents?: WellboreNPTEventsMap;
   wellLogs?: Record<string, DepthMeasurement[]>;
   wellLogsRowData?: Record<string, DepthMeasurementData>;

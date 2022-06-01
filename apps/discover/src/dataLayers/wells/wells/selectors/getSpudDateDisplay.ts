@@ -1,6 +1,6 @@
-import { getDateOrDefaultText } from 'utils/date';
+import { Well } from 'domain/wells/well/internal/types';
 
-import { Well } from 'modules/wellSearch/types';
+import { getDateOrDefaultText } from 'utils/date';
 
 export const getSpudDateDisplay = <T extends Pick<Well, 'spudDate'>>(
   well: T

@@ -1,10 +1,12 @@
-export const getMockCasings = (wellboreId?: number) => {
+// import { CasingData } from "pages/authorized/search/well/inspect/modules/casing/interfaces";
+
+export const getMockCasings = (wellboreId?: string) => {
   return [
     {
-      id: 3296482019589132,
+      id: '3296482019589132',
       name: 'USA0000600900_00183',
       description: 'EDM Casing',
-      assetId: 759155409324993,
+      assetId: wellboreId,
       externalId: '3TSN622Z8T_cpFDdj1bZ0_00183',
       metadata: {
         assy_min_inside_diameter: '0.0',
@@ -210,10 +212,10 @@ export const getMockCasings = (wellboreId?: number) => {
       dataSetId: 4464571136926873,
     },
     {
-      id: 6038082465005340,
+      id: '6038082465005340',
       name: 'USA0000600900_00187',
       description: 'EDM Casing',
-      assetId: 217754508970394,
+      assetId: '217754508970394',
       externalId: '3TSN622Z8T_cpFDdj1bZ0_00187',
       metadata: {
         assy_min_inside_diameter: '0.0',
@@ -419,10 +421,10 @@ export const getMockCasings = (wellboreId?: number) => {
       dataSetId: 4464571136926873,
     },
     {
-      id: 6262535443106103,
+      id: '6262535443106103',
       name: 'USA0000600900_00184',
       description: 'EDM Casing',
-      assetId: 217754508970394,
+      assetId: '217754508970394',
       externalId: '3TSN622Z8T_cpFDdj1bZ0_00184',
       metadata: {
         assy_min_inside_diameter: '0.0',
@@ -628,10 +630,10 @@ export const getMockCasings = (wellboreId?: number) => {
       dataSetId: 4464571136926873,
     },
     {
-      id: 7542933368431334,
+      id: '7542933368431334',
       name: 'USA0000600900_00186',
       description: 'EDM Casing',
-      assetId: 217754508970394,
+      assetId: '217754508970394',
       externalId: '3TSN622Z8T_cpFDdj1bZ0_00186',
       metadata: {
         assy_min_inside_diameter: '0.0',

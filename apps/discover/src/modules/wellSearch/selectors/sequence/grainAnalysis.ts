@@ -8,7 +8,6 @@ import { Asset } from '@cognite/sdk';
 
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
-import { useWellboreData } from 'modules/wellSearch/selectors';
 import {
   AssetData,
   DigitalRockSampleData,
@@ -16,6 +15,7 @@ import {
 } from 'modules/wellSearch/types';
 
 import { getCogniteSDKClient } from '../../../../utils/getCogniteSDKClient';
+import { useWellboreData } from '../wellbore';
 
 const getDigitalRocksGrainPartitioningFetchFunction = (
   metadata: Record<string, unknown> | undefined

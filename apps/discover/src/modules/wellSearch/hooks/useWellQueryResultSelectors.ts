@@ -3,10 +3,9 @@ import keyBy from 'lodash/keyBy';
 
 import { useDeepMemo } from 'hooks/useDeep';
 
+import { useWellSearchResultQuery } from '../../../domain/wells/well/internal/queries/useWellSearchResultQuery';
 import { useWells } from '../selectors';
 import { WellId, WellMap } from '../types';
-
-import { useWellSearchResultQuery } from './useWellSearchResultQuery';
 
 // can we deprecate this?
 export const useWellQueryResultWells = () => {

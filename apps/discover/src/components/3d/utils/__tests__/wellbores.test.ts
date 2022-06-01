@@ -1,9 +1,10 @@
+import { Well } from 'domain/wells/well/internal/types';
+
 import {
   getMockWell,
   mockedWellboreResultFixture,
   mockWellboreOptions,
 } from '__test-utils/fixtures/well';
-import { Well } from 'modules/wellSearch/types';
 
 import { mapWellboresTo3D } from '../wellbores';
 
@@ -27,7 +28,8 @@ describe('mapWellboresTo3D', () => {
         name: 'wellbore B',
         parentId: '1234',
         sourceWellbores: [],
-        wellId: 1234,
+        wellId: '1234',
+        wellMatchingId: '1234',
         ...mockWellboreOptions,
       },
       {
@@ -41,12 +43,13 @@ describe('mapWellboresTo3D', () => {
         name: 'wellbore A',
         id: '759155409324993',
         externalId: 'Wellbore A:759155409324993',
-        wellId: 1234,
+        wellId: '1234',
+        wellMatchingId: '1234',
         description: 'wellbore A desc',
         sourceWellbores: [
           {
             externalId: 'Wellbore A:759155409324993',
-            id: 759155409324993,
+            id: '759155409324993',
             source: 'Source A',
           },
         ],

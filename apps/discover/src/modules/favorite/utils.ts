@@ -1,5 +1,4 @@
 import isEmpty from 'lodash/isEmpty';
-import isUndefined from 'lodash/isUndefined';
 import merge from 'lodash/merge';
 
 import {
@@ -29,38 +28,38 @@ export const getDocumentIds = (documentId?: number): number[] =>
 export const getWellbores = (wellboreId: WellboreId): WellboreId[] =>
   wellboreId ? [wellboreId] : [];
 
-const isWellInFavoriteContentWells = (
-  wells: FavoriteContentWells,
-  wellId: WellId
-): boolean => {
-  return Object.keys(wells).includes(String(wellId));
-};
+// const isWellInFavoriteContentWells = (
+//   wells: FavoriteContentWells,
+//   wellId: WellId
+// ): boolean => {
+//   return Object.keys(wells).includes(wellId);
+// };
 
-const isWellboreIdInFavoriteContentWellbores = (
-  wells: FavoriteContentWells,
-  wellboreId: WellboreId
-): boolean => {
-  return (
-    !isUndefined(wellboreId) &&
-    !isEmpty(
-      Object.values(wells).filter((wellbore) => wellbore.includes(wellboreId))
-    )
-  );
-};
+// const isWellboreIdInFavoriteContentWellbores = (
+//   wells: FavoriteContentWells,
+//   wellboreId: WellboreId
+// ): boolean => {
+//   return (
+//     !isUndefined(wellboreId) &&
+//     !isEmpty(
+//       Object.values(wells).filter((wellbore) => wellbore.includes(wellboreId))
+//     )
+//   );
+// };
 
-const checkWellboreIdAndFavoriteWellcontent = (
-  wellboreId: WellboreId,
-  wells: FavoriteContentWells,
-  wellboreList: string[]
-): boolean => {
-  return (
-    /* wellbore id will undefined when adding entire well */
-    isUndefined(wellboreId) ||
-    isWellboreIdInFavoriteContentWellbores(wells, wellboreId) ||
-    /* if a well with all wellbores denoted as empty wellbore array */
-    isEmpty(wellboreList)
-  );
-};
+// const checkWellboreIdAndFavoriteWellcontent = (
+//   wellboreId: WellboreId,
+//   wells: FavoriteContentWells,
+//   wellboreList: string[]
+// ): boolean => {
+//   return (
+//     /* wellbore id will undefined when adding entire well */
+//     isUndefined(wellboreId) ||
+//     isWellboreIdInFavoriteContentWellbores(wells, wellboreId) ||
+//     /* if a well with all wellbores denoted as empty wellbore array */
+//     isEmpty(wellboreList)
+//   );
+// };
 
 export const getDocumentExistInFavorite = (
   favorites: FavoriteSummary[],
@@ -69,24 +68,6 @@ export const getDocumentExistInFavorite = (
   return favorites
     .filter((favorite) =>
       favorite.content.documentIds.includes(Number(documentId))
-    )
-    .map((favorite) => favorite.id);
-};
-
-export const getWellsWellboresExistInFavorite = (
-  favorites: FavoriteSummary[],
-  wellId: WellId,
-  wellboreId?: WellboreId
-): string[] => {
-  return favorites
-    .filter(
-      (favorite) =>
-        isWellInFavoriteContentWells(favorite.content.wells, wellId) &&
-        checkWellboreIdAndFavoriteWellcontent(
-          wellboreId,
-          favorite.content.wells,
-          favorite.content.wells[wellId]
-        )
     )
     .map((favorite) => favorite.id);
 };
@@ -115,15 +96,17 @@ export const getUpdatedWells = (
 export const getWellsToAddAfterFavoriteCreation = (
   wellIds: WellId[]
 ): FavoriteContentWells => {
-  return wellIds && wellIds.length
-    ? wellIds.reduce(
-        (previousValue, currentValue) => ({
-          ...previousValue,
-          [currentValue]: [],
-        }),
-        {}
-      )
-    : undefined;
+  if (isEmpty(wellIds)) {
+    return {};
+  }
+
+  return wellIds.reduce(
+    (previousValue, currentValue) => ({
+      ...previousValue,
+      [currentValue]: [],
+    }),
+    {}
+  );
 };
 
 export const getDocumentsToAddAfterFavoriteCreation = (

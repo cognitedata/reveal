@@ -4,14 +4,9 @@ import { useMemo } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
-import { useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { FavoriteContentWells, FavoriteSummary } from 'modules/favorite/types';
-import {
-  getDocumentExistInFavorite,
-  getWellsWellboresExistInFavorite,
-} from 'modules/favorite/utils';
-import { WellboreId, WellId } from 'modules/wellSearch/types';
+import { getDocumentExistInFavorite } from 'modules/favorite/utils';
 
 export function useDocumentExistInFavorite(
   favorites: FavoriteSummary[],
@@ -21,16 +16,6 @@ export function useDocumentExistInFavorite(
     return getDocumentExistInFavorite(favorites, documentId);
   }, [favorites, documentId]);
 }
-
-export const useWellExistInFavorite = (
-  favorites: FavoriteSummary[],
-  wellId: WellId,
-  wellboreId?: WellboreId
-): string[] => {
-  return useDeepMemo(() => {
-    return getWellsWellboresExistInFavorite(favorites, wellId, wellboreId);
-  }, [favorites, wellId, wellboreId]);
-};
 
 export const useHandleSelectFavourite = () => {
   const { mutateAsync } = useFavoriteUpdateContent();

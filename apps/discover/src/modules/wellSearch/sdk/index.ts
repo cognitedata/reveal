@@ -2,24 +2,15 @@ import {
   authenticateWellSDK,
   getWellSDKClient,
 } from 'services/wellSearch/sdk/authenticate';
-import { fetchAllCursors, FetchOptions } from 'utils/fetchAllCursors';
-
-import { NPTFilter } from '@cognite/sdk-wells-v2';
-
-import { CommonWellFilter } from 'modules/wellSearch/types';
 
 import {
-  extractWellboresFromWells,
   mapSummaryCountsToStringArray,
   mapV2toV3NPTFilter,
   mapV3ToV2NPTItems,
   mapV3ToV2SourceItems,
   mapV3ToV2SpudDateLimits,
-  mapV3ToV2Wellbore,
   mapV3ToV2WellsWaterDepthLimits,
-  mapWellFilterToWellFilterRequest,
-  toIdentifier,
-  toIdentifierItems,
+  NPTFilterV2WithV3WellboreIds,
 } from './utils';
 
 export { authenticateWellSDK };
@@ -112,43 +103,12 @@ export const getNDSRiskTypes = () => {
     .then(mapSummaryCountsToStringArray);
 };
 
-export const getAllWellItemsByFilter = (
-  wellFilter: CommonWellFilter,
-  options?: FetchOptions
-) => {
-  return fetchAllCursors<unknown>({
-    signal: options?.signal,
-    action: getWellSDKClient().wells.list,
-    actionProps: {
-      ...mapWellFilterToWellFilterRequest(wellFilter),
-      // limit: 101,
-    },
-  });
-};
-
-export const getWellboresFromWells = (wellIds: number[]) => {
-  return getWellSDKClient()
-    .wellbores.retrieveMultipleByWells(
-      toIdentifierItems(wellIds.map(toIdentifier))
-    )
-    .then(extractWellboresFromWells)
-    .then((wellbores) => wellbores.map(mapV3ToV2Wellbore));
-};
-
-export const getWellboresByIds = (wellboreIds: number[]) => {
-  return getWellSDKClient()
-    .wellbores.retrieveMultiple(
-      toIdentifierItems(wellboreIds.map(toIdentifier))
-    )
-    .then((wellboreItems) => wellboreItems.items.map(mapV3ToV2Wellbore));
-};
-
 export const getNPTItems = ({
   filter,
   cursor,
   limit,
 }: {
-  filter: NPTFilter;
+  filter: NPTFilterV2WithV3WellboreIds;
   cursor?: string;
   limit?: number;
 }) => {

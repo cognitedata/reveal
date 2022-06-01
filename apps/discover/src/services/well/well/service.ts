@@ -1,12 +1,10 @@
-import get from 'lodash/get';
+import { WellSearchResult } from 'domain/wells/well/internal/queries/useWellSearchResultQuery';
+
 import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
 
 import { WellFilter } from '@cognite/sdk-wells-v3';
 
-import { WellSearchResult } from 'modules/wellSearch/hooks/useWellSearchResultQuery';
-import { mapV3ToV2WellItems } from 'modules/wellSearch/sdk/utils';
-import { normalizeWells } from 'modules/wellSearch/utils/wells';
-
+// THIS IS CURRENTLY NOT USED
 export const getListWells = async (
   wellFilter: WellFilter,
   query: string
@@ -26,38 +24,34 @@ export const getListWells = async (
     totalWellbores: fetchResponse.wellboresCount,
   };
 
-  const normalizedResponse = mapV3ToV2WellItems(fetchResponse);
-  const wellItems = normalizedResponse.items;
+  // export const mapV3ToV2WellItems = (wellItems: WellItemsV3) => {
+  //   return {
+  //     ...wellItems,
+  //     items: wellItems.items.map(mapV3ToV2Well),
+  //   };
+  // };
+
+  // export const mapV3ToV2Well = (well: WellV3): Well => {
+  //   const wellbores = well.wellbores?.map(mapV3ToV2Wellbore) || [];
+  //   return {
+  //     ...well,
+  //     id: well.matchingId,
+  //     spudDate: new Date(well.spudDate || ''),
+  //     wellhead: { id: 0, ...well.wellhead },
+  //     sources: well.sources.map((source) => source.sourceName),
+  //     wellbores,
+  //     // wellbores: () => Promise.resolve(wellbores),
+  //     sourceAssets: () => Promise.resolve([]),
+  //   } as Well;
+  // };
+  // const wellItems = normalizedResponse.items;
+
+  // const normalizedResponse = normalize(fetchResponse);
+  const wellItems = fetchResponse.items;
   // const wellItems = get<Well[]>(normalizedResponse, 'items', [])
 
-  const wellsResponse = normalizeWells(wellItems);
-
   return {
-    wells: wellsResponse,
-    ...totals,
-  };
-};
-
-export const searchWells = async (filter: WellFilter, query: string) => {
-  const results = await getWellSDKClient().wells.search({
-    filter,
-    search: query ? { query } : undefined,
-    outputCrs: undefined,
-    limit: undefined,
-    aggregates: ['count'],
-  });
-
-  const totals = {
-    totalWells: results.wellsCount,
-    totalWellbores: results.wellboresCount,
-  };
-
-  const normalizedResponse = mapV3ToV2WellItems(results);
-
-  const wellsResponse = normalizeWells(get(normalizedResponse, 'items', []));
-
-  return {
-    wells: wellsResponse,
+    wells: wellItems,
     ...totals,
   };
 };

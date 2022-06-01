@@ -16,12 +16,12 @@ import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateT
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useWellQueryResultWells } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
 import {
-  useSelectedWellIds,
-  useSelectedWellboreIds,
   useExternalLinkFromSelectedWells,
-} from 'modules/wellSearch/selectors';
+  useSelectedWellIds,
+  useSelectedWellsForFavorites,
+} from 'modules/wellSearch/selectors/well';
+import { useSelectedWellboreIds } from 'modules/wellSearch/selectors/wellbore';
 
-import { useSelectedWellsForFavorites } from '../../../../../../modules/wellSearch/selectors';
 import {
   ADD_SELECTED_WELLS_TEXT,
   CLEAR_SELECTION_TEXT,

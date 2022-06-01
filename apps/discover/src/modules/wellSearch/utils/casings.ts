@@ -2,8 +2,7 @@ import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
 import { toFraction } from 'utils/number/toFraction';
 
-import { Sequence } from '@cognite/sdk';
-
+import { Sequence } from 'modules/wellSearch/types';
 import { CasingType } from 'pages/authorized/search/well/inspect/modules/casing/CasingView/interfaces';
 import { getScale } from 'pages/authorized/search/well/inspect/modules/casing/helper';
 import { SCALE_BLOCK_HEIGHT } from 'pages/authorized/search/well/inspect/modules/common/Events/constants';

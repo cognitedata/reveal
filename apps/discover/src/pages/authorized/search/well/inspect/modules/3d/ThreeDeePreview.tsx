@@ -1,22 +1,21 @@
+import { useWellLogsWithRowData } from 'domain/wells/log/internal/queries/useWellLogsWithRowData';
 import { useTrajectoriesQuery } from 'domain/wells/trajectory/dataLayer/queries/useTrajectoriesQuery';
+import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
 
 import React from 'react';
 import { connect } from 'react-redux';
 
 import isArray from 'lodash/isArray';
 
-import { Sequence, CogniteEvent } from '@cognite/sdk';
-
 import { ThreeDee } from 'components/3d';
 import EmptyState from 'components/EmptyState';
 import { LOADING_SUB_TEXT } from 'components/EmptyState/constants';
 import { StoreState } from 'core/types';
-import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
-import { useWellLogsWithRowData } from 'modules/wellInspect/hooks/useWellLogsWithRowData';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 import { useNptEventsQuery } from 'modules/wellSearch/hooks/useNptEventsQuery';
 import { useSelectedWellboresCasingsQuery } from 'modules/wellSearch/hooks/useSelectedWellboresCasingsQuery';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
+import { CogniteEventV3ish, Sequence } from 'modules/wellSearch/types';
 import { orderedCasingsByBase } from 'modules/wellSearch/utils/casings';
 import { keyBySource } from 'modules/wellSearch/utils/groupBySource';
 import { groupByWellbore } from 'modules/wellSearch/utils/groupByWellbore';
@@ -41,7 +40,7 @@ const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
   } = useTrajectoriesQuery();
 
   const casings: Sequence[] = [];
-  const ndsEvents: CogniteEvent[] = [];
+  const ndsEvents: CogniteEventV3ish[] = [];
 
   /**
    * ************PP-2693************

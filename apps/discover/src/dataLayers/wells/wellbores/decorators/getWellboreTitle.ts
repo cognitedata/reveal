@@ -1,4 +1,4 @@
-import { Wellbore } from 'modules/wellSearch/types';
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
 import { getWellboreName } from '../selectors/getWellboreName';
 

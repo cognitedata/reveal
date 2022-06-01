@@ -1,5 +1,6 @@
 import { NdsDataLayer } from 'domain/wells/dataLayer/nds/types';
 import { groupByWellbore } from 'domain/wells/dataLayer/wellbore/adapters/groupByWellbore';
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
 import isEmpty from 'lodash/isEmpty';
 import minBy from 'lodash/minBy';
@@ -7,7 +8,6 @@ import sumBy from 'lodash/sumBy';
 import { getFixedPercent } from 'utils/number';
 
 import { TreeMapData } from 'components/Treemap/Treemap';
-import { Wellbore } from 'modules/wellSearch/types';
 
 export const generateNdsTreemapData = (
   wellbores: Wellbore[],

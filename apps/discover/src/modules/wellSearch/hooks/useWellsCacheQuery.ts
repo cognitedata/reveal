@@ -1,3 +1,6 @@
+import { Well } from 'domain/wells/well/internal/types';
+import { getWellsByIds } from 'domain/wells/well/service/network/getWellsById';
+
 import React from 'react';
 import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
 
@@ -10,8 +13,7 @@ import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useDeepMemo } from 'hooks/useDeep';
 
 import { ERROR_LOADING_WELLS_ERROR } from '../constants';
-import { getWellsByWellIdsv3 } from '../service';
-import { Well, WellId, WellResult } from '../types';
+import { WellId, WellResult } from '../types';
 
 import { useWellConfig } from './useWellConfig';
 
@@ -55,7 +57,7 @@ export const useWellsCacheQuery = (
       let uncachedWells: Well[];
 
       try {
-        uncachedWells = await getWellsByWellIdsv3(uncachedWellIds);
+        uncachedWells = await getWellsByIds(uncachedWellIds);
       } catch (error) {
         // console.log('Error loading wells:', error);
         return handleServiceError<WellResult>(

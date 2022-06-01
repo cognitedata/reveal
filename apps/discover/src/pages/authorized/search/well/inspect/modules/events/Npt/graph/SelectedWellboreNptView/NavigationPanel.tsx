@@ -1,7 +1,8 @@
+import { useWellInspectSelectedWellboreNames } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreNames';
+
 import React, { useMemo } from 'react';
 
 import { BackButton, BaseButton } from 'components/Buttons';
-import { useWellInspectSelectedWellboreNames } from 'modules/wellInspect/hooks/useWellInspect';
 import { useSelectedSecondaryWellboreNamesWithoutNptData } from 'modules/wellSearch/selectors';
 
 import { SelectedWellboreNavigatable } from '../types';

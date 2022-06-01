@@ -1,7 +1,8 @@
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
+
 import { OptionType } from '@cognite/cogs.js';
 
 import { mockedWellboreResultFixture } from '__test-utils/fixtures/well';
-import { Wellbore } from 'modules/wellSearch/types';
 
 import {
   checkIndeterminateState,
@@ -58,7 +59,7 @@ describe('common utils', () => {
     const data: Wellbore[] = mockedWellboreResultFixture.map((item) => {
       return {
         ...item,
-        metadata: { wellDescription: item?.wellId?.toString() || '' },
+        metadata: { wellDescription: item?.wellId || '' },
       };
     });
     const result = groupOptionTypes(data);

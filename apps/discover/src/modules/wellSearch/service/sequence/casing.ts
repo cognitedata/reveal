@@ -10,7 +10,7 @@ import uniqueId from 'lodash/uniqueId';
 import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
 import { changeUnitTo } from 'utils/units';
 
-import { Sequence, SequenceColumn } from '@cognite/sdk';
+import { SequenceColumn } from '@cognite/sdk';
 import {
   CasingAssembly,
   CasingItems,
@@ -25,6 +25,7 @@ import { toIdentifier } from 'modules/wellSearch/sdk/utils';
 import {
   CasingAssemblyWithTVD,
   CasingSchematicWithTVDs,
+  Sequence,
   WellboreId,
   WellboreSourceExternalIdMap,
 } from 'modules/wellSearch/types';

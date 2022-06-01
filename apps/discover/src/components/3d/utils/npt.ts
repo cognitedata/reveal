@@ -1,3 +1,5 @@
+import { Well } from 'domain/wells/well/internal/types';
+
 import convert from 'convert-units';
 import flatten from 'lodash/flatten';
 import { UNITS_TO_STANDARD } from 'utils/units/constants';
@@ -7,7 +9,7 @@ import { NPT as NptV2 } from '@cognite/sdk-wells-v2';
 import { DistanceUnitEnum } from '@cognite/sdk-wells-v3';
 
 import { FEET } from 'constants/units';
-import { Well, WellboreNPTEventsMap } from 'modules/wellSearch/types';
+import { WellboreNPTEventsMap } from 'modules/wellSearch/types';
 import { getIdWellboreMap } from 'modules/wellSearch/utils/events';
 
 const convertMeasureDepthToFeet = (measuredDepth: NptV2['measuredDepth']) => {

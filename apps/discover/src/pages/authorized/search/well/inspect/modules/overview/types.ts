@@ -1,6 +1,6 @@
-import { DoubleWithUnit } from '@cognite/sdk-wells-v2/dist/src/client/model/DoubleWithUnit';
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
-import { Wellbore } from 'modules/wellSearch/types';
+import { DoubleWithUnit } from '@cognite/sdk-wells-v2/dist/src/client/model/DoubleWithUnit';
 
 export interface OverviewModel extends Omit<Wellbore, 'wellbores' | 'sources'> {
   source?: string;

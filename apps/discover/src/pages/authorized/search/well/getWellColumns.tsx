@@ -1,3 +1,5 @@
+import { Well } from 'domain/wells/well/internal/types';
+
 import { getSpudDateDisplay } from 'dataLayers/wells/wells/selectors/getSpudDateDisplay';
 import { getSpudDateTableSort } from 'dataLayers/wells/wells/selectors/getSpudDateSort';
 import { wellFieldTitles } from 'dataLayers/wells/wells/titles';
@@ -5,7 +7,6 @@ import { wellFieldTitles } from 'dataLayers/wells/wells/titles';
 import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';
 import { KB_ELEVATION_TEXT } from 'modules/wellSearch/constantsSidebarFilters';
-import { Well } from 'modules/wellSearch/types';
 
 import {
   BLOCK_NAME,
@@ -32,8 +33,7 @@ export const getWellColumns = (userPreferredUnit = ''): ColumnMap<Well> => {
     },
     source: {
       Header: SOURCE,
-      accessor: (value: Well) =>
-        value.sources ? value.sources.join(', ') : '',
+      accessor: 'sourceList',
       width: '150px',
       order: 6,
     },

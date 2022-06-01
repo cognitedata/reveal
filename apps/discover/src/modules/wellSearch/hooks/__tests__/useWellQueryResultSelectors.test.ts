@@ -1,3 +1,5 @@
+import { useWellSearchResultQuery } from 'domain/wells/well/internal/queries/useWellSearchResultQuery';
+
 import { renderHook } from '@testing-library/react-hooks';
 
 import {
@@ -12,11 +14,13 @@ import {
   useWellQueryResultWellIds,
   useWellQueryResultWells,
 } from '../useWellQueryResultSelectors';
-import { useWellSearchResultQuery } from '../useWellSearchResultQuery';
 
-jest.mock('../useWellSearchResultQuery', () => ({
-  useWellSearchResultQuery: jest.fn(),
-}));
+jest.mock(
+  'domain/wells/well/internal/queries/useWellSearchResultQuery',
+  () => ({
+    useWellSearchResultQuery: jest.fn(),
+  })
+);
 
 describe('useWellQueryResultSelectors', () => {
   beforeEach(() => {
@@ -59,7 +63,7 @@ describe('useWellQueryResultSelectors', () => {
     };
 
     it('should return wellbores as expected', () => {
-      const wellbores = getHookResult([1234]);
+      const wellbores = getHookResult(['1234']);
       expect(wellbores).toEqual(mockedWellsFixtureWellbores);
     });
   });

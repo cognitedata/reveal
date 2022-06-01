@@ -1,4 +1,5 @@
 import { useTrajectoriesMetadataQuery } from 'domain/wells/trajectory/dataLayer/queries/useTrajectoriesMetadataQuery';
+import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
 
 import { useMemo } from 'react';
 
@@ -12,7 +13,6 @@ import { getWaterDepth } from 'dataLayers/wells/wells/selectors/getWaterDepth';
 import flatten from 'lodash/flatten';
 
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
-import { useWellInspectSelectedWells } from 'modules/wellInspect/hooks/useWellInspect';
 import { OverviewModel } from 'pages/authorized/search/well/inspect/modules/overview/types';
 
 export const useDataLayer = () => {
@@ -34,7 +34,7 @@ export const useDataLayer = () => {
             wellName: `${well?.name} / ${wellbore?.description}`,
             operator: well.operator,
             spudDate: well.spudDate,
-            sources: well.sources ? well.sources.join(', ') : '',
+            sources: well.sourceList,
             // this is a special case just for the overview
             field: well.field || wellbore.metadata?.field_name,
             md: '',

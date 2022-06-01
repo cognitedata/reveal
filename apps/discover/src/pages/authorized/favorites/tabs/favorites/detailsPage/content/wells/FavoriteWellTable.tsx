@@ -1,4 +1,6 @@
 import { useFavoriteUpdateContent } from 'domain/favorites/internal/actions/useFavoritesMutate';
+import { Well } from 'domain/wells/well/internal/types';
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
 import React, { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +20,7 @@ import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/inspectTabs/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { useWellsCacheQuery } from 'modules/wellSearch/hooks/useWellsCacheQuery';
-import { Well, WellId, Wellbore } from 'modules/wellSearch/types';
+import { WellId } from 'modules/wellSearch/types';
 import { WellResultTableOptions } from 'pages/authorized/constant';
 import {
   FAVORITE_SET_NO_WELLS,
@@ -106,7 +108,8 @@ export const FavoriteWellsTable: React.FC<Props> = ({ wells, favoriteId }) => {
       if (nextState) {
         setSelectedWellsAndWellboreIds((prevState) => ({
           ...prevState,
-          [row.original.id]: row.original.wellbores?.map((wb) => wb.id),
+          [row.original.id]:
+            row.original.wellbores?.map((wellbore) => wellbore.id) || [],
         }));
       } else {
         setSelectedWellsAndWellboreIds((prevState) => ({

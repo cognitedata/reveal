@@ -1,10 +1,13 @@
+import { Well } from 'domain/wells/well/internal/types';
+
 import groupBy from 'lodash/groupBy';
 
 import { storage } from '@cognite/react-container';
-import { Sequence, Asset } from '@cognite/sdk';
+import { Asset } from '@cognite/sdk';
 
 import { ThunkResult } from 'core/types';
 import {
+  Sequence,
   TOGGLE_SELECTED_WELLBORE_OF_WELL,
   WellboreId,
 } from 'modules/wellSearch/types';
@@ -14,7 +17,6 @@ import { wellSearchService } from './service';
 import {
   TOGGLE_EXPANDED_WELL_ID,
   TOGGLE_SELECTED_WELLS,
-  Well,
   SET_WELLBORE_ASSETS,
   SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
   AssetTypes,
@@ -24,10 +26,8 @@ import {
   WELL_ADD_SELECTED_COLUMN,
   WELL_SET_SELECTED_COLUMN,
   WELL_REMOVE_SELECTED_COLUMN,
-  WellboreAssetIdMap,
   WellboreExternalAssetIdMap,
 } from './types';
-import { getWellboreAssetIdReverseMap } from './utils/common';
 
 export const WELL_SELECTED_COLUMNS = 'WELL_SELECTED_COLUMNS';
 
@@ -115,44 +115,8 @@ function toggleSelectedWellboreOfWell({
   };
 }
 
-function getWellboreAssets(
-  wellboreIds: number[],
-  wellboreAssetIdMap: WellboreAssetIdMap,
-  assetType: AssetTypes,
-  fetcher: any
-): ThunkResult<void> {
-  const wellboreAssetIdReverseMap =
-    getWellboreAssetIdReverseMap(wellboreAssetIdMap);
-  return (dispatch) => {
-    return wellSearchService
-      .getAssetsByParentIds(
-        wellboreIds.map((id) => wellboreAssetIdMap[id]),
-        fetcher
-      )
-      .then((data: Asset[]) => {
-        const assets = data.map((item) => ({
-          ...item,
-          parentId: wellboreAssetIdReverseMap[item.parentId as number],
-        }));
-        const wellboreAssets = groupBy(assets, 'parentId') as {
-          [x: string]: any;
-        };
-        wellboreIds.forEach((wellboreId) => {
-          if (!wellboreAssets[wellboreId]) {
-            wellboreAssets[wellboreId] = [];
-          }
-        });
-        dispatch({
-          type: SET_WELLBORE_ASSETS,
-          data: wellboreAssets,
-          assetType,
-        });
-      });
-  };
-}
-
 function getWellboreAssetsByExternalParentIds(
-  wellboreIds: number[],
+  wellboreIds: WellboreId[],
   wellboreAssetIdMap: WellboreExternalAssetIdMap,
   assetType: AssetTypes,
   fetcher: any
@@ -278,7 +242,6 @@ function initialize(): ThunkResult<void> {
 export const wellSearchActions = {
   toggleSelectedWells,
   toggleSelectedWellboreOfWell,
-  getWellboreAssets,
   toggleExpandedWell,
   getDigitalRockSamples,
   getGrainAnalysisData,

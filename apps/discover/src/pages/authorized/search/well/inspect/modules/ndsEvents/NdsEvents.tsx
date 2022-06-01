@@ -1,4 +1,6 @@
 import { useNdsAggregatesByWellboreIdsQuery } from 'domain/wells/service/nds/queries/useNdsAggregatesByWellboreIdsQuery';
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
+import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores';
 
 import React, { useState } from 'react';
 
@@ -8,10 +10,6 @@ import { SegmentedControl } from '@cognite/cogs.js';
 
 import EmptyState from 'components/EmptyState';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
-import {
-  useWellInspectSelectedWellboreIds,
-  useWellInspectSelectedWellbores,
-} from 'modules/wellInspect/hooks/useWellInspect';
 
 import { DetailedView } from './detailedView';
 import { NdsControlWrapper } from './elements';

@@ -1,9 +1,10 @@
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
+
 import { getKbElevation } from 'dataLayers/wells/wellbores/selectors/getKbElevation';
 
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';
 import { KB_ELEVATION_TEXT } from 'modules/wellSearch/constantsSidebarFilters';
-import { Wellbore } from 'modules/wellSearch/types';
 
 import { WELLBORE } from './search/well/content/constants';
 

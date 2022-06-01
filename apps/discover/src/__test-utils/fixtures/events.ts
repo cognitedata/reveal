@@ -1,21 +1,21 @@
-import { CogniteEvent } from '@cognite/sdk';
+import { CogniteEventV3ish } from 'modules/wellSearch/types';
 
 import { createdAndLastUpdatedTime } from './log';
 
-export const mockCogniteEvent: CogniteEvent = {
-  assetIds: [759155409324883], // wellbore id
+export const mockCogniteEvent: CogniteEventV3ish = {
+  assetIds: ['759155409324883'], // wellbore id
   ...createdAndLastUpdatedTime,
   id: 1,
 };
 
-export const mockCogniteEventList: CogniteEvent[] = [
+export const mockCogniteEventList: CogniteEventV3ish[] = [
   {
-    assetIds: [12, 10],
+    assetIds: ['12', '10'],
     ...createdAndLastUpdatedTime,
     id: 1,
   },
   {
-    assetIds: [5],
+    assetIds: ['5'],
     ...createdAndLastUpdatedTime,
     id: 1,
   },

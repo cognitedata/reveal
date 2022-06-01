@@ -1,9 +1,11 @@
+import { useWellInspectWellboreExternalIdMap } from 'domain/wells/well/internal/transformers/useWellInspectIdMap';
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
+import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
+
 import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 
 import isEmpty from 'lodash/isEmpty';
-
-import { Sequence } from '@cognite/sdk';
 
 import {
   LOG_TRAJECTORY,
@@ -11,13 +13,12 @@ import {
 } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
-import {
-  useWellInspectSelectedWellboreIds,
-  useWellInspectSelectedWells,
-} from 'modules/wellInspect/hooks/useWellInspect';
-import { useWellInspectWellboreExternalIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
-import { TrajectoryData, TrajectoryRows } from 'modules/wellSearch/types';
+import {
+  Sequence,
+  TrajectoryData,
+  TrajectoryRows,
+} from 'modules/wellSearch/types';
 import { trimCachedData } from 'modules/wellSearch/utils/common';
 import { mapWellInfo } from 'modules/wellSearch/utils/trajectory';
 

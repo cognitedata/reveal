@@ -1,8 +1,6 @@
 import { UnitConverterItem } from 'utils/units';
 
-import { CogniteEvent } from '@cognite/sdk';
-
-import { EventsType } from 'modules/wellSearch/types';
+import { CogniteEventV3ish, EventsType } from 'modules/wellSearch/types';
 import { convertObject } from 'modules/wellSearch/utils';
 
 import { ndsAccessorsToFixedDecimal } from './constants';
@@ -50,14 +48,14 @@ export const useGetConvertFunctionForEvents = (unit?: string) => {
           if (ndsUnitChangeAcceessors.length > 1)
             ndsUnitChangeAcceessors[1].errorHandler = errorHandler;
         }
-        return (event: CogniteEvent) =>
+        return (event: CogniteEventV3ish) =>
           convertObject(event)
             .changeUnits(ndsUnitChangeAcceessors)
             .toClosestInteger(ndsAccessorsToFixedDecimal)
             .get();
       }
       default:
-        return (event: CogniteEvent) => event;
+        return (event: CogniteEventV3ish) => event;
     }
   };
 };

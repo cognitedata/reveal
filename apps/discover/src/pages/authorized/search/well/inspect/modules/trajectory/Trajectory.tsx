@@ -1,17 +1,16 @@
 import { useTrajectoriesQuery } from 'domain/wells/trajectory/dataLayer/queries/useTrajectoriesQuery';
+import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores';
 
 import React, { useMemo, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import has from 'lodash/has';
 
-import { Sequence } from '@cognite/sdk';
-
 import { Loading } from 'components/Loading/Loading';
 import { Table, ColumnType, RowProps } from 'components/Tablev3';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useFilterDataTrajectory } from 'modules/inspectTabs/selectors';
-import { useWellInspectSelectedWellbores } from 'modules/wellInspect/hooks/useWellInspect';
+import { Sequence } from 'modules/wellSearch/types';
 
 import { Trajectory2D } from './Trajectory2D/Trajectory2D';
 
@@ -49,13 +48,11 @@ export const Trajectory: React.FC = () => {
 
   const { selectedIds, selectedWellboreIds } = useFilterDataTrajectory();
 
-  const selectedWellboresTrajectories = useMemo(
-    () =>
-      trajectories.filter(
-        (trajectory) => selectedWellboreIds[trajectory.assetId as number]
-      ),
-    [selectedWellboreIds, trajectories]
-  );
+  const selectedWellboresTrajectories = useMemo(() => {
+    return trajectories.filter((trajectory) =>
+      trajectory.assetId ? selectedWellboreIds[trajectory.assetId] : false
+    );
+  }, [selectedWellboreIds, trajectories]);
 
   const selectedTrajectories = useMemo(
     () =>

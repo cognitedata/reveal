@@ -1,3 +1,5 @@
+import { useWellInspectWellboreExternalAssetIdMap } from 'domain/wells/well/internal/transformers/useWellInspectIdMap';
+
 import React, { useState } from 'react';
 
 import { Button } from '@cognite/cogs.js';
@@ -6,9 +8,8 @@ import { Asset } from '@cognite/sdk';
 import EmptyState from 'components/EmptyState';
 import { Modal } from 'components/Modal';
 import { RowProps, Table } from 'components/Tablev3';
-import { useWellInspectWellboreExternalAssetIdMap } from 'modules/wellInspect/hooks/useWellInspectIdMap';
 import { DIGITAL_ROCK_SAMPLES_ACCESSORS } from 'modules/wellSearch/constants';
-import { useDigitalRocksSamples } from 'modules/wellSearch/selectors/asset/digitalRocks';
+import { useDigitalRocksSamples } from 'modules/wellSearch/selectors/digitalRocks';
 import { getWellboreExternalAssetIdReverseMap } from 'modules/wellSearch/utils/common';
 import { FlexRow } from 'styles/layout';
 

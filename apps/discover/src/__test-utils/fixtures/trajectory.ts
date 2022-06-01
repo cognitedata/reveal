@@ -16,7 +16,7 @@ export const getMockedTrajectoryData = (): TrajectoryRows[] => {
       externalId: '0',
       columns: [{ name: 'Depth', valueType: 'string', externalId: '0' }],
       rows: [{ rowNumber: 0, values: [0, 1] }],
-      wellboreId: 759155409324883,
+      wellboreId: '759155409324883',
     },
   ];
 };
