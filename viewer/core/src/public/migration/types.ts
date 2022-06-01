@@ -12,15 +12,6 @@ import { GeometryFilter, Cognite3DModel } from '@reveal/cad-model';
 import { DataSource } from '@reveal/data-source';
 
 /**
- * @module @cognite/reveal
- */
-export type Color = {
-  r: number;
-  g: number;
-  b: number;
-};
-
-/**
  * Callback to monitor loaded requests and progress.
  * Use OnLoadingCallback instead of onProgress/onComplete.
  * @module @cognite/reveal
@@ -198,8 +189,6 @@ export type Intersection = CadIntersection | PointCloudIntersection;
  * @module @cognite/reveal
  */
 export { CameraConfiguration } from '@reveal/utilities';
-
-export * from './NotSupportedInMigrationWrapperError';
 
 export { CadModelBudget, PointCloudBudget };
 

@@ -5,9 +5,9 @@ import * as THREE from 'three';
 
 import { Cognite3DViewer, Cognite3DModel } from '@reveal/core';
 import { LevelOfDetail, SectorNode } from '@reveal/core/cad';
-import { assertNever } from '@reveal/core/utilities';
 
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
+import { assertNever } from '@reveal/utilities';
 
 export type DebugLoadedSectorsToolOptions = {
   showSimpleSectors?: boolean;

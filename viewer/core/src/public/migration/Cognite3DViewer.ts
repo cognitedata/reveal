@@ -33,7 +33,6 @@ import {
 } from '@reveal/pointclouds';
 
 import { AddModelOptions, Cognite3DViewerOptions, Intersection, CadModelBudget } from './types';
-import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
 import { RevealManager } from '../RevealManager';
 import { RevealOptions } from '../types';
@@ -592,7 +591,7 @@ export class Cognite3DViewer {
    */
   async addPointCloudModel(options: AddModelOptions): Promise<CognitePointCloudModel> {
     if (options.geometryFilter) {
-      throw new NotSupportedInMigrationWrapperError('geometryFilter is not supported for point clouds');
+      throw new Error('geometryFilter is not supported for point clouds');
     }
 
     const { modelId, revisionId } = options;
