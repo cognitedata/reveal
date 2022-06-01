@@ -1,4 +1,3 @@
-import { BaseRegion as ReactImageAnnotateBaseRegion } from '@cognite/react-image-annotate';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
 import { CDFAnnotationTypeEnum, Status } from 'src/api/annotation/types';
 import { VisionReviewAnnotation } from 'src/modules/Review/types';
