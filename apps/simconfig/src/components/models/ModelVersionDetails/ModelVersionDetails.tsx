@@ -151,10 +151,6 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
         <div className="info-stack">
           <div className="info">
             <div className="user-email">
-              <Icon type="Document" />
-              {modelFile.metadata.fileName}
-            </div>
-            <div className="user-email">
               <Icon type="User" />
               {modelFile.metadata.userEmail}
             </div>
@@ -246,7 +242,7 @@ const ModelVersionProperties = styled.main`
       display: flex;
       align-items: center;
       flex: 1 1 auto;
-      overflow: hidden;
+      flex-flow: row wrap;
       gap: 12px;
       .user-email,
       .file-name,
