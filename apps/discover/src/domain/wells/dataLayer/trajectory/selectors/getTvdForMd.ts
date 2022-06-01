@@ -23,14 +23,15 @@ export const getTvdForMd = (
 
   const { unit: tvdUnit } = trueVerticalDepthUnit;
 
-  if (!unit) {
+  if (!unit && tvd) {
     return toFixedNumberFromNumber(tvd, toFixed);
   }
 
-  const convertedValue = changeUnitTo(tvd, tvdUnit, unit);
-
-  if (!isUndefined(convertedValue)) {
-    return toFixedNumberFromNumber(convertedValue, toFixed);
+  if (unit) {
+    const convertedValue = changeUnitTo(tvd, tvdUnit, unit);
+    if (!isUndefined(convertedValue)) {
+      return toFixedNumberFromNumber(convertedValue, toFixed);
+    }
   }
 
   return undefined;

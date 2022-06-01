@@ -37,7 +37,7 @@ describe('generateNdsFilterDataFromAggregate', () => {
 
     const filterResult = [
       {
-        label: 'Type 1',
+        category: 'Type 1',
         value: 'Type 1',
         options: [
           {
@@ -51,7 +51,7 @@ describe('generateNdsFilterDataFromAggregate', () => {
         ],
       },
       {
-        label: 'ORPHAN_SUBTYPES',
+        category: 'ORPHAN_SUBTYPES',
         value: 'ORPHAN_SUBTYPES',
         options: [
           {
@@ -61,9 +61,9 @@ describe('generateNdsFilterDataFromAggregate', () => {
         ],
       },
       {
-        label: 'Type 3',
+        category: 'Type 3',
         value: 'Type 3',
-        options: [],
+        options: undefined,
       },
     ];
     const result = generateNdsFilterDataFromAggregate(ndsAggregateMock);

@@ -7,7 +7,9 @@ export type Category = string;
 
 export interface MultiSelectCategorizedProps {
   title: string;
-  onValueChange: (values: string[]) => void;
+  onValueChange: (
+    values: Record<Category, OptionType<MultiSelectOptionType>[] | undefined>
+  ) => void;
   options?: MultiSelectCategorizedOption[];
   placeholder?: string;
   enableSelectAll?: boolean;
@@ -27,10 +29,10 @@ export interface OptionsCategoryProps<ValueType>
 
 export interface MultiSelectCategorizedOption {
   category: Category;
-  options: MultiSelectOptionType[];
+  options: MultiSelectOptionType[] | undefined;
 }
 
 export interface CategorizedOptionType<ValueType> {
   category: string;
-  options: OptionType<ValueType>[];
+  options: OptionType<ValueType>[] | undefined;
 }

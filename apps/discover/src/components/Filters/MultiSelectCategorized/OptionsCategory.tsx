@@ -16,15 +16,15 @@ import { OptionsCategoryProps } from './types';
 
 export const OptionsCategory: React.FC<
   OptionsCategoryProps<MultiSelectOptionType>
-> = React.memo(({ category, options, selectedOptions = [], onValueChange }) => {
+> = React.memo(({ category, options, selectedOptions, onValueChange }) => {
   const selectionMap = toBooleanMap(
-    selectedOptions.map((option) => option.label)
+    (selectedOptions || []).map((option) => option.label)
   );
 
   const handleChangeCategory = (isSelected: boolean) => {
     onValueChange({
       category,
-      options: isSelected ? options : [],
+      options: isSelected ? options : undefined,
     });
   };
 
@@ -33,19 +33,22 @@ export const OptionsCategory: React.FC<
     isSelected: boolean
   ) => {
     const updatedSelectedOptions = isSelected
-      ? [...selectedOptions, option]
-      : selectedOptions.filter(
+      ? [...(selectedOptions || []), option]
+      : (selectedOptions || []).filter(
           (selectedOption) => selectedOption.label !== option.label
         );
 
     onValueChange({
       category,
-      options: updatedSelectedOptions,
+      options: updatedSelectedOptions.length
+        ? updatedSelectedOptions
+        : undefined,
     });
   };
 
   const isAnySelected = !isEmpty(selectedOptions);
-  const isAllSelected = selectedOptions.length === options.length;
+  const isAllSelected =
+    (selectedOptions && selectedOptions.length) === options?.length;
 
   return (
     <OptionsCategoryWrapper>
@@ -60,7 +63,7 @@ export const OptionsCategory: React.FC<
         </Checkbox>
       </CategoryWrapper>
 
-      {options.map((option) => {
+      {(options || []).map((option) => {
         const { label } = option;
         const name = `${category}-${label}`;
 

@@ -1,12 +1,12 @@
 import { NdsAggregate } from '@cognite/sdk-wells-v3';
 
-import { FilterData } from '../types';
+import { MultiSelectCategorizedOption } from 'components/Filters/MultiSelectCategorized/types';
 
 const ORPHAN_SUBTYPES = 'ORPHAN_SUBTYPES';
 
 export const generateNdsFilterDataFromAggregate = (
   ndsAggregates: NdsAggregate[]
-): FilterData[] => {
+): MultiSelectCategorizedOption[] => {
   const riskTypesMap = ndsAggregates
     .flatMap((aggregate) => aggregate.items)
     .reduce((previousValue, currentValue) => {
@@ -34,17 +34,19 @@ export const generateNdsFilterDataFromAggregate = (
     }, {} as { [key: string]: string[] });
 
   return Object.keys(riskTypesMap).map((riskType) => {
+    const options = Array.from(new Set(riskTypesMap[riskType]));
     return {
-      label: riskType,
+      category: riskType,
       value: riskType,
-      options: Array.from(new Set(riskTypesMap[riskType] || [])).map(
-        (subtype) => {
-          return {
-            label: subtype,
-            value: subtype,
-          };
-        }
-      ),
+      options:
+        options.length > 0
+          ? options.map((subtype) => {
+              return {
+                label: subtype,
+                value: subtype,
+              };
+            })
+          : undefined,
     };
   });
 };

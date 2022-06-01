@@ -253,8 +253,8 @@ const AppHeader: React.FC = () => {
             <TopBar.Search
               className="topbar-search"
               placeholder="Search for resources"
-              onChange={(e) =>
-                setSearchQuery((e.target as HTMLInputElement).value)
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setSearchQuery(e.target.value)
               }
               onClick={() => setIsSearchVisible(!isSearchVisible)}
             />

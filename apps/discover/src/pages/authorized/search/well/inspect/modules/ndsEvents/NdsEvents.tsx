@@ -6,21 +6,28 @@ import React, { useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
-import { SegmentedControl } from '@cognite/cogs.js';
+import { OptionType, SegmentedControl } from '@cognite/cogs.js';
 
 import EmptyState from 'components/EmptyState';
+import { MultiSelectCategorized } from 'components/Filters';
+import { MultiSelectOptionType } from 'components/Filters/MultiSelect/types';
+import {
+  MultiSelectCategorizedOption,
+  Category,
+} from 'components/Filters/MultiSelectCategorized/types';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 
 import { DetailedView } from './detailedView';
 import { NdsControlWrapper } from './elements';
 import { NdsTable } from './table';
 import { NdsTreemap } from './treemap';
-import { FilterData, NdsView } from './types';
+import { NdsView } from './types';
 import { useNdsData } from './useNdsData';
 import { generateNdsFilterDataFromAggregate } from './utils/generateNdsFilterDataFromAggregate';
 import { generateNdsTreemapData } from './utils/generateNdsTreemapData';
 
 type SelectedView = 'treemap' | 'table';
+const SELECT_TITLE = 'Risk type & subtype';
 
 const NdsEvents: React.FC = () => {
   // data
@@ -39,8 +46,14 @@ const NdsEvents: React.FC = () => {
   const [selectedView, setSelectedView] = useState<SelectedView>('treemap');
   const [detailedViewNdsData, setDetailedViewNdsData] = useState<NdsView[]>();
 
-  const [riskTypeFilters, setRiskTypeFilters] = useState<FilterData[]>([]);
-  console.log(riskTypeFilters);
+  const [riskTypeFilters, setRiskTypeFilters] = useState<
+    MultiSelectCategorizedOption[]
+  >([]);
+  const [selected, setSelected] =
+    useState<
+      Record<Category, OptionType<MultiSelectOptionType>[] | undefined>
+    >();
+  console.log(selected);
 
   useDeepEffect(() => {
     if (ndsAggregates) {
@@ -64,6 +77,13 @@ const NdsEvents: React.FC = () => {
           </SegmentedControl.Button>
           <SegmentedControl.Button key="table">Table</SegmentedControl.Button>
         </SegmentedControl>
+
+        <MultiSelectCategorized
+          title={SELECT_TITLE}
+          width={300}
+          options={riskTypeFilters}
+          onValueChange={setSelected}
+        />
       </NdsControlWrapper>
 
       {selectedView === 'treemap' && <NdsTreemap data={treemapData} />}

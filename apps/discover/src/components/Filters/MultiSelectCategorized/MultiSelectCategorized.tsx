@@ -1,7 +1,8 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import flatten from 'lodash/flatten';
 import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
 import unset from 'lodash/unset';
 
 import { Body, Checkbox, Dropdown, OptionType } from '@cognite/cogs.js';
@@ -46,8 +47,15 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
   const [dropdownVisible, setDropdownVisible] = useState<boolean>(false);
 
   const [selectedOptions, setSelectedOptions] = useState<
-    Record<Category, OptionType<MultiSelectOptionType>[]>
-  >({});
+    | Record<Category, OptionType<MultiSelectOptionType>[] | undefined>
+    | undefined
+  >(undefined);
+
+  useEffect(() => {
+    if (!isUndefined(selectedOptions)) {
+      onValueChange(selectedOptions);
+    }
+  }, [selectedOptions]);
 
   const options = useDeepMemo(
     () => getProcessedOptions(data, extraLabels),
@@ -55,7 +63,7 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
   );
 
   const optionsCount = options.reduce(
-    (total, { options }) => total + options.length,
+    (total, { options }) => total + (options?.length || 0),
     0
   );
 
@@ -68,16 +76,11 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
       [category]: options,
     };
 
-    if (isEmpty(options)) {
+    if (isUndefined(options)) {
       unset(updatedSelectedOptions, category);
     }
 
-    const labels = flatten(Object.values(updatedSelectedOptions)).map(
-      (option) => option.label
-    );
-
     setSelectedOptions(updatedSelectedOptions);
-    onValueChange(labels);
   };
 
   const handleSelectAll = (isSelected: boolean) => {
@@ -102,9 +105,12 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
    */
   const dropdownWidth = width || multiSelectCategorizedRef.current?.clientWidth;
 
-  const selectedOptionValues = flatten(Object.values(selectedOptions));
+  const selectedOptionValues = flatten(Object.values(selectedOptions || {}));
   const isAnySelected = !isEmpty(selectedOptions);
-  const isAllSelected = selectedOptionValues.length === optionsCount;
+  const isAllSelected =
+    selectedOptions &&
+    Object.keys(selectedOptions).length === data?.length &&
+    selectedOptionValues.length === optionsCount;
 
   const SelectAllOption = useDeepMemo(() => {
     if (!enableSelectAll || isEmpty(options)) {
@@ -134,7 +140,9 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
             key={category}
             category={category}
             options={options}
-            selectedOptions={selectedOptions[category]}
+            selectedOptions={
+              selectedOptions ? selectedOptions[category] : undefined
+            }
             onValueChange={handleValueChange}
           />
         );
@@ -152,7 +160,12 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
         {isEmpty(options) ? NoOptionsContent : OptionsContent}
       </DropdownContent>
     ),
-    [options.length, selectedOptionValues.length, dropdownWidth]
+    [
+      options.length,
+      selectedOptionValues.length,
+      selectedOptions,
+      dropdownWidth,
+    ]
   );
 
   const dropdownIcon = useMemo(

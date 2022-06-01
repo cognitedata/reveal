@@ -16,7 +16,7 @@ export const getProcessedOptions = (
     ({ category, options }: MultiSelectCategorizedOption) => {
       return {
         category,
-        options: options.map((option) => {
+        options: (options || []).map((option) => {
           const value = getValueFromOption(option);
           const label = [value, extraLabels[value]].filter(Boolean).join(' ');
           const helpText = get(option, 'helpText');
