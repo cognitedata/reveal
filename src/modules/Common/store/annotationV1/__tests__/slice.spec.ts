@@ -7,7 +7,7 @@ import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotatio
 import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
+import { VisionJobUpdateV1 } from 'src/store/thunks/Process/VisionJobUpdateV1';
 import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 describe('Test annotationV1 reducer', () => {
@@ -300,7 +300,7 @@ describe('Test annotationV1 reducer', () => {
     // TODO: same test as for RetrieveAnnotationsV1.fulfilled, should be removed after refactoring
     const actionTypes = [
       CreateAnnotationsV1.fulfilled.type,
-      VisionJobUpdate.fulfilled.type,
+      VisionJobUpdateV1.fulfilled.type,
       UpdateAnnotationsV1.fulfilled.type,
     ];
     test('should populate state', () => {

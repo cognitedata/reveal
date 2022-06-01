@@ -6,7 +6,7 @@ import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/Populat
 import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
-import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
+import { VisionJobUpdateV1 } from 'src/store/thunks/Process/VisionJobUpdateV1';
 import { Region } from '@cognite/react-image-annotate';
 import { Point } from '@cognite/react-image-annotate/Types/ImageCanvas/region-tools';
 import {
@@ -205,7 +205,7 @@ const annotationLabelSlice = createSlice({
     builder.addMatcher(
       isAnyOf(
         CreateAnnotationsV1.fulfilled,
-        VisionJobUpdate.fulfilled,
+        VisionJobUpdateV1.fulfilled,
         UpdateAnnotationsV1.fulfilled,
         RetrieveAnnotationsV1.fulfilled
       ),

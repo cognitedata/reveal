@@ -16,7 +16,7 @@ import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/Populat
 import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
-import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
+import { VisionJobUpdateV1 } from 'src/store/thunks/Process/VisionJobUpdateV1';
 import {
   AnnotationStatus,
   AnnotationUtilsV1,
@@ -523,7 +523,7 @@ describe('Test annotationLabel reducer', () => {
       test('Should not update state when annotations are from multiple files', () => {
         [
           CreateAnnotationsV1.fulfilled.type,
-          VisionJobUpdate.fulfilled.type,
+          VisionJobUpdateV1.fulfilled.type,
           UpdateAnnotationsV1.fulfilled.type,
           RetrieveAnnotationsV1.fulfilled.type,
         ].forEach((type) => {
@@ -543,7 +543,7 @@ describe('Test annotationLabel reducer', () => {
       test('Should populate keypoint collection related fields in state', () => {
         [
           CreateAnnotationsV1.fulfilled.type,
-          VisionJobUpdate.fulfilled.type,
+          VisionJobUpdateV1.fulfilled.type,
           UpdateAnnotationsV1.fulfilled.type,
           RetrieveAnnotationsV1.fulfilled.type,
         ].forEach((type) => {
