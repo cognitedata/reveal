@@ -1,3 +1,9 @@
+## 6.0.0-rc-1 May 25 2022
+
+- moving mixpanel and frontend metrics inside the provider, to initialize add a prop called `getMixpanelSettings` with a function that returns `mixpanelProps`.
+
+note: this is only a naming change, functionality is not affected
+
 ## 5.0.6 May 20 2022
 
 - deprecate `getTenantInfo` in favor of `getProjectInfo`

@@ -26,12 +26,14 @@ import {
   TenantSelectorWrapper,
   AuthContainer,
   IntercomContainer,
+  AuthConsumer,
 } from './components';
 import { PROJECT_TO_LOGIN } from './components/AuthProvider/TokenFactory';
 import { getProjectSpecificFlow } from './components/AuthProvider/utils';
 import { createBrowserHistory } from './internal';
 import { ConditionalReduxProvider } from './providers';
 import { storage, getTenantInfo } from './utils';
+import { mixpanelProps, ProvideMetrics } from './providers/ProvideMetrics';
 
 const { REACT_APP_API_KEY_PROJECT: project } = process.env;
 
@@ -41,6 +43,8 @@ interface ContainerSidecarConfig extends SidecarConfig {
   disableSentry?: boolean;
   disableIntercom?: boolean;
   disableReactQuery?: boolean;
+  disableMixpanel?: boolean;
+  disableInternalMetrics?: boolean;
 }
 
 type Props = {
@@ -49,6 +53,7 @@ type Props = {
   intercomSettings?: IntercomBootSettings;
   sentrySettings?: SentryProps;
   sidecar: ContainerSidecarConfig;
+  getMixpanelSettings?: () => mixpanelProps;
 };
 const RawContainer: React.FC<Props> = ({
   children,
@@ -56,6 +61,7 @@ const RawContainer: React.FC<Props> = ({
   sidecar,
   intercomSettings,
   sentrySettings,
+  getMixpanelSettings,
 }) => {
   const [_possibleTenant, initialTenant] = getTenantInfo(window.location);
 
@@ -65,6 +71,8 @@ const RawContainer: React.FC<Props> = ({
     disableSentry,
     disableIntercom,
     disableReactQuery,
+    disableMixpanel,
+    disableInternalMetrics,
     reactQueryDevtools,
   } = sidecar;
 
@@ -135,6 +143,10 @@ const RawContainer: React.FC<Props> = ({
     window.location.assign('/');
   };
 
+  const internalMetricsSettings = {
+    frontendMetricsBaseUrl: sidecar.frontendMetricsBaseUrl,
+  };
+
   return (
     <ConditionalLoopDetector disabled={disableLoopDetector}>
       <ConditionalQueryClientProvider
@@ -161,11 +173,32 @@ const RawContainer: React.FC<Props> = ({
               sidecar={sidecar}
               disabled={disableIntercom}
             >
-              <ConditionalReduxProvider store={store}>
-                <ErrorBoundary instanceId="container-root">
-                  <Router history={history}>{children}</Router>
-                </ErrorBoundary>
-              </ConditionalReduxProvider>
+              <>
+                <AuthConsumer>
+                  {(authState) => {
+                    return (
+                      authState.authState?.authenticated && (
+                        <ProvideMetrics
+                          getMixpanelSettings={getMixpanelSettings}
+                          internalMetricsSettings={{
+                            ...internalMetricsSettings,
+                            authToken: authState?.authState?.token,
+                          }}
+                          disableMixpanel={disableMixpanel || false}
+                          disableInternalMetrics={
+                            disableInternalMetrics || false
+                          }
+                        />
+                      )
+                    );
+                  }}
+                </AuthConsumer>
+                <ConditionalReduxProvider store={store}>
+                  <ErrorBoundary instanceId="container-root">
+                    <Router history={history}>{children}</Router>
+                  </ErrorBoundary>
+                </ConditionalReduxProvider>
+              </>
             </IntercomContainer>
           </AuthContainer>
         </ConditionalSentry>

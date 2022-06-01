@@ -69,6 +69,7 @@ DEPENDENCIES = [
     "@npm//react-redux",
     "@npm//react-router-dom",
     "@npm//redux",
+    "@npm//web-vitals",
     "//packages/metrics",
     "//packages/storage",
     "//packages/intercom-helper",
