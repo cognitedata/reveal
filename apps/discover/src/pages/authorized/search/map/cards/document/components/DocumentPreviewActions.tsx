@@ -17,7 +17,6 @@ import {
   CogniteButton,
   FeedbackButton,
 } from 'components/Buttons';
-import { FavoriteDropdown } from 'components/Dropdown/FavoriteDropdown';
 import { useDocumentLabelsByExternalIds } from 'hooks/useDocumentLabels';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useDocumentConfig } from 'modules/documentSearch/hooks';
@@ -29,6 +28,7 @@ import {
   getContextualizePath,
 } from 'modules/documentSearch/utils/contextualize';
 import { setObjectFeedbackModalDocumentId } from 'modules/feedback/actions';
+import { FavoriteDropdown } from 'pages/authorized/search/common/FavoriteDropdown';
 import { FlexGrow, FlexAlignItems } from 'styles/layout';
 
 import { ActionContainer, FavouriteTooltip } from './elements';

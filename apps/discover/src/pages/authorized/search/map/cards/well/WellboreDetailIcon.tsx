@@ -1,7 +1,7 @@
-import { FavoriteDropdown } from 'components/Dropdown/FavoriteDropdown';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { WellId, WellboreId } from 'modules/wellSearch/types';
 import { isWellboreFavored } from 'modules/wellSearch/utils/isWellboreFavored';
+import { FavoriteDropdown } from 'pages/authorized/search/common/FavoriteDropdown';
 
 import { WellboreButton } from './elements';
 

@@ -10,12 +10,12 @@ import { useTranslation } from '@cognite/react-i18n';
 
 import { ADD_TO_FAVOURITES } from 'components/AddToFavoriteSetMenu/constants';
 import { FeedbackButton } from 'components/Buttons';
-import { FavoriteDropdown } from 'components/Dropdown/FavoriteDropdown';
 import GeneralFeedback from 'components/Modals/general-feedback/GeneralFeedback';
 import { useDeepMemo } from 'hooks/useDeep';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { useWellboresOfWellById } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
+import { FavoriteDropdown } from 'pages/authorized/search/common/FavoriteDropdown';
 import { FlexAlignItems, FlexGrow } from 'styles/layout';
 
 import { ActionContainer } from '../document/components/elements';
