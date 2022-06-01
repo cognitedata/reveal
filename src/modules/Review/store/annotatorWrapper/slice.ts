@@ -27,6 +27,7 @@ import {
 } from 'src/api/annotation/types';
 import { isImageKeypointCollectionData } from 'src/modules/Common/types/typeGuards';
 import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import { VisionJobUpdateV1 } from 'src/store/thunks/Process/VisionJobUpdateV1';
 
 export const initialState: AnnotatorWrapperState = {
   predefinedAnnotations: {
@@ -220,7 +221,7 @@ const annotatorWrapperSlice = createSlice({
     builder.addMatcher(
       isAnyOf(
         CreateAnnotationsV1.fulfilled,
-        VisionJobUpdate.fulfilled,
+        VisionJobUpdateV1.fulfilled,
         UpdateAnnotationsV1.fulfilled,
         RetrieveAnnotationsV1.fulfilled
       ),

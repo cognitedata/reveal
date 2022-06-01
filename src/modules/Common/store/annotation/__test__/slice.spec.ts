@@ -10,7 +10,7 @@ import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotatio
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
+import { VisionJobUpdateV1 } from 'src/store/thunks/Process/VisionJobUpdateV1';
 import { getDummyImageObjectDetectionBoundingBoxAnnotation } from 'src/__test-utils/getDummyAnnotations';
 
 describe('Test annotation reducer', () => {
@@ -314,7 +314,7 @@ describe('Test annotation reducer', () => {
     // TODO: same test as for RetrieveAnnotationsV1.fulfilled, should be removed after refactoring
     const actionTypes = [
       CreateAnnotationsV1.fulfilled.type,
-      VisionJobUpdate.fulfilled.type,
+      VisionJobUpdateV1.fulfilled.type,
       UpdateAnnotationsV1.fulfilled.type,
     ];
 

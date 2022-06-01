@@ -10,6 +10,7 @@ import {
   convertVisionJobAnnotationToImageExtractedText,
   convertVisionJobAnnotationToImageKeypointCollection,
   convertVisionJobAnnotationToImageObjectDetectionBoundingBox,
+  convertVisionJobAnnotationToVisionAnnotation,
 } from 'src/api/vision/detectionModels/converters';
 import {
   ImageAssetLink,
@@ -520,6 +521,153 @@ describe('convertVisionJobAnnotationToAnnotationTypeV1', () => {
       data: {
         confidence: visionJobAnnotation.confidence,
       },
+    });
+  });
+});
+
+describe('convertVisionJobAnnotationToVisionAnnotation', () => {
+  const rectangleShape = {
+    region: {
+      shape: RegionShape.Rectangle,
+      vertices: [
+        { x: 0, y: 0.1 },
+        { x: 1, y: 0.3 },
+      ],
+    },
+  };
+  test('Non existing model type', () => {
+    const visionJobAnnotation = {} as VisionJobAnnotation;
+    const visionDetectionModelType = 10 as VisionDetectionModelType;
+
+    expect(
+      convertVisionJobAnnotationToVisionAnnotation(
+        visionJobAnnotation,
+        visionDetectionModelType
+      )
+    ).toStrictEqual(null);
+  });
+
+  test('Invalid type (missing bounding box)', () => {
+    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+    const visionJobAnnotation = {
+      text: 'gauge',
+      confidence: 0.1,
+    } as VisionJobAnnotation;
+
+    [
+      VisionDetectionModelType.OCR,
+      VisionDetectionModelType.ObjectDetection,
+      VisionDetectionModelType.TagDetection, // exclude custom model since it will fallback to classification
+    ].forEach((visionDetectionModelType) => {
+      expect(
+        convertVisionJobAnnotationToVisionAnnotation(
+          visionJobAnnotation,
+          visionDetectionModelType
+        )
+      ).toStrictEqual(null);
+      expect(consoleSpy).toHaveBeenCalled();
+    });
+  });
+
+  test('Valid type (objectDetection and custom model)', () => {
+    const visionJobAnnotation = {
+      text: 'gauge',
+      confidence: 0.1,
+      ...rectangleShape,
+    } as VisionJobAnnotation;
+
+    [
+      VisionDetectionModelType.ObjectDetection,
+      VisionDetectionModelType.CustomModel,
+    ].forEach((visionDetectionModelType) => {
+      expect(
+        convertVisionJobAnnotationToVisionAnnotation(
+          visionJobAnnotation,
+          visionDetectionModelType
+        )
+      ).toStrictEqual({
+        label: visionJobAnnotation.text,
+        confidence: visionJobAnnotation.confidence,
+        boundingBox: {
+          xMin: rectangleShape.region.vertices[0].x,
+          yMin: rectangleShape.region.vertices[0].y,
+          xMax: rectangleShape.region.vertices[1].x,
+          yMax: rectangleShape.region.vertices[1].y,
+        },
+      });
+    });
+  });
+
+  test('Valid type (textDetection)', () => {
+    const visionJobAnnotation = {
+      text: 'gauge',
+      confidence: 0.1,
+      assetIds: [1],
+      ...rectangleShape,
+    } as VisionJobAnnotation;
+
+    expect(
+      convertVisionJobAnnotationToVisionAnnotation(
+        visionJobAnnotation,
+        VisionDetectionModelType.OCR
+      )
+    ).toStrictEqual({
+      extractedText: visionJobAnnotation.text,
+      confidence: visionJobAnnotation.confidence,
+      textRegion: {
+        xMin: rectangleShape.region.vertices[0].x,
+        yMin: rectangleShape.region.vertices[0].y,
+        xMax: rectangleShape.region.vertices[1].x,
+        yMax: rectangleShape.region.vertices[1].y,
+      },
+    });
+  });
+
+  test('Valid type (tagDetection)', () => {
+    const visionJobAnnotation = {
+      text: 'gauge',
+      confidence: 0.1,
+      assetIds: [1],
+      ...rectangleShape,
+    } as VisionJobAnnotation;
+
+    expect(
+      convertVisionJobAnnotationToVisionAnnotation(
+        visionJobAnnotation,
+        VisionDetectionModelType.TagDetection
+      )
+    ).toStrictEqual([
+      {
+        text: visionJobAnnotation.text,
+        confidence: visionJobAnnotation.confidence,
+        assetRef: {
+          id: 1,
+        },
+        textRegion: {
+          xMin: rectangleShape.region.vertices[0].x,
+          yMin: rectangleShape.region.vertices[0].y,
+          xMax: rectangleShape.region.vertices[1].x,
+          yMax: rectangleShape.region.vertices[1].y,
+        },
+      },
+    ]);
+  });
+
+  test('Valid type (custom model classification)', () => {
+    const visionJobAnnotation = {
+      text: 'gauge',
+      confidence: 0.1,
+    } as VisionJobAnnotation;
+
+    expect(
+      convertVisionJobAnnotationToVisionAnnotation(
+        visionJobAnnotation,
+        VisionDetectionModelType.CustomModel
+      )
+    ).toStrictEqual({
+      label: visionJobAnnotation.text,
+      confidence: visionJobAnnotation.confidence,
     });
   });
 });

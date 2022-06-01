@@ -4,7 +4,7 @@ import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotatio
 import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
+import { VisionJobUpdateV1 } from 'src/store/thunks/Process/VisionJobUpdateV1';
 import { clearAnnotationState } from 'src/store/commonActions';
 import { AnnotationStateV1 } from 'src/modules/Common/store/annotationV1/types';
 
@@ -95,7 +95,7 @@ const annotationSliceV1 = createSlice({
       // TODO: refactor -> same as RetrieveAnnotationsV1.fulfilled
       isAnyOf(
         CreateAnnotationsV1.fulfilled,
-        VisionJobUpdate.fulfilled,
+        VisionJobUpdateV1.fulfilled,
         UpdateAnnotationsV1.fulfilled
       ),
       (state, { payload }) => {
