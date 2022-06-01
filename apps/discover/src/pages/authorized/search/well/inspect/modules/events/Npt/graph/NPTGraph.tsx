@@ -5,23 +5,26 @@ import { now, fromNow } from 'utils/date';
 import {
   SelectedBarData,
   StackedBarChart,
+  StackedBarChartOptions,
 } from 'components/Charts/modules/StackedBarChart';
-import { useDeepMemo } from 'hooks/useDeep';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../constants';
 import { NptCodeDefinition } from '../NptCodeDefinition';
 
 import {
+  GRAPH_LEGEND_TITLE,
+  GRAPH_MAX_HEIGHT,
   GRAPH_TITLE,
   GRAPH_X_AXIS_TITLE,
-  NPT_GRAPH_OPTIONS,
+  NPT_GRAPH_COMMON_COLOR_CONFIG,
+  NPT_GRAPH_COMMON_OPTIONS,
 } from './constants';
 import { IconStyle } from './SelectedWellboreNptView/elements';
 import { NptTooltip } from './SelectedWellboreNptView/NptTooltip';
 import { SelectedWellbore } from './types';
 import { useDataLayer } from './useDataLayer';
-import { adaptEventsToDaysDuration } from './utils';
+import { adaptEventsToDaysDuration, getNptCodesColorMap } from './utils';
 
 interface Props {
   events: NPTEvent[];
@@ -88,7 +91,25 @@ export const NPTGraph: React.FC<Props> = React.memo(
       []
     );
 
-    return useDeepMemo(
+    const options: StackedBarChartOptions<NPTEvent> = useMemo(
+      () => ({
+        ...NPT_GRAPH_COMMON_OPTIONS,
+        colorConfig: {
+          ...NPT_GRAPH_COMMON_COLOR_CONFIG,
+          colors: getNptCodesColorMap(events),
+        },
+        maxHeight: GRAPH_MAX_HEIGHT,
+        legendOptions: {
+          title: GRAPH_LEGEND_TITLE,
+          overlay: true,
+        },
+        formatTooltip: getFormatTooltip,
+        getInfoIcon,
+      }),
+      [events]
+    );
+
+    return useMemo(
       () => (
         <StackedBarChart<NPTEvent>
           id="npt-events-graph"
@@ -102,11 +123,7 @@ export const NPTGraph: React.FC<Props> = React.memo(
           groupDataInsideBarsBy={accessors.NPT_CODE}
           title={GRAPH_TITLE}
           subtitle={chartSubtitle}
-          options={{
-            ...NPT_GRAPH_OPTIONS,
-            formatTooltip: getFormatTooltip,
-            getInfoIcon,
-          }}
+          options={options}
           onUpdate={handleOnUpdateGraph}
           onSelectBar={handleOnSelectBar}
         />

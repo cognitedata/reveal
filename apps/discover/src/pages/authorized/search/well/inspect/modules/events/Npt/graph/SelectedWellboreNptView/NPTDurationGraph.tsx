@@ -10,8 +10,11 @@ import { NPTEvent } from 'modules/wellSearch/types';
 import { accessors } from '../../constants';
 import { NptCodeDefinition } from '../../NptCodeDefinition';
 import { NptCodeDefinitionType } from '../../types';
-import { NPT_GRAPH_OPTIONS } from '../constants';
-import { adaptEventsToDaysDuration } from '../utils';
+import {
+  NPT_GRAPH_COMMON_COLOR_CONFIG,
+  NPT_GRAPH_COMMON_OPTIONS,
+} from '../constants';
+import { adaptEventsToDaysDuration, getNptCodesColorMap } from '../utils';
 
 import {
   GRAPH_MAX_HEIGHT,
@@ -44,7 +47,11 @@ export const NPTDurationGraph: React.FC<{
 
   const options: StackedBarChartOptions<NPTEvent> = useMemo(
     () => ({
-      ...NPT_GRAPH_OPTIONS,
+      ...NPT_GRAPH_COMMON_OPTIONS,
+      colorConfig: {
+        ...NPT_GRAPH_COMMON_COLOR_CONFIG,
+        colors: getNptCodesColorMap(events),
+      },
       maxHeight: GRAPH_MAX_HEIGHT,
       legendOptions: {
         isolate: false,
@@ -56,7 +63,7 @@ export const NPTDurationGraph: React.FC<{
       formatTooltip: getFormatTooltip,
       getInfoIcon,
     }),
-    []
+    [events]
   );
 
   const adaptedEvents = useMemo(

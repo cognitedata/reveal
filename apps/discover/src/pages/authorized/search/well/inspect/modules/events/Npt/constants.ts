@@ -14,18 +14,6 @@ export const accessors = {
   SUBTYPE: 'subtype',
 };
 
-export const colors = {
-  CEMT: '#8791E7',
-  DFAL: '#87E79C',
-  RREP: '#87B9E7',
-  SFAL: '#AB87E7',
-  UFAL: '#F19F9D',
-  WAIT: '#FECB4D',
-  DPRB: '#FF614B',
-};
-
-export const DEFAULT_NPT_COLOR = '#BFBFBF';
-
 export const VIEW_MODES = {
   Graph: 'Graph',
   Table: 'Table',

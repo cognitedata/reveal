@@ -84,6 +84,7 @@ describe('Events utils', () => {
           wellName: '16/1',
           wellboreId: '759155409324993',
           wellboreName: 'wellbore A',
+          nptCodeColor: '#BFBFBF',
         },
       },
     ]);

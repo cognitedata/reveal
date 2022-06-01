@@ -1,7 +1,7 @@
 import { hashString } from '../hashString';
 
-describe('getStringASCIIValue', () => {
-  it('should return the ASCII value for string', () => {
+describe('hashString', () => {
+  it('should return the hash value for string', () => {
     expect(hashString('')).toEqual(0);
     expect(hashString(' ')).toEqual(0);
     expect(hashString('TEST_STRING_UPPERCASE')).toEqual(17855);

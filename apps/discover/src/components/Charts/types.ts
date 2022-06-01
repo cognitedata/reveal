@@ -63,7 +63,7 @@ export interface Dimensions {
 }
 
 export interface ColorConfig {
-  colors: { [x: string]: string };
+  colors: Record<string, string>;
   accessor: string;
   defaultColor: string;
   noDataColor?: string;

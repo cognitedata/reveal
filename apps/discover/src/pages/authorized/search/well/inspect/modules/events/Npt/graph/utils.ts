@@ -1,4 +1,5 @@
 import get from 'lodash/get';
+import { ColorMap } from 'utils/colorize';
 import { getTimeDuration } from 'utils/date';
 import { HOURS_IN_A_DAY } from 'utils/date/constants';
 import { sortByCaseInsensitive } from 'utils/sort';
@@ -36,3 +37,15 @@ export const adaptEventsToDaysDuration = (events: NPTEvent[]): NPTEvent[] =>
     ...event,
     [accessors.DURATION]: get(event, accessors.DURATION, 0) / HOURS_IN_A_DAY,
   }));
+
+export const getNptCodesColorMap = (events: NPTEvent[]): ColorMap =>
+  events.reduce((colorMap, event) => {
+    const { nptCode, nptCodeColor } = event;
+    if (!nptCode) {
+      return { ...colorMap };
+    }
+    return {
+      ...colorMap,
+      [nptCode]: nptCodeColor,
+    };
+  }, {});

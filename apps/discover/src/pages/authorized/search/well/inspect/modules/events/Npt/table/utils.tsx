@@ -7,7 +7,7 @@ import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 import { NPTEvent } from 'modules/wellSearch/types';
 import { SortBy } from 'pages/types';
 
-import { accessors, colors, DEFAULT_NPT_COLOR } from '../constants';
+import { accessors } from '../constants';
 import { NptCodeAvatar } from '../elements';
 import { NptCodeDefinition } from '../NptCodeDefinition';
 import { NptCodeDefinitionType } from '../types';
@@ -33,7 +33,7 @@ export const renderNPTCodeWithColor = (
 
   return (
     <NptCodeContainer>
-      <NptCodeAvatar color={get(colors, nptCode, DEFAULT_NPT_COLOR)} />
+      <NptCodeAvatar color={nptEvent.nptCodeColor} />
       {nptCode}
       <NptCodeDefinition
         nptCodeDefinition={nptCodeDefinition}

@@ -1,5 +1,7 @@
-import { HashMap } from '../types';
+import { HashMap, HashMapUnique } from '../types';
 
-export const getHashValuesFromHashMap = (hashMap: HashMap): number[] => {
+export const getHashValuesFromHashMap = (
+  hashMap: HashMap | HashMapUnique
+): number[] => {
   return Object.keys(hashMap).map(Number);
 };

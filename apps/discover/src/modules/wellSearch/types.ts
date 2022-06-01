@@ -359,6 +359,7 @@ export interface NPTEvent extends NPT {
   wellboreId: number;
   wellName?: string;
   wellboreName?: string;
+  nptCodeColor: string;
 }
 
 export interface NDSEvent extends CogniteEvent {

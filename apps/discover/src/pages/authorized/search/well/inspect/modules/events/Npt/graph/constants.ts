@@ -1,7 +1,9 @@
 import { StackedBarChartOptions } from 'components/Charts/modules/StackedBarChart';
+import { ColorConfig } from 'components/Charts/types';
+import { DEFAULT_NPT_COLOR } from 'modules/wellSearch/constants';
 import { NPTEvent } from 'modules/wellSearch/types';
 
-import { accessors, colors, DEFAULT_NPT_COLOR } from '../constants';
+import { accessors } from '../constants';
 
 export const NO_NPT_DATA_COLOR = '#00000010';
 
@@ -15,20 +17,16 @@ export const NO_DATA_AMONG_SELECTED_NPT_CODES_TEXT =
   'No data among the selected NPT codes';
 export const NO_DATA_TEXT = 'No data';
 
-export const NPT_GRAPH_OPTIONS: StackedBarChartOptions<NPTEvent> = {
-  maxHeight: GRAPH_MAX_HEIGHT,
-  colorConfig: {
-    colors,
-    accessor: accessors.NPT_CODE,
-    defaultColor: DEFAULT_NPT_COLOR,
-    noDataColor: NO_NPT_DATA_COLOR,
-  },
-  legendOptions: {
-    title: GRAPH_LEGEND_TITLE,
-    overlay: true,
-  },
-
+export const NPT_GRAPH_COMMON_OPTIONS: Partial<
+  StackedBarChartOptions<NPTEvent>
+> = {
   fixXValuesToDecimalPlaces: 3,
   noDataAmongSelectedCheckboxesText: NO_DATA_AMONG_SELECTED_NPT_CODES_TEXT,
   noDataText: NO_DATA_TEXT,
+};
+
+export const NPT_GRAPH_COMMON_COLOR_CONFIG: Omit<ColorConfig, 'colors'> = {
+  accessor: accessors.NPT_CODE,
+  defaultColor: DEFAULT_NPT_COLOR,
+  noDataColor: NO_NPT_DATA_COLOR,
 };

@@ -2,13 +2,14 @@ import { HashMap } from '../types';
 
 import { hashString } from './hashString';
 
-export const toHashMap = (strings: string[]): HashMap => {
-  return strings.reduce<HashMap>((hashMap, string) => {
-    const hashValue = hashString(string);
+export const toHashMap = (properties: string[]): HashMap => {
+  return properties.reduce<HashMap>((hashMap, property) => {
+    const hashValue = hashString(property);
+    const currentProperties = hashMap[hashValue] || [];
 
     return {
       ...hashMap,
-      [hashValue]: string,
+      [hashValue]: [...currentProperties, property],
     };
   }, {});
 };

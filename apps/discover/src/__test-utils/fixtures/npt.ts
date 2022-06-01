@@ -22,6 +22,7 @@ export const getMockNPTEvent = (extras?: Partial<NPTEvent>): NPTEvent => ({
   duration: 1,
   wellboreId: 123456789,
   nptCode: 'TEST-NPT-CODE',
+  nptCodeColor: '#BFBFBF',
   ...extras,
 });
 

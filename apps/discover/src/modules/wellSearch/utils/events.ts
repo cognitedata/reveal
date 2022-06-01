@@ -1,11 +1,13 @@
 import { Dictionary } from '@reduxjs/toolkit';
 import convert from 'convert-units';
+import compact from 'lodash/compact';
 import flatten from 'lodash/flatten';
 import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import head from 'lodash/head';
 import includes from 'lodash/includes';
 import isEmpty from 'lodash/isEmpty';
+import { colorize } from 'utils/colorize';
 import { unsafeChangeUnitTo } from 'utils/units';
 import { UNITS_TO_STANDARD } from 'utils/units/constants';
 
@@ -15,6 +17,8 @@ import { DistanceUnitEnum } from '@cognite/sdk-wells-v3';
 import { DistanceUnit } from 'constants/units';
 import { InspectTabsState } from 'modules/inspectTabs/types';
 import {
+  DEFAULT_NPT_COLOR,
+  PREDEFINED_NPT_COLORS,
   UNKNOWN_NPT_CODE,
   UNKNOWN_NPT_DETAIL_CODE,
 } from 'modules/wellSearch/constants';
@@ -100,6 +104,10 @@ export const mapWellInfoToNPTEvents = (
   userPreferredUnit?: string
 ): NPTEvent[] => {
   const wellbores = getIdWellboreMap(wells);
+  const nptCodes = compact(
+    flatten(Object.values(eventsMap)).map((event) => event.nptCode)
+  );
+  const nptCodesColorMap = colorize(nptCodes, PREDEFINED_NPT_COLORS);
 
   return flatten(
     Object.keys(eventsMap).map((key) => {
@@ -126,6 +134,9 @@ export const mapWellInfoToNPTEvents = (
         wellName: wellbores[wellboreId]?.metadata?.wellName,
         wellboreName:
           wellbores[wellboreId]?.name || wellbores[wellboreId]?.description,
+        nptCodeColor: event.nptCode
+          ? nptCodesColorMap[event.nptCode]
+          : DEFAULT_NPT_COLOR,
       }));
     })
   );

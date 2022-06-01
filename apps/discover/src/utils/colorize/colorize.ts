@@ -1,22 +1,28 @@
 import { scaleQuantize } from 'd3-scale';
-import sortedUniq from 'lodash/sortedUniq';
+import difference from 'lodash/difference';
+import uniq from 'lodash/uniq';
 
 import { COLORS } from './colors';
 import { ColorMap } from './types';
+import { getHashMapReverse } from './utils/getHashMapReverse';
 import { getHashValuesFromHashMap } from './utils/getHashValuesFromHashMap';
 import { toHashMap } from './utils/toHashMap';
+import { toHashMapUnique } from './utils/toHashMapUnique';
 
 export const colorize = (
   properties: string[],
   propertyColorOverride: ColorMap = {},
   colors: string[] = COLORS
 ): ColorMap => {
-  const propertiesSorted = sortedUniq(properties);
+  const propertiesToProcess = difference(
+    uniq(properties),
+    Object.keys(propertyColorOverride)
+  );
 
-  const propertiesHashMap = toHashMap(propertiesSorted);
-  const propertiesHashValues = getHashValuesFromHashMap(propertiesHashMap);
+  const propertiesHashMap = toHashMap(propertiesToProcess);
+  const propertiesHashMapReverse = getHashMapReverse(propertiesHashMap);
 
-  const colorsHashMap = toHashMap(colors);
+  const colorsHashMap = toHashMapUnique(colors);
   const colorsHashValues = getHashValuesFromHashMap(colorsHashMap);
 
   /**
@@ -34,28 +40,24 @@ export const colorize = (
     .domain(colorizeScaleBounds)
     .range(colorsHashValues);
 
-  const colorMap = propertiesHashValues.reduce<ColorMap>(
-    (map, propertyHash) => {
-      /**
-       * Here we get the common scale value for a particular property hash value,
-       * then get the corresponding color hash value for that common scale value.
-       *
-       * This builds a mapping between the property hash value and the color hash value.
-       */
-      const colorScaleValue = propertyHashScale(propertyHash);
-      const colorHash = colorHashScale(colorScaleValue);
+  const colorMap = propertiesToProcess.reduce<ColorMap>((map, property) => {
+    // Get the hash value of the property.
+    const propertyHash = propertiesHashMapReverse[property];
 
-      // Get the actual values for hash values.
-      const property = propertiesHashMap[propertyHash];
-      const color = colorsHashMap[colorHash];
+    // Get the color scale value (in the common scale) for the above property hash value.
+    const colorScaleValue = propertyHashScale(propertyHash);
 
-      return {
-        ...map,
-        [property]: color,
-      };
-    },
-    {}
-  );
+    // Get the color hash value for the above common scale value.
+    const colorHash = colorHashScale(colorScaleValue);
+
+    // Get the actual color.
+    const color = colorsHashMap[colorHash];
+
+    return {
+      ...map,
+      [property]: color,
+    };
+  }, {});
 
   return {
     ...colorMap,

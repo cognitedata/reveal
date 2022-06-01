@@ -15,10 +15,11 @@ import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { NPTEvent } from 'modules/wellSearch/types';
 import { FlexColumn, FlexRow } from 'styles/layout';
 
-import { accessors, colors, DEFAULT_NPT_COLOR } from '../../constants';
+import { accessors } from '../../constants';
 import { NptCodeDefinition } from '../../NptCodeDefinition';
 import { NptCodeDefinitionType } from '../../types';
-import { NO_NPT_DATA_COLOR } from '../constants';
+import { NPT_GRAPH_COMMON_COLOR_CONFIG } from '../constants';
+import { getNptCodesColorMap } from '../utils';
 
 import {
   GRAPH_MAX_HEIGHT,
@@ -77,17 +78,15 @@ export const NPTEventsGraph: React.FC<{
     () => ({
       maxHeight: GRAPH_MAX_HEIGHT,
       colorConfig: {
-        colors,
-        accessor: accessors.NPT_CODE,
-        defaultColor: DEFAULT_NPT_COLOR,
-        noDataColor: NO_NPT_DATA_COLOR,
+        ...NPT_GRAPH_COMMON_COLOR_CONFIG,
+        colors: getNptCodesColorMap(events),
       },
       legendOptions: {
         isolate: false,
       },
       getInfoIcon,
     }),
-    []
+    [events]
   );
 
   const formatAxisLabel = (startTime: number) => {
@@ -96,7 +95,6 @@ export const NPTEventsGraph: React.FC<{
 
   const renderPlotHoverComponent = (nptEvent: NPTEvent) => {
     const nptCode = get(nptEvent, accessors.NPT_CODE);
-    const nptCodeIndicatorColor = get(colors, nptCode, DEFAULT_NPT_COLOR);
     const nptCodeDefinition = getCodeDefinition(
       nptEvent.nptCode,
       nptCodeDefinitions
@@ -105,7 +103,7 @@ export const NPTEventsGraph: React.FC<{
     return (
       <NPTEventCard key={uniqueId(nptCode)}>
         <NPTCodeContainer>
-          <NPTCodeIndicator color={nptCodeIndicatorColor} />
+          <NPTCodeIndicator color={nptEvent.nptCodeColor} />
           <FlexColumn>
             <SectionTitle>NPT code</SectionTitle>
             <SectionData>
