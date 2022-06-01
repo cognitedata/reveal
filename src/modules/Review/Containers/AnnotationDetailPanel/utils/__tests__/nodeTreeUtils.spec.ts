@@ -17,13 +17,13 @@ import {
   AnnotationDetailPanelRowData,
   TreeNode,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
-import {
-  ReviewKeypoint,
-  VisionReviewAnnotation,
-} from 'src/modules/Review/store/review/types';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
 import { getDummyImageObjectDetectionBoundingBoxAnnotation } from 'src/__test-utils/getDummyAnnotations';
 import { getDummyReviewImageKeypointObject } from 'src/__test-utils/annotations';
+import {
+  ReviewKeypoint,
+  VisionReviewAnnotation,
+} from 'src/modules/Review/types';
 
 const getDummyRowDataObject = (
   data:

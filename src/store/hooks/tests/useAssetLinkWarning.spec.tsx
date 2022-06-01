@@ -5,10 +5,10 @@ import { act, renderHook } from '@testing-library/react-hooks';
 import { waitFor } from '@testing-library/react';
 import { WrappedWithProviders } from 'src/__test-utils/renderer';
 import { mockFileList } from 'src/__test-utils/fixtures/files';
-import { VisionReviewAnnotation } from 'src/modules/Review/store/review/types';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
 import { getDummyImageAssetLinkAnnotation } from 'src/__test-utils/getDummyAnnotations';
 import { ImageAssetLink, Status } from 'src/api/annotation/types';
+import { VisionReviewAnnotation } from 'src/modules/Review/types';
 
 const approveAnnotation = (
   reviewAnnotation: VisionReviewAnnotation<ImageAssetLink>

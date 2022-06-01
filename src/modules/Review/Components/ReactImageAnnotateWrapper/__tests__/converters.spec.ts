@@ -18,15 +18,10 @@ import {
 } from 'src/api/annotation/types';
 import {
   convertRegionToVisionAnnotationProperties,
-  convertUnsavedKeypointCollectionToRegions,
+  convertTempKeypointCollectionToRegions,
   convertVisionReviewAnnotationsToRegions,
   convertVisionReviewAnnotationToRegions,
 } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/converters';
-import {
-  ReviewKeypoint,
-  UnsavedKeypointCollection,
-  VisionReviewAnnotation,
-} from 'src/modules/Review/store/review/types';
 import {
   UnsavedVisionAnnotation,
   VisionAnnotation,
@@ -43,6 +38,11 @@ import {
   AnnotatorRegionType,
 } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
 import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import {
+  TempKeypointCollection,
+  VisionReviewAnnotation,
+} from 'src/modules/Review/types';
+import { getDummyTempKeypointCollection } from 'src/__test-utils/annotations';
 
 const dummyImageClassificationAnnotation =
   getDummyImageClassificationAnnotation({
@@ -161,6 +161,8 @@ const dummyImageKeypointCollectionReviewAnnotation =
     true,
     true
   ) as VisionReviewAnnotation<ImageKeypointCollection>;
+
+const dummyTempKeypointCollection = getDummyTempKeypointCollection({});
 
 const getDummyRegion = <
   RegionType extends { type: AnnotatorRegionType } & AnnotatorBaseRegion
@@ -295,19 +297,111 @@ describe('test convertVisionReviewAnnotationsToRegions', () => {
 
 describe('test convertVisionReviewAnnotationToRegions', () => {
   it('should return empty if empty', () => {
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
     expect(
       convertVisionReviewAnnotationToRegions(
         {} as VisionReviewAnnotation<VisionAnnotationDataType>
       )
     ).toEqual([]);
+    expect(consoleSpy).toHaveBeenCalled();
   });
   it('should return empty if annotation is missing', () => {
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
     expect(
       convertVisionReviewAnnotationToRegions({
         show: true,
         selected: true,
       } as VisionReviewAnnotation<VisionAnnotationDataType>)
     ).toEqual([]);
+    expect(consoleSpy).toHaveBeenCalled();
+  });
+  it('should return empty if annotation id is missing', () => {
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    expect(
+      convertVisionReviewAnnotationToRegions({
+        ...dummyImageKeypointCollectionReviewAnnotation,
+        annotation: {
+          ...dummyImageKeypointCollectionReviewAnnotation.annotation,
+          id: undefined!,
+        },
+      } as VisionReviewAnnotation<VisionAnnotationDataType>)
+    ).toEqual([]);
+    expect(consoleSpy).toHaveBeenCalled();
+  });
+  it('should return empty if annotation type is missing', () => {
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    expect(
+      convertVisionReviewAnnotationToRegions({
+        ...dummyImageKeypointCollectionReviewAnnotation,
+        annotation: {
+          ...dummyImageKeypointCollectionReviewAnnotation.annotation,
+          annotationType: undefined!,
+        },
+      } as VisionReviewAnnotation<VisionAnnotationDataType>)
+    ).toEqual([]);
+    expect(consoleSpy).toHaveBeenCalled();
+  });
+  it('should return empty if status is missing', () => {
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    expect(
+      convertVisionReviewAnnotationToRegions({
+        ...dummyImageKeypointCollectionReviewAnnotation,
+        annotation: {
+          ...dummyImageKeypointCollectionReviewAnnotation.annotation,
+          status: undefined!,
+        },
+      } as VisionReviewAnnotation<VisionAnnotationDataType>)
+    ).toEqual([]);
+    expect(consoleSpy).toHaveBeenCalled();
+  });
+  it('should return empty if any label is missing', () => {
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    expect(
+      convertVisionReviewAnnotationToRegions({
+        ...dummyImageKeypointCollectionReviewAnnotation,
+        annotation: {
+          ...dummyImageKeypointCollectionReviewAnnotation.annotation,
+          label: undefined!,
+        },
+      } as VisionReviewAnnotation<VisionAnnotationDataType>)
+    ).toEqual([]);
+    expect(
+      convertVisionReviewAnnotationToRegions({
+        ...dummyImageKeypointCollectionReviewAnnotation,
+        annotation: {
+          ...dummyImageKeypointCollectionReviewAnnotation.annotation,
+          label: '',
+        },
+      } as VisionReviewAnnotation<VisionAnnotationDataType>)
+    ).toEqual([]);
+    expect(consoleSpy).toHaveBeenCalled();
+  });
+  it('should return empty if keypoints are missing for ImageKeypointCollection annotations', () => {
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    expect(
+      convertVisionReviewAnnotationToRegions({
+        ...dummyImageKeypointCollectionReviewAnnotation,
+        annotation: {
+          ...dummyImageKeypointCollectionReviewAnnotation.annotation,
+          keypoints: [],
+        },
+      } as VisionReviewAnnotation<VisionAnnotationDataType>)
+    ).toEqual([]);
+    expect(consoleSpy).toHaveBeenCalled();
   });
   it('should return empty for ImageClassification annotation', () => {
     expect(
@@ -319,6 +413,61 @@ describe('test convertVisionReviewAnnotationToRegions', () => {
         )
       )
     ).toEqual([]);
+  });
+  it('should return correct region if show field is not provided', () => {
+    const dummyImagePolygonReviewAnnotationWithShowFalse = {
+      ...dummyImagePolygonReviewAnnotation,
+      show: undefined as unknown as boolean,
+    } as VisionReviewAnnotation<ImageObjectDetectionPolygon>;
+    expect(
+      convertVisionReviewAnnotationToRegions(
+        dummyImagePolygonReviewAnnotationWithShowFalse
+      )
+    ).toStrictEqual([
+      {
+        ...getDummyRegion<AnnotatorPolygonRegion>({
+          reviewAnnotation: dummyImagePolygonReviewAnnotationWithShowFalse,
+          visible: false,
+          editingLabels:
+            dummyImagePolygonReviewAnnotationWithShowFalse.selected,
+          highlighted: dummyImagePolygonReviewAnnotationWithShowFalse.selected,
+          regionProps: {
+            type: AnnotatorRegionType.PolygonRegion,
+            points:
+              dummyImagePolygonReviewAnnotationWithShowFalse.annotation.polygon.vertices.map(
+                (point) => [point.x, point.y]
+              ),
+          },
+        }),
+      },
+    ] as AnnotatorPolygonRegion[]);
+  });
+  it('should return correct region if selected field is not provided', () => {
+    const dummyImagePolygonReviewAnnotationWithSelectedFalse = {
+      ...dummyImagePolygonReviewAnnotation,
+      selected: undefined as unknown as boolean,
+    } as VisionReviewAnnotation<ImageObjectDetectionPolygon>;
+    expect(
+      convertVisionReviewAnnotationToRegions(
+        dummyImagePolygonReviewAnnotationWithSelectedFalse
+      )
+    ).toStrictEqual([
+      {
+        ...getDummyRegion<AnnotatorPolygonRegion>({
+          reviewAnnotation: dummyImagePolygonReviewAnnotationWithSelectedFalse,
+          visible: dummyImagePolygonReviewAnnotationWithSelectedFalse.show,
+          editingLabels: false,
+          highlighted: false,
+          regionProps: {
+            type: AnnotatorRegionType.PolygonRegion,
+            points:
+              dummyImagePolygonReviewAnnotationWithSelectedFalse.annotation.polygon.vertices.map(
+                (point) => [point.x, point.y]
+              ),
+          },
+        }),
+      },
+    ] as AnnotatorPolygonRegion[]);
   });
   it('should return correct region for ImageAssetLink Annotation', () => {
     expect(
@@ -831,15 +980,124 @@ describe('test convertRegionToVisionAnnotationProperties', () => {
     ).toStrictEqual({
       ...dummyImageKeypointCollectionReviewAnnotation.annotation.keypoints[0],
       selected,
-    } as ReviewKeypoint);
+    });
   });
   it('If Point region and Annotation type not provided should return unsaved keypoint', () => {});
 });
 
-describe('test convertUnsavedKeypointCollectionToRegions', () => {
-  it('should return null on empty region', () => {
+describe('test convertTempKeypointCollectionToRegions', () => {
+  it('should return empty array on empty unsavedKeypointCollection', () => {
     expect(
-      convertUnsavedKeypointCollectionToRegions({} as UnsavedKeypointCollection)
+      convertTempKeypointCollectionToRegions({} as TempKeypointCollection)
     ).toEqual([]);
+  });
+  it('should return empty array on no data field', () => {
+    expect(
+      convertTempKeypointCollectionToRegions({
+        ...dummyTempKeypointCollection,
+        data: undefined!,
+      })
+    ).toEqual([]);
+  });
+  it('should return empty array on empty data object', () => {
+    expect(
+      convertTempKeypointCollectionToRegions({
+        ...dummyTempKeypointCollection,
+        data: {} as any,
+      })
+    ).toEqual([]);
+  });
+  it('should return empty array on empty id', () => {
+    expect(
+      convertTempKeypointCollectionToRegions({
+        ...dummyTempKeypointCollection,
+        id: undefined!,
+      })
+    ).toEqual([]);
+  });
+  it('should return empty array on empty label', () => {
+    expect(
+      convertTempKeypointCollectionToRegions({
+        ...dummyTempKeypointCollection,
+        data: {
+          ...dummyTempKeypointCollection.data,
+          label: '',
+        },
+      })
+    ).toEqual([]);
+    expect(
+      convertTempKeypointCollectionToRegions({
+        ...dummyTempKeypointCollection,
+        data: {
+          ...dummyTempKeypointCollection.data,
+          label: undefined!,
+        },
+      })
+    ).toEqual([]);
+  });
+  it('should return empty array on empty keypoints', () => {
+    expect(
+      convertTempKeypointCollectionToRegions({
+        ...dummyTempKeypointCollection,
+        data: {
+          ...dummyTempKeypointCollection.data,
+          keypoints: undefined!,
+        },
+      })
+    ).toEqual([]);
+    expect(
+      convertTempKeypointCollectionToRegions({
+        ...dummyTempKeypointCollection,
+        data: {
+          ...dummyTempKeypointCollection.data,
+          keypoints: [],
+        },
+      })
+    ).toEqual([]);
+  });
+  it('should return correct regions', () => {
+    const dummyRegions = dummyTempKeypointCollection.data.keypoints.map(
+      (keypoint, index) =>
+        ({
+          ...getDummyRegion<AnnotatorPointRegion>({
+            reviewAnnotation: {
+              annotation: {
+                id: dummyTempKeypointCollection.id,
+                annotatedResourceId:
+                  dummyTempKeypointCollection.annotatedResourceId,
+                ...dummyTempKeypointCollection.data,
+                status: Status.Approved,
+                annotationType: CDFAnnotationTypeEnum.ImagesKeypointCollection,
+                createdTime: 0,
+                lastUpdatedTime: 0,
+              },
+              selected: true,
+              show: true,
+            },
+            id: keypoint.id,
+            visible: true,
+            highlighted: true,
+            editingLabels: true,
+            tags: [
+              dummyTempKeypointCollection.data.label,
+              String(index + 1),
+              String(dummyTempKeypointCollection.id),
+              keypoint.keypoint.label,
+            ],
+            regionProps: {
+              type: AnnotatorRegionType.PointRegion,
+              parentAnnotationId: dummyTempKeypointCollection.id,
+              keypointOrder: String(index + 1),
+              keypointLabel: keypoint.keypoint.label,
+              keypointConfidence: keypoint.keypoint.confidence,
+              x: keypoint.keypoint.point.x,
+              y: keypoint.keypoint.point.y,
+            },
+          }),
+        } as AnnotatorPointRegion)
+    );
+    expect(
+      convertTempKeypointCollectionToRegions(dummyTempKeypointCollection)
+    ).toStrictEqual(dummyRegions);
   });
 });

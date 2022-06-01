@@ -1,3 +1,5 @@
+import isEmpty from 'lodash-es/isEmpty';
+import isFinite from 'lodash-es/isFinite';
 import {
   UnsavedVisionAnnotation,
   VisionAnnotation,
@@ -12,12 +14,6 @@ import {
   isImageObjectDetectionPolygonData,
   isImageObjectDetectionPolylineData,
 } from 'src/modules/Common/types/typeGuards';
-import {
-  ReviewKeypoint,
-  TurnKeypointType,
-  UnsavedKeypointCollection,
-  VisionReviewAnnotation,
-} from 'src/modules/Review/store/review/types';
 import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
   AnnotatorBaseRegion,
@@ -43,7 +39,12 @@ import {
   ImageObjectDetectionPolyline,
   Status,
 } from 'src/api/annotation/types';
-import isEmpty from 'lodash-es/isEmpty';
+import {
+  ReviewKeypoint,
+  TempKeypointCollection,
+  TurnKeypointType,
+  VisionReviewAnnotation,
+} from 'src/modules/Review/types';
 
 /**
  * Converts array of VisionAnnotations to Array of AnnotatorRegions
@@ -73,9 +74,10 @@ export const convertVisionReviewAnnotationToRegions = (
 
   if (
     !annotation ||
-    !annotation.id ||
+    !isFinite(annotation.id) ||
     !annotation.annotationType ||
-    !annotation.status
+    !annotation.status ||
+    !getAnnotationLabelOrText(annotation)
   ) {
     console.error(
       'ReactImageAnnotateWrapper: fields id or annotationType or status is missing in annotation',
@@ -162,6 +164,24 @@ export const convertVisionReviewAnnotationToRegions = (
       ...baseRegionData,
     } as AnnotatorLineRegion);
   } else if (isImageKeypointCollectionData(annotation)) {
+    if (
+      // todo: update typescript version > 4.4 and remove these casts
+      !(
+        annotation as TurnKeypointType<
+          VisionAnnotation<ImageKeypointCollection>
+        >
+      ).keypoints ||
+      !(
+        annotation as TurnKeypointType<
+          VisionAnnotation<ImageKeypointCollection>
+        >
+      ).keypoints.length
+    ) {
+      console.error(
+        'ReactImageAnnotateWrapper: keypoints not found in annotation'
+      );
+      return regions;
+    }
     (
       annotation as TurnKeypointType<VisionAnnotation<ImageKeypointCollection>>
     ).keypoints.forEach((keypoint, index) => {
@@ -334,18 +354,26 @@ export const convertRegionToVisionAnnotationProperties = (
   } as UnsavedVisionAnnotation<VisionAnnotationDataType>;
 };
 
-export const convertUnsavedKeypointCollectionToRegions = (
-  keypointCollection: UnsavedKeypointCollection
+export const convertTempKeypointCollectionToRegions = (
+  tempKeypointCollection: TempKeypointCollection
 ): AnnotatorRegion[] => {
-  const { label, show, selected, annotatedResourceId, reviewKeypoints } =
-    keypointCollection;
+  const {
+    id,
+    annotatedResourceId,
+    data: { keypoints, label } = {},
+  } = tempKeypointCollection;
   return convertVisionReviewAnnotationToRegions({
     annotation: {
-      label,
+      id,
       annotatedResourceId,
-      keypoints: reviewKeypoints,
+      label,
+      keypoints,
+      createdTime: 0,
+      lastUpdatedTime: 0,
+      status: Status.Approved,
+      annotationType: CDFAnnotationTypeEnum.ImagesKeypointCollection,
     },
-    selected,
-    show,
+    selected: true,
+    show: true,
   } as VisionReviewAnnotation<ImageKeypointCollection>);
 };

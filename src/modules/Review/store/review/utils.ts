@@ -1,22 +1,29 @@
 import isFinite from 'lodash-es/isFinite';
-import { UnsavedKeypointCollection } from 'src/modules/Review/store/review/types';
 import { UnsavedVisionAnnotation } from 'src/modules/Common/types';
 import {
   CDFAnnotationTypeEnum,
   ImageKeypointCollection,
   Status,
 } from 'src/api/annotation/types';
+import { TempKeypointCollection } from 'src/modules/Review/types';
 
-export const convertUnsavedKeypointCollectionToUnsavedVisionImageKeypointCollection =
+/**
+ * Returns UnsavedVisionImageKeypointCollection with confidence set to 1 for annotation itself and each keypoint,
+ * Status is set to Approved
+ * @param collection
+ */
+export const convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection =
   (
-    collection: UnsavedKeypointCollection
+    collection: TempKeypointCollection
   ): UnsavedVisionAnnotation<ImageKeypointCollection> | null => {
     if (
-      collection.annotatedResourceId === undefined ||
+      !collection ||
+      !collection.annotatedResourceId ||
       !isFinite(collection.annotatedResourceId) ||
-      !collection.reviewKeypoints ||
-      !collection.reviewKeypoints.length ||
-      !collection.label
+      !collection.data ||
+      !collection.data.label ||
+      !collection.data.keypoints ||
+      !collection.data.keypoints.length
     ) {
       return null;
     }
@@ -25,9 +32,9 @@ export const convertUnsavedKeypointCollectionToUnsavedVisionImageKeypointCollect
       status: Status.Approved, // since all manually created annotation are considered "approved" by default
       annotatedResourceId: collection.annotatedResourceId,
       data: {
-        label: collection.label,
+        ...collection.data,
         confidence: 1, // since it is manually created
-        keypoints: collection.reviewKeypoints.map((reviewKeypoint) => ({
+        keypoints: collection.data.keypoints.map((reviewKeypoint) => ({
           label: reviewKeypoint.keypoint.label,
           point: reviewKeypoint.keypoint.point,
           confidence: 1, // since it is manually created
