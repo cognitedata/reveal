@@ -8,6 +8,7 @@ import {
   PredefinedKeypoint,
   PredefinedKeypointCollection,
   ReviewKeypoint,
+  TempKeypointCollection,
 } from 'src/modules/Review/types';
 
 export const nextKeypoint = createSelector(
@@ -133,12 +134,14 @@ export const currentCollection = createSelector(
         ) || [];
 
       return {
-        ...collection,
+        id: Number(collection.id),
         annotatedResourceId: fileId,
-        selected: selectedCollectionIds.includes(collection.id),
-        keypoints: reviewImageKeypoints,
+        data: {
+          keypoints: reviewImageKeypoints,
+          label: collection.label,
+        },
         remainingKeypoints,
-      };
+      } as TempKeypointCollection;
     }
     return null;
   }

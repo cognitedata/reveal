@@ -5,7 +5,10 @@ import {
   ImageKeypointCollection,
   Status,
 } from 'src/api/annotation/types';
-import { TempKeypointCollection } from 'src/modules/Review/types';
+import {
+  TempKeypointCollection,
+  VisionReviewAnnotation,
+} from 'src/modules/Review/types';
 
 /**
  * Returns UnsavedVisionImageKeypointCollection with confidence set to 1 for annotation itself and each keypoint,
@@ -14,7 +17,7 @@ import { TempKeypointCollection } from 'src/modules/Review/types';
  */
 export const convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection =
   (
-    collection: TempKeypointCollection
+    collection: TempKeypointCollection | null
   ): UnsavedVisionAnnotation<ImageKeypointCollection> | null => {
     if (
       !collection ||
@@ -41,4 +44,33 @@ export const convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection
         })),
       },
     };
+  };
+
+export const convertTempKeypointCollectionToVisionReviewImageKeypointCollection =
+  (
+    tempKeypointCollection: TempKeypointCollection | null
+  ): VisionReviewAnnotation<ImageKeypointCollection> | null => {
+    if (!tempKeypointCollection) {
+      return null;
+    }
+
+    const {
+      id,
+      annotatedResourceId,
+      data: { keypoints, label } = {},
+    } = tempKeypointCollection;
+    return {
+      annotation: {
+        id,
+        annotatedResourceId,
+        label,
+        keypoints,
+        createdTime: 0,
+        lastUpdatedTime: 0,
+        status: Status.Approved,
+        annotationType: CDFAnnotationTypeEnum.ImagesKeypointCollection,
+      },
+      selected: true,
+      show: true,
+    } as VisionReviewAnnotation<ImageKeypointCollection>;
   };

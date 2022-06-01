@@ -159,4 +159,6 @@ export type ReviewKeypoint = KeypointId &
 export type TempKeypointCollection = Pick<
   UnsavedVisionAnnotation<ImageKeypointCollection>,
   'annotatedResourceId'
-> & { id: number; data: TurnKeypointType<ImageKeypointCollection> };
+> & { id: number; data: TurnKeypointType<ImageKeypointCollection> } & {
+  remainingKeypoints: PredefinedKeypoint[];
+};

@@ -5,29 +5,6 @@ import { VisionReviewAnnotation } from 'src/modules/Review/types';
 
 // This will always be a label or a text field of an annotation
 export type AnnotatorAnnotationLabelOrText = string;
-/**
- * @deprecated Remove usages of AnnotatorKeypointOrder since it's no longer needed.
- * Keypoint labels are unique within a single annotation. parentAnnotationId and label
- * can be used to generate its unique id
- */
-export type AnnotatorKeypointOrder = string | null; // todo: remove null once tag usages are removed;
-export type AnnotatorParentAnnotationId = string | null; // todo: remove null once tag usages are removed
-export type AnnotatorKeypointLabel = string | null; // todo: remove null once tag usages are removed
-
-/**
- * @deprecated use 'annotationLabelOrText' in AnnotatorBaseRegion and
- * 'parentAnnotationId', 'keypointOrder', 'keypointLabel' introduced in AnnotatorPointRegion instead
- * to pass this metadata
- *
- * tags array for the region was repurposed to send annotation metadata to the Annotator component without
- * introducing new fields. But now new fields have been introduced to in a more targeted approach to send this metadata
- */
-export type AnnotatorRegionTags = [
-  AnnotatorAnnotationLabelOrText,
-  AnnotatorKeypointOrder,
-  AnnotatorParentAnnotationId,
-  AnnotatorKeypointLabel
-];
 
 /** @deprecated  do not use this property within library this should be used for annotation-region mapping only
  */
@@ -40,16 +17,20 @@ export enum AnnotatorRegionType {
   LineRegion = 'line',
 }
 
-export type AnnotatorBaseRegion = Omit<
-  ReactImageAnnotateBaseRegion,
-  'status' | 'source' | 'tags'
-> & {
+export type AnnotatorBaseRegion = {
+  id: number | string;
+  color: string;
   /** @deprecated library specific property - should not be utilized anywhere but conversion functions */
   annotationMeta: AnnotationMeta;
   status: Status;
   annotationType: CDFAnnotationTypeEnum;
   annotationLabelOrText: AnnotatorAnnotationLabelOrText;
-  tags: AnnotatorRegionTags | String[];
+  tags?: Array<string>;
+  editingLabels?: boolean;
+  highlighted?: boolean;
+  cls?: string;
+  locked?: boolean;
+  visible?: boolean;
 };
 
 export type AnnotatorBoxRegion = AnnotatorBaseRegion & {
@@ -65,8 +46,6 @@ export type AnnotatorPointRegion = AnnotatorBaseRegion & {
   x: number;
   y: number;
   parentAnnotationId: number;
-  /** @deprecated  */
-  keypointOrder: AnnotatorKeypointOrder;
   keypointLabel: string;
   keypointConfidence: number | undefined;
 };

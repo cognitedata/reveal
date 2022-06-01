@@ -13,7 +13,6 @@ import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotatio
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { createUniqueNumericId } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { deleteCollection } from 'src/modules/Review/store/annotatorWrapper/utils';
-import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
 import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bulkConverters';
 import {
   VisionAnnotation,
@@ -28,6 +27,7 @@ import {
 import { isImageKeypointCollectionData } from 'src/modules/Common/types/typeGuards';
 import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import { VisionJobUpdateV1 } from 'src/store/thunks/Process/VisionJobUpdateV1';
+import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
 
 export const initialState: AnnotatorWrapperState = {
   predefinedAnnotations: {
@@ -57,7 +57,7 @@ const annotatorWrapperSlice = createSlice({
   initialState,
   /* eslint-disable no-param-reassign */
   reducers: {
-    selectCollection(state, action: PayloadAction<string>) {
+    selectCollection(state, action: PayloadAction<number>) {
       const collection = state.collections.byId[action.payload];
       const status = state.collections.selectedIds.includes(action.payload);
       if (status) {
@@ -68,7 +68,7 @@ const annotatorWrapperSlice = createSlice({
         state.collections.selectedIds = [action.payload];
       }
     },
-    toggleCollectionVisibility(state, action: PayloadAction<string>) {
+    toggleCollectionVisibility(state, action: PayloadAction<number>) {
       const collection = state.collections.byId[action.payload];
       if (collection) {
         collection.show = !collection.show;
@@ -76,7 +76,7 @@ const annotatorWrapperSlice = createSlice({
     },
     setCollectionStatus(
       state,
-      action: PayloadAction<{ id: string; status: Status }>
+      action: PayloadAction<{ id: number; status: Status }>
     ) {
       const collection = state.collections.byId[action.payload.id];
       if (collection) {
@@ -148,7 +148,7 @@ const annotatorWrapperSlice = createSlice({
           // set that collection as last collection
           // and select it
           if (!state.lastCollectionId) {
-            const collectionId = createUniqueNumericId().toString(); // TODO make collection id numeric
+            const collectionId = createUniqueNumericId();
             const collectionToAdd = {
               id: collectionId,
               keypointIds: [],
@@ -158,7 +158,9 @@ const annotatorWrapperSlice = createSlice({
             };
 
             state.collections.byId[collectionId] = collectionToAdd;
-            state.collections.allIds = Object.keys(state.collections.byId);
+            state.collections.allIds = Object.keys(state.collections.byId).map(
+              (key) => +key
+            );
             state.lastCollectionId = collectionId;
             state.collections.selectedIds = [collectionId];
           }
@@ -193,7 +195,7 @@ const annotatorWrapperSlice = createSlice({
         };
       }
     },
-    deleteCollectionById(state, action: PayloadAction<string>) {
+    deleteCollectionById(state, action: PayloadAction<number>) {
       deleteCollection(state, action.payload);
     },
     deleteCurrentCollection(state) {
@@ -258,7 +260,7 @@ const annotatorWrapperSlice = createSlice({
 
         keypointAnnotationCollections.forEach(
           (keypointAnnotationCollection) => {
-            const collectionId = keypointAnnotationCollection.id.toString();
+            const collectionId = keypointAnnotationCollection.id;
             const keypointIds: string[] = [];
 
             keypointAnnotationCollection.keypoints.forEach((keypoint) => {
@@ -282,7 +284,9 @@ const annotatorWrapperSlice = createSlice({
             };
           }
         );
-        state.collections.allIds = Object.keys(state.collections.byId);
+        state.collections.allIds = Object.keys(state.collections.byId).map(
+          (key) => +key
+        );
       }
     );
     builder.addMatcher(
@@ -301,8 +305,6 @@ const annotatorWrapperSlice = createSlice({
     );
   },
 });
-
-export type { AnnotatorWrapperState as AnnotatorWrapperReducerState };
 
 export const {
   selectCollection,

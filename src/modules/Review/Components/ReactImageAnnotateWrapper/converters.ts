@@ -18,7 +18,6 @@ import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUti
 import {
   AnnotatorBaseRegion,
   AnnotatorBoxRegion,
-  AnnotatorKeypointLabel,
   AnnotatorLineRegion,
   AnnotatorPointRegion,
   AnnotatorPolygonRegion,
@@ -45,6 +44,7 @@ import {
   TurnKeypointType,
   VisionReviewAnnotation,
 } from 'src/modules/Review/types';
+import { convertTempKeypointCollectionToVisionReviewImageKeypointCollection } from 'src/modules/Review/store/review/utils';
 
 /**
  * Converts array of VisionAnnotations to Array of AnnotatorRegions
@@ -91,7 +91,7 @@ export const convertVisionReviewAnnotationToRegions = (
     annotationMeta: reviewAnnotation,
     highlighted: !!reviewAnnotation.selected,
     editingLabels: !!reviewAnnotation.selected,
-    tags: [getAnnotationLabelOrText(annotation), null, null, null], // todo: remove once library changes are done to remove tags array usages
+    tags: [],
     annotationType: annotation.annotationType,
     annotationLabelOrText: getAnnotationLabelOrText(annotation),
     status: annotation.status,
@@ -195,12 +195,7 @@ export const convertVisionReviewAnnotationToRegions = (
         id: keypoint.id,
         editingLabels: !!reviewAnnotation.selected || keypoint.selected,
         highlighted: !!reviewAnnotation.selected || keypoint.selected,
-        tags: [
-          getAnnotationLabelOrText(annotation),
-          String(index + 1),
-          String((annotation as VisionAnnotation<ImageKeypointCollection>).id),
-          keypoint.keypoint.label,
-        ], // todo: remove once library changes are done to remove tags array usages
+        tags: [],
         parentAnnotationId: (
           annotation as VisionAnnotation<ImageKeypointCollection>
         ).id,
@@ -298,10 +293,9 @@ export const convertRegionToVisionAnnotationProperties = (
     } as ImageObjectDetectionPolyline;
   }
   if (isAnnotatorPointRegion(region)) {
-    const keypointLabel =
-      region.keypointLabel || (region.tags[3] as AnnotatorKeypointLabel); // todo: remove reading from tags once library changes are done to remove tags array usages
+    const { keypointLabel } = region;
     data = {
-      id: region.id,
+      id: String(region.id),
       keypoint: {
         label: keypointLabel,
         point: { x: region.x, y: region.y },
@@ -355,25 +349,17 @@ export const convertRegionToVisionAnnotationProperties = (
 };
 
 export const convertTempKeypointCollectionToRegions = (
-  tempKeypointCollection: TempKeypointCollection
+  tempKeypointCollection: TempKeypointCollection | null
 ): AnnotatorRegion[] => {
-  const {
-    id,
-    annotatedResourceId,
-    data: { keypoints, label } = {},
-  } = tempKeypointCollection;
-  return convertVisionReviewAnnotationToRegions({
-    annotation: {
-      id,
-      annotatedResourceId,
-      label,
-      keypoints,
-      createdTime: 0,
-      lastUpdatedTime: 0,
-      status: Status.Approved,
-      annotationType: CDFAnnotationTypeEnum.ImagesKeypointCollection,
-    },
-    selected: true,
-    show: true,
-  } as VisionReviewAnnotation<ImageKeypointCollection>);
+  const visionReviewImageKeypointCollection =
+    convertTempKeypointCollectionToVisionReviewImageKeypointCollection(
+      tempKeypointCollection
+    );
+
+  if (visionReviewImageKeypointCollection) {
+    return convertVisionReviewAnnotationToRegions(
+      visionReviewImageKeypointCollection
+    );
+  }
+  return [];
 };
