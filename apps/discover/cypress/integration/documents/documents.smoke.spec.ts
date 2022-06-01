@@ -114,7 +114,7 @@ describe('Documents', () => {
     cy.contains('Date Range').click();
     cy.get('.cogs-tab-input').first().click();
     cy.get('button').contains('Apply').should('be.disabled');
-    cy.get('button').contains('1').click();
+    cy.get('button').contains(new RegExp('^1$', 'g')).click();
     cy.get('button').contains('Apply').click();
     cy.get('.cogs-tab-input').last().click();
     cy.get('button').contains('Apply').click();
