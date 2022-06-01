@@ -3,6 +3,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import groupBy from 'lodash/groupBy';
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
+import { sortTableData } from 'utils/sort/sortTableData';
 
 import { BaseButton } from 'components/Buttons';
 import EmptyState from 'components/EmptyState';
@@ -109,13 +110,13 @@ export const CasingTableView: React.FC<Props> = ({
     </CasingViewButtonWrapper>
   );
 
-  const renderRowSubComponent = useCallback(({ row }) => {
+  const renderRowSubComponent = useCallback(({ row, sortBy }) => {
     return (
       <CasingsTableWrapper>
         <Table<CasingData>
           id="well-casings-table"
           scrollTable={false}
-          data={row.original.casings}
+          data={sortTableData(row.original.casings, sortBy)}
           columns={casingsTableColumn}
           renderRowHoverComponent={renderRowHoverComponent}
           hideHeaders

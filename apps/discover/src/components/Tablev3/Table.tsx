@@ -338,7 +338,9 @@ const TableInner = <T extends Object>({
             handleRowClick={handleRowClick}
             handleDoubleClick={handleDoubleClick}
             highlighted={isHighlighted}
-            renderRowSubComponent={renderRowSubComponent}
+            renderRowSubComponent={(props) =>
+              renderRowSubComponent?.({ ...props, sortBy })
+            }
             rowOptions={rowOptions}
             expanded={expanded}
             selected={row.isSelected}
