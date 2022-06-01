@@ -5,7 +5,13 @@ import React, { useMemo } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import keyBy from 'lodash/keyBy';
 
+import { PerfMetrics } from '@cognite/metrics';
+
 import EmptyState from 'components/EmptyState';
+import {
+  PerformanceMetricsObserver,
+  PerformanceObserved,
+} from 'components/performance/PerformanceMetricsObserver';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import {
   useNptEventsForCasings,
@@ -82,11 +88,28 @@ export const CasingGraphView: React.FC<ViewProps> = ({ data, scrollRef }) => {
     return <EmptyState />;
   }
 
+  const handlePerformanceObserved = ({
+    mutations,
+    data,
+  }: PerformanceObserved) => {
+    if (mutations) {
+      PerfMetrics.trackPerfEnd('CASING_PAGE_LOAD');
+    }
+    if (data && data.length === 0) {
+      PerfMetrics.trackPerfEnd('CASING_PAGE_LOAD');
+    }
+  };
+
   return (
-    <CasingViewListWrapper ref={scrollRef}>
-      {data.map((wellbore) => {
-        return <CasingView {...wellbore} key={wellbore.key} />;
-      })}
-    </CasingViewListWrapper>
+    <PerformanceMetricsObserver
+      onChange={handlePerformanceObserved}
+      data={data}
+    >
+      <CasingViewListWrapper ref={scrollRef}>
+        {data.map((wellbore) => {
+          return <CasingView {...wellbore} key={wellbore.key} />;
+        })}
+      </CasingViewListWrapper>
+    </PerformanceMetricsObserver>
   );
 };

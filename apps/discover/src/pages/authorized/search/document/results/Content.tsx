@@ -12,7 +12,7 @@ import { FlexColumn } from 'styles/layout';
 
 import { NoResults } from '../NoResults';
 
-import { DocumentResultTable } from './DocumentResultTable';
+import { DocumentResultTableWithPerformanceTracking } from './DocumentResultTableWithPerformanceTracking';
 import { DocumentsSearchResultsBulkActions } from './DocumentsSearchResultsBulkActions';
 import { DocumentStats } from './DocumentStats';
 
@@ -39,7 +39,7 @@ export const DocumentSearchContent: React.FC = () => {
           <SearchDisplayOptionPanel />
         </SearchTableResultActionContainer>
 
-        <DocumentResultTable />
+        <DocumentResultTableWithPerformanceTracking />
         <DocumentsSearchResultsBulkActions />
       </MaxHeight>
     );

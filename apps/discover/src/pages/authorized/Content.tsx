@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react';
 import { Switch, Redirect, Route } from 'react-router-dom';
 
+import { PerfMetrics } from '@cognite/metrics';
 import { Logout } from '@cognite/react-container';
 
 import { Page } from 'components/Page';
+import { searchVisibleQuery } from 'components/performance/mutationSearchQueries';
+import { PerformanceMetricsObserver } from 'components/performance/PerformanceMetricsObserver';
 import navigation from 'constants/navigation';
 import { usePageSettings } from 'hooks/usePageSettings';
 import AdminPageContainer from 'pages/authorized/admin';
@@ -26,6 +29,8 @@ const Content = () => {
   const metrics = useGlobalMetrics(LOG_APP_NAMESPACE);
 
   useEffect(() => {
+    // For this metric to work, PR2537 needs to get merged in https://github.com/cognitedata/applications/pull/2537
+    PerfMetrics.trackPerfStart('SEARCH_LOAD');
     const cleanup = () => {
       metrics.track(LOG_APP_CLOSED);
     };
@@ -37,40 +42,60 @@ const Content = () => {
     };
   }, []);
 
+  const handlePerformanceObserved = (mutations: any) => {
+    if (mutations) {
+      PerfMetrics.findInMutation({
+        ...searchVisibleQuery,
+        mutations,
+        callback: (_output: any) => {
+          PerfMetrics.trackPerfEnd('SEARCH_LOAD');
+        },
+      });
+    }
+  };
+
   return (
-    <div role="application">
-      <GlobalModals /> {/* Global Modals to be shown from multiple places */}
-      <AppFrame>
-        <Page
-          scrollPage={pageSettings.scrollPage}
-          collapseTopbar={pageSettings.collapseTopbar}
-        >
-          <React.Suspense fallback="">
-            <Switch>
-              <Route path={navigation.SEARCH} render={() => <Search />} />
-              <Route path={navigation.FAVORITES} render={() => <Favorites />} />
-              <Route path={navigation.DASHBOARD} render={() => <Dashboard />} />
+    <PerformanceMetricsObserver onChange={handlePerformanceObserved}>
+      <div role="application">
+        <GlobalModals /> {/* Global Modals to be shown from multiple places */}
+        <AppFrame>
+          <Page
+            scrollPage={pageSettings.scrollPage}
+            collapseTopbar={pageSettings.collapseTopbar}
+          >
+            <React.Suspense fallback="">
+              <Switch>
+                <Route path={navigation.SEARCH} render={() => <Search />} />
+                <Route
+                  path={navigation.FAVORITES}
+                  render={() => <Favorites />}
+                />
+                <Route
+                  path={navigation.DASHBOARD}
+                  render={() => <Dashboard />}
+                />
 
-              <Route
-                path={navigation.ADMIN}
-                render={() => <AdminPageContainer />}
-              />
+                <Route
+                  path={navigation.ADMIN}
+                  render={() => <AdminPageContainer />}
+                />
 
-              <Route
-                path={navigation.INTERNAL_PROJECT_CONFIG}
-                render={() => <ProjectConfig />}
-              />
+                <Route
+                  path={navigation.INTERNAL_PROJECT_CONFIG}
+                  render={() => <ProjectConfig />}
+                />
 
-              <Route path={navigation.LOGOUT} render={() => <Logout />} />
-              <Redirect from="" to={navigation.SEARCH} />
-              <Redirect from="/" to={navigation.SEARCH} />
-              <Route render={() => <NotFoundPage />} />
-            </Switch>
-          </React.Suspense>
-        </Page>
-      </AppFrame>
-      <CookieConsent />
-    </div>
+                <Route path={navigation.LOGOUT} render={() => <Logout />} />
+                <Redirect from="" to={navigation.SEARCH} />
+                <Redirect from="/" to={navigation.SEARCH} />
+                <Route render={() => <NotFoundPage />} />
+              </Switch>
+            </React.Suspense>
+          </Page>
+        </AppFrame>
+        <CookieConsent />
+      </div>
+    </PerformanceMetricsObserver>
   );
 };
 

@@ -131,7 +131,11 @@ export const columnMap: ColumnMap<DocumentType> = {
   },
 };
 
-export const DocumentResultTable: React.FC = () => {
+interface Props {
+  onHandleRowClick?: () => void;
+}
+
+export const DocumentResultTable: React.FC<Props> = ({ onHandleRowClick }) => {
   const { selectedColumns } = useDocuments();
   const { results, hasNextPage, isFetching, fetchNextPage } = useData();
   const dispatch = useDispatch();
@@ -193,6 +197,8 @@ export const DocumentResultTable: React.FC = () => {
   }, []);
 
   const handleRowClick = React.useCallback((row: Row<DocumentType>) => {
+    onHandleRowClick?.();
+
     const doc = row.original;
 
     setExpandedDocumentIds((state) => ({

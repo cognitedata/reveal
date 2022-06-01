@@ -4,10 +4,16 @@ import { useDispatch } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import { areAllSetValuesEmpty } from 'utils/areAllSetValuesEmpty';
 
+import { PerfMetrics } from '@cognite/metrics';
 import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
 import { NoDataAvailable } from 'components/Charts/common/NoDataAvailable';
 import { Loading } from 'components/Loading';
+import { measurementsPageLoadQuery } from 'components/performance/mutationSearchQueries';
+import {
+  PerformanceMetricsObserver,
+  PerformanceObserved,
+} from 'components/performance/PerformanceMetricsObserver';
 import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
@@ -27,7 +33,7 @@ import { ViewModeSelector } from './filters/ViewModeSelector';
 import { getMeasurementDataFetchErrors } from './utils';
 import WellCentricView from './wellCentricView/WellCentricView';
 
-export const Measurements: React.FC = () => {
+export const MeasurementsComponent: React.FC = () => {
   const dispatch = useDispatch();
   const [viewMode, setViewMode] = useState<string>('Wells');
   const [geomechanicsCurves, setGeomechanicsCurves] = useState<
@@ -97,6 +103,24 @@ export const Measurements: React.FC = () => {
         />
       )}
     </MeasurementsWrapper>
+  );
+};
+
+export const Measurements: React.FC = () => {
+  const handlePerformanceObserved = ({ mutations }: PerformanceObserved) => {
+    if (mutations) {
+      PerfMetrics.findInMutation({
+        ...measurementsPageLoadQuery,
+        mutations,
+        callback: (_output: any) =>
+          PerfMetrics.trackPerfEnd('MEASUREMENTS_PAGE_LOAD'),
+      });
+    }
+  };
+  return (
+    <PerformanceMetricsObserver onChange={handlePerformanceObserved}>
+      <MeasurementsComponent />
+    </PerformanceMetricsObserver>
   );
 };
 

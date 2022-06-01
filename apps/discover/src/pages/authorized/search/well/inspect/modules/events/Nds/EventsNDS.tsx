@@ -2,8 +2,14 @@ import React, { useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
+import { PerfMetrics } from '@cognite/metrics';
+
 import EmptyState from 'components/EmptyState';
 import { Loading } from 'components/Loading';
+import {
+  PerformanceMetricsObserver,
+  PerformanceObserved,
+} from 'components/performance/PerformanceMetricsObserver';
 import { Table } from 'components/Tablev3';
 import {
   LOG_EVENTS_NDS,
@@ -49,27 +55,44 @@ export const EventsNds: React.FC = () => {
   useStopTimeLogger(renderTimer);
   if (isLoading) return <Loading />;
 
+  const handlePerformanceObserved = ({
+    mutations,
+    data,
+  }: PerformanceObserved) => {
+    if (mutations) {
+      PerfMetrics.trackPerfEnd('NDS_PAGE_LOAD');
+    }
+    if (data && data.length === 0) {
+      PerfMetrics.trackPerfEnd('NDS_PAGE_LOAD');
+    }
+  };
+
   return (
     <>
-      <NdsFilterWrapper>
-        <FilterContainer
-          events={ndsEvents}
-          filteredEvents={filteredEvents}
-          onChangeFilteredEvents={setFilteredEvents}
-        />
-      </NdsFilterWrapper>
+      <PerformanceMetricsObserver
+        onChange={handlePerformanceObserved}
+        data={filteredEvents}
+      >
+        <NdsFilterWrapper>
+          <FilterContainer
+            events={ndsEvents}
+            filteredEvents={filteredEvents}
+            onChangeFilteredEvents={setFilteredEvents}
+          />
+        </NdsFilterWrapper>
 
-      {isEmpty(filteredEvents) ? (
-        <EmptyState />
-      ) : (
-        <Table<CogniteEventV3ish>
-          scrollTable
-          id="events-nds-table"
-          data={filteredEvents || []}
-          columns={columns}
-          options={tableOptions}
-        />
-      )}
+        {isEmpty(filteredEvents) ? (
+          <EmptyState />
+        ) : (
+          <Table<CogniteEventV3ish>
+            scrollTable
+            id="events-nds-table"
+            data={filteredEvents || []}
+            columns={columns}
+            options={tableOptions}
+          />
+        )}
+      </PerformanceMetricsObserver>
     </>
   );
 };

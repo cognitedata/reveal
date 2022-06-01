@@ -19,6 +19,7 @@ import {
 } from 'services/savedSearches/hooks/useClearPolygon';
 import { v1 } from 'uuid';
 
+import { PerfMetrics } from '@cognite/metrics';
 import { useTranslation } from '@cognite/react-i18n';
 import { Point } from '@cognite/seismic-sdk-js';
 
@@ -241,6 +242,16 @@ export const Map: React.FC = () => {
         metrics.track('update-drawn-polygon-on-map');
       }
     }
+  }, []);
+
+  React.useEffect(() => {
+    if (mapReference && mapReference?.areTilesLoaded()) {
+      PerfMetrics.trackPerfEnd('MAP_RENDER');
+    }
+  }, [mapReference]);
+
+  React.useEffect(() => {
+    PerfMetrics.trackPerfStart('MAP_RENDER');
   }, []);
 
   const mapEvents = useMapEvents();

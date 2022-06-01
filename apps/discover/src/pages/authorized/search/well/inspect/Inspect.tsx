@@ -10,6 +10,7 @@ import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 
 import { Button, Icon, Menu, Tabs, Dropdown, Loader } from '@cognite/cogs.js';
+import { PerfMetrics } from '@cognite/metrics';
 
 import { WELL_INSPECT_ID } from 'constants/metrics';
 import navigation from 'constants/navigation';
@@ -87,6 +88,7 @@ export const WellInspect: React.FC = () => {
        * Clear errors in side bar
        */
       dispatch(inspectTabsActions.resetErrors());
+      PerfMetrics.trackPerfStart(`${tabKey.toUpperCase()}_PAGE_LOAD`);
       metrics.track(`click-${tabKey}-tab`);
       history.push(tabItem.path);
     }

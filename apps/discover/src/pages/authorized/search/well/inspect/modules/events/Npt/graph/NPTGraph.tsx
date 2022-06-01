@@ -2,11 +2,18 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { now, fromNow } from 'utils/date';
 
+import { PerfMetrics } from '@cognite/metrics';
+
 import {
   SelectedBarData,
   StackedBarChart,
   StackedBarChartOptions,
 } from 'components/Charts/modules/StackedBarChart';
+import { nptGraphPageLoadQuery } from 'components/performance/mutationSearchQueries';
+import {
+  PerformanceMetricsObserver,
+  PerformanceObserved,
+} from 'components/performance/PerformanceMetricsObserver';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../constants';
@@ -55,9 +62,27 @@ export const NPTGraph: React.FC<Props> = React.memo(
 
     const data: NPTEvent[] = useMemo(() => {
       setLastUpdatedTime(now());
-
+      if (events.length === 0) {
+        PerfMetrics.trackPerfEnd('NPT_PAGE_LOAD');
+      } else {
+        PerfMetrics.trackPerfEnd('NPT_PAGE_LOAD');
+        PerfMetrics.trackPerfStart('NPT_GRAPH_RENDER');
+      }
       return adaptEventsToDaysDuration(events);
     }, [events]);
+
+    const handlePerformanceObserved = ({ mutations }: PerformanceObserved) => {
+      if (mutations) {
+        PerfMetrics.findInMutation({
+          ...nptGraphPageLoadQuery,
+          mutations,
+          callback: (_output: any) => {
+            PerfMetrics.trackPerfEnd('NPT_GRAPH_RENDER');
+            PerfMetrics.trackPerfEnd('NPT_PAGE_LOAD');
+          },
+        });
+      }
+    };
 
     const handleOnUpdateGraph = useCallback(
       () => setLastUpdatedTime(now()),
@@ -111,22 +136,24 @@ export const NPTGraph: React.FC<Props> = React.memo(
 
     return useMemo(
       () => (
-        <StackedBarChart<NPTEvent>
-          id="npt-events-graph"
-          data={data}
-          xAxis={{ accessor: accessors.DURATION, title: GRAPH_X_AXIS_TITLE }}
-          yAxis={{
-            accessor: accessors.WELLBORE_NAME,
-            reverseScaleDomain: true,
-          }}
-          yScaleDomain={wellboreNames}
-          groupDataInsideBarsBy={accessors.NPT_CODE}
-          title={GRAPH_TITLE}
-          subtitle={chartSubtitle}
-          options={options}
-          onUpdate={handleOnUpdateGraph}
-          onSelectBar={handleOnSelectBar}
-        />
+        <PerformanceMetricsObserver onChange={handlePerformanceObserved}>
+          <StackedBarChart<NPTEvent>
+            id="npt-events-graph"
+            data={data}
+            xAxis={{ accessor: accessors.DURATION, title: GRAPH_X_AXIS_TITLE }}
+            yAxis={{
+              accessor: accessors.WELLBORE_NAME,
+              reverseScaleDomain: true,
+            }}
+            yScaleDomain={wellboreNames}
+            groupDataInsideBarsBy={accessors.NPT_CODE}
+            title={GRAPH_TITLE}
+            subtitle={chartSubtitle}
+            options={options}
+            onUpdate={handleOnUpdateGraph}
+            onSelectBar={handleOnSelectBar}
+          />
+        </PerformanceMetricsObserver>
       ),
       [wellboreNames, chartSubtitle]
     );

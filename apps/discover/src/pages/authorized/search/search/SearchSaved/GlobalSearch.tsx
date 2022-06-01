@@ -8,6 +8,7 @@ import { useSetQuery } from 'services/savedSearches/hooks/useClearQuery';
 import { SavedSearchContent } from 'services/savedSearches/types';
 
 import { AutoComplete, OptionType } from '@cognite/cogs.js';
+import { PerfMetrics } from '@cognite/metrics';
 
 import { SearchValueContainer } from 'components/SearchBar/SearchValueContainer';
 import {
@@ -75,6 +76,8 @@ export const GlobalSearch: React.FC = () => {
       metrics.track(SEARCH_TRACK_ID);
     }
 
+    PerfMetrics.trackPerfStart('SEARCH_ACTION_DATA_UPDATED', 'SEARCH');
+
     setQuery(inputString);
     setSearchValues(inputString);
   };
@@ -88,6 +91,8 @@ export const GlobalSearch: React.FC = () => {
   };
 
   const clearSearchValue = () => {
+    PerfMetrics.trackPerfStart('SEARCH_ACTION_DATA_UPDATED', 'SEARCH');
+
     updateSearchValue('');
     history.push({
       search: '',

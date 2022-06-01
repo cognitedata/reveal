@@ -6,7 +6,14 @@ import { useDispatch } from 'react-redux';
 
 import has from 'lodash/has';
 
+import { PerfMetrics } from '@cognite/metrics';
+
 import { Loading } from 'components/Loading/Loading';
+import { trajectoryPageLoadQuery } from 'components/performance/mutationSearchQueries';
+import {
+  PerformanceMetricsObserver,
+  PerformanceObserved,
+} from 'components/performance/PerformanceMetricsObserver';
 import { Table, ColumnType, RowProps } from 'components/Tablev3';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useFilterDataTrajectory } from 'modules/inspectTabs/selectors';
@@ -119,6 +126,18 @@ export const Trajectory: React.FC = () => {
     );
   };
 
+  const handlePerformanceObserved = ({ mutations }: PerformanceObserved) => {
+    if (mutations) {
+      PerfMetrics.findInMutation({
+        ...trajectoryPageLoadQuery,
+        mutations,
+        callback: (_output: any) => {
+          PerfMetrics.trackPerfEnd('TRAJECTORY_PAGE_LOAD');
+        },
+      });
+    }
+  };
+
   const showTrajectoryTable = false;
 
   if (isLoading) {
@@ -126,24 +145,26 @@ export const Trajectory: React.FC = () => {
   }
   return (
     <>
-      {showTrajectoryTable && (
-        <Table<Sequence>
-          scrollTable
-          id="trajectory-result-table"
-          data-testid="trajectory-result-table"
-          data={selectedWellboresTrajectories}
-          selectedIds={selectedIds}
-          handleRowSelect={handleRowSelect}
-          handleRowsSelect={handleRowsSelect}
-          columns={columns}
-          options={tableOptions}
-          // renderChildren={PreviewSelector({ onApplyChanges })}
+      <PerformanceMetricsObserver onChange={handlePerformanceObserved}>
+        {showTrajectoryTable && (
+          <Table<Sequence>
+            scrollTable
+            id="trajectory-result-table"
+            data-testid="trajectory-result-table"
+            data={selectedWellboresTrajectories}
+            selectedIds={selectedIds}
+            handleRowSelect={handleRowSelect}
+            handleRowsSelect={handleRowsSelect}
+            columns={columns}
+            options={tableOptions}
+            // renderChildren={PreviewSelector({ onApplyChanges })}
+          />
+        )}
+        <Trajectory2D
+          selectedTrajectoryData={selectedTrajectoryRows}
+          selectedTrajectories={selectedTrajectories}
         />
-      )}
-      <Trajectory2D
-        selectedTrajectoryData={selectedTrajectoryRows}
-        selectedTrajectories={selectedTrajectories}
-      />
+      </PerformanceMetricsObserver>
     </>
   );
 };
