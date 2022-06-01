@@ -65,8 +65,8 @@ import ThresholdSidebar from 'components/Thresholds/ThresholdSidebar';
 import SearchSidebar from 'components/Search/SearchSidebar';
 import TimePeriodSelector from 'components/TimePeriodSelector/TimePeriodSelector';
 import { useFilePicker } from 'use-file-picker';
-import SourceRows from './SourceRows';
 
+import SourceTable from 'components/SourceTable/SourceTable';
 import {
   BottomPaneWrapper,
   ChartContainer,
@@ -74,7 +74,6 @@ import {
   ChartWrapper,
   ContentWrapper,
   Header,
-  SourceTable,
   SourceTableWrapper,
   TopPaneWrapper,
 } from './elements';
@@ -672,30 +671,20 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                       {(provided) => (
                         <div style={{ display: 'flex', height: '100%' }}>
                           <SourceTableWrapper>
-                            <SourceTable ref={provided.innerRef}>
-                              <SourceTableHeader
-                                mode={workspaceMode}
-                                onShowHideButtonClick={
-                                  handleShowHideButtonClick
-                                }
-                                translations={sourceTableTranslation}
-                                showHideIconState={!isEveryRowHidden}
-                              />
-                              <tbody>
-                                <SourceRows
-                                  draggable
-                                  chart={chart}
-                                  updateChart={setChart}
-                                  mode={workspaceMode}
-                                  selectedSourceId={selectedSourceId}
-                                  openNodeEditor={openNodeEditor}
-                                  onRowClick={handleSourceClick}
-                                  onInfoClick={handleInfoClick}
-                                  onThresholdClick={handleThresholdClick}
-                                />
-                                {provided.placeholder}
-                              </tbody>
-                            </SourceTable>
+                            <SourceTable
+                              mode={workspaceMode}
+                              chart={chart}
+                              setChart={setChart}
+                              provided={provided}
+                              isEveryRowHidden={isEveryRowHidden}
+                              headerTranslations={sourceTableTranslation}
+                              selectedSourceId={selectedSourceId}
+                              openNodeEditor={openNodeEditor}
+                              onRowClick={handleSourceClick}
+                              onInfoClick={handleInfoClick}
+                              onThresholdClick={handleThresholdClick}
+                              onShowHideButtonClick={handleShowHideButtonClick}
+                            />
                           </SourceTableWrapper>
                           {workspaceMode === 'editor' && !!selectedSourceId && (
                             <NodeEditor

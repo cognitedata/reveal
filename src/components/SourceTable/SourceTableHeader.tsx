@@ -12,7 +12,7 @@ interface Props {
   mode: Modes;
   onShowHideButtonClick?: MouseEventHandler<HTMLDivElement>;
   showHideIconState?: boolean;
-  translations: typeof defaultTranslation;
+  translations?: typeof defaultTranslation;
 }
 
 const defaultTranslation = makeDefaultTranslations(
