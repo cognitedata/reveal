@@ -8,7 +8,7 @@ import { Cognite3DModel } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { Keyframe } from './Keyframe';
 import { TimelineDateUpdateDelegate } from './types';
-import { EventTrigger, assertNever } from '@reveal/core/utilities';
+import { EventTrigger, assertNever } from '@reveal/utilities';
 
 /**
  * Tool to applying styles to nodes based on date to play them over in Timeline
