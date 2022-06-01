@@ -2,6 +2,8 @@ import { FeatureCollection } from 'geojson';
 import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 import { log } from 'utils/log';
 
+import { GeospatialFeatureResponse } from '@cognite/sdk';
+
 import { adaptGeoJSONToGeospatial } from './adaptGeoJSONToGeospatial';
 import { adaptGeospatialToGeoJSON } from './adaptGeospatialToGeoJSON';
 import {
@@ -41,13 +43,27 @@ export const geospatial = {
   },
   getGeoJSON: (featureTypeId: string) => {
     return getCogniteSDKClient()
-      .geospatial.feature.search(
+      .geospatial.feature.searchStream(
         `${DISCOVER_FEATURE_TYPE_PREFIX}${featureTypeId}`,
         {
-          output: { geometryFormat: 'GEOJSON' },
+          output: {
+            geometryFormat: 'GEOJSON',
+            jsonStreamFormat: 'NEW_LINE_DELIMITED',
+          },
         }
       )
-      .then((features) => adaptGeospatialToGeoJSON(features));
+      .then((response) => {
+        try {
+          return adaptGeospatialToGeoJSON(
+            response
+              .split('\n')
+              .map<GeospatialFeatureResponse>((feature) => JSON.parse(feature))
+          );
+        } catch (e) {
+          log('Could not parse feature search stream');
+          throw new Error('Could not parse feature search stream');
+        }
+      });
   },
   deleteFeatureType: (featureTypeId: string, params = { recursive: true }) => {
     return getCogniteSDKClient().geospatial.featureType.delete(

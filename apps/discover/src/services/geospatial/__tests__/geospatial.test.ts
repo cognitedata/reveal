@@ -9,7 +9,7 @@ import {
 } from '__test-utils/fixtures/geometry';
 
 import { getMockGeospatialFeature } from '../__mocks/getMockGeospatialFeature';
-import { getMockGeospatialFeatureSearch } from '../__mocks/getMockGeospatialFeatureSearch';
+import { getMockGeospatialFeatureSearchStream } from '../__mocks/getMockGeospatialFeatureSearchStream';
 import { getMockGeospatialFeatureTypes } from '../__mocks/getMockGeospatialFeatureTypes';
 import { getMockGeospatialFeatureTypesDelete } from '../__mocks/getMockGeospatialFeatureTypesDelete';
 import { FEATURE_ERROR, FEATURE_TYPE_ERROR } from '../constants';
@@ -19,7 +19,7 @@ const mockServer = setupServer(
   getMockGeospatialFeatureTypes(),
   getMockGeospatialFeature(),
   getMockGeospatialFeatureTypesDelete(),
-  getMockGeospatialFeatureSearch()
+  getMockGeospatialFeatureSearchStream()
 );
 describe('GeospecialV1 Actions', () => {
   const origConsole = global.console;
@@ -93,6 +93,13 @@ describe('GeospecialV1 Actions', () => {
     const result = await geospatial.getGeoJSON(TEST_LAYER_ID);
 
     expect(result.features).toEqual([
+      {
+        type: 'Feature',
+        geometry: GEOMETRY,
+        properties: {
+          Operator: TEST_STRING,
+        },
+      },
       {
         type: 'Feature',
         geometry: GEOMETRY,
