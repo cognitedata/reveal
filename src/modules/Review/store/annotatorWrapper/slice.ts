@@ -10,7 +10,6 @@ import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/Populat
 import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
-import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { createUniqueNumericId } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { deleteCollection } from 'src/modules/Review/store/annotatorWrapper/utils';
 import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
