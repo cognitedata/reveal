@@ -7,8 +7,7 @@ import { useNavigate } from 'hooks/navigation';
 import { useAsset } from 'hooks/cdf-assets';
 import styled from 'styled-components/macro';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
-import { SourceTableWrapper, SourceTable } from 'pages/ChartView/elements';
-import TimeSeriesRows from 'pages/ChartView/TimeSeriesRows';
+import { SourceTableWrapper } from 'pages/ChartView/elements';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import Layers from 'utils/z-index';
 import AssetSearchHit from 'components/SearchResultTable/AssetSearchHit';
@@ -17,6 +16,7 @@ import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
 import { useTranslations } from 'hooks/translations';
 import { Chart } from 'models/chart/types';
 import { SetterOrUpdater } from 'recoil';
+import SourceTable from 'pages/ChartView/SourceTable';
 
 type Prop = {
   chart: Chart;
@@ -132,21 +132,12 @@ export const FileView = ({ chart, setChart, assetId }: Prop) => {
           </div>
           <div style={{ width: '100%' }}>
             <SourceTableWrapper>
-              <SourceTable>
-                <SourceTableHeader
-                  translations={sourceTableHeaderTranslations}
-                  mode="file"
-                />
-                <tbody>
-                  <TimeSeriesRows
-                    chart={chart}
-                    updateChart={setChart}
-                    mode="file"
-                    dateFrom={chart.dateFrom}
-                    dateTo={chart.dateTo}
-                  />
-                </tbody>
-              </SourceTable>
+              <SourceTable
+                mode="file"
+                headerTranslations={sourceTableHeaderTranslations}
+                setChart={setChart}
+                chart={chart}
+              />
             </SourceTableWrapper>
           </div>
         </SplitPaneLayout>

@@ -3,7 +3,7 @@
  */
 
 import { Meta, Story } from '@storybook/react';
-import { SourceTable, SourceTableWrapper } from 'pages/ChartView/elements';
+import { Table, SourceTableWrapper } from 'pages/ChartView/elements';
 import { ComponentProps } from 'react';
 import { SourceTableHeader } from './SourceTableHeader';
 
@@ -14,9 +14,9 @@ export default {
 
 const Template: Story<ComponentProps<typeof SourceTableHeader>> = (args) => (
   <SourceTableWrapper>
-    <SourceTable>
+    <Table>
       <SourceTableHeader {...args} />
-    </SourceTable>
+    </Table>
   </SourceTableWrapper>
 );
 

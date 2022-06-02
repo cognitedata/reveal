@@ -1,4 +1,5 @@
 import { Dropdown, Icon } from '@cognite/cogs.js';
+import { Alert } from 'antd';
 import styled from 'styled-components/macro';
 import Layers from 'utils/z-index';
 
@@ -68,7 +69,7 @@ export const SourceTableWrapper = styled.div`
   overflow-y: auto;
 `;
 
-export const SourceTable = styled.table`
+export const Table = styled.table`
   border: 0;
   border-collapse: collapse;
   width: 100%;
@@ -241,4 +242,43 @@ export const DropdownWithoutMaxWidth = styled(Dropdown)`
   &.tippy-box {
     max-width: none !important;
   }
+`;
+
+export const WarningAlert = styled(Alert)`
+  .ant-alert-message {
+    color: var(--cogs-text-warning);
+  }
+`;
+
+export const Divider = styled.div`
+  border-left: 1px solid var(--cogs-greyscale-grey3);
+  height: 24px;
+  margin-left: 10px;
+`;
+
+export const DropdownTitle = styled.div`
+  color: var(--cogs-greyscale-grey6);
+  font-size: 12px;
+  margin-bottom: 15px;
+`;
+
+export const DropdownWrapper = styled.div`
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+`;
+
+export const RangeWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+`;
+
+export const RangeColumn = styled.div`
+  margin: 2px 6px;
+`;
+
+export const MenuItemText = styled.div`
+  padding-right: 10px;
 `;
