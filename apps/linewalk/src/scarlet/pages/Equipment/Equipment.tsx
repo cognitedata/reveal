@@ -14,14 +14,9 @@ import {
   getEquipmentPCMS,
   getEquipmentState,
 } from 'scarlet/api';
-import {
-  findU1Document,
-  getEquipmentType,
-  getEquipmentTypeLabel,
-  preApproveDataElements,
-} from 'scarlet/utils';
+import { getEquipmentType } from 'scarlet/utils';
 
-import { BreadcrumbBar, PageBody } from './components';
+import { PageBody } from './components';
 import * as Styled from './style';
 
 export const Equipment = () => {
@@ -108,12 +103,6 @@ export const Equipment = () => {
             type: getEquipmentType(equipmentId),
           });
 
-    const hasU1Document = Boolean(findU1Document(documentsQuery.data));
-
-    const hasChanged = equipmentData
-      ? preApproveDataElements(equipmentData, hasU1Document, unitId)
-      : false;
-
     appDispatch({
       type: AppActionType.SET_EQUIPMENT,
       equipment: {
@@ -121,7 +110,7 @@ export const Equipment = () => {
         loading,
         error,
       },
-      isAutoSave: hasChanged,
+      isInitial: true,
     });
   }, [
     configQuery,
@@ -171,11 +160,6 @@ export const Equipment = () => {
 
   return (
     <Styled.Container>
-      <BreadcrumbBar
-        unitId={unitId}
-        equipmentType={getEquipmentTypeLabel(getEquipmentType(equipmentId))}
-      />
-
       <DataPanelProvider>
         <PageBody unitId={unitId} equipmentId={equipmentId} />
       </DataPanelProvider>

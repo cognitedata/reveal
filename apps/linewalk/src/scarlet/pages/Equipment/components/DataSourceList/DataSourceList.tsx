@@ -7,8 +7,17 @@ import {
   DetectionState,
   DetectionType,
 } from 'scarlet/types';
+import {
+  getDataElementPCMSDetection,
+  isCalculatedDataElement,
+} from 'scarlet/utils';
 
-import { DataSourceHeader, NewDataSource, DataSourcePanel } from '..';
+import {
+  CalculatedElementInfoBox,
+  DataSourceHeader,
+  NewDataSource,
+  DataSourcePanel,
+} from '..';
 
 import * as Styled from './style';
 
@@ -16,6 +25,11 @@ type DataSourceListProps = {
   dataElement: DataElement;
   hasConnectedElements: boolean;
   isDiscrepancy: boolean;
+};
+
+const defaultCalcDetection = {
+  id: 'calc',
+  type: DetectionType.CALCULATED,
 };
 
 export const DataSourceList = ({
@@ -31,11 +45,7 @@ export const DataSourceList = ({
   const { activeDetection, newDetection } = dataPanelState;
 
   const PCMSDetection = useMemo(
-    () =>
-      dataElement.detections.find(
-        (d) =>
-          d.type === DetectionType.PCMS && !['', 'N/A'].includes(d.value || '')
-      ),
+    () => getDataElementPCMSDetection(dataElement),
     [dataElement]
   );
 
@@ -175,31 +185,40 @@ export const DataSourceList = ({
     };
   }, [dataElement.detections]);
 
+  const isCalculated = isCalculatedDataElement(dataElement);
+
   return (
     <Styled.Container>
-      <NewDataSource />
+      {isCalculated ? (
+        <CalculatedElementInfoBox dataElement={dataElement} />
+      ) : (
+        <>
+          <NewDataSource />
 
-      {topDetections.map((detection) => (
-        <DataSourcePanel
-          key={detection.id}
-          detection={detection}
-          dataElement={dataElement}
-          focused={detection.id === activeDetectionId}
-          isDraft={!detection.state}
-          hasConnectedElements={hasConnectedElements}
-          collapseProps={{
-            activeKey: activeDetectionId,
-            onChange: setActiveDetectionId,
-            accordion: true,
-          }}
-        />
-      ))}
+          {topDetections.map((detection) => (
+            <DataSourcePanel
+              key={detection.id}
+              detection={detection}
+              dataElement={dataElement}
+              focused={detection.id === activeDetectionId}
+              isDraft={!detection.state}
+              hasConnectedElements={hasConnectedElements}
+              collapseProps={{
+                activeKey: activeDetectionId,
+                onChange: setActiveDetectionId,
+                accordion: true,
+              }}
+            />
+          ))}
+        </>
+      )}
 
       {PCMSDetection ? (
         <DataSourcePanel
           detection={PCMSDetection}
           dataElement={dataElement}
           isDiscrepancy={isDiscrepancy}
+          isCalculated={isCalculated}
           hasConnectedElements={hasConnectedElements}
           collapseProps={{
             defaultActiveKey: PCMSDetection.id,
@@ -213,6 +232,7 @@ export const DataSourceList = ({
           <Styled.EmptySourceBody>Not available</Styled.EmptySourceBody>
         </Styled.EmptySource>
       )}
+
       {detections.map((detection) => (
         <DataSourcePanel
           key={detection.id}
@@ -220,13 +240,27 @@ export const DataSourceList = ({
           dataElement={dataElement}
           focused={detection.id === activeDetectionId}
           hasConnectedElements={hasConnectedElements}
+          isCalculated={isCalculated}
           collapseProps={{
             activeKey: activeDetectionId,
-            onChange: setActiveDetectionId,
+            onChange: !isCalculated ? setActiveDetectionId : undefined,
             accordion: true,
           }}
+          showArrow={!isCalculated}
         />
       ))}
+
+      {isCalculated && !detections.length && (
+        <DataSourcePanel
+          detection={defaultCalcDetection}
+          dataElement={dataElement}
+          isCalculated={isCalculated}
+          collapseProps={{
+            activeKey: defaultCalcDetection.id,
+          }}
+          showArrow={false}
+        />
+      )}
     </Styled.Container>
   );
 };

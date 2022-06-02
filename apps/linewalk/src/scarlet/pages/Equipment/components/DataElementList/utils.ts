@@ -1,4 +1,5 @@
 import { DataElement, DataElementState } from 'scarlet/types';
+import { isCalculatedDataElement } from 'scarlet/utils';
 
 type SortDataElement = {
   dataElement: DataElement;
@@ -21,8 +22,10 @@ const getSortingRank = ({ dataElement, value }: SortDataElement) => {
     rate += 1000000;
   } else if (dataElement.state === DataElementState.APPROVED) {
     rate += 100000;
-  } else if ([undefined, null, ''].includes(value)) {
+  } else if (isCalculatedDataElement(dataElement)) {
     rate += 10000;
+  } else if ([undefined, null, ''].includes(value)) {
+    rate += 1000;
   }
 
   return rate;

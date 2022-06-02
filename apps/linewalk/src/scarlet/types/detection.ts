@@ -9,7 +9,8 @@ export enum DetectionType {
   MS3 = 'MS3',
   MANUAL_INPUT = 'manual-input',
   MANUAL_EXTERNAL = 'manuel-external',
-  LINKED = 'LINKED',
+  LINKED = 'linked',
+  CALCULATED = 'calculated',
 }
 
 export enum DetectionState {

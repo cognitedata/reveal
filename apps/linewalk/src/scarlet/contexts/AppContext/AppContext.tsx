@@ -11,6 +11,7 @@ import {
   updateComponents,
   updateDataElementState,
   setLinkedDetections,
+  initEquipment,
 } from './utils';
 
 const equipmentInitialState = {
@@ -51,18 +52,35 @@ function reducer(state: AppState, action: AppAction) {
         ...state,
         documents: action.documents,
       };
-    case AppActionType.SET_EQUIPMENT:
+    case AppActionType.SET_EQUIPMENT: {
+      if (!action.isInitial || !action.equipment.data)
+        return {
+          ...state,
+          equipment: action.equipment,
+        };
+
+      const { data, isChanged } = initEquipment(state, action.equipment.data);
+
+      if (!isChanged) {
+        return {
+          ...state,
+          equipment: action.equipment,
+        };
+      }
+
       return {
         ...state,
-        equipment: action.equipment,
-        saveState: action.isAutoSave
-          ? {
-              loading: true,
-              data: action.equipment.data,
-              isAutoSave: action.isAutoSave,
-            }
-          : state.saveState,
+        equipment: {
+          ...action.equipment,
+          data,
+        },
+        saveState: {
+          isAutoSave: true,
+          loading: true,
+          data,
+        },
       };
+    }
     case AppActionType.SET_EQUIPMENT_CONFIG:
       return {
         ...state,

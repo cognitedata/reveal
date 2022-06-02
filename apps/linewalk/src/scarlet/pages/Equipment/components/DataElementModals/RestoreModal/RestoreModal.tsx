@@ -1,10 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from '@cognite/cogs.js';
-import {
-  useAppContext,
-  useDataElementConfig,
-  useDataPanelDispatch,
-} from 'scarlet/hooks';
+import { useAppContext, useDataPanelDispatch } from 'scarlet/hooks';
 import {
   AppActionType,
   DataElement,
@@ -28,9 +24,6 @@ export const RestoreModal = ({
   const { appState, appDispatch } = useAppContext();
   const [loading, setLoading] = useState(false);
   const isMultiple = dataElements.length > 1;
-  const dataElementConfig = useDataElementConfig(
-    !isMultiple ? dataElements[0] : undefined
-  );
   const dataPanelDispatch = useDataPanelDispatch();
 
   useEffect(() => {
@@ -39,7 +32,7 @@ export const RestoreModal = ({
     if (appState.saveState.error) {
       const errorMessage = isMultiple
         ? `Failed to restore ${dataElements.length} data fields`
-        : `Failed to restore data field "${dataElementConfig?.label}"`;
+        : `Failed to restore data field "${dataElements?.[0].config.label}"`;
 
       toast.error(errorMessage);
     }
@@ -50,7 +43,7 @@ export const RestoreModal = ({
       if (!appState.saveState.error) {
         const successMessage = isMultiple
           ? `${dataElements.length} data fields have been restored`
-          : `Data field "${dataElementConfig?.label}" has been restored`;
+          : `Data field "${dataElements?.[0].config.label}" has been restored`;
 
         toast.success(successMessage);
 
@@ -80,7 +73,7 @@ export const RestoreModal = ({
 
   const description = isMultiple
     ? 'Selected fields will be restored to pending states.'
-    : `Data field "${dataElementConfig?.label}" will be restored to pending state.`;
+    : `Data field "${dataElements?.[0].config.label}" will be restored to pending state.`;
 
   return (
     <Modal

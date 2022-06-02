@@ -42,6 +42,8 @@ export const getDetectionSourceLabel = (detection?: Detection) => {
       return 'MS3';
     case DetectionType.LINKED:
       return 'Linked field';
+    case DetectionType.CALCULATED:
+      return 'Calculated field';
     default:
       return defaultLabel;
   }
@@ -63,6 +65,8 @@ export const getDetectionSourceAcronym = (detection: Detection) => {
       return 'MS3';
     case DetectionType.LINKED:
       return 'Linked';
+    case DetectionType.CALCULATED:
+      return 'CALC';
   }
 
   const type = detection.documentExternalId

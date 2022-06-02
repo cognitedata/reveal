@@ -10,8 +10,10 @@ type DataSourcePanelProps = {
   dataElement: DataElement;
   focused?: boolean;
   isDraft?: boolean;
+  isCalculated?: boolean;
   isDiscrepancy?: boolean;
-  hasConnectedElements: boolean;
+  hasConnectedElements?: boolean;
+  showArrow?: boolean;
   collapseProps?: Omit<CollapseProps, 'children'>;
 };
 
@@ -20,8 +22,10 @@ export const DataSourcePanel = ({
   dataElement,
   focused = false,
   isDraft = false,
+  isCalculated = false,
   isDiscrepancy = false,
-  hasConnectedElements,
+  hasConnectedElements = false,
+  showArrow = true,
   collapseProps,
 }: DataSourcePanelProps) => (
   <Styled.Collapse expandIcon={expandIcon} {...collapseProps}>
@@ -35,11 +39,13 @@ export const DataSourcePanel = ({
       }
       key={detection.id}
       isActive
+      showArrow={showArrow}
     >
       <DataSource
         key={detection.id}
         dataElement={dataElement}
         detection={detection}
+        isCalculated={isCalculated}
         focused={focused}
         isDraft={isDraft}
         hasConnectedElements={hasConnectedElements}

@@ -54,7 +54,7 @@ export type AppAction =
   | {
       type: AppActionType.SET_EQUIPMENT;
       equipment: APIState<EquipmentData>;
-      isAutoSave?: boolean;
+      isInitial?: boolean;
     }
   | {
       type: AppActionType.CLEANUP_EQUIPMENT_DATA;

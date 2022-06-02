@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import {
   useAppDispatch,
   useComponent,
-  useDataElementConfig,
   useDataPanelDispatch,
 } from 'scarlet/hooks';
 import {
@@ -23,7 +22,6 @@ export const CardHeader = ({ dataElement }: CardHeaderProps) => {
   const dataPanelDispatch = useDataPanelDispatch();
   const appDispatch = useAppDispatch();
   const [isMenuActive, setMenuActive] = useState(false);
-  const dataElementConfig = useDataElementConfig(dataElement);
   const { component, componentGroup } = useComponent(dataElement.componentId);
 
   const onBackButton = () =>
@@ -52,7 +50,7 @@ export const CardHeader = ({ dataElement }: CardHeaderProps) => {
     <Styled.Container>
       <Styled.BackButton icon="ArrowLeft" type="ghost" onClick={onBackButton}>
         <Styled.Header>
-          <Styled.Title>{dataElementConfig?.label}</Styled.Title>
+          <Styled.Title>{dataElement.config.label}</Styled.Title>
           <Styled.Details className="cogs-detail">
             {component
               ? `${

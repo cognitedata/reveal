@@ -1,4 +1,5 @@
 import { Detection, Remark } from '.';
+import { DataElementConfig } from './equipmentConfig';
 
 export enum DataElementOrigin {
   EQUIPMENT = 'equipment',
@@ -38,4 +39,5 @@ export type DataElement = {
   stateReason?: string;
   componentId?: string;
   remarks?: Remark[];
+  config: DataElementConfig;
 };

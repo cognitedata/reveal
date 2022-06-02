@@ -14,7 +14,6 @@ import {
 import {
   useAppContext,
   useAppState,
-  useDataElementConfig,
   useDataPanelDispatch,
 } from 'scarlet/hooks';
 import { getPrintedDataElementValue } from 'scarlet/utils';
@@ -28,6 +27,7 @@ export type DataSourceProps = {
   detection: Detection;
   focused?: boolean;
   isDraft?: boolean;
+  isCalculated?: boolean;
   hasConnectedElements: boolean;
 };
 
@@ -42,6 +42,7 @@ const readOnlyDetectionTypes = [
   DetectionType.MS2,
   DetectionType.MS3,
   DetectionType.LINKED,
+  DetectionType.CALCULATED,
 ];
 
 export const DataSource = ({
@@ -49,6 +50,7 @@ export const DataSource = ({
   detection,
   focused,
   isDraft = false,
+  isCalculated = false,
   hasConnectedElements,
 }: DataSourceProps) => {
   const originalValue = detection.value;
@@ -65,7 +67,6 @@ export const DataSource = ({
   const [isSaving, setIsSaving] = useState(false);
   const { appDispatch } = useAppContext();
   const dataPanelDispatch = useDataPanelDispatch();
-  const dataElementConfig = useDataElementConfig(dataElement);
   const isPCMS = detection?.type === DetectionType.PCMS;
   const isExternalSource = detection?.type === DetectionType.MANUAL_EXTERNAL;
   const isActionsDisabled =
@@ -229,9 +230,9 @@ export const DataSource = ({
             id={inputId}
             name="value"
             label={isPCMS ? 'PCMS value' : 'Field value'}
-            type={dataElementConfig!.type}
-            unit={dataElementConfig!.unit}
-            values={dataElementConfig!.values}
+            type={dataElement.config.type}
+            unit={dataElement.config.unit}
+            values={dataElement.config.values}
             disabled={isReadOnly}
           />
 
@@ -276,6 +277,7 @@ export const DataSource = ({
           )}
 
           {!isDraft &&
+            !isCalculated &&
             !isLinkedSource &&
             detection.state === DetectionState.APPROVED && (
               <>
@@ -359,9 +361,9 @@ export const DataSource = ({
           <DataSourceSavingHelper
             dataElementKey={dataElement.key}
             values={values}
-            label={dataElementConfig?.label}
-            unit={dataElementConfig?.unit}
-            type={dataElementConfig?.type}
+            label={dataElement.config.label}
+            unit={dataElement.config.unit}
+            type={dataElement.config.type}
             isDraft={isDraft}
             isRemoving={isRemoving}
             isApproving={isApproving}

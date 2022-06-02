@@ -1,5 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import {
+  AppState,
   DataElement,
   DataElementOrigin,
   DataElementState,
@@ -10,8 +11,32 @@ import {
   EquipmentData,
   Remark,
 } from 'scarlet/types';
+import {
+  findU1Document,
+  preApproveDataElements,
+  updateCalculatedDataElements,
+} from 'scarlet/utils';
 
 const deepCopy = (obj: any) => JSON.parse(JSON.stringify(obj));
+
+export const initEquipment = (
+  state: AppState,
+  equipmentOrigin: EquipmentData
+): { data: EquipmentData; isChanged: boolean } => {
+  const equipment = deepCopy(equipmentOrigin);
+  const hasU1Document = Boolean(findU1Document(state.documents.data));
+
+  let isChanged = false;
+  if (equipment) {
+    isChanged = preApproveDataElements(equipment, hasU1Document, state.unitId);
+    isChanged = updateCalculatedDataElements(equipment) || isChanged;
+  }
+
+  return {
+    data: equipment,
+    isChanged,
+  };
+};
 
 export const updateDataElementState = (
   equipmentOrigin: EquipmentData,
@@ -35,6 +60,7 @@ export const updateDataElementState = (
         // eslint-disable-next-line no-param-reassign
         detection.isPrimary = false;
       });
+      updateCalculatedDataElements(equipment);
     }
   });
 
@@ -89,6 +115,7 @@ export const replaceDetection = (
   setDataElementState(dataElement, state);
 
   updateComponentScannerDetectionsOnApproval(equipment, dataElement);
+  updateCalculatedDataElements(equipment);
 
   return equipment;
 };
@@ -131,6 +158,7 @@ export const removeDetection = (
     : DataElementState.PENDING;
 
   setDataElementState(dataElement, state);
+  updateCalculatedDataElements(equipment);
 
   return equipment;
 };
@@ -153,6 +181,7 @@ export const deleteComponents = (
     (c) => !componentIds.includes(c.id)
   );
   equipment = removeLinkedDetectionsWithoutOrigin(equipment);
+  updateCalculatedDataElements(equipment);
   return equipment;
 };
 
@@ -365,3 +394,10 @@ const setDataElementState = (
   dataElement.touched = true;
   /* eslint-enable no-param-reassign */
 };
+
+// const updateCalculatedDataElements = (equipment: EquipmentData): boolean => {
+//   const hasChanged = false;
+//   equipment.equipmentElements.forEach
+
+//   return false;
+// };

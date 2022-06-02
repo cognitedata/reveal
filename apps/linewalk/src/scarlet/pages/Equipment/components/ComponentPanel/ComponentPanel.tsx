@@ -129,14 +129,15 @@ export const ComponentPanel = () => {
               {isMenuActive && (
                 <Styled.Menu>
                   <Styled.MenuItem
-                    remove
                     disabled={!components.length}
                     onClick={() => {
                       setIsDeleteView(true);
                       toggleMenu();
                     }}
                   >
-                    <Icon type="Delete" /> Delete {groupLabel}
+                    <Styled.RemoveLabel>
+                      <Icon type="Delete" /> Delete {groupLabel}
+                    </Styled.RemoveLabel>
                   </Styled.MenuItem>
                   <Styled.MenuItem onClick={onAddComponent}>
                     <Icon type="Add" /> Add new {groupLabel}

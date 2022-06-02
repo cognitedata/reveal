@@ -1,10 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast, Textarea } from '@cognite/cogs.js';
-import {
-  useAppContext,
-  useDataElementConfig,
-  useDataPanelDispatch,
-} from 'scarlet/hooks';
+import { useAppContext, useDataPanelDispatch } from 'scarlet/hooks';
 import {
   AppActionType,
   DataElement,
@@ -29,9 +25,6 @@ export const OmitModal = ({
   const [reason, setReason] = useState('');
   const [loading, setLoading] = useState(false);
   const isMultiple = dataElements.length > 1;
-  const dataElementConfig = useDataElementConfig(
-    !isMultiple ? dataElements[0] : undefined
-  );
   const dataPanelDispatch = useDataPanelDispatch();
 
   useEffect(() => {
@@ -40,7 +33,7 @@ export const OmitModal = ({
     if (appState.saveState.error) {
       const errorMessage = isMultiple
         ? `Failed to ignore ${dataElements.length} data fields`
-        : `Failed to ignore data field "${dataElementConfig?.label}"`;
+        : `Failed to ignore data field "${dataElements?.[0].config.label}"`;
 
       toast.error(errorMessage);
     }
@@ -50,7 +43,7 @@ export const OmitModal = ({
       if (!appState.saveState.error) {
         const successMessage = isMultiple
           ? `${dataElements.length} data fields have been ignored`
-          : `Data field "${dataElementConfig?.label}" has been ignored`;
+          : `Data field "${dataElements?.[0].config.label}" has been ignored`;
 
         toast.success(successMessage);
 
@@ -85,7 +78,7 @@ export const OmitModal = ({
 
   const description = isMultiple
     ? 'Ignored fields would be omitted from data export.'
-    : `Ignored field "${dataElementConfig?.label}" would be omitted from data export.`;
+    : `Ignored field "${dataElements?.[0].config.label}" would be omitted from data export.`;
 
   return (
     <Modal

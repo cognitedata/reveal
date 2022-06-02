@@ -49,13 +49,7 @@ export const getConnectedDataElements = (
 };
 
 const CONNECTED_DATA_ELEMENT_KEYS = [
-  [
-    EquipmentElementKey.INSTALL_DT,
-    EquipmentElementKey.IN_SERVICE_DT,
-    ComponentElementKey.INSTALL_DATE,
-  ],
-  [EquipmentElementKey.DESIGN_PRESSURE, EquipmentElementKey.MAX_ALLOW_WRK_PRES],
-  [EquipmentElementKey.DESIGN_TEMP, EquipmentElementKey.MAX_ALLOW_WRK_TEMP],
+  [EquipmentElementKey.INSTALL_DT, ComponentElementKey.INSTALL_DATE],
 ] as string[][];
 
 const getConnectedKeys = (key: string) => {

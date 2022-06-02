@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { CellProps } from 'react-table';
 import { Checkbox, Icon, Table } from '@cognite/cogs.js';
-import { useAppContext, useDataElementConfig } from 'scarlet/hooks';
+import { useAppContext } from 'scarlet/hooks';
 import {
   DataElement,
   DataElementOrigin,
@@ -9,7 +9,6 @@ import {
   DetectionType,
 } from 'scarlet/types';
 import {
-  getDataElementConfig,
   getDataElementHasDiscrepancy,
   getDataElementTypeLabel,
   getDetectionSourceAcronym,
@@ -42,7 +41,6 @@ export const ConnectedElements = ({
   onChange,
 }: ConnectedElementsProps) => {
   const { appState } = useAppContext();
-  const dataElementConfig = useDataElementConfig(dataElement);
   const isDiscrepancy = useMemo(
     () => getDataElementHasDiscrepancy(dataElement),
     [dataElement]
@@ -67,10 +65,6 @@ export const ConnectedElements = ({
     () =>
       connectedElements
         .map((item) => {
-          const itemElementConfig = getDataElementConfig(
-            appState.equipmentConfig.data,
-            item
-          );
           const component = item.componentId
             ? appState.equipment.data?.components.find(
                 (component) => component.id === item.componentId
@@ -81,7 +75,7 @@ export const ConnectedElements = ({
 
           return {
             id: item.id,
-            label: itemElementConfig?.label,
+            label: item.config.label,
             type: getDataElementTypeLabel(item),
             componentName: component ? component.name : '-',
             isCurrentDataElement,
@@ -116,8 +110,8 @@ export const ConnectedElements = ({
           <Styled.DetectionValue className="cogs-body-2 strong">
             {getPrintedDataElementValue(
               detection.value!,
-              dataElementConfig?.unit,
-              dataElementConfig?.type
+              dataElement.config.unit,
+              dataElement.config.type
             )}
           </Styled.DetectionValue>
         </Styled.Detection>

@@ -4,11 +4,7 @@ import {
   DataPanelActionType,
   Detection,
 } from 'scarlet/types';
-import {
-  useDataElementConfig,
-  useDataPanelDispatch,
-  useDetectionOrigin,
-} from 'scarlet/hooks';
+import { useDataPanelDispatch, useDetectionOrigin } from 'scarlet/hooks';
 import { useCallback } from 'react';
 
 import * as Styled from './style';
@@ -20,7 +16,6 @@ type DataSourceOriginProps = {
 export const DataSourceOrigin = ({ detection }: DataSourceOriginProps) => {
   const dataPanelDispatch = useDataPanelDispatch();
   const { dataElementOrigin } = useDetectionOrigin(detection);
-  const dataElementConfig = useDataElementConfig(dataElementOrigin);
 
   const openDataElementCard = useCallback(() => {
     dataPanelDispatch({
@@ -41,7 +36,7 @@ export const DataSourceOrigin = ({ detection }: DataSourceOriginProps) => {
         <Styled.Origin>
           <Styled.Tag className="cogs-micro">{tag}</Styled.Tag>
           <Styled.Label className="cogs-body-2">
-            {dataElementConfig?.label || dataElementOrigin?.key}
+            {dataElementOrigin.config.label || dataElementOrigin?.key}
           </Styled.Label>
         </Styled.Origin>
       </Styled.Content>

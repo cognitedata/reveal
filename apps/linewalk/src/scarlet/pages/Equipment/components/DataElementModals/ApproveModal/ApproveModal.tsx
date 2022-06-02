@@ -1,10 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from '@cognite/cogs.js';
-import {
-  useAppContext,
-  useDataElementConfig,
-  useDataPanelDispatch,
-} from 'scarlet/hooks';
+import { useAppContext, useDataPanelDispatch } from 'scarlet/hooks';
 import {
   AppActionType,
   DataElement,
@@ -29,9 +25,6 @@ export const ApproveModal = ({
   const { appState, appDispatch } = useAppContext();
   const [loading, setLoading] = useState(false);
   const isMultiple = dataElements.length > 1;
-  const dataElementConfig = useDataElementConfig(
-    !isMultiple ? dataElements[0] : undefined
-  );
   const dataPanelDispatch = useDataPanelDispatch();
 
   useEffect(() => {
@@ -40,7 +33,7 @@ export const ApproveModal = ({
     if (appState.saveState.error) {
       const errorMessage = isMultiple
         ? `Failed to approve ${dataElements.length} data fields`
-        : `Failed to approve data field "${dataElementConfig?.label}"`;
+        : `Failed to approve data field "${dataElements[0].config.label}"`;
       toast.error(errorMessage);
     }
 
@@ -49,7 +42,7 @@ export const ApproveModal = ({
       if (!appState.saveState.error) {
         const successMessage = isMultiple
           ? `${dataElements.length} data fields have been approved`
-          : `Data field "${dataElementConfig?.label}" has been approved`;
+          : `Data field "${dataElements[0].config.label}" has been approved`;
         toast.success(successMessage);
 
         dataPanelDispatch({
@@ -86,7 +79,7 @@ export const ApproveModal = ({
 
   const description = isMultiple
     ? 'You can modify fields with accepted values after approving.'
-    : `You can modify field "${dataElementConfig?.label}" with accepted value after approving.`;
+    : `You can modify field "${dataElements?.[0].config.label}" with accepted value after approving.`;
 
   return (
     <Modal

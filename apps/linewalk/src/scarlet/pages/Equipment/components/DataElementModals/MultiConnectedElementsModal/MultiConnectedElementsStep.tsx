@@ -1,4 +1,3 @@
-import { useDataElementConfig } from 'scarlet/hooks';
 import { DataElement, Detection } from 'scarlet/types';
 
 import { ConnectedElements } from '../..';
@@ -19,22 +18,18 @@ export const MultiConnectedElementsStep = ({
   connectedElements,
   detection,
   onChange,
-}: MultiConnectedElementsStepProps) => {
-  const dataElementConfig = useDataElementConfig(dataElement);
+}: MultiConnectedElementsStepProps) => (
+  <Styled.Container>
+    <Styled.Header>
+      {stepInfo && <div className="cogs-detail">{stepInfo}</div>}
+      <h5 className="cogs-title-5">{dataElement.config.label}</h5>
+    </Styled.Header>
 
-  return (
-    <Styled.Container>
-      <Styled.Header>
-        {stepInfo && <div className="cogs-detail">{stepInfo}</div>}
-        <h5 className="cogs-title-5">{dataElementConfig?.label}</h5>
-      </Styled.Header>
-
-      <ConnectedElements
-        dataElement={dataElement}
-        detection={detection}
-        connectedElements={connectedElements}
-        onChange={onChange}
-      />
-    </Styled.Container>
-  );
-};
+    <ConnectedElements
+      dataElement={dataElement}
+      detection={detection}
+      connectedElements={connectedElements}
+      onChange={onChange}
+    />
+  </Styled.Container>
+);

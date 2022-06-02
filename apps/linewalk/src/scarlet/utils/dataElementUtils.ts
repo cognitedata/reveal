@@ -11,8 +11,6 @@ import {
   EquipmentConfig,
 } from 'scarlet/types';
 
-import { getLocaleDateString } from '.';
-
 export const getDataElementPrimaryDetection = (
   dataElement: DataElement
 ): Detection | undefined => {
@@ -37,11 +35,16 @@ export const getDataElementPrimaryDetection = (
 
   if (nonPCMSDetection) return nonPCMSDetection;
 
+  if (isCalculatedDataElement(dataElement)) return undefined;
+
   const pcmsDetection = getDataElementPCMSDetection(dataElement);
   if (pcmsDetection) return pcmsDetection;
 
   return undefined;
 };
+
+export const isCalculatedDataElement = (dataElement: DataElement): boolean =>
+  Boolean(dataElement.config.formula);
 
 export const getDataElementPCMSDetection = (
   dataElement: DataElement
@@ -79,30 +82,33 @@ export const getIsDataElementValueAvailable = (
   return value !== null && value !== undefined && value !== '';
 };
 
-export const getDataElementConfig = (
-  config?: EquipmentConfig,
-  dataElement?: DataElement
+export const getDataElementConfigByKey = (
+  config: EquipmentConfig,
+  dataElementKey: string,
+  origin: DataElementOrigin
 ): DataElementConfig | undefined => {
-  if (!dataElement) return undefined;
-
   const configElements =
-    dataElement.origin === DataElementOrigin.COMPONENT
-      ? config?.componentElements
-      : config?.equipmentElements;
+    origin === DataElementOrigin.COMPONENT
+      ? config.componentElements
+      : config.equipmentElements;
 
   return (
-    (configElements && configElements[dataElement.key]) ||
+    (configElements && configElements[dataElementKey]) ||
     ({
-      key: dataElement.key,
-      label: dataElement.key,
+      key: dataElementKey,
+      label: dataElementKey,
     } as DataElementConfig)
   );
 };
 
 export const getDataElementTypeLabel = (
   dataElement?: DataElement
+): string | undefined => getDataElementTypeLabelByOrigin(dataElement?.origin);
+
+export const getDataElementTypeLabelByOrigin = (
+  origin?: DataElementOrigin
 ): string | undefined => {
-  switch (dataElement?.origin) {
+  switch (origin) {
     case DataElementOrigin.EQUIPMENT:
       return 'Equipment';
     case DataElementOrigin.COMPONENT:
@@ -128,8 +134,6 @@ export const getPrintedValue = (value?: string, type?: DataElementType) => {
   if (value === undefined || value === null) return value;
 
   switch (type) {
-    case DataElementType.DATE:
-      return getLocaleDateString(value);
     case DataElementType.BOOLEAN:
       return getPrintedBooleanDataElementValue(value as BooleanDetectionValue);
     default:

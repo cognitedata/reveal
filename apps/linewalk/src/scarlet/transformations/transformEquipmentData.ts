@@ -18,7 +18,7 @@ import {
   MSData,
   DataElementType,
 } from 'scarlet/types';
-import { getLocaleDateString } from 'scarlet/utils';
+import { getDataElementConfig, parseDate } from 'scarlet/utils';
 
 export const transformEquipmentData = ({
   config,
@@ -87,7 +87,7 @@ const getEquipmentElements = (
 
   const equipmentElements = equipmentElementKeys
     .map((key) => {
-      const dataElementConfig = config.equipmentElements[key];
+      const dataElementConfig = getDataElementConfig(config, key, type);
       if (!dataElementConfig) return undefined;
 
       const itemScannerDetections = scannerDetections
@@ -127,6 +127,7 @@ const getEquipmentElements = (
         origin: DataElementOrigin.EQUIPMENT,
         detections,
         state: equipmentStateElement?.state ?? DataElementState.PENDING,
+        config: dataElementConfig,
       } as DataElement;
     })
     .filter((item) => item);
@@ -375,9 +376,17 @@ const getComponentElements = (
       `Component config is not set for ${equipmentType}:${component.type}`
     );
 
-  const componentElements = componentConfig.componentElementKeys.map(
-    (dataElementKey): DataElement =>
-      component.componentElements.find(
+  const componentElements = componentConfig.componentElementKeys
+    .map((dataElementKey) => {
+      const dataElementConfig = getDataElementConfig(
+        config,
+        dataElementKey,
+        equipmentType,
+        component.type
+      );
+      if (!dataElementConfig) return undefined;
+
+      const componentElement = component.componentElements.find(
         (element) => element.key === dataElementKey
       ) || {
         id: uuid(),
@@ -386,17 +395,20 @@ const getComponentElements = (
         state: DataElementState.PENDING,
         detections: [],
         componentId: component.id,
-      }
-  );
+      };
+
+      return {
+        ...componentElement,
+        config: dataElementConfig,
+      };
+    })
+    .filter((dataElement) => dataElement) as DataElement[];
 
   componentElements.forEach((dataElement) => {
-    const dataElementConfig = config.componentElements[dataElement.key];
-    if (!dataElementConfig) return;
-
     const pcmsDetection = getPCMSDetection(
       dataElement.key,
       pcmsComponent,
-      dataElementConfig.type
+      dataElement.config.type
     );
 
     if (pcmsDetection) {
@@ -414,7 +426,7 @@ const getComponentElements = (
     const malDetection = getMALDetection(
       dataElement.key,
       mal,
-      dataElementConfig.type
+      dataElement.config.type
     );
 
     if (malDetection) {
@@ -431,7 +443,7 @@ const getComponentElements = (
     const msDetection = getMSDetection(
       dataElement.key,
       ms,
-      dataElementConfig.type
+      dataElement.config.type
     );
     if (msDetection) {
       const existingMSDetection = dataElement.detections.find((detection) =>
@@ -483,7 +495,7 @@ const transformDetectionValue = (
       return Number.isNaN(parsedValue) ? strValue : parsedValue.toString();
     }
     case DataElementType.DATE:
-      return getLocaleDateString(strValue);
+      return parseDate(strValue);
 
     default:
       return strValue;

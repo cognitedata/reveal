@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useState, useMemo } from 'react';
 import { Field, useFormikContext } from 'formik';
-import { addLeadingZeros, getIsoDate, getIsValidIsoDate } from 'scarlet/utils';
+import { addLeadingZeros, getDate, getIsValidDate } from 'scarlet/utils';
 
 import { DataSourceFieldProps, DataSourceFormValues } from '..';
 
@@ -37,12 +37,12 @@ export const DateField = ({
   useEffect(() => {
     setFieldValue(
       name,
-      getIsoDate(parseInt(year, 10), parseInt(month, 10), parseInt(day, 10))
+      getDate(parseInt(year, 10), parseInt(month, 10), parseInt(day, 10))
     );
   }, [day, month, year]);
 
   const validate = useCallback(
-    (value: string) => !getIsValidIsoDate(value) && 'Invalid date',
+    (value: string) => !getIsValidDate(value) && 'Invalid date',
     []
   );
 

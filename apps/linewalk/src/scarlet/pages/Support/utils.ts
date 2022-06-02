@@ -12,7 +12,6 @@ import { transformEquipmentData } from 'scarlet/transformations';
 import { EquipmentConfig, Facility, UnitListItem } from 'scarlet/types';
 import {
   findU1Document,
-  getEquipmentToSave,
   getEquipmentType,
   preApproveDataElements,
 } from 'scarlet/utils';
@@ -137,14 +136,13 @@ const preapproveEquipment = async (
   const hasU1Document = Boolean(findU1Document(documents));
   const hasToBeSaved =
     preApproveDataElements(equipment, hasU1Document, unitId) || !equipmentState;
-  const equipmentToSave = getEquipmentToSave(equipment);
 
   if (hasToBeSaved) {
     await saveEquipment(client, {
       facility,
       unitId,
       equipmentId,
-      equipment: equipmentToSave,
+      equipment,
       modifiedBy: equipmentState?.modifiedBy,
     });
     console.log('%c    Equipment is saved', 'color: green;');

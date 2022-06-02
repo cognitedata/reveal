@@ -1,18 +1,18 @@
-export const getIsoDate = (year: number, month: number, day: number) => {
+export const getDate = (year: number, month: number, day: number) => {
   return [
-    addLeadingZeros(year, 4),
     addLeadingZeros(month, 2),
     addLeadingZeros(day, 2),
+    addLeadingZeros(year, 4),
   ].join('-');
 };
 
-export const getIsValidIsoDate = (date: string) =>
-  /\d{4}-\d{2}-\d{2}/.test(date) && !Number.isNaN(Date.parse(date));
+export const getIsValidDate = (date: string) =>
+  /\d{2}-\d{2}-\d{4}/.test(date) && !Number.isNaN(Date.parse(date));
 
-export const getLocaleDateString = (isoDate: string) => {
-  const date = new Date(isoDate);
+export const parseDate = (strDate: string) => {
+  const date = new Date(strDate);
 
-  if (Number.isNaN(date.getTime())) return isoDate;
+  if (Number.isNaN(date.getTime())) return strDate;
 
   return [
     addLeadingZeros(date.getMonth() + 1, 2),

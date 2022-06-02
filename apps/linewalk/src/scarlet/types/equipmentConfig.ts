@@ -1,4 +1,9 @@
-import { DataElementType, DataElementUnit, EquipmentComponentType } from '.';
+import {
+  DataElementType,
+  DataElementUnit,
+  EquipmentComponentType,
+  Formula,
+} from '.';
 
 export enum EquipmentType {
   AIR_COOLER = 'air_cooler',
@@ -18,6 +23,7 @@ export type DataElementConfig = {
   type?: DataElementType;
   unit?: DataElementUnit;
   values?: string[];
+  formula?: Formula;
 };
 
 export type EquipmentConfig = {

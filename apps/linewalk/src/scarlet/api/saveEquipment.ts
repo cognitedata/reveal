@@ -3,6 +3,7 @@ import { DataSetId, EquipmentData, Facility } from 'scarlet/types';
 import {
   getEquipmentProgress,
   getEquipmentStateExternalId,
+  getEquipmentToSave,
 } from 'scarlet/utils';
 import config from 'utils/config';
 
@@ -43,7 +44,7 @@ export const saveEquipment = async (
         },
         source: 'p66-scarlet-view',
       },
-      JSON.stringify(equipment),
+      JSON.stringify(getEquipmentToSave(equipment)),
       true,
       true
     );

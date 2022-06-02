@@ -8,6 +8,7 @@ import {
   EquipmentComponent,
   EquipmentComponentType,
 } from 'scarlet/types';
+import { getDataElementConfig } from 'scarlet/utils';
 
 import { useAppDispatch, useAppState } from '.';
 
@@ -32,6 +33,15 @@ export const useAddComponent = () => {
       const componentId = uuid();
       const componentElements = componentElementKeys
         .map((dataElementKey): DataElement | undefined => {
+          const dataElementConfig = getDataElementConfig(
+            equipmentConfig.data!,
+            dataElementKey,
+            equipmentType,
+            componentType
+          );
+
+          if (!dataElementConfig) return;
+
           const dataElement: DataElement = {
             id: uuid(),
             key: dataElementKey,
@@ -39,6 +49,7 @@ export const useAddComponent = () => {
             state: DataElementState.PENDING,
             detections: [],
             componentId,
+            config: dataElementConfig,
           };
 
           // eslint-disable-next-line consistent-return

@@ -3,6 +3,7 @@ export * from 'scarlet/components';
 export * from './AutoCompleteField';
 export * from './BreadcrumbBar';
 export * from './DataElement';
+export * from './CalculatedElementInfoBox';
 export * from './Card';
 export * from './CardHeader';
 export * from './CardRemarks';

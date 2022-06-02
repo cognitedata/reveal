@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   useAppDispatch,
   useCheckedDataElementsState,
-  useDataElementConfig,
   useDataPanelContext,
 } from 'scarlet/hooks';
 import {
@@ -18,6 +17,7 @@ import {
   getDetectionSourceAcronym,
   getIsDataElementValueAvailable,
   getPrintedDataElementValue,
+  isCalculatedDataElement,
 } from 'scarlet/utils';
 
 import * as Styled from './style';
@@ -30,7 +30,6 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
   const appDispatch = useAppDispatch();
   const { dataPanelState, dataPanelDispatch } = useDataPanelContext();
   const [checked, setChecked] = useState(false);
-  const dataElementConfig = useDataElementConfig(dataElement);
   const currentCheckedState = useCheckedDataElementsState();
   const isCheckboxDisabled =
     !!currentCheckedState && currentCheckedState !== dataElement.state;
@@ -38,6 +37,7 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
   const {
     primaryDetection,
     value,
+    isCalculated,
     isDiscrepancy,
     isApproved,
     isOmitted,
@@ -47,19 +47,21 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
 
     const value = getPrintedDataElementValue(
       primaryDetection?.value,
-      dataElementConfig!.unit,
-      dataElementConfig!.type
+      dataElement.config.unit,
+      dataElement.config.type
     );
     const isApproved = dataElement.state === DataElementState.APPROVED;
     const isOmitted = dataElement.state === DataElementState.OMITTED;
 
     const isDiscrepancy = getDataElementHasDiscrepancy(dataElement);
+    const isCalculated = isCalculatedDataElement(dataElement);
 
     const hasValue = getIsDataElementValueAvailable(value);
 
     return {
       primaryDetection,
       value,
+      isCalculated,
       isDiscrepancy,
       isApproved,
       isOmitted,
@@ -132,7 +134,7 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
         onClick={zoomDetection}
       >
         <Styled.Label className="cogs-detail">
-          {dataElementConfig?.label}
+          {dataElement.config.label}
         </Styled.Label>
         {isOmitted ? (
           <Styled.DataContainer>
@@ -148,7 +150,7 @@ export const DataElement = ({ dataElement }: DataElementProps) => {
             {!hasValue ? (
               <Styled.DataContainer>
                 <Styled.DataSource className="cogs-micro">
-                  N/A
+                  {isCalculated ? 'CALC' : 'N/A'}
                 </Styled.DataSource>
                 <Styled.Value secondary className="cogs-body-3 strong">
                   No value

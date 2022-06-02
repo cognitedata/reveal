@@ -14,7 +14,7 @@ export const transformScannerDetection = (data: any): Detection => ({
     data.component_identifier || data.component_type
       ? {
           id: data.component_identifier,
-          type: getType(data.component_type),
+          type: getEquipmentComponentType(data.component_type),
         }
       : undefined,
   ...(data.value_annotation && {
@@ -32,7 +32,9 @@ const getBoundingBox = (data?: any): AnnotationBoundingBox | undefined =>
     height: data.y_max - data.y_min,
   };
 
-const getType = (type: string): EquipmentComponentType | undefined => {
+export const getEquipmentComponentType = (
+  type: string
+): EquipmentComponentType | undefined => {
   switch (type.toLowerCase()) {
     case 'bundle':
       return EquipmentComponentType.BUNDLE;

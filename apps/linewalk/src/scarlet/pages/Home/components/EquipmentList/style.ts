@@ -86,7 +86,7 @@ export const StatusLabel = styled.div<{ status: EquipmentStatus }>`
 
       default:
         return css`
-          color: var(--cogs-secondary-text);
+          color: var(--cogs-text-secondary);
           background-color: rgba(0, 0, 0, 0.05);
         `;
     }

@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { Button, Menu as CogsMenu } from '@cognite/cogs.js';
 import z from 'utils/z';
 
@@ -67,14 +67,12 @@ export const Menu = styled(CogsMenu)`
   right: 0;
 `;
 
-export const MenuItem = styled(CogsMenu.Item)<{ remove?: boolean }>`
+export const MenuItem = styled(CogsMenu.Item)<{ removeComponent?: boolean }>`
   color: var(--cogs-text-primary);
+`;
 
-  ${({ remove }) =>
-    remove &&
-    css`
-      color: #af1613;
-    `};
+export const RemoveLabel = styled.span`
+  color: #af1613;
 `;
 
 export const LoaderContainer = styled.div`

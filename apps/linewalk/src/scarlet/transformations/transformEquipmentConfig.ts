@@ -1,13 +1,24 @@
-import { EquipmentComponentType, EquipmentConfig } from 'scarlet/types';
+import {
+  Formula,
+  FormulaType,
+  EquipmentComponentType,
+  EquipmentConfig,
+} from 'scarlet/types';
 
 export const transformEquipmentConfig = (data: any): EquipmentConfig => ({
   creatingAppVersions: data.creating_app_versions || [],
   equipmentElements: data.equipment_properties.reduce(
-    (result: any, item: any) => ({ ...result, [item.key]: item }),
+    (result: any, item: any) => ({
+      ...result,
+      [item.key]: { ...item, formula: getFormula(item.formula) },
+    }),
     {}
   ),
   componentElements: data.component_properties.reduce(
-    (result: any, item: any) => ({ ...result, [item.key]: item }),
+    (result: any, item: any) => ({
+      ...result,
+      [item.key]: { ...item, formula: getFormula(item.formula) },
+    }),
     {}
   ),
   equipmentTypes: data.equipment_types.reduce(
@@ -60,3 +71,8 @@ const getType = (configType: string): EquipmentComponentType | undefined => {
   }
   return undefined;
 };
+
+const getFormula = (formula?: Formula) =>
+  formula && Object.values(FormulaType).includes(formula.type)
+    ? formula
+    : undefined;

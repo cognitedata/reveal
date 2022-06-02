@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 import z from 'utils/z';
 
 export const Container = styled.div`
-  height: calc(100vh - 106px);
+  height: calc(100vh - 56px);
   position: relative;
 `;
 

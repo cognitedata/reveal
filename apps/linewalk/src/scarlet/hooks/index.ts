@@ -5,7 +5,6 @@ export * from './useCheckedDataElementsState';
 export * from './useCognitePlaygroundClient';
 export * from './useComponent';
 export * from './useConnectedDataElements';
-export * from './useDataElementConfig';
 export * from './useDataPanelContext';
 export * from './useDetectionOrigin';
 export * from './useEquipmentComponentsByType';

@@ -8,7 +8,6 @@ import {
   EquipmentData,
   Facility,
 } from 'scarlet/types';
-import { getEquipmentToSave } from 'scarlet/utils';
 
 export const useSaveEquipment = (
   facility: Facility,
@@ -25,13 +24,12 @@ export const useSaveEquipment = (
     if (!equipment) return;
 
     equipment.modified = Date.now();
-    const equipmentToSave = getEquipmentToSave(equipment);
 
     saveEquipment(client!, {
       facility,
       unitId,
       equipmentId,
-      equipment: equipmentToSave,
+      equipment,
       modifiedBy: isAutoSave ? undefined : authState?.email,
     })
       .then(() => {

@@ -13,6 +13,7 @@ export * from './equipmentDocument';
 export * from './equipmentElementKey';
 export * from './equipmentList';
 export * from './facility';
+export * from './formula';
 export * from './mal';
 export * from './ms';
 export * from './ornate';
