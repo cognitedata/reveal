@@ -38,7 +38,11 @@ export function SimulatorList({
               >
                 <span className="simulator">{simulator.simulator}</span>
                 <span className="connector">{simulator.connectorName}</span>
-                <SimulatorStatusLabel simulator={simulator} />
+                <SimulatorStatusLabel
+                  simulator={simulator}
+                  title={simulator.simulator}
+                  onMenuBar={false}
+                />
               </div>
             }
             // eslint-disable-next-line react/no-array-index-key

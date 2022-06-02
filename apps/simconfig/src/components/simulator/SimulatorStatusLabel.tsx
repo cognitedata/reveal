@@ -10,16 +10,20 @@ import { HEARTBEAT_TIMEOUT_SECONDS } from 'components/simulator/constants';
 interface SimulatorStatusCellProps {
   simulator: SimulatorInstance;
   title?: string;
+  onMenuBar?: boolean;
 }
 
 export function SimulatorStatusLabel({
   simulator,
   title,
+  onMenuBar = true,
 }: SimulatorStatusCellProps) {
   const isSimulatorAvailable = isAfter(
     new Date(simulator.heartbeat),
     new Date(Date.now() - HEARTBEAT_TIMEOUT_SECONDS)
   );
+
+  const statusDisplayTitle = isSimulatorAvailable ? 'Available' : 'Unavailable';
 
   return (
     <SimulatorStatusLabelContainer>
@@ -29,7 +33,7 @@ export function SimulatorStatusLabel({
         size="small"
         variant={isSimulatorAvailable ? 'success' : 'danger'}
       >
-        {title ?? 'Unavailable'}
+        {onMenuBar ? title : statusDisplayTitle}
       </Label>
     </SimulatorStatusLabelContainer>
   );
