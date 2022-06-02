@@ -3,7 +3,7 @@ import React from 'react';
 import { Form, Input } from 'antd';
 
 import { Value } from './common';
-import { useTranslation } from 'common/i18n';
+import { TranslationKeys, useTranslation } from 'common/i18n';
 
 export type OAuthState = {
   clientId: Value<string>;
@@ -129,8 +129,8 @@ export const getOAuth2Configuration = (
   };
 };
 
-// TODO CDFUX-1572 - figure out translation
 export const validateOAuthState = (
+  _t: (key: TranslationKeys) => string,
   state: OAuthState,
   setState: (value: OAuthState) => void,
   validateUrls: boolean = true
@@ -145,7 +145,7 @@ export const validateOAuthState = (
       clientId: {
         ...newState.clientId,
         validateStatus: 'error',
-        errorMsg: 'Client ID is required.',
+        errorMsg: _t('client-id-error'),
       },
     };
   }
@@ -157,7 +157,7 @@ export const validateOAuthState = (
       clientSecret: {
         ...newState.clientSecret,
         validateStatus: 'error',
-        errorMsg: 'Client secret is required.',
+        errorMsg: _t('client-secret-error'),
       },
     };
   }
@@ -169,7 +169,7 @@ export const validateOAuthState = (
       loginUrl: {
         ...newState.loginUrl,
         validateStatus: 'error',
-        errorMsg: 'Login URL is required.',
+        errorMsg: _t('login-url-error'),
       },
     };
   }
@@ -181,7 +181,7 @@ export const validateOAuthState = (
       logoutUrl: {
         ...newState.logoutUrl,
         validateStatus: 'error',
-        errorMsg: 'Logout URL is required.',
+        errorMsg: _t('logout-url-error'),
       },
     };
   }
@@ -193,7 +193,7 @@ export const validateOAuthState = (
       tokenUrl: {
         ...newState.tokenUrl,
         validateStatus: 'error',
-        errorMsg: 'Token URL is required.',
+        errorMsg: _t('token-url-error'),
       },
     };
   }

@@ -212,6 +212,7 @@ const LegacyIdentityProviderForm = () => {
     let failure = false;
 
     const validDomainsResult = validateDomainInput(
+      t,
       validDomains.value || defaultValidDomains
     );
     if (validDomainsResult.failure) {
@@ -221,6 +222,7 @@ const LegacyIdentityProviderForm = () => {
 
     if (useAppDomains.value || isAppDomainsSet) {
       const appDomainsResult = validateDomainInput(
+        t,
         appDomains.value || defaultAppDomains,
         true
       );
@@ -234,7 +236,7 @@ const LegacyIdentityProviderForm = () => {
     let updateBody: UpdateBody;
     switch (identityProvider) {
       case 'azureAd':
-        innerFailure = validateAzureState(azureState, setAzureState);
+        innerFailure = validateAzureState(azureState, setAzureState, t);
         failure = failure || innerFailure;
 
         updateBody = {
@@ -245,7 +247,7 @@ const LegacyIdentityProviderForm = () => {
         break;
 
       case 'oauth2':
-        innerFailure = validateOAuthState(oauthState, setOAuthState);
+        innerFailure = validateOAuthState(t, oauthState, setOAuthState);
         failure = failure || innerFailure;
 
         updateBody = {
@@ -256,7 +258,12 @@ const LegacyIdentityProviderForm = () => {
         break;
 
       case 'googleOauth2':
-        innerFailure = validateOAuthState(googleState, setGoogleState, false);
+        innerFailure = validateOAuthState(
+          t,
+          googleState,
+          setGoogleState,
+          false
+        );
         failure = failure || innerFailure;
 
         updateBody = {
@@ -331,7 +338,7 @@ const LegacyIdentityProviderForm = () => {
             tokenSeparators={[',', ' ']}
             value={validDomains.value || defaultValidDomains}
             onChange={(values: string[]) =>
-              setValidDomains(validateDomainInput(values))
+              setValidDomains(validateDomainInput(t, values))
             }
           />
         </Form.Item>
@@ -407,7 +414,7 @@ const LegacyIdentityProviderForm = () => {
             value={appDomains.value || defaultAppDomains}
             disabled={!useAppDomains.value && !isAppDomainsSet}
             onChange={(values: string[]) =>
-              setAppDomains(validateDomainInput(values, true))
+              setAppDomains(validateDomainInput(t, values, true))
             }
           />
         </Form.Item>

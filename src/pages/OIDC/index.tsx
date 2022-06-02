@@ -10,7 +10,7 @@ import { useRouteMatch } from 'react-router';
 import { useAuthConfiguration } from 'hooks';
 import { StyledHelpIcon } from 'pages/components/CustomInfo';
 import styled from 'styled-components';
-import { useTranslation } from 'common/i18n';
+import { TranslationKeys, useTranslation } from 'common/i18n';
 
 const formItemLayout = {
   labelCol: {
@@ -23,18 +23,19 @@ const formItemLayout = {
   },
 };
 
-// TODO CDFUX-1572 - figure out translation
-const urlRules = (required = true) => [
+const urlRules = (_t: (key: TranslationKeys) => string, required = true) => [
   {
     required,
-    message: 'Please enter a valid url!',
+    message: _t('valid-url-info'),
   },
   () => ({
     validator(_: any, value: string) {
       if (!required && !value) {
         return Promise.resolve();
       }
-      return isValidURL(value);
+
+      const invalidUrlErrMessage = _t('valid-url-error');
+      return isValidURL(value, invalidUrlErrMessage);
     },
   }),
 ];
@@ -162,7 +163,7 @@ export default function OIDCConfigContainer() {
         label={t('jwks-url')}
         name="jwksUrl"
         hasFeedback
-        rules={urlRules()}
+        rules={urlRules(t)}
       >
         <Input disabled={updating} />
       </Form.Item>
@@ -172,7 +173,7 @@ export default function OIDCConfigContainer() {
         name="tokenUrl"
         required={false}
         hasFeedback
-        rules={urlRules(false)}
+        rules={urlRules(t, false)}
       >
         <Input disabled={updating} />
       </Form.Item>
@@ -181,7 +182,7 @@ export default function OIDCConfigContainer() {
         label={t('issuer')}
         name="issuer"
         hasFeedback
-        rules={urlRules()}
+        rules={urlRules(t)}
       >
         <Input disabled={updating} />
       </Form.Item>
@@ -190,7 +191,7 @@ export default function OIDCConfigContainer() {
         label={t('audience')}
         name="audience"
         hasFeedback
-        rules={urlRules()}
+        rules={urlRules(t)}
       >
         <Input disabled={updating} />
       </Form.Item>
@@ -255,13 +256,12 @@ const StyledFormItemLabel = styled.div`
   display: flex;
 `;
 
-// TODO CDFUX-1572 - figure out translation
-function isValidURL(url: string) {
+function isValidURL(url: string, errMessage: string) {
   try {
     // eslint-disable-next-line no-new
     new URL(url);
     return Promise.resolve();
   } catch {
-    return Promise.reject(new Error('Invalid URL'));
+    return Promise.reject(new Error(errMessage));
   }
 }

@@ -5,7 +5,7 @@ import { Form, Input } from 'antd';
 import { Value } from './common';
 
 import { AZURE_APP_RESOURCE_ID } from 'utils/constants';
-import { useTranslation } from 'common/i18n';
+import { TranslationKeys, useTranslation } from 'common/i18n';
 
 export type AzureADState = {
   appId: Value<string>;
@@ -49,7 +49,7 @@ const AzureADForm = (props: AzureADFormProps) => {
         <Input
           value={appId.value}
           disabled={props.disabled}
-          onChange={(e) => setAppId({ value: e.target.value })}
+          onChange={(e: any) => setAppId({ value: e.target.value })}
         />
       </Form.Item>
       <Form.Item
@@ -62,7 +62,7 @@ const AzureADForm = (props: AzureADFormProps) => {
         <Input
           value={appSecret.value}
           disabled={props.disabled}
-          onChange={(e) => setAppSecret({ value: e.target.value })}
+          onChange={(e: any) => setAppSecret({ value: e.target.value })}
         />
       </Form.Item>
       <Form.Item
@@ -75,7 +75,7 @@ const AzureADForm = (props: AzureADFormProps) => {
         <Input
           value={tenantId.value}
           disabled={props.disabled}
-          onChange={(e) => setTenantId({ value: e.target.value })}
+          onChange={(e: any) => setTenantId({ value: e.target.value })}
         />
       </Form.Item>
     </>
@@ -93,10 +93,10 @@ export const getAzureConfiguration = (
   };
 };
 
-// TODO CDFUX-1572 - figure out translation
 export const validateAzureState = (
   state: AzureADState,
-  setState: (value: AzureADState) => void
+  setState: (value: AzureADState) => void,
+  _t: (key: TranslationKeys) => string
 ): boolean => {
   let failure = false;
   let newState = state;
@@ -108,7 +108,7 @@ export const validateAzureState = (
       appId: {
         ...newState.appId,
         validateStatus: 'error',
-        errorMsg: 'App ID is required.',
+        errorMsg: _t('app-id-error'),
       },
     };
   }
@@ -120,7 +120,7 @@ export const validateAzureState = (
       appSecret: {
         ...newState.appSecret,
         validateStatus: 'error',
-        errorMsg: 'App secret is required.',
+        errorMsg: _t('app-secret-error'),
       },
     };
   }
@@ -132,7 +132,7 @@ export const validateAzureState = (
       tenantId: {
         ...newState.tenantId,
         validateStatus: 'error',
-        errorMsg: 'Tenant ID is required.',
+        errorMsg: _t('tenant-id-error'),
       },
     };
   }

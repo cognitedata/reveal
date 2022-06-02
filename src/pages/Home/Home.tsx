@@ -54,6 +54,7 @@ export default function () {
           style={{
             cursor: 'pointer',
             color: 'var(--cogs-greyscale-grey5)',
+            marginLeft: '4px',
           }}
           type={isFetching || isMutating ? 'Loader' : 'Refresh'}
           onClick={() => client.invalidateQueries()}

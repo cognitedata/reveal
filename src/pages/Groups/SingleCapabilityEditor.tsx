@@ -17,7 +17,7 @@ import ScopesSelector from './ScopesSelector';
 import ActionsSelector from './ActionsSelector';
 import CapabilityTypeSelector from './CapabilityTypeSelector';
 
-import { useTranslation } from 'common/i18n';
+import { TranslationKeys, useTranslation } from 'common/i18n';
 
 interface SingleCapabilityEditorProps {
   visible: boolean;
@@ -70,20 +70,23 @@ const validateActions = (
   };
 };
 
-// TODO CDFUX-1572 - figure out translation
-const validateScope = (value: any, capability: string): FormValue<object> => {
+const validateScope = (
+  value: any,
+  capability: string,
+  _t: (key: TranslationKeys) => string
+): FormValue<object> => {
   if (value.assetIdScope && value.assetIdScope.subtreeIds.length === 0) {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one asset',
+      errorMessage: _t('single-capability-validate-asset'),
     };
   }
   if (value.assetRootIdScope && value.assetRootIdScope.rootIds.length === 0) {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one root asset',
+      errorMessage: _t('single-capability-validate-root-asset'),
     };
   }
   if (
@@ -94,7 +97,7 @@ const validateScope = (value: any, capability: string): FormValue<object> => {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one time series',
+      errorMessage: _t('single-capability-validate-time-series'),
     };
   }
   if (
@@ -105,7 +108,7 @@ const validateScope = (value: any, capability: string): FormValue<object> => {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one security category',
+      errorMessage: _t('single-capability-validate-security-category'),
     };
   }
   if (
@@ -116,7 +119,7 @@ const validateScope = (value: any, capability: string): FormValue<object> => {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one extraction pipeline',
+      errorMessage: _t('single-capability-validate-extraction-pipeline'),
     };
   }
   if (
@@ -127,14 +130,14 @@ const validateScope = (value: any, capability: string): FormValue<object> => {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one data set',
+      errorMessage: _t('single-capability-validate-dataset'),
     };
   }
   if (value.datasetScope && value.datasetScope.ids.length === 0) {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one data set',
+      errorMessage: _t('single-capability-validate-dataset'),
     };
   }
   if (
@@ -144,21 +147,21 @@ const validateScope = (value: any, capability: string): FormValue<object> => {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one extraction pipeline',
+      errorMessage: _t('single-capability-validate-extraction-pipeline'),
     };
   }
   if (value.partition && value.partition.partitionIds.length === 0) {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one partition',
+      errorMessage: _t('single-capability-validate-partition'),
     };
   }
   if (value.tableScope && isEmpty(value.tableScope)) {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one table',
+      errorMessage: _t('single-capability-validate-table'),
     };
   }
   return {
@@ -203,7 +206,7 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
   };
 
   const handleScopeChange = (value: object) => {
-    const validationResult = validateScope(value, capabilityType.value);
+    const validationResult = validateScope(value, capabilityType.value, t);
     setScope(validationResult);
   };
 

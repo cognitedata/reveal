@@ -5,6 +5,7 @@ import {
   Group,
   SingleCogniteCapability,
 } from '@cognite/sdk';
+import { TranslationKeys } from 'common/i18n';
 import queryString from 'query-string';
 
 const capitalize = (s: string) =>
@@ -53,119 +54,107 @@ const nameToAclTypeMap = {
   wells: 'wellsAcl',
 };
 
-// TODO CDFUX-1572 - figure out translation
-const nameToFormattedName = {
-  apikeys: 'API Keys',
-  securitycategories: 'Security categories',
-  '3d': '3D',
-  timeseries: 'Time series',
-  digitaltwin: 'Digital twin',
-  datasets: 'Data sets',
-  transformations: 'Transformations',
-  extractionpipelines: 'Extraction pipelines',
-  extractionruns: 'Extraction pipeline runs',
-  entitymatching: 'Entity matching',
-  documentpipelines: 'Document pipelines',
-  filepipelines: 'File pipelines',
-  documentfeedback: 'Document feedback',
-  annotations: 'Annotations',
-  robotics: 'Robotics',
-  sessions: 'Sessions',
-  templategroups: 'Template groups',
-  templateinstances: 'Template instances',
-  visionmodel: 'Vision model',
+const getCapabilityNameTranslationKey = {
+  apikeys: 'api-keys',
+  securitycategories: 'security-categories',
+  '3d': '3d',
+  timeseries: 'time-series',
+  digitaltwin: 'digital-twin',
+  datasets: 'data-sets',
+  transformations: 'transformations',
+  extractionpipelines: 'extraction-pipelines',
+  extractionruns: 'extraction-runs',
+  entitymatching: 'entity-matching',
+  documentpipelines: 'document-pipelines',
+  filepipelines: 'file-pipelines',
+  documentfeedback: 'document-feedback',
+  annotations: 'annotations',
+  robotics: 'robotics',
+  sessions: 'sessions',
+  templategroups: 'template-groups',
+  templateinstances: 'template-instances',
+  visionmodel: 'vision-model',
 };
 
-const capabilityTypeGroups = [
-  {
-    name: 'Data',
-    items: [
-      '3d',
-      'assets',
-      'events',
-      'files',
-      'raw',
-      'relationships',
-      'seismic',
-      'sequences',
-      'timeseries',
-      'templategroups',
-      'templateinstances',
-    ],
-  },
-  {
-    name: 'Protect or denylist data',
-    items: ['datasets', 'securitycategories'],
-  },
-  {
-    name: 'Permissions to access management.',
-    items: ['apikeys', 'groups', 'users', 'projects', 'sessions'],
-  },
-  {
-    name: 'Other',
-    items: [
-      'extractionpipelines',
-      'extractionruns',
-      'digitaltwin',
-      'functions',
-      'transformations',
-      'labels',
-      'geospatial',
-      'entitymatching',
-      'documentpipelines',
-      'filepipelines',
-      'documentfeedback',
-      'annotations',
-      'wells',
-      'visionmodel',
-      'robotics',
-    ],
-  },
-];
+const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
+  const capabilityTypeGroups = [
+    {
+      name: _t('data'),
+      items: [
+        '3d',
+        'assets',
+        'events',
+        'files',
+        'raw',
+        'relationships',
+        'seismic',
+        'sequences',
+        'timeseries',
+        'templategroups',
+        'templateinstances',
+      ],
+    },
+    {
+      name: _t('protect-or-denylist-data'),
+      items: ['datasets', 'securitycategories'],
+    },
+    {
+      name: _t('permission-to-access-management'),
+      items: ['apikeys', 'groups', 'users', 'projects', 'sessions'],
+    },
+    {
+      name: _t('other'),
+      items: [
+        'extractionpipelines',
+        'extractionruns',
+        'digitaltwin',
+        'functions',
+        'transformations',
+        'labels',
+        'geospatial',
+        'entitymatching',
+        'documentpipelines',
+        'filepipelines',
+        'documentfeedback',
+        'annotations',
+        'wells',
+        'visionmodel',
+        'robotics',
+      ],
+    },
+  ];
+  return { capabilityTypeGroups };
+};
 
 export const capabilityDescriptions = {
-  assets:
-    'Assets represent objects or groups of objects, such as physical equipment or systems',
-  apikeys: 'API keys let services authenticate towards CDF',
-  events:
-    'Events store information that happen over a period of time, such as maintenance logs',
-  files: 'Files include documents such as P&IDs, logic diagrams, images, etc.',
-  groups:
-    'Groups store which permissions different users should have access to',
-  projects:
-    'Project is used to configure which Identity Provider CDF uses to authenticate users against',
+  assets: 'capability-desc-assets',
+  apikeys: 'capability-desc-apikeys',
+  events: 'capability-desc-events',
+  files: 'capability-desc-files',
+  groups: 'capability-desc-groups',
+  projects: 'capability-desc-projects',
   raw: 'RAW is a tabular store that serves as a staging area for data in CDF',
-  securitycategories:
-    'Security categories is a way to denylist data. Data with a security category is only visible to users in groups that have explicit access to the specific security category',
-  sequences:
-    'Sequences is a tabular data representation used for e.g., well trajectories or pump design curves',
-  '3d': '3D includes 3D models, 3D model revisions, and 3D files',
-  timeseries: 'Time series store data points in time order, e.g., sensor data',
-  users: 'Users refer to service accounts',
-  relationships:
-    'Relationships represent connections between pairs of CDF resources',
-  datasets:
-    'Data sets are groups of data based on origin, such as all SAP work orders',
-  transformations:
-    'Transformations are used to transform data from RAW tables and write it to CDF resources or write back to RAW tables',
-  extractionpipelines:
-    'Extraction pipelines are used to extract data from a source system',
-  extractionruns: 'Execution history for extraction pipelines',
-  labels:
-    'With labels you as an IT manager or data engineer can create a predefined set of managed terms that you can use to annotate and group assets',
-  seismic: 'Seismic is a representation of cubes of seismic traces',
-  digitaltwin:
-    'Digital twin is a representation of a 3D world used in a digital twin application',
-  entitymatching: 'Match resources to their corresponding entity',
-  annotations: 'Edit annotations in documents',
-  robotics: 'Control robots and access robotics data',
-  sessions:
-    'Sessions are used to maintain access to CDF resources for an extended period of time beyond the initial access granted to an internal service.',
-  templategroups: 'Organize and structure your data',
-  templateinstances: 'Access data organized in templategroups',
-  wells: 'Access Well Data Layer',
-  visionmodel:
-    'Computer vision models are used to analyze and extract information from imagery data.',
+  securitycategories: 'capability-desc-securitycategories',
+  sequences: 'capability-desc-sequences',
+  '3d': 'capability-desc-3d',
+  timeseries: 'capability-desc-timeseries',
+  users: 'capability-desc-users',
+  relationships: 'capability-desc-relationships',
+  datasets: 'capability-desc-datasets',
+  transformations: 'capability-desc-transformations',
+  extractionpipelines: 'capability-desc-extractionpipelines',
+  extractionruns: 'capability-desc-extractionruns',
+  labels: 'capability-desc-labels',
+  seismic: 'capability-desc-seismic',
+  digitaltwin: 'capability-desc-digitaltwin',
+  entitymatching: 'capability-desc-entitymatching',
+  annotations: 'capability-desc-annotations',
+  robotics: 'capability-desc-robotics',
+  sessions: 'capability-desc-sessions',
+  templategroups: 'capability-desc-templategroups',
+  templateinstances: 'capability-desc-templateinstances',
+  wells: 'capability-desc-wells',
+  visionmodel: 'capability-desc-visionmodel',
 };
 
 const deprecatedAclTypes = ['genericsAcl', 'modelHostingAcl', 'typesAcl'];
@@ -243,11 +232,21 @@ export const getCapabilityFormattedName = (
   capability: CogniteCapability | string | SingleCogniteCapability
 ) => {
   const capabilityName = getCapabilityName(capability) || capability;
-  // @ts-ignore
-  return nameToFormattedName[capabilityName] || capitalize(capabilityName);
+  const capabilityTranslateKey =
+    // @ts-ignore
+    getCapabilityNameTranslationKey[capabilityName];
+
+  return {
+    // @ts-ignore
+    capability: capabilityTranslateKey || capitalize(capabilityName),
+    requireTranslate: Boolean(capabilityTranslateKey),
+  };
 };
 
-export const getCapabilityTypeGroups = () => {
+export const getCapabilityTypeGroups = (
+  _t: (key: TranslationKeys) => string
+) => {
+  const { capabilityTypeGroups } = prepareCapabilityTypeGroups(_t);
   const filteredGroups = capabilityTypeGroups.map((group) => {
     const filteredItems = group.items.filter(
       (item) => !!getCapabilityName(item)
@@ -258,47 +257,51 @@ export const getCapabilityTypeGroups = () => {
 };
 
 export const getCapabilityDescription = (
-  capability: CogniteCapability | string | SingleCogniteCapability
+  capability: CogniteCapability | string | SingleCogniteCapability,
+  _t: (key: TranslationKeys) => string
 ) => {
   const capabilityName = getCapabilityName(capability);
   // @ts-ignore
-  return capabilityDescriptions[capabilityName] || '';
+  const capabilityDescKey = capabilityDescriptions[capabilityName];
+
+  return _t(capabilityDescKey) || '';
 };
 
 export const getScopeLabel = (
   scope: string,
-  capability: CogniteCapability | string | SingleCogniteCapability
+  capability: CogniteCapability | string | SingleCogniteCapability,
+  _t: (key: TranslationKeys) => string
 ) => {
   switch (scope) {
     case 'all':
-      return 'All';
+      return _t('all');
     case 'currentuserscope':
-      return 'Current user';
+      return _t('current-user');
     case 'assetIdScope':
-      return 'Assets';
+      return _t('assets');
     case 'assetRootIdScope':
-      return 'Root assets';
+      return _t('root-assets');
     case 'tableScope':
-      return 'Tables';
+      return _t('tables');
     case 'datasetScope':
-      return 'Data sets';
+      return _t('data-sets');
     case 'idScope':
       switch (getCapabilityName(capability)) {
         case 'extractionpipelines':
-          return 'Extraction pipelines';
+          return _t('extraction-pipelines');
         default:
-          return 'Data sets';
+          return _t('data-sets');
       }
     case 'extractionPipelineScope':
-      return 'Extraction pipelines';
+      return _t('extraction-pipelines');
     case 'partition':
-      return 'Partition';
+      return _t('partition');
     case 'idscope':
       switch (getCapabilityName(capability)) {
         case 'timeseries':
-          return 'Time series';
+          return _t('time-series');
         case 'securitycategories':
-          return 'Security categories';
+          return _t('security-categories');
       }
   }
   return null;

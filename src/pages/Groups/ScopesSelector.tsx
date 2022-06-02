@@ -11,6 +11,7 @@ import SecurityCategoriesSelector from './SecurityCategoriesSelector';
 import PartitionSelector from './PartitionSelector';
 import ResourcesSelector from './ResourcesSelector';
 import RawSelector from './RawSelector';
+import { useTranslation } from 'common/i18n';
 
 const SelectorContainer = styled.div`
   margin-top: 10px;
@@ -22,6 +23,7 @@ type Props = {
   onChange: (_: any) => void;
 };
 const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
+  const { t } = useTranslation();
   const scopes = getCapabilityScopes(capabilityKey);
 
   const selectedScope = Object.keys(value || {})?.[0] || 'all';
@@ -249,7 +251,7 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
       <Radio.Group value={selectedScope} onChange={(e) => onSelectScope(e)}>
         {scopes.map((scope) => (
           <Radio value={scope} key={scope}>
-            {getScopeLabel(scope, capabilityKey)}
+            {getScopeLabel(scope, capabilityKey, t)}
           </Radio>
         ))}
       </Radio.Group>
