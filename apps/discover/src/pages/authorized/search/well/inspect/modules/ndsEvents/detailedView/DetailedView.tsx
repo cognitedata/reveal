@@ -8,6 +8,7 @@ import { ViewModeControl } from '../../common/ViewModeControl';
 import { WellboreNavigationPanel } from '../../common/WellboreNavigationPanel';
 import { NdsTreemap } from '../treemap';
 import { getRiskTypeTreemapData } from '../utils/getRiskTypeTreemapData';
+import { getSubtypeTreemapData } from '../utils/getSubtypeTreemapData';
 
 import { NdsDetailedViewModes } from './constants';
 import { DetailedViewContent, ViewModeControlWrapper } from './elements';
@@ -26,8 +27,13 @@ export const DetailedView: React.FC<DetailedViewProps> = ({
 
   const clearDetailedViewNdsData = () => setDetailedViewNdsData(undefined);
 
-  const treemapData = useMemo(
+  const riskTypeTreemapData = useMemo(
     () => getRiskTypeTreemapData(detailedViewNdsData || []),
+    [detailedViewNdsData]
+  );
+
+  const subtypeTreemapData = useMemo(
+    () => getSubtypeTreemapData(detailedViewNdsData || []),
     [detailedViewNdsData]
   );
 
@@ -51,7 +57,11 @@ export const DetailedView: React.FC<DetailedViewProps> = ({
 
       <DetailedViewContent>
         {selectedViewMode === NdsDetailedViewModes.RiskType && (
-          <NdsTreemap data={treemapData} />
+          <NdsTreemap data={riskTypeTreemapData} />
+        )}
+
+        {selectedViewMode === NdsDetailedViewModes.Subtype && (
+          <NdsTreemap data={subtypeTreemapData} />
         )}
 
         {selectedViewMode === NdsDetailedViewModes.Table && (
