@@ -77,7 +77,7 @@ export default function Actions({ id, name }: { id: number; name: string }) {
             onClick={() =>
               Modal.confirm({
                 title: t('confirm-delete'),
-                okText: t('text-delete'),
+                okText: t('delete'),
                 content: (
                   <>
                     {t('confirm-delete-service-account')}
@@ -88,7 +88,7 @@ export default function Actions({ id, name }: { id: number; name: string }) {
               })
             }
           >
-            {t('text-delete')}
+            {t('delete')}
           </Menu.Item>
         </Menu>
       }

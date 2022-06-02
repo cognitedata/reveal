@@ -38,7 +38,7 @@ const CustomInfo = (props: any) => {
 
   return (
     <StyledInfoboxContainer>
-      <Infobox type={type || 'neutral'} title={alertTitle || t('text-info')}>
+      <Infobox type={type || 'neutral'} title={alertTitle || t('info')}>
         {alertMessage}
         <StyledDisableButtonSection>
           <Button
@@ -56,9 +56,9 @@ const CustomInfo = (props: any) => {
         </StyledDisableButtonSection>
         <DeleteConfirmModal
           isOpen={isModalVisible}
-          confirmTitle={confirmTitle || alertTitle || t('text-confirm')}
+          confirmTitle={confirmTitle || alertTitle || t('confirm')}
           confirmMessage={confirmMessage}
-          confirmLabel={confirmLabel || t('text-delete')}
+          confirmLabel={confirmLabel || t('delete')}
           onCancel={closeConfirmModal}
           onConfirm={handleSubmit}
         />

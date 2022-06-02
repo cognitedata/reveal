@@ -139,7 +139,7 @@ export default function Groups() {
         description={
           <>
             {t('capability-missing-desc')} <strong>groupsAcl:READ</strong>{' '}
-            {t('capability-missing-desc')}
+            {t('capability-missing-desc-more')}
           </>
         }
       />
@@ -172,7 +172,7 @@ export default function Groups() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    {t('text-learn-more')}
+                    {t('learn-more')}
                   </a>
                 </p>
               }
@@ -196,7 +196,7 @@ export default function Groups() {
       },
     },
     {
-      title: t('text-name'),
+      title: t('name'),
       dataIndex: 'name',
       key: 'name',
       sorter: (a?: Group, b?: Group) => {
@@ -204,7 +204,7 @@ export default function Groups() {
       },
     },
     {
-      title: t('capability_other'),
+      title: t('capabilities'),
       key: 'capability',
       render(g: Group) {
         if (g.capabilities && g.capabilities.length > 0) {
@@ -218,7 +218,7 @@ export default function Groups() {
     },
     legacyFlow
       ? {
-          title: t('service-account_other'),
+          title: t('service-accounts'),
           dataIndex: 'id',
           align: 'center',
           render(id: number) {
@@ -230,7 +230,7 @@ export default function Groups() {
       : false,
 
     {
-      title: t('text-actions'),
+      title: t('actions'),
       key: 'actions',
       width: 100,
       align: 'center',
@@ -264,12 +264,12 @@ export default function Groups() {
                         ?
                       </>
                     ),
-                    okText: t('text-delete'),
+                    okText: t('delete'),
                     onOk: () => deleteGroup(item.id),
                   })
                 }
               >
-                {t('text-delete')}
+                {t('delete')}
               </Menu.Item>
             </Menu>
           }

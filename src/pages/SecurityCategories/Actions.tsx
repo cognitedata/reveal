@@ -50,7 +50,7 @@ export default function Actions({ id }: { id: number }) {
             onClick={() =>
               Modal.confirm({
                 title: t('confirm-delete'),
-                okText: t('text-delete'),
+                okText: t('delete'),
                 content: (
                   <>
                     {t('confirm-delete-group')} <strong>{id}</strong>?

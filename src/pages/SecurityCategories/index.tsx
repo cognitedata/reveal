@@ -51,9 +51,9 @@ export default function SecurityCategories() {
       {showModal && (
         <Modal
           visible
-          cancelText={t('text-cancel')}
+          cancelText={t('cancel')}
           title={t('create-security-category')}
-          okText={t('text-create')}
+          okText={t('create')}
           okButtonProps={{ disabled: !newName }}
           onOk={async () => {
             await createCategory(newName);
@@ -66,7 +66,7 @@ export default function SecurityCategories() {
           }}
         >
           <Form layout="horizontal">
-            <Form.Item name="name" label={t('text-name')}>
+            <Form.Item name="name" label={t('name')}>
               <Input
                 onChange={(e) => setNewName(e.target.value)}
                 value={newName}

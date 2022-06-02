@@ -74,7 +74,7 @@ export default function () {
         </Menu.Item>
         {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && (
           <Menu.Item key="service-accounts" disabled={!usersRead}>
-            {t('service-account_other')}
+            {t('service-accounts')}
           </Menu.Item>
         )}
         {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && (

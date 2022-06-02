@@ -277,7 +277,7 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            {t('text-learn-more')}{' '}
+            {t('learn-more')}{' '}
           </a>
           {t('single-capability-about-dataset')}
         </p>
@@ -310,7 +310,7 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
         </div>
         <Divider />
         <div style={actionsDisabled ? disabledStyle : {}}>
-          <Form.Item label={t('text-actions')} required>
+          <Form.Item label={t('actions')} required>
             {actionsDisabled ? (
               <div>
                 <Icon type="Info" />
@@ -328,7 +328,7 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
         <Divider />
         <div style={actionsDisabled ? disabledStyle : {}}>
           {showDataSetsRecommendation()}
-          <Form.Item label={t('text-scope')} required>
+          <Form.Item label={t('scope')} required>
             {scopeDisabled ? (
               <div>
                 <Icon type="Info" />
@@ -353,7 +353,7 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
           }
           onClick={() => addCapability()}
         >
-          {t('text-save')}
+          {t('save')}
         </Button>
       </Form>
     </Drawer>

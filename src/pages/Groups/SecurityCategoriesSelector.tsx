@@ -51,7 +51,7 @@ const SecurityCategorySelector = ({
           (sc) => String(sc.key) === String(id)
         ) || {
           key: Number(id),
-          label: t('text-not-available'),
+          label: t('not-available'),
           notAvailable: true,
         };
         return category;
@@ -75,7 +75,7 @@ const SecurityCategorySelector = ({
         mode="multiple"
         value={selectedCategories.map((c) => c.key)}
         placeholder={t('security-category-selector-placeholder')}
-        notFoundContent={fetching ? <Spin /> : t('text-not-found')}
+        notFoundContent={fetching ? <Spin /> : t('not-found')}
         filterOption={false}
         onChange={(v) =>
           setSelectedCategories(
@@ -99,11 +99,11 @@ const SecurityCategorySelector = ({
               title={
                 securityCategory.notAvailable &&
                 t('security-category-not-available-info', {
-                  key: securityCategory.key,
+                  categoryId: securityCategory.key,
                 })
               }
             >
-              <>{securityCategory.label || <i>{t('text-no-name')}</i>}</>
+              <>{securityCategory.label || <i>{t('no-name')}</i>}</>
             </Tooltip>
           </Option>
         ))}

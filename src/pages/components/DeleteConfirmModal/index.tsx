@@ -43,7 +43,7 @@ const DeleteConfirmModal = ({
         visible={isOpen}
         footer={[
           <StyledCancelButton onClick={handleClose} type="ghost">
-            {t('text-cancel')}
+            {t('cancel')}
           </StyledCancelButton>,
           <Button disabled={!isConfirmed} onClick={handleDelete} type="danger">
             {confirmLabel}

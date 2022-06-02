@@ -105,7 +105,7 @@ export default function GroupDrawer({ group, onClose }: Props) {
         <Form.Item
           hasFeedback={isLoading}
           validateStatus="validating"
-          label={t('capability_one')}
+          label={t('capability')}
           extra={
             <>
               {t('capability-info')}{' '}
@@ -114,7 +114,7 @@ export default function GroupDrawer({ group, onClose }: Props) {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {t('text-learn-more')}
+                {t('learn-more')}
               </a>
             </>
           }
@@ -150,9 +150,9 @@ export default function GroupDrawer({ group, onClose }: Props) {
         </Form.Item>
         <Form.Item>
           <Button disabled={isLoading} type="primary" htmlType="submit">
-            {group ? t('text-update') : t('text-create')}
+            {group ? t('update') : t('create')}
           </Button>
-          <Button onClick={onClose}>{t('text-cancel')}</Button>
+          <Button onClick={onClose}>{t('cancel')}</Button>
         </Form.Item>
       </Form>
     </Drawer>

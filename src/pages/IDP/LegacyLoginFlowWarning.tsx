@@ -112,7 +112,7 @@ const LegacyLoginFlowWarning = () => {
           <br />
           <StyledIcon $success={hasAnyValidGroup} />
           {t('legacy-login-flow-valid-group-info')} <b>groups:create</b>{' '}
-          {t('capability_one').toLocaleLowerCase()}
+          {t('capability').toLocaleLowerCase()}
         </p>
       }
       confirmTitle={t('legacy-login-flow-deprecate')}

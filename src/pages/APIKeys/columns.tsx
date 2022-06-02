@@ -33,7 +33,7 @@ export const useAPIKeyTableColumns = () => {
       },
     },
     {
-      title: t('service-account_one'),
+      title: t('service-account'),
       dataIndex: 'serviceAccountName',
       sorter: (a, b) => {
         return a.serviceAccountName && b.serviceAccountName
@@ -42,7 +42,7 @@ export const useAPIKeyTableColumns = () => {
       },
     },
     {
-      title: t('text-status'),
+      title: t('status'),
       dataIndex: 'status',
       render(status) {
         return (
@@ -51,7 +51,7 @@ export const useAPIKeyTableColumns = () => {
       },
     },
     {
-      title: t('text-created-at'),
+      title: t('created-at'),
       dataIndex: 'createdTime',
       sorter: (a, b) => {
         return a?.serviceAccountName && b?.serviceAccountName
@@ -63,7 +63,7 @@ export const useAPIKeyTableColumns = () => {
       },
     },
     {
-      title: t('text-actions'),
+      title: t('actions'),
       key: 'actions',
       width: 100,
       align: 'center',

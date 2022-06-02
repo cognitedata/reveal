@@ -78,7 +78,7 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
     account.groups && account.groups.length > 0 ? (
       account.groups.map((group) => <GroupTag key={group} id={group} />)
     ) : (
-      <>{t('text-no-groups')}</>
+      <>{t('no-groups')}</>
     );
 
   const button = editMode ? (
@@ -94,7 +94,7 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
         setEditMode(false);
       }}
     >
-      {!isLoading && t('text-save')}
+      {!isLoading && t('save')}
     </Button>
   ) : (
     <Button

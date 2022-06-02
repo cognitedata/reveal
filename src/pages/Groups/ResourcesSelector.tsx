@@ -76,7 +76,7 @@ export default function ResourcesSelector({
       mode="tags"
       value={value?.map((i) => `${i}`)}
       placeholder={t('resources-selector-placeholder')}
-      notFoundContent={fetching ? <Spin /> : t('text-not-found')}
+      notFoundContent={fetching ? <Spin /> : t('not-found')}
       onSearch={handleSearch}
       defaultValue={[]}
       onChange={(v) => {

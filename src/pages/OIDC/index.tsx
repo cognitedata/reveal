@@ -152,7 +152,7 @@ export default function OIDCConfigContainer() {
     >
       <Form.Item
         name="isOidcEnabled"
-        label={t('text-enabled')}
+        label={t('enabled')}
         valuePropName="checked"
       >
         <Checkbox disabled={updating} />
@@ -243,7 +243,7 @@ export default function OIDCConfigContainer() {
 
       <Form.Item {...noLabelItemLayout}>
         <Button type="primary" htmlType="submit" disabled={updating}>
-          {t('text-save-configuration')}
+          {t('save-configuration')}
         </Button>
       </Form.Item>
     </Form>

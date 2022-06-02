@@ -77,9 +77,9 @@ export default function ServiceAccounts() {
       {showNewModal && (
         <Modal
           visible
-          cancelText={t('text-cancel')}
+          cancelText={t('cancel')}
           title={t('service-account-create')}
-          okText={t('text-create')}
+          okText={t('create')}
           okButtonProps={{ disabled: !newName }}
           onOk={async () => {
             await create({ name: newName, groups: newGroups });
@@ -98,7 +98,7 @@ export default function ServiceAccounts() {
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 20 }}
           >
-            <Form.Item name="name" label={t('text-name')}>
+            <Form.Item name="name" label={t('name')}>
               <Input
                 onChange={(e) => setNewName(e.target.value)}
                 value={newName}

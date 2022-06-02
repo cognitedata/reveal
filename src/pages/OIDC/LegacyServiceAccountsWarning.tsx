@@ -54,7 +54,7 @@ const LegacyServiceAccountsWarning = (props: {
                   </StyledListItem>
                 ))}
                 <StyledListItem>
-                  {t('text-view-more', { count: accounts.length - 2 })}
+                  {t('count-view-more', { count: accounts.length - 2 })}
                 </StyledListItem>
               </StyledList>
             </>

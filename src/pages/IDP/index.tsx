@@ -313,7 +313,7 @@ const LegacyIdentityProviderForm = () => {
             &nbsp;
             <Radio.Button value="googleOauth2">{t('google')}</Radio.Button>
             &nbsp;
-            <Radio.Button value="oauth2">{t('Oauth')}</Radio.Button>
+            <Radio.Button value="oauth2">{t('oauth')}</Radio.Button>
           </Radio.Group>
         </Form.Item>
 
@@ -348,7 +348,7 @@ const LegacyIdentityProviderForm = () => {
               <Alert
                 type="warning"
                 showIcon
-                message={t('text-notice')}
+                message={t('notice')}
                 description={
                   <>
                     <div>{t('idp-app-domain-info-1')}</div>
@@ -414,7 +414,7 @@ const LegacyIdentityProviderForm = () => {
 
         <Form.Item {...noLabelItemLayout}>
           <Button type="primary" htmlType="submit" disabled={!writeOk}>
-            {t('text-save-configuration')}
+            {t('save-configuration')}
           </Button>
         </Form.Item>
       </Form>

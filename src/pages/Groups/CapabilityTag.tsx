@@ -25,7 +25,7 @@ export default function CapabilityTag({ capability }: Props) {
             borderRadius: 2,
           }}
         >
-          {t('text-scope')}: {scopeLabel}
+          {t('scope')}: {scopeLabel}
         </span>
       )}
       {getCapabilityName(capability)}:{`${a.toLowerCase()}`}

@@ -18,13 +18,13 @@ export default function CapabilitiesList(props: CapabilitiesTableProps) {
   const renderItem = (capability: SingleCogniteCapability, index: number) => {
     const removeButton = (
       <Button type="link" onClick={() => onRemove && onRemove(index)}>
-        {t('text-remove')}
+        {t('remove')}
       </Button>
     );
 
     const editButton = (
       <Button type="link" onClick={() => onEdit && onEdit(index)}>
-        {t('text-edit')}
+        {t('edit')}
       </Button>
     );
 
