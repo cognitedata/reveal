@@ -3,20 +3,17 @@ import { getPathsFromDoc } from 'utils/getPathsFromDocument';
 import { getMockDocument } from '__test-utils/fixtures/document';
 
 describe('getPathsFromDoc', () => {
+  const mockDocument = getMockDocument();
   test('should return document paths correctly', () => {
-    expect(
-      getPathsFromDoc(getMockDocument(undefined, { filepath: '/123' }))
-    ).toEqual(['/123']);
-    expect(
-      getPathsFromDoc(getMockDocument(undefined, { filepath: '' }))
-    ).toEqual([]);
+    expect(getPathsFromDoc(mockDocument)).toEqual([mockDocument.fullFilePath]);
+    expect(getPathsFromDoc(getMockDocument({ fullFilePath: '' }))).toEqual([]);
 
     expect(
       getPathsFromDoc(
-        getMockDocument(
-          { duplicates: [getMockDocument(undefined, { filepath: '/234' })] },
-          { filepath: '/123' }
-        )
+        getMockDocument({
+          duplicates: [getMockDocument({ fullFilePath: '/234' })],
+          fullFilePath: '/123',
+        })
       )
     ).toEqual(['/123', '/234']);
   });

@@ -19,6 +19,7 @@ describe('FilePath', () => {
       paths: getPathsFromDoc({
         ...mockDocument,
         doc: { ...mockDocument.doc, filepath: '' },
+        fullFilePath: '',
       }),
     });
 
