@@ -26,6 +26,8 @@ import {
 } from 'src/modules/Common/types/typeGuards';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { InternalId } from '@cognite/sdk';
+import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
+import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 
 export const initialState: AnnotationState = {
   files: {
@@ -116,18 +118,14 @@ const annotationSlice = createSlice({
     );
 
     builder.addMatcher(
-      // TODO: refactor -> same as RetrieveAnnotationsV1.fulfilled
       isAnyOf(
-        CreateAnnotationsV1.fulfilled,
-        VisionJobUpdateV1.fulfilled,
-        UpdateAnnotationsV1.fulfilled
+        // CreateAnnotationsV1.fulfilled,
+        VisionJobUpdate.fulfilled,
+        UpdateAnnotations.fulfilled
       ),
       (state: AnnotationState, { payload }) => {
         // update annotations
-        // ToDo (VIS-794): conversion logic from V1 to V2 in the new slice can be moved into thunks.
-        const annotations = convertCDFAnnotationV1ToVisionAnnotations(payload);
-
-        repopulateAnnotationState(state, annotations);
+        repopulateAnnotationState(state, payload);
       }
     );
 
