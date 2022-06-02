@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
@@ -21,9 +21,11 @@ import type {
   CalculationRun,
   CalculationTemplate,
   CalculationType,
+  DeletionStatus,
   Simulator,
 } from '@cognite/simconfig-api-sdk/rtk';
 import {
+  useDeleteModelCalculationMutation,
   useGetModelCalculationListQuery,
   useGetModelFileQuery,
   useRunModelCalculationMutation,
@@ -31,6 +33,7 @@ import {
 
 import { GraphicContainer } from 'components/shared/elements';
 import { CalculationDescriptionInfoDrawer } from 'pages/CalculationConfiguration/steps/infoDrawers/CalculationDescriptionInfoDrawer';
+import { selectCapabilities } from 'store/capabilities/selectors';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 import { isBHPApproxMethodWarning } from 'utils/common';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
@@ -41,6 +44,7 @@ import { CalculationRunTypeIndicator } from './CalculationRunTypeIndicator';
 import { CalculationScheduleIndicator } from './CalculationScheduleIndicator';
 import { CalculationStatusIndicator } from './CalculationStatusIndicator';
 import { STATUS_POLLING_INTERVAL } from './constants';
+import DeleteConfirmModal from './DeleteConfirmModal';
 
 import type { AppLocationGenerics } from 'routes';
 
@@ -50,10 +54,11 @@ interface CalculationListProps {
   modelName: string;
   showConfigured?: boolean;
 }
-interface ModelCalculation {
+export interface ModelCalculation {
   externalId: string;
   configuration: CalculationTemplate;
   latestRun?: CalculationRun;
+  deletionStatus?: DeletionStatus;
 }
 export function CalculationList({
   simulator,
@@ -63,23 +68,51 @@ export function CalculationList({
   const project = useSelector(selectProject);
   const navigate = useNavigate();
   const [runModelCalculations] = useRunModelCalculationMutation();
+  const [deleteModelCalculation, { isSuccess: isDeleteSuccess }] =
+    useDeleteModelCalculationMutation();
   const { authState } = useAuthContext();
   const [shouldPoll, setShouldPoll] = useState<boolean>(false);
+  const [shouldPollOnDelete, setShouldPollOnDelete] = useState<boolean>(false);
   const [triggeredRuns, setTriggeredRuns] = useState<TriggeredRunInfo>();
+
+  const [deletedExternalIds, setDeletedExternalIds] = useState<string[]>([]);
+
+  const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] =
+    useState<boolean>(false);
+  const [confirmDeleteCalucation, setConfirmDeleteCalucation] =
+    useState<ModelCalculation | null>(null);
+
+  const capabilities = useSelector(selectCapabilities);
+
+  const isDeleteEnabled = useMemo(() => {
+    const deleteFeature = capabilities.capabilities.find(
+      (feature) => feature.name === 'Delete'
+    );
+    return deleteFeature?.capabilities?.every(
+      (capability) => capability.enabled
+    );
+  }, [capabilities]);
 
   const {
     data: { definitions },
   } = useMatch<AppLocationGenerics>();
 
-  const { data: modelCalculations, isFetching: isFetchingModelCalculations } =
-    useGetModelCalculationListQuery(
-      {
-        project,
-        simulator,
-        modelName,
-      },
-      { pollingInterval: shouldPoll ? STATUS_POLLING_INTERVAL : undefined }
-    );
+  const {
+    data: modelCalculations,
+    isFetching: isFetchingModelCalculations,
+    isError: isErrorModelCalculations,
+    refetch: refetchModelCalcList,
+  } = useGetModelCalculationListQuery(
+    {
+      project,
+      simulator,
+      modelName,
+    },
+    {
+      pollingInterval:
+        shouldPoll || shouldPollOnDelete ? STATUS_POLLING_INTERVAL : undefined,
+    }
+  );
 
   const { data: modelFile, isFetching: isFetchingModelFile } =
     useGetModelFileQuery(
@@ -108,6 +141,31 @@ export function CalculationList({
     },
     [triggeredRuns]
   );
+
+  // Check if any deletion is in progress from a different window/user/ refresh of page
+  useEffect(() => {
+    if (!isFetchingModelCalculations) {
+      const isAnyCalcDeletionInProgress = Boolean(
+        modelCalculations?.modelCalculationList.find(
+          (calcConfig) =>
+            'deletionStatus' in calcConfig &&
+            !calcConfig.deletionStatus?.erroredResources?.length
+        )
+      );
+      setShouldPollOnDelete(isAnyCalcDeletionInProgress);
+    }
+  }, [
+    modelCalculations?.modelCalculationList,
+    modelCalculations?.modelCalculationList.length,
+    isFetchingModelCalculations,
+  ]);
+
+  // Refetch once deletion is complete
+  useEffect(() => {
+    if (isDeleteSuccess || isErrorModelCalculations) {
+      refetchModelCalcList();
+    }
+  }, [isDeleteSuccess, refetchModelCalcList, isErrorModelCalculations]);
 
   useEffect(() => {
     if (!modelCalculations?.modelCalculationList) {
@@ -139,7 +197,7 @@ export function CalculationList({
   }
 
   if (
-    (isFetchingModelCalculations && !shouldPoll) ||
+    (isFetchingModelCalculations && !shouldPoll && !shouldPollOnDelete) ||
     !definitions ||
     !modelCalculations
   ) {
@@ -156,6 +214,31 @@ export function CalculationList({
   const nonConfiguredCalculations = calculationTypes.filter(
     (calculationType) => !configuredCalculations.includes(calculationType)
   );
+
+  const handleOnDeleteCalculationConfirm = async (
+    isDeleteConfirmed: boolean,
+    calculation: ModelCalculation
+  ) => {
+    // Close the model
+    setIsDeleteConfirmModalOpen(false);
+
+    // Not ready to delete
+    if (!isDeleteConfirmed) {
+      return;
+    }
+
+    // Used for showing "Deletion in progress"
+    setDeletedExternalIds([...deletedExternalIds, calculation.externalId]);
+    // Make the call to delete endpoint
+    await deleteModelCalculation({
+      project,
+      simulator,
+      modelName,
+      calculationType: `${encodeURIComponent(
+        calculation.configuration.calculationType
+      )}` as CalculationType,
+    });
+  };
 
   const onRunClick =
     (calcType: CalculationType, externalId: string) => async () => {
@@ -238,6 +321,14 @@ export function CalculationList({
               <CalculationDescriptionInfoDrawer
                 calculation={calculation.configuration.calculationType}
               />
+              {(calculation.deletionStatus &&
+                !calculation.deletionStatus.erroredResources?.length) ||
+              deletedExternalIds.includes(calculation.externalId) ? (
+                <Label size="medium" variant="danger">
+                  Deletion in progress
+                </Label>
+              ) : undefined}
+
               {!isFetchingModelFile &&
               modelFile?.metadata &&
               isBHPApproxMethodWarning(
@@ -338,11 +429,22 @@ export function CalculationList({
                     >
                       <Icon type="Settings" /> Edit configuration
                     </Menu.Item>
+                    {isDeleteEnabled ? (
+                      <Menu.Item
+                        onClick={() => {
+                          setConfirmDeleteCalucation(calculation);
+                          setIsDeleteConfirmModalOpen(true);
+                        }}
+                      >
+                        <Icon type="Delete" /> Delete configuration
+                      </Menu.Item>
+                    ) : undefined}
                   </Menu>
                 }
               >
                 <Button
                   aria-label="Actions"
+                  disabled={!!calculation.deletionStatus}
                   icon="EllipsisHorizontal"
                   size="small"
                 />
@@ -350,6 +452,11 @@ export function CalculationList({
             </span>
           </React.Fragment>
         ))}
+        <DeleteConfirmModal
+          calculationConfig={confirmDeleteCalucation}
+          handleModalConfirm={handleOnDeleteCalculationConfirm}
+          isModelOpen={isDeleteConfirmModalOpen}
+        />
       </ConfiguredCalculationList>
     );
   }

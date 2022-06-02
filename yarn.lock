@@ -3398,10 +3398,10 @@
     typedoc-plugin-markdown "^2.3.1"
     xhr2 "^0.2.0"
 
-"@cognite/simconfig-api-sdk@1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-1.2.2.tgz#bfcfb018af288a19dabac915579c762f58f4f4b4"
-  integrity sha512-rq3YJiCew0JzG63KRq6AgC+D4hYXss3EvUYLc+gj2aDvQR8z9NDcF7SwEz5p8Vo88iWydh9541aw/pGw4WzYTg==
+"@cognite/simconfig-api-sdk@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-1.3.0.tgz#e936559f4813db4c9093c773b7dc384862358a5a"
+  integrity sha512-Yk2DTSTU2gnnvtvtuSkWkx6A6p1oP92pU+9Wn6IsB7e93TJJqQ9C4MO+i1Pg8aQdb5UasyLHp7nFp8jRnQ2xwQ==
 
 "@cognite/user-management-service-types@^0.1.2":
   version "0.1.2"
