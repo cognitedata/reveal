@@ -16,6 +16,7 @@ interface TimeseriesChartProps {
   data?: DatapointAggregate[];
   aggregateType?: AggregateType;
 
+  fullSize?: boolean;
   primaryColor?: string;
   width?: number;
   height?: number;
@@ -27,35 +28,53 @@ export function TimeseriesChart({
   data = [],
   aggregateType = 'average',
 
+  fullSize = false,
   width = 100,
   height = 60,
-  margin = { top: 7, right: 3, bottom: 7, left: 15 },
+  margin = {
+    top: 7,
+    right: 3,
+    bottom: fullSize ? 30 : 7,
+    left: fullSize ? 54 : 15,
+  },
   yAxisLabel = 'Value',
 
   ...additionalChartProps
 }: TimeseriesChartProps) {
   const timestamps = data.map((it) => +it.timestamp);
-  const values = data.map((it) => it.average ?? 0);
+  const values = data.map((it) => it[aggregateType] ?? 0);
   const latestDatapoint = data[data.length - 1];
 
-  const minValue = min(data.map((it) => it.min ?? 0)) ?? 0;
-  const maxValue = max(data.map((it) => it.max ?? 1)) ?? 1;
+  const aggregateValues = data.reduce<number[]>(
+    (filteredValues, values) => [
+      ...filteredValues,
+      ...Object.values(values).reduce<number[]>((collection, value) => {
+        if (value === undefined || typeof value !== 'number') {
+          return collection;
+        }
+        return [...collection, value];
+      }, []),
+    ],
+    []
+  );
+  const minValue = min(aggregateValues) ?? 0;
+  const maxValue = max(aggregateValues) ?? 0;
 
   const xScale = timeScale({ datapoints: timestamps });
   const yScale = linearScale({
     datapoints: values,
     axis: 'y',
     boundary: {
-      min: minValue,
-      max: maxValue,
+      min: minValue === maxValue ? minValue - 1 : minValue,
+      max: minValue === maxValue ? maxValue + 1 : maxValue,
     },
-    nice: false,
+    nice: fullSize,
     padding: 0,
   });
 
   const curve = getCurve(aggregateType);
 
-  const { geometry, Axis, Chart, Plot } = useBaseChart({
+  const { geometry, Axis, Chart, Plot, Grid } = useBaseChart({
     height,
     width,
     margin,
@@ -65,8 +84,11 @@ export function TimeseriesChart({
 
   const yMax = height - margin.top - margin.bottom;
 
-  const Average = Plot.LineRegular({
-    data: data.map(({ timestamp, average: value }) => ({ timestamp, value })),
+  const Aggregate = Plot.LineRegular({
+    data: data.map(({ timestamp, [aggregateType]: value }) => ({
+      timestamp,
+      value,
+    })),
     width: 1,
     curve,
   });
@@ -76,10 +98,12 @@ export function TimeseriesChart({
   }
 
   const upperThreshold = maxValue - (maxValue - minValue) * 0.5;
-  const isRising = (latestDatapoint.average ?? 0) > upperThreshold;
+  const isRising = (latestDatapoint[aggregateType] ?? 0) > upperThreshold;
 
   return (
     <Chart {...additionalChartProps}>
+      {fullSize && <Grid.Horizontal />}
+
       <Threshold<DatapointAggregate>
         belowAreaProps={{
           fill: Colors.primary.hex(),
@@ -95,10 +119,30 @@ export function TimeseriesChart({
         y1={(d) => geometry.yScale(+(d.max ?? 0))}
       />
 
-      <Average.Plot />
+      {fullSize ? (
+        <>
+          <Axis.Left label={yAxisLabel} />
+          <Axis.Bottom />
+        </>
+      ) : (
+        <Axis.Left
+          label={yAxisLabel}
+          labelOffset={10}
+          tickLabelProps={() => ({
+            ...rightTickLabelProps(),
+            paintOrder: 'stroke',
+            stroke: Colors.white.hex(),
+            strokeWidth: 2,
+          })}
+          tickLength={-3}
+          tickValues={[0, minValue, (minValue + maxValue) / 2, maxValue]}
+        />
+      )}
+
+      <Aggregate.Plot />
       <circle
         cx={geometry.xScale(+latestDatapoint.timestamp)}
-        cy={geometry.yScale(latestDatapoint.average ?? 0)}
+        cy={geometry.yScale(latestDatapoint[aggregateType] ?? 0)}
         fill={Colors.primary.hex()}
         r={2}
       />
@@ -113,25 +157,12 @@ export function TimeseriesChart({
         textAnchor="end"
         verticalAnchor={isRising ? 'start' : 'end'}
         x={geometry.xScale(+latestDatapoint.timestamp)}
-        y={geometry.yScale(latestDatapoint.average ?? 0)}
+        y={geometry.yScale(latestDatapoint[aggregateType] ?? 0)}
       >
-        {formatNumber('.1f')(latestDatapoint.average ?? 0)}
+        {formatNumber('.1f')(latestDatapoint[aggregateType] ?? 0)}
       </Text>
 
-      <Axis.Left
-        label={yAxisLabel}
-        labelOffset={10}
-        tickLabelProps={() => ({
-          ...rightTickLabelProps(),
-          paintOrder: 'stroke',
-          stroke: Colors.white.hex(),
-          strokeWidth: 2,
-        })}
-        tickLength={-3}
-        tickValues={[0, minValue, (minValue + maxValue) / 2, maxValue]}
-      />
-
-      <Average.Tooltip />
+      <Aggregate.Tooltip />
     </Chart>
   );
 }

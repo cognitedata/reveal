@@ -1,25 +1,17 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useThrottle } from 'react-use';
 
 import { ParentSizeModern } from '@visx/responsive';
 
-import { extent } from 'd3';
-import { sub } from 'date-fns';
+import classNames from 'classnames';
 import { Field, useFormikContext } from 'formik';
-import styled from 'styled-components/macro';
 
 import type { OptionType } from '@cognite/cogs.js';
-import { Colors, Icon, Select, Switch } from '@cognite/cogs.js';
-import { useAuthContext } from '@cognite/react-container';
-import type { DatapointAggregate } from '@cognite/sdk';
-import type {
-  AggregateType,
-  CalculationTemplate,
-} from '@cognite/simconfig-api-sdk/rtk';
+import { Select, Switch } from '@cognite/cogs.js';
+import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
 import { LogicalCheckChart } from 'components/charts/LogicalCheckChart';
 import { SteadyStateDetectionChart } from 'components/charts/SteadyStateDetectionChart';
-import type { TemporalDatum } from 'components/charts/types';
 import { SegmentedControl } from 'components/forms/controls/SegmentedControl';
 import {
   FormContainer,
@@ -31,8 +23,9 @@ import {
   TimeSeriesField,
 } from 'components/forms/elements';
 
+import { ChartContainer, LoaderOverlay, SelectContainer } from '../elements';
 import type { ScheduleRepeat } from '../types';
-import { INTERVAL_OPTIONS, getScheduleRepeat } from '../utils';
+import { INTERVAL_OPTIONS, getScheduleRepeat, useTimeseries } from '../utils';
 
 import { DataSamplingInfoDrawer } from './infoDrawers/DataSamplingInfoDrawer';
 import { LogicalCheckInfoDrawer } from './infoDrawers/LogicalCheckInfoDrawer';
@@ -84,19 +77,31 @@ export function DataSamplingStep() {
 
   const ssdAggregateType =
     values.steadyStateDetection.aggregateType ?? 'stepInterpolation';
-  const ssdTimeseries = useTimeseries({
-    timeseries: values.steadyStateDetection.externalId,
-    aggregateType: ssdAggregateType,
-    granularity,
-    window,
-    endOffset,
-  });
 
   const lcAggregateType =
     values.logicalCheck.aggregateType ?? 'stepInterpolation';
-  const lcTimeseries = useTimeseries({
-    timeseries: values.logicalCheck.externalId,
-    aggregateType: lcAggregateType,
+
+  const timeseries = useMemo(
+    () => [
+      {
+        externalId: values.steadyStateDetection.externalId,
+        aggregateType: ssdAggregateType,
+      },
+      {
+        externalId: values.logicalCheck.externalId,
+        aggregateType: lcAggregateType,
+      },
+    ],
+    [
+      lcAggregateType,
+      ssdAggregateType,
+      values.logicalCheck.externalId,
+      values.steadyStateDetection.externalId,
+    ]
+  );
+
+  const timeseriesState = useTimeseries({
+    timeseries,
     granularity,
     window,
     endOffset,
@@ -107,20 +112,29 @@ export function DataSamplingStep() {
       ? Math.floor(values.dataSampling.validationWindow / 2)
       : 15;
 
+  const steadyStateDetectionTimeseriesState =
+    timeseriesState.timeseries[values.steadyStateDetection.externalId];
   const steadyStateDetectionChart = useMemo(
     () => (
       <ParentSizeModern>
         {({ width, height }) => (
           <SteadyStateDetectionChart
             aggregateType={ssdAggregateType}
-            data={ssdTimeseries.data}
+            data={
+              steadyStateDetectionTimeseriesState?.datapoints.map(
+                (datapoint) => ({
+                  timestamp: datapoint.timestamp,
+                  value: datapoint[ssdAggregateType] ?? 0,
+                })
+              ) ?? []
+            }
             granularity={granularity}
             height={height}
             minSegmentDistance={minSectionSize}
             slopeThreshold={slopeThreshold}
             varianceThreshold={varThreshold}
             width={width}
-            yAxisLabel={ssdTimeseries.axisLabel}
+            yAxisLabel={steadyStateDetectionTimeseriesState?.axisLabel}
           />
         )}
       </ParentSizeModern>
@@ -128,14 +142,16 @@ export function DataSamplingStep() {
     [
       minSectionSize,
       slopeThreshold,
-      ssdTimeseries.axisLabel,
-      ssdTimeseries.data,
+      steadyStateDetectionTimeseriesState?.axisLabel,
+      steadyStateDetectionTimeseriesState?.datapoints,
       granularity,
       ssdAggregateType,
       varThreshold,
     ]
   );
 
+  const logicalCheckTimeseriesState =
+    timeseriesState.timeseries[values.logicalCheck.externalId];
   const logicalCheckChart = useMemo(
     () => (
       <ParentSizeModern>
@@ -143,19 +159,24 @@ export function DataSamplingStep() {
           <LogicalCheckChart
             aggregateType={lcAggregateType}
             check={values.logicalCheck.check ?? 'gt'}
-            data={lcTimeseries.data}
+            data={
+              logicalCheckTimeseriesState?.datapoints.map((datapoint) => ({
+                timestamp: datapoint.timestamp,
+                value: datapoint[lcAggregateType] ?? 0,
+              })) ?? []
+            }
             granularity={granularity}
             height={height}
             threshold={values.logicalCheck.value ?? 0}
             width={width}
-            yAxisLabel={lcTimeseries.axisLabel}
+            yAxisLabel={logicalCheckTimeseriesState?.axisLabel}
           />
         )}
       </ParentSizeModern>
     ),
     [
-      lcTimeseries.axisLabel,
-      lcTimeseries.data,
+      logicalCheckTimeseriesState?.axisLabel,
+      logicalCheckTimeseriesState?.datapoints,
       granularity,
       lcAggregateType,
       values.logicalCheck.check,
@@ -300,11 +321,25 @@ export function DataSamplingStep() {
               />
             </FormRow>
           </div>
-          <div className="chart short">
-            {lcTimeseries.isLoading && <LoaderOverlay />}
+          <div
+            className={classNames('chart', 'short', {
+              isLoading: timeseriesState.isLoading,
+              isEmpty:
+                !timeseriesState.isLoading &&
+                timeseriesState.timeseries[values.logicalCheck.externalId]
+                  ?.datapoints &&
+                !(
+                  (timeseriesState.timeseries[values.logicalCheck.externalId]
+                    ?.datapoints.length ?? 0) >= 2
+                ),
+            })}
+          >
+            {timeseriesState.isLoading && <LoaderOverlay />}
             {values.logicalCheck.externalId &&
-              lcTimeseries.data.length >= 2 &&
-              logicalCheckChart}
+            (timeseriesState.timeseries[values.logicalCheck.externalId]
+              ?.datapoints.length ?? 0) >= 2
+              ? logicalCheckChart
+              : null}
           </div>
         </ChartContainer>
       ) : null}
@@ -364,172 +399,28 @@ export function DataSamplingStep() {
               />
             </FormRow>
           </div>
-          <div className="chart">
-            {ssdTimeseries.isLoading && <LoaderOverlay />}
-            {values.steadyStateDetection.externalId &&
-              ssdTimeseries.data.length >= 2 &&
-              steadyStateDetectionChart}
+          <div
+            className={classNames('chart', {
+              isLoading: timeseriesState.isLoading,
+              isEmpty:
+                !timeseriesState.isLoading &&
+                timeseriesState.timeseries[
+                  values.steadyStateDetection.externalId
+                ]?.datapoints &&
+                !(
+                  (timeseriesState.timeseries[
+                    values.steadyStateDetection.externalId
+                  ]?.datapoints.length ?? 0) >= 2
+                ),
+            })}
+          >
+            {timeseriesState.isLoading && <LoaderOverlay />}
+            {(steadyStateDetectionTimeseriesState?.datapoints.length ?? 0) >= 2
+              ? steadyStateDetectionChart
+              : null}
           </div>
         </ChartContainer>
       ) : null}
     </FormContainer>
   );
-}
-
-const LoaderOverlay = styled(Icon).attrs((props) => ({
-  ...props,
-  type: 'Loader',
-  size: 32,
-}))`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: ${Colors.primary.hex()};
-  opacity: 0.5;
-`;
-
-const SelectContainer = styled.div`
-  .title {
-    display: block;
-    margin-bottom: 4px;
-    color: var(--cogs-greyscale-grey8);
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 20px;
-  }
-  .cogs-select {
-    min-width: 120px;
-  }
-`;
-
-const ChartContainer = styled.div`
-  display: flex;
-  column-gap: 24px;
-  .form {
-    flex: 1 1 0;
-    display: flex;
-    flex-flow: column nowrap;
-    row-gap: 6px;
-  }
-  .chart {
-    max-width: 720px;
-    height: 240px;
-    flex: 1 1 0;
-    overflow: hidden;
-    position: relative;
-    &.short {
-      height: 180px;
-    }
-  }
-`;
-
-function useTimeseries({
-  timeseries,
-  granularity,
-  window,
-  aggregateType,
-  limit = 5000,
-  endOffset = 0,
-}: {
-  timeseries: string;
-  granularity: number;
-  window: number;
-  aggregateType: AggregateType;
-  limit?: number;
-  endOffset?: number;
-}) {
-  const { client } = useAuthContext();
-  const [data, setData] = useState<TemporalDatum[]>([]);
-  const [range, setRange] = useState({ min: 0, max: 1 });
-  const [step, setStep] = useState(1);
-  const [axisLabel, setAxisLabel] = useState('Process sensor');
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    async function getTimeseries() {
-      if (!client || !timeseries) {
-        return;
-      }
-
-      try {
-        setIsLoading(true);
-
-        try {
-          if (!timeseries) {
-            return;
-          }
-          const {
-            items: [{ unit, description }],
-          } = await client.timeseries.list({
-            filter: {
-              externalIdPrefix: timeseries,
-            },
-          });
-          setAxisLabel(`${description.substring(0, 25)} (${unit ?? 'n/a'})`);
-        } catch (e) {
-          throw new Error(
-            `Error while reading time series '${timeseries}' (missing permissions?)`
-          );
-        }
-
-        try {
-          const [{ datapoints }] = await client.datapoints.retrieve({
-            items: [
-              {
-                externalId: timeseries,
-                start: sub(new Date(), {
-                  minutes: window + endOffset,
-                }).getTime(),
-                end: sub(new Date(), { minutes: endOffset }),
-                aggregates: [aggregateType],
-                granularity: `${granularity}m`,
-                limit,
-              },
-            ],
-          });
-
-          const mappedDatapoints = (datapoints as DatapointAggregate[]).map(
-            (datapoint) => ({
-              timestamp: datapoint.timestamp,
-              value: datapoint[aggregateType] ?? 0,
-            })
-          );
-
-          const [min = 0, max = 1] = extent(mappedDatapoints, (dp) => dp.value);
-
-          setData(mappedDatapoints);
-          setRange({ min, max });
-          setStep(Math.ceil(min / 100) / 100);
-        } catch (e) {
-          throw new Error(
-            `Error while reading datapoints for timeseries '${timeseries}'`
-          );
-        }
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    void getTimeseries();
-  }, [
-    client,
-    client?.datapoints,
-    client?.timeseries,
-    granularity,
-    timeseries,
-    window,
-    aggregateType,
-    limit,
-    endOffset,
-  ]);
-
-  return {
-    data,
-    range,
-    step,
-    axisLabel,
-    isLoading,
-  };
 }
