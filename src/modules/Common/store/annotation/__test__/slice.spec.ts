@@ -6,12 +6,14 @@ import reducer, {
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
 import { clearAnnotationState } from 'src/store/commonActions';
 import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
+import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotationsV1';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { VisionJobUpdateV1 } from 'src/store/thunks/Process/VisionJobUpdateV1';
 import { getDummyImageObjectDetectionBoundingBoxAnnotation } from 'src/__test-utils/getDummyAnnotations';
+import { InternalId } from '@cognite/sdk';
 
 jest.mock(
   'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils',
@@ -26,19 +28,18 @@ jest.mock(
 );
 
 describe('Test annotation reducer', () => {
+  const dummyAnnotation1 = getDummyImageObjectDetectionBoundingBoxAnnotation({
+    id: 1,
+  });
+  const dummyAnnotation2 = getDummyImageObjectDetectionBoundingBoxAnnotation({
+    id: 2,
+  });
+
   test('should return the initial state', () => {
     expect(reducer(undefined, { type: undefined })).toEqual(initialState);
   });
 
   describe('Test RetrieveAnnotations.fulfilled action', () => {
-    const dummyAnnotation1 = getDummyImageObjectDetectionBoundingBoxAnnotation({
-      id: 1,
-    });
-    const dummyAnnotation2 = getDummyImageObjectDetectionBoundingBoxAnnotation({
-      id: 2,
-      annotatedResourceId: 20,
-    });
-
     test('should clear entire state when clear cache is true and response is empty', () => {
       const previousState: AnnotationState = {
         files: {
@@ -52,9 +53,9 @@ describe('Test annotation reducer', () => {
             '2': dummyAnnotation2,
           },
         },
+        // both keypoints have same label
         annotationColorMap: {
           [dummyAnnotation1.label]: '#f00',
-          [dummyAnnotation2.label]: '#f00',
         },
       };
       const action = {
@@ -234,7 +235,7 @@ describe('Test annotation reducer', () => {
 
   describe('Test DeleteAnnotations.fulfilled action', () => {
     test('should not change state for nonexistent annotation id', () => {
-      const previousState = {
+      const previousState: AnnotationState = {
         files: {
           byId: {
             '10': [1],
@@ -242,21 +243,24 @@ describe('Test annotation reducer', () => {
         },
         annotations: {
           byId: {
-            '1': getDummyImageObjectDetectionBoundingBoxAnnotation({ id: 1 }),
+            '1': dummyAnnotation1,
           },
+        },
+        annotationColorMap: {
+          [dummyAnnotation1.label]: '#f00',
         },
       };
 
-      const action = {
-        type: DeleteAnnotationsV1.fulfilled.type,
-        payload: [3], // annotation ids to delete
+      const action: { type: string; payload: InternalId[] } = {
+        type: DeleteAnnotations.fulfilled.type,
+        payload: [{ id: 3 }], // annotation ids to delete
       };
 
       expect(reducer(previousState, action)).toEqual(previousState);
     });
 
     test('should clean entire state since all annotation ids in state given in payload', () => {
-      const previousState = {
+      const previousState: AnnotationState = {
         files: {
           byId: {
             '10': [1, 2],
@@ -264,23 +268,25 @@ describe('Test annotation reducer', () => {
         },
         annotations: {
           byId: {
-            '1': getDummyImageObjectDetectionBoundingBoxAnnotation({ id: 1 }),
-            '2': getDummyImageObjectDetectionBoundingBoxAnnotation({ id: 1 }),
+            '1': dummyAnnotation1,
+            '2': dummyAnnotation2,
           },
         },
-        annotationColorMap: {},
+        annotationColorMap: {
+          [dummyAnnotation1.label]: '#f00',
+        },
       };
 
-      const action = {
-        type: DeleteAnnotationsV1.fulfilled.type,
-        payload: [1, 2], // annotation ids to delete
+      const action: { type: string; payload: InternalId[] } = {
+        type: DeleteAnnotations.fulfilled.type,
+        payload: [{ id: 1 }, { id: 2 }], // annotation ids to delete
       };
 
       expect(reducer(previousState, action)).toEqual(initialState);
     });
 
     test('should only remove annotations with specified ids', () => {
-      const previousState = {
+      const previousState: AnnotationState = {
         files: {
           byId: {
             '10': [1, 2],
@@ -288,15 +294,18 @@ describe('Test annotation reducer', () => {
         },
         annotations: {
           byId: {
-            '1': getDummyImageObjectDetectionBoundingBoxAnnotation({ id: 1 }),
-            '2': getDummyImageObjectDetectionBoundingBoxAnnotation({ id: 2 }),
+            '1': dummyAnnotation1,
+            '2': dummyAnnotation2,
           },
+        },
+        annotationColorMap: {
+          [dummyAnnotation1.label]: '#f00',
         },
       };
 
-      const action = {
-        type: DeleteAnnotationsV1.fulfilled.type,
-        payload: [2], // annotation ids to delete
+      const action: { type: string; payload: InternalId[] } = {
+        type: DeleteAnnotations.fulfilled.type,
+        payload: [{ id: 2 }], // annotation ids to delete
       };
 
       expect(reducer(previousState, action)).toEqual({
@@ -307,14 +316,17 @@ describe('Test annotation reducer', () => {
         },
         annotations: {
           byId: {
-            '1': getDummyImageObjectDetectionBoundingBoxAnnotation({ id: 1 }),
+            '1': dummyAnnotation1,
           },
+        },
+        annotationColorMap: {
+          [dummyAnnotation1.label]: '#f00',
         },
       });
     });
 
     test('should delete annotation with non existing file id', () => {
-      const previousState = {
+      const previousState: AnnotationState = {
         files: {
           byId: {
             '20': [1], // annotation.annotatedResourceId ('10') not in sync with state.files.byId ('20')
@@ -322,17 +334,17 @@ describe('Test annotation reducer', () => {
         },
         annotations: {
           byId: {
-            '1': getDummyImageObjectDetectionBoundingBoxAnnotation({
-              id: 1,
-              annotatedResourceId: 10,
-            }),
+            '1': dummyAnnotation1,
           },
+        },
+        annotationColorMap: {
+          [dummyAnnotation1.label]: '#f00',
         },
       };
 
-      const action = {
-        type: DeleteAnnotationsV1.fulfilled.type,
-        payload: [1], // annotation ids to delete
+      const action: { type: string; payload: InternalId[] } = {
+        type: DeleteAnnotations.fulfilled.type,
+        payload: [{ id: 1 }], // annotation ids to delete
       };
 
       expect(reducer(previousState, action)).toEqual({
@@ -345,6 +357,7 @@ describe('Test annotation reducer', () => {
         annotations: {
           byId: {},
         },
+        annotationColorMap: {},
       });
     });
   });

@@ -18,6 +18,14 @@ import {
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types/annotation';
+import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import {
+  isImageClassificationData,
+  isImageObjectDetectionData,
+  isImageKeypointCollectionData,
+} from 'src/modules/Common/types/typeGuards';
+import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
+import { InternalId } from '@cognite/sdk';
 
 export const initialState: AnnotationState = {
   files: {
@@ -64,14 +72,14 @@ const annotationSlice = createSlice({
     );
 
     builder.addCase(
-      DeleteAnnotationsV1.fulfilled,
-      (state: AnnotationState, { payload }: { payload: number[] }) => {
-        payload.forEach((annotationId) => {
+      DeleteAnnotations.fulfilled,
+      (state: AnnotationState, { payload }: { payload: InternalId[] }) => {
+        payload.forEach((payloadId) => {
+          const { id: annotationId } = payloadId;
           const annotation = state.annotations.byId[annotationId];
 
           if (annotation) {
             const resourceId: number = annotation.annotatedResourceId;
-
             const annotatedFileState = state.files.byId[resourceId];
             if (annotatedFileState) {
               const filteredState = annotatedFileState.filter(
@@ -84,6 +92,24 @@ const annotationSlice = createSlice({
               }
             }
             delete state.annotations.byId[annotationId];
+
+            // clean color map
+            if (
+              isImageClassificationData(annotation) ||
+              isImageObjectDetectionData(annotation) ||
+              isImageKeypointCollectionData(annotation)
+            ) {
+              const labelOrText = getAnnotationLabelOrText(annotation);
+              if (
+                !Object.values(state.annotations.byId)
+                  .map((stateAnnotation) =>
+                    getAnnotationLabelOrText(stateAnnotation)
+                  )
+                  .includes(labelOrText)
+              ) {
+                delete state.annotationColorMap[labelOrText];
+              }
+            }
           }
         });
       }
