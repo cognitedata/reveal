@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
-import flatten from 'lodash/flatten';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import unset from 'lodash/unset';
@@ -46,10 +45,10 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
 
   const [dropdownVisible, setDropdownVisible] = useState<boolean>(false);
 
-  const [selectedOptions, setSelectedOptions] = useState<
-    | Record<Category, OptionType<MultiSelectOptionType>[] | undefined>
-    | undefined
-  >(undefined);
+  const [selectedOptions, setSelectedOptions] =
+    useState<
+      Record<Category, OptionType<MultiSelectOptionType>[] | undefined>
+    >();
 
   useEffect(() => {
     if (!isUndefined(selectedOptions)) {
@@ -63,7 +62,7 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
   );
 
   const optionsCount = options.reduce(
-    (total, { options }) => total + (options?.length || 0),
+    (total, { options }) => total + (options?.length || 1),
     0
   );
 
@@ -105,7 +104,7 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
    */
   const dropdownWidth = width || multiSelectCategorizedRef.current?.clientWidth;
 
-  const selectedOptionValues = flatten(Object.values(selectedOptions || {}));
+  const selectedOptionValues = Object.keys(selectedOptions || {});
   const isAnySelected = !isEmpty(selectedOptions);
   const isAllSelected =
     selectedOptions &&

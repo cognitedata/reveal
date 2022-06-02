@@ -1,11 +1,14 @@
 import styled from 'styled-components/macro';
 
-import { sizes } from 'styles/layout';
+import { FlexRow, sizes } from 'styles/layout';
 
-export const ViewModeControlWrapper = styled.div`
-  width: 100%;
+export const FiltersBar = styled(FlexRow)`
   padding: ${sizes.normal};
   padding-bottom: 0;
+
+  & > *:not(:last-child) {
+    margin-right: ${sizes.normal};
+  }
 `;
 
 export const DetailedViewContent = styled.div`

@@ -1,3 +1,5 @@
+import { NdsAggregate } from '@cognite/sdk-wells-v3';
+
 import { NdsView } from '../types';
 
 export interface DetailedViewProps {
@@ -10,4 +12,5 @@ export interface DetailedViewProps {
    */
   detailedViewNdsData?: NdsView[];
   setDetailedViewNdsData: (detailedViewNdsData?: NdsView[]) => void;
+  ndsAggregate?: NdsAggregate;
 }

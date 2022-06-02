@@ -1,9 +1,9 @@
 import styled from 'styled-components/macro';
 
-import { sizes, Flex } from 'styles/layout';
+import { sizes } from 'styles/layout';
 
-export const NdsControlWrapper = styled(Flex)`
-  width: 100%;
+export const NdsControlWrapper = styled.div`
+  margin-right: ${sizes.normal};
   margin-bottom: ${sizes.normal};
 `;
 

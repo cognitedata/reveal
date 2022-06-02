@@ -1,5 +1,4 @@
-import { useNdsAggregatesByWellboreIdsQuery } from 'domain/wells/service/nds/queries/useNdsAggregatesByWellboreIdsQuery';
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
+import { filterByRiskTypes } from 'domain/wells/dataLayer/nds/adapters/filterByRiskTypes';
 import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores';
 
 import React, { useMemo, useState } from 'react';
@@ -11,59 +10,61 @@ import { OptionType } from '@cognite/cogs.js';
 import EmptyState from 'components/EmptyState';
 import { MultiSelectCategorized } from 'components/Filters';
 import { MultiSelectOptionType } from 'components/Filters/MultiSelect/types';
-import {
-  MultiSelectCategorizedOption,
-  Category,
-} from 'components/Filters/MultiSelectCategorized/types';
-import { useDeepEffect } from 'hooks/useDeep';
+import { useDeepCallback, useDeepEffect } from 'hooks/useDeep';
+import { FlexRow } from 'styles/layout';
 
 import { ViewModeControl } from '../common/ViewModeControl';
 
-import { NdsViewModes } from './constans';
+import {
+  FILTER_WIDTH,
+  NdsViewModes,
+  RISK_TYPE_FILTER_TITLE,
+} from './constants';
 import { DetailedView } from './detailedView';
 import { NdsControlWrapper } from './elements';
 import { NdsTable } from './table';
 import { NdsTreemap } from './treemap';
 import { NdsView } from './types';
 import { useNdsData } from './useNdsData';
-import { generateNdsFilterDataFromAggregate } from './utils/generateNdsFilterDataFromAggregate';
 import { generateNdsTreemapData } from './utils/generateNdsTreemapData';
-
-const SELECT_TITLE = 'Risk type & subtype';
+import { getNdsAggregateForWellbore } from './utils/getNdsAggregateForWellbore';
 
 const NdsEvents: React.FC = () => {
   // data
-  const wellboreIds = useWellInspectSelectedWellboreIds();
-  const selectedWellbores = useWellInspectSelectedWellbores();
-  const { data: ndsAggregates } =
-    useNdsAggregatesByWellboreIdsQuery(wellboreIds);
-  const { data, isLoading } = useNdsData();
-
-  const treemapData = useMemo(
-    () => generateNdsTreemapData(selectedWellbores, data),
-    [selectedWellbores, data]
-  );
+  const { isLoading, data, ndsAggregates, riskTypeFilters } = useNdsData();
+  const wellbores = useWellInspectSelectedWellbores();
 
   // state
+  const [filteredData, setFilteredData] = useState<NdsView[]>(data);
   const [selectedViewMode, setSelectedViewMode] = useState<NdsViewModes>(
     NdsViewModes.Treemap
   );
   const [detailedViewNdsData, setDetailedViewNdsData] = useState<NdsView[]>();
 
-  const [riskTypeFilters, setRiskTypeFilters] = useState<
-    MultiSelectCategorizedOption[]
-  >([]);
-  const [selected, setSelected] =
-    useState<
-      Record<Category, OptionType<MultiSelectOptionType>[] | undefined>
-    >();
-  console.log(selected);
-
   useDeepEffect(() => {
-    if (ndsAggregates) {
-      setRiskTypeFilters(generateNdsFilterDataFromAggregate(ndsAggregates));
-    }
-  }, [ndsAggregates]);
+    setFilteredData(data);
+  }, [data]);
+
+  const treemapData = useMemo(
+    () => generateNdsTreemapData(wellbores, filteredData),
+    [wellbores, filteredData]
+  );
+
+  const detailedViewNdsAggregate = useMemo(
+    () => getNdsAggregateForWellbore(detailedViewNdsData || [], ndsAggregates),
+    [detailedViewNdsData]
+  );
+
+  const handleChangeRiskTypeFilter = useDeepCallback(
+    (
+      values: Record<string, OptionType<MultiSelectOptionType>[] | undefined>
+    ) => {
+      const riskTypes = Object.keys(values);
+      const filteredData = filterByRiskTypes(data, riskTypes);
+      setFilteredData(filteredData);
+    },
+    [data]
+  );
 
   if (isEmpty(data)) {
     return <EmptyState isLoading={isLoading} />;
@@ -71,32 +72,36 @@ const NdsEvents: React.FC = () => {
 
   return (
     <>
-      <NdsControlWrapper>
-        <ViewModeControl
-          views={Object.values(NdsViewModes)}
-          selectedView={selectedViewMode}
-          onChangeView={setSelectedViewMode}
-        />
+      <FlexRow>
+        <NdsControlWrapper>
+          <ViewModeControl
+            views={Object.values(NdsViewModes)}
+            selectedView={selectedViewMode}
+            onChangeView={setSelectedViewMode}
+          />
+        </NdsControlWrapper>
+
         <MultiSelectCategorized
-          title={SELECT_TITLE}
-          width={300}
+          title={RISK_TYPE_FILTER_TITLE}
+          width={FILTER_WIDTH}
           options={riskTypeFilters}
-          onValueChange={setSelected}
+          onValueChange={handleChangeRiskTypeFilter}
         />
-      </NdsControlWrapper>
+      </FlexRow>
 
       {selectedViewMode === NdsViewModes.Treemap && (
         <NdsTreemap data={treemapData} onClickTile={setDetailedViewNdsData} />
       )}
 
       {selectedViewMode === NdsViewModes.Table && (
-        <NdsTable data={data} onClickView={setDetailedViewNdsData} />
+        <NdsTable data={filteredData} onClickView={setDetailedViewNdsData} />
       )}
 
       <DetailedView
-        data={data}
+        data={filteredData}
         detailedViewNdsData={detailedViewNdsData}
         setDetailedViewNdsData={setDetailedViewNdsData}
+        ndsAggregate={detailedViewNdsAggregate}
       />
     </>
   );
