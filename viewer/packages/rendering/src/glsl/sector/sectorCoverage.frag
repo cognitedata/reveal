@@ -15,7 +15,9 @@ out vec4 outputColor;
 const NodeAppearance dummyNodeAppearance = NodeAppearance(vec4(0.0), false, false, false);
 
 void main() {
-    if((v_visible < 0.99999) || isClipped(dummyNodeAppearance, v_viewPosition)){
+    const float epsilon = 0.0001;
+    bool visible =  abs(1.0 - v_visible) < epsilon;
+    if(!visible || isClipped(dummyNodeAppearance, v_viewPosition)){
       discard;
     }
 
