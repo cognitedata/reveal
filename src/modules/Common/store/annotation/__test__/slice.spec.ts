@@ -1,17 +1,11 @@
-/* eslint-disable jest/no-disabled-tests */
-
 import reducer, {
   initialState,
 } from 'src/modules/Common/store/annotation/slice';
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
 import { clearAnnotationState } from 'src/store/commonActions';
-import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
-import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotationsV1';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
-import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { VisionJobUpdateV1 } from 'src/store/thunks/Process/VisionJobUpdateV1';
 import { getDummyImageObjectDetectionBoundingBoxAnnotation } from 'src/__test-utils/getDummyAnnotations';
 import { InternalId } from '@cognite/sdk';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';

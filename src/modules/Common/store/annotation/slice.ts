@@ -1,12 +1,5 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
-import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bulkConverters';
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
-import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
-import { VisionAnnotationV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotationsV1';
-import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
-import { VisionJobUpdateV1 } from 'src/store/thunks/Process/VisionJobUpdateV1';
-import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { clearAnnotationState } from 'src/store/commonActions';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import {
