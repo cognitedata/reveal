@@ -29,8 +29,18 @@ describe('generateNdsTreemapData', () => {
     expect(result).toEqual({
       title: 'Wellbore NDS treemap',
       children: [
-        { title: 'wellbore 1', description: '1 events (50%)', value: 1 },
-        { title: 'wellbore 2', description: '1 events (50%)', value: 1 },
+        {
+          title: 'wellbore 1',
+          description: '1 events (50%)',
+          value: 1,
+          ndsEvents: [ndsEvents[0]],
+        },
+        {
+          title: 'wellbore 2',
+          description: '1 events (50%)',
+          value: 1,
+          ndsEvents: [ndsEvents[1]],
+        },
       ],
     });
   });
@@ -53,8 +63,18 @@ describe('generateNdsTreemapData', () => {
     expect(result).toEqual({
       title: 'Wellbore NDS treemap',
       children: [
-        { title: 'wellbore 1', description: '1 events (50%)', value: 1 },
-        { title: 'wellbore 2', description: '1 events (50%)', value: 1 },
+        {
+          title: 'wellbore 1',
+          description: '1 events (50%)',
+          value: 1,
+          ndsEvents: [ndsEvents[0]],
+        },
+        {
+          title: 'wellbore 2',
+          description: '1 events (50%)',
+          value: 1,
+          ndsEvents: [ndsEvents[1]],
+        },
         {
           title: 'Other (1)',
           description: '0 events (0%)',
@@ -81,22 +101,32 @@ describe('generateNdsTreemapData', () => {
       getMockWellbore({ id: 'wellboreId5', name: 'wellbore 5' }),
     ];
 
-    const ndsEvents = [
+    const wellbore1Nds = [
       getMockNdsEvent({ wellboreMatchingId: 'wellboreId1' }),
       getMockNdsEvent({ wellboreMatchingId: 'wellboreId1' }),
       getMockNdsEvent({ wellboreMatchingId: 'wellboreId1' }),
-
+    ];
+    const wellbore2Nds = [
       getMockNdsEvent({ wellboreMatchingId: 'wellboreId2' }),
       getMockNdsEvent({ wellboreMatchingId: 'wellboreId2' }),
       getMockNdsEvent({ wellboreMatchingId: 'wellboreId2' }),
-
+    ];
+    const wellbore4Nds = [
       getMockNdsEvent({ wellboreMatchingId: 'wellboreId4' }),
+    ];
+    const wellbore5Nds = [
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId5' }),
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId5' }),
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId5' }),
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId5' }),
+      getMockNdsEvent({ wellboreMatchingId: 'wellboreId5' }),
+    ];
 
-      getMockNdsEvent({ wellboreMatchingId: 'wellboreId5' }),
-      getMockNdsEvent({ wellboreMatchingId: 'wellboreId5' }),
-      getMockNdsEvent({ wellboreMatchingId: 'wellboreId5' }),
-      getMockNdsEvent({ wellboreMatchingId: 'wellboreId5' }),
-      getMockNdsEvent({ wellboreMatchingId: 'wellboreId5' }),
+    const ndsEvents = [
+      ...wellbore1Nds,
+      ...wellbore2Nds,
+      ...wellbore4Nds,
+      ...wellbore5Nds,
     ] as NdsDataLayer[];
 
     const result = generateNdsTreemapData(wellbores, ndsEvents, 3);
@@ -104,9 +134,24 @@ describe('generateNdsTreemapData', () => {
     expect(result).toEqual({
       title: 'Wellbore NDS treemap',
       children: [
-        { title: 'wellbore 5', description: '5 events (42%)', value: 5 },
-        { title: 'wellbore 1', description: '3 events (25%)', value: 3 },
-        { title: 'wellbore 2', description: '3 events (25%)', value: 3 },
+        {
+          title: 'wellbore 5',
+          description: '5 events (42%)',
+          value: 5,
+          ndsEvents: wellbore5Nds,
+        },
+        {
+          title: 'wellbore 1',
+          description: '3 events (25%)',
+          value: 3,
+          ndsEvents: wellbore1Nds,
+        },
+        {
+          title: 'wellbore 2',
+          description: '3 events (25%)',
+          value: 3,
+          ndsEvents: wellbore2Nds,
+        },
         {
           title: 'Other (2)',
           description: '1 events (8%)',

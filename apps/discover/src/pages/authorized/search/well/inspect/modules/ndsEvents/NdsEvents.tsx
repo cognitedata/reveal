@@ -2,11 +2,11 @@ import { useNdsAggregatesByWellboreIdsQuery } from 'domain/wells/service/nds/que
 import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
 import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
-import { OptionType, SegmentedControl } from '@cognite/cogs.js';
+import { OptionType } from '@cognite/cogs.js';
 
 import EmptyState from 'components/EmptyState';
 import { MultiSelectCategorized } from 'components/Filters';
@@ -15,8 +15,11 @@ import {
   MultiSelectCategorizedOption,
   Category,
 } from 'components/Filters/MultiSelectCategorized/types';
-import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
+import { useDeepEffect } from 'hooks/useDeep';
 
+import { ViewModeControl } from '../common/ViewModeControl';
+
+import { NdsViewModes } from './constans';
 import { DetailedView } from './detailedView';
 import { NdsControlWrapper } from './elements';
 import { NdsTable } from './table';
@@ -26,7 +29,6 @@ import { useNdsData } from './useNdsData';
 import { generateNdsFilterDataFromAggregate } from './utils/generateNdsFilterDataFromAggregate';
 import { generateNdsTreemapData } from './utils/generateNdsTreemapData';
 
-type SelectedView = 'treemap' | 'table';
 const SELECT_TITLE = 'Risk type & subtype';
 
 const NdsEvents: React.FC = () => {
@@ -37,13 +39,15 @@ const NdsEvents: React.FC = () => {
     useNdsAggregatesByWellboreIdsQuery(wellboreIds);
   const { data, isLoading } = useNdsData();
 
-  const treemapData = useDeepMemo(
+  const treemapData = useMemo(
     () => generateNdsTreemapData(selectedWellbores, data),
     [selectedWellbores, data]
   );
 
   // state
-  const [selectedView, setSelectedView] = useState<SelectedView>('treemap');
+  const [selectedViewMode, setSelectedViewMode] = useState<NdsViewModes>(
+    NdsViewModes.Treemap
+  );
   const [detailedViewNdsData, setDetailedViewNdsData] = useState<NdsView[]>();
 
   const [riskTypeFilters, setRiskTypeFilters] = useState<
@@ -68,16 +72,11 @@ const NdsEvents: React.FC = () => {
   return (
     <>
       <NdsControlWrapper>
-        <SegmentedControl
-          currentKey={selectedView}
-          onButtonClicked={(view) => setSelectedView(view as SelectedView)}
-        >
-          <SegmentedControl.Button key="treemap">
-            Treemap
-          </SegmentedControl.Button>
-          <SegmentedControl.Button key="table">Table</SegmentedControl.Button>
-        </SegmentedControl>
-
+        <ViewModeControl
+          views={Object.values(NdsViewModes)}
+          selectedView={selectedViewMode}
+          onChangeView={setSelectedViewMode}
+        />
         <MultiSelectCategorized
           title={SELECT_TITLE}
           width={300}
@@ -86,9 +85,11 @@ const NdsEvents: React.FC = () => {
         />
       </NdsControlWrapper>
 
-      {selectedView === 'treemap' && <NdsTreemap data={treemapData} />}
+      {selectedViewMode === NdsViewModes.Treemap && (
+        <NdsTreemap data={treemapData} onClickTile={setDetailedViewNdsData} />
+      )}
 
-      {selectedView === 'table' && (
+      {selectedViewMode === NdsViewModes.Table && (
         <NdsTable data={data} onClickView={setDetailedViewNdsData} />
       )}
 

@@ -7,7 +7,7 @@ import minBy from 'lodash/minBy';
 import sumBy from 'lodash/sumBy';
 import { getFixedPercent } from 'utils/number';
 
-import { TreeMapData } from 'components/Treemap/Treemap';
+import { TreeMapData } from 'components/Treemap';
 
 export const generateNdsTreemapData = (
   wellbores: Wellbore[],
@@ -50,7 +50,7 @@ export const generateNdsTreemapData = (
       {
         totalNumberOfEvents: 0,
         numberOfWellsWithEvents: 0,
-        wellbores: [] as { name: string; numberOfEvents: number }[],
+        wellbores: [] as { id: string; name: string; numberOfEvents: number }[],
       }
     );
 
@@ -103,6 +103,7 @@ export const generateNdsTreemapData = (
         totalNumberOfEvents
       )}%)`,
       value: data.numberOfEvents,
+      ndsEvents: groupedNdsEvents[data.id],
     }));
 
     children = OtherNode ? [...realNodes, OtherNode] : realNodes;

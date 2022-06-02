@@ -3,26 +3,34 @@ import React, { useState } from 'react';
 import { Table } from '@cognite/cogs.js';
 
 import { Modal } from 'components/Modal';
-import { Treemap } from 'components/Treemap';
+import { Treemap, TreeMapData } from 'components/Treemap';
+
+import { NdsView } from '../types';
 
 import { WellboreTableWrapper } from './elements';
 import { NdsTreemapProps, NdsTreemapWellboreData } from './types';
 
-export const NdsTreemap: React.FC<NdsTreemapProps> = ({ data }) => {
+export const NdsTreemap: React.FC<NdsTreemapProps> = ({
+  data,
+  onClickTile,
+}) => {
   const [otherWellbores, setOtherWellbores] = useState<
     NdsTreemapWellboreData[]
   >([]);
 
+  const handleTileClicked = (treemapData: TreeMapData) => {
+    const { id, wellbores, ndsEvents } = treemapData;
+
+    if (id === 'other') {
+      setOtherWellbores(wellbores as NdsTreemapWellboreData[]);
+    } else {
+      onClickTile?.(ndsEvents as NdsView[]);
+    }
+  };
+
   return (
     <>
-      <Treemap
-        data={data}
-        onTileClicked={(d) => {
-          if (d.id === 'other') {
-            setOtherWellbores(d.wellbores as any);
-          }
-        }}
-      />
+      <Treemap data={data} onTileClicked={handleTileClicked} />
 
       {/* The modal needs to be implemented properly, there is no design right now for this view so it's improvised */}
       <Modal
