@@ -455,7 +455,7 @@ describe('Test annotation reducer', () => {
           payload: [20], // file id to delete
         };
 
-        const previousState = {
+        const previousState: AnnotationState = {
           files: {
             byId: {
               '10': [1],
@@ -467,6 +467,9 @@ describe('Test annotation reducer', () => {
               '1': getDummyImageObjectDetectionBoundingBoxAnnotation({ id: 1 }),
               '2': getDummyImageObjectDetectionBoundingBoxAnnotation({ id: 2 }),
             },
+          },
+          annotationColorMap: {
+            [dummyAnnotation1.label]: '#f00',
           },
         };
 
@@ -480,6 +483,9 @@ describe('Test annotation reducer', () => {
             byId: {
               '1': getDummyImageObjectDetectionBoundingBoxAnnotation({ id: 1 }),
             },
+          },
+          annotationColorMap: {
+            [dummyAnnotation1.label]: '#f00',
           },
         });
       });
