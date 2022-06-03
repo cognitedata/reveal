@@ -27,6 +27,7 @@ import {
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
 
 export const initialState: AnnotatorWrapperState = {
   predefinedAnnotations: {
@@ -219,7 +220,7 @@ const annotatorWrapperSlice = createSlice({
     // Matchers
     builder.addMatcher(
       isAnyOf(
-        // CreateAnnotationsV1.fulfilled, // Todo add SaveAnnotations.fulfilled
+        SaveAnnotations.fulfilled,
         VisionJobUpdate.fulfilled,
         UpdateAnnotations.fulfilled,
         RetrieveAnnotations.fulfilled

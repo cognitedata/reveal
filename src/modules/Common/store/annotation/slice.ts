@@ -15,6 +15,7 @@ import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations
 import { InternalId } from '@cognite/sdk';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
 
 export const initialState: AnnotationState = {
   files: {
@@ -90,7 +91,7 @@ const annotationSlice = createSlice({
 
     builder.addMatcher(
       isAnyOf(
-        // CreateAnnotationsV1.fulfilled, // Todo add SaveAnnotations.fulfilled
+        SaveAnnotations.fulfilled,
         VisionJobUpdate.fulfilled,
         UpdateAnnotations.fulfilled
       ),

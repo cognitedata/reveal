@@ -18,8 +18,6 @@ import {
   KeypointVertex,
   VisionAnnotationV1,
 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
-import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { makeSelectFileAnnotations as makeSelectFileAnnotationsV1 } from 'src/modules/Common/store/annotationV1/selectors';
 import { makeSelectFileAnnotations } from 'src/modules/Common/store/annotation/selectors';
 import {
@@ -29,6 +27,8 @@ import {
 import { Status } from 'src/api/annotation/types';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
 import { VisionReviewAnnotation } from 'src/modules/Review/types';
+import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
+import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 
 export interface VisibleAnnotation extends VisionAnnotationV1 {
   show: boolean;
@@ -163,7 +163,7 @@ const reviewSlice = createSlice({
 
     // select created or updated annotations if no other annotation is already selected
     builder.addMatcher(
-      isAnyOf(CreateAnnotationsV1.fulfilled, UpdateAnnotationsV1.fulfilled),
+      isAnyOf(SaveAnnotations.fulfilled, UpdateAnnotations.fulfilled),
       (state, { payload }) => {
         payload.forEach((annotation) => {
           if (!state.selectedAnnotationIds.length) {

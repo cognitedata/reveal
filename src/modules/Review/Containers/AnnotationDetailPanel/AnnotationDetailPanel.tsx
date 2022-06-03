@@ -46,12 +46,9 @@ import {
 import {
   AnnotationDetailPanelAnnotationType,
   AnnotationDetailPanelRowDataBase,
-} from './types';
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
 
-export const AnnotationDetailPanel = (props: {
-  file: FileInfo;
-  reference: any;
-}) => {
+export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
   const { file } = props;
 
   const dispatch = useDispatch();
@@ -217,8 +214,8 @@ export const AnnotationDetailPanel = (props: {
     [currentKeypointCollection?.id]
   );
 
-  const handleKeypointSelect = useCallback((id: ReactText) => {
-    dispatch(keypointSelectStatusChange(id.toString()));
+  const handleKeypointSelect = useCallback((id: string) => {
+    dispatch(keypointSelectStatusChange(id));
   }, []);
 
   const ReviewCallbacks = useMemo(
@@ -328,7 +325,7 @@ export const AnnotationDetailPanel = (props: {
       scrollId={scrollId}
       file={file}
     >
-      <Container ref={props.reference}>
+      <Container>
         <Detail style={{ color: '#595959' }}>
           {'Approve and reject detected annotations '}
           <PrimaryTooltip
