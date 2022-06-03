@@ -6,13 +6,14 @@ import { useTooltip, defaultStyles, Tooltip } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
 import { LinearGradient } from '@visx/gradient';
 import { max, min, extent, bisector } from 'd3-array';
-import { timeFormat } from 'd3-time-format';
+import { NumberValue } from 'd3-scale';
 import { DatapointAggregate } from '@cognite/sdk';
-import { AxisRight, AxisBottom } from '@visx/axis';
+import { AxisRight, AxisBottom, TickFormatter } from '@visx/axis';
 import { Group } from '@visx/group';
 import { Threshold } from '@visx/threshold';
 import { Body, Colors, Overline } from '@cognite/cogs.js';
 import { lightGrey } from 'utils/Colors';
+import { formatDate, datetimeMultiFormat } from 'utils/datetimeFormat';
 
 const pointColor = Colors['midblue-3'].hex();
 const primaryColor = Colors['midblue-4'].hex();
@@ -24,9 +25,6 @@ const tooltipStyles = {
   border: 'none',
   color: 'white',
 };
-
-// util
-const formatDate = timeFormat('%b %d %Y, %H:%M');
 
 // accessors
 const getDate = (d?: DatapointAggregate) =>
@@ -117,6 +115,7 @@ export const LineChart = ({
     const d0 = values[index - 1];
     const d1 = values[index];
     let d: DatapointAggregate | undefined = d0;
+
     if (d1 && getDate(d1)) {
       d =
         x0.valueOf() - getDate(d0).valueOf() >
@@ -178,6 +177,9 @@ export const LineChart = ({
             textAnchor: 'middle',
           })}
           tickLength={showSmallerTicks ? 4 : 8}
+          tickFormat={
+            datetimeMultiFormat as TickFormatter<Date | NumberValue> | undefined
+          }
         />
       )}
       {(showAxis === 'both' || showAxis === 'vertical') && (
