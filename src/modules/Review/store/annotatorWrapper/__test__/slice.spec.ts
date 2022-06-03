@@ -15,16 +15,6 @@ import {
   getDummyPredefinedKeypointCollection,
 } from 'src/__test-utils/annotations';
 import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
-import {
-  AnnotatorPointRegion,
-  AnnotatorRegionType,
-} from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
-import { getDummyRegion } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/__test-utils/region';
-import {
-  getDummyImageKeypointCollectionAnnotation,
-  getDummyVisionReviewAnnotation,
-} from 'src/__test-utils/getDummyAnnotations';
-import { VisionReviewAnnotation } from 'src/modules/Review/types';
 
 jest.mock('src/modules/Common/Utils/AnnotationUtils/AnnotationUtils', () => ({
   ...jest.requireActual(
