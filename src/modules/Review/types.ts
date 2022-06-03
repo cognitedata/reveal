@@ -12,7 +12,11 @@ import {
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
-import { ImageKeypointCollection, Keypoint } from 'src/api/annotation/types';
+import {
+  ImageKeypointCollection,
+  Keypoint,
+  Status,
+} from 'src/api/annotation/types';
 
 /** @deprecated */
 export type LegacyKeypointItemCollection = {
@@ -84,11 +88,11 @@ export type ReactImageAnnotateWrapperProps = FilePreviewProps & {
 };
 
 export type AnnotationTableRowProps = {
-  reviewAnnotation: VisionReviewAnnotation<VisionAnnotationDataType>; // TODO: rename to reviewAnnotation
+  reviewAnnotation: VisionReviewAnnotation<VisionAnnotationDataType>;
   onSelect: (id: ReactText, state: boolean) => void;
-  onDelete: (id: ReactText) => void;
-  onVisibilityChange: (id: ReactText) => void;
-  onApprove: (id: ReactText, status: AnnotationStatus) => void;
+  onDelete: (id: number) => void;
+  onVisibilityChange: (id: number) => void;
+  onApprove: (id: number, status: Status) => void;
   showColorCircle?: boolean;
   expandByDefault?: boolean;
 };

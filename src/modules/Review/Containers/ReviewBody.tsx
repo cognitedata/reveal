@@ -35,7 +35,6 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const loadingState = useRef<boolean>(false);
   const [currentTab, tabChange] = useState('context');
-  const contextElement = useRef<HTMLElement>(null);
 
   const { flow } = getFlow();
   const { data: userInfo } = useUserInformation();
@@ -154,10 +153,7 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
                   style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
                   disabled={isVideo(file)}
                 >
-                  <AnnotationDetailPanel
-                    file={file}
-                    reference={contextElement}
-                  />
+                  <AnnotationDetailPanel file={file} />
                 </Tabs.Pane>
                 <Tabs.Pane
                   title="File details"

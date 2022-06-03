@@ -25,7 +25,7 @@ import {
   dummyKeypoint,
   getDummyKeypointCollectionState,
   getDummyKeypointState,
-  getDummyPredefinedKeypoint,
+  getDummyPredefinedKeypointCollection,
 } from 'src/__test-utils/annotations';
 
 describe('Test annotationLabel selectors', () => {
@@ -39,7 +39,7 @@ describe('Test annotationLabel selectors', () => {
 
     test('Should return first point in predefined collection since lastKeyPoint is not set', () => {
       const predefinedKeypointCollection: PredefinedKeypointCollection =
-        getDummyPredefinedKeypoint('123');
+        getDummyPredefinedKeypointCollection(123);
 
       const previousState: AnnotatorWrapperState = {
         ...initialState,
@@ -53,13 +53,13 @@ describe('Test annotationLabel selectors', () => {
 
     test('Should return next point in predefined collection since lastKeyPoint is set', () => {
       const predefinedKeypointCollection: PredefinedKeypointCollection =
-        getDummyPredefinedKeypoint('123');
+        getDummyPredefinedKeypointCollection(123);
 
-      const k1Id = generateKeypointId('10', 'left');
-      const k2Id = generateKeypointId('10', 'center');
+      const k1Id = generateKeypointId(10, 'left');
+      const k2Id = generateKeypointId(10, 'center');
 
       const keypointCollectionState: Record<string, KeypointCollectionState> = {
-        '10': getDummyKeypointCollectionState('10', [k1Id, k2Id]),
+        10: getDummyKeypointCollectionState(10, [k1Id, k2Id]),
       };
 
       const imageKeypoints: Record<string, Keypoint> = {
@@ -68,7 +68,7 @@ describe('Test annotationLabel selectors', () => {
       };
       const collections = {
         byId: keypointCollectionState,
-        allIds: ['10'],
+        allIds: [10],
         selectedIds: [],
       };
       const previousState: AnnotatorWrapperState = {
@@ -91,14 +91,14 @@ describe('Test annotationLabel selectors', () => {
 
     test('Should return first point in predefined collection since lastKeyPoint is set to last keypoint in predefined collection', () => {
       const predefinedKeypointCollection: PredefinedKeypointCollection =
-        getDummyPredefinedKeypoint('123');
+        getDummyPredefinedKeypointCollection(123);
 
-      const k1Id = generateKeypointId('10', 'left');
-      const k2Id = generateKeypointId('10', 'center');
-      const k3Id = generateKeypointId('10', 'right');
+      const k1Id = generateKeypointId(10, 'left');
+      const k2Id = generateKeypointId(10, 'center');
+      const k3Id = generateKeypointId(10, 'right');
 
       const keypointCollectionState: Record<string, KeypointCollectionState> = {
-        '10': getDummyKeypointCollectionState('10', [k1Id, k2Id, k3Id]),
+        '10': getDummyKeypointCollectionState(10, [k1Id, k2Id, k3Id]),
       };
 
       const imageKeypoints: Record<string, Keypoint> = {
@@ -108,7 +108,7 @@ describe('Test annotationLabel selectors', () => {
       };
       const collections = {
         byId: keypointCollectionState,
-        allIds: ['10'],
+        allIds: [10],
         selectedIds: [],
       };
 
@@ -133,14 +133,14 @@ describe('Test annotationLabel selectors', () => {
 
     test('Should return first point in predefined collection for invalid last keypoint label', () => {
       const predefinedKeypointCollection: PredefinedKeypointCollection =
-        getDummyPredefinedKeypoint('123');
+        getDummyPredefinedKeypointCollection(123);
 
-      const k1Id = generateKeypointId('10', 'left');
-      const k2Id = generateKeypointId('10', 'center');
-      const k3Id = generateKeypointId('10', 'right');
+      const k1Id = generateKeypointId(10, 'left');
+      const k2Id = generateKeypointId(10, 'center');
+      const k3Id = generateKeypointId(10, 'right');
 
       const keypointCollectionState: Record<string, KeypointCollectionState> = {
-        '10': getDummyKeypointCollectionState('10', [k1Id, k2Id, k3Id]),
+        '10': getDummyKeypointCollectionState(10, [k1Id, k2Id, k3Id]),
       };
 
       const imageKeypoints: Record<string, Keypoint> = {
@@ -150,7 +150,7 @@ describe('Test annotationLabel selectors', () => {
       };
       const collections = {
         byId: keypointCollectionState,
-        allIds: ['10'],
+        allIds: [10],
         selectedIds: [],
       };
 
@@ -365,18 +365,18 @@ describe('Test annotationLabel selectors', () => {
 
   describe('Test currentCollection selector', () => {
     const predefinedKeypointCollection: PredefinedKeypointCollection =
-      getDummyPredefinedKeypoint('123');
+      getDummyPredefinedKeypointCollection(123);
 
-    const k1Id = generateKeypointId('10', 'left');
-    const k2Id = generateKeypointId('10', 'center');
-    const k3Id = generateKeypointId('20', 'right');
-    const k4Id = generateKeypointId('20', 'left');
+    const k1Id = generateKeypointId(10, 'left');
+    const k2Id = generateKeypointId(10, 'center');
+    const k3Id = generateKeypointId(20, 'right');
+    const k4Id = generateKeypointId(20, 'left');
 
-    const unfinishedCollection = getDummyKeypointCollectionState('20', [k4Id]);
+    const unfinishedCollection = getDummyKeypointCollectionState(20, [k4Id]);
 
     const keypointCollectionState: Record<string, KeypointCollectionState> = {
-      '10': getDummyKeypointCollectionState('10', [k1Id, k2Id, k3Id]),
-      '20': unfinishedCollection,
+      10: getDummyKeypointCollectionState(10, [k1Id, k2Id, k3Id]),
+      20: unfinishedCollection,
     };
 
     const imageKeypoints: Record<string, Keypoint> = {
@@ -394,10 +394,10 @@ describe('Test annotationLabel selectors', () => {
     });
 
     test('Should return last collection++', () => {
-      const lastCollectionId = '20';
+      const lastCollectionId = 20;
       const collections = {
         byId: keypointCollectionState,
-        allIds: ['10', '20'],
+        allIds: [10, 20],
         selectedIds: [],
       };
 
@@ -436,15 +436,15 @@ describe('Test annotationLabel selectors', () => {
 
   describe('Test keypointsCompleteInCollection selector', () => {
     const predefinedKeypointCollection: PredefinedKeypointCollection =
-      getDummyPredefinedKeypoint('123');
+      getDummyPredefinedKeypointCollection(123);
 
-    const k1Id = generateKeypointId('10', 'left');
-    const k2Id = generateKeypointId('10', 'center');
-    const k3Id = generateKeypointId('20', 'left');
+    const k1Id = generateKeypointId(10, 'left');
+    const k2Id = generateKeypointId(10, 'center');
+    const k3Id = generateKeypointId(20, 'left');
 
     const keypointCollectionState: Record<string, KeypointCollectionState> = {
-      '10': getDummyKeypointCollectionState('10', [k1Id, k2Id]),
-      '20': getDummyKeypointCollectionState('20', [k3Id]),
+      10: getDummyKeypointCollectionState(10, [k1Id, k2Id]),
+      20: getDummyKeypointCollectionState(20, [k3Id]),
     };
 
     const imageKeypoints: Record<string, Keypoint> = {
@@ -461,10 +461,10 @@ describe('Test annotationLabel selectors', () => {
     });
 
     test('Should return counts', () => {
-      const lastCollectionId = '20';
+      const lastCollectionId = 20;
       const collections = {
         byId: keypointCollectionState,
-        allIds: ['10', '20'],
+        allIds: [10, 20],
         selectedIds: [],
       };
       const previousState: AnnotatorWrapperState = {

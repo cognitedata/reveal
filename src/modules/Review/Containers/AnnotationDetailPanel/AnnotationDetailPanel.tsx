@@ -1,12 +1,5 @@
 import React, { ReactText, useCallback, useMemo } from 'react';
 import { Detail, Icon, PrimaryTooltip } from '@cognite/cogs.js';
-import {
-  deleteCollectionById,
-  keypointSelectStatusChange,
-  selectCollection,
-  setCollectionStatus,
-  toggleCollectionVisibility,
-} from 'src/modules/Review/store/annotationLabel/slice';
 import { currentCollection } from 'src/modules/Review/store/annotatorWrapper/selectors';
 import {
   selectAnnotation,
@@ -14,14 +7,11 @@ import {
   selectVisionReviewAnnotationsForFile,
 } from 'src/modules/Review/store/reviewSlice';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
-import { AnnotationStatusChangeV1 } from 'src/store/thunks/Annotation/AnnotationStatusChangeV1';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFileV1 } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFileV1';
 import styled from 'styled-components';
 import { RootState } from 'src/store/rootReducer';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { useDispatch, useSelector } from 'react-redux';
 import { FileInfo } from '@cognite/sdk';
-import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { generateNodeTree } from 'src/modules/Review/Containers/AnnotationDetailPanel/utils/generateNodeTree';
 import { Categories, VisionReviewAnnotation } from 'src/modules/Review/types';
 import {
@@ -34,6 +24,7 @@ import { selectCategory } from 'src/modules/Review/Containers/AnnotationDetailPa
 import {
   CDFAnnotationTypeEnum,
   ImageKeypointCollection,
+  Status,
 } from 'src/api/annotation/types';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
 import {
@@ -43,15 +34,22 @@ import {
   isImageKeypointCollectionData,
   isImageObjectDetectionData,
 } from 'src/modules/Common/types/typeGuards';
+import { convertTempKeypointCollectionToVisionReviewImageKeypointCollection } from 'src/modules/Review/store/review/utils';
+import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
+import {
+  deleteCurrentCollection,
+  keypointSelectStatusChange,
+  selectCollection,
+  setCollectionStatus,
+  toggleCollectionVisibility,
+} from 'src/modules/Review/store/annotatorWrapper/slice';
 import {
   AnnotationDetailPanelAnnotationType,
   AnnotationDetailPanelRowDataBase,
-} from './types';
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
 
-export const AnnotationDetailPanel = (props: {
-  file: FileInfo;
-  reference: any;
-}) => {
+export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
   const { file } = props;
 
   const dispatch = useDispatch();
@@ -75,29 +73,9 @@ export const AnnotationDetailPanel = (props: {
   );
 
   const convertedCurrentKeypointCollection: VisionReviewAnnotation<ImageKeypointCollection> | null =
-    currentKeypointCollection && {
-      annotation: {
-        annotatedResourceId: currentKeypointCollection.annotatedResourceId,
-        status: currentKeypointCollection.status,
-        annotationType: CDFAnnotationTypeEnum.ImagesKeypointCollection,
-        label: currentKeypointCollection.label,
-        keypoints: currentKeypointCollection.keypoints,
-        createdTime: 0,
-        lastUpdatedTime: 0,
-        /**
-         * @todo: The currentCollection selector in AnnotationWrapper should use numeric
-         * id for the collection, which can correspond to annotation id from CDF or
-         * in case on unsaved collection a random numeric value.
-         * @see createUniqueNumericId
-         *
-         * Once this has been done we need update the code other places
-         * accordingly.
-         */
-        id: Number(currentKeypointCollection.id),
-      },
-      show: currentKeypointCollection.show,
-      selected: currentKeypointCollection.selected,
-    };
+    convertTempKeypointCollectionToVisionReviewImageKeypointCollection(
+      currentKeypointCollection
+    );
 
   const imagesAssetLinkReviewAnnotations = useMemo(() => {
     return visibleReviewAnnotations.filter((reviewAnnotation) =>
@@ -157,7 +135,7 @@ export const AnnotationDetailPanel = (props: {
     (id: ReactText) => {
       if (id === currentKeypointCollection?.id) {
         // when creating keypoint collections
-        dispatch(toggleCollectionVisibility(id.toString()));
+        dispatch(toggleCollectionVisibility(id));
       } else {
         dispatch(
           toggleAnnotationVisibility({
@@ -170,14 +148,14 @@ export const AnnotationDetailPanel = (props: {
   );
 
   const handleDelete = useCallback(
-    (id: ReactText) => {
+    (id: number) => {
       if (id === currentKeypointCollection?.id) {
         // when creating keypoint collections
-        dispatch(deleteCollectionById(id.toString()));
+        dispatch(deleteCurrentCollection());
       } else {
         dispatch(
-          DeleteAnnotationsAndHandleLinkedAssetsOfFileV1({
-            annotationIds: [+id],
+          DeleteAnnotationsAndHandleLinkedAssetsOfFile({
+            annotationIds: [{ id }],
             showWarnings: true,
           })
         );
@@ -187,12 +165,12 @@ export const AnnotationDetailPanel = (props: {
   );
 
   const handleApprovalState = useCallback(
-    async (id: ReactText, status: AnnotationStatus) => {
+    async (id: number, status: Status) => {
       if (id === currentKeypointCollection?.id) {
         // when creating keypoint collections
-        dispatch(setCollectionStatus({ id: id.toString(), status }));
+        dispatch(setCollectionStatus({ id, status }));
       } else {
-        await dispatch(AnnotationStatusChangeV1({ id: +id, status }));
+        await dispatch(AnnotationStatusChange({ id, status }));
       }
     },
     [currentKeypointCollection?.id]
@@ -204,7 +182,7 @@ export const AnnotationDetailPanel = (props: {
       if (id === currentKeypointCollection?.id) {
         // when creating keypoint collections
         if (nextState) {
-          dispatch(selectCollection(id.toString()));
+          dispatch(selectCollection(id));
         }
       } else if (Object.values(Categories).includes(id as Categories)) {
         dispatch(
@@ -217,8 +195,8 @@ export const AnnotationDetailPanel = (props: {
     [currentKeypointCollection?.id]
   );
 
-  const handleKeypointSelect = useCallback((id: ReactText) => {
-    dispatch(keypointSelectStatusChange(id.toString()));
+  const handleKeypointSelect = useCallback((id: string) => {
+    dispatch(keypointSelectStatusChange(id));
   }, []);
 
   const ReviewCallbacks = useMemo(
@@ -328,7 +306,7 @@ export const AnnotationDetailPanel = (props: {
       scrollId={scrollId}
       file={file}
     >
-      <Container ref={props.reference}>
+      <Container>
         <Detail style={{ color: '#595959' }}>
           {'Approve and reject detected annotations '}
           <PrimaryTooltip

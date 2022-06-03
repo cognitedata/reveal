@@ -45,7 +45,7 @@ export const convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection
       },
     };
   };
- // todo: add test cases [VIS-877]
+// todo: add test cases [VIS-877]
 export const convertTempKeypointCollectionToVisionReviewImageKeypointCollection =
   (
     tempKeypointCollection: TempKeypointCollection | null
