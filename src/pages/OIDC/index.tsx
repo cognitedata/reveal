@@ -10,6 +10,7 @@ import { useRouteMatch } from 'react-router';
 import { useAuthConfiguration } from 'hooks';
 import { StyledHelpIcon } from 'pages/components/CustomInfo';
 import styled from 'styled-components';
+import { OIDCConfigurationWarning } from 'pages/components/OIDCConfigurationWarning';
 
 const formItemLayout = {
   labelCol: {
@@ -124,114 +125,122 @@ export default function OIDCConfigContainer() {
   }
 
   return (
-    <Form
-      {...formItemLayout}
-      onFinish={handleSubmit}
-      initialValues={{
-        ...projectSettings?.oidcConfiguration,
-        accessClaims: projectSettings?.oidcConfiguration?.accessClaims?.map(
-          (o) => o.claimName
-        ),
-        scopeClaims: projectSettings?.oidcConfiguration?.scopeClaims?.map(
-          (o) => o.claimName
-        ),
-        logClaims: projectSettings?.oidcConfiguration?.logClaims?.map(
-          (o) => o.claimName
-        ),
-        isOidcEnabled: authConfiguration?.isOidcEnabled,
-        isGroupCallbackEnabled: (
-          projectSettings?.oidcConfiguration as OidcConfiguration & {
-            isGroupCallbackEnabled?: boolean;
+    <>
+      <OIDCConfigurationWarning />
+      <Form
+        {...formItemLayout}
+        onFinish={handleSubmit}
+        initialValues={{
+          ...projectSettings?.oidcConfiguration,
+          accessClaims: projectSettings?.oidcConfiguration?.accessClaims?.map(
+            (o) => o.claimName
+          ),
+          scopeClaims: projectSettings?.oidcConfiguration?.scopeClaims?.map(
+            (o) => o.claimName
+          ),
+          logClaims: projectSettings?.oidcConfiguration?.logClaims?.map(
+            (o) => o.claimName
+          ),
+          isOidcEnabled: authConfiguration?.isOidcEnabled,
+          isGroupCallbackEnabled: (
+            projectSettings?.oidcConfiguration as OidcConfiguration & {
+              isGroupCallbackEnabled?: boolean;
+            }
+          )?.isGroupCallbackEnabled,
+        }}
+      >
+        <Form.Item name="isOidcEnabled" label="Enabled" valuePropName="checked">
+          <Checkbox disabled={updating} />
+        </Form.Item>
+
+        <Form.Item
+          label="JWKS URL"
+          name="jwksUrl"
+          hasFeedback
+          rules={urlRules()}
+        >
+          <Input disabled={updating} />
+        </Form.Item>
+
+        <Form.Item
+          label="Token URL"
+          name="tokenUrl"
+          required={false}
+          hasFeedback
+          rules={urlRules(false)}
+        >
+          <Input disabled={updating} />
+        </Form.Item>
+
+        <Form.Item label="Issuer" name="issuer" hasFeedback rules={urlRules()}>
+          <Input disabled={updating} />
+        </Form.Item>
+
+        <Form.Item
+          label="Audience"
+          name="audience"
+          hasFeedback
+          rules={urlRules()}
+        >
+          <Input disabled={updating} />
+        </Form.Item>
+
+        <Form.Item label="Access claims" name="accessClaims" required>
+          <Select
+            getPopupContainer={getContainer}
+            mode="tags"
+            tokenSeparators={[',', ' ']}
+            disabled={updating}
+          />
+        </Form.Item>
+
+        <Form.Item label="Scope claims" name="scopeClaims">
+          <Select
+            mode="tags"
+            tokenSeparators={[',', ' ']}
+            getPopupContainer={getContainer}
+            disabled={updating}
+          />
+        </Form.Item>
+
+        <Form.Item label="Log claims" name="logClaims">
+          <Select
+            mode="tags"
+            tokenSeparators={[',', ' ']}
+            getPopupContainer={getContainer}
+            disabled={updating}
+          />
+        </Form.Item>
+
+        <Form.Item label="Permitted time skew (ms)" name="skewMs">
+          <InputNumber min={0} disabled={updating} />
+        </Form.Item>
+
+        <Form.Item
+          label={
+            <StyledFormItemLabel>
+              Group callback is enabled
+              <Tooltip
+                content="A group callback occurs when a user has too many groups attached. This property indicates whether the group callback functionality should be supported for this project. This is only supported for AAD hosted IdPs."
+                wrapped
+              >
+                <StyledHelpIcon size={20} type="HelpFilled" />
+              </Tooltip>
+            </StyledFormItemLabel>
           }
-        )?.isGroupCallbackEnabled,
-      }}
-    >
-      <Form.Item name="isOidcEnabled" label="Enabled" valuePropName="checked">
-        <Checkbox disabled={updating} />
-      </Form.Item>
+          name="isGroupCallbackEnabled"
+          valuePropName="checked"
+        >
+          <Checkbox disabled={updating} />
+        </Form.Item>
 
-      <Form.Item label="JWKS URL" name="jwksUrl" hasFeedback rules={urlRules()}>
-        <Input disabled={updating} />
-      </Form.Item>
-
-      <Form.Item
-        label="Token URL"
-        name="tokenUrl"
-        required={false}
-        hasFeedback
-        rules={urlRules(false)}
-      >
-        <Input disabled={updating} />
-      </Form.Item>
-
-      <Form.Item label="Issuer" name="issuer" hasFeedback rules={urlRules()}>
-        <Input disabled={updating} />
-      </Form.Item>
-
-      <Form.Item
-        label="Audience"
-        name="audience"
-        hasFeedback
-        rules={urlRules()}
-      >
-        <Input disabled={updating} />
-      </Form.Item>
-
-      <Form.Item label="Access claims" name="accessClaims" required>
-        <Select
-          getPopupContainer={getContainer}
-          mode="tags"
-          tokenSeparators={[',', ' ']}
-          disabled={updating}
-        />
-      </Form.Item>
-
-      <Form.Item label="Scope claims" name="scopeClaims">
-        <Select
-          mode="tags"
-          tokenSeparators={[',', ' ']}
-          getPopupContainer={getContainer}
-          disabled={updating}
-        />
-      </Form.Item>
-
-      <Form.Item label="Log claims" name="logClaims">
-        <Select
-          mode="tags"
-          tokenSeparators={[',', ' ']}
-          getPopupContainer={getContainer}
-          disabled={updating}
-        />
-      </Form.Item>
-
-      <Form.Item label="Permitted time skew (ms)" name="skewMs">
-        <InputNumber min={0} disabled={updating} />
-      </Form.Item>
-
-      <Form.Item
-        label={
-          <StyledFormItemLabel>
-            Group callback is enabled
-            <Tooltip
-              content="A group callback occurs when a user has too many groups attached. This property indicates whether the group callback functionality should be supported for this project. This is only supported for AAD hosted IdPs."
-              wrapped
-            >
-              <StyledHelpIcon size={20} type="HelpFilled" />
-            </Tooltip>
-          </StyledFormItemLabel>
-        }
-        name="isGroupCallbackEnabled"
-        valuePropName="checked"
-      >
-        <Checkbox disabled={updating} />
-      </Form.Item>
-
-      <Form.Item {...noLabelItemLayout}>
-        <Button type="primary" htmlType="submit" disabled={updating}>
-          Save configuration
-        </Button>
-      </Form.Item>
-    </Form>
+        <Form.Item {...noLabelItemLayout}>
+          <Button type="primary" htmlType="submit" disabled={updating}>
+            Save configuration
+          </Button>
+        </Form.Item>
+      </Form>
+    </>
   );
 }
 
