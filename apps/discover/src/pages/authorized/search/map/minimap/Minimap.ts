@@ -122,12 +122,6 @@ export class Minimap {
       }
     });
 
-    if (isFunction(opts.zoomAdjust)) {
-      this.options.zoomAdjust = opts.zoomAdjust.bind(this);
-    } else if (opts.zoomAdjust === null) {
-      this.options.zoomAdjust = this._zoomAdjust.bind(this);
-    }
-
     if (opts.maxBounds === 'parent') {
       opts.bounds = parentMap.getMaxBounds();
     }
@@ -270,7 +264,7 @@ export class Minimap {
     this._setTrackingRectBounds(parentBounds);
 
     if (isFunction(this.options.zoomAdjust)) {
-      this.options.zoomAdjust();
+      this._zoomAdjust();
     }
   }
 
