@@ -4,6 +4,7 @@
 
 import React, { ReactNode } from 'react';
 import { Simple } from './pages/Simple';
+import { SimpleViewer } from './pages/SimpleCognite3DViewer';
 import { Clipping } from './pages/Clipping';
 import { Migration } from './pages/Migration';
 import { Geomap } from './pages/Geomap';
@@ -60,6 +61,12 @@ export const exampleRoutes: Array<ExampleRoute> = [
     path: '/simple',
     menuTitle: 'Simple',
     component: <Simple />,
+  },
+  {
+    name: 'simple Cognite3DViewer',
+    path: '/simpleC3DV',
+    menuTitle: 'Simple Cognite3DViewer',
+    component: <SimpleViewer />,
   },
   {
     name: 'clipping',

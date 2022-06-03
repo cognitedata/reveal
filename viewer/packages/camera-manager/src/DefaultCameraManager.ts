@@ -87,7 +87,7 @@ export class DefaultCameraManager implements CameraManager {
     raycastFunction: (x: number, y: number) => Promise<CameraManagerCallbackData>,
     camera?: THREE.PerspectiveCamera
   ) {
-    this._camera = camera ?? new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
+    this._camera = camera ?? new THREE.PerspectiveCamera(90, undefined, 0.1, 10000);
 
     this._domElement = domElement;
     this._inputHandler = inputHandler;

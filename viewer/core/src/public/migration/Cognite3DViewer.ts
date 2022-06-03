@@ -1022,9 +1022,9 @@ export class Cognite3DViewer {
     options?: IntersectionFromPixelOptions
   ): Promise<null | Intersection> {
     const cadModels = this.getModels('cad');
-    const pointCloudModels = this.getModels('pointcloud');
+    //const pointCloudModels = this.getModels('pointcloud');
     const cadNodes = cadModels.map(x => x.cadNode);
-    const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
+    //const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
 
     const normalizedCoords = {
       x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
@@ -1039,25 +1039,25 @@ export class Cognite3DViewer {
       domElement: this.renderer.domElement
     };
     const cadResults = this._pickingHandler.intersectCadNodes(cadNodes, input);
-    const pointCloudResults = intersectPointClouds(pointCloudNodes, input, options?.pointIntersectionThreshold);
+    // const pointCloudResults = intersectPointClouds(pointCloudNodes, input, options?.pointIntersectionThreshold);
 
     const intersections: Intersection[] = [];
-    if (pointCloudResults.length > 0) {
-      const result = pointCloudResults[0]; // Nearest intersection
-      for (const model of pointCloudModels) {
-        if (model.pointCloudNode === result.pointCloudNode) {
-          const intersection: PointCloudIntersection = {
-            type: 'pointcloud',
-            model,
-            point: result.point,
-            pointIndex: result.pointIndex,
-            distanceToCamera: result.distance
-          };
-          intersections.push(intersection);
-          break;
-        }
-      }
-    }
+    // if (pointCloudResults.length > 0) {
+    //   const result = pointCloudResults[0]; // Nearest intersection
+    //   for (const model of pointCloudModels) {
+    //     if (model.pointCloudNode === result.pointCloudNode) {
+    //       const intersection: PointCloudIntersection = {
+    //         type: 'pointcloud',
+    //         model,
+    //         point: result.point,
+    //         pointIndex: result.pointIndex,
+    //         distanceToCamera: result.distance
+    //       };
+    //       intersections.push(intersection);
+    //       break;
+    //     }
+    //   }
+    // }
 
     if (cadResults.length > 0) {
       const result = cadResults[0]; // Nearest intersection
