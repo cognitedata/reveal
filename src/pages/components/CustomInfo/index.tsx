@@ -18,6 +18,7 @@ const CustomInfo = (props: any) => {
     confirmMessage,
     confirmLabel,
     onClickConfirm,
+    hideModal = false,
   } = props;
 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -40,27 +41,31 @@ const CustomInfo = (props: any) => {
       <Infobox type={type || 'neutral'} title={alertTitle || INFO}>
         {alertMessage}
         <StyledDisableButtonSection>
-          <Button
-            disabled={alertBtnDisabled}
-            onClick={showConfirmModal}
-            type={alertBtnType || 'normal'}
-          >
-            {alertBtnLabel}
-          </Button>
+          {alertBtnLabel && (
+            <Button
+              disabled={alertBtnDisabled}
+              onClick={showConfirmModal}
+              type={alertBtnType || 'normal'}
+            >
+              {alertBtnLabel}
+            </Button>
+          )}
           {helpEnabled && (
             <Tooltip content={helpTooltipMessage}>
               <StyledHelpIcon size={20} type="HelpFilled" />
             </Tooltip>
           )}
         </StyledDisableButtonSection>
-        <DeleteConfirmModal
-          isOpen={isModalVisible}
-          confirmTitle={confirmTitle || alertTitle || CONFIRM}
-          confirmMessage={confirmMessage}
-          confirmLabel={confirmLabel || DELETE}
-          onCancel={closeConfirmModal}
-          onConfirm={handleSubmit}
-        />
+        {!hideModal && (
+          <DeleteConfirmModal
+            isOpen={isModalVisible}
+            confirmTitle={confirmTitle || alertTitle || CONFIRM}
+            confirmMessage={confirmMessage}
+            confirmLabel={confirmLabel || DELETE}
+            onCancel={closeConfirmModal}
+            onConfirm={handleSubmit}
+          />
+        )}
       </Infobox>
     </StyledInfoboxContainer>
   );
