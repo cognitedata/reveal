@@ -9,6 +9,10 @@ import {
   AnnotationLabelReducerState,
 } from 'src/modules/Review/store/annotationLabel/slice';
 import {
+  initialState as annotatorWrapperInitialState,
+  AnnotatorWrapperReducerState,
+} from 'src/modules/Review/store/annotatorWrapper/slice';
+import {
   reviewReducerInitialState,
   ReviewReducerState,
 } from 'src/modules/Review/store/reviewSlice';
@@ -60,6 +64,10 @@ export const loadState = (): Partial<RootState> | undefined => {
             ...annotationLabelReducerInitialState,
             ...persistedState.annotationLabelReducer,
           },
+          annotatorWrapperReducer: {
+            ...annotatorWrapperInitialState,
+            ...persistedState.annotatorWrapperReducer,
+          },
           reviewSlice: {
             ...reviewReducerInitialState,
             ...persistedState.reviewSlice,
@@ -78,6 +86,9 @@ export const loadState = (): Partial<RootState> | undefined => {
     return {
       annotationLabelReducer: {
         ...annotationLabelReducerInitialState,
+      },
+      annotatorWrapperReducer: {
+        ...annotatorWrapperInitialState,
       },
       reviewSlice: {
         ...reviewReducerInitialState,
@@ -104,8 +115,13 @@ export const saveState = (state: any): void => {
 };
 
 export type OfflineState = {
+  /** @deprecated */
   annotationLabelReducer: Pick<
     AnnotationLabelReducerState,
+    'predefinedAnnotations'
+  >;
+  annotatorWrapperReducer: Pick<
+    AnnotatorWrapperReducerState,
     'predefinedAnnotations'
   >;
   reviewSlice: Pick<ReviewReducerState, 'fileIds'>;
@@ -129,8 +145,13 @@ export type OfflineState = {
 
 const getOfflineState = (state: RootState): OfflineState => {
   const offState: OfflineState = {
+    /** @deprecated */
     annotationLabelReducer: {
       predefinedAnnotations: state.annotationLabelReducer.predefinedAnnotations,
+    },
+    annotatorWrapperReducer: {
+      predefinedAnnotations:
+        state.annotatorWrapperReducer.predefinedAnnotations,
     },
     reviewSlice: {
       fileIds: state.reviewSlice.fileIds,
