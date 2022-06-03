@@ -7,8 +7,8 @@ import {
   ChartTimeSeries,
   ChartWorkflow,
 } from 'models/chart/types';
-import { TimeseriesEntry } from 'models/timeseries/types';
-import { WorkflowState } from 'models/workflows/types';
+import { TimeseriesEntry } from 'models/timeseries-results/types';
+import { WorkflowState } from 'models/calculation-results/types';
 import { PlotWrapper } from './elements';
 import {
   calculateSeriesData,

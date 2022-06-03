@@ -4,7 +4,7 @@ import {
   CalculationResultQueryAggregateEnum,
 } from '@cognite/calculation-backend';
 import { Button, Popconfirm, Tooltip } from '@cognite/cogs.js';
-import { workflowsAtom } from 'models/workflows/atom';
+import { workflowsAtom } from 'models/calculation-results/atom';
 import AppearanceDropdown from 'components/AppearanceDropdown/AppearanceDropdown';
 import CalculationCallStatus from 'components/CalculationCallStatus/CalculationCallStatus';
 import { isWorkflowRunnable } from 'components/NodeEditor/utils';
@@ -42,7 +42,7 @@ import chartAtom from 'models/chart/atom';
 import dayjs from 'dayjs';
 import { CHART_POINTS_PER_SERIES } from 'utils/constants';
 import { formatValueForDisplay } from 'utils/numbers';
-import { workflowsSummaryById } from 'models/workflows/selectors';
+import { workflowsSummaryById } from 'models/calculation-results/selectors';
 import {
   DropdownWithoutMaxWidth,
   SourceDescription,

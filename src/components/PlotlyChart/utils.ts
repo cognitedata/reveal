@@ -10,8 +10,8 @@ import {
 import { roundToSignificantDigits } from 'utils/numbers';
 import { hexToRGBA } from 'utils/colors';
 import { convertUnits, convertThresholdUnits, units } from 'utils/units';
-import { WorkflowState } from 'models/workflows/types';
-import { TimeseriesEntry } from 'models/timeseries/types';
+import { WorkflowState } from 'models/calculation-results/types';
+import { TimeseriesEntry } from 'models/timeseries-results/types';
 import { isThresholdValid } from 'utils/threshold';
 
 export type PlotlyEventData = {

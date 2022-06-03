@@ -16,7 +16,7 @@ import {
   UseQueryOptions,
 } from 'react-query';
 import { RAW_DATA_POINTS_THRESHOLD } from 'utils/constants';
-import { WorkflowResult } from 'models/workflows/types';
+import { WorkflowResult } from 'models/calculation-results/types';
 import { useCallback } from 'react';
 import { ChartThreshold } from 'models/chart/types';
 import { getHash } from 'utils/hash';

@@ -27,7 +27,7 @@ import {
   DoubleDatapoint,
 } from '@cognite/sdk';
 import { isProduction } from 'utils/environment';
-import { WorkflowResult } from 'models/workflows/types';
+import { WorkflowResult } from 'models/calculation-results/types';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 

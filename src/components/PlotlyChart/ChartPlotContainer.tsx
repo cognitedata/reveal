@@ -1,5 +1,5 @@
-import { timeseriesAtom } from 'models/timeseries/atom';
-import { availableWorkflows } from 'models/workflows/selectors';
+import { timeseriesAtom } from 'models/timeseries-results/atom';
+import { availableWorkflows } from 'models/calculation-results/selectors';
 import { useCallback, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Chart } from 'models/chart/types';
