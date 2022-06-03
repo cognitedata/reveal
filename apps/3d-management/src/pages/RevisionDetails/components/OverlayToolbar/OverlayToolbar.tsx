@@ -1,10 +1,10 @@
 import React from 'react';
-import * as THREE from 'three';
 import { ToolBarButton, ToolBar, Slider, Icon } from '@cognite/cogs.js';
 import {
   Cognite3DModel,
   Cognite3DViewer,
   CognitePointCloudModel,
+  THREE,
 } from '@cognite/reveal';
 import {
   Legacy3DModel,
