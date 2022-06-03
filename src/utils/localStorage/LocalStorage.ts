@@ -5,10 +5,6 @@ import {
   ProcessReducerState,
 } from 'src/modules/Process/store/slice';
 import {
-  initialState as annotationLabelReducerInitialState,
-  AnnotationLabelReducerState,
-} from 'src/modules/Review/store/annotationLabel/slice';
-import {
   initialState as annotatorWrapperInitialState,
   AnnotatorWrapperReducerState,
 } from 'src/modules/Review/store/annotatorWrapper/slice';
@@ -60,10 +56,6 @@ export const loadState = (): Partial<RootState> | undefined => {
         validatePersistedState(stateMeta.project, stateMeta.appStateVersion)
       ) {
         return {
-          annotationLabelReducer: {
-            ...annotationLabelReducerInitialState,
-            ...persistedState.annotationLabelReducer,
-          },
           annotatorWrapperReducer: {
             ...annotatorWrapperInitialState,
             ...persistedState.annotatorWrapperReducer,
@@ -84,9 +76,6 @@ export const loadState = (): Partial<RootState> | undefined => {
       }
     }
     return {
-      annotationLabelReducer: {
-        ...annotationLabelReducerInitialState,
-      },
       annotatorWrapperReducer: {
         ...annotatorWrapperInitialState,
       },
@@ -115,11 +104,6 @@ export const saveState = (state: any): void => {
 };
 
 export type OfflineState = {
-  /** @deprecated */
-  annotationLabelReducer: Pick<
-    AnnotationLabelReducerState,
-    'predefinedAnnotations'
-  >;
   annotatorWrapperReducer: Pick<
     AnnotatorWrapperReducerState,
     'predefinedAnnotations'
@@ -145,10 +129,6 @@ export type OfflineState = {
 
 const getOfflineState = (state: RootState): OfflineState => {
   const offState: OfflineState = {
-    /** @deprecated */
-    annotationLabelReducer: {
-      predefinedAnnotations: state.annotationLabelReducer.predefinedAnnotations,
-    },
     annotatorWrapperReducer: {
       predefinedAnnotations:
         state.annotatorWrapperReducer.predefinedAnnotations,
