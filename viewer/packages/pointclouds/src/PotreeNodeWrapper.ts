@@ -11,7 +11,11 @@ import { WellKnownAsprsPointClassCodes } from './types';
 
 import { createPointClassKey } from './createPointClassKey';
 import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
-import { AnnotationMetadata, PointCloudObjectAnnotation, PointCloudObjectAnnotationsWithIndexMap } from './annotationTypes';
+import {
+  AnnotationMetadata,
+  PointCloudObjectAnnotation,
+  PointCloudObjectAnnotationsWithIndexMap
+} from './annotationTypes';
 
 /**
  * Wrapper around `Potree.PointCloudOctree` with some convenience functions.
@@ -80,7 +84,9 @@ export class PotreeNodeWrapper {
   }
 
   get stylableObjectAnnotationIds(): Iterable<AnnotationMetadata> {
-    return this._annotations.map(a => { return { annotationId: a.annotationId, assetId: a.assetId } })
+    return this._annotations.map(a => {
+      return { annotationId: a.annotationId, assetId: a.assetId };
+    });
   }
 
   get stylableObjects(): PointCloudObjectAnnotation[] {
