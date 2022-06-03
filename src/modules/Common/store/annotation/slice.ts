@@ -11,12 +11,6 @@ import {
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types/annotation';
-import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
-import {
-  isImageClassificationData,
-  isImageObjectDetectionData,
-  isImageKeypointCollectionData,
-} from 'src/modules/Common/types/typeGuards';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { InternalId } from '@cognite/sdk';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
@@ -88,23 +82,7 @@ const annotationSlice = createSlice({
             }
             delete state.annotations.byId[annotationId];
 
-            // clean color map
-            if (
-              isImageClassificationData(annotation) ||
-              isImageObjectDetectionData(annotation) ||
-              isImageKeypointCollectionData(annotation)
-            ) {
-              const labelOrText = getAnnotationLabelOrText(annotation);
-              if (
-                !Object.values(state.annotations.byId)
-                  .map((stateAnnotation) =>
-                    getAnnotationLabelOrText(stateAnnotation)
-                  )
-                  .includes(labelOrText)
-              ) {
-                delete state.annotationColorMap[labelOrText];
-              }
-            }
+            // don't clean annotationColorMap
           }
         });
       }

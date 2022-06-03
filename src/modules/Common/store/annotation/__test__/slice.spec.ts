@@ -65,7 +65,10 @@ describe('Test annotation reducer', () => {
         payload: [],
       };
 
-      expect(reducer(previousState, action)).toEqual(initialState);
+      expect(reducer(previousState, action)).toEqual({
+        ...initialState,
+        annotationColorMap: previousState.annotationColorMap,
+      });
     });
 
     test('should clear only specified fileIds when clear cache is false and response is empty', () => {
@@ -278,7 +281,10 @@ describe('Test annotation reducer', () => {
         payload: [{ id: 1 }, { id: 2 }], // annotation ids to delete
       };
 
-      expect(reducer(previousState, action)).toEqual(initialState);
+      expect(reducer(previousState, action)).toEqual({
+        ...initialState,
+        annotationColorMap: previousState.annotationColorMap,
+      });
     });
 
     test('should only remove annotations with specified ids', () => {
@@ -315,9 +321,7 @@ describe('Test annotation reducer', () => {
             '1': dummyAnnotation1,
           },
         },
-        annotationColorMap: {
-          [dummyAnnotation1.label]: '#f00',
-        },
+        annotationColorMap: previousState.annotationColorMap,
       });
     });
 
@@ -344,7 +348,6 @@ describe('Test annotation reducer', () => {
       };
 
       expect(reducer(previousState, action)).toEqual({
-        // TODO: is this behavior desired?
         files: {
           byId: {
             '20': [1],
@@ -353,7 +356,7 @@ describe('Test annotation reducer', () => {
         annotations: {
           byId: {},
         },
-        annotationColorMap: {},
+        annotationColorMap: previousState.annotationColorMap,
       });
     });
   });

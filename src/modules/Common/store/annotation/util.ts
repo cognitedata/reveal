@@ -20,7 +20,7 @@ export const clearAnnotationStates = (
   if (clearCache) {
     state.files.byId = {};
     state.annotations.byId = {};
-    state.annotationColorMap = {};
+    // don't clean annotationColorMap
   } else {
     fileIds.forEach((fileId: number) => {
       const annotationIdsForFile = state.files.byId[fileId];
