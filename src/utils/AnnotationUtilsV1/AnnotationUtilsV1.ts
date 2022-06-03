@@ -525,13 +525,6 @@ export const createUniqueId = (text: string): string => {
   return `${text.replace(/(\s)/g, '_').trim()}-${uuidv4()}`;
 };
 
-/**
- * @deprecated Use function in AnnotationUtils instead
- */
-export const createUniqueNumericId = (): number => {
-  return Date.now();
-};
-
 // todo: remove this function once they are not needed - start
 
 export const tempConvertAnnotationStatus = (
