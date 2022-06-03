@@ -1,13 +1,16 @@
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
 load("@npm//@storybook/react:index.bzl", "build_storybook", "start_storybook")
-load("@npm//react-scripts:index.bzl", "react_scripts")
+load("@npm//vite:index.bzl", "vite")
+load("//rules/vite:vite_build.bzl", "vite_build")
+load("//rules/test:jest.bzl", "jest_test")
+load("@npm//jest:index.bzl", "jest")
 load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
 load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
 load("//rules/publish:publish_fas.bzl", "publish_fas")
 load("//rules/publish:publish_storybook.bzl", "publish_storybook")
-load("//rules/test:react_scripts_test.bzl", "react_scripts_test")
 load("//rules/build_sed:build_sed.bzl", "build_sed")
+load("//rules/storybook:move_assets.bzl", "move_assets")
 
 # Filename conventions described at
 # https://create-react-app.dev/docs/running-tests#filename-conventions
@@ -125,7 +128,15 @@ copy_to_bin(
     srcs = SOURCES + PUBLIC + [
         ":package.json",
         ":tsconfig.json",
+        ":index.html",
+        ":.env.production",
+        ":.env.development",
     ],
+)
+
+copy_to_bin(
+    name = "vite_config",
+    srcs = [":vite.config.ts"],
 )
 
 # react-scripts can only work if the working directory is the root of the application.
@@ -149,45 +160,91 @@ _RUNTIME_DEPS = [
     "//:tsconfig",
 ]
 
-### react-scripts build ###
+### vite build ###
 
-react_scripts(
-    # Note: If you want to change the name make sure you update BUILD_PATH below accordingly
-    # https://create-react-app.dev/docs/advanced-configuration/
+vite_build(
     name = "build",
     args = [
         "--node_options=--require=./$(execpath chdir.js)",
         "build",
     ],
     data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
-        # see patches/react-scripts+5.0.0.patch
-        # we have added this plugin into webpack so Bazel should know about it
-        # TODO: move build script into a custom rules with defined plugin once and for all
-        "@npm//tsconfig-paths-webpack-plugin",
+        ":vite_config",
+        "@npm//@vitejs/plugin-react",
+        "@npm//vite-tsconfig-paths",
+        "@npm//vite-plugin-svgr",
+        "@npm//vite-plugin-babel-macros",
     ],
     env = {
-        # Specify your Sentry DSN is the URL used to report runtime issues
-        "REACT_APP_SENTRY_DSN": "https://4558e4f6faaf4948ab9327457827a301@o124058.ingest.sentry.io/5193370",
-        # Specify your Mixpanel project token used in users analytics
-        "REACT_APP_MIXPANEL_TOKEN": "0ef20fa9df0965e1ad952d1d9b804147",
-        # Specify your locize.io project ID used for localization
-        "REACT_APP_LOCIZE_PROJECT_ID": "dfcacf1f-a7aa-4cc2-94d7-de6ea4e66f1d",
-
-        ### DO NOT CHANGE: FAS placeholders
-        # In order to build only once we set placeholders into dynamic variables
-        # Which will be on FAS publish step in Jenkins replaced to actual values
-        # see https://cognitedata.atlassian.net/browse/FAS-159?focusedCommentId=124832
-        "PUBLIC_URL": "PUBLIC_URL_VALUE",
-        "REACT_APP_APP_ID": "REACT_APP_APP_ID_VALUE",
-        "REACT_APP_ENV": "REACT_APP_ENV_VALUE",
-        "REACT_APP_RELEASE_ID": "REACT_APP_RELEASE_ID_VALUE",
-        "REACT_APP_VERSION_NAME": "REACT_APP_VERSION_NAME_VALUE",
-        "REACT_APP_VERSION_SHA": "REACT_APP_VERSION_SHA_VALUE",
         "INLINE_RUNTIME_CHUNK": "false",
-        ### END
+        "NODE_OPTIONS": "--max_old_space_size=4096",
     },
     output_dir = True,
 )
+
+### vite start ###
+
+vite(
+    name = "start",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "--https",
+    ],
+    data = _RUNTIME_DEPS + [
+        "chdir-workspace.js",
+    ],
+    env = {
+        "NODE_OPTIONS": "--max_old_space_size=4096",
+    },
+)
+
+### vite test ###
+
+copy_to_bin(
+    name = "copy_test_files",
+    srcs = TESTS,
+)
+
+jest_test(
+    name = "jest_test",
+    srcs = SOURCES + TESTS + [
+        "//apps:jest.config.js",
+        "//apps:jest.react.config.js",
+        "//apps:babelTransform.js",
+        ":tsconfig.json",
+        "//:tsconfig.json",
+    ],
+    jest_args = [],
+    jest_config = "jest.config.js",
+    service_name = "tenant-selector",
+    deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + ["@npm//babel-preset-react-app"],
+)
+
+### vite test Dev ###
+
+jest(
+    name = "jest",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "--config",
+        "jest.config.js",
+        "--runInBand",
+    ],
+    data = _RUNTIME_DEPS + [
+        "chdir-workspace.js",
+    ],
+    env = {
+        "DISABLE_ESLINT_PLUGIN": "true",
+    },
+    tags = [
+        # This tag instructs ibazel to pipe into stdin a event describing actions.
+        # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
+        # So use this to prevent EOF.
+        "ibazel_notify_changes",
+    ],
+)
+
+### E2E Tests ###
 
 sh_binary(
     name = "build_sed_default",
@@ -213,60 +270,6 @@ build_sed(
     src_dir = ":build",
 )
 
-### react-scripts test ###
-
-copy_to_bin(
-    name = "copy_test_files",
-    srcs = TESTS,
-)
-
-react_scripts_test(
-    name = "test",
-    # folder name to store jest coverage in during CI run
-    app_name = "tenant-selector",
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
-        "@npm//@storybook/addon-essentials",
-        "@npm//@storybook/addon-links",
-        "@npm//@storybook/preset-create-react-app",
-        "@npm//@storybook/react",
-        "copy_test_files",
-    ],
-)
-
-### react-scripts start ###
-
-react_scripts(
-    name = "start",
-    args = [
-        "--node_options=--require=./$(rootpath chdir-workspace.js)",
-        "start",
-    ],
-    data = _RUNTIME_DEPS + [
-        "chdir-workspace.js",
-    ],
-    env = {
-        "DISABLE_ESLINT_PLUGIN": "true",
-        "HTTPS": "true",
-        "REACT_APP_I18N_DEBUG": "true",
-        "REACT_APP_I18N_PSEUDO": "false",
-        "REACT_APP_LANGUAGE": "en",
-        # Specify your locize.io api key used for localization
-        "REACT_APP_LOCIZE_API_KEY": "679d5a83-bc71-4d5e-9e32-f8560603166b",
-        # Specify your locize.io project ID used for localization
-        "REACT_APP_LOCIZE_PROJECT_ID": "dfcacf1f-a7aa-4cc2-94d7-de6ea4e66f1d",
-        "REACT_APP_LOCIZE_VERSION": "latest",
-        "REACT_APP_MIXPANEL_DEBUG": "false",
-        # Specify your Mixpanel project token used in users analytics
-        "REACT_APP_MIXPANEL_TOKEN": "0ef20fa9df0965e1ad952d1d9b804147",
-    },
-    tags = [
-        # This tag instructs ibazel to pipe into stdin a event describing actions.
-        # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
-        # So use this to prevent EOF.
-        "ibazel_notify_changes",
-    ],
-)
-
 ### Storybook ###
 
 copy_to_bin(
@@ -284,35 +287,37 @@ build_storybook(
     ],
     chdir = "$(RULEDIR)",
     data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
-        "@npm//@babel/preset-env",
         "copy_storybook_files",
-        "@npm//tsconfig-paths-webpack-plugin",
-        "@npm//@storybook/manager-webpack5",
-        "@npm//@storybook/builder-webpack5",
-        "@npm//@types",
         "@npm//@storybook/addon-essentials",
         "@npm//@storybook/addon-links",
-        "@npm//@storybook/preset-create-react-app",
         "@npm//@storybook/react",
-        "@npm//react-i18next",
+        "@npm//@storybook/builder-vite",
+        "@npm//vite-plugin-babel-macros",
+        "@npm//vite-tsconfig-paths",
     ],
     output_dir = True,
+)
+
+move_assets(
+    name = "storybook-static-final",
+    out_dir = "storybook-static-final",
+    src_dir = ":storybook-static",
+    tmp_dir = "tmp",
 )
 
 start_storybook(
     name = "start-storybook",
     args = [
         "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "-c",
+        ".storybook-dev",
         "-p",
         "6006",
     ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
+    data = [
         "chdir-workspace.js",
-        "copy_storybook_files",
-        "@npm//@types",
-        "@npm//@storybook/addon-essentials",
-        "@npm//@storybook/addon-links",
-        "@npm//@storybook/preset-create-react-app",
+        # Bazel needs to give access @tippyjs in cogs.js
+        "@npm//@cognite/cogs.js",
     ],
     tags = [
         # This tag instructs ibazel to pipe into stdin a event describing actions.
@@ -324,7 +329,7 @@ start_storybook(
 
 publish_storybook(
     name = "publish_storybook",
-    build = ":storybook-static",
+    build = ":storybook-static-final",
     # Storybook sub domain to be used
     sub_domain = "tenant-selector",
 )

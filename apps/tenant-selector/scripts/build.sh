@@ -28,4 +28,4 @@ esac
 export REACT_APP_MIXPANEL_TOKEN="0ef20fa9df0965e1ad952d1d9b804147"
 export REACT_APP_LOCIZE_PROJECT_ID="dfcacf1f-a7aa-4cc2-94d7-de6ea4e66f1d"
 
-../../node_modules/.bin/react-scripts build
+../../node_modules/.bin/vite build

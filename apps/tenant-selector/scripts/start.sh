@@ -6,4 +6,4 @@ export REACT_APP_LOCIZE_PROJECT_ID="${REACT_APP_LOCIZE_PROJECT_ID:-dfcacf1f-a7aa
 export REACT_APP_LOCIZE_API_KEY="${REACT_APP_LOCIZE_API_KEY:-679d5a83-bc71-4d5e-9e32-f8560603166b}"
 export REACT_APP_MIXPANEL_TOKEN="${REACT_APP_MIXPANEL_TOKEN:-0ef20fa9df0965e1ad952d1d9b804147}"
 
-../../node_modules/.bin/react-scripts start
+bazel run :start
