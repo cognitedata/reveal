@@ -35,7 +35,7 @@ export const RetrieveAnnotations = createAsyncThunk<
     };
     const annotationListRequest = {
       filter: filterPayload,
-      limit: -1,
+      limit: 1000, // todo: [VIS-882] make limit to -1 for this to work
     };
     return sdk.annotations.list(annotationListRequest);
   });
