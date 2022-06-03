@@ -1,5 +1,6 @@
-export const getFASVersionName = (): string =>
-  process.env.REACT_APP_VERSION_NAME || 'dev';
+export const getFASVersionName = (): string => {
+  return process.env.REACT_APP_VERSION_NAME || 'dev';
+};
 
 export const getReleaseDate = (): string => {
   const releaseDate = process.env.REACT_APP_RELEASE_DATE

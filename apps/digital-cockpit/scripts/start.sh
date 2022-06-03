@@ -9,4 +9,4 @@ export HTTPS=${HTTPS:-true}
 # Uncomment to use local `digital-cockpit-api` service (for local development, do not commit this change)
 # export REACT_APP_DC_API_URL="${REACT_APP_DC_API_URL:-http://localhost:8001}"
 
-../../node_modules/.bin/react-scripts start
+../../node_modules/.bin/vite start

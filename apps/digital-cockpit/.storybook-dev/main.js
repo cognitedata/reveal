@@ -1,19 +1,7 @@
 const tsconfigPaths = require('vite-tsconfig-paths');
+const NodeGlobalsPolyfillPlugin = require('@esbuild-plugins/node-globals-polyfill');
 const macrosPlugin = require('vite-plugin-babel-macros');
-const { glob } = require('glob');
-const path = require('path');
 const { loadEnv } = require('vite');
-
-const pathToNodeModules = path.normalize(
-  `${process.cwd()}/../../../../../node_modules`
-);
-const coreJsFiles = glob
-  .sync(`${pathToNodeModules}/core-js/modules/*.js`)
-  .map((it) => {
-    // Add 1 for trailing '/'
-    const t = it.substring(pathToNodeModules.length + 1);
-    return t;
-  });
 
 module.exports = {
   framework: '@storybook/react',
@@ -34,14 +22,6 @@ module.exports = {
       }),
       macrosPlugin.default(),
     ];
-    const plugins = config.plugins.filter(
-      (plugin) => plugin.name !== 'mock-core-js'
-    );
-    config.plugins = plugins;
-    config.optimizeDeps = {
-      ...config.optimizeDeps,
-      include: coreJsFiles,
-    };
 
     const NODE_ENV = configType.toLowerCase();
     const env = {
@@ -53,11 +33,28 @@ module.exports = {
     config.define = {
       'process.env': env,
     };
-    config.build = {
-      // sourcemap: true,
-      outDir: 'storybook-static-tmp/tmp',
-      commonjsOptions: {
-        include: [],
+    config.resolve = {
+      ...config.resolve,
+      dedupe: ['@storybook/client-api'],
+      alias: {
+        ...config.alias,
+        crypto: require.resolve('rollup-plugin-node-builtins'),
+        path: require.resolve('path-browserify'),
+      },
+    };
+    config.optimizeDeps = {
+      ...config.optimizeDeps,
+      esbuildOptions: {
+        // Node.js global to browser globalThis
+        define: {
+          global: 'globalThis',
+        },
+        // Enable esbuild polyfill plugins
+        plugins: [
+          NodeGlobalsPolyfillPlugin.default({
+            buffer: true,
+          }),
+        ],
       },
     };
     return config;
