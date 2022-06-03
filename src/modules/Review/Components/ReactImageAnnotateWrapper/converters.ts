@@ -184,7 +184,7 @@ export const convertVisionReviewAnnotationToRegions = (
     }
     (
       annotation as TurnKeypointType<VisionAnnotation<ImageKeypointCollection>>
-    ).keypoints.forEach((keypoint, index) => {
+    ).keypoints.forEach((keypoint) => {
       regions.push({
         ...{
           type: AnnotatorRegionType.PointRegion,
