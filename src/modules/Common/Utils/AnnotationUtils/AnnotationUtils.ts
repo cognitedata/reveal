@@ -205,3 +205,7 @@ export const generateKeypointId = (
   }
   return `${parentAnnotationId}-${keypointLabel}`;
 };
+
+export const createUniqueNumericId = (): number => {
+  return Date.now();
+};

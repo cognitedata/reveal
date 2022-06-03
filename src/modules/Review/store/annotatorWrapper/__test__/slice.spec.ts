@@ -16,8 +16,10 @@ import {
 } from 'src/__test-utils/annotations';
 import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 
-jest.mock('src/utils/AnnotationUtilsV1/AnnotationUtilsV1', () => ({
-  ...jest.requireActual('src/utils/AnnotationUtilsV1/AnnotationUtilsV1'),
+jest.mock('src/modules/Common/Utils/AnnotationUtils/AnnotationUtils', () => ({
+  ...jest.requireActual(
+    'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils'
+  ),
   createUniqueNumericId: () => {
     return 'gauge';
   },

@@ -90,7 +90,7 @@ const annotationSlice = createSlice({
 
     builder.addMatcher(
       isAnyOf(
-        // CreateAnnotationsV1.fulfilled,
+        // CreateAnnotationsV1.fulfilled, // Todo add SaveAnnotations.fulfilled
         VisionJobUpdate.fulfilled,
         UpdateAnnotations.fulfilled
       ),
