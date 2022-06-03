@@ -2,14 +2,9 @@ import isFinite from 'lodash-es/isFinite';
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
 import { PredefinedKeypoint, Tool } from 'src/modules/Review/types';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
-import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
-import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
-import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
-import { createUniqueNumericId } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { deleteCollection } from 'src/modules/Review/store/annotatorWrapper/utils';
-import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bulkConverters';
 import {
   VisionAnnotation,
   VisionAnnotationDataType,
@@ -20,10 +15,16 @@ import {
   Status,
 } from 'src/api/annotation/types';
 import { isImageKeypointCollectionData } from 'src/modules/Common/types/typeGuards';
-import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
-import { VisionJobUpdateV1 } from 'src/store/thunks/Process/VisionJobUpdateV1';
 import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
 import { AnnotatorPointRegion } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
+import {
+  createUniqueNumericId,
+  generateKeypointId,
+} from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
+import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
 
 export const initialState: AnnotatorWrapperState = {
   predefinedAnnotations: {
@@ -198,15 +199,14 @@ const annotatorWrapperSlice = createSlice({
     // Matchers
     builder.addMatcher(
       isAnyOf(
-        CreateAnnotationsV1.fulfilled,
-        VisionJobUpdateV1.fulfilled,
-        UpdateAnnotationsV1.fulfilled,
-        RetrieveAnnotationsV1.fulfilled
+        SaveAnnotations.fulfilled,
+        VisionJobUpdate.fulfilled,
+        UpdateAnnotations.fulfilled,
+        RetrieveAnnotations.fulfilled
       ),
-      (state, action) => {
-        // ToDo (VIS-794): conversion logic from V1 to V2 in the new slice can be moved into thunks.
+      (state: AnnotatorWrapperState, action) => {
         const annotations: VisionAnnotation<VisionAnnotationDataType>[] =
-          convertCDFAnnotationV1ToVisionAnnotations(action.payload);
+          action.payload;
 
         // HACK: only update states if annotations belong to one single file
         // to avoid costly state update if thunks are triggered by other pages than review page
@@ -271,7 +271,6 @@ const annotatorWrapperSlice = createSlice({
         SaveAnnotationTemplates.fulfilled
       ),
       (state, action) => {
-        // ToDo: thunk should return PredefinedAnnotations type data
         state.predefinedAnnotations = {
           predefinedKeypointCollections:
             action.payload.predefinedKeypointCollections,

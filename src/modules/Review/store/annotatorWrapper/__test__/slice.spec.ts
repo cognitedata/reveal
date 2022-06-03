@@ -26,8 +26,10 @@ import {
 } from 'src/__test-utils/getDummyAnnotations';
 import { VisionReviewAnnotation } from 'src/modules/Review/types';
 
-jest.mock('src/utils/AnnotationUtilsV1/AnnotationUtilsV1', () => ({
-  ...jest.requireActual('src/utils/AnnotationUtilsV1/AnnotationUtilsV1'),
+jest.mock('src/modules/Common/Utils/AnnotationUtils/AnnotationUtils', () => ({
+  ...jest.requireActual(
+    'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils'
+  ),
   createUniqueNumericId: () => {
     return 'gauge';
   },
