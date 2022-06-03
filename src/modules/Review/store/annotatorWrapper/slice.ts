@@ -7,7 +7,6 @@ import {
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
-import { createUniqueNumericId } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { deleteCollection } from 'src/modules/Review/store/annotatorWrapper/utils';
 import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
 import {
@@ -21,7 +20,10 @@ import {
   Status,
 } from 'src/api/annotation/types';
 import { isImageKeypointCollectionData } from 'src/modules/Common/types/typeGuards';
-import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import {
+  createUniqueNumericId,
+  generateKeypointId,
+} from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
