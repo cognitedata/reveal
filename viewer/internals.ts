@@ -12,8 +12,8 @@ export { PotreeGroupWrapper, PotreeNodeWrapper, PointCloudNode, Potree } from '.
 
 export { CadNode } from './packages/cad-model';
 
-export { RevealManager } from './core/src/public/RevealManager';
-export { createLocalRevealManager, createCdfRevealManager } from './core/src/public/createRevealManager';
+export { RevealManager } from './packages/api/src/public/RevealManager';
+export { createLocalRevealManager, createCdfRevealManager } from './packages/api/src/public/createRevealManager';
 
 export { LocalModelIdentifier, CdfModelIdentifier } from './packages/modeldata-api';
 

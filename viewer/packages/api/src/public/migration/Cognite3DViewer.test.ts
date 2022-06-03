@@ -11,7 +11,7 @@ import { Cognite3DViewer } from './Cognite3DViewer';
 
 import nock from 'nock';
 import { DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
-import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
+import { createGlContext, mockClientAuthentication } from '../../../../../test-utilities';
 
 const sceneJson = require('./Cognite3DViewer.test-scene.json');
 

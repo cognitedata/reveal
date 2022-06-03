@@ -300,7 +300,7 @@ export class Cognite3DViewer {
    * Returns reveal version installed.
    */
   getVersion(): string {
-    return process.env.VERSION;
+    return process.env.VERSION!;
   }
 
   /**
