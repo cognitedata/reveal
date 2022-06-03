@@ -74,8 +74,6 @@ type Field {
 type FieldConstraints {
   isId: Boolean!
   nonNull: Boolean!
-  isSortable: Boolean!
-  isFilterable: Boolean!
 }
 type View {
   kind: ViewKind!
@@ -101,9 +99,9 @@ type DataModelStorageSource {
   mappings: [Mapping!]!
 }
 input DataModelStorageSourceCreate {
-  externalId: String
+  space: String!
+  externalId: String!
   mappings: [MappingCreate!]
-  space: String
 }
 
 type NoopDataSource {
@@ -139,6 +137,9 @@ type PageInfo {
 }
 "Represents a plain JSON object"
 scalar JSONObject
+
+"Represents a plain JSON element. An Object, an array, a primitive."
+scalar JSONElement
 
 "Represents the number of milliseconds since 00:00:00 Thursday, 1 January 1970, Coordinated Universal Time (UTC), minus leap seconds."
 scalar Timestamp

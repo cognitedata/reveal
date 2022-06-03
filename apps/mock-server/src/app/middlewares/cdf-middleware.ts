@@ -30,6 +30,8 @@ export default function (
   // Create JSON server REST API endpoints and db
   const jsonServerApiRouter = jsonServerRouter(db);
   const jsonServerDb = jsonServerApiRouter.db as any as CdfMockDatabase;
+  // set json server id to be externalId because that is how cdf works
+  (jsonServerDb._ as any).id = 'externalId';
 
   const serverConfig = createConfigDefaults(config || ({} as CdfApiConfig));
 

@@ -1,21 +1,17 @@
 import { config } from '../config';
 import { CdfApiConfig } from '../types';
 
-export function createConfigDefaults(config: CdfApiConfig): CdfApiConfig {
-  const newConfig = { ...config };
+export function createConfigDefaults(cdfApiConfig: CdfApiConfig): CdfApiConfig {
+  const newConfig = { ...cdfApiConfig };
 
   if (!newConfig.version) {
     newConfig.version = 1;
   }
 
-  newConfig.urlRewrites = Object.assign(newConfig.urlRewrites || {}, {
-    '/api/v1/projects/*': '/$1',
-    '/:resource/list': '/:resource',
-    '/:resource/search': '/:resource',
-    '/:resource/byids': '/:resource',
-    '/templategroups/:templategroups_id/versions/list':
-      '/templates?templategroups_id=:templategroups_id&_sort=version&_order=desc',
-  });
+  newConfig.urlRewrites = Object.assign(
+    newConfig.urlRewrites || {},
+    config.urlRewrites
+  );
 
   if (!newConfig.endpoints) {
     newConfig.endpoints = {};

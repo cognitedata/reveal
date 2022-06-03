@@ -4,6 +4,9 @@ type Post @template {
   title: String!
   views: Int!
   user: User
+  tags: [String]
+  metadata: PostMetadata
+  colors: [PostColor]
   comments: [Comment]
 }
 
@@ -17,6 +20,14 @@ type Comment @template {
   body: String!
   date: Int!
   post: Post
+}
+
+type PostMetadata {
+  slug: String
+}
+
+type PostColor {
+  name: String
 }
 
 type Like {
@@ -40,13 +51,19 @@ export const postsTemplateGroup = {
         title: 'Lorem Ipsum',
         views: 254,
         user: { id: 123 },
-        comments: [{ id: 1 }, { id: 2 }],
+        tags: ['Lorem', 'Ipsum'],
+        metadata: { slug: 'lorem-ipsum' },
+        colors: [{ name: 'red' }],
+        comments: [{ id: 987 }, { id: 995 }],
       },
       {
         id: 2,
         title: 'Sic Dolor amet',
         views: 65,
         user: { id: 456 },
+        tags: ['Sic', 'Dolor'],
+        metadata: { slug: 'sic-dolor-amet' },
+        colors: [{ name: 'blue' }],
         comments: [],
       },
     ],

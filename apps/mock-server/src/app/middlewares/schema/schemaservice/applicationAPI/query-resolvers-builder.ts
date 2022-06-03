@@ -7,7 +7,9 @@ import {
   filterCollection,
   flattenNestedObjArray,
   getType,
+  isObjectContainingPrimitiveValues,
   objToFilter,
+  sortCollection,
 } from '../../../../utils';
 import { camelize, capitalize } from '../../../../utils/text-utils';
 
@@ -31,7 +33,7 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
 
   params.tablesList.forEach((table) => {
     resolvers.Query[`list${capitalize(table)}`] = (prm, filterParams) => {
-      const items = fetchAndQueryData({
+      let items = fetchAndQueryData({
         globalDb: params.db,
         templateDb,
         isBuiltInType: false,
@@ -40,6 +42,10 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
         filterParams: filterParams,
         parsedSchema: params.parsedSchema,
       });
+
+      if (filterParams.sort) {
+        items = sortCollection(items, filterParams.sort);
+      }
 
       return {
         items,
@@ -79,6 +85,11 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
 
       if (fieldKind === 'OBJECT') {
         tableResolver[fieldName] = (ref) => {
+          // Fix for inline types
+          if (!isBuiltInType && !params.tablesList.includes(fieldSchemaType)) {
+            return ref[fieldName];
+          }
+
           const results = fetchAndQueryData({
             globalDb: params.db,
             templateDb,
@@ -95,7 +106,12 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
 
       if (fieldKind === 'LIST') {
         tableResolver[field.name] = (ref, prms) => {
-          return fetchAndQueryData({
+          // Fix for inline types
+          if (!isBuiltInType && !params.tablesList.includes(fieldSchemaType)) {
+            return ref[fieldName];
+          }
+
+          const listData = fetchAndQueryData({
             globalDb: params.db,
             templateDb,
             isBuiltInType,
@@ -105,6 +121,8 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
             isFetchingObject: false,
             filterParams: prms,
           });
+
+          return listData;
         };
       }
     });
@@ -154,6 +172,15 @@ function fetchAndQueryData(props: FetchAndQueryDataProps): CdfResourceObject[] {
     ) {
       return [];
     }
+
+    if (
+      !isFetchingObject &&
+      relation.length &&
+      isObjectContainingPrimitiveValues(relation)
+    ) {
+      return relation;
+    }
+
     const relationParams = isFetchingObject
       ? objToFilter(relation)
       : objToFilter(flattenNestedObjArray(relation, false));

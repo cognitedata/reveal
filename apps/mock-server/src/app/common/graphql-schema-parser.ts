@@ -24,6 +24,21 @@ export class GraphQlSchemaParser {
     return introspection;
   }
 
+  buildGraphQlSchemaAst(schemaString: string) {
+    const newSchemaString = `${schemaString}
+    type Query {
+      test: String
+    }
+    `;
+
+    // schema is your GraphQL schema.
+    const schema = buildSchema(newSchemaString, {
+      experimentalFragmentVariables: true,
+    });
+
+    return schema;
+  }
+
   getTableNames(
     schemaString: string,
     tableDirectiveName = 'template'

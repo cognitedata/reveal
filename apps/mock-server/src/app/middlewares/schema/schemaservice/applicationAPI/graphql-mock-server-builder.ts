@@ -11,6 +11,7 @@ import { schemaServiceGraphqlApi } from '../../config/schema-service-api';
 import { Api } from '../../types';
 import { buildQueryResolvers } from './query-resolvers-builder';
 import { SchemaServiceGraphqlApiBuilder } from './schema-builder';
+import { createMockServerKey } from '../../utils/graphql-server-utils';
 
 export interface BuildMockServerParams {
   db: CdfMockDatabase;
@@ -133,7 +134,3 @@ export const buildFromMockDb = (db: CdfMockDatabase) => {
 
   return graphQlServers;
 };
-
-export function createMockServerKey(name, version) {
-  return `${name}_${version}`;
-}

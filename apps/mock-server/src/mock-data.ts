@@ -20,6 +20,91 @@ export const mockDataSample = {
   templates: templatesMockData,
   files: filesMockData,
   posts: [{ id: 1, title: 'json-server', author: 'typicode' }],
+  spaces: [{ externalId: 'blog' }],
+  models: [
+    {
+      spaceExternalId: 'blog',
+      externalId: 'PostTable',
+      properties: {
+        title: {
+          type: 'text',
+          nullable: false,
+        },
+        views: {
+          type: 'int32',
+          nullable: false,
+        },
+        user: {
+          type: 'direct_relation',
+          nullable: true,
+          targetModelExternalId: 'UserTable',
+        },
+      },
+    },
+    {
+      spaceExternalId: 'blog',
+      externalId: 'UserTable',
+      properties: {
+        name: {
+          type: 'text',
+          nullable: false,
+        },
+      },
+    },
+    {
+      spaceExternalId: 'blog',
+      externalId: 'CommentTable',
+      properties: {
+        body: {
+          type: 'text',
+          nullable: false,
+        },
+        date: {
+          type: 'int32',
+          nullable: false,
+        },
+        post: {
+          type: 'direct_relation',
+          nullable: true,
+          targetModelExternalId: 'PostTable',
+        },
+      },
+    },
+  ],
+  nodes: [
+    {
+      model: 'UserTable',
+      externalId: 'user_1',
+      name: 'John Doe',
+    },
+    {
+      model: 'UserTable',
+      externalId: 'user_2',
+      name: 'James Bond',
+    },
+    {
+      model: 'PostTable',
+      externalId: 'post_1',
+      title: 'Random post 1',
+      views: 10,
+      user: 'user_1',
+    },
+    {
+      model: 'PostTable',
+      externalId: 'post_2',
+      title: 'Random post 2',
+      views: 12,
+      user: 'user_2',
+    },
+    {
+      model: 'CommentTable',
+      externalId: 'comment_1',
+      body: 'Random comment 1',
+      date: 164744,
+      post: 'post_1',
+    },
+  ],
+  edges: [],
   schema: [
     {
       externalId: 'blog',
@@ -34,7 +119,7 @@ export const mockDataSample = {
           bindings: [],
           dataModel: {
             graphqlRepresentation:
-              'type Post @view {\n  title: String!\n  views: Int!\n  user: User\n}\n\ntype User @view {\n  name: String!\n}\n\ntype Comment @view {\n  body: String!\n  date: Int!\n  post: Post\n}\n',
+              'type Post @view {\n  title: String!\n  views: Int!\n  user: User\n tags: [String]\n metadata: PostMetadata\n colors: [PostColor]\n comments: [Comment]\n}\n\ntype User @view {\n  name: String!\n}\n\ntype Comment @view {\n  body: String!\n  date: Timestamp!\n  post: Post\n}\n type PostMetadata {\n  slug: String\n}\n\ntype PostColor {\n  name: String\n}',
             types: [],
           },
         },
@@ -43,16 +128,35 @@ export const mockDataSample = {
         Post: [
           {
             id: 1,
+            externalId: '1',
             title: 'Lorem Ipsum',
             views: 254,
             user: { id: 123 },
-            comments: [{ id: 1 }, { id: 2 }],
+            tags: ['Lorem', 'Ipsum'],
+            metadata: { slug: 'lorem-ipsum' },
+            colors: [{ name: 'red' }],
+            comments: [{ id: 987 }, { id: 995 }],
           },
           {
             id: 2,
+            externalId: '2',
             title: 'Sic Dolor amet',
             views: 65,
             user: { id: 456 },
+            tags: ['Sic', 'Dolor'],
+            metadata: { slug: 'sic-dolor-amet' },
+            colors: [{ name: 'blue' }],
+            comments: [],
+          },
+          {
+            id: 3,
+            externalId: '3',
+            title: 'Lorem Sic Dolor amet',
+            views: 100,
+            user: { id: 456 },
+            tags: ['Dolor', 'Lorem'],
+            metadata: { slug: 'lorem-sic-dolor-amet' },
+            colors: [{ name: 'green' }],
             comments: [],
           },
         ],
@@ -63,15 +167,17 @@ export const mockDataSample = {
         Comment: [
           {
             id: 987,
+            externalId: '987',
             post: { id: 1 },
             body: 'Consectetur adipiscing elit',
-            date: 16394776,
+            date: 1651346026630,
           },
           {
             id: 995,
+            externalId: '995',
             post: { id: 1 },
             body: 'Nam molestie pellentesque dui',
-            date: 16394776,
+            date: 1651346026630,
           },
         ],
       },

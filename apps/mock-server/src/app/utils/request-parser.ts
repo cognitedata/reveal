@@ -40,6 +40,7 @@ export const mapParamsAsFilter = (reqParams) => {
 export type RequestBody = {
   filter?: Record<string, unknown>;
   search?: Record<string, unknown>;
+  query?: string;
   cursor?: string;
   limit?: number;
   sort?: {
@@ -115,6 +116,9 @@ export const mapRequestBodyToQueryParams = (
   }
 
   if (filterMode === 'search') {
+    if (reqBody.query) {
+      filters['q'] = reqBody.query;
+    }
     for (const searchKey in reqBody.search) {
       if (searchKey === 'query') {
         filters['q'] = reqBody.search[searchKey];

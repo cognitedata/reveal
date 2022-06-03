@@ -9,6 +9,7 @@ export interface KeyValuePair {
 }
 export interface CdfResourceObject extends KeyValuePair {
   id?: string | number;
+  externalId?: string | number;
   metadata?: Record<string, unknown>;
   source?: string;
   createdTime?: number;

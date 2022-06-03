@@ -57,6 +57,36 @@ export const flattenObjAsArray = (reqBody: MockData[]) => {
   return response;
 };
 
+export function isObjectContainingPrimitiveValues(testObj) {
+  const values = Object.values(testObj);
+  for (const i of values) {
+    if (Array.isArray(i)) {
+      if (i.some((val) => !isPrimitive(val))) return false;
+    } else {
+      if (!isPrimitive(i)) return false;
+    }
+  }
+  return true;
+}
+
+export function isPrimitive(test) {
+  // eslint-disable-next-line lodash/prefer-lodash-typecheck
+  return typeof test !== 'object';
+}
+
+export function sortCollection(
+  data: CdfResourceObject[],
+  sortCriteria: KeyValuePair[]
+) {
+  let collection = Collection.from<CdfResourceObject>(data);
+  sortCriteria.forEach((sort) => {
+    const sortKey = Object.keys(sort)[0];
+    collection = collection.orderBy((x) => x[sortKey], sort[sortKey] as any);
+  });
+
+  return collection.toArray();
+}
+
 export function filterCollection(
   data: CdfResourceObject[],
   reqFilter: KeyValuePair,
@@ -79,7 +109,7 @@ export function filterCollection(
   const filterKeys = Object.keys(filters);
 
   filterKeys
-    .filter((key) => !['_and', '_or'].includes(key))
+    .filter((key) => !['_and', '_or', 'and', 'or'].includes(key))
     .forEach((key) => {
       collection = collection.where((x) =>
         filterFunction(x[key], filters[key])
@@ -88,12 +118,32 @@ export function filterCollection(
 
   if (parsedSchema) {
     // eslint-disable-next-line no-prototype-builtins
-    if (filterKeys.includes('_or')) {
-      (filters['_or'] as any).forEach((orFilter) => {
+    if (filterKeys.includes('_and') || filterKeys.includes('and')) {
+      const andTypeFilter = filters['_and'] || filters['and'];
+      (andTypeFilter as any).forEach((andFilter) => {
+        const andKeys = Object.keys(andFilter);
+        andKeys.forEach((key) => {
+          collection = collection.where((x) => {
+            return filterFunction(x[key], andFilter[key]);
+          });
+        });
+      });
+    }
+
+    // eslint-disable-next-line no-prototype-builtins
+    if (filterKeys.includes('_or') || filterKeys.includes('or')) {
+      const orTypeFilter = filters['_or'] || filters['or'];
+      (orTypeFilter as any).forEach((orFilter) => {
         collection = collection.concat(
           filterCollection(dataReq, orFilter, parsedSchema, true) as any
         );
       });
+      const collectionGroupped = collection.groupBy(
+        (x) => x.id || x.externalId
+      );
+      collection = Collection.from<CdfResourceObject>(
+        Object.keys(collectionGroupped).map((key) => collectionGroupped[key][0])
+      );
     }
   }
 
@@ -127,8 +177,9 @@ const filterFunction = (dbValue, filter) => {
     return filterCollection.count() > 0;
   }
 
-  if (filter.anyOfTerms) {
-    return filter.anyOfTerms.some((x) => dbValue.includes(x));
+  if (filter.anyOfTerms || filter.in) {
+    const filterVal = filter.anyOfTerms || filter.in || [];
+    return filterVal.some((x) => dbValue.toString().includes(x.toString()));
   }
 
   if (filter.containsAny) {
@@ -140,10 +191,14 @@ const filterFunction = (dbValue, filter) => {
     });
   }
 
+  if (filter.prefix) {
+    return dbValue.startsWith(filter.prefix);
+  }
+
   // get item value based on path
   // i.e post.title -> 'foo'
   const filterValue = filter.eq;
-  console.log('filterValue', filterValue, 'dbValue', dbValue);
+  // console.log('filterValue', filter, filterValue, 'dbValue', dbValue);
 
   // Prevent toString() failing on undefined or null values
   if (dbValue === undefined || dbValue === null) {

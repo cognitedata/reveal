@@ -1,18 +1,26 @@
 import { CdfMockDatabase, CdfResourceObject } from '../../../../types';
 import {
   bigIntScalar,
-  timestampScalar,
+  timestampStringScalar,
 } from '../../../../utils/graphql/custom-scalars';
 import { CdfDatabaseService } from '../../../../common/cdf-database.service';
 import { fetchAndQueryData } from '../../utils/query-fetcher';
 import { objToFilter } from '../../../../utils';
 import { v4 } from 'uuid';
+import {
+  createMockServerKey,
+  validateBreakingChanges,
+} from '../../utils/graphql-server-utils';
+import { buildMockServer } from '../applicationAPI/graphql-mock-server-builder';
+import { GraphQLError } from 'graphql';
 
-export const graphQlMetaApiResolvers = (db: CdfMockDatabase) => {
+export const graphQlMetaApiResolvers = (
+  db: CdfMockDatabase,
+  graphQlServers: { [name: string]: any }
+) => {
   const store = CdfDatabaseService.from(db, 'schema');
-
   return {
-    Timestamp: timestampScalar,
+    Timestamp: timestampStringScalar,
     Int64: bigIntScalar,
     Query: {
       listApis: (prm, filterParams) => {
@@ -62,11 +70,12 @@ export const graphQlMetaApiResolvers = (db: CdfMockDatabase) => {
         store.deleteByKey({ externalId: solutionExternalId });
         return [solution];
       },
-      upsertApiVersionFromGraphQl: (_, req) => {
+      upsertApiVersionFromGraphQl: async (_, req) => {
         // console.log(req);
         const { apiExternalId, graphQl, bindings } = req.apiVersion;
         const conflictMode = req.conflictMode;
         const version = req.version || 1;
+
         const schemaVersion = {
           id: v4(),
           createdTime: Date.now(),
@@ -79,18 +88,48 @@ export const graphQlMetaApiResolvers = (db: CdfMockDatabase) => {
         };
 
         const solution = store.find({ externalId: apiExternalId });
-        // console.log(solution);
         const versions = (solution.versions || []) as CdfResourceObject[];
+
+        const currentSchemaVersion = versions.find(
+          (schemaVersion: any) => schemaVersion.version === version
+        ) as any;
+        if (conflictMode !== 'NEW_VERSION' && currentSchemaVersion) {
+          const breakingChanges = await validateBreakingChanges(
+            graphQl,
+            currentSchemaVersion.dataModel.graphqlRepresentation,
+            'upsertApiVersionFromGraphQl'
+          );
+
+          if (breakingChanges.length) {
+            throw new GraphQLError(
+              breakingChanges[0].message,
+              null,
+              null,
+              null,
+              null,
+              null,
+              breakingChanges[0].extensions
+            );
+          }
+        }
+
         versions.push(schemaVersion);
         solution.versions = versions;
         store.updateBy({ externalId: apiExternalId }, solution);
 
-        //first insert the version
-        //create the graphql server
-        //return the created version
+        const serverKey = createMockServerKey(solution.externalId, version);
 
-        // console.log('upsertApiVersionFromGraphQl', _, req, solution);
+        graphQlServers[serverKey] = buildMockServer({
+          db,
+          mockDb: solution.db as any,
+          externalId: solution.externalId as string,
+          schema: graphQl,
+          version: version,
+          incrementVersion: false,
+        });
+
         return schemaVersion;
+        // throw new Error()
       },
     },
   };

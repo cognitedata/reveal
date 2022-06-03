@@ -97,6 +97,7 @@ export const bestDayTemplateMockData = {
     Well: [
       {
         id: 200,
+        externalId: '200',
         asset: { id: 4642328515242672 },
         type: 'OIL',
         mainProduct: {
@@ -110,6 +111,7 @@ export const bestDayTemplateMockData = {
     Product: [
       {
         id: 400,
+        externalId: '400',
         type: 'OIL',
         production: [{ id: 500 }],
         deferments: [{ id: 600 }],
@@ -118,6 +120,7 @@ export const bestDayTemplateMockData = {
       },
       {
         id: 401,
+        externalId: '401',
         type: 'OIL_test',
         production: [{ id: 501 }],
         deferments: [{ id: 601 }, { id: 602 }],

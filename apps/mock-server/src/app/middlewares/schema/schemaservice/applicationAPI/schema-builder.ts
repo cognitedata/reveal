@@ -116,34 +116,35 @@ export class SchemaServiceGraphqlApiBuilder {
   ): string {
     let extendedSchema = sourceSchema;
     tablesList.forEach((table) => {
-      // (
-      //   parsedSchema['__schema'].types.find(
-      //     (type) => type.name === table
-      //   ) as IntrospectionObjectType
-      // ).fields.forEach((field) => {
-      //   const mutedType = field.type as any;
-      //   const fieldSchemaType = mutedType.ofType
-      //     ? getType(mutedType.ofType)
-      //     : (field.type as any).name;
+      (
+        parsedSchema['__schema'].types.find(
+          (type) => type.name === table
+        ) as IntrospectionObjectType
+      ).fields.forEach((field) => {
+        const mutedType = field.type as any;
+        const fieldKind = mutedType.kind;
+        const fieldSchemaType = mutedType.ofType
+          ? getType(mutedType.ofType)
+          : (field.type as any).name;
 
-      //   if (tablesList.includes(fieldSchemaType)) {
-      //     const typeDeclarations = `(${fieldSchemaType}|${fieldSchemaType}!|\\[${fieldSchemaType}\\]|\\[${fieldSchemaType}\\]!|\\[${fieldSchemaType}!\\]!|\\[${fieldSchemaType}!\\]!)`;
-      //     const regexp = new RegExp(`${field.name}: ${typeDeclarations}`, 'g');
+        if (tablesList.includes(fieldSchemaType) && fieldKind === 'LIST') {
+          const typeDeclarations = `(${fieldSchemaType}|${fieldSchemaType}!|\\[${fieldSchemaType}\\]|\\[${fieldSchemaType}\\]!|\\[${fieldSchemaType}!\\]!|\\[${fieldSchemaType}!\\]!)`;
+          const regexp = new RegExp(`${field.name}: ${typeDeclarations}`, 'g');
 
-      //     const matches = extendedSchema.match(regexp);
+          const matches = extendedSchema.match(regexp);
 
-      //     if (matches) {
-      //       matches.forEach((match) => {
-      //         extendedSchema = extendedSchema.replace(
-      //           match,
-      //           `${field.name}(filter: _${this.capitalize(
-      //             fieldSchemaType
-      //           )}Filter): ${match.replace(`${field.name}:`, '')}`
-      //         );
-      //       });
-      //     }
-      //   }
-      // });
+          if (matches) {
+            matches.forEach((match) => {
+              extendedSchema = extendedSchema.replace(
+                match,
+                `${field.name}(filter: _List${this.capitalize(
+                  fieldSchemaType
+                )}Filter): ${match.replace(`${field.name}:`, '')}`
+              );
+            });
+          }
+        }
+      });
 
       extendedSchema = extendedSchema.replace(
         new RegExp('type ' + table + '\\s{1,}\\{', 'gmi'),
@@ -163,6 +164,7 @@ export class SchemaServiceGraphqlApiBuilder {
       .map((table) => {
         const searchFilter = [];
         const searchFields = [];
+        const aggregateNumericFields = [];
         const listFilter = [];
         const sortFields = [];
         (
@@ -188,12 +190,21 @@ export class SchemaServiceGraphqlApiBuilder {
             searchFields.push(field.name);
           } else if (
             fieldKind === 'SCALAR' &&
-            (fieldSchemaType === 'Float' ||
-              fieldSchemaType === 'Int' ||
-              fieldSchemaType === 'Int64')
+            fieldSchemaType === 'Timestamp'
+          ) {
+            searchFilter.push(`${field.name}: _TimestampCondition`);
+            listFilter.push(`${field.name}: _TimestampCondition`);
+          } else if (fieldKind === 'SCALAR' && fieldSchemaType === 'Int64') {
+            searchFilter.push(`${field.name}: _Int64Condition`);
+            listFilter.push(`${field.name}: _Int64Condition`);
+            aggregateNumericFields.push(field.name);
+          } else if (
+            fieldKind === 'SCALAR' &&
+            (fieldSchemaType === 'Float' || fieldSchemaType === 'Int')
           ) {
             searchFilter.push(`${field.name}: _IntCondition`);
             listFilter.push(`${field.name}: _IntCondition`);
+            aggregateNumericFields.push(field.name);
           } else if (fieldKind === 'SCALAR') {
             searchFilter.push(`${field.name}: ${fieldSchemaType}`);
             listFilter.push(`${field.name}: ${fieldSchemaType}`);
@@ -240,6 +251,16 @@ export class SchemaServiceGraphqlApiBuilder {
           ${sortFields.join('\n')}
         }
 
+        type _${this.capitalize(table)}AggregateFieldResult {
+          ${
+            !aggregateNumericFields.length
+              ? '_empty: Int!'
+              : aggregateNumericFields
+                  .map((field) => `${field}: Int!`)
+                  .join('\n')
+          }
+        }
+
         `;
       })
       .join('\n')}
@@ -256,9 +277,29 @@ export class SchemaServiceGraphqlApiBuilder {
       pageInfo: PageInfo!
     }
 
+    type ${this.capitalize(table)}AggregateConnection {
+      edges: [_${this.capitalize(table)}AggregateEdge]!
+      items: [${table}AggregateResult]!
+      pageInfo: PageInfo!
+    }
+
     type _${this.capitalize(table)}Edge {
-      node: ${table}
+      node: ${table}!
       cursor: String
+    }
+
+    type _${this.capitalize(table)}AggregateEdge {
+      node: ${table}AggregateResult!
+      cursor: String
+    }
+
+    type ${this.capitalize(table)}AggregateResult {
+      group: JSONObject
+      avg: [_${this.capitalize(table)}AggregateFieldResult]!
+      min: [_${this.capitalize(table)}AggregateFieldResult]!
+      max: [_${this.capitalize(table)}AggregateFieldResult]!
+      count: [_${this.capitalize(table)}AggregateFieldResult]!
+      sum: [_${this.capitalize(table)}AggregateFieldResult]!
     }
     `
       )
@@ -286,8 +327,23 @@ export class SchemaServiceGraphqlApiBuilder {
 
           filter: _Search${this.capitalize(table)}Filter
           first: Int
+          after: String
           query: String!
         ): ${this.capitalize(table)}Connection
+
+        aggregate${table}(
+          ${
+            this.typeSearchFieldsMap[table]
+              ? `fields: [_Search${this.capitalize(table)}Fields!]`
+              : ''
+          }
+
+          filter: _Search${this.capitalize(table)}Filter
+          groupBy: [_Search${this.capitalize(table)}Fields!]
+          first: Int
+          after: String
+          query: String
+        ): ${this.capitalize(table)}AggregateConnection
 
         `
         )

@@ -3355,6 +3355,15 @@
     parse-filepath "^1.0.2"
     tslib "~2.3.0"
 
+"@graphql-inspector/core@^3.1.2":
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/@graphql-inspector/core/-/core-3.1.2.tgz#9ef2a72601a77cb0dcc09c5fbd870413bc687ad8"
+  integrity sha512-f+w1LG6JkGuORBVZM9ZM4j/nT2TgPZwk40m7XutWozNKZpguVG8ChQsldAzb9xPpRZ6Qj/qRfMYMyiA4AAqQbg==
+  dependencies:
+    dependency-graph "0.11.0"
+    object-inspect "1.10.3"
+    tslib "^2.0.0"
+
 "@graphql-tools/merge@^8.2.1":
   version "8.2.1"
   resolved "https://registry.npmjs.org/@graphql-tools/merge/-/merge-8.2.1.tgz"
@@ -11459,7 +11468,7 @@ depd@~2.0.0:
   resolved "https://registry.npmjs.org/depd/-/depd-2.0.0.tgz"
   integrity sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==
 
-dependency-graph@^0.11.0:
+dependency-graph@0.11.0, dependency-graph@^0.11.0:
   version "0.11.0"
   resolved "https://registry.npmjs.org/dependency-graph/-/dependency-graph-0.11.0.tgz"
   integrity sha512-JeMq7fEshyepOWDfcfHK06N3MhyPhz++vtqWhMT5O9A3K42rdsEDpfdVqjaqaAhsw6a+ZqeDvQVtD0hFHQWrzg==
@@ -18692,6 +18701,11 @@ object-copy@^0.1.0:
     copy-descriptor "^0.1.0"
     define-property "^0.2.5"
     kind-of "^3.0.3"
+
+object-inspect@1.10.3:
+  version "1.10.3"
+  resolved "https://registry.yarnpkg.com/object-inspect/-/object-inspect-1.10.3.tgz#c2aa7d2d09f50c99375704f7a0adf24c5782d369"
+  integrity sha512-e5mCJlSH7poANfC8z8S9s9S2IN5/4Zb3aZ33f5s8YqoazCFzNLloLU8r5VCG+G7WoqLvAAZoVMcy3tp/3X0Plw==
 
 object-inspect@^1.11.0, object-inspect@^1.9.0:
   version "1.11.0"

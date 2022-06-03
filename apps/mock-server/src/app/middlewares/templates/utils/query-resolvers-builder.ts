@@ -7,6 +7,7 @@ import {
   filterCollection,
   flattenNestedObjArray,
   getType,
+  isObjectContainingPrimitiveValues,
   objToFilter,
 } from '../../../utils';
 import { camelize } from '../../../utils/text-utils';
@@ -125,6 +126,11 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
 
       if (fieldKind === 'OBJECT') {
         tableResolver[fieldName] = (ref) => {
+          // Fix for inline types
+          if (!isBuiltInType && !params.tablesList.includes(fieldSchemaType)) {
+            return ref[fieldName];
+          }
+
           const results = fetchAndQueryData({
             globalDb: params.db,
             templateDb,
@@ -140,6 +146,11 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
 
       if (fieldKind === 'LIST') {
         tableResolver[field.name] = (ref, prms) => {
+          // Fix for inline types
+          if (!isBuiltInType && !params.tablesList.includes(fieldSchemaType)) {
+            return ref[fieldName];
+          }
+
           return fetchAndQueryData({
             globalDb: params.db,
             templateDb,
@@ -193,11 +204,20 @@ function fetchAndQueryData(props: FetchAndQueryDataProps): CdfResourceObject[] {
 
   if (refObj) {
     const relation = refObj[schemaFieldName];
+
     if (
       (!isFetchingObject && !relation) ||
       (!isFetchingObject && !relation.length)
     ) {
       return [];
+    }
+
+    if (
+      !isFetchingObject &&
+      relation.length &&
+      isObjectContainingPrimitiveValues(relation)
+    ) {
+      return relation;
     }
     const relationParams = isFetchingObject
       ? objToFilter(relation)

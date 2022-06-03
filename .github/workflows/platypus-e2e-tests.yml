@@ -66,4 +66,4 @@ jobs:
         uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./coverage/
+          files: ./coverage/coverage-final.json,./coverage/cobertura-coverage.xml,./coverage/coverage-summary.json

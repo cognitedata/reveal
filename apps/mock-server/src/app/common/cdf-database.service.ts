@@ -60,7 +60,7 @@ export class CdfDatabaseService {
     const obj = this.find(param);
     if (obj) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.cdfDb.get(this.storeKey) as any).removeById(obj.id).value();
+      (this.cdfDb.get(this.storeKey) as any).removeById(obj.externalId).value();
       this.cdfDb.write();
     }
   }

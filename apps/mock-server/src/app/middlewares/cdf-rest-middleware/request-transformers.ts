@@ -29,10 +29,14 @@ export function transformDeleteRequest(
   if (storeKey && req.body && req.body.items.length) {
     // quick hack unitl I found a better solution
     const payload = req.body.items[0];
+
     const objToDelete = CdfDatabaseService.from(cdfDb, storeKey).find(payload);
 
-    if (objToDelete && objToDelete.id) {
-      req.url += `/${objToDelete.id}`;
+    if (objToDelete && objToDelete.externalId) {
+      req.url += `/${objToDelete.externalId}`;
+      if (req.url.includes('datamodelstorage')) {
+        req.url = req.url.replace('/datamodelstorage', '');
+      }
     }
   }
 }
@@ -71,6 +75,11 @@ export function transformFetchRequest(
     body = mapParamsAsFilter(flattenNestedObjArray(req.body.items));
   }
 
+  if (body.model) {
+    body.filter = body.filter || {};
+    body.filter.model = body.model;
+  }
+
   // Convert POST Body request params as GET params needed for json-server
   req.query = mapRequestBodyToQueryParams(
     body,
@@ -92,8 +101,8 @@ export function transformPostCreateRequest(
   const payload = req.body.items[0];
   const currentTimestamp = Date.now();
 
-  if (!payload.id) {
-    payload.id = uuid.generate();
+  if (!payload.externalId) {
+    payload.externalId = uuid.generate();
   }
 
   if (!payload.createdTime) {

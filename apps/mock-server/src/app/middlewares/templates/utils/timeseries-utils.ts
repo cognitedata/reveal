@@ -162,7 +162,6 @@ export const filterTimeseriesDatapoints = (
     .toArray();
 
   if (prms.granularity) {
-    console.log('total', datapoints.length);
     result = groupTimesBy(
       datapoints,
       prms.granularity as string
