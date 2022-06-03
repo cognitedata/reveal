@@ -27,7 +27,7 @@ export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
   private readonly _sdkPlayground: CogniteClientPlayground | undefined;
 
-  constructor(modelLoader: ModelDataProvider, sdkPlayground: CogniteClientPlayground | undefined) {
+  constructor(modelLoader: ModelDataProvider, sdkPlayground?: CogniteClientPlayground | undefined) {
     this._potreeInstance = new Potree(modelLoader);
     this._sdkPlayground = sdkPlayground;
   }
