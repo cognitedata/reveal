@@ -6,6 +6,9 @@ import assert from 'assert';
 
 import { EventTrigger } from '@reveal/utilities';
 
+/**
+ * Base class for collections of point cloud objects intended for styling operations
+ */
 export abstract class PointCloudObjectCollection {
   private readonly _changedEvent = new EventTrigger<() => void>();
 
