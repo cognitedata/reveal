@@ -1164,10 +1164,10 @@
     babel-plugin-syntax-jsx "^6.18.0"
     lodash "^4.17.11"
 
-"@cognite/cdf-i18n-utils@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-i18n-utils/-/cdf-i18n-utils-0.0.5.tgz#30b6bb62f72e7f588b867708b1c679e668754081"
-  integrity sha512-D6+jzRlOq7d/CJdqHA3xbdoZBqv/kdjxLhzLSNS+UzaXrABep1K3BiFVHQBYRC7LgihnVK2PXjIuCE1rmr2fkg==
+"@cognite/cdf-i18n-utils@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-i18n-utils/-/cdf-i18n-utils-0.1.1.tgz#b2a567b7b96e047c4433ad7301f874d59ccde6ea"
+  integrity sha512-Q6YuXhsSHQvHAb2+eX03ELUpVqKPW4d63Ejr7d8Zb/KZPR2ludTeD8s3LV1rrh1v/l0zQnke7pNzFpgv1OP3GA==
   dependencies:
     "@cognite/cdf-utilities" "^1.4.6"
     "@cognite/react-feature-flags" "^1.0.0"
@@ -1181,15 +1181,6 @@
     react-i18next "^11.15.6"
     yargs "^17.4.1"
 
-"@cognite/cdf-utilities@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-1.0.0.tgz#c486e2d979353dc99b3c93616bcba96cf5a042fb"
-  integrity sha512-DPhVVO3pLgogVpTurfDyM9K+tNI91z5X64tqZ58VwZn2flFnjBBvTa9andDj6E4rlisDAHDgWwHACuEqpwGLug==
-  dependencies:
-    "@cognite/cogs.js" "^3.38.4"
-    query-string "^7.0.1"
-    styled-components "^5.3.3"
-
 "@cognite/cdf-utilities@^1.4.6":
   version "1.4.6"
   resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-1.4.6.tgz#5ad2743911085ff81ae42572dea00028101951bf"
@@ -1200,33 +1191,15 @@
     query-string "^7.0.1"
     styled-components "^5.3.3"
 
-"@cognite/cogs.js@^3.38.4":
-  version "3.44.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.44.1.tgz#cab0b75fe199260531c3c650248122e77bfedf07"
-  integrity sha512-hToYuYPaNFZLCV1PRFC9FMQ8O6YvVOk38CzIgxkRdXhvXJXDbE2cBKahqD1Pg9N7pdiacgeDiVf6Jd5u1mvALw==
+"@cognite/cdf-utilities@^1.4.7":
+  version "1.4.7"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-1.4.7.tgz#1c09d7fc7554a0add734c352c1e31bb42e7a7603"
+  integrity sha512-8KUOYWEY6Ng87ZMYfjGI3Jn1au0iC6KkMPKaOj0WNpvNLhFyCY6e3MV7cCX+LsLc7ahO2vrxEQZouNAZ5SrJdA==
   dependencies:
-    "@tippyjs/react" "4.2.3"
-    "@types/react-date-range" "^1.1.2"
-    axios "^0.21.2"
-    classnames "^2.3.1"
-    color "^3.1.2"
-    dayjs "^1.9.7"
-    eslint-config-stylelint "^13.1.1"
-    focus-visible "^5.1.0"
-    match-sorter "^6.3.0"
-    rc-collapse "^1.11.8"
-    rc-drawer "^4.1.0"
-    rc-slider "^9.5.4"
-    rc-tabs "^11.6.2"
-    react-date-range "^1.1.3"
-    react-modal "^3.11.2"
-    react-select "^3.1.0"
-    react-table "^7.6.0"
-    react-toastify "^6.0.9"
-    resize-observer-polyfill "^1.5.1"
-    stylelint "^13.13.1"
-    tippy.js "6.2.0"
-    ts-dedent "^2.2.0"
+    "@cognite/cogs.js" "^6.9.1"
+    antd "^4.19.5"
+    query-string "^7.0.1"
+    styled-components "^5.3.3"
 
 "@cognite/cogs.js@^5.2.1":
   version "5.19.5"
