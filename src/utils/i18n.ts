@@ -1,4 +1,5 @@
 import { TOptions, StringMap } from 'i18next';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { SELECTED_LANGUAGE_LS_KEY } from '../common/constants';
@@ -34,10 +35,13 @@ export const selectLanguage = (language: string) => {
 export const useTypedTranslation = <K extends string>() => {
   const { t: oldT, ...rest } = useTranslation();
 
-  const t = (key: K, options?: TOptions<StringMap> | string) => {
-    const translation = oldT(key, options);
-    return translation;
-  };
+  const t = useCallback(
+    (key: K, options?: TOptions<StringMap> | string) => {
+      const translation = oldT(key, options);
+      return translation;
+    },
+    [oldT]
+  );
 
   return { t, ...rest };
 };
