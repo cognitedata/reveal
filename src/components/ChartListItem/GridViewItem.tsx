@@ -5,7 +5,7 @@ import { Chart } from 'models/chart/types';
 import { trackUsage } from 'services/metrics';
 import { useProject } from 'hooks/config';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
-import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChartContainer';
+import PreviewPlotContainer from 'components/PlotlyChart/PreviewPlotContainer';
 import { formatOwner, formatDate } from './utils';
 
 interface GridViewItemProps {
@@ -35,7 +35,7 @@ const GridViewItem = ({
       >
         <ImageWrapper>
           <ImageContent>
-            <PlotlyChartComponent chart={chart} isPreview />
+            <PreviewPlotContainer chart={chart} />
           </ImageContent>
         </ImageWrapper>
       </Link>

@@ -6,7 +6,7 @@ import { Chart } from 'models/chart/types';
 import { trackUsage } from 'services/metrics';
 import { useProject } from 'hooks/config';
 import { useIsChartOwner } from 'hooks/user';
-import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChartContainer';
+import PreviewPlotContainer from 'components/PlotlyChart/PreviewPlotContainer';
 import { formatOwner, formatDate } from './utils';
 
 interface ListViewItemProps {
@@ -42,7 +42,7 @@ const ListViewItem = ({
         }}
       >
         <ImageColumn>
-          <PlotlyChartComponent chart={chart} isPreview />
+          <PreviewPlotContainer chart={chart} />
         </ImageColumn>
         <NameColumn>
           <TranslatedEditableText

@@ -10,7 +10,7 @@ import {
 } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
-import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChartContainer';
+import ChartPlotContainer from 'components/PlotlyChart/ChartPlotContainer';
 import { useChart, useUpdateChart } from 'hooks/charts-storage';
 import {
   ChartTimeSeries,
@@ -407,9 +407,10 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               <SplitPaneLayout defaultSize={200}>
                 <TopPaneWrapper className="chart">
                   <ChartWrapper>
-                    <PlotlyChartComponent
+                    <ChartPlotContainer
                       key={chartId}
                       chart={chart}
+                      setChart={setChart}
                       isYAxisShown={showYAxis}
                       isMinMaxShown={showMinMax}
                       isGridlinesShown={showGridlines}

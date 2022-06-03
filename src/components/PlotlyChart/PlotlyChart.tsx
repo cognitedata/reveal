@@ -52,7 +52,6 @@ type Props = {
   isMinMaxShown?: boolean;
   isGridlinesShown?: boolean;
   isPreview?: boolean;
-  isInSearch?: boolean;
   stackedMode?: boolean;
   mergeUnits?: boolean;
   yAxisWidth?: number;

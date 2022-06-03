@@ -1,94 +1,45 @@
-import { DatapointsMultiQuery } from '@cognite/sdk';
-import { useSDK } from '@cognite/sdk-provider';
-import chartAtom from 'models/chart/atom';
 import { timeseriesAtom } from 'models/timeseries/atom';
 import { availableWorkflows } from 'models/workflows/selectors';
-import dayjs from 'dayjs';
 import { useCallback, useMemo, useState } from 'react';
-import { useQuery } from 'react-query';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { Chart } from 'models/chart/types';
-import { calculateGranularity } from 'utils/timeseries';
-import { CHART_POINTS_PER_SERIES } from 'utils/constants';
 import { updateSourceAxisForChart } from 'models/chart/updates';
-import { TimeseriesEntry } from 'models/timeseries/types';
-import { Icon } from '@cognite/cogs.js';
-import { ChartingContainer, LoadingContainer } from './elements';
+import { ChartingContainer } from './elements';
 import { cleanTimeseriesCollection, cleanWorkflowCollection } from './utils';
 import PlotlyChart, { PlotNavigationUpdate } from './PlotlyChart';
 
 type Props = {
   chart?: Chart;
+  setChart?: (
+    valOrUpdater: ((currVal: Chart | undefined) => Chart) | Chart
+  ) => void;
   isYAxisShown?: boolean;
   isMinMaxShown?: boolean;
   isGridlinesShown?: boolean;
-  isPreview?: boolean;
   stackedMode?: boolean;
   mergeUnits?: boolean;
 };
 
-const PlotlyChartContainer = ({
+const ChartPlotContainer = ({
   chart = undefined,
+  setChart = (val) => val,
   isYAxisShown = true,
   isMinMaxShown = false,
   isGridlinesShown = false,
-  isPreview = false,
   stackedMode = false,
   mergeUnits = false,
 }: Props) => {
-  const sdk = useSDK();
-  const pointsPerSeries = isPreview ? 100 : CHART_POINTS_PER_SERIES;
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
 
   /**
    * Get local chart context
    */
-  const [, setChart] = useRecoilState(chartAtom);
   const dateFrom = chart?.dateFrom;
   const dateTo = chart?.dateTo;
 
-  const queries =
-    chart?.timeSeriesCollection?.map(({ tsExternalId }) => ({
-      items: [{ externalId: tsExternalId }],
-      start: dayjs(dateFrom).toDate(),
-      end: dayjs(dateTo).toDate(),
-      granularity: calculateGranularity(
-        [dayjs(dateFrom).valueOf(), dayjs(dateTo).valueOf()],
-        pointsPerSeries
-      ),
-      aggregates: ['average', 'min', 'max', 'count', 'sum'],
-      limit: pointsPerSeries,
-    })) || [];
-
   /**
-   * This is only used for the overview preview mode
+   * Get stored results for timeseries and calculations
    */
-  const { data: timeseriesPreview = [], isFetching: isFetchingPreview } =
-    useQuery(
-      ['chart-data', 'timeseries', queries],
-      () => {
-        return Promise.allSettled(
-          queries.map((q) =>
-            sdk.datapoints.retrieve(q as DatapointsMultiQuery).then((r) => r[0])
-          )
-        ).then((results) => {
-          return results
-            .map((result) => ('value' in result ? result.value : undefined))
-            .filter(Boolean)
-            .map((series) => {
-              return {
-                externalId: series?.externalId,
-                loading: false,
-                series,
-              } as TimeseriesEntry;
-            });
-        });
-      },
-      {
-        enabled: !!chart && !!isPreview,
-      }
-    );
-
   const localTimeseries = useRecoilValue(timeseriesAtom);
   const localWorkflows = useRecoilValue(availableWorkflows);
 
@@ -112,16 +63,12 @@ const PlotlyChartContainer = ({
     [wfCollectionAsString]
   );
 
-  const timeseriesData = isPreview ? timeseriesPreview : localTimeseries;
+  const timeseriesData = localTimeseries;
   const calculationsData = localWorkflows;
   const thresholds = chart?.thresholdCollection;
 
   const handleChartNavigation = useCallback(
     ({ x, y, dragmode: newDragmode }: PlotNavigationUpdate) => {
-      if (isPreview) {
-        return;
-      }
-
       setChart((oldChart) =>
         updateSourceAxisForChart(oldChart!, {
           x,
@@ -133,10 +80,8 @@ const PlotlyChartContainer = ({
         setDragmode(newDragmode);
       }
     },
-    [setChart, isPreview, stackedMode]
+    [setChart, stackedMode]
   );
-
-  const isYAxisShownOverride = !isPreview && isYAxisShown;
 
   const hasValidDates =
     !Number.isNaN(new Date(dateFrom || '').getTime()) &&
@@ -154,10 +99,9 @@ const PlotlyChartContainer = ({
     calculations,
     calculationsData,
     thresholds,
-    isYAxisShown: isYAxisShownOverride,
+    isYAxisShown,
     isMinMaxShown,
     isGridlinesShown,
-    isPreview,
     stackedMode,
     mergeUnits,
     dragmode,
@@ -166,15 +110,9 @@ const PlotlyChartContainer = ({
 
   return (
     <ChartingContainer>
-      {isFetchingPreview ? (
-        <LoadingContainer>
-          <Icon type="Loader" />
-        </LoadingContainer>
-      ) : (
-        <PlotlyChart {...plotProps} />
-      )}
+      <PlotlyChart {...plotProps} />
     </ChartingContainer>
   );
 };
 
-export default PlotlyChartContainer;
+export default ChartPlotContainer;
