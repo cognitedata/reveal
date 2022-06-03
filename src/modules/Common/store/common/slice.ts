@@ -5,15 +5,15 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import { CDFStatusModes } from 'src/modules/Common/Components/CDFStatus/CDFStatus';
-import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotationsV1';
-import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
-import { SaveAnnotationsV1 } from 'src/store/thunks/Annotation/SaveAnnotationsV1';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
-import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
 import { ToastUtils } from 'src/utils/ToastUtils';
 import { PollJobs } from 'src/store/thunks/Process/PollJobs';
 import { CreateVisionJob } from 'src/store/thunks/Process/CreateVisionJob';
+import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
+import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { BulkEditUnsavedState, CommonState } from './types';
 
 export const initialState: CommonState = {
@@ -48,9 +48,9 @@ const commonSlice = createSlice({
   extraReducers: (builder) => {
     builder.addMatcher(
       isFulfilled(
-        SaveAnnotationsV1,
-        DeleteAnnotationsV1,
-        UpdateAnnotationsV1,
+        SaveAnnotations,
+        DeleteAnnotations,
+        UpdateAnnotations,
         UpdateFiles
       ),
       (state) => {
@@ -61,10 +61,10 @@ const commonSlice = createSlice({
 
     builder.addMatcher(
       isRejected(
-        SaveAnnotationsV1,
-        RetrieveAnnotationsV1,
-        DeleteAnnotationsV1,
-        UpdateAnnotationsV1,
+        SaveAnnotations,
+        RetrieveAnnotations,
+        DeleteAnnotations,
+        UpdateAnnotations,
         SaveAnnotationTemplates
       ),
       (state, { error }) => {

@@ -4,8 +4,8 @@ import {
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
-import { useCognitePlaygroundClient } from 'src/hooks/useCognitePlaygroundClient';
 import { AnnotationChangeById } from '@cognite/sdk-playground';
+import { cognitePlaygroundClient } from 'src/api/annotation/CognitePlaygroundClient';
 
 /**
  * ## Example
@@ -38,7 +38,7 @@ export const UpdateAnnotations = createAsyncThunk<
     return [];
   }
 
-  const sdk = useCognitePlaygroundClient();
+  const sdk = cognitePlaygroundClient;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const annotations = await sdk.annotations.update(annotationChangeByIds);
 

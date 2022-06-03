@@ -1,24 +1,24 @@
 import reducer, { initialState } from 'src/modules/Common/store/common/slice';
-import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotationsV1';
-import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
-import { SaveAnnotationsV1 } from 'src/store/thunks/Annotation/SaveAnnotationsV1';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
-import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
 import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
+import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
+import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
+import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 
 describe('Test common reducer', () => {
   const fulfilledActionTypes = [
-    SaveAnnotationsV1.fulfilled.type,
-    DeleteAnnotationsV1.fulfilled.type,
-    UpdateAnnotationsV1.fulfilled.type,
+    SaveAnnotations.fulfilled.type,
+    DeleteAnnotations.fulfilled.type,
+    UpdateAnnotations.fulfilled.type,
     UpdateFiles.fulfilled.type,
   ];
 
   const rejectedActionTypes = [
-    SaveAnnotationsV1.rejected.type,
-    RetrieveAnnotationsV1.rejected.type,
-    DeleteAnnotationsV1.rejected.type,
-    UpdateAnnotationsV1.rejected.type,
+    SaveAnnotations.rejected.type,
+    RetrieveAnnotations.rejected.type,
+    DeleteAnnotations.rejected.type,
+    UpdateAnnotations.rejected.type,
     UpdateFiles.rejected.type,
     SaveAnnotationTemplates.rejected.type,
   ];

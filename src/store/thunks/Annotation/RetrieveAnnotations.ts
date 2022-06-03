@@ -11,7 +11,7 @@ import { map, mergeMap, reduce } from 'rxjs/operators';
 import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bulkConverters';
 import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { convertCDFAnnotationToVisionAnnotations } from 'src/api/annotation/converters';
-import { useCognitePlaygroundClient } from 'src/hooks/useCognitePlaygroundClient';
+import { cognitePlaygroundClient } from 'src/api/annotation/CognitePlaygroundClient';
 
 export const RetrieveAnnotations = createAsyncThunk<
   VisionAnnotation<VisionAnnotationDataType>[],
@@ -23,7 +23,7 @@ export const RetrieveAnnotations = createAsyncThunk<
   /**
    * fetch new (V2 annotators using sdk)
    */
-  const sdk = useCognitePlaygroundClient();
+  const sdk = cognitePlaygroundClient;
   const fileIdBatches = splitListIntoChunks(
     fetchFileIds,
     ANNOTATION_FETCH_BULK_SIZE

@@ -32,8 +32,8 @@ import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
 import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import { fetchFiles } from 'src/api/file/fetchFiles/fetchFiles';
-import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 
 type Resource = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
@@ -106,7 +106,7 @@ export const ResultTableLoader = <T extends Resource>({
       const fileIds = fileSearchResult.map((item) => item.id);
 
       dispatch(setLoadingAnnotations());
-      dispatch(RetrieveAnnotationsV1({ fileIds, clearCache: true })); // clearCache: true will clear annotation state before adding new annotations
+      dispatch(RetrieveAnnotations({ fileIds, clearCache: true })); // clearCache: true will clear annotation state before adding new annotations
       // manually clearing annotations is not needed
       dispatch(setExplorerFiles(fileSearchResult));
     })();
