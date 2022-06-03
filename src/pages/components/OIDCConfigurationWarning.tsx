@@ -1,25 +1,17 @@
 import * as React from 'react';
-import { Body } from '@cognite/cogs.js';
-import { Alert } from 'antd';
-import { t } from 'i18next';
-import styled from 'styled-components';
+import CustomInfo from './CustomInfo';
+import { useTranslation } from 'react-i18next';
 
 export const OIDCConfigurationWarning = () => {
+  const { t } = useTranslation();
   return (
-    <StyledAlertContainer>
-      <Body level={2}>
-        <Alert
-          type="warning"
-          message={t(
-            'chaging-oidc-settings-could-have-unintended-consequences'
-          )}
-        />
-      </Body>
-    </StyledAlertContainer>
+    <CustomInfo
+      type="warning"
+      alertTitle={t('warning')}
+      alertMessage={t(
+        'chaging-oidc-settings-could-have-unintended-consequences'
+      )}
+      hideModal
+    />
   );
 };
-
-const StyledAlertContainer = styled.div`
-  max-width: 640px;
-  margin-bottom: 16px;
-`;

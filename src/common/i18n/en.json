@@ -3,5 +3,6 @@
   "english_language": "English",
   "norwegian_language": "Norwegian",
   "welcome_text": "Welcome to {{0}}: {{1}}",
+  "warning": "Warning",
   "chaging-oidc-settings-could-have-unintended-consequences": "Be careful about changing OIDC settings, it could have uninteded consequences."
 }
