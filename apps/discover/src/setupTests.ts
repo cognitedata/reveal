@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom/extend-expect';
 import '@testing-library/jest-dom';
+import fetchMock from 'jest-fetch-mock';
 import isUndefined from 'lodash/isUndefined';
 
 import * as mocks from '@cognite/metrics/dist/mocks';
@@ -8,6 +9,8 @@ import { configureLocalStorageMock } from '__test-utils/mockLocalstorage';
 
 export const TEST_PROJECT = 'testProject';
 
+fetchMock.enableMocks();
+fetchMock.dontMock();
 // console.warn = jest.fn();
 
 jest.mock('@cognite/metrics', () => mocks);

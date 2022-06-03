@@ -53,7 +53,7 @@ USER_ID=$(git config user.email) # ok since this is local only
 echo '-------------'
 echo "Current user: $USER_ID"
 echo '-------------'
-REACT_APP_E2E_USER=$USER_ID ibazel run :start
+REACT_APP_E2E_USER=$USER_ID bazel run :start
 EXIT_CODE=$?
 
 exit $EXIT_CODE

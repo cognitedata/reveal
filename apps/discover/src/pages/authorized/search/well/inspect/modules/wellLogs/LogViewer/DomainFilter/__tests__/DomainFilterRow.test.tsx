@@ -22,6 +22,10 @@ describe('DomainFilterRow', () => {
     return testRenderer(DomainFilterRow, undefined, props);
   };
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should render domain filter row', () => {
     renderComponent();
 

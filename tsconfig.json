@@ -21,6 +21,7 @@
       "@cognite/*": [
         "../../../packages/*/dist",
         "../../../packages/*/src",
+        "<rootDir>/../../packages/*/dist", // in bazel: package requiring another package
         "<rootDir>/../../packages/*/src",
 
         "../../../../packages/*/src",

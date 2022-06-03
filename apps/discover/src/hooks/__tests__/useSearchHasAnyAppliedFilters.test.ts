@@ -6,13 +6,14 @@ import {
   isAnyFilterApplied,
 } from 'hooks/useSearchHasAnyAppliedFilters';
 
+// this one throws an "open handle" console error. It will help to investigate later
 describe('useSearchHasAnyAppliedFilters hook', () => {
-  it('should return false initially', () => {
+  it('should return false initially', async () => {
     const { result, waitForNextUpdate } = renderHook(
       () => useSearchHasAnyAppliedFilters(),
       { wrapper: QueryClientWrapper }
     );
-    waitForNextUpdate();
+    await waitForNextUpdate();
     expect(result.current).toBeFalsy();
   });
 });

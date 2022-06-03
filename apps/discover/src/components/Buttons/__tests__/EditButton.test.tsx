@@ -9,6 +9,8 @@ import { BaseButtonProps } from '../types';
 const BUTTON_TEXT = 'TestButtonText';
 
 describe('Edit Button', () => {
+  beforeEach(jest.clearAllMocks);
+
   const testInit = async (viewProps?: BaseButtonProps) =>
     testRenderer(EditButton, undefined, viewProps);
 

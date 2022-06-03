@@ -9,7 +9,7 @@ describe('UnassignWarningModal', () => {
   const unassign = jest.fn();
   const unassignModal = jest.fn();
 
-  afterAll(() => jest.clearAllMocks());
+  afterEach(() => jest.clearAllMocks());
 
   const initiateTest = (props: any) => {
     return testRendererModal(UnassignWarningModal, undefined, props);

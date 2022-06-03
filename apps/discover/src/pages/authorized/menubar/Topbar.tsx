@@ -22,12 +22,7 @@ import {
   PATHNAMES,
   // DASHBOARD_LINK_TEXT_KEY,
 } from './constants';
-import {
-  Container,
-  LogoWrapper,
-  TopBarLogo,
-  TopBarNavigationWrapper,
-} from './elements';
+import { Container, TopBarLogo, TopBarNavigationWrapper } from './elements';
 import { Feedback } from './Feedback';
 import { TenantLogo } from './TenantLogo';
 import { UserProfileButton } from './UserProfileButton';
@@ -139,9 +134,7 @@ export const Topbar: React.FC = () => {
         <Feedback />
         <UserProfileButton />
 
-        <LogoWrapper>
-          <TenantLogo />
-        </LogoWrapper>
+        <TenantLogo />
       </TopBar.Right>
     ),
     [activeTab]

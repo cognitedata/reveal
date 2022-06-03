@@ -17,7 +17,7 @@ import {
   CasingSchematic,
 } from '@cognite/sdk-wells-v3';
 
-import { Error } from 'modules/inspectTabs/types';
+import { DataError } from 'modules/inspectTabs/types';
 import { CasingType } from 'pages/authorized/search/well/inspect/modules/casing/CasingView/interfaces';
 
 import { TableResults } from '../../components/Tablev3/resultTypes';
@@ -400,7 +400,7 @@ export interface Measurement extends Sequence {
  */
 export interface MeasurementV3 extends DepthMeasurement {
   data?: DepthMeasurementData;
-  errors?: Error[];
+  errors?: DataError[];
 }
 
 export type WellboreMeasurementsMap = {

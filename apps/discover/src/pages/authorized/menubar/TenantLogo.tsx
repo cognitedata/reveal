@@ -1,7 +1,6 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useEffect } from 'react';
 
-import noop from 'lodash/noop';
+import logoBpImage from 'images/logo/owa-prod.png';
 import styled from 'styled-components/macro';
 
 import { getTenantInfo } from '@cognite/react-container';
@@ -12,22 +11,21 @@ const Image = styled.img`
   transform: scale(0.7, 0.7);
   margin-right: ${sizes.small}; ;
 `;
+const LogoWrapper = styled.div`
+  margin-left: ${sizes.small};
+  margin-right: ${sizes.small};
+`;
 
 export const TenantLogo: React.FC = () => {
   const [tenant] = getTenantInfo();
-  const [logo, setLogo] = React.useState();
+  const [logo, setLogo] = React.useState<string>();
 
-  React.useEffect(() => {
-    import(`images/logo/${tenant}.png`)
-      .then(({ default: importedLogo }) => {
-        if (importedLogo) {
-          setLogo(importedLogo);
-        }
-      })
-      .catch(() => {
-        // no problem!
-        return noop;
-      });
+  // @todo(PP-2966) - make this dynamic again
+  const bp = ['owa-prod'];
+  useEffect(() => {
+    if (bp.includes(tenant)) {
+      setLogo(logoBpImage);
+    }
   }, [tenant]);
 
   if (!logo) {
@@ -35,10 +33,10 @@ export const TenantLogo: React.FC = () => {
   }
 
   return (
-    <Center>
-      <NavLink to="/">
+    <LogoWrapper>
+      <Center>
         <Image src={logo} alt={`${tenant} logo`} id="tenant-logo-icon" />
-      </NavLink>
-    </Center>
+      </Center>
+    </LogoWrapper>
   );
 };

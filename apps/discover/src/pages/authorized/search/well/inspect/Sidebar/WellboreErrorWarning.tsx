@@ -4,12 +4,12 @@ import { v4 as uuid } from 'uuid';
 
 import { Dropdown } from '@cognite/cogs.js';
 
-import { Error } from 'modules/inspectTabs/types';
+import { DataError } from 'modules/inspectTabs/types';
 
 import { WellboreErrorWarningButton, WellboreErrorsWrapper } from './elements';
 
 export type Props = {
-  errors: Error[];
+  errors: DataError[];
 };
 
 export const WellboreErrorWarning: React.FC<Props> = ({ errors }) => {

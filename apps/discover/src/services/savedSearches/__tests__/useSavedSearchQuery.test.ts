@@ -75,7 +75,7 @@ describe('useSavedSearchQuery', () => {
   describe('useMutatePatchSavedSearch', () => {
     const successCallback = jest.fn();
 
-    afterAll(() => jest.clearAllMocks());
+    afterEach(() => jest.clearAllMocks());
 
     it('should return expected output', async () => {
       const { result } = renderHookWithStore(() =>

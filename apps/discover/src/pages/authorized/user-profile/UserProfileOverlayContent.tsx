@@ -44,8 +44,15 @@ export const UserProfileOverlayContent: React.FC<Props> = ({ companyInfo }) => {
   }, [user?.displayName]);
 
   useEffect(() => {
+    // error from: plugin:rollup-plugin-dynamic-import-variables
+    // Requires the use of extensions in dynamic imports
+    if (!companyInfo || !companyInfo.logo) {
+      return () => null;
+    }
+    const file = companyInfo.logo.split('.');
+    const extension = file.pop();
     const cancellablePromise = convertToCancellablePromise(
-      import(`images/logo/${companyInfo?.logo}`)
+      import(`../../../images/logo/${file.join('.')}.${extension}`)
     );
     cancellablePromise.promise
       .then((img) => {

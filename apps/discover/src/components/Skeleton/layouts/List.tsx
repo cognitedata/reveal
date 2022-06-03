@@ -3,7 +3,7 @@ import styled from 'styled-components/macro';
 
 import { sizes } from 'styles/layout';
 
-import Skeleton from '../index';
+import Text from './Text';
 
 interface Props {
   lines?: number;
@@ -39,7 +39,7 @@ const List: React.FC<Props> = ({ lines = 1, borders }) => {
     <div role="table">
       {times(lines).map((count) => (
         <ListItem borders={borders} key={`skeleton-${count}`}>
-          <Skeleton.Text currentLine={count} isOnlyLine />
+          <Text currentLine={count} isOnlyLine />
         </ListItem>
       ))}
     </div>

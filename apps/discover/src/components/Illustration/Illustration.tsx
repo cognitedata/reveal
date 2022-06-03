@@ -15,7 +15,6 @@ const illustrations = {
 
 export const Illustration: React.FC<Props> = ({ type = 'Search', alt }) => {
   const { t } = useTranslation('general');
-
   return (
     <Img
       src={illustrations[type]}

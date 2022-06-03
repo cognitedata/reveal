@@ -14,6 +14,10 @@ const feedbackType: FeedbackType = 'general';
 const headers: FetchHeaders = { header: 'test-header' };
 
 describe('feedback api', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should call `fetchGet` on `get` as expected', async () => {
     await feedback.get(feedbackType, headers);
     expect(fetchGet).toBeCalledTimes(1);

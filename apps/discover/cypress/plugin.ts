@@ -2,7 +2,6 @@ import { readFileSync } from 'fs';
 import path from 'path';
 
 import webpackPreprocessor from '@cypress/webpack-preprocessor';
-import axios from 'axios';
 import express from 'express';
 import { v1 as uuid } from 'uuid';
 import webpack from 'webpack';

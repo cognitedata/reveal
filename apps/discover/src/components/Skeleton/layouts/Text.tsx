@@ -1,6 +1,11 @@
 import React from 'react';
 
-import { Base } from '../index';
+import { Rectangle, Circle } from '../elements';
+
+const Base = {
+  Rectangle,
+  Circle,
+};
 
 export interface Props {
   currentLine?: number;

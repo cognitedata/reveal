@@ -54,6 +54,7 @@ describe('useCommonSearch hook', () => {
   const dispatch = jest.fn();
 
   beforeEach(() => {
+    jest.clearAllMocks();
     (useDispatch as jest.Mock).mockImplementation(() => dispatch);
     (useProjectConfig as jest.Mock).mockImplementation(() => ({}));
   });

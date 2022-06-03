@@ -29,24 +29,12 @@ const composedEnhancers: StoreEnhancer = compose(
   ...enhancers
 );
 
-type RootReducer = typeof rootReducer;
-
 export function configureStore(initialState: PartialStoreState = {}): AppStore {
   const store = createStore(
     rootReducer,
     initialState as PreloadedStoreState,
     composedEnhancers
   );
-
-  if (process.env.NODE_ENV !== 'production') {
-    if (module.hot) {
-      module.hot.accept('./reducer', (): void => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const nextRootReducer: RootReducer = require('./reducer').default; // eslint-disable-line global-require
-        store.replaceReducer(nextRootReducer);
-      });
-    }
-  }
 
   return store;
 }

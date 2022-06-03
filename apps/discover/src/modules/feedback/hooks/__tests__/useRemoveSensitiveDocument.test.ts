@@ -41,6 +41,7 @@ describe('useRemoveSensitiveDocument hook', () => {
   };
 
   beforeEach(() => {
+    jest.clearAllMocks();
     (useQueryClient as jest.Mock).mockImplementation(() => ({ setQueryData }));
     (useDocumentSearchResultQuery as jest.Mock).mockImplementation(() => ({
       results: documentResult,

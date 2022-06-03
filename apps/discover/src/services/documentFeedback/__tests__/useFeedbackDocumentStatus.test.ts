@@ -13,8 +13,16 @@ const mockServer = setupServer(
 );
 
 describe('Document feedback hooks', () => {
-  beforeAll(() => mockServer.listen());
+  beforeAll(() => {
+    jest.clearAllMocks();
+    mockServer.listen();
+  });
+
   afterAll(() => mockServer.close());
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   const initiateTest = (documentId: number, label: string) => {
     return renderHook(() => useFeedbackDocumentStatus(documentId, label), {

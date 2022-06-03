@@ -29,7 +29,7 @@ describe('seismic', () => {
       await expect(() => seismic.search({}, TEST_PROJECT)).rejects.toThrowError(
         'Bad seismic'
       );
-    });
+    }, 5000);
     it('search should handle error case', async () => {
       const networkMocks = setupServer(getMockSeismicSearch(true));
       networkMocks.listen();

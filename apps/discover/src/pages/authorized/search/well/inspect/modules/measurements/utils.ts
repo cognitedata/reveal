@@ -18,7 +18,7 @@ import {
 } from '@cognite/sdk-wells-v3';
 
 import { PressureUnit, UserPreferredUnit } from 'constants/units';
-import { Error, Errors } from 'modules/inspectTabs/types';
+import { DataError, Errors } from 'modules/inspectTabs/types';
 import {
   MEASUREMENT_CURVE_CONFIG_V3 as MEASUREMENT_CURVE_CONFIG,
   MEASUREMENT_EXTERNAL_ID_CONFIG,
@@ -486,7 +486,7 @@ export const getMeasurementDataFetchErrors = (
       measurements
         .filter((measurement) => measurement.errors)
         .map((measurement) => measurement.errors)
-        .filter((error): error is Error[] => !!error)
+        .filter((error): error is DataError[] => !!error)
     );
     return {
       ...results,

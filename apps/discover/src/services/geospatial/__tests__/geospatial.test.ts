@@ -36,7 +36,9 @@ describe('GeospecialV1 Actions', () => {
     mockServer.close();
     global.console = origConsole;
   });
-
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   it('should return expected output', async () => {
     const result = await geospatial.createLayer(
       {

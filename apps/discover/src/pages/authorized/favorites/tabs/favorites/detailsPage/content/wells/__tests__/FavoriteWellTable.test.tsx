@@ -45,7 +45,6 @@ describe('Favorite Wellbore table', () => {
       wells: {
         'test-well-1': [],
       },
-      removeWell: jest.fn(),
       favoriteId: '1',
     });
 
@@ -66,7 +65,6 @@ describe('Favorite Wellbore table', () => {
   it('should render the no well message', async () => {
     await defaultTestInit({
       wells: {},
-      removeWell: jest.fn(),
       favoriteId: '1',
     });
 
@@ -76,7 +74,6 @@ describe('Favorite Wellbore table', () => {
   it('should render loading message when `isLoading` is true and no data', async () => {
     await defaultTestInit({
       wells: {},
-      removeWell: jest.fn(),
       favoriteId: '1',
     });
     expect(await screen.findByText(LOADING_TEXT)).toBeInTheDocument();
@@ -88,7 +85,6 @@ describe('Favorite Wellbore table', () => {
       wells: {
         'test-well-1': [],
       },
-      removeWell: jest.fn(),
       favoriteId: '1',
     });
 

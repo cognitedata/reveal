@@ -19,6 +19,7 @@ const mutate = jest.fn();
 
 describe('feedback actions', () => {
   beforeEach(() => {
+    mutate.mockClear();
     mutate.mockImplementation(() => {
       try {
         return Promise.resolve();
@@ -97,6 +98,7 @@ describe('feedback api error handling', () => {
     // @ts-expect-error - missing other keys
     global.console = { error: jest.fn() };
 
+    mutate.mockClear();
     mutate.mockImplementation(() => {
       try {
         throw new Error('error');

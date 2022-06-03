@@ -1,4 +1,11 @@
+import '__mocks/mockContainerAuth'; // should be first
+import '__mocks/setupMockCogniteSDK';
+import 'services/wellSearch/__mocks/setupWellsMockSDK';
+import { getMockFavoritesListGet } from 'domain/favorites/service/__mocks/getMockFavoritesListGet';
+
 import { screen, cleanup, fireEvent } from '@testing-library/react';
+import { setupServer } from 'msw/node';
+import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import {
   getMockWell,
@@ -11,26 +18,20 @@ import { useWellById } from 'modules/wellSearch/hooks/useWellsCacheQuerySelector
 
 import { WellPreviewCard } from '../WellPreviewCard';
 
-jest.mock('modules/wellSearch/service', () => ({
-  getWellByWellId: jest.fn(() =>
-    Promise.resolve(() => mockedWellStateWithSelectedWells.wellSearch.wells[0])
-  ),
-  getWellboresByWellIds: jest.fn(() =>
-    Promise.resolve(
-      () => mockedWellStateWithSelectedWells.wellSearch.wells[0].wellbores
-    )
-  ),
-}));
-
 jest.mock('modules/wellSearch/hooks/useWellsCacheQuerySelectors', () => ({
   useWellboresOfWellById: jest.fn(),
   useWellById: jest.fn(),
 }));
 
+const mockServer = setupServer(getMockConfigGet(), getMockFavoritesListGet());
+
 const store = getMockedStore(mockedWellStateWithSelectedWells);
 
 describe('Well Preview Card', () => {
   afterEach(cleanup);
+
+  beforeAll(() => mockServer.listen());
+  afterAll(() => mockServer.close());
 
   const getWellPreviewCard = (props: any) => {
     return testRenderer(WellPreviewCard, store, props);
@@ -49,14 +50,6 @@ describe('Well Preview Card', () => {
 
     expect(screen.getByTestId('title').innerHTML).toBe(selectedWell.name);
     expect(screen.getByText('23.52')).toBeInTheDocument();
-  });
-
-  it('should not render Well Preview Card with well when wellId is not provided', async () => {
-    getWellPreviewCard({});
-
-    await Promise.resolve();
-
-    expect(screen.getByTestId('title')).toBeEmptyDOMElement();
   });
 
   it('should close preview on clicking close icon', async () => {

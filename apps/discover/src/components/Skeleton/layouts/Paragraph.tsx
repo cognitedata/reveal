@@ -2,7 +2,7 @@ import React from 'react';
 
 import times from 'lodash/times';
 
-import Skeleton from '../index';
+import Text from './Text';
 
 export interface Props {
   lines?: number;
@@ -19,7 +19,7 @@ export const Paragraph: React.FC<Props> = ({ lines = 1 }) => {
   return (
     <>
       {linesArr.map((_, i) => (
-        <Skeleton.Text
+        <Text
           key={`line-${_}`}
           data-testid="paragraph"
           currentLine={i}

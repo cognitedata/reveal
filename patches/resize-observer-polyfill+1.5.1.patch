@@ -1,0 +1,42 @@
+diff --git a/node_modules/resize-observer-polyfill/dist/ResizeObserver.es.js b/node_modules/resize-observer-polyfill/dist/ResizeObserver.es.js
+index 1fe19b6..073d8f1 100644
+--- a/node_modules/resize-observer-polyfill/dist/ResizeObserver.es.js
++++ b/node_modules/resize-observer-polyfill/dist/ResizeObserver.es.js
+@@ -110,7 +110,7 @@ var MapShim = (function () {
+ var isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined' && window.document === document;
+ 
+ // Returns global object of a current environment.
+-var global$1 = (function () {
++var global_1 = (function () {
+     if (typeof global !== 'undefined' && global.Math === Math) {
+         return global;
+     }
+@@ -135,7 +135,7 @@ var requestAnimationFrame$1 = (function () {
+         // It's required to use a bounded function because IE sometimes throws
+         // an "Invalid calling object" error if rAF is invoked without the global
+         // object on the left hand side.
+-        return requestAnimationFrame.bind(global$1);
++        return requestAnimationFrame.bind(global_1);
+     }
+     return function (callback) { return setTimeout(function () { return callback(Date.now()); }, 1000 / 60); };
+ })();
+@@ -443,7 +443,7 @@ var getWindowOf = (function (target) {
+     var ownerGlobal = target && target.ownerDocument && target.ownerDocument.defaultView;
+     // Return the local global object if it's not possible extract one from
+     // provided element.
+-    return ownerGlobal || global$1;
++    return ownerGlobal || global_1;
+ });
+ 
+ // Placeholder of an empty content rectangle.
+@@ -919,8 +919,8 @@ var ResizeObserver = /** @class */ (function () {
+ 
+ var index = (function () {
+     // Export existing implementation if available.
+-    if (typeof global$1.ResizeObserver !== 'undefined') {
+-        return global$1.ResizeObserver;
++    if (typeof global_1.ResizeObserver !== 'undefined') {
++        return global_1.ResizeObserver;
+     }
+     return ResizeObserver;
+ })();
