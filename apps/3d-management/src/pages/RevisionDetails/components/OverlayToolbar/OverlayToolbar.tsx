@@ -1,12 +1,6 @@
 import React from 'react';
 import * as THREE from 'three';
-import {
-  ToolBarButton,
-  ToolBar,
-  Slider,
-  Icon,
-  Checkbox,
-} from '@cognite/cogs.js';
+import { ToolBarButton, ToolBar, Slider, Icon } from '@cognite/cogs.js';
 import {
   Cognite3DModel,
   Cognite3DViewer,
