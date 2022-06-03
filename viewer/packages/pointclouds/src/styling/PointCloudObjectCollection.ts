@@ -3,5 +3,5 @@
  */
 
 export interface PointCloudObjectCollection {
-  getObjectIds(): Iterable<number>;
+  getAnnotationIds(): Iterable<number>;
 }

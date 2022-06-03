@@ -9,6 +9,7 @@ import * as THREE from 'three';
 import { Box } from './styling/shapes/Box';
 
 import { createInvertedRevealTransformationFromCdfTransformation } from './styling/shapes/linalg';
+import { StylableObject } from './styling/StylableObject';
 
 export class CylinderPrimitive {
   constructor(public centerA: THREE.Vector3, public centerB: THREE.Vector3, public radius: number) {}
@@ -34,7 +35,19 @@ export class BoxPrimitive {
 
 export type Geometry = CylinderPrimitive | BoxPrimitive;
 
-export type BoundingVolume = {
+export type CdfPointCloudObjectAnnotation = {
   annotationId: number;
+  assetId?: number;
   region: Geometry[];
+};
+
+export type PointCloudObjectAnnotation = {
+  annotationId: number;
+  assetId?: number;
+  stylableObject: StylableObject;
+};
+
+export type PointCloudObjectAnnotationsWithIndexMap = {
+  annotations: PointCloudObjectAnnotation[];
+  annotationIdToIndexMap: Map<number, number>;
 };

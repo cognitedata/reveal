@@ -11,6 +11,7 @@ import { IPotree } from '../types/IPotree';
 import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { computeTransformedBoundingBox } from '../utils/bounds';
+import { PointCloudObjectAnnotationsWithIndexMap } from '../../annotationTypes';
 
 export class PointCloudOctree extends PointCloudTree {
   potree: IPotree;
@@ -34,7 +35,11 @@ export class PointCloudOctree extends PointCloudTree {
   private readonly visibleBounds: Box3 = new Box3();
   private picker: PointCloudOctreePicker | undefined;
 
-  constructor(potree: IPotree, pcoGeometry: IPointCloudTreeGeometry, material?: PointCloudMaterial) {
+  constructor(
+    potree: IPotree,
+    pcoGeometry: IPointCloudTreeGeometry,
+    annotationInfo: PointCloudObjectAnnotationsWithIndexMap
+  ) {
     super();
 
     this.name = '';
@@ -46,7 +51,11 @@ export class PointCloudOctree extends PointCloudTree {
 
     this.position.copy(pcoGeometry.offset);
 
-    this.material = material || new PointCloudMaterial();
+    const annotationIdToObjectIdMap = new Map<number, number>(
+      annotationInfo.annotations.map(annotation => [annotation.annotationId, annotation.stylableObject.objectId])
+    );
+
+    this.material = new PointCloudMaterial({ annotationIdToObjectIdMap });
     this.updateMaterial();
   }
 

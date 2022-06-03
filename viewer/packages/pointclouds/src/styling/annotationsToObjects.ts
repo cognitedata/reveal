@@ -2,14 +2,23 @@
  * Copyright 2022 Cognite AS
  */
 
-import { BoundingVolume } from '../annotationTypes';
+import {
+  PointCloudObjectAnnotation,
+  PointCloudObjectAnnotationsWithIndexMap,
+  CdfPointCloudObjectAnnotation
+} from '../annotationTypes';
 import { CompositeShape } from './shapes/CompositeShape';
-import { RawStylableObject, StylableObject } from './StylableObject';
+import { StylableObject } from './StylableObject';
 
-function annotationsToObjects(bvs: BoundingVolume[]): StylableObject[] {
+function cdfAnnotationsToRevealAnnotationsAndIdMap(
+  bvs: CdfPointCloudObjectAnnotation[]
+): [PointCloudObjectAnnotation[], Map<number, number>] {
   let idCounter = 0;
+  const idMap = new Map<number, number>();
 
-  const resultObjects = bvs.map(bv => {
+  const resultAnnotations = bvs.map((bv, ind) => {
+    idMap.set(bv.annotationId, ind);
+
     idCounter++;
 
     const shapes = bv.region.map(primitive => primitive.transformToShape());
@@ -20,19 +29,22 @@ function annotationsToObjects(bvs: BoundingVolume[]): StylableObject[] {
       objectId: idCounter
     };
 
-    return stylableObject;
+    const annotation = {
+      annotationId: bv.annotationId,
+      assetId: bv.assetId,
+      stylableObject
+    };
+
+    return annotation;
   });
 
-  return resultObjects;
+  return [resultAnnotations, idMap];
 }
 
-export function annotationsToObjectInfo(annotations: BoundingVolume[]): RawStylableObject[] {
-  const stylableObjects = annotationsToObjects(annotations);
+export function annotationsToObjectInfo(
+  annotations: CdfPointCloudObjectAnnotation[]
+): PointCloudObjectAnnotationsWithIndexMap {
+  const [translatedAnnotations, idMap] = cdfAnnotationsToRevealAnnotationsAndIdMap(annotations);
 
-  return stylableObjects.map(obj => {
-    return {
-      objectId: obj.objectId,
-      shape: obj.shape.toRawShape()
-    };
-  });
+  return { annotations: translatedAnnotations, annotationIdToIndexMap: idMap };
 }

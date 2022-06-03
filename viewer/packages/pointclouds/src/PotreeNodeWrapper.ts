@@ -10,8 +10,8 @@ import { PointCloudOctree, PotreePointColorType, PotreePointShape, IClassificati
 import { WellKnownAsprsPointClassCodes } from './types';
 
 import { createPointClassKey } from './createPointClassKey';
-import { RawStylableObject } from './styling/StylableObject';
 import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
+import { PointCloudObjectAnnotation, PointCloudObjectAnnotationsWithIndexMap } from './annotationTypes';
 
 /**
  * Wrapper around `Potree.PointCloudOctree` with some convenience functions.
@@ -20,19 +20,22 @@ export class PotreeNodeWrapper {
   readonly octree: PointCloudOctree;
   private _needsRedraw = false;
   private readonly _classification: IClassification = {} as IClassification;
-  private readonly _stylableObjects: RawStylableObject[];
+
+  private readonly _annotations: PointCloudObjectAnnotation[];
+  private readonly _annotationIdToIndexMap: Map<number, number>;
 
   get needsRedraw(): boolean {
     return this._needsRedraw;
   }
 
-  constructor(octree: PointCloudOctree, stylableObjects: RawStylableObject[]) {
+  constructor(octree: PointCloudOctree, annotationsInfo?: PointCloudObjectAnnotationsWithIndexMap | undefined) {
     this.octree = octree;
     this.pointSize = 2;
     this.pointColorType = PotreePointColorType.Rgb;
     this.pointShape = PotreePointShape.Circle;
     this._classification = octree.material.classification;
-    this._stylableObjects = stylableObjects;
+    this._annotations = annotationsInfo?.annotations ?? [];
+    this._annotationIdToIndexMap = annotationsInfo?.annotationIdToIndexMap ?? new Map();
   }
 
   get pointSize(): number {
@@ -76,8 +79,12 @@ export class PotreeNodeWrapper {
     return this._classification;
   }
 
-  get stylableObjects(): RawStylableObject[] {
-    return this._stylableObjects;
+  get stylableObjectAnnotationIds(): Iterable<number> {
+    return this._annotationIdToIndexMap.keys();
+  }
+
+  get stylableObjects(): PointCloudObjectAnnotation[] {
+    return this._annotations;
   }
 
   setObjectStyle(styledCollection: StyledPointCloudObjectCollection): void {

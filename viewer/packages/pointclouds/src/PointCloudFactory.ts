@@ -7,7 +7,12 @@ import { PointCloudMetadata } from './PointCloudMetadata';
 
 import { ModelDataProvider, ModelIdentifier, CdfModelIdentifier } from '@reveal/modeldata-api';
 
-import { BoundingVolume, CylinderPrimitive, Geometry } from './annotationTypes';
+import {
+  PointCloudObjectAnnotation,
+  CdfPointCloudObjectAnnotation,
+  CylinderPrimitive,
+  Geometry
+} from './annotationTypes';
 import { annotationsToObjectInfo } from './styling/annotationsToObjects';
 import { BoxPrimitive } from './annotationTypes';
 
@@ -17,7 +22,6 @@ import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
 import { CogniteClientPlayground } from '@cognite/sdk-playground';
 
 import * as THREE from 'three';
-import { RawStylableObject } from './styling/StylableObject';
 
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
@@ -44,7 +48,7 @@ export class PointCloudFactory {
     throw Error('Annotation geometry type not recognized');
   }
 
-  private async getAnnotations(modelIdentifier: CdfModelIdentifier): Promise<BoundingVolume[]> {
+  private async getAnnotations(modelIdentifier: CdfModelIdentifier): Promise<CdfPointCloudObjectAnnotation[]> {
     const modelAnnotations = await this._sdkPlayground!.annotations.list({
       filter: {
         // @ts-ignore
@@ -60,8 +64,9 @@ export class PointCloudFactory {
 
       return {
         annotationId: annotation.id,
+        assetId: annotation.linkedResourceId,
         region
-      } as BoundingVolume;
+      } as CdfPointCloudObjectAnnotation;
     });
 
     return bvs;
@@ -70,19 +75,22 @@ export class PointCloudFactory {
   async createModel(modelIdentifier: ModelIdentifier, modelMetadata: PointCloudMetadata): Promise<PotreeNodeWrapper> {
     const { modelBaseUrl } = modelMetadata;
 
-    let stylableObjects: RawStylableObject[] = [];
+    let annotationInfo = {
+      annotations: [] as PointCloudObjectAnnotation[],
+      annotationIdToIndexMap: new Map<number, number>()
+    };
     if (this._sdkPlayground && modelIdentifier instanceof CdfModelIdentifier) {
       const annotations = await this.getAnnotations(modelIdentifier);
-      stylableObjects = annotationsToObjectInfo(annotations);
+      annotationInfo = annotationsToObjectInfo(annotations);
     }
 
     const pointCloudOctree = await this._potreeInstance.loadPointCloud(
       modelBaseUrl,
       DEFAULT_POINT_CLOUD_METADATA_FILE,
-      stylableObjects
+      annotationInfo
     );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;
-    return new PotreeNodeWrapper(pointCloudOctree, stylableObjects);
+    return new PotreeNodeWrapper(pointCloudOctree, annotationInfo);
   }
 }

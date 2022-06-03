@@ -54,6 +54,7 @@ export interface IPointCloudMaterialParameters {
   minSize: number;
   maxSize: number;
   treeType: TreeType;
+  annotationIdToObjectIdMap: Map<number, number>;
 }
 
 export interface IPointCloudMaterialUniforms {
@@ -343,6 +344,10 @@ export class PointCloudMaterial extends RawShaderMaterial {
     this.defaultAttributeValues.indices = [0, 0, 0, 0];
 
     this.vertexColors = true;
+
+    if (parameters.annotationIdToObjectIdMap) {
+      this._objectAppearanceTexture.setAnnotationIdToObjectIdMap(parameters.annotationIdToObjectIdMap);
+    }
 
     this.updateShaderSource();
   }

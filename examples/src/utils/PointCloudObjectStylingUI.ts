@@ -57,14 +57,18 @@ export class PointCloudObjectStylingUI {
     ui.add(actions, 'apply').name('Apply');
   }
 
-
   private createByObjectIndexUi(ui: dat.GUI) {
     const state = { from: 1, count: 1 };
     const createAppearanceCb = this.createObjectAppearanceUi(ui);
     const actions = {
       apply: () => {
         const numIndices = Math.min(state.count, this._model.stylableObjectCount - state.from + 1);
-        const objects = new IndexPointCloudObjectCollection([...Array(numIndices).keys()].map(i => i + state.from))
+
+        const allAnnotationIds: number[] = [];
+        this._model.traverseStylableObjects(id => allAnnotationIds.push(id));
+        const selectedIds = allAnnotationIds.slice(state.from, state.from + numIndices);
+
+        const objects = new IndexPointCloudObjectCollection(selectedIds);
         const appearance = createAppearanceCb();
         this._model.assignStyledObjectCollection(objects, appearance);
       }

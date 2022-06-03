@@ -5,15 +5,15 @@
 import { PointCloudObjectCollection } from './PointCloudObjectCollection';
 
 export class IndexPointCloudObjectCollection implements PointCloudObjectCollection {
-  private readonly _objectIds = new Set<number>();
+  private readonly _annotationIds = new Set<number>();
 
   constructor(ids: number[]) {
     for (const id of ids) {
-      this._objectIds.add(id);
+      this._annotationIds.add(id);
     }
   }
 
-  getObjectIds(): Iterable<number> {
-    return this._objectIds.values();
+  getAnnotationIds(): Iterable<number> {
+    return this._annotationIds.values();
   }
 }

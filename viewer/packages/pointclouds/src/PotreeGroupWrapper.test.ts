@@ -33,7 +33,7 @@ describe('PotreeGroupWrapper', () => {
       .setup(p => p.material)
       .returns(new PointCloudMaterial())
       .object();
-    const model = new PotreeNodeWrapper(dummyNode, []);
+    const model = new PotreeNodeWrapper(dummyNode);
     const manager = new PotreeGroupWrapper(new Potree(mockModelDataProvider), pollLoadingStatusInterval);
 
     expectObservable(manager.getLoadingStateObserver().pipe(map(x => x.isLoading)), [false], done);

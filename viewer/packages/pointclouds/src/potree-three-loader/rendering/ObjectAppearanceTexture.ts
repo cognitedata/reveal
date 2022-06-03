@@ -20,11 +20,17 @@ export class ObjectAppearanceTexture {
   private readonly _width: number;
   private readonly _height: number;
 
+  private _annotationIdsToObjectId: Map<number, number> | undefined;
+
   constructor(width: number, height: number) {
     this._objectStyleTexture = generateDataTexture(width, height, new THREE.Color(0x01000000)); // Initialize with visibility bit set
 
     this._width = width;
     this._height = height;
+  }
+
+  setAnnotationIdToObjectIdMap(map: Map<number, number>): void {
+    this._annotationIdsToObjectId = map;
   }
 
   private appearanceToRgba(appearance: PointCloudAppearance): [number, number, number, number] {
@@ -40,8 +46,18 @@ export class ObjectAppearanceTexture {
   }
 
   private setObjectCollectionStyle(styledObjectSet: StyledPointCloudObjectCollection): void {
-    for (const objId of styledObjectSet.objectCollection.getObjectIds()) {
-      this.setObjectStyle(objId, styledObjectSet.style);
+    if (!this._annotationIdsToObjectId) {
+      throw new Error('Annotation ID to Object ID map not initialized');
+    }
+
+    for (const annotationId of styledObjectSet.objectCollection.getAnnotationIds()) {
+      const objectId = this._annotationIdsToObjectId.get(annotationId);
+
+      if (objectId === undefined) {
+        throw new Error('Could not find corresponding object ID for annotation ID' + annotationId);
+      }
+
+      this.setObjectStyle(objectId, styledObjectSet.style);
     }
   }
 

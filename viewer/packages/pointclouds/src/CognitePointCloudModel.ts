@@ -12,7 +12,6 @@ import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from './p
 import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
 
 import { PointCloudAppearance } from './styling/PointCloudAppearance';
-import { RawStylableObject } from './styling/StylableObject';
 import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
 import { PointCloudObjectCollection } from './styling/PointCloudObjectCollection';
 
@@ -230,6 +229,9 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
     this.pointCloudNode.defaultAppearance = appearance;
   }
 
+  /**
+   * Gets the object collections that have been assigned a style
+   */
   get styledCollections(): StyledPointCloudObjectCollection[] {
     return this._styledObjectCollections;
   }
@@ -284,8 +286,8 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   /**
    * iterates through all stylable objects for this model
    */
-  traverseStylableObjects(callback: (obj: RawStylableObject) => void): void {
-    for (const obj of this.pointCloudNode.potreeNode.stylableObjects) {
+  traverseStylableObjects(callback: (obj: number) => void): void {
+    for (const obj of this.pointCloudNode.potreeNode.stylableObjectAnnotationIds) {
       callback(obj);
     }
   }
