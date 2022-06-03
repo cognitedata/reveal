@@ -15,7 +15,7 @@ import { getExtents, getX, getY } from 'components/charts/utils';
 import { getFormattedSciNumber } from 'utils/numberUtils';
 import { LAYER } from 'utils/zIndex';
 
-import type { ChartGeometry } from './types';
+import type { ChartGeometry, ChartScale } from './types';
 
 import type Color from 'color';
 
@@ -26,6 +26,7 @@ type TooltipData = Partial<DatumType> & {
 
 interface TooltipHookProps {
   geometry: ChartGeometry;
+  scale: ChartScale;
   data: Partial<DatumType>[];
   color?: Color;
 }
@@ -36,10 +37,14 @@ export interface TooltipProps {
 
 export function usePortalTooltip({
   geometry,
+  scale,
   data,
   color = Colors.primary,
 }: TooltipHookProps) {
-  const { xScale, yScale, margin } = geometry;
+  const { margin } = geometry;
+  const { xScaleGetter, yScaleGetter } = scale;
+  const xScale = xScaleGetter(geometry);
+  const yScale = yScaleGetter(geometry);
   const { xMax, yMax } = getExtents(geometry);
 
   const { tooltipData, tooltipLeft, tooltipTop, showTooltip, hideTooltip } =

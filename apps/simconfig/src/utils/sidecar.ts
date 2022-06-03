@@ -27,7 +27,7 @@ const getAadApplicationId = (cluster: string) => {
   const ids: Record<string, string> = {
     'bluefield': '245a8a64-4142-4226-86fa-63d590de14c9',
     'azure-dev': '9d30a99f-4209-470d-8389-c8390c3007fe',
-    'ew1': 'd584f014-5fa9-4b0b-953d-cc4837d093f3',
+    'ew1': '9686d16c-284e-47a0-8714-9b0b1faed2a0',
     'westeurope-1': '83e4fd8b-321f-4e35-89f9-80dde739a713',
   };
 

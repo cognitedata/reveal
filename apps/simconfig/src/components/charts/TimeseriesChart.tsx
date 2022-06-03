@@ -60,8 +60,8 @@ export function TimeseriesChart({
   const minValue = min(aggregateValues) ?? 0;
   const maxValue = max(aggregateValues) ?? 0;
 
-  const xScale = timeScale({ datapoints: timestamps });
-  const yScale = linearScale({
+  const xScaleGetter = timeScale({ datapoints: timestamps });
+  const yScaleGetter = linearScale({
     datapoints: values,
     axis: 'y',
     boundary: {
@@ -78,8 +78,8 @@ export function TimeseriesChart({
     height,
     width,
     margin,
-    xScale,
-    yScale,
+    xScaleGetter,
+    yScaleGetter,
   });
 
   const yMax = height - margin.top - margin.bottom;
@@ -100,6 +100,9 @@ export function TimeseriesChart({
   const upperThreshold = maxValue - (maxValue - minValue) * 0.5;
   const isRising = (latestDatapoint[aggregateType] ?? 0) > upperThreshold;
 
+  const xScaleGeometry = xScaleGetter(geometry);
+  const yScaleGeometry = yScaleGetter(geometry);
+
   return (
     <Chart {...additionalChartProps}>
       {fullSize && <Grid.Horizontal />}
@@ -114,9 +117,9 @@ export function TimeseriesChart({
         curve={curve}
         data={data}
         id={`${Math.random()}`}
-        x={(d) => geometry.xScale(+d.timestamp)}
-        y0={(d) => geometry.yScale(+(d.min ?? 0))}
-        y1={(d) => geometry.yScale(+(d.max ?? 0))}
+        x={(d) => xScaleGeometry(+d.timestamp)}
+        y0={(d) => yScaleGeometry(+(d.min ?? 0))}
+        y1={(d) => yScaleGeometry(+(d.max ?? 0))}
       />
 
       {fullSize ? (
@@ -141,8 +144,8 @@ export function TimeseriesChart({
 
       <Aggregate.Plot />
       <circle
-        cx={geometry.xScale(+latestDatapoint.timestamp)}
-        cy={geometry.yScale(latestDatapoint[aggregateType] ?? 0)}
+        cx={xScaleGeometry(+latestDatapoint.timestamp)}
+        cy={yScaleGeometry(latestDatapoint[aggregateType] ?? 0)}
         fill={Colors.primary.hex()}
         r={2}
       />
@@ -156,8 +159,8 @@ export function TimeseriesChart({
         strokeWidth={2}
         textAnchor="end"
         verticalAnchor={isRising ? 'start' : 'end'}
-        x={geometry.xScale(+latestDatapoint.timestamp)}
-        y={geometry.yScale(latestDatapoint[aggregateType] ?? 0)}
+        x={xScaleGeometry(+latestDatapoint.timestamp)}
+        y={yScaleGeometry(latestDatapoint[aggregateType] ?? 0)}
       >
         {formatNumber('.1f')(latestDatapoint[aggregateType] ?? 0)}
       </Text>

@@ -106,8 +106,8 @@ export function SteadyStateDetectionChart({
     [resampledData, steadyStateDetectionTimeseries?.data]
   );
 
-  const xScale = timeScale({ datapoints: timeseries?.time ?? [] });
-  const yScale = linearScale({
+  const xScaleGetter = timeScale({ datapoints: timeseries?.time ?? [] });
+  const yScaleGetter = linearScale({
     datapoints: timeseries?.data ?? [],
     padding: 0.025,
     axis: 'y',
@@ -119,8 +119,8 @@ export function SteadyStateDetectionChart({
     height,
     width,
     margin,
-    xScale,
-    yScale,
+    xScaleGetter,
+    yScaleGetter,
   });
 
   const NonSteadyState = Plot.LineRegular({

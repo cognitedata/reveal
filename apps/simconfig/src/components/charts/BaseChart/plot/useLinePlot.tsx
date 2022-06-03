@@ -13,9 +13,12 @@ import { usePortalTooltip } from '../usePortalTooltip';
 
 import type { Plot, PlotFunctionProps, PlotProps } from './types';
 
-export function useLinePlot(geometry: PlotProps) {
+export function useLinePlot({
+  geometry,
+  scale: defaultScale,
+  defaultCurve = curveMonotoneX,
+}: PlotProps) {
   return useMemo(() => {
-    const { xScale, yScale, defaultCurve = curveMonotoneX } = geometry;
     const { xMax, yMax } = getExtents(geometry);
 
     const usePlot = ({
@@ -28,6 +31,7 @@ export function useLinePlot(geometry: PlotProps) {
       threshold,
       dashes,
       bulletSize,
+      scale = defaultScale,
     }: PlotFunctionProps & {
       width?: number;
       opacity?: number;
@@ -35,8 +39,17 @@ export function useLinePlot(geometry: PlotProps) {
       dashes?: string;
       bulletSize?: number;
     }): Plot => ({
-      Plot: () =>
-        threshold ? (
+      functionProps: {
+        data,
+        color,
+        curve,
+        label,
+        scale,
+      },
+      Plot: () => {
+        const xScale = scale.xScaleGetter(geometry);
+        const yScale = scale.yScaleGetter(geometry);
+        return threshold ? (
           <GridRows
             height={yMax}
             scale={yScale}
@@ -71,7 +84,8 @@ export function useLinePlot(geometry: PlotProps) {
                 />
               ))}
           </>
-        ),
+        );
+      },
       Label: ({ itemSize = 12 }) => (
         <SymbolLegendItem itemSize={itemSize} label={label}>
           <line
@@ -86,9 +100,14 @@ export function useLinePlot(geometry: PlotProps) {
           />
         </SymbolLegendItem>
       ),
-      Tooltip: usePortalTooltip({ geometry, data }),
+      Tooltip: usePortalTooltip({
+        geometry,
+        scale,
+        color,
+        data,
+      }),
     });
 
     return usePlot;
-  }, [geometry]);
+  }, [defaultScale, geometry, defaultCurve]);
 }

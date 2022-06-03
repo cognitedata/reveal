@@ -97,8 +97,8 @@ export function LogicalCheckChart({
   const isBoolean =
     (minValue === 0 || minValue === 1) && (maxValue === 0 || maxValue === 1);
 
-  const xScale = timeScale({ datapoints: timeseries?.time ?? [] });
-  const yScale = linearScale({
+  const xScaleGetter = timeScale({ datapoints: timeseries?.time ?? [] });
+  const yScaleGetter = linearScale({
     datapoints: timeseries?.data ?? [],
     padding: 0.025,
     boundary: isBoolean
@@ -116,8 +116,8 @@ export function LogicalCheckChart({
     height,
     width,
     margin,
-    xScale,
-    yScale,
+    xScaleGetter,
+    yScaleGetter,
   });
 
   const LogicalCheck = Plot.AreaFilled({

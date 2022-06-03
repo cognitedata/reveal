@@ -1,33 +1,24 @@
-import { useState } from 'react';
+import React from 'react';
+import { Link, useRouter } from 'react-location';
+import { useSelector } from 'react-redux';
 
-import {
-  formatDuration,
-  formatISO9075,
-  intervalToDuration,
-  parseISO,
-} from 'date-fns';
 import styled from 'styled-components/macro';
 
-import { Collapse, Icon, Label, Skeleton } from '@cognite/cogs.js';
+import {
+  Button,
+  Dropdown,
+  Icon,
+  Label,
+  Menu,
+  Skeleton,
+} from '@cognite/cogs.js';
 import type { CalculationRun } from '@cognite/simconfig-api-sdk/rtk';
+import { useGetCalculationQuery } from '@cognite/simconfig-api-sdk/rtk';
 
 import { CalculationRunTypeIndicator } from 'components/models/CalculationList/CalculationRunTypeIndicator';
 import { CalculationStatusIndicator } from 'components/models/CalculationList/CalculationStatusIndicator';
-
-import { CalculationRunChartButtons } from '../CalculationRuns/CalculationRunChartButtons';
-
-const formatCalculationDate = (date?: string) =>
-  date ? formatISO9075(parseISO(date)) : 'n/a';
-
-const formatCalculationDuration = (start?: string, end?: string) =>
-  start && end
-    ? formatDuration(
-        intervalToDuration({
-          start: parseISO(start),
-          end: parseISO(end),
-        })
-      ) || '-'
-    : 'n/a';
+import { CalculationTimeLabel } from 'components/models/CalculationList/CalculationTimeLabel';
+import { selectProject } from 'store/simconfigApiProperties/selectors';
 
 interface CalculationRunListProps extends React.HTMLAttributes<HTMLDivElement> {
   calculationRuns: CalculationRun[];
@@ -39,79 +30,60 @@ export function CalculationRunList({
   isFetchingCalculationsRunList,
   onScroll,
 }: CalculationRunListProps) {
-  const [activeTab, setActiveTab] = useState<string | null>();
+  const router = useRouter();
+  const sourceQuery = JSON.stringify(router.state.location.search);
   return (
     <CalculationRunsListContainer onScroll={onScroll}>
-      <Collapse
-        accordion
-        onChange={(currentTab) => {
-          setActiveTab(currentTab);
-        }}
-      >
-        {calculationRuns.map((run) => (
-          <Collapse.Panel
-            header={
-              <CollapseCommonContainer>
-                <span className="model-name">
-                  {run.metadata.modelName}{' '}
-                  {run.metadata.modelVersion ? (
-                    <Label size="small" variant="unknown">
-                      v{run.metadata.modelVersion}
-                    </Label>
-                  ) : null}
-                </span>
-                <span className="calculation-name">
-                  {run.metadata.calcName}
-                </span>
-                <span className="status">
-                  <CalculationRunTypeIndicator
-                    runType={run.metadata.runType}
-                    userEmail={run.metadata.userEmail}
-                  />
-                  <CalculationStatusIndicator
-                    status={run.metadata.status}
-                    statusMessage={run.metadata.statusMessage}
-                  />
-                </span>
-                <span className="date">
-                  {formatCalculationDate(run.lastUpdatedTime)}
-                </span>
-              </CollapseCommonContainer>
-            }
-            key={run.id}
-          >
-            <RunDetailsList>
-              <dt>
-                <Icon type="User" /> User
-              </dt>
-              <dd>{run.metadata.userEmail ?? 'n/a'}</dd>
+      {calculationRuns.map((run) => {
+        const timestamps = {
+          calcTime: run.metadata.calcTime,
+          createdTime: run.createdTime,
+          endTime: run.endTime,
+          lastUpdatedTime: run.lastUpdatedTime,
+          startTime: run.startTime,
+        };
+        return (
+          <React.Fragment key={run.id}>
+            <span className="model-name">{run.metadata.modelName}</span>
 
-              <dt>Simulation event created</dt>
-              <dd>{formatCalculationDate(run.lastUpdatedTime)}</dd>
+            <span className="model-version">
+              {run.metadata.modelVersion ? (
+                <Label size="small" variant="unknown">
+                  v{run.metadata.modelVersion}
+                </Label>
+              ) : null}
+            </span>
 
-              <dt>Total duration</dt>
-              <dd>{formatCalculationDuration(run.endTime, run.createdTime)}</dd>
+            <span className="calculation-name">{run.metadata.calcName}</span>
 
-              <dt>Simulation started</dt>
-              <dd>{formatCalculationDate(run.startTime)}</dd>
+            <CalculationRunTypeIndicator
+              runType={run.metadata.runType}
+              userEmail={run.metadata.userEmail}
+            />
 
-              <dt>Simulation duration</dt>
-              <dd>{formatCalculationDuration(run.endTime, run.startTime)}</dd>
+            <CalculationStatusIndicator
+              status={run.metadata.status}
+              statusMessage={run.metadata.statusMessage}
+            />
 
-              {run.metadata.status === 'failure' && (
-                <>
-                  <dt>Error message</dt>
-                  <dd>{run.metadata.statusMessage}</dd>
-                </>
-              )}
-            </RunDetailsList>
-            {activeTab === run.id?.toString() &&
-              run.metadata.status === 'success' && (
-                <CalculationRunChartButtons calculationRun={run} />
-              )}
-          </Collapse.Panel>
-        ))}
-      </Collapse>
+            <span className="date">
+              <CalculationTimeLabel {...timestamps} />
+            </span>
+
+            <div>
+              <Dropdown
+                content={<ExpansionMenu run={run} sourceQuery={sourceQuery} />}
+              >
+                <Button
+                  aria-label="Actions"
+                  icon="EllipsisHorizontal"
+                  size="small"
+                />
+              </Dropdown>
+            </div>
+          </React.Fragment>
+        );
+      })}
       {isFetchingCalculationsRunList ? <Skeleton.List lines={5} /> : null}
     </CalculationRunsListContainer>
   );
@@ -120,38 +92,86 @@ export function CalculationRunList({
 const CalculationRunsListContainer = styled.div`
   overflow: auto;
   padding: 0 24px;
-`;
-
-const CollapseCommonContainer = styled.div`
-  display: flex;
-  flex: 1 0 auto;
-  line-height: 1;
-  & > span {
-    flex: 1 0 0;
-    display: flex;
-    align-items: center;
-    column-gap: 6px;
-  }
-  .calculation-name {
-    max-width: 240px;
-  }
-  .status {
-    max-width: 120px;
-  }
-  .date {
-    max-width: 160px;
-  }
-`;
-
-export const RunDetailsList = styled.dl`
   display: grid;
-  grid-template-columns: 240px auto;
-  gap: 4px;
-  align-items: end;
-  dt,
-  dd {
+  grid-template-columns: auto auto 1fr auto auto auto auto;
+  grid-gap: 6px 12px;
+  align-items: center;
+  .cogs-tooltip__content {
+    cursor: help;
     display: flex;
-    align-items: center;
     column-gap: 6px;
+    align-items: center;
   }
 `;
+
+function ExpansionMenu({
+  run,
+  sourceQuery,
+}: {
+  run: CalculationRun;
+  sourceQuery: string;
+}) {
+  const project = useSelector(selectProject);
+  const externalId = run.metadata.calcConfig;
+  const eventId = run.id?.toString();
+  const { data: chartLinks, isFetching: isFetchingChartLinks } =
+    useGetCalculationQuery({
+      project,
+      externalId,
+      eventId,
+    });
+
+  return (
+    <Menu>
+      <Link search={{ sourceQuery }} to={run.id}>
+        <Menu.Item>
+          <Icon type="Info" /> Calculation run details
+        </Menu.Item>
+      </Link>
+      <Menu.Divider />
+      {isFetchingChartLinks ? (
+        <Menu.Item>
+          <Skeleton.Text />
+        </Menu.Item>
+      ) : (
+        <a href={chartLinks?.inputLink} rel="noreferrer" target="_blank">
+          <Menu.Item>
+            <Icon type="LineChart" /> Open inputs in Charts
+          </Menu.Item>
+        </a>
+      )}
+      {isFetchingChartLinks ? (
+        <Menu.Item>
+          <Skeleton.Text />
+        </Menu.Item>
+      ) : (
+        <a href={chartLinks?.outputLink} rel="noreferrer" target="_blank">
+          <Menu.Item>
+            <Icon type="LineChart" /> Open outputs in Charts
+          </Menu.Item>
+        </a>
+      )}
+      <Menu.Divider />
+      <Link
+        to={`/model-library/models/${encodeURIComponent(
+          run.metadata.simulator
+        )}/${encodeURIComponent(run.metadata.modelName)}`}
+      >
+        <Menu.Item>
+          <Icon type="DataSource" /> View model
+        </Menu.Item>
+      </Link>
+      <Link
+        to={`/model-library/models/${encodeURIComponent(
+          run.metadata.simulator
+        )}/${encodeURIComponent(
+          run.metadata.modelName
+        )}/calculations/${encodeURIComponent(run.metadata.calcType)}`}
+      >
+        <Menu.Item>
+          <Icon type="Settings" /> View configuration
+        </Menu.Item>
+      </Link>
+    </Menu>
+  );
+}

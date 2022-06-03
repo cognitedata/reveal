@@ -16,12 +16,9 @@ import { usePortalTooltip } from '../usePortalTooltip';
 import type { Plot, PlotFunctionProps, PlotProps } from './types';
 
 export function useAreaPlot({
-  xScale,
-  yScale,
-  width,
-  height,
+  geometry,
+  scale: defaultScale,
   defaultCurve = curveMonotoneX,
-  margin,
 }: PlotProps) {
   return useMemo(() => {
     const usePlot = ({
@@ -33,40 +30,46 @@ export function useAreaPlot({
       opacity = 0.15,
       stroke = 1,
       size = 5,
+      scale = defaultScale,
     }: PlotFunctionProps & {
       pattern?: keyof typeof PatternOrientation;
       opacity?: number;
       stroke?: number;
       size?: number;
     }): Plot => ({
-      Plot: () => (
-        <>
-          {pattern && (
-            <PatternLines
-              height={size}
-              id={`fill-${color.hex().substring(1)}-${pattern}`}
-              orientation={[pattern]}
-              stroke={color.hex()}
-              strokeWidth={stroke}
-              width={size}
+      functionProps: { data, color, curve, label, scale },
+      Plot: () => {
+        const xScale = scale.xScaleGetter(geometry);
+        const yScale = scale.yScaleGetter(geometry);
+        return (
+          <>
+            {pattern && (
+              <PatternLines
+                height={size}
+                id={`fill-${color.hex().substring(1)}-${pattern}`}
+                orientation={[pattern]}
+                stroke={color.hex()}
+                strokeWidth={stroke}
+                width={size}
+              />
+            )}
+            <AreaClosed
+              curve={curve}
+              data={data}
+              defined={(d) => getY(d) !== undefined}
+              fill={
+                pattern
+                  ? `url(#fill-${color.hex().substring(1)}-${pattern})`
+                  : color.hex()
+              }
+              fillOpacity={opacity}
+              x={(d) => xScale(getX(d, 0))}
+              y={(d) => yScale(getY(d, 0))}
+              yScale={yScale}
             />
-          )}
-          <AreaClosed
-            curve={curve}
-            data={data}
-            defined={(d) => getY(d) !== undefined}
-            fill={
-              pattern
-                ? `url(#fill-${color.hex().substring(1)}-${pattern})`
-                : color.hex()
-            }
-            fillOpacity={opacity}
-            x={(d) => xScale(getX(d, 0))}
-            y={(d) => yScale(getY(d, 0))}
-            yScale={yScale}
-          />
-        </>
-      ),
+          </>
+        );
+      },
       Label: ({ itemSize = 12 }) => (
         <SymbolLegendItem itemSize={itemSize} label={label}>
           <rect
@@ -84,16 +87,12 @@ export function useAreaPlot({
         </SymbolLegendItem>
       ),
       Tooltip: usePortalTooltip({
-        geometry: {
-          width,
-          height,
-          margin,
-          xScale,
-          yScale,
-        },
+        geometry,
+        scale,
         data,
       }),
     });
+
     return usePlot;
-  }, [height, margin, width, xScale, yScale, defaultCurve]);
+  }, [defaultCurve, defaultScale, geometry]);
 }

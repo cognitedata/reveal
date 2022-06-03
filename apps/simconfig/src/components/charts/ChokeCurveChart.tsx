@@ -30,13 +30,13 @@ export function ChokeCurveChart({
   curve = curveLinear,
   ...additionalChartProps
 }: ChokeCurveChartProps) {
-  const xScale = linearScale({
+  const xScaleGetter = linearScale({
     datapoints: data.map(getX),
     axis: 'x',
     domain: [0, 100],
   });
 
-  const yScale = linearScale({
+  const yScaleGetter = linearScale({
     datapoints: data.map(getY),
     axis: 'y',
   });
@@ -45,8 +45,8 @@ export function ChokeCurveChart({
     height,
     width,
     margin,
-    xScale,
-    yScale,
+    xScaleGetter,
+    yScaleGetter,
   });
 
   const ChokeCurve = Plot.LineRegular({

@@ -13,43 +13,47 @@ import { Colors } from '@cognite/cogs.js';
 import { getAxis } from './axis';
 import { getGrid } from './grid';
 import { useAreaPlot, useChangePointPlot, useLinePlot } from './plot';
-import type { ScaleProps } from './scale';
-import type { ChartGeometry, Margin } from './types';
+import type { ChartGeometry, ChartScale } from './types';
 
-interface BaseChartProps {
-  xScale: (props: ScaleProps) => ChartGeometry['xScale'];
-  yScale: (props: ScaleProps) => ChartGeometry['yScale'];
-  width?: number;
-  height?: number;
-  margin?: Margin;
-}
+interface BaseChartProps extends ChartScale, Partial<ChartGeometry> {}
 
 export function useBaseChart({
-  xScale: getScaleX,
-  yScale: getScaleY,
+  xScaleGetter,
+  yScaleGetter,
   width = 300,
   height = 200,
   margin = { top: 6, right: 24, bottom: 30, left: 54 },
 }: BaseChartProps) {
-  const xScale = getScaleX({ width, height, margin });
-  const yScale = getScaleY({ width, height, margin });
-
-  const geometry = {
-    xScale,
-    yScale,
+  const geometry: ChartGeometry = {
     width,
     height,
     margin,
   };
 
-  const Plot = {
-    AreaFilled: useAreaPlot({ ...geometry, defaultCurve: curveMonotoneX }),
-    LineRegular: useLinePlot({ ...geometry, defaultCurve: curveMonotoneX }),
-    ChangePoint: useChangePointPlot(geometry),
+  const scale: ChartScale = {
+    xScaleGetter,
+    yScaleGetter,
   };
 
-  const Axis = getAxis(geometry);
-  const Grid = getGrid(geometry);
+  const Plot = {
+    AreaFilled: useAreaPlot({
+      geometry,
+      scale,
+      defaultCurve: curveMonotoneX,
+    }),
+    LineRegular: useLinePlot({
+      geometry,
+      scale,
+      defaultCurve: curveMonotoneX,
+    }),
+    ChangePoint: useChangePointPlot({
+      geometry,
+      scale,
+    }),
+  };
+
+  const Axis = getAxis({ geometry, scale });
+  const Grid = getGrid({ geometry, scale });
 
   const chartId = useMemo(() => `chart-${Math.random()}`, []);
 

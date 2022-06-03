@@ -1,12 +1,12 @@
 import type { SharedAxisProps, TickRendererProps } from '@visx/axis';
-import { AxisBottom, AxisLeft } from '@visx/axis';
+import { AxisBottom, AxisLeft, AxisRight } from '@visx/axis';
 import { Text } from '@visx/text';
 
 import { format, isSameDay } from 'date-fns';
 
 import { getExtents } from '../utils';
 
-import type { ChartGeometry } from './types';
+import type { ChartGeometry, ChartScale } from './types';
 
 function TickComponent({ formattedValue, x, y }: TickRendererProps) {
   const [time, date] = (formattedValue ?? '').split(' ');
@@ -34,19 +34,30 @@ function TickComponent({ formattedValue, x, y }: TickRendererProps) {
   );
 }
 
-export function getAxis(geometry: ChartGeometry) {
-  const { xScale, yScale } = geometry;
+interface AxisProps {
+  geometry: ChartGeometry;
+  scale: ChartScale;
+}
+
+export function getAxis({ geometry, scale }: AxisProps) {
   const { yMax } = getExtents(geometry);
+  const { xScaleGetter, yScaleGetter } = scale;
 
   return {
     Bottom: ({
+      scale = xScaleGetter,
       ...additionalProps
-    }: Partial<SharedAxisProps<ChartGeometry['xScale']>>) => {
+    }: Partial<
+      Omit<SharedAxisProps<ReturnType<ChartScale['xScaleGetter']>>, 'scale'> & {
+        scale: ChartScale['xScaleGetter'];
+      }
+    >) => {
+      const scaleGeometry = scale(geometry);
       let previousDate: Date | undefined;
 
       return (
         <AxisBottom
-          scale={xScale}
+          scale={scaleGeometry}
           stroke="#333"
           tickComponent={TickComponent}
           tickFormat={(tickValue) => {
@@ -66,13 +77,42 @@ export function getAxis(geometry: ChartGeometry) {
       );
     },
     Left: ({
+      scale = yScaleGetter,
       ...additionalProps
-    }: Partial<SharedAxisProps<ChartGeometry['yScale']>>) => (
-      <AxisLeft
-        scale={yScale}
-        tickFormat={(tickValue) => yScale.tickFormat(undefined, 'f')(tickValue)}
-        {...additionalProps}
-      />
-    ),
+    }: Partial<
+      Omit<SharedAxisProps<ReturnType<ChartScale['yScaleGetter']>>, 'scale'> & {
+        scale: ChartScale['yScaleGetter'];
+      }
+    >) => {
+      const scaleGeometry = scale(geometry);
+      return (
+        <AxisLeft
+          scale={scaleGeometry}
+          tickFormat={(tickValue) =>
+            scaleGeometry.tickFormat(undefined, 'f')(tickValue)
+          }
+          {...additionalProps}
+        />
+      );
+    },
+    Right: ({
+      scale = yScaleGetter,
+      ...additionalProps
+    }: Partial<
+      Omit<SharedAxisProps<ReturnType<ChartScale['yScaleGetter']>>, 'scale'> & {
+        scale: ChartScale['yScaleGetter'];
+      }
+    >) => {
+      const scaleGeometry = scale(geometry);
+      return (
+        <AxisRight
+          scale={scaleGeometry}
+          tickFormat={(tickValue) =>
+            scaleGeometry.tickFormat(undefined, 'f')(tickValue)
+          }
+          {...additionalProps}
+        />
+      );
+    },
   };
 }

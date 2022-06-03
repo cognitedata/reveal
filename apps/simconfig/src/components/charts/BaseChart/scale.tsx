@@ -34,9 +34,10 @@ interface LinearScaleProps
 
 export function linearScale({
   datapoints,
-  padding = 0.025,
   boundary,
   axis,
+  padding = axis === 'x' ? 0 : 0.025,
+  nice = axis === 'y',
   ...additionalProps
 }: LinearScaleProps) {
   return ({ height, width, margin }: ScaleProps) => {
@@ -51,7 +52,7 @@ export function linearScale({
         axis === 'x'
           ? [0, width - margin.left - margin.right]
           : [height - margin.top - margin.bottom, 0],
-      nice: true,
+      nice,
       ...additionalProps,
     });
     return scale;

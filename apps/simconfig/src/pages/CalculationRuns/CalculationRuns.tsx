@@ -121,11 +121,6 @@ export function CalculationRuns() {
     });
   };
 
-  if (!searchFilters.eventStartTime || !searchFilters.eventEndTime) {
-    setSearchParams({ ...initialDateRange });
-    return null;
-  }
-
   const handleDateChange = ({ startDate, endDate }: Range) => {
     if (!startDate || !endDate) {
       return;
@@ -147,8 +142,12 @@ export function CalculationRuns() {
             format="YYYY.MM.DD"
             maxDate={new Date()}
             range={{
-              startDate: parseISO(searchFilters.eventStartTime),
-              endDate: parseISO(searchFilters.eventEndTime),
+              startDate: parseISO(
+                searchFilters.eventStartTime ?? initialDateRange.eventStartTime
+              ),
+              endDate: parseISO(
+                searchFilters.eventEndTime ?? initialDateRange.eventEndTime
+              ),
             }}
             startDatePlaceholder="Interval"
             onChange={handleDateChange}
@@ -301,7 +300,7 @@ function Filter({
         isClearable={isClearable}
         options={options}
         title={label}
-        value={options[0].options?.find(
+        value={options[0]?.options?.find(
           ({ value }) =>
             value?.key === filterKey && value.value === currentValue
         )}
