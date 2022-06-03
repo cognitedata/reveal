@@ -26,6 +26,7 @@ import {
   getDummyKeypointCollectionState,
   getDummyKeypointState,
   getDummyPredefinedKeypointCollection,
+  getDummyTempKeypointCollection,
 } from 'src/__test-utils/annotations';
 
 describe('Test annotationLabel selectors', () => {
@@ -424,13 +425,16 @@ describe('Test annotationLabel selectors', () => {
         },
       ];
 
-      expect(currentCollection(previousState, 1)).toEqual({
-        ...unfinishedCollection,
-        annotatedResourceId: 1,
-        selected: false,
-        keypoints,
+      const dummyTempCollection = getDummyTempKeypointCollection({
+        id: 20,
+        label: 'gauge',
+        reviewKeypoints: keypoints,
         remainingKeypoints: [dummyKeypoint('center'), dummyKeypoint('right')],
       });
+
+      expect(currentCollection(previousState, 1)).toStrictEqual(
+        dummyTempCollection
+      );
     });
   });
 

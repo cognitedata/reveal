@@ -141,8 +141,6 @@ export const getDummyTempKeypointCollection = ({
 }: {
   id?: number;
   label?: string;
-  show?: boolean;
-  selected?: boolean;
   annotatedResourceId?: number;
   reviewKeypoints?: ReviewKeypoint[];
   remainingKeypoints?: PredefinedKeypoint[];

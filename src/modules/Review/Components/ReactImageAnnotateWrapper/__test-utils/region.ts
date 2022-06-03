@@ -50,7 +50,7 @@ export const getDummyRegion = <
     status,
     annotationLabelOrText: labelOrText,
     annotationMeta: reviewAnnotation,
-    tags,
+    tags: tags || [],
     highlighted,
     editingLabels,
     visible,

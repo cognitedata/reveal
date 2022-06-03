@@ -200,7 +200,6 @@ export const convertVisionReviewAnnotationToRegions = (
           annotation as VisionAnnotation<ImageKeypointCollection>
         ).id,
         keypointLabel: keypoint.keypoint.label,
-        keypointOrder: String(index + 1),
         keypointConfidence: keypoint.keypoint.confidence,
       } as AnnotatorPointRegion);
     });
