@@ -14,6 +14,7 @@ import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
 import { PointCloudAppearance } from './styling/PointCloudAppearance';
 import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
 import { PointCloudObjectCollection } from './styling/PointCloudObjectCollection';
+import { AnnotationMetadata } from './annotationTypes';
 
 /**
  * Represents a point clouds model loaded from CDF.
@@ -286,7 +287,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   /**
    * iterates through all stylable objects for this model
    */
-  traverseStylableObjects(callback: (obj: number) => void): void {
+  traverseStylableObjects(callback: (obj: AnnotationMetadata) => void): void {
     for (const obj of this.pointCloudNode.potreeNode.stylableObjectAnnotationIds) {
       callback(obj);
     }

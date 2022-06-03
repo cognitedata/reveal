@@ -41,9 +41,13 @@ export type CdfPointCloudObjectAnnotation = {
   region: Geometry[];
 };
 
-export type PointCloudObjectAnnotation = {
+
+export type AnnotationMetadata = {
   annotationId: number;
   assetId?: number;
+};
+
+export type PointCloudObjectAnnotation = AnnotationMetadata & {
   stylableObject: StylableObject;
 };
 
