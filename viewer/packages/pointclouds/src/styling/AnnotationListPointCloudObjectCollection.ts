@@ -4,10 +4,11 @@
 
 import { PointCloudObjectCollection } from './PointCloudObjectCollection';
 
-export class AnnotationListPointCloudObjectCollection implements PointCloudObjectCollection {
+export class AnnotationListPointCloudObjectCollection extends PointCloudObjectCollection {
   private readonly _annotationIds = new Set<number>();
 
   constructor(ids: number[]) {
+    super();
     for (const id of ids) {
       this._annotationIds.add(id);
     }
@@ -20,7 +21,4 @@ export class AnnotationListPointCloudObjectCollection implements PointCloudObjec
   get isLoading(): false {
     return false;
   }
-
-  on(_event: 'changed'): void { }
-  off(_event: 'changed'): void { }
 }
