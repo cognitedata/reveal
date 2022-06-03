@@ -32,14 +32,20 @@ import {
   CognitePointCloudModel
 } from '@reveal/pointclouds';
 
-import { AddModelOptions, Cognite3DViewerOptions, Intersection, CadModelBudget } from './types';
+import {
+  AddModelOptions,
+  Cognite3DViewerOptions,
+  Intersection,
+  CadModelBudget,
+  IntersectionFromPixelOptions,
+  CadIntersection
+} from './types';
 import RenderController from './RenderController';
 import { RevealManager } from '../RevealManager';
 import { RevealOptions } from '../types';
 
 import { Spinner } from '../../utilities/Spinner';
 
-import { CadIntersection, IntersectionFromPixelOptions } from '../..';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 

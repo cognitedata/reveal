@@ -3,8 +3,8 @@
  */
 // To overcome "implicitly has an 'any' type" and "unused variable reference" error in the geo-three library
 // @ts-ignore
-import * as GEOTHREE from 'geo-three';
-import { Cognite3DViewer } from '@reveal/core';
+import { Cognite3DViewer } from '@reveal/api';
+import { GEOTHREE } from 'geo-three';
 import { LatLongPosition, MapConfig, MapProviders } from './MapConfig';
 
 export class Geomap {
@@ -49,11 +49,11 @@ export class Geomap {
       case MapProviders.HereMap:
         mapProvider = new GEOTHREE.HereMapsProvider(
           mapConfig.APIKey,
-          mapConfig.appCode,
-          mapConfig.style,
-          mapConfig.scheme,
-          mapConfig.imageFormat,
-          mapConfig.size
+          mapConfig.appCode!,
+          mapConfig.style!,
+          mapConfig.scheme!,
+          mapConfig.imageFormat!,
+          mapConfig.size!
         );
         break;
       case MapProviders.MapboxMap:

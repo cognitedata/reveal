@@ -20,3 +20,9 @@ declare module '*.jpeg' {
   const value: any;
   export default value;
 }
+
+// Maintainer of this package messed up his types
+// TODO: Remove this when types are restored
+declare module 'geo-three' {
+  export * as GEOTHREE from 'geo-three/build/Main';
+}
