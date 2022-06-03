@@ -16,4 +16,11 @@ export class AnnotationListPointCloudObjectCollection implements PointCloudObjec
   getAnnotationIds(): Iterable<number> {
     return this._annotationIds.values();
   }
+
+  get isLoading(): false {
+    return false;
+  }
+
+  on(_event: 'changed'): void { }
+  off(_event: 'changed'): void { }
 }
