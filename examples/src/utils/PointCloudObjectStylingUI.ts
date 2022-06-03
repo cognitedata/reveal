@@ -2,7 +2,12 @@
  * Copyright 2022 Cognite AS
  */
 
-import { CognitePointCloudModel, IndexPointCloudObjectCollection, PointCloudAppearance, DefaultPointCloudAppearance } from '@cognite/reveal';
+import {
+  CognitePointCloudModel,
+  AnnotationListPointCloudObjectCollection,
+  PointCloudAppearance,
+  DefaultPointCloudAppearance
+} from '@cognite/reveal';
 import * as THREE from 'three';
 
 export class PointCloudObjectStylingUI {
@@ -68,7 +73,7 @@ export class PointCloudObjectStylingUI {
         this._model.traverseStylableObjects(id => allAnnotationIds.push(id));
         const selectedIds = allAnnotationIds.slice(state.from, state.from + numIndices);
 
-        const objects = new IndexPointCloudObjectCollection(selectedIds);
+        const objects = new AnnotationListPointCloudObjectCollection(selectedIds);
         const appearance = createAppearanceCb();
         this._model.assignStyledObjectCollection(objects, appearance);
       }

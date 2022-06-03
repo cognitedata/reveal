@@ -4,7 +4,7 @@
 
 import { PointCloudObjectCollection } from './PointCloudObjectCollection';
 
-export class IndexPointCloudObjectCollection implements PointCloudObjectCollection {
+export class AnnotationListPointCloudObjectCollection implements PointCloudObjectCollection {
   private readonly _annotationIds = new Set<number>();
 
   constructor(ids: number[]) {

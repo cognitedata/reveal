@@ -23,5 +23,5 @@ export { Potree, PointCloudOctree } from './src/PotreePnextLoader';
 
 export { PointCloudAppearance } from './src/styling/PointCloudAppearance';
 export { PointCloudObjectCollection } from './src/styling/PointCloudObjectCollection';
-export { IndexPointCloudObjectCollection } from './src/styling/IndexPointCloudObjectCollection';
+export { AnnotationListPointCloudObjectCollection } from './src/styling/AnnotationListPointCloudObjectCollection';
 export { DefaultPointCloudAppearance } from './src/styling/PointCloudAppearance';
