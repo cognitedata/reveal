@@ -13,6 +13,6 @@ describe(CognitePointCloudModel.name, () => {
   });
 
   test('Default CognitePointCloudModel does not contain annotations', () => {
-    expect(model.stylableObjects).toHaveLength(0);
+    expect(model.stylableObjectCount).toEqual(0);
   });
 });
