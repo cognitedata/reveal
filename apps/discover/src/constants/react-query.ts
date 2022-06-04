@@ -4,7 +4,7 @@
 
 import { WellLegendNptType } from 'services/well/legend/types';
 
-import { FeedbackType } from '../services/feedback/types';
+import { FeedbackType } from '../domain/feedback/internal/types';
 import { SAVED_SEARCHES_CURRENT_KEY } from '../services/savedSearches/constants';
 
 export const DOCUMENT_LABELS_QUERY_KEY = 'labels';

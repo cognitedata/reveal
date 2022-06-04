@@ -1,3 +1,9 @@
+import { assignGeneralFeedback } from 'domain/feedback/internal/actions/assignGeneralFeedback';
+import { deleteGeneralFeedback } from 'domain/feedback/internal/actions/deleteGeneralFeedback';
+import { recoverGeneralFeedback } from 'domain/feedback/internal/actions/recoverGeneralFeedback';
+import { updateFeedbackStatus } from 'domain/feedback/internal/actions/updateFeedbackStatus';
+import { useFeedbackUpdateMutate } from 'domain/feedback/internal/actions/useFeedbackUpdateMutate';
+import { useFeedbackGetAllQuery } from 'domain/feedback/internal/queries/useFeedbackGetAllQuery';
 import { useAdminUsersQuery } from 'domain/userManagementService/internal/queries/useAdminUsersQuery';
 import { useUserInfoQuery } from 'domain/userManagementService/internal/queries/useUserInfoQuery';
 import { getUmsUserFromId } from 'domain/userManagementService/internal/selectors/getUmsUserFromId';
@@ -8,14 +14,6 @@ import { Cell } from 'react-table';
 import compact from 'lodash/compact';
 import isString from 'lodash/isString';
 import sortBy from 'lodash/sortBy';
-import {
-  useFeedbackUpdateMutate,
-  updateFeedbackStatus,
-  assignGeneralFeedback,
-  deleteGeneralFeedback,
-  recoverGeneralFeedback,
-  useFeedbackGetAllQuery,
-} from 'services/feedback';
 import { getDateOrDefaultText } from 'utils/date';
 import { sortByDate } from 'utils/sort/sortByDate';
 

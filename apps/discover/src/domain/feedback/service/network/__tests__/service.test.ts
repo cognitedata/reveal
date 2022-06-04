@@ -1,7 +1,7 @@
 import { fetchGet, FetchHeaders, fetchPatch, fetchPost } from 'utils/fetch';
 
+import { FeedbackType } from '../../../internal/types';
 import { feedback } from '../service';
-import { FeedbackType } from '../types';
 
 jest.mock('utils/fetch', () => ({
   fetchGet: jest.fn(),

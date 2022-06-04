@@ -8,7 +8,7 @@ import { getTenantInfo } from '@cognite/react-container';
 
 import { SIDECAR } from 'constants/app';
 
-import { FeedbackType, FeedbackPatchBody } from './types';
+import { FeedbackType, FeedbackPatchBody } from '../../internal/types';
 
 export const feedback = {
   get: async <T>(feedbackType: FeedbackType, headers: FetchHeaders) => {

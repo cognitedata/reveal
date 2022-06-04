@@ -1,6 +1,6 @@
-import React from 'react';
+import { useFeedbackGetAllQuery } from 'domain/feedback/internal/queries/useFeedbackGetAllQuery';
 
-import { useFeedbackGetAllQuery } from 'services/feedback/useFeedbackQuery';
+import React from 'react';
 
 import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';

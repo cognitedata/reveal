@@ -1,7 +1,8 @@
+import { useFeedbackGetOneQuery } from 'domain/feedback/internal/queries/useFeedbackGetOneQuery';
+
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useFeedbackGetOneQuery } from 'services/feedback';
 import styled from 'styled-components/macro';
 
 import { GeneralFeedbackResponse } from '@cognite/discover-api-types';

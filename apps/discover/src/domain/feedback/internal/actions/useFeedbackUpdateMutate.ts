@@ -1,27 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query';
 
-import { FeedbackPostBody } from '@cognite/discover-api-types';
-
-import { FEEDBACK_QUERY_KEY } from 'constants/react-query';
-
-import { discoverAPI, useJsonHeaders } from '../service';
-
-import { FeedbackType, FeedbackPatchBody } from './types';
-
-export function useFeedbackCreateMutate(endpoint: FeedbackType = 'general') {
-  const queryClient = useQueryClient();
-  const headers = useJsonHeaders({}, true);
-
-  return useMutation(
-    (payload: FeedbackPostBody) =>
-      discoverAPI.feedback.create(endpoint, payload, headers),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(FEEDBACK_QUERY_KEY.ALL(endpoint));
-      },
-    }
-  );
-}
+import { discoverAPI, useJsonHeaders } from '../../../../services/service';
+import { FeedbackPatchBody, FeedbackType } from '../types';
 
 export function useFeedbackUpdateMutate(endpoint: FeedbackType = 'general') {
   const queryClient = useQueryClient();

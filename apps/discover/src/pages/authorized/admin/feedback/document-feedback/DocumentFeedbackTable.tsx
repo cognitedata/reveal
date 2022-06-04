@@ -1,3 +1,7 @@
+import { deleteObjectFeedback } from 'domain/feedback/internal/actions/deleteObjectFeedback';
+import { recoverObjectFeedback } from 'domain/feedback/internal/actions/recoverObjectFeedback';
+import { updateFeedbackStatus } from 'domain/feedback/internal/actions/updateFeedbackStatus';
+import { useFeedbackUpdateMutate } from 'domain/feedback/internal/actions/useFeedbackUpdateMutate';
 import { useAdminUsersQuery } from 'domain/userManagementService/internal/queries/useAdminUsersQuery';
 import { getUmsUserFromId } from 'domain/userManagementService/internal/selectors/getUmsUserFromId';
 
@@ -7,12 +11,6 @@ import { Cell } from 'react-table';
 
 import compact from 'lodash/compact';
 import sortBy from 'lodash/sortBy';
-import {
-  useFeedbackUpdateMutate,
-  updateFeedbackStatus,
-  deleteObjectFeedback,
-  recoverObjectFeedback,
-} from 'services/feedback';
 import { getDateOrDefaultText } from 'utils/date';
 import { sortByDate } from 'utils/sort/sortByDate';
 

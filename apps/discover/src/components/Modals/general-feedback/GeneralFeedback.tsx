@@ -1,11 +1,10 @@
+import { sendGeneralFeedback } from 'domain/feedback/internal/actions/sendGeneralFeedback';
+import { useFeedbackCreateMutate } from 'domain/feedback/internal/actions/useFeedbackCreateMutate';
+
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import html2canvas from 'html2canvas';
-import {
-  sendGeneralFeedback,
-  useFeedbackCreateMutate,
-} from 'services/feedback';
 import { getElementById } from 'utils/general.helper';
 
 import { Modal } from 'components/Modal';

@@ -1,12 +1,9 @@
 import { useDocumentSearchOneQuery } from 'domain/documents/service/queries/useDocumentSearchOneQuery';
+import { setObjectFeedbackSensitivityByAdmin } from 'domain/feedback/internal/actions/setObjectFeedbackSensitivityByAdmin';
+import { useFeedbackUpdateMutate } from 'domain/feedback/internal/actions/useFeedbackUpdateMutate';
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-
-import {
-  setObjectFeedbackSensitivityByAdmin,
-  useFeedbackUpdateMutate,
-} from 'services/feedback';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { ObjectFeedbackResponse } from '@cognite/discover-api-types';

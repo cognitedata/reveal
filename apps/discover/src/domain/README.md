@@ -37,7 +37,7 @@ domain
     | ├── \_\_fixtures
     | ├── \_\_mocks
     |
-    | ├── network <-- axios - must return external API type
+    | ├── network <-- axios/sdk - must return external API type
     | | └── getxxx.ts
     | | └── createxxx.ts
     | | └── deletexxx.ts

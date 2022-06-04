@@ -4,15 +4,11 @@ import { discoverAPI } from 'services/service';
 
 import { QueryClientWrapper } from '__test-utils/queryClientWrapper';
 
-import { feedback } from '../service';
-import {
-  useFeedbackCreateMutate,
-  useFeedbackUpdateMutate,
-} from '../useFeedbackMutate';
-import {
-  useFeedbackGetAllQuery,
-  useFeedbackGetOneQuery,
-} from '../useFeedbackQuery';
+import { feedback } from '../../../service/network/service';
+import { useFeedbackCreateMutate } from '../../actions/useFeedbackCreateMutate';
+import { useFeedbackUpdateMutate } from '../../actions/useFeedbackUpdateMutate';
+import { useFeedbackGetAllQuery } from '../useFeedbackGetAllQuery';
+import { useFeedbackGetOneQuery } from '../useFeedbackGetOneQuery';
 
 const feedbackSpy: { [method: string]: jest.SpyInstance } = {};
 

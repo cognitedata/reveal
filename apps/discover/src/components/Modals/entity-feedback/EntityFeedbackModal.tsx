@@ -1,11 +1,12 @@
 import { useQueryDocumentLabels } from 'domain/documents/service/queries/useDocumentQuery';
+import { sendObjectFeedback } from 'domain/feedback/internal/actions/sendObjectFeedback';
+import { useFeedbackCreateMutate } from 'domain/feedback/internal/actions/useFeedbackCreateMutate';
 
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { StoreState } from 'core';
-import { sendObjectFeedback, useFeedbackCreateMutate } from 'services/feedback';
 
 import { ObjectFeedback } from '@cognite/discover-api-types';
 

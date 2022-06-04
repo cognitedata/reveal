@@ -1,18 +1,16 @@
 import { getUser } from '__test-utils/fixtures/user';
 
-import { getMockedNewDocumentFeedbackItem } from '../__fixtures/feedback';
-import {
-  updateFeedbackStatus,
-  recoverGeneralFeedback,
-  sendObjectFeedback,
-  deleteObjectFeedback,
-  recoverObjectFeedback,
-  setObjectFeedbackSensitivityByAdmin,
-  deleteGeneralFeedback,
-  assignGeneralFeedback,
-  unassignGeneralFeedback,
-  sendGeneralFeedback,
-} from '../actions';
+import { getMockedNewDocumentFeedbackItem } from '../../__fixtures/feedback';
+import { assignGeneralFeedback } from '../assignGeneralFeedback';
+import { deleteGeneralFeedback } from '../deleteGeneralFeedback';
+import { deleteObjectFeedback } from '../deleteObjectFeedback';
+import { recoverGeneralFeedback } from '../recoverGeneralFeedback';
+import { recoverObjectFeedback } from '../recoverObjectFeedback';
+import { sendGeneralFeedback } from '../sendGeneralFeedback';
+import { sendObjectFeedback } from '../sendObjectFeedback';
+import { setObjectFeedbackSensitivityByAdmin } from '../setObjectFeedbackSensitivityByAdmin';
+import { unassignGeneralFeedback } from '../unassignGeneralFeedback';
+import { updateFeedbackStatus } from '../updateFeedbackStatus';
 
 const id = '12345';
 const mutate = jest.fn();

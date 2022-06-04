@@ -1,12 +1,12 @@
+import { useFeedbackCreateMutate } from 'domain/feedback/internal/actions/useFeedbackCreateMutate';
+
 import { screen, fireEvent } from '@testing-library/react';
-import { useFeedbackCreateMutate } from 'services/feedback';
 
 import { testRendererModal } from '__test-utils/renderer';
 
 import { GeneralFeedbackModal, Props } from '../GeneralFeedback';
 
-jest.mock('services/feedback', () => ({
-  sendGeneralFeedback: jest.fn(),
+jest.mock('domain/feedback/internal/actions/useFeedbackCreateMutate', () => ({
   useFeedbackCreateMutate: jest.fn(),
 }));
 
