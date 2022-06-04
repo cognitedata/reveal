@@ -1,6 +1,6 @@
 import { feedback } from 'domain/feedback/service/network/service';
 
-import { getAuthHeaders } from '@cognite/react-container';
+import { getDefaultHeader, getAuthHeaders } from '@cognite/react-container';
 
 import { useIdToken as useIdTokenHook } from 'hooks/useIdToken';
 
@@ -11,10 +11,6 @@ import { seismic } from './seismic';
 import { stats } from './stats';
 import { user } from './user';
 import { well } from './well';
-
-export const getDefaultHeader = () => ({
-  'Content-Type': 'application/json',
-});
 
 export const useJsonHeaders = (
   extras: Record<string, string> = {},

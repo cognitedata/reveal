@@ -1,11 +1,12 @@
+import { getLabels } from 'domain/labels/service/network/getLabels';
+
 import { useQuery } from 'react-query';
 
-import { getLabels } from 'services/labels/getLabels';
 import { handleServiceError } from 'utils/errors';
 
 import { DOCUMENTS_QUERY_KEY } from 'constants/react-query';
 
-import { Labels } from './types';
+import { Labels } from '../types';
 
 export const useLabelsQuery = () => {
   const { data } = useQuery<Labels>(DOCUMENTS_QUERY_KEY.LABELS, () =>

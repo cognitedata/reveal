@@ -32,7 +32,7 @@ const mockServer = setupServer(
 
 describe('useDataFeatures', () => {
   beforeAll(() => mockServer.listen());
-  beforeAll(() => mockServer.listen());
+  afterAll(() => mockServer.close());
   beforeEach(jest.clearAllMocks);
 
   it('should return empty array for empty state', async () => {

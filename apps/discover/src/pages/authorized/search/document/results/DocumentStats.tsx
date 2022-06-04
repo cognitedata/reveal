@@ -1,8 +1,7 @@
 import { useDocumentSearchResultQuery } from 'domain/documents/service/queries/useDocumentSearchResultQuery';
+import { useLabelsQuery } from 'domain/labels/internal/query/useLabelsQuery';
 
 import * as React from 'react';
-
-import { useLabelsQuery } from 'services/labels/useLabelsQuery';
 
 import { reportException } from '@cognite/react-errors';
 

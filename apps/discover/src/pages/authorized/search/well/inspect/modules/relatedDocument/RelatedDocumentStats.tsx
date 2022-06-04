@@ -1,8 +1,7 @@
 import { useDocumentSearchRelatedDocumentsQuery } from 'domain/documents/service/queries/useDocumentSearchRelatedDocumentsQuery';
+import { useLabelsQuery } from 'domain/labels/internal/query/useLabelsQuery';
 
 import * as React from 'react';
-
-import { useLabelsQuery } from 'services/labels/useLabelsQuery';
 
 import { useDocumentResultRelatedCount } from 'modules/documentSearch/hooks/useDocumentResultRelatedCount';
 import { getDocumentsFacetsInfo } from 'modules/documentSearch/utils';

@@ -1,7 +1,8 @@
 import '__mocks/setupMockCogniteSDK';
+import { getMockLabelsPost } from 'domain/labels/service/__mocks/getMockLabels';
+
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
-import { getMockLabelsPost } from 'services/labels/__mocks/getMockLabels';
 
 import { testWrapper as wrapper } from '__test-utils/renderer';
 

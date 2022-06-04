@@ -3,12 +3,12 @@ import '__mocks/mockCogniteSDK';
 import 'services/wellSearch/__mocks/setupWellsMockSDK';
 
 import { getMockDocumentSearch } from 'domain/documents/service/__mocks/getMockDocumentSearch';
+import { getMockLabelsPost } from 'domain/labels/service/__mocks/getMockLabels';
 import { getMockUserMe } from 'domain/userManagementService/service/__mocks/getMockUserMe';
 
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { Store } from 'redux';
-import { getMockLabelsPost } from 'services/labels/__mocks/getMockLabels';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockSavedSearchList } from 'services/savedSearches/__mocks/getMockSavedSearchList';
 import { getMockSearchHistoryGet } from 'services/searchHistory/__mocks/getMockSearchHistoryGet';

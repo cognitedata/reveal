@@ -1,8 +1,9 @@
 import '__mocks/mockCogniteSDK';
 import '__mocks/mockContainerAuth';
 
+import { getMockLabelsPost } from 'domain/labels/service/__mocks/getMockLabels';
+
 import { setupServer } from 'msw/node';
-import { getMockLabelsPost } from 'services/labels/__mocks/getMockLabels';
 
 import { renderHookWithStore } from '__test-utils/renderer';
 
