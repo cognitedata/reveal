@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
-import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import unset from 'lodash/unset';
@@ -15,6 +14,7 @@ import {
   DEFAULT_PLACEHOLDER,
   DEFAULT_SELECT_ALL_LABEL,
   NO_OPTIONS_TEXT,
+  SELECTED_ALL_DISPLAY_VALUE,
 } from './constants';
 import {
   CategoryWrapper,
@@ -30,13 +30,11 @@ import {
   Category,
   MultiSelectCategorizedProps,
 } from './types';
-import {
-  adaptToMultiSelectCategorizedOptions,
-  getProcessedOptions,
-} from './utils';
+import { getMultiSelectCategorizedOptions, getProcessedOptions } from './utils';
 
 export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
   options: data,
+  selectedOptions: selectedOptionsProp,
   title,
   placeholder,
   onValueChange,
@@ -49,21 +47,26 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
 
   const [dropdownVisible, setDropdownVisible] = useState<boolean>(false);
 
-  const [selectedOptions, setSelectedOptions] =
-    useState<
-      Record<Category, OptionType<MultiSelectOptionType>[] | undefined>
-    >();
+  const [selectedOptions, setSelectedOptions] = useState<
+    Record<Category, OptionType<MultiSelectOptionType>[] | undefined>
+  >({});
 
   useEffect(() => {
-    if (!isUndefined(selectedOptions)) {
-      onValueChange(selectedOptions);
-    }
-  }, [selectedOptions]);
+    if (!selectedOptionsProp) return;
+
+    setSelectedOptions(
+      getMultiSelectCategorizedOptions(selectedOptionsProp).reduce(
+        (selectedOptions, { category, options }) => ({
+          ...selectedOptions,
+          [category]: options,
+        }),
+        {}
+      )
+    );
+  }, [selectedOptionsProp]);
 
   const options = useDeepMemo(() => {
-    const adaptedData = isArray(data)
-      ? data
-      : adaptToMultiSelectCategorizedOptions(data);
+    const adaptedData = getMultiSelectCategorizedOptions(data);
     return getProcessedOptions(adaptedData, extraLabels);
   }, [data, extraLabels]);
 
@@ -71,6 +74,18 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
     (total, { options }) => total + (options?.length || 1),
     0
   );
+
+  const handleSetSelectedOptions = (
+    selectedOptions: Record<
+      Category,
+      OptionType<MultiSelectOptionType>[] | undefined
+    >
+  ) => {
+    if (!selectedOptionsProp) {
+      setSelectedOptions(selectedOptions);
+    }
+    onValueChange(selectedOptions);
+  };
 
   const handleValueChange = ({
     category,
@@ -85,12 +100,12 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
       unset(updatedSelectedOptions, category);
     }
 
-    setSelectedOptions(updatedSelectedOptions);
+    handleSetSelectedOptions(updatedSelectedOptions);
   };
 
   const handleSelectAll = (isSelected: boolean) => {
     if (isSelected) {
-      setSelectedOptions(
+      handleSetSelectedOptions(
         options.reduce(
           (selectedOptions, { category, options }) => ({
             ...selectedOptions,
@@ -100,7 +115,7 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
         )
       );
     } else {
-      setSelectedOptions({});
+      handleSetSelectedOptions({});
     }
   };
 
@@ -112,10 +127,7 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
 
   const selectedOptionValues = Object.keys(selectedOptions || {});
   const isAnySelected = !isEmpty(selectedOptions);
-  const isAllSelected =
-    selectedOptions &&
-    Object.keys(selectedOptions).length === data?.length &&
-    selectedOptionValues.length === optionsCount;
+  const isAllSelected = selectedOptionValues.length === optionsCount;
 
   const SelectAllOption = useDeepMemo(() => {
     if (!enableSelectAll || isEmpty(options)) {
@@ -145,9 +157,7 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
             key={category}
             category={category}
             options={options}
-            selectedOptions={
-              selectedOptions ? selectedOptions[category] : undefined
-            }
+            selectedOptions={selectedOptions[category]}
             onValueChange={handleValueChange}
           />
         );
@@ -178,13 +188,15 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
     [dropdownVisible]
   );
 
-  const dropdownValue = useDeepMemo(
-    () =>
-      isAnySelected
-        ? `${selectedOptionValues.length}/${optionsCount}`
-        : placeholder || DEFAULT_PLACEHOLDER,
-    [isAnySelected, selectedOptionValues]
-  );
+  const dropdownValue = useDeepMemo(() => {
+    if (isAllSelected) {
+      return SELECTED_ALL_DISPLAY_VALUE;
+    }
+    if (isAnySelected) {
+      return `${selectedOptionValues.length}/${optionsCount}`;
+    }
+    return placeholder || DEFAULT_PLACEHOLDER;
+  }, [isAnySelected, selectedOptionValues]);
 
   return (
     <MultiSelectCategorizedWrapper

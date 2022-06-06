@@ -1,4 +1,5 @@
 import get from 'lodash/get';
+import isArray from 'lodash/isArray';
 
 import { ExtraLabels } from '../interfaces';
 import {
@@ -6,7 +7,11 @@ import {
   MultiSelectOptionValue,
 } from '../MultiSelect/types';
 
-import { MultiSelectCategorizedOption, CategorizedOptionType } from './types';
+import {
+  MultiSelectCategorizedOption,
+  CategorizedOptionType,
+  PossibleOptionsType,
+} from './types';
 
 export const getProcessedOptions = (
   options: MultiSelectCategorizedOption[],
@@ -47,4 +52,13 @@ export const adaptToMultiSelectCategorizedOptions = (
     category,
     options,
   }));
+};
+
+export const getMultiSelectCategorizedOptions = (
+  options?: PossibleOptionsType
+): MultiSelectCategorizedOption[] => {
+  if (isArray(options)) {
+    return options;
+  }
+  return adaptToMultiSelectCategorizedOptions(options);
 };

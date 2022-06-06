@@ -7,6 +7,7 @@ import { RiskTypeFilterProps } from './types';
 
 export const RiskTypeFilter: React.FC<RiskTypeFilterProps> = ({
   riskTypesAndSubtypes,
+  appliedRiskTypesAndSubtypes,
   onChangeRiskType,
 }) => {
   return (
@@ -14,6 +15,7 @@ export const RiskTypeFilter: React.FC<RiskTypeFilterProps> = ({
       title={RISK_TYPE_FILTER_TITLE}
       width={FILTER_WIDTH}
       options={riskTypesAndSubtypes}
+      selectedOptions={appliedRiskTypesAndSubtypes}
       onValueChange={onChangeRiskType}
     />
   );

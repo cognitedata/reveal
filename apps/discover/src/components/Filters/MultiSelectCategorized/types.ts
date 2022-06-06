@@ -5,14 +5,22 @@ import { MultiSelectOptionType } from '../MultiSelect/types';
 
 export type Category = string;
 
+export type MultiSelectCategorizedOptionMap = Record<
+  Category,
+  MultiSelectOptionType[] | undefined
+>;
+
+export type PossibleOptionsType =
+  | MultiSelectCategorizedOption[]
+  | MultiSelectCategorizedOptionMap;
+
 export interface MultiSelectCategorizedProps {
   title: string;
   onValueChange: (
     values: Record<Category, OptionType<MultiSelectOptionType>[] | undefined>
   ) => void;
-  options?:
-    | MultiSelectCategorizedOption[]
-    | Record<Category, MultiSelectOptionType[] | undefined>;
+  options?: PossibleOptionsType;
+  selectedOptions?: PossibleOptionsType;
   placeholder?: string;
   enableSelectAll?: boolean;
   selectAllLabel?: string;
