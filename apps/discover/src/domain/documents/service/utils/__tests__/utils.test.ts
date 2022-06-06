@@ -19,7 +19,7 @@ import {
   MOCK_DOWNLOAD_URL,
 } from 'modules/documentSearch/__mocks/getMockFilesDownloadLinkEndpoint';
 
-import * as service from '../service';
+import * as getTemporaryPreviewLink from '../../network/getTemporaryPreviewLink';
 import {
   getDocIdFromSignedUrlResponse,
   zipAndDownload,
@@ -123,7 +123,7 @@ describe.skip('documentPreview -> utils', () => {
   describe('openDocumentPreviewInNewTab', () => {
     it('should call `openDocumentPreviewInNewTab` as expected', async () => {
       const getTemporaryPreviewLinkSpy = jest
-        .spyOn(service, 'getTemporaryPreviewLink')
+        .spyOn(getTemporaryPreviewLink, 'getTemporaryPreviewLink')
         .mockImplementation(() => Promise.resolve('getTemporaryPreviewLink'));
 
       await openDocumentPreviewInNewTab('12345');

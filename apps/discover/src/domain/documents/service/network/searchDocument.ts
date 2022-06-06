@@ -1,5 +1,5 @@
 import { getSearchQuery } from 'domain/documents/internal/transformers/getSearchQuery';
-import { getDocumentSDKClient } from 'domain/documents/service/network/getDocumentSDKClient';
+import { getDocumentSDKClient } from 'domain/documents/service/utils/getDocumentSDKClient';
 
 import isEmpty from 'lodash/isEmpty';
 import { handleServiceError } from 'utils/errors';

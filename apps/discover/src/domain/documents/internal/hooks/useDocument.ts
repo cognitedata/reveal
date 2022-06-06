@@ -1,4 +1,4 @@
-import { getDocumentSDKClient } from 'domain/documents/service/network/getDocumentSDKClient';
+import { getDocumentSDKClient } from 'domain/documents/service/utils/getDocumentSDKClient';
 
 import { useEffect, useState } from 'react';
 

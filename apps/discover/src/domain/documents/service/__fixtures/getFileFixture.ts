@@ -1,6 +1,6 @@
 import { FileInfo } from '@cognite/sdk';
 
-import { getMockGeometry } from '../geometry';
+import { getMockGeometry } from '__test-utils/fixtures/geometry';
 
 export const getFileFixture = (extras = {}): FileInfo => ({
   id: 123,

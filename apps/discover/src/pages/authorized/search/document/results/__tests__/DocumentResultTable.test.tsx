@@ -1,6 +1,7 @@
 import '__mocks/mockContainerAuth';
 import '__mocks/mockCogniteSDK';
 
+import { getDocumentFixture } from 'domain/documents/service/__fixtures/getDocumentFixture';
 import { getMockDocumentCategoriesGet } from 'domain/documents/service/__mocks/getMockDocumentCategoriesGet';
 import { getMockDocumentSearch } from 'domain/documents/service/__mocks/getMockDocumentSearch';
 import { getMockFavoritesListGet } from 'domain/favorites/service/__mocks/getMockFavoritesListGet';
@@ -11,7 +12,6 @@ import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGe
 import { getMockSavedSearchCurrentGet } from 'services/savedSearches/__mocks/getMockSavedSearchCurrentGet';
 
 import { getMockAPIResponse } from '__test-utils/fixtures/document';
-import { getDocumentFixture } from '__test-utils/fixtures/documents/getDocumentFixture';
 import { testRenderer } from '__test-utils/renderer';
 import { MockStore, getMockedStore } from '__test-utils/store.utils';
 import { SELECT_DOCUMENT_IDS } from 'modules/documentSearch/types.actions';

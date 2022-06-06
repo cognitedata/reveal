@@ -1,14 +1,14 @@
 import '__mocks/mockCogniteSDK';
+import { useDocumentHighlightedContent } from 'domain/documents/internal/hooks/useDocumentHighlightedContent';
+import { getDocumentFixture as mockDocumentFixture } from 'domain/documents/service/__fixtures/getDocumentFixture';
+
 import { renderHook } from '@testing-library/react-hooks';
 
 import { getMockDocument as mockDocument } from '__test-utils/fixtures/document';
-import { getDocumentFixture as mockDocumentFixture } from '__test-utils/fixtures/documents/getDocumentFixture';
 import { testWrapper } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 
-import { useDocumentHighlightedContent } from '../useDocumentHighlightedContent';
-
-jest.mock('domain/documents/service/network/getDocumentSDKClient', () => ({
+jest.mock('domain/documents/service/utils/getDocumentSDKClient', () => ({
   getDocumentSDKClient: () => ({
     documents: {
       search: jest

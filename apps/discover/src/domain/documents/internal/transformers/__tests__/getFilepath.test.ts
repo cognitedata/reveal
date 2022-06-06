@@ -1,4 +1,4 @@
-import { getDocumentFixture } from '__test-utils/fixtures/documents/getDocumentFixture';
+import { getDocumentFixture } from 'domain/documents/service/__fixtures/getDocumentFixture';
 
 import { getFilepath } from '../getFilepath';
 

@@ -1,9 +1,10 @@
+import { getFileFixture } from 'domain/documents/service/__fixtures/getFileFixture';
+
 import { rest } from 'msw';
 import { TEST_PROJECT } from 'setupTests';
 
 import { FileInfo } from '@cognite/sdk';
 
-import { getFileFixture } from '__test-utils/fixtures/documents/getFileFixture';
 import { SIDECAR } from 'constants/app';
 
 export const getMockFilesByIds = (customResponse?: FileInfo[]) => {

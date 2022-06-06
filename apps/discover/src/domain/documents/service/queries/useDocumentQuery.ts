@@ -10,7 +10,7 @@ import { getTenantInfo } from '@cognite/react-container';
 
 import { DOCUMENT_CATEGORIES_QUERY_KEY } from 'constants/react-query';
 
-import { DocumentError } from '../../internal/types';
+import { DocumentError } from '../../service/types';
 import { getCategories } from '../network/getCategories';
 
 export const useDocumentCategoryQuery = () => {

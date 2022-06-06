@@ -1,3 +1,21 @@
+import { DocumentCategories } from '@cognite/discover-api-types';
+
+export type GenericApiError = {
+  error: boolean;
+};
+
+export interface BaseAPIResult {
+  success?: string;
+  updated?: boolean;
+  error?: boolean;
+}
+
+export type DocumentError = GenericApiError;
+
+export interface DocumentCategoriesResult extends BaseAPIResult {
+  data: DocumentCategories;
+}
+
 export type DocumentFeedbackType = 'accept' | 'reject';
 
 export type DocumentFeedbackCreateBody = {

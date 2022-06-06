@@ -1,12 +1,13 @@
 import '__mocks/mockContainerAuth'; // never miss this import
+import { useFeedbackDocumentStatus } from 'domain/documents/internal/hooks/useFeedbackDocumentStatus';
+
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
 
 import { getMockDocumentFeedbackDetails } from '__test-utils/fixtures/documentFeedback';
 import { testWrapper } from '__test-utils/renderer';
 
-import { getMockListDocumentFeedback } from '../__mocks/mockDocumentFeedbacks';
-import { useFeedbackDocumentStatus } from '../hooks';
+import { getMockListDocumentFeedback } from '../../__mocks/mockDocumentFeedbacks';
 
 const mockServer = setupServer(
   getMockListDocumentFeedback(getMockDocumentFeedbackDetails())

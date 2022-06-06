@@ -6,13 +6,13 @@ import { getTenantInfo } from '@cognite/react-container';
 
 import { DOCUMENT_FEEDBACK_QUERY_KEY } from 'constants/react-query';
 
-import { listDocumentFeedbacks } from './service';
+import { getDocumentFeedbacks } from '../network/getDocumentFeedbacks';
 
 export const useDocumentFeedbackListQuery = () => {
   const headers = useJsonHeaders();
   const [project] = getTenantInfo();
 
   return useQuery(DOCUMENT_FEEDBACK_QUERY_KEY.lists(), () =>
-    listDocumentFeedbacks(project, headers)
+    getDocumentFeedbacks(project, headers)
   );
 };

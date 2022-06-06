@@ -9,12 +9,10 @@ import { showErrorMessage } from 'components/Toast';
 import { LONG_DURATION } from 'components/Toast/constants';
 import { DOCUMENT_FEEDBACK_QUERY_KEY } from 'constants/react-query';
 
-import {
-  acceptDocumentFeedback,
-  createDocumentFeedback,
-  rejectDocumentFeedback,
-} from './service';
-import { DocumentFeedbackCreateBody, DocumentFeedbackType } from './types';
+import { acceptDocumentFeedback } from '../network/acceptDocumentFeedback';
+import { createDocumentFeedback } from '../network/createDocumentFeedback';
+import { rejectDocumentFeedback } from '../network/rejectDocumentFeedback';
+import { DocumentFeedbackCreateBody, DocumentFeedbackType } from '../types';
 
 export const useDocumentFeedbackMutate = () => {
   const headers = useJsonHeaders();

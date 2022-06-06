@@ -1,7 +1,7 @@
 import {
   getDocumentFixture,
   getHighlightContentFixture,
-} from '__test-utils/fixtures/documents/getDocumentFixture';
+} from 'domain/documents/service/__fixtures/getDocumentFixture';
 
 import { toDocument } from '../toDocument';
 

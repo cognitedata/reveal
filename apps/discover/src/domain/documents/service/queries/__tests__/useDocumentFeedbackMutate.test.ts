@@ -16,8 +16,8 @@ import {
   acceptMockDocumentFeedback,
   postMockDocumentFeedback,
   rejectMockDocumentFeedback,
-} from '../__mocks/mockDocumentFeedbacks';
-import { useDocumentFeedbackMutate } from '../mutate';
+} from '../../__mocks/mockDocumentFeedbacks';
+import { useDocumentFeedbackMutate } from '../useDocumentFeedbackMutate';
 
 const mockServer = setupServer(
   postMockDocumentFeedback(getMockDocumentFeedbackDetails()),

@@ -1,3 +1,5 @@
+import { useDocumentHighlightedContent } from 'domain/documents/internal/hooks/useDocumentHighlightedContent';
+
 import React from 'react';
 import SanitizedHTML from 'react-sanitized-html';
 
@@ -9,7 +11,6 @@ import { useTranslation } from '@cognite/react-i18n';
 
 import { PreviewHeader } from 'components/DocumentPreview/elements';
 import { Value } from 'components/MetadataTable/elements';
-import { useDocumentHighlightedContent } from 'hooks/useDocumentHighlightedContent';
 import { DocumentType } from 'modules/documentSearch/types';
 import { FlexColumn } from 'styles/layout';
 

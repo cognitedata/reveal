@@ -1,4 +1,4 @@
-import { SearchRequestOptions } from 'domain/documents/service/queries/searchDocument';
+import { SearchRequestOptions } from 'domain/documents/service/network/searchDocument';
 import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
 
 export const useRelatedDocumentsFilter = () => {

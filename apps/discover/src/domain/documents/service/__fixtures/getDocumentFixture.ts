@@ -1,6 +1,6 @@
 import { Document, DocumentHighlight } from '@cognite/sdk';
 
-import { getMockGeometry } from '../geometry';
+import { getMockGeometry } from '../../../../__test-utils/fixtures/geometry';
 
 export const getDocumentFixture = (
   extras = {},

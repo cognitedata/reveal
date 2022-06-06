@@ -1,3 +1,5 @@
+import { useDocument } from 'domain/documents/internal/hooks/useDocument';
+import { useDocumentLabelsByExternalIds } from 'domain/documents/internal/hooks/useDocumentLabels';
 import { useQueryDocumentLabels } from 'domain/documents/service/queries/useDocumentQuery';
 import { sendObjectFeedback } from 'domain/feedback/internal/actions/sendObjectFeedback';
 import { useFeedbackCreateMutate } from 'domain/feedback/internal/actions/useFeedbackCreateMutate';
@@ -13,8 +15,6 @@ import { ObjectFeedback } from '@cognite/discover-api-types';
 import { Modal } from 'components/Modal';
 import { UndoToast } from 'components/Toast';
 import { FEEDBACK_CONFIRM_TOAST } from 'constants/feedback';
-import { useDocument } from 'hooks/useDocument';
-import { useDocumentLabelsByExternalIds } from 'hooks/useDocumentLabels';
 import { clearObjectFeedbackModalDocumentId } from 'modules/feedback/actions';
 import { useRemoveSensitiveDocument } from 'modules/feedback/hooks/useRemoveSensitiveDocument';
 import { FeedbackState } from 'modules/feedback/types';

@@ -2,7 +2,7 @@ import { mergeSearchResponsePages } from 'domain/documents/internal/transformers
 import {
   searchDocument,
   SearchRequestOptions,
-} from 'domain/documents/service/queries/searchDocument';
+} from 'domain/documents/service/network/searchDocument';
 
 import { useInfiniteQuery, useQueryClient } from 'react-query';
 

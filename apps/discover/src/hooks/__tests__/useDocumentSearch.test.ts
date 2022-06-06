@@ -1,11 +1,11 @@
+import { useDocumentSearch } from 'domain/documents/internal/hooks/useDocumentSearch';
+
 import { useDispatch } from 'react-redux';
 
 import { renderHook } from '@testing-library/react-hooks';
 
 import { getMockDocumentFilter } from '__test-utils/fixtures/sidebar';
 import { useProjectConfig } from 'hooks/useProjectConfig';
-
-import { useDocumentSearch } from '../useDocumentSearch';
 
 jest.mock('react-redux', () => ({
   useDispatch: jest.fn(),

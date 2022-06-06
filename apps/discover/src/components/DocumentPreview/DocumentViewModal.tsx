@@ -1,8 +1,9 @@
+import { getPreview } from 'domain/documents/service/network/getPreview';
+import { downloadFileFromUrl } from 'domain/documents/service/utils/utils';
+
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { getPreview } from 'services/documentPreview/service';
-import { downloadFileFromUrl } from 'services/documentPreview/utils';
 import styled from 'styled-components/macro';
 
 import { IconType, Button } from '@cognite/cogs.js';

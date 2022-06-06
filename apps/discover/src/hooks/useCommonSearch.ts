@@ -1,3 +1,5 @@
+import { useDocumentSearch } from 'domain/documents/internal/hooks/useDocumentSearch';
+
 import { useDispatch } from 'react-redux';
 
 import isUndefined from 'lodash/isUndefined';
@@ -9,7 +11,6 @@ import { setGeo } from 'modules/map/actions';
 import { showResults, startSearching } from 'modules/search/actions';
 import { setSearchPhrase } from 'modules/sidebar/actions';
 
-import { useDocumentSearch } from './useDocumentSearch';
 import { useProjectConfig } from './useProjectConfig';
 import { useSeismicSearch } from './useSeismicSearch';
 import { useWellsSearch } from './useWellsSearch';

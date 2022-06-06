@@ -1,4 +1,4 @@
-import { DocumentFeedbackListResponse } from 'services/documentFeedback/types';
+import { DocumentFeedbackListResponse } from 'domain/documents/service/types';
 
 import { ItemsResponse } from '@cognite/sdk';
 

@@ -7,10 +7,11 @@ import { SavedSearchQuery } from 'services/savedSearches/types';
 import { documentSearchActions } from 'modules/documentSearch/actions';
 import { useExtractParentFolderPath } from 'modules/documentSearch/selectors';
 import { setSortByOptions } from 'modules/resultPanel/actions';
-import { updateCategoryAppliedFilters } from 'modules/sidebar/actions';
+import {
+  updateCategoryAppliedFilters,
+  updateExtraGeoJsonAppliedFilters,
+} from 'modules/sidebar/actions';
 import { Modules } from 'modules/sidebar/types';
-
-import { updateExtraGeoJsonAppliedFilters } from '../modules/sidebar/actions';
 
 export const useDocumentSearch = () => {
   const dispatch = useDispatch();

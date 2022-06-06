@@ -1,9 +1,10 @@
+import { useDocumentAssetNames } from 'domain/documents/internal/hooks/useDocumentAssetNames';
+import { useDocumentLabelsByExternalIds } from 'domain/documents/internal/hooks/useDocumentLabels';
+
 import React from 'react';
 
 import MetadataTable from 'components/MetadataTable';
 import { EMPTY_ARRAY } from 'constants/empty';
-import { useDocumentAssetNames } from 'hooks/useDocumentAssetNames';
-import { useDocumentLabelsByExternalIds } from 'hooks/useDocumentLabels';
 import { DocumentType } from 'modules/documentSearch/types';
 
 type HideableFields = 'assets';

@@ -5,14 +5,6 @@ import {
   DocumentsFacets,
 } from 'modules/documentSearch/types';
 
-import { GenericApiError, BaseAPIResult } from '../../types';
-
-export type DocumentError = GenericApiError;
-
-export interface DocumentCategoriesResult extends BaseAPIResult {
-  data: DocumentCategories;
-}
-
 export type DocumentCategoriesFacets = Omit<
   DocumentCategories,
   'fileType' | 'documentType'

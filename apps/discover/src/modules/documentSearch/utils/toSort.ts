@@ -1,4 +1,4 @@
-import { DOCUMENT_KEYS } from 'dataLayers/documents/keys';
+import { DOCUMENT_KEYS } from 'domain/documents/internal/constants';
 
 import { DocumentSortItem, DocumentFilterProperty } from '@cognite/sdk';
 

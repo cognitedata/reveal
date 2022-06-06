@@ -1,9 +1,9 @@
+import { zipAndDownloadDocumentsByIds } from 'domain/documents/service/utils/utils';
 import { useFavoriteQuery } from 'domain/favorites/internal/queries/useFavoriteQuery';
 
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { zipAndDownloadDocumentsByIds } from 'services/documentPreview/utils';
 import styled from 'styled-components/macro';
 
 import { SetCommentTarget } from '@cognite/react-comments';

@@ -1,4 +1,5 @@
-import { DOCUMENT_KEYS } from 'dataLayers/documents/keys';
+import { DOCUMENT_KEYS } from 'domain/documents/internal/constants';
+
 import isEmpty from 'lodash/isEmpty';
 import set from 'lodash/set';
 import { adaptLocalEpochToUTC } from 'utils/date/adaptLocalEpochToUTC';

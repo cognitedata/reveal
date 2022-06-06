@@ -1,11 +1,12 @@
+import {
+  downloadFileFromUrl,
+  openDocumentPreviewInNewTab,
+} from 'domain/documents/service/utils/utils';
+
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
-import {
-  downloadFileFromUrl,
-  openDocumentPreviewInNewTab,
-} from 'services/documentPreview/utils';
 import { handleServiceError } from 'utils/errors';
 
 import { Menu, Dropdown } from '@cognite/cogs.js';

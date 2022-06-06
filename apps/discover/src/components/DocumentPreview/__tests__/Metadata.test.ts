@@ -8,7 +8,7 @@ import { getMockedStore } from '__test-utils/store.utils';
 import { Metadata } from 'components/DocumentPreview';
 import { DocumentMetadata } from 'modules/documentSearch/types';
 
-jest.mock('hooks/useDocumentLabels', () => ({
+jest.mock('domain/documents/internal/hooks/useDocumentLabels', () => ({
   useDocumentLabelsByExternalIds: () => ['unclassified'],
 }));
 

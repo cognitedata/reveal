@@ -1,8 +1,9 @@
+import { useFeedbackDocumentStatus } from 'domain/documents/internal/hooks/useFeedbackDocumentStatus';
+import { useDocumentFeedbackMutate } from 'domain/documents/service/queries/useDocumentFeedbackMutate';
+import { DocumentFeedbackType } from 'domain/documents/service/types';
+
 import React, { useEffect } from 'react';
 
-import { useFeedbackDocumentStatus } from 'services/documentFeedback/hooks';
-import { useDocumentFeedbackMutate } from 'services/documentFeedback/mutate';
-import { DocumentFeedbackType } from 'services/documentFeedback/types';
 import styled from 'styled-components/macro';
 
 import { Body, Button, Flex, Tooltip } from '@cognite/cogs.js';

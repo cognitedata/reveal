@@ -1,6 +1,7 @@
+import { openDocumentPreviewInNewTab } from 'domain/documents/service/utils/utils';
+
 import { useTranslation } from 'react-i18next';
 
-import { openDocumentPreviewInNewTab } from 'services/documentPreview/utils';
 import { handleServiceError } from 'utils/errors';
 
 import { Menu, Dropdown } from '@cognite/cogs.js';

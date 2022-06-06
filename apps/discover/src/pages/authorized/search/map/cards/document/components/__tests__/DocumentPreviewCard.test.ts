@@ -1,4 +1,6 @@
 import '__mocks/mockCogniteSDK';
+import { useDocumentHighlightedContent } from 'domain/documents/internal/hooks/useDocumentHighlightedContent';
+
 import { screen, fireEvent } from '@testing-library/react';
 import noop from 'lodash/noop';
 import { Store } from 'redux';
@@ -6,7 +8,6 @@ import { Store } from 'redux';
 import { getMockDocument } from '__test-utils/fixtures/document';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { useDocumentHighlightedContent } from 'hooks/useDocumentHighlightedContent';
 import { useSearchActions } from 'hooks/useSearchActions';
 import { useDocumentResultHits } from 'modules/documentSearch/hooks/useDocumentResultHits';
 import { useExtractParentFolder } from 'modules/documentSearch/hooks/useExtractParentFolder';
@@ -31,9 +32,12 @@ jest.mock('hooks/useSearchActions', () => ({
   useSearchActions: jest.fn(),
 }));
 
-jest.mock('hooks/useDocumentHighlightedContent', () => ({
-  useDocumentHighlightedContent: jest.fn(),
-}));
+jest.mock(
+  'domain/documents/internal/hooks/useDocumentHighlightedContent',
+  () => ({
+    useDocumentHighlightedContent: jest.fn(),
+  })
+);
 
 describe('Favourite Content', () => {
   let doSearchSpy: any;

@@ -1,6 +1,6 @@
 import head from 'lodash/head';
 
-import { useDocumentFeedbackListQuery } from './query';
+import { useDocumentFeedbackListQuery } from '../../service/queries/userDocumentFeedbackListQuery';
 
 /**
  * Checks feedback status of document with respective label suggestion.

@@ -1,8 +1,8 @@
+import { getFilteredLabels } from 'domain/documents/internal/transformers/getFilteredLabels';
 import { useQueryDocumentLabels } from 'domain/documents/service/queries/useDocumentQuery';
 import { useDocumentSearchResultQuery } from 'domain/documents/service/queries/useDocumentSearchResultQuery';
 
 import { useDeepMemo } from 'hooks/useDeep';
-import { getFilteredLabels } from 'hooks/utils/getFilteredLabels';
 
 export const useData = () => {
   const { data: allLabels, isFetched } = useQueryDocumentLabels();

@@ -1,3 +1,5 @@
+import { useDocumentSearch } from 'domain/documents/internal/hooks/useDocumentSearch';
+
 import { useDispatch } from 'react-redux';
 
 import { renderHook } from '@testing-library/react-hooks';
@@ -12,7 +14,6 @@ import { SET_SEARCH_PHRASE } from 'modules/sidebar/constants';
 
 import { QueryClientWrapper } from '../../__test-utils/queryClientWrapper';
 import { useCommonSearch } from '../useCommonSearch';
-import { useDocumentSearch } from '../useDocumentSearch';
 import { useSeismicSearch } from '../useSeismicSearch';
 import { useWellsSearch } from '../useWellsSearch';
 
@@ -32,7 +33,7 @@ jest.mock('modules/map/actions', () => ({
   setGeo: jest.fn(),
 }));
 
-jest.mock('hooks/useDocumentSearch', () => ({
+jest.mock('domain/documents/internal/hooks/useDocumentSearch', () => ({
   useDocumentSearch: jest.fn(),
 }));
 

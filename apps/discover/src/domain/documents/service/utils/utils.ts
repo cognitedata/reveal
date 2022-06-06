@@ -1,3 +1,5 @@
+import { getSignedUrl } from 'domain/documents/service/network/getSignedUrl';
+
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import { openExternalPage } from 'utils/openExternalPage';
@@ -6,12 +8,9 @@ import { InternalId, ExternalId, IdEither, FileLink } from '@cognite/sdk';
 
 import { DocumentType } from 'modules/documentSearch/types';
 
-import {
-  getSignedUrls,
-  getSignedUrl,
-  getFileMetadataByIds,
-  getTemporaryPreviewLink,
-} from './service';
+import { getFileMetadataByIds } from '../network/getFileMetadataByIds';
+import { getSignedUrls } from '../network/getSignedUrls';
+import { getTemporaryPreviewLink } from '../network/getTemporaryPreviewLink';
 
 export const getDocIdFromSignedUrlResponse = (
   responses: ((FileLink & InternalId) | (FileLink & ExternalId))[],

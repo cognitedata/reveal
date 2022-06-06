@@ -1,4 +1,5 @@
 import { normalize } from 'domain/documents/internal/transformers/normalize';
+import { getDocumentFixture } from 'domain/documents/service/__fixtures/getDocumentFixture';
 
 import uniqueId from 'lodash/uniqueId';
 
@@ -19,7 +20,6 @@ import {
   DocumentsFacets,
 } from 'modules/documentSearch/types';
 
-import { getDocumentFixture } from './documents/getDocumentFixture';
 import { createdAndLastUpdatedTime } from './log';
 
 // this is the internal structure used for documents in Discover

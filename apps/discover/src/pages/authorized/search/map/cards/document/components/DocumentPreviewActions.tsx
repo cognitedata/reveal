@@ -1,9 +1,11 @@
+import { useDocumentLabelsByExternalIds } from 'domain/documents/internal/hooks/useDocumentLabels';
+import { downloadFileFromUrl } from 'domain/documents/service/utils/utils';
+
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import includes from 'lodash/includes';
-import { downloadFileFromUrl } from 'services/documentPreview/utils';
 import { openExternalPage } from 'utils/openExternalPage';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
@@ -17,7 +19,6 @@ import {
   CogniteButton,
   FeedbackButton,
 } from 'components/Buttons';
-import { useDocumentLabelsByExternalIds } from 'hooks/useDocumentLabels';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useDocumentConfig } from 'modules/documentSearch/hooks';
 import { useExtractParentFolder } from 'modules/documentSearch/hooks/useExtractParentFolder';

@@ -1,7 +1,8 @@
+import { getPdfPreview } from 'domain/documents/service/network/getPdfPreview';
+
 import React, { useState, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 
-import { getPdfPreview } from 'services/documentPreview/service';
 import styled from 'styled-components/macro';
 
 import { getAuthHeaders } from '@cognite/react-container';

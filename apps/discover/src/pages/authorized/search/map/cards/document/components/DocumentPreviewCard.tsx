@@ -1,7 +1,8 @@
+import { openDocumentPreviewInNewTab } from 'domain/documents/service/utils/utils';
+
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { openDocumentPreviewInNewTab } from 'services/documentPreview/utils';
 import { handleServiceError } from 'utils/errors';
 import { getPathsFromDoc } from 'utils/getPathsFromDocument';
 
