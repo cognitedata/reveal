@@ -1,10 +1,11 @@
 import '__mocks/mockCogniteSDK';
 import 'domain/wells/__mocks/setupWellsMockSDK';
 
+import { getDocumentFixture } from 'domain/documents/service/__fixtures/getDocumentFixture';
 import { getMockDocumentSearch } from 'domain/documents/service/__mocks/getMockDocumentSearch';
 import { getMockWellsGeometry } from 'domain/wells/well/service/__mocks/getMockWellsGeometry';
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
@@ -24,18 +25,25 @@ import {
 
 const selectedLayers = [WELL_HEADS_LAYER_ID, DOCUMENT_LAYER_ID];
 
-const mockServer = setupServer(
-  getMockWellsGeometry(),
-  getMockDocumentSearch(),
-  getMockConfigGet()
-);
+const mockServer = setupServer();
 
 describe('useDataFeatures', () => {
   beforeAll(() => mockServer.listen());
   afterAll(() => mockServer.close());
+
   beforeEach(jest.clearAllMocks);
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockServer.resetHandlers();
+  });
 
   it('should return empty array for empty state', async () => {
+    mockServer.use(
+      getMockWellsGeometry(),
+      getMockDocumentSearch(),
+      getMockConfigGet()
+    );
+
     const store = getMockedStore();
 
     const { result } = renderHook(() => useDataFeatures(selectedLayers, []), {
@@ -46,6 +54,14 @@ describe('useDataFeatures', () => {
   });
 
   it('should return empty array for documents and wells without geolocation', async () => {
+    mockServer.use(
+      // getMockWellsGeometry(),
+      getMockDocumentSearch({
+        items: [{ item: getDocumentFixture({ geoLocation: undefined }) }],
+      }),
+      getMockConfigGet()
+    );
+
     const store = getMockedStore({
       wellSearch: {
         selectedWellIds: {
@@ -54,18 +70,24 @@ describe('useDataFeatures', () => {
       },
     });
 
-    const { result, waitForNextUpdate } = renderHook(
+    const { result, waitForNextUpdate } = await renderHook(
       () => useDataFeatures(selectedLayers, []),
       {
         wrapper: getWrapper(store),
       }
     );
-    waitForNextUpdate();
+    await waitForNextUpdate();
 
     expect(result.current.features).toHaveLength(0);
   });
 
   it('should return correct data for documents and wells that have geolocation', async () => {
+    mockServer.use(
+      getMockWellsGeometry(),
+      getMockDocumentSearch(),
+      getMockConfigGet()
+    );
+
     const store = getMockedStore({
       wellSearch: {
         selectedWellIds: {
@@ -79,12 +101,18 @@ describe('useDataFeatures', () => {
       return <div>Total: {data.features.length}</div>;
     };
 
-    testRenderer(TestComponent, store);
+    await testRenderer(TestComponent, store);
 
     expect(await screen.findByText('Total: 2')).toBeInTheDocument();
   });
 
   it('should return correct data from state and remote wells', async () => {
+    mockServer.use(
+      getMockWellsGeometry(),
+      getMockDocumentSearch(),
+      getMockConfigGet()
+    );
+
     const externalWells: ExternalWellsFeature[] = [
       {
         id: 123,
@@ -121,7 +149,7 @@ describe('useDataFeatures', () => {
       );
     };
 
-    testRenderer(TestComponent, store);
+    await testRenderer(TestComponent, store);
 
     expect(
       await screen.findByRole('button', { name: /123/i })
@@ -136,6 +164,12 @@ describe('useDataFeatures', () => {
   });
 
   it('should return empty array when no layers are selected based on data from state and remote wells', async () => {
+    mockServer.use(
+      getMockWellsGeometry(),
+      getMockDocumentSearch(),
+      getMockConfigGet()
+    );
+
     const externalWells: ExternalWellsFeature[] = [
       {
         id: 123,
@@ -165,12 +199,18 @@ describe('useDataFeatures', () => {
       }
     );
 
-    waitForNextUpdate();
+    await waitForNextUpdate();
 
     expect(result.current.features).toHaveLength(0);
   });
 
   it('should set isBlurred and isSelected properties correctly', async () => {
+    mockServer.use(
+      getMockWellsGeometry(),
+      getMockDocumentSearch(),
+      getMockConfigGet()
+    );
+
     const externalWells: ExternalWellsFeature[] = [
       {
         id: 123,
@@ -214,7 +254,7 @@ describe('useDataFeatures', () => {
       );
     };
 
-    testRenderer(TestComponent, store);
+    await testRenderer(TestComponent, store);
 
     // documents is selected so isblurred is false
     expect(
@@ -237,6 +277,12 @@ describe('useDataFeatures', () => {
   });
 
   it('should remove external wells that have same id as wells from results', async () => {
+    mockServer.use(
+      getMockWellsGeometry(),
+      getMockDocumentSearch(),
+      getMockConfigGet()
+    );
+
     const externalWells: ExternalWellsFeature[] = [
       {
         id: 111,
@@ -274,7 +320,6 @@ describe('useDataFeatures', () => {
 
     const TestComponent: React.FC = () => {
       const data = useDataFeatures(selectedLayers, externalWells);
-      // console.log('data', JSON.stringify(data, null, 2));
       return (
         <>
           {data?.features.map((well) => (
@@ -286,16 +331,21 @@ describe('useDataFeatures', () => {
       );
     };
 
-    testRenderer(TestComponent, store);
+    await testRenderer(TestComponent, store);
 
-    expect(
-      await screen.findByRole('button', {
-        name: getMockWellGeometry().properties.id,
-      })
-    ).toBeInTheDocument();
+    // eslint-disable-next-line
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', {
+          name: getMockWellGeometry().properties.id,
+        })
+      ).toBeInTheDocument()
+    );
 
     // NOTE: i suspect there is something wrong here
     // this is not showing 444 but i think it should
-    expect((await screen.findAllByRole('button')).length).toEqual(4);
+    await waitFor(() =>
+      expect(screen.getAllByRole('button').length).toEqual(4)
+    );
   });
 });
