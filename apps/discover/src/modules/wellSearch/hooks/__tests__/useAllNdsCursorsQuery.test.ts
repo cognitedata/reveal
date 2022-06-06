@@ -1,4 +1,4 @@
-import 'services/wellSearch/__mocks/setupWellsMockSDK';
+import 'domain/wells/__mocks/setupWellsMockSDK';
 import { setupServer } from 'msw/node';
 import { getMockNDSEventsPost } from 'services/wellSearch/__mocks/getMockNDSEventsPost';
 

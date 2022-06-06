@@ -2,9 +2,9 @@ import {
   getTrajectoryInterpolateTVDs,
   getTVDForMD,
 } from 'domain/wells/trajectory/service/network/trajectoryInterpolate';
+import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 
 import set from 'lodash/set';
-import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
 
 import { Nds, NdsItems } from '@cognite/sdk-wells-v3';
 

@@ -1,6 +1,5 @@
+import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 import { normalize } from 'domain/wells/well/internal/transformers/normalize';
-
-import { getWellSDKClient } from 'services/wellSearch/sdk';
 
 import { WellItems, Well } from '@cognite/sdk-wells-v3';
 

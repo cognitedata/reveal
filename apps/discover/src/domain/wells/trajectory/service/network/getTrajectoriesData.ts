@@ -1,9 +1,10 @@
+import { getWellSDKClient } from 'domain/wells/utils/authenticate';
+
 import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import max from 'lodash/max';
 import noop from 'lodash/noop';
 import uniqueId from 'lodash/uniqueId';
-import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
 
 import { ProjectConfigWellsTrajectoryColumns } from '@cognite/discover-api-types';
 import { SequenceColumn } from '@cognite/sdk';

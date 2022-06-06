@@ -1,3 +1,5 @@
+import { useWellAllGeometryQuery } from 'domain/wells/well/internal/queries/useWellAllGeometryQuery';
+
 import {
   feature as turfFeature,
   Feature,
@@ -6,7 +8,6 @@ import {
   GeometryCollection,
 } from '@turf/helpers';
 import includes from 'lodash/includes';
-import { useWellAllGeometryQuery } from 'services/well/useWellQuery';
 
 import { useDeepMemo } from 'hooks/useDeep';
 import { useDocumentResultHits } from 'modules/documentSearch/hooks/useDocumentResultHits';

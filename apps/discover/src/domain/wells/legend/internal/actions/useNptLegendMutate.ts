@@ -1,22 +1,27 @@
+import {
+  WellLegendNptType,
+  WellLegendPayload,
+} from 'domain/wells/legend/internal/types';
+
 import { useMutation, useQueryClient } from 'react-query';
 
-import { discoverAPI, useJsonHeaders } from 'services/service';
+import { useJsonHeaders } from 'services/service';
 import { handleServiceError } from 'utils/errors';
 
-import { getTenantInfo } from '@cognite/react-container';
+import { getProjectInfo } from '@cognite/react-container';
 
 import { NPT_LEGEND_KEY } from 'constants/react-query';
 
-import { WellLegendNptType, WellLegendPayload } from '../types';
+import { nptCreateLegend } from '../../service/network/nptCreateLegend';
 
 const useNptLegendMutate = (type: WellLegendNptType) => {
   const queryClient = useQueryClient();
   const headers = useJsonHeaders({}, true);
-  const [project] = getTenantInfo();
+  const [project] = getProjectInfo();
 
   return useMutation(
     ({ id, body }: WellLegendPayload) =>
-      discoverAPI.well.nptLegend.create(headers, project, type, id, body),
+      nptCreateLegend(headers, project, type, id, body),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(NPT_LEGEND_KEY.lists(type));

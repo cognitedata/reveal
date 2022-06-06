@@ -1,8 +1,9 @@
-import { mapNptCodeAndDetailCode } from 'dataLayers/wells/npt/adapters/mapNptCodeAndDetailCode';
 import {
   useNptLegendCodeQuery,
   useNptLegendDetailCodeQuery,
-} from 'services/well/legend/npt/useNptLegendQuery';
+} from 'domain/wells/legend/internal/queries/useNptLegendQuery';
+
+import { mapNptCodeAndDetailCode } from 'dataLayers/wells/npt/adapters/mapNptCodeAndDetailCode';
 
 export const useDataLayer = () => {
   const { data: nptCodeLegends } = useNptLegendCodeQuery();

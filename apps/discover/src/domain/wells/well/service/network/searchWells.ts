@@ -1,4 +1,4 @@
-import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
+import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 
 import { WellFilter } from '@cognite/sdk-wells-v3';
 

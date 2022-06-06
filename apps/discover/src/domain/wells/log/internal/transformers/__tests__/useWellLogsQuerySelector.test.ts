@@ -1,9 +1,10 @@
-import 'services/wellSearch/__mocks/setupWellsMockSDK';
+import 'domain/wells/__mocks/setupWellsMockSDK';
+import { getMockWellsById } from 'domain/wells/well/service/__mocks/getMockWellsById';
+
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 import { getMockDepthMeasurements } from 'services/well/measurements/__mocks/mockMeasurements';
-import { getMockWellsById } from 'services/wellSearch/__mocks/getMockWellsById';
 
 import { mockedWellStateWithWellInspect } from '__test-utils/fixtures/well';
 import { testWrapper } from '__test-utils/renderer';

@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
-
 import {
   useNptLegendCodeMutate,
   useNptLegendDetailCodeMutate,
-} from 'services/well/legend/npt/useNptLegendMutate';
+} from 'domain/wells/legend/internal/actions/useNptLegendMutate';
 import {
   useNptLegendCodeQuery,
   useNptLegendDetailCodeQuery,
-} from 'services/well/legend/npt/useNptLegendQuery';
-import { WellLegendNptType } from 'services/well/legend/types';
+} from 'domain/wells/legend/internal/queries/useNptLegendQuery';
+import { WellLegendNptType } from 'domain/wells/legend/internal/types';
+
+import React, { useEffect, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
+
 import { useNptCodesQuery } from 'services/wellSearch/sdk/useNptCodesQuery';
 import { useNptDetailCodesQuery } from 'services/wellSearch/sdk/useNptDetailCodesQuery';
 

@@ -1,30 +1,23 @@
 import { useQuery } from 'react-query';
 
+import { useJsonHeaders } from 'services/service';
+
 import { WellGeometryListResponse } from '@cognite/discover-api-types';
-import { getTenantInfo } from '@cognite/react-container';
+import { getProjectInfo } from '@cognite/react-container';
 
 import { WELLS_DISCOVER_QUERY_KEY } from 'constants/react-query';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 
-import { discoverAPI, useJsonHeaders } from '../service';
+import { getWellGeometry } from '../../service/network/getWellGeometry';
 
 export const useWellAllGeometryQuery = () => {
   const headers = useJsonHeaders();
-  const [project] = getTenantInfo();
+  const [project] = getProjectInfo();
   const { data: wellConfig } = useWellConfig();
 
   return useQuery<WellGeometryListResponse>(
     WELLS_DISCOVER_QUERY_KEY.GEOMETRY,
-    () => discoverAPI.well.get({ headers, project }),
+    () => getWellGeometry({ headers, project }),
     { enabled: wellConfig?.disabled !== true }
-  );
-};
-
-export const useWellGroupsQuery = () => {
-  const headers = useJsonHeaders();
-  const [project] = getTenantInfo();
-
-  return useQuery(WELLS_DISCOVER_QUERY_KEY.GROUPS, () =>
-    discoverAPI.well.getGroups({ headers, project })
   );
 };

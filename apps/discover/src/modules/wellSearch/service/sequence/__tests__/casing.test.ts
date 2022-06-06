@@ -1,4 +1,4 @@
-import 'services/wellSearch/__mocks/setupWellsMockSDK';
+import 'domain/wells/__mocks/setupWellsMockSDK';
 import { setupServer } from 'msw/node';
 
 import { getMockCasingsList } from '__mocks/mockCasings';
@@ -7,8 +7,8 @@ import { fetchCasingsUsingWellsSDK } from '../casing';
 
 const mockServer = setupServer(getMockCasingsList());
 
-const ASSETID_1 = 1;
-const ASSETID_2 = 2;
+const ASSETID_1 = '1';
+const ASSETID_2 = '2';
 
 describe('casing', () => {
   beforeAll(() => mockServer.listen());

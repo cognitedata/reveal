@@ -1,7 +1,7 @@
 import { GetAllInspectDataProps } from 'domain/wells/types';
+import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 import { convertToIdentifiers } from 'domain/wells/utils/convertToIdentifiers';
 
-import { getWellSDKClient } from 'services/wellSearch/sdk';
 import { fetchAllCursors } from 'utils/fetchAllCursors';
 
 import { Nds } from '@cognite/sdk-wells-v3';

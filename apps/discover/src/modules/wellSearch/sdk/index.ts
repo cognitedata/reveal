@@ -1,7 +1,7 @@
 import {
   authenticateWellSDK,
   getWellSDKClient,
-} from 'services/wellSearch/sdk/authenticate';
+} from 'domain/wells/utils/authenticate';
 
 import {
   mapSummaryCountsToStringArray,

@@ -1,5 +1,6 @@
-import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
-import { toIdentifier } from 'services/wellSearch/utils/toIdentifier';
+import { getWellSDKClient } from 'domain/wells/utils/authenticate';
+import { toIdentifierWithMatchingId } from 'domain/wells/utils/toIdentifierWithMatchingId';
+
 import { fetchAllCursors, FetchOptions } from 'utils/fetchAllCursors';
 
 import { DepthMeasurement, DepthMeasurementData } from '@cognite/sdk-wells-v3';
@@ -26,7 +27,9 @@ export const fetchAllDepthMeasurements = async ({
     actionProps: {
       filter: {
         measurementTypes,
-        wellboreIds: Array.from(wellboreMatchingIds).map(toIdentifier),
+        wellboreIds: Array.from(wellboreMatchingIds).map(
+          toIdentifierWithMatchingId
+        ),
       },
       limit: SEQUENCES_PER_PAGE,
     },

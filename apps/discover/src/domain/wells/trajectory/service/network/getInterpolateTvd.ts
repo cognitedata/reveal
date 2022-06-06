@@ -1,5 +1,6 @@
+import { getWellSDKClient } from 'domain/wells/utils/authenticate';
+
 import isEmpty from 'lodash/isEmpty';
-import { getWellSDKClient } from 'services/wellSearch/sdk';
 
 import {
   TrajectoryInterpolationItems,

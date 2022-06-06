@@ -1,3 +1,5 @@
+import { getWellSDKClient } from 'domain/wells/utils/authenticate';
+
 import chunk from 'lodash/chunk';
 import flatten from 'lodash/flatten';
 import get from 'lodash/get';
@@ -7,7 +9,6 @@ import isEmpty from 'lodash/isEmpty';
 import keyBy from 'lodash/keyBy';
 import noop from 'lodash/noop';
 import uniqueId from 'lodash/uniqueId';
-import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
 import { changeUnitTo } from 'utils/units';
 
 import { SequenceColumn } from '@cognite/sdk';

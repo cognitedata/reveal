@@ -1,7 +1,7 @@
+import { useNptLegendCodeQuery } from 'domain/wells/legend/internal/queries/useNptLegendQuery';
 import { useWellInspectSelectedWellboreNames } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreNames';
 
 import { mapNptCodeAndDetailCode } from 'dataLayers/wells/npt/adapters/mapNptCodeAndDetailCode';
-import { useNptLegendCodeQuery } from 'services/well/legend/npt/useNptLegendQuery';
 
 import { NptCodeDefinitionType } from '../types';
 

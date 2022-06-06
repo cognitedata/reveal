@@ -1,5 +1,6 @@
+import { getWellSDKClient } from 'domain/wells/utils/authenticate';
+
 import flatten from 'lodash/flatten';
-import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
 import {
   fetchAllCursors,
   fetchAllCursorsItem,

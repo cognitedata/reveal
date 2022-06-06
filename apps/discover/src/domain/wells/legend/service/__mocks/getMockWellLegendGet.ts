@@ -1,17 +1,17 @@
 import { rest } from 'msw';
-import { getNptLegendEndpoint } from 'services/well/legend/npt/service';
 import { TEST_PROJECT } from 'setupTests';
 
 import { WellEventLegend } from '@cognite/discover-api-types/types/model/wellEventLegend';
 
 import { MSWRequest } from '__test-utils/types';
 
-import { WellLegendNptType } from '../legend/types';
+import { WellLegendNptType } from '../../internal/types';
+import { getNptLegendEndpoint } from '../network/getNptLegendEndpoint';
 
-export const getMockDetailCodeLegendGet = (
+export const getMockWellLegendGet = (
   customResponse?: WellEventLegend[]
 ): MSWRequest => {
-  const url = getNptLegendEndpoint(TEST_PROJECT, WellLegendNptType.DetailCode);
+  const url = getNptLegendEndpoint(TEST_PROJECT, WellLegendNptType.Code);
 
   // console.log('STARTING MOCK', url);
 

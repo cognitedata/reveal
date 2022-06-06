@@ -1,12 +1,13 @@
-import 'services/wellSearch/__mocks/setupWellsMockSDK';
+import 'domain/wells/__mocks/setupWellsMockSDK';
+
+import { getMockDetailCodeLegendGet } from 'domain/wells/legend/service/__mocks/getMockDetailCodeLegendGet';
+import { getMockWellLegendGet } from 'domain/wells/legend/service/__mocks/getMockWellLegendGet';
+import { getMockNPTCodeSummaries } from 'domain/wells/summaries/service/__mocks/getMockNPTCodeSummaries';
+import { getMockNPTDetailCodeSummaries } from 'domain/wells/summaries/service/__mocks/getMockNPTDetailCodeSummaries';
 
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { setupServer } from 'msw/node';
-import { getMockDetailCodeLegendGet } from 'services/well/__mocks/getMockDetailCodeLegendGet';
-import { getMockWellLegendGet } from 'services/well/__mocks/getMockWellLegendGet';
-import { getMockNPTCodeSummaries } from 'services/wellSearch/__mocks/getMockNPTCodeSummaries';
-import { getMockNPTDetailCodeSummaries } from 'services/wellSearch/__mocks/getMockNPTDetailCodeSummaries';
 
 import { testRenderer } from '__test-utils/renderer';
 import { NO_RESULTS_TEXT } from 'components/EmptyState/constants';

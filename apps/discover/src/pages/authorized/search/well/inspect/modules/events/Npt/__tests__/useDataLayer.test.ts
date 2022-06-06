@@ -1,11 +1,12 @@
 import '__mocks/mockContainerAuth';
 import '__mocks/mockCogniteSDK';
+import { nptCodeLegend } from 'domain/wells/legend/service/__fixtures/nptCodeLegend';
+import { nptDetailCodeLegend } from 'domain/wells/legend/service/__fixtures/nptDetailCodeLegend';
+import { getMockDetailCodeLegendGet } from 'domain/wells/legend/service/__mocks/getMockDetailCodeLegendGet';
+import { getMockWellLegendGet } from 'domain/wells/legend/service/__mocks/getMockWellLegendGet';
+
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
-import { nptCodeLegend } from 'services/well/__fixtures/nptCodeLegend';
-import { nptDetailCodeLegend } from 'services/well/__fixtures/nptDetailCodeLegend';
-import { getMockDetailCodeLegendGet } from 'services/well/__mocks/getMockDetailCodeLegendGet';
-import { getMockWellLegendGet } from 'services/well/__mocks/getMockWellLegendGet';
 
 import { testWrapper } from '__test-utils/renderer';
 

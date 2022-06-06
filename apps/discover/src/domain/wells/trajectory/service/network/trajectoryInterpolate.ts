@@ -1,6 +1,7 @@
+import { getWellSDKClient } from 'domain/wells/utils/authenticate';
+
 import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
-import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
 
 import {
   DistanceUnitEnum,

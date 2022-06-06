@@ -1,8 +1,7 @@
+import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 import { convertToIdentifiers } from 'domain/wells/utils/convertToIdentifiers';
 
 import { useQuery } from 'react-query';
-
-import { getWellSDKClient } from 'services/wellSearch/sdk';
 
 import { NdsAggregate, NdsAggregateEnum } from '@cognite/sdk-wells-v3';
 

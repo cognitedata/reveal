@@ -1,8 +1,9 @@
-import 'services/wellSearch/__mocks/setupWellsMockSDK';
+import 'domain/wells/__mocks/setupWellsMockSDK';
+import { getMockWellsGeometry } from 'domain/wells/well/service/__mocks/getMockWellsGeometry';
+
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
-import { getMockWellsGeometry } from 'services/well/__mocks/getMockWellsGeometry';
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';

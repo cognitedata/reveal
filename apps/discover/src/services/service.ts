@@ -10,7 +10,6 @@ import { searchHistory } from './searchHistory';
 import { seismic } from './seismic';
 import { stats } from './stats';
 import { user } from './user';
-import { well } from './well';
 
 export const useJsonHeaders = (
   extras: Record<string, string> = {},
@@ -35,5 +34,4 @@ export const discoverAPI = {
   seismic,
   stats,
   user,
-  well,
 };

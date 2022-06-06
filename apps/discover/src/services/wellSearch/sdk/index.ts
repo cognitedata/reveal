@@ -1,1 +1,0 @@
-export { getWellSDKClient } from './authenticate';

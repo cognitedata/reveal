@@ -1,13 +1,14 @@
+import { authenticateWellSDK } from 'domain/wells/utils/authenticate';
+
 import * as React from 'react';
 
 import { setClient, setEmail, setReAuth } from 'utils/getCogniteSDKClient';
 
-import { getTenantInfo, AuthContext } from '@cognite/react-container';
+import { getProjectInfo, AuthContext } from '@cognite/react-container';
 
 import { SIDECAR } from 'constants/app';
 import { useProjectConfig } from 'hooks/useProjectConfig';
 import { authenticateSeismicSDK } from 'modules/seismicSearch/service';
-import { authenticateWellSDK } from 'modules/wellSearch/sdk';
 
 export const ProvideAuthSetup: React.FC<
   React.PropsWithChildren<{
@@ -15,7 +16,7 @@ export const ProvideAuthSetup: React.FC<
   }>
 > = ({ authState, children }) => {
   const [doneAuth, setDoneAuth] = React.useState(false);
-  const [project] = getTenantInfo();
+  const [project] = getProjectInfo();
 
   const { data: projectConfig } = useProjectConfig();
 

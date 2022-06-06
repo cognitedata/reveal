@@ -1,6 +1,7 @@
+import { getWellSDKClient } from 'domain/wells/utils/authenticate';
+
 import chunk from 'lodash/chunk';
 import flatten from 'lodash/flatten';
-import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
 
 import { Trajectory, TrajectoryItems } from '@cognite/sdk-wells-v3';
 

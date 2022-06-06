@@ -1,6 +1,6 @@
 import '__mocks/mockContainerAuth'; // should be first
 import '__mocks/setupMockCogniteSDK';
-import 'services/wellSearch/__mocks/setupWellsMockSDK';
+import 'domain/wells/__mocks/setupWellsMockSDK';
 import { getMockFavoritesListGet } from 'domain/favorites/service/__mocks/getMockFavoritesListGet';
 
 import { screen, cleanup, fireEvent } from '@testing-library/react';

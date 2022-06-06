@@ -1,4 +1,5 @@
-import { getWellSDKClient } from 'services/wellSearch/sdk/authenticate';
+import { getWellSDKClient } from 'domain/wells/utils/authenticate';
+
 import { fetchAllCursors, FetchOptions } from 'utils/fetchAllCursors';
 
 import { Wellbore, Npt } from '@cognite/sdk-wells-v3';

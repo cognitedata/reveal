@@ -1,12 +1,12 @@
 import { rest } from 'msw';
-import { getNptLegendEndpoint } from 'services/well/legend/npt/service';
 import { TEST_PROJECT } from 'setupTests';
 
 import { WellEventLegendCreateResponse } from '@cognite/discover-api-types';
 
 import { MSWRequest } from '__test-utils/types';
 
-import { WellLegendNptType } from '../legend/types';
+import { WellLegendNptType } from '../../internal/types';
+import { getNptLegendEndpoint } from '../network/getNptLegendEndpoint';
 
 const responseData: WellEventLegendCreateResponse = { items: [] };
 
