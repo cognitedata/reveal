@@ -1,5 +1,5 @@
-import { mergeNdsAggregates } from 'domain/wells/dataLayer/nds/adapters/mergeNdsAggregates';
-import { NdsAggregatesSummary } from 'domain/wells/dataLayer/nds/types';
+import { mergeNdsAggregates } from 'domain/wells/nds/internal/transformers/mergeNdsAggregates';
+import { NdsAggregatesSummary } from 'domain/wells/nds/internal/types';
 
 import { useQuery } from 'react-query';
 

@@ -1,6 +1,6 @@
 import { Nds, NdsAggregate } from '@cognite/sdk-wells-v3';
 
-export interface NdsDataLayer extends Nds {
+export interface NdsInternal extends Nds {
   original: Nds;
 }
 

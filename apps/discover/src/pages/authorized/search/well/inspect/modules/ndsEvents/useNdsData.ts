@@ -1,7 +1,7 @@
 import { WellboreDataLayer } from 'domain/wells/dataLayer/wellbore/types';
-import { useNdsAggregatesSummaryQuery } from 'domain/wells/service/nds/queries/useNdsAggregatesSummaryQuery';
-import { useNdsEventsQuery } from 'domain/wells/service/nds/queries/useNdsEventsQuery';
-import { useNdsTvdDataQuery } from 'domain/wells/service/nds/queries/useNdsTvdDataQuery';
+import { useNdsAggregatesSummaryQuery } from 'domain/wells/nds/service/queries/useNdsAggregatesSummaryQuery';
+import { useNdsEventsQuery } from 'domain/wells/nds/service/queries/useNdsEventsQuery';
+import { useNdsTvdDataQuery } from 'domain/wells/nds/service/queries/useNdsTvdDataQuery';
 import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
 import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores';
 

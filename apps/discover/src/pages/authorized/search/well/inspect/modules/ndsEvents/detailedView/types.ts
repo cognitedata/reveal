@@ -1,4 +1,4 @@
-import { WellboreNdsAggregatesSummary } from 'domain/wells/dataLayer/nds/types';
+import { WellboreNdsAggregatesSummary } from 'domain/wells/nds/internal/types';
 
 import { NdsView } from '../types';
 

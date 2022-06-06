@@ -1,4 +1,4 @@
-import { NdsDataLayer } from 'domain/wells/dataLayer/nds/types';
+import { NdsInternal } from 'domain/wells/nds/internal/types';
 
 import { ConvertedDistance } from 'utils/units/constants';
 
@@ -6,7 +6,7 @@ import { OptionType } from '@cognite/cogs.js';
 
 import { MultiSelectOptionType } from 'components/Filters/MultiSelect/types';
 
-export interface NdsView extends NdsDataLayer {
+export interface NdsView extends NdsInternal {
   wellName: string;
   wellboreName: string;
   holeStartTvd?: ConvertedDistance;

@@ -1,10 +1,10 @@
 import pickBy from 'lodash/pickBy';
 import { BooleanMap, toBooleanMap } from 'utils/booleanMap';
 
-import { NdsDataLayer } from '../types';
+import { NdsInternal } from '../types';
 
 type NdsObjectType = Pick<
-  NdsDataLayer,
+  NdsInternal,
   'riskType' | 'subtype' | 'severity' | 'probability'
 >;
 

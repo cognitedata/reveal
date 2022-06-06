@@ -1,4 +1,4 @@
-import { filterWellInspectNdsData } from 'domain/wells/dataLayer/nds/adapters/filterWellInspectNdsData';
+import { filterWellInspectNdsData } from 'domain/wells/nds/internal/transformers/filterWellInspectNdsData';
 
 import flatten from 'lodash/flatten';
 import isEmpty from 'lodash/isEmpty';

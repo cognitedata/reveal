@@ -1,6 +1,6 @@
-import { normalizeNds } from 'domain/wells/dataLayer/nds/adapters/normalizeNds';
-import { NdsDataLayer } from 'domain/wells/dataLayer/nds/types';
 import { groupByWellbore } from 'domain/wells/dataLayer/wellbore/adapters/groupByWellbore';
+import { normalizeNds } from 'domain/wells/nds/internal/transformers/normalizeNds';
+import { NdsInternal } from 'domain/wells/nds/internal/types';
 import { AllCursorsProps } from 'domain/wells/types';
 
 import { handleServiceError } from 'utils/errors';
@@ -15,7 +15,7 @@ import { getAllNdsEvents } from '../network/getAllNdsEvents';
 export const useNdsEventsQuery = ({ wellboreIds }: AllCursorsProps) => {
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
-  return useArrayCache<NdsDataLayer>({
+  return useArrayCache<NdsInternal>({
     key: [...WELL_QUERY_KEY.NDS_EVENTS_CACHE, userPreferredUnit],
     items: wellboreIds,
     fetchAction: (wellboreIds, options) =>

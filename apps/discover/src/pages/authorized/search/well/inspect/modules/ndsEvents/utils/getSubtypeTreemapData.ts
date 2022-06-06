@@ -1,5 +1,5 @@
-import { groupBySubtype } from 'domain/wells/dataLayer/nds/adapters/groupBySubtype';
-import { NdsDataLayer } from 'domain/wells/dataLayer/nds/types';
+import { groupBySubtype } from 'domain/wells/nds/internal/transformers/groupBySubtype';
+import { NdsInternal } from 'domain/wells/nds/internal/types';
 
 import isEmpty from 'lodash/isEmpty';
 import minBy from 'lodash/minBy';
@@ -9,7 +9,7 @@ import { getFixedPercent } from 'utils/number';
 import { TreeMapData } from 'components/Treemap';
 
 export const getSubtypeTreemapData = (
-  ndsEvents: NdsDataLayer[],
+  ndsEvents: NdsInternal[],
   maxNodes = 15
 ): TreeMapData => {
   let children: TreeMapData[];

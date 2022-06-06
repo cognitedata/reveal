@@ -1,4 +1,4 @@
-import { normalizeNdsAggregates } from 'domain/wells/dataLayer/nds/adapters/normalizeNdsAggregates';
+import { normalizeNdsAggregates } from 'domain/wells/nds/internal/transformers/normalizeNdsAggregates';
 import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 import { convertToIdentifiers } from 'domain/wells/utils/convertToIdentifiers';
 

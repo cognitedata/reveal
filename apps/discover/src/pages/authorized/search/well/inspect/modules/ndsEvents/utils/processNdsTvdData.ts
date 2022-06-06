@@ -1,6 +1,6 @@
-import { NdsDataLayer } from 'domain/wells/dataLayer/nds/types';
 import { getTvdForMd } from 'domain/wells/dataLayer/trajectory/selectors/getTvdForMd';
 import { TrueVerticalDepthsDataLayer } from 'domain/wells/dataLayer/trajectory/types';
+import { NdsInternal } from 'domain/wells/nds/internal/types';
 
 import isUndefined from 'lodash/isUndefined';
 import { convertToDistance } from 'utils/units/convertToDistance';
@@ -8,7 +8,7 @@ import { convertToDistance } from 'utils/units/convertToDistance';
 import { NdsView } from '../types';
 
 export const processNdsTvdData = (
-  nds: NdsDataLayer,
+  nds: NdsInternal,
   trueVerticalDepths?: TrueVerticalDepthsDataLayer
 ) => {
   const tvdData: Partial<NdsView> = {};

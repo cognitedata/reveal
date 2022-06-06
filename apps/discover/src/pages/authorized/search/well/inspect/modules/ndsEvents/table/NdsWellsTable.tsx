@@ -1,4 +1,4 @@
-import { NDS_ACCESSORS } from 'domain/wells/dataLayer/nds/selectors/accessors';
+import { NDS_ACCESSORS } from 'domain/wells/nds/internal/selectors/accessors';
 
 import React, { useState } from 'react';
 

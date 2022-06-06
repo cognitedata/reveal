@@ -1,4 +1,4 @@
-import { NdsDataLayer } from 'domain/wells/dataLayer/nds/types';
+import { NdsInternal } from 'domain/wells/nds/internal/types';
 import { getMockWellbore } from 'domain/wells/wellbore/internal/__fixtures/getMockWellbore';
 
 import { getMockNdsEvent } from '__test-utils/fixtures/nds';
@@ -23,7 +23,7 @@ describe('generateNdsTreemapData', () => {
     const ndsEvents = [
       getMockNdsEvent({ wellboreMatchingId: 'wellboreId1' }),
       getMockNdsEvent({ wellboreMatchingId: 'wellboreId2' }),
-    ] as NdsDataLayer[];
+    ] as NdsInternal[];
 
     const result = generateNdsTreemapData(wellbores, ndsEvents);
     expect(result).toEqual({
@@ -57,7 +57,7 @@ describe('generateNdsTreemapData', () => {
     const ndsEvents = [
       getMockNdsEvent({ wellboreMatchingId: 'wellboreId1' }),
       getMockNdsEvent({ wellboreMatchingId: 'wellboreId2' }),
-    ] as NdsDataLayer[];
+    ] as NdsInternal[];
 
     const result = generateNdsTreemapData(wellbores, ndsEvents);
     expect(result).toEqual({
@@ -127,7 +127,7 @@ describe('generateNdsTreemapData', () => {
       ...wellbore2Nds,
       ...wellbore4Nds,
       ...wellbore5Nds,
-    ] as NdsDataLayer[];
+    ] as NdsInternal[];
 
     const result = generateNdsTreemapData(wellbores, ndsEvents, 3);
 
@@ -175,7 +175,7 @@ describe('generateNdsTreemapData', () => {
       getMockWellbore({ id: 'wellboreId3', name: 'wellbore 3' }),
     ];
 
-    const ndsEvents: NdsDataLayer[] = [];
+    const ndsEvents: NdsInternal[] = [];
 
     const result = generateNdsTreemapData(wellbores, ndsEvents);
     expect(result).toEqual({

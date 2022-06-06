@@ -1,8 +1,8 @@
 import groupBy from 'lodash/groupBy';
 
-import { NdsDataLayer } from '../types';
+import { NdsInternal } from '../types';
 
-export const groupBySubtype = <T extends Pick<NdsDataLayer, 'subtype'>>(
+export const groupBySubtype = <T extends Pick<NdsInternal, 'subtype'>>(
   items: T[]
 ): Record<string, T[]> => {
   const itemsWithSubtype = items.filter((item) => item.subtype);

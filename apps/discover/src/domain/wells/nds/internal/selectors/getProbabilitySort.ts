@@ -2,9 +2,9 @@ import { Row } from 'react-table';
 
 import { sortByCaseInsensitive } from 'utils/sort/sortByCaseInsensitive';
 
-import { NdsDataLayer } from '../types';
+import { NdsInternal } from '../types';
 
-type NdsProbability = Pick<NdsDataLayer, 'probability'>;
+type NdsProbability = Pick<NdsInternal, 'probability'>;
 
 export const getProbabilitySort = <T extends NdsProbability>(
   ndsA: T,

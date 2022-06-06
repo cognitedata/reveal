@@ -1,8 +1,8 @@
 import {
   NdsAggregatesSummary,
   WellboreNdsAggregatesSummary,
-} from 'domain/wells/dataLayer/nds/types';
-import { getEmptyNdsAggregatesMerged } from 'domain/wells/dataLayer/nds/utils/getEmptyNdsAggregatesMerged';
+} from 'domain/wells/nds/internal/types';
+import { getEmptyNdsAggregatesMerged } from 'domain/wells/nds/internal/utils/getEmptyNdsAggregatesMerged';
 
 import head from 'lodash/head';
 

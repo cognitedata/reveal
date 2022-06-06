@@ -1,5 +1,5 @@
-import { NdsDataLayer } from 'domain/wells/dataLayer/nds/types';
 import { groupByWellbore } from 'domain/wells/dataLayer/wellbore/adapters/groupByWellbore';
+import { NdsInternal } from 'domain/wells/nds/internal/types';
 import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
 import isEmpty from 'lodash/isEmpty';
@@ -11,7 +11,7 @@ import { TreeMapData } from 'components/Treemap';
 
 export const generateNdsTreemapData = (
   wellbores: Wellbore[],
-  ndsEvents: NdsDataLayer[],
+  ndsEvents: NdsInternal[],
   maxNodes = 15
 ): TreeMapData => {
   let children: TreeMapData[];

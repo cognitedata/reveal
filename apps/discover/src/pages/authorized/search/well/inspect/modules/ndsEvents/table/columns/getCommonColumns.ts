@@ -1,6 +1,6 @@
-import { NDS_ACCESSORS } from 'domain/wells/dataLayer/nds/selectors/accessors';
-import { getProbabilityTableSort } from 'domain/wells/dataLayer/nds/selectors/getProbabilitySort';
-import { getSeverityTableSort } from 'domain/wells/dataLayer/nds/selectors/getSeveritySort';
+import { NDS_ACCESSORS } from 'domain/wells/nds/internal/selectors/accessors';
+import { getProbabilityTableSort } from 'domain/wells/nds/internal/selectors/getProbabilitySort';
+import { getSeverityTableSort } from 'domain/wells/nds/internal/selectors/getSeveritySort';
 
 import { ColumnType } from 'components/Tablev3';
 import { UserPreferredUnit } from 'constants/units';

@@ -2,9 +2,9 @@ import { Row } from 'react-table';
 
 import { sortByCaseInsensitive } from 'utils/sort/sortByCaseInsensitive';
 
-import { NdsDataLayer } from '../types';
+import { NdsInternal } from '../types';
 
-type NdsSeverity = Pick<NdsDataLayer, 'severity'>;
+type NdsSeverity = Pick<NdsInternal, 'severity'>;
 
 export const getSeveritySort = <T extends NdsSeverity>(ndsA: T, ndsB: T) => {
   const severityA = ndsA.severity || 0;

@@ -1,13 +1,13 @@
-import { NdsDataLayer } from 'domain/wells/dataLayer/nds/types';
 import { TrueVerticalDepthsDataLayer } from 'domain/wells/dataLayer/trajectory/types';
 import { WellboreDataLayer } from 'domain/wells/dataLayer/wellbore/types';
+import { NdsInternal } from 'domain/wells/nds/internal/types';
 
 import { NdsView } from '../types';
 
 import { processNdsTvdData } from './processNdsTvdData';
 
 export const processNdsData = (
-  nds: NdsDataLayer,
+  nds: NdsInternal,
   wellbore: WellboreDataLayer,
   trueVerticalDepths?: TrueVerticalDepthsDataLayer
 ): NdsView => {

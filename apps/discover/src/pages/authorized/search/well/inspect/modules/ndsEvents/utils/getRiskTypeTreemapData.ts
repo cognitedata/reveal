@@ -1,5 +1,5 @@
-import { groupByRiskType } from 'domain/wells/dataLayer/nds/adapters/groupByRiskType';
-import { NdsDataLayer } from 'domain/wells/dataLayer/nds/types';
+import { groupByRiskType } from 'domain/wells/nds/internal/transformers/groupByRiskType';
+import { NdsInternal } from 'domain/wells/nds/internal/types';
 
 import isEmpty from 'lodash/isEmpty';
 import minBy from 'lodash/minBy';
@@ -9,7 +9,7 @@ import { getFixedPercent } from 'utils/number';
 import { TreeMapData } from 'components/Treemap';
 
 export const getRiskTypeTreemapData = (
-  ndsEvents: NdsDataLayer[],
+  ndsEvents: NdsInternal[],
   maxNodes = 15
 ): TreeMapData => {
   let children: TreeMapData[];

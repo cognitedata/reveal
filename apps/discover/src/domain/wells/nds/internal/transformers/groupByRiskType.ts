@@ -1,8 +1,8 @@
 import groupBy from 'lodash/groupBy';
 
-import { NdsDataLayer } from '../types';
+import { NdsInternal } from '../types';
 
-export const groupByRiskType = <T extends Pick<NdsDataLayer, 'riskType'>>(
+export const groupByRiskType = <T extends Pick<NdsInternal, 'riskType'>>(
   items: T[]
 ): Record<string, T[]> => {
   const itemsWithRiskType = items.filter((item) => item.riskType);

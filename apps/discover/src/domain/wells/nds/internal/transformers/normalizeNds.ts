@@ -3,7 +3,7 @@ import { Nds } from '@cognite/sdk-wells-v3';
 import { UserPreferredUnit } from 'constants/units';
 import { convertObject } from 'modules/wellSearch/utils';
 
-import { NdsDataLayer } from '../types';
+import { NdsInternal } from '../types';
 import {
   getNdsAccessorsToFixedDecimal,
   getNdsUnitChangeAccessors,
@@ -12,7 +12,7 @@ import {
 export const normalizeNds = (
   rawNds: Nds,
   userPreferredUnit: UserPreferredUnit
-): NdsDataLayer => {
+): NdsInternal => {
   return {
     ...convertObject(rawNds)
       .changeUnits(getNdsUnitChangeAccessors(userPreferredUnit))
