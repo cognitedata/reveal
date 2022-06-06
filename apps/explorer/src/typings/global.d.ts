@@ -8,4 +8,6 @@ declare global {
     attachEvent: any;
     __cogniteSidecar: Partial<SidecarConfig>;
   }
+
+  type NonEmptyArr<T> = [T, ...T[]];
 }
