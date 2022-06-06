@@ -39,3 +39,12 @@ export const getValueFromOption = (
 ): MultiSelectOptionValue => {
   return get(option, 'value', option);
 };
+
+export const adaptToMultiSelectCategorizedOptions = (
+  categoryOptionsMap: Record<string, MultiSelectOptionType[] | undefined> = {}
+): MultiSelectCategorizedOption[] => {
+  return Object.entries(categoryOptionsMap).map(([category, options]) => ({
+    category,
+    options,
+  }));
+};

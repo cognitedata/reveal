@@ -1,4 +1,4 @@
-import { NdsAggregate } from '@cognite/sdk-wells-v3';
+import { WellboreNdsAggregatesSummary } from 'domain/wells/dataLayer/nds/types';
 
 import { NdsView } from '../types';
 
@@ -12,5 +12,5 @@ export interface DetailedViewProps {
    */
   detailedViewNdsData?: NdsView[];
   setDetailedViewNdsData: (detailedViewNdsData?: NdsView[]) => void;
-  ndsAggregate?: NdsAggregate;
+  ndsAggregate: WellboreNdsAggregatesSummary;
 }

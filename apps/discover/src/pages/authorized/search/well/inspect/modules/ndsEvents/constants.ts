@@ -1,8 +1,12 @@
+import { AppliedFilters } from './types';
+
 export enum NdsViewModes {
   Treemap = 'Treemap',
   Table = 'Table',
 }
 
-export const FILTER_WIDTH = 300;
-
-export const RISK_TYPE_FILTER_TITLE = 'Risk type & subtype';
+export const EMPTY_APPLIED_FILTERS: AppliedFilters = {
+  riskType: {},
+  severity: [],
+  probability: [],
+};

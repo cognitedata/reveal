@@ -1,22 +1,17 @@
-import { filterByRiskTypes } from 'domain/wells/dataLayer/nds/adapters/filterByRiskTypes';
-
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import head from 'lodash/head';
+import isEmpty from 'lodash/isEmpty';
 
-import { OptionType } from '@cognite/cogs.js';
-
-import { MultiSelectCategorized } from 'components/Filters';
-import { MultiSelectOptionType } from 'components/Filters/MultiSelect/types';
 import { OverlayNavigation } from 'components/OverlayNavigation';
-import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 
 import { ViewModeControl } from '../../common/ViewModeControl';
 import { WellboreNavigationPanel } from '../../common/WellboreNavigationPanel';
-import { FILTER_WIDTH, RISK_TYPE_FILTER_TITLE } from '../constants';
+import { EMPTY_APPLIED_FILTERS } from '../constants';
+import { Filters } from '../filters';
 import { NdsTreemap } from '../treemap';
-import { NdsView } from '../types';
-import { generateNdsFilterDataFromAggregate } from '../utils/generateNdsFilterDataFromAggregate';
+import { AppliedFilters, FilterValues, NdsView } from '../types';
+import { getFilteredNdsData } from '../utils/getFilteredNdsData';
 import { getRiskTypeTreemapData } from '../utils/getRiskTypeTreemapData';
 import { getSubtypeTreemapData } from '../utils/getSubtypeTreemapData';
 
@@ -27,29 +22,22 @@ import { DetailedViewProps } from './types';
 
 export const DetailedView: React.FC<DetailedViewProps> = ({
   data,
-  detailedViewNdsData,
+  detailedViewNdsData = [],
   setDetailedViewNdsData,
   ndsAggregate,
 }) => {
-  const [filteredData, setFilteredData] = useState<NdsView[]>(
-    detailedViewNdsData || []
+  const [filteredData, setFilteredData] =
+    useState<NdsView[]>(detailedViewNdsData);
+
+  const [appliedFilters, setAppliedFilters] = useState<AppliedFilters>(
+    EMPTY_APPLIED_FILTERS
   );
   const [selectedViewMode, setSelectedViewMode] =
     useState<NdsDetailedViewModes>(NdsDetailedViewModes.RiskType);
 
-  useDeepEffect(() => {
-    setFilteredData(detailedViewNdsData || []);
-  }, [detailedViewNdsData]);
-
   const currentWellboreName = head(detailedViewNdsData)?.wellboreName;
 
   const clearDetailedViewNdsData = () => setDetailedViewNdsData(undefined);
-
-  const riskTypeFilters = useDeepMemo(
-    () =>
-      generateNdsFilterDataFromAggregate(ndsAggregate ? [ndsAggregate] : []),
-    [ndsAggregate]
-  );
 
   const riskTypeTreemapData = useMemo(
     () => getRiskTypeTreemapData(filteredData),
@@ -61,21 +49,32 @@ export const DetailedView: React.FC<DetailedViewProps> = ({
     [filteredData]
   );
 
-  const handleChangeRiskTypeFilter = useCallback(
-    (
-      values: Record<string, OptionType<MultiSelectOptionType>[] | undefined>
-    ) => {
-      if (!detailedViewNdsData) return;
+  const handleChangeFilter = (
+    filter: keyof AppliedFilters,
+    values: FilterValues
+  ) => {
+    setAppliedFilters((appliedFilters) => ({
+      ...appliedFilters,
+      [filter]: values,
+    }));
+  };
 
-      const riskTypes = Object.keys(values);
-      const filteredData = filterByRiskTypes(detailedViewNdsData, riskTypes);
-      setFilteredData(filteredData);
-    },
-    [detailedViewNdsData]
-  );
+  useEffect(() => {
+    const filteredData = getFilteredNdsData(data, appliedFilters);
+    setFilteredData(filteredData);
+  }, [appliedFilters]);
+
+  useEffect(() => {
+    const { riskTypesAndSubtypes, severities, probabilities } = ndsAggregate;
+    setAppliedFilters({
+      riskType: riskTypesAndSubtypes,
+      severity: severities,
+      probability: probabilities,
+    });
+  }, [data, ndsAggregate]);
 
   return (
-    <OverlayNavigation mount={Boolean(detailedViewNdsData)}>
+    <OverlayNavigation mount={!isEmpty(detailedViewNdsData)}>
       <WellboreNavigationPanel
         data={data}
         currentWellboreName={currentWellboreName}
@@ -91,11 +90,10 @@ export const DetailedView: React.FC<DetailedViewProps> = ({
           onChangeView={setSelectedViewMode}
         />
 
-        <MultiSelectCategorized
-          title={RISK_TYPE_FILTER_TITLE}
-          width={FILTER_WIDTH}
-          options={riskTypeFilters}
-          onValueChange={handleChangeRiskTypeFilter}
+        <Filters
+          {...ndsAggregate}
+          appliedFilters={appliedFilters}
+          onChangeFilter={handleChangeFilter}
         />
       </FiltersBar>
 

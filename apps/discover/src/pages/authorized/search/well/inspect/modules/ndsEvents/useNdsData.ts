@@ -1,6 +1,5 @@
-import { keyByWellbore } from 'domain/wells/dataLayer/wellbore/adapters/keyByWellbore';
 import { WellboreDataLayer } from 'domain/wells/dataLayer/wellbore/types';
-import { useNdsAggregatesByWellboreIdsQuery } from 'domain/wells/service/nds/queries/useNdsAggregatesByWellboreIdsQuery';
+import { useNdsAggregatesSummaryQuery } from 'domain/wells/service/nds/queries/useNdsAggregatesSummaryQuery';
 import { useNdsEventsQuery } from 'domain/wells/service/nds/queries/useNdsEventsQuery';
 import { useNdsTvdDataQuery } from 'domain/wells/service/nds/queries/useNdsTvdDataQuery';
 import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
@@ -11,7 +10,6 @@ import keyBy from 'lodash/keyBy';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
-import { generateNdsFilterDataFromAggregate } from './utils/generateNdsFilterDataFromAggregate';
 import { processNdsData } from './utils/processNdsData';
 
 export const useNdsData = () => {
@@ -23,8 +21,7 @@ export const useNdsData = () => {
   const { data: ndsData, isLoading } = useNdsEventsQuery({
     wellboreIds: new Set(wellboreIds),
   });
-  const { data: ndsAggregates } =
-    useNdsAggregatesByWellboreIdsQuery(wellboreIds);
+  const { data: ndsAggregates } = useNdsAggregatesSummaryQuery(wellboreIds);
 
   const originalNdsData = useDeepMemo(() => {
     if (!ndsData) {
@@ -52,15 +49,9 @@ export const useNdsData = () => {
     });
   }, [ndsData, tvdData, userPreferredUnit]);
 
-  const riskTypeFilters = useDeepMemo(
-    () => generateNdsFilterDataFromAggregate(ndsAggregates || []),
-    [ndsAggregates]
-  );
-
   return {
     isLoading,
     data: processedData,
-    ndsAggregates: keyByWellbore(ndsAggregates || []),
-    riskTypeFilters,
+    ndsAggregates: ndsAggregates || {},
   };
 };

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
+import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import unset from 'lodash/unset';
@@ -29,10 +30,13 @@ import {
   Category,
   MultiSelectCategorizedProps,
 } from './types';
-import { getProcessedOptions } from './utils';
+import {
+  adaptToMultiSelectCategorizedOptions,
+  getProcessedOptions,
+} from './utils';
 
 export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
-  options: data = [],
+  options: data,
   title,
   placeholder,
   onValueChange,
@@ -56,10 +60,12 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
     }
   }, [selectedOptions]);
 
-  const options = useDeepMemo(
-    () => getProcessedOptions(data, extraLabels),
-    [data, extraLabels]
-  );
+  const options = useDeepMemo(() => {
+    const adaptedData = isArray(data)
+      ? data
+      : adaptToMultiSelectCategorizedOptions(data);
+    return getProcessedOptions(adaptedData, extraLabels);
+  }, [data, extraLabels]);
 
   const optionsCount = options.reduce(
     (total, { options }) => total + (options?.length || 1),

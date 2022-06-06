@@ -1,10 +1,17 @@
 import styled from 'styled-components/macro';
+import layers from 'utils/zindex';
 
-import { sizes } from 'styles/layout';
+import { FlexRow, sizes } from 'styles/layout';
 
-export const NdsControlWrapper = styled.div`
-  margin-right: ${sizes.normal};
-  margin-bottom: ${sizes.normal};
+export const FiltersBar = styled(FlexRow)`
+  padding: ${sizes.normal};
+  padding-top: 0;
+  padding-left: 0;
+  z-index: ${layers.FILTER};
+
+  & > *:not(:last-child) {
+    margin-right: ${sizes.normal};
+  }
 `;
 
 export const WellboreTableWrapper = styled.div`

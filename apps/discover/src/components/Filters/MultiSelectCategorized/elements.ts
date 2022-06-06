@@ -6,7 +6,7 @@ import { Flex, FlexColumn, sizes } from 'styles/layout';
 
 import { OPTION_INDENTATION } from './constants';
 
-export const MultiSelectCategorizedWrapper = styled.div`
+export const MultiSelectCategorizedWrapper = styled.span`
   width: ${(props: { width?: number }) =>
     props.width ? `${props.width}px` : '100%'};
 `;

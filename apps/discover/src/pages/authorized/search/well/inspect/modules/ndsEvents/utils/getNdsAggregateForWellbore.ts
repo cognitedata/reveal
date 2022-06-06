@@ -1,17 +1,21 @@
-import head from 'lodash/head';
+import {
+  NdsAggregatesSummary,
+  WellboreNdsAggregatesSummary,
+} from 'domain/wells/dataLayer/nds/types';
+import { getEmptyNdsAggregatesMerged } from 'domain/wells/dataLayer/nds/utils/getEmptyNdsAggregatesMerged';
 
-import { NdsAggregate } from '@cognite/sdk-wells-v3';
+import head from 'lodash/head';
 
 import { NdsView } from '../types';
 
 export const getNdsAggregateForWellbore = (
   data: NdsView[],
-  ndsAggregates: Record<string, NdsAggregate>
-) => {
+  ndsAggregates: NdsAggregatesSummary
+): WellboreNdsAggregatesSummary => {
   const wellboreMatchingId = head(data)?.wellboreMatchingId;
 
   if (!wellboreMatchingId) {
-    return undefined;
+    return getEmptyNdsAggregatesMerged();
   }
   return ndsAggregates[wellboreMatchingId];
 };
