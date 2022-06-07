@@ -47,7 +47,7 @@ async function getBufferSubDataAsync(
   gl.bindBuffer(target, null);
 }
 
-export async function readPixelsAsync(
+async function readPixelsAsync(
   gl: WebGL2RenderingContext,
   x: number,
   y: number,
@@ -71,6 +71,18 @@ export async function readPixelsAsync(
   gl.deleteBuffer(buf);
 }
 
+/**
+ * Does the same as THREE.WebGlRenderer.readRenderTargetPixels(), but does this
+ * asynchronously when used on WebGL2.
+ * @param renderer
+ * @param renderTarget
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ * @param dest
+ * @returns
+ */
 export async function readPixelsFromTargetAsync(
   renderer: THREE.WebGLRenderer,
   renderTarget: THREE.WebGLRenderTarget,
