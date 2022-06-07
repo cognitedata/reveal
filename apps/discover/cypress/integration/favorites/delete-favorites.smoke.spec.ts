@@ -23,7 +23,7 @@ describe('Delete Favorites', () => {
     cy.log('Delete favorite');
     cy.findByTestId(`favorite-card-${favoriteToDelete}`)
       .findByLabelText('More options')
-      .trigger('mouseenter');
+      .click();
 
     cy.findByRole('button', { name: 'Delete' }).click({ force: true });
     cy.findByRole('button', { name: 'Delete set' }).click();

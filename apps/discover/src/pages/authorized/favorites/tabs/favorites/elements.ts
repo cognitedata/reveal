@@ -1,8 +1,9 @@
 import styled from 'styled-components/macro';
 
-import { Icon, Label, Menu } from '@cognite/cogs.js';
+import { Icon, Label } from '@cognite/cogs.js';
 
 import { Card } from 'components/Card';
+import { Dropdown } from 'components/Dropdown';
 import InlineLink from 'components/InlineLink';
 import { FlexAlignItems, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
@@ -152,7 +153,7 @@ export const ActionPadding = styled(FlexRow)`
   margin-right: ${sizes.small};
 `;
 
-export const DropDownMenu = styled(Menu)`
+export const DropdownMenu = styled(Dropdown.Menu)`
   width: 172px;
 `;
 

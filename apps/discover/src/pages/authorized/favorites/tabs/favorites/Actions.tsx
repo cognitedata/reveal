@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { Dropdown, Menu } from '@cognite/cogs.js';
-
 import { MoreOptionsButton } from 'components/Buttons';
+import { Dropdown } from 'components/Dropdown';
 import { FavoriteSummary } from 'modules/favorite/types';
 
 import {
@@ -14,7 +13,7 @@ import {
 } from '../../constants';
 import { DangerButton } from '../../elements';
 
-import { ActionPadding, DropDownMenu } from './elements';
+import { ActionPadding, DropdownMenu } from './elements';
 import { ModalType } from './types';
 
 interface Props {
@@ -40,34 +39,35 @@ const Actions: React.FC<Props> = ({
     return (
       <>
         <Dropdown
-          openOnHover
           placement="bottom-end"
           content={
-            <DropDownMenu data-testid={`dropdown-menu-${set.name}`}>
-              <Menu.Item
+            <DropdownMenu data-testid={`dropdown-menu-${set.name}`}>
+              <Dropdown.Item
                 onClick={() => {
                   openModal(DUPLICATE_SET_MODAL_BUTTON_TEXT);
                 }}
               >
                 {DUPLICATE_FAVORITE_CARD_BUTTON}
-              </Menu.Item>
+              </Dropdown.Item>
               {showEditButton && (
-                <Menu.Item onClick={() => openModal(EDIT_FAVORITE_CARD_BUTTON)}>
+                <Dropdown.Item
+                  onClick={() => openModal(EDIT_FAVORITE_CARD_BUTTON)}
+                >
                   {EDIT_FAVORITE_CARD_BUTTON}
-                </Menu.Item>
+                </Dropdown.Item>
               )}
 
               {showShareButton && (
-                <Menu.Item
+                <Dropdown.Item
                   onClick={() => openModal(SHARE_FAVORITE_CARD_BUTTON)}
                 >
                   {SHARE_FAVORITE_CARD_BUTTON}
-                </Menu.Item>
+                </Dropdown.Item>
               )}
 
               {showDeleteButton && (
                 <>
-                  <Menu.Divider />
+                  <Dropdown.Divider />
                   <DangerButton
                     onClick={() => openModal(DELETE_FAVORITE_CARD_BUTTON)}
                   >
@@ -75,7 +75,7 @@ const Actions: React.FC<Props> = ({
                   </DangerButton>
                 </>
               )}
-            </DropDownMenu>
+            </DropdownMenu>
           }
         >
           <MoreOptionsButton

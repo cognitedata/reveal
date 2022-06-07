@@ -41,14 +41,14 @@ describe('Duplicate Favorites', () => {
     cy.log('Duplicate favorite');
     cy.findByTestId(`favorite-card-${favoriteToDuplicate}`)
       .findByLabelText('More options')
-      .trigger('mouseenter');
+      .click();
 
     cy.findByRole('button', { name: 'Duplicate' }).click({ force: true });
     cy.findByRole('button', { name: 'Cancel' }).click();
 
     cy.findByTestId(`favorite-card-${favoriteToDuplicate}`)
       .findByLabelText('More options')
-      .trigger('mouseenter');
+      .click();
 
     cy.findByRole('button', { name: 'Duplicate' }).click({ force: true });
     cy.findByLabelText('Name')

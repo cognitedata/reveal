@@ -30,9 +30,7 @@ describe('Share Favorites', () => {
     goToFavoritesPage();
 
     cy.log('Share favorite with admin');
-    cy.findByTestId(`menu-button-${favoriteName}`).trigger('mouseenter', {
-      force: true,
-    });
+    cy.findByTestId(`menu-button-${favoriteName}`).click();
 
     cy.findByRole('button', { name: 'Share' }).click({ force: true });
     cy.findByTestId('shared-user-input')
@@ -54,9 +52,7 @@ describe('Share Favorites', () => {
     cy.findByText(favoriteName).should('exist');
 
     cy.log('Check that we cannot share it with others');
-    cy.findByTestId(`menu-button-${favoriteName}`).trigger('mouseenter', {
-      force: true,
-    });
+    cy.findByTestId(`menu-button-${favoriteName}`).click();
     cy.findByRole('button', { name: 'Share' }).should('not.exist');
     cy.findByRole('button', { name: 'Duplicate' }).should('exist');
 
