@@ -9,11 +9,11 @@ import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
 import { NoDataAvailable } from 'components/Charts/common/NoDataAvailable';
 import { Loading } from 'components/Loading';
-import { measurementsPageLoadQuery } from 'components/performance/mutationSearchQueries';
 import {
   PerformanceMetricsObserver,
   PerformanceObserved,
-} from 'components/performance/PerformanceMetricsObserver';
+  measurementsPageLoadQuery,
+} from 'components/Performance';
 import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';

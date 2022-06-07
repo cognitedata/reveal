@@ -5,8 +5,10 @@ import { PerfMetrics } from '@cognite/metrics';
 import { Logout } from '@cognite/react-container';
 
 import { Page } from 'components/Page';
-import { searchVisibleQuery } from 'components/performance/mutationSearchQueries';
-import { PerformanceMetricsObserver } from 'components/performance/PerformanceMetricsObserver';
+import {
+  PerformanceMetricsObserver,
+  searchVisibleQuery,
+} from 'components/Performance';
 import navigation from 'constants/navigation';
 import { usePageSettings } from 'hooks/usePageSettings';
 import AdminPageContainer from 'pages/authorized/admin';

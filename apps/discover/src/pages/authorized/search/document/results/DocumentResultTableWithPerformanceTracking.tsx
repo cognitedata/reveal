@@ -2,13 +2,12 @@ import React from 'react';
 
 import { PerfMetrics } from '@cognite/metrics';
 
-import { documentResultTableLoadQuery } from 'components/performance/mutationSearchQueries';
-
 import {
   domRef,
   PerformanceMetricsObserver,
   PerformanceObserved,
-} from '../../../../../components/performance/PerformanceMetricsObserver';
+  documentResultTableLoadQuery,
+} from 'components/Performance';
 
 import { DocumentResultTable } from './DocumentResultTable';
 

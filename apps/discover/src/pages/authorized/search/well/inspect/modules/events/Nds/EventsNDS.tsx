@@ -9,7 +9,7 @@ import { Loading } from 'components/Loading';
 import {
   PerformanceMetricsObserver,
   PerformanceObserved,
-} from 'components/performance/PerformanceMetricsObserver';
+} from 'components/Performance';
 import { Table } from 'components/Tablev3';
 import {
   LOG_EVENTS_NDS,

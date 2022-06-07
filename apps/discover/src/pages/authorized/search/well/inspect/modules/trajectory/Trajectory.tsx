@@ -9,11 +9,11 @@ import has from 'lodash/has';
 import { PerfMetrics } from '@cognite/metrics';
 
 import { Loading } from 'components/Loading/Loading';
-import { trajectoryPageLoadQuery } from 'components/performance/mutationSearchQueries';
 import {
   PerformanceMetricsObserver,
   PerformanceObserved,
-} from 'components/performance/PerformanceMetricsObserver';
+  trajectoryPageLoadQuery,
+} from 'components/Performance';
 import { Table, ColumnType, RowProps } from 'components/Tablev3';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useFilterDataTrajectory } from 'modules/inspectTabs/selectors';

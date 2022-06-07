@@ -11,7 +11,7 @@ import EmptyState from 'components/EmptyState';
 import {
   PerformanceMetricsObserver,
   PerformanceObserved,
-} from 'components/performance/PerformanceMetricsObserver';
+} from 'components/Performance';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import {
   useNptEventsForCasings,

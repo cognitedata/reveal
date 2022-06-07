@@ -9,11 +9,11 @@ import {
   StackedBarChart,
   StackedBarChartOptions,
 } from 'components/Charts/modules/StackedBarChart';
-import { nptGraphPageLoadQuery } from 'components/performance/mutationSearchQueries';
 import {
   PerformanceMetricsObserver,
   PerformanceObserved,
-} from 'components/performance/PerformanceMetricsObserver';
+  nptGraphPageLoadQuery,
+} from 'components/Performance';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../constants';
