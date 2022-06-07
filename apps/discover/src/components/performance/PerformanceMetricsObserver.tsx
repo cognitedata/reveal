@@ -1,4 +1,13 @@
-import { PropsWithChildren, RefObject, useEffect, useRef } from 'react';
+import {
+  cloneElement,
+  isValidElement,
+  PropsWithChildren,
+  RefObject,
+  useEffect,
+  useRef,
+} from 'react';
+
+import get from 'lodash/get';
 
 import { PerfMetrics } from '@cognite/metrics';
 
@@ -21,11 +30,23 @@ export const PerformanceMetricsObserver = <T,>({
   data,
   children,
 }: PropsWithChildren<Props<T>>) => {
-  const contentRef = useRef<HTMLDivElement>(null);
+  /**
+   * Creating a ref to use if a ref is not set for children.
+   */
+  const createdChildrenRef = useRef<HTMLDivElement>(null);
 
-  // [Performance-Tracker] This needs to be run only on the first load of the component so we can attach our DOM observer
+  /**
+   * If a ref is already set for children, use that ref.
+   * Otherwise, use the created ref above.
+   */
+  const contentRef: domRef = get(children, 'ref') || createdChildrenRef;
+
+  /**
+   * [Performance-Tracker]
+   * This needs to be run only on the first load of the component so we can attach our DOM observer.
+   */
   useEffect(() => {
-    const onRenderCleanup = onRender ? onRender(contentRef) : null;
+    const onRenderCleanup = onRender?.(contentRef);
     PerfMetrics?.observeDom(contentRef, (mutations: MutationRecord[]) => {
       onChange({ mutations, data });
     });
@@ -38,5 +59,9 @@ export const PerformanceMetricsObserver = <T,>({
     onChange({ mutations: undefined, data });
   }, [data]);
 
-  return <div ref={contentRef}>{children}</div>;
+  if (!isValidElement(children)) {
+    return null;
+  }
+
+  return cloneElement(children, { ref: contentRef });
 };
