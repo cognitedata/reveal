@@ -1038,7 +1038,7 @@ export class Cognite3DViewer {
       clippingPlanes: this.getClippingPlanes(),
       domElement: this.renderer.domElement
     };
-    const cadResults = this._pickingHandler.intersectCadNodes(cadNodes, input);
+    const cadResults = await this._pickingHandler.intersectCadNodes(cadNodes, input);
     const pointCloudResults = intersectPointClouds(pointCloudNodes, input, options?.pointIntersectionThreshold);
 
     const intersections: Intersection[] = [];

@@ -68,8 +68,8 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     const outputs = await this._modelMetadataProvider.getModelOutputs(modelIdentifier);
     // Supported output formats in order of preference (first format is most preferred)
     const preferredOutputs = [
-      { format: File3dFormat.GltfCadModel, version: 9 },
-      { format: File3dFormat.RevealCadModel, version: 8 }
+      { format: File3dFormat.RevealCadModel, version: 8 },
+      { format: File3dFormat.GltfCadModel, version: 9 }
     ];
 
     const supportedOutputs = preferredOutputs
