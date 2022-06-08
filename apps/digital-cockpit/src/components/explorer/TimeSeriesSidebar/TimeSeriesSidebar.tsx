@@ -35,7 +35,7 @@ const TimeSeriesDownloadButton = ({
   const { data: datapoints, isLoading } = useDatapointsQuery(
     [{ id: timeSeries.id }],
     {
-      limit: 1000,
+      limit: 100000,
     }
   );
 
