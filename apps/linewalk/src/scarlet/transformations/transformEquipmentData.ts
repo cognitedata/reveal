@@ -1,6 +1,7 @@
 import { Asset } from '@cognite/sdk';
 import { v4 as uuid } from 'uuid';
 import {
+  BooleanDetectionValue,
   DataElement,
   EquipmentData,
   DataElementOrigin,
@@ -329,7 +330,8 @@ const getEquipmentComponents = (
     );
 
     component.componentElements.forEach((dataElement) => {
-      const dataElementConfig = config.equipmentElements[dataElement.key];
+      const dataElementConfig = config.componentElements[dataElement.key];
+
       if (!dataElementConfig) return;
 
       const isScannerDetectionAvailable = dataElement.detections.some(
@@ -342,6 +344,7 @@ const getEquipmentComponents = (
         .map((detection) =>
           transformDetection(detection, dataElementConfig.type)
         );
+
       if (scannerDataElementDetections) {
         // eslint-disable-next-line no-param-reassign
         dataElement.detections = [
@@ -496,6 +499,13 @@ const transformDetectionValue = (
     }
     case DataElementType.DATE:
       return parseDate(strValue);
+
+    case DataElementType.BOOLEAN: {
+      if (strValue.includes('n')) return BooleanDetectionValue.NO;
+      if (strValue.includes('y')) return BooleanDetectionValue.YES;
+
+      return strValue;
+    }
 
     default:
       return strValue;
