@@ -100,8 +100,19 @@ export async function readPixelsFromTargetAsync(
 ): Promise<void> {
   if (renderer.capabilities.isWebGL2) {
     const gl = renderer.getContext() as WebGL2RenderingContext;
+    const utils = new THREE.WebGLUtils(gl, renderer.extensions, renderer.capabilities);
+
     const texture = renderTarget.texture;
-    return readPixelsAsync(gl, x, y, w, h, texture.format, texture.type, dest);
+    const format = utils.convert(texture.format);
+    if (format === null) {
+      throw new Error(`Invalid texture format ${texture.format}`);
+    }
+    const type = utils.convert(texture.type);
+    if (type === null) {
+      throw new Error(`Invalid texture type ${texture.type}`);
+    }
+
+    return readPixelsAsync(gl, x, y, w, h, format, type, dest);
   }
   renderer.readRenderTargetPixels(renderTarget, x, y, w, h, dest);
 }
