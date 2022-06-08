@@ -47,4 +47,15 @@ describe(PickingHandler.name, () => {
     const intersections = await pickingHandler.intersectCadNodes([cadNode], input);
     expect(intersections).toBeEmpty();
   });
+
+  test('resets render state before results are returned and after results are ready', async () => {
+    renderer.setClearAlpha(0.5);
+    renderer.setClearColor(new THREE.Color(0.5, 0.6, 0.7));
+    const promise = pickingHandler.intersectCadNodes([cadNode], input);
+    expect(renderer.getClearAlpha()).toEqual(0.5);
+    expect(renderer.getClearColor(new THREE.Color())).toEqual(new THREE.Color(0.5, 0.6, 0.7));
+    await promise;
+    expect(renderer.getClearAlpha()).toEqual(0.5);
+    expect(renderer.getClearColor(new THREE.Color())).toEqual(new THREE.Color(0.5, 0.6, 0.7));
+  });
 });
