@@ -363,14 +363,14 @@ export function Migration() {
       viewer.on('click', async (event) => {
         const { offsetX, offsetY } = event; 
         console.log('2D coordinates', event);
+        const start = performance.now();
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {
-          console.log(intersection);
           switch (intersection.type) {
             case 'cad':
               {
                 const { treeIndex, point } = intersection;
-                console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
+                console.log(`Clicked node with treeIndex ${treeIndex} at`, point, `took ${(performance.now() - start).toFixed(1)} ms`);
 
                 inspectNodeUi.inspectNode(intersection.model, treeIndex);
               }
