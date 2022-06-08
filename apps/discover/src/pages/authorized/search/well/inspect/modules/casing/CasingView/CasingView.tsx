@@ -12,8 +12,9 @@ import isEmpty from 'lodash/isEmpty';
 import noop from 'lodash/noop';
 import orderBy from 'lodash/orderBy';
 
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 
+import { Dropdown } from 'components/Dropdown';
 import EmptyState from 'components/EmptyState';
 import { Tooltip } from 'components/PopperTooltip';
 import { DepthMeasurementUnit } from 'constants/units';
@@ -157,18 +158,18 @@ const CasingView: FC<CasingViewTypeProps> = ({
           </FlexColumn>
           <Dropdown
             content={
-              <Menu>
-                <Menu.Item onClick={noop} disabled>
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={noop} disabled>
                   {NDS_EVENT_DETAILS_LABEL}
-                </Menu.Item>
-                <Menu.Item
+                </Dropdown.Item>
+                <Dropdown.Item
                   onClick={() => {
                     setSelectedWellbore(wellboreName);
                   }}
                 >
                   {NPT_EVENT_DETAILS_LABEL}
-                </Menu.Item>
-              </Menu>
+                </Dropdown.Item>
+              </Dropdown.Menu>
             }
           >
             <Button icon="ChevronDown" iconPlacement="right">

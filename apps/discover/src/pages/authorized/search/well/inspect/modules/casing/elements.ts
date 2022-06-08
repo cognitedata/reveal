@@ -11,7 +11,7 @@ export const TopBarWrapper = styled(FlexRow)`
 `;
 export const CasingViewListWrapper = styled(FlexRow)`
   gap: ${sizes.normal};
-  height: calc(100% - 52px);
+  height: 100%;
   white-space: nowrap;
   overflow: auto;
 `;
