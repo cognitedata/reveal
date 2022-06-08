@@ -187,13 +187,17 @@ export class PickingHandler {
     pickCamera.setViewOffset(domElement.clientWidth, domElement.clientHeight, absoluteCoords.x, absoluteCoords.y, 1, 1);
 
     const stateHelper = new WebGLRendererStateHelper(renderer);
+    let readPixelsPromise: Promise<void>;
     try {
       stateHelper.setClearColor(clearColor, clearAlpha);
       this._pipelineExecutor.render(renderPipeline, pickCamera);
-      await readPixelsFromTargetAsync(renderer, renderTarget, 0, 0, 1, 1, pixelBuffer);
+      readPixelsPromise = readPixelsFromTargetAsync(renderer, renderTarget, 0, 0, 1, 1, pixelBuffer);
     } finally {
+      // Note! State is reset before promise is resolved as there might be rendering happening between
+      // "now" and when the result from readPixelsFromTargetAsync is ready
       stateHelper.resetState();
     }
+    await readPixelsPromise;
     return pixelBuffer;
   }
 
