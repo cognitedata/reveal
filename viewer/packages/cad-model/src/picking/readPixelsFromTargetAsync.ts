@@ -99,7 +99,7 @@ export async function readPixelsFromTargetAsync(
   dest: ArrayBufferView
 ): Promise<void> {
   if (renderer.capabilities.isWebGL2) {
-    const gl = renderer.context as WebGL2RenderingContext;
+    const gl = renderer.getContext() as WebGL2RenderingContext;
     const texture = renderTarget.texture;
     return readPixelsAsync(gl, x, y, w, h, texture.format, texture.type, dest);
   }
