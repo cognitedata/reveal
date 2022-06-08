@@ -13,6 +13,7 @@ import {
 } from '@reveal/rendering';
 import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 import { CadNode } from '../wrappers/CadNode';
+import { readPixelsFromTargetAsync } from './readPixelsFromTargetAsync';
 
 type PickingInput = {
   normalizedCoords: {
@@ -189,7 +190,7 @@ export class PickingHandler {
     try {
       stateHelper.setClearColor(clearColor, clearAlpha);
       this._pipelineExecutor.render(renderPipeline, pickCamera);
-      renderer.readRenderTargetPixels(renderTarget, 0, 0, 1, 1, pixelBuffer);
+      await readPixelsFromTargetAsync(renderer, renderTarget, 0, 0, 1, 1, pixelBuffer);
     } finally {
       stateHelper.resetState();
     }
