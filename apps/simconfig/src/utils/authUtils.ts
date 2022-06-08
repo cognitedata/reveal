@@ -59,7 +59,6 @@ export function getAuthenticatedUser({
     }
     return account;
   } catch (ex) {
-    console.error('Failed to get account');
     return null;
   }
 }
