@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import { TopBar } from '@cognite/cogs.js';
+import { PAGES } from 'pages/routers/constants';
 // import { useQuery } from '@apollo/client';
 // import {
 //   findEquipment as Equipments,
 //   EquipmentsQuery,
 //   _ListEquipmentFilter,
 // } from 'queries/useListEquipment';x
-import { PAGES } from 'pages/routers/AppRouter';
 
 import { SidebarIcon } from './Sidebar';
 

@@ -1,5 +1,5 @@
 import { Icon, IconType } from '@cognite/cogs.js';
-import { PAGES } from 'pages/routers/AppRouter';
+import { PAGES } from 'pages/routers/constants';
 import React from 'react';
 import { Link } from 'react-router-dom';
 

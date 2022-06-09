@@ -1,7 +1,5 @@
 # Explorer App
 
-## Requirements to run and test locally
-
 ```
 yarn start
 ```
@@ -9,6 +7,30 @@ yarn start
 Use the cluster `greenfield` and your `cognitedata` account as a guest user in the `fusiondevforcognite.onmicrosoft.com` tenant.
 
 Then select the project `atlas-greenfield`
+
+## How to ingest
+
+### Models
+
+1. Send a POST request to `https://greenfield.cognitedata.com/api/v1/projects/atlas-greenfield/datamodelstorage/definitions/apply` with the models
+
+### Ingesting Data
+
+1. Go to `fusion.cognite.com`
+2. Click on `Manage staged data`
+3. Create a database called `cognite-office-explorer`
+4. Upload information to it through `.csv`
+5. Upload and run the necessarry transfomrations (see [Google Drive] (https://drive.google.com/drive/folders/1bluuJ1TVCq1wuIOnIgQrmwJmN01Ad74n?usp=sharing) or the `#cognite-office-explorer` slack channel for transformations)
+
+Note: Watch (Friyay Demo)[https://drive.google.com/file/d/1BsLVOndR53GAzeV6QmbHTH4viKpKD9xW/view?usp=sharing] for further details on ingestion
+
+### Setting up GraphQL server
+
+1. Download the repo (schema-demo) [https://github.com/cognitedata/schema-demo]
+2. Modify the Bearer token as needed to run `yarn deploy`
+3. Run `yarn deploy`
+
+Note: You can grab a valid Bearer token form a network request on `fusion.cognite.com`
 
 ## Unit tests - Jest
 

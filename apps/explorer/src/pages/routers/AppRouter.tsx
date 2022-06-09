@@ -5,12 +5,7 @@ import { Search } from 'pages/Search';
 import { Profile } from 'pages/Profile';
 import { Logout } from '@cognite/react-container';
 
-export enum PAGES {
-  HOME = '/home',
-  LOGOUT = '/logout',
-  SEARCH = '/search',
-  PROFILE = '/profile',
-}
+import { PAGES } from './constants';
 
 // Refactor https://dev.to/surajjadhav/how-should-we-structure-our-react-code-2-2-kgh
 export const AppRouter = () => {

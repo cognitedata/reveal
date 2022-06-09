@@ -1,24 +1,9 @@
-import {
-  AddModelOptions,
-  CadIntersection,
-  Cognite3DModel,
-  Cognite3DViewer,
-  DefaultNodeAppearance,
-  IndexSet,
-  NumericRange,
-  TreeIndexNodeCollection,
-} from '@cognite/reveal';
+import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
 import React from 'react';
+import { updateStyledNodes, projectModels } from 'utils/map/updateStyledNodes';
 
 import { Popup } from './Popup';
-
-const projectModels: Record<string, AddModelOptions> = {
-  'atlas-greenfield': {
-    modelId: 3838447502587280,
-    revisionId: 8081245322726425,
-  },
-};
 
 interface Props {
   client: CogniteClient;
@@ -38,44 +23,8 @@ const Map: React.FC<Props> = ({ client, project }) => {
     event: { offsetX: any; offsetY: any },
     model: Cognite3DModel
   ) => {
-    const intersection = await viewer
-      .current!.getIntersectionFromPixel(event.offsetX, event.offsetY)
-      .then((res) => res as CadIntersection);
-    if (intersection) {
-      const myNodes = new TreeIndexNodeCollection();
-      const styledNodes = model.styledNodeCollections;
-      // determines if we should assign highlights to nodes
-      let updateStyles = true;
-
-      if (styledNodes[0]) {
-        // if there are styled nodes
-        const styledIndexSet = styledNodes[0].nodeCollection.getIndexSet();
-        const styledNodeTreeIndex = styledIndexSet.rootNode
-          ? styledIndexSet.rootNode.range.from
-          : undefined;
-
-        // reset
-        model.removeAllStyledNodeCollections();
-        if (styledNodeTreeIndex === intersection.treeIndex) {
-          updateStyles = false;
-        }
-      }
-
-      if (updateStyles) {
-        model.assignStyledNodeCollection(
-          myNodes,
-          DefaultNodeAppearance.Highlighted
-        );
-        myNodes.updateSet(
-          new IndexSet(new NumericRange(intersection.treeIndex, 1))
-        );
-        setTreeIndex(intersection.treeIndex);
-      } else {
-        setTreeIndex(undefined);
-      }
-    } else {
-      setTreeIndex(undefined);
-    }
+    const newTreeIndex = await updateStyledNodes(viewer.current, event, model);
+    setTreeIndex(newTreeIndex);
   };
 
   React.useEffect(() => {
