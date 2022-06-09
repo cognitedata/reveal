@@ -1,7 +1,8 @@
 import '__mocks/mockCogniteSDK';
+import { useSearchHistoryListQuery } from 'domain/searchHistory/internal/queries/useSearchHistoryQuery';
+
 import { screen } from '@testing-library/react';
 import { Store } from 'redux';
-import { useSearchHistoryListQuery } from 'services/searchHistory/useSearchHistoryQuery';
 
 import { getEmptyAppliedFilterType } from '__test-utils/fixtures/sidebar';
 import { testRenderer } from '__test-utils/renderer';
@@ -9,9 +10,12 @@ import { getMockedStore } from '__test-utils/store.utils';
 
 import { GlobalSearch } from '../GlobalSearch';
 
-jest.mock('services/searchHistory/useSearchHistoryQuery', () => ({
-  useSearchHistoryListQuery: jest.fn(),
-}));
+jest.mock(
+  'domain/searchHistory/internal/queries/useSearchHistoryQuery',
+  () => ({
+    useSearchHistoryListQuery: jest.fn(),
+  })
+);
 
 jest.mock('domain/savedSearches/internal/hooks/useClearQuery.ts', () => ({
   useSetQuery: jest.fn(),
@@ -19,10 +23,6 @@ jest.mock('domain/savedSearches/internal/hooks/useClearQuery.ts', () => ({
 
 jest.mock('domain/savedSearches/internal/hooks/useSavedSearch.ts', () => ({
   useSavedSearch: jest.fn(),
-}));
-
-jest.mock('services/searchHistory/useSearchHistoryQuery', () => ({
-  useSearchHistoryListQuery: jest.fn(),
 }));
 
 describe('GlobalSearch', () => {

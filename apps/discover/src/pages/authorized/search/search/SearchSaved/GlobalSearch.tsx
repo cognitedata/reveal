@@ -1,6 +1,9 @@
 import { useSavedSearch } from 'domain/savedSearches/internal/hooks';
 import { useSetQuery } from 'domain/savedSearches/internal/hooks/useClearQuery';
-import { SavedSearchContent } from 'domain/savedSearches/types';
+import { useSearchHistoryAppliedFilters } from 'domain/searchHistory/internal/hooks/useSearchHistoryAppliedFilters';
+import { useSearchHistoryOptionData } from 'domain/searchHistory/internal/hooks/useSearchHistoryOptionData';
+import { useUpdateSearchHistoryListQuery } from 'domain/searchHistory/internal/hooks/useUpdateSearchHistoryListQuery';
+import { SearchHistoryOptionType } from 'domain/searchHistory/internal/types';
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,14 +30,6 @@ import { SearchQueryInfoPanel } from '../SearchQueryInfoPanel';
 import { SearchHistory } from './components/SearchHistory';
 import { SEARCH_HISTORY_DISPLAY_COUNT } from './constants';
 import { SearchHistoryContainer, customStyles } from './elements';
-import { useSearchHistoryAppliedFilters } from './hooks/useSearchHistoryAppliedFilters';
-import { useSearchHistoryOptionData } from './hooks/useSearchHistoryOptionData';
-import { useUpdateSearchHistoryListQuery } from './hooks/useUpdateSearchHistoryListQuery';
-
-export interface SearchHistoryOptionType<ValueType>
-  extends OptionType<ValueType> {
-  data: SavedSearchContent;
-}
 
 export const GlobalSearch: React.FC = () => {
   const { t } = useTranslation('Search');

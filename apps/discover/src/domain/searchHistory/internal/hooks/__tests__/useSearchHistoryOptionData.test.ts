@@ -1,12 +1,16 @@
-import { renderHook } from '@testing-library/react-hooks';
-import { getMockSearchHistory } from 'services/searchHistory/__fixtures/searchHistory';
-import { useSearchHistoryListQuery } from 'services/searchHistory/useSearchHistoryQuery';
+import { getMockSearchHistory } from 'domain/searchHistory/service/__fixtures/searchHistory';
 
+import { renderHook } from '@testing-library/react-hooks';
+
+import { useSearchHistoryListQuery } from '../../queries/useSearchHistoryQuery';
 import { useSearchHistoryOptionData } from '../useSearchHistoryOptionData';
 
-jest.mock('services/searchHistory/useSearchHistoryQuery', () => ({
-  useSearchHistoryListQuery: jest.fn(),
-}));
+jest.mock(
+  'domain/searchHistory/internal/queries/useSearchHistoryQuery',
+  () => ({
+    useSearchHistoryListQuery: jest.fn(),
+  })
+);
 
 describe('useSearchHistoryOptionData hook', () => {
   const getSearchHistoryOptionData = () => {

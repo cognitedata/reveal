@@ -7,6 +7,7 @@ import { Flex, Icon, Tooltip } from '@cognite/cogs.js';
 import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 import { NewLine } from 'styles/layout';
 
+import { SearchHistoryFilter } from '../../../../../../domain/searchHistory/internal/types';
 import { FILTER_END_MARKER, NO_FILTERS } from '../constants';
 import {
   Filters,
@@ -15,7 +16,6 @@ import {
   SearchHistoryRow,
   SearchPhrase,
 } from '../elements';
-import { SearchHistoryFilter } from '../types';
 
 interface Props {
   query?: string;

@@ -1,6 +1,6 @@
-import { useQueryClient } from 'react-query';
+import { useSearchHistoryListQuery } from 'domain/searchHistory/internal/queries/useSearchHistoryQuery';
 
-import { useSearchHistoryListQuery } from 'services/searchHistory/useSearchHistoryQuery';
+import { useQueryClient } from 'react-query';
 
 import { SEARCH_HISTORY_KEY } from 'constants/react-query';
 import { useCurrentSavedSearchState } from 'hooks/useCurrentSavedSearchState';

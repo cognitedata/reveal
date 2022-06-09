@@ -3,11 +3,11 @@ import { getMockedSavedSearchWithFilters } from 'domain/savedSearches/service/__
 import { useQueryClient } from 'react-query';
 
 import { renderHook } from '@testing-library/react-hooks';
-import { useSearchHistoryListQuery } from 'services/searchHistory/useSearchHistoryQuery';
 
 import { SEARCH_HISTORY_KEY } from 'constants/react-query';
 import { useCurrentSavedSearchState } from 'hooks/useCurrentSavedSearchState';
 
+import { useSearchHistoryListQuery } from '../../queries/useSearchHistoryQuery';
 import { useUpdateSearchHistoryListQuery } from '../useUpdateSearchHistoryListQuery';
 
 jest.mock('react-query', () => ({
@@ -18,9 +18,12 @@ jest.mock('hooks/useCurrentSavedSearchState', () => ({
   useCurrentSavedSearchState: jest.fn(),
 }));
 
-jest.mock('services/searchHistory/useSearchHistoryQuery', () => ({
-  useSearchHistoryListQuery: jest.fn(),
-}));
+jest.mock(
+  'domain/searchHistory/internal/queries/useSearchHistoryQuery',
+  () => ({
+    useSearchHistoryListQuery: jest.fn(),
+  })
+);
 
 describe('useUpdateSearchHistoryListQuery hook', () => {
   const setQueryData = jest.fn();

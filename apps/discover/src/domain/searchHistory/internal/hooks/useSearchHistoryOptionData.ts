@@ -1,9 +1,10 @@
+import { useSearchHistoryListQuery } from 'domain/searchHistory/internal/queries/useSearchHistoryQuery';
+
 import { useMemo } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
-import { useSearchHistoryListQuery } from 'services/searchHistory/useSearchHistoryQuery';
 
-import { SearchHistoryOptionType } from '../GlobalSearch';
+import { SearchHistoryOptionType } from '../types';
 
 export const useSearchHistoryOptionData =
   (): SearchHistoryOptionType<string>[] => {

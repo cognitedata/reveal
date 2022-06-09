@@ -4,8 +4,8 @@ import { setupServer } from 'msw/node';
 
 import { testWrapper } from '__test-utils/renderer';
 
-import { getMockSearchHistory } from '../__fixtures/searchHistory';
-import { getMockSearchHistoryGet } from '../__mocks/getMockSearchHistoryGet';
+import { getMockSearchHistory } from '../../../service/__fixtures/searchHistory';
+import { getMockSearchHistoryGet } from '../../../service/__mocks/getMockSearchHistoryGet';
 import { useSearchHistoryListQuery } from '../useSearchHistoryQuery';
 
 const networkMocks = setupServer(getMockSearchHistoryGet());

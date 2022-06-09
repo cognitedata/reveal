@@ -1,5 +1,6 @@
+import { getMockSearchHistory } from 'domain/searchHistory/service/__fixtures/searchHistory';
+
 import { rest } from 'msw';
-import { getMockSearchHistory } from 'services/searchHistory/__fixtures/searchHistory';
 import { TEST_PROJECT } from 'setupTests';
 
 import { SearchHistoryResponse } from '@cognite/discover-api-types';
