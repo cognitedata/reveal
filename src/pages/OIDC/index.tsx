@@ -10,6 +10,7 @@ import { useRouteMatch } from 'react-router';
 import { useAuthConfiguration } from 'hooks';
 import { StyledHelpIcon } from 'pages/components/CustomInfo';
 import styled from 'styled-components';
+import { TranslationKeys, useTranslation } from 'common/i18n';
 
 const formItemLayout = {
   labelCol: {
@@ -22,17 +23,19 @@ const formItemLayout = {
   },
 };
 
-const urlRules = (required = true) => [
+const urlRules = (_t: (key: TranslationKeys) => string, required = true) => [
   {
     required,
-    message: 'Please enter a valid url!',
+    message: _t('valid-url-info'),
   },
   () => ({
     validator(_: any, value: string) {
       if (!required && !value) {
         return Promise.resolve();
       }
-      return isValidURL(value);
+
+      const invalidUrlErrMessage = _t('valid-url-error');
+      return isValidURL(value, invalidUrlErrMessage);
     },
   }),
 ];
@@ -45,6 +48,7 @@ const noLabelItemLayout = {
 };
 
 export default function OIDCConfigContainer() {
+  const { t } = useTranslation();
   const cache = useQueryClient();
   const sdk = useSDK();
   const match = useRouteMatch<{ tenant: string }>('/:tenant');
@@ -60,19 +64,20 @@ export default function OIDCConfigContainer() {
       onMutate() {
         notification.info({
           key: 'oidc-settings',
-          message: 'Updating settings',
+          message: t('oidc-settings-update'),
         });
       },
       onSuccess() {
         notification.success({
           key: 'oidc-settings',
-          message: 'Settings updated',
+          message: t('oidc-settings-update-success'),
         });
       },
       onError() {
         notification.error({
           key: 'oidc-settings',
-          message: 'An error occurred when updating settings',
+          message: t('oidc-settings-update-fail'),
+          description: t('oidc-settings-update-error'),
         });
       },
       onSettled() {
@@ -146,38 +151,52 @@ export default function OIDCConfigContainer() {
         )?.isGroupCallbackEnabled,
       }}
     >
-      <Form.Item name="isOidcEnabled" label="Enabled" valuePropName="checked">
+      <Form.Item
+        name="isOidcEnabled"
+        label={t('enabled')}
+        valuePropName="checked"
+      >
         <Checkbox disabled={updating} />
       </Form.Item>
 
-      <Form.Item label="JWKS URL" name="jwksUrl" hasFeedback rules={urlRules()}>
+      <Form.Item
+        label={t('jwks-url')}
+        name="jwksUrl"
+        hasFeedback
+        rules={urlRules(t)}
+      >
         <Input disabled={updating} />
       </Form.Item>
 
       <Form.Item
-        label="Token URL"
+        label={t('token-url')}
         name="tokenUrl"
         required={false}
         hasFeedback
-        rules={urlRules(false)}
+        rules={urlRules(t, false)}
       >
-        <Input disabled={updating} />
-      </Form.Item>
-
-      <Form.Item label="Issuer" name="issuer" hasFeedback rules={urlRules()}>
         <Input disabled={updating} />
       </Form.Item>
 
       <Form.Item
-        label="Audience"
-        name="audience"
+        label={t('issuer')}
+        name="issuer"
         hasFeedback
-        rules={urlRules()}
+        rules={urlRules(t)}
       >
         <Input disabled={updating} />
       </Form.Item>
 
-      <Form.Item label="Access claims" name="accessClaims" required>
+      <Form.Item
+        label={t('audience')}
+        name="audience"
+        hasFeedback
+        rules={urlRules(t)}
+      >
+        <Input disabled={updating} />
+      </Form.Item>
+
+      <Form.Item label={t('access-claims')} name="accessClaims" required>
         <Select
           getPopupContainer={getContainer}
           mode="tags"
@@ -186,7 +205,7 @@ export default function OIDCConfigContainer() {
         />
       </Form.Item>
 
-      <Form.Item label="Scope claims" name="scopeClaims">
+      <Form.Item label={t('scope-claims')} name="scopeClaims">
         <Select
           mode="tags"
           tokenSeparators={[',', ' ']}
@@ -195,7 +214,7 @@ export default function OIDCConfigContainer() {
         />
       </Form.Item>
 
-      <Form.Item label="Log claims" name="logClaims">
+      <Form.Item label={t('log-claims')} name="logClaims">
         <Select
           mode="tags"
           tokenSeparators={[',', ' ']}
@@ -204,18 +223,15 @@ export default function OIDCConfigContainer() {
         />
       </Form.Item>
 
-      <Form.Item label="Permitted time skew (ms)" name="skewMs">
+      <Form.Item label={t('permitted-time-skew')} name="skewMs">
         <InputNumber min={0} disabled={updating} />
       </Form.Item>
 
       <Form.Item
         label={
           <StyledFormItemLabel>
-            Group callback is enabled
-            <Tooltip
-              content="A group callback occurs when a user has too many groups attached. This property indicates whether the group callback functionality should be supported for this project. This is only supported for AAD hosted IdPs."
-              wrapped
-            >
+            {t('group-callback-enabled')}
+            <Tooltip content={t('group-callback-enabled-info')} wrapped>
               <StyledHelpIcon size={20} type="HelpFilled" />
             </Tooltip>
           </StyledFormItemLabel>
@@ -228,7 +244,7 @@ export default function OIDCConfigContainer() {
 
       <Form.Item {...noLabelItemLayout}>
         <Button type="primary" htmlType="submit" disabled={updating}>
-          Save configuration
+          {t('save-configuration')}
         </Button>
       </Form.Item>
     </Form>
@@ -240,12 +256,12 @@ const StyledFormItemLabel = styled.div`
   display: flex;
 `;
 
-function isValidURL(url: string) {
+function isValidURL(url: string, errMessage: string) {
   try {
     // eslint-disable-next-line no-new
     new URL(url);
     return Promise.resolve();
   } catch {
-    return Promise.reject(new Error('Invalid URL'));
+    return Promise.reject(new Error(errMessage));
   }
 }

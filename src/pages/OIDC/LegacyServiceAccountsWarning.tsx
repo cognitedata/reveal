@@ -4,10 +4,12 @@ import CustomInfo from 'pages/components/CustomInfo';
 import { ServiceAccount } from '@cognite/sdk';
 import { getProject } from '@cognite/cdf-utilities';
 import { usePermissions, useDeleteServiceAccounts } from 'hooks';
+import { useTranslation } from 'common/i18n';
 
 const LegacyServiceAccountsWarning = (props: {
   accounts: ServiceAccount[];
 }) => {
+  const { t } = useTranslation();
   const { accounts } = props;
   const { data: writeOk } = usePermissions('projectsAcl', 'UPDATE');
 
@@ -27,13 +29,13 @@ const LegacyServiceAccountsWarning = (props: {
   return (
     <CustomInfo
       type="neutral"
-      alertTitle="Clean up service account"
+      alertTitle={t('legacy-service-account-cleanup')}
       alertMessage={
         <>
           <p>
-            This project no longer support service accounts. You have{' '}
-            {accounts.length} service accounts that be removed as they are no
-            longer supported with OIDC and can be safely reomoved.
+            {t('legacy-service-account-cleanup-info', {
+              accounts: accounts.length,
+            })}
           </p>
           {accounts.length <= 3 ? (
             <StyledList>
@@ -51,19 +53,19 @@ const LegacyServiceAccountsWarning = (props: {
                     {account.name}
                   </StyledListItem>
                 ))}
-                <StyledListItem>{`+${
-                  accounts.length - 2
-                } more`}</StyledListItem>
+                <StyledListItem>
+                  {t('count-view-more', { count: accounts.length - 2 })}
+                </StyledListItem>
               </StyledList>
             </>
           )}
         </>
       }
-      alertBtnLabel={'Delete service accounts'}
+      alertBtnLabel={t('legacy-service-account-delete')}
       alertBtnDisabled={!writeOk}
       helpEnabled={false}
-      confirmTitle={'Delete service accounts'}
-      confirmMessage={'delete service accounts'}
+      confirmTitle={t('legacy-service-account-delete')}
+      confirmMessage={t('legacy-service-account-delete').toLocaleLowerCase()}
       onClickConfirm={handleSubmit}
     />
   );

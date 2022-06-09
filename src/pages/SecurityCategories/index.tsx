@@ -6,8 +6,10 @@ import { Col, Form, Input, Modal, Row, Table, notification } from 'antd';
 import { getContainer } from 'utils/utils';
 import columns from './columns';
 import { stringContains } from '../Groups/utils';
+import { useTranslation } from 'common/i18n';
 
 export default function SecurityCategories() {
+  const { t } = useTranslation();
   const sdk = useSDK();
   const client = useQueryClient();
   const { data, isFetched } = useQuery(
@@ -21,17 +23,17 @@ export default function SecurityCategories() {
       onSuccess() {
         notification.success({
           key: 'category-creation',
-          message: 'Category created',
+          message: t('create-category-success'),
         });
         client.invalidateQueries(['security-categories']);
       },
       onError(error) {
         notification.error({
           key: 'category-creation',
-          message: 'Category not created!',
+          message: t('create-category-fail'),
           description: (
             <>
-              <p>An error occured when creating the security category</p>
+              <p>{t('create-category-error')}</p>
               <pre>{JSON.stringify(error, null, 2)}</pre>
             </>
           ),
@@ -49,9 +51,9 @@ export default function SecurityCategories() {
       {showModal && (
         <Modal
           visible
-          cancelText="Cancel"
-          title="Create security category"
-          okText="Create"
+          cancelText={t('cancel')}
+          title={t('create-security-category')}
+          okText={t('create')}
           okButtonProps={{ disabled: !newName }}
           onOk={async () => {
             await createCategory(newName);
@@ -64,7 +66,7 @@ export default function SecurityCategories() {
           }}
         >
           <Form layout="horizontal">
-            <Form.Item name="name" label="Name">
+            <Form.Item name="name" label={t('name')}>
               <Input
                 onChange={(e) => setNewName(e.target.value)}
                 value={newName}
@@ -76,7 +78,7 @@ export default function SecurityCategories() {
       <Row justify="space-between">
         <Col>
           <Input.Search
-            placeholder="Filter security categories by name/ID"
+            placeholder={t('create-category-filter-placeholder')}
             onChange={(e) => setSearchValue(e.target.value)}
             value={searchValue}
             allowClear
@@ -88,7 +90,7 @@ export default function SecurityCategories() {
         </Col>
         <Col>
           <Button type="primary" onClick={() => setShowModal(true)}>
-            Create new security category
+            {t('create-new-security-category')}
           </Button>
         </Col>
       </Row>

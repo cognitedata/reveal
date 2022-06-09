@@ -5,11 +5,13 @@ import { Radio, RadioChangeEvent } from 'antd';
 
 import { DataSet } from '@cognite/sdk';
 import { getScopeLabel, getCapabilityScopes } from './utils';
+import { RESOURCE_SELECTOR_LIMIT } from 'utils/constants';
 
 import SecurityCategoriesSelector from './SecurityCategoriesSelector';
 import PartitionSelector from './PartitionSelector';
 import ResourcesSelector from './ResourcesSelector';
 import RawSelector from './RawSelector';
+import { useTranslation } from 'common/i18n';
 
 const SelectorContainer = styled.div`
   margin-top: 10px;
@@ -21,6 +23,7 @@ type Props = {
   onChange: (_: any) => void;
 };
 const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
+  const { t } = useTranslation();
   const scopes = getCapabilityScopes(capabilityKey);
 
   const selectedScope = Object.keys(value || {})?.[0] || 'all';
@@ -154,7 +157,7 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
             value={selectedResources}
             onChange={onChangeResource}
             useSearchApi={false}
-            limit={1000}
+            limit={RESOURCE_SELECTOR_LIMIT}
             itemFilter={(ds: DataSet) => ds.metadata?.archived !== 'true'}
             downloadAll
           />
@@ -193,7 +196,7 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
             value={selectedResources}
             onChange={onChangeResource}
             useSearchApi={false}
-            limit={1000}
+            limit={RESOURCE_SELECTOR_LIMIT}
             downloadAll
           />
         );
@@ -207,7 +210,7 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
                 value={selectedResources}
                 onChange={onChangeResource}
                 useSearchApi={false}
-                limit={1000}
+                limit={RESOURCE_SELECTOR_LIMIT}
                 downloadAll
               />
             );
@@ -233,7 +236,7 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
                 value={selectedResources}
                 onChange={onChangeResource}
                 useSearchApi={false}
-                limit={1000}
+                limit={RESOURCE_SELECTOR_LIMIT}
                 itemFilter={(ds: DataSet) => ds.metadata?.archived !== 'true'}
                 downloadAll
               />
@@ -248,7 +251,7 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
       <Radio.Group value={selectedScope} onChange={(e) => onSelectScope(e)}>
         {scopes.map((scope) => (
           <Radio value={scope} key={scope}>
-            {getScopeLabel(scope, capabilityKey)}
+            {getScopeLabel(scope, capabilityKey, t)}
           </Radio>
         ))}
       </Radio.Group>

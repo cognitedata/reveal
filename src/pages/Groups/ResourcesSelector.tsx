@@ -6,6 +6,7 @@ import {
   useSearch,
 } from '@cognite/sdk-react-query-hooks';
 import { stringContains } from './utils';
+import { useTranslation } from 'common/i18n';
 
 const { Option } = Select;
 
@@ -29,6 +30,7 @@ export default function ResourcesSelector({
   itemFilter = () => true,
   downloadAll = false,
 }: Props) {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   type R = { name: string; id: number };
 
@@ -73,8 +75,8 @@ export default function ResourcesSelector({
     <Select
       mode="tags"
       value={value?.map((i) => `${i}`)}
-      placeholder="Search and select resources"
-      notFoundContent={fetching ? <Spin /> : 'Not found'}
+      placeholder={t('resources-selector-placeholder')}
+      notFoundContent={fetching ? <Spin /> : t('not-found')}
       onSearch={handleSearch}
       defaultValue={[]}
       onChange={(v) => {

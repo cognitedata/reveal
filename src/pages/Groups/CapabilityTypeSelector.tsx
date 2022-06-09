@@ -10,6 +10,7 @@ import {
   getCapabilityFormattedName,
   getCapabilityDescription,
 } from './utils';
+import { TranslationKeys, useTranslation } from 'common/i18n';
 
 declare module 'antd/lib/select' {
   export interface OptionProps {
@@ -46,8 +47,11 @@ const CapabilityDescription = styled.div`
 
 const CapabilityTypeSelector = (props: CapabilityTypeSelectorProps) => {
   const { value, onChange } = props;
+  const { t } = useTranslation();
 
-  const capabilityTypeGroups = getCapabilityTypeGroups();
+  const capabilityTypeGroups = getCapabilityTypeGroups(
+    t as (key: TranslationKeys) => string
+  );
 
   const { OptGroup, Option } = Select;
 
@@ -56,15 +60,24 @@ const CapabilityTypeSelector = (props: CapabilityTypeSelectorProps) => {
       <OptGroup key={group.name} label={group.name}>
         {group.items.map((item) => {
           const aclType = getAclType(item);
-          const formattedName = getCapabilityFormattedName(item);
-          const description = getCapabilityDescription(item);
+          const { capability, requireTranslate } =
+            getCapabilityFormattedName(item);
+          const capabilityDisplayName: string = requireTranslate
+            ? t(capability as TranslationKeys)
+            : capability;
+          const capabilityDesc = getCapabilityDescription(item, t);
+
           return (
-            <Option key={formattedName} value={aclType} label={formattedName}>
+            <Option
+              key={capabilityDisplayName}
+              value={aclType}
+              label={capabilityDisplayName}
+            >
               <Capability>
                 <CapabilityName>
-                  <CapabilityLabel>{formattedName}</CapabilityLabel>
+                  <CapabilityLabel>{capabilityDisplayName}</CapabilityLabel>
                 </CapabilityName>
-                <CapabilityDescription>{description}</CapabilityDescription>
+                <CapabilityDescription>{capabilityDesc}</CapabilityDescription>
               </Capability>
             </Option>
           );

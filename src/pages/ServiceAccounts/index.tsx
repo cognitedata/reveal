@@ -20,10 +20,12 @@ import { useGroups, usePermissions, useRefreshToken } from 'hooks';
 import LegacyLoginFlowWarning from 'pages/IDP/LegacyLoginFlowWarning';
 import columns from './columns';
 import { stringContains } from '../Groups/utils';
+import { useTranslation } from 'common/i18n';
 
 const { Option } = Select;
 
 export default function ServiceAccounts() {
+  const { t } = useTranslation();
   const sdk = useSDK();
   const client = useQueryClient();
   const { refreshToken } = useRefreshToken();
@@ -43,13 +45,13 @@ export default function ServiceAccounts() {
       onMutate() {
         notification.info({
           key: 'service-account-create',
-          message: 'Creating service account',
+          message: t('service-account-create-progress'),
         });
       },
       onSuccess() {
         notification.success({
           key: 'service-account-create',
-          message: 'Service account created',
+          message: t('service-account-create-success'),
         });
         client.invalidateQueries(['service-accounts']);
         refreshToken();
@@ -57,10 +59,10 @@ export default function ServiceAccounts() {
       onError(error) {
         notification.error({
           key: 'service-account-create',
-          message: 'Service account not created!',
+          message: t('service-account-create-fail'),
           description: (
             <>
-              <p>An error occured when creating the service account</p>
+              <p>{t('service-account-create-error')}</p>
               <pre>{JSON.stringify(error, null, 2)}</pre>
             </>
           ),
@@ -75,9 +77,9 @@ export default function ServiceAccounts() {
       {showNewModal && (
         <Modal
           visible
-          cancelText="Cancel"
-          title="Create service account"
-          okText="Create"
+          cancelText={t('cancel')}
+          title={t('service-account-create')}
+          okText={t('create')}
           okButtonProps={{ disabled: !newName }}
           onOk={async () => {
             await create({ name: newName, groups: newGroups });
@@ -96,7 +98,7 @@ export default function ServiceAccounts() {
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 20 }}
           >
-            <Form.Item name="name" label="Name">
+            <Form.Item name="name" label={t('name')}>
               <Input
                 onChange={(e) => setNewName(e.target.value)}
                 value={newName}
@@ -124,7 +126,7 @@ export default function ServiceAccounts() {
       <Row justify="space-between">
         <Col>
           <Input.Search
-            placeholder="Filter by name, ID, group name or capability"
+            placeholder={t('service-account-create-filter-placeholder')}
             onChange={(e) => setSearchValue(e.target.value)}
             value={searchValue}
             allowClear
@@ -140,7 +142,7 @@ export default function ServiceAccounts() {
             disabled={!createPermission}
             onClick={() => setShowModal(true)}
           >
-            Create new service account
+            {t('service-account-create-new')}
           </Button>
         </Col>
       </Row>

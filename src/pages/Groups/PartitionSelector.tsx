@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Select from 'antd/lib/select';
+import { useTranslation } from 'common/i18n';
 
 interface PartitionSelectorProps {
   value: number[];
@@ -11,11 +12,13 @@ const PartitionSelector = ({
   value = [],
   onChange = () => {},
 }: PartitionSelectorProps) => {
+  const { t } = useTranslation();
+
   return (
     <Select
       mode="tags"
       value={value}
-      placeholder="Type the partitions' ids"
+      placeholder={t('partition-select-placeholder')}
       onChange={onChange}
     />
   );

@@ -17,6 +17,7 @@ export function validateDomain(
 }
 
 export function validateDomainInput(
+  _t: any,
   domains: string[],
   wildcardSupported: boolean = false
 ): Value<string[]> {
@@ -27,7 +28,9 @@ export function validateDomainInput(
     return {
       value: domains,
       validateStatus: 'error',
-      errorMsg: `Invalid domains: ${invalidDomains.join(', ')}`,
+      errorMsg: _t('error-invalid-domain', {
+        domains: invalidDomains.join(', '),
+      }),
       failure: true,
     };
   }
@@ -36,8 +39,7 @@ export function validateDomainInput(
     return {
       value: domains,
       validateStatus: 'warning',
-      errorMsg:
-        'fusion.cognite.com is not present, which may cause Fusion to become inaccessible for the project',
+      errorMsg: _t('error-invalid-domain-desc'),
       failure: false,
     };
   }

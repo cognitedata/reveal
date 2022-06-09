@@ -17,6 +17,8 @@ import ScopesSelector from './ScopesSelector';
 import ActionsSelector from './ActionsSelector';
 import CapabilityTypeSelector from './CapabilityTypeSelector';
 
+import { TranslationKeys, useTranslation } from 'common/i18n';
+
 interface SingleCapabilityEditorProps {
   visible: boolean;
   capability?: SingleCogniteCapability | null;
@@ -38,22 +40,28 @@ const initialFormValue = <T extends {}>(value: T): FormValue<T> => ({
   errorMessage: '',
 });
 
-const validateCapabilityType = (value: string): FormValue<string> => {
+const validateCapabilityType = (
+  value: string,
+  validationErrMessage: string
+): FormValue<string> => {
   let validateStatus: ValidateStatus = 'success';
   let errorMessage = '';
   if (!value) {
     validateStatus = 'error';
-    errorMessage = 'Select a capability type';
+    errorMessage = validationErrMessage;
   }
   return { value, validateStatus, errorMessage };
 };
 
-const validateActions = (value: string[]): FormValue<string[]> => {
+const validateActions = (
+  value: string[],
+  validationErrMessage: string
+): FormValue<string[]> => {
   let validateStatus: ValidateStatus = 'success';
   let errorMessage = '';
   if (value.length === 0) {
     validateStatus = 'error';
-    errorMessage = 'Select at least one action';
+    errorMessage = validationErrMessage;
   }
   return {
     value,
@@ -62,19 +70,23 @@ const validateActions = (value: string[]): FormValue<string[]> => {
   };
 };
 
-const validateScope = (value: any, capability: string): FormValue<object> => {
+const validateScope = (
+  value: any,
+  capability: string,
+  _t: (key: TranslationKeys) => string
+): FormValue<object> => {
   if (value.assetIdScope && value.assetIdScope.subtreeIds.length === 0) {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one asset',
+      errorMessage: _t('single-capability-validate-asset'),
     };
   }
   if (value.assetRootIdScope && value.assetRootIdScope.rootIds.length === 0) {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one root asset',
+      errorMessage: _t('single-capability-validate-root-asset'),
     };
   }
   if (
@@ -85,7 +97,7 @@ const validateScope = (value: any, capability: string): FormValue<object> => {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one time series',
+      errorMessage: _t('single-capability-validate-time-series'),
     };
   }
   if (
@@ -96,7 +108,7 @@ const validateScope = (value: any, capability: string): FormValue<object> => {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one security category',
+      errorMessage: _t('single-capability-validate-security-category'),
     };
   }
   if (
@@ -107,7 +119,7 @@ const validateScope = (value: any, capability: string): FormValue<object> => {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one extraction pipeline',
+      errorMessage: _t('single-capability-validate-extraction-pipeline'),
     };
   }
   if (
@@ -118,14 +130,14 @@ const validateScope = (value: any, capability: string): FormValue<object> => {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one data set',
+      errorMessage: _t('single-capability-validate-dataset'),
     };
   }
   if (value.datasetScope && value.datasetScope.ids.length === 0) {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one data set',
+      errorMessage: _t('single-capability-validate-dataset'),
     };
   }
   if (
@@ -135,21 +147,21 @@ const validateScope = (value: any, capability: string): FormValue<object> => {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one extraction pipeline',
+      errorMessage: _t('single-capability-validate-extraction-pipeline'),
     };
   }
   if (value.partition && value.partition.partitionIds.length === 0) {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one partition',
+      errorMessage: _t('single-capability-validate-partition'),
     };
   }
   if (value.tableScope && isEmpty(value.tableScope)) {
     return {
       value,
       validateStatus: 'error',
-      errorMessage: 'Select at least one table',
+      errorMessage: _t('single-capability-validate-table'),
     };
   }
   return {
@@ -164,6 +176,7 @@ const validateScope = (value: any, capability: string): FormValue<object> => {
 */
 const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
   const { visible, capability, onOk, onCancel } = props;
+  const { t } = useTranslation();
 
   const data = capability ? Object.values(capability)[0] : {};
 
@@ -178,7 +191,8 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
   );
 
   const handleCapabilityTypeChange = (value: string) => {
-    const validationResult = validateCapabilityType(value);
+    const errMessage = t('single-capability-validate-capability');
+    const validationResult = validateCapabilityType(value, errMessage);
     setCapabilityType(validationResult);
     clearActions();
     setDefaultScope(value);
@@ -186,12 +200,13 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
 
   const handleActionsChange = (value: CheckboxValueType[]) => {
     const values = value as string[];
-    const validationResult = validateActions(values);
+    const errMessage = t('single-capability-validate-action');
+    const validationResult = validateActions(values, errMessage);
     setActions(validationResult);
   };
 
   const handleScopeChange = (value: object) => {
-    const validationResult = validateScope(value, capabilityType.value);
+    const validationResult = validateScope(value, capabilityType.value, t);
     setScope(validationResult);
   };
 
@@ -242,7 +257,7 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
     clearStateAndExit();
   };
 
-  const title = capability ? 'Edit capability' : 'Add capability';
+  const title = capability ? t('capability-edit') : t('capability-add');
 
   const disabledStyle = { opacity: 0.5 };
 
@@ -259,16 +274,15 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
     if (resourcesWithDataSets.includes(capabilityType.value)) {
       return (
         <p>
-          The scope defines what data the capability actions apply to. We
-          recommend that you use data sets.{' '}
+          {t('single-capability-scope-desc')}{' '}
           <a
             href="https://docs.cognite.com/cdf/data_governance/concepts/datasets/"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Learn more{' '}
+            {t('learn-more')}{' '}
           </a>
-          about data sets.
+          {t('single-capability-about-dataset')}
         </p>
       );
     }
@@ -287,7 +301,7 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
         <div>
           <Form.Item
             required
-            label="Capability type"
+            label={t('capability-type')}
             validateStatus={capabilityType.validateStatus}
             help={capabilityType.errorMessage}
           >
@@ -299,11 +313,11 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
         </div>
         <Divider />
         <div style={actionsDisabled ? disabledStyle : {}}>
-          <Form.Item label="Actions" required>
+          <Form.Item label={t('actions')} required>
             {actionsDisabled ? (
               <div>
-                <Icon type="Info" /> The possible actions vary according to the
-                capability type. First select a capability type above.
+                <Icon type="Info" />
+                {t('single-capability-action-info')}
               </div>
             ) : (
               <ActionsSelector
@@ -317,11 +331,11 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
         <Divider />
         <div style={actionsDisabled ? disabledStyle : {}}>
           {showDataSetsRecommendation()}
-          <Form.Item label="Scope" required>
+          <Form.Item label={t('scope')} required>
             {scopeDisabled ? (
               <div>
-                <Icon type="Info" /> The scope options vary according to the
-                capability type. First select a capability type above.
+                <Icon type="Info" />
+                {t('single-capability-scope-info')}
               </div>
             ) : (
               <ScopesSelector
@@ -342,7 +356,7 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
           }
           onClick={() => addCapability()}
         >
-          Save
+          {t('save')}
         </Button>
       </Form>
     </Drawer>

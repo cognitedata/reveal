@@ -5,10 +5,13 @@ import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 
 import LegacyLoginFlowWarning from 'pages/IDP/LegacyLoginFlowWarning';
-import columns from './columns';
+import { useAPIKeyTableColumns } from './columns';
 import { stringContains } from '../Groups/utils';
+import { useTranslation } from 'common/i18n';
 
 export default function APIKeys() {
+  const { t } = useTranslation();
+  const { columns } = useAPIKeyTableColumns();
   const sdk = useSDK();
 
   const [searchValue, setSearchValue] = useState('');
@@ -31,7 +34,7 @@ export default function APIKeys() {
       <Row justify="space-between">
         <Col>
           <Input.Search
-            placeholder="Filter by service account or ID"
+            placeholder={t('filter-by-service-account-or-id')}
             onChange={(e) => setSearchValue(e.target.value)}
             value={searchValue}
             allowClear
@@ -46,7 +49,7 @@ export default function APIKeys() {
             checked={showDeleted}
             onChange={(e) => setShowDeleted(e.target.checked)}
           >
-            Show deleted keys
+            {t('display-deleted-key')}
           </Checkbox>
         </Col>
       </Row>

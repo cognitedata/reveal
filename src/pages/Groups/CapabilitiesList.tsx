@@ -3,6 +3,7 @@ import { CogniteCapability, SingleCogniteCapability } from '@cognite/sdk';
 import { Button } from '@cognite/cogs.js';
 import List from 'antd/lib/list';
 import CapabilityTag from './CapabilityTag';
+import { useTranslation } from 'common/i18n';
 
 interface CapabilitiesTableProps {
   capabilities: CogniteCapability;
@@ -10,21 +11,20 @@ interface CapabilitiesTableProps {
   onRemove?(index: number): void;
 }
 
-export const EMPTY_MESSAGE = 'No capability was added yet';
-
 export default function CapabilitiesList(props: CapabilitiesTableProps) {
   const { capabilities, onEdit, onRemove } = props;
+  const { t } = useTranslation();
 
   const renderItem = (capability: SingleCogniteCapability, index: number) => {
     const removeButton = (
       <Button type="link" onClick={() => onRemove && onRemove(index)}>
-        Remove
+        {t('remove')}
       </Button>
     );
 
     const editButton = (
       <Button type="link" onClick={() => onEdit && onEdit(index)}>
-        Edit
+        {t('edit')}
       </Button>
     );
 
@@ -47,7 +47,7 @@ export default function CapabilitiesList(props: CapabilitiesTableProps) {
       renderItem={renderItem}
       bordered
       size="small"
-      locale={{ emptyText: EMPTY_MESSAGE }}
+      locale={{ emptyText: t('capability-not-added') }}
     />
   );
 }
