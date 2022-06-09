@@ -1,0 +1,31 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "local>cognitedata/renovate-config",
+    ":semanticCommits"
+  ],
+  "github-actions": {
+    "enabled": false
+  },
+  "rangeStrategy": "replace",
+  "prConcurrentLimit": 10,
+  "stabilityDays": 30,
+  "labels": [
+    "dependencies",
+    "auto-merge"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "matchPackagePatterns": "^@visx",
+      "groupName": ["visx monorepo"]
+    },
+    {
+      "matchPackagePatterns": "^eslint",
+      "groupName": ["eslint"]
+    }
+  ]
+}
