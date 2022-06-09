@@ -93,7 +93,14 @@ export class PointCloudNode extends THREE.Group {
   set pointShape(value: PotreePointShape) {
     this._potreeNode.pointShape = value;
   }
-
+  
+  /**
+   * GPU-based picking allowing to get point data based on ray directing from the camera.
+   * @param renderer Renderer object used for Reveal rendereing.
+   * @param camera Camera object used for Reveal rendering.
+   * @param ray Ray representing the direction for picking.
+   * @returns Picked point data. 
+   */
   pick(renderer: THREE.WebGLRenderer, camera: THREE.Camera, ray: THREE.Ray): PickPoint | null {
     return this._potreeNode.pick(renderer, camera, ray);
   }
