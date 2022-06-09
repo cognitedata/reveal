@@ -12,7 +12,6 @@ import {
   VisionAnnotationDataType,
 } from 'src/modules/Common/types/annotation';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
-import { InternalId } from '@cognite/sdk';
 import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
@@ -63,9 +62,9 @@ const annotationSlice = createSlice({
 
     builder.addCase(
       DeleteAnnotations.fulfilled,
-      (state: AnnotationState, { payload }: { payload: InternalId[] }) => {
-        payload.forEach((payloadId) => {
-          const { id: annotationId } = payloadId;
+      (state: AnnotationState, { meta: { arg } }) => {
+        arg.forEach((fileId) => {
+          const { id: annotationId } = fileId;
           const annotation = state.annotations.byId[annotationId];
 
           if (annotation) {

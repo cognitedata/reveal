@@ -17,13 +17,11 @@ import { cognitePlaygroundClient } from 'src/api/annotation/CognitePlaygroundCli
  */
 
 export const DeleteAnnotations = createAsyncThunk<
-  InternalId[],
+  void,
   InternalId[],
   ThunkConfig
 >('DeleteAnnotations', async (annotationIds: InternalId[]) => {
   if (annotationIds && annotationIds.length) {
     await cognitePlaygroundClient.annotations.delete(annotationIds);
-    return annotationIds;
   }
-  return []; // TODO: should this really return input ids?
 });
