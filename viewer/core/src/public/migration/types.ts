@@ -208,6 +208,7 @@ export { CadModelBudget, PointCloudBudget };
  */
 export interface IntersectionFromPixelOptions {
   /**
+   * @deprecated
    * Threshold (in meters) for how close a point must be an intersection
    * ray for it to be considered an intersection for point clouds. Defaults
    * to 0.05.
