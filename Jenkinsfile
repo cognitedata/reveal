@@ -106,7 +106,7 @@ def pods = { body ->
                 fakeIdpEnvVars: fakeIdpEnvVars,
               ) {
                 properties([
-                  buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '100'))
+                  
                 ])
 
                 node(POD_LABEL) {
