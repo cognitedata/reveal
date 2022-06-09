@@ -318,7 +318,7 @@ export const selectNonRejectedVisionReviewAnnotationsForFile = createSelector(
     return allVisibleAnnotations.filter(
       (ann) =>
         ann.show &&
-        !!isImageClassificationData(ann.annotation) && // todo: remove this once imageClassification annotations are supported
+        !isImageClassificationData(ann.annotation) && // todo: remove this once imageClassification annotations are supported
         ann.annotation.status !== Status.Rejected
     );
   }

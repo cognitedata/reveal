@@ -10,6 +10,7 @@ import { from, lastValueFrom } from 'rxjs';
 import { map, mergeMap, reduce } from 'rxjs/operators';
 import { convertCDFAnnotationToVisionAnnotations } from 'src/api/annotation/converters';
 import { cognitePlaygroundClient } from 'src/api/annotation/CognitePlaygroundClient';
+import { ListResponse } from '@cognite/sdk';
 
 export const RetrieveAnnotations = createAsyncThunk<
   VisionAnnotation<VisionAnnotationDataType>[],
@@ -40,12 +41,13 @@ export const RetrieveAnnotations = createAsyncThunk<
 
   let visionAnnotations: VisionAnnotation<VisionAnnotationDataType>[] = [];
   if (requests.length) {
-    const annotationsPerBatch = Promise.all(requests);
-    const responses = from(annotationsPerBatch).pipe(
+    const responses = from(requests).pipe(
       mergeMap((request) => from(request)),
-      map((annotations) =>
-        convertCDFAnnotationToVisionAnnotations(annotations.items)
-      ),
+      map((annotations) => {
+        return convertCDFAnnotationToVisionAnnotations(
+          (annotations as ListResponse<any>).items
+        ) as VisionAnnotation<VisionAnnotationDataType>[];
+      }),
       reduce((allAnnotations, annotationsPerFile) => {
         return allAnnotations.concat(annotationsPerFile);
       })
