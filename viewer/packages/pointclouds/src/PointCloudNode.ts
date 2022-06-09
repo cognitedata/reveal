@@ -10,7 +10,7 @@ import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { WellKnownAsprsPointClassCodes } from './types';
 import { createPointClassKey } from './createPointClassKey';
 
-import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from './potree-three-loader';
+import { PickPoint, PotreePointColorType, PotreePointShape, PotreePointSizeType } from './potree-three-loader';
 
 const PotreeDefaultPointClass = 'DEFAULT';
 
@@ -94,6 +94,9 @@ export class PointCloudNode extends THREE.Group {
     this._potreeNode.pointShape = value;
   }
 
+  pick(renderer: THREE.WebGLRenderer, camera: THREE.Camera, ray: THREE.Ray): PickPoint | null {
+    return this._potreeNode.pick(renderer, camera, ray);
+  }
   /**
    * Sets a visible filter on points of a given class.
    * @param pointClass ASPRS classification class code. Either one of the well known

@@ -307,12 +307,13 @@ export class PointCloudOctreePicker {
       return null;
     }
 
-    const point: PickPoint = {};
-
-    const points = nodes[hit.pcIndex] && nodes[hit.pcIndex].node.sceneNode;
+    
+    const points = nodes[hit.pcIndex]?.node.sceneNode;
     if (!points) {
       return null;
     }
+
+    const point: PickPoint = {pointIndex: hit.pIndex, object: points, distance: 0};
 
     point.pointCloud = nodes[hit.pcIndex].octree;
 
