@@ -10,6 +10,7 @@ import {
   ResourceTypeTabs,
   getTitle,
   ResourceType,
+  Splitter,
 } from '@cognite/data-exploration';
 import { Colors } from '@cognite/cogs.js';
 import { Row, Col } from 'antd';
@@ -254,6 +255,7 @@ function SearchPage() {
         currentResourceType={currentResourceType}
         setCurrentResourceType={setCurrentResourceType}
       />
+
       <Wrapper>
         <SearchFilters
           assetFilter={assetFilter}
@@ -270,60 +272,57 @@ function SearchPage() {
           closeFilters={() => setShowFilter(false)}
           visible={currentResourceType !== 'threeD' && showFilter}
         />
-        <div
-          style={{
-            width: active ? 440 : 'unset',
-            flex: active ? 'unset' : 1,
-            borderRight: active
-              ? `1px solid ${Colors['greyscale-grey3'].hex()}`
-              : 'unset',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <SearchInputContainer align="middle">
-            {currentResourceType !== 'threeD' && !showFilter ? (
-              <Col flex="none">
-                <FilterToggleButton
-                  toggleOpen={() => setShowFilter(!showFilter)}
-                />
-              </Col>
-            ) : undefined}
-            <Col flex="auto">
-              <ExplorationSearchBar />
-            </Col>
-          </SearchInputContainer>
-          <SearchResultWrapper
+        <Splitter secondaryMinSize={440} primaryIndex={1}>
+          <div
             style={{
-              paddingRight: active ? 8 : 0,
-              paddingLeft: showFilter ? 8 : 0,
+              borderRight: active
+                ? `1px solid ${Colors['greyscale-grey3'].hex()}`
+                : 'unset',
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
-            {SearchResults()}
-          </SearchResultWrapper>
-        </div>
-
-        <div
-          style={{
-            width: active ? 'unset' : 0,
-            flex: active ? 1 : 'unset',
-          }}
-        >
-          {activeId && (
-            <SearchResultWrapper>
-              <ResourcePreview
-                item={{ id: activeId, type: currentResourceType }}
-                onCloseClicked={() => openPreview(undefined)}
-              />
+            <SearchInputContainer align="middle">
+              {currentResourceType !== 'threeD' && !showFilter ? (
+                <Col flex="none">
+                  <FilterToggleButton
+                    toggleOpen={() => setShowFilter(!showFilter)}
+                  />
+                </Col>
+              ) : undefined}
+              <Col flex="auto">
+                <ExplorationSearchBar />
+              </Col>
+            </SearchInputContainer>
+            <SearchResultWrapper
+              style={{
+                paddingRight: active ? 8 : 0,
+                paddingLeft: showFilter ? 8 : 0,
+              }}
+            >
+              {SearchResults()}
             </SearchResultWrapper>
+          </div>
+
+          {active && (
+            <div>
+              {activeId && (
+                <SearchResultWrapper>
+                  <ResourcePreview
+                    item={{ id: activeId, type: currentResourceType }}
+                    onCloseClicked={() => openPreview(undefined)}
+                  />
+                </SearchResultWrapper>
+              )}
+              {!activeId && cart.length > 0 && (
+                <SelectedResults
+                  ids={cart.map(id => ({ id }))}
+                  resourceType={currentResourceType}
+                />
+              )}
+            </div>
           )}
-          {!activeId && cart.length > 0 && (
-            <SelectedResults
-              ids={cart.map(id => ({ id }))}
-              resourceType={currentResourceType}
-            />
-          )}
-        </div>
+        </Splitter>
       </Wrapper>
     </>
   );
