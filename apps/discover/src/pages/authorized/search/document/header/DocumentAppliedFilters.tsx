@@ -1,13 +1,13 @@
 import { useDocumentAppliedFilterEntries } from 'domain/documents/internal/hooks/useDocumentAppliedFilters';
 import { useDocumentFormatFilter } from 'domain/documents/internal/hooks/useDocumentFormatFilter';
+import { useClearAllDocumentFilters } from 'domain/savedSearches/internal/hooks/useClearAllDocumentFilters';
+import { useClearPolygon } from 'domain/savedSearches/internal/hooks/useClearPolygon';
+import { useClearQuery } from 'domain/savedSearches/internal/hooks/useClearQuery';
+import { useSetDocumentFilters } from 'domain/savedSearches/internal/hooks/useSetDocumentFilters';
 
 import React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
-import { useClearAllDocumentFilters } from 'services/savedSearches/hooks/useClearAllDocumentFilters';
-import { useSetDocumentFilters } from 'services/savedSearches/hooks/useClearDocumentFilters';
-import { useClearPolygon } from 'services/savedSearches/hooks/useClearPolygon';
-import { useClearQuery } from 'services/savedSearches/hooks/useClearQuery';
 
 import { GeoJsonGeometryTypes } from '@cognite/seismic-sdk-js';
 
@@ -25,9 +25,9 @@ import {
   isRangeFacet,
 } from 'modules/sidebar/utils';
 
+import { useSavedSearch } from '../../../../../domain/savedSearches/internal/hooks';
 import { useAppliedMapGeoJsonFilters } from '../../../../../modules/sidebar/selectors';
 import { MapLayerGeoJsonFilter } from '../../../../../modules/sidebar/types';
-import { useSavedSearch } from '../../../../../services/savedSearches/hooks';
 
 import { TagRow, TagWrapper } from './elements';
 

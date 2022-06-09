@@ -1,3 +1,9 @@
+import {
+  useSavedSearchSort,
+  useSavedSearchSortClear,
+} from 'domain/savedSearches/internal/hooks/useSavedSearchSort';
+import { useQuerySavedSearchCurrent } from 'domain/savedSearches/internal/queries/useQuerySavedSearchCurrent';
+
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { batch, useDispatch } from 'react-redux';
 import { Row } from 'react-table';
@@ -5,11 +11,6 @@ import { Row } from 'react-table';
 import compact from 'lodash/compact';
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
-import {
-  useSavedSearchSort,
-  useSavedSearchSortClear,
-} from 'services/savedSearches/hooks/useSavedSearchSort';
-import { useQuerySavedSearchCurrent } from 'services/savedSearches/useSavedSearchQuery';
 
 import { Icon, IconType } from '@cognite/cogs.js';
 

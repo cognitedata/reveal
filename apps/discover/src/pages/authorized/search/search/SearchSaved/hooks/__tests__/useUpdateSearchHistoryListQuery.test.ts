@@ -1,7 +1,8 @@
+import { getMockedSavedSearchWithFilters } from 'domain/savedSearches/service/__fixtures/savedSearch';
+
 import { useQueryClient } from 'react-query';
 
 import { renderHook } from '@testing-library/react-hooks';
-import { getMockedSavedSearchWithFilters } from 'services/savedSearches/__fixtures/savedSearch';
 import { useSearchHistoryListQuery } from 'services/searchHistory/useSearchHistoryQuery';
 
 import { SEARCH_HISTORY_KEY } from 'constants/react-query';

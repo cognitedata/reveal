@@ -1,8 +1,9 @@
+import { useQuerySavedSearchRelatedDocuments } from 'domain/savedSearches/internal/queries/useQuerySavedSearchRelatedDocuments';
+
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import get from 'lodash/get';
-import { useQuerySavedSearchRelatedDocuments } from 'services/savedSearches/useSavedSearchQuery';
 import { dateToEpoch } from 'utils/date';
 
 import { Dropdown, Menu, Range } from '@cognite/cogs.js';

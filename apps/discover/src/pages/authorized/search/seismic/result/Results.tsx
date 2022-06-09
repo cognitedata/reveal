@@ -1,7 +1,7 @@
+import { useQuerySavedSearchCurrent } from 'domain/savedSearches/internal/queries/useQuerySavedSearchCurrent';
+
 import React, { useEffect } from 'react';
 import { useQueryClient } from 'react-query';
-
-import { useQuerySavedSearchCurrent } from 'services/savedSearches/useSavedSearchQuery';
 
 import EmptyState from 'components/EmptyState';
 import { NO_RESULTS_TEXT } from 'components/EmptyState/constants';

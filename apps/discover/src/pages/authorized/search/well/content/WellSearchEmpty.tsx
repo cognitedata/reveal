@@ -1,8 +1,8 @@
-import React from 'react';
+import { useClearAllFilters } from 'domain/savedSearches/internal/hooks/useClearAllFilters';
+import { useClearPolygon } from 'domain/savedSearches/internal/hooks/useClearPolygon';
+import { useClearQuery } from 'domain/savedSearches/internal/hooks/useClearQuery';
 
-import { useClearAllFilters } from 'services/savedSearches/hooks/useClearAllFilters';
-import { useClearPolygon } from 'services/savedSearches/hooks/useClearPolygon';
-import { useClearQuery } from 'services/savedSearches/hooks/useClearQuery';
+import React from 'react';
 
 import { TableEmpty } from 'components/TableEmpty';
 

@@ -1,9 +1,9 @@
 import { useDocumentSearch } from 'domain/documents/internal/hooks/useDocumentSearch';
+import { convertGeometryToGeoJson } from 'domain/savedSearches/internal/transformers/normalizeSavedSearch';
 
 import { useDispatch } from 'react-redux';
 
 import { renderHook } from '@testing-library/react-hooks';
-import { convertGeometryToGeoJson } from 'services/savedSearches/normalizeSavedSearch';
 import { FetchHeaders } from 'utils/fetch';
 
 import { Geometry } from '@cognite/seismic-sdk-js';
@@ -25,9 +25,12 @@ jest.mock('hooks/useProjectConfig', () => ({
   useProjectConfig: jest.fn(),
 }));
 
-jest.mock('services/savedSearches/normalizeSavedSearch', () => ({
-  convertGeometryToGeoJson: jest.fn(),
-}));
+jest.mock(
+  'domain/savedSearches/internal/transformers/normalizeSavedSearch',
+  () => ({
+    convertGeometryToGeoJson: jest.fn(),
+  })
+);
 
 jest.mock('modules/map/actions', () => ({
   setGeo: jest.fn(),

@@ -1,3 +1,8 @@
+import {
+  useClearPolygon,
+  useSetPolygon,
+} from 'domain/savedSearches/internal/hooks/useClearPolygon';
+
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { batch, useDispatch } from 'react-redux';
 
@@ -13,10 +18,6 @@ import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import mapboxgl from 'maplibre-gl';
-import {
-  useClearPolygon,
-  useSetPolygon,
-} from 'services/savedSearches/hooks/useClearPolygon';
 import { v1 } from 'uuid';
 
 import { PerfMetrics } from '@cognite/metrics';

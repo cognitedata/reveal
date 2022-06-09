@@ -1,5 +1,6 @@
+import { useQuerySavedSearchCurrent } from 'domain/savedSearches/internal/queries/useQuerySavedSearchCurrent';
+
 import isObject from 'lodash/isObject';
-import { useQuerySavedSearchCurrent } from 'services/savedSearches/useSavedSearchQuery';
 
 export const useSearchHasAnyAppliedFilters = (): boolean => {
   const { data: savedSearchCurrent } = useQuerySavedSearchCurrent();

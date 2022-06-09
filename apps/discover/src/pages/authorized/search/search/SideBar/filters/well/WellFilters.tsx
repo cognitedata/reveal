@@ -1,12 +1,11 @@
+import { useClearWellsFilters } from 'domain/savedSearches/internal/hooks/useClearWellsFilters';
+import { useSetWellsFiltersAsync } from 'domain/savedSearches/internal/hooks/useSetWellsFiltersAsync';
+
 import React, { useState, useEffect } from 'react';
 
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import omit from 'lodash/omit';
-import {
-  useClearWellsFilters,
-  useSetWellsFiltersAsync,
-} from 'services/savedSearches/hooks/useClearWellsFilters';
 
 import Skeleton from 'components/Skeleton';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';

@@ -1,11 +1,12 @@
+import { useSavedSearch } from 'domain/savedSearches/internal/hooks';
+import { useSetQuery } from 'domain/savedSearches/internal/hooks/useClearQuery';
+import { SavedSearchContent } from 'domain/savedSearches/types';
+
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 
 import get from 'lodash/get';
-import { useSavedSearch } from 'services/savedSearches/hooks';
-import { useSetQuery } from 'services/savedSearches/hooks/useClearQuery';
-import { SavedSearchContent } from 'services/savedSearches/types';
 
 import { AutoComplete, OptionType } from '@cognite/cogs.js';
 import { PerfMetrics } from '@cognite/metrics';

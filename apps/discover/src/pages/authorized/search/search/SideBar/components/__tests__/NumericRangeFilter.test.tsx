@@ -33,7 +33,7 @@ jest.mock('modules/sidebar/selectors', () => ({
   useFilterAppliedFilters: jest.fn(),
 }));
 
-jest.mock('services/savedSearches/hooks/useClearDocumentFilters', () => ({
+jest.mock('domain/savedSearches/internal/hooks/useSetDocumentFilters', () => ({
   useSetDocumentFilters: jest.fn(),
 }));
 

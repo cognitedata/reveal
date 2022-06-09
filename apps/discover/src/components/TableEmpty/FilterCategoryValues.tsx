@@ -1,7 +1,7 @@
+import { useSetWellsFilters } from 'domain/savedSearches/internal/hooks/useSetWellsFilters';
+
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { useSetWellsFilters } from 'services/savedSearches/hooks/useClearWellsFilters';
 
 import { Body } from '@cognite/cogs.js';
 

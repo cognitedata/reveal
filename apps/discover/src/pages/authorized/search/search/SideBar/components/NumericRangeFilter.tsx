@@ -1,10 +1,11 @@
+import { useSetDocumentFilters } from 'domain/savedSearches/internal/hooks/useSetDocumentFilters';
+
 import React, { useState } from 'react';
 
 import isUndefined from 'lodash/isUndefined';
 import map from 'lodash/map';
 import maxBy from 'lodash/maxBy';
 import minBy from 'lodash/minBy';
-import { useSetDocumentFilters } from 'services/savedSearches/hooks/useClearDocumentFilters';
 
 import { DocumentPayload } from '@cognite/discover-api-types';
 

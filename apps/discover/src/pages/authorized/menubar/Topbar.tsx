@@ -1,9 +1,9 @@
+import { useClearAllFilters } from 'domain/savedSearches/internal/hooks/useClearAllFilters';
+
 import { useMemo } from 'react';
 import * as React from 'react';
 import { batch, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
-
-import { useClearAllFilters } from 'services/savedSearches/hooks/useClearAllFilters';
 
 import { Graphic, TopBar } from '@cognite/cogs.js';
 import { useTranslation } from '@cognite/react-i18n';

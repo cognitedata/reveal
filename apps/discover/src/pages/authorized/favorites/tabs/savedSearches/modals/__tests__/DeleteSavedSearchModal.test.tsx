@@ -1,8 +1,9 @@
-import { screen, fireEvent } from '@testing-library/react';
 import {
   DEFAULT_MOCKED_SAVED_SEARCH_NAME,
   getMockedEmptySavedSearch,
-} from 'services/savedSearches/__fixtures/savedSearch';
+} from 'domain/savedSearches/service/__fixtures/savedSearch';
+
+import { screen, fireEvent } from '@testing-library/react';
 
 import { testRendererModal } from '__test-utils/renderer';
 

@@ -1,7 +1,7 @@
+import { SavedSearchItem } from 'domain/savedSearches/types';
+
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { SavedSearchItem } from 'services/savedSearches/types';
 
 import { Button } from '@cognite/cogs.js';
 

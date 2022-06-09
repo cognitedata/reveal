@@ -1,7 +1,7 @@
 import { Geometry } from '@cognite/seismic-sdk-js';
 
 import { DocumentsFacets } from '../../../modules/documentSearch/types';
-import { SavedSearchContent } from '../../../services/savedSearches/types';
+import { SavedSearchContent } from '../../savedSearches/types';
 
 export const documentValuesPayload = (
   query: any,

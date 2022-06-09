@@ -2,10 +2,10 @@
 // is that it will make it easier to keep the
 // format in sync
 
-import { WellLegendNptType } from 'services/well/legend/types';
+import { SAVED_SEARCHES_CURRENT_KEY } from 'domain/savedSearches/constants';
+import { WellLegendNptType } from 'domain/wells/legend/internal/types';
 
 import { FeedbackType } from '../domain/feedback/internal/types';
-import { SAVED_SEARCHES_CURRENT_KEY } from '../services/savedSearches/constants';
 
 export const DOCUMENT_LABELS_QUERY_KEY = 'labels';
 

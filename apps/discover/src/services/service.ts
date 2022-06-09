@@ -1,11 +1,11 @@
 import { feedback } from 'domain/feedback/service/network/service';
+import { savedSearches } from 'domain/savedSearches/service/network/savedSearches';
 
 import { getDefaultHeader, getAuthHeaders } from '@cognite/react-container';
 
 import { useIdToken as useIdTokenHook } from 'hooks/useIdToken';
 
 import { projectConfig } from './projectConfig';
-import { savedSearches } from './savedSearches';
 import { searchHistory } from './searchHistory';
 import { seismic } from './seismic';
 import { stats } from './stats';

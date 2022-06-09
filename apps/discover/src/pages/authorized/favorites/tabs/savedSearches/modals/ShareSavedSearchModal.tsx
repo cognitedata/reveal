@@ -1,8 +1,9 @@
+import { useSavedSearchRemoveShareMutate } from 'domain/savedSearches/internal/actions/useSavedSearchRemoveShareMutate';
+import { useQuerySavedSearcheGetOne } from 'domain/savedSearches/internal/queries/useQuerySavedSearcheGetOne';
+
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useSavedSearchRemoveShareMutate } from 'services/savedSearches/useSavedSearchesMutate';
-import { useQuerySavedSearcheGetOne } from 'services/savedSearches/useSavedSearchQuery';
 import { handleServiceError } from 'utils/errors';
 
 import { BasicShareModal } from 'components/BasicShareModal';

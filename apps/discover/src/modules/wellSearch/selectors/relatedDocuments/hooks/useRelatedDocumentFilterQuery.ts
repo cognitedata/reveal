@@ -1,7 +1,8 @@
+import { useQuerySavedSearchRelatedDocuments } from 'domain/savedSearches/internal/queries/useQuerySavedSearchRelatedDocuments';
+
 import { useMemo } from 'react';
 
 import { SavedSearchContent } from 'services/savedSearches';
-import { useQuerySavedSearchRelatedDocuments } from 'services/savedSearches/useSavedSearchQuery';
 
 import { SearchQueryFull } from 'modules/documentSearch/types';
 

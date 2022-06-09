@@ -1,8 +1,9 @@
+import { SavedSearchQuery } from 'domain/savedSearches/types';
+
 import { useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 import isUndefined from 'lodash/isUndefined';
-import { SavedSearchQuery } from 'services/savedSearches/types';
 import { FetchHeaders } from 'utils/fetch';
 
 import { seismicSearchActions } from 'modules/seismicSearch/actions';

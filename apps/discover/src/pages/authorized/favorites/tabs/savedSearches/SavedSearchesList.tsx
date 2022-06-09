@@ -1,15 +1,13 @@
+import { useSavedSearchAddShareMutate } from 'domain/savedSearches/internal/actions/useSavedSearchAddShareMutate';
+import { useSavedSearchDeleteMutate } from 'domain/savedSearches/internal/actions/useSavedSearchDeleteMutate';
+import { useSavedSearch } from 'domain/savedSearches/internal/hooks/useSavedSearch';
+import { useQuerySavedSearchesList } from 'domain/savedSearches/internal/queries/useQuerySavedSearchesList';
+import { SavedSearchItem } from 'domain/savedSearches/types';
 import { useUserInfoQuery } from 'domain/userManagementService/internal/queries/useUserInfoQuery';
 
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useSavedSearch } from 'services/savedSearches/hooks/useSavedSearch';
-import { SavedSearchItem } from 'services/savedSearches/types';
-import {
-  useSavedSearchAddShareMutate,
-  useSavedSearchDeleteMutate,
-} from 'services/savedSearches/useSavedSearchesMutate';
-import { useQuerySavedSearchesList } from 'services/savedSearches/useSavedSearchQuery';
 import { shortDate } from 'utils/date';
 import { log } from 'utils/log';
 import { sortByDate } from 'utils/sort/sortByDate';

@@ -1,14 +1,13 @@
+import { useSavedSearchCreateMutate } from 'domain/savedSearches/internal/actions/useSavedSearchCreateMutate';
+import { useSavedSearchDeleteMutate } from 'domain/savedSearches/internal/actions/useSavedSearchDeleteMutate';
+import { adaptSaveSearchContentToSchemaBody } from 'domain/savedSearches/internal/adapters/adaptSaveSearchContentToSchemaBody';
+import { useSavedSearch } from 'domain/savedSearches/internal/hooks';
+import { useQuerySavedSearchesList } from 'domain/savedSearches/internal/queries/useQuerySavedSearchesList';
+
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { SavedSearchContent } from 'services/savedSearches';
-import { adaptSaveSearchContentToSchemaBody } from 'services/savedSearches/adaptSavedSearch';
-import { useSavedSearch } from 'services/savedSearches/hooks';
-import {
-  useSavedSearchCreateMutate,
-  useSavedSearchDeleteMutate,
-} from 'services/savedSearches/useSavedSearchesMutate';
-import { useQuerySavedSearchesList } from 'services/savedSearches/useSavedSearchQuery';
 import { GenericApiError } from 'services/types';
 import { isEnterPressed } from 'utils/general.helper';
 import { log } from 'utils/log';

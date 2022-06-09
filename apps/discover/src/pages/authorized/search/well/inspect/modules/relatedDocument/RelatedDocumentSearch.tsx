@@ -1,10 +1,10 @@
 import { documentFacetsStructure } from 'domain/documents/internal/types';
+import { useQuerySavedSearchRelatedDocuments } from 'domain/savedSearches/internal/queries/useQuerySavedSearchRelatedDocuments';
 
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import get from 'lodash/get';
-import { useQuerySavedSearchRelatedDocuments } from 'services/savedSearches/useSavedSearchQuery';
 import { isEnterPressed } from 'utils/general.helper';
 
 import { Input } from '@cognite/cogs.js';

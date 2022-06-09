@@ -1,14 +1,14 @@
 import { documentValuesPayload } from 'domain/documents/utils/documentValuesPayload';
+import { useRelatedDocumentPatchMutate } from 'domain/savedSearches/internal/actions/useRelatedDocumentPatchMutate';
+import { useQuerySavedSearchRelatedDocuments } from 'domain/savedSearches/internal/queries/useQuerySavedSearchRelatedDocuments';
 
 import get from 'lodash/get';
-import { useMutateRelatedDocumentPatch } from 'services/savedSearches/queries/useMutateRelatedDocumentPatch';
-import { useQuerySavedSearchRelatedDocuments } from 'services/savedSearches/useSavedSearchQuery';
 import { getEmptyGeometry } from 'utils/geometry';
 
 import { DocumentsFacets } from 'modules/documentSearch/types';
 
 export const usePatchRelatedDocumentFilters = () => {
-  const { mutate } = useMutateRelatedDocumentPatch();
+  const { mutate } = useRelatedDocumentPatchMutate();
   const { data } = useQuerySavedSearchRelatedDocuments();
   return (
     facets: Partial<DocumentsFacets>,

@@ -1,10 +1,10 @@
 import { useDocumentSearch } from 'domain/documents/internal/hooks/useDocumentSearch';
+import { convertGeometryToGeoJson } from 'domain/savedSearches/internal/transformers/normalizeSavedSearch';
+import { SavedSearchContent } from 'domain/savedSearches/types';
 
 import { useDispatch } from 'react-redux';
 
 import isUndefined from 'lodash/isUndefined';
-import { convertGeometryToGeoJson } from 'services/savedSearches/normalizeSavedSearch';
-import { SavedSearchContent } from 'services/savedSearches/types';
 import { FetchHeaders } from 'utils/fetch';
 
 import { setGeo } from 'modules/map/actions';

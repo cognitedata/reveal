@@ -1,7 +1,8 @@
+import { SavedSearchItem } from 'domain/savedSearches/types';
+
 import React from 'react';
 import { Row } from 'react-table';
 
-import { SavedSearchItem } from 'services/savedSearches/types';
 import styled from 'styled-components/macro';
 
 import { CommentButton } from 'components/Buttons';

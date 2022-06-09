@@ -30,9 +30,9 @@ import {
   useWellQueryResultWellsById,
 } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
 
+import { useSavedSearch } from '../../../../../domain/savedSearches/internal/hooks';
 import { useProjectConfigByKey } from '../../../../../hooks/useProjectConfig';
 import { useMapDrawMode } from '../../../../../modules/map/selectors';
-import { useSavedSearch } from '../../../../../services/savedSearches/hooks';
 import {
   DOCUMENT_MARKER,
   GROUPED_CLUSTER_LAYER_ID,

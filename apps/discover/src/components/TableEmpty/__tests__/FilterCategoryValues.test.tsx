@@ -1,6 +1,7 @@
+import { useSetWellsFilters } from 'domain/savedSearches/internal/hooks/useSetWellsFilters';
+
 import { screen, fireEvent } from '@testing-library/react';
 import noop from 'lodash/noop';
-import { useSetWellsFilters } from 'services/savedSearches/hooks/useClearWellsFilters';
 
 import { getMockSidebarState } from '__test-utils/fixtures/sidebar';
 import { testRenderer } from '__test-utils/renderer';
@@ -11,7 +12,7 @@ import { defaultWellsConfig } from 'tenants/config';
 
 import { FilterCategoryValues } from '../FilterCategoryValues';
 
-jest.mock('services/savedSearches/hooks/useClearWellsFilters', () => ({
+jest.mock('domain/savedSearches/internal/hooks/useSetWellsFilters', () => ({
   useSetWellsFilters: jest.fn(),
 }));
 

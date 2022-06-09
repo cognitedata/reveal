@@ -2,11 +2,11 @@ import '__mocks/mockContainerAuth'; // should be first
 import '__mocks/mockCogniteSDK';
 import { getMockDocumentSearch } from 'domain/documents/service/__mocks/getMockDocumentSearch';
 import { getMockLabelsPost } from 'domain/labels/service/__mocks/getMockLabels';
+import { getMockSavedSearchRelatedGet } from 'domain/savedSearches/service/__mocks/getMockSavedSearchRelatedGet';
 
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
-import { getMockSavedSearchRelatedGet } from 'services/savedSearches/__mocks/getMockSavedSearchRelatedGet';
 
 import { mockedWellStateWithSelectedWells } from '__test-utils/fixtures/well';
 import { testRenderer } from '__test-utils/renderer';

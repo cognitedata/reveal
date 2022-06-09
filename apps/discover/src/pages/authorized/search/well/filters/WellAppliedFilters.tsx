@@ -1,12 +1,11 @@
+import { useClearPolygon } from 'domain/savedSearches/internal/hooks/useClearPolygon';
+import { useClearQuery } from 'domain/savedSearches/internal/hooks/useClearQuery';
+import { useClearWellsFilters } from 'domain/savedSearches/internal/hooks/useClearWellsFilters';
+import { useSetWellsFilters } from 'domain/savedSearches/internal/hooks/useSetWellsFilters';
+
 import React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
-import { useClearPolygon } from 'services/savedSearches/hooks/useClearPolygon';
-import { useClearQuery } from 'services/savedSearches/hooks/useClearQuery';
-import {
-  useClearWellsFilters,
-  useSetWellsFilters,
-} from 'services/savedSearches/hooks/useClearWellsFilters';
 import styled from 'styled-components/macro';
 
 import { FilterClearAllButton } from 'components/Buttons/FilterClearAllButton';

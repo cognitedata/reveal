@@ -1,6 +1,7 @@
+import { getMockSavedSearchRelatedGet } from 'domain/savedSearches/service/__mocks/getMockSavedSearchRelatedGet';
+
 import { screen, fireEvent } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import { getMockSavedSearchRelatedGet } from 'services/savedSearches/__mocks/getMockSavedSearchRelatedGet';
 
 import { testRenderer } from '__test-utils/renderer';
 

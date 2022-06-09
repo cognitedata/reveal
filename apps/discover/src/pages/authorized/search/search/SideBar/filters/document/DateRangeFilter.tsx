@@ -1,7 +1,8 @@
+import { useSetDocumentFilters } from 'domain/savedSearches/internal/hooks/useSetDocumentFilters';
+
 import React, { useEffect, useState, useMemo } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
-import { useSetDocumentFilters } from 'services/savedSearches/hooks/useClearDocumentFilters';
 import styled from 'styled-components/macro';
 import { dateToEpoch } from 'utils/date';
 

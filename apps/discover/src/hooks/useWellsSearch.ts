@@ -1,8 +1,9 @@
+import { SavedSearchQuery } from 'domain/savedSearches/types';
+
 import { useDispatch } from 'react-redux';
 
 import get from 'lodash/get';
 import isUndefined from 'lodash/isUndefined';
-import { SavedSearchQuery } from 'services/savedSearches/types';
 
 import { updateCategoryAppliedFilters } from 'modules/sidebar/actions';
 import { Modules } from 'modules/sidebar/types';

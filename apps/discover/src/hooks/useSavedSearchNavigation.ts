@@ -1,6 +1,6 @@
-import { useHistory } from 'react-router-dom';
+import { SavedSearchItem } from 'domain/savedSearches/types';
 
-import { SavedSearchItem } from 'services/savedSearches/types';
+import { useHistory } from 'react-router-dom';
 
 import navigation from 'constants/navigation';
 

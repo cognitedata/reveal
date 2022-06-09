@@ -1,8 +1,9 @@
+import { useSetDocumentFilters } from 'domain/savedSearches/internal/hooks/useSetDocumentFilters';
+
 import React, { useState, useEffect, useMemo } from 'react';
 
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import { useSetDocumentFilters } from 'services/savedSearches/hooks/useClearDocumentFilters';
 import styled from 'styled-components/macro';
 
 import { Body, Icon } from '@cognite/cogs.js';

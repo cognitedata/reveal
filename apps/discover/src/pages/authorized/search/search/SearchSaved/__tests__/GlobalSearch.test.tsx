@@ -13,11 +13,11 @@ jest.mock('services/searchHistory/useSearchHistoryQuery', () => ({
   useSearchHistoryListQuery: jest.fn(),
 }));
 
-jest.mock('services/savedSearches/hooks/useClearQuery', () => ({
+jest.mock('domain/savedSearches/internal/hooks/useClearQuery.ts', () => ({
   useSetQuery: jest.fn(),
 }));
 
-jest.mock('services/savedSearches/hooks', () => ({
+jest.mock('domain/savedSearches/internal/hooks/useSavedSearch.ts', () => ({
   useSavedSearch: jest.fn(),
 }));
 
