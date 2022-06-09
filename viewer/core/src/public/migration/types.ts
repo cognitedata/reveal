@@ -204,7 +204,7 @@ export * from './NotSupportedInMigrationWrapperError';
 export { CadModelBudget, PointCloudBudget };
 
 /**
- * Options to control how {@link Cognite3DViewer.getIntersectionFromPixel} behaves.
+ * @deprecated Options to control how {@link Cognite3DViewer.getIntersectionFromPixel} behaves.
  */
 export interface IntersectionFromPixelOptions {
   /**
