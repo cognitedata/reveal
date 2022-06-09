@@ -141,7 +141,7 @@ export class ComboControls extends EventDispatcher {
     };
   }
 
-  public update = (deltaTime: number): boolean => {
+  public update = (deltaTime: number, forceUpdate = false): boolean => {
     const {
       _camera,
       _target,
@@ -157,7 +157,7 @@ export class ComboControls extends EventDispatcher {
       enabled
     } = this;
 
-    if (!enabled) {
+    if (!forceUpdate && !enabled) {
       return false;
     }
 
@@ -242,7 +242,7 @@ export class ComboControls extends EventDispatcher {
     this._target.copy(this._targetEnd);
     this._scrollTarget.copy(target);
     this._spherical.copy(this._sphericalEnd);
-    this.update(1000 / this._targetFPS);
+    this.update(1000 / this._targetFPS, true);
     this.triggerCameraChangeEvent();
   };
 
