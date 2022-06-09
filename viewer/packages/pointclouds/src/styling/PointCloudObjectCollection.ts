@@ -24,6 +24,5 @@ export abstract class PointCloudObjectCollection {
   off(event: 'changed', listener: () => void): void {
     assert(event === 'changed');
     this._changedEvent.unsubscribe(listener);
-
   }
 }
