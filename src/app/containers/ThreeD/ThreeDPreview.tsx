@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { PageTitle } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';
-import { Cognite3DViewer, Cognite3DModel } from '@cognite/reveal';
+import {
+  Cognite3DViewer,
+  Cognite3DModel,
+  DefaultCameraManager,
+} from '@cognite/reveal';
 import { useParams } from 'react-router-dom';
 import {
   useDefault3DModelRevision,
@@ -43,6 +47,12 @@ export const ThreeDPreview = () => {
       const threeDViewer = new Cognite3DViewer({
         sdk,
         domElement: revealContainer.current,
+        continuousModelStreaming: true,
+      });
+      const cameraManager = threeDViewer.cameraManager as DefaultCameraManager;
+      cameraManager.setCameraControlsOptions({
+        mouseWheelAction: 'zoomToCursor',
+        changeCameraTargetOnClick: true,
       });
 
       const model = (await threeDViewer.addModel({
