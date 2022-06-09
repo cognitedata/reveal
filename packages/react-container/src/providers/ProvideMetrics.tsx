@@ -2,84 +2,94 @@ import * as React from 'react';
 import { Metrics, PerfMetrics } from '@cognite/metrics';
 import { getTenantInfo, isProduction } from '@cognite/react-container';
 import { Metric } from 'web-vitals';
+import { AuthenticatedUser } from '@cognite/auth-utils';
+import { ContainerSidecarConfig } from 'types';
 
 import reportWebVitals from '../internal/reportWebVitals';
 import { extractToken } from '../auth';
+import { getUserForMixpanel } from '../internal';
+import { AuthConsumer } from '../components';
 
 export type mixpanelProps = {
-  userId: string | undefined;
-  mixpanelUser: { [key: string]: string } | undefined;
+  userId: string;
+  mixpanelUser?: { [key: string]: string };
   appName: string;
-  mixpanelToken: string;
-};
-
-type internalMetricsProps = {
-  authToken: string | undefined;
-  frontendMetricsBaseUrl?: string;
+  mixpanelToken: string | undefined;
 };
 
 type Props = {
-  internalMetricsSettings: internalMetricsProps;
-  disableInternalMetrics?: boolean;
-  disableMixpanel?: boolean;
-  getMixpanelSettings?: () => mixpanelProps;
+  sidecar: ContainerSidecarConfig;
+  authState: AuthenticatedUser;
 };
 
-export const ProvideMetrics = ({
-  getMixpanelSettings,
-  internalMetricsSettings,
-  disableInternalMetrics,
-  disableMixpanel,
-}: Props) => {
+const ProvideMetricsComponent = ({ sidecar, authState }: Props) => {
+  const { frontendMetricsBaseUrl, disableMixpanel, disableInternalMetrics } =
+    sidecar;
   const [tenant] = getTenantInfo();
-  const authToken = extractToken(internalMetricsSettings.authToken);
-  const mixpanelSettings = getMixpanelSettings?.();
+  const authToken = extractToken(authState.token);
+  const [mixpanelUserData, setMixpanelUserData] = React.useState<
+    mixpanelProps | undefined
+  >(undefined);
+  /**
+   * Initialization
+   */
+  React.useEffect(() => {
+    const { applicationId, mixpanel } = sidecar;
+    const { token, idToken } = authState;
+    getUserForMixpanel(sidecar, token, idToken, applicationId).then(
+      (mixpanelUser) => {
+        if (mixpanelUser) {
+          setMixpanelUserData({
+            ...mixpanelUser,
+            mixpanelToken: mixpanel,
+            appName: applicationId,
+          });
+        }
+      }
+    );
+  }, [sidecar, authState]);
 
   React.useEffect(() => {
-    // Will run twice: Before the user loads, and after.
-    // The first time we don't want to initialise Mixpanel
-    if (mixpanelSettings && mixpanelSettings.userId) {
+    if (mixpanelUserData && mixpanelUserData.userId) {
       const {
         REACT_APP_RELEASE: release = 'release',
         REACT_APP_VERSION_NAME: versionName = '0.0.0',
         REACT_APP_VERSION_SHA: build = 'development',
       } = process.env;
 
-      const { appName, userId, mixpanelUser, mixpanelToken } = mixpanelSettings;
-
-      const metricsConfig = {
-        applicationId: appName,
-        mixpanelToken,
-        userId,
-        release,
-        versionName,
-        build,
-        debug: !isProduction,
-        tenant,
-      };
+      const { appName, userId, mixpanelUser, mixpanelToken } = mixpanelUserData;
 
       try {
-        if (disableMixpanel === false) {
+        if (disableMixpanel !== true && mixpanelToken) {
+          const metricsConfig = {
+            applicationId: appName,
+            mixpanelToken,
+            userId,
+            release,
+            versionName,
+            build,
+            debug: !isProduction,
+            tenant,
+          };
           Metrics.init(metricsConfig);
           Metrics.identify(userId);
           if (mixpanelUser) {
             Metrics.people(mixpanelUser);
           }
+          // Send web-vitals to Mixpanel
+          reportWebVitals((report: Metric) => {
+            const metrics = Metrics.create('performance');
+            metrics.track(report.name, { ...report });
+          });
         }
-
-        // Send web-vitals to Mixpanel
-        reportWebVitals((report: Metric) => {
-          const metrics = Metrics.create('performance');
-          metrics.track(report.name, { ...report });
-        });
       } finally {
         /* continue regardless of error */
       }
     }
+  }, [mixpanelUserData]);
 
-    if (internalMetricsSettings && disableInternalMetrics === false) {
-      const { frontendMetricsBaseUrl } = internalMetricsSettings;
-
+  React.useEffect(() => {
+    if (disableInternalMetrics !== true) {
       if (authToken && frontendMetricsBaseUrl) {
         PerfMetrics.initialize(
           `${frontendMetricsBaseUrl}/${tenant}`,
@@ -96,7 +106,28 @@ export const ProvideMetrics = ({
         });
       }
     }
-  }, [mixpanelSettings, authToken, tenant]);
+  }, [authToken, tenant]);
   // eslint-disable-next-line
   return <></>;
+};
+
+type ProvideMetricsProps = {
+  sidecar: ContainerSidecarConfig;
+};
+
+export const ProvideMetrics = ({ sidecar }: ProvideMetricsProps) => {
+  return (
+    <AuthConsumer>
+      {(authState) => {
+        return (
+          authState.authState?.authenticated && (
+            <ProvideMetricsComponent
+              sidecar={sidecar}
+              authState={authState.authState}
+            />
+          )
+        );
+      }}
+    </AuthConsumer>
+  );
 };

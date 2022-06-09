@@ -15,7 +15,6 @@ import { IntercomBootSettings } from '@cognite/intercom-helper';
 import { ErrorBoundary } from '@cognite/react-errors';
 import { withI18nSuspense } from '@cognite/react-i18n';
 import { SentryProps } from '@cognite/react-sentry';
-import { SidecarConfig } from '@cognite/sidecar';
 import '@cognite/cogs.js/dist/cogs.css';
 
 import {
@@ -26,26 +25,16 @@ import {
   TenantSelectorWrapper,
   AuthContainer,
   IntercomContainer,
-  AuthConsumer,
 } from './components';
 import { PROJECT_TO_LOGIN } from './components/AuthProvider/TokenFactory';
 import { getProjectSpecificFlow } from './components/AuthProvider/utils';
 import { createBrowserHistory } from './internal';
 import { ConditionalReduxProvider } from './providers';
 import { storage, getTenantInfo } from './utils';
-import { mixpanelProps, ProvideMetrics } from './providers/ProvideMetrics';
+import { ProvideMetrics } from './providers/ProvideMetrics';
+import { ContainerSidecarConfig } from './types';
 
 const { REACT_APP_API_KEY_PROJECT: project } = process.env;
-
-interface ContainerSidecarConfig extends SidecarConfig {
-  disableTranslations?: boolean;
-  disableLoopDetector?: boolean;
-  disableSentry?: boolean;
-  disableIntercom?: boolean;
-  disableReactQuery?: boolean;
-  disableMixpanel?: boolean;
-  disableInternalMetrics?: boolean;
-}
 
 type Props = {
   store?: Store;
@@ -53,7 +42,6 @@ type Props = {
   intercomSettings?: IntercomBootSettings;
   sentrySettings?: SentryProps;
   sidecar: ContainerSidecarConfig;
-  getMixpanelSettings?: () => mixpanelProps;
 };
 const RawContainer: React.FC<Props> = ({
   children,
@@ -61,7 +49,6 @@ const RawContainer: React.FC<Props> = ({
   sidecar,
   intercomSettings,
   sentrySettings,
-  getMixpanelSettings,
 }) => {
   const [_possibleTenant, initialTenant] = getTenantInfo(window.location);
 
@@ -71,8 +58,6 @@ const RawContainer: React.FC<Props> = ({
     disableSentry,
     disableIntercom,
     disableReactQuery,
-    disableMixpanel,
-    disableInternalMetrics,
     reactQueryDevtools,
   } = sidecar;
 
@@ -143,10 +128,6 @@ const RawContainer: React.FC<Props> = ({
     window.location.assign('/');
   };
 
-  const internalMetricsSettings = {
-    frontendMetricsBaseUrl: sidecar.frontendMetricsBaseUrl,
-  };
-
   return (
     <ConditionalLoopDetector disabled={disableLoopDetector}>
       <ConditionalQueryClientProvider
@@ -174,25 +155,7 @@ const RawContainer: React.FC<Props> = ({
               disabled={disableIntercom}
             >
               <>
-                <AuthConsumer>
-                  {(authState) => {
-                    return (
-                      authState.authState?.authenticated && (
-                        <ProvideMetrics
-                          getMixpanelSettings={getMixpanelSettings}
-                          internalMetricsSettings={{
-                            ...internalMetricsSettings,
-                            authToken: authState?.authState?.token,
-                          }}
-                          disableMixpanel={disableMixpanel || false}
-                          disableInternalMetrics={
-                            disableInternalMetrics || false
-                          }
-                        />
-                      )
-                    );
-                  }}
-                </AuthConsumer>
+                <ProvideMetrics sidecar={sidecar} />
                 <ConditionalReduxProvider store={store}>
                   <ErrorBoundary instanceId="container-root">
                     <Router history={history}>{children}</Router>
