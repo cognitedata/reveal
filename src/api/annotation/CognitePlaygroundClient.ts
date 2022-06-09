@@ -8,3 +8,5 @@ export const cognitePlaygroundClient = new CogniteClientPlayground({
   project: getProject(),
   getToken: () => getToken(),
 });
+
+cognitePlaygroundClient.authenticate();
