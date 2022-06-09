@@ -40,7 +40,7 @@ export function intersectPointClouds(
   input: IntersectInput,
   threshold: number = 0.05 // 5 cm
 ): IntersectPointCloudNodeResult[] {
-  const { normalizedCoords, camera, renderer} = input;
+  const { normalizedCoords, camera, renderer } = input;
   normalized.set(normalizedCoords.x, normalizedCoords.y);
   raycaster.setFromCamera(normalizedCoords, camera);
   raycaster.params.Points = { threshold };
@@ -50,9 +50,8 @@ export function intersectPointClouds(
   nodes.forEach(node => {
     const intersection = node.pick(renderer, camera, raycaster.ray);
 
-    if (intersection === null)
-      return;
-    
+    if (intersection === null) return;
+
     intersections.push(intersection);
   });
 
