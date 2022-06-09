@@ -1,4 +1,7 @@
-import { CalculationResult } from '@cognite/calculation-backend';
+import {
+  CalculationResult,
+  StatusStatusEnum,
+} from '@cognite/calculation-backend';
 import { DatapointAggregate, DoubleDatapoint } from '@cognite/sdk';
 
 export type WorkflowResult = {
@@ -9,4 +12,7 @@ export type WorkflowResult = {
   isDownsampled?: CalculationResult['exceeded_server_limits'];
 };
 
-export type WorkflowState = WorkflowResult & { loading?: boolean };
+export type WorkflowState = WorkflowResult & {
+  loading?: boolean;
+  status?: StatusStatusEnum;
+};

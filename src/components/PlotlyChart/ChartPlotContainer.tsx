@@ -1,9 +1,8 @@
-import { timeseriesAtom } from 'models/timeseries-results/atom';
-import { availableWorkflows } from 'models/calculation-results/selectors';
 import { useCallback, useMemo, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { Chart } from 'models/chart/types';
 import { updateSourceAxisForChart } from 'models/chart/updates';
+import { TimeseriesEntry } from 'models/timeseries-results/types';
+import { WorkflowState } from 'models/calculation-results/types';
 import { ChartingContainer } from './elements';
 import { cleanTimeseriesCollection, cleanWorkflowCollection } from './utils';
 import PlotlyChart, { PlotNavigationUpdate } from './PlotlyChart';
@@ -18,6 +17,8 @@ type Props = {
   isGridlinesShown?: boolean;
   stackedMode?: boolean;
   mergeUnits?: boolean;
+  timeseriesData: TimeseriesEntry[];
+  calculationsData: WorkflowState[];
 };
 
 const ChartPlotContainer = ({
@@ -28,6 +29,8 @@ const ChartPlotContainer = ({
   isGridlinesShown = false,
   stackedMode = false,
   mergeUnits = false,
+  timeseriesData = [],
+  calculationsData = [],
 }: Props) => {
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
 
@@ -36,12 +39,6 @@ const ChartPlotContainer = ({
    */
   const dateFrom = chart?.dateFrom;
   const dateTo = chart?.dateTo;
-
-  /**
-   * Get stored results for timeseries and calculations
-   */
-  const localTimeseries = useRecoilValue(timeseriesAtom);
-  const localWorkflows = useRecoilValue(availableWorkflows);
 
   /**
    * Filter out callIDs that trigger unnecessary recalcs/rerenders
@@ -63,8 +60,6 @@ const ChartPlotContainer = ({
     [wfCollectionAsString]
   );
 
-  const timeseriesData = localTimeseries;
-  const calculationsData = localWorkflows;
   const thresholds = chart?.thresholdCollection;
 
   const handleChartNavigation = useCallback(

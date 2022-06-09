@@ -5,6 +5,8 @@ import {
   isStaging,
 } from 'utils/environment';
 
+const env = typeof process !== 'undefined' ? process.env : ({} as any);
+
 const stagePart = () => {
   if (isStaging) return 'Staging';
   if (isDevelopment) return 'Development';
@@ -17,7 +19,7 @@ const {
   REACT_APP_COMMIT_REF = 'local',
   REACT_APP_LOCIZE_API_KEY,
   REACT_APP_MIXPANEL_TOKEN,
-} = process.env;
+} = env;
 
 const config = {
   azureAppId: '05aa256f-ba87-4e4c-902a-8e80ae5fb32e',

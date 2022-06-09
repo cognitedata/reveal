@@ -1,6 +1,9 @@
 /* eslint camelcase: 0 */
 
-import { StatusStatusEnum } from '@cognite/calculation-backend';
+import {
+  StatisticsResultResults,
+  StatusStatusEnum,
+} from '@cognite/calculation-backend';
 import {
   Button,
   Icon,
@@ -10,7 +13,6 @@ import {
 } from '@cognite/cogs.js';
 import { Col, List, Row } from 'antd';
 import DetailsBlock from 'components/DetailsBlock/DetailsBlock';
-import StatisticsCallStatus from 'components/StatisticsCallStatus/StatisticsCallStatus';
 import { SourceCircle, SourceSquare } from 'pages/ChartView/elements';
 import { useState } from 'react';
 import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
@@ -32,7 +34,7 @@ import {
   SourceItemWrapper,
 } from './elements';
 import { MetadataList } from './MetadataList';
-import { getDisplayUnit, useStatistics } from './utils';
+import { getDisplayUnit } from './utils';
 import { Histogram } from './Histogram';
 
 const renderStatusIcon = (status?: StatusStatusEnum) => {
@@ -54,6 +56,8 @@ type Props = {
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
   onClose: () => void;
   visible?: boolean;
+  statisticsResult?: StatisticsResultResults | null;
+  statisticsStatus?: StatusStatusEnum;
 };
 
 const defaultTranslation = makeDefaultTranslations(
@@ -99,6 +103,8 @@ export default function DetailsSidebar({
   visible,
   sourceItem,
   onClose,
+  statisticsResult,
+  statisticsStatus,
 }: Props) {
   const [selectedMenu, setSelectedMenu] = useState<string>('statistics');
 
@@ -159,6 +165,8 @@ export default function DetailsSidebar({
             <Statistics
               sourceItem={sourceItem}
               translations={statsTranslations}
+              statistics={statisticsResult}
+              status={statisticsStatus}
             />
           )}
         </Container>
@@ -188,12 +196,14 @@ const Metadata = ({
 const Statistics = ({
   sourceItem,
   translations = statsDefaultTranslations,
+  statistics,
+  status,
 }: {
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
   translations?: typeof statsDefaultTranslations;
+  statistics?: StatisticsResultResults | null;
+  status?: StatusStatusEnum;
 }) => {
-  const statisticsCall = (sourceItem?.statisticsCalls || [])[0];
-  const { results: statistics } = useStatistics(sourceItem);
   const unit = sourceItem?.unit;
   const preferredUnit = sourceItem?.preferredUnit;
   const customUnitLabel = sourceItem?.customUnitLabel;
@@ -207,13 +217,7 @@ const Statistics = ({
 
   return (
     <>
-      <div>
-        <StatisticsCallStatus
-          id={statisticsCall?.callId}
-          renderLoading={() => renderStatusIcon(StatusStatusEnum.Running)}
-          renderStatus={({ status }) => renderStatusIcon(status)}
-        />
-      </div>
+      <div>{renderStatusIcon(status)}</div>
       <DetailsBlock title={t.Statistics}>
         <List
           dataSource={[

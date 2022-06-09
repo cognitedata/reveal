@@ -3,8 +3,8 @@
  */
 
 import { Meta, Story } from '@storybook/react';
-import { Table, SourceTableWrapper } from 'pages/ChartView/elements';
 import { ComponentProps } from 'react';
+import { Table } from './elements';
 import { SourceTableHeader } from './SourceTableHeader';
 
 export default {
@@ -13,11 +13,9 @@ export default {
 } as Meta;
 
 const Template: Story<ComponentProps<typeof SourceTableHeader>> = (args) => (
-  <SourceTableWrapper>
-    <Table>
-      <SourceTableHeader {...args} />
-    </Table>
-  </SourceTableWrapper>
+  <Table>
+    <SourceTableHeader {...args} />
+  </Table>
 );
 
 export const WorkspaceTableHeader = Template.bind({});

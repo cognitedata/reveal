@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Body, Button, Loader, Title } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import { FileViewer } from 'components/FileViewer/FileViewer';
@@ -7,25 +7,50 @@ import { useNavigate } from 'hooks/navigation';
 import { useAsset } from 'hooks/cdf-assets';
 import styled from 'styled-components/macro';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
-import { SourceTableWrapper } from 'pages/ChartView/elements';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import Layers from 'utils/z-index';
 import AssetSearchHit from 'components/SearchResultTable/AssetSearchHit';
 import { trackUsage } from 'services/metrics';
 import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
 import { useTranslations } from 'hooks/translations';
-import { Chart } from 'models/chart/types';
-import { SetterOrUpdater } from 'recoil';
-import SourceTable from 'pages/ChartView/SourceTable';
+import { Chart, ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import SourceTable from 'components/SourceTable/SourceTable';
+import { timeseriesSummaries } from 'models/timeseries-results/selectors';
+import { useRecoilValue } from 'recoil';
+import { calculationSummaries } from 'models/calculation-results/selectors';
 
 type Prop = {
   chart: Chart;
-  setChart: SetterOrUpdater<Chart | undefined>;
   assetId: string;
 };
 
-export const FileView = ({ chart, setChart, assetId }: Prop) => {
+export const FileView = ({ chart, assetId }: Prop) => {
   const chartId = chart.id;
+
+  const sources = useMemo(() => {
+    return (chart?.sourceCollection ?? [])
+      .map((x) =>
+        x.type === 'timeseries'
+          ? {
+              type: 'timeseries',
+              ...chart?.timeSeriesCollection?.find((ts) => ts.id === x.id),
+            }
+          : {
+              type: 'workflow',
+              ...chart?.workflowCollection?.find((calc) => calc.id === x.id),
+            }
+      )
+      .filter(Boolean) as (ChartTimeSeries | ChartWorkflow)[];
+  }, [
+    chart?.sourceCollection,
+    chart?.timeSeriesCollection,
+    chart?.workflowCollection,
+  ]);
+
+  const summaries = {
+    ...useRecoilValue(timeseriesSummaries),
+    ...useRecoilValue(calculationSummaries),
+  };
 
   const [selectedFile, setSelectedFile] = useState<File>();
   const [showLinkedAssets, setShowLinkedAssets] = useState(false);
@@ -131,14 +156,12 @@ export const FileView = ({ chart, setChart, assetId }: Prop) => {
             )}
           </div>
           <div style={{ width: '100%' }}>
-            <SourceTableWrapper>
-              <SourceTable
-                mode="file"
-                headerTranslations={sourceTableHeaderTranslations}
-                setChart={setChart}
-                chart={chart}
-              />
-            </SourceTableWrapper>
+            <SourceTable
+              mode="file"
+              headerTranslations={sourceTableHeaderTranslations}
+              sources={sources}
+              summaries={summaries}
+            />
           </div>
         </SplitPaneLayout>
       </FileViewerContainer>

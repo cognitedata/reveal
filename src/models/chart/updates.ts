@@ -6,6 +6,7 @@ import {
   ChartThresholdEventFilter,
   ChartTimeSeries,
   ChartWorkflow,
+  ChartWorkflowV2,
   SourceCollectionData,
   StorableNode,
   UserInfo,
@@ -130,8 +131,46 @@ export function updateWorkflow(
   );
 }
 
+export function updateChartSource(
+  chart: Chart,
+  id: string,
+  diff: Partial<ChartTimeSeries | ChartWorkflow>
+) {
+  return {
+    ...chart,
+    timeSeriesCollection: chart.timeSeriesCollection?.map((ts) =>
+      ts.id === id
+        ? {
+            ...ts,
+            ...diff,
+          }
+        : ts
+    ),
+    workflowCollection: chart.workflowCollection?.map((wf) =>
+      wf.id === id
+        ? {
+            ...(wf as ChartWorkflowV2),
+            ...(diff as Partial<ChartWorkflowV2>),
+          }
+        : wf
+    ),
+  };
+}
+
 export function removeWorkflow(chart: Chart, wfId: string): Chart {
   return removeItem(chart, 'workflowCollection', wfId);
+}
+
+export function removeSource(chart: Chart, sourceId: string): Chart {
+  return {
+    ...chart,
+    timeSeriesCollection: chart.timeSeriesCollection?.filter(
+      ({ id }) => id !== sourceId
+    ),
+    workflowCollection: chart.workflowCollection?.filter(
+      ({ id }) => id !== sourceId
+    ),
+  };
 }
 
 export function duplicateWorkflow(chart: Chart, wfId: string): Chart {

@@ -3,10 +3,10 @@
  */
 
 import { ShowHideButton } from 'components/ShowHideButton/ShowHideButton';
-import { SourceItem, SourceName } from 'pages/ChartView/elements';
 import { Modes } from 'pages/types';
 import { MouseEventHandler } from 'react';
 import { makeDefaultTranslations } from 'utils/translations';
+import { SourceItem, SourceName } from './elements';
 
 interface Props {
   mode: Modes;

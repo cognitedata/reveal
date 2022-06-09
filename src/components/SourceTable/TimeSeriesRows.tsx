@@ -1,27 +1,26 @@
 import { useTranslations } from 'hooks/translations';
-import { Chart } from 'models/chart/types';
+import { ChartTimeSeries } from 'models/chart/types';
 import { Modes } from 'pages/types';
+import { ComponentProps } from 'react';
 import TimeSeriesRow from './TimeSeriesRow';
 
 type Props = {
-  chart: Chart;
-  updateChart: (update: (c: Chart | undefined) => Chart) => void;
+  sources: ChartTimeSeries[];
+  summaries: {
+    [key: string]: ComponentProps<typeof TimeSeriesRow>['summary'];
+  };
   mode: Modes;
   selectedSourceId?: string;
   onRowClick?: (id?: string) => void;
   onInfoClick?: (id?: string) => void;
-  dateFrom: string;
-  dateTo: string;
 };
 export default function TimeSeriesRows({
-  chart,
-  updateChart,
+  sources = [],
+  summaries,
   mode,
   onRowClick = () => {},
   onInfoClick = () => {},
   selectedSourceId,
-  dateFrom,
-  dateTo,
 }: Props) {
   const isWorkspaceMode = mode === 'workspace';
   const isEditorMode = mode === 'editor';
@@ -34,19 +33,17 @@ export default function TimeSeriesRows({
 
   return (
     <>
-      {chart?.timeSeriesCollection?.map((t) => (
+      {sources.map((t) => (
         <TimeSeriesRow
           key={t.id}
-          mutate={updateChart}
           timeseries={t}
+          summary={summaries[t.tsExternalId || '']}
           isWorkspaceMode={isWorkspaceMode}
           onRowClick={onRowClick}
           onInfoClick={onInfoClick}
           isSelected={selectedSourceId === t.id}
           disabled={isEditorMode}
           isFileViewerMode={isFileViewerMode}
-          dateFrom={dateFrom}
-          dateTo={dateTo}
           translations={translations}
         />
       ))}

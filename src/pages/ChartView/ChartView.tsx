@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import get from 'lodash/get';
-import dayjs from 'dayjs';
 import { toast, Loader } from '@cognite/cogs.js';
 import {
   useParams,
@@ -11,7 +10,7 @@ import {
 import NodeEditor from 'components/NodeEditor/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
 import ChartPlotContainer from 'components/PlotlyChart/ChartPlotContainer';
-import { useChart, useUpdateChart } from 'hooks/charts-storage';
+import { useUpdateChart } from 'hooks/charts-storage';
 import {
   ChartTimeSeries,
   ChartWorkflow,
@@ -21,40 +20,50 @@ import { useSearchParam } from 'hooks/navigation';
 import { SEARCH_KEY } from 'utils/constants';
 import { startTimer, stopTimer, trackUsage } from 'services/metrics';
 import { Modes } from 'pages/types';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import {
   addWorkflows,
-  updateChartDateRange,
+  duplicateWorkflow,
+  initializeSourceCollection,
+  removeSource,
+  updateChartSource,
   updateSourceCollectionOrder,
   updateVisibilityForAllSources,
-  updateWorkflowsFromV1toV2,
-  updateWorkflowsToSupportVersions,
 } from 'models/chart/updates';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import chartAtom from 'models/chart/atom';
 import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
-
 import { useTranslations } from 'hooks/translations';
 import { makeDefaultTranslations } from 'utils/translations';
-import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
 import { FileView } from 'pages/FileView/FileView';
 import { useIsChartOwner } from 'hooks/user';
 import DetailsSidebar from 'components/DetailsSidebar/DetailsSidebar';
 import ThresholdSidebar from 'components/Thresholds/ThresholdSidebar';
 import SearchSidebar from 'components/Search/SearchSidebar';
-import { useFilePicker } from 'use-file-picker';
-import SourceTable from 'pages/ChartView/SourceTable';
-
+import SourceTable from 'components/SourceTable/SourceTable';
+import { timeseriesAtom } from 'models/timeseries-results/atom';
+import {
+  availableWorkflows,
+  calculationSummaries,
+} from 'models/calculation-results/selectors';
+import { TimeseriesCollectionEffects } from 'effects/timeseries';
+import { CalculationCollectionEffects } from 'effects/calculations';
+import { flow } from 'lodash';
+import { getUnitConverter } from 'utils/units';
+import { timeseriesSummaries } from 'models/timeseries-results/selectors';
 import {
   BottomPaneWrapper,
   ChartContainer,
   ChartViewContainer,
   ChartWrapper,
   ContentWrapper,
-  SourceTableWrapper,
   TopPaneWrapper,
 } from './elements';
 import ChartViewHeader from './ChartViewHeader';
+import {
+  useInitializedChart,
+  useStatistics,
+  useUploadCalculations,
+} from './hooks';
 
 type ChartViewProps = {
   chartId: string;
@@ -74,14 +83,14 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const { path } = useRouteMatch();
 
   /**
-   * Get stored chart
+   * Get local initialized chart
    */
-  const { data: originalChart, isError, isFetched } = useChart(chartId);
+  const { data: chart, isError, isLoading } = useInitializedChart(chartId);
 
   /**
    * Get local chart context
    */
-  const [chart, setChart] = useRecoilState(chartAtom);
+  const [, setChart] = useRecoilState(chartAtom);
 
   /**
    * Check if you own the chart
@@ -89,71 +98,19 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const isChartOwner = useIsChartOwner(chart);
 
   /**
+   * Get stored results for timeseries and calculations
+   */
+  const timeseriesData = useRecoilValue(timeseriesAtom);
+  const calculationData = useRecoilValue(availableWorkflows);
+
+  /**
    * Method for updating storage value of chart
    */
-  const {
-    mutate: updateChart,
-    isError: updateError,
-    error: updateErrorMsg,
-  } = useUpdateChart();
-
-  /**
-   * Get all available operations (needed for migration)
-   */
-  const [, , operations] = useAvailableOps();
-
-  /**
-   * Initialize local chart atom
-   */
-  useEffect(() => {
-    if ((chart && chart.id === chartId) || !originalChart) {
-      return;
-    }
-
-    if (!operations || !operations.length) {
-      return;
-    }
-
-    /**
-     * Fallback date range to default 1M if saved dates are not valid
-     */
-    const dateFrom = Date.parse(originalChart.dateFrom!)
-      ? originalChart.dateFrom!
-      : dayjs().subtract(1, 'M').toISOString();
-    const dateTo = Date.parse(originalChart.dateTo!)
-      ? originalChart.dateTo!
-      : dayjs().toISOString();
-
-    const updatedChart = [originalChart]
-      .map((_chart) => updateChartDateRange(_chart, dateFrom, dateTo))
-      /**
-       * Convert/migrate workflows using @cognite/connect to the format supported by React Flow (v2)
-       */
-      .map((_chart) => updateWorkflowsFromV1toV2(_chart, operations))
-      /**
-       * Convert/migrate from v2 format to v3 (toolFunction -> selectedOperation, functionData -> parameterValues, etc...)
-       */
-      .map((_chart) => updateWorkflowsToSupportVersions(_chart))[0];
-
-    /**
-     * Add chart to local state atom
-     */
-    setChart(updatedChart);
-  }, [originalChart, chart, chartId, setChart, operations]);
-
-  /**
-   * Sync local chart atom to storage
-   */
-  useEffect(() => {
-    if (chart) {
-      updateChart(chart);
-    }
-  }, [chart, updateChart]);
+  const { isError: updateError, error: updateErrorMsg } = useUpdateChart();
 
   /**
    * Translations for ChartView
    */
-
   const t = {
     ...defaultTranslations,
     ...useTranslations(Object.keys(defaultTranslations), 'ChartView').t,
@@ -219,6 +176,19 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   }, [updateError, updateErrorMsg, translatedChartNotSavedError]);
 
   /**
+   * Initialize sort order collection
+   */
+  useEffect(() => {
+    if (!chart) {
+      return;
+    }
+
+    if (!chart.sourceCollection || chart.sourceCollection === undefined) {
+      setChart((oldChart) => initializeSourceCollection(oldChart!));
+    }
+  }, [chart, setChart]);
+
+  /**
    * Open search drawer if query is present in the url
    */
   useEffect(() => {
@@ -280,42 +250,34 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   }, [setQuery]);
 
-  const onDragEnd = useCallback(
-    (result: any) => {
-      if (!result.destination) {
-        return;
-      }
-
+  const handleMoveSource = useCallback(
+    (sourceIndex: number, destinationIndex: number) => {
       setChart((oldChart) =>
-        updateSourceCollectionOrder(
-          oldChart!,
-          result.source.index,
-          result.destination.index
-        )
+        updateSourceCollectionOrder(oldChart!, sourceIndex, destinationIndex)
       );
     },
     [setChart]
   );
 
-  const sources = useMemo(
-    () => [
-      ...(chart?.timeSeriesCollection || []).map(
-        (ts) =>
-          ({
-            type: 'timeseries',
-            ...ts,
-          } as ChartTimeSeries)
-      ),
-      ...(chart?.workflowCollection || []).map(
-        (wf) =>
-          ({
-            type: 'workflow',
-            ...wf,
-          } as ChartWorkflow)
-      ),
-    ],
-    [chart?.timeSeriesCollection, chart?.workflowCollection]
-  );
+  const sources = useMemo(() => {
+    return (chart?.sourceCollection ?? [])
+      .map((x) =>
+        x.type === 'timeseries'
+          ? {
+              type: 'timeseries',
+              ...chart?.timeSeriesCollection?.find((ts) => ts.id === x.id),
+            }
+          : {
+              type: 'workflow',
+              ...chart?.workflowCollection?.find((calc) => calc.id === x.id),
+            }
+      )
+      .filter(Boolean) as (ChartTimeSeries | ChartWorkflow)[];
+  }, [
+    chart?.sourceCollection,
+    chart?.timeSeriesCollection,
+    chart?.workflowCollection,
+  ]);
 
   const isEveryRowHidden = sources.every(({ enabled }) => !enabled);
 
@@ -325,39 +287,202 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     );
   }, [setChart, isEveryRowHidden]);
 
-  /**
-   * File upload handling
-   */
-  const [openFileSelector, { filesContent, loading }] = useFilePicker({
-    accept: '.json',
-    readAs: 'Text',
-  });
-
-  const handleImportCalculations = useCallback(
-    (string) => {
-      let calculations: ChartWorkflowV2[] = [];
-      try {
-        calculations = JSON.parse(string);
-      } catch (err) {
-        toast.error('Invalid file format or content');
-      }
+  const handleImportCalculationsSuccess = useCallback(
+    (calculations: ChartWorkflowV2[]) => {
       setChart((oldChart) => addWorkflows(oldChart!, calculations));
       toast.success('Calculations imported successfully!');
     },
     [setChart]
   );
 
-  useEffect(() => {
-    if (loading) {
-      return;
-    }
-    if (!filesContent.length) {
-      return;
-    }
-    handleImportCalculations(filesContent[0].content);
-  }, [filesContent, loading, handleImportCalculations]);
+  const handleImportCalculationsError = useCallback(() => {
+    toast.error('Invalid file format or content');
+  }, []);
 
-  if (!isFetched || (isFetched && originalChart && !chart)) {
+  /**
+   * File upload handling
+   */
+  const openFileSelector = useUploadCalculations({
+    onSuccess: handleImportCalculationsSuccess,
+    onError: handleImportCalculationsError,
+  });
+
+  /**
+   * Get source item currently active
+   */
+  const selectedSourceItem = sources.find((s) => s.id === selectedSourceId);
+
+  /**
+   * Statistics results (for active item)
+   */
+  const { results: statisticsResult, status: statisticsStatus } = useStatistics(
+    selectedSourceItem,
+    chart?.dateFrom || new Date().toISOString(),
+    chart?.dateTo || new Date().toISOString(),
+    showContextMenu
+  );
+
+  const handleUpdateChartSource = useCallback(
+    (sourceId: string, diff: Partial<ChartTimeSeries | ChartWorkflow>) =>
+      setChart((oldChart) => updateChartSource(oldChart!, sourceId, diff)),
+    [setChart]
+  );
+
+  const handleOverrideUnitClick =
+    (source: ChartTimeSeries | ChartWorkflow) => (unitOption: any) => {
+      const currentInputUnit = source.unit;
+      const currentOutputUnit = source.preferredUnit;
+      const nextInputUnit = unitOption?.value;
+
+      const min = source.range?.[0];
+      const max = source.range?.[1];
+      const hasValidRange = typeof min === 'number' && typeof max === 'number';
+
+      const convert = flow(
+        getUnitConverter(currentOutputUnit, currentInputUnit),
+        getUnitConverter(nextInputUnit, currentOutputUnit)
+      );
+
+      const range = hasValidRange ? [convert(min!), convert(max!)] : [];
+
+      /**
+       * Update unit and corresponding converted range
+       */
+      handleUpdateChartSource(source.id, {
+        unit: unitOption.value,
+        range,
+      });
+    };
+
+  const handleConversionUnitClick =
+    (source: ChartTimeSeries | ChartWorkflow) => (unitOption: any) => {
+      const currentInputUnit = source.unit;
+      const currentOutputUnit = source.preferredUnit;
+      const nextOutputUnit = unitOption?.value;
+
+      const min = source.range?.[0];
+      const max = source.range?.[1];
+
+      const hasValidRange = typeof min === 'number' && typeof max === 'number';
+
+      const convert = flow(
+        getUnitConverter(currentOutputUnit, currentInputUnit),
+        getUnitConverter(currentInputUnit, nextOutputUnit)
+      );
+
+      const range = hasValidRange ? [convert(min!), convert(max!)] : [];
+
+      /**
+       * Update unit and corresponding converted range
+       */
+      handleUpdateChartSource(source.id, {
+        preferredUnit: unitOption?.value,
+        range,
+      });
+    };
+
+  const handleCustomUnitLabelClick =
+    (source: ChartTimeSeries | ChartWorkflow) => (label: string) => {
+      handleUpdateChartSource(source.id, {
+        customUnitLabel: label,
+        preferredUnit: '',
+        unit: '',
+      });
+    };
+
+  const handleResetUnitClick =
+    (source: ChartTimeSeries | ChartWorkflow) => () => {
+      const currentInputUnit = source.unit;
+      const currentOutputUnit = source.preferredUnit;
+
+      const min = source.range?.[0];
+      const max = source.range?.[1];
+      const convertUnit = getUnitConverter(currentOutputUnit, currentInputUnit);
+      const hasValidRange = typeof min === 'number' && typeof max === 'number';
+      const range = hasValidRange ? [convertUnit(min), convertUnit(max)] : [];
+
+      /**
+       * Update units and corresponding converted range
+       */
+      handleUpdateChartSource(source.id, {
+        unit: '',
+        preferredUnit: '',
+        customUnitLabel: '',
+        range,
+      });
+    };
+
+  const handleStatusIconClick =
+    (source: ChartTimeSeries | ChartWorkflow) => () => {
+      setChart((oldChart) => ({
+        ...oldChart!,
+        timeSeriesCollection: oldChart!.timeSeriesCollection?.map((ts) =>
+          ts.id === source.id
+            ? {
+                ...ts,
+                enabled: !ts.enabled,
+              }
+            : ts
+        ),
+        workflowCollection: oldChart!.workflowCollection?.map((wf) =>
+          wf.id === source.id
+            ? {
+                ...wf,
+                enabled: !wf.enabled,
+              }
+            : wf
+        ),
+      }));
+    };
+
+  const handleRemoveSourceClick =
+    (source: ChartTimeSeries | ChartWorkflow) => () =>
+      setChart((oldChart) => removeSource(oldChart!, source.id));
+
+  const handleUpdateAppearance =
+    (source: ChartTimeSeries | ChartWorkflow) =>
+    (diff: Partial<ChartTimeSeries | ChartWorkflow>) =>
+      setChart((oldChart) => ({
+        ...oldChart!,
+        timeSeriesCollection: oldChart!.timeSeriesCollection?.map((ts) =>
+          ts.id === source.id
+            ? {
+                ...ts,
+                ...diff,
+              }
+            : ts
+        ),
+        workflowCollection: oldChart!.workflowCollection?.map((wf) =>
+          wf.id === source.id
+            ? {
+                ...(wf as ChartWorkflowV2),
+                ...(diff as Partial<ChartWorkflowV2>),
+              }
+            : wf
+        ),
+      }));
+
+  const handleUpdateName =
+    (source: ChartTimeSeries | ChartWorkflow) => (value: string) => {
+      handleUpdateChartSource(source.id, {
+        name: value,
+      });
+    };
+
+  const handleDuplicateCalculation =
+    (source: ChartTimeSeries | ChartWorkflow) => () => {
+      const wf = chart?.workflowCollection?.find((wfc) => wfc.id === source.id);
+      if (wf) {
+        setChart((oldChart) => duplicateWorkflow(oldChart!, source.id));
+      }
+    };
+
+  const summaries = {
+    ...useRecoilValue(timeseriesSummaries),
+    ...useRecoilValue(calculationSummaries),
+  };
+
+  if (isLoading) {
     return <Loader />;
   }
 
@@ -377,110 +502,115 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     );
   }
 
-  const selectedSourceItem = sources.find((s) => s.id === selectedSourceId);
-
   return (
-    <RouterSwitch>
-      <Route exact path={path}>
-        <ChartViewContainer id="chart-view">
-          {showSearch && (
-            <SearchSidebar visible={showSearch} onClose={handleCloseSearch} />
-          )}
-          <ContentWrapper showSearch={showSearch}>
-            <ChartViewHeader
-              chart={chart}
-              setChart={setChart}
-              stackedMode={stackedMode}
-              setStackedMode={setStackedMode}
-              showSearch={showSearch}
-              setShowSearch={setShowSearch}
-              translations={ChartViewHeaderTranslations}
-              showYAxis={showYAxis}
-              showMinMax={showMinMax}
-              showGridlines={showGridlines}
-              mergeUnits={mergeUnits}
-              openNodeEditor={openNodeEditor}
-              openFileSelector={openFileSelector}
-              setSelectedSourceId={setSelectedSourceId}
-            />
-            <ChartContainer>
-              <SplitPaneLayout defaultSize={200}>
-                <TopPaneWrapper className="chart">
-                  <ChartWrapper>
-                    <ChartPlotContainer
-                      key={chartId}
-                      chart={chart}
-                      setChart={setChart}
-                      isYAxisShown={showYAxis}
-                      isMinMaxShown={showMinMax}
-                      isGridlinesShown={showGridlines}
-                      stackedMode={stackedMode}
-                      mergeUnits={mergeUnits}
-                    />
-                  </ChartWrapper>
-                </TopPaneWrapper>
-                <BottomPaneWrapper className="table">
-                  <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId="droppable-sources">
-                      {(provided) => (
-                        <div style={{ display: 'flex', height: '100%' }}>
-                          <SourceTableWrapper>
-                            <SourceTable
-                              mode={workspaceMode}
-                              chart={chart}
-                              setChart={setChart}
-                              provided={provided}
-                              isEveryRowHidden={isEveryRowHidden}
-                              headerTranslations={sourceTableTranslation}
-                              selectedSourceId={selectedSourceId}
-                              openNodeEditor={openNodeEditor}
-                              onRowClick={handleSourceClick}
-                              onInfoClick={handleInfoClick}
-                              onThresholdClick={handleThresholdClick}
-                              onShowHideButtonClick={handleShowHideButtonClick}
-                            />
-                          </SourceTableWrapper>
-                          {workspaceMode === 'editor' && !!selectedSourceId && (
-                            <NodeEditor
-                              setChart={setChart}
-                              workflowId={selectedSourceId}
-                              onClose={handleCloseEditor}
-                              chart={chart}
-                              translations={nodeEditorTranslations}
-                            />
-                          )}
-                        </div>
+    <>
+      <TimeseriesCollectionEffects />
+      <CalculationCollectionEffects />
+      <RouterSwitch>
+        <Route exact path={path}>
+          <ChartViewContainer id="chart-view">
+            {showSearch && (
+              <SearchSidebar visible={showSearch} onClose={handleCloseSearch} />
+            )}
+            <ContentWrapper showSearch={showSearch}>
+              <ChartViewHeader
+                chart={chart}
+                setChart={setChart}
+                stackedMode={stackedMode}
+                setStackedMode={setStackedMode}
+                showSearch={showSearch}
+                setShowSearch={setShowSearch}
+                translations={ChartViewHeaderTranslations}
+                showYAxis={showYAxis}
+                showMinMax={showMinMax}
+                showGridlines={showGridlines}
+                mergeUnits={mergeUnits}
+                openNodeEditor={openNodeEditor}
+                openFileSelector={openFileSelector}
+                setSelectedSourceId={setSelectedSourceId}
+              />
+              <ChartContainer>
+                <SplitPaneLayout defaultSize={200}>
+                  <TopPaneWrapper className="chart">
+                    <ChartWrapper>
+                      <ChartPlotContainer
+                        key={chartId}
+                        chart={chart}
+                        setChart={setChart}
+                        isYAxisShown={showYAxis}
+                        isMinMaxShown={showMinMax}
+                        isGridlinesShown={showGridlines}
+                        stackedMode={stackedMode}
+                        mergeUnits={mergeUnits}
+                        timeseriesData={timeseriesData}
+                        calculationsData={calculationData}
+                      />
+                    </ChartWrapper>
+                  </TopPaneWrapper>
+                  <BottomPaneWrapper className="table">
+                    <div style={{ display: 'flex', height: '100%' }}>
+                      <SourceTable
+                        mode={workspaceMode}
+                        sources={sources}
+                        summaries={summaries}
+                        isEveryRowHidden={isEveryRowHidden}
+                        headerTranslations={sourceTableTranslation}
+                        selectedSourceId={selectedSourceId}
+                        openNodeEditor={openNodeEditor}
+                        onRowClick={handleSourceClick}
+                        onInfoClick={handleInfoClick}
+                        onThresholdClick={handleThresholdClick}
+                        onShowHideButtonClick={handleShowHideButtonClick}
+                        timeseriesData={timeseriesData}
+                        calculationData={calculationData}
+                        onConversionUnitClick={handleConversionUnitClick}
+                        onCustomUnitLabelClick={handleCustomUnitLabelClick}
+                        onOverrideUnitClick={handleOverrideUnitClick}
+                        onResetUnitClick={handleResetUnitClick}
+                        onStatusIconClick={handleStatusIconClick}
+                        onRemoveSourceClick={handleRemoveSourceClick}
+                        onUpdateAppearance={handleUpdateAppearance}
+                        onUpdateName={handleUpdateName}
+                        onDuplicateCalculation={handleDuplicateCalculation}
+                        onMoveSource={handleMoveSource}
+                      />
+                      {workspaceMode === 'editor' && !!selectedSourceId && (
+                        <NodeEditor
+                          setChart={setChart}
+                          workflowId={selectedSourceId}
+                          onClose={handleCloseEditor}
+                          chart={chart}
+                          translations={nodeEditorTranslations}
+                        />
                       )}
-                    </Droppable>
-                  </DragDropContext>
-                </BottomPaneWrapper>
-              </SplitPaneLayout>
-            </ChartContainer>
-          </ContentWrapper>
-          <DetailsSidebar
-            visible={showContextMenu}
-            onClose={handleCloseContextMenu}
-            sourceItem={selectedSourceItem}
-          />
-          <ThresholdSidebar
-            visible={showThresholdMenu}
-            onClose={handleCloseThresholdMenu}
-            updateChart={setChart}
-            chart={chart}
-          />
-        </ChartViewContainer>
-      </Route>
-      <Route
-        path={`${path}/files/:assetId`}
-        render={({ match }) => (
-          <FileView
-            chart={chart}
-            setChart={setChart}
-            assetId={match.params.assetId}
-          />
-        )}
-      />
-    </RouterSwitch>
+                    </div>
+                  </BottomPaneWrapper>
+                </SplitPaneLayout>
+              </ChartContainer>
+            </ContentWrapper>
+            <DetailsSidebar
+              visible={showContextMenu}
+              onClose={handleCloseContextMenu}
+              sourceItem={selectedSourceItem}
+              statisticsResult={statisticsResult}
+              statisticsStatus={statisticsStatus}
+            />
+            <ThresholdSidebar
+              visible={showThresholdMenu}
+              onClose={handleCloseThresholdMenu}
+              updateChart={setChart}
+              chart={chart}
+            />
+          </ChartViewContainer>
+        </Route>
+        <Route
+          path={`${path}/files/:assetId`}
+          render={({ match }) => (
+            <FileView chart={chart} assetId={match.params.assetId} />
+          )}
+        />
+      </RouterSwitch>
+    </>
   );
 };
 

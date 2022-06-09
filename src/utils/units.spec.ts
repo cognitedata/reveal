@@ -1,6 +1,11 @@
 import { DatapointAggregate, DoubleDatapoint } from '@cognite/sdk';
 import { ChartThreshold } from 'models/chart/types';
-import { convertThresholdUnits, convertUnits, convertValue } from './units';
+import {
+  convertThresholdUnits,
+  convertUnits,
+  convertValue,
+  getUnitConvertedDatapointsSummary,
+} from './units';
 
 describe('convertUnits', () => {
   it('should convert units successfully (double data points)', () => {
@@ -395,5 +400,67 @@ describe('unitConvertedThresolds', () => {
         filter: {},
       },
     ]);
+  });
+});
+
+describe('getUnitConvertedDatapointsSummary', () => {
+  it('works for empty list of datapoints', () => {
+    const datapoints: DoubleDatapoint[] = [];
+    const summary = getUnitConvertedDatapointsSummary(datapoints);
+    expect(summary).toEqual({
+      max: undefined,
+      mean: undefined,
+      min: undefined,
+    });
+  });
+
+  it('gives correct result for list of datapoints (raw)', () => {
+    const datapoints: DoubleDatapoint[] = [
+      {
+        timestamp: new Date(),
+        value: -10,
+      },
+      {
+        timestamp: new Date(),
+        value: 0,
+      },
+      {
+        timestamp: new Date(),
+        value: 10,
+      },
+    ];
+    const summary = getUnitConvertedDatapointsSummary(datapoints);
+    expect(summary).toEqual({ max: 10, mean: 0, min: -10 });
+  });
+
+  it('gives correct result for list of datapoints (aggregate)', () => {
+    const datapoints: DatapointAggregate[] = [
+      {
+        timestamp: new Date(),
+        min: -20,
+        average: 0,
+        max: 20,
+        count: 100,
+        sum: 1000,
+      },
+      {
+        timestamp: new Date(),
+        min: -10,
+        average: 0,
+        max: 10,
+        count: 100,
+        sum: 1000,
+      },
+      {
+        timestamp: new Date(),
+        min: -30,
+        average: 0,
+        max: 30,
+        count: 100,
+        sum: 1000,
+      },
+    ];
+    const summary = getUnitConvertedDatapointsSummary(datapoints);
+    expect(summary).toEqual({ max: 30, mean: 10, min: -30 });
   });
 });

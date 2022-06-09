@@ -1,4 +1,6 @@
-const { REACT_APP_ENV = 'development', NODE_ENV } = process.env;
+const env = typeof process !== 'undefined' ? process.env : ({} as any);
+
+const { REACT_APP_ENV = 'development', NODE_ENV } = env;
 
 export const isDevelopment =
   REACT_APP_ENV === 'development' || NODE_ENV === 'development';
