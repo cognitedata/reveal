@@ -1,12 +1,13 @@
 import '__mocks/mockContainerAuth'; // should be first
+import { getMockUserMe } from 'domain/userManagementService/service/__mocks/getMockUserMe';
+
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
 
 import { testWrapper } from '__test-utils/renderer';
 import { defaultTestUser } from '__test-utils/testdata.utils';
 
-import { getMockUserMe } from '../../../domain/userManagementService/service/__mocks/getMockUserMe';
-import { useIsOwner } from '../utils';
+import { useIsOwner } from '../useIsOwner';
 
 const networkMocks = setupServer(getMockUserMe({ id: defaultTestUser }));
 

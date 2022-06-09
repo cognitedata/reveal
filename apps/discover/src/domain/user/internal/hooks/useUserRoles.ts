@@ -1,6 +1,8 @@
+import { getRoles, getRolesLegacy } from 'domain/user/service/network';
+
 import { UseQueryResult, useQuery } from 'react-query';
 
-import { discoverAPI, useJsonHeaders } from 'services/service';
+import { useJsonHeaders } from 'services/service';
 
 import { AuthModes } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
@@ -18,10 +20,10 @@ export function useUserRoles(): UseQueryResult<AuthModes | undefined> {
     USER_KEY.ROLES,
     () => {
       if (azureConfig && azureConfig?.enabled) {
-        return discoverAPI.user.getRoles(idHeaders, tenant);
+        return getRoles(idHeaders, tenant);
       }
 
-      return discoverAPI.user.getRolesLegacy(headers, tenant);
+      return getRolesLegacy(headers, tenant);
     },
     {
       retry: 2,

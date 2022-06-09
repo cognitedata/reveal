@@ -1,6 +1,6 @@
-import React from 'react';
+import { useUserRoles } from 'domain/user/internal/hooks/useUserRoles';
 
-import { useUserRoles } from 'services/user/useUserQuery';
+import React from 'react';
 
 export const Admin: React.FC<React.PropsWithChildren<unknown>> = ({
   children,

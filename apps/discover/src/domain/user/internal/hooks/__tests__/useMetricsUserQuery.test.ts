@@ -1,10 +1,9 @@
+import { useMetricsUser } from 'domain/user/internal/hooks/useMetricsUser';
 import { useUserInfoQuery } from 'domain/userManagementService/internal/queries/useUserInfoQuery';
 
 import { renderHook } from '@testing-library/react-hooks';
 
 import { useAuthContext } from '@cognite/react-container';
-
-import { useMetricsUser } from '../useMetricsUser';
 
 jest.mock('@cognite/react-container', () => ({
   useAuthContext: jest.fn(),

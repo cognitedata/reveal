@@ -1,6 +1,6 @@
-import * as React from 'react';
+import { useMetricsUser } from 'domain/user/internal/hooks/useMetricsUser';
 
-import { useMetricsUser } from 'services/user/useMetricsUser';
+import * as React from 'react';
 
 import { Metrics, PerfMetrics } from '@cognite/metrics';
 import { getTenantInfo, isProduction } from '@cognite/react-container';

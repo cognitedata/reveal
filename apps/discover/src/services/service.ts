@@ -1,5 +1,6 @@
 import { feedback } from 'domain/feedback/service/network/service';
 import { savedSearches } from 'domain/savedSearches/service/network/savedSearches';
+import * as user from 'domain/user/service/network';
 
 import { getDefaultHeader, getAuthHeaders } from '@cognite/react-container';
 
@@ -9,7 +10,6 @@ import { projectConfig } from './projectConfig';
 import { searchHistory } from './searchHistory';
 import { seismic } from './seismic';
 import { stats } from './stats';
-import { user } from './user';
 
 export const useJsonHeaders = (
   extras: Record<string, string> = {},

@@ -1,9 +1,10 @@
+import { useUserRoles } from 'domain/user/internal/hooks/useUserRoles';
+
 import { Switch } from 'react-router-dom';
 
 import navigation from 'constants/navigation';
 
 import { ProtectedRoute } from '../../../core';
-import { useUserRoles } from '../../../services/user/useUserQuery';
 
 import { CodeDefinitions } from './codeDefinitions/CodeDefinitions';
 import FeedbackPage from './feedback';

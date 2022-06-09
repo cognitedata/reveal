@@ -3,11 +3,11 @@ import {
   zipFavoritesAndDownload,
 } from 'domain/documents/service/utils/utils';
 import { useFavoriteUpdateContent } from 'domain/favorites/internal/actions/useFavoritesMutate';
+import { useIsOwner } from 'domain/user/internal/hooks/useIsOwner';
 
 import * as React from 'react';
 
 import flatten from 'lodash/flatten';
-import { useIsOwner } from 'services/user/utils';
 
 import { useTranslation } from '@cognite/react-i18n';
 

@@ -3,12 +3,12 @@ import {
   useFavoritesDeleteMutate,
 } from 'domain/favorites/internal/actions/useFavoritesMutate';
 import { useFavoritesQuery } from 'domain/favorites/internal/queries/useFavoritesQuery';
+import { useIsOwner } from 'domain/user/internal/hooks/useIsOwner';
 
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import isEmpty from 'lodash/isEmpty';
-import { useIsOwner } from 'services/user/utils';
 
 import { CommentTarget, SetCommentTarget } from '@cognite/react-comments';
 

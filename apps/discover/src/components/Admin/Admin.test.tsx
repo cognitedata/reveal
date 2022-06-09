@@ -1,11 +1,12 @@
+import { useUserRoles } from 'domain/user/internal/hooks/useUserRoles';
+
 import { screen } from '@testing-library/react';
-import { useUserRoles } from 'services/user/useUserQuery';
 
 import { testRenderer } from '__test-utils/renderer';
 
 import { Admin } from './Admin';
 
-jest.mock('services/user/useUserQuery', () => ({
+jest.mock('domain/user/internal/hooks/useUserRoles', () => ({
   useUserRoles: jest.fn(),
 }));
 

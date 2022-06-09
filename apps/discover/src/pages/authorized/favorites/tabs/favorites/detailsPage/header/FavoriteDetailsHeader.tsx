@@ -1,8 +1,8 @@
+import { useIsOwner } from 'domain/user/internal/hooks/useIsOwner';
+
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
-
-import { useIsOwner } from 'services/user/utils';
 
 import {
   ShareButton,

@@ -1,12 +1,12 @@
 import '__mocks/mockContainerAuth'; // should be first
+import { useUserRoles } from 'domain/user/internal/hooks/useUserRoles';
+import { getMockUserRolesLegacyGet } from 'domain/user/service/__mocks/getMockUserRolesLegacyGet';
+
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import { testWrapper } from '__test-utils/renderer';
-
-import { getMockUserRolesLegacyGet } from '../__mocks/getMockUserRolesLegacyGet';
-import { useUserRoles } from '../useUserQuery';
 
 const networkMocks = setupServer(
   getMockUserRolesLegacyGet(),
