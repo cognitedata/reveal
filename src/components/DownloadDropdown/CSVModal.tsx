@@ -1,8 +1,8 @@
 import { Button, Checkbox, SegmentedControl, Tooltip } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
-import DateRangeSelector from 'components/DateRangeSelector';
+import DateRangeSelector from 'components/DateRangeSelector/DateRangeSelector';
 import chartAtom from 'models/chart/atom';
-import { useCallback, useEffect, useState } from 'react';
+import { ComponentProps, useCallback, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { datapointsToCSV, Delimiters, downloadCSV } from 'utils/csv';
 import { wait } from 'utils/helpers';
@@ -51,6 +51,11 @@ export const defaultTranslations = makeDefaultTranslations(
 type Props = {
   isOpen?: boolean;
   onClose?: () => void;
+  dateFrom: Date;
+  dateTo: Date;
+  handleDateChange: ComponentProps<
+    typeof DateRangeSelector
+  >['handleDateChange'];
   translations?: typeof defaultTranslations;
 };
 
@@ -63,6 +68,9 @@ const delimiterOptions: { id: string; value: Delimiters; label: string }[] = [
 const CSVModal = ({
   isOpen = false,
   onClose = () => {},
+  dateFrom,
+  dateTo,
+  handleDateChange,
   translations,
 }: Props) => {
   const t = { ...defaultTranslations, ...translations };
@@ -279,7 +287,11 @@ const CSVModal = ({
             <>{t['Time span']}</>
           </Tooltip>
         </Label>
-        <DateRangeSelector />
+        <DateRangeSelector
+          dateFrom={dateFrom}
+          dateTo={dateTo}
+          handleDateChange={handleDateChange}
+        />
       </FieldContainer>
 
       <FieldContainer>

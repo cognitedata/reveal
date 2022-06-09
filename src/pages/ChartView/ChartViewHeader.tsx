@@ -10,25 +10,10 @@ import {
   Menu,
   Switch,
 } from '@cognite/cogs.js';
-import { useUserInfo } from '@cognite/sdk-react-query-hooks';
-import { useCallback } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { Elements } from 'react-flow-renderer';
-import { useIsChartOwner } from 'hooks/user';
 
-import {
-  NodeDataDehydratedVariants,
-  NodeTypes,
-} from 'components/NodeEditor/V2/types';
-
-import DateRangeSelector from 'components/DateRangeSelector';
+import DateRangeSelector from 'components/DateRangeSelector/DateRangeSelector';
 import TimePeriodSelector from 'components/TimePeriodSelector/TimePeriodSelector';
-import { Chart, ChartWorkflowV2 } from 'models/chart/types';
-import { trackUsage } from 'services/metrics';
-import { getEntryColor } from 'utils/colors';
-
-import { addWorkflow } from 'models/chart/updates';
-import { SetterOrUpdater } from 'recoil';
+import { ComponentProps } from 'react';
 import { makeDefaultTranslations } from 'utils/translations';
 import {
   Header,
@@ -67,111 +52,47 @@ const defaultTranslations = makeDefaultTranslations(
 );
 
 type Props = {
-  chart: Chart;
+  userId: string | undefined;
+  isOwner: boolean;
   stackedMode: boolean;
+  setStackedMode: (diff: boolean) => void;
   showSearch: boolean;
   showYAxis: boolean;
   showMinMax: boolean;
   showGridlines: boolean;
   mergeUnits: boolean;
-  setChart: SetterOrUpdater<Chart | undefined>;
-  setStackedMode: (diff: boolean) => void;
-  setShowSearch: (diff: boolean) => void;
-  openNodeEditor: () => void;
-  openFileSelector: () => void;
-  setSelectedSourceId: (diff: string) => void;
+  dateFrom: Date;
+  dateTo: Date;
+  handleOpenSearch: (diff: any) => void;
+  handleClickNewWorkflow: (diff: any) => void;
+  handleImportCalculationsClick: (diff: any) => void;
+  handleSettingsToggle: (str: string, val: boolean) => void;
+  handleDateChange: ComponentProps<
+    typeof DateRangeSelector
+  >['handleDateChange'];
   translations?: typeof defaultTranslations;
 };
 
 const ChartViewHeader = ({
-  chart,
+  userId,
+  isOwner,
   showSearch,
   stackedMode,
   showYAxis,
   showMinMax,
   showGridlines,
   mergeUnits,
-  setChart,
+  dateFrom,
+  dateTo,
   setStackedMode,
-  setShowSearch,
-  openNodeEditor,
-  openFileSelector,
-  setSelectedSourceId,
+  handleOpenSearch,
+  handleClickNewWorkflow,
+  handleImportCalculationsClick,
+  handleSettingsToggle,
+  handleDateChange,
   translations,
 }: Props) => {
-  const { data: login } = useUserInfo();
-  const isChartOwner = useIsChartOwner(chart);
   const t = { ...defaultTranslations, ...translations };
-
-  const handleOpenSearch = useCallback(() => {
-    setShowSearch(true);
-    trackUsage('ChartView.OpenSearch');
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
-  }, [setShowSearch]);
-
-  const handleSettingsToggle = useCallback(
-    (key: string, value: boolean) => {
-      setChart((oldChart) => ({
-        ...oldChart!,
-        settings: {
-          showYAxis,
-          showMinMax,
-          showGridlines,
-          mergeUnits,
-          [key]: value,
-        },
-      }));
-    },
-    [mergeUnits, setChart, showGridlines, showMinMax, showYAxis]
-  );
-
-  const handleClickNewWorkflow = useCallback(() => {
-    if (!chart) {
-      return;
-    }
-
-    const newWorkflowId = uuidv4();
-
-    /**
-     * The current template is just an output node
-     * that's added for you (but it could be anything!)
-     */
-    const elementsTemplate: Elements<NodeDataDehydratedVariants> = [
-      {
-        id: uuidv4(),
-        type: NodeTypes.OUTPUT,
-        position: { x: 400, y: 150 },
-      },
-    ];
-
-    const newWorkflow: ChartWorkflowV2 = {
-      version: 'v2',
-      id: newWorkflowId,
-      name: 'New Calculation',
-      color: getEntryColor(chart.id, newWorkflowId),
-      flow: {
-        elements: elementsTemplate,
-        position: [0, 0],
-        zoom: 1,
-      },
-      lineWeight: 1,
-      lineStyle: 'solid',
-      enabled: true,
-      createdAt: Date.now(),
-      unit: '',
-      preferredUnit: '',
-      settings: { autoAlign: true },
-    };
-
-    setChart((oldChart) => addWorkflow(oldChart!, newWorkflow));
-    setSelectedSourceId(newWorkflowId);
-    openNodeEditor();
-    trackUsage('ChartView.AddCalculation');
-  }, [chart, setChart, openNodeEditor, setSelectedSourceId]);
-
-  const handleImportCalculationsClick = useCallback(async () => {
-    openFileSelector();
-  }, [openFileSelector]);
 
   return (
     <Header className="downloadChartHide">
@@ -205,7 +126,7 @@ const ChartViewHeader = ({
           />
         </Dropdown>
       </section>
-      {login?.id && !isChartOwner && (
+      {userId && !isOwner && (
         <section>
           <WarningAlert
             type="warning"
@@ -313,10 +234,18 @@ const ChartViewHeader = ({
         <Divider />
         <RangeWrapper>
           <RangeColumn>
-            <TimePeriodSelector />
+            <TimePeriodSelector
+              dateFrom={dateFrom}
+              dateTo={dateTo}
+              handleDateChange={handleDateChange}
+            />
           </RangeColumn>
           <RangeColumn>
-            <DateRangeSelector />
+            <DateRangeSelector
+              dateFrom={dateFrom}
+              dateTo={dateTo}
+              handleDateChange={handleDateChange}
+            />
           </RangeColumn>
         </RangeWrapper>
       </section>

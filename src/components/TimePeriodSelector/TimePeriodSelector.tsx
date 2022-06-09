@@ -1,10 +1,7 @@
 import dayjs from 'dayjs';
 import { Button } from '@cognite/cogs.js';
 import { trackUsage } from 'services/metrics';
-import { useRecoilState } from 'recoil';
-import chartAtom from 'models/chart/atom';
 import { useState } from 'react';
-import { updateChartDateRange } from 'models/chart/updates';
 
 const relativeTimeOptions = [
   {
@@ -39,31 +36,23 @@ const relativeTimeOptions = [
   },
 ];
 
-const TimePeriodSelector = () => {
-  const [chart, setChart] = useRecoilState(chartAtom);
+type dateOption = {
+  dateFrom: Date;
+  dateTo: Date;
+};
+
+type Props = {
+  dateFrom: Date;
+  dateTo: Date;
+  handleDateChange: (diff: Partial<dateOption>) => void;
+};
+const TimePeriodSelector = ({ dateFrom, dateTo, handleDateChange }: Props) => {
   const [[selectedRange, selectedDateFrom, selectedDateTo], setSelectedRange] =
     useState<[string | undefined, string | undefined, string | undefined]>([
       undefined,
       undefined,
       undefined,
     ]);
-
-  if (!chart) {
-    return null;
-  }
-
-  const handleDateChange = ({
-    dateFrom,
-    dateTo,
-  }: {
-    dateFrom?: Date;
-    dateTo?: Date;
-  }) => {
-    if (dateFrom || dateTo) {
-      setChart((oldChart) => updateChartDateRange(oldChart!, dateFrom, dateTo));
-      trackUsage('ChartView.DateChange', { source: 'button' });
-    }
-  };
 
   const handleTimeOptionSelected = (selectedOption: string) => {
     const selectedTimeOption = relativeTimeOptions.find(
@@ -80,10 +69,13 @@ const TimePeriodSelector = () => {
       selectedTimeOption?.dateFrom().toISOString(),
       selectedTimeOption?.dateTo().toISOString(),
     ]);
+
+    trackUsage('ChartView.DateChange', { source: 'button' });
   };
 
   const shouldShowRangeSelectionAsActive =
-    chart?.dateFrom === selectedDateFrom && chart?.dateTo === selectedDateTo;
+    dateFrom.toISOString() === selectedDateFrom &&
+    dateTo.toISOString() === selectedDateTo;
 
   return (
     <div>

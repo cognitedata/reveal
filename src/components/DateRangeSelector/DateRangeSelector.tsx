@@ -1,36 +1,25 @@
 import { DateRange } from '@cognite/cogs.js';
 import { trackUsage } from 'services/metrics';
-import { useRecoilState } from 'recoil';
-import chartAtom from 'models/chart/atom';
-import { updateChartDateRange } from 'models/chart/updates';
 import TimeSelector from 'components/TimeSelector/TimeSelector';
 
-const DateRangeSelector = () => {
-  const [chart, setChart] = useRecoilState(chartAtom);
+type dateOption = {
+  dateFrom: Date;
+  dateTo: Date;
+};
 
-  if (!chart) {
-    return null;
-  }
+type Props = {
+  dateFrom: Date;
+  dateTo: Date;
+  handleDateChange: (diff: Partial<dateOption>) => void;
+};
 
-  const handleDateChange = ({
-    dateFrom,
-    dateTo,
-  }: {
-    dateFrom?: Date;
-    dateTo?: Date;
-  }) => {
-    if (dateFrom || dateTo) {
-      setChart((oldChart) => updateChartDateRange(oldChart!, dateFrom, dateTo));
-      trackUsage('ChartView.DateChange', { source: 'daterange' });
-    }
-  };
-
+const DateRangeSelector = ({ dateFrom, dateTo, handleDateChange }: Props) => {
   return (
     <DateRange
       format="MMM D, YYYY"
       range={{
-        startDate: new Date(chart.dateFrom || new Date()),
-        endDate: new Date(chart.dateTo || new Date()),
+        startDate: new Date(dateFrom || new Date()),
+        endDate: new Date(dateTo || new Date()),
       }}
       onChange={({
         startDate,
@@ -39,8 +28,8 @@ const DateRangeSelector = () => {
         startDate?: Date | undefined;
         endDate?: Date | undefined;
       }) => {
-        const currentStart = new Date(chart.dateFrom);
-        const currentEnd = new Date(chart.dateTo);
+        const currentStart = new Date(dateFrom);
+        const currentEnd = new Date(dateTo);
 
         const newStart = new Date(startDate || new Date());
         newStart.setHours(currentStart.getHours());
@@ -57,6 +46,7 @@ const DateRangeSelector = () => {
 
         // Force mouseup event as it doesn't bubble up for this component
         window.dispatchEvent(new Event('mouseup'));
+        trackUsage('ChartView.DateChange', { source: 'daterange' });
       }}
       prependComponent={() => (
         <div
@@ -67,7 +57,7 @@ const DateRangeSelector = () => {
         >
           <div>
             <TimeSelector
-              value={new Date(chart.dateFrom)}
+              value={new Date(dateFrom)}
               onChange={(value) => {
                 handleDateChange({
                   dateFrom: value,
@@ -77,7 +67,7 @@ const DateRangeSelector = () => {
           </div>
           <div>
             <TimeSelector
-              value={new Date(chart.dateTo)}
+              value={new Date(dateTo)}
               onChange={(value) => {
                 handleDateChange({
                   dateTo: value,

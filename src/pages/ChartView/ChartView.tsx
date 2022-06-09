@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import get from 'lodash/get';
 import { toast, Loader } from '@cognite/cogs.js';
+import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useIsChartOwner } from 'hooks/user';
 import {
   useParams,
   useRouteMatch,
@@ -21,10 +23,12 @@ import { SEARCH_KEY } from 'utils/constants';
 import { startTimer, stopTimer, trackUsage } from 'services/metrics';
 import { Modes } from 'pages/types';
 import {
+  addWorkflow,
   addWorkflows,
   duplicateWorkflow,
   initializeSourceCollection,
   removeSource,
+  updateChartDateRange,
   updateChartSource,
   updateSourceCollectionOrder,
   updateVisibilityForAllSources,
@@ -35,10 +39,19 @@ import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
 import { useTranslations } from 'hooks/translations';
 import { makeDefaultTranslations } from 'utils/translations';
 import { FileView } from 'pages/FileView/FileView';
-import { useIsChartOwner } from 'hooks/user';
 import DetailsSidebar from 'components/DetailsSidebar/DetailsSidebar';
 import ThresholdSidebar from 'components/Thresholds/ThresholdSidebar';
 import SearchSidebar from 'components/Search/SearchSidebar';
+import { getEntryColor } from 'utils/colors';
+
+import { v4 as uuidv4 } from 'uuid';
+import { Elements } from 'react-flow-renderer';
+
+import {
+  NodeDataDehydratedVariants,
+  NodeTypes,
+} from 'components/NodeEditor/V2/types';
+
 import SourceTable from 'components/SourceTable/SourceTable';
 import { timeseriesAtom } from 'models/timeseries-results/atom';
 import {
@@ -50,6 +63,7 @@ import { CalculationCollectionEffects } from 'effects/calculations';
 import { flow } from 'lodash';
 import { getUnitConverter } from 'utils/units';
 import { timeseriesSummaries } from 'models/timeseries-results/selectors';
+
 import {
   BottomPaneWrapper,
   ChartContainer,
@@ -81,6 +95,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [query = '', setQuery] = useSearchParam(SEARCH_KEY, false);
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { path } = useRouteMatch();
+  const { data: login } = useUserInfo();
 
   /**
    * Get local initialized chart
@@ -299,10 +314,90 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     toast.error('Invalid file format or content');
   }, []);
 
+  const handleOpenSearch = useCallback(() => {
+    setShowSearch(true);
+    trackUsage('ChartView.OpenSearch');
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+  }, [setShowSearch]);
+
+  const handleSettingsToggle = useCallback(
+    (key: string, value: boolean) => {
+      setChart((oldChart) => ({
+        ...oldChart!,
+        settings: {
+          showYAxis,
+          showMinMax,
+          showGridlines,
+          mergeUnits,
+          [key]: value,
+        },
+      }));
+    },
+    [mergeUnits, setChart, showGridlines, showMinMax, showYAxis]
+  );
+
+  const handleClickNewWorkflow = useCallback(() => {
+    if (!chart) {
+      return;
+    }
+
+    const newWorkflowId = uuidv4();
+
+    /**
+     * The current template is just an output node
+     * that's added for you (but it could be anything!)
+     */
+    const elementsTemplate: Elements<NodeDataDehydratedVariants> = [
+      {
+        id: uuidv4(),
+        type: NodeTypes.OUTPUT,
+        position: { x: 400, y: 150 },
+      },
+    ];
+
+    const newWorkflow: ChartWorkflowV2 = {
+      version: 'v2',
+      id: newWorkflowId,
+      name: 'New Calculation',
+      color: getEntryColor(chart.id, newWorkflowId),
+      flow: {
+        elements: elementsTemplate,
+        position: [0, 0],
+        zoom: 1,
+      },
+      lineWeight: 1,
+      lineStyle: 'solid',
+      enabled: true,
+      createdAt: Date.now(),
+      unit: '',
+      preferredUnit: '',
+      settings: { autoAlign: true },
+    };
+
+    setChart((oldChart) => addWorkflow(oldChart!, newWorkflow));
+    setSelectedSourceId(newWorkflowId);
+    openNodeEditor();
+    trackUsage('ChartView.AddCalculation');
+  }, [chart, setChart, openNodeEditor, setSelectedSourceId]);
+
+  const handleDateChange = ({
+    dateFrom,
+    dateTo,
+  }: {
+    dateFrom?: Date;
+    dateTo?: Date;
+  }) => {
+    if (dateFrom || dateTo) {
+      setChart((oldChart: any) =>
+        updateChartDateRange(oldChart!, dateFrom, dateTo)
+      );
+    }
+  };
+
   /**
    * File upload handling
    */
-  const openFileSelector = useUploadCalculations({
+  const handleImportCalculationsClick = useUploadCalculations({
     onSuccess: handleImportCalculationsSuccess,
     onError: handleImportCalculationsError,
   });
@@ -514,20 +609,23 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             )}
             <ContentWrapper showSearch={showSearch}>
               <ChartViewHeader
-                chart={chart}
-                setChart={setChart}
+                userId={login?.id}
+                isOwner={isChartOwner}
                 stackedMode={stackedMode}
                 setStackedMode={setStackedMode}
                 showSearch={showSearch}
-                setShowSearch={setShowSearch}
-                translations={ChartViewHeaderTranslations}
                 showYAxis={showYAxis}
                 showMinMax={showMinMax}
                 showGridlines={showGridlines}
                 mergeUnits={mergeUnits}
-                openNodeEditor={openNodeEditor}
-                openFileSelector={openFileSelector}
-                setSelectedSourceId={setSelectedSourceId}
+                dateFrom={new Date(chart.dateFrom)}
+                dateTo={new Date(chart.dateTo)}
+                handleOpenSearch={handleOpenSearch}
+                handleClickNewWorkflow={handleClickNewWorkflow}
+                handleImportCalculationsClick={handleImportCalculationsClick}
+                handleSettingsToggle={handleSettingsToggle}
+                handleDateChange={handleDateChange}
+                translations={ChartViewHeaderTranslations}
               />
               <ChartContainer>
                 <SplitPaneLayout defaultSize={200}>

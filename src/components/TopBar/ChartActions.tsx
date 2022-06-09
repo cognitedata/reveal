@@ -3,7 +3,7 @@ import styled from 'styled-components/macro';
 import { Button, Popconfirm, toast, Tooltip } from '@cognite/cogs.js';
 import { useNavigate } from 'hooks/navigation';
 import { useDeleteChart, useUpdateChart } from 'hooks/charts-storage';
-import { duplicate } from 'models/chart/updates';
+import { duplicate, updateChartDateRange } from 'models/chart/updates';
 import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
 import { trackUsage } from 'services/metrics';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
@@ -48,7 +48,7 @@ export const ChartActions = () => {
   );
 
   const move = useNavigate();
-  const [chart] = useRecoilState(chartAtom);
+  const [chart, setChart] = useRecoilState(chartAtom);
   const { data: login } = useUserInfo();
   const { takeScreenshot } = useScreenshot();
   const [isCSVModalVisible, setIsCSVModalVisible] = useState(false);
@@ -135,6 +135,21 @@ export const ChartActions = () => {
     });
   };
 
+  const handleDateChange = ({
+    dateFrom,
+    dateTo,
+  }: {
+    dateFrom?: Date;
+    dateTo?: Date;
+  }) => {
+    if (dateFrom || dateTo) {
+      setChart((oldChart: any) =>
+        updateChartDateRange(oldChart!, dateFrom, dateTo)
+      );
+      trackUsage('ChartView.DateChange', { source: 'daterange' });
+    }
+  };
+
   if (!chart) {
     return <></>;
   }
@@ -188,6 +203,9 @@ export const ChartActions = () => {
         isOpen={isCSVModalVisible}
         onClose={() => setIsCSVModalVisible(false)}
         translations={CSVModalTranslations}
+        dateFrom={new Date(chart.dateFrom)}
+        dateTo={new Date(chart.dateTo)}
+        handleDateChange={handleDateChange}
       />
     </div>
   );
