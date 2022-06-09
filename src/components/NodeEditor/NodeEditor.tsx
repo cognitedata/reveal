@@ -1,6 +1,6 @@
 import { Chart, ChartWorkflowV2 } from 'models/chart/types';
 import { updateWorkflow } from 'models/chart/updates';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { ReactFlowProvider } from 'react-flow-renderer';
 import { Icon, toast } from '@cognite/cogs.js';
 import { SetterOrUpdater } from 'recoil';
@@ -28,7 +28,10 @@ const NodeEditor = ({
   setChart,
   translations,
 }: Props) => {
-  const t = { ...defaultTranslations, ...translations };
+  const t = useMemo(
+    () => ({ ...defaultTranslations, ...translations }),
+    [translations]
+  );
   const { data: login } = useUserInfo();
   const isOwner = useIsChartOwner(chart);
 
@@ -61,14 +64,19 @@ const NodeEditor = ({
 
   const readOnly = Boolean(login?.id && !isOwner);
 
-  if (operationsError instanceof Error) {
-    toast.error(
-      <ErrorToast
-        title={t['Failed to load Operations']}
-        text={t['Please reload the page']}
-      />
-    );
-  }
+  /**
+   * Trigger toast if error is present
+   */
+  useEffect(() => {
+    if (operationsError instanceof Error) {
+      toast.error(
+        <ErrorToast
+          title={t['Failed to load Operations']}
+          text={t['Please reload the page']}
+        />
+      );
+    }
+  }, [operationsError, t]);
 
   if (isLoadingOperations) {
     return <Icon type="Loader" />;
