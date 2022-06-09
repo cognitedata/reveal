@@ -231,13 +231,12 @@ const getCapabilityKey = (
 export const getCapabilityFormattedName = (
   capability: CogniteCapability | string | SingleCogniteCapability
 ) => {
-  const capabilityName = getCapabilityName(capability) || capability;
+  const capabilityName = (getCapabilityName(capability) ||
+    capability) as keyof typeof getCapabilityNameTranslationKey;
   const capabilityTranslateKey =
-    // @ts-ignore
     getCapabilityNameTranslationKey[capabilityName];
 
   return {
-    // @ts-ignore
     capability: capabilityTranslateKey || capitalize(capabilityName),
     requireTranslate: Boolean(capabilityTranslateKey),
   };

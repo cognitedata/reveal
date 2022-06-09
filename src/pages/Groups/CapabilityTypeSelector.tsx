@@ -60,10 +60,10 @@ const CapabilityTypeSelector = (props: CapabilityTypeSelectorProps) => {
       <OptGroup key={group.name} label={group.name}>
         {group.items.map((item) => {
           const aclType = getAclType(item);
-          let { capability, requireTranslate } =
+          const { capability, requireTranslate } =
             getCapabilityFormattedName(item);
-          const capabilityDisplayName = requireTranslate
-            ? t(capability)
+          const capabilityDisplayName: string = requireTranslate
+            ? t(capability as TranslationKeys)
             : capability;
           const capabilityDesc = getCapabilityDescription(item, t);
 
