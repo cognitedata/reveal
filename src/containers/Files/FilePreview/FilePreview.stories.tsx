@@ -1,5 +1,6 @@
+import { ComponentStory } from '@storybook/react';
 import React from 'react';
-import { files } from '../../../stubs/files';
+import { files } from 'stubs/files';
 import { FilePreview } from './FilePreview';
 
 const sdkMock = {
@@ -22,7 +23,9 @@ export default {
   },
 };
 
-export const Example = args => <FilePreview {...args} />;
+export const Example: ComponentStory<typeof FilePreview> = args => (
+  <FilePreview {...args} />
+);
 Example.args = {
   fileId: files[0].id,
 };

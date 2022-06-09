@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { IdEither } from '@cognite/sdk';
+import { ComponentStory } from '@storybook/react';
 import { DataSetFilter } from './DataSetFilter';
 
 export default {
@@ -12,9 +13,9 @@ export default {
     },
   },
 };
-export const Example = args => {
+export const Example: ComponentStory<typeof DataSetFilter> = args => {
   const [value, setValue] = useState<IdEither[] | undefined>(undefined);
-  return <DataSetFilter value={value} setValue={setValue} {...args} />;
+  return <DataSetFilter {...args} value={value} setValue={setValue} />;
 };
 Example.args = {
   resourceType: 'asset',

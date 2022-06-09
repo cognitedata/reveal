@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AssetFilterProps } from '@cognite/sdk';
 import { action } from '@storybook/addon-actions';
+import { PartialStoryFn } from '@storybook/addons';
 import { Wrapper } from './utils';
 import { DataSetFilter } from '../components/Search/Filters';
 import { AssetSearchResults } from '../containers/SearchResults';
@@ -21,13 +22,14 @@ export const QueryBuilder = () => {
         filter={assetFilter}
         isSelected={() => false}
         onSelect={action('onSelect')}
+        onClick={action('onClick')}
         selectionMode="single"
       />
     </div>
   );
 };
 QueryBuilder.decorators = [
-  Story => (
+  (Story: PartialStoryFn<JSX.Element>) => (
     <Wrapper>
       <Story />
     </Wrapper>

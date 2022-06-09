@@ -1,3 +1,4 @@
+import { ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
 import { LabelFilter } from './LabelFilter';
 
@@ -12,11 +13,11 @@ export default {
   },
 };
 
-export const Example = args => {
+export const Example: ComponentStory<typeof LabelFilter> = args => {
   const [value, setValue] = useState<{ externalId: string }[] | undefined>(
     undefined
   );
-  return <LabelFilter value={value} setValue={setValue} {...args} />;
+  return <LabelFilter {...args} value={value} setValue={setValue} />;
 };
 Example.args = {
   resourceType: 'asset',

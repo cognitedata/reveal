@@ -1,3 +1,4 @@
+import { ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
 import { StringFilter } from './StringFilter';
 
@@ -10,7 +11,7 @@ export default {
     },
   },
 };
-export const Example = args => {
+export const Example: ComponentStory<typeof StringFilter> = args => {
   const [value, setValue] = useState<string | undefined>();
   return <StringFilter {...args} value={value} setValue={setValue} />;
 };

@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import relativeTimePlugin from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(relativeTimePlugin);
-interface TimeDisplayProps {
+export interface TimeDisplayProps {
   value?: number | Date;
   relative?: boolean;
   withTooltip?: boolean;

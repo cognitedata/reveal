@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
-import { files } from '../../../stubs/files';
+import { files } from 'stubs/files';
+import { ComponentStory } from '@storybook/react';
 import { FileGridPreview } from './FileGridPreview';
 
 export default {
@@ -11,19 +12,23 @@ export default {
   argTypes: { query: { control: 'text', defaultValue: '' } },
 };
 
-export const Example = args => <FileGridPreview {...args} />;
+export const Example: ComponentStory<typeof FileGridPreview> = args => (
+  <FileGridPreview {...args} />
+);
 Example.args = {
   item: files[0],
-  onItemClicked: action('onItemClicked'),
-  isSelected: () => {},
+  onClick: action('onClick'),
+  isSelected: () => false,
 };
 
-export const ExampleSingleSelect = args => <FileGridPreview {...args} />;
+export const ExampleSingleSelect: ComponentStory<
+  typeof FileGridPreview
+> = args => <FileGridPreview {...args} />;
 ExampleSingleSelect.args = {
   selectionMode: 'single',
   item: files[0],
-  onItemClicked: action('onItemClicked'),
-  isSelected: () => {},
+  onClick: action('onClick'),
+  isSelected: () => false,
 };
 
 const Container = styled.div`

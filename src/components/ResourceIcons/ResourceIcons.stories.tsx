@@ -1,6 +1,7 @@
 import React from 'react';
 import { Overline } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { ComponentStory } from '@storybook/react';
 import { ResourceIcons } from './ResourceIcons';
 
 export default {
@@ -13,7 +14,7 @@ export default {
     },
   },
 };
-export const Simple = args => (
+export const Simple: ComponentStory<typeof ResourceIcons> = args => (
   <Item>
     <ResourceIcons {...args} />
   </Item>

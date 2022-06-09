@@ -1,20 +1,8 @@
 import React from 'react';
-import { DataExplorationProvider } from 'context';
 import { files } from 'stubs/files';
 import { sdkMock } from 'docs/stub';
 import { FileSmallPreview } from './FileSmallPreview';
 
-export default {
-  title: 'Files/FileSmallPreview',
-  component: FileSmallPreview,
-  decorators: [
-    (storyFn: any) => (
-      <DataExplorationProvider sdk={tempSdk}>
-        {storyFn()}
-      </DataExplorationProvider>
-    ),
-  ],
-};
 const tempSdk = {
   ...sdkMock,
   post: async (query: string) => {
@@ -27,4 +15,11 @@ const tempSdk = {
     return { data: { items: [] } };
   },
 };
+
+export default {
+  title: 'Files/FileSmallPreview',
+  component: FileSmallPreview,
+  explorerConfig: { sdkMockOverride: tempSdk },
+};
+
 export const Example = () => <FileSmallPreview fileId={files[0].id} />;

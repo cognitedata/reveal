@@ -1,3 +1,4 @@
+import { ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
 import { ByAssetFilter } from './ByAssetFilter';
 
@@ -10,7 +11,7 @@ export default {
     },
   },
 };
-export const Example = args => {
+export const Example: ComponentStory<typeof ByAssetFilter> = args => {
   const [value, setValue] = useState<number[] | undefined>(undefined);
   return <ByAssetFilter {...args} value={value} setValue={setValue} />;
 };

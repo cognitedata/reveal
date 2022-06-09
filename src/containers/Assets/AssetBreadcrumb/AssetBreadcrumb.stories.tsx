@@ -1,7 +1,7 @@
 import React from 'react';
 import { action } from '@storybook/addon-actions';
+import { assets, rootAssets } from 'stubs/assets';
 import { AssetBreadcrumb } from './AssetBreadcrumb';
-import { assets, rootAssets } from '../../../stubs/assets';
 
 const sdkMock = {
   post: async (_: string, body: any) => {

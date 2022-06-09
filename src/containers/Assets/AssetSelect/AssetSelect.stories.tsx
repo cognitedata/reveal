@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { action } from '@storybook/addon-actions';
-import { Asset } from '@cognite/sdk';
 import { AssetSelect } from './AssetSelect';
 
 export default {
@@ -9,25 +8,25 @@ export default {
 };
 
 export const Example = () => {
-  const [selected, setSelected] = useState<Asset | undefined>(undefined);
+  const [selectedIds, setSelectedIds] = useState<number[] | undefined>();
   return (
     <AssetSelect
-      selectedAssetIds={selected ? [selected?.id] : []}
+      selectedAssetIds={selectedIds}
       onAssetSelected={item => {
-        setSelected(item ? item[0] : undefined);
+        setSelectedIds(item);
         action('onAssetSelected')(item);
       }}
     />
   );
 };
 export const ExampleMulti = () => {
-  const [selected, setSelected] = useState<Asset[]>([]);
+  const [selectedIds, setSelectedIds] = useState<number[] | undefined>();
   return (
     <AssetSelect
       isMulti
-      selectedAssetIds={selected.map(el => el.id)}
+      selectedAssetIds={selectedIds}
       onAssetSelected={item => {
-        setSelected(item || []);
+        setSelectedIds(item);
         action('onAssetSelected')(item);
       }}
     />

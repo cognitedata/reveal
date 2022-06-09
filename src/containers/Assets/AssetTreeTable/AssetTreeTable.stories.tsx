@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
+import { ComponentStory } from '@storybook/react';
 import { AssetTreeTable } from './AssetTreeTable';
 
 export default {
@@ -10,17 +11,21 @@ export default {
   argTypes: { query: { control: 'string' } },
 };
 
-export const Example = args => <AssetTreeTable {...args} />;
+export const Example: ComponentStory<typeof AssetTreeTable> = args => (
+  <AssetTreeTable {...args} />
+);
 Example.args = {
-  onAssetSelected: action('onAssetSelected'),
-  isSelected: () => {},
+  onAssetClicked: action('onAssetClicked'),
+  isSelected: () => false,
 };
 
-export const ExampleSingleSelect = args => <AssetTreeTable {...args} />;
+export const ExampleSingleSelect: ComponentStory<
+  typeof AssetTreeTable
+> = args => <AssetTreeTable {...args} />;
 ExampleSingleSelect.args = {
   selectionMode: 'single',
-  onAssetSelected: action('onAssetSelected'),
-  isSelected: () => {},
+  onAssetClicked: action('onAssetClicked'),
+  isSelected: () => false,
 };
 
 const Container = styled.div`

@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
-import { timeseries } from '../../../stubs/timeseries';
+import { timeseries } from 'stubs/timeseries';
+import { ComponentStory } from '@storybook/react';
 import { TimeseriesTable } from './TimeseriesTable';
 
 export default {
@@ -11,13 +12,17 @@ export default {
   argTypes: { query: { control: 'text' } },
 };
 
-export const Example = args => <TimeseriesTable {...args} />;
+export const Example: ComponentStory<typeof TimeseriesTable> = args => (
+  <TimeseriesTable {...args} />
+);
 Example.args = {
   items: timeseries,
   onItemClicked: action('onItemClicked'),
 };
 
-export const ExampleSingleSelect = args => <TimeseriesTable {...args} />;
+export const ExampleSingleSelect: ComponentStory<
+  typeof TimeseriesTable
+> = args => <TimeseriesTable {...args} />;
 ExampleSingleSelect.args = {
   selectionMode: 'single',
   items: timeseries,

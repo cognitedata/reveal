@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
-import { events } from '../../../stubs/events';
+import { events } from 'stubs/events';
+import { ComponentStory } from '@storybook/react';
 import { EventTable } from './EventTable';
 
 export default {
@@ -11,13 +12,17 @@ export default {
   argTypes: { query: { control: 'text' } },
 };
 
-export const Example = args => <EventTable {...args} />;
+export const Example: ComponentStory<typeof EventTable> = args => (
+  <EventTable {...args} />
+);
 Example.args = {
   items: events,
   onItemClicked: action('onItemClicked'),
 };
 
-export const ExampleSingleSelect = args => <EventTable {...args} />;
+export const ExampleSingleSelect: ComponentStory<typeof EventTable> = args => (
+  <EventTable {...args} />
+);
 ExampleSingleSelect.args = {
   selectionMode: 'single',
   items: events,

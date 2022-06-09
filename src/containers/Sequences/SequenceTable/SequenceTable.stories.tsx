@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
-import { sequences } from '../../../stubs/sequences';
+import { sequences } from 'stubs/sequences';
+import { ComponentStory } from '@storybook/react';
 import { SequenceTable } from './SequenceTable';
 
 export default {
@@ -11,13 +12,17 @@ export default {
   argTypes: { query: { control: 'text' } },
 };
 
-export const Example = args => <SequenceTable {...args} />;
+export const Example: ComponentStory<typeof SequenceTable> = args => (
+  <SequenceTable {...args} />
+);
 Example.args = {
   items: sequences,
   onItemClicked: action('onItemClicked'),
 };
 
-export const ExampleSingleSelect = args => <SequenceTable {...args} />;
+export const ExampleSingleSelect: ComponentStory<
+  typeof SequenceTable
+> = args => <SequenceTable {...args} />;
 ExampleSingleSelect.args = {
   selectionMode: 'single',
   items: sequences,

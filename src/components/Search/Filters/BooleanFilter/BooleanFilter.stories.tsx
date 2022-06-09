@@ -1,3 +1,4 @@
+import { ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
 import { BooleanFilter } from './BooleanFilter';
 
@@ -10,10 +11,10 @@ export default {
     },
   },
 };
-export const Example = args => {
+export const Example: ComponentStory<typeof BooleanFilter> = args => {
   const [value, setValue] = useState<boolean | undefined>(false);
   return <BooleanFilter {...args} value={value} setValue={setValue} />;
 };
 Example.args = {
-  type: 'Title',
+  title: 'Title',
 };

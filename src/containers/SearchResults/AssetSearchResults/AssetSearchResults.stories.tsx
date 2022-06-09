@@ -1,3 +1,4 @@
+import { ComponentStory } from '@storybook/react';
 import React from 'react';
 import styled from 'styled-components';
 import { AssetSearchResults } from './AssetSearchResults';
@@ -8,13 +9,13 @@ export default {
   argTypes: { query: { control: 'text' } },
 };
 
-export const Example = args => (
+export const Example: ComponentStory<typeof AssetSearchResults> = args => (
   <Container>
     <AssetSearchResults {...args} />
   </Container>
 );
 Example.args = {
-  isSelected: () => {},
+  isSelected: () => false,
 };
 
 const Container = styled.div`

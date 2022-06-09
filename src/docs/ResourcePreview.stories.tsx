@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '@cognite/cogs.js';
 import { action } from '@storybook/addon-actions';
+import { PartialStoryFn } from '@storybook/addons';
 import { ResourcePreviewPropsFunctions } from './stub';
 import { Wrapper } from './utils';
 import { useResourcePreview, ResourcePreviewProps } from '../context';
@@ -58,7 +59,7 @@ const ArgType: {
 };
 PreviewingResources.argTypes = ArgType;
 PreviewingResources.decorators = [
-  Story => (
+  (Story: PartialStoryFn<JSX.Element>) => (
     <Wrapper>
       <Story />
     </Wrapper>

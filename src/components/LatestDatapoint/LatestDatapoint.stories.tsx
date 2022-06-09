@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Timeseries } from '@cognite/sdk';
-import { SDKProvider } from '@cognite/sdk-provider';
 import { LatestDatapoint } from './LatestDatapoint';
 
 const exampleTimeSeries: Timeseries[] = [
@@ -31,22 +30,19 @@ const exampleTimeSeries: Timeseries[] = [
   },
 ];
 
-export default {
-  title: 'Component/Uses Context/LatestDatapoint',
-  component: LatestDatapoint,
-  decorators: [
-    (storyFn: any) => (
-      <Container>
-        <SDKProvider sdk={sdkMock}>{storyFn()}</SDKProvider>
-      </Container>
-    ),
-  ],
-};
 const sdkMock = {
   timeseries: {
     retrieveLatest: async () => [{ datapoints: [1] }],
   },
 };
+
+export default {
+  title: 'Component/Uses Context/LatestDatapoint',
+  component: LatestDatapoint,
+  explorerConfig: { sdkMockOverride: sdkMock },
+  decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
+};
+
 export const Example = () => (
   <LatestDatapoint timeSeries={exampleTimeSeries[0]} />
 );

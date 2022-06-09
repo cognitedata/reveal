@@ -1,3 +1,4 @@
+import { ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
 import { DateFilter } from './DateFilter';
 
@@ -10,11 +11,11 @@ export default {
     },
   },
 };
-export const Example = args => {
+export const Example: ComponentStory<typeof DateFilter> = args => {
   const [value, setValue] = useState<
-    { min?: number; max?: number } | undefined
+    { min?: number; max?: number } | undefined | null
   >();
-  return <DateFilter value={value} setValue={setValue} {...args} />;
+  return <DateFilter {...args} value={value} setValue={setValue} />;
 };
 Example.args = {
   title: 'Title',

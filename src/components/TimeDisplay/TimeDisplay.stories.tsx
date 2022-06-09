@@ -1,3 +1,4 @@
+import { ComponentStory } from '@storybook/react';
 import React from 'react';
 import { TimeDisplay } from './TimeDisplay';
 
@@ -16,7 +17,9 @@ export default {
     },
   },
 };
-export const Example = args => <TimeDisplay {...args} />;
+export const Example: ComponentStory<typeof TimeDisplay> = args => (
+  <TimeDisplay {...args} />
+);
 Example.args = {
   value: new Date(),
   withTooltip: true,

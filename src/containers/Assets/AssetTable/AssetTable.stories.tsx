@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
-import { assets } from '../../../stubs/assets';
+import { assets } from 'stubs/assets';
+import { ComponentStory } from '@storybook/react';
 import { AssetTable } from './AssetTable';
 
 export default {
@@ -16,13 +17,17 @@ export default {
   },
 };
 
-export const Example = args => <AssetTable {...args} />;
+export const Example: ComponentStory<typeof AssetTable> = args => (
+  <AssetTable {...args} />
+);
 Example.args = {
   items: assets,
   onItemClicked: action('onItemClicked'),
 };
 
-export const ExampleSingleSelect = args => <AssetTable {...args} />;
+export const ExampleSingleSelect: ComponentStory<typeof AssetTable> = args => (
+  <AssetTable {...args} />
+);
 ExampleSingleSelect.args = {
   selectionMode: 'single',
   items: assets,

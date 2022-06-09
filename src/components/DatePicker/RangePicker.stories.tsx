@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
-import { Range } from '@cognite/cogs.js';
 import { RangePicker } from './RangePicker';
 import { CalendarPicker } from './CalendarPicker';
 import { PivotRangePicker } from './PivotRangePicker';
@@ -28,12 +27,17 @@ export const Example = () => {
   );
 };
 export const CalendarPickerExample = () => {
-  const [range, setRange] = useState<Range>({
-    startDate: dayjs().subtract(1, 'year').toDate(),
-    endDate: new Date(),
-  });
+  const [range, setRange] = useState<[Date, Date]>([
+    dayjs().subtract(1, 'year').toDate(),
+    new Date(),
+  ]);
 
-  return <CalendarPicker dates={range} onDatesChanged={setRange} />;
+  return (
+    <CalendarPicker
+      dates={range}
+      onDatesChanged={(start, end) => setRange([start, end])}
+    />
+  );
 };
 export const PivotRangePickerExample = () => {
   const [range, setRange] = useState<PivotRange>({

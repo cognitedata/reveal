@@ -1,5 +1,6 @@
 import React from 'react';
 import { action } from '@storybook/addon-actions';
+import { ComponentStory } from '@storybook/react';
 import { ListItem } from './ListItem';
 
 export default {
@@ -21,7 +22,7 @@ export default {
   },
 };
 
-export const Example = args => (
+export const Example: ComponentStory<typeof ListItem> = args => (
   <ListItem {...args} onClick={action('onClick')} />
 );
 Example.args = {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { action } from '@storybook/addon-actions';
+import { ComponentStory } from '@storybook/react';
 import { FileUploader } from './FileUploader';
 
 export default {
@@ -7,7 +8,9 @@ export default {
   component: FileUploader,
 };
 
-export const Example = args => <FileUploader {...args} />;
+export const Example: ComponentStory<typeof FileUploader> = args => (
+  <FileUploader {...args} />
+);
 Example.args = {
   onUploadSuccess: action('onUploadSuccess'),
   onUploadFailure: action('onUploadFailure'),

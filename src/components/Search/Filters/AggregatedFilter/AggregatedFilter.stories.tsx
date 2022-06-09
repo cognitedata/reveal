@@ -1,5 +1,6 @@
+import { ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
-import { assets } from '../../../../stubs/assets';
+import { assets } from 'stubs/assets';
 import { AggregatedFilter } from './AggregatedFilter';
 
 export default {
@@ -15,7 +16,7 @@ export default {
   },
 };
 
-export const Example = args => {
+export const Example: ComponentStory<typeof AggregatedFilter> = args => {
   const [value, setValue] = useState<string | undefined>(undefined);
   return <AggregatedFilter {...args} value={value} setValue={setValue} />;
 };

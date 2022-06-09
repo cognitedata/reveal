@@ -1,20 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
-import { SDKProvider } from '@cognite/sdk-provider';
-import { sdkMock } from 'docs/stub';
 import { DataSetSelect } from './DataSetSelect';
 
 export default {
   title: 'Component/DataSetSelect',
   component: DataSetSelect,
-  decorators: [
-    (storyFn: any) => (
-      <Container>
-        <SDKProvider sdk={sdkMock}>{storyFn()}</SDKProvider>
-      </Container>
-    ),
-  ],
+  decorators: [(storyFn: any) => <Container>{storyFn}</Container>],
 };
 
 export const Example = () => (

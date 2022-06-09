@@ -1,3 +1,4 @@
+import { ComponentStory } from '@storybook/react';
 import React from 'react';
 import styled from 'styled-components';
 import { SequenceSearchResults } from './SequenceSearchResults';
@@ -8,7 +9,7 @@ export default {
   argTypes: { query: { control: 'text' } },
 };
 
-export const Example = args => (
+export const Example: ComponentStory<typeof SequenceSearchResults> = args => (
   <Container>
     <SequenceSearchResults {...args} />
   </Container>

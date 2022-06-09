@@ -1,3 +1,4 @@
+import { ComponentStory } from '@storybook/react';
 import React from 'react';
 import styled from 'styled-components';
 import { FileSearchResults } from './FileSearchResults';
@@ -8,7 +9,7 @@ export default {
   argTypes: { query: { control: 'text' } },
 };
 
-export const Example = args => (
+export const Example: ComponentStory<typeof FileSearchResults> = args => (
   <Container>
     <FileSearchResults {...args} />
   </Container>

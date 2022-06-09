@@ -3,6 +3,7 @@ import { Button } from '@cognite/cogs.js';
 import { action } from '@storybook/addon-actions';
 import { assets } from 'stubs/assets';
 import { files } from 'stubs/files';
+import { PartialStoryFn } from '@storybook/addons';
 import { AssetTable, FileTable, Splitter } from '..';
 import { useResourcePreview, ResourcePreviewProvider } from '../context';
 import { Wrapper } from './utils';
@@ -14,7 +15,7 @@ export const ResourcesLargeTables = () => (
   </Splitter>
 );
 ResourcesLargeTables.decorators = [
-  Story => (
+  (Story: PartialStoryFn<JSX.Element>) => (
     <Wrapper>
       <Story />
     </Wrapper>
@@ -69,7 +70,7 @@ export const NestingPreviews = () => {
   );
 };
 NestingPreviews.decorators = [
-  Story => (
+  (Story: PartialStoryFn<JSX.Element>) => (
     <Wrapper>
       <Story />
     </Wrapper>

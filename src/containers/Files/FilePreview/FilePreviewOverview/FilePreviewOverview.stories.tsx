@@ -3,7 +3,8 @@ import { CogniteAnnotation } from '@cognite/annotations';
 import { action } from '@storybook/addon-actions';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { CogniteClient } from '@cognite/sdk';
-import { files } from '../../../../stubs/files';
+import { files } from 'stubs/files';
+import { ComponentStory } from '@storybook/react';
 import { FilePreviewOverview } from './FilePreviewOverview';
 
 export default {
@@ -63,7 +64,9 @@ const annotations = [
   } as CogniteAnnotation,
 ];
 
-export const Example = args => <FilePreviewOverview {...args} />;
+export const Example: ComponentStory<typeof FilePreviewOverview> = args => (
+  <FilePreviewOverview {...args} />
+);
 Example.args = {
   file: files[0],
   annotations: [],
@@ -75,7 +78,9 @@ Example.args = {
   onSequenceClicked: action('onSequenceClicked'),
 };
 
-export const ExampleWithAnnotations = args => <FilePreviewOverview {...args} />;
+export const ExampleWithAnnotations: ComponentStory<
+  typeof FilePreviewOverview
+> = args => <FilePreviewOverview {...args} />;
 ExampleWithAnnotations.args = {
   annotations,
   file: files[0],

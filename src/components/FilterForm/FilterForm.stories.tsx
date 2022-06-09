@@ -1,3 +1,4 @@
+import { ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FilterForm } from './FilterForm';
@@ -19,11 +20,11 @@ export default {
   },
 };
 
-export const Example = args => {
+export const Example: ComponentStory<typeof FilterForm> = args => {
   const [filters, setFilters] = useState<{
     [key: string]: string;
   }>({ testing: 'yay' });
-  return <FilterForm filters={filters} setFilters={setFilters} {...args} />;
+  return <FilterForm {...args} filters={filters} setFilters={setFilters} />;
 };
 Example.args = {
   metadata: {
@@ -34,11 +35,13 @@ Example.args = {
   lockedFilters: [],
 };
 
-export const ExampleWithCategories = args => {
+export const ExampleWithCategories: ComponentStory<
+  typeof FilterForm
+> = args => {
   const [filters, setFilters] = useState<{
     [key: string]: string;
   }>({ testing: 'yay' });
-  return <FilterForm filters={filters} setFilters={setFilters} {...args} />;
+  return <FilterForm {...args} filters={filters} setFilters={setFilters} />;
 };
 ExampleWithCategories.args = {
   metadata: {
@@ -55,11 +58,13 @@ ExampleWithCategories.args = {
   lockedFilters: [],
 };
 
-export const ExampleWithLockedCategories = args => {
+export const ExampleWithLockedCategories: ComponentStory<
+  typeof FilterForm
+> = args => {
   const [filters, setFilters] = useState<{
     [key: string]: string;
   }>({ testing: 'yay' });
-  return <FilterForm filters={filters} setFilters={setFilters} {...args} />;
+  return <FilterForm {...args} filters={filters} setFilters={setFilters} />;
 };
 ExampleWithLockedCategories.args = {
   metadata: {

@@ -3,7 +3,7 @@ import { InfoCell, SpacedRow, TimeDisplay } from 'components';
 import { Timeseries, DoubleDatapoint, StringDatapoint } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
-interface LatestDatapointProps {
+export interface LatestDatapointProps {
   timeSeries: Timeseries;
   valueOnly?: boolean;
 }
