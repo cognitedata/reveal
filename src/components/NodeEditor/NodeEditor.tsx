@@ -7,8 +7,8 @@ import { SetterOrUpdater } from 'recoil';
 import ErrorToast from 'components/ErrorToast/ErrorToast';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useIsChartOwner } from 'hooks/user';
+import { useOperations } from 'models/operations/atom';
 import { SourceOption } from './V2/types';
-import { useAvailableOps } from './AvailableOps';
 import { getSourceOption, getSourcesFromChart } from './utils';
 import ReactFlowNodeEditorContainer from './V2/ReactFlowNodeEditorContainer';
 import { defaultTranslations } from './translations';
@@ -39,7 +39,7 @@ const NodeEditor = ({
    * Get all operations
    */
   const [isLoadingOperations, operationsError, operations = []] =
-    useAvailableOps();
+    useOperations();
 
   /**
    * Generate all source options

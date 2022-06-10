@@ -14,7 +14,6 @@ import {
   updateWorkflowsToSupportVersions,
 } from 'models/chart/updates';
 import chartAtom from 'models/chart/atom';
-import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
 import { useFilePicker } from 'use-file-picker';
 import { useSDK } from '@cognite/sdk-provider';
 import { useDebounce } from 'use-debounce';
@@ -36,6 +35,7 @@ import { getHash } from 'utils/hash';
 import { useCluster, useProject } from 'hooks/config';
 import { usePrevious } from 'react-use';
 import { useRecoilState } from 'recoil';
+import { useOperations } from 'models/operations/atom';
 
 export const useInitializedChart = (chartId: string) => {
   /**
@@ -56,7 +56,7 @@ export const useInitializedChart = (chartId: string) => {
   /**
    * Get all available operations (needed for migration)
    */
-  const [, , operations] = useAvailableOps();
+  const [, , operations] = useOperations();
 
   /**
    * Initialize local chart atom

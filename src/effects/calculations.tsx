@@ -2,7 +2,6 @@ import {
   Calculation,
   CalculationResultQueryAggregateEnum,
 } from '@cognite/calculation-backend';
-import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
 import { getStepsFromWorkflow } from 'components/NodeEditor/transforms';
 import { isWorkflowRunnable } from 'components/NodeEditor/utils';
 import { validateSteps } from 'components/NodeEditor/V2/calculations';
@@ -23,6 +22,7 @@ import { calculateGranularity } from 'utils/timeseries';
 import { useDebounce } from 'use-debounce';
 import { updateWorkflow } from 'models/chart/updates';
 import { isEqual } from 'lodash';
+import { useOperations } from 'models/operations/atom';
 
 export function CalculationCollectionEffects() {
   const [chart] = useRecoilState(chartAtom);
@@ -46,7 +46,7 @@ function CalculationEffects({ calculation }: { calculation: ChartWorkflowV2 }) {
   const [chart, mutate] = useRecoilState(chartAtom);
   const { id, enabled, calls } = calculation;
   const call = [...(calls || [])].sort((c) => c.callDate)[0];
-  const [, , operations] = useAvailableOps();
+  const [, , operations] = useOperations();
   const [refetchInterval, setRefetchInterval] = useState<number | false>(2000);
 
   const steps = useMemo(
