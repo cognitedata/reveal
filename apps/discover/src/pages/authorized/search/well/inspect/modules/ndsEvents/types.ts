@@ -7,7 +7,7 @@ import { OptionType } from '@cognite/cogs.js';
 import { MultiSelectOptionType } from 'components/Filters/MultiSelect/types';
 
 export interface NdsView extends NdsInternal {
-  wellName: string;
+  wellName?: string;
   wellboreName: string;
   holeStartTvd?: ConvertedDistance;
   holeEndTvd?: ConvertedDistance;

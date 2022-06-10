@@ -20,10 +20,10 @@ import {
   SEARCH_ID,
   SEARCH_TRACK_ID,
 } from 'constants/metrics';
-import { useCurrentSavedSearchState } from 'hooks/useCurrentSavedSearchState';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useSearchState } from 'modules/search/selectors';
 import { useSearchPhrase } from 'modules/sidebar/selectors';
+import { useCurrentSavedSearchState } from 'modules/sidebar/selectors/useCurrentSavedSearchState';
 
 import { SearchQueryInfoPanel } from '../SearchQueryInfoPanel';
 

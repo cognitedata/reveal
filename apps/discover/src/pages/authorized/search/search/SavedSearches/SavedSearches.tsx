@@ -19,8 +19,8 @@ import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 import OverwriteSearchModal from 'components/Modals/overwrite-search-modal';
 import Skeleton from 'components/Skeleton';
 import { showErrorMessage, showSuccessMessage } from 'components/Toast';
-import { useCurrentSavedSearchState } from 'hooks/useCurrentSavedSearchState';
 import { useSavedSearchNavigation } from 'hooks/useSavedSearchNavigation';
+import { useCurrentSavedSearchState } from 'modules/sidebar/selectors/useCurrentSavedSearchState';
 
 import {
   SAVED_SEARCHES_MENU_CREATE_NEW_TEXT,

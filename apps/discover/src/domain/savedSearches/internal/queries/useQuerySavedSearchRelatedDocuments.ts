@@ -1,8 +1,10 @@
+import { getSavedSearch } from 'domain/savedSearches/service/network/getSavedSearch';
+
 import { useQuery } from 'react-query';
 
-import { discoverAPI, useJsonHeaders } from 'services/service';
+import { useJsonHeaders } from 'services/service';
 
-import { getTenantInfo } from '@cognite/react-container';
+import { getProjectInfo } from '@cognite/react-container';
 
 import { RELATED_DOCUMENT_KEY } from 'constants/react-query';
 
@@ -11,11 +13,11 @@ import { RELATED_DOCUMENT_KEY } from 'constants/react-query';
 
 export const useQuerySavedSearchRelatedDocuments = () => {
   const headers = useJsonHeaders();
-  const [tenant] = getTenantInfo();
+  const [tenant] = getProjectInfo();
 
   return useQuery(
     RELATED_DOCUMENT_KEY,
-    () => discoverAPI.savedSearches.get(RELATED_DOCUMENT_KEY, headers, tenant),
+    () => getSavedSearch(RELATED_DOCUMENT_KEY, headers, tenant),
     {
       enabled: true,
       retry: false,

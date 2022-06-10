@@ -1,11 +1,16 @@
+import {
+  SeismicError,
+  seismicGet,
+} from 'domain/seismic/service/network/seismicGet';
+import { seismicSearch } from 'domain/seismic/service/network/seismicSearch';
+import { SeismicGetData } from 'domain/seismic/service/network/types';
+
 import { useQuery, QueryClient } from 'react-query';
 
-import { SeismicError } from 'services/seismic';
-import { discoverAPI, useJsonHeaders } from 'services/service';
-import { SeismicGetData } from 'services/types';
+import { useJsonHeaders } from 'services/service';
 import { FetchHeaders } from 'utils/fetch';
 
-import { getTenantInfo } from '@cognite/react-container';
+import { getProjectInfo } from '@cognite/react-container';
 
 import { SURVEYS_QUERY_KEY } from 'constants/react-query';
 
@@ -29,12 +34,12 @@ export const updateOneSurveyInList = (
 };
 
 export const useSurveys = () => {
-  const [tenant] = getTenantInfo();
+  const [tenant] = getProjectInfo();
   const headers = useJsonHeaders();
 
   return useQuery<SeismicSurveyContainer[], SeismicError>(
     SURVEYS_QUERY_KEY,
-    () => discoverAPI.seismic.search(headers, tenant),
+    () => seismicSearch(headers, tenant),
     {
       // retry: false,
       enabled: true,
@@ -53,11 +58,11 @@ export const prefetchSurveys = (
   headers: FetchHeaders,
   queryClient: QueryClient
 ) => {
-  const [tenant] = getTenantInfo();
+  const [tenant] = getProjectInfo();
 
   // console.log('prefetchSurveys');
   return queryClient.prefetchQuery(SURVEYS_QUERY_KEY, () =>
-    discoverAPI.seismic.search(headers, tenant)
+    seismicSearch(headers, tenant)
   );
   // return seismic
   //   .search()
@@ -67,13 +72,13 @@ export const prefetchSurveys = (
 // expand on one in the results list, showing all the files for it etc.
 export const useSurvey = (surveyId: string) => {
   const headers = useJsonHeaders();
-  const [tenant] = getTenantInfo();
+  const [tenant] = getProjectInfo();
 
   return useQuery<SeismicGetData | SeismicError>(
     getSurveyKey(surveyId),
     () =>
       surveyId
-        ? discoverAPI.seismic.get(surveyId, headers, tenant)
+        ? seismicGet(surveyId, headers, tenant)
         : Promise.reject(new Error('Survey Id not supplied.')),
     {
       retry: false,

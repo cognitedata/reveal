@@ -7,12 +7,11 @@ import {
   useNptLegendDetailCodeQuery,
 } from 'domain/wells/legend/internal/queries/useNptLegendQuery';
 import { WellLegendNptType } from 'domain/wells/legend/internal/types';
+import { useNptCodesQuery } from 'domain/wells/summaries/service/network/useNptCodesQuery';
+import { useNptDetailCodesQuery } from 'domain/wells/summaries/service/network/useNptDetailCodesQuery';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-
-import { useNptCodesQuery } from 'services/wellSearch/sdk/useNptCodesQuery';
-import { useNptDetailCodesQuery } from 'services/wellSearch/sdk/useNptDetailCodesQuery';
 
 import { CodeDefinitionsMenuItem } from './components/CodeDefinitionsMenuItem';
 import { CodeDefinitionsView } from './components/CodeDefinitionsView';

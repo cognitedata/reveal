@@ -7,7 +7,6 @@ import { FetchHeaders } from 'utils/fetch';
 
 import { Geometry, GeoJson } from '@cognite/seismic-sdk-js';
 
-import { discoverAPI } from '../../../services/service';
 import { adaptSaveSearchContentToSchemaBody } from '../internal/adapters/adaptSaveSearchContentToSchemaBody';
 import { getEmptyFilters } from '../internal/transformers/getEmptyFilters';
 import { normalizeSavedSearch } from '../internal/transformers/normalizeSavedSearch';
@@ -16,6 +15,8 @@ import {
   SavedSearchQuery,
   SavedSearchState,
 } from '../types';
+
+import { createSavedSearch } from './network/createSavedSearch';
 
 /**
  * Update the 'current' search with some new fields
@@ -43,18 +44,16 @@ export const updateCurrentSearch = async (
     adaptSaveSearchContentToSchemaBody(savingResponse);
 
   if (!waitForResponse) {
-    discoverAPI.savedSearches
-      .create(
-        SAVED_SEARCHES_CURRENT_KEY,
-        savedSearchSchemaBody,
-        headers,
-        tenant
-      )
-      .catch(handleServiceError);
+    createSavedSearch(
+      SAVED_SEARCHES_CURRENT_KEY,
+      savedSearchSchemaBody,
+      headers,
+      tenant
+    ).catch(handleServiceError);
     return { ...savingResponse, updated_at: new Date().getTime() };
   }
 
-  return discoverAPI.savedSearches.create(
+  return createSavedSearch(
     SAVED_SEARCHES_CURRENT_KEY,
     savedSearchSchemaBody,
     headers,

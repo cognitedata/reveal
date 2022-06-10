@@ -1,4 +1,3 @@
-import { WellboreDataLayer } from 'domain/wells/dataLayer/wellbore/types';
 import { useNdsAggregatesSummaryQuery } from 'domain/wells/nds/service/queries/useNdsAggregatesSummaryQuery';
 import { useNdsEventsQuery } from 'domain/wells/nds/service/queries/useNdsEventsQuery';
 import { useNdsTvdDataQuery } from 'domain/wells/nds/service/queries/useNdsTvdDataQuery';
@@ -41,11 +40,7 @@ export const useNdsData = () => {
       const { wellboreMatchingId } = nds;
       const wellbore = wellboreMatchingIdMap[wellboreMatchingId];
 
-      return processNdsData(
-        nds,
-        wellbore as WellboreDataLayer, // Remove the cast when refactored
-        tvdData[wellboreMatchingId]
-      );
+      return processNdsData(nds, wellbore, tvdData[wellboreMatchingId]);
     });
   }, [ndsData, tvdData, userPreferredUnit]);
 

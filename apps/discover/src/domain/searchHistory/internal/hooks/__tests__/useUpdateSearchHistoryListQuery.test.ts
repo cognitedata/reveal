@@ -5,7 +5,7 @@ import { useQueryClient } from 'react-query';
 import { renderHook } from '@testing-library/react-hooks';
 
 import { SEARCH_HISTORY_KEY } from 'constants/react-query';
-import { useCurrentSavedSearchState } from 'hooks/useCurrentSavedSearchState';
+import { useCurrentSavedSearchState } from 'modules/sidebar/selectors/useCurrentSavedSearchState';
 
 import { useSearchHistoryListQuery } from '../../queries/useSearchHistoryQuery';
 import { useUpdateSearchHistoryListQuery } from '../useUpdateSearchHistoryListQuery';
@@ -14,7 +14,7 @@ jest.mock('react-query', () => ({
   useQueryClient: jest.fn(),
 }));
 
-jest.mock('hooks/useCurrentSavedSearchState', () => ({
+jest.mock('modules/sidebar/selectors/useCurrentSavedSearchState', () => ({
   useCurrentSavedSearchState: jest.fn(),
 }));
 

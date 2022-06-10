@@ -1,23 +1,24 @@
+import { getSavedSearch } from 'domain/savedSearches/service/network/getSavedSearch';
 import { SavedSearchContent } from 'domain/savedSearches/types';
 
 import { useQuery } from 'react-query';
 
-import { discoverAPI, useJsonHeaders } from 'services/service';
+import { useJsonHeaders } from 'services/service';
 
-import { getTenantInfo } from '@cognite/react-container';
+import { getProjectInfo } from '@cognite/react-container';
 
 import { SAVED_SEARCHES_QUERY_KEY } from 'constants/react-query';
 
 export const useQuerySavedSearcheGetOne = (id: string) => {
   const headers = useJsonHeaders({}, true);
-  const [tenant] = getTenantInfo();
+  const [tenant] = getProjectInfo();
 
   return useQuery<SavedSearchContent>(
     [SAVED_SEARCHES_QUERY_KEY, id],
     () =>
-      discoverAPI.savedSearches
-        .get(id, headers, tenant)
-        .then((response) => response as SavedSearchContent),
+      getSavedSearch(id, headers, tenant).then(
+        (response) => response as SavedSearchContent
+      ),
     {
       enabled: true,
       retry: false,

@@ -11,7 +11,7 @@ import {
 import {
   useAppliedDocumentMapLayerFilters,
   useAppliedMapGeoJsonFilters,
-} from '../modules/sidebar/selectors';
+} from '../selectors';
 
 export const useCurrentSavedSearchState = (): SavedSearchState => {
   const searchPhrase = useSearchPhrase();

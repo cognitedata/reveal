@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 
 import navigation from 'constants/navigation';
 
-import { isAnyFilterApplied } from './useSearchHasAnyAppliedFilters';
+import { isAnyFilterApplied } from '../domain/savedSearches/internal/queries/useSearchHasAnyAppliedFilters';
 
 export const DEFAULT_SAVED_SEARCH_NAVIGATION = navigation.SEARCH_DOCUMENTS;
 

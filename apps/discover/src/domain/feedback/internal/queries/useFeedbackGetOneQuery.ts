@@ -1,8 +1,10 @@
+import { feedback } from 'domain/feedback/service/network/service';
+
 import { useQuery } from 'react-query';
 
 import { FEEDBACK_QUERY_KEY } from 'constants/react-query';
 
-import { discoverAPI, useJsonHeaders } from '../../../../services/service';
+import { useJsonHeaders } from '../../../../services/service';
 import { FeedbackType } from '../types';
 
 export function useFeedbackGetOneQuery<T>(
@@ -11,6 +13,6 @@ export function useFeedbackGetOneQuery<T>(
 ) {
   const headers = useJsonHeaders({}, true);
   return useQuery(FEEDBACK_QUERY_KEY.ONE(endpoint, id), () =>
-    discoverAPI.feedback.getOne<T>(endpoint, id, headers)
+    feedback.getOne<T>(endpoint, id, headers)
   );
 }

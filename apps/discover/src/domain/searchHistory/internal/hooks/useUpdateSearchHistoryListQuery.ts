@@ -3,7 +3,7 @@ import { useSearchHistoryListQuery } from 'domain/searchHistory/internal/queries
 import { useQueryClient } from 'react-query';
 
 import { SEARCH_HISTORY_KEY } from 'constants/react-query';
-import { useCurrentSavedSearchState } from 'hooks/useCurrentSavedSearchState';
+import { useCurrentSavedSearchState } from 'modules/sidebar/selectors/useCurrentSavedSearchState';
 
 export const useUpdateSearchHistoryListQuery = () => {
   const queryClient = useQueryClient();

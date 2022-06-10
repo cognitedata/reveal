@@ -1,10 +1,11 @@
-import { renderHook } from '@testing-library/react-hooks';
-
-import { QueryClientWrapper } from '__test-utils/queryClientWrapper';
 import {
   useSearchHasAnyAppliedFilters,
   isAnyFilterApplied,
-} from 'hooks/useSearchHasAnyAppliedFilters';
+} from 'domain/savedSearches/internal/queries/useSearchHasAnyAppliedFilters';
+
+import { renderHook } from '@testing-library/react-hooks';
+
+import { QueryClientWrapper } from '__test-utils/queryClientWrapper';
 
 // this one throws an "open handle" console error. It will help to investigate later
 describe('useSearchHasAnyAppliedFilters hook', () => {

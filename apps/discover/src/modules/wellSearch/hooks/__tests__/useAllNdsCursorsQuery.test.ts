@@ -1,6 +1,7 @@
 import 'domain/wells/__mocks/setupWellsMockSDK';
+import { getMockNDSEventsPost } from 'domain/wells/nds/service/__mocks/getMockNDSEventsPost';
+
 import { setupServer } from 'msw/node';
-import { getMockNDSEventsPost } from 'services/wellSearch/__mocks/getMockNDSEventsPost';
 
 import { renderHookWithStore } from '__test-utils/renderer';
 
