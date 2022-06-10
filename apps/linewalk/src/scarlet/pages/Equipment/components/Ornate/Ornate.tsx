@@ -10,7 +10,7 @@ import {
 } from 'scarlet/types';
 import { useDataPanelDispatch, useOrnateTags } from 'scarlet/hooks';
 
-import { WorkspaceTools } from '..';
+import { WorkspaceTools, DocumentNavigator } from '..';
 
 import {
   addDocumentTitle,
@@ -28,8 +28,8 @@ export type OrnateProps = {
   fullwidth?: boolean;
 };
 
-const VIEW_OFFSET_X = 150;
-const VIEW_OFFSET_Y = 200;
+const VIEW_OFFSET_X = 200;
+const VIEW_OFFSET_Y = 600;
 const SLIDE_WIDTH = 2500;
 const SLIDE_COLUMN_GAP = 300;
 const SLIDE_ROW_GAP = 200;
@@ -59,6 +59,17 @@ export const Ornate = ({ documents, fullwidth = false }: OrnateProps) => {
       dataElement: tag.dataElement,
       detection: tag.detection,
     });
+
+  const zoomToDocument = (docExternalId: string) => {
+    if (!ornateViewer.current || !docExternalId) return;
+
+    const doc = ornateDocuments.find(
+      (ornDoc) => ornDoc.externalId === docExternalId
+    );
+
+    if (!doc) return;
+    ornateViewer.current.zoomToDocument(doc.ornateDocument);
+  };
 
   // Setup Ornate
   useEffect(() => {
@@ -237,7 +248,10 @@ export const Ornate = ({ documents, fullwidth = false }: OrnateProps) => {
       ) : (
         <div id={componentContainerId} />
       )}
-
+      <DocumentNavigator
+        documents={documents}
+        zoomToDocument={zoomToDocument}
+      />
       <WorkspaceTools ornateRef={ornateViewer.current} />
     </Styled.Container>
   );

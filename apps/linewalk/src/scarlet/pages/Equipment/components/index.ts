@@ -37,3 +37,4 @@ export * from './SelectedElementsBar';
 export * from './StringField';
 export * from './TopBar';
 export * from './WorkspaceTools';
+export * from './DocumentNavigator';
