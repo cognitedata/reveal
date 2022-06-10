@@ -708,7 +708,7 @@ __metadata:
     "@types/jsdom": 16.2.14
     "@types/lodash": 4.14.182
     "@types/mixpanel-browser": 2.38.0
-    "@types/node": 16.11.38
+    "@types/node": 16.11.39
     "@types/offscreencanvas": 2019.7.0
     "@types/proj4": ^2.5.2
     "@types/random-seed": 0.3.3
@@ -748,7 +748,7 @@ __metadata:
     loglevel: 1.8.0
     mixpanel-browser: 2.45.0
     moq.ts: 9.0.2
-    nock: 13.2.4
+    nock: 13.2.6
     prettier: 2.6.2
     proj4: ^2.8.0
     random-seed: 0.3.0
@@ -1633,10 +1633,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:16.11.38":
-  version: 16.11.38
-  resolution: "@types/node@npm:16.11.38"
-  checksum: 471df020162098602fd77014c458e84f01f7faff3cddcc2b7739312a8b4f103bc0fab3dfc03641233d9f627c47fd82dfabc9b86413ef680e193c36b9aed322e6
+"@types/node@npm:16.11.39":
+  version: 16.11.39
+  resolution: "@types/node@npm:16.11.39"
+  checksum: bc97b9773ac6b3194800f990b349fad7f66c6126dacef59291b10a2c8b6813d6f67f947b7e12a6c9952790f7065d576fe38355b8fe034a6af60f317cfc570f69
   languageName: node
   linkType: hard
 
@@ -9034,13 +9034,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"lodash.set@npm:^4.3.2":
-  version: 4.3.2
-  resolution: "lodash.set@npm:4.3.2"
-  checksum: a9122f49eef9f2d0fc9061a33d87f8e5b8c6b23d46e8b9e9ce1529d3588d79741bd1145a3abdfa3b13082703e65af27ff18d8a07bfc22b9be32f3fc36f763f70
-  languageName: node
-  linkType: hard
-
 "lodash@npm:4.17.21, lodash@npm:^4.17.11, lodash@npm:^4.17.14, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4, lodash@npm:^4.7.0":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
@@ -9761,15 +9754,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"nock@npm:13.2.4":
-  version: 13.2.4
-  resolution: "nock@npm:13.2.4"
+"nock@npm:13.2.6":
+  version: 13.2.6
+  resolution: "nock@npm:13.2.6"
   dependencies:
     debug: ^4.1.0
     json-stringify-safe: ^5.0.1
-    lodash.set: ^4.3.2
+    lodash: ^4.17.21
     propagate: ^2.0.0
-  checksum: 2750a82ea22eebd8203eb1d7669ae09c3daae1fd573026372bad2515adad48d723a804f647bd45d7a499eb3a9a632560da406bde05bca9df762d3027db9099b5
+  checksum: d135a8036b2feb41c0696c585682f7252f6cd3232ff686efe54a39f979f063fcc178636dfdf27aba07f653091e2812014db41ed6f5f250fdd2ee2948035a4203
   languageName: node
   linkType: hard
 
