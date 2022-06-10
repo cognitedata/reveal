@@ -32,12 +32,11 @@ export const CalendarPickerExample = () => {
     new Date(),
   ]);
 
-  return (
-    <CalendarPicker
-      dates={range}
-      onDatesChanged={(start, end) => setRange([start, end])}
-    />
-  );
+  const onDatesChanged = (start: Date, end: Date) => {
+    setRange([start, end]);
+  };
+
+  return <CalendarPicker dates={range} onDatesChanged={onDatesChanged} />;
 };
 export const PivotRangePickerExample = () => {
   const [range, setRange] = useState<PivotRange>({
@@ -53,4 +52,5 @@ export const PivotRangePickerExample = () => {
 const Container = styled.div`
   padding: 20px;
   display: flex;
+  position: fixed;
 `;

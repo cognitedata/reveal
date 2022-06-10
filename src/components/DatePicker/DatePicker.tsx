@@ -3,7 +3,6 @@ import React, { useState, useRef, useMemo } from 'react';
 import dayjs from 'dayjs';
 import { Dropdown, Button } from '@cognite/cogs.js';
 import ReactDatePicker from 'react-datepicker';
-import { SpacedRow } from 'components';
 import {
   DatePickerInput,
   DatePickerWrapper,
@@ -46,26 +45,26 @@ export const DatePicker = ({
         overflow: 'auto',
       }}
     >
-      <DatePickerInput date={date} onDateChange={newDate => setDate(newDate)} />
+      <DatePickerInput
+        date={date}
+        onDateChange={newDate => {
+          onDateChanged(newDate);
+          setDate(newDate);
+        }}
+      />
       <DatePickerWrapper mode={undefined} style={{ marginTop: 8 }}>
         <ReactDatePicker
           renderCustomHeader={renderCustomHeader()}
           selected={date}
-          onChange={newDate => setDate(newDate as Date)}
+          onChange={newDate => {
+            const typedDate = newDate as Date;
+            onDateChanged(typedDate);
+            setDate(typedDate);
+          }}
           disabledKeyboardNavigation
           inline
         />
       </DatePickerWrapper>
-      <SpacedRow>
-        <div className="spacer" />
-        <Button
-          onClick={() => {
-            onDateChanged(date);
-          }}
-        >
-          Update Date
-        </Button>
-      </SpacedRow>
     </div>
   );
 

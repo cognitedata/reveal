@@ -15,4 +15,5 @@ export const Example = () => {
 const Container = styled.div`
   padding: 20px;
   display: flex;
+  position: fixed;
 `;

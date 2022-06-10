@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import React, { useMemo, useState, useRef } from 'react';
 import dayjs from 'dayjs';
-import { SpacedRow, Divider } from 'components';
+import { Divider } from 'components';
 import {
   Dropdown,
   Button,
@@ -53,6 +53,11 @@ export const RangePicker = ({
     [offsetTop, offsetHeight]
   );
 
+  const onPivotRangeChange = (range: PivotRange) => {
+    onRangeChanged(getPivotRangeAsDates(range));
+    setPivotRange(range);
+  };
+
   const renderModePicker = () => (
     <div
       style={{
@@ -79,11 +84,15 @@ export const RangePicker = ({
         </SegmentedControl.Button>
       </SegmentedControl>
       {mode === 'range' ? (
-        <PivotRangePicker range={pivotRange} onRangeChanged={setPivotRange} />
+        <PivotRangePicker
+          range={pivotRange}
+          onRangeChanged={onPivotRangeChange}
+        />
       ) : (
         <CalendarPicker
           dates={[startEndRange.startDate, startEndRange.endDate]}
           onDatesChanged={(startDate, endDate) => {
+            onRangeChanged([startDate, endDate]);
             setStartEndRange(currentRange => ({
               ...currentRange,
               startDate,
@@ -93,22 +102,6 @@ export const RangePicker = ({
         />
       )}
       <Divider.Horizontal />
-      <SpacedRow>
-        <div className="spacer" />
-        <Button
-          type="primary"
-          variant="outline"
-          onClick={() => {
-            if (mode === 'range') {
-              onRangeChanged(getPivotRangeAsDates(pivotRange));
-            } else {
-              onRangeChanged([startEndRange.startDate, startEndRange.endDate]);
-            }
-          }}
-        >
-          Update Range
-        </Button>
-      </SpacedRow>
     </div>
   );
 
