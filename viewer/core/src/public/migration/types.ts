@@ -205,7 +205,7 @@ export { CadModelBudget, PointCloudBudget };
 
 /**
  * Options to control how {@link Cognite3DViewer.getIntersectionFromPixel} behaves.
- * @deprecated Because of using GPU picking options doesn't affect anything.
+ * @deprecated Because of using GPU picking, options doesn't affect the behaviour of the method.
  */
 export interface IntersectionFromPixelOptions {
   /**
