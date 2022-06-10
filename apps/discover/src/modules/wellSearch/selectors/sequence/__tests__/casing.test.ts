@@ -193,13 +193,13 @@ describe('casing selectors (useCasingsForTable)', () => {
     expect(view).toEqual({
       casings: [
         {
-          bottomMD: 15191.009,
+          bottomMD: 4630.219,
           casingNames: 'Intermediate 2',
           casings,
           id: wellboreId,
           idMin: 0,
           idUnit: 'in',
-          mdUnit: 'm',
+          mdUnit: 'ft', // 'm'
           odMax: 11.875,
           odMin: 11.875,
           odUnit: 'in',
@@ -209,7 +209,7 @@ describe('casing selectors (useCasingsForTable)', () => {
           rkbLevel: undefined,
           rkbLevelUnit: undefined,
           waterDepth: 7.169810170566074,
-          waterDepthUnit: 'm',
+          waterDepthUnit: 'ft', // 'm'
         },
       ],
       isLoading: false,

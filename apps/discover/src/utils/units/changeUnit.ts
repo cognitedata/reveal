@@ -56,13 +56,23 @@ export const changeUnit = <Item>(
         convertedValue
       );
 
-      if (fromAccessor) {
-        set(
-          convertedObj as unknown as Record<string, unknown>,
-          fromAccessor,
-          to
-        );
-      }
+      /**
+       * This code block was added to change the unit of the convertedObj.
+       * Otherwise, the returned convertedObj has the unit before the value is converted.
+       * However, this mutates the original object.
+       * Hence, if the same accessor is used again , no conversion happens,
+       * since the original object is mutated with thetarrgt unit.
+       * This doesn't effect the app since we don't use the unit from the object directly.
+       * But this should be fixed as soon as possible.
+       */
+
+      // if (fromAccessor) {
+      //   set(
+      //     convertedObj as unknown as Record<string, unknown>,
+      //     fromAccessor,
+      //     to
+      //   );
+      // }
     }
   }
   return convertedObj;
