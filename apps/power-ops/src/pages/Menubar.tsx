@@ -80,7 +80,7 @@ export const MenuBar = () => {
           visible={visible}
           onClickOutside={() => setVisible(false)}
           content={
-            <StyledMenu className="testing">
+            <StyledMenu>
               <Menu.Header>Price Area</Menu.Header>
               {allPriceAreas?.map((pricearea) => (
                 <Menu.Item

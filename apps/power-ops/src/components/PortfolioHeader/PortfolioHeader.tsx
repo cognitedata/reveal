@@ -1,11 +1,19 @@
-import { Button, Label } from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Label, Menu } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import { downloadBidMatrices, formatDate } from 'utils/utils';
 import { PriceAreaWithData } from 'types';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { CogniteClient } from '@cognite/sdk';
+import { PriceAreasContext } from 'providers/priceAreaProvider';
 
-import { Header, StyledTitle } from './elements';
+import {
+  Header,
+  VerticalSeparator,
+  StyledTitle,
+  MethodItem,
+  MethodButton,
+} from './elements';
+import { formatMethod } from './utils';
 
 export const useBidMatrixProcessStartDate = (
   externalId: string | undefined,
@@ -38,6 +46,12 @@ export const PortfolioHeader = ({
   const { client } = useAuthContext();
   const { authState } = useAuthContext();
 
+  const {
+    allProcessConfigurations,
+    bidProcessEventExternalId,
+    bidProcessConfigurationChanged,
+  } = useContext(PriceAreasContext);
+
   const [downloading, setDownloading] = useState<boolean>(false);
 
   const { startDate, getStartDate } = useBidMatrixProcessStartDate(
@@ -59,22 +73,73 @@ export const PortfolioHeader = ({
           {`Matrix generation started: ${startDate}`}
         </Label>
       </div>
-      <Button
-        icon="Download"
-        type="primary"
-        loading={downloading}
-        onClick={async () => {
-          setDownloading(true);
-          await downloadBidMatrices(
-            priceArea,
-            client?.project,
-            authState?.token
-          );
-          setDownloading(false);
-        }}
-      >
-        Download
-      </Button>
+      <div className="right-side">
+        <Dropdown
+          content={
+            <Menu>
+              {allProcessConfigurations?.map((config) => (
+                <Menu.Item
+                  selected={
+                    config.bidProcessEventExternalId ===
+                    bidProcessEventExternalId
+                  }
+                  key={config.bidProcessEventExternalId}
+                  onClick={() =>
+                    bidProcessConfigurationChanged(
+                      config.bidProcessEventExternalId
+                    )
+                  }
+                >
+                  <MethodItem>
+                    <div>
+                      {formatMethod(config.configurationName)}
+                      <p>
+                        Process finished:{' '}
+                        {new Date(
+                          config.bidProcessFinshedDate
+                        ).toLocaleTimeString('en-IT')}
+                      </p>
+                    </div>
+                    {config.bidProcessEventExternalId ===
+                      bidProcessEventExternalId && <Icon type="Checkmark" />}
+                  </MethodItem>
+                </Menu.Item>
+              ))}
+            </Menu>
+          }
+        >
+          <MethodButton type="tertiary">
+            <div className="method-name">
+              <b>Method:&nbsp;</b>
+              {formatMethod(
+                allProcessConfigurations?.find(
+                  (config) =>
+                    config.bidProcessEventExternalId ===
+                    bidProcessEventExternalId
+                )?.configurationName || ''
+              )}
+            </div>
+            <Icon type="ChevronDown" />
+          </MethodButton>
+        </Dropdown>
+        <VerticalSeparator />
+        <Button
+          icon="Download"
+          type="primary"
+          loading={downloading}
+          onClick={async () => {
+            setDownloading(true);
+            await downloadBidMatrices(
+              priceArea,
+              client?.project,
+              authState?.token
+            );
+            setDownloading(false);
+          }}
+        >
+          Download
+        </Button>
+      </div>
     </Header>
   );
 };

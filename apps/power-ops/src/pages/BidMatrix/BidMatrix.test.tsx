@@ -25,7 +25,7 @@ Object.assign(navigator, {
   },
 });
 
-describe('Bidmatrix tests', () => {
+describe('Bid matrix tests', () => {
   beforeEach(() => {
     // Display 'Total' bidmatrix
     (useParams as jest.Mock).mockImplementation(() => ({
@@ -33,13 +33,13 @@ describe('Bidmatrix tests', () => {
     }));
   });
 
-  describe('Bidmatrix header tests', () => {
-    it('Should display the correct display name in Bidmatrix title', async () => {
+  describe('Bid matrix header tests', () => {
+    it('Should display the correct display name in Bid matrix title', async () => {
       const { rerender } = testRenderer(
         <BidMatrix priceArea={mockPriceArea} />
       );
 
-      let title = await screen.findByRole('heading', { name: /Bidmatrix:/i });
+      let title = await screen.findByRole('heading', { name: /Bid matrix:/i });
       expect(title).toHaveTextContent('Total');
 
       // First plant bidmatrix
@@ -49,7 +49,7 @@ describe('Bidmatrix tests', () => {
       }));
       rerender(<BidMatrix priceArea={mockPriceArea} />);
 
-      title = await screen.findByRole('heading', { name: /Bidmatrix:/i });
+      title = await screen.findByRole('heading', { name: /Bid matrix:/i });
       expect(title).toHaveTextContent(testPlant.displayName);
     });
 
@@ -68,10 +68,8 @@ describe('Bidmatrix tests', () => {
       );
 
       let externalId = await screen.findByText(/Generated/i);
-      // TODO(POWEROPS-223):
-      // For now, we select always the first method available
       expect(externalId).toHaveTextContent(
-        mockPriceArea.totalMatrixesWithData[0].externalId
+        mockPriceArea.totalMatrixWithData.externalId
       );
 
       // Test a plant bidmatrix
@@ -84,9 +82,7 @@ describe('Bidmatrix tests', () => {
       const plant = mockPriceArea.plantMatrixesWithData.find(
         (plant) => plant.plantName === testPlant.name
       );
-      // TODO(POWEROPS-223):
-      // For now, we select always the first method available
-      const expectedExternalId = plant?.matrixesWithData[0]?.externalId;
+      const expectedExternalId = plant?.matrixWithData?.externalId;
       externalId = await screen.findByText(/Generated/i);
 
       expect(expectedExternalId).not.toBeUndefined();
@@ -94,7 +90,7 @@ describe('Bidmatrix tests', () => {
     });
   });
 
-  describe('Bidmatrix table tests', () => {
+  describe('Bid matrix table tests', () => {
     it('Should render bidmatrix table', async () => {
       testRenderer(<BidMatrix priceArea={mockPriceArea} />);
 
@@ -112,10 +108,8 @@ describe('Bidmatrix tests', () => {
     it('Should have the correct number of columns', async () => {
       testRenderer(<BidMatrix priceArea={mockPriceArea} />);
 
-      // TODO(POWEROPS-223):
-      // For now, we select always the first method available
       const expectedColumnLength =
-        mockPriceArea.totalMatrixesWithData[0].sequenceRows.length + 1; // +1 for hour column
+        mockPriceArea.totalMatrixWithData.sequenceRows.length + 1; // +1 for hour column
       const columns = await screen.findAllByRole('columnheader');
 
       expect(columns).toHaveLength(expectedColumnLength);
@@ -132,10 +126,8 @@ describe('Bidmatrix tests', () => {
         return (index - 1) % numColumns === 0 && value !== '';
       });
 
-      // TODO(POWEROPS-223):
-      // For now, we select always the first method available
       const expectedFirstColumn: SequenceItem[] = Array.from(
-        mockPriceArea.totalMatrixesWithData[0].sequenceRows[0].values()
+        mockPriceArea.totalMatrixWithData.sequenceRows[0].values()
       )
         .slice(1)
         .map((data) => {

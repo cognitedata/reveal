@@ -1,26 +1,58 @@
 import axios from 'axios';
-import { PriceArea } from '@cognite/power-ops-api-types';
+import {
+  PriceArea,
+  BidProcessConfiguration,
+} from '@cognite/power-ops-api-types';
 import { useQuery } from 'react-query';
 import sidecar from 'utils/sidecar';
 import { CogniteClient } from '@cognite/sdk';
 import { getBidMatrixData } from 'pages/BidMatrix/utils';
-import { MatrixWithData, PriceAreaWithData } from 'types';
+import { PriceAreaWithData } from 'types';
 
-export const fetchPriceArea = async ({
-  priceAreaExternalId,
+export const fetchProcessConfigurations = async ({
   client,
   token,
+  priceAreaExternalId,
 }: {
-  priceAreaExternalId: string;
   client: CogniteClient;
   token: string;
+  priceAreaExternalId: string;
 }) => {
   if (!(client.project && token)) return undefined;
 
   const { powerOpsApiBaseUrl } = sidecar;
 
+  const { data: processConfigurations }: { data: BidProcessConfiguration[] } =
+    await axios.get(
+      `${powerOpsApiBaseUrl}/${client.project}/price-area/${priceAreaExternalId}/process-configurations`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  return processConfigurations;
+};
+
+export const fetchPriceArea = async ({
+  client,
+  token,
+  priceAreaExternalId,
+  bidProcessEventExternalId,
+}: {
+  client: CogniteClient;
+  token: string;
+  priceAreaExternalId: string;
+  bidProcessEventExternalId?: string;
+}) => {
+  if (!(client.project && token)) return undefined;
+
+  const { powerOpsApiBaseUrl } = sidecar;
+
+  const url = `${powerOpsApiBaseUrl}/${client.project}/price-area/${priceAreaExternalId}/data`;
+
   const { data: priceArea }: { data: PriceArea } = await axios.get(
-    `${powerOpsApiBaseUrl}/${client.project}/price-area-with-data/${priceAreaExternalId}`,
+    url + (bidProcessEventExternalId ? `/${bidProcessEventExternalId}` : ''),
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -31,43 +63,30 @@ export const fetchPriceArea = async ({
 
   const priceAreaWithData: PriceAreaWithData = {
     ...priceArea,
-    totalMatrixesWithData: await Promise.all(
-      priceArea.totalMatrixes?.map(async (matrix) => {
-        const data = await getBidMatrixData(client, matrix.externalId);
-        if (data) {
-          return {
-            ...matrix,
-            sequenceRows: data,
-          } as MatrixWithData;
-        }
-        return {
-          ...matrix,
-        } as MatrixWithData;
-      })
-    ),
-    plantMatrixesWithData: await Promise.all(
-      priceArea.plantMatrixes.map(async (plant) => {
-        return {
-          ...plant,
-          matrixesWithData: await Promise.all(
-            plant.matrixes.map(async (matrix) => {
-              const data = await getBidMatrixData(client, matrix.externalId);
-              if (data) {
-                return {
-                  ...matrix,
-                  sequenceRows: data,
-                } as MatrixWithData;
-              }
-              return {
-                ...matrix,
-              } as MatrixWithData;
-            })
-          ),
-        };
-      })
-    ),
+    totalMatrixWithData: {
+      ...priceArea.totalMatrix!,
+      sequenceRows:
+        (await getBidMatrixData(client, priceArea.totalMatrix?.externalId)) ||
+        [],
+    },
+    plantMatrixesWithData: priceArea.plantMatrixes
+      ? await Promise.all(
+          priceArea.plantMatrixes.map(async (plant) => {
+            const matrixData = await getBidMatrixData(
+              client,
+              plant.matrix?.externalId
+            );
+            return {
+              ...plant,
+              matrixWithData: {
+                ...plant.matrix!,
+                sequenceRows: matrixData || [],
+              },
+            };
+          })
+        )
+      : [],
   };
-
   return priceAreaWithData;
 };
 

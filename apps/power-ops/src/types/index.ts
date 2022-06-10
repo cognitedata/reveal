@@ -40,9 +40,9 @@ export interface MatrixWithData extends Matrix {
 }
 
 export interface PriceAreaWithData extends PriceArea {
-  totalMatrixesWithData: MatrixWithData[];
+  totalMatrixWithData: MatrixWithData;
   plantMatrixesWithData: {
     plantName: string;
-    matrixesWithData: MatrixWithData[];
+    matrixWithData: MatrixWithData;
   }[];
 }

@@ -79,11 +79,10 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
 
     if (!priceTs?.length) return;
 
-    const scenarioPricePerHour = (priceTs?.[0]?.datapoints ||
-      []) as DoubleDatapoint[];
+    const [{ datapoints: scenarioPricePerHour }] = priceTs;
 
     const scenarioData = await formatScenarioData(
-      scenarioPricePerHour,
+      scenarioPricePerHour as DoubleDatapoint[],
       matrix.sequenceRows
     );
 
@@ -119,15 +118,13 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
       if (!priceExternalId) return;
 
       if (plantExternalId === 'total') {
-        const matrixes = priceArea.totalMatrixesWithData;
+        const bidMatrix = priceArea.totalMatrixWithData;
         const production = priceArea.priceScenarios.find(
           (scenario) => scenario.externalId === priceArea.mainScenarioExternalId
         )?.totalProduction;
 
-        // TODO(POWEROPS-000):
-        // For now, we select always the first method available
-        if (matrixes?.[0] && production?.[0]?.shopProductionExternalId) {
-          updateMatrixData(matrixes[0], priceExternalId);
+        if (bidMatrix && production?.shopProductionExternalId) {
+          updateMatrixData(bidMatrix, priceExternalId);
         }
       } else {
         const plant = priceArea.plants?.find(
@@ -144,13 +141,11 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
           ?.plantProduction.find(
             (p) => p.plantName === plant?.name
           )?.production;
-        // TODO(POWEROPS-000):
-        // For now, we select always the first method available
         if (
-          plantMatrixes?.matrixesWithData[0] &&
-          production?.[0]?.shopProductionExternalId
+          plantMatrixes?.matrixWithData &&
+          production?.shopProductionExternalId
         ) {
-          updateMatrixData(plantMatrixes?.matrixesWithData[0], priceExternalId);
+          updateMatrixData(plantMatrixes?.matrixWithData, priceExternalId);
         }
       }
     }
@@ -188,11 +183,8 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
             <div>
               <span>
                 <StyledTitle level={5}>
-                  Bidmatrix: {getMatrixTitle()}
+                  Bid matrix: {getMatrixTitle()}
                 </StyledTitle>
-                {/* <Label size="small" variant="unknown">
-                {matrix?.method}
-              </Label> */}
               </span>
               <Detail>{`Generated for ${bidDate.format('MMM DD, YYYY')} - ${
                 currentMatrix?.externalId

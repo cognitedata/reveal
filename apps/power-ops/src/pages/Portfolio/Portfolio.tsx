@@ -19,8 +19,13 @@ import { Sidebar } from 'components/Sidebar/Sidebar';
 import { Container, MainDiv } from './elements';
 
 const PortfolioPage = () => {
-  const { priceArea, allPriceAreas, priceAreaChanged } =
-    useContext(PriceAreasContext);
+  const {
+    priceArea,
+    allPriceAreas,
+    bidProcessEventExternalId,
+    priceAreaChanged,
+  } = useContext(PriceAreasContext);
+
   const { priceAreaExternalId } = useParams<{ priceAreaExternalId?: string }>();
 
   const history = useHistory();
@@ -46,10 +51,11 @@ const PortfolioPage = () => {
   }, [allPriceAreas]);
 
   useEffect(() => {
+    setLoading(true);
     if (priceArea) {
       setLoading(false);
     }
-  }, [priceArea]);
+  }, [priceArea, bidProcessEventExternalId]);
 
   if (!allPriceAreas) {
     return loading ? (
@@ -65,7 +71,7 @@ const PortfolioPage = () => {
     ).length;
     return found ? (
       <Loader
-        infoTitle="Loading Price Area:"
+        infoTitle="Loading Price Area Data:"
         infoText={priceAreaExternalId}
         darkMode={false}
       />

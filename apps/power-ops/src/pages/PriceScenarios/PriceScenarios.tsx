@@ -75,10 +75,8 @@ export const PriceScenarios = ({
           (scenario) => scenario.externalId === column.id
         );
         if (scenario) {
-          // TODO(POWEROPS-223):
-          // For now, we select always the first method available
           productionTsExternalIds.push({
-            externalId: scenario?.totalProduction[0].shopProductionExternalId,
+            externalId: scenario?.totalProduction.shopProductionExternalId,
           });
         }
       } else {
@@ -88,10 +86,8 @@ export const PriceScenarios = ({
         )?.plantProduction?.[index - 2];
 
         if (plant) {
-          // TODO(POWEROPS-223):
-          // For now, we select always the first method available
           productionTsExternalIds.push({
-            externalId: plant?.production[0].shopProductionExternalId,
+            externalId: plant?.production.shopProductionExternalId,
           });
         }
       }
@@ -150,7 +146,7 @@ export const PriceScenarios = ({
 
       calcProductionData = priceTimeseries
         ? priceTimeseries.map((scenarioPricePerHour, index) => {
-            const { sequenceRows } = priceArea.totalMatrixesWithData[0];
+            const { sequenceRows } = priceArea.totalMatrixWithData;
             const accessor = `calc-${index}`;
             const calulatedProduction = calculateScenarioProduction(
               scenarioPricePerHour.datapoints as DoubleDatapoint[],
@@ -181,7 +177,7 @@ export const PriceScenarios = ({
                 plantA.plantName.localeCompare(plantB.plantName)
               )
               .map((plantMatrix, index) => {
-                const { sequenceRows } = plantMatrix.matrixesWithData[0];
+                const { sequenceRows } = plantMatrix.matrixWithData;
                 const accessor = `calc-plant-${index}`;
 
                 const calulatedProduction = calculateScenarioProduction(
@@ -198,7 +194,7 @@ export const PriceScenarios = ({
       // Calculate Total Column
       const [calcTotalProductionData] = activeScenarioTimeseries
         ? activeScenarioTimeseries.map((scenarioPricePerHour) => {
-            const { sequenceRows } = priceArea.totalMatrixesWithData[0];
+            const { sequenceRows } = priceArea.totalMatrixWithData;
             const accessor = `calc-${activeScenarioIndex}`;
             const calulatedProduction = calculateScenarioProduction(
               scenarioPricePerHour.datapoints as DoubleDatapoint[],
@@ -237,11 +233,11 @@ export const PriceScenarios = ({
       });
       setPriceExternalIds(priceExternalIds);
     }
-  }, [activeTab]);
+  }, [activeTab, priceArea]);
 
   useEffect(() => {
     getTableData();
-  }, [priceExternalIds]);
+  }, [priceExternalIds, priceArea]);
 
   return (
     <Main>
