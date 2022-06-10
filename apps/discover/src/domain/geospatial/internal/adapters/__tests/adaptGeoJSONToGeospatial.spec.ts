@@ -6,12 +6,12 @@ import {
   TEST_LAYER_ID,
 } from '__test-utils/fixtures/geometry';
 
-import { adaptGeoJSONToGeospatial } from '../adaptGeoJSONToGeospatial';
 import {
   DISCOVER_FEATURE_PREFIX,
   DISCOVER_FEATURE_TYPE_PREFIX,
   MAX_STRING_LENGTH_MULTIPLIER,
-} from '../constants';
+} from '../../../constants';
+import { adaptGeoJSONToGeospatial } from '../adaptGeoJSONToGeospatial';
 
 describe('adaptGeoJSONToGeospatial', () => {
   it('should return featureType and featureItems', () => {

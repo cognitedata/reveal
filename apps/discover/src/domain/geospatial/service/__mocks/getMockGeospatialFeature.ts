@@ -1,8 +1,8 @@
 import { rest } from 'msw';
 
-import { SIDECAR } from '../../../constants/app';
-import { TEST_PROJECT } from '../../../setupTests';
-import { TEST_ERROR_MESSAGE } from '../constants';
+import { SIDECAR } from '../../../../constants/app';
+import { TEST_PROJECT } from '../../../../setupTests';
+import { TEST_ERROR_MESSAGE } from '../../constants';
 
 export const getMockGeospatialFeature = () => {
   const url = `${SIDECAR.cdfApiBaseUrl}/api/v1/projects/${TEST_PROJECT}/geospatial/featuretypes/:featureType/features`;

@@ -1,8 +1,8 @@
 import { rest } from 'msw';
+import { TEST_PROJECT } from 'setupTests';
 
-import { GEOMETRY, TEST_STRING } from '../../../__test-utils/fixtures/geometry';
-import { SIDECAR } from '../../../constants/app';
-import { TEST_PROJECT } from '../../../setupTests';
+import { GEOMETRY, TEST_STRING } from '__test-utils/fixtures/geometry';
+import { SIDECAR } from 'constants/app';
 
 export const getMockGeospatialFeatureSearchStream = () => {
   const url = `${SIDECAR.cdfApiBaseUrl}/api/v1/projects/${TEST_PROJECT}/geospatial/featuretypes/:featureType/features/search-streaming`;

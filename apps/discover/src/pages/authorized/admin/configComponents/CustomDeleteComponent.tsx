@@ -1,4 +1,7 @@
-import { geospatial } from 'services/geospatial';
+import {
+  deleteFeatureType,
+  getFeatureType,
+} from 'domain/geospatial/service/network';
 
 import { Modal } from '@cognite/cogs.js';
 
@@ -21,12 +24,12 @@ export const CustomDeleteComponent = ({
           try {
             // while deleting if we do not find corresponding featureType then
             // we just want to delete the layer from project config (onOk)
-            await geospatial.getFeatureType(featureTypeId || id);
+            await getFeatureType(featureTypeId || id);
 
             try {
               // if successful in finding featureType then we just delete corresponding data from geospatial
               // and then try for deleting layer from project config
-              await geospatial.deleteFeatureType(featureTypeId || id);
+              await deleteFeatureType(featureTypeId || id);
               onDelete();
             } catch (e) {
               // in case we couldn't delete data, we do not want to delete layer from project config otherwise

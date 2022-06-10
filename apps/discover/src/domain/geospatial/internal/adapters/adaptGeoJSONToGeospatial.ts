@@ -8,7 +8,7 @@ import {
   MAX_STRING_LENGTH_MULTIPLIER,
   DISCOVER_FEATURE_PREFIX,
   DISCOVER_FEATURE_TYPE_PREFIX,
-} from './constants';
+} from '../../constants';
 
 export const adaptGeoJSONToGeospatial = (
   featureCollection: FeatureCollection,

@@ -1,8 +1,12 @@
+import {
+  createLayer,
+  deleteFeatureType,
+} from 'domain/geospatial/service/network';
+
 import { useTranslation } from 'react-i18next';
 
 import { useFormik } from 'formik';
 import omit from 'lodash/omit';
-import { geospatial } from 'services/geospatial';
 import { log } from 'utils/log';
 
 import { FileReaderComp } from 'components/FileReader';
@@ -42,8 +46,7 @@ export const LayersFormModal = ({
   const { t } = useTranslation();
 
   const createNewLayer = (values: LayerFormValues) => {
-    return geospatial
-      .createLayer(values.layerSource, values.featureTypeId)
+    return createLayer(values.layerSource, values.featureTypeId)
       .then(() => onOk(omit(values, 'layerSource')))
       .catch((error) => {
         showErrorMessage(
@@ -55,12 +58,11 @@ export const LayersFormModal = ({
   const updateExistingLayer = (values: LayerFormValues) => {
     const newLayerId = getNewUniqueLayerId();
     const oldLayerId = values.featureTypeId;
-    return geospatial
-      .createLayer(values.layerSource, newLayerId)
+    return createLayer(values.layerSource, newLayerId)
       .then(() =>
         onOk({ ...omit(values, 'layerSource'), featureTypeId: newLayerId })
       )
-      .then(() => geospatial.deleteFeatureType(oldLayerId || values.id))
+      .then(() => deleteFeatureType(oldLayerId || values.id))
       .catch((error) => {
         showErrorMessage(error);
         log('Could not update layer.');

@@ -1,9 +1,10 @@
+import { getGeoJSON } from 'domain/geospatial/service/network';
+
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { FeatureCollection } from 'geojson';
 import isUndefined from 'lodash/isUndefined';
-import { geospatial } from 'services/geospatial';
 import { useJsonHeaders } from 'services/service';
 import {
   CancellablePromise,
@@ -82,10 +83,9 @@ export const useMapContent = () => {
 
         if (!isUndefined((layers[id] as ProjectConfigMapLayers).disabled)) {
           promises.push(
-            geospatial
-              .getGeoJSON(
-                (layers[id] as ProjectConfigMapLayers)?.featureTypeId || id
-              )
+            getGeoJSON(
+              (layers[id] as ProjectConfigMapLayers)?.featureTypeId || id
+            )
               .then((geoJSON) => {
                 pushResponse(geoJSON);
               })
