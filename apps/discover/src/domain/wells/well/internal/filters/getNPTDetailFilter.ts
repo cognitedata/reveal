@@ -1,4 +1,5 @@
-import { filters } from 'dataLayers/wells/filters';
+import { filters } from 'domain/wells/well/internal/filters';
+
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 

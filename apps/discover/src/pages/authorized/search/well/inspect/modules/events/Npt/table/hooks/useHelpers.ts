@@ -1,4 +1,5 @@
-import { getNptCodeTableSort } from 'dataLayers/wells/wellbores/selectors/getNptCodeSort';
+import { getNptCodeTableSort } from 'domain/wells/npt/internal/selectors/getNptCodeSort';
+
 import get from 'lodash/get';
 import { getTimeDuration } from 'utils/date';
 import { processAccessor } from 'utils/table/processAccessor';

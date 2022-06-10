@@ -1,7 +1,6 @@
+import { getWellName } from 'domain/wells/well/internal/selectors/getWellName';
 import { Well } from 'domain/wells/well/internal/types';
 import { normalize as normalizeWellbore } from 'domain/wells/wellbore/internal/transformers/normalize';
-
-import { getWellName } from 'dataLayers/wells/wells/selectors/getWellName';
 
 import { Well as WellV3 } from '@cognite/sdk-wells-v3';
 

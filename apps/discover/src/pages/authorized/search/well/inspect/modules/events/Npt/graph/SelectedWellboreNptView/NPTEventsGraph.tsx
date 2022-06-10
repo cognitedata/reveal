@@ -1,8 +1,9 @@
+import { getCodeDefinition } from 'domain/wells/npt/internal/selectors/getCodeDefinition';
+import { getEndTimeDisplay } from 'domain/wells/npt/internal/selectors/getEndTimeDisplay';
+import { getStartTimeDisplay } from 'domain/wells/npt/internal/selectors/getStartTimeDisplay';
+
 import React, { useCallback, useMemo } from 'react';
 
-import { getEndTimeDisplay } from 'dataLayers/wells/npt/decorators/getEndTimeDisplay';
-import { getStartTimeDisplay } from 'dataLayers/wells/npt/decorators/getStartTimeDisplay';
-import { getCodeDefinition } from 'dataLayers/wells/npt/selectors/getCodeDefinition';
 import get from 'lodash/get';
 import uniqueId from 'lodash/uniqueId';
 import { formatDate, getTimeDuration } from 'utils/date';

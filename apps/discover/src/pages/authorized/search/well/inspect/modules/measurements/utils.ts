@@ -1,6 +1,6 @@
+import { getWellboreTitle } from 'domain/wells/wellbore/internal/selectors/getWellboreTitle';
 import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
-import { getWellboreTitle } from 'dataLayers/wells/wellbores/decorators/getWellboreTitle';
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';

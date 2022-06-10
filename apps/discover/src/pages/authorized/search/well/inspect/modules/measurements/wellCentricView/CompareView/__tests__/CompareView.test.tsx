@@ -6,9 +6,9 @@ import { getMockDepthMeasurementData } from 'domain/wells/measurements/service/_
 import { getMockDepthMeasurements } from 'domain/wells/measurements/service/__mocks/getMockDepthMeasurements';
 import { getMockWellsById } from 'domain/wells/well/service/__mocks/getMockWellsById';
 import { getMockWellbore } from 'domain/wells/wellbore/internal/__fixtures/getMockWellbore';
+import { getWellboreTitle } from 'domain/wells/wellbore/internal/selectors/getWellboreTitle';
 
 import { screen, waitFor } from '@testing-library/react';
-import { getWellboreTitle } from 'dataLayers/wells/wellbores/decorators/getWellboreTitle';
 import { setupServer } from 'msw/node';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 

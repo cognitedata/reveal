@@ -1,4 +1,4 @@
-import { getDiameterHole } from 'dataLayers/wells/nds/decorators/getDiameterHole';
+import { getDiameterHole } from 'domain/wells/nds/internal/selectors/getDiameterHole';
 
 import {
   COMMON_COLUMN_ACCESSORS,

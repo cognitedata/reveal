@@ -1,6 +1,6 @@
-import { getSpudDateDisplay } from 'dataLayers/wells/wells/selectors/getSpudDateDisplay';
-import { getSpudDateTableSort } from 'dataLayers/wells/wells/selectors/getSpudDateSort';
-import { wellFieldTitles } from 'dataLayers/wells/wells/titles';
+import { getSpudDateDisplay } from 'domain/wells/well/internal/selectors/getSpudDateDisplay';
+import { getSpudDateTableSort } from 'domain/wells/well/internal/selectors/getSpudDateSort';
+import { wellFieldTitles } from 'domain/wells/well/internal/titles';
 
 import { ColumnType } from 'components/Tablev3';
 import { WATER_DEPTH } from 'pages/authorized/search/well/content/constants';

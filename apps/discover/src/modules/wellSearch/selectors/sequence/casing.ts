@@ -1,10 +1,10 @@
+import { getWaterDepth } from 'domain/wells/well/internal/selectors/getWaterDepth';
 import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
+import { getRkbLevel } from 'domain/wells/wellbore/internal/selectors/getRkbLevel';
+import { getWellboreName } from 'domain/wells/wellbore/internal/selectors/getWellboreName';
 
 import { useMemo } from 'react';
 
-import { getRkbLevel } from 'dataLayers/wells/wellbores/selectors/getRkbLevel';
-import { getWellboreName } from 'dataLayers/wells/wellbores/selectors/getWellboreName';
-import { getWaterDepth } from 'dataLayers/wells/wells/selectors/getWaterDepth';
 import capitalize from 'lodash/capitalize';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';

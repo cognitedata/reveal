@@ -1,11 +1,11 @@
 import { useFavoriteWellIds } from 'domain/favorites/internal/hooks/useFavoriteWellIds';
+import { processedWellsAdapter } from 'domain/wells/well/internal/adapters';
 import { useWellSearchResultQuery } from 'domain/wells/well/internal/queries/useWellSearchResultQuery';
 import { Well } from 'domain/wells/well/internal/types';
 
 import React, { useCallback, useEffect, useRef } from 'react';
 import { batch, useDispatch } from 'react-redux';
 
-import { processedWellsAdapter } from 'dataLayers/wells/wells/adapters';
 import head from 'lodash/head';
 import map from 'lodash/map';
 

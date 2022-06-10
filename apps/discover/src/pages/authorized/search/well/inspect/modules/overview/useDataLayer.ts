@@ -1,15 +1,18 @@
 import { useTrajectoriesMetadataQuery } from 'domain/wells/trajectory/internal/queries/useTrajectoriesMetadataQuery';
+import {
+  getMd,
+  getMdUnit,
+} from 'domain/wells/trajectory/internal/selectors/getMd';
+import { getTrajectoryForWellbore } from 'domain/wells/trajectory/internal/selectors/getTrajectoryForWellbore';
+import {
+  getTvd,
+  getTvdUnit,
+} from 'domain/wells/trajectory/internal/selectors/getTvd';
+import { getWaterDepth } from 'domain/wells/well/internal/selectors/getWaterDepth';
 import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
 
 import { useMemo } from 'react';
 
-import { getMd, getMdUnit } from 'dataLayers/wells/trajectory/selectors/getMd';
-import { getTrajectoryForWellbore } from 'dataLayers/wells/trajectory/selectors/getTrajectoryForWellbore';
-import {
-  getTvd,
-  getTvdUnit,
-} from 'dataLayers/wells/trajectory/selectors/getTvd';
-import { getWaterDepth } from 'dataLayers/wells/wells/selectors/getWaterDepth';
 import flatten from 'lodash/flatten';
 
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';

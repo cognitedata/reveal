@@ -1,4 +1,5 @@
-import { getCodeDefinition } from 'dataLayers/wells/npt/selectors/getCodeDefinition';
+import { getCodeDefinition } from 'domain/wells/npt/internal/selectors/getCodeDefinition';
+
 import get from 'lodash/get';
 import styled from 'styled-components/macro';
 import { sortObjectsAscending, sortObjectsDecending } from 'utils/sort';

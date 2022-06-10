@@ -1,4 +1,5 @@
-import { getCodeDefinition } from 'dataLayers/wells/npt/selectors/getCodeDefinition';
+import { getCodeDefinition } from 'domain/wells/npt/internal/selectors/getCodeDefinition';
+
 import groupBy from 'lodash/groupBy';
 
 import { NPTEvent } from 'modules/wellSearch/types';

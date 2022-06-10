@@ -1,7 +1,8 @@
+import { getEndTimeDisplay } from 'domain/wells/npt/internal/selectors/getEndTimeDisplay';
+import { getStartTimeDisplay } from 'domain/wells/npt/internal/selectors/getStartTimeDisplay';
+
 import { Row } from 'react-table';
 
-import { getEndTimeDisplay } from 'dataLayers/wells/npt/decorators/getEndTimeDisplay';
-import { getStartTimeDisplay } from 'dataLayers/wells/npt/decorators/getStartTimeDisplay';
 import get from 'lodash/get';
 import keyBy from 'lodash/keyBy';
 import set from 'lodash/set';

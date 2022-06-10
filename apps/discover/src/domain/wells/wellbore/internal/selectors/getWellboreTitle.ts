@@ -1,6 +1,6 @@
 import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
-import { getWellboreName } from '../selectors/getWellboreName';
+import { getWellboreName } from './getWellboreName';
 
 export const getWellboreTitle = (wellbore: Wellbore) => {
   const name = getWellboreName(wellbore);

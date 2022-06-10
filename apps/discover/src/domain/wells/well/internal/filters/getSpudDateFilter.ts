@@ -1,4 +1,5 @@
-import { filters } from 'dataLayers/wells/filters';
+import { filters } from 'domain/wells/well/internal/filters';
+
 import { adaptLocalDateToISOString } from 'utils/date';
 import { isStringsArray } from 'utils/types/isStringsArray';
 

@@ -1,9 +1,9 @@
+import { getWellboreName } from 'domain/wells/wellbore/internal/selectors/getWellboreName';
+import { getWellboreTitle } from 'domain/wells/wellbore/internal/selectors/getWellboreTitle';
 import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
 import React, { useEffect, useState } from 'react';
 
-import { getWellboreTitle } from 'dataLayers/wells/wellbores/decorators/getWellboreTitle';
-import { getWellboreName } from 'dataLayers/wells/wellbores/selectors/getWellboreName';
 import head from 'lodash/head';
 import uniqueBy from 'lodash/uniqBy';
 import { v4 as uuid } from 'uuid';

@@ -1,7 +1,6 @@
+import { addColor } from 'domain/wells/wellbore/internal/selectors/addColor';
+import { addTitle } from 'domain/wells/wellbore/internal/selectors/addTitle';
 import { Wellbore } from 'domain/wells/wellbore/internal/types';
-
-import { addColor } from 'dataLayers/wells/wellbores/selectors/addColor';
-import { addTitle } from 'dataLayers/wells/wellbores/selectors/addTitle';
 
 export const wellboreAdapter = (
   wellbore: Wellbore,

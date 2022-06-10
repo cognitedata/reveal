@@ -1,6 +1,5 @@
+import { getKbElevation } from 'domain/wells/wellbore/internal/selectors/getKbElevation';
 import { Wellbore } from 'domain/wells/wellbore/internal/types';
-
-import { getKbElevation } from 'dataLayers/wells/wellbores/selectors/getKbElevation';
 
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
 import { ColumnMap } from 'modules/documentSearch/utils/getAvailableColumns';

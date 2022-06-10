@@ -1,4 +1,5 @@
-import { filters } from 'dataLayers/wells/filters';
+import { filters } from 'domain/wells/well/internal/filters';
+
 import { isNumberTuple } from 'utils/types/isNumberTuple';
 
 import { WellFilter } from '@cognite/sdk-wells-v3';

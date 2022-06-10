@@ -1,8 +1,7 @@
+import { getSpudDateDisplay } from 'domain/wells/well/internal/selectors/getSpudDateDisplay';
+import { getSpudDateTableSort } from 'domain/wells/well/internal/selectors/getSpudDateSort';
+import { wellFieldTitles } from 'domain/wells/well/internal/titles';
 import { Well } from 'domain/wells/well/internal/types';
-
-import { getSpudDateDisplay } from 'dataLayers/wells/wells/selectors/getSpudDateDisplay';
-import { getSpudDateTableSort } from 'dataLayers/wells/wells/selectors/getSpudDateSort';
-import { wellFieldTitles } from 'dataLayers/wells/wells/titles';
 
 import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 import { ColumnMap } from 'modules/documentSearch/utils/getAvailableColumns';

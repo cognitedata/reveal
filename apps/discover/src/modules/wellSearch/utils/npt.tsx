@@ -1,4 +1,4 @@
-import { getCodeDefinition } from 'dataLayers/wells/npt/selectors/getCodeDefinition';
+import { getCodeDefinition } from 'domain/wells/npt/internal/selectors/getCodeDefinition';
 
 import { MultiSelectOptionObject } from 'components/Filters/types';
 import { Definition } from 'pages/authorized/search/well/inspect/modules/events/Npt/Definition';
