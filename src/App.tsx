@@ -24,8 +24,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-const env = getEnv();
-const project = getProject();
 
 const App = () => {
   const appName = 'cdf-access-management';
