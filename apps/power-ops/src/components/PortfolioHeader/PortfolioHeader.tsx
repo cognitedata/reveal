@@ -92,11 +92,11 @@ export const PortfolioHeader = ({
                 >
                   <MethodItem>
                     <div>
-                      {formatMethod(config.configurationName)}
+                      {formatMethod(config.bidProcessConfiguration)}
                       <p>
                         Process finished:{' '}
                         {new Date(
-                          config.bidProcessFinshedDate
+                          config.bidProcessFinishedDate
                         ).toLocaleTimeString('en-IT')}
                       </p>
                     </div>
@@ -116,7 +116,7 @@ export const PortfolioHeader = ({
                   (config) =>
                     config.bidProcessEventExternalId ===
                     bidProcessEventExternalId
-                )?.configurationName || ''
+                )?.bidProcessConfiguration || ''
               )}
             </div>
             <Icon type="ChevronDown" />
