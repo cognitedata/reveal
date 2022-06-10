@@ -18,6 +18,6 @@ const Template: Story<ComponentProps<typeof TimeSelector>> = (args) => (
 export const TimeDopdown = Template.bind({});
 
 TimeDopdown.args = {
-  value: new Date(),
+  value: new Date('2022-06-10T15:00:00.000Z'),
   onChange: () => {},
 };
