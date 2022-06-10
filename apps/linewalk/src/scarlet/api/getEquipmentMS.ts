@@ -41,7 +41,11 @@ export const getEquipmentMS = async (
   if (!unitId) throw Error('Unit id is not set');
   if (!equipmentId) throw Error('Equipment id is not set');
 
-  const tableNames = [`${unitId}_MS2_MS3`, `${unitId}_MS3`, `${unitId}_MS2`];
+  const tableNames = [
+    `${facility.sequenceNumber}_${unitId}_MS2_MS3`,
+    `${facility.sequenceNumber}_${unitId}_MS3`,
+    `${facility.sequenceNumber}_${unitId}_MS2`,
+  ];
 
   // eslint-disable-next-line no-restricted-syntax
   for (const tableName of tableNames) {

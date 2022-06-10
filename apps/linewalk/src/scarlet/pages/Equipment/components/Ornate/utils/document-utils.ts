@@ -13,7 +13,7 @@ export const addDocumentTitle = ({
   ornateDocument: OrnatePDFDocument;
 }) => {
   const text = new Konva.Text({
-    text: document.type || document.externalId || document.id.toString(),
+    text: document.externalId || document.id.toString(),
     fill: 'rgba(0, 0, 0, 0.45)',
     fontSize: TEXT_SIZE,
     padding: TEXT_PADDING,

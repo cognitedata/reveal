@@ -25,7 +25,7 @@ export const getEquipmentMAL = async (
   if (!unitId) throw Error('Unit id is not set');
   if (!equipmentId) throw Error('Equipment id is not set');
 
-  const tableName = `${unitId}_MAL`;
+  const tableName = `${facility.sequenceNumber}_${unitId}_MAL`;
   const rows = (
     await client.raw.listRows('PCMS', tableName, {
       columns: [
