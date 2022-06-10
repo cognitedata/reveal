@@ -10,7 +10,7 @@ export interface ListData {
   description?: string;
 }
 
-interface Props {
+export interface Props {
   items: Record<string, NonEmptyArr<ListData>>;
 }
 

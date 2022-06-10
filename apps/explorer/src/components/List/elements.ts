@@ -13,5 +13,5 @@ export const SectionWrapper = styled.div`
 `;
 
 export const SectionTitle = styled(Body)`
-  text-transform: 'capitalize';
+  text-transform: capitalize;
 `;

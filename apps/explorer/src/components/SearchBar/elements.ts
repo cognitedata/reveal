@@ -3,12 +3,12 @@ import styled from 'styled-components';
 import { sizes } from 'styles/layout';
 
 export const SearchInputWrapper = styled.div`
-  height: 100%;
   width: 100%;
   display: flex;
   border: 3px solid #d9d9d9;
   border-radius: 6px;
   padding: 10px 7px;
+  color: #1e1e1e;
 `;
 
 export const SearchInput = styled.input`
@@ -26,4 +26,5 @@ export const SearchButton = styled(Button)`
   border: ${sizes.extraSmall} white solid;
   color: #aeaeae;
   justify-content: left;
+  min-height: ${sizes.large};
 `;

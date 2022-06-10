@@ -78,6 +78,7 @@ DEPENDENCIES = [
     "@npm//@cognite/sdk",
     "@npm//@sentry/browser",
     "@npm//@apollo/client",
+    "@npm//fuse.js",
     "@npm//react",
     "@npm//react-dom",
     "@npm//react-i18next",
