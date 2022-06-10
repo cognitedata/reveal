@@ -1019,7 +1019,6 @@ export class Cognite3DViewer {
   async getIntersectionFromPixel(
     offsetX: number,
     offsetY: number,
-    //@deprecated
     options?: IntersectionFromPixelOptions
   ): Promise<null | Intersection> {
     const cadModels = this.getModels('cad');

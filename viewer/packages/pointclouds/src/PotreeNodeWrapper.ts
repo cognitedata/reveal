@@ -79,7 +79,7 @@ export class PotreeNodeWrapper {
   }
 
   pick(renderer: THREE.WebGLRenderer, camera: THREE.Camera, ray: THREE.Ray): PickPoint | null {
-    return this.octree.pick(renderer, camera, ray);
+    return this.octree.pick(renderer, camera, ray, { pickWindowSize: 45 });
   }
 
   setClassificationAndRecompute(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void {
