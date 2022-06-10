@@ -52,9 +52,8 @@ const hoverOnNthWell = (nth: number) => {
   cy.findAllByTestId('table-row').eq(nth).invoke('attr', 'style', 'opacity: 1');
 };
 
-const hoverOnNthWellbore = (nth: number) => {
-  cy.findByTestId('well-result-table')
-    .findAllByTestId('table-cell-expanded')
+const hoverOnNthWellbore = (nth: number, tableType: String) => {
+  cy.findAllByTestId(`well-${tableType}-table`)
     .first()
     .findAllByTestId('table-row')
     .eq(nth)
@@ -87,7 +86,7 @@ export interface TableCommands {
     tableDataTestId?: string
   ): void;
   hoverOnNthWell(nth: number): void;
-  hoverOnNthWellbore(nth: number): void;
+  hoverOnNthWellbore(nth: number, tableType: String): void;
   clickNthWellViewButton(nth: number): void;
   clickNthWellboreViewButton(nth: number): void;
 }

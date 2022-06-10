@@ -10,6 +10,7 @@ import { SidebarCommands } from './sidebar.commands';
 import { TableCommands } from './table.commands';
 import { WellsCommands } from './wells.commands';
 import { MapCommands } from './map.commands';
+import { SettingsCommands } from './settings.commands';
 
 declare global {
   namespace Cypress {
@@ -24,6 +25,7 @@ declare global {
         MapCommands,
         AdminCommands,
         SavedSearchCommands,
+        SettingsCommands,
         FeedbackCommands {}
   }
 }
@@ -39,3 +41,4 @@ export * from './button.commands';
 export * from './map.commands';
 export * from './feedback.commands';
 export * from './savedSearches.commands';
+export * from './settings.commands';

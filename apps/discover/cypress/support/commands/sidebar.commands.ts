@@ -36,7 +36,7 @@ Cypress.Commands.add(
     });
 
     if (toSelect) {
-      cy.contains(toSelect).scrollIntoView().should('be.visible').click();
+      cy.findByText(toSelect).scrollIntoView().should('be.visible').click();
     }
 
     cy.log(`Close ${filter} select list`);

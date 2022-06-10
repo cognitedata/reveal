@@ -230,7 +230,7 @@ describe('Wells: result_table', () => {
       .click();
 
     cy.log('hover on wellbore row and click on `view` button');
-    cy.hoverOnNthWellbore(0);
+    cy.hoverOnNthWellbore(0, 'result');
     cy.clickNthWellboreViewButton(0);
 
     cy.log('result table should contain 1 row');

@@ -1,5 +1,7 @@
 import { DATA_AVAILABILITY } from '../../../../../src/modules/wellSearch/constantsSidebarFilters';
 import { TAB_NAMES } from '../../../../../src/pages/authorized/search/well/inspect/constants';
+import { UserPreferredUnit } from '../../../../../src/constants/units';
+import { NO_RESULTS_TEXT } from '../../../../../src/components/EmptyState/constants';
 const DATA_AVAILABILITY_CASINGS = 'Casings';
 const DATA_AVAILABILITY_NPT = 'NPT events';
 
@@ -19,7 +21,7 @@ describe('Wells: casings buttons', () => {
     cy.findAllByText(DATA_AVAILABILITY_NPT).click();
 
     cy.log('select one row');
-    cy.hoverOnNthWellbore(0);
+    cy.hoverOnNthWellbore(0, 'result');
     cy.clickNthWellboreViewButton(0);
 
     cy.log('navigate to casings tab');
@@ -72,5 +74,161 @@ describe('Wells: casings buttons', () => {
     cy.log('Click on `Graph` button');
     cy.contains('Graph').click({ force: true });
     cy.findByTestId('schema-column').should('be.visible');
+  });
+});
+
+describe('Casings: Table view', () => {
+  before(() => {
+    cy.visit(Cypress.env('BASE_URL'));
+    cy.login();
+    cy.acceptCookies();
+    cy.selectCategory('Wells');
+
+    cy.log(`click on ${DATA_AVAILABILITY} filter section`);
+    cy.clickOnFilterCategory(DATA_AVAILABILITY);
+
+    cy.log(`select ${DATA_AVAILABILITY_NPT} from side bar filters`);
+    cy.validateSelect(
+      DATA_AVAILABILITY,
+      [DATA_AVAILABILITY_NPT],
+      DATA_AVAILABILITY_NPT
+    );
+
+    cy.log(`select ${DATA_AVAILABILITY_CASINGS} from side bar filters`);
+    cy.validateSelect(
+      DATA_AVAILABILITY,
+      [DATA_AVAILABILITY_CASINGS],
+      DATA_AVAILABILITY_CASINGS
+    );
+
+    cy.log('select all rows');
+    cy.toggleSelectAllRows();
+    cy.openInspectView();
+
+    cy.log('navigate to casings tab');
+    cy.goToWellsInspectTab(TAB_NAMES.CASINGS);
+  });
+
+  it('Should be able to filter results by Well/Wellbore ', () => {
+    cy.log('Click on `Table` button');
+    cy.contains('Table').click({ force: true });
+
+    cy.log('filter results by well');
+    cy.findAllByTestId('table-cell')
+      .eq(1)
+      .invoke('text')
+      .then((wellName) => {
+        cy.findByTestId('search-box-input')
+          .click()
+          .type('{selectall}')
+          .type(`${wellName}{enter}`);
+      });
+
+    cy.log('clear search input box');
+    cy.findAllByTestId('search-box-input').clear().type('{enter}');
+
+    cy.log('filter results by wellbore');
+    cy.findAllByTestId('well-casings-table')
+      .findAllByTestId('table-cell')
+      .eq(2)
+      .invoke('text')
+      .then((wellBoreName) => {
+        cy.log(`Found: ${wellBoreName}`);
+        cy.findByTestId('search-box-input')
+          .click()
+          .type('{selectall}')
+          .type(`${wellBoreName}{enter}`);
+      });
+
+    cy.log('result table should contain 1 wellbore');
+    cy.findAllByTestId('well-casings-table')
+      .findAllByTestId('table-row')
+      .its('length')
+      .should('eq', 1);
+
+    cy.log('clear search input box');
+    cy.findAllByTestId('search-box-input').clear().type('{enter}');
+
+    cy.log('verify incorrect filter string');
+    cy.findByTestId('search-box-input')
+      .click()
+      .type('{selectall}')
+      .type(`test-string {enter}`);
+
+    cy.log('casings table should not be visible');
+    cy.findAllByText(NO_RESULTS_TEXT).should('be.visible');
+
+    cy.log('clear search input box');
+    cy.findAllByTestId('search-box-input').clear().type('{enter}');
+  });
+
+  it('Should be able to click on `Show casings` button', () => {
+    cy.log('hover on first wellbore');
+    cy.hoverOnNthWellbore(0, 'casings');
+
+    cy.log('Click on `Show casings` button');
+    cy.contains('Show casings').click({ force: true });
+    cy.findByTestId('schema-column').should('be.visible');
+
+    cy.log('go back to table view');
+    cy.get('[aria-label="Go back"]').as('goBackBtn');
+    cy.get('@goBackBtn').eq(1).click({ force: true });
+  });
+  it('Measurement unit changes should apply to "Top MD" & "Bottom MD" column', () => {
+    cy.changeMeasurementUnit('Meter');
+
+    cy.log(`verify Top MD column header`);
+    cy.findByTestId('table-header-row')
+      .findByText(`Top MD (${UserPreferredUnit.METER})`)
+      .should('be.visible');
+
+    cy.log(`verify Bottom MD column header`);
+    cy.findByTestId('table-header-row')
+      .findByText(`Bottom MD (${UserPreferredUnit.METER})`)
+      .should('be.visible');
+
+    cy.log(
+      'Top MD values should change according to selected measurement unit'
+    );
+    cy.findAllByTestId('well-casings-table')
+      .findAllByTestId('table-cell')
+      .eq(4)
+      .invoke('text')
+      .then(parseFloat)
+      .then((valInMeter) => {
+        cy.changeMeasurementUnit('Feet');
+
+        cy.findAllByTestId('well-casings-table')
+          .findAllByTestId('table-cell')
+          .eq(4)
+          .invoke('text')
+          .then(parseFloat)
+          .then((valInFeet) => {
+            expect(valInFeet).to.greaterThan(valInMeter);
+          });
+      });
+
+    cy.log(
+      'Bottom MD values should change according to selected measurement unit'
+    );
+    cy.changeMeasurementUnit('Meter');
+
+    cy.findAllByTestId('well-casings-table')
+      .findAllByTestId('table-cell')
+      .eq(5)
+      .invoke('text')
+      .then(parseFloat)
+      .then((valInMeter) => {
+        cy.changeMeasurementUnit('Feet');
+
+        cy.findAllByTestId('well-casings-table')
+          .findAllByTestId('table-cell')
+          .eq(5)
+          .invoke('text')
+          .then(parseFloat)
+          .then((valInFeet) => {
+            expect(valInFeet).to.greaterThan(valInMeter);
+          });
+      });
   });
 });
