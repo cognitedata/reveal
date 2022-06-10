@@ -312,11 +312,11 @@ export class PointCloudOctreePicker {
       return null;
     }
 
-    const attributes = points.geometry.attributes;
     const point: PickPoint = { pointIndex: hit.pIndex, object: points, position: new Vector3() };
-    
+
     point.pointCloud = nodes[hit.pcIndex].octree;
-    PointCloudOctreePicker.addPositionToPickPoint(point, hit, attributes['position'] as BufferAttribute, points);
+
+    const attributes = points.geometry.attributes;
 
     for (const property in attributes) {
       if (!attributes.hasOwnProperty(property)) {
@@ -326,7 +326,9 @@ export class PointCloudOctreePicker {
       const values = attributes[property] as BufferAttribute;
 
       // tslint:disable-next-line:prefer-switch
-      if (property === 'normal') {
+      if (property === 'position') {
+        PointCloudOctreePicker.addPositionToPickPoint(point, hit, values, points);
+      } else if (property === 'normal') {
         PointCloudOctreePicker.addNormalToPickPoint(point, hit, values, points);
       } else if (property === 'indices') {
         // TODO
