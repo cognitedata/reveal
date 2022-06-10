@@ -1,6 +1,7 @@
+import { useStatsGetQuery } from 'domain/stats/internal/queries/useStatsQuery';
+
 import React from 'react';
 
-import { useStatsGetQuery } from 'services/stats/useStatsQuery';
 import styled from 'styled-components/macro';
 import { formatBigNumbersWithSuffix } from 'utils/number';
 

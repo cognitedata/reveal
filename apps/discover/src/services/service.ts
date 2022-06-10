@@ -1,5 +1,6 @@
 import { feedback } from 'domain/feedback/service/network/service';
 import { savedSearches } from 'domain/savedSearches/service/network/savedSearches';
+import { stats } from 'domain/stats/service/network/stats';
 import * as user from 'domain/user/service/network';
 
 import { getDefaultHeader, getAuthHeaders } from '@cognite/react-container';
@@ -7,7 +8,6 @@ import { getDefaultHeader, getAuthHeaders } from '@cognite/react-container';
 import { useIdToken as useIdTokenHook } from 'hooks/useIdToken';
 
 import { projectConfig } from './projectConfig';
-import { stats } from './stats';
 
 export const useJsonHeaders = (
   extras: Record<string, string> = {},

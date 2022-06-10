@@ -1,13 +1,14 @@
 import '__mocks/mockContainerAuth';
 
+import { getMockStatFindGet } from 'domain/stats/service/__mocks/getMockStatFindGet';
+import { getMockStatGet } from 'domain/stats/service/__mocks/getMockStatGet';
+
 import { setupServer } from 'msw/node';
 
-import { getMockStatData } from '../__fixtures/stats';
-import { getMockStatFindGet } from '../__mocks/getMockStatFindGet';
-import { getMockStatGet } from '../__mocks/getMockStatGet';
-import { STATS_ERROR } from '../constants';
+import { STATS_ERROR } from '../../../constants';
+import { getMockStatData } from '../../__fixtures/stats';
+import { StatsApiResult } from '../../types';
 import { stats } from '../stats';
-import { StatsApiResult } from '../types';
 
 const mockResponseData: StatsApiResult = {
   success: 'true',
