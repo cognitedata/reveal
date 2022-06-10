@@ -54,6 +54,7 @@ export const useDeleteChart = () => {
     },
     {
       onSuccess: (chartId) => {
+        cache.invalidateQueries(['charts', 'mine']);
         cache.invalidateQueries(['charts']);
         cache.invalidateQueries(['chart', chartId]);
       },

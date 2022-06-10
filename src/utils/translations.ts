@@ -1,3 +1,4 @@
+import { pick } from 'lodash';
 import { FunctionComponent } from 'react';
 
 /**
@@ -23,4 +24,14 @@ export function translationKeys<
   TranslationKeys extends string | symbol | number
 >(translations: Record<TranslationKeys, string>): TranslationKeys[] {
   return Object.keys(translations) as Array<keyof typeof translations>;
+}
+
+export function getTranslationsFromComponent<
+  ComponentTranslationKeys extends string | symbol | number,
+  TranslationKeys extends ComponentTranslationKeys
+>(
+  componentTranslations: Record<ComponentTranslationKeys, string>,
+  translations: Record<TranslationKeys, string>
+): Record<TranslationKeys, string> {
+  return pick(componentTranslations, translationKeys(translations));
 }

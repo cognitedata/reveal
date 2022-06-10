@@ -12,6 +12,7 @@ module.exports = {
       'error',
       { ignoredNamesRegex: '^_' },
     ],
+    'react/jsx-key': 'error',
   },
   overrides: [
     {
