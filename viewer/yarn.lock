@@ -739,6 +739,7 @@ __metadata:
     glslify-loader: 2.0.0
     html-webpack-plugin: 4.5.2
     husky: 8.0.1
+    inversify: 6.0.1
     jest: 27.5.1
     jest-canvas-mock: 2.4.0
     jest-extended: 2.0.0
@@ -753,6 +754,7 @@ __metadata:
     proj4: ^2.8.0
     random-seed: 0.3.0
     raw-loader: 4.0.2
+    reflect-metadata: 0.1.13
     rimraf: 3.0.2
     run-script-os: 1.1.6
     rxjs: 7.5.5
@@ -7355,6 +7357,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"inversify@npm:6.0.1":
+  version: 6.0.1
+  resolution: "inversify@npm:6.0.1"
+  checksum: b6c9b56ef7817a71534b06101c2b0a0130b67c47a769f58794d9c0643591a83ac02be30a48c00cb729c0c83ece96dde369c419d48c32d0201c6cc7407629fbc5
+  languageName: node
+  linkType: hard
+
 "ip-regex@npm:^2.1.0":
   version: 2.1.0
   resolution: "ip-regex@npm:2.1.0"
@@ -10828,6 +10837,13 @@ fsevents@^1.2.7:
   dependencies:
     resolve: ^1.1.6
   checksum: fe76bf9c21875ac16e235defedd7cbd34f333c02a92546142b7911a0f7c7059d2e16f441fe6fb9ae203f459c05a31b2bcf26202896d89e390eda7514d5d2702b
+  languageName: node
+  linkType: hard
+
+"reflect-metadata@npm:0.1.13":
+  version: 0.1.13
+  resolution: "reflect-metadata@npm:0.1.13"
+  checksum: 798d379a7b6f6455501145419505c97dd11cbc23857a386add2b9ef15963ccf15a48d9d15507afe01d4cd74116df8a213247200bac00320bd7c11ddeaa5e8fb4
   languageName: node
   linkType: hard
 

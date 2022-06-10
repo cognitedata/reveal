@@ -203,3 +203,9 @@ export interface IntersectionFromPixelOptions {
    */
   pointIntersectionThreshold?: number;
 }
+
+const TYPES = {
+  TestClass: Symbol.for('TestClass'),
+  TestVec: Symbol.for('TestVec')
+};
+export { TYPES };

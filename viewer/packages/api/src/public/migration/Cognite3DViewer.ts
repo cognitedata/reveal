@@ -9,6 +9,8 @@ import pick from 'lodash/pick';
 
 import { defaultRenderOptions } from '@reveal/rendering';
 
+import 'reflect-metadata';
+
 import {
   assertNever,
   EventTrigger,
@@ -38,7 +40,8 @@ import {
   Intersection,
   CadModelBudget,
   IntersectionFromPixelOptions,
-  CadIntersection
+  CadIntersection,
+  TYPES
 } from './types';
 import RenderController from './RenderController';
 import { RevealManager } from '../RevealManager';
@@ -57,6 +60,10 @@ import { IntersectInput, SupportedModelTypes, CogniteModelBase, LoadingState } f
 import { CogniteClient } from '@cognite/sdk';
 import log from '@reveal/logger';
 import { determineAntiAliasingMode, determineSsaoRenderParameters } from './renderOptionsHelpers';
+import { Container } from 'inversify';
+import { Vector3 } from 'three';
+import { ITestClass } from './ITestClass';
+import { TestClass } from './TestClass';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -198,6 +205,21 @@ export class Cognite3DViewer {
     return this.revealManager.cadLoadedStatistics;
   }
 
+  /**
+   * Lorem Ipsum.
+   */
+  private asd() {
+    const globalContainer = new Container();
+
+    const subContainter = globalContainer.createChild();
+    subContainter.bind<THREE.Vector3>(TYPES.TestVec).toConstantValue(new Vector3(1, 2, 3));
+    subContainter.bind<ITestClass>(TYPES.TestClass).to(TestClass).inSingletonScope();
+
+    globalContainer.bind<ITestClass>(TYPES.TestClass).toConstantValue(subContainter.get<ITestClass>(TYPES.TestClass));
+
+    return globalContainer;
+  }
+
   constructor(options: Cognite3DViewerOptions) {
     this._renderer = options.renderer ?? new THREE.WebGLRenderer();
     this._renderer.localClippingEnabled = true;
@@ -210,6 +232,12 @@ export class Cognite3DViewer {
     this.canvas.style.maxHeight = '100%';
     this._domElement = options.domElement ?? createCanvasWrapper();
     this._domElement.appendChild(this.canvas);
+
+    const container = this.asd();
+    const myClass = container.get<ITestClass>(TYPES.TestClass);
+    const myVec = container.get<THREE.Vector3>(TYPES.TestVec);
+    console.log(myClass.quack());
+    console.log(myVec);
 
     this.spinner = new Spinner(this.domElement);
     this.spinner.placement = options.loadingIndicatorStyle?.placement ?? 'topLeft';
