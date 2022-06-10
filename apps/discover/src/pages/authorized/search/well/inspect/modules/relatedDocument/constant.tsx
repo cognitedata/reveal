@@ -3,7 +3,7 @@ import { sortByDate } from 'utils/sort/sortByDate';
 import { IconType, Icon } from '@cognite/cogs.js';
 
 import { DocumentType } from 'modules/documentSearch/types';
-import { ColumnMap } from 'modules/documentSearch/utils/columns';
+import { ColumnMap } from 'modules/documentSearch/utils/getAvailableColumns';
 
 export const columns: ColumnMap<DocumentType> = {
   fileName: {

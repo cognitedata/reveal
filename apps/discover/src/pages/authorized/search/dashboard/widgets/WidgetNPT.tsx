@@ -1,6 +1,6 @@
-import * as React from 'react';
+import { useAllNptCursorsQuery } from 'domain/wells/npt/internal/queries/useAllNptCursorsQuery';
 
-import { useAllNptCursorsQuery } from 'modules/wellSearch/hooks/useAllNptCursorsQuery';
+import * as React from 'react';
 
 import { WidgetLoader } from '../WidgetLoader';
 

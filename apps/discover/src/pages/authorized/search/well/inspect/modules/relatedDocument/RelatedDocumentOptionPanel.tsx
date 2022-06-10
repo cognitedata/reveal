@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
 
-import { getAvailableColumns } from 'modules/documentSearch/utils/columns';
+import { getAvailableColumns } from 'modules/documentSearch/utils/getAvailableColumns';
 import { wellInspectActions } from 'modules/wellInspect/actions';
 import { useWellInspect } from 'modules/wellInspect/selectors';
 import { AvailableColumn } from 'pages/authorized/search/common/types';

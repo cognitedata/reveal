@@ -6,7 +6,7 @@ import sortBy from 'lodash/sortBy';
 
 import { documentSearchActions } from 'modules/documentSearch/actions';
 import { ViewMode } from 'modules/documentSearch/types';
-import { getAvailableColumns } from 'modules/documentSearch/utils/columns';
+import { getAvailableColumns } from 'modules/documentSearch/utils/getAvailableColumns';
 import { Column, AvailableColumn } from 'pages/authorized/search/common/types';
 
 import { columnMap } from '../../results/DocumentResultTable';

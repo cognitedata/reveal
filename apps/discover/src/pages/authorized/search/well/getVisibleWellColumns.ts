@@ -2,7 +2,7 @@ import { Well } from 'domain/wells/well/internal/types';
 
 import pickBy from 'lodash/pickBy';
 
-import { ColumnMap } from 'modules/documentSearch/utils/columns';
+import { ColumnMap } from 'modules/documentSearch/utils/getAvailableColumns';
 
 import { getWellColumns } from './getWellColumns';
 

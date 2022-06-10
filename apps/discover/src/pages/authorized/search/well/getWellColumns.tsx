@@ -5,7 +5,7 @@ import { getSpudDateTableSort } from 'dataLayers/wells/wells/selectors/getSpudDa
 import { wellFieldTitles } from 'dataLayers/wells/wells/titles';
 
 import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
-import { ColumnMap } from 'modules/documentSearch/utils/columns';
+import { ColumnMap } from 'modules/documentSearch/utils/getAvailableColumns';
 import { KB_ELEVATION_TEXT } from 'modules/wellSearch/constantsSidebarFilters';
 
 import {

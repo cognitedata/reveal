@@ -2,11 +2,9 @@ import { Npt } from '@cognite/sdk-wells-v3';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useArrayCache } from 'hooks/useArrayCache';
-
-import { nptFetchAll } from '../service/event/nptFetchAll';
-import { groupByWellbore } from '../utils/groupByWellbore';
-
-import { AllCursorsProps } from './useAllNdsCursorsQuery';
+import { AllCursorsProps } from 'modules/wellSearch/hooks/useAllNdsCursorsQuery';
+import { nptFetchAll } from 'modules/wellSearch/service/event/nptFetchAll';
+import { groupByWellbore } from 'modules/wellSearch/utils/groupByWellbore';
 
 export const useAllNptCursorsQuery = ({ wellboreIds }: AllCursorsProps) => {
   return useArrayCache<Npt>({

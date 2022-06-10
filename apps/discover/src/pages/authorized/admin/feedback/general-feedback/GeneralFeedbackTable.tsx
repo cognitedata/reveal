@@ -24,7 +24,7 @@ import EmptyState from 'components/EmptyState';
 import { Table, Options, TableResults, RowProps } from 'components/Tablev3';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { SOMETHING_WENT_WRONG_REFRESH_PAGE } from 'constants/error';
-import { ColumnMap } from 'modules/documentSearch/utils/columns';
+import { ColumnMap } from 'modules/documentSearch/utils/getAvailableColumns';
 import { FIELDS } from 'modules/feedback/constants';
 import { feedbackHelper } from 'modules/feedback/helper';
 import { getFullNameOrDefaultText } from 'modules/user/utils';

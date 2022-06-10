@@ -36,7 +36,7 @@ import {
   DocumentType,
   DocumentFilterCategoryTitles,
 } from 'modules/documentSearch/types';
-import { ColumnMap } from 'modules/documentSearch/utils/columns';
+import { ColumnMap } from 'modules/documentSearch/utils/getAvailableColumns';
 import { getDocumentGeoPoint } from 'modules/documentSearch/utils/getGeoPoint';
 import { sortByMap } from 'modules/documentSearch/utils/toSort';
 import { setObjectFeedbackModalDocumentId } from 'modules/feedback/actions';

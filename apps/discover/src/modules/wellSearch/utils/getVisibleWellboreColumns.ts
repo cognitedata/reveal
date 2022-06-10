@@ -4,7 +4,7 @@ import { Wellbore } from 'domain/wells/wellbore/internal/types';
 import intersection from 'lodash/intersection';
 
 import { ColumnType } from 'components/Tablev3/types';
-import { ColumnMap } from 'modules/documentSearch/utils/columns';
+import { ColumnMap } from 'modules/documentSearch/utils/getAvailableColumns';
 
 export const getVisibleWellboreColumns = (
   selectedColumns: string[],

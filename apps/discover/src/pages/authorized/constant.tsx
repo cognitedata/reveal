@@ -3,7 +3,7 @@ import { Wellbore } from 'domain/wells/wellbore/internal/types';
 import { getKbElevation } from 'dataLayers/wells/wellbores/selectors/getKbElevation';
 
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
-import { ColumnMap } from 'modules/documentSearch/utils/columns';
+import { ColumnMap } from 'modules/documentSearch/utils/getAvailableColumns';
 import { KB_ELEVATION_TEXT } from 'modules/wellSearch/constantsSidebarFilters';
 
 import { WELLBORE } from './search/well/content/constants';

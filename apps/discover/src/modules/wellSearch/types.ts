@@ -6,6 +6,7 @@ import { PlotData } from 'plotly.js';
 
 import { ProjectConfigWellsTrajectoryColumns } from '@cognite/discover-api-types';
 import { Sequence as DefaultSequence, Asset, CogniteEvent } from '@cognite/sdk';
+// TODO(PP-2998): Remove well sdk v2 usage in NPT
 import { NPT, WellFilter } from '@cognite/sdk-wells-v2';
 import {
   AssetSource,

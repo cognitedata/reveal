@@ -2,6 +2,7 @@ import { NPT } from '@cognite/sdk-wells-v2';
 
 import { NPTEvent } from 'modules/wellSearch/types';
 
+// TODO(PP-2998): Remove well sdk v2 usage in NPT
 export const mockNpt: NPT = {
   duration: 0,
   endTime: 0,

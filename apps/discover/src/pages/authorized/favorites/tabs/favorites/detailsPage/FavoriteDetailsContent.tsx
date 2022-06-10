@@ -1,3 +1,5 @@
+import { useDocumentsByIdForFavoritesQuery } from 'domain/documents/internal/queries/useDocumentsByIdForFavoritesQuery';
+
 import * as React from 'react';
 import { Switch, Route, useHistory, useLocation } from 'react-router-dom';
 
@@ -8,7 +10,6 @@ import DocumentViewModal from 'components/DocumentPreview/DocumentViewModal';
 import EmptyState from 'components/EmptyState';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useDocumentsByIdForFavoritesQuery } from 'modules/documentSearch/hooks/useDocumentsByIdsForFavorites';
 import { useWellsCacheQuery } from 'modules/wellSearch/hooks/useWellsCacheQuery';
 import { NavigationTab } from 'pages/types';
 
