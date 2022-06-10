@@ -1,9 +1,0 @@
-{
-  "current_language_text": "Language: English",
-  "english_language": "English",
-  "norwegian_language": "Norwegian",
-  "welcome_text": "Welcome to {{0}}: {{1}}",
-  "warning": "Warning",
-  "chaging-oidc-settings-could-have-unintended-consequences": "Be careful. If you change the OIDC settings, you must recreate any scheduled jobs.",
-  "changing-access-settings-could-have-unintended-consequences": "Be careful. Changing these settings can cause access issues."
-}

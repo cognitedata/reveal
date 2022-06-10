@@ -1,5 +1,5 @@
 import React from 'react';
-import { languages, setupTranslations } from 'common/i18n';
+import { languages, translations } from 'common/i18n';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
@@ -9,6 +9,7 @@ import {
   getProject,
   I18nWrapper,
   SubAppWrapper,
+  setupTranslations,
 } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
@@ -18,7 +19,7 @@ import GlobalStyles from 'styles/GlobalStyles';
 import Home from 'pages/Home';
 import i18next from 'i18next';
 
-setupTranslations();
+setupTranslations(translations);
 
 const queryClient = new QueryClient({
   defaultOptions: {

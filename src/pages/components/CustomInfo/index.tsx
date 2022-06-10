@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Button, Colors, Icon, Tooltip, Infobox } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import DeleteConfirmModal from '../DeleteConfirmModal';
-import { CONFIRM, DELETE, INFO } from 'utils/constants';
+import { useTranslation } from 'common/i18n';
 
 const CustomInfo = (props: any) => {
+  const { t } = useTranslation();
   const {
     type,
     alertTitle,
@@ -38,7 +39,7 @@ const CustomInfo = (props: any) => {
 
   return (
     <StyledInfoboxContainer>
-      <Infobox type={type || 'neutral'} title={alertTitle || INFO}>
+      <Infobox type={type || 'neutral'} title={alertTitle || t('info')}>
         {alertMessage}
         <StyledDisableButtonSection>
           {alertBtnLabel && (
@@ -59,9 +60,9 @@ const CustomInfo = (props: any) => {
         {!hideModal && (
           <DeleteConfirmModal
             isOpen={isModalVisible}
-            confirmTitle={confirmTitle || alertTitle || CONFIRM}
+            confirmTitle={confirmTitle || alertTitle || t('confirm')}
             confirmMessage={confirmMessage}
-            confirmLabel={confirmLabel || DELETE}
+            confirmLabel={confirmLabel || t('delete')}
             onCancel={closeConfirmModal}
             onConfirm={handleSubmit}
           />

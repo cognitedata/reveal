@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Body, Button, Checkbox, Colors, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import Modal, { ModalProps } from '../Modal/index';
-import { CANCEL } from 'utils/constants';
+import { useTranslation } from 'common/i18n';
 
 type DeleteTableModalProps = {
   isOpen: boolean;
@@ -21,6 +21,7 @@ const DeleteConfirmModal = ({
   onCancel,
   ...modalProps
 }: DeleteTableModalProps): JSX.Element => {
+  const { t } = useTranslation();
   const [isConfirmed, setIsConfirmed] = useState(isOpen);
 
   const handleDelete = (): void => {
@@ -42,7 +43,7 @@ const DeleteConfirmModal = ({
         visible={isOpen}
         footer={[
           <StyledCancelButton onClick={handleClose} type="ghost">
-            {CANCEL}
+            {t('cancel')}
           </StyledCancelButton>,
           <Button disabled={!isConfirmed} onClick={handleDelete} type="danger">
             {confirmLabel}
@@ -57,8 +58,9 @@ const DeleteConfirmModal = ({
         {...modalProps}
       >
         <StyledDeleteTableModalBody level={2}>
-          Are you sure you want to {confirmMessage}? You will lose all of the
-          data, and <b>will not</b> be able to restore it later.
+          {t('delete-modal-confirm-message-1', { confirmMessage })}{' '}
+          <b>{t('delete-modal-confirm-message-2')}</b>{' '}
+          {t('delete-modal-confirm-message-3')}
         </StyledDeleteTableModalBody>
         <StyledConfirmCheckboxWrapper>
           <StyledConfirmCheckbox
@@ -66,7 +68,7 @@ const DeleteConfirmModal = ({
             name="confirm-delete-service-accounts"
             onChange={handleConfirmCheckboxChange}
           >
-            Yes, I'm sure I want to {confirmMessage}
+            {t('confirm-allow-delete', { confirmMessage })}
           </StyledConfirmCheckbox>
         </StyledConfirmCheckboxWrapper>
       </Modal>

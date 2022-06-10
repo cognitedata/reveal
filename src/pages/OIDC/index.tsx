@@ -11,6 +11,7 @@ import { useAuthConfiguration } from 'hooks';
 import { StyledHelpIcon } from 'pages/components/CustomInfo';
 import styled from 'styled-components';
 import { OIDCConfigurationWarning } from 'pages/components/OIDCConfigurationWarning';
+import { TranslationKeys, useTranslation } from 'common/i18n';
 
 const formItemLayout = {
   labelCol: {
@@ -23,17 +24,19 @@ const formItemLayout = {
   },
 };
 
-const urlRules = (required = true) => [
+const urlRules = (_t: (key: TranslationKeys) => string, required = true) => [
   {
     required,
-    message: 'Please enter a valid url!',
+    message: _t('valid-url-info'),
   },
   () => ({
     validator(_: any, value: string) {
       if (!required && !value) {
         return Promise.resolve();
       }
-      return isValidURL(value);
+
+      const invalidUrlErrMessage = _t('valid-url-error');
+      return isValidURL(value, invalidUrlErrMessage);
     },
   }),
 ];
@@ -46,6 +49,7 @@ const noLabelItemLayout = {
 };
 
 export default function OIDCConfigContainer() {
+  const { t } = useTranslation();
   const cache = useQueryClient();
   const sdk = useSDK();
   const match = useRouteMatch<{ tenant: string }>('/:tenant');
@@ -61,19 +65,20 @@ export default function OIDCConfigContainer() {
       onMutate() {
         notification.info({
           key: 'oidc-settings',
-          message: 'Updating settings',
+          message: t('oidc-settings-update'),
         });
       },
       onSuccess() {
         notification.success({
           key: 'oidc-settings',
-          message: 'Settings updated',
+          message: t('oidc-settings-update-success'),
         });
       },
       onError() {
         notification.error({
           key: 'oidc-settings',
-          message: 'An error occurred when updating settings',
+          message: t('oidc-settings-update-fail'),
+          description: t('oidc-settings-update-error'),
         });
       },
       onSettled() {
@@ -157,7 +162,7 @@ export default function OIDCConfigContainer() {
           label="JWKS URL"
           name="jwksUrl"
           hasFeedback
-          rules={urlRules()}
+          rules={urlRules(t)}
         >
           <Input disabled={updating} />
         </Form.Item>
@@ -167,12 +172,12 @@ export default function OIDCConfigContainer() {
           name="tokenUrl"
           required={false}
           hasFeedback
-          rules={urlRules(false)}
+          rules={urlRules(t, false)}
         >
           <Input disabled={updating} />
         </Form.Item>
 
-        <Form.Item label="Issuer" name="issuer" hasFeedback rules={urlRules()}>
+        <Form.Item label="Issuer" name="issuer" hasFeedback rules={urlRules(t)}>
           <Input disabled={updating} />
         </Form.Item>
 
@@ -180,7 +185,7 @@ export default function OIDCConfigContainer() {
           label="Audience"
           name="audience"
           hasFeedback
-          rules={urlRules()}
+          rules={urlRules(t)}
         >
           <Input disabled={updating} />
         </Form.Item>
@@ -236,7 +241,7 @@ export default function OIDCConfigContainer() {
 
         <Form.Item {...noLabelItemLayout}>
           <Button type="primary" htmlType="submit" disabled={updating}>
-            Save configuration
+            {t('save-configuration')}
           </Button>
         </Form.Item>
       </Form>
@@ -249,12 +254,12 @@ const StyledFormItemLabel = styled.div`
   display: flex;
 `;
 
-function isValidURL(url: string) {
+function isValidURL(url: string, errMessage: string) {
   try {
     // eslint-disable-next-line no-new
     new URL(url);
     return Promise.resolve();
   } catch {
-    return Promise.reject(new Error('Invalid URL'));
+    return Promise.reject(new Error(errMessage));
   }
 }

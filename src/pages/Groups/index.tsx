@@ -32,10 +32,12 @@ import GroupDrawer from './GroupDrawer';
 import CapabilityTag from './CapabilityTag';
 import { isDeprecated, stringContains } from './utils';
 import { AccessConfigurationWarning } from 'pages/components/AccessConfigurationWarning';
+import { useTranslation } from 'common/i18n';
 
 const { Text } = Typography;
 
 export default function Groups() {
+  const { t } = useTranslation();
   const sdk = useSDK();
   const { flow } = getFlow();
   const legacyFlow = flow === 'COGNITE_AUTH';
@@ -105,23 +107,23 @@ export default function Groups() {
       onMutate() {
         notification.info({
           key: 'group-delete',
-          message: 'Deleting group',
+          message: t('group-delete'),
         });
       },
       onSuccess() {
         notification.success({
           key: 'group-delete',
-          message: 'Group deleted',
+          message: t('group-delete-success'),
         });
         client.invalidateQueries(['groups']);
       },
       onError(error) {
         notification.error({
           key: 'group-delete',
-          message: 'Group not deleted!',
+          message: t('group-delete-fail'),
           description: (
             <>
-              <p>An error occured when deleting the group</p>
+              <p>{t('group-delete-error')}</p>
               <pre>{JSON.stringify(error, null, 2)}</pre>
             </>
           ),
@@ -134,11 +136,11 @@ export default function Groups() {
     return (
       <Alert
         type="warning"
-        message="Missing capability!"
+        message={t('capability-missing')}
         description={
           <>
-            You do not have the necessary <strong>groupsAcl:READ</strong> to
-            list the groups
+            {t('capability-missing-desc')} <strong>groupsAcl:READ</strong>{' '}
+            {t('capability-missing-desc-more')}
           </>
         }
       />
@@ -147,7 +149,7 @@ export default function Groups() {
 
   const columns: ColumnType<Group>[] = [
     {
-      title: 'ID',
+      title: t('id'),
       dataIndex: 'id',
       width: 240,
       sorter: (a?: Group, b?: Group) => {
@@ -165,15 +167,13 @@ export default function Groups() {
               placement="topLeft"
               title={
                 <p>
-                  This is the default group for your project. Users are
-                  dynamically placed in the default group when their user
-                  account or service account does not belong to another group.{' '}
+                  {t('id-info')}{' '}
                   <a
                     href="https://docs.cognite.com/dev/guides/iam/authorization.html#the-default-group"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Learn More
+                    {t('learn-more')}
                   </a>
                 </p>
               }
@@ -197,7 +197,7 @@ export default function Groups() {
       },
     },
     {
-      title: 'Name',
+      title: t('name'),
       dataIndex: 'name',
       key: 'name',
       sorter: (a?: Group, b?: Group) => {
@@ -205,7 +205,7 @@ export default function Groups() {
       },
     },
     {
-      title: 'Capabilities',
+      title: t('capabilities'),
       key: 'capability',
       render(g: Group) {
         if (g.capabilities && g.capabilities.length > 0) {
@@ -214,12 +214,12 @@ export default function Groups() {
             .map((c) => <CapabilityTag capability={c} />);
         }
 
-        return <>No permissions specified</>;
+        return <>{t('capabilities-no-permission-specified')}</>;
       },
     },
     legacyFlow
       ? {
-          title: 'Service accounts',
+          title: t('service-accounts'),
           dataIndex: 'id',
           align: 'center',
           render(id: number) {
@@ -231,7 +231,7 @@ export default function Groups() {
       : false,
 
     {
-      title: 'Actions',
+      title: t('actions'),
       key: 'actions',
       width: 100,
       align: 'center',
@@ -252,25 +252,25 @@ export default function Groups() {
                     })
                   }
                 >
-                  Set as default group
+                  {t('set-as-default')}
                 </Menu.Item>
               )}
               <Menu.Item
                 onClick={() =>
                   Modal.confirm({
-                    title: 'Confirm group deletion',
+                    title: t('confirm-delete'),
                     content: (
                       <>
-                        Do you want to delete the group{' '}
-                        <strong>{item.name}</strong>?{' '}
+                        {t('group-delete-confirm')} <strong>{item.name}</strong>
+                        ?
                       </>
                     ),
-                    okText: 'Delete',
+                    okText: t('delete'),
                     onOk: () => deleteGroup(item.id),
                   })
                 }
               >
-                Delete
+                {t('delete')}
               </Menu.Item>
             </Menu>
           }
@@ -291,7 +291,7 @@ export default function Groups() {
       <Row justify="space-between">
         <Col>
           <Input.Search
-            placeholder="Filter groups by name, ID or capability"
+            placeholder={t('group-filter-placeholder')}
             onChange={(e) => setSearchValue(e.target.value)}
             value={searchValue}
             allowClear
@@ -307,7 +307,7 @@ export default function Groups() {
             disabled={!createPermission}
             onClick={() => setShowNew(true)}
           >
-            Create new group
+            {t('group-create-label')}
           </Button>
         </Col>
       </Row>

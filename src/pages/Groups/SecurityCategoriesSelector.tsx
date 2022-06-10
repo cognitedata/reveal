@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { SecurityCategory } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { Select, Spin, Tooltip } from 'antd';
+import { useTranslation } from 'common/i18n';
 
 const { Option } = Select;
 
@@ -21,6 +22,7 @@ const SecurityCategorySelector = ({
   value = [],
   onChange = () => {},
 }: SecurityCategoriesSelector) => {
+  const { t } = useTranslation();
   const sdk = useSDK();
   const [fetching, setFetching] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<
@@ -49,7 +51,7 @@ const SecurityCategorySelector = ({
           (sc) => String(sc.key) === String(id)
         ) || {
           key: Number(id),
-          label: 'Not available',
+          label: t('not-available'),
           notAvailable: true,
         };
         return category;
@@ -72,8 +74,8 @@ const SecurityCategorySelector = ({
       <Select
         mode="multiple"
         value={selectedCategories.map((c) => c.key)}
-        placeholder="Search and select security categories"
-        notFoundContent={fetching ? <Spin /> : 'Not found'}
+        placeholder={t('security-category-selector-placeholder')}
+        notFoundContent={fetching ? <Spin /> : t('not-found')}
         filterOption={false}
         onChange={(v) =>
           setSelectedCategories(
@@ -96,10 +98,12 @@ const SecurityCategorySelector = ({
             <Tooltip
               title={
                 securityCategory.notAvailable &&
-                `This security category with ID ${securityCategory.key} is not available, this may be because it was deleted`
+                t('security-category-not-available-info', {
+                  categoryId: securityCategory.key,
+                })
               }
             >
-              <>{securityCategory.label || <i>No name</i>}</>
+              <>{securityCategory.label || <i>{t('no-name')}</i>}</>
             </Tooltip>
           </Option>
         ))}

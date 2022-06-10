@@ -5,6 +5,7 @@ import { Button } from '@cognite/cogs.js';
 import CapabilitiesList from './CapabilitiesList';
 import SingleCapabilityEditor from './SingleCapabilityEditor';
 import { isDeprecated } from './utils';
+import { useTranslation } from 'common/i18n';
 
 interface CapabilitiesSelectorProps {
   value: CogniteCapability;
@@ -13,6 +14,7 @@ interface CapabilitiesSelectorProps {
 
 const CapabilitiesSelector = (props: CapabilitiesSelectorProps, ref: any) => {
   const { onChange, value } = props;
+  const { t } = useTranslation();
 
   const [capabilities, setCapabilities] = useState<CogniteCapability>(
     value.filter(isDeprecated)
@@ -91,7 +93,7 @@ const CapabilitiesSelector = (props: CapabilitiesSelectorProps, ref: any) => {
       </div>
       <div>
         <Button icon="Plus" onClick={openCapabilityComposer}>
-          Add capability
+          {t('capability-add')}
         </Button>
         {composerVisible && (
           <SingleCapabilityEditor

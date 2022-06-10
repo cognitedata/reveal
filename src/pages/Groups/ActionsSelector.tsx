@@ -4,6 +4,7 @@ import Checkbox, { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 
 import { getCapabilityActions, getActionLabel } from './utils';
+import { useTranslation } from 'common/i18n';
 
 interface ActionsSelectorProps {
   capabilityType: string;
@@ -13,6 +14,7 @@ interface ActionsSelectorProps {
 
 const ActionsSelector = (props: ActionsSelectorProps) => {
   const { capabilityType, value = [], onChange } = props;
+  const { t } = useTranslation();
 
   const [indeterminate, setIndeterminate] = useState<boolean>(false);
   const [checkAll, setCheckAll] = useState<boolean>(false);
@@ -51,7 +53,7 @@ const ActionsSelector = (props: ActionsSelectorProps) => {
         onChange={onCheckAllChange}
         checked={checkAll}
       >
-        Check all
+        {t('check-all')}
       </Checkbox>
       <Checkbox.Group
         value={value}

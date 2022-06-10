@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 import styled from 'styled-components';
 import { Title, Icon, Loader } from '@cognite/cogs.js';
-import { Menu } from 'antd';
+import Menu from 'antd/lib/menu';
 import { createLink } from '@cognite/cdf-utilities';
 import APIKeys from 'pages/APIKeys';
 import Groups from 'pages/Groups';
@@ -18,8 +18,10 @@ import SecurityCategories from 'pages/SecurityCategories';
 import ServiceAccounts from 'pages/ServiceAccounts';
 import { useQueryClient, useIsFetching, useIsMutating } from 'react-query';
 import { useAuthConfiguration, usePermissions } from 'hooks';
+import { useTranslation } from 'common/i18n';
 
 export default function () {
+  const { t } = useTranslation();
   const client = useQueryClient();
   const isFetching = useIsFetching();
   const isMutating = useIsMutating();
@@ -47,17 +49,18 @@ export default function () {
   return (
     <StyledAppContainerDiv>
       <Title level={1}>
-        Access management{' '}
+        {t('access-management')}
         <Icon
           style={{
             cursor: 'pointer',
             color: 'var(--cogs-greyscale-grey5)',
+            marginLeft: '4px',
           }}
           type={isFetching || isMutating ? 'Loader' : 'Refresh'}
           onClick={() => client.invalidateQueries()}
         />
       </Title>
-      <StyledMeny
+      <Menu
         mode="horizontal"
         selectedKeys={[params.page || 'groups']}
         onClick={(e) => {
@@ -65,32 +68,33 @@ export default function () {
             history.push(createLink(`/${params.path}/${e.key}`));
           }
         }}
+        style={{ fontSize: '16px', marginBottom: '20px' }}
       >
         <Menu.Item disabled={!groupsRead} key="groups">
-          Groups
+          {t('groups')}
         </Menu.Item>
         {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && (
           <Menu.Item key="service-accounts" disabled={!usersRead}>
-            Service accounts
+            {t('service-accounts')}
           </Menu.Item>
         )}
         {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && (
           <Menu.Item key="api-keys" disabled={!keysRead}>
-            API keys
+            {t('api-keys')}
           </Menu.Item>
         )}
         <Menu.Item key="security-categories" disabled={!secCatRead}>
-          Security categories
+          {t('security-categories')}
         </Menu.Item>
         <Menu.Item key="oidc" disabled={!projectsRead}>
-          OpenID connect
+          {t('open-id-connect')}
         </Menu.Item>
         {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && (
           <Menu.Item key="idp" disabled={!projectsRead}>
-            Identity provider configuration
+            {t('identity-provider-configuration')}
           </Menu.Item>
         )}
-      </StyledMeny>
+      </Menu>
       <Switch>
         <Redirect
           from="/:url*(/+)"
@@ -133,9 +137,4 @@ export default function () {
 
 const StyledAppContainerDiv = styled.div`
   padding: 18px 44px;
-`;
-
-const StyledMeny = styled(Menu)`
-  font-size: 16px;
-  margin-bottom: 20px;
 `;

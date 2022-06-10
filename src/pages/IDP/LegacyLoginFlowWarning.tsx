@@ -10,8 +10,10 @@ import { useAuthConfiguration, useGroups, usePermissions } from 'hooks';
 import { hasAnyValidGroupForOIDC } from 'pages/Groups/utils';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import CustomInfo from 'pages/components/CustomInfo';
+import { useTranslation } from 'common/i18n';
 
 const LegacyLoginFlowWarning = () => {
+  const { t } = useTranslation();
   const sdk = useSDK();
   const client = useQueryClient();
   const { flow } = getFlow();
@@ -47,13 +49,13 @@ const LegacyLoginFlowWarning = () => {
       onMutate() {
         notification.info({
           key: 'disable-legacy-login-flow',
-          message: 'Disabling legacy login flow',
+          message: t('legacy-login-flow-disable'),
         });
       },
       onSuccess() {
         notification.success({
           key: 'disable-legacy-login-flow',
-          message: 'Legacy login flow is disabled',
+          message: t('legacy-login-flow-disable-success'),
         });
         client.invalidateQueries('auth-configuration');
         if (match?.params) {
@@ -63,8 +65,8 @@ const LegacyLoginFlowWarning = () => {
       onError() {
         notification.error({
           key: 'disable-legacy-login-flow',
-          message: 'Legacy login flow is not disabled!',
-          description: 'An error occured while disabling legacy login flow',
+          message: t('legacy-login-flow-disable-fail'),
+          description: t('legacy-login-flow-disable-error'),
         });
       },
     }
@@ -81,41 +83,40 @@ const LegacyLoginFlowWarning = () => {
   return (
     <CustomInfo
       type="danger"
-      alertTitle="Deprecate Legacy Login"
+      alertTitle={t('legacy-login-flow-deprecate')}
       alertMessage={
         <p>
-          We are deprecating authentication via CDF service accounts and API
-          keys in favor of OIDC. We strongly encourage customers to adopt{' '}
+          {t('legacy-login-flow-info')}{' '}
           <a
             href="https://docs.cognite.com/cdf/access/"
             target="_blank"
             rel="noopener noreferrer"
           >
-            the new authentication flows
-          </a>{' '}
-          as soon as possible.
+            {t('legacy-login-flow-new-auth-flow')}{' '}
+          </a>
+          {t('legacy-login-flow-info-more')}
         </p>
       }
-      alertBtnLabel="Deprecate Legacy Login"
+      alertBtnLabel={t('legacy-login-flow-deprecate')}
       alertBtnDisabled={!writeOk || !canLegacyLoginFlowBeDisabled}
       helpEnabled
       helpTooltipMessage={
         <p>
-          Before you can deprecate legacy login, you must:
+          {t('legacy-login-flow-desc')}
           <br />
           <StyledIcon $success={isOIDCConfigured} />
-          Configure OIDC for your project
+          {t('legacy-login-flow-configure-oidc')}
           <br />
           <StyledIcon $success={!isLoggedInUsingLegacyLoginFlow} />
-          Log in using OIDC
+          {t('legacy-login-flow-login-using-oidc')}
           <br />
           <StyledIcon $success={hasAnyValidGroup} />
-          Have a group in your project that has a source ID and the{' '}
-          <b>groups:create</b> capability
+          {t('legacy-login-flow-valid-group-info')} <b>groups:create</b>{' '}
+          {t('capability').toLocaleLowerCase()}
         </p>
       }
-      confirmTitle="Deprecate Legacy Login"
-      confirmMessage="deprecate legacy login"
+      confirmTitle={t('legacy-login-flow-deprecate')}
+      confirmMessage={t('legacy-login-flow-deprecate').toLocaleLowerCase()}
       onClickConfirm={handleSubmit}
     />
   );
