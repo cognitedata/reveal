@@ -386,7 +386,6 @@ function catchToApiError<T>(
       throw new JetfireApiError(data.error.message, status);
     }
 
-    // TODO CDFUX-1573 - figure out translation
     switch (status) {
       case 503: {
         throw new JetfireApiError(
