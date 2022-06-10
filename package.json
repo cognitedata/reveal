@@ -78,7 +78,7 @@
     "react-split-pane": "0.1.92",
     "react-use": "17.3.2",
     "react-use-intercom": "1.5.1",
-    "recoil": "0.6.1",
+    "recoil": "0.7.3",
     "rehype-katex": "6.0.2",
     "remark-math": "5.1.1",
     "resize-observer-polyfill": "^1.5.1",
