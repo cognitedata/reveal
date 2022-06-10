@@ -146,6 +146,7 @@ The data stored in Charts is currently on Firebase and can be accessed for admin
 - [Azure AD App Registration](https://github.com/cognitedata/terraform/tree/master/aad-app-registrations/charts) in Terraform
 - [Jenkins Secrets](https://github.com/cognitedata/infrastructure/tree/master/services/jenkins/sealed-secrets) to config secrets for Jenkins CI or CD
 - [Jenkins Helpers](https://github.com/cognitedata/jenkins-helpers) for functions used in the [Jenkinsfile](./Jenkinsfile)
+- [Blackbox Probing](https://grafana.cognite.ai/d/UHGq51Rnk/blackbox-probing-health-services-applications?orgId=1&var-type=Application&var-cluster=pgs&var-cluster=bp-northeurope&var-cluster=asia-northeast1-1&var-cluster=azure-dev&var-cluster=europe-west1-1&var-cluster=az-ams-aloe&var-cluster=az-power-no-northeurope&var-cluster=cognitedata-production&var-cluster=az-eastus-1&var-cluster=greenfield&var-cluster=bluefield&var-cluster=omv&var-cluster=westeurope-1&var-cluster=power-no&var-cluster=statnett&var-cluster=cognitedata-test&var-name=charts&from=now-90d&to=now) - Grafana Dashboard with the results of the frontend blackbox probing
 
 ## Development FAQ
 
