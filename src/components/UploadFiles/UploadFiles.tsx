@@ -11,6 +11,7 @@ import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 import { UploadFile } from 'antd/lib/upload/interface';
 import { ErrorMessageBox } from 'components/ErrorMessage/ErrorMessage';
+import { TranslationKeys } from 'common/i18n';
 import { FileInfo } from 'utils/types';
 import { getContainer, nameToAclTypeMap } from 'utils/shared';
 import { useTranslation } from 'common/i18n';
@@ -58,15 +59,15 @@ const getDataSetId = async () => {
   }
 };
 
-const createDataSet = async () => {
+const createDataSet = async (_t: (key: TranslationKeys) => string) => {
   try {
     const [createdDataSet] = await sdk.datasets.create([
       {
         externalId: 'COGNITE_GENERATED_SYSTEM_FILES',
         name: 'COGNITE_GENERATED_SYSTEM_FILES',
-        // TODO does this need to be translated as well?
-        description:
-          'This data set contains files uploaded as documentation for other data sets.',
+        description: _t(
+          'this-data-set-contains-files-uploaded-as-documentation'
+        ),
         metadata: {
           consoleCreatedBy: JSON.stringify({
             username: 'Cognite Data Fusion',
@@ -81,8 +82,11 @@ const createDataSet = async () => {
   }
 };
 
-const addFileToSystemSet = async (filedId: number) => {
-  const dataSetId = (await getDataSetId()) || (await createDataSet());
+const addFileToSystemSet = async (
+  filedId: number,
+  _t: (key: TranslationKeys) => string
+) => {
+  const dataSetId = (await getDataSetId()) || (await createDataSet(_t));
   if (dataSetId) {
     updateFileWithDataSet(filedId, dataSetId);
   }
@@ -151,7 +155,7 @@ const UploadFiles = ({
         })
         .then((response: any) => {
           const fileId = response.id;
-          addFileToSystemSet(fileId);
+          addFileToSystemSet(fileId, t);
           if (response.uploadUrl) {
             const xhr = new XMLHttpRequest();
             xhr.open('PUT', response.uploadUrl, true);

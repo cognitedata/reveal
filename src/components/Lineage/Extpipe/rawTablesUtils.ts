@@ -1,11 +1,13 @@
 import moment from 'moment';
 import sdk from '@cognite/cdf-sdk-singleton';
+import { TranslationKeys } from 'common/i18n';
 import { RawExtpipeWithUpdateTime } from 'components/Lineage/Extpipe/ExtpipeRawTables';
 import { DataSet, Extpipe, RawTableWithExtpipes } from 'utils/types';
 import { DataSetWithExtpipes } from 'actions';
 
 export const updateRawTableWithLastUpdate = async (
-  value: RawTableWithExtpipes
+  value: RawTableWithExtpipes,
+  _t: (key: TranslationKeys) => string
 ): Promise<RawExtpipeWithUpdateTime> => {
   const { databaseName, tableName, extpipes } = value;
   try {
@@ -25,8 +27,7 @@ export const updateRawTableWithLastUpdate = async (
       databaseName,
       tableName,
       extpipes,
-      // TODO CDFUX-1573 - figure out translation
-      lastUpdate: 'This RAW table may be deleted.',
+      lastUpdate: _t('this-raw-table-may-be-deleted'),
     } as RawExtpipeWithUpdateTime;
   }
 };

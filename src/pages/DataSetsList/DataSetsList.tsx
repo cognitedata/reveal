@@ -10,7 +10,7 @@ import { Dropdown, DropdownMenuContent } from 'components/DropdownMenu';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import SelectorFilter from 'components/SelectorFilter';
-import { handleDataSetsFilters } from 'utils/filterUtils';
+import { useHandleFilters } from 'utils/filterUtils';
 import { setItemInStorage } from 'utils/localStorage';
 import { createLink } from '@cognite/cdf-utilities';
 import { getContainer } from 'utils/shared';
@@ -31,6 +31,7 @@ import { useTranslation } from 'common/i18n';
 
 const DataSetsList = (): JSX.Element => {
   const { t } = useTranslation();
+  const { handleDataSetsFilters } = useHandleFilters();
   const { getTableColumns } = useTableColumns();
   const { data: withExtpipes, isFetched: didFetchWithExtpipes } =
     useWithExtpipes();
@@ -109,6 +110,7 @@ const DataSetsList = (): JSX.Element => {
     searchValue,
     setSearchValue,
     showArchived,
+    handleDataSetsFilters,
   ]);
 
   const handleModalClose = () => {

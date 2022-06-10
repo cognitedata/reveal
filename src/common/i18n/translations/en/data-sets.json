@@ -133,7 +133,9 @@
     "table_one": "Table",
     "table_other": "Tables",
     "table-selected": "Table selected",
+    "this-data-set-contains-files-uploaded-as-documentation": "This data set contains files uploaded as documentation for other data sets.",
     "this-data-set-contains-no-data": "This data set contains no data",
+    "this-raw-table-may-be-deleted": "This RAW table may be deleted.",
     "time-series": "Time series",
     "transform": "Transform",
     "transformation_one": "Transformation",
@@ -216,6 +218,9 @@
     "events-profile-subtypes": "Event subtypes in this data set",
     "events-profile-failed-event-types": "Failed to aggregate event types",
     "events-profile-failed-event-subtypes": "Failed to aggregate event subtypes",
+
+    "error-cannot-edit-the-default-group": "Cannot edit the default group",
+    "error-group-does-not-exist": "Group does not exist",
 
     "extpipe-raw-tables-title": "The RAW tables below are used in this data extpipe.",
     "extpipe-extpipes-title": "Extraction pipelines",

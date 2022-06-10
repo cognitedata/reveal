@@ -1,7 +1,8 @@
-import { handleDataSetsFilters } from './filterUtils';
+import { useHandleFilters } from './filterUtils';
 
 describe('FilterUtils', () => {
   describe('handleDataSetsSearch', () => {
+    const { handleDataSetsFilters } = useHandleFilters();
     const dataSetsWithExtpipes = [
       {
         extpipes: [],

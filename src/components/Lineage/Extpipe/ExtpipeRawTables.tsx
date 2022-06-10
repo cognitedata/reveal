@@ -46,11 +46,11 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
     const combinedRaws =
       dataSet != null ? combineDataSetAndExtpipesRawTables(dataSet) : [];
     const rawTables = await Promise.all(
-      combinedRaws.map(updateRawTableWithLastUpdate)
+      combinedRaws.map((raw) => updateRawTableWithLastUpdate(raw, t))
     );
     setRawList(rawTables);
     setLoadingRaw(false);
-  }, [dataSet]);
+  }, [dataSet, t]);
 
   useEffect(() => {
     getRawTableExtpipeLastUpdateTime();
