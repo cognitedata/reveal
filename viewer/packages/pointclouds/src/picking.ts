@@ -56,8 +56,8 @@ export function intersectPointClouds(
   });
 
   return intersections
-    .sort((x, y) => x.position!.distanceTo(camera.position) - y.position!.distanceTo(camera.position))
-    .filter(x => isPointAcceptedByClippingPlanes(x.position!, input.clippingPlanes))
+    .sort((x, y) => x.position.distanceTo(camera.position) - y.position.distanceTo(camera.position))
+    .filter(x => isPointAcceptedByClippingPlanes(x.position, input.clippingPlanes))
     .map(x => {
       const pointCloudNode = determinePointCloudNode(x.object, nodes);
       if (pointCloudNode === null) {
@@ -65,9 +65,9 @@ export function intersectPointClouds(
       }
 
       const result: IntersectPointCloudNodeResult = {
-        distance: x.position!.distanceTo(camera.position),
-        point: x.position!,
-        pointIndex: x.pointIndex!,
+        distance: x.position.distanceTo(camera.position),
+        point: x.position,
+        pointIndex: x.pointIndex,
         pointCloudNode,
         object: x.object
       };
