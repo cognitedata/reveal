@@ -8,7 +8,6 @@ import config from 'config/config';
 import { IntercomProvider } from 'react-use-intercom';
 
 import 'antd/dist/antd.css';
-import 'react-datepicker/dist/react-datepicker.css';
 import '@cognite/cogs.js/dist/cogs.css';
 import './config/i18n';
 import './config/locale';
