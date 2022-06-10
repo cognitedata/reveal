@@ -79,7 +79,7 @@ export const useExtpipeTableColumns = () => {
       key: 'schedule',
       render: ({ schedule }: Extpipe) => {
         if (!schedule) {
-          return 'Not defined';
+          return t('not-defined');
         }
         if (
           isScheduleOfType(schedule, [

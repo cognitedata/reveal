@@ -44,7 +44,9 @@ export const useTransformationsColumns = () => {
       key: 'created',
       render: (_text: string, transform: any) => {
         const { hidden, created } = transform;
-        const cellText = hidden ? 'Not available' : moment(created).toString();
+        const cellText = hidden
+          ? t('not-available')
+          : moment(created).toString();
         return (
           <CellTransformation $hidden={hidden}>{cellText}</CellTransformation>
         );
@@ -55,7 +57,9 @@ export const useTransformationsColumns = () => {
       key: 'updated',
       render: (_text: string, transform: any) => {
         const { hidden, updated } = transform;
-        const cellText = hidden ? 'Not available' : moment(updated).toString();
+        const cellText = hidden
+          ? t('not-available')
+          : moment(updated).toString();
         return (
           <CellTransformation $hidden={hidden}>{cellText}</CellTransformation>
         );
@@ -68,7 +72,7 @@ export const useTransformationsColumns = () => {
         const { hidden, owner: _owner, ownerIsCurrentUser } = transform;
         const owner = ownerIsCurrentUser ? (
           <CellTransformation>
-            <Icon type="User" /> me
+            <Icon type="User" /> {t('me')}
           </CellTransformation>
         ) : (
           _owner?.user ?? ''
