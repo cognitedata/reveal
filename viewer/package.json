@@ -70,7 +70,7 @@
     "@types/jsdom": "16.2.14",
     "@types/lodash": "4.14.182",
     "@types/mixpanel-browser": "2.38.0",
-    "@types/node": "16.11.38",
+    "@types/node": "16.11.39",
     "@types/offscreencanvas": "2019.7.0",
     "@types/proj4": "^2.5.2",
     "@types/random-seed": "0.3.3",
