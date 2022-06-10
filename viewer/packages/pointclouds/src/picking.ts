@@ -49,7 +49,7 @@ export function intersectPointClouds(
 
   nodes.forEach(node => {
     const intersection = node.pick(renderer, camera, raycaster.ray);
-    if (intersection !== null) { 
+    if (intersection !== null) {
       intersections.push(intersection);
     }
   });

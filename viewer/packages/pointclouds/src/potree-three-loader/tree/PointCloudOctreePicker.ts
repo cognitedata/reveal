@@ -117,7 +117,7 @@ export class PointCloudOctreePicker {
 
     // Read back image and decode hit point
     const pixels = PointCloudOctreePicker.readPixels(renderer, x, y, pickWndSize);
-    const hit = PointCloudOctreePicker.findHit(pixels, pickWndSize);
+    const hit = PointCloudOctreePicker.findHit(pixels, pickWndSize, renderedNodes, camera);
     return PointCloudOctreePicker.getPickPoint(hit, renderedNodes);
   }
 
@@ -275,27 +275,43 @@ export class PointCloudOctreePicker {
     });
   }
 
-  private static findHit(pixels: Uint8Array, pickWndSize: number): PointCloudHit | null {
+  private static findHit(
+    pixels: Uint8Array,
+    pickWndSize: number,
+    nodes: RenderedNode[],
+    camera: THREE.Camera
+  ): PointCloudHit | null {
     const ibuffer = new Uint32Array(pixels.buffer);
 
-    // Find closest hit inside pixelWindow boundaries
-    let min = Number.MAX_VALUE;
+    // Find closest hit inside pixelWindow boundaries and closest to the camera.
+    let minScreen = Number.MAX_VALUE;
+    let minCameraDistance = Number.MAX_VALUE;
     let hit: PointCloudHit | null = null;
     for (let u = 0; u < pickWndSize; u++) {
       for (let v = 0; v < pickWndSize; v++) {
         const offset = u + v * pickWndSize;
-        const distance = Math.pow(u - (pickWndSize - 1) / 2, 2) + Math.pow(v - (pickWndSize - 1) / 2, 2);
+        const screenDistance = Math.pow(u - (pickWndSize - 1) / 2, 2) + Math.pow(v - (pickWndSize - 1) / 2, 2);
 
         const pcIndex = pixels[4 * offset + 3];
         pixels[4 * offset + 3] = 0;
         const pIndex = ibuffer[offset];
 
-        if (pcIndex > 0 && distance < min) {
-          hit = {
-            pIndex: pIndex,
-            pcIndex: pcIndex - 1
-          };
-          min = distance;
+        if (pcIndex !== 255 && screenDistance < minScreen) {
+          const points = nodes[pcIndex - 1]?.node.sceneNode;
+          this.helperVec3
+            .fromBufferAttribute(points.geometry.attributes['position'], pIndex)
+            .applyMatrix4(points.matrixWorld);
+          const distanceToCamera = this.helperVec3.distanceToSquared(camera.position);
+
+          if (distanceToCamera < minCameraDistance) {
+            hit = {
+              pIndex: pIndex,
+              pcIndex: pcIndex - 1
+            };
+
+            minScreen = screenDistance;
+            minCameraDistance = distanceToCamera;
+          }
         }
       }
     }
