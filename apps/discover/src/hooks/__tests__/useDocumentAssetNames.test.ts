@@ -1,9 +1,9 @@
 import '__mocks/mockCogniteSDK';
-import { useDocumentAssetNames } from 'domain/documents/internal/hooks/useDocumentAssetNames';
+import { getMockAssetsByIds } from 'domain/assets/__mocks/getMockAssets';
+import { useDocumentAssetNames } from 'domain/documents/internal/queries/useDocumentAssetNames';
 
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
-import { getMockAssetsByIds } from 'services/assets/__mocks/getMockAssets';
 
 import { testWrapper } from '__test-utils/renderer';
 

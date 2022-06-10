@@ -1,9 +1,9 @@
+import { GraphTrackEnum } from 'domain/wells/measurements/constants';
+
 import compact from 'lodash/compact';
 import isEmpty from 'lodash/isEmpty';
 
 import { Track } from '@cognite/videx-wellog';
-
-import { GraphTrackEnum } from 'modules/wellSearch/service/measurements/constants';
 
 import { EventData, LogData } from '../interfaces';
 

@@ -1,8 +1,8 @@
 import { useFormatDocumentFilters } from 'domain/documents/internal/hooks/useFormatDocumentFilters';
 import { DocumentFormatFilter } from 'domain/documents/internal/types';
+import { SavedSearchContent } from 'domain/savedSearches/types';
 
 import isEmpty from 'lodash/isEmpty';
-import { SavedSearchContent } from 'services/savedSearches';
 
 import { AppliedFilterEntries } from 'modules/sidebar/types';
 import { useFormatWellFilters } from 'modules/wellSearch/hooks/useAppliedFilters';

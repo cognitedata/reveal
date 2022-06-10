@@ -1,3 +1,4 @@
+import { useMeasurementsQuery } from 'domain/wells/measurements/internal/queries/useMeasurementsQuery';
 import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
 import React, { useEffect, useMemo, useState } from 'react';
@@ -13,7 +14,6 @@ import { OverlayNavigation } from 'components/OverlayNavigation';
 import { PressureUnit, DepthMeasurementUnit } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
-import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 import { WellboreProcessedData } from 'modules/wellSearch/types';
 import { FlexColumn } from 'styles/layout';
 

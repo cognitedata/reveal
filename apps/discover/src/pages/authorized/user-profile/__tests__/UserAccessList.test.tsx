@@ -1,8 +1,9 @@
 import '__mocks/mockCogniteSDK';
 
+import { getMockTokenInspect } from 'domain/capabilities/service/__mocks/mockTokenInspect';
+
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import { getMockTokenInspect } from 'services/capabilities/__mocks/mockTokenInspect';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import { testRenderer } from '__test-utils/renderer';

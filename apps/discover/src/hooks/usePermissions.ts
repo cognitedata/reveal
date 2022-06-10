@@ -1,6 +1,7 @@
+import { useCapabilitiesQuery } from 'domain/capabilities/internal/queries/useCapabilitiesQuery';
+
 import isEmpty from 'lodash/isEmpty';
 import xor from 'lodash/xor';
-import { useCapabilitiesQuery } from 'services/capabilities/query';
 
 /**
  * Check if user has the correct permission ACLs and corresponding actions rights.

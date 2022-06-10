@@ -1,8 +1,9 @@
+import { getMeasurementLogsData } from 'domain/wells/measurements/service/network/getMeasurementLogsData';
+
 import { DepthMeasurementData } from '@cognite/sdk-wells-v3';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useArrayCache } from 'hooks/useArrayCache';
-import { fetchAllWellLogsRowData } from 'modules/wellSearch/service/measurements/wellLogs';
 import { groupBySource } from 'modules/wellSearch/utils/groupBySource';
 
 export const useWellLogsRowDataQuery = (sequenceExternalIds: string[] = []) => {
@@ -15,7 +16,7 @@ export const useWellLogsRowDataQuery = (sequenceExternalIds: string[] = []) => {
     key: JSON.stringify([WELL_QUERY_KEY.LOGS_ROW_DATA, sequenceExternalIds]),
     items: new Set(sequenceExternalIds),
     fetchAction: (items: Set<string>, options) =>
-      fetchAllWellLogsRowData({ sequenceExternalIds: items, options }).then(
+      getMeasurementLogsData({ sequenceExternalIds: items, options }).then(
         groupBySource
       ),
   });

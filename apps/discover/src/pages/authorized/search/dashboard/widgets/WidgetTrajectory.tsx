@@ -1,4 +1,4 @@
-import { useAllTrajectoriesQuery } from 'domain/wells/trajectory/dataLayer/queries/useAllTrajectoriesQuery';
+import { useAllTrajectoriesQuery } from 'domain/wells/trajectory/internal/queries/useAllTrajectoriesQuery';
 
 import * as React from 'react';
 

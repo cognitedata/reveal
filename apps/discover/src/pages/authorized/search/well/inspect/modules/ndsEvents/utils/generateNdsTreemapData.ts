@@ -1,5 +1,5 @@
-import { groupByWellbore } from 'domain/wells/dataLayer/wellbore/adapters/groupByWellbore';
 import { NdsInternal } from 'domain/wells/nds/internal/types';
+import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
 import isEmpty from 'lodash/isEmpty';

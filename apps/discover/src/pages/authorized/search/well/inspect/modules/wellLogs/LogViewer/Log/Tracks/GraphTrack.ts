@@ -1,10 +1,11 @@
+import { GraphTrackEnum } from 'domain/wells/measurements/constants';
+
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 
 import { graphLegendConfig, GraphTrack } from '@cognite/videx-wellog';
 import { PlotConfig } from '@cognite/videx-wellog/dist/tracks/graph/interfaces';
 
-import { GraphTrackEnum } from 'modules/wellSearch/service/measurements/constants';
 import { NO_LOGS_LEGEND_MESSAGE } from 'pages/authorized/search/well/inspect/constants';
 
 import { LogData } from '../interfaces';

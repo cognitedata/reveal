@@ -2,15 +2,13 @@ import '__mocks/mockContainerAuth'; // should be first
 import 'domain/wells/__mocks/setupWellsMockSDK';
 import 'modules/map/__mocks/mockMapbox';
 import { getMockUserMe } from 'domain/userManagementService/service/__mocks/getMockUserMe';
+import { getMockDepthMeasurementData } from 'domain/wells/measurements/service/__mocks/getMockDepthMeasurementData';
+import { getMockDepthMeasurements } from 'domain/wells/measurements/service/__mocks/getMockDepthMeasurements';
 import { getMockWellsById } from 'domain/wells/well/service/__mocks/getMockWellsById';
 
 import { screen, waitFor } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
-import {
-  getMockDepthMeasurements,
-  getMockDepthMeasurementData,
-} from 'services/well/measurements/__mocks/mockMeasurements';
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';

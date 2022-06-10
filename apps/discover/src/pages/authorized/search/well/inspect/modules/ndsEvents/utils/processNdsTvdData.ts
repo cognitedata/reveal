@@ -1,6 +1,6 @@
-import { getTvdForMd } from 'domain/wells/dataLayer/trajectory/selectors/getTvdForMd';
-import { TrueVerticalDepthsDataLayer } from 'domain/wells/dataLayer/trajectory/types';
 import { NdsInternal } from 'domain/wells/nds/internal/types';
+import { getTvdForMd } from 'domain/wells/trajectory/internal/transformers/getTvdForMd';
+import { TrueVerticalDepthsDataLayer } from 'domain/wells/trajectory/internal/types';
 
 import isUndefined from 'lodash/isUndefined';
 import { convertToDistance } from 'utils/units/convertToDistance';

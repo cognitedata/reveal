@@ -1,7 +1,7 @@
-import { groupByWellbore } from 'domain/wells/dataLayer/wellbore/adapters/groupByWellbore';
 import { normalizeNds } from 'domain/wells/nds/internal/transformers/normalizeNds';
 import { NdsInternal } from 'domain/wells/nds/internal/types';
 import { AllCursorsProps } from 'domain/wells/types';
+import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
 import { handleServiceError } from 'utils/errors';
 

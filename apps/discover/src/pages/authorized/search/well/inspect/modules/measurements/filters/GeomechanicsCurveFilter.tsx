@@ -1,10 +1,11 @@
+import { useGeomechanicsFilterOptions } from 'domain/wells/measurements/internal/hooks/useGeomechanicsFilterOptions';
+
 import React from 'react';
 
 import { OptionType } from '@cognite/cogs.js';
 import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
 import { useDeepEffect } from 'hooks/useDeep';
-import { useGeomechanicsFilterOptions } from 'modules/wellSearch/selectors/sequence/measurements/useGeomechanicsFilterOptions';
 
 import { CommonCurveFilter } from './CommonCurveFilter';
 import { mapCurvesToOptions } from './utils';

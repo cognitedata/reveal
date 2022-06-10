@@ -1,4 +1,4 @@
-import { GraphTrackEnum } from 'modules/wellSearch/service/measurements/constants';
+import { GraphTrackEnum } from 'domain/wells/measurements/constants';
 
 export interface PlotConfig {
   measurementType: string;

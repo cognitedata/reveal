@@ -1,10 +1,11 @@
+import { usePPFGFilterOptions } from 'domain/wells/measurements/internal/hooks/usePPFGFilterOptions';
+
 import React from 'react';
 
 import { OptionType } from '@cognite/cogs.js';
 import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
 import { useDeepEffect } from 'hooks/useDeep';
-import { usePPFGFilterOptions } from 'modules/wellSearch/selectors/sequence/measurements/usePPFGFilterOptions';
 
 import { CommonCurveFilter } from './CommonCurveFilter';
 import { mapCurvesToOptions } from './utils';

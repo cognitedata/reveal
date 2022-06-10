@@ -60,3 +60,8 @@ domain
     |── service
     |── dataLayer
 ```
+
+| Folder       | Description                                                  |
+| :----------- | :----------------------------------------------------------- |
+| \_\_fixtures | generator functions to create objects of a type for testing  |
+| \_\_mocks    | network level mocks, one file for each endpoint/request type |

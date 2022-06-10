@@ -1,5 +1,5 @@
-import { groupByWellbore } from 'domain/wells/dataLayer/wellbore/adapters/groupByWellbore';
 import { toIdentifierWithMatchingId } from 'domain/wells/utils/toIdentifierWithMatchingId';
+import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
 import compact from 'lodash/compact';
 import { toDistanceUnit } from 'utils/units/toDistanceUnit';

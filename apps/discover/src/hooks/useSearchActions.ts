@@ -1,6 +1,7 @@
+import { SavedSearchContent } from 'domain/savedSearches/types';
+
 import { batch } from 'react-redux';
 
-import { SavedSearchContent } from 'services/savedSearches';
 import { FetchHeaders } from 'utils/fetch';
 
 import { useCommonSearch } from './useCommonSearch';

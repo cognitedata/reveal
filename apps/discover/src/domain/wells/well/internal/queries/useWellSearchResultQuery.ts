@@ -1,8 +1,7 @@
+import { useWellFilters } from 'domain/wells/well/internal/filters/useWellFilters';
 import { Well } from 'domain/wells/well/internal/types';
 
 import { useQuery, UseQueryResult } from 'react-query';
-
-import { useWellFilters } from 'services/well/well/filters/useWellFilters';
 
 import { Metrics } from '@cognite/metrics';
 

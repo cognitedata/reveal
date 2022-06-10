@@ -1,5 +1,5 @@
 import { useWellLogsWithRowData } from 'domain/wells/log/internal/queries/useWellLogsWithRowData';
-import { useTrajectoriesQuery } from 'domain/wells/trajectory/dataLayer/queries/useTrajectoriesQuery';
+import { useTrajectoriesQuery } from 'domain/wells/trajectory/internal/queries/useTrajectoriesQuery';
 import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
 
 import React from 'react';

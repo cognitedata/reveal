@@ -1,3 +1,5 @@
+import { useMeasurementsQuery } from 'domain/wells/measurements/internal/queries/useMeasurementsQuery';
+
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -16,7 +18,6 @@ import {
 } from 'components/Performance';
 import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
-import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 import { FlexGrow } from 'styles/layout';
 
 import {

@@ -1,6 +1,7 @@
 import '__mocks/mockCogniteSDK';
 import 'domain/wells/__mocks/setupWellsMockSDK';
 
+import { getMockAssetsByIds } from 'domain/assets/__mocks/getMockAssets';
 import { getMockDocumentCategoriesGet } from 'domain/documents/service/__mocks/getMockDocumentCategoriesGet';
 import { getMockDocumentSearch } from 'domain/documents/service/__mocks/getMockDocumentSearch';
 import { getMockFavoriteSummary } from 'domain/favorites/service/__fixtures/favorite';
@@ -10,7 +11,6 @@ import { getMockWellsById } from 'domain/wells/well/service/__mocks/getMockWells
 
 import { screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import { getMockAssetsByIds } from 'services/assets/__mocks/getMockAssets';
 import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import { testRenderer } from '__test-utils/renderer';

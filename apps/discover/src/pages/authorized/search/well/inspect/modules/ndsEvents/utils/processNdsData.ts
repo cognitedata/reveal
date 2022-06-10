@@ -1,6 +1,6 @@
-import { TrueVerticalDepthsDataLayer } from 'domain/wells/dataLayer/trajectory/types';
 import { WellboreDataLayer } from 'domain/wells/dataLayer/wellbore/types';
 import { NdsInternal } from 'domain/wells/nds/internal/types';
+import { TrueVerticalDepthsDataLayer } from 'domain/wells/trajectory/internal/types';
 
 import { NdsView } from '../types';
 

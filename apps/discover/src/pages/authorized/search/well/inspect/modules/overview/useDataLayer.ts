@@ -1,4 +1,4 @@
-import { useTrajectoriesMetadataQuery } from 'domain/wells/trajectory/dataLayer/queries/useTrajectoriesMetadataQuery';
+import { useTrajectoriesMetadataQuery } from 'domain/wells/trajectory/internal/queries/useTrajectoriesMetadataQuery';
 import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
 
 import { useMemo } from 'react';

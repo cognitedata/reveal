@@ -7,7 +7,6 @@ import { getDefaultHeader, getAuthHeaders } from '@cognite/react-container';
 import { useIdToken as useIdTokenHook } from 'hooks/useIdToken';
 
 import { projectConfig } from './projectConfig';
-import { seismic } from './seismic';
 import { stats } from './stats';
 
 export const useJsonHeaders = (
@@ -29,7 +28,6 @@ export const discoverAPI = {
   feedback,
   projectConfig,
   savedSearches,
-  seismic,
   stats,
   user,
 };

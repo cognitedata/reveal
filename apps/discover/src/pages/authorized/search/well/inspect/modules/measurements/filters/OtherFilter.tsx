@@ -1,9 +1,10 @@
+import { useOtherFilterOptions } from 'domain/wells/measurements/internal/hooks/useOtherFilterOptions';
+
 import React from 'react';
 
 import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
 import { useDeepEffect } from 'hooks/useDeep';
-import { useOtherFilterOptions } from 'modules/wellSearch/selectors/sequence/measurements/useOtherFilterOptions';
 
 import { CommonCurveFilter } from './CommonCurveFilter';
 import { mapCurvesToOptions } from './utils';

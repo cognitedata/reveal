@@ -1,4 +1,4 @@
-import { KeyedTvdData } from 'domain/wells/dataLayer/trajectory/types';
+import { KeyedTvdData } from 'domain/wells/trajectory/internal/types';
 
 import head from 'lodash/head';
 
@@ -6,7 +6,7 @@ import { Nds } from '@cognite/sdk-wells-v3';
 
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
-import { useInterpolateTvdQuery } from '../../../trajectory/dataLayer/queries/useInterpolateTvdQuery';
+import { useInterpolateTvdQuery } from '../../../trajectory/internal/queries/useInterpolateTvdQuery';
 import { getInterpolateRequests } from '../utils/getInterpolateRequests';
 
 export const useNdsTvdDataQuery = (ndsData: Nds[]) => {

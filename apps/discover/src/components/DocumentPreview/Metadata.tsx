@@ -1,5 +1,5 @@
-import { useDocumentAssetNames } from 'domain/documents/internal/hooks/useDocumentAssetNames';
 import { useDocumentLabelsByExternalIds } from 'domain/documents/internal/hooks/useDocumentLabels';
+import { useDocumentAssetNames } from 'domain/documents/internal/queries/useDocumentAssetNames';
 
 import React from 'react';
 
