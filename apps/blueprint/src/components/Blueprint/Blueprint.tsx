@@ -7,27 +7,17 @@ import {
   useRef,
   useState,
 } from 'react';
-import {
-  BlueprintDefinition,
-  ShapeAttribute,
-  TimeSeriesTag,
-  Rule,
-  RuleOutput,
-  RuleSet,
-} from 'typings';
-import { NodeConfig, Node } from 'konva/lib/Node';
+import { BlueprintDefinition, TimeSeriesTag } from 'typings';
+// import { NodeConfig, Node } from 'konva/lib/Node';
 import { Drawer } from '@cognite/cogs.js';
 import { RuleSetsDrawer } from 'components/RuleSetDrawer/RuleSetsDrawer';
-import { useQueries } from 'react-query';
-import { resolveAttributeValue } from 'models/rulesEngine/api';
-import { compileExpression } from 'filtrex';
-import { useAuthContext } from '@cognite/react-container';
 import { CogniteOrnate, defaultColor, ToolNodeStyle, ToolType } from 'ornate';
 import { Ornate } from 'ornate/react';
 import { NodeStyle, StyleSelector, Toolbar } from 'ornate/react/components';
 import BaseAttributesControl from 'components/ContextMenu/ContextMenuItems/AttributesControl';
 import { ControlProps } from 'ornate/react/components/context-menu/controls';
 
+import { useRuleSetEvaluation } from './useRuleSetEvaluation';
 import { BlueprintWrapper } from './elements';
 import { BaseRuleControl } from './RuleControl/RuleControl';
 
@@ -37,107 +27,9 @@ export type BlueprintProps = {
   onUpdate?: (nextBlueprint: BlueprintDefinition) => void;
   onSelectTag?: (nextTagId: string) => void;
   onDeleteTag?: (tag: TimeSeriesTag) => void;
-  onSelectNodes?: (nodes: Node<NodeConfig>[]) => void;
+  // onSelectNodes?: (nodes: Node<NodeConfig>[]) => void;
   onReady?: (viewer: MutableRefObject<CogniteOrnate | undefined>) => void;
   isAllMinimized?: boolean;
-};
-
-const evaluateRuleSet = async (
-  client: CogniteClient,
-  ruleSet: RuleSet,
-  shapeAttributes: ShapeAttribute[]
-) => {
-  const evaluatedRules = await Promise.all(
-    ruleSet.rules.map((rule) => evaluateRule(client, rule, shapeAttributes))
-  );
-  return Object.assign({}, ...evaluatedRules);
-};
-
-const evaluateRule = async (
-  client: CogniteClient,
-  rule: Rule<RuleOutput>,
-  shapeAttributes: ShapeAttribute[]
-): Promise<RuleOutput> => {
-  const { expression } = rule;
-  if (!expression) return {};
-  // For some early alpha version debugging
-  // eslint-disable-next-line no-console
-  console.log('- EVALUATING RULE: ----', rule);
-  const shapeAttributesInExpression =
-    shapeAttributes.filter((x: ShapeAttribute) =>
-      expression.includes(x.name)
-    ) || [];
-
-  const resolvedShapeAttributesPromises = shapeAttributesInExpression.map(
-    (attr) =>
-      resolveAttributeValue(client!, attr).then((res) => ({
-        name: attr.name,
-        value: res,
-      }))
-  );
-  const resolvedAttributes = await Promise.all(resolvedShapeAttributesPromises);
-  const attributes = resolvedAttributes.reduce(
-    (acc, item) => ({
-      ...acc,
-      [item.name]: item.value,
-    }),
-    {}
-  );
-
-  const evalFunc = compileExpression(expression);
-  const result = evalFunc(attributes);
-  // For some early alpha version debugging
-  // eslint-disable-next-line no-console
-  console.log('--- RESOLUTION', attributes, expression, result);
-  if (result) {
-    return rule.output;
-  }
-  return {};
-};
-
-const useRuleSetEvaluation = (
-  blueprint?: BlueprintDefinition,
-  onSuccess?: (shapeKey: string, output: RuleOutput) => void,
-  onError?: (shapeKey: string, error: string) => void
-) => {
-  const { ruleSets = [], shapeRuleSets, shapeAttributes } = blueprint || {};
-  const { client } = useAuthContext();
-
-  return useQueries(
-    Object.keys(shapeRuleSets || {}).map((shapeKey) => ({
-      queryKey: ['ruleEval', shapeKey],
-      queryFn: async () => {
-        if (!client) return {};
-        const expandedRuleSets = (shapeRuleSets?.[shapeKey] || [])
-          .map((id) => ruleSets.find((r) => r.id === id))
-          .filter(Boolean) as RuleSet[];
-
-        const evaluatedRuleSets = await Promise.all(
-          (expandedRuleSets || []).map((ruleSet) =>
-            evaluateRuleSet(client, ruleSet, shapeAttributes?.[shapeKey] || [])
-          )
-        );
-
-        return Object.assign({}, ...evaluatedRuleSets);
-      },
-      onSuccess: (result: RuleOutput) => {
-        if (onSuccess) {
-          onSuccess(shapeKey, result);
-        }
-      },
-      onError: (err: Error) => {
-        if (onError) {
-          onError(shapeKey, err.message);
-
-          // For some early alpha version debugging
-          // eslint-disable-next-line no-console
-          console.error(err);
-        }
-      },
-      retry: false,
-      refetchInterval: 10000,
-    }))
-  );
 };
 
 const DEFAULT_STYLE: NodeStyle = {
@@ -178,6 +70,7 @@ const Blueprint = ({
       }
     },
     (shapeKey, error) => {
+      console.log('setting errors', shapeKey, error);
       setErrors((prev) => ({
         ...prev,
         [shapeKey]: error,
@@ -389,7 +282,7 @@ const Blueprint = ({
               ruleSets: next,
             };
             onUpdate(nextBlueprint);
-            queriesResults.forEach((query) => query.refetch());
+            queriesResults.refetch();
           }}
         />
       </Drawer>
