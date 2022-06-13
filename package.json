@@ -142,6 +142,6 @@
     "webpack-bundle-analyzer": "^3.9.0"
   },
   "resolutions": {
-    "react-error-overlay": "6.0.11"
+    "react-error-overlay": "6.0.9"
   }
 }

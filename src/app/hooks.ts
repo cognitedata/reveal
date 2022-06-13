@@ -23,7 +23,7 @@ const getSetItems =
     location: Location,
     navigate: NavigateFunction
   ) =>
-  (newItems?: string | string[]) => {
+  (newItems: string | string[]) => {
     const search = qs.parse(location.search, opts);
     navigate(
       {
@@ -31,7 +31,9 @@ const getSetItems =
         search: qs.stringify(
           {
             ...search,
-            [key]: newItems,
+            [key]: Array.isArray(newItems)
+              ? newItems
+              : encodeURIComponent(newItems),
           },
           opts
         ),

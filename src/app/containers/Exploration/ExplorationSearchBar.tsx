@@ -11,7 +11,7 @@ export const ExplorationSearchBar = () => {
 
   useEffect(() => {
     if (localQuery !== urlQuery) {
-      debouncedSetUrlQuery(encodeURIComponent(localQuery));
+      debouncedSetUrlQuery(localQuery);
     }
     return () => debouncedSetUrlQuery.cancel();
   }, [debouncedSetUrlQuery, localQuery, urlQuery]);
