@@ -9,7 +9,9 @@ export const fetchLabels = async (
   sdk: CogniteClient
 ): Promise<LabelDefinition[]> => {
   const response = sdk.labels.list();
-  const result = await response.autoPagingToArray();
+  const result = await response.autoPagingToArray({
+    limit: Infinity,
+  });
 
   return result;
 };
