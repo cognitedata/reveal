@@ -8,6 +8,7 @@ import {
   RuleOutput,
   RuleSet,
 } from 'typings';
+import { Asset, Datapoints, Timeseries } from '@cognite/sdk';
 
 export const useRuleSetEvaluation = (
   blueprint?: BlueprintDefinition,
@@ -28,22 +29,39 @@ export const useRuleSetEvaluation = (
   return useQuery(
     ['all-assets', assetAttributes, tsAttributes],
     async () => {
-      const assets = client!.assets.retrieve(
-        uniq(assetAttributes.map((x) => x.externalId)).map((externalId) => ({
-          externalId,
-        }))
-      );
-      const timeseries = client!.timeseries.retrieve(
-        uniq(tsAttributes.map((x) => x.externalId)).map((externalId) => ({
-          externalId,
-        }))
-      );
-      const datasets = client!.datapoints.retrieveLatest(
-        uniq(tsAttributes.map((x) => x.externalId)).map((externalId) => ({
-          externalId,
-        }))
-      );
-      const results = await Promise.all([assets, timeseries, datasets]);
+      const assets =
+        assetAttributes.length > 0
+          ? client!.assets.retrieve(
+              uniq(assetAttributes.map((x) => x.externalId)).map(
+                (externalId) => ({
+                  externalId,
+                })
+              )
+            )
+          : new Promise<Asset[]>((res) => {
+              res([]);
+            });
+      const timeseries =
+        tsAttributes.length > 0
+          ? client!.timeseries.retrieve(
+              uniq(tsAttributes.map((x) => x.externalId)).map((externalId) => ({
+                externalId,
+              }))
+            )
+          : new Promise<Timeseries[]>((res) => {
+              res([]);
+            });
+      const datapoints =
+        tsAttributes.length > 0
+          ? client!.datapoints.retrieveLatest(
+              uniq(tsAttributes.map((x) => x.externalId)).map((externalId) => ({
+                externalId,
+              }))
+            )
+          : new Promise<Datapoints[]>((res) => {
+              res([]);
+            });
+      const results = await Promise.all([assets, timeseries, datapoints]);
       return {
         assets: results[0],
         timeseries: results[1],
@@ -65,8 +83,8 @@ export const useRuleSetEvaluation = (
               // eslint-disable-next-line no-console
               console.log('- EVALUATING RULE: ----', rule);
               const shapeAttributesInExpression =
-                shapeAttributes?.[shapeKey].filter((x: ShapeAttribute) =>
-                  rule.expression.includes(x.name)
+                (shapeAttributes?.[shapeKey] || []).filter(
+                  (x: ShapeAttribute) => rule.expression.includes(x.name)
                 ) || [];
               const relevantData = shapeAttributesInExpression.map((attr) => {
                 if (attr.type === 'ASSET') {
