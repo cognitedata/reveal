@@ -1,7 +1,9 @@
-import { handleDataSetsFilters } from './filterUtils';
+import { renderHook } from '@testing-library/react-hooks/dom';
+import { useHandleFilters } from './filterUtils';
 
 describe('FilterUtils', () => {
   describe('handleDataSetsSearch', () => {
+    const { result } = renderHook(() => useHandleFilters());
     const dataSetsWithExtpipes = [
       {
         extpipes: [],
@@ -43,7 +45,7 @@ describe('FilterUtils', () => {
       },
     ];
     test('Searches among extpipes name', () => {
-      const res = handleDataSetsFilters(
+      const res = result.current.handleDataSetsFilters(
         false,
         'extpi',
         jest.fn(),
@@ -55,7 +57,7 @@ describe('FilterUtils', () => {
     });
 
     test('Searches among extpipes external id', () => {
-      const res = handleDataSetsFilters(
+      const res = result.current.handleDataSetsFilters(
         false,
         'external_999',
         jest.fn(),
@@ -67,7 +69,7 @@ describe('FilterUtils', () => {
     });
 
     test('Searches on data set name', () => {
-      const res = handleDataSetsFilters(
+      const res = result.current.handleDataSetsFilters(
         false,
         'baz',
         jest.fn(),

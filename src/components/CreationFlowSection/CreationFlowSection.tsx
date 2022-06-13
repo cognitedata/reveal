@@ -1,4 +1,5 @@
 import Col from 'antd/lib/col';
+import { useTranslation } from 'common/i18n';
 import {
   IconWrapper,
   SectionCard,
@@ -15,49 +16,14 @@ interface CreationFlowSectionProps {
   name: string;
 }
 
-// TODO CDFUX-1573 - figure out translation
-const DataInStatusFields = [
-  {
-    field: 'Tell us which source your data comes from',
-    key: 'source',
-  },
-  {
-    field: 'Document any RAW tables used',
-    key: 'raw',
-  },
-];
-
-const TransformStatusFields = [
-  {
-    field: 'Document any transformations used',
-    key: 'transform',
-  },
-];
-
-const DocumentationStatusFields = [
-  {
-    field: 'Specify owner(s)',
-    key: 'owners',
-  },
-  {
-    field: 'Upload documentation or add links',
-    key: 'docs',
-  },
-  {
-    field: 'Set governance status',
-    key: 'quality',
-  },
-];
-
-export const CONSUMER_KEY = 'consumer';
-const ConsumersStatusFields = [
-  {
-    field: 'Register consumer(s)',
-    key: CONSUMER_KEY,
-  },
-];
-
 const CreationFlowSection = (props: CreationFlowSectionProps): JSX.Element => {
+  const {
+    DataInStatusFields,
+    TransformStatusFields,
+    DocumentationStatusFields,
+    ConsumersStatusFields,
+  } = useFields();
+
   const getDataFields = () => {
     switch (props.name) {
       case 'GetDataIn':
@@ -93,6 +59,56 @@ const CreationFlowSection = (props: CreationFlowSectionProps): JSX.Element => {
       </Col>
     </SectionCard>
   );
+};
+
+const useFields = () => {
+  const { t } = useTranslation();
+  const DataInStatusFields = [
+    {
+      field: t('creation-flow-field-source'),
+      key: 'source',
+    },
+    {
+      field: t('creation-flow-field-raw'),
+      key: 'raw',
+    },
+  ];
+
+  const TransformStatusFields = [
+    {
+      field: t('creation-flow-field-transform'),
+      key: 'transform',
+    },
+  ];
+
+  const DocumentationStatusFields = [
+    {
+      field: t('creation-flow-field-owners'),
+      key: 'owners',
+    },
+    {
+      field: t('creation-flow-field-docs'),
+      key: 'docs',
+    },
+    {
+      field: t('creation-flow-field-quality'),
+      key: 'quality',
+    },
+  ];
+
+  const ConsumersStatusFields = [
+    {
+      field: t('creation-flow-field-consumer'),
+      key: 'consumer',
+    },
+  ];
+
+  return {
+    DataInStatusFields,
+    TransformStatusFields,
+    DocumentationStatusFields,
+    ConsumersStatusFields,
+  };
 };
 
 export default CreationFlowSection;

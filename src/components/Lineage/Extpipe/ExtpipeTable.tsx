@@ -17,7 +17,7 @@ import {
   NoDataText,
 } from '../../../utils/styledComponents';
 import { Extpipe } from '../../../utils/types';
-import { ExtpipeTableColumns } from './ExtpipeTableColumns';
+import { useExtpipeTableColumns } from './ExtpipeTableColumns';
 import { ExtpipeSourceExtractorProps } from './ExtpipeSourceExtractor';
 import { getExtractionPipelineUIUrl } from '../../../utils/extpipeUtils';
 import { useTranslation } from 'common/i18n';
@@ -40,6 +40,7 @@ const ExtpipeTable: FunctionComponent<ExtpipeTableProps> = ({
   isExtpipesFetched,
 }: PropsWithChildren<ExtpipeTableProps>) => {
   const { t } = useTranslation();
+  const { extpipeTableColumns } = useExtpipeTableColumns();
   const { extpipes, dataSet } = dataSetWithExtpipes;
 
   const { flow } = getFlow();
@@ -81,7 +82,7 @@ const ExtpipeTable: FunctionComponent<ExtpipeTableProps> = ({
         <>
           {isExtpipesFetched ? (
             <Table
-              columns={ExtpipeTableColumns}
+              columns={extpipeTableColumns}
               dataSource={extpipes}
               pagination={{ pageSize: 5 }}
               rowKey={(record: Extpipe) => `${record?.id}`}

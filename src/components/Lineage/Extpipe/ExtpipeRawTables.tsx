@@ -13,7 +13,7 @@ import {
   LineageSubTitle,
   LineageTitle,
 } from 'utils/styledComponents';
-import { rawTablesColumnsWithExtpipe } from 'components/Lineage/rawTableColumns';
+import { useRawTableColumns } from 'components/Lineage/rawTableColumns';
 import { Extpipe, RawTable } from 'utils/types';
 import { DataSetWithExtpipes } from 'actions';
 import { getContainer } from 'utils/shared';
@@ -38,6 +38,7 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
   isExtpipesFetched,
 }: PropsWithChildren<ExtpipeRawTablesProps>) => {
   const { t } = useTranslation();
+  const { rawTablesColumnsWithExtpipe } = useRawTableColumns();
   const [rawList, setRawList] = useState<RawExtpipeWithUpdateTime[]>([]);
   const [loadingRaw, setLoadingRaw] = useState<boolean>(true);
 
@@ -45,11 +46,11 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
     const combinedRaws =
       dataSet != null ? combineDataSetAndExtpipesRawTables(dataSet) : [];
     const rawTables = await Promise.all(
-      combinedRaws.map(updateRawTableWithLastUpdate)
+      combinedRaws.map((raw) => updateRawTableWithLastUpdate(raw, t))
     );
     setRawList(rawTables);
     setLoadingRaw(false);
-  }, [dataSet]);
+  }, [dataSet, t]);
 
   useEffect(() => {
     getRawTableExtpipeLastUpdateTime();
