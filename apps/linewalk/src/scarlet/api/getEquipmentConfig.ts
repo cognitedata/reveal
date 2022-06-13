@@ -23,7 +23,7 @@ export const getEquipmentConfig = async (client: CogniteClient) => {
           );
           return match ? parseInt(match[1], 10) : 0;
         })
-        .sort()
+        .sort((a, b) => a - b)
         .pop();
       return response.items.find(
         (item) => item.externalId === `${externalIdPrefix}_${version}.json`
