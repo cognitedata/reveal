@@ -9,12 +9,12 @@ export const getFilterQuery = (searchOption?: SavedSearchContent) => ({
   phrase: searchOption?.query || '',
   geoFilter: [],
   facets: {
-    fileCategory: searchOption?.filters.documents?.facets.fileCategory || [],
-    labels: searchOption?.filters.documents?.facets.labels || [],
-    lastcreated: searchOption?.filters.documents?.facets.lastcreated || [],
-    lastmodified: searchOption?.filters.documents?.facets.lastmodified || [],
-    location: searchOption?.filters.documents?.facets.location || [],
-    pageCount: searchOption?.filters.documents?.facets.pageCount || [],
+    fileCategory: searchOption?.filters?.documents?.facets?.fileCategory || [],
+    labels: searchOption?.filters?.documents?.facets?.labels || [],
+    lastcreated: searchOption?.filters?.documents?.facets?.lastcreated || [],
+    lastmodified: searchOption?.filters?.documents?.facets?.lastmodified || [],
+    location: searchOption?.filters?.documents?.facets?.location || [],
+    pageCount: searchOption?.filters?.documents?.facets?.pageCount || [],
   },
 });
 
