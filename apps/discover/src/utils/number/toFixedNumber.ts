@@ -1,5 +1,7 @@
 import { ERROR_INVALID_DATA } from 'constants/error';
 
+import { toFixedNumberFromNumber } from './toFixedNumberFromNumber';
+
 export const toFixedNumber = (
   value: string | number,
   decimalPlaces = 3
@@ -8,5 +10,5 @@ export const toFixedNumber = (
 
   return Number.isNaN(number)
     ? ERROR_INVALID_DATA
-    : Number(number.toFixed(decimalPlaces));
+    : toFixedNumberFromNumber(number, decimalPlaces);
 };

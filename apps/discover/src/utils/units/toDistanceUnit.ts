@@ -1,3 +1,5 @@
+import convert from 'convert-units';
+
 import { DistanceUnit, DistanceUnitEnum } from '@cognite/sdk-wells-v3';
 
 import { UserPreferredUnit } from 'constants/units';
@@ -8,7 +10,7 @@ const UNIT_MAP: Record<UserPreferredUnit, DistanceUnitEnum> = {
 };
 
 export const toDistanceUnit = (
-  unit: UserPreferredUnit | DistanceUnitEnum,
+  unit: UserPreferredUnit | DistanceUnitEnum | convert.Unit,
   factor?: number
 ): DistanceUnit => {
   let safeUnit: DistanceUnitEnum;

@@ -1,25 +1,15 @@
 import convert from 'convert-units';
 import get from 'lodash/get';
 
-import {
-  OTHER_CONVERSION_UNITS,
-  UNITS_TO_STANDARD,
-  OtherConversionUnit,
-} from './constants';
+import { UNITS_TO_STANDARD, OtherConversionUnit } from './constants';
+import { getSafeUnit } from './getSafeUnit';
 
 export const changeUnitTo = (
   value: number,
   fromUnit: convert.Unit | OtherConversionUnit,
   toUnit: convert.Unit
 ) => {
-  let safeFrom;
-
-  // get conversion using a custom unit name
-  if (fromUnit in OTHER_CONVERSION_UNITS) {
-    safeFrom = OTHER_CONVERSION_UNITS[fromUnit as OtherConversionUnit];
-  } else {
-    safeFrom = fromUnit as convert.Unit;
-  }
+  const safeFrom = getSafeUnit(fromUnit);
 
   try {
     return convert(Number(value)).from(safeFrom).to(toUnit);

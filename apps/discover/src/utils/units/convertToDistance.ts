@@ -12,7 +12,7 @@ import { UserPreferredUnit } from 'constants/units';
 export const convertToDistance = (
   value: number,
   unit: DistanceUnitEnum | UserPreferredUnit | OtherConversionUnit
-): ConvertedDistance | undefined => {
+): ConvertedDistance => {
   let safeUnit;
 
   // get conversion using a custom unit name

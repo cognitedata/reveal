@@ -1,6 +1,6 @@
-import { useNdsAggregatesSummaryQuery } from 'domain/wells/nds/service/queries/useNdsAggregatesSummaryQuery';
-import { useNdsEventsQuery } from 'domain/wells/nds/service/queries/useNdsEventsQuery';
-import { useNdsTvdDataQuery } from 'domain/wells/nds/service/queries/useNdsTvdDataQuery';
+import { useNdsAggregatesSummaryQuery } from 'domain/wells/nds/internal/queries/useNdsAggregatesSummaryQuery';
+import { useNdsEventsQuery } from 'domain/wells/nds/internal/queries/useNdsEventsQuery';
+import { useNdsTvdDataQuery } from 'domain/wells/nds/internal/queries/useNdsTvdDataQuery';
 import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
 import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores';
 
@@ -18,7 +18,7 @@ export const useNdsData = () => {
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   const { data: ndsData, isLoading } = useNdsEventsQuery({
-    wellboreIds: new Set(wellboreIds),
+    wellboreIds,
   });
   const { data: ndsAggregates } = useNdsAggregatesSummaryQuery(wellboreIds);
 

@@ -3,6 +3,7 @@ import { getTvdForMd } from 'domain/wells/trajectory/internal/transformers/getTv
 import { TrueVerticalDepthsDataLayer } from 'domain/wells/trajectory/internal/types';
 
 import isUndefined from 'lodash/isUndefined';
+import { Fixed } from 'utils/number';
 import { convertToDistance } from 'utils/units/convertToDistance';
 
 import { NdsView } from '../types';
@@ -22,7 +23,11 @@ export const processNdsTvdData = (
   const { unit } = trueVerticalDepths.trueVerticalDepthUnit;
 
   if (holeStart) {
-    const holeStartTvdValue = getTvdForMd(holeStart, trueVerticalDepths, 0);
+    const holeStartTvdValue = getTvdForMd(
+      holeStart,
+      trueVerticalDepths,
+      Fixed.NoDecimals
+    );
 
     if (!isUndefined(holeStartTvdValue)) {
       tvdData.holeStartTvd = convertToDistance(holeStartTvdValue, unit);
@@ -30,7 +35,11 @@ export const processNdsTvdData = (
   }
 
   if (holeEnd) {
-    const holeEndTvdValue = getTvdForMd(holeEnd, trueVerticalDepths, 0);
+    const holeEndTvdValue = getTvdForMd(
+      holeEnd,
+      trueVerticalDepths,
+      Fixed.NoDecimals
+    );
 
     if (!isUndefined(holeEndTvdValue)) {
       tvdData.holeEndTvd = convertToDistance(holeEndTvdValue, unit);

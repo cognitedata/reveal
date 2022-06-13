@@ -7,7 +7,7 @@ export interface Wellbore
     Partial<Omit<WellboreV3, 'name' | 'matchingId'>> {
   id: string;
   wellName?: string;
-  matchingId?: string;
+  matchingId: string;
   wellId?: string;
   sourceWellbores: {
     id: string;

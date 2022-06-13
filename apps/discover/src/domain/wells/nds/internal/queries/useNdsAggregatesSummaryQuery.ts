@@ -7,7 +7,7 @@ import { NdsAggregateEnum } from '@cognite/sdk-wells-v3';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
 
-import { getNdsAggregates } from '../network/getNdsAggregates';
+import { getNdsAggregates } from '../../service/network/getNdsAggregates';
 
 export const useNdsAggregatesSummaryQuery = (wellboreIds: string[]) => {
   const wellboreIdsSet = new Set(wellboreIds);

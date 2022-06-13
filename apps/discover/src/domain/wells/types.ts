@@ -8,5 +8,5 @@ export interface GetAllInspectDataProps {
 }
 
 export interface AllCursorsProps {
-  wellboreIds: Set<Wellbore['matchingId']>;
+  wellboreIds: Array<Wellbore['matchingId']>;
 }

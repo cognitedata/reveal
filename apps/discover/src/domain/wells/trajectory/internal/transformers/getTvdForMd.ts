@@ -1,7 +1,8 @@
 import isNumber from 'lodash/isNumber';
 import isUndefined from 'lodash/isUndefined';
-import { toFixedNumberFromNumber } from 'utils/number';
+import { Fixed, toFixedNumberFromNumber } from 'utils/number';
 import { changeUnitTo } from 'utils/units';
+import { ConvertedDistance } from 'utils/units/constants';
 
 import { Distance } from '@cognite/sdk-wells-v3';
 
@@ -10,9 +11,9 @@ import { UserPreferredUnit } from 'constants/units';
 import { TrueVerticalDepthsDataLayer } from '../types';
 
 export const getTvdForMd = (
-  measuredDepth: Distance | number,
+  measuredDepth: Distance | ConvertedDistance | number,
   trueVerticalDepths: TrueVerticalDepthsDataLayer,
-  toFixed?: number,
+  toFixed?: Fixed,
   unit?: UserPreferredUnit
 ) => {
   const { mdTvdMap, trueVerticalDepthUnit } = trueVerticalDepths;
