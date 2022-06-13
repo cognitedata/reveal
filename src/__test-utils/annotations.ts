@@ -70,13 +70,13 @@ export const getDummyKeypointState = (
 };
 
 export const getDummyKeypointCollectionState = (
-  id: string,
+  id: number,
   keypointIds: string[]
 ): KeypointCollectionState => {
   return {
     id,
     keypointIds,
-    label: getDummyPredefinedKeypoint(id).collectionName,
+    label: getDummyPredefinedKeypointCollection(id).collectionName,
     show: true,
     status: Status.Approved,
   };
@@ -89,8 +89,8 @@ export const dummyKeypoint = (caption?: string): PredefinedKeypoint => {
     color: 'red',
   };
 };
-export const getDummyPredefinedKeypoint = (
-  id: string
+export const getDummyPredefinedKeypointCollection = (
+  id: number
 ): PredefinedKeypointCollection => {
   return {
     id,
@@ -130,13 +130,20 @@ export const getDummyTempKeypointCollection = ({
       keypoint: { label: 'two', confidence: 0.5, point: { x: 1, y: 1 } },
     },
   ],
+  remainingKeypoints = [
+    {
+      caption: 'three',
+      color: 'yellow',
+      order: '3',
+      defaultPosition: [0.5, 0.5],
+    },
+  ],
 }: {
   id?: number;
   label?: string;
-  show?: boolean;
-  selected?: boolean;
   annotatedResourceId?: number;
   reviewKeypoints?: ReviewKeypoint[];
+  remainingKeypoints?: PredefinedKeypoint[];
 }): TempKeypointCollection => {
   return {
     id,
@@ -145,5 +152,6 @@ export const getDummyTempKeypointCollection = ({
       label,
       keypoints: reviewKeypoints,
     },
+    remainingKeypoints,
   };
 };

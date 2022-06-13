@@ -1,25 +1,22 @@
+import isFinite from 'lodash-es/isFinite';
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
-import {
-  PredefinedKeypoint,
-  PredefinedKeypointCollection,
-  Tool,
-} from 'src/modules/Review/types';
+import { PredefinedKeypoint, Tool } from 'src/modules/Review/types';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 import { deleteCollection } from 'src/modules/Review/store/annotatorWrapper/utils';
-import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
 import {
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
 import {
-  Keypoint,
   ImageKeypointCollection,
-  Point,
+  Keypoint,
   Status,
 } from 'src/api/annotation/types';
 import { isImageKeypointCollectionData } from 'src/modules/Common/types/typeGuards';
+import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
+import { AnnotatorPointRegion } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
 import {
   createUniqueNumericId,
   generateKeypointId,
@@ -57,7 +54,7 @@ const annotatorWrapperSlice = createSlice({
   initialState,
   /* eslint-disable no-param-reassign */
   reducers: {
-    selectCollection(state, action: PayloadAction<string>) {
+    selectCollection(state, action: PayloadAction<number>) {
       const collection = state.collections.byId[action.payload];
       const status = state.collections.selectedIds.includes(action.payload);
       if (status) {
@@ -68,7 +65,7 @@ const annotatorWrapperSlice = createSlice({
         state.collections.selectedIds = [action.payload];
       }
     },
-    toggleCollectionVisibility(state, action: PayloadAction<string>) {
+    toggleCollectionVisibility(state, action: PayloadAction<number>) {
       const collection = state.collections.byId[action.payload];
       if (collection) {
         collection.show = !collection.show;
@@ -76,7 +73,7 @@ const annotatorWrapperSlice = createSlice({
     },
     setCollectionStatus(
       state,
-      action: PayloadAction<{ id: string; status: Status }>
+      action: PayloadAction<{ id: number; status: Status }>
     ) {
       const collection = state.collections.byId[action.payload.id];
       if (collection) {
@@ -103,24 +100,13 @@ const annotatorWrapperSlice = createSlice({
     setSelectedTool(state, action: PayloadAction<Tool>) {
       state.currentTool = action.payload;
     },
-    onCreateKeyPoint(
-      state,
-      action: PayloadAction<{
-        id: string; // id from region
-        collectionName: string;
-        keypointLabel: string; // use nextKeypoint selector to get keypointLabel
-        positionX: number;
-        positionY: number;
-      }>
-    ) {
-      const { id, collectionName, keypointLabel, positionX, positionY } =
-        action.payload;
+    onCreateKeyPoint(state, action: PayloadAction<AnnotatorPointRegion>) {
+      const { id, annotationLabelOrText, x, y, keypointLabel } = action.payload;
 
-      const predefinedKeypointCollection:
-        | PredefinedKeypointCollection
-        | undefined = state.predefinedAnnotations.predefinedKeypointCollections.find(
-        (collection) => collection.collectionName === collectionName
-      );
+      const predefinedKeypointCollection =
+        state.predefinedAnnotations.predefinedKeypointCollections.find(
+          (collection) => collection.collectionName === annotationLabelOrText
+        );
 
       // validPredefinedKeypointCollection
       if (predefinedKeypointCollection) {
@@ -137,8 +123,8 @@ const annotatorWrapperSlice = createSlice({
           const imageKeypointToAdd: Keypoint = {
             label: predefinedKeypoint.caption,
             point: {
-              x: positionX,
-              y: positionY,
+              x,
+              y,
             },
             confidence: 1, // 100% confident about manually created keypoints
           };
@@ -148,53 +134,46 @@ const annotatorWrapperSlice = createSlice({
           // set that collection as last collection
           // and select it
           if (!state.lastCollectionId) {
-            const collectionId = createUniqueNumericId().toString(); // TODO make collection id numeric
-            const collectionToAdd = {
+            const collectionId = createUniqueNumericId();
+            state.collections.byId[collectionId] = {
               id: collectionId,
               keypointIds: [],
-              label: collectionName,
+              label: annotationLabelOrText,
               status: Status.Approved,
               show: true,
             };
-
-            state.collections.byId[collectionId] = collectionToAdd;
-            state.collections.allIds = Object.keys(state.collections.byId);
+            state.collections.allIds = Object.keys(state.collections.byId).map(
+              (key) => +key
+            );
             state.lastCollectionId = collectionId;
             state.collections.selectedIds = [collectionId];
           }
 
           state.lastKeyPoint = predefinedKeypoint.caption;
-          state.collections.byId[state.lastCollectionId].keypointIds.push(id);
+          state.collections.byId[state.lastCollectionId].keypointIds.push(
+            String(id)
+          );
           state.keypointMap.byId[id] = imageKeypointToAdd;
           state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
         }
       }
     },
-    onUpdateKeyPoint(
-      state,
-      action: PayloadAction<{
-        keypointAnnotationCollectionId: string;
-        label: string;
-        newConfidence: number | undefined;
-        newPoint: Point;
-      }>
-    ) {
-      const { keypointAnnotationCollectionId, label, newConfidence, newPoint } =
+    onUpdateKeyPoint(state, action: PayloadAction<AnnotatorPointRegion>) {
+      const { parentAnnotationId, keypointLabel, keypointConfidence, x, y } =
         action.payload;
-      const keypointId = generateKeypointId(
-        keypointAnnotationCollectionId,
-        label
-      );
-      if (state.keypointMap.allIds.includes(keypointId)) {
-        state.keypointMap.byId[keypointId] = {
-          label,
-          confidence: newConfidence,
-          point: newPoint,
-        };
+      if (parentAnnotationId && keypointLabel && isFinite(x) && isFinite(y)) {
+        const keypointId = generateKeypointId(
+          parentAnnotationId,
+          keypointLabel
+        );
+        if (state.keypointMap.allIds.includes(keypointId)) {
+          state.keypointMap.byId[keypointId] = {
+            label: keypointLabel,
+            confidence: keypointConfidence,
+            point: { x, y },
+          };
+        }
       }
-    },
-    deleteCollectionById(state, action: PayloadAction<string>) {
-      deleteCollection(state, action.payload);
     },
     deleteCurrentCollection(state) {
       const currentCollectionId = state.lastCollectionId;
@@ -257,7 +236,7 @@ const annotatorWrapperSlice = createSlice({
 
         keypointAnnotationCollections.forEach(
           (keypointAnnotationCollection) => {
-            const collectionId = keypointAnnotationCollection.id.toString();
+            const collectionId = keypointAnnotationCollection.id;
             const keypointIds: string[] = [];
 
             keypointAnnotationCollection.keypoints.forEach((keypoint) => {
@@ -281,7 +260,9 @@ const annotatorWrapperSlice = createSlice({
             };
           }
         );
-        state.collections.allIds = Object.keys(state.collections.byId);
+        state.collections.allIds = Object.keys(state.collections.byId).map(
+          (key) => +key
+        );
       }
     );
     builder.addMatcher(
@@ -300,8 +281,6 @@ const annotatorWrapperSlice = createSlice({
   },
 });
 
-export type { AnnotatorWrapperState as AnnotatorWrapperReducerState };
-
 export const {
   selectCollection,
   toggleCollectionVisibility,
@@ -312,7 +291,6 @@ export const {
   setLastCollectionName,
   onCreateKeyPoint,
   onUpdateKeyPoint,
-  deleteCollectionById,
   deleteCurrentCollection,
   removeLabels,
   setKeepUnsavedRegion,

@@ -24,25 +24,22 @@ import {
 } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/converters';
 import {
   UnsavedVisionAnnotation,
-  VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
 import {
-  AnnotatorBaseRegion,
   AnnotatorBoxRegion,
   AnnotatorLineRegion,
   AnnotatorPointRegion,
   AnnotatorPolygonRegion,
   AnnotatorRegion,
-  AnnotatorRegionTags,
   AnnotatorRegionType,
 } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
-import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
   TempKeypointCollection,
   VisionReviewAnnotation,
 } from 'src/modules/Review/types';
 import { getDummyTempKeypointCollection } from 'src/__test-utils/annotations';
+import { getDummyRegion } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/__test-utils/region';
 
 const dummyImageClassificationAnnotation =
   getDummyImageClassificationAnnotation({
@@ -164,64 +161,6 @@ const dummyImageKeypointCollectionReviewAnnotation =
 
 const dummyTempKeypointCollection = getDummyTempKeypointCollection({});
 
-const getDummyRegion = <
-  RegionType extends { type: AnnotatorRegionType } & AnnotatorBaseRegion
->({
-  reviewAnnotation,
-  regionProps,
-  id,
-  tags,
-  highlighted = false,
-  editingLabels = false,
-  visible = true,
-  color = 'red',
-  cls = '',
-  locked = false,
-}: {
-  reviewAnnotation: VisionReviewAnnotation<
-    VisionAnnotation<VisionAnnotationDataType>
-  >;
-  regionProps: Omit<RegionType, keyof AnnotatorBaseRegion>;
-  id?: string | number;
-  tags?: AnnotatorRegionTags | string[];
-  highlighted?: boolean;
-  editingLabels?: boolean;
-  visible?: boolean;
-  color?: string;
-  cls?: string;
-  locked?: boolean;
-}) => {
-  const {
-    id: annotationId,
-    annotationType,
-    status,
-  } = reviewAnnotation.annotation;
-
-  const labelOrText = getAnnotationLabelOrText(reviewAnnotation.annotation);
-  const regionTags = tags || [labelOrText, null, null, null];
-
-  const baseProperties: AnnotatorBaseRegion = {
-    id: id || annotationId,
-    annotationType,
-    status,
-    annotationLabelOrText: getAnnotationLabelOrText(
-      reviewAnnotation.annotation
-    ),
-    annotationMeta: reviewAnnotation,
-    tags: regionTags,
-    highlighted,
-    editingLabels,
-    visible,
-    color,
-    cls,
-    locked,
-  };
-  return {
-    ...baseProperties,
-    ...regionProps,
-  };
-};
-
 describe('test convertVisionReviewAnnotationsToRegions', () => {
   it('should return empty if annotations are empty', () => {
     expect(convertVisionReviewAnnotationsToRegions([])).toEqual([]);
@@ -266,23 +205,17 @@ describe('test convertVisionReviewAnnotationsToRegions', () => {
         }),
       },
       ...dummyImageKeypointCollectionReviewAnnotation.annotation.keypoints.map(
-        (keypoint, index) => ({
+        (keypoint) => ({
           ...getDummyRegion<AnnotatorPointRegion>({
             reviewAnnotation: dummyImageKeypointCollectionReviewAnnotation,
             id: keypoint.id,
             visible: dummyImageKeypointCollectionReviewAnnotation.show,
             highlighted: true,
             editingLabels: true,
-            tags: [
-              dummyImageKeypointCollectionAnnotation.label,
-              String(index + 1),
-              String(dummyImageKeypointCollectionAnnotation.id),
-              keypoint.keypoint.label,
-            ],
+            tags: [],
             regionProps: {
               type: AnnotatorRegionType.PointRegion,
               parentAnnotationId: dummyImageKeypointCollectionAnnotation.id,
-              keypointOrder: String(index + 1),
               keypointLabel: keypoint.keypoint.label,
               keypointConfidence: keypoint.keypoint.confidence,
               x: keypoint.keypoint.point.x,
@@ -603,7 +536,7 @@ describe('test convertVisionReviewAnnotationToRegions', () => {
   it('should return correct region for ImageKeypointCollection Annotation', () => {
     const dummyRegions =
       dummyImageKeypointCollectionReviewAnnotation.annotation.keypoints.map(
-        (keypoint, index) =>
+        (keypoint) =>
           ({
             ...getDummyRegion<AnnotatorPointRegion>({
               reviewAnnotation: dummyImageKeypointCollectionReviewAnnotation,
@@ -611,16 +544,10 @@ describe('test convertVisionReviewAnnotationToRegions', () => {
               visible: dummyImageKeypointCollectionReviewAnnotation.show,
               highlighted: true,
               editingLabels: true,
-              tags: [
-                dummyImageKeypointCollectionAnnotation.label,
-                String(index + 1),
-                String(dummyImageKeypointCollectionAnnotation.id),
-                keypoint.keypoint.label,
-              ],
+              tags: [],
               regionProps: {
                 type: AnnotatorRegionType.PointRegion,
                 parentAnnotationId: dummyImageKeypointCollectionAnnotation.id,
-                keypointOrder: String(index + 1),
                 keypointLabel: keypoint.keypoint.label,
                 keypointConfidence: keypoint.keypoint.confidence,
                 x: keypoint.keypoint.point.x,
@@ -646,7 +573,7 @@ describe('test convertVisionReviewAnnotationToRegions', () => {
     const dummyRegions = (
       dummyReviewAnnotation as VisionReviewAnnotation<ImageKeypointCollection>
     ).annotation.keypoints.map(
-      (keypoint, index) =>
+      (keypoint) =>
         ({
           ...getDummyRegion<AnnotatorPointRegion>({
             reviewAnnotation: dummyReviewAnnotation,
@@ -654,16 +581,10 @@ describe('test convertVisionReviewAnnotationToRegions', () => {
             visible: dummyReviewAnnotation.show,
             highlighted: keypoint.selected,
             editingLabels: keypoint.selected,
-            tags: [
-              dummyImageKeypointCollectionAnnotation.label,
-              String(index + 1),
-              String(dummyImageKeypointCollectionAnnotation.id),
-              keypoint.keypoint.label,
-            ],
+            tags: [],
             regionProps: {
               type: AnnotatorRegionType.PointRegion,
               parentAnnotationId: dummyImageKeypointCollectionAnnotation.id,
-              keypointOrder: String(index + 1),
               keypointLabel: keypoint.keypoint.label,
               keypointConfidence: keypoint.keypoint.confidence,
               x: keypoint.keypoint.point.x,
@@ -965,7 +886,6 @@ describe('test convertRegionToVisionAnnotationProperties', () => {
               .keypoints[0].keypoint.point.x,
             y: dummyImageKeypointCollectionReviewAnnotation.annotation
               .keypoints[0].keypoint.point.y,
-            keypointOrder: String(1),
             keypointLabel:
               dummyImageKeypointCollectionReviewAnnotation.annotation
                 .keypoints[0].keypoint.label,
@@ -1057,7 +977,7 @@ describe('test convertTempKeypointCollectionToRegions', () => {
   });
   it('should return correct regions', () => {
     const dummyRegions = dummyTempKeypointCollection.data.keypoints.map(
-      (keypoint, index) =>
+      (keypoint) =>
         ({
           ...getDummyRegion<AnnotatorPointRegion>({
             reviewAnnotation: {
@@ -1078,16 +998,10 @@ describe('test convertTempKeypointCollectionToRegions', () => {
             visible: true,
             highlighted: true,
             editingLabels: true,
-            tags: [
-              dummyTempKeypointCollection.data.label,
-              String(index + 1),
-              String(dummyTempKeypointCollection.id),
-              keypoint.keypoint.label,
-            ],
+            tags: [],
             regionProps: {
               type: AnnotatorRegionType.PointRegion,
               parentAnnotationId: dummyTempKeypointCollection.id,
-              keypointOrder: String(index + 1),
               keypointLabel: keypoint.keypoint.label,
               keypointConfidence: keypoint.keypoint.confidence,
               x: keypoint.keypoint.point.x,
