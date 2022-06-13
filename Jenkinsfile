@@ -2,7 +2,6 @@
 
 static final String PR_COMMENT_MARKER = "🚀[pr-server]\n"
 static final String SLACK_ALERTS_CHANNEL = "#cdf-ui-devs-alerts"
-// deploySpinnakerPipelineConfigs {}
 static final String APP_ID = 'cdf-access-management'
 static final String APPLICATION_REPO_ID = 'fusion-access-management'
 static final String NODE_VERSION = 'node:14'
@@ -12,9 +11,17 @@ static final String VERSIONING_STRATEGY = "single-branch"
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
     previewServer.pod(nodeVersion: NODE_VERSION) {
+      locizeApiKey = secretEnvVar(
+        key: 'LOCIZE_API_KEY',
+        secretName: 'fusion-locize-api-key',
+        secretKey: 'FUSION_LOCIZE_API_KEY'
+      )
       fas.pod(
         nodeVersion: NODE_VERSION,
         sentryProjectName: 'nope',
+        envVars: [
+          locizeApiKey,
+        ]
       ) {
         // This enables codecov for the repo. If this fails to start, then
         // do the following:
@@ -138,6 +145,17 @@ pods {
           deleteComments("[FUSION_PREVIEW_URL]")
           def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${package_name}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
           pullRequest.comment("[FUSION_PREVIEW_URL] [$url]($url)");
+        }
+      }
+    }
+
+    if (isRelease) {
+      container('fas') {
+        stageWithNotify('Save missing keys to locize') {
+          sh("yarn save-missing")
+        }
+        stageWithNotify('Remove deleted keys from locize') {
+          sh("yarn remove-deleted")
         }
       }
     }

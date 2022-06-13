@@ -12,11 +12,14 @@
     "lint": "yarn prettier && yarn eslint",
     "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
     "eslint:changed": "eslint --config .eslintrc.production.js",
-    "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)"
+    "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
+    "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace access-management",
+    "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace access-management",
+    "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace access-management"
   },
   "dependencies": {
     "@cognite/acl-protos": "^0.15.0",
-    "@cognite/cdf-i18n-utils": "^0.0.5",
+    "@cognite/cdf-i18n-utils": "^0.1.1",
     "@cognite/cdf-utilities": "^1.4.6",
     "@cognite/cogs.js": "^5.17.0",
     "@cognite/login-utils": "^2.0.0",
