@@ -4,11 +4,14 @@ import NewHeader from 'components/NewHeader';
 import styled from 'styled-components';
 import { getContainer } from 'utils/utils';
 import {
+  getExtractorsWithReleases,
+  ExtractorWithRelease,
+  Artifact,
+  Release,
   getDownloadUrl,
-  listExtractors,
-  listReleases,
 } from './ExtractorDownloadApi';
 import { Colors } from '@cognite/cogs.js';
+import { ExpandableConfig } from 'antd/lib/table/interface';
 
 const LinkStyled = styled.a`
   height: 100%;
@@ -18,11 +21,7 @@ const LinkStyled = styled.a`
   align-items: left;
 `;
 
-const StyledExtractorsContainer = styled.div`
-  padding: 18px 44px;
-`;
-
-const versionTableColumns = [
+const extractorColumns = [
   {
     title: 'Version',
     dataIndex: 'version',
@@ -48,28 +47,51 @@ const versionTableColumns = [
   },
 ];
 
-const GetUrl = (extractorTag: string, version: string, platform: string) => {
-  const platformParameter =
-    platform === 'Documentation' ? 'docs' : platform.toLowerCase();
-  const [fileUrl, setFileUrl] = useState<string>();
-  useEffect(() => {
-    getDownloadUrl(extractorTag, version, platformParameter)
-      .then((res) => {
-        setFileUrl(res.data.download);
-      })
-      // eslint-disable-next-line no-console
-      .catch((e) => console.error(e));
-  }, [extractorTag, version, platformParameter]);
+const StyledExtractorsContainer = styled.div`
+  padding: 18px 44px;
+`;
 
-  return fileUrl;
+const artifactPlatform = (artifact: Artifact): string => {
+  switch (artifact.platform) {
+    case 'docs':
+      return 'Documentation';
+    case 'windows':
+      return 'Windows';
+    case 'linux':
+      return 'Linux';
+    case 'macos':
+      return 'MacOS';
+  }
+  return '';
+};
+
+const artifactType = (artifact: Artifact): string => {
+  const name = artifact.name.toLowerCase();
+  if (name.endsWith('zip') || name.endsWith('gz') || name.endsWith('tar')) {
+    return 'zip';
+  } else if (name.endsWith('pdf')) {
+    return 'pdf';
+  } else if (
+    name.endsWith('msi') ||
+    name.endsWith('rpm') ||
+    name.endsWith('deb')
+  ) {
+    return 'installer';
+  } else {
+    return 'executable';
+  }
+};
+
+const GetArtifactName = (artifact: Artifact): string => {
+  return `${artifactPlatform(artifact)} ${artifactType(artifact)}`;
 };
 
 const GetExtractors = () => {
-  const [extractors, setExtractors] = useState<any>();
+  const [extractors, setExtractors] = useState<ExtractorWithRelease[]>();
   useEffect(() => {
-    listExtractors()
+    getExtractorsWithReleases()
       .then((res) => {
-        setExtractors(res.data.items);
+        setExtractors(res);
       })
       // eslint-disable-next-line no-console
       .catch((e) => console.error(e));
@@ -78,69 +100,68 @@ const GetExtractors = () => {
   return extractors;
 };
 
-const GetReleases = () => {
-  const [extractors, setExtractors] = useState<any>();
-  useEffect(() => {
-    listReleases()
-      .then((res) => {
-        setExtractors(res.data.items);
-      })
-      // eslint-disable-next-line no-console
-      .catch((e) => console.error(e));
-  }, []);
-
-  return extractors;
+const Download = (artifact: Artifact) => {
+  getDownloadUrl(artifact)
+    .then((url) => {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = artifact.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    })
+    // eslint-disable-next-line no-console
+    .catch((e) => console.error(e));
 };
 
-const VersionTable = ({
-  extractorTag,
-  releases,
-}: {
-  extractorTag: string;
-  releases: any;
-}) => {
-  if (!releases[extractorTag]) {
+const VersionTable = ({ releases }: { releases: Release[] }) => {
+  if (!releases) {
     return (
       <Table
         dataSource={undefined}
-        columns={versionTableColumns}
+        columns={extractorColumns}
         pagination={false}
         getPopupContainer={getContainer}
       />
     );
   }
 
-  const dataSource = releases[extractorTag].map((releaseElem, idx) => {
-    const { version, description, releaseDate: releasedAt } = releaseElem;
-    const downloads = releaseElem.artifacts.map((artifact: string) => (
-      <LinkStyled
-        href={GetUrl(extractorTag, version, artifact.split(' ')[0])}
-        key={artifact}
-      >
-        {artifact}
-      </LinkStyled>
-    ));
-
-    return {
+  const dataSource: {
+    key: number;
+    version: string;
+    description: string | undefined;
+    releasedAt: string;
+    artifacts: Artifact[];
+    downloads: JSX.Element[];
+  }[] = [];
+  releases.forEach((release, idx) => {
+    dataSource.push({
       key: idx,
-      version,
-      description,
-      releasedAt,
-      downloads,
-    };
+      version: release.version,
+      description: release.description,
+      releasedAt: new Date(release.createdTime ?? 0).toLocaleDateString(
+        'en-GB'
+      ),
+      artifacts: release.artifacts,
+      downloads: release.artifacts.map((artifact) => (
+        <LinkStyled onClick={() => Download(artifact)} key={artifact.name}>
+          {GetArtifactName(artifact)}
+        </LinkStyled>
+      )),
+    });
   });
 
   return (
     <Table
       dataSource={dataSource}
-      columns={versionTableColumns}
+      columns={extractorColumns}
       pagination={false}
       getPopupContainer={getContainer}
     />
   );
 };
 
-const extractorColumns = [
+const columns = [
   {
     title: 'Name',
     dataIndex: 'name',
@@ -154,23 +175,28 @@ const extractorColumns = [
   },
 ];
 
-const Extractors = () => {
-  const releases = GetReleases();
+const expandableConfig: ExpandableConfig<ExtractorWithRelease> = {
+  defaultExpandAllRows: false,
+  expandedRowRender: (record) => <VersionTable releases={record.releases} />,
+};
 
+const Extractors = () => {
   return (
     <StyledExtractorsContainer>
       <NewHeader
         title="Extractor downloads"
         ornamentColor={Colors['lightblue']}
+        breadcrumbs={[
+          { title: 'Data ingestion', path: '/ingest' },
+          { title: 'Extractors', path: '/extractors' },
+        ]}
       />
       <Table
         dataSource={GetExtractors()}
-        columns={extractorColumns}
+        columns={columns}
         pagination={false}
-        rowKey="tag"
-        expandedRowRender={(record) => (
-          <VersionTable extractorTag={record.tag} releases={releases} />
-        )}
+        rowKey={(record) => record.externalId}
+        expandable={expandableConfig}
         getPopupContainer={getContainer}
       />
     </StyledExtractorsContainer>
