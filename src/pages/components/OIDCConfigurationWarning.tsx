@@ -9,7 +9,7 @@ export const OIDCConfigurationWarning = () => {
       type="warning"
       alertTitle={t('warning')}
       alertMessage={t(
-        'chaging-oidc-settings-could-have-unintended-consequences'
+        'changing-oidc-settings-could-have-unintended-consequences'
       )}
       hideModal
     />
