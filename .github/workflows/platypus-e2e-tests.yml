@@ -5,6 +5,7 @@ on:
       - master
     paths:
       - 'apps/platypus/**'
+      - 'apps/mock-server/**'
       - 'libs/platypus-core/**'
       - 'libs/platypus-infrastructure/**'
 jobs:
