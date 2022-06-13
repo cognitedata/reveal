@@ -154,7 +154,11 @@ export default function OIDCConfigContainer() {
           )?.isGroupCallbackEnabled,
         }}
       >
-        <Form.Item name="isOidcEnabled" label="Enabled" valuePropName="checked">
+        <Form.Item
+          name="isOidcEnabled"
+          label={t('enabled')}
+          valuePropName="checked"
+        >
           <Checkbox disabled={updating} />
         </Form.Item>
 
@@ -177,7 +181,12 @@ export default function OIDCConfigContainer() {
           <Input disabled={updating} />
         </Form.Item>
 
-        <Form.Item label="Issuer" name="issuer" hasFeedback rules={urlRules(t)}>
+        <Form.Item
+          label={t('issuer')}
+          name="issuer"
+          hasFeedback
+          rules={urlRules(t)}
+        >
           <Input disabled={updating} />
         </Form.Item>
 
