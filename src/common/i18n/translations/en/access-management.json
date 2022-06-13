@@ -267,6 +267,7 @@
     "valid-url-error": "Invalid URL",
     "valid-url-info": "Please enter a valid url!",
     "vision-model": "Vision model",
+    "warning": "Warning",
     "changing-oidc-settings-could-have-unintended-consequences": "Be careful. If you change the OIDC settings, you must recreate any scheduled jobs.",
     "changing-access-settings-could-have-unintended-consequences": "Be careful. Changing these settings can cause access issues."
 }
