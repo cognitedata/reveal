@@ -178,7 +178,10 @@ type File {
           }
         }
       });
+    });
 
+    const types = this.getTypeNames(extendedSchema);
+    types.forEach((table) => {
       extendedSchema = extendedSchema.replace(
         new RegExp('type ' + table + '\\s{1,}\\{', 'gmi'),
         `type ${table} {
@@ -189,6 +192,36 @@ type File {
 
     return extendedSchema;
   }
+
+  private getTypeNames(schemaString: string): string[] {
+    let m;
+    const regex = /type[\s]{1,}[a-zA-Z]{1,20}[\s]{1,}(@template[\s]{1,})?\{/gm;
+
+    const templateTables = [];
+
+    while ((m = regex.exec(schemaString)) !== null) {
+      // This is necessary to avoid infinite loops with zero-width matches
+      if (m.index === regex.lastIndex) {
+        regex.lastIndex++;
+      }
+
+      // The result can be accessed through the `m`-variable.
+      m.forEach((match) => {
+        if (match) {
+          templateTables.push(
+            (match as string)
+              .replace('type', '')
+              .replace('@template', '')
+              .replace('{', '')
+              .trim()
+          );
+        }
+      });
+    }
+
+    return templateTables;
+  }
+
   private generateFiltersInputs(
     tablesList: string[],
     parsedSchema: IntrospectionQuery
