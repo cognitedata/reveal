@@ -205,14 +205,14 @@ export { CadModelBudget, PointCloudBudget };
 
 /**
  * Options to control how {@link Cognite3DViewer.getIntersectionFromPixel} behaves.
- * @deprecated Because of using GPU picking, options doesn't affect the behaviour of the method.
+ * @deprecated Since 3.1 these options have no effect.
  */
 export interface IntersectionFromPixelOptions {
   /**
    * Threshold (in meters) for how close a point must be an intersection
    * ray for it to be considered an intersection for point clouds. Defaults
    * to 0.05.
-   * @deprecated Threshold doesn't affect picking because of new GPU based method.
+   * @deprecated Since 3.1, threshold doesn't affect picking because of new, GPU based method.
    */
   pointIntersectionThreshold?: number;
 }
