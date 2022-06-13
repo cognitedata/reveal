@@ -1,6 +1,6 @@
 import * as React from 'react';
 import CustomInfo from './CustomInfo';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'common/i18n';
 
 export const AccessConfigurationWarning = () => {
   const { t } = useTranslation();
