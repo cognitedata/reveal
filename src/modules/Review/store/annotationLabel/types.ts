@@ -1,6 +1,7 @@
 import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { PredefinedVisionAnnotations, Tool } from 'src/modules/Review/types';
 
+/** @deprecated */
 export type KeyPointState = {
   id: string;
   caption: string;
@@ -16,6 +17,7 @@ type KeypointCollectionState = {
   status: AnnotationStatus;
 };
 
+/** @deprecated */
 export type AnnotationLabelState = {
   predefinedAnnotations: PredefinedVisionAnnotations;
   collections: {
