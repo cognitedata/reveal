@@ -1,41 +1,48 @@
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
-import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { AnnotationApiV1 } from 'src/api/annotation/AnnotationApiV1';
-import { validateAnnotationV1 } from 'src/api/annotation/utils';
 import { FileInfo } from '@cognite/sdk';
-import {
-  ANNOTATION_FETCH_BULK_SIZE,
-  FETCH_ANNOTATION_LIMIT,
-} from 'src/constants/FetchConstants';
+import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
 import { splitListIntoChunks } from 'src/utils/generalUtils';
-import { CDFAnnotationV1 } from './types';
+import {
+  AnnotationFilterRequest,
+  AnnotationStatus,
+} from '@cognite/sdk-playground';
+import { cognitePlaygroundClient } from 'src/api/annotation/CognitePlaygroundClient';
+import { convertCDFAnnotationToVisionAnnotations } from './converters';
 
 const getAnnotations = async (
   annotationLabelOrText?: string,
   annotationState?: string,
   fileIds?: number[]
 ) => {
-  const filterPayload: any = {
-    annotatedResourceType: 'file',
-    text: annotationLabelOrText,
-    status: annotationState,
-    annotatedResourceIds: fileIds && fileIds.map((id) => ({ id })),
+  const baseFilterPayload: AnnotationFilterRequest = {
+    filter: {
+      annotatedResourceType: 'file',
+      annotatedResourceIds: fileIds?.map((id) => ({ id })) || [],
+      status: annotationState as AnnotationStatus,
+    },
+    limit: 1000,
   };
-  const annotationListRequest = {
-    limit: FETCH_ANNOTATION_LIMIT,
-    filter: filterPayload,
-  };
-  const annotations = await AnnotationApiV1.list(annotationListRequest);
 
-  const validAnnotations = annotations.filter((annotation: CDFAnnotationV1) => {
-    try {
-      return validateAnnotationV1(annotation);
-    } catch (error) {
-      return false;
-    }
-  });
+  const fieldsToFilterBy = annotationLabelOrText
+    ? ['label', 'text']
+    : [undefined];
+  const annotations = await Promise.all(
+    fieldsToFilterBy.map(async (field?: string) => {
+      const filterPayload = { ...baseFilterPayload };
+      if (field) {
+        filterPayload.filter.data = { [field]: annotationLabelOrText };
+      }
+      return cognitePlaygroundClient.annotations
+        .list(filterPayload)
+        .autoPagingToArray({ limit: Infinity });
+    })
+  );
 
-  return AnnotationUtilsV1.convertToVisionAnnotationsV1(validAnnotations);
+  const visionAnnotations = convertCDFAnnotationToVisionAnnotations(
+    annotations.flat()
+  );
+
+  return visionAnnotations;
 };
 
 export const fileFilterByAnnotation = async (

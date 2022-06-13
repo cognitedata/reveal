@@ -1,6 +1,5 @@
 import {
   AnnotatedResourceId,
-  CDFAnnotationStatus,
   CDFAnnotationType,
   CDFAnnotationTypeEnum,
   CDFAnnotationV1,
@@ -27,11 +26,7 @@ import {
   isPolyline,
   isTextAnnotation,
 } from 'src/api/annotation/typeGuards';
-import {
-  AnnotationModel,
-  AnnotationPayload,
-  AnnotationType,
-} from '@cognite/sdk-playground';
+import { AnnotationModel, AnnotationPayload } from '@cognite/sdk-playground';
 import {
   validBoundingBox,
   validImageAssetLink,
@@ -262,41 +257,21 @@ export function convertCDFAnnotationV1ToVisionAnnotation(
   return null;
 }
 
-const convertCDFAnnotationStatusToStatus = (
-  status: CDFAnnotationStatus
-): Status | undefined => {
-  switch (status) {
-    case 'suggested':
-      return Status.Suggested;
-    case 'approved':
-      return Status.Approved;
-    case 'rejected':
-      return Status.Rejected;
-    default:
-      return undefined;
-  }
-};
-const convertCDFAnnotationTypeToAnnotationType = (
-  annotationType: AnnotationType
-): CDFAnnotationTypeEnum | undefined => {
-  if (annotationType in Object.values(CDFAnnotationTypeEnum)) {
-    return annotationType as CDFAnnotationTypeEnum;
-  }
-  return undefined;
-};
-
 export const convertCDFAnnotationToVisionAnnotations = (
   annotations: AnnotationModel[]
 ): VisionAnnotation<VisionAnnotationDataType>[] =>
   annotations.reduce<VisionAnnotation<VisionAnnotationDataType>[]>(
     (ann, nextAnnotation) => {
-      const status = convertCDFAnnotationStatusToStatus(nextAnnotation.status);
-      const annotationType = convertCDFAnnotationTypeToAnnotationType(
-        nextAnnotation.annotationType
-      );
+      const status = nextAnnotation.status as Status;
+      const annotationType =
+        nextAnnotation.annotationType as CDFAnnotationType<VisionAnnotationDataType>;
 
       // if CDF annotation has valid status and annotation type
-      if (status && annotationType) {
+      if (
+        status &&
+        annotationType &&
+        Object.values(CDFAnnotationTypeEnum).includes(annotationType)
+      ) {
         const cdfInheritedFields: CDFInheritedFields<VisionAnnotationDataType> =
           {
             id: nextAnnotation.id,

@@ -2,9 +2,9 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { InternalId } from '@cognite/sdk';
-import { useCognitePlaygroundClient } from 'src/hooks/useCognitePlaygroundClient';
 import { AnnotationFilterRequest } from '@cognite/sdk-playground';
 import { ANNOTATED_RESOURCE_TYPE } from 'src/constants/annotationMetadata';
+import { cognitePlaygroundClient } from 'src/api/annotation/CognitePlaygroundClient';
 
 const BATCH_SIZE = 10;
 
@@ -25,8 +25,6 @@ export const DeleteAnnotationsForDeletedFiles = createAsyncThunk<
   InternalId[],
   ThunkConfig
 >('DeleteAnnotationsForDeletedFiles', async (fileIds, { dispatch }) => {
-  const sdk = useCognitePlaygroundClient();
-
   const batchFileIdsList: InternalId[][] = fileIds.reduce((acc, _, i) => {
     if (i % BATCH_SIZE === 0) {
       acc.push(fileIds.slice(i, i + BATCH_SIZE));
@@ -43,7 +41,7 @@ export const DeleteAnnotationsForDeletedFiles = createAsyncThunk<
       limit: -1,
     };
 
-    const annotationPromise = sdk.annotations.list(filter);
+    const annotationPromise = cognitePlaygroundClient.annotations.list(filter);
     return annotationPromise;
   });
 

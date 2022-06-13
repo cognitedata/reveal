@@ -13,9 +13,9 @@ import {
 } from 'src/modules/FilterSidePanel/types';
 
 const annotationStateOptions: { [key: string]: string } = {
-  verified: 'True (verified annotations)',
+  approved: 'True (verified annotations)',
   rejected: 'False (rejected annotations)',
-  unhandled: 'Unhandled (unreviewed annotations)',
+  suggested: 'Unhandled (suggested annotations)',
 };
 
 export const AnnotationFilter = ({

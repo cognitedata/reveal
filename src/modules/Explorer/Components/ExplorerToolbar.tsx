@@ -79,7 +79,7 @@ export const ExplorerToolbar = ({
           {visionAutoMLEnabled && (
             <Button
               style={{ marginLeft: 14 }}
-              icon="ArrowRight"
+              icon="ArrowForward"
               type="tertiary"
               iconPlacement="right"
               onClick={onAutoMLModelPage}

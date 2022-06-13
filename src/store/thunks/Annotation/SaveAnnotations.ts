@@ -6,20 +6,18 @@ import {
   VisionAnnotationDataType,
   UnsavedVisionAnnotation,
 } from 'src/modules/Common/types';
-import { useCognitePlaygroundClient } from 'src/hooks/useCognitePlaygroundClient';
 import {
   ANNOTATED_RESOURCE_TYPE,
   CREATING_APP,
   CREATING_APP_VERSION,
 } from 'src/constants/annotationMetadata';
+import { cognitePlaygroundClient } from 'src/api/annotation/CognitePlaygroundClient';
 
 export const SaveAnnotations = createAsyncThunk<
   VisionAnnotation<VisionAnnotationDataType>[],
   UnsavedVisionAnnotation<VisionAnnotationDataType>[],
   ThunkConfig
 >('SaveAnnotations', async (unsavedAnnotations) => {
-  const sdk = useCognitePlaygroundClient();
-
   const items = unsavedAnnotations.map((item) => {
     return {
       ...item,
@@ -31,7 +29,7 @@ export const SaveAnnotations = createAsyncThunk<
   });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const annotations = await sdk.annotations.create(items);
+  const annotations = await cognitePlaygroundClient.annotations.create(items);
 
   const visionAnnotations: VisionAnnotation<VisionAnnotationDataType>[] = [];
   // visionAnnotations = annotations.map((annotations) =>
