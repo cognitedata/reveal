@@ -1016,10 +1016,8 @@ export class Cognite3DViewer {
    *   );
    * ```
    */
-  async getIntersectionFromPixel(
-    offsetX: number,
-    offsetY: number): Promise<null | Intersection>;
-  /** 
+  async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
+  /**
    * @deprecated Since 3.1 options argument have no effect.
    * */
   async getIntersectionFromPixel(
@@ -1027,6 +1025,12 @@ export class Cognite3DViewer {
     offsetY: number,
     options: IntersectionFromPixelOptions
   ): Promise<null | Intersection>;
+  /**
+   * Implementation of getIntersectionFromPixel.
+   * @param offsetX
+   * @param offsetY
+   * @param options
+   */
   async getIntersectionFromPixel(
     offsetX: number,
     offsetY: number,
