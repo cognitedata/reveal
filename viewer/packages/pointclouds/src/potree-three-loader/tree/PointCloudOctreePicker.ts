@@ -296,7 +296,7 @@ export class PointCloudOctreePicker {
         pixels[4 * offset + 3] = 0;
         const pIndex = ibuffer[offset];
 
-        if (pcIndex !== 255 && screenDistance < minScreen) {
+        if (pcIndex > 0 && pcIndex !== 255 && screenDistance < minScreen) {
           const points = nodes[pcIndex - 1]?.node.sceneNode;
           this.helperVec3
             .fromBufferAttribute(points.geometry.attributes['position'], pIndex)
