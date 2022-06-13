@@ -10,6 +10,7 @@ import { useRouteMatch } from 'react-router';
 import { useAuthConfiguration } from 'hooks';
 import { StyledHelpIcon } from 'pages/components/CustomInfo';
 import styled from 'styled-components';
+import { OIDCConfigurationWarning } from 'pages/components/OIDCConfigurationWarning';
 import { TranslationKeys, useTranslation } from 'common/i18n';
 
 const formItemLayout = {
@@ -129,125 +130,128 @@ export default function OIDCConfigContainer() {
   }
 
   return (
-    <Form
-      {...formItemLayout}
-      onFinish={handleSubmit}
-      initialValues={{
-        ...projectSettings?.oidcConfiguration,
-        accessClaims: projectSettings?.oidcConfiguration?.accessClaims?.map(
-          (o) => o.claimName
-        ),
-        scopeClaims: projectSettings?.oidcConfiguration?.scopeClaims?.map(
-          (o) => o.claimName
-        ),
-        logClaims: projectSettings?.oidcConfiguration?.logClaims?.map(
-          (o) => o.claimName
-        ),
-        isOidcEnabled: authConfiguration?.isOidcEnabled,
-        isGroupCallbackEnabled: (
-          projectSettings?.oidcConfiguration as OidcConfiguration & {
-            isGroupCallbackEnabled?: boolean;
+    <>
+      <OIDCConfigurationWarning />
+      <Form
+        {...formItemLayout}
+        onFinish={handleSubmit}
+        initialValues={{
+          ...projectSettings?.oidcConfiguration,
+          accessClaims: projectSettings?.oidcConfiguration?.accessClaims?.map(
+            (o) => o.claimName
+          ),
+          scopeClaims: projectSettings?.oidcConfiguration?.scopeClaims?.map(
+            (o) => o.claimName
+          ),
+          logClaims: projectSettings?.oidcConfiguration?.logClaims?.map(
+            (o) => o.claimName
+          ),
+          isOidcEnabled: authConfiguration?.isOidcEnabled,
+          isGroupCallbackEnabled: (
+            projectSettings?.oidcConfiguration as OidcConfiguration & {
+              isGroupCallbackEnabled?: boolean;
+            }
+          )?.isGroupCallbackEnabled,
+        }}
+      >
+        <Form.Item
+          name="isOidcEnabled"
+          label={t('enabled')}
+          valuePropName="checked"
+        >
+          <Checkbox disabled={updating} />
+        </Form.Item>
+
+        <Form.Item
+          label={t('jwks-url')}
+          name="jwksUrl"
+          hasFeedback
+          rules={urlRules(t)}
+        >
+          <Input disabled={updating} />
+        </Form.Item>
+
+        <Form.Item
+          label={t('token-url')}
+          name="tokenUrl"
+          required={false}
+          hasFeedback
+          rules={urlRules(t, false)}
+        >
+          <Input disabled={updating} />
+        </Form.Item>
+
+        <Form.Item
+          label={t('issuer')}
+          name="issuer"
+          hasFeedback
+          rules={urlRules(t)}
+        >
+          <Input disabled={updating} />
+        </Form.Item>
+
+        <Form.Item
+          label={t('audience')}
+          name="audience"
+          hasFeedback
+          rules={urlRules(t)}
+        >
+          <Input disabled={updating} />
+        </Form.Item>
+
+        <Form.Item label={t('access-claims')} name="accessClaims" required>
+          <Select
+            getPopupContainer={getContainer}
+            mode="tags"
+            tokenSeparators={[',', ' ']}
+            disabled={updating}
+          />
+        </Form.Item>
+
+        <Form.Item label={t('scope-claims')} name="scopeClaims">
+          <Select
+            mode="tags"
+            tokenSeparators={[',', ' ']}
+            getPopupContainer={getContainer}
+            disabled={updating}
+          />
+        </Form.Item>
+
+        <Form.Item label={t('log-claims')} name="logClaims">
+          <Select
+            mode="tags"
+            tokenSeparators={[',', ' ']}
+            getPopupContainer={getContainer}
+            disabled={updating}
+          />
+        </Form.Item>
+
+        <Form.Item label={t('permitted-time-skew')} name="skewMs">
+          <InputNumber min={0} disabled={updating} />
+        </Form.Item>
+
+        <Form.Item
+          label={
+            <StyledFormItemLabel>
+              {t('group-callback-enabled')}
+              <Tooltip content={t('group-callback-enabled-info')} wrapped>
+                <StyledHelpIcon size={20} type="HelpFilled" />
+              </Tooltip>
+            </StyledFormItemLabel>
           }
-        )?.isGroupCallbackEnabled,
-      }}
-    >
-      <Form.Item
-        name="isOidcEnabled"
-        label={t('enabled')}
-        valuePropName="checked"
-      >
-        <Checkbox disabled={updating} />
-      </Form.Item>
+          name="isGroupCallbackEnabled"
+          valuePropName="checked"
+        >
+          <Checkbox disabled={updating} />
+        </Form.Item>
 
-      <Form.Item
-        label={t('jwks-url')}
-        name="jwksUrl"
-        hasFeedback
-        rules={urlRules(t)}
-      >
-        <Input disabled={updating} />
-      </Form.Item>
-
-      <Form.Item
-        label={t('token-url')}
-        name="tokenUrl"
-        required={false}
-        hasFeedback
-        rules={urlRules(t, false)}
-      >
-        <Input disabled={updating} />
-      </Form.Item>
-
-      <Form.Item
-        label={t('issuer')}
-        name="issuer"
-        hasFeedback
-        rules={urlRules(t)}
-      >
-        <Input disabled={updating} />
-      </Form.Item>
-
-      <Form.Item
-        label={t('audience')}
-        name="audience"
-        hasFeedback
-        rules={urlRules(t)}
-      >
-        <Input disabled={updating} />
-      </Form.Item>
-
-      <Form.Item label={t('access-claims')} name="accessClaims" required>
-        <Select
-          getPopupContainer={getContainer}
-          mode="tags"
-          tokenSeparators={[',', ' ']}
-          disabled={updating}
-        />
-      </Form.Item>
-
-      <Form.Item label={t('scope-claims')} name="scopeClaims">
-        <Select
-          mode="tags"
-          tokenSeparators={[',', ' ']}
-          getPopupContainer={getContainer}
-          disabled={updating}
-        />
-      </Form.Item>
-
-      <Form.Item label={t('log-claims')} name="logClaims">
-        <Select
-          mode="tags"
-          tokenSeparators={[',', ' ']}
-          getPopupContainer={getContainer}
-          disabled={updating}
-        />
-      </Form.Item>
-
-      <Form.Item label={t('permitted-time-skew')} name="skewMs">
-        <InputNumber min={0} disabled={updating} />
-      </Form.Item>
-
-      <Form.Item
-        label={
-          <StyledFormItemLabel>
-            {t('group-callback-enabled')}
-            <Tooltip content={t('group-callback-enabled-info')} wrapped>
-              <StyledHelpIcon size={20} type="HelpFilled" />
-            </Tooltip>
-          </StyledFormItemLabel>
-        }
-        name="isGroupCallbackEnabled"
-        valuePropName="checked"
-      >
-        <Checkbox disabled={updating} />
-      </Form.Item>
-
-      <Form.Item {...noLabelItemLayout}>
-        <Button type="primary" htmlType="submit" disabled={updating}>
-          {t('save-configuration')}
-        </Button>
-      </Form.Item>
-    </Form>
+        <Form.Item {...noLabelItemLayout}>
+          <Button type="primary" htmlType="submit" disabled={updating}>
+            {t('save-configuration')}
+          </Button>
+        </Form.Item>
+      </Form>
+    </>
   );
 }
 

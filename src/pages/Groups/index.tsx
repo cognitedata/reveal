@@ -31,6 +31,7 @@ import { getFlow } from '@cognite/cdf-sdk-singleton';
 import GroupDrawer from './GroupDrawer';
 import CapabilityTag from './CapabilityTag';
 import { isDeprecated, stringContains } from './utils';
+import { AccessConfigurationWarning } from 'pages/components/AccessConfigurationWarning';
 import { useTranslation } from 'common/i18n';
 
 const { Text } = Typography;
@@ -282,6 +283,7 @@ export default function Groups() {
 
   return (
     <>
+      <AccessConfigurationWarning />
       {!authSettings?.isLegacyLoginFlowAndApiKeysEnabled &&
       serviceAccounts?.length ? (
         <LegacyServiceAccountsWarning accounts={serviceAccounts} />

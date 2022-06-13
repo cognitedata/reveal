@@ -6,6 +6,7 @@ import { Col, Form, Input, Modal, Row, Table, notification } from 'antd';
 import { getContainer } from 'utils/utils';
 import columns from './columns';
 import { stringContains } from '../Groups/utils';
+import { AccessConfigurationWarning } from 'pages/components/AccessConfigurationWarning';
 import { useTranslation } from 'common/i18n';
 
 export default function SecurityCategories() {
@@ -48,6 +49,7 @@ export default function SecurityCategories() {
 
   return (
     <>
+      <AccessConfigurationWarning />
       {showModal && (
         <Modal
           visible
