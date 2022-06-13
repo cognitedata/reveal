@@ -46,7 +46,7 @@ const TimeSelector = ({ onChange, value }: TimeSelectorProps) => {
     if (valueString !== inputValue) {
       setInputValue(valueString);
     }
-    // Only needs to update when valueString chages
+    // Only needs to update when valueString changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [valueString]);
 

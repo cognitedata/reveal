@@ -135,16 +135,10 @@ export const ChartActions = () => {
     });
   };
 
-  const handleDateChange = ({
-    dateFrom,
-    dateTo,
-  }: {
-    dateFrom?: Date;
-    dateTo?: Date;
-  }) => {
-    if (dateFrom || dateTo) {
+  const handleDateChange = (startDate: Date, endDate: Date) => {
+    if (startDate || endDate) {
       setChart((oldChart: any) =>
-        updateChartDateRange(oldChart!, dateFrom, dateTo)
+        updateChartDateRange(oldChart!, startDate, endDate)
       );
       trackUsage('ChartView.DateChange', { source: 'daterange' });
     }
@@ -205,7 +199,7 @@ export const ChartActions = () => {
         translations={CSVModalTranslations}
         dateFrom={new Date(chart.dateFrom)}
         dateTo={new Date(chart.dateTo)}
-        handleDateChange={handleDateChange}
+        onDateChange={handleDateChange}
       />
     </div>
   );

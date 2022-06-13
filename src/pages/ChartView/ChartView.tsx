@@ -380,16 +380,10 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     trackUsage('ChartView.AddCalculation');
   }, [chart, setChart, openNodeEditor, setSelectedSourceId]);
 
-  const handleDateChange = ({
-    dateFrom,
-    dateTo,
-  }: {
-    dateFrom?: Date;
-    dateTo?: Date;
-  }) => {
-    if (dateFrom || dateTo) {
+  const handleDateChange = (startDate: Date, endDate: Date) => {
+    if (startDate || endDate) {
       setChart((oldChart: any) =>
-        updateChartDateRange(oldChart!, dateFrom, dateTo)
+        updateChartDateRange(oldChart!, startDate, endDate)
       );
     }
   };

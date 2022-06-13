@@ -10,10 +10,8 @@ import {
   Menu,
   Switch,
 } from '@cognite/cogs.js';
-
-import DateRangeSelector from 'components/DateRangeSelector/DateRangeSelector';
-import TimePeriodSelector from 'components/TimePeriodSelector/TimePeriodSelector';
 import { ComponentProps } from 'react';
+import DateTimePicker from 'components/DateTime/DateTimePicker';
 import { makeDefaultTranslations } from 'utils/translations';
 import {
   Header,
@@ -67,9 +65,7 @@ type Props = {
   handleClickNewWorkflow: (diff: any) => void;
   handleImportCalculationsClick: (diff: any) => void;
   handleSettingsToggle: (str: string, val: boolean) => void;
-  handleDateChange: ComponentProps<
-    typeof DateRangeSelector
-  >['handleDateChange'];
+  handleDateChange: ComponentProps<typeof DateTimePicker>['onChange'];
   translations?: typeof defaultTranslations;
 };
 
@@ -234,17 +230,12 @@ const ChartViewHeader = ({
         <Divider />
         <RangeWrapper>
           <RangeColumn>
-            <TimePeriodSelector
-              dateFrom={dateFrom}
-              dateTo={dateTo}
-              handleDateChange={handleDateChange}
-            />
-          </RangeColumn>
-          <RangeColumn>
-            <DateRangeSelector
-              dateFrom={dateFrom}
-              dateTo={dateTo}
-              handleDateChange={handleDateChange}
+            <DateTimePicker
+              range={{
+                startDate: dateFrom,
+                endDate: dateTo,
+              }}
+              onChange={handleDateChange}
             />
           </RangeColumn>
         </RangeWrapper>
