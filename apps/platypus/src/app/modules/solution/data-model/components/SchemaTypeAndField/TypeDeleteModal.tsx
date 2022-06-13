@@ -18,8 +18,8 @@ export const TypeDeleteModal = ({
   const { t } = useTranslation('type_modal');
 
   const onDeleteType = () => {
-    onOk(typeValue);
     closeModal();
+    onOk(typeValue);
   };
 
   return (

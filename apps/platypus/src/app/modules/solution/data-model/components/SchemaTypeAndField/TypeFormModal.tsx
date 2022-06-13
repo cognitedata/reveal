@@ -58,11 +58,11 @@ export const TypeFormModal = ({
 
   const onSubmit: SubmitHandler<FormInput> = (data) => {
     if (data.typeName) {
+      closeModal();
       onOk(data.typeName);
       reset({
         typeName: '',
       });
-      closeModal();
     }
   };
   return (

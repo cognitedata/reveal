@@ -32,6 +32,7 @@ export const CreateSolution = ({
         description: solutionDescription,
       })
       .then((result) => {
+        setCreating(false);
         if (result.isFailure) {
           if (result.error.name) {
             setInputError(true);
@@ -53,7 +54,6 @@ export const CreateSolution = ({
             `solutions/${result.getValue().id}/${DEFAULT_VERSION_PATH}`
           );
         }
-        setCreating(false);
       });
   };
 

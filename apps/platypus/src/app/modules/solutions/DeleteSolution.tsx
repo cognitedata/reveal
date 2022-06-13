@@ -28,6 +28,7 @@ export const DeleteSolution = ({
   const onDeleteSolution = (solutionId: string) => {
     setDeleting(true);
     solutionsHandler.delete({ id: solutionId }).then((result) => {
+      setDeleting(false);
       if (result.error) {
         Notification({
           type: 'error',
@@ -49,7 +50,6 @@ export const DeleteSolution = ({
         onCancel();
         onAfterDeleting();
       }
-      setDeleting(false);
     });
   };
 
