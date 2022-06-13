@@ -70,6 +70,7 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
       };
 
     case DataPanelActionType.SET_ACTIVE_DETECTION:
+      if (state.activeDetection?.id === action.detection.id) return state;
       return {
         ...state,
         activeDetection: action.detection,

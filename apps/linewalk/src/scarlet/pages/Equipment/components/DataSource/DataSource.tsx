@@ -193,6 +193,7 @@ export const DataSource = ({
 
   useEffect(() => {
     if (focused) {
+      onFocus();
       const focusId = isExternalSource && isDraft ? externalSourceId : inputId;
       document.getElementById(focusId)?.focus();
     }
