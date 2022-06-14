@@ -11,7 +11,7 @@ import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from './p
 
 import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
 
-import { DefaultPointCloudAppearance, fillPartialPointCloudAppearance, PointCloudAppearance } from './styling/PointCloudAppearance';
+import { fillPartialPointCloudAppearance, PointCloudAppearance } from './styling/PointCloudAppearance';
 import { StylablePointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
 import { StylableObjectCollection } from './styling/PointCloudObjectCollection';
 import { AnnotationMetadata } from './annotationTypes';
@@ -241,8 +241,10 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   /**
    * Assign a style to a collection of objects
    */
-  assignStyledObjectCollection(objectCollection: StylableObjectCollection, appearance: Partial<PointCloudAppearance>): void {
-
+  assignStyledObjectCollection(
+    objectCollection: StylableObjectCollection,
+    appearance: Partial<PointCloudAppearance>
+  ): void {
     const fullAppearance: PointCloudAppearance = fillPartialPointCloudAppearance(appearance);
     const index = this._styledObjectCollections.findIndex(x => x.objectCollection === objectCollection);
     if (index !== -1) {

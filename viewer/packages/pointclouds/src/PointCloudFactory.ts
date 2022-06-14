@@ -66,7 +66,7 @@ export class PointCloudFactory {
 
       return {
         annotationId: annotation.id,
-        assetId: annotation.linkedResourceId,
+        assetId: annotation.annotatedResourceId,
         region
       } as CdfPointCloudObjectAnnotation;
     });

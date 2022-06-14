@@ -235,7 +235,6 @@ export class Cognite3DViewer {
       );
     } else if (options.customDataSource !== undefined) {
       this._dataSource = options.customDataSource;
-      console.log("Creating reveal manager using options: ", options);
       this._revealManagerHelper = RevealManagerHelper.createCustomDataSourceHelper(
         this._renderer,
         this._sceneHandler,

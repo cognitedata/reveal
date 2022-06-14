@@ -6,7 +6,9 @@ import { Cylinder } from './Cylinder';
 
 describe(Cylinder.name, () => {
   test('constructing cylinder does not throw', () => {
-    expect(() => { new Cylinder([0, 0, 0], [0, 1, 0], 1) }).not.toThrow();
+    expect(() => {
+      new Cylinder([0, 0, 0], [0, 1, 0], 1);
+    }).not.toThrow();
   });
 
   test('origin is within cylinder at origin', () => {

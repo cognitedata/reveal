@@ -35,6 +35,7 @@ import { CogniteClientPlayground } from '@cognite/sdk-playground';
  * @param renderer
  * @param sceneHandler
  * @param revealOptions
+ * @param sdkClientPlayground
  * @returns RevealManager instance.
  */
 export function createLocalRevealManager(

@@ -17,9 +17,10 @@ function createIdentityMatrix(): Mat4 {
 }
 
 describe(Box.name, () => {
-
   test('constructing box does not throw error', () => {
-    expect(() => { new Box(createIdentityMatrix()); }).not.toThrow();
+    expect(() => {
+      new Box(createIdentityMatrix());
+    }).not.toThrow();
   });
 
   test('origin is within identity box', () => {
