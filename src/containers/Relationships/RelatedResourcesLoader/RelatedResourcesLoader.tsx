@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
-import { Icon } from '@cognite/cogs.js';
-import { Loader, SpacedRow, TableProps } from 'components';
+import { Flex, Icon } from '@cognite/cogs.js';
+import { Loader, Select, SpacedRow, TableProps } from 'components';
 import { SelectableItemsProps } from 'CommonProps';
-import { ResourceType, ResourceItem } from 'types';
+import { ResourceType, ResourceItem, RelationshipLabels } from 'types';
 import {
   FileInfo,
   Asset,
@@ -10,10 +10,12 @@ import {
   Timeseries,
   Sequence,
 } from '@cognite/sdk';
+import { OptionsType, OptionTypeBase } from 'react-select';
 import {
   RelatedResourceType,
   useRelatedResourceResults,
 } from 'hooks/RelatedResourcesHooks';
+import styled from 'styled-components';
 
 type Resource = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
@@ -44,6 +46,9 @@ export const RelatedResourcesLoader = <T extends Resource>({
     isIdle,
     isFetching,
     items,
+    relationshipLabelOptions,
+    onChangeLabelValue,
+    labelValue,
   } = useRelatedResourceResults<T>(relatedResourceType, type, parentResource);
 
   const selectedIds = useMemo(
@@ -60,6 +65,34 @@ export const RelatedResourcesLoader = <T extends Resource>({
 
   return (
     <>
+      <Flex alignItems="center">
+        <h4>Relationship Labels:</h4>
+        <SelectWrapper>
+          <Select
+            creatable
+            options={relationshipLabelOptions.map(option => ({
+              label: option,
+              value: option,
+            }))}
+            onChange={newValue => {
+              onChangeLabelValue(
+                newValue
+                  ? (newValue as OptionsType<OptionTypeBase>).map(
+                      el => el.value
+                    )
+                  : undefined
+              );
+            }}
+            value={labelValue?.map(el => ({
+              label: el.externalId,
+              value: el.externalId,
+            }))}
+            isMulti
+            isSearchable
+            isClearable
+          />
+        </SelectWrapper>
+      </Flex>
       {children({
         ...props,
         onEndReached: () => {
@@ -83,3 +116,8 @@ export const RelatedResourcesLoader = <T extends Resource>({
     </>
   );
 };
+
+const SelectWrapper = styled.div`
+  width: 225px;
+  margin: 20px;
+`;

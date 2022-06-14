@@ -8,7 +8,7 @@ import {
 } from '@cognite/sdk-react-query-hooks';
 import { ResourceType, ResourceItem, convertResourceType } from 'types';
 import { formatNumber } from 'utils/numbers';
-import { useContext, useMemo } from 'react';
+import { useEffect, useContext, useMemo, useState } from 'react';
 import {
   ExternalId,
   Asset,
@@ -17,6 +17,7 @@ import {
   Timeseries,
   FileInfo,
 } from '@cognite/sdk';
+import flatten from 'lodash/flatten';
 import {
   annotationInteralIdFilter,
   annotationExternalIdFilter,
@@ -42,6 +43,8 @@ export type Relationship = {
     externalId: string;
   }[];
 };
+
+export type RelationshipTypeLabels = { externalId: string }[];
 
 const extractRelationshipLabels = (
   pages: { items: Relationship[] }[] = []
@@ -117,6 +120,19 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
   enabled: boolean = true
 ) => {
   const fetchEnabled = enabled && !!resourceExternalId;
+  const [labelValue, setLabelValue] = useState<
+    RelationshipTypeLabels | undefined
+  >();
+
+  const [selectOptions, setSelectOptions] = useState(new Set<string>());
+
+  const onChangeLabelValue = (labels?: string[]) => {
+    const newRelationshipFilters =
+      labels && labels.length > 0
+        ? labels.map(externalId => ({ externalId }))
+        : undefined;
+    setLabelValue(newRelationshipFilters);
+  };
 
   const extractExternalIds = (
     pages: { items: Relationship[] }[] = [],
@@ -151,7 +167,15 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
     // @ts-ignore
     'relationships',
     PAGE_SIZE,
-    { sourceExternalIds: [resourceExternalId], targetTypes: [type] },
+    {
+      sourceExternalIds: [resourceExternalId],
+      targetTypes: [type],
+      ...(labelValue && {
+        labels: {
+          containsAny: labelValue,
+        },
+      }),
+    },
     { enabled: fetchEnabled, staleTime: 60 * 1000 }
   );
 
@@ -175,7 +199,15 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
     // @ts-ignore
     'relationships',
     PAGE_SIZE,
-    { targetExternalIds: [resourceExternalId], sourceTypes: [type] },
+    {
+      targetExternalIds: [resourceExternalId],
+      sourceTypes: [type],
+      ...(labelValue && {
+        labels: {
+          containsAny: labelValue,
+        },
+      }),
+    },
     {
       enabled: fetchEnabled && fetchTarget,
       staleTime: 60 * 1000,
@@ -187,6 +219,7 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
     () => extractExternalIds(targetData?.pages, 'target'),
     [targetData]
   );
+
   const { data: targetResources = [] } = useCdfItems<T>(
     convertResourceType(type!),
     targetItems,
@@ -214,11 +247,25 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
       }),
     })
   );
+
+  useEffect(() => {
+    const options = new Set(
+      flatten([...targetRelationshipLabels, ...sourceRelationshipLabels])
+    );
+
+    setSelectOptions(prev => new Set([...prev, ...options]));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [targetRelationshipLabels.length, sourceRelationshipLabels.length]);
+
   return {
     items: [
       ...sourceResourcesWithRelationshipLabels,
       ...targetResourcesWithRelationshipLabels,
     ],
+    relationshipLabelOptions: Array.from(selectOptions),
+    onChangeLabelValue,
+    labelValue,
 
     ...rest,
   };
