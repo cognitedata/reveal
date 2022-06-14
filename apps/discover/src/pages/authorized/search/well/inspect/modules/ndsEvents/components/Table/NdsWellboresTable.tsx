@@ -3,7 +3,7 @@ import React from 'react';
 import { ViewButton } from 'components/Buttons';
 import { Table } from 'components/Tablev3';
 
-import { NdsView } from '../types';
+import { NdsView } from '../../types';
 
 import { useNdsWellboresTableColumns } from './columns/useNdsTableColumns';
 import { NdsTableProps } from './types';

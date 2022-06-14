@@ -103,7 +103,7 @@ export const generateNdsTreemapData = (
         totalNumberOfEvents
       )}%)`,
       value: data.numberOfEvents,
-      ndsEvents: groupedNdsEvents[data.id],
+      wellboreId: data.id,
     }));
 
     children = OtherNode ? [...realNodes, OtherNode] : realNodes;

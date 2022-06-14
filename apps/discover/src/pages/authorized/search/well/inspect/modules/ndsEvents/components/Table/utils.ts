@@ -2,7 +2,7 @@ import { sortObjectsAscending, sortObjectsDecending } from 'utils/sort';
 
 import { SortBy } from 'pages/types';
 
-import { NdsView } from '../types';
+import { NdsView } from '../../types';
 
 export const sortNdsEvents = (ndsEvents: NdsView[], sortBy: SortBy[]) => {
   const { id: accessor, desc } = sortBy[0];

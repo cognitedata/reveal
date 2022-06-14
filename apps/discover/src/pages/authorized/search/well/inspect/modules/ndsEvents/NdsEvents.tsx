@@ -11,12 +11,12 @@ import { useDeepMemo } from 'hooks/useDeep';
 
 import { ViewModeControl } from '../common/ViewModeControl';
 
+import { DetailedView } from './components/DetailedView';
+import { Filters } from './components/Filters';
+import { NdsTreemap } from './components/NdsTreemap';
+import { NdsTable } from './components/Table';
 import { EMPTY_APPLIED_FILTERS, NdsViewModes } from './constants';
-import { DetailedView } from './detailedView';
 import { FiltersBar } from './elements';
-import { Filters } from './filters';
-import { NdsTable } from './table';
-import { NdsTreemap } from './treemap';
 import { AppliedFilters, FilterValues, NdsView } from './types';
 import { useNdsData } from './useNdsData';
 import { generateNdsTreemapData } from './utils/generateNdsTreemapData';
@@ -29,6 +29,14 @@ const NdsEvents: React.FC = () => {
   const wellbores = useWellInspectSelectedWellbores();
 
   // state
+  const [selectedWellboreIndex, setSelectedWellboreIndex] = useState<
+    number | undefined
+  >(undefined);
+
+  const [selectedWellboreId, setSelectedWellboreId] = useState<
+    string | undefined
+  >(undefined);
+
   const [filteredData, setFilteredData] = useState<NdsView[]>(data);
   const [appliedFilters, setAppliedFilters] = useState<AppliedFilters>(
     EMPTY_APPLIED_FILTERS
@@ -36,7 +44,7 @@ const NdsEvents: React.FC = () => {
   const [selectedViewMode, setSelectedViewMode] = useState<NdsViewModes>(
     NdsViewModes.Treemap
   );
-  const [detailedViewNdsData, setDetailedViewNdsData] = useState<NdsView[]>();
+  const [detailedViewNdsData, setDetailedViewNdsData] = useState<NdsView[]>([]);
 
   const treemapData = useMemo(
     () => generateNdsTreemapData(wellbores, filteredData),
@@ -56,6 +64,22 @@ const NdsEvents: React.FC = () => {
     () => getNdsAggregateForWellbore(detailedViewNdsData || [], ndsAggregates),
     [detailedViewNdsData]
   );
+
+  useEffect(() => {
+    setSelectedWellboreIndex(
+      wellbores.findIndex(
+        (wellbore) => wellbore.matchingId === selectedWellboreId
+      )
+    );
+
+    setDetailedViewNdsData(
+      selectedWellboreId
+        ? data.filter(
+            (ndsEvent) => ndsEvent.wellboreMatchingId === selectedWellboreId
+          )
+        : []
+    );
+  }, [selectedWellboreId]);
 
   const handleChangeFilter = (
     filter: keyof AppliedFilters,
@@ -85,6 +109,20 @@ const NdsEvents: React.FC = () => {
     });
   }, [data, filtersData]);
 
+  const handlePreviousClick = () => {
+    const wellboreId = wellbores[(selectedWellboreIndex || 0) - 1]?.matchingId;
+    if (wellboreId) {
+      setSelectedWellboreId(wellboreId);
+    }
+  };
+
+  const handleNextClick = () => {
+    const wellboreId = wellbores[(selectedWellboreIndex || 0) + 1]?.matchingId;
+    if (wellboreId) {
+      setSelectedWellboreId(wellboreId);
+    }
+  };
+
   if (isEmpty(data)) {
     return <EmptyState isLoading={isLoading} />;
   }
@@ -106,7 +144,12 @@ const NdsEvents: React.FC = () => {
       </FiltersBar>
 
       {selectedViewMode === NdsViewModes.Treemap && (
-        <NdsTreemap data={treemapData} onClickTile={setDetailedViewNdsData} />
+        <NdsTreemap
+          data={treemapData}
+          onClickTile={(wellboreId) => {
+            setSelectedWellboreId(wellboreId);
+          }}
+        />
       )}
 
       {selectedViewMode === NdsViewModes.Table && (
@@ -114,10 +157,13 @@ const NdsEvents: React.FC = () => {
       )}
 
       <DetailedView
-        data={filteredData}
-        detailedViewNdsData={detailedViewNdsData}
-        setDetailedViewNdsData={setDetailedViewNdsData}
+        data={detailedViewNdsData}
         ndsAggregate={detailedViewNdsAggregate}
+        isPreviousButtonDisabled={selectedWellboreIndex === 0}
+        isNextButtonDisabled={selectedWellboreIndex === wellbores.length - 1}
+        onBackClick={() => setSelectedWellboreId(undefined)}
+        onPreviousClick={handlePreviousClick}
+        onNextClick={handleNextClick}
       />
     </>
   );

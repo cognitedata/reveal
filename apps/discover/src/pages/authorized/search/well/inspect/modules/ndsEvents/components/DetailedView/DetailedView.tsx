@@ -3,17 +3,17 @@ import React, { useEffect, useMemo, useState } from 'react';
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
 
+import { NavigationPanel } from 'components/NavigationPanel';
 import { OverlayNavigation } from 'components/OverlayNavigation';
 
-import { ViewModeControl } from '../../common/ViewModeControl';
-import { WellboreNavigationPanel } from '../../common/WellboreNavigationPanel';
-import { EMPTY_APPLIED_FILTERS } from '../constants';
-import { Filters } from '../filters';
-import { NdsTreemap } from '../treemap';
-import { AppliedFilters, FilterValues, NdsView } from '../types';
-import { getFilteredNdsData } from '../utils/getFilteredNdsData';
-import { getRiskTypeTreemapData } from '../utils/getRiskTypeTreemapData';
-import { getSubtypeTreemapData } from '../utils/getSubtypeTreemapData';
+import { ViewModeControl } from '../../../common/ViewModeControl';
+import { EMPTY_APPLIED_FILTERS } from '../../constants';
+import { AppliedFilters, FilterValues, NdsView } from '../../types';
+import { getFilteredNdsData } from '../../utils/getFilteredNdsData';
+import { getRiskTypeTreemapData } from '../../utils/getRiskTypeTreemapData';
+import { getSubtypeTreemapData } from '../../utils/getSubtypeTreemapData';
+import { Filters } from '../Filters';
+import { NdsTreemap } from '../NdsTreemap';
 
 import { NdsDetailedViewModes } from './constants';
 import { DetailedViewContent, FiltersBar } from './elements';
@@ -21,13 +21,15 @@ import { DetailedViewTable } from './table';
 import { DetailedViewProps } from './types';
 
 export const DetailedView: React.FC<DetailedViewProps> = ({
-  data,
-  detailedViewNdsData = [],
-  setDetailedViewNdsData,
+  data = [],
   ndsAggregate,
+  isPreviousButtonDisabled,
+  isNextButtonDisabled,
+  onPreviousClick,
+  onNextClick,
+  onBackClick,
 }) => {
-  const [filteredData, setFilteredData] =
-    useState<NdsView[]>(detailedViewNdsData);
+  const [filteredData, setFilteredData] = useState<NdsView[]>(data);
 
   const [appliedFilters, setAppliedFilters] = useState<AppliedFilters>(
     EMPTY_APPLIED_FILTERS
@@ -35,9 +37,7 @@ export const DetailedView: React.FC<DetailedViewProps> = ({
   const [selectedViewMode, setSelectedViewMode] =
     useState<NdsDetailedViewModes>(NdsDetailedViewModes.RiskType);
 
-  const currentWellboreName = head(detailedViewNdsData)?.wellboreName;
-
-  const clearDetailedViewNdsData = () => setDetailedViewNdsData(undefined);
+  const currentWellbore = head(data);
 
   const riskTypeTreemapData = useMemo(
     () => getRiskTypeTreemapData(filteredData),
@@ -62,7 +62,7 @@ export const DetailedView: React.FC<DetailedViewProps> = ({
   useEffect(() => {
     const filteredData = getFilteredNdsData(data, appliedFilters);
     setFilteredData(filteredData);
-  }, [appliedFilters]);
+  }, [appliedFilters, data]);
 
   useEffect(() => {
     const { riskTypesAndSubtypes, severities, probabilities } = ndsAggregate;
@@ -74,13 +74,15 @@ export const DetailedView: React.FC<DetailedViewProps> = ({
   }, [data, ndsAggregate]);
 
   return (
-    <OverlayNavigation mount={!isEmpty(detailedViewNdsData)}>
-      <WellboreNavigationPanel
-        data={data}
-        currentWellboreName={currentWellboreName}
-        onClickBack={clearDetailedViewNdsData}
-        onNavigate={setDetailedViewNdsData}
-        onChangeData={setDetailedViewNdsData}
+    <OverlayNavigation mount={!isEmpty(data)}>
+      <NavigationPanel
+        title={currentWellbore?.wellboreName || ''}
+        subtitle={currentWellbore?.wellName || ''}
+        isPreviousButtonDisabled={isPreviousButtonDisabled}
+        isNextButtonDisabled={isNextButtonDisabled}
+        onPreviousClick={onPreviousClick}
+        onNextClick={onNextClick}
+        onBackClick={onBackClick}
       />
 
       <FiltersBar>

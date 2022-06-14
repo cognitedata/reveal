@@ -5,8 +5,6 @@ import { Table } from '@cognite/cogs.js';
 import { Modal } from 'components/Modal';
 import { Treemap, TreeMapData } from 'components/Treemap';
 
-import { NdsView } from '../types';
-
 import { WellboreTableWrapper } from './elements';
 import { NdsTreemapProps, NdsTreemapWellboreData } from './types';
 
@@ -19,12 +17,12 @@ export const NdsTreemap: React.FC<NdsTreemapProps> = ({
   >([]);
 
   const handleTileClicked = (treemapData: TreeMapData) => {
-    const { id, wellbores, ndsEvents } = treemapData;
+    const { id, wellbores, wellboreId } = treemapData;
 
     if (id === 'other') {
       setOtherWellbores(wellbores as NdsTreemapWellboreData[]);
     } else {
-      onClickTile?.(ndsEvents as NdsView[]);
+      onClickTile?.(wellboreId as string);
     }
   };
 

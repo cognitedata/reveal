@@ -5,8 +5,8 @@ import { useMemo } from 'react';
 import { ColumnType } from 'components/Tablev3';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
-import { Body2DefaultStrong } from '../../../common/Table/Body2DefaultStrong';
-import { NdsView } from '../../types';
+import { Body2DefaultStrong } from '../../../../common/Table/Body2DefaultStrong';
+import { NdsView } from '../../../types';
 
 import { getCommonColumns } from './getCommonColumns';
 

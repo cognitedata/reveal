@@ -2,7 +2,7 @@ import { OptionType } from '@cognite/cogs.js';
 
 import { MultiSelectOptionType } from 'components/Filters/MultiSelect/types';
 
-import { AppliedFilters, FilterValues } from '../types';
+import { AppliedFilters, FilterValues } from '../../types';
 
 export interface FiltersProps
   extends Pick<RiskTypeFilterProps, 'riskTypesAndSubtypes'>,

@@ -1,10 +1,8 @@
 import { TreeMapData } from 'components/Treemap';
 
-import { NdsView } from '../types';
-
 export interface NdsTreemapProps {
   data: TreeMapData;
-  onClickTile?: (detailedViewNdsData: NdsView[]) => void;
+  onClickTile?: (wellboreId: string) => void;
 }
 
 export interface NdsTreemapWellboreData {

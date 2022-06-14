@@ -5,8 +5,8 @@ import { getSeverityTableSort } from 'domain/wells/nds/internal/selectors/getSev
 import { ColumnType } from 'components/Tablev3';
 import { UserPreferredUnit } from 'constants/units';
 
-import { ValueLabel } from '../../../common/Table/ValueLabel';
-import { NdsView } from '../../types';
+import { ValueLabel } from '../../../../common/Table/ValueLabel';
+import { NdsView } from '../../../types';
 
 export const getCommonColumns = (
   unit: UserPreferredUnit

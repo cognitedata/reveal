@@ -100,7 +100,6 @@ export const getRiskTypeTreemapData = (
         totalNumberOfEvents
       )}%)`,
       value: data.numberOfEvents,
-      ndsEvents: groupedNdsEvents[data.name],
     }));
 
     children = OtherNode ? [...realNodes, OtherNode] : realNodes;

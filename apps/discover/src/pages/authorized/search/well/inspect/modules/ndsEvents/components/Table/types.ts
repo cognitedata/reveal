@@ -1,4 +1,4 @@
-import { NdsView } from '../types';
+import { NdsView } from '../../types';
 
 export interface NdsTableProps {
   data: NdsView[];
