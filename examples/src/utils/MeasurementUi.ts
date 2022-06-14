@@ -103,9 +103,6 @@ export class MeasurementUi {
     }
     const objects = {
       select: (mesh: Line2) => {
-        if (!this._selectedObject) {
-          this._selectedObject = new Line2();
-        }
         this._selectedObject = mesh;
         const material = mesh.material as LineMaterial;
         this._storedMaterial.copy(material);
