@@ -42,8 +42,8 @@ export class PointCloudFactory {
     }
 
     if (geometry.cylinder) {
-      const centerA = new THREE.Vector3().set(...(geometry.cylinder.centerA as [number, number, number]));
-      const centerB = new THREE.Vector3().set(...(geometry.cylinder.centerB as [number, number, number]));
+      const centerA = new THREE.Vector3().fromArray(geometry.cylinder.centerA);
+      const centerB = new THREE.Vector3().fromArray(geometry.cylinder.centerB);
       return new CylinderPrimitive(centerA, centerB, geometry.cylinder.radius);
     }
 
