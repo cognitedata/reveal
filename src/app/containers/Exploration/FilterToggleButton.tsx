@@ -1,7 +1,7 @@
 import React from 'react';
 import { Badge, Button } from 'antd';
 import { Icon } from '@cognite/cogs.js';
-import { isEmpty } from 'lodash';
+import { isEmpty, isBoolean } from 'lodash';
 import { useResourceFilter } from 'app/context/ResourceSelectionContext';
 import { useCurrentResourceType } from 'app/hooks';
 
@@ -13,7 +13,8 @@ export default function FilterToggleButton({
   const [resourceType] = useCurrentResourceType();
   const filter = useResourceFilter(resourceType);
   const count = filter
-    ? Object.values(filter).filter(f => !!f && !isEmpty(f)).length
+    ? Object.values(filter).filter(f => isBoolean(f) || (!!f && !isEmpty(f)))
+        .length
     : 0;
   return (
     <Badge count={count} style={{ zIndex: 2 }}>
