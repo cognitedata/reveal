@@ -1,5 +1,4 @@
 import {
-  AddModelOptions,
   CadIntersection,
   Cognite3DModel,
   Cognite3DViewer,
@@ -8,13 +7,6 @@ import {
   NumericRange,
   TreeIndexNodeCollection,
 } from '@cognite/reveal';
-
-export const projectModels: Record<string, AddModelOptions> = {
-  'atlas-greenfield': {
-    modelId: 3838447502587280,
-    revisionId: 8081245322726425,
-  },
-};
 
 export const updateStyledNodes = async (
   viewer: Cognite3DViewer | undefined,

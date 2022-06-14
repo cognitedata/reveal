@@ -1,0 +1,10 @@
+name,isBookable,externalId,description,building,type
+Kitchen,false,houston-kitchen-01,The kitchen in Cognite's Houston offices,cog-houston,Kitchen
+Lobby,false,tokyo-lobby-01,The lobby in Cognite's Tokyo offices,cog-tokyo,Lobby
+Super Mario,true,oslo-supermario-B407,The Super Mario meeting room (407) in the Oslo office,cog-oslo,Meeting room
+Sonic,true,oslo-sonic-B401,The Sonic meeting room (401) in the Oslo office,cog-oslo,Meeting room
+Captain Marvel,true,oslo-captain-marvel-B5259,The Captain Marvel meeting room (B5259) in the Oslo office,cog-oslo,Meeting room
+Black Panther,true,oslo-black-panther-B5264,The Black Panther meeting room (B5264) in the Oslo office,cog-oslo,Meeting room
+Super Mario,true,oslo-supermario-B401,The Super Mario meeting room (B401) in the Oslo office,cog-oslo,Meeting room
+Kitchen TV 6th Floor,true,oslo-kitchen-6,The 6th floor Kitchen in the Oslo office,cog-oslo,Kitchen
+Cognite Oslo Fifth Floor Desk Area,true,oslo-5th-floor,The 5th floor open seating area,cog-oslo,Seating Area

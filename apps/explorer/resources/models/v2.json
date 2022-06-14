@@ -1,0 +1,106 @@
+{
+  "items": [
+    {
+      "externalId": "Building",
+      "properties": {
+        "name": {
+          "type": "text",
+          "nullable": false
+        },
+        "description": {
+          "type": "text",
+          "nullable": true
+        },
+        "thumbnail": {
+          "type": "text",
+          "nullable": true
+        }
+      }
+    },
+    {
+      "externalId": "Room",
+      "properties": {
+        "type": {
+          "type": "text",
+          "nullable": false
+        },
+        "name": {
+          "type": "text",
+          "nullable": false
+        },
+        "description": {
+          "type": "text",
+          "nullable": true
+        },
+        "isBookable": {
+          "type": "boolean",
+          "nullable": true
+        },
+        "building": {
+          "type": "direct_relation",
+          "nullable": true,
+          "targetModel": ["Building"]
+        }
+      }
+    },
+    {
+      "externalId": "Equipment",
+      "properties": {
+        "name": {
+          "type": "text",
+          "nullable": false
+        },
+        "type": {
+          "type": "text",
+          "nullable": false
+        },
+        "isBroken": {
+          "type": "boolean",
+          "nullable": true
+        },
+        "room": {
+          "type": "direct_relation",
+          "nullable": true,
+          "targetModel": ["Room"]
+        },
+        "person": {
+          "type": "direct_relation",
+          "nullable": true,
+          "targetModel": ["Person"]
+        }
+      }
+    },
+    {
+      "externalId": "Person",
+      "properties": {
+        "name": {
+          "type": "text",
+          "nullable": false
+        },
+        "slackId": {
+          "type": "text",
+          "nullable": false
+        },
+        "desk": {
+          "type": "direct_relation",
+          "nullable": true,
+          "targetModel": ["Equipment"]
+        },
+        "team": {
+          "type": "direct_relation",
+          "nullable": true,
+          "targetModel": ["Team"]
+        }
+      }
+    },
+    {
+      "externalId": "Team",
+      "properties": {
+        "name": {
+          "type": "text",
+          "nullable": true
+        }
+      }
+    }
+  ]
+}

@@ -6,6 +6,6 @@ describe('App tests', () => {
 
   it('Check page content', () => {
     cy.log('Checking for page content');
-    cy.contains('What are you looking for?');
+    cy.contains('Error loading the 3D model');
   });
 });

@@ -1,0 +1,12 @@
+externalId,person,isBroken,room,name,type
+jabra-01,hakontromborg,true,oslo-supermario-401,Jabra Speak 510,Speaker
+desk-01,hakontromborg,false,oslo-5th-floor,Håkons desk,Desk
+desk-02,kristianaurlien,false,oslo-5th-floor,Kristians Desk,Desk
+desk-03,andreaskorneliussen,false,oslo-5th-floor,Andreas' Desk,Desk
+desk-04,brankodimitrijoski,false,oslo-5th-floor,Brankos Desk,Desk
+jabra02,francoislaboire,false,houston-kitchen-01,Jabra Speak 810,Speaker
+logitech-video-08,ryoichiegawa,false,tokyo-lobby-01,Logitech Rally Ultra-HG Conference Cam,Camera
+logitech-video-90,andreaskorneliussen,true,oslo-black-panther-B5264,Logitech Rally Ultra-HG Conference Cam,Camera
+logitech-meetup-01,kristianaurlien,false,tokyo-lobby-01,Logitech Meetup Video Conferencing,Camera
+jabra-panacast-ms,hakontromborg,true,oslo-captain-marvel-B5259,Jabra Panacast MS Video Conferencing System,Camera
+logitech-rally-plus,ryoichiegawa,false,oslo-sonic-B401,Logitech Rally Plus,Camera

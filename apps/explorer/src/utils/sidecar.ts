@@ -33,6 +33,8 @@ const getAadApplicationId = (cluster: string) => {
   };
 };
 
+type ExplorerConfig = SidecarConfig;
+
 // We are overwriting the window.__cogniteSidecar object because the tenant-selector
 // reads from this variable, so when you test on localhost, it (TSA) will not access via this file
 // but via the window.__cogniteSidecar global
@@ -48,7 +50,7 @@ const getAadApplicationId = (cluster: string) => {
   // to be used only locally as a sidecar placeholder
   // when deployed with FAS the values below are partly overriden
   applicationId: 'explorer',
-  applicationName: '',
+  applicationName: 'Cognite Office Explorer',
   docsSiteBaseUrl: 'https://docs.cognite.com',
   availableClusters: [
     {
@@ -63,6 +65,8 @@ const getAadApplicationId = (cluster: string) => {
       ],
     },
   ],
+  disableSentry: true,
+  disableTranslations: true,
   disableIntercom: true,
   enableUserManagement: false,
   disableLegacyLogin: true,
@@ -70,6 +74,6 @@ const getAadApplicationId = (cluster: string) => {
   reactQueryDevtools: {
     disabled: true,
   },
-} as SidecarConfig;
+} as ExplorerConfig;
 
-export default (window as any).__cogniteSidecar;
+export default (window as any).__cogniteSidecar as ExplorerConfig;

@@ -1,0 +1,34 @@
+# Required
+externalId: 'cognite_office_explorer_buildings'
+# Required
+name: 'cognite_office_explorer_buildings'
+
+destination:
+  type: alpha_data_model_instances
+  externalId: Building
+
+# Optional, default: true
+shared: true
+
+# Optional, default: upsert
+# Valid values are:
+#   upsert: Create new items, or update existing items if their id or externalId
+#           already exists.
+#   create: Create new items. The transformation will fail if there are id or
+#           externalId conflicts.
+#   update: Update existing items. The transformation will fail if an id or
+#           externalId does not exist.
+#   delete: Delete items by internal id.
+action: 'upsert'
+
+# Required
+query: 'select name, externalId, description, thumbnail from `cognite-office-explorer`.buildings'
+
+# The client credentials to be used in the transformation
+authentication:
+  clientId: ${TRANSFORMATIONS_CLIENT_ID}
+  clientSecret: ${TRANSFORMATIONS_CLIENT_SECRET}
+  tokenUrl: ${TRANSFORMATIONS_TOKEN_URL}
+  scopes:
+    - ${TRANSFORMATIONS_SCOPES}
+  cdfProjectName: ${TRANSFORMATIONS_PROJECT}

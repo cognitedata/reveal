@@ -9,7 +9,7 @@ describe('<Home />', () => {
   test('Load Home screen', async () => {
     render(<Home />);
     expect(
-      await screen.findByText(/What are you looking for?/i)
+      await screen.findByText(/Error loading the 3D model/i)
     ).toBeInTheDocument();
   });
 });
