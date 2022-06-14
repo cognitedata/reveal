@@ -3,11 +3,11 @@ import '__mocks/mockCogniteSDK';
 
 import { getMockDocumentCategoriesGetWithStatus } from 'domain/documents/service/__mocks/getMockDocumentCategoriesGet';
 import { getMockDocumentSearch } from 'domain/documents/service/__mocks/getMockDocumentSearch';
+import { getMockConfigGet } from 'domain/projectConfig/service/__mocks/getMockConfigGet';
 
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
 import { DocumentCategoriesFacets } from 'services/documents/types';
-import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import { testWrapper as wrapper } from '__test-utils/renderer';
 

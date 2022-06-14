@@ -1,11 +1,11 @@
 import 'domain/wells/__mocks/setupWellsMockSDK';
+import { getMockConfigGet } from 'domain/projectConfig/service/__mocks/getMockConfigGet';
 import { getMockWellsById } from 'domain/wells/well/service/__mocks/getMockWellsById';
 
 import { QueryClient, useQueryClient } from 'react-query';
 
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import { testRendererForHooks } from '__test-utils/renderer';
 import { WELL_QUERY_KEY } from 'constants/react-query';

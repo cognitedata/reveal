@@ -1,12 +1,12 @@
 import '__mocks/mockContainerAuth';
 
 import { getMockLabelsPost } from 'domain/labels/service/__mocks/getMockLabels';
+import { getMockConfigGet } from 'domain/projectConfig/service/__mocks/getMockConfigGet';
 import { getMockUserMe } from 'domain/userManagementService/service/__mocks/getMockUserMe';
 
 import { screen } from '@testing-library/react'; // should be first
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
-import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import { getMockGeoJson } from '__test-utils/fixtures/geometry';
 import {

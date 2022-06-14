@@ -5,11 +5,11 @@ import { getDocumentFixture } from 'domain/documents/service/__fixtures/getDocum
 import { getMockDocumentCategoriesGet } from 'domain/documents/service/__mocks/getMockDocumentCategoriesGet';
 import { getMockDocumentSearch } from 'domain/documents/service/__mocks/getMockDocumentSearch';
 import { getMockFavoritesListGet } from 'domain/favorites/service/__mocks/getMockFavoritesListGet';
+import { getMockConfigGet } from 'domain/projectConfig/service/__mocks/getMockConfigGet';
 import { getMockSavedSearchCurrentGet } from 'domain/savedSearches/service/__mocks/getMockSavedSearchCurrentGet';
 
 import { waitFor, screen, fireEvent, within } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import { getMockAPIResponse } from '__test-utils/fixtures/document';
 import { testRenderer } from '__test-utils/renderer';

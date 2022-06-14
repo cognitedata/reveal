@@ -1,12 +1,12 @@
 import '__mocks/mockContainerAuth';
 import '__mocks/mockCogniteSDK';
 import { getMockFavoritesListGet } from 'domain/favorites/service/__mocks/getMockFavoritesListGet';
+import { getMockConfigGet } from 'domain/projectConfig/service/__mocks/getMockConfigGet';
 import { getMockUserMe } from 'domain/userManagementService/service/__mocks/getMockUserMe';
 import { getMockWellsList } from 'domain/wells/well/service/__mocks/getMockWellsList';
 
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';

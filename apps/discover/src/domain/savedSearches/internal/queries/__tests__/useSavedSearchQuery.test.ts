@@ -1,4 +1,5 @@
 import '__mocks/mockContainerAuth'; // should be first
+import { getMockConfigGet } from 'domain/projectConfig/service/__mocks/getMockConfigGet';
 import { getMockSavedSearchCurrentGet } from 'domain/savedSearches/service/__mocks/getMockSavedSearchCurrentGet';
 import { getMockSavedSearchCurrentPut } from 'domain/savedSearches/service/__mocks/getMockSavedSearchCurrentPut';
 import { getMockSavedSearchGet } from 'domain/savedSearches/service/__mocks/getMockSavedSearchGet';
@@ -8,7 +9,6 @@ import { getMockSavedSearchRelatedGet } from 'domain/savedSearches/service/__moc
 import { act } from 'react-test-renderer';
 
 import { setupServer } from 'msw/node';
-import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import { renderHookWithStore } from '__test-utils/renderer';
 

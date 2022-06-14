@@ -3,12 +3,12 @@ import 'domain/wells/__mocks/setupWellsMockSDK';
 
 import { getDocumentFixture } from 'domain/documents/service/__fixtures/getDocumentFixture';
 import { getMockDocumentSearch } from 'domain/documents/service/__mocks/getMockDocumentSearch';
+import { getMockConfigGet } from 'domain/projectConfig/service/__mocks/getMockConfigGet';
 import { getMockWellsGeometry } from 'domain/wells/well/service/__mocks/getMockWellsGeometry';
 
 import { screen, waitFor } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
-import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import { getMockPointGeo } from '__test-utils/fixtures/geometry';
 import { getMockWellGeometry } from '__test-utils/fixtures/wellGeometryCollection';

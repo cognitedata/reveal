@@ -8,15 +8,13 @@ import { ProjectConfig } from '@cognite/discover-api-types';
 import { getMockConfig } from '__test-utils/fixtures/projectConfig';
 import { renderHookWithStore } from '__test-utils/renderer';
 
-import { getMockConfigDelete } from '../__mocks/getMockConfigDelete';
-import { getMockConfigGet } from '../__mocks/getMockConfigGet';
-import { getMockConfigMetadataGet } from '../__mocks/getMockConfigMetadataGet';
-import { getMockConfigPatch } from '../__mocks/getMockConfigPatch';
-import {
-  useProjectConfigDeleteQuery,
-  useProjectConfigMetadataGetQuery,
-  useProjectConfigUpdateMutate,
-} from '../useProjectConfigQuery';
+import { getMockConfigDelete } from '../../service/__mocks/getMockConfigDelete';
+import { getMockConfigGet } from '../../service/__mocks/getMockConfigGet';
+import { getMockConfigMetadataGet } from '../../service/__mocks/getMockConfigMetadataGet';
+import { getMockConfigPatch } from '../../service/__mocks/getMockConfigPatch';
+import { useProjectConfigDeleteQuery } from '../actions/useProjectConfigDeleteQuery';
+import { useProjectConfigUpdateMutate } from '../actions/useProjectConfigUpdateMutate';
+import { useProjectConfigMetadataGetQuery } from '../queries/useProjectConfigMetadataGetQuery';
 
 const responseData: ProjectConfig = getMockConfig();
 

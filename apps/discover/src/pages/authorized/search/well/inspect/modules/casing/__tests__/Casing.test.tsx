@@ -1,9 +1,9 @@
+import { getMockConfigGet } from 'domain/projectConfig/service/__mocks/getMockConfigGet';
 import { getMockUserMe } from 'domain/userManagementService/service/__mocks/getMockUserMe';
 
 import { screen, fireEvent } from '@testing-library/react';
 import { PartialStoreState } from 'core';
 import { setupServer } from 'msw/node';
-import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';

@@ -1,6 +1,7 @@
+import { getMockConfigGet } from 'domain/projectConfig/service/__mocks/getMockConfigGet';
+
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import { getMockedTrajectoryData } from '__test-utils/fixtures/trajectory';
 import { testRenderer } from '__test-utils/renderer';

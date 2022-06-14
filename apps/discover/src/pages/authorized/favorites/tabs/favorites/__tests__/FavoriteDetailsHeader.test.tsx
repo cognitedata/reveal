@@ -1,10 +1,10 @@
 import '__mocks/mockContainerAuth'; // should be first
 import { getMockFavoriteSummary } from 'domain/favorites/service/__fixtures/favorite';
+import { getMockConfigGet } from 'domain/projectConfig/service/__mocks/getMockConfigGet';
 import { getMockUserMe } from 'domain/userManagementService/service/__mocks/getMockUserMe';
 
 import { screen, waitFor } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import { testRenderer } from '__test-utils/renderer';
 import { defaultTestUser } from '__test-utils/testdata.utils';

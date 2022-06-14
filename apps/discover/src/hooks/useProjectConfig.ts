@@ -1,5 +1,6 @@
+import { useProjectConfigGetQuery } from 'domain/projectConfig/internal/queries/useProjectConfigGetQuery';
+
 import get from 'lodash/get';
-import { useProjectConfigGetQuery } from 'services/projectConfig/useProjectConfigQuery';
 
 import { ProjectConfig } from '@cognite/discover-api-types';
 

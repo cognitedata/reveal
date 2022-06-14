@@ -1,9 +1,9 @@
 import '__mocks/mockContainerAuth'; // should be first
+import { getMockConfigGet } from 'domain/projectConfig/service/__mocks/getMockConfigGet';
 import { getMockUserMe } from 'domain/userManagementService/service/__mocks/getMockUserMe';
 import { getMockWellLegendGet } from 'domain/wells/legend/service/__mocks/getMockWellLegendGet';
 
 import { setupServer } from 'msw/node';
-import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import { renderHookWithStore } from '__test-utils/renderer';
 

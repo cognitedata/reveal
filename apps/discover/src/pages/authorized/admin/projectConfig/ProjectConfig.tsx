@@ -1,13 +1,12 @@
+import { useProjectConfigUpdateMutate } from 'domain/projectConfig/internal/actions/useProjectConfigUpdateMutate';
+import { useProjectConfigGetQuery } from 'domain/projectConfig/internal/queries/useProjectConfigGetQuery';
+import { useProjectConfigMetadataGetQuery } from 'domain/projectConfig/internal/queries/useProjectConfigMetadataGetQuery';
+
 import { useCallback, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Map } from 'immutable';
 import merge from 'lodash/merge';
-import {
-  useProjectConfigGetQuery,
-  useProjectConfigUpdateMutate,
-  useProjectConfigMetadataGetQuery,
-} from 'services/projectConfig/useProjectConfigQuery';
 
 import { ProjectConfig as ProjectConfigTypes } from '@cognite/discover-api-types';
 

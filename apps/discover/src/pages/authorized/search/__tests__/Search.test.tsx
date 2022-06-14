@@ -4,6 +4,7 @@ import 'domain/wells/__mocks/setupWellsMockSDK';
 
 import { getMockDocumentSearch } from 'domain/documents/service/__mocks/getMockDocumentSearch';
 import { getMockLabelsPost } from 'domain/labels/service/__mocks/getMockLabels';
+import { getMockConfigGet } from 'domain/projectConfig/service/__mocks/getMockConfigGet';
 import { getMockSavedSearchList } from 'domain/savedSearches/service/__mocks/getMockSavedSearchList';
 import { getMockSearchHistoryGet } from 'domain/searchHistory/service/__mocks/getMockSearchHistoryGet';
 import { getMockUserMe } from 'domain/userManagementService/service/__mocks/getMockUserMe';
@@ -13,7 +14,6 @@ import { getMockSummariesGet } from 'domain/wells/summaries/service/__mocks/getM
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { Store } from 'redux';
-import { getMockConfigGet } from 'services/projectConfig/__mocks/getMockConfigGet';
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';

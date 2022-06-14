@@ -4,8 +4,6 @@ import { getDefaultHeader, getAuthHeaders } from '@cognite/react-container';
 
 import { useIdToken as useIdTokenHook } from 'hooks/useIdToken';
 
-import { projectConfig } from './projectConfig';
-
 export const useJsonHeaders = (
   extras: Record<string, string> = {},
   useIdToken = false
@@ -22,6 +20,5 @@ export const useJsonHeaders = (
 };
 
 export const discoverAPI = {
-  projectConfig,
   stats,
 };
