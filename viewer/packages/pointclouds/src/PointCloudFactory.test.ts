@@ -40,12 +40,16 @@ describe(PointCloudFactory.name, () => {
 
     const expectedIds = [123, 124];
 
-    const potreeMock = new Mock<Potree>().
-      setup(p => p.loadPointCloud)
-      .returns(() => Promise.resolve(new Mock<PointCloudOctree>()
-        .setup(p => p.material)
-        .returns(new Mock<PointCloudMaterial>().object())
-      .object()));
+    const potreeMock = new Mock<Potree>()
+      .setup(p => p.loadPointCloud)
+      .returns(() =>
+        Promise.resolve(
+          new Mock<PointCloudOctree>()
+            .setup(p => p.material)
+            .returns(new Mock<PointCloudMaterial>().object())
+            .object()
+        )
+      );
 
     const factory = new PointCloudFactory(potreeMock.object(), sdkPlaygroundMock.object());
 

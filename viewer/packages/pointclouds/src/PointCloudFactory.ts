@@ -5,7 +5,7 @@
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { PointCloudMetadata } from './PointCloudMetadata';
 
-import { ModelDataProvider, ModelIdentifier, CdfModelIdentifier } from '@reveal/modeldata-api';
+import { ModelIdentifier, CdfModelIdentifier } from '@reveal/modeldata-api';
 
 import {
   PointCloudObjectAnnotation,
