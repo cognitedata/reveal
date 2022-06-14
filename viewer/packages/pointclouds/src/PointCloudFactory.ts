@@ -27,8 +27,8 @@ export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
   private readonly _sdkPlayground: CogniteClientPlayground | undefined;
 
-  constructor(modelLoader: ModelDataProvider, sdkPlayground?: CogniteClientPlayground | undefined) {
-    this._potreeInstance = new Potree(modelLoader);
+  constructor(potreeInstance: Potree, sdkPlayground?: CogniteClientPlayground | undefined) {
+    this._potreeInstance = potreeInstance;
     this._sdkPlayground = sdkPlayground;
   }
 
@@ -81,6 +81,7 @@ export class PointCloudFactory {
       annotations: [] as PointCloudObjectAnnotation[],
       annotationIdToIndexMap: new Map<number, number>()
     };
+
     if (this._sdkPlayground) {
       const annotations = await this.getAnnotations(modelIdentifier as CdfModelIdentifier);
       annotationInfo = annotationsToObjectInfo(annotations);
