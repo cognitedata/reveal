@@ -1,9 +1,4 @@
-import {
-  Camera,
-  Ray,
-  Vector3,
-  WebGLRenderer,
-} from 'three';
+import { Camera, Ray, Vector3, WebGLRenderer } from 'three';
 import { DEFAULT_PICK_WINDOW_SIZE } from '../rendering/constants';
 import { PointCloudOctree } from './PointCloudOctree';
 import { PickPoint } from '../types/types';
