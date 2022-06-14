@@ -5,7 +5,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { isLocalUrlPointCloudModel } from '../../utils/isLocalUrlPointCloudModel';
 
 type Props = {
-  viewerOptions?: Cognite3DViewerOptions;
+  viewerOptions?: Partial<Cognite3DViewerOptions>;
 
   modelUrls: string[];
   fitCameraToModel?: boolean;

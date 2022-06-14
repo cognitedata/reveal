@@ -60,9 +60,10 @@ export class RevealManagerHelper {
   static createLocalHelper(
     renderer: THREE.WebGLRenderer,
     sceneHandler: SceneHandler,
-    revealOptions: RevealOptions
+    revealOptions: RevealOptions,
+    sdkClientPlayground?: CogniteClientPlayground | undefined
   ): RevealManagerHelper {
-    const revealManager = createLocalRevealManager(renderer, sceneHandler, revealOptions);
+    const revealManager = createLocalRevealManager(renderer, sceneHandler, revealOptions, sdkClientPlayground);
     return new RevealManagerHelper('local', revealManager);
   }
 
@@ -78,7 +79,7 @@ export class RevealManagerHelper {
     sceneHandler: SceneHandler,
     revealOptions: RevealOptions,
     sdkClient: CogniteClient,
-    sdkClientPlayground?: CogniteClientPlayground
+    sdkClientPlayground?: CogniteClientPlayground | undefined
   ): RevealManagerHelper {
     const revealManager = createCdfRevealManager(sdkClient, renderer, sceneHandler, revealOptions, sdkClientPlayground);
     return new RevealManagerHelper('cdf', revealManager);
@@ -88,7 +89,8 @@ export class RevealManagerHelper {
     renderer: THREE.WebGLRenderer,
     sceneHandler: SceneHandler,
     revealOptions: RevealOptions,
-    dataSource: DataSource
+    dataSource: DataSource,
+    sdkClientPlayground?: CogniteClientPlayground | undefined
   ): RevealManagerHelper {
     const revealManager = createRevealManager(
       'custom-datasource',
@@ -97,7 +99,8 @@ export class RevealManagerHelper {
       dataSource.getModelDataProvider(),
       renderer,
       sceneHandler,
-      revealOptions
+      revealOptions,
+      sdkClientPlayground
     );
     // Note! We consider custom data sources 'CDF-type' as we use CDF model identifiers
     // for custom data sources too.

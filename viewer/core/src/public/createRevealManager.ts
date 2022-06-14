@@ -40,7 +40,8 @@ import { CogniteClientPlayground } from '@cognite/sdk-playground';
 export function createLocalRevealManager(
   renderer: THREE.WebGLRenderer,
   sceneHandler: SceneHandler,
-  revealOptions: RevealOptions = {}
+  revealOptions: RevealOptions = {},
+  sdkClientPlayground?: CogniteClientPlayground | undefined
 ): RevealManager {
   const modelMetadataProvider = new LocalModelMetadataProvider();
   const modelDataProvider = new LocalModelDataProvider();
@@ -51,7 +52,8 @@ export function createLocalRevealManager(
     modelDataProvider,
     renderer,
     sceneHandler,
-    revealOptions
+    revealOptions,
+    sdkClientPlayground
   );
 }
 

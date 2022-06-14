@@ -58,7 +58,7 @@ export { Cognite3DModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } fro
 export {
   CognitePointCloudModel,
   PointCloudAppearance,
-  PointCloudObjectCollection,
-  AnnotationListPointCloudObjectCollection,
+  StylableObjectCollection,
+  AnnotationListStylableObjectCollection,
   DefaultPointCloudAppearance
 } from './packages/pointclouds';
