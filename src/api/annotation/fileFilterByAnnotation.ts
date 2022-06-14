@@ -14,29 +14,21 @@ const getAnnotations = async (
   annotationState?: string,
   fileIds?: number[]
 ) => {
-  const baseFilterPayload: AnnotationFilterRequest = {
+  const filterPayload: AnnotationFilterRequest = {
     filter: {
       annotatedResourceType: 'file',
       annotatedResourceIds: fileIds?.map((id) => ({ id })) || [],
       status: annotationState as AnnotationStatus,
+      data: {
+        label: annotationLabelOrText,
+      },
     },
     limit: 1000,
   };
 
-  const fieldsToFilterBy = annotationLabelOrText
-    ? ['label', 'text']
-    : [undefined];
-  const annotations = await Promise.all(
-    fieldsToFilterBy.map(async (field?: string) => {
-      const filterPayload = { ...baseFilterPayload };
-      if (field) {
-        filterPayload.filter.data = { [field]: annotationLabelOrText };
-      }
-      return cognitePlaygroundClient.annotations
-        .list(filterPayload)
-        .autoPagingToArray({ limit: Infinity });
-    })
-  );
+  const annotations = await cognitePlaygroundClient.annotations
+    .list(filterPayload)
+    .autoPagingToArray({ limit: Infinity });
 
   const visionAnnotations = convertCDFAnnotationToVisionAnnotations(
     annotations.flat()

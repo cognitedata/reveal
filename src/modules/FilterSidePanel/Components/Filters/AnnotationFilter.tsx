@@ -15,7 +15,7 @@ import {
 const annotationStateOptions: { [key: string]: string } = {
   approved: 'True (verified annotations)',
   rejected: 'False (rejected annotations)',
-  suggested: 'Unhandled (suggested annotations)',
+  suggested: 'Suggested (suggested annotations)',
 };
 
 export const AnnotationFilter = ({

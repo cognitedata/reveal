@@ -4,10 +4,8 @@ import {
   processReducerInitialState,
   ProcessReducerState,
 } from 'src/modules/Process/store/slice';
-import {
-  initialState as annotatorWrapperInitialState,
-  AnnotatorWrapperReducerState,
-} from 'src/modules/Review/store/annotatorWrapper/slice';
+import { initialState as annotatorWrapperInitialState } from 'src/modules/Review/store/annotatorWrapper/slice';
+import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
 import {
   reviewReducerInitialState,
   ReviewReducerState,
@@ -104,10 +102,7 @@ export const saveState = (state: any): void => {
 };
 
 export type OfflineState = {
-  annotatorWrapperReducer: Pick<
-    AnnotatorWrapperReducerState,
-    'predefinedAnnotations'
-  >;
+  annotatorWrapperReducer: Pick<AnnotatorWrapperState, 'predefinedAnnotations'>;
   reviewSlice: Pick<ReviewReducerState, 'fileIds'>;
   explorerReducer: Pick<
     ExplorerState,
