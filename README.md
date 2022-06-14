@@ -6,12 +6,34 @@ To use the `@cognite/data-exploration` library, check out the [storybook](https:
 
 ## Developing locally
 
+### Using storybook
+
 You should use storybook as much as possible for local development.
 ```
 yarn storybook
 ```
 
-Alternatively, if you want to develop `data-exploration-components` locally with `data-exploration` subapp:
+Each component should have its own stories. Get started with writing stories by following the [storybook tutorial](https://storybook.js.org/docs/react/writing-stories/introduction) or check the examples [here](https://github.com/storybookjs/storybook).
+
+
+If you need data from CogniteClient, you can either edit the common [sdkMock object](https://github.com/cognitedata/data-exploration-components/blob/d0aef9846ae18b33dd2fdf6bd1c1edc7c15a530b/src/docs/stub.tsx#L26) or use the `explorerConfig.sdkMockOverride` custom parameter as below.
+
+```ts
+const sdkMock = {
+      post: async () => ({ data: { items: [{ count: 100 }] } }),
+};
+
+export default {
+  ...,
+  parameters: {
+    explorerConfig: { sdkMockOverride: sdkMock },
+  },
+};
+```
+
+### Using `data-exploration` subapp
+
+Alternatively, if you want to develop `data-exploration-components` locally linked to `data-exploration` subapp:
 
 1. Install yalc:
 ```
