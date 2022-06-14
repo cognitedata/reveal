@@ -105,6 +105,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       measurement.removeMeasurement();
     });
     this._measurements.splice(0);
+    this._currentMeasurementIndex = -1;
   }
 
   /**
