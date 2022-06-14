@@ -41,6 +41,7 @@ function ColorStyling() {
     const appearance = { color: [0, 255, 0] as [number, number, number] };
 
     model.assignStyledObjectCollection(objectCollection, appearance);
+    model.setDefaultPointCloudAppearance({ visible: false });
   }}
   viewerOptions={viewerOptions} />;
 }
