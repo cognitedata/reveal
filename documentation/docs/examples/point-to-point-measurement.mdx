@@ -41,19 +41,16 @@ measurementTool.exitMeasurementMode();
 ```
 
 ### Set width and color of the measuring line
-To change width and color of the line, use `MeasurementTool.setLineOptions(lineOptions: MeasurementLineOptions)`. MeasurementLineOptions expects
+To change width and color of the line, use `MeasurementTool.setLineOptions(options: MeasurementOptions, meshObject?: THREE.Mesh)`. MeasurementOptions expects
   - `lineWidth` : number
   - `color` : number
-  - `currentLine` : boolean
-If `currentLine` is enabled (`true`), than line width & color changes will be applied to recently measured line and the new measurement lines.
 
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
 const lineOptions = {
   lineWidth: 0.04,
-  color: 0xff0000,
-  currentLine: false
+  color: 0xff0000
 };
 const measurementTool = new MeasurementTool(viewer);
 measurementTool.enterMeasurementMode();
@@ -73,4 +70,49 @@ const measurementTool = new MeasurementTool(viewer, {changeMeasurementLabelMetri
       return { distance: distanceInFeet, units: 'ft'};
      }});
 measurementTool.enterMeasurementMode();
+```
+
+### Get all measurement
+To retrive all measurements added in the viewer, we can provide `MeasurementTool.getAllMeasurement()` which will
+returns array of meshes `THREE.Mesh[]`.
+
+```jsx
+// import { MeasurementTool } from '@cognite/reveal/tools';
+
+const measurementTool = new MeasurementTool(viewer);
+measurementTool.enterMeasurementMode();
+
+//get all measurements
+const measurements = measurementTool.getAllMeasurement();
+```
+
+### Remove Measurement
+To remove a measurement from the viewer, we have `MeasurementTool.removeMeasurement(measurement: THREE.Mesh)`
+  - 'measurement` : Measurement mesh to be removed.
+
+```jsx
+// import { MeasurementTool } from '@cognite/reveal/tools';
+
+const measurementTool = new MeasurementTool(viewer);
+measurementTool.enterMeasurementMode();
+
+//Before retrival of measurements, add some measurement
+const measurements = measurementTool.getAllMeasurement();
+
+//Remove the first measurement added
+measurementTool.removeMeasurement(measurements[0]);
+```
+
+To remove all measurement from the viewer, use `MeasurementTool.removeAllMeasurement()`
+
+```jsx
+// import { MeasurementTool } from '@cognite/reveal/tools';
+
+const measurementTool = new MeasurementTool(viewer);
+measurementTool.enterMeasurementMode();
+
+//add measurements
+
+//Remove all measurement from the viewer
+measurementTool.removeAllMeasurement();
 ```

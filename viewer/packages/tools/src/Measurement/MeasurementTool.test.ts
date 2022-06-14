@@ -49,11 +49,11 @@ describe(MeasurementTool.name, () => {
     expect(onRemoveEventHandlingSpyOn).toHaveBeenCalled();
   });
 
-  test('Set measurement line width and color', () => {
+  test('Set measurement line width and color option values', () => {
     const lineOptions = { lineWidth: 1.0, color: 0xff0000 };
     measurementTool.setLineOptions(lineOptions);
 
-    expect((measurementTool as any)._line._options.color).toBe(0xff0000);
-    expect((measurementTool as any)._line._options.lineWidth).toBe(1.0);
+    expect((measurementTool as any)._options.color).toBe(0xff0000);
+    expect((measurementTool as any)._options.lineWidth).toBe(1.0);
   });
 });

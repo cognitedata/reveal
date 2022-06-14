@@ -5,25 +5,24 @@
 import * as THREE from 'three';
 import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
-import { MeasurementLineOptions } from './types';
+import { Line2 } from 'three/examples/jsm/lines/Line2';
+import { MeasurementOptions } from './types';
 
 export class MeasurementLine {
   private _geometry: LineGeometry | null;
   private _material: LineMaterial | null;
+  private readonly _spheres: THREE.Mesh[];
   private _position: Float32Array;
   private _distanceToCamera: number = 0;
-  private _sphereSize: number;
 
-  private readonly _options: MeasurementLineOptions = {
-    lineWidth: 0.01,
-    color: 0x00ffff
-  };
+  private _options: MeasurementOptions;
 
-  constructor() {
+  constructor(options: MeasurementOptions) {
     this._position = new Float32Array(6);
     this._geometry = null;
     this._material = null;
-    this._sphereSize = 0.01;
+    this._spheres = [];
+    this._options = { ...options };
   }
 
   /**
@@ -36,8 +35,9 @@ export class MeasurementLine {
       new THREE.MeshBasicMaterial({ color: 0xff0000, opacity: 0.5, transparent: true })
     );
     mesh.position.copy(position);
-    mesh.scale.copy(mesh.scale.multiplyScalar(this._sphereSize));
+    mesh.scale.copy(mesh.scale.multiplyScalar(this._options.lineWidth!));
     mesh.renderOrder = 1;
+    this._spheres.push(mesh);
 
     return mesh;
   }
@@ -67,7 +67,9 @@ export class MeasurementLine {
       opacity: 1
     });
 
-    const mesh = new THREE.Mesh(this._geometry as THREE.BufferGeometry, this._material);
+    const mesh = new Line2(this._geometry, this._material);
+    //Assign bounding sphere & box for the line to support raycasting.
+    mesh.computeLineDistances();
     //Make sure line are rendered in-front of other objects
     mesh.renderOrder = 1;
 
@@ -129,14 +131,17 @@ export class MeasurementLine {
    * Sets Measurement line width and color with @options value.
    * @param options MeasurementLineOptions to set line width and color.
    */
-  setOptions(options: MeasurementLineOptions): void {
+  setOptions(options: MeasurementOptions): void {
     this._options.lineWidth = options?.lineWidth ?? this._options.lineWidth;
     this._options.color = options?.color ?? this._options.color;
-    this._sphereSize = options?.lineWidth || this._sphereSize;
-    //Apply for current active line if set
-    if (this._material && options.currentLine) {
+    //Apply for current line.
+    if (this._material) {
       this._material?.setValues({ linewidth: this._options.lineWidth });
       this._material?.color.set(new THREE.Color(this._options.color));
+      //Updates the spheres size to match line width.
+      this._spheres.forEach(sphere => {
+        sphere.scale.copy(new THREE.Vector3(1, 1, 1).multiplyScalar(this._options.lineWidth!));
+      });
     }
   }
 
@@ -165,7 +170,7 @@ export class MeasurementLine {
   }
 
   /**
-   * Clear all line objects mesh, geometry & material.
+   * Clear all line objects geometry & material.
    */
   clearObjects(): void {
     if (this._geometry) {

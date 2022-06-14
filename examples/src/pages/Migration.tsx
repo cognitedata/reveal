@@ -361,6 +361,8 @@ export function Migration() {
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client, viewer);
 
+      const measurementTool = new MeasurementUi(viewer, gui.addFolder('Measurement'));
+
       viewer.on('click', async (event) => {
         const { offsetX, offsetY } = event; 
         console.log('2D coordinates', event);
@@ -384,11 +386,12 @@ export function Migration() {
               break;
           }
         }
+
+        measurementTool.reset();
       });
 
       new AxisViewTool(viewer);
 
-      new MeasurementUi(viewer, gui.addFolder('Measurement'));
     }
 
     function showBoundsForAllGeometries(model: Cognite3DModel) {
