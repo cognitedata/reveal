@@ -5,15 +5,15 @@
 import { generateDataTexture } from './texture-generation';
 
 import * as THREE from 'three';
-import { StyledPointCloudObjectCollection } from '../../styling/StyledPointCloudObjectCollection';
-import { PointCloudObjectCollection } from '../../styling/PointCloudObjectCollection';
+import { StylablePointCloudObjectCollection } from '../../styling/StyledPointCloudObjectCollection';
+import { StylableObjectCollection } from '../../styling/PointCloudObjectCollection';
 import { DefaultPointCloudAppearance, PointCloudAppearance } from '../../styling/PointCloudAppearance';
 
 export class ObjectAppearanceTexture {
   private _objectStyleTexture: THREE.DataTexture;
   private _needsReconstruction: boolean = true;
 
-  private readonly _styledObjectSets: StyledPointCloudObjectCollection[] = [];
+  private readonly _styledObjectSets: StylablePointCloudObjectCollection[] = [];
 
   private _defaultAppearance: PointCloudAppearance = { ...DefaultPointCloudAppearance };
 
@@ -45,7 +45,7 @@ export class ObjectAppearanceTexture {
     data.set(styleData, 4 * objectId);
   }
 
-  private setObjectCollectionStyle(styledObjectSet: StyledPointCloudObjectCollection): void {
+  private setObjectCollectionStyle(styledObjectSet: StylablePointCloudObjectCollection): void {
     if (!this._annotationIdsToObjectId) {
       throw new Error('Annotation ID to Object ID map not initialized');
     }
@@ -81,7 +81,7 @@ export class ObjectAppearanceTexture {
     }
   }
 
-  assignStyledObjectSet(styledCollection: StyledPointCloudObjectCollection): void {
+  assignStyledObjectSet(styledCollection: StylablePointCloudObjectCollection): void {
     const ind = this._styledObjectSets.findIndex(s => s.objectCollection === styledCollection.objectCollection);
 
     if (ind !== -1) {
@@ -93,7 +93,7 @@ export class ObjectAppearanceTexture {
     this._needsReconstruction = true;
   }
 
-  removeStyledObjectSet(collection: PointCloudObjectCollection): void {
+  removeStyledObjectSet(collection: StylableObjectCollection): void {
     const ind = this._styledObjectSets.findIndex(s => s.objectCollection === collection);
     if (ind !== -1) {
       this._styledObjectSets.splice(ind, 1);

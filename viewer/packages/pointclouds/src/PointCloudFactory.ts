@@ -42,7 +42,9 @@ export class PointCloudFactory {
     }
 
     if (geometry.cylinder) {
-      return new CylinderPrimitive(geometry.cylinder.centerA, geometry.cylinder.centerA, geometry.cylinder.radius);
+      const centerA = new THREE.Vector3().set(...(geometry.cylinder.centerA as [number, number, number]));
+      const centerB = new THREE.Vector3().set(...(geometry.cylinder.centerB as [number, number, number]));
+      return new CylinderPrimitive(centerA, centerB, geometry.cylinder.radius);
     }
 
     throw Error('Annotation geometry type not recognized');
@@ -79,8 +81,8 @@ export class PointCloudFactory {
       annotations: [] as PointCloudObjectAnnotation[],
       annotationIdToIndexMap: new Map<number, number>()
     };
-    if (this._sdkPlayground && modelIdentifier instanceof CdfModelIdentifier) {
-      const annotations = await this.getAnnotations(modelIdentifier);
+    if (this._sdkPlayground) {
+      const annotations = await this.getAnnotations(modelIdentifier as CdfModelIdentifier);
       annotationInfo = annotationsToObjectInfo(annotations);
     }
 

@@ -11,9 +11,9 @@ import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from './p
 
 import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
 
-import { PointCloudAppearance } from './styling/PointCloudAppearance';
-import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
-import { PointCloudObjectCollection } from './styling/PointCloudObjectCollection';
+import { DefaultPointCloudAppearance, fillPartialPointCloudAppearance, PointCloudAppearance } from './styling/PointCloudAppearance';
+import { StylablePointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
+import { StylableObjectCollection } from './styling/PointCloudObjectCollection';
 import { AnnotationMetadata } from './annotationTypes';
 
 /**
@@ -34,7 +34,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    */
   readonly pointCloudNode: PointCloudNode;
 
-  private readonly _styledObjectCollections: StyledPointCloudObjectCollection[] = [];
+  private readonly _styledObjectCollections: StylablePointCloudObjectCollection[] = [];
 
   /**
    * @param modelId
@@ -226,27 +226,30 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * Sets default apparance for points that are
    * not styled otherwise
    */
-  setDefaultPointCloudAppearance(appearance: PointCloudAppearance): void {
-    this.pointCloudNode.defaultAppearance = appearance;
+  setDefaultPointCloudAppearance(appearance: Partial<PointCloudAppearance>): void {
+    const fullAppearance: PointCloudAppearance = fillPartialPointCloudAppearance(appearance);
+    this.pointCloudNode.defaultAppearance = fullAppearance;
   }
 
   /**
    * Gets the object collections that have been assigned a style
    */
-  get styledCollections(): StyledPointCloudObjectCollection[] {
+  get styledCollections(): StylablePointCloudObjectCollection[] {
     return this._styledObjectCollections;
   }
 
   /**
    * Assign a style to a collection of objects
    */
-  assignStyledObjectCollection(objectCollection: PointCloudObjectCollection, appearance: PointCloudAppearance): void {
+  assignStyledObjectCollection(objectCollection: StylableObjectCollection, appearance: Partial<PointCloudAppearance>): void {
+
+    const fullAppearance: PointCloudAppearance = fillPartialPointCloudAppearance(appearance);
     const index = this._styledObjectCollections.findIndex(x => x.objectCollection === objectCollection);
     if (index !== -1) {
-      this._styledObjectCollections[index].style = appearance;
+      this._styledObjectCollections[index].style = fullAppearance;
       this.pointCloudNode.assignStyledPointCloudObjectCollection(this._styledObjectCollections[index]);
     } else {
-      const newObjectCollection = new StyledPointCloudObjectCollection(objectCollection, appearance);
+      const newObjectCollection = new StylablePointCloudObjectCollection(objectCollection, fullAppearance);
 
       this._styledObjectCollections.push(newObjectCollection);
       this.pointCloudNode.assignStyledPointCloudObjectCollection(newObjectCollection);
@@ -256,7 +259,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   /**
    * Unassign style from an already styled object collection
    */
-  unassignStyledObjectCollection(objectCollection: PointCloudObjectCollection): void {
+  unassignStyledObjectCollection(objectCollection: StylableObjectCollection): void {
     const styledCollectionIndex = this._styledObjectCollections.findIndex(x => x.objectCollection === objectCollection);
 
     if (styledCollectionIndex !== -1) {
@@ -278,16 +281,22 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   }
 
   /**
-   * return the number of stylable objects
+   * Returns the number of stylable objects
    */
   get stylableObjectCount(): number {
     return this.pointCloudNode.potreeNode.stylableObjects.length;
   }
 
   /**
-   * iterates through all stylable objects for this model
+   * Iterates through all stylable objects for this model
+   * @example
+   * ```js
+   * model.traverseStylableObjects(
+   *     annotationMetadata => console.log(annotationMetadata.annotationId)
+   * );
+   * ```
    */
-  traverseStylableObjects(callback: (obj: AnnotationMetadata) => void): void {
+  traverseStylableObjects(callback: (annotationMetadata: AnnotationMetadata) => void): void {
     for (const obj of this.pointCloudNode.potreeNode.stylableObjectAnnotationIds) {
       callback(obj);
     }

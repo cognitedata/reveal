@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "private": true,
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite Data Fusion.",
   "homepage": "https://github.com/cognitedata/reveal/tree/master/viewer",
@@ -124,9 +124,12 @@
     "worker-plugin": "5.0.1"
   },
   "peerDependencies": {
-    "@cognite/sdk": "^5.0.0 || ^6.0.0 || ^7.0.0",
+    "@cognite/sdk": "^5.0.0 || ^6.0.0 || 7.5.0",
     "@cognite/sdk-core": "^4.1.0",
     "@cognite/sdk-playground": "^5.0.0"
+  },
+  "resolutions": {
+    "@cognite/sdk-core": "4.1.0"
   },
   "glslify": {
     "transform": [
