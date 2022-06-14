@@ -15,7 +15,6 @@ import {
   CadGeometryRenderModePipelineProvider,
   RenderMode
 } from '@reveal/rendering';
-import { createCadManager } from '@reveal/cad-model';
 import { createPointCloudManager } from '@reveal/pointclouds';
 import {
   ModelMetadataProvider,
@@ -29,6 +28,7 @@ import {
 import { CogniteClient } from '@cognite/sdk';
 import { SceneHandler } from '@reveal/utilities';
 import { CogniteClientPlayground } from '@cognite/sdk-playground';
+import { createCadManager } from '@reveal/cad-geometry-loaders';
 
 /**
  * Used to create an instance of reveal manager that works with localhost.

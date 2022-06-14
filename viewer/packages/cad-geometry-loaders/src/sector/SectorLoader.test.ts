@@ -14,10 +14,10 @@ import { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } fr
 import { ModelStateHandler } from './ModelStateHandler';
 import { SectorRepository } from '@reveal/sector-loader';
 import { SectorLoader } from './SectorLoader';
-import { CadNode } from '@reveal/rendering';
 import { IMock, Mock } from 'moq.ts';
 import Log from '@reveal/logger';
 import { LogLevelNumbers } from 'loglevel';
+import { CadNode } from '@reveal/cad-model';
 
 describe('SectorLoader', () => {
   let culler: SectorCuller;

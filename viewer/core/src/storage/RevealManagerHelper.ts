@@ -12,10 +12,10 @@ import { createCdfRevealManager, createLocalRevealManager, PointCloudNode, Revea
 import { CdfModelIdentifier, LocalModelIdentifier } from '@reveal/modeldata-api';
 import { DataSource } from '@reveal/data-source';
 import { assertNever, SceneHandler } from '@reveal/utilities';
-import { CadNode } from '@reveal/rendering';
 
 import { CogniteClient } from '@cognite/sdk';
 import { CogniteClientPlayground } from '@cognite/sdk-playground';
+import { CadNode } from '@reveal/cad-model';
 
 /**
  * Helper for {@link RevealManager} for creating a uniform interface for

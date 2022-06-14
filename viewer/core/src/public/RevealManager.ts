@@ -8,18 +8,12 @@ import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
 import { map, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } from 'rxjs/operators';
 import { LoadingStateChangeListener, PointCloudBudget } from './types';
 
-import { CadManager, GeometryFilter, CadModelSectorLoadStatistics } from '@reveal/cad-model';
+import { GeometryFilter, CadModelSectorLoadStatistics, CadNode } from '@reveal/cad-model';
 import { PointCloudManager, PointCloudNode } from '@reveal/pointclouds';
 import { SupportedModelTypes, LoadingState } from '@reveal/model-base';
-import { CadModelBudget } from '@reveal/cad-geometry-loaders';
+import { CadManager, CadModelBudget } from '@reveal/cad-geometry-loaders';
 import { NodeAppearanceProvider } from '@reveal/cad-styling';
-import {
-  CadNode,
-  RenderMode,
-  RenderPipelineExecutor,
-  CadMaterialManager,
-  RenderPipelineProvider
-} from '@reveal/rendering';
+import { RenderMode, RenderPipelineExecutor, CadMaterialManager, RenderPipelineProvider } from '@reveal/rendering';
 import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
 
