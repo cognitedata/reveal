@@ -133,7 +133,7 @@
     "chromatic": "^6.1.0",
     "conventional-changelog-conventionalcommits": "^4.6.3",
     "eslint-config-airbnb": "^18.2.0",
-    "eslint-config-prettier": "~6.0.0",
+    "eslint-config-prettier": "~6.15.0",
     "eslint-plugin-import": "^2.22",
     "eslint-plugin-jest": "^24.1.0",
     "eslint-plugin-jsx-a11y": "^6.3.0",
