@@ -56,10 +56,11 @@ export class PointCloudFactory {
         // @ts-ignore
         annotatedResourceType: 'threedmodel',
         annotatedResourceIds: [{ id: modelIdentifier.modelId }]
-      }
-    });
+      },
+      limit: 1000
+    }).autoPagingToArray();
 
-    const bvs = modelAnnotations.items.map(annotation => {
+    const bvs = modelAnnotations.map(annotation => {
       const region = (annotation.data as any).region.map((geometry: any) => {
         return this.annotationGeometryToLocalGeometry(geometry);
       });
