@@ -9,7 +9,7 @@ import { DistanceUnitEnum } from '@cognite/sdk-wells-v3';
 
 import { UserPreferredUnit } from 'constants/units';
 
-export const convertToDistance = (
+export const adaptToConvertedDistance = (
   value: number,
   unit: DistanceUnitEnum | UserPreferredUnit | OtherConversionUnit
 ): ConvertedDistance => {

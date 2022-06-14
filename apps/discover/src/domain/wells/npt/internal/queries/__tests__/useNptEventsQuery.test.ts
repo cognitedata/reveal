@@ -6,7 +6,7 @@ import { setupServer } from 'msw/node';
 
 import { renderHookWithStore } from '__test-utils/renderer';
 
-import { useAllNptCursorsQuery } from '../useAllNptCursorsQuery';
+import { useNptEventsQuery } from '../useNptEventsQuery';
 
 const mockServer = setupServer(getMockNPTListPost());
 
@@ -19,7 +19,7 @@ describe('useAllNptCursorsQuery', () => {
     wellboreIds.add(getMockNPTV3().wellboreMatchingId);
 
     const { result, waitForNextUpdate } = renderHookWithStore(() =>
-      useAllNptCursorsQuery({ wellboreIds })
+      useNptEventsQuery({ wellboreIds })
     );
 
     await waitForNextUpdate();

@@ -39,13 +39,11 @@ export const normalizeCasingAssembly = (
     ),
     measuredDepthTop: convertDistance(
       originalMeasuredDepthTop,
-      userPreferredUnit,
-      Fixed.ThreeDecimals
+      userPreferredUnit
     ),
     measuredDepthBase: convertDistance(
       originalMeasuredDepthBase,
-      userPreferredUnit,
-      Fixed.ThreeDecimals
+      userPreferredUnit
     ),
   };
 };

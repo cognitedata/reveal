@@ -11,7 +11,7 @@ import { getSafeUnit } from './getSafeUnit';
 export const convertDistance = (
   distance: DistanceWellsSDK,
   toUnit: Distance,
-  toFixed?: Fixed
+  toFixed = Fixed.ThreeDecimals
 ): ConvertedDistance => {
   const { value, unit: fromUnit } = distance;
 

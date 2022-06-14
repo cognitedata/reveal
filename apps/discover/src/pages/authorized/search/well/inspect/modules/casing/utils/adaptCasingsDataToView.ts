@@ -1,5 +1,6 @@
 import { CasingSchematicInternal } from 'domain/wells/casings/internal/types';
 import { NdsInternal } from 'domain/wells/nds/internal/types';
+import { NptInternal } from 'domain/wells/npt/internal/types';
 import { KeyedTvdData } from 'domain/wells/trajectory/internal/types';
 import { getWaterDepth } from 'domain/wells/well/internal/selectors/getWaterDepth';
 import { Well } from 'domain/wells/well/internal/types';
@@ -7,7 +8,7 @@ import { getRkbLevel } from 'domain/wells/wellbore/internal/selectors/getRkbLeve
 import { keyByWellbore } from 'domain/wells/wellbore/internal/transformers/keyByWellbore';
 
 import isEmpty from 'lodash/isEmpty';
-import { convertToDistance } from 'utils/units/convertToDistance';
+import { adaptToConvertedDistance } from 'utils/units/adaptToConvertedDistance';
 
 import { UserPreferredUnit } from 'constants/units';
 
@@ -19,6 +20,7 @@ export const adaptCasingsDataToView = (
   wells: Well[],
   casingsData: CasingSchematicInternal[],
   tvdData: KeyedTvdData,
+  nptData: Record<string, NptInternal[]>,
   ndsData: Record<string, NdsInternal[]>,
   userPreferredUnit: UserPreferredUnit
 ): CasingsView[] => {
@@ -48,11 +50,15 @@ export const adaptCasingsDataToView = (
         casingAssemblies,
         wellName: well.name,
         wellboreName,
-        rkbLevel: convertToDistance(rkbLevel?.value || 0, userPreferredUnit),
-        waterDepth: convertToDistance(
+        rkbLevel: adaptToConvertedDistance(
+          rkbLevel?.value || 0,
+          userPreferredUnit
+        ),
+        waterDepth: adaptToConvertedDistance(
           waterDepth?.value || 0,
           userPreferredUnit
         ),
+        nptEvents: nptData[wellboreMatchingId] || [],
         ndsEvents: ndsData[wellboreMatchingId] || [],
       };
     })

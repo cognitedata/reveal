@@ -4,7 +4,7 @@ import { TrueVerticalDepthsDataLayer } from 'domain/wells/trajectory/internal/ty
 
 import isUndefined from 'lodash/isUndefined';
 import { Fixed } from 'utils/number';
-import { convertToDistance } from 'utils/units/convertToDistance';
+import { adaptToConvertedDistance } from 'utils/units/adaptToConvertedDistance';
 
 import { NdsView } from '../types';
 
@@ -30,7 +30,7 @@ export const processNdsTvdData = (
     );
 
     if (!isUndefined(holeStartTvdValue)) {
-      tvdData.holeStartTvd = convertToDistance(holeStartTvdValue, unit);
+      tvdData.holeStartTvd = adaptToConvertedDistance(holeStartTvdValue, unit);
     }
   }
 
@@ -42,7 +42,7 @@ export const processNdsTvdData = (
     );
 
     if (!isUndefined(holeEndTvdValue)) {
-      tvdData.holeEndTvd = convertToDistance(holeEndTvdValue, unit);
+      tvdData.holeEndTvd = adaptToConvertedDistance(holeEndTvdValue, unit);
     }
   }
 

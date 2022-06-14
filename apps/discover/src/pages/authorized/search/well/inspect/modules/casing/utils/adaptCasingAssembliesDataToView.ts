@@ -4,7 +4,7 @@ import { TrueVerticalDepthsDataLayer } from 'domain/wells/trajectory/internal/ty
 
 import isUndefined from 'lodash/isUndefined';
 import { Fixed } from 'utils/number';
-import { convertToDistance } from 'utils/units/convertToDistance';
+import { adaptToConvertedDistance } from 'utils/units/adaptToConvertedDistance';
 
 import { CasingAssemblyView } from '../types';
 
@@ -35,14 +35,14 @@ export const adaptCasingAssembliesDataToView = (
     const tvdData: Partial<CasingAssemblyView> = {};
 
     if (!isUndefined(trueVerticalDepthBase)) {
-      tvdData.trueVerticalDepthBase = convertToDistance(
+      tvdData.trueVerticalDepthBase = adaptToConvertedDistance(
         trueVerticalDepthBase,
         unit
       );
     }
 
     if (!isUndefined(trueVerticalDepthTop)) {
-      tvdData.trueVerticalDepthTop = convertToDistance(
+      tvdData.trueVerticalDepthTop = adaptToConvertedDistance(
         trueVerticalDepthTop,
         unit
       );
