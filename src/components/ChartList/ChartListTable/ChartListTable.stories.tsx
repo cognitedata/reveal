@@ -41,3 +41,13 @@ Loading.args = {
   list: [],
   loading: true,
 };
+
+export const LoadingOnlyPlots = Template.bind({});
+
+LoadingOnlyPlots.args = {
+  list: Array(4).fill({
+    ...chartMock,
+    loadingPlot: true,
+    plotlyProps: undefined,
+  }),
+};

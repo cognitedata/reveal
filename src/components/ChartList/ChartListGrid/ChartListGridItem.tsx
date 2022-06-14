@@ -15,7 +15,8 @@ import ChartListDropdown from '../ChartListDropdown/ChartListDropdown';
 import formatOwner from '../formatOwner';
 
 interface Props {
-  plotlyProps: ComponentProps<typeof PlotlyChart>;
+  loadingPlot: boolean;
+  plotlyProps: ComponentProps<typeof PlotlyChart> | undefined;
   name: string;
   updatedAt: string;
   owner: string;
@@ -23,11 +24,12 @@ interface Props {
   readOnly?: boolean;
   onDuplicateClick: () => void;
   onDeleteClick: () => void;
-  translations: typeof ChartListDropdown.defaultTranslations;
+  translations?: typeof ChartListDropdown.defaultTranslations;
 }
 
 const ChartListGridItem = ({
   name,
+  loadingPlot,
   plotlyProps,
   updatedAt,
   owner,
@@ -42,7 +44,11 @@ const ChartListGridItem = ({
       <A onClick={onClick}>
         <ImageWrapper>
           <ImageContent>
-            <PlotlyChart {...plotlyProps} isPreview />
+            {loadingPlot ? (
+              <Skeleton.Image style={{ width: 286, height: 200 }} />
+            ) : (
+              <PlotlyChart {...plotlyProps} isPreview />
+            )}
           </ImageContent>
         </ImageWrapper>
       </A>

@@ -19,7 +19,7 @@ export const useMyCharts = () => {
   return useQuery(
     ['charts', 'mine'],
     async () => (id ? fetchUserCharts(project, id, email) : []),
-    { enabled: !!id }
+    { enabled: !!id, refetchOnWindowFocus: false }
   );
 };
 
@@ -44,8 +44,8 @@ export const useChart = (id: string) => {
 };
 
 export const useDeleteChart = () => {
-  const cache = useQueryClient();
   const project = useProject();
+  const cache = useQueryClient();
 
   return useMutation(
     async (chartId: string) => {
@@ -55,8 +55,9 @@ export const useDeleteChart = () => {
     {
       onSuccess: (chartId) => {
         cache.invalidateQueries(['charts', 'mine']);
+        cache.invalidateQueries(['charts', 'myCharts']);
         cache.invalidateQueries(['charts']);
-        cache.invalidateQueries(['chart', chartId]);
+        cache.removeQueries(['chart', chartId]);
       },
     }
   );

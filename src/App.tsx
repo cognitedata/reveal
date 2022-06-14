@@ -63,29 +63,29 @@ const sdkClient = getSDK();
 export default function RootApp() {
   return (
     <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>} showDialog>
-      <IntercomProvider
-        appId={config.intercomAppId}
-        autoBoot
-        initializeDelay={1000}
-        autoBootProps={{
-          hideDefaultLauncher: true,
-          alignment: 'right',
-          horizontalPadding: 20,
-          verticalPadding: 20,
-        }}
-      >
-        <RecoilRoot>
-          <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <IntercomProvider
+          appId={config.intercomAppId}
+          autoBoot
+          initializeDelay={1000}
+          autoBootProps={{
+            hideDefaultLauncher: true,
+            alignment: 'right',
+            horizontalPadding: 20,
+            verticalPadding: 20,
+          }}
+        >
+          <RecoilRoot>
             <SDKProvider sdk={sdkClient}>
               <Router history={history}>
                 <ToastContainer />
                 <Routes />
               </Router>
-              <ReactQueryDevtools />
             </SDKProvider>
-          </QueryClientProvider>
-        </RecoilRoot>
-      </IntercomProvider>
+          </RecoilRoot>
+        </IntercomProvider>
+        <ReactQueryDevtools />
+      </QueryClientProvider>
     </Sentry.ErrorBoundary>
   );
 }

@@ -12,8 +12,8 @@ import {
   Title,
   Tooltip,
 } from '@cognite/cogs.js';
-import { ComponentProps } from 'react';
 import PlotlyChart from 'components/PlotlyChart/PlotlyChart';
+import { ChartListProps } from '../types';
 import ChartListDropdown from '../ChartListDropdown/ChartListDropdown';
 import formatOwner from '../formatOwner';
 
@@ -23,24 +23,13 @@ const defaultTranslations = makeDefaultTranslations(
   'Owner',
   'Updated',
   'Actions',
+  "You search didn't return any results",
   ...translationKeys(ChartListDropdown.defaultTranslations)
 );
 
-type Props = {
-  loading: boolean;
-  list: {
-    id: string;
-    name: string;
-    owner: string;
-    updatedAt: string;
-    plotlyProps: ComponentProps<typeof PlotlyChart>;
-  }[];
-  readOnly?: boolean;
-  onChartClick: (chartId: string) => void;
-  onChartDeleteClick: (chartId: string) => void;
-  onChartDuplicateClick: (chartId: string) => void;
+interface Props extends ChartListProps {
   translations?: typeof defaultTranslations;
-};
+}
 
 function ChartListTable({
   loading,
@@ -92,6 +81,15 @@ function ChartListTable({
           </tr>
         </thead>
         <tbody>
+          {!loading && list.length === 0 && (
+            <tr>
+              <td colSpan={5} style={{ textAlign: 'center' }}>
+                <Title level={4}>
+                  {t["You search didn't return any results"]}
+                </Title>
+              </td>
+            </tr>
+          )}
           {loading
             ? Array.from(Array(6).keys()).map((e) => <LoadingRow key={e} />)
             : list.map((row) => (
@@ -104,7 +102,11 @@ function ChartListTable({
                           border: '1px solid var(--cogs-greyscale-grey2)',
                         }}
                       >
-                        <PlotlyChart {...row.plotlyProps} />
+                        {row.loadingPlot ? (
+                          <Skeleton.Image style={{ height: 80, width: 86 }} />
+                        ) : (
+                          <PlotlyChart {...row.plotlyProps} />
+                        )}
                       </div>
                     </A>
                   </td>

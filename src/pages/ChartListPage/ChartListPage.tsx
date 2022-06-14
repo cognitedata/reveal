@@ -7,20 +7,18 @@ import {
   SegmentedControl,
   Select,
   Flex,
-  Infobox,
 } from '@cognite/cogs.js';
 import { trackUsage } from 'services/metrics';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useComponentTranslations } from 'hooks/translations';
 import { OpenInCharts } from 'components/OpenInCharts/OpenInCharts';
-import useMyChartsList from 'hooks/myCharts/myCharts';
-import useFirebaseCreateNewChart from 'hooks/firebase/currentChart/createNewChart';
+import useCreateChart from 'models/charts/mutations/useCreateChart';
 import { useNavigate } from 'hooks/navigation';
-import usePublicChartsList from 'hooks/publicCharts/publicCharts';
-import ChartListGrid from 'components/ChartList/ChartListGrid/ChartListGrid';
-import ChartListTable from 'components/ChartList/ChartListTable/ChartListTable';
 import { useResetRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
+import MyChartsList from 'components/ChartList/MyChartsList/MyChartsList';
+import PublicChartsList from 'components/ChartList/PublicChartsList/PublicChartsList';
+import { currentStartPageLayout } from 'config/startPagePreference';
 
 const defaultTranslations = makeDefaultTranslations(
   'Name',
@@ -41,22 +39,22 @@ const defaultTranslations = makeDefaultTranslations(
 const ChartListPage = () => {
   const move = useNavigate();
   const resetChart = useResetRecoilState(chartAtom);
-  const myCharts = useMyChartsList();
-  const publicCharts = usePublicChartsList();
-  const { createNewChart } = useFirebaseCreateNewChart();
+  const { mutateAsync: createNewChart, isLoading: isCreatingChart } =
+    useCreateChart();
   const [activeTab, setActiveTab] = useState<'mine' | 'public'>('mine');
-  const [viewOption, setViewOption] = useState<'list' | 'grid'>('list');
+  const [viewOption, setViewOption] = useState<'list' | 'grid'>(
+    currentStartPageLayout
+  );
   const [searchTerm, setSearchTerm] = useState('');
   const t = useComponentTranslations({
     defaultTranslations,
     translationNamespace: 'ChartList',
   });
-  const chartListTableTranslations = useComponentTranslations(ChartListTable);
 
   const sortOptions = [
-    { value: 'name', label: t.Name },
-    { value: 'owner', label: t.Owner },
-    { value: 'updatedAt', label: t.Updated },
+    { value: 'name' as const, label: t.Name },
+    { value: 'owner' as const, label: t.Owner },
+    { value: 'updatedAt' as const, label: t.Updated },
   ];
 
   const [sortOption, setSortOption] = useState<typeof sortOptions[number]>(
@@ -80,51 +78,19 @@ const ChartListPage = () => {
     trackUsage('ChartListPage.ViewModeChange', { mode: viewOption });
   }, [viewOption]);
 
-  const handleNewChart = async () => {
+  const handleCreateChart = async () => {
     trackUsage('ChartListPage.CreateChart');
     const id = await createNewChart();
     move(`/${id}`);
   };
 
-  const handleDuplicate = async (chartId: string) => {
-    trackUsage('ChartListPage.DuplicateChart', { chartId });
-    if (activeTab === 'mine') {
-      const newId = await myCharts.duplicateChart(chartId);
-      move(`/${newId}`);
-    } else {
-      const publicChart = publicCharts.list.find((c) => c.id === chartId);
-      if (!publicChart) throw new Error('Public Chart not found');
-      const newId = await myCharts.duplicatePublicChart(
-        publicChart.firebaseChart
-      );
-      move(`/${newId}`);
-    }
-  };
-
-  const handleDelete = (chartId: string) => {
-    trackUsage('ChartListPage.DeleteChart');
-    if (activeTab === 'mine') myCharts.deleteChart(chartId);
-  };
-
-  const seeMyCharts = activeTab === 'mine';
-
   const handleSortList = (option: typeof sortOption) => {
-    const currentSort = seeMyCharts ? myCharts.sortList : publicCharts.sortList;
     setSortOption(option);
-    currentSort(option.value as 'updatedAt' | 'name' | 'owner');
   };
 
   const handleSearchTermChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    const currentFilter = seeMyCharts
-      ? myCharts.filterList
-      : publicCharts.filterList;
-    currentFilter(e.target.value);
   };
-
-  const currentList = seeMyCharts ? myCharts.list : publicCharts.list;
-  const currentLoading = seeMyCharts ? myCharts.loading : publicCharts.loading;
-  const currentError = seeMyCharts ? myCharts.error : publicCharts.error;
 
   return (
     <Flex
@@ -132,20 +98,13 @@ const ChartListPage = () => {
       id="chart-list"
       style={{ padding: 16, width: '100%' }}
     >
-      {currentError && (
-        <Infobox
-          type="warning"
-          title="There was a problem when loading the information"
-        >
-          {currentError}
-        </Infobox>
-      )}
       <div style={{ margin: '10px 20px' }}>
         <Button
           type="primary"
           icon="Add"
           aria-label={t['New chart']}
-          onClick={handleNewChart}
+          onClick={handleCreateChart}
+          disabled={isCreatingChart}
         >
           {t['New chart']}
         </Button>
@@ -194,25 +153,17 @@ const ChartListPage = () => {
         </div>
       </Flex>
       <Flex style={{ margin: '10px 20px' }}>
-        {viewOption === 'list' ? (
-          <ChartListTable
-            loading={currentLoading}
-            list={currentList}
-            onChartClick={(chartId) => move(`/${chartId}`)}
-            translations={chartListTableTranslations}
-            onChartDeleteClick={handleDelete}
-            onChartDuplicateClick={handleDuplicate}
-            readOnly={activeTab === 'public'}
+        {activeTab === 'mine' ? (
+          <MyChartsList
+            viewOption={viewOption}
+            sortOption={sortOption}
+            searchTerm={searchTerm}
           />
         ) : (
-          <ChartListGrid
-            loading={currentLoading}
-            list={currentList}
-            onChartClick={(chartId) => move(`/${chartId}`)}
-            onChartDeleteClick={handleDelete}
-            onChartDuplicateClick={handleDuplicate}
-            readOnly={activeTab === 'public'}
-            translations={chartListTableTranslations}
+          <PublicChartsList
+            viewOption={viewOption}
+            sortOption={sortOption}
+            searchTerm={searchTerm}
           />
         )}
       </Flex>

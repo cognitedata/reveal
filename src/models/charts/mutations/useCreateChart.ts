@@ -1,19 +1,22 @@
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import dayjs from 'dayjs';
-import { useUpdateChart } from 'hooks/charts-storage';
+import { useProject } from 'hooks/config';
 import { Chart } from 'models/chart/types';
+import { useMutation } from 'react-query';
+import { createChart } from 'services/charts-storage';
 import { v4 } from 'uuid';
 
-const useFirebaseCreateNewChart = () => {
-  const { data: login } = useUserInfo();
-  const { mutateAsync: updateChartInFirebase } = useUpdateChart();
-  const createNewChart = async () => {
-    if (!login?.id) return '';
+const useCreateChart = () => {
+  const { data: loginInfo } = useUserInfo();
+  const project = useProject();
+
+  return useMutation(async () => {
+    if (!loginInfo?.id) throw new Error('No user present!');
 
     const newChart: Chart = {
       id: v4(),
-      user: login?.id,
-      userInfo: login,
+      user: loginInfo.id,
+      userInfo: loginInfo,
       name: 'New chart',
       updatedAt: Date.now(),
       createdAt: Date.now(),
@@ -42,9 +45,9 @@ const useFirebaseCreateNewChart = () => {
         mergeUnits: false,
       },
     };
-    return updateChartInFirebase(newChart);
-  };
-  return { createNewChart };
+    await createChart(project, newChart.id, newChart);
+    return newChart.id;
+  });
 };
 
-export default useFirebaseCreateNewChart;
+export default useCreateChart;

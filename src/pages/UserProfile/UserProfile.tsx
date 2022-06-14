@@ -25,6 +25,10 @@ import {
   changeDayJSLocale,
   currentLocale,
 } from 'config/locale';
+import {
+  changeStartPageLayout,
+  currentStartPageLayout,
+} from 'config/startPagePreference';
 
 const UserProfileWrap = styled(Flex)`
   width: 100%;
@@ -114,6 +118,9 @@ const defaultTranslations = makeDefaultTranslations(
   'Select the preferred language of the application.',
   'Select Locale',
   'Select how dates and numbers are displayed in the application.',
+  'Select Default Start Page Layout',
+  'Grid',
+  'List',
   'Example',
   'Language'
 );
@@ -150,6 +157,17 @@ const UserProfile = () => {
       });
     }
   }, [ready, i18n.services.backendConnector.backend.backends]);
+
+  const startPageLayoutOptions = [
+    { label: t.List, value: 'list' as const },
+    { label: t.Grid, value: 'grid' as const },
+  ];
+  const [startPageLayout, setStartPageLayout] = useState(
+    () =>
+      startPageLayoutOptions.find(
+        (o) => o.value === currentStartPageLayout()
+      ) ?? startPageLayoutOptions[0]
+  );
 
   return (
     <div id="user-settings" style={{ padding: 16, width: '100%' }}>
@@ -224,6 +242,25 @@ const UserProfile = () => {
             </div>
             <div>
               {t.Example}: {dayjs().format('LLLL')}
+            </div>
+          </Row>
+        </article>
+      </LangAreaWrap>
+      <LangAreaWrap>
+        <article>
+          <h3>{t['Select Default Start Page Layout']}</h3>
+        </article>
+        <article className="lang-col">
+          <Row cols={2}>
+            <div>
+              <Select
+                value={startPageLayout}
+                onChange={(option: typeof startPageLayoutOptions[number]) => {
+                  changeStartPageLayout(option.value);
+                  setStartPageLayout(option);
+                }}
+                options={startPageLayoutOptions}
+              />
             </div>
           </Row>
         </article>

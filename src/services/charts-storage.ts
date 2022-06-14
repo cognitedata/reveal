@@ -66,7 +66,9 @@ export const deleteChart = async (projectId: string, chartId: string) => {
 export const updateChart = async (
   projectId: string,
   chartId: string,
-  update: Partial<Chart>
+  content: Partial<Chart>
 ) => {
-  return charts(projectId).doc(chartId).set(update, { merge: true });
+  return charts(projectId).doc(chartId).set(content, { merge: true });
 };
+
+export const createChart = updateChart;

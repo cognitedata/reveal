@@ -21,18 +21,30 @@ const Template: Story<ComponentProps<typeof ChartListGrid>> = (args) => (
 export const Default = Template.bind({});
 
 Default.args = {
-  list: [
-    {
-      id: 'abc',
-      name: 'Test Chart',
-      owner: 'Rhuan',
-      updatedAt: dayjs().toISOString(),
-      plotlyProps: {
-        plotExamplePropsWithAggregatedData,
-        isPreview: true,
-      } as ComponentProps<typeof ChartListGrid>['list'][number]['plotlyProps'],
-    },
-  ],
+  list: Array(4).fill({
+    id: 'abc',
+    name: 'Test Chart',
+    owner: 'Rhuan',
+    updatedAt: dayjs().toISOString(),
+    loadingPlot: false,
+    plotlyProps: {
+      plotExamplePropsWithAggregatedData,
+      isPreview: true,
+    } as ComponentProps<typeof ChartListGrid>['list'][number]['plotlyProps'],
+  }),
+};
+
+export const LoadingPlot = Template.bind({});
+
+LoadingPlot.args = {
+  list: Array(4).fill({
+    id: 'abc',
+    name: 'Test Chart',
+    owner: 'Rhuan',
+    updatedAt: dayjs().toISOString(),
+    loadingPlot: true,
+    plotlyProps: undefined,
+  }),
 };
 
 export const Loading = Template.bind({});

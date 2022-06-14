@@ -1,5 +1,5 @@
 import ChartsDropdown from 'components/Dropdown/Dropdown';
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 
 const defaultTranslations = makeDefaultTranslations('Duplicate', 'Delete');
 
@@ -47,7 +47,9 @@ const ChartListDropdown = ({
   );
 };
 
+ChartListDropdown.displayName = 'ChartListDropdown';
 ChartListDropdown.defaultTranslations = defaultTranslations;
+ChartListDropdown.translationKeys = translationKeys(defaultTranslations);
 ChartListDropdown.translationsNamepace = 'ChartListDropdown';
 
 export default ChartListDropdown;

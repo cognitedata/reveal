@@ -1,24 +1,17 @@
-import { ComponentProps } from 'react';
-import PlotlyChart from 'components/PlotlyChart/PlotlyChart';
-import { Flex } from '@cognite/cogs.js';
+import { Flex, Title } from '@cognite/cogs.js';
+import { makeDefaultTranslations } from 'utils/translations';
 import ChartListGridItem from './ChartListGridItem';
+import { ChartListProps } from '../types';
 import ChartListDropdown from '../ChartListDropdown/ChartListDropdown';
 
-type Props = {
-  loading: boolean;
-  readOnly?: boolean;
-  list: {
-    id: string;
-    name: string;
-    owner: string;
-    updatedAt: string;
-    plotlyProps: ComponentProps<typeof PlotlyChart>;
-  }[];
-  onChartClick: (chartId: string) => void;
-  onChartDuplicateClick: (chartId: string) => void;
-  onChartDeleteClick: (chartId: string) => void;
-  translations: typeof ChartListDropdown.defaultTranslations;
-};
+const defaultTranslations = makeDefaultTranslations(
+  "You search didn't return any results",
+  ...ChartListDropdown.translationKeys
+);
+
+interface Props extends ChartListProps {
+  translations?: typeof defaultTranslations;
+}
 
 function ChartListGrid({
   loading,
@@ -29,8 +22,14 @@ function ChartListGrid({
   onChartDeleteClick,
   translations,
 }: Props) {
+  const t = { ...defaultTranslations, ...translations };
   return (
     <Flex gap={15} wrap="wrap">
+      {!loading && list.length === 0 && (
+        <div style={{ flexGrow: 1, textAlign: 'center', marginBottom: 10 }}>
+          <Title level={4}>{t["You search didn't return any results"]}</Title>
+        </div>
+      )}
       {loading
         ? Array.from(Array(6).keys()).map((e) => (
             <ChartListGridItem.Loading key={e} />
@@ -42,6 +41,7 @@ function ChartListGrid({
               onDuplicateClick={() => onChartDuplicateClick(row.id)}
               onDeleteClick={() => onChartDeleteClick(row.id)}
               name={row.name}
+              loadingPlot={row.loadingPlot}
               plotlyProps={row.plotlyProps}
               updatedAt={row.updatedAt}
               owner={row.owner}
