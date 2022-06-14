@@ -1,0 +1,40 @@
+---
+id: controlsmodes
+title: Camera controls modes
+description: Usage of different camera controls modes
+---
+
+import { DemoWrapper } from '@site/versioned_docs/version-4.x/components/DemoWrapper';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+Reveal allows you to use different camera controls modes. You can set different controls modes using `setCameraControlsOptions` method of `Cognite3DViewer` class in runtime. Configurable parameters are described in `CameraControlsOptions` type (see API Reference for details).
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+#### Mouse wheel action
+Property `mouseWheelAction` describes what happens when user initiate a mouse wheel scroll. Possible valuses are:
+
+| Value | Description |
+| ----- | ----------- |
+| `zoomToTarget` | zooms just to the current target (center of the screen) of the camera. |
+| `zoomPastCursor` |  zooms in the direction of the ray coming from camera through cursor screen position, allows going through objects. |
+| `zoomToCursor` | mouse wheel scroll zooms towards the point on the model where cursor is hovering over, doesn't allow going through objects. |
+
+Default value is `zoomPastCursor`.
+
+#### On click camera target change
+
+Property `changeCameraTargetOnClick` enables or disables camera target change based on mouse clicks. When enabled, mouse click sets camera target to the point on the model where cursor is hovering over.
+
+Default value is `false`.
+
+Example of setting different camera controls options:
+
+```jsx runnable-4x
+const newControlsOptions = {
+  mouseWheelAction: 'zoomToCursor',
+  changeCameraTargetOnClick: true,
+};
+
+viewer.cameraManager.setCameraControlsOptions(newControlsOptions);
+```

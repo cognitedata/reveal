@@ -1,0 +1,153 @@
+---
+id: clipping
+title: Clipping/slicing planes
+describe: Reveal support adding a number of clipping planes to "cut through" the models.
+---
+
+import { DemoWrapper } from '@site/versioned_docs/version-4.x/components/DemoWrapper';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+Clipping planes, also called slicing planes, can be used to "cut through" the model to reveal the interior. This is
+useful to isolate interesting parts of the model and hide obscuring geometry. Reveal supports having multiple clipping planes
+in arbitrary position and orientation. When clipping planes are active,
+the amount of geometry loaded might be reduced since culled geometry doesn't need
+to be loaded (or rather loaded in a lower detail level).
+
+<video preload="auto" autoPlay="autoplay" loop controls>
+  <source src={useBaseUrl('/img/cad-clipping.webm')} />
+</video>
+
+## Examples
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+### Single, fixed clipping plane
+
+Clipping planes are defined by providing zero or more [`THREE.Plane`](https://threejs.org/docs/#api/en/math/Plane)
+to `Cognite3DViewer.setClippingPlanes`. The clipping planes are activated for all models and
+replaces any active clipping planes.
+
+Typically, [setFromNormalAndCoplanarPoint](https://threejs.org/docs/#api/en/math/Plane.setFromNormalAndCoplanarPoint)
+is used to create clipping planes. This function accepts a direction that defines the orientation of
+the plane and a point on the plane. For example, the following
+code will create a clipping plane that only accepts geometry below `Y = 55`:
+
+```jsx runnable-4x
+const orientation = new THREE.Vector3(0, -1, 0);
+const point = new THREE.Vector3(0, 55, 0);
+const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(orientation, point);
+viewer.setClippingPlanes([plane]);
+```
+
+### Animated clipping plane
+
+Planes can be manipulated runtime and effects will have an effect in the viewer. Note however that rendering must be
+triggered after updating the plane before the change will have a visual effect. This can be done using
+`Cognite3DViewer.requestRedraw()` or simply set new planes using `Cognite3DViewer.setClippingPlanes`.
+
+Below is an example animates a clipping plane by ping-ponging the plane in the vertical direction.
+
+```js runnable-4x
+const bbox = model.getModelBoundingBox();
+
+const orientation = new THREE.Vector3(0, -1, 0);
+const point = new THREE.Vector3(0, bbox.max.y, 0);
+const plane = new THREE.Plane();
+plane.setFromNormalAndCoplanarPoint(orientation, point);
+viewer.setClippingPlanes([plane]);
+
+const start = performance.now();
+setInterval(() => {
+  // Ping-pong plane between top of model and half-way to the bottom
+  const dt = (performance.now() - start) / 1000.0
+  const s = 0.5 * (Math.sin(Math.PI * dt / 10.0) + 1.0);
+  point.y = bbox.max.y - (bbox.max.y - bbox.min.y) / 2.0 * s;
+  plane.setFromNormalAndCoplanarPoint(orientation, point);
+
+  viewer.requestRedraw();
+}, 1000 / 60);
+```
+
+:::note
+Updating `THREE.Plane`-instances will not trigger data loading. To manually trigger data loading after doing
+substantial changes to the clipping planes, use `Cognite3DViewer.setClippingPlanes`. Note that the example
+above performs substantial changes to the planes without loading data. In a real application it's recommended
+to not load data during animation, but initiate data after an animation is completed.
+:::
+
+### Interactable clipping planes
+
+Often it's required to have interactive clipping planes that the user can modify. The following example
+show how [ThreeJS DragControls](https://threejs.org/docs/#examples/en/controls/DragControls) can be used
+to manipulate the clipping planes.
+
+After running this snippet the clipping plane can be manipulated by dragging the white manipulator.
+
+```js runnable-4x
+// import { DragControls } from 'three/examples/jsm/controls/DragControls';
+
+const bounds = model.getModelBoundingBox();
+
+// Create draggable sphere at the center of bounds
+const initialDragPosition = new THREE.Vector3(bounds.min.x, 0.5*(bounds.max.y + bounds.min.y), bounds.min.z);
+const draggerGeometry = new THREE.SphereBufferGeometry(5);
+const draggerMaterial = new THREE.MeshBasicMaterial({ color: 'white' });
+const draggerMesh = new THREE.Mesh(draggerGeometry, draggerMaterial);
+draggerMesh.position.copy(initialDragPosition);
+viewer.addObject3D(draggerMesh);
+
+// Prepare a clipping plane
+const orientation = new THREE.Vector3(0, -1, 0);
+const plane = new THREE.Plane();
+plane.setFromNormalAndCoplanarPoint(orientation, initialDragPosition);
+viewer.setClippingPlanes([plane]);
+
+
+// Handle drag events
+const controls = new DragControls([draggerMesh], viewer.getCamera(), viewer.domElement);
+controls.addEventListener('drag', () => {
+  // Fix XZ-poistion
+  draggerMesh.position.set(initialDragPosition.x, draggerMesh.position.y, initialDragPosition.z);
+  draggerMesh.updateWorldMatrix();
+  // Update clipping plane
+  plane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, -1, 0), draggerMesh.position);
+  viewer.requestRedraw();
+});
+
+// When we are hovering over a sphere we want to disable viewer controls
+controls.addEventListener('hoveron', () => {
+  viewer.cameraManager.cameraControlsEnabled = false;
+  draggerMaterial.color.set('gray');
+  viewer.requestRedraw();
+});
+
+// And turn them back on when we stop hovering over it
+controls.addEventListener('hoveroff', () => {
+  viewer.cameraManager.cameraControlsEnabled = true;
+  draggerMaterial.color.set('white');
+  viewer.requestRedraw();
+});
+```
+
+### CAD geometry filter
+
+A special type of clipping is to provide a "geometry filter" when loading the model. A geometry filter restricts the
+area to load geometry for and is specified when the model is created. Geometry filters not only hides clipped geometry,
+it unloads unnecessary geometry to save memory and improve rendering performance.
+
+```js
+const min = new THREE.Vector3(10, 20, 30);
+const max = new THREE.Vector3(20, 30, 40);
+viewer.addModel({
+  modelId,
+  revisionId,
+  geometryFilter: {
+    boundingBox: new THREE.Box3(min, max)
+  }
+});
+```
+
+:::note
+Geometry filters are static and cannot be changed after creating the model. Instead, remove and re-add the model,
+or use regular clipping planes if they change frequently.
+:::

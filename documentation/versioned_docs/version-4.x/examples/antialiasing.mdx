@@ -1,0 +1,44 @@
+---
+id: antialiasing
+title: Enabling anti-aliasing
+description: Shows the effects of the different anti-aliasing approaches supported by Reveal
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+
+Anti-aliasing is a technique to reduce the aliasing effects in the rendered result, and improves visual quality.
+
+Reveal supports several anti-aliasing modes:
+- [Fast approximate anti-aliasing (FXAA)](https://en.wikipedia.org/wiki/Fast_approximate_anti-aliasing) - a fast 
+technique that reduces anti-aliasing at modest cost.
+- [Multi-sample anti-antialiasing (MSAA)](https://en.wikipedia.org/wiki/Multisample_anti-aliasing) - hardware supported
+supersampling technique. This produces high-quality anti-aliasing at some performance cost depending on how many samples
+is taken per output pixel. Reveal supports 4, 8 or 16 samples. This mode is only supported on WebGL 2 (currently this 
+means desktop computers, most Android devices, but not iOS - see [caniuse.com](https://caniuse.com/webgl2)).
+- MSAA + FXAA - a combination of both modes where an FXAA pass is performed after the MSAA pass.
+- Disabled - no anti-aliasing.
+
+<a target='_blank' href={useBaseUrl('/img/antialias-comparison.png')}>
+  <img src={useBaseUrl('/img/antialias-comparison.png')} alt="Comparison of different anti-aliasing techniques" />
+</a>
+It might be hard to notice the difference in a scaled image, click the image to open the full resolution image.
+
+By default [Fast approximate anti-aliasing (FXAA)](https://en.wikipedia.org/wiki/Fast_approximate_anti-aliasing) is used.
+This mode works on both WebGL 1 and WebGL 2. If WebGL 2 isn't supported, FXAA is used as a fallback.
+
+
+```jsx
+const viewer = new Cognite3DViewer(
+  { 
+    sdk: client, 
+    antiAliasingHint: 'msaa4+fxaa' 
+  });
+```
+
+Modes currently supported are `'disabled'`, `'fxaa'`, `'msaa2+fxaa'`, `'msaa4+fxaa'`, `'msaa8+fxaa'`, `'msaa16+fxaa'`,
+`'msaa2'`, `'msaa4'`, `'msaa8'` and `'msaa16'`.
+
+:::note
+The examples in this documentation use `msaa4+fxaa`.
+:::

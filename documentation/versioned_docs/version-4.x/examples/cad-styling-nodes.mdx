@@ -1,0 +1,150 @@
+---
+id: cad-styling-nodes
+title: Filtering nodes by node properties
+describe: Applying styles to nodes based on node properties/attributes
+---
+
+import { DemoWrapper } from '@site/versioned_docs/version-4.x/components/DemoWrapper';
+
+3D nodes may have associated attribute/property data. Reveal allows for filtering based on
+these properties, allowing queries such as "all pipes", "nodes within module P600" or "nodes
+with status S5". Combinations are also possible by using `UnionNodeCollection` and `IntersectionNodeCollection`.
+
+`PropertyFilterNodeCollection` is used to query nodes based on node properties. It's possible to specify
+multiple criterias which will be combined using `AND` - i.e. all criterias must be met for a node
+to match. To emulate `OR`, use `UnionNodeCollection`.
+
+Note that if a node is in a `PropertyFilterNodeCollection` all of its children will also be
+in the set.
+
+:::note
+The test model used in the documentation site is lacking good node properties and the quality of
+the examples shown is therefor restricted as a result of this. To best utilize the filtering APIs
+we recommend providing a rich 3D models with a good set of high-quality attributes associated with
+the nodes.
+:::
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+## Show all pipes
+
+If nodes in the 3D model has an attribute `'PDMS.Type'`, `PropertyFilterNodeCollection` can be used to
+retrieve nodes of a certain type. In the following example, only pipes are accepted:
+
+```js runnable-4x
+// import { PropertyFilterNodeCollection, DefaultNodeAppearance } from '@cognite/reveal';
+
+const allPipes = new PropertyFilterNodeCollection(sdk, model);
+allPipes.executeFilter({'PDMS': {'Type': 'PIPE'}});
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.assignStyledNodeCollection(allPipes, { renderGhosted: false, color: [40, 200, 20] } );
+```
+
+## Partitioning requests
+
+For filters that match a lot of nodes, [paritioned requests](https://docs.cognite.com/api/v1/#section/Parallel-retrieval)
+might increase the performance radically by fetching result from the server in parallel.
+To partition requests, provide the number of partitions using the `requestPartitions`-option
+to the `PropertyFilterNodeCollection`-constructor:
+
+```js runnable-4x
+// import { PropertyFilterNodeCollection, DefaultNodeAppearance, NodeOutlineColor } from '@cognite/reveal';
+
+const nodesFromFile = new PropertyFilterNodeCollection(sdk, model, { requestPartitions: 10 });
+// All nodes originating from a given file
+nodesFromFile.executeFilter({'Item': {'Source File': 'PRO-S_CD-MUM.rvm'}});
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.assignStyledNodeCollection(nodesFromFile, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange } );
+```
+
+To compare speed-up, set `requestPartitions` to `1`.
+
+## Combining filters
+
+Often one would want to match multiple criterias of the same type. Lets say we want to find all
+mechanical equipment with purpose 'STU'. We can either execute this as a single query, or as two
+seperate queries.
+
+When doing this as a single query, no `IntersectionNodeCollection` is necessary and the code is quite compact:
+
+```js runnable-4x
+// import { PropertyFilterNodeCollection, DefaultNodeAppearance } from '@cognite/reveal';
+
+const stuMechNodes = new PropertyFilterNodeCollection(sdk, model);
+stuMechNodes.executeFilter({'PDMS': {':capDisc': 'MECH', 'Purpose': 'STU' }});
+
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.assignStyledNodeCollection(stuMechNodes, { renderGhosted: false, color: [40, 200, 20] } );
+```
+
+Combining two separate queries requires the use of `IntersectionNodeCollection`:
+
+```js runnable-4x
+// import { PropertyFilterNodeCollection, IntersectionNodeCollection, DefaultNodeAppearance } from '@cognite/reveal';
+
+const mechNodes = new PropertyFilterNodeCollection(sdk, model);
+mechNodes.executeFilter({'PDMS': {':capDisc': 'MECH'}});
+
+const stuNodes = new PropertyFilterNodeCollection(sdk, model);
+stuNodes.executeFilter({'PDMS': {'Purpose': 'STU'}});
+
+const combined = new IntersectionNodeCollection();
+combined.add(mechNodes);
+combined.add(stuNodes);
+
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.assignStyledNodeCollection(combined, { renderGhosted: false, color: [40, 200, 20] } );
+```
+
+The two approaches has their pros and cons. Often it will be faster to combine the
+filters into a single query as this will reduce the result set returned from the
+server. However, if the different combinations will be configured run-time (e.g.
+the user will want to show 'ARCH'-nodes within the 'STU'-purpose) it might
+be better to use two separate queries and combine the results. Also, the latter
+approach also allows for more complex types of filters.
+
+## Matching nodes with a list of values
+
+There might be situations where an application has a long list of identifiers of nodes to show
+or style. In this case, `SinglePropertyFilterNodeCollection` might be useful. This class will match
+one node property towards many values - e.g. a node identifier towards a list of IDs. This node set
+supports thousands of IDs - `PropertyFilterNodeCollection` only supports one matching value.
+
+```js runnable-4x
+// import { SinglePropertyFilterNodeCollection, DefaultNodeAppearance } from '@cognite/reveal';
+
+const nodeSet = new SinglePropertyFilterNodeCollection(sdk, model, { requestPartitions: 10 });
+const names = [];
+for (let q = 200; q < 300; q++) {
+  for (let e = 1; e <= 9; e++) {
+    const name = `/60-EL-9016-Q${q}-E0${e}`;
+    names.push(name);
+  }
+}
+nodeSet.executeFilter('Item', 'Name', names);
+
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.assignStyledNodeCollection(nodeSet, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange } );
+```
+
+## Inverting filters
+
+Often it is interesting to invert results from filters to find elements that does not match the query. This
+can be done using `InvertedNodeCollection`.
+
+```js runnable-4x
+// import { PropertyFilterNodeCollection, InvertedNodeCollection, DefaultNodeAppearance } from '@cognite/reveal';
+
+const livingQuarters = new PropertyFilterNodeCollection(sdk, model);
+livingQuarters.executeFilter({'Item': {'Name': '/SLP/S/LQ'}});
+const notLivingQuarters = new InvertedNodeCollection(model, livingQuarters);
+
+model.setDefaultNodeAppearance({
+  outlineColor: NodeOutlineColor.Red,
+  color: [120, 50, 0]
+});
+model.assignStyledNodeCollection(notLivingQuarters, {
+  outlineColor: NodeOutlineColor.NoOutline,
+  color: [0,0,0]
+});
+```

@@ -35,6 +35,11 @@ const versionedImportNode = {
     type: 'import',
     value:
       "import { LiveCodeSnippet } from '@site/versioned_docs/version-3.x/components/LiveCodeSnippet';",
+  },
+  'runnable-4x': {
+    type: 'import',
+    value:
+      "import { LiveCodeSnippet } from '@site/versioned_docs/version-4.x/components/LiveCodeSnippet';",
   }
 };
 

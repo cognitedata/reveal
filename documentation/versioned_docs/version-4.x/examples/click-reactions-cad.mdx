@@ -1,0 +1,74 @@
+---
+id: click-reactions-cad
+title: Reacting to clicks in CAD models
+description: Detecting intersections from clicks in CAD models
+---
+
+Determining clicks is important in applications with an interactive 3D model. Cognite Reveal supports
+mappings clicks on the 2D rendered result to a 3D position and to determine what object is clicked.
+`Cognite3DViewer.on('click', ...)` is used to detect clicks in the 3D model, while
+`Cognite3DViewer.getIntersectionFromPixel` is used to determine clicked 3D world position and point from
+a mouse click.
+
+import { DemoWrapper } from '@site/versioned_docs/version-4.x/components/DemoWrapper';
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+## Detecting clicked objects
+
+The following example detects intersections at clicked positions and marks the intersected positions
+using a red sphere.
+
+```js runnable-4x
+viewer.on('click', async event => {
+  const intersection = await viewer.getIntersectionFromPixel(
+    event.offsetX, event.offsetY
+  );
+  if (intersection) {
+    const toPresent = { treeIndex: intersection.treeIndex, nodeId: intersection.nodeID, point: intersection.point };
+    alert(`Clicked object!: ${JSON.stringify(toPresent)}`);
+  };
+});
+```
+
+## Highlighting clicked objects
+
+It's quite common to highlight clicked objects. This can be achieved by using [the node styling API](./cad-styling.mdx).
+
+```js runnable-4x
+const selectedNodes = new TreeIndexNodeCollection();
+model.assignStyledNodeCollection(selectedNodes, DefaultNodeAppearance.Highlighted);
+
+viewer.on('click', async event => {
+  const intersection = await viewer.getIntersectionFromPixel(
+    event.offsetX, event.offsetY
+  );
+  if (intersection) {
+    // Replace current selection
+    selectedNodes.updateSet(new IndexSet([intersection.treeIndex]));
+  };
+});
+```
+
+In CAD models, it's quite common that equipment consists of many small geometry parts. Often it's desirable to
+highlight the entire equipment (e.g. a tank) and not just the individual pieces (e.g. a valve connected to the tank).
+This can be achieved by determining the ancestor tree indices of the clicked geometry. `Cognite3DModel.getAncestorTreeIndices()`
+can be used to determine this.
+
+```js runnable-4x
+const selectedNodes = new TreeIndexNodeCollection();
+model.assignStyledNodeCollection(selectedNodes, DefaultNodeAppearance.Highlighted);
+
+viewer.on('click', async event => {
+  const intersection = await viewer.getIntersectionFromPixel(
+    event.offsetX, event.offsetY
+  );
+  if (intersection) {
+    // Retrieve tree indices of parent. Second argument is used to control what ancestor level to retrieve;
+    // 1 is direct parent, 2 is grand-parent etc
+    const parentRange = await model.getAncestorTreeIndices(intersection.treeIndex, 1);
+    // Replace current selection
+    selectedNodes.updateSet(new IndexSet(parentRange));
+  };
+});
+```
