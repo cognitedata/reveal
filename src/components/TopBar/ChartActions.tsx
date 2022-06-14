@@ -19,6 +19,7 @@ import {
 } from 'utils/charts';
 import useScreenshot from 'use-screenshot-hook';
 import CSVModal from 'components/DownloadDropdown/CSVModal';
+import { isProduction } from 'utils/environment';
 
 export const ChartActions = () => {
   const { t } = useTranslations(
@@ -164,7 +165,9 @@ export const ChartActions = () => {
       <Tooltip content={t['Download Chart']}>
         <DownloadDropdown
           translations={dropdownTranslations}
-          onDownloadCalculations={handleDownloadCalculations}
+          onDownloadCalculations={
+            isProduction ? undefined : handleDownloadCalculations
+          }
           onDownloadImage={handleDownloadImage}
           onCsvDownload={() => setIsCSVModalVisible(true)}
         />

@@ -64,6 +64,7 @@ import { flow } from 'lodash';
 import { getUnitConverter } from 'utils/units';
 import { timeseriesSummaries } from 'models/timeseries-results/selectors';
 
+import { isProduction } from 'utils/environment';
 import {
   BottomPaneWrapper,
   ChartContainer,
@@ -616,7 +617,9 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                 dateTo={new Date(chart.dateTo)}
                 handleOpenSearch={handleOpenSearch}
                 handleClickNewWorkflow={handleClickNewWorkflow}
-                handleImportCalculationsClick={handleImportCalculationsClick}
+                handleImportCalculationsClick={
+                  isProduction ? undefined : handleImportCalculationsClick
+                }
                 handleSettingsToggle={handleSettingsToggle}
                 handleDateChange={handleDateChange}
                 translations={ChartViewHeaderTranslations}

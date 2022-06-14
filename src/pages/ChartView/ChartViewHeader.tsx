@@ -63,7 +63,7 @@ type Props = {
   dateTo: Date;
   handleOpenSearch: (diff: any) => void;
   handleClickNewWorkflow: (diff: any) => void;
-  handleImportCalculationsClick: (diff: any) => void;
+  handleImportCalculationsClick: ((diff: any) => void) | undefined;
   handleSettingsToggle: (str: string, val: boolean) => void;
   handleDateChange: ComponentProps<typeof DateTimePicker>['onChange'];
   translations?: typeof defaultTranslations;
@@ -101,26 +101,28 @@ const ChartViewHeader = ({
         <Button icon="Function" type="ghost" onClick={handleClickNewWorkflow}>
           {t['Add calculation']}
         </Button>
-        <Dropdown
-          content={
-            <Menu>
-              <Menu.Header>{t.Imports}</Menu.Header>
-              <Menu.Item
-                appendIcon="Function"
-                onClick={handleImportCalculationsClick}
-              >
-                <MenuItemText>{t['Import calculations']}</MenuItemText>
-              </Menu.Item>
-            </Menu>
-          }
-        >
-          <Button
-            icon="EllipsisHorizontal"
-            type="ghost"
-            aria-label="view"
-            style={{ paddingRight: 8, marginLeft: 4 }}
-          />
-        </Dropdown>
+        {handleImportCalculationsClick && (
+          <Dropdown
+            content={
+              <Menu>
+                <Menu.Header>{t.Imports}</Menu.Header>
+                <Menu.Item
+                  appendIcon="Function"
+                  onClick={handleImportCalculationsClick}
+                >
+                  <MenuItemText>{t['Import calculations']}</MenuItemText>
+                </Menu.Item>
+              </Menu>
+            }
+          >
+            <Button
+              icon="EllipsisHorizontal"
+              type="ghost"
+              aria-label="view"
+              style={{ paddingRight: 8, marginLeft: 4 }}
+            />
+          </Dropdown>
+        )}
       </section>
       {userId && !isOwner && (
         <section>
