@@ -2,7 +2,7 @@
 
 set -e
 
-project="${1:-platypus,platypus-core,platypus-infrastructure}"
+project="${1:-platypus,platypus-core,platypus-common-utils}"
 
 nx run-many --target=test --projects=${project} "$@" \
   --collectCoverageFrom='!*/**/*.stories.tsx' \

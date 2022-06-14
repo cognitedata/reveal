@@ -333,7 +333,7 @@ describe('Templates Test', () => {
     );
   });
 
-  it.only('Should support filter datapoints based on start and end', async () => {
+  it('Should support filter datapoints based on start and end', async () => {
     const apiPath = '/templategroups/BestDay/versions/1/graphql';
     // test equal
     const start = 1625788700000;

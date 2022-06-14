@@ -6,7 +6,8 @@ import {
 import { RequiredFieldValidator } from '../common/validators/required-field.validator';
 import { IDataModelVersionApiService } from './boundaries';
 import {
-  CreateSchemaDTO,
+  ConflictMode,
+  CreateDataModelVersionDTO,
   FetchSolutionDTO,
   GraphQLQueryResponse,
   ListVersionsDTO,
@@ -52,28 +53,20 @@ export class DataModelVersionHandler {
 
   /**
    * Publish new schema by bumping the version.
-   * @param dto
+   * @param dataModelVersion - DataModelVersion
+   * @param conflictMode - NEW_VERSION | PATCH
    */
-  publish(dto: CreateSchemaDTO): Promise<Result<DataModelVersion>> {
-    const validationResult = this.validate(dto, ['solutionId']);
-
+  publish(
+    dto: CreateDataModelVersionDTO,
+    conflictMode: ConflictMode
+  ): Promise<Result<DataModelVersion>> {
+    const validationResult = this.validate(dto, ['externalId']);
     if (!validationResult.valid) {
       return Promise.reject(Result.fail(validationResult.errors));
     }
 
     return this.solutionSchemaService
-      .publishVersion(dto)
-      .then((version) => Result.ok(version))
-      .catch((err) => Result.fail(err));
-  }
-
-  /**
-   * Patch the existing version, but will fail if there are breaking changes.
-   * @param dto
-   */
-  update(dto: CreateSchemaDTO): Promise<Result<DataModelVersion>> {
-    return this.solutionSchemaService
-      .updateVersion(dto)
+      .publishVersion(dto, conflictMode)
       .then((version) => Result.ok(version))
       .catch((err) => Result.fail(err));
   }

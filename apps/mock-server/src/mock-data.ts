@@ -119,7 +119,7 @@ export const mockDataSample = {
           bindings: [],
           dataModel: {
             graphqlRepresentation:
-              'type Post @view {\n  title: String!\n  views: Int!\n  user: User\n tags: [String]\n metadata: PostMetadata\n colors: [PostColor]\n comments: [Comment]\n}\n\ntype User @view {\n  name: String!\n}\n\ntype Comment @view {\n  body: String!\n  date: Timestamp!\n  post: Post\n}\n type PostMetadata {\n  slug: String\n}\n\ntype PostColor {\n  name: String\n}',
+              'type Post @view {\n  title: String!\n  views: Int!\n  user: User\n tags: [String]\n comments: [Comment]\n}\n\ntype User @view {\n  name: String!\n}\n\ntype Comment @view {\n  body: String!\n  date: Timestamp!\n  post: Post\n}',
             types: [],
           },
         },
@@ -133,8 +133,6 @@ export const mockDataSample = {
             views: 254,
             user: { id: 123 },
             tags: ['Lorem', 'Ipsum'],
-            metadata: { slug: 'lorem-ipsum' },
-            colors: [{ name: 'red' }],
             comments: [{ id: 987 }, { id: 995 }],
           },
           {
@@ -144,8 +142,6 @@ export const mockDataSample = {
             views: 65,
             user: { id: 456 },
             tags: ['Sic', 'Dolor'],
-            metadata: { slug: 'sic-dolor-amet' },
-            colors: [{ name: 'blue' }],
             comments: [],
           },
           {
@@ -155,8 +151,6 @@ export const mockDataSample = {
             views: 100,
             user: { id: 456 },
             tags: ['Dolor', 'Lorem'],
-            metadata: { slug: 'lorem-sic-dolor-amet' },
-            colors: [{ name: 'green' }],
             comments: [],
           },
         ],

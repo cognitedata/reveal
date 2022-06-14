@@ -20,9 +20,12 @@ export abstract class DateUtils {
    * @param date - JS Date object or UNIX timestamp
    * @param format - DateFormat or string, default DateFormat.DISPLAY_DATE_FORMAT
    */
-  abstract format(date: Date, format?: DateFormat | string): string;
+  abstract format(
+    date: Date | number | string,
+    format?: DateFormat | string
+  ): string;
 
-  abstract toTimeDiffString(date: Date): string;
+  abstract toTimeDiffString(date: Date | number): string;
 
-  abstract isValid(date: Date): boolean;
+  abstract isValid(date: Date | number): boolean;
 }

@@ -1,4 +1,4 @@
-import { GraphQlUtilsService } from '@platypus/platypus-infrastructure';
+import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 import { MarkerSeverity } from 'monaco-editor';
 import {
   ValidateSchemaError,

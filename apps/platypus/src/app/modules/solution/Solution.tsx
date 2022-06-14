@@ -82,8 +82,8 @@ export const Solution = () => {
           <Route
             exact
             path={[
-              '/solutions/:solutionId?/:version?',
-              '/solutions/:solutionId?/:version?/data/:solutionPage?/:subSolutionPage?',
+              '/data-models/:solutionId?/:version?',
+              '/data-models/:solutionId?/:version?/data/:solutionPage?/:subSolutionPage?',
             ]}
           >
             <Suspense fallback={<Spinner />}>
@@ -93,25 +93,24 @@ export const Solution = () => {
           <Route
             exact
             path={[
-              // '/solutions/:solutionId?/:version?',
-              '/solutions/:solutionId?/:version?/overview/:solutionPage?',
+              '/data-models/:solutionId?/:version?/overview/:solutionPage?',
             ]}
           >
             <Suspense fallback={<Spinner />}>
               <OverviewPage />
             </Suspense>
           </Route>
-          <Route exact path="/solutions/:solutionId?/:version?/tools">
+          <Route exact path="/data-models/:solutionId?/:version?/tools">
             <Suspense fallback={<Spinner />}>
               <ToolsPage />
             </Suspense>
           </Route>
-          <Route exact path="/solutions/:solutionId?/:version?/deployments">
+          <Route exact path="/data-models/:solutionId?/:version?/deployments">
             <Suspense fallback={<Spinner />}>
               <DeploymentsPage />
             </Suspense>
           </Route>
-          <Route exact path="/solutions/:solutionId?/:version?/settings">
+          <Route exact path="/data-models/:solutionId?/:version?/settings">
             <Suspense fallback={<Spinner />}>
               <SettingsPage />
             </Suspense>

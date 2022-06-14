@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import solutionsSlice from '@platypus-app/modules/solutions/redux/store';
 import { KeyValueStore } from '@platypus-app/types';
 import {
   configureStore,
@@ -21,7 +20,6 @@ const createReducer = (asyncReducers: any) => {
 
 const reducersRegistry = {
   global: globalReducer.reducer,
-  solutions: solutionsSlice.reducer,
   solution: solutionSlice.reducer,
 };
 

@@ -1,5 +1,5 @@
 import { IGraphQlUtilsService } from '../boundaries';
-import { schemaServiceBuiltInTypes, templatesBiltInTypes } from '../constants';
+import { mixerApiBuiltInTypes, templatesBiltInTypes } from '../constants';
 import { UpdateSolutionDataModelFieldDTO } from '../dto';
 import {
   DataModelTypeDefsField,
@@ -163,7 +163,7 @@ export class SolutionDataModelService {
   getBuiltinTypes(): BuiltInType[] {
     return this.backend === 'templates'
       ? templatesBiltInTypes
-      : schemaServiceBuiltInTypes;
+      : mixerApiBuiltInTypes;
   }
 
   /** Clears the state */

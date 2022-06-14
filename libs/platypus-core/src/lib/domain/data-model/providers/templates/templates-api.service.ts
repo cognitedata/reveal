@@ -9,7 +9,7 @@ import { PlatypusError } from '@platypus-core/boundaries/types';
 import { ExternalId } from '@cognite/sdk-core';
 
 import {
-  CreateSchemaDTO,
+  CreateDataModelVersionDTO,
   CreateSolutionDTO,
   DeleteSolutionDTO,
   FetchSolutionDTO,
@@ -100,12 +100,12 @@ export class TemplatesApiService {
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 
-  publishSchema(dto: CreateSchemaDTO): Promise<TemplateGroupVersion> {
+  publishSchema(dto: CreateDataModelVersionDTO): Promise<TemplateGroupVersion> {
     return this.createOrUpdate(dto, ConflictMode.Update);
   }
 
   updateSchema(
-    dto: CreateSchemaDTO,
+    dto: CreateDataModelVersionDTO,
     forceUpdate = false
   ): Promise<TemplateGroupVersion> {
     return this.createOrUpdate(
@@ -115,7 +115,7 @@ export class TemplatesApiService {
   }
 
   private createOrUpdate(
-    dto: CreateSchemaDTO,
+    dto: CreateDataModelVersionDTO,
     mode: string
   ): Promise<TemplateGroupVersion> {
     const requestDto = {
@@ -128,7 +128,7 @@ export class TemplatesApiService {
     }
 
     return this.cdfClient.templates
-      .group(dto.solutionId)
+      .group(dto.externalId)
       .versions.upsert(requestDto)
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }

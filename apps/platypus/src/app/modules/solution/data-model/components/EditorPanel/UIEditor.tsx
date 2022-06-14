@@ -13,8 +13,8 @@ import { SchemaTypeList } from '../SchemaTypeAndField/SchemaTypeList';
 import { SchemaTypeView } from '../SchemaTypeAndField/SchemaTypeView';
 import { useErrorLogger } from '@platypus-app/hooks/useErrorLogger';
 import { ErrorPlaceholder } from '../ErrorBoundary/ErrorPlaceholder';
-import dataModelServices from '../../di';
-const dataModelService = dataModelServices.dataModelService;
+import { useInjection } from '@platypus-app/hooks/useInjection';
+import { TOKENS } from '@platypus-app/di';
 
 interface UIEditorProps {
   builtInTypes: BuiltInType[];
@@ -45,6 +45,7 @@ export function UIEditor({
     }
   );
   const errorLogger = useErrorLogger();
+  const dataModelService = useInjection(TOKENS.solutionDataModelService);
 
   useEffect(() => {
     if (graphQLSchemaString === '') {

@@ -7,7 +7,7 @@ on:
       - 'apps/platypus/**'
       - 'apps/mock-server/**'
       - 'libs/platypus-core/**'
-      - 'libs/platypus-infrastructure/**'
+      - 'libs/platypus-common-utils/**'
 jobs:
   cypress-run:
     runs-on: ubuntu-latest

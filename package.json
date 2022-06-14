@@ -32,6 +32,8 @@
     "@types/qrcode-terminal": "^0.12.0",
     "ag-grid-community": "^26.1.0",
     "ag-grid-react": "^26.1.0",
+    "brandi": "^4.0.2",
+    "brandi-react": "^4.0.2",
     "chalk": "4.1.2",
     "cli-table": "^0.3.11",
     "conf": "^10.0.3",

@@ -1,4 +1,9 @@
-const shouldUseMixerApi = localStorage.getItem('USE_MIXER_API') ? true : false;
+const shouldUseMixerApi =
+  localStorage.getItem('USE_MIXER_API') &&
+  localStorage.getItem('USE_MIXER_API')?.toString() === 'false'
+    ? false
+    : true;
+
 export default {
   APP_APP_ID:
     process.env.REACT_APP_APP_ID ||

@@ -1,9 +1,7 @@
 describe('Platypus Data Preview Page - Preview', () => {
   beforeEach(() => {
     window.sessionStorage.setItem('agGridVirtualizationModeDisabled', 'true');
-    cy.visit(
-      '/platypus/solutions/posts-example/latest/data/data-management/preview'
-    );
+    cy.visit('/platypus/data-models/blog/latest/data/data-management/preview');
   });
 
   it('should load page', () => {
@@ -34,7 +32,9 @@ describe('Platypus Data Preview Page - Preview', () => {
     cy.getBySel('data-preview-table').should('be.visible');
 
     // check if all fields are rendered as cols
-    cy.get('.ag-header .ag-header-cell[col-id="id"]').should('be.visible');
+    cy.get('.ag-header .ag-header-cell[col-id="externalId"]').should(
+      'be.visible'
+    );
     cy.get('.ag-header .ag-header-cell[col-id="title"]').should('be.visible');
     cy.get('.ag-header .ag-header-cell[col-id="views"]').should('be.visible');
 
@@ -56,7 +56,7 @@ describe('Platypus Data Preview Page - Preview', () => {
     // check custom col types
     cy.get(
       '.ag-body-viewport .ag-row[row-index="0"] .ag-cell[col-id="user"] .cogs-tag'
-    ).should('have.text', '{"_externalId":""}');
+    ).should('have.text', '{"externalId":""}');
   });
 
   it('should display data preview if no data', () => {

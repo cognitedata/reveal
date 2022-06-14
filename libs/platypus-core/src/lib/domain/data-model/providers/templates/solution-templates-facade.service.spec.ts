@@ -1,3 +1,4 @@
+import { DataModelVersionStatus } from '../../types';
 import { SolutionTemplatesFacadeService } from './solution-templates-facade.service';
 
 describe('SolutionsTemplatesFacadeServiceTest', () => {
@@ -90,9 +91,12 @@ describe('SolutionsTemplatesFacadeServiceTest', () => {
   it('should create schema', async () => {
     const service = createInstance();
     await service.publishVersion({
-      solutionId: templateGroupMock.externalId,
+      externalId: templateGroupMock.externalId,
       version: '1',
       schema: templateSchemaMock.schema,
+      status: DataModelVersionStatus.PUBLISHED,
+      createdTime: 0,
+      lastUpdatedTime: 0,
     });
     expect(templatesApiServiceMock.publishSchema).toBeCalled();
   });

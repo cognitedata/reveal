@@ -24,7 +24,7 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
   const history = useHistory();
 
   const onRoute = (page: string, slug: string) => {
-    history.push(`/solutions/${solutionId}/${version}/${page}/${slug}`);
+    history.push(`/data-models/${solutionId}/${version}/${page}/${slug}`);
   };
 
   const renderIcon = (item: SideBarItem, index: number) => {

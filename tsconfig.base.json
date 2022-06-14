@@ -10,52 +10,26 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": [
-      "es2017",
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["es2017", "dom", "dom.iterable", "esnext"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@cognite/cog-data-grid": [
-        "libs/cog-data-grid/src/index.ts"
+      "@cognite/cog-data-grid": ["libs/cog-data-grid/src/index.ts"],
+      "@cognite/cog-data-grid-root/*": ["libs/cog-data-grid/src/*"],
+      "@cognite/graph": ["libs/graph/src/index.ts"],
+      "@cognite/platypus-cdf-cli/*": ["apps/platypus-cdf-cli/src/*"],
+      "@platypus-app/*": ["apps/platypus/src/app/*"],
+      "@platypus-core/*": ["libs/platypus-core/src/lib/*"],
+      "@platypus/mock-data": ["libs/mock-data/src/index.ts"],
+      "@platypus/platypus-common-utils": [
+        "libs/platypus-common-utils/src/index.ts"
       ],
-      "@cognite/cog-data-grid-root/*": [
-        "libs/cog-data-grid/src/*"
-      ],
-      "@cognite/graph": [
-        "libs/graph/src/index.ts"
-      ],
-      "@cognite/platypus-cdf-cli/*": [
-        "apps/platypus-cdf-cli/src/*"
-      ],
-      "@platypus-app/*": [
-        "apps/platypus/src/app/*"
-      ],
-      "@platypus-core/*": [
-        "libs/platypus-core/src/lib/*"
-      ],
-      "@platypus/mock-data": [
-        "libs/mock-data/src/index.ts"
-      ],
-      "@platypus/platypus-core": [
-        "libs/platypus-core/src/index.ts"
-      ],
-      "@platypus/platypus-infrastructure": [
-        "libs/platypus-infrastructure/src/index.ts"
-      ],
-      "@platypus/platypus-ui": [
-        "libs/platypus-ui/src/index.ts"
-      ]
+      "@platypus/platypus-core": ["libs/platypus-core/src/index.ts"],
+      "@platypus/platypus-ui": ["libs/platypus-ui/src/index.ts"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }

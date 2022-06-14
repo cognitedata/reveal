@@ -30,7 +30,7 @@ export const DataModelHeader = (props: DataModelHeaderProps) => {
               <SchemaVersionDropdown
                 onVersionSelect={(solutionSchema) => {
                   history.replace(
-                    `/solutions/${props.solutionId}/${solutionSchema.version}/data`
+                    `/data-models/${props.solutionId}/${solutionSchema.version}/data`
                   );
                   props.selectSchema(solutionSchema);
                 }}

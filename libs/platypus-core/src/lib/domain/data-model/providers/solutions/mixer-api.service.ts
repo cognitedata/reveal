@@ -9,9 +9,8 @@ import {
   SolutionApiOutputDTO,
   ApiVersion,
   ApiVersionFromGraphQl,
-  SolutionStorageDataModelDTO,
-  ListInstancesReqDTO,
-  StorageInstanceDTO,
+  ConflictMode,
+  DataModelStorageBindingsDTO,
 } from '../../dto';
 
 export class MixerApiService {
@@ -115,13 +114,11 @@ export class MixerApiService {
   }
 
   /** Publish new API version */
-  publishVersion(dto: ApiVersionFromGraphQl): Promise<ApiVersion> {
-    return this.upsertApiVersion(dto, 'NEW_VERSION');
-  }
-
-  /** Tried to patch the version or throws confict error */
-  updateVersion(dto: ApiVersionFromGraphQl): Promise<ApiVersion> {
-    return this.upsertApiVersion(dto, 'PATCH');
+  publishVersion(
+    dto: ApiVersionFromGraphQl,
+    conflictMode: ConflictMode
+  ): Promise<ApiVersion> {
+    return this.upsertApiVersion(dto, conflictMode);
   }
 
   deleteApi(externalId: string): Promise<unknown> {
@@ -142,38 +139,29 @@ export class MixerApiService {
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 
-  /** List data models for a project */
-  listStorage(): Promise<SolutionStorageDataModelDTO[]> {
-    return this.runStorageApiRequest('definitions/list', {
-      includeInheritedProperties: true,
-    }).then((res) => res.items as SolutionStorageDataModelDTO[]);
-  }
+  validateBindings(
+    externalId: string,
+    version: string,
+    bindings: DataModelStorageBindingsDTO[]
+  ) {
+    const validateDTO = {
+      query: `query ($apiExternalId: ID, $version: Int!, $bindings: [ViewBindingCreate!]!) {
+        validateBindings(apiExternalId: $apiExternalId, version: $version, bindings: $bindings) {
+          message
+        }
+      }`,
+      variables: {
+        apiExternalId: externalId,
+        version,
+        bindings,
+      },
+    } as GraphQlQueryParams;
 
-  /** List data models for a project */
-  listStorageInstances(
-    payload: ListInstancesReqDTO
-  ): Promise<StorageInstanceDTO[]> {
-    return this.runStorageApiRequest('instances/list', payload).then(
-      (res) => res.items as StorageInstanceDTO[]
-    );
-  }
-
-  /** Apply a data model for a project. Apply will fail if making incompatible changes. */
-  upsertStorage(
-    payload: SolutionStorageDataModelDTO[]
-  ): Promise<SolutionStorageDataModelDTO[]> {
-    return this.runStorageApiRequest('definitions/apply', payload).then(
-      (res) => res.items as SolutionStorageDataModelDTO[]
-    );
-  }
-
-  /** Ingest instances (data) into storage. */
-  ingestInstancesIntoStorage(
-    payload: StorageInstanceDTO[]
-  ): Promise<StorageInstanceDTO[]> {
-    return this.runStorageApiRequest('instances/ingest', {
-      items: payload,
-    }).then((res) => res.items as StorageInstanceDTO[]);
+    return this.runGraphQlQuery(this.schemaServiceBaseUrl, validateDTO)
+      .then((response) => {
+        return response.data.data.validateBindings[0] as { message: string }[];
+      })
+      .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 
   private upsertApiVersion(
@@ -219,30 +207,6 @@ export class MixerApiService {
   async runQuery(dto: RunQueryDTO): Promise<GraphQLQueryResponse> {
     const url = `/api/v1/projects/${this.cdfClient.project}/schema/api/${dto.solutionId}/${dto.schemaVersion}/graphql`;
     return (await this.runGraphQlQuery(url, dto.graphQlParams)).data;
-  }
-
-  async runStorageApiRequest(apiPath: string, payload: any): Promise<any> {
-    const apiUrl = `/api/v1/projects/${this.cdfClient.project}/datamodelstorage/${apiPath}`;
-    return new Promise((resolve, reject) => {
-      this.cdfClient
-        .post(apiUrl, {
-          data: payload,
-          headers: {
-            'cdf-version': 'alpha',
-          },
-        })
-        .then((response) => {
-          if (response.data.errors) {
-            reject({ status: 400, errors: [...response.data.errors] });
-          } else {
-            resolve(response.data);
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-          reject({ status: 400, errors: [] });
-        });
-    });
   }
 
   private runGraphQlQuery(

@@ -4,11 +4,13 @@ import { Notification } from '@platypus-app/components/Notification/Notification
 import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import config from '@platypus-app/config/config';
+import { TOKENS } from '@platypus-app/di';
+import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { KeyValueMap, DataModelTypeDefsType } from '@platypus/platypus-core';
 import { GridReadyEvent, IDatasource, IGetRowsParams } from 'ag-grid-community';
 import { useCallback, useEffect, useState } from 'react';
-import dataManagmentServices from '../../di';
+
 import {
   buildGridConfig,
   getInitialGridConfig,
@@ -29,7 +31,8 @@ export const DataPreviewTable = ({
   version,
 }: DataPreviewTableProps) => {
   const instanceIdCol = config.USE_MIXER_API ? 'externalId' : '_externalId';
-  const dataManagmentHandler = dataManagmentServices().dataManagmentHandler;
+
+  const dataManagmentHandler = useInjection(TOKENS.dataManagmentHandler);
 
   const { t } = useTranslation('DataPreviewTable');
   const [isGridInit, setIsGridInit] = useState(false);

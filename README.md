@@ -144,7 +144,7 @@ Read more [here](./apps/platypus-cdf-cli/README.md)
 
 We have developed a mock server that can be used for local development and used for running E2E tests.
 
-Read more [here](./apps/mock-server/README.md) how to use it.
+Read more [here](./apps/mock-server/README.md) how to use it or serach on confluence.
 
 To run, use following command:
 `nx serve mock-server`

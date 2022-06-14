@@ -15,24 +15,14 @@ export const templatesBiltInTypes = [
   { name: 'template', type: 'DIRECTIVE', fieldDirective: false },
 ] as BuiltInType[];
 
-export const schemaServiceBuiltInTypes = [
-  { name: 'String', type: 'SCALAR' },
-  { name: 'Int', type: 'SCALAR' },
-  { name: 'Float', type: 'SCALAR' },
-  { name: 'Boolean', type: 'SCALAR' },
-  { name: 'Timestamp', type: 'SCALAR' },
-  { name: 'JSONObject', type: 'SCALAR' },
+export const mixerApiBuiltInTypes = [
+  { name: 'String', type: 'SCALAR', dmsType: 'text' },
+  { name: 'Int', type: 'SCALAR', dmsType: 'int32' },
+  { name: 'Int64', type: 'SCALAR', dmsType: 'int64' },
+  { name: 'Float', type: 'SCALAR', dmsType: 'float32' },
+  { name: 'Boolean', type: 'SCALAR', dmsType: 'boolean' },
+  { name: 'Timestamp', type: 'SCALAR', dmsType: 'timestamp' },
+  { name: 'JSONObject', type: 'SCALAR', dmsType: 'json' },
+  { name: 'TimeSeries', type: 'SCALAR', dmsType: 'text' },
   { name: 'view', type: 'DIRECTIVE', fieldDirective: false },
-  {
-    name: 'filterable',
-    type: 'DIRECTIVE',
-    fieldDirective: true,
-    icon: 'Filter',
-  },
-  {
-    name: 'searchable',
-    type: 'DIRECTIVE',
-    fieldDirective: true,
-    icon: 'Search',
-  },
 ] as BuiltInType[];

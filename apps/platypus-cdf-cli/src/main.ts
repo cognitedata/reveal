@@ -3,8 +3,7 @@ import yargs, { scriptName } from 'yargs';
 import chalk from 'chalk';
 import { authenticate } from './app/middlewares/auth';
 import * as login from './app/cmds/login';
-import * as solutions from './app/cmds/solutions';
-import * as templates from './app/cmds/templates';
+import * as dataModelsCmds from './app/cmds/data-models';
 import { init } from './app/middlewares/init';
 import status from './app/cmds/status';
 import logout from './app/cmds/logout';
@@ -21,8 +20,7 @@ scriptName(CONSTANTS.APP_ID)
   .middleware([init, authenticate])
   .demandCommand(1)
   .command(login)
-  .command(solutions)
-  .command(templates)
+  .command(dataModelsCmds)
   .command(logout)
   .command(status)
   .command(initCmd)
@@ -42,6 +40,7 @@ scriptName(CONSTANTS.APP_ID)
   .fail((msg, err, { argv, help }) => {
     DEBUG(`Error occurred and caught by main handler: ${msg}, ${err}`);
     // if (err) throw err; // do something with stack report to sentry (maybe)
+
     console.error(
       chalk.red(
         msg ||

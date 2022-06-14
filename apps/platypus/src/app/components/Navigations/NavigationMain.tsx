@@ -19,8 +19,8 @@ export const NavigationMain = () => {
     title: string;
   }> = [
     {
-      slug: 'solutions',
-      title: t('solutions_title', 'Solutions'),
+      slug: 'data-models',
+      title: t('data_models_title', 'Data Models'),
     },
     {
       slug: 'guidetools',
@@ -36,16 +36,16 @@ export const NavigationMain = () => {
     name: tab.title,
     isActive:
       pathname.startsWith(`/${tab.slug}`) ||
-      (tab.slug === 'solutions' && pathname === '/'),
-    disabled: tab.slug !== 'solutions',
+      (tab.slug === 'data-models' && pathname === '/'),
+    disabled: tab.slug !== 'data-models',
     tooltipProps:
-      tab.slug !== 'solutions'
+      tab.slug !== 'data-models'
         ? {
             content: 'Coming Soon',
           }
         : undefined,
     onClick:
-      tab.slug === 'solutions'
+      tab.slug === 'data-models'
         ? () => {
             history.push({
               pathname: `/${tab.slug}`,

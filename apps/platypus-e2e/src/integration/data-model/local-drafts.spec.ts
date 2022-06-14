@@ -33,7 +33,7 @@ const ensureCurrentVersionIsNotDraft = () => {
 };
 
 describe('Data Model Page - Local Drafts', () => {
-  beforeEach(() => cy.visit('/platypus/solutions/new-schema/latest/data'));
+  beforeEach(() => cy.visit('/platypus/data-models/blog/latest/data'));
 
   it('persists unpublished changes after page refresh', () => {
     cy.getBySel('discard-btn').should('not.exist');
@@ -54,7 +54,7 @@ describe('Data Model Page - Local Drafts', () => {
     ensureCurrentVersionIsDraft();
 
     cy.visit('/platypus/');
-    cy.visit('/platypus/solutions/new-schema/latest/data');
+    cy.visit('/platypus/data-models/blog/latest/data');
 
     cy.getBySel('schema-version-select')
       .click()

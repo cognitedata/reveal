@@ -2,8 +2,9 @@ import { Flex, Title } from '@cognite/cogs.js';
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
-import services from '@platypus-app/di';
+import { TOKENS } from '@platypus-app/di';
 import { useErrorLogger } from '@platypus-app/hooks/useErrorLogger';
+import { useInjection } from '@platypus-app/hooks/useInjection';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { SolutionState } from '@platypus-app/redux/reducers/global/solutionReducer';
@@ -15,8 +16,6 @@ import { useEffect, useState } from 'react';
 import { DataPreviewTable } from '../components/DataPreviewTable/DataPreviewTable';
 import { TypeList } from '../components/TypeList/TypeList';
 
-const dataModelService = services().solutionDataModelService;
-
 export const Preview = () => {
   const [selectedType, setSelected] = useState<DataModelTypeDefsType | null>(
     null
@@ -26,6 +25,7 @@ export const Preview = () => {
   const { selectedSchema } = useSelector<SolutionState>(
     (state) => state.solution
   );
+  const dataModelService = useInjection(TOKENS.solutionDataModelService);
   const [solutionDataModel, setSolutionDataModel] = useState<DataModelTypeDefs>(
     {
       types: [],

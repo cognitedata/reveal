@@ -58,7 +58,7 @@ export const NavigationSolution = () => {
       tab.slug === 'data'
         ? () => {
             history.push({
-              pathname: `/solutions/${solutionId}/${version}/${tab.slug}`,
+              pathname: `/data-models/${solutionId}/${version}/${tab.slug}`,
             });
           }
         : undefined,

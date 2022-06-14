@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { SolutionsPage } from './modules/solutions/SolutionsPage';
+import { DataModelsPage } from './modules/data-models/DataModelsPage';
 import { GuideToolsPage } from './modules/guides/GuideToolsPage';
 import { StatusPage } from './modules/statusboard/StatusboardPage';
 import { NavigationMain } from './components/Navigations/NavigationMain';
@@ -14,14 +14,14 @@ const Routes = () => {
   return (
     <React.Suspense fallback={<Spinner />}>
       <Switch>
-        <Route exact path={['/', '/solutions']}>
+        <Route exact path={['/', '/data-models']}>
           <NavigationMain />
-          <SolutionsPage />
+          <DataModelsPage />
         </Route>
         <Route
           exact
           path={[
-            '/solutions/:solutionId?/:version?/:tabKey?/:solutionPage?/:subSolutionPage?',
+            '/data-models/:solutionId?/:version?/:tabKey?/:solutionPage?/:subSolutionPage?',
           ]}
         >
           <NavigationSolution />

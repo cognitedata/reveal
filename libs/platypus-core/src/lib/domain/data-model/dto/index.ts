@@ -2,7 +2,10 @@ import {
   DataModelTypeDefsField,
   DataModelTypeDefsFieldType,
   DataModelTypeDefsType,
+  DataModelVersionStatus,
 } from '../types';
+
+export * from './data-model-storage-api-dtos';
 
 export interface CreateSolutionDTO {
   name: string;
@@ -32,14 +35,23 @@ export interface ListVersionsDTO {
   version?: string;
 }
 
-export interface CreateSchemaDTO {
-  /** SolutionId (template group external id) */
-  solutionId: string;
+export interface CreateDataModelVersionDTO {
+  /** Data Model externalId */
+  externalId: string;
   /** GraphQL schema as string */
   schema: string;
   version?: string;
   // eslint-disable-next-line
   bindings?: any;
+  /**
+   * When resource was created
+   */
+  createdTime?: number;
+  /**
+   * When resource was last updated
+   */
+  lastUpdatedTime?: number;
+  status?: DataModelVersionStatus;
 }
 
 export interface GraphQlQueryParams {
@@ -60,6 +72,8 @@ export interface RunQueryDTO {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type GraphQLQueryResponse = { data?: any; errors?: Array<any> };
+
+export type ConflictMode = 'NEW_VERSION' | 'PATCH';
 
 export interface ApiSpecDTO {
   externalId: string;
@@ -82,24 +96,18 @@ export interface ApiVersionDataModel {
   graphqlRepresentation: string;
 }
 
-export interface ApiVersionBindings {
-  targetName: string;
-  dataSource: {
-    externalId: string;
-  };
-}
 export interface ApiVersion {
   version: number;
   createdTime: string;
   dataModel: ApiVersionDataModel;
-  bindings?: [ApiVersionBindings];
+  bindings?: [DataModelStorageBindingsDTO];
 }
 
 export interface ApiVersionFromGraphQl {
   version?: number;
   apiExternalId: string;
   graphQl: string;
-  bindings?: ApiVersionBindings[];
+  bindings?: DataModelStorageBindingsDTO[];
   metadata?: {
     [key: string]: unknown;
   };
@@ -117,36 +125,11 @@ export interface UpdateSolutionDataModelFieldDTO
   type: DataModelTypeDefsFieldType | string;
 }
 
-export interface SolutionStorageDataModelDTO {
-  externalId: string;
-  properties: {
-    [propertyName: string]: {
-      type: string;
-      nullable: boolean;
-    };
-  };
-  extends?: string[];
-  indexes?: {
-    indexName: string;
-    fields: string[];
-  }[];
-}
-
-/*
-https://pr-ark-codegen-1662.specs.preview.cogniteapp.com/v1.json.html#operation/listInstances
-*/
-export interface ListInstancesReqDTO {
-  modelExternalId: string;
-  filter?: any;
-  sort?: string[];
-  limit?: number;
-  cursor?: string;
-}
-
-export interface StorageInstanceDTO {
-  modelExternalId: string;
-  properties: {
-    [propertyName: string]: string | number | boolean;
+export interface DataModelStorageBindingsDTO {
+  targetName: string;
+  dataModelStorageSource: {
+    externalId: string;
+    space: string;
   };
 }
 
@@ -164,4 +147,8 @@ export interface FetchDataDTO {
   hasNextPage: boolean;
   solutionId: string;
   version: string;
+}
+
+export interface DataModelSpaceDTO {
+  externalId: string;
 }

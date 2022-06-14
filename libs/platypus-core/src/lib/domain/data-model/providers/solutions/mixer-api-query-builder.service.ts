@@ -1,5 +1,5 @@
 import { IQueryBuilderService } from '../../boundaries';
-import { schemaServiceBuiltInTypes } from '../../constants';
+import { mixerApiBuiltInTypes } from '../../constants';
 import { BuildQueryDTO } from '../../dto';
 import { DataModelTypeDefsField } from '../../types';
 
@@ -31,7 +31,7 @@ export class MixerApiQueryBuilderService implements IQueryBuilderService {
   }
 
   private buildQryItem(field: DataModelTypeDefsField): string {
-    const isPrimitive = schemaServiceBuiltInTypes
+    const isPrimitive = mixerApiBuiltInTypes
       .filter((t) => t.type === 'SCALAR')
       .map((t) => t.name)
       .includes(field.type.name);

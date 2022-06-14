@@ -1,4 +1,7 @@
-import { CreateSchemaDTO, TemplatesApiService } from '@platypus/platypus-core';
+import {
+  CreateDataModelVersionDTO,
+  TemplatesApiService,
+} from '@platypus/platypus-core';
 import { readFileSync } from 'fs';
 import { Arguments } from 'yargs';
 import {
@@ -56,9 +59,9 @@ export class TemplatesPublishSchemaCommand extends CLICommand {
 
     const dto = {
       schema: graphqlSchema,
-      solutionId: templateId,
+      externalId: templateId,
       version: templateVersion ? templateVersion.toString() : undefined,
-    } as CreateSchemaDTO;
+    } as CreateDataModelVersionDTO;
 
     try {
       await (conflictMode === 'Update'

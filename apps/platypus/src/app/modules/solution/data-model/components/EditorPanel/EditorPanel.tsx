@@ -8,9 +8,10 @@ import { SchemaEditorMode } from '../../types';
 import { UIEditor } from './UIEditor';
 import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
 import { BuiltInType } from '@platypus/platypus-core';
-import services from '@platypus-app/di';
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import { ErrorPlaceholder } from '../ErrorBoundary/ErrorPlaceholder';
+import { useInjection } from '@platypus-app/hooks/useInjection';
+import { TOKENS } from '@platypus-app/di';
 
 const GraphqlCodeEditor = React.lazy(() =>
   import('../GraphqlCodeEditor/GraphqlCodeEditor').then((module) => ({
@@ -30,11 +31,14 @@ export interface EditorPanelProps {
 export const EditorPanel = (props: EditorPanelProps) => {
   const { t } = useTranslation('EditorPanel');
   const [builtInTypes, setBuiltInTypes] = useState<BuiltInType[]>([]);
+  const solutionDataModelService = useInjection(
+    TOKENS.solutionDataModelService
+  );
 
   useEffect(() => {
     async function getOptions() {
       const builtInTypesResponse =
-        await services().solutionDataModelService.getBuiltinTypes();
+        await solutionDataModelService.getBuiltinTypes();
       setBuiltInTypes(builtInTypesResponse);
     }
 

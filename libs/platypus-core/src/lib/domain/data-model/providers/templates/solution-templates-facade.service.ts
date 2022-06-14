@@ -3,7 +3,7 @@ import {
   IDataModelVersionApiService,
 } from '../../boundaries';
 import {
-  CreateSchemaDTO,
+  CreateDataModelVersionDTO,
   CreateSolutionDTO,
   DeleteSolutionDTO,
   FetchSolutionDTO,
@@ -76,19 +76,19 @@ export class SolutionTemplatesFacadeService
     });
   }
 
-  publishVersion(dto: CreateSchemaDTO): Promise<DataModelVersion> {
+  publishVersion(dto: DataModelVersion): Promise<DataModelVersion> {
     return this.templatesApiService
-      .publishSchema(dto)
+      .publishSchema(dto as unknown as CreateDataModelVersionDTO)
       .then((res) =>
-        this.templateSchemaDataMapper.deserialize(dto.solutionId, res)
+        this.templateSchemaDataMapper.deserialize(dto.externalId, res)
       );
   }
 
-  updateVersion(dto: CreateSchemaDTO): Promise<DataModelVersion> {
+  updateVersion(dto: CreateDataModelVersionDTO): Promise<DataModelVersion> {
     return this.templatesApiService
       .updateSchema(dto)
       .then((res) =>
-        this.templateSchemaDataMapper.deserialize(dto.solutionId, res)
+        this.templateSchemaDataMapper.deserialize(dto.externalId, res)
       );
   }
 

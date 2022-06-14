@@ -1,8 +1,8 @@
 import { IDataModelsApiService } from './boundaries';
 import { DataModelsHandler } from './data-models-handler';
 
-describe('SolutionsHandlerTest', () => {
-  const solutionProviderMock = {
+describe('DataModelsHandlerTest', () => {
+  const dataModelsProviderMock = {
     list: jest.fn().mockImplementation(() => Promise.resolve([])),
     create: jest.fn().mockImplementation(() => Promise.resolve([])),
     delete: jest.fn().mockImplementation(() => Promise.resolve([])),
@@ -10,7 +10,7 @@ describe('SolutionsHandlerTest', () => {
   } as IDataModelsApiService;
 
   const createInstance = () => {
-    return new DataModelsHandler(solutionProviderMock);
+    return new DataModelsHandler(dataModelsProviderMock);
   };
 
   it('should work', () => {
@@ -18,13 +18,13 @@ describe('SolutionsHandlerTest', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should fetch solutions', async () => {
+  it('should fetch data models', async () => {
     const service = createInstance();
     await service.list();
-    expect(solutionProviderMock.list).toBeCalled();
+    expect(dataModelsProviderMock.list).toBeCalled();
   });
 
-  it('should create solution', async () => {
+  it('should create data model', async () => {
     const service = createInstance();
     const reqDto = {
       name: 'test group',
@@ -32,15 +32,15 @@ describe('SolutionsHandlerTest', () => {
       owner: 'test-user@cognite.com',
     };
     await service.create(reqDto);
-    expect(solutionProviderMock.create).toBeCalledWith(reqDto);
+    expect(dataModelsProviderMock.create).toBeCalledWith(reqDto);
   });
 
-  it('should delete solution', async () => {
+  it('should delete data model', async () => {
     const service = createInstance();
     const reqDto = {
       id: 'test group',
     };
     await service.delete(reqDto);
-    expect(solutionProviderMock.delete).toBeCalledWith(reqDto);
+    expect(dataModelsProviderMock.delete).toBeCalledWith(reqDto);
   });
 });

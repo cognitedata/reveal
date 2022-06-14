@@ -1,32 +1,29 @@
 describe('Platypus Query Explorer Page - Preview', () => {
   beforeEach(() =>
-    cy.visit('/platypus/solutions/new-schema/latest/data/query-explorer')
+    cy.visit('/platypus/data-models/blog/latest/data/query-explorer')
   );
 
   it('should be able to query', () => {
     // eslint-disable-next-line
     cy.wait(300);
 
-    const query = `{
-  personQuery(limit: 1) {
-    items {
-      firstName
-      lastName
-      email
-      age
-    }
+    const query = `
+    query {
+      listPost (filter: {title: {eq: "Lorem Ipsum"}}) {
+        items {
+          title
+          views
+        }
+      }
   }
-}
 `;
 
     const mockResult = {
-      personQuery: {
+      listPost: {
         items: [
           {
-            firstName: 'John',
-            lastName: 'Doe',
-            email: 'john.doe@email.com',
-            age: 30,
+            title: 'Lorem Ipsum',
+            views: 254,
           },
         ],
       },

@@ -1,6 +1,6 @@
 describe('Data Model Page - Publish new schema', () => {
   beforeEach(() =>
-    cy.visit('/platypus/solutions/schema-versions-test/latest/data')
+    cy.visit('/platypus/data-models/schema-versions-test/latest/data')
   );
 
   // it('should edit and publish new schema', () => {

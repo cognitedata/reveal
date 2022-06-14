@@ -1,6 +1,7 @@
 import {
   BuildQueryDTO,
-  CreateSchemaDTO,
+  ConflictMode,
+  CreateDataModelVersionDTO,
   CreateSolutionDTO,
   DeleteSolutionDTO,
   FetchSolutionDTO,
@@ -10,11 +11,11 @@ import {
   UpdateSolutionDataModelFieldDTO,
 } from '../dto';
 import {
-  DataModelVersion,
   DataModel,
   DataModelTypeDefs,
-  DataModelTypeDefsType,
   DataModelTypeDefsField,
+  DataModelTypeDefsType,
+  DataModelVersion,
 } from '../types';
 
 export interface IDataModelsApiService {
@@ -38,15 +39,13 @@ export interface IDataModelVersionApiService {
 
   /**
    * Publish new schema by bumping the version.
-   * @param dto
+   * @param dto - {solutionId, version, schema, bindings}
+   * @param conflictMode - NEW_VERSION | PATCH
    */
-  publishVersion(dto: CreateSchemaDTO): Promise<DataModelVersion>;
-
-  /**
-   * Patch the existing version, but will fail if there are breaking changes.
-   * @param dto
-   */
-  updateVersion(dto: CreateSchemaDTO): Promise<DataModelVersion>;
+  publishVersion(
+    dto: CreateDataModelVersionDTO,
+    conflictMode: ConflictMode
+  ): Promise<DataModelVersion>;
 
   /**
    * Run GraphQL Query.

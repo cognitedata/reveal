@@ -3,6 +3,7 @@ import store from './app/redux/store';
 import { AppContainer } from './environments/AppContainer';
 import App from './app/App';
 
+//
 // Globally defined global
 // GraphiQL package needs this to be run correctly
 (window as any).global = window;

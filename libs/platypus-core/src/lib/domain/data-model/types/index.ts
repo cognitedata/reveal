@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { KeyValueMap } from '@platypus-core/boundaries/types';
-
+export * from './data-model-storage-types';
 export interface DataModel {
   id: string;
   name: string;
@@ -80,6 +80,7 @@ export type DataModelTypeDefs = {
 
 export type BuiltInType = {
   name: string;
+  dmsType?: string;
   type: 'SCALAR' | 'DIRECTIVE' | 'OBJECT' | 'ENUM';
 };
 

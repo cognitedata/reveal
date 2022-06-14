@@ -7,16 +7,17 @@ import { CreateSolutionDTO, DeleteSolutionDTO, FetchSolutionDTO } from './dto';
 import { DataModel } from './types';
 
 export class DataModelsHandler {
-  constructor(private solutionsService: IDataModelsApiService) {}
+  constructor(private dataModelsApiService: IDataModelsApiService) {}
 
   list(): Promise<Result<DataModel[]>> {
-    return this.solutionsService
+    return this.dataModelsApiService
       .list()
-      .then((solutions) => Result.ok(solutions));
+      .then((solutions) => Result.ok(solutions))
+      .catch((err: PlatypusError) => Result.fail(err));
   }
 
   fetch(dto: FetchSolutionDTO): Promise<Result<DataModel>> {
-    return this.solutionsService
+    return this.dataModelsApiService
       .fetch(dto)
       .then((solutions) => Result.ok(solutions));
   }
@@ -30,7 +31,7 @@ export class DataModelsHandler {
       console.error(validationResult.errors);
       return Promise.resolve(Result.fail(validationResult.errors));
     }
-    return this.solutionsService
+    return this.dataModelsApiService
       .create(dto)
       .then((solution: DataModel) => Result.ok(solution))
       .catch((err: PlatypusError) => {
@@ -45,7 +46,7 @@ export class DataModelsHandler {
   }
 
   delete(dto: DeleteSolutionDTO): Promise<Result<unknown>> {
-    return this.solutionsService
+    return this.dataModelsApiService
       .delete(dto)
       .then((res) => Result.ok(res))
       .catch((err: PlatypusError) => {

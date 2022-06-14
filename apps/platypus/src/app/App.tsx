@@ -1,9 +1,22 @@
 import { BrowserRouter as Router } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { ToastContainer } from '@cognite/cogs.js';
+import { ContainerProvider } from 'brandi-react';
+import { rootInjector } from './di';
 
 import Routes from './Routes';
 import { getTenant } from './utils/tenant-utils';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    },
+  },
+});
 
 // Globally defined global
 // GraphiQL package needs this to be run correctly
@@ -12,16 +25,18 @@ import { getTenant } from './utils/tenant-utils';
 function App() {
   const tenant = getTenant();
   return (
-    <>
-      <ToastContainer />
-      <StyledWrapper>
-        <Router basename={tenant}>
-          <StyledPage>
-            <Routes />
-          </StyledPage>
-        </Router>
-      </StyledWrapper>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <ContainerProvider container={rootInjector}>
+        <ToastContainer />
+        <StyledWrapper>
+          <Router basename={tenant}>
+            <StyledPage>
+              <Routes />
+            </StyledPage>
+          </Router>
+        </StyledWrapper>
+      </ContainerProvider>
+    </QueryClientProvider>
   );
 }
 

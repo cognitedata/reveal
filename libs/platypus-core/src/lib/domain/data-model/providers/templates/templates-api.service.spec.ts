@@ -109,7 +109,7 @@ describe('TemplatesApiServiceTest', () => {
     const service = createInstance();
     const version = await service.publishSchema({
       schema: templateSchemaMock.schema,
-      solutionId: '1234',
+      externalId: '1234',
       version: '1',
     });
     expect(upsertVersionMock).toBeCalledWith({
@@ -124,7 +124,7 @@ describe('TemplatesApiServiceTest', () => {
     const service = createInstance();
     const version = await service.updateSchema({
       schema: templateSchemaMock.schema,
-      solutionId: '1234',
+      externalId: '1234',
       version: '1',
     });
     expect(upsertVersionMock).toBeCalledWith({
@@ -148,7 +148,7 @@ describe('TemplatesApiServiceTest', () => {
     expect(
       service.updateSchema({
         schema: templateSchemaMock.schema,
-        solutionId: '1234',
+        externalId: '1234',
         version: '1',
       })
     ).rejects.toBeInstanceOf(PlatypusError);

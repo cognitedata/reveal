@@ -1,5 +1,7 @@
 # [CDF CLI](https://www.npmjs.com/package/@cognite/cdf-cli)
 
+# [Confluence](https://cognitedata.atlassian.net/wiki/spaces/APPJOURNEY/pages/3383361624/Schema+Service+CLI+Commands+-+temporary)
+
 The CDF CLI's aim is to make it easier for developers to develop an app or solution on top of CDF. The CLI's current focus is on enabling key data modeling functionality, and we will expand towards other features in the future.
 
 **NOTE: This package is still in early alpha and under active development. We will document and test actively, but please file bug report via the [Cognite Hub group](https://hub.cognite.com/groups/flexible-data-modeling-early-adopter-208)**

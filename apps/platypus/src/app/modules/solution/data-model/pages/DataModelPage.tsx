@@ -8,7 +8,7 @@ import useSelector from '@platypus-app/hooks/useSelector';
 import { SolutionState } from '@platypus-app/redux/reducers/global/solutionReducer';
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
 import { Notification } from '@platypus-app/components/Notification/Notification';
-import services from '@platypus-app/di';
+import { TOKENS } from '@platypus-app/di';
 import {
   DataModelTypeDefsType,
   ErrorType,
@@ -30,8 +30,7 @@ import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBound
 import { ErrorPlaceholder } from '../components/ErrorBoundary/ErrorPlaceholder';
 import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
 import { DiscardButton } from './elements';
-import dataModelServices from '../di';
-const dataModelService = dataModelServices.dataModelService;
+import { useInjection } from '@platypus-app/hooks/useInjection';
 
 export const DataModelPage = () => {
   const history = useHistory();
@@ -56,6 +55,8 @@ export const DataModelPage = () => {
     null
   );
   const [selectedSchema, setSelectedSchema] = useState(selectedReduxSchema);
+  const dataModelService = useInjection(TOKENS.solutionDataModelService);
+  const dataModelVersionHandler = useInjection(TOKENS.dataModelVersionHandler);
   const { insertSchema, updateSchema, selectVersion } = useSolution();
   const {
     setLocalDraft,
@@ -102,30 +103,38 @@ export const DataModelPage = () => {
       setMode(SchemaEditorMode.Edit);
     }
   }, []);
-
   const onSaveOrPublish = async () => {
     try {
       const publishNewVersion = breakingChanges || !schemas.length;
       let version = selectedSchema?.version;
       let result;
+
       if (publishNewVersion) {
         setUpdating(true);
         version = schemas.length
           ? (parseInt(selectedSchema?.version) + 1).toString()
           : '1';
-        result = await services().solutionSchemaHandler.publish({
-          solutionId: solution!.id,
-          schema: projectSchema,
-          version: version,
-        });
+        result = await dataModelVersionHandler.publish(
+          {
+            ...selectedSchema,
+            externalId: solution!.id,
+            schema: projectSchema,
+            version: version,
+          },
+          'NEW_VERSION'
+        );
         setBreakingChanges('');
       } else {
         setSaving(true);
-        result = await services().solutionSchemaHandler.update({
-          solutionId: solution!.id,
-          schema: projectSchema,
-          version: version,
-        });
+        result = await dataModelVersionHandler.publish(
+          {
+            ...selectedSchema,
+            externalId: solution!.id,
+            schema: projectSchema,
+            version: version,
+          },
+          'PATCH'
+        );
       }
 
       if ((result.error?.type as ErrorType) === 'BREAKING_CHANGE') {
@@ -147,7 +156,7 @@ export const DataModelPage = () => {
         if (publishNewVersion) {
           insertSchema(result.getValue());
           history.replace(
-            `/solutions/${solution?.id}/${DEFAULT_VERSION_PATH}/data`
+            `/data-models/${solution?.id}/${DEFAULT_VERSION_PATH}/data`
           );
         }
 

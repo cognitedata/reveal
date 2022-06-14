@@ -44,15 +44,18 @@ describe('E2E for Templates Generate', () => {
     );
     expect(response).toMatch('Solution "Car" is successfully initialized!');
   });
-  it('Generate From Init Templates', async () => {
-    const response = await Run(
-      CONSTANTS.APP_ID,
-      'templates',
-      'generate',
-      '--plugins',
-      'typescript'
-    );
-    //todo: check if the file is created
-    expect(response).toMatch('Types generated successfully');
-  });
+
+  // Commented out for now because we have disabled the templates commands
+  // We will need to re-create this test for schema service
+  // it('Generate From Init Templates', async () => {
+  //   const response = await Run(
+  //     CONSTANTS.APP_ID,
+  //     'templates',
+  //     'generate',
+  //     '--plugins',
+  //     'typescript'
+  //   );
+  //   //todo: check if the file is created
+  //   expect(response).toMatch('Types generated successfully');
+  // });
 });

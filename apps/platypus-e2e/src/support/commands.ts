@@ -51,13 +51,12 @@ Cypress.Commands.add('clickQueryExplorerExecuteQuery', () => {
 });
 
 Cypress.Commands.add('setQueryExplorerQuery', (query: string) => {
-  // eslint-disable-next-line
-  cy.wait(300);
-  cy.window().then((window) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return window.g.getQueryEditor().setValue(query);
-  });
+  return cy
+    .get('.CodeMirror-lines')
+    .first()
+    .click()
+    .type('{selectAll}')
+    .type(query, { parseSpecialCharSequences: false });
 });
 
 Cypress.Commands.add(

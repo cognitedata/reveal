@@ -1,47 +1,63 @@
 import {
   IDataModelsApiService,
   IDataModelVersionApiService,
+  IGraphQlUtilsService,
 } from '../../boundaries';
 
-import { DataModel } from '../../types';
+import { DataModel, DataModelVersionStatus } from '../../types';
 import {
   CreateSolutionDTO,
   DeleteSolutionDTO,
   FetchSolutionDTO,
   ListVersionsDTO,
-  CreateSchemaDTO,
   RunQueryDTO,
   GraphQLQueryResponse,
   SolutionApiOutputDTO,
   FetchVersionDTO,
+  ConflictMode,
+  CreateDataModelVersionDTO,
 } from '../../dto';
 import { DataModelVersion } from '../../types';
 import { MixerApiService } from './mixer-api.service';
 import { SolutionDataMapper } from './data-mappers/solution-data-mapper';
 import { PlatypusError } from '@platypus-core/boundaries/types';
 import { SolutionSchemaVersionDataMapper } from './data-mappers/solution-schema-version-data-mapper';
+import { DataModelStorageApiService } from './data-model-storage-api.service';
+import { DataModelStorageBuilderService } from './data-model-storage-builder.service';
 
 export class DataModelApiFacadeService
   implements IDataModelsApiService, IDataModelVersionApiService
 {
   private solutionDataMapper: SolutionDataMapper;
   private apiSpecVersionMapper: SolutionSchemaVersionDataMapper;
-  constructor(private solutionsApiService: MixerApiService) {
+  private dmsServiceBuilder: DataModelStorageBuilderService;
+  constructor(
+    private solutionsApiService: MixerApiService,
+    private dmsApiService: DataModelStorageApiService,
+    private graphqlService: IGraphQlUtilsService
+  ) {
     this.solutionDataMapper = new SolutionDataMapper();
     this.apiSpecVersionMapper = new SolutionSchemaVersionDataMapper();
+    this.dmsServiceBuilder = new DataModelStorageBuilderService();
   }
-  create(dto: CreateSolutionDTO): Promise<DataModel> {
-    return this.solutionsApiService
-      .upsertApi({
-        externalId: dto.name,
-        description: dto.description || '',
-        name: dto.name,
-        metadata: dto.metadata || {},
-      })
-      .then((createApiResponse) =>
-        this.solutionDataMapper.deserialize(createApiResponse)
-      );
+
+  async create(dto: CreateSolutionDTO): Promise<DataModel> {
+    const externalId = this.convertToCamelCase(dto.name);
+    const createApiResponse = await this.solutionsApiService.upsertApi({
+      externalId,
+      description: dto.description || '',
+      name: dto.name,
+      metadata: dto.metadata || {},
+    });
+
+    await this.dmsApiService.applySpaces([{ externalId }]);
+
+    const createdDataModel =
+      this.solutionDataMapper.deserialize(createApiResponse);
+
+    return createdDataModel;
   }
+
   delete(dto: DeleteSolutionDTO): Promise<unknown> {
     return this.solutionsApiService.deleteApi(dto.id);
   }
@@ -98,30 +114,83 @@ export class DataModelApiFacadeService
         );
       });
   }
-  publishVersion(dto: CreateSchemaDTO): Promise<DataModelVersion> {
-    return this.solutionsApiService
-      .publishVersion({
-        apiExternalId: dto.solutionId,
-        graphQl: dto.schema,
-        bindings: dto.bindings,
-        version: dto.version ? +dto.version : 1,
-      })
-      .then((version) =>
-        this.apiSpecVersionMapper.deserialize(dto.solutionId, version)
+  async publishVersion(
+    dto: CreateDataModelVersionDTO,
+    conflictMode: ConflictMode
+  ): Promise<DataModelVersion> {
+    // Create DataModelVersion out of request obj
+    const dataModelVersionDto = {
+      createdTime: dto.createdTime || Date.now(),
+      lastUpdatedTime: dto.lastUpdatedTime || Date.now(),
+      externalId: dto.externalId,
+      schema: dto.schema,
+      status: dto.status || DataModelVersionStatus.PUBLISHED,
+      version: dto.version,
+    } as DataModelVersion;
+
+    let version;
+
+    const dataModelVersion = dto.version ? +dto.version : 1;
+
+    const dataModelVersionCreateDto = {
+      apiExternalId: dto.externalId,
+      graphQl: dto.schema,
+      bindings: dto.bindings,
+      version: dataModelVersion,
+    };
+
+    // if bindings are provided, that would mean that the user is
+    // controlling the storage and bindings manually using CLI
+    if (dto.bindings) {
+      // Patch the API and set new bindings
+      version = await this.solutionsApiService.publishVersion(
+        dataModelVersionCreateDto,
+        'PATCH'
       );
-  }
-  updateVersion(dto: CreateSchemaDTO): Promise<DataModelVersion> {
-    return this.solutionsApiService
-      .updateVersion({
-        apiExternalId: dto.solutionId,
-        graphQl: dto.schema,
-        bindings: dto.bindings,
-        version: dto.version ? +dto.version : undefined,
-      })
-      .then((version) =>
-        this.apiSpecVersionMapper.deserialize(dto.solutionId, version)
+      return this.apiSpecVersionMapper.deserialize(dto.externalId, version);
+    } else {
+      // if no bindings are provided then try to autogenerate them
+      const typeDefs = this.graphqlService.parseSchema(dto.schema);
+      const bindings = this.dmsServiceBuilder.buildBindings(
+        dto.externalId,
+        dataModelVersionDto,
+        typeDefs
       );
+
+      const models = this.dmsServiceBuilder.buildModels(
+        dto.externalId,
+        dataModelVersionDto,
+        typeDefs
+      );
+
+      // Hack for now!
+      // We need to validate everything first before creating DMS
+      // However if we send the bindings in the first call to Mixer API
+      // Validation will fail and it will complain that DMS Model Does not exist
+      // Solution is first to do MixerAPi validation with empty bindings
+      let version = await this.solutionsApiService.publishVersion(
+        {
+          ...dataModelVersionCreateDto,
+          bindings: [],
+        },
+        conflictMode
+      );
+
+      // Create DMS models
+      await this.dmsApiService.upsertModel(models);
+
+      // Patch the API and set new bindings
+      version = await this.solutionsApiService.publishVersion(
+        {
+          ...dataModelVersionCreateDto,
+          bindings,
+        },
+        'PATCH'
+      );
+      return this.apiSpecVersionMapper.deserialize(dto.externalId, version);
+    }
   }
+
   runQuery(dto: RunQueryDTO): Promise<GraphQLQueryResponse> {
     const reqDto = {
       ...dto,
@@ -132,5 +201,13 @@ export class DataModelApiFacadeService
       .runQuery(reqDto) // return type GraphQlResponse
       .then((value) => value)
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
+  }
+
+  private convertToCamelCase(input: string) {
+    const regex = /\s+(\w)?/gi;
+
+    return input
+      .toLowerCase()
+      .replace(regex, (match, letter) => letter.toUpperCase());
   }
 }

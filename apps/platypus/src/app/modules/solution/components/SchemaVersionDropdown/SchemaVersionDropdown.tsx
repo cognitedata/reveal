@@ -7,7 +7,8 @@ import { useState } from 'react';
 
 import { MenuItem, DropdownButton, LastTimeText, VersionTag } from './elements';
 
-import services from '@platypus-app/di';
+import { TOKENS } from '@platypus-app/di';
+import { useInjection } from '@platypus-app/hooks/useInjection';
 
 type Props = {
   selectedVersion: DataModelVersion;
@@ -40,6 +41,8 @@ export function SchemaVersionDropdown({
   onVersionSelect,
 }: Props) {
   const [isOpen, setOpen] = useState(false);
+  const dateUtils = useInjection(TOKENS.dateUtils);
+
   const latestVersion =
     versions.filter((v) => v.status === DataModelVersionStatus.PUBLISHED)[0]
       ?.version || '999999';
@@ -67,11 +70,9 @@ export function SchemaVersionDropdown({
                     level={2}
                     style={{ width: 50, textAlign: 'left' }}
                   >{`v. ${schemaObj.version}`}</Body>
-                  {services().dateUtils.isValid(schemaObj.lastUpdatedTime) ? (
+                  {dateUtils.isValid(schemaObj.lastUpdatedTime) ? (
                     <LastTimeText level={2}>
-                      {services().dateUtils.toTimeDiffString(
-                        schemaObj.lastUpdatedTime
-                      )}
+                      {dateUtils.toTimeDiffString(schemaObj.lastUpdatedTime)}
                     </LastTimeText>
                   ) : null}
                 </Flex>

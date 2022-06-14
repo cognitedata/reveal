@@ -8879,6 +8879,16 @@ braces@^3.0.1, braces@~3.0.2:
   dependencies:
     fill-range "^7.0.1"
 
+brandi-react@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/brandi-react/-/brandi-react-4.0.2.tgz#17a5092b69cde85634cb913f030f141ab6d109da"
+  integrity sha512-RpEB45rnQRfyI8wVP5cnn0XGmX2U+pxE6jNLO3SY/xNyJl/0QzTaS5fwgAxnWVYgrtdAgletSdfYoXp6LDynAw==
+
+brandi@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/brandi/-/brandi-4.0.2.tgz#448d1f621b6bcbd01bf282a77438d236e4b5efa1"
+  integrity sha512-y29/yvZuqeHVbQFKVayRk7ewMTe3bEXibHzl35YelrHScVEPHh8gJo91SILpENlZFIPggvbCf8FAJozqEyjvKw==
+
 broadcast-channel@^3.4.1:
   version "3.7.0"
   resolved "https://registry.npmjs.org/broadcast-channel/-/broadcast-channel-3.7.0.tgz"
