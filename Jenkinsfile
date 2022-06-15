@@ -125,7 +125,7 @@ pods {
   ) {
     parallel(
       'Lint': {
-        stage('Check linting') {
+        stageWithNotify('Check linting') {
           dir('main') {
             container('fas') {
               sh('yarn lint')
@@ -135,7 +135,7 @@ pods {
       },
 
       'Unit tests': {
-        stage('Execute unit tests') {
+        stageWithNotify('Execute unit tests') {
           dir('main') {
             container('fas') {
               sh('yarn test')
@@ -147,6 +147,10 @@ pods {
 
       'Storybook': {
         dir('main') {
+          if (!isPullRequest) {
+            print 'No PR previews for release builds'
+            return
+          }
           stageWithNotify('Build and deploy Storybook') {
             previewServer(
               prefix: 'storybook',
