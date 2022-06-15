@@ -68,13 +68,14 @@ export const getCommonColumns = (unit?: string): ColumnType<NPTEvent>[] => {
       width: '500px',
       maxWidth: '1fr',
       accessor: (row: NPTEvent) => processAccessor(row, accessors.DESCRIPTION),
-      displayFullText: true,
+      expandableContent: true,
     },
     {
       id: accessors.ROOT_CAUSE,
       Header: 'Root Cause',
       width: '500px',
       accessor: (row: NPTEvent) => processAccessor(row, accessors.ROOT_CAUSE),
+      expandableContent: true,
     },
     {
       id: accessors.LOCATION,

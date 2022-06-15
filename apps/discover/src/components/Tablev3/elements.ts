@@ -118,6 +118,11 @@ export const OverlayCell = styled.div`
   }
 `;
 
+// ExpandableCell
+export const ExpandableCell = styled.div`
+  width: 100%;
+`;
+
 export const OverlayContentWrapper = styled(HoverContentWrapper)`
   opacity: 1;
   background: border-box;

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import ShowMoreText from 'react-show-more-text';
 import { Cell } from 'react-table';
 
 import isNil from 'lodash/isNil';
@@ -7,7 +8,7 @@ import isString from 'lodash/isString';
 
 import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 
-import { CellContentWrapper } from './elements';
+import { CellContentWrapper, ExpandableCell } from './elements';
 
 interface Props {
   cell: Cell<any>;
@@ -21,6 +22,9 @@ export const TableCell: React.FC<Props> = React.memo(({ cell }) => {
 });
 
 const CellText = ({ children }: any) => {
+  const value = children.props.value.id || children.props.value;
+  const [expanded, setExpanded] = useState<boolean>(false);
+
   const isCellValueEmpty = (value: string | number): boolean => {
     return !(
       value &&
@@ -28,9 +32,18 @@ const CellText = ({ children }: any) => {
     );
   };
 
-  // Render empty if the cell is empty
-  const value = children.props.value.id || children.props.value;
   if (isCellValueEmpty(value)) return null;
+
+  // render expandable content
+  if (children.props.column.expandableContent) {
+    return (
+      <ExpandableCell style={{ whiteSpace: expanded ? 'normal' : 'nowrap' }}>
+        <ShowMoreText lines={1} more="More" less="Close" onClick={setExpanded}>
+          {value}
+        </ShowMoreText>
+      </ExpandableCell>
+    );
+  }
 
   return (
     <CellContentWrapper

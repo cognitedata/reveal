@@ -95,6 +95,10 @@ interface ColumnTypeBase<T extends Object> {
    * NOTE: The columns should have `width` property defined to work this properly.
    */
   stickyColumn?: boolean;
+  /**
+   * Show "...More" and "Close" buttons to expand/collapse column content
+   * */
+  expandableContent?: boolean;
 }
 
 interface ColumnTypeWithAccessor<T extends Object> extends ColumnTypeBase<T> {
