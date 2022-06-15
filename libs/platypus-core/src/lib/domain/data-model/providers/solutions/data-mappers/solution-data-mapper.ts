@@ -1,17 +1,17 @@
 import { DataModel } from '../../../types';
-import { SolutionApiOutputDTO } from '../../../dto';
+import { DataModelApiOutputDTO } from '../../../dto';
 
 export class SolutionDataMapper {
-  serialize(solution: DataModel): SolutionApiOutputDTO {
+  serialize(solution: DataModel): DataModelApiOutputDTO {
     return {
       externalId: solution.id,
       name: solution.id,
       description: solution.description,
       createdTime: solution.createdTime,
-    } as SolutionApiOutputDTO;
+    } as DataModelApiOutputDTO;
   }
 
-  deserialize(dto: SolutionApiOutputDTO): DataModel {
+  deserialize(dto: DataModelApiOutputDTO): DataModel {
     return {
       id: dto.externalId,
       name: dto.name,

@@ -6,7 +6,7 @@ import {
   DataModelTypeDefsField,
   DataModelTypeDefsFieldArgument,
   DataModelTypeDefsType,
-  UpdateSolutionDataModelFieldDTO,
+  UpdateDataModelFieldDTO,
 } from '@platypus/platypus-core';
 import { ObjectTypeDefinitionNode } from 'graphql';
 import {
@@ -105,7 +105,7 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
   updateTypeField(
     typeName: string,
     fieldName: string,
-    updates: Partial<UpdateSolutionDataModelFieldDTO>
+    updates: Partial<UpdateDataModelFieldDTO>
   ): DataModelTypeDefsField {
     this.createIfEmpty();
     const updatedFieldName = updates.name ? updates.name : fieldName;

@@ -2,7 +2,7 @@ import { Body, Button, Checkbox, Flex, Input } from '@cognite/cogs.js';
 import {
   BuiltInType,
   DataModelTypeDefsField,
-  UpdateSolutionDataModelFieldDTO,
+  UpdateDataModelFieldDTO,
 } from '@platypus/platypus-core';
 import { useState, useCallback } from 'react';
 import styled from 'styled-components';
@@ -18,7 +18,7 @@ export interface SchemaTypeFieldProps {
   customTypesNames: string[];
   typeFieldNames: string[];
   disabled?: boolean;
-  onFieldUpdated: (field: Partial<UpdateSolutionDataModelFieldDTO>) => void;
+  onFieldUpdated: (field: Partial<UpdateDataModelFieldDTO>) => void;
   onFieldRemoved: (field: DataModelTypeDefsField) => void;
 }
 export const SchemaTypeField = ({

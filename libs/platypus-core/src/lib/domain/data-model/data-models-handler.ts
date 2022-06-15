@@ -3,7 +3,11 @@ import { Result } from '../../boundaries/types/result';
 import { Validator } from '../../boundaries/validation';
 import { RequiredFieldValidator } from '../common/validators/required-field.validator';
 import { IDataModelsApiService } from './boundaries';
-import { CreateSolutionDTO, DeleteSolutionDTO, FetchSolutionDTO } from './dto';
+import {
+  CreateDataModelDTO,
+  DeleteDataModelDTO,
+  FetchDataModelDTO,
+} from './dto';
 import { DataModel } from './types';
 
 export class DataModelsHandler {
@@ -16,13 +20,13 @@ export class DataModelsHandler {
       .catch((err: PlatypusError) => Result.fail(err));
   }
 
-  fetch(dto: FetchSolutionDTO): Promise<Result<DataModel>> {
+  fetch(dto: FetchDataModelDTO): Promise<Result<DataModel>> {
     return this.dataModelsApiService
       .fetch(dto)
       .then((solutions) => Result.ok(solutions));
   }
 
-  create(dto: CreateSolutionDTO): Promise<Result<DataModel>> {
+  create(dto: CreateDataModelDTO): Promise<Result<DataModel>> {
     const validator = new Validator(dto);
     validator.addRule('name', new RequiredFieldValidator());
     const validationResult = validator.validate();
@@ -45,7 +49,7 @@ export class DataModelsHandler {
       });
   }
 
-  delete(dto: DeleteSolutionDTO): Promise<Result<unknown>> {
+  delete(dto: DeleteDataModelDTO): Promise<Result<unknown>> {
     return this.dataModelsApiService
       .delete(dto)
       .then((res) => Result.ok(res))

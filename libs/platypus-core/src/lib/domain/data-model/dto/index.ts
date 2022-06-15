@@ -7,7 +7,7 @@ import {
 
 export * from './data-model-storage-api-dtos';
 
-export interface CreateSolutionDTO {
+export interface CreateDataModelDTO {
   name: string;
   description?: string;
   owner?: string;
@@ -16,22 +16,22 @@ export interface CreateSolutionDTO {
   };
 }
 
-export interface DeleteSolutionDTO {
+export interface DeleteDataModelDTO {
   id: string;
 }
 
-export interface FetchSolutionDTO {
-  solutionId: string;
+export interface FetchDataModelDTO {
+  dataModelId: string;
 }
 export interface FetchVersionDTO {
-  /** SolutionId (template group external id) */
-  solutionId: string;
+  /** dataModelId (template group external id) */
+  dataModelId: string;
   version: string;
 }
 
 export interface ListVersionsDTO {
-  /** SolutionId (template group external id) */
-  solutionId: string;
+  /** dataModelId (template group external id) */
+  dataModelId: string;
   version?: string;
 }
 
@@ -62,8 +62,8 @@ export interface GraphQlQueryParams {
 }
 export interface RunQueryDTO {
   graphQlParams: GraphQlQueryParams;
-  /** SolutionId (template group external id) */
-  solutionId: string;
+  /** dataModelId (template group external id) */
+  dataModelId: string;
   schemaVersion: string;
   extras?: {
     [key: string]: unknown;
@@ -84,7 +84,7 @@ export interface ApiSpecDTO {
   };
 }
 
-export interface SolutionApiBinding {
+export interface DataModelApiBinding {
   targetName: string;
   tableDataSource: {
     externalId: string;
@@ -112,7 +112,7 @@ export interface ApiVersionFromGraphQl {
     [key: string]: unknown;
   };
 }
-export interface SolutionApiOutputDTO {
+export interface DataModelApiOutputDTO {
   externalId: string;
   name: string;
   description: string;
@@ -120,7 +120,7 @@ export interface SolutionApiOutputDTO {
   versions?: ApiVersion[];
 }
 
-export interface UpdateSolutionDataModelFieldDTO
+export interface UpdateDataModelFieldDTO
   extends Omit<DataModelTypeDefsField, 'type'> {
   type: DataModelTypeDefsFieldType | string;
 }
@@ -145,7 +145,7 @@ export interface FetchDataDTO {
   limit: number;
   cursor: string;
   hasNextPage: boolean;
-  solutionId: string;
+  dataModelId: string;
   version: string;
 }
 

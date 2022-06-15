@@ -78,7 +78,7 @@ export const DataPreviewTable = ({
               dataModelType,
               hasNextPage: nextPage,
               limit: pageSizeLimit,
-              solutionId,
+              dataModelId: solutionId,
               version,
             })
             .then((result) => {

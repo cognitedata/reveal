@@ -93,7 +93,7 @@ class SolutionGenerateCommand extends CLICommand {
       const solutions = new MixerApiService(client);
       DEBUG('Fetching the introspection query from the server');
       const response = await solutions.runQuery({
-        solutionId: args['project-name'],
+        dataModelId: args['project-name'],
         schemaVersion: '1',
         extras: {
           apiName: args['api-name'],

@@ -89,7 +89,7 @@ describe('TemplatesApiServiceTest', () => {
   it('should list all template group versions', async () => {
     const service = createInstance();
     const versions = await service.listSchemaVersions({
-      solutionId: '123',
+      dataModelId: '123',
       version: '1',
     });
     expect(listVersionsMock).toBeCalled();
@@ -99,7 +99,7 @@ describe('TemplatesApiServiceTest', () => {
   it('should load template group as a solution', async () => {
     const service = createInstance();
     const solution = await service.fetchTemplateGroup({
-      solutionId: templateGroupMock.externalId,
+      dataModelId: templateGroupMock.externalId,
     });
     expect(cdfMock.templates.groups.list).toBeCalled();
     expect(solution).toEqual(templateGroupMock);

@@ -82,7 +82,7 @@ describe('SolutionsTemplatesFacadeServiceTest', () => {
   it('should list template schema versions', async () => {
     const service = createInstance();
     await service.listVersions({
-      solutionId: templateGroupMock.externalId,
+      dataModelId: templateGroupMock.externalId,
       version: '1',
     });
     expect(templatesApiServiceMock.listSchemaVersions).toBeCalled();

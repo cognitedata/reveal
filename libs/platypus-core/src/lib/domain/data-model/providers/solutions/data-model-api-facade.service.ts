@@ -6,13 +6,13 @@ import {
 
 import { DataModel, DataModelVersionStatus } from '../../types';
 import {
-  CreateSolutionDTO,
-  DeleteSolutionDTO,
-  FetchSolutionDTO,
+  CreateDataModelDTO,
+  DeleteDataModelDTO,
+  FetchDataModelDTO,
   ListVersionsDTO,
   RunQueryDTO,
   GraphQLQueryResponse,
-  SolutionApiOutputDTO,
+  DataModelApiOutputDTO,
   FetchVersionDTO,
   ConflictMode,
   CreateDataModelVersionDTO,
@@ -41,7 +41,7 @@ export class DataModelApiFacadeService
     this.dmsServiceBuilder = new DataModelStorageBuilderService();
   }
 
-  async create(dto: CreateSolutionDTO): Promise<DataModel> {
+  async create(dto: CreateDataModelDTO): Promise<DataModel> {
     const externalId = this.convertToCamelCase(dto.name);
     const createApiResponse = await this.solutionsApiService.upsertApi({
       externalId,
@@ -58,26 +58,26 @@ export class DataModelApiFacadeService
     return createdDataModel;
   }
 
-  delete(dto: DeleteSolutionDTO): Promise<unknown> {
+  delete(dto: DeleteDataModelDTO): Promise<unknown> {
     return this.solutionsApiService.deleteApi(dto.id);
   }
   list(): Promise<DataModel[]> {
     return this.solutionsApiService
       .listApis()
-      .then((results: SolutionApiOutputDTO[]) => {
+      .then((results: DataModelApiOutputDTO[]) => {
         return results.map((result) =>
           this.solutionDataMapper.deserialize(result)
         );
       });
   }
-  fetch(dto: FetchSolutionDTO): Promise<DataModel> {
+  fetch(dto: FetchDataModelDTO): Promise<DataModel> {
     return this.solutionsApiService
-      .getApisByIds(dto.solutionId, false)
+      .getApisByIds(dto.dataModelId, false)
       .then((results) => {
         if (!results || !results.length || results.length > 1) {
           return Promise.reject(
             new PlatypusError(
-              `Specified version ${dto.solutionId} does not exist!`,
+              `Specified version ${dto.dataModelId} does not exist!`,
               'NOT_FOUND'
             )
           );
@@ -97,12 +97,12 @@ export class DataModelApiFacadeService
 
   listVersions(dto: ListVersionsDTO): Promise<DataModelVersion[]> {
     return this.solutionsApiService
-      .getApisByIds(dto.solutionId, true)
-      .then((results: SolutionApiOutputDTO[]) => {
+      .getApisByIds(dto.dataModelId, true)
+      .then((results: DataModelApiOutputDTO[]) => {
         if (!results || !results.length || results.length > 1) {
           return Promise.reject(
             new PlatypusError(
-              `Specified version ${dto.solutionId} does not exist!`,
+              `Specified version ${dto.dataModelId} does not exist!`,
               'NOT_FOUND'
             )
           );
@@ -110,7 +110,7 @@ export class DataModelApiFacadeService
         // eslint-disable-next-line
         const versions = results[0].versions!;
         return versions.map((version) =>
-          this.apiSpecVersionMapper.deserialize(dto.solutionId, version)
+          this.apiSpecVersionMapper.deserialize(dto.dataModelId, version)
         );
       });
   }
@@ -194,7 +194,7 @@ export class DataModelApiFacadeService
   runQuery(dto: RunQueryDTO): Promise<GraphQLQueryResponse> {
     const reqDto = {
       ...dto,
-      extras: { ...dto.extras, apiName: dto.solutionId },
+      extras: { ...dto.extras, apiName: dto.dataModelId },
     } as RunQueryDTO;
 
     return this.solutionsApiService

@@ -69,7 +69,7 @@ class TemplateGenerateCommand extends CLICommand {
       const client = getCogniteSDKClient();
       const templates = new TemplatesApiService(client);
       const response = await templates.runQuery({
-        solutionId: args.solutionConfig.all.config.templateId,
+        dataModelId: args.solutionConfig.all.config.templateId,
         schemaVersion:
           args.solutionConfig.all.config.templateVersion.toString(),
         graphQlParams: {

@@ -8,7 +8,7 @@ import { IDataModelVersionApiService } from './boundaries';
 import {
   ConflictMode,
   CreateDataModelVersionDTO,
-  FetchSolutionDTO,
+  FetchDataModelDTO,
   GraphQLQueryResponse,
   ListVersionsDTO,
   RunQueryDTO,
@@ -16,23 +16,23 @@ import {
 import { DataModelVersion } from './types';
 
 export class DataModelVersionHandler {
-  constructor(private solutionSchemaService: IDataModelVersionApiService) {}
+  constructor(private dataModelsApiService: IDataModelVersionApiService) {}
 
   /**
-   * Fetch solution (template group) schema
+   * Fetch data model (template group) schema
    * @param dto
    */
-  version(dto: FetchSolutionDTO): Promise<Result<DataModelVersion>> {
-    const validationResult = this.validate(dto, ['solutionId']);
+  version(dto: FetchDataModelDTO): Promise<Result<DataModelVersion>> {
+    const validationResult = this.validate(dto, ['dataModelId']);
 
     if (!validationResult.valid) {
       return Promise.reject(Result.fail(validationResult.errors));
     }
 
-    return this.solutionSchemaService
+    return this.dataModelsApiService
       .fetchVersion(dto)
-      .then((solution: DataModelVersion) =>
-        Result.ok(solution as DataModelVersion)
+      .then((dataModel: DataModelVersion) =>
+        Result.ok(dataModel as DataModelVersion)
       );
   }
 
@@ -41,12 +41,12 @@ export class DataModelVersionHandler {
    * @param dto
    */
   versions(dto: ListVersionsDTO): Promise<Result<DataModelVersion[]>> {
-    const validationResult = this.validate(dto, ['solutionId']);
+    const validationResult = this.validate(dto, ['dataModelId']);
     if (!validationResult.valid) {
       return Promise.reject(Result.fail(validationResult.errors));
     }
 
-    return this.solutionSchemaService
+    return this.dataModelsApiService
       .listVersions(dto)
       .then((versions) => Result.ok(versions));
   }
@@ -65,7 +65,7 @@ export class DataModelVersionHandler {
       return Promise.reject(Result.fail(validationResult.errors));
     }
 
-    return this.solutionSchemaService
+    return this.dataModelsApiService
       .publishVersion(dto, conflictMode)
       .then((version) => Result.ok(version))
       .catch((err) => Result.fail(err));
@@ -76,13 +76,13 @@ export class DataModelVersionHandler {
    * @param dto
    */
   runQuery(dto: RunQueryDTO): Promise<Result<GraphQLQueryResponse>> {
-    const validationResult = this.validate(dto, ['solutionId']);
+    const validationResult = this.validate(dto, ['dataModelId']);
 
     if (!validationResult.valid) {
       return Promise.reject(Result.fail(validationResult.errors));
     }
 
-    return this.solutionSchemaService
+    return this.dataModelsApiService
       .runQuery(dto)
       .then((response) => Result.ok(response));
   }

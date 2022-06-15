@@ -14,7 +14,7 @@ export class DataManagmentHandler {
   ) {}
 
   fetchData(dto: FetchDataDTO): Promise<Result<PaginatedResponse>> {
-    const { cursor, hasNextPage, limit, dataModelType, solutionId, version } =
+    const { cursor, hasNextPage, limit, dataModelType, dataModelId, version } =
       dto;
     const operationName = this.queryBuilder.getOperationName(
       dataModelType.name
@@ -31,7 +31,7 @@ export class DataManagmentHandler {
           graphQlParams: {
             query,
           },
-          solutionId,
+          dataModelId,
           schemaVersion: version,
         })
         .then((result) => {

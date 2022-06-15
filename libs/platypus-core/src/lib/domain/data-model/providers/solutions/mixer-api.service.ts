@@ -6,7 +6,7 @@ import {
   GraphQlQueryParams,
   GraphQLQueryResponse,
   RunQueryDTO,
-  SolutionApiOutputDTO,
+  DataModelApiOutputDTO,
   ApiVersion,
   ApiVersionFromGraphQl,
   ConflictMode,
@@ -22,7 +22,7 @@ export class MixerApiService {
   getApisByIds(
     externalId: string,
     includeVersions = true
-  ): Promise<SolutionApiOutputDTO[]> {
+  ): Promise<DataModelApiOutputDTO[]> {
     const versionsSubquery = `
     versions {
       version
@@ -54,7 +54,7 @@ export class MixerApiService {
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 
-  listApis(): Promise<SolutionApiOutputDTO[]> {
+  listApis(): Promise<DataModelApiOutputDTO[]> {
     const listVersionsQuery = `
     query {
       listApis {
@@ -205,7 +205,7 @@ export class MixerApiService {
   }
 
   async runQuery(dto: RunQueryDTO): Promise<GraphQLQueryResponse> {
-    const url = `/api/v1/projects/${this.cdfClient.project}/schema/api/${dto.solutionId}/${dto.schemaVersion}/graphql`;
+    const url = `/api/v1/projects/${this.cdfClient.project}/schema/api/${dto.dataModelId}/${dto.schemaVersion}/graphql`;
     return (await this.runGraphQlQuery(url, dto.graphQlParams)).data;
   }
 

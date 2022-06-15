@@ -23,7 +23,7 @@ export class SolutionsApiSpecVersionsListCommand extends CLICommand {
     DEBUG('dataModelVersionsHandler initialized');
 
     const apiVersionsResult = await dataModelVersionsHandler.versions({
-      solutionId: args.externalId,
+      dataModelId: args.externalId,
     });
 
     if (!apiVersionsResult.isSuccess) {

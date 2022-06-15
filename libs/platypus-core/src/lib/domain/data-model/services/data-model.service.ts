@@ -1,6 +1,6 @@
 import { IGraphQlUtilsService } from '../boundaries';
 import { mixerApiBuiltInTypes, templatesBiltInTypes } from '../constants';
-import { UpdateSolutionDataModelFieldDTO } from '../dto';
+import { UpdateDataModelFieldDTO } from '../dto';
 import {
   DataModelTypeDefsField,
   DataModelTypeDefs,
@@ -94,7 +94,7 @@ export class DataModelService {
     state: DataModelTypeDefs,
     typeName: string,
     fieldName: string,
-    props: Partial<UpdateSolutionDataModelFieldDTO>
+    props: Partial<UpdateDataModelFieldDTO>
   ): DataModelTypeDefs {
     const newField = this.graphqlService.addField(typeName, fieldName, props);
     return {
@@ -111,7 +111,7 @@ export class DataModelService {
     state: DataModelTypeDefs,
     typeName: string,
     fieldName: string,
-    updates: Partial<UpdateSolutionDataModelFieldDTO>
+    updates: Partial<UpdateDataModelFieldDTO>
   ): DataModelTypeDefs {
     const updatedField = this.graphqlService.updateTypeField(
       typeName,

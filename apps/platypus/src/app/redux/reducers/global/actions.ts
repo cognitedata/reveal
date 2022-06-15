@@ -9,7 +9,7 @@ export const fetchDataModel = createAsyncThunk(
     async (args: { dataModelId: string } | undefined) => {
       const dataModelsHandler = rootInjector.get(TOKENS.dataModelsHandler);
       const result = await dataModelsHandler.fetch({
-        solutionId: args?.dataModelId as string,
+        dataModelId: args?.dataModelId as string,
       });
       return result.getValue();
     }
@@ -24,7 +24,7 @@ export const fetchVersions = createAsyncThunk(
         TOKENS.dataModelVersionHandler
       );
       const result = await dataModelVersionHandler.versions({
-        solutionId: args?.dataModelId as string,
+        dataModelId: args?.dataModelId as string,
       });
       return result.getValue();
     }

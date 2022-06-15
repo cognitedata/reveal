@@ -1,14 +1,15 @@
 import {
   BuildQueryDTO,
   ConflictMode,
+  CreateDataModelDTO,
+  DataModelStorageModelsDTO,
   CreateDataModelVersionDTO,
-  CreateSolutionDTO,
-  DeleteSolutionDTO,
-  FetchSolutionDTO,
+  DeleteDataModelDTO,
+  FetchDataModelDTO,
   GraphQLQueryResponse,
   ListVersionsDTO,
   RunQueryDTO,
-  UpdateSolutionDataModelFieldDTO,
+  UpdateDataModelFieldDTO,
 } from '../dto';
 import {
   DataModel,
@@ -19,10 +20,10 @@ import {
 } from '../types';
 
 export interface IDataModelsApiService {
-  create(dto: CreateSolutionDTO): Promise<DataModel>;
-  delete(dto: DeleteSolutionDTO): Promise<unknown>;
+  create(dto: CreateDataModelDTO): Promise<DataModel>;
+  delete(dto: DeleteDataModelDTO): Promise<unknown>;
   list(): Promise<DataModel[]>;
-  fetch(dto: FetchSolutionDTO): Promise<DataModel>;
+  fetch(dto: FetchDataModelDTO): Promise<DataModel>;
 }
 
 export interface IDataModelVersionApiService {
@@ -30,7 +31,7 @@ export interface IDataModelVersionApiService {
    * Fetch solution (template group)
    * @param dto
    */
-  fetchVersion(dto: FetchSolutionDTO): Promise<DataModelVersion>;
+  fetchVersion(dto: FetchDataModelDTO): Promise<DataModelVersion>;
   /**
    * List Solution schema (template groups) versions
    * @param dto
@@ -39,7 +40,7 @@ export interface IDataModelVersionApiService {
 
   /**
    * Publish new schema by bumping the version.
-   * @param dto - {solutionId, version, schema, bindings}
+   * @param dto - {dataModelId, version, schema, bindings}
    * @param conflictMode - NEW_VERSION | PATCH
    */
   publishVersion(
@@ -97,7 +98,7 @@ export interface IGraphQlUtilsService {
   addField(
     typeName: string,
     fieldName: string,
-    fieldProps: Partial<UpdateSolutionDataModelFieldDTO>
+    fieldProps: Partial<UpdateDataModelFieldDTO>
   ): DataModelTypeDefsField;
 
   /**
@@ -109,7 +110,7 @@ export interface IGraphQlUtilsService {
   updateTypeField(
     typeName: string,
     fieldName: string,
-    updates: Partial<UpdateSolutionDataModelFieldDTO>
+    updates: Partial<UpdateDataModelFieldDTO>
   ): DataModelTypeDefsField;
 
   /**

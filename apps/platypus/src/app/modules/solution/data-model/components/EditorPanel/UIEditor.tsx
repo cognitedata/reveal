@@ -5,7 +5,7 @@ import {
   BuiltInType,
   DataModelTypeDefs,
   DataModelTypeDefsType,
-  UpdateSolutionDataModelFieldDTO,
+  UpdateDataModelFieldDTO,
 } from '@platypus/platypus-core';
 import { useEffect, useState } from 'react';
 import { SchemaTypeField } from '../SchemaTypeAndField/SchemaTypeField';
@@ -90,7 +90,7 @@ export function UIEditor({
   const onFieldUpdated = (
     typeName: string,
     fieldName: string,
-    updates: Partial<UpdateSolutionDataModelFieldDTO>
+    updates: Partial<UpdateDataModelFieldDTO>
   ) => {
     const newState = dataModelService.updateField(
       solutionDataModel,

@@ -10,9 +10,9 @@ import { ExternalId } from '@cognite/sdk-core';
 
 import {
   CreateDataModelVersionDTO,
-  CreateSolutionDTO,
-  DeleteSolutionDTO,
-  FetchSolutionDTO,
+  CreateDataModelDTO,
+  DeleteDataModelDTO,
+  FetchDataModelDTO,
   FetchVersionDTO,
   GraphQLQueryResponse,
   ListVersionsDTO,
@@ -24,7 +24,7 @@ export const TEMPLATE_GROUP_LIST_LIMIT = 1000;
 export class TemplatesApiService {
   constructor(private cdfClient: CogniteClient) {}
 
-  createTemplateGroup(dto: CreateSolutionDTO): Promise<TemplateGroup> {
+  createTemplateGroup(dto: CreateDataModelDTO): Promise<TemplateGroup> {
     const payload = [
       {
         externalId: dto.name,
@@ -41,7 +41,7 @@ export class TemplatesApiService {
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 
-  deleteTemplateGroup(dto: DeleteSolutionDTO): Promise<unknown> {
+  deleteTemplateGroup(dto: DeleteDataModelDTO): Promise<unknown> {
     return this.cdfClient.templates.groups
       .delete([{ externalId: dto.id }], {
         ignoreUnknownIds: false,
@@ -56,10 +56,10 @@ export class TemplatesApiService {
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 
-  fetchTemplateGroup(dto: FetchSolutionDTO): Promise<TemplateGroup> {
+  fetchTemplateGroup(dto: FetchDataModelDTO): Promise<TemplateGroup> {
     const externalIds: ExternalId[] = [
       {
-        externalId: dto.solutionId,
+        externalId: dto.dataModelId,
       },
     ];
     return this.cdfClient.templates.groups
@@ -94,7 +94,7 @@ export class TemplatesApiService {
         }
       : {};
     return this.cdfClient.templates
-      .group(dto.solutionId)
+      .group(dto.dataModelId)
       .versions.list(filter)
       .then((response) => response.items)
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
@@ -135,7 +135,7 @@ export class TemplatesApiService {
 
   runQuery(dto: RunQueryDTO): Promise<GraphQLQueryResponse> {
     return this.cdfClient.templates
-      .group(dto.solutionId)
+      .group(dto.dataModelId)
       .version(parseInt(dto.schemaVersion))
       .runQuery(dto.graphQlParams) // return type GraphQlResponse
       .then((value) => value)

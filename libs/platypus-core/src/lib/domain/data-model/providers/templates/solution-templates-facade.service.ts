@@ -4,9 +4,9 @@ import {
 } from '../../boundaries';
 import {
   CreateDataModelVersionDTO,
-  CreateSolutionDTO,
-  DeleteSolutionDTO,
-  FetchSolutionDTO,
+  CreateDataModelDTO,
+  DeleteDataModelDTO,
+  FetchDataModelDTO,
   FetchVersionDTO,
   GraphQLQueryResponse,
   ListVersionsDTO,
@@ -27,7 +27,7 @@ export class SolutionTemplatesFacadeService
     this.templateSchemaDataMapper = new TemplateSchemaDataMapper();
   }
 
-  create(dto: CreateSolutionDTO): Promise<DataModel> {
+  create(dto: CreateDataModelDTO): Promise<DataModel> {
     return this.templatesApiService
       .createTemplateGroup(dto)
       .then((templateGroup) =>
@@ -35,7 +35,7 @@ export class SolutionTemplatesFacadeService
       );
   }
 
-  delete(dto: DeleteSolutionDTO): Promise<unknown> {
+  delete(dto: DeleteDataModelDTO): Promise<unknown> {
     return this.templatesApiService.deleteTemplateGroup(dto);
   }
 
@@ -49,9 +49,9 @@ export class SolutionTemplatesFacadeService
       );
   }
 
-  fetch(dto: FetchSolutionDTO): Promise<DataModel> {
+  fetch(dto: FetchDataModelDTO): Promise<DataModel> {
     return this.templatesApiService
-      .fetchTemplateGroup({ solutionId: dto.solutionId })
+      .fetchTemplateGroup({ dataModelId: dto.dataModelId })
       .then((templateGroup) =>
         this.templatesDataMapper.deserialize(templateGroup)
       );
@@ -61,7 +61,7 @@ export class SolutionTemplatesFacadeService
     return this.templatesApiService
       .fetchSchemaVersion(dto)
       .then((version) =>
-        this.templateSchemaDataMapper.deserialize(dto.solutionId, version)
+        this.templateSchemaDataMapper.deserialize(dto.dataModelId, version)
       );
   }
 
@@ -69,7 +69,7 @@ export class SolutionTemplatesFacadeService
     return this.templatesApiService.listSchemaVersions(dto).then((versions) => {
       return versions.map((templateSchemaVersion) =>
         this.templateSchemaDataMapper.deserialize(
-          dto.solutionId,
+          dto.dataModelId,
           templateSchemaVersion
         )
       );
@@ -95,7 +95,7 @@ export class SolutionTemplatesFacadeService
   runQuery(dto: RunQueryDTO): Promise<GraphQLQueryResponse> {
     return this.templatesApiService.runQuery({
       graphQlParams: dto.graphQlParams,
-      solutionId: dto.solutionId,
+      dataModelId: dto.dataModelId,
       schemaVersion: dto.schemaVersion,
     });
   }

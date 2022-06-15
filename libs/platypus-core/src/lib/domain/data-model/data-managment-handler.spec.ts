@@ -55,7 +55,7 @@ describe('DataManagmentHandlerTest', () => {
       dataModelType: mockType,
       hasNextPage: true,
       limit: 100,
-      solutionId: 'testExternalId',
+      dataModelId: 'testExternalId',
       version: '1',
     });
     expect(queryBuilderMock.buildQuery).toBeCalled();

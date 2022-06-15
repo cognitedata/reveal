@@ -5,7 +5,7 @@ import { rootInjector, TOKENS } from '@platypus-app/di';
 export default {
   fetcher: (
     graphQlParams: FetcherParams,
-    solutionId: string,
+    dataModelId: string,
     version: string
   ): Promise<FetcherResult> => {
     const solutionSchemaHandler = rootInjector.get(
@@ -15,7 +15,7 @@ export default {
       solutionSchemaHandler
         .runQuery({
           graphQlParams,
-          solutionId,
+          dataModelId,
           schemaVersion: version,
         })
         .then((result) => {

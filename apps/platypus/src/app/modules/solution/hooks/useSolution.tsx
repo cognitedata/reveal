@@ -7,17 +7,15 @@ import { DataModelVersion } from '@platypus/platypus-core';
 export const useSolution = () => {
   const dispatch = useDispatch();
   const fetchSolution = useCallback(
-    (solutionId: string) => {
-      dispatch(
-        solutionAsyncActions.fetchDataModel({ dataModelId: solutionId })
-      );
+    (dataModelId: string) => {
+      dispatch(solutionAsyncActions.fetchDataModel({ dataModelId }));
     },
     [dispatch]
   );
 
   const fetchVersions = useCallback(
-    (solutionId: string) => {
-      dispatch(solutionAsyncActions.fetchVersions({ dataModelId: solutionId }));
+    (dataModelId: string) => {
+      dispatch(solutionAsyncActions.fetchVersions({ dataModelId }));
     },
     [dispatch]
   );
