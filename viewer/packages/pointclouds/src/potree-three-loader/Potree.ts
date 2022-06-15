@@ -43,6 +43,16 @@ export class QueueItem {
   ) {}
 }
 
+type VisibilityUpdateInfo = {
+  loadedToGPUThisFrame: number;
+  exceededMaxLoadsToGPU: boolean;
+  nodeLoadFailed: boolean;
+  numVisiblePoints: number;
+  unloadedGeometry: IPointCloudTreeGeometryNode[];
+  visibleNodes: IPointCloudTreeNodeBase[];
+  priorityQueue: BinaryHeap<QueueItem>;
+};
+
 export class Potree implements IPotree {
   private static picker: PointCloudOctreePicker | undefined;
   private _pointBudget: number = DEFAULT_POINT_BUDGET;
@@ -117,96 +127,124 @@ export class Potree implements IPotree {
     return EptBinaryLoader.WORKER_POOL.maxWorkers;
   }
 
+  private updateVisibilityForNode(
+    node: IPointCloudTreeNodeBase,
+    updateInfo: VisibilityUpdateInfo,
+    queueItem: QueueItem,
+    pointClouds: PointCloudOctree[],
+    frustums: THREE.Frustum[],
+    camera: THREE.Camera,
+    cameraPositions: THREE.Vector3[],
+    renderer: THREE.WebGLRenderer
+  ): void {
+
+    const pointCloudIndex = queueItem.pointCloudIndex;
+    const pointCloud = pointClouds[pointCloudIndex];
+
+    const maxLevel = pointCloud.maxLevel !== undefined ? pointCloud.maxLevel : Infinity;
+
+    if (
+      node.level > maxLevel ||
+        !frustums[pointCloudIndex].intersectsBox(node.boundingBox) ||
+        this.shouldClip(pointCloud, node.boundingBox)
+    ) {
+      return;
+    }
+
+    updateInfo.numVisiblePoints += node.numPoints;
+    pointCloud.numVisiblePoints += node.numPoints;
+
+    const parentNode = queueItem.parent;
+    if (isGeometryNode(node) && isOptionalTreeNode(parentNode)) {
+      if (node.loaded && updateInfo.loadedToGPUThisFrame < MAX_LOADS_TO_GPU) {
+        node = pointCloud.toTreeNode(node, parentNode);
+        updateInfo.loadedToGPUThisFrame++;
+      } else if (!node.failed) {
+        if (node.loaded && updateInfo.loadedToGPUThisFrame >= MAX_LOADS_TO_GPU) {
+          updateInfo.exceededMaxLoadsToGPU = true;
+        }
+        updateInfo.unloadedGeometry.push(node);
+        pointCloud.visibleGeometry.push(node);
+      } else {
+        updateInfo.nodeLoadFailed = true;
+        return;
+      }
+    }
+
+    if (isTreeNode(node)) {
+      this.updateTreeNodeVisibility(pointCloud, node, updateInfo.visibleNodes);
+      pointCloud.visibleGeometry.push(node.geometryNode);
+    }
+
+    const halfHeight = 0.5 * renderer.getSize(this._rendererSize).height * renderer.getPixelRatio();
+
+    this.updateChildVisibility(
+      queueItem,
+      updateInfo.priorityQueue,
+      pointCloud,
+      node,
+      cameraPositions[pointCloudIndex],
+      camera,
+      halfHeight
+    );
+  }
+
+  private createVisibilityUpdateResult(updateInfo: VisibilityUpdateInfo,
+                                       nodeLoadPromises: Promise<void>[]): IVisibilityUpdateResult {
+    return {
+      visibleNodes: updateInfo.visibleNodes,
+      numVisiblePoints: updateInfo.numVisiblePoints,
+      exceededMaxLoadsToGPU: updateInfo.exceededMaxLoadsToGPU,
+      nodeLoadFailed: updateInfo.nodeLoadFailed,
+      nodeLoadPromises: nodeLoadPromises
+    };
+  }
+
   private updateVisibility(
     pointClouds: PointCloudOctree[],
     camera: Camera,
     renderer: WebGLRenderer
   ): IVisibilityUpdateResult {
-    let numVisiblePoints = 0;
-
-    const visibleNodes: IPointCloudTreeNodeBase[] = [];
-    const unloadedGeometry: IPointCloudTreeGeometryNode[] = [];
 
     // calculate object space frustum and cam pos and setup priority queue
     const { frustums, cameraPositions, priorityQueue } = this.updateVisibilityStructures(pointClouds, camera);
 
-    let loadedToGPUThisFrame = 0;
-    let exceededMaxLoadsToGPU = false;
-    let nodeLoadFailed = false;
+    const updateInfo: VisibilityUpdateInfo = {
+      loadedToGPUThisFrame: 0,
+      exceededMaxLoadsToGPU: false,
+      nodeLoadFailed: false,
+      numVisiblePoints: 0,
+      unloadedGeometry: [],
+      visibleNodes: [],
+      priorityQueue
+    };
+
     let queueItem: QueueItem | undefined;
 
     while ((queueItem = priorityQueue.pop()) !== undefined) {
       let node = queueItem.node;
 
       // If we will end up with too many points, we stop right away.
-      if (numVisiblePoints + node.numPoints > this.pointBudget) {
+      if (updateInfo.numVisiblePoints + node.numPoints > this.pointBudget) {
         break;
       }
-
-      const pointCloudIndex = queueItem.pointCloudIndex;
-      const pointCloud = pointClouds[pointCloudIndex];
-
-      const maxLevel = pointCloud.maxLevel !== undefined ? pointCloud.maxLevel : Infinity;
-
-      if (
-        node.level > maxLevel ||
-        !frustums[pointCloudIndex].intersectsBox(node.boundingBox) ||
-        this.shouldClip(pointCloud, node.boundingBox)
-      ) {
-        continue;
-      }
-
-      numVisiblePoints += node.numPoints;
-      pointCloud.numVisiblePoints += node.numPoints;
-
-      const parentNode = queueItem.parent;
-      if (isGeometryNode(node) && isOptionalTreeNode(parentNode)) {
-        if (node.loaded && loadedToGPUThisFrame < MAX_LOADS_TO_GPU) {
-          node = pointCloud.toTreeNode(node, parentNode);
-          loadedToGPUThisFrame++;
-        } else if (!node.failed) {
-          if (node.loaded && loadedToGPUThisFrame >= MAX_LOADS_TO_GPU) {
-            exceededMaxLoadsToGPU = true;
-          }
-          unloadedGeometry.push(node);
-          pointCloud.visibleGeometry.push(node);
-        } else {
-          nodeLoadFailed = true;
-          continue;
-        }
-      }
-
-      if (isTreeNode(node)) {
-        this.updateTreeNodeVisibility(pointCloud, node, visibleNodes);
-        pointCloud.visibleGeometry.push(node.geometryNode);
-      }
-
-      const halfHeight = 0.5 * renderer.getSize(this._rendererSize).height * renderer.getPixelRatio();
-
-      this.updateChildVisibility(
-        queueItem,
-        priorityQueue,
-        pointCloud,
-        node,
-        cameraPositions[pointCloudIndex],
-        camera,
-        halfHeight
-      );
+      this.updateVisibilityForNode(node,
+                                   updateInfo,
+                                   queueItem,
+                                   pointClouds,
+                                   frustums,
+                                   camera,
+                                   cameraPositions,
+                                   renderer);
     } // end priority queue loop
 
-    const numNodesToLoad = Math.min(this.maxNumNodesLoading, unloadedGeometry.length);
+    const numNodesToLoad = Math.min(this.maxNumNodesLoading, updateInfo.unloadedGeometry.length);
     const nodeLoadPromises: Promise<void>[] = [];
     for (let i = 0; i < numNodesToLoad; i++) {
-      nodeLoadPromises.push(unloadedGeometry[i].load());
+      nodeLoadPromises.push(updateInfo.unloadedGeometry[i].load());
     }
 
-    return {
-      visibleNodes: visibleNodes,
-      numVisiblePoints: numVisiblePoints,
-      exceededMaxLoadsToGPU: exceededMaxLoadsToGPU,
-      nodeLoadFailed: nodeLoadFailed,
-      nodeLoadPromises: nodeLoadPromises
-    };
+    return this.createVisibilityUpdateResult(updateInfo, nodeLoadPromises);
   }
 
   private updateTreeNodeVisibility(
