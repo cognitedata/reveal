@@ -38,19 +38,19 @@ export const DeleteAnnotationsForDeletedFiles = createAsyncThunk<
         annotatedResourceType: ANNOTATED_RESOURCE_TYPE,
         annotatedResourceIds: batch,
       },
-      limit: -1,
+      limit: 1000,
     };
 
-    const annotationPromise = sdk.annotations.list(filter);
+    const annotationPromise = sdk.annotations
+      .list(filter)
+      .autoPagingToArray({ limit: Infinity });
     return annotationPromise;
   });
 
   if (promises.length) {
     const annotationsPerBatch = await Promise.all(promises);
     const annotationIds: InternalId[] = annotationsPerBatch
-      .map((batchAnnotations) =>
-        batchAnnotations.items.map((a) => ({ id: a.id }))
-      )
+      .map((batchAnnotations) => batchAnnotations.map((a) => ({ id: a.id })))
       .flat();
     // TODO: handle API deletion limits
     await dispatch(DeleteAnnotations(annotationIds));
