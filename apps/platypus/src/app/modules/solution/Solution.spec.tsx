@@ -25,8 +25,8 @@ jest.mock('./hooks/useSolution', () => ({
 
 const solutionReduxMock = {
   solution: mockSolution,
-  solutionStatus: ActionStatus.SUCCESS,
-  solutionError: '',
+  dataModelStatus: ActionStatus.SUCCESS,
+  dataModelError: '',
   selectedSchema: mockSchema,
   schemas: mockSchemas,
   schemasStatus: ActionStatus.SUCCESS,
@@ -41,7 +41,7 @@ describe('Solution Test', () => {
   it('Should render page if everything is loaded', async () => {
     render(<SolutionPage />, {
       redux: {
-        solution: {
+        dataModel: {
           ...solutionReduxMock,
         },
       },
@@ -55,9 +55,9 @@ describe('Solution Test', () => {
   it('Should render no solution placeholder if solution is not loaded', async () => {
     render(<SolutionPage />, {
       redux: {
-        solution: {
+        dataModel: {
           ...solutionReduxMock,
-          solutionStatus: ActionStatus.FAIL,
+          dataModelStatus: ActionStatus.FAIL,
         },
       },
     });
@@ -68,7 +68,7 @@ describe('Solution Test', () => {
   it('Should render no schema placeholder if schema is not loaded', async () => {
     render(<SolutionPage />, {
       redux: {
-        solution: {
+        dataModel: {
           ...solutionReduxMock,
           schemasStatus: ActionStatus.FAIL,
         },

@@ -5,7 +5,7 @@ import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentL
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Button, Flex } from '@cognite/cogs.js';
 import useSelector from '@platypus-app/hooks/useSelector';
-import { SolutionState } from '@platypus-app/redux/reducers/global/solutionReducer';
+import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { TOKENS } from '@platypus-app/di';
@@ -37,10 +37,10 @@ export const DataModelPage = () => {
 
   const { t } = useTranslation('SolutionDataModel');
   const {
-    solution,
+    dataModel,
     schemas,
     selectedSchema: selectedReduxSchema,
-  } = useSelector<SolutionState>((state) => state.solution);
+  } = useSelector<DataModelState>((state) => state.dataModel);
   const [mode, setMode] = useState<SchemaEditorMode>(
     schemas.length ? SchemaEditorMode.View : SchemaEditorMode.Edit
   );
@@ -63,7 +63,7 @@ export const DataModelPage = () => {
     removeLocalDraft,
     getRemoteAndLocalSchemas,
     getLocalDraft,
-  } = useLocalDraft(solution!.id);
+  } = useLocalDraft(dataModel!.id);
 
   const onSelectedSchemaChanged = (changedSchema: DataModelVersion) => {
     dataModelService.clear();
@@ -117,7 +117,7 @@ export const DataModelPage = () => {
         result = await dataModelVersionHandler.publish(
           {
             ...selectedSchema,
-            externalId: solution!.id,
+            externalId: dataModel!.id,
             schema: projectSchema,
             version: version,
           },
@@ -129,7 +129,7 @@ export const DataModelPage = () => {
         result = await dataModelVersionHandler.publish(
           {
             ...selectedSchema,
-            externalId: solution!.id,
+            externalId: dataModel!.id,
             schema: projectSchema,
             version: version,
           },
@@ -156,7 +156,7 @@ export const DataModelPage = () => {
         if (publishNewVersion) {
           insertSchema(result.getValue());
           history.replace(
-            `/data-models/${solution?.id}/${DEFAULT_VERSION_PATH}/data`
+            `/data-models/${dataModel?.id}/${DEFAULT_VERSION_PATH}/data`
           );
         }
 
@@ -289,7 +289,7 @@ export const DataModelPage = () => {
       <PageContentLayout>
         <PageContentLayout.Header>
           <DataModelHeader
-            solutionId={solution!.id}
+            solutionId={dataModel!.id}
             editorMode={mode}
             schemas={getRemoteAndLocalSchemas(schemas)}
             draftSaved={isDirty}

@@ -1,21 +1,23 @@
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import * as solutionAsyncActions from '@platypus-app/redux/reducers/global/actions';
-import { actions as solutionActions } from '@platypus-app/redux/reducers/global/solutionReducer';
+import { actions as solutionActions } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { DataModelVersion } from '@platypus/platypus-core';
 
 export const useSolution = () => {
   const dispatch = useDispatch();
   const fetchSolution = useCallback(
     (solutionId: string) => {
-      dispatch(solutionAsyncActions.fetchSolution({ solutionId }));
+      dispatch(
+        solutionAsyncActions.fetchDataModel({ dataModelId: solutionId })
+      );
     },
     [dispatch]
   );
 
   const fetchVersions = useCallback(
     (solutionId: string) => {
-      dispatch(solutionAsyncActions.fetchVersions({ solutionId }));
+      dispatch(solutionAsyncActions.fetchVersions({ dataModelId: solutionId }));
     },
     [dispatch]
   );

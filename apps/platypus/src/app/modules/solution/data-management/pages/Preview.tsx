@@ -7,7 +7,7 @@ import { useErrorLogger } from '@platypus-app/hooks/useErrorLogger';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { SolutionState } from '@platypus-app/redux/reducers/global/solutionReducer';
+import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import {
   DataModelTypeDefs,
   DataModelTypeDefsType,
@@ -22,8 +22,8 @@ export const Preview = () => {
   );
   const errorLogger = useErrorLogger();
   const { t } = useTranslation('DataPreview');
-  const { selectedSchema } = useSelector<SolutionState>(
-    (state) => state.solution
+  const { selectedSchema } = useSelector<DataModelState>(
+    (state) => state.dataModel
   );
   const dataModelService = useInjection(TOKENS.dataModelService);
   const [solutionDataModel, setSolutionDataModel] = useState<DataModelTypeDefs>(

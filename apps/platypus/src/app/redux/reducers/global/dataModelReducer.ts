@@ -1,4 +1,4 @@
-import { fetchVersions, fetchSolution } from './actions';
+import { fetchVersions, fetchDataModel } from './actions';
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { DataModelVersion, DataModel } from '@platypus/platypus-core';
@@ -6,9 +6,9 @@ import { ActionStatus } from '@platypus-app/types';
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 
 const initialState = {
-  solution: undefined as DataModel | undefined,
-  solutionStatus: ActionStatus.IDLE,
-  solutionError: '',
+  dataModel: undefined as DataModel | undefined,
+  dataModelStatus: ActionStatus.IDLE,
+  dataModelError: '',
   selectedSchema: {
     schema: '',
     externalId: '',
@@ -22,8 +22,8 @@ const initialState = {
   schemasError: '',
 };
 
-const solutionStateSlice = createSlice({
-  name: 'solution',
+const dataModelSlice = createSlice({
+  name: 'data-model',
   initialState: initialState,
   reducers: {
     selectVersion: (state, action: PayloadAction<{ version: string }>) => {
@@ -38,7 +38,7 @@ const solutionStateSlice = createSlice({
       } else {
         state.selectedSchema = {
           ...initialState.selectedSchema,
-          externalId: state.solution!.id,
+          externalId: state.dataModel!.id,
         };
       }
     },
@@ -50,17 +50,17 @@ const solutionStateSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Fetching solution
-    builder.addCase(fetchSolution.pending, (state) => {
-      state.solutionStatus = ActionStatus.PROCESSING;
+    // Fetching data model
+    builder.addCase(fetchDataModel.pending, (state) => {
+      state.dataModelStatus = ActionStatus.PROCESSING;
     });
-    builder.addCase(fetchSolution.fulfilled, (state, action) => {
-      state.solutionStatus = ActionStatus.SUCCESS;
-      state.solution = action.payload;
+    builder.addCase(fetchDataModel.fulfilled, (state, action) => {
+      state.dataModelStatus = ActionStatus.SUCCESS;
+      state.dataModel = action.payload;
     });
-    builder.addCase(fetchSolution.rejected, (state, action) => {
-      state.solutionStatus = ActionStatus.FAIL;
-      state.solutionError = action.error.message as string;
+    builder.addCase(fetchDataModel.rejected, (state, action) => {
+      state.dataModelStatus = ActionStatus.FAIL;
+      state.dataModelError = action.error.message as string;
     });
 
     // Fetching versions
@@ -81,6 +81,6 @@ const solutionStateSlice = createSlice({
   },
 });
 
-export type SolutionState = ReturnType<typeof solutionStateSlice.reducer>;
-export const { actions } = solutionStateSlice;
-export default solutionStateSlice;
+export type DataModelState = ReturnType<typeof dataModelSlice.reducer>;
+export const { actions } = dataModelSlice;
+export default dataModelSlice;

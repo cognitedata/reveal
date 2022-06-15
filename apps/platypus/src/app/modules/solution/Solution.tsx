@@ -3,13 +3,13 @@ import { Route, Switch, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
 import useSelector from '@platypus-app/hooks/useSelector';
-import { SolutionState } from '@platypus-app/redux/reducers/global/solutionReducer';
+import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 import { useSolution } from './hooks/useSolution';
 import { ActionStatus } from '@platypus-app/types';
-import solutionStateSlice from '@platypus-app/redux/reducers/global/solutionReducer';
+import solutionStateSlice from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
@@ -51,8 +51,8 @@ export const Solution = () => {
     solutionId: string;
     version: string;
   }>();
-  const { solutionStatus, schemasStatus, schemas, selectedSchema } =
-    useSelector<SolutionState>((state) => state.solution);
+  const { dataModelStatus, schemasStatus, schemas, selectedSchema } =
+    useSelector<DataModelState>((state) => state.dataModel);
 
   const { fetchVersions, fetchSolution } = useSolution();
 
@@ -64,7 +64,7 @@ export const Solution = () => {
     fetchVersions(solutionId);
   }, [fetchVersions, solutionId]);
   const isLoadSucceeded =
-    solutionStatus === ActionStatus.SUCCESS &&
+    dataModelStatus === ActionStatus.SUCCESS &&
     schemasStatus === ActionStatus.SUCCESS;
   useEffect(() => {
     if (isLoadSucceeded) {
@@ -120,7 +120,7 @@ export const Solution = () => {
     );
   }
 
-  if (solutionStatus === ActionStatus.FAIL) {
+  if (dataModelStatus === ActionStatus.FAIL) {
     return (
       <div data-testid="solution_not_found">
         <BasicPlaceholder

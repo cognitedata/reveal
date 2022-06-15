@@ -2,7 +2,7 @@ import 'graphiql/graphiql.min.css';
 
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import useSelector from '@platypus-app/hooks/useSelector';
-import { SolutionState } from '@platypus-app/redux/reducers/global/solutionReducer';
+import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
@@ -11,8 +11,8 @@ import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/Basi
 
 export const QueryExplorerPage = () => {
   const { t } = useTranslation('SolutionMonitoring');
-  const { solution, selectedSchema } = useSelector<SolutionState>(
-    (state) => state.solution
+  const { dataModel, selectedSchema } = useSelector<DataModelState>(
+    (state) => state.dataModel
   );
 
   const renderHeader = () => {
@@ -25,7 +25,7 @@ export const QueryExplorerPage = () => {
       <PageContentLayout.Body>
         {selectedSchema?.version ? (
           <QueryExplorer
-            solutionId={solution?.id || ''}
+            solutionId={dataModel?.id || ''}
             schemaVersion={selectedSchema.version}
           />
         ) : (

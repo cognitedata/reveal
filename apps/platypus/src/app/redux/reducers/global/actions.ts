@@ -3,13 +3,13 @@ import { DataModel, DataModelVersion } from '@platypus/platypus-core';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { rootInjector, TOKENS } from '@platypus-app/di';
 
-export const fetchSolution = createAsyncThunk(
-  'solution/fetchSolution',
-  withToastForErrorWithArgs<{ solutionId: string }, DataModel>(
-    async (args: { solutionId: string } | undefined) => {
+export const fetchDataModel = createAsyncThunk(
+  'dataModel/fetchDataModel',
+  withToastForErrorWithArgs<{ dataModelId: string }, DataModel>(
+    async (args: { dataModelId: string } | undefined) => {
       const dataModelsHandler = rootInjector.get(TOKENS.dataModelsHandler);
       const result = await dataModelsHandler.fetch({
-        solutionId: args?.solutionId as string,
+        solutionId: args?.dataModelId as string,
       });
       return result.getValue();
     }
@@ -17,14 +17,14 @@ export const fetchSolution = createAsyncThunk(
 );
 
 export const fetchVersions = createAsyncThunk(
-  'solution/fetchVersions',
-  withToastForErrorWithArgs<{ solutionId: string }, DataModelVersion[]>(
-    async (args: { solutionId: string } | undefined) => {
+  'dataModel/fetchVersions',
+  withToastForErrorWithArgs<{ dataModelId: string }, DataModelVersion[]>(
+    async (args: { dataModelId: string } | undefined) => {
       const dataModelVersionHandler = rootInjector.get(
         TOKENS.dataModelVersionHandler
       );
       const result = await dataModelVersionHandler.versions({
-        solutionId: args?.solutionId as string,
+        solutionId: args?.dataModelId as string,
       });
       return result.getValue();
     }
