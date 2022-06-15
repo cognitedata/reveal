@@ -53,11 +53,11 @@ const dummyAnnotations: VisionAnnotation<VisionAnnotationDataType>[] = [
     status: Status.Approved,
   }),
   getDummyImageExtractedTextAnnotation({
-    extractedText: 'pump',
+    text: 'pump',
     status: Status.Suggested,
   }),
   getDummyImageExtractedTextAnnotation({
-    extractedText: 'pumpText',
+    text: 'pumpText',
     status: Status.Approved,
   }),
   getDummyImageAssetLinkAnnotation({
@@ -109,12 +109,12 @@ describe('Test AnnotationUtils', () => {
     });
 
     test('get label for ImageExtractedText', () => {
-      const extractedText = 'pump';
+      const text = 'pump';
       const annotation = getDummyImageExtractedTextAnnotation({
-        extractedText,
+        text,
       });
 
-      expect(getAnnotationLabelOrText(annotation)).toEqual(extractedText);
+      expect(getAnnotationLabelOrText(annotation)).toEqual(text);
     });
 
     test('get label for ImageAssetLink', () => {
@@ -217,7 +217,7 @@ describe('Test AnnotationUtils', () => {
       getDummyImageExtractedTextAnnotation({
         id: index + 1,
         status: annotationStatus,
-        extractedText: `${index + 1}`,
+        text: `${index + 1}`,
       })
     );
     test('get ids by rejected, verified and unhandled statuses', () => {
@@ -236,7 +236,7 @@ describe('Test AnnotationUtils', () => {
       getDummyImageExtractedTextAnnotation({
         id: index + 1,
         status: annotationStatus,
-        extractedText: `${index + 1}`,
+        text: `${index + 1}`,
         confidence: confidences[index],
       })
     );
@@ -290,7 +290,7 @@ describe('Test AnnotationUtils', () => {
       getDummyImageExtractedTextAnnotation({
         id: index + 1,
         status: annotationStatus,
-        extractedText: `${index + 1}`,
+        text: `${index + 1}`,
         confidence: confidences[index],
       })
     );

@@ -126,7 +126,7 @@ export function convertCDFAnnotationV1ToImageExtractedText(
   }
 
   const imageExtractedText: ImageExtractedText = {
-    extractedText: annotation.text,
+    text: annotation.text,
     confidence: annotation?.data?.confidence,
     textRegion: {
       xMin: annotation.region!.vertices[0].x,

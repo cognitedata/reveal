@@ -246,7 +246,7 @@ export const convertRegionToVisionAnnotationProperties = (
       }
       case CDFAnnotationTypeEnum.ImagesTextRegion: {
         data = {
-          extractedText: labelOrText,
+          text: labelOrText,
           textRegion: {
             xMin: region.x,
             yMin: region.y,

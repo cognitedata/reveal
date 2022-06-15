@@ -115,7 +115,7 @@ export type ImageObjectDetection =
 
 export type ImageExtractedText = TextRegion &
   Partial<Confidence & AnnotationAttributes> & {
-    extractedText: string;
+    text: string;
   };
 
 export type ImageAssetLink = TextRegion &
@@ -144,10 +144,10 @@ export enum CDFAnnotationTypeEnum {
 
 export type CDFAnnotationType<Type> = Type extends ImageObjectDetection
   ? CDFAnnotationTypeEnum.ImagesObjectDetection
-  : Type extends ImageExtractedText
-  ? CDFAnnotationTypeEnum.ImagesTextRegion
   : Type extends ImageAssetLink
   ? CDFAnnotationTypeEnum.ImagesAssetLink
+  : Type extends ImageExtractedText
+  ? CDFAnnotationTypeEnum.ImagesTextRegion
   : Type extends ImageKeypointCollection
   ? CDFAnnotationTypeEnum.ImagesKeypointCollection
   : Type extends ImageClassification

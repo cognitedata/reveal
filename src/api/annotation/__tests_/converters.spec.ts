@@ -178,7 +178,7 @@ describe('Test convertCDFAnnotationV1ToImageExtractedText', () => {
       convertCDFAnnotationV1ToImageExtractedText(cdfTextAnnotationV1)
     ).toStrictEqual({
       confidence: cdfTextAnnotationV1.data?.confidence,
-      extractedText: cdfTextAnnotationV1.text,
+      text: cdfTextAnnotationV1.text,
       textRegion: {
         xMin: cdfTextAnnotationV1.region?.vertices[0].x,
         yMin: cdfTextAnnotationV1.region?.vertices[0].y,
@@ -343,7 +343,7 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
       status: Status.Suggested,
       confidence: cdfAnnotationWithIdV1.data?.confidence,
       annotationType: CDFAnnotationTypeEnum.ImagesTextRegion,
-      extractedText: cdfAnnotationWithIdV1.text,
+      text: cdfAnnotationWithIdV1.text,
       textRegion: {
         xMin: cdfAnnotationWithIdV1.region?.vertices[0].x,
         yMin: cdfAnnotationWithIdV1.region?.vertices[0].y,
@@ -382,7 +382,7 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
       lastUpdatedTime: cdfAnnotationWithOCR.lastUpdatedTime,
       status: Status.Suggested,
       confidence: cdfAnnotationWithOCR.data?.confidence,
-      extractedText: cdfAnnotationWithOCR.text,
+      text: cdfAnnotationWithOCR.text,
       annotationType: CDFAnnotationTypeEnum.ImagesTextRegion,
       textRegion: {
         xMin: cdfAnnotationWithOCR.region?.vertices[0].x,

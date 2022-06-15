@@ -199,7 +199,7 @@ export const getDummyImageExtractedTextAnnotation = ({
   id = 1,
   status = Status.Suggested,
   annotatedResourceId = 10,
-  extractedText = 'pump',
+  text = 'pump',
   confidence = 0.5,
   textRegion = {
     xMin: 0.25,
@@ -211,12 +211,12 @@ export const getDummyImageExtractedTextAnnotation = ({
   id?: number;
   status?: Status;
   annotatedResourceId?: CogniteInternalId;
-  extractedText?: string;
+  text?: string;
   confidence?: number;
   textRegion?: BoundingBox;
 }): VisionAnnotation<ImageExtractedText> => {
   const data: ImageExtractedText = {
-    extractedText,
+    text,
     confidence,
     textRegion,
   };

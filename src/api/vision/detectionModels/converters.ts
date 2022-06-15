@@ -69,7 +69,7 @@ export function convertVisionJobAnnotationToImageExtractedText(
   }
   const annotation = visionJobAnnotation as TextDetectionJobAnnotation;
   const imageExtractedText: ImageExtractedText = {
-    extractedText: annotation.text,
+    text: annotation.text,
     confidence: annotation.confidence,
     textRegion: {
       xMin: annotation.region.vertices[0].x,
@@ -196,7 +196,7 @@ export function convertImageExtractedTextToAnnotationTypeV1(
   imageExtractedText: ImageExtractedText
 ) {
   const annotation = {
-    text: imageExtractedText.extractedText,
+    text: imageExtractedText.text,
     data: {
       confidence: imageExtractedText.confidence,
     },

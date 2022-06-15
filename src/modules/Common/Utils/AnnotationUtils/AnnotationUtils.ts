@@ -31,7 +31,7 @@ export const getAnnotationLabelOrText = (
   (annotation as ImageClassification).label ||
   (annotation as ImageObjectDetection).label ||
   (annotation as ImageKeypointCollection).label ||
-  (annotation as ImageExtractedText).extractedText ||
+  (annotation as ImageExtractedText).text ||
   (annotation as ImageAssetLink).text;
 
 export const filterAnnotations = ({

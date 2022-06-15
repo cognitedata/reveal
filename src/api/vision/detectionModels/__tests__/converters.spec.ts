@@ -127,7 +127,7 @@ describe('convertVisionJobAnnotationToImageExtractedText', () => {
       convertVisionJobAnnotationToImageExtractedText(visionJobAnnotation)
     ).toStrictEqual({
       confidence: visionJobAnnotation.confidence,
-      extractedText: visionJobAnnotation.text,
+      text: visionJobAnnotation.text,
       textRegion: {
         xMin: boundingBox.region.vertices[0].x,
         yMin: boundingBox.region.vertices[0].y,
@@ -313,13 +313,13 @@ describe('Test converts for internal types -> Annotation V1 types', () => {
   test('convertImageExtractedTextToAnnotationTypeV1', () => {
     const visionJobAnnotation = {
       confidence: 0.5,
-      extractedText: 'gauge',
+      text: 'gauge',
       textRegion: boundingBox,
     } as ImageExtractedText;
     expect(
       convertImageExtractedTextToAnnotationTypeV1(visionJobAnnotation)
     ).toStrictEqual({
-      text: visionJobAnnotation.extractedText,
+      text: visionJobAnnotation.text,
       data: {
         confidence: visionJobAnnotation.confidence,
       },
@@ -613,7 +613,7 @@ describe('convertVisionJobAnnotationToVisionAnnotation', () => {
         VisionDetectionModelType.OCR
       )
     ).toStrictEqual({
-      extractedText: visionJobAnnotation.text,
+      text: visionJobAnnotation.text,
       confidence: visionJobAnnotation.confidence,
       textRegion: {
         xMin: rectangleShape.region.vertices[0].x,
