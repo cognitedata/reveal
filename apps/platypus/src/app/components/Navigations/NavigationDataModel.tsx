@@ -11,8 +11,8 @@ import {
 import { StyledButton, StyledTopBar, StyledTopBarRight } from './elements';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-export const NavigationSolution = () => {
-  const { t } = useTranslation('Solution');
+export const NavigationDataModel = () => {
+  const { t } = useTranslation('data-models');
 
   const tabs: Array<{
     slug: string;

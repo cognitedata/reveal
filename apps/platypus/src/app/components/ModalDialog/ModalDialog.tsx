@@ -28,7 +28,7 @@ export const ModalDialog = ({
   okType,
   ...rest
 }: ModalDialogProps) => {
-  const { t } = useTranslation('solutions');
+  const { t } = useTranslation('data-models');
 
   return (
     <StyledModal

@@ -20,5 +20,5 @@ export const Default = Template.bind({});
 Default.args = {
   title: 'Overview page',
   description:
-    'On the overview page we are envisioning main information about a solution.',
+    'On the overview page we are envisioning main information about a data model.',
 };

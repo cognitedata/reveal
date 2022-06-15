@@ -12,7 +12,7 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 export const NavigationMain = () => {
   const { pathname } = useLocation();
   const history = useHistory();
-  const { t } = useTranslation('solutions');
+  const { t } = useTranslation('data-models');
 
   const tabs: Array<{
     slug: string;

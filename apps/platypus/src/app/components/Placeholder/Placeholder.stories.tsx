@@ -20,7 +20,7 @@ export const Default = Template.bind({});
 Default.args = {
   componentName: 'Overview page',
   componentDescription:
-    'On the overview page we are envisioning main information about a solution.',
+    'On the overview page we are envisioning main information about a data model.',
 };
 
 const TemplateWithoutGraphic: Story<Parameters<typeof Placeholder>[0]> = (

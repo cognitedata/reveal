@@ -5,7 +5,7 @@ import { GuideToolsPage } from './modules/guides/GuideToolsPage';
 import { StatusPage } from './modules/statusboard/StatusboardPage';
 import { NavigationMain } from './components/Navigations/NavigationMain';
 import { Solution } from './modules/solution/Solution';
-import { NavigationSolution } from './components/Navigations/NavigationSolution';
+import { NavigationDataModel } from './components/Navigations/NavigationDataModel';
 import { Spinner } from './components/Spinner/Spinner';
 import { useFusionQuery } from './hooks/useFusionQuery';
 
@@ -24,7 +24,7 @@ const Routes = () => {
             '/data-models/:solutionId?/:version?/:tabKey?/:solutionPage?/:subSolutionPage?',
           ]}
         >
-          <NavigationSolution />
+          <NavigationDataModel />
           <Solution />
         </Route>
         <Route exact path="/guidetools">

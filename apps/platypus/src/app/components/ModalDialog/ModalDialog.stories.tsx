@@ -23,10 +23,10 @@ export const Base = () => {
   return (
     <>
       <Wrapper>
-        <MainTitle>Solution card represents the solution object.</MainTitle>
+        <MainTitle>Data Model card represents the data model object.</MainTitle>
         <MainDescription title="Where is it used?">
           It is used at many places actually. For instance when user tries to
-          delete a solution.
+          delete a data model.
         </MainDescription>
         <Group>
           <GroupTitle>Simple information dialog</GroupTitle>
