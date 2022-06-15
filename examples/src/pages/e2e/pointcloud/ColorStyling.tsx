@@ -22,9 +22,14 @@ function ColorStyling() {
     .setup(p => p.annotations)
     .returns(new Mock<CogniteClientPlayground['annotations']>()
       .setup(a => a.list)
-      .returns(() => { return Promise.resolve({ items: [{ id: 123, data: { region: [
-        { cylinder: { centerA: [-0.03, 0.1, -1000], centerB: [-0.03, 0.1, 1000], radius: 0.04 } }
-      ] } } ] } ) as any }).object()
+      .returns(() => {
+        const promise = Promise.resolve({ items: [{ id: 123, data: { region: [
+          { cylinder: { centerA: [-0.03, 0.1, -1000], centerB: [-0.03, 0.1, 1000], radius: 0.04 } }
+        ] } } ] } );
+
+        Object.assign(promise, { autoPagingToArray: async (_arg: { limit: number }) => (await promise).items });
+        return promise as any;
+      }).object()
     );
 
   const viewerOptions: Partial<Cognite3DViewerOptions> = {
