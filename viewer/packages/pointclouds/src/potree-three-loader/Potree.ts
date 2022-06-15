@@ -137,7 +137,6 @@ export class Potree implements IPotree {
     cameraPositions: THREE.Vector3[],
     renderer: THREE.WebGLRenderer
   ): void {
-
     const pointCloudIndex = queueItem.pointCloudIndex;
     const pointCloud = pointClouds[pointCloudIndex];
 
@@ -145,8 +144,8 @@ export class Potree implements IPotree {
 
     if (
       node.level > maxLevel ||
-        !frustums[pointCloudIndex].intersectsBox(node.boundingBox) ||
-        this.shouldClip(pointCloud, node.boundingBox)
+      !frustums[pointCloudIndex].intersectsBox(node.boundingBox) ||
+      this.shouldClip(pointCloud, node.boundingBox)
     ) {
       return;
     }
@@ -189,8 +188,10 @@ export class Potree implements IPotree {
     );
   }
 
-  private createVisibilityUpdateResult(updateInfo: VisibilityUpdateInfo,
-                                       nodeLoadPromises: Promise<void>[]): IVisibilityUpdateResult {
+  private createVisibilityUpdateResult(
+    updateInfo: VisibilityUpdateInfo,
+    nodeLoadPromises: Promise<void>[]
+  ): IVisibilityUpdateResult {
     return {
       visibleNodes: updateInfo.visibleNodes,
       numVisiblePoints: updateInfo.numVisiblePoints,
@@ -205,7 +206,6 @@ export class Potree implements IPotree {
     camera: Camera,
     renderer: WebGLRenderer
   ): IVisibilityUpdateResult {
-
     // calculate object space frustum and cam pos and setup priority queue
     const { frustums, cameraPositions, priorityQueue } = this.updateVisibilityStructures(pointClouds, camera);
 
@@ -219,23 +219,42 @@ export class Potree implements IPotree {
       priorityQueue
     };
 
-    let queueItem: QueueItem | undefined;
+    let queueItem = priorityQueue.pop();
+
+    if (!queueItem) {
+      return this.createVisibilityUpdateResult(updateInfo, []);
+    }
+
+    // Ensure root node is always enqueued as a visible node, as it is never unloaded
+    // even when budget is 0
+    this.updateVisibilityForNode(
+      queueItem.node,
+      updateInfo,
+      queueItem,
+      pointClouds,
+      frustums,
+      camera,
+      cameraPositions,
+      renderer
+    );
 
     while ((queueItem = priorityQueue.pop()) !== undefined) {
-      let node = queueItem.node;
+      const node = queueItem.node;
 
       // If we will end up with too many points, we stop right away.
       if (updateInfo.numVisiblePoints + node.numPoints > this.pointBudget) {
         break;
       }
-      this.updateVisibilityForNode(node,
-                                   updateInfo,
-                                   queueItem,
-                                   pointClouds,
-                                   frustums,
-                                   camera,
-                                   cameraPositions,
-                                   renderer);
+      this.updateVisibilityForNode(
+        node,
+        updateInfo,
+        queueItem,
+        pointClouds,
+        frustums,
+        camera,
+        cameraPositions,
+        renderer
+      );
     } // end priority queue loop
 
     const numNodesToLoad = Math.min(this.maxNumNodesLoading, updateInfo.unloadedGeometry.length);
