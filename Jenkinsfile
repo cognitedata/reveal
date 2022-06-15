@@ -191,7 +191,7 @@ pods {
               )
               deleteComments("[FUSION_PREVIEW_URL]")
               deleteComments("[pr-server]")
-              def url = "https://next-release.fusion.cognite.com/?externalOverride=${package_name}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
+              def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${package_name}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
               pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url)");
             }
 
