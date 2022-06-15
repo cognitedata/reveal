@@ -179,7 +179,9 @@ export const PriceScenariosChart = ({
           style={chartStyles}
           config={{
             responsive: true,
-            displayModeBar: false,
+            displayModeBar: 'hover',
+            modeBarButtons: [['zoomIn2d', 'zoomOut2d', 'resetScale2d']],
+            displaylogo: false,
             scrollZoom: true,
           }}
           onClick={(event) => changeTab(event.points[0].data.name)}

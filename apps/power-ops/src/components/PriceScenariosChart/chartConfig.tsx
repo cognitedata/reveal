@@ -9,7 +9,7 @@ import {
 } from './elements';
 
 export const layout: Partial<Plotly.Layout> = {
-  paper_bgcolor: 'transparent',
+  paper_bgcolor: '#fafafa',
   plot_bgcolor: 'transparent',
   autosize: true,
   margin: {
@@ -61,11 +61,10 @@ export const layout: Partial<Plotly.Layout> = {
     spikecolor: '#8C8C8C',
   },
   hovermode: 'closest',
-  dragmode: false,
+  dragmode: 'pan',
 };
 
 export const chartStyles: CSS.Properties = {
-  display: 'flex',
   width: '100%',
   height: '368px',
   overflow: 'hidden',
