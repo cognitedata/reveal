@@ -79,8 +79,8 @@ export const mapNdsItemsToCogniteEvents = async (ndsEvents: Nds[]) => {
   );
 
   return ndsEvents.map((event) => {
-    const tvdsForWellbore = tvds[event.wellboreMatchingId][0];
-    const tvdUnit = tvdsForWellbore.trueVerticalDepthUnit.unit;
+    const tvdsForWellbore = tvds[event.wellboreMatchingId]?.[0];
+    const tvdUnit = tvdsForWellbore?.trueVerticalDepthUnit?.unit;
 
     return {
       id: event.wellboreMatchingId,
@@ -101,13 +101,15 @@ export const mapNdsItemsToCogniteEvents = async (ndsEvents: Nds[]) => {
         risk_sub_category: event.subtype || '',
         severity: String(event?.severity || ''),
         probability: String(event?.probability || ''),
-        tvd_offset_hole_start: event.holeStart?.value
-          ? getTVDForMD(tvdsForWellbore, event.holeStart.value)
-          : undefined,
+        tvd_offset_hole_start:
+          event.holeStart?.value && tvdsForWellbore
+            ? getTVDForMD(tvdsForWellbore, event.holeStart.value)
+            : undefined,
         tvd_offset_hole_start_unit: tvdUnit,
-        tvd_offset_hole_end: event.holeEnd?.value
-          ? getTVDForMD(tvdsForWellbore, event.holeEnd.value)
-          : undefined,
+        tvd_offset_hole_end:
+          event.holeEnd?.value && tvdsForWellbore
+            ? getTVDForMD(tvdsForWellbore, event.holeEnd.value)
+            : undefined,
         tvd_offset_hole_end_unit: tvdUnit,
       },
       assetIds: [event.wellboreAssetExternalId],
