@@ -144,6 +144,7 @@ export const DataModelPage = () => {
           type: 'error',
           title: 'Error: could not update data model',
           message: result.error.message,
+          validationErrors: result.error.errors || [],
         });
       }
 
@@ -187,7 +188,7 @@ export const DataModelPage = () => {
         title: 'Error: could not save data model',
         message: t(
           'schema_save_error',
-          `Saving of the schema failed. ${error}`
+          `Saving of the data model failed. ${error}`
         ),
       });
     }
@@ -244,14 +245,17 @@ export const DataModelPage = () => {
     if (mode === SchemaEditorMode.Edit) {
       return (
         <div data-cy="data-model-toolbar-actions" style={{ display: 'flex' }}>
-          <DiscardButton
-            type="secondary"
-            data-cy="discard-btn"
-            onClick={onDiscardClick}
-            style={{ marginRight: '10px' }}
-          >
-            {t('discard_changes', 'Discard changes')}
-          </DiscardButton>
+          {selectedSchema.status === DataModelVersionStatus.DRAFT &&
+            projectSchema && (
+              <DiscardButton
+                type="secondary"
+                data-cy="discard-btn"
+                onClick={onDiscardClick}
+                style={{ marginRight: '10px' }}
+              >
+                {t('discard_changes', 'Discard changes')}
+              </DiscardButton>
+            )}
 
           <Button
             type="primary"
