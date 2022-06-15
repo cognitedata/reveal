@@ -2,7 +2,7 @@
 
 // This is your FAS staging app id. Staging deployments are protected by Cognite
 // IAP, meaning they're only accessible to Cogniters.
-static final String STAGING_APP_ID = 'platypus-staging'
+// static final String STAGING_APP_ID = 'platypus-staging'
 
 // This is your FAS production app id.
 // At this time, there is no production build for the demo app.
@@ -54,37 +54,27 @@ static final String SLACK_CHANNEL = 'alerts-platypus'
 //    which are named release-[NNN].
 //
 // No other options are supported at this time.
-static final String VERSIONING_STRATEGY = "single-branch"
+// static final String VERSIONING_STRATEGY = 'single-branch'
 
 // == End of customization. Everything below here is common. == \\
 
 static final String NODE_VERSION = 'node:14'
 
 static final Map<String, String> CONTEXTS = [
-  checkout: "continuous-integration/jenkins/checkout",
-  setup: "continuous-integration/jenkins/setup",
-  lint: "continuous-integration/jenkins/lint",
-  unitTests: "continuous-integration/jenkins/unit-tests",
-  buildStaging: "continuous-integration/jenkins/build-staging",
-  publishStaging: "continuous-integration/jenkins/publish-staging",
-  buildProduction: "continuous-integration/jenkins/build-production",
-  publishProduction: "continuous-integration/jenkins/publish-production",
-  buildPreview: "continuous-integration/jenkins/build-preview",
-  publishPreview: "continuous-integration/jenkins/publish-preview",
-]
-
-// Copy these before installing dependencies so that we don't have to
-// copy the entire node_modules directory tree as well.
-static final String[] DIRS = [
-  'lint',
-  'testcafe',
-  'unit-tests',
-  'storybook',
-  'preview',
-  'production',
+  checkout: 'continuous-integration/jenkins/checkout',
+  setup: 'continuous-integration/jenkins/setup',
+  lint: 'continuous-integration/jenkins/lint',
+  unitTests: 'continuous-integration/jenkins/unit-tests',
+  buildStaging: 'continuous-integration/jenkins/build-staging',
+  publishStaging: 'continuous-integration/jenkins/publish-staging',
+  buildProduction: 'continuous-integration/jenkins/build-production',
+  publishProduction: 'continuous-integration/jenkins/publish-production',
+  buildPreview: 'continuous-integration/jenkins/build-preview',
+  publishPreview: 'continuous-integration/jenkins/publish-preview',
 ]
 
 static final String PR_COMMENT_MARKER = '[pr-server]\n'
+static final String STORYBOOK_COMMENT_MARKER = '[storybook-server]\n'
 
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
@@ -99,7 +89,7 @@ def pods = { body ->
         codecov.pod {
           testcafe.pod() {
             properties([
-              
+
             ])
 
             node(POD_LABEL) {
@@ -115,10 +105,6 @@ def pods = { body ->
                 stage('Install dependencies') {
                   yarn.setup()
                 }
-
-                yarn.copy(
-                  dirs: DIRS
-                )
               }
 
               body()
@@ -137,103 +123,84 @@ pods {
     slackChannel: SLACK_CHANNEL,
     logErrors: isRelease
   ) {
-    threadPool(
-      tasks: [
-        'Lint': {
-          stage('Check linting') {
-            dir('lint') {
-              container('fas') {
-                retry(3) {
-                  sh('yarn lint')
-                }
-              }
+    parallel(
+      'Lint': {
+        stage('Check linting') {
+          dir('main') {
+            container('fas') {
+              sh('yarn lint')
             }
           }
-        },
+        }
+      },
 
-        'Unit tests': {
-          stage('Execute unit tests') {
-            dir('unit-tests') {
-              container('fas') {
-                retry(3) {
-                  sh('yarn test')
-                  junit(allowEmptyResults: true, testResults: '**/junit.xml')
-                }
-              }
+      'Unit tests': {
+        stage('Execute unit tests') {
+          dir('main') {
+            container('fas') {
+              sh('yarn test')
+              junit(allowEmptyResults: true, testResults: '**/junit.xml')
             }
           }
-        },
+        }
+      },
 
-        'Storybook': {
-          retry(3) {
-            previewServer.runStorybookStage(
-              shouldExecute: isPullRequest
+      'Storybook': {
+        dir('main') {
+          stageWithNotify('Build and deploy Storybook') {
+            previewServer(
+              prefix: 'storybook',
+              commentPrefix: STORYBOOK_COMMENT_MARKER,
+              buildCommand: 'yarn build-storybook',
+              buildFolder: 'storybook-static',
             )
           }
-        },
+        }
+      },
 
-        'Preview': {
-          dir('preview') {
-            if(!isPullRequest) {
-              print "No PR previews for release builds"
-              return;
-            }
-
-            stageWithNotify('Build and deploy PR') {
-              def package_name = "@cognite/cdf-solutions-ui";
-              def prefix = jenkinsHelpersUtil.determineRepoName();
-              def domain = "fusion-preview";
-              previewServer(
-                repo: domain,
-                prefix: prefix,
-                buildCommand: 'yarn build preview platypus',
-                buildFolder: 'build',
-              )
-              deleteComments("[FUSION_PREVIEW_URL]")
-              deleteComments("[pr-server]")
-              def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${package_name}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
-              pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url)");
-            }
-
+      'Preview': {
+        dir('main') {
+          if (!isPullRequest) {
+            print 'No PR previews for release builds'
+            return
           }
-        },
 
-        'Production': {
-          dir('production') {
-            if (isPullRequest) {
-              println "Skipping build for pull requests"
-              return
-            }
-
-            stage('Build for production') {
-              fas.build(
-                appId: PRODUCTION_APP_ID,
-                repo: APPLICATION_REPO_ID,
-                buildCommand: 'yarn build production',
-                shouldPublishSourceMap: false
-              )
-            }
+          stageWithNotify('Build and deploy PR') {
+            def package_name = '@cognite/cdf-solutions-ui'
+            def prefix = jenkinsHelpersUtil.determineRepoName()
+            def domain = 'fusion-preview'
+            previewServer(
+              repo: domain,
+              prefix: prefix,
+              buildCommand: 'yarn build preview platypus',
+              buildFolder: 'build',
+            )
+            deleteComments('[FUSION_PREVIEW_URL]')
+            deleteComments('[pr-server]')
+            def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${package_name}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"
+            pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url)")
           }
-        },
-      ],
-      workers: 4,
+        }
+      }
     )
-
 
     if (isRelease) {
       stage('Publish production build') {
-        dir('production') {
-          fas.publish(
-            shouldPublishSourceMap: false
-          )
-        }
+        fas.build(
+          appId: PRODUCTION_APP_ID,
+          repo: APPLICATION_REPO_ID,
+          buildCommand: 'yarn build production',
+          shouldPublishSourceMap: false
+        )
 
-        dir('main') {
-          slack.send(
-            channel: SLACK_CHANNEL,
-            message: "Deployment of ${env.BRANCH_NAME} complete!"
-          )
-        }
+        fas.publish(
+          shouldPublishSourceMap: false
+        )
+
+        slack.send(
+          channel: SLACK_CHANNEL,
+          message: "Deployment of ${env.BRANCH_NAME} complete!"
+        )
       }
     }
   }
