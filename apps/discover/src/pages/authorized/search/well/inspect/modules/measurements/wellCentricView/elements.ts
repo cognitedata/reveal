@@ -1,6 +1,8 @@
 import styled from 'styled-components/macro';
 import layers from 'utils/zindex';
 
+import { Detail, Title } from '@cognite/cogs.js';
+
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
 export const WellCentricViewWrapper = styled(FlexColumn)`
@@ -29,22 +31,9 @@ export const HeaderTitleContainer = styled(FlexColumn)`
   gap: ${sizes.extraSmall};
 `;
 
-export const HeaderTitle = styled(Flex)`
-  font-weight: 600;
-  font-size: var(--cogs-b1-font-size);
-  line-height: var(--cogs-b2-line-height);
-  letter-spacing: var(--cogs-t6-letter-spacing);
-  color: var(--cogs-greyscale-grey9);
-`;
+export const HeaderTitle = styled(Title).attrs({ level: '5' })``;
 
-export const HeaderSubTitle = styled(Flex)`
-  font-weight: 500;
-  margin-top: ${sizes.extraSmall};
-  font-size: var(--cogs-detail-font-size);
-  line-height: var(--cogs-detail-line-height);
-  letter-spacing: var(--cogs-micro-letter-spacing);
-  color: var(--cogs-greyscale-grey6);
-`;
+export const HeaderSubTitle = styled(Detail)``;
 
 export const Footer = styled(FlexColumn)`
   padding: ${sizes.normal};

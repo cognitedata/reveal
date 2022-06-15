@@ -53,7 +53,6 @@ export const MeasurementsComponent: React.FC = () => {
   useEffect(() => {
     if (!data) return;
     const wellboreErrors = getMeasurementDataFetchErrors(data);
-
     if (!isEmpty(wellboreErrors)) {
       dispatch(inspectTabsActions.setErrors(wellboreErrors));
     }

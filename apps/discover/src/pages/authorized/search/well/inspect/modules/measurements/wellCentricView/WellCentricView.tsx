@@ -1,11 +1,10 @@
-import { useMeasurementsQuery } from 'domain/wells/measurements/internal/queries/useMeasurementsQuery';
 import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores';
+import { useWellInspectSelectedWellboresChartData } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboresChartData';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import isEmpty from 'lodash/isEmpty';
-import isUndefined from 'lodash/isUndefined';
 import uniqBy from 'lodash/uniqBy';
 
 import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
@@ -16,14 +15,9 @@ import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { BooleanSelection } from 'modules/wellInspect/types';
-import {
-  WellboreId,
-  WellboreChartData,
-  WellboreProcessedData,
-} from 'modules/wellSearch/types';
+import { WellboreId, WellboreChartData } from 'modules/wellSearch/types';
 
 import {
-  formatChartData,
   extractChartDataFromProcessedData,
   extractWellboreErrorsFromProcessedData,
 } from '../utils';
@@ -50,8 +44,6 @@ export const WellCentricView: React.FC<Props> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const { data, isLoading } = useMeasurementsQuery();
-
   const selectedInspectWellbores = useWellInspectSelectedWellbores();
 
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
@@ -60,10 +52,13 @@ export const WellCentricView: React.FC<Props> = ({
     WellboreChartData[]
   >([]);
 
-  const [wellboreProcessedData, setWellboreProcessedData] =
-    useState<WellboreProcessedData[]>();
-
-  const [chartRendering, setChartRendering] = useState<boolean>(false);
+  const { data: wellboreProcessedData, isLoading } =
+    useWellInspectSelectedWellboresChartData({
+      geomechanicsCurves,
+      ppfgCurves,
+      otherTypes,
+      pressureUnit,
+    });
 
   const [selectedWellboresMap, setSelectedWellboresMap] =
     useState<BooleanSelection>({});
@@ -104,47 +99,7 @@ export const WellCentricView: React.FC<Props> = ({
     );
   }, [wellboreProcessedData]);
 
-  const updateChartData = useCallback(() => {
-    if (isUndefined(data) || !userPreferredUnit) return;
-    const wellboreProcessedData = selectedInspectWellbores.map((wellbore) => ({
-      wellbore,
-      proccessedData: formatChartData(
-        data[wellbore.matchingId || ''], // Matching id is not optional in sdkv3. this is due to handling two sdk's
-        geomechanicsCurves,
-        ppfgCurves,
-        otherTypes,
-        pressureUnit,
-        userPreferredUnit
-      ),
-    }));
-    setWellboreProcessedData(wellboreProcessedData);
-  }, [
-    JSON.stringify(data),
-    isLoading,
-    selectedInspectWellbores,
-    pressureUnit,
-    geomechanicsCurves,
-    ppfgCurves,
-    measurementReference,
-    otherTypes,
-    userPreferredUnit,
-  ]);
-
-  useEffect(() => {
-    setChartRendering(true);
-    // Use timeout to display loader before app get freezed with chart rendering
-    const timer = setTimeout(() => {
-      updateChartData();
-      setTimeout(() => {
-        // Use timeout to avoid hiding loader before chart renders
-        setChartRendering(false);
-      }, 100);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [updateChartData]);
-
-  const wellCards = useMemo(
+  const renderWellCards = useMemo(
     () =>
       wellboreChartData.map((row) => (
         <WellCentricCard
@@ -176,16 +131,16 @@ export const WellCentricView: React.FC<Props> = ({
     [selectedWellbores]
   );
 
-  if (chartRendering) {
+  if (isLoading) {
     return <Loading />;
   }
 
-  if (!chartRendering && isEmpty(wellboreChartData)) return <NoDataAvailable />;
+  if (!isLoading && isEmpty(wellboreChartData)) return <NoDataAvailable />;
 
   return (
     <>
-      <WellCentricViewWrapper visible={!chartRendering}>
-        {wellCards}
+      <WellCentricViewWrapper visible={!isLoading}>
+        {renderWellCards}
       </WellCentricViewWrapper>
       {!isEmpty(selectedWellbores) && (
         <BulkActionsWrapper>

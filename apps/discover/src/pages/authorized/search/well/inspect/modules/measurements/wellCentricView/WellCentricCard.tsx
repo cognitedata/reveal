@@ -79,10 +79,10 @@ export const WellCentricCard: React.FC<Props> = ({
             name={`wellcentric-card-${wellbore.id}`}
           >
             <div>
-              <HeaderTitle>{wellbore.metadata?.wellName}</HeaderTitle>
-              <HeaderSubTitle data-testid="wellbore-descriptor">
+              <HeaderTitle data-testid="wellbore-descriptor">
                 {getWellboreTitle(wellbore)}
-              </HeaderSubTitle>
+              </HeaderTitle>
+              <HeaderSubTitle>{wellbore.name}</HeaderSubTitle>
             </div>
           </Checkbox>
         </HeaderTitleContainer>

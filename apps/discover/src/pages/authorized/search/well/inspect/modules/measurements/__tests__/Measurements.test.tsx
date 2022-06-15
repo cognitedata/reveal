@@ -108,7 +108,7 @@ describe('Measurement with delayed loading and data available', () => {
   }, 10000);
 });
 
-describe('Measuremnts with loading errors', () => {
+describe('Measurement with loading errors', () => {
   const mockServer = setupServer(
     getMockDepthMeasurements(0),
     getMockDepthMeasurementDataRejectAll(),
@@ -148,7 +148,7 @@ describe('Measuremnts with loading errors', () => {
 
     await waitFor(
       () => {
-        expect(store.getActions().length).toEqual(1);
+        expect(store.getActions().length).toBeGreaterThan(1);
       },
       { timeout: 5000 }
     );
