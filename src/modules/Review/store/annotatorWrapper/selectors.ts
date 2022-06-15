@@ -1,66 +1,42 @@
+import isFinite from 'lodash-es/isFinite';
 import { createSelector } from '@reduxjs/toolkit';
-import {
-  AnnotatorWrapperState,
-  KeypointCollectionState,
-} from 'src/modules/Review/store/annotatorWrapper/type';
+import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
 import { RootState } from 'src/store/rootReducer';
 import {
-  PredefinedKeypoint,
   PredefinedKeypointCollection,
   ReviewKeypoint,
   TempKeypointCollection,
 } from 'src/modules/Review/types';
 
-export const nextKeypoint = createSelector(
-  (state: AnnotatorWrapperState) =>
-    state.predefinedAnnotations.predefinedKeypointCollections,
-  (state: AnnotatorWrapperState) => state.lastCollectionName,
-  (state: AnnotatorWrapperState) => state.lastKeyPoint,
-  (predefinedKeypointCollections, lastCollectionName, lastKeyPointLabel) => {
-    const activePredefinedKeypointCollection =
-      predefinedKeypointCollections.find(
-        (predefinedKeypointCollection) =>
-          predefinedKeypointCollection.collectionName === lastCollectionName
-      ) || predefinedKeypointCollections[0];
-
-    if (activePredefinedKeypointCollection) {
-      const activeKeypoints = activePredefinedKeypointCollection.keypoints;
-
-      if (activeKeypoints && activeKeypoints.length) {
-        const lastKeyPointIndex = activeKeypoints.findIndex(
-          (keypoint: PredefinedKeypoint) =>
-            keypoint.caption === lastKeyPointLabel
-        );
-        if (
-          lastKeyPointIndex &&
-          activeKeypoints.length > lastKeyPointIndex + 1
-        ) {
-          return activeKeypoints[lastKeyPointIndex + 1];
-        }
-        return activeKeypoints[0];
-      }
-    }
-    return null;
-  }
-);
-
-export const nextShape = createSelector(
+/**
+ * Selects next predefined shape based on last shape annotation created
+ * or latest predefined shape
+ */
+export const selectNextPredefinedShape = createSelector(
   (state: RootState) => state.reviewSlice.annotationSettings.createNew,
   (state: RootState) =>
     state.annotatorWrapperReducer.predefinedAnnotations.predefinedShapes,
   (state: RootState) => state.annotatorWrapperReducer.lastShape,
   (annotationSettingsNewLabel, predefinedShapes, lastShape) => {
-    if (annotationSettingsNewLabel.text) {
-      return annotationSettingsNewLabel.text;
+    let shape = predefinedShapes[0];
+    const nextShapeName = annotationSettingsNewLabel.text || lastShape;
+    if (nextShapeName) {
+      const template = predefinedShapes.find(
+        (c) => c.shapeName === nextShapeName
+      );
+      if (template) {
+        shape = template;
+      }
     }
-    if (lastShape) {
-      return lastShape;
-    }
-    return predefinedShapes[0]?.shapeName || '';
+    return shape;
   }
 );
 
-export const nextCollection = createSelector(
+/**
+ * Selects next predefined keypoint collection based on last keypoint annotation created
+ * or latest predefined keypoint collection
+ */
+export const selectNextPredefinedKeypointCollection = createSelector(
   (state: RootState) => state.reviewSlice.annotationSettings.createNew,
   (state: RootState) =>
     state.annotatorWrapperReducer.predefinedAnnotations
@@ -86,44 +62,50 @@ export const nextCollection = createSelector(
   }
 );
 
-/** This selector will return
- * current collection
- * & annotatedResourceId
- * & selected collection Ids
- * & already added keypoints
- * & remainingKeypoints
+/**
+ * selects last keypoint collection
  */
-export const currentCollection = createSelector(
-  (state: AnnotatorWrapperState, currentFileId: number) => currentFileId,
+// todo: since this is the temp keypoint collection, move it into a separate state within slice
+export const selectLastKeypointCollection = createSelector(
   (state: AnnotatorWrapperState) => state.lastCollectionId,
   (state: AnnotatorWrapperState) => state.collections.byId,
-  (state: AnnotatorWrapperState) => state.collections.selectedIds,
+  (lastCollectionId, collectionState) => {
+    if (lastCollectionId !== undefined && isFinite(lastCollectionId)) {
+      return collectionState[lastCollectionId];
+    }
+    return null;
+  }
+);
+
+/**
+ * This selector will return TempKeypointCollection or
+ * null if lastCollectionId is not available in state
+ */
+export const selectTempKeypointCollection = createSelector(
+  (state: AnnotatorWrapperState, currentFileId: number) => currentFileId,
+  selectLastKeypointCollection,
   (state: AnnotatorWrapperState) => state.keypointMap.byId,
   (state: AnnotatorWrapperState) => state.keypointMap.selectedIds,
   (state: AnnotatorWrapperState) =>
     state.predefinedAnnotations.predefinedKeypointCollections,
   (
     fileId,
-    lastCollectionId,
-    allCollections,
-    selectedCollectionIds,
+    lastKeypointCollection,
     allKeypoints,
     selectedKeypointIds,
     predefinedKeypointCollections
   ) => {
-    if (lastCollectionId) {
-      const collection = allCollections[lastCollectionId];
-      const reviewImageKeypoints: ReviewKeypoint[] = collection.keypointIds.map(
-        (keypointId: string) => ({
+    if (lastKeypointCollection) {
+      const reviewImageKeypoints: ReviewKeypoint[] =
+        lastKeypointCollection.keypointIds.map((keypointId: string) => ({
           id: keypointId,
           selected: selectedKeypointIds.includes(keypointId),
           keypoint: allKeypoints[keypointId],
-        })
-      );
+        }));
 
       const predefinedCollection: PredefinedKeypointCollection | undefined =
         predefinedKeypointCollections.find(
-          (template) => template.collectionName === collection.label
+          (template) => template.collectionName === lastKeypointCollection.label
         );
       const remainingKeypoints =
         predefinedCollection?.keypoints?.filter(
@@ -134,37 +116,14 @@ export const currentCollection = createSelector(
         ) || [];
 
       return {
-        id: collection.id,
+        id: lastKeypointCollection.id,
         annotatedResourceId: fileId,
         data: {
           keypoints: reviewImageKeypoints,
-          label: collection.label,
+          label: lastKeypointCollection.label,
         },
         remainingKeypoints,
       } as TempKeypointCollection;
-    }
-    return null;
-  }
-);
-
-export const keypointsCompleteInCollection = createSelector(
-  (state: AnnotatorWrapperState) => state.lastCollectionId,
-  (state: AnnotatorWrapperState) => state.collections.byId,
-  (state: AnnotatorWrapperState) =>
-    state.predefinedAnnotations.predefinedKeypointCollections,
-  (lastCollectionId, allCollections, predefinedKeypointCollections) => {
-    if (lastCollectionId) {
-      const collection: KeypointCollectionState =
-        allCollections[lastCollectionId];
-      const predefinedCollection: PredefinedKeypointCollection | undefined =
-        predefinedKeypointCollections.find(
-          (template) => template.collectionName === collection.label
-        );
-      const templateKeypoints = predefinedCollection!.keypoints;
-
-      const completedKeypointIds = collection.keypointIds;
-
-      return [completedKeypointIds.length, templateKeypoints?.length];
     }
     return null;
   }

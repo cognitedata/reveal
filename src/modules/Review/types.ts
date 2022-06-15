@@ -65,28 +65,6 @@ export type FilePreviewProps = {
   handleAddToFile?: () => void;
 };
 
-export type ReactImageAnnotateWrapperProps = FilePreviewProps & {
-  fileInfo: FileInfo;
-  annotations: VisibleAnnotation[];
-  onCreateAnnotation: (annotation: any) => void;
-  onUpdateAnnotation: (annotation: any) => void;
-  onDeleteAnnotation: (annotation: any) => void;
-  handleInEditMode: (inEditMode: boolean) => void;
-  editable?: boolean;
-  creatable?: boolean;
-  handleAddToFile?: () => void;
-  predefinedAnnotations: PredefinedVisionAnnotations;
-  lastShapeName: string;
-  lastKeypointCollection: PredefinedKeypointCollection;
-  selectedTool: Tool;
-  nextToDoKeypointInCurrentCollection: PredefinedKeypoint | null;
-  currentKeypointCollection: LegacyKeypointItemCollection | null;
-  isLoading: (status: boolean) => void;
-  onSelectTool: (tool: Tool) => void;
-  focusIntoView: (annotation: AnnotationTableItem) => void;
-  openAnnotationSettings: (type: string, text?: string, color?: string) => void;
-};
-
 export type AnnotationTableRowProps = {
   reviewAnnotation: VisionReviewAnnotation<VisionAnnotationDataType>;
   onSelect: (id: ReactText, state: boolean) => void;

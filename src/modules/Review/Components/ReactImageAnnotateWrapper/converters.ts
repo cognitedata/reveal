@@ -45,6 +45,7 @@ import {
   VisionReviewAnnotation,
 } from 'src/modules/Review/types';
 import { convertTempKeypointCollectionToVisionReviewImageKeypointCollection } from 'src/modules/Review/store/review/utils';
+import { AnnotationChangeById } from '@cognite/sdk-playground';
 
 /**
  * Converts array of VisionAnnotations to Array of AnnotatorRegions
@@ -224,8 +225,7 @@ export const convertVisionReviewAnnotationToRegions = (
 export const convertRegionToVisionAnnotationProperties = (
   region: AnnotatorRegion
 ): any => {
-  const labelOrText =
-    region.annotationLabelOrText || (region.tags && region.tags[0]) || ''; // todo: remove reading from tags once library changes are done to remove tags array usages
+  const labelOrText = region.annotationLabelOrText;
   let data: VisionAnnotationDataType | ReviewKeypoint | {} = {};
 
   if (isAnnotatorBoxRegion(region)) {
@@ -361,4 +361,41 @@ export const convertTempKeypointCollectionToRegions = (
     );
   }
   return [];
+};
+
+// todo: add test cases VIS-891
+export const convertAnnotatorPointRegionToAnnotationChangeProperties = (
+  region: AnnotatorPointRegion
+): AnnotationChangeById => {
+  const annotationKeypoints: Record<
+    string,
+    {
+      confidence?: number;
+      point: { x: number; y: number };
+    }
+  > = {};
+  (
+    region.annotationMeta as VisionReviewAnnotation<ImageKeypointCollection>
+  ).annotation.keypoints.forEach(({ keypoint }) => {
+    annotationKeypoints[keypoint.label] = {
+      confidence: keypoint.confidence,
+      point: keypoint.point,
+    };
+  });
+  return {
+    id: region.parentAnnotationId,
+    update: {
+      data: {
+        set: {
+          keypoints: {
+            ...annotationKeypoints,
+            [region.keypointLabel]: {
+              confidence: region.keypointConfidence,
+              point: { x: region.x, y: region.y },
+            },
+          },
+        },
+      },
+    },
+  };
 };

@@ -1,44 +1,51 @@
 import { FileInfo } from '@cognite/sdk';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { unwrapResult } from '@reduxjs/toolkit';
-import React, { ReactText, useEffect, useState } from 'react';
+import React, { ReactText, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { UnsavedAnnotation, CDFAnnotationV1 } from 'src/api/annotation/types';
 import { AnnotationSettingsModal } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsModal';
 import { KeyboardShortcutModal } from 'src/modules/Review/Components/KeyboardShortcutModal/KeyboardShortcutModal';
 import { ReactImageAnnotateWrapper } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ReactImageAnnotateWrapper';
 import {
-  setKeepUnsavedRegion,
-  setLastCollectionName,
-  setLastShape,
-  setSelectedTool,
-} from 'src/modules/Review/store/annotationLabel/slice';
-import {
-  currentCollection,
-  nextCollection,
-  nextKeypoint,
-  nextShape,
-} from 'src/modules/Review/store/annotationLabel/selectors';
-import {
   selectAnnotationSettingsState,
-  selectVisibleNonRejectedAnnotationsForFile,
+  selectNonRejectedVisionReviewAnnotationsForFile,
   showAnnotationSettingsModel,
 } from 'src/modules/Review/store/reviewSlice';
 import {
   PredefinedVisionAnnotations,
-  AnnotationTableItem,
-  Tool,
+  VisionReviewAnnotation,
 } from 'src/modules/Review/types';
 import { AppDispatch } from 'src/store';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { RootState } from 'src/store/rootReducer';
-import { CreateAnnotationsV1 } from 'src/store/thunks/Annotation/CreateAnnotationsV1';
-import { UpdateAnnotationsV1 } from 'src/store/thunks/Annotation/UpdateAnnotationsV1';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFileV1 } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFileV1';
 import { pushMetric } from 'src/utils/pushMetric';
 import styled from 'styled-components';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 import isEmpty from 'lodash/isEmpty';
+import {
+  UnsavedVisionAnnotation,
+  VisionAnnotationDataType,
+} from 'src/modules/Common/types';
+import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
+import {
+  isImageKeypointCollectionData,
+  isImageObjectDetectionBoundingBoxData,
+  isImageObjectDetectionPolygonData,
+  isImageObjectDetectionPolylineData,
+} from 'src/modules/Common/types/typeGuards';
+import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { AnnotationChangeById } from '@cognite/sdk-playground';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
+import {
+  setKeepUnsavedRegion,
+  setLastCollectionName,
+  setLastShape,
+} from 'src/modules/Review/store/annotatorWrapper/slice';
+import {
+  selectNextPredefinedKeypointCollection,
+  selectNextPredefinedShape,
+  selectTempKeypointCollection,
+} from 'src/modules/Review/store/annotatorWrapper/selectors';
 
 export const ImagePreview = ({
   file,
@@ -55,174 +62,172 @@ export const ImagePreview = ({
   const [showKeyboardShortcutModal, setShowKeyboardShortcutModal] =
     useState(false);
 
-  const visibleNonRejectedAnnotations = useSelector((rootState: RootState) =>
-    selectVisibleNonRejectedAnnotationsForFile(rootState, file.id)
+  const nonRejectedVisionReviewAnnotations = useSelector(
+    (rootState: RootState) =>
+      selectNonRejectedVisionReviewAnnotationsForFile(rootState, file.id)
   );
 
-  const definedCollection = useSelector(
-    ({ annotationLabelReducer }: RootState) =>
-      annotationLabelReducer.predefinedAnnotations
+  const predefinedAnnotations = useSelector(
+    ({ annotatorWrapperReducer }: RootState) =>
+      annotatorWrapperReducer.predefinedAnnotations
   );
 
-  const nextShapeName = useSelector((rootState: RootState) =>
-    nextShape(rootState)
-  );
-
-  const nextKeypointCollection = useSelector((rootState: RootState) =>
-    nextCollection(rootState)
-  );
-
-  const nextKeypointInCollection = useSelector(
-    ({ annotationLabelReducer }: RootState) =>
-      nextKeypoint(annotationLabelReducer)
-  );
-
-  const currentTool = useSelector(
-    ({ annotationLabelReducer }: RootState) =>
-      annotationLabelReducer.currentTool
-  );
-
-  const currentKeypointCollection = useSelector(
-    ({ annotationLabelReducer }: RootState) =>
-      currentCollection(annotationLabelReducer, file.id)
-  );
-
-  const annotationSettingsState = useSelector(({ reviewSlice }: RootState) =>
+  const annotationSettings = useSelector(({ reviewSlice }: RootState) =>
     selectAnnotationSettingsState(reviewSlice)
   );
 
-  useEffect(() => {
-    if (currentKeypointCollection) {
-      scrollIntoView(currentKeypointCollection.id);
-    }
-  }, [currentKeypointCollection]);
+  const nextPredefinedKeypointCollection = useSelector((rootState: RootState) =>
+    selectNextPredefinedKeypointCollection(rootState)
+  );
 
-  const handleCreateAnnotation = async (annotation: UnsavedAnnotation) => {
-    pushMetric('Vision.Review.CreateAnnotation');
+  const tempKeypointCollection = useSelector(
+    ({ annotatorWrapperReducer }: RootState) =>
+      selectTempKeypointCollection(annotatorWrapperReducer, file.id)
+  );
 
-    if (annotation?.region?.shape === 'rectangle') {
-      pushMetric('Vision.Review.CreateAnnotation.Rectangle');
-    }
-    if (annotation?.region?.shape === 'points') {
-      pushMetric('Vision.Review.CreateAnnotation.Points');
-    }
-    if (annotation?.region?.shape === 'polygon') {
-      pushMetric('Vision.Review.CreateAnnotation.Polygon');
-    }
-    if (annotation?.region?.shape === 'polyline') {
-      pushMetric('Vision.Review.CreateAnnotation.Line');
-    }
-    const res = await dispatch(
-      CreateAnnotationsV1({ fileId: file.id, annotation })
-    );
-    const createdAnnotations = unwrapResult(res);
+  const nextPredefinedShape = useSelector((rootState: RootState) =>
+    selectNextPredefinedShape(rootState)
+  );
 
-    if (createdAnnotations.length && createdAnnotations[0].id) {
-      scrollIntoView(createdAnnotations[0].id);
-    }
-  };
+  const selectedTool = useSelector(
+    ({ annotatorWrapperReducer }: RootState) =>
+      annotatorWrapperReducer.currentTool
+  );
 
-  const handleModifyAnnotation = async (annotation: CDFAnnotationV1) => {
-    dispatch(deselectAllSelectionsReviewPage());
-    await dispatch(UpdateAnnotationsV1([annotation]));
-  };
+  const keepUnsavedRegion = useSelector(
+    ({ annotatorWrapperReducer }: RootState) =>
+      annotatorWrapperReducer.keepUnsavedRegion
+  );
 
-  const handleDeleteAnnotation = (annotation: CDFAnnotationV1) => {
-    dispatch(
-      DeleteAnnotationsAndHandleLinkedAssetsOfFileV1({
-        annotationIds: [annotation.id],
-        showWarnings: true,
-      })
-    );
-  };
+  const scrollId = useSelector(
+    (rootState: RootState) => rootState.reviewSlice.scrollToId
+  );
 
-  const handleInEditMode = (mode: boolean) => {
-    onEditMode(mode);
-  };
+  const handleCreateAnnotation = useCallback(
+    async (annotation: UnsavedVisionAnnotation<VisionAnnotationDataType>) => {
+      pushMetric('Vision.Review.CreateAnnotation');
 
-  const onFocus = (annotation: AnnotationTableItem) => {
-    scrollIntoView(annotation.id);
-  };
+      if (isImageObjectDetectionBoundingBoxData(annotation.data)) {
+        pushMetric('Vision.Review.CreateAnnotation.Rectangle');
+      }
+      if (isImageKeypointCollectionData(annotation.data)) {
+        pushMetric('Vision.Review.CreateAnnotation.Points');
+      }
+      if (isImageObjectDetectionPolygonData(annotation.data)) {
+        pushMetric('Vision.Review.CreateAnnotation.Polygon');
+      }
+      if (isImageObjectDetectionPolylineData(annotation.data)) {
+        pushMetric('Vision.Review.CreateAnnotation.Line');
+      }
+      const res = await dispatch(
+        SaveAnnotations([{ ...annotation, annotatedResourceId: file.id }])
+      );
+      const createdAnnotations = unwrapResult(res);
 
-  const onSelectTool = (tool: Tool) => {
-    dispatch(setSelectedTool(tool));
-  };
+      if (createdAnnotations.length && createdAnnotations[0].id) {
+        scrollIntoView(createdAnnotations[0].id);
+      }
+    },
+    [scrollIntoView]
+  );
 
-  const onOpenAnnotationSettings = (
-    type = 'shape',
-    text?: string,
-    color?: string
-  ) => {
-    dispatch(setKeepUnsavedRegion(true));
-    dispatch(showAnnotationSettingsModel(true, type, text, color));
-  };
+  const handleModifyAnnotation = useCallback(
+    async (annotationChanges: AnnotationChangeById) => {
+      dispatch(deselectAllSelectionsReviewPage());
+      await dispatch(UpdateAnnotations([annotationChanges]));
+    },
+    [dispatch]
+  );
+
+  const handleDeleteAnnotation = useCallback(
+    ({
+      annotation: { id },
+    }: VisionReviewAnnotation<VisionAnnotationDataType>) => {
+      dispatch(
+        DeleteAnnotationsAndHandleLinkedAssetsOfFile({
+          annotationIds: [{ id }],
+          showWarnings: true,
+        })
+      );
+    },
+    [dispatch]
+  );
+
+  const onOpenAnnotationSettings = useCallback(
+    (type = 'shape', text?: string, color?: string) => {
+      dispatch(setKeepUnsavedRegion(true));
+      dispatch(showAnnotationSettingsModel(true, type, text, color));
+    },
+    [dispatch]
+  );
 
   const onOpenKeyboardShortcuts = () => {
     setShowKeyboardShortcutModal(true);
   };
 
-  const onDoneAnnotationSettings = async (
-    newCollection: PredefinedVisionAnnotations | null
-  ) => {
-    try {
-      if (newCollection) {
-        if (
-          newCollection.predefinedShapes.length ||
-          newCollection.predefinedKeypointCollections.length
-        ) {
-          await dispatch(SaveAnnotationTemplates(newCollection)).unwrap();
-          if (!isEmpty(annotationSettingsState.createNew)) {
-            if (
-              annotationSettingsState.activeView === 'shape' &&
-              newCollection.predefinedShapes.length > 0
-            ) {
-              dispatch(
-                setLastShape(
-                  newCollection.predefinedShapes[
-                    newCollection.predefinedShapes.length - 1
-                  ].shapeName
-                )
-              );
-            } else if (
-              annotationSettingsState.activeView === 'keypoint' &&
-              newCollection.predefinedKeypointCollections.length > 0
-            ) {
-              dispatch(
-                setLastCollectionName(
-                  newCollection.predefinedKeypointCollections[
-                    newCollection.predefinedKeypointCollections.length - 1
-                  ].collectionName
-                )
-              );
+  const onDoneAnnotationSettings = useCallback(
+    async (newCollection: PredefinedVisionAnnotations | null) => {
+      try {
+        if (newCollection) {
+          if (
+            newCollection.predefinedShapes.length ||
+            newCollection.predefinedKeypointCollections.length
+          ) {
+            await dispatch(SaveAnnotationTemplates(newCollection)).unwrap();
+            if (!isEmpty(annotationSettings.createNew)) {
+              if (
+                annotationSettings.activeView === 'shape' &&
+                newCollection.predefinedShapes.length > 0
+              ) {
+                dispatch(
+                  setLastShape(
+                    newCollection.predefinedShapes[
+                      newCollection.predefinedShapes.length - 1
+                    ].shapeName
+                  )
+                );
+              } else if (
+                annotationSettings.activeView === 'keypoint' &&
+                newCollection.predefinedKeypointCollections.length > 0
+              ) {
+                dispatch(
+                  setLastCollectionName(
+                    newCollection.predefinedKeypointCollections[
+                      newCollection.predefinedKeypointCollections.length - 1
+                    ].collectionName
+                  )
+                );
+              }
             }
           }
+          dispatch(showAnnotationSettingsModel(false));
+          dispatch(setKeepUnsavedRegion(false));
         }
-        dispatch(showAnnotationSettingsModel(false));
-        dispatch(setKeepUnsavedRegion(false));
+      } catch (e) {
+        console.error('Error occurred while saving predefined annotations!');
       }
-    } catch (e) {
-      console.error('Error occurred while saving predefined annotations!');
-    }
-  };
+    },
+    [annotationSettings]
+  );
 
   return (
     <Container>
       <ReactImageAnnotateWrapper
         fileInfo={file}
-        annotations={visibleNonRejectedAnnotations}
+        annotations={nonRejectedVisionReviewAnnotations}
+        onEditMode={onEditMode}
+        predefinedAnnotations={predefinedAnnotations}
+        nextPredefinedKeypointCollection={nextPredefinedKeypointCollection}
+        tempKeypointCollection={tempKeypointCollection}
+        isLoading={isLoading}
+        focusIntoView={scrollIntoView}
+        nextPredefinedShape={nextPredefinedShape}
+        keepUnsavedRegion={keepUnsavedRegion}
+        selectedTool={selectedTool}
+        scrollId={scrollId}
         onCreateAnnotation={handleCreateAnnotation}
         onUpdateAnnotation={handleModifyAnnotation}
         onDeleteAnnotation={handleDeleteAnnotation}
-        handleInEditMode={handleInEditMode}
-        predefinedAnnotations={definedCollection}
-        lastShapeName={nextShapeName}
-        lastKeypointCollection={nextKeypointCollection}
-        nextToDoKeypointInCurrentCollection={nextKeypointInCollection}
-        currentKeypointCollection={currentKeypointCollection}
-        isLoading={isLoading}
-        selectedTool={currentTool}
-        onSelectTool={onSelectTool}
-        focusIntoView={onFocus}
         openAnnotationSettings={onOpenAnnotationSettings}
       />
       <ExtraToolbar>
@@ -273,19 +278,19 @@ export const ImagePreview = ({
             icon="Settings"
             aria-label="open annotation settings"
             onClick={() => onOpenAnnotationSettings()}
-            toggled={annotationSettingsState.show}
+            toggled={annotationSettings.show}
           />
         </Tooltip>
       </ExtraToolbar>
       <AnnotationSettingsModal
-        predefinedAnnotations={definedCollection}
-        showModal={annotationSettingsState.show}
+        predefinedAnnotations={predefinedAnnotations}
+        showModal={annotationSettings.show}
         onCancel={() => {
           dispatch(showAnnotationSettingsModel(false));
           dispatch(setKeepUnsavedRegion(false));
         }}
         onDone={onDoneAnnotationSettings}
-        options={annotationSettingsState}
+        options={annotationSettings}
       />
       <KeyboardShortcutModal
         showModal={showKeyboardShortcutModal}

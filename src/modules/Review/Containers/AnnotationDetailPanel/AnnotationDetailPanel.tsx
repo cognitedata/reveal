@@ -1,6 +1,5 @@
 import React, { ReactText, useCallback, useMemo } from 'react';
 import { Detail, Icon, PrimaryTooltip } from '@cognite/cogs.js';
-import { currentCollection } from 'src/modules/Review/store/annotatorWrapper/selectors';
 import {
   selectAnnotation,
   toggleAnnotationVisibility,
@@ -48,6 +47,7 @@ import {
   AnnotationDetailPanelAnnotationType,
   AnnotationDetailPanelRowDataBase,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
+import { selectTempKeypointCollection } from 'src/modules/Review/store/annotatorWrapper/selectors';
 
 export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
   const { file } = props;
@@ -67,14 +67,14 @@ export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
       selectVisionReviewAnnotationsForFile(rootState, file.id)
     );
 
-  const currentKeypointCollection = useSelector(
+  const tempKeypointCollection = useSelector(
     ({ annotatorWrapperReducer }: RootState) =>
-      currentCollection(annotatorWrapperReducer, file.id)
+      selectTempKeypointCollection(annotatorWrapperReducer, file.id)
   );
 
   const convertedCurrentKeypointCollection: VisionReviewAnnotation<ImageKeypointCollection> | null =
     convertTempKeypointCollectionToVisionReviewImageKeypointCollection(
-      currentKeypointCollection
+      tempKeypointCollection
     );
 
   const imagesAssetLinkReviewAnnotations = useMemo(() => {
@@ -102,7 +102,7 @@ export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
       ]);
     }
     return savedKeypointAnnotations;
-  }, [visibleReviewAnnotations, currentKeypointCollection]);
+  }, [visibleReviewAnnotations, tempKeypointCollection]);
 
   const imagesTextRegionReviewAnnotations = useMemo(() => {
     return visibleReviewAnnotations.filter((reviewAnnotation) =>
@@ -133,7 +133,7 @@ export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
 
   const handleVisibility = useCallback(
     (id: ReactText) => {
-      if (id === currentKeypointCollection?.id) {
+      if (id === tempKeypointCollection?.id) {
         // when creating keypoint collections
         dispatch(toggleCollectionVisibility(id));
       } else {
@@ -144,12 +144,12 @@ export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
         );
       }
     },
-    [currentKeypointCollection?.id]
+    [tempKeypointCollection?.id]
   );
 
   const handleDelete = useCallback(
     (id: number) => {
-      if (id === currentKeypointCollection?.id) {
+      if (id === tempKeypointCollection?.id) {
         // when creating keypoint collections
         dispatch(deleteCurrentCollection());
       } else {
@@ -161,25 +161,25 @@ export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
         );
       }
     },
-    [currentKeypointCollection?.id]
+    [tempKeypointCollection?.id]
   );
 
   const handleApprovalState = useCallback(
     async (id: number, status: Status) => {
-      if (id === currentKeypointCollection?.id) {
+      if (id === tempKeypointCollection?.id) {
         // when creating keypoint collections
         dispatch(setCollectionStatus({ id, status }));
       } else {
         await dispatch(AnnotationStatusChange({ id, status }));
       }
     },
-    [currentKeypointCollection?.id]
+    [tempKeypointCollection?.id]
   );
 
   const handleOnSelect = useCallback(
     (id: ReactText, nextState: boolean) => {
       dispatch(deselectAllSelectionsReviewPage());
-      if (id === currentKeypointCollection?.id) {
+      if (id === tempKeypointCollection?.id) {
         // when creating keypoint collections
         if (nextState) {
           dispatch(selectCollection(id));
@@ -192,7 +192,7 @@ export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
         dispatch(selectAnnotation(+id));
       }
     },
-    [currentKeypointCollection?.id]
+    [tempKeypointCollection?.id]
   );
 
   const handleKeypointSelect = useCallback((id: string) => {
