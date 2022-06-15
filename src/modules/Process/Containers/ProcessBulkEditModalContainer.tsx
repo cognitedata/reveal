@@ -8,8 +8,8 @@ import {
 
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { RootState } from 'src/store/rootReducer';
-import { updateBulkV1 } from 'src/store/thunks/Files/updateBulkV1';
 import { selectProcessAllSelectedFilesInSortedOrder } from 'src/modules/Process/store/selectors';
+import { updateBulk } from 'src/store/thunks/Files/updateBulk';
 
 export const ProcessBulkEditModalContainer = () => {
   const dispatch = useDispatch();
@@ -34,7 +34,7 @@ export const ProcessBulkEditModalContainer = () => {
     setBulkEdit({});
   };
   const onFinishBulkEdit = () => {
-    dispatch(updateBulkV1({ selectedFiles, bulkEditUnsaved }));
+    dispatch(updateBulk({ selectedFiles, bulkEditUnsaved }));
     onCloseBulkEdit();
   };
 
