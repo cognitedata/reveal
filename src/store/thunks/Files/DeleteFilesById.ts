@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { DeleteAnnotationsForDeletedFilesV1 } from 'src/store/thunks/Annotation/DeleteAnnotationsForDeletedFilesV1';
+import { DeleteAnnotationsForDeletedFiles } from 'src/store/thunks/Annotation/DeleteAnnotationsForDeletedFiles';
 
 export const DeleteFilesById = createAsyncThunk<
   number[],
@@ -13,7 +13,9 @@ export const DeleteFilesById = createAsyncThunk<
     throw new Error('Ids not provided!');
   }
   if (setIsDeletingState) setIsDeletingState(true);
-  await dispatch(DeleteAnnotationsForDeletedFilesV1(fileIds));
+  await dispatch(
+    DeleteAnnotationsForDeletedFiles(fileIds.map((item) => ({ id: item })))
+  );
   await sdk.files.delete(fileIds.map((id) => ({ id })));
   if (setIsDeletingState) setIsDeletingState(false);
   return fileIds;
