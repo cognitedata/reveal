@@ -38,7 +38,7 @@ const Thresholds: FunctionComponentWithTranslationKeys<Props> = ({
         <Button
           icon="Plus"
           type="tertiary"
-          aria-label="Add threshopld"
+          aria-label="Add threshold"
           onClick={() => {
             onAddThreshold();
             setActiveKey((prevState) => [

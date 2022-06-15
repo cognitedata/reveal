@@ -94,6 +94,7 @@ const SearchInAsset = ({ query, setQuery }: SearchInAssetProps) => {
             <Button
               type="ghost"
               icon="ArrowLeft"
+              aria-label="Back"
               onClick={() => {
                 setUrlAssetId(undefined);
                 setQuery('');

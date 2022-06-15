@@ -473,7 +473,7 @@ const ThresholdItem: FunctionComponentWithTranslationKeys<Props> = ({
             content={`${t['Do you want to delete']} "${threshold.name}"?`}
             onConfirm={() => onRemoveThreshold(threshold.id)}
           >
-            <Button type="ghost" icon="Delete" />
+            <Button type="ghost" icon="Delete" aria-label="Delete" />
           </Popconfirm>
         </Flex>
       </footer>

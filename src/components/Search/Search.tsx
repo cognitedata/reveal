@@ -201,7 +201,7 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
           }
           onShown={() => trackUsage('Search.Filters.Open')}
         >
-          <Button icon="Filter" toggled={!isEmpty} />
+          <Button icon="Filter" aria-label="Filter" toggled={!isEmpty} />
         </Dropdown>
       </Flex>
       {isEmpty ? (
