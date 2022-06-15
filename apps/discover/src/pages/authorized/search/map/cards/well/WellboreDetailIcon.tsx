@@ -1,9 +1,9 @@
+import { Button } from '@cognite/cogs.js';
+
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { WellId, WellboreId } from 'modules/wellSearch/types';
 import { isWellboreFavored } from 'modules/wellSearch/utils/isWellboreFavored';
 import { FavoriteDropdown } from 'pages/authorized/search/common/FavoriteDropdown';
-
-import { WellboreButton } from './elements';
 
 export const WellboreDetailIcon: React.FC<{
   favoriteWellIds: FavoriteContentWells;
@@ -15,7 +15,7 @@ export const WellboreDetailIcon: React.FC<{
 
   return (
     <>
-      <WellboreButton
+      <Button
         aria-label="Wellbore button"
         type="ghost"
         icon="ArrowRight"

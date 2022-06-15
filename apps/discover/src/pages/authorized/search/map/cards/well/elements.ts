@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
 
-import { Button, Flex } from '@cognite/cogs.js';
+import { Flex } from '@cognite/cogs.js';
 
 import { MarginBottomNormalContainer, sizes } from 'styles/layout';
 
@@ -23,10 +23,6 @@ export const WellboreTitle = styled.div`
   &:hover {
     cursor: pointer;
   }
-`;
-
-export const WellboreButton = styled(Button)`
-  color: var(--cogs-greyscale-grey6);
 `;
 
 export const WellMetaDataContainer = styled(MarginBottomNormalContainer)`
