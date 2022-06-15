@@ -4,10 +4,8 @@ import {
   processReducerInitialState,
   ProcessReducerState,
 } from 'src/modules/Process/store/slice';
-import {
-  initialState as annotationLabelReducerInitialState,
-  AnnotationLabelReducerState,
-} from 'src/modules/Review/store/annotationLabel/slice';
+import { initialState as annotatorWrapperInitialState } from 'src/modules/Review/store/annotatorWrapper/slice';
+import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
 import {
   reviewReducerInitialState,
   ReviewReducerState,
@@ -21,7 +19,7 @@ const OLD_VISION_STATE_NAME = 'state';
 
 // To invalidate stored state when braking changes are added to the state
 // bump up the version
-export const APP_STATE_VERSION = 3;
+export const APP_STATE_VERSION = 4;
 
 const recoverOldState = () => {
   try {
@@ -56,9 +54,9 @@ export const loadState = (): Partial<RootState> | undefined => {
         validatePersistedState(stateMeta.project, stateMeta.appStateVersion)
       ) {
         return {
-          annotationLabelReducer: {
-            ...annotationLabelReducerInitialState,
-            ...persistedState.annotationLabelReducer,
+          annotatorWrapperReducer: {
+            ...annotatorWrapperInitialState,
+            ...persistedState.annotatorWrapperReducer,
           },
           reviewSlice: {
             ...reviewReducerInitialState,
@@ -76,8 +74,8 @@ export const loadState = (): Partial<RootState> | undefined => {
       }
     }
     return {
-      annotationLabelReducer: {
-        ...annotationLabelReducerInitialState,
+      annotatorWrapperReducer: {
+        ...annotatorWrapperInitialState,
       },
       reviewSlice: {
         ...reviewReducerInitialState,
@@ -104,10 +102,7 @@ export const saveState = (state: any): void => {
 };
 
 export type OfflineState = {
-  annotationLabelReducer: Pick<
-    AnnotationLabelReducerState,
-    'predefinedAnnotations'
-  >;
+  annotatorWrapperReducer: Pick<AnnotatorWrapperState, 'predefinedAnnotations'>;
   reviewSlice: Pick<ReviewReducerState, 'fileIds'>;
   explorerReducer: Pick<
     ExplorerState,
@@ -129,8 +124,9 @@ export type OfflineState = {
 
 const getOfflineState = (state: RootState): OfflineState => {
   const offState: OfflineState = {
-    annotationLabelReducer: {
-      predefinedAnnotations: state.annotationLabelReducer.predefinedAnnotations,
+    annotatorWrapperReducer: {
+      predefinedAnnotations:
+        state.annotatorWrapperReducer.predefinedAnnotations,
     },
     reviewSlice: {
       fileIds: state.reviewSlice.fileIds,

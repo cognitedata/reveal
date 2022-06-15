@@ -188,6 +188,7 @@ describe('Test annotator slice', () => {
       });
     });
 
+    // todo: this method will change so wil add test cases later [VIS-883]
     describe.skip('Test onUpdateKeyPoint reducer', () => {
       const k1Id = generateKeypointId(1, 'left');
       const k2Id = generateKeypointId(1, 'center');
@@ -259,6 +260,7 @@ describe('Test annotator slice', () => {
       });
     });
 
+    // todo: this method will change so wil add test cases later [VIS-883]
     describe.skip('Test onCreateKeyPoint reducer', () => {
       test('Should not create keypoint collection, invalid collection name', () => {
         const previousState = {

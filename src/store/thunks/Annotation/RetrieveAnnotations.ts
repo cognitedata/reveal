@@ -9,7 +9,7 @@ import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
 import { from, lastValueFrom } from 'rxjs';
 import { map, mergeMap, reduce } from 'rxjs/operators';
 import { convertCDFAnnotationToVisionAnnotations } from 'src/api/annotation/converters';
-import { cognitePlaygroundClient } from 'src/api/annotation/CognitePlaygroundClient';
+import { cognitePlaygroundClient as sdk } from 'src/api/annotation/CognitePlaygroundClient';
 import { ListResponse } from '@cognite/sdk';
 
 export const RetrieveAnnotations = createAsyncThunk<
@@ -22,7 +22,6 @@ export const RetrieveAnnotations = createAsyncThunk<
   /**
    * fetch new (V2 annotators using sdk)
    */
-  const sdk = cognitePlaygroundClient;
   const fileIdBatches = splitListIntoChunks(
     fetchFileIds,
     ANNOTATION_FETCH_BULK_SIZE

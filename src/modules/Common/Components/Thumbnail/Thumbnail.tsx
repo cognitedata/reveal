@@ -46,7 +46,7 @@ export const Thumbnail = ({
           style={{ padding: '4px 60px' }}
         >
           View file
-          <Icon type="ArrowRight" style={{ marginLeft: '8px' }} />
+          <Icon type="ArrowForward" style={{ marginLeft: '8px' }} />
         </Button>
       </OverlayContainer>
     );

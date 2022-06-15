@@ -18,6 +18,7 @@ import { ReactText } from 'react';
 import { AnnotationLabelState, KeyPointState } from './types';
 import { deleteCollection } from './utils';
 
+/** @deprecated */
 export const initialState: AnnotationLabelState = {
   predefinedAnnotations: {
     predefinedKeypointCollections: [],
