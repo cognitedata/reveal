@@ -88,6 +88,9 @@ Cypress.Commands.add(
     cy.validateCheck(category, [], toSelect);
   }
 );
+Cypress.Commands.add('clickOnNthFilterWrapper', (nth: number) => {
+  cy.findAllByTestId('filter-item-wrapper').as('filter-items').eq(nth).click();
+});
 
 export interface SidebarCommands {
   validateSelect(filter: string, values: string[], toSelect?: string): void;
@@ -103,4 +106,5 @@ export interface SidebarCommands {
     subCategory: string,
     toSelect?: string
   ): void;
+  clickOnNthFilterWrapper(nth: number): void;
 }

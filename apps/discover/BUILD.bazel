@@ -505,6 +505,7 @@ CYPRESS_EXTERNAL_FILES = [
     "src/utils/isISODateRegex.ts",
     "src/pages/authorized/search/well/content/constants.ts",
     "src/constants/units.ts",
+    "src/domain/wells/measurements/constants.ts",
 ]
 
 CYPRESS_FILES = _CYPRESS_FILES + CYPRESS_EXTERNAL_FILES
