@@ -1026,10 +1026,7 @@ export class Cognite3DViewer {
     options: IntersectionFromPixelOptions
   ): Promise<null | Intersection>;
   /**
-   * Implementation of getIntersectionFromPixel.
-   * @param offsetX
-   * @param offsetY
-   * @param options
+   * @obvious
    */
   async getIntersectionFromPixel(
     offsetX: number,
