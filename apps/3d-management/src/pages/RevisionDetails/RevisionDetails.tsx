@@ -257,6 +257,18 @@ export default function RevisionDetails(props: Props) {
         </DetailsRowFlex>
         <DetailsRowFlex>
           <div>
+            <b>Model id: </b>
+          </div>
+          <div>{modelId}</div>
+        </DetailsRowFlex>
+        <DetailsRowFlex>
+          <div>
+            <b>Revision id: </b>
+          </div>
+          <div>{revisionId}</div>
+        </DetailsRowFlex>
+        <DetailsRowFlex>
+          <div>
             <b>Date Created: </b>
           </div>
           <div>{dayjs(revision.createdTime).format('MMM D, YYYY h:mm A')}</div>
