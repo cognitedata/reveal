@@ -18,15 +18,18 @@ const DateTimeRangeSelector = ({
       format="L"
       range={{ startDate, endDate }}
       onChange={(newRange) => {
-        const newStart = newRange.startDate ?? new Date();
+        const newStart = new Date(newRange.startDate ?? new Date());
         newStart.setHours(startDate.getHours());
         newStart.setMinutes(startDate.getMinutes());
 
-        const newEnd = newRange.endDate ?? new Date();
+        const newEnd = new Date(newRange.endDate ?? new Date());
         newEnd.setHours(endDate.getHours());
         newEnd.setMinutes(endDate.getMinutes());
 
         onChange(newStart, newEnd);
+
+        // Force mouseup event as it doesn't bubble up for this component
+        window.dispatchEvent(new Event('mouseup'));
       }}
       prependComponent={() => (
         <Flex justifyContent="space-evenly">
