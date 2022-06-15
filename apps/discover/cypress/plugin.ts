@@ -19,15 +19,14 @@ module.exports = async (on, config) => {
   }
   const uniqueId = uuid();
   const app = express();
-  app.get('/uuid', (_, res) => {
-    res.json(uniqueId);
-  });
+
   app.use(express.static(pathToBuild));
   app.use(redirectUnmatched);
 
   app.listen(port);
 
   const options = webpackPreprocessor.defaultOptions;
+
   options.webpackOptions.resolve = {
     alias: {
       '@cognite': path.resolve('./packages'),

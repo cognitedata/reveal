@@ -54,6 +54,12 @@ const getAadApplicationId = (cluster: string) => {
 
 // add in the dyanmic USER_ID, so the login page will have it
 // which is unique per 'yarn start' (apart from local, which users your git email)
+
+const userId =
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  window?.Cypress?.env('REACT_APP_E2E_USER') || process.env.REACT_APP_E2E_USER; // When running Cypress tests we get the userId from Cypress ENV
+
 const sidecarOverridesWithCustomFakeIdpUser: Partial<SidecarConfig> = {
   ...sidecarOverrides,
   fakeIdp:
@@ -62,8 +68,8 @@ const sidecarOverridesWithCustomFakeIdpUser: Partial<SidecarConfig> = {
           const isAdmin = fakeIdp.name?.toLowerCase().includes('admin');
           return {
             ...fakeIdp,
-            userId: process.env.REACT_APP_E2E_USER
-              ? (isAdmin ? 'admin-' : '') + process.env.REACT_APP_E2E_USER
+            userId: userId
+              ? (isAdmin ? 'admin-' : '') + userId
               : fakeIdp.userId,
           };
         })
