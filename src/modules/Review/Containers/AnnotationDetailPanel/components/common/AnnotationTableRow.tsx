@@ -1,4 +1,3 @@
-import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { Detail, Icon, SegmentedControl, Tooltip } from '@cognite/cogs.js';
 import { AnnotationActionMenuExtended } from 'src/modules/Common/Components/AnnotationActionMenu/AnnotationActionMenuExtended';
 import React from 'react';
@@ -242,27 +241,27 @@ const StyledSegmentedControl = styled(SegmentedControl)<{ status: string }>`
   }
   .approveButton {
     background: ${(props) =>
-      props.status === AnnotationStatus.Verified
+      props.status === Status.Approved
         ? '#ffffff'
         : 'var(--cogs-color-action-secondary)'};
   }
   .approveButton:hover {
     color: ${(props) =>
-      props.status !== AnnotationStatus.Verified ? '#059b85' : 'unset'};
+      props.status !== Status.Approved ? '#059b85' : 'unset'};
     background: ${(props) =>
-      props.status !== AnnotationStatus.Verified ? '#d9d9d9' : '#6FCF97'};
+      props.status !== Status.Approved ? '#d9d9d9' : '#6FCF97'};
   }
 
   .rejectButton {
     background: ${(props) =>
-      props.status === AnnotationStatus.Rejected
+      props.status === Status.Rejected
         ? '#ffffff'
         : 'var(--cogs-color-action-secondary)'};
   }
   .rejectButton:hover {
     color: ${(props) =>
-      props.status !== AnnotationStatus.Rejected ? '#eb5757' : 'unset'};
+      props.status !== Status.Rejected ? '#eb5757' : 'unset'};
     background: ${(props) =>
-      props.status !== AnnotationStatus.Rejected ? '#d9d9d9' : '#FFCFCF'};
+      props.status !== Status.Rejected ? '#d9d9d9' : '#FFCFCF'};
   }
 `;

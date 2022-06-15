@@ -3,7 +3,7 @@ import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Title } from '@cognite/cogs.js';
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
 import { Spin, notification } from 'antd';
-import React, { ReactText, useEffect, useRef, useState } from 'react';
+import React, { ReactText, useCallback, useRef, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -43,14 +43,17 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
     selectAllReviewFiles(state)
   );
 
-  const onEditMode = (mode: boolean) => {
-    setInFocus(mode);
-  };
+  const onEditMode = useCallback(
+    (mode: boolean) => {
+      setInFocus(mode);
+    },
+    [setInFocus]
+  );
 
-  const handleLoad = (status: boolean) => {
+  const handleLoad = useCallback((status: boolean) => {
     setLoading(status);
     loadingState.current = status;
-  };
+  }, []);
 
   const handleError = ({
     message,
@@ -75,21 +78,25 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
     }
   };
 
-  useEffect(() => {
-    if (loading && loadingState.current) {
-      // timeout loading spinner
-      setTimeout(() => {
-        if (loadingState.current) {
-          setLoading(false);
-        }
-      }, 10000);
-    }
-  }, [loading]);
+  // todo: re- add this if red flash becomes visible in review page before image is loaded
+  // useEffect(() => {
+  //   if (loading && loadingState.current) {
+  //     // timeout loading spinner
+  //     setTimeout(() => {
+  //       if (loadingState.current) {
+  //         setLoading(false);
+  //       }
+  //     }, 10000);
+  //   }
+  // }, [loading]);
 
-  const scrollToItem = (id: ReactText) => {
-    tabChange('context');
-    dispatch(setScrollToId(id.toString()));
-  };
+  const scrollToItem = useCallback(
+    (id: ReactText) => {
+      tabChange('context');
+      dispatch(setScrollToId(id.toString()));
+    },
+    [tabChange, dispatch, setScrollToId]
+  );
 
   return (
     <ImageKeyboardShortKeys>

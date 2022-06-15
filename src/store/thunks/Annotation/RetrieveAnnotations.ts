@@ -9,7 +9,7 @@ import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
 import { from, lastValueFrom } from 'rxjs';
 import { map, mergeMap, reduce } from 'rxjs/operators';
 import { convertCDFAnnotationToVisionAnnotations } from 'src/api/annotation/converters';
-import { cognitePlaygroundClient } from 'src/api/annotation/CognitePlaygroundClient';
+import { cognitePlaygroundClient as sdk } from 'src/api/annotation/CognitePlaygroundClient';
 
 export const RetrieveAnnotations = createAsyncThunk<
   VisionAnnotation<VisionAnnotationDataType>[],
@@ -32,18 +32,19 @@ export const RetrieveAnnotations = createAsyncThunk<
     };
     const annotationListRequest = {
       filter: filterPayload,
-      limit: 1000, // todo: [VIS-882] make limit to -1 for this to work
+      limit: 1000,
     };
-    return cognitePlaygroundClient.annotations.list(annotationListRequest);
+    return sdk.annotations
+      .list(annotationListRequest)
+      .autoPagingToArray({ limit: Infinity });
   });
 
   let visionAnnotations: VisionAnnotation<VisionAnnotationDataType>[] = [];
   if (requests.length) {
-    const annotationsPerBatch = Promise.all(requests);
-    const responses = from(annotationsPerBatch).pipe(
+    const responses = from(requests).pipe(
       mergeMap((request) => from(request)),
       map((annotations) =>
-        convertCDFAnnotationToVisionAnnotations(annotations.items)
+        convertCDFAnnotationToVisionAnnotations(annotations)
       ),
       reduce((allAnnotations, annotationsPerFile) => {
         return allAnnotations.concat(annotationsPerFile);

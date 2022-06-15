@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { PageTitle } from '@cognite/cdf-utilities';
 import { selectFileById } from 'src/modules/Common/store/files/selectors';
 import { RootState } from 'src/store/rootReducer';
@@ -60,11 +60,11 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   const previousPage = (props.location.state as { from?: string })?.from;
   const showBackButton = !!previousPage || false;
 
-  const onBackButtonClick = () => {
+  const onBackButtonClick = useCallback(() => {
     history.goBack();
-  };
+  }, [history]);
 
-  const handleFileDelete = () => {
+  const handleFileDelete = useCallback(() => {
     // go to previous page if in single file review
     if (reviewFileIds.length <= 1) {
       onBackButtonClick();
@@ -89,7 +89,14 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
         setIsDeletingState: setIsDeleteInProgress,
       })
     );
-  };
+  }, [
+    reviewFileIds,
+    onBackButtonClick,
+    history,
+    previousPage,
+    file,
+    setIsDeleteInProgress,
+  ]);
 
   useEffect(() => {
     batch(() => {
@@ -117,54 +124,67 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
     dispatch(PopulateAnnotationTemplates());
   }, []);
 
+  const clearProcessData = useCallback(() => {
+    dispatch(PopulateProcessFiles([]));
+    return true;
+  }, []);
+
+  const renderView = useMemo(() => {
+    if (file) {
+      return (
+        <>
+          <ToastContainer />
+          <PageTitle title="Review Annotations" />
+          <Container>
+            <ToolBar>
+              <StatusToolBar
+                current="Review"
+                previous={previousPage!}
+                left={
+                  showBackButton ? (
+                    <Button
+                      type="secondary"
+                      style={{ background: 'white' }}
+                      onClick={onBackButtonClick}
+                    >
+                      <Icon type="ChevronLeftCompact" />
+                      Back
+                    </Button>
+                  ) : (
+                    <></>
+                  )
+                }
+                right={
+                  <DeleteButton
+                    onConfirm={handleFileDelete}
+                    isDeleteInProgress={isDeleteInProgress}
+                  />
+                }
+              />
+            </ToolBar>
+            <ReviewBody file={file} prev={previousPage} />
+          </Container>
+        </>
+      );
+    }
+    return null;
+  }, [
+    file,
+    previousPage,
+    showBackButton,
+    onBackButtonClick,
+    handleFileDelete,
+    isDeleteInProgress,
+  ]);
+
   if (!file) {
     return null;
   }
-  const clearProcessData = () => {
-    dispatch(PopulateProcessFiles([]));
-    return true;
-  };
-  const renderView = () => {
-    return (
-      <>
-        <ToastContainer />
-        <PageTitle title="Review Annotations" />
-        <Container>
-          <ToolBar>
-            <StatusToolBar
-              current="Review"
-              previous={previousPage!}
-              left={
-                showBackButton ? (
-                  <Button
-                    type="secondary"
-                    style={{ background: 'white' }}
-                    onClick={onBackButtonClick}
-                  >
-                    <Icon type="ChevronLeftCompact" />
-                    Back
-                  </Button>
-                ) : (
-                  <></>
-                )
-              }
-              right={
-                <DeleteButton
-                  onConfirm={handleFileDelete}
-                  isDeleteInProgress={isDeleteInProgress}
-                />
-              }
-            />
-          </ToolBar>
-          <ReviewBody file={file} prev={previousPage} />
-        </Container>
-      </>
-    );
-  };
+
   return (
     <>
       <CustomPrompt when={previousPage === 'process'} onOK={clearProcessData} />
-      {renderView()}
+      {renderView}
     </>
   );
 };

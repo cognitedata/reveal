@@ -40,11 +40,10 @@ export const repopulateAnnotationState = (
 ) => {
   annotations.forEach((annotation) => {
     const resourceId: number = annotation.annotatedResourceId;
-    if (
-      state.files.byId[resourceId] &&
-      !state.files.byId[resourceId].includes(annotation.id)
-    ) {
-      state.files.byId[resourceId].push(annotation.id);
+    if (state.files.byId[resourceId]) {
+      if (!state.files.byId[resourceId].includes(annotation.id)) {
+        state.files.byId[resourceId].push(annotation.id);
+      }
     } else {
       state.files.byId[resourceId] = [annotation.id];
     }

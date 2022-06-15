@@ -250,8 +250,15 @@ describe('Test annotation reducer', () => {
         },
       };
 
-      const action: { type: string; payload: InternalId[] } = {
+      const action: {
+        type: string;
+        meta: { arg: InternalId[] };
+        payload: InternalId[];
+      } = {
         type: DeleteAnnotations.fulfilled.type,
+        meta: {
+          arg: [{ id: 3 }],
+        },
         payload: [{ id: 3 }], // annotation ids to delete
       };
 
@@ -276,8 +283,15 @@ describe('Test annotation reducer', () => {
         },
       };
 
-      const action: { type: string; payload: InternalId[] } = {
+      const action: {
+        type: string;
+        meta: { arg: InternalId[] };
+        payload: InternalId[];
+      } = {
         type: DeleteAnnotations.fulfilled.type,
+        meta: {
+          arg: [{ id: 1 }, { id: 2 }],
+        },
         payload: [{ id: 1 }, { id: 2 }], // annotation ids to delete
       };
 
@@ -305,8 +319,15 @@ describe('Test annotation reducer', () => {
         },
       };
 
-      const action: { type: string; payload: InternalId[] } = {
+      const action: {
+        type: string;
+        meta: { arg: InternalId[] };
+        payload: InternalId[];
+      } = {
         type: DeleteAnnotations.fulfilled.type,
+        meta: {
+          arg: [{ id: 2 }],
+        },
         payload: [{ id: 2 }], // annotation ids to delete
       };
 
@@ -342,8 +363,15 @@ describe('Test annotation reducer', () => {
         },
       };
 
-      const action: { type: string; payload: InternalId[] } = {
+      const action: {
+        type: string;
+        meta: { arg: InternalId[] };
+        payload: InternalId[];
+      } = {
         type: DeleteAnnotations.fulfilled.type,
+        meta: {
+          arg: [{ id: 1 }],
+        },
         payload: [{ id: 1 }], // annotation ids to delete
       };
 
