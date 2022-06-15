@@ -1,8 +1,8 @@
 import { RootState } from 'src/store/rootReducer';
 import { ProcessState } from 'src/modules/Process/store/types';
+import { initialState as annotationReducerInitialState } from 'src/modules/Common/store/annotation/slice';
 import { initialState as processSliceInitialState } from 'src/modules/Process/store/slice';
 import { initialState as fileSliceInitialState } from 'src/modules/Common/store/files/slice';
-import { initialState as annotationReducerInitialState } from 'src/modules/Common/store/annotationV1/slice';
 import {
   makeSelectJobStatusForFile,
   selectAllFilesDict,
@@ -23,32 +23,36 @@ import {
 } from 'src/modules/Process/store/selectors';
 import { convertToVisionFileState } from 'src/__test-utils/files';
 import {
-  mockFileInfo,
-  mockFileIds,
   INVALID_FILE_ID,
-  mockFileIdsSortedByNameAscending,
-  mockFileIdsSortedByNameDescending,
+  mockFileIds,
   mockFileIdsSortedByMimeTypeAscending,
   mockFileIdsSortedByMimeTypeDescending,
+  mockFileIdsSortedByNameAscending,
+  mockFileIdsSortedByNameDescending,
+  mockFileInfo,
 } from 'src/__test-utils/data/mockFileInfo';
 import { FileState, VisionFile } from 'src/modules/Common/store/files/types';
 import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
 import {
-  filesWithJobs,
-  jobState,
-  jobIds,
   completedJob,
   failedJob,
+  filesWithJobs,
+  jobIds,
+  jobState,
 } from 'src/__test-utils/data/mockJobInfo';
-import { AnnotationStateV1 } from 'src/modules/Common/store/annotationV1/types';
 import { VisionFilesToFileState } from 'src/store/util/StateUtils';
-import {
-  AnnotationStatus,
-  VisionAnnotationV1,
-} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { mockFileList } from 'src/__test-utils/fixtures/files';
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
-import { getDummyAnnotation } from 'src/__test-utils/annotations';
+import { AnnotationState } from 'src/modules/Common/store/annotation/types';
+import {
+  VisionAnnotation,
+  VisionAnnotationDataType,
+} from 'src/modules/Common/types';
+import {
+  getDummyImageAssetLinkAnnotation,
+  getDummyImageExtractedTextAnnotation,
+  getDummyImageObjectDetectionBoundingBoxAnnotation,
+} from 'src/__test-utils/getDummyAnnotations';
+import { Status } from 'src/api/annotation/types';
 
 // Process State
 const mockProcessState: ProcessState = {
@@ -122,10 +126,10 @@ const mockRootState: RootState = {
 
 const getRootState = (
   fileIds: number[],
-  annotationsByFile: { [key: string]: number[] },
-  annotationsById: { [key: string]: VisionAnnotationV1 }
+  annotationsByFile: { [key: number]: number[] },
+  annotationsById: { [key: number]: VisionAnnotation<VisionAnnotationDataType> }
 ) => {
-  const annotationState: AnnotationStateV1 = {
+  const annotationState: AnnotationState = {
     ...annotationReducerInitialState,
     files: {
       byId: annotationsByFile,
@@ -133,6 +137,7 @@ const getRootState = (
     annotations: {
       byId: annotationsById,
     },
+    annotationColorMap: {},
   };
 
   const fileState: FileState = {
@@ -152,7 +157,7 @@ const getRootState = (
   };
   return {
     processSlice: processState,
-    annotationV1Reducer: annotationState,
+    annotationReducer: annotationState,
     fileReducer: fileState,
   } as RootState;
 };
@@ -693,23 +698,30 @@ describe('Test file process selectors', () => {
           3: [5, 6, 7],
         },
         {
-          '1': getDummyAnnotation(1),
-          '2': getDummyAnnotation(2, VisionDetectionModelType.OCR, {
-            status: AnnotationStatus.Deleted,
+          1: getDummyImageExtractedTextAnnotation({ id: 1 }),
+          2: getDummyImageExtractedTextAnnotation({
+            id: 2,
+            status: Status.Rejected,
           }),
-          '3': getDummyAnnotation(3, VisionDetectionModelType.TagDetection, {
-            status: AnnotationStatus.Verified,
+          3: getDummyImageAssetLinkAnnotation({
+            id: 3,
+            status: Status.Approved,
           }),
-          '4': getDummyAnnotation(4, VisionDetectionModelType.ObjectDetection, {
-            text: 'person',
-            status: AnnotationStatus.Verified,
+          4: getDummyImageObjectDetectionBoundingBoxAnnotation({
+            id: 4,
+            label: 'person',
+            status: Status.Approved,
           }),
-          '5': getDummyAnnotation(5, VisionDetectionModelType.ObjectDetection),
-          '6': getDummyAnnotation(6, VisionDetectionModelType.ObjectDetection, {
-            text: 'person',
+          5: getDummyImageObjectDetectionBoundingBoxAnnotation({
+            id: 5,
           }),
-          '7': getDummyAnnotation(7, VisionDetectionModelType.TagDetection, {
-            status: AnnotationStatus.Rejected,
+          6: getDummyImageObjectDetectionBoundingBoxAnnotation({
+            id: 6,
+            label: 'person',
+          }),
+          7: getDummyImageAssetLinkAnnotation({
+            id: 7,
+            status: Status.Rejected,
           }),
         }
       );
@@ -741,9 +753,12 @@ describe('Test file process selectors', () => {
           1: [1, 2],
         },
         {
-          '1': getDummyAnnotation(1, VisionDetectionModelType.ObjectDetection),
-          '2': getDummyAnnotation(2, VisionDetectionModelType.ObjectDetection, {
-            text: 'person',
+          1: getDummyImageObjectDetectionBoundingBoxAnnotation({
+            id: 1,
+          }),
+          2: getDummyImageObjectDetectionBoundingBoxAnnotation({
+            id: 2,
+            label: 'person',
           }),
         }
       );
@@ -781,18 +796,24 @@ describe('Test file process selectors', () => {
           4: [5],
         },
         {
-          '1': getDummyAnnotation(1, VisionDetectionModelType.TagDetection, {
-            status: AnnotationStatus.Verified,
+          1: getDummyImageAssetLinkAnnotation({
+            id: 1,
+            status: Status.Approved,
           }),
-          '2': getDummyAnnotation(2, VisionDetectionModelType.ObjectDetection, {
-            text: 'person',
+          2: getDummyImageObjectDetectionBoundingBoxAnnotation({
+            id: 2,
+            label: 'person',
           }),
-          '3': getDummyAnnotation(3, VisionDetectionModelType.OCR, {
-            status: AnnotationStatus.Rejected,
+          3: getDummyImageExtractedTextAnnotation({
+            id: 3,
+            status: Status.Rejected,
           }),
-          '4': getDummyAnnotation(4, VisionDetectionModelType.ObjectDetection),
-          '5': getDummyAnnotation(5, VisionDetectionModelType.OCR, {
-            status: AnnotationStatus.Deleted,
+          4: getDummyImageObjectDetectionBoundingBoxAnnotation({
+            id: 4,
+          }),
+          5: getDummyImageExtractedTextAnnotation({
+            id: 5,
+            status: Status.Rejected,
           }),
         }
       );
@@ -826,13 +847,18 @@ describe('Test file process selectors', () => {
           3: [4],
         },
         {
-          '1': getDummyAnnotation(1),
-          '2': getDummyAnnotation(2, VisionDetectionModelType.ObjectDetection, {
-            text: 'person',
-            status: AnnotationStatus.Verified,
+          1: getDummyImageExtractedTextAnnotation({ id: 1 }),
+          2: getDummyImageObjectDetectionBoundingBoxAnnotation({
+            id: 2,
+            label: 'person',
+            status: Status.Approved,
           }),
-          '3': getDummyAnnotation(3, VisionDetectionModelType.ObjectDetection),
-          '4': getDummyAnnotation(4, VisionDetectionModelType.TagDetection),
+          3: getDummyImageObjectDetectionBoundingBoxAnnotation({
+            id: 3,
+          }),
+          4: getDummyImageAssetLinkAnnotation({
+            id: 4,
+          }),
         }
       );
       expect(selectProcessSummary(rootState).totalProcessed).toEqual(3);

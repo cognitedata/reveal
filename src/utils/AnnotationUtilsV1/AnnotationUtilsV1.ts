@@ -19,7 +19,10 @@ import {
   ColorsTagDetection,
 } from 'src/constants/Colors';
 import { PredefinedKeypoint } from 'src/modules/Review/types';
-import { AnnotationsBadgeCounts } from 'src/modules/Common/types';
+import {
+  AnnotationIdsByStatus,
+  AnnotationsBadgeCounts,
+} from 'src/modules/Common/types';
 import { AllIconTypes } from '@cognite/cogs.js';
 import { v4 as uuidv4 } from 'uuid';
 import { getRandomColor } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
@@ -97,12 +100,6 @@ export const AnnotationTypeModelTypeMap = {
   user_defined: VisionDetectionModelType.ObjectDetection,
   CDF_ANNOTATION_TEMPLATE: VisionDetectionModelType.ObjectDetection,
 };
-
-export interface AnnotationIdsByStatus {
-  rejectedAnnotationIds: number[];
-  acceptedAnnotationIds: number[];
-  unhandledAnnotationIds: number[];
-}
 
 export class AnnotationUtilsV1 {
   public static lineWidth = 5;

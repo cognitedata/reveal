@@ -1,8 +1,6 @@
-import { FileInfo } from '@cognite/sdk';
 import { OptionType } from '@cognite/cogs.js';
 import { ReactText } from 'react';
 import { tools } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/Tools';
-import { VisibleAnnotation } from 'src/modules/Review/store/reviewSlice';
 import {
   AnnotationStatus,
   KeypointItem,
@@ -53,18 +51,6 @@ export type PredefinedVisionAnnotations = {
   predefinedShapes: PredefinedShape[];
 };
 
-export type FilePreviewProps = {
-  fileInfo: FileInfo;
-  annotations: VisibleAnnotation[];
-  onCreateAnnotation: (annotation: any) => void;
-  onUpdateAnnotation: (annotation: any) => void;
-  onDeleteAnnotation: (annotation: any) => void;
-  handleInEditMode: (inEditMode: boolean) => void;
-  editable?: boolean;
-  creatable?: boolean;
-  handleAddToFile?: () => void;
-};
-
 export type AnnotationTableRowProps = {
   reviewAnnotation: VisionReviewAnnotation<VisionAnnotationDataType>;
   onSelect: (id: ReactText, state: boolean) => void;
@@ -73,12 +59,6 @@ export type AnnotationTableRowProps = {
   onApprove: (id: number, status: Status) => void;
   showColorCircle?: boolean;
   expandByDefault?: boolean;
-};
-
-/** @deprecated */
-export type AnnotationTableItem = Omit<VisibleAnnotation, 'id'> & {
-  id: ReactText;
-  remainingKeypoints?: KeypointItem[];
 };
 
 export type VisionOptionType<T> = OptionType<T> & {
