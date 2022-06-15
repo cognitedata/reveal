@@ -7,12 +7,12 @@ import { SeismicGetData } from 'domain/seismic/service/network/types';
 
 import { useQuery, QueryClient } from 'react-query';
 
-import { useJsonHeaders } from 'services/service';
 import { FetchHeaders } from 'utils/fetch';
 
 import { getProjectInfo } from '@cognite/react-container';
 
 import { SURVEYS_QUERY_KEY } from 'constants/react-query';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
 import { SeismicSurveyContainer } from '../types';
 

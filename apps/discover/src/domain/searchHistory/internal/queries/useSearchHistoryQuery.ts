@@ -1,10 +1,9 @@
 import { useQuery } from 'react-query';
 
-import { useJsonHeaders } from 'services/service';
-
 import { getTenantInfo } from '@cognite/react-container';
 
 import { SEARCH_HISTORY_KEY } from 'constants/react-query';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
 import { getSearchHistories } from '../../service/network/getSearchHistories';
 

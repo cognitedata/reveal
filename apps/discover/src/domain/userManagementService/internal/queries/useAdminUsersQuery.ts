@@ -2,14 +2,13 @@ import { getUmsUsers } from 'domain/userManagementService/service/network/getUms
 
 import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
 
-import { useJsonHeaders } from 'services/service';
-
 import { UMSUser } from '@cognite/user-management-service-types';
 
 import {
   ONLY_FETCH_ONCE,
   USER_MANAGEMENT_SYSTEM_KEY,
 } from 'constants/react-query';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
 import { MAXIMUM_NUMBER_OF_ADMINS } from '../../constants';
 

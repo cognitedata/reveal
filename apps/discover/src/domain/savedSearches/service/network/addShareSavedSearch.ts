@@ -1,4 +1,3 @@
-import { GenericApiError } from 'domain/documents/service/types';
 import { SAVED_SEARCH_ENDPOINT } from 'domain/savedSearches/constants';
 import { SavedSearchContent } from 'domain/savedSearches/types';
 
@@ -7,6 +6,7 @@ import { FetchHeaders, fetchPost } from 'utils/fetch';
 import { SavedSearchAddShareSchemaBody } from '@cognite/discover-api-types';
 
 import { SIDECAR } from 'constants/app';
+import { GenericApiError } from 'core/types';
 
 import { SavedSearchSaveResponse } from '../types';
 

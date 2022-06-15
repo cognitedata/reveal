@@ -1,6 +1,6 @@
-import { BaseAPIResult } from 'domain/documents/service/types';
-
 import { Geometry } from '@cognite/seismic-sdk-js';
+
+import { BaseAPIResult } from 'core/types';
 
 // fix this in api next:
 export type RawSeismicMetadata = [string, string][];

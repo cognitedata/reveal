@@ -1,4 +1,4 @@
-import { useJsonHeaders } from 'services/service';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
 export const useAccessToken = () => {
   const authHeaders = useJsonHeaders();

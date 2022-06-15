@@ -1,7 +1,5 @@
 import { useQuery } from 'react-query';
 
-import { useJsonHeaders } from 'services/service';
-
 import {
   DocumentCategories,
   DocumentPayload,
@@ -9,6 +7,7 @@ import {
 import { getTenantInfo } from '@cognite/react-container';
 
 import { DOCUMENT_CATEGORIES_QUERY_KEY } from 'constants/react-query';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
 import { DocumentError } from '../../service/types';
 import { getCategories } from '../network/getCategories';

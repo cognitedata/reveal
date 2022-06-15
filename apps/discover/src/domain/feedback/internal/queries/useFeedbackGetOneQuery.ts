@@ -4,7 +4,7 @@ import { useQuery } from 'react-query';
 
 import { FEEDBACK_QUERY_KEY } from 'constants/react-query';
 
-import { useJsonHeaders } from '../../../../services/service';
+import { useJsonHeaders } from '../../../../hooks/useJsonHeaders';
 import { FeedbackType } from '../types';
 
 export function useFeedbackGetOneQuery<T>(

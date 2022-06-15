@@ -5,12 +5,12 @@ import {
 
 import { useMutation, useQueryClient } from 'react-query';
 
-import { useJsonHeaders } from 'services/service';
 import { handleServiceError } from 'utils/errors';
 
 import { getProjectInfo } from '@cognite/react-container';
 
 import { NPT_LEGEND_KEY } from 'constants/react-query';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
 import { nptCreateLegend } from '../../service/network/nptCreateLegend';
 

@@ -1,7 +1,7 @@
 import '__mocks/mockContainerAuth'; // should be first
 import { renderHook } from '@testing-library/react-hooks';
 
-import { useJsonHeaders, discoverAPI } from '../service';
+import { useJsonHeaders } from '../useJsonHeaders';
 
 jest.mock('react-query', () => ({
   ...jest.requireActual('react-query'),
@@ -17,11 +17,5 @@ describe('useJsonHeaders', () => {
       Authorization: 'Bearer fake-token',
       'Content-Type': 'application/json',
     });
-  });
-});
-
-describe('discoverAPI', () => {
-  it('should export the discoverAPI object', () => {
-    expect(discoverAPI).toBeTruthy();
   });
 });

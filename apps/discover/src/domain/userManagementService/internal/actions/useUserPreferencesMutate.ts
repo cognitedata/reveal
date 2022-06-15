@@ -2,14 +2,13 @@ import { patchUserPreferences } from 'domain/userManagementService/service/netwo
 
 import { useMutation, useQueryClient } from 'react-query';
 
-import { useJsonHeaders } from 'services/service';
-
 import {
   UMSUserProfile,
   UMSUserProfilePreferences,
 } from '@cognite/user-management-service-types';
 
 import { USER_MANAGEMENT_SYSTEM_KEY } from 'constants/react-query';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
 export const useUserPreferencesMutate = (
   key: typeof USER_MANAGEMENT_SYSTEM_KEY[keyof typeof USER_MANAGEMENT_SYSTEM_KEY]

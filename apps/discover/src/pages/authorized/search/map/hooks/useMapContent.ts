@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux';
 
 import { FeatureCollection } from 'geojson';
 import isUndefined from 'lodash/isUndefined';
-import { useJsonHeaders } from 'services/service';
 import {
   CancellablePromise,
   convertToCancellablePromise,
@@ -15,8 +14,9 @@ import { fetchTenantFile } from 'utils/fetchTenantFile';
 import { log } from 'utils/log';
 
 import { ProjectConfigMapLayers } from '@cognite/discover-api-types';
-import { getTenantInfo } from '@cognite/react-container';
+import { getProjectInfo } from '@cognite/react-container';
 
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 import { setSources, setAssets } from 'modules/map/actions';
 import { useMap } from 'modules/map/selectors';
 import { mapService } from 'modules/map/service';
@@ -29,7 +29,7 @@ import { useLayers } from './useLayers';
 
 export const useMapContent = () => {
   const { layers, layersReady } = useLayers();
-  const [tenant] = getTenantInfo();
+  const [tenant] = getProjectInfo();
   const { sources } = useMap();
   const dispatch = useDispatch();
   const headers = useJsonHeaders();

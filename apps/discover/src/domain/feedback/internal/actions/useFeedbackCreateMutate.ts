@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { FeedbackPostBody } from '@cognite/discover-api-types';
 
 import { FEEDBACK_QUERY_KEY } from '../../../../constants/react-query';
-import { useJsonHeaders } from '../../../../services/service';
+import { useJsonHeaders } from '../../../../hooks/useJsonHeaders';
 import { FeedbackType } from '../types';
 
 export function useFeedbackCreateMutate(endpoint: FeedbackType = 'general') {

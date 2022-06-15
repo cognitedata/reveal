@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from 'react-query';
 
 import isObject from 'lodash/isObject';
 import noop from 'lodash/noop';
-import { useJsonHeaders } from 'services/service';
 
 import { ProjectConfig } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
@@ -11,6 +10,7 @@ import {
   LAYERS_QUERY_KEY,
   PROJECT_CONFIG_QUERY_KEY,
 } from 'constants/react-query';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
 import { updateProjectConfig } from '../../service/network/updateProjectConfig';
 

@@ -2,12 +2,11 @@ import { removeShareSavedSearch } from 'domain/savedSearches/service/network/rem
 
 import { useMutation, useQueryClient } from 'react-query';
 
-import { useJsonHeaders } from 'services/service';
-
 import { SavedSearchRemoveShareSchemaPOST } from '@cognite/discover-api-types';
 import { getProjectInfo } from '@cognite/react-container';
 
 import { SAVED_SEARCHES_QUERY_KEY } from 'constants/react-query';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
 export function useSavedSearchRemoveShareMutate() {
   const headers = useJsonHeaders({}, true);

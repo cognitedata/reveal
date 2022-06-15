@@ -4,12 +4,12 @@ import { SavedSearchContent } from 'domain/savedSearches/types';
 
 import { useMutation, useQueryClient } from 'react-query';
 
-import { useJsonHeaders } from 'services/service';
 import { handleServiceError } from 'utils/errors';
 
 import { getProjectInfo } from '@cognite/react-container';
 
 import { RELATED_DOCUMENT_KEY, WELL_QUERY_KEY } from 'constants/react-query';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
 export const useRelatedDocumentPatchMutate = () => {
   const queryClient = useQueryClient();

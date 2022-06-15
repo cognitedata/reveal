@@ -1,6 +1,6 @@
-import { BaseAPIResult } from 'services/types';
-
 import { StatsGetResponse } from '@cognite/discover-api-types';
+
+import { BaseAPIResult } from 'core/types';
 
 export interface StatsApiResult extends BaseAPIResult {
   data: {

@@ -2,11 +2,10 @@ import { getSavedSearch } from 'domain/savedSearches/service/network/getSavedSea
 
 import { useQuery } from 'react-query';
 
-import { useJsonHeaders } from 'services/service';
-
 import { getProjectInfo } from '@cognite/react-container';
 
 import { RELATED_DOCUMENT_KEY } from 'constants/react-query';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
 // Need to keep separate query for related document filters
 // This does not tie into 'current' filters

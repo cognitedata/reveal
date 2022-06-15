@@ -8,8 +8,6 @@ import { updateFavoriteContent } from 'domain/favorites/service/network/updateFa
 
 import { useMutation, useQueryClient } from 'react-query';
 
-import { useJsonHeaders } from 'services/service';
-
 import { FavoritePostSchema } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 import { reportException } from '@cognite/react-errors';
@@ -17,6 +15,7 @@ import { reportException } from '@cognite/react-errors';
 import { showErrorMessage } from 'components/Toast';
 import { SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN } from 'constants/error';
 import { FAVORITE_KEY } from 'constants/react-query';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 import {
   FavoriteSummary,
   UpdateFavoriteContentData,

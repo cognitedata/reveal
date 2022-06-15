@@ -1,14 +1,6 @@
 import { DocumentCategories } from '@cognite/discover-api-types';
 
-export type GenericApiError = {
-  error: boolean;
-};
-
-export interface BaseAPIResult {
-  success?: string;
-  updated?: boolean;
-  error?: boolean;
-}
+import { GenericApiError, BaseAPIResult } from 'core/types';
 
 export type DocumentError = GenericApiError;
 

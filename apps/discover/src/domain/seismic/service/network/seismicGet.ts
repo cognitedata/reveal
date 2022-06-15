@@ -1,8 +1,7 @@
-import { GenericApiError } from 'domain/documents/service/types';
-
 import { fetchGet, FetchHeaders } from 'utils/fetch';
 
 import { SIDECAR } from 'constants/app';
+import { GenericApiError } from 'core/types';
 
 import { SeismicGetResult } from './types';
 

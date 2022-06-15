@@ -1,10 +1,9 @@
 import { useQuery } from 'react-query';
 
-import { useJsonHeaders } from 'services/service';
-
 import { getProjectInfo } from '@cognite/react-container';
 
 import { NPT_LEGEND_KEY } from 'constants/react-query';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
 import { nptListLegend } from '../../service/network/nptListLegend';
 import { WellLegendNptType } from '../types';

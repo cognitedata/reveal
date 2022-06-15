@@ -1,9 +1,8 @@
-import { GenericApiError } from 'domain/documents/service/types';
-
 import { fetchGet, FetchHeaders } from 'utils/fetch';
 import { log } from 'utils/log';
 
 import { SIDECAR } from 'constants/app';
+import { GenericApiError } from 'core/types';
 import { SeismicSurveyContainer } from 'modules/seismicSearch/types';
 import { normalizeSurvey } from 'modules/seismicSearch/utils';
 

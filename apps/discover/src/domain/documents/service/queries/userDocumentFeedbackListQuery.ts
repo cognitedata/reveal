@@ -1,10 +1,9 @@
 import { useQuery } from 'react-query';
 
-import { useJsonHeaders } from 'services/service';
-
 import { getTenantInfo } from '@cognite/react-container';
 
 import { DOCUMENT_FEEDBACK_QUERY_KEY } from 'constants/react-query';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
 import { getDocumentFeedbacks } from '../network/getDocumentFeedbacks';
 

@@ -2,12 +2,11 @@ import { getRoles, getRolesLegacy } from 'domain/user/service/network';
 
 import { UseQueryResult, useQuery } from 'react-query';
 
-import { useJsonHeaders } from 'services/service';
-
 import { AuthModes } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 
 import { ONLY_FETCH_ONCE, USER_KEY } from 'constants/react-query';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 
 export function useUserRoles(): UseQueryResult<AuthModes | undefined> {

@@ -2,13 +2,13 @@ import { addShareSavedSearch } from 'domain/savedSearches/service/network/addSha
 
 import { useMutation, useQueryClient } from 'react-query';
 
-import { useJsonHeaders } from 'services/service';
 import { handleServiceError } from 'utils/errors';
 
 import { SavedSearchAddShareSchemaBody } from '@cognite/discover-api-types';
 import { getProjectInfo } from '@cognite/react-container';
 
 import { SAVED_SEARCHES_QUERY_KEY } from 'constants/react-query';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
 export function useSavedSearchAddShareMutate() {
   const queryClient = useQueryClient();

@@ -2,7 +2,7 @@ import { feedback } from 'domain/feedback/service/network/service';
 
 import { useMutation, useQueryClient } from 'react-query';
 
-import { useJsonHeaders } from '../../../../services/service';
+import { useJsonHeaders } from '../../../../hooks/useJsonHeaders';
 import { FeedbackPatchBody, FeedbackType } from '../types';
 
 export function useFeedbackUpdateMutate(endpoint: FeedbackType = 'general') {

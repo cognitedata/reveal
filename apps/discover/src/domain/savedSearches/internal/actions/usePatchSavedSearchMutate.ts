@@ -3,7 +3,6 @@ import { SavedSearchContent } from 'domain/savedSearches/types';
 
 import { useMutation, useQueryClient } from 'react-query';
 
-import { useJsonHeaders } from 'services/service';
 import { log } from 'utils/log';
 
 import { getProjectInfo } from '@cognite/react-container';
@@ -13,12 +12,12 @@ import {
   SAVED_SEARCHES_QUERY_KEY_CURRENT,
   SURVEYS_QUERY_KEY,
 } from 'constants/react-query';
+import { GenericApiError } from 'core/types';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useSearchActions } from 'hooks/useSearchActions';
 import { useCurrentSavedSearchState } from 'modules/sidebar/selectors/useCurrentSavedSearchState';
 import { Modules } from 'modules/sidebar/types';
-
-import { GenericApiError } from '../../../../services/types';
 
 export const usePatchSavedSearchMutate = (
   doSearch = true,

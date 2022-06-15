@@ -3,11 +3,10 @@ import { getSavedSearch } from 'domain/savedSearches/service/network/getSavedSea
 
 import { useQuery } from 'react-query';
 
-import { useJsonHeaders } from 'services/service';
-
 import { getProjectInfo } from '@cognite/react-container';
 
 import { SAVED_SEARCHES_QUERY_KEY_CURRENT } from 'constants/react-query';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
 export const useQuerySavedSearchCurrent = () => {
   const headers = useJsonHeaders({}, true);

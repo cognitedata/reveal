@@ -10,11 +10,9 @@ We need to have a Data Layer which sits in between the fetch & UI presentation c
 
 Example structure
 
-- wells
-  - trajectories
-    - adapters
-      -- Manipulate the data (normalization after query, or for repeated views, e.g unit conversion)
-    - decorators
-      -- Merge/enrich data (e.g add color to a trajectory)
-    - selectors
-      -- Select data from a structure. (e.g: getTitle, getWellboreName, etc)
+- adapters
+  -- Manipulate the data (normalization after query, or for repeated views, e.g unit conversion)
+- decorators
+  -- Merge/enrich data (e.g add color to a trajectory)
+- selectors
+  -- Select data from a structure. (e.g: getTitle, getWellboreName, etc)

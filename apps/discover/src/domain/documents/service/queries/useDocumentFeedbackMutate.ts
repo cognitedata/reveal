@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from 'react-query';
 
 import head from 'lodash/head';
-import { useJsonHeaders } from 'services/service';
 
 import { getTenantInfo } from '@cognite/react-container';
 
 import { showErrorMessage } from 'components/Toast';
 import { LONG_DURATION } from 'components/Toast/constants';
 import { DOCUMENT_FEEDBACK_QUERY_KEY } from 'constants/react-query';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
 import { acceptDocumentFeedback } from '../network/acceptDocumentFeedback';
 import { createDocumentFeedback } from '../network/createDocumentFeedback';

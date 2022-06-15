@@ -1,9 +1,9 @@
-import { GenericApiError } from 'domain/documents/service/types';
 import { SAVED_SEARCH_ENDPOINT } from 'domain/savedSearches/constants';
 
 import { fetchGet, FetchHeaders } from 'utils/fetch';
 
 import { SIDECAR } from 'constants/app';
+import { GenericApiError } from 'core/types';
 
 import { SavedSearchGetResponse } from '../types';
 

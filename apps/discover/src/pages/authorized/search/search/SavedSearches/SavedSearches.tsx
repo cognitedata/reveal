@@ -8,7 +8,6 @@ import { SavedSearchContent } from 'domain/savedSearches/types';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { GenericApiError } from 'services/types';
 import { isEnterPressed } from 'utils/general.helper';
 import { log } from 'utils/log';
 
@@ -19,6 +18,7 @@ import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 import OverwriteSearchModal from 'components/Modals/overwrite-search-modal';
 import Skeleton from 'components/Skeleton';
 import { showErrorMessage, showSuccessMessage } from 'components/Toast';
+import { GenericApiError } from 'core/types';
 import { useSavedSearchNavigation } from 'hooks/useSavedSearchNavigation';
 import { useCurrentSavedSearchState } from 'modules/sidebar/selectors/useCurrentSavedSearchState';
 

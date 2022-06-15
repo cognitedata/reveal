@@ -1,4 +1,5 @@
-import { BaseAPIResult } from '../../../services/types';
+import { BaseAPIResult } from 'core/types';
+
 import { SavedSearchContent } from '../types';
 
 export interface SavedSearchListResponse extends BaseAPIResult {

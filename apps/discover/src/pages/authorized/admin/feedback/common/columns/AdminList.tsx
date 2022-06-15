@@ -4,12 +4,12 @@ import { getUmsUsers } from 'domain/userManagementService/service/network/getUms
 import { useCallback, useState } from 'react';
 
 import debounce from 'lodash/debounce';
-import { useJsonHeaders } from 'services/service';
 
 import { Input, Menu } from '@cognite/cogs.js';
 import { UMSUser } from '@cognite/user-management-service-types';
 
 import { showErrorMessage } from 'components/Toast';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
 import { INFO_MESSAGE, NO_OPTIONS } from '../../constants';
 import {

@@ -4,11 +4,11 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import debounce from 'lodash/debounce';
-import { useJsonHeaders } from 'services/service';
 
 import { AutoComplete, OptionsType, OptionTypeBase } from '@cognite/cogs.js';
 
 import { SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN } from 'constants/error';
+import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
 import { showErrorMessage } from '../Toast';
 
