@@ -45,7 +45,7 @@ export const ActionMenu = ({
         <Icon type="ResourceDocuments" style={{ marginRight: '17px' }} />
         File details
         {showExifIcon && (
-          <Tooltip content="Exif data added">
+          <Tooltip content="Geolocated">
             <ExifIcon>
               <img src={exifIcon} alt="exifIcon" />
             </ExifIcon>

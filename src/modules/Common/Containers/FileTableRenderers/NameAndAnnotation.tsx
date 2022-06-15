@@ -30,7 +30,7 @@ export function NameAndAnnotationRenderer({
       <FileRow>
         <Filename>{name}</Filename>
         {geoLocation && (
-          <Tooltip content="Exif data added">
+          <Tooltip content="Geolocated">
             <ExifIcon>
               <img src={exifIcon} alt="exifIcon" />
             </ExifIcon>
