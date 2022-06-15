@@ -29,6 +29,5 @@ export const renderEmptyAnnotationMessage = (shape: string) => {
 };
 
 const StyledCol = styled(Col)`
-  padding: 5px;
-  padding-left: '14px';
+  padding: 5px 5px 5px 14px;
 `;
