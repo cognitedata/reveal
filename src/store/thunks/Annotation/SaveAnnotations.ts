@@ -19,8 +19,6 @@ export const SaveAnnotations = createAsyncThunk<
   UnsavedVisionAnnotation<VisionAnnotationDataType>[],
   ThunkConfig
 >('SaveAnnotations', async (unsavedAnnotations) => {
-  const sdk = cognitePlaygroundClient;
-
   const items = unsavedAnnotations.map((item) => {
     return {
       ...item,
