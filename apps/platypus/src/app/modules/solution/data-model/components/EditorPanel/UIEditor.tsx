@@ -45,7 +45,7 @@ export function UIEditor({
     }
   );
   const errorLogger = useErrorLogger();
-  const dataModelService = useInjection(TOKENS.solutionDataModelService);
+  const dataModelService = useInjection(TOKENS.dataModelService);
 
   useEffect(() => {
     if (graphQLSchemaString === '') {

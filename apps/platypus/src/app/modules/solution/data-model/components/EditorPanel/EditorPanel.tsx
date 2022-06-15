@@ -31,14 +31,11 @@ export interface EditorPanelProps {
 export const EditorPanel = (props: EditorPanelProps) => {
   const { t } = useTranslation('EditorPanel');
   const [builtInTypes, setBuiltInTypes] = useState<BuiltInType[]>([]);
-  const solutionDataModelService = useInjection(
-    TOKENS.solutionDataModelService
-  );
+  const dataModelService = useInjection(TOKENS.dataModelService);
 
   useEffect(() => {
     async function getOptions() {
-      const builtInTypesResponse =
-        await solutionDataModelService.getBuiltinTypes();
+      const builtInTypesResponse = await dataModelService.getBuiltinTypes();
       setBuiltInTypes(builtInTypesResponse);
     }
 

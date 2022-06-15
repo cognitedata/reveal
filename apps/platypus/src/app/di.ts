@@ -7,7 +7,7 @@ import {
   TemplatesApiService,
   DataModelApiFacadeService,
   MixerApiService,
-  SolutionDataModelService,
+  DataModelService,
   DataModelStorageApiService,
   DateUtils,
   TimeUtils,
@@ -37,9 +37,7 @@ export const TOKENS = {
   dataModelVersionHandler: token<DataModelVersionHandler>(
     'dataModelVersionHandler'
   ),
-  solutionDataModelService: token<SolutionDataModelService>(
-    'solutionDataModelService'
-  ),
+  dataModelService: token<DataModelService>('dataModelService'),
   dataManagmentHandler: token<DataManagmentHandler>('dataManagmentHandler'),
   dataModelsApiService: token('dataModelsApiService'),
 };
@@ -100,10 +98,10 @@ rootInjector
   .inSingletonScope();
 
 rootInjector
-  .bind(TOKENS.solutionDataModelService)
+  .bind(TOKENS.dataModelService)
   .toInstance(
     () =>
-      new SolutionDataModelService(
+      new DataModelService(
         new GraphQlUtilsService(),
         config.USE_MIXER_API ? 'schema-service' : 'templates'
       )

@@ -55,7 +55,7 @@ export const DataModelPage = () => {
     null
   );
   const [selectedSchema, setSelectedSchema] = useState(selectedReduxSchema);
-  const dataModelService = useInjection(TOKENS.solutionDataModelService);
+  const dataModelService = useInjection(TOKENS.dataModelService);
   const dataModelVersionHandler = useInjection(TOKENS.dataModelVersionHandler);
   const { insertSchema, updateSchema, selectVersion } = useSolution();
   const {

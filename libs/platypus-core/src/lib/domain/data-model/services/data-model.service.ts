@@ -7,7 +7,7 @@ import {
   DataModelTypeDefsType,
   BuiltInType,
 } from '../types';
-export class SolutionDataModelService {
+export class DataModelService {
   constructor(
     private graphqlService: IGraphQlUtilsService,
     private backend: 'templates' | 'schema-service' = 'templates'

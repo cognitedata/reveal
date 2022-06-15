@@ -1,5 +1,5 @@
 import { IGraphQlUtilsService } from '../boundaries';
-import { SolutionDataModelService } from './solution-data-model.service';
+import { DataModelService } from './data-model.service';
 
 const schemaMock = `
 type Person @template {
@@ -14,7 +14,7 @@ type Post {
   author: Person!
 }
 `;
-const solutionDataModelMock = {
+const dataModelMock = {
   types: [
     {
       name: 'Person',
@@ -105,7 +105,7 @@ const solutionDataModelMock = {
     },
   ],
 };
-describe('SolutionsHandlerTest', () => {
+describe('DataModelService', () => {
   const graphqlUtilsMock = {
     addField: jest.fn().mockImplementation((type, name, params) => ({
       name: params.name,
@@ -139,7 +139,7 @@ describe('SolutionsHandlerTest', () => {
           };
     }),
     generateSdl: jest.fn().mockImplementation(() => schemaMock),
-    parseSchema: jest.fn().mockImplementation(() => solutionDataModelMock),
+    parseSchema: jest.fn().mockImplementation(() => dataModelMock),
     removeField: jest.fn(),
     removeType: jest.fn(),
     updateType: jest.fn().mockImplementation((typeName, updates) => {
@@ -156,7 +156,7 @@ describe('SolutionsHandlerTest', () => {
   } as IGraphQlUtilsService;
 
   const createInstance = () => {
-    return new SolutionDataModelService(graphqlUtilsMock);
+    return new DataModelService(graphqlUtilsMock);
   };
 
   it('should work', () => {
@@ -170,7 +170,7 @@ describe('SolutionsHandlerTest', () => {
     expect(graphqlUtilsMock.parseSchema).toBeCalled();
   });
 
-  it('should convert solution data model to sdl', () => {
+  it('should convert data model to sdl', () => {
     const service = createInstance();
     service.buildSchemaString();
     expect(graphqlUtilsMock.generateSdl).toBeCalled();
@@ -178,13 +178,13 @@ describe('SolutionsHandlerTest', () => {
 
   it('should add type', () => {
     const service = createInstance();
-    const newState = service.addType(solutionDataModelMock, 'Test');
+    const newState = service.addType(dataModelMock, 'Test');
     expect(newState.types.find((t) => t.name === 'Test')).toBeTruthy();
   });
 
   it('should add type with directive', () => {
     const service = createInstance();
-    const newState = service.addType(solutionDataModelMock, 'Test', 'Template');
+    const newState = service.addType(dataModelMock, 'Test', 'Template');
     expect(
       newState.types.find(
         (t) => t.name && t.directives && t.directives[0].name === 'Template'
@@ -194,7 +194,7 @@ describe('SolutionsHandlerTest', () => {
 
   it('should remove type', () => {
     const service = createInstance();
-    const newState = service.removeType(solutionDataModelMock, 'Post');
+    const newState = service.removeType(dataModelMock, 'Post');
     expect(newState.types.find((t) => t.name === 'Post')).not.toBeTruthy();
     expect(
       newState.types
@@ -206,11 +206,7 @@ describe('SolutionsHandlerTest', () => {
 
   it('should rename type', () => {
     const service = createInstance();
-    const newState = service.renameType(
-      solutionDataModelMock,
-      'Post',
-      'Article'
-    );
+    const newState = service.renameType(dataModelMock, 'Post', 'Article');
 
     expect(newState.types.find((t) => t.name === 'Post')).not.toBeTruthy();
     expect(newState.types.find((t) => t.name === 'Article')).toBeTruthy();
@@ -224,7 +220,7 @@ describe('SolutionsHandlerTest', () => {
 
   it('should add field', () => {
     const service = createInstance();
-    const newState = service.addField(solutionDataModelMock, 'Person', 'test', {
+    const newState = service.addField(dataModelMock, 'Person', 'test', {
       name: 'test',
       type: {
         name: 'String',
@@ -239,7 +235,7 @@ describe('SolutionsHandlerTest', () => {
 
   it('should update field', () => {
     const service = createInstance();
-    let newState = service.addField(solutionDataModelMock, 'Person', 'test', {
+    let newState = service.addField(dataModelMock, 'Person', 'test', {
       name: 'test',
       type: {
         name: 'String',
@@ -260,7 +256,7 @@ describe('SolutionsHandlerTest', () => {
 
   it('should remove field', () => {
     const service = createInstance();
-    const newState = service.removeField(solutionDataModelMock, 'Person', 'id');
+    const newState = service.removeField(dataModelMock, 'Person', 'id');
     const type = newState.types.find((t) => t.name === 'Person');
     const field = type?.fields.find((t) => t.name === 'id');
     expect(field).not.toBeTruthy();

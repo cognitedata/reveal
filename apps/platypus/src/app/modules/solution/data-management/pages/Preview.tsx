@@ -25,7 +25,7 @@ export const Preview = () => {
   const { selectedSchema } = useSelector<SolutionState>(
     (state) => state.solution
   );
-  const dataModelService = useInjection(TOKENS.solutionDataModelService);
+  const dataModelService = useInjection(TOKENS.dataModelService);
   const [solutionDataModel, setSolutionDataModel] = useState<DataModelTypeDefs>(
     {
       types: [],
