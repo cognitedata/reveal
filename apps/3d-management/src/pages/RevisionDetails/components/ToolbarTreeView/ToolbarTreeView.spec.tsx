@@ -69,13 +69,6 @@ describe('ToolbarTreeView test cases', () => {
       .find((el) => el.getAttribute('aria-label') === 'plus-square');
     userEvent.click(expandBtn!);
 
-    // fixme: flacky test, most of the time its ok,
-    //    but from time to time it fails because it happens too fast
-    // must show loading icon
-    expect(
-      await screen.findByRole('img', { name: /loading/i })
-    ).toBeInTheDocument();
-
     // shows children
     expect(await screen.findByText('Cube (4)')).toBeInTheDocument();
 

@@ -43,6 +43,11 @@ export const PUBLISH_STATUS_HINT = `
   the model accessible for users in other applications.
 `;
 
+export const MODELID_AND_REVISIONID_HINT = `
+  Model ID and revision ID is used to identify the 3D model in 
+  certain application configurations.
+`;
+
 const PageWithFixedWidth = styled.div<{ width: number }>`
   min-width: ${(props) => props.width}px;
   width: 100%;
@@ -257,13 +262,19 @@ export default function RevisionDetails(props: Props) {
         </DetailsRowFlex>
         <DetailsRowFlex>
           <div>
-            <b>Model id: </b>
+            <b>Model ID: </b>
+            <Tooltip content={MODELID_AND_REVISIONID_HINT}>
+              <Icon type="Info" />
+            </Tooltip>
           </div>
           <div>{modelId}</div>
         </DetailsRowFlex>
         <DetailsRowFlex>
           <div>
-            <b>Revision id: </b>
+            <b>Revision ID: </b>
+            <Tooltip content={MODELID_AND_REVISIONID_HINT}>
+              <Icon type="Info" />
+            </Tooltip>
           </div>
           <div>{revisionId}</div>
         </DetailsRowFlex>
