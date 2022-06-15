@@ -8,8 +8,6 @@ import { splitListIntoChunks } from 'src/utils/generalUtils';
 import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
 import { from, lastValueFrom } from 'rxjs';
 import { map, mergeMap, reduce } from 'rxjs/operators';
-import { convertCDFAnnotationV1ToVisionAnnotations } from 'src/api/annotation/bulkConverters';
-import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { convertCDFAnnotationToVisionAnnotations } from 'src/api/annotation/converters';
 import { cognitePlaygroundClient } from 'src/api/annotation/CognitePlaygroundClient';
 
@@ -17,8 +15,8 @@ export const RetrieveAnnotations = createAsyncThunk<
   VisionAnnotation<VisionAnnotationDataType>[],
   { fileIds: number[]; clearCache?: boolean },
   ThunkConfig
->('RetrieveAnnotations', async (payload, { dispatch }) => {
-  const { fileIds: fetchFileIds, clearCache } = payload;
+>('RetrieveAnnotations', async (payload) => {
+  const { fileIds: fetchFileIds } = payload;
 
   /**
    * fetch new (V2 annotators using sdk)
@@ -34,7 +32,7 @@ export const RetrieveAnnotations = createAsyncThunk<
     };
     const annotationListRequest = {
       filter: filterPayload,
-      limit: -1,
+      limit: 1000, // todo: [VIS-882] make limit to -1 for this to work
     };
     return cognitePlaygroundClient.annotations.list(annotationListRequest);
   });
@@ -53,20 +51,6 @@ export const RetrieveAnnotations = createAsyncThunk<
     );
     visionAnnotations = await lastValueFrom(responses);
   }
-
-  /**
-   * fetch V1 type annotations using visionAnnotationV1 thunk
-   * convert them into VisionAnnotation(s)
-   * combine the results with annotations received from new API
-   * return the final combined results
-   */
-  const annotationFromV1 = await dispatch(
-    RetrieveAnnotationsV1({ fileIds: fetchFileIds, clearCache })
-  ).unwrap();
-
-  const visionAnnotationFromV1 =
-    convertCDFAnnotationV1ToVisionAnnotations(annotationFromV1);
-  visionAnnotations.concat(visionAnnotationFromV1);
 
   return visionAnnotations;
 });
