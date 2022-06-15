@@ -10,6 +10,7 @@ import {
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
   ImageObjectDetectionPolyline,
+  Keypoint,
   Status,
 } from 'src/api/annotation/types';
 import {
@@ -284,7 +285,7 @@ export const convertCDFAnnotationToVisionAnnotations = (
 
         // HACK: VIS-859 converting Data, due to the type of data of a CDFImageKeypointCollection,
         // is not matching with ImageKeypointCollection data
-        // should change Vision internal type and remove this hack
+        // should change Vision internal type and remove this hack - VIS-874
         let annotationData: AnnotationPayload = nextAnnotation.data;
         if (
           cdfInheritedFields.annotationType ===
@@ -292,20 +293,13 @@ export const convertCDFAnnotationToVisionAnnotations = (
         ) {
           const convertedAnnotationData: ImageKeypointCollection = {
             ...(nextAnnotation.data as ImageKeypointCollection),
-            // @ts-ignore
-            keypoints: Object.keys(nextAnnotation.data.keypoints).map(
-              (keypointName) => ({
-                label: keypointName,
-                // @ts-ignore
-                confidence: keypoints[keypointName].confidence,
-                point: {
-                  // @ts-ignore
-                  x: keypoints[keypointName].x,
-                  // @ts-ignore
-                  y: keypoints[keypointName].y,
-                },
-              })
-            ),
+            keypoints: Object.entries(
+              (nextAnnotation.data as ImageKeypointCollection).keypoints
+            ).map(([keypointName, keypoint]) => ({
+              label: keypointName,
+              confidence: (keypoint as Keypoint).confidence,
+              point: (keypoint as Keypoint).point,
+            })),
           };
           annotationData = convertedAnnotationData;
         }
