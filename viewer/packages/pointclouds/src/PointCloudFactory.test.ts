@@ -18,7 +18,7 @@ describe(PointCloudFactory.name, () => {
         new Mock<CogniteClientPlayground['annotations']>()
           .setup(a => a.list)
           .returns(() => {
-            return Promise.resolve({
+            const promise = Promise.resolve({
               items: [
                 {
                   id: 123,
@@ -33,7 +33,10 @@ describe(PointCloudFactory.name, () => {
                   }
                 }
               ]
-            }) as any;
+            });
+
+            Object.assign(promise, { autoPagingToArray: async (_arg: { limit: number }) => (await promise).items });
+            return promise as any;
           })
           .object()
       );

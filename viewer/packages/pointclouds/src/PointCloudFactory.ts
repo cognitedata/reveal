@@ -58,7 +58,7 @@ export class PointCloudFactory {
         annotatedResourceIds: [{ id: modelIdentifier.modelId }]
       },
       limit: 1000
-    }).autoPagingToArray();
+    }).autoPagingToArray({ limit: Infinity });
 
     const bvs = modelAnnotations.map(annotation => {
       const region = (annotation.data as any).region.map((geometry: any) => {
