@@ -233,10 +233,12 @@ export class PointCloudOctreePickerHelper {
         const screenDistance = Math.pow(u - (pickWndSize - 1) / 2, 2) + Math.pow(v - (pickWndSize - 1) / 2, 2);
 
         const pcIndex = pixels[4 * offset + 3];
+
+        // Set pcIndex bit to 0 for proper conversion to pointIndex afterwards.
         pixels[4 * offset + 3] = 0;
         const pIndex = ibuffer[offset];
 
-        if (pcIndex > 0 && pcIndex !== 255 && screenDistance < minScreen) {
+        if (pcIndex > 0 && pcIndex !== 255 && screenDistance <= minScreen) {
           const pointPosition = PointCloudOctreePickerHelper.getPointPosition(nodes, pcIndex - 1, pIndex);
           const distanceToCamera = pointPosition.distanceToSquared(camera.position);
 
