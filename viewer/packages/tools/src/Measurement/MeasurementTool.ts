@@ -8,6 +8,8 @@ import * as THREE from 'three';
 import { MeasurementOptions, MeasurementLabelData } from './types';
 import { Measurement } from './Measurement';
 import { HtmlOverlayTool, HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOverlayTool';
+import svg from '!!raw-loader!./styles/ruler.svg';
+import { MeasurementLabels } from './MeasurementLabels';
 
 /**
  * Enables {@see Cognite3DViewer} to perform a point to point measurement.
@@ -43,7 +45,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private _currentMeasurementIndex: number;
   private _measurementActive: boolean;
   private readonly _htmlOverlay: HtmlOverlayTool;
-  private readonly _handleClustering = this.createEmptyClusterElement.bind(this);
+  private readonly _handleClustering = this.createCombineClusterElement.bind(this);
   private readonly _overlayOptions: HtmlOverlayToolOptions = {
     clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback: this._handleClustering }
   };
@@ -57,7 +59,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._viewer = viewer;
     this._options = {
       changeMeasurementLabelMetrics: this._handleDefaultOptions,
-      lineWidth: 0.01,
+      lineWidth: 2.0,
       color: 0x00ffff,
       ...options
     };
@@ -94,6 +96,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     if (index > -1) {
       this._measurements[index].removeMeasurement();
       this._measurements.splice(index, 1);
+      this._currentMeasurementIndex--;
     }
   }
 
@@ -197,10 +200,14 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Create and return empty HTMLDivElement.
+   * Create and return combine ruler icon as HTMLDivElement.
    * @returns HTMLDivElement.
    */
-  private createEmptyClusterElement() {
-    return document.createElement('div');
+  private createCombineClusterElement() {
+    const combineElement = document.createElement('div');
+    combineElement.className = MeasurementLabels.stylesId;
+    combineElement.innerHTML = svg;
+
+    return combineElement;
   }
 }

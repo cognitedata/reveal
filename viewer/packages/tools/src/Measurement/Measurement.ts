@@ -14,7 +14,6 @@ export class Measurement {
   private readonly _measurementLabel: MeasurementLabels;
   private readonly _line: MeasurementLine;
   private _lineMesh: THREE.Mesh | null;
-  private readonly _startEndSpheres: THREE.Mesh[];
   private readonly _options: MeasurementOptions | undefined;
   private _distanceValue: string;
   private readonly _domElement: HTMLElement;
@@ -26,7 +25,6 @@ export class Measurement {
     this._viewer = viewer;
     this._options = options;
     this._lineMesh = null;
-    this._startEndSpheres = [];
     this._line = new MeasurementLine(this._options);
     this._measurementLabel = new MeasurementLabels();
     this._htmlOverlay = overlay;
@@ -43,10 +41,7 @@ export class Measurement {
   startMeasurement(intersection: Intersection): void {
     //Clear the line objects if exists for new line.
     this._line.clearObjects();
-    this._startEndSpheres.push(this._line.addSphere(intersection.point));
     this._lineMesh = this._line.startLine(intersection.point, intersection.distanceToCamera);
-    //Add the sphere and line into the viewer.
-    this._viewer.addObject3D(this._startEndSpheres[0]);
     this._viewer.addObject3D(this._lineMesh);
   }
 
@@ -65,8 +60,6 @@ export class Measurement {
    */
   endMeasurement(point: THREE.Vector3): void {
     //Update the line with final end point.
-    this._startEndSpheres.push(this._line.addSphere(point));
-    this._viewer.addObject3D(this._startEndSpheres[1]);
     this._line.updateLine(0, 0, this._domElement, this._camera, point);
     this.setMeasurementValue(this._options!.changeMeasurementLabelMetrics!);
     //Add the measurement label.
@@ -87,10 +80,6 @@ export class Measurement {
     if (this._lineMesh) {
       this._viewer.removeObject3D(this._lineMesh);
     }
-    this._startEndSpheres.forEach(sphere => {
-      this._viewer.removeObject3D(sphere);
-    });
-    this._startEndSpheres.splice(0);
 
     if (this._htmlOverlay && this._labelElement) {
       this._htmlOverlay.remove(this._labelElement!);

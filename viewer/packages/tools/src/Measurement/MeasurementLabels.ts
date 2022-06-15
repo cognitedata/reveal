@@ -5,7 +5,7 @@
 import labelCSS from './styles/Label.css';
 
 export class MeasurementLabels {
-  private static readonly stylesId = 'reveal-measurement-label';
+  static readonly stylesId = 'reveal-measurement-label';
 
   constructor() {
     MeasurementLabels.ensureStylesLoaded();

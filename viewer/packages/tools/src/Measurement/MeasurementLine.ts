@@ -26,23 +26,6 @@ export class MeasurementLine {
   }
 
   /**
-   * Creates sphere at given position.
-   * @param position Position to place the sphere.
-   */
-  addSphere(position: THREE.Vector3): THREE.Mesh {
-    const mesh = new THREE.Mesh(
-      new THREE.SphereGeometry(1),
-      new THREE.MeshBasicMaterial({ color: 0xff0000, opacity: 0.5, transparent: true })
-    );
-    mesh.position.copy(position);
-    mesh.scale.copy(mesh.scale.multiplyScalar(this._options.lineWidth!));
-    mesh.renderOrder = 1;
-    this._spheres.push(mesh);
-
-    return mesh;
-  }
-
-  /**
    * Generating Line geometry and create the mesh.
    * @param point Point from where the line will be generated.
    * @param distanceToCamera Distance to camera from the @point
@@ -61,8 +44,6 @@ export class MeasurementLine {
       color: this._options.color,
       linewidth: this._options.lineWidth,
       depthTest: false,
-      worldUnits: true,
-      dashed: true,
       transparent: true,
       opacity: 1
     });
@@ -72,6 +53,9 @@ export class MeasurementLine {
     mesh.computeLineDistances();
     //Make sure line are rendered in-front of other objects
     mesh.renderOrder = 1;
+    mesh.onBeforeRender = () => {
+      this._material?.resolution.set(window.innerWidth, window.innerHeight);
+    };
 
     return mesh;
   }
@@ -117,7 +101,7 @@ export class MeasurementLine {
       ray.at(this._distanceToCamera, position);
       //Add transparent color when dragging to make other 3D objects visible for users
       this._material?.color.set(new THREE.Color(this._options.color));
-      this._material?.setValues({ opacity: 0.2 });
+      this._material?.setValues({ opacity: 0.5 });
     }
 
     this._position[3] = position.x;

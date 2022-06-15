@@ -9,7 +9,7 @@ import { createGlContext, mockClientAuthentication, createCadModel } from '../..
 import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
 import { Measurement } from './Measurement';
 
-describe('Measurementname', () => {
+describe(Measurement.name, () => {
   let viewer: Cognite3DViewer;
   let canvasContainer: HTMLElement;
   let domSize: { height: number; width: number };
@@ -58,12 +58,10 @@ describe('Measurementname', () => {
     const addObject3DSpyOn = jest.spyOn(viewer, 'addObject3D');
 
     expect(measurement.getMesh()).toBeNull();
-    expect((measurement as any)._startEndSpheres).toBeEmpty();
     measurement.startMeasurement(intersection);
 
     expect(measurement.getMesh()).not.toBeNull();
-    expect(addObject3DSpyOn).toBeCalledTimes(2);
-    expect((measurement as any)._startEndSpheres.length).toBe(1);
+    expect(addObject3DSpyOn).toBeCalledTimes(1);
   });
 
   test('Update the measurement line mesh', () => {
@@ -88,12 +86,10 @@ describe('Measurementname', () => {
     measurement.startMeasurement(intersection);
 
     expect(measurement.getMesh()).not.toBeNull();
-    expect((measurement as any)._startEndSpheres.length).toBe(1);
 
     measurement.removeMeasurement();
 
-    expect((measurement as any)._startEndSpheres.length).toBe(0);
-    expect(removeObject3DSpyOn).toBeCalledTimes(2);
+    expect(removeObject3DSpyOn).toBeCalledTimes(1);
   });
 
   test('Set measurement line width & color', () => {

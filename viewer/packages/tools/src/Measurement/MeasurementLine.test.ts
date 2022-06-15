@@ -51,16 +51,6 @@ describe(MeasurementLine.name, () => {
     expect(endPoint).toEqual(position);
   });
 
-  test('Generating sphere at a position', () => {
-    const position = new THREE.Vector3();
-    const mesh = line.addSphere(position);
-
-    expect(mesh.geometry).not.toBeNull();
-    expect(mesh.material).not.toBeNull();
-
-    expect(position).toEqual(mesh.position);
-  });
-
   test('distance between the measuring line start point & end point', () => {
     const startPosition = new THREE.Vector3();
     const endPosition = new THREE.Vector3(100, 100, 100);

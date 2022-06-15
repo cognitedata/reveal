@@ -8,16 +8,14 @@ import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
 export class MeasurementUi {
   private readonly _viewer: Cognite3DViewer;
   private readonly _measurementTool: MeasurementTool;
-  private _raycaster: THREE.Raycaster;
   private _gui: dat.GUI;
   private _guiController: any[];
   private _measurementObjectControllerUi: any[];
-  private _listGui: dat.GUI | undefined;
   private _selectedObject: Line2 | null;
   private _storedMaterial: LineMaterial;
 
   private state = {
-    lineWidth: 0.01,
+    lineWidth: 2.0,
     color: 0x00FFFF,
     allMeasurement: false
   };
@@ -30,8 +28,6 @@ export class MeasurementUi {
     this._viewer = viewer;
     this._selectedObject = null;
     this._storedMaterial = new LineMaterial();
-    this._raycaster = new THREE.Raycaster();
-    this._raycaster.params.Mesh.threshold = 2;
     this._measurementTool = new MeasurementTool(this._viewer, {changeMeasurementLabelMetrics: (distance: number) => {
       // 1 meters = 3.281 feet
       const distanceInFeet = distance * 3.281;
@@ -57,7 +53,7 @@ export class MeasurementUi {
   }
 
   private addGUI() {
-    this._guiController.push(this._gui.add(this.state, 'lineWidth').name('Line Width').onFinishChange(linewidth => {
+    this._guiController.push(this._gui.add(this.state, 'lineWidth', 2, 25, 1).name('Line Width').onFinishChange(linewidth => {
       this.state.lineWidth = linewidth;
       this.setMeasurementLineOptions();
     }));
