@@ -55,7 +55,7 @@ export const DeleteDataModel = ({
   return (
     <StyledModalDialog
       visible={dataModel ? true : false}
-      title={t('delete_solution', 'Delete Data Model')}
+      title={t('delete_data_model', 'Delete Data Model')}
       onCancel={() => {
         onCancel();
         setConfirmDelete(false);

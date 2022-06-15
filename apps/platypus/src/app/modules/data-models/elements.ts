@@ -3,13 +3,13 @@ import styled from 'styled-components/macro';
 import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
 import { Row } from '@cognite/cogs.js';
 
-const solutionListWidth = 1020;
+const dataModelListWidth = 1020;
 
-export const StyledSolutionListWrapper = styled(StyledPageWrapper)`
-  width: ${solutionListWidth}px;
+export const StyledDataModelListWrapper = styled(StyledPageWrapper)`
+  width: ${dataModelListWidth}px;
   margin: 0 auto;
 
-  @media only screen and (max-width: ${solutionListWidth}px) {
+  @media only screen and (max-width: ${dataModelListWidth}px) {
     width: 670px;
   }
 
@@ -40,7 +40,7 @@ export const StyledModalDialog = styled(ModalDialog)`
 `;
 
 export const StyledRow = styled(Row)`
-  @media only screen and (max-width: ${solutionListWidth}px) {
+  @media only screen and (max-width: ${dataModelListWidth}px) {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 `;

@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { CreateDataModel } from '../CreateDataModel';
 import { DeleteDataModel } from '../DeleteDataModel';
-import { StyledRow, StyledSolutionListWrapper } from '../elements';
+import { StyledRow, StyledDataModelListWrapper } from '../elements';
 
 export const DataModelsList = () => {
   const history = useHistory();
@@ -39,7 +39,7 @@ export const DataModelsList = () => {
 
   if (isError) {
     return (
-      <StyledSolutionListWrapper>
+      <StyledDataModelListWrapper>
         <div className="emptyList">
           <FlexPlaceholder
             data-cy="data-models-error"
@@ -50,28 +50,30 @@ export const DataModelsList = () => {
             )}
           />
         </div>
-      </StyledSolutionListWrapper>
+      </StyledDataModelListWrapper>
     );
   }
 
   const renderList = () => {
     return (
       <StyledRow cols={3} gutter={20} className="grid">
-        {dataModels!.map((solution) => (
+        {dataModels!.map((dataModel) => (
           <DataModelCard
-            dataModel={solution}
-            onOpen={(openSolution) => {
+            dataModel={dataModel}
+            onOpen={(openDataModel) => {
               history.push({
-                pathname: `/data-models/${openSolution.id}/${DEFAULT_VERSION_PATH}`,
+                pathname: `/data-models/${openDataModel.id}/${DEFAULT_VERSION_PATH}`,
               });
             }}
-            onEdit={(editSolution) => {
+            onEdit={(editDataModel) => {
               history.push({
-                pathname: `/data-models/${editSolution.id}/${DEFAULT_VERSION_PATH}`,
+                pathname: `/data-models/${editDataModel.id}/${DEFAULT_VERSION_PATH}`,
               });
             }}
-            onDelete={(deleteSolution) => setDataModelToDelete(deleteSolution)}
-            key={solution.id}
+            onDelete={(deleteDataModel) =>
+              setDataModelToDelete(deleteDataModel)
+            }
+            key={dataModel.id}
           />
         ))}
       </StyledRow>
@@ -94,7 +96,7 @@ export const DataModelsList = () => {
   };
 
   return (
-    <StyledSolutionListWrapper>
+    <StyledDataModelListWrapper>
       <Flex justifyContent="space-between" className="header">
         <Title level={3} data-cy="data-models-title">
           {t('data_models_title', 'Data Models')}
@@ -118,6 +120,6 @@ export const DataModelsList = () => {
           onAfterDeleting={() => refetchDataModels()}
         />
       )}
-    </StyledSolutionListWrapper>
+    </StyledDataModelListWrapper>
   );
 };

@@ -112,8 +112,8 @@ export const CreateDataModel = ({
           {t('modal_description_title', 'Description')}
         </Body>
         <Textarea
-          name="solutionDescription"
-          data-cy="input-solution-description"
+          name="dataModelDescription"
+          data-cy="input-data-model-description"
           value={dataModelDescription}
           onChange={(e) => setDataModelDescription(e.target.value)}
           placeholder={t(
