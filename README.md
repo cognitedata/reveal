@@ -134,6 +134,25 @@ The data stored in Charts is currently on Firebase and can be accessed for admin
 | Bluefield            | `bluefield`               | Azure     | Dev      | [Console](https://console.firebase.google.com/project/bluefield-charts-prod/overview)         | [Console](https://console.firebase.google.com/project/bluefield-charts-stg/overview)           |
 | Azure Dev            | `azure-dev`               | Azure     | Dev      | [Console](https://console.firebase.google.com/project/azure-dev-charts-prod/overview)         | [Console](https://console.firebase.google.com/project/azure-dev-charts-stg/overview)           |
 
+## Login
+
+| Name                 | Cluster                   | Project | Azure AD Tenant |
+| -------------------- | ------------------------- | ------- | --------------- | 
+| Europe 1 (Google)    | `europe-west1-1`          |         | cognitecharts.onmicrosoft.com |
+| Europe 2 (Microsoft) | `westeurope-1`            | charts-westeurope-1 | cognitecharts.onmicrosoft.com | 
+| Asia 1               | `asia-northeast1-1`       |        | cognitecharts.onmicrosoft.com | 
+| US East 1            | `az-eastus-1`             |      | cognitecharts.onmicrosoft.com | 
+| BP North Europe      | `bp-northeurope`          |      | cognitecharts.onmicrosoft.com | 
+| OMV                  | `omv`                     |        | cognitecharts.onmicrosoft.com |
+| PGS                  | `pgs`                     |        | cognitecharts.onmicrosoft.com |
+| Power NO (Google)    | `power-no`                |       | cognitecharts.onmicrosoft.com | 
+| Power NO (Microsoft) | `az-power-no-northeurope` |      | cognitecharts.onmicrosoft.com | 
+| Statnett             | `statnett`                |        | cognitecharts.onmicrosoft.com | 
+| Greenfield           | `greenfield`              | charts-greenfield | cognitecharts.onmicrosoft.com | 
+| Bluefield            | `bluefield`               | charts-demo     | cognitecharts.onmicrosoft.com | 
+| Azure Dev            | `azure-dev`               | charts-azuredev | cognitecharts.onmicrosoft.com |
+
+
 ## Important Links
 
 - [Sentry](https://sentry.io/organizations/cognite/issues/?project=5509609) for our current bugs
