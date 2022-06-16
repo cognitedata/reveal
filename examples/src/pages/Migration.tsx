@@ -360,6 +360,10 @@ export function Migration() {
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client, viewer);
 
+      viewer.renderer.setPixelRatio(6);
+      console.log(viewer.renderer.getSize(new THREE.Vector2()));
+      console.log(viewer.renderer.getDrawingBufferSize(new THREE.Vector2()));
+
       viewer.on('click', async (event) => {
         const { offsetX, offsetY } = event; 
         console.log('2D coordinates', event);
