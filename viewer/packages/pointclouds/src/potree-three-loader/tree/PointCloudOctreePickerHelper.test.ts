@@ -15,7 +15,7 @@ describe('PointCloudOctreePickerHelper', () => {
     const dummyCamera = new THREE.PerspectiveCamera();
     dummyCamera.position.set(1, 0, 0);
 
-    jest.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation((_nodes, _pcIndex, _pIndex) => {
+    jest.spyOn(PointCloudOctreePickerHelper, 'getPointPosition').mockImplementation(() => {
       return new THREE.Vector3();
     });
 
