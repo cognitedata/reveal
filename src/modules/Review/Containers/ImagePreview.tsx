@@ -129,7 +129,7 @@ export const ImagePreview = ({
         scrollIntoView(createdAnnotations[0].id);
       }
     },
-    [scrollIntoView]
+    [file, scrollIntoView]
   );
 
   const handleModifyAnnotation = useCallback(
