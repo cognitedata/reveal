@@ -45,9 +45,9 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private _currentMeasurementIndex: number;
   private _measurementActive: boolean;
   private readonly _htmlOverlay: HtmlOverlayTool;
-  private readonly _handleClustering = this.createCombineClusterElement.bind(this);
+  private readonly _handleLabelClustering = this.createCombineClusterElement.bind(this);
   private readonly _overlayOptions: HtmlOverlayToolOptions = {
-    clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback: this._handleClustering }
+    clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback: this._handleLabelClustering }
   };
 
   private readonly _handleonPointerClick = this.onPointerClick.bind(this);

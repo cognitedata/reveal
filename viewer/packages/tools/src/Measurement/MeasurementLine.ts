@@ -11,7 +11,6 @@ import { MeasurementOptions } from './types';
 export class MeasurementLine {
   private _geometry: LineGeometry | null;
   private _material: LineMaterial | null;
-  private readonly _spheres: THREE.Mesh[];
   private _position: Float32Array;
   private _distanceToCamera: number = 0;
 
@@ -21,7 +20,6 @@ export class MeasurementLine {
     this._position = new Float32Array(6);
     this._geometry = null;
     this._material = null;
-    this._spheres = [];
     this._options = { ...options };
   }
 
@@ -122,10 +120,6 @@ export class MeasurementLine {
     if (this._material) {
       this._material?.setValues({ linewidth: this._options.lineWidth });
       this._material?.color.set(new THREE.Color(this._options.color));
-      //Updates the spheres size to match line width.
-      this._spheres.forEach(sphere => {
-        sphere.scale.copy(new THREE.Vector3(1, 1, 1).multiplyScalar(this._options.lineWidth!));
-      });
     }
   }
 

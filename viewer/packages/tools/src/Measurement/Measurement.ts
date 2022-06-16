@@ -61,7 +61,7 @@ export class Measurement {
   endMeasurement(point: THREE.Vector3): void {
     //Update the line with final end point.
     this._line.updateLine(0, 0, this._domElement, this._camera, point);
-    this.setMeasurementValue(this._options!.changeMeasurementLabelMetrics!);
+    this.setMeasurementLabelValue(this._options!.changeMeasurementLabelMetrics!);
     //Add the measurement label.
     this._labelElement = this.addLabel(this._line.getMidPointOnLine(), this._distanceValue);
   }
@@ -114,7 +114,7 @@ export class Measurement {
    * Set the measurement data.
    * @param options Callback function which get user value to be added into label.
    */
-  private setMeasurementValue(options: MeasurementLabelUpdateDelegate) {
+  private setMeasurementLabelValue(options: MeasurementLabelUpdateDelegate) {
     const measurementLabelData = options(this._line.getMeasuredDistance());
     this._distanceValue = measurementLabelData?.distance?.toFixed(2) + ' ' + measurementLabelData?.units;
   }
