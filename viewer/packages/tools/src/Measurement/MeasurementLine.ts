@@ -5,7 +5,8 @@
 import * as THREE from 'three';
 import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
-import { MeasurementLineOptions } from './types';
+import { Line2 } from 'three/examples/jsm/lines/Line2';
+import { MeasurementOptions } from './types';
 
 export class MeasurementLine {
   private _geometry: LineGeometry | null;
@@ -17,12 +18,9 @@ export class MeasurementLine {
   private _zAxisMidPoint: THREE.Vector3;
   private _distanceToCamera: number = 0;
 
-  private readonly _options: MeasurementLineOptions = {
-    lineWidth: 0.01,
-    color: 0x00ffff
-  };
+  private _options: MeasurementOptions;
 
-  constructor() {
+  constructor(options: MeasurementOptions) {
     this._position = new Float32Array(6);
     this._axisDistance = new THREE.Vector3();
     this._xAxisMidPoint = new THREE.Vector3();
@@ -30,6 +28,7 @@ export class MeasurementLine {
     this._zAxisMidPoint = new THREE.Vector3();
     this._geometry = null;
     this._material = null;
+    this._options = { ...options };
   }
 
   /**
@@ -51,15 +50,18 @@ export class MeasurementLine {
       color: this._options.color,
       linewidth: this._options.lineWidth,
       depthTest: false,
-      worldUnits: true,
-      dashed: true,
       transparent: true,
       opacity: 1
     });
 
-    const mesh = new THREE.Mesh(this._geometry as THREE.BufferGeometry, this._material);
+    const mesh = new Line2(this._geometry, this._material);
+    //Assign bounding sphere & box for the line to support raycasting.
+    mesh.computeLineDistances();
     //Make sure line are rendered in-front of other objects
     mesh.renderOrder = 1;
+    mesh.onBeforeRender = () => {
+      this._material?.resolution.set(window.innerWidth, window.innerHeight);
+    };
 
     return mesh;
   }
@@ -105,7 +107,7 @@ export class MeasurementLine {
       ray.at(this._distanceToCamera, position);
       //Add transparent color when dragging to make other 3D objects visible for users
       this._material?.color.set(new THREE.Color(this._options.color));
-      this._material?.setValues({ opacity: 0.2 });
+      this._material?.setValues({ opacity: 0.5 });
     }
 
     this._position[3] = position.x;
@@ -119,11 +121,11 @@ export class MeasurementLine {
    * Sets Measurement line width and color with @options value.
    * @param options MeasurementLineOptions to set line width and color.
    */
-  setOptions(options: MeasurementLineOptions): void {
+  setOptions(options: MeasurementOptions): void {
     this._options.lineWidth = options?.lineWidth ?? this._options.lineWidth;
     this._options.color = options?.color ?? this._options.color;
-    //Apply for current active line if set
-    if (this._material && options.currentLine) {
+    //Apply for current line.
+    if (this._material) {
       this._material?.setValues({ linewidth: this._options.lineWidth });
       this._material?.color.set(new THREE.Color(this._options.color));
     }
@@ -154,7 +156,7 @@ export class MeasurementLine {
   }
 
   /**
-   * Clear all line objects mesh, geometry & material.
+   * Clear all line objects geometry & material.
    */
   clearObjects(): void {
     if (this._geometry) {

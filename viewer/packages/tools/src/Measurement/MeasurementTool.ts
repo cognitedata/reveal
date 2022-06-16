@@ -2,17 +2,14 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Cognite3DViewer, Intersection } from '@reveal/core';
+import { Cognite3DViewer } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import * as THREE from 'three';
+import { MeasurementOptions, MeasurementLabelData } from './types';
+import { Measurement } from './Measurement';
+import { HtmlOverlayTool, HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOverlayTool';
+import svg from '!!raw-loader!./styles/ruler.svg';
 import { MeasurementLabels } from './MeasurementLabels';
-import {
-  MeasurementLineOptions,
-  MeasurementOptions,
-  MeasurementLabelUpdateDelegate,
-  MeasurementLabelData
-} from './types';
-import { MeasurementLine } from './MeasurementLine';
 
 /**
  * Enables {@see Cognite3DViewer} to perform a point to point measurement.
@@ -31,16 +28,27 @@ import { MeasurementLine } from './MeasurementLine';
  * // detach the tool from the viewer
  * measurementTool.dispose();
  * ```
+ * @example
+ * ```jsx runnable
+ * const measurementTool = new MeasurementTool(viewer, {changeMeasurementLabelMetrics: (distance) => {
+ *    // 1 meters = 3.281 feet
+ *    const distanceInFeet = distance * 3.281;
+ *    return { distance: distanceInFeet, units: 'ft'};
+ *  }});
+ *  measurementTool.enterMeasurementMode();
+```
  */
 export class MeasurementTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
-  private readonly _measurementLabel: MeasurementLabels;
-  private readonly _line: MeasurementLine;
-  private _lineMesh: THREE.Mesh | null;
-  private readonly _options: Required<MeasurementOptions>;
-  private _sphereSize: number;
-  private readonly _domElement: HTMLElement;
-  private readonly _camera: THREE.Camera;
+  private readonly _measurements: Measurement[];
+  private _options: MeasurementOptions | undefined;
+  private _currentMeasurementIndex: number;
+  private _measurementActive: boolean;
+  private readonly _htmlOverlay: HtmlOverlayTool;
+  private readonly _handleLabelClustering = this.createCombineClusterElement.bind(this);
+  private readonly _overlayOptions: HtmlOverlayToolOptions = {
+    clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback: this._handleLabelClustering }
+  };
 
   private readonly _handleonPointerClick = this.onPointerClick.bind(this);
   private readonly _handleonPointerMove = this.onPointerMove.bind(this);
@@ -51,15 +59,14 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._viewer = viewer;
     this._options = {
       changeMeasurementLabelMetrics: this._handleDefaultOptions,
-      axisComponentMeasurement: false,
+      lineWidth: 2.0,
+      color: 0x00ffff,
       ...options
     };
-    this._lineMesh = null;
-    this._line = new MeasurementLine();
-    this._measurementLabel = new MeasurementLabels(this._viewer);
-    this._domElement = this._viewer.domElement;
-    this._camera = this._viewer.getCamera();
-    this._sphereSize = 0.01;
+    this._measurements = [];
+    this._htmlOverlay = new HtmlOverlayTool(this._viewer, this._overlayOptions);
+    this._currentMeasurementIndex = -1;
+    this._measurementActive = false;
   }
 
   /**
@@ -74,27 +81,71 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    */
   exitMeasurementMode(): void {
     //clear all mesh, geometry & event handling.
-    this._line.clearObjects();
+    this._measurements.forEach(measurement => {
+      measurement.clearObjects();
+    });
     this.removeEventHandling();
   }
 
   /**
-   * Sets Measurement line width and color with @options value.
-   * @param options MeasurementLineOptions to set line width and color.
+   * Removes a measurement from the Cognite3DViewer.
+   * @param measurement Measurement mesh to be removed from @Cognite3DViewer.
    */
-  setLineOptions(options: MeasurementLineOptions): void {
-    this._line.setOptions(options);
-    this._sphereSize = options?.lineWidth || this._sphereSize;
-    if (this._viewer) {
+  removeMeasurement(measurement: THREE.Mesh): void {
+    const index = this._measurements.findIndex(obj => obj.getMesh() === measurement);
+    if (index > -1) {
+      this._measurements[index].removeMeasurement();
+      this._measurements.splice(index, 1);
+      this._currentMeasurementIndex--;
+    }
+  }
+
+  /**
+   * Removes all measurements from the Cognite3DViewer.
+   */
+  removeAllMeasurement(): void {
+    this._measurements.forEach(measurement => {
+      measurement.removeMeasurement();
+    });
+    this._measurements.splice(0);
+    this._currentMeasurementIndex = -1;
+  }
+
+  /**
+   * Get all measurement objects from the Cognite3DViewer.
+   * @returns Group of all measurements in the Cognite3DViewer.
+   */
+  getAllMeasurement(): THREE.Mesh[] {
+    const measurementGroups: THREE.Mesh[] = [];
+    this._measurements.forEach(measurement => {
+      const meshGrp = measurement.getMesh();
+      if (meshGrp) {
+        measurementGroups.push(meshGrp);
+      }
+    });
+    return measurementGroups;
+  }
+
+  /**
+   * Sets Measurement line width and color with @options value.
+   * @param options MeasurementOptions to set line width and color.
+   * @param meshObject Measurement mesh object to edit line width and color.
+   */
+  setLineOptions(options: MeasurementOptions, meshObject?: THREE.Mesh): void {
+    if (meshObject) {
+      const measurement = this._measurements.find(measurement => measurement.getMesh() === meshObject);
+      measurement?.setLineOptions(options);
       this._viewer.requestRedraw();
     }
+    this._options = { changeMeasurementLabelMetrics: this._options?.changeMeasurementLabelMetrics, ...options };
   }
 
   /**
    * Dispose Measurement Tool.
    */
   dispose(): void {
-    this.exitMeasurementMode();
+    this.removeAllMeasurement();
+    this._htmlOverlay.clear();
     super.dispose();
   }
 
@@ -121,107 +172,42 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       return;
     }
 
-    this.addSphere(intersection.point);
-
-    if (!this._lineMesh) {
+    if (!this._measurementActive) {
+      this._measurements.push(new Measurement(this._viewer, this._options!, this._htmlOverlay));
+      this._currentMeasurementIndex++;
       this._viewer.domElement.addEventListener('mousemove', this._handleonPointerMove);
-      this.startMeasurement(intersection);
+      this._measurements[this._currentMeasurementIndex].startMeasurement(intersection);
+      this._measurementActive = true;
     } else {
-      this.endMeasurement(intersection.point);
+      this._measurements[this._currentMeasurementIndex].endMeasurement(intersection.point);
       this._viewer.domElement.removeEventListener('mousemove', this._handleonPointerMove);
+      this._measurementActive = false;
     }
     this._viewer.requestRedraw();
-  }
-
-  /**
-   * Start the measurement.
-   * @param intersection Intersection Object containing point & camera distance.
-   */
-  private startMeasurement(intersection: Intersection) {
-    //Clear the line objects if exists for new line
-    this._line.clearObjects();
-    this._lineMesh = this._line.startLine(intersection.point, intersection.distanceToCamera);
-    this._viewer.addObject3D(this._lineMesh);
-  }
-
-  /**
-   * End the measurement.
-   * @param point Point at which measuring line ends.
-   */
-  private endMeasurement(point: THREE.Vector3) {
-    //Update the line with final end point.
-    this._line.updateLine(0, 0, this._domElement, this._camera, point);
-    this.addLabel(this._line.getMidPointOnLine());
-
-    //Add axis component measurement data if enabled
-    if (this._options.axisComponentMeasurement) {
-      this.addAxisMeasurement();
-    }
-    this._lineMesh = null;
-  }
-
-  private addLabel(postion: THREE.Vector3) {
-    const distance = this.setMeasurementValue(this._options.changeMeasurementLabelMetrics);
-    //Add the measurement label.
-    this._measurementLabel.addLabel(postion, distance);
-  }
-
-  /**
-   * Set the measurement data.
-   * @param options Callback function which get user value to be added into label.
-   */
-  private setMeasurementValue(options: MeasurementLabelUpdateDelegate): string {
-    const measurementLabelData = options(this._line.getMeasuredDistance());
-    return measurementLabelData.distance?.toFixed(2) + ' ' + measurementLabelData.units;
-  }
-
-  /**
-   * Get and add axis components for the point to point measurement
-   */
-  private addAxisMeasurement() {
-    if (this._line) {
-      const axisMeshes = this._line.getAxisLines();
-      axisMeshes.forEach(mesh => {
-        this._viewer.addObject3D(mesh);
-      });
-      this.addAxisLabels();
-    }
-  }
-
-  private addAxisLabels() {
-    if (this._measurementLabel) {
-      this._measurementLabel.setStyle();
-      const axisDistanceValues = this._line.getAxisDistances();
-      // this.addLabel(this._line.getAxisMidPoints()[0]);
-      this._measurementLabel.addLabel(this._line.getAxisMidPoints()[0], Math.abs(axisDistanceValues.x).toFixed(2));
-      this._measurementLabel.addLabel(this._line.getAxisMidPoints()[1], Math.abs(axisDistanceValues.y).toFixed(2));
-      this._measurementLabel.addLabel(this._line.getAxisMidPoints()[2], Math.abs(axisDistanceValues.z).toFixed(2));
-    }
   }
 
   private onPointerMove(event: any) {
-    const { offsetX, offsetY } = event;
-    this._line.updateLine(offsetX, offsetY, this._domElement, this._camera);
+    this._measurements[this._currentMeasurementIndex].update(event);
     this._viewer.requestRedraw();
   }
 
   /**
-   * Creates sphere at given position.
-   * @param position Position to place the sphere.
+   * Function for callback to set default measuring units for the labels.
+   * @returns Returns default label data with meter units.
    */
-  private addSphere(position: THREE.Vector3) {
-    const mesh = new THREE.Mesh(
-      new THREE.SphereGeometry(1),
-      new THREE.MeshBasicMaterial({ color: 0xff0000, opacity: 0.5, transparent: true })
-    );
-    mesh.position.copy(position);
-    mesh.scale.copy(mesh.scale.multiplyScalar(this._sphereSize));
-    mesh.renderOrder = 1;
-
-    this._viewer.addObject3D(mesh);
+  private defaultOptions(): MeasurementLabelData | undefined {
+    return this._measurements[this._currentMeasurementIndex].setDefaultOptions();
   }
 
-  private defaultOptions(): MeasurementLabelData {
-    return { distance: this._line.getMeasuredDistance(), units: 'm' };
+  /**
+   * Create and return combine ruler icon as HTMLDivElement.
+   * @returns HTMLDivElement.
+   */
+  private createCombineClusterElement() {
+    const combineElement = document.createElement('div');
+    combineElement.className = MeasurementLabels.stylesId;
+    combineElement.innerHTML = svg;
+
+    return combineElement;
   }
 }

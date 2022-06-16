@@ -3,12 +3,12 @@
  */
 
 import { CadManager } from './CadManager';
-import { CadModelFactory } from './CadModelFactory';
 import { InternalRevealCadOptions } from './InternalRevealCadOptions';
 
 import { CadModelUpdateHandler, createV8SectorCuller } from '@reveal/cad-geometry-loaders';
 import { CadMaterialManager, CadGeometryRenderModePipelineProvider } from '@reveal/rendering';
 import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
+import { CadModelFactory } from '@reveal/cad-model';
 
 export function createCadManager(
   modelMetadataProvider: ModelMetadataProvider,

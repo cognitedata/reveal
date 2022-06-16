@@ -3,22 +3,18 @@
  */
 
 /**
- * Measurment line options of width & color which can be used while creating Measurement tool.
- */
-export type MeasurementLineOptions = {
-  lineWidth?: number;
-  color?: number;
-  currentLine?: boolean;
-};
-
-/**
  * Custom callback for users to change measurement label content.
  */
-export type MeasurementLabelUpdateDelegate = (distance: number) => MeasurementLabelData;
+export type MeasurementLabelUpdateDelegate = (distance: number) => MeasurementLabelData | undefined;
 
+/**
+ * Measurment tool option with user custom callback, line width & color.
+ */
 export type MeasurementOptions = {
-  changeMeasurementLabelMetrics?: MeasurementLabelUpdateDelegate;
-  axisComponentMeasurement: boolean;
+  changeMeasurementLabelMetrics?: MeasurementLabelUpdateDelegate | undefined;
+  lineWidth?: number;
+  color?: number;
+  axisComponents?: boolean;
 };
 
 /**

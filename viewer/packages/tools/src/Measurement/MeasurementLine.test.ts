@@ -11,7 +11,11 @@ describe(MeasurementLine.name, () => {
   let camera: THREE.Camera;
 
   beforeEach(() => {
-    line = new MeasurementLine();
+    line = new MeasurementLine({
+      changeMeasurementLabelMetrics: (distance: number) => {
+        return { distance: distance * 2.0, units: 'ft' };
+      }
+    });
     domElement = document.createElement('div');
     camera = new THREE.Camera();
   });
@@ -60,10 +64,14 @@ describe(MeasurementLine.name, () => {
   });
 
   test('set measurement line width and color', () => {
-    const lineOptions = { lineWidth: 1.0, color: 0xff0000 };
+    const lineOptions = {
+      lineWidth: 1.0,
+      color: 0xff0000
+    };
     line.setOptions(lineOptions);
 
-    expect((line as any)._options).toEqual(lineOptions);
+    expect((line as any)._options.lineWidth).toEqual(1.0);
+    expect((line as any)._options.color).toEqual(0xff0000);
   });
 
   test('mid point between the line', () => {
@@ -78,5 +86,19 @@ describe(MeasurementLine.name, () => {
 
     //Have to roundToZero to remove floating comparison error
     expect(expectedMidPoint).toEqual(midPoint.roundToZero());
+  });
+
+  test('Clear line geometry and material', () => {
+    const position = new THREE.Vector3();
+    const mesh = line.startLine(position, 0);
+
+    expect(mesh.geometry).not.toBeNull();
+    expect(mesh.material).not.toBeNull();
+
+    //clear the line geometry & material.
+    line.clearObjects();
+
+    expect((line as any)._geometry).toBeNull();
+    expect((line as any)._material).toBeNull();
   });
 });

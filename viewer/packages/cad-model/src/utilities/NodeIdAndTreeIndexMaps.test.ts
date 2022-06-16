@@ -5,7 +5,7 @@
 import { CogniteInternalId } from '@cognite/sdk';
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 
-import { sleep } from '../../../test-utilities';
+import { sleep } from '../../../../test-utilities';
 import { NodesApiClient } from '@reveal/nodes-api';
 
 import { Mock, It } from 'moq.ts';
