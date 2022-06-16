@@ -1,16 +1,20 @@
-import { IDataModelsApiService } from './boundaries';
 import { DataModelsHandler } from './data-models-handler';
+import { DataModelStorageApiService, MixerApiService } from './services';
 
 describe('DataModelsHandlerTest', () => {
-  const dataModelsProviderMock = {
-    list: jest.fn().mockImplementation(() => Promise.resolve([])),
-    create: jest.fn().mockImplementation(() => Promise.resolve([])),
-    delete: jest.fn().mockImplementation(() => Promise.resolve([])),
-    fetch: jest.fn(),
-  } as IDataModelsApiService;
+  const mixerApiMock = {
+    getApisByIds: jest.fn().mockImplementation(() => Promise.resolve([])),
+    listApis: jest.fn().mockImplementation(() => Promise.resolve([])),
+    upsertApi: jest.fn().mockImplementation(() => Promise.resolve([])),
+    deleteApi: jest.fn().mockImplementation(() => Promise.resolve([])),
+  } as any as MixerApiService;
+
+  const dmsApiMock = {
+    applySpaces: jest.fn().mockImplementation(() => Promise.resolve([])),
+  } as any as DataModelStorageApiService;
 
   const createInstance = () => {
-    return new DataModelsHandler(dataModelsProviderMock);
+    return new DataModelsHandler(mixerApiMock, dmsApiMock);
   };
 
   it('should work', () => {
@@ -21,7 +25,7 @@ describe('DataModelsHandlerTest', () => {
   it('should fetch data models', async () => {
     const service = createInstance();
     await service.list();
-    expect(dataModelsProviderMock.list).toBeCalled();
+    expect(mixerApiMock.listApis).toBeCalled();
   });
 
   it('should create data model', async () => {
@@ -32,7 +36,16 @@ describe('DataModelsHandlerTest', () => {
       owner: 'test-user@cognite.com',
     };
     await service.create(reqDto);
-    expect(dataModelsProviderMock.create).toBeCalledWith(reqDto);
+    expect(mixerApiMock.upsertApi).toBeCalledWith(
+      expect.objectContaining({
+        name: reqDto.name,
+        externalId: 'testGroup',
+        metadata: {},
+      })
+    );
+    expect(dmsApiMock.applySpaces).toBeCalledWith([
+      { externalId: 'testGroup' },
+    ]);
   });
 
   it('should delete data model', async () => {
@@ -41,6 +54,6 @@ describe('DataModelsHandlerTest', () => {
       id: 'test group',
     };
     await service.delete(reqDto);
-    expect(dataModelsProviderMock.delete).toBeCalledWith(reqDto);
+    expect(mixerApiMock.deleteApi).toBeCalledWith(reqDto.id);
   });
 });

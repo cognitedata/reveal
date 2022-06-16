@@ -25,7 +25,9 @@ export const Preview = () => {
   const { selectedSchema } = useSelector<DataModelState>(
     (state) => state.dataModel
   );
-  const dataModelService = useInjection(TOKENS.dataModelService);
+  const dataModelTypeDefsBuilder = useInjection(
+    TOKENS.dataModelTypeDefsBuilderService
+  );
   const [solutionDataModel, setSolutionDataModel] = useState<DataModelTypeDefs>(
     {
       types: [],
@@ -35,7 +37,9 @@ export const Preview = () => {
   useEffect(() => {
     if (selectedSchema.schema) {
       try {
-        const newState = dataModelService.parseSchema(selectedSchema.schema);
+        const newState = dataModelTypeDefsBuilder.parseSchema(
+          selectedSchema.schema
+        );
         setSolutionDataModel(newState);
       } catch (err: any) {
         errorLogger.log(err);

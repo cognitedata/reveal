@@ -1,15 +1,12 @@
-import { FetchDataDTO } from './dto';
-import { PaginatedResponse } from './types';
 import { Result } from '../../boundaries/types';
-import {
-  IQueryBuilderService,
-  IDataModelVersionApiService,
-} from './boundaries';
+import { FetchDataDTO } from './dto';
+import { MixerApiQueryBuilderService, MixerApiService } from './services';
+import { PaginatedResponse } from './types';
 
 export class DataManagmentHandler {
   constructor(
-    private queryBuilder: IQueryBuilderService,
-    private solutionSchemaService: IDataModelVersionApiService
+    private queryBuilder: MixerApiQueryBuilderService,
+    private mixerApiService: MixerApiService
   ) {}
 
   fetchData(dto: FetchDataDTO): Promise<Result<PaginatedResponse>> {
@@ -25,7 +22,7 @@ export class DataManagmentHandler {
       limit,
     });
     return new Promise((resolve, reject) => {
-      this.solutionSchemaService
+      this.mixerApiService
         .runQuery({
           graphQlParams: {
             query,

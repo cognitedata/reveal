@@ -15,7 +15,7 @@ interface BaseDTOWithKeyValuePairsItems {
    * The data that needs to be ingested as key->value pairs
    */
   items: {
-    externalId: string;
+    [key: string]: string | number | boolean;
   }[];
 }
 interface BaseDTOWithModelProps {
@@ -147,3 +147,7 @@ export interface FilterEdgesResponseDTO
   nextCursor?: string;
 }
 /************* Edges APIs DTOs **************/
+
+export interface DataModelSpaceDTO {
+  externalId: string;
+}

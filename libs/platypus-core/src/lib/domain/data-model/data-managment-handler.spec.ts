@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IQueryBuilderService } from './boundaries';
 import { DataManagmentHandler } from './data-managment-handler';
+import { MixerApiQueryBuilderService } from './services';
 
 describe('DataManagmentHandlerTest', () => {
   const queryBuilderMock = {
@@ -10,7 +10,7 @@ describe('DataManagmentHandlerTest', () => {
         () => 'query { listTestOperationName { externalId } }'
       ),
     getOperationName: jest.fn().mockImplementation(() => 'TestOperationName'),
-  } as IQueryBuilderService;
+  } as any as MixerApiQueryBuilderService;
 
   const fetchDataResponseMock = {
     items: [],

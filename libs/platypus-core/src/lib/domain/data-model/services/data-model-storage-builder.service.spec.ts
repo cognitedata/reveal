@@ -3,7 +3,7 @@ import {
   DataModelVersion,
   DataModelTypeDefs,
   DataModelVersionStatus,
-} from '../../types';
+} from '../types';
 
 import { DataModelStorageBuilderService } from './data-model-storage-builder.service';
 

@@ -1,7 +1,7 @@
-import { DataModel } from '../../../types';
-import { DataModelApiOutputDTO } from '../../../dto';
+import { DataModel } from '../../types';
+import { DataModelApiOutputDTO } from '../../dto';
 
-export class SolutionDataMapper {
+export class DataModelDataMapper {
   serialize(solution: DataModel): DataModelApiOutputDTO {
     return {
       externalId: solution.id,

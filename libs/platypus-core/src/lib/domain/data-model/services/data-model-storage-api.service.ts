@@ -15,10 +15,10 @@ import {
   DmsDeleteEdgesRequestDTO,
   RetrieveEdgesByIdsRequestDTO,
   RetrieveEdgesByIdsResponseDTO,
-} from '../../dto';
+} from '../dto';
 
-import { DataModelStorageModel } from '../../types';
-import { PlatypusError } from '@platypus-core/boundaries/types';
+import { DataModelStorageModel } from '../types';
+import { PlatypusError } from '../../../boundaries/types';
 
 /**
  * Data Model Storage API

@@ -3,9 +3,8 @@ import { Container, token } from 'brandi';
 import {
   DataModelsHandler,
   DataModelVersionHandler,
-  DataModelApiFacadeService,
   MixerApiService,
-  DataModelService,
+  DataModelTypeDefsBuilderService,
   DataModelStorageApiService,
   DateUtils,
   TimeUtils,
@@ -33,9 +32,14 @@ export const TOKENS = {
   dataModelVersionHandler: token<DataModelVersionHandler>(
     'dataModelVersionHandler'
   ),
-  dataModelService: token<DataModelService>('dataModelService'),
+  mixerApiService: token<MixerApiService>('mixerApiService'),
+  dataModelStorageApiService: token<DataModelStorageApiService>(
+    'dataModelStorageApiService'
+  ),
+  dataModelTypeDefsBuilderService: token<DataModelTypeDefsBuilderService>(
+    'dataModelTypeDefsBuilderService'
+  ),
   dataManagmentHandler: token<DataManagmentHandler>('dataManagmentHandler'),
-  dataModelsApiService: token('dataModelsApiService'),
 };
 
 export const rootInjector = new Container();
@@ -57,17 +61,18 @@ rootInjector
   .inSingletonScope();
 
 rootInjector
-  .bind(TOKENS.dataModelsApiService)
+  .bind(TOKENS.mixerApiService)
   .toInstance(() => {
     const sdkClient = getCogniteSDKClient();
-    const solutionsApiService = new DataModelApiFacadeService(
-      new MixerApiService(sdkClient),
-      new DataModelStorageApiService(sdkClient),
-      new GraphQlUtilsService()
-    );
+    return new MixerApiService(sdkClient);
+  })
+  .inSingletonScope();
 
-    // TODO: provide proper types here
-    return solutionsApiService as any;
+rootInjector
+  .bind(TOKENS.dataModelStorageApiService)
+  .toInstance(() => {
+    const sdkClient = getCogniteSDKClient();
+    return new DataModelStorageApiService(sdkClient);
   })
   .inSingletonScope();
 
@@ -76,7 +81,8 @@ rootInjector
   .toInstance(
     () =>
       new DataModelsHandler(
-        rootInjector.get(TOKENS.dataModelsApiService as any)
+        rootInjector.get(TOKENS.mixerApiService),
+        rootInjector.get(TOKENS.dataModelStorageApiService)
       )
   )
   .inSingletonScope();
@@ -86,24 +92,27 @@ rootInjector
   .toInstance(
     () =>
       new DataModelVersionHandler(
-        rootInjector.get(TOKENS.dataModelsApiService as any)
+        rootInjector.get(TOKENS.mixerApiService),
+        rootInjector.get(TOKENS.dataModelStorageApiService),
+        new GraphQlUtilsService()
       )
   )
   .inSingletonScope();
 
 rootInjector
-  .bind(TOKENS.dataModelService)
-  .toInstance(() => new DataModelService(new GraphQlUtilsService()))
+  .bind(TOKENS.dataModelTypeDefsBuilderService)
+  .toInstance(
+    () => new DataModelTypeDefsBuilderService(new GraphQlUtilsService())
+  )
   .inSingletonScope();
 
 rootInjector
   .bind(TOKENS.dataManagmentHandler)
-  .toInstance(() => {
-    const queryBuilder = new MixerApiQueryBuilderService();
-
-    return new DataManagmentHandler(
-      queryBuilder,
-      rootInjector.get(TOKENS.dataModelsApiService as any)
-    );
-  })
+  .toInstance(
+    () =>
+      new DataManagmentHandler(
+        new MixerApiQueryBuilderService(),
+        rootInjector.get(TOKENS.mixerApiService)
+      )
+  )
   .inSingletonScope();

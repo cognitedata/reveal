@@ -1,12 +1,12 @@
-import { DataModelVersionStatus } from '../../../types';
-import { SolutionSchemaVersionDataMapper } from './solution-schema-version-data-mapper';
+import { DataModelVersionStatus } from '../../types';
+import { DataModelVersionDataMapper } from './data-model-version-data-mapper';
 
-describe('SolutionSchemaVersionDataMapperTest', () => {
+describe('DataModelVersionDataMapperTest', () => {
   const createInstance = () => {
-    return new SolutionSchemaVersionDataMapper();
+    return new DataModelVersionDataMapper();
   };
 
-  const templateSchemaMock = {
+  const dataModelVersionMock = {
     version: 1,
     createdTime: '2022-05-12T07:46:48.206Z',
     lastUpdatedTime: '2022-05-12T07:46:48.206Z',
@@ -23,9 +23,9 @@ describe('SolutionSchemaVersionDataMapperTest', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should deserialize response into solution schema', () => {
+  it('should deserialize response into data model version', () => {
     const service = createInstance();
-    expect(service.deserialize('123', templateSchemaMock)).toEqual({
+    expect(service.deserialize('123', dataModelVersionMock)).toEqual({
       version: '1',
       externalId: '123',
       status: DataModelVersionStatus.PUBLISHED,

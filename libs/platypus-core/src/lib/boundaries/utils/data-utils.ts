@@ -10,4 +10,12 @@ export class DataUtils {
   static isArray(obj: unknown): boolean {
     return Array.isArray(obj);
   }
+
+  static convertToCamelCase(input: string): string {
+    const regex = /\s+(\w)?/gi;
+
+    return input
+      .toLowerCase()
+      .replace(regex, (match, letter) => letter.toUpperCase());
+  }
 }

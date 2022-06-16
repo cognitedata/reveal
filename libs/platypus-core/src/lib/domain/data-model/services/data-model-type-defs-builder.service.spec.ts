@@ -1,5 +1,5 @@
 import { IGraphQlUtilsService } from '../boundaries';
-import { DataModelService } from './data-model.service';
+import { DataModelTypeDefsBuilderService } from './data-model-type-defs-builder.service';
 
 const schemaMock = `
 type Person @template {
@@ -105,7 +105,7 @@ const dataModelMock = {
     },
   ],
 };
-describe('DataModelService', () => {
+describe('DataModelTypeDefsBuilderService Test', () => {
   const graphqlUtilsMock = {
     addField: jest.fn().mockImplementation((type, name, params) => ({
       name: params.name,
@@ -156,7 +156,7 @@ describe('DataModelService', () => {
   } as IGraphQlUtilsService;
 
   const createInstance = () => {
-    return new DataModelService(graphqlUtilsMock);
+    return new DataModelTypeDefsBuilderService(graphqlUtilsMock);
   };
 
   it('should work', () => {

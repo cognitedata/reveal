@@ -1,59 +1,9 @@
+import { UpdateDataModelFieldDTO } from '../dto';
 import {
-  BuildQueryDTO,
-  ConflictMode,
-  CreateDataModelDTO,
-  DataModelStorageModelsDTO,
-  CreateDataModelVersionDTO,
-  DeleteDataModelDTO,
-  FetchDataModelDTO,
-  GraphQLQueryResponse,
-  ListVersionsDTO,
-  RunQueryDTO,
-  UpdateDataModelFieldDTO,
-} from '../dto';
-import {
-  DataModel,
   DataModelTypeDefs,
   DataModelTypeDefsField,
   DataModelTypeDefsType,
-  DataModelVersion,
 } from '../types';
-
-export interface IDataModelsApiService {
-  create(dto: CreateDataModelDTO): Promise<DataModel>;
-  delete(dto: DeleteDataModelDTO): Promise<unknown>;
-  list(): Promise<DataModel[]>;
-  fetch(dto: FetchDataModelDTO): Promise<DataModel>;
-}
-
-export interface IDataModelVersionApiService {
-  /**
-   * Fetch solution (template group)
-   * @param dto
-   */
-  fetchVersion(dto: FetchDataModelDTO): Promise<DataModelVersion>;
-  /**
-   * List Solution schema (template groups) versions
-   * @param dto
-   */
-  listVersions(dto: ListVersionsDTO): Promise<DataModelVersion[]>;
-
-  /**
-   * Publish new schema by bumping the version.
-   * @param dto - {dataModelId, version, schema, bindings}
-   * @param conflictMode - NEW_VERSION | PATCH
-   */
-  publishVersion(
-    dto: CreateDataModelVersionDTO,
-    conflictMode: ConflictMode
-  ): Promise<DataModelVersion>;
-
-  /**
-   * Run GraphQL Query.
-   * @param dto
-   */
-  runQuery(dto: RunQueryDTO): Promise<GraphQLQueryResponse>;
-}
 
 export interface IGraphQlUtilsService {
   /**
@@ -122,9 +72,4 @@ export interface IGraphQlUtilsService {
 
   /** Clears the state */
   clear(): void;
-}
-
-export interface IQueryBuilderService {
-  getOperationName(typeName: string): string;
-  buildQuery(dto: BuildQueryDTO): string;
 }

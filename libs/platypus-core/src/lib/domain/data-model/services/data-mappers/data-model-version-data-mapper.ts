@@ -1,7 +1,7 @@
-import { DataModelVersion, DataModelVersionStatus } from '../../../types';
-import { ApiVersion } from '../../../dto';
+import { DataModelVersion, DataModelVersionStatus } from '../../types';
+import { ApiVersion } from '../../dto';
 
-export class SolutionSchemaVersionDataMapper {
+export class DataModelVersionDataMapper {
   serialize(externalId: string, solutionSchema: DataModelVersion): ApiVersion {
     return {
       createdTime: new Date(solutionSchema.createdTime).toISOString(),

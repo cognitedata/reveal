@@ -7,5 +7,4 @@ export * from './lib/boundaries/validation';
 export * from './lib/boundaries/utils';
 export * from './lib/domain/data-model';
 export * from './lib/domain/common/validators';
-export * from './lib/domain/data-model/providers/solutions';
-export * from './lib/domain/data-model/services/data-model.service';
+export * from './lib/domain/data-model/services';

@@ -11,7 +11,7 @@ import {
   ApiVersionFromGraphQl,
   ConflictMode,
   DataModelStorageBindingsDTO,
-} from '../../dto';
+} from '../dto';
 
 export class MixerApiService {
   private schemaServiceBaseUrl: string;
@@ -102,7 +102,7 @@ export class MixerApiService {
           externalId: apiSpec.externalId,
           name: apiSpec.name ? apiSpec.name : apiSpec.externalId,
           description: apiSpec.description,
-          // metadata: apiSpec.metadata,
+          metadata: apiSpec.metadata,
         },
       },
     } as GraphQlQueryParams;

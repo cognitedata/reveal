@@ -1,9 +1,8 @@
-import { IQueryBuilderService } from '../../boundaries';
-import { mixerApiBuiltInTypes } from '../../constants';
-import { BuildQueryDTO } from '../../dto';
-import { DataModelTypeDefsField } from '../../types';
+import { mixerApiBuiltInTypes } from '../constants';
+import { BuildQueryDTO } from '../dto';
+import { DataModelTypeDefsField } from '../types';
 
-export class MixerApiQueryBuilderService implements IQueryBuilderService {
+export class MixerApiQueryBuilderService {
   getOperationName(typeName: string): string {
     return `list${typeName}`;
   }

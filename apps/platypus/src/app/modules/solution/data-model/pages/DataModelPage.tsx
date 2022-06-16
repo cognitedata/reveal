@@ -55,7 +55,9 @@ export const DataModelPage = () => {
     null
   );
   const [selectedSchema, setSelectedSchema] = useState(selectedReduxSchema);
-  const dataModelService = useInjection(TOKENS.dataModelService);
+  const dataModelTypeDefsBuilder = useInjection(
+    TOKENS.dataModelTypeDefsBuilderService
+  );
   const dataModelVersionHandler = useInjection(TOKENS.dataModelVersionHandler);
   const { insertSchema, updateSchema, selectVersion } = useSolution();
   const {
@@ -66,7 +68,7 @@ export const DataModelPage = () => {
   } = useLocalDraft(dataModel!.id);
 
   const onSelectedSchemaChanged = (changedSchema: DataModelVersion) => {
-    dataModelService.clear();
+    dataModelTypeDefsBuilder.clear();
     setProjectSchema(changedSchema.schema);
     setIsDirty(false);
     setCurrentType(null);
@@ -81,9 +83,9 @@ export const DataModelPage = () => {
   };
   useEffect(() => {
     function fetchSchemaAndTypes() {
-      const builtInTypesResponse = dataModelService.getBuiltinTypes();
+      const builtInTypesResponse = dataModelTypeDefsBuilder.getBuiltinTypes();
       setBuiltInTypes(builtInTypesResponse);
-      dataModelService.clear();
+      dataModelTypeDefsBuilder.clear();
       setProjectSchema(selectedSchema.schema);
       setInit(true);
     }
@@ -97,7 +99,7 @@ export const DataModelPage = () => {
   useEffect(() => {
     const draft = getLocalDraft(selectedReduxSchema.version);
     if (draft) {
-      dataModelService.clear();
+      dataModelTypeDefsBuilder.clear();
       setSelectedSchema(draft);
       setProjectSchema(draft.schema);
       setMode(SchemaEditorMode.Edit);
@@ -237,7 +239,7 @@ export const DataModelPage = () => {
       setIsDirty(false);
       setCurrentType(null);
       removeLocalDraft(draft);
-      dataModelService.clear();
+      dataModelTypeDefsBuilder.clear();
       setSelectedSchema(selectedReduxSchema);
       selectVersion('latest');
       setInit(false);

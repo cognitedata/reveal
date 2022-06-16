@@ -45,20 +45,25 @@ export function UIEditor({
     }
   );
   const errorLogger = useErrorLogger();
-  const dataModelService = useInjection(TOKENS.dataModelService);
+  const dataModelTypeDefsBuilder = useInjection(
+    TOKENS.dataModelTypeDefsBuilderService
+  );
 
   useEffect(() => {
     if (graphQLSchemaString === '') {
-      dataModelService.clear();
+      dataModelTypeDefsBuilder.clear();
     }
     if (
       graphQLSchemaString !== currentGraphqlSchema &&
       graphQLSchemaString !== ''
     ) {
       try {
-        const newState = dataModelService.parseSchema(graphQLSchemaString);
+        const newState =
+          dataModelTypeDefsBuilder.parseSchema(graphQLSchemaString);
         setSolutionDataModel(newState);
-        setCustomTypesNames(dataModelService.getCustomTypesNames(newState));
+        setCustomTypesNames(
+          dataModelTypeDefsBuilder.getCustomTypesNames(newState)
+        );
         setCurrentGraphqlSchema(graphQLSchemaString);
         setCurrentType(
           newState.types.find((type) => type.name === currentType?.name) || null
@@ -81,10 +86,10 @@ export function UIEditor({
     ) as DataModelTypeDefsType;
     setSolutionDataModel(newState);
     setCurrentType(updatedType);
-    const updatedGqlSchema = dataModelService.buildSchemaString();
+    const updatedGqlSchema = dataModelTypeDefsBuilder.buildSchemaString();
     setCurrentGraphqlSchema(updatedGqlSchema);
     onSchemaChange(updatedGqlSchema);
-    setCustomTypesNames(dataModelService.getCustomTypesNames(newState));
+    setCustomTypesNames(dataModelTypeDefsBuilder.getCustomTypesNames(newState));
   };
 
   const onFieldUpdated = (
@@ -92,7 +97,7 @@ export function UIEditor({
     fieldName: string,
     updates: Partial<UpdateDataModelFieldDTO>
   ) => {
-    const newState = dataModelService.updateField(
+    const newState = dataModelTypeDefsBuilder.updateField(
       solutionDataModel,
       typeName,
       fieldName,
@@ -101,7 +106,7 @@ export function UIEditor({
     updateUiState(newState, currentType!.name);
   };
   const onFieldRemoved = (typeName: string, fieldName: string) => {
-    const newState = dataModelService.removeField(
+    const newState = dataModelTypeDefsBuilder.removeField(
       solutionDataModel,
       typeName,
       fieldName
@@ -117,19 +122,22 @@ export function UIEditor({
     );
 
     const newState = defaultDirective
-      ? dataModelService.addType(
+      ? dataModelTypeDefsBuilder.addType(
           solutionDataModel,
           capitalizedTypeName,
           defaultDirective.name
         )
-      : dataModelService.addType(solutionDataModel, capitalizedTypeName);
+      : dataModelTypeDefsBuilder.addType(
+          solutionDataModel,
+          capitalizedTypeName
+        );
 
     updateUiState(newState, capitalizedTypeName);
   };
 
   const onFieldCreate = () => {
     const fieldName = '';
-    const newState = dataModelService.addField(
+    const newState = dataModelTypeDefsBuilder.addField(
       solutionDataModel,
       currentType!.name,
       fieldName,
@@ -143,14 +151,18 @@ export function UIEditor({
 
   const renameSchemaType = (oldValue: string, newValue: string) => {
     updateUiState(
-      dataModelService.renameType(solutionDataModel, oldValue, newValue),
+      dataModelTypeDefsBuilder.renameType(
+        solutionDataModel,
+        oldValue,
+        newValue
+      ),
       newValue
     );
   };
 
   const deleteSchemaType = (typeName: string) => {
     updateUiState(
-      dataModelService.removeType(solutionDataModel, typeName),
+      dataModelTypeDefsBuilder.removeType(solutionDataModel, typeName),
       typeName
     );
   };

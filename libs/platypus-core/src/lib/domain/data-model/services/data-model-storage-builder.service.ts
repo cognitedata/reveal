@@ -1,16 +1,13 @@
-import {
-  DataModelStorageBindingsDTO,
-  DataModelStorageModelsDTO,
-} from '../../dto';
+import { DataModelStorageBindingsDTO, DataModelStorageModelsDTO } from '../dto';
 
 import {
   DataModelVersion,
   DataModelTypeDefs,
   DataModelStorageModel,
   DmsModelProperty,
-} from '../../types';
-import { KeyValueMap } from '../../../../boundaries/types';
-import { mixerApiBuiltInTypes } from '../../constants';
+} from '../types';
+import { KeyValueMap } from '../../../boundaries/types';
+import { mixerApiBuiltInTypes } from '../constants';
 
 export class DataModelStorageBuilderService {
   /**
