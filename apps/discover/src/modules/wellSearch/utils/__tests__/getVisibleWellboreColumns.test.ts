@@ -8,7 +8,14 @@ describe('getVisibleWellboreColumns', () => {
   const wellboreColumns = getWellboreColumns();
   it('should return expected result', () => {
     const result = getVisibleWellboreColumns(
-      ['wellname', 'kbElevation', 'testColumnName'],
+      [
+        'wellname',
+        'kbElevation',
+        'trueVerticalDepth',
+        'measuredDepth',
+        'doglegSeverity',
+        'testColumnName',
+      ],
       wellColumns,
       wellboreColumns
     );

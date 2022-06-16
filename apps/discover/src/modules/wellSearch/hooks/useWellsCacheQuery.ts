@@ -40,8 +40,6 @@ export const useWellsCacheQuery = (
     [cachedWells]
   );
 
-  // console.log('Existing wells:', cachedWellIds);
-
   return useQuery<WellResult>(
     [WELL_QUERY_KEY.WELLS_ONE, requiredWellIds],
     async () => {

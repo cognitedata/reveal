@@ -31,6 +31,9 @@ describe('useEnabledWellResultColumnNames hook', () => {
       'waterDepth',
       'fieldname',
       'kbElevation',
+      'trueVerticalDepth',
+      'measuredDepth',
+      'doglegSeverity',
     ]);
   });
 });

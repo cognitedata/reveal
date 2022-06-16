@@ -1,7 +1,10 @@
 import { useFavoriteWellIds } from 'domain/favorites/internal/hooks/useFavoriteWellIds';
+import { useTrajectoriesMetadataQuery } from 'domain/wells/trajectory/internal/queries/useTrajectoriesMetadataQuery';
 import { processedWellsAdapter } from 'domain/wells/well/internal/adapters';
 import { useWellSearchResultQuery } from 'domain/wells/well/internal/queries/useWellSearchResultQuery';
 import { Well } from 'domain/wells/well/internal/types';
+import { getDoglegSeverityUnit } from 'domain/wells/wellbore/internal/transformers/getDoglegSeverityUnit';
+import { getWellboreIdsList } from 'domain/wells/wellbore/internal/transformers/getWellboreIdsList';
 
 import React, { useCallback, useEffect, useRef } from 'react';
 import { batch, useDispatch } from 'react-redux';
@@ -23,6 +26,7 @@ import { moveToCoords, zoomToCoords } from 'modules/map/actions';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useWells, useIndeterminateWells } from 'modules/wellSearch/selectors';
+import { WellboreId } from 'modules/wellSearch/types';
 import { WellResultTableOptions } from 'pages/authorized/constant';
 import { SearchBreadcrumb } from 'pages/authorized/search/common/searchResult';
 import { ADD_TO_FAVORITES_OPTION_TEXT } from 'pages/authorized/search/document/constants';
@@ -50,17 +54,28 @@ export const WellResultTable: React.FC = () => {
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
   const dispatch = useDispatch();
   const navigateToWellInspect = useNavigateToWellInspect();
-  const { columns } = useDataForTable();
   const { wells } = data || {};
   const wellsRef = useRef(wells);
+
+  const wellboreIdList: WellboreId[] = getWellboreIdsList(wells);
+  const { isLoading, data: trajectoryData } =
+    useTrajectoriesMetadataQuery(wellboreIdList);
+
+  const doglegSeverityUnit = getDoglegSeverityUnit(trajectoryData);
+  const { columns } = useDataForTable(doglegSeverityUnit);
 
   useEffect(() => {
     wellsRef.current = wells;
   }, [wells]);
 
   const wellsData = useDeepMemo(
-    () => processedWellsAdapter(wells || EMPTY_ARRAY, userPreferredUnit),
-    [wells, userPreferredUnit]
+    () =>
+      processedWellsAdapter(
+        wells || EMPTY_ARRAY,
+        userPreferredUnit,
+        trajectoryData
+      ),
+    [wells, userPreferredUnit, isLoading]
   );
 
   useDeepEffect(() => {

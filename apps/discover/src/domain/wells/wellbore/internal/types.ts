@@ -1,6 +1,10 @@
 import { Metadata } from '@cognite/sdk';
 import { Wellbore as WellboreV2 } from '@cognite/sdk-wells-v2';
-import { Wellbore as WellboreV3 } from '@cognite/sdk-wells-v3';
+import {
+  DoglegSeverity,
+  DoglegSeverityUnit as DoglegSeverityUnitV3,
+  Wellbore as WellboreV3,
+} from '@cognite/sdk-wells-v3';
 
 export interface Wellbore
   extends Omit<WellboreV2, 'id' | 'wellId' | 'sourceWellbores'>,
@@ -18,6 +22,9 @@ export interface Wellbore
   metadata?: Metadata;
   parentExternalId?: string;
   description?: string;
+  maxMeasuredDepth?: number;
+  maxTrueVerticalDepth?: number;
+  maxDoglegSeverity?: DoglegSeverity;
 }
 
 interface WellSequence {
@@ -32,3 +39,5 @@ interface WellSequenceMetadata {
   source: string;
   fileType: string;
 }
+
+export type DogLegSeverityUnit = DoglegSeverityUnitV3;

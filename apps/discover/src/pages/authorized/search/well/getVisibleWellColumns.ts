@@ -1,4 +1,5 @@
 import { Well } from 'domain/wells/well/internal/types';
+import { DogLegSeverityUnit } from 'domain/wells/wellbore/internal/types';
 
 import pickBy from 'lodash/pickBy';
 
@@ -14,11 +15,13 @@ export type Field = {
 export const getVisibleWellColumns = ({
   unit,
   enabled,
+  doglegUnit,
 }: {
   unit: string;
   enabled: string[];
+  doglegUnit?: DogLegSeverityUnit;
 }): ColumnMap<Well> => {
-  const columns = getWellColumns(unit);
+  const columns = getWellColumns(unit, doglegUnit);
 
   const visibleColumns = pickBy(columns, (_column, key) =>
     enabled.includes(key)

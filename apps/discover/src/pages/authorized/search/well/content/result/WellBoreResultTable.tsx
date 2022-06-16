@@ -20,7 +20,6 @@ import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useVisibleWellboreColumns } from 'hooks/useVisibleWellboreColumns';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { wellSearchActions } from 'modules/wellSearch/actions';
-import { useWellQueryResultWellbores } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';
 import { useWells } from 'modules/wellSearch/selectors';
 import { isWellboreFavored } from 'modules/wellSearch/utils/isWellboreFavored';
 import { WellboreSubtableOptions } from 'pages/authorized/constant';
@@ -43,7 +42,7 @@ export const Message = styled.div`
 `;
 
 export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
-  const wellbores = useWellQueryResultWellbores([well.id]);
+  const { wellbores } = well;
   const { selectedWellboreIds } = useWells();
   const favoriteWellIds = useFavoriteWellIds();
   const navigateToWellInspect = useNavigateToWellInspect();

@@ -2,10 +2,16 @@ import { getSpudDateDisplay } from 'domain/wells/well/internal/selectors/getSpud
 import { getSpudDateTableSort } from 'domain/wells/well/internal/selectors/getSpudDateSort';
 import { wellFieldTitles } from 'domain/wells/well/internal/titles';
 import { Well } from 'domain/wells/well/internal/types';
+import { DogLegSeverityUnit } from 'domain/wells/wellbore/internal/types';
 
 import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 import { ColumnMap } from 'modules/documentSearch/utils/getAvailableColumns';
-import { KB_ELEVATION_TEXT } from 'modules/wellSearch/constantsSidebarFilters';
+import {
+  DOGLEG_SEVERITY,
+  MD_ELEVATION_TEXT,
+  TVD,
+  KB_ELEVATION_TEXT,
+} from 'modules/wellSearch/constantsSidebarFilters';
 
 import {
   BLOCK_NAME,
@@ -20,7 +26,10 @@ export type Field = {
   enabled: boolean;
 };
 
-export const getWellColumns = (userPreferredUnit = ''): ColumnMap<Well> => {
+export const getWellColumns = (
+  userPreferredUnit = '',
+  doglegUnit?: DogLegSeverityUnit
+): ColumnMap<Well> => {
   return {
     wellname: {
       Header: WELL,
@@ -73,6 +82,26 @@ export const getWellColumns = (userPreferredUnit = ''): ColumnMap<Well> => {
       accessor: 'kbElevation', // this is an empty cell in well table
       width: '130px',
       order: 7,
+    },
+    trueVerticalDepth: {
+      Header: `${TVD} (${userPreferredUnit})`,
+      accessor: 'tvd',
+      width: '130px',
+      order: 8,
+    },
+    measuredDepth: {
+      Header: `${MD_ELEVATION_TEXT} (${userPreferredUnit})`,
+      accessor: 'md',
+      width: '130px',
+      order: 9,
+    },
+    doglegSeverity: {
+      Header: doglegUnit
+        ? `${DOGLEG_SEVERITY} (${doglegUnit.angleUnit}/${doglegUnit.distanceInterval} ${doglegUnit.distanceUnit}s)`
+        : `${DOGLEG_SEVERITY}`,
+      accessor: 'dls',
+      width: '130px',
+      order: 10,
     },
   };
 };

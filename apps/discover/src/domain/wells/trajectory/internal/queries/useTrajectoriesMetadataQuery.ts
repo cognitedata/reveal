@@ -3,16 +3,17 @@ import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/tr
 import { useQuery } from 'react-query';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
+import { WellboreId } from 'modules/wellSearch/types';
 
 import { getTrajectories } from '../../service/network/getTrajectories';
 
-export const useTrajectoriesMetadataQuery = () => {
-  const wellboreIds = useWellInspectSelectedWellboreIds();
+export const useTrajectoriesMetadataQuery = (wellboreIds?: WellboreId[]) => {
+  const selectedWellboreIds = useWellInspectSelectedWellboreIds();
 
   const trajectoriesMetadata = useQuery(
-    [WELL_QUERY_KEY.TRAJECTORIES_LIST, wellboreIds],
+    [WELL_QUERY_KEY.TRAJECTORIES_LIST, wellboreIds || selectedWellboreIds],
     async () => {
-      return getTrajectories(wellboreIds);
+      return getTrajectories(wellboreIds || selectedWellboreIds);
     }
   );
 

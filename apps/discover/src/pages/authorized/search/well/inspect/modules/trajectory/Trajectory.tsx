@@ -79,11 +79,6 @@ export const Trajectory: React.FC = () => {
     [selectedTrajectories, trajectoryRows]
   );
 
-  // const selectedWellbores = useMemo(
-  //   () => wellbores.filter((wellbore) => selectedWellboreIds[wellbore.id]),
-  //   [selectedWellboreIds, wellbores]
-  // );
-
   useEffect(() => {
     // Set new wellbores as selected wellbored in trajectory tab
     const selectedWellboreIdsMap: { [key: number]: boolean } = wellbores

@@ -166,6 +166,18 @@ export interface WellName {
   name: string;
 }
 
+export interface WellSequence {
+  name: string;
+  id: number;
+  metadata: WellSequenceMetadata;
+}
+
+interface WellSequenceMetadata {
+  subtype: string;
+  type: string;
+  source: string;
+  fileType: string;
+}
 export type WellId = string;
 export type WellboreId = string;
 
