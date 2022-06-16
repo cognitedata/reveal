@@ -110,7 +110,7 @@ const Wrapper = styled.div`
   width: 320px;
   margin: 0;
   padding: 16px;
-  border: 1px solid #dedede;
+  border: none;
   border-radius: 4px;
 `;
 
