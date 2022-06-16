@@ -25,7 +25,7 @@ import TopBarWrapper from 'components/TopBar/TopBar';
 import TenantSelectorView from './TenantSelector/TenantSelector';
 import UserProfile from './UserProfile/UserProfile';
 import ChartListPage from './ChartListPage/ChartListPage';
-import ChartView from './ChartView/ChartView';
+import ChartViewPageRoute from './ChartViewPage/ChartViewPageRoute';
 
 const SentryRoute = Sentry.withSentryRouting(Route);
 
@@ -214,7 +214,10 @@ const AppRoutes = () => {
     <Switch>
       <RouteWithTopbar path={`${path}/`} exact component={ChartListPage} />
       <RouteWithTopbar path={`${path}/user`} exact component={UserProfile} />
-      <RouteWithTopbar path={`${path}/:chartId`} component={ChartView} />
+      <RouteWithTopbar
+        path={`${path}/:chartId`}
+        component={ChartViewPageRoute}
+      />
     </Switch>
   );
 };

@@ -13,19 +13,18 @@ import AssetSearchHit from 'components/SearchResultTable/AssetSearchHit';
 import { trackUsage } from 'services/metrics';
 import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
 import { useTranslations } from 'hooks/translations';
-import { Chart, ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import SourceTable from 'components/SourceTable/SourceTable';
 import { timeseriesSummaries } from 'models/timeseries-results/selectors';
 import { useRecoilValue } from 'recoil';
 import { calculationSummaries } from 'models/calculation-results/selectors';
+import { useInitializedChart } from 'pages/ChartViewPage/hooks';
+import { useParams } from 'react-router-dom';
 
-type Prop = {
-  chart: Chart;
-  assetId: string;
-};
-
-export const FileView = ({ chart, assetId }: Prop) => {
-  const chartId = chart.id;
+const FileViewPage = () => {
+  const { chartId, assetId } =
+    useParams<{ chartId: string; assetId: string }>();
+  const { data: chart } = useInitializedChart(chartId);
 
   const sources = useMemo(() => {
     return (chart?.sourceCollection ?? [])
@@ -240,3 +239,5 @@ const NoChartBox = styled.div`
     margin: 0 0 2rem;
   }
 `;
+
+export default FileViewPage;

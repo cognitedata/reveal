@@ -3,12 +3,7 @@ import get from 'lodash/get';
 import { toast, Loader } from '@cognite/cogs.js';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useIsChartOwner } from 'hooks/user';
-import {
-  useParams,
-  useRouteMatch,
-  Switch as RouterSwitch,
-  Route,
-} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
 import ChartPlotContainer from 'components/PlotlyChart/ChartPlotContainer';
@@ -38,7 +33,6 @@ import chartAtom from 'models/chart/atom';
 import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
 import { useTranslations } from 'hooks/translations';
 import { makeDefaultTranslations } from 'utils/translations';
-import { FileView } from 'pages/FileView/FileView';
 import DetailsSidebar from 'components/DetailsSidebar/DetailsSidebar';
 import ThresholdSidebar from 'components/Thresholds/ThresholdSidebar';
 import SearchSidebar from 'components/Search/SearchSidebar';
@@ -90,12 +84,11 @@ const defaultTranslations = makeDefaultTranslations(
   'This chart does not seem to exist. You might not have access'
 );
 
-const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
+const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [showThresholdMenu, setShowThresholdMenu] = useState(false);
   const [query = '', setQuery] = useSearchParam(SEARCH_KEY, false);
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
-  const { path } = useRouteMatch();
   const { data: login } = useUserInfo();
 
   /**
@@ -596,117 +589,107 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     <>
       <TimeseriesCollectionEffects />
       <CalculationCollectionEffects />
-      <RouterSwitch>
-        <Route exact path={path}>
-          <ChartViewContainer id="chart-view">
-            {showSearch && (
-              <SearchSidebar visible={showSearch} onClose={handleCloseSearch} />
-            )}
-            <ContentWrapper showSearch={showSearch}>
-              <ChartViewHeader
-                userId={login?.id}
-                isOwner={isChartOwner}
-                stackedMode={stackedMode}
-                setStackedMode={setStackedMode}
-                showSearch={showSearch}
-                showYAxis={showYAxis}
-                showMinMax={showMinMax}
-                showGridlines={showGridlines}
-                mergeUnits={mergeUnits}
-                dateFrom={new Date(chart.dateFrom)}
-                dateTo={new Date(chart.dateTo)}
-                handleOpenSearch={handleOpenSearch}
-                handleClickNewWorkflow={handleClickNewWorkflow}
-                handleImportCalculationsClick={
-                  isProduction ? undefined : handleImportCalculationsClick
-                }
-                handleSettingsToggle={handleSettingsToggle}
-                handleDateChange={handleDateChange}
-                translations={ChartViewHeaderTranslations}
-              />
-              <ChartContainer>
-                <SplitPaneLayout defaultSize={200}>
-                  <TopPaneWrapper className="chart">
-                    <ChartWrapper>
-                      <ChartPlotContainer
-                        key={chartId}
-                        chart={chart}
-                        setChart={setChart}
-                        isYAxisShown={showYAxis}
-                        isMinMaxShown={showMinMax}
-                        isGridlinesShown={showGridlines}
-                        stackedMode={stackedMode}
-                        mergeUnits={mergeUnits}
-                        timeseriesData={timeseriesData}
-                        calculationsData={calculationData}
-                      />
-                    </ChartWrapper>
-                  </TopPaneWrapper>
-                  <BottomPaneWrapper className="table">
-                    <div style={{ display: 'flex', height: '100%' }}>
-                      <SourceTable
-                        mode={workspaceMode}
-                        sources={sources}
-                        summaries={summaries}
-                        isEveryRowHidden={isEveryRowHidden}
-                        headerTranslations={sourceTableTranslation}
-                        selectedSourceId={selectedSourceId}
-                        openNodeEditor={openNodeEditor}
-                        onRowClick={handleSourceClick}
-                        onInfoClick={handleInfoClick}
-                        onThresholdClick={handleThresholdClick}
-                        onShowHideButtonClick={handleShowHideButtonClick}
-                        timeseriesData={timeseriesData}
-                        calculationData={calculationData}
-                        onConversionUnitClick={handleConversionUnitClick}
-                        onCustomUnitLabelClick={handleCustomUnitLabelClick}
-                        onOverrideUnitClick={handleOverrideUnitClick}
-                        onResetUnitClick={handleResetUnitClick}
-                        onStatusIconClick={handleStatusIconClick}
-                        onRemoveSourceClick={handleRemoveSourceClick}
-                        onUpdateAppearance={handleUpdateAppearance}
-                        onUpdateName={handleUpdateName}
-                        onDuplicateCalculation={handleDuplicateCalculation}
-                        onMoveSource={handleMoveSource}
-                      />
-                      {workspaceMode === 'editor' && !!selectedSourceId && (
-                        <NodeEditor
-                          setChart={setChart}
-                          workflowId={selectedSourceId}
-                          onClose={handleCloseEditor}
-                          chart={chart}
-                          translations={nodeEditorTranslations}
-                        />
-                      )}
-                    </div>
-                  </BottomPaneWrapper>
-                </SplitPaneLayout>
-              </ChartContainer>
-            </ContentWrapper>
-            <DetailsSidebar
-              visible={showContextMenu}
-              onClose={handleCloseContextMenu}
-              sourceItem={selectedSourceItem}
-              statisticsResult={statisticsResult}
-              statisticsStatus={statisticsStatus}
-            />
-            <ThresholdSidebar
-              visible={showThresholdMenu}
-              onClose={handleCloseThresholdMenu}
-              updateChart={setChart}
-              chart={chart}
-            />
-          </ChartViewContainer>
-        </Route>
-        <Route
-          path={`${path}/files/:assetId`}
-          render={({ match }) => (
-            <FileView chart={chart} assetId={match.params.assetId} />
-          )}
+      <ChartViewContainer id="chart-view">
+        {showSearch && (
+          <SearchSidebar visible={showSearch} onClose={handleCloseSearch} />
+        )}
+        <ContentWrapper showSearch={showSearch}>
+          <ChartViewHeader
+            userId={login?.id}
+            isOwner={isChartOwner}
+            stackedMode={stackedMode}
+            setStackedMode={setStackedMode}
+            showSearch={showSearch}
+            showYAxis={showYAxis}
+            showMinMax={showMinMax}
+            showGridlines={showGridlines}
+            mergeUnits={mergeUnits}
+            dateFrom={new Date(chart.dateFrom)}
+            dateTo={new Date(chart.dateTo)}
+            handleOpenSearch={handleOpenSearch}
+            handleClickNewWorkflow={handleClickNewWorkflow}
+            handleImportCalculationsClick={
+              isProduction ? undefined : handleImportCalculationsClick
+            }
+            handleSettingsToggle={handleSettingsToggle}
+            handleDateChange={handleDateChange}
+            translations={ChartViewHeaderTranslations}
+          />
+          <ChartContainer>
+            <SplitPaneLayout defaultSize={200}>
+              <TopPaneWrapper className="chart">
+                <ChartWrapper>
+                  <ChartPlotContainer
+                    key={chartId}
+                    chart={chart}
+                    setChart={setChart}
+                    isYAxisShown={showYAxis}
+                    isMinMaxShown={showMinMax}
+                    isGridlinesShown={showGridlines}
+                    stackedMode={stackedMode}
+                    mergeUnits={mergeUnits}
+                    timeseriesData={timeseriesData}
+                    calculationsData={calculationData}
+                  />
+                </ChartWrapper>
+              </TopPaneWrapper>
+              <BottomPaneWrapper className="table">
+                <div style={{ display: 'flex', height: '100%' }}>
+                  <SourceTable
+                    mode={workspaceMode}
+                    sources={sources}
+                    summaries={summaries}
+                    isEveryRowHidden={isEveryRowHidden}
+                    headerTranslations={sourceTableTranslation}
+                    selectedSourceId={selectedSourceId}
+                    openNodeEditor={openNodeEditor}
+                    onRowClick={handleSourceClick}
+                    onInfoClick={handleInfoClick}
+                    onThresholdClick={handleThresholdClick}
+                    onShowHideButtonClick={handleShowHideButtonClick}
+                    timeseriesData={timeseriesData}
+                    calculationData={calculationData}
+                    onConversionUnitClick={handleConversionUnitClick}
+                    onCustomUnitLabelClick={handleCustomUnitLabelClick}
+                    onOverrideUnitClick={handleOverrideUnitClick}
+                    onResetUnitClick={handleResetUnitClick}
+                    onStatusIconClick={handleStatusIconClick}
+                    onRemoveSourceClick={handleRemoveSourceClick}
+                    onUpdateAppearance={handleUpdateAppearance}
+                    onUpdateName={handleUpdateName}
+                    onDuplicateCalculation={handleDuplicateCalculation}
+                    onMoveSource={handleMoveSource}
+                  />
+                  {workspaceMode === 'editor' && !!selectedSourceId && (
+                    <NodeEditor
+                      setChart={setChart}
+                      workflowId={selectedSourceId}
+                      onClose={handleCloseEditor}
+                      chart={chart}
+                      translations={nodeEditorTranslations}
+                    />
+                  )}
+                </div>
+              </BottomPaneWrapper>
+            </SplitPaneLayout>
+          </ChartContainer>
+        </ContentWrapper>
+        <DetailsSidebar
+          visible={showContextMenu}
+          onClose={handleCloseContextMenu}
+          sourceItem={selectedSourceItem}
+          statisticsResult={statisticsResult}
+          statisticsStatus={statisticsStatus}
         />
-      </RouterSwitch>
+        <ThresholdSidebar
+          visible={showThresholdMenu}
+          onClose={handleCloseThresholdMenu}
+          updateChart={setChart}
+          chart={chart}
+        />
+      </ChartViewContainer>
     </>
   );
 };
 
-export default ChartView;
+export default ChartViewPage;

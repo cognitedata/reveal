@@ -13,7 +13,7 @@ import {
 } from '@cognite/cogs.js';
 import { Col, List, Row } from 'antd';
 import DetailsBlock from 'components/DetailsBlock/DetailsBlock';
-import { SourceCircle, SourceSquare } from 'pages/ChartView/elements';
+import { SourceCircle, SourceSquare } from 'pages/ChartViewPage/elements';
 import { useState } from 'react';
 import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import { formatValueForDisplay } from 'utils/numbers';
