@@ -37,7 +37,7 @@ const Map: React.FC<Props> = ({ client, model }) => {
       viewer.current = new Cognite3DViewer({
         // @ts-expect-error client needs updates
         sdk: client,
-        domElement: document.getElementById('reveal')!,
+        domElement: document.getElementById('reveal-map')!,
       });
 
       // load a model and add it on 3d scene

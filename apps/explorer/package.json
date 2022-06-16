@@ -28,7 +28,8 @@
     "cypress:open": "../../node_modules/.bin/cypress open --env REACT_APP_E2E_USER=$(git config user.email)",
     "cypress:ci": "bazel test :cypress_test",
     "update-helpers": "bazel run :generate_package_json_helpers",
-    "deploy": "cd ../.. && ./scripts/deploy.sh explorer"
+    "deploy": "cd ../.. && ./scripts/deploy.sh explorer",
+    "graphql:deploy": "node resources/schema/deploy"
   },
   "jest": {
     "coveragePathIgnorePatterns": [

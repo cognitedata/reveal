@@ -1,0 +1,32 @@
+type Building @view {
+  name: String!
+  description: String
+  thumbnail: String
+}
+
+type Room @view {
+  type: String!
+  name: String!
+  description: String
+  isBookable: Boolean
+  building: Building
+}
+
+type Equipment @view {
+  type: String!
+  name: String!
+  isBroken: Boolean
+  room: Room
+  person: Person
+}
+
+type Team @view {
+  name: String
+}
+
+type Person @view {
+  name: String
+  slackId: String
+  desk: Equipment
+  team: Team
+}
