@@ -53,6 +53,14 @@ type VisibilityUpdateInfo = {
   priorityQueue: BinaryHeap<QueueItem>;
 };
 
+type VisibilitySceneParameters = {
+  pointClouds: PointCloudOctree[];
+  frustums: Frustum[];
+  camera: Camera;
+  cameraPositions: Vector3[];
+  renderer: WebGLRenderer;
+};
+
 export class Potree implements IPotree {
   private static picker: PointCloudOctreePicker | undefined;
   private _pointBudget: number = DEFAULT_POINT_BUDGET;
@@ -131,20 +139,16 @@ export class Potree implements IPotree {
     node: IPointCloudTreeNodeBase,
     updateInfo: VisibilityUpdateInfo,
     queueItem: QueueItem,
-    pointClouds: PointCloudOctree[],
-    frustums: THREE.Frustum[],
-    camera: THREE.Camera,
-    cameraPositions: THREE.Vector3[],
-    renderer: THREE.WebGLRenderer
+    sceneParams: VisibilitySceneParameters
   ): void {
     const pointCloudIndex = queueItem.pointCloudIndex;
-    const pointCloud = pointClouds[pointCloudIndex];
+    const pointCloud = sceneParams.pointClouds[pointCloudIndex];
 
     const maxLevel = pointCloud.maxLevel !== undefined ? pointCloud.maxLevel : Infinity;
 
     if (
       node.level > maxLevel ||
-      !frustums[pointCloudIndex].intersectsBox(node.boundingBox) ||
+      !sceneParams.frustums[pointCloudIndex].intersectsBox(node.boundingBox) ||
       this.shouldClip(pointCloud, node.boundingBox)
     ) {
       return;
@@ -175,15 +179,16 @@ export class Potree implements IPotree {
       pointCloud.visibleGeometry.push(node.geometryNode);
     }
 
-    const halfHeight = 0.5 * renderer.getSize(this._rendererSize).height * renderer.getPixelRatio();
+    const halfHeight =
+      0.5 * sceneParams.renderer.getSize(this._rendererSize).height * sceneParams.renderer.getPixelRatio();
 
     this.updateChildVisibility(
       queueItem,
       updateInfo.priorityQueue,
       pointCloud,
       node,
-      cameraPositions[pointCloudIndex],
-      camera,
+      sceneParams.cameraPositions[pointCloudIndex],
+      sceneParams.camera,
       halfHeight
     );
   }
@@ -225,18 +230,17 @@ export class Potree implements IPotree {
       return this.createVisibilityUpdateResult(updateInfo, []);
     }
 
-    // Ensure root node is always enqueued as a visible node, as it is never unloaded
-    // even when budget is 0
-    this.updateVisibilityForNode(
-      queueItem.node,
-      updateInfo,
-      queueItem,
+    const sceneParams: VisibilitySceneParameters = {
       pointClouds,
       frustums,
       camera,
       cameraPositions,
       renderer
-    );
+    };
+
+    // Ensure root node is always enqueued as a visible node, as it is never unloaded
+    // even when budget is 0
+    this.updateVisibilityForNode(queueItem.node, updateInfo, queueItem, sceneParams);
 
     while ((queueItem = priorityQueue.pop()) !== undefined) {
       const node = queueItem.node;
@@ -245,16 +249,7 @@ export class Potree implements IPotree {
       if (updateInfo.numVisiblePoints + node.numPoints > this.pointBudget) {
         break;
       }
-      this.updateVisibilityForNode(
-        node,
-        updateInfo,
-        queueItem,
-        pointClouds,
-        frustums,
-        camera,
-        cameraPositions,
-        renderer
-      );
+      this.updateVisibilityForNode(node, updateInfo, queueItem, sceneParams);
     } // end priority queue loop
 
     const numNodesToLoad = Math.min(this.maxNumNodesLoading, updateInfo.unloadedGeometry.length);
