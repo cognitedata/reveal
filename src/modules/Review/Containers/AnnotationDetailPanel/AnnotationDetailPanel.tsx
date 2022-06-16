@@ -9,7 +9,7 @@ import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import styled from 'styled-components';
 import { RootState } from 'src/store/rootReducer';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
-import { useDispatch, useSelector } from 'react-redux';
+import { batch, useDispatch, useSelector } from 'react-redux';
 import { FileInfo } from '@cognite/sdk';
 import { generateNodeTree } from 'src/modules/Review/Containers/AnnotationDetailPanel/utils/generateNodeTree';
 import { Categories, VisionReviewAnnotation } from 'src/modules/Review/types';
@@ -178,19 +178,21 @@ export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
 
   const handleOnSelect = useCallback(
     (id: ReactText, nextState: boolean) => {
-      dispatch(deselectAllSelectionsReviewPage());
-      if (id === tempKeypointCollection?.id) {
-        // when creating keypoint collections
-        if (nextState) {
-          dispatch(selectCollection(id));
+      batch(() => {
+        dispatch(deselectAllSelectionsReviewPage());
+        if (id === tempKeypointCollection?.id) {
+          // when creating keypoint collections
+          if (nextState) {
+            dispatch(selectCollection(id));
+          }
+        } else if (Object.values(Categories).includes(id as Categories)) {
+          dispatch(
+            selectCategory({ category: id as Categories, selected: nextState })
+          );
+        } else if (nextState) {
+          dispatch(selectAnnotation(+id));
         }
-      } else if (Object.values(Categories).includes(id as Categories)) {
-        dispatch(
-          selectCategory({ category: id as Categories, selected: nextState })
-        );
-      } else if (nextState) {
-        dispatch(selectAnnotation(+id));
-      }
+      });
     },
     [tempKeypointCollection?.id]
   );

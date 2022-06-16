@@ -310,11 +310,11 @@ export const selectProcessSummary = createSelector(
 
 export const selectIsProcessing = createSelector(
   [
-    (state: ProcessState) => state,
+    (state: ProcessState) => state.files,
+    (state: ProcessState) => state.jobs,
     (state: ProcessState, fileId: number) => fileId,
   ],
-  (state: ProcessState, fileId: number) => {
-    const { files, jobs } = state;
+  (files, jobs, fileId: number) => {
     const notCompletedStates = ['Queued', 'Collecting', 'Running'];
 
     const relatedJobIds = files.byId[fileId]?.jobIds;
