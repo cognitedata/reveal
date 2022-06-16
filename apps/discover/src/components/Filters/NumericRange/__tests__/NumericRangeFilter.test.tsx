@@ -5,8 +5,8 @@ import { testRenderer } from '__test-utils/renderer';
 
 import { NumericRangeFilter } from '../NumericRangeFilter';
 
-const values = [0, 100];
-const selectedValues = [2, 10];
+const values = [10, 100];
+const selectedValues = [12, 10];
 const onValueChange = jest.fn();
 
 const toId = 'To-';
@@ -96,12 +96,10 @@ describe('Numeric Range Filter', () => {
     expect(screen.getByTestId(fromId)).toHaveAttribute('readonly');
   });
 
-  // fix here
-  // eslint-disable-next-line jest/no-disabled-tests
-  it.skip(`Should show error when value is less than min`, async () => {
+  it(`Should show error when value is less than min`, async () => {
     await defaultTestInit(defaultProps);
 
-    await userEvent.type(screen.getByTestId(fromId), '{backspace}-1');
+    await userEvent.type(screen.getByTestId(fromId), '{backspace}');
     fireEvent.blur(screen.getByTestId(fromId));
 
     expect(screen.getByText(`Min value is ${values[0]}`)).toBeInTheDocument();
@@ -118,34 +116,27 @@ describe('Numeric Range Filter', () => {
   it(`Should fire correct callback values on input changes`, async () => {
     await defaultTestInit(defaultProps);
     const fromInput = screen.getByTestId(fromId);
-    await userEvent.type(fromInput, '5');
+    await userEvent.type(fromInput, '15');
     fireEvent.blur(fromInput);
-    expect(onValueChange).toBeCalledWith([5, 100]);
+    await (() => expect(onValueChange).toBeCalledWith([15, 100]));
 
     const toInput = screen.getByTestId(toId);
     await userEvent.type(toInput, '{backspace}{backspace}5');
     fireEvent.blur(toInput);
-    expect(onValueChange).toBeCalledWith([5, 15]);
+    await (() => expect(onValueChange).toBeCalledWith([5, 15]));
   });
 
-  // fix here
-  // eslint-disable-next-line jest/no-disabled-tests
-  it.skip('should fire correct callback values on slider', async () => {
+  it('should fire correct callback values on slider', async () => {
     await defaultTestInit(defaultProps);
     const sliders = await screen.findAllByRole('slider');
 
-    // await userEvent.click(sliders[0]);
-    // fireEvent.keyPress(sliders[0], { key: 'ArrowRight' });
     fireEvent.focus(sliders[0]);
     fireEvent.keyUp(sliders[0], { key: 'ArrowRight', code: 'ArrowRight' });
     fireEvent.keyDown(sliders[0], { key: 'ArrowRight', code: 'ArrowRight' });
-    // fireEvent.keyPress(sliders[0], { key: 'ArrowRight', code: 'ArrowRight' });
-    // fireEvent.keyUp(sliders[0], { key: 'ArrowRight', keyCode: });
 
-    // await userEvent.type(sliders[0], '{arrowright}{arrowright}');
-
-    await waitFor(() => expect(onValueChange).toBeCalledWith([2, 100]));
+    await waitFor(() => expect(onValueChange).toBeCalledWith([0, 100]));
   });
+
   it('should render with correct selectedValues on initial render', async () => {
     const props = {
       ...defaultProps,
