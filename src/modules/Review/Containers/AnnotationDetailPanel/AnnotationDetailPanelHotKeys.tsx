@@ -213,7 +213,7 @@ export const AnnotationDetailPanelHotKeys = ({
       const onConfirmDelete = async () => {
         await dispatch(
           DeleteAnnotationsAndHandleLinkedAssetsOfFile({
-            annotationIds: [{ id: +annotationId! }],
+            annotationId: { id: +annotationId! },
             showWarnings: true,
           })
         );
