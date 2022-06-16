@@ -15,11 +15,13 @@ import { createFileInfo } from 'src/store/util/StateUtils';
 import {
   annotatedFilesById,
   annotationsById,
-} from 'src/modules/Common/store/annotationV1/selectors';
+} from 'src/modules/Common/store/annotation/selectors';
+import { Status } from 'src/api/annotation/types';
+import { isImageObjectDetectionData } from 'src/modules/Common/types/typeGuards';
 import {
-  AnnotationStatus,
+  getAnnotationLabelOrText,
   getAnnotationsBadgeCounts,
-} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+} from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import { ProcessState, JobState } from './types';
 
 export const selectAllFilesDict = (
@@ -204,8 +206,8 @@ export const selectProcessAllSelectedFilesInSortedOrder = createSelector(
 
 export const selectProcessSummary = createSelector(
   selectAllProcessFiles,
-  (state: RootState) => annotatedFilesById(state.annotationV1Reducer),
-  (state: RootState) => annotationsById(state.annotationV1Reducer),
+  (state: RootState) => annotatedFilesById(state.annotationReducer),
+  (state: RootState) => annotationsById(state.annotationReducer),
   (processFiles, allAnnotatedFiles, allAnnotations) => {
     // all files with geolocation
     const totalFilesWithGeolocation = processFiles.filter(
@@ -225,7 +227,7 @@ export const selectProcessSummary = createSelector(
     const totalUserReviewedFiles = annotationsForFile.filter(
       ({ annotations }) =>
         !!annotations.some(
-          (annotation) => annotation.status !== AnnotationStatus.Unhandled
+          (annotation) => annotation.status !== Status.Suggested
         )
     );
 
@@ -234,9 +236,9 @@ export const selectProcessSummary = createSelector(
       ({ annotations }) =>
         !!annotations.filter(
           (annotation) =>
-            annotation.modelType === VisionDetectionModelType.ObjectDetection &&
-            annotation.label === 'person' &&
-            annotation.status === AnnotationStatus.Unhandled
+            isImageObjectDetectionData(annotation) &&
+            getAnnotationLabelOrText(annotation) === 'person' &&
+            annotation.status === Status.Suggested
         ).length
     );
 
@@ -308,11 +310,11 @@ export const selectProcessSummary = createSelector(
 
 export const selectIsProcessing = createSelector(
   [
-    (state: ProcessState) => state,
+    (state: ProcessState) => state.files,
+    (state: ProcessState) => state.jobs,
     (state: ProcessState, fileId: number) => fileId,
   ],
-  (state: ProcessState, fileId: number) => {
-    const { files, jobs } = state;
+  (files, jobs, fileId: number) => {
     const notCompletedStates = ['Queued', 'Collecting', 'Running'];
 
     const relatedJobIds = files.byId[fileId]?.jobIds;

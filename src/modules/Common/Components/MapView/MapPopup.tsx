@@ -81,7 +81,7 @@ export const MapPopup = ({
                   <div className="nameAndExif">
                     <div className="name">{item.name}</div>
                     {fileDetails?.geoLocation && (
-                      <Tooltip content="EXIF data added">
+                      <Tooltip content="Geolocated">
                         <div className="exif">
                           <img src={exifIcon} alt="exifIcon" />
                         </div>

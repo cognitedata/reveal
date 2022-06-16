@@ -10,7 +10,6 @@ import { useHistory } from 'react-router-dom';
 import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
 import { ThumbnailCarousel } from 'src/modules/Review/Components/ThumbnailCarousel/ThumbnailCarousel';
 import { ImagePreview } from 'src/modules/Review/Containers/ImagePreview';
-import { ImageKeyboardShortKeys } from 'src/modules/Review/Containers/KeyboardShortKeys/ImageKeyboardShortKeys';
 import {
   selectAllReviewFiles,
   setScrollToId,
@@ -99,97 +98,92 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
   );
 
   return (
-    <ImageKeyboardShortKeys>
-      <QueryClientProvider client={queryClient}>
-        <AnnotationContainer id="annotationContainer">
-          <FilePreviewContainer>
-            <PreviewContainer
-              fullHeight={reviewFiles.length === 1}
-              inFocus={inFocus}
-            >
-              {loading && (
-                // eslint-disable-next-line @cognite/no-number-z-index
-                <PreviewLoader style={{ zIndex: 1000 }} isVideo={isVideo(file)}>
-                  <Spin />
-                </PreviewLoader>
-              )}
-              {file && isVideo(file) ? (
-                <VideoPreview
-                  fileObj={file}
-                  isLoading={handleLoad}
-                  onError={handleError}
-                />
-              ) : (
-                <FileProcessStatusWrapper fileId={file.id}>
-                  {({ isFileProcessing }) => {
-                    return (
-                      <>
-                        <ImagePreview
-                          file={file}
-                          onEditMode={onEditMode}
-                          isLoading={handleLoad}
-                          scrollIntoView={scrollToItem}
-                        />
-                        {isFileProcessing && <PreviewProcessingOverlay />}
-                      </>
-                    );
-                  }}
-                </FileProcessStatusWrapper>
-              )}
-            </PreviewContainer>
-            {reviewFiles.length > 1 && (
-              <ThumbnailCarousel
-                files={reviewFiles}
-                onItemClick={onItemClick}
-              />
+    <QueryClientProvider client={queryClient}>
+      <AnnotationContainer id="annotationContainer">
+        <FilePreviewContainer>
+          <PreviewContainer
+            fullHeight={reviewFiles.length === 1}
+            inFocus={inFocus}
+          >
+            {loading && (
+              // eslint-disable-next-line @cognite/no-number-z-index
+              <PreviewLoader style={{ zIndex: 1000 }} isVideo={isVideo(file)}>
+                <Spin />
+              </PreviewLoader>
             )}
-          </FilePreviewContainer>
-          <RightPanelContainer>
-            <StyledTitle level={4}>{file?.name}</StyledTitle>
-            <TabsContainer>
-              <Tabs
-                tab={isVideo(file) ? 'file-detail' : currentTab}
-                onTabChange={tabChange}
-                style={{
-                  border: 0,
+            {file && isVideo(file) ? (
+              <VideoPreview
+                fileObj={file}
+                isLoading={handleLoad}
+                onError={handleError}
+              />
+            ) : (
+              <FileProcessStatusWrapper fileId={file.id}>
+                {({ isFileProcessing }) => {
+                  return (
+                    <>
+                      <ImagePreview
+                        file={file}
+                        onEditMode={onEditMode}
+                        isLoading={handleLoad}
+                        scrollIntoView={scrollToItem}
+                      />
+                      {isFileProcessing && <PreviewProcessingOverlay />}
+                    </>
+                  );
                 }}
+              </FileProcessStatusWrapper>
+            )}
+          </PreviewContainer>
+          {reviewFiles.length > 1 && (
+            <ThumbnailCarousel files={reviewFiles} onItemClick={onItemClick} />
+          )}
+        </FilePreviewContainer>
+        <RightPanelContainer>
+          <StyledTitle level={4}>{file?.name}</StyledTitle>
+          <TabsContainer>
+            <Tabs
+              tab={isVideo(file) ? 'file-detail' : currentTab}
+              onTabChange={tabChange}
+              style={{
+                border: 0,
+              }}
+            >
+              <Tabs.Pane
+                title="Annotations"
+                key="context"
+                style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
+                disabled={isVideo(file)}
               >
-                <Tabs.Pane
-                  title="Annotations"
-                  key="context"
-                  style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
-                  disabled={isVideo(file)}
-                >
-                  <AnnotationDetailPanel file={file} />
-                </Tabs.Pane>
-                <Tabs.Pane
-                  title="File details"
-                  key="file-detail"
-                  style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
-                >
-                  {file && (
-                    <DataExplorationProvider
-                      flow={flow}
-                      sdk={sdk}
-                      userInfo={userInfo}
-                      overrideURLMap={{
-                        pdfjsWorkerSrc:
-                          '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
-                      }}
-                    >
-                      <QueryClientProvider client={queryClient}>
-                        <FileDetailsReview fileObj={file} />
-                      </QueryClientProvider>
-                    </DataExplorationProvider>
-                  )}
-                </Tabs.Pane>
-              </Tabs>
-            </TabsContainer>
-          </RightPanelContainer>
-          <div aria-hidden="true" className="confirm-delete-modal-anchor" />
-        </AnnotationContainer>
-      </QueryClientProvider>
-    </ImageKeyboardShortKeys>
+                <AnnotationDetailPanel file={file} />
+              </Tabs.Pane>
+              <Tabs.Pane
+                title="File details"
+                key="file-detail"
+                style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
+              >
+                {file && (
+                  <DataExplorationProvider
+                    flow={flow}
+                    sdk={sdk}
+                    userInfo={userInfo}
+                    overrideURLMap={{
+                      pdfjsWorkerSrc:
+                        '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
+                    }}
+                  >
+                    <QueryClientProvider client={queryClient}>
+                      <FileDetailsReview fileObj={file} />
+                    </QueryClientProvider>
+                  </DataExplorationProvider>
+                )}
+              </Tabs.Pane>
+            </Tabs>
+          </TabsContainer>
+        </RightPanelContainer>
+        <div aria-hidden="true" className="confirm-delete-modal-anchor" />
+      </AnnotationContainer>
+    </QueryClientProvider>
   );
 };
 export default ReviewBody;

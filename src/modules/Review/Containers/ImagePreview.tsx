@@ -46,6 +46,7 @@ import {
   selectNextPredefinedShape,
   selectTempKeypointCollection,
 } from 'src/modules/Review/store/annotatorWrapper/selectors';
+import { ImageKeyboardShortKeys } from 'src/modules/Review/Containers/KeyboardShortKeys/ImageKeyboardShortKeys';
 
 export const ImagePreview = ({
   file,
@@ -212,24 +213,26 @@ export const ImagePreview = ({
 
   return (
     <Container>
-      <ReactImageAnnotateWrapper
-        fileInfo={file}
-        annotations={nonRejectedVisionReviewAnnotations}
-        onEditMode={onEditMode}
-        predefinedAnnotations={predefinedAnnotations}
-        nextPredefinedKeypointCollection={nextPredefinedKeypointCollection}
-        tempKeypointCollection={tempKeypointCollection}
-        isLoading={isLoading}
-        focusIntoView={scrollIntoView}
-        nextPredefinedShape={nextPredefinedShape}
-        keepUnsavedRegion={keepUnsavedRegion}
-        selectedTool={selectedTool}
-        scrollId={scrollId}
-        onCreateAnnotation={handleCreateAnnotation}
-        onUpdateAnnotation={handleModifyAnnotation}
-        onDeleteAnnotation={handleDeleteAnnotation}
-        openAnnotationSettings={onOpenAnnotationSettings}
-      />
+      <ImageKeyboardShortKeys>
+        <ReactImageAnnotateWrapper
+          fileInfo={file}
+          annotations={nonRejectedVisionReviewAnnotations}
+          onEditMode={onEditMode}
+          predefinedAnnotations={predefinedAnnotations}
+          nextPredefinedKeypointCollection={nextPredefinedKeypointCollection}
+          tempKeypointCollection={tempKeypointCollection}
+          isLoading={isLoading}
+          focusIntoView={scrollIntoView}
+          nextPredefinedShape={nextPredefinedShape}
+          keepUnsavedRegion={keepUnsavedRegion}
+          selectedTool={selectedTool}
+          scrollId={scrollId}
+          onCreateAnnotation={handleCreateAnnotation}
+          onUpdateAnnotation={handleModifyAnnotation}
+          onDeleteAnnotation={handleDeleteAnnotation}
+          openAnnotationSettings={onOpenAnnotationSettings}
+        />
+      </ImageKeyboardShortKeys>
       <ExtraToolbar>
         <Tooltip
           content={

@@ -10,15 +10,8 @@ import {
   deselectAllSelectionsReviewPage,
 } from 'src/store/commonActions';
 import { RootState } from 'src/store/rootReducer';
-import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotationsV1';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { createFileInfo } from 'src/store/util/StateUtils';
-import {
-  AnnotationStatus,
-  KeypointVertex,
-  VisionAnnotationV1,
-} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { makeSelectFileAnnotations as makeSelectFileAnnotationsV1 } from 'src/modules/Common/store/annotationV1/selectors';
 import { makeSelectFileAnnotations } from 'src/modules/Common/store/annotation/selectors';
 import {
   isImageClassificationData,
@@ -29,11 +22,7 @@ import { VisionAnnotationDataType } from 'src/modules/Common/types';
 import { VisionReviewAnnotation } from 'src/modules/Review/types';
 import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
-
-export interface VisibleAnnotation extends VisionAnnotationV1 {
-  show: boolean;
-  selected: boolean;
-}
+import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 
 type State = {
   fileIds: number[];
@@ -141,13 +130,13 @@ const reviewSlice = createSlice({
       state.scrollToId = '';
     });
 
-    builder.addCase(DeleteAnnotationsV1.fulfilled, (state, { payload }) => {
+    builder.addCase(DeleteAnnotations.fulfilled, (state, { meta: { arg } }) => {
       state.selectedAnnotationIds = state.selectedAnnotationIds.filter(
-        (id) => !payload.includes(id)
+        (id) => !arg.map((internalId) => internalId.id).includes(id)
       );
 
       state.hiddenAnnotationIds = state.hiddenAnnotationIds.filter(
-        (id) => !payload.includes(id)
+        (id) => !arg.map((internalId) => internalId.id).includes(id)
       );
     });
 
@@ -200,59 +189,6 @@ export const selectAllReviewFiles = createSelector(
       (id) => !!allFiles[id] && files.push(createFileInfo(allFiles[id]))
     );
     return files;
-  }
-);
-
-const fileAnnotationsSelectorV1 = makeSelectFileAnnotationsV1();
-
-export const selectVisibleAnnotationsForFile = createSelector(
-  (state: RootState, fileId: number) =>
-    fileAnnotationsSelectorV1(state.annotationV1Reducer, fileId),
-  (state: RootState) => state.reviewSlice.selectedAnnotationIds,
-  (state: RootState) => state.reviewSlice.hiddenAnnotationIds,
-  (state: RootState) => state.annotationLabelReducer.keypointMap.selectedIds,
-
-  (
-    fileAnnotations,
-    selectedAnnotationIds,
-    hiddenAnnotationIds,
-    selectedKeypointIds
-  ) => {
-    return fileAnnotations
-      .map((ann) => ({
-        ...ann,
-        show: !hiddenAnnotationIds.includes(ann.id),
-        selected: selectedAnnotationIds.includes(ann.id),
-      }))
-      .map((ann: VisibleAnnotation) => {
-        if (ann.data?.keypoint) {
-          const keypoints = ann.region?.vertices.map((keypointVertex) => ({
-            ...(keypointVertex as KeypointVertex),
-            selected: selectedKeypointIds.includes(
-              (keypointVertex as KeypointVertex).id
-            ),
-          }));
-
-          return {
-            ...ann,
-            region: {
-              vertices: keypoints as KeypointVertex[],
-              shape: ann.region!.shape,
-            },
-          };
-        }
-        return ann;
-      });
-  }
-);
-
-export const selectVisibleNonRejectedAnnotationsForFile = createSelector(
-  selectVisibleAnnotationsForFile,
-  (allVisibleAnnotations) => {
-    return allVisibleAnnotations.filter(
-      (ann) =>
-        ann.show && !!ann.region && ann.status !== AnnotationStatus.Rejected
-    );
   }
 );
 

@@ -152,6 +152,7 @@ describe('Test annotation selectors', () => {
             }),
           },
         },
+        annotationColorMap: {},
       };
       expect(selectFileAnnotations(previousState, 10)).toEqual([
         getDummyImageObjectDetectionBoundingBoxAnnotation({

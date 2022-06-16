@@ -9,7 +9,7 @@ import {
   keypointSelectStatusChange,
   selectCollection,
 } from 'src/modules/Review/store/annotationLabel/slice';
-import { useDispatch } from 'react-redux';
+import { batch, useDispatch } from 'react-redux';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import {
   selectAnnotation,
@@ -103,22 +103,26 @@ export const AnnotationDetailPanelHotKeys = ({
     id: string,
     node: TreeNode<AnnotationDetailPanelRowData>
   ) => {
-    dispatch(deselectAllSelectionsReviewPage());
-    if (isAnnotationTypeRowData(node.additionalData)) {
-      dispatch(selectCategory({ category: id as Categories, selected: true }));
-    } else if (isVisionReviewAnnotationRowData(node.additionalData)) {
-      if (
-        isVisionReviewImageKeypointRowData(node.additionalData) && // if this is current Collection
-        !node.additionalData.annotation.lastUpdatedTime
-      ) {
-        dispatch(selectCollection(id));
+    batch(() => {
+      dispatch(deselectAllSelectionsReviewPage());
+      if (isAnnotationTypeRowData(node.additionalData)) {
+        dispatch(
+          selectCategory({ category: id as Categories, selected: true })
+        );
+      } else if (isVisionReviewAnnotationRowData(node.additionalData)) {
+        if (
+          isVisionReviewImageKeypointRowData(node.additionalData) && // if this is current Collection
+          !node.additionalData.annotation.lastUpdatedTime
+        ) {
+          dispatch(selectCollection(id));
+        } else {
+          dispatch(selectAnnotation(+id));
+        }
       } else {
-        dispatch(selectAnnotation(+id));
+        dispatch(keypointSelectStatusChange(id));
       }
-    } else {
-      dispatch(keypointSelectStatusChange(id));
-    }
-    dispatch(setScrollToId(id));
+      dispatch(setScrollToId(id));
+    });
   };
 
   const selectPrevRow = useCallback(() => {

@@ -100,7 +100,7 @@ export const FileGridPreview = ({
           <div className="nameAndExif">
             <div className="name">{item.name}</div>
             {item?.geoLocation && (
-              <Tooltip content="EXIF data added">
+              <Tooltip content="Geolocated">
                 <div className="exif">
                   <img src={exifIcon} alt="exifIcon" />
                 </div>

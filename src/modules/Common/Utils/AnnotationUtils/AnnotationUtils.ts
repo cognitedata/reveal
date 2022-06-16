@@ -11,6 +11,7 @@ import {
   Status,
 } from 'src/api/annotation/types';
 import {
+  AnnotationIdsByStatus,
   AnnotationsBadgeCounts,
   VisionAnnotation,
   VisionAnnotationDataType,
@@ -23,7 +24,6 @@ import {
   isImageObjectDetectionPolygonData,
   isImageKeypointCollectionData,
 } from 'src/modules/Common/types/typeGuards';
-import { AnnotationIdsByStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 export const getAnnotationLabelOrText = (
   annotation: VisionAnnotation<VisionAnnotationDataType>

@@ -21,6 +21,7 @@ import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotat
 import { ToastUtils } from 'src/utils/ToastUtils';
 import { convertVisionJobAnnotationToAnnotationTypeV1 } from 'src/api/vision/detectionModels/converters';
 
+/** @deprecated */
 export const VisionJobUpdateV1 = createAsyncThunk<
   VisionAnnotationV1[],
   {
