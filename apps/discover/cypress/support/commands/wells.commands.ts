@@ -1,3 +1,4 @@
+import cypress from 'cypress';
 import {
   WellInspectTabs,
   TAB_NAMES,
@@ -81,6 +82,16 @@ Cypress.Commands.add('clickClearAllFilterButtonInWellsTable', () => {
     .click();
 });
 
+Cypress.Commands.add(
+  'addWaitForWdlResources',
+  (url: string, method: string, filter: string) => {
+    cy.intercept({
+      url: `**/wdl/${url}`,
+      method: method,
+    }).as(filter);
+  }
+);
+
 export interface WellsCommands {
   goToWellsInspectTab(tab: string): void;
   openInspectView(selectedWells?: number): void;
@@ -91,4 +102,5 @@ export interface WellsCommands {
     wellboresCount?: number
   ): void;
   clickClearAllFilterButtonInWellsTable(): void;
+  addWaitForWdlResources(url: string, method: string, filter: string): void;
 }

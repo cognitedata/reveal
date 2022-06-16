@@ -3,10 +3,12 @@ import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/
 
 describe('Wells: Casings', () => {
   beforeEach(() => {
+    cy.addWaitForWdlResources('sources', 'GET', 'getSources');
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
     cy.selectCategory('Wells');
+    cy.wait('@getSources');
   });
 
   it('allows us to inspect bad and good casings for wellbores', () => {
