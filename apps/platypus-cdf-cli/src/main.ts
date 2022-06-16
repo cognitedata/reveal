@@ -7,10 +7,10 @@ import * as dataModelsCmds from './app/cmds/data-models';
 import { init } from './app/middlewares/init';
 import status from './app/cmds/status';
 import logout from './app/cmds/logout';
-import initCmd from './app/cmds/init';
 import { DEBUG as _DEBUG } from './app/utils/logger';
 import { CONSTANTS } from './app/constants';
 import { getMixpanel } from '@cognite/platypus-cdf-cli/app/utils/mixpanel';
+import { PlatypusError } from '@platypus/platypus-core';
 
 const DEBUG = _DEBUG.extend('main');
 
@@ -23,7 +23,6 @@ scriptName(CONSTANTS.APP_ID)
   .command(dataModelsCmds)
   .command(logout)
   .command(status)
-  .command(initCmd)
   .option('verbose', {
     type: 'boolean',
     alias: 'v',
@@ -39,15 +38,19 @@ scriptName(CONSTANTS.APP_ID)
   .help(true)
   .fail((msg, err, { argv, help }) => {
     DEBUG(`Error occurred and caught by main handler: ${msg}, ${err}`);
-    // if (err) throw err; // do something with stack report to sentry (maybe)
 
-    console.error(
-      chalk.red(
-        msg ||
-          err.message ||
-          'Something went wrong, and we are unable to detect what please contact us for more info'
-      )
-    );
+    let errorMessage =
+      msg ||
+      err.message ||
+      'Something went wrong, and we are unable to detect what please contact us for more info';
+
+    if (err instanceof PlatypusError && (err as PlatypusError).errors?.length) {
+      errorMessage +=
+        '\n' +
+        (err as PlatypusError).errors.map((error) => error.message).join('\n');
+    }
+
+    console.error(chalk.red(errorMessage));
 
     getMixpanel()?.track('failed command', {
       message: msg || err.message,

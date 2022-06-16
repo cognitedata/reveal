@@ -1,5 +1,5 @@
 import { IGraphQlUtilsService } from '../boundaries';
-import { mixerApiBuiltInTypes, templatesBiltInTypes } from '../constants';
+import { mixerApiBuiltInTypes } from '../constants';
 import { UpdateDataModelFieldDTO } from '../dto';
 import {
   DataModelTypeDefsField,
@@ -8,10 +8,7 @@ import {
   BuiltInType,
 } from '../types';
 export class DataModelService {
-  constructor(
-    private graphqlService: IGraphQlUtilsService,
-    private backend: 'templates' | 'schema-service' = 'templates'
-  ) {}
+  constructor(private graphqlService: IGraphQlUtilsService) {}
 
   parseSchema(graphQlSchema: string): DataModelTypeDefs {
     return this.graphqlService.parseSchema(graphQlSchema);
@@ -161,9 +158,7 @@ export class DataModelService {
   }
 
   getBuiltinTypes(): BuiltInType[] {
-    return this.backend === 'templates'
-      ? templatesBiltInTypes
-      : mixerApiBuiltInTypes;
+    return mixerApiBuiltInTypes;
   }
 
   /** Clears the state */

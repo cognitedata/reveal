@@ -3,7 +3,6 @@ import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBound
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import config from '@platypus-app/config/config';
 import { TOKENS } from '@platypus-app/di';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
@@ -30,7 +29,7 @@ export const DataPreviewTable = ({
   solutionId,
   version,
 }: DataPreviewTableProps) => {
-  const instanceIdCol = config.USE_MIXER_API ? 'externalId' : '_externalId';
+  const instanceIdCol = 'externalId';
 
   const dataManagmentHandler = useInjection(TOKENS.dataManagmentHandler);
 

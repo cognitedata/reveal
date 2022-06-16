@@ -107,6 +107,10 @@ export class DataModelApiFacadeService
             )
           );
         }
+
+        if (!results || !results[0] || !results[0].versions) {
+          return [];
+        }
         // eslint-disable-next-line
         const versions = results[0].versions!;
         return versions.map((version) =>

@@ -30,11 +30,10 @@ describe('DataManagmentHandlerTest', () => {
     ),
   } as any;
 
-  const createInstance = (backend = 'templates') => {
+  const createInstance = () => {
     return new DataManagmentHandler(
       queryBuilderMock,
-      solutionSchemaServiceMock,
-      backend as any
+      solutionSchemaServiceMock
     );
   };
 

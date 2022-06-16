@@ -32,7 +32,6 @@ export class DataModelsHandler {
     const validationResult = validator.validate();
 
     if (!validationResult.valid) {
-      console.error(validationResult.errors);
       return Promise.resolve(Result.fail(validationResult.errors));
     }
     return this.dataModelsApiService

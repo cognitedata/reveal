@@ -97,7 +97,7 @@ export class CreateApiSpecVersionCommand extends CLICommand {
 
     let response;
     try {
-      dataModelVersionsHandler.publish(dto, conflictMode);
+      response = await dataModelVersionsHandler.publish(dto, conflictMode);
     } catch (err) {
       console.log(err);
       throw err;

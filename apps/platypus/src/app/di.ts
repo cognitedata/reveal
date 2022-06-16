@@ -3,8 +3,6 @@ import { Container, token } from 'brandi';
 import {
   DataModelsHandler,
   DataModelVersionHandler,
-  SolutionTemplatesFacadeService,
-  TemplatesApiService,
   DataModelApiFacadeService,
   MixerApiService,
   DataModelService,
@@ -14,7 +12,6 @@ import {
   StorageProviderFactory,
   DataManagmentHandler,
   MixerApiQueryBuilderService,
-  TemplatesApiQueryBuilderService,
 } from '@platypus/platypus-core';
 
 import { DateUtilsImpl, TimeUtilsImpl } from '@platypus-app/utils/data';
@@ -23,7 +20,6 @@ import { StorageProviderFactoryImpl } from '@platypus-app/utils/persistence';
 
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 
-import config from './config/config';
 import { getCogniteSDKClient } from '../environments/cogniteSdk';
 
 // First define the Tokens
@@ -64,13 +60,11 @@ rootInjector
   .bind(TOKENS.dataModelsApiService)
   .toInstance(() => {
     const sdkClient = getCogniteSDKClient();
-    const solutionsApiService = config.USE_MIXER_API
-      ? new DataModelApiFacadeService(
-          new MixerApiService(sdkClient),
-          new DataModelStorageApiService(sdkClient),
-          new GraphQlUtilsService()
-        )
-      : new SolutionTemplatesFacadeService(new TemplatesApiService(sdkClient));
+    const solutionsApiService = new DataModelApiFacadeService(
+      new MixerApiService(sdkClient),
+      new DataModelStorageApiService(sdkClient),
+      new GraphQlUtilsService()
+    );
 
     // TODO: provide proper types here
     return solutionsApiService as any;
@@ -99,26 +93,17 @@ rootInjector
 
 rootInjector
   .bind(TOKENS.dataModelService)
-  .toInstance(
-    () =>
-      new DataModelService(
-        new GraphQlUtilsService(),
-        config.USE_MIXER_API ? 'schema-service' : 'templates'
-      )
-  )
+  .toInstance(() => new DataModelService(new GraphQlUtilsService()))
   .inSingletonScope();
 
 rootInjector
   .bind(TOKENS.dataManagmentHandler)
   .toInstance(() => {
-    const queryBuilder = config.USE_MIXER_API
-      ? new MixerApiQueryBuilderService()
-      : new TemplatesApiQueryBuilderService();
+    const queryBuilder = new MixerApiQueryBuilderService();
 
     return new DataManagmentHandler(
       queryBuilder,
-      rootInjector.get(TOKENS.dataModelsApiService as any),
-      config.USE_MIXER_API ? 'schema-service' : 'templates'
+      rootInjector.get(TOKENS.dataModelsApiService as any)
     );
   })
   .inSingletonScope();

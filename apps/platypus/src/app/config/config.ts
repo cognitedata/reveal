@@ -1,9 +1,3 @@
-const shouldUseMixerApi =
-  localStorage.getItem('USE_MIXER_API') &&
-  localStorage.getItem('USE_MIXER_API')?.toString() === 'false'
-    ? false
-    : true;
-
 export default {
   APP_APP_ID:
     process.env.REACT_APP_APP_ID ||
@@ -30,5 +24,4 @@ export default {
     process.env.SENTRY_PROJECT_NAME ||
     process.env.NX_SENTRY_PROJECT_NAME ||
     'platypus',
-  USE_MIXER_API: shouldUseMixerApi,
 };

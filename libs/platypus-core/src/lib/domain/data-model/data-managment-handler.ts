@@ -9,8 +9,7 @@ import {
 export class DataManagmentHandler {
   constructor(
     private queryBuilder: IQueryBuilderService,
-    private solutionSchemaService: IDataModelVersionApiService,
-    private backend: 'templates' | 'schema-service' = 'templates'
+    private solutionSchemaService: IDataModelVersionApiService
   ) {}
 
   fetchData(dto: FetchDataDTO): Promise<Result<PaginatedResponse>> {
@@ -39,18 +38,12 @@ export class DataManagmentHandler {
           resolve(
             Result.ok({
               pageInfo: {
-                cursor:
-                  this.backend === 'templates'
-                    ? response.nextCursor
-                    : response.pageInfo
-                    ? response.pageInfo.endCursor
-                    : undefined,
-                hasNextPage:
-                  this.backend === 'templates'
-                    ? response.nextCursor !== null
-                    : response.pageInfo
-                    ? response.pageInfo.hasNextPage
-                    : false,
+                cursor: response.pageInfo
+                  ? response.pageInfo.endCursor
+                  : undefined,
+                hasNextPage: response.pageInfo
+                  ? response.pageInfo.hasNextPage
+                  : false,
               },
               items: response.items,
             })
