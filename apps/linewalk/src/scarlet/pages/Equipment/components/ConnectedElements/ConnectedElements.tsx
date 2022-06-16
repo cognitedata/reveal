@@ -14,6 +14,7 @@ import {
   getDetectionSourceAcronym,
   getPrintedDataElementValue,
 } from 'scarlet/utils';
+import capitalize from 'lodash/capitalize';
 
 import * as Styled from './style';
 
@@ -72,11 +73,14 @@ export const ConnectedElements = ({
             : undefined;
 
           const isCurrentDataElement = item.id === dataElement.id;
+          const type = component?.type
+            ? capitalize(component.type)
+            : getDataElementTypeLabel(item);
 
           return {
             id: item.id,
             label: item.config.label,
-            type: getDataElementTypeLabel(item),
+            type,
             componentName: component ? component.name : '-',
             isCurrentDataElement,
             sortBy: isCurrentDataElement ? 0 : 1,

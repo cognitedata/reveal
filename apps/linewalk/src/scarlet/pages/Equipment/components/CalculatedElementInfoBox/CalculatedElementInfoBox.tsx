@@ -7,6 +7,7 @@ import {
   getDataElementTypeLabelByOrigin,
   getFormulaFields,
 } from 'scarlet/utils';
+import capitalize from 'lodash/capitalize';
 
 import * as Styled from './style';
 
@@ -27,6 +28,7 @@ export const CalculatedElementInfoBox = ({
         : undefined,
     [equipment.data]
   );
+
   const formulaArguments = useMemo(() => {
     const formulaArguments = getFormulaFields(
       dataElement.config.formula,
@@ -45,6 +47,9 @@ export const CalculatedElementInfoBox = ({
         const origin = item.componentType
           ? DataElementOrigin.COMPONENT
           : DataElementOrigin.EQUIPMENT;
+        const originLabel = item.componentType
+          ? capitalize(item.componentType)
+          : getDataElementTypeLabelByOrigin(origin);
 
         return {
           id: uuid(),
@@ -53,7 +58,7 @@ export const CalculatedElementInfoBox = ({
             item.field,
             origin
           )?.label,
-          originLabel: getDataElementTypeLabelByOrigin(origin),
+          originLabel,
         };
       });
 
