@@ -45,7 +45,15 @@ export const EditorPanel = (props: EditorPanelProps) => {
   const [currentView, setCurrentView] = useState('ui');
 
   return (
-    <div data-cy="editor_panel" style={{ height: '100%', overflow: 'hidden' }}>
+    <div
+      data-cy="editor_panel"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        overflow: 'hidden',
+      }}
+    >
       <PageToolbar title={t('editor_title', 'Editor')} titleLevel={6}>
         <SegmentedControl
           currentKey={currentView}
@@ -75,16 +83,18 @@ export const EditorPanel = (props: EditorPanelProps) => {
         </Suspense>
       ) : (
         <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
-          <UIEditor
-            builtInTypes={builtInTypes}
-            currentType={props.currentType}
-            setCurrentType={props.setCurrentType}
-            disabled={props.editorMode === SchemaEditorMode.View}
-            graphQLSchemaString={props.graphQlSchema}
-            onSchemaChange={(schemaString) =>
-              props.onSchemaChanged(schemaString)
-            }
-          />
+          <div style={{ overflow: 'auto' }}>
+            <UIEditor
+              builtInTypes={builtInTypes}
+              currentType={props.currentType}
+              setCurrentType={props.setCurrentType}
+              disabled={props.editorMode === SchemaEditorMode.View}
+              graphQLSchemaString={props.graphQlSchema}
+              onSchemaChange={(schemaString) =>
+                props.onSchemaChanged(schemaString)
+              }
+            />
+          </div>
         </ErrorBoundary>
       )}
     </div>
