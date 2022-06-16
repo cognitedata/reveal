@@ -13,9 +13,9 @@ function DefaultCognite3DViewerTestPage() {
   const modelUrl = 'primitives';
   
   return <Cognite3DTestViewer modelUrls={[modelUrl]} initializeCallback={(viewer:Cognite3DViewer) => {
-    // Sanity check for pixel ratio should not impact the resolution in any way
+    // Sanity check for pixel ratio. It should not impact the resolution in any way
     viewer.renderer.setPixelRatio(4);
-    
+
     viewer.cameraManager.setCameraState({position: new THREE.Vector3(30,10,50), 
       target: new THREE.Vector3()});
   }}/>;
