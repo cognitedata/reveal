@@ -102,7 +102,7 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
 
   private updateRenderTargetSizes(renderer: THREE.WebGLRenderer): void {
     const renderSize = new THREE.Vector2();
-    renderer.getSize(renderSize);
+    renderer.getDrawingBufferSize(renderSize);
 
     const { x: width, y: height } = renderSize;
 
