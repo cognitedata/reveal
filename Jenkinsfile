@@ -127,7 +127,7 @@ pods {
       'Lint': {
         stageWithNotify('Check linting') {
           dir('main') {
-            container('fas') {
+            container('preview') {
               sh('yarn lint')
             }
           }
@@ -137,7 +137,7 @@ pods {
       'Unit tests': {
         stageWithNotify('Execute unit tests') {
           dir('main') {
-            container('fas') {
+            container('preview') {
               sh('yarn test')
               junit(allowEmptyResults: true, testResults: '**/junit.xml')
             }
@@ -161,7 +161,8 @@ pods {
           }
         }
       },
-
+    )
+    parallel(
       'Preview': {
         dir('main') {
           if (!isPullRequest) {
@@ -185,27 +186,30 @@ pods {
             pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url)")
           }
         }
+      },
+      'Release': {
+        if (isRelease) {
+          dir('main') {
+            stage('Publish production build') {
+              fas.build(
+                appId: PRODUCTION_APP_ID,
+                repo: APPLICATION_REPO_ID,
+                buildCommand: 'yarn build production',
+                shouldPublishSourceMap: false
+              )
+
+              fas.publish(
+                shouldPublishSourceMap: false
+              )
+
+              slack.send(
+                channel: SLACK_CHANNEL,
+                message: "Deployment of ${env.BRANCH_NAME} complete!"
+              )
+            }
+          }
+        }
       }
     )
-
-    if (isRelease) {
-      stage('Publish production build') {
-        fas.build(
-          appId: PRODUCTION_APP_ID,
-          repo: APPLICATION_REPO_ID,
-          buildCommand: 'yarn build production',
-          shouldPublishSourceMap: false
-        )
-
-        fas.publish(
-          shouldPublishSourceMap: false
-        )
-
-        slack.send(
-          channel: SLACK_CHANNEL,
-          message: "Deployment of ${env.BRANCH_NAME} complete!"
-        )
-      }
-    }
   }
 }
