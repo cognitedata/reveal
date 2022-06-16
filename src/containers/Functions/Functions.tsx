@@ -37,7 +37,7 @@ const FUNCTIONS_PER_PAGE = 10;
 function Functions() {
   const refresh = useRefreshApp();
   const [currentPage, setCurrentPage] = useState(1);
-  const { isEnabled: isActivationFunctionButtonEnabled } = useFlag(
+  const isActivationFunctionButtonEnabled = useFlag(
     'DSS_activation_function_button',
     {
       forceRerender: true,
@@ -70,7 +70,7 @@ function Functions() {
       ? sortLastCall(calls)
       : recentlyCreated;
 
-  const { data: activation, isLoading, isError } = useCheckActivateFunction();
+  const { data: activation, isLoading } = useCheckActivateFunction();
   const [mutate] = useActivateFunction();
 
   const sortedFunctions = functions?.sort(sortFn);
@@ -81,20 +81,19 @@ function Functions() {
       .includes(functionFilter.toLowerCase())
   );
 
-  const isProjectFunctionActivated =
-    isActivationFunctionButtonEnabled ||
-    (!isLoading && !isError && activation?.activated);
-
   if (isLoading) {
     return <Loader />;
   }
-  return (
-    <>
-      <PageTitle title="Functions" />
-      <Row>
-        <h1 style={{ display: 'inline-block' }}>Functions</h1>
 
-        {isProjectFunctionActivated && (
+  if (
+    !isActivationFunctionButtonEnabled ||
+    (isActivationFunctionButtonEnabled && activation?.status === 'activated')
+  ) {
+    return (
+      <>
+        <PageTitle title="Functions" />
+        <Row>
+          <h1 style={{ display: 'inline-block' }}>Functions</h1>
           <div
             style={{
               float: 'right',
@@ -113,9 +112,7 @@ function Functions() {
               Refresh
             </Button>
           </div>
-        )}
-      </Row>
-      {isProjectFunctionActivated && (
+        </Row>
         <Input
           name="filter"
           prefix={
@@ -132,29 +129,21 @@ function Functions() {
           onChange={evt => setFunctionFilter(evt.target.value)}
           allowClear
         />
-      )}
-      {isProjectFunctionActivated && (
-        <div>
-          <b>Sort by: </b>
-          <Select
-            style={{
-              width: '200px',
-              marginTop: '8px',
-            }}
-            value={sortFunctionCriteria}
-            onChange={(value: SortFunctions) => setSortFunctionCriteria(value)}
-          >
-            <Select.Option value="recentlyCalled">
-              Recently Called
-            </Select.Option>
-            <Select.Option value="recentlyCreated">
-              Recently Created
-            </Select.Option>
-          </Select>
-        </div>
-      )}
-      <div style={{ marginTop: '8px' }}>
-        {isProjectFunctionActivated && (
+        <b>Sort by: </b>
+        <Select
+          style={{
+            width: '200px',
+            marginTop: '8px',
+          }}
+          value={sortFunctionCriteria}
+          onChange={(value: SortFunctions) => setSortFunctionCriteria(value)}
+        >
+          <Select.Option value="recentlyCalled">Recently Called</Select.Option>
+          <Select.Option value="recentlyCreated">
+            Recently Created
+          </Select.Option>
+        </Select>
+        <div style={{ marginTop: '8px' }}>
           <CollapseDiv>
             <Collapse>
               {filteredFunctions
@@ -194,29 +183,27 @@ function Functions() {
               style={{ float: 'right', marginTop: '8px' }}
             />
           </CollapseDiv>
-        )}
-        {isActivationFunctionButtonEnabled &&
-          !activation?.activated &&
-          activation?.requested && (
-            <FunctionActivationAlert
-              showIcon
-              description="Cognite function is getting ready.This might take sometime"
-              message="Activation in Progress"
-              type="warning"
-            />
-          )}
-        {isActivationFunctionButtonEnabled &&
-          !activation?.requested &&
-          !activation?.activated && (
-            <FunctionActivationAlert
-              type="error"
-              message="Cognite Functions is not activated for the project"
-              showIcon
-              description={<Button onClick={() => mutate()}>Activate</Button>}
-            />
-          )}
-      </div>
-    </>
+        </div>
+      </>
+    );
+  }
+  if (isActivationFunctionButtonEnabled && activation?.status === 'requested') {
+    return (
+      <FunctionActivationAlert
+        showIcon
+        description="Cognite function is getting ready.This might take sometime"
+        message="Activation in Progress"
+        type="warning"
+      />
+    );
+  }
+  return (
+    <FunctionActivationAlert
+      type="error"
+      message="Cognite Functions is not activated for the project"
+      showIcon
+      description={<Button onClick={() => mutate()}>Activate</Button>}
+    />
   );
 }
 

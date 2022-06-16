@@ -114,9 +114,7 @@ export const useUserInformation = () => {
 };
 
 type ActivationResponse = {
-  project: string;
-  requested: boolean;
-  activated: boolean;
+  status: 'activated' | 'inactive' | 'requested';
 };
 export const useCheckActivateFunction = (
   config?: QueryConfig<ActivationResponse, unknown>
