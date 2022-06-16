@@ -95,10 +95,10 @@ export const generateNodeTree = (
       return {
         ...data,
         children: reviewAnnotation.annotation.keypoints.map(
-          (reviewImageKeypoint) =>
+          (reviewImageKeypoint, index) =>
             generateNodeTree({
               ...reviewImageKeypoint,
-              common,
+              common: { ...common, index },
               callbacks,
             })
         ),

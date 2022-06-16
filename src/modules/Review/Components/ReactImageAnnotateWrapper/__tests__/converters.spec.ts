@@ -91,7 +91,7 @@ const dummyImageObjectDetectionPolylineAnnotation =
 const dummyImageExtractedTextAnnotation = getDummyImageExtractedTextAnnotation({
   id: 5,
   annotatedResourceId: 10,
-  extractedText: 'test',
+  text: 'test',
   textRegion: {
     xMin: 0,
     yMin: 0,
@@ -211,7 +211,7 @@ describe('test convertVisionReviewAnnotationsToRegions', () => {
             id: keypoint.id,
             visible: dummyImageKeypointCollectionReviewAnnotation.show,
             highlighted: true,
-            editingLabels: true,
+            editingLabels: keypoint.selected,
             tags: [],
             regionProps: {
               type: AnnotatorRegionType.PointRegion,
@@ -543,7 +543,7 @@ describe('test convertVisionReviewAnnotationToRegions', () => {
               id: keypoint.id,
               visible: dummyImageKeypointCollectionReviewAnnotation.show,
               highlighted: true,
-              editingLabels: true,
+              editingLabels: false,
               tags: [],
               regionProps: {
                 type: AnnotatorRegionType.PointRegion,
@@ -997,7 +997,7 @@ describe('test convertTempKeypointCollectionToRegions', () => {
             id: keypoint.id,
             visible: true,
             highlighted: true,
-            editingLabels: true,
+            editingLabels: keypoint.selected,
             tags: [],
             regionProps: {
               type: AnnotatorRegionType.PointRegion,

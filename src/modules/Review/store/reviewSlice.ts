@@ -211,7 +211,7 @@ export const selectVisionReviewAnnotationsForFile = createSelector(
     fileAnnotationsSelector(state.annotationReducer, fileId),
   (state: RootState) => state.reviewSlice.selectedAnnotationIds,
   (state: RootState) => state.reviewSlice.hiddenAnnotationIds,
-  (state: RootState) => state.annotationLabelReducer.keypointMap.selectedIds,
+  (state: RootState) => state.annotatorWrapperReducer.keypointMap.selectedIds,
 
   (
     fileAnnotations,

@@ -225,7 +225,7 @@ const annotatorWrapperSlice = createSlice({
           ) => {
             if (isImageKeypointCollectionData(ann)) {
               // ToDo: Remove casting by improving type guards
-              keypointCollections.concat(
+              return keypointCollections.concat(
                 ann as VisionAnnotation<ImageKeypointCollection>
               );
             }

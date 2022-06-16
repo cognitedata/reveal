@@ -27,6 +27,7 @@ export type AnnotationDetailPanelCommonProps = {
       AnnotationDetailPanelRowDataBase<AnnotationDetailPanelRowData>
     >
   >;
+  index?: number;
 };
 
 export type AnnotationDetailPanelReviewCallbacks = {

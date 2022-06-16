@@ -194,7 +194,7 @@ export const convertVisionReviewAnnotationToRegions = (
         },
         ...baseRegionData,
         id: keypoint.id,
-        editingLabels: !!reviewAnnotation.selected || keypoint.selected,
+        editingLabels: keypoint.selected,
         highlighted: !!reviewAnnotation.selected || keypoint.selected,
         tags: [],
         parentAnnotationId: (
