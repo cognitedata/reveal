@@ -1,4 +1,13 @@
-import { Body, Detail, Icon, Input, Textarea } from '@cognite/cogs.js';
+import {
+  Body,
+  Button,
+  Detail,
+  Icon,
+  Input,
+  OptionType,
+  Select,
+  Textarea,
+} from '@cognite/cogs.js';
 import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
@@ -8,6 +17,9 @@ import { useTranslation } from '../../hooks/useTranslation';
 import { TOKENS } from '@platypus-app/di';
 import { CreateDataModelModalContent } from './elements';
 import { useInjection } from '@platypus-app/hooks/useInjection';
+import { useDataSets } from '@platypus-app/hooks/useDataSets';
+import { DataSet } from '@cognite/sdk/dist/src/types';
+import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 
 export const CreateDataModel = ({
   createDataModel,
@@ -23,6 +35,24 @@ export const CreateDataModel = ({
   const history = useHistory();
   const { t } = useTranslation('CreateDataModelDialog');
 
+  const {
+    data: dataSets,
+    isLoading: isDataSetsLoading,
+    isError: isDataSetsFetchError,
+  } = useDataSets();
+
+  const dataSetOptions = (dataSets || []).map(
+    (item: DataSet) =>
+      ({
+        label: item.name,
+        value: item.id,
+      } as OptionType<typeof item.id>)
+  );
+
+  const [selectedDataSet, setSelectedDataSet] = useState<
+    OptionType<unknown> | undefined
+  >(undefined);
+
   const dataModelsHandler = useInjection(TOKENS.dataModelsHandler);
 
   const onCreateDataModel = () => {
@@ -32,7 +62,7 @@ export const CreateDataModel = ({
         name: dataModelName.trim(),
         description: dataModelDescription,
       })
-      .then((result) => {
+      .then((result: any) => {
         setCreating(false);
         if (result.isFailure) {
           if (result.error.name) {
@@ -121,6 +151,70 @@ export const CreateDataModel = ({
             'Description (optional)'
           )}
         ></Textarea>
+
+        <div
+          style={{
+            borderTop: '1px solid var(--cogs-greyscale-grey4)',
+            margin: '32px 0px 20px 0px',
+          }}
+        ></div>
+
+        <Body level={2} strong>
+          {t('modal_data_sets_title', 'Access Control')}
+        </Body>
+        <Body level={3}>
+          <em>{t('modal_data_sets_title_coming_soon', 'Coming Soon')}</em>
+        </Body>
+        {/* Temporarily hidden until backend support is available */}
+        {false && (
+          <>
+            <Select
+              fullWidth
+              name="dataSet"
+              data-cy="input-data-set"
+              options={dataSetOptions}
+              isMulti={false}
+              value={selectedDataSet}
+              placeholder={t(
+                'modal_data_sets_input_placeholder',
+                'Select data set'
+              )}
+              onChange={setSelectedDataSet}
+              // error={inputError}
+              noOptionsMessage={() =>
+                isDataSetsLoading ? (
+                  <Spinner />
+                ) : isDataSetsFetchError ? (
+                  <span>
+                    {t(
+                      'data_sets_error',
+                      "Something went wrong! Couldn't fetch data sets."
+                    )}
+                  </span>
+                ) : (
+                  <span>
+                    {t('data_sets_empty', 'There are no data sets available')}
+                  </span>
+                )
+              }
+              menuFooter={
+                (
+                  <Button iconPlacement="right" icon="ExternalLink">
+                    {t('add_data_set_btn_text', 'Add data set')}
+                  </Button>
+                ) as unknown as HTMLButtonElement
+              }
+            />
+            <div className="input-detail">
+              <Detail>
+                {t(
+                  'detail_data_sets_unique',
+                  'You need to select a data set to define access control. This can also be done later in the Settings dialog. '
+                )}
+              </Detail>
+            </div>
+          </>
+        )}
       </CreateDataModelModalContent>
     </ModalDialog>
   );
