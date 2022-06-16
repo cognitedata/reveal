@@ -4,17 +4,20 @@ import layers from 'utils/zindex';
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
 export const ToolbarWrapper = styled.div`
-  position: absolute;
-  text-align: right;
-  height: 28px !important;
-  margin-top: ${sizes.normal};
-  padding-right: ${sizes.normal};
+  position: relative;
+  top: -5px;
+`;
+
+export const Container = styled.div`
   width: 100%;
-  z-index: ${layers.FILTER};
+  padding-bottom: 8px;
+  border: 1px solid var(--cogs-greyscale-grey3);
+  border-radius: 12px;
 `;
 
 export const ChartWrapper = styled.div`
   min-height: 364px;
+  flex: 1;
   position: relative;
   > .js-plotly-plot {
     min-height: 464px;

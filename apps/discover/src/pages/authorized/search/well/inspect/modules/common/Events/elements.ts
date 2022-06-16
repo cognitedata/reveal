@@ -65,6 +65,8 @@ export const BodyWrapper = styled(Flex)`
 `;
 
 export const BodyColumn = styled(FlexColumn)`
+  /* margin-top: 30px; */
+  /* height: 500px; */
   height: 100%;
   border: 1px solid var(--cogs-greyscale-grey3);
   border-radius: 12px;
@@ -132,11 +134,12 @@ export const DepthMeasurementScale = styled(FlexColumn)`
 `;
 
 export const ScaleLine = styled(Flex)`
-  height ${SCALE_BLOCK_HEIGHT}px;
+  min-height: ${(props: { gap?: number }) => props.gap || SCALE_BLOCK_HEIGHT}px;
+  height: auto;
   width: 100%;
   border-bottom: 1px solid var(--cogs-greyscale-grey3);
   justify-content: center;
-  min-height: ${SCALE_BLOCK_HEIGHT}px;
+  align-items: center;
 `;
 
 export const LastScaleBlock = styled(Flex)`

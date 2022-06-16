@@ -22,6 +22,7 @@ export type Props = {
   scaleBlocks: number[];
   events: NDSEvent[];
   isEventsLoading?: boolean;
+  scaleLineGap?: number;
 };
 
 export const EMPTY_STATE_TEXT = 'This wellbore has no NDS events data';
@@ -31,6 +32,7 @@ const NdsEventsColumn: React.FC<Props> = ({
   scaleBlocks,
   events,
   isEventsLoading,
+  scaleLineGap,
 }: Props) => {
   const blockElements = useMemo(() => {
     const lastEvents = events.filter(
@@ -52,7 +54,7 @@ const NdsEventsColumn: React.FC<Props> = ({
           );
 
           return (
-            <ScaleLine key={row}>
+            <ScaleLine key={row} gap={scaleLineGap}>
               {!isEmpty(blockEvents) ? (
                 <NdsEventsBadge events={blockEvents} />
               ) : null}

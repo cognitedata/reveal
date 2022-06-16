@@ -5,7 +5,7 @@ export const filterNptByDepth = (
   minDepth: number,
   maxDepth: number
 ): NPTEvent[] =>
-  events.filter(
+  events?.filter(
     (nptEvent) =>
       nptEvent.measuredDepth &&
       nptEvent.measuredDepth.value >= minDepth &&
@@ -17,7 +17,7 @@ export const filterNdsByDepth = (
   minDepth: number,
   maxDepth: number
 ): NDSEvent[] =>
-  events.filter(
+  events?.filter(
     (ndsEvent) =>
       ndsEvent.metadata &&
       ndsEvent.metadata.md_hole_start &&

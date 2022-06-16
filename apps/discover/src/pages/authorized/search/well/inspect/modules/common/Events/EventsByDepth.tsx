@@ -11,6 +11,7 @@ export type Props = {
   ndsEvents: NDSEvent[];
   isNptEventsLoading?: boolean;
   isNdsEventsLoading?: boolean;
+  scaleLineGap?: number;
 };
 
 const EventsByDepth: React.FC<Props> = ({
@@ -19,6 +20,7 @@ const EventsByDepth: React.FC<Props> = ({
   ndsEvents = [],
   isNptEventsLoading,
   isNdsEventsLoading,
+  scaleLineGap,
 }: Props) => {
   return (
     <>
@@ -26,11 +28,13 @@ const EventsByDepth: React.FC<Props> = ({
         scaleBlocks={scaleBlocks}
         events={nptEvents}
         isEventsLoading={isNptEventsLoading}
+        scaleLineGap={scaleLineGap}
       />
       <NdsEventsColumn
         scaleBlocks={scaleBlocks}
         events={ndsEvents}
         isEventsLoading={isNdsEventsLoading}
+        scaleLineGap={scaleLineGap}
       />
     </>
   );

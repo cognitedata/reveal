@@ -23,6 +23,7 @@ export type Props = {
   scaleBlocks: number[];
   events: NPTEvent[];
   isEventsLoading?: boolean;
+  scaleLineGap?: number;
 };
 
 export const EMPTY_STATE_TEXT = 'This wellbore has no NPT events data';
@@ -32,6 +33,7 @@ const NptEventsColumn: React.FC<Props> = ({
   scaleBlocks,
   events,
   isEventsLoading,
+  scaleLineGap,
 }: Props) => {
   const blockElements = useMemo(() => {
     const lastEvents = events.filter(
@@ -51,7 +53,7 @@ const NptEventsColumn: React.FC<Props> = ({
           );
 
           return (
-            <ScaleLine key={row}>
+            <ScaleLine gap={scaleLineGap} key={row}>
               {!isEmpty(blockEvents) ? (
                 <NptEventsBadge events={blockEvents} />
               ) : null}

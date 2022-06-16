@@ -1,6 +1,7 @@
 import get from 'lodash/get';
 import { DataTitle, PlotMouseEvent } from 'plotly.js';
 import { DeepPartial } from 'redux';
+import { sortByNumberAscending } from 'utils/sort/sortByNumber';
 
 const DEFAULT_WIDTH = 342;
 
@@ -26,4 +27,38 @@ export const getChartPositionValues = (data?: DeepPartial<PlotMouseEvent>) => {
     left -= DEFAULT_WIDTH;
   }
   return { left, top: top + 10, show: !!data, width: DEFAULT_WIDTH };
+};
+
+export const findVisibleYTicksValues = (graph: HTMLElement) => {
+  // Get the y-axis ticks element label from the graph "DOM" and return them in an array
+  const yTickLabelElements = Array.from(graph.getElementsByClassName('ytick'));
+
+  const ticks = yTickLabelElements.map((labelElement) => {
+    return Number(labelElement.textContent);
+  });
+
+  const sortedTicks = sortByNumberAscending(ticks);
+
+  return sortedTicks;
+};
+
+export const calculateYTicksGap = (graph: HTMLElement) => {
+  // Get all the y-axis ticks element lines draw in the graph "DOM" and return them in an array
+  const yTickLineElements = Array.from(
+    graph.getElementsByClassName('ygrid crisp')
+  );
+
+  const lines = yTickLineElements.map((lineElement) => {
+    const { f } = new DOMMatrixReadOnly(
+      window.getComputedStyle(lineElement).getPropertyValue('transform')
+    );
+
+    return f;
+  });
+
+  const sortedLines = sortByNumberAscending(lines);
+
+  // Using second and third line, as I suspect the first line are outside the plotly grid (thus, not giving valid values) in calculations
+  const [_firstLine, secondLine, thirdLine] = sortedLines;
+  return thirdLine - secondLine;
 };

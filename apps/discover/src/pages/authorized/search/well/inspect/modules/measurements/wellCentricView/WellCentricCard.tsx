@@ -2,7 +2,7 @@ import { getWellboreName } from 'domain/wells/wellbore/internal/selectors/getWel
 import { getWellboreTitle } from 'domain/wells/wellbore/internal/selectors/getWellboreTitle';
 import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import head from 'lodash/head';
 import uniqueBy from 'lodash/uniqBy';
@@ -12,6 +12,10 @@ import { Checkbox } from '@cognite/cogs.js';
 
 import { BaseButton } from 'components/Buttons';
 import {
+  useNdsEventsForCasings,
+  useNptEventsForCasings,
+} from 'modules/wellSearch/selectors';
+import {
   MeasurementChartDataV3 as MeasurementChartData,
   MeasurementTypeV3,
   WellboreId,
@@ -19,9 +23,12 @@ import {
 import { ChartV2 } from 'pages/authorized/search/well/inspect/modules/common/ChartV2';
 import CurveColorCode from 'pages/authorized/search/well/inspect/modules/common/ChartV2/CurveColorCode';
 
+import EventsByDepth from '../../common/Events/EventsByDepth';
+import { filterNdsByDepth, filterNptByDepth } from '../../common/Events/utils';
 import { filterByChartType, filterByMainChartType } from '../utils';
 
 import {
+  Content,
   CurveIndicator,
   Footer,
   Header,
@@ -55,12 +62,35 @@ export const WellCentricCard: React.FC<Props> = ({
   selected,
   onToggle,
 }) => {
-  const [showAll, setShowAll] = useState<boolean>(false);
+  const scaleRef = useRef<HTMLElement | null>(null);
   const legendsHolderRef = React.useRef<HTMLDivElement>(null);
+
+  const [scaleGap, setScaleGap] = useState(50);
+  const [scaleBlocks, setScaleBlocks] = useState<number[]>([]);
+
+  const [showAll, setShowAll] = useState<boolean>(false);
   const [displayShowAllButton, setDisplayShowAllButton] =
     useState<boolean>(false);
+
+  const [[minDepth, maxDepth], setDepthRange] = useState<[number, number]>([
+    0, 0,
+  ]);
+
   const fitChart = head(filterByChartType(chartData, [MeasurementTypeV3.FIT]));
   const lotChart = head(filterByChartType(chartData, [MeasurementTypeV3.LOT]));
+
+  const { isLoading: isNptLoading, events } = useNptEventsForCasings();
+  const validNptEvents = useMemo(
+    () => filterNptByDepth(events[wellbore.id], minDepth, maxDepth),
+    [events, wellbore.id, minDepth, maxDepth]
+  );
+
+  const { isLoading: isNdsLoading, events: ndsEvents } =
+    useNdsEventsForCasings();
+  const validNdsEvents = useMemo(
+    () => filterNdsByDepth(ndsEvents[wellbore.id], minDepth, maxDepth),
+    [minDepth, maxDepth, ndsEvents]
+  );
 
   useEffect(() => {
     setDisplayShowAllButton(
@@ -87,15 +117,35 @@ export const WellCentricCard: React.FC<Props> = ({
           </Checkbox>
         </HeaderTitleContainer>
       </Header>
-      <ChartV2
-        data={chartData}
-        axisNames={axisNames}
-        axisAutorange={{
-          y: 'reversed',
-        }}
-        title="Internal Friction Angle & Pore Pressure Fracture Gradient"
-        autosize
-      />
+
+      <Content>
+        <ChartV2
+          data={chartData}
+          axisNames={axisNames}
+          axisAutorange={{
+            y: 'reversed',
+          }}
+          height={600}
+          title="Geomechanics & PPFG"
+          autosize
+          ref={scaleRef}
+          onMinMaxChange={(minY, maxY) => setDepthRange([minY, maxY])}
+          onLayoutChange={(gap, lines) => {
+            setScaleGap(gap);
+            setScaleBlocks(lines);
+          }}
+        />
+
+        <EventsByDepth
+          ndsEvents={validNdsEvents}
+          nptEvents={validNptEvents}
+          isNdsEventsLoading={isNdsLoading}
+          isNptEventsLoading={isNptLoading}
+          scaleBlocks={scaleBlocks}
+          scaleLineGap={scaleGap}
+        />
+      </Content>
+
       <Footer>
         <LegendsHolder expanded={showAll} ref={legendsHolderRef}>
           {uniqueBy(filterByMainChartType(chartData), (row) => {
