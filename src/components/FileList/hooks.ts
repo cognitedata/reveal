@@ -64,9 +64,8 @@ export const useFileIcon = (file: File) => {
 
       const icon = await sdk
         .get(
-          `/api/playground/projects/${sdk.project}/files/unstructured/preview`,
+          `/api/v1/projects/${sdk.project}/documents/${file.id}/preview/image/pages/1`,
           {
-            params: { documentId: file.id },
             headers: {
               Accept: 'image/png',
             },
