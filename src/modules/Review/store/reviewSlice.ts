@@ -230,7 +230,7 @@ export const selectVisionReviewAnnotationsForFile = createSelector(
           const keypoints = reviewAnn.annotation.keypoints.map((keypoint) => {
             const id = `${reviewAnn.annotation.id}-${keypoint.label}`;
             return {
-              ...keypoint,
+              keypoint,
               id,
               selected: selectedKeypointIds.includes(id),
             };
