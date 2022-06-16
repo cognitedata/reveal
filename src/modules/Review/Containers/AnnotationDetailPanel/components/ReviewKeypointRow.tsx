@@ -18,9 +18,11 @@ import { Col, Row } from '@cognite/cogs.js';
 const KeypointRowContent = ({
   reviewImageKeypoint,
   remaining = false,
+  keypointIndex,
 }: {
   reviewImageKeypoint: ReviewKeypoint;
   remaining?: boolean;
+  keypointIndex?: number;
 }) => (
   <StyledRow cols={12}>
     <StyledCol span={1}>
@@ -31,8 +33,7 @@ const KeypointRowContent = ({
     </StyledCol>
     <StyledCol span={1}>
       <div style={{ color: remaining ? '#8C8C8C' : undefined }}>
-        {/* {keypoint.order} */}
-        {reviewImageKeypoint.id}
+        {keypointIndex !== undefined ? keypointIndex + 1 : ''}
       </div>
     </StyledCol>
     <StyledCol span={10} className="label">
@@ -57,6 +58,7 @@ export const ReviewKeypointRow = ({
   AnnotationDetailPanelRowDataBase<ReviewKeypoint>
 >) => {
   const {
+    common: { index },
     callbacks: { onKeypointSelect },
     ...keypoint
   } = additionalData;
@@ -76,7 +78,10 @@ export const ReviewKeypointRow = ({
               }
             }}
           >
-            <KeypointRowContent reviewImageKeypoint={keypoint} />
+            <KeypointRowContent
+              reviewImageKeypoint={keypoint}
+              keypointIndex={index}
+            />
           </CollapseRowContainer>
         </SidePanelRow>
       </KeyboardShortCutExpandChildSelectable>

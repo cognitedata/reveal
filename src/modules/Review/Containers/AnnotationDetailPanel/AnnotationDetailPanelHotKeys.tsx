@@ -5,10 +5,6 @@ import React, {
   useEffect,
   useRef,
 } from 'react';
-import {
-  keypointSelectStatusChange,
-  selectCollection,
-} from 'src/modules/Review/store/annotationLabel/slice';
 import { batch, useDispatch } from 'react-redux';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import {
@@ -39,6 +35,10 @@ import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/R
 import { FileInfo } from '@cognite/sdk';
 import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
 import { Status } from 'src/api/annotation/types';
+import {
+  keypointSelectStatusChange,
+  selectCollection,
+} from 'src/modules/Review/store/annotatorWrapper/slice';
 
 export const AnnotationDetailPanelHotKeys = ({
   scrollId,
@@ -114,7 +114,7 @@ export const AnnotationDetailPanelHotKeys = ({
           isVisionReviewImageKeypointRowData(node.additionalData) && // if this is current Collection
           !node.additionalData.annotation.lastUpdatedTime
         ) {
-          dispatch(selectCollection(id));
+          dispatch(selectCollection(+id));
         } else {
           dispatch(selectAnnotation(+id));
         }
