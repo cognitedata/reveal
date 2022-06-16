@@ -1,27 +1,17 @@
-import {
-  cloneElement,
-  isValidElement,
-  PropsWithChildren,
-  RefObject,
-  useEffect,
-  useRef,
-} from 'react';
-
-import get from 'lodash/get';
+import { MutableRefObject, ReactNode, useEffect, useRef } from 'react';
 
 import { PerfMetrics } from '@cognite/metrics';
-
-export type domRef = RefObject<HTMLDivElement>;
 
 export type PerformanceObserved = {
   mutations: MutationRecord[] | undefined;
   data: Array<any> | undefined;
 };
 
-type Props<T> = {
+export type Props<T> = {
   data?: Array<T>;
-  onRender?: (ref: domRef) => () => void;
+  onRender?: (ref: MutableRefObject<HTMLElement | null>) => () => void;
   onChange: (params: PerformanceObserved) => void;
+  children?: ReactNode | undefined;
 };
 
 export const PerformanceMetricsObserver = <T,>({
@@ -29,25 +19,27 @@ export const PerformanceMetricsObserver = <T,>({
   onRender,
   data,
   children,
-}: PropsWithChildren<Props<T>>) => {
+}: Props<T>) => {
   /**
-   * Creating a ref to use if a ref is not set for children.
+   * This is a ref to our temporary dom element
+   * The actual element we need to track is the sibling of this element
+   * and since sometimes, the sibling is simply a loader which is
+   * replaced with a div with actual content, we will track the parent of
+   * the sibling
    */
-  const createdChildrenRef = useRef<HTMLDivElement>(null);
-
-  /**
-   * If a ref is already set for children, use that ref.
-   * Otherwise, use the created ref above.
-   */
-  const contentRef: domRef = get(children, 'ref') || createdChildrenRef;
+  const contentRef = useRef<HTMLDivElement>(null);
 
   /**
    * [Performance-Tracker]
    * This needs to be run only on the first load of the component so we can attach our DOM observer.
    */
   useEffect(() => {
-    const onRenderCleanup = onRender?.(contentRef);
-    PerfMetrics?.observeDom(contentRef, (mutations: MutationRecord[]) => {
+    const parentElement = contentRef.current?.previousSibling?.parentElement;
+    const elementToWatch = {
+      current: parentElement,
+    } as MutableRefObject<HTMLElement | null>;
+    const onRenderCleanup = onRender?.(elementToWatch);
+    PerfMetrics?.observeDom(elementToWatch, (mutations: MutationRecord[]) => {
       onChange({ mutations, data });
     });
     return () => {
@@ -59,9 +51,10 @@ export const PerformanceMetricsObserver = <T,>({
     onChange({ mutations: undefined, data });
   }, [data]);
 
-  if (!isValidElement(children)) {
-    return null;
-  }
-
-  return cloneElement(children, { ref: contentRef });
+  return (
+    <>
+      {children}
+      <span ref={contentRef} data-testid="performance-observer" />
+    </>
+  );
 };

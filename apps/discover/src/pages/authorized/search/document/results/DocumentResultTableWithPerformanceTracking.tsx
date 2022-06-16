@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { MutableRefObject } from 'react';
 
 import { PerfMetrics } from '@cognite/metrics';
 
 import {
-  domRef,
   PerformanceMetricsObserver,
   PerformanceObserved,
   documentResultTableLoadQuery,
@@ -11,7 +10,7 @@ import {
 
 import { DocumentResultTable } from './DocumentResultTable';
 
-const performanceOnRender = (ref: domRef) => {
+const performanceOnRender = (ref: MutableRefObject<HTMLElement | null>) => {
   PerfMetrics.trackPerfEvent(
     'SEARCH_CHECKBOX_CLICKED',
     'click',
