@@ -1,10 +1,8 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
-import { VisionAsset } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import {
   VisionJob,
   VisionDetectionModelType,
-  TagDetectionJobAnnotation,
   VisionJobRunning,
   VisionJobCompleted,
 } from 'src/api/vision/detectionModels/types';
@@ -15,7 +13,6 @@ import {
   Status,
 } from 'src/api/annotation/types';
 import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
-import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { fileProcessUpdate } from 'src/store/commonActions';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { ToastUtils } from 'src/utils/ToastUtils';
@@ -40,25 +37,6 @@ const isImageAssetLinkDataList = (
   return (
     isVisionAnnotationDataTypeList(data) &&
     data.every((item) => isImageAssetLinkData(item))
-  );
-};
-
-const isJobRunningOrCompleted = (
-  job: VisionJob
-): job is (VisionJobRunning | VisionJobCompleted) & {
-  type: VisionDetectionModelType;
-} => {
-  return (
-    !!(
-      job as (VisionJobRunning | VisionJobCompleted) & {
-        type: VisionDetectionModelType;
-      }
-    )?.items &&
-    !!(
-      job as (VisionJobRunning | VisionJobCompleted) & {
-        type: VisionDetectionModelType;
-      }
-    )?.failedItems
   );
 };
 
@@ -113,9 +91,11 @@ export const VisionJobUpdate = createAsyncThunk<
     const jobState = getState().processSlice.jobs;
     const existingJob = jobState.byId[job.jobId];
 
-    if (existingJob && isJobRunningOrCompleted(job)) {
+    if (
+      (existingJob && job.status === 'Running') ||
+      job.status === 'Completed'
+    ) {
       const { completedFileIds = [], failedFileIds = [] } = existingJob;
-      let assetIdMap = new Map<number, VisionAsset>();
 
       // show error notification for new failed items and get corresponding file ids
       const newFailedFileIds = getNewFailedFileIds({ job, failedFileIds });
@@ -124,53 +104,6 @@ export const VisionJobUpdate = createAsyncThunk<
       const newVisionJobResults =
         job.items?.filter((item) => !completedFileIds.includes(item.fileId)) ||
         [];
-
-      // fetch assets if tag detection
-      const isNewTagDetectionJob =
-        job.type === VisionDetectionModelType.TagDetection &&
-        newVisionJobResults.length;
-      if (isNewTagDetectionJob) {
-        const jobFilesWithDetectedAnnotations = newVisionJobResults.filter(
-          (jobItem) => !!jobItem.annotations.length
-        );
-        if (jobFilesWithDetectedAnnotations.length) {
-          const assetRequests = jobFilesWithDetectedAnnotations.map(
-            (jobItem) => {
-              const assetIds: number[] = [
-                ...new Set(
-                  jobItem.annotations
-                    .map(
-                      (detectedAnnotation) =>
-                        (detectedAnnotation as TagDetectionJobAnnotation)
-                          ?.assetIds
-                    )
-                    .filter((item): item is number[] => !!item)
-                    .flat()
-                ),
-              ];
-
-              return dispatch(
-                fetchAssets(
-                  assetIds.map((id) => ({
-                    id,
-                  }))
-                )
-              );
-            }
-          );
-          const assetResponses = await Promise.all(assetRequests);
-          const assetUnwrappedResponses = assetResponses.map((assetRes) =>
-            unwrapResult(assetRes)
-          );
-          const assetMapArr = assetUnwrappedResponses.map(
-            (assetUnwrappedResponse) =>
-              new Map(assetUnwrappedResponse.map((asset) => [asset.id, asset]))
-          );
-          assetIdMap = assetMapArr.reduce((acc, current) => {
-            return new Map([...acc, ...current]);
-          });
-        }
-      }
 
       // save new prediction results as annotations
       let unsavedAnnotations: UnsavedVisionAnnotation<VisionAnnotationDataType>[] =
@@ -191,21 +124,12 @@ export const VisionJobUpdate = createAsyncThunk<
                 return null;
               }
               if (isImageAssetLinkDataList(convertedAnnotations)) {
-                return convertedAnnotations.map((annotation, index) => {
-                  const asset = assetIdMap.get(
-                    (item as TagDetectionJobAnnotation).assetIds[index]
-                  );
+                return convertedAnnotations.map((annotation) => {
                   return {
                     annotationType: CDFAnnotationTypeEnum.ImagesAssetLink,
                     annotatedResourceId: results.fileId,
                     status: Status.Suggested,
-                    data: {
-                      ...annotation,
-                      assetRef: {
-                        ...(annotation as ImageAssetLink).assetRef,
-                        externalId: asset?.externalId,
-                      },
-                    },
+                    data: annotation,
                   };
                 });
               }

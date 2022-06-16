@@ -51,10 +51,22 @@ export function convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
     label: annotation.text,
     confidence: annotation.confidence,
     boundingBox: {
-      xMin: annotation.region.vertices[0].x,
-      yMin: annotation.region.vertices[0].y,
-      xMax: annotation.region.vertices[1].x,
-      yMax: annotation.region.vertices[1].y,
+      xMin: Math.min(
+        annotation.region.vertices[0].x,
+        annotation.region.vertices[1].x
+      ),
+      yMin: Math.min(
+        annotation.region.vertices[0].y,
+        annotation.region.vertices[1].y
+      ),
+      xMax: Math.max(
+        annotation.region.vertices[0].x,
+        annotation.region.vertices[1].x
+      ),
+      yMax: Math.max(
+        annotation.region.vertices[0].y,
+        annotation.region.vertices[1].y
+      ),
     },
   };
   return imageObjectDetectionBoundingBox;
@@ -72,10 +84,22 @@ export function convertVisionJobAnnotationToImageExtractedText(
     text: annotation.text,
     confidence: annotation.confidence,
     textRegion: {
-      xMin: annotation.region.vertices[0].x,
-      yMin: annotation.region.vertices[0].y,
-      xMax: annotation.region.vertices[1].x,
-      yMax: annotation.region.vertices[1].y,
+      xMin: Math.min(
+        annotation.region.vertices[0].x,
+        annotation.region.vertices[1].x
+      ),
+      yMin: Math.min(
+        annotation.region.vertices[0].y,
+        annotation.region.vertices[1].y
+      ),
+      xMax: Math.max(
+        annotation.region.vertices[0].x,
+        annotation.region.vertices[1].x
+      ),
+      yMax: Math.max(
+        annotation.region.vertices[0].y,
+        annotation.region.vertices[1].y
+      ),
     },
   };
   return imageExtractedText;
@@ -96,10 +120,22 @@ export function convertVisionJobAnnotationToImageAssetLinkList(
         confidence: annotation.confidence,
         assetRef: { id: assetId },
         textRegion: {
-          xMin: annotation.region.vertices[0].x,
-          yMin: annotation.region.vertices[0].y,
-          xMax: annotation.region.vertices[1].x,
-          yMax: annotation.region.vertices[1].y,
+          xMin: Math.min(
+            annotation.region.vertices[0].x,
+            annotation.region.vertices[1].x
+          ),
+          yMin: Math.min(
+            annotation.region.vertices[0].y,
+            annotation.region.vertices[1].y
+          ),
+          xMax: Math.max(
+            annotation.region.vertices[0].x,
+            annotation.region.vertices[1].x
+          ),
+          yMax: Math.max(
+            annotation.region.vertices[0].y,
+            annotation.region.vertices[1].y
+          ),
         },
       };
     }
