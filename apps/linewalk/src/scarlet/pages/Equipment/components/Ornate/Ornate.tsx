@@ -13,6 +13,7 @@ import { useDataPanelDispatch, useOrnateTags } from 'scarlet/hooks';
 import { WorkspaceTools, DocumentNavigator } from '..';
 
 import {
+  getDocumentSkeleton,
   addDocumentTitle,
   addPageNumber,
   addTags,
@@ -97,6 +98,13 @@ export const Ornate = ({ documents, fullwidth = false }: OrnateProps) => {
       (async () => {
         await Promise.all(
           documents.map(async (document, iDocument) => {
+            const docSkeleton = getDocumentSkeleton({
+              id: `rect-${iDocument}`,
+              x: VIEW_OFFSET_X + iDocument * (SLIDE_WIDTH + SLIDE_COLUMN_GAP),
+              y: VIEW_OFFSET_Y,
+            });
+            ornateRef?.addShape(docSkeleton);
+
             try {
               const pdfDocumentLoadingTask = await PDFJS.getDocument(
                 document.downloadUrl!
@@ -141,6 +149,7 @@ export const Ornate = ({ documents, fullwidth = false }: OrnateProps) => {
                     groupId: `${document.id}#${pageNumber}`,
                   }
                 );
+                ornateRef?.removeShapeById(`rect-${iDocument}`);
 
                 addDocumentTitle({
                   document,

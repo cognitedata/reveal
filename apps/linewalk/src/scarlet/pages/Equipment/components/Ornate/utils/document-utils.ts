@@ -4,6 +4,8 @@ import { EquipmentDocument } from 'scarlet/types';
 
 const TEXT_PADDING = 40;
 const TEXT_SIZE = 60;
+const DOCUMENT_SKELETON_WIDTH = 2400;
+const DOCUMENT_SKELETON_HEIGHT = 3000;
 
 export const addDocumentTitle = ({
   document,
@@ -84,3 +86,21 @@ export const addPageNumber = ({
   group.add(text);
   ornateDocument.group.add(group);
 };
+
+export const getDocumentSkeleton = ({
+  id,
+  x,
+  y,
+}: {
+  id: string;
+  x: number;
+  y: number;
+}) =>
+  new Konva.Rect({
+    id,
+    x,
+    y,
+    width: DOCUMENT_SKELETON_WIDTH,
+    height: DOCUMENT_SKELETON_HEIGHT,
+    fill: '#E8E8E8',
+  });
