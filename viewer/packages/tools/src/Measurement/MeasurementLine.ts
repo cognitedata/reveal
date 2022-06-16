@@ -221,15 +221,21 @@ export class MeasurementLine {
     axesLine.setPositions(position);
     const axesLineMaterial = new LineMaterial({
       color: color,
-      linewidth: this._options.lineWidth! / 2,
+      linewidth: this._options.lineWidth!,
       depthTest: false,
-      worldUnits: true,
       dashed: true,
+      dashSize: 1,
+      dashScale: 10,
+      gapSize: 1,
       transparent: true,
-      opacity: 0.25
+      opacity: 0.5
     });
-    const axesLineMesh = new THREE.Mesh(axesLine, axesLineMaterial);
+    const axesLineMesh = new Line2(axesLine, axesLineMaterial);
+    axesLineMesh.computeLineDistances();
     axesLineMesh.renderOrder = 1;
+    axesLineMesh.onBeforeRender = () => {
+      axesLineMaterial?.resolution.set(window.innerWidth, window.innerHeight);
+    };
 
     return axesLineMesh;
   }
