@@ -102,7 +102,7 @@
     "jsdom": "19.0.0",
     "lint-staged": "13.0.1",
     "moq.ts": "9.0.2",
-    "nock": "13.2.6",
+    "nock": "13.2.7",
     "prettier": "2.6.2",
     "random-seed": "0.3.0",
     "raw-loader": "4.0.2",
