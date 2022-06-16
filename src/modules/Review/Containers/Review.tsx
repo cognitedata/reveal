@@ -64,9 +64,20 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
     history.goBack();
   }, [history]);
 
-  const handleFileDelete = useCallback(() => {
+  // Wraps around the dispatch call so that we can await for the deletion to finish.
+  const deleteFileById = async () => {
+    return dispatch(
+      DeleteFilesById({
+        fileIds: [file!.id],
+        setIsDeletingState: setIsDeleteInProgress,
+      })
+    );
+  };
+
+  const handleFileDelete = useCallback(async () => {
     // go to previous page if in single file review
     if (reviewFileIds.length <= 1) {
+      await deleteFileById();
       onBackButtonClick();
     } else {
       // go to previous image if in multi file review
@@ -82,13 +93,8 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
         ),
         { from: previousPage }
       );
+      await deleteFileById();
     }
-    dispatch(
-      DeleteFilesById({
-        fileIds: [file!.id],
-        setIsDeletingState: setIsDeleteInProgress,
-      })
-    );
   }, [
     reviewFileIds,
     onBackButtonClick,
