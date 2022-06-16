@@ -64,6 +64,10 @@ export class Measurement {
     this.setMeasurementLabelValue(this._options!.changeMeasurementLabelMetrics!);
     //Add the measurement label.
     this._labelElement = this.addLabel(this._line.getMidPointOnLine(), this._distanceValue);
+
+    if (this._options?.axisComponents) {
+      this.addAxisMeasurement();
+    }
   }
 
   /**
