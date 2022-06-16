@@ -191,6 +191,11 @@ export function ModelForm({
         throw new Error(`Missing required property: 'unitSystem'`);
       }
 
+      if (!('modelType' in metadata)) {
+        toast.error('Missing required property: Please select Model Type');
+        return;
+      }
+
       const fileInfo: FileInfo = {
         ...formFileInfo,
         // Override linked values from metadata
@@ -377,6 +382,23 @@ export function ModelForm({
               <InputRow>
                 <Field
                   as={Select}
+                  name="metadata.modelType"
+                  options={getSelectEntriesFromMap(definitions?.type.model)}
+                  title="Model Type"
+                  value={{
+                    value: metadata.modelType,
+                    label: definitions?.type.model[metadata.modelType],
+                  }}
+                  closeMenuOnSelect
+                  required
+                  onChange={({ value }: { value: string }) => {
+                    setFieldValue('metadata.modelType', value);
+                  }}
+                />
+              </InputRow>
+              <InputRow>
+                <Field
+                  as={Select}
                   name="fileInfo.dataSetId"
                   options={datasets?.map((dataset) => ({
                     label: (
@@ -441,7 +463,6 @@ export function ModelForm({
               </InputRow>
             </>
           )}
-
           <div>
             <Button
               disabled={isSubmitting}

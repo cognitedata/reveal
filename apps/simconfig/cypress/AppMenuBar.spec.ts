@@ -12,7 +12,7 @@ describe('App tests', () => {
     cy.get('#project-name').invoke('text').should('eq', 'simconfig-e2e');
   });
 
-  it.skip('Check for at least one connector status', () => {
+  it('Check for at least one connector status', () => {
     cy.get('#simulator-status-0').click();
     cy.get('#simulator-header-0').click();
 
