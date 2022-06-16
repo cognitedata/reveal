@@ -12,6 +12,15 @@ export const Footer = styled.div`
 
 export const Modal = styled(CogsModal)<{ isPrompt: boolean }>`
   max-width: calc(100vw - 20px);
+
+  && {
+    margin: 0px auto;
+    top: 50%;
+    transform: translate(0, -50%);
+    max-height: 100%;
+    overflow-y: scroll;
+  }
+
   ${({ isPrompt }) =>
     isPrompt
       ? css`
