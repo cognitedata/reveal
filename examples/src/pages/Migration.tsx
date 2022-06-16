@@ -361,6 +361,8 @@ export function Migration() {
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client, viewer);
 
+      viewer.renderer.setPixelRatio(window.devicePixelRatio);
+
       const measurementTool = new MeasurementUi(viewer, gui.addFolder('Measurement'));
 
       viewer.on('click', async (event) => {
