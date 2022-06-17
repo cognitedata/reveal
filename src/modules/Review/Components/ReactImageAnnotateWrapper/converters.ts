@@ -210,24 +210,11 @@ export const convertVisionReviewAnnotationToRegions = (
   return regions;
 };
 
-/**
- * Converts annotator region to appropriate VisionAnnotation attributes
- *
- * If region is a point, output is a ReviewKeypoint else it will be an VisionReviewAnnotation with correct data type
- *
- * If annotation metadata is available in the region, output will be a complete review Annotation or review keypoint
- * If not it will be an UnsavedAnnotation or a review keypoint with confidence set to 1
- *
- * New regions created in Annotator tool will not contain annotationMeta since they did not originate from CDF
- * So those will be output from this function as VisionReviewAnnotation or ReviewKeypoint
- * @param region
- */
-export const convertRegionToVisionAnnotationProperties = (
+export const getVisionAnnotationDataFromRegion = (
   region: AnnotatorRegion
-): any => {
+): VisionAnnotationDataType | ReviewKeypoint | {} => {
   const labelOrText = region.annotationLabelOrText;
   let data: VisionAnnotationDataType | ReviewKeypoint | {} = {};
-
   if (isAnnotatorBoxRegion(region)) {
     switch (region.annotationType) {
       case CDFAnnotationTypeEnum.ImagesAssetLink: {
@@ -303,6 +290,25 @@ export const convertRegionToVisionAnnotationProperties = (
       selected: region.editingLabels,
     } as ReviewKeypoint;
   }
+  return data;
+};
+
+/**
+ * Converts annotator region to appropriate VisionAnnotation attributes
+ *
+ * If region is a point, output is a ReviewKeypoint else it will be an VisionReviewAnnotation with correct data type
+ *
+ * If annotation metadata is available in the region, output will be a complete review Annotation or review keypoint
+ * If not it will be an UnsavedAnnotation or a review keypoint with confidence set to 1
+ *
+ * New regions created in Annotator tool will not contain annotationMeta since they did not originate from CDF
+ * So those will be output from this function as VisionReviewAnnotation or ReviewKeypoint
+ * @param region
+ */
+export const convertRegionToVisionAnnotationProperties = (
+  region: AnnotatorRegion
+): any => {
+  const data = getVisionAnnotationDataFromRegion(region);
 
   if (isEmpty(data)) {
     console.error('Cannot convert region', JSON.stringify(region));
