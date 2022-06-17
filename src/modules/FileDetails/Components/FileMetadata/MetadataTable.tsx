@@ -16,6 +16,7 @@ import {
 import exifIcon from 'src/assets/exifIcon.svg';
 import { TableDataItem } from 'src/modules/Common/types';
 import { ExifIcon } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
+import { keyGenerator } from 'src/utils/keyGenerator';
 
 type TableProps = Omit<Omit<BaseTableProps<TableDataItem>, 'width'>, 'height'>;
 
@@ -86,6 +87,12 @@ const components = {
 };
 
 export const MetaDataTable = (props: MetadataTableProps) => {
+  const metaUniqueKeyGenerator = keyGenerator({ prefix: 'meta-key' });
+  const data = props.data.map((dataItem) => ({
+    ...dataItem,
+    key: metaUniqueKeyGenerator.next().value,
+  }));
+
   let tableInstance: ReactBaseTable<MetadataItem>;
   const setRef = (ref: ReactBaseTable<MetadataItem>) => {
     tableInstance = ref;
@@ -142,7 +149,7 @@ export const MetaDataTable = (props: MetadataTableProps) => {
           columns={columns}
           maxHeight={Infinity}
           width={props.columnWidth * columns.length}
-          data={props.data}
+          data={data}
           rowKey="key"
           components={components}
         />
