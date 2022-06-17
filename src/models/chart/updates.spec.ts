@@ -11,6 +11,7 @@ import {
   addTimeseries,
   addWorkflow,
   duplicate,
+  removeSource,
   removeTimeseries,
   removeWorkflow,
   updateChartDateRange,
@@ -34,6 +35,7 @@ import {
 
 describe('charts util', () => {
   const id = uuidv4();
+
   const chart: Chart = {
     id,
     version: 1,
@@ -45,6 +47,40 @@ describe('charts util', () => {
     dateFrom: 'then',
     dateTo: 'now',
   };
+
+  const wf: ChartWorkflow = {
+    id: '42',
+    name: 'ts1',
+    color: 'red',
+    type: 'workflow',
+    enabled: true,
+    version: 'v2',
+    settings: {
+      autoAlign: true,
+    },
+  };
+
+  const chartWithWF: Chart = {
+    ...chart,
+    workflowCollection: [wf],
+    sourceCollection: [{ id: wf.id, type: 'workflow' }],
+  };
+
+  const ts: ChartTimeSeries = {
+    id: '42',
+    name: 'ts1',
+    color: 'red',
+    enabled: true,
+    tsId: 42,
+    type: 'timeseries',
+    createdAt: 0,
+  };
+  const chartWithTS: Chart = {
+    ...chart,
+    timeSeriesCollection: [ts],
+    sourceCollection: [{ id: ts.id, type: 'timeseries' }],
+  };
+
   describe('duplicate', () => {
     it('should update the appropriate fields', () => {
       expect(
@@ -79,20 +115,6 @@ describe('charts util', () => {
     });
   });
   describe('ChartTimerseries functions', () => {
-    const ts: ChartTimeSeries = {
-      id: '42',
-      name: 'ts1',
-      color: 'red',
-      enabled: true,
-      tsId: 42,
-      type: 'timeseries',
-      createdAt: 0,
-    };
-    const chartWithTS: Chart = {
-      ...chart,
-      timeSeriesCollection: [ts],
-      sourceCollection: [{ id: ts.id, type: 'timeseries' }],
-    };
     describe('updateTimeseries', () => {
       it('should do nothing for unknown ts', () => {
         expect(updateTimeseries(chart, 'foo', { color: 'red' })).toEqual(chart);
@@ -138,6 +160,25 @@ describe('charts util', () => {
         expect(removeTimeseries(chartWithTS, '44')).toEqual(chartWithTS);
       });
     });
+    describe('removeSource', () => {
+      it('should remove source (time series), if found', () => {
+        expect(removeSource(chartWithTS, '42')).toEqual({
+          ...chart,
+          timeSeriesCollection: [],
+          sourceCollection: [],
+        });
+      });
+      it('should remove source (calculation), if found', () => {
+        expect(removeWorkflow(chartWithWF, '42')).toEqual({
+          ...chart,
+          workflowCollection: [],
+          sourceCollection: [],
+        });
+      });
+      it('should remove return an unchanged chart for unknown ids', () => {
+        expect(removeWorkflow(chartWithWF, '44')).toEqual(chartWithWF);
+      });
+    });
     describe('addTimeseries', () => {
       it('should add timeseries to charts', () => {
         expect(addTimeseries(chart, ts)).toEqual(chartWithTS);
@@ -146,23 +187,6 @@ describe('charts util', () => {
   });
 
   describe('ChartWorkflow functions', () => {
-    const wf: ChartWorkflow = {
-      id: '42',
-      name: 'ts1',
-      color: 'red',
-      type: 'workflow',
-      enabled: true,
-      version: 'v2',
-      settings: {
-        autoAlign: true,
-      },
-    };
-
-    const chartWithWF: Chart = {
-      ...chart,
-      workflowCollection: [wf],
-      sourceCollection: [{ id: wf.id, type: 'workflow' }],
-    };
     describe('updateWorkflow', () => {
       it('should do nothing for unknown wf', () => {
         expect(updateWorkflow(chart, 'foo', { color: 'red' })).toEqual(chart);

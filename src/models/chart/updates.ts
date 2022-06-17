@@ -170,6 +170,9 @@ export function removeSource(chart: Chart, sourceId: string): Chart {
     workflowCollection: chart.workflowCollection?.filter(
       ({ id }) => id !== sourceId
     ),
+    sourceCollection: chart.sourceCollection?.filter(
+      ({ id }) => id !== sourceId
+    ),
   };
 }
 

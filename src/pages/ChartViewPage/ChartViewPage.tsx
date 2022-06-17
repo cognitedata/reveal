@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import get from 'lodash/get';
 import { toast, Loader } from '@cognite/cogs.js';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
@@ -59,6 +59,7 @@ import { getUnitConverter } from 'utils/units';
 import { timeseriesSummaries } from 'models/timeseries-results/selectors';
 
 import { isProduction } from 'utils/environment';
+import { chartSources } from 'models/chart/selectors';
 import {
   BottomPaneWrapper,
   ChartContainer,
@@ -268,25 +269,7 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
     [setChart]
   );
 
-  const sources = useMemo(() => {
-    return (chart?.sourceCollection ?? [])
-      .map((x) =>
-        x.type === 'timeseries'
-          ? {
-              type: 'timeseries',
-              ...chart?.timeSeriesCollection?.find((ts) => ts.id === x.id),
-            }
-          : {
-              type: 'workflow',
-              ...chart?.workflowCollection?.find((calc) => calc.id === x.id),
-            }
-      )
-      .filter(Boolean) as (ChartTimeSeries | ChartWorkflow)[];
-  }, [
-    chart?.sourceCollection,
-    chart?.timeSeriesCollection,
-    chart?.workflowCollection,
-  ]);
+  const sources = useRecoilValue(chartSources);
 
   const isEveryRowHidden = sources.every(({ enabled }) => !enabled);
 

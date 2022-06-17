@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Body, Button, Loader, Title } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import { FileViewer } from 'components/FileViewer/FileViewer';
@@ -13,38 +13,20 @@ import AssetSearchHit from 'components/SearchResultTable/AssetSearchHit';
 import { trackUsage } from 'services/metrics';
 import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
 import { useTranslations } from 'hooks/translations';
-import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import SourceTable from 'components/SourceTable/SourceTable';
 import { timeseriesSummaries } from 'models/timeseries-results/selectors';
 import { useRecoilValue } from 'recoil';
 import { calculationSummaries } from 'models/calculation-results/selectors';
 import { useInitializedChart } from 'pages/ChartViewPage/hooks';
 import { useParams } from 'react-router-dom';
+import { chartSources } from 'models/chart/selectors';
 
 const FileViewPage = () => {
   const { chartId, assetId } =
     useParams<{ chartId: string; assetId: string }>();
   const { data: chart } = useInitializedChart(chartId);
 
-  const sources = useMemo(() => {
-    return (chart?.sourceCollection ?? [])
-      .map((x) =>
-        x.type === 'timeseries'
-          ? {
-              type: 'timeseries',
-              ...chart?.timeSeriesCollection?.find((ts) => ts.id === x.id),
-            }
-          : {
-              type: 'workflow',
-              ...chart?.workflowCollection?.find((calc) => calc.id === x.id),
-            }
-      )
-      .filter(Boolean) as (ChartTimeSeries | ChartWorkflow)[];
-  }, [
-    chart?.sourceCollection,
-    chart?.timeSeriesCollection,
-    chart?.workflowCollection,
-  ]);
+  const sources = useRecoilValue(chartSources);
 
   const summaries = {
     ...useRecoilValue(timeseriesSummaries),
