@@ -13,7 +13,7 @@ describe('Test file details reducers', () => {
   const mockState: FileDetailsState = {
     metadataEdit: false,
     fileDetails: { labels: [{ externalId: 'testlabel' }] },
-    fileMetaData: { 0: { key: 'foo', value: 'bar' } },
+    fileMetaData: { 0: { metaKey: 'foo', metaValue: 'bar' } },
     loadingField: 'labels',
   };
   test('should return the initial state for undefined state', () => {
@@ -43,16 +43,22 @@ describe('Test file details reducers', () => {
     test('should set new value', () => {
       const newState = reducer(
         mockState,
-        fileMetaDataEdit({ index: 0, key: 'key', value: 'value' })
+        fileMetaDataEdit({ rowIndex: 0, metaKey: 'key', metaValue: 'value' })
       );
-      expect(newState.fileMetaData[0]).toEqual({ key: 'key', value: 'value' });
+      expect(newState.fileMetaData[0]).toEqual({
+        metaKey: 'key',
+        metaValue: 'value',
+      });
     });
     test('should update value to empty string when no value is provided', () => {
       const newState = reducer(
         mockState,
-        fileMetaDataEdit({ index: 1, key: 'key' })
+        fileMetaDataEdit({ rowIndex: 1, metaKey: 'key' })
       );
-      expect(newState.fileMetaData[1]).toEqual({ key: 'key', value: '' });
+      expect(newState.fileMetaData[1]).toEqual({
+        metaKey: 'key',
+        metaValue: '',
+      });
     });
   });
   test('action resetEditHistory', () => {
@@ -64,12 +70,12 @@ describe('Test file details reducers', () => {
   test('action fileMetaDataAddRow', () => {
     const newState = reducer(
       mockState,
-      fileMetaDataAddRow([{ key: 'foo', value: 'bar' }])
+      fileMetaDataAddRow([{ metaKey: 'foo', metaValue: 'bar' }])
     );
     expect(newState.metadataEdit).toEqual(true);
     expect(newState.fileMetaData).toEqual({
-      0: { key: 'foo', value: 'bar' },
-      1: { key: '', value: '' },
+      0: { metaKey: 'foo', metaValue: 'bar' },
+      1: { metaKey: '', metaValue: '' },
     });
   });
   describe('action toggleMetaDataTableEditMode', () => {
@@ -80,11 +86,11 @@ describe('Test file details reducers', () => {
       };
       const newState = reducer(
         startEditModeState,
-        toggleMetaDataTableEditMode([{ key: 'foo', value: 'bar' }])
+        toggleMetaDataTableEditMode([{ metaKey: 'foo', metaValue: 'bar' }])
       );
       expect(newState.metadataEdit).toEqual(true);
       expect(newState.fileMetaData).toEqual({
-        0: { key: 'foo', value: 'bar' },
+        0: { metaKey: 'foo', metaValue: 'bar' },
       }); // new payload is set
     });
     test('Finishing edit mode', () => {
@@ -92,10 +98,10 @@ describe('Test file details reducers', () => {
         ...mockState,
         metadataEdit: true,
         fileMetaData: {
-          0: { key: 'foo', value: 'bar' },
-          1: { key: '', value: '' }, // this row should be filtered
-          2: { key: '', value: 'bar' }, // this row should be filtered
-          3: { key: 'foo', value: '' }, // this row should be filtered
+          0: { metaKey: 'foo', metaValue: 'bar' },
+          1: { metaKey: '', metaValue: '' }, // this row should be filtered
+          2: { metaKey: '', metaValue: 'bar' }, // this row should be filtered
+          3: { metaKey: 'foo', metaValue: '' }, // this row should be filtered
         },
       };
       const newState = reducer(
@@ -104,7 +110,7 @@ describe('Test file details reducers', () => {
       );
       expect(newState.metadataEdit).toEqual(false);
       expect(newState.fileMetaData).toEqual({
-        0: { key: 'foo', value: 'bar' },
+        0: { metaKey: 'foo', metaValue: 'bar' },
       });
     });
   });

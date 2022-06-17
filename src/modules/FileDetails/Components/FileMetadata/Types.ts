@@ -11,7 +11,7 @@ export type VisionFileInfo = VisionFileDetails & {
 };
 
 export interface MetadataItem {
-  key: string;
-  value: ReactText;
+  metaKey: string;
+  metaValue: ReactText;
 }
 export type VisionFileDetailKey = keyof VisionFileDetails;
