@@ -7,20 +7,15 @@ import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUti
 import {
   isImageAssetLinkData,
   isImageExtractedTextData,
-  isImageObjectDetectionData,
 } from 'src/modules/Common/types/typeGuards';
-import {
-  ColorsTagDetection,
-  ColorsOCR,
-  ColorsPersonDetection,
-} from 'src/constants/Colors';
+import { ColorsTagDetection, ColorsOCR } from 'src/constants/Colors';
 import { RootState } from 'src/store/rootReducer';
 
 const useAnnotationColor = (
   annotation: VisionAnnotation<VisionAnnotationDataType>
 ): string => {
-  const state = useSelector(
-    ({ annotationReducer }: RootState) => annotationReducer
+  const annotationColorMap = useSelector(
+    ({ annotationReducer }: RootState) => annotationReducer.annotationColorMap
   );
   if (isImageAssetLinkData(annotation)) {
     return ColorsTagDetection.color;
@@ -28,14 +23,9 @@ const useAnnotationColor = (
   if (isImageExtractedTextData(annotation)) {
     return ColorsOCR.color;
   }
-
-  if (isImageObjectDetectionData(annotation)) {
-    return ColorsPersonDetection.color;
-  }
-
   const colorKey = getAnnotationLabelOrText(annotation);
-  if (colorKey in state.annotationColorMap) {
-    return state.annotationColorMap[colorKey];
+  if (colorKey in annotationColorMap) {
+    return annotationColorMap[colorKey];
   }
   return '';
 };

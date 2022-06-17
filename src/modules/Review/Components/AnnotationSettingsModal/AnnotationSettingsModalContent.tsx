@@ -115,18 +115,7 @@ export const AnnotationSettingsModalContent = ({
         </Tabs.TabPane>
       </Tabs>
       <Footer>
-        <LeftFooter>
-          {/* ToDo: fix upload labels button */}
-          {/* <Button
-            type="tertiary"
-            icon="Upload"
-            onClick={() => {
-              console.error('Not Implemented');
-            }}
-          >
-            Upload labels
-          </Button> */}
-        </LeftFooter>
+        <LeftFooter />
         <RightFooter>
           <Button type="secondary" onClick={onCancel}>
             Cancel

@@ -96,6 +96,7 @@ export const SaveAnnotationTemplates = createAsyncThunk<
         data: {
           keypoint: true,
           keypoints: unsavedKeypointCollection.keypoints,
+          color: unsavedKeypointCollection.color,
         },
         annotatedResourceType: 'file',
         annotatedResourceId: 0,
@@ -113,12 +114,13 @@ export const SaveAnnotationTemplates = createAsyncThunk<
     const response = await AnnotationApiV1.create(data);
     const templateAnnotations = response.data.items;
     templateAnnotations.forEach((templateAnnotation) => {
-      if (templateAnnotation.data?.keypoint) {
+      if (templateAnnotation.data?.keypoint && templateAnnotation.data.color) {
         keypointCollections.push({
           id: templateAnnotation.id,
           lastUpdated: templateAnnotation.lastUpdatedTime,
           keypoints: templateAnnotation.data.keypoints,
           collectionName: templateAnnotation.text,
+          color: templateAnnotation.data.color,
         });
       } else {
         shapes.push({

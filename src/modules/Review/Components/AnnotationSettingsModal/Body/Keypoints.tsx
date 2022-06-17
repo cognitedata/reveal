@@ -51,7 +51,9 @@ export const Keypoints = ({
     return [
       ...predefinedKeypointCollections,
       ...unsavedKeypointCollections.map((sp) => ({ ...sp, unsaved: true })),
-    ];
+    ].sort((a, b) =>
+      a.collectionName.toLowerCase() > b.collectionName.toLowerCase() ? 1 : -1
+    );
   }, [predefinedKeypointCollections, unsavedKeypointCollections]);
 
   const addNewKeypoint = () => {
@@ -69,19 +71,20 @@ export const Keypoints = ({
   };
 
   const addNewKeypointGroup = (newKeypointGroup?: { text?: string }) => {
+    const color = getRandomColor();
     setNewKeypoints({
       collectionName: newKeypointGroup?.text || '',
-      keypoints: [{ caption: '', color: getRandomColor() }],
+      color,
+      keypoints: [{ caption: '', color }],
     });
   };
 
-  const updateColor = (index: number, value: string) => {
+  const updateColor = (value: string) => {
     if (newKeypoints) {
       const { keypoints } = newKeypoints;
-      keypoints[index].color = value;
       setNewKeypoints({
         ...newKeypoints,
-        keypoints: [...keypoints],
+        keypoints: [...keypoints.map((item) => ({ ...item, color: value }))],
       });
     }
   };
@@ -108,7 +111,7 @@ export const Keypoints = ({
   };
   const onFinish = () => {
     if (newKeypoints) {
-      const { collectionName, keypoints } = newKeypoints;
+      const { collectionName, keypoints, color } = newKeypoints;
       const structuredNewKeypoints: PredefinedKeypoint[] = keypoints.map(
         (keypoint, index) => ({
           ...keypoint,
@@ -127,6 +130,7 @@ export const Keypoints = ({
           ...unsavedKeypointCollections,
           {
             collectionName,
+            color,
             keypoints: structuredNewKeypoints,
           },
         ]);
@@ -198,6 +202,7 @@ export const Keypoints = ({
                 header={
                   <PanelHeader>
                     <Body level={2}>{keypointCollection.collectionName}</Body>
+                    <ColorBox color={keypointCollection.color} />
                     {keypointCollection.unsaved && (
                       <Button
                         icon="Trash"
@@ -223,8 +228,10 @@ export const Keypoints = ({
                     <KeyPointDetail>Key point</KeyPointDetail>
                   </Row>
                   {keypointCollection.keypoints?.map((keypoint, index) => (
-                    <Row key={`${keypoint.caption} - ${keypoint.color}`}>
-                      <ColorBox color={keypoint.color} />
+                    <Row
+                      key={`${keypointCollection.collectionName} - ${keypoint.caption}`}
+                    >
+                      <ColorBox color={keypointCollection.color} />
                       <OrderDetail>{index + 1}</OrderDetail>
                       <KeyPointDetail>{keypoint.caption}</KeyPointDetail>
                     </Row>
@@ -255,13 +262,22 @@ export const Keypoints = ({
                       });
                     }}
                   />
-                  <Button
-                    icon="Trash"
-                    onClick={() => setNewKeypoints(undefined)}
-                    size="small"
-                    type="ghost-danger"
-                    aria-label="deleteButton"
-                  />
+                  <PanelHeaderActionContainer>
+                    <ColorPicker
+                      size="16px"
+                      color={newKeypoints.color}
+                      onChange={(newColor: string) => {
+                        updateColor(newColor);
+                      }}
+                    />
+                    <Button
+                      icon="Trash"
+                      onClick={() => setNewKeypoints(undefined)}
+                      size="small"
+                      type="ghost-danger"
+                      aria-label="deleteButton"
+                    />
+                  </PanelHeaderActionContainer>
                 </PanelHeader>
               }
               key="new"
@@ -275,13 +291,7 @@ export const Keypoints = ({
                 </Row>
                 {newKeypoints.keypoints.map((keypoint, index) => (
                   <Row key={index.toString()}>
-                    <ColorPicker
-                      size="16px"
-                      color={keypoint.color}
-                      onChange={(newColor: string) => {
-                        updateColor(index, newColor);
-                      }}
-                    />
+                    <ColorBox color={newKeypoints.color} />
                     <OrderDetail>{index + 1}</OrderDetail>
                     <KeypointInput
                       size="small"
@@ -388,6 +398,12 @@ const KeyPointDetail = styled(Detail)`
 const PanelHeaderInput = styled(Input)`
   width: 200px;
   background: #ffffff;
+`;
+const PanelHeaderActionContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
 `;
 const KeypointInput = styled(Input)`
   width: 160px;

@@ -95,6 +95,7 @@ export const getDummyPredefinedKeypointCollection = (
   return {
     id,
     collectionName: 'gauge',
+    color: 'red',
     keypoints: [
       dummyKeypoint('left'),
       dummyKeypoint('center'),
