@@ -1,5 +1,4 @@
 import { CDFAnnotationTypeEnum } from 'src/api/annotation/types';
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import {
   ColorsObjectDetection,
   ColorsOCR,
@@ -20,18 +19,4 @@ export const AnnotationTypeStyleMap = {
   [CDFAnnotationTypeEnum.ImagesObjectDetection]: ColorsObjectDetection,
   [CDFAnnotationTypeEnum.ImagesKeypointCollection]: ColorsObjectDetection, // keypoint collections are regarded as object detection models
   [CDFAnnotationTypeEnum.ImagesClassification]: ColorsObjectDetection, // custom models are regarded as object detection models
-};
-
-export const VisionModelTypeCDFAnnotationTypeMap: {
-  [key: number]: CDFAnnotationTypeEnum;
-} = {
-  [VisionDetectionModelType.OCR]: CDFAnnotationTypeEnum.ImagesTextRegion,
-  [VisionDetectionModelType.TagDetection]:
-    CDFAnnotationTypeEnum.ImagesAssetLink,
-  [VisionDetectionModelType.ObjectDetection]:
-    CDFAnnotationTypeEnum.ImagesObjectDetection,
-  [VisionDetectionModelType.GaugeReader]:
-    CDFAnnotationTypeEnum.ImagesKeypointCollection,
-  [VisionDetectionModelType.CustomModel]:
-    CDFAnnotationTypeEnum.ImagesObjectDetection, // TODO: update this when classification is added
 };
