@@ -4,8 +4,8 @@ import layers from 'utils/zindex';
 import { SubTitleText } from 'components/EmptyState/elements';
 import { Center, Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
-import { SCALE_BLOCK_HEIGHT } from '../../common/Events/constants';
-import { DepthMeasurementScale } from '../../common/Events/elements';
+import { SCALE_BLOCK_HEIGHT } from '../../common/EventsV2/constants';
+import { DepthMeasurementScale } from '../../common/EventsV2/elements';
 
 import { MUD_LINE_COLOR, RKB_COLOR, SEA_LEVEL_COLOR } from './constants';
 import { Description } from './DepthIndicator/elements';

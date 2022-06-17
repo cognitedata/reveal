@@ -1,12 +1,13 @@
-import groupBy from 'lodash/groupBy';
 import { sortDictionaryByValuesLength } from 'utils/sort/sortDictionaryByValuesLength';
 
-import { NPTEvent } from 'modules/wellSearch/types';
+import { NptInternal } from '../types';
+
+import { groupByNptCode } from './groupByNptCode';
 
 export const adaptNptEventsToListView = (
-  nptEvents: NPTEvent[]
+  nptEvents: NptInternal[]
 ): { [key: string]: number } => {
-  const groupedEvents = groupBy(nptEvents, 'nptCode');
+  const groupedEvents = groupByNptCode(nptEvents);
 
   return sortDictionaryByValuesLength(groupedEvents);
 };

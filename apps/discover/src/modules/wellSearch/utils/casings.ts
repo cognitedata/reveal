@@ -5,7 +5,7 @@ import { toFraction } from 'utils/number/toFraction';
 import { Sequence } from 'modules/wellSearch/types';
 import { CasingType } from 'pages/authorized/search/well/inspect/modules/casing/CasingView/interfaces';
 import { getScale } from 'pages/authorized/search/well/inspect/modules/casing/helper';
-import { SCALE_BLOCK_HEIGHT } from 'pages/authorized/search/well/inspect/modules/common/Events/constants';
+import { SCALE_BLOCK_HEIGHT } from 'pages/authorized/search/well/inspect/modules/common/EventsV2/constants';
 
 import { PreviewCasingType } from '../types';
 

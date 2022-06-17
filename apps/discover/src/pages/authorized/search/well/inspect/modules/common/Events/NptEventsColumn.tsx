@@ -1,9 +1,10 @@
+import { NptInternal } from 'domain/wells/npt/internal/types';
+
 import React, { useMemo } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
 import EmptyState from 'components/EmptyState';
-import { NPTEvent } from 'modules/wellSearch/types';
 
 import { NPT_COLUMN_TITLE } from '../../casing/CasingView/constants';
 
@@ -21,7 +22,7 @@ import NptEventsBadge from './NptEventsBadge';
 
 export type Props = {
   scaleBlocks: number[];
-  events: NPTEvent[];
+  events: NptInternal[];
   isEventsLoading?: boolean;
   scaleLineGap?: number;
 };

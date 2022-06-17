@@ -1,7 +1,6 @@
-import { adaptNptEventsToListView } from 'domain/wells/npt/internal/adapters/adaptNptEventsToListView';
 import { getCodeDefinition } from 'domain/wells/npt/internal/selectors/getCodeDefinition';
-
-import { NPTEvent } from 'modules/wellSearch/types';
+import { adaptNptEventsToListView } from 'domain/wells/npt/internal/transformers/adaptNptEventsToListView';
+import { NptInternal } from 'domain/wells/npt/internal/types';
 
 import { NptCodeDefinition } from '../../events/Npt/NptCodeDefinition';
 import { IconStyles } from '../../events/Npt/table/elements';
@@ -10,7 +9,7 @@ import { NptCodeDefinitionType } from '../../events/Npt/types';
 import { EventsCodeCount, EventsCodeName, EventsCodeRow } from './elements';
 
 export const NptEventCodeList: React.FC<{
-  events: NPTEvent[];
+  events: NptInternal[];
   nptCodeDefinitions: NptCodeDefinitionType;
 }> = ({ events, nptCodeDefinitions }) => {
   const processedEvents = adaptNptEventsToListView(events);

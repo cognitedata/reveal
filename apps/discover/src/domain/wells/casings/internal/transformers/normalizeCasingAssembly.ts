@@ -5,6 +5,7 @@ import { CasingAssembly } from '@cognite/sdk-wells-v3';
 
 import { UserPreferredUnit } from 'constants/units';
 
+import { CASING_ASSEMBLY_DIAMETER_UNIT } from '../constants';
 import { CasingAssemblyInternal } from '../types';
 
 export const normalizeCasingAssembly = (
@@ -24,17 +25,17 @@ export const normalizeCasingAssembly = (
     ...rest,
     minInsideDiameter: convertDistance(
       minInsideDiameter,
-      'in',
+      CASING_ASSEMBLY_DIAMETER_UNIT,
       Fixed.TwoDecimals
     ),
     minOutsideDiameter: convertDistance(
       minOutsideDiameter,
-      'in',
+      CASING_ASSEMBLY_DIAMETER_UNIT,
       Fixed.TwoDecimals
     ),
     maxOutsideDiameter: convertDistance(
       maxOutsideDiameter,
-      'in',
+      CASING_ASSEMBLY_DIAMETER_UNIT,
       Fixed.TwoDecimals
     ),
     measuredDepthTop: convertDistance(

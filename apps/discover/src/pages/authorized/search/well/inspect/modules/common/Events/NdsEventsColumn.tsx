@@ -1,9 +1,10 @@
+import { NdsInternal } from 'domain/wells/nds/internal/types';
+
 import React, { useMemo } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
 import EmptyState from 'components/EmptyState';
-import { NDSEvent } from 'modules/wellSearch/types';
 
 import { NDS_COLUMN_TITLE } from './constants';
 import {
@@ -20,7 +21,7 @@ import NdsEventsBadge from './NdsEventsBadge';
 
 export type Props = {
   scaleBlocks: number[];
-  events: NDSEvent[];
+  events: NdsInternal[];
   isEventsLoading?: boolean;
   scaleLineGap?: number;
 };
@@ -36,37 +37,32 @@ const NdsEventsColumn: React.FC<Props> = ({
 }: Props) => {
   const blockElements = useMemo(() => {
     const lastEvents = events.filter(
-      (event) =>
-        event.metadata &&
-        Number(event.metadata?.md_hole_start) >=
-          scaleBlocks[scaleBlocks.length - 1]
+      ({ holeStart }) =>
+        holeStart && holeStart.value >= scaleBlocks[scaleBlocks.length - 1]
     );
 
     return (
       <>
         {scaleBlocks.map((row, index) => {
           const blockEvents = events.filter(
-            (event) =>
-              event.metadata &&
-              Number(event.metadata?.md_hole_start) < row &&
-              (!index ||
-                Number(event.metadata?.md_hole_start) >= scaleBlocks[index - 1])
+            ({ holeStart }) =>
+              holeStart &&
+              holeStart.value < row &&
+              (!index || holeStart.value >= scaleBlocks[index - 1])
           );
 
           return (
             <ScaleLine key={row} gap={scaleLineGap}>
-              {!isEmpty(blockEvents) ? (
-                <NdsEventsBadge events={blockEvents} />
-              ) : null}
+              {!isEmpty(blockEvents) && <NdsEventsBadge events={blockEvents} />}
             </ScaleLine>
           );
         })}
 
-        {!isEmpty(lastEvents) ? (
+        {!isEmpty(lastEvents) && (
           <LastScaleBlock>
             <NdsEventsBadge events={lastEvents} />
           </LastScaleBlock>
-        ) : null}
+        )}
       </>
     );
   }, [scaleBlocks, events]);

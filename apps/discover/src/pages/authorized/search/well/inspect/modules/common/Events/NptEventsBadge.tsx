@@ -1,8 +1,8 @@
+import { NptInternal } from 'domain/wells/npt/internal/types';
+
 import React, { useState } from 'react';
 
 import { Dropdown } from '@cognite/cogs.js';
-
-import { NPTEvent } from 'modules/wellSearch/types';
 
 import { NPT_EVENT_CODES_TITLE } from './constants';
 import {
@@ -15,7 +15,7 @@ import { NptEventCodeList } from './NptEventCodeList';
 import { useDataLayer } from './useDataLayer';
 
 export type Props = {
-  events: NPTEvent[];
+  events: NptInternal[];
 };
 
 const MIN_SIZE_PERCENTAGE = 70;

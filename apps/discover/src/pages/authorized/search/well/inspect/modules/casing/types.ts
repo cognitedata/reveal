@@ -20,4 +20,6 @@ export interface CasingsView extends CasingSchematicInternal {
 export interface CasingAssemblyView extends CasingAssemblyInternal {
   trueVerticalDepthTop?: ConvertedDistance;
   trueVerticalDepthBase?: ConvertedDistance;
+  outsideDiameterFormatted: string;
+  isLiner: boolean;
 }

@@ -1,3 +1,4 @@
+import { sortCasingAssembliesByMDBase } from 'domain/wells/casings/internal/transformers/sortCasingAssembliesByMDBase';
 import { CasingSchematicInternal } from 'domain/wells/casings/internal/types';
 import { NdsInternal } from 'domain/wells/nds/internal/types';
 import { NptInternal } from 'domain/wells/npt/internal/types';
@@ -7,7 +8,9 @@ import { Well } from 'domain/wells/well/internal/types';
 import { getRkbLevel } from 'domain/wells/wellbore/internal/selectors/getRkbLevel';
 import { keyByWellbore } from 'domain/wells/wellbore/internal/transformers/keyByWellbore';
 
+import compact from 'lodash/compact';
 import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
 import { adaptToConvertedDistance } from 'utils/units/adaptToConvertedDistance';
 
 import { UserPreferredUnit } from 'constants/units';
@@ -30,15 +33,20 @@ export const adaptCasingsDataToView = (
 
   const keyedCasingsData = keyByWellbore(casingsData);
 
-  return wells.flatMap((well) =>
+  const casingViews = wells.flatMap((well) =>
     (well.wellbores || []).map((wellbore) => {
       const { matchingId: wellboreMatchingId, name: wellboreName } = wellbore;
 
       const casingSchematic = keyedCasingsData[wellboreMatchingId];
       const trueVerticalDepths = tvdData[wellboreMatchingId];
 
+      // If no casings for the current wellbore.
+      if (isUndefined(casingSchematic)) {
+        return null;
+      }
+
       const casingAssemblies = adaptCasingAssembliesDataToView(
-        casingSchematic,
+        casingSchematic.casingAssemblies,
         trueVerticalDepths
       );
 
@@ -47,7 +55,7 @@ export const adaptCasingsDataToView = (
 
       return {
         ...casingSchematic,
-        casingAssemblies,
+        casingAssemblies: sortCasingAssembliesByMDBase(casingAssemblies),
         wellName: well.name,
         wellboreName,
         rkbLevel: adaptToConvertedDistance(
@@ -63,4 +71,6 @@ export const adaptCasingsDataToView = (
       };
     })
   );
+
+  return compact(casingViews);
 };

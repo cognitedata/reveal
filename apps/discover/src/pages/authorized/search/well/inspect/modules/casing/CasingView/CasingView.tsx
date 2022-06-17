@@ -22,8 +22,8 @@ import { useDeepMemo } from 'hooks/useDeep';
 import { convertToPreviewData } from 'modules/wellSearch/utils/casings';
 import { FlexColumn } from 'styles/layout';
 
-import { SCALE_BLOCK_HEIGHT } from '../../common/Events/constants';
-import DepthColumn from '../../common/Events/DepthColumn';
+import { SCALE_BLOCK_HEIGHT } from '../../common/EventsV2/constants';
+import DepthColumn from '../../common/EventsV2/DepthColumn';
 import {
   ScaleLine,
   BodyWrapper,
@@ -33,9 +33,12 @@ import {
   BodyColumnBody,
   BodyColumnHeaderLegend,
   LegendIndicator,
-} from '../../common/Events/elements';
-import EventsByDepth from '../../common/Events/EventsByDepth';
-import { filterNdsByDepth, filterNptByDepth } from '../../common/Events/utils';
+} from '../../common/EventsV2/elements';
+import EventsByDepth from '../../common/EventsV2/EventsByDepth';
+import {
+  filterNdsByDepth,
+  filterNptByDepth,
+} from '../../common/EventsV2/utils';
 import { SelectedWellboreNptView } from '../../events/Npt/graph';
 import { SelectedWellbore } from '../../events/Npt/graph/types';
 import { SIDE_MODES } from '../constants';

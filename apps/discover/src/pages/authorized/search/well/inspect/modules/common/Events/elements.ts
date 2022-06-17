@@ -129,7 +129,6 @@ export const DepthMeasurementScale = styled(FlexColumn)`
   position: absolute;
   top: 0;
   left: 0;
-  flex-wrap: wrap;
   overflow: hidden;
 `;
 

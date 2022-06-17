@@ -11,16 +11,19 @@ import { ScrollButtons } from '../common/ScrollButtons';
 import { DEFAULT_ACTIVE_VIEW_MODE, VIEW_MODES } from '../events/Npt/constants';
 import { ViewModes } from '../events/Npt/types';
 
-import { CasingGraph } from './CasingGraphView';
 import CasingTableView from './CasingTableView';
 import { SideModes } from './CasingView/types';
 import { DEFAULT_ACTIVE_SIDE_MODE, SIDE_MODES } from './constants';
 import { SearchBoxWrapper, TopBarWrapper } from './elements';
+import { CasingsGraph } from './graph';
+import { useCasingsData } from './useCasingsData';
 
 const FILTER_PLACEHOLDER = 'Filter by Well/Wellbore';
 
 export const Casing: React.FC = () => {
-  const { casings, isLoading } = useCasingsForTable();
+  const { data, isLoading, isNptEventsLoading, isNdsEventsLoading } =
+    useCasingsData();
+  const { casings } = useCasingsForTable();
 
   const [viewMode, setViewMode] = useState<ViewModes>(DEFAULT_ACTIVE_VIEW_MODE);
   const [activeSideMode, setActiveSideMode] = useState<SideModes>(
@@ -77,10 +80,12 @@ export const Casing: React.FC = () => {
       </TopBarWrapper>
 
       {viewMode === VIEW_MODES.Graph && (
-        <CasingGraph
-          casings={casings}
+        <CasingsGraph
+          data={data}
           scrollRef={scrollRef}
-          sideMode={activeSideMode}
+          isNptEventsLoading={isNptEventsLoading}
+          isNdsEventsLoading={isNdsEventsLoading}
+          showBothSides={activeSideMode === 'Both sides'}
         />
       )}
       {viewMode === VIEW_MODES.Table && (

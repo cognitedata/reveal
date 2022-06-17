@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 
 import { testRenderer } from '__test-utils/renderer';
 
-import DepthColumn, { Props } from '../Events/DepthColumn';
+import DepthColumn, { Props } from '../EventsV2/DepthColumn';
 
 const casingViewProps = {
   scaleBlocks: [0, 100, 200, 300],

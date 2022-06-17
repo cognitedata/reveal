@@ -1,4 +1,4 @@
-import { scaleLinear } from 'd3-scale';
+import { ScaleLinear, scaleLinear } from 'd3-scale';
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
@@ -12,9 +12,8 @@ import { convertObject } from 'modules/wellSearch/utils';
 import { COMMON_COLUMN_WIDTHS } from '../../constants';
 import {
   SCALE_BLOCK_HEIGHT,
-  SCALE_BOTTOM_PADDING,
   SCALE_PADDING,
-} from '../common/Events/constants';
+} from '../common/EventsV2/constants';
 
 import { CasingType } from './CasingView/interfaces';
 import { CasingData, FormattedCasings } from './interfaces';
@@ -190,14 +189,17 @@ export const getCasingColumnsWithPrefferedUnit = (unit: string) => {
 };
 
 export const getScaleBlocks = (scaleHeight: number, maxDepth: number) => {
-  const domainMax = maxDepth + SCALE_BOTTOM_PADDING;
   const blocksCountWithoutZero = Math.floor(
     (scaleHeight - SCALE_PADDING) / SCALE_BLOCK_HEIGHT
   );
   const blocksCount = blocksCountWithoutZero
-    ? blocksCountWithoutZero - 1
+    ? /**
+       * Reduce 1 for `0` depth.
+       * Reduce another zero as the padding at the bottom
+       */
+      blocksCountWithoutZero - 1 - 1
     : blocksCountWithoutZero;
-  const interval = Math.round(domainMax / blocksCount);
+  const interval = Math.round(maxDepth / blocksCount);
   return [
     0,
     ...[...Array(blocksCount).keys()]
@@ -206,7 +208,9 @@ export const getScaleBlocks = (scaleHeight: number, maxDepth: number) => {
   ];
 };
 
-export const getScale = (scaleBlocks: number[]) => {
+export const getScale = (
+  scaleBlocks: number[]
+): ScaleLinear<number, number> => {
   return scaleLinear()
     .domain([head(scaleBlocks) || 0, last(scaleBlocks) || 0])
     .range([0, scaleBlocks.length - 1]);

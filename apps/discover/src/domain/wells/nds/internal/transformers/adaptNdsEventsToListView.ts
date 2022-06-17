@@ -1,12 +1,13 @@
-import groupBy from 'lodash/groupBy';
 import { sortDictionaryByValuesLength } from 'utils/sort/sortDictionaryByValuesLength';
 
-import { NDSEvent } from 'modules/wellSearch/types';
+import { NdsInternal } from '../types';
+
+import { groupByRiskType } from './groupByRiskType';
 
 export const adaptNdsEventsToListView = (
-  ndsEvents: NDSEvent[]
+  ndsEvents: NdsInternal[]
 ): { [key: string]: number } => {
-  const groupedEvents = groupBy(ndsEvents, 'riskType');
+  const groupedEvents = groupByRiskType(ndsEvents);
 
   return sortDictionaryByValuesLength(groupedEvents);
 };

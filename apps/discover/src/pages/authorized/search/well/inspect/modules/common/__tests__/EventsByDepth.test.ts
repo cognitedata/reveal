@@ -4,7 +4,7 @@ import { mockNdsV2Events } from '__test-utils/fixtures/nds';
 import { mockNptEvents } from '__test-utils/fixtures/npt';
 import { testRenderer } from '__test-utils/renderer';
 
-import EventsByDepth, { Props } from '../Events/EventsByDepth';
+import EventsByDepth, { Props } from '../EventsV2/EventsByDepth';
 
 const ndsEvents = mockNdsV2Events();
 const nptEvents = mockNptEvents;

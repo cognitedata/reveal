@@ -1,10 +1,9 @@
-import { adaptNdsEventsToListView } from 'domain/wells/nds/internal/adapters/adaptNdsEventsToListView';
+import { adaptNdsEventsToListView } from 'domain/wells/nds/internal/transformers/adaptNdsEventsToListView';
+import { NdsInternal } from 'domain/wells/nds/internal/types';
 
 import React, { useState } from 'react';
 
 import { Dropdown } from '@cognite/cogs.js';
-
-import { NDSEvent } from 'modules/wellSearch/types';
 
 import { NDS_EVENT_CODES_TITLE } from './constants';
 import {
@@ -18,7 +17,7 @@ import {
 } from './elements';
 
 export type Props = {
-  events: NDSEvent[];
+  events: NdsInternal[];
 };
 
 const MIN_SIZE_PERCENTAGE = 70;

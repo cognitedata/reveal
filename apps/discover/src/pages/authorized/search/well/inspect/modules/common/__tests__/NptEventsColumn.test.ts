@@ -7,7 +7,7 @@ import NptEventsColumn, {
   EMPTY_STATE_TEXT,
   LOADING_TEXT,
   Props,
-} from '../Events/NptEventsColumn';
+} from '../EventsV2/NptEventsColumn';
 
 const props = {
   scaleBlocks: [],

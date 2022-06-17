@@ -7,7 +7,7 @@ import NdsEventsColumn, {
   EMPTY_STATE_TEXT,
   LOADING_TEXT,
   Props,
-} from '../Events/NdsEventsColumn';
+} from '../EventsV2/NdsEventsColumn';
 
 const props = {
   scaleBlocks: [],
