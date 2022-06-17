@@ -146,7 +146,7 @@ export const ImagePreview = ({
     }: VisionReviewAnnotation<VisionAnnotationDataType>) => {
       dispatch(
         DeleteAnnotationsAndHandleLinkedAssetsOfFile({
-          annotationIds: [{ id }],
+          annotationId: { id },
           showWarnings: true,
         })
       );

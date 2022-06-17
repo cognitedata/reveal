@@ -155,7 +155,7 @@ export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
       } else {
         dispatch(
           DeleteAnnotationsAndHandleLinkedAssetsOfFile({
-            annotationIds: [{ id }],
+            annotationId: { id },
             showWarnings: true,
           })
         );
