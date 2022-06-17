@@ -1,17 +1,17 @@
 import type { Reducer } from 'react';
-import { useEffect, useMemo, useReducer } from 'react';
+import { useEffect, useMemo, useReducer, useState } from 'react';
 import { Link, useMatch } from 'react-location';
 
 import { ParentSizeModern } from '@visx/responsive';
 
 import styled from 'styled-components/macro';
 
+import type { OptionType } from '@cognite/cogs.js';
 import { Button, Collapse, Skeleton, toast } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import type { CogniteEvent } from '@cognite/sdk';
 import type { CalculationRunMetadata } from '@cognite/simconfig-api-sdk/rtk';
 
-import type { CalculationResultDatum } from 'components/charts/CalculationResultChart';
 import { CalculationResultChart } from 'components/charts/CalculationResultChart';
 import { CalculationRunTypeIndicator } from 'components/models/CalculationList/CalculationRunTypeIndicator';
 import { CalculationStatusIndicator } from 'components/models/CalculationList/CalculationStatusIndicator';
@@ -19,6 +19,8 @@ import { CalculationTimeLabel } from 'components/models/CalculationList/Calculat
 import type { ValueUnitType } from 'components/shared/PropertyGrid';
 import { ValueUnitGrid } from 'components/shared/PropertyGrid';
 import { recordsToDsv } from 'utils/stringUtils';
+
+import { calculationSchema } from './constants';
 
 import type { AppLocationGenerics } from 'routes';
 
@@ -61,18 +63,23 @@ export function CalculationRunDetails() {
 
       dispatch({
         run,
-        isChartEnabled: run.subtype === 'Rate by Nodal Analysis',
+        isChartEnabled: Object.keys(calculationSchema).includes(
+          run.metadata?.calcType
+        ),
       });
 
+      if (!run.metadata) {
+        return;
+      }
+
       if (
-        run.metadata?.outputResultsRowStart !==
-        run.metadata?.outputResultsRowEnd
+        run.metadata.outputResultsRowStart !== run.metadata.outputResultsRowEnd
       ) {
         const outputResults = (
           await getSequenceRows(
-            run.metadata?.outputResultsSequence,
-            run.metadata?.outputResultsRowStart,
-            +(run.metadata?.outputResultsRowEnd ?? 0) + 1
+            run.metadata.outputResultsSequence,
+            run.metadata.outputResultsRowStart,
+            +run.metadata.outputResultsRowEnd + 1
           )
         ).reduce<ValueUnitType>(
           (acc, [label, value, unit]) =>
@@ -89,27 +96,32 @@ export function CalculationRunDetails() {
         return;
       }
 
-      // XXX Specific to Rate by Nodal Analysis:
-
       const outputCurves = await getSequenceRows(
-        run.metadata?.outputCurvesSequence,
-        run.metadata?.outputCurvesRowStart,
-        +(run.metadata?.outputCurvesRowEnd ?? 0) + 1
+        run.metadata.outputCurvesSequence,
+        run.metadata.outputCurvesRowStart,
+        +run.metadata.outputCurvesRowEnd + 1
       );
       const { columns } = outputCurves[0];
 
-      const gasRateColumn =
+      const { calcType } = run.metadata as unknown as CalculationRunMetadata;
+      const schema = calculationSchema[calcType];
+
+      const xAxisColumn =
         columns.find((column) =>
-          column.name?.toLowerCase().startsWith('gas rate')
-        )?.name ?? '';
-      const iprColumn =
-        columns.find((column) =>
-          column.name?.toLowerCase().startsWith('ipr pressure')
-        )?.name ?? '';
-      const vlpColumn =
-        columns.find((column) =>
-          column.name?.toLowerCase().startsWith('vlp pressure')
-        )?.name ?? '';
+          column.name?.startsWith(schema?.xAxis.column ?? '')
+        )?.name ?? '(unknown)';
+      const yAxisColumns = columns
+        .filter((column) =>
+          schema?.yAxis.columns.some((calcColumn) =>
+            column.name?.startsWith(calcColumn)
+          )
+        )
+        .map((column) => column.name)
+        .reduce<string[]>(
+          (acc, cur) => [...acc, ...(cur !== undefined ? [cur] : [])],
+          []
+        );
+      const dataColumns = [xAxisColumn, ...yAxisColumns];
 
       const curveTable = outputCurves.map((row) =>
         row.reduce<Record<string, number>>(
@@ -123,14 +135,28 @@ export function CalculationRunDetails() {
 
       dispatch({
         curveTable,
-        data: curveTable.map((row) => ({
-          gasRate: row[gasRateColumn] || 0,
-          ipr: row[iprColumn] || 0,
-          vlp: row[vlpColumn] || 0,
-        })),
+        columns: columns.map(
+          ({ name: label = '(label unavailable)', externalId: value }) => ({
+            label,
+            value,
+          })
+        ),
+        data: curveTable.map((row) =>
+          dataColumns.reduce<Record<typeof dataColumns[number], number>>(
+            (acc, cur) => ({
+              ...acc,
+              [cur]: row[cur] || 0,
+            }),
+            {}
+          )
+        ),
+        axisColumns: {
+          x: xAxisColumn,
+          y: yAxisColumns,
+        },
         axisLabels: {
-          x: gasRateColumn,
-          y: iprColumn.replace('IPR', '').trim(),
+          x: xAxisColumn,
+          y: yAxisColumns.join(' / '),
         },
       });
     }
@@ -146,7 +172,9 @@ export function CalculationRunDetails() {
               data={state.data}
               height={height}
               width={width}
+              xAxisColumn={state.axisColumns?.x ?? ''}
               xAxisLabel={state.axisLabels?.x}
+              yAxisColumns={state.axisColumns?.y ?? []}
               yAxisLabel={state.axisLabels?.y}
             />
           )}
@@ -156,37 +184,6 @@ export function CalculationRunDetails() {
       ),
     [state]
   );
-
-  // XXX Specific to Rate by Nodal Analysis
-  const mainResultFields = [
-    'Solution Node Pressure',
-    'Gas Rate',
-    'Liquid Rate',
-    'Oil Rate',
-    'Water Rate',
-  ];
-
-  const results = state.results
-    ? Object.entries(state.results).reduce<{
-        main: ValueUnitType;
-        additional: ValueUnitType;
-      }>(
-        ({ main, additional }, [key, value]) =>
-          mainResultFields.includes(key)
-            ? {
-                additional,
-                main: { ...main, [key]: value },
-              }
-            : {
-                main,
-                additional: { ...additional, [key]: value },
-              },
-        {
-          main: {},
-          additional: {},
-        }
-      )
-    : undefined;
 
   if (!state.run || !state.run.metadata) {
     return (
@@ -206,6 +203,42 @@ export function CalculationRunDetails() {
     lastUpdatedTime: state.run.lastUpdatedTime,
     startTime: state.run.startTime,
   };
+
+  const { calcType } = metadata;
+  const schema = calculationSchema[calcType];
+  const mainResultFields = [
+    'Solution Node Pressure',
+    'Gas Rate',
+    'Liquid Rate',
+    'Oil Rate',
+    'Water Rate',
+    schema?.xAxis.column,
+    ...(schema?.yAxis.columns ?? []),
+  ];
+
+  const results = state.results
+    ? Object.entries(state.results).reduce<{
+        main: ValueUnitType;
+        additional: ValueUnitType;
+      }>(
+        ({ main, additional }, [key, value]) =>
+          mainResultFields.some((field) =>
+            key.toLowerCase().startsWith(field?.toLowerCase() ?? '')
+          )
+            ? {
+                additional,
+                main: { ...main, [key]: value },
+              }
+            : {
+                main,
+                additional: { ...additional, [key]: value },
+              },
+        {
+          main: {},
+          additional: {},
+        }
+      )
+    : undefined;
 
   return (
     <CalculationDetailsContainer>
@@ -319,12 +352,17 @@ export function CalculationRunDetails() {
 }
 
 interface CalculationRunState {
-  data: (CalculationResultDatum & Record<string, number>)[];
+  data: Record<string, number>[];
   results?: ValueUnitType;
+  columns: OptionType<string>[];
   run?: CogniteEvent;
   axisLabels?: {
     x?: string;
     y?: string;
+  };
+  axisColumns?: {
+    x?: string;
+    y?: string[];
   };
   curveTable: Record<string, number>[];
   isChartEnabled: boolean;
@@ -341,6 +379,8 @@ const getCalculationRunInitialState = (
   state?: CalculationRunState
 ): CalculationRunState => ({
   data: [],
+  columns: [],
+  axisColumns: {},
   curveTable: [],
   isChartEnabled: false,
   ...state,

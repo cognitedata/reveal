@@ -8,8 +8,8 @@ import { useBaseChart } from './BaseChart';
 import { linearScale } from './BaseChart/scale';
 import type { Margin } from './BaseChart/types';
 import { useMultiPlotTooltip } from './BaseChart/useMultiSeriesTooltip';
-import type { OrdinalDatum } from './types';
 
+import type Color from 'color';
 import type { CurveFactory } from 'd3';
 
 export interface CalculationResultDatum {
@@ -18,9 +18,12 @@ export interface CalculationResultDatum {
   vlp: number;
 }
 
-interface CalculationResultChartProps {
-  data: CalculationResultDatum[];
-  solution?: Partial<OrdinalDatum>;
+interface CalculationResultChartProps<
+  AxisColumnsType extends string[] = string[]
+> {
+  xAxisColumn: string;
+  yAxisColumns: AxisColumnsType;
+  data: Record<AxisColumnsType[number], number>[];
   width?: number;
   height?: number;
   curve?: CurveFactory;
@@ -31,24 +34,29 @@ interface CalculationResultChartProps {
 
 export function CalculationResultChart({
   data,
-  solution,
   width = 800,
   height = 300,
   curve = curveMonotoneX,
   margin = { top: 6, right: 0, bottom: 40, left: 54 },
   xAxisLabel,
   yAxisLabel,
+  xAxisColumn,
+  yAxisColumns,
   ...additionalChartProps
 }: CalculationResultChartProps) {
   const xScaleGetter = linearScale({
-    datapoints: data.map(gasRateAccessor),
+    datapoints: data.map((d) => d[xAxisColumn]),
     axis: 'x',
     nice: false,
   });
 
-  const allDatapoints = [...data.map(iprAccessor), ...data.map(vlpAccessor)];
+  const allDatapoints = data.reduce<number[]>(
+    (acc, cur) => [...acc, ...yAxisColumns.map((column) => cur[column])],
+    []
+  );
+
   const yScaleGetter = linearScale({
-    datapoints: data.map(iprAccessor),
+    datapoints: allDatapoints,
     padding: 0.025,
     axis: 'y',
     boundary: {
@@ -65,41 +73,29 @@ export function CalculationResultChart({
     yScaleGetter,
   });
 
-  const Ipr = Plot.LineRegular({
-    label: 'IPR',
-    data: data.map((it) => ({ x: it.gasRate, y: it.ipr })),
-    curve,
-    color: Colors.primary,
-    width: 1.25,
-  });
-
-  const Vlp = Plot.LineRegular({
-    label: 'VLP',
-    data: data.map((it) => ({ x: it.gasRate, y: it.vlp })),
-    curve,
-    color: Colors.red,
-    width: 1.25,
-  });
-
-  const Solution = Plot.ChangePoint({
-    label: 'Solution',
-    data: solution ? [solution] : [],
-    color: Colors.black,
-    radius: 10,
-  });
+  const plots = yAxisColumns.map((column, index) => ({
+    id: Math.random(),
+    plot: Plot.LineRegular({
+      label: column,
+      data: data.map((it) => ({ x: it[xAxisColumn], y: it[column] })),
+      curve,
+      color: palette[index],
+      width: 1.25,
+    }),
+  }));
 
   const Tooltip = useMultiPlotTooltip({
     geometry,
-    plots: [Ipr, Vlp, Solution],
+    plots: plots.map(({ plot }) => plot),
   });
 
   return (
     <Chart
       legend={
         <>
-          <Ipr.Label />
-          <Vlp.Label />
-          {solution && <Solution.Label />}
+          {plots.map(({ id, plot: ColumnPlot }) => (
+            <ColumnPlot.Label key={id} />
+          ))}
         </>
       }
       {...additionalChartProps}
@@ -107,9 +103,9 @@ export function CalculationResultChart({
       <Grid.Horizontal />
       <Grid.Vertical />
 
-      <Ipr.Plot />
-      <Vlp.Plot />
-      {solution && <Solution.Plot />}
+      {plots.map(({ id, plot: ColumnPlot }) => (
+        <ColumnPlot.Plot key={id} />
+      ))}
 
       <Axis.Bottom label={xAxisLabel ?? '(unknown)'} />
       <Axis.Left label={yAxisLabel ?? '(unknown)'} />
@@ -119,6 +115,4 @@ export function CalculationResultChart({
   );
 }
 
-const gasRateAccessor = (d: CalculationResultDatum) => d.gasRate;
-const iprAccessor = (d: CalculationResultDatum) => d.ipr;
-const vlpAccessor = (d: CalculationResultDatum) => d.vlp;
+const palette: Color[] = [Colors.primary, Colors.red];

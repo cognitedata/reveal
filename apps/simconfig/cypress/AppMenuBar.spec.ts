@@ -3,9 +3,18 @@ import login from './login.test';
 beforeEach(login);
 
 describe('App tests', () => {
+  beforeEach(() => {
+    cy.get('[data-cy="top-bar"]')
+      .as('app top bar visible')
+      .should('be.visible');
+    cy.get('[data-cy="model-library-container"]')
+      .as('model library visible')
+      .should('be.visible');
+  });
+
   it('Check for SimConfig App heading', () => {
     cy.log('Checking for page content');
-    cy.contains('Cognite Simulator Configuration');
+    cy.contains('Cognite Simulator Configuration').as('page content visible');
   });
 
   it('Check for project name in App heading', () => {
@@ -49,12 +58,14 @@ describe('App tests', () => {
 
   it('Should contain user avatar with logout button', () => {
     cy.get('.cogs-avatar').click();
-    cy.get('.cogs-menu-item').invoke('text').should('contain', 'Logout');
+    cy.get('.cogs-menu-item[data-cy="logout-button"]')
+      .invoke('text')
+      .should('contain', 'Logout');
   });
 
   it('Should log out successfully', () => {
     cy.get('.cogs-avatar').click();
-    cy.get('.cogs-menu-item').click();
+    cy.get('.cogs-menu-item[data-cy="logout-button"]').click();
     cy.contains('Login with Fake IDP (azure-dev)');
   });
 });

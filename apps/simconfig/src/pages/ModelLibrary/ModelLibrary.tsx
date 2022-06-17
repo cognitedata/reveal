@@ -77,7 +77,7 @@ export function ModelLibrary() {
   }
 
   return (
-    <ModelLibraryContainer>
+    <ModelLibraryContainer data-cy="model-library-container">
       <ModelLibrarySidebar>
         <div className="header">
           <div className="form">

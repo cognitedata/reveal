@@ -21,7 +21,7 @@ export function MenuBar() {
   const { authState } = useAuthContext();
   const matchRoute = useMatchRoute();
   const navigate = useNavigate();
-  const labelsFeature = capabilities.capabilities.find(
+  const labelsFeature = capabilities.capabilities?.find(
     (feature) => feature.name === 'Labels'
   );
   const isLabelsEnabled = labelsFeature?.capabilities?.every(
@@ -36,7 +36,7 @@ export function MenuBar() {
   };
 
   return (
-    <TopBar>
+    <TopBar data-cy="top-bar">
       {isLabelsEnabled && <LabelsModal isOpen={isOpen} setOpen={setOpen} />}
       <TopBar.Left>
         <TopBar.Logo
@@ -103,7 +103,9 @@ export function MenuBar() {
                       <Menu.Divider />
                     </>
                   )}
-                  <Menu.Item onClick={redirectLogout}>Logout</Menu.Item>
+                  <Menu.Item data-cy="logout-button" onClick={redirectLogout}>
+                    Logout
+                  </Menu.Item>
                 </Menu>
               ),
               onClick: () => {
