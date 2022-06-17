@@ -32,6 +32,7 @@ import {
   convertRegionToVisionAnnotationProperties,
   convertTempKeypointCollectionToRegions,
   convertVisionReviewAnnotationsToRegions,
+  getVisionAnnotationDataFromRegion,
 } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/converters';
 import { FileInfo } from '@cognite/sdk';
 import {
@@ -247,7 +248,13 @@ export const ReactImageAnnotateWrapper = ({
         }
       } else {
         await dispatch(setLastShape(annotationLabelOrText));
-        onUpdateAnnotation(convertRegionToVisionAnnotationProperties(region));
+        const changeData: AnnotationChangeById = {
+          id: Number(region.id),
+          update: {
+            data: { set: getVisionAnnotationDataFromRegion(region) },
+          },
+        };
+        onUpdateAnnotation(changeData);
       }
     }
   };

@@ -40,9 +40,11 @@ export const UpdateAnnotations = createAsyncThunk<
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const annotations = await sdk.annotations.update(annotationChangeByIds);
+  const updatedAnnotations = await sdk.annotations.update(
+    annotationChangeByIds
+  );
 
-  const visionAnnotations: VisionAnnotation<VisionAnnotationDataType>[] =
-    convertCDFAnnotationToVisionAnnotations(annotations);
-  return visionAnnotations;
+  const updatedVisionAnnotations: VisionAnnotation<VisionAnnotationDataType>[] =
+    convertCDFAnnotationToVisionAnnotations(updatedAnnotations);
+  return updatedVisionAnnotations;
 });
