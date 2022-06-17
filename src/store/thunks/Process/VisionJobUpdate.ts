@@ -7,38 +7,16 @@ import {
   VisionJobCompleted,
 } from 'src/api/vision/detectionModels/types';
 
-import {
-  CDFAnnotationTypeEnum,
-  ImageAssetLink,
-  Status,
-} from 'src/api/annotation/types';
 import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
 import { fileProcessUpdate } from 'src/store/commonActions';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { ToastUtils } from 'src/utils/ToastUtils';
-import { convertVisionJobAnnotationToVisionAnnotation } from 'src/api/vision/detectionModels/converters';
+import { convertVisionJobResultItemToUnsavedVisionAnnotation } from 'src/api/vision/detectionModels/converters';
 import {
   UnsavedVisionAnnotation,
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
-import { isImageAssetLinkData } from 'src/modules/Common/types/typeGuards';
-import { VisionModelTypeCDFAnnotationTypeMap } from 'src/utils/visionAnnotationUtils';
-
-const isVisionAnnotationDataTypeList = (
-  data: VisionAnnotationDataType | VisionAnnotationDataType[]
-): data is VisionAnnotationDataType[] => {
-  return (data as VisionAnnotationDataType[]).length !== undefined;
-};
-
-const isImageAssetLinkDataList = (
-  data: VisionAnnotationDataType | VisionAnnotationDataType[]
-): data is ImageAssetLink[] => {
-  return (
-    isVisionAnnotationDataTypeList(data) &&
-    data.every((item) => isImageAssetLinkData(item))
-  );
-};
 
 const getNewFailedFileIds = ({
   job,
@@ -112,42 +90,11 @@ export const VisionJobUpdate = createAsyncThunk<
         const { annotations: jobAnnotations } = results;
 
         if (jobAnnotations && jobAnnotations.length) {
-          const unsavedAnnotationsForFile = jobAnnotations
-            .map((item):
-              | UnsavedVisionAnnotation<VisionAnnotationDataType>[]
-              | UnsavedVisionAnnotation<VisionAnnotationDataType>
-              | null => {
-              const convertedAnnotations =
-                convertVisionJobAnnotationToVisionAnnotation(item, job.type);
-
-              if (!convertedAnnotations) {
-                return null;
-              }
-              if (isImageAssetLinkDataList(convertedAnnotations)) {
-                return convertedAnnotations.map((annotation) => {
-                  return {
-                    annotationType: CDFAnnotationTypeEnum.ImagesAssetLink,
-                    annotatedResourceId: results.fileId,
-                    status: Status.Suggested,
-                    data: annotation,
-                  };
-                });
-              }
-
-              return {
-                annotationType: VisionModelTypeCDFAnnotationTypeMap[job.type],
-                annotatedResourceId: results.fileId,
-                status: Status.Suggested,
-                data: convertedAnnotations,
-              };
-            })
-            .filter(
-              (
-                item
-              ): item is UnsavedVisionAnnotation<VisionAnnotationDataType>[] =>
-                !!item
-            )
-            .flat();
+          const unsavedAnnotationsForFile =
+            convertVisionJobResultItemToUnsavedVisionAnnotation(
+              results,
+              job.type
+            );
           unsavedAnnotations = unsavedAnnotations.concat(
             unsavedAnnotationsForFile
           );
