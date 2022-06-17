@@ -22,7 +22,7 @@ export const PageBody = () => {
   const { homePageState, homePageDispatch } = useHomePageContext();
   const { appState, appDispatch } = useAppContext();
 
-  const unitListByFacility = useApi(
+  const { state: unitListByFacilityQuery } = useApi(
     getUnitListByFacility,
     {},
     appState.unitListByFacility
@@ -54,13 +54,13 @@ export const PageBody = () => {
     if (!appState.unitListByFacility.data) {
       appDispatch({
         type: AppActionType.INIT_UNITS,
-        unitListByFacility,
+        unitListByFacility: unitListByFacilityQuery,
       });
     }
 
     const unitListQuery = {
-      ...unitListByFacility,
-      data: unitListByFacility.data?.[facility.sequenceNumber].sort(
+      ...unitListByFacilityQuery,
+      data: unitListByFacilityQuery.data?.[facility.sequenceNumber].sort(
         (a, b) => a.number - b.number
       ),
     };
@@ -69,7 +69,7 @@ export const PageBody = () => {
       type: HomePageActionType.SET_UNIT_LIST,
       unitListQuery,
     });
-  }, [facility, unitListByFacility]);
+  }, [facility, unitListByFacilityQuery]);
 
   useEffect(() => {
     if (!homePageState.unitListQuery.data || !facility) return;

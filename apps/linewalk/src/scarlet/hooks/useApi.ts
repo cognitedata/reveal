@@ -24,18 +24,21 @@ export const useApi = <T>(
     loading: !options?.data,
   });
 
+  const trigger = () => {
+    if (!client) return;
+    setState((state) => (state.loading ? state : initialState));
+    func(client, props)
+      .then((data) => {
+        setState((state) => ({ ...state, data, loading: false }));
+      })
+      .catch((error) => {
+        setState((state) => ({ ...state, error, loading: false }));
+      });
+  };
+
   useEffect(() => {
-    if (client && !options?.data && !options?.skip) {
-      setState((state) => (state.loading ? state : initialState));
-      func(client, props)
-        .then((data) => {
-          setState((state) => ({ ...state, data, loading: false }));
-        })
-        .catch((error) => {
-          setState((state) => ({ ...state, error, loading: false }));
-        });
-    }
+    if (client && !options?.data && !options?.skip) trigger();
   }, [client, JSON.stringify(props), options?.skip]);
 
-  return state;
+  return { state, trigger };
 };

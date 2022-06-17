@@ -16,7 +16,7 @@ import {
 } from 'scarlet/api';
 import { getEquipmentType } from 'scarlet/utils';
 
-import { PageBody } from './components';
+import { PageBody, ActionToastBody } from './components';
 import * as Styled from './style';
 
 export const Equipment = () => {
@@ -26,38 +26,41 @@ export const Equipment = () => {
 
   const { appState, appDispatch } = useAppContext();
 
-  const configQuery = useApi(
+  const { state: configQuery } = useApi(
     getEquipmentConfig,
     {},
     { data: appState.equipmentConfig.data }
   );
 
-  const pcmsQuery = useApi(getEquipmentPCMS, {
+  const { state: pcmsQuery } = useApi(getEquipmentPCMS, {
     facility,
     unitId,
     equipmentId,
   });
-  const documentsQuery = useApi(getEquipmentDocuments, {
-    unitId,
-    equipmentId,
-  });
-  const equipmentStateQuery = useApi(getEquipmentState, {
+  const { state: documentsQuery, trigger: documentsQueryTrigger } = useApi(
+    getEquipmentDocuments,
+    {
+      unitId,
+      equipmentId,
+    }
+  );
+  const { state: equipmentStateQuery } = useApi(getEquipmentState, {
     facility,
     unitId,
     equipmentId,
   });
-  const malQuery = useApi(getEquipmentMAL, {
+  const { state: malQuery } = useApi(getEquipmentMAL, {
     facility,
     unitId,
     equipmentId,
   });
-  const msQuery = useApi(getEquipmentMS, {
+  const { state: msQuery } = useApi(getEquipmentMS, {
     facility,
     unitId,
     equipmentId,
   });
 
-  const scannerDetectionsQuery = useApi(
+  const { state: scannerDetectionsQuery } = useApi(
     getEquipmentAnnotations,
     { config: configQuery.data, documents: documentsQuery.data },
     { skip: !configQuery.data || !documentsQuery.data }
@@ -130,7 +133,15 @@ export const Equipment = () => {
 
   useEffect(() => {
     if (documentsQuery.error) {
-      toast.error('Failed to load documents');
+      toast.open(
+        (props) => (
+          <ActionToastBody toastProps={props} action={documentsQueryTrigger} />
+        ),
+        {
+          className: 'cogs-toast-error',
+          autoClose: false,
+        }
+      );
     }
 
     appDispatch({

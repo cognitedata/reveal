@@ -47,10 +47,13 @@ export const EquipmentList = () => {
 
   const { facility, unitId } = homePageState;
 
-  const equipmentListQuery = useApi<EquipmentListItem[]>(getEquipmentList, {
-    facility,
-    unitId,
-  });
+  const { state: equipmentListQuery } = useApi<EquipmentListItem[]>(
+    getEquipmentList,
+    {
+      facility,
+      unitId,
+    }
+  );
 
   useEffect(() => {
     homePageDispatch({

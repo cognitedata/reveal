@@ -28,7 +28,7 @@ export const ExportTools = () => {
     cognitePlaygroundClient,
     functionCall
   );
-  const exportFileQuery = useApi(getExportFile, {
+  const { state: exportFileQuery } = useApi(getExportFile, {
     id: exportFileIdQuery.fileId,
   });
 

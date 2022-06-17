@@ -22,12 +22,11 @@ export const UnitNavigation = ({ showFacilities }: UnitNavigationProps) => {
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState(SortOrder.ASCENDING);
   const { homePageState } = useHomePageContext();
-  const numberEquipmentsPerUnit = useApi<Record<number, number>>(
-    getNumberEquipmentsPerUnit,
-    {
-      unitIds: homePageState.unitListQuery.data?.map((item) => item.cdfId),
-    }
-  );
+  const { state: numberEquipmentsPerUnitQuery } = useApi<
+    Record<number, number>
+  >(getNumberEquipmentsPerUnit, {
+    unitIds: homePageState.unitListQuery.data?.map((item) => item.cdfId),
+  });
 
   useEffect(() => {
     const unitButton = activeUnitRef.current;
@@ -135,9 +134,9 @@ export const UnitNavigation = ({ showFacilities }: UnitNavigationProps) => {
               {sortedUnitList.map((unit) => {
                 const isActive = unit.id === homePageState.unitId;
                 const numberEquipments =
-                  numberEquipmentsPerUnit.data?.[unit.cdfId] || 0;
+                  numberEquipmentsPerUnitQuery.data?.[unit.cdfId] || 0;
                 const disabled =
-                  !numberEquipmentsPerUnit.loading && !numberEquipments;
+                  !numberEquipmentsPerUnitQuery.loading && !numberEquipments;
                 return (
                   <Styled.ListItem
                     key={unit.id}
@@ -148,7 +147,7 @@ export const UnitNavigation = ({ showFacilities }: UnitNavigationProps) => {
                   >
                     <Styled.ListItemContent>
                       <h4 className="cogs-title-4">Unit {unit.number}</h4>
-                      {numberEquipmentsPerUnit.loading ? (
+                      {numberEquipmentsPerUnitQuery.loading ? (
                         <Styled.NumberEquipments className="cogs-body-2">
                           <Icon type="Loader" />
                           equipment

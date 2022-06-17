@@ -27,15 +27,15 @@ export const Support = () => {
   const { client } = useAuthContext();
   const [loading, setLoading] = useState(false);
 
-  const unitListByFacility = useApi(
+  const { state: unitListByFacilityQuery } = useApi(
     getUnitListByFacility,
     {},
     { skip: Boolean(unitId) }
   );
-  const equipmentsPerUnit = useApi(
+  const { state: equipmentsPerUnitQuery } = useApi(
     getEquipmentsPerUnit,
     {
-      unitIds: unitListByFacility.data?.[facility.sequenceNumber].map(
+      unitIds: unitListByFacilityQuery.data?.[facility.sequenceNumber].map(
         (item) => item.cdfId
       ),
     },
@@ -43,56 +43,56 @@ export const Support = () => {
   );
 
   useEffect(() => {
-    if (!unitListByFacility.data) return;
+    if (!unitListByFacilityQuery.data) return;
     setUnitId(SELECT_ALL);
     setUnitOptions([
       { value: SELECT_ALL, label: 'All' },
-      ...unitListByFacility.data[facility.sequenceNumber]
+      ...unitListByFacilityQuery.data[facility.sequenceNumber]
         .sort((a, b) => a.number - b.number)
         .map((unit) => ({
           value: unit.id,
           label: unit.id,
         })),
     ]);
-  }, [unitListByFacility, facility]);
+  }, [unitListByFacilityQuery, facility]);
 
   const preapproveEquipment = () => {
     if (!unitId) return;
 
-    const unitIds = unitListByFacility.data![facility.sequenceNumber].filter(
-      (item) => unitId === SELECT_ALL || item.id === unitId
-    );
+    const unitIds = unitListByFacilityQuery.data![
+      facility.sequenceNumber
+    ].filter((item) => unitId === SELECT_ALL || item.id === unitId);
     setLoading(true);
 
     preapproveEquipmentList(
       client!,
       facility,
       unitIds,
-      equipmentsPerUnit.data!
+      equipmentsPerUnitQuery.data!
     ).finally(() => setLoading(false));
   };
 
   useEffect(() => {
-    if (unitListByFacility.loading) {
+    if (unitListByFacilityQuery.loading) {
       console.debug('Loading units...');
-    } else if (unitListByFacility.data) {
+    } else if (unitListByFacilityQuery.data) {
       console.debug('%cUnits loaded', 'color: green');
     }
-    if (unitListByFacility.error) {
-      console.error('Failed to load units', unitListByFacility.error);
+    if (unitListByFacilityQuery.error) {
+      console.error('Failed to load units', unitListByFacilityQuery.error);
     }
-  }, [unitListByFacility]);
+  }, [unitListByFacilityQuery]);
 
   useEffect(() => {
-    if (equipmentsPerUnit.loading) {
+    if (equipmentsPerUnitQuery.loading) {
       console.debug('Loading equipment...');
-    } else if (equipmentsPerUnit.data) {
+    } else if (equipmentsPerUnitQuery.data) {
       console.debug('%cEquipment loaded', 'color: green');
     }
-    if (equipmentsPerUnit.error) {
-      console.error('Failed to load equipment', equipmentsPerUnit.error);
+    if (equipmentsPerUnitQuery.error) {
+      console.error('Failed to load equipment', equipmentsPerUnitQuery.error);
     }
-  }, [equipmentsPerUnit]);
+  }, [equipmentsPerUnitQuery]);
 
   return (
     <Styled.Container>
@@ -114,8 +114,8 @@ export const Support = () => {
           width={220}
           onChange={(option: any) => setUnitId(option.value)}
           title="Unit"
-          icon={unitListByFacility.loading ? 'Loader' : undefined}
-          disabled={unitListByFacility.loading || loading}
+          icon={unitListByFacilityQuery.loading ? 'Loader' : undefined}
+          disabled={unitListByFacilityQuery.loading || loading}
         />
       </Styled.FilterContainer>
       <Styled.Actions>
@@ -123,9 +123,13 @@ export const Support = () => {
           type="primary"
           onClick={preapproveEquipment}
           disabled={
-            loading || equipmentsPerUnit.loading || equipmentsPerUnit.error
+            loading ||
+            equipmentsPerUnitQuery.loading ||
+            equipmentsPerUnitQuery.error
           }
-          icon={loading || equipmentsPerUnit.loading ? 'Loader' : undefined}
+          icon={
+            loading || equipmentsPerUnitQuery.loading ? 'Loader' : undefined
+          }
           iconPlacement="right"
         >
           Pre-approved equipments
