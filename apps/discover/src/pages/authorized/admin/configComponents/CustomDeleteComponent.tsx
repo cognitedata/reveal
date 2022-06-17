@@ -11,7 +11,6 @@ import { CustomDeleteProps } from '../projectConfig';
 
 export const CustomDeleteComponent = ({
   type,
-  id,
   featureTypeId,
   onDelete,
   onClose,
@@ -20,16 +19,16 @@ export const CustomDeleteComponent = ({
   switch (type) {
     case 'map.children.layers': {
       const handleOk = async () => {
-        if (id) {
+        if (featureTypeId) {
           try {
             // while deleting if we do not find corresponding featureType then
-            // we just want to delete the layer from project config (onOk)
-            await getFeatureType(featureTypeId || id);
+            // we just want to delete the layer from project config (onDelete)
+            await getFeatureType(featureTypeId);
 
             try {
               // if successful in finding featureType then we just delete corresponding data from geospatial
               // and then try for deleting layer from project config
-              await deleteFeatureType(featureTypeId || id);
+              await deleteFeatureType(featureTypeId);
               onDelete();
             } catch (e) {
               // in case we couldn't delete data, we do not want to delete layer from project config otherwise

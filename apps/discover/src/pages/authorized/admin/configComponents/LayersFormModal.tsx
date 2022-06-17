@@ -1,13 +1,15 @@
-import {
-  createLayer,
-  deleteFeatureType,
-} from 'domain/geospatial/service/network';
+import { useLayersCreateMutate } from 'domain/geospatial/internal/actions/useLayersCreateMutate';
+import { useLayersUpdateMutate } from 'domain/geospatial/internal/actions/useLayersUpdateMutate';
+import { useFeatureTypesListQuery } from 'domain/geospatial/internal/queries/useFeatureTypesListQuery';
+import { LayerFormValues } from 'domain/geospatial/internal/types';
 
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useFormik } from 'formik';
-import omit from 'lodash/omit';
-import { log } from 'utils/log';
+import isEmpty from 'lodash/isEmpty';
+
+import { Select, OptionType, Detail } from '@cognite/cogs.js';
 
 import { FileReaderComp } from 'components/FileReader';
 import { Modal } from 'components/Modal';
@@ -16,25 +18,8 @@ import { showErrorMessage } from 'components/Toast';
 import { ConfigFormFields } from '../projectConfig';
 
 import { CustomForm } from './elements';
-import { LayerFormValues, FormModalProps } from './types';
-
-const validate = (values: LayerFormValues) => {
-  const errors: Record<string, string> = {};
-  if (!values.id) {
-    errors.id = 'Please enter a valid Id';
-  }
-  if (!values.name) {
-    errors.name = 'Please enter a valid Name';
-  }
-  if (!values.layerSource) {
-    errors.layerSource = 'Please select a source file';
-  }
-  return errors;
-};
-
-const getNewUniqueLayerId = (): string => {
-  return `${String(Date.now())}_${String(Math.random()).slice(2, 7)}`;
-};
+import { FormModalProps } from './types';
+import { validate, getNewFeatureTypeId } from './utils';
 
 export const LayersFormModal = ({
   onClose,
@@ -44,42 +29,32 @@ export const LayersFormModal = ({
   mode,
 }: FormModalProps) => {
   const { t } = useTranslation();
-
-  const createNewLayer = (values: LayerFormValues) => {
-    return createLayer(values.layerSource, values.featureTypeId)
-      .then(() => onOk(omit(values, 'layerSource')))
-      .catch((error) => {
-        showErrorMessage(
-          error?.message || 'Could not create layer. Please check JSON file.'
-        );
-      });
-  };
-
-  const updateExistingLayer = (values: LayerFormValues) => {
-    const newLayerId = getNewUniqueLayerId();
-    const oldLayerId = values.featureTypeId;
-    return createLayer(values.layerSource, newLayerId)
-      .then(() =>
-        onOk({ ...omit(values, 'layerSource'), featureTypeId: newLayerId })
-      )
-      .then(() => deleteFeatureType(oldLayerId || values.id))
-      .catch((error) => {
-        showErrorMessage(error);
-        log('Could not update layer.');
-      });
-  };
+  const { data: featureTypes } = useFeatureTypesListQuery();
+  const { mutate: createNewLayer } = useLayersCreateMutate(onOk);
+  const { mutate: updateExistingLayer } = useLayersUpdateMutate(onOk);
 
   const onSubmit = (values: any) => {
-    return mode === 'EDIT'
-      ? updateExistingLayer(values)
-      : createNewLayer(values);
+    // for new source create new layer
+    if (values.layerSource) {
+      if (mode === 'EDIT') {
+        return updateExistingLayer({
+          ...values,
+          featureTypeId: getNewFeatureTypeId(),
+        });
+      }
+      return createNewLayer({
+        ...values,
+        featureTypeId: getNewFeatureTypeId(),
+      });
+    }
+    // for exising feature type, just need to update featureTypeId
+    return onOk(values);
   };
 
   const { values, errors, setFieldValue, submitForm, isSubmitting } =
     useFormik<LayerFormValues>({
       initialValues: (value as LayerFormValues) || {
         disabled: false,
-        featureTypeId: getNewUniqueLayerId(),
       },
       validate,
       onSubmit,
@@ -95,6 +70,16 @@ export const LayersFormModal = ({
       showErrorMessage('Invalid JSON file.');
     }
   };
+
+  const featureTypeOptions = useMemo(() => {
+    if (!featureTypes) {
+      return [];
+    }
+    return featureTypes.map((featureType) => ({
+      label: featureType.externalId,
+      value: featureType.externalId,
+    }));
+  }, [featureTypes]);
 
   return (
     <Modal
@@ -114,6 +99,29 @@ export const LayersFormModal = ({
           onChange={setFieldValue}
           error={errors}
         />
+        <>
+          <Detail strong>Select Existing Feature Type</Detail>
+          <Select
+            label="Select"
+            id="featureTypeId"
+            inputId="featureTypeId"
+            placeholder="Select Feature Type"
+            value={
+              values.featureTypeId
+                ? { label: values.featureTypeId, value: values.featureTypeId }
+                : undefined
+            }
+            isClearable
+            onChange={(option: OptionType<string>) => {
+              if (isEmpty(option)) {
+                setFieldValue('featureTypeId', undefined);
+              } else {
+                setFieldValue('featureTypeId', option.value);
+              }
+            }}
+            options={featureTypeOptions}
+          />
+        </>
         <FileReaderComp
           onRead={handleRead}
           error={errors.layerSource as string}

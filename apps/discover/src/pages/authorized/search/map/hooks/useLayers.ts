@@ -9,7 +9,7 @@ import reduce from 'lodash/reduce';
 import { fetchTenantFile } from 'utils/fetchTenantFile';
 
 import { ProjectConfigMapLayers } from '@cognite/discover-api-types';
-import { getTenantInfo } from '@cognite/react-container';
+import { getProjectInfo } from '@cognite/react-container';
 
 import { LAYERS_QUERY_KEY } from 'constants/react-query';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
@@ -42,8 +42,12 @@ const getCombinedLayers = (
   );
 };
 
-export const useLayers = () => {
-  const [tenant] = getTenantInfo();
+export const useLayers = (): {
+  layers: Layers;
+  selectableLayers: SelectableLayer[];
+  layersReady: boolean;
+} => {
+  const [project] = getProjectInfo();
   const { data: mapConfig } = useProjectConfigByKey('map');
 
   const adaptedProjectConfigLayers = keyBy(mapConfig?.layers, 'id');
@@ -59,7 +63,7 @@ export const useLayers = () => {
   };
 
   const { data, isFetched: layersReady } = useQuery(LAYERS_QUERY_KEY.ALL, () =>
-    fetchTenantFile(tenant, 'layers')
+    fetchTenantFile(project, 'layers')
       .then((fetchedLayers) => {
         const combinedLayers = getCombinedLayers(
           adaptedProjectConfigLayers,

@@ -7,7 +7,6 @@ import { GeospatialCreateFeatureType, GeospatialFeature } from '@cognite/sdk';
 import {
   MAX_STRING_LENGTH_MULTIPLIER,
   DISCOVER_FEATURE_PREFIX,
-  DISCOVER_FEATURE_TYPE_PREFIX,
 } from '../../constants';
 
 export const adaptGeoJSONToGeospatial = (
@@ -78,7 +77,7 @@ export const adaptGeoJSONToGeospatial = (
     },
     {
       featureType: {
-        externalId: `${DISCOVER_FEATURE_TYPE_PREFIX}${id}`,
+        externalId: id,
         properties: {
           geometry: { type: 'GEOMETRY', srid: 4326 },
         },

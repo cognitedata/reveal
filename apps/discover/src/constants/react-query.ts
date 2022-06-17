@@ -143,6 +143,11 @@ export const LAYERS_QUERY_KEY = {
   ALL: [LAYERS, 'get'],
 };
 
+const GEOSPATIAL = 'geospatial';
+export const GEOSPATIAL_QUERY_KEY = {
+  FEATURE_TYPES: [GEOSPATIAL, 'featureTypes'],
+};
+
 export const TOKEN_INSPECT_QUERY_KEY = {
   all: ['token-inspect'],
   lists: () => [...TOKEN_INSPECT_QUERY_KEY.all, 'list'],

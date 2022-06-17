@@ -13,7 +13,6 @@ import { handleServiceError } from 'utils/errors';
 import { fetchTenantFile } from 'utils/fetchTenantFile';
 import { log } from 'utils/log';
 
-import { ProjectConfigMapLayers } from '@cognite/discover-api-types';
 import { getProjectInfo } from '@cognite/react-container';
 
 import { useJsonHeaders } from 'hooks/useJsonHeaders';
@@ -81,11 +80,13 @@ export const useMapContent = () => {
           );
         }
 
-        if (!isUndefined((layers[id] as ProjectConfigMapLayers).disabled)) {
+        if (
+          !isUndefined(layers[id].disabled) &&
+          !layers[id].disabled &&
+          layers[id]?.featureTypeId
+        ) {
           promises.push(
-            getGeoJSON(
-              (layers[id] as ProjectConfigMapLayers)?.featureTypeId || id
-            )
+            getGeoJSON(layers[id]?.featureTypeId as string)
               .then((geoJSON) => {
                 pushResponse(geoJSON);
               })

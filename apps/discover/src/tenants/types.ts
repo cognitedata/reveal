@@ -58,7 +58,7 @@ export type LegacyLayer = {
   };
 };
 
-export type Layer = LegacyLayer | ProjectConfigMapLayers;
+export type Layer = ProjectConfigMapLayers;
 
 export type Layers = Record<string, Layer>;
 

@@ -3,20 +3,16 @@ import { log } from 'utils/log';
 
 import { GeospatialFeatureResponse } from '@cognite/sdk';
 
-import { DISCOVER_FEATURE_TYPE_PREFIX } from '../../constants';
 import { adaptGeospatialToGeoJSON } from '../../internal/adapters/adaptGeospatialToGeoJSON';
 
 export const getGeoJSON = (featureTypeId: string) => {
   return getCogniteSDKClient()
-    .geospatial.feature.searchStream(
-      `${DISCOVER_FEATURE_TYPE_PREFIX}${featureTypeId}`,
-      {
-        output: {
-          geometryFormat: 'GEOJSON',
-          jsonStreamFormat: 'NEW_LINE_DELIMITED',
-        },
-      }
-    )
+    .geospatial.feature.searchStream(featureTypeId, {
+      output: {
+        geometryFormat: 'GEOJSON',
+        jsonStreamFormat: 'NEW_LINE_DELIMITED',
+      },
+    })
     .then((response) => {
       try {
         return adaptGeospatialToGeoJSON(

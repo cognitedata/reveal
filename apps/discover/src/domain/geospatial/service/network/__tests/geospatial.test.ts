@@ -63,7 +63,6 @@ describe('GeospecialV1 Actions', () => {
         weight: 20,
       },
     ]);
-    // expect(result).toBe(`${DISCOVER_FEATURE_TYPE_PREFIX}${TEST_LAYER_ID}`);
     expect(console.error).toHaveBeenCalledTimes(0);
   });
 

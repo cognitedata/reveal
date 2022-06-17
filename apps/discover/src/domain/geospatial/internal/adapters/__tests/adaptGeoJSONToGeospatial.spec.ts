@@ -8,7 +8,6 @@ import {
 
 import {
   DISCOVER_FEATURE_PREFIX,
-  DISCOVER_FEATURE_TYPE_PREFIX,
   MAX_STRING_LENGTH_MULTIPLIER,
 } from '../../../constants';
 import { adaptGeoJSONToGeospatial } from '../adaptGeoJSONToGeospatial';
@@ -39,9 +38,7 @@ describe('adaptGeoJSONToGeospatial', () => {
       },
       TEST_LAYER_ID
     );
-    expect(featureType.externalId).toBe(
-      `${DISCOVER_FEATURE_TYPE_PREFIX}${TEST_LAYER_ID}`
-    );
+    expect(featureType.externalId).toBe(TEST_LAYER_ID);
     expect(featureItems[0].externalId).toBe(
       `${DISCOVER_FEATURE_PREFIX}${TEST_LAYER_ID}_0`
     );
