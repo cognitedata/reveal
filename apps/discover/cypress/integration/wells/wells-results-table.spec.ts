@@ -15,6 +15,7 @@ describe('Wells: result_table', () => {
   beforeEach(() => {
     cy.deleteAllFavorites();
     cy.deleteAllSavedSearches();
+    cy.addWaitForWdlResources('sources', 'GET', 'getSources');
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
@@ -185,6 +186,7 @@ describe('Wells: result_table', () => {
   it('Should be able to clear all the filters by clicking `clear all` button', () => {
     cy.performSearch('');
     cy.goToTab('Wells');
+    cy.wait('@getSources');
 
     cy.log('click on source filter section');
     cy.clickOnFilterCategory(DATA_SOURCE);

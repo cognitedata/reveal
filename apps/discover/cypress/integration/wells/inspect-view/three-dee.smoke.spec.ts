@@ -9,6 +9,7 @@ import { WELL_SOURCE_WITH_ALL } from '../../../support/constants';
 
 describe('Three-dee component', () => {
   beforeEach(() => {
+    cy.addWaitForWdlResources('sources', 'GET', 'getSources');
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
@@ -16,6 +17,7 @@ describe('Three-dee component', () => {
 
   it('should render log filter, wells and wellbores correctly', () => {
     cy.selectCategory('Wells');
+    cy.wait('@getSources');
     cy.performWellsSearch({
       search: {
         filters: [
@@ -115,6 +117,7 @@ describe('Three-dee component', () => {
 
   it('should pop up warning message and load multiple wells', () => {
     cy.selectCategory('Wells');
+    cy.wait('@getSources');
 
     cy.performWellsSearch({
       search: {
