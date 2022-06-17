@@ -304,6 +304,34 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
         </ConfigurationSection>
       ) : null}
 
+      {'routine' in configuration ? (
+        <ConfigurationSection>
+          <h3>Calculation routine</h3>
+          <CalculationRoutineList>
+            {configuration.routine
+              ? configuration.routine.map(({ order, description, steps }) => (
+                  <React.Fragment key={order}>
+                    <div className="heading">
+                      {order}. {description}
+                    </div>
+                    {steps.map(({ step, type, arguments: args }) => (
+                      <React.Fragment key={step}>
+                        <div className="step">
+                          {order}.{step}. {type} (
+                          {args.value
+                            ? `${args.address}, ${args.value}`
+                            : args.address}
+                          )
+                        </div>
+                      </React.Fragment>
+                    ))}
+                  </React.Fragment>
+                ))
+              : null}
+          </CalculationRoutineList>
+        </ConfigurationSection>
+      ) : null}
+
       <ConfigurationSection
         className={classNames({
           enabled: !!configuration.inputTimeSeries.length,
@@ -324,15 +352,24 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
           <div className="heading">Sensor timeseries</div>
           <div className="heading">Sampling method</div>
           {configuration.inputTimeSeries.map(
-            ({ name, unit, aggregateType, sensorExternalId, unitType }) => (
+            ({
+              name,
+              unit,
+              aggregateType,
+              sensorExternalId,
+              unitType,
+              type,
+            }) => (
               <React.Fragment key={name}>
                 <div>
-                  <NullableValue value={name} />
+                  <NullableValue value={name} /> (<NullableValue value={type} />
+                  )
                 </div>
                 <div>
                   <NullableValue
                     value={definitions?.map.unitType[unitType][unit ?? '']}
-                  />
+                  />{' '}
+                  (<NullableValue value={unitType} />)
                 </div>
                 <div>
                   <NullableValue value={sensorExternalId} />
@@ -479,6 +516,25 @@ const OutputTimeseriesList = styled.div`
   .heading {
     font-weight: bold;
     text-transform: capitalize;
+  }
+`;
+
+const CalculationRoutineList = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  & > div {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .heading {
+    margin-top: 8px;
+    font-weight: bold;
+    text-transform: capitalize;
+  }
+  .step {
+    margin-left: 12px;
+    font-weight: italic;
   }
 `;
 

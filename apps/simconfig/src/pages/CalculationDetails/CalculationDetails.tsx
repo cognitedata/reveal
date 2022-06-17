@@ -18,7 +18,12 @@ import type { AppLocationGenerics } from 'routes';
 export function CalculationDetails() {
   const project = useSelector(selectProject);
   const {
-    params: { modelName, simulator = 'UNKNOWN', calculationType = 'IPR' },
+    params: {
+      modelName,
+      simulator = 'UNKNOWN',
+      calculationType = 'IPR',
+      userDefined,
+    },
   } = useMatch<AppLocationGenerics>();
   const { data: modelFile, isFetching: isFetchingModelFile } =
     useGetModelFileQuery({ project, modelName, simulator });
@@ -28,6 +33,7 @@ export function CalculationDetails() {
       modelName,
       simulator,
       calculationType,
+      userDefinedType: userDefined,
     });
 
   useTitle(
@@ -44,6 +50,10 @@ export function CalculationDetails() {
     // No model file returned
     throw new Error('Model file or calculation missing');
   }
+
+  const modelLibraryPath = modelCalculation.configuration.calcTypeUserDefined
+    ? '../../..'
+    : '../..';
   return (
     <CalculationDetailsContainer>
       <h2>
@@ -52,11 +62,17 @@ export function CalculationDetails() {
         <Link to="configuration">
           <Button icon="Settings">Edit configuration</Button>
         </Link>
-        <Link to="../..">
+        <Link to={modelLibraryPath}>
           <Button icon="ArrowLeft">Return to model library</Button>
         </Link>
       </h2>
       <ConfigurationMetadata>
+        {modelCalculation.configuration.calcTypeUserDefined ? (
+          <div className="entry">
+            <div>Calculation Type</div>
+            <div>{modelCalculation.configuration.calcTypeUserDefined}</div>
+          </div>
+        ) : null}
         <div className="entry">
           <div>Simulator</div>
           <div>{modelCalculation.configuration.simulator}</div>

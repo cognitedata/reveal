@@ -7,6 +7,7 @@ import { CalculationDetails, ModelLibrary } from 'pages';
 
 import type {
   CalculationType,
+  CalculationTypeUserDefined,
   GetDefinitionsApiResponse,
   Simulator,
 } from '@cognite/simconfig-api-sdk/rtk';
@@ -27,6 +28,7 @@ export type AppLocationGenerics = MakeGenerics<{
   Params: Record<string, string> & {
     simulator?: Simulator;
     calculationType?: CalculationType;
+    userDefined?: CalculationTypeUserDefined;
   };
   RunListParams: Record<string, string> & {
     simulator?: Simulator;
@@ -82,6 +84,19 @@ export function routes(
                         {
                           path: 'configuration',
                           element: <CalculationConfiguration />,
+                        },
+                        {
+                          path: ':userDefined',
+                          children: [
+                            {
+                              path: '/',
+                              element: <CalculationDetails />,
+                            },
+                            {
+                              path: 'configuration',
+                              element: <CalculationConfiguration />,
+                            },
+                          ],
                         },
                       ],
                     },

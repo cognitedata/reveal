@@ -21,6 +21,7 @@ import type {
   CalculationRun,
   CalculationTemplate,
   CalculationType,
+  CalculationTypeUserDefined,
   DeletionStatus,
   Simulator,
 } from '@cognite/simconfig-api-sdk/rtk';
@@ -212,7 +213,9 @@ export function CalculationList({
     (calculation) => calculation.configuration.calculationType
   );
   const nonConfiguredCalculations = calculationTypes.filter(
-    (calculationType) => !configuredCalculations.includes(calculationType)
+    (calculationType) =>
+      !configuredCalculations.includes(calculationType) &&
+      calculationType !== 'UserDefined'
   );
 
   const handleOnDeleteCalculationConfirm = async (
@@ -237,11 +240,17 @@ export function CalculationList({
       calculationType: `${encodeURIComponent(
         calculation.configuration.calculationType
       )}` as CalculationType,
+      userDefinedType: calculation.configuration.calcTypeUserDefined,
     });
   };
 
   const onRunClick =
-    (calcType: CalculationType, externalId: string) => async () => {
+    (
+      calcType: CalculationType,
+      calcTypeUserDefined: CalculationTypeUserDefined | undefined,
+      externalId: string
+    ) =>
+    async () => {
       if (!authState?.email) {
         toast.error('No user email found, please refresh and try again');
         return;
@@ -260,6 +269,7 @@ export function CalculationList({
         runModelCalculationRequestModel: {
           userEmail: authState.email,
           calculationType: calcType,
+          userDefinedType: calcTypeUserDefined,
         },
       });
 
@@ -309,6 +319,7 @@ export function CalculationList({
               type="secondary"
               onClick={onRunClick(
                 calculation.configuration.calculationType,
+                calculation.configuration.calcTypeUserDefined,
                 calculation.externalId
               )}
             >
@@ -376,11 +387,21 @@ export function CalculationList({
                   <Menu>
                     <Menu.Item
                       onClick={() => {
-                        navigate({
-                          to: encodeURIComponent(
-                            calculation.configuration.calculationType
-                          ),
-                        });
+                        if (calculation.configuration.calcTypeUserDefined) {
+                          navigate({
+                            to: `${encodeURIComponent(
+                              calculation.configuration.calculationType
+                            )}/${encodeURIComponent(
+                              calculation.configuration.calcTypeUserDefined
+                            )}`,
+                          });
+                        } else {
+                          navigate({
+                            to: encodeURIComponent(
+                              calculation.configuration.calculationType
+                            ),
+                          });
+                        }
                       }}
                     >
                       <Icon type="Info" /> Calculation details
@@ -420,11 +441,21 @@ export function CalculationList({
                           calculationType:
                             calculation.configuration.calculationType,
                         });
-                        navigate({
-                          to: `${encodeURIComponent(
-                            calculation.configuration.calculationType
-                          )}/configuration`,
-                        });
+                        if (calculation.configuration.calcTypeUserDefined) {
+                          navigate({
+                            to: `${encodeURIComponent(
+                              calculation.configuration.calculationType
+                            )}/${encodeURIComponent(
+                              calculation.configuration.calcTypeUserDefined
+                            )}/configuration`,
+                          });
+                        } else {
+                          navigate({
+                            to: `${encodeURIComponent(
+                              calculation.configuration.calculationType
+                            )}/configuration`,
+                          });
+                        }
                       }}
                     >
                       <Icon type="Settings" /> Edit configuration

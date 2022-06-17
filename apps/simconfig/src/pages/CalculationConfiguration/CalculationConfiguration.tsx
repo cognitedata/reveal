@@ -50,6 +50,7 @@ export function CalculationConfiguration() {
       simulator = 'UNKNOWN',
       modelName,
       calculationType: encodedCalculationType = 'IPR',
+      userDefined,
     },
     data: { definitions },
   } = useMatch<AppLocationGenerics>();
@@ -85,6 +86,7 @@ export function CalculationConfiguration() {
       project,
       modelName,
       calculationType: encodedCalculationType,
+      userDefinedType: userDefined,
       simulator,
     });
 
@@ -184,25 +186,29 @@ export function CalculationConfiguration() {
         return sum;
       }, 0);
 
-  // Calcuation types with advanced settings
+  // Calculation types with advanced settings
   const calcTypesWtAvcdStps = [
     'ChokeDp',
     'VLP',
     'IPR',
     'BhpFromGradientTraverse',
   ];
+  const nameFromConfiguration = modelCalculation?.configuration.calculationName;
+  const modelLibraryPath = modelCalculation?.configuration.calcTypeUserDefined
+    ? '../../..'
+    : '../..';
 
   return (
     <CalculationConfigurationContainer>
       <h2>
-        <strong>{calculationName}</strong>
+        <strong>{nameFromConfiguration ?? calculationName}</strong>
         <span>Configuration for {modelFile.metadata.modelName}</span>
         {isEditing ? (
           <Link to="..">
             <Button icon="Info">Calculation details</Button>
           </Link>
         ) : null}
-        <Link to="../..">
+        <Link to={modelLibraryPath}>
           <Button icon="ArrowLeft">Return to model library</Button>
         </Link>
       </h2>
@@ -226,7 +232,7 @@ export function CalculationConfiguration() {
               toast.success('The calculation was successfully configured.', {
                 autoClose: 5000,
               });
-              navigate({ to: '../..' });
+              navigate({ to: modelLibraryPath });
             } catch (e) {
               toast.error(
                 `An error occured while storing the calculation configuration.`
@@ -241,7 +247,7 @@ export function CalculationConfiguration() {
                 isValid={isValid}
                 animated
                 onCancel={() => {
-                  navigate({ to: '../..' });
+                  navigate({ to: modelLibraryPath });
                 }}
                 onChangeStep={() => {
                   const ret = calculationTemplateSchema.cast(
