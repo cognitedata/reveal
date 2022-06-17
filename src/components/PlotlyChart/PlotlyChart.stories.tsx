@@ -9,7 +9,7 @@ type Props = React.ComponentProps<typeof PlotlyChart>;
 
 export default {
   component: PlotlyChart,
-  title: 'Components/PlotlyChart',
+  title: 'Components/Plotly Chart/Chart',
 } as Meta;
 
 const Template: Story<Props> = (args) => <PlotlyChart {...args} />;

@@ -141,8 +141,8 @@ const PlotlyChart = ({
   ]);
 
   const data: Plotly.Data[] = useMemo(
-    () => formatPlotlyData(seriesData, isPreview || !isMinMaxShown),
-    [seriesData, isMinMaxShown, isPreview]
+    () => formatPlotlyData(seriesData, !isMinMaxShown),
+    [seriesData, isMinMaxShown]
   );
 
   const layout = useMemo(() => {
