@@ -36,6 +36,15 @@ export const PopulateAnnotationTemplates = createAsyncThunk<
           lastUpdated: templateAnnotation.lastUpdatedTime,
           keypoints: templateAnnotation.data.keypoints,
           collectionName: templateAnnotation.text,
+          // Predefined collections created after june 2022 have color
+          // property, but old collections have color on individual keypoints
+          // This ensure backward comparability by using color from the first keypoint
+          // if collection does not have a color field.
+          color:
+            templateAnnotation.data.color ||
+            (templateAnnotation.data.keypoints?.length
+              ? templateAnnotation.data.keypoints[0].color
+              : ''),
         });
       } else {
         shapes.push({

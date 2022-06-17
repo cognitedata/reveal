@@ -44,6 +44,7 @@ export type PredefinedKeypointCollection = {
   keypoints?: PredefinedKeypoint[];
   lastUpdated?: number;
   id?: ReactText;
+  color: string;
 };
 
 export type PredefinedVisionAnnotations = {

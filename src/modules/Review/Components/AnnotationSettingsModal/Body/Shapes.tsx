@@ -40,7 +40,9 @@ export const Shapes = ({
     return [
       ...predefinedShapes,
       ...unsavedShapes.map((sp) => ({ ...sp, unsaved: true })),
-    ];
+    ].sort((a, b) =>
+      a.shapeName.toLowerCase() > b.shapeName.toLowerCase() ? 1 : -1
+    );
   }, [predefinedShapes, unsavedShapes]);
 
   const addNewShape = (newShape?: { text?: string; color?: string }) => {

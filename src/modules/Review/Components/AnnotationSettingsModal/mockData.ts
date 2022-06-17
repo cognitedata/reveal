@@ -6,6 +6,7 @@ import {
 export const predefinedKeypoints: PredefinedKeypointCollection[] = [
   {
     collectionName: 'Dial',
+    color: 'red',
     keypoints: [
       {
         caption: 'Centre',
@@ -31,6 +32,7 @@ export const predefinedKeypoints: PredefinedKeypointCollection[] = [
   },
   {
     collectionName: 'Level',
+    color: 'red',
     keypoints: [
       {
         caption: 'V2',
@@ -46,6 +48,7 @@ export const predefinedKeypoints: PredefinedKeypointCollection[] = [
   },
   {
     collectionName: 'Large gauge',
+    color: 'red',
     keypoints: [
       {
         caption: 'Center',
