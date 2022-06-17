@@ -1,6 +1,5 @@
+import { adaptNptEventsToListView } from 'domain/wells/npt/internal/adapters/adaptNptEventsToListView';
 import { getCodeDefinition } from 'domain/wells/npt/internal/selectors/getCodeDefinition';
-
-import groupBy from 'lodash/groupBy';
 
 import { NPTEvent } from 'modules/wellSearch/types';
 
@@ -14,20 +13,20 @@ export const NptEventCodeList: React.FC<{
   events: NPTEvent[];
   nptCodeDefinitions: NptCodeDefinitionType;
 }> = ({ events, nptCodeDefinitions }) => {
-  const groupedEvents = groupBy(events, 'nptCode');
+  const processedEvents = adaptNptEventsToListView(events);
 
   return (
     <>
-      {Object.keys(groupedEvents).map((code) => {
-        const nptCodeDefinition = getCodeDefinition(code, nptCodeDefinitions);
+      {Object.keys(processedEvents).map((event: string) => {
+        const nptCodeDefinition = getCodeDefinition(event, nptCodeDefinitions);
         return (
-          <EventsCodeRow key={code}>
-            <EventsCodeName>{code}</EventsCodeName>
+          <EventsCodeRow key={event}>
+            <EventsCodeName>{event}</EventsCodeName>
             <NptCodeDefinition
               nptCodeDefinition={nptCodeDefinition}
               iconStyle={IconStyles}
             />
-            <EventsCodeCount>{groupedEvents[code].length}</EventsCodeCount>
+            <EventsCodeCount>{processedEvents[event]}</EventsCodeCount>
           </EventsCodeRow>
         );
       })}

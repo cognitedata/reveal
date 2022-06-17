@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { adaptNdsEventsToListView } from 'domain/wells/nds/internal/adapters/adaptNdsEventsToListView';
 
-import groupBy from 'lodash/groupBy';
+import React, { useState } from 'react';
 
 import { Dropdown } from '@cognite/cogs.js';
 
@@ -42,7 +42,7 @@ const NdsEventsBadge: React.FC<Props> = ({ events }: Props) => {
    */
   const [isVisible, setVisible] = useState<boolean>(false);
 
-  const groupedEvents = groupBy(events, 'riskType');
+  const sortedEvents = adaptNdsEventsToListView(events);
 
   let badgeSize = MAX_SIZE_PERCENTAGE;
 
@@ -61,10 +61,10 @@ const NdsEventsBadge: React.FC<Props> = ({ events }: Props) => {
       content={
         <EventsCodesWrapper>
           <EventsCodesHeader>{NDS_EVENT_CODES_TITLE}</EventsCodesHeader>
-          {Object.keys(groupedEvents).map((code) => (
+          {Object.keys(sortedEvents).map((code) => (
             <EventsCodeRow key={code}>
               <EventsCodeName>{code}</EventsCodeName>
-              <EventsCodeCount>{groupedEvents[code].length}</EventsCodeCount>
+              <EventsCodeCount>{sortedEvents[code]}</EventsCodeCount>
             </EventsCodeRow>
           ))}
         </EventsCodesWrapper>
