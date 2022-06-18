@@ -67,8 +67,7 @@ Cypress.Commands.add(
 
     if (wellboresCount) {
       cy.findByText(
-        `With ${wellboresCount} ${
-          wellboresCount > 1 ? 'wellbores' : 'wellbore'
+        `With ${wellboresCount} ${wellboresCount > 1 ? 'wellbores' : 'wellbore'
         } inside`
       );
     }
@@ -102,5 +101,8 @@ export interface WellsCommands {
     wellboresCount?: number
   ): void;
   clickClearAllFilterButtonInWellsTable(): void;
-  addWaitForWdlResources(url: string, method: string, filter: string): void;
+  addWaitForWdlResources(
+    url: string,
+    method: string,
+    filter: string): void;
 }
