@@ -46,18 +46,21 @@ export type Relationship = {
 
 export type RelationshipTypeLabels = { externalId: string }[];
 
+type RelationshipLabelsOutput = {
+  [key: string]: string[];
+};
 const extractRelationshipLabels = (
   pages: { items: Relationship[] }[] = []
-): string[][] => {
-  const labels = pages.reduce(
-    (accl, page) =>
-      accl.concat(
-        page.items.map(({ labels: rlabels }) =>
-          rlabels.map(label => label.externalId)
-        )
-      ),
-    [] as string[][]
-  );
+): RelationshipLabelsOutput => {
+  const labels = pages.reduce((accl, page) => {
+    page.items.forEach(
+      ({ labels: rlabels, sourceExternalId, targetExternalId }) => {
+        accl[sourceExternalId] = rlabels.map(label => label.externalId);
+        accl[targetExternalId] = rlabels.map(label => label.externalId);
+      }
+    );
+    return accl;
+  }, {} as RelationshipLabelsOutput);
   return labels;
 };
 
@@ -193,6 +196,7 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
   );
 
   const sourceRelationshipLabels = extractRelationshipLabels(sourceData?.pages);
+
   const fetchTarget = !!sourceParams && !sourceParams.hasNextPage;
 
   const { data: targetData, ...targetParams } = useInfiniteList<Relationship>(
@@ -215,6 +219,7 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
   );
 
   const targetRelationshipLabels = extractRelationshipLabels(targetData?.pages);
+
   const targetItems = useMemo(
     () => extractExternalIds(targetData?.pages, 'target'),
     [targetData]
@@ -230,27 +235,28 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
   );
 
   const rest = sourceParams.hasNextPage ? sourceParams : targetParams;
-  const sourceResourcesWithRelationshipLabels = sourceResources.map(
-    (item, idx) => ({
-      ...item,
-      ...(sourceRelationshipLabels && {
-        relationshipLabels: sourceRelationshipLabels[idx],
-      }),
-    })
-  );
+  const sourceResourcesWithRelationshipLabels = sourceResources.map(item => ({
+    ...item,
+    relationshipLabels: item?.externalId
+      ? sourceRelationshipLabels[item.externalId]
+      : [],
+  }));
 
-  const targetResourcesWithRelationshipLabels = targetResources.map(
-    (item, idx) => ({
-      ...item,
-      ...(targetRelationshipLabels && {
-        relationshipLabels: targetRelationshipLabels[idx],
-      }),
-    })
-  );
+  const targetResourcesWithRelationshipLabels = targetResources.map(item => ({
+    ...item,
+    relationshipLabels: item?.externalId
+      ? targetRelationshipLabels[item.externalId]
+      : [],
+  }));
 
   useEffect(() => {
     const options = new Set(
-      flatten([...targetRelationshipLabels, ...sourceRelationshipLabels])
+      flatten(
+        Object.values({
+          ...targetRelationshipLabels,
+          ...sourceRelationshipLabels,
+        })
+      )
     );
 
     setSelectOptions(prev => new Set([...prev, ...options]));
