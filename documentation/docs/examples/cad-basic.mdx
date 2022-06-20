@@ -73,6 +73,16 @@ To also reclaim memory and permanently unloading the model, use
 viewer.removeModel(model)
 ```
 
+## Setting custom background image
+
+The recommended way to set a custom background image for Reveal is to add the image as background to the DOM and then setting the clear alpha of the renderer to 0.
+See an example of this below.
+
+```js runnable
+viewer.renderer.setClearAlpha(0.0);
+viewer.domElement.style.backgroundImage = "url('https://i.imgur.com/8tcxHWh.jpeg')";
+```
+
 ## Only loading a part of the model
 
 In some cases, it might be useful to restrict the area for which geometry is loaded to only show a partial
