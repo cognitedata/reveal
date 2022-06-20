@@ -20,6 +20,7 @@ import { ClipMode, PointCloudMaterial, PotreePointColorType } from '../rendering
 import { PointCloudOctree } from './PointCloudOctree';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { PickPoint, PointCloudHit } from '../types/types';
+import { WebGLRendererStateHelper } from '@reveal/utilities';
 
 export interface RenderedNode {
   node: IPointCloudTreeNode;
@@ -57,10 +58,10 @@ export interface PickParams {
 export class PointCloudOctreePickerHelper {
   private static readonly helperVec3 = new Vector3();
   private static readonly helperSphere = new Sphere();
-  private static readonly clearColor = new Color();
 
   public static prepareRender(
     renderer: WebGLRenderer,
+    stateHelper: WebGLRendererStateHelper,
     x: number,
     y: number,
     pickWndSize: number,
@@ -68,20 +69,22 @@ export class PointCloudOctreePickerHelper {
     pickState: IPickState
   ): void {
     // Render the intersected nodes onto the pick render target, clipping to a small pick window.
-    renderer.setScissor(x, y, pickWndSize, pickWndSize);
-    renderer.setScissorTest(true);
-    renderer.state.buffers.depth.setTest(pickMaterial.depthTest);
-    renderer.state.buffers.depth.setMask(pickMaterial.depthWrite);
+    stateHelper.setScissor(x, y, pickWndSize, pickWndSize);
+    stateHelper.setScissorTest(true);
+    stateHelper.setWebGLState({
+      buffers: {
+        depth: {
+          test: pickMaterial.depthTest,
+          mask: pickMaterial.depthWrite
+        }
+      }
+    });
     renderer.state.setBlending(NoBlending);
 
-    renderer.setRenderTarget(pickState.renderTarget);
+    stateHelper.setRenderTarget(pickState.renderTarget);
 
-    // Save the current clear color and clear the renderer with black color and alpha 0.
-    renderer.getClearColor(this.clearColor);
-    const oldClearAlpha = renderer.getClearAlpha();
-    renderer.setClearColor(COLOR_BLACK, 0);
+    stateHelper.setClearColor(COLOR_BLACK, 0);
     renderer.clear(true, true, true);
-    renderer.setClearColor(this.clearColor, oldClearAlpha);
   }
 
   public static render(
@@ -144,8 +147,6 @@ export class PointCloudOctreePickerHelper {
     // Read the pixel from the pick render target.
     const pixels = new Uint8Array(4 * pickWndSize * pickWndSize);
     renderer.readRenderTargetPixels(renderer.getRenderTarget()!, x, y, pickWndSize, pickWndSize, pixels);
-    renderer.setScissorTest(false);
-    renderer.setRenderTarget(null!);
     return pixels;
   }
 
