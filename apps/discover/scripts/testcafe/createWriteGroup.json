@@ -155,6 +155,16 @@
               "all": {}
             }
           }
+        },
+        {
+          "experimentAcl": {
+            "actions": ["USE"],
+            "scope": {
+              "experimentscope": {
+                "experiments": ["schema", "datamodelstorage"]
+              }
+            }
+          }
         }
       ]
     }
