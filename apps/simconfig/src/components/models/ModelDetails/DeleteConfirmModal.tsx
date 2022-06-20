@@ -1,22 +1,16 @@
 import { Button, Modal } from '@cognite/cogs.js';
 
-import type { ModelCalculation } from './CalculationList';
-
 interface DeleteConfirmModalProps {
   isModelOpen: boolean;
-  handleModalConfirm(
-    isConfirmed: boolean,
-    calculationConfig?: ModelCalculation | null
-  ): void;
-  calculationConfig: ModelCalculation | null;
+  handleModalConfirm(isConfirmed: boolean): void;
+  modalName: string;
 }
 
 export function DeleteConfirmModal({
   isModelOpen,
   handleModalConfirm,
-  calculationConfig,
+  modalName,
 }: DeleteConfirmModalProps) {
-  const calcName = calculationConfig?.configuration.calculationName ?? 'NA';
   return (
     <Modal
       footer={
@@ -31,14 +25,14 @@ export function DeleteConfirmModal({
           <Button
             type="danger"
             onClick={() => {
-              handleModalConfirm(true, calculationConfig);
+              handleModalConfirm(true);
             }}
           >
-            Delete
+            Delete model
           </Button>
         </div>
       }
-      style={{ top: '20%' }}
+      style={{ top: '15%' }}
       title="Are you sure?"
       visible={isModelOpen}
       onCancel={() => {
@@ -46,10 +40,14 @@ export function DeleteConfirmModal({
       }}
     >
       <h3>
-        Do you want to delete <strong>{calcName}</strong> calculation config?
+        Do you want to delete model{' '}
+        <strong>{decodeURIComponent(modalName)}</strong>{' '}
       </h3>
       <br />
-      <h3>This is an irreversible action</h3>
+      <h3>
+        This is an irreversible action, it will delete all versions of the
+        model, any configured calculations and all simulation results
+      </h3>
     </Modal>
   );
 }

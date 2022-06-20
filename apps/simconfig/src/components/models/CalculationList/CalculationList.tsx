@@ -112,6 +112,7 @@ export function CalculationList({
     {
       pollingInterval:
         shouldPoll || shouldPollOnDelete ? STATUS_POLLING_INTERVAL : undefined,
+      refetchOnMountOrArgChange: true,
     }
   );
 
@@ -336,7 +337,8 @@ export function CalculationList({
                 !calculation.deletionStatus.erroredResources?.length) ||
               deletedExternalIds.includes(calculation.externalId) ? (
                 <Label size="medium" variant="danger">
-                  Deletion in progress
+                  <Icon type="Loader" />
+                  &nbsp;&nbsp; Deletion in progress
                 </Label>
               ) : undefined}
 

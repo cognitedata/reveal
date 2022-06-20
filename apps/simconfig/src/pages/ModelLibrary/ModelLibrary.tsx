@@ -36,11 +36,17 @@ export function ModelLibrary() {
     (capability) => capability.enabled
   );
 
-  const { data: modelFiles, isFetching: isFetchingModelFiles } =
-    useGetModelFileListQuery({
-      project,
-      labelIds: selectedLabels.map((label) => label.value).join(','),
-    });
+  const [isModelFileDeleted, setIsModelFileDeleted] = useState<boolean>(false);
+
+  const {
+    data: modelFiles,
+    isFetching: isFetchingModelFiles,
+    refetch,
+  } = useGetModelFileListQuery({
+    project,
+    labelIds: selectedLabels.map((label) => label.value).join(','),
+  });
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -62,18 +68,32 @@ export function ModelLibrary() {
     [modelFiles?.modelFileList, modelNameFilter]
   );
 
-  if (isFetchingModelFiles) {
+  const deleteHandleOnModelLibrary = () => {
+    setIsModelFileDeleted(true);
+  };
+
+  if (isFetchingModelFiles && !isModelFileDeleted) {
     return <Skeleton.List lines={5} />;
   }
 
-  if (!modelName && modelFileList.length > 0) {
-    const firstFile = modelFileList[0];
-    navigate({
-      to: `/model-library/models/${encodeURIComponent(
-        firstFile.source
-      )}/${encodeURIComponent(firstFile.metadata.modelName)}`,
-      replace: true,
-    });
+  if ((!modelName || isModelFileDeleted) && modelFileList.length > 0) {
+    const firstFile = modelFileList[isModelFileDeleted ? 1 : 0];
+
+    if (isModelFileDeleted) {
+      navigate({
+        to: '/model-library/',
+        replace: true,
+      });
+      setIsModelFileDeleted(false);
+      refetch();
+    } else {
+      navigate({
+        to: `/model-library/models/${encodeURIComponent(
+          firstFile.source
+        )}/${encodeURIComponent(firstFile.metadata.modelName)}`,
+        replace: true,
+      });
+    }
   }
 
   return (
@@ -121,6 +141,7 @@ export function ModelLibrary() {
       </ModelLibrarySidebar>
       <ModelLibraryContent>
         <ModelDetails
+          modelLibraryDeleteHandler={deleteHandleOnModelLibrary}
           modelName={modelName}
           project={project}
           simulator={simulator}

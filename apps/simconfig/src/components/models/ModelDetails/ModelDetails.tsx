@@ -1,17 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 
 import styled from 'styled-components/macro';
 
 import {
   Button,
+  Dropdown,
   Icon,
+  Label,
+  Menu,
   SegmentedControl,
   Skeleton,
   Tabs,
+  toast,
 } from '@cognite/cogs.js';
-import type { Simulator } from '@cognite/simconfig-api-sdk/rtk';
-import { useGetModelFileQuery } from '@cognite/simconfig-api-sdk/rtk';
+import type { ExternalId, Simulator } from '@cognite/simconfig-api-sdk/rtk';
+import {
+  useDeleteModelFileMutation,
+  useGetModelFileQuery,
+} from '@cognite/simconfig-api-sdk/rtk';
 
 import { ModelForm } from 'components/forms/ModelForm';
 import { CalculationList, ModelVersionList } from 'components/models';
@@ -19,6 +26,7 @@ import { useTitle } from 'hooks/useTitle';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
 
+import DeleteConfirmModal from './DeleteConfirmModal';
 import { ModelLabels } from './ModelLabels';
 
 import type { AppLocationGenerics } from 'routes';
@@ -27,12 +35,14 @@ interface ModelDetailsProps {
   project: string;
   modelName: string;
   simulator?: Simulator;
+  modelLibraryDeleteHandler?: () => void;
 }
 
 export function ModelDetails({
   project,
   modelName,
   simulator = 'UNKNOWN',
+  modelLibraryDeleteHandler,
 }: ModelDetailsProps) {
   const {
     data: { definitions },
@@ -45,8 +55,21 @@ export function ModelDetails({
     (capability) => capability.enabled
   );
 
+  const isDeleteEnabled = useMemo(() => {
+    const deleteFeature = definitions?.features.find(
+      (feature) => feature.name === 'Delete'
+    );
+    return deleteFeature?.capabilities?.every(
+      (capability) => capability.enabled
+    );
+  }, [definitions]);
+
   const navigate = useNavigate();
   const [showCalculations, setShowCalculations] = useState('configured');
+
+  const [shouldShowDeleteConfirmModal, setShouldShowDeleteConfirmModal] =
+    useState<boolean>(false);
+  const [deletedModels, setDeletedModels] = useState<ExternalId[]>([]);
 
   const {
     data: modelFile,
@@ -56,6 +79,9 @@ export function ModelDetails({
     { project, modelName, simulator },
     { skip: simulator === 'UNKNOWN' }
   );
+
+  const [deleteModelFile, { isSuccess: isDeleteModelSuccess }] =
+    useDeleteModelFileMutation();
 
   useTitle(modelFile?.metadata.modelName);
 
@@ -69,6 +95,24 @@ export function ModelDetails({
       refetchModelFile();
     };
   }, [modelName, simulator, refetchModelFile]);
+
+  useEffect(() => {
+    if (isDeleteModelSuccess && modelLibraryDeleteHandler) {
+      modelLibraryDeleteHandler();
+    }
+  }, [isDeleteModelSuccess, modelLibraryDeleteHandler, modelName]);
+
+  const handleDeleteModelConfirm = async (isConfirmed: boolean) => {
+    setShouldShowDeleteConfirmModal(false);
+    if (isConfirmed && modelFile?.externalId) {
+      setDeletedModels([...deletedModels, modelFile.externalId]);
+      await deleteModelFile({ project, simulator, modelName });
+      toast.success(
+        `${decodeURIComponent(modelName)} is deleted successfully`,
+        { delay: 2000 }
+      );
+    }
+  };
 
   if (!isFetchingModelFile && !modelFile) {
     // Uninitialized state
@@ -133,6 +177,46 @@ export function ModelDetails({
             <Icon size={12} type="Wrench" />
             {definitions?.type.unitSystem[modelFile.metadata.unitSystem]}
           </li>
+          <li>
+            {isDeleteEnabled ? (
+              <Dropdown
+                content={
+                  <Menu>
+                    <Menu.Item
+                      onClick={() => {
+                        setShouldShowDeleteConfirmModal(true);
+                      }}
+                    >
+                      <Icon type="Delete" /> Delete Model
+                    </Menu.Item>
+                  </Menu>
+                }
+              >
+                <Button
+                  aria-label="Actions"
+                  icon="EllipsisHorizontal"
+                  size="small"
+                />
+              </Dropdown>
+            ) : undefined}
+          </li>
+          {(Boolean(modelFile.deletionStatus) &&
+            !modelFile.deletionStatus?.erroredResources?.length) ||
+          deletedModels.includes(modelFile.externalId) ? (
+            <li>
+              <Label size="medium" variant="danger">
+                <Icon type="Loader" />
+                &nbsp;&nbsp; Deletion in progress
+              </Label>
+            </li>
+          ) : undefined}
+          {modelFile.deletionStatus?.erroredResources?.length ? (
+            <li>
+              <Label size="large" variant="danger">
+                Partial deleted model, some of the resources are not deleted
+              </Label>
+            </li>
+          ) : undefined}
         </ul>
       </div>
       {isLabelsEnabled && <ModelLabels modelFile={modelFile} />}
@@ -202,6 +286,11 @@ export function ModelDetails({
           </Tabs.TabPane>
         )}
       </Tabs>
+      <DeleteConfirmModal
+        handleModalConfirm={handleDeleteModelConfirm}
+        isModelOpen={shouldShowDeleteConfirmModal}
+        modalName={modelName}
+      />
     </ModelDetailsContainer>
   );
 }
