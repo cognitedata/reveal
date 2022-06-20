@@ -20,7 +20,6 @@ import {
   useRefreshApp,
 } from 'utils/hooks';
 import { Loader } from 'components/Common';
-import { useFlag } from '@cognite/react-feature-flags';
 
 const CollapseDiv = styled.div`
   .ant-collapse-header[aria-expanded='true'] {
@@ -37,12 +36,6 @@ const FUNCTIONS_PER_PAGE = 10;
 function Functions() {
   const refresh = useRefreshApp();
   const [currentPage, setCurrentPage] = useState(1);
-  const isActivationFunctionButtonEnabled = useFlag(
-    'DSS_activation_function_button',
-    {
-      forceRerender: true,
-    }
-  );
 
   const [functionFilter, setFunctionFilter] = useState('');
   type SortFunctions = 'recentlyCreated' | 'recentlyCalled';
@@ -85,10 +78,7 @@ function Functions() {
     return <Loader />;
   }
 
-  if (
-    !isActivationFunctionButtonEnabled ||
-    (isActivationFunctionButtonEnabled && activation?.status === 'activated')
-  ) {
+  if (activation?.status === 'activated') {
     return (
       <>
         <PageTitle title="Functions" />
@@ -187,7 +177,7 @@ function Functions() {
       </>
     );
   }
-  if (isActivationFunctionButtonEnabled && activation?.status === 'requested') {
+  if (activation?.status === 'requested') {
     return (
       <FunctionActivationAlert
         showIcon
