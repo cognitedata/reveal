@@ -195,7 +195,7 @@ export class PointLogView extends BaseGroupThreeView {
     if (index === undefined) return;
 
     const { node } = this;
-    const { trajectory } = node;
+    const { trajectory, name } = node;
     if (!trajectory) return;
 
     const { log } = node;
@@ -215,9 +215,16 @@ export class PointLogView extends BaseGroupThreeView {
 
     viewInfo.addPickedNode(node);
     viewInfo.addTabbedValue('Description', sample.description);
-    viewInfo.addTabbedValue('Subtype', sample.subtype);
-    viewInfo.addTabbedValue('Subcategory', sample.riskSubCategory);
-    viewInfo.addTabbedValue('Details', sample.details);
+
+    if (name === 'NDS Risk Event') {
+      viewInfo.addTabbedValue('Risk Type', sample.subtype || '-');
+      viewInfo.addTabbedValue('Subcategory', sample.riskSubCategory || '-');
+      viewInfo.addTabbedValue('Details', sample.details || '-');
+    }
+
+    if (name === 'NPT Events') {
+      viewInfo.addTabbedValue('Subtype', sample.subtype || '-');
+    }
   }
 
   //= =================================================
