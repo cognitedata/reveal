@@ -3,7 +3,6 @@ import { Route, Switch } from 'react-router-dom';
 import { DataModelsPage } from './modules/data-models/DataModelsPage';
 import { GuideToolsPage } from './modules/guides/GuideToolsPage';
 import { StatusPage } from './modules/statusboard/StatusboardPage';
-import { NavigationMain } from './components/Navigations/NavigationMain';
 import { Solution } from './modules/solution/Solution';
 import { NavigationDataModel } from './components/Navigations/NavigationDataModel';
 import { Spinner } from './components/Spinner/Spinner';
@@ -15,7 +14,6 @@ const Routes = () => {
     <React.Suspense fallback={<Spinner />}>
       <Switch>
         <Route exact path={['/', '/data-models']}>
-          <NavigationMain />
           <DataModelsPage />
         </Route>
         <Route
