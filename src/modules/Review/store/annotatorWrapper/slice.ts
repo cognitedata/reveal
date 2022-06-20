@@ -291,7 +291,7 @@ const annotatorWrapperSlice = createSlice({
             confidence: 1, // 100% confident about manually created keypoints
           };
 
-          /* duplicate keypoint removal start
+          /* duplicate keypoint detection start
           this is due to bug in Annotator where onRegionCreated is called twice
            */
           const tempCollectionKeypointIds =
@@ -301,25 +301,19 @@ const annotatorWrapperSlice = createSlice({
             .findIndex((keypoint) =>
               isEqual(keypoint.point, imageKeypointToAdd.point)
             );
-          if (duplicateKeypointIdIndex >= 0) {
-            // delete keypoint
-            delete state.keypointMap.byId[
-              tempCollectionKeypointIds[duplicateKeypointIdIndex]
-            ];
-            state.collections.byId[state.lastCollectionId].keypointIds.splice(
-              duplicateKeypointIdIndex,
-              1
-            );
+          /* duplicate keypoint detection end */
+
+          // todo: remove this check once duplicate region create callback is fixed
+          if (duplicateKeypointIdIndex === -1) {
+            const tempCollection =
+              state.collections.byId[state.lastCollectionId];
+            tempCollection.keypointIds.push(String(id));
+
+            // update keypoints
+            state.lastKeyPoint = keypointLabel;
+            state.keypointMap.byId[String(id)] = imageKeypointToAdd;
+            state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
           }
-          /* duplicate keypoint removal end */
-
-          const tempCollection = state.collections.byId[state.lastCollectionId];
-          tempCollection.keypointIds.push(String(id));
-
-          // update keypoints
-          state.lastKeyPoint = keypointLabel;
-          state.keypointMap.byId[String(id)] = imageKeypointToAdd;
-          state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
         } else {
           console.warn('annotation label or keypoint label not found!');
         }
