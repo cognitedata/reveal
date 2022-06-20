@@ -1245,15 +1245,16 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/data-exploration@3.5.0":
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-3.5.0.tgz#1c676a8f52a25b9569c38affbdf83eff58eac1ff"
-  integrity sha512-+DRTkn7u6pKoWfRIBu2Nz1K0sMUVXn1O4BA7GOZFJpkv6Cd1/BZCQj74wb5TYP10M3nWKbcIhp8iOGNGFHIT0g==
+"@cognite/data-exploration@^3.6.0":
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-3.6.0.tgz#e82403a7aa22d24542b7bc3a84c042850af42487"
+  integrity sha512-/uB5c8ew6n3sjdAgIb54gb0y1TkiHZGLgiL7ISJ6k8XcafKE+GrxKqAroTiTRH9CS6SSgO2EjeReMAktdemqEA==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
     "@cognite/cogs.js" "^5.19.5"
     "@cognite/gcs-browser-upload" cognitedata/gcs-browser-upload#mn/temporary-azure-fix
+    "@cognite/react-document-table" "^1.22.2"
     "@cognite/react-picture-annotation" "3.0.0"
     "@cognite/sdk" "^6.3.1"
     "@cognite/sdk-provider" "^1.0.0"
@@ -1312,9 +1313,8 @@
   optionalDependencies:
     typescript "^3.6"
 
-"@cognite/gcs-browser-upload@cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
+"@cognite/gcs-browser-upload@github:cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
   version "1.1.1"
-  uid e180a039d56e9572efbfe123bd607e7ce1e6f06e
   resolved "https://codeload.github.com/cognitedata/gcs-browser-upload/tar.gz/e180a039d56e9572efbfe123bd607e7ce1e6f06e"
   dependencies:
     axios "^0.21.1"
@@ -1336,6 +1336,13 @@
   integrity sha512-Lk3HXkDwkvxtxWeKGiHuh0iRbNPJXEy1dTJ87NUUVR5tGRgiFky/RHUfUREMfba/kc+kXTlGF7lYH+ZwuolU6A==
   dependencies:
     three "0.138.3"
+
+"@cognite/react-document-table@^1.22.2":
+  version "1.24.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-document-table/-/react-document-table-1.24.0.tgz#76fd6b3468f43f5fd4afba9cd0db30099da3c6e3"
+  integrity sha512-J93D9LcBCgbYIx/TbiQWvms7g/YqffHu2tqu8Piy47yLhfGX1m2iHWgOmzAnw74nXbfzBe18h8q5f15DkV1kiw==
+  dependencies:
+    tslib "^2.2.0"
 
 "@cognite/react-feature-flags@^0.2.2":
   version "0.2.2"

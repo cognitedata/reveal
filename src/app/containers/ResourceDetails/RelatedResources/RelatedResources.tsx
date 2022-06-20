@@ -14,6 +14,7 @@ import {
 import { Select } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
+import { useFlag } from '@cognite/react-feature-flags';
 
 type TypeOption = {
   label: string;
@@ -21,12 +22,23 @@ type TypeOption = {
   count: number;
 };
 
+export const DATA_EXPLORATION_DOCUMENT_CATEGORISATION =
+  'DATA_EXPLORATION_document_categorisation';
+
 export const RelatedResources = ({
   parentResource,
   type,
   ...props
 }: RelationshipTableProps & SelectableItemsProps) => {
   const [selectedType, setSelectedType] = useState<TypeOption>();
+
+  // Adding the flag to manually enable this feature to categorize the documents
+  const isGroupingFilesEnabled = useFlag(
+    DATA_EXPLORATION_DOCUMENT_CATEGORISATION,
+    {
+      forceRerender: true,
+    }
+  );
 
   const {
     relationshipCount,
@@ -130,6 +142,7 @@ export const RelatedResources = ({
 
         {selectedType?.value === 'linkedResource' && (
           <LinkedResourceTable
+            isGroupingFilesEnabled={isGroupingFilesEnabled}
             excludeParentResource
             parentResource={parentResource}
             type={type}
