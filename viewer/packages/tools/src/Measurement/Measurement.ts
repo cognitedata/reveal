@@ -77,9 +77,9 @@ export class Measurement {
     //Add the measurement label.
     this._labelElement = this.addLabel(this._line.getMidPointOnLine(), this._distanceValue);
 
-    if (this._options?.axisComponents) {
-      this.addAxisMeasurement();
-    }
+    // if (this._options?.axisComponents) {
+    this.addAxisMeasurement();
+    // }
   }
 
   /**
@@ -141,9 +141,16 @@ export class Measurement {
   }
 
   enableAxesComponent(options: MeasurementOptions): void {
-    if (options.axisComponents) {
+    if (this._axesMesh.length > 0) {
       this._axesMesh.forEach(mesh => {
         mesh.visible = options.axisComponents!;
+      });
+    }
+
+    const opacity = options.axisComponents === true ? 1.0 : 0.0;
+    if (this._axesHtmlOverlay.elements.length > 0) {
+      this._axesHtmlOverlay.elements.forEach(element => {
+        element.element.style.opacity = opacity.toString();
       });
     }
   }

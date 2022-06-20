@@ -18,7 +18,7 @@ export class MeasurementUi {
     lineWidth: 2.0,
     color: 0x00FFFF,
     allMeasurement: false,
-    axesComponent: false
+    axisComponents: false
   };
 
   private measurement = {
@@ -33,7 +33,7 @@ export class MeasurementUi {
       // 1 meters = 3.281 feet
       const distanceInFeet = distance * 3.281;
       return { distance: distanceInFeet, units: 'ft'};
-     }, axisComponents: true});
+     }, axisComponents: false});
     this._gui = ui.addFolder('Types');
     this._guiController = [];
     this._measurementObjectControllerUi = [];
@@ -65,6 +65,10 @@ export class MeasurementUi {
     this._guiController.push(this._gui.add(this.state, 'allMeasurement').name('Show all Measurement').onChange(allMeasurement => {
       this.state.allMeasurement = allMeasurement;
       this.measurementObjectsUI(allMeasurement);
+    }));
+    this._guiController.push(this._gui.add(this.state, 'axisComponents').name('Show axes component').onChange(axisComponents => {
+      this.state.axisComponents = axisComponents;
+      this._measurementTool.enableAxesComponent(this.state, this._selectedObject!);
     }));
   }
 
@@ -115,9 +119,6 @@ export class MeasurementUi {
         this._measurementTool.removeAllMeasurement();
         this.reset();
         this.removeMeasurementObjectUI();
-      },
-      enableAxesComponent: () => {
-        this._measurementTool.enableAxesComponent(this._selectedObject);
       }
     };
     let count = 0;
