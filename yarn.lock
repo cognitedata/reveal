@@ -1269,10 +1269,10 @@
   dependencies:
     axios "^0.26.1"
 
-"@cognite/cdf-hub-tenant-selector@0.14.1":
-  version "0.14.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-hub-tenant-selector/-/cdf-hub-tenant-selector-0.14.1.tgz#012b36de5083fcd8c9590c0b28cef4cb37712245"
-  integrity sha512-5xQjRn/hR1ZnuQVPpaC35Ep8Yx0tRYDzAEAzT4f/1Qi6T3g2ffi8728Lb9kXQM/QKYN/3cM2RqS8/X+HWAfm2w==
+"@cognite/cdf-hub-tenant-selector@0.14.2":
+  version "0.14.2"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-hub-tenant-selector/-/cdf-hub-tenant-selector-0.14.2.tgz#4d734f062f3631f32a49fca0fa54fc4cca17f48a"
+  integrity sha512-P8oZxcXEtwEjOZMNJ/NlTyn4pBY79+zHZfVximewXvf7C1DY9ZOrpT2TR0Rg9EGnt09JfI0mrXa0ZW6qwMYKMw==
   dependencies:
     "@cognite/auth-utils" "^2.1.0"
     "@cognite/cdf-ui-cli" "^1.0.0"
