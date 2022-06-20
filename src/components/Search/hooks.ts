@@ -18,7 +18,18 @@ export const useAddRemoveTimeseries = () => {
   const { addAssetToRecent, addTimeseriesToRecent } =
     useAddToRecentLocalStorage();
 
-  return async (ts: Timeseries) => {
+  return async (
+    ts: Pick<
+      Timeseries,
+      | 'assetId'
+      | 'id'
+      | 'externalId'
+      | 'name'
+      | 'unit'
+      | 'isStep'
+      | 'description'
+    >
+  ) => {
     if (!chart) {
       return;
     }

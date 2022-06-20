@@ -202,7 +202,10 @@ export function addWorkflows(chart: Chart, wfs: ChartWorkflow[]): Chart {
 }
 
 export function convertTSToChartTS(
-  ts: Timeseries,
+  ts: Pick<
+    Timeseries,
+    'name' | 'externalId' | 'id' | 'unit' | 'isStep' | 'description'
+  >,
   chartId: string,
   range: number[] = []
 ): ChartTimeSeries {
