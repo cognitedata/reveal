@@ -17,7 +17,8 @@ export class MeasurementUi {
   private state = {
     lineWidth: 2.0,
     color: 0x00FFFF,
-    allMeasurement: false
+    allMeasurement: false,
+    axesComponent: false
   };
 
   private measurement = {
@@ -114,6 +115,9 @@ export class MeasurementUi {
         this._measurementTool.removeAllMeasurement();
         this.reset();
         this.removeMeasurementObjectUI();
+      },
+      enableAxesComponent: () => {
+        this._measurementTool.enableAxesComponent(this._selectedObject);
       }
     };
     let count = 0;

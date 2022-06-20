@@ -140,6 +140,15 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._options = { changeMeasurementLabelMetrics: this._options?.changeMeasurementLabelMetrics, ...options };
   }
 
+  enableAxesComponent(options: MeasurementOptions, meshObject?: THREE.Mesh): void {
+    if (meshObject) {
+      const measurement = this._measurements.find(measurement => measurement.getMesh() === meshObject);
+      measurement?.enableAxesComponent(options);
+      this._viewer.requestRedraw();
+    }
+    this._options = { changeMeasurementLabelMetrics: this._options?.changeMeasurementLabelMetrics, ...options };
+  }
+
   /**
    * Dispose Measurement Tool.
    */

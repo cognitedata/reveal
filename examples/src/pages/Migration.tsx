@@ -393,7 +393,6 @@ export function Migration() {
       });
 
       new AxisViewTool(viewer);
-
     }
 
     function showBoundsForAllGeometries(model: Cognite3DModel) {

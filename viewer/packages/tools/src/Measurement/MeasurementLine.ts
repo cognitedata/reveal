@@ -232,7 +232,6 @@ export class MeasurementLine {
     });
     const axesLineMesh = new Line2(axesLine, axesLineMaterial);
     axesLineMesh.computeLineDistances();
-    axesLineMesh.renderOrder = 1;
     axesLineMesh.onBeforeRender = () => {
       axesLineMaterial?.resolution.set(window.innerWidth, window.innerHeight);
     };
