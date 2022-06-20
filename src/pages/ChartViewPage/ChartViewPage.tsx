@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { ComponentProps, useCallback, useEffect, useState } from 'react';
 import get from 'lodash/get';
 import { toast, Loader } from '@cognite/cogs.js';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
@@ -59,6 +59,7 @@ import { getUnitConverter } from 'utils/units';
 import { timeseriesSummaries } from 'models/timeseries-results/selectors';
 
 import { isProduction } from 'utils/environment';
+import { currentDateRangeLocale } from 'config/locale';
 import { chartSources } from 'models/chart/selectors';
 import {
   BottomPaneWrapper,
@@ -357,7 +358,9 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
     trackUsage('ChartView.AddCalculation');
   }, [chart, setChart, openNodeEditor, setSelectedSourceId]);
 
-  const handleDateChange = (startDate: Date, endDate: Date) => {
+  const handleDateChange: ComponentProps<
+    typeof ChartViewHeader
+  >['handleDateChange'] = ({ startDate, endDate }) => {
     if (startDate || endDate) {
       setChart((oldChart: any) =>
         updateChartDateRange(oldChart!, startDate, endDate)
@@ -597,6 +600,7 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
             handleSettingsToggle={handleSettingsToggle}
             handleDateChange={handleDateChange}
             translations={ChartViewHeaderTranslations}
+            locale={currentDateRangeLocale()}
           />
           <ChartContainer>
             <SplitPaneLayout defaultSize={200}>

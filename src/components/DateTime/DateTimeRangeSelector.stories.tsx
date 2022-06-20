@@ -8,16 +8,11 @@ export default {
   title: 'Components/DateTime',
 } as Meta;
 
-const Template: Story<ComponentProps<typeof DateTimeRangeSelector>> = (
-  args
-) => {
+type Props = ComponentProps<typeof DateTimeRangeSelector>;
+
+const Template: Story<Props> = (args) => {
   const [range, setRange] = useState(args.range);
-  const handleChange = (startDate: Date, endDate: Date) => {
-    setRange({ startDate, endDate });
-  };
-  return (
-    <DateTimeRangeSelector {...args} range={range} onChange={handleChange} />
-  );
+  return <DateTimeRangeSelector {...args} range={range} onChange={setRange} />;
 };
 
 export const DateTimeRange = Template.bind({});

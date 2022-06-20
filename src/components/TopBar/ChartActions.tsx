@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ComponentProps, useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
 import { Button, Popconfirm, toast, Tooltip } from '@cognite/cogs.js';
 import { useNavigate } from 'hooks/navigation';
@@ -20,6 +20,7 @@ import {
 import useScreenshot from 'use-screenshot-hook';
 import CSVModal from 'components/DownloadDropdown/CSVModal';
 import { isProduction } from 'utils/environment';
+import { currentDateRangeLocale } from 'config/locale';
 
 export const ChartActions = () => {
   const { t } = useTranslations(
@@ -136,7 +137,10 @@ export const ChartActions = () => {
     });
   };
 
-  const handleDateChange = (startDate: Date, endDate: Date) => {
+  const handleDateChange: ComponentProps<typeof CSVModal>['onDateChange'] = ({
+    startDate,
+    endDate,
+  }) => {
     if (startDate || endDate) {
       setChart((oldChart: any) =>
         updateChartDateRange(oldChart!, startDate, endDate)
@@ -203,6 +207,7 @@ export const ChartActions = () => {
         dateFrom={new Date(chart.dateFrom)}
         dateTo={new Date(chart.dateTo)}
         onDateChange={handleDateChange}
+        locale={currentDateRangeLocale()}
       />
     </div>
   );

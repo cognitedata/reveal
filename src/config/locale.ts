@@ -4,6 +4,7 @@ import 'dayjs/locale/en';
 import 'dayjs/locale/en-gb';
 import 'dayjs/locale/nb';
 import 'dayjs/locale/ja';
+import { enGB, enUS, ja, nb } from 'date-fns/locale';
 import i18n from './i18n';
 
 dayjs.extend(localizedFormat);
@@ -11,15 +12,25 @@ dayjs.extend(localizedFormat);
 const LS_KEY = 'chartsLocale';
 
 export const availableLocales = [
-  { value: 'en', label: 'English' },
-  { value: 'en-gb', label: 'English (United Kingdom)' },
-  { value: 'nb', label: 'Norsk Bokmål' },
-  { value: 'ja', label: '日本' },
+  { value: 'en' as const, label: 'English' },
+  { value: 'en-gb' as const, label: 'English (United Kingdom)' },
+  { value: 'nb' as const, label: 'Norsk Bokmål' },
+  { value: 'ja' as const, label: '日本' },
 ];
 
 export const currentLocale = () =>
   availableLocales.find((l) => l.value === dayjs.locale()) ??
   availableLocales[0];
+
+export const currentDateRangeLocale = () => {
+  const list = {
+    en: enUS,
+    'en-gb': enGB,
+    nb,
+    ja,
+  };
+  return list[currentLocale().value];
+};
 
 export const changeDayJSLocale = (lang: string) => {
   dayjs.locale(lang);

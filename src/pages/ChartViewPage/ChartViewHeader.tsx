@@ -66,6 +66,7 @@ type Props = {
   handleImportCalculationsClick: ((diff: any) => void) | undefined;
   handleSettingsToggle: (str: string, val: boolean) => void;
   handleDateChange: ComponentProps<typeof DateTimePicker>['onChange'];
+  locale: ComponentProps<typeof DateTimePicker>['locale'];
   translations?: typeof defaultTranslations;
 };
 
@@ -86,6 +87,7 @@ const ChartViewHeader = ({
   handleImportCalculationsClick,
   handleSettingsToggle,
   handleDateChange,
+  locale,
   translations,
 }: Props) => {
   const t = { ...defaultTranslations, ...translations };
@@ -238,6 +240,7 @@ const ChartViewHeader = ({
                 endDate: dateTo,
               }}
               onChange={handleDateChange}
+              locale={locale}
             />
           </RangeColumn>
         </RangeWrapper>

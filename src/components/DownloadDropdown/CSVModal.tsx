@@ -1,6 +1,6 @@
 import { Button, Checkbox, SegmentedControl, Tooltip } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
-import DateRangeSelector from 'components/DateTime/DateTimeRangeSelector';
+import DateTimeRangeSelector from 'components/DateTime/DateTimeRangeSelector';
 import chartAtom from 'models/chart/atom';
 import { ComponentProps, useCallback, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -53,8 +53,9 @@ type Props = {
   onClose?: () => void;
   dateFrom: Date;
   dateTo: Date;
-  onDateChange: ComponentProps<typeof DateRangeSelector>['onChange'];
+  onDateChange: ComponentProps<typeof DateTimeRangeSelector>['onChange'];
   translations?: typeof defaultTranslations;
+  locale: ComponentProps<typeof DateTimeRangeSelector>['locale'];
 };
 
 const delimiterOptions: { id: string; value: Delimiters; label: string }[] = [
@@ -70,6 +71,7 @@ const CSVModal = ({
   dateTo,
   onDateChange,
   translations,
+  locale,
 }: Props) => {
   const t = { ...defaultTranslations, ...translations };
   const [chart] = useRecoilState(chartAtom);
@@ -285,12 +287,13 @@ const CSVModal = ({
             <>{t['Time span']}</>
           </Tooltip>
         </Label>
-        <DateRangeSelector
+        <DateTimeRangeSelector
           range={{
             startDate: dateFrom,
             endDate: dateTo,
           }}
           onChange={onDateChange}
+          locale={locale}
         />
       </FieldContainer>
 

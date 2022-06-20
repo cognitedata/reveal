@@ -33,10 +33,12 @@ const DateTimePicker = (props: Props) => {
       <TimePeriodSelector
         optionSelected={optionsSelected()}
         onPeriodClick={(period) => {
-          props.onChange(
-            dayjs().subtract(parseInt(period[0], 10), period[1]).toDate(),
-            props.range.endDate
-          );
+          props.onChange({
+            startDate: dayjs()
+              .subtract(parseInt(period[0], 10), period[1])
+              .toDate(),
+            endDate: props.range.endDate,
+          });
         }}
         style={{ marginRight: 12 }}
       />
