@@ -1,3 +1,5 @@
+import compact from 'lodash/compact';
+
 import { BPDataOptions } from '@cognite/node-visualizer';
 
 import { WellsData } from '../types';
@@ -23,12 +25,19 @@ export const normalizeWellsData = (wellsData: WellsData): BPDataOptions => {
     wellLogsRowData = {},
   } = wellsData;
 
+  /**
+   * Casings data needs the wellbore name.
+   * This is a temporary trick to get the wellbores list.
+   * This will be fixed properly when 3D component is refactored to match with new domain types.
+   */
+  const wellbores = compact(wells.flatMap(({ wellbores }) => wellbores));
+
   const result: BPDataOptions = {
     wells: mapWellsTo3D(wells),
     wellBores: mapWellboresTo3D(wells),
     trajectories: mapTrajectoriesTo3D(trajectories),
     trajectoryData: mapTrajectoryDataTo3D(trajectoryData),
-    casings: mapCasingsTo3D(casings),
+    casings: mapCasingsTo3D(wellbores, casings),
     ndsEvents: mapNDSTo3D(ndsEvents),
     nptEvents: mapNPTTo3D(nptEvents, wells),
     logs: mapLogsTo3D(wellLogs, wellLogsRowData),

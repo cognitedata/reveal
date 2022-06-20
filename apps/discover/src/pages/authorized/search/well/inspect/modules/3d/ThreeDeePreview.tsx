@@ -1,8 +1,11 @@
+import { useCasingSchematicsQuery } from 'domain/wells/casings/internal/queries/useCasingSchematicsQuery';
+import { sortCasingAssembliesByMDBase } from 'domain/wells/casings/internal/transformers/sortCasingAssembliesByMDBase';
 import { useWellLogsWithRowData } from 'domain/wells/log/internal/queries/useWellLogsWithRowData';
 import { useTrajectoriesQuery } from 'domain/wells/trajectory/internal/queries/useTrajectoriesQuery';
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
 import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
 
 import isArray from 'lodash/isArray';
@@ -13,10 +16,8 @@ import { LOADING_SUB_TEXT } from 'components/EmptyState/constants';
 import { StoreState } from 'core/types';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 import { useNptEventsQuery } from 'modules/wellSearch/hooks/useNptEventsQuery';
-import { useSelectedWellboresCasingsQuery } from 'modules/wellSearch/hooks/useSelectedWellboresCasingsQuery';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
-import { CogniteEventV3ish, Sequence } from 'modules/wellSearch/types';
-import { orderedCasingsByBase } from 'modules/wellSearch/utils/casings';
+import { CogniteEventV3ish } from 'modules/wellSearch/types';
 import { keyBySource } from 'modules/wellSearch/utils/groupBySource';
 import { groupByWellbore } from 'modules/wellSearch/utils/groupByWellbore';
 
@@ -28,9 +29,10 @@ type Props = ReturnType<typeof mapStateToProps>;
 const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
   const { data: config } = useWellConfig();
   const wells = useWellInspectSelectedWells();
+  const wellboreIds = useWellInspectSelectedWellboreIds();
 
   const { data: casingData, isLoading: casingLoading } =
-    useSelectedWellboresCasingsQuery();
+    useCasingSchematicsQuery({ wellboreIds });
   const { data: ndsData, isLoading: ndsLoading } = useNdsEventsQuery();
   const { data: nptEvents, isLoading: nptLoading } = useNptEventsQuery();
   const {
@@ -39,7 +41,6 @@ const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
     isLoading: trajectoriesLoading,
   } = useTrajectoriesQuery();
 
-  const casings: Sequence[] = [];
   const ndsEvents: CogniteEventV3ish[] = [];
 
   /**
@@ -56,15 +57,20 @@ const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
   const isLoading =
     casingLoading || ndsLoading || nptLoading || trajectoriesLoading; // || isWellLogsLoading;
 
+  const casings = useMemo(
+    () =>
+      (casingData || []).map(({ casingAssemblies, ...rest }) => ({
+        ...rest,
+        casingAssemblies: sortCasingAssembliesByMDBase(casingAssemblies),
+      })),
+    [casingData, casingLoading]
+  );
+
   if (!config || isLoading) {
     return <ThreeDeeEmptyStateLoader />;
   }
 
   Object.keys(selectedWellboreIds).forEach((wbid) => {
-    if (casingData && casingData[wbid]) {
-      casings.push(...orderedCasingsByBase(casingData[wbid]));
-    }
-
     if (ndsData && isArray(ndsData[wbid])) {
       ndsEvents.push(...ndsData[wbid]);
     }

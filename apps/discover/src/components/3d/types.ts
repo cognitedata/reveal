@@ -1,3 +1,4 @@
+import { CasingSchematicInternal } from 'domain/wells/casings/internal/types';
 import { Well } from 'domain/wells/well/internal/types';
 
 import { DepthMeasurement, DepthMeasurementData } from '@cognite/sdk-wells-v3';
@@ -17,7 +18,7 @@ export interface WellsData {
   wells?: Well[];
   trajectories?: Sequence[];
   trajectoryData?: TrajectoryRows[];
-  casings?: Sequence[];
+  casings?: CasingSchematicInternal[];
   ndsEvents?: CogniteEventV3ish[];
   nptEvents?: WellboreNPTEventsMap;
   wellLogs?: Record<string, DepthMeasurement[]>;
