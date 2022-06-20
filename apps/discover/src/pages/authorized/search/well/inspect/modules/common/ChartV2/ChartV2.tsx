@@ -185,10 +185,10 @@ const ChartV2 = React.forwardRef(
               'hoverCompareCartesian',
               'hoverClosestCartesian',
               'resetScale2d',
-              'zoomIn2d',
-              'zoomOut2d',
+              // 'zoomIn2d',
+              // 'zoomOut2d',
             ],
-            // scrollZoom: true,
+            scrollZoom: true,
           }}
           onHover={(event: Plotly.PlotMouseEvent) => {
             setDetailCardData(event);

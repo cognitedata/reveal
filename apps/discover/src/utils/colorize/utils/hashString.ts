@@ -1,9 +1,9 @@
 import isEmpty from 'lodash/isEmpty';
 
-export const hashString = (string: string) => {
-  const trimmedString = string.trim();
+export const hashString = (text?: string) => {
+  const trimmedString = text?.trim();
 
-  if (isEmpty(trimmedString)) {
+  if (isEmpty(trimmedString) || trimmedString === undefined) {
     return 0;
   }
 
