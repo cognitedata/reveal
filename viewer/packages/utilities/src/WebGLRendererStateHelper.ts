@@ -1,7 +1,6 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import _ from 'lodash';
 import * as THREE from 'three';
 import { Vector4 } from 'three';
 
@@ -20,11 +19,11 @@ type WebGLRendererState = {
 type WebGLState = {
   buffers?: {
     depth?: {
-      mask?: boolean
-      test?: boolean
-    }
-  }
-}
+      mask?: boolean;
+      test?: boolean;
+    };
+  };
+};
 
 export class WebGLRendererStateHelper {
   private _originalState: WebGLRendererState = {};
@@ -35,10 +34,9 @@ export class WebGLRendererStateHelper {
     this._originalState = {};
   }
 
-  setScissor(x: number, y: number, width: number, height:number): void {
+  setScissor(x: number, y: number, width: number, height: number): void {
     const scissorData = this._renderer.getScissor(new Vector4());
-    this._originalState = { scissorData: scissorData ? 
-      scissorData : undefined, ...this._originalState};
+    this._originalState = { scissorData: scissorData ? scissorData : undefined, ...this._originalState };
     this._renderer.setScissor(x, y, width, height);
   }
 
@@ -56,29 +54,28 @@ export class WebGLRendererStateHelper {
     this._renderer.setClearColor(color, alpha);
   }
 
-  setWebGLState(state: WebGLState): void { 
+  setWebGLState(state: WebGLState): void {
     const gl = this._renderer.getContext();
-    
+
     this._originalState = {
-      webGLState: { 
+      webGLState: {
         buffers: state?.buffers ? {} : undefined
-      }, ...this._originalState
-    }
+      },
+      ...this._originalState
+    };
 
     if (state?.buffers?.depth) {
       const newTest = state.buffers.depth?.test;
       const newMask = state.buffers.depth?.mask;
 
-      this._originalState.webGLState!.buffers!.depth = { 
-        test: newTest ? gl.getParameter(gl.DEPTH_TEST) : undefined, 
+      this._originalState.webGLState!.buffers!.depth = {
+        test: newTest ? gl.getParameter(gl.DEPTH_TEST) : undefined,
         mask: newMask ? gl.getParameter(gl.DEPTH_WRITEMASK) : undefined
-      }
+      };
 
       if (newMask) this._renderer.state.buffers.depth.setMask(newMask);
       if (newTest) this._renderer.state.buffers.depth.setTest(newTest);
     }
-    
-      
   }
 
   setSize(width: number, height: number): void {
@@ -127,7 +124,7 @@ export class WebGLRendererStateHelper {
       if (this._originalState.webGLState?.buffers?.depth) {
         const lastTest = this._originalState.webGLState.buffers.depth?.test;
         const lastMask = this._originalState.webGLState.buffers.depth?.mask;
-  
+
         if (lastMask) this._renderer.state.buffers.depth.setMask(lastMask);
         if (lastTest) this._renderer.state.buffers.depth.setTest(lastTest);
       }

@@ -1,7 +1,6 @@
 import {
   BufferAttribute,
   Camera,
-  Color,
   LinearFilter,
   NearestFilter,
   NoBlending,

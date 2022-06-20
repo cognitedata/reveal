@@ -31,7 +31,7 @@ export class PointCloudOctreePicker {
     }
 
     const stateHelper = new WebGLRendererStateHelper(renderer);
-    
+
     const pickState = this.pickState ? this.pickState : (this.pickState = PointCloudOctreePickerHelper.getPickState());
 
     const pickMaterial = pickState.material;
@@ -75,7 +75,6 @@ export class PointCloudOctreePicker {
       // Read back image and decode hit point
       const pixels = PointCloudOctreePickerHelper.readPixels(renderer, x, y, pickWndSize);
       hit = PointCloudOctreePickerHelper.findHit(pixels, pickWndSize, renderedNodes, camera);
-
     } finally {
       // Cleanup
       pickMaterial.clearVisibleNodeTextureOffsets();
