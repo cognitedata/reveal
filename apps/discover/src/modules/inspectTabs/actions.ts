@@ -1,3 +1,5 @@
+import { SavedSearchContent } from 'domain/savedSearches/types';
+
 import { createAction } from '@reduxjs/toolkit';
 
 import {
@@ -18,6 +20,7 @@ import {
   SET_SELECTED_LOG_IDS,
   SET_SELECTED_TRAJECTORY_IDS,
   SET_SELECTED_TRAJECTORY_WELLBORE_IDS,
+  SET_RELATED_DOCUMENTS_FILTERS,
 } from './types';
 
 // NDS
@@ -33,14 +36,25 @@ export const setNptSearchPhrase = createAction<SearchInput>(
   SET_NPT_SEARCH_PHRASE
 );
 export const setNptDuration = createAction<NumericRange>(SET_NPT_DURATION);
+
+// log
 export const setSelectedLogIds =
   createAction<SelectedMap>(SET_SELECTED_LOG_IDS);
+
+// trajectory
 export const setSelectedTrajectoryIds = createAction<SelectedMap>(
   SET_SELECTED_TRAJECTORY_IDS
 );
 export const setSelectedTrajectoryWellboreIds = createAction<SelectedMap>(
   SET_SELECTED_TRAJECTORY_WELLBORE_IDS
 );
+
+// related documents
+export const setRelatedDocumentsFilters = createAction<SavedSearchContent>(
+  SET_RELATED_DOCUMENTS_FILTERS
+);
+
+// errors
 export const setErrors = createAction<Errors>(SET_ERRORS);
 export const resetErrors = createAction(RESET_ERRORS);
 
@@ -55,6 +69,7 @@ export const inspectTabsActions = {
   setSelectedLogIds,
   setSelectedTrajectoryIds,
   setSelectedTrajectoryWellboreIds,
+  setRelatedDocumentsFilters,
   setErrors,
   resetErrors,
 };

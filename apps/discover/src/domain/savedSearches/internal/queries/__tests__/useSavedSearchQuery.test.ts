@@ -17,7 +17,6 @@ import { usePatchSavedSearchMutate } from '../../actions/usePatchSavedSearchMuta
 import { useQuerySavedSearchCurrent } from '../useQuerySavedSearchCurrent';
 import { useQuerySavedSearcheGetOne } from '../useQuerySavedSearcheGetOne';
 import { useQuerySavedSearchesList } from '../useQuerySavedSearchesList';
-import { useQuerySavedSearchRelatedDocuments } from '../useQuerySavedSearchRelatedDocuments';
 
 describe('useSavedSearchQuery', () => {
   const networkMocks = setupServer(
@@ -30,16 +29,6 @@ describe('useSavedSearchQuery', () => {
   );
   beforeAll(() => networkMocks.listen());
   afterAll(() => networkMocks.close());
-
-  describe('useQuerySavedSearchRelatedDocuments', () => {
-    it('should be ok', async () => {
-      const { result, waitFor } = renderHookWithStore(() =>
-        useQuerySavedSearchRelatedDocuments()
-      );
-      await waitFor(() => expect(result.current.isFetched).toEqual(true));
-      expect(result.current.data).toEqual(getSavedSearchResponseFixture());
-    });
-  });
 
   describe('useQuerySavedSearchCurrent', () => {
     it('should be ok', async () => {

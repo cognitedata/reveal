@@ -1,13 +1,15 @@
 import { fireEvent, screen } from '@testing-library/react';
-import { shortDate } from 'utils/date';
+import { getDateOrDefaultText } from 'utils/date';
 
 import { testRenderer } from '__test-utils/renderer';
+import { getMockedStore } from '__test-utils/store.utils';
 
 import { RelatedDocumentDateRange } from '../RelatedDocumentDateRange';
 
 describe('Date Range', () => {
+  const store = getMockedStore();
   const page = (viewProps?: any) =>
-    testRenderer(RelatedDocumentDateRange, undefined, viewProps);
+    testRenderer(RelatedDocumentDateRange, store, viewProps);
 
   const defaultTestInit = async () => {
     return { ...page() };
@@ -21,7 +23,9 @@ describe('Date Range', () => {
     const button = screen.getByText('Date Range');
     await fireEvent.click(button);
 
-    const minMaxDate = screen.getAllByDisplayValue(shortDate(new Date()));
+    const minMaxDate = screen.getAllByDisplayValue(
+      getDateOrDefaultText(new Date())
+    );
     expect(minMaxDate.length).toBeGreaterThan(0);
   });
 });

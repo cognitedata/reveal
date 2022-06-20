@@ -1,5 +1,3 @@
-import { useQuerySavedSearchRelatedDocuments } from 'domain/savedSearches/internal/queries/useQuerySavedSearchRelatedDocuments';
-
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -10,7 +8,8 @@ import { Dropdown, Menu, Range } from '@cognite/cogs.js';
 
 import { BaseButton } from 'components/Buttons';
 import { DocumentsFacets } from 'modules/documentSearch/types';
-import { useSetRelatedDocumentFilters } from 'modules/inspectTabs/hooks/useSetRelatedDocumentFilters';
+import { useSetRelatedDocumentsFilters } from 'modules/inspectTabs/hooks/useSetRelatedDocumentsFilters';
+import { useRelatedDocumentsFilters } from 'modules/inspectTabs/selectors';
 import { ClearButton } from 'pages/authorized/search/search/SideBar/components/ClearButton';
 import { CommonDateRange } from 'pages/authorized/search/search/SideBar/components/CommonDateRange';
 import { DateRangeTabs } from 'pages/authorized/search/search/SideBar/components/DateRangeTabs';
@@ -21,8 +20,8 @@ import { DateTabType } from 'pages/authorized/search/search/SideBar/types';
 import { DateRangeButtonWrapper } from './elements';
 
 export const RelatedDocumentDateRange: React.FC = () => {
-  const { data } = useQuerySavedSearchRelatedDocuments();
-  const setRelatedDocumentFilters = useSetRelatedDocumentFilters();
+  const data = useRelatedDocumentsFilters();
+  const setRelatedDocumentFilters = useSetRelatedDocumentsFilters();
   const query = get(data, 'query');
   const filters = get(data, 'filters.documents.facets') as DocumentsFacets;
   const { t } = useTranslation();
@@ -41,14 +40,12 @@ export const RelatedDocumentDateRange: React.FC = () => {
   };
 
   const search = (newRanges: Range) => {
-    const facets: DocumentsFacets = {
-      ...filters,
+    setRelatedDocumentFilters({
       [activeKey]: [
         String(dateToEpoch(newRanges.startDate as Date)),
         String(dateToEpoch(newRanges.endDate as Date)),
       ],
-    };
-    setRelatedDocumentFilters(facets, query);
+    });
   };
 
   const applyFilters = async (newRanges: Range) => {
@@ -68,12 +65,7 @@ export const RelatedDocumentDateRange: React.FC = () => {
   );
 
   const handleClearDate = () => {
-    const facets: DocumentsFacets = {
-      ...filters,
-      [activeKey]: [],
-    };
-
-    setRelatedDocumentFilters(facets, query);
+    setRelatedDocumentFilters({ [activeKey]: [] }, query);
   };
 
   useEffect(() => {

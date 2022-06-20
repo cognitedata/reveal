@@ -13,8 +13,6 @@ export const DOCUMENT_CATEGORIES_QUERY_KEY = ['documents', 'categories'];
 export const DOCUMENT_TYPES_QUERY_KEY = ['documents', 'types'];
 export const DOCUMENTS_BY_IDS_QUERY_KEY = ['documents'];
 
-export const RELATED_DOCUMENT_KEY = 'relatedDocuments';
-
 const USER = 'user';
 export const USER_KEY = {
   SYNC_QUERY: [USER, 'userSync'],
@@ -98,7 +96,6 @@ export const WELL_QUERY_KEY = {
   WELL_TOPS: [WELLS, 'wellTops'],
   FORMATION_TOPS: [WELLS, 'logsFrmTops'],
   LOGS_PPFGS: ['logsPPFGs'],
-  RELATED_DOCUMENTS: [WELLS, 'relatedDocuments'],
   RELATED_DOCUMENT_FACETS: [WELLS, 'relatedDocuments', 'facets'],
   NPT_CODES: [WELLS, 'nptCodes'],
   NPT_DETAIL_CODES: [WELLS, 'nptDetailCodes'],

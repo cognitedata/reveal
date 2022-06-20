@@ -4,4 +4,5 @@ export const MODULES = {
   log: 'log',
   casing: 'casing',
   trajectory: 'trajectory',
+  relatedDocuments: 'relatedDocuments',
 };

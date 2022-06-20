@@ -1,5 +1,4 @@
 import { documentFacetsStructure } from 'domain/documents/internal/types';
-import { useQuerySavedSearchRelatedDocuments } from 'domain/savedSearches/internal/queries/useQuerySavedSearchRelatedDocuments';
 
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,19 +8,17 @@ import { isEnterPressed } from 'utils/general.helper';
 
 import { Input } from '@cognite/cogs.js';
 
-import { useSetRelatedDocumentFilters } from 'modules/inspectTabs/hooks/useSetRelatedDocumentFilters';
+import { useSetRelatedDocumentsFilters } from 'modules/inspectTabs/hooks/useSetRelatedDocumentsFilters';
+import { useRelatedDocumentsFilters } from 'modules/inspectTabs/selectors';
 
 import { InputContainer } from './elements';
 
 export const RelatedDocumentSearch: React.FC = () => {
-  const { data } = useQuerySavedSearchRelatedDocuments();
-  const setRelatedDocumentFilters = useSetRelatedDocumentFilters();
+  const data = useRelatedDocumentsFilters();
+  const setRelatedDocumentFilters = useSetRelatedDocumentsFilters();
   const facets = useMemo(() => get(data, 'filters.documents.facets'), [data]);
-  const query = get(data, 'query');
   const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState<string>('');
-
-  useMemo(() => setSearchValue(query), [query]);
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (isEnterPressed(event)) {

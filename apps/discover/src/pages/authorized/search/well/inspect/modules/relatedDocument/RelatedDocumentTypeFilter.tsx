@@ -7,7 +7,7 @@ import Histogram from 'components/Histogram/Histogram';
 import Skeleton from 'components/Skeleton';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useDocumentResultRelatedCount } from 'modules/documentSearch/hooks/useDocumentResultRelatedCount';
-import { usePatchRelatedDocumentFilters } from 'modules/inspectTabs/hooks/usePatchRelatedDocumentFilters';
+import { useSetRelatedDocumentsFilters } from 'modules/inspectTabs/hooks/useSetRelatedDocumentsFilters';
 import { FlexGrow } from 'styles/layout';
 
 import {
@@ -19,7 +19,7 @@ import {
 } from './elements';
 
 export const RelatedDocumentTypeFilter = () => {
-  const patchRelatedDocumentFilters = usePatchRelatedDocumentFilters();
+  const setRelatedDocumentFilters = useSetRelatedDocumentsFilters();
   const { results } = useDocumentSearchRelatedDocumentsQuery();
   const { facets } = results;
   const totalResults = useDocumentResultRelatedCount();
@@ -42,7 +42,7 @@ export const RelatedDocumentTypeFilter = () => {
         externalId: option.name,
       }));
 
-    patchRelatedDocumentFilters({
+    setRelatedDocumentFilters({
       labels,
     });
   };

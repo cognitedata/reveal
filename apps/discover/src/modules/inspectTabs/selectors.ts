@@ -30,3 +30,11 @@ export const useOverviewPageErrors = () => {
   const inspectTabs = useInspectTabs();
   return useMemo(() => inspectTabs.errors, [inspectTabs.errors]);
 };
+
+export const useRelatedDocumentsFilters = () => {
+  const inspectTabs = useInspectTabs();
+  return useMemo(
+    () => inspectTabs.relatedDocuments.filters,
+    [inspectTabs.relatedDocuments.filters]
+  );
+};

@@ -1,3 +1,5 @@
+import { SavedSearchContent } from '../../domain/savedSearches/types';
+
 import { MODULES } from './constants';
 
 export type SearchInput = string;
@@ -29,11 +31,19 @@ export interface InspectTabsState {
   casing: {
     selectedIds: SelectedMap;
   };
+  relatedDocuments: {
+    filters: SavedSearchContent;
+  };
   // Errors in data fetching and processing for overview tabs
   errors: Errors;
 }
 
-export type FilterValues = NumericRange | MultiSelect | SelectedMap;
+export type FilterValues =
+  | NumericRange
+  | MultiSelect
+  | SelectedMap
+  | SavedSearchContent;
+
 export interface InspectTabsAction {
   type: FilterDataActionsType;
   payload?: FilterValues | Errors;
@@ -56,7 +66,8 @@ type FilterDataActionsType =
   | typeof SET_NPT_DURATION
   | typeof SET_SELECTED_LOG_IDS
   | typeof SET_SELECTED_TRAJECTORY_IDS
-  | typeof SET_SELECTED_TRAJECTORY_WELLBORE_IDS;
+  | typeof SET_SELECTED_TRAJECTORY_WELLBORE_IDS
+  | typeof SET_RELATED_DOCUMENTS_FILTERS;
 
 export const SET_ERRORS = 'SET_ERRORS';
 export const RESET_ERRORS = 'RESET_ERRORS';
@@ -76,3 +87,4 @@ export const SET_SELECTED_LOG_IDS = 'SET_SELECTED_LOG_IDS';
 export const SET_SELECTED_TRAJECTORY_IDS = 'SET_SELECTED_TRAJECTORY_IDS';
 export const SET_SELECTED_TRAJECTORY_WELLBORE_IDS =
   'SET_SELECTED_TRAJECTORY_WELLBORE_IDS';
+export const SET_RELATED_DOCUMENTS_FILTERS = 'SET_RELATED_DOCUMENTS_FILTERS';

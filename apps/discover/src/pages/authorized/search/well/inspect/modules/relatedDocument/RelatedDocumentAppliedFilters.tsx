@@ -3,7 +3,7 @@ import React from 'react';
 import { useDocumentResultRelatedCount } from 'modules/documentSearch/hooks/useDocumentResultRelatedCount';
 import { DocumentsFacets } from 'modules/documentSearch/types';
 import { getEmptyFacets } from 'modules/documentSearch/utils';
-import { useSetRelatedDocumentFilters } from 'modules/inspectTabs/hooks/useSetRelatedDocumentFilters';
+import { useSetRelatedDocumentsFilters } from 'modules/inspectTabs/hooks/useSetRelatedDocumentsFilters';
 import { useAppliedMapGeoJsonFilters } from 'modules/sidebar/selectors';
 import { useRelatedDocumentFilterQuery } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocumentFilterQuery';
 import { DocumentAppliedFiltersCore } from 'pages/authorized/search/document/header/DocumentAppliedFilters';
@@ -16,7 +16,7 @@ interface Props {
 export const RelatedDocumentAppliedFilters: React.FC<Props> = (props) => {
   const { facets, phrase } = useRelatedDocumentFilterQuery();
   const extraGeoJsonFilters = useAppliedMapGeoJsonFilters();
-  const setRelatedDocumentFilters = useSetRelatedDocumentFilters();
+  const setRelatedDocumentFilters = useSetRelatedDocumentsFilters();
   const documentResultCount = useDocumentResultRelatedCount();
 
   if (documentResultCount === 0) {
@@ -24,13 +24,13 @@ export const RelatedDocumentAppliedFilters: React.FC<Props> = (props) => {
   }
 
   const setDocumentFilters = (docFacets: DocumentsFacets) => {
-    setRelatedDocumentFilters(docFacets, phrase);
+    setRelatedDocumentFilters(docFacets);
   };
   const clearAllDocumentFilters = () => {
     setRelatedDocumentFilters(getEmptyFacets(), '');
   };
   const clearQuery = () => {
-    setRelatedDocumentFilters(facets, '');
+    setRelatedDocumentFilters({}, '');
   };
 
   const actions = {

@@ -16,6 +16,7 @@ import {
   setSelectedLogIds,
   setSelectedTrajectoryWellboreIds,
   setSelectedTrajectoryIds,
+  setRelatedDocumentsFilters,
 } from './actions';
 import { InspectTabsState, InspectTabsAction, Errors } from './types';
 
@@ -40,6 +41,9 @@ export const initialState: InspectTabsState = {
   },
   casing: {
     selectedIds: {},
+  },
+  relatedDocuments: {
+    filters: { filters: {} },
   },
   errors: {},
 };
@@ -81,6 +85,12 @@ const inspectReducerCreator = createReducer(initialState, (builder) => {
     .addCase(setSelectedTrajectoryWellboreIds, (state, action) => {
       state.trajectory.selectedWellboreIds = {
         ...state.trajectory.selectedWellboreIds,
+        ...action.payload,
+      };
+    })
+    .addCase(setRelatedDocumentsFilters, (state, action) => {
+      state.relatedDocuments.filters = {
+        ...state.relatedDocuments.filters,
         ...action.payload,
       };
     })

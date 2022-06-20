@@ -1,30 +1,23 @@
-import { renderHook } from '@testing-library/react-hooks';
-
 import { getMockDocumentEmptyFacets } from '__test-utils/fixtures/document';
+import { getMockRelatedDocumentsFilters } from '__test-utils/fixtures/relatedDocuments';
+import { renderHookWithStore } from '__test-utils/renderer';
+import { getMockedStore } from '__test-utils/store.utils';
 import { useRelatedDocumentFilterQuery } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocumentFilterQuery';
 
-jest.mock('react-query', () => ({
-  ...jest.requireActual('react-query'),
-  useQueryClient: () => ({
-    setQueryData: jest.fn(),
-  }),
-  useQuery: () => ({
-    isLoading: false,
-    error: {},
-    data: {
-      filters: {
-        documents: {
-          facets: {
-            fileCategory: ['Test File Type 1'],
-          },
-        },
-      },
+const store = getMockedStore({
+  inspectTabs: {
+    relatedDocuments: {
+      filters: getMockRelatedDocumentsFilters(),
     },
-  }),
-}));
+  },
+});
+
 describe('useRelatedDocumentFilterQuery', () => {
   it('should return selected documents facets', async () => {
-    const { result } = renderHook(() => useRelatedDocumentFilterQuery());
+    const { result } = renderHookWithStore(
+      () => useRelatedDocumentFilterQuery(),
+      store
+    );
 
     expect(result.current).toEqual({
       facets: {

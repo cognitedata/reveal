@@ -4,17 +4,20 @@ import { screen, fireEvent } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 
 import { testRenderer } from '__test-utils/renderer';
+import { getMockedStore } from '__test-utils/store.utils';
 
 import { RelatedDocumentSearch } from '../RelatedDocumentSearch';
 
 const mockServer = setupServer(getMockSavedSearchRelatedGet());
+
+const store = getMockedStore();
 
 describe('Related Document search', () => {
   beforeAll(() => mockServer.listen());
   afterAll(() => mockServer.close());
 
   const defaultTestInit = async () =>
-    testRenderer(RelatedDocumentSearch, undefined, null);
+    testRenderer(RelatedDocumentSearch, store, null);
 
   it(`should press enter`, async () => {
     await defaultTestInit();

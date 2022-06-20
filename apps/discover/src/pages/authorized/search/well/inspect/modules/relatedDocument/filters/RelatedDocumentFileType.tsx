@@ -3,14 +3,14 @@ import { useDocumentSearchRelatedDocumentsOnlyQuery } from 'domain/documents/ser
 import { useTranslation } from 'react-i18next';
 
 import { MultiSelect } from 'components/Filters';
-import { usePatchRelatedDocumentFilters } from 'modules/inspectTabs/hooks/usePatchRelatedDocumentFilters';
+import { useSetRelatedDocumentsFilters } from 'modules/inspectTabs/hooks/useSetRelatedDocumentsFilters';
 import { useRelatedDocumentFilterQuery } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocumentFilterQuery';
 
 import { DropdownWrapper } from './elements';
 
 export const RelatedDocumentFileType = () => {
   const { t } = useTranslation();
-  const patchRelatedDocumentFilters = usePatchRelatedDocumentFilters();
+  const setRelatedDocumentFilters = useSetRelatedDocumentsFilters();
   const { facets: filters } = useRelatedDocumentFilterQuery();
   const fileCategoryFilters = filters.fileCategory;
   const selectedCount = fileCategoryFilters.length;
@@ -27,7 +27,7 @@ export const RelatedDocumentFileType = () => {
         options={options}
         selectedOptions={fileCategoryFilters}
         onValueChange={(values: string[]) => {
-          patchRelatedDocumentFilters({ fileCategory: values });
+          setRelatedDocumentFilters({ fileCategory: values });
         }}
         enableSelectAll
         showCustomCheckbox
