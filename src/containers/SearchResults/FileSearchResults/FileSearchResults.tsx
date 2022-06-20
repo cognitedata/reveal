@@ -10,6 +10,7 @@ import { GridTable, EnsureNonEmptyResource } from 'components';
 import { ResultTableLoader } from 'containers/ResultTableLoader';
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 import { ResourceItem } from 'types';
+import FileGroupingTable from 'containers/Files/FileGroupingTable/FileGroupingTable';
 import { FileToolbar } from './FileToolbar';
 
 export const FileSearchResults = ({
@@ -19,6 +20,7 @@ export const FileSearchResults = ({
   relatedResourceType,
   parentResource,
   count,
+  isGroupingFilesEnabled,
   allowEdit = false,
   onClick,
   ...extraProps
@@ -31,6 +33,7 @@ export const FileSearchResults = ({
   parentResource?: ResourceItem;
   count?: number;
   allowEdit?: boolean;
+  isGroupingFilesEnabled?: boolean;
   onClick: (item: FileInfo) => void;
 } & SelectableItemsProps &
   TableStateProps &
@@ -40,7 +43,10 @@ export const FileSearchResults = ({
   return (
     <>
       <FileToolbar
+        isHaveParent={Boolean(parentResource)}
+        relatedResourceType={relatedResourceType}
         query={query}
+        isGroupingFilesEnabled={isGroupingFilesEnabled}
         filter={filter}
         onFileClicked={file => {
           onClick(file);
@@ -61,16 +67,23 @@ export const FileSearchResults = ({
           relatedResourceType={relatedResourceType}
           {...extraProps}
         >
-          {props =>
-            currentView === 'grid' ? (
-              <GridTable
-                {...props}
-                onEndReached={() => props.onEndReached!({ distanceFromEnd: 0 })}
-                onItemClicked={file => onClick(file)}
-                {...extraProps}
-                renderCell={cellProps => <FileGridPreview {...cellProps} />}
-              />
-            ) : (
+          {props => {
+            if (currentView === 'grid')
+              return (
+                <GridTable
+                  {...props}
+                  onEndReached={() =>
+                    props.onEndReached!({ distanceFromEnd: 0 })
+                  }
+                  onItemClicked={file => onClick(file)}
+                  {...extraProps}
+                  renderCell={cellProps => <FileGridPreview {...cellProps} />}
+                />
+              );
+
+            if (currentView === 'tree')
+              return <FileGroupingTable parentResource={parentResource} />;
+            return (
               <FileTable
                 {...props}
                 onRowClick={file => {
@@ -79,8 +92,8 @@ export const FileSearchResults = ({
                 }}
                 relatedResourceType={relatedResourceType}
               />
-            )
-          }
+            );
+          }}
         </ResultTableLoader>
       </EnsureNonEmptyResource>
     </>

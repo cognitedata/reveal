@@ -15,6 +15,19 @@ export const Example: ComponentStory<typeof FileSearchResults> = args => (
   </Container>
 );
 
+export const GroupingEnabled: ComponentStory<
+  typeof FileSearchResults
+> = args => (
+  <Container>
+    <FileSearchResults {...args} />
+  </Container>
+);
+
+GroupingEnabled.args = {
+  isGroupingFilesEnabled: true,
+  parentResource: { externalId: 'dsd', id: 123, type: 'file' },
+  relatedResourceType: 'linkedResource',
+};
 const Container = styled.div`
   height: 400px;
 `;

@@ -9,12 +9,18 @@ import styled from 'styled-components';
 import { SearchResultToolbar, FileUploaderModal } from 'containers';
 import { CLOSE_DROPDOWN_EVENT } from 'utils/WindowEvents';
 import { AppContext } from 'context/AppContext';
+import { RelatedResourceType } from 'hooks';
 
+export const DATA_EXPLORATION_DOCUMENT_CATEGORISATION =
+  'DATA_EXPLORATION_document_categorisation';
 export const FileToolbar = ({
   onFileClicked,
+  isHaveParent,
+  isGroupingFilesEnabled = false,
   onViewChange,
   currentView = 'list',
   query,
+  relatedResourceType,
   filter,
   count,
   allowEdit = false,
@@ -23,8 +29,11 @@ export const FileToolbar = ({
   onViewChange?: (view: string) => void;
   currentView?: string;
   query: string;
+  isHaveParent?: boolean;
   count?: number;
   filter?: any;
+  isGroupingFilesEnabled?: boolean;
+  relatedResourceType?: RelatedResourceType;
   allowEdit?: boolean;
 }) => {
   const context = useContext(AppContext);
@@ -72,6 +81,18 @@ export const FileToolbar = ({
             title="Grid"
             aria-label="Grid"
           />
+          {isHaveParent &&
+          relatedResourceType === 'linkedResource' &&
+          isGroupingFilesEnabled ? (
+            <SegmentedControl.Button
+              key="tree"
+              icon="Tree"
+              title="Tree"
+              aria-label="Tree"
+            />
+          ) : (
+            <div />
+          )}
         </SegmentedControl>
       </SearchResultToolbar>
       <FileUploaderModal

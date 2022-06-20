@@ -13,6 +13,7 @@ import { ResultTableLoader } from 'containers/ResultTableLoader';
 
 export const LinkedResourceTable = ({
   excludeParentResource = false,
+  isGroupingFilesEnabled,
   type,
   parentResource,
   onItemClicked,
@@ -20,10 +21,12 @@ export const LinkedResourceTable = ({
 }: {
   excludeParentResource?: boolean;
   type: ResourceType;
+  isGroupingFilesEnabled?: boolean;
   parentResource: ResourceItem;
   onItemClicked: (id: number) => void;
 } & SelectableItemsProps) => {
   const filter = { assetSubtreeIds: [{ id: parentResource.id }] };
+
   switch (type) {
     case 'asset':
       return (
@@ -50,6 +53,9 @@ export const LinkedResourceTable = ({
     case 'file':
       return (
         <FileSearchResults
+          isGroupingFilesEnabled={isGroupingFilesEnabled}
+          relatedResourceType="linkedResource"
+          parentResource={parentResource}
           filter={filter}
           onClick={el => onItemClicked(el.id)}
           {...selectionMode}
