@@ -15,7 +15,7 @@ import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { BooleanSelection } from 'modules/wellInspect/types';
-import { WellboreId, WellboreChartData } from 'modules/wellSearch/types';
+import { WellboreId } from 'modules/wellSearch/types';
 
 import {
   extractChartDataFromProcessedData,
@@ -47,11 +47,6 @@ export const WellCentricView: React.FC<Props> = ({
   const selectedInspectWellbores = useWellInspectSelectedWellbores();
 
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
-
-  const [wellboreChartData, setWellboreChartData] = useState<
-    WellboreChartData[]
-  >([]);
-
   const { data: wellboreProcessedData, isLoading } =
     useWellInspectSelectedWellboresChartData({
       geomechanicsCurves,
@@ -59,6 +54,13 @@ export const WellCentricView: React.FC<Props> = ({
       otherTypes,
       pressureUnit,
     });
+
+  const wellboreChartData = React.useMemo(() => {
+    if (!wellboreProcessedData) {
+      return [];
+    }
+    return extractChartDataFromProcessedData(wellboreProcessedData);
+  }, [wellboreProcessedData]);
 
   const [selectedWellboresMap, setSelectedWellboresMap] =
     useState<BooleanSelection>({});
@@ -76,16 +78,6 @@ export const WellCentricView: React.FC<Props> = ({
     setSelectedWellboresMap({});
     setCompare(false);
   };
-
-  /**
-   * Extract chart data from processed data and set to state
-   */
-  useEffect(() => {
-    if (!wellboreProcessedData) return;
-    setWellboreChartData(
-      extractChartDataFromProcessedData(wellboreProcessedData)
-    );
-  }, [wellboreProcessedData]);
 
   /**
    * Extract errors from processed data and dispath to state

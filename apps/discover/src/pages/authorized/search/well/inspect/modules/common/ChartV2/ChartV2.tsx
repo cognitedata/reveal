@@ -103,8 +103,9 @@ const ChartV2 = React.forwardRef(
         spikemode: 'across',
         spikethickness: 1,
         overlaying: 'x',
-        side: 'bottom',
+        side: 'top',
         tickformat: 'digit',
+        ticklen: 40,
       };
     }
 
@@ -130,10 +131,10 @@ const ChartV2 = React.forwardRef(
       hovermode,
       height,
       margin: {
-        t: 60,
+        t: 45,
         r: 16,
         l: 60,
-        b: axisNames?.x2 && axisNames?.x ? 90 : 50,
+        b: 35,
       },
       dragmode: 'pan',
     };
