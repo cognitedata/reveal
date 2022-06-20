@@ -102,7 +102,10 @@ const Extractors = () => {
   const { extractorColumns } = getColumns(t);
   return (
     <StyledExtractorsContainer>
-      <NewHeader title={t('app-title')} ornamentColor={Colors['lightblue']} />
+      <NewHeader
+        title={t('extractor-downloads')}
+        ornamentColor={Colors['lightblue']}
+      />
       <Table
         dataSource={GetExtractors()}
         columns={extractorColumns}
