@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import LinkWithCopy from 'components/links/LinkWithCopy';
-import { useAppEnv } from 'hooks/useAppEnv';
 import { getDataSetsLink } from 'utils/dataSetUtils';
 import {
   NO_DATA_SET_ID_SET,
@@ -27,7 +26,6 @@ export const DataSet: FunctionComponent<Props> = ({
   dataSetName,
   ...rest
 }: Props) => {
-  const { cdfEnv, project, origin } = useAppEnv();
   if (!dataSetId) {
     return (
       <StyledTooltip content={NO_DATA_SET_ID_SET_TOOLTIP}>
@@ -38,7 +36,7 @@ export const DataSet: FunctionComponent<Props> = ({
   return (
     <DatasetTooltip>
       <LinkWithCopy
-        href={getDataSetsLink({ origin, project, cdfEnv, dataSetId })}
+        href={getDataSetsLink(dataSetId)}
         linkText={dataSetName}
         copyText={`${dataSetId}`}
         copyType="dataSetId"

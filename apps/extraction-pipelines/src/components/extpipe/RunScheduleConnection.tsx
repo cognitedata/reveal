@@ -65,6 +65,7 @@ export const RunScheduleConnection: FunctionComponent = () => {
     ...addIfExist(extpipe?.lastSuccess),
     ...addIfExist(extpipe?.lastFailure),
   ]);
+
   return (
     <CardWrapper className={`${lastRun.status.toLowerCase()} z-2`}>
       <CardNavLink to={`${url}/${HEALTH_PATH}${search}`} exact>

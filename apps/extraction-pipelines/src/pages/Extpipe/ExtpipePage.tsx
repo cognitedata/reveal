@@ -29,7 +29,7 @@ import { useExtpipeById } from 'hooks/useExtpipe';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { ExtpipeDetails } from 'components/extpipe/ExtpipeDetails';
-import { HEALTH_PATH, RouterParams } from 'routing/RoutingConfig';
+import { HEALTH_PATH, RouterParams } from 'routing/RoutingConfig'; // EXT_PIPE_PATH
 import {
   EXT_PIPE_TAB_OVERVIEW,
   EXT_PIPE_TAB_RUN_HISTORY,
@@ -42,12 +42,13 @@ import { ExtpipeBreadcrumbs } from 'components/navigation/breadcrumbs/ExtpipeBre
 import { Span3 } from 'styles/grid/StyledGrid';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 import { EXTPIPES_READS } from 'model/AclAction';
-import { createExtPipePath } from 'utils/baseURL';
+import { createExtPipePath } from 'utils/baseURL'; // EXTRACTION_PIPELINES_PATH
 import { useQueryClient } from 'react-query';
 import { deleteExtractionPipeline } from 'utils/ExtpipesAPI';
 import { ErrorBox } from 'components/error/ErrorBox';
 import { EditModal } from 'components/modals/EditModal';
 import { DivFlex } from 'styles/flex/StyledFlex';
+// import { createRedirectLink } from 'utils/utils';
 
 const PageNav = styled.ul`
   ${Span3};
@@ -146,7 +147,7 @@ const DeleteDialog: FunctionComponent<DeleteDialogProps> = ({
 
 const ExtpipePage: FunctionComponent<ExtpipePageProps> = () => {
   const { search } = useLocation();
-  const { path, url } = useRouteMatch();
+  const { path, url } = useRouteMatch(); //
   const { id } = useParams<RouterParams>();
   const history = useHistory();
   const { project } = useAppEnv();
@@ -218,6 +219,7 @@ const ExtpipePage: FunctionComponent<ExtpipePageProps> = () => {
       </FullPageLayout>
     );
   }
+
   return isLoading || extpipe == null ? (
     <Loader />
   ) : (
@@ -232,6 +234,7 @@ const ExtpipePage: FunctionComponent<ExtpipePageProps> = () => {
                 <li>
                   <NavLink
                     to={{ pathname: url, search }}
+                    // to={{ pathname: createRedirectLink(`/${EXTRACTION_PIPELINES_PATH}/${EXT_PIPE_PATH}/${id}`) }}
                     exact
                     className="tab-link"
                   >
@@ -241,6 +244,7 @@ const ExtpipePage: FunctionComponent<ExtpipePageProps> = () => {
                 <li>
                   <NavLink
                     to={{ pathname: `${url}/${HEALTH_PATH}`, search }}
+                    // to={{ pathname: createRedirectLink(`/${EXTRACTION_PIPELINES_PATH}/${EXT_PIPE_PATH}/${id}/${HEALTH_PATH}`) }}
                     exact
                     className="tab-link"
                   >
@@ -282,10 +286,17 @@ const ExtpipePage: FunctionComponent<ExtpipePageProps> = () => {
         breadcrumbs={<ExtpipeBreadcrumbs extpipe={extpipe} />}
       >
         <Switch>
-          <Route exact path={path}>
+          <Route
+            exact
+            path={path}
+            // path={createRedirectLink(`/${EXTRACTION_PIPELINES_PATH}/${EXT_PIPE_PATH}/${id}`)}
+          >
             <ExtpipeDetails />
           </Route>
-          <Route path={`${path}/${HEALTH_PATH}`}>
+          <Route
+            path={`${path}/${HEALTH_PATH}`}
+            // path={createRedirectLink(`/${EXTRACTION_PIPELINES_PATH}/${EXT_PIPE_PATH}/${id}/${HEALTH_PATH}`)}
+          >
             <ExtpipeRunHistory extpipe={extpipe} />
           </Route>
         </Switch>

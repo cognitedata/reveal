@@ -151,9 +151,9 @@ describe('Data set util', () => {
       expected: 'dev/itera-int-green/data-sets/data-set/123123123',
     },
   ];
-  getDataSetCases.forEach(({ desc, value, expected }) => {
+  getDataSetCases.forEach(({ desc, expected }) => {
     test(`${desc}`, () => {
-      const res = getDataSetsLink(value);
+      const res = getDataSetsLink(dataSetId);
       expect(res).toEqual(expected);
     });
   });

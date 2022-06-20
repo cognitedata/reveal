@@ -1,8 +1,7 @@
 import React, { FunctionComponent } from 'react';
-import { useAppEnv } from 'hooks/useAppEnv';
-
 import { trackUsage } from 'utils/Metrics';
 import { ExternalLink } from 'components/links/ExternalLink';
+import { createRedirectLink } from 'utils/utils';
 
 interface LinkBase {
   linkText: string;
@@ -26,12 +25,12 @@ const ExtractorDownloadsLink: FunctionComponent<OwnProps> = ({
   linkText,
   link: { url, path },
 }: OwnProps) => {
-  const { project, cdfEnv } = useAppEnv();
-  const displayHref =
-    url || `/${project}${path}${cdfEnv ? `?env=${cdfEnv}` : ''}`;
+  const displayHref = url || createRedirectLink(path || '');
+
   const onLinkClick = () => {
     trackUsage({ t: 'Navigation', href: displayHref });
   };
+
   return (
     <>
       {(url || path) && (

@@ -19,6 +19,7 @@ import styled from 'styled-components';
 import { ids } from 'cogs-variables';
 import { CreateExtpipe } from 'pages/create/CreateExtpipe';
 import { StyledTooltip } from 'styles/StyledToolTip';
+// import { createLink } from 'utils/utils';
 
 import { trackUsage } from 'utils/Metrics';
 
