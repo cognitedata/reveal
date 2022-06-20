@@ -8,7 +8,7 @@ import head from 'lodash/head';
 import uniqueBy from 'lodash/uniqBy';
 import { v4 as uuid } from 'uuid';
 
-import { Checkbox } from '@cognite/cogs.js';
+import { Checkbox, SegmentedControl } from '@cognite/cogs.js';
 
 import { BaseButton } from 'components/Buttons';
 import {
@@ -32,6 +32,7 @@ import {
   CurveIndicator,
   Footer,
   Header,
+  HeaderActions,
   HeaderSubTitle,
   HeaderTitle,
   HeaderTitleContainer,
@@ -44,6 +45,11 @@ type AxisNames = {
   y: string;
   x2?: string;
 };
+
+enum EventTabs {
+  'cluster' = 'cluster',
+  'scatter' = 'scatter',
+}
 
 export type Props = {
   wellbore: Wellbore;
@@ -64,6 +70,8 @@ export const WellCentricCard: React.FC<Props> = ({
 }) => {
   const scaleRef = useRef<HTMLElement | null>(null);
   const legendsHolderRef = React.useRef<HTMLDivElement>(null);
+
+  const [currentTab, setCurrentTab] = useState<EventTabs>(EventTabs.cluster);
 
   const [scaleGap, setScaleGap] = useState(50);
   const [scaleBlocks, setScaleBlocks] = useState<number[]>([]);
@@ -115,6 +123,19 @@ export const WellCentricCard: React.FC<Props> = ({
               <HeaderSubTitle>{wellbore.name}</HeaderSubTitle>
             </div>
           </Checkbox>
+          <HeaderActions>
+            <SegmentedControl
+              currentKey={currentTab}
+              onButtonClicked={(tabKey: string) => setCurrentTab(tabKey as any)}
+            >
+              <SegmentedControl.Button key={EventTabs.cluster}>
+                Cluster view
+              </SegmentedControl.Button>
+              <SegmentedControl.Button key={EventTabs.scatter}>
+                Scatter view
+              </SegmentedControl.Button>
+            </SegmentedControl>
+          </HeaderActions>
         </HeaderTitleContainer>
       </Header>
 

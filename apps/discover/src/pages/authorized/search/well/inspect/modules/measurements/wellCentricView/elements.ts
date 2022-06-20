@@ -5,6 +5,13 @@ import { Detail, Title } from '@cognite/cogs.js';
 
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
+export const HeaderActions = styled.div`
+  display: flex;
+  height: 100%;
+  align-items: center;
+  gap: 8px;
+`;
+
 export const WellCentricViewWrapper = styled(FlexColumn)`
   height: 100%;
   gap: ${sizes.normal};
@@ -27,8 +34,10 @@ export const Header = styled(Flex)`
   width: 100%;
 `;
 
-export const HeaderTitleContainer = styled(FlexColumn)`
+export const HeaderTitleContainer = styled(FlexRow)`
   gap: ${sizes.extraSmall};
+  justify-content: space-between;
+  width: 100%;
 `;
 
 export const HeaderTitle = styled(Title).attrs({ level: '5' })``;
