@@ -6,7 +6,13 @@ import * as THREE from 'three';
 
 export type PotreeClassification = { [pointClass: number]: { x: number; y: number; z: number; w: number } };
 
-import { PointCloudOctree, PotreePointColorType, PotreePointShape, IClassification } from './potree-three-loader';
+import {
+  PointCloudOctree,
+  PotreePointColorType,
+  PotreePointShape,
+  IClassification,
+  PickPoint
+} from './potree-three-loader';
 import { WellKnownAsprsPointClassCodes } from './types';
 
 import { createPointClassKey } from './createPointClassKey';
@@ -70,6 +76,10 @@ export class PotreeNodeWrapper {
 
   get classification(): PotreeClassification {
     return this._classification;
+  }
+
+  pick(renderer: THREE.WebGLRenderer, camera: THREE.Camera, ray: THREE.Ray): PickPoint | null {
+    return this.octree.pick(renderer, camera, ray, { pickWindowSize: 20 });
   }
 
   setClassificationAndRecompute(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void {

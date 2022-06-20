@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { IntersectInput } from '@reveal/model-base';
 import { PointCloudNode } from './PointCloudNode';
 
-import { PointCloudOctree } from './potree-three-loader';
+import { PickPoint, PointCloudOctree } from './potree-three-loader';
 
 export interface IntersectPointCloudNodeResult {
   /**
@@ -40,14 +40,23 @@ export function intersectPointClouds(
   input: IntersectInput,
   threshold: number = 0.05 // 5 cm
 ): IntersectPointCloudNodeResult[] {
-  const { normalizedCoords, camera } = input;
+  const { normalizedCoords, camera, renderer } = input;
   normalized.set(normalizedCoords.x, normalizedCoords.y);
   raycaster.setFromCamera(normalizedCoords, camera);
   raycaster.params.Points = { threshold };
 
-  const intersections = raycaster.intersectObjects(nodes, true);
+  const intersections: PickPoint[] = [];
+
+  nodes.forEach(node => {
+    const intersection = node.pick(renderer, camera, raycaster.ray);
+    if (intersection !== null) {
+      intersections.push(intersection);
+    }
+  });
+
   return intersections
-    .filter(x => isPointAcceptedByClippingPlanes(x.point, input.clippingPlanes))
+    .sort((x, y) => x.position.distanceTo(camera.position) - y.position.distanceTo(camera.position))
+    .filter(x => isPointAcceptedByClippingPlanes(x.position, input.clippingPlanes))
     .map(x => {
       const pointCloudNode = determinePointCloudNode(x.object, nodes);
       if (pointCloudNode === null) {
@@ -55,9 +64,9 @@ export function intersectPointClouds(
       }
 
       const result: IntersectPointCloudNodeResult = {
-        distance: x.distance,
-        point: x.point,
-        pointIndex: x.index!,
+        distance: x.position.distanceTo(camera.position),
+        point: x.position,
+        pointIndex: x.pointIndex,
         pointCloudNode,
         object: x.object
       };
