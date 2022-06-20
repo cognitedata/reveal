@@ -743,13 +743,13 @@ __metadata:
     jest-canvas-mock: 2.4.0
     jest-extended: 0.11.5
     jsdom: 19.0.0
-    lint-staged: 13.0.1
+    lint-staged: 13.0.2
     lodash: 4.17.21
     loglevel: 1.8.0
     mixpanel-browser: 2.45.0
     moq.ts: 9.0.2
     nock: 13.2.7
-    prettier: 2.6.2
+    prettier: 2.7.1
     proj4: ^2.8.0
     random-seed: 0.3.0
     raw-loader: 4.0.2
@@ -762,7 +762,7 @@ __metadata:
     ts-jest: 27.1.5
     ts-loader: 8.4.0
     tsc-alias: 1.6.10
-    typescript: 4.7.3
+    typescript: 4.7.4
     webpack: 4.46.0
     webpack-cli: 3.3.12
     webpack-dev-server: 3.11.3
@@ -8952,9 +8952,9 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:13.0.1":
-  version: 13.0.1
-  resolution: "lint-staged@npm:13.0.1"
+"lint-staged@npm:13.0.2":
+  version: 13.0.2
+  resolution: "lint-staged@npm:13.0.2"
   dependencies:
     cli-truncate: ^3.1.0
     colorette: ^2.0.17
@@ -8971,7 +8971,7 @@ fsevents@^1.2.7:
     yaml: ^2.1.1
   bin:
     lint-staged: bin/lint-staged.js
-  checksum: a321b351bbdc7dba09c9f026e385b887dabaaea1258eb478fbbe73dc395e11ebe26c946f8514426c7fc7e3e0efbe0761fe64f70e0d26361f912af79f80bf3e4e
+  checksum: b5ccf8e11b69f6fd8b79b629580c1463524aeca069a8f97a28291de2fafa474c28871428b56f251cf95a02d84e7b0fc0dfd6443532e16fdac3f9cba9228cfc9e
   languageName: node
   linkType: hard
 
@@ -10650,12 +10650,12 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"prettier@npm:2.6.2":
-  version: 2.6.2
-  resolution: "prettier@npm:2.6.2"
+"prettier@npm:2.7.1":
+  version: 2.7.1
+  resolution: "prettier@npm:2.7.1"
   bin:
     prettier: bin-prettier.js
-  checksum: 48d08dde8e9fb1f5bccdd205baa7f192e9fc8bc98f86e1b97d919de804e28c806b0e6cc685e4a88211aa7987fa9668f30baae19580d87ced3ed0f2ec6572106f
+  checksum: 55a4409182260866ab31284d929b3cb961e5fdb91fe0d2e099dac92eaecec890f36e524b4c19e6ceae839c99c6d7195817579cdffc8e2c80da0cb794463a748b
   languageName: node
   linkType: hard
 
@@ -13011,23 +13011,23 @@ resolve@^1.20.0:
   languageName: node
   linkType: hard
 
-typescript@4.7.3:
-  version: 4.7.3
-  resolution: "typescript@npm:4.7.3"
+typescript@4.7.4:
+  version: 4.7.4
+  resolution: "typescript@npm:4.7.4"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: fd13a1ce53790a36bb8350e1f5e5e384b5f6cb9b0635114a6d01d49cb99916abdcfbc13c7521cdae2f2d3f6d8bc4a8ae7625edf645a04ee940588cd5e7597b2f
+  checksum: 5750181b1cd7e6482c4195825547e70f944114fb47e58e4aa7553e62f11b3f3173766aef9c281783edfd881f7b8299cf35e3ca8caebe73d8464528c907a164df
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@4.7.3#~builtin<compat/typescript>":
-  version: 4.7.3
-  resolution: "typescript@patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=32657b"
+"typescript@patch:typescript@4.7.4#~builtin<compat/typescript>":
+  version: 4.7.4
+  resolution: "typescript@patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=32657b"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: f619532bccd55cbc634fa506d2c52514a1bdaadcb6d2077b75d3a62b7b9a5df1c4540d8008c73b6158dafd883fd519bcfc12a68477455c31db7afffd6300b2d6
+  checksum: 0b078b97f27848c2d10fc0777b7cb4cb85374426620edac25b2fe62459a4344569655e7f1a989d0ce9d5618cdeb958451eb2ee9436e78f7af86a99e800df967b
   languageName: node
   linkType: hard
 
