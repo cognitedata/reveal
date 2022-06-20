@@ -327,7 +327,7 @@ export const convertRegionToVisionAnnotationProperties = (
       annotation: {
         ...region.annotationMeta.annotation,
         id: +region.id,
-        ...data,
+        data,
       },
       selected: region.editingLabels,
       show: region.visible,
@@ -369,10 +369,33 @@ export const convertTempKeypointCollectionToRegions = (
   return [];
 };
 
+export const convertAnnotatorRegionToAnnotationChangeProperties = (
+  region: AnnotatorRegion
+): AnnotationChangeById => {
+  const annotationProperties =
+    convertRegionToVisionAnnotationProperties(region);
+  return {
+    id: annotationProperties.annotation.id,
+    update: {
+      data: {
+        set: {
+          ...annotationProperties.annotation.data,
+        },
+      },
+    },
+  };
+};
+
 // todo: add test cases VIS-891
 export const convertAnnotatorPointRegionToAnnotationChangeProperties = (
   region: AnnotatorPointRegion
-): AnnotationChangeById => {
+): AnnotationChangeById | null => {
+  if (
+    !isAnnotatorPointRegion(region) ||
+    !(region.annotationMeta && region.parentAnnotationId)
+  ) {
+    return null;
+  }
   const annotationKeypoints: Record<
     string,
     {
@@ -393,6 +416,8 @@ export const convertAnnotatorPointRegionToAnnotationChangeProperties = (
     update: {
       data: {
         set: {
+          label: region.annotationLabelOrText,
+          confidence: 1,
           keypoints: {
             ...annotationKeypoints,
             [region.keypointLabel]: {

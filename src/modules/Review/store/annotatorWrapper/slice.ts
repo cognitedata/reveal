@@ -16,7 +16,11 @@ import {
 } from 'src/api/annotation/types';
 import { isImageKeypointCollectionData } from 'src/modules/Common/types/typeGuards';
 import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
-import { AnnotatorPointRegion } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
+import {
+  AnnotatorPointRegion,
+  AnnotatorRegion,
+  isAnnotatorPointRegion,
+} from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
 import {
   createUniqueNumericId,
   generateKeypointId,
@@ -25,6 +29,7 @@ import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
+import isEqual from 'lodash-es/isEqual';
 
 export const initialState: AnnotatorWrapperState = {
   predefinedAnnotations: {
@@ -47,6 +52,8 @@ export const initialState: AnnotatorWrapperState = {
   lastKeyPoint: undefined,
   currentTool: 'select',
   keepUnsavedRegion: false,
+  isCreatingKeypointCollection: false,
+  temporaryRegion: undefined,
 };
 
 const annotatorWrapperSlice = createSlice({
@@ -190,11 +197,156 @@ const annotatorWrapperSlice = createSlice({
     setKeepUnsavedRegion(state, action: PayloadAction<boolean>) {
       state.keepUnsavedRegion = action.payload;
     },
+    createTempKeypointCollection(state, action: PayloadAction<boolean>) {
+      if (action.payload) {
+        state.isCreatingKeypointCollection = true;
+
+        const { id, annotationLabelOrText, keypointLabel, x, y } =
+          state.temporaryRegion as AnnotatorPointRegion;
+        if (annotationLabelOrText && keypointLabel) {
+          const predefinedKeypointCollection =
+            state.predefinedAnnotations.predefinedKeypointCollections.find(
+              (collection) =>
+                collection.collectionName === annotationLabelOrText
+            );
+
+          // valid PredefinedKeypointCollection is available
+          if (predefinedKeypointCollection) {
+            const { keypoints } = predefinedKeypointCollection;
+            state.lastCollectionName =
+              predefinedKeypointCollection.collectionName;
+
+            if (keypoints) {
+              // if collection has keypoints
+              const predefinedKeypoint: PredefinedKeypoint =
+                keypoints.find(
+                  (keypoint) => keypoint.caption === keypointLabel
+                ) || keypoints[0];
+              const imageKeypointToAdd: Keypoint = {
+                label: predefinedKeypoint.caption,
+                point: {
+                  x,
+                  y,
+                },
+                confidence: 1, // 100% confident about manually created keypoints
+              };
+
+              // create temp keypoint collection
+
+              const collectionId = createUniqueNumericId();
+              state.collections.byId[collectionId] = {
+                id: collectionId,
+                keypointIds: [String(id)],
+                label: annotationLabelOrText,
+                status: Status.Approved,
+                show: true,
+              };
+              state.collections.allIds = Object.keys(
+                state.collections.byId
+              ).map((key) => +key);
+              state.lastCollectionId = collectionId;
+              state.collections.selectedIds = [collectionId];
+
+              // update keypoints
+              state.lastKeyPoint = predefinedKeypoint.caption;
+              state.keypointMap.byId[id] = imageKeypointToAdd;
+              state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
+            } else {
+              console.warn('predefined collection has no keypoints!');
+            }
+          } else {
+            console.warn('predefined keypoint collection not found!');
+          }
+        } else {
+          console.warn('annotation label or keypoint label not found!');
+        }
+      } else {
+        state.isCreatingKeypointCollection = false;
+        const tempKeypointCollectionId = state.lastCollectionId;
+        if (tempKeypointCollectionId) {
+          deleteCollection(state, tempKeypointCollectionId);
+        }
+      }
+    },
+    onCreateRegion(state, action: PayloadAction<AnnotatorRegion>) {
+      state.temporaryRegion = action.payload;
+
+      const tempRegion = action.payload;
+      if (
+        state.isCreatingKeypointCollection &&
+        state.lastCollectionId &&
+        state.lastCollectionName &&
+        isAnnotatorPointRegion(tempRegion) // temp keypoint collection is available and temp region is available
+      ) {
+        // populate temp keypoint collection
+
+        const { id, annotationLabelOrText, keypointLabel, x, y } = tempRegion;
+        if (annotationLabelOrText && keypointLabel) {
+          const imageKeypointToAdd: Keypoint = {
+            label: keypointLabel,
+            point: {
+              x,
+              y,
+            },
+            confidence: 1, // 100% confident about manually created keypoints
+          };
+
+          /* duplicate keypoint removal start
+          this is due to bug in Annotator where onRegionCreated is called twice
+           */
+          const tempCollectionKeypointIds =
+            state.collections.byId[state.lastCollectionId].keypointIds;
+          const duplicateKeypointIdIndex = tempCollectionKeypointIds
+            .map((keypointId) => state.keypointMap.byId[keypointId])
+            .findIndex((keypoint) =>
+              isEqual(keypoint.point, imageKeypointToAdd.point)
+            );
+          if (duplicateKeypointIdIndex >= 0) {
+            // delete keypoint
+            delete state.keypointMap.byId[
+              tempCollectionKeypointIds[duplicateKeypointIdIndex]
+            ];
+            state.collections.byId[state.lastCollectionId].keypointIds.splice(
+              duplicateKeypointIdIndex,
+              1
+            );
+          }
+          /* duplicate keypoint removal end */
+
+          const tempCollection = state.collections.byId[state.lastCollectionId];
+          tempCollection.keypointIds.push(String(id));
+
+          // update keypoints
+          state.lastKeyPoint = keypointLabel;
+          state.keypointMap.byId[String(id)] = imageKeypointToAdd;
+          state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
+        } else {
+          console.warn('annotation label or keypoint label not found!');
+        }
+      }
+    },
+    onUpdateRegion(state, action: PayloadAction<AnnotatorRegion>) {
+      if (
+        state.temporaryRegion &&
+        action.payload.id === state.temporaryRegion.id
+      ) {
+        state.temporaryRegion = { ...state.temporaryRegion, ...action.payload };
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(deselectAllSelectionsReviewPage, (state) => {
       state.collections.selectedIds = [];
       state.keypointMap.selectedIds = [];
+      state.temporaryRegion = undefined;
+      state.isCreatingKeypointCollection = false;
+      if (state.lastCollectionId) {
+        // delete temp keypoint collection
+        const tempKeypointCollectionId = state.lastCollectionId;
+        if (tempKeypointCollectionId) {
+          deleteCollection(state, tempKeypointCollectionId);
+        }
+      }
     });
     // Matchers
     builder.addMatcher(
@@ -294,6 +446,9 @@ export const {
   deleteCurrentCollection,
   removeLabels,
   setKeepUnsavedRegion,
+  onCreateRegion,
+  onUpdateRegion,
+  createTempKeypointCollection,
 } = annotatorWrapperSlice.actions;
 
 export default annotatorWrapperSlice.reducer;

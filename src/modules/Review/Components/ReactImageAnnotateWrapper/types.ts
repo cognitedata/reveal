@@ -69,6 +69,14 @@ export type AnnotatorRegion =
   | AnnotatorPolygonRegion
   | AnnotatorLineRegion;
 
+export type AnnotatorRegionLabelProps = {
+  region: AnnotatorRegion;
+  editing: boolean;
+  onDelete: (region: AnnotatorRegion) => void;
+  onClose: (region: AnnotatorRegion) => void;
+  onChange: (region: AnnotatorRegion) => void;
+};
+
 export function isAnnotatorBoxRegion(
   region: AnnotatorRegion
 ): region is AnnotatorBoxRegion {

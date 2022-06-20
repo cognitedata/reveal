@@ -17,6 +17,7 @@ export const useIsCurrentKeypointCollectionComplete = (fileId: number) => {
   );
 
   useEffect(() => {
+    // todo: extract this logic and add test cases
     if (tempKeypointCollection) {
       // check for completeness
       const keypointCollectionTemplate = predefinedKeypointCollections.find(
@@ -33,11 +34,12 @@ export const useIsCurrentKeypointCollectionComplete = (fileId: number) => {
           (keypoint) => keypoint.keypoint.label
         );
         const notCompletedKeypoints = templateKeypointLabels.filter(
-          (keypointLabel) => createdKeypointLabels.includes(keypointLabel)
+          (keypointLabel) => !createdKeypointLabels.includes(keypointLabel)
         );
 
         if (notCompletedKeypoints.length === 0) {
           setIsComplete(true);
+          return;
         }
       }
     }

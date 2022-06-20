@@ -63,7 +63,6 @@ export type AnnotationTableRowProps = {
 };
 
 export type VisionOptionType<T> = OptionType<T> & {
-  order?: string;
   color?: string;
   icon?: string;
 };

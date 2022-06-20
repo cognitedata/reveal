@@ -94,10 +94,14 @@ export const ImagePreview = ({
     ({ annotatorWrapperReducer }: RootState) =>
       annotatorWrapperReducer.currentTool
   );
-
   const keepUnsavedRegion = useSelector(
     ({ annotatorWrapperReducer }: RootState) =>
       annotatorWrapperReducer.keepUnsavedRegion
+  );
+
+  const isCreatingKeypointCollection = useSelector(
+    ({ annotatorWrapperReducer }: RootState) =>
+      annotatorWrapperReducer.isCreatingKeypointCollection
   );
 
   const scrollId = useSelector(
@@ -224,7 +228,7 @@ export const ImagePreview = ({
           isLoading={isLoading}
           focusIntoView={scrollIntoView}
           nextPredefinedShape={nextPredefinedShape}
-          keepUnsavedRegion={keepUnsavedRegion}
+          keepUnsavedRegion={isCreatingKeypointCollection || keepUnsavedRegion}
           selectedTool={selectedTool}
           scrollId={scrollId}
           onCreateAnnotation={handleCreateAnnotation}
