@@ -1,7 +1,8 @@
+import { NO_RESULTS_TEXT } from '../../../../../src/components/EmptyState/constants';
+import { UserPreferredUnit } from '../../../../../src/constants/units';
 import { DATA_AVAILABILITY } from '../../../../../src/modules/wellSearch/constantsSidebarFilters';
 import { TAB_NAMES } from '../../../../../src/pages/authorized/search/well/inspect/constants';
-import { UserPreferredUnit } from '../../../../../src/constants/units';
-import { NO_RESULTS_TEXT } from '../../../../../src/components/EmptyState/constants';
+
 const DATA_AVAILABILITY_CASINGS = 'Casings';
 const DATA_AVAILABILITY_NPT = 'NPT events';
 
@@ -28,7 +29,9 @@ describe('Wells: casings buttons', () => {
     cy.goToWellsInspectTab(TAB_NAMES.CASINGS);
   });
 
-  it('Should be able to navigate NPT events page by clicking details options', () => {
+  // TODO(PP-3015)
+  // eslint-disable-next-line jest/no-disabled-tests
+  it.skip('Should be able to navigate NPT events page by clicking details options', () => {
     cy.log('navigate NPT events page');
     cy.contains('Details').click({ force: true });
     cy.findByRole('button', { name: 'NPT events' }).click({ force: true });
@@ -109,7 +112,7 @@ describe('Casings: Table view', () => {
     cy.goToWellsInspectTab(TAB_NAMES.CASINGS);
   });
 
-  it('Should be able to filter results by Well/Wellbore ', () => {
+  it('Should be able to filter results by Well/Wellbore', () => {
     cy.log('Click on `Table` button');
     cy.contains('Table').click({ force: true });
 
@@ -128,9 +131,9 @@ describe('Casings: Table view', () => {
     cy.findAllByTestId('search-box-input').clear().type('{enter}');
 
     cy.log('filter results by wellbore');
-    cy.findAllByTestId('well-casings-table')
+    cy.findAllByTestId('wellbore-casings-table')
       .findAllByTestId('table-cell')
-      .eq(2)
+      .eq(1)
       .invoke('text')
       .then((wellBoreName) => {
         cy.log(`Found: ${wellBoreName}`);
@@ -140,11 +143,11 @@ describe('Casings: Table view', () => {
           .type(`${wellBoreName}{enter}`);
       });
 
-    cy.log('result table should contain 1 wellbore');
-    cy.findAllByTestId('well-casings-table')
+    cy.log('result table should contain at least 1 wellbore');
+    cy.findByTestId('wellbore-casings-table')
       .findAllByTestId('table-row')
       .its('length')
-      .should('eq', 1);
+      .should('be.gte', 1);
 
     cy.log('clear search input box');
     cy.findAllByTestId('search-box-input').clear().type('{enter}');
@@ -174,6 +177,7 @@ describe('Casings: Table view', () => {
     cy.get('[aria-label="Go back"]').as('goBackBtn');
     cy.get('@goBackBtn').eq(1).click({ force: true });
   });
+
   it('Measurement unit changes should apply to "Top MD" & "Bottom MD" column', () => {
     cy.changeMeasurementUnit('Meter');
 
@@ -190,17 +194,17 @@ describe('Casings: Table view', () => {
     cy.log(
       'Top MD values should change according to selected measurement unit'
     );
-    cy.findAllByTestId('well-casings-table')
+    cy.findAllByTestId('wellbore-casings-table')
       .findAllByTestId('table-cell')
-      .eq(4)
+      .eq(3)
       .invoke('text')
       .then(parseFloat)
       .then((valInMeter) => {
         cy.changeMeasurementUnit('Feet');
 
-        cy.findAllByTestId('well-casings-table')
+        cy.findAllByTestId('wellbore-casings-table')
           .findAllByTestId('table-cell')
-          .eq(4)
+          .eq(3)
           .invoke('text')
           .then(parseFloat)
           .then((valInFeet) => {
@@ -213,17 +217,17 @@ describe('Casings: Table view', () => {
     );
     cy.changeMeasurementUnit('Meter');
 
-    cy.findAllByTestId('well-casings-table')
+    cy.findAllByTestId('wellbore-casings-table')
       .findAllByTestId('table-cell')
-      .eq(5)
+      .eq(4)
       .invoke('text')
       .then(parseFloat)
       .then((valInMeter) => {
         cy.changeMeasurementUnit('Feet');
 
-        cy.findAllByTestId('well-casings-table')
+        cy.findAllByTestId('wellbore-casings-table')
           .findAllByTestId('table-cell')
-          .eq(5)
+          .eq(4)
           .invoke('text')
           .then(parseFloat)
           .then((valInFeet) => {

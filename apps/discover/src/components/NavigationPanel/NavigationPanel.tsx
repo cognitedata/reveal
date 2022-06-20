@@ -14,8 +14,8 @@ interface Props {
   subtitle: string;
   isPreviousButtonDisabled?: boolean;
   isNextButtonDisabled?: boolean;
-  onPreviousClick: () => void;
-  onNextClick: () => void;
+  onPreviousClick?: () => void;
+  onNextClick?: () => void;
   onBackClick: () => void;
 }
 
@@ -38,20 +38,25 @@ export const NavigationPanel: React.FC<Props> = ({
       </DetailsContainer>
 
       <>
-        <BaseButton
-          icon="ChevronLeft"
-          type="secondary"
-          onClick={onPreviousClick}
-          disabled={isPreviousButtonDisabled}
-          aria-label="previous-wellbore"
-        />
-        <BaseButton
-          icon="ChevronRight"
-          type="secondary"
-          onClick={onNextClick}
-          disabled={isNextButtonDisabled}
-          aria-label="next-wellbore"
-        />
+        {onPreviousClick && (
+          <BaseButton
+            icon="ChevronLeft"
+            type="secondary"
+            onClick={onPreviousClick}
+            disabled={isPreviousButtonDisabled}
+            aria-label="previous-wellbore"
+          />
+        )}
+
+        {onNextClick && (
+          <BaseButton
+            icon="ChevronRight"
+            type="secondary"
+            onClick={onNextClick}
+            disabled={isNextButtonDisabled}
+            aria-label="next-wellbore"
+          />
+        )}
       </>
     </NavigationPanelContainer>
   );

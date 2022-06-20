@@ -14,11 +14,11 @@ export const sortCasingAssembliesByMDBase = <T extends CasingAssemblyType>(
     return sortObjectsDecending<CasingAssemblyType>(
       casingAssemblies,
       MD_BASE_VALUE_ACCESSOR
-    );
+    ) as T[];
   }
 
   return sortObjectsAscending<CasingAssemblyType>(
     casingAssemblies,
     MD_BASE_VALUE_ACCESSOR
-  );
+  ) as T[];
 };

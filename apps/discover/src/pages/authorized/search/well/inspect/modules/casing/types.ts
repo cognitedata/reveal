@@ -23,3 +23,7 @@ export interface CasingAssemblyView extends CasingAssemblyInternal {
   outsideDiameterFormatted: string;
   isLiner: boolean;
 }
+
+export interface CasingAssemblyTableView extends CasingAssemblyView {
+  wellboreName: CasingsView['wellboreName'];
+}

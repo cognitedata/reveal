@@ -1,9 +1,8 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import EmptyState from 'components/EmptyState';
 import { SearchBox } from 'components/Filters';
 import { MultiStateToggle } from 'components/MultiStateToggle';
-import { useCasingsForTable } from 'modules/wellSearch/selectors';
 import { FlexGrow } from 'styles/layout';
 
 import { Separator } from '../../elements';
@@ -11,11 +10,11 @@ import { ScrollButtons } from '../common/ScrollButtons';
 import { DEFAULT_ACTIVE_VIEW_MODE, VIEW_MODES } from '../events/Npt/constants';
 import { ViewModes } from '../events/Npt/types';
 
-import CasingTableView from './CasingTableView';
 import { SideModes } from './CasingView/types';
 import { DEFAULT_ACTIVE_SIDE_MODE, SIDE_MODES } from './constants';
 import { SearchBoxWrapper, TopBarWrapper } from './elements';
 import { CasingsGraph } from './graph';
+import { CasingsTable } from './table';
 import { useCasingsData } from './useCasingsData';
 
 const FILTER_PLACEHOLDER = 'Filter by Well/Wellbore';
@@ -23,7 +22,6 @@ const FILTER_PLACEHOLDER = 'Filter by Well/Wellbore';
 export const Casing: React.FC = () => {
   const { data, isLoading, isNptEventsLoading, isNdsEventsLoading } =
     useCasingsData();
-  const { casings } = useCasingsForTable();
 
   const [viewMode, setViewMode] = useState<ViewModes>(DEFAULT_ACTIVE_VIEW_MODE);
   const [activeSideMode, setActiveSideMode] = useState<SideModes>(
@@ -32,17 +30,6 @@ export const Casing: React.FC = () => {
 
   const [searchPhrase, setSearchPhrase] = useState<string>('');
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  const searchBox = useMemo(
-    () => (
-      <SearchBox
-        placeholder={FILTER_PLACEHOLDER}
-        value={searchPhrase}
-        onSearch={setSearchPhrase}
-      />
-    ),
-    [searchPhrase]
-  );
 
   if (isLoading) {
     return <EmptyState isLoading={isLoading} />;
@@ -68,7 +55,13 @@ export const Casing: React.FC = () => {
         {viewMode === VIEW_MODES.Table && (
           <>
             <Separator />
-            <SearchBoxWrapper>{searchBox}</SearchBoxWrapper>
+            <SearchBoxWrapper>
+              <SearchBox
+                placeholder={FILTER_PLACEHOLDER}
+                value={searchPhrase}
+                onSearch={setSearchPhrase}
+              />
+            </SearchBoxWrapper>
           </>
         )}
 
@@ -88,12 +81,9 @@ export const Casing: React.FC = () => {
           showBothSides={activeSideMode === 'Both sides'}
         />
       )}
+
       {viewMode === VIEW_MODES.Table && (
-        <CasingTableView
-          casings={casings}
-          searchPhrase={searchPhrase}
-          sideMode={activeSideMode}
-        />
+        <CasingsTable data={data} searchPhrase={searchPhrase} />
       )}
     </>
   );

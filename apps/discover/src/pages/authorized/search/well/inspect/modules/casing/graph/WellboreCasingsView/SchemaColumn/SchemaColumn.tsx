@@ -28,7 +28,7 @@ export const SchemaColumn: React.FC<SchemaColumnProps> = ({
   showBothSides = false,
 }) => {
   return (
-    <SchemaColumnWrapper>
+    <SchemaColumnWrapper data-testid="schema-column">
       <SchemaColumnHeaderWrapper>
         <HeaderText>Schema</HeaderText>
         <Legend />
