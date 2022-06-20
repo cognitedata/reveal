@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { Body, Button, Flex, Icon, Overline, Title } from '@cognite/cogs.js';
 import { DoubleDatapoint, Timeseries } from '@cognite/sdk';
 import useDatapointsQuery from 'hooks/useQuery/useDatapointsQuery';
@@ -7,6 +7,7 @@ import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 import Loading from 'components/utils/Loading';
 import IconContainer from 'components/icons';
 import isNumber from 'lodash/isNumber';
+import downloadURL from 'utils/downloadUrl';
 
 import TimeSeriesPreview from '../TimeSeriesPreview';
 import ShareButton from '../ShareButton';
@@ -32,33 +33,31 @@ const TimeSeriesDownloadButton = ({
 }: {
   timeSeries: Timeseries;
 }) => {
-  const { data: datapoints, isLoading } = useDatapointsQuery(
-    [{ id: timeSeries.id }],
-    {
-      limit: 100000,
-    }
-  );
+  const { isLoading, refetch } = useDatapointsQuery([{ id: timeSeries.id }], {
+    limit: 100000,
+    refetchOnWindowFocus: false,
+    enabled: false,
+  });
 
-  const data = useMemo(
-    () => ({ ...timeSeries, datapoints: datapoints?.[0]?.datapoints }),
-    [timeSeries, datapoints]
-  );
+  const download = useCallback(async () => {
+    try {
+      const { data: datapoints } = await refetch();
+      const data = { ...timeSeries, datapoints: datapoints?.[0]?.datapoints };
+      downloadURL(
+        `data:text/json;charset=utf-8,${encodeURIComponent(
+          JSON.stringify(data)
+        )}`,
+        `${timeSeries.id}.json`
+      );
+      // eslint-disable-next-line no-empty
+    } catch (e) {}
+  }, [refetch]);
 
   if (isLoading) {
     return <Loading />;
   }
 
-  return (
-    <a
-      className="cogs-btn cogs-btn-secondary cogs-btn-tiny cogs-btn-tiny--padding cogs-btn-icon-only"
-      href={`data:text/json;charset=utf-8,${encodeURIComponent(
-        JSON.stringify(data)
-      )}`}
-      download={`${timeSeries.id}.json`}
-    >
-      <Icon type="Download" />
-    </a>
-  );
+  return <Button icon="Download" size="small" onClick={download} />;
 };
 
 const TimeSeriesSidebar = ({

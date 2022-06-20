@@ -43,6 +43,7 @@ export const RowWrapper = styled.div`
 `;
 
 export const TimeSeriesPreviewContainer = styled.div`
+  cursor: pointer;
   svg {
     overflow: visible;
   }
