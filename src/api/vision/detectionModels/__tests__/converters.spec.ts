@@ -10,20 +10,23 @@ import {
   convertVisionJobAnnotationToImageExtractedText,
   convertVisionJobAnnotationToImageKeypointCollection,
   convertVisionJobAnnotationToImageObjectDetectionBoundingBox,
-  convertVisionJobAnnotationToVisionAnnotation,
+  convertVisionJobResultItemToUnsavedVisionAnnotation,
 } from 'src/api/vision/detectionModels/converters';
 import {
+  CDFAnnotationTypeEnum,
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
   ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
   RegionShape,
+  Status,
 } from 'src/api/annotation/types';
 import {
   GaugeReaderJobAnnotation,
   VisionDetectionModelType,
   VisionJobAnnotation,
+  VisionJobResultItem,
 } from 'src/api/vision/detectionModels/types';
 
 describe('convertVisionJobAnnotationToImageClassification', () => {
@@ -525,7 +528,7 @@ describe('convertVisionJobAnnotationToAnnotationTypeV1', () => {
   });
 });
 
-describe('convertVisionJobAnnotationToVisionAnnotation', () => {
+describe('convertVisionJobResultItemToUnsavedVisionAnnotation', () => {
   const rectangleShape = {
     region: {
       shape: RegionShape.Rectangle,
@@ -536,24 +539,29 @@ describe('convertVisionJobAnnotationToVisionAnnotation', () => {
     },
   };
   test('Non existing model type', () => {
-    const visionJobAnnotation = {} as VisionJobAnnotation;
+    const visionJobResultItem = {} as VisionJobResultItem;
     const visionDetectionModelType = 10 as VisionDetectionModelType;
 
     expect(
-      convertVisionJobAnnotationToVisionAnnotation(
-        visionJobAnnotation,
+      convertVisionJobResultItemToUnsavedVisionAnnotation(
+        visionJobResultItem,
         visionDetectionModelType
       )
-    ).toStrictEqual(null);
+    ).toStrictEqual([]);
   });
 
   test('Invalid type (missing bounding box)', () => {
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
-    const visionJobAnnotation = {
-      text: 'gauge',
-      confidence: 0.1,
-    } as VisionJobAnnotation;
+    const visionJobResultItem = {
+      fileId: 1,
+      annotations: [
+        {
+          text: 'gauge',
+          confidence: 0.1,
+        },
+      ],
+    } as VisionJobResultItem;
 
     [
       VisionDetectionModelType.OCR,
@@ -561,11 +569,11 @@ describe('convertVisionJobAnnotationToVisionAnnotation', () => {
       VisionDetectionModelType.TagDetection, // exclude custom model since it will fallback to classification
     ].forEach((visionDetectionModelType) => {
       expect(
-        convertVisionJobAnnotationToVisionAnnotation(
-          visionJobAnnotation,
+        convertVisionJobResultItemToUnsavedVisionAnnotation(
+          visionJobResultItem,
           visionDetectionModelType
         )
-      ).toStrictEqual(null);
+      ).toStrictEqual([]);
       expect(consoleSpy).toHaveBeenCalled();
     });
   });
@@ -577,25 +585,37 @@ describe('convertVisionJobAnnotationToVisionAnnotation', () => {
       ...rectangleShape,
     } as VisionJobAnnotation;
 
+    const visionJobResultItem = {
+      fileId: 1,
+      annotations: [visionJobAnnotation],
+    } as VisionJobResultItem;
+
     [
       VisionDetectionModelType.ObjectDetection,
       VisionDetectionModelType.CustomModel,
     ].forEach((visionDetectionModelType) => {
       expect(
-        convertVisionJobAnnotationToVisionAnnotation(
-          visionJobAnnotation,
+        convertVisionJobResultItemToUnsavedVisionAnnotation(
+          visionJobResultItem,
           visionDetectionModelType
         )
-      ).toStrictEqual({
-        label: visionJobAnnotation.text,
-        confidence: visionJobAnnotation.confidence,
-        boundingBox: {
-          xMin: rectangleShape.region.vertices[0].x,
-          yMin: rectangleShape.region.vertices[0].y,
-          xMax: rectangleShape.region.vertices[1].x,
-          yMax: rectangleShape.region.vertices[1].y,
+      ).toStrictEqual([
+        {
+          annotationType: CDFAnnotationTypeEnum.ImagesObjectDetection,
+          annotatedResourceId: visionJobResultItem.fileId,
+          status: Status.Suggested,
+          data: {
+            label: visionJobAnnotation.text,
+            confidence: visionJobAnnotation.confidence,
+            boundingBox: {
+              xMin: rectangleShape.region.vertices[0].x,
+              yMin: rectangleShape.region.vertices[0].y,
+              xMax: rectangleShape.region.vertices[1].x,
+              yMax: rectangleShape.region.vertices[1].y,
+            },
+          },
         },
-      });
+      ]);
     });
   });
 
@@ -607,21 +627,33 @@ describe('convertVisionJobAnnotationToVisionAnnotation', () => {
       ...rectangleShape,
     } as VisionJobAnnotation;
 
+    const visionJobResultItem = {
+      fileId: 1,
+      annotations: [visionJobAnnotation],
+    } as VisionJobResultItem;
+
     expect(
-      convertVisionJobAnnotationToVisionAnnotation(
-        visionJobAnnotation,
+      convertVisionJobResultItemToUnsavedVisionAnnotation(
+        visionJobResultItem,
         VisionDetectionModelType.OCR
       )
-    ).toStrictEqual({
-      text: visionJobAnnotation.text,
-      confidence: visionJobAnnotation.confidence,
-      textRegion: {
-        xMin: rectangleShape.region.vertices[0].x,
-        yMin: rectangleShape.region.vertices[0].y,
-        xMax: rectangleShape.region.vertices[1].x,
-        yMax: rectangleShape.region.vertices[1].y,
+    ).toStrictEqual([
+      {
+        annotationType: CDFAnnotationTypeEnum.ImagesTextRegion,
+        annotatedResourceId: visionJobResultItem.fileId,
+        status: Status.Suggested,
+        data: {
+          text: visionJobAnnotation.text,
+          confidence: visionJobAnnotation.confidence,
+          textRegion: {
+            xMin: rectangleShape.region.vertices[0].x,
+            yMin: rectangleShape.region.vertices[0].y,
+            xMax: rectangleShape.region.vertices[1].x,
+            yMax: rectangleShape.region.vertices[1].y,
+          },
+        },
       },
-    });
+    ]);
   });
 
   test('Valid type (tagDetection)', () => {
@@ -632,23 +664,33 @@ describe('convertVisionJobAnnotationToVisionAnnotation', () => {
       ...rectangleShape,
     } as VisionJobAnnotation;
 
+    const visionJobResultItem = {
+      fileId: 1,
+      annotations: [visionJobAnnotation],
+    } as VisionJobResultItem;
+
     expect(
-      convertVisionJobAnnotationToVisionAnnotation(
-        visionJobAnnotation,
+      convertVisionJobResultItemToUnsavedVisionAnnotation(
+        visionJobResultItem,
         VisionDetectionModelType.TagDetection
       )
     ).toStrictEqual([
       {
-        text: visionJobAnnotation.text,
-        confidence: visionJobAnnotation.confidence,
-        assetRef: {
-          id: 1,
-        },
-        textRegion: {
-          xMin: rectangleShape.region.vertices[0].x,
-          yMin: rectangleShape.region.vertices[0].y,
-          xMax: rectangleShape.region.vertices[1].x,
-          yMax: rectangleShape.region.vertices[1].y,
+        annotationType: CDFAnnotationTypeEnum.ImagesAssetLink,
+        annotatedResourceId: visionJobResultItem.fileId,
+        status: Status.Suggested,
+        data: {
+          text: visionJobAnnotation.text,
+          confidence: visionJobAnnotation.confidence,
+          assetRef: {
+            id: 1,
+          },
+          textRegion: {
+            xMin: rectangleShape.region.vertices[0].x,
+            yMin: rectangleShape.region.vertices[0].y,
+            xMax: rectangleShape.region.vertices[1].x,
+            yMax: rectangleShape.region.vertices[1].y,
+          },
         },
       },
     ]);
@@ -660,14 +702,26 @@ describe('convertVisionJobAnnotationToVisionAnnotation', () => {
       confidence: 0.1,
     } as VisionJobAnnotation;
 
+    const visionJobResultItem = {
+      fileId: 1,
+      annotations: [visionJobAnnotation],
+    } as VisionJobResultItem;
+
     expect(
-      convertVisionJobAnnotationToVisionAnnotation(
-        visionJobAnnotation,
+      convertVisionJobResultItemToUnsavedVisionAnnotation(
+        visionJobResultItem,
         VisionDetectionModelType.CustomModel
       )
-    ).toStrictEqual({
-      label: visionJobAnnotation.text,
-      confidence: visionJobAnnotation.confidence,
-    });
+    ).toStrictEqual([
+      {
+        annotationType: CDFAnnotationTypeEnum.ImagesClassification,
+        annotatedResourceId: visionJobResultItem.fileId,
+        status: Status.Suggested,
+        data: {
+          label: visionJobAnnotation.text,
+          confidence: visionJobAnnotation.confidence,
+        },
+      },
+    ]);
   });
 });
