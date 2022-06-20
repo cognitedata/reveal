@@ -58,15 +58,29 @@ export class PointCloudOctreePickerHelper {
   private static readonly helperVec3 = new Vector3();
   private static readonly helperSphere = new Sphere();
 
-  public static prepareRender(
-    renderer: WebGLRenderer,
-    stateHelper: WebGLRendererStateHelper,
+  private readonly _renderer: WebGLRenderer;
+  private readonly _rendererStateHelper: WebGLRendererStateHelper;
+
+  constructor(renderer: WebGLRenderer) {
+    this._renderer = renderer;
+    this._rendererStateHelper = new WebGLRendererStateHelper(renderer);
+  }
+
+  resetState(): void {
+    this._renderer.state.reset();
+    this._rendererStateHelper.resetState();
+  }
+
+  public prepareRender(
     x: number,
     y: number,
     pickWndSize: number,
     pickMaterial: PointCloudMaterial,
     pickState: IPickState
   ): void {
+    const renderer = this._renderer;
+    const stateHelper = this._rendererStateHelper;
+
     // Render the intersected nodes onto the pick render target, clipping to a small pick window.
     stateHelper.setScissor(x, y, pickWndSize, pickWndSize);
     stateHelper.setScissorTest(true);
@@ -86,8 +100,7 @@ export class PointCloudOctreePickerHelper {
     renderer.clear(true, true, true);
   }
 
-  public static render(
-    renderer: WebGLRenderer,
+  public render(
     camera: Camera,
     pickMaterial: PointCloudMaterial,
     octrees: PointCloudOctree[],
@@ -95,6 +108,8 @@ export class PointCloudOctreePickerHelper {
     pickState: IPickState,
     params: Partial<PickParams>
   ): RenderedNode[] {
+    const renderer = this._renderer;
+
     const renderedNodes: RenderedNode[] = [];
     for (const octree of octrees) {
       // Get all the octree nodes which intersect the picking ray. We only need to render those.
@@ -142,10 +157,11 @@ export class PointCloudOctreePickerHelper {
     return nodesOnRay;
   }
 
-  public static readPixels(renderer: WebGLRenderer, x: number, y: number, pickWndSize: number): Uint8Array {
+  public readPixels(x: number, y: number, pickWndSize: number): Uint8Array {
     // Read the pixel from the pick render target.
+    // TODO 2022-06-20 larsmoa: Replace with async picking
     const pixels = new Uint8Array(4 * pickWndSize * pickWndSize);
-    renderer.readRenderTargetPixels(renderer.getRenderTarget()!, x, y, pickWndSize, pickWndSize, pixels);
+    this._renderer.readRenderTargetPixels(this._renderer.getRenderTarget()!, x, y, pickWndSize, pickWndSize, pixels);
     return pixels;
   }
 
