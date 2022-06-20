@@ -16,10 +16,15 @@ export interface TreeMapData {
 
 export interface Props {
   data: TreeMapData;
+  tileCursor?: string;
   onTileClicked?: (data: TreeMapData) => void;
 }
 
-export const Treemap: React.FC<Props> = ({ data, onTileClicked }) => {
+export const Treemap: React.FC<Props> = ({
+  data,
+  onTileClicked,
+  tileCursor,
+}) => {
   const divRef = useRef<HTMLDivElement>(null);
 
   const renderTreemap = () => {
@@ -46,7 +51,9 @@ export const Treemap: React.FC<Props> = ({ data, onTileClicked }) => {
       .enter()
       .append('div')
       .on('click', (_event, node) => {
-        if (onTileClicked) {
+        const selection = window.getSelection();
+        // if there is a selection, don't trigger the click event
+        if (onTileClicked && (!selection || selection.type !== 'Range')) {
           onTileClicked(node.data);
         }
       })
@@ -55,7 +62,8 @@ export const Treemap: React.FC<Props> = ({ data, onTileClicked }) => {
       .style('top', (node) => `${node.y0}px`)
       .style('width', (node) => `${node.x1 - node.x0}px`)
       .style('height', (node) => `${node.y1 - node.y0}px`)
-      .style('position', 'absolute');
+      .style('position', 'absolute')
+      .style('cursor', tileCursor || 'initial');
 
     // // title
     nodes
@@ -76,7 +84,7 @@ export const Treemap: React.FC<Props> = ({ data, onTileClicked }) => {
 
   const debouncedHandleResize = useDebounce(() => {
     renderTreemap();
-  }, 1000);
+  }, 500);
 
   useEffect(() => {
     window.addEventListener('resize', debouncedHandleResize);

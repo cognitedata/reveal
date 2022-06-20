@@ -11,6 +11,7 @@ import { NdsTreemapProps, NdsTreemapWellboreData } from './types';
 export const NdsTreemap: React.FC<NdsTreemapProps> = ({
   data,
   onClickTile,
+  tileCursor,
 }) => {
   const [otherWellbores, setOtherWellbores] = useState<
     NdsTreemapWellboreData[]
@@ -28,15 +29,20 @@ export const NdsTreemap: React.FC<NdsTreemapProps> = ({
 
   return (
     <>
-      <Treemap data={data} onTileClicked={handleTileClicked} />
+      <Treemap
+        data={data}
+        onTileClicked={handleTileClicked}
+        tileCursor={tileCursor}
+      />
 
       {/* The modal needs to be implemented properly, there is no design right now for this view so it's improvised */}
       <Modal
         visible={!!otherWellbores.length}
-        title="List of wellbores"
+        title="Other"
         width={1000}
         onOk={() => setOtherWellbores([])}
         onCancel={() => setOtherWellbores([])}
+        footer={null}
       >
         <WellboreTableWrapper>
           <Table<NdsTreemapWellboreData>
@@ -49,7 +55,7 @@ export const NdsTreemap: React.FC<NdsTreemapProps> = ({
               {
                 Header: 'Number of NDS events',
                 accessor: 'numberOfEvents',
-                width: 100,
+                width: 150,
               },
             ]}
             pagination={false}

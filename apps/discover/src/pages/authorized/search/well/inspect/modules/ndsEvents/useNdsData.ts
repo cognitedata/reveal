@@ -20,6 +20,7 @@ export const useNdsData = () => {
   const { data: ndsData, isLoading } = useNdsEventsQuery({
     wellboreIds,
   });
+
   const { data: ndsAggregates } = useNdsAggregatesSummaryQuery(wellboreIds);
 
   const originalNdsData = useDeepMemo(() => {
@@ -29,7 +30,8 @@ export const useNdsData = () => {
     return ndsData.map(({ original }) => original);
   }, [ndsData]);
 
-  const { data: tvdData } = useNdsTvdDataQuery(originalNdsData);
+  const { data: tvdData, isLoading: isTvdLoading } =
+    useNdsTvdDataQuery(originalNdsData);
 
   const processedData = useDeepMemo(() => {
     if (!ndsData) {
@@ -45,7 +47,7 @@ export const useNdsData = () => {
   }, [ndsData, tvdData, userPreferredUnit]);
 
   return {
-    isLoading,
+    isLoading: isLoading || isTvdLoading,
     data: processedData,
     ndsAggregates: ndsAggregates || {},
   };

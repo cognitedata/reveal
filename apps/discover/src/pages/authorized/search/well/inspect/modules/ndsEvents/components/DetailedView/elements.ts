@@ -18,3 +18,11 @@ export const DetailedViewContent = styled.div`
   height: 100%;
   padding: ${sizes.normal};
 `;
+
+export const DetailedViewWrapper = styled.div`
+  margin-left: 11%;
+  margin-right: 11%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+`;

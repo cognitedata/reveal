@@ -102,6 +102,7 @@ const NdsEvents: React.FC = () => {
 
   useEffect(() => {
     const { riskTypesAndSubtypes, severities, probabilities } = filtersData;
+
     setAppliedFilters({
       riskType: riskTypesAndSubtypes,
       severity: severities,
@@ -123,10 +124,6 @@ const NdsEvents: React.FC = () => {
     }
   };
 
-  if (isEmpty(data)) {
-    return <EmptyState isLoading={isLoading} />;
-  }
-
   return (
     <>
       <FiltersBar>
@@ -143,16 +140,21 @@ const NdsEvents: React.FC = () => {
         />
       </FiltersBar>
 
-      {selectedViewMode === NdsViewModes.Treemap && (
+      {(isEmpty(data) || isEmpty(filteredData)) && (
+        <EmptyState isLoading={isLoading} />
+      )}
+
+      {!isEmpty(filteredData) && selectedViewMode === NdsViewModes.Treemap && (
         <NdsTreemap
           data={treemapData}
+          tileCursor="pointer"
           onClickTile={(wellboreId) => {
             setSelectedWellboreId(wellboreId);
           }}
         />
       )}
 
-      {selectedViewMode === NdsViewModes.Table && (
+      {!isEmpty(filteredData) && selectedViewMode === NdsViewModes.Table && (
         <NdsTable data={filteredData} onClickView={setDetailedViewNdsData} />
       )}
 

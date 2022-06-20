@@ -4,7 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import { MultiSelect } from 'components/Filters';
 
-import { FILTER_THEME, FILTER_WIDTH, SEVERITY_FILTER_TITLE } from './constants';
+import { FILTER_WIDTH, SEVERITY_FILTER_TITLE } from './constants';
 import { SeverityFilterProps } from './types';
 import { getMultiSelectDisplayValue } from './utils';
 
@@ -16,7 +16,6 @@ export const SeverityFilter: React.FC<SeverityFilterProps> = ({
   return (
     <div>
       <MultiSelect
-        theme={FILTER_THEME}
         width={FILTER_WIDTH}
         title={SEVERITY_FILTER_TITLE}
         options={severities}

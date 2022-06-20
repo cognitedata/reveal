@@ -4,11 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import { MultiSelect } from 'components/Filters';
 
-import {
-  FILTER_THEME,
-  FILTER_WIDTH,
-  PROBABILITY_FILTER_TITLE,
-} from './constants';
+import { FILTER_WIDTH, PROBABILITY_FILTER_TITLE } from './constants';
 import { ProbabilityFilterProps } from './types';
 import { getMultiSelectDisplayValue } from './utils';
 
@@ -20,7 +16,6 @@ export const ProbabilityFilter: React.FC<ProbabilityFilterProps> = ({
   return (
     <div>
       <MultiSelect
-        theme={FILTER_THEME}
         width={FILTER_WIDTH}
         title={PROBABILITY_FILTER_TITLE}
         options={probabilities}

@@ -18,7 +18,17 @@ export const OptionsCategory: React.FC<
   OptionsCategoryProps<MultiSelectOptionType>
 > = React.memo(({ category, options, selectedOptions, onValueChange }) => {
   const selectionMap = toBooleanMap(
-    (selectedOptions || []).map((option) => option.label)
+    (selectedOptions || []).map((option) => {
+      if (typeof option === 'string') {
+        return option;
+      }
+
+      if (option?.value && typeof option?.value === 'string') {
+        return option.value;
+      }
+
+      return option.label;
+    })
   );
 
   const handleChangeCategory = (isSelected: boolean) => {

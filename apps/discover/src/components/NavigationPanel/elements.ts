@@ -11,10 +11,10 @@ export const DetailsContainer = styled(FlexColumn)`
 `;
 
 export const NavigationPanelContainer = styled(FlexRow)`
-  background: var(--cogs-bg-accent);
   padding: ${sizes.normal};
   align-items: center;
   z-index: ${layers.TOP_BAR};
+  border-bottom: 1px solid var(--cogs-bg-accent);
 `;
 
 export const Title = styled(Body)`

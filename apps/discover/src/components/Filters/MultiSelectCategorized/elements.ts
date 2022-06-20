@@ -14,12 +14,15 @@ export const MultiSelectCategorizedWrapper = styled.span`
 export const DropdownContent = styled(Menu)`
   margin-top: 2px;
   width: ${(props: { width?: number }) => props.width}px;
+  max-height: 65vh;
+  overflow: auto;
 `;
 
 export const OptionsCategoryWrapper = styled(FlexColumn)``;
 
 export const CategoryWrapper = styled(Menu.Item)`
   font-size: 14px;
+  flex-shrink: 0;
 `;
 
 export const OptionWrapper = styled(CategoryWrapper)`

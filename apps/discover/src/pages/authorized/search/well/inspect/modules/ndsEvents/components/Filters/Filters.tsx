@@ -1,5 +1,9 @@
 import React from 'react';
 
+import { OptionType } from '@cognite/cogs.js';
+
+import { MultiSelectOptionType } from 'components/Filters/MultiSelect/types';
+
 import { ProbabilityFilter } from './ProbabilityFilter';
 import { RiskTypeFilter } from './RiskTypeFilter';
 import { SeverityFilter } from './SeverityFilter';
@@ -12,12 +16,28 @@ export const Filters: React.FC<FiltersProps> = ({
   appliedFilters,
   onChangeFilter,
 }) => {
+  // The option values are { label: string, value: string }[] and we map it to string[]
+  const mapOptionsToStringArray = (
+    options: Record<string, OptionType<MultiSelectOptionType>[] | undefined>
+  ) => {
+    return Object.keys(options).reduce((previousValue, currentValue) => {
+      return {
+        ...previousValue,
+        [currentValue]: options[currentValue]?.map((val) => {
+          return val?.value || val?.label || val;
+        }),
+      };
+    }, {});
+  };
+
   return (
     <>
       <RiskTypeFilter
         riskTypesAndSubtypes={riskTypesAndSubtypes}
         appliedRiskTypesAndSubtypes={appliedFilters.riskType}
-        onChangeRiskType={(values) => onChangeFilter('riskType', values)}
+        onChangeRiskType={(values) =>
+          onChangeFilter('riskType', mapOptionsToStringArray(values))
+        }
       />
 
       <SeverityFilter

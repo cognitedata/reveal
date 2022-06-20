@@ -14,7 +14,6 @@ import {
   DEFAULT_PLACEHOLDER,
   DEFAULT_SELECT_ALL_LABEL,
   NO_OPTIONS_TEXT,
-  SELECTED_ALL_DISPLAY_VALUE,
 } from './constants';
 import {
   CategoryWrapper,
@@ -70,10 +69,21 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
     return getProcessedOptions(adaptedData, extraLabels);
   }, [data, extraLabels]);
 
-  const optionsCount = options.reduce(
-    (total, { options }) => total + (options?.length || 1),
-    0
-  );
+  const optionsCount = useMemo(() => {
+    return options.reduce(
+      (total, { options }) => total + (options?.length || 1),
+      0
+    );
+  }, [options]);
+
+  const selectedOptionsCount = useMemo(() => {
+    return Object.keys(selectedOptions).reduce(
+      (previousValue, currentValue) => {
+        return previousValue + (selectedOptions[currentValue]?.length || 1);
+      },
+      0
+    );
+  }, [selectedOptions]);
 
   const handleSetSelectedOptions = (
     selectedOptions: Record<
@@ -125,9 +135,8 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
    */
   const dropdownWidth = width || multiSelectCategorizedRef.current?.clientWidth;
 
-  const selectedOptionValues = Object.keys(selectedOptions || {});
   const isAnySelected = !isEmpty(selectedOptions);
-  const isAllSelected = selectedOptionValues.length === optionsCount;
+  const isAllSelected = selectedOptionsCount === optionsCount;
 
   const SelectAllOption = useDeepMemo(() => {
     if (!enableSelectAll || isEmpty(options)) {
@@ -172,15 +181,10 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
   const dropdownContent = useMemo(
     () => (
       <DropdownContent width={dropdownWidth}>
-        {isEmpty(options) ? NoOptionsContent : OptionsContent}
+        {optionsCount ? NoOptionsContent : OptionsContent}
       </DropdownContent>
     ),
-    [
-      options.length,
-      selectedOptionValues.length,
-      selectedOptions,
-      dropdownWidth,
-    ]
+    [optionsCount, selectedOptionsCount, selectedOptions, dropdownWidth]
   );
 
   const dropdownIcon = useMemo(
@@ -189,14 +193,11 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
   );
 
   const dropdownValue = useDeepMemo(() => {
-    if (isAllSelected) {
-      return SELECTED_ALL_DISPLAY_VALUE;
-    }
     if (isAnySelected) {
-      return `${selectedOptionValues.length}/${optionsCount}`;
+      return `${selectedOptionsCount}/${optionsCount}`;
     }
     return placeholder || DEFAULT_PLACEHOLDER;
-  }, [isAnySelected, selectedOptionValues]);
+  }, [isAnySelected, selectedOptionsCount]);
 
   return (
     <MultiSelectCategorizedWrapper

@@ -26,9 +26,11 @@ export const getRiskTypeTreemapData = (
     ];
   } else {
     // get as much data from one loop as possible
-    const { totalNumberOfEvents, events: eventsMapped } = Object.keys(
-      groupedNdsEvents
-    ).reduce(
+    const {
+      totalNumberOfEvents,
+      events: eventsMapped,
+      numberOfRiskTypesWithEvents,
+    } = Object.keys(groupedNdsEvents).reduce(
       (previousValue, riskType) => {
         const numberOfEvents = groupedNdsEvents[riskType].length;
 
@@ -36,6 +38,9 @@ export const getRiskTypeTreemapData = (
           ...previousValue,
           totalNumberOfEvents:
             previousValue.totalNumberOfEvents + numberOfEvents,
+          numberOfRiskTypesWithEvents: numberOfEvents
+            ? previousValue.numberOfRiskTypesWithEvents + 1
+            : previousValue.numberOfRiskTypesWithEvents,
           events: [
             ...previousValue.events,
             {
@@ -47,6 +52,7 @@ export const getRiskTypeTreemapData = (
       },
       {
         totalNumberOfEvents: 0,
+        numberOfRiskTypesWithEvents: 0,
         events: [] as { name: string; numberOfEvents: number }[],
       }
     );
@@ -59,7 +65,9 @@ export const getRiskTypeTreemapData = (
     // get the number wellbores to be displayed
     const riskTypesToDisplay = sortedEventsWithRiskType.slice(
       0,
-      numberOfRiskTypes > maxNodes ? maxNodes : numberOfRiskTypes
+      numberOfRiskTypesWithEvents > maxNodes
+        ? maxNodes
+        : numberOfRiskTypesWithEvents
     );
     const numberOfEventsFromDisplayedRiskTypes = sumBy(
       riskTypesToDisplay,

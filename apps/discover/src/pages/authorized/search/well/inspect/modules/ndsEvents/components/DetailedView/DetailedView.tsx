@@ -16,7 +16,11 @@ import { Filters } from '../Filters';
 import { NdsTreemap } from '../NdsTreemap';
 
 import { NdsDetailedViewModes } from './constants';
-import { DetailedViewContent, FiltersBar } from './elements';
+import {
+  DetailedViewContent,
+  DetailedViewWrapper,
+  FiltersBar,
+} from './elements';
 import { DetailedViewTable } from './table';
 import { DetailedViewProps } from './types';
 
@@ -75,43 +79,45 @@ export const DetailedView: React.FC<DetailedViewProps> = ({
 
   return (
     <OverlayNavigation mount={!isEmpty(data)}>
-      <NavigationPanel
-        title={currentWellbore?.wellboreName || ''}
-        subtitle={currentWellbore?.wellName || ''}
-        isPreviousButtonDisabled={isPreviousButtonDisabled}
-        isNextButtonDisabled={isNextButtonDisabled}
-        onPreviousClick={onPreviousClick}
-        onNextClick={onNextClick}
-        onBackClick={onBackClick}
-      />
-
-      <FiltersBar>
-        <ViewModeControl
-          views={Object.values(NdsDetailedViewModes)}
-          selectedView={selectedViewMode}
-          onChangeView={setSelectedViewMode}
+      <DetailedViewWrapper>
+        <NavigationPanel
+          title={currentWellbore?.wellboreName || ''}
+          subtitle={currentWellbore?.wellName || ''}
+          isPreviousButtonDisabled={isPreviousButtonDisabled}
+          isNextButtonDisabled={isNextButtonDisabled}
+          onPreviousClick={onPreviousClick}
+          onNextClick={onNextClick}
+          onBackClick={onBackClick}
         />
 
-        <Filters
-          {...ndsAggregate}
-          appliedFilters={appliedFilters}
-          onChangeFilter={handleChangeFilter}
-        />
-      </FiltersBar>
+        <FiltersBar>
+          <ViewModeControl
+            views={Object.values(NdsDetailedViewModes)}
+            selectedView={selectedViewMode}
+            onChangeView={setSelectedViewMode}
+          />
 
-      <DetailedViewContent>
-        {selectedViewMode === NdsDetailedViewModes.RiskType && (
-          <NdsTreemap data={riskTypeTreemapData} />
-        )}
+          <Filters
+            {...ndsAggregate}
+            appliedFilters={appliedFilters}
+            onChangeFilter={handleChangeFilter}
+          />
+        </FiltersBar>
 
-        {selectedViewMode === NdsDetailedViewModes.Subtype && (
-          <NdsTreemap data={subtypeTreemapData} />
-        )}
+        <DetailedViewContent>
+          {selectedViewMode === NdsDetailedViewModes.RiskType && (
+            <NdsTreemap data={riskTypeTreemapData} />
+          )}
 
-        {selectedViewMode === NdsDetailedViewModes.Table && (
-          <DetailedViewTable data={filteredData} />
-        )}
-      </DetailedViewContent>
+          {selectedViewMode === NdsDetailedViewModes.Subtype && (
+            <NdsTreemap data={subtypeTreemapData} />
+          )}
+
+          {selectedViewMode === NdsDetailedViewModes.Table && (
+            <DetailedViewTable data={filteredData} />
+          )}
+        </DetailedViewContent>
+      </DetailedViewWrapper>
     </OverlayNavigation>
   );
 };

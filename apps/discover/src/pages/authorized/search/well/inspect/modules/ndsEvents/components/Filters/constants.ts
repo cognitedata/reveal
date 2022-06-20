@@ -1,6 +1,3 @@
-import { Theme } from '@cognite/cogs.js';
-
-export const FILTER_THEME: Theme = 'grey';
 export const FILTER_WIDTH = 300;
 
 export const SELECT_ALL_LABEL = 'All';

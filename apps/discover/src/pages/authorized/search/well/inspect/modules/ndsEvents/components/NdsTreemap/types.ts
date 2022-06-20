@@ -2,6 +2,7 @@ import { TreeMapData } from 'components/Treemap';
 
 export interface NdsTreemapProps {
   data: TreeMapData;
+  tileCursor?: string;
   onClickTile?: (wellboreId: string) => void;
 }
 
