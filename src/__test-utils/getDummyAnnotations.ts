@@ -292,5 +292,6 @@ export const getDummyVisionReviewAnnotation = (
     >,
     show: !!show,
     selected: !!selected,
+    color: 'red',
   };
 };

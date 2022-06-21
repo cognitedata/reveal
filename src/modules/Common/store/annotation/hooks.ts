@@ -11,12 +11,20 @@ import {
 import { ColorsTagDetection, ColorsOCR } from 'src/constants/Colors';
 import { RootState } from 'src/store/rootReducer';
 
-const useAnnotationColor = (
+export const getAnnotationColorFromColorKey = (
+  annotationColorMap: Record<string, string>,
+  colorKey: string
+): string => {
+  if (colorKey in annotationColorMap) {
+    return annotationColorMap[colorKey];
+  }
+  return '';
+};
+
+export const getAnnotationColor = (
+  annotationColorMap: Record<string, string>,
   annotation: VisionAnnotation<VisionAnnotationDataType>
 ): string => {
-  const annotationColorMap = useSelector(
-    ({ annotationReducer }: RootState) => annotationReducer.annotationColorMap
-  );
   if (isImageAssetLinkData(annotation)) {
     return ColorsTagDetection.color;
   }
@@ -24,10 +32,16 @@ const useAnnotationColor = (
     return ColorsOCR.color;
   }
   const colorKey = getAnnotationLabelOrText(annotation);
-  if (colorKey in annotationColorMap) {
-    return annotationColorMap[colorKey];
-  }
-  return '';
+  return getAnnotationColorFromColorKey(annotationColorMap, colorKey);
+};
+
+const useAnnotationColor = (
+  annotation: VisionAnnotation<VisionAnnotationDataType>
+): string => {
+  const annotationColorMap = useSelector(
+    ({ annotationReducer }: RootState) => annotationReducer.annotationColorMap
+  );
+  return getAnnotationColor(annotationColorMap, annotation);
 };
 
 export default useAnnotationColor;

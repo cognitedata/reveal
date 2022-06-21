@@ -82,8 +82,11 @@ export const ImagePreview = ({
   );
 
   const tempKeypointCollection = useSelector(
-    ({ annotatorWrapperReducer }: RootState) =>
-      selectTempKeypointCollection(annotatorWrapperReducer, file.id)
+    ({ annotatorWrapperReducer, annotationReducer }: RootState) =>
+      selectTempKeypointCollection(annotatorWrapperReducer, {
+        currentFileId: file.id,
+        annotationColorMap: annotationReducer.annotationColorMap,
+      })
   );
 
   const nextPredefinedShape = useSelector((rootState: RootState) =>

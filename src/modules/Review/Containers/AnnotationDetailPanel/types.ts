@@ -27,6 +27,7 @@ export type AnnotationDetailPanelCommonProps = {
       AnnotationDetailPanelRowDataBase<AnnotationDetailPanelRowData>
     >
   >;
+  color?: string;
   index?: number;
 };
 

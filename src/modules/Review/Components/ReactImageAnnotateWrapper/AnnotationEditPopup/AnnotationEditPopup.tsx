@@ -179,6 +179,7 @@ export const AnnotationEditPopup = ({
   }, [region.annotationLabelOrText]);
 
   useEffect(() => {
+    // on select and on label value state is set region is updated accordingly
     if (editing && !isKeypoint && labelValue?.color && labelValue.value) {
       const updatedRegion = {
         ...region,
@@ -277,7 +278,6 @@ export const AnnotationEditPopup = ({
           <Row cols={5} style={{ paddingTop: '10px', paddingBottom: '10px' }}>
             <AnnotationEditPopupBody
               isKeypointMode={isKeypoint}
-              color={region.color}
               isSavedAnnotation={alreadyCreated}
               labelOption={labelValue}
               keypointLabel={keypointLabel}

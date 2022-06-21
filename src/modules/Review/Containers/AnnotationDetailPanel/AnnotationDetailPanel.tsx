@@ -68,8 +68,11 @@ export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
     );
 
   const tempKeypointCollection = useSelector(
-    ({ annotatorWrapperReducer }: RootState) =>
-      selectTempKeypointCollection(annotatorWrapperReducer, file.id)
+    ({ annotatorWrapperReducer, annotationReducer }: RootState) =>
+      selectTempKeypointCollection(annotatorWrapperReducer, {
+        currentFileId: file.id,
+        annotationColorMap: annotationReducer.annotationColorMap,
+      })
   );
 
   const convertedCurrentKeypointCollection: VisionReviewAnnotation<ImageKeypointCollection> | null =

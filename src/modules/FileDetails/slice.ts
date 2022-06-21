@@ -26,8 +26,8 @@ const fileDetailsSlice = createSlice({
         // filter rows with empty keys and empty values when finishing edit mode
         const metaRowKeys = Object.keys(state.fileMetaData);
         metaRowKeys.forEach((rowKey) => {
-          const metaKey = state.fileMetaData[parseInt(rowKey, 10)].key;
-          const metaValue = state.fileMetaData[parseInt(rowKey, 10)].value;
+          const { metaKey } = state.fileMetaData[parseInt(rowKey, 10)];
+          const { metaValue } = state.fileMetaData[parseInt(rowKey, 10)];
 
           if (!(metaKey && metaValue)) {
             delete state.fileMetaData[parseInt(rowKey, 10)];
@@ -46,7 +46,7 @@ const fileDetailsSlice = createSlice({
       state,
       action: PayloadAction<{
         key: string;
-        value: FileInfoValueState;
+        value?: FileInfoValueState;
       }>
     ) {
       state.fileDetails[action.payload.key] = action.payload.value || null;
@@ -54,14 +54,14 @@ const fileDetailsSlice = createSlice({
     fileMetaDataEdit(
       state,
       action: PayloadAction<{
-        index: number;
-        key: string;
-        value: string;
+        rowIndex: number;
+        metaKey: string;
+        metaValue?: string;
       }>
     ) {
-      state.fileMetaData[action.payload.index] = {
-        key: action.payload.key,
-        value: action.payload.value || '',
+      state.fileMetaData[action.payload.rowIndex] = {
+        metaKey: action.payload.metaKey,
+        metaValue: action.payload.metaValue || '',
       };
     },
     fileMetaDataAddRow(state, action: PayloadAction<MetadataItem[]>) {
@@ -71,7 +71,7 @@ const fileDetailsSlice = createSlice({
       action.payload.forEach((item, index) => {
         state.fileMetaData[index] = item;
       });
-      state.fileMetaData[metaLength] = { key: '', value: '' };
+      state.fileMetaData[metaLength] = { metaKey: '', metaValue: '' };
     },
     resetEditHistory(state) {
       resetEditHistoryState(state);

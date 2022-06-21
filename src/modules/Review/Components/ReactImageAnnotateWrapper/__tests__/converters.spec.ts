@@ -993,6 +993,7 @@ describe('test convertTempKeypointCollectionToRegions', () => {
               },
               selected: true,
               show: true,
+              color: 'red',
             },
             id: keypoint.id,
             visible: true,

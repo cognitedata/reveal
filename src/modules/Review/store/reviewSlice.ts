@@ -23,6 +23,7 @@ import { VisionReviewAnnotation } from 'src/modules/Review/types';
 import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
+import { getAnnotationColor } from 'src/modules/Common/store/annotation/hooks';
 
 type State = {
   fileIds: number[];
@@ -212,18 +213,21 @@ export const selectVisionReviewAnnotationsForFile = createSelector(
   (state: RootState) => state.reviewSlice.selectedAnnotationIds,
   (state: RootState) => state.reviewSlice.hiddenAnnotationIds,
   (state: RootState) => state.annotatorWrapperReducer.keypointMap.selectedIds,
+  (state: RootState) => state.annotationReducer.annotationColorMap,
 
   (
     fileAnnotations,
     selectedAnnotationIds,
     hiddenAnnotationIds,
-    selectedKeypointIds
+    selectedKeypointIds,
+    annotationColorMap
   ): VisionReviewAnnotation<VisionAnnotationDataType>[] => {
     return fileAnnotations
       .map((ann) => ({
         annotation: ann,
         show: !hiddenAnnotationIds.includes(ann.id),
         selected: selectedAnnotationIds.includes(ann.id),
+        color: getAnnotationColor(annotationColorMap, ann),
       }))
       .map((reviewAnn) => {
         if (isImageKeypointCollectionData(reviewAnn.annotation)) {
@@ -232,6 +236,7 @@ export const selectVisionReviewAnnotationsForFile = createSelector(
             return {
               keypoint,
               id,
+              color: reviewAnn.color, // NOTE: it is possible to have colors per keypoint
               selected: selectedKeypointIds.includes(id),
             };
           });

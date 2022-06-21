@@ -139,11 +139,7 @@ export const ReactImageAnnotateWrapper = ({
           text: keypoint.collectionName,
           modelType: VisionDetectionModelType.ObjectDetection,
         }),
-        color: AnnotationUtilsV1.getAnnotationColor(
-          keypoint.collectionName,
-          VisionDetectionModelType.ObjectDetection,
-          { keypoint: true }
-        ),
+        color: keypoint.color,
       })
     );
   }, [predefinedAnnotations]);

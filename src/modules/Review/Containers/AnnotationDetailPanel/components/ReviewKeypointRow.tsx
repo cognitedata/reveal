@@ -17,19 +17,18 @@ import { Col, Row } from '@cognite/cogs.js';
  */
 const KeypointRowContent = ({
   reviewImageKeypoint,
+  keypointColor,
   remaining = false,
   keypointIndex,
 }: {
   reviewImageKeypoint: ReviewKeypoint;
+  keypointColor: string;
   remaining?: boolean;
   keypointIndex?: number;
 }) => (
   <StyledRow cols={12}>
     <StyledCol span={1}>
-      <ColorBox
-        // color={remaining ? '#F5F5F5' : (keypoint as KeypointVertex).color}
-        color="red"
-      />
+      <ColorBox color={remaining ? '#F5F5F5' : keypointColor} />
     </StyledCol>
     <StyledCol span={1}>
       <div style={{ color: remaining ? '#8C8C8C' : undefined }}>
@@ -58,7 +57,7 @@ export const ReviewKeypointRow = ({
   AnnotationDetailPanelRowDataBase<ReviewKeypoint>
 >) => {
   const {
-    common: { index },
+    common: { index, color },
     callbacks: { onKeypointSelect },
     ...keypoint
   } = additionalData;
@@ -80,6 +79,9 @@ export const ReviewKeypointRow = ({
           >
             <KeypointRowContent
               reviewImageKeypoint={keypoint}
+              // given that a keypoint is set, the corresponding color (which
+              // belongs to its keypoint collection) must also exist
+              keypointColor={color!}
               keypointIndex={index}
             />
           </CollapseRowContainer>

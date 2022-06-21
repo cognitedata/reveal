@@ -1,7 +1,7 @@
 import { fileMetaDataEdit } from 'src/modules/FileDetails/slice';
 import styled from 'styled-components';
 import { Input, Title } from '@cognite/cogs.js';
-import React, { ReactText, useEffect } from 'react';
+import React, { ChangeEvent, ReactText, useEffect } from 'react';
 import { TableWrapper } from 'src/modules/Common/Components/FileTable/FileTableWrapper';
 import ReactBaseTable, {
   BaseTableProps,
@@ -16,6 +16,7 @@ import {
 import exifIcon from 'src/assets/exifIcon.svg';
 import { TableDataItem } from 'src/modules/Common/types';
 import { ExifIcon } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
+import { keyGenerator } from 'src/utils/keyGenerator/keyGenerator';
 
 type TableProps = Omit<Omit<BaseTableProps<TableDataItem>, 'width'>, 'height'>;
 
@@ -28,34 +29,40 @@ type MetadataTableProps = TableProps & {
   toolBar: JSX.Element;
 };
 
+// this type only contain the needed properties
+type CellProps = {
+  column: ColumnShape<MetadataItem>;
+  cellData: ReactText;
+  columnIndex: number;
+  rowIndex: number;
+  rowData: { metaKey: string; metaValue: string };
+};
+
 const { dispatch } = store;
-const updateCell = (value: any, cellProps: any) => {
+const updateCell = (inputValue: string, cellProps: CellProps) => {
   if (cellProps.columnIndex === 0) {
     // editing key
     dispatch(
       fileMetaDataEdit({
-        index: cellProps.rowIndex,
-        key: value,
-        value: cellProps.rowData.value,
+        rowIndex: cellProps.rowIndex,
+        metaKey: inputValue,
+        metaValue: cellProps.rowData.metaValue,
       })
     );
   } else if (cellProps.columnIndex === 1) {
     // editing value
     dispatch(
       fileMetaDataEdit({
-        index: cellProps.rowIndex,
-        key: cellProps.rowData.key,
-        value,
+        rowIndex: cellProps.rowIndex,
+        metaKey: cellProps.rowData.metaKey,
+        metaValue: inputValue,
       })
     );
   }
 };
 
-const EditableCell = (cellProps: {
-  column: ColumnShape<MetadataItem>;
-  cellData: ReactText;
-}) => {
-  const handleChange = (e: any) => {
+const EditableCell = (cellProps: CellProps) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     updateCell(e.target.value, cellProps);
   };
   if (cellProps.column.editMode) {
@@ -80,6 +87,12 @@ const components = {
 };
 
 export const MetaDataTable = (props: MetadataTableProps) => {
+  const metaUniqueKeyGenerator = keyGenerator({ prefix: 'meta-key' });
+  const data = props.data.map((dataItem) => ({
+    ...dataItem,
+    key: metaUniqueKeyGenerator.next().value,
+  }));
+
   let tableInstance: ReactBaseTable<MetadataItem>;
   const setRef = (ref: ReactBaseTable<MetadataItem>) => {
     tableInstance = ref;
@@ -88,24 +101,28 @@ export const MetaDataTable = (props: MetadataTableProps) => {
   useEffect(() => {
     const dataLength = props.data.length;
     // scroll to bottom if blank row
-    if (tableInstance && dataLength && props.data[dataLength - 1].key === '') {
+    if (
+      tableInstance &&
+      dataLength &&
+      props.data[dataLength - 1].metaKey === ''
+    ) {
       tableInstance.scrollToRow(dataLength - 1);
     }
   }, [props.data]);
 
   const columns: ColumnShape<MetadataItem>[] = [
     {
-      key: 'key',
+      key: 'metaKey',
       title: 'Key',
-      dataKey: 'key',
+      dataKey: 'metaKey',
       width: props.columnWidth,
       align: Column.Alignment.LEFT,
       editMode: props.editMode,
     },
     {
-      key: 'value',
+      key: 'metaValue',
       title: 'Value',
-      dataKey: 'value',
+      dataKey: 'metaValue',
       width: props.columnWidth,
       align: Column.Alignment.LEFT,
       editMode: props.editMode,
@@ -132,7 +149,7 @@ export const MetaDataTable = (props: MetadataTableProps) => {
           columns={columns}
           maxHeight={Infinity}
           width={props.columnWidth * columns.length}
-          data={props.data}
+          data={data}
           rowKey="key"
           components={components}
         />
