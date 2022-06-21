@@ -164,7 +164,7 @@ export const AnnotationEditPopup = ({
   };
 
   // fix label on first time render of component
-  // todo: remove this once logic changed to region update setting label instead of label change
+  // todo: Use the action handlers for selector for triggering this instead of using useEffect
   // updating the region
   useEffect(() => {
     if (
@@ -190,6 +190,7 @@ export const AnnotationEditPopup = ({
   }, [labelValue, editing]);
 
   // on changing shape option region and region label is changed accordingly for keypoints
+  // todo: the color property should be accessed from predefined annotation or every metadata such as color, keypoints needs to be populated in labelOptions and passed to this component
   useEffect(() => {
     if (
       editing &&
@@ -198,6 +199,7 @@ export const AnnotationEditPopup = ({
       labelValue.value
     ) {
       if (nextKeypoint) {
+        // for intermediate keypoints of a collection keypoint metadata are accessed from nextKeypoint
         const updatedRegion = {
           ...region,
           color: nextKeypoint.color,
@@ -206,6 +208,7 @@ export const AnnotationEditPopup = ({
         };
         onChange(updatedRegion);
       } else {
+        // for first keypoint of a collection keypoint metadata needs to be taken from the correct predefinedKeypointCollection
         const predefinedCollection =
           predefinedAnnotations.predefinedKeypointCollections.find(
             (collection) => collection.collectionName === labelValue.value
