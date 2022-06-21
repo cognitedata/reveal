@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { Colors } from '@cognite/cogs.js';
 import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
-import { useAppEnv } from 'hooks/useAppEnv';
 import { EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
+import { createRedirectLink } from 'utils/utils';
 
 export const StyledRouterLink = styled((props) => (
   <Link {...props}>{props.children}</Link>
@@ -29,13 +29,13 @@ const Name: FunctionComponent<Props> = ({
   extpipeId,
   selected,
 }: Props) => {
-  const { cdfEnv, project } = useAppEnv();
   return (
     <StyledRouterLink
       id={`extpipe-${name}`}
       to={{
-        pathname: `/${project}/${EXTRACTION_PIPELINES_PATH}/${EXT_PIPE_PATH}/${extpipeId}`,
-        search: cdfEnv ? `?env=${cdfEnv}` : '',
+        pathname: createRedirectLink(
+          `/${EXTRACTION_PIPELINES_PATH}/${EXT_PIPE_PATH}/${extpipeId}`
+        ),
       }}
       aria-selected={selected}
     >

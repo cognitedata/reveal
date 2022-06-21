@@ -7,9 +7,9 @@ import { useExtpipeById } from 'hooks/useExtpipe';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { createLink } from '@cognite/cdf-utilities';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 import { Section } from 'components/extpipe/Section';
+import { createRedirectLink } from 'utils/utils';
 
 const RawTableWrapper = styled.div`
   display: flex;
@@ -40,7 +40,7 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
             <DivFlex role="row" key={`${dbName}-${tableName}`}>
               <a
                 role="gridcell"
-                href={createLink(`/raw/${dbName}`)}
+                href={createRedirectLink(`/raw/${dbName}`)}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -50,7 +50,7 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
               <a
                 role="gridcell"
                 data-testid="selected-table"
-                href={createLink(`/raw/${dbName}/${tableName}`)}
+                href={createRedirectLink(`/raw/${dbName}/${tableName}`)}
                 target="_blank"
                 rel="noopener noreferrer"
               >

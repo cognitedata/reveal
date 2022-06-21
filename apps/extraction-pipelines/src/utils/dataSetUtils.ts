@@ -1,6 +1,7 @@
 import { DataSet } from '@cognite/sdk';
 import { Extpipe } from 'model/Extpipe';
 import { DataSetMetadata, DataSetModel } from 'model/DataSetModel';
+import { createRedirectLink } from 'utils/utils';
 
 export const mapUniqueDataSetIds = (extpipes?: Extpipe[]) => {
   return extpipes
@@ -49,20 +50,6 @@ export const mapDataSetResponse = (response: DataSet[]): DataSetModel[] => {
   });
 };
 
-interface GetDataSetLinkProps {
-  origin: string | undefined;
-  project: string | null;
-  dataSetId: number;
-  cdfEnv: string | undefined;
-}
-
-export const getDataSetsLink = ({
-  origin,
-  project,
-  cdfEnv,
-  dataSetId,
-}: GetDataSetLinkProps) => {
-  return `${origin}/${project}/data-sets/data-set/${dataSetId}${
-    cdfEnv ? `?env=${cdfEnv}` : ''
-  }`;
+export const getDataSetsLink = (dataSetId: number) => {
+  return createRedirectLink(`/data-sets/data-set/${dataSetId}`);
 };

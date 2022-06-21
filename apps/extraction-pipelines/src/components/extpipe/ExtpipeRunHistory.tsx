@@ -122,7 +122,7 @@ export const ExtpipeRunHistory: FunctionComponent<LogsViewProps> = ({
     }
   }, [extpipeId]);
   const { search: urlSearch, pathname } = useLocation();
-  const { env } = getQueryParams(urlSearch);
+  const { env, cluster } = getQueryParams(urlSearch);
 
   const {
     state: { dateRange, statuses, search },
@@ -146,12 +146,13 @@ export const ExtpipeRunHistory: FunctionComponent<LogsViewProps> = ({
       search,
       statuses,
       dateRange,
+      cluster,
     })}`;
     history.push(url);
     setAll([]);
     setRunsList([]);
     setNextCursor(undefined);
-  }, [pathname, env, search, statuses, dateRange, history]);
+  }, [pathname, env, search, statuses, dateRange, history, cluster]);
 
   useEffect(() => {
     if (!isPreviousData && data) {

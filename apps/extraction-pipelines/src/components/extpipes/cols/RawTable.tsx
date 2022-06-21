@@ -4,7 +4,7 @@ import { Colors } from '@cognite/cogs.js';
 import LinkWithCopy from 'components/links/LinkWithCopy';
 import { NO_RAW_TABLES_MESSAGE } from 'utils/constants';
 import { ExtpipeRawTable } from 'model/Extpipe';
-import { useAppEnv } from 'hooks/useAppEnv';
+import { createRedirectLink } from 'utils/utils';
 
 const RawTableWrapper = styled.table`
   width: 50%;
@@ -39,7 +39,6 @@ interface OwnProps {
 type Props = OwnProps;
 
 const RawTable: FunctionComponent<Props> = ({ rawTables }: OwnProps) => {
-  const { cdfEnv, project, origin } = useAppEnv();
   if (!rawTables || rawTables.length === 0) {
     return <i>{NO_RAW_TABLES_MESSAGE}</i>;
   }
@@ -56,9 +55,7 @@ const RawTable: FunctionComponent<Props> = ({ rawTables }: OwnProps) => {
             <tr className="grid-row" key={key}>
               <td className="grid-cell cell-0">
                 <LinkWithCopy
-                  href={`${origin}/${project}/raw/${dbName}/${
-                    cdfEnv ? `?env=${cdfEnv}` : ''
-                  }`}
+                  href={createRedirectLink(`/raw/${dbName}/`)}
                   linkText={dbName}
                   copyText={dbName}
                   copyType="dbName"
@@ -66,9 +63,7 @@ const RawTable: FunctionComponent<Props> = ({ rawTables }: OwnProps) => {
               </td>
               <td className="grid-cell cell-1">
                 <LinkWithCopy
-                  href={`${origin}/${project}/raw/${dbName}/${tableName}${
-                    cdfEnv ? `?env=${cdfEnv}` : ''
-                  }`}
+                  href={createRedirectLink(`/raw/${dbName}/${tableName}`)}
                   copyText={tableName}
                   linkText={tableName}
                   copyType="tableName"

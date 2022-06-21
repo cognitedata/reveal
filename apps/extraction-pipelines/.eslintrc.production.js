@@ -9,7 +9,7 @@ module.exports = {
   rules: {
     '@cognite/no-unissued-todos': [
       'error',
-      { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },
+      { issuePattern: '\\(((CDFUX)-[0-9]+)\\)' },
     ],
 
     'max-classes-per-file': ['off'],

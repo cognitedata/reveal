@@ -1,5 +1,4 @@
 import React from 'react';
-import { createLink } from '@cognite/cdf-utilities';
 import {
   CDF_LABEL,
   DATA_SETS_LABEL,
@@ -7,12 +6,13 @@ import {
 } from 'utils/constants';
 import { Breadcrumbs } from 'components/navigation/breadcrumbs/Breadcrumbs';
 import { createExtPipePath } from 'utils/baseURL';
+import { createRedirectLink } from 'utils/utils';
 
 export const ExtPipesBreadcrumbs = () => {
   const currentPageBreadCrumbs = [
-    { href: createLink(''), label: CDF_LABEL },
+    { href: createRedirectLink(''), label: CDF_LABEL },
     {
-      href: createLink('/data-sets'),
+      href: createRedirectLink('/data-sets'),
       label: DATA_SETS_LABEL,
     },
     {

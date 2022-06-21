@@ -6,11 +6,6 @@ import {
   parseDataSetMeta,
 } from './dataSetUtils';
 import { getMockResponse, mockDataSetResponse } from './mockResponse';
-import {
-  CDF_ENV_GREENFIELD,
-  ORIGIN_DEV,
-  PROJECT_ITERA_INT_GREEN,
-} from './baseURL';
 
 describe('Data set util', () => {
   const metaDataMock = {
@@ -132,28 +127,16 @@ describe('Data set util', () => {
   const getDataSetCases = [
     {
       desc: 'Creat link with env when cdfEnv is defined',
-      value: {
-        origin: ORIGIN_DEV,
-        project: PROJECT_ITERA_INT_GREEN,
-        dataSetId,
-        cdfEnv: CDF_ENV_GREENFIELD,
-      },
-      expected:
-        'dev/itera-int-green/data-sets/data-set/123123123?env=greenfield',
+      expected: '//data-sets/data-set/123123123',
     },
     {
       desc: 'Creat link with out env when cdfEnv is not defined',
-      value: {
-        origin: ORIGIN_DEV,
-        project: PROJECT_ITERA_INT_GREEN,
-        dataSetId,
-      },
-      expected: 'dev/itera-int-green/data-sets/data-set/123123123',
+      expected: '//data-sets/data-set/123123123',
     },
   ];
-  getDataSetCases.forEach(({ desc, value, expected }) => {
+  getDataSetCases.forEach(({ desc, expected }) => {
     test(`${desc}`, () => {
-      const res = getDataSetsLink(value);
+      const res = getDataSetsLink(dataSetId);
       expect(res).toEqual(expected);
     });
   });

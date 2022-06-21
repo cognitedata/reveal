@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { createLink } from '@cognite/cdf-utilities';
 import {
   CANCEL,
   CREATE,
@@ -45,6 +44,7 @@ import { EXTPIPES_WRITES } from 'model/AclAction';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 import { ids } from 'cogs-variables';
 import { trackUsage } from 'utils/Metrics';
+import { createRedirectLink } from 'utils/utils';
 
 const InfoMessage = styled.span`
   display: flex;
@@ -251,7 +251,7 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
           <PriSecBtnWrapper>
             {props.customCancelCallback == null ? (
               <a
-                href={createLink(
+                href={createRedirectLink(
                   `/data-sets${
                     dataSetIdFromLocation &&
                     `/data-set/${dataSetIdFromLocation}`
