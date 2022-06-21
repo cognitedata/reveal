@@ -29,7 +29,8 @@
     "cypress:ci": "bazel test :cypress_test",
     "update-helpers": "bazel run :generate_package_json_helpers",
     "deploy": "cd ../.. && ./scripts/deploy.sh explorer",
-    "graphql:deploy": "node resources/schema/deploy"
+    "graphql:deploy": "node resources/schema/deploy",
+    "graphql:generate": "../../node_modules/.bin/graphql-codegen --config=./resources/schema/codegen.yaml"
   },
   "jest": {
     "coveragePathIgnorePatterns": [

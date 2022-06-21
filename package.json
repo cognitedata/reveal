@@ -12,8 +12,7 @@
     "prepare": "husky install",
     "generate": "plop --plopfile generators/index.ts",
     "update-helpers": "for i in `bazel query 'kind(generate_package_json_helpers, //...)'`; do bazel run $i; done",
-    "deploy": "./scripts/deploy.sh",
-    "explorer:graphql-generate": "graphql-codegen --config=apps/explorer/resources/schema/codegen.yaml"
+    "deploy": "./scripts/deploy.sh"
   },
   "dependencies": {
     "@azure/msal-browser": "^2.22.0",
@@ -219,6 +218,7 @@
     "@graphql-codegen/cli": "^2.6.2",
     "@graphql-codegen/typescript": "^2.5.1",
     "@graphql-codegen/typescript-operations": "^2.4.2",
+    "@graphql-codegen/typescript-react-query": "^3.5.14",
     "@rollup/plugin-alias": "^3.1.9",
     "@rollup/plugin-image": "^2.0.6",
     "@rollup/plugin-node-resolve": "^13.1.3",

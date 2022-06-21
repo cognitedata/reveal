@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { sizes } from 'styles/layout';
 
 export const ErrorHeader = styled.header`
   font-size: 22px;
@@ -15,4 +16,7 @@ export const ErrorBody = styled.div`
   align-items: center;
   height: 100%;
   width: 100%;
+`;
+export const MarginWrapper = styled.div`
+  margin: ${sizes.normal};
 `;

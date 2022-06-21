@@ -110,6 +110,7 @@ DEV_DEPENDENCIES = [
     "@npm//@graphql-codegen/cli",
     "@npm//@graphql-codegen/typescript",
     "@npm//@graphql-codegen/typescript-operations",
+    "@npm//@graphql-codegen/typescript-react-query",
     "@npm//@storybook/addons",
     "@npm//@storybook/addon-knobs",
     "@npm//@testing-library/jest-dom",

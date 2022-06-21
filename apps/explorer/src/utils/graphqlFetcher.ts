@@ -9,7 +9,7 @@ export const graphqlFetcher = <TData, TVariables>(
 ) => {
   const [project] = getProjectInfo();
   const urlBase = SIDECAR.cdfApiBaseUrl;
-  const url = `${urlBase}/api/v1/projects/${project}/schema/api/cognite_office_explorer/1/graphql`;
+  const url = `${urlBase}/api/v1/projects/${project}/schema/api/demo/1/graphql`;
 
   const graphQLClient = new GraphQLClient(url, {
     headers: {

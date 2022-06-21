@@ -2,7 +2,7 @@ import Fuse from 'fuse.js';
 import { getObjectsFromItems } from 'utils/search';
 import { SearchDataFormat } from 'utils/search/types';
 
-export const useFuseSearch = (
+export const getFuseSearch = (
   query: string,
   itemsArray: SearchDataFormat[]
 ) => {

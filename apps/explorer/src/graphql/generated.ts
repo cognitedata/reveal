@@ -1,3 +1,6 @@
+import { useQuery, UseQueryOptions } from 'react-query';
+import { graphqlFetcher } from 'utils/graphqlFetcher';
+
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -743,3 +746,39 @@ export type SearchPeopleRoomsQueryTypeGenerated = {
     } | null>;
   } | null;
 };
+
+export const SearchPeopleRoomsDocument = `
+    query searchPeopleRooms($personFilter: _ListPersonFilter, $roomFilter: _ListRoomFilter) {
+  people: listPerson(first: 15, filter: $personFilter) {
+    items {
+      externalId
+      name
+      description: slackId
+    }
+  }
+  rooms: listRoom(first: 15, filter: $roomFilter) {
+    items {
+      externalId
+      name
+      description
+    }
+  }
+}
+    `;
+export const useSearchPeopleRoomsQuery = <
+  TData = SearchPeopleRoomsQueryTypeGenerated,
+  TError = unknown
+>(
+  variables?: SearchPeopleRoomsQueryVariables,
+  options?: UseQueryOptions<SearchPeopleRoomsQueryTypeGenerated, TError, TData>
+) =>
+  useQuery<SearchPeopleRoomsQueryTypeGenerated, TError, TData>(
+    variables === undefined
+      ? ['searchPeopleRooms']
+      : ['searchPeopleRooms', variables],
+    graphqlFetcher<
+      SearchPeopleRoomsQueryTypeGenerated,
+      SearchPeopleRoomsQueryVariables
+    >(SearchPeopleRoomsDocument, variables),
+    options
+  );

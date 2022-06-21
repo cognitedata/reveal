@@ -4,8 +4,8 @@ import { RegularHeader } from 'components/Header';
 import { List } from 'components/List';
 import { NoResults } from 'components/NoResults/NoResults';
 import { SearchBar } from 'components/SearchBar';
-import { useSearchPeopleRoomsQuery } from 'graphql/queries/useSearchPeopleRoomsQuery';
-import { useFuseSearch } from 'hooks/useFuseSearch';
+import { useSearchPeopleRoomsQuery } from 'graphql/generated';
+import { getArrayOfItems, getFuseSearch } from 'utils/search';
 import { ErrorDisplay } from 'components/ErrorDisplay';
 
 const renderLeftHeader = (
@@ -23,30 +23,27 @@ const renderLeftHeader = (
 
 export const Search = () => {
   const [query, setQuery] = useState('');
-  const {
-    isLoading,
-    error,
-    data: itemsArray,
-  } = useSearchPeopleRoomsQuery({
+  const { isLoading, error, data } = useSearchPeopleRoomsQuery({
     personFilter: {},
     roomFilter: {},
   });
-  let content;
 
-  if (error) content = <ErrorDisplay>{error as string}</ErrorDisplay>;
-  else {
-    const itemsObj = useFuseSearch(query, itemsArray);
-    if (isLoading) content = <>Loading</>;
-    else
-      content = isEmpty(itemsObj) ? <NoResults /> : <List items={itemsObj} />;
-  }
+  if (error) return <ErrorDisplay>{error as string}</ErrorDisplay>;
+
+  const itemsArray = getArrayOfItems(data);
+  const itemsObj = getFuseSearch(query, itemsArray);
 
   return (
     <>
       <RegularHeader
         Left={() => renderLeftHeader(query, (e) => setQuery(e.target.value))}
       />
-      {content}
+      {isLoading && <>Loading</>}
+      {isEmpty(itemsObj) && !isLoading ? (
+        <NoResults />
+      ) : (
+        <List items={itemsObj} />
+      )}
     </>
   );
 };

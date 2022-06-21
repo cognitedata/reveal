@@ -62,6 +62,7 @@ type ExplorerConfig = SidecarConfig;
       options: [
         { value: 'azure-dev', label: 'azure-dev' },
         { value: 'greenfield', label: 'greenfield' },
+        { value: 'bluefield', label: 'bluefield' },
       ],
     },
   ],
