@@ -16,7 +16,7 @@ import {
 import exifIcon from 'src/assets/exifIcon.svg';
 import { TableDataItem } from 'src/modules/Common/types';
 import { ExifIcon } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
-import { keyGenerator } from 'src/utils/keyGenerator';
+import { keyGenerator } from 'src/utils/keyGenerator/keyGenerator';
 
 type TableProps = Omit<Omit<BaseTableProps<TableDataItem>, 'width'>, 'height'>;
 

@@ -7,7 +7,7 @@ export function* keyGenerator({
 }) {
   let increment = 0;
   while (true) {
-    yield `${prefix}${startingIndex + increment}`;
+    yield `${prefix || ''}${startingIndex + increment}`;
     increment++;
   }
 }
