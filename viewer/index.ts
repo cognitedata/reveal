@@ -8,7 +8,7 @@
  * @module @cognite/reveal
  */
 
-export * from './core/src/index';
+export * from './packages/api/';
 
 export {
   CameraControlsOptions,

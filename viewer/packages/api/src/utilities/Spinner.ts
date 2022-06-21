@@ -22,8 +22,8 @@ export class Spinner {
     dark: 'reveal-viewer-spinner--dark'
   };
   private static readonly titles = {
-    idle: process.env.VERSION,
-    loading: `${process.env.VERSION} Loading...`
+    idle: process.env.VERSION!,
+    loading: `${process.env.VERSION!} Loading...`
   };
 
   private _loading = false;
