@@ -9,7 +9,7 @@ import {
   Flex,
 } from '@cognite/cogs.js';
 import { trackUsage } from 'services/metrics';
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import { useComponentTranslations } from 'hooks/translations';
 import { OpenInCharts } from 'components/OpenInCharts/OpenInCharts';
 import useCreateChart from 'models/charts/mutations/useCreateChart';
@@ -48,6 +48,7 @@ const ChartListPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const t = useComponentTranslations({
     defaultTranslations,
+    translationKeys: translationKeys(defaultTranslations),
     translationNamespace: 'ChartList',
   });
 

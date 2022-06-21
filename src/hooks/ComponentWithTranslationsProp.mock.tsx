@@ -1,4 +1,4 @@
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 
 const defaultTranslations = makeDefaultTranslations('Test');
 
@@ -14,5 +14,7 @@ const ComponentWithTranslationsProp = ({ translations }: Props) => {
 ComponentWithTranslationsProp.translationNamespace =
   'ComponentWithTranslationsProp';
 ComponentWithTranslationsProp.defaultTranslations = defaultTranslations;
+ComponentWithTranslationsProp.translationKeys =
+  translationKeys(defaultTranslations);
 
 export default ComponentWithTranslationsProp;

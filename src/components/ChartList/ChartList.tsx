@@ -57,6 +57,7 @@ const ChartList = ({
 };
 
 ChartList.defaultTranslations = ChartListTable.defaultTranslations;
+ChartList.translationKeys = ChartListTable.translationKeys;
 ChartList.translationNamespace = 'ChartList';
 
 export default ChartList;

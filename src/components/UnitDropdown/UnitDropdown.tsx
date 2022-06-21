@@ -2,7 +2,7 @@ import { CSSProperties, useState } from 'react';
 import styled from 'styled-components/macro';
 import { Menu, Button, Dropdown } from '@cognite/cogs.js';
 import { units, UnitTypes } from 'utils/units';
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
 
 type UnitDropdownProps = {
@@ -210,6 +210,7 @@ const UnitDropdown = ({
 };
 
 UnitDropdown.defaultTranslations = defaultTranslations;
+UnitDropdown.translationKeys = translationKeys(defaultTranslations);
 UnitDropdown.translationNamespace = 'UnitDropdown';
 
 const MenuContainer = styled.div`

@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { translationKeys } from 'utils/translations';
 
 type TranslationKey = string | number | symbol;
 /**
@@ -26,12 +25,15 @@ export function useTranslations<TranslationKeys extends TranslationKey>(
   };
 }
 
-interface TranslationProperties {
-  defaultTranslations: Record<string | number | symbol, string>;
+interface TranslationProperties<T extends string | symbol | number> {
+  defaultTranslations: Record<T, string>;
+  translationKeys: T[];
   translationNamespace: string;
 }
 
-export function useComponentTranslations(component: TranslationProperties) {
+export function useComponentTranslations<T extends TranslationKey>(
+  component: TranslationProperties<T>
+): Record<T, string> {
   if (!component.defaultTranslations) {
     throw new Error('Component has no defaultTranslations defined in it.');
   }
@@ -39,7 +41,7 @@ export function useComponentTranslations(component: TranslationProperties) {
     throw new Error('Component has no translationNamespace defined in it.');
   }
   return useTranslations(
-    translationKeys(component.defaultTranslations),
+    component.translationKeys,
     component.translationNamespace
   ).t;
 }

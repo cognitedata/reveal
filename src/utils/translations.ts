@@ -1,5 +1,4 @@
 import { pick } from 'lodash';
-import { FunctionComponent } from 'react';
 
 /**
  * A helper function to create { key: key } object of same value as key name.
@@ -15,9 +14,10 @@ export function makeDefaultTranslations<
   );
 }
 
-export interface FunctionComponentWithTranslationKeys<T = {}>
-  extends FunctionComponent<T> {
-  translationKeys: string[];
+interface TranslationProperties<T extends string | symbol | number> {
+  defaultTranslations: Record<T, string>;
+  translationKeys: T[];
+  translationNamespace: string;
 }
 
 export function translationKeys<
@@ -26,12 +26,12 @@ export function translationKeys<
   return Object.keys(translations) as Array<keyof typeof translations>;
 }
 
-export function getTranslationsFromComponent<
+export function getTranslationsForComponent<
   ComponentTranslationKeys extends string | symbol | number,
   TranslationKeys extends ComponentTranslationKeys
 >(
   componentTranslations: Record<ComponentTranslationKeys, string>,
-  translations: Record<TranslationKeys, string>
+  component: TranslationProperties<TranslationKeys>
 ): Record<TranslationKeys, string> {
-  return pick(componentTranslations, translationKeys(translations));
+  return pick(componentTranslations, component.translationKeys);
 }

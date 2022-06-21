@@ -1,6 +1,6 @@
 import { Skeleton } from 'antd';
 import {
-  getTranslationsFromComponent,
+  getTranslationsForComponent,
   makeDefaultTranslations,
   translationKeys,
 } from 'utils/translations';
@@ -135,9 +135,9 @@ function ChartListTable({
                       readOnly={readOnly}
                       onDuplicateClick={() => onChartDuplicateClick(row.id)}
                       onDeleteClick={() => onChartDeleteClick(row.id)}
-                      translations={getTranslationsFromComponent(
+                      translations={getTranslationsForComponent(
                         t,
-                        ChartListDropdown.defaultTranslations
+                        ChartListDropdown
                       )}
                     />
                   </td>
@@ -150,6 +150,7 @@ function ChartListTable({
 }
 
 ChartListTable.defaultTranslations = defaultTranslations;
+ChartListTable.translationKeys = translationKeys(defaultTranslations);
 ChartListTable.translationNamespace = 'ChartListTable';
 
 export default ChartListTable;

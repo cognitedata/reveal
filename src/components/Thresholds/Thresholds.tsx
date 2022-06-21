@@ -9,7 +9,6 @@ import { Button, Collapse } from '@cognite/cogs.js';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
 import { ExpandIcon, ThresholdCollapse } from 'components/Thresholds/elements';
 import { Container } from 'components/DetailsSidebar/elements';
-import { FunctionComponentWithTranslationKeys } from 'utils/translations';
 
 interface Props
   extends Omit<ComponentProps<typeof ThresholdItem>, 'threshold'> {
@@ -19,7 +18,7 @@ interface Props
   onAddThreshold: () => void;
 }
 
-const Thresholds: FunctionComponentWithTranslationKeys<Props> = ({
+const Thresholds = ({
   thresholds,
   sources,
   onUpdateThresholdName,

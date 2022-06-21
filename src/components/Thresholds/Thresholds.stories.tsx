@@ -60,7 +60,7 @@ const Template: Story<Props> = (args) => {
   const handleUpdateName = (id: string, name: string) => {
     updateArgs({
       ...args,
-      thresholds: args.thresholds.map((th) => {
+      thresholds: args.thresholds.map((th: { id: string; name: string }) => {
         if (th.id === id) {
           th.name = name;
         }

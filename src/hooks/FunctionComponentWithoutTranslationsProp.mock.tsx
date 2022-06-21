@@ -1,4 +1,4 @@
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 
 function FunctionComponentWithoutTranslationsProp({
   label = 'Test',
@@ -8,8 +8,11 @@ function FunctionComponentWithoutTranslationsProp({
   return <div>{label}</div>;
 }
 
+const defaultTranslations = makeDefaultTranslations('Test');
 FunctionComponentWithoutTranslationsProp.defaultTranslations =
-  makeDefaultTranslations('Test');
+  defaultTranslations;
+FunctionComponentWithoutTranslationsProp.translationKeys =
+  translationKeys(defaultTranslations);
 FunctionComponentWithoutTranslationsProp.translationNamespace =
   'FunctionComponentWithoutTranslationsProp';
 

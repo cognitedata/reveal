@@ -50,6 +50,6 @@ const ChartListDropdown = ({
 ChartListDropdown.displayName = 'ChartListDropdown';
 ChartListDropdown.defaultTranslations = defaultTranslations;
 ChartListDropdown.translationKeys = translationKeys(defaultTranslations);
-ChartListDropdown.translationsNamepace = 'ChartListDropdown';
+ChartListDropdown.translationNamespace = 'ChartListDropdown';
 
 export default ChartListDropdown;

@@ -20,10 +20,7 @@ import {
 } from 'models/chart/types';
 import convertMSToDisplay from 'utils/date';
 import { getUnitConverter } from 'utils/units';
-import {
-  FunctionComponentWithTranslationKeys,
-  makeDefaultTranslations,
-} from 'utils/translations';
+import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import { isThresholdValid } from 'utils/threshold';
 import {
   ExpandIcon,
@@ -104,7 +101,7 @@ const filterLengthOptions: OptionsType[] = [
   },
 ];
 
-const ThresholdItem: FunctionComponentWithTranslationKeys<Props> = ({
+const ThresholdItem = ({
   threshold,
   sources,
   onRemoveThreshold,
@@ -481,6 +478,8 @@ const ThresholdItem: FunctionComponentWithTranslationKeys<Props> = ({
   );
 };
 
-ThresholdItem.translationKeys = Object.keys(defaultTranslations);
+ThresholdItem.translationKeys = translationKeys(defaultTranslations);
+ThresholdItem.defaultTranslations = defaultTranslations;
+ThresholdItem.translationNamespace = 'ThresholdItem';
 
 export default ThresholdItem;
