@@ -96,7 +96,7 @@ export const updateFileInfoField = createAsyncThunk<
 
         metaKeys.forEach((rowId) => {
           const row = editedFileMeta[parseInt(rowId, 10)];
-          metadata[row.key] = row.value.toString();
+          metadata[row.metaKey] = row.metaValue.toString();
         });
 
         if (isEqual(metadata, fileDetails?.metadata)) {
