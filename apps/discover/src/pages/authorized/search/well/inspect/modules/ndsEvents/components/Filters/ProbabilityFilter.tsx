@@ -4,7 +4,11 @@ import isEmpty from 'lodash/isEmpty';
 
 import { MultiSelect } from 'components/Filters';
 
-import { FILTER_WIDTH, PROBABILITY_FILTER_TITLE } from './constants';
+import {
+  FILTER_WIDTH,
+  PROBABILITY_FILTER_TITLE,
+  SELECT_ALL_LABEL,
+} from './constants';
 import { ProbabilityFilterProps } from './types';
 import { getMultiSelectDisplayValue } from './utils';
 
@@ -28,6 +32,8 @@ export const ProbabilityFilter: React.FC<ProbabilityFilterProps> = ({
         enableSelectAll={!isEmpty(probabilities)}
         showCustomCheckbox
         hideClearIndicator
+        selectAllLabel={SELECT_ALL_LABEL}
+        hideDividerForSelectAll
       />
     </div>
   );

@@ -4,7 +4,11 @@ import isEmpty from 'lodash/isEmpty';
 
 import { MultiSelect } from 'components/Filters';
 
-import { FILTER_WIDTH, SEVERITY_FILTER_TITLE } from './constants';
+import {
+  FILTER_WIDTH,
+  SELECT_ALL_LABEL,
+  SEVERITY_FILTER_TITLE,
+} from './constants';
 import { SeverityFilterProps } from './types';
 import { getMultiSelectDisplayValue } from './utils';
 
@@ -25,6 +29,8 @@ export const SeverityFilter: React.FC<SeverityFilterProps> = ({
         enableSelectAll={!isEmpty(severities)}
         showCustomCheckbox
         hideClearIndicator
+        selectAllLabel={SELECT_ALL_LABEL}
+        hideDividerForSelectAll
       />
     </div>
   );

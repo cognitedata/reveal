@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { ViewButton } from 'components/Buttons';
 import { Table } from 'components/Tablev3';
@@ -22,9 +22,15 @@ export const NdsWellboresTable: React.FC<NdsTableProps> = ({
     },
   };
 
-  const renderRowHoverComponent = () => {
-    return <ViewButton hideIcon onClick={() => onClickView(data)} />;
-  };
+  const renderRowHoverComponent = useCallback(
+    ({ row }) => (
+      <ViewButton
+        hideIcon
+        onClick={() => onClickView(row.original.wellboreMatchingId)}
+      />
+    ),
+    []
+  );
 
   return (
     <Table<Partial<NdsView>>

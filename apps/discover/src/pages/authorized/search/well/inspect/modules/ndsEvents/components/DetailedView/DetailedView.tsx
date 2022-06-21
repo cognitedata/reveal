@@ -155,7 +155,7 @@ export const DetailedView: React.FC<DetailedViewProps> = ({
         >
           <WellboreTableWrapper>
             <Table
-              id="blabla"
+              id="event-types-table"
               data={events}
               columns={[
                 {

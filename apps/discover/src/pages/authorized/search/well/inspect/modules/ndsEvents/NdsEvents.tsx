@@ -155,7 +155,7 @@ const NdsEvents: React.FC = () => {
       )}
 
       {!isEmpty(filteredData) && selectedViewMode === NdsViewModes.Table && (
-        <NdsTable data={filteredData} onClickView={setDetailedViewNdsData} />
+        <NdsTable data={filteredData} onClickView={setSelectedWellboreId} />
       )}
 
       <DetailedView

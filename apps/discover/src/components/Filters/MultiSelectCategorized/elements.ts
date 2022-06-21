@@ -23,6 +23,10 @@ export const OptionsCategoryWrapper = styled(FlexColumn)``;
 export const CategoryWrapper = styled(Menu.Item)`
   font-size: 14px;
   flex-shrink: 0;
+
+  :hover {
+    background: var(--cogs-midblue-7);
+  }
 `;
 
 export const OptionWrapper = styled(CategoryWrapper)`

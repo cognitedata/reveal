@@ -29,10 +29,10 @@ export const filterWellInspectNdsData = <T extends NdsObjectType>(
     {} as Record<keyof Filter, BooleanMap>
   );
 
-  return items.filter((item) =>
-    filterKeys.every((key) => {
+  return items.filter((item) => {
+    return filterKeys.every((key) => {
       const value = item[key];
-      return value && Boolean(filterMap[key][value]);
-    })
-  );
+      return Boolean(filterMap[key][String(value)]);
+    });
+  });
 };

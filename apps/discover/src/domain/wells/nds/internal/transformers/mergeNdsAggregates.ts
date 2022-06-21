@@ -1,4 +1,3 @@
-import isNil from 'lodash/isNil';
 import { mergeUniqueArray } from 'utils/merge';
 
 import { NdsAggregateRow } from '@cognite/sdk-wells-v3';
@@ -44,6 +43,6 @@ const mergeRiskTypeAndSubtype = (
   return {};
 };
 
-const getValueAsStringArray = (value?: string | number): string[] => {
-  return isNil(value) ? [] : [String(value)];
+const getValueAsStringArray = (value?: string | number | null): string[] => {
+  return [String(value)];
 };

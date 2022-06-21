@@ -15,25 +15,17 @@ export const useNdsAggregatesSummaryQuery = (wellboreIds: string[]) => {
   return useQuery<NdsAggregatesSummary>(
     [...WELL_QUERY_KEY.NDS_EVENTS_AGGREGATE, ...wellboreIdsSet.keys()],
     async () => {
-      const riskTypeAndSubtype = await getNdsAggregates(wellboreIdsSet, [
+      const aggregates = await getNdsAggregates(wellboreIdsSet, [
         NdsAggregateEnum.RiskType,
         NdsAggregateEnum.Subtype,
-      ]);
-      const severity = await getNdsAggregates(wellboreIdsSet, [
         NdsAggregateEnum.Severity,
-      ]);
-      const probability = await getNdsAggregates(wellboreIdsSet, [
         NdsAggregateEnum.Probability,
       ]);
 
       return Array.from(wellboreIdsSet).reduce((aggregatesMap, wellboreId) => {
         return {
           ...aggregatesMap,
-          [wellboreId]: mergeNdsAggregates([
-            ...riskTypeAndSubtype[wellboreId],
-            ...severity[wellboreId],
-            ...probability[wellboreId],
-          ]),
+          [wellboreId]: mergeNdsAggregates(aggregates[wellboreId]),
         };
       }, {} as NdsAggregatesSummary);
     },

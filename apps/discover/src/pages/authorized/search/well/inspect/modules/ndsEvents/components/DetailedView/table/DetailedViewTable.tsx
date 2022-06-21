@@ -15,10 +15,6 @@ export const DetailedViewTable: React.FC<DetailedViewTableProps> = ({
 
   const tableOptions = {
     flex: false,
-    pagination: {
-      enabled: true,
-      pageSize: 50,
-    },
   };
 
   return (

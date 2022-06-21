@@ -1,11 +1,10 @@
 import navigation from 'constants/navigation';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 
-import { TAB_NAMES, WellInspectTabs } from './constants';
+import { TAB_NAMES } from './constants';
 import ThreeDee from './modules/3d';
 import Casing from './modules/casings';
 import DigitalRocks from './modules/digitalRocks';
-import EventsNds from './modules/events/Nds';
 import EventsNpt from './modules/events/Npt';
 import Measurements from './modules/measurements';
 import NdsEvents from './modules/ndsEvents';
@@ -17,7 +16,6 @@ import { Tab } from './types';
 
 export const useTabs = () => {
   const { data: wellsConfig } = useWellConfig();
-  const { location } = window;
 
   const TAB_ITEMS: Tab[] = [
     {
@@ -38,17 +36,8 @@ export const useTabs = () => {
       key: 'nds',
       name: TAB_NAMES.NDS_EVENTS,
       path: navigation.SEARCH_WELLS_INSPECT_EVENTSNDS,
-      componentToRender: EventsNds,
-      enabled: !!wellsConfig?.nds?.enabled,
-    },
-    {
-      key: 'ndsV2',
-      name: `${TAB_NAMES.NDS_EVENTS} V2` as WellInspectTabs,
-      path: `${navigation.SEARCH_WELLS_INSPECT_EVENTSNDS}_2`,
       componentToRender: NdsEvents,
-      enabled:
-        location.host === 'localhost:3000' ||
-        location.host.includes('-discover.pr.'),
+      enabled: !!wellsConfig?.nds?.enabled,
     },
     {
       key: 'npt',
