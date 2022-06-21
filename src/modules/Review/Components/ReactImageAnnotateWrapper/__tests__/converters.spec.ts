@@ -690,6 +690,7 @@ describe('test convertRegionToUnsavedVisionAnnotation', () => {
   });
   it('If Box region should return UnsavedVisionAnnotation<<ImageObjectDetection>>', () => {
     const {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       annotatedResourceId,
       ...dummyUnsavedObjectDetectionAnnotationWithoutAnnotatedResourceId
     } = getDummyUnsavedAnnotation({
@@ -720,6 +721,7 @@ describe('test convertRegionToUnsavedVisionAnnotation', () => {
   });
   it('If Polygon region should return UnsavedVisionAnnotation<<ImageObjectDetection>>', () => {
     const {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       annotatedResourceId,
       ...dummyUnsavedObjectDetectionAnnotationWithoutAnnotatedResourceId
     } = getDummyUnsavedAnnotation({
@@ -750,6 +752,7 @@ describe('test convertRegionToUnsavedVisionAnnotation', () => {
   });
   it('If Line region should return UnsavedVisionAnnotation<<ImageObjectDetection>>', () => {
     const {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       annotatedResourceId,
       ...dummyUnsavedObjectDetectionAnnotationWithoutAnnotatedResourceId
     } = getDummyUnsavedAnnotation({
