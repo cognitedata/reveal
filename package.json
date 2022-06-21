@@ -13,10 +13,14 @@
     "lint:fix": "eslint src --ext .jsx,.js,.tsx,.ts --fix",
     "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
     "eslint:changed": "eslint --config .eslintrc.production.js",
-    "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)"
+    "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
+    "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace extractor-downloads",
+    "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace extractor-downloads",
+    "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace extractor-downloads"
   },
   "dependencies": {
-    "@cognite/cdf-utilities": "^0.12.1",
+    "@cognite/cdf-i18n-utils": "^0.1.1",
+    "@cognite/cdf-utilities": "^1.4.6",
     "@cognite/cogs.js": "^5.17.0",
     "@cognite/metrics": "^1.2.1",
     "@cognite/react-feature-flags": "^1.0.0",
@@ -31,7 +35,6 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-i18next": "^11.15.5",
-    "react-iframe": "^1.8.0",
     "react-query": "^3.34.16",
     "react-router-dom": "^5.3.0",
     "react-scripts": "^5.0.0",

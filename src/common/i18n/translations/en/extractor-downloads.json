@@ -1,0 +1,13 @@
+{
+    "extractor-downloads": "Extractor downloads",
+    "description": "Description",
+    "documentation": "Documentation",
+    "download-links": "Download links",
+    "help": "Help",
+    "linux": "Linux",
+    "macos": "MacOS",
+    "name": "Name",
+    "release-date": "Release date",
+    "version": "Version",
+    "windows": "Windows"
+}
