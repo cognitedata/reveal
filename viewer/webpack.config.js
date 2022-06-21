@@ -46,6 +46,10 @@ module.exports = env => {
         },
     target: 'web',
     resolve: {
+      fallback: {
+        fs: false,
+        path: require.resolve('path-browserify')
+      },
       extensions: ['.tsx', '.ts', '.js'],
       symlinks: true
     },
@@ -95,7 +99,7 @@ module.exports = env => {
     },
     externals: [
       nodeExternals({
-        allowlist: [/^@reveal/]
+        allowlist: [/^@reveal/, /three/]
       })
     ],
     output: {
@@ -103,8 +107,11 @@ module.exports = env => {
       publicPath: publicPathViewer,
       path: path.resolve(__dirname, 'dist'),
       sourceMapFilename: '[name].map',
-      globalObject: `(typeof self !== 'undefined' ? self : this)`,
-      libraryTarget: 'umd'
+        globalObject: `(typeof self !== 'undefined' ? self : this)`,
+        library: {
+            name: '@cognite/reveal',
+            type: 'umd'
+        }
     },
     devtool: development ? 'inline-source-map' : 'source-map',
     watchOptions: {
@@ -113,9 +120,6 @@ module.exports = env => {
     },
     optimization: {
       usedExports: true
-    },
-    node: {
-      fs: 'empty'
     },
     plugins: [
       new copyPkgJsonPlugin({
