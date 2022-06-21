@@ -128,6 +128,11 @@ export interface VisionJobCompleted extends VisionJobBase {
 }
 export interface VisionJobFailed extends VisionJobBase {
   status: 'Failed';
+  createdTime: number;
+  startTime: number;
+  statusTime: number;
+  jobId: number;
+  failedItems: Array<VisionJobFailedItem>;
 }
 
 export type VisionJobResponse =

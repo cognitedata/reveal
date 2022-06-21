@@ -30,7 +30,10 @@ const setBadge = (count: number, statuses?: AnnotationStatuses) => {
   return '–';
 };
 const setOpacity = (status: string | undefined) =>
-  status === 'Completed' || status === 'Running' || status === undefined
+  status === 'Completed' ||
+  status === 'Running' ||
+  status === 'Failed' ||
+  status === undefined
     ? 1.0
     : 0.5;
 
