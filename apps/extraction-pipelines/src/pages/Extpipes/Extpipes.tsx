@@ -48,7 +48,7 @@ const CreateExtpipeModal = (props: { visible: boolean; close: () => void }) => {
   );
 };
 
-interface OwnProps { }
+interface OwnProps {}
 
 type Props = OwnProps;
 

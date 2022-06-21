@@ -89,7 +89,7 @@ const TabsAndActions = styled.div`
   align-self: flex-end;
 `;
 
-interface ExtpipePageProps { }
+interface ExtpipePageProps {}
 
 type DeleteDialogProps = {
   isOpen: boolean;
@@ -146,7 +146,7 @@ const DeleteDialog: FunctionComponent<DeleteDialogProps> = ({
 
 const ExtpipePage: FunctionComponent<ExtpipePageProps> = () => {
   const { search } = useLocation();
-  const { path, url } = useRouteMatch(); //
+  const { path, url } = useRouteMatch();
   const { id } = useParams<RouterParams>();
   const history = useHistory();
   const { project } = useAppEnv();
@@ -218,7 +218,6 @@ const ExtpipePage: FunctionComponent<ExtpipePageProps> = () => {
       </FullPageLayout>
     );
   }
-
   return isLoading || extpipe == null ? (
     <Loader />
   ) : (
@@ -283,15 +282,10 @@ const ExtpipePage: FunctionComponent<ExtpipePageProps> = () => {
         breadcrumbs={<ExtpipeBreadcrumbs extpipe={extpipe} />}
       >
         <Switch>
-          <Route
-            exact
-            path={path}
-          >
+          <Route exact path={path}>
             <ExtpipeDetails />
           </Route>
-          <Route
-            path={`${path}/${HEALTH_PATH}`}
-          >
+          <Route path={`${path}/${HEALTH_PATH}`}>
             <ExtpipeRunHistory extpipe={extpipe} />
           </Route>
         </Switch>

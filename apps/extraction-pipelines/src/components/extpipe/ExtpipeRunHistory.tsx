@@ -146,7 +146,7 @@ export const ExtpipeRunHistory: FunctionComponent<LogsViewProps> = ({
       search,
       statuses,
       dateRange,
-      cluster
+      cluster,
     })}`;
     history.push(url);
     setAll([]);

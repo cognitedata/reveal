@@ -11,7 +11,7 @@ export const getContainer = () => {
   return el;
 };
 
-// TODO : CDFUX-1655 Refractor & use createRedirectLink i.e. createLink from @cognite/cdf-utilities
+// TODO(CDFUX-1655) : Refractor & use createRedirectLink i.e. createLink from @cognite/cdf-utilities
 export const getQueryParameter = (parameterKey: any) => {
   const parameters = queryString.parse(window.location.search) ?? {};
   return parameters[parameterKey] ?? '';

@@ -30,7 +30,6 @@ const ExtractorDownloadsLink: FunctionComponent<OwnProps> = ({
   const onLinkClick = () => {
     trackUsage({ t: 'Navigation', href: displayHref });
   };
-
   return (
     <>
       {(url || path) && (

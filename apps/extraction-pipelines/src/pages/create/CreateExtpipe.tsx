@@ -44,7 +44,7 @@ import { EXTPIPES_WRITES } from 'model/AclAction';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 import { ids } from 'cogs-variables';
 import { trackUsage } from 'utils/Metrics';
-import { createRedirectLink } from "utils/utils"
+import { createRedirectLink } from 'utils/utils';
 
 const InfoMessage = styled.span`
   display: flex;
@@ -57,7 +57,7 @@ const InfoMessage = styled.span`
           &:nth-child(2),
           &:nth-child(3) {
             fill: ${(props: { color?: string }) =>
-    props.color ?? `${Colors.primary.hex()}`};
+              props.color ?? `${Colors.primary.hex()}`};
           }
         }
       }
@@ -252,8 +252,9 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
             {props.customCancelCallback == null ? (
               <a
                 href={createRedirectLink(
-                  `/data-sets${dataSetIdFromLocation &&
-                  `/data-set/${dataSetIdFromLocation}`
+                  `/data-sets${
+                    dataSetIdFromLocation &&
+                    `/data-set/${dataSetIdFromLocation}`
                   }`
                 )}
                 className="cogs-btn cogs-btn-ghost cogs-btn-secondary cogs-btn--padding"

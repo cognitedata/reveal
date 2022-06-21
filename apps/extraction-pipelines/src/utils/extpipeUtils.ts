@@ -187,7 +187,7 @@ export const createSearchParams = ({
   search,
   statuses,
   dateRange,
-  cluster
+  cluster,
 }: CreateSearchParams) => {
   const params = {
     ...(env && { env }),
