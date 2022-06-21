@@ -7,8 +7,11 @@ import { selectTempKeypointCollection } from 'src/modules/Review/store/annotator
 export const useIsCurrentKeypointCollectionComplete = (fileId: number) => {
   const [isComplete, setIsComplete] = useState(false);
   const tempKeypointCollection = useSelector(
-    ({ annotatorWrapperReducer }: RootState) =>
-      selectTempKeypointCollection(annotatorWrapperReducer, fileId)
+    ({ annotatorWrapperReducer, annotationReducer }: RootState) =>
+      selectTempKeypointCollection(annotatorWrapperReducer, {
+        currentFileId: fileId,
+        annotationColorMap: annotationReducer.annotationColorMap,
+      })
   );
 
   const { predefinedKeypointCollections } = useSelector(

@@ -7,6 +7,7 @@ import {
   ReviewKeypoint,
   TempKeypointCollection,
 } from 'src/modules/Review/types';
+import { getAnnotationColorFromColorKey } from 'src/modules/Common/store/annotation/hooks';
 
 /**
  * Selects next predefined shape based on last shape annotation created
@@ -82,7 +83,20 @@ export const selectLastKeypointCollection = createSelector(
  * null if lastCollectionId is not available in state
  */
 export const selectTempKeypointCollection = createSelector(
-  (state: AnnotatorWrapperState, currentFileId: number) => currentFileId,
+  (
+    state: AnnotatorWrapperState,
+    params: {
+      currentFileId: number;
+      annotationColorMap: Record<string, string>;
+    }
+  ) => params.currentFileId,
+  (
+    state: AnnotatorWrapperState,
+    params: {
+      currentFileId: number;
+      annotationColorMap: Record<string, string>;
+    }
+  ) => params.annotationColorMap,
   selectLastKeypointCollection,
   (state: AnnotatorWrapperState) => state.keypointMap.byId,
   (state: AnnotatorWrapperState) => state.keypointMap.selectedIds,
@@ -90,17 +104,23 @@ export const selectTempKeypointCollection = createSelector(
     state.predefinedAnnotations.predefinedKeypointCollections,
   (
     fileId,
+    annotationColorMap,
     lastKeypointCollection,
     allKeypoints,
     selectedKeypointIds,
     predefinedKeypointCollections
   ) => {
     if (lastKeypointCollection) {
+      const keypointColor = getAnnotationColorFromColorKey(
+        annotationColorMap,
+        lastKeypointCollection.label
+      );
       const reviewImageKeypoints: ReviewKeypoint[] =
         lastKeypointCollection.keypointIds.map((keypointId: string) => ({
           id: keypointId,
           selected: selectedKeypointIds.includes(keypointId),
           keypoint: allKeypoints[keypointId],
+          color: keypointColor, // same keypoint color for whole collection
         }));
 
       const predefinedCollection: PredefinedKeypointCollection | undefined =
@@ -123,6 +143,7 @@ export const selectTempKeypointCollection = createSelector(
           label: lastKeypointCollection.label,
         },
         remainingKeypoints,
+        color: keypointColor,
       } as TempKeypointCollection;
     }
     return null;

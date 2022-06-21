@@ -96,7 +96,7 @@ export const convertVisionReviewAnnotationToRegions = (
     annotationType: annotation.annotationType,
     annotationLabelOrText: getAnnotationLabelOrText(annotation),
     status: annotation.status,
-    color: 'red', // read this from reviewAnnotation.color once it is introduced.
+    color: reviewAnnotation.color,
     cls: '',
     locked: false,
     visible: !!reviewAnnotation.show,

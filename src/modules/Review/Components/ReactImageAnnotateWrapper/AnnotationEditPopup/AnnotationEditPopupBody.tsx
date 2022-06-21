@@ -10,7 +10,6 @@ import {
 } from '@cognite/cogs.js';
 import { PopupUIElementContainer } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/TitleContainer';
 import React from 'react';
-import { ColorBadge } from 'src/modules/Review/Components/ColorBadge/ColorBadge';
 import styled from 'styled-components';
 import { VisionAutoComplete } from 'src/modules/Common/Components/VisionAutoComplete/VisionAutoComplete';
 
@@ -18,7 +17,6 @@ export type BodyContainerMode = 'point' | 'shape';
 
 export const AnnotationEditPopupBody = ({
   isKeypointMode,
-  color,
   isSavedAnnotation,
   labelOption,
   keypointLabel,
@@ -27,7 +25,6 @@ export const AnnotationEditPopupBody = ({
   onOpenAnnotationSettings,
 }: {
   isKeypointMode: boolean;
-  color: string;
   isSavedAnnotation: boolean;
   labelOption: OptionType<string>;
   keypointLabel: string;
@@ -103,11 +100,6 @@ export const AnnotationEditPopupBody = ({
   if (labelOptions && labelOptions.length) {
     return (
       <>
-        <Col span={1}>
-          <PopupUIElementContainer title="Color">
-            <ColorBadge color={color} />
-          </PopupUIElementContainer>
-        </Col>
         <Col span={4}>
           <PopupUIElementContainer title="Label">
             <VisionAutoComplete

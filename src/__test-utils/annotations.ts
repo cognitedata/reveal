@@ -154,5 +154,6 @@ export const getDummyTempKeypointCollection = ({
       keypoints: reviewKeypoints,
     },
     remainingKeypoints,
+    color: 'red',
   };
 };
