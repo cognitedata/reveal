@@ -56,7 +56,7 @@ export const DataModelsList = () => {
 
   const renderList = () => {
     return (
-      <StyledRow cols={3} gutter={20} className="grid">
+      <StyledRow cols={3} gutter={20}>
         {dataModels!.map((dataModel) => (
           <DataModelCard
             dataModel={dataModel}
@@ -102,6 +102,7 @@ export const DataModelsList = () => {
           {t('data_models_title', 'Data Models')}
         </Title>
         <Button
+          type="primary"
           data-cy="create-data-model-btn"
           onClick={() => setCreateDataModel(true)}
         >

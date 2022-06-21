@@ -22,10 +22,6 @@ export const StyledDataModelListWrapper = styled(StyledPageWrapper)`
     margin: 100px auto;
     text-align: center;
   }
-
-  .grid {
-    margin: 0 3px;
-  }
 `;
 
 export const StyledModalDialog = styled(ModalDialog)`
@@ -40,6 +36,9 @@ export const StyledModalDialog = styled(ModalDialog)`
 `;
 
 export const StyledRow = styled(Row)`
+  padding: 2px;
+  padding-bottom: 24px;
+  overflow: auto;
   @media only screen and (max-width: ${dataModelListWidth}px) {
     grid-template-columns: repeat(2, 1fr) !important;
   }
