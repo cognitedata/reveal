@@ -1,7 +1,7 @@
 {
   "name": "discover",
   "description": "Discover - AKA: PrettyPoly",
-  "version": "1.28.0",
+  "version": "1.29.0",
   "private": true,
   "scripts": {
     "analyse": "../../node_modules/.bin/source-map-explorer 'build/static/js/*.js' --only-mapped --html /tmp/result.html && google-chrome /tmp/result.html",
