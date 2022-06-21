@@ -8,7 +8,6 @@
     "@cognite/cogs.js": "^1.21.3",
     "@cognite/gcs-browser-upload": "^1.0.5",
     "@cognite/griff-react": "~0.4.2",
-    "@cognite/react-feature-flags": "^0.2.2",
     "@cognite/sdk": "^6.3.1",
     "@cognite/sdk-provider": "^1.0.0",
     "antd": "^3.26.18",

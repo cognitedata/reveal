@@ -78,103 +78,14 @@ function Functions() {
     return <Loader />;
   }
 
-  if (activation?.status === 'activated') {
+  if (activation?.status === 'inactive') {
     return (
-      <>
-        <PageTitle title="Functions" />
-        <Row>
-          <h1 style={{ display: 'inline-block' }}>Functions</h1>
-          <div
-            style={{
-              float: 'right',
-              marginTop: '8px',
-              display: 'inline-flex',
-            }}
-          >
-            <UploadFunctionButton />
-
-            <Button
-              icon={isFetching || !callsDone ? 'Loading' : 'Refresh'}
-              disabled={isFetching}
-              onClick={() => refresh()}
-              style={{ marginLeft: '8px' }}
-            >
-              Refresh
-            </Button>
-          </div>
-        </Row>
-        <Input
-          name="filter"
-          prefix={
-            <Icon
-              type="Search"
-              style={{
-                height: '16px',
-                width: '16px',
-              }}
-            />
-          }
-          placeholder="Search by name, external id, or owner"
-          value={functionFilter}
-          onChange={evt => setFunctionFilter(evt.target.value)}
-          allowClear
-        />
-        <b>Sort by: </b>
-        <Select
-          style={{
-            width: '200px',
-            marginTop: '8px',
-          }}
-          value={sortFunctionCriteria}
-          onChange={(value: SortFunctions) => setSortFunctionCriteria(value)}
-        >
-          <Select.Option value="recentlyCalled">Recently Called</Select.Option>
-          <Select.Option value="recentlyCreated">
-            Recently Created
-          </Select.Option>
-        </Select>
-        <div style={{ marginTop: '8px' }}>
-          <CollapseDiv>
-            <Collapse>
-              {filteredFunctions
-                ? filteredFunctions
-                    .slice(
-                      (currentPage - 1) * FUNCTIONS_PER_PAGE,
-                      currentPage * FUNCTIONS_PER_PAGE
-                    )
-                    .map(({ id, name, externalId, error }: CogFunction) => {
-                      return (
-                        <Panel
-                          key={id}
-                          header={
-                            <FunctionPanelHeader
-                              id={id}
-                              name={name}
-                              externalId={externalId}
-                            />
-                          }
-                        >
-                          <FunctionPanelContent
-                            id={id}
-                            name={name}
-                            externalId={externalId}
-                            error={error}
-                          />
-                        </Panel>
-                      );
-                    })
-                : null}
-            </Collapse>
-            <Pagination
-              current={currentPage}
-              total={filteredFunctions?.length}
-              defaultPageSize={FUNCTIONS_PER_PAGE}
-              onChange={page => setCurrentPage(page)}
-              style={{ float: 'right', marginTop: '8px' }}
-            />
-          </CollapseDiv>
-        </div>
-      </>
+      <FunctionActivationAlert
+        type="error"
+        message="Cognite Functions is not activated for the project"
+        showIcon
+        description={<Button onClick={() => mutate()}>Activate</Button>}
+      />
     );
   }
   if (activation?.status === 'requested') {
@@ -187,13 +98,101 @@ function Functions() {
       />
     );
   }
+
   return (
-    <FunctionActivationAlert
-      type="error"
-      message="Cognite Functions is not activated for the project"
-      showIcon
-      description={<Button onClick={() => mutate()}>Activate</Button>}
-    />
+    <>
+      <PageTitle title="Functions" />
+      <Row>
+        <h1 style={{ display: 'inline-block' }}>Functions</h1>
+        <div
+          style={{
+            float: 'right',
+            marginTop: '8px',
+            display: 'inline-flex',
+          }}
+        >
+          <UploadFunctionButton />
+
+          <Button
+            icon={isFetching || !callsDone ? 'Loading' : 'Refresh'}
+            disabled={isFetching}
+            onClick={() => refresh()}
+            style={{ marginLeft: '8px' }}
+          >
+            Refresh
+          </Button>
+        </div>
+      </Row>
+      <Input
+        name="filter"
+        prefix={
+          <Icon
+            type="Search"
+            style={{
+              height: '16px',
+              width: '16px',
+            }}
+          />
+        }
+        placeholder="Search by name, external id, or owner"
+        value={functionFilter}
+        onChange={evt => setFunctionFilter(evt.target.value)}
+        allowClear
+      />
+      <b>Sort by: </b>
+      <Select
+        style={{
+          width: '200px',
+          marginTop: '8px',
+        }}
+        value={sortFunctionCriteria}
+        onChange={(value: SortFunctions) => setSortFunctionCriteria(value)}
+      >
+        <Select.Option value="recentlyCalled">Recently Called</Select.Option>
+        <Select.Option value="recentlyCreated">Recently Created</Select.Option>
+      </Select>
+      <div style={{ marginTop: '8px' }}>
+        <CollapseDiv>
+          <Collapse>
+            {filteredFunctions
+              ? filteredFunctions
+                  .slice(
+                    (currentPage - 1) * FUNCTIONS_PER_PAGE,
+                    currentPage * FUNCTIONS_PER_PAGE
+                  )
+                  .map(({ id, name, externalId, error }: CogFunction) => {
+                    return (
+                      <Panel
+                        key={id}
+                        header={
+                          <FunctionPanelHeader
+                            id={id}
+                            name={name}
+                            externalId={externalId}
+                          />
+                        }
+                      >
+                        <FunctionPanelContent
+                          id={id}
+                          name={name}
+                          externalId={externalId}
+                          error={error}
+                        />
+                      </Panel>
+                    );
+                  })
+              : null}
+          </Collapse>
+          <Pagination
+            current={currentPage}
+            total={filteredFunctions?.length}
+            defaultPageSize={FUNCTIONS_PER_PAGE}
+            onChange={page => setCurrentPage(page)}
+            style={{ float: 'right', marginTop: '8px' }}
+          />
+        </CollapseDiv>
+      </div>
+    </>
   );
 }
 
