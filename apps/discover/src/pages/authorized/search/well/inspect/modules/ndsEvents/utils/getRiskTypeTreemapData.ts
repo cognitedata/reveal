@@ -8,6 +8,8 @@ import { getFixedPercent } from 'utils/number';
 
 import { TreeMapData } from 'components/Treemap';
 
+import { MORE_NODE_ID } from '../components/DetailedView';
+
 export const getRiskTypeTreemapData = (
   ndsEvents: NdsInternal[],
   maxNodes = 15
@@ -85,7 +87,7 @@ export const getRiskTypeTreemapData = (
       riskTypesToDisplay.length === 0
     ) {
       OtherNode = {
-        id: 'more',
+        id: MORE_NODE_ID,
         title: `More (${numberOfRiskTypes - riskTypesToDisplay.length})`,
         value: minEvents || 100,
         description: `${

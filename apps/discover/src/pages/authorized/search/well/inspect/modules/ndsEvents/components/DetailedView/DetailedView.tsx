@@ -3,9 +3,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
 
+import { Modal } from 'components/Modal';
 import { NavigationPanel } from 'components/NavigationPanel';
 import { OverlayNavigation } from 'components/OverlayNavigation';
-import { Treemap } from 'components/Treemap';
+import { Table } from 'components/Tablev3';
+import { Treemap, TreeMapData } from 'components/Treemap';
 
 import { ViewModeControl } from '../../../common/ViewModeControl';
 import { EMPTY_APPLIED_FILTERS } from '../../constants';
@@ -14,6 +16,7 @@ import { getFilteredNdsData } from '../../utils/getFilteredNdsData';
 import { getRiskTypeTreemapData } from '../../utils/getRiskTypeTreemapData';
 import { getSubtypeTreemapData } from '../../utils/getSubtypeTreemapData';
 import { Filters } from '../Filters';
+import { WellboreTableWrapper } from '../NdsTreemap/elements';
 
 import { NdsDetailedViewModes } from './constants';
 import {
@@ -23,6 +26,8 @@ import {
 } from './elements';
 import { DetailedViewTable } from './table';
 import { DetailedViewProps } from './types';
+
+export const MORE_NODE_ID = 'more';
 
 export const DetailedView: React.FC<DetailedViewProps> = ({
   data = [],
@@ -40,6 +45,9 @@ export const DetailedView: React.FC<DetailedViewProps> = ({
   );
   const [selectedViewMode, setSelectedViewMode] =
     useState<NdsDetailedViewModes>(NdsDetailedViewModes.RiskType);
+  const [events, setEvents] = useState<
+    { name: string; numberOfEvents: number }[]
+  >([]);
 
   const currentWellbore = head(data);
 
@@ -61,6 +69,20 @@ export const DetailedView: React.FC<DetailedViewProps> = ({
       ...appliedFilters,
       [filter]: values,
     }));
+  };
+
+  const handleRickTypeTileClicked = (data: TreeMapData) => {
+    const { id, riskTypes } = data;
+    if (id === MORE_NODE_ID) {
+      setEvents(riskTypes as { name: string; numberOfEvents: number }[]);
+    }
+  };
+
+  const handleSubtypeTileClicked = (data: TreeMapData) => {
+    const { id, subtypes } = data;
+    if (id === MORE_NODE_ID) {
+      setEvents(subtypes as { name: string; numberOfEvents: number }[]);
+    }
   };
 
   useEffect(() => {
@@ -106,17 +128,53 @@ export const DetailedView: React.FC<DetailedViewProps> = ({
 
         <DetailedViewContent>
           {selectedViewMode === NdsDetailedViewModes.RiskType && (
-            <Treemap data={riskTypeTreemapData} />
+            <Treemap
+              data={riskTypeTreemapData}
+              onTileClicked={handleRickTypeTileClicked}
+            />
           )}
 
           {selectedViewMode === NdsDetailedViewModes.Subtype && (
-            <Treemap data={subtypeTreemapData} />
+            <Treemap
+              data={subtypeTreemapData}
+              onTileClicked={handleSubtypeTileClicked}
+            />
           )}
 
           {selectedViewMode === NdsDetailedViewModes.Table && (
             <DetailedViewTable data={filteredData} />
           )}
         </DetailedViewContent>
+
+        <Modal
+          visible={!!events.length}
+          title="Event types"
+          width={1000}
+          onCancel={() => setEvents([])}
+          footer={null}
+        >
+          <WellboreTableWrapper>
+            <Table
+              id="blabla"
+              data={events}
+              columns={[
+                {
+                  Header: 'Name',
+                  accessor: 'name',
+                  width: 'auto',
+                },
+                {
+                  Header: 'Number of NDS events',
+                  accessor: 'numberOfEvents',
+                  width: '250px',
+                },
+              ]}
+              options={{
+                flex: false,
+              }}
+            />
+          </WellboreTableWrapper>
+        </Modal>
       </DetailedViewWrapper>
     </OverlayNavigation>
   );

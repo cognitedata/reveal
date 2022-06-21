@@ -181,7 +181,7 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
   const dropdownContent = useMemo(
     () => (
       <DropdownContent width={dropdownWidth}>
-        {optionsCount ? NoOptionsContent : OptionsContent}
+        {optionsCount ? OptionsContent : NoOptionsContent}
       </DropdownContent>
     ),
     [optionsCount, selectedOptionsCount, selectedOptions, dropdownWidth]

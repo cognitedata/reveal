@@ -8,6 +8,8 @@ import { getFixedPercent } from 'utils/number';
 
 import { TreeMapData } from 'components/Treemap';
 
+import { MORE_NODE_ID } from '../components/DetailedView';
+
 export const getSubtypeTreemapData = (
   ndsEvents: NdsInternal[],
   maxNodes = 15
@@ -26,9 +28,11 @@ export const getSubtypeTreemapData = (
     ];
   } else {
     // get as much data from one loop as possible
-    const { totalNumberOfEvents, events: eventsMapped } = Object.keys(
-      groupedNdsEvents
-    ).reduce(
+    const {
+      totalNumberOfEvents,
+      events: eventsMapped,
+      numberOfSubtypesWithEvents,
+    } = Object.keys(groupedNdsEvents).reduce(
       (previousValue, subtype) => {
         const numberOfEvents = groupedNdsEvents[subtype].length;
 
@@ -36,6 +40,9 @@ export const getSubtypeTreemapData = (
           ...previousValue,
           totalNumberOfEvents:
             previousValue.totalNumberOfEvents + numberOfEvents,
+          numberOfSubtypesWithEvents: numberOfEvents
+            ? previousValue.numberOfSubtypesWithEvents + 1
+            : previousValue.numberOfSubtypesWithEvents,
           events: [
             ...previousValue.events,
             {
@@ -47,6 +54,7 @@ export const getSubtypeTreemapData = (
       },
       {
         totalNumberOfEvents: 0,
+        numberOfSubtypesWithEvents: 0,
         events: [] as { name: string; numberOfEvents: number }[],
       }
     );
@@ -59,7 +67,9 @@ export const getSubtypeTreemapData = (
     // get the number wellbores to be displayed
     const subtypesToDisplay = sortedEventsWithSubtype.slice(
       0,
-      numberOfSubtypes > maxNodes ? maxNodes : numberOfSubtypes
+      numberOfSubtypesWithEvents > maxNodes
+        ? maxNodes
+        : numberOfSubtypesWithEvents
     );
     const numberOfEventsFromDisplayedSubtypes = sumBy(
       subtypesToDisplay,
@@ -77,7 +87,7 @@ export const getSubtypeTreemapData = (
       subtypesToDisplay.length === 0
     ) {
       OtherNode = {
-        id: 'more',
+        id: MORE_NODE_ID,
         title: `More (${numberOfSubtypes - subtypesToDisplay.length})`,
         value: minEvents || 100,
         description: `${
