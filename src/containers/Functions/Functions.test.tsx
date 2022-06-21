@@ -11,15 +11,6 @@ import sdk from '@cognite/cdf-sdk-singleton';
 
 import Functions from './Functions';
 
-jest.mock('@cognite/cdf-utilities', () => ({
-  PageTitle: () => null,
-  getProject: jest.fn().mockReturnValue('mockProject'),
-}));
-
-jest.mock('@cognite/react-feature-flags', () => ({
-  useFlag: jest.fn(),
-}));
-
 const mockFunction = ({
   name: 'testFunc',
   id: 1,
@@ -45,22 +36,37 @@ const mockFunction2 = ({
   status: 'Ready',
 } as unknown) as CogFunction;
 
-jest.mock('@cognite/cdf-sdk-singleton', () => {
-  return {
-    get: jest.fn(() =>
-      Promise.resolve({
+jest.mock('@cognite/cdf-sdk-singleton', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn((url: string) => {
+      if (url.includes('/status')) {
+        return Promise.resolve({
+          data: { status: 'activated' },
+        });
+      }
+      return Promise.resolve({
         data: { items: [mockFunction, mockFunction2] },
+      });
+    }),
+    post: jest.fn(() =>
+      Promise.resolve({
+        data: { items: [mockCall] },
       })
     ),
-    post: jest.fn(() => mockCall),
-  };
-});
-const mockedSdk = sdk as jest.Mocked<typeof sdk>;
+  },
+}));
+
+jest.mock('@cognite/cdf-utilities', () => ({
+  PageTitle: () => null,
+  getProject: jest.fn().mockReturnValue('mockProject'),
+}));
 
 const wrap = (node: React.ReactNode) =>
   render(<TestWrapper>{node}</TestWrapper>);
 
 describe('Functions', () => {
+  beforeEach(() => (sdk.get as any).mockClear());
   it('renders without crashing', () => {
     expect(() => {
       const div = document.createElement('div');
@@ -81,9 +87,9 @@ describe('Functions', () => {
     await sleep(100);
 
     expect(useEffect).toHaveBeenCalled();
-    expect(mockedSdk.get).toHaveBeenCalled();
+    expect(sdk.get).toHaveBeenCalled();
 
-    expect(mockedSdk.get).toHaveBeenCalledWith(
+    expect(sdk.get).toHaveBeenCalledWith(
       '/api/playground/projects/mockProject/functions'
     );
   });
@@ -92,8 +98,7 @@ describe('Functions', () => {
     wrap(<Functions />);
     await sleep(100);
 
-    mockedSdk.get.mockClear();
-    expect(sdk.get).not.toHaveBeenCalledWith(
+    expect(sdk.get).toHaveBeenCalledWith(
       '/api/playground/projects/mockProject/functions'
     );
 
@@ -128,7 +133,6 @@ describe('Functions', () => {
       'ant-collapse-item'
     );
 
-    mockedSdk.get.mockClear();
     expect(functionsDisplayedAfterSearch).toHaveLength(1);
   });
 
