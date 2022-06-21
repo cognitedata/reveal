@@ -6,26 +6,22 @@ import {
   getDummyImageObjectDetectionBoundingBoxAnnotation,
   getDummyImageObjectDetectionPolygonAnnotation,
   getDummyImageObjectDetectionPolylineAnnotation,
+  getDummyUnsavedAnnotation,
   getDummyVisionReviewAnnotation,
 } from 'src/__test-utils/getDummyAnnotations';
 import {
   CDFAnnotationTypeEnum,
   ImageKeypointCollection,
-  ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
-  ImageObjectDetectionPolyline,
   Status,
 } from 'src/api/annotation/types';
 import {
-  convertRegionToVisionAnnotationProperties,
+  convertRegionToUnsavedVisionAnnotation,
   convertTempKeypointCollectionToRegions,
   convertVisionReviewAnnotationsToRegions,
   convertVisionReviewAnnotationToRegions,
 } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/converters';
-import {
-  UnsavedVisionAnnotation,
-  VisionAnnotationDataType,
-} from 'src/modules/Common/types';
+import { VisionAnnotationDataType } from 'src/modules/Common/types';
 import {
   AnnotatorBoxRegion,
   AnnotatorLineRegion,
@@ -39,7 +35,10 @@ import {
   VisionReviewAnnotation,
 } from 'src/modules/Review/types';
 import { getDummyTempKeypointCollection } from 'src/__test-utils/annotations';
-import { getDummyRegion } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/__test-utils/region';
+import {
+  getDummyRegion,
+  getDummyRegionOriginatedInAnnotator,
+} from 'src/modules/Review/Components/ReactImageAnnotateWrapper/__test-utils/region';
 
 const dummyImageClassificationAnnotation =
   getDummyImageClassificationAnnotation({
@@ -599,7 +598,7 @@ describe('test convertVisionReviewAnnotationToRegions', () => {
   });
 });
 
-describe('test convertRegionToVisionAnnotationProperties', () => {
+describe('test convertRegionToUnsavedVisionAnnotation', () => {
   const selected = true;
   const visible = true;
   it('should return null on empty region', () => {
@@ -607,7 +606,7 @@ describe('test convertRegionToVisionAnnotationProperties', () => {
       .spyOn(console, 'error')
       .mockImplementation(() => {});
     expect(
-      convertRegionToVisionAnnotationProperties({} as AnnotatorRegion)
+      convertRegionToUnsavedVisionAnnotation({} as AnnotatorRegion)
     ).toBeNull();
     expect(consoleSpy).toHaveBeenCalled();
   });
@@ -616,7 +615,7 @@ describe('test convertRegionToVisionAnnotationProperties', () => {
       .spyOn(console, 'error')
       .mockImplementation(() => {});
     expect(
-      convertRegionToVisionAnnotationProperties({
+      convertRegionToUnsavedVisionAnnotation({
         ...getDummyRegion<any>({
           reviewAnnotation: dummyImageClassificationReviewAnnotation,
           regionProps: {
@@ -627,9 +626,9 @@ describe('test convertRegionToVisionAnnotationProperties', () => {
     ).toBeNull();
     expect(consoleSpy).toHaveBeenCalled();
   });
-  it('For AnnotatorBox region and CDFAnnotationType ObjectDetection should return correct AnnotationProperties', () => {
+  it('For AnnotatorBox region converted from an existing annotation should return null', () => {
     expect(
-      convertRegionToVisionAnnotationProperties({
+      convertRegionToUnsavedVisionAnnotation({
         ...getDummyRegion<AnnotatorBoxRegion>({
           reviewAnnotation: dummyImageBoundingBoxReviewAnnotation,
           visible,
@@ -643,17 +642,14 @@ describe('test convertRegionToVisionAnnotationProperties', () => {
           },
         }),
       } as AnnotatorRegion)
-    ).toStrictEqual({
-      annotation: {
-        ...dummyImageObjectDetectionBoundingBoxAnnotation,
-      },
-      selected,
-      show: visible,
-    } as VisionReviewAnnotation<VisionAnnotationDataType>);
+    ).toBeNull();
   });
-  it('If Box region and CDFAnnotationType Extracted text should return correct vision annotation', () => {
+  it('If Box region and CDFAnnotationType Extracted text should return null', () => {
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
     expect(
-      convertRegionToVisionAnnotationProperties({
+      convertRegionToUnsavedVisionAnnotation({
         ...getDummyRegion<AnnotatorBoxRegion>({
           reviewAnnotation: dummyImageExtractedTextReviewAnnotation,
           visible,
@@ -667,17 +663,15 @@ describe('test convertRegionToVisionAnnotationProperties', () => {
           },
         }),
       } as AnnotatorRegion)
-    ).toStrictEqual({
-      annotation: {
-        ...dummyImageExtractedTextAnnotation,
-      },
-      selected,
-      show: visible,
-    } as VisionReviewAnnotation<VisionAnnotationDataType>);
+    ).toBeNull();
+    expect(consoleSpy).toHaveBeenCalled();
   });
-  it('If Box region and CDFAnnotationType ImageAssetLink should return correct vision annotation', () => {
+  it('If Box region and CDFAnnotationType ImageAssetLink should return null', () => {
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
     expect(
-      convertRegionToVisionAnnotationProperties({
+      convertRegionToUnsavedVisionAnnotation({
         ...getDummyRegion<AnnotatorBoxRegion>({
           reviewAnnotation: dummyImageAssetLinkReviewAnnotation,
           visible,
@@ -691,125 +685,86 @@ describe('test convertRegionToVisionAnnotationProperties', () => {
           },
         }),
       } as AnnotatorRegion)
-    ).toStrictEqual({
-      annotation: {
-        ...dummyImageAssetLinkTextAnnotation,
-      },
-      selected,
-      show: visible,
-    } as VisionReviewAnnotation<VisionAnnotationDataType>);
+    ).toBeNull();
+    expect(consoleSpy).toHaveBeenCalled();
   });
-  it('If Box region and Annotation type not provided should return ImageBoundingBox Unsaved annotation', () => {
-    const dummyReviewAnnotation = {
-      annotation: {
-        label: 'newObject',
-      },
-      show: visible,
-      selected,
-    };
+  it('If Box region should return UnsavedVisionAnnotation<<ImageObjectDetection>>', () => {
+    const {
+      annotatedResourceId,
+      ...dummyUnsavedObjectDetectionAnnotationWithoutAnnotatedResourceId
+    } = getDummyUnsavedAnnotation({
+      ...dummyImageObjectDetectionBoundingBoxAnnotation,
+      confidence: 1,
+      status: Status.Approved,
+    });
+
     expect(
-      convertRegionToVisionAnnotationProperties({
-        ...getDummyRegion<AnnotatorBoxRegion>({
-          reviewAnnotation:
-            dummyReviewAnnotation as VisionReviewAnnotation<VisionAnnotationDataType>,
-          visible,
-          editingLabels: selected,
-          regionProps: {
+      convertRegionToUnsavedVisionAnnotation(
+        getDummyRegionOriginatedInAnnotator({
+          id: dummyImageObjectDetectionBoundingBoxAnnotation.id,
+          annotationLabelOrText:
+            dummyImageObjectDetectionBoundingBoxAnnotation.label,
+          color: 'red',
+          ...{
             type: AnnotatorRegionType.BoxRegion,
             x: 0,
             y: 0,
             w: 1,
             h: 1,
           },
-        }),
-      } as AnnotatorRegion)
-    ).toStrictEqual({
-      status: Status.Approved,
-      annotatedResourceId: 0,
-      annotationType: CDFAnnotationTypeEnum.ImagesObjectDetection,
-      data: {
-        label: dummyReviewAnnotation.annotation.label,
-        boundingBox: {
-          xMin: 0,
-          yMin: 0,
-          xMax: 1,
-          yMax: 1,
-        },
-        confidence: 1,
-      },
-    } as UnsavedVisionAnnotation<ImageObjectDetectionBoundingBox>);
+        }) as AnnotatorRegion
+      )
+    ).toStrictEqual(
+      dummyUnsavedObjectDetectionAnnotationWithoutAnnotatedResourceId
+    );
   });
-  it('If Polygon region and CDFAnnotationType ObjectDetectionPolygon should return correct vision annotation', () => {
+  it('If Polygon region should return UnsavedVisionAnnotation<<ImageObjectDetection>>', () => {
+    const {
+      annotatedResourceId,
+      ...dummyUnsavedObjectDetectionAnnotationWithoutAnnotatedResourceId
+    } = getDummyUnsavedAnnotation({
+      ...dummyImageObjectDetectionPolygonAnnotation,
+      confidence: 1,
+      status: Status.Approved,
+    });
+
     expect(
-      convertRegionToVisionAnnotationProperties({
-        ...getDummyRegion<AnnotatorPolygonRegion>({
-          reviewAnnotation: dummyImagePolygonReviewAnnotation,
-          visible,
-          editingLabels: selected,
-          regionProps: {
+      convertRegionToUnsavedVisionAnnotation(
+        getDummyRegionOriginatedInAnnotator({
+          id: dummyImageObjectDetectionPolygonAnnotation.id,
+          annotationLabelOrText:
+            dummyImageObjectDetectionPolygonAnnotation.label,
+          color: 'red',
+          ...{
             type: AnnotatorRegionType.PolygonRegion,
             points:
               dummyImageObjectDetectionPolygonAnnotation.polygon.vertices.map(
                 (vertex) => [vertex.x, vertex.y]
               ),
           },
-        }),
-      } as AnnotatorRegion)
-    ).toStrictEqual({
-      annotation: {
-        ...dummyImageObjectDetectionPolygonAnnotation,
-      },
-      selected,
-      show: visible,
-    } as VisionReviewAnnotation<VisionAnnotationDataType>);
+        }) as AnnotatorRegion
+      )
+    ).toStrictEqual(
+      dummyUnsavedObjectDetectionAnnotationWithoutAnnotatedResourceId
+    );
   });
-  it('If Polygon region and Annotation type not provided should return ImageObjectDetectionPolygon Unsaved annotation', () => {
-    const dummyReviewAnnotation = {
-      annotation: {
-        label: 'newObject',
-      },
-      show: visible,
-      selected,
-    };
-    const vertices = [
-      { x: 0, y: 0 },
-      { x: 1, y: 1 },
-      { x: 0.5, y: 0.5 },
-    ];
-    expect(
-      convertRegionToVisionAnnotationProperties({
-        ...getDummyRegion<AnnotatorPolygonRegion>({
-          reviewAnnotation:
-            dummyReviewAnnotation as VisionReviewAnnotation<VisionAnnotationDataType>,
-          visible,
-          editingLabels: selected,
-          regionProps: {
-            type: AnnotatorRegionType.PolygonRegion,
-            points: vertices.map((vertex) => [vertex.x, vertex.y]),
-          },
-        }),
-      } as AnnotatorRegion)
-    ).toStrictEqual({
+  it('If Line region should return UnsavedVisionAnnotation<<ImageObjectDetection>>', () => {
+    const {
+      annotatedResourceId,
+      ...dummyUnsavedObjectDetectionAnnotationWithoutAnnotatedResourceId
+    } = getDummyUnsavedAnnotation({
+      ...dummyImageObjectDetectionPolylineAnnotation,
+      confidence: 1,
       status: Status.Approved,
-      annotatedResourceId: 0,
-      annotationType: CDFAnnotationTypeEnum.ImagesObjectDetection,
-      data: {
-        label: dummyReviewAnnotation.annotation.label,
-        polygon: {
-          vertices,
-        },
-        confidence: 1,
-      },
-    } as UnsavedVisionAnnotation<ImageObjectDetectionPolygon>);
-  });
-  it('If Line region and CDFAnnotationType ObjectDetectionPolyline should return correct vision annotation', () => {
+    });
     expect(
-      convertRegionToVisionAnnotationProperties({
-        ...getDummyRegion<AnnotatorLineRegion>({
-          reviewAnnotation: dummyImagePolyLineReviewAnnotation,
-          visible,
-          editingLabels: selected,
-          regionProps: {
+      convertRegionToUnsavedVisionAnnotation(
+        getDummyRegionOriginatedInAnnotator({
+          id: dummyImageObjectDetectionPolylineAnnotation.id,
+          annotationLabelOrText:
+            dummyImageObjectDetectionPolylineAnnotation.label,
+          color: 'red',
+          ...{
             type: AnnotatorRegionType.LineRegion,
             x1: dummyImageObjectDetectionPolylineAnnotation.polyline.vertices[0]
               .x,
@@ -820,89 +775,12 @@ describe('test convertRegionToVisionAnnotationProperties', () => {
             y2: dummyImageObjectDetectionPolylineAnnotation.polyline.vertices[1]
               .y,
           },
-        }),
-      } as AnnotatorRegion)
-    ).toStrictEqual({
-      annotation: {
-        ...dummyImageObjectDetectionPolylineAnnotation,
-      },
-      selected,
-      show: visible,
-    } as VisionReviewAnnotation<VisionAnnotationDataType>);
+        }) as AnnotatorRegion
+      )
+    ).toStrictEqual(
+      dummyUnsavedObjectDetectionAnnotationWithoutAnnotatedResourceId
+    );
   });
-  it('If Line region and Annotation type not provided should return ImageObjectDetectionPolyline Unsaved annotation', () => {
-    const dummyReviewAnnotation = {
-      annotation: {
-        label: 'newLine',
-      },
-      show: visible,
-      selected,
-    };
-    const vertices = [
-      { x: 0, y: 0 },
-      { x: 1, y: 1 },
-    ];
-    expect(
-      convertRegionToVisionAnnotationProperties({
-        ...getDummyRegion<AnnotatorLineRegion>({
-          reviewAnnotation:
-            dummyReviewAnnotation as VisionReviewAnnotation<VisionAnnotationDataType>,
-          visible,
-          editingLabels: selected,
-          regionProps: {
-            type: AnnotatorRegionType.LineRegion,
-            x1: vertices[0].x,
-            y1: vertices[0].y,
-            x2: vertices[1].x,
-            y2: vertices[1].y,
-          },
-        }),
-      } as AnnotatorRegion)
-    ).toStrictEqual({
-      status: Status.Approved,
-      annotatedResourceId: 0,
-      annotationType: CDFAnnotationTypeEnum.ImagesObjectDetection,
-      data: {
-        label: dummyReviewAnnotation.annotation.label,
-        polyline: {
-          vertices,
-        },
-        confidence: 1,
-      },
-    } as UnsavedVisionAnnotation<ImageObjectDetectionPolyline>);
-  });
-  it('If Point region and CDFAnnotationType ObjectKeypointCollection should return correct Keypoint', () => {
-    expect(
-      convertRegionToVisionAnnotationProperties({
-        ...getDummyRegion<AnnotatorPointRegion>({
-          reviewAnnotation: dummyImageKeypointCollectionReviewAnnotation,
-          id: dummyImageKeypointCollectionReviewAnnotation.annotation
-            .keypoints[0].id,
-          visible,
-          editingLabels: selected,
-          regionProps: {
-            type: AnnotatorRegionType.PointRegion,
-            x: dummyImageKeypointCollectionReviewAnnotation.annotation
-              .keypoints[0].keypoint.point.x,
-            y: dummyImageKeypointCollectionReviewAnnotation.annotation
-              .keypoints[0].keypoint.point.y,
-            keypointLabel:
-              dummyImageKeypointCollectionReviewAnnotation.annotation
-                .keypoints[0].keypoint.label,
-            parentAnnotationId:
-              dummyImageKeypointCollectionReviewAnnotation.annotation.id,
-            keypointConfidence:
-              dummyImageKeypointCollectionReviewAnnotation.annotation
-                .keypoints[0].keypoint.confidence,
-          },
-        }),
-      } as AnnotatorRegion)
-    ).toStrictEqual({
-      ...dummyImageKeypointCollectionReviewAnnotation.annotation.keypoints[0],
-      selected,
-    });
-  });
-  it('If Point region and Annotation type not provided should return unsaved keypoint', () => {});
 });
 
 describe('test convertTempKeypointCollectionToRegions', () => {

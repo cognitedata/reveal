@@ -1,4 +1,4 @@
-import { FileInfo } from '@cognite/sdk';
+import { FileInfo, InternalId } from '@cognite/sdk';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { unwrapResult } from '@reduxjs/toolkit';
 import React, { ReactText, useCallback, useState } from 'react';
@@ -11,10 +11,7 @@ import {
   selectNonRejectedVisionReviewAnnotationsForFile,
   showAnnotationSettingsModel,
 } from 'src/modules/Review/store/reviewSlice';
-import {
-  PredefinedVisionAnnotations,
-  VisionReviewAnnotation,
-} from 'src/modules/Review/types';
+import { PredefinedVisionAnnotations } from 'src/modules/Review/types';
 import { AppDispatch } from 'src/store';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { RootState } from 'src/store/rootReducer';
@@ -109,7 +106,12 @@ export const ImagePreview = ({
   );
 
   const handleCreateAnnotation = useCallback(
-    async (annotation: UnsavedVisionAnnotation<VisionAnnotationDataType>) => {
+    async (
+      annotation: Omit<
+        UnsavedVisionAnnotation<VisionAnnotationDataType>,
+        'annotatedResourceId'
+      >
+    ) => {
       pushMetric('Vision.Review.CreateAnnotation');
 
       if (isImageObjectDetectionBoundingBoxData(annotation.data)) {
@@ -145,12 +147,10 @@ export const ImagePreview = ({
   );
 
   const handleDeleteAnnotation = useCallback(
-    ({
-      annotation: { id },
-    }: VisionReviewAnnotation<VisionAnnotationDataType>) => {
+    (annotationId: InternalId) => {
       dispatch(
         DeleteAnnotationsAndHandleLinkedAssetsOfFile({
-          annotationId: { id },
+          annotationId,
           showWarnings: true,
         })
       );
