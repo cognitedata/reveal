@@ -69,6 +69,19 @@ export const VisionJobUpdate = createAsyncThunk<
     const jobState = getState().processSlice.jobs;
     const existingJob = jobState.byId[job.jobId];
 
+    if (job.status === 'Failed') {
+      dispatch(
+        fileProcessUpdate({
+          modelType,
+          fileIds,
+          job,
+          completedFileIds: [],
+          failedFileIds: job.failedItems
+            .map((item) => item.items.map(({ fileId }) => fileId))
+            .flat(),
+        })
+      );
+    }
     if (
       (existingJob && job.status === 'Running') ||
       job.status === 'Completed'

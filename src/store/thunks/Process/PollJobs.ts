@@ -29,7 +29,8 @@ export const PollJobs = createAsyncThunk<void, JobState[], ThunkConfig>(
           onTick: async (latestJobVersion) => {
             if (
               latestJobVersion.status === 'Running' ||
-              latestJobVersion.status === 'Completed'
+              latestJobVersion.status === 'Completed' ||
+              latestJobVersion.status === 'Failed'
             ) {
               await dispatch(
                 VisionJobUpdate({
