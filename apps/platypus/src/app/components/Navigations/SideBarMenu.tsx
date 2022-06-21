@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
 import { useHistory, useParams } from 'react-router-dom';
-import { Icon, Tooltip } from '@cognite/cogs.js';
+import { Button, Tooltip } from '@cognite/cogs.js';
 
 type SideBarProps = {
   items: Array<SideBarItem>;
@@ -32,11 +32,16 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
       <>
         {item.splitter && <StyledSplitter />}
         <StyledItem
-          key={item.slug}
-          onClick={() => onRoute(item.page, item.slug)}
-          active={
+          type={
+            item.slug.startsWith(solutionPage) || (!index && !solutionPage)
+              ? 'secondary'
+              : 'ghost'
+          }
+          toggled={
             item.slug.startsWith(solutionPage) || (!index && !solutionPage)
           }
+          key={item.slug}
+          onClick={() => onRoute(item.page, item.slug)}
         >
           {item.icon}
         </StyledItem>
@@ -64,11 +69,6 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
           return renderIcon(item, index);
         })}
       </div>
-      <div>
-        <StyledItem>
-          <Icon type="Help" />
-        </StyledItem>
-      </div>
     </StyledSideBarMenu>
   );
 };
@@ -78,41 +78,21 @@ const StyledSideBarMenu = styled.div`
   height: 100%;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center !important;
   width: 56px; // fit to the navbar's 56px + 1px of border
-  padding: 0 1rem;
+  padding: 10px;
   border-right: solid 1px var(--cogs-greyscale-grey3);
 `;
 
-type StyledIconProps = {
-  active?: boolean;
-};
-
-const StyledItem = styled.div<StyledIconProps>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 3.5rem;
-  margin: 1rem 0;
-  cursor: pointer;
-  border-radius: 5px;
-  background-color: ${(props: StyledIconProps) =>
-    props.active ? 'var(--cogs-midblue-7)' : 'transparent'};
-  transition: all 350ms linear;
-
-  * {
-    width: 2.15rem;
-    fill: ${(props: StyledIconProps) =>
-      props.active ? 'var(--cogs-primary)' : 'var(--cogs-greyscale-grey7)'};
-  }
-
-  :hover {
-    background-color: ${(props: StyledIconProps) =>
-      props.active ? 'var(--cogs-midblue-7)' : 'var(--cogs-midblue-7)'};
-  }
+const StyledItem = styled(Button)`
+  margin-bottom: 8px !important;
+  width: 36px !important;
+  height: 36px !important;
+  padding: 10px !important;
 `;
 
 const StyledSplitter = styled.div`
   border-top: solid 1px var(--cogs-greyscale-grey4);
   height: 4px;
-  margin-top: 20px;
+  margin-bottom: 8px;
 `;
