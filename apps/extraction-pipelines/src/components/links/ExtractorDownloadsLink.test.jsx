@@ -34,7 +34,7 @@ describe('ExtractorDownloadsTab', () => {
     const downloadLink = screen.getByText(/download extractors/i);
     expect(downloadLink).toBeInTheDocument();
     expect(downloadLink.href).toEqual(
-      'http://localhost/itera-int-green/extractors?env=greenfield'
+      'http://extractors/'
     );
   });
 

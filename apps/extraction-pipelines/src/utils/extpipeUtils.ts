@@ -166,6 +166,7 @@ type QueryParams = {
   env?: string;
   min?: string;
   max?: string;
+  cluster?: string;
 };
 export const getQueryParams = (search: string): QueryParams => {
   const params = new URLSearchParams(search);
@@ -179,12 +180,14 @@ interface CreateSearchParams {
   statuses: RunStatusAPI[];
   dateRange: Range;
   env?: string;
+  cluster?: string;
 }
 export const createSearchParams = ({
   env,
   search,
   statuses,
   dateRange,
+  cluster
 }: CreateSearchParams) => {
   const params = {
     ...(env && { env }),
@@ -192,6 +195,7 @@ export const createSearchParams = ({
     ...(statuses.length && { statuses: statuses.join(',') }),
     ...(dateRange?.endDate && { max: `${dateRange?.endDate?.getTime()}` }),
     ...(dateRange?.startDate && { min: `${dateRange?.startDate?.getTime()}` }),
+    ...(cluster && { cluster }),
   };
   return new URLSearchParams(params).toString();
 };
