@@ -713,7 +713,7 @@ __metadata:
     "@types/proj4": ^2.5.2
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.3
-    "@types/three": 0.140.0
+    "@types/three": 0.141.0
     "@types/tween.js": 18.5.1
     "@typescript-eslint/eslint-plugin": 5.29.0
     "@typescript-eslint/parser": 5.29.0
@@ -758,7 +758,7 @@ __metadata:
     rxjs: 7.5.5
     shx: 0.3.4
     skmeans: 0.11.3
-    three: 0.140.2
+    three: 0.141.0
     ts-jest: 27.1.5
     ts-loader: 8.4.0
     tsc-alias: 1.6.11
@@ -1649,10 +1649,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.140.0":
-  version: 0.140.0
-  resolution: "@types/three@npm:0.140.0"
-  checksum: 05693787002f0e879e76a09cfd474d4fd100779f00c048e380d146783adaff539846988625b0f9117451bf2790637a236c68111f7f3e160f5227373a037381ba
+"@types/three@npm:0.141.0":
+  version: 0.141.0
+  resolution: "@types/three@npm:0.141.0"
+  dependencies:
+    "@types/webxr": "*"
+  checksum: b4d1fd19eec01a15374a9e0a181207f0b2a27df881f3cfc63ce167b36b214c6926d80ac0eeb80c365832f69e7180db514a859808150ece1c1503a4eb58d4ac1e
   languageName: node
   linkType: hard
 
@@ -1701,6 +1703,13 @@ __metadata:
     anymatch: ^3.0.0
     source-map: ^0.6.0
   checksum: e594a1357cbbc2f7c6ca47785c5a11adb5591a774a69afaeab07cd6f6bff6c6aea2030bd37b32bdd19d0ec2336a346db754e8d8d236ba8effeab542716fb32b7
+  languageName: node
+  linkType: hard
+
+"@types/webxr@npm:*":
+  version: 0.4.0
+  resolution: "@types/webxr@npm:0.4.0"
+  checksum: 4388c18a5b08ef4aa97f2177d3d80d384c5557c4b06278215d46472585923128fb316353e5fb799d22ffe99be149af90d0c27c41cb3681e82228088e48b24184
   languageName: node
   linkType: hard
 
@@ -12504,10 +12513,10 @@ resolve@^1.20.0:
   languageName: node
   linkType: hard
 
-"three@npm:0.140.2":
-  version: 0.140.2
-  resolution: "three@npm:0.140.2"
-  checksum: 67b2733c4177ba0555a16a99e833340586d7a5b1dc4ac2ce7a376c55542cbc6acf72d785ce55b887597551bcf6e209213bcacb0b2c990db66f56ba4991601acb
+"three@npm:0.141.0":
+  version: 0.141.0
+  resolution: "three@npm:0.141.0"
+  checksum: d161350b5134f2db616c7081d625c84235a1d50658b9f9c6ffe94143ddb77944b1c1b6831ad0be00037f8c744c8c60ee8d740ea4d48844b54f4525ee73a2d44f
   languageName: node
   linkType: hard
 
