@@ -153,7 +153,7 @@ export const triggerDownloadFromBlob = (fileName: string, blob: Blob) => {
   link.parentNode?.removeChild(link);
 };
 
-export const formatDate = (date: Date) => {
+export const formatDate = (date: Date | string) => {
   const formatDate = dayjs(date);
   dayjs.extend(isToday);
   dayjs.extend(isYesterday);

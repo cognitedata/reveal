@@ -95,9 +95,9 @@ export const PortfolioHeader = ({
                       {formatMethod(config.bidProcessConfiguration)}
                       <p>
                         Process finished:{' '}
-                        {new Date(
-                          config.bidProcessFinishedDate
-                        ).toLocaleTimeString('en-IT')}
+                        {formatDate(
+                          config.bidProcessFinishedDate.toLocaleString()
+                        )}
                       </p>
                     </div>
                     {config.bidProcessEventExternalId ===
