@@ -5,12 +5,12 @@ import * as THREE from 'three';
 
 import { createRevealManager } from './createRevealManager';
 import { RevealManager } from './RevealManager';
-import { LoadingStateChangeListener } from '..';
-import { createGlContext } from '../../../test-utilities';
+import { createGlContext } from '../../../../test-utilities';
 
 import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
 import { SectorCuller } from '@reveal/cad-geometry-loaders';
 import { SceneHandler } from '@reveal/utilities';
+import { LoadingStateChangeListener } from './types';
 
 describe('RevealManager', () => {
   const stubMetadataProvider: ModelMetadataProvider = {} as any;
