@@ -48,7 +48,7 @@
     "@tweenjs/tween.js": "18.6.4",
     "@types/draco3dgltf": "1.4.0",
     "@types/geojson": "7946.0.8",
-    "@types/three": "0.140.0",
+    "@types/three": "0.141.0",
     "assert": "2.0.0",
     "comlink": "4.3.1",
     "geo-three": "0.0.17",
@@ -60,7 +60,7 @@
     "proj4": "^2.8.0",
     "rxjs": "7.5.5",
     "skmeans": "0.11.3",
-    "three": "0.140.2"
+    "three": "0.141.0"
   },
   "devDependencies": {
     "@azure/msal-browser": "2.26.0",
