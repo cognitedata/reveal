@@ -1,4 +1,4 @@
-import { FileInfo } from '@cognite/sdk';
+import { FileInfo, InternalId } from '@cognite/sdk';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { unwrapResult } from '@reduxjs/toolkit';
 import React, { ReactText, useCallback, useState } from 'react';
@@ -11,10 +11,7 @@ import {
   selectNonRejectedVisionReviewAnnotationsForFile,
   showAnnotationSettingsModel,
 } from 'src/modules/Review/store/reviewSlice';
-import {
-  PredefinedVisionAnnotations,
-  VisionReviewAnnotation,
-} from 'src/modules/Review/types';
+import { PredefinedVisionAnnotations } from 'src/modules/Review/types';
 import { AppDispatch } from 'src/store';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { RootState } from 'src/store/rootReducer';
@@ -97,10 +94,14 @@ export const ImagePreview = ({
     ({ annotatorWrapperReducer }: RootState) =>
       annotatorWrapperReducer.currentTool
   );
-
   const keepUnsavedRegion = useSelector(
     ({ annotatorWrapperReducer }: RootState) =>
       annotatorWrapperReducer.keepUnsavedRegion
+  );
+
+  const isCreatingKeypointCollection = useSelector(
+    ({ annotatorWrapperReducer }: RootState) =>
+      annotatorWrapperReducer.isCreatingKeypointCollection
   );
 
   const scrollId = useSelector(
@@ -108,7 +109,12 @@ export const ImagePreview = ({
   );
 
   const handleCreateAnnotation = useCallback(
-    async (annotation: UnsavedVisionAnnotation<VisionAnnotationDataType>) => {
+    async (
+      annotation: Omit<
+        UnsavedVisionAnnotation<VisionAnnotationDataType>,
+        'annotatedResourceId'
+      >
+    ) => {
       pushMetric('Vision.Review.CreateAnnotation');
 
       if (isImageObjectDetectionBoundingBoxData(annotation.data)) {
@@ -144,12 +150,10 @@ export const ImagePreview = ({
   );
 
   const handleDeleteAnnotation = useCallback(
-    ({
-      annotation: { id },
-    }: VisionReviewAnnotation<VisionAnnotationDataType>) => {
+    (annotationId: InternalId) => {
       dispatch(
         DeleteAnnotationsAndHandleLinkedAssetsOfFile({
-          annotationId: { id },
+          annotationId,
           showWarnings: true,
         })
       );
@@ -227,7 +231,7 @@ export const ImagePreview = ({
           isLoading={isLoading}
           focusIntoView={scrollIntoView}
           nextPredefinedShape={nextPredefinedShape}
-          keepUnsavedRegion={keepUnsavedRegion}
+          keepUnsavedRegion={isCreatingKeypointCollection || keepUnsavedRegion}
           selectedTool={selectedTool}
           scrollId={scrollId}
           onCreateAnnotation={handleCreateAnnotation}

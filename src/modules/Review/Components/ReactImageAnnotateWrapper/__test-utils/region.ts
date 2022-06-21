@@ -1,5 +1,6 @@
 import {
   AnnotatorBaseRegion,
+  AnnotatorNewRegion,
   AnnotatorRegionType,
 } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
 import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
@@ -60,6 +61,34 @@ export const getDummyRegion = <
   };
   return {
     ...baseProperties,
+    ...regionProps,
+  };
+};
+
+export const getDummyRegionOriginatedInAnnotator = ({
+  id,
+  annotationLabelOrText,
+  editingLabels = true,
+  highlighted = true,
+  color = 'red',
+  ...rest
+}: AnnotatorNewRegion) => {
+  let regionProps = rest;
+  if (!regionProps) {
+    regionProps = {
+      type: AnnotatorRegionType.BoxRegion,
+      x: 0,
+      y: 0,
+      w: 1,
+      h: 1,
+    };
+  }
+  return {
+    id,
+    annotationLabelOrText,
+    editingLabels,
+    highlighted,
+    color,
     ...regionProps,
   };
 };

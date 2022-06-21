@@ -1,5 +1,6 @@
 import { PredefinedVisionAnnotations, Tool } from 'src/modules/Review/types';
 import { Keypoint, Status } from 'src/api/annotation/types';
+import { AnnotatorRegion } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
 
 export type KeypointCollectionState = {
   id: number;
@@ -28,4 +29,6 @@ export type AnnotatorWrapperState = {
   lastKeyPoint: string | undefined; // label of last created keypoint to get next keypoint
   currentTool: Tool;
   keepUnsavedRegion: boolean;
+  isCreatingKeypointCollection: boolean;
+  temporaryRegion: AnnotatorRegion | undefined;
 };

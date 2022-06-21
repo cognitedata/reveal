@@ -11,6 +11,7 @@ import {
   isImageExtractedTextData,
   isImageKeypointCollectionData,
   isImageObjectDetectionBoundingBoxData,
+  isImageObjectDetectionData,
   isImageObjectDetectionPolygonData,
   isImageObjectDetectionPolylineData,
 } from 'src/modules/Common/types/typeGuards';
@@ -33,6 +34,7 @@ import {
   ImageAssetLink,
   ImageExtractedText,
   ImageKeypointCollection,
+  ImageObjectDetection,
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
   ImageObjectDetectionPolyline,
@@ -294,54 +296,50 @@ export const getVisionAnnotationDataFromRegion = (
 };
 
 /**
- * Converts annotator region to appropriate VisionAnnotation attributes
+ * Converts annotator region to UnsavedVision annotation
  *
- * If region is a point, output is a ReviewKeypoint else it will be an VisionReviewAnnotation with correct data type
+ * This converts a region to Unsaved Vision Object Detection annotations for annotation creation
+ * This does not accept AnnotatorPointRegions since single region is not enough to create an UnsavedVisionImageKeypointCollection
+ * This does not accept regions that were converted from an existing annotation
  *
- * If annotation metadata is available in the region, output will be a complete review Annotation or review keypoint
- * If not it will be an UnsavedAnnotation or a review keypoint with confidence set to 1
- *
- * New regions created in Annotator tool will not contain annotationMeta since they did not originate from CDF
- * So those will be output from this function as VisionReviewAnnotation or ReviewKeypoint
+ * Also this only provides annotation for ImageObjectDetection type since currently app only creates such annotations
  * @param region
  */
-export const convertRegionToVisionAnnotationProperties = (
+export const convertRegionToUnsavedVisionAnnotation = (
   region: AnnotatorRegion
-): any => {
-  const data = getVisionAnnotationDataFromRegion(region);
-
-  if (isEmpty(data)) {
-    console.error('Cannot convert region', JSON.stringify(region));
+): Omit<
+  UnsavedVisionAnnotation<ImageObjectDetection>,
+  'annotatedResourceId'
+> | null => {
+  if (
+    region.annotationMeta &&
+    region.annotationMeta.annotation.lastUpdatedTime
+  ) {
+    console.error(
+      'Cannot convert region, This region was converted from an existing annotation',
+      JSON.stringify(region)
+    );
     return null;
   }
 
-  if (region.annotationType && region.annotationMeta) {
-    // if point region return keypoint
-    if (isAnnotatorPointRegion(region)) {
-      return {
-        ...data,
-      };
-    }
-    // if annotationType and annotation is available return vision review annotation
-    return {
-      annotation: {
-        ...region.annotationMeta.annotation,
-        id: +region.id,
-        ...data,
-      },
-      selected: region.editingLabels,
-      show: region.visible,
-    } as VisionReviewAnnotation<VisionAnnotationDataType>;
+  const data = getVisionAnnotationDataFromRegion(region);
+
+  if (isEmpty(data)) {
+    console.error(
+      'Cannot convert region, Vision Annotation data not found',
+      JSON.stringify(region)
+    );
+    return null;
   }
 
-  // if point region return unsaved keypoint
-  if (isAnnotatorPointRegion(region)) {
-    return {
-      ...data,
-      confidence: 1,
-    };
+  if (!isImageObjectDetectionData(data as ImageObjectDetection)) {
+    console.error(
+      'Cannot convert region, convertRegionToUnsavedVisionAnnotation can only be used to create Unsaved Object detection annotations',
+      JSON.stringify(region)
+    );
+    return null;
   }
-  // else return vision UnsavedAnnotation
+
   return {
     data: {
       ...data,
@@ -349,8 +347,10 @@ export const convertRegionToVisionAnnotationProperties = (
     },
     annotationType: CDFAnnotationTypeEnum.ImagesObjectDetection,
     status: Status.Approved,
-    annotatedResourceId: 0,
-  } as UnsavedVisionAnnotation<VisionAnnotationDataType>;
+  } as Omit<
+    UnsavedVisionAnnotation<ImageObjectDetection>,
+    'annotatedResourceId'
+  >;
 };
 
 export const convertTempKeypointCollectionToRegions = (
@@ -369,10 +369,39 @@ export const convertTempKeypointCollectionToRegions = (
   return [];
 };
 
+export const convertAnnotatorRegionToAnnotationChangeProperties = (
+  region: AnnotatorRegion
+): AnnotationChangeById | null => {
+  if (
+    !region.annotationMeta ||
+    !region.annotationMeta.annotation.lastUpdatedTime
+  ) {
+    // if the annotation wasn't saved atleast once
+    return null;
+  }
+  if (isAnnotatorPointRegion(region)) {
+    return convertAnnotatorPointRegionToAnnotationChangeProperties(region);
+  }
+  const annotationData = getVisionAnnotationDataFromRegion(region);
+
+  return {
+    id: +region.id,
+    update: {
+      data: { set: annotationData },
+    },
+  };
+};
+
 // todo: add test cases VIS-891
 export const convertAnnotatorPointRegionToAnnotationChangeProperties = (
   region: AnnotatorPointRegion
-): AnnotationChangeById => {
+): AnnotationChangeById | null => {
+  if (
+    !isAnnotatorPointRegion(region) ||
+    !(region.annotationMeta && region.parentAnnotationId)
+  ) {
+    return null;
+  }
   const annotationKeypoints: Record<
     string,
     {
@@ -393,6 +422,8 @@ export const convertAnnotatorPointRegionToAnnotationChangeProperties = (
     update: {
       data: {
         set: {
+          label: region.annotationLabelOrText,
+          confidence: 1,
           keypoints: {
             ...annotationKeypoints,
             [region.keypointLabel]: {
