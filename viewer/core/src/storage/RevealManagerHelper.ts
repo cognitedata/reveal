@@ -15,6 +15,7 @@ import { assertNever, SceneHandler } from '@reveal/utilities';
 
 import { CogniteClient } from '@cognite/sdk';
 import { CadNode } from '@reveal/cad-model';
+import { CogniteClientPlayground } from '@cognite/sdk-playground';
 
 /**
  * Helper for {@link RevealManager} for creating a uniform interface for
@@ -76,9 +77,10 @@ export class RevealManagerHelper {
     renderer: THREE.WebGLRenderer,
     sceneHandler: SceneHandler,
     revealOptions: RevealOptions,
-    sdkClient: CogniteClient
+    sdkClient: CogniteClient,
+    sdkClientPlayground?: CogniteClientPlayground
   ): RevealManagerHelper {
-    const revealManager = createCdfRevealManager(sdkClient, renderer, sceneHandler, revealOptions);
+    const revealManager = createCdfRevealManager(sdkClient, renderer, sceneHandler, revealOptions, sdkClientPlayground);
     return new RevealManagerHelper('cdf', revealManager);
   }
 

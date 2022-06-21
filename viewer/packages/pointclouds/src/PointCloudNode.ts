@@ -12,6 +12,9 @@ import { createPointClassKey } from './createPointClassKey';
 
 import { PickPoint, PotreePointColorType, PotreePointShape, PotreePointSizeType } from './potree-three-loader';
 
+import { PointCloudAppearance } from './styling/PointCloudAppearance';
+import { RawStylableObject } from './styling/StylableObject';
+
 const PotreeDefaultPointClass = 'DEFAULT';
 
 export class PointCloudNode extends THREE.Group {
@@ -92,6 +95,15 @@ export class PointCloudNode extends THREE.Group {
 
   set pointShape(value: PotreePointShape) {
     this._potreeNode.pointShape = value;
+  }
+
+  get stylableObjects(): RawStylableObject[] {
+    return this._potreeNode.stylableObjects;
+  }
+
+  setObjectStyle(objectId: number, appearance: PointCloudAppearance): void {
+    this.potreeNode.setObjectStyle(objectId, appearance);
+    this.requestRedraw();
   }
 
   /**

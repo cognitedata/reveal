@@ -248,7 +248,8 @@ export class Cognite3DViewer {
         this._renderer,
         this._sceneHandler,
         revealOptions,
-        options.sdk
+        options.sdk,
+        options.sdkPlayground
       );
     }
 

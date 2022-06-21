@@ -3,6 +3,7 @@
  */
 
 import { CogniteClient } from '@cognite/sdk';
+import { CogniteClientPlayground } from '@cognite/sdk-playground';
 
 import { CadModelBudget, SectorCuller } from '@reveal/cad-geometry-loaders';
 import { PointCloudBudget, PointCloudIntersection } from '@reveal/pointclouds';
@@ -37,6 +38,8 @@ export type OnLoadingCallback = (itemsLoaded: number, itemsRequested: number, it
 export interface Cognite3DViewerOptions {
   /** Initialized connection to CDF used to load data. */
   sdk: CogniteClient;
+
+  sdkPlayground?: CogniteClientPlayground;
 
   /** An existing DOM element that we will render canvas into. */
   domElement?: HTMLElement;

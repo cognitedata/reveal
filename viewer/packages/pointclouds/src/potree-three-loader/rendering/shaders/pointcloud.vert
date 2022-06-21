@@ -11,6 +11,7 @@ in float classification;
 in float returnNumber;
 in float numberOfReturns;
 in float pointSourceID;
+in float objectId;
 in vec4 indices;
 in vec2 uv;
 
@@ -66,6 +67,7 @@ uniform sampler2D visibleNodes;
 uniform sampler2D gradient;
 uniform sampler2D classificationLUT;
 uniform sampler2D depthMap;
+uniform sampler2D objectIdLUT;
 
 #ifdef use_texture_blending
 	uniform sampler2D backgroundMap;
@@ -599,5 +601,15 @@ void main() {
 
         if (isClipped((modelViewMatrix * vec4(position, 1.0)).xyz)) {
                  gl_Position = vec4(1000.0, 1000.0, 1000.0, 1.0);
+        }
+
+        if (objectId > 0.0) {
+            int lutX = int(objectId) % OBJECT_STYLING_TEXTURE_WIDTH;
+            int lutY = int(objectId) / OBJECT_STYLING_TEXTURE_WIDTH;
+            vec3 colorTexel = texelFetch(objectIdLUT, ivec2(lutX, lutY), 0).rgb;
+
+            if (any(greaterThan(colorTexel, vec3(0.0)))) {
+                vColor = 0.5 * (colorTexel + vColor);
+            }
         }
 }
