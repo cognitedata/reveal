@@ -78,7 +78,6 @@ describe('CdfRestApis Test', () => {
         ],
       });
     qryResult = response.body;
-
     expect(response.statusCode).toEqual(200);
     expect(qryResult.items.length).toBeGreaterThanOrEqual(1);
     expect(qryResult.items[0].externalId).toEqual('LOR_OSLO');
@@ -95,7 +94,6 @@ describe('CdfRestApis Test', () => {
         ],
       });
     qryResult = response.body;
-
     expect(response.statusCode).toEqual(200);
     expect(qryResult.items.length).toBeGreaterThanOrEqual(1);
     expect(qryResult.items[0].externalId).toEqual('LOR_OSLO');

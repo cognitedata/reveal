@@ -220,6 +220,9 @@ const filterFunction = (dbValue, filter) => {
 };
 
 export const objToFilter = (obj) => {
+  if (!obj) {
+    return {};
+  }
   const filters = {};
   Object.keys(obj).forEach((key) => {
     filters[key] = {

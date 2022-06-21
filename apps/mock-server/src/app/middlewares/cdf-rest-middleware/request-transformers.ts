@@ -57,6 +57,7 @@ export function transformFetchRequest(
     'assets',
     'files',
     'events',
+    'relationships',
   ];
 
   endpointEnding = endpointEnding.replace('/', '');
@@ -145,7 +146,6 @@ function convertFiltersWithCustomMappings(body, cdfDb, reqUrl): void {
 
   if (
     body.filter['labels'] &&
-    body.filter['labels'].length &&
     (reqUrl.includes('assets') || reqUrl.includes('files'))
   ) {
     const labelsFilter = body.filter['labels'];
@@ -209,6 +209,24 @@ function convertFiltersWithCustomMappings(body, cdfDb, reqUrl): void {
       } else {
         body.filter.assetIds_like = collection.toArray().map((x) => x.id);
       }
+    }
+  }
+
+  if (body.filter['sourceExternalIds']) {
+    const filter = body.filter['sourceExternalIds'];
+    delete body.filter['sourceExternalIds'];
+
+    const assets = CdfDatabaseService.from(cdfDb, 'assets').getState();
+    const filteredAssets = filterCollection(assets, {
+      externalId: {
+        eq: filter,
+      },
+    }) as CdfResourceObject[];
+
+    if (filteredAssets.length) {
+      body.filter.sourceExternalId = filteredAssets.map(
+        (asset) => asset.externalId
+      );
     }
   }
 }

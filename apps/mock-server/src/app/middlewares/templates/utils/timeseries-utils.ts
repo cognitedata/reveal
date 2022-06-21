@@ -29,6 +29,57 @@ export const findDatapoints = (
   return linkedData.datapoints as CdfResourceObject[];
 };
 
+function isDatapointsGranularityLowerDensity(
+  datapoints: any[],
+  granularity: string
+): boolean {
+  if (!datapoints || datapoints.length < 2) {
+    return true;
+  }
+  const millisecondDiff = +datapoints[2].timestamp - +datapoints[1].timestamp;
+
+  const timeRange = granularity.match(/\d/g)
+    ? +granularity.replace(/\D/g, '')
+    : 0;
+  const unit = granularity.replace(/\d/g, '');
+
+  switch (unit) {
+    case 'd':
+    case 'day':
+    case 'days': {
+      if (millisecondDiff / (1000 * 60 * 60 * 24) > timeRange) {
+        return false;
+      }
+      break;
+    }
+    case 'm':
+    case 'minute':
+    case 'minutes': {
+      if (millisecondDiff / (1000 * 60) > timeRange) {
+        return false;
+      }
+      break;
+    }
+    case 'h':
+    case 'hour':
+    case 'hours': {
+      if (millisecondDiff / (1000 * 60 * 60) > timeRange) {
+        return false;
+      }
+      break;
+    }
+    case 's':
+    case 'second':
+    case 'seconds': {
+      if (millisecondDiff / 1000 > timeRange) {
+        return false;
+      }
+      break;
+    }
+  }
+  return true;
+}
+
 function getTimeRangeBasedOnGranularity(
   timestamp: number,
   granularity: string,
@@ -78,7 +129,7 @@ function getTimeRangeBasedOnGranularity(
   return generateTime;
 }
 
-function groupTimesBy(datapoints, granularity = 'day') {
+function groupTimesBy(datapoints, granularity = '1d') {
   const grouppedResults = {};
 
   let nextStepToMatch;
@@ -161,7 +212,10 @@ export const filterTimeseriesDatapoints = (
     .orderBy((x) => x.timestamp, 'ASC')
     .toArray();
 
-  if (prms.granularity) {
+  if (
+    prms.granularity &&
+    isDatapointsGranularityLowerDensity(datapoints, prms.granularity as string)
+  ) {
     result = groupTimesBy(
       datapoints,
       prms.granularity as string

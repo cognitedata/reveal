@@ -374,6 +374,55 @@ describe('Templates Test', () => {
     expect(dataPointsAfterEnd.length).toEqual(0);
   });
 
+  it('Should not use granularity lower than the actual datapoints', async () => {
+    const apiPath = '/templategroups/BestDay/versions/1/graphql';
+    const response = await runRequest(
+      apiPath,
+      `query {
+        productQuery(filter: {_externalId: {eq: ["401"]}}) {
+          items {
+            _externalId
+            _dataSetId
+            deferments {
+
+              _externalId
+              timeSeries {
+                name
+                aggregatedDatapoints(granularity: "1h", limit:100) {
+                  count {
+                    timestamp
+                    value
+                  }
+                }
+              }
+            }
+          }
+        }
+      }`
+    );
+
+    const qryResult = response.body;
+    expect(response.statusCode).toEqual(200);
+    expect(qryResult.data.productQuery.items.length).toBeGreaterThanOrEqual(1);
+    const [actualDeferments] = qryResult.data.productQuery.items;
+    expect(
+      actualDeferments.deferments[0].timeSeries.aggregatedDatapoints.count[0]
+        .timestamp
+    ).toEqual(1625702400000);
+    expect(
+      actualDeferments.deferments[0].timeSeries.aggregatedDatapoints.count[1]
+        .timestamp
+    ).toEqual(1625788800000);
+    expect(
+      actualDeferments.deferments[0].timeSeries.aggregatedDatapoints.count[2]
+        .timestamp
+    ).toEqual(1625875200000);
+    expect(
+      actualDeferments.deferments[0].timeSeries.aggregatedDatapoints.count[3]
+        .timestamp
+    ).toEqual(1625961600000);
+  });
+
   it('Should support aggregation and synthetic timeseries', async () => {
     const apiPath = '/templategroups/BestDay/versions/1/graphql';
     // test equal

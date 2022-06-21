@@ -95,7 +95,7 @@
 
       useEffect(() => {
         const origin = window.location.origin;
-        fetch(origin + "/api/v1/projects/templategroups/list", {
+        fetch(origin + "/api/v1/projects/project/templategroups/list", {
           method: 'POST',
           body: {}
         }).then((res) => res.json()).then((data) => {
@@ -115,7 +115,7 @@
         }
         const origin = window.location.origin;
 
-        fetch(origin + "/api/v1/projects/templategroups/" + selectedTemplateGroup + "/versions/list", {
+        fetch(origin + "/api/v1/projects/project/templategroups/" + selectedTemplateGroup + "/versions/list", {
           method: 'POST',
           body: {}
         }).then((res) => res.json()).then((data) => {
@@ -159,7 +159,7 @@
                     onChange={(e) => {
                       const schema = templateGroupVersions.find((x) => x.version === +e.target.value);
                       const origin = window.location.origin;
-                      setFetcherUrl(origin + "/api/v1/projects/templategroups/" + selectedTemplateGroup + "/versions/" + e.target.value + "/graphql/");
+                      setFetcherUrl(origin + "/api/v1/projects/project/templategroups/" + selectedTemplateGroup + "/versions/" + e.target.value + "/graphql/");
                       setTemplateGroupVersion(schema);
 
                     }}>

@@ -26,7 +26,7 @@ export const config = {
     '/files/gcs_proxy/cognitedata-file-storage/*',
   ],
   urlRewrites: {
-    '/api/v1/projects/*': '/$1',
+    '/api/v1/projects/:project/*': '/$2',
     '/datamodelstorage/:resource/list': '/:resource',
     '/datamodelstorage/:resource/byids': '/:resource',
     '/datamodelstorage/:resource/search': '/:resource',
