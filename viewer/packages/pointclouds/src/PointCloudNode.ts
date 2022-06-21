@@ -15,12 +15,6 @@ import { PickPoint, PotreePointColorType, PotreePointShape, PotreePointSizeType 
 import { PointCloudAppearance } from './styling/PointCloudAppearance';
 import { RawStylableObject } from './styling/StylableObject';
 
-import { PointCloudAppearance } from './styling/PointCloudAppearance';
-import { RawStylableObject } from './styling/StylableObject';
-
-import { PointCloudAppearance } from './styling/PointCloudAppearance';
-import { RawStylableObject } from './styling/StylableObject';
-
 const PotreeDefaultPointClass = 'DEFAULT';
 
 export class PointCloudNode extends THREE.Group {

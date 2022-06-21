@@ -2,8 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { CognitePointCloudModel } from '@cognite/reveal';
-import * as THREE from 'three';
+import { CognitePointCloudModel, THREE } from '@cognite/reveal';
 
 export class PointCloudObjectStylingUI {
 
