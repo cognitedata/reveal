@@ -661,19 +661,23 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
             </SplitPaneLayout>
           </ChartContainer>
         </ContentWrapper>
-        <DetailsSidebar
-          visible={showContextMenu}
-          onClose={handleCloseContextMenu}
-          sourceItem={selectedSourceItem}
-          statisticsResult={statisticsResult}
-          statisticsStatus={statisticsStatus}
-        />
-        <ThresholdSidebar
-          visible={showThresholdMenu}
-          onClose={handleCloseThresholdMenu}
-          updateChart={setChart}
-          chart={chart}
-        />
+        {showContextMenu && (
+          <DetailsSidebar
+            visible={showContextMenu}
+            onClose={handleCloseContextMenu}
+            sourceItem={selectedSourceItem}
+            statisticsResult={statisticsResult}
+            statisticsStatus={statisticsStatus}
+          />
+        )}
+        {showThresholdMenu && (
+          <ThresholdSidebar
+            visible={showThresholdMenu}
+            onClose={handleCloseThresholdMenu}
+            updateChart={setChart}
+            chart={chart}
+          />
+        )}
       </ChartViewContainer>
     </>
   );
