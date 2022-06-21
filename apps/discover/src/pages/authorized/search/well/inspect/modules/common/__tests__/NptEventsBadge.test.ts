@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 
 import { testRenderer } from '__test-utils/renderer';
 
-import NptEventsBadge from '../EventsV2/NptEventsBadge';
+import NptEventsBadge from '../Events/NptEventsBadge';
 
 const props = {
   events: [

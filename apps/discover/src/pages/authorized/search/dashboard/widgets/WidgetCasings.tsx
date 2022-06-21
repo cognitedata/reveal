@@ -1,9 +1,9 @@
-import * as React from 'react';
+import { useCasingSchematicsQuery } from 'domain/wells/casings/internal/queries/useCasingSchematicsQuery';
 
-import { useAllCasingsQuery } from 'modules/wellSearch/hooks/useAllCasingsQuery';
+import * as React from 'react';
 
 import { WidgetLoader } from '../WidgetLoader';
 
 export const WidgetCasings: React.FC = () => {
-  return <WidgetLoader title="Casings" query={useAllCasingsQuery} />;
+  return <WidgetLoader title="Casings" query={useCasingSchematicsQuery} />;
 };

@@ -1,13 +1,15 @@
+import { NdsInternal } from 'domain/wells/nds/internal/types';
+
 import { screen } from '@testing-library/react';
 
-import { mockNdsV2Events } from '__test-utils/fixtures/nds';
+import { mockNdsEvents } from '__test-utils/fixtures/nds';
 import { testRenderer } from '__test-utils/renderer';
 
 import NdsEventsColumn, {
   EMPTY_STATE_TEXT,
   LOADING_TEXT,
   Props,
-} from '../EventsV2/NdsEventsColumn';
+} from '../Events/NdsEventsColumn';
 
 const props = {
   scaleBlocks: [],
@@ -19,7 +21,7 @@ describe('NdsEventsColumn Tests', () => {
   const page = (viewProps?: Props) =>
     testRenderer(NdsEventsColumn, undefined, viewProps);
 
-  const ndsEvents = mockNdsV2Events();
+  const ndsEvents = mockNdsEvents as NdsInternal[];
 
   const defaultTestInit = async (props: Props) => {
     return {

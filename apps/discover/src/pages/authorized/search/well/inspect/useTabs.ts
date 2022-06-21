@@ -3,7 +3,7 @@ import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 
 import { TAB_NAMES, WellInspectTabs } from './constants';
 import ThreeDee from './modules/3d';
-import Casing from './modules/casing';
+import Casing from './modules/casings';
 import DigitalRocks from './modules/digitalRocks';
 import EventsNds from './modules/events/Nds';
 import EventsNpt from './modules/events/Npt';

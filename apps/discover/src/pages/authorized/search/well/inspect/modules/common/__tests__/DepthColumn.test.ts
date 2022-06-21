@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 
 import { testRenderer } from '__test-utils/renderer';
 
-import DepthColumn, { Props } from '../EventsV2/DepthColumn';
+import DepthColumn, { Props } from '../Events/DepthColumn';
 
 const casingViewProps = {
   scaleBlocks: [0, 100, 200, 300],
@@ -33,13 +33,13 @@ describe('Depth Column', () => {
       await screen.findByText(`${casingViewProps.scaleBlocks[0]}`)
     ).toBeInTheDocument();
     expect(
-      await screen.findByText(`${casingViewProps.scaleBlocks[1]}.00`)
+      await screen.findByText(`${casingViewProps.scaleBlocks[1]}`)
     ).toBeInTheDocument();
     expect(
-      await screen.findByText(`${casingViewProps.scaleBlocks[2]}.00`)
+      await screen.findByText(`${casingViewProps.scaleBlocks[2]}`)
     ).toBeInTheDocument();
     expect(
-      await screen.findByText(`${casingViewProps.scaleBlocks[3]}.00`)
+      await screen.findByText(`${casingViewProps.scaleBlocks[3]}`)
     ).toBeInTheDocument();
   });
 });

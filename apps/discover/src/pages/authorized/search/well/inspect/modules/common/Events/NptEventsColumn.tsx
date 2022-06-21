@@ -6,8 +6,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import EmptyState from 'components/EmptyState';
 
-import { NPT_COLUMN_TITLE } from '../../casing/CasingView/constants';
-
+import { NPT_COLUMN_TITLE } from './constants';
 import {
   BodyColumn,
   BodyColumnHeaderWrapper,

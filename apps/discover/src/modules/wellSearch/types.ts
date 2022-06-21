@@ -13,13 +13,9 @@ import {
   WellFilter as WellFilterV3,
   DepthMeasurement,
   DepthMeasurementData,
-  CasingAssembly,
-  Distance,
-  CasingSchematic,
 } from '@cognite/sdk-wells-v3';
 
 import { DataError } from 'modules/inspectTabs/types';
-import { CasingType } from 'pages/authorized/search/well/inspect/modules/casing/CasingView/interfaces';
 
 import { TableResults } from '../../components/Tablev3/resultTypes';
 import { UserPreferredUnit } from '../../constants/units';
@@ -161,11 +157,6 @@ export interface WellResult {
   error?: Error;
 }
 
-export interface WellName {
-  id: number;
-  name: string;
-}
-
 export interface WellSequence {
   name: string;
   id: number;
@@ -277,10 +268,6 @@ export type FilterConfig = {
 
 export type FilterConfigMap = {
   [key: number]: FilterConfig;
-};
-
-export type WellboreSequencesMap = {
-  [key: string]: Sequence[];
 };
 
 export type WellboreEventsMap = {
@@ -416,10 +403,6 @@ export interface MeasurementV3 extends DepthMeasurement {
   errors?: DataError[];
 }
 
-export type WellboreMeasurementsMap = {
-  [key: string]: Measurement[];
-};
-
 export type WellboreMeasurementsMapV3 = {
   [key: string]: MeasurementV3[];
 };
@@ -436,17 +419,8 @@ export type MeasurementCurveConfigV3 = {
   };
 };
 
-export type MeasurementChartData = Partial<PlotData> & {
-  measurementType: MeasurementType;
-};
-
 export type MeasurementChartDataV3 = Partial<PlotData> & {
   measurementType: MeasurementTypeV3;
-};
-
-export type WellboreChartData = {
-  wellbore: Wellbore;
-  chartData: MeasurementChartDataV3[];
 };
 
 export type WellboreProcessedData = {
@@ -476,26 +450,3 @@ export type RegionFieldBlockHierarchy = {
 };
 
 export type RegionFieldBlockResult = { [key in RegionFieldBlock]: string[] };
-
-export interface PreviewCasingType extends CasingType {
-  startDepth: number;
-  casingStartDepth: number;
-  casingDepth: number;
-  casingDescription: string;
-  /**
-   * If the assembly is a liner or casing.
-   * True if it's a liner. False otherwise.
-   */
-  liner: boolean;
-  maximumDescription: string;
-  /** Invert the triangle (shoe) end */
-  leftEnd?: boolean;
-}
-export interface CasingAssemblyWithTVD extends CasingAssembly {
-  trueVerticalDepthTop?: Distance;
-  trueVerticalDepthBase?: Distance;
-}
-
-export interface CasingSchematicWithTVDs extends CasingSchematic {
-  casingAssemblies: Array<CasingAssemblyWithTVD>;
-}

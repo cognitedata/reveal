@@ -1,8 +1,7 @@
 import React from 'react';
 
 import { Distance } from 'convert-units';
-
-import { Body } from '@cognite/cogs.js';
+import { Fixed, toFixedNumberFromNumber } from 'utils/number';
 
 import {
   DepthMeasurementUnit,
@@ -37,26 +36,15 @@ const DepthColumn = React.forwardRef<HTMLElement, Props>(
           <FlexGrow />
           <BodyColumnSubHeader>{unit}</BodyColumnSubHeader>
         </BodyColumnHeaderWrapper>
+
         <BodyColumnBody>
           <DepthMeasurementScale>
-            {scaleBlocks.map((row, index) => {
-              if (index === 0) {
-                /**
-                 * Making the `0` text bold and render without decimal places (0.00 -> 0)
-                 */
-                return (
-                  <ScaleLine key={row}>
-                    <ScaleLineDepth>
-                      <Body strong level={2}>
-                        {Number(row)}
-                      </Body>
-                    </ScaleLineDepth>
-                  </ScaleLine>
-                );
-              }
+            {scaleBlocks.map((scaleValue) => {
               return (
-                <ScaleLine key={row}>
-                  <ScaleLineDepth>{row.toFixed(2)}</ScaleLineDepth>
+                <ScaleLine key={scaleValue}>
+                  <ScaleLineDepth>
+                    {toFixedNumberFromNumber(scaleValue, Fixed.TwoDecimals)}
+                  </ScaleLineDepth>
                 </ScaleLine>
               );
             })}

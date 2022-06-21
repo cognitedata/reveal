@@ -1,12 +1,14 @@
+import { NdsInternal } from 'domain/wells/nds/internal/types';
+
 import { screen } from '@testing-library/react';
 
-import { mockNdsV2Events } from '__test-utils/fixtures/nds';
+import { mockNdsEvents } from '__test-utils/fixtures/nds';
 import { testRenderer } from '__test-utils/renderer';
 
-import NdsEventsBadge, { Props } from '../EventsV2/NdsEventsBadge';
+import NdsEventsBadge, { Props } from '../Events/NdsEventsBadge';
 
 const props = {
-  events: mockNdsV2Events(),
+  events: mockNdsEvents as NdsInternal[],
 };
 
 describe('Nds Events Badge', () => {

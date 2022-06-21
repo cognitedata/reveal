@@ -9,61 +9,6 @@ import {
   SCALE_PADDING,
 } from './constants';
 
-export const CasingViewListWrapper = styled.div`
-  height: calc(100% - 4px);
-  white-space: nowrap;
-`;
-
-export const CenterLine = styled.div`
-  display: inline-block;
-  width: 20px;
-  height: 100%;
-`;
-
-export const Wrapper = styled(FlexColumn)`
-  height: 100%;
-  width: fit-content;
-  background: var(--cogs-bg-accent);
-  border-radius: 12px;
-`;
-
-export const Header = styled(FlexRow)`
-  gap: 32px;
-  padding: ${sizes.normal};
-  box-shadow: inset 0px -1px 0px var(--cogs-greyscale-grey3);
-`;
-
-export const MainHeader = styled(Flex)`
-  width: 100%;
-  font-weight: 600;
-  font-size: ${sizes.normal};
-  line-height: 20px;
-  align-items: center;
-  letter-spacing: -0.01em;
-  color: var(--cogs-greyscale-grey9);
-`;
-
-export const SubHeader = styled(Flex)`
-  width: 100%;
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 16px;
-  align-items: center;
-  letter-spacing: -0.004em;
-  color: rgba(0, 0, 0, 0.45);
-  margin-top: ${sizes.extraSmall};
-`;
-
-export const BodyWrapper = styled(Flex)`
-  height: calc(100% - 72px);
-  padding: ${sizes.normal};
-  gap: ${sizes.small};
-  justify-content: center;
-  > * h6 {
-    display: none;
-  }
-`;
-
 export const BodyColumn = styled(FlexColumn)`
   /* margin-top: 30px; */
   /* height: 500px; */
@@ -86,14 +31,6 @@ export const BodyColumnHeaderWrapper = styled(FlexRow)`
 
 export const BodyColumnHeaderLegend = styled(FlexRow)`
   margin-left: auto;
-`;
-
-export const LegendIndicator = styled.div`
-  height: ${sizes.small};
-  width: ${sizes.small};
-  border-radius: 50%;
-  margin: 0 ${sizes.extraSmall} 2px ${sizes.normal};
-  background: ${(props: { color: string }) => props.color};
 `;
 
 export const BodyColumnMainHeader = styled(Flex)`
@@ -250,23 +187,6 @@ export const EventsCodeCount = styled(Flex)`
 export const EmptyStateWrapper = styled(Flex)`
   white-space: break-spaces;
   max-width: 148px;
-  & ${SubTitleText} {
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 16px;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    letter-spacing: -0.004em;
-    padding-top: 0;
-    justify-content: center;
-  }
-`;
-
-export const EmptyCasingsStateWrapper = styled(Flex)`
-  white-space: break-spaces;
-  max-width: 200px;
-  height: 100%;
   & ${SubTitleText} {
     font-weight: 500;
     font-size: 12px;
