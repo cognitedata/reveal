@@ -187,13 +187,18 @@ describe('Wells: result_table', () => {
     cy.performSearch('');
     cy.goToTab('Wells');
     cy.wait('@getSources');
+    cy.addWaitForWdlResources(
+      'trajectories/list',
+      'POST',
+      'getTrajectoriesList'
+    );
 
     cy.log('click on source filter section');
     cy.clickOnFilterCategory(DATA_SOURCE);
 
     cy.log('Checking source values');
     cy.validateSelect(DATA_SOURCE, [SOURCE_FILTER], SOURCE_FILTER);
-    cy.contains(SOURCE_FILTER).should('be.visible').click();
+    cy.wait('@getTrajectoriesList');
 
     cy.log('Minimize source section');
     cy.clickOnFilterCategory(DATA_SOURCE);
