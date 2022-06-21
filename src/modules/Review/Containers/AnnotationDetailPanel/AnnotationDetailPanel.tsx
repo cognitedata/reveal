@@ -37,7 +37,7 @@ import { convertTempKeypointCollectionToVisionReviewImageKeypointCollection } fr
 import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import {
-  deleteCurrentCollection,
+  deleteTempKeypointCollection,
   keypointSelectStatusChange,
   selectCollection,
   setCollectionStatus,
@@ -151,7 +151,7 @@ export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
     (id: number) => {
       if (id === tempKeypointCollection?.id) {
         // when creating keypoint collections
-        dispatch(deleteCurrentCollection());
+        dispatch(deleteTempKeypointCollection());
       } else {
         dispatch(
           DeleteAnnotationsAndHandleLinkedAssetsOfFile({

@@ -25,12 +25,12 @@ import { AnnotationEditPopup } from 'src/modules/Review/Components/ReactImageAnn
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import {
   convertAnnotatorPointRegionToAnnotationChangeProperties,
-  convertRegionToVisionAnnotationProperties,
+  convertAnnotatorRegionToAnnotationChangeProperties,
+  convertRegionToUnsavedVisionAnnotation,
   convertTempKeypointCollectionToRegions,
   convertVisionReviewAnnotationsToRegions,
-  getVisionAnnotationDataFromRegion,
 } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/converters';
-import { FileInfo } from '@cognite/sdk';
+import { FileInfo, InternalId } from '@cognite/sdk';
 import {
   UnsavedVisionAnnotation,
   VisionAnnotationDataType,
@@ -44,7 +44,7 @@ import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1
 import { AnnotationChangeById } from '@cognite/sdk-playground';
 import {
   createTempKeypointCollection,
-  deleteCurrentCollection,
+  deleteTempKeypointCollection,
   keypointSelectStatusChange,
   onCreateRegion,
   onUpdateKeyPoint,
@@ -71,12 +71,13 @@ type ReactImageAnnotateWrapperProps = {
   selectedTool: string;
   scrollId: string;
   onCreateAnnotation: (
-    annotation: UnsavedVisionAnnotation<VisionAnnotationDataType>
+    annotation: Omit<
+      UnsavedVisionAnnotation<VisionAnnotationDataType>,
+      'annotatedResourceId'
+    >
   ) => void;
   onUpdateAnnotation: (changes: AnnotationChangeById) => void;
-  onDeleteAnnotation: (
-    annotation: VisionReviewAnnotation<VisionAnnotationDataType>
-  ) => void;
+  onDeleteAnnotation: (annotationId: InternalId) => void;
   openAnnotationSettings: (type: string, text?: string, color?: string) => void;
 };
 
@@ -179,7 +180,7 @@ export const ReactImageAnnotateWrapper = ({
         );
       if (unsavedVisionImageKeypointCollectionAnnotation) {
         onCreateAnnotation(unsavedVisionImageKeypointCollectionAnnotation);
-        dispatch(createTempKeypointCollection(false));
+        dispatch(deleteTempKeypointCollection());
       }
     }
   }, [
@@ -213,12 +214,12 @@ export const ReactImageAnnotateWrapper = ({
   // delete current collection when component is unmounted
   useEffect(() => {
     return () => {
-      dispatch(deleteCurrentCollection());
+      dispatch(deleteTempKeypointCollection());
     };
   }, []);
 
   useEffect(() => {
-    dispatch(deleteCurrentCollection());
+    dispatch(deleteTempKeypointCollection());
     dispatch(deselectAllSelectionsReviewPage());
   }, [fileInfo, selectedTool]);
 
@@ -228,10 +229,14 @@ export const ReactImageAnnotateWrapper = ({
 
       if (annotationLabelOrText) {
         if (isAnnotatorPointRegion(region)) {
-          await dispatch(createTempKeypointCollection(true));
+          await dispatch(createTempKeypointCollection());
         } else {
           await dispatch(setLastShape(annotationLabelOrText));
-          onCreateAnnotation(convertRegionToVisionAnnotationProperties(region));
+          const unsavedAnnotation =
+            convertRegionToUnsavedVisionAnnotation(region);
+          if (unsavedAnnotation) {
+            onCreateAnnotation(unsavedAnnotation);
+          }
         }
       }
     },
@@ -250,12 +255,8 @@ export const ReactImageAnnotateWrapper = ({
             convertAnnotatorPointRegionToAnnotationChangeProperties(region);
         } else {
           await dispatch(setLastShape(annotationLabelOrText));
-          annotationChangeProps = {
-            id: Number(region.id),
-            update: {
-              data: { set: getVisionAnnotationDataFromRegion(region) },
-            },
-          };
+          annotationChangeProps =
+            convertAnnotatorRegionToAnnotationChangeProperties(region);
         }
         if (annotationChangeProps) {
           onUpdateAnnotation(annotationChangeProps);
@@ -267,7 +268,11 @@ export const ReactImageAnnotateWrapper = ({
 
   const handleDeleteRegion = useCallback(
     (region: AnnotatorRegion) => {
-      onDeleteAnnotation(convertRegionToVisionAnnotationProperties(region));
+      const annotationChangeProps =
+        convertAnnotatorRegionToAnnotationChangeProperties(region);
+      if (annotationChangeProps && annotationChangeProps.id) {
+        onDeleteAnnotation({ id: annotationChangeProps.id });
+      }
     },
     [onDeleteAnnotation]
   );

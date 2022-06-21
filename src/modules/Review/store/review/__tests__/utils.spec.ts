@@ -2,7 +2,7 @@ import {
   ReviewKeypoint,
   TempKeypointCollection,
 } from 'src/modules/Review/types';
-import { CDFAnnotationTypeEnum, Status } from 'src/api/annotation/types';
+import { CDFAnnotationTypeEnum, Point, Status } from 'src/api/annotation/types';
 import { convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection } from 'src/modules/Review/store/review/utils';
 import { getDummyTempKeypointCollection } from 'src/__test-utils/annotations';
 
@@ -77,6 +77,17 @@ describe('test convertTempKeypointCollectionToUnsavedVisionImageKeypointCollecti
     ).toBeNull();
   });
   it('should return correct UnsavedVisionImageKeypointCollectionAnnotation with all confidences set to 1', () => {
+    const keypointObject: {
+      [key: string]: { confidence?: number; point: Point };
+    } = {};
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const { keypoint } of dummyTempKeypointCollection.data.keypoints) {
+      keypointObject[keypoint.label] = {
+        confidence: 1,
+        point: keypoint.point,
+      };
+    }
     expect(
       convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection({
         ...getDummyTempKeypointCollection({}),
@@ -87,13 +98,7 @@ describe('test convertTempKeypointCollectionToUnsavedVisionImageKeypointCollecti
       status: Status.Approved,
       data: {
         label: dummyTempKeypointCollection.data.label,
-        keypoints: dummyTempKeypointCollection.data.keypoints.map(
-          ({ keypoint }) => ({
-            label: keypoint.label,
-            confidence: 1,
-            point: keypoint.point,
-          })
-        ),
+        keypoints: keypointObject,
         confidence: 1,
       },
     });

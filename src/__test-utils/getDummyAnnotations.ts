@@ -15,10 +15,14 @@ import {
   Status,
 } from 'src/api/annotation/types';
 import {
+  UnsavedVisionAnnotation,
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
-import { isImageKeypointCollectionData } from 'src/modules/Common/types/typeGuards';
+import {
+  isImageKeypointCollectionData,
+  isImageObjectDetectionData,
+} from 'src/modules/Common/types/typeGuards';
 import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
   TurnKeypointType,
@@ -293,4 +297,32 @@ export const getDummyVisionReviewAnnotation = (
     show: !!show,
     selected: !!selected,
   };
+};
+
+export const getDummyUnsavedAnnotation = (
+  visionAnnotation: VisionAnnotation<VisionAnnotationDataType>
+): UnsavedVisionAnnotation<VisionAnnotationDataType> => {
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  const {
+    id,
+    annotationType,
+    status,
+    annotatedResourceId,
+    createdTime,
+    lastUpdatedTime,
+    ...data
+  } = visionAnnotation;
+
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+  let correctAnnotationType = annotationType;
+  if (isImageObjectDetectionData(data)) {
+    correctAnnotationType = CDFAnnotationTypeEnum.ImagesObjectDetection;
+  }
+
+  return {
+    data,
+    status,
+    annotatedResourceId,
+    annotationType: correctAnnotationType,
+  } as UnsavedVisionAnnotation<VisionAnnotationDataType>;
 };
