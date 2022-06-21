@@ -30,13 +30,6 @@ export const convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection
     ) {
       return null;
     }
-    const keypoints = collection.data.keypoints.reduce((acc, next) => {
-      acc[next.keypoint.label] = {
-        point: next.keypoint.point,
-        confidence: 1, // since it is manually created
-      };
-      return acc;
-    }, {} as any);
     return {
       annotationType: CDFAnnotationTypeEnum.ImagesKeypointCollection,
       status: Status.Approved, // since all manually created annotation are considered "approved" by default
@@ -44,7 +37,11 @@ export const convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection
       data: {
         ...collection.data,
         confidence: 1, // since it is manually created
-        keypoints,
+        keypoints: collection.data.keypoints.map((reviewKeypoint) => ({
+          label: reviewKeypoint.keypoint.label,
+          point: reviewKeypoint.keypoint.point,
+          confidence: 1, // since it is manually created
+        })),
       },
     };
   };
