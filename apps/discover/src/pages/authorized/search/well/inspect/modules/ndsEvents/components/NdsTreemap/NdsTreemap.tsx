@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-import { Table } from '@cognite/cogs.js';
-
+import { ViewButton } from 'components/Buttons';
 import { Modal } from 'components/Modal';
+import { Table } from 'components/Tablev3';
 import { Treemap, TreeMapData } from 'components/Treemap';
 
 import { WellboreTableWrapper } from './elements';
@@ -40,30 +40,38 @@ export const NdsTreemap: React.FC<NdsTreemapProps> = ({
         visible={!!otherWellbores.length}
         title="Other"
         width={1000}
-        onOk={() => setOtherWellbores([])}
         onCancel={() => setOtherWellbores([])}
         footer={null}
       >
         <WellboreTableWrapper>
           <Table<NdsTreemapWellboreData>
-            dataSource={otherWellbores}
+            id="nds-modal-wellbores"
+            data={otherWellbores}
             columns={[
               {
                 Header: 'Wellbore name',
                 accessor: 'name',
+                width: 'auto',
               },
               {
                 Header: 'Number of NDS events',
                 accessor: 'numberOfEvents',
-                width: 150,
+                width: '250px',
               },
             ]}
-            pagination={false}
-            flexLayout={{
-              minWidth: 100,
-              width: 500,
-              maxWidth: 500,
+            options={{
+              flex: false,
             }}
+            renderRowHoverComponent={({ row }) => (
+              <ViewButton
+                text="View"
+                hideIcon
+                onClick={() => {
+                  onClickTile?.(row.original.id);
+                  setOtherWellbores([]);
+                }}
+              />
+            )}
           />
         </WellboreTableWrapper>
       </Modal>

@@ -5,6 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import { NavigationPanel } from 'components/NavigationPanel';
 import { OverlayNavigation } from 'components/OverlayNavigation';
+import { Treemap } from 'components/Treemap';
 
 import { ViewModeControl } from '../../../common/ViewModeControl';
 import { EMPTY_APPLIED_FILTERS } from '../../constants';
@@ -13,7 +14,6 @@ import { getFilteredNdsData } from '../../utils/getFilteredNdsData';
 import { getRiskTypeTreemapData } from '../../utils/getRiskTypeTreemapData';
 import { getSubtypeTreemapData } from '../../utils/getSubtypeTreemapData';
 import { Filters } from '../Filters';
-import { NdsTreemap } from '../NdsTreemap';
 
 import { NdsDetailedViewModes } from './constants';
 import {
@@ -106,11 +106,11 @@ export const DetailedView: React.FC<DetailedViewProps> = ({
 
         <DetailedViewContent>
           {selectedViewMode === NdsDetailedViewModes.RiskType && (
-            <NdsTreemap data={riskTypeTreemapData} />
+            <Treemap data={riskTypeTreemapData} />
           )}
 
           {selectedViewMode === NdsDetailedViewModes.Subtype && (
-            <NdsTreemap data={subtypeTreemapData} />
+            <Treemap data={subtypeTreemapData} />
           )}
 
           {selectedViewMode === NdsDetailedViewModes.Table && (
