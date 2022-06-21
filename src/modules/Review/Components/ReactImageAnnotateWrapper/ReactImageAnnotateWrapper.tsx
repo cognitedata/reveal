@@ -44,7 +44,7 @@ import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1
 import { AnnotationChangeById } from '@cognite/sdk-playground';
 import {
   createTempKeypointCollection,
-  deleteCurrentCollection,
+  deleteTempKeypointCollection,
   keypointSelectStatusChange,
   onCreateRegion,
   onUpdateKeyPoint,
@@ -180,7 +180,7 @@ export const ReactImageAnnotateWrapper = ({
         );
       if (unsavedVisionImageKeypointCollectionAnnotation) {
         onCreateAnnotation(unsavedVisionImageKeypointCollectionAnnotation);
-        dispatch(createTempKeypointCollection(false));
+        dispatch(deleteTempKeypointCollection());
       }
     }
   }, [
@@ -214,12 +214,12 @@ export const ReactImageAnnotateWrapper = ({
   // delete current collection when component is unmounted
   useEffect(() => {
     return () => {
-      dispatch(deleteCurrentCollection());
+      dispatch(deleteTempKeypointCollection());
     };
   }, []);
 
   useEffect(() => {
-    dispatch(deleteCurrentCollection());
+    dispatch(deleteTempKeypointCollection());
     dispatch(deselectAllSelectionsReviewPage());
   }, [fileInfo, selectedTool]);
 
@@ -229,7 +229,7 @@ export const ReactImageAnnotateWrapper = ({
 
       if (annotationLabelOrText) {
         if (isAnnotatorPointRegion(region)) {
-          await dispatch(createTempKeypointCollection(true));
+          await dispatch(createTempKeypointCollection());
         } else {
           await dispatch(setLastShape(annotationLabelOrText));
           const unsavedAnnotation =
