@@ -15,10 +15,10 @@ import {
 } from 'src/api/annotation/types';
 import {
   CDFInheritedFields,
+  UnsavedVisionAnnotation,
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
-import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   isAssetLinkedAnnotation,
   isKeyPointAnnotation,
@@ -27,7 +27,13 @@ import {
   isPolyline,
   isTextAnnotation,
 } from 'src/api/annotation/typeGuards';
-import { AnnotationModel, AnnotationPayload } from '@cognite/sdk-playground';
+import {
+  AnnotationCreate,
+  AnnotationModel,
+  AnnotationPayload,
+  AnnotationStatus as sdkAnnotationStatus,
+} from '@cognite/sdk-playground';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   validBoundingBox,
   validImageAssetLink,
@@ -316,3 +322,46 @@ export const convertCDFAnnotationToVisionAnnotations = (
     },
     []
   );
+
+// TODO: remove this conversion once
+// https://cognitedata.atlassian.net/browse/VIS-874 is done
+export const convertUnsavedAnnotationsToCDFCompatibleAnnotation = (
+  unsavedAnnotations: UnsavedVisionAnnotation<VisionAnnotationDataType>[]
+): Omit<
+  AnnotationCreate,
+  | 'annotatedResourceType'
+  | 'creatingApp'
+  | 'creatingAppVersion'
+  | 'creatingUser'
+>[] =>
+  unsavedAnnotations.map((unsavedAnnotation) => {
+    const status = unsavedAnnotation.status as sdkAnnotationStatus;
+
+    let annotationData: AnnotationPayload = unsavedAnnotation.data;
+    if (
+      unsavedAnnotation.annotationType ===
+      CDFAnnotationTypeEnum.ImagesKeypointCollection
+    ) {
+      const keypoints = (
+        unsavedAnnotation.data as ImageKeypointCollection
+      ).keypoints.reduce((acc, next) => {
+        acc[next.label] = {
+          point: next.point,
+          confidence: next.confidence,
+        };
+        return acc;
+      }, {} as any);
+
+      const convertedAnnotationData = {
+        ...unsavedAnnotation.data,
+        keypoints,
+      };
+      annotationData = convertedAnnotationData;
+    }
+
+    return {
+      ...unsavedAnnotation,
+      data: annotationData,
+      status,
+    };
+  });

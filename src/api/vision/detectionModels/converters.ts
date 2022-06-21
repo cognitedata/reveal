@@ -156,10 +156,11 @@ function convertGaugeReaderJobAnnotationAttributesToAnnotationAttributes(
   const { data } = visionJobAnnotation;
   return {
     attributes: {
-      unit: {
-        type: 'unit',
-        value: data.unit,
-      },
+      // TODO: remove unit until it is supported in Annotations API
+      // unit: {
+      //   type: 'unit',
+      //   value: data.unit,
+      // },
       gaugeValue: {
         type: 'numerical',
         value: data.gauge_value || -1,

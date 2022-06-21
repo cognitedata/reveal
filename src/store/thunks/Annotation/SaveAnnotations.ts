@@ -12,14 +12,21 @@ import {
   CREATING_APP_VERSION,
 } from 'src/constants/annotationMetadata';
 import { cognitePlaygroundClient as sdk } from 'src/api/annotation/CognitePlaygroundClient';
-import { convertCDFAnnotationToVisionAnnotations } from 'src/api/annotation/converters';
+import {
+  convertCDFAnnotationToVisionAnnotations,
+  convertUnsavedAnnotationsToCDFCompatibleAnnotation,
+} from 'src/api/annotation/converters';
 
 export const SaveAnnotations = createAsyncThunk<
   VisionAnnotation<VisionAnnotationDataType>[],
   UnsavedVisionAnnotation<VisionAnnotationDataType>[],
   ThunkConfig
 >('SaveAnnotations', async (unsavedAnnotations) => {
-  const items = unsavedAnnotations.map((item) => {
+  // TODO: remove this conversion once
+  // https://cognitedata.atlassian.net/browse/VIS-874 is done
+  const items = convertUnsavedAnnotationsToCDFCompatibleAnnotation(
+    unsavedAnnotations
+  ).map((item) => {
     return {
       ...item,
       annotatedResourceType: ANNOTATED_RESOURCE_TYPE,
