@@ -6,7 +6,11 @@ module.exports = {
       const config = configFunction(proxy, allowedHost);
 
       // Removes deprecation warning
-      config.server = 'https';
+      if (process.env.HTTPS === undefined || process.env.HTTPS !== "false") {
+        config.server = 'https';
+      } else {
+        config.server = 'http';
+      }
       delete config.https;
 
       // Removes deprecation warning
