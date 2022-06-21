@@ -16,7 +16,7 @@ import { CalculatedProduction } from '@cognite/power-ops-api-types';
 import { getActiveColumns } from './utils';
 import {
   Main,
-  GraphContainer,
+  PriceScenariosContainer,
   StyledIcon,
   StyledTabs,
   StyledTable,
@@ -241,7 +241,7 @@ export const PriceScenarios = ({
 
   return (
     <Main>
-      <GraphContainer>
+      <PriceScenariosContainer>
         <PriceScenariosChart
           priceArea={priceArea}
           externalIds={priceExternalIds}
@@ -269,7 +269,7 @@ export const PriceScenarios = ({
             );
           })}
         </StyledTabs>
-      </GraphContainer>
+      </PriceScenariosContainer>
       <StyledTable>
         {tableColumns && tableData && (
           <HeadlessTable
