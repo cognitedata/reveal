@@ -51,7 +51,11 @@ export const generateNodeTree = (
       >,
       children: common.reviewAnnotations.map(
         (reviewAnnotation: VisionReviewAnnotation<VisionAnnotationDataType>) =>
-          generateNodeTree({ ...reviewAnnotation, common, callbacks })
+          generateNodeTree({
+            ...reviewAnnotation,
+            common: { ...common, color: reviewAnnotation.color },
+            callbacks,
+          })
       ),
       // check if the annotation type header, annotations within or any keypoints within an annotation
       // in case of keypoint collections, are selected.
@@ -98,7 +102,7 @@ export const generateNodeTree = (
           (reviewImageKeypoint, index) =>
             generateNodeTree({
               ...reviewImageKeypoint,
-              common: { ...common, index },
+              common: { ...common, index, color: reviewAnnotation.color },
               callbacks,
             })
         ),

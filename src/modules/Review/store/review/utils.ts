@@ -58,6 +58,7 @@ export const convertTempKeypointCollectionToVisionReviewImageKeypointCollection 
       id,
       annotatedResourceId,
       data: { keypoints, label } = {},
+      color,
     } = tempKeypointCollection;
     return {
       annotation: {
@@ -72,5 +73,6 @@ export const convertTempKeypointCollectionToVisionReviewImageKeypointCollection 
       },
       selected: true,
       show: true,
+      color,
     } as VisionReviewAnnotation<ImageKeypointCollection>;
   };

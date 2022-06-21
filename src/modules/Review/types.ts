@@ -93,6 +93,9 @@ export type Visible = {
 export type Selectable = {
   selected: boolean;
 };
+export type Color = {
+  color: string;
+};
 export type KeypointId = { id: string };
 
 // derivations
@@ -104,7 +107,8 @@ export type TurnKeypointType<Type> = {
     : Type[Property];
 };
 export type VisionReviewAnnotation<Type> = Visible &
-  Selectable & {
+  Selectable &
+  Color & {
     annotation: TurnKeypointType<VisionAnnotation<Type>>;
   };
 
@@ -122,6 +126,7 @@ export type ReviewKeypoint = KeypointId &
 export type TempKeypointCollection = Pick<
   UnsavedVisionAnnotation<ImageKeypointCollection>,
   'annotatedResourceId'
-> & { id: number; data: TurnKeypointType<ImageKeypointCollection> } & {
-  remainingKeypoints: PredefinedKeypoint[];
-};
+> &
+  Color & { id: number; data: TurnKeypointType<ImageKeypointCollection> } & {
+    remainingKeypoints: PredefinedKeypoint[];
+  };

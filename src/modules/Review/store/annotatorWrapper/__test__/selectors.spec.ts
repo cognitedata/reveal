@@ -280,6 +280,7 @@ describe('Test annotationLabel selectors', () => {
           id: '20-left',
           selected: false,
           keypoint: getDummyKeypointState('left'),
+          color: 'red',
         },
       ];
 
@@ -290,9 +291,12 @@ describe('Test annotationLabel selectors', () => {
         remainingKeypoints: [dummyKeypoint('center'), dummyKeypoint('right')],
       });
 
-      expect(selectTempKeypointCollection(previousState, 1)).toStrictEqual(
-        dummyTempCollection
-      );
+      expect(
+        selectTempKeypointCollection(previousState, {
+          currentFileId: 1,
+          annotationColorMap: { gauge: 'red' },
+        })
+      ).toStrictEqual(dummyTempCollection);
     });
   });
 });
