@@ -48,6 +48,40 @@ export const getWellboreColumns = (
       accessor: (row) => row?.name || row?.description || '',
       width: '250px',
       maxWidth: '1fr',
+      stickyColumn: true,
+    },
+
+    /*
+     * Following five columns were added for convert wellbore column to sticky.
+     * without these columns, wellbore column acquire space of these columns,
+     * and then unable see properly other values(KB,TVD,MD,DLS) in wellbore table.
+     * So aligned the wellbore table columns with the well table.
+     * Note: always should keep the same column name with the well columns.
+     */
+    fieldname: {
+      Header: 'dummyColumn',
+      accessor: 'field',
+      width: '150px',
+    },
+    operator: {
+      Header: 'dummyColumn',
+      accessor: 'operator',
+      width: '150px',
+    },
+    spudDate: {
+      Header: 'dummyColumn',
+      accessor: 'spud-date',
+      width: '140px',
+    },
+    waterDepth: {
+      Header: 'dummyColumn',
+      accessor: 'waterDepth.value',
+      width: '170px',
+    },
+    source: {
+      Header: 'dummyColumn',
+      accessor: 'sourceList',
+      width: '150px',
     },
     kbElevation: {
       Header: KB_ELEVATION_TEXT,

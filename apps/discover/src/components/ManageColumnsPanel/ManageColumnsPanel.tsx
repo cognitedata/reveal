@@ -6,6 +6,7 @@ import { TS_FIX_ME } from 'core';
 
 import { Button, Checkbox, Dropdown, Menu, Tooltip } from '@cognite/cogs.js';
 
+import { MiddleEllipsis } from 'components/MiddleEllipsis';
 import { FlexColumn } from 'styles/layout';
 
 import { DROPDOWN_HEADER, TOOLTIP_TEXT } from './constants';
@@ -87,7 +88,7 @@ const ManageColumnsPanel: React.FC<Props> = ({
             name={item.name}
             indeterminate={item.indeterminate}
           >
-            <div className="item-name">{item.name} </div>
+            <MiddleEllipsis value={item.name} />
           </Checkbox>
         </Menu.Item>
       );

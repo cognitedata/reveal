@@ -38,6 +38,7 @@ export const getWellColumns = (
       maxWidth: '0.6fr',
       Cell: (cell) => <MiddleEllipsis value={cell.row.original.name} />,
       order: 0,
+      stickyColumn: true,
     },
     source: {
       Header: SOURCE,

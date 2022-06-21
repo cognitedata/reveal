@@ -17,7 +17,8 @@ export const getStickyColumnHeadersStyles = <T extends object>(
    * eg: selection, expansion, indentation, etc.
    */
   const indexOfFirstColumnInHeaders = headers.findIndex(
-    (header) => header.id === head(columns)?.id
+    (header) =>
+      header.id === head(columns)?.id || header.Header === head(columns)?.Header
   );
 
   return headers.map((header, index) => {
@@ -65,7 +66,9 @@ export const getStickyColumnCellsStyles = <T extends object>(
    * eg: selection, expansion, indentation, etc.
    */
   const indexOfFirstColumnInCells = cells.findIndex(
-    (cell) => cell.column.id === head(columns)?.id
+    (cell) =>
+      cell.column.id === head(columns)?.id ||
+      cell.column.Header === head(columns)?.Header
   );
 
   return cells.map((cell, index) => {

@@ -18,7 +18,7 @@ export const Wrapper = styled.div`
     ${(props: BarProps) => (props.visible ? '0px' : '88px')}
   );
   margin: ${sizes.normal};
-  z-index: ${layers.TABLE_ROW_HOVER}; // needed in favorite wells page
+  z-index: ${layers.BULK_ACTION};
 `;
 
 export const Bar = styled(FlexRow)`

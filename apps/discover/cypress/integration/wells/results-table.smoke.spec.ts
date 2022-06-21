@@ -20,7 +20,7 @@ describe('Wells: Search table', () => {
 
       cy.log(`Enable the ${column} column from column settings`);
       cy.findByTestId('organize-columns').click();
-      cy.findByLabelText(column).click({ force: true });
+      cy.findByTitle(column).click({ force: true });
 
       cy.log(`Check that the ${column} column is visible`);
       cy.findByTestId('table-header-row')

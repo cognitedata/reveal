@@ -11,6 +11,11 @@ describe('getVisibleWellboreColumns', () => {
       [
         'wellname',
         'kbElevation',
+        'fieldname',
+        'operator',
+        'spudDate',
+        'waterDepth',
+        'source',
         'trueVerticalDepth',
         'measuredDepth',
         'doglegSeverity',
