@@ -70,22 +70,22 @@ export const AnnotationTableRow = ({
           />
         ) : undefined}
       </ShowHideIconContainer>
-      {reviewAnnotation.annotation.attributes !== undefined ||
-        (reviewAnnotation.annotation?.confidence !== undefined && (
-          <AttributesIconContainer>
-            <Detail style={{ color: '#595959' }}>
-              <Tooltip
-                content={
-                  <AnnotationTableRowAttribute
-                    reviewAnnotation={reviewAnnotation}
-                  />
-                }
-              >
-                <Icon type="Info" />
-              </Tooltip>
-            </Detail>
-          </AttributesIconContainer>
-        ))}
+      {(reviewAnnotation.annotation.attributes !== undefined ||
+        reviewAnnotation.annotation?.confidence !== undefined) && (
+        <AttributesIconContainer>
+          <Detail style={{ color: '#595959' }}>
+            <Tooltip
+              content={
+                <AnnotationTableRowAttribute
+                  reviewAnnotation={reviewAnnotation}
+                />
+              }
+            >
+              <Icon type="Info" />
+            </Tooltip>
+          </Detail>
+        </AttributesIconContainer>
+      )}
       <ApproveBtnContainer onClick={(evt) => evt.stopPropagation()}>
         <StyledSegmentedControl
           status={reviewAnnotation.annotation.status}
