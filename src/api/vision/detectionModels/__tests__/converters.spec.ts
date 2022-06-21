@@ -246,10 +246,10 @@ describe('convertVisionJobAnnotationToImageKeypointCollection', () => {
       confidence: visionJobAnnotation.confidence,
       label: visionJobAnnotation.text,
       attributes: {
-        unit: {
-          type: 'unit',
-          value: (visionJobAnnotation as GaugeReaderJobAnnotation).data.unit,
-        },
+        // unit: {
+        //   type: 'unit',
+        //   value: (visionJobAnnotation as GaugeReaderJobAnnotation).data.unit,
+        // },
         gaugeValue: {
           type: 'numerical',
           value: (visionJobAnnotation as GaugeReaderJobAnnotation).data
