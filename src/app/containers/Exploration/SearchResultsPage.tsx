@@ -272,7 +272,7 @@ function SearchPage() {
           closeFilters={() => setShowFilter(false)}
           visible={currentResourceType !== 'threeD' && showFilter}
         />
-        <Splitter secondaryMinSize={440} primaryIndex={1}>
+        <StyledSplitter secondaryMinSize={440} primaryIndex={1}>
           <div
             style={{
               borderRight: active
@@ -322,11 +322,16 @@ function SearchPage() {
               )}
             </div>
           )}
-        </Splitter>
+        </StyledSplitter>
       </Wrapper>
     </>
   );
 }
+const StyledSplitter = styled(Splitter)`
+  .splitter-layout .layout-pane.layout-pane-primary {
+    overflow: hidden;
+  }
+`;
 
 export const SearchResultsPage = () => {
   const [resourceType] = useCurrentResourceType();
@@ -360,7 +365,7 @@ const SearchResultWrapper = styled.div`
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  overflow: auto;
+
   height: 100%;
 `;
 
