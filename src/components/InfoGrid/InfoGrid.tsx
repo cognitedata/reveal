@@ -7,7 +7,6 @@ type InfoGridProps = {
 };
 export const InfoGrid = styled.div<InfoGridProps>(
   props => css`
-    position: relative;
     width: 100%;
     display: flex;
     flex-wrap: wrap;
@@ -40,11 +39,6 @@ const InfoCellContainer = styled.div<InfoCellContainerProps>`
       border-bottom: 1px solid var(--cogs-greyscale-grey4);
       border-right: 1px solid var(--cogs-greyscale-grey4);
     `}
-
-  &:last-child {
-    flex: 1;
-    overflow: auto;
-  }
 
   .title {
     text-transform: uppercase;

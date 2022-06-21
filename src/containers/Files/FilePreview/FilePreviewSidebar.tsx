@@ -87,7 +87,7 @@ const FilePreviewSidebar = ({
     );
   }
   return (
-    <div style={{ width: 360, borderLeft: `1px solid ${lightGrey}` }}>
+    <FilePreviewSidebarWrapper>
       <Modal
         okText="Approve tags"
         title="Are you sure?"
@@ -125,11 +125,15 @@ const FilePreviewSidebar = ({
         }
         onClose={() => setSelectedAnnotations([])}
       />
-    </div>
+    </FilePreviewSidebarWrapper>
   );
 };
 
 export default FilePreviewSidebar;
+
+const FilePreviewSidebarWrapper = styled.div`
+  border-left: 1px solid ${lightGrey};
+`;
 
 const TitleWrapper = styled.div`
   padding: 20px 10px;

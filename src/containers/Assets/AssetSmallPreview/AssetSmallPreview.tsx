@@ -5,9 +5,18 @@ import {
   useList,
   SdkResourceType,
 } from '@cognite/sdk-react-query-hooks';
-import { Icon, Button, Title, Badge, Colors, Body, A } from '@cognite/cogs.js';
-import { FixedSizeList as List } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
+import {
+  Icon,
+  Button,
+  Title,
+  Badge,
+  Colors,
+  Body,
+  A,
+  Flex,
+  Collapse,
+} from '@cognite/cogs.js';
+
 import {
   Loader,
   InfoGrid,
@@ -24,14 +33,12 @@ import { useSelectionButton } from 'hooks/useSelection';
 import { lightGrey } from 'utils/Colors';
 import { createLink } from 'utils/URLUtils';
 
-const LIST_ITEM_HEIGHT = 42;
-
 const RowItem = ({
   style,
   title,
   onClick,
 }: {
-  style: React.CSSProperties;
+  style?: React.CSSProperties;
   title: string | number;
   onClick?: () => void;
 }) => (
@@ -47,7 +54,7 @@ const RowItem = ({
         <div
           style={{
             display: 'flex',
-            height: 32,
+            paddingBottom: 8,
             borderBottom: `1px solid ${lightGrey}`,
           }}
         >
@@ -139,8 +146,6 @@ export const AssetSmallPreview = ({
         <InfoCell
           noBorders
           containerStyles={{
-            display: 'flex',
-            alignItems: 'center',
             color: Colors['greyscale-grey6'].hex(),
           }}
         >
@@ -201,98 +206,82 @@ export const AssetSmallPreview = ({
       <InfoCell noBorders>
         <p>CONTENT</p>
         {files && (
-          <>
-            <ListItem
-              id="pnids"
-              style={{
-                padding: 0,
-                marginBottom: '8px',
-                marginTop: '8px',
-              }}
-              title={
-                <div style={{ display: 'flex' }}>
-                  <Icon type="Document" style={{ marginRight: '4px' }} />
-                  <Title level={6}>P&IDs</Title>
-                </div>
-              }
-              bordered={false}
-            >
-              <Badge text={`${files.length}`} />
-            </ListItem>
-            <AutoSizer disableHeight>
-              {({ width }) => (
-                <List
-                  height={Math.min(files.length * LIST_ITEM_HEIGHT, 150)}
-                  itemCount={files.length}
-                  itemSize={LIST_ITEM_HEIGHT}
-                  width={width}
+          <Collapse accordion ghost>
+            <Collapse.Panel
+              header={
+                <ListItem
+                  id="pnids"
+                  style={{
+                    marginBlock: '8px',
+                    padding: 0,
+                    width: '100%',
+                    border: 0,
+                  }}
+                  title={
+                    <Flex>
+                      <Icon type="Document" style={{ marginRight: '4px' }} />
+                      <Title level={6}>P&IDs</Title>
+                    </Flex>
+                  }
+                  bordered={false}
                 >
-                  {({ index, style }) => (
-                    <RowItem
-                      onClick={() =>
-                        setSelected({
-                          type: 'files',
-                          id: files[index].id,
-                        })
-                      }
-                      key={files[index].id}
-                      style={style}
-                      title={files[index].name}
-                    />
-                  )}
-                </List>
-              )}
-            </AutoSizer>
-          </>
+                  <Badge text={`${files.length}`} />
+                </ListItem>
+              }
+            >
+              {files.map(file => (
+                <RowItem
+                  onClick={() =>
+                    setSelected({
+                      type: 'files',
+                      id: file.id,
+                    })
+                  }
+                  key={file.id}
+                  title={file.name}
+                />
+              ))}
+            </Collapse.Panel>
+          </Collapse>
         )}
         {timeseries && (
-          <>
-            <ListItem
-              id="timeseries"
-              style={{
-                padding: 0,
-                marginBottom: '8px',
-                marginTop: '8px',
-              }}
-              title={
-                <div style={{ display: 'flex' }}>
-                  <Icon type="Timeseries" style={{ marginRight: '4px' }} />
-                  <Title level={6}>Time series</Title>
-                </div>
-              }
-              bordered={false}
-            >
-              <Badge text={`${timeseries.length}`} />
-            </ListItem>
-            <AutoSizer disableHeight>
-              {({ width }) => (
-                <List
-                  height={Math.min(timeseries.length * LIST_ITEM_HEIGHT, 150)}
-                  itemCount={timeseries.length}
-                  itemSize={LIST_ITEM_HEIGHT}
-                  width={width}
+          <Collapse accordion ghost>
+            <Collapse.Panel
+              header={
+                <ListItem
+                  id="pnids"
+                  style={{
+                    marginBlock: '8px',
+                    padding: 0,
+                    width: '100%',
+                    border: 0,
+                  }}
+                  title={
+                    <Flex>
+                      <Icon type="Timeseries" style={{ marginRight: '4px' }} />
+                      <Title level={6}>Time series</Title>
+                    </Flex>
+                  }
+                  bordered={false}
                 >
-                  {({ index, style }) => (
-                    <RowItem
-                      onClick={() =>
-                        setSelected({
-                          type: 'timeseries',
-                          id: timeseries[index].id,
-                        })
-                      }
-                      key={timeseries[index].id}
-                      style={style}
-                      title={
-                        timeseries[index].name ||
-                        timeseries[index].externalId ||
-                        timeseries[index].id
-                      }
-                    />
-                  )}
-                </List>
-              )}
-            </AutoSizer>
-          </>
+                  <Badge text={`${timeseries.length}`} />
+                </ListItem>
+              }
+            >
+              {timeseries.map(time => (
+                <RowItem
+                  onClick={() =>
+                    setSelected({
+                      type: 'timeseries',
+                      id: time.id,
+                    })
+                  }
+                  key={time.id}
+                  title={time.name || time.externalId || time.id}
+                />
+              ))}
+            </Collapse.Panel>
+          </Collapse>
         )}
       </InfoCell>
       {children}

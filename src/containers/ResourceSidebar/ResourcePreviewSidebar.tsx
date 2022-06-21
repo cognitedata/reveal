@@ -113,14 +113,9 @@ export const ResourcePreviewSidebar = ({
 };
 
 const ResourcePreviewWrapper = styled.div`
-  height: 100%;
+  height: calc(100vh - 250px);
   min-width: 360px;
   overflow: auto;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  margin-top: -1px;
 `;
 
 const CloseButton = styled(Button)`

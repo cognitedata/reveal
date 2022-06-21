@@ -9,6 +9,7 @@ export type SplitterProps = {
   percentage?: boolean;
   primaryIndex?: 0 | 1;
   children: React.ReactNode | React.ReactNode[];
+  className?: string;
 };
 
 export const Splitter = ({
@@ -16,8 +17,9 @@ export const Splitter = ({
   secondaryMinSize = 360,
   percentage = false,
   primaryIndex = 0,
+  className,
 }: SplitterProps) => (
-  <SplitterWrapper>
+  <SplitterWrapper className={className}>
     <SplitterLayout
       secondaryMinSize={secondaryMinSize}
       secondaryInitialSize={secondaryMinSize}
