@@ -1,0 +1,14 @@
+overwrite: true
+schema:
+  - https://greenfield.cognitedata.com/api/v1/projects/atlas-greenfield/schema/api/cognite_office_explorer/1/graphql:
+      headers:
+        Authorization: Bearer ${Token}
+documents: '../../src/graphql/queries/*.ts'
+generates:
+  ./apps/explorer/src/graphql/generated.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+    config:
+      operationResultSuffix: TypeGenerated
+      skipTypename: true

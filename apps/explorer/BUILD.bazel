@@ -77,8 +77,9 @@ DEPENDENCIES = [
     "@npm//@cognite/reveal",
     "@npm//@cognite/sdk",
     "@npm//@sentry/browser",
-    "@npm//@apollo/client",
     "@npm//fuse.js",
+    "@npm//graphql",
+    "@npm//graphql-request",
     "@npm//react",
     "@npm//react-dom",
     "@npm//react-i18next",
@@ -106,6 +107,9 @@ TYPE_DEPENDENCIES = [
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = [
+    "@npm//@graphql-codegen/cli",
+    "@npm//@graphql-codegen/typescript",
+    "@npm//@graphql-codegen/typescript-operations",
     "@npm//@storybook/addons",
     "@npm//@storybook/addon-knobs",
     "@npm//@testing-library/jest-dom",

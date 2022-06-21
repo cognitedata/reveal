@@ -1,7 +1,7 @@
-import styled from 'styled-components';
 import { useAuthContext, getProjectInfo } from '@cognite/react-container';
-import { AvatarButton } from 'components/AvatarButton/AvatarButton';
+import { AvatarButton } from 'components/AvatarButton';
 import { AbsoluteHeader } from 'components/Header';
+import { ErrorDisplay } from 'components/ErrorDisplay';
 import Map from 'components/Map';
 import { NavigateToSearchButton } from 'components/SearchBar';
 import { Link } from 'react-router-dom';
@@ -10,15 +10,6 @@ import env from 'utils/config';
 
 const renderLeftHeader = () => <NavigateToSearchButton />;
 
-export const ErrorWrapper = styled.header`
-  font-size: 22px;
-  color: #ba3939;
-  background: #ffe0e0;
-  border: 1px solid #a33a3a;
-  padding: 10px;
-  margin: 10px;
-`;
-
 export const Home = () => {
   const { client } = useAuthContext();
   const [project] = getProjectInfo();
@@ -26,9 +17,9 @@ export const Home = () => {
   const model = env.projectModels[project];
   if (!model) {
     return (
-      <ErrorWrapper>
+      <ErrorDisplay>
         Error loading the 3D model. Perhaps this project is not configured yet.
-      </ErrorWrapper>
+      </ErrorDisplay>
     );
   }
 

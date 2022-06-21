@@ -4,8 +4,9 @@ import { RegularHeader } from 'components/Header';
 import { List } from 'components/List';
 import { NoResults } from 'components/NoResults/NoResults';
 import { SearchBar } from 'components/SearchBar';
-import { useGetSearchAPI } from 'hooks/useGetSearchAPI';
+import { useSearchPeopleRoomsQuery } from 'graphql/queries/useSearchPeopleRoomsQuery';
 import { useFuseSearch } from 'hooks/useFuseSearch';
+import { ErrorDisplay } from 'components/ErrorDisplay';
 
 const renderLeftHeader = (
   query: string,
@@ -22,15 +23,30 @@ const renderLeftHeader = (
 
 export const Search = () => {
   const [query, setQuery] = useState('');
-  const itemsArray = useGetSearchAPI();
-  const itemsObj = useFuseSearch(query, itemsArray);
+  const {
+    isLoading,
+    error,
+    data: itemsArray,
+  } = useSearchPeopleRoomsQuery({
+    personFilter: {},
+    roomFilter: {},
+  });
+  let content;
+
+  if (error) content = <ErrorDisplay>{error as string}</ErrorDisplay>;
+  else {
+    const itemsObj = useFuseSearch(query, itemsArray);
+    if (isLoading) content = <>Loading</>;
+    else
+      content = isEmpty(itemsObj) ? <NoResults /> : <List items={itemsObj} />;
+  }
 
   return (
     <>
       <RegularHeader
         Left={() => renderLeftHeader(query, (e) => setQuery(e.target.value))}
       />
-      {isEmpty(itemsObj) ? <NoResults /> : <List items={itemsObj} />}
+      {content}
     </>
   );
 };

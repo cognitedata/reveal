@@ -12,10 +12,10 @@
     "prepare": "husky install",
     "generate": "plop --plopfile generators/index.ts",
     "update-helpers": "for i in `bazel query 'kind(generate_package_json_helpers, //...)'`; do bazel run $i; done",
-    "deploy": "./scripts/deploy.sh"
+    "deploy": "./scripts/deploy.sh",
+    "explorer:graphql-generate": "graphql-codegen --config=apps/explorer/resources/schema/codegen.yaml"
   },
   "dependencies": {
-    "@apollo/client": "^3.5.5",
     "@azure/msal-browser": "^2.22.0",
     "@babel/runtime": "^7.16.7",
     "@cognite/cogs.js": "6.17.3",
@@ -105,6 +105,8 @@
     "google-protobuf": "^3.17.3",
     "graphology": "^0.23.2",
     "graphology-simple-path": "^0.1.1",
+    "graphql": "^16.5.0",
+    "graphql-request": "^4.3.0",
     "gridstack": "^4.2.5",
     "html2canvas": "^1.0.0-rc.5",
     "i18next": "^20.3.2",
@@ -214,6 +216,9 @@
     "@cypress/webpack-preprocessor": "^5.10.0",
     "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
+    "@graphql-codegen/cli": "^2.6.2",
+    "@graphql-codegen/typescript": "^2.5.1",
+    "@graphql-codegen/typescript-operations": "^2.4.2",
     "@rollup/plugin-alias": "^3.1.9",
     "@rollup/plugin-image": "^2.0.6",
     "@rollup/plugin-node-resolve": "^13.1.3",

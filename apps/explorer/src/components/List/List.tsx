@@ -5,6 +5,7 @@ import { ListStyles, SectionWrapper, SectionTitle } from './elements';
 import { ListItem } from './ListItem';
 
 export interface ListData {
+  id: string;
   name: string;
   iconSrc?: IconType;
   description?: string;
@@ -28,7 +29,7 @@ export const List: React.FC<Props> = ({ items }) => {
           <SectionTitle level={2}>{section}</SectionTitle>
           {items[section].map((item) => (
             <ListItem
-              key={item.name}
+              key={item.id}
               iconSrc={item.iconSrc ? item.iconSrc : defaultIcons[section]}
               mainText={item.name}
               subText={item.description ? item.description : ''}
