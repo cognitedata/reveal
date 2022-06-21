@@ -14,8 +14,6 @@ import { useComponentTranslations } from 'hooks/translations';
 import { OpenInCharts } from 'components/OpenInCharts/OpenInCharts';
 import useCreateChart from 'models/charts/mutations/useCreateChart';
 import { useNavigate } from 'hooks/navigation';
-import { useResetRecoilState } from 'recoil';
-import chartAtom from 'models/chart/atom';
 import MyChartsList from 'components/ChartList/MyChartsList/MyChartsList';
 import PublicChartsList from 'components/ChartList/PublicChartsList/PublicChartsList';
 import { currentStartPageLayout } from 'config/startPagePreference';
@@ -38,7 +36,6 @@ const defaultTranslations = makeDefaultTranslations(
 
 const ChartListPage = () => {
   const move = useNavigate();
-  const resetChart = useResetRecoilState(chartAtom);
   const { mutateAsync: createNewChart, isLoading: isCreatingChart } =
     useCreateChart();
   const [activeTab, setActiveTab] = useState<'mine' | 'public'>('mine');
@@ -61,11 +58,6 @@ const ChartListPage = () => {
   const [sortOption, setSortOption] = useState<typeof sortOptions[number]>(
     sortOptions[2]
   );
-
-  useEffect(() => {
-    // This is for making the button disappear in the top bar
-    resetChart();
-  }, [resetChart]);
 
   useEffect(() => {
     trackUsage('PageView.ChartListPage');

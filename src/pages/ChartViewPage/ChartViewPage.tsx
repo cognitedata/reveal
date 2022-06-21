@@ -32,7 +32,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import chartAtom from 'models/chart/atom';
 import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
 import { useTranslations } from 'hooks/translations';
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import DetailsSidebar from 'components/DetailsSidebar/DetailsSidebar';
 import ThresholdSidebar from 'components/Thresholds/ThresholdSidebar';
 import SearchSidebar from 'components/Search/SearchSidebar';
@@ -61,6 +61,7 @@ import { timeseriesSummaries } from 'models/timeseries-results/selectors';
 import { isProduction } from 'utils/environment';
 import { currentDateRangeLocale } from 'config/locale';
 import { chartSources } from 'models/chart/selectors';
+import ChartViewPageAppBar from 'pages/ChartViewPage/ChartViewPageAppBar';
 import {
   BottomPaneWrapper,
   ChartContainer,
@@ -83,8 +84,11 @@ type ChartViewProps = {
 const defaultTranslations = makeDefaultTranslations(
   'Chart could not be saved!',
   'Could not load chart',
-  'This chart does not seem to exist. You might not have access'
+  'This chart does not seem to exist. You might not have access',
+  'All charts'
 );
+
+const keys = translationKeys(defaultTranslations);
 
 const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [showContextMenu, setShowContextMenu] = useState(false);
@@ -124,7 +128,7 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
    */
   const t = {
     ...defaultTranslations,
-    ...useTranslations(Object.keys(defaultTranslations), 'ChartView').t,
+    ...useTranslations(keys, 'ChartView').t,
   };
 
   const { t: ChartViewHeaderTranslations } = useTranslations(
@@ -575,6 +579,7 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
     <>
       <TimeseriesCollectionEffects />
       <CalculationCollectionEffects />
+      <ChartViewPageAppBar allChartsLabel={t['All charts']} />
       <ChartViewContainer id="chart-view">
         {showSearch && (
           <SearchSidebar visible={showSearch} onClose={handleCloseSearch} />

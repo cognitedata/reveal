@@ -13,8 +13,6 @@ import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
 import { useEffect, useState } from 'react';
-import { useResetRecoilState } from 'recoil';
-import chartAtom from 'models/chart/atom';
 import { isProduction } from 'utils/environment';
 import config from 'config/config';
 import firebase from 'firebase/app';
@@ -135,11 +133,6 @@ const UserProfile = () => {
     ...useTranslations(Object.keys(defaultTranslations), 'UserProfile').t,
   };
   const { data: user } = useUserInfo();
-  const resetChart = useResetRecoilState(chartAtom);
-
-  useEffect(() => {
-    resetChart();
-  }, [resetChart]);
 
   useEffect(() => {
     if (ready) {
