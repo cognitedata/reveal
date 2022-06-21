@@ -182,7 +182,8 @@ const annotatorWrapperSlice = createSlice({
         }
       }
     },
-    deleteCurrentCollection(state) {
+    deleteTempKeypointCollection(state) {
+      state.isCreatingKeypointCollection = false;
       const currentCollectionId = state.lastCollectionId;
       if (currentCollectionId) {
         deleteCollection(state, currentCollectionId);
@@ -197,75 +198,66 @@ const annotatorWrapperSlice = createSlice({
     setKeepUnsavedRegion(state, action: PayloadAction<boolean>) {
       state.keepUnsavedRegion = action.payload;
     },
-    createTempKeypointCollection(state, action: PayloadAction<boolean>) {
-      if (action.payload) {
-        state.isCreatingKeypointCollection = true;
+    createTempKeypointCollection(state) {
+      state.isCreatingKeypointCollection = true;
 
-        const { id, annotationLabelOrText, keypointLabel, x, y } =
-          state.temporaryRegion as AnnotatorPointRegion;
-        if (annotationLabelOrText && keypointLabel) {
-          const predefinedKeypointCollection =
-            state.predefinedAnnotations.predefinedKeypointCollections.find(
-              (collection) =>
-                collection.collectionName === annotationLabelOrText
+      const { id, annotationLabelOrText, keypointLabel, x, y } =
+        state.temporaryRegion as AnnotatorPointRegion;
+      if (annotationLabelOrText && keypointLabel) {
+        const predefinedKeypointCollection =
+          state.predefinedAnnotations.predefinedKeypointCollections.find(
+            (collection) => collection.collectionName === annotationLabelOrText
+          );
+
+        // valid PredefinedKeypointCollection is available
+        if (predefinedKeypointCollection) {
+          const { keypoints } = predefinedKeypointCollection;
+          state.lastCollectionName =
+            predefinedKeypointCollection.collectionName;
+
+          if (keypoints) {
+            // if collection has keypoints
+            const predefinedKeypoint: PredefinedKeypoint =
+              keypoints.find(
+                (keypoint) => keypoint.caption === keypointLabel
+              ) || keypoints[0];
+            const imageKeypointToAdd: Keypoint = {
+              label: predefinedKeypoint.caption,
+              point: {
+                x,
+                y,
+              },
+              confidence: 1, // 100% confident about manually created keypoints
+            };
+
+            // create temp keypoint collection
+
+            const collectionId = createUniqueNumericId();
+            state.collections.byId[collectionId] = {
+              id: collectionId,
+              keypointIds: [String(id)],
+              label: annotationLabelOrText,
+              status: Status.Approved,
+              show: true,
+            };
+            state.collections.allIds = Object.keys(state.collections.byId).map(
+              (key) => +key
             );
+            state.lastCollectionId = collectionId;
+            state.collections.selectedIds = [collectionId];
 
-          // valid PredefinedKeypointCollection is available
-          if (predefinedKeypointCollection) {
-            const { keypoints } = predefinedKeypointCollection;
-            state.lastCollectionName =
-              predefinedKeypointCollection.collectionName;
-
-            if (keypoints) {
-              // if collection has keypoints
-              const predefinedKeypoint: PredefinedKeypoint =
-                keypoints.find(
-                  (keypoint) => keypoint.caption === keypointLabel
-                ) || keypoints[0];
-              const imageKeypointToAdd: Keypoint = {
-                label: predefinedKeypoint.caption,
-                point: {
-                  x,
-                  y,
-                },
-                confidence: 1, // 100% confident about manually created keypoints
-              };
-
-              // create temp keypoint collection
-
-              const collectionId = createUniqueNumericId();
-              state.collections.byId[collectionId] = {
-                id: collectionId,
-                keypointIds: [String(id)],
-                label: annotationLabelOrText,
-                status: Status.Approved,
-                show: true,
-              };
-              state.collections.allIds = Object.keys(
-                state.collections.byId
-              ).map((key) => +key);
-              state.lastCollectionId = collectionId;
-              state.collections.selectedIds = [collectionId];
-
-              // update keypoints
-              state.lastKeyPoint = predefinedKeypoint.caption;
-              state.keypointMap.byId[id] = imageKeypointToAdd;
-              state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
-            } else {
-              console.warn('predefined collection has no keypoints!');
-            }
+            // update keypoints
+            state.lastKeyPoint = predefinedKeypoint.caption;
+            state.keypointMap.byId[id] = imageKeypointToAdd;
+            state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
           } else {
-            console.warn('predefined keypoint collection not found!');
+            console.warn('predefined collection has no keypoints!');
           }
         } else {
-          console.warn('annotation label or keypoint label not found!');
+          console.warn('predefined keypoint collection not found!');
         }
       } else {
-        state.isCreatingKeypointCollection = false;
-        const tempKeypointCollectionId = state.lastCollectionId;
-        if (tempKeypointCollectionId) {
-          deleteCollection(state, tempKeypointCollectionId);
-        }
+        console.warn('annotation label or keypoint label not found!');
       }
     },
     onCreateRegion(state, action: PayloadAction<AnnotatorRegion>) {
@@ -437,7 +429,7 @@ export const {
   setLastCollectionName,
   onCreateKeyPoint,
   onUpdateKeyPoint,
-  deleteCurrentCollection,
+  deleteTempKeypointCollection,
   removeLabels,
   setKeepUnsavedRegion,
   onCreateRegion,
