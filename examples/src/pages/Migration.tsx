@@ -360,6 +360,8 @@ export function Migration() {
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client, viewer);
 
+      viewer.renderer.setPixelRatio(window.devicePixelRatio);
+
       viewer.on('click', async (event) => {
         const { offsetX, offsetY } = event; 
         console.log('2D coordinates', event);

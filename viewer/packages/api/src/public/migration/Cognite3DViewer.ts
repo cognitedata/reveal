@@ -1021,6 +1021,21 @@ export class Cognite3DViewer {
    *   );
    * ```
    */
+  async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
+  /**
+   * @deprecated Since 3.1 options argument have no effect.
+   * */
+  async getIntersectionFromPixel(
+    offsetX: number,
+    offsetY: number,
+    options: IntersectionFromPixelOptions
+  ): Promise<null | Intersection>;
+  /**
+   * @obvious
+   * @param offsetX
+   * @param offsetY
+   * @param options
+   */
   async getIntersectionFromPixel(
     offsetX: number,
     offsetY: number,
@@ -1188,6 +1203,7 @@ export class Cognite3DViewer {
     const maxTextureSize = 1.4e6;
 
     const rendererSize = this.renderer.getSize(new THREE.Vector2());
+    const devicePixelRatio = this.renderer.getPixelRatio();
     const rendererPixelWidth = rendererSize.width;
     const rendererPixelHeight = rendererSize.height;
 
@@ -1199,8 +1215,8 @@ export class Cognite3DViewer {
 
     const scale = clientTextureSize > maxTextureSize ? Math.sqrt(maxTextureSize / clientTextureSize) : 1;
 
-    const width = clientWidth * scale;
-    const height = clientHeight * scale;
+    let width = clientWidth * scale;
+    let height = clientHeight * scale;
 
     const maxError = 0.1; // pixels
     const isOptimalSize =
@@ -1209,6 +1225,11 @@ export class Cognite3DViewer {
     if (isOptimalSize) {
       return false;
     }
+
+    // This needs to be done such that users don't unintentionally bypass the
+    // resolution cap by setting a high device pixel ratio
+    width /= devicePixelRatio;
+    height /= devicePixelRatio;
 
     adjustCamera(this.camera, width, height);
     this.renderer.setSize(width, height);

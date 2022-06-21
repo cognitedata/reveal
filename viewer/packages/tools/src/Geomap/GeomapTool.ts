@@ -22,7 +22,7 @@ export class GeomapTool extends Cognite3DViewerToolBase {
     this._viewer = viewer;
     this._maps = new Geomap(this._viewer, config);
 
-    MetricsLogger.trackCreateTool('AxisViewTool');
+    MetricsLogger.trackCreateTool('GeomapTool');
   }
 
   /**
