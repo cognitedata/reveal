@@ -73,8 +73,12 @@ export const useOrnateTags = (): {
         allTags.push(tag);
       }
 
-      const tag = allTags.find((tag) => tag.isActive);
-      const activeTag = tag && (JSON.parse(JSON.stringify(tag)) as OrnateTag);
+      const activeTagNode = allTags.find(
+        (tag) => tag.isActive && tag.dataElement.id === visibleDataElement?.id
+      );
+      const activeTag =
+        activeTagNode &&
+        (JSON.parse(JSON.stringify(activeTagNode)) as OrnateTag);
 
       allTags.sort((a) => (!a.detection.state ? -1 : 1));
 
@@ -111,7 +115,11 @@ const getOrnateTag = ({
     (activeDetection && activeDetection.id === detection.id) || false;
 
   const id = uuid(
-    detection.id + detection.state + detection.value + isActive,
+    dataElement.id +
+      detection.id +
+      detection.state +
+      detection.value +
+      isActive,
     '00000000-0000-0000-0000-000000000000'
   );
 

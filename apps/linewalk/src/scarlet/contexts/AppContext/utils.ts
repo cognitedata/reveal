@@ -263,7 +263,8 @@ const updateComponentScannerDetectionsOnApproval = (
 ) => {
   if (dataElement.origin !== DataElementOrigin.COMPONENT) return;
   const approveDetection = dataElement.detections.find(
-    (d) => d.state === DetectionState.APPROVED
+    (d) =>
+      d.state === DetectionState.APPROVED && d.type === DetectionType.SCANNER
   );
   const approveDetectionScannerId = approveDetection?.scannerComponent?.id;
   if (approveDetectionScannerId) {
