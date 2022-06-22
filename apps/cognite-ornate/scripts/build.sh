@@ -24,4 +24,4 @@ case "$variant": in
     exit 1
 esac
 
-../../node_modules/.bin/react-scripts build
+../../node_modules/.bin/vite build

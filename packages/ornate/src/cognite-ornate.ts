@@ -205,17 +205,19 @@ export class CogniteOrnate {
     const rectSize = 500000;
     const backgroundImage = new Image();
     backgroundImage.src = bgImage;
-    const backgroundRect = new Konva.Rect({
-      x: -rectSize / 2,
-      y: -rectSize / 2,
-      width: rectSize,
-      height: rectSize,
-      fillPatternImage: backgroundImage,
-      unselectable: true,
-    });
-    const group = new Konva.Group();
-    group.add(backgroundRect);
-    this.backgroundLayer.add(group);
+    backgroundImage.onload = () => {
+      const backgroundRect = new Konva.Rect({
+        x: -rectSize / 2,
+        y: -rectSize / 2,
+        width: rectSize,
+        height: rectSize,
+        fillPatternImage: backgroundImage,
+        unselectable: true,
+      });
+      const group = new Konva.Group();
+      group.add(backgroundRect);
+      this.backgroundLayer.add(group);
+    };
   };
 
   fitStageIntoParentContainer = () => {
