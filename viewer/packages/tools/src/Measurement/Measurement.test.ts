@@ -3,7 +3,7 @@
  */
 
 import { CogniteClient } from '@cognite/sdk';
-import { Cognite3DViewer, Intersection } from '@reveal/core';
+import { Cognite3DViewer, Intersection } from '@reveal/api';
 import * as THREE from 'three';
 import { createGlContext, mockClientAuthentication, createCadModel } from '../../../../test-utilities';
 import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
