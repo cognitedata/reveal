@@ -2,8 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
+import { Cognite3DModel } from '@reveal/api';
 import { NodeAppearance, NodeCollection } from '@reveal/cad-styling';
-import { Cognite3DModel } from '@reveal/core';
 import { MetricsLogger } from '@reveal/metrics';
 
 /**

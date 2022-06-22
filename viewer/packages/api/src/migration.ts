@@ -5,10 +5,4 @@
 export { Cognite3DModel } from '@reveal/cad-model';
 export { CognitePointCloudModel } from '@reveal/pointclouds';
 export { Cognite3DViewer } from './public/migration/Cognite3DViewer';
-export {
-  Color,
-  Cognite3DViewerOptions,
-  AddModelOptions,
-  Intersection,
-  CameraConfiguration
-} from './public/migration/types';
+export { Cognite3DViewerOptions, AddModelOptions, Intersection, CameraConfiguration } from './public/migration/types';

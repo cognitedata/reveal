@@ -1,27 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimationLoopHandler } from '../../utils/AnimationLoopHandler';
 import { getParamsFromURL } from '../../utils/example-helpers';
-import { THREE } from '@cognite/reveal';
+import { PotreePointColorType, THREE } from '@cognite/reveal';
 import CameraControls from 'camera-controls';
 import { resizeRendererToDisplaySize } from '../../utils/sceneHelpers';
 import { CanvasWrapper } from '../../components/styled';
-import * as reveal from '@cognite/reveal/internals';
 import { SuggestedCameraConfig, suggestCameraConfig } from '../../utils/cameraConfig';
 
-import { defaultRenderOptions, RenderOptions, SceneHandler } from '@cognite/reveal/internals';
+import { CadNode, createLocalRevealManager, defaultRenderOptions, LoadingState, LocalModelIdentifier, PointCloudNode, RenderOptions, RevealManager, SceneHandler } from '@cognite/reveal/internals';
 
 type CadModelEnv = {
   modelType: 'cad';
-  model: reveal.CadNode;
+  model: CadNode;
 };
 type PointCloudModelEnv = {
   modelType: 'pointcloud';
-  model: reveal.PointCloudNode;
+  model: PointCloudNode;
 };
 
 export type TestEnv = {
   camera: THREE.PerspectiveCamera;
-  revealManager: reveal.RevealManager;
+  revealManager: RevealManager;
   sceneHandler: SceneHandler;
   renderer: THREE.WebGLRenderer;
 };
@@ -44,7 +43,7 @@ type PropsCad<T = TestEnvCad> = {
 };
 type PropsPointCloud<T = TestEnvPointCloud> = {
   modelType: 'pointcloud';
-  pointColorType?: reveal.PotreePointColorType;
+  pointColorType?: PotreePointColorType;
   nodeAppearanceProvider?: never;
   modifyTestEnv?: (env: T) => TestEnvModified<T> | void;
 };
@@ -59,7 +58,7 @@ CameraControls.install({ THREE });
 export function TestViewer(props: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const [loadingState, setLoadingState] = useState<
-    reveal.utilities.LoadingState
+    LoadingState
   >({
     isLoading: true,
     itemsLoaded: 0,
@@ -68,7 +67,7 @@ export function TestViewer(props: Props) {
   });
 
   const setupLoadingStateHandler = (
-    revealManager: reveal.RevealManager
+    revealManager: RevealManager
   ) => {
     let skipFirstLoadingState = true;
     revealManager.on('loadingStateChanged', (loadingState) => {
@@ -85,10 +84,10 @@ export function TestViewer(props: Props) {
   };
 
   const getCameraConfig = (
-    model: reveal.CadNode | reveal.PointCloudNode
+    model: CadNode | PointCloudNode
   ): SuggestedCameraConfig => {
 
-    if ( model instanceof reveal.CadNode) {
+    if ( model instanceof CadNode) {
       return suggestCameraConfig(model.cadModelMetadata.scene.root,
                                  model.getModelTransformation());
     }
@@ -110,7 +109,7 @@ export function TestViewer(props: Props) {
 
   useEffect(() => {
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
-    let revealManager: reveal.RevealManager;
+    let revealManager: RevealManager;
 
     async function main() {
       if (!canvas.current) {
@@ -139,24 +138,24 @@ export function TestViewer(props: Props) {
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.localClippingEnabled = true;
 
-      revealManager = reveal.createLocalRevealManager(renderer, sceneHandler, { logMetrics: false, renderOptions: renderOptions });
+      revealManager = createLocalRevealManager(renderer, sceneHandler, { logMetrics: false, renderOptions: renderOptions });
       setupLoadingStateHandler(revealManager);
 
-      let model: reveal.PointCloudNode | reveal.CadNode;
+      let model: PointCloudNode | CadNode;
 
       if (props.modelType === 'pointcloud') {
-        const modelIdentifier = new reveal.LocalModelIdentifier(modelUrl.fileName!);
+        const modelIdentifier = new LocalModelIdentifier(modelUrl.fileName!);
         model = await revealManager.addModel('pointcloud', modelIdentifier);
-        model.pointColorType = props.pointColorType ? props.pointColorType : reveal.PotreePointColorType.Rgb;
+        (model as PointCloudNode).pointColorType = props.pointColorType ? props.pointColorType : PotreePointColorType.Rgb;
         sceneHandler.addCustomObject(model);
       } else {
-        const modelIdentifier = new reveal.LocalModelIdentifier(modelUrl.fileName!);
+        const modelIdentifier = new LocalModelIdentifier(modelUrl.fileName!);
         model = await revealManager.addModel(
           'cad',
           modelIdentifier
         );
         
-        sceneHandler.addCadModel(model, model.cadModelIdentifier);
+        sceneHandler.addCadModel(model, (model as CadNode).cadModelIdentifier);
       }
       
       let cameraConfig = getCameraConfig(model);
