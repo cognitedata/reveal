@@ -125,7 +125,7 @@ function createGeometryFromEptData(data: ParsedEptData): THREE.BufferGeometry {
   }
 
   addAttributeIfPresent<Float32Array>(Float32Array, 'position', 3, data.position);
-  addAttributeIfPresent<Uint32Array>(Uint32Array, 'indices', 1, data.indices);
+  addAttributeIfPresent<Uint8Array>(Uint8Array, 'indices', 4, data.indices);
   addAttributeIfPresent<Uint8Array>(Uint8Array, 'color', 4, data.color, true);
   addAttributeIfPresent<Float32Array>(Float32Array, 'intensity', 1, data.intensity);
   addAttributeIfPresent<Uint8Array>(Uint8Array, 'classification', 1, data.classification);
