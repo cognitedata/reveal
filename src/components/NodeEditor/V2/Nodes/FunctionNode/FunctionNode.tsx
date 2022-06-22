@@ -51,21 +51,12 @@ const FunctionNode = memo(
       translations: t,
     } = data;
 
-    const [areParamsVisible, setAreParamsVisible] = useState<boolean>(selected);
-
-    useEffect(() => {
-      if (!selected) {
-        setAreParamsVisible(false);
-      }
-    }, [selected]);
-
     const selectedOperationVersion = operation?.versions.find(
       ({ version }) => version === selectedOperation.version
     );
 
-    if (!selectedOperationVersion) {
-      return null;
-    }
+    if (!selectedOperationVersion)
+      throw new Error('Operation version not found!');
 
     const nodeHeight = selectedOperationVersion.inputs.length * PIN_MIN_HEIGHT;
 
@@ -73,6 +64,16 @@ const FunctionNode = memo(
     const parameters = (selectedOperationVersion.parameters || []).filter(
       (p) => p.param !== AUTO_ALIGN_PARAM
     );
+
+    const [areParamsVisible, setAreParamsVisible] = useState<boolean>(
+      selected && parameters.length > 0
+    );
+
+    useEffect(() => {
+      if (!selected) {
+        setAreParamsVisible(false);
+      }
+    }, [selected]);
 
     const containerClasses = classNames(FUNCTION_NODE_DRAG_HANDLE_CLASSNAME, {
       selected,

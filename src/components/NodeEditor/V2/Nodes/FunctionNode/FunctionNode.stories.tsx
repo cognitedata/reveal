@@ -3,6 +3,7 @@ import { Meta, Story } from '@storybook/react';
 import { fullListOfOperations } from 'models/operations/mocks';
 import { ReactFlowProvider } from 'react-flow-renderer';
 import { defaultTranslations } from 'components/NodeEditor/translations';
+import { Operation } from '@cognite/calculation-backend';
 import FunctionNode from './FunctionNode';
 import ReactFlowNodeEditor from '../../ReactFlowNodeEditor';
 import { NodeTypes } from '../../types';
@@ -51,14 +52,18 @@ const Template: Story<ComponentProps<typeof FunctionNode>> = (args) => (
 export const AddFunction = Template.bind({});
 export const ExtremeOutliersFunction = Template.bind({});
 
+const addFunctionMock = fullListOfOperations.find(
+  ({ op }) => op === 'add'
+) as Operation;
+
 AddFunction.args = {
   id: 'sample',
   data: {
     selectedOperation: {
-      op: fullListOfOperations[27].op,
-      version: fullListOfOperations[27].versions[0].version,
+      op: addFunctionMock.op,
+      version: addFunctionMock.versions[0].version,
     },
-    operation: fullListOfOperations[27],
+    operation: addFunctionMock,
     parameterValues: {},
     onParameterValuesChange: () => {},
     onDuplicateNode: () => {},
@@ -66,7 +71,7 @@ AddFunction.args = {
     readOnly: false,
     translations: defaultTranslations,
   },
-  selected: false,
+  selected: true,
 };
 
 ExtremeOutliersFunction.args = {
