@@ -13,6 +13,7 @@ load("//rules/publish:publish_storybook.bzl", "publish_storybook")
 load("@npm//@bazel/cypress:index.bzl", "cypress_web_test")
 load("//rules/build_sed:build_sed.bzl", "build_sed")
 load("//rules/storybook:move_assets.bzl", "move_assets")
+load("//rules/vite:vite_build.bzl", "vite_build")
 
 # Filename conventions described at
 # https://create-react-app.dev/docs/running-tests#filename-conventions
@@ -202,12 +203,11 @@ _RUNTIME_DEPS = [
 
 ### vite build ###
 
-vite(
+vite_build(
     name = "build",
     args = [
         "--node_options=--require=./$(execpath chdir.js)",
         "build",
-        "--outDir=build",
     ],
     data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
         ":vite_config",

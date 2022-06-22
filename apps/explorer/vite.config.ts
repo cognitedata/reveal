@@ -1,11 +1,12 @@
-import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
-import tsConfigPaths from 'vite-tsconfig-paths';
-import svgr from 'vite-plugin-svgr';
+import { defineConfig, loadEnv } from 'vite';
 import macrosPlugin from 'vite-plugin-babel-macros';
+import svgr from 'vite-plugin-svgr';
+import tsConfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(({ command }) => {
   let env = {};
+  let define = {};
   const baseConfig: Record<string, unknown> = {};
   if (command === 'serve') {
     // Allows vite to get resources from node_modules, like cogs.js fonts
@@ -13,6 +14,9 @@ export default defineConfig(({ command }) => {
       fs: {
         allow: ['../..'],
       },
+    };
+    define = {
+      global: {},
     };
     env = {
       NODE_ENV: 'development',
@@ -43,6 +47,7 @@ export default defineConfig(({ command }) => {
     },
     base: command === 'build' ? 'PUBLIC_URL_VALUE/' : '/',
     define: {
+      ...define,
       'process.env': env,
     },
     build: {

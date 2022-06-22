@@ -51,7 +51,6 @@ type ExplorerConfig = SidecarConfig;
   // when deployed with FAS the values below are partly overriden
   applicationId: 'explorer',
   applicationName: 'Cognite Office Explorer',
-  docsSiteBaseUrl: 'https://docs.cognite.com',
   availableClusters: [
     {
       label: 'Multi customer environments',

@@ -13,8 +13,6 @@ export HTTPS=${HTTPS:-true}
 
 ../../node_modules/.bin/kill-port --port 3000
 
-echo ' '
-echo '-> Starting FakeIdP service'
 ./scripts/start-fake-idp.sh &
 IDP_PID=$!
 
