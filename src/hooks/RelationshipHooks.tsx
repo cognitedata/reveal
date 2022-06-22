@@ -249,6 +249,11 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
       : [],
   }));
 
+  const relationshipLabelsLength = Object.keys({
+    ...targetRelationshipLabels,
+    ...sourceRelationshipLabels,
+  }).length;
+
   useEffect(() => {
     const options = new Set(
       flatten(
@@ -262,7 +267,7 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
     setSelectOptions(prev => new Set([...prev, ...options]));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [targetRelationshipLabels.length, sourceRelationshipLabels.length]);
+  }, [relationshipLabelsLength]);
 
   return {
     items: [
