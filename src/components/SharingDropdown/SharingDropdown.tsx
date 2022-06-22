@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ComponentProps } from 'react';
 import styled from 'styled-components/macro';
 import {
   Button,
@@ -8,16 +8,19 @@ import {
   Menu,
   Body,
   Input,
+  Colors,
+  MiddleEllipsis,
+  DropdownProps,
 } from '@cognite/cogs.js';
-import { Chart } from 'models/chart/types';
+import { makeDefaultTranslations, translationKeys } from 'utils/translations';
+import CopyButton from 'components/CopyButton/CopyButton';
 
-import { trackUsage } from 'services/metrics';
-import { useRecoilState } from 'recoil';
-import chartAtom from 'models/chart/atom';
-import { makeDefaultTranslations } from 'utils/translations';
-
-interface SharingDropdownProps {
-  chart: Chart;
+interface SharingDropdownProps extends DropdownProps {
+  chart: {
+    name: string;
+    public: boolean;
+  };
+  onToggleChartAccess: ComponentProps<typeof Switch>['onChange'];
   disabled?: boolean;
   translations?: typeof defaultTranslations;
 }
@@ -33,48 +36,35 @@ const defaultTranslations = makeDefaultTranslations(
 const SharingDropdown = ({
   chart,
   disabled = false,
+  onToggleChartAccess,
   translations,
+  ...rest
 }: SharingDropdownProps) => {
-  const [, setChart] = useRecoilState(chartAtom);
-  const [shareIconType, setShareIconType] = useState<
-    'Copy' | 'Checkmark' | 'Error'
-  >('Copy');
   const shareableLink = window.location.href;
   const t = {
     ...defaultTranslations,
     ...translations,
   };
 
-  const handleToggleChartAccess = async () => {
-    setChart((oldChart) => ({
-      ...oldChart!,
-      public: !oldChart?.public,
-    }));
-
-    trackUsage('ChartView.ChangeChartAccess', {
-      state: chart.public ? 'public' : 'private',
-    });
-  };
-
-  const handleCopyLinkClick = async () => {
-    try {
-      await navigator.clipboard.writeText(shareableLink);
-      setShareIconType('Checkmark');
-      trackUsage('ChartView.CopyLink');
-      setTimeout(() => setShareIconType('Copy'), 3000);
-    } catch (e) {
-      setShareIconType('Error');
-      setTimeout(() => setShareIconType('Copy'), 3000);
-    }
-  };
-
   return (
     <StyledDropdown
       disabled={disabled}
+      popperOptions={{
+        modifiers: [
+          {
+            name: 'offset',
+            options: {
+              offset: [-260, 10],
+            },
+          },
+        ],
+      }}
       content={
         <SharingMenu>
           <SharingMenuContent>
-            <Title level={3}>{chart.name}</Title>
+            <MiddleEllipsis>
+              <Title level={3}>{chart.name}</Title>
+            </MiddleEllipsis>
             <SharingMenuBody level={1}>
               {chart.public
                 ? t[
@@ -87,8 +77,8 @@ const SharingDropdown = ({
             <SharingSwitchContainer>
               <Switch
                 name="toggleChartAccess"
-                value={chart.public}
-                onChange={handleToggleChartAccess}
+                checked={chart.public}
+                onChange={onToggleChartAccess}
               >
                 {chart.public ? t['Sharing on'] : t['Sharing off']}
               </Switch>
@@ -100,19 +90,20 @@ const SharingDropdown = ({
                 disabled={!chart.public}
                 htmlSize={32}
               />
-              <Button
+              <CopyButton
+                value={shareableLink}
                 type="primary"
-                onClick={() => handleCopyLinkClick()}
-                icon={shareIconType}
                 iconPlacement="right"
+                style={{ color: Colors['text-icon-on-contrast-strong'] }}
                 disabled={!chart.public}
               >
                 {t['Copy link']}
-              </Button>
+              </CopyButton>
             </ShareLinkContainer>
           </SharingMenuContent>
         </SharingMenu>
       }
+      {...rest}
     >
       <Button
         icon="Share"
@@ -161,6 +152,8 @@ const StyledDropdown = styled(Dropdown)`
   transform: translate(50%);
 `;
 
-SharingDropdown.translationKeys = Object.keys(defaultTranslations);
+SharingDropdown.defaultTranslations = defaultTranslations;
+SharingDropdown.translationKeys = translationKeys(defaultTranslations);
+SharingDropdown.translationNamespace = 'SharingDropdown';
 
 export default SharingDropdown;

@@ -4,7 +4,6 @@ import { Button, Popconfirm, toast, Tooltip } from '@cognite/cogs.js';
 import { useNavigate } from 'hooks/navigation';
 import { useDeleteChart, useUpdateChart } from 'hooks/charts-storage';
 import { duplicate, updateChartDateRange } from 'models/chart/updates';
-import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
 import { trackUsage } from 'services/metrics';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useRecoilState } from 'recoil';
@@ -21,6 +20,7 @@ import useScreenshot from 'use-screenshot-hook';
 import CSVModal from 'components/DownloadDropdown/CSVModal';
 import { isProduction } from 'utils/environment';
 import { currentDateRangeLocale } from 'config/locale';
+import ConnectedSharingDropdown from 'components/SharingDropdown/ConnectedSharingDropdown';
 
 export const ChartActions = () => {
   const { t } = useTranslations(
@@ -43,10 +43,6 @@ export const ChartActions = () => {
   const { t: CSVModalTranslations } = useTranslations(
     CSVModal.translationKeys,
     'DownloadCSVModal'
-  );
-  const { t: sharingDropdownTranslations } = useTranslations(
-    SharingDropdown.translationKeys,
-    'SharingDropdown'
   );
 
   const move = useNavigate();
@@ -159,11 +155,7 @@ export const ChartActions = () => {
       style={{ padding: '0 3px' }}
     >
       <Tooltip content={t.Share}>
-        <SharingDropdown
-          chart={chart}
-          disabled={!isOwner}
-          translations={sharingDropdownTranslations}
-        />
+        <ConnectedSharingDropdown />
       </Tooltip>
       <Divider />
       <Tooltip content={t['Download Chart']}>
