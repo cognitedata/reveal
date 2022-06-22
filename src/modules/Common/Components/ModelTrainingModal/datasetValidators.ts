@@ -9,6 +9,7 @@ import {
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
 import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import path from 'path';
 
 export interface DatasetValidationType {
   valid: boolean;
@@ -16,8 +17,10 @@ export interface DatasetValidationType {
 }
 
 export const fileTypesValid = (files: VisionFile[]) => {
-  return files.every((item) =>
-    ['png', 'jpeg'].includes(mime.extension(item?.mimeType || '') || '')
+  return files.every(
+    (item) =>
+      ['.png', '.jpeg', '.jpg'].includes(path.extname(item.name)) &&
+      ['png', 'jpeg'].includes(mime.extension(item?.mimeType || '') || '')
   );
 };
 
@@ -65,7 +68,7 @@ export const validateDataset = (
   if (!fileTypesValid(files)) {
     return {
       valid: false,
-      message: `Images must be of type jpeg or png, with mime type image/png or image/jpeg`,
+      message: `Images must have file extension .jpg, .jpeg or .png, with mime type image/png or image/jpeg`,
     };
   }
 

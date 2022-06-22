@@ -26,13 +26,19 @@ describe('Test AutoML validator: fileTypesValid', () => {
     const mockVisionFiles = [
       {
         id: 1,
-        name: 'one',
+        name: 'one.png',
         mimeType: 'image/png',
         ...commonVisionFileMock,
       },
       {
         id: 2,
-        name: 'two',
+        name: 'two.jpeg',
+        mimeType: 'image/jpeg',
+        ...commonVisionFileMock,
+      },
+      {
+        id: 3,
+        name: 'two.jpg',
         mimeType: 'image/jpeg',
         ...commonVisionFileMock,
       },
@@ -44,13 +50,13 @@ describe('Test AutoML validator: fileTypesValid', () => {
     const mockVisionFiles = [
       {
         id: 1,
-        name: 'one',
+        name: 'one.png',
         mimeType: 'video/mp4',
         ...commonVisionFileMock,
       },
       {
         id: 2,
-        name: 'two',
+        name: 'two.jpeg',
         mimeType: 'image/jpeg',
         ...commonVisionFileMock,
       },
@@ -62,7 +68,7 @@ describe('Test AutoML validator: fileTypesValid', () => {
     const mockVisionFiles = [
       {
         id: 1,
-        name: 'one',
+        name: 'one.png',
         ...commonVisionFileMock,
       },
     ] as VisionFile[];
@@ -73,8 +79,28 @@ describe('Test AutoML validator: fileTypesValid', () => {
     const mockVisionFiles = [
       {
         id: 1,
-        name: 'one',
+        name: 'one.png',
         mimeType: '',
+        ...commonVisionFileMock,
+      },
+    ] as VisionFile[];
+    expect(fileTypesValid(mockVisionFiles)).toBe(false);
+  });
+  test('missing file extension is not valid', () => {
+    const mockVisionFiles = [
+      {
+        id: 1,
+        name: 'one',
+        ...commonVisionFileMock,
+      },
+    ] as VisionFile[];
+    expect(fileTypesValid(mockVisionFiles)).toBe(false);
+  });
+  test('mp4 is not valid file extension', () => {
+    const mockVisionFiles = [
+      {
+        id: 1,
+        name: 'one.mp4',
         ...commonVisionFileMock,
       },
     ] as VisionFile[];
