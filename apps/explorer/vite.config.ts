@@ -37,7 +37,11 @@ export default defineConfig(({ command }) => {
       svgr(),
       macrosPlugin(),
     ],
-    base: command === 'build' ? '/PUBLIC_URL_VALUE' : '/',
+    resolve: {
+      dedupe: ['react', 'react-dom'],
+      preserveSymlinks: true,
+    },
+    base: command === 'build' ? 'PUBLIC_URL_VALUE/' : '/',
     define: {
       'process.env': env,
     },
@@ -46,6 +50,7 @@ export default defineConfig(({ command }) => {
       commonjsOptions: {
         include: [],
       },
+      rollupOptions: { treeshake: false },
     },
   };
 });
