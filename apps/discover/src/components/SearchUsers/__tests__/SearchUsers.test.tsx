@@ -11,11 +11,8 @@ import { setupServer } from 'msw/node';
 
 import { testRenderer } from '__test-utils/renderer';
 
-import {
-  SearchUsers,
-  Props,
-  SHARED_USER_INPUT_PLACEHOLDER,
-} from '../SearchUsers';
+import { SHARED_USER_INPUT_PLACEHOLDER } from '../constants';
+import { SearchUsers, Props } from '../SearchUsers';
 
 const mockServer = setupServer(getMockUserSearch());
 

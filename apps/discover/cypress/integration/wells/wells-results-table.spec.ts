@@ -1,15 +1,14 @@
 import { UserPreferredUnit } from '../../../src/constants/units';
 import {
-  WATER_DEPTH,
-  KB_ELEVATION,
-} from '../../../src/pages/authorized/search/well/content/constants';
-
-import {
   OPERATOR,
   DATA_SOURCE,
 } from '../../../src/modules/wellSearch/constantsSidebarFilters';
-import { SOURCE_FILTER } from '../../support/selectors/wells.selectors';
+import {
+  WATER_DEPTH,
+  KB_ELEVATION,
+} from '../../../src/pages/authorized/search/well/content/constants';
 import { STATIC_WELL_1 } from '../../support/constants';
+import { SOURCE_FILTER } from '../../support/selectors/wells.selectors';
 
 describe('Wells: result_table', () => {
   beforeEach(() => {

@@ -8,9 +8,11 @@ import { handleServiceError } from 'utils/errors';
 
 import { BasicShareModal } from 'components/BasicShareModal';
 import { SharedUsersList } from 'components/BasicShareModal/SharedUsersList';
-import { UserOption } from 'components/search-users/SearchUsers';
+import { UserOption } from 'components/SearchUsers/SearchUsers';
 import { showSuccessMessage } from 'components/Toast';
 import { REMOVE_SHARE_SUCCESS_TOAST } from 'pages/authorized/favorites/modals/constants';
+
+import { SHARE_SAVED_SEARCH } from '../constants';
 
 interface Props {
   isOpen: boolean;
@@ -50,7 +52,7 @@ export const ShareSavedSearchModal: React.FC<Props> = (props) => {
 
   return (
     <BasicShareModal
-      title={t('Share saved search')}
+      title={t(SHARE_SAVED_SEARCH)}
       onCancel={onCancel}
       isOpen={isOpen}
       onShare={onShare}

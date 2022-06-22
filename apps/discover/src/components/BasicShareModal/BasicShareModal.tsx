@@ -3,7 +3,7 @@ import React, { ReactNode, useState } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { useTranslation } from '@cognite/react-i18n';
 
-import { SearchUsers, UserOption } from 'components/search-users/SearchUsers';
+import { SearchUsers, UserOption } from 'components/SearchUsers/SearchUsers';
 import {
   SHARE_MODAL_BUTTON_TEXT,
   SHARE_MODAL_WIDTH,

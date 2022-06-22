@@ -12,13 +12,12 @@ import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
 import { showErrorMessage } from '../Toast';
 
+import { SHARED_USER_INPUT_PLACEHOLDER } from './constants';
+
 export interface UserOption {
   value: string;
   label: string;
 }
-
-export const SHARED_USER_INPUT_PLACEHOLDER =
-  'Type names or emails to invite users...';
 
 export interface Props {
   selectedOptions: UserOption[];

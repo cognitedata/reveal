@@ -18,7 +18,7 @@ import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 import { ViewButton, MoreOptionsButton } from 'components/Buttons';
 import EmptyState from 'components/EmptyState';
 import InlineLink from 'components/InlineLink';
-import { UserOption } from 'components/search-users/SearchUsers';
+import { UserOption } from 'components/SearchUsers/SearchUsers';
 import { Table, TableResults, RowProps } from 'components/Tablev3';
 import { showErrorMessage, showSuccessMessage } from 'components/Toast';
 import { COMMENT_NAMESPACE } from 'constants/comments';

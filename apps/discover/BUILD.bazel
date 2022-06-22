@@ -506,6 +506,8 @@ CYPRESS_EXTERNAL_FILES = [
     "src/pages/authorized/search/well/content/constants.ts",
     "src/constants/units.ts",
     "src/domain/wells/measurements/constants.ts",
+    "src/pages/authorized/favorites/tabs/savedSearches/constants.ts",
+    "src/components/SearchUsers/constants.ts",
 ]
 
 CYPRESS_FILES = _CYPRESS_FILES + CYPRESS_EXTERNAL_FILES
