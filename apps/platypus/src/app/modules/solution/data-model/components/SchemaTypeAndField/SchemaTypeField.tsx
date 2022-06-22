@@ -38,7 +38,10 @@ export const SchemaTypeField = ({
 
   const fieldNameDebounced = useCallback(
     debounce((value: string) => {
-      if (typeFieldNames.includes(value)) {
+      const isSameFieldPresent = typeFieldNames.some(
+        (nameField, i) => nameField === value && index !== i
+      );
+      if (isSameFieldPresent) {
         setError(t('duplicate_field', 'Duplicate field name'));
       } else {
         onFieldUpdated({ name: value });
