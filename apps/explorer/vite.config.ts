@@ -37,6 +37,7 @@ export default defineConfig(({ command }) => {
       svgr(),
       macrosPlugin(),
     ],
+    base: command === 'build' ? '/PUBLIC_URL_VALUE' : '/',
     define: {
       'process.env': env,
     },

@@ -29,36 +29,24 @@ The following steps detail how to setup a project to have all the data required 
 
 ### Run the project setup from Fusion Demo Data
 
-... add lines for build and send
+```
+yarn build:one --static --directory explorer --folder build_explorer
+```
 
-### Setting up GraphQL server
-
-1. Define in `.env.local` the constants `CLIENT_ID`, `CLIENT_SECRET`, `SCOPE`, `TENANT_ID`, `PROJECT` and `BASE_URL`
-2. To start the GraphQL server for the schema, run `yarn graphql:deploy`
+```
+yarn send <...credential stuff...> -f build_explorer --dirty
+```
 
 ### Generating GraphQL Types
 
-1. Open `resources/codegen.yaml` and replace `${Token}` with a valid bearer token.
-2. Go to `applications` folder and run `explorer:graphql-generate`.
+This needs to only be run whenever there are schema changes (which live in fusion-demo-data)
 
-### Setting up GraphQL
-
-After we have models with data in them, we need to setup a GraphQL API to access that data.
-Again there are a few steps here:
-
-1. Make the API - where we setup an API namespace to use
-2. Create a version - this is an instance in the api that we will query
+1. Open `resources/schema/codegen.yaml` and replace `${Token}` with a valid bearer token.
+2. Run `yarn graphql:generate`
 
 #### Using the API
 
-... todo
-
-1. Define in `.env.local` the constants `CLIENT_ID`, `CLIENT_SECRET`, `SCOPE`, `TENANT_ID`, `PROJECT` and `BASE_URL`
-2. To start the GraphQL server for the schema, run `yarn graphql:deploy`
-
-Note: once you have made this, you can see it directly here:
-
-https://graphiql-online.com/
+To browse the GraphQL server online, goto: https://graphiql-online.com
 
 Note: make sure to add the `Authorization` key to the headers and the `Bearer xxx` token.
 
