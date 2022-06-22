@@ -38,7 +38,7 @@
     "bump:tag": "cross-var git tag $npm_package_name@$npm_package_version",
     "bump:push": "git push -u origin head && git push --tags",
     "release": "yarn build:prod && cd dist && yarn publish --non-interactive",
-    "ws:start": "cd $INIT_CWD && webpack-dev-server --open --env.dir=$INIT_CWD",
+    "ws:start": "cd $INIT_CWD && webpack-dev-server --config ../webpack.config.js --open --env dir=$INIT_CWD",
     "ws:test": "cd $INIT_CWD && jest --runInBand",
     "ws:lint": "cd $INIT_CWD && eslint . --ext .ts,.js --max-warnings 0 --cache"
   },
@@ -104,6 +104,7 @@
     "moq.ts": "9.0.2",
     "nock": "13.2.7",
     "prettier": "2.7.1",
+    "process": "^0.11.10",
     "random-seed": "0.3.0",
     "raw-loader": "^4.0.2",
     "rimraf": "3.0.2",

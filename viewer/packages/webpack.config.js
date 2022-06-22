@@ -3,6 +3,7 @@
  */
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = env => {
   const entryFile = env.example ?? './app/index.ts';
@@ -17,23 +18,22 @@ module.exports = env => {
     },
 
     resolve: {
+      fallback: {
+        fs: false,
+        path: require.resolve('path-browserify')
+      },
       extensions: ['.ts', '.js'],
       symlinks: true
     },
 
     devServer: {
-      host: '0.0.0.0',
-      contentBase: path.resolve(__dirname, '../../examples/public'),
-      disableHostCheck: true,
-      watchContentBase: true,
-      https: true,
-      watchOptions: {
-        poll: true
-      }
-    },
-
-    node: {
-      fs: 'empty'
+      host: 'localhost',
+      static: {
+        directory: path.resolve(__dirname, env.dir + '/app'),
+        watch: true
+      },
+      allowedHosts: 'all',
+      server: 'https'
     },
 
     module: {
@@ -67,9 +67,15 @@ module.exports = env => {
         }
       ]
     },
+    watchOptions: {
+      poll: 1000
+    },
 
     devtool: 'inline-source-map',
 
-    plugins: [new HtmlWebpackPlugin({ title: require(path.resolve(env.dir, './package.json')).name })]
+    plugins: [new HtmlWebpackPlugin({ title: require(path.resolve(env.dir, './package.json')).name }),
+              new webpack.ProvidePlugin({
+                process: 'process/browser'
+              })]
   };
 };
