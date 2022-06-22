@@ -11,7 +11,7 @@ import {
   objToFilter,
   sortCollection,
 } from '../../../../utils';
-import { camelize, capitalize } from '../../../../utils/text-utils';
+import { capitalize } from '../../../../utils/text-utils';
 
 export interface BuildQueryResolversParams {
   version: number;
@@ -31,13 +31,34 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
     externalId: params.externalId,
   });
 
+  const templateVersion = (templateDb as any).versions.find(
+    (v) => v.version === params.version
+  );
+
+  // console.log('buildQueryResolvers', templateDb, templateVersion);
+
   params.tablesList.forEach((table) => {
+    // storage could have different name in schema service
+    // make sure that we read the right table
+    let storageTableName = table;
+    if (
+      templateVersion?.bindings?.find(
+        (bindingsItem) => bindingsItem.targetName === table
+      )
+    ) {
+      const tableBinding = templateVersion?.bindings.find(
+        (bindingsItem) => bindingsItem.targetName === table
+      );
+      storageTableName =
+        tableBinding?.dataModelStorageSource.externalId || table;
+    }
+
     resolvers.Query[`list${capitalize(table)}`] = (prm, filterParams) => {
       let items = fetchAndQueryData({
         globalDb: params.db,
         templateDb,
         isBuiltInType: false,
-        schemaType: table,
+        schemaType: storageTableName,
         isFetchingObject: false,
         filterParams: filterParams,
         parsedSchema: params.parsedSchema,
@@ -83,6 +104,23 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
       const fieldName = field.name;
       const isBuiltInType = builtInTypes.includes(fieldSchemaType);
 
+      // storage could have different name in schema service
+      // make sure that we read the right table
+      let fieldStorageTableName = fieldSchemaType;
+      if (
+        templateVersion?.bindings &&
+        templateVersion?.bindings.find(
+          (bindingsItem) => bindingsItem.targetName === table
+        )
+      ) {
+        const fieldStorageTableBinding = templateVersion?.bindings.find(
+          (bindingsItem) => bindingsItem.targetName === fieldSchemaType
+        );
+        fieldStorageTableName =
+          fieldStorageTableBinding?.dataModelStorageSource.externalId ||
+          fieldSchemaType;
+      }
+
       if (fieldKind === 'OBJECT') {
         tableResolver[fieldName] = (ref) => {
           // Fix for inline types
@@ -95,7 +133,7 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
             templateDb,
             isBuiltInType,
             refObj: ref,
-            schemaType: fieldSchemaType,
+            schemaType: fieldStorageTableName,
             schemaFieldName: fieldName,
             isFetchingObject: true,
           });
@@ -116,7 +154,7 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
             templateDb,
             isBuiltInType,
             refObj: ref,
-            schemaType: fieldSchemaType,
+            schemaType: fieldStorageTableName,
             schemaFieldName: fieldName,
             isFetchingObject: false,
             filterParams: prms,

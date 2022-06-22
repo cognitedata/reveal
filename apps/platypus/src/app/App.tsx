@@ -6,17 +6,8 @@ import { rootInjector } from './di';
 
 import Routes from './Routes';
 import { getTenant } from './utils/tenant-utils';
-import { QueryClient, QueryClientProvider } from 'react-query';
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    },
-  },
-});
+import { QueryClientProvider } from 'react-query';
+import { queryClient } from './queryClient';
 
 // Globally defined global
 // GraphiQL package needs this to be run correctly

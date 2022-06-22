@@ -15,12 +15,28 @@ const PORT = args.port || 4002;
 const dbPath = (args._[0] || args.db) as string;
 
 const mockData = loadMockData(dbPath);
+const mockDataInitalState = JSON.parse(JSON.stringify(mockData));
 const mockServerConfig = args.config ? loadConfig(args.config) : null;
 
 const baseUrl =
   TENANT === 'testcafe' ? 'http://localhost:11111' : 'http://localhost:' + PORT;
 
-server.use(cdfMiddleware(mockData, mockServerConfig, args.middlewares));
+const cdfMiddlewares = cdfMiddleware(
+  mockData,
+  mockServerConfig,
+  args.middlewares
+);
+
+server.get('/reset', (req, res) => {
+  // we must be sure that we are going to make deep copy
+  // otherwise we will end up with prev state being modified
+  cdfMiddlewares.reset(JSON.parse(JSON.stringify(mockDataInitalState)));
+  console.log('Application state was reseted to its initial state');
+
+  res.jsonp({ items: [] });
+});
+
+server.use(cdfMiddlewares);
 
 server.get('/login/status', (req, res) => {
   res.set({

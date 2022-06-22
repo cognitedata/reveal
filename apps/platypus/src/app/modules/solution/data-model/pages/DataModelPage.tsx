@@ -31,6 +31,7 @@ import { ErrorPlaceholder } from '../components/ErrorBoundary/ErrorPlaceholder';
 import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
 import { DiscardButton } from './elements';
 import { useInjection } from '@platypus-app/hooks/useInjection';
+import { queryClient } from '@platypus-app/queryClient';
 
 export const DataModelPage = () => {
   const history = useHistory();
@@ -38,8 +39,8 @@ export const DataModelPage = () => {
   const { t } = useTranslation('SolutionDataModel');
   const {
     dataModel,
-    schemas,
-    selectedSchema: selectedReduxSchema,
+    versions: schemas,
+    selectedVersion: selectedReduxSchema,
   } = useSelector<DataModelState>((state) => state.dataModel);
   const [mode, setMode] = useState<SchemaEditorMode>(
     schemas.length ? SchemaEditorMode.View : SchemaEditorMode.Edit
@@ -156,6 +157,11 @@ export const DataModelPage = () => {
 
         updateSchema(result.getValue());
         setSelectedSchema(result.getValue());
+
+        // react-query cache the requests and if we have to clear the cache when we are making changes
+        // otherwise we will end with invalid state
+        queryClient.clear();
+
         if (publishNewVersion) {
           insertSchema(result.getValue());
           history.replace(

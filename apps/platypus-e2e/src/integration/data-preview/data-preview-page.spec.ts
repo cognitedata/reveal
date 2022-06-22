@@ -1,6 +1,7 @@
 describe('Platypus Data Preview Page - Preview', () => {
   beforeEach(() => {
     window.sessionStorage.setItem('agGridVirtualizationModeDisabled', 'true');
+    cy.request('http://localhost:4200/reset');
     cy.visit('/platypus/data-models/blog/latest/data/data-management/preview');
   });
 

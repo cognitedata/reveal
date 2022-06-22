@@ -76,9 +76,11 @@ export interface CdfApiConfig {
 export type CdfMockDatabase = LowdbSync<MockData>;
 export interface ExtendedRouter extends Router {
   db: KeyValuePair;
+  init?: (mockData?: CdfMockDatabase) => void;
 }
 export interface CdfServerRouter extends Router {
   db: CdfMockDatabase;
+  reset?: (mockData: CdfMockDatabase) => void;
 }
 
 export interface DatapointGroup {

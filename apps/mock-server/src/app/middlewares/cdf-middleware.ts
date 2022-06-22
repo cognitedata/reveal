@@ -28,8 +28,8 @@ export default function (
 
   const db = createDefaultMockApiEndpoints(mockData);
   // Create JSON server REST API endpoints and db
-  const jsonServerApiRouter = jsonServerRouter(db);
-  const jsonServerDb = jsonServerApiRouter.db as any as CdfMockDatabase;
+  let jsonServerApiRouter = jsonServerRouter(db);
+  let jsonServerDb = jsonServerApiRouter.db as any as CdfMockDatabase;
   // set json server id to be externalId because that is how cdf works
   (jsonServerDb._ as any).id = 'externalId';
 
@@ -46,7 +46,7 @@ export default function (
 
   const filesApiRouter = filesMiddleware(jsonServerDb, serverConfig);
 
-  const cdfDb = jsonServerDb;
+  let cdfDb = jsonServerDb;
 
   const cdfRouter = createCdfRestRouter(cdfDb, serverConfig);
 
@@ -68,6 +68,21 @@ export default function (
   cdfRouter.use(jsonServerApiRouter);
 
   cdfRouter.db = cdfDb;
+
+  cdfRouter.reset = (cdfMockData: CdfMockDatabase) => {
+    jsonServerApiRouter = jsonServerRouter(cdfMockData);
+    jsonServerApiRouter.db.defaults(cdfMockData).write();
+    jsonServerDb = jsonServerApiRouter.db as any as CdfMockDatabase;
+
+    templatesApiRouter.init(jsonServerDb);
+    schemaServiceApiRouter.init(jsonServerDb);
+
+    cdfDb = cdfMockData;
+    cdfRouter.db.setState(jsonServerDb as any);
+    // and immediately write the database file
+    cdfRouter.db.write();
+    cdfRouter.use(jsonServerApiRouter);
+  };
 
   return cdfRouter;
 }

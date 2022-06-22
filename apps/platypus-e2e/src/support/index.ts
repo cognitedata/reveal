@@ -16,3 +16,11 @@
 // Import commands.js using ES2015 syntax:
 import './commands';
 import '@cypress/code-coverage/support';
+
+// https://stackoverflow.com/questions/49384120/resizeobserver-loop-limit-exceeded
+Cypress.on('uncaught:exception', (err) => {
+  /* returning false here prevents Cypress from failing the test */
+  if (err.message.startsWith('ResizeObserver loop limit exceeded')) {
+    return false;
+  }
+});

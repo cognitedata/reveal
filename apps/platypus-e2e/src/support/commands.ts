@@ -25,6 +25,14 @@ declare namespace Cypress {
     setQueryExplorerQuery(query: string): void;
     clickQueryExplorerExecuteQuery(): void;
     assertQueryExplorerResult(expectedResult: any, timeout?: number): void;
+    addDataModelType(typeName: string): void;
+    editDataModelTypeFieldName(
+      typeName: string,
+      fieldName: string,
+      value: string
+    ): void;
+    ensureCurrentVersionIsDraft(): void;
+    ensureCurrentVersionIsNotDraft(): void;
   }
 }
 //
@@ -72,3 +80,55 @@ Cypress.Commands.add(
     });
   }
 );
+
+Cypress.Commands.add(
+  'editDataModelTypeFieldName',
+  (typeName: string, fieldName: string, value: string) => {
+    // Add new type
+    cy.get('[aria-label="UI editor"]').click();
+    cy.getBySel(`type-list-item-${typeName}`).click();
+    cy.getBySel(`data_model_type_field_${fieldName}`)
+      .getBySel('schema-type-field')
+      .type('{selectAll}')
+      .type(value);
+
+    const typeSelector = `div#${typeName}.node`;
+    // Wait for visualizer to be updated with new type before reloading page
+    cy.get(typeSelector).should('be.visible');
+  }
+);
+
+Cypress.Commands.add('addDataModelType', (typeName: string) => {
+  // Add new type
+  cy.get('[aria-label="UI editor"]').click();
+  cy.getBySel('edit-schema-btn').should('be.visible').click();
+  cy.getBySel('add-type-btn').should('be.visible').click();
+  cy.getBySel('type-name-input').should('be.visible').type(typeName);
+  cy.getBySel('modal-ok-button').should('be.visible').click();
+  cy.getBySel('schema-type-field').type('name');
+
+  const typeSelector = `div#${typeName}.node`;
+  // Wait for visualizer to be updated with new type before reloading page
+  cy.get(typeSelector).should('be.visible');
+});
+
+Cypress.Commands.add('ensureCurrentVersionIsDraft', () => {
+  // Version selector should display "Local draft"
+  cy.getBySel('schema-version-select').contains('Local draft');
+
+  // Discard draft button should become visible next to publish button
+  cy.getBySel('discard-btn').should('be.visible');
+
+  // All changes saved status text should display next to version selector
+  cy.getBySel('changes-saved-status-text').should('be.visible');
+});
+
+Cypress.Commands.add('ensureCurrentVersionIsNotDraft', () => {
+  // Discard draft button should be hidden
+  cy.getBySel('discard-btn').should('not.exist');
+
+  // "All changes saved" status text should be hidden
+  cy.getBySel('changes-saved-status-text').should('not.exist');
+  // Version selector should not display "Local draft"
+  cy.getBySel('schema-version-select').should('not.have.text', 'Local draft');
+});

@@ -8,7 +8,7 @@ import { CdfDatabaseService } from '../../../../common/cdf-database.service';
 import { GraphQlSchemaParser } from '../../../../common/graphql-schema-parser';
 import uuid from '../../../../utils/uuid';
 import { schemaServiceGraphqlApi } from '../../config/schema-service-api';
-import { Api } from '../../types';
+import { Api, DmsBinding } from '../../types';
 import { buildQueryResolvers } from './query-resolvers-builder';
 import { SchemaServiceGraphqlApiBuilder } from './schema-builder';
 import { createMockServerKey } from '../../utils/graphql-server-utils';
@@ -19,15 +19,15 @@ export interface BuildMockServerParams {
   schema: string;
   version: number;
   externalId: string;
-  incrementVersion: boolean;
+  updateBindings: boolean;
+  bindings?: DmsBinding[];
 }
 export const buildMockServer = (params: BuildMockServerParams) => {
-  const { db, schema, version, externalId, incrementVersion } = params;
+  const { db, schema, version, externalId, updateBindings, bindings } = params;
   const parser = new GraphQlSchemaParser();
   const schemaBuilder = new SchemaServiceGraphqlApiBuilder();
 
   const store = CdfDatabaseService.from(db, 'schema');
-  const templateDb = {};
 
   const templateTables = parser.getTableNames(schema, 'view');
   const modifiedSchema = schemaBuilder.sanitizeSchema(schema);
@@ -48,6 +48,7 @@ export const buildMockServer = (params: BuildMockServerParams) => {
   const template = store.find({
     externalId,
   });
+  const templateDb = template.db || {};
 
   // if (!template) {
   //   template = store.insert({
@@ -60,22 +61,35 @@ export const buildMockServer = (params: BuildMockServerParams) => {
   //   });
   // }
 
-  if (template.db === undefined || !Object.keys(template.db)) {
+  if (
+    updateBindings ||
+    template.db === undefined ||
+    !Object.keys(template.db)
+  ) {
     templateTables.forEach((table) => {
-      templateDb[table] = [];
+      let storageTableName = table;
+      if (
+        bindings &&
+        bindings.find((bindingsItem) => bindingsItem.targetName === table)
+      ) {
+        storageTableName = bindings.find(
+          (bindingsItem) => bindingsItem.targetName === table
+        )!.dataModelStorageSource.externalId;
+      }
+
+      if (!templateDb[storageTableName]) {
+        templateDb[storageTableName] = [];
+      }
     });
     template.db = templateDb;
+    store.updateBy(
+      {
+        externalId,
+      },
+      template
+    );
   }
 
-  // store.updateBy(
-  //   {
-  //     templategroups_id,
-  //     version: version,
-  //   },
-  //   template
-  // );
-
-  // const resolvers = {};
   const resolvers = buildQueryResolvers({
     db,
     externalId,
@@ -125,7 +139,7 @@ export const buildFromMockDb = (db: CdfMockDatabase) => {
             externalId: solution.externalId as string,
             schema: solutionVersion.dataModel.graphqlRepresentation,
             version: solutionVersion.version,
-            incrementVersion: false,
+            updateBindings: false,
           });
         }
       });

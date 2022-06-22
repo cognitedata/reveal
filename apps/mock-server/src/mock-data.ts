@@ -116,7 +116,29 @@ export const mockDataSample = {
         {
           version: 1,
           createdTime: 1651346026630,
-          bindings: [],
+          bindings: [
+            {
+              targetName: 'Post',
+              dataModelStorageSource: {
+                externalId: 'Post_1',
+                space: 'blog',
+              },
+            },
+            {
+              targetName: 'User',
+              dataModelStorageSource: {
+                externalId: 'User_1',
+                space: 'blog',
+              },
+            },
+            {
+              targetName: 'Comment',
+              dataModelStorageSource: {
+                externalId: 'Comment_1',
+                space: 'blog',
+              },
+            },
+          ],
           dataModel: {
             graphqlRepresentation:
               'type Post @view {\n  title: String!\n  views: Int!\n  user: User\n tags: [String]\n comments: [Comment]\n}\n\ntype User @view {\n  name: String!\n}\n\ntype Comment @view {\n  body: String!\n  date: Timestamp!\n  post: Post\n}',
@@ -125,7 +147,7 @@ export const mockDataSample = {
         },
       ],
       db: {
-        Post: [
+        Post_1: [
           {
             id: 1,
             externalId: '1',
@@ -154,11 +176,11 @@ export const mockDataSample = {
             comments: [],
           },
         ],
-        User: [
+        User_1: [
           { id: 123, name: 'John Doe' },
           { id: 456, name: 'Jane Doe' },
         ],
-        Comment: [
+        Comment_1: [
           {
             id: 987,
             externalId: '987',

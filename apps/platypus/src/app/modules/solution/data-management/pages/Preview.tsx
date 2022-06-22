@@ -22,7 +22,7 @@ export const Preview = () => {
   );
   const errorLogger = useErrorLogger();
   const { t } = useTranslation('DataPreview');
-  const { selectedSchema } = useSelector<DataModelState>(
+  const { selectedVersion } = useSelector<DataModelState>(
     (state) => state.dataModel
   );
   const dataModelTypeDefsBuilder = useInjection(
@@ -35,10 +35,10 @@ export const Preview = () => {
   );
 
   useEffect(() => {
-    if (selectedSchema.schema) {
+    if (selectedVersion.schema) {
       try {
         const newState = dataModelTypeDefsBuilder.parseSchema(
-          selectedSchema.schema
+          selectedVersion.schema
         );
         setSolutionDataModel(newState);
       } catch (err: any) {
@@ -70,8 +70,8 @@ export const Preview = () => {
             </Flex>
             <DataPreviewTable
               dataModelType={selectedType}
-              solutionId={selectedSchema.externalId}
-              version={selectedSchema.version}
+              solutionId={selectedVersion.externalId}
+              version={selectedVersion.version}
             />
           </div>
         ) : (

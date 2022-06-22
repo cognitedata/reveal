@@ -1,15 +1,11 @@
-import { fetchVersions, fetchDataModel } from './actions';
+import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
+import { DataModel, DataModelVersion } from '@platypus/platypus-core';
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DataModelVersion, DataModel } from '@platypus/platypus-core';
-import { ActionStatus } from '@platypus-app/types';
-import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 
 const initialState = {
   dataModel: undefined as DataModel | undefined,
-  dataModelStatus: ActionStatus.IDLE,
-  dataModelError: '',
-  selectedSchema: {
+  selectedVersion: {
     schema: '',
     externalId: '',
     status: 'DRAFT',
@@ -17,67 +13,46 @@ const initialState = {
     createdTime: Date.now(),
     lastUpdatedTime: Date.now(),
   } as DataModelVersion,
-  schemas: [] as DataModelVersion[],
-  schemasStatus: ActionStatus.IDLE,
-  schemasError: '',
+  versions: [] as DataModelVersion[],
 };
 
 const dataModelSlice = createSlice({
   name: 'data-model',
   initialState: initialState,
   reducers: {
+    setDataModel: (state, action: PayloadAction<{ dataModel: DataModel }>) => {
+      state.dataModel = action.payload.dataModel;
+    },
+    setDataModelVersions: (
+      state,
+      action: PayloadAction<{ dataModelVersions: DataModelVersion[] }>
+    ) => {
+      state.versions = action.payload.dataModelVersions;
+    },
     selectVersion: (state, action: PayloadAction<{ version: string }>) => {
-      if (state.schemas.length) {
+      if (state.versions.length) {
         if (action.payload.version === DEFAULT_VERSION_PATH) {
-          state.selectedSchema = state.schemas[0];
+          state.selectedVersion = state.versions.sort((a, b) =>
+            +a.version < +b.version ? 1 : -1
+          )[0];
         } else {
-          state.selectedSchema = state.schemas.find(
+          state.selectedVersion = state.versions.find(
             (schema) => schema.version === action.payload.version
           ) as DataModelVersion;
         }
       } else {
-        state.selectedSchema = {
-          ...initialState.selectedSchema,
+        state.selectedVersion = {
+          ...initialState.selectedVersion,
           externalId: state.dataModel!.id,
         };
       }
     },
-    setSchema: (state, action: PayloadAction<DataModelVersion>) => {
-      state.selectedSchema = action.payload;
+    setVersion: (state, action: PayloadAction<DataModelVersion>) => {
+      state.selectedVersion = action.payload;
     },
-    insertSchema: (state, action: PayloadAction<DataModelVersion>) => {
-      state.schemas = [action.payload, ...state.schemas];
+    insertVersion: (state, action: PayloadAction<DataModelVersion>) => {
+      state.versions = [action.payload, ...state.versions];
     },
-  },
-  extraReducers: (builder) => {
-    // Fetching data model
-    builder.addCase(fetchDataModel.pending, (state) => {
-      state.dataModelStatus = ActionStatus.PROCESSING;
-    });
-    builder.addCase(fetchDataModel.fulfilled, (state, action) => {
-      state.dataModelStatus = ActionStatus.SUCCESS;
-      state.dataModel = action.payload;
-    });
-    builder.addCase(fetchDataModel.rejected, (state, action) => {
-      state.dataModelStatus = ActionStatus.FAIL;
-      state.dataModelError = action.error.message as string;
-    });
-
-    // Fetching versions
-    builder.addCase(fetchVersions.pending, (state) => {
-      state.schemasStatus = ActionStatus.PROCESSING;
-    });
-    builder.addCase(fetchVersions.fulfilled, (state, action) => {
-      state.schemasStatus = ActionStatus.SUCCESS;
-      state.schemas = action.payload;
-      state.selectedSchema = action.payload.length
-        ? action.payload[0]
-        : initialState.selectedSchema;
-    });
-    builder.addCase(fetchVersions.rejected, (state, action) => {
-      state.schemasStatus = ActionStatus.FAIL;
-      state.schemasError = action.error.message as string;
-    });
   },
 });
 

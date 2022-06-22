@@ -5,9 +5,18 @@ import { CdfApiConfig, CdfMockDatabase, ExtendedRouter } from '../../types';
 import { buildFromMockDb, buildMockServer, createMockServerKey } from './utils';
 
 export default function (db: CdfMockDatabase, config: CdfApiConfig) {
+  let templatesDb = db;
   // Create router
   const templatesRouter = Router() as ExtendedRouter;
-  const graphQlServers = buildFromMockDb(db);
+
+  let graphQlServers;
+  templatesRouter.init = (mockData?: CdfMockDatabase) => {
+    templatesDb = mockData || db;
+    graphQlServers = null;
+    graphQlServers = buildFromMockDb(templatesDb);
+  };
+
+  templatesRouter.init();
 
   /**
    * The endpoints for template groups are handled by the generic
@@ -18,9 +27,10 @@ export default function (db: CdfMockDatabase, config: CdfApiConfig) {
    */
 
   templatesRouter.post('/templategroups/upsert', (req, res) => {
-    const response = CdfDatabaseService.from(db, 'templategroups').insert(
-      req.body
-    );
+    const response = CdfDatabaseService.from(
+      templatesDb,
+      'templategroups'
+    ).insert(req.body);
     res.jsonp({ items: [response] });
   });
 
@@ -32,7 +42,7 @@ export default function (db: CdfMockDatabase, config: CdfApiConfig) {
       const version = req.body.version || 1;
 
       const executableSchema = buildMockServer({
-        db,
+        db: templatesDb,
         version,
         templategroups_id: externalId,
         schema,

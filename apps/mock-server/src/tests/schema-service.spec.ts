@@ -286,7 +286,7 @@ describe('SchemaService Solutions Test', () => {
               currentValue: null,
               previousValue: null,
               typeName: 'Comment',
-              typeOfChange: null,
+              typeOfChange: 'TYPE_REMOVED',
             },
             classification: 'DataFetchingException',
           },

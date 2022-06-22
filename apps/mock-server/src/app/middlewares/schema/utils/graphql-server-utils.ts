@@ -37,7 +37,7 @@ export async function validateBreakingChanges(
 
   const typeChangeMap = {
     FIELD_TYPE_CHANGED: 'fieldTypeChanged',
-    FIELD_REMOVED: 'fieldRemoved'
+    FIELD_REMOVED: 'fieldRemoved',
   };
 
   const regex = /.*(?<from>'.*')\sto\s(?<to>'.*')/gm;
@@ -63,9 +63,7 @@ export async function validateBreakingChanges(
       fieldName: breakingChange.path.split('.')[1],
       previousValue,
       typeName: breakingChange.path.split('.')[0],
-      typeOfChange: typeChangeMap.hasOwnProperty(breakingChange.type)
-        ? typeChangeMap[breakingChange.type]
-        : null
+      typeOfChange: breakingChange.type,
     };
   };
 
@@ -73,11 +71,11 @@ export async function validateBreakingChanges(
     ? breakingChanges.map((breakingChange) => ({
         extensions: {
           breakingChangeInfo: getBreakingChangeInfo(breakingChange),
-          classification: 'DataFetchingException'
+          classification: 'DataFetchingException',
         },
         locations: [],
         message: breakingChange.message,
-        path: [operationName]
+        path: [operationName],
       }))
     : [];
 }

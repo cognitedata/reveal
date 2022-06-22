@@ -8,15 +8,24 @@ import { createMockServerKey } from './utils/graphql-server-utils';
 import { CdfDatabaseService } from '../../common/cdf-database.service';
 
 export default function (db: CdfMockDatabase, config: CdfApiConfig) {
+  let schemaServiceDb = db;
   // Create router
   const schemaServiceRouter = Router() as ExtendedRouter;
-  const graphQlServers = buildFromMockDb(db);
-  const metaApiGraphqlMockServer = buildSchemaServiceMetaApiMockServer({
-    db,
-    graphQlServers,
-  });
 
-  // const graphQlServers = {};
+  let graphQlServers;
+  let metaApiGraphqlMockServer;
+  schemaServiceRouter.init = (mockData: CdfMockDatabase) => {
+    schemaServiceDb = mockData || db;
+
+    graphQlServers = null;
+    metaApiGraphqlMockServer = null;
+    graphQlServers = buildFromMockDb(schemaServiceDb);
+    metaApiGraphqlMockServer = buildSchemaServiceMetaApiMockServer({
+      db: schemaServiceDb,
+      graphQlServers,
+    });
+  };
+  schemaServiceRouter.init();
 
   schemaServiceRouter.post('/datamodelstorage/nodes', (req, res) => {
     if (!req.body.spaceExternalId) {
@@ -35,7 +44,7 @@ export default function (db: CdfMockDatabase, config: CdfApiConfig) {
 
     const model = req.body.model[0];
 
-    const schemaDb = CdfDatabaseService.from(db, 'schema');
+    const schemaDb = CdfDatabaseService.from(schemaServiceDb, 'schema');
     const dataModel = schemaDb.find({ externalId: req.body.spaceExternalId });
     const dataModelDb = dataModel.db;
 
@@ -54,10 +63,10 @@ export default function (db: CdfMockDatabase, config: CdfApiConfig) {
       );
       dataModelDb[model].push(item);
 
-      CdfDatabaseService.from(db, 'nodes').deleteByKey({
+      CdfDatabaseService.from(schemaServiceDb, 'nodes').deleteByKey({
         externalId: item.externalId,
       });
-      CdfDatabaseService.from(db, 'nodes').insert(item);
+      CdfDatabaseService.from(schemaServiceDb, 'nodes').insert(item);
     });
 
     // console.log(JSON.stringify(dataModelDb, null, 2));

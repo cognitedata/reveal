@@ -74,7 +74,7 @@ export const graphQlMetaApiResolvers = (
         // console.log(req);
         const { apiExternalId, graphQl, bindings } = req.apiVersion;
         const conflictMode = req.conflictMode;
-        const version = req.version || 1;
+        const version = req.apiVersion.version || 1;
 
         const schemaVersion = {
           id: v4(),
@@ -93,6 +93,7 @@ export const graphQlMetaApiResolvers = (
         const currentSchemaVersion = versions.find(
           (schemaVersion: any) => schemaVersion.version === version
         ) as any;
+
         if (conflictMode !== 'NEW_VERSION' && currentSchemaVersion) {
           const breakingChanges = await validateBreakingChanges(
             graphQl,
@@ -113,8 +114,18 @@ export const graphQlMetaApiResolvers = (
           }
         }
 
-        versions.push(schemaVersion);
-        solution.versions = versions;
+        if (conflictMode === 'NEW_VERSION') {
+          versions.push(schemaVersion);
+        } else if (currentSchemaVersion) {
+          const currentSchemaVersionIdx = versions.findIndex(
+            (schemaVersion: any) => schemaVersion.version === version
+          ) as number;
+          currentSchemaVersion.dataModel.graphqlRepresentation = graphQl;
+          currentSchemaVersion.bindings = bindings;
+          versions[currentSchemaVersionIdx] = currentSchemaVersion;
+          solution.versions = versions;
+        }
+
         store.updateBy({ externalId: apiExternalId }, solution);
 
         const serverKey = createMockServerKey(solution.externalId, version);
@@ -125,7 +136,8 @@ export const graphQlMetaApiResolvers = (
           externalId: solution.externalId as string,
           schema: graphQl,
           version: version,
-          incrementVersion: false,
+          updateBindings: true,
+          bindings,
         });
 
         return schemaVersion;

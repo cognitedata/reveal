@@ -15,8 +15,8 @@ export type SideBarItem = {
 };
 
 export const SideBarMenu = ({ items }: SideBarProps) => {
-  const { solutionId, version, solutionPage } = useParams<{
-    solutionId: string;
+  const { dataModelExternalId, version, solutionPage } = useParams<{
+    dataModelExternalId: string;
     version: string;
     solutionPage: string;
   }>();
@@ -24,7 +24,9 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
   const history = useHistory();
 
   const onRoute = (page: string, slug: string) => {
-    history.push(`/data-models/${solutionId}/${version}/${page}/${slug}`);
+    history.push(
+      `/data-models/${dataModelExternalId}/${version}/${page}/${slug}`
+    );
   };
 
   const renderIcon = (item: SideBarItem, index: number) => {

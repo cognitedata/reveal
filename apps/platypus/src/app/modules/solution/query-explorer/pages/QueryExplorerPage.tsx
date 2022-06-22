@@ -11,7 +11,7 @@ import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/Basi
 
 export const QueryExplorerPage = () => {
   const { t } = useTranslation('SolutionMonitoring');
-  const { dataModel, selectedSchema } = useSelector<DataModelState>(
+  const { dataModel, selectedVersion } = useSelector<DataModelState>(
     (state) => state.dataModel
   );
 
@@ -23,10 +23,10 @@ export const QueryExplorerPage = () => {
     <PageContentLayout>
       <PageContentLayout.Header>{renderHeader()}</PageContentLayout.Header>
       <PageContentLayout.Body>
-        {selectedSchema?.version ? (
+        {selectedVersion?.version ? (
           <QueryExplorer
             solutionId={dataModel?.id || ''}
-            schemaVersion={selectedSchema.version}
+            schemaVersion={selectedVersion.version}
           />
         ) : (
           <BasicPlaceholder

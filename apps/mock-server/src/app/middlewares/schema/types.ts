@@ -16,3 +16,10 @@ export interface Api {
   versions: ApiVersion[];
   db?: MockData; // the template version tables and storage
 }
+
+export interface DmsBinding {
+  targetName: string;
+  dataModelStorageSource?: {
+    externalId: string;
+  };
+}

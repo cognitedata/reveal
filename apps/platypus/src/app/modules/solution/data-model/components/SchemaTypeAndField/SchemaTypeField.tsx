@@ -73,7 +73,7 @@ export const SchemaTypeField = ({
         paddingRight: 10,
       }}
     >
-      <InputWrapper>
+      <InputWrapper data-cy={`data_model_type_field_${fieldName}`}>
         {isFirstField && (
           <Label level="2"> {t('field_name_label', 'Field name')}</Label>
         )}

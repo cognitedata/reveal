@@ -9,8 +9,8 @@ import {
 } from './elements';
 
 export const NavigationDataModel = () => {
-  const { solutionId } = useParams<{
-    solutionId: string;
+  const { dataModelExternalId } = useParams<{
+    dataModelExternalId: string;
   }>();
 
   const history = useHistory();
@@ -34,7 +34,7 @@ export const NavigationDataModel = () => {
           aria-label="Go Back"
           onClick={() => history.push('/data-models')}
         >
-          {solutionId}
+          {dataModelExternalId}
         </StyledTitleButton>
       </StyledTopBarLeft>
     );

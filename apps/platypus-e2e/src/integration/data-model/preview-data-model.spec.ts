@@ -1,5 +1,9 @@
 describe('Data Model Page - Existing Solution Preview', () => {
-  beforeEach(() => cy.visit('/platypus/data-models/blog/latest/data'));
+  beforeEach(() => {
+    cy.request('http://localhost:4200/reset').then(() => {
+      cy.visit('/platypus/data-models/blog/latest/data');
+    });
+  });
 
   it('should render page', () => {
     cy.getBySel('page-title').contains('Data model');

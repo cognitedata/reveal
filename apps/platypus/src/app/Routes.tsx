@@ -3,7 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 import { DataModelsPage } from './modules/data-models/DataModelsPage';
 import { GuideToolsPage } from './modules/guides/GuideToolsPage';
 import { StatusPage } from './modules/statusboard/StatusboardPage';
-import { Solution } from './modules/solution/Solution';
+import { DataModel } from './modules/solution/DataModel';
 import { NavigationDataModel } from './components/Navigations/NavigationDataModel';
 import { Spinner } from './components/Spinner/Spinner';
 import { useFusionQuery } from './hooks/useFusionQuery';
@@ -19,11 +19,11 @@ const Routes = () => {
         <Route
           exact
           path={[
-            '/data-models/:solutionId?/:version?/:tabKey?/:solutionPage?/:subSolutionPage?',
+            '/data-models/:dataModelExternalId?/:version?/:tabKey?/:solutionPage?/:subSolutionPage?',
           ]}
         >
           <NavigationDataModel />
-          <Solution />
+          <DataModel />
         </Route>
         <Route exact path="/guidetools">
           <GuideToolsPage />

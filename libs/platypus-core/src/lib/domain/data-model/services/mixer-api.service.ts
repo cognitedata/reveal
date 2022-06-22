@@ -180,9 +180,10 @@ export class MixerApiService {
 
     const reqDto = {
       query: `
-      mutation upsertApiVersion($apiVersion: ApiVersionFromGraphQl!) {
+      mutation upsertApiVersion($apiVersion: ApiVersionFromGraphQl!, $conflictMode: ConflictMode) {
         upsertApiVersionFromGraphQl(
-          apiVersion: $apiVersion
+          apiVersion: $apiVersion,
+          conflictMode: $conflictMode
         ) {
           version
           createdTime
