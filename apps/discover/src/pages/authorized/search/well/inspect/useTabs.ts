@@ -5,9 +5,9 @@ import { TAB_NAMES } from './constants';
 import ThreeDee from './modules/3d';
 import Casing from './modules/casings';
 import DigitalRocks from './modules/digitalRocks';
-import EventsNpt from './modules/events/Npt';
 import Measurements from './modules/measurements';
 import NdsEvents from './modules/ndsEvents';
+import NptEvents from './modules/nptEvents';
 import Overview from './modules/overview';
 import RelatedDocument from './modules/relatedDocument';
 import Trajectory from './modules/trajectory';
@@ -43,7 +43,7 @@ export const useTabs = () => {
       key: 'npt',
       name: TAB_NAMES.NPT_EVENTS,
       path: navigation.SEARCH_WELLS_INSPECT_EVENTSNPT,
-      componentToRender: EventsNpt,
+      componentToRender: NptEvents,
       enabled: !!wellsConfig?.npt?.enabled,
     },
     {

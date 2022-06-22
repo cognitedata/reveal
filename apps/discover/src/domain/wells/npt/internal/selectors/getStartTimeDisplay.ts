@@ -1,7 +1,7 @@
 import { getDateOrDefaultText } from 'utils/date';
 
-import { NPTEvent } from 'modules/wellSearch/types';
+import { NptInternal } from '../types';
 
-export const getStartTimeDisplay = (event: NPTEvent) => {
+export const getStartTimeDisplay = (event: NptInternal) => {
   return getDateOrDefaultText(event.startTime);
 };
