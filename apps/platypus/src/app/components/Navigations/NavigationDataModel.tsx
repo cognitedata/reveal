@@ -32,7 +32,7 @@ export const NavigationDataModel = () => {
           icon="ArrowLeft"
           iconPlacement="left"
           aria-label="Go Back"
-          onClick={() => history.goBack()}
+          onClick={() => history.push('/data-models')}
         >
           {solutionId}
         </StyledTitleButton>
