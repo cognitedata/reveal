@@ -1,4 +1,3 @@
-import cypress from 'cypress';
 import {
   WellInspectTabs,
   TAB_NAMES,
@@ -87,7 +86,7 @@ Cypress.Commands.add(
   (url: string, method: string, filter: string) => {
     cy.intercept({
       url: `**/wdl/${url}`,
-      method: method,
+      method,
     }).as(filter);
   }
 );

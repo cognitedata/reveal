@@ -1,10 +1,11 @@
-import { DATA_SOURCE } from '../../../../../src/modules/wellSearch/constantsSidebarFilters';
-import { WELL_SOURCE_WITH_ALL } from '../../../../support/constants';
-import { TAB_NAMES } from '../../../../../src/pages/authorized/search/well/inspect/constants';
 import { GraphTrackEnum } from '../../../../../src/domain/wells/measurements/constants';
+import { DATA_SOURCE } from '../../../../../src/modules/wellSearch/constantsSidebarFilters';
+import { TAB_NAMES } from '../../../../../src/pages/authorized/search/well/inspect/constants';
+import { WELL_SOURCE_WITH_ALL } from '../../../../support/constants';
 
 describe('Wells: Well Logs', () => {
   before(() => {
+    cy.interceptFavorites('GET', 'getFavorites');
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
@@ -16,7 +17,8 @@ describe('Wells: Well Logs', () => {
     cy.clickOnNthFilterWrapper(0);
     cy.validateCheck(DATA_SOURCE, [WELL_SOURCE_WITH_ALL], WELL_SOURCE_WITH_ALL);
 
-    cy.toggleSelectAllRows();
+    cy.wait('@getFavorites');
+    cy.toggleSelectAllRows('well-result-table');
     cy.openInspectView();
     cy.goToWellsInspectTab(TAB_NAMES.WELL_LOGS);
   });
@@ -34,6 +36,7 @@ describe('Wells: Well Logs', () => {
     cy.log('Close well log preview');
     cy.clickButton('OK');
   });
+
   it('Should be able to navigate preview when only one log selected', () => {
     cy.log('uncheck all the wells');
     cy.toggleSelectAllRows();
