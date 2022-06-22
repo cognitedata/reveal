@@ -18,7 +18,7 @@ Any shortcomings from the items below should be explained and detailed within th
 - [ ] I have added unit and visuals tests to prove that my feature works to the best of my ability.
 - [ ] I have refactored the code for readability to the best of my ability.
 - [ ] I have checked that my changes do not introduce regressions in the public documentation.
-- [ ] I have outlined any known defects / lacking cabilities in the contents of this PR.
+- [ ] I have outlined any known defects / lacking capabilities in the contents of this PR.
 - [ ] I have listed any remaining work that should follow this PR in the description or jira/miro/etc.
 - [ ] I have added TSDoc to any public facing changes.
 - [ ] I have added "developer documentation" in any package README.md that is related / applicable to this PR.
