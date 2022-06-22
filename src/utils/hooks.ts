@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig, useQueryCache } from 'react-query';
+import { useQuery, QueryConfig, useQueryCache, useMutation } from 'react-query';
 import {
   CogFunction,
   GetCallsArgs,
@@ -111,4 +111,40 @@ export const useRefreshApp = () => {
 
 export const useUserInformation = () => {
   return useQuery('user-info', getUserInformation);
+};
+
+type ActivationResponse = {
+  status: 'activated' | 'inactive' | 'requested';
+};
+export const useCheckActivateFunction = (
+  config?: QueryConfig<ActivationResponse, unknown>
+) => {
+  const project = getProject();
+  return useQuery<ActivationResponse>(
+    ['activation', project],
+    () =>
+      sdk
+        .get(`api/playground/projects/${project}/functions/status`)
+        .then(res => res.data),
+    config
+  );
+};
+
+export const useActivateFunction = (
+  config?: QueryConfig<ActivationResponse, unknown>
+) => {
+  const cache = useQueryCache();
+  const project = getProject();
+  return useMutation<ActivationResponse>(
+    () =>
+      sdk
+        .post(`/api/playground/projects/${project}/functions/status`)
+        .then(res => res.data),
+    {
+      ...config,
+      onSuccess: data => {
+        cache.setQueryData(['activation', project], data);
+      },
+    }
+  );
 };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Row, Collapse, Input, Pagination, Select } from 'antd';
+import { Row, Collapse, Input, Pagination, Select, Alert } from 'antd';
 import { Colors, Button, Icon } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
@@ -12,12 +12,23 @@ import FunctionPanelHeader from 'containers/Functions/FunctionPanelHeader';
 import FunctionPanelContent from 'containers/Functions/FunctionPanelContent';
 import UploadFunctionButton from 'components/buttons/UploadFunctionButton';
 
-import { useFunctions, useMultipleCalls, useRefreshApp } from 'utils/hooks';
+import {
+  useActivateFunction,
+  useCheckActivateFunction,
+  useFunctions,
+  useMultipleCalls,
+  useRefreshApp,
+} from 'utils/hooks';
+import { Loader } from 'components/Common';
 
 const CollapseDiv = styled.div`
   .ant-collapse-header[aria-expanded='true'] {
     background-color: ${Colors['midblue-6'].hex()};
   }
+`;
+
+const FunctionActivationAlert = styled(Alert)`
+  margin: 2rem 0;
 `;
 
 const FUNCTIONS_PER_PAGE = 10;
@@ -52,6 +63,9 @@ function Functions() {
       ? sortLastCall(calls)
       : recentlyCreated;
 
+  const { data: activation, isLoading } = useCheckActivateFunction();
+  const [mutate] = useActivateFunction();
+
   const sortedFunctions = functions?.sort(sortFn);
   const filteredFunctions = sortedFunctions?.filter((f: CogFunction) =>
     [f.name, f.externalId || '', f.owner || '']
@@ -59,6 +73,31 @@ function Functions() {
       .toLowerCase()
       .includes(functionFilter.toLowerCase())
   );
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (activation?.status === 'inactive') {
+    return (
+      <FunctionActivationAlert
+        type="error"
+        message="Cognite Functions is not activated for the project"
+        showIcon
+        description={<Button onClick={() => mutate()}>Activate</Button>}
+      />
+    );
+  }
+  if (activation?.status === 'requested') {
+    return (
+      <FunctionActivationAlert
+        showIcon
+        description="Cognite function is getting ready.This might take sometime"
+        message="Activation in Progress"
+        type="warning"
+      />
+    );
+  }
 
   return (
     <>
