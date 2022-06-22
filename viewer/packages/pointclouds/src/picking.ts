@@ -30,6 +30,10 @@ export interface IntersectPointCloudNodeResult {
    * The geometry object that was intersected.
    */
   object: THREE.Object3D;
+  /**
+   * Id of the clicked object within a pointcloud.
+   */
+  objectId: number;
 }
 
 const normalized = new THREE.Vector2();
@@ -68,7 +72,8 @@ export function intersectPointClouds(
         point: x.position,
         pointIndex: x.pointIndex,
         pointCloudNode,
-        object: x.object
+        object: x.object,
+        objectId: x.objectId as number
       };
       return result;
     });

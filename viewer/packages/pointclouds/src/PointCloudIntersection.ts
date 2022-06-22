@@ -24,4 +24,8 @@ export type PointCloudIntersection = {
    * Distance from the camera to the intersection.
    */
   distanceToCamera: number;
+  /**
+   * Id of the intersected object within a pointcloud.
+   */
+  objectId: number;
 };
