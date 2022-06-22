@@ -11,7 +11,10 @@ import {
   Title,
 } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { AutoMLTrainingJob } from 'src/api/vision/autoML/types';
+import {
+  AutoMLExportFormat,
+  AutoMLTrainingJob,
+} from 'src/api/vision/autoML/types';
 import { AutoMLModelNameBadge } from 'src/modules/AutoML/Components/AutoMLModelNameBadge';
 import { useUserCapabilities } from 'src/hooks/useUserCapabilities';
 import { AutoMLMetricsOverview } from './AutoMLMetricsOverview';
@@ -21,7 +24,7 @@ export const AutoMLModelPage = (props: {
   isLoadingJob: boolean;
   model?: AutoMLTrainingJob;
   downloadingModel?: boolean;
-  handleDownload: () => void;
+  handleDownload: (exportFormat: AutoMLExportFormat) => void;
   handleOnDelete: () => void;
   handleOnContextualize: (model: AutoMLTrainingJob | undefined) => void;
   handleOnGetPredictionURL: () => void;
@@ -35,6 +38,31 @@ export const AutoMLModelPage = (props: {
     },
   ]);
   const deleteDisabled = props.downloadingModel || !hasCapabilities;
+
+  const modelDownloadContent = () => {
+    function getMenuItem(exportFormat: AutoMLExportFormat) {
+      const menuName =
+        exportFormat === AutoMLExportFormat.tflite
+          ? 'TensorFlow Lite'
+          : 'TensorFlow SavedModel';
+      return (
+        <Menu.Item
+          onClick={() => {
+            props.handleDownload(exportFormat);
+            setHideDropDown(true);
+          }}
+        >
+          {menuName}
+        </Menu.Item>
+      );
+    }
+    return (
+      <Menu>
+        {getMenuItem(AutoMLExportFormat.tflite)}
+        {getMenuItem(AutoMLExportFormat.protobuf)}
+      </Menu>
+    );
+  };
 
   const MenuContent = (
     <Menu
@@ -55,17 +83,14 @@ export const AutoMLModelPage = (props: {
           </Detail>
         </div>
       </Menu.Item>
-      <Menu.Item
-        onClick={() => {
-          props.handleDownload();
-          setHideDropDown(true);
-        }}
-      >
-        <Icon type="Download" style={{ marginRight: 17 }} />
-        <Detail strong style={{ color: 'inherit' }}>
-          Download model
-        </Detail>
-      </Menu.Item>
+      <Menu.Submenu content={modelDownloadContent()}>
+        <>
+          <Icon type="Download" style={{ marginRight: 17 }} />
+          <Detail strong style={{ color: 'inherit' }}>
+            Download model
+          </Detail>
+        </>
+      </Menu.Submenu>
       <Menu.Item
         onClick={() => {
           props.handleOnGetPredictionURL();
