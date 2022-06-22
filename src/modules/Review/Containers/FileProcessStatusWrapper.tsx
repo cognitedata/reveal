@@ -20,6 +20,7 @@ export const FileProcessStatusWrapper = ({
     getAnnotationStatuses(processSlice, fileId)
   );
   const isFileProcessing = isProcessingFile(annotationStatuses);
+  console.log('');
 
   return children({ isFileProcessing });
 };
