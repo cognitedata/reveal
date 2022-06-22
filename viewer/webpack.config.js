@@ -34,16 +34,43 @@ module.exports = env => {
     // Internals is not part of prod builds
     entry: development
       ? {
-          index: './index.ts',
-          tools: './tools.ts',
-          'extensions/datasource': './extensions/datasource.ts',
-          internals: './internals.ts'
-        }
-      : {
-          index: './index.ts',
-          'extensions/datasource': './extensions/datasource.ts',
-          tools: './tools.ts'
+        index: {
+          import: './index.ts',
+          dependOn: 'shared'
         },
+        tools: {
+          import: './tools.ts',
+          dependOn: 'shared'
+        },
+        'extensions/datasource': {
+          import: './extensions/datasource.ts',
+          dependOn: 'shared'
+        },
+        internals: {
+          import: './internals.ts',
+          dependOn: 'shared'
+        },
+        shared: {
+          import: 'three'
+        }
+      }
+      : {
+        index: {
+          import: './index.ts',
+          dependOn: 'shared'
+        },
+        tools: {
+          import: './tools.ts',
+          dependOn: 'shared'
+        },
+        'extensions/datasource': {
+          import: './extensions/datasource.ts',
+          dependOn: 'shared'
+        },
+        shared: {
+          import: 'three'
+        }
+      },
     target: 'web',
     resolve: {
       fallback: {
