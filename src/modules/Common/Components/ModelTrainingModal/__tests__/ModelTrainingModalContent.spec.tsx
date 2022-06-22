@@ -98,7 +98,7 @@ describe('ModelTrainingModalContent', () => {
     const data = [
       {
         id: 1,
-        name: 'one',
+        name: 'one.png',
         mimeType: 'image/png',
         annotations: [
           { id: 1, text: 'pump' },
@@ -107,7 +107,7 @@ describe('ModelTrainingModalContent', () => {
       },
       {
         id: 2,
-        name: 'two',
+        name: 'two.jpeg',
         mimeType: 'image/jpeg',
         annotations: [
           { id: 3, text: 'pump' },
@@ -158,13 +158,13 @@ describe('ModelTrainingModalContent', () => {
     const data = [
       {
         id: 1,
-        name: 'one',
+        name: 'one.png',
         mimeType: 'image/png',
         annotations: [{ id: 1, text: 'pump' }],
       },
       {
         id: 2,
-        name: 'two',
+        name: 'two.png',
         mimeType: 'video/mp4',
         annotations: [{ id: 2, text: 'valve' }],
       },
@@ -190,12 +190,12 @@ describe('ModelTrainingModalContent', () => {
 
     expect(
       await screen.findByText(
-        `Images must be of type jpeg or png, with mime type image/png or image/jpeg`
+        `Images must have file extension .jpg, .jpeg or .png, with mime type image/png or image/jpeg`
       )
     ).toBeInTheDocument();
   });
 
-  test('Start training should be disabled, files without annotations', async () => {
+  test('Start training should be disabled, invalid file name', async () => {
     const data = [
       {
         id: 1,
@@ -205,7 +205,48 @@ describe('ModelTrainingModalContent', () => {
       },
       {
         id: 2,
-        name: 'two',
+        name: 'two.png',
+        mimeType: 'image/png',
+        annotations: [{ id: 2, text: 'valve' }],
+      },
+    ] as MockDataType[];
+    const { props, annotationState } = getMockData(data);
+
+    const store = getMockedStore({
+      annotationReducer: annotationState,
+    });
+
+    testRenderer(TestComponent, store, props);
+    expect(screen.getByText('Model configuration')).toBeInTheDocument();
+    expect(
+      screen.getByText('Create computer vision model from files')
+    ).toBeInTheDocument();
+
+    expect(screen.getByTestId('cancel-button')).not.toBeDisabled();
+
+    expect(screen.getByTestId('start-training-button')).toBeDisabled();
+    fireEvent.mouseEnter(screen.getByTestId('start-training-button'), {
+      bubbles: true,
+    });
+
+    expect(
+      await screen.findByText(
+        `Images must have file extension .jpg, .jpeg or .png, with mime type image/png or image/jpeg`
+      )
+    ).toBeInTheDocument();
+  });
+
+  test('Start training should be disabled, files without annotations', async () => {
+    const data = [
+      {
+        id: 1,
+        name: 'one.png',
+        mimeType: 'image/png',
+        annotations: [{ id: 1, text: 'pump' }],
+      },
+      {
+        id: 2,
+        name: 'two.png',
         mimeType: 'image/png',
         annotations: [],
       },
@@ -238,7 +279,7 @@ describe('ModelTrainingModalContent', () => {
     const data = [
       {
         id: 1,
-        name: 'one',
+        name: 'one.png',
         mimeType: 'image/png',
         annotations: [
           { id: 1, text: 'pump' },
@@ -248,7 +289,7 @@ describe('ModelTrainingModalContent', () => {
       },
       {
         id: 2,
-        name: 'two',
+        name: 'two.jpeg',
         mimeType: 'image/jpeg',
         annotations: [{ id: 4, text: 'valve' }],
       },
@@ -283,7 +324,7 @@ describe('ModelTrainingModalContent', () => {
     const data = [
       {
         id: 1,
-        name: 'one',
+        name: 'one.png',
         mimeType: 'image/png',
         annotations: [
           { id: 1, text: 'pump' },
@@ -292,7 +333,7 @@ describe('ModelTrainingModalContent', () => {
       },
       {
         id: 2,
-        name: 'two',
+        name: 'two.jpeg',
         mimeType: 'image/jpeg',
         annotations: [{ id: 3, text: 'valve' }],
       },
