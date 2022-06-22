@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Cognite3DViewer, Intersection } from '@reveal/core';
+import { Cognite3DViewer, Intersection } from '@reveal/api';
 import * as THREE from 'three';
 import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
 import { MeasurementLabels } from './MeasurementLabels';

@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Cognite3DViewer } from '@reveal/core';
+import { Cognite3DViewer } from '@reveal/api';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import * as THREE from 'three';
 import { MeasurementOptions, MeasurementLabelData } from './types';
