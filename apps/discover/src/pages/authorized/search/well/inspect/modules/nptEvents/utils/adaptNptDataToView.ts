@@ -5,8 +5,10 @@ import keyBy from 'lodash/keyBy';
 
 import { NptView } from '../types';
 
-export const adaptNptDataToView = (
-  wellbores: Wellbore[],
+type WellboreType = Pick<Wellbore, 'matchingId' | 'name' | 'wellName'>;
+
+export const adaptNptDataToView = <T extends WellboreType>(
+  wellbores: T[],
   nptEvents: NptInternal[]
 ): NptView[] => {
   const keyedWellbores = keyBy(wellbores, 'matchingId');

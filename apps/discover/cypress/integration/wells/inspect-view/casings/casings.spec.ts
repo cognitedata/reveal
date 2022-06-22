@@ -29,9 +29,7 @@ describe('Wells: casings buttons', () => {
     cy.goToWellsInspectTab(TAB_NAMES.CASINGS);
   });
 
-  // TODO(PP-3015)
-  // eslint-disable-next-line jest/no-disabled-tests
-  it.skip('Should be able to navigate NPT events page by clicking details options', () => {
+  it('Should be able to navigate NPT events page by clicking details options', () => {
     cy.log('navigate NPT events page');
     cy.contains('Details').click({ force: true });
     cy.findByRole('button', { name: 'NPT events' }).click({ force: true });
