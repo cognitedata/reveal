@@ -177,7 +177,7 @@ export const DataModelPage = () => {
             }_toast_title`,
             `Data model ${publishNewVersion ? 'published' : 'updated'}`
           ),
-          message: `${t('version', 'version')} ${version} ${t(
+          message: `${t('version', 'Version')} ${version} ${t(
             'of_your_data_model_was_successfully',
             'of your data model was successfully'
           )} ${
