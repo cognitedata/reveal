@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 import { CogniteClient } from '@cognite/sdk';
-import { Cognite3DViewer } from '@reveal/core';
+import { Cognite3DViewer } from '@reveal/api';
 import * as THREE from 'three';
 import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
 
