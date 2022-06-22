@@ -13,7 +13,7 @@ import {
 
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { DataModel } from '@platypus/platypus-core';
-import { StyledDataModelCard } from './elements';
+import { StyledDataModelCard, StyledDeleteMenuItem } from './elements';
 import { TOKENS } from '@platypus-app/di';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 
@@ -48,10 +48,9 @@ export const DataModelCard = ({
                 e.stopPropagation();
               }}
             >
-              {t('edit', 'Edit')}
+              {t('open_data_model', 'Open data model')}
             </Menu.Item>
             <div className="cogs-menu-divider" />
-            <Menu.Header>{t('danger_zone', 'Danger zone')}</Menu.Header>
             <Menu.Item
               onClick={(e) => {
                 onDelete(dataModel);
@@ -61,7 +60,9 @@ export const DataModelCard = ({
               className="delete"
               data-cy="delete-data-model-menu-item"
             >
-              {t('delete', 'Delete')}
+              <StyledDeleteMenuItem>
+                {t('delete_data_model', 'Delete data model')}
+              </StyledDeleteMenuItem>
             </Menu.Item>
           </Menu>
         }
@@ -78,7 +79,7 @@ export const DataModelCard = ({
       return dataModel.owners?.map((owner) => {
         return (
           <Tooltip content={owner} placement="bottom" key={owner}>
-            <Avatar text={owner} className="avatar" />
+            <Avatar text={owner} className="avatar" css={{}} />
           </Tooltip>
         );
       });
@@ -102,11 +103,17 @@ export const DataModelCard = ({
         <div>
           <Title level={5} className="title" data-cy="data-model-card-title">
             {dataModel.name}
-            <span className="version" role="definition">
-              <Label size="small" variant="unknown">
-                {dataModel.version || '1.0'}
-              </Label>
-            </span>
+            {dataModel.version && (
+              <span
+                className="version"
+                role="definition"
+                title={t('data_model_latest_version', 'Latest version number')}
+              >
+                <Label size="small" variant="unknown">
+                  {dataModel.version}
+                </Label>
+              </span>
+            )}
           </Title>
           <Detail>
             {t('data_model_last_updated', 'Last updated')}{' '}

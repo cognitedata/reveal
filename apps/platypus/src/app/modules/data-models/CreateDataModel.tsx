@@ -115,6 +115,7 @@ export const CreateDataModel = ({
           data-cy="input-data-model-name"
           value={dataModelName}
           placeholder={t('modal_name_input_placeholder', 'Enter name')}
+          css={{}}
           onChange={(e) => {
             setDataModelName(e.target.value);
             if (inputError) {

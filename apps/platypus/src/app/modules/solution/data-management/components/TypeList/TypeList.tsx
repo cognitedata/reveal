@@ -21,6 +21,7 @@ export const TypeList = ({ items, placeholder, onClick }: TypeListProps) => {
           placeholder={placeholder}
           value={filter}
           data-cy="types-list-filter"
+          css={{}}
           onChange={(e) => setFilter(e.target.value)}
         ></Input>
       </StyledFilterContainer>

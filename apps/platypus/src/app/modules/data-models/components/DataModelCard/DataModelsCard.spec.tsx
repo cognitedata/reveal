@@ -29,8 +29,6 @@ describe('DataModelCard', () => {
     expect(headers.length).toBe(1);
     expect(screen.getByRole('heading')).toHaveTextContent('Equipments');
     expect(screen.queryByText('No owners')).not.toBeNull();
-    expect(screen.getByRole('definition')).toBeInTheDocument();
-    expect(screen.getByRole('definition')).toHaveTextContent('1.0');
-    expect(screen.getByRole('definition')).toHaveClass('version');
+    expect(screen.queryByRole('definition')).not.toBeInTheDocument();
   });
 });

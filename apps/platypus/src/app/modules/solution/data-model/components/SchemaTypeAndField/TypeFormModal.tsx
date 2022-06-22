@@ -82,6 +82,7 @@ export const TypeFormModal = ({
         fullWidth
         data-cy="type-name-input"
         autoFocus
+        css={{}}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             handleSubmit(onSubmit)();

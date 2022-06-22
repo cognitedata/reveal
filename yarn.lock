@@ -2718,17 +2718,18 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@^5.19.5":
-  version "5.19.5"
-  resolved "https://registry.npmjs.org/@cognite/cogs.js/-/cogs.js-5.19.5.tgz"
-  integrity sha512-8Fi+0J2j4qNOAENoIV2L10WXZGmhGXnxeEJDfZFZyPDWHKcilADD7mojmdg9lKGk1rgHkp4cYhxDm0xdRCwHwA==
+"@cognite/cogs.js@6.19.0":
+  version "6.19.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-6.19.0.tgz#3531513aa352991efd9988844e800c75ae0833b1"
+  integrity sha512-nOAjK9jOGkGA7UtrJ5ywsCqHEz+MiVYcfJv0DWxL1GDZkjautJET99bculhI6+xqB+PAhRSHTkp6viJ9NwHE7Q==
   dependencies:
     "@tippyjs/react" "4.2.3"
-    "@types/react-date-range" "^1.1.2"
+    "@types/react-date-range" "^1.4.3"
     axios "^0.21.2"
     classnames "^2.3.1"
     color "^3.1.2"
     dayjs "^1.9.7"
+    deepdash "^5.3.9"
     eslint-config-stylelint "^13.1.1"
     focus-visible "^5.1.0"
     match-sorter "^6.3.0"

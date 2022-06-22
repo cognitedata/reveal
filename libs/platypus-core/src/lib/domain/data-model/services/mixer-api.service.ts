@@ -64,6 +64,10 @@ export class MixerApiService {
             name
             description
             createdTime
+            versions {
+              version
+              createdTime
+            }
           }
         }
       }

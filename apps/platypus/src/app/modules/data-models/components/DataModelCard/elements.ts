@@ -1,5 +1,9 @@
 import styled from 'styled-components/macro';
 
+export const StyledDeleteMenuItem = styled.span`
+  color: var(--cogs-text-icon--status-critical);
+`;
+
 export const StyledDataModelCard = styled.div`
   display: flex;
   flex-direction: column;
@@ -12,14 +16,15 @@ export const StyledDataModelCard = styled.div`
   cursor: pointer;
   position: relative;
   top: 0;
-  transition: top 350ms cubic-bezier(0.68, -0.55, 0.265, 1.55),
-    background-color 400ms linear;
-  transition-delay: 200ms;
+  transition: background-color 100ms linear;
   opacity: 1;
 
   :hover {
-    background-color: var(--cogs-greyscale-grey1);
-    top: -2px;
+    box-shadow: var(--cogs-z-8);
+  }
+
+  :active {
+    background-color: var(--cogs-surface--interactive--pressed);
   }
 
   .top {
@@ -28,7 +33,7 @@ export const StyledDataModelCard = styled.div`
   }
 
   .delete {
-    color: var(--cogs-danger);
+    color: var(--cogs-text-icon--status-critical);
   }
 
   .menuContainer {

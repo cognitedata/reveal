@@ -42,9 +42,11 @@ export const VisualizerToolbar = ({
     <ToolBar direction="horizontal">
       <>
         <Input
+          type="search"
           style={{ marginLeft: 4 }}
           placeholder="Search"
           size="small"
+          css={{}}
           value={searchFilterValue}
           onChange={(e) => setSearchFilterValue(e.target.value)}
         />

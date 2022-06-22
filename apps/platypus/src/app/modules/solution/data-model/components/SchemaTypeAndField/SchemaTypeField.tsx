@@ -85,6 +85,7 @@ export const SchemaTypeField = ({
           disabled={disabled}
           onClick={(event) => event.currentTarget.select()}
           onChange={onFieldNameChanged}
+          css={{}}
           error={error}
         />
       </InputWrapper>
