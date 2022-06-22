@@ -11,9 +11,9 @@ import {
   HtmlOverlayCreateClusterDelegate
 } from './HtmlOverlayTool';
 
-import { Cognite3DViewer } from '@reveal/core';
 import { CogniteClient } from '@cognite/sdk';
 import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
+import { Cognite3DViewer } from '@reveal/api';
 
 describe(HtmlOverlayTool.name, () => {
   let canvasContainer: HTMLElement;

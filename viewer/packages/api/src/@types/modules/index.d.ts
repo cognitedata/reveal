@@ -16,4 +16,7 @@ declare module '*.svg' {
   export default src;
 }
 
-declare module '@cognite/potree-core';
+declare module '*.jpeg' {
+  const value: any;
+  export default value;
+}

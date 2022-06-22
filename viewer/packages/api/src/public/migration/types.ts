@@ -12,15 +12,6 @@ import { GeometryFilter, Cognite3DModel } from '@reveal/cad-model';
 import { DataSource } from '@reveal/data-source';
 
 /**
- * @module @cognite/reveal
- */
-export type Color = {
-  r: number;
-  g: number;
-  b: number;
-};
-
-/**
  * Callback to monitor loaded requests and progress.
  * Use OnLoadingCallback instead of onProgress/onComplete.
  * @module @cognite/reveal
@@ -199,18 +190,18 @@ export type Intersection = CadIntersection | PointCloudIntersection;
  */
 export { CameraConfiguration } from '@reveal/utilities';
 
-export * from './NotSupportedInMigrationWrapperError';
-
 export { CadModelBudget, PointCloudBudget };
 
 /**
  * Options to control how {@link Cognite3DViewer.getIntersectionFromPixel} behaves.
+ * @deprecated Since 3.1 these options have no effect.
  */
 export interface IntersectionFromPixelOptions {
   /**
    * Threshold (in meters) for how close a point must be an intersection
    * ray for it to be considered an intersection for point clouds. Defaults
    * to 0.05.
+   * @deprecated Since 3.1, threshold doesn't affect picking because of new, GPU based method.
    */
   pointIntersectionThreshold?: number;
 }

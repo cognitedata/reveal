@@ -3,11 +3,6 @@
  */
 import { MetricsLogger } from '@reveal/metrics';
 
-declare module '*.jpeg' {
-  const value: any;
-  export = value;
-}
-
 declare global {
   // Global variables will only be usable if they are declared with var
   // eslint-disable-next-line no-var
