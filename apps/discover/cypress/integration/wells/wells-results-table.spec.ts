@@ -131,7 +131,7 @@ describe('Wells: result_table', () => {
 
     cy.log(`Enable the ${KB_ELEVATION} column from column settings`);
     cy.findByTestId('organize-columns').click();
-    cy.findByLabelText(`${KB_ELEVATION} (${UserPreferredUnit.METER})`).click({
+    cy.findByTitle(`${KB_ELEVATION} (${UserPreferredUnit.METER})`).click({
       force: true,
     });
     cy.findByTestId('organize-columns').click();
@@ -157,7 +157,7 @@ describe('Wells: result_table', () => {
           .invoke('text')
           .then(parseFloat)
           .then((valInFeet) => {
-            expect(valInFeet).to.greaterThan(valInMeter);
+            expect(valInFeet).greaterThan(valInMeter);
           });
       });
   });
