@@ -1,6 +1,10 @@
 import { FileIdEither, JobStatus } from 'src/api/vision/detectionModels/types';
 
 export type AutoMLModelType = 'classification' | 'objectdetection';
+export enum AutoMLExportFormat {
+  tflite = 'tflite',
+  protobuf = 'tf-saved-model',
+}
 
 export interface AutoMLDownload {
   modelUrl: string;
