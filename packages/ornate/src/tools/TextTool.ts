@@ -12,7 +12,10 @@ import { Tool } from './Tool';
 const safeHtmlPattern = /<(?:.|\n)*?>/gm;
 
 const safeStrToHtml = (str = ''): string => {
-  return str.replace(safeHtmlPattern, '').replace(/\n/gi, '<br>');
+  return str
+    .replace(/'/g, "''")
+    .replace(safeHtmlPattern, '')
+    .replace(/\n/gi, '<br>');
 };
 
 const safeHtmlToStr = (str = ''): string =>
