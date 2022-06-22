@@ -4,6 +4,7 @@ import { ToastUtils } from 'src/utils/ToastUtils';
 
 import {
   AutoMLDownload,
+  AutoMLExportFormat,
   AutoMLModelCore,
   AutoMLModelType,
   AutoMLTrainingJob,
@@ -33,13 +34,15 @@ export class AutoMLAPI {
   };
 
   public static downloadAutoMLModel = async (
-    id: number
+    id: number,
+    exportFormat: AutoMLExportFormat = AutoMLExportFormat.tflite
   ): Promise<AutoMLDownload | undefined> => {
     try {
       const response = await sdk.get(
         `${sdk.getBaseUrl()}/api/playground/projects/${
           sdk.project
-        }/context/vision/automl/${id}/download`
+        }/context/vision/automl/${id}/download`,
+        { params: { exportFormat } }
       );
 
       return response.data;

@@ -7,6 +7,7 @@ import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import styled from 'styled-components';
 import { AutoMLAPI } from 'src/api/vision/autoML/AutoMLAPI';
 import {
+  AutoMLExportFormat,
   AutoMLModelCore,
   AutoMLTrainingJob,
 } from 'src/api/vision/autoML/types';
@@ -16,6 +17,9 @@ import { AutoMLModelPage } from './AutoMLPage/AutoMLModelPage';
 import { AutoMLModelList } from './AutoMLModelList';
 import { AutoMLPredictionDocModal } from './AutoMLPredictionDocModal';
 
+const getModelTypeExtension = (exportFormat: AutoMLExportFormat) => {
+  return exportFormat === AutoMLExportFormat.tflite ? exportFormat : 'pb';
+};
 const AutoML = () => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -37,10 +41,14 @@ const AutoML = () => {
     });
   };
 
-  const handleDownload = async () => {
+  const handleDownload = async (exportFormat: AutoMLExportFormat) => {
     if (selectedModelId) {
       setDownloadingModel(true);
-      const data = await AutoMLAPI.downloadAutoMLModel(selectedModelId);
+      const format = getModelTypeExtension(exportFormat);
+      const data = await AutoMLAPI.downloadAutoMLModel(
+        selectedModelId,
+        exportFormat
+      );
       if (data?.modelUrl) {
         const res = await fetch(data.modelUrl, {
           method: 'GET',
@@ -48,7 +56,7 @@ const AutoML = () => {
         const blob = await res.blob();
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
-        link.setAttribute('download', `${selectedModelId}.tflite`);
+        link.setAttribute('download', `${selectedModelId}.${format}`);
         document.body.appendChild(link);
         link.click();
       }
