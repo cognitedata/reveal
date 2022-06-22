@@ -62,6 +62,7 @@ import { isProduction } from 'utils/environment';
 import { currentDateRangeLocale } from 'config/locale';
 import { chartSources } from 'models/chart/selectors';
 import ChartViewPageAppBar from 'pages/ChartViewPage/ChartViewPageAppBar';
+import PageTitle from 'components/PageTitle/PageTitle';
 import {
   BottomPaneWrapper,
   ChartContainer,
@@ -577,6 +578,7 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   return (
     <>
+      <PageTitle title={chart.name} />
       <TimeseriesCollectionEffects />
       <CalculationCollectionEffects />
       <ChartViewPageAppBar allChartsLabel={t['All charts']} />

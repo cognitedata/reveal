@@ -27,6 +27,7 @@ import {
   changeStartPageLayout,
   currentStartPageLayout,
 } from 'config/startPagePreference';
+import PageTitle from 'components/PageTitle/PageTitle';
 
 const UserProfileWrap = styled(Flex)`
   width: 100%;
@@ -163,125 +164,128 @@ const UserProfile = () => {
   );
 
   return (
-    <div id="user-settings" style={{ padding: 16, width: '100%' }}>
-      <UserProfileWrap element="section">
-        <article>
-          <Icon type="Cognite" size={128} />
-        </article>
-        <article className="col-user">
-          <h3 className="cogs-title-3">{t['Charts User settings']}</h3>
-          <p className="tags">{user?.displayName}</p>
-        </article>
-        <article className="last-col">
-          <Button
-            type="tertiary"
-            onClick={() => {
-              localStorage.clear();
-              window.location.reload();
-            }}
-          >
-            {t.Logout}
-          </Button>
-          <p className="tags">
-            {t['Cognite Charts Version']} {config.version.substring(0, 7)}
-          </p>
-        </article>
-      </UserProfileWrap>
-      <LangAreaWrap>
-        <article>
-          <h3>{t['Select Language']}</h3>
-          <p>{t['Select the preferred language of the application.']}</p>
-        </article>
-        <article className="lang-col">
-          <Select
-            disabled={!ready}
-            value={
-              ready
-                ? availableLanguages.find(
-                    (option) => option.value === i18n.language
-                  )
-                : availableLanguages[0]
-            }
-            icon={ready ? '' : 'Loader'}
-            onChange={(option: typeof availableLanguages[0]) =>
-              i18n.changeLanguage(option.value)
-            }
-            options={availableLanguages}
-          />
-        </article>
-      </LangAreaWrap>
-      <LangAreaWrap>
-        <article>
-          <h3>{t['Select Locale']}</h3>
-          <p>
-            {
-              t[
-                'Select how dates and numbers are displayed in the application.'
-              ]
-            }
-          </p>
-        </article>
-        <article className="lang-col">
-          <Row cols={2}>
-            <div>
-              <Select
-                value={locale}
-                onChange={(option: typeof locale) => {
-                  changeDayJSLocale(option.value);
-                  setLocale(option);
-                }}
-                options={availableLocales}
-              />
-            </div>
-            <div>
-              {t.Example}: {dayjs().format('LLLL')}
-            </div>
-          </Row>
-        </article>
-      </LangAreaWrap>
-      <LangAreaWrap>
-        <article>
-          <h3>{t['Select Default Start Page Layout']}</h3>
-        </article>
-        <article className="lang-col">
-          <Row cols={2}>
-            <div>
-              <Select
-                value={startPageLayout}
-                onChange={(option: typeof startPageLayoutOptions[number]) => {
-                  changeStartPageLayout(option.value);
-                  setStartPageLayout(option);
-                }}
-                options={startPageLayoutOptions}
-              />
-            </div>
-          </Row>
-        </article>
-      </LangAreaWrap>
+    <>
+      <PageTitle title="User Settings" />
+      <div id="user-settings" style={{ padding: 16, width: '100%' }}>
+        <UserProfileWrap element="section">
+          <article>
+            <Icon type="Cognite" size={128} />
+          </article>
+          <article className="col-user">
+            <h3 className="cogs-title-3">{t['Charts User settings']}</h3>
+            <p className="tags">{user?.displayName}</p>
+          </article>
+          <article className="last-col">
+            <Button
+              type="tertiary"
+              onClick={() => {
+                localStorage.clear();
+                window.location.reload();
+              }}
+            >
+              {t.Logout}
+            </Button>
+            <p className="tags">
+              {t['Cognite Charts Version']} {config.version.substring(0, 7)}
+            </p>
+          </article>
+        </UserProfileWrap>
+        <LangAreaWrap>
+          <article>
+            <h3>{t['Select Language']}</h3>
+            <p>{t['Select the preferred language of the application.']}</p>
+          </article>
+          <article className="lang-col">
+            <Select
+              disabled={!ready}
+              value={
+                ready
+                  ? availableLanguages.find(
+                      (option) => option.value === i18n.language
+                    )
+                  : availableLanguages[0]
+              }
+              icon={ready ? '' : 'Loader'}
+              onChange={(option: typeof availableLanguages[0]) =>
+                i18n.changeLanguage(option.value)
+              }
+              options={availableLanguages}
+            />
+          </article>
+        </LangAreaWrap>
+        <LangAreaWrap>
+          <article>
+            <h3>{t['Select Locale']}</h3>
+            <p>
+              {
+                t[
+                  'Select how dates and numbers are displayed in the application.'
+                ]
+              }
+            </p>
+          </article>
+          <article className="lang-col">
+            <Row cols={2}>
+              <div>
+                <Select
+                  value={locale}
+                  onChange={(option: typeof locale) => {
+                    changeDayJSLocale(option.value);
+                    setLocale(option);
+                  }}
+                  options={availableLocales}
+                />
+              </div>
+              <div>
+                {t.Example}: {dayjs().format('LLLL')}
+              </div>
+            </Row>
+          </article>
+        </LangAreaWrap>
+        <LangAreaWrap>
+          <article>
+            <h3>{t['Select Default Start Page Layout']}</h3>
+          </article>
+          <article className="lang-col">
+            <Row cols={2}>
+              <div>
+                <Select
+                  value={startPageLayout}
+                  onChange={(option: typeof startPageLayoutOptions[number]) => {
+                    changeStartPageLayout(option.value);
+                    setStartPageLayout(option);
+                  }}
+                  options={startPageLayoutOptions}
+                />
+              </div>
+            </Row>
+          </article>
+        </LangAreaWrap>
 
-      <Collapse>
-        <Collapse.Panel header="Advanced information">
-          <Display level={3}>User Information</Display>
-          <pre>{JSON.stringify(user, null, 2)}</pre>
-          <Display level={3}>Firebase User Information</Display>
-          <pre>
-            {JSON.stringify(firebase.auth()?.currentUser ?? {}, null, 2)}
-          </pre>
-          <Display level={3}>Firebase Token Information</Display>
-          <pre>
-            {parseJwt(localStorage.getItem('@cognite/charts/firebaseToken'))}
-          </pre>
-          <Display level={3}>CDF Token Information</Display>
-          <pre>
-            {parseJwt(localStorage.getItem('@cognite/charts/cdfToken'))}
-          </pre>
-          <Display level={3}>Azure AD Token Information</Display>
-          <pre>
-            {parseJwt(localStorage.getItem('@cognite/charts/azureAdToken'))}
-          </pre>
-        </Collapse.Panel>
-      </Collapse>
-    </div>
+        <Collapse>
+          <Collapse.Panel header="Advanced information">
+            <Display level={3}>User Information</Display>
+            <pre>{JSON.stringify(user, null, 2)}</pre>
+            <Display level={3}>Firebase User Information</Display>
+            <pre>
+              {JSON.stringify(firebase.auth()?.currentUser ?? {}, null, 2)}
+            </pre>
+            <Display level={3}>Firebase Token Information</Display>
+            <pre>
+              {parseJwt(localStorage.getItem('@cognite/charts/firebaseToken'))}
+            </pre>
+            <Display level={3}>CDF Token Information</Display>
+            <pre>
+              {parseJwt(localStorage.getItem('@cognite/charts/cdfToken'))}
+            </pre>
+            <Display level={3}>Azure AD Token Information</Display>
+            <pre>
+              {parseJwt(localStorage.getItem('@cognite/charts/azureAdToken'))}
+            </pre>
+          </Collapse.Panel>
+        </Collapse>
+      </div>
+    </>
   );
 };
 
