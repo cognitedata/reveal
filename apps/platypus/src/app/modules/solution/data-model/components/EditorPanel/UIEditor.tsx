@@ -146,7 +146,11 @@ export function UIEditor({
         type: 'String',
       }
     );
-    updateUiState(newState, currentType!.name);
+    const updatedType = newState.types.find(
+      (type) => type.name === currentType!.name
+    ) as DataModelTypeDefsType;
+    setSolutionDataModel(newState);
+    setCurrentType(updatedType);
   };
 
   const renameSchemaType = (oldValue: string, newValue: string) => {

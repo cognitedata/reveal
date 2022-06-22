@@ -83,7 +83,6 @@ export const SchemaTypeField = ({
           autoFocus
           value={fieldName}
           disabled={disabled}
-          required
           onClick={(event) => event.currentTarget.select()}
           onChange={onFieldNameChanged}
           error={error}
