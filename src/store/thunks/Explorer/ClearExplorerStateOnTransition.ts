@@ -1,5 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { resetExplorerTemporaryState } from 'src/modules/Explorer/store/slice';
+import {
+  resetExplorerTemporaryState,
+  setCurrentPage,
+} from 'src/modules/Explorer/store/slice';
 import {
   clearAnnotationState,
   clearExplorerFileState,
@@ -17,5 +20,6 @@ export const ClearExplorerStateOnTransition = createAsyncThunk<
     dispatch(clearExplorerFileState(removeFileList));
     dispatch(clearAnnotationState(removeFileList));
   }
+  dispatch(setCurrentPage(1)); // Reset the current page to 1 on redirect
   dispatch(resetExplorerTemporaryState());
 });
