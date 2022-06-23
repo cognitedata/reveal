@@ -1,6 +1,7 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { v4 as uuid } from 'uuid';
+import sanitizeHtml from 'sanitize-html';
 
 import { CogniteOrnate } from '../../ornate';
 import { Tool, ToolNodeStyle, ToolType } from '..';
@@ -10,14 +11,11 @@ import { insertStyles } from '../../utils';
 const safeHtmlPattern = /<(?:.|\n)*?>/gm;
 
 const safeStrToHtml = (str = ''): string => {
-  return str
-    .replace(/'/g, "''")
-    .replace(safeHtmlPattern, '')
-    .replace(/\n/gi, '<br>');
+  return sanitizeHtml(str).replace(safeHtmlPattern, '').replace(/\n/gi, '<br>');
 };
 
 const safeHtmlToStr = (str = ''): string =>
-  str.replace(/<br>/gi, '\n').replace(safeHtmlPattern, '');
+  sanitizeHtml(str).replace(/<br>/gi, '\n').replace(safeHtmlPattern, '');
 
 export class TextTool implements Tool {
   ornate: CogniteOrnate;

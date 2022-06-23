@@ -82,6 +82,7 @@ DEPENDENCIES = [
     "@npm//react-router-dom",
     "@npm//styled-components",
     "@npm//uuid",
+    "@npm//sanitize-html",
     "@npm//victory",
     "@npm//web-vitals",
     "//packages/react-container",

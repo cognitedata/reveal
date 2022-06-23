@@ -41,12 +41,14 @@ DEPENDENCIES = [
     "@npm//lodash",
     "@npm//pdf-lib",
     "@npm//pdfjs-dist",
+    "@npm//sanitize-html",
     "@npm//uuid",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
     "@npm//@types/lodash",
+    "@npm//@types/sanitize-html",
     "@npm//@types/uuid",
 ]
 
