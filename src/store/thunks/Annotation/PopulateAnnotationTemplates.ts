@@ -8,6 +8,7 @@ import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationApiV1 } from 'src/api/annotation/AnnotationApiV1';
 import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
+import { getPredefinedKeypointsWithColor } from 'src/store/util/getPredefinedKeypointsWithCorrectColors';
 
 export const PopulateAnnotationTemplates = createAsyncThunk<
   PredefinedVisionAnnotations,
@@ -34,11 +35,14 @@ export const PopulateAnnotationTemplates = createAsyncThunk<
         keypointCollections.push({
           id: templateAnnotation.id,
           lastUpdated: templateAnnotation.lastUpdatedTime,
-          keypoints: templateAnnotation.data.keypoints,
+          keypoints: getPredefinedKeypointsWithColor(
+            templateAnnotation.data.keypoints,
+            templateAnnotation.data.color
+          ),
           collectionName: templateAnnotation.text,
           // Predefined collections created after june 2022 have color
           // property, but old collections have color on individual keypoints
-          // This ensure backward comparability by using color from the first keypoint
+          // This ensures backward comparability by using color from the first keypoint
           // if collection does not have a color field.
           color:
             templateAnnotation.data.color ||

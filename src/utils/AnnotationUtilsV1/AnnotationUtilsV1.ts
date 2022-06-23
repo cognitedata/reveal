@@ -78,7 +78,7 @@ export const ModelTypeStyleMap = {
   [VisionDetectionModelType.CustomModel]: ColorsObjectDetection, // custom models are regarded as object detection models
 };
 export const ModelTypeIconMap: { [key: number]: string } = {
-  [VisionDetectionModelType.OCR]: 'Scan',
+  [VisionDetectionModelType.OCR]: 'TextScan',
   [VisionDetectionModelType.TagDetection]: 'ResourceAssets',
   [VisionDetectionModelType.ObjectDetection]: 'Scan',
   [VisionDetectionModelType.GaugeReader]: 'Scan',
