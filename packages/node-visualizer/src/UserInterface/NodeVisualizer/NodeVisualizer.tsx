@@ -126,6 +126,7 @@ export const NodeVisualizer: React.FC<NodeVisualizerProps> = (props) => {
         split="vertical"
         minSize={common.isFullscreen ? 0 : Appearance.leftPanelDefaultSize}
         maxSize={common.isFullscreen ? 0 : Appearance.leftPanelMaxSize}
+        pane2Style={{ overflow: 'hidden' }}
         onChange={() => {
           // -TODO: Test this feature on BP
           const viewers = Object.values(ViewerUtils.getViewers());
