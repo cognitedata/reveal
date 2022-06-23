@@ -76,7 +76,7 @@ export function OverlayToolbar({ viewer, model }: Props) {
           <CenteredIcon type="Dot" />
           <PointSizeSlider
             min={0}
-            max={0.5}
+            max={1.0}
             step={0.01}
             defaultValue={model.pointSize}
             onChange={(pointSize) => {

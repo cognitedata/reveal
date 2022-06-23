@@ -4,6 +4,7 @@ import {
   Cognite3DViewer,
   CognitePointCloudModel,
   CogniteModelBase,
+  PotreePointSizeType,
   DefaultCameraManager,
 } from '@cognite/reveal';
 
@@ -114,7 +115,8 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
                 modelId,
                 revisionId,
               });
-              modelLocal.pointSize = 0.15;
+              modelLocal.pointSizeType = PotreePointSizeType.Attenuated;
+              modelLocal.pointSize = 0.25;
               break;
             }
             default: {

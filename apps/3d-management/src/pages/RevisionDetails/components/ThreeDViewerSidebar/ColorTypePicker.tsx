@@ -4,12 +4,11 @@ import { PotreePointColorType } from '@cognite/reveal';
 
 const { Option } = Select;
 
-const options: Record<PotreePointColorType, string> = {
-  [PotreePointColorType.Rgb]: 'RGB',
+const options: Record<number, string> = {
+  [PotreePointColorType.Rgb]: 'Color (RGB)',
   [PotreePointColorType.Classification]: 'Classification',
   [PotreePointColorType.Depth]: 'Depth',
   [PotreePointColorType.Height]: 'Height',
-  [PotreePointColorType.PointIndex]: 'Point index',
   [PotreePointColorType.Intensity]: 'Intensity',
 };
 
