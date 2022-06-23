@@ -80,6 +80,8 @@ describe('Wells: casings buttons', () => {
 
 describe('Casings: Table view', () => {
   before(() => {
+    cy.addWaitForWdlResources('search', 'POST', 'searchWells');
+
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
@@ -103,6 +105,7 @@ describe('Casings: Table view', () => {
     );
 
     cy.log('select all rows');
+    cy.wait('@searchWells');
     cy.toggleSelectAllRows();
     cy.openInspectView();
 
