@@ -2,7 +2,6 @@ import { sendGeneralFeedback } from 'domain/feedback/internal/actions/sendGenera
 import { useFeedbackCreateMutate } from 'domain/feedback/internal/actions/useFeedbackCreateMutate';
 
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import html2canvas from 'html2canvas';
 import { getElementById } from 'utils/general.helper';
@@ -11,6 +10,7 @@ import { Modal } from 'components/Modal';
 import { showErrorMessage, UndoToast } from 'components/Toast';
 import { FEEDBACK_CONFIRM_TOAST } from 'constants/feedback';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 
 import { GeneralFeedbackContent } from './GeneralFeedbackContent';
 

@@ -93,19 +93,8 @@ export const SIDECAR = {
 
   enableUserManagement: true,
 
-  locize: {
-    keySeparator: false,
-    projectId: 'b0fef6b6-5821-4946-9acc-cb9c41568a75',
-    apiKey: process.env.REACT_APP_LOCIZE_API_KEY,
-    // NOTE: this 'version' is set to 'Production' for the deployments
-    // via the release-configs in application-services
-    // if you have made big key changes, you will need to do a release
-    // of the 'Production' keys, by copying the 'latest' into them via the
-    // locize app: https://www.locize.app/p/b8u69o32
-    // this is done because the 'Production' keys are cached for cost/performance
-    // and the latest ones are live.
-    version: 'latest',
-  },
+  locize: {},
+  disableTranslations: true,
   intercomSettings: {
     app_id: 'ou1uyk2p',
     hide_default_launcher: true,

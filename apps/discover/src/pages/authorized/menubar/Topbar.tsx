@@ -6,10 +6,10 @@ import { batch, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { Graphic, TopBar } from '@cognite/cogs.js';
-import { useTranslation } from '@cognite/react-i18n';
 
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import { useActivePanel } from 'modules/resultPanel/selectors';
 import { hideResults } from 'modules/search/actions';
 

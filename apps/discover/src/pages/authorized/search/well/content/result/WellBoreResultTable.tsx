@@ -3,7 +3,6 @@ import { Well } from 'domain/wells/well/internal/types';
 import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
 import React, { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Row } from 'react-table';
 
@@ -17,6 +16,7 @@ import { MoreOptionsButton, ViewButton } from 'components/Buttons';
 import { FavoriteStarIcon } from 'components/Icons/FavoriteStarIcon';
 import { Table, RowProps } from 'components/Tablev3';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import { useVisibleWellboreColumns } from 'hooks/useVisibleWellboreColumns';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { wellSearchActions } from 'modules/wellSearch/actions';

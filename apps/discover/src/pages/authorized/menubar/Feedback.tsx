@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components/macro';
 
@@ -8,6 +7,7 @@ import { intercomHelper } from '@cognite/intercom-helper';
 
 import GeneralFeedback from 'components/Modals/general-feedback';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 
 const MenuContainer = styled.div``;
 

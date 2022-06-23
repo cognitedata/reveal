@@ -6,7 +6,6 @@ import { useUpdateSearchHistoryListQuery } from 'domain/searchHistory/internal/h
 import { SearchHistoryOptionType } from 'domain/searchHistory/internal/types';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 
 import get from 'lodash/get';
@@ -21,6 +20,7 @@ import {
   SEARCH_TRACK_ID,
 } from 'constants/metrics';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import { useSearchState } from 'modules/search/selectors';
 import { useSearchPhrase } from 'modules/sidebar/selectors';
 import { useCurrentSavedSearchState } from 'modules/sidebar/selectors/useCurrentSavedSearchState';

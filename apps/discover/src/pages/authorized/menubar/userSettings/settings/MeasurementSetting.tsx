@@ -1,9 +1,9 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Body, SegmentedControl } from '@cognite/cogs.js';
 import { UMSUserProfilePreferences } from '@cognite/user-management-service-types';
 
+import { useTranslation } from 'hooks/useTranslation';
 import { useUserPreferencesMeasurementByMeasurementEnum } from 'hooks/useUserPreferences';
 
 import { SettingsItem } from '../elements';

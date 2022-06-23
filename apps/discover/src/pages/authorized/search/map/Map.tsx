@@ -21,7 +21,6 @@ import mapboxgl from 'maplibre-gl';
 import { v1 } from 'uuid';
 
 import { PerfMetrics } from '@cognite/metrics';
-import { useTranslation } from '@cognite/react-i18n';
 import { Point } from '@cognite/seismic-sdk-js';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -57,6 +56,7 @@ import { useFilterCategory } from 'modules/sidebar/selectors';
 import { CategoryTypes } from 'modules/sidebar/types';
 
 import { useDeepEffect, useDeepMemo } from '../../../../hooks/useDeep';
+import { useTranslation } from '../../../../hooks/useTranslation';
 import { setClearPolygon } from '../../../../modules/map/actions';
 import { MS_TRANSITION_TIME } from '../search/SideBar/constants';
 

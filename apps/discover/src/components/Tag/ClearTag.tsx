@@ -1,7 +1,7 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { CLEAR_ALL_TEXT } from 'components/TableEmpty/constants';
+import { useTranslation } from 'hooks/useTranslation';
 
 import { ClearTagWrapper } from './elements';
 

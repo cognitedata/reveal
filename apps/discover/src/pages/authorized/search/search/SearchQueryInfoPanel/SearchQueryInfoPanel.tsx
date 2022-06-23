@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import {
   Button,
@@ -11,6 +10,7 @@ import {
 
 import { CloseButton } from 'components/Buttons';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 
 import { SEARCH_QUERY_INFO_HEADER, SEARCH_QUERY_INFO_TABS } from './constants';
 import {

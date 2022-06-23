@@ -10,11 +10,10 @@ import * as React from 'react';
 
 import flatten from 'lodash/flatten';
 
-import { useTranslation } from '@cognite/react-i18n';
-
 import { LoadMoreButton } from 'components/Tablev3/elements';
 import { showInfoMessageWithTitle } from 'components/Toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import { DocumentType } from 'modules/documentSearch/types';
 import {
   DOWNLOAD_MESSAGE,

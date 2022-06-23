@@ -6,8 +6,6 @@ import { useDispatch } from 'react-redux';
 import { handleServiceError } from 'utils/errors';
 import { getPathsFromDoc } from 'utils/getPathsFromDocument';
 
-import { useTranslation } from '@cognite/react-i18n';
-
 import BasePreviewCard from 'components/Card/PreviewCard/BasePreviewCard';
 import {
   FilePath,
@@ -18,6 +16,7 @@ import {
 } from 'components/DocumentPreview';
 import { showSuccessMessage } from 'components/Toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import { useDocumentResultHits } from 'modules/documentSearch/hooks/useDocumentResultHits';
 import { clearSelectedDocument } from 'modules/map/actions';
 import { MarginBottomNormalContainer } from 'styles/layout';

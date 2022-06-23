@@ -1,9 +1,9 @@
 import React, { PropsWithChildren } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Button } from '@cognite/cogs.js';
 
 import { Tooltip } from 'components/Tooltip';
+import { useTranslation } from 'hooks/useTranslation';
 
 import TableResultActions from '../TableResultActions';
 

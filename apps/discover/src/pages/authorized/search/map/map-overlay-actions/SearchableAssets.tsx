@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Autosuggest from 'react-autosuggest';
-import { useTranslation } from 'react-i18next';
 
 import { TS_FIX_ME } from 'core';
 import noop from 'lodash/noop';
@@ -9,6 +8,7 @@ import layers from 'utils/zindex';
 import { Input } from '@cognite/cogs.js';
 
 import { Tooltip } from 'components/Tooltip/TooltipSlowly';
+import { useTranslation } from 'hooks/useTranslation';
 import { MarginRightSmallContainer } from 'styles/layout';
 
 import { TypeaheadResult } from '../hooks/useLayers';

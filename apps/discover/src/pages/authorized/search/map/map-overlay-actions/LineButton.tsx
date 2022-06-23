@@ -1,10 +1,10 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
 
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import { setDrawMode } from 'modules/map/actions';
 import { useMap } from 'modules/map/selectors';
 import { useSelectedSurvey } from 'modules/seismicSearch/hooks';

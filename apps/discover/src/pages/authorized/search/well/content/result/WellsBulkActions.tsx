@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { openInNewTab } from 'utils/openInNewTab';
@@ -12,6 +11,7 @@ import { ViewButton, FavoriteButton, CloseButton } from 'components/Buttons';
 import TableBulkActions from 'components/TableBulkActions';
 import { showErrorMessage } from 'components/Toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useWellQueryResultWells } from 'modules/wellSearch/hooks/useWellQueryResultSelectors';

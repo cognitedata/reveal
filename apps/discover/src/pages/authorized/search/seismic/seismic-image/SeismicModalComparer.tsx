@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components/macro';
 
@@ -10,6 +9,7 @@ import { BlankModal } from 'components/Modal';
 // import { showInfoMessage } from 'components/Toast';
 import { Select } from 'components/Select/Select';
 import { Typography } from 'components/Typography';
+import { useTranslation } from 'hooks/useTranslation';
 import { useSeismic, useSelectedFiles } from 'modules/seismicSearch/selectors';
 import { SeismicCollection, Slices } from 'modules/seismicSearch/types';
 import { Flex, FlexGrow } from 'styles/layout';

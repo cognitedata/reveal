@@ -1,7 +1,6 @@
 import { getUmsUsers } from 'domain/userManagementService/service/network/getUmsUsers';
 
 import React, { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import debounce from 'lodash/debounce';
 
@@ -9,6 +8,7 @@ import { AutoComplete, OptionsType, OptionTypeBase } from '@cognite/cogs.js';
 
 import { SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN } from 'constants/error';
 import { useJsonHeaders } from 'hooks/useJsonHeaders';
+import { useTranslation } from 'hooks/useTranslation';
 
 import { showErrorMessage } from '../Toast';
 

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Button } from '@cognite/cogs.js';
 
 import { Select } from 'components/Select/Select';
+import { useTranslation } from 'hooks/useTranslation';
 
 import { colors } from '../constants';
 import { HeaderButtonsWrapper } from '../elements';

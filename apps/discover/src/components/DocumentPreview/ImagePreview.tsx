@@ -1,7 +1,8 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import styled, { keyframes } from 'styled-components/macro';
+
+import { useTranslation } from 'hooks/useTranslation';
 
 const fadeIn = keyframes`
   from {

@@ -7,10 +7,10 @@ import first from 'lodash/head';
 import styled from 'styled-components/macro';
 
 import { Body } from '@cognite/cogs.js';
-import { useTranslation } from '@cognite/react-i18n';
 
 import { PreviewHeader } from 'components/DocumentPreview/elements';
 import { Value } from 'components/MetadataTable/elements';
+import { useTranslation } from 'hooks/useTranslation';
 import { DocumentType } from 'modules/documentSearch/types';
 import { FlexColumn } from 'styles/layout';
 

@@ -1,7 +1,6 @@
 import { useIsOwner } from 'domain/user/internal/hooks/useIsOwner';
 
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 
 import {
@@ -16,6 +15,7 @@ import { showInfoMessageWithTitle } from 'components/Toast';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
+import { useTranslation } from 'hooks/useTranslation';
 import { FavoriteSummary } from 'modules/favorite/types';
 import {
   DOWNLOAD_MESSAGE,

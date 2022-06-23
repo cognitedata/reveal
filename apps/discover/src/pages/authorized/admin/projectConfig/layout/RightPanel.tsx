@@ -1,11 +1,12 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import get from 'lodash/get';
 import isNaN from 'lodash/isNaN';
 import last from 'lodash/last';
 
 import { Button, Title } from '@cognite/cogs.js';
+
+import { useTranslation } from 'hooks/useTranslation';
 
 import { ConfigForm } from '../components/ConfigForm';
 import { RightPanelProps } from '../types';

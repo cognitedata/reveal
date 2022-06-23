@@ -1,7 +1,5 @@
 import { openDocumentPreviewInNewTab } from 'domain/documents/service/utils/utils';
 
-import { useTranslation } from 'react-i18next';
-
 import { handleServiceError } from 'utils/errors';
 
 import { Menu, Dropdown } from '@cognite/cogs.js';
@@ -14,6 +12,7 @@ import {
 } from 'components/Buttons';
 import { showSuccessMessage } from 'components/Toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import { DocumentType } from 'modules/documentSearch/types';
 import { FlexRow } from 'styles/layout';
 

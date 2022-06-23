@@ -1,7 +1,6 @@
 import { useUserInfoQuery } from 'domain/userManagementService/internal/queries/useUserInfoQuery';
 
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 
 import noop from 'lodash/noop';
@@ -10,6 +9,7 @@ import { convertToCancellablePromise } from 'utils/cancellablePromise';
 import { Input } from '@cognite/cogs.js';
 import { LogoutButton } from '@cognite/react-container';
 
+import { useTranslation } from 'hooks/useTranslation';
 import {
   AvatarAndEmailContainer,
   CompanyInfoContainer,

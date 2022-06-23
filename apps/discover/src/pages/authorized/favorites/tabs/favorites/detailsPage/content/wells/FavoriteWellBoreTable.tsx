@@ -1,7 +1,6 @@
 import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
@@ -12,6 +11,7 @@ import { Dropdown, Menu } from '@cognite/cogs.js';
 import { MoreOptionsButton, ViewButton } from 'components/Buttons';
 import { RowProps, Table } from 'components/Tablev3';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
+import { useTranslation } from 'hooks/useTranslation';
 import { useVisibleWellboreColumns } from 'hooks/useVisibleWellboreColumns';
 import { SelectedMap } from 'modules/inspectTabs/types';
 import { WellboreId } from 'modules/wellSearch/types';

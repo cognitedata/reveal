@@ -1,10 +1,10 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components/macro';
 
 import { Modal } from 'components/Modal';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 
 const Title = styled.div`
   margin-bottom: 8px;

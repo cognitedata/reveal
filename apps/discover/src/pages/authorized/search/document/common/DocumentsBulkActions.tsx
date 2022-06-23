@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Dropdown } from '@cognite/cogs.js';
 
 import AddToFavoriteSetMenu from 'components/AddToFavoriteSetMenu';
 import { FavoriteButton, CloseButton } from 'components/Buttons';
 import TableBulkActions from 'components/TableBulkActions';
+import { useTranslation } from 'hooks/useTranslation';
 
 type Props = {
   selectedDocumentIds: number[];

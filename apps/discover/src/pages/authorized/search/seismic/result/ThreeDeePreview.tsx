@@ -1,10 +1,10 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import isEmpty from 'lodash/isEmpty';
 
 import { ThreeDee } from 'components/3d';
 import { BlankModal } from 'components/Modal';
+import { useTranslation } from 'hooks/useTranslation';
 import { useSelectedFiles } from 'modules/seismicSearch/selectors';
 
 import { ThreeDeeContainer } from './elements';

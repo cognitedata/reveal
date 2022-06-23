@@ -4,7 +4,6 @@ import { useFeatureTypesListQuery } from 'domain/geospatial/internal/queries/use
 import { LayerFormValues } from 'domain/geospatial/internal/types';
 
 import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { useFormik } from 'formik';
 import isEmpty from 'lodash/isEmpty';
@@ -14,6 +13,7 @@ import { Select, OptionType, Detail } from '@cognite/cogs.js';
 import { FileReaderComp } from 'components/FileReader';
 import { Modal } from 'components/Modal';
 import { showErrorMessage } from 'components/Toast';
+import { useTranslation } from 'hooks/useTranslation';
 
 import { ConfigFormFields } from '../projectConfig';
 

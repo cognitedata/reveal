@@ -1,8 +1,9 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Label, Flex } from '@cognite/cogs.js';
 import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
+
+import { useTranslation } from 'hooks/useTranslation';
 
 interface Props {
   feedback: ObjectFeedbackResponse;

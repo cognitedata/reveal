@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { Button, Modal } from '@cognite/cogs.js';
-import { useTranslation } from '@cognite/react-i18n';
 
 import { CloseButton } from 'components/Buttons';
+import { useTranslation } from 'hooks/useTranslation';
 import { FlexGrow } from 'styles/layout';
 
 import { CONTINUE_EDITING, EXIT_DELETE } from './constants';

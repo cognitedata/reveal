@@ -1,10 +1,10 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import EmptyState from 'components/EmptyState';
 import InlineLink from 'components/InlineLink';
 import navigation from 'constants/navigation';
+import { useTranslation } from 'hooks/useTranslation';
 import { showCreateFavoriteModal } from 'modules/favorite/reducer';
 
 interface Props {

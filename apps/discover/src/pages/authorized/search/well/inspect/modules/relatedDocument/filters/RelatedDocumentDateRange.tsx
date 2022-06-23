@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import get from 'lodash/get';
 import { dateToEpoch } from 'utils/date';
@@ -7,6 +6,7 @@ import { dateToEpoch } from 'utils/date';
 import { Dropdown, Menu, Range } from '@cognite/cogs.js';
 
 import { BaseButton } from 'components/Buttons';
+import { useTranslation } from 'hooks/useTranslation';
 import { DocumentsFacets } from 'modules/documentSearch/types';
 import { useSetRelatedDocumentsFilters } from 'modules/inspectTabs/hooks/useSetRelatedDocumentsFilters';
 import { useRelatedDocumentsFilters } from 'modules/inspectTabs/selectors';

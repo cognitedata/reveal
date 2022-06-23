@@ -6,7 +6,6 @@ import { useQuerySavedSearchesList } from 'domain/savedSearches/internal/queries
 import { SavedSearchContent } from 'domain/savedSearches/types';
 
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { isEnterPressed } from 'utils/general.helper';
 import { log } from 'utils/log';
@@ -20,6 +19,7 @@ import Skeleton from 'components/Skeleton';
 import { showErrorMessage, showSuccessMessage } from 'components/Toast';
 import { GenericApiError } from 'core/types';
 import { useSavedSearchNavigation } from 'hooks/useSavedSearchNavigation';
+import { useTranslation } from 'hooks/useTranslation';
 import { useCurrentSavedSearchState } from 'modules/sidebar/selectors/useCurrentSavedSearchState';
 
 import {

@@ -1,9 +1,9 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { Button } from '@cognite/cogs.js';
 
+import { useTranslation } from 'hooks/useTranslation';
 import { toggleFeedbackDelete } from 'modules/feedback/actions';
 
 import { useFeedback } from '../Selector';

@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components/macro';
 import layers from 'utils/zindex';
@@ -7,6 +6,7 @@ import layers from 'utils/zindex';
 import { Button } from '@cognite/cogs.js';
 
 import { APP_NAME } from 'constants/general';
+import { useTranslation } from 'hooks/useTranslation';
 import { sizes } from 'styles/layout';
 
 export const CONFIRM_BUTTON_TEXT = 'Accept';

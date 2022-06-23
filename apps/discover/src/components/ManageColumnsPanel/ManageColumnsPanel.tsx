@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import * as Popper from '@popperjs/core';
 import { TS_FIX_ME } from 'core';
@@ -7,6 +6,7 @@ import { TS_FIX_ME } from 'core';
 import { Button, Checkbox, Dropdown, Menu, Tooltip } from '@cognite/cogs.js';
 
 import { MiddleEllipsis } from 'components/MiddleEllipsis';
+import { useTranslation } from 'hooks/useTranslation';
 import { FlexColumn } from 'styles/layout';
 
 import { DROPDOWN_HEADER, TOOLTIP_TEXT } from './constants';

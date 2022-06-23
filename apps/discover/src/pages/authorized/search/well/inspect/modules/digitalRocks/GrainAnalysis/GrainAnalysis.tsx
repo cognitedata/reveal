@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
@@ -8,6 +7,7 @@ import { Data } from 'plotly.js';
 import { Asset } from '@cognite/sdk';
 
 import EmptyState from 'components/EmptyState';
+import { useTranslation } from 'hooks/useTranslation';
 import { DIGITAL_ROCK_SAMPLES_ACCESSORS } from 'modules/wellSearch/constants';
 import { useGrainPartionings } from 'modules/wellSearch/selectors/sequence/grainAnalysis';
 import { convertToPlotly } from 'modules/wellSearch/utils/grainAnalysis';

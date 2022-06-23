@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 
 import { Button } from '@cognite/cogs.js';
-import { useTranslation } from '@cognite/react-i18n';
 
+import { useTranslation } from 'hooks/useTranslation';
 import { SHARE_MODAL_REMOVE_BUTTON_TEXT } from 'pages/authorized/favorites/modals/constants';
 import { FlexColumn, FlexGrow } from 'styles/layout';
 

@@ -1,7 +1,8 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { AllIconTypes, Button, Tooltip } from '@cognite/cogs.js';
+
+import { useTranslation } from 'hooks/useTranslation';
 
 import { CANCEL_POLYGON, POLYGON_TOOL } from '../constants';
 

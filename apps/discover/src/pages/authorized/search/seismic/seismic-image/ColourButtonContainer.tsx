@@ -1,10 +1,10 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components/macro';
 
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 
+import { useTranslation } from 'hooks/useTranslation';
 import { sizes } from 'styles/layout';
 
 import { ColorScale } from './ColorScale';

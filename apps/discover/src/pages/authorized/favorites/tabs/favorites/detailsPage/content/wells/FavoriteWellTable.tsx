@@ -3,7 +3,6 @@ import { Well } from 'domain/wells/well/internal/types';
 import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
 import React, { useState, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
@@ -16,6 +15,7 @@ import EmptyState from 'components/EmptyState';
 import { LOADING_TEXT } from 'components/EmptyState/constants';
 import { Options, Table, RowProps } from 'components/Tablev3';
 import { useDeepCallback, useDeepEffect } from 'hooks/useDeep';
+import { useTranslation } from 'hooks/useTranslation';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/inspectTabs/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';

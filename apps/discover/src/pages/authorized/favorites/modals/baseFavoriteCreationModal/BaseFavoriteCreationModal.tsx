@@ -1,11 +1,11 @@
 import React, { useState, useEffect, KeyboardEvent } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components/macro';
 
 import { Input } from '@cognite/cogs.js';
 
 import { Modal } from 'components/Modal';
+import { useTranslation } from 'hooks/useTranslation';
 import { FavoriteSummary } from 'modules/favorite/types';
 import {
   CREATE_SET_MODAL_DESCRIPTION_LABEL,

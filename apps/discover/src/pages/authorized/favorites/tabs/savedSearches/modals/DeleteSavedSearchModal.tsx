@@ -1,12 +1,12 @@
 import { SavedSearchItem } from 'domain/savedSearches/types';
 
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Button } from '@cognite/cogs.js';
 
 import { Modal } from 'components/Modal';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 
 import { DELETE_SAVED_SEARCH_CONFIRM_BUTTON_TEXT } from '../constants';
 

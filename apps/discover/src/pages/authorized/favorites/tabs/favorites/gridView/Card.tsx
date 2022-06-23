@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Input } from '@cognite/cogs.js';
 import { SetCommentTarget } from '@cognite/react-comments';
@@ -8,6 +7,7 @@ import { CommentButton } from 'components/Buttons';
 import MetadataTable from 'components/MetadataTable';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import { FavoriteSummary } from 'modules/favorite/types';
 import {
   getFavoriteLastUpdateByUserName,

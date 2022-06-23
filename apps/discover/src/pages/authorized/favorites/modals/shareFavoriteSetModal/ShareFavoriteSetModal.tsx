@@ -5,12 +5,12 @@ import {
 import { useFavoriteQuery } from 'domain/favorites/internal/queries/useFavoriteQuery';
 
 import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { BasicShareModal } from 'components/BasicShareModal';
 import { SharedUsersList } from 'components/BasicShareModal/SharedUsersList';
 import { UserOption } from 'components/SearchUsers/SearchUsers';
 import { showSuccessMessage } from 'components/Toast';
+import { useTranslation } from 'hooks/useTranslation';
 import {
   REMOVE_SHARE_SUCCESS_TOAST,
   SHARE_FAVORITE_MODAL_TITLE,

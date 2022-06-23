@@ -1,11 +1,11 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import isNumber from 'lodash/isNumber';
 
 import { Dropdown, Menu, Label, LabelVariants } from '@cognite/cogs.js';
 
 import { NoPropagationWrapper } from 'components/Buttons/NoPropagationWrapper';
+import { useTranslation } from 'hooks/useTranslation';
 import { STATUS } from 'modules/feedback/constants';
 
 interface DropdownButtonProps {

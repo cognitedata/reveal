@@ -1,7 +1,6 @@
 import { useWellSearchResultQuery } from 'domain/wells/well/internal/queries/useWellSearchResultQuery';
 
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { Button } from '@cognite/cogs.js';
@@ -9,6 +8,7 @@ import { Button } from '@cognite/cogs.js';
 import EmptyState from 'components/EmptyState';
 import { FilterCategoryValues } from 'components/TableEmpty/FilterCategoryValues';
 import { SearchInputValues } from 'components/TableEmpty/SearchInputValues';
+import { useTranslation } from 'hooks/useTranslation';
 import {
   clearSelectedFeature,
   removeArbitraryLine,

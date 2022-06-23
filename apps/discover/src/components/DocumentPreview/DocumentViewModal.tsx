@@ -2,7 +2,6 @@ import { getPreview } from 'domain/documents/service/network/getPreview';
 import { downloadFileFromUrl } from 'domain/documents/service/utils/utils';
 
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components/macro';
 
@@ -11,6 +10,7 @@ import { IconType, Button } from '@cognite/cogs.js';
 import { WhiteLoaderInline } from 'components/Loading';
 import { ActionModal, OKModal } from 'components/Modal';
 import { Typography } from 'components/Typography';
+import { useTranslation } from 'hooks/useTranslation';
 import { FlexRow, FlexAlignJustifyContent } from 'styles/layout';
 
 import { ImagePreview } from './ImagePreview';

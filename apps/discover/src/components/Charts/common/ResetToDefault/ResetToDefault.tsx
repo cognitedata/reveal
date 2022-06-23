@@ -1,9 +1,8 @@
 import React from 'react';
 
-import { useTranslation } from '@cognite/react-i18n';
-
 import { BaseButton } from 'components/Buttons';
 import EmptyState from 'components/EmptyState';
+import { useTranslation } from 'hooks/useTranslation';
 
 import { EMPTY_STATE_TEXT, RESET_TO_DEFAULT_BUTTON_TEXT } from './constants';
 import { EmptyStateContainer, ResetToDefaultContainer } from './elements';

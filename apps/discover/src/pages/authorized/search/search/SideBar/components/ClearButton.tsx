@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { Button } from '@cognite/cogs.js';
-import { useTranslation } from '@cognite/react-i18n';
 
+import { useTranslation } from 'hooks/useTranslation';
 import { DocumentsFacets } from 'modules/documentSearch/types';
 
 export const ClearButton: React.FC<{

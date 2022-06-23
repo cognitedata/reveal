@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 
 import { CloseButton } from 'components/Buttons';
 import TableBulkActions from 'components/TableBulkActions';
+import { useTranslation } from 'hooks/useTranslation';
 import { useSelectedFiles } from 'modules/seismicSearch/selectors';
 import { deselectAllFiles } from 'modules/seismicSearch/utils';
 

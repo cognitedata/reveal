@@ -1,7 +1,6 @@
 import { useFavoritesSortedByName } from 'domain/favorites/internal/hooks/useFavoritesSortedByName';
 
 import React, { useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import { batch, useDispatch } from 'react-redux';
 
 import isEmpty from 'lodash/isEmpty';
@@ -9,6 +8,8 @@ import { mergeUniqueArray } from 'utils/merge';
 
 import { Icon, Menu } from '@cognite/cogs.js';
 import { FavoriteContent } from '@cognite/discover-api-types';
+
+import { useTranslation } from 'hooks/useTranslation';
 
 import { useDeepCallback } from '../../hooks/useDeep';
 import {

@@ -1,9 +1,9 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { BlockExpander } from 'components/BlockExpander/BlockExpander';
 import { HideButton } from 'components/Buttons';
 import { HorizontalResizableBox } from 'components/HorizontalResizable-box/HorizontalResizableBox';
+import { useTranslation } from 'hooks/useTranslation';
 
 import {
   HIDE_TEXT,

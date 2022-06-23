@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-
 import styled from 'styled-components/macro';
 import { shortDate } from 'utils/date';
 
@@ -7,6 +5,7 @@ import { Button } from '@cognite/cogs.js';
 import { GeneralFeedbackResponse } from '@cognite/discover-api-types';
 
 import { Typography } from 'components/Typography';
+import { useTranslation } from 'hooks/useTranslation';
 import { generateReplyToUserContent } from 'modules/feedback/helper';
 import { Flex, sizes } from 'styles/layout';
 

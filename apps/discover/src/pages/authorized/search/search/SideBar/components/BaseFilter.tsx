@@ -1,5 +1,4 @@
 import React, { ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
@@ -9,6 +8,7 @@ import { BlockExpander } from 'components/BlockExpander/BlockExpander';
 import { HideButton } from 'components/Buttons';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import { setCategoryPage, toggleFilterBar } from 'modules/sidebar/actions';
 import { useFilterBarIsOpen } from 'modules/sidebar/selectors';
 import { CategoryTypes, Modules } from 'modules/sidebar/types';

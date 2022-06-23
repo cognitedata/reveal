@@ -4,7 +4,6 @@ import {
 } from 'domain/documents/service/utils/utils';
 
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { handleServiceError } from 'utils/errors';
@@ -19,6 +18,7 @@ import {
 import DocumentViewModal from 'components/DocumentPreview/DocumentViewModal';
 import { showInfoMessageWithTitle, showSuccessMessage } from 'components/Toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import { DocumentType } from 'modules/documentSearch/types';
 import { FavouriteRowType } from 'modules/favorite/types';
 import { setObjectFeedbackModalDocumentId } from 'modules/feedback/actions';

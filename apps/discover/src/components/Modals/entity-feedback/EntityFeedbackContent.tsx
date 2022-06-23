@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Checkbox, OptionType } from '@cognite/cogs.js';
 import { DocumentPayload } from '@cognite/discover-api-types';
+
+import { useTranslation } from 'hooks/useTranslation';
 
 import {
   FEEDBACK_ACTION_TITLE,

@@ -1,11 +1,11 @@
 import { useSetWellsFilters } from 'domain/savedSearches/internal/hooks/useSetWellsFilters';
 
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Body } from '@cognite/cogs.js';
 
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import { useAppliedWellFilters } from 'modules/sidebar/selectors';
 import { useGetAppliedFilterGroupedByCategory } from 'modules/wellSearch/hooks/useAppliedFilters';
 import { removeAppliedFilterValue } from 'modules/wellSearch/utils/filters';

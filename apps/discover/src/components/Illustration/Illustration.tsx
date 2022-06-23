@@ -1,8 +1,8 @@
-import { useTranslation } from 'react-i18next';
-
 import Favorites from 'images/illustrations/favorites.svg';
 import Recent from 'images/illustrations/recent.svg';
 import Search from 'images/illustrations/search.svg';
+
+import { useTranslation } from 'hooks/useTranslation';
 
 import { Img } from './elements';
 import { Props } from './types';

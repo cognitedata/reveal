@@ -1,8 +1,7 @@
 import { useDocumentSearchRelatedDocumentsOnlyQuery } from 'domain/documents/service/queries/useDocumentSearchRelatedDocumentsOnlyQuery';
 
-import { useTranslation } from 'react-i18next';
-
 import { MultiSelect } from 'components/Filters';
+import { useTranslation } from 'hooks/useTranslation';
 import { useSetRelatedDocumentsFilters } from 'modules/inspectTabs/hooks/useSetRelatedDocumentsFilters';
 import { useRelatedDocumentFilterQuery } from 'modules/wellSearch/selectors/relatedDocuments/hooks/useRelatedDocumentFilterQuery';
 

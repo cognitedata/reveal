@@ -1,11 +1,11 @@
 import React, { Dispatch, ReactNode, SetStateAction, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { ToastOptions } from 'react-toastify';
 
 import styled from 'styled-components/macro';
 
 import { toast as cogniteToast, Button } from '@cognite/cogs.js';
 
+import { useTranslation } from 'hooks/useTranslation';
 import { FlexRow } from 'styles/layout';
 
 interface Props {

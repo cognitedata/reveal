@@ -3,7 +3,6 @@ import { useWellSearchResultQuery } from 'domain/wells/well/internal/queries/use
 import { getWellboreIdsList } from 'domain/wells/wellbore/internal/transformers/getWellboreIdsList';
 
 import React, { useMemo, useEffect, useCallback, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import { batch, useDispatch } from 'react-redux';
 import {
   Route,
@@ -24,6 +23,7 @@ import { useDebounce } from 'hooks/useDebounce';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useProjectConfig } from 'hooks/useProjectConfig';
 import { useResponsive } from 'hooks/useResponsive';
+import { useTranslation } from 'hooks/useTranslation';
 import { documentSearchActions } from 'modules/documentSearch/actions';
 import { useIsDocumentConfigEnabled } from 'modules/documentSearch/hooks';
 import { useDocumentResultCount } from 'modules/documentSearch/hooks/useDocumentResultCount';

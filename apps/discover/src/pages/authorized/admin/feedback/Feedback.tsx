@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Route,
   Redirect,
@@ -14,6 +13,7 @@ import { Slider as CommentSlider } from '@cognite/react-comments';
 import { SIDECAR } from 'constants/app';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import { NavigationTab } from 'pages/types';
 
 import { ViewArchivedFeedback } from './common/ViewArchivedFeedback';

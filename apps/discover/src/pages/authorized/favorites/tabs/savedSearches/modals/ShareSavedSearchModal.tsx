@@ -2,7 +2,6 @@ import { useSavedSearchRemoveShareMutate } from 'domain/savedSearches/internal/a
 import { useQuerySavedSearcheGetOne } from 'domain/savedSearches/internal/queries/useQuerySavedSearcheGetOne';
 
 import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { handleServiceError } from 'utils/errors';
 
@@ -10,6 +9,7 @@ import { BasicShareModal } from 'components/BasicShareModal';
 import { SharedUsersList } from 'components/BasicShareModal/SharedUsersList';
 import { UserOption } from 'components/SearchUsers/SearchUsers';
 import { showSuccessMessage } from 'components/Toast';
+import { useTranslation } from 'hooks/useTranslation';
 import { REMOVE_SHARE_SUCCESS_TOAST } from 'pages/authorized/favorites/modals/constants';
 
 import { SHARE_SAVED_SEARCH } from '../constants';

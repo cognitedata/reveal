@@ -6,7 +6,6 @@ import { useAdminUsersQuery } from 'domain/userManagementService/internal/querie
 import { getUmsUserFromId } from 'domain/userManagementService/internal/selectors/getUmsUserFromId';
 
 import React, { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Cell } from 'react-table';
 
 import compact from 'lodash/compact';
@@ -24,6 +23,7 @@ import { Table, Options, TableResults, RowProps } from 'components/Tablev3';
 import { showErrorMessage } from 'components/Toast';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { EMPTY_FIELD_PLACEHOLDER } from 'constants/general';
+import { useTranslation } from 'hooks/useTranslation';
 import { ColumnMap } from 'modules/documentSearch/utils/getAvailableColumns';
 import { FIELDS } from 'modules/feedback/constants';
 import { feedbackHelper } from 'modules/feedback/helper';

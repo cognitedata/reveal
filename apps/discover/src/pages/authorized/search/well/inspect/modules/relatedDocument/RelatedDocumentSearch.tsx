@@ -1,13 +1,13 @@
 import { documentFacetsStructure } from 'domain/documents/internal/types';
 
 import React, { useState, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import get from 'lodash/get';
 import { isEnterPressed } from 'utils/general.helper';
 
 import { Input } from '@cognite/cogs.js';
 
+import { useTranslation } from 'hooks/useTranslation';
 import { useSetRelatedDocumentsFilters } from 'modules/inspectTabs/hooks/useSetRelatedDocumentsFilters';
 import { useRelatedDocumentsFilters } from 'modules/inspectTabs/selectors';
 

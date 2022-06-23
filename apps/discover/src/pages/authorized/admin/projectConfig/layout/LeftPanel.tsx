@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { ProjectConfig } from '@cognite/discover-api-types';
 
 import { SearchBox } from 'components/Filters';
+import { useTranslation } from 'hooks/useTranslation';
 
 import { ConfigFields } from '../fields/ConfigFields';
 import { Metadata } from '../types';

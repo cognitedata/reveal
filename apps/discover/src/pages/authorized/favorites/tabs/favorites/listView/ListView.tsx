@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Row } from 'react-table';
 
 import { getDateOrDefaultText } from 'utils/date';
@@ -11,6 +10,7 @@ import { CommentButton } from 'components/Buttons';
 import { AvatarWrapper, IconWrapper } from 'components/Card/element';
 import { Table, TableResults } from 'components/Tablev3';
 import { COMMENT_NAMESPACE } from 'constants/comments';
+import { useTranslation } from 'hooks/useTranslation';
 import { FavoriteSummary } from 'modules/favorite/types';
 import {
   getFavoriteLastUpdateByUserName,

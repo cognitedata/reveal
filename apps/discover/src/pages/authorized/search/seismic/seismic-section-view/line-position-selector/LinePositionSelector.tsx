@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import isUndefined from 'lodash/isUndefined';
 
 import { Input } from '@cognite/cogs.js';
 
 import { showErrorMessage } from 'components/Toast';
+import { useTranslation } from 'hooks/useTranslation';
 import { LineProps } from 'modules/seismicSearch/types';
 
 import { VALUE_NOT_IN_RANGE } from '../constants';

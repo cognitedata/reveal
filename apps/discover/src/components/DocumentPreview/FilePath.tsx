@@ -1,11 +1,11 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { pluralize } from 'utils/pluralize';
 
 import { MetadataItem } from 'components/MetadataTable';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import { setObjectFeedbackModalDocumentId } from 'modules/feedback/actions';
 import { FlexColumn, FlexRow } from 'styles/layout';
 

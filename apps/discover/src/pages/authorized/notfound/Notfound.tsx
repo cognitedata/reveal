@@ -1,8 +1,9 @@
 import { FC } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import PrettyPollyIcon from 'images/DiscoverLogo.svg';
 import styled from 'styled-components/macro';
+
+import { useTranslation } from 'hooks/useTranslation';
 
 const Wrapper = styled.div`
   top: 0;

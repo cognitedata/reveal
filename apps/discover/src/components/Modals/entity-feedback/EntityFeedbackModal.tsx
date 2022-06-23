@@ -6,7 +6,6 @@ import { sendObjectFeedback } from 'domain/feedback/internal/actions/sendObjectF
 import { useFeedbackCreateMutate } from 'domain/feedback/internal/actions/useFeedbackCreateMutate';
 
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { StoreState } from 'core';
@@ -16,6 +15,7 @@ import { ObjectFeedback } from '@cognite/discover-api-types';
 import { Modal } from 'components/Modal';
 import { UndoToast } from 'components/Toast';
 import { FEEDBACK_CONFIRM_TOAST } from 'constants/feedback';
+import { useTranslation } from 'hooks/useTranslation';
 import { clearObjectFeedbackModalDocumentId } from 'modules/feedback/actions';
 import { FeedbackState } from 'modules/feedback/types';
 

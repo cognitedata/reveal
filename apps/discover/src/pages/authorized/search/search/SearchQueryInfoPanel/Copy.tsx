@@ -1,11 +1,11 @@
 import CopyToClipboard from 'react-copy-to-clipboard';
-import { useTranslation } from 'react-i18next';
 
 import isString from 'lodash/isString';
 
 import { Tooltip } from '@cognite/cogs.js';
 
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 
 import { CopyToClipboardStyle } from './elements';
 

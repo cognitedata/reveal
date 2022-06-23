@@ -3,7 +3,6 @@ import { setObjectFeedbackSensitivityByAdmin } from 'domain/feedback/internal/ac
 import { useFeedbackUpdateMutate } from 'domain/feedback/internal/actions/useFeedbackUpdateMutate';
 
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
@@ -11,6 +10,7 @@ import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
 import { Loading } from 'components/Loading';
 // import { Metadata } from 'components/document-preview';
 import MetadataTable, { MetadataItem } from 'components/MetadataTable';
+import { useTranslation } from 'hooks/useTranslation';
 import { ASSESS } from 'modules/feedback/constants';
 import { generateReplyToUserContent } from 'modules/feedback/helper';
 import { MarginBottomNormalContainer } from 'styles/layout';

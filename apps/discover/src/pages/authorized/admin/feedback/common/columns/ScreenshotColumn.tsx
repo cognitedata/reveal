@@ -1,8 +1,9 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Button } from '@cognite/cogs.js';
 import { GeneralFeedbackResponse } from '@cognite/discover-api-types';
+
+import { useTranslation } from 'hooks/useTranslation';
 
 import { useFeedback } from '../../Selector';
 

@@ -1,10 +1,11 @@
 import { useUpdateMyPreferencesMutate } from 'domain/userManagementService/internal/actions/useUpdateMyPreferencesMutate';
 
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Dropdown, Title, Menu, TopBar, Icon } from '@cognite/cogs.js';
 import { UMSUserProfilePreferences } from '@cognite/user-management-service-types';
+
+import { useTranslation } from 'hooks/useTranslation';
 
 import { Content, SettingsContent, SettingsHeader } from './elements';
 import { MeasurementSetting } from './settings';

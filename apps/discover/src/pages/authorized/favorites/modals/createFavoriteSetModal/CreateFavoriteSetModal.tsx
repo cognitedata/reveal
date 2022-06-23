@@ -1,12 +1,12 @@
 import { useFavoritesCreateMutate } from 'domain/favorites/internal/actions/useFavoritesMutate';
 
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { NOTIFICATION_MESSAGE } from 'components/AddToFavoriteSetMenu/constants';
 import { showSuccessMessage } from 'components/Toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import {
   hideCreateFavoriteModal,
   setItemsToAddOnFavoriteCreation,

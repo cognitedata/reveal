@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import reduce from 'lodash/reduce';
 
@@ -9,6 +8,7 @@ import EmptyState from 'components/EmptyState';
 import TableBulkActions from 'components/TableBulkActions';
 import { Table, TableResults, RowProps } from 'components/Tablev3';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import { DocumentType } from 'modules/documentSearch/types';
 import { FavouriteRowType } from 'modules/favorite/types';
 import { FAVORITE_SET_NO_DOCUMENTS } from 'pages/authorized/favorites/constants';

@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components/macro';
 
@@ -7,6 +6,7 @@ import { Textarea } from '@cognite/cogs.js';
 
 import { Typography } from 'components/Typography';
 import { APP_NAME } from 'constants/general';
+import { useTranslation } from 'hooks/useTranslation';
 
 const InfoBox = styled.div`
   background-color: var(--cogs-greyscale-grey3);

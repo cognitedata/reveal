@@ -2,7 +2,6 @@ import { useDocumentLabelsByExternalIds } from 'domain/documents/internal/hooks/
 import { downloadFileFromUrl } from 'domain/documents/service/utils/utils';
 
 import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import includes from 'lodash/includes';
@@ -20,6 +19,7 @@ import {
   FeedbackButton,
 } from 'components/Buttons';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import { useDocumentConfig } from 'modules/documentSearch/hooks';
 import { useExtractParentFolder } from 'modules/documentSearch/hooks/useExtractParentFolder';
 import { useFavoriteDocumentIds } from 'modules/documentSearch/hooks/useFavoriteDocumentIds';

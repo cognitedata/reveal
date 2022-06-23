@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import isNumber from 'lodash/isNumber';
 
@@ -7,6 +6,7 @@ import { Dropdown, Menu, Button } from '@cognite/cogs.js';
 
 import { NoPropagationWrapper } from 'components/Buttons/NoPropagationWrapper';
 import { Modal } from 'components/Modal';
+import { useTranslation } from 'hooks/useTranslation';
 import {
   ASSESS,
   ASSESS_DROPDOWN_APPROVE,

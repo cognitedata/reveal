@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Button, Dropdown, Tooltip } from '@cognite/cogs.js';
 import { Point } from '@cognite/seismic-sdk-js';
 
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import { Asset, SelectableLayer } from 'modules/map/types';
 
 import { useLayers } from '../hooks/useLayers';

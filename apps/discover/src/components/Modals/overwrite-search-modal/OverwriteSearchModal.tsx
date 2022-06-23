@@ -1,7 +1,7 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Modal } from 'components/Modal';
+import { useTranslation } from 'hooks/useTranslation';
 
 import { OVERWRITE_SEARCH_MODAL_TEXT } from '../constants';
 

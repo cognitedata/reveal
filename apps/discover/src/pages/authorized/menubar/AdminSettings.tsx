@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
 import styled from 'styled-components/macro';
@@ -10,6 +9,7 @@ import { useFlag } from '@cognite/react-feature-flags';
 import { Admin } from 'components/Admin';
 import navigation from 'constants/navigation';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
+import { useTranslation } from 'hooks/useTranslation';
 
 import {
   adminMenuMap,

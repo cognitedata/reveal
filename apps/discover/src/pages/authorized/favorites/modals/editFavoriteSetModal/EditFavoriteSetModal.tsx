@@ -1,10 +1,10 @@
 import { useFavoritesUpdateMutate } from 'domain/favorites/internal/actions/useFavoritesMutate';
 
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { showErrorMessage } from 'components/Toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import { FavoriteMetadata, FavoriteSummary } from 'modules/favorite/types';
 import BaseFavoriteCreationModal from 'pages/authorized/favorites/modals/baseFavoriteCreationModal/BaseFavoriteCreationModal';
 

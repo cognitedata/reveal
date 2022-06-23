@@ -3,7 +3,6 @@ import { useProjectConfigGetQuery } from 'domain/projectConfig/internal/queries/
 import { useProjectConfigMetadataGetQuery } from 'domain/projectConfig/internal/queries/useProjectConfigMetadataGetQuery';
 
 import { useCallback, useState, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Map } from 'immutable';
 import merge from 'lodash/merge';
@@ -12,6 +11,7 @@ import { ProjectConfig as ProjectConfigTypes } from '@cognite/discover-api-types
 
 import EmptyState from 'components/EmptyState';
 import { showErrorMessage } from 'components/Toast';
+import { useTranslation } from 'hooks/useTranslation';
 
 import {
   CustomConfigComponent,

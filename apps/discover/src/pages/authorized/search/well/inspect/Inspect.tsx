@@ -2,7 +2,6 @@ import { useWellInspectWells } from 'domain/wells/well/internal/transformers/use
 import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 
@@ -16,6 +15,7 @@ import { WELL_INSPECT_ID } from 'constants/metrics';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useHorizontalScroll } from 'hooks/useHorizontalScroll';
+import { useTranslation } from 'hooks/useTranslation';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useInspectStateFromUrl } from 'modules/wellInspect/hooks/useInspectStateFromUrl';
 

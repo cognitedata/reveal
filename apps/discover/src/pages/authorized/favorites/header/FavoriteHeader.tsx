@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import styled from 'styled-components/macro';
@@ -9,6 +8,7 @@ import { SegmentedControl, Tooltip } from '@cognite/cogs.js';
 import { PlusButton } from 'components/Buttons';
 import Header from 'components/Header/Header';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useTranslation } from 'hooks/useTranslation';
 import {
   setFavoritesViewMode,
   showCreateFavoriteModal,

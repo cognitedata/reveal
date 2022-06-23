@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import isEmpty from 'lodash/isEmpty';
 
@@ -7,6 +6,7 @@ import { Button } from '@cognite/cogs.js';
 
 import { CloseButton, ViewButton } from 'components/Buttons';
 import TableBulkActions from 'components/TableBulkActions';
+import { useTranslation } from 'hooks/useTranslation';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { REMOVE_FROM_SET_TEXT } from 'pages/authorized/favorites/constants';
 import { DeleteWellFromSetModal } from 'pages/authorized/favorites/modals';
