@@ -4,6 +4,7 @@ import {
   Cognite3DViewer,
   CognitePointCloudModel,
   CogniteModelBase,
+  DefaultCameraManager,
 } from '@cognite/reveal';
 
 import styled from 'styled-components';
@@ -93,6 +94,12 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
 
       try {
         if (viewer instanceof Cognite3DViewer) {
+          (viewer.cameraManager as DefaultCameraManager).setCameraControlsOptions(
+            {
+              changeCameraTargetOnClick: true,
+              mouseWheelAction: 'zoomToCursor',
+            }
+          );
           const modelType = await viewer.determineModelType(
             modelId,
             revisionId
