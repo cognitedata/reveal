@@ -17,7 +17,6 @@ export class MeasurementLine {
   private _yAxisMidPoint: THREE.Vector3;
   private _zAxisMidPoint: THREE.Vector3;
   private _distanceToCamera: number = 0;
-
   private _options: MeasurementOptions;
 
   constructor(options: MeasurementOptions) {
@@ -183,7 +182,7 @@ export class MeasurementLine {
     yAxisLinePosition = this._position.slice();
     yAxisLinePosition[3] += this._axisDistance.y;
     yAxisLinePosition[5] += this._axisDistance.z;
-    const verticalLine = this.addLine(yAxisLinePosition, 0x00ff00);
+    const verticalLine = this.addAxisLine(yAxisLinePosition, 0x00ff00);
     this._yAxisMidPoint = this.setAxisMidPosition(yAxisLinePosition);
 
     //Horizontal distance line
@@ -192,7 +191,7 @@ export class MeasurementLine {
     xAxisLinePosition[3] = yAxisLinePosition[3];
     xAxisLinePosition[4] = yAxisLinePosition[4];
     xAxisLinePosition[5] = yAxisLinePosition[5] - this._axisDistance.z;
-    const horizontalLine = this.addLine(xAxisLinePosition, 0xff0000);
+    const horizontalLine = this.addAxisLine(xAxisLinePosition, 0xff0000);
     this._xAxisMidPoint = this.setAxisMidPosition(xAxisLinePosition);
 
     //Depth distance line
@@ -202,7 +201,7 @@ export class MeasurementLine {
     zAxisLinePosition[3] = xAxisLinePosition[3] - this._axisDistance.y;
     zAxisLinePosition[4] = xAxisLinePosition[4];
     zAxisLinePosition[5] = xAxisLinePosition[5];
-    const depthLine = this.addLine(zAxisLinePosition, 0x0000ff);
+    const depthLine = this.addAxisLine(zAxisLinePosition, 0x0000ff);
     this._zAxisMidPoint = this.setAxisMidPosition(zAxisLinePosition);
 
     return [verticalLine, horizontalLine, depthLine];
@@ -216,9 +215,9 @@ export class MeasurementLine {
     return [this._yAxisMidPoint, this._zAxisMidPoint, this._xAxisMidPoint];
   }
 
-  private addLine(position: Float32Array, color: number): THREE.Mesh {
-    const axesLine = new LineGeometry();
-    axesLine.setPositions(position);
+  private addAxisLine(position: Float32Array, color: number): THREE.Mesh {
+    const axisLine = new LineGeometry();
+    axisLine.setPositions(position);
     const axesLineMaterial = new LineMaterial({
       color: color,
       linewidth: this._options.lineWidth!,
@@ -230,13 +229,14 @@ export class MeasurementLine {
       transparent: true,
       opacity: 0.5
     });
-    const axesLineMesh = new Line2(axesLine, axesLineMaterial);
-    axesLineMesh.computeLineDistances();
-    axesLineMesh.onBeforeRender = () => {
+    const axisLineMesh = new Line2(axisLine, axesLineMaterial);
+    axisLineMesh.computeLineDistances();
+    axisLineMesh.visible = false;
+    axisLineMesh.onBeforeRender = () => {
       axesLineMaterial?.resolution.set(window.innerWidth, window.innerHeight);
     };
 
-    return axesLineMesh;
+    return axisLineMesh;
   }
 
   private setAxisMidPosition(position: Float32Array): THREE.Vector3 {

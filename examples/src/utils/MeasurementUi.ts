@@ -11,6 +11,7 @@ export class MeasurementUi {
   private _gui: dat.GUI;
   private _guiController: any[];
   private _measurementObjectControllerUi: any[];
+  private _subFolders: dat.GUI[];
   private _selectedObject: Line2 | null;
   private _storedMaterial: LineMaterial;
 
@@ -18,7 +19,7 @@ export class MeasurementUi {
     lineWidth: 2.0,
     color: 0x00FFFF,
     allMeasurement: false,
-    axisComponents: false
+    axesComponents: false
   };
 
   private measurement = {
@@ -33,10 +34,11 @@ export class MeasurementUi {
       // 1 meters = 3.281 feet
       const distanceInFeet = distance * 3.281;
       return { distance: distanceInFeet, units: 'ft'};
-     }, axisComponents: false});
+     }, axesComponents: false});
     this._gui = ui.addFolder('Types');
     this._guiController = [];
     this._measurementObjectControllerUi = [];
+    this._subFolders = [];
     const addDistanceOptions = this.addDistanceOptions.bind(this);
 
     this._gui.add(this.measurement, 'enable').name('Point To Point Distance').onChange(addDistanceOptions);
@@ -66,9 +68,9 @@ export class MeasurementUi {
       this.state.allMeasurement = allMeasurement;
       this.measurementObjectsUI(allMeasurement);
     }));
-    this._guiController.push(this._gui.add(this.state, 'axisComponents').name('Show axes component').onChange(axisComponents => {
-      this.state.axisComponents = axisComponents;
-      this._measurementTool.enableAxesComponent(this.state, this._selectedObject!);
+    this._guiController.push(this._gui.add(this.state, 'axesComponents').name('Show all axes component').onChange(axesComponents => {
+      this.state.axesComponents = axesComponents;
+      this._measurementTool.showAllAxesComponent(this.state);
     }));
   }
 
@@ -111,7 +113,8 @@ export class MeasurementUi {
         material.color.set(new THREE.Color('white'));
         this._viewer.requestRedraw();
       },
-      delete: () => {
+      delete: (mesh: Line2) => {
+        this._selectedObject = mesh;
         this._measurementTool.removeMeasurement(this._selectedObject!);
         this.reset();
         this.populateMeasurementObjectUI();
@@ -120,6 +123,11 @@ export class MeasurementUi {
         this._measurementTool.removeAllMeasurement();
         this.reset();
         this.removeMeasurementObjectUI();
+      },
+      axesComponent: (mesh: Line2) => {
+        this._selectedObject = mesh;
+        const options = { axesComponents: false };
+        this._measurementTool.showAxesComponent(options, this._selectedObject!);
       }
     };
     let count = 0;
@@ -128,14 +136,21 @@ export class MeasurementUi {
 
       measurementsObjects.forEach((mesh: any) => {
         count++;
-        this._measurementObjectControllerUi.push(this._gui.add({select: objects.select.bind(this, mesh)}, 'select').name('mesh' + count.toString()));
+        const measurementGui = this._gui.addFolder('Measurement ' + count.toString());
+        this._subFolders.push(measurementGui);
+        this._measurementObjectControllerUi.push(measurementGui.add({select: objects.select.bind(this, mesh)}, 'select').name('select'));
+        this._measurementObjectControllerUi.push(measurementGui.add({delete: objects.delete.bind(this, mesh)}, 'delete').name('delete'));
+        this._measurementObjectControllerUi.push(measurementGui.add({axesComponent: objects.axesComponent.bind(this, mesh)}, 'axesComponent').name('axesComponent'));
       });
-      this._measurementObjectControllerUi.push(this._gui.add(objects, 'delete').name('Remove selected measurement'));
+
       this._measurementObjectControllerUi.push(this._gui.add(objects, 'deleteAll').name('Remove All measurement'));
     }
   }
 
   private removeMeasurementObjectUI() {
+    this._subFolders.forEach(folder => { this._gui.removeFolder(folder)});
+    this._subFolders.splice(0, this._subFolders.length);
+
     this._measurementObjectControllerUi.forEach(controller => {
       controller.remove();
     });

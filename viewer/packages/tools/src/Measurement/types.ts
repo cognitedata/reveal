@@ -14,7 +14,7 @@ export type MeasurementOptions = {
   changeMeasurementLabelMetrics?: MeasurementLabelUpdateDelegate | undefined;
   lineWidth?: number;
   color?: number;
-  axisComponents?: boolean;
+  axesComponents?: boolean;
 };
 
 /**

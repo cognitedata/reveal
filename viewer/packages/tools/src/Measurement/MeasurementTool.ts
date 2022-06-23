@@ -140,13 +140,29 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._options = { changeMeasurementLabelMetrics: this._options?.changeMeasurementLabelMetrics, ...options };
   }
 
-  enableAxesComponent(options: MeasurementOptions, meshObject?: THREE.Mesh): void {
+  /**
+   * To enable/disable X, Y, Z axis component of a measurement.
+   * @param options MeasurementOptions to enable or disable axes component for the measurement.
+   * @param meshObject Measurement mesh object to enable/disable axes component.
+   */
+  showAxesComponent(options: MeasurementOptions, meshObject?: THREE.Mesh): void {
     if (meshObject) {
       const measurement = this._measurements.find(measurement => measurement.getMesh() === meshObject);
-      measurement?.enableAxesComponent(options);
+      measurement?.showAxesComponent(options);
       this._viewer.requestRedraw();
     }
     this._options = { changeMeasurementLabelMetrics: this._options?.changeMeasurementLabelMetrics, ...options };
+  }
+
+  /**
+   * To enable/disable X, Y, Z axis component of all measurement.
+   * @param options MeasurementOptions to enable or disable axes component for the measurement.
+   */
+  showAllAxesComponent(options: MeasurementOptions): void {
+    this._measurements.forEach(measurement => {
+      measurement.showAxesComponent(options);
+    });
+    this._viewer.requestRedraw();
   }
 
   /**

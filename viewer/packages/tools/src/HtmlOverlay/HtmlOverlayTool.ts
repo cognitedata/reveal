@@ -234,6 +234,10 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     this._htmlOverlays.set(htmlElement, element);
 
     this.scheduleUpdate();
+
+    if (options.positionUpdatedCallback) {
+      options.positionUpdatedCallback(htmlElement, new THREE.Vector2(), position3D, 0, []);
+    }
   }
 
   /**

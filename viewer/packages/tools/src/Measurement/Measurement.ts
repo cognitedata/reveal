@@ -17,13 +17,12 @@ export class Measurement {
   private _lineMesh: THREE.Mesh | null;
   private _axesMesh: THREE.Mesh[];
   private readonly _options: MeasurementOptions | undefined;
-  private _distanceValue: string;
   private readonly _domElement: HTMLElement;
   private readonly _camera: THREE.Camera;
   private readonly _htmlOverlay: HtmlOverlayTool;
   private readonly _axesHtmlOverlay: HtmlOverlayTool;
-  private _labelElement: HTMLDivElement | null;
   private readonly _axesLabelElement: HTMLDivElement[];
+  private _axesLabelOpacity: string;
 
   private readonly _handleLabelClustering = this.createCombineClusterElement.bind(this);
   private readonly _overlayOptions: HtmlOverlayToolOptions = {
@@ -39,11 +38,10 @@ export class Measurement {
     this._measurementLabel = new MeasurementLabels();
     this._htmlOverlay = overlay;
     this._axesHtmlOverlay = new HtmlOverlayTool(viewer, this._overlayOptions);
-    this._labelElement = null;
     this._axesLabelElement = [];
+    this._axesLabelOpacity = '0.0';
     this._domElement = this._viewer.domElement;
     this._camera = this._viewer.getCamera();
-    this._distanceValue = '';
   }
 
   /**
@@ -73,9 +71,12 @@ export class Measurement {
   endMeasurement(point: THREE.Vector3): void {
     //Update the line with final end point.
     this._line.updateLine(0, 0, this._domElement, this._camera, point);
-    this.setMeasurementLabelValue(this._options!.changeMeasurementLabelMetrics!);
+    const distanceValue = this.getMeasurementLabelValue(
+      this._options!.changeMeasurementLabelMetrics!,
+      this._line.getMeasuredDistance()
+    );
     //Add the measurement label.
-    this._labelElement = this.addLabel(this._line.getMidPointOnLine(), this._distanceValue);
+    this.addLabel(this._line.getMidPointOnLine(), distanceValue);
 
     // if (this._options?.axisComponents) {
     this.addAxisMeasurement();
@@ -98,8 +99,8 @@ export class Measurement {
       this._viewer.removeObject3D(this._lineMesh);
     }
 
-    if (this._htmlOverlay && this._labelElement) {
-      this._htmlOverlay.remove(this._labelElement!);
+    if (this._htmlOverlay) {
+      this._htmlOverlay.clear();
     }
 
     //Remove Axes lines & labels
@@ -109,10 +110,8 @@ export class Measurement {
       });
     }
 
-    if (this._axesHtmlOverlay && this._axesLabelElement.length > 0) {
-      this._axesLabelElement.forEach(element => {
-        this._axesHtmlOverlay.remove(element!);
-      });
+    if (this._axesHtmlOverlay) {
+      this._axesHtmlOverlay.clear();
     }
   }
 
@@ -140,28 +139,27 @@ export class Measurement {
     return this._lineMesh;
   }
 
-  enableAxesComponent(options: MeasurementOptions): void {
+  /**
+   * To enable/disable X, Y, Z axis component of the measurement.
+   * @param options MeasurementLineOptions to enable/disable axes components.
+   */
+  showAxesComponent(options: MeasurementOptions): void {
     if (this._axesMesh.length > 0) {
       this._axesMesh.forEach(mesh => {
-        mesh.visible = options.axisComponents!;
+        mesh.visible = options.axesComponents!;
       });
     }
 
-    const opacity = options.axisComponents === true ? 1.0 : 0.0;
-    if (this._axesHtmlOverlay.elements.length > 0) {
-      this._axesHtmlOverlay.elements.forEach(element => {
-        element.element.style.opacity = opacity.toString();
-      });
-    }
+    this._axesLabelOpacity = (options.axesComponents === true ? 1.0 : 0.0).toString();
   }
 
   /**
    * Set the measurement data.
    * @param options Callback function which get user value to be added into label.
    */
-  private setMeasurementLabelValue(options: MeasurementLabelUpdateDelegate) {
-    const measurementLabelData = options(this._line.getMeasuredDistance());
-    this._distanceValue = measurementLabelData?.distance?.toFixed(2) + ' ' + measurementLabelData?.units;
+  private getMeasurementLabelValue(options: MeasurementLabelUpdateDelegate, distance: number) {
+    const measurementLabelData = options(distance);
+    return measurementLabelData?.distance?.toFixed(2) + ' ' + measurementLabelData?.units;
   }
 
   /**
@@ -191,7 +189,12 @@ export class Measurement {
 
   private createAxesLabels(position: THREE.Vector3, label: string) {
     const element = this._measurementLabel.createLabel(label);
-    this._axesHtmlOverlay.add(element, position);
+    const options = {
+      positionUpdatedCallback: (element: HTMLElement) => {
+        element.style.opacity = this._axesLabelOpacity;
+      }
+    };
+    this._axesHtmlOverlay.add(element, position, options);
 
     return element;
   }
@@ -200,22 +203,35 @@ export class Measurement {
     if (this._measurementLabel) {
       const axisDistanceValues = this._line.getAxisDistances();
       this._axesLabelElement.push(
-        this.createAxesLabels(this._line.getAxisMidPoints()[0], Math.abs(axisDistanceValues.x).toFixed(2))
+        this.createAxesLabels(
+          this._line.getAxisMidPoints()[0],
+          this.getMeasurementLabelValue(this._options!.changeMeasurementLabelMetrics!, Math.abs(axisDistanceValues.x))
+        )
       );
       this._axesLabelElement.push(
-        this.createAxesLabels(this._line.getAxisMidPoints()[1], Math.abs(axisDistanceValues.y).toFixed(2))
+        this.createAxesLabels(
+          this._line.getAxisMidPoints()[1],
+          this.getMeasurementLabelValue(this._options!.changeMeasurementLabelMetrics!, Math.abs(axisDistanceValues.y))
+        )
       );
       this._axesLabelElement.push(
-        this.createAxesLabels(this._line.getAxisMidPoints()[2], Math.abs(axisDistanceValues.z).toFixed(2))
+        this.createAxesLabels(
+          this._line.getAxisMidPoints()[2],
+          this.getMeasurementLabelValue(this._options!.changeMeasurementLabelMetrics!, Math.abs(axisDistanceValues.z))
+        )
       );
     }
   }
 
   /**
    * Create and return combine ruler icon as HTMLDivElement.
-   * @returns HTMLDivElement.
+   * @returns HTMLElement.
    */
-  private createCombineClusterElement() {
+  private createCombineClusterElement(): HTMLElement {
+    //TODO: Change the logic to check if axes component are disabled. - Pramod
+    if (this._axesHtmlOverlay.elements[0].element.style.opacity === '0') {
+      return this._axesHtmlOverlay.elements[0].element;
+    }
     const combineElement = document.createElement('div');
     combineElement.className = MeasurementLabels.stylesId;
     combineElement.innerHTML = svg;
