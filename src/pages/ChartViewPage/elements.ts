@@ -3,7 +3,9 @@ import { Alert } from 'antd';
 import styled from 'styled-components/macro';
 
 export const Header = styled.header`
-  height: 60px;
+  min-height: 56px;
+  max-height: 56px;
+  height: 56px;
   background: var(--cogs-greyscale-grey1);
   border-bottom: 1px solid var(--cogs-greyscale-grey4);
   display: flex;
