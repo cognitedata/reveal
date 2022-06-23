@@ -114,7 +114,9 @@ export const isProcessingFile = (
     keyof AnnotationsBadgeStatuses
   >;
   return statuses.some((key) =>
-    ['Queued', 'Running'].includes(annotationStatuses[key]?.status || '')
+    ['Queued', 'Collecting', 'Running'].includes(
+      annotationStatuses[key]?.status || ''
+    )
   );
 };
 

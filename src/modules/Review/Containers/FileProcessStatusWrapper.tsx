@@ -1,5 +1,7 @@
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { selectIsProcessing } from 'src/modules/Process/store/selectors';
+import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
+import { isProcessingFile } from 'src/modules/Process/store/utils';
 import { RootState } from 'src/store/rootReducer';
 
 export const FileProcessStatusWrapper = ({
@@ -13,9 +15,11 @@ export const FileProcessStatusWrapper = ({
     isFileProcessing: boolean;
   }) => JSX.Element;
 }): JSX.Element => {
-  const isFileProcessing = useSelector(({ processSlice }: RootState) =>
-    selectIsProcessing(processSlice, fileId)
+  const getAnnotationStatuses = useMemo(makeSelectJobStatusForFile, []);
+  const annotationStatuses = useSelector(({ processSlice }: RootState) =>
+    getAnnotationStatuses(processSlice, fileId)
   );
+  const isFileProcessing = isProcessingFile(annotationStatuses);
 
   return children({ isFileProcessing });
 };
