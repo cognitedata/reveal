@@ -8,7 +8,7 @@ To use the `@cognite/data-exploration` library, check out the [storybook](https:
 
 ### Using storybook
 
-You should use storybook as much as possible for local development.
+You should use storybook as much as possible for local development
 ```
 yarn storybook
 ```
