@@ -116,11 +116,15 @@ export const useUserInformation = () => {
 type ActivationResponse = {
   status: 'activated' | 'inactive' | 'requested';
 };
+type ActivationError = {
+  message: string;
+};
+
 export const useCheckActivateFunction = (
-  config?: QueryConfig<ActivationResponse, unknown>
+  config?: QueryConfig<ActivationResponse, ActivationError>
 ) => {
   const project = getProject();
-  return useQuery<ActivationResponse>(
+  return useQuery<ActivationResponse, ActivationError>(
     ['activation', project],
     () =>
       sdk
@@ -131,11 +135,11 @@ export const useCheckActivateFunction = (
 };
 
 export const useActivateFunction = (
-  config?: QueryConfig<ActivationResponse, unknown>
+  config?: QueryConfig<ActivationResponse, ActivationError>
 ) => {
   const cache = useQueryCache();
   const project = getProject();
-  return useMutation<ActivationResponse>(
+  return useMutation<ActivationResponse, ActivationError>(
     () =>
       sdk
         .post(`/api/playground/projects/${project}/functions/status`)

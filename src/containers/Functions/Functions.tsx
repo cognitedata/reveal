@@ -34,6 +34,14 @@ const FunctionActivationAlert = styled(Alert)`
 const FUNCTIONS_PER_PAGE = 10;
 
 function Functions() {
+  const {
+    data: activation,
+    isLoading,
+    isError,
+    error: activationError,
+  } = useCheckActivateFunction();
+  const [mutate] = useActivateFunction();
+
   const refresh = useRefreshApp();
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -47,7 +55,7 @@ function Functions() {
     data: functions,
     isFetching,
     isFetched: functionsDone,
-  } = useFunctions();
+  } = useFunctions({ enabled: !isError && activation?.status === 'activated' });
 
   const functionIds = functions
     ?.sort(({ id: id1 }, { id: id2 }) => id1 - id2)
@@ -63,9 +71,6 @@ function Functions() {
       ? sortLastCall(calls)
       : recentlyCreated;
 
-  const { data: activation, isLoading } = useCheckActivateFunction();
-  const [mutate] = useActivateFunction();
-
   const sortedFunctions = functions?.sort(sortFn);
   const filteredFunctions = sortedFunctions?.filter((f: CogFunction) =>
     [f.name, f.externalId || '', f.owner || '']
@@ -76,6 +81,17 @@ function Functions() {
 
   if (isLoading) {
     return <Loader />;
+  }
+
+  if (isError) {
+    return (
+      <FunctionActivationAlert
+        type="error"
+        message="Error Occured"
+        showIcon
+        description={activationError?.message}
+      />
+    );
   }
 
   if (activation?.status === 'inactive') {
@@ -92,7 +108,14 @@ function Functions() {
     return (
       <FunctionActivationAlert
         showIcon
-        description="Cognite function is getting ready.This might take sometime"
+        description={
+          <span>
+            Cognite Functions is getting ready. This might take some time.
+            <br />
+            <b>Testing Period:</b> Please request your project to be whitelisted
+            as well.
+          </span>
+        }
         message="Activation in Progress"
         type="warning"
       />
