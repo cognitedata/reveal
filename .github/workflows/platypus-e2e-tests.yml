@@ -9,7 +9,7 @@ on:
       - 'libs/platypus-core/**'
       - 'libs/platypus-common-utils/**'
 jobs:
-  cypress-run:
+  setup:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -31,6 +31,10 @@ jobs:
         run: |
           yarn install --frozen-lockfile
           rm .npmrc
+
+      - name: Run lint
+        run: |
+          yarn lint
 
       - name: Run unit tests
         run: |

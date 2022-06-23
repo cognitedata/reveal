@@ -60,19 +60,6 @@ static final String SLACK_CHANNEL = 'alerts-platypus'
 
 static final String NODE_VERSION = 'node:14'
 
-static final Map<String, String> CONTEXTS = [
-  checkout: 'continuous-integration/jenkins/checkout',
-  setup: 'continuous-integration/jenkins/setup',
-  lint: 'continuous-integration/jenkins/lint',
-  unitTests: 'continuous-integration/jenkins/unit-tests',
-  buildStaging: 'continuous-integration/jenkins/build-staging',
-  publishStaging: 'continuous-integration/jenkins/publish-staging',
-  buildProduction: 'continuous-integration/jenkins/build-production',
-  publishProduction: 'continuous-integration/jenkins/publish-production',
-  buildPreview: 'continuous-integration/jenkins/build-preview',
-  publishPreview: 'continuous-integration/jenkins/publish-preview',
-]
-
 static final String PR_COMMENT_MARKER = '[pr-server]\n'
 static final String STORYBOOK_COMMENT_MARKER = '[storybook-server]\n'
 
@@ -123,45 +110,20 @@ pods {
     slackChannel: SLACK_CHANNEL,
     logErrors: isRelease
   ) {
-    parallel(
-      'Lint': {
-        stageWithNotify('Check linting') {
-          dir('main') {
-            container('preview') {
-              sh('yarn lint')
-            }
-          }
+    stageWithNotify('Build and deploy Storybook') {
+      dir('main') {
+        if (!isPullRequest) {
+          print 'No PR previews for release builds'
+          return
         }
-      },
-
-      'Unit tests': {
-        stageWithNotify('Execute unit tests') {
-          dir('main') {
-            container('preview') {
-              sh('yarn test')
-              junit(allowEmptyResults: true, testResults: '**/junit.xml')
-            }
-          }
-        }
-      },
-
-      'Storybook': {
-        dir('main') {
-          if (!isPullRequest) {
-            print 'No PR previews for release builds'
-            return
-          }
-          stageWithNotify('Build and deploy Storybook') {
-            previewServer(
-              prefix: 'storybook',
-              commentPrefix: STORYBOOK_COMMENT_MARKER,
-              buildCommand: 'yarn build-storybook',
-              buildFolder: 'storybook-static',
-            )
-          }
-        }
-      },
-    )
+        previewServer(
+          prefix: 'storybook',
+          commentPrefix: STORYBOOK_COMMENT_MARKER,
+          buildCommand: 'yarn build-storybook',
+          buildFolder: 'storybook-static',
+        )
+      }
+    }
     parallel(
       'Preview': {
         dir('main') {

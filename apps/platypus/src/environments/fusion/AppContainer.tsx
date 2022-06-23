@@ -23,7 +23,7 @@ export const AppContainer = ({ children, store }: AppContainerProps) => {
     <ReduxProvider store={store}>
       <GlobalStyles>
         <AuthWrapper login={() => loginAndAuthIfNeeded(project, env)}>
-          <SubAppWrapper title="Solutions Management">{children}</SubAppWrapper>
+          <SubAppWrapper title="Data Models">{children}</SubAppWrapper>
         </AuthWrapper>
       </GlobalStyles>
     </ReduxProvider>
