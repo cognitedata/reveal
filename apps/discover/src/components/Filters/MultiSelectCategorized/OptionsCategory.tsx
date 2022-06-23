@@ -44,9 +44,15 @@ export const OptionsCategory: React.FC<
   ) => {
     const updatedSelectedOptions = isSelected
       ? [...(selectedOptions || []), option]
-      : (selectedOptions || []).filter(
-          (selectedOption) => selectedOption.label !== option.label
-        );
+      : (selectedOptions || []).filter((selectedOption) => {
+          if (typeof selectedOption === 'string') {
+            return selectedOption !== option.value;
+          }
+
+          return selectedOption?.value
+            ? selectedOption?.value !== option.value
+            : selectedOption?.label !== option.label;
+        });
 
     onValueChange({
       category,
