@@ -69,7 +69,7 @@ export default function TimeseriesSearchResultItem({
                     backgroundColor: Colors['yellow-4'].alpha(0.4),
                     marginLeft: 5,
                   }}
-                  searchWords={[removeIllegalCharacters(query)]}
+                  searchWords={removeIllegalCharacters(query).split(' ')}
                   textToHighlight={timeseries.name ?? ''}
                 />
               </ResourceNameWrapper>
@@ -78,7 +78,7 @@ export default function TimeseriesSearchResultItem({
                   highlightStyle={{
                     backgroundColor: Colors['yellow-4'].alpha(0.4),
                   }}
-                  searchWords={[removeIllegalCharacters(query)]}
+                  searchWords={removeIllegalCharacters(query).split(' ')}
                   textToHighlight={timeseries.description ?? ''}
                 />
               </Description>

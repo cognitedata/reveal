@@ -101,7 +101,7 @@ export default function AssetSearchHit({
                 backgroundColor: Colors['yellow-4'].alpha(0.4),
                 marginLeft: 5,
               }}
-              searchWords={[removeIllegalCharacters(query)]}
+              searchWords={removeIllegalCharacters(query).split(' ')}
               textToHighlight={asset.name}
               className="cogs-anchor"
               onClick={() => handleSelectAsset(asset.id)}
@@ -115,7 +115,7 @@ export default function AssetSearchHit({
                 backgroundColor: Colors['yellow-4'].alpha(0.4),
                 marginLeft: 5,
               }}
-              searchWords={[removeIllegalCharacters(query)]}
+              searchWords={removeIllegalCharacters(query).split(' ')}
               textToHighlight={asset.description ?? ' '}
             />
           </Description>

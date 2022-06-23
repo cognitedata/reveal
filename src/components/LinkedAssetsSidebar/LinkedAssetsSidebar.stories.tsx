@@ -68,3 +68,17 @@ Default.args = {
         })),
     })),
 };
+
+export const SpaceHighlight = Template.bind({});
+
+SpaceHighlight.args = {
+  ...Default.args,
+  highlight: ' ',
+};
+
+export const MultipleWordsHighlight = Template.bind({});
+
+MultipleWordsHighlight.args = {
+  ...Default.args,
+  highlight: 'es 0',
+};

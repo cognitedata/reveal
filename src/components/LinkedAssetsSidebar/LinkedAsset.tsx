@@ -6,7 +6,6 @@ import { Skeleton } from 'antd';
 import { AssetItem } from './elements/AssetItem';
 import { ExactMatchLabel } from './elements/ExactMatchLabel';
 import { TSList } from './elements/TSList';
-import { TSItem } from './elements/TSItem';
 import { Row } from './elements/Row';
 import { InfoContainer } from './elements/InfoContainer';
 import { ResourceNameWrapper } from './elements/ResourceNameWrapper';
@@ -75,7 +74,7 @@ export default function LinkedAsset({
                 highlightStyle={{
                   backgroundColor: Colors['yellow-4'].alpha(0.4),
                 }}
-                searchWords={[removeIllegalCharacters(highlight)]}
+                searchWords={removeIllegalCharacters(highlight).split(' ')}
                 textToHighlight={asset.name}
                 className="cogs-anchor"
                 onClick={() => onAssetClick(asset.id)}
@@ -89,7 +88,7 @@ export default function LinkedAsset({
                 highlightStyle={{
                   backgroundColor: Colors['yellow-4'].alpha(0.4),
                 }}
-                searchWords={[removeIllegalCharacters(highlight)]}
+                searchWords={removeIllegalCharacters(highlight).split(' ')}
                 textToHighlight={asset.description}
               />
             ) : (
@@ -159,11 +158,13 @@ export default function LinkedAsset({
             )
           )}
           {asset.totalTimeSeries > timeseries.length && (
-            <TSItem>
-              <Button type="link" onClick={() => onAssetClick(asset.id)}>
-                {viewAllLabel} ({asset.totalTimeSeries})
-              </Button>
-            </TSItem>
+            <Button
+              type="link"
+              onClick={() => onAssetClick(asset.id)}
+              style={{ marginTop: 10 }}
+            >
+              {viewAllLabel} ({asset.totalTimeSeries})
+            </Button>
           )}
         </TSList>
       </Row>

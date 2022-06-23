@@ -213,9 +213,12 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
               <InfoBox
                 translations={infoBoxTranslations}
                 infoType="TagHelpBox"
-                query={debouncedUrlQuery}
+                query={debouncedUrlQuery.trim()}
               />
-              <SearchResultList query={debouncedUrlQuery} filter={filter} />
+              <SearchResultList
+                query={debouncedUrlQuery.trim()}
+                filter={filter}
+              />
             </>
           )}
           {searchType === 'timeseries' && (
@@ -223,9 +226,12 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
               <InfoBox
                 translations={infoBoxTranslations}
                 infoType="TimeSeriesHelpBox"
-                query={debouncedUrlQuery}
+                query={debouncedUrlQuery.trim()}
               />
-              <SearchTimeseries query={debouncedUrlQuery} filter={filter} />
+              <SearchTimeseries
+                query={debouncedUrlQuery.trim()}
+                filter={filter}
+              />
             </>
           )}
         </SearchResultsContainer>
