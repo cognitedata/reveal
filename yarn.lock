@@ -1245,15 +1245,15 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/data-exploration@3.6.2":
-  version "3.6.2"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-3.6.2.tgz#50453855e2ad2c3a353588ce01113922b3a1f7dc"
-  integrity sha512-1s6XQrJ3u+NO0zP1TGrQvZodgn7FereJ4J8X8ms/MHBf2EPnckrqO9t0ScPfnw9xbLHPbolO5OtnGr2IR/fE7g==
+"@cognite/data-exploration@3.6.3":
+  version "3.6.3"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-3.6.3.tgz#2a9a65816b9236a13162d8b1f8f2403f2ac159fe"
+  integrity sha512-JQmVMsUcloZd2t5wzV8EAZf8dkHL8WvFokZdvvkJ0ZJiXAU2vhkzyFZ3ZYk80jsJtjChMXiZKHbBXkebijwLWw==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
     "@cognite/cogs.js" "^5.19.5"
-    "@cognite/gcs-browser-upload" "github:cognitedata/gcs-browser-upload#mn/temporary-azure-fix"
+    "@cognite/gcs-browser-upload" cognitedata/gcs-browser-upload#mn/temporary-azure-fix
     "@cognite/react-document-table" "^1.22.2"
     "@cognite/react-picture-annotation" "3.0.0"
     "@cognite/sdk" "^6.3.1"
