@@ -55,6 +55,7 @@ const initialState: ExplorerState = {
 export const setSelectedAllExplorerFiles = createAction<{
   selectStatus: boolean;
   filter?: SelectFilter;
+  fileIds?: number[];
 }>('setSelectedAllExplorerFiles');
 
 function withPayloadType() {
