@@ -45,6 +45,7 @@ describe('Reveal visual tests', () => {
     const blur = snapshotBlur ?? 0;
 
     retry(snapshotName, RETRIES, async () => {
+      console.log(`Running test with key ${testKey}`);
       await screenShotTest(url, snapshotName, blur);
     });
 
