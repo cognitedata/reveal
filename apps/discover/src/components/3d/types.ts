@@ -1,4 +1,5 @@
 import { CasingSchematicInternal } from 'domain/wells/casings/internal/types';
+import { NptInternal } from 'domain/wells/npt/internal/types';
 import { Well } from 'domain/wells/well/internal/types';
 
 import { DepthMeasurement, DepthMeasurementData } from '@cognite/sdk-wells-v3';
@@ -7,7 +8,6 @@ import {
   CogniteEventV3ish,
   Sequence,
   TrajectoryRows,
-  WellboreNPTEventsMap,
 } from 'modules/wellSearch/types';
 
 export interface ThreeDeeProps extends WellsData {
@@ -20,7 +20,7 @@ export interface WellsData {
   trajectoryData?: TrajectoryRows[];
   casings?: CasingSchematicInternal[];
   ndsEvents?: CogniteEventV3ish[];
-  nptEvents?: WellboreNPTEventsMap;
+  nptEvents?: NptInternal[];
   wellLogs?: Record<string, DepthMeasurement[]>;
   wellLogsRowData?: Record<string, DepthMeasurementData>;
 }

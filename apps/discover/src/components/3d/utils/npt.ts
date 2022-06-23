@@ -1,61 +1,50 @@
-import { Well } from 'domain/wells/well/internal/types';
+import { NptInternal } from 'domain/wells/npt/internal/types';
+import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
-import convert from 'convert-units';
 import flatten from 'lodash/flatten';
-import { UNITS_TO_STANDARD } from 'utils/units/constants';
+import { convertDistance } from 'utils/units/convertDistance';
 
 import { INpt } from '@cognite/node-visualizer';
-import { NPT as NptV2 } from '@cognite/sdk-wells-v2';
-import { DistanceUnitEnum } from '@cognite/sdk-wells-v3';
 
 import { FEET } from 'constants/units';
-import { WellboreNPTEventsMap } from 'modules/wellSearch/types';
-import { getIdWellboreMap } from 'modules/wellSearch/utils/events';
 
-const convertMeasureDepthToFeet = (measuredDepth: NptV2['measuredDepth']) => {
+const convertMeasureDepthToFeet = (
+  measuredDepth?: NptInternal['measuredDepth']
+) => {
   if (!measuredDepth) {
     return undefined;
   }
 
-  return convert(measuredDepth.value)
-    .from(
-      UNITS_TO_STANDARD[measuredDepth.unit as DistanceUnitEnum] ||
-        measuredDepth.unit
-    )
-    .to(FEET);
+  return convertDistance(measuredDepth, FEET);
 };
 
-export const mapNPTTo3D = (
-  eventsMap?: WellboreNPTEventsMap,
-  wells?: Well[]
-): Partial<INpt>[] => {
-  if (!eventsMap) {
-    return [];
-  }
-  if (!wells) {
+export const mapNPTTo3D = (events?: NptInternal[]): Partial<INpt>[] => {
+  if (!events) {
     return [];
   }
 
-  const wellbores = getIdWellboreMap(wells);
+  const groupedEvents = groupByWellbore(events);
+
   return flatten(
-    Object.keys(eventsMap).map((key) => {
-      const wellboreId = key;
-      const matchingEvents = eventsMap[wellboreId];
-      if (!matchingEvents) {
+    Object.keys(groupedEvents).map((wellboreId) => {
+      const wellboreNptEvents = groupedEvents[wellboreId];
+      if (!wellboreNptEvents) {
         console.warn('Missing NPT event', { wellboreId });
         return [];
       }
-      return matchingEvents.map((event) => {
-        return {
-          assetIds: [wellbores[wellboreId]?.id],
-          subtype: event.subtype,
-          description: event.description,
-          metadata: {
-            npt_md: `${convertMeasureDepthToFeet(event.measuredDepth)}`,
-            description: '',
-          },
-        };
-      });
+      return wellboreNptEvents.map(
+        ({ wellboreAssetExternalId, subtype, description, measuredDepth }) => {
+          return {
+            assetIds: [wellboreAssetExternalId],
+            subtype,
+            description,
+            metadata: {
+              npt_md: `${convertMeasureDepthToFeet(measuredDepth)?.value}`,
+              description: '',
+            },
+          };
+        }
+      );
     })
   );
 };

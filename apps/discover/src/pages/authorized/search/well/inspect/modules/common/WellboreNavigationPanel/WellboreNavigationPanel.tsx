@@ -1,39 +1,29 @@
-import React from 'react';
+import { groupByWellboreName } from 'domain/wells/well/internal/transformers/groupByWellboreName';
 
-import groupBy from 'lodash/groupBy';
+import { useEffect, useMemo } from 'react';
+
 import head from 'lodash/head';
 
-import { BackButton, BaseButton } from 'components/Buttons';
-import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
+import { NavigationPanel } from 'components/NavigationPanel';
 
-import {
-  DetailsContainer,
-  NavigationPanelContainer,
-  WellboreName,
-  WellName,
-} from './elements';
 import { NavigationPanelDataType, WellboreNavigationPanelProps } from './types';
 
 export const WellboreNavigationPanel = <T extends NavigationPanelDataType>({
   data,
   currentWellboreName,
   onNavigate,
-  onChangeData,
-  onClickBack,
+  onBackClick,
   disableNavigation,
 }: WellboreNavigationPanelProps<T>) => {
-  const groupedData = useDeepMemo(() => groupBy(data, 'wellboreName'), [data]);
+  const groupedData = useMemo(() => groupByWellboreName(data), [data]);
 
-  const wellboreNames = useDeepMemo(
-    () => Object.keys(groupedData),
-    [groupedData]
-  );
+  const wellboreNames = useMemo(() => Object.keys(groupedData), [groupedData]);
 
-  useDeepEffect(() => {
+  useEffect(() => {
     if (!currentWellboreName) return;
 
-    const updatedDataForCurrentWellbore = groupedData[currentWellboreName];
-    onChangeData?.(updatedDataForCurrentWellbore);
+    const currentData = groupedData[currentWellboreName];
+    onNavigate?.({ data: currentData, wellboreName: currentWellboreName });
   }, [data]);
 
   if (!currentWellboreName) {
@@ -56,40 +46,28 @@ export const WellboreNavigationPanel = <T extends NavigationPanelDataType>({
   const handleNavigation = (index: number) => {
     const wellboreName = wellboreNames[index];
     const data = groupedData[wellboreName];
-    onNavigate?.(data);
+    onNavigate?.({ data, wellboreName });
   };
 
-  const handleClickPrevious = () => handleNavigation(currentWellboreIndex - 1);
+  const onPreviousClick = () => handleNavigation(currentWellboreIndex - 1);
 
-  const handleClickNext = () => handleNavigation(currentWellboreIndex + 1);
+  const onNextClick = () => handleNavigation(currentWellboreIndex + 1);
+
+  const navigationProps = disableNavigation
+    ? {}
+    : {
+        onPreviousClick,
+        onNextClick,
+      };
 
   return (
-    <NavigationPanelContainer>
-      <BackButton type="secondary" onClick={onClickBack} />
-
-      <DetailsContainer>
-        <WellboreName>{wellboreName}</WellboreName>
-        <WellName>{wellName}</WellName>
-      </DetailsContainer>
-
-      {!disableNavigation && (
-        <>
-          <BaseButton
-            icon="ChevronLeft"
-            type="secondary"
-            onClick={handleClickPrevious}
-            disabled={isFirstWellbore}
-            aria-label="previous-wellbore"
-          />
-          <BaseButton
-            icon="ChevronRight"
-            type="secondary"
-            onClick={handleClickNext}
-            disabled={isLastWellbore}
-            aria-label="next-wellbore"
-          />
-        </>
-      )}
-    </NavigationPanelContainer>
+    <NavigationPanel
+      title={wellboreName}
+      subtitle={wellName}
+      {...navigationProps}
+      onBackClick={onBackClick}
+      isPreviousButtonDisabled={isFirstWellbore}
+      isNextButtonDisabled={isLastWellbore}
+    />
   );
 };

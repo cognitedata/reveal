@@ -11,7 +11,7 @@ import {
 
 interface Props {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   isPreviousButtonDisabled?: boolean;
   isNextButtonDisabled?: boolean;
   onPreviousClick?: () => void;

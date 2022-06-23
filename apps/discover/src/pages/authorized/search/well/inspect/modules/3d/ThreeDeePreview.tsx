@@ -1,6 +1,7 @@
 import { useCasingSchematicsQuery } from 'domain/wells/casings/internal/queries/useCasingSchematicsQuery';
 import { sortCasingAssembliesByMDBase } from 'domain/wells/casings/internal/transformers/sortCasingAssembliesByMDBase';
 import { useWellLogsWithRowData } from 'domain/wells/log/internal/queries/useWellLogsWithRowData';
+import { useNptEventsQuery } from 'domain/wells/npt/internal/queries/useNptEventsQuery';
 import { useTrajectoriesQuery } from 'domain/wells/trajectory/internal/queries/useTrajectoriesQuery';
 import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
 import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
@@ -15,7 +16,6 @@ import EmptyState from 'components/EmptyState';
 import { LOADING_SUB_TEXT } from 'components/EmptyState/constants';
 import { StoreState } from 'core/types';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
-import { useNptEventsQuery } from 'modules/wellSearch/hooks/useNptEventsQuery';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { CogniteEventV3ish } from 'modules/wellSearch/types';
 import { keyBySource } from 'modules/wellSearch/utils/groupBySource';
@@ -34,7 +34,9 @@ const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
   const { data: casingData, isLoading: casingLoading } =
     useCasingSchematicsQuery({ wellboreIds });
   const { data: ndsData, isLoading: ndsLoading } = useNdsEventsQuery();
-  const { data: nptEvents, isLoading: nptLoading } = useNptEventsQuery();
+  const { data: nptEvents, isLoading: nptLoading } = useNptEventsQuery({
+    wellboreIds,
+  });
   const {
     trajectories,
     trajectoryRows,

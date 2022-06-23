@@ -2,14 +2,19 @@ import { Distance } from 'convert-units';
 import isUndefined from 'lodash/isUndefined';
 import { Fixed, toFixedNumberFromNumber } from 'utils/number';
 
-import { Distance as DistanceWellsSDK } from '@cognite/sdk-wells-v3';
+import { DistanceUnitEnum } from '@cognite/sdk-wells-v3';
 
 import { changeUnitTo } from '.';
 import { ConvertedDistance } from './constants';
 import { getSafeUnit } from './getSafeUnit';
 
+type DistanceType = {
+  value: number;
+  unit: DistanceUnitEnum | Distance;
+};
+
 export const convertDistance = (
-  distance: DistanceWellsSDK,
+  distance: DistanceType,
   toUnit: Distance,
   toFixed = Fixed.ThreeDecimals
 ): ConvertedDistance => {
