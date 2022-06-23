@@ -34,43 +34,17 @@ module.exports = env => {
     // Internals is not part of prod builds
     entry: development
       ? {
-        index: {
-          import: './index.ts',
-          dependOn: 'shared'
-        },
-        tools: {
-          import: './tools.ts',
-          dependOn: 'shared'
-        },
-        'extensions/datasource': {
-          import: './extensions/datasource.ts',
-          dependOn: 'shared'
-        },
-        internals: {
-          import: './internals.ts',
-          dependOn: 'shared'
-        },
-        shared: {
-          import: 'three'
-        }
+        index: './index.ts',
+        tools: './tools.ts',
+        'extensions/datasource': './extensions/datasource.ts',
+        internals: './internals.ts'
       }
-      : {
-        index: {
-          import: './index.ts',
-          dependOn: 'shared'
-        },
-        tools: {
-          import: './tools.ts',
-          dependOn: 'shared'
-        },
-        'extensions/datasource': {
-          import: './extensions/datasource.ts',
-          dependOn: 'shared'
-        },
-        shared: {
-          import: 'three'
-        }
-      },
+    :
+    {
+        index: './index.ts',
+        tools: './tools.ts',
+        'extensions/datasource': './extensions/datasource.ts'
+    },
     target: 'web',
     resolve: {
       fallback: {
@@ -126,7 +100,7 @@ module.exports = env => {
     },
     externals: [
       nodeExternals({
-        allowlist: [/^@reveal/, /three/]
+        allowlist: [/^@reveal/]
       })
     ],
     output: {
@@ -144,9 +118,6 @@ module.exports = env => {
     watchOptions: {
       aggregateTimeout: 1500,
       ignored: /node_modules/
-    },
-    optimization: {
-      usedExports: true
     },
     plugins: [
       new copyPkgJsonPlugin({
