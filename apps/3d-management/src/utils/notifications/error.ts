@@ -19,7 +19,7 @@ const generateErrorMessage = (errorCode: number): string => {
       return 'We could not find what you were looking for. Keep in mind that this may be due to insufficient access rights.';
     case 500:
     case 503:
-      return 'Something went terribly wrong. You can try again in a bit.';
+      return 'An unexpected, internal server error occurred - please wait a bit and try again. If the issue persists, please contact your project administrator.';
     case undefined:
       return 'We experienced a network issue while handling your request. Please make sure you are connected to the internet and try again.';
     default:
