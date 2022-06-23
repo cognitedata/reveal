@@ -1,4 +1,4 @@
-// const SELECT_TEXT = 'Select...';
+const SELECT_TEXT = 'Select...';
 
 Cypress.Commands.add(
   'validateSelect',
@@ -22,6 +22,7 @@ Cypress.Commands.add(
       .siblings()
       .first()
       .should('be.visible')
+      .contains(SELECT_TEXT)
       .click();
 
     cy.log('Check select has right values');
@@ -36,7 +37,10 @@ Cypress.Commands.add(
     });
 
     if (toSelect) {
-      cy.findByText(toSelect).scrollIntoView().should('be.visible').click();
+      cy.findByText(toSelect)
+        .scrollIntoView()
+        .should('be.visible')
+        .click({ waitForAnimations: true });
     }
 
     cy.log(`Close ${filter} select list`);

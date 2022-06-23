@@ -1,6 +1,15 @@
 import axios, { AxiosRequestConfig } from 'axios';
 
-// import { getDefaultSidecar } from '@cognite/sidecar';
+import {
+  DOCUMENTS_SEARCH_ALIAS,
+  GEO_STREAMING_ALIAS,
+  interceptDocumentsSearch,
+  interceptGeoStreaming,
+  interceptWellGeometries,
+  interceptWellsSearch,
+  WELL_GEOMETRIES_ALIAS,
+  WELLS_SEARCH_ALIAS,
+} from '../interceptions';
 
 const rawHeaders = {
   'Content-Type': 'application/json',
@@ -114,4 +123,22 @@ export const deleteE2EUsers = async (config: Cypress.Config) => {
     .catch((err) => {
       console.error(err);
     });
+};
+
+/**
+ * Intercepts CORE network requests that trigger big page changes and re-renders
+ * Returns an array of aliases on which we can call cy.wait()
+ * */
+export const interceptCoreNetworkRequests = (): string[] => {
+  interceptDocumentsSearch();
+  interceptWellsSearch();
+  interceptGeoStreaming();
+  interceptWellGeometries();
+
+  return [
+    `@${DOCUMENTS_SEARCH_ALIAS}`,
+    `@${WELLS_SEARCH_ALIAS}`,
+    `@${GEO_STREAMING_ALIAS}`,
+    `@${WELL_GEOMETRIES_ALIAS}`,
+  ];
 };

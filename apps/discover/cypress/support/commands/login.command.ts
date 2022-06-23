@@ -37,7 +37,7 @@ Cypress.Commands.add('logout', () => {
 });
 
 Cypress.Commands.add('acceptCookies', () => {
-  cy.contains('Accept').should('be.visible').click();
+  cy.contains('Accept', { timeout: 25000 }).should('be.visible').click();
 });
 
 Cypress.Commands.add('syncAdminUser', () => {

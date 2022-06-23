@@ -24,6 +24,8 @@ import {
   WELL_TYPE,
 } from '../../../src/modules/wellSearch/constantsSidebarFilters';
 import { ISODateRegex } from '../../../src/utils/isISODateRegex';
+import { interceptCoreNetworkRequests } from '../../support/commands/helpers';
+import { WELLS_SEARCH_ALIAS } from '../../support/interceptions';
 import { SOURCE_FILTER } from '../../support/selectors/wells.selectors';
 
 const SELECT_TEXT = 'Select...';
@@ -34,7 +36,7 @@ const NPT_DETAILS_CODE_SELECT = 'BARR';
 const SEARCH_QUERY = 'Discover';
 
 const checkRequestContainsFilter = (expectedFilter: unknown) => {
-  cy.wait('@searchWells')
+  cy.wait(`@${WELLS_SEARCH_ALIAS}`)
     .its('request.body.filter')
     .should((body) => {
       return assert.deepNestedInclude(body, expectedFilter);
@@ -42,7 +44,7 @@ const checkRequestContainsFilter = (expectedFilter: unknown) => {
 };
 
 const checkTVDFilter = () => {
-  cy.wait('@searchWells')
+  cy.wait(`@${WELLS_SEARCH_ALIAS}`)
     .its('request.body.filter')
     .should((body) => {
       assert.nestedProperty(body, 'trajectories.maxTrueVerticalDepth');
@@ -53,7 +55,7 @@ const checkTVDFilter = () => {
 };
 
 const checkDogledFilter = () => {
-  cy.wait('@searchWells')
+  cy.wait(`@${WELLS_SEARCH_ALIAS}`)
     .its('request.body.filter')
     .should((body) => {
       assert.nestedProperty(body, 'trajectories.maxDoglegSeverity');
@@ -69,7 +71,7 @@ const checkDogledFilter = () => {
 };
 
 const checkMaxInclination = () => {
-  cy.wait('@searchWells')
+  cy.wait(`@${WELLS_SEARCH_ALIAS}`)
     .its('request.body.filter')
     .should((body) => {
       const expected = {
@@ -83,7 +85,7 @@ const checkMaxInclination = () => {
 };
 
 const checkSpudDateFilter = () => {
-  cy.wait('@searchWells')
+  cy.wait(`@${WELLS_SEARCH_ALIAS}`)
     .its('request.body.filter')
     .should((body) => {
       expect(body.spudDate).haveOwnProperty('min');
@@ -97,14 +99,12 @@ const checkSpudDateFilter = () => {
 
 describe('Wells sidebar filters', () => {
   beforeEach(() => {
+    const coreRequests = interceptCoreNetworkRequests();
+
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
-
-    cy.intercept({
-      url: '**/wdl/wells/search',
-      method: 'POST',
-    }).as('searchWells');
+    cy.wait(coreRequests);
     cy.selectCategory('Wells');
   });
 
@@ -113,7 +113,6 @@ describe('Wells sidebar filters', () => {
 
     cy.log('Checking source values');
     cy.validateSelect(DATA_SOURCE, [SOURCE_FILTER], SOURCE_FILTER);
-    cy.contains(SOURCE_FILTER).should('be.visible').click();
     checkRequestContainsFilter({ sources: [SOURCE_FILTER] });
 
     cy.log('Checking visibility of selected source');
@@ -419,15 +418,18 @@ describe('Wells sidebar filters', () => {
 
     cy.get('@nptFilters')
       .first()
-      .scrollIntoView()
+      .scrollIntoView({ duration: 300 })
       .as('nptDurationFilter')
       .contains(NPT_DURATION);
 
     cy.get('@nptDurationFilter')
       .findAllByRole('slider')
       .first()
+      .should('be.visible')
       .click()
+      .should('be.visible')
       .type('{rightarrow}{rightarrow}{rightarrow}{rightarrow}');
+
     checkRequestContainsFilter({
       npt: {
         duration: {
