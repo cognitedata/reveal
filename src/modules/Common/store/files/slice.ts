@@ -19,6 +19,7 @@ import { clearFilesState, deleteFileById, updateFileState } from './utils';
 export const setSelectedAllFiles = createAction<{
   selectStatus: boolean;
   filter?: SelectFilter;
+  overridedFileIds?: number[];
 }>('setSelectedAllFiles');
 
 export const initialState: FileState = {

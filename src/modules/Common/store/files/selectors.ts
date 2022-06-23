@@ -17,10 +17,13 @@ export const selectAllFiles = createSelector(
 
 export const selectAllFilesSelected = createSelector(
   (state: FileState) => state.files.allIds,
+  (state: FileState, args: { overridedFileIds?: number[] }) => args,
   selectAllSelectedIds,
-  (allIds, selectedFileIds) => {
+  (allIds, args, selectedFileIds) => {
+    const allIdsToSelectFrom = args.overridedFileIds || allIds;
     return (
-      !!allIds.length && allIds.every((id) => selectedFileIds.includes(id))
+      !!allIdsToSelectFrom.length &&
+      allIdsToSelectFrom.every((id) => selectedFileIds.includes(id))
     );
   }
 );

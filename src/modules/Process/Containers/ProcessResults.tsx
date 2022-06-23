@@ -74,7 +74,12 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   );
 
   const allFilesSelected = useSelector((state: RootState) =>
-    selectAllFilesSelected(state.fileReducer)
+    selectAllFilesSelected(state.fileReducer, {
+      // Select from processFileIds instead of fileReducer.files.allids
+      // This is because the former contains the ids of the files that are
+      // actually shown on the process page
+      overridedFileIds: processFileIds,
+    })
   );
 
   const selectedFileIds = useSelector((state: RootState) =>
@@ -159,7 +164,11 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     selectFilter?: SelectFilter
   ) => {
     dispatch(
-      setSelectedAllFiles({ selectStatus: value, filter: selectFilter })
+      setSelectedAllFiles({
+        selectStatus: value,
+        filter: selectFilter,
+        overridedFileIds: processFileIds,
+      })
     );
   };
   const handleSetSelectedFiles = (fileIds: number[]) => {
