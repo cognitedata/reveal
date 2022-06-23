@@ -86,7 +86,7 @@ export const EditorPanel = (props: EditorPanelProps) => {
         </Suspense>
       ) : (
         <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
-          <div style={{ overflow: 'auto' }}>
+          <div style={{ flexGrow: 1, overflow: 'auto' }}>
             <UIEditor
               builtInTypes={builtInTypes}
               currentType={props.currentType}
