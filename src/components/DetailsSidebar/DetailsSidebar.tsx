@@ -35,7 +35,7 @@ import {
 } from './elements';
 import { MetadataList } from './MetadataList';
 import { getDisplayUnit } from './utils';
-import { Histogram } from './Histogram';
+import { Histogram } from '../Histogram/Histogram';
 
 const renderStatusIcon = (status?: StatusStatusEnum) => {
   switch (status) {

@@ -54,7 +54,7 @@ export const Histogram = ({
         width: 300,
         height: 260,
         bargap: 0,
-        margin: { l: 30, r: 5, t: 0, b: 70 },
+        margin: { l: 40, r: 5, t: 0, b: 70 },
         xaxis: {
           tickvals: data
             .map(({ range_start = NaN }) => range_start)
