@@ -58,10 +58,10 @@ export const Keypoints = ({
 
   const addNewKeypoint = () => {
     if (newKeypoints) {
-      const { keypoints } = newKeypoints;
+      const { color, keypoints } = newKeypoints;
       keypoints.push({
         caption: '',
-        color: getRandomColor(),
+        color,
       });
       setNewKeypoints({
         ...newKeypoints,

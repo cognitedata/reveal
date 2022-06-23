@@ -19,7 +19,7 @@
     "@cognite/cogs.js": "^3.42.6",
     "@cognite/data-exploration": "1.8.0-beta.2",
     "@cognite/react-feature-flags": "^0.2.2-rc.0",
-    "@cognite/react-image-annotate": "^1.8.0-v4-8",
+    "@cognite/react-image-annotate": "^1.8.0-v4-9",
     "@cognite/react-picture-annotation": "2.1.0-beta.4",
     "@cognite/sdk": "6.3.4",
     "@cognite/sdk-playground": "^5.2.0",
