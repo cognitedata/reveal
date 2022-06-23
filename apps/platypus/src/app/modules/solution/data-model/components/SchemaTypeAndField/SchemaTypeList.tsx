@@ -113,7 +113,6 @@ export const SchemaTypeList = ({
                     type="ghost"
                     icon="ArrowRight"
                     style={{ paddingLeft: '5px', paddingRight: '5px' }}
-                    disabled
                     aria-label="Forward"
                   />
                 </div>
