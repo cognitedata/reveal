@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-3d-management",
-  "version": "0.4.0",
+  "version": "4.0.0",
   "private": true,
   "scripts": {
     "start": "cross-env BROWSER=none WDS_SOCKET_PORT=3033 WDS_SOCKET_HOST=localhost PORT=3033 HTTPS=true SKIP_PREFLIGHT_CHECK=true rescripts start",
