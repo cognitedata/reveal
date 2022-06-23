@@ -17,14 +17,10 @@ module.exports = {
         compress: true,
         port: 3000,
         hot: true,
-        open: true,
-        server: 'https',
+        open: process.env.BROWSER === 'none' ? false : true,
+        server: process.env.HTTPS === 'false' ? 'http' : 'https',
         headers: { 'Access-Control-Allow-Origin': '*' },
         historyApiFallback: true
-        /* watchOptions: {
-            ignored: /node_modules/,
-            poll: 1000,
-        }, */
     },
     module: {
         rules: [
