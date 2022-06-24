@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+
+import isEmpty from 'lodash/isEmpty';
 
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 
 import { FullSizedTrajectoryView, TrajectoryGrid } from '../elements';
@@ -15,6 +19,7 @@ export const Trajectory2D: React.FC<Trajectory2DProps> = ({
   selectedTrajectoryData,
   selectedTrajectories,
 }) => {
+  const dispatch = useDispatch();
   const { data: config } = useWellConfig();
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
@@ -40,23 +45,28 @@ export const Trajectory2D: React.FC<Trajectory2DProps> = ({
     [config?.trajectory?.charts]
   );
 
-  const charts = useDeepMemo(
+  const { data: charts, errors } = useDeepMemo(
     () =>
       generateChartData(
         selectedTrajectoryData,
         selectedTrajectories,
         chartConfigs,
         userPreferredUnit,
-        config
+        config?.trajectory?.normalizeColumns
       ),
     [
       selectedTrajectoryData,
       selectedTrajectories,
       chartConfigs,
       userPreferredUnit,
-      config,
+      config?.trajectory?.normalizeColumns,
     ]
   );
+
+  useEffect(() => {
+    if (!errors || isEmpty(errors)) return;
+    dispatch(inspectTabsActions.setErrors(errors));
+  }, [errors]);
 
   const handleExpandFullSizedView = ({ data, index }: TrajectoryChartProps) => {
     setExpandedChart({ data, index });
@@ -97,7 +107,7 @@ export const Trajectory2D: React.FC<Trajectory2DProps> = ({
     <>
       <NoUnmountShowHide show={!expandedChart} fullHeight>
         <TrajectoryGrid>
-          {charts.map((data, index) => (
+          {(charts || []).map((data, index) => (
             <TrajectoryChart
               // eslint-disable-next-line react/no-array-index-key
               key={`chart_${index}`}

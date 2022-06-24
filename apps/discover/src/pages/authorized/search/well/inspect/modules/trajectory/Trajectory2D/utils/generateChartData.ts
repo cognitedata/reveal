@@ -1,16 +1,22 @@
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
-import { Datum, PlotData } from 'plotly.js';
+import { Datum } from 'plotly.js';
 
-import {
-  ProjectConfigWells,
-  ProjectConfigWellsTrajectoryCharts,
-} from '@cognite/discover-api-types';
+import { ProjectConfigWellsTrajectoryCharts } from '@cognite/discover-api-types';
 
 import { UserPreferredUnit } from 'constants/units';
+import { DataError } from 'modules/inspectTabs/types';
 import { Sequence, TrajectoryRows } from 'modules/wellSearch/types';
 
-import { getAddDataFn } from './addChartData';
+import {
+  ThreeDCoordinate,
+  ChartData,
+  ChartListData,
+  CoordinatesAndErrors,
+  DimensionType,
+} from '../types';
+
+import { getArrayCoordinatesForChartType } from './addChartData';
 import { getChartObjectGenerateFn } from './getChartObject';
 
 export const findSelectedTrajectoryColumnData = (
@@ -24,42 +30,78 @@ export const findSelectedTrajectoryColumnData = (
 /**
  * Restructre the coordintes so coordiates for each plot is grouped
  *
- * Function is returning Array<Array<Datum>> but somehow ts think it is
- * Array<Array<Datum | undefine>> so returned data had to be casted.
  */
 export const extractNthCoordinates = (
-  coordintes: Array<Array<Array<Datum | undefined>>>,
+  coordintes: Array<Array<ThreeDCoordinate<Datum>>>,
   configIndex: number
 ) => {
-  return coordintes.reduce((result: Array<Array<Datum>>, coordinateArrays) => {
-    const nthConfigCoordinates = coordinateArrays[configIndex];
-    const x = nthConfigCoordinates[0];
-    const y = nthConfigCoordinates[1];
-    const z = nthConfigCoordinates[2];
+  return coordintes.reduce((result, coordinateArrays) => {
+    const nthConfigCoordinates = coordinateArrays[
+      configIndex
+    ] as ThreeDCoordinate<Datum>;
+    const { x, y, z } = nthConfigCoordinates;
 
-    if (isEmpty(result)) {
-      const xCoordinate = !isUndefined(x) ? [x] : [];
-      const yCoordinate = !isUndefined(y) ? [y] : [];
-      const zCoordinate = !isUndefined(z) ? [z] : [];
-      return [xCoordinate, yCoordinate, zCoordinate];
+    /**
+     * If there is a issue with a coordiante ( hence no data )
+     * Skip the whole tuple.
+     */
+    if (
+      isUndefined(x.data) ||
+      isUndefined(y.data) ||
+      // Only for the last chart ( 3d chart ) we worry about the z index
+      (z && z.dimentionType === DimensionType.THREED && isUndefined(z.data))
+    ) {
+      return {
+        data: {
+          ...result.data,
+        },
+        errors: [x.error, y.error, z?.error].filter(
+          (error): error is DataError => !!error
+        ),
+      };
     }
 
-    const previousxCoordintes = result[0] || [];
-    const previousyCoordintes = result[1] || [];
-    const previouszCoordintes = result[2] || [];
+    if (isEmpty(result)) {
+      const xCoordinate = !isUndefined(x.data) ? [x.data] : [];
+      const yCoordinate = !isUndefined(y.data) ? [y.data] : [];
+      // Only for the last chart ( 3d chart ) we worry about the z index
+      const zCoordinate =
+        !isUndefined(z) && !isUndefined(z.data) ? [z.data] : [];
+      return {
+        data: {
+          x: xCoordinate,
+          y: yCoordinate,
+          z: zCoordinate,
+        },
+        errors: [],
+      };
+    }
 
-    const updatedxCoordinates = !isUndefined(x)
-      ? [...previousxCoordintes, x]
+    const previousxCoordintes = result.data.x || [];
+    const previousyCoordintes = result.data.y || [];
+    const previouszCoordintes = result.data.z || [];
+
+    const updatedxCoordinates = !isUndefined(x.data)
+      ? [...previousxCoordintes, x.data]
       : [...previousxCoordintes];
-    const updatedyCoordinates = !isUndefined(y)
-      ? [...previousyCoordintes, y]
+    const updatedyCoordinates = !isUndefined(y.data)
+      ? [...previousyCoordintes, y.data]
       : [...previousyCoordintes];
-    const updatedzCoordinates = !isUndefined(z)
-      ? [...previouszCoordintes, z]
-      : [...previouszCoordintes];
+    // Only for the last chart ( 3d chart ) we worry about the z index
+    const updatedzCoordinates =
+      !isUndefined(z) && !isUndefined(z.data)
+        ? [...previouszCoordintes, z.data]
+        : [...previouszCoordintes];
 
-    return [updatedxCoordinates, updatedyCoordinates, updatedzCoordinates];
-  }, [] as Array<Array<Datum>>);
+    return {
+      data: {
+        x: updatedxCoordinates,
+        y: updatedyCoordinates,
+        z: updatedzCoordinates,
+      },
+      errors: [...result.errors],
+    };
+  }, {} as CoordinatesAndErrors);
 };
 
 export const generateChartData = (
@@ -67,11 +109,38 @@ export const generateChartData = (
   selectedTrajectories: Sequence[],
   chartConfigs: ProjectConfigWellsTrajectoryCharts[],
   userPreferredUnit: UserPreferredUnit,
-  config?: ProjectConfigWells
+  normalizeColumns?: Record<string, string>
 ) => {
   return selectedTrajectoryData.reduce((chartDataList, trajectory) => {
     if (!trajectory) return chartDataList;
 
+    /**
+     * Reduce to a array, each row for a trajectory row graph coordinates ( 6 graphs )
+     * eg:
+     * [
+     *    [
+     *      {x, y, z}, #1 chart
+     *      {x, y, z},
+     *      ...
+     *      {x, y, z}, #6 chart
+     *    ],
+     *    [
+     *      {x, y, z}, #1 chart
+     *      {x, y, z},
+     *      ...
+     *      {x, y, z}, #6 chart
+     *    ],
+     *    .
+     *    .
+     *    .
+     *    [ #n the rocord, n = number of rows
+     *      {x, y, z}, #1 chart
+     *      {x, y, z},
+     *      ...
+     *      {x, y, z}, #6 chart
+     *    ],
+     * ]
+     */
     const trajectoryCoordinates = trajectory.rows.reduce((result, row) => {
       /**
        * Loop though chart configs to get data generation function and execute it to get coordinate for current row
@@ -86,49 +155,23 @@ export const generateChartData = (
           /**
            * Get generate data function for type ( line, 3d etc )
            */
-          const addData = getAddDataFn(chartConfigs[index].type);
-
-          const [x, y, z] = addData({
+          const chartType = chartConfigs[index].type;
+          const coordinates = getArrayCoordinatesForChartType({
+            chartType,
             row,
             chartData: chartConfigs[index].chartData,
             columnData,
             selectedTrajectoryData,
             userPreferredUnit,
-            config,
+            normalizeColumns,
           });
-
-          /**
-           * Reduce to a array, each row for a trajectory row graph coordinates ( 6 graphs )
-           * eg:
-           * [
-           *    [
-           *      [x1, y1, z1],
-           *      [x2, y2, z2],
-           *      [x3, y3, z3],
-           *    ] => #1,
-           *    [
-           *      [x1, y1, z1],
-           *      [x2, y2, z2],
-           *      [x3, z3, z3],
-           *    ] => #1,
-           *    .
-           *    .
-           *    .
-           *    [
-           *      [x1, y1, z1],
-           *      [x2, y2, z2],
-           *      [x3, z3, z3],
-           *    ] => #6,
-           * ]
-           */
-
-          return [...previousResult, [x, y, z]];
+          return [...previousResult, coordinates];
         },
-        [] as Array<Array<Datum | undefined>>
+        [] as Array<ThreeDCoordinate<Datum>>
       );
 
       return [...result, coordinates];
-    }, [] as Array<Array<Array<Datum | undefined>>>);
+    }, [] as Array<Array<ThreeDCoordinate<Datum>>>);
 
     const chartObjects = chartConfigs.reduce((result, chartConfig, index) => {
       const getObject = getChartObjectGenerateFn(chartConfig.type);
@@ -141,28 +184,57 @@ export const generateChartData = (
 
       /**
        * List of coordinates of the plot
+       * We are pulling out coordiantes for a given graph from all trajectories
+       * Given index of each array contain coordinates for a given graph
        */
-      const coordinates = extractNthCoordinates(trajectoryCoordinates, index);
+      const coordinatesAndErrors = extractNthCoordinates(
+        trajectoryCoordinates,
+        index
+      );
 
-      return [
-        ...result,
-        {
-          ...plotlyData,
-          x: coordinates[0] as Array<Datum>,
-          y: coordinates[1] as Array<Datum>,
-          z: coordinates[2] as Array<Datum>,
-        },
-      ];
-    }, [] as Partial<PlotData>[]);
+      const { data: coordinates, errors } = coordinatesAndErrors;
+      const { x, y, z } = coordinates;
+
+      return {
+        data: [
+          ...(result.data || []),
+          {
+            ...plotlyData,
+            x,
+            y,
+            z,
+          },
+        ],
+        errors: [...(result.errors || []), ...errors],
+      };
+    }, {} as ChartData);
+
+    const { wellboreId } = trajectory;
 
     if (isEmpty(chartDataList)) {
-      return chartObjects.map((element) => [element]);
+      return {
+        data: (chartObjects.data || []).map((element) => [element]),
+        errors: {
+          [wellboreId]: [...chartObjects.errors],
+        },
+      };
     }
 
-    const res = chartDataList.map((elem, i) => {
-      return [...elem, chartObjects[i]];
-    });
+    const existingErrors = chartDataList.errors;
 
-    return res;
-  }, [] as Array<Partial<PlotData>[]>);
+    return {
+      data: (chartDataList.data || []).map((elem, i) => {
+        return [...elem, chartObjects.data[i]];
+      }),
+      /**
+       * Merge errors by wellboreId
+       */
+      errors: {
+        ...existingErrors,
+        [wellboreId]: existingErrors[wellboreId]
+          ? [...existingErrors[wellboreId], ...chartObjects.errors]
+          : [...chartObjects.errors],
+      },
+    };
+  }, {} as ChartListData);
 };

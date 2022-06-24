@@ -225,7 +225,7 @@ export const mapCurveToPlotly = (
   measurementType: MeasurementType
 ): ProcessedData => {
   const chartData: MeasurementChartData[] = [];
-  const errors: Error[] = [];
+  const errors: DataError[] = [];
   const curveDescription = `${depthMeasurementColumn.columnExternalId} (${detailCardTitle})`;
 
   /**

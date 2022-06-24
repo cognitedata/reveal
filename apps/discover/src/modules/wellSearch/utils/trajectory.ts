@@ -4,12 +4,10 @@ import convert from 'convert-units';
 import get from 'lodash/get';
 import head from 'lodash/head';
 import isEqual from 'lodash/isEqual';
+import isUndefined from 'lodash/isUndefined';
 import { UNITS_TO_STANDARD } from 'utils/units/constants';
 
-import {
-  ProjectConfigWells,
-  ProjectConfigWellsTrajectoryColumns,
-} from '@cognite/discover-api-types';
+import { ProjectConfigWellsTrajectoryColumns } from '@cognite/discover-api-types';
 import { SequenceColumn } from '@cognite/sdk';
 import { TrajectoryData as TrajectoryDataV3 } from '@cognite/sdk-wells-v3';
 
@@ -71,23 +69,30 @@ export const getDataPointInPreferredUnit = (
   selectedTrajectoryData: (TrajectoryRows | undefined)[],
   preferredUnit?: UserPreferredUnit,
   columnData?: SequenceColumn[],
-  config?: ProjectConfigWells
+  normalizeColumns?: Record<string, string>
 ): number => {
+  const dataPointIndex = findIndexByName(
+    accessor,
+    selectedTrajectoryData,
+    normalizeColumns
+  );
   const dataPoint = get(
     row.values,
-    findIndexByName(
-      accessor,
-      selectedTrajectoryData,
-      config?.trajectory?.normalizeColumns
-    ) || -1
+    !isUndefined(dataPointIndex) ? dataPointIndex : -1
   );
   const columnMetaData = columnData?.find(
     (column) => column.name === accessor
   )?.metadata;
+  /**
+   * If configured accessor is wrong then we might end up falling back to wrong unit.
+   */
+  if (isUndefined(columnMetaData)) {
+    throw new Error(
+      'Configured column cannot be found. Please check the chart configuration against data'
+    );
+  }
   return convert(dataPoint)
-    .from(
-      columnMetaData ? get(UNITS_TO_STANDARD, columnMetaData.unit, FEET) : FEET
-    )
+    .from(get(UNITS_TO_STANDARD, columnMetaData.unit, FEET))
     .to(preferredUnit || FEET);
 };
 

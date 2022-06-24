@@ -433,7 +433,7 @@ export type WellboreProcessedData = {
  */
 export type ProcessedData = {
   chartData: MeasurementChartDataV3[];
-  errors: Error[];
+  errors: DataError[];
 };
 
 export type RegionFieldBlock =

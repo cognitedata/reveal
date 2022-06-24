@@ -265,6 +265,14 @@ It is not encouraged to install `node` or `npm` using `apt-get`. If you already 
 
 After that try installing global package again.
 
+#### App stuck on start up with pending api calls ( Linux )
+
+Adding the following line to both /etc/systemd/system.conf and /etc/systemd/user.conf file. ( [Ref](https://github.com/vitejs/vite/issues/5310) )
+
+```
+DefaultLimitNOFILE=65536
+```
+
 ## Running E2E tests in the Docker container
 
 The end to end tests have two parts (which are in two docker files).

@@ -1,4 +1,7 @@
-import { ProjectConfig } from '@cognite/discover-api-types';
+import {
+  ProjectConfig,
+  ProjectConfigWellsTrajectoryCharts,
+} from '@cognite/discover-api-types';
 
 export const getMockConfig = (
   extras?: Partial<ProjectConfig>
@@ -43,3 +46,84 @@ export const getMockConfig = (
     ...extras,
   };
 };
+
+export const getMockLineGraphProjectConfigWellsTrajectoryChart = (
+  extras?: ProjectConfigWellsTrajectoryCharts
+): ProjectConfigWellsTrajectoryCharts => {
+  return {
+    type: 'line',
+    chartData: {
+      x: 'x_offset',
+      y: 'y_offset',
+    },
+    chartExtraData: {
+      hovertemplate: '%{y}',
+    },
+    chartVizData: {
+      axisNames: {
+        x: 'East West (<%= unit %>)',
+        y: 'North South (<%= unit %>)',
+      },
+      title: 'NS vs EW',
+    },
+    ...extras,
+  };
+};
+
+export const getMock3dGraphProjectConfigWellsTrajectoryChart = (
+  extras?: ProjectConfigWellsTrajectoryCharts
+): ProjectConfigWellsTrajectoryCharts => {
+  return {
+    type: '3d',
+    chartData: {
+      x: 'x_offset',
+      y: 'y_offset',
+      z: 'tvd',
+    },
+    chartExtraData: {
+      hovertemplate: 'EW: %{x}<br>NS: %{y}<br>TVD: %{z}',
+    },
+    chartVizData: {
+      axisNames: {
+        x: 'East West (<%= unit %>)',
+        y: 'North South (<%= unit %>)',
+        z: 'TVD (<%= unit %>)',
+      },
+      title: 'TVD 3D view',
+    },
+    ...extras,
+  };
+};
+
+export const getMockLegendGraphProjectConfigWellsTrajectoryChart = (
+  extras?: ProjectConfigWellsTrajectoryCharts
+): ProjectConfigWellsTrajectoryCharts => {
+  return {
+    type: 'legend',
+    chartData: {
+      x: 'x_offset',
+      y: 'y_offset',
+    },
+    chartExtraData: {
+      hovertemplate: '%{y}',
+    },
+    chartVizData: {
+      axisNames: {
+        x: 'East West',
+        y: 'North South',
+        z: 'TVD',
+      },
+      title: '',
+    },
+    ...extras,
+  };
+};
+
+export const getMockProjectConfigWellsTrajectoryCharts =
+  (): ProjectConfigWellsTrajectoryCharts[] => {
+    return [
+      getMockLineGraphProjectConfigWellsTrajectoryChart(),
+      getMock3dGraphProjectConfigWellsTrajectoryChart(),
+      getMockLegendGraphProjectConfigWellsTrajectoryChart(),
+    ];
+  };

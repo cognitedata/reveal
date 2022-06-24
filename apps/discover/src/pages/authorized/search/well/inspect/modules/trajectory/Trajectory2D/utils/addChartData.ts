@@ -1,81 +1,155 @@
+import { Datum } from 'plotly.js';
+
+import { SequenceColumn } from '@cognite/sdk';
+
+import { UserPreferredUnit } from 'constants/units';
+import { TrajectoryRow, TrajectoryRows } from 'modules/wellSearch/types';
 import { getDataPointInPreferredUnit } from 'modules/wellSearch/utils/trajectory';
 
-import { AddData } from '../types';
+import {
+  AddData,
+  DataContainer,
+  DimensionType,
+  ThreeDCoordinate,
+} from '../types';
 
-const addLineData = ({
+export const addLineData = ({
   row,
   chartData,
   columnData,
-  config,
   selectedTrajectoryData,
   userPreferredUnit,
-}: AddData) => {
-  const x = getDataPointInPreferredUnit(
+  normalizeColumns,
+}: AddData): ThreeDCoordinate<Datum> => {
+  const x = getDataPoint(
     row,
     chartData.x,
     selectedTrajectoryData,
+    DimensionType.TWOD,
     userPreferredUnit,
     columnData,
-    config
+    normalizeColumns
   );
-  const y = getDataPointInPreferredUnit(
+  const y = getDataPoint(
     row,
     chartData.y,
     selectedTrajectoryData,
+    DimensionType.TWOD,
     userPreferredUnit,
     columnData,
-    config
+    normalizeColumns
   );
 
-  return [x, y, undefined];
+  return {
+    x,
+    y,
+    z: undefined,
+  };
 };
 
-const add3DLineData = ({
+export const add3DLineData = ({
   row,
   chartData,
   columnData,
-  config,
   selectedTrajectoryData,
   userPreferredUnit,
-}: AddData) => {
-  const x = getDataPointInPreferredUnit(
+  normalizeColumns,
+}: AddData): ThreeDCoordinate<Datum> => {
+  const x = getDataPoint(
     row,
     chartData.x,
     selectedTrajectoryData,
+    DimensionType.THREED,
     userPreferredUnit,
     columnData,
-    config
+    normalizeColumns
   );
 
-  const y = getDataPointInPreferredUnit(
+  const y = getDataPoint(
     row,
     chartData.y,
     selectedTrajectoryData,
+    DimensionType.THREED,
     userPreferredUnit,
     columnData,
-    config
+    normalizeColumns
   );
 
-  const z = getDataPointInPreferredUnit(
+  const z = getDataPoint(
     row,
     chartData.z || '',
     selectedTrajectoryData,
+    DimensionType.THREED,
     userPreferredUnit,
     columnData,
-    config
+    normalizeColumns
   );
 
-  return [x, y, z];
+  return {
+    x,
+    y,
+    z,
+  };
 };
 
-// return data adding functions for different chart types.
-export const getAddDataFn = (type: string | undefined) => {
-  switch (type) {
-    case 'line':
-      return addLineData;
-    case '3d':
-      return add3DLineData;
-    default:
-      return addLineData;
+export const getDataPoint = (
+  row: TrajectoryRow,
+  accessor: string,
+  selectedTrajectoryData: (TrajectoryRows | undefined)[],
+  dimentionType: DimensionType,
+  preferredUnit?: UserPreferredUnit,
+  columnData?: SequenceColumn[],
+  normalizeColumns?: Record<string, string>
+): DataContainer<Datum> => {
+  try {
+    const data = getDataPointInPreferredUnit(
+      row,
+      accessor,
+      selectedTrajectoryData,
+      preferredUnit,
+      columnData,
+      normalizeColumns
+    );
+    return {
+      dimentionType,
+      data,
+    };
+  } catch (error) {
+    return {
+      dimentionType,
+      data: undefined,
+      error: {
+        message: `Error acquiring data for ${accessor}`,
+      },
+    };
   }
+};
+
+export const getArrayCoordinatesForChartType = ({
+  chartType,
+  row,
+  chartData,
+  columnData,
+  selectedTrajectoryData,
+  userPreferredUnit,
+  normalizeColumns,
+}: AddData & { chartType: string | undefined }) => {
+  if (chartType === '3d') {
+    return add3DLineData({
+      row,
+      chartData,
+      columnData,
+      selectedTrajectoryData,
+      userPreferredUnit,
+      normalizeColumns,
+    });
+  }
+  return addLineData({
+    row,
+    chartData,
+    columnData,
+    selectedTrajectoryData,
+    userPreferredUnit,
+    normalizeColumns,
+  });
 };
