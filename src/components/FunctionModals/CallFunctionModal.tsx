@@ -74,6 +74,12 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
   }, [callId, running]);
 
   const validJSONMessage = <div style={{ color: 'green' }}>JSON is valid</div>;
+  const JSONCheckMessage = !canParseInputData(inputData)
+    ? 'Input data must be a valid JSON object'
+    : validJSONMessage;
+  const helpMessage = inputData
+    ? JSONCheckMessage
+    : 'Secrets or other confidential information should not be passed via the data object. There is a dedicated secrets object in the request body to "Create functions" for this purpose.';
 
   const handleInputDataChange = (evt: { target: { value: string } }) => {
     setInputData(evt.target.value);
@@ -123,11 +129,7 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
         <Form.Item
           label="Input data"
           validateStatus={canParseInputData(inputData) ? 'success' : 'error'}
-          help={
-            !canParseInputData(inputData)
-              ? 'Input data must be a valid JSON object'
-              : validJSONMessage
-          }
+          help={helpMessage}
           hasFeedback
         >
           <Input.TextArea
