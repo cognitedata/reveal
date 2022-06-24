@@ -8,13 +8,22 @@ import {
   TreeIndexNodeCollection,
 } from '@cognite/reveal';
 
+interface ObjectDetails {
+  newTreeIndex: number | undefined;
+  newTreeNodeId: number | undefined;
+}
+
 export const updateStyledNodes = async (
   viewer: Cognite3DViewer | undefined,
   event: { offsetX: any; offsetY: any },
   model: Cognite3DModel
 ) => {
-  if (!viewer) return undefined;
+  const newValues: ObjectDetails = {
+    newTreeIndex: undefined,
+    newTreeNodeId: undefined,
+  };
 
+  if (!viewer) return newValues;
   const intersection = await viewer
     .getIntersectionFromPixel(event.offsetX, event.offsetY)
     .then((res) => res as CadIntersection);
@@ -47,9 +56,12 @@ export const updateStyledNodes = async (
         new IndexSet(new NumericRange(intersection.treeIndex, 1))
       );
 
-      return intersection.treeIndex;
+      newValues.newTreeIndex = intersection.treeIndex;
+      newValues.newTreeNodeId = await intersection.model.mapTreeIndexToNodeId(
+        intersection.treeIndex
+      );
     }
-    return undefined;
   }
-  return undefined;
+
+  return newValues;
 };

@@ -33,6 +33,7 @@ export type Building = {
   description?: Maybe<Scalars['String']>;
   externalId: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
+  nodeId?: Maybe<Scalars['Int64']>;
   thumbnail?: Maybe<Scalars['String']>;
 };
 
@@ -71,6 +72,7 @@ export type Equipment = {
   externalId: Scalars['ID'];
   isBroken?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
+  nodeId?: Maybe<Scalars['Int64']>;
   person?: Maybe<Person>;
   room?: Maybe<Room>;
   type?: Maybe<Scalars['String']>;
@@ -281,6 +283,7 @@ export type Room = {
   externalId: Scalars['ID'];
   isBookable?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
+  nodeId?: Maybe<Scalars['Int64']>;
   type?: Maybe<Scalars['String']>;
 };
 
@@ -387,15 +390,16 @@ export type _BuildingAggregateFieldCountResult = {
   description?: Maybe<Scalars['Int']>;
   externalId?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['Int']>;
+  nodeId?: Maybe<Scalars['Int']>;
   thumbnail?: Maybe<Scalars['Int']>;
 };
 
 export type _BuildingAggregateFieldResult = {
-  _empty: Scalars['Int'];
+  nodeId?: Maybe<Scalars['Float']>;
 };
 
 export type _BuildingAggregateHistogramFieldResult = {
-  _empty?: Maybe<Array<Maybe<_AggregateHistogramObjectType>>>;
+  nodeId?: Maybe<Array<Maybe<_AggregateHistogramObjectType>>>;
 };
 
 export type _BuildingEdge = {
@@ -407,6 +411,7 @@ export type _BuildingSort = {
   description?: InputMaybe<SortDirection>;
   externalId?: InputMaybe<SortDirection>;
   name?: InputMaybe<SortDirection>;
+  nodeId?: InputMaybe<SortDirection>;
   thumbnail?: InputMaybe<SortDirection>;
 };
 
@@ -419,17 +424,18 @@ export type _EquipmentAggregateFieldCountResult = {
   externalId?: Maybe<Scalars['Int']>;
   isBroken?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['Int']>;
+  nodeId?: Maybe<Scalars['Int']>;
   person?: Maybe<Scalars['Int']>;
   room?: Maybe<Scalars['Int']>;
   type?: Maybe<Scalars['Int']>;
 };
 
 export type _EquipmentAggregateFieldResult = {
-  _empty: Scalars['Int'];
+  nodeId?: Maybe<Scalars['Float']>;
 };
 
 export type _EquipmentAggregateHistogramFieldResult = {
-  _empty?: Maybe<Array<Maybe<_AggregateHistogramObjectType>>>;
+  nodeId?: Maybe<Array<Maybe<_AggregateHistogramObjectType>>>;
 };
 
 export type _EquipmentEdge = {
@@ -441,6 +447,7 @@ export type _EquipmentSort = {
   externalId?: InputMaybe<SortDirection>;
   isBroken?: InputMaybe<SortDirection>;
   name?: InputMaybe<SortDirection>;
+  nodeId?: InputMaybe<SortDirection>;
   type?: InputMaybe<SortDirection>;
 };
 
@@ -485,6 +492,7 @@ export type _ListBuildingFilter = {
   description?: InputMaybe<_StringCondition>;
   externalId?: InputMaybe<_IdCondition>;
   name?: InputMaybe<_StringCondition>;
+  nodeId?: InputMaybe<_Int64Condition>;
   not?: InputMaybe<_ListBuildingFilter>;
   or?: InputMaybe<Array<_ListBuildingFilter>>;
   thumbnail?: InputMaybe<_StringCondition>;
@@ -495,6 +503,7 @@ export type _ListEquipmentFilter = {
   externalId?: InputMaybe<_IdCondition>;
   isBroken?: InputMaybe<_BooleanCondition>;
   name?: InputMaybe<_StringCondition>;
+  nodeId?: InputMaybe<_Int64Condition>;
   not?: InputMaybe<_ListEquipmentFilter>;
   or?: InputMaybe<Array<_ListEquipmentFilter>>;
   person?: InputMaybe<_ListPersonFilter>;
@@ -520,6 +529,7 @@ export type _ListRoomFilter = {
   externalId?: InputMaybe<_IdCondition>;
   isBookable?: InputMaybe<_BooleanCondition>;
   name?: InputMaybe<_StringCondition>;
+  nodeId?: InputMaybe<_Int64Condition>;
   not?: InputMaybe<_ListRoomFilter>;
   or?: InputMaybe<Array<_ListRoomFilter>>;
   type?: InputMaybe<_StringCondition>;
@@ -576,15 +586,16 @@ export type _RoomAggregateFieldCountResult = {
   externalId?: Maybe<Scalars['Int']>;
   isBookable?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['Int']>;
+  nodeId?: Maybe<Scalars['Int']>;
   type?: Maybe<Scalars['Int']>;
 };
 
 export type _RoomAggregateFieldResult = {
-  _empty: Scalars['Int'];
+  nodeId?: Maybe<Scalars['Float']>;
 };
 
 export type _RoomAggregateHistogramFieldResult = {
-  _empty?: Maybe<Array<Maybe<_AggregateHistogramObjectType>>>;
+  nodeId?: Maybe<Array<Maybe<_AggregateHistogramObjectType>>>;
 };
 
 export type _RoomEdge = {
@@ -597,12 +608,14 @@ export type _RoomSort = {
   externalId?: InputMaybe<SortDirection>;
   isBookable?: InputMaybe<SortDirection>;
   name?: InputMaybe<SortDirection>;
+  nodeId?: InputMaybe<SortDirection>;
   type?: InputMaybe<SortDirection>;
 };
 
 export enum _SearchBuildingFields {
   Description = 'description',
   Name = 'name',
+  NodeId = 'nodeId',
   Thumbnail = 'thumbnail',
 }
 
@@ -611,6 +624,7 @@ export type _SearchBuildingFilter = {
   description?: InputMaybe<_StringCondition>;
   externalId?: InputMaybe<_IdCondition>;
   name?: InputMaybe<_StringCondition>;
+  nodeId?: InputMaybe<_Int64Condition>;
   not?: InputMaybe<_SearchBuildingFilter>;
   or?: InputMaybe<Array<_SearchBuildingFilter>>;
   thumbnail?: InputMaybe<_StringCondition>;
@@ -619,6 +633,7 @@ export type _SearchBuildingFilter = {
 export enum _SearchEquipmentFields {
   IsBroken = 'isBroken',
   Name = 'name',
+  NodeId = 'nodeId',
   Type = 'type',
 }
 
@@ -627,6 +642,7 @@ export type _SearchEquipmentFilter = {
   externalId?: InputMaybe<_IdCondition>;
   isBroken?: InputMaybe<_BooleanCondition>;
   name?: InputMaybe<_StringCondition>;
+  nodeId?: InputMaybe<_Int64Condition>;
   not?: InputMaybe<_SearchEquipmentFilter>;
   or?: InputMaybe<Array<_SearchEquipmentFilter>>;
   type?: InputMaybe<_StringCondition>;
@@ -650,6 +666,7 @@ export enum _SearchRoomFields {
   Description = 'description',
   IsBookable = 'isBookable',
   Name = 'name',
+  NodeId = 'nodeId',
   Type = 'type',
 }
 
@@ -659,6 +676,7 @@ export type _SearchRoomFilter = {
   externalId?: InputMaybe<_IdCondition>;
   isBookable?: InputMaybe<_BooleanCondition>;
   name?: InputMaybe<_StringCondition>;
+  nodeId?: InputMaybe<_Int64Condition>;
   not?: InputMaybe<_SearchRoomFilter>;
   or?: InputMaybe<Array<_SearchRoomFilter>>;
   type?: InputMaybe<_StringCondition>;
@@ -742,6 +760,7 @@ export type SearchPeopleRoomsQueryTypeGenerated = {
     items: Array<{
       externalId: string;
       name?: string | null;
+      nodeId?: any | null;
       description?: string | null;
     } | null>;
   } | null;
@@ -760,6 +779,7 @@ export const SearchPeopleRoomsDocument = `
     items {
       externalId
       name
+      nodeId
       description
     }
   }

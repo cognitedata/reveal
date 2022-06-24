@@ -5,35 +5,35 @@ import {
 } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { updateStyledNodes } from 'utils/map/updateStyledNodes';
-
-import { Popup } from './Popup';
 
 const fullStyle = { width: '100%', height: '100%' };
 
 interface Props {
   client: CogniteClient;
   model: AddModelOptions;
-  nodeInfo:
-    | {
-        externalId: string;
-        name?: string | undefined | null;
-        description?: string | undefined | null;
-      }
-    | undefined
-    | null;
 }
 
-const Map: React.FC<Props> = ({ client, model, nodeInfo }) => {
+const Map: React.FC<Props> = ({ client, model }) => {
   const viewer = React.useRef<Cognite3DViewer>();
   // Need to work on connecting this with nodeId
+  const history = useHistory();
   const [_treeIndex, setTreeIndex] = React.useState<number>();
 
   const handleClick = async (
     event: { offsetX: any; offsetY: any },
     model: Cognite3DModel
   ) => {
-    const newTreeIndex = await updateStyledNodes(viewer.current, event, model);
+    const { newTreeIndex, newTreeNodeId } = await updateStyledNodes(
+      viewer.current,
+      event,
+      model
+    );
+    const url = new URL(window.location.href);
+    url.searchParams.set('to', String(newTreeNodeId));
+    history.push(`?to=${newTreeNodeId}`);
+
     setTreeIndex(newTreeIndex);
   };
 
@@ -59,13 +59,6 @@ const Map: React.FC<Props> = ({ client, model, nodeInfo }) => {
   return (
     <div style={fullStyle}>
       <div id="reveal-map" style={fullStyle} />
-      {nodeInfo ? (
-        <Popup
-          mainText={nodeInfo.name as string}
-          subText={nodeInfo.description as string}
-          labels={[]}
-        />
-      ) : null}
     </div>
   );
 };
