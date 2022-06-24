@@ -11,6 +11,7 @@ import {
   DocumentIcon,
   Title,
   Graphic,
+  Tooltip,
 } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import { Link } from 'react-router-dom';
@@ -83,13 +84,16 @@ export const ThreeDGridPreview = ({
             {revision?.thumbnailURL && image}
             {!revision?.thumbnailURL && <Graphic type="ThreeDModel" />}
           </Thumbnail>
-          <Title level={6}>
-            <Highlighter
-              searchWords={query.split(' ')}
-              autoEscape
-              textToHighlight={name}
-            />
-          </Title>
+          <Tooltip content={name} arrow={false}>
+            <Title level={6}>
+              <Highlighter
+                className="highlighter-wrapper"
+                searchWords={query.split(' ')}
+                autoEscape
+                textToHighlight={name}
+              />
+            </Title>
+          </Tooltip>
         </GridItemWrapper>
       </GridItemContainer>
     </Link>
@@ -117,4 +121,9 @@ const GridItemContainer = styled.div`
 const GridItemWrapper = styled.div`
   padding: 15px;
   border: 1px solid var(--cogs-greyscale-grey4);
+  .highlighter-wrapper {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `;
