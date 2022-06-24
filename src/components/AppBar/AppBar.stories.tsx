@@ -58,7 +58,7 @@ export const UsageWithPortals = () => {
             marginRight: 17,
           }}
         >
-          {dayjs('2022-12-22T10:00:00Z').format('LL')} · John Doe
+          {dayjs('2022-12-22T10:00:00Z').format('MMMM D, YYYY')} · John Doe
         </div>
         <TopBar.Actions
           className="downloadChartHide"

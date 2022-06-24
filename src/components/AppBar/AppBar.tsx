@@ -1,4 +1,4 @@
-import { A, TopBar, TopBarLogoProps } from '@cognite/cogs.js';
+import { TopBar, TopBarLogoProps } from '@cognite/cogs.js';
 import { ComponentProps } from 'react';
 import {
   getTranslationsForComponent,
@@ -35,13 +35,7 @@ const AppBar = ({
   return (
     <TopBar style={{ backgroundColor: '#FFF' }}>
       <TopBar.Left>
-        <A onClick={onLogoClick} style={{ color: 'var(--cogs-text-color)' }}>
-          <TopBar.Logo
-            title={t['Cognite Charts']}
-            onLogoClick={onLogoClick}
-            style={{ cursor: 'pointer' }}
-          />
-        </A>
+        <TopBar.Logo title={t['Cognite Charts']} onClick={onLogoClick} />
         <div id="appbar-left" style={{ flexGrow: 1 }} />
       </TopBar.Left>
       <TopBar.Right>
