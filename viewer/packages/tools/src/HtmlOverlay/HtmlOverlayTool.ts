@@ -135,6 +135,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   private readonly _options: HtmlOverlayToolOptions;
   private readonly _htmlOverlays: Map<HTMLElement, HtmlOverlayElement> = new Map();
   private readonly _compositeOverlays: HTMLElement[] = [];
+  private _visible: boolean;
 
   private readonly _onSceneRenderedHandler: SceneRenderedDelegate;
   private readonly _onViewerDisposedHandler: DisposedDelegate;
@@ -173,6 +174,8 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     this._viewer.on('disposed', this._onViewerDisposedHandler);
 
     // this.scheduleUpdate = debounce(() => this.forceUpdate(), 20);
+
+    this._visible = true;
 
     MetricsLogger.trackCreateTool('HtmlOverlayTool');
   }
@@ -266,6 +269,23 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   }
 
   /**
+   * Hide/unhide all HTML overlay elements.
+   * @param enable
+   */
+  visible(enable: boolean): void {
+    const visible = enable === true ? 'visible' : 'hidden';
+    this._visible = enable;
+
+    this._htmlOverlays.forEach((_element, htmlElement) => {
+      htmlElement.style.visibility = visible;
+    });
+
+    this._compositeOverlays.forEach(element => {
+      element.style.visibility = visible;
+    });
+  }
+
+  /**
    * Updates positions of all overlays. This is automatically managed and there
    * shouldn't be any reason to trigger this unless the attached elements are
    * modified externally.
@@ -273,6 +293,10 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
    * Calling this function often might cause degraded performance.
    */
   forceUpdate(): void {
+    // Do not update elements if overlay visibility is set to hidden/false.
+    if (!this._visible) {
+      return;
+    }
     this.ensureNotDisposed();
     this.cleanupClusterElements();
     if (this._htmlOverlays.size === 0) {
