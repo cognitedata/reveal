@@ -6,8 +6,8 @@ import {
   ModelTypeStyleMap,
 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
-  Category,
-  RowData,
+  AnnotationDetailPanelAnnotationType,
+  AnnotationDetailPanelRowDataBase,
   VirtualizedTreeRowProps,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
 import {
@@ -23,12 +23,14 @@ import {
  * @param additionalData
  * @constructor
  */
-export const CategoryRow = ({
+export const ReviewVisionAnnotationTypeRow = ({
   name,
   isOpen,
   childItems,
   additionalData,
-}: VirtualizedTreeRowProps<RowData<Category>>) => {
+}: VirtualizedTreeRowProps<
+  AnnotationDetailPanelRowDataBase<AnnotationDetailPanelAnnotationType>
+>) => {
   const {
     common: { mode },
     callbacks: { onSelect },

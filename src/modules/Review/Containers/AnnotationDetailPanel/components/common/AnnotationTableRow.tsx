@@ -1,4 +1,3 @@
-import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { Detail, Icon, SegmentedControl, Tooltip } from '@cognite/cogs.js';
 import { AnnotationActionMenuExtended } from 'src/modules/Common/Components/AnnotationActionMenu/AnnotationActionMenuExtended';
 import React from 'react';
@@ -7,64 +6,80 @@ import { AnnotationTableRowProps } from 'src/modules/Review/types';
 import { pushMetric } from 'src/utils/pushMetric';
 import { createLink } from '@cognite/cdf-utilities';
 import { Link } from 'react-router-dom';
+import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import { Status } from 'src/api/annotation/types';
+import { isImageAssetLinkData } from 'src/modules/Common/types/typeGuards';
+import useAnnotationColor from 'src/modules/Common/store/annotation/hooks';
 import { AnnotationTableRowAttribute } from './AnnotationTableRowAttribute';
 
 export const AnnotationTableRow = ({
-  annotation,
+  reviewAnnotation,
   onSelect,
   onDelete,
   onVisibilityChange,
   onApprove,
   showColorCircle,
 }: AnnotationTableRowProps) => {
+  const annotationColor = useAnnotationColor(reviewAnnotation.annotation);
   return (
     <StyledRow
-      key={annotation.id}
-      onClick={() => onSelect(annotation.id, !annotation.selected)}
+      key={reviewAnnotation.annotation.id}
+      onClick={() =>
+        onSelect(reviewAnnotation.annotation.id, !reviewAnnotation.selected)
+      }
     >
       {showColorCircle && (
         <ColorCircleContainer>
-          <ColorCircle color={annotation.color} />
+          <ColorCircle color={annotationColor} />
         </ColorCircleContainer>
       )}
       <AnnotationLabelContainer>
         <AnnotationLbl>
-          <Tooltip className="lbl-tooltip" content={annotation.text}>
-            <> {`${annotation.text}`}</>
+          <Tooltip
+            className="lbl-tooltip"
+            content={getAnnotationLabelOrText(reviewAnnotation.annotation)}
+          >
+            <> {`${getAnnotationLabelOrText(reviewAnnotation.annotation)}`}</>
           </Tooltip>
         </AnnotationLbl>
       </AnnotationLabelContainer>
-      {annotation.linkedResourceId && (
+      {isImageAssetLinkData(reviewAnnotation.annotation) && (
         <Link
-          to={createLink(`/explore/asset/${annotation.linkedResourceId}`)}
+          to={createLink(
+            `/explore/asset/${reviewAnnotation.annotation.assetRef.id}`
+          )}
           target="_blank"
           style={{ display: 'flex', alignItems: 'center' }}
         >
           <Icon
             type="ExternalLink"
             style={{
-              color: annotation.color,
+              color: annotationColor,
             }}
           />
         </Link>
       )}
       <ShowHideIconContainer>
-        {!annotation.show ? (
+        {!reviewAnnotation.show ? (
           <Icon
             type="EyeHide"
             style={{ color: '#595959' }}
             onClick={() => {
-              onVisibilityChange(annotation.id);
+              onVisibilityChange(reviewAnnotation.annotation.id);
             }}
           />
         ) : undefined}
       </ShowHideIconContainer>
-      {(annotation.data?.attributes !== undefined ||
-        annotation.data?.confidence !== undefined) && (
+      {(reviewAnnotation.annotation.attributes !== undefined ||
+        reviewAnnotation.annotation?.confidence !== undefined) && (
         <AttributesIconContainer>
           <Detail style={{ color: '#595959' }}>
             <Tooltip
-              content={<AnnotationTableRowAttribute annotation={annotation} />}
+              content={
+                <AnnotationTableRowAttribute
+                  reviewAnnotation={reviewAnnotation}
+                />
+              }
             >
               <Icon type="Info" />
             </Tooltip>
@@ -73,24 +88,24 @@ export const AnnotationTableRow = ({
       )}
       <ApproveBtnContainer onClick={(evt) => evt.stopPropagation()}>
         <StyledSegmentedControl
-          status={annotation.status}
+          status={reviewAnnotation.annotation.status}
           className="approvalButton"
           currentKey={
             // eslint-disable-next-line no-nested-ternary
-            annotation.status === AnnotationStatus.Verified
+            reviewAnnotation.annotation.status === Status.Approved
               ? 'verified'
-              : annotation.status === AnnotationStatus.Rejected
+              : reviewAnnotation.annotation.status === Status.Rejected
               ? 'rejected'
               : undefined
           }
           onButtonClicked={(key) => {
             if (key === 'verified') {
               pushMetric('Vision.Review.Annotation.Verified');
-              onApprove(annotation.id, AnnotationStatus.Verified);
+              onApprove(reviewAnnotation.annotation.id, Status.Approved);
             }
             if (key === 'rejected') {
               pushMetric('Vision.Review.Annotation.Rejected');
-              onApprove(annotation.id, AnnotationStatus.Rejected);
+              onApprove(reviewAnnotation.annotation.id, Status.Rejected);
             }
           }}
         >
@@ -119,13 +134,15 @@ export const AnnotationTableRow = ({
         aria-hidden="true"
       >
         <AnnotationActionMenuExtended
-          showPolygon={annotation.show}
-          disableShowPolygon={annotation.status === AnnotationStatus.Rejected}
+          showPolygon={reviewAnnotation.show}
+          disableShowPolygon={
+            reviewAnnotation.annotation.status === Status.Rejected
+          }
           handleVisibility={() => {
-            onVisibilityChange(annotation.id);
+            onVisibilityChange(reviewAnnotation.annotation.id);
           }}
           handleAnnotationDelete={() => {
-            onDelete(annotation.id);
+            onDelete(reviewAnnotation.annotation.id);
           }}
         />
       </ActionMenuContainer>
@@ -224,27 +241,27 @@ const StyledSegmentedControl = styled(SegmentedControl)<{ status: string }>`
   }
   .approveButton {
     background: ${(props) =>
-      props.status === AnnotationStatus.Verified
+      props.status === Status.Approved
         ? '#ffffff'
         : 'var(--cogs-color-action-secondary)'};
   }
   .approveButton:hover {
     color: ${(props) =>
-      props.status !== AnnotationStatus.Verified ? '#059b85' : 'unset'};
+      props.status !== Status.Approved ? '#059b85' : 'unset'};
     background: ${(props) =>
-      props.status !== AnnotationStatus.Verified ? '#d9d9d9' : '#6FCF97'};
+      props.status !== Status.Approved ? '#d9d9d9' : '#6FCF97'};
   }
 
   .rejectButton {
     background: ${(props) =>
-      props.status === AnnotationStatus.Rejected
+      props.status === Status.Rejected
         ? '#ffffff'
         : 'var(--cogs-color-action-secondary)'};
   }
   .rejectButton:hover {
     color: ${(props) =>
-      props.status !== AnnotationStatus.Rejected ? '#eb5757' : 'unset'};
+      props.status !== Status.Rejected ? '#eb5757' : 'unset'};
     background: ${(props) =>
-      props.status !== AnnotationStatus.Rejected ? '#d9d9d9' : '#FFCFCF'};
+      props.status !== Status.Rejected ? '#d9d9d9' : '#FFCFCF'};
   }
 `;

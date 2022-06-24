@@ -1,49 +1,59 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import {
-  ReviewAnnotation,
-  RowData,
+  AnnotationDetailPanelRowDataBase,
   VirtualizedTreeRowProps,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
 import {
   AnnotationTableRow,
-  AssetLinkWarning,
   KeyboardShortCutSelectable,
   SidePanelRow,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/components/common';
+import { VisionReviewAnnotation } from 'src/modules/Review/types';
+import { VisionAnnotationDataType } from 'src/modules/Common/types/annotation';
+import { AssetLinkWarning } from './AssetLinkWarning';
 
 /**
  * Annotation detail row component for Tag annotations
  * @param additionalData
  * @constructor
  */
-export const TagAnnotationReviewRow = ({
+export const ReviewAssetLinkAnnotationRow = ({
   additionalData,
-}: VirtualizedTreeRowProps<RowData<ReviewAnnotation>>) => {
+}: VirtualizedTreeRowProps<
+  AnnotationDetailPanelRowDataBase<
+    VisionReviewAnnotation<VisionAnnotationDataType>
+  >
+>) => {
   const {
-    common: { annotations, file },
+    common: { reviewAnnotations, file },
     callbacks: { onSelect, onVisibilityChange, onApproveStateChange, onDelete },
-    ...annotation
+    ...visionReviewAnnotationRowData
   } = additionalData;
 
   const [warningShown, setWarningShown] = useState(false);
 
   return (
     <KeyboardShortCutSelectable
-      id={annotation.id}
-      selected={annotation.selected}
-      onClick={() => onSelect(annotation.id, !annotation.selected)}
+      id={visionReviewAnnotationRowData.annotation.id}
+      selected={visionReviewAnnotationRowData.selected}
+      onClick={() =>
+        onSelect(
+          visionReviewAnnotationRowData.annotation.id,
+          !visionReviewAnnotationRowData.selected
+        )
+      }
     >
       <AssetLinkWarning
         file={file}
-        annotation={annotation}
-        key={annotation.id}
-        allAnnotations={annotations}
+        reviewAnnotation={visionReviewAnnotationRowData}
+        key={visionReviewAnnotationRowData.annotation.id}
+        allReviewAnnotations={reviewAnnotations}
         onWarningStatusChange={setWarningShown}
       >
         <AssetLinkSidePanelRow showWarning={warningShown}>
           <AnnotationTableRow
-            annotation={annotation}
+            reviewAnnotation={visionReviewAnnotationRowData}
             onSelect={onSelect}
             onDelete={onDelete}
             onApprove={onApproveStateChange}

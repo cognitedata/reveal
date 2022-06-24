@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Detail, Tabs, Title } from '@cognite/cogs.js';
 import {
-  AnnotationCollection,
-  KeypointCollection,
-  Shape,
+  PredefinedVisionAnnotations,
+  PredefinedKeypointCollection,
+  PredefinedShape,
 } from 'src/modules/Review/types';
 import styled from 'styled-components';
 import { Shapes } from './Body/Shapes';
@@ -15,8 +15,8 @@ export const AnnotationSettingsModalContent = ({
   onCancel,
   options,
 }: {
-  predefinedAnnotations: AnnotationCollection;
-  onDone: (collection: AnnotationCollection) => void;
+  predefinedAnnotations: PredefinedVisionAnnotations;
+  onDone: (collection: PredefinedVisionAnnotations) => void;
   onCancel: () => void;
   options?: {
     createNew: { text?: string; color?: string };
@@ -27,10 +27,11 @@ export const AnnotationSettingsModalContent = ({
     options?.activeView || 'shape'
   );
 
-  const [newCollection, setNewCollection] = useState<AnnotationCollection>({
-    predefinedKeypoints: [],
-    predefinedShapes: [],
-  });
+  const [newCollection, setNewCollection] =
+    useState<PredefinedVisionAnnotations>({
+      predefinedKeypointCollections: [],
+      predefinedShapes: [],
+    });
 
   const [shapeCreationInProgress, setShapeCreationInProgress] = useState(false);
   const [keypointCreationInProgress, setKeypointCreationInProgress] =
@@ -43,7 +44,7 @@ export const AnnotationSettingsModalContent = ({
     setIsSaving(false);
   };
 
-  const setUnsavedShapes = (shapes: Shape[]) => {
+  const setUnsavedShapes = (shapes: PredefinedShape[]) => {
     setNewCollection((collection) => ({
       ...collection,
       predefinedShapes: [...shapes],
@@ -51,11 +52,11 @@ export const AnnotationSettingsModalContent = ({
   };
 
   const setUnsavedKeypointCollections = (
-    keypointCollections: KeypointCollection[]
+    keypointCollections: PredefinedKeypointCollection[]
   ) => {
     setNewCollection((collection) => ({
       ...collection,
-      predefinedKeypoints: [...keypointCollections],
+      predefinedKeypointCollections: [...keypointCollections],
     }));
   };
 
@@ -101,9 +102,11 @@ export const AnnotationSettingsModalContent = ({
           <Body>
             <Keypoints
               predefinedKeypointCollections={
-                predefinedAnnotations.predefinedKeypoints
+                predefinedAnnotations.predefinedKeypointCollections
               }
-              unsavedKeypointCollections={newCollection.predefinedKeypoints}
+              unsavedKeypointCollections={
+                newCollection.predefinedKeypointCollections
+              }
               setUnsavedKeypointCollections={setUnsavedKeypointCollections}
               options={options?.activeView === 'keypoint' ? options : undefined}
               creationInProgress={setKeypointsInProgressState}
@@ -112,18 +115,7 @@ export const AnnotationSettingsModalContent = ({
         </Tabs.TabPane>
       </Tabs>
       <Footer>
-        <LeftFooter>
-          {/* ToDo: fix upload labels button */}
-          {/* <Button
-            type="tertiary"
-            icon="Upload"
-            onClick={() => {
-              console.error('Not Implemented');
-            }}
-          >
-            Upload labels
-          </Button> */}
-        </LeftFooter>
+        <LeftFooter />
         <RightFooter>
           <Button type="secondary" onClick={onCancel}>
             Cancel

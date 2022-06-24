@@ -1,4 +1,3 @@
-import { AnnotationStateV1 } from 'src/modules/Common/store/annotationV1/types';
 import { SortKeys } from 'src/modules/Common/Utils/SortUtils';
 import {
   selectExplorerSelectedIds,
@@ -12,22 +11,14 @@ import {
 } from 'src/modules/Explorer/store/selectors';
 import { ExplorerState } from 'src/modules/Explorer/types';
 import { RootState } from 'src/store/rootReducer';
-import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { VisionFilesToFileState } from 'src/store/util/StateUtils';
 import { mockFileList } from 'src/__test-utils/fixtures/files';
-
-const createMockAnnotation = (id?: number, fileId?: number) => {
-  return AnnotationUtilsV1.createVisionAnnotationStubV1(
-    id || 1,
-    'foo',
-    VisionDetectionModelType.ObjectDetection,
-    fileId || 2,
-    1,
-    123,
-    { shape: 'rectangle', vertices: [] }
-  );
-};
+import { AnnotationState } from 'src/modules/Common/store/annotation/types';
+import {
+  getDummyImageObjectDetectionBoundingBoxAnnotation,
+  getDummyImageObjectDetectionPolygonAnnotation,
+  getDummyImageObjectDetectionPolylineAnnotation,
+} from 'src/__test-utils/getDummyAnnotations';
 
 describe('Test file explorer selectors', () => {
   const mockState: ExplorerState = {
@@ -129,17 +120,27 @@ describe('Test file explorer selectors', () => {
     });
   });
 
-  const annoState: AnnotationStateV1 = {
+  const annoState: AnnotationState = {
     files: {
       byId: { 1: [1, 2], 2: [], 4: [4] },
     },
     annotations: {
       byId: {
-        1: createMockAnnotation(1, 1),
-        2: createMockAnnotation(2, 1),
-        4: createMockAnnotation(4, 4),
+        1: getDummyImageObjectDetectionPolygonAnnotation({
+          id: 1,
+          annotatedResourceId: 1,
+        }),
+        2: getDummyImageObjectDetectionBoundingBoxAnnotation({
+          id: 2,
+          annotatedResourceId: 1,
+        }),
+        4: getDummyImageObjectDetectionPolylineAnnotation({
+          id: 4,
+          annotatedResourceId: 4,
+        }),
       },
     },
+    annotationColorMap: {},
   };
   const fileIds = [1, 2, 3, 4];
   const explorerState: ExplorerState = {
@@ -154,7 +155,7 @@ describe('Test file explorer selectors', () => {
   };
   const rootState: RootState = {
     explorerReducer: explorerState,
-    annotationV1Reducer: annoState,
+    annotationReducer: annoState,
   } as RootState;
 
   describe('Test selectExplorerFilesWithAnnotationCount', () => {

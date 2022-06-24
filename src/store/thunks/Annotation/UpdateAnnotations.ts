@@ -4,8 +4,9 @@ import {
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
-import { useCognitePlaygroundClient } from 'src/hooks/useCognitePlaygroundClient';
 import { AnnotationChangeById } from '@cognite/sdk-playground';
+import { cognitePlaygroundClient as sdk } from 'src/api/annotation/CognitePlaygroundClient';
+import { convertCDFAnnotationToVisionAnnotations } from 'src/api/annotation/converters';
 
 /**
  * ## Example
@@ -38,13 +39,12 @@ export const UpdateAnnotations = createAsyncThunk<
     return [];
   }
 
-  const sdk = useCognitePlaygroundClient();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const annotations = await sdk.annotations.update(annotationChangeByIds);
+  const updatedAnnotations = await sdk.annotations.update(
+    annotationChangeByIds
+  );
 
-  const visionAnnotations: VisionAnnotation<VisionAnnotationDataType>[] = [];
-  // visionAnnotations = annotations.map((annotations) =>
-  //     convertCDFAnnotationV2ToVisionAnnotations(annotations)
-  //   ),
-  return visionAnnotations;
+  const updatedVisionAnnotations: VisionAnnotation<VisionAnnotationDataType>[] =
+    convertCDFAnnotationToVisionAnnotations(updatedAnnotations);
+  return updatedVisionAnnotations;
 });

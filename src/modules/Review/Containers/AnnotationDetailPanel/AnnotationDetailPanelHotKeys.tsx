@@ -5,40 +5,39 @@ import React, {
   useEffect,
   useRef,
 } from 'react';
-import {
-  keypointSelectStatusChange,
-  selectCollection,
-} from 'src/modules/Review/store/annotationLabel/slice';
-import { useDispatch } from 'react-redux';
+import { batch, useDispatch } from 'react-redux';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import {
   selectAnnotation,
   setScrollToId,
 } from 'src/modules/Review/store/reviewSlice';
-import { Categories } from 'src/modules/Review/types';
 import {
   getActiveNode,
   getActiveNodeIndexFromArray,
   getActiveNodeParent,
   getNodeFromRowSelect,
-  isAnnotationData,
-  isCategoryData,
-  isKeypointAnnotationData,
+  isVisionReviewAnnotationRowData,
+  isAnnotationTypeRowData,
+  isVisionReviewImageKeypointRowData,
   selectNextOrFirstIndexArr,
   selectPrevOrFirstIndexArr,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/utils/nodeTreeUtils';
 import {
-  Data,
+  AnnotationDetailPanelRowData,
   TreeNode,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { selectCategory } from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
+import { selectAnnotationCategory } from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
 import { HotKeys } from 'src/constants/HotKeys';
-import { AnnotationStatusChangeV1 } from 'src/store/thunks/Annotation/AnnotationStatusChangeV1';
-import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { Modal } from 'antd';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFileV1 } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFileV1';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import { FileInfo } from '@cognite/sdk';
+import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
+import { Status } from 'src/api/annotation/types';
+import {
+  keypointSelectStatusChange,
+  selectCollection,
+} from 'src/modules/Review/store/annotatorWrapper/slice';
 
 export const AnnotationDetailPanelHotKeys = ({
   scrollId,
@@ -46,7 +45,7 @@ export const AnnotationDetailPanelHotKeys = ({
   nodeTree,
   file,
 }: {
-  nodeTree: TreeNode<Data>[];
+  nodeTree: TreeNode<AnnotationDetailPanelRowData>[];
   children: any;
   scrollId: ReactText;
   file: FileInfo;
@@ -99,23 +98,30 @@ export const AnnotationDetailPanelHotKeys = ({
     scrollId,
   ]);
 
-  const setSelectedNodeAsActive = (id: string, node: TreeNode<Data>) => {
-    dispatch(deselectAllSelectionsReviewPage());
-    if (isCategoryData(node.additionalData)) {
-      dispatch(selectCategory({ category: id as Categories, selected: true }));
-    } else if (isAnnotationData(node.additionalData)) {
-      if (
-        isKeypointAnnotationData(node.additionalData) && // if this is current Collection
-        !node.additionalData.lastUpdatedTime
-      ) {
-        dispatch(selectCollection(id));
+  const setSelectedNodeAsActive = (
+    id: string,
+    node: TreeNode<AnnotationDetailPanelRowData>
+  ) => {
+    batch(() => {
+      dispatch(deselectAllSelectionsReviewPage());
+      if (isAnnotationTypeRowData(node.additionalData)) {
+        const { annotationType } =
+          node.additionalData.common.reviewAnnotations[0].annotation;
+        dispatch(selectAnnotationCategory({ annotationType, selected: true }));
+      } else if (isVisionReviewAnnotationRowData(node.additionalData)) {
+        if (
+          isVisionReviewImageKeypointRowData(node.additionalData) && // if this is current Collection
+          !node.additionalData.annotation.lastUpdatedTime
+        ) {
+          dispatch(selectCollection(+id));
+        } else {
+          dispatch(selectAnnotation(+id));
+        }
       } else {
-        dispatch(selectAnnotation(+id));
+        dispatch(keypointSelectStatusChange(id));
       }
-    } else {
-      dispatch(keypointSelectStatusChange(id));
-    }
-    dispatch(setScrollToId(id));
+      dispatch(setScrollToId(id));
+    });
   };
 
   const selectPrevRow = useCallback(() => {
@@ -185,11 +191,9 @@ export const AnnotationDetailPanelHotKeys = ({
         }
         if (annotationId) {
           dispatch(
-            AnnotationStatusChangeV1({
+            AnnotationStatusChange({
               id: +annotationId,
-              status: status
-                ? AnnotationStatus.Verified
-                : AnnotationStatus.Rejected,
+              status: status ? Status.Approved : Status.Rejected,
             })
           );
         }
@@ -202,14 +206,17 @@ export const AnnotationDetailPanelHotKeys = ({
     if (nodeTree.length) {
       let annotationId: string;
       const activeNode = getActiveNode(nodeTree);
-      if (activeNode && isAnnotationData(activeNode.additionalData)) {
+      if (
+        activeNode &&
+        isVisionReviewAnnotationRowData(activeNode.additionalData)
+      ) {
         annotationId = activeNode.id;
       }
 
       const onConfirmDelete = async () => {
         await dispatch(
-          DeleteAnnotationsAndHandleLinkedAssetsOfFileV1({
-            annotationIds: [+annotationId!],
+          DeleteAnnotationsAndHandleLinkedAssetsOfFile({
+            annotationId: { id: +annotationId! },
             showWarnings: true,
           })
         );

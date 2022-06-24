@@ -104,9 +104,22 @@ export const failedJob: JobState = {
   status: 'Failed',
   createdTime: 1643352030229,
   statusTime: 1643352030229,
-  startTime: null,
+  startTime: 1643352030660,
   fileIds: [10, 11, 12, 14, 15],
   failedFileIds: [10, 11, 12, 14, 15],
+  failedItems: [
+    {
+      errorMessage: 'error',
+      items: [
+        { fileId: 10 },
+        { fileId: 11 },
+        { fileId: 12 },
+        { fileId: 13 },
+        { fileId: 14 },
+        { fileId: 15 },
+      ],
+    },
+  ],
 };
 export const partiallyCompletedJob: JobState = {
   jobId: 500,

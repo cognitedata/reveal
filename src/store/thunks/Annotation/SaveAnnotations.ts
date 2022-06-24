@@ -6,21 +6,27 @@ import {
   VisionAnnotationDataType,
   UnsavedVisionAnnotation,
 } from 'src/modules/Common/types';
-import { useCognitePlaygroundClient } from 'src/hooks/useCognitePlaygroundClient';
 import {
   ANNOTATED_RESOURCE_TYPE,
   CREATING_APP,
   CREATING_APP_VERSION,
 } from 'src/constants/annotationMetadata';
+import { cognitePlaygroundClient as sdk } from 'src/api/annotation/CognitePlaygroundClient';
+import {
+  convertCDFAnnotationToVisionAnnotations,
+  convertUnsavedAnnotationsToCDFCompatibleAnnotation,
+} from 'src/api/annotation/converters';
 
 export const SaveAnnotations = createAsyncThunk<
   VisionAnnotation<VisionAnnotationDataType>[],
   UnsavedVisionAnnotation<VisionAnnotationDataType>[],
   ThunkConfig
 >('SaveAnnotations', async (unsavedAnnotations) => {
-  const sdk = useCognitePlaygroundClient();
-
-  const items = unsavedAnnotations.map((item) => {
+  // TODO: remove this conversion once
+  // https://cognitedata.atlassian.net/browse/VIS-874 is done
+  const items = convertUnsavedAnnotationsToCDFCompatibleAnnotation(
+    unsavedAnnotations
+  ).map((item) => {
     return {
       ...item,
       annotatedResourceType: ANNOTATED_RESOURCE_TYPE,
@@ -33,9 +39,7 @@ export const SaveAnnotations = createAsyncThunk<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const annotations = await sdk.annotations.create(items);
 
-  const visionAnnotations: VisionAnnotation<VisionAnnotationDataType>[] = [];
-  // visionAnnotations = annotations.map((annotations) =>
-  //     convertCDFAnnotationV2ToVisionAnnotations(annotations)
-  //   ),
+  const visionAnnotations: VisionAnnotation<VisionAnnotationDataType>[] =
+    convertCDFAnnotationToVisionAnnotations(annotations);
   return visionAnnotations;
 });

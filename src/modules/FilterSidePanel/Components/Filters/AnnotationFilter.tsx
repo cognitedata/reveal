@@ -13,9 +13,9 @@ import {
 } from 'src/modules/FilterSidePanel/types';
 
 const annotationStateOptions: { [key: string]: string } = {
-  verified: 'True (verified annotations)',
+  approved: 'True (verified annotations)',
   rejected: 'False (rejected annotations)',
-  unhandled: 'Unhandled (unreviewed annotations)',
+  suggested: 'Suggested (suggested annotations)',
 };
 
 export const AnnotationFilter = ({
@@ -74,7 +74,10 @@ export const AnnotationFilter = ({
         PopulateAnnotationTemplates()
       );
       const savedConfiguration = unwrapResult(savedConfigurationsResponse);
-      const { predefinedKeypoints, predefinedShapes } = savedConfiguration;
+      const {
+        predefinedKeypointCollections: predefinedKeypoints,
+        predefinedShapes,
+      } = savedConfiguration;
       const keypointOptions = predefinedKeypoints.map((keypoint) => ({
         value: keypoint.collectionName,
         label: keypoint.collectionName,

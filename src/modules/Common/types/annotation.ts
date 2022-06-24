@@ -1,6 +1,4 @@
 import {
-  AnnotatedResourceId,
-  CDFAnnotationType,
   CDFAnnotationV2,
   ImageAssetLink,
   ImageClassification,
@@ -22,21 +20,23 @@ export type VisionAnnotationDataType =
 
 // Vision Annotation Type
 
-export type CDFInheritedFields<Type> = AnnotatedResourceId & {
-  // AnnotatedResourceId available in CDFAnnotationV2, cannot be used in Pick operation due to One of relationship
+export type CDFInheritedFields<Type> = {
   status: Status;
 } & Pick<
-    CDFAnnotationV2<Type>,
-    'id' | 'createdTime' | 'lastUpdatedTime' | 'annotationType'
-  >;
+  CDFAnnotationV2<Type>,
+  | 'id'
+  | 'annotatedResourceId'
+  | 'createdTime'
+  | 'lastUpdatedTime'
+  | 'annotationType'
+>;
 
 export type VisionAnnotation<Type> = CDFInheritedFields<Type> & Type;
 
-export type UnsavedVisionAnnotation<Type> = AnnotatedResourceId & {
-  annotationType: CDFAnnotationType<Type>;
-} & {
-  status: Status;
-} & { data: Type };
+export type UnsavedVisionAnnotation<Type> = { data: Type } & Pick<
+  VisionAnnotation<Type>,
+  'annotatedResourceId' | 'annotationType' | 'status'
+>;
 
 export type VisionImageClassificationAnnotation =
   VisionAnnotation<ImageClassification>;

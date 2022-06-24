@@ -1,14 +1,19 @@
 /* eslint-disable no-underscore-dangle */
 import {
   AnnotationAttributes,
+  CDFAnnotationTypeEnum,
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
   ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
   RegionShape,
+  Status,
 } from 'src/api/annotation/types';
-import { VisionAnnotationDataType } from 'src/modules/Common/types';
+import {
+  UnsavedVisionAnnotation,
+  VisionAnnotationDataType,
+} from 'src/modules/Common/types';
 
 import {
   GaugeReaderJobAnnotation,
@@ -17,6 +22,7 @@ import {
   TextDetectionJobAnnotation,
   VisionDetectionModelType,
   VisionJobAnnotation,
+  VisionJobResultItem,
 } from './types';
 import {
   validBoundingBox,
@@ -51,10 +57,22 @@ export function convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
     label: annotation.text,
     confidence: annotation.confidence,
     boundingBox: {
-      xMin: annotation.region.vertices[0].x,
-      yMin: annotation.region.vertices[0].y,
-      xMax: annotation.region.vertices[1].x,
-      yMax: annotation.region.vertices[1].y,
+      xMin: Math.min(
+        annotation.region.vertices[0].x,
+        annotation.region.vertices[1].x
+      ),
+      yMin: Math.min(
+        annotation.region.vertices[0].y,
+        annotation.region.vertices[1].y
+      ),
+      xMax: Math.max(
+        annotation.region.vertices[0].x,
+        annotation.region.vertices[1].x
+      ),
+      yMax: Math.max(
+        annotation.region.vertices[0].y,
+        annotation.region.vertices[1].y
+      ),
     },
   };
   return imageObjectDetectionBoundingBox;
@@ -69,13 +87,25 @@ export function convertVisionJobAnnotationToImageExtractedText(
   }
   const annotation = visionJobAnnotation as TextDetectionJobAnnotation;
   const imageExtractedText: ImageExtractedText = {
-    extractedText: annotation.text,
+    text: annotation.text,
     confidence: annotation.confidence,
     textRegion: {
-      xMin: annotation.region.vertices[0].x,
-      yMin: annotation.region.vertices[0].y,
-      xMax: annotation.region.vertices[1].x,
-      yMax: annotation.region.vertices[1].y,
+      xMin: Math.min(
+        annotation.region.vertices[0].x,
+        annotation.region.vertices[1].x
+      ),
+      yMin: Math.min(
+        annotation.region.vertices[0].y,
+        annotation.region.vertices[1].y
+      ),
+      xMax: Math.max(
+        annotation.region.vertices[0].x,
+        annotation.region.vertices[1].x
+      ),
+      yMax: Math.max(
+        annotation.region.vertices[0].y,
+        annotation.region.vertices[1].y
+      ),
     },
   };
   return imageExtractedText;
@@ -96,10 +126,22 @@ export function convertVisionJobAnnotationToImageAssetLinkList(
         confidence: annotation.confidence,
         assetRef: { id: assetId },
         textRegion: {
-          xMin: annotation.region.vertices[0].x,
-          yMin: annotation.region.vertices[0].y,
-          xMax: annotation.region.vertices[1].x,
-          yMax: annotation.region.vertices[1].y,
+          xMin: Math.min(
+            annotation.region.vertices[0].x,
+            annotation.region.vertices[1].x
+          ),
+          yMin: Math.min(
+            annotation.region.vertices[0].y,
+            annotation.region.vertices[1].y
+          ),
+          xMax: Math.max(
+            annotation.region.vertices[0].x,
+            annotation.region.vertices[1].x
+          ),
+          yMax: Math.max(
+            annotation.region.vertices[0].y,
+            annotation.region.vertices[1].y
+          ),
         },
       };
     }
@@ -114,10 +156,11 @@ function convertGaugeReaderJobAnnotationAttributesToAnnotationAttributes(
   const { data } = visionJobAnnotation;
   return {
     attributes: {
-      unit: {
-        type: 'unit',
-        value: data.unit,
-      },
+      // TODO: remove unit until it is supported in Annotations API
+      // unit: {
+      //   type: 'unit',
+      //   value: data.unit,
+      // },
       gaugeValue: {
         type: 'numerical',
         value: data.gauge_value || -1,
@@ -196,7 +239,7 @@ export function convertImageExtractedTextToAnnotationTypeV1(
   imageExtractedText: ImageExtractedText
 ) {
   const annotation = {
-    text: imageExtractedText.extractedText,
+    text: imageExtractedText.text,
     data: {
       confidence: imageExtractedText.confidence,
     },
@@ -351,57 +394,127 @@ export function convertVisionJobAnnotationToAnnotationTypeV1(
   }
 }
 
-export function convertVisionJobAnnotationToVisionAnnotation(
-  visionJobAnnotation: VisionJobAnnotation,
+export function convertVisionJobResultItemToUnsavedVisionAnnotation(
+  visionJobResultItem: VisionJobResultItem,
   visionDetectionModelType: VisionDetectionModelType
-): VisionAnnotationDataType | ImageAssetLink[] | null {
-  switch (visionDetectionModelType) {
-    case VisionDetectionModelType.ObjectDetection: {
-      const annotationType =
-        convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
-          visionJobAnnotation
-        );
-      return annotationType;
-    }
-    case VisionDetectionModelType.OCR: {
-      const annotationType =
-        convertVisionJobAnnotationToImageExtractedText(visionJobAnnotation);
-      return annotationType;
-    }
-    case VisionDetectionModelType.TagDetection: {
-      const annotationType =
-        convertVisionJobAnnotationToImageAssetLinkList(visionJobAnnotation);
-      return annotationType;
-    }
-    case VisionDetectionModelType.GaugeReader: {
-      // Gauge reader output consist of a bounding box and a keypoint collection
-      const annotationTypeBoundingBox =
-        convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
-          visionJobAnnotation
-        );
-      if (annotationTypeBoundingBox) {
-        return annotationTypeBoundingBox;
-      }
-      const annotationTypeKeypointCollection =
-        convertVisionJobAnnotationToImageKeypointCollection(
-          visionJobAnnotation
-        );
-      return annotationTypeKeypointCollection;
-    }
-    case VisionDetectionModelType.CustomModel: {
-      const annotationTypeBoundingBox =
-        convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
-          visionJobAnnotation
-        );
-      if (annotationTypeBoundingBox) {
-        return annotationTypeBoundingBox;
-      }
+): UnsavedVisionAnnotation<VisionAnnotationDataType>[] {
+  const commonProperties = {
+    annotatedResourceId: visionJobResultItem.fileId,
+    status: Status.Suggested,
+  };
 
-      const annotationTypeClassification =
-        convertVisionJobAnnotationToImageClassification(visionJobAnnotation);
-      return annotationTypeClassification;
-    }
-    default:
-      return null;
-  }
+  const unsavedVisionAnnotations = !visionJobResultItem.annotations
+    ? []
+    : visionJobResultItem.annotations
+        .map((visionJobAnnotation):
+          | UnsavedVisionAnnotation<VisionAnnotationDataType>
+          | UnsavedVisionAnnotation<VisionAnnotationDataType>[]
+          | null => {
+          switch (visionDetectionModelType) {
+            case VisionDetectionModelType.ObjectDetection: {
+              const annotationData =
+                convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
+                  visionJobAnnotation
+                );
+              return annotationData
+                ? {
+                    annotationType: CDFAnnotationTypeEnum.ImagesObjectDetection,
+                    data: annotationData,
+                    ...commonProperties,
+                  }
+                : null;
+            }
+            case VisionDetectionModelType.OCR: {
+              const annotationData =
+                convertVisionJobAnnotationToImageExtractedText(
+                  visionJobAnnotation
+                );
+              return annotationData
+                ? {
+                    annotationType: CDFAnnotationTypeEnum.ImagesTextRegion,
+                    data: annotationData,
+                    ...commonProperties,
+                  }
+                : null;
+            }
+            case VisionDetectionModelType.TagDetection: {
+              const annotationData =
+                convertVisionJobAnnotationToImageAssetLinkList(
+                  visionJobAnnotation
+                );
+              return annotationData
+                ? annotationData.map((item) => ({
+                    annotationType: CDFAnnotationTypeEnum.ImagesAssetLink,
+                    data: item,
+                    ...commonProperties,
+                  }))
+                : null;
+            }
+            case VisionDetectionModelType.GaugeReader: {
+              // Gauge reader output consist of a bounding box and a keypoint collection
+              const annotationDataBoundingBox =
+                convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
+                  visionJobAnnotation
+                );
+              if (annotationDataBoundingBox) {
+                return annotationDataBoundingBox
+                  ? {
+                      annotationType:
+                        CDFAnnotationTypeEnum.ImagesObjectDetection,
+                      data: annotationDataBoundingBox,
+                      ...commonProperties,
+                    }
+                  : null;
+              }
+              const annotationDataKeypointCollection =
+                convertVisionJobAnnotationToImageKeypointCollection(
+                  visionJobAnnotation
+                );
+              return annotationDataKeypointCollection
+                ? {
+                    annotationType:
+                      CDFAnnotationTypeEnum.ImagesKeypointCollection,
+                    data: annotationDataKeypointCollection,
+                    ...commonProperties,
+                  }
+                : null;
+            }
+            case VisionDetectionModelType.CustomModel: {
+              const annotationData =
+                convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
+                  visionJobAnnotation
+                );
+              if (annotationData) {
+                return annotationData
+                  ? {
+                      ...commonProperties,
+                      annotationType:
+                        CDFAnnotationTypeEnum.ImagesObjectDetection,
+                      data: annotationData,
+                    }
+                  : null;
+              }
+
+              const annotationDataClassification =
+                convertVisionJobAnnotationToImageClassification(
+                  visionJobAnnotation
+                );
+              return annotationDataClassification
+                ? {
+                    ...commonProperties,
+                    annotationType: CDFAnnotationTypeEnum.ImagesClassification,
+                    data: annotationDataClassification,
+                  }
+                : null;
+            }
+            default:
+              return null;
+          }
+        })
+        .filter(
+          (item): item is UnsavedVisionAnnotation<VisionAnnotationDataType>[] =>
+            !!item
+        )
+        .flat();
+  return unsavedVisionAnnotations;
 }

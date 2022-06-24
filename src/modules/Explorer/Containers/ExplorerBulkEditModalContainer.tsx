@@ -10,7 +10,7 @@ import {
 } from 'src/modules/Common/store/common/slice';
 
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
-import { updateBulkV1 } from 'src/store/thunks/Files/updateBulkV1';
+import { updateBulk } from 'src/store/thunks/Files/updateBulk';
 
 export const ExplorerBulkEditModalContainer = () => {
   const dispatch = useDispatch();
@@ -30,7 +30,7 @@ export const ExplorerBulkEditModalContainer = () => {
     dispatch(setBulkEditUnsaved(value));
   };
   const onFinishBulkEdit = () => {
-    dispatch(updateBulkV1({ selectedFiles, bulkEditUnsaved }));
+    dispatch(updateBulk({ selectedFiles, bulkEditUnsaved }));
     onCloseBulkEdit();
   };
   const onCloseBulkEdit = () => {

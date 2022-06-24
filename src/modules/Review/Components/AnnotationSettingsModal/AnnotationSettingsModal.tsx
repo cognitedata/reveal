@@ -2,13 +2,13 @@ import React from 'react';
 import { Modal } from 'antd';
 import { getContainer } from 'src/utils';
 import styled from 'styled-components';
-import { AnnotationCollection } from 'src/modules/Review/types';
+import { PredefinedVisionAnnotations } from 'src/modules/Review/types';
 import { AnnotationSettingsModalContent } from './AnnotationSettingsModalContent';
 
 export type AnnotationSettingsModalProps = {
-  predefinedAnnotations: AnnotationCollection;
+  predefinedAnnotations: PredefinedVisionAnnotations;
   showModal: boolean;
-  onDone: (collection: AnnotationCollection) => void;
+  onDone: (collection: PredefinedVisionAnnotations) => void;
   onCancel: () => void;
   options?: {
     createNew: { text?: string; color?: string };

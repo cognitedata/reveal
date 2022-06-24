@@ -1,31 +1,72 @@
 import {
-  Category,
-  Data,
-  ReviewAnnotation,
-  RowData,
+  AnnotationDetailPanelAnnotationType,
+  AnnotationDetailPanelRowData,
+  AnnotationDetailPanelRowDataBase,
   TreeNode,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
 import isNumber from 'lodash-es/isNumber';
 import isInteger from 'lodash-es/isInteger';
 import isFinite from 'lodash-es/isFinite';
+import {
+  ReviewKeypoint,
+  VisionReviewAnnotation,
+} from 'src/modules/Review/types';
+import { VisionAnnotationDataType } from 'src/modules/Common/types';
+import {
+  CDFAnnotationTypeEnum,
+  ImageKeypointCollection,
+} from 'src/api/annotation/types';
 
-export const isCategoryData = (data: Data): data is RowData<Category> => {
-  return !!(data as Category).emptyPlaceholder;
-};
+export const isAnnotationTypeRowData = (
+  data: AnnotationDetailPanelRowData
+): data is AnnotationDetailPanelRowDataBase<AnnotationDetailPanelAnnotationType> => {
+  const castedType =
+    data as AnnotationDetailPanelRowDataBase<AnnotationDetailPanelAnnotationType>;
 
-export const isAnnotationData = (
-  data: Data
-): data is RowData<ReviewAnnotation> => {
   return (
-    'annotatedResourceId' in (data as ReviewAnnotation) &&
-    'lastUpdatedTime' in (data as ReviewAnnotation)
+    'title' in castedType &&
+    'selected' in castedType &&
+    'emptyPlaceholder' in castedType
   );
 };
 
-export const isKeypointAnnotationData = (
-  data: Data
-): data is RowData<ReviewAnnotation> => {
-  return !!(data as ReviewAnnotation).data?.keypoint;
+export const isVisionReviewAnnotationRowData = (
+  data: AnnotationDetailPanelRowData
+): data is AnnotationDetailPanelRowDataBase<
+  VisionReviewAnnotation<VisionAnnotationDataType>
+> => {
+  const castedType = data as AnnotationDetailPanelRowDataBase<
+    VisionReviewAnnotation<VisionAnnotationDataType>
+  >;
+
+  return (
+    'annotation' in castedType &&
+    'selected' in castedType &&
+    'show' in castedType
+  );
+};
+
+export const isVisionReviewImageKeypointRowData = (
+  data: AnnotationDetailPanelRowData
+): data is AnnotationDetailPanelRowDataBase<ReviewKeypoint> => {
+  const castedType = data as AnnotationDetailPanelRowDataBase<ReviewKeypoint>;
+
+  return (
+    'keypoint' in castedType &&
+    'label' in castedType.keypoint &&
+    'point' in castedType.keypoint
+  );
+};
+
+export const isVisionReviewImageKeypointCollection = (
+  data: VisionReviewAnnotation<VisionAnnotationDataType>
+): data is VisionReviewAnnotation<ImageKeypointCollection> => {
+  const castedType = data as VisionReviewAnnotation<ImageKeypointCollection>;
+
+  return (
+    castedType.annotation.annotationType ===
+    CDFAnnotationTypeEnum.ImagesKeypointCollection
+  );
 };
 
 /**
@@ -33,8 +74,8 @@ export const isKeypointAnnotationData = (
  * @param nodeArr
  */
 export const getActiveNode = (
-  nodeArr: TreeNode<Data>[]
-): TreeNode<Data> | undefined => {
+  nodeArr: TreeNode<AnnotationDetailPanelRowData>[]
+): TreeNode<AnnotationDetailPanelRowData> | undefined => {
   if (!nodeArr.length) {
     return undefined;
   }
@@ -51,15 +92,15 @@ export const getActiveNode = (
 };
 
 export const getActiveNodeIndexFromArray = (
-  nodeArr: TreeNode<Data>[]
+  nodeArr: TreeNode<AnnotationDetailPanelRowData>[]
 ): number | undefined => {
   const index = nodeArr.findIndex((node) => node.openByDefault);
   return index >= 0 ? index : undefined;
 };
 
 export const getActiveNodeSiblings = (
-  nodeArr: TreeNode<Data>[]
-): TreeNode<Data>[] => {
+  nodeArr: TreeNode<AnnotationDetailPanelRowData>[]
+): TreeNode<AnnotationDetailPanelRowData>[] => {
   if (!nodeArr.length) {
     return [];
   }
@@ -78,9 +119,9 @@ export const getActiveNodeSiblings = (
 };
 
 export const getActiveNodeParent = (
-  nodeArr: TreeNode<Data>[],
-  parent?: TreeNode<Data>
-): TreeNode<Data> | undefined => {
+  nodeArr: TreeNode<AnnotationDetailPanelRowData>[],
+  parent?: TreeNode<AnnotationDetailPanelRowData>
+): TreeNode<AnnotationDetailPanelRowData> | undefined => {
   if (!nodeArr.length) {
     return undefined;
   }
@@ -100,13 +141,13 @@ export const getActiveNodeParent = (
 };
 
 export const getNodeFromRowSelect = (
-  nodeArr: TreeNode<Data>[],
+  nodeArr: TreeNode<AnnotationDetailPanelRowData>[],
   getRowIndex: (
-    rows: TreeNode<Data>[],
+    rows: TreeNode<AnnotationDetailPanelRowData>[],
     currentActiveRowIndex: number | undefined
   ) => number | null
-): TreeNode<Data> | null => {
-  let node: TreeNode<Data> | null = null;
+): TreeNode<AnnotationDetailPanelRowData> | null => {
+  let node: TreeNode<AnnotationDetailPanelRowData> | null = null;
   if (nodeArr.length && !!getRowIndex) {
     let rows = getActiveNodeSiblings(nodeArr);
 

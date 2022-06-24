@@ -11,6 +11,7 @@ import {
   Status,
 } from 'src/api/annotation/types';
 import {
+  AnnotationIdsByStatus,
   AnnotationsBadgeCounts,
   VisionAnnotation,
   VisionAnnotationDataType,
@@ -23,7 +24,6 @@ import {
   isImageObjectDetectionPolygonData,
   isImageKeypointCollectionData,
 } from 'src/modules/Common/types/typeGuards';
-import { AnnotationIdsByStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 export const getAnnotationLabelOrText = (
   annotation: VisionAnnotation<VisionAnnotationDataType>
@@ -31,7 +31,7 @@ export const getAnnotationLabelOrText = (
   (annotation as ImageClassification).label ||
   (annotation as ImageObjectDetection).label ||
   (annotation as ImageKeypointCollection).label ||
-  (annotation as ImageExtractedText).extractedText ||
+  (annotation as ImageExtractedText).text ||
   (annotation as ImageAssetLink).text;
 
 export const filterAnnotations = ({
@@ -204,4 +204,8 @@ export const generateKeypointId = (
     );
   }
   return `${parentAnnotationId}-${keypointLabel}`;
+};
+
+export const createUniqueNumericId = (): number => {
+  return Date.now();
 };

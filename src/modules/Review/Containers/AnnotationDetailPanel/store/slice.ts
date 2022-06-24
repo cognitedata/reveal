@@ -1,35 +1,41 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Categories } from 'src/modules/Review/types';
+import { CDFAnnotationTypeEnum } from 'src/api/annotation/types';
 
-type CategoryState = {
-  [index in Categories]?: { selected: boolean };
+type AnnotationCategoryState = {
+  [index in CDFAnnotationTypeEnum]?: { selected: boolean };
 };
 
-const categories: CategoryState = {};
+const initialAnnotationCategories: AnnotationCategoryState = {};
 
 type State = {
-  categories: CategoryState;
+  annotationCategories: AnnotationCategoryState;
 };
-const initialState: State = { categories };
+const initialState: State = {
+  annotationCategories: initialAnnotationCategories,
+};
 
 const annotationDetailPanelSlice = createSlice({
   name: 'annotationDetailPanelSlice',
   initialState,
   reducers: {
-    selectCategory(
+    selectAnnotationCategory(
       state,
-      action: PayloadAction<{ category: Categories; selected: boolean }>
+      action: PayloadAction<{
+        annotationType: CDFAnnotationTypeEnum;
+        selected: boolean;
+      }>
     ) {
-      if (action.payload.category) {
+      const { annotationType } = action.payload;
+      if (annotationType) {
         /* eslint-disable no-param-reassign */
         if (action.payload.selected) {
-          state.categories = {
-            [action.payload.category as Categories]: {
+          state.annotationCategories = {
+            [annotationType]: {
               selected: action.payload.selected,
             },
           };
-        } else if (state.categories[action.payload.category]) {
-          delete state.categories[action.payload.category];
+        } else if (state.annotationCategories[annotationType]) {
+          delete state.annotationCategories[annotationType];
         }
         /* eslint-enable no-param-reassign */
       }
@@ -40,6 +46,6 @@ const annotationDetailPanelSlice = createSlice({
 export type { State as AnnotationDetailPanelState };
 export { initialState as annotationDetailPanelInitialState };
 
-export const { selectCategory } = annotationDetailPanelSlice.actions;
+export const { selectAnnotationCategory } = annotationDetailPanelSlice.actions;
 
 export default annotationDetailPanelSlice.reducer;

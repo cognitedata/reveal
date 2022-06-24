@@ -1,16 +1,17 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
-  AnnotationCollection,
-  KeypointCollection,
-  Shape,
+  PredefinedVisionAnnotations,
+  PredefinedKeypointCollection,
+  PredefinedShape,
 } from 'src/modules/Review/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationApiV1 } from 'src/api/annotation/AnnotationApiV1';
 import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
+import { getPredefinedKeypointsWithColor } from 'src/store/util/getPredefinedKeypointsWithCorrectColors';
 
 export const PopulateAnnotationTemplates = createAsyncThunk<
-  AnnotationCollection,
+  PredefinedVisionAnnotations,
   void,
   ThunkConfig
 >('PopulateAnnotationTemplates', async () => {
@@ -24,8 +25,8 @@ export const PopulateAnnotationTemplates = createAsyncThunk<
     limit: -1,
   };
   const templateAnnotations = await AnnotationApiV1.list(annotationListRequest);
-  const keypointCollections: KeypointCollection[] = [];
-  const shapes: Shape[] = [];
+  const keypointCollections: PredefinedKeypointCollection[] = [];
+  const shapes: PredefinedShape[] = [];
 
   if (templateAnnotations.length) {
     // eslint-disable-next-line no-restricted-syntax
@@ -34,8 +35,20 @@ export const PopulateAnnotationTemplates = createAsyncThunk<
         keypointCollections.push({
           id: templateAnnotation.id,
           lastUpdated: templateAnnotation.lastUpdatedTime,
-          keypoints: templateAnnotation.data.keypoints,
+          keypoints: getPredefinedKeypointsWithColor(
+            templateAnnotation.data.keypoints,
+            templateAnnotation.data.color
+          ),
           collectionName: templateAnnotation.text,
+          // Predefined collections created after june 2022 have color
+          // property, but old collections have color on individual keypoints
+          // This ensures backward comparability by using color from the first keypoint
+          // if collection does not have a color field.
+          color:
+            templateAnnotation.data.color ||
+            (templateAnnotation.data.keypoints?.length
+              ? templateAnnotation.data.keypoints[0].color
+              : ''),
         });
       } else {
         shapes.push({
@@ -52,7 +65,7 @@ export const PopulateAnnotationTemplates = createAsyncThunk<
     }
   }
   return {
-    predefinedKeypoints: keypointCollections,
+    predefinedKeypointCollections: keypointCollections,
     predefinedShapes: shapes,
   };
 });

@@ -39,7 +39,7 @@ const getNodeData = <T,>(
  * @param scrollId
  * @constructor
  */
-export const VirtualizedAnnotationsReview = <T,>({
+export const VirtualizedReviewAnnotations = <T,>({
   rootNodeArr,
   scrollId,
 }: {

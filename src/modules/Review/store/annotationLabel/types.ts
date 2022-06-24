@@ -1,5 +1,5 @@
 import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { AnnotationCollection, Tool } from 'src/modules/Review/types';
+import { PredefinedVisionAnnotations, Tool } from 'src/modules/Review/types';
 
 /** @deprecated */
 export type KeyPointState = {
@@ -19,7 +19,7 @@ type KeypointCollectionState = {
 
 /** @deprecated */
 export type AnnotationLabelState = {
-  predefinedAnnotations: AnnotationCollection;
+  predefinedAnnotations: PredefinedVisionAnnotations;
   collections: {
     byId: Record<string, KeypointCollectionState>;
     allIds: string[];

@@ -21,7 +21,7 @@ import { deleteCollection } from './utils';
 /** @deprecated */
 export const initialState: AnnotationLabelState = {
   predefinedAnnotations: {
-    predefinedKeypoints: [],
+    predefinedKeypointCollections: [],
     predefinedShapes: [],
   },
   collections: {
@@ -105,7 +105,7 @@ const annotationLabelSlice = createSlice({
         }>
       ) => {
         const predefinedCollection =
-          state.predefinedAnnotations.predefinedKeypoints.find(
+          state.predefinedAnnotations.predefinedKeypointCollections.find(
             (col) => col.collectionName === action.payload.collectionName
           );
 
@@ -189,7 +189,7 @@ const annotationLabelSlice = createSlice({
     },
     removeLabels(state) {
       state.predefinedAnnotations = {
-        predefinedKeypoints: [],
+        predefinedKeypointCollections: [],
         predefinedShapes: [],
       };
     },

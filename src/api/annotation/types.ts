@@ -5,7 +5,7 @@ import {
   InternalId,
 } from '@cognite/sdk';
 import { AnnotationRegion } from 'src/api/vision/detectionModels/types';
-import { Keypoint } from 'src/modules/Review/types';
+import { PredefinedKeypoint } from 'src/modules/Review/types';
 import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 // Constants
@@ -55,7 +55,7 @@ export type TextRegion = {
   textRegion: BoundingBox;
 };
 
-export type ImageKeypoint = Label &
+export type Keypoint = Label &
   Partial<Confidence> & {
     point: Point;
   };
@@ -114,18 +114,18 @@ export type ImageObjectDetection =
   | ImageObjectDetectionPolyline;
 
 export type ImageExtractedText = TextRegion &
-  Partial<Confidence> & {
-    extractedText: string;
+  Partial<Confidence & AnnotationAttributes> & {
+    text: string;
   };
 
 export type ImageAssetLink = TextRegion &
-  Partial<Confidence> & {
+  Partial<Confidence & AnnotationAttributes> & {
     text: string;
     assetRef: InternalId & Partial<ExternalId>;
   };
 
 export type ImageKeypointCollection = ImageClassification & {
-  keypoints: ImageKeypoint[];
+  keypoints: Keypoint[];
 };
 
 // Annotation API V2 types todo: remove this and import correct type from @cognite/sdk when v2 becomes available
@@ -144,10 +144,10 @@ export enum CDFAnnotationTypeEnum {
 
 export type CDFAnnotationType<Type> = Type extends ImageObjectDetection
   ? CDFAnnotationTypeEnum.ImagesObjectDetection
-  : Type extends ImageExtractedText
-  ? CDFAnnotationTypeEnum.ImagesTextRegion
   : Type extends ImageAssetLink
   ? CDFAnnotationTypeEnum.ImagesAssetLink
+  : Type extends ImageExtractedText
+  ? CDFAnnotationTypeEnum.ImagesTextRegion
   : Type extends ImageKeypointCollection
   ? CDFAnnotationTypeEnum.ImagesKeypointCollection
   : Type extends ImageClassification
@@ -178,7 +178,7 @@ export type AnnotationSourceV1 = 'context_api' | 'user';
 
 export type AnnotationMetadataV1 = Partial<AnnotationAttributes> & {
   keypoint?: boolean;
-  keypoints?: Keypoint[];
+  keypoints?: PredefinedKeypoint[];
   color?: string;
   confidence?: number;
 };

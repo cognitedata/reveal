@@ -2,43 +2,31 @@ import useAssetLinkWarning, {
   AssetWarnTypes,
 } from 'src/store/hooks/useAssetLinkWarning';
 import { act, renderHook } from '@testing-library/react-hooks';
-import {
-  AnnotationStatus,
-  AnnotationUtilsV1,
-} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { waitFor } from '@testing-library/react';
 import { WrappedWithProviders } from 'src/__test-utils/renderer';
-import { AnnotationTableItem } from 'src/modules/Review/types';
 import { mockFileList } from 'src/__test-utils/fixtures/files';
+import { VisionAnnotationDataType } from 'src/modules/Common/types';
+import { getDummyImageAssetLinkAnnotation } from 'src/__test-utils/getDummyAnnotations';
+import { ImageAssetLink, Status } from 'src/api/annotation/types';
+import { VisionReviewAnnotation } from 'src/modules/Review/types';
 
-const getDummyAnnotation = (
-  id?: number,
-  modelType?: number,
-  linkedResourceId?: number
-) => {
-  return {
-    ...AnnotationUtilsV1.createVisionAnnotationStubV1(
-      id || 1,
-      'pump',
-      modelType || 1,
-      1,
-      123,
-      124
-    ),
-    linkedResourceId,
-    show: true,
-    selected: false,
-  } as AnnotationTableItem;
-};
-
-const approveAnnotation = (annotation: AnnotationTableItem) => ({
-  ...annotation,
-  status: AnnotationStatus.Verified,
+const approveAnnotation = (
+  reviewAnnotation: VisionReviewAnnotation<ImageAssetLink>
+) => ({
+  ...reviewAnnotation,
+  annotation: {
+    ...reviewAnnotation.annotation,
+    status: Status.Approved,
+  },
 });
-const rejectAnnotation = (annotation: AnnotationTableItem) => ({
-  ...annotation,
-  status: AnnotationStatus.Rejected,
+const rejectAnnotation = (
+  reviewAnnotation: VisionReviewAnnotation<VisionAnnotationDataType>
+) => ({
+  ...reviewAnnotation,
+  annotation: {
+    ...reviewAnnotation.annotation,
+    status: Status.Rejected,
+  },
 });
 
 const linkFileToAssets = (assetIds?: number[]) => ({
@@ -47,10 +35,10 @@ const linkFileToAssets = (assetIds?: number[]) => ({
 });
 
 const getRenderProps = (
-  annotation: AnnotationTableItem,
-  annotationSibling: AnnotationTableItem,
+  annotation: VisionReviewAnnotation<VisionAnnotationDataType>,
+  annotationSibling: VisionReviewAnnotation<VisionAnnotationDataType>,
   fileAssetIds: number[],
-  annotationWithSameAsset?: AnnotationTableItem
+  annotationWithSameAsset?: VisionReviewAnnotation<VisionAnnotationDataType>
 ) => ({
   annotation,
   file: linkFileToAssets(fileAssetIds),
@@ -62,21 +50,30 @@ const getRenderProps = (
 describe('tests useAssetLinkWarningHook', () => {
   const annotationAssetId = 1;
   const annotationSiblingAssetId = 2;
-  const tagAnnotation = getDummyAnnotation(
-    1,
-    VisionDetectionModelType.TagDetection,
-    annotationAssetId
-  );
-  const tagAnnotationSibling = getDummyAnnotation(
-    2,
-    VisionDetectionModelType.TagDetection,
-    annotationSiblingAssetId
-  );
-  const tagAnnotationWithSameAsset = getDummyAnnotation(
-    3,
-    VisionDetectionModelType.TagDetection,
-    annotationAssetId
-  );
+  const tagAnnotation = {
+    show: true,
+    selected: false,
+    annotation: getDummyImageAssetLinkAnnotation({
+      id: 1,
+      assetRef: { id: annotationAssetId },
+    }),
+  };
+  const tagAnnotationSibling = {
+    show: true,
+    selected: false,
+    annotation: getDummyImageAssetLinkAnnotation({
+      id: 2,
+      assetRef: { id: annotationSiblingAssetId },
+    }),
+  };
+  const tagAnnotationWithSameAsset = {
+    show: true,
+    selected: false,
+    annotation: getDummyImageAssetLinkAnnotation({
+      id: 3,
+      assetRef: { id: annotationAssetId },
+    }),
+  };
 
   it('should test rendering of the hook with different props', async () => {
     jest.mock('@cognite/cdf-sdk-singleton');

@@ -18,8 +18,11 @@ import {
   ColorsPersonDetection,
   ColorsTagDetection,
 } from 'src/constants/Colors';
-import { Keypoint } from 'src/modules/Review/types';
-import { AnnotationsBadgeCounts } from 'src/modules/Common/types';
+import { PredefinedKeypoint } from 'src/modules/Review/types';
+import {
+  AnnotationIdsByStatus,
+  AnnotationsBadgeCounts,
+} from 'src/modules/Common/types';
 import { AllIconTypes } from '@cognite/cogs.js';
 import { v4 as uuidv4 } from 'uuid';
 import { getRandomColor } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
@@ -29,6 +32,9 @@ import {
   isKeyPointAnnotation,
 } from 'src/api/annotation/typeGuards';
 
+/**
+ * @deprecated Use Status instead
+ */
 export enum AnnotationStatus {
   Verified = 'verified',
   Rejected = 'rejected',
@@ -36,7 +42,7 @@ export enum AnnotationStatus {
   Unhandled = 'unhandled',
 }
 
-export type KeypointItem = Required<Keypoint> & {
+export type KeypointItem = Required<PredefinedKeypoint> & {
   id: string;
   selected: boolean;
 };
@@ -72,7 +78,7 @@ export const ModelTypeStyleMap = {
   [VisionDetectionModelType.CustomModel]: ColorsObjectDetection, // custom models are regarded as object detection models
 };
 export const ModelTypeIconMap: { [key: number]: string } = {
-  [VisionDetectionModelType.OCR]: 'Scan',
+  [VisionDetectionModelType.OCR]: 'TextScan',
   [VisionDetectionModelType.TagDetection]: 'ResourceAssets',
   [VisionDetectionModelType.ObjectDetection]: 'Scan',
   [VisionDetectionModelType.GaugeReader]: 'Scan',
@@ -94,12 +100,6 @@ export const AnnotationTypeModelTypeMap = {
   user_defined: VisionDetectionModelType.ObjectDetection,
   CDF_ANNOTATION_TEMPLATE: VisionDetectionModelType.ObjectDetection,
 };
-
-export interface AnnotationIdsByStatus {
-  rejectedAnnotationIds: number[];
-  acceptedAnnotationIds: number[];
-  unhandledAnnotationIds: number[];
-}
 
 export class AnnotationUtilsV1 {
   public static lineWidth = 5;
@@ -515,7 +515,9 @@ export const isUnSavedAnnotation = (
   return !(ann as CDFAnnotationV1).lastUpdatedTime;
 };
 
-// ToDo: move this to new util file
+/**
+ * @deprecated
+ */
 export const createUniqueId = (text: string): string => {
   return `${text.replace(/(\s)/g, '_').trim()}-${uuidv4()}`;
 };

@@ -10,7 +10,7 @@ import { Body, Button, Tooltip } from '@cognite/cogs.js';
 import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/AnnotationSettings';
 import { renderEmptyAnnotationMessage } from 'src/modules/Review/Components/AnnotationSettingsModal/Body/EmptyAnnotationInfo';
 import isEmpty from 'lodash-es/isEmpty';
-import { Shape } from 'src/modules/Review/types';
+import { PredefinedShape } from 'src/modules/Review/types';
 import { ToastUtils } from 'src/utils/ToastUtils';
 import { Header } from './Header';
 
@@ -26,19 +26,23 @@ export const Shapes = ({
   creationInProgress,
   options,
 }: {
-  predefinedShapes: Shape[];
-  unsavedShapes: Shape[];
-  setUnsavedShapes: (shapes: Shape[]) => void;
+  predefinedShapes: PredefinedShape[];
+  unsavedShapes: PredefinedShape[];
+  setUnsavedShapes: (shapes: PredefinedShape[]) => void;
   creationInProgress: (inProgress: boolean) => void;
   options?: { createNew?: { text?: string; color?: string } };
 }) => {
-  const [newShapes, setNewShapes] = useState<{ [key: string]: Shape }>({});
+  const [newShapes, setNewShapes] = useState<{
+    [key: string]: PredefinedShape;
+  }>({});
   const shapePanelRef = useRef<HTMLDivElement | null>(null);
-  const allShapes: (Shape & { unsaved?: boolean })[] = useMemo(() => {
+  const allShapes: (PredefinedShape & { unsaved?: boolean })[] = useMemo(() => {
     return [
       ...predefinedShapes,
       ...unsavedShapes.map((sp) => ({ ...sp, unsaved: true })),
-    ];
+    ].sort((a, b) =>
+      a.shapeName.toLowerCase() > b.shapeName.toLowerCase() ? 1 : -1
+    );
   }, [predefinedShapes, unsavedShapes]);
 
   const addNewShape = (newShape?: { text?: string; color?: string }) => {

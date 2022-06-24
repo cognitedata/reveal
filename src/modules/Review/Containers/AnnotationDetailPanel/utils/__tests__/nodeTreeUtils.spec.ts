@@ -1,120 +1,141 @@
-import { KeypointVertex } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { getDummyAnnotation } from 'src/__test-utils/annotations';
-import { Categories } from 'src/modules/Review/types';
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import {
   getActiveNode,
   getActiveNodeIndexFromArray,
   getActiveNodeParent,
   getActiveNodeSiblings,
   getNodeFromRowSelect,
-  isAnnotationData,
-  isCategoryData,
-  isKeypointAnnotationData,
+  isVisionReviewAnnotationRowData,
+  isAnnotationTypeRowData,
+  isVisionReviewImageKeypointRowData,
   selectNextOrFirstIndexArr,
   selectPrevOrFirstIndexArr,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/utils/nodeTreeUtils';
 import {
-  AnnotationReviewCallbacks,
-  Category,
-  CommonProps,
-  Data,
-  ReviewAnnotation,
-  RowData,
+  AnnotationDetailPanelReviewCallbacks,
+  AnnotationDetailPanelAnnotationType,
+  AnnotationDetailPanelCommonProps,
+  AnnotationDetailPanelRowData,
   TreeNode,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
+import { VisionAnnotationDataType } from 'src/modules/Common/types';
+import { getDummyImageObjectDetectionBoundingBoxAnnotation } from 'src/__test-utils/getDummyAnnotations';
+import { getDummyReviewImageKeypointObject } from 'src/__test-utils/annotations';
+import {
+  ReviewKeypoint,
+  VisionReviewAnnotation,
+} from 'src/modules/Review/types';
 
-const getDummyDataObject = (
-  data: Category | ReviewAnnotation | KeypointVertex
-): Data => {
+const getDummyRowDataObject = (
+  data:
+    | AnnotationDetailPanelAnnotationType
+    | VisionReviewAnnotation<VisionAnnotationDataType>
+    | ReviewKeypoint
+): AnnotationDetailPanelRowData => {
   return {
     ...data,
-    common: {} as CommonProps,
-    callbacks: {} as AnnotationReviewCallbacks,
+    common: {} as AnnotationDetailPanelCommonProps,
+    callbacks: {} as AnnotationDetailPanelReviewCallbacks,
   };
 };
 
-const getDummyReviewAnnotation = (id: number, selected = false) => {
+const getDummyAnnotationTypeRowDataObject = (
+  selected = false
+): AnnotationDetailPanelAnnotationType => {
+  return { title: 'Asset tags', selected, emptyPlaceholder: 'empty' };
+};
+
+const getDummyVisionReviewAnnotationRowDataObject = (
+  id: number,
+  selected = false
+): VisionReviewAnnotation<VisionAnnotationDataType> => {
   return {
     show: true,
     selected,
-    ...getDummyAnnotation(1),
-  };
-};
-const getDummyKeypointAnnotation = (id: number, selected = false) => {
-  return {
-    show: true,
-    selected,
-    ...getDummyAnnotation(1, VisionDetectionModelType.ObjectDetection, {
-      data: { keypoint: true },
-    }),
+    annotation: getDummyImageObjectDetectionBoundingBoxAnnotation({ id }),
   };
 };
 
-const getDummyCategory = (title: Categories, selected = false): Category => {
-  return { title, selected, emptyPlaceholder: 'empty' };
-};
-
-describe('test isCategoryData', () => {
+describe('test isAnnotationTypeRowData', () => {
   it('should reject empty', () => {
-    expect(isCategoryData({} as RowData<Category>)).toEqual(false);
-  });
-  it('should reject other objects data', () => {
-    expect(
-      isCategoryData(getDummyDataObject(getDummyReviewAnnotation(1, false)))
-    ).toEqual(false);
-    expect(
-      isCategoryData(getDummyDataObject(getDummyKeypointAnnotation(2)))
-    ).toEqual(false);
-  });
-  it('should accept category data', () => {
-    expect(
-      isCategoryData(getDummyDataObject(getDummyCategory(Categories.Asset)))
-    ).toEqual(true);
-  });
-});
-
-describe('test isAnnotationData', () => {
-  it('should reject empty', () => {
-    expect(isAnnotationData({} as RowData<ReviewAnnotation>)).toEqual(false);
-  });
-  it('should reject other objects data', () => {
-    expect(
-      isAnnotationData(
-        getDummyDataObject(getDummyCategory(Categories.Asset, false))
-      )
-    ).toEqual(false);
-  });
-  it('should accept annotation data', () => {
-    expect(
-      isAnnotationData(getDummyDataObject(getDummyReviewAnnotation(1, false)))
-    ).toEqual(true);
-    expect(
-      isAnnotationData(getDummyDataObject(getDummyKeypointAnnotation(2)))
-    ).toEqual(true);
-  });
-});
-
-describe('test isKeypointAnnotationData', () => {
-  it('should reject empty', () => {
-    expect(isKeypointAnnotationData({} as RowData<ReviewAnnotation>)).toEqual(
+    expect(isAnnotationTypeRowData({} as AnnotationDetailPanelRowData)).toEqual(
       false
     );
   });
-  it('should reject other objects data', () => {
+  it('should reject other objects than instances of AnnotationDetailPanelAnnotationType', () => {
     expect(
-      isKeypointAnnotationData(
-        getDummyDataObject(getDummyCategory(Categories.Asset, false))
+      isAnnotationTypeRowData(
+        getDummyRowDataObject(
+          getDummyVisionReviewAnnotationRowDataObject(1, false)
+        )
       )
     ).toEqual(false);
     expect(
-      isKeypointAnnotationData(getDummyDataObject(getDummyReviewAnnotation(1)))
+      isAnnotationTypeRowData(
+        getDummyRowDataObject(getDummyReviewImageKeypointObject(2))
+      )
     ).toEqual(false);
   });
-  it('should accept keypoint vertex data', () => {
+  it('should accept AnnotationDetailPanelAnnotationType objects', () => {
     expect(
-      isKeypointAnnotationData(
-        getDummyDataObject(getDummyKeypointAnnotation(1))
+      isAnnotationTypeRowData(
+        getDummyRowDataObject(getDummyAnnotationTypeRowDataObject())
+      )
+    ).toEqual(true);
+  });
+});
+
+describe('test isVisionReviewAnnotationRowData', () => {
+  it('should reject empty', () => {
+    expect(
+      isVisionReviewAnnotationRowData({} as AnnotationDetailPanelRowData)
+    ).toEqual(false);
+  });
+  it('should reject other objects than instances of VisionReviewAnnotation', () => {
+    expect(
+      isVisionReviewAnnotationRowData(
+        getDummyRowDataObject(getDummyAnnotationTypeRowDataObject(false))
+      )
+    ).toEqual(false);
+
+    expect(
+      isVisionReviewAnnotationRowData(
+        getDummyRowDataObject(getDummyReviewImageKeypointObject(2))
+      )
+    ).toEqual(false);
+  });
+  it('should accept VisionReviewAnnotation objects', () => {
+    expect(
+      isVisionReviewAnnotationRowData(
+        getDummyRowDataObject(
+          getDummyVisionReviewAnnotationRowDataObject(1, false)
+        )
+      )
+    ).toEqual(true);
+  });
+});
+
+describe('test isVisionReviewImageKeypointRowData', () => {
+  it('should reject empty', () => {
+    expect(
+      isVisionReviewImageKeypointRowData({} as AnnotationDetailPanelRowData)
+    ).toEqual(false);
+  });
+  it('should reject other objects than instances of ReviewKeypoint', () => {
+    expect(
+      isVisionReviewImageKeypointRowData(
+        getDummyRowDataObject(getDummyAnnotationTypeRowDataObject(false))
+      )
+    ).toEqual(false);
+    expect(
+      isVisionReviewImageKeypointRowData(
+        getDummyRowDataObject(getDummyVisionReviewAnnotationRowDataObject(1))
+      )
+    ).toEqual(false);
+  });
+  it('should accept ReviewKeypoint objects', () => {
+    expect(
+      isVisionReviewImageKeypointRowData(
+        getDummyRowDataObject(getDummyReviewImageKeypointObject(1))
       )
     ).toEqual(true);
   });
@@ -123,27 +144,34 @@ describe('test isKeypointAnnotationData', () => {
 const getDummyTreeNode = (
   id: string,
   isOpen = false,
-  data?: Category | KeypointVertex | ReviewAnnotation
-): TreeNode<Data> => {
+  data?:
+    | AnnotationDetailPanelAnnotationType
+    | ReviewKeypoint
+    | VisionReviewAnnotation<VisionAnnotationDataType>
+): TreeNode<AnnotationDetailPanelRowData> => {
   return {
     id,
     children: [],
     openByDefault: isOpen,
-    additionalData: { common: {}, callbacks: {}, ...data } as RowData<Data>,
+    additionalData: {
+      common: {},
+      callbacks: {},
+      ...data,
+    } as AnnotationDetailPanelRowData,
     component: () => null,
     name: id,
   };
 };
 
 describe('test nodeTree utility functions', () => {
-  const treeNodesWithNoActiveNode: TreeNode<Data>[] = [
+  const treeNodesWithNoActiveNode: TreeNode<AnnotationDetailPanelRowData>[] = [
     {
       ...getDummyTreeNode('1'),
       children: [getDummyTreeNode('3'), getDummyTreeNode('4')],
     },
     { ...getDummyTreeNode('2') },
   ];
-  const treeNodesWithOneActiveNode: TreeNode<Data>[] = [
+  const treeNodesWithOneActiveNode: TreeNode<AnnotationDetailPanelRowData>[] = [
     {
       ...getDummyTreeNode('1', true),
       children: [
@@ -210,7 +238,7 @@ describe('test nodeTree utility functions', () => {
 
   describe('test getNodeFromRowSelect', () => {
     const getPreviousRowIndex = (
-      rows: TreeNode<Data>[],
+      rows: TreeNode<AnnotationDetailPanelRowData>[],
       currentActiveRowIndex: number | undefined
     ) => {
       if (!rows.length) {
@@ -227,7 +255,7 @@ describe('test nodeTree utility functions', () => {
     };
 
     const getNextRowIndex = (
-      rows: TreeNode<Data>[],
+      rows: TreeNode<AnnotationDetailPanelRowData>[],
       currentActiveRowIndex: number | undefined
     ) => {
       if (!rows.length) {

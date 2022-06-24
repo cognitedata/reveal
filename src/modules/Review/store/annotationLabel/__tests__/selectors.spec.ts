@@ -61,8 +61,8 @@ describe('Test annotationLabel selectors', () => {
         annotationLabelReducer: {
           ...initialState,
           predefinedAnnotations: {
-            predefinedKeypoints:
-              initialState.predefinedAnnotations.predefinedKeypoints,
+            predefinedKeypointCollections:
+              initialState.predefinedAnnotations.predefinedKeypointCollections,
             predefinedShapes: [
               {
                 shapeName,
@@ -117,7 +117,7 @@ describe('Test annotationLabel selectors', () => {
           predefinedAnnotations: {
             predefinedShapes:
               initialState.predefinedAnnotations.predefinedShapes,
-            predefinedKeypoints: predefinedKeypointCollectionList,
+            predefinedKeypointCollections: predefinedKeypointCollectionList,
           },
         },
       } as CombinedState<RootState>;
@@ -142,7 +142,7 @@ describe('Test annotationLabel selectors', () => {
           predefinedAnnotations: {
             predefinedShapes:
               initialState.predefinedAnnotations.predefinedShapes,
-            predefinedKeypoints: predefinedKeypointCollectionList,
+            predefinedKeypointCollections: predefinedKeypointCollectionList,
           },
         },
       } as CombinedState<RootState>;
@@ -169,7 +169,7 @@ describe('Test annotationLabel selectors', () => {
           predefinedAnnotations: {
             predefinedShapes:
               initialState.predefinedAnnotations.predefinedShapes,
-            predefinedKeypoints: predefinedKeypointCollectionList,
+            predefinedKeypointCollections: predefinedKeypointCollectionList,
           },
         },
       } as CombinedState<RootState>;
@@ -222,7 +222,7 @@ describe('Test annotationLabel selectors', () => {
         ...initialState,
         predefinedAnnotations: {
           predefinedShapes: initialState.predefinedAnnotations.predefinedShapes,
-          predefinedKeypoints: [predefinedKeypointCollection],
+          predefinedKeypointCollections: [predefinedKeypointCollection],
         },
       };
       expect(nextKeypoint(previousState)).toEqual(
@@ -245,7 +245,7 @@ describe('Test annotationLabel selectors', () => {
         },
         predefinedAnnotations: {
           predefinedShapes: initialState.predefinedAnnotations.predefinedShapes,
-          predefinedKeypoints: [predefinedKeypointCollection],
+          predefinedKeypointCollections: [predefinedKeypointCollection],
         },
       };
       expect(nextKeypoint(previousState)).toEqual(
@@ -268,7 +268,7 @@ describe('Test annotationLabel selectors', () => {
         },
         predefinedAnnotations: {
           predefinedShapes: initialState.predefinedAnnotations.predefinedShapes,
-          predefinedKeypoints: [predefinedKeypointCollection],
+          predefinedKeypointCollections: [predefinedKeypointCollection],
         },
       };
       expect(nextKeypoint(previousState)).toEqual(
@@ -352,7 +352,7 @@ describe('Test annotationLabel selectors', () => {
         collections,
         predefinedAnnotations: {
           predefinedShapes: initialState.predefinedAnnotations.predefinedShapes,
-          predefinedKeypoints: [predefinedKeypointCollection],
+          predefinedKeypointCollections: [predefinedKeypointCollection],
         },
         keypointMap: {
           byId: Object.assign(
@@ -450,7 +450,7 @@ describe('Test annotationLabel selectors', () => {
         collections,
         predefinedAnnotations: {
           predefinedShapes: initialState.predefinedAnnotations.predefinedShapes,
-          predefinedKeypoints: [predefinedKeypointCollection],
+          predefinedKeypointCollections: [predefinedKeypointCollection],
         },
         keypointMap: {
           byId: Object.assign(

@@ -1,10 +1,10 @@
 import { Label } from '@cognite/sdk';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
+import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
+import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { Status } from 'src/api/annotation/types';
 import { UpdateFiles } from './UpdateFiles';
 
@@ -108,15 +108,13 @@ export const updateBulk = createAsyncThunk<
       annotationIds?: number[]
     ) => {
       if (!annotationIds) return;
-      await Promise.all(
-        annotationIds.map((id) => {
-          return dispatch(
-            AnnotationStatusChange({
-              id,
-              status,
-            })
-          );
-        })
+      await dispatch(
+        UpdateAnnotations(
+          annotationIds.map((id) => ({
+            id,
+            update: { status: { set: status } },
+          }))
+        )
       );
     };
     const { annotationIds } = bulkEditUnsaved;
@@ -135,12 +133,9 @@ export const updateBulk = createAsyncThunk<
     );
     // Delete annotations
     await dispatch(
-      DeleteAnnotationsAndHandleLinkedAssetsOfFile({
-        annotationIds:
-          annotationIds.annotationIdsToDelete?.map((item) => ({ id: item })) ||
-          [],
-        showWarnings: true,
-      })
+      DeleteAnnotations(
+        annotationIds.annotationIdsToDelete?.map((id) => ({ id })) || []
+      )
     );
   }
   await dispatch(UpdateFiles(payload));

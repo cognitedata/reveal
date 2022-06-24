@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 // import * as Sentry from '@sentry/browser';
 // import config from 'utils/config';
 import './set-public-path';
-import { configure } from 'react-hotkeys';
 import singleSpaReact from 'single-spa-react';
 
 import App from './App';
@@ -33,29 +32,4 @@ const lifecycles = singleSpaReact({
     return <span>An error occured in your app</span>;
   },
 });
-configure({
-  // logLevel: 'debug',
-  ignoreRepeatedEventsWhenKeyHeldDown: false,
-  stopEventPropagationAfterIgnoring: false,
-  stopEventPropagationAfterHandling: false,
-  // todo: remove after https://github.com/greena13/react-hotkeys/issues/237
-  ignoreEventsCondition: (keyEvent) => {
-    const IGNORED_TAGS = ['input', 'select', 'textarea'];
-
-    const eventIsFromIgnoredInput =
-      keyEvent.target &&
-      IGNORED_TAGS.includes(
-        (keyEvent.target as HTMLElement).tagName.toLowerCase()
-      );
-    const eventIsFromEditableText =
-      keyEvent.target && (keyEvent.target as HTMLElement).isContentEditable;
-    if (eventIsFromIgnoredInput || eventIsFromEditableText) {
-      return true;
-    }
-    return (
-      keyEvent.key === ' ' || keyEvent.key === 'Enter' || keyEvent.key === 'Tab'
-    );
-  },
-});
-
 export const { bootstrap, mount, unmount } = lifecycles;

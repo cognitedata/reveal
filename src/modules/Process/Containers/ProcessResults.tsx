@@ -52,7 +52,7 @@ import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginatio
 import { PaginatedTableProps } from 'src/modules/Common/Components/FileTable/types';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { PollJobs } from 'src/store/thunks/Process/PollJobs';
-import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const dispatch = useDispatch();
@@ -74,7 +74,12 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   );
 
   const allFilesSelected = useSelector((state: RootState) =>
-    selectAllFilesSelected(state.fileReducer)
+    selectAllFilesSelected(state.fileReducer, {
+      // Select from processFileIds instead of fileReducer.files.allids
+      // This is because the former contains the ids of the files that are
+      // actually shown on the process page
+      overridedFileIds: processFileIds,
+    })
   );
 
   const selectedFileIds = useSelector((state: RootState) =>
@@ -130,7 +135,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     if (processFileIds.length) {
       dispatch(FetchFilesById(processFileIds));
       dispatch(
-        RetrieveAnnotationsV1({ fileIds: processFileIds, clearCache: true })
+        RetrieveAnnotations({ fileIds: processFileIds, clearCache: true })
       );
     }
   }, [processFileIds, showSelectFromExploreModal]); // requires to fetch annotations when explorer modal is closed
@@ -159,7 +164,11 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     selectFilter?: SelectFilter
   ) => {
     dispatch(
-      setSelectedAllFiles({ selectStatus: value, filter: selectFilter })
+      setSelectedAllFiles({
+        selectStatus: value,
+        filter: selectFilter,
+        overridedFileIds: processFileIds,
+      })
     );
   };
   const handleSetSelectedFiles = (fileIds: number[]) => {

@@ -8,18 +8,20 @@ import reducer, {
   toggleCollectionVisibility,
 } from 'src/modules/Review/store/annotatorWrapper/slice';
 import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
-import { ImageKeypoint, Status } from 'src/api/annotation/types';
+import { Keypoint, Status } from 'src/api/annotation/types';
 import {
   getDummyKeypointCollectionState,
   getDummyKeypointState,
-  getDummyPredefinedKeypoint,
+  getDummyPredefinedKeypointCollection,
 } from 'src/__test-utils/annotations';
 import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 
-jest.mock('src/utils/AnnotationUtilsV1/AnnotationUtilsV1', () => ({
-  ...jest.requireActual('src/utils/AnnotationUtilsV1/AnnotationUtilsV1'),
-  createUniqueId: (text: string) => {
-    return text;
+jest.mock('src/modules/Common/Utils/AnnotationUtils/AnnotationUtils', () => ({
+  ...jest.requireActual(
+    'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils'
+  ),
+  createUniqueNumericId: () => {
+    return 'gauge';
   },
 }));
 
@@ -34,8 +36,8 @@ describe('Test annotator slice', () => {
         ...initialState,
         collections: {
           byId: {
-            c1: getDummyKeypointCollectionState('c1', ['k1']),
-            c2: getDummyKeypointCollectionState('c2', ['k2']),
+            1: getDummyKeypointCollectionState(1, ['k1']),
+            2: getDummyKeypointCollectionState(2, ['k2']),
           },
         },
       };
@@ -45,14 +47,14 @@ describe('Test annotator slice', () => {
           ...modifiedInitialState,
           collections: {
             ...modifiedInitialState.collections,
-            allIds: ['c1', 'c2'],
-            selectedIds: ['c1'],
+            allIds: [1, 2],
+            selectedIds: [1],
           },
         };
 
         expect(
-          reducer(previousState, selectCollection('c2')).collections.selectedIds
-        ).toEqual(['c2']);
+          reducer(previousState, selectCollection(2)).collections.selectedIds
+        ).toEqual([2]);
       });
 
       test('should deselect only provided collection', () => {
@@ -60,14 +62,14 @@ describe('Test annotator slice', () => {
           ...modifiedInitialState,
           collections: {
             ...modifiedInitialState.collections,
-            allIds: ['c1', 'c2'],
-            selectedIds: ['c1', 'c2'],
+            allIds: [1, 2],
+            selectedIds: [1, 2],
           },
         };
 
         expect(
-          reducer(previousState, selectCollection('c2')).collections.selectedIds
-        ).toEqual(['c1']);
+          reducer(previousState, selectCollection(2)).collections.selectedIds
+        ).toEqual([1]);
       });
     });
 
@@ -76,24 +78,24 @@ describe('Test annotator slice', () => {
         ...initialState,
         collections: {
           byId: {
-            c1: getDummyKeypointCollectionState('c1', ['k1']),
+            1: getDummyKeypointCollectionState(1, ['k1']),
           },
-          allIds: ['c1'],
-          selectedIds: ['c1'],
+          allIds: [1],
+          selectedIds: [1],
         },
       };
 
       test('should hide visible collection', () => {
         expect(
-          reducer(previousState, toggleCollectionVisibility('c1')).collections
-            .byId.c1.show
+          reducer(previousState, toggleCollectionVisibility(1)).collections
+            .byId[1].show
         ).toEqual(false);
       });
 
       test('should not effect others when non existing id used', () => {
         expect(
-          reducer(previousState, toggleCollectionVisibility('c3')).collections
-            .byId.c1.show
+          reducer(previousState, toggleCollectionVisibility(3)).collections
+            .byId[1].show
         ).toEqual(true);
       });
     });
@@ -103,10 +105,10 @@ describe('Test annotator slice', () => {
         ...initialState,
         collections: {
           byId: {
-            c1: getDummyKeypointCollectionState('c1', ['k1']),
+            1: getDummyKeypointCollectionState(1, ['k1']),
           },
-          allIds: ['c1'],
-          selectedIds: ['c1'],
+          allIds: [1],
+          selectedIds: [1],
         },
       };
 
@@ -114,8 +116,8 @@ describe('Test annotator slice', () => {
         expect(
           reducer(
             previousState,
-            setCollectionStatus({ id: 'c1', status: Status.Rejected })
-          ).collections.byId.c1.status
+            setCollectionStatus({ id: 1, status: Status.Rejected })
+          ).collections.byId[1].status
         ).toEqual(Status.Rejected);
       });
 
@@ -123,8 +125,8 @@ describe('Test annotator slice', () => {
         expect(
           reducer(
             previousState,
-            setCollectionStatus({ id: 'c3', status: Status.Rejected })
-          ).collections.byId.c1.status
+            setCollectionStatus({ id: 3, status: Status.Rejected })
+          ).collections.byId[1].status
         ).toEqual(Status.Approved);
       });
     });
@@ -134,11 +136,11 @@ describe('Test annotator slice', () => {
         ...initialState,
         collections: {
           byId: {
-            c1: getDummyKeypointCollectionState('c1', ['k1']),
-            c2: getDummyKeypointCollectionState('c2', ['k2']),
+            1: getDummyKeypointCollectionState(1, ['k1']),
+            2: getDummyKeypointCollectionState(2, ['k2']),
           },
-          allIds: ['c1', 'c2'],
-          selectedIds: ['c1'],
+          allIds: [1, 2],
+          selectedIds: [1],
         },
         keypointMap: {
           byId: {
@@ -161,10 +163,10 @@ describe('Test annotator slice', () => {
         expect(
           reducer(previousState, keypointSelectStatusChange('k1')).collections
             .selectedIds
-        ).toEqual(['c1']);
+        ).toEqual([1]);
       });
 
-      test('select non-selected keypoint (for collection c2)', () => {
+      test('select non-selected keypoint (for collection with id 2)', () => {
         expect(
           reducer(previousState, keypointSelectStatusChange('k2')).keypointMap
             .selectedIds
@@ -175,30 +177,31 @@ describe('Test annotator slice', () => {
         expect(
           reducer(previousState, keypointSelectStatusChange('k1')).collections
             .selectedIds
-        ).toEqual(['c1']);
+        ).toEqual([1]);
       });
 
       test('collection selected list not changed for invalid keypoint id', () => {
         expect(
           reducer(previousState, keypointSelectStatusChange('k3')).collections
             .selectedIds
-        ).toEqual(['c1']);
+        ).toEqual([1]);
       });
     });
 
-    describe('Test onUpdateKeyPoint reducer', () => {
-      const k1Id = generateKeypointId('c1', 'left');
-      const k2Id = generateKeypointId('c2', 'center');
+    // todo: this method will change so wil add test cases later [VIS-883]
+    describe.skip('Test onUpdateKeyPoint reducer', () => {
+      const k1Id = generateKeypointId(1, 'left');
+      const k2Id = generateKeypointId(1, 'center');
 
       const previousState = {
         ...initialState,
         collections: {
           byId: {
-            c1: getDummyKeypointCollectionState('c1', [k1Id]),
-            c2: getDummyKeypointCollectionState('c2', [k2Id]),
+            1: getDummyKeypointCollectionState(1, [k1Id]),
+            2: getDummyKeypointCollectionState(2, [k2Id]),
           },
-          allIds: ['c1', 'c2'],
-          selectedIds: ['c1'],
+          allIds: [1, 2],
+          selectedIds: [1],
         },
         keypointMap: {
           byId: {
@@ -211,12 +214,12 @@ describe('Test annotator slice', () => {
       };
 
       test('should update confidence and point', () => {
-        const pointToUpdate: ImageKeypoint = {
+        const pointToUpdate: Keypoint = {
           label: 'left',
           confidence: 0.5,
           point: { x: 0.25, y: 0.75 },
         };
-        const collectionId = 'c1';
+        const collectionId = 1;
 
         expect(
           reducer(
@@ -238,7 +241,7 @@ describe('Test annotator slice', () => {
       });
 
       test('should not effect others when non existing label used', () => {
-        const pointToUpdate: ImageKeypoint = {
+        const pointToUpdate: Keypoint = {
           label: 'non-existing-label',
           confidence: 0.5,
           point: { x: 0.25, y: 0.75 },
@@ -247,7 +250,7 @@ describe('Test annotator slice', () => {
           reducer(
             previousState,
             onUpdateKeyPoint({
-              keypointAnnotationCollectionId: 'c1',
+              keypointAnnotationCollectionId: 1,
               label: pointToUpdate.label,
               newConfidence: pointToUpdate.confidence,
               newPoint: pointToUpdate.point,
@@ -257,12 +260,15 @@ describe('Test annotator slice', () => {
       });
     });
 
-    describe('Test onCreateKeyPoint reducer', () => {
+    // todo: this method will change so wil add test cases later [VIS-883]
+    describe.skip('Test onCreateKeyPoint reducer', () => {
       test('Should not create keypoint collection, invalid collection name', () => {
         const previousState = {
           ...initialState,
           predefinedAnnotations: {
-            predefinedKeypointCollections: [getDummyPredefinedKeypoint('c1')],
+            predefinedKeypointCollections: [
+              getDummyPredefinedKeypointCollection(1),
+            ],
             predefinedShapes: [],
           },
         };
@@ -275,7 +281,7 @@ describe('Test annotator slice', () => {
               keypointLabel: 'left',
               positionX: 0.25,
               positionY: 0.25,
-            })
+            } as any)
           )
         ).toEqual(previousState);
       });
@@ -292,7 +298,9 @@ describe('Test annotator slice', () => {
         const previousState = {
           ...initialState,
           predefinedAnnotations: {
-            predefinedKeypointCollections: [getDummyPredefinedKeypoint('c1')],
+            predefinedKeypointCollections: [
+              getDummyPredefinedKeypointCollection(1),
+            ],
             predefinedShapes: [],
           },
         };
@@ -343,17 +351,19 @@ describe('Test annotator slice', () => {
         };
         const previousState = {
           ...initialState,
-          lastCollectionId: 'c1',
+          lastCollectionId: 1,
           predefinedAnnotations: {
-            predefinedKeypointCollections: [getDummyPredefinedKeypoint('c1')],
+            predefinedKeypointCollections: [
+              getDummyPredefinedKeypointCollection(1),
+            ],
             predefinedShapes: [],
           },
           collections: {
             byId: {
-              c1: getDummyKeypointCollectionState('c1', ['k1']),
+              1: getDummyKeypointCollectionState(1, ['k1']),
             },
-            allIds: ['c1'],
-            selectedIds: ['c1'],
+            allIds: [1],
+            selectedIds: [1],
           },
           keypointMap: {
             byId: { k1: getDummyKeypointState('k1') },
@@ -369,10 +379,10 @@ describe('Test annotator slice', () => {
           collections: {
             ...previousState.collections,
             byId: {
-              c1: {
-                ...previousState.collections.byId.c1,
+              1: {
+                ...previousState.collections.byId[1],
                 keypointIds: [
-                  ...previousState.collections.byId.c1.keypointIds,
+                  ...previousState.collections.byId[1].keypointIds,
                   idFromRegion,
                 ],
               },

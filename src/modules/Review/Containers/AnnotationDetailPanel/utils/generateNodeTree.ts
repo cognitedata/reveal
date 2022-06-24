@@ -1,96 +1,150 @@
-import {
-  KeypointItem,
-  KeypointVertex,
-} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { FC } from 'react';
 import {
-  Category,
-  Data,
-  ReviewAnnotation,
-  RowData,
+  AnnotationDetailPanelAnnotationType,
+  AnnotationDetailPanelRowData,
+  AnnotationDetailPanelRowDataBase,
   TreeNode,
   VirtualizedTreeRowProps,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
 import {
-  isAnnotationData,
-  isCategoryData,
+  isVisionReviewAnnotationRowData,
+  isAnnotationTypeRowData,
+  isVisionReviewImageKeypointCollection,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/utils/nodeTreeUtils';
 import {
-  CategoryRow,
-  KeypointReviewRow,
+  ReviewVisionAnnotationTypeRow,
+  ReviewKeypointRow,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/components';
 
+import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import {
+  ReviewKeypoint,
+  VisionReviewAnnotation,
+} from 'src/modules/Review/types';
+import { VisionAnnotationDataType } from 'src/modules/Common/types';
+
 /**
- * generates a node tree structure using the annotation heirarchy. Which then is provided to virtualized tree
- * This function is specific to AnnotationSidePanel since components are hardcoded into the function
- * @param data
+ * Recursive method that generates a node tree structure using the annotation hierarchy:
+ *
+ *      annotation type -> annotation instance -> keypoint instance (for keypoint collections only)
+ *
+ * Node tree is then provided to a virtualized tree. This function is specific to AnnotationSidePanel
+ * since components are hardcoded into the function.
+ *
+ * @todo [VIS-867] Add tests
  */
-// todo: will add test in separate PR
-export const generateNodeTree = (data: Data): TreeNode<Data> => {
-  if (isCategoryData(data)) {
-    const { title, common, selected, callbacks } = data as RowData<Category>;
+export const generateNodeTree = (
+  rowData: AnnotationDetailPanelRowData
+): TreeNode<AnnotationDetailPanelRowData> => {
+  /**
+   * Check if row data corresponds to annotation type header and if so call the function recursively
+   * with the individual annotation instances as input
+   */
+  if (isAnnotationTypeRowData(rowData)) {
+    const { title, common, selected, callbacks } =
+      rowData as AnnotationDetailPanelRowDataBase<AnnotationDetailPanelAnnotationType>;
     return {
       id: title,
       name: title,
-      component: CategoryRow as FC<VirtualizedTreeRowProps<Data>>,
-      children: common.annotations.map((annotation) =>
-        generateNodeTree({ ...annotation, common, callbacks })
+      component: ReviewVisionAnnotationTypeRow as FC<
+        VirtualizedTreeRowProps<AnnotationDetailPanelRowData>
+      >,
+      children: common.reviewAnnotations.map(
+        (reviewAnnotation: VisionReviewAnnotation<VisionAnnotationDataType>) =>
+          generateNodeTree({
+            ...reviewAnnotation,
+            common: { ...common, color: reviewAnnotation.color },
+            callbacks,
+          })
       ),
+      // check if the annotation type header, annotations within or any keypoints within an annotation
+      // in case of keypoint collections, are selected.
       openByDefault:
         selected ||
-        common.annotations.some(
-          (annotation) =>
-            annotation.selected || isAnyKeypointChildSelected(annotation)
+        common.reviewAnnotations.some(
+          (
+            reviewAnnotation: VisionReviewAnnotation<VisionAnnotationDataType>
+          ) =>
+            reviewAnnotation.selected ||
+            isAnyKeypointChildSelected(reviewAnnotation)
         ),
-      additionalData: data,
+      additionalData: rowData,
     };
   }
-  if (isAnnotationData(data)) {
-    const { common, callbacks, ...annotation } =
-      data as RowData<ReviewAnnotation>;
 
-    return {
-      id: annotation.id.toString(),
-      name: annotation.label,
-      component: common.component as FC<VirtualizedTreeRowProps<Data>>,
+  /**
+   * Check if row data corresponds to a `VisionReviewAnnotation` instance. Represents a node leaf in the tree,
+   *  unless the annotation type is `ImageKeypointCollection`, in which case the function is called recursively
+   * for each keypoint within the keypoint collection.
+   */
+  if (isVisionReviewAnnotationRowData(rowData)) {
+    const { common, callbacks, ...reviewAnnotation } =
+      rowData as AnnotationDetailPanelRowDataBase<
+        VisionReviewAnnotation<VisionAnnotationDataType>
+      >;
+
+    const data = {
+      id: reviewAnnotation.annotation.id.toString(),
+      name: getAnnotationLabelOrText(reviewAnnotation.annotation),
+      component: common.component as FC<
+        VirtualizedTreeRowProps<AnnotationDetailPanelRowData>
+      >,
       openByDefault:
-        annotation.selected || isAnyKeypointChildSelected(annotation),
-      children:
-        annotation.data?.keypoint && annotation?.region
-          ? annotation.region.vertices.map((vertex) =>
-              generateNodeTree({
-                ...(vertex as KeypointVertex),
-                common,
-                callbacks,
-              })
-            )
-          : [],
-      additionalData: data,
+        reviewAnnotation.selected ||
+        isAnyKeypointChildSelected(reviewAnnotation),
+      additionalData: rowData,
     };
+
+    if (isVisionReviewImageKeypointCollection(reviewAnnotation)) {
+      return {
+        ...data,
+        children: reviewAnnotation.annotation.keypoints.map(
+          (reviewImageKeypoint, index) =>
+            generateNodeTree({
+              ...reviewImageKeypoint,
+              common: { ...common, index, color: reviewAnnotation.color },
+              callbacks,
+            })
+        ),
+      };
+    }
+
+    return { ...data, children: [] };
   }
 
-  const keypointItem = data as RowData<KeypointItem>;
-
+  /**
+   * If row data does not have type `AnnotationDetailPanelAnnotationType` or `VisionReviewAnnotation<VisionAnnotationDataType>`
+   * it must be `ReviewKeypoint`. The keypoint is added as a node leaf in the tree.
+   *
+   * @see `AnnotationDetailPanelRowData` definition
+   */
+  const reviewImageKeypoint =
+    rowData as AnnotationDetailPanelRowDataBase<ReviewKeypoint>;
   return {
-    id: keypointItem.id.toString(),
-    name: keypointItem.caption,
-    component: KeypointReviewRow as FC<VirtualizedTreeRowProps<Data>>,
-    openByDefault: keypointItem.selected,
+    id: reviewImageKeypoint.id.toString(),
+    name: reviewImageKeypoint.keypoint.label,
+    component: ReviewKeypointRow as FC<
+      VirtualizedTreeRowProps<AnnotationDetailPanelRowData>
+    >,
+    openByDefault: reviewImageKeypoint.selected,
     children: [],
-    additionalData: data,
+    additionalData: rowData,
   };
 };
 
-// todo: will add test in separate PR
 /**
- * Checks whether any one of keypoint children of a keypoint annotation is selected
- * @param annotation
+ * Checks whether a `VisionReviewAnnotation` has annotation type `ImageKeypointCollection`
+ * and has any keypoints that are selected
+ *
+ * @todo [VIS-867] Add tests
  */
-const isAnyKeypointChildSelected = (annotation: ReviewAnnotation) => {
+const isAnyKeypointChildSelected = (
+  reviewAnnotation: VisionReviewAnnotation<VisionAnnotationDataType>
+) => {
   return (
-    !!annotation.data?.keypoint &&
-    !!annotation?.region?.vertices.some(
-      (vertex) => (vertex as KeypointItem).selected
+    isVisionReviewImageKeypointCollection(reviewAnnotation) &&
+    !!reviewAnnotation.annotation.keypoints.some(
+      (reviewImageKeypoint) => reviewImageKeypoint.selected
     )
   );
 };

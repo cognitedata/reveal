@@ -1,32 +1,13 @@
-import { BaseRegion as ReactImageAnnotateBaseRegion } from '@cognite/react-image-annotate';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
 import { CDFAnnotationTypeEnum, Status } from 'src/api/annotation/types';
-import { VisionReviewAnnotation } from 'src/modules/Review/store/review/types';
+import { VisionReviewAnnotation } from 'src/modules/Review/types';
 
+// This will always be a label or a text field of an annotation
 export type AnnotatorAnnotationLabelOrText = string;
-/**
- * @deprecated Remove usages of AnnotatorKeypointOrder since it's no longer needed.
- * Keypoint labels are unique within a single annotation. parentAnnotationId and label
- * can be used to generate its unique id
- */
-export type AnnotatorKeypointOrder = string;
-export type AnnotatorParentAnnotationId = string;
-export type AnnotatorKeypointLabel = string;
 
-/**
- * @deprecated use 'annotationLabelOrText' in AnnotatorBaseRegion and
- * 'parentAnnotationId', 'keypointOrder', 'keypointLabel' introduced in AnnotatorPointRegion instead
- * to pass this metadata
- *
- * tags array for the region was repurposed to send annotation metadata to the Annotator component without
- * introducing new fields. But now new fields have been introduced to in a more targeted approach to send this metadata
+/** @deprecated  do not use this property within library this should be used for annotation-region mapping only
  */
-export type AnnotatorRegionTags = [
-  AnnotatorAnnotationLabelOrText,
-  AnnotatorKeypointOrder,
-  AnnotatorParentAnnotationId,
-  AnnotatorKeypointLabel
-];
+export type AnnotationMeta = VisionReviewAnnotation<VisionAnnotationDataType>;
 
 export enum AnnotatorRegionType {
   PointRegion = 'point',
@@ -35,15 +16,20 @@ export enum AnnotatorRegionType {
   LineRegion = 'line',
 }
 
-export type AnnotatorBaseRegion = Omit<
-  ReactImageAnnotateBaseRegion,
-  'status' | 'source' | 'tags'
-> & {
-  annotation: VisionReviewAnnotation<VisionAnnotationDataType>;
+export type AnnotatorBaseRegion = {
+  id: number | string;
+  color: string;
+  /** @deprecated library specific property - should not be utilized anywhere but conversion functions */
+  annotationMeta: AnnotationMeta;
   status: Status;
   annotationType: CDFAnnotationTypeEnum;
   annotationLabelOrText: AnnotatorAnnotationLabelOrText;
-  tags: AnnotatorRegionTags;
+  tags?: Array<string>;
+  editingLabels?: boolean;
+  highlighted?: boolean;
+  cls?: string;
+  locked?: boolean;
+  visible?: boolean;
 };
 
 export type AnnotatorBoxRegion = AnnotatorBaseRegion & {
@@ -58,9 +44,9 @@ export type AnnotatorPointRegion = AnnotatorBaseRegion & {
   type: AnnotatorRegionType.PointRegion;
   x: number;
   y: number;
-  parentAnnotationId: AnnotatorParentAnnotationId;
-  keypointOrder: AnnotatorKeypointOrder;
-  keypointLabel: AnnotatorKeypointLabel;
+  parentAnnotationId: number;
+  keypointLabel: string;
+  keypointConfidence: number | undefined;
 };
 
 export type AnnotatorPolygonRegion = AnnotatorBaseRegion & {
@@ -82,6 +68,25 @@ export type AnnotatorRegion =
   | AnnotatorPointRegion
   | AnnotatorPolygonRegion
   | AnnotatorLineRegion;
+
+export type AnnotatorRegionLabelProps = {
+  region: AnnotatorRegion;
+  editing: boolean;
+  onDelete: (region: AnnotatorRegion) => void;
+  onClose: (region: AnnotatorRegion) => void;
+  onChange: (region: AnnotatorRegion) => void;
+};
+
+export type AnnotatorNewRegion = Pick<
+  AnnotatorBaseRegion,
+  'id' | 'annotationLabelOrText' | 'highlighted' | 'editingLabels' | 'color'
+> &
+  (
+    | Omit<AnnotatorBoxRegion, keyof AnnotatorBaseRegion>
+    | Omit<AnnotatorLineRegion, keyof AnnotatorBaseRegion>
+    | Omit<AnnotatorPolygonRegion, keyof AnnotatorBaseRegion>
+    | Omit<AnnotatorPointRegion, keyof AnnotatorBaseRegion>
+  );
 
 export function isAnnotatorBoxRegion(
   region: AnnotatorRegion

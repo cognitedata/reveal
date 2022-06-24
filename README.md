@@ -5,6 +5,7 @@ This repo contains [Vision components](https://cognitedata.atlassian.net/wiki/sp
 ## Local Development 🛠
 - Clone the repo: `git clone git@github.com:cognitedata/cdf-vision-subapp.git`
 - Move to the right folder and get ready to start: `cd cdf-vision-subapp && yarn`
+- Navigate to `https://localhost:8000/index.js` in order to "approve the code" for use in the browser.
 - Starting the app locally: `yarn start`
 - Navigate to [dev.fusion.cogniteapp.com](https://dev.fusion.cogniteapp.com/)
 - Open Console

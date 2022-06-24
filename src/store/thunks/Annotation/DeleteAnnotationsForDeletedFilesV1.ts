@@ -4,7 +4,7 @@ import { AnnotationApiV1 } from 'src/api/annotation/AnnotationApiV1';
 import { DeleteAnnotationsV1 } from 'src/store/thunks/Annotation/DeleteAnnotationsV1';
 
 const BATCH_SIZE = 10;
-
+/** @deprecated */
 export const DeleteAnnotationsForDeletedFilesV1 = createAsyncThunk<
   void,
   number[],

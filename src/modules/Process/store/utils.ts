@@ -6,6 +6,7 @@ import {
   VisionJobCompleted,
   VisionJobRunning,
   VisionDetectionModelType,
+  VisionJobFailed,
 } from 'src/api/vision/detectionModels/types';
 
 import {
@@ -48,9 +49,13 @@ export const addJobToState = (
     failedFileIds,
   };
 
-  if (job.status === 'Completed' || job.status === 'Running') {
+  if (
+    job.status === 'Completed' ||
+    job.status === 'Running' ||
+    job.status === 'Failed'
+  ) {
     jobState.failedFiles = (
-      job as VisionJobRunning | VisionJobCompleted
+      job as VisionJobRunning | VisionJobCompleted | VisionJobFailed
     ).failedItems?.reduce(
       (acc: { fileId: number; error: string }[], next) =>
         acc.concat(
@@ -109,7 +114,9 @@ export const isProcessingFile = (
     keyof AnnotationsBadgeStatuses
   >;
   return statuses.some((key) =>
-    ['Queued', 'Running'].includes(annotationStatuses[key]?.status || '')
+    ['Queued', 'Collecting', 'Running'].includes(
+      annotationStatuses[key]?.status || ''
+    )
   );
 };
 

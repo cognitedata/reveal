@@ -1,8 +1,12 @@
-import { KeypointCollection, Shape } from 'src/modules/Review/types';
+import {
+  PredefinedKeypointCollection,
+  PredefinedShape,
+} from 'src/modules/Review/types';
 
-export const predefinedKeypoints: KeypointCollection[] = [
+export const predefinedKeypoints: PredefinedKeypointCollection[] = [
   {
     collectionName: 'Dial',
+    color: 'red',
     keypoints: [
       {
         caption: 'Centre',
@@ -28,6 +32,7 @@ export const predefinedKeypoints: KeypointCollection[] = [
   },
   {
     collectionName: 'Level',
+    color: 'red',
     keypoints: [
       {
         caption: 'V2',
@@ -43,6 +48,7 @@ export const predefinedKeypoints: KeypointCollection[] = [
   },
   {
     collectionName: 'Large gauge',
+    color: 'red',
     keypoints: [
       {
         caption: 'Center',
@@ -53,7 +59,7 @@ export const predefinedKeypoints: KeypointCollection[] = [
   },
 ];
 
-export const predefinedShapes: Shape[] = [
+export const predefinedShapes: PredefinedShape[] = [
   { shapeName: 'Dial', color: '#00665c' },
   { shapeName: 'Gauge', color: '#6ED8BE' },
   { shapeName: 'Level', color: '#24D8ED' },

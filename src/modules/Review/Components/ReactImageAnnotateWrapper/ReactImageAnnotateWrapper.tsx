@@ -1,110 +1,196 @@
 import React, {
   Dispatch,
   ReactText,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
-import {
-  deleteCurrentCollection,
-  keypointSelectStatusChange,
-  onCreateKeyPoint,
-  onUpdateKeyPoint,
-  setLastShape,
-} from 'src/modules/Review/store/annotationLabel/slice';
 import { selectAnnotation } from 'src/modules/Review/store/reviewSlice';
 import {
-  AnnotationTableItem,
-  ReactImageAnnotateWrapperProps,
+  PredefinedKeypointCollection,
+  PredefinedShape,
+  PredefinedVisionAnnotations,
+  TempKeypointCollection,
+  VisionReviewAnnotation,
 } from 'src/modules/Review/types';
-import {
-  Annotator,
-  Region,
-  AnnotatorTool,
-  Action,
-  MainLayoutState,
-} from '@cognite/react-image-annotate';
+import { Annotator, AnnotatorTool } from '@cognite/react-image-annotate';
 import { retrieveDownloadUrl } from 'src/api/file/fileDownloadUrl';
-import {
-  convertAnnotations,
-  convertCollectionToRegions,
-  convertKeyPointCollectionToAnnotationStub,
-  convertToAnnotation,
-  RegionTagsIndex,
-} from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ConversionUtilsV1';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
-import { CreateKeypointAnnotation } from 'src/store/thunks/Annotation/CreateKeypointAnnotation';
-import { RetrieveKeypointCollection } from 'src/store/thunks/Review/RetrieveKeypointCollection';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { unwrapResult } from '@reduxjs/toolkit';
+import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/store';
 import { AnnotationEditPopup } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup/AnnotationEditPopup';
-import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
-import { RootState } from 'src/store/rootReducer';
+import {
+  convertAnnotatorPointRegionToAnnotationChangeProperties,
+  convertAnnotatorRegionToAnnotationChangeProperties,
+  convertRegionToUnsavedVisionAnnotation,
+  convertTempKeypointCollectionToRegions,
+  convertVisionReviewAnnotationsToRegions,
+} from 'src/modules/Review/Components/ReactImageAnnotateWrapper/converters';
+import { FileInfo, InternalId } from '@cognite/sdk';
+import {
+  UnsavedVisionAnnotation,
+  VisionAnnotationDataType,
+} from 'src/modules/Common/types';
+import {
+  AnnotatorRegion,
+  AnnotatorRegionLabelProps,
+  isAnnotatorPointRegion,
+} from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
+import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import { AnnotationChangeById } from '@cognite/sdk-playground';
+import {
+  createTempKeypointCollection,
+  deleteTempKeypointCollection,
+  keypointSelectStatusChange,
+  onCreateRegion,
+  onUpdateKeyPoint,
+  onUpdateRegion,
+  setLastShape,
+  setSelectedTool,
+} from 'src/modules/Review/store/annotatorWrapper/slice';
+import { useIsCurrentKeypointCollectionComplete } from 'src/modules/Review/store/annotatorWrapper/hooks';
+import { convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection } from 'src/modules/Review/store/review/utils';
 import { tools } from './Tools';
 
+type ReactImageAnnotateWrapperProps = {
+  fileInfo: FileInfo;
+  predefinedAnnotations: PredefinedVisionAnnotations;
+  nextPredefinedKeypointCollection: PredefinedKeypointCollection;
+  nextPredefinedShape: PredefinedShape;
+  tempKeypointCollection: TempKeypointCollection | null;
+  isLoading: (status: boolean) => void;
+  focusIntoView: (id: ReactText) => void;
+  // eslint-disable-next-line react/no-unused-prop-types
+  onEditMode: (isEdit: boolean) => void; // todo: call this in edit mode to show border while in edit
+  annotations: VisionReviewAnnotation<VisionAnnotationDataType>[];
+  keepUnsavedRegion: boolean;
+  selectedTool: string;
+  scrollId: string;
+  onCreateAnnotation: (
+    annotation: Omit<
+      UnsavedVisionAnnotation<VisionAnnotationDataType>,
+      'annotatedResourceId'
+    >
+  ) => void;
+  onUpdateAnnotation: (changes: AnnotationChangeById) => void;
+  onDeleteAnnotation: (annotationId: InternalId) => void;
+  openAnnotationSettings: (type: string, text?: string, color?: string) => void;
+};
+
 export const ReactImageAnnotateWrapper = ({
+  fileInfo,
+  annotations,
+  predefinedAnnotations,
+  nextPredefinedKeypointCollection,
+  nextPredefinedShape,
+  tempKeypointCollection,
+  isLoading,
+  focusIntoView,
+  keepUnsavedRegion,
+  selectedTool,
+  scrollId,
   onUpdateAnnotation,
   onCreateAnnotation,
   onDeleteAnnotation,
-  annotations,
-  fileInfo,
-  predefinedAnnotations,
-  nextToDoKeypointInCurrentCollection,
-  lastShapeName,
-  lastKeypointCollection,
-  currentKeypointCollection,
-  isLoading,
-  selectedTool,
-  onSelectTool,
-  focusIntoView,
   openAnnotationSettings,
 }: ReactImageAnnotateWrapperProps) => {
-  const annotationEditPopupRef = useRef<HTMLDivElement | null>(null);
-  const [imageUrl, setImageUrl] = useState<string>();
-  const regions: any[] = useMemo(() => {
-    const currentCollectionAsRegions = currentKeypointCollection
-      ? convertCollectionToRegions(currentKeypointCollection)
-      : [];
-
-    return [...convertAnnotations(annotations), ...currentCollectionAsRegions];
-  }, [annotations, currentKeypointCollection]);
-
   const dispatch: AppDispatch = useDispatch();
-  const libDispatch = useRef<Dispatch<any> | null>(null);
-  const [tempRegion, setTempRegion] = useState<Region | null>(null);
-  const keepUnsavedRegion = useSelector(
-    ({ annotationLabelReducer }: RootState) =>
-      annotationLabelReducer.keepUnsavedRegion
-  );
+  const currentKeypointCollectionIsComplete =
+    useIsCurrentKeypointCollectionComplete(fileInfo.id);
 
-  const collectionOptions = predefinedAnnotations?.predefinedKeypoints.map(
-    (keypoint) => ({
-      value: keypoint.collectionName,
-      label: keypoint.collectionName,
+  const annotationEditPopupRef = useRef<HTMLDivElement | null>(null);
+  const libDispatch = useRef<Dispatch<any> | null>(null);
+  const [imageUrl, setImageUrl] = useState<string>();
+
+  const regions = useMemo(() => {
+    const currentCollectionAsRegions = convertTempKeypointCollectionToRegions(
+      tempKeypointCollection
+    );
+
+    return [
+      ...convertVisionReviewAnnotationsToRegions(annotations),
+      ...currentCollectionAsRegions,
+    ];
+  }, [annotations, tempKeypointCollection]);
+
+  const images = useMemo(() => {
+    if (!imageUrl) {
+      return [];
+    }
+
+    return [
+      {
+        src: imageUrl,
+        name: fileInfo.name,
+        regions,
+      },
+    ];
+  }, [imageUrl, regions, fileInfo]);
+
+  const collectionOptions = useMemo(() => {
+    return predefinedAnnotations?.predefinedKeypointCollections.map(
+      (keypoint) => ({
+        value: keypoint.collectionName,
+        label: keypoint.collectionName,
+        icon: AnnotationUtilsV1.getIconType({
+          text: keypoint.collectionName,
+          modelType: VisionDetectionModelType.ObjectDetection,
+        }),
+        color: keypoint.color,
+      })
+    );
+  }, [predefinedAnnotations]);
+
+  const shapeOptions = useMemo(() => {
+    return predefinedAnnotations?.predefinedShapes.map((shape) => ({
+      value: shape.shapeName,
+      label: shape.shapeName,
       icon: AnnotationUtilsV1.getIconType({
-        text: keypoint.collectionName,
+        text: shape.shapeName,
         modelType: VisionDetectionModelType.ObjectDetection,
       }),
-      color: AnnotationUtilsV1.getAnnotationColor(
-        keypoint.collectionName,
-        VisionDetectionModelType.ObjectDetection,
-        { keypoint: true }
-      ),
-    })
-  );
-  const shapeOptions = predefinedAnnotations?.predefinedShapes.map((shape) => ({
-    value: shape.shapeName,
-    label: shape.shapeName,
-    icon: AnnotationUtilsV1.getIconType({
-      text: shape.shapeName,
-      modelType: VisionDetectionModelType.ObjectDetection,
-    }),
-    color: shape.color,
-  }));
+      color: shape.color,
+    }));
+  }, [predefinedAnnotations]);
+
+  const nextKeypoint = useMemo(() => {
+    if (
+      tempKeypointCollection?.remainingKeypoints &&
+      tempKeypointCollection?.remainingKeypoints.length
+    ) {
+      return tempKeypointCollection?.remainingKeypoints[0];
+    }
+    return null;
+  }, [tempKeypointCollection]);
+
+  // if current keypoint collection is complete save it to CDF and remove state if not make it focus
+  useEffect(() => {
+    if (tempKeypointCollection && currentKeypointCollectionIsComplete) {
+      const unsavedVisionImageKeypointCollectionAnnotation =
+        convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection(
+          tempKeypointCollection
+        );
+      if (unsavedVisionImageKeypointCollectionAnnotation) {
+        onCreateAnnotation(unsavedVisionImageKeypointCollectionAnnotation);
+        dispatch(deleteTempKeypointCollection());
+      }
+    }
+  }, [
+    tempKeypointCollection,
+    currentKeypointCollectionIsComplete,
+    onCreateAnnotation,
+  ]);
+
+  // if current keypoint collection is available and is not focused make it focused
+  useEffect(() => {
+    if (tempKeypointCollection && +scrollId !== tempKeypointCollection.id) {
+      focusIntoView(tempKeypointCollection.id);
+    }
+  }, [tempKeypointCollection, scrollId]);
 
   useEffect(() => {
     (async () => {
@@ -121,90 +207,71 @@ export const ReactImageAnnotateWrapper = ({
     })();
   }, [fileInfo]);
 
-  const images = useMemo(() => {
-    if (!imageUrl) {
-      return [];
-    }
-
-    return [
-      {
-        src: imageUrl,
-        name: fileInfo.name,
-        regions,
-      },
-    ];
-  }, [imageUrl, regions, fileInfo]);
-
+  // delete current collection when component is unmounted
   useEffect(() => {
     return () => {
-      dispatch(deleteCurrentCollection());
+      dispatch(deleteTempKeypointCollection());
     };
   }, []);
 
   useEffect(() => {
-    dispatch(deleteCurrentCollection());
+    dispatch(deleteTempKeypointCollection());
     dispatch(deselectAllSelectionsReviewPage());
   }, [fileInfo, selectedTool]);
 
-  const handleCreateRegion = async (region: Region) => {
-    const annotationCollectionLabel =
-      region.tags && region.tags[RegionTagsIndex.label];
-    const keyPointOrder =
-      region.tags && region.tags[RegionTagsIndex.keypointOrder];
-    if (annotationCollectionLabel) {
-      if (region.type === 'point') {
-        await dispatch(
-          onCreateKeyPoint(
-            region.id,
-            annotationCollectionLabel,
-            region.x,
-            region.y,
-            keyPointOrder
-          )
-        );
-        const thunkResponse = await dispatch(CreateKeypointAnnotation());
-        const keypointCollection = unwrapResult(thunkResponse);
-        if (keypointCollection) {
-          onCreateAnnotation(
-            convertKeyPointCollectionToAnnotationStub(keypointCollection)
-          );
-        }
-      } else {
-        await dispatch(setLastShape(annotationCollectionLabel));
-        onCreateAnnotation(convertToAnnotation(region));
-      }
-    }
-  };
+  const handleCreateRegion = useCallback(
+    async (region: AnnotatorRegion) => {
+      const { annotationLabelOrText } = region;
 
-  const handleUpdateRegion = async (region: Region) => {
-    const annotationLabel = region.tags && region.tags[RegionTagsIndex.label];
-
-    if (annotationLabel) {
-      if (region.type === 'point') {
-        await dispatch(onUpdateKeyPoint(region));
-        // check for availability of CDF annotation id
-        if (region.tags && region.tags[RegionTagsIndex.parentAnnotationId]) {
-          const thunkResponse = await dispatch(
-            RetrieveKeypointCollection(
-              region.tags[RegionTagsIndex.parentAnnotationId]
-            )
-          );
-          const keypointCollection = unwrapResult(thunkResponse);
-          if (keypointCollection) {
-            onUpdateAnnotation(
-              convertKeyPointCollectionToAnnotationStub(keypointCollection)
-            );
+      if (annotationLabelOrText) {
+        if (isAnnotatorPointRegion(region)) {
+          await dispatch(createTempKeypointCollection());
+        } else {
+          await dispatch(setLastShape(annotationLabelOrText));
+          const unsavedAnnotation =
+            convertRegionToUnsavedVisionAnnotation(region);
+          if (unsavedAnnotation) {
+            onCreateAnnotation(unsavedAnnotation);
           }
         }
-      } else {
-        await dispatch(setLastShape(annotationLabel));
-        onUpdateAnnotation(convertToAnnotation(region));
       }
-    }
-  };
-  const handleDeleteRegion = (region: Region) => {
-    onDeleteAnnotation(convertToAnnotation(region));
-  };
+    },
+    [onCreateAnnotation]
+  );
+
+  const handleUpdateRegion = useCallback(
+    async (region: AnnotatorRegion) => {
+      const { annotationLabelOrText } = region;
+
+      if (annotationLabelOrText) {
+        let annotationChangeProps;
+        if (isAnnotatorPointRegion(region)) {
+          await dispatch(onUpdateKeyPoint(region));
+          annotationChangeProps =
+            convertAnnotatorPointRegionToAnnotationChangeProperties(region);
+        } else {
+          await dispatch(setLastShape(annotationLabelOrText));
+          annotationChangeProps =
+            convertAnnotatorRegionToAnnotationChangeProperties(region);
+        }
+        if (annotationChangeProps) {
+          onUpdateAnnotation(annotationChangeProps);
+        }
+      }
+    },
+    [onUpdateAnnotation]
+  );
+
+  const handleDeleteRegion = useCallback(
+    (region: AnnotatorRegion) => {
+      const annotationChangeProps =
+        convertAnnotatorRegionToAnnotationChangeProperties(region);
+      if (annotationChangeProps && annotationChangeProps.id) {
+        onDeleteAnnotation({ id: annotationChangeProps.id });
+      }
+    },
+    [onDeleteAnnotation]
+  );
 
   const NewRegionEditLabel = useMemo(() => {
     return ({
@@ -213,13 +280,7 @@ export const ReactImageAnnotateWrapper = ({
       onDelete,
       onClose,
       onChange,
-    }: {
-      region: Region;
-      editing: boolean;
-      onDelete: (region: Region) => void;
-      onClose: (region: Region) => void;
-      onChange: (region: Region) => void;
-    }) => {
+    }: AnnotatorRegionLabelProps) => {
       /* eslint-disable react/prop-types */
       return (
         <AnnotationEditPopup
@@ -233,122 +294,117 @@ export const ReactImageAnnotateWrapper = ({
           onDeleteRegion={handleDeleteRegion}
           collectionOptions={collectionOptions}
           shapeOptions={shapeOptions}
-          lastShape={lastShapeName!}
-          lastCollection={lastKeypointCollection}
+          nextPredefinedShape={nextPredefinedShape}
+          nextPredefinedKeypointCollection={nextPredefinedKeypointCollection}
           onOpenAnnotationSettings={openAnnotationSettings}
+          nextKeypoint={nextKeypoint}
           popupReference={annotationEditPopupRef}
-          nextKeypoint={nextToDoKeypointInCurrentCollection}
+          predefinedAnnotations={predefinedAnnotations}
         />
       );
       /* eslint-enable react/prop-types */
     };
   }, [
-    onCreateAnnotation,
-    onUpdateAnnotation,
+    handleCreateRegion,
+    handleUpdateRegion,
+    handleDeleteRegion,
+    collectionOptions,
+    shapeOptions,
+    nextPredefinedShape,
+    nextPredefinedKeypointCollection,
+    openAnnotationSettings,
+    nextKeypoint,
     predefinedAnnotations,
-    nextToDoKeypointInCurrentCollection,
-    lastShapeName,
   ]);
 
-  const onRegionSelect = (region: Region) => {
-    dispatch(deselectAllSelectionsReviewPage());
-    let selectedAnnotationId: ReactText;
-    // keypoint regions will have a string id
-    if (typeof region.id === 'string') {
-      dispatch(keypointSelectStatusChange(region.id));
-      selectedAnnotationId = region.tags![RegionTagsIndex.parentAnnotationId];
-    } else {
-      dispatch(selectAnnotation(region.id));
-      selectedAnnotationId = region.id;
-    }
-    if (selectedAnnotationId) {
-      let annotation: AnnotationTableItem = annotations.find(
-        (ann) => ann.id === +selectedAnnotationId
-      ) as AnnotationTableItem;
-      if (!annotation && currentKeypointCollection) {
-        annotation = {
-          ...convertKeyPointCollectionToAnnotationStub(
-            currentKeypointCollection
-          ),
-        };
+  /**
+   * Focus annotation in side panel when region is selected
+   */
+  /* eslint-disable react/prop-types */
+  const onRegionSelect = useCallback(
+    (region: AnnotatorRegion) => {
+      dispatch(deselectAllSelectionsReviewPage());
+      let selectedAnnotationId: ReactText;
+      // keypoint regions will have a string id
+      if (isAnnotatorPointRegion(region)) {
+        // eslint-disable-next-line react/prop-types
+        dispatch(keypointSelectStatusChange(String(region.id)));
+        selectedAnnotationId = region.parentAnnotationId;
+      } else {
+        dispatch(selectAnnotation(+region.id));
+        selectedAnnotationId = +region.id;
       }
-      if (annotation) {
-        focusIntoView(annotation);
+      if (selectedAnnotationId) {
+        let annotationId = annotations.find(
+          (ann) => ann.annotation.id === +selectedAnnotationId
+        )?.annotation?.id;
+        if (!annotationId && tempKeypointCollection) {
+          annotationId = tempKeypointCollection.id;
+        }
+        if (annotationId) {
+          focusIntoView(annotationId);
+        }
       }
-    }
-  };
+    },
+    [focusIntoView, tempKeypointCollection, annotations]
+  );
+  /* eslint-enable react/prop-types */
 
-  const deselectAllRegions = () => {
+  const deselectAllRegionHandler = useCallback(() => {
     dispatch(deselectAllSelectionsReviewPage());
-  };
+  }, []);
 
-  const onToolChange = (tool: AnnotatorTool) => {
-    onSelectTool(tool);
-  };
+  const toolChangeHandler = useCallback((tool: AnnotatorTool) => {
+    dispatch(setSelectedTool(tool));
+  }, []);
 
-  const onImageOrVideoLoaded = () => {
+  const imageOrVideoLoadedHandler = useCallback(() => {
     isLoading(false);
-  };
+  }, [isLoading]);
 
-  // todo: use hotkeys implementation once https://github.com/greena13/react-hotkeys/issues/237 is fixed
-  const onKeyPressSubmit = (evt: Partial<KeyboardEvent>) => {
-    if (evt.key === 'Enter') {
-      if (annotationEditPopupRef.current) {
-        const submitBtn = annotationEditPopupRef.current?.querySelector(
-          '.annotation-submit-btn'
-        ) as HTMLButtonElement;
-        if (submitBtn) {
-          submitBtn.focus();
-          submitBtn.click();
-        }
-      }
-    }
-  };
+  const regionCreateHandler = useCallback((region: AnnotatorRegion) => {
+    dispatch(onCreateRegion(region));
+  }, []);
 
-  const onCreateRegion = (region: Region) => {
-    setTempRegion(region);
-  };
+  const regionUpdateHandler = useCallback((region: AnnotatorRegion) => {
+    dispatch(onUpdateRegion(region));
+  }, []);
 
-  const onInitDispatch = (dispatchObj: Dispatch<any>) => {
-    libDispatch.current = dispatchObj;
-  };
+  const dispatchObjectReceiveHandler = useCallback(
+    (dispatchObj: Dispatch<any>) => {
+      libDispatch.current = dispatchObj;
+    },
+    []
+  );
 
-  const onCallDispatch = (action: Action, state: MainLayoutState) => {
-    if (libDispatch.current) {
-      if (action.type === 'MOUSE_DOWN') {
-        if (tempRegion && state.mode === null && !keepUnsavedRegion) {
-          // delete temporary regions on mouse click if not saved in CDF
-          libDispatch.current({
-            type: 'DELETE_REGION',
-            region: tempRegion,
-          });
-        }
-      }
-    }
-  };
+  const enabledTools = useMemo(() => {
+    return Object.values(tools);
+  }, [tools]);
 
   return (
-    <Container onKeyPress={onKeyPressSubmit}>
-      <Annotator
+    <Container>
+      <MemoizedAnnotator
         onExit={() => {}}
         hideHeader
         images={images}
-        keypointDefinitions={{}}
-        enabledTools={Object.values(tools)}
+        enabledTools={enabledTools}
         RegionEditLabel={NewRegionEditLabel}
         showTags
-        onSelectRegion={onRegionSelect}
-        deSelectAllRegions={deselectAllRegions}
-        onSelectTool={onToolChange}
         selectedTool={selectedTool}
-        onImageOrVideoLoaded={onImageOrVideoLoaded}
-        onRegionCreated={onCreateRegion}
-        onCallDispatch={onCallDispatch}
-        onInitDispatch={onInitDispatch}
+        keepUnsavedRegions={keepUnsavedRegion}
+        onSelectRegion={onRegionSelect}
+        deSelectAllRegions={deselectAllRegionHandler}
+        onSelectTool={toolChangeHandler}
+        onImageOrVideoLoaded={imageOrVideoLoadedHandler}
+        onRegionCreated={regionCreateHandler}
+        onRegionUpdated={regionUpdateHandler}
+        onInitDispatch={dispatchObjectReceiveHandler}
       />
     </Container>
   );
 };
+
+export const MemoizedAnnotator = React.memo(Annotator);
 
 const Container = styled.div`
   width: 100%;

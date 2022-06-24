@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { InternalId } from '@cognite/sdk';
-import { useCognitePlaygroundClient } from 'src/hooks/useCognitePlaygroundClient';
+import { cognitePlaygroundClient } from 'src/api/annotation/CognitePlaygroundClient';
 
 /**
  * ## Example
@@ -17,14 +17,11 @@ import { useCognitePlaygroundClient } from 'src/hooks/useCognitePlaygroundClient
  */
 
 export const DeleteAnnotations = createAsyncThunk<
-  InternalId[],
+  void,
   InternalId[],
   ThunkConfig
 >('DeleteAnnotations', async (annotationIds: InternalId[]) => {
   if (annotationIds && annotationIds.length) {
-    const sdk = useCognitePlaygroundClient();
-    await sdk.annotations.delete(annotationIds);
-    return annotationIds;
+    await cognitePlaygroundClient.annotations.delete(annotationIds);
   }
-  return []; // TODO: should this really return input ids?
 });

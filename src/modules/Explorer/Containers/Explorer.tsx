@@ -210,12 +210,14 @@ const TablePanel = styled.div<tablePanelProps>`
     }px)`};
   border-right: 1px solid ${Colors['greyscale-grey3'].hex()};
   height: 100%;
+  overflow-x: auto;
 `;
 
 const ViewContainer = styled.div`
   height: 100%;
   width: 100%;
   padding: 20px 16px;
+  min-width: 1200px;
   display: grid;
   grid-template-rows: 32px 40px auto;
   grid-template-columns: 100%;
@@ -239,6 +241,7 @@ const DeselectContainer = styled.div`
   right: 0;
   bottom: 0;
   left: 0;
+  pointer-events: none;
 `;
 
 const Deselect = () => {

@@ -21,6 +21,10 @@ const hasTextRegion = (data: VisionAnnotationDataType) => {
   return 'textRegion' in data;
 };
 
+const hasAssetRef = (data: VisionAnnotationDataType) => {
+  return 'assetRef' in data;
+};
+
 export const isImageObjectDetectionBoundingBoxData = (
   data: VisionAnnotationDataType
 ): data is ImageObjectDetectionBoundingBox => {
@@ -48,12 +52,12 @@ export const isImageObjectDetectionData = (
 export const isImageExtractedTextData = (
   data: VisionAnnotationDataType
 ): data is ImageExtractedText => {
-  return hasTextRegion(data) && 'extractedText' in data;
+  return hasTextRegion(data) && 'text' in data && !hasAssetRef(data);
 };
 export const isImageAssetLinkData = (
   data: VisionAnnotationDataType
 ): data is ImageAssetLink => {
-  return hasTextRegion(data) && 'assetRef' in data && 'text' in data;
+  return hasTextRegion(data) && 'text' in data && hasAssetRef(data);
 };
 export const isImageKeypointCollectionData = (
   data: VisionAnnotationDataType

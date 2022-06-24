@@ -27,6 +27,7 @@ export const getUpdatedValue = ({
   return undefined;
 };
 
+/** @deprecated */
 export const updateBulkV1 = createAsyncThunk<
   void,
   { selectedFiles: VisionFile[]; bulkEditUnsaved: BulkEditUnsavedState },

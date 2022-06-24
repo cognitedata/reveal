@@ -1,6 +1,5 @@
 import {
   AnnotatedResourceId,
-  CDFAnnotationStatus,
   CDFAnnotationType,
   CDFAnnotationTypeEnum,
   CDFAnnotationV1,
@@ -11,14 +10,15 @@ import {
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
   ImageObjectDetectionPolyline,
+  Keypoint,
   Status,
 } from 'src/api/annotation/types';
 import {
   CDFInheritedFields,
+  UnsavedVisionAnnotation,
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
-import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   isAssetLinkedAnnotation,
   isKeyPointAnnotation,
@@ -28,10 +28,12 @@ import {
   isTextAnnotation,
 } from 'src/api/annotation/typeGuards';
 import {
+  AnnotationCreate,
   AnnotationModel,
   AnnotationPayload,
-  AnnotationType,
+  AnnotationStatus as sdkAnnotationStatus,
 } from '@cognite/sdk-playground';
+import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   validBoundingBox,
   validImageAssetLink,
@@ -130,7 +132,7 @@ export function convertCDFAnnotationV1ToImageExtractedText(
   }
 
   const imageExtractedText: ImageExtractedText = {
-    extractedText: annotation.text,
+    text: annotation.text,
     confidence: annotation?.data?.confidence,
     textRegion: {
       xMin: annotation.region!.vertices[0].x,
@@ -262,41 +264,21 @@ export function convertCDFAnnotationV1ToVisionAnnotation(
   return null;
 }
 
-const convertCDFAnnotationStatusToStatus = (
-  status: CDFAnnotationStatus
-): Status | undefined => {
-  switch (status) {
-    case 'suggested':
-      return Status.Suggested;
-    case 'approved':
-      return Status.Approved;
-    case 'rejected':
-      return Status.Rejected;
-    default:
-      return undefined;
-  }
-};
-const convertCDFAnnotationTypeToAnnotationType = (
-  annotationType: AnnotationType
-): CDFAnnotationTypeEnum | undefined => {
-  if (annotationType in Object.values(CDFAnnotationTypeEnum)) {
-    return annotationType as CDFAnnotationTypeEnum;
-  }
-  return undefined;
-};
-
 export const convertCDFAnnotationToVisionAnnotations = (
   annotations: AnnotationModel[]
 ): VisionAnnotation<VisionAnnotationDataType>[] =>
   annotations.reduce<VisionAnnotation<VisionAnnotationDataType>[]>(
     (ann, nextAnnotation) => {
-      const status = convertCDFAnnotationStatusToStatus(nextAnnotation.status);
-      const annotationType = convertCDFAnnotationTypeToAnnotationType(
-        nextAnnotation.annotationType
-      );
+      const status = nextAnnotation.status as Status;
+      const annotationType =
+        nextAnnotation.annotationType as CDFAnnotationType<VisionAnnotationDataType>;
 
       // if CDF annotation has valid status and annotation type
-      if (status && annotationType) {
+      if (
+        status &&
+        annotationType &&
+        Object.values(CDFAnnotationTypeEnum).includes(annotationType)
+      ) {
         const cdfInheritedFields: CDFInheritedFields<VisionAnnotationDataType> =
           {
             id: nextAnnotation.id,
@@ -309,7 +291,7 @@ export const convertCDFAnnotationToVisionAnnotations = (
 
         // HACK: VIS-859 converting Data, due to the type of data of a CDFImageKeypointCollection,
         // is not matching with ImageKeypointCollection data
-        // should change Vision internal type and remove this hack
+        // should change Vision internal type and remove this hack - VIS-874
         let annotationData: AnnotationPayload = nextAnnotation.data;
         if (
           cdfInheritedFields.annotationType ===
@@ -317,20 +299,13 @@ export const convertCDFAnnotationToVisionAnnotations = (
         ) {
           const convertedAnnotationData: ImageKeypointCollection = {
             ...(nextAnnotation.data as ImageKeypointCollection),
-            // @ts-ignore
-            keypoints: Object.keys(nextAnnotation.data.keypoints).map(
-              (keypointName) => ({
-                label: keypointName,
-                // @ts-ignore
-                confidence: keypoints[keypointName].confidence,
-                point: {
-                  // @ts-ignore
-                  x: keypoints[keypointName].x,
-                  // @ts-ignore
-                  y: keypoints[keypointName].y,
-                },
-              })
-            ),
+            keypoints: Object.entries(
+              (nextAnnotation.data as ImageKeypointCollection).keypoints
+            ).map(([keypointName, keypoint]) => ({
+              label: keypointName,
+              confidence: (keypoint as Keypoint).confidence,
+              point: (keypoint as Keypoint).point,
+            })),
           };
           annotationData = convertedAnnotationData;
         }
@@ -347,3 +322,46 @@ export const convertCDFAnnotationToVisionAnnotations = (
     },
     []
   );
+
+// TODO: remove this conversion once
+// https://cognitedata.atlassian.net/browse/VIS-874 is done
+export const convertUnsavedAnnotationsToCDFCompatibleAnnotation = (
+  unsavedAnnotations: UnsavedVisionAnnotation<VisionAnnotationDataType>[]
+): Omit<
+  AnnotationCreate,
+  | 'annotatedResourceType'
+  | 'creatingApp'
+  | 'creatingAppVersion'
+  | 'creatingUser'
+>[] =>
+  unsavedAnnotations.map((unsavedAnnotation) => {
+    const status = unsavedAnnotation.status as sdkAnnotationStatus;
+
+    let annotationData: AnnotationPayload = unsavedAnnotation.data;
+    if (
+      unsavedAnnotation.annotationType ===
+      CDFAnnotationTypeEnum.ImagesKeypointCollection
+    ) {
+      const keypoints = (
+        unsavedAnnotation.data as ImageKeypointCollection
+      ).keypoints.reduce((acc, next) => {
+        acc[next.label] = {
+          point: next.point,
+          confidence: next.confidence,
+        };
+        return acc;
+      }, {} as any);
+
+      const convertedAnnotationData = {
+        ...unsavedAnnotation.data,
+        keypoints,
+      };
+      annotationData = convertedAnnotationData;
+    }
+
+    return {
+      ...unsavedAnnotation,
+      data: annotationData,
+      status,
+    };
+  });

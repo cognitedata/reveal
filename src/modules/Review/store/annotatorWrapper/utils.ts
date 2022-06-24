@@ -4,12 +4,14 @@ import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper
 
 export const deleteCollection = (
   state: AnnotatorWrapperState,
-  collectionId: string
+  collectionId: number
 ) => {
   const collection = state.collections.byId[collectionId];
   if (collection) {
     delete state.collections.byId[collection.id];
-    state.collections.allIds = Object.keys(state.collections.byId);
+    state.collections.allIds = Object.keys(state.collections.byId).map(
+      (key) => +key
+    );
 
     // remove collection from selected list, if it was selected
     if (state.collections.selectedIds.includes(collectionId)) {

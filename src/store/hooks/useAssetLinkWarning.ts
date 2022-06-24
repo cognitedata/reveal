@@ -1,12 +1,14 @@
-import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { VisionAsset } from 'src/modules/Common/store/files/types';
-import { AnnotationTableItem } from 'src/modules/Review/types';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/store';
 import { FileInfo } from '@cognite/sdk';
 import { unwrapResult } from '@reduxjs/toolkit';
+import { VisionReviewAnnotation } from 'src/modules/Review/types';
+import { VisionAnnotationDataType } from 'src/modules/Common/types';
+import { ImageAssetLink, Status } from 'src/api/annotation/types';
+import { isImageAssetLinkData } from 'src/modules/Common/types/typeGuards';
 
 export enum AssetWarnTypes {
   NoWarning,
@@ -17,9 +19,9 @@ export enum AssetWarnTypes {
 const ANNOTATION_STATUS_ERROR_VISIBILITY_DELAY = 1000;
 
 const useAssetLinkWarning = (
-  annotation: AnnotationTableItem,
+  reviewAnnotation: VisionReviewAnnotation<VisionAnnotationDataType>,
   file: FileInfo,
-  allAnnotations: AnnotationTableItem[]
+  allReviwAnnotations: VisionReviewAnnotation<VisionAnnotationDataType>[]
 ): AssetWarnTypes => {
   const [assetWarnType, setAssetWarnType] = useState<AssetWarnTypes>(
     AssetWarnTypes.NoWarning
@@ -30,15 +32,9 @@ const useAssetLinkWarning = (
   const rejectedAnnotationLinkedToFileTimer = useRef<any>(null);
 
   useEffect(() => {
-    const fetchAndSetAsset = async (ann: AnnotationTableItem) => {
-      const assetPayload = [];
-      if (ann.linkedResourceId) {
-        assetPayload.push({ id: ann.linkedResourceId });
-      } else if (ann.linkedResourceExternalId) {
-        assetPayload.push({
-          externalId: ann.linkedResourceExternalId,
-        });
-      }
+    const fetchAndSetAsset = async (annotation: ImageAssetLink) => {
+      const assetPayload = [{ id: annotation.assetRef.id }];
+
       try {
         const assetResponse = await dispatch(fetchAssets(assetPayload));
         const assets = unwrapResult(assetResponse);
@@ -50,12 +46,12 @@ const useAssetLinkWarning = (
       }
     };
 
-    if (annotation.linkedResourceId || annotation.linkedResourceExternalId) {
-      fetchAndSetAsset(annotation);
+    if (isImageAssetLinkData(reviewAnnotation.annotation)) {
+      fetchAndSetAsset(reviewAnnotation.annotation);
     } else {
       setAsset(null);
     }
-  }, [annotation.linkedResourceId, annotation.linkedResourceExternalId]);
+  }, [reviewAnnotation.annotation]);
 
   useEffect(() => {
     // clear timers and cancel pending errors, since not doing it can make app to show error erroneously
@@ -70,7 +66,7 @@ const useAssetLinkWarning = (
 
     if (asset) {
       if (
-        annotation.status === AnnotationStatus.Verified &&
+        reviewAnnotation.annotation.status === Status.Approved &&
         !file.assetIds?.includes(asset.id)
       ) {
         approvedAnnotationNotLinkedToFileTimer.current = setTimeout(() => {
@@ -80,13 +76,13 @@ const useAssetLinkWarning = (
           );
         }, ANNOTATION_STATUS_ERROR_VISIBILITY_DELAY);
       } else if (
-        annotation.status === AnnotationStatus.Rejected &&
+        reviewAnnotation.annotation.status === Status.Rejected &&
         file.assetIds?.includes(asset.id) &&
-        allAnnotations
+        allReviwAnnotations
           .filter(
-            (ann) =>
-              ann.id !== annotation.id &&
-              ann.status === AnnotationStatus.Verified
+            (reviewAnn) =>
+              reviewAnn.annotation.id !== reviewAnnotation.annotation.id &&
+              reviewAnn.annotation.status === Status.Approved
           ) // select other annotations except this one
           .every((tagAnnotation) => !isLinkedToAsset(tagAnnotation, asset)) // every other tag annotation is not approved and linked to the same asset
       ) {
@@ -100,7 +96,7 @@ const useAssetLinkWarning = (
     } else {
       setAssetWarnType(AssetWarnTypes.NoWarning);
     }
-  }, [annotation, file, asset]);
+  }, [reviewAnnotation, file, asset]);
 
   return assetWarnType;
 };
@@ -108,14 +104,11 @@ const useAssetLinkWarning = (
 export default useAssetLinkWarning;
 
 const isLinkedToAsset = (
-  ann: AnnotationTableItem,
+  ann: VisionReviewAnnotation<VisionAnnotationDataType>,
   asset: VisionAsset
 ): boolean => {
-  if (ann.linkedResourceId) {
-    return ann.linkedResourceId === asset.id;
-  }
-  if (ann.linkedResourceExternalId) {
-    return ann.linkedResourceExternalId === asset.externalId;
+  if (isImageAssetLinkData(ann.annotation)) {
+    return ann.annotation.assetRef.id === asset.id;
   }
   return false;
 };

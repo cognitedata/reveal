@@ -1,8 +1,9 @@
-import { KeypointCollection, Shape, Tool } from 'src/modules/Review/types';
-import { ImageKeypoint, Status } from 'src/api/annotation/types';
+import { PredefinedVisionAnnotations, Tool } from 'src/modules/Review/types';
+import { Keypoint, Status } from 'src/api/annotation/types';
+import { AnnotatorRegion } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
 
 export type KeypointCollectionState = {
-  id: string;
+  id: number;
   keypointIds: string[];
   label: string;
   show: boolean;
@@ -10,27 +11,24 @@ export type KeypointCollectionState = {
   // do we have to have selected state here?
 };
 
-type PredefinedAnnotations = {
-  predefinedKeypointCollections: KeypointCollection[];
-  predefinedShapes: Shape[];
-};
-
 export type AnnotatorWrapperState = {
-  predefinedAnnotations: PredefinedAnnotations;
+  predefinedAnnotations: PredefinedVisionAnnotations;
   keypointMap: {
-    byId: Record<string, ImageKeypoint>;
+    byId: Record<string, Keypoint>;
     allIds: string[];
     selectedIds: string[];
   };
   collections: {
-    byId: Record<string, KeypointCollectionState>;
-    allIds: string[];
-    selectedIds: string[];
+    byId: Record<number, KeypointCollectionState>;
+    allIds: number[];
+    selectedIds: number[];
   };
-  lastCollectionId: string | undefined;
+  lastCollectionId: number | undefined;
   lastCollectionName: string | undefined; // Caption (label) of last used Predefined Annotations collection, use to select for the next time
   lastShape: string | undefined; // shapeName (label) of last used predefined shapes, use to select for the next time
   lastKeyPoint: string | undefined; // label of last created keypoint to get next keypoint
   currentTool: Tool;
   keepUnsavedRegion: boolean;
+  isCreatingKeypointCollection: boolean;
+  temporaryRegion: AnnotatorRegion | undefined;
 };

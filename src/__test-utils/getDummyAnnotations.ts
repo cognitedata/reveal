@@ -5,25 +5,29 @@ import {
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
-  ImageKeypoint,
   ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
   ImageObjectDetectionPolyline,
+  Keypoint,
   Polygon,
   Polyline,
   Status,
 } from 'src/api/annotation/types';
 import {
+  UnsavedVisionAnnotation,
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
 import {
+  isImageKeypointCollectionData,
+  isImageObjectDetectionData,
+} from 'src/modules/Common/types/typeGuards';
+import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import {
   TurnKeypointType,
   VisionReviewAnnotation,
-} from 'src/modules/Review/store/review/types';
-import { isImageKeypointCollectionData } from 'src/modules/Common/types/typeGuards';
-import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+} from 'src/modules/Review/types';
 
 export const getDummyImageClassificationAnnotation = ({
   id = 1,
@@ -166,9 +170,9 @@ export const getDummyImageKeypointCollectionAnnotation = ({
   label = 'gauge',
   confidence = 0.5,
   keypoints = [
-    { label: 'start', point: { x: 0.1, y: 0.1 } },
-    { label: 'center', point: { x: 0.2, y: 0.2 } },
-    { label: 'end', point: { x: 0.3, y: 0.3 } },
+    { label: 'start', point: { x: 0.1, y: 0.1 }, confidence: 0.2 },
+    { label: 'center', point: { x: 0.2, y: 0.2 }, confidence: 0.2 },
+    { label: 'end', point: { x: 0.3, y: 0.3 }, confidence: 0.2 },
   ],
 }: {
   id?: number;
@@ -176,7 +180,7 @@ export const getDummyImageKeypointCollectionAnnotation = ({
   annotatedResourceId?: CogniteInternalId;
   label?: string;
   confidence?: number;
-  keypoints?: ImageKeypoint[];
+  keypoints?: Keypoint[];
 }): VisionAnnotation<ImageKeypointCollection> => {
   const data: ImageKeypointCollection = {
     label,
@@ -199,7 +203,7 @@ export const getDummyImageExtractedTextAnnotation = ({
   id = 1,
   status = Status.Suggested,
   annotatedResourceId = 10,
-  extractedText = 'pump',
+  text = 'pump',
   confidence = 0.5,
   textRegion = {
     xMin: 0.25,
@@ -211,12 +215,12 @@ export const getDummyImageExtractedTextAnnotation = ({
   id?: number;
   status?: Status;
   annotatedResourceId?: CogniteInternalId;
-  extractedText?: string;
+  text?: string;
   confidence?: number;
   textRegion?: BoundingBox;
 }): VisionAnnotation<ImageExtractedText> => {
   const data: ImageExtractedText = {
-    extractedText,
+    text,
     confidence,
     textRegion,
   };
@@ -272,22 +276,54 @@ export const getDummyImageAssetLinkAnnotation = ({
 export const getDummyVisionReviewAnnotation = (
   annotation: VisionAnnotation<VisionAnnotationDataType>,
   selected?: boolean,
-  show?: boolean
+  show?: boolean,
+  selectedKeypointIndices?: number[]
 ): VisionReviewAnnotation<VisionAnnotationDataType> => {
   return {
     annotation: (isImageKeypointCollectionData(annotation)
       ? {
           ...annotation,
-          keypoints: annotation.keypoints.map((keypoint) => ({
+          keypoints: annotation.keypoints.map((keypoint, index) => ({
             id: generateKeypointId(annotation.id, keypoint.label),
             keypoint,
-            selected,
+            selected: selectedKeypointIndices?.length
+              ? selectedKeypointIndices.includes(index)
+              : false,
           })),
         }
       : annotation) as TurnKeypointType<
       VisionAnnotation<VisionAnnotationDataType>
     >,
-    show: show!!,
-    selected: selected!!,
+    show: !!show,
+    selected: !!selected,
+    color: 'red',
   };
+};
+
+export const getDummyUnsavedAnnotation = (
+  visionAnnotation: VisionAnnotation<VisionAnnotationDataType>
+): UnsavedVisionAnnotation<VisionAnnotationDataType> => {
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  const {
+    id,
+    annotationType,
+    status,
+    annotatedResourceId,
+    createdTime,
+    lastUpdatedTime,
+    ...data
+  } = visionAnnotation;
+
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+  let correctAnnotationType = annotationType;
+  if (isImageObjectDetectionData(data)) {
+    correctAnnotationType = CDFAnnotationTypeEnum.ImagesObjectDetection;
+  }
+
+  return {
+    data,
+    status,
+    annotatedResourceId,
+    annotationType: correctAnnotationType,
+  } as UnsavedVisionAnnotation<VisionAnnotationDataType>;
 };

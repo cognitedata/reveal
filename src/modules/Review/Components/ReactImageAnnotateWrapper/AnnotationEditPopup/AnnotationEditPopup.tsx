@@ -1,111 +1,123 @@
-import { Region } from '@cognite/react-image-annotate/Types/ImageCanvas/region-tools';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   Button,
   Col,
+  OptionType,
   Popconfirm,
   Row,
   Title,
-  OptionType,
 } from '@cognite/cogs.js';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import {
-  Keypoint,
-  KeypointCollection,
+  PredefinedKeypoint,
+  PredefinedKeypointCollection,
+  PredefinedShape,
+  PredefinedVisionAnnotations,
   VisionOptionType,
 } from 'src/modules/Review/types';
 import { AnnotationEditPopupBody } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup/AnnotationEditPopupBody';
+import {
+  AnnotatorPointRegion,
+  AnnotatorRegion,
+  AnnotatorRegionLabelProps,
+  AnnotatorRegionType,
+  isAnnotatorPointRegion,
+} from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
 
-export const AnnotationEditPopup = (props: {
-  region: Region;
-  editing: boolean;
-  onDelete: (region: Region) => void;
-  onClose: (region: Region) => void;
-  onChange: (region: Region) => void;
-  onCreateRegion: (region: Region) => void;
-  onUpdateRegion: (region: Region) => void;
-  onDeleteRegion: (region: Region) => void;
+export const AnnotationEditPopup = ({
+  region,
+  editing,
+  onDelete,
+  onClose,
+  onChange,
+  onCreateRegion,
+  onUpdateRegion,
+  onDeleteRegion,
+  collectionOptions,
+  shapeOptions,
+  nextPredefinedShape,
+  nextPredefinedKeypointCollection,
+  onOpenAnnotationSettings,
+  popupReference,
+  nextKeypoint,
+  predefinedAnnotations,
+}: AnnotatorRegionLabelProps & {
+  onCreateRegion: (region: AnnotatorRegion) => void;
+  onUpdateRegion: (region: AnnotatorRegion) => void;
+  onDeleteRegion: (region: AnnotatorRegion) => void;
   collectionOptions?: VisionOptionType<string>[];
   shapeOptions?: VisionOptionType<string>[];
-  lastShape?: string;
-  lastCollection: KeypointCollection;
+  nextPredefinedShape?: PredefinedShape;
+  nextPredefinedKeypointCollection: PredefinedKeypointCollection;
   onOpenAnnotationSettings: (
     type: string,
     text?: string,
     color?: string
   ) => void;
+  nextKeypoint: PredefinedKeypoint | null;
   popupReference: any;
-  nextKeypoint: Keypoint | null;
+  predefinedAnnotations: PredefinedVisionAnnotations;
 }) => {
-  const {
-    region,
-    editing,
-    onDelete,
-    onClose,
-    onChange,
-    onCreateRegion,
-    onUpdateRegion,
-    onDeleteRegion,
-    collectionOptions,
-    shapeOptions,
-    lastShape,
-    lastCollection,
-    onOpenAnnotationSettings,
-    popupReference,
-    nextKeypoint,
-  } = props;
-
   const dispatch = useDispatch();
 
   const title = useMemo(() => {
     switch (region.type) {
-      case 'box': {
+      case AnnotatorRegionType.BoxRegion: {
         return 'Rectangle';
       }
-      case 'point': {
+      case AnnotatorRegionType.PointRegion: {
         return 'Point';
       }
-      case 'polygon': {
+      case AnnotatorRegionType.PolygonRegion: {
         return 'Polygon';
       }
-      case 'line': {
+      case AnnotatorRegionType.LineRegion: {
         return 'Line';
       }
       default:
         return 'Other';
     }
-  }, [region]);
+  }, [region.type]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [annotationLabel, keypointOrder, annotationId, keypointLabel] =
-    region.tags || [];
-  const alreadyCreated = !!(region as any).lastUpdatedTime; // means already saved in CDF
-  const isKeypoint = region.type === 'point';
+  const { annotationLabelOrText, annotationMeta, keypointLabel } =
+    region as AnnotatorPointRegion;
 
-  const getInitialValue = (): VisionOptionType<string> => {
+  // means already saved in CDF
+  const alreadyCreated = useMemo(() => {
+    return !!(annotationMeta && annotationMeta?.annotation?.lastUpdatedTime);
+  }, [annotationMeta]);
+
+  const isKeypoint = useMemo(() => {
+    return isAnnotatorPointRegion(region);
+  }, [region]);
+
+  const getInitialOption = (): VisionOptionType<string> => {
     // sets last created keypoint or shape in the options list or adds existing label for created annotations
     if (!alreadyCreated) {
       if (isKeypoint) {
         return (
           collectionOptions?.find(
-            (val) => val.value === lastCollection.collectionName
+            (val) =>
+              val.value === nextPredefinedKeypointCollection.collectionName
           ) || {
             label: '',
           }
         );
       }
       return (
-        shapeOptions?.find((val) => val.value === lastShape) || { label: '' }
+        shapeOptions?.find(
+          (val) => val.value === nextPredefinedShape?.shapeName
+        ) || { label: '' }
       );
     }
-    return { label: annotationLabel, value: annotationLabel };
+    return { label: annotationLabelOrText, value: annotationLabelOrText };
   };
 
-  const [labelValue, setLabelValue] = useState<VisionOptionType<string>>(
-    getInitialValue()
-  );
+  const [labelValue, setLabelValue] =
+    useState<VisionOptionType<string>>(getInitialOption);
 
   const disabledCreationOrUpdate = !labelValue.value; // disallow creating or updating annotation if label is not available
 
@@ -125,29 +137,8 @@ export const AnnotationEditPopup = (props: {
     }
   };
 
-  const createKeypoint = () => {
-    if (lastCollection && nextKeypoint) {
-      const updatedRegion = {
-        ...region,
-        color: nextKeypoint.color,
-        tags: [
-          labelValue.value ? labelValue.value : lastCollection.collectionName,
-          nextKeypoint.order,
-          String(lastCollection.id) || '',
-          nextKeypoint.caption,
-        ],
-      };
-      onChange(updatedRegion);
-      onCreateRegion(updatedRegion);
-      onClose(updatedRegion);
-    }
-  };
-
   const handleOnCreate = () => {
     // calls create callback and deletes temp region in annotation lib memory
-    if (isKeypoint) {
-      createKeypoint();
-    }
     onCreateRegion(region);
     onClose(region);
     onDelete(region);
@@ -172,30 +163,74 @@ export const AnnotationEditPopup = (props: {
     }
   };
 
+  // fix label on first time render of component
+  // todo: Use the action handlers for selector for triggering this instead of using useEffect
+  // updating the region
+  useEffect(() => {
+    if (
+      region.annotationLabelOrText &&
+      labelValue.value !== region.annotationLabelOrText
+    ) {
+      setLabelValue({
+        label: region.annotationLabelOrText,
+        value: annotationLabelOrText,
+      });
+    }
+  }, [region.annotationLabelOrText]);
+
   useEffect(() => {
     // on select and on label value state is set region is updated accordingly
     if (editing && !isKeypoint && labelValue?.color && labelValue.value) {
-      let updatedRegionTags = [labelValue.value];
-      if (region.tags?.length) {
-        updatedRegionTags = updatedRegionTags.concat(region.tags.slice(1));
-      }
       const updatedRegion = {
         ...region,
         color: labelValue.color,
-        tags: updatedRegionTags,
+        annotationLabelOrText: labelValue.value,
       };
       onChange(updatedRegion);
     }
   }, [labelValue, editing]);
 
+  // on changing shape option region and region label is changed accordingly for keypoints
+  // todo: the color property should be accessed from predefined annotation or every metadata such as color, keypoints needs to be populated in labelOptions and passed to this component
   useEffect(() => {
-    if (editing) {
-      if (nextKeypoint && +nextKeypoint.order > 1) {
-        // create intermediate keypoints
-        createKeypoint();
+    if (
+      editing &&
+      isAnnotatorPointRegion(region) &&
+      labelValue?.color &&
+      labelValue.value
+    ) {
+      if (nextKeypoint) {
+        // for intermediate keypoints of a collection keypoint metadata are accessed from nextKeypoint
+        const updatedRegion = {
+          ...region,
+          color: nextKeypoint.color,
+          annotationLabelOrText: labelValue.value,
+          keypointLabel: nextKeypoint.caption,
+        };
+        onChange(updatedRegion);
+      } else {
+        // for first keypoint of a collection keypoint metadata needs to be taken from the correct predefinedKeypointCollection
+        const predefinedCollection =
+          predefinedAnnotations.predefinedKeypointCollections.find(
+            (collection) => collection.collectionName === labelValue.value
+          );
+        if (
+          predefinedCollection &&
+          predefinedCollection.keypoints &&
+          predefinedCollection.keypoints.length
+        ) {
+          const firstKeypoint = predefinedCollection.keypoints[0];
+          const updatedRegion = {
+            ...region,
+            color: firstKeypoint.color,
+            annotationLabelOrText: predefinedCollection.collectionName,
+            keypointLabel: firstKeypoint.caption,
+          };
+          onChange(updatedRegion);
+        }
       }
     }
-  }, [editing, nextKeypoint]);
+  }, [labelValue, editing, nextKeypoint]);
 
   useEffect(() => {
     // focus to submit buttons
@@ -215,12 +250,8 @@ export const AnnotationEditPopup = (props: {
     return isShape ? !!shapeOptions?.length : !!collectionOptions?.length;
   };
 
-  if (
-    editing &&
-    (!isKeypoint ||
-      (isKeypoint && !nextKeypoint?.order) || // no predefined keypoints
-      (isKeypoint && +nextKeypoint!.order === 1)) // don't show popup for intermediate keypoints
-  ) {
+  if (editing && (!isKeypoint || (isKeypoint && !nextKeypoint))) {
+    // don't show popup for intermediate keypoints
     return (
       <Container ref={popupReference}>
         <OptionContainer>
@@ -250,7 +281,6 @@ export const AnnotationEditPopup = (props: {
           <Row cols={5} style={{ paddingTop: '10px', paddingBottom: '10px' }}>
             <AnnotationEditPopupBody
               isKeypointMode={isKeypoint}
-              color={region.color}
               isSavedAnnotation={alreadyCreated}
               labelOption={labelValue}
               keypointLabel={keypointLabel}

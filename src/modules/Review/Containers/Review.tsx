@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { PageTitle } from '@cognite/cdf-utilities';
 import { selectFileById } from 'src/modules/Common/store/files/selectors';
 import { RootState } from 'src/store/rootReducer';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
-import { RetrieveAnnotationsV1 } from 'src/store/thunks/Annotation/RetrieveAnnotationsV1';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
 import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
@@ -19,6 +18,7 @@ import { pushMetric } from 'src/utils/pushMetric';
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import { CustomPrompt } from 'src/modules/Common/Components/CustomPrompt/CustomPrompt';
 import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 
 const DeleteButton = (props: {
   onConfirm: () => void;
@@ -60,13 +60,24 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   const previousPage = (props.location.state as { from?: string })?.from;
   const showBackButton = !!previousPage || false;
 
-  const onBackButtonClick = () => {
+  const onBackButtonClick = useCallback(() => {
     history.goBack();
+  }, [history]);
+
+  // Wraps around the dispatch call so that we can await for the deletion to finish.
+  const deleteFileById = async () => {
+    return dispatch(
+      DeleteFilesById({
+        fileIds: [file!.id],
+        setIsDeletingState: setIsDeleteInProgress,
+      })
+    );
   };
 
-  const handleFileDelete = () => {
+  const handleFileDelete = useCallback(async () => {
     // go to previous page if in single file review
     if (reviewFileIds.length <= 1) {
+      await deleteFileById();
       onBackButtonClick();
     } else {
       // go to previous image if in multi file review
@@ -82,14 +93,16 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
         ),
         { from: previousPage }
       );
+      await deleteFileById();
     }
-    dispatch(
-      DeleteFilesById({
-        fileIds: [file!.id],
-        setIsDeletingState: setIsDeleteInProgress,
-      })
-    );
-  };
+  }, [
+    reviewFileIds,
+    onBackButtonClick,
+    history,
+    previousPage,
+    file,
+    setIsDeleteInProgress,
+  ]);
 
   useEffect(() => {
     batch(() => {
@@ -104,7 +117,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
     }
 
     if (file) {
-      dispatch(RetrieveAnnotationsV1({ fileIds: [+fileId], clearCache: true }));
+      dispatch(RetrieveAnnotations({ fileIds: [+fileId], clearCache: true }));
     }
   }, [file, fileId, reviewFileIds]);
 
@@ -117,54 +130,67 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
     dispatch(PopulateAnnotationTemplates());
   }, []);
 
+  const clearProcessData = useCallback(() => {
+    dispatch(PopulateProcessFiles([]));
+    return true;
+  }, []);
+
+  const renderView = useMemo(() => {
+    if (file) {
+      return (
+        <>
+          <ToastContainer />
+          <PageTitle title="Review Annotations" />
+          <Container>
+            <ToolBar>
+              <StatusToolBar
+                current="Review"
+                previous={previousPage!}
+                left={
+                  showBackButton ? (
+                    <Button
+                      type="secondary"
+                      style={{ background: 'white' }}
+                      onClick={onBackButtonClick}
+                    >
+                      <Icon type="ChevronLeftCompact" />
+                      Back
+                    </Button>
+                  ) : (
+                    <></>
+                  )
+                }
+                right={
+                  <DeleteButton
+                    onConfirm={handleFileDelete}
+                    isDeleteInProgress={isDeleteInProgress}
+                  />
+                }
+              />
+            </ToolBar>
+            <ReviewBody file={file} prev={previousPage} />
+          </Container>
+        </>
+      );
+    }
+    return null;
+  }, [
+    file,
+    previousPage,
+    showBackButton,
+    onBackButtonClick,
+    handleFileDelete,
+    isDeleteInProgress,
+  ]);
+
   if (!file) {
     return null;
   }
-  const clearProcessData = () => {
-    dispatch(PopulateProcessFiles([]));
-    return true;
-  };
-  const renderView = () => {
-    return (
-      <>
-        <ToastContainer />
-        <PageTitle title="Review Annotations" />
-        <Container>
-          <ToolBar>
-            <StatusToolBar
-              current="Review"
-              previous={previousPage!}
-              left={
-                showBackButton ? (
-                  <Button
-                    type="secondary"
-                    style={{ background: 'white' }}
-                    onClick={onBackButtonClick}
-                  >
-                    <Icon type="ChevronLeftCompact" />
-                    Back
-                  </Button>
-                ) : (
-                  <></>
-                )
-              }
-              right={
-                <DeleteButton
-                  onConfirm={handleFileDelete}
-                  isDeleteInProgress={isDeleteInProgress}
-                />
-              }
-            />
-          </ToolBar>
-          <ReviewBody file={file} prev={previousPage} />
-        </Container>
-      </>
-    );
-  };
+
   return (
     <>
       <CustomPrompt when={previousPage === 'process'} onOK={clearProcessData} />
-      {renderView()}
+      {renderView}
     </>
   );
 };

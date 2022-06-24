@@ -6,7 +6,7 @@ import { JobState } from 'src/modules/Process/store/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { fetchUntilComplete } from 'src/utils';
 import { ToastUtils } from 'src/utils/ToastUtils';
-import { VisionJobUpdateV1 } from './VisionJobUpdateV1';
+import { VisionJobUpdate } from './VisionJobUpdate';
 
 export const PollJobs = createAsyncThunk<void, JobState[], ThunkConfig>(
   'process/pollJobs',
@@ -29,10 +29,11 @@ export const PollJobs = createAsyncThunk<void, JobState[], ThunkConfig>(
           onTick: async (latestJobVersion) => {
             if (
               latestJobVersion.status === 'Running' ||
-              latestJobVersion.status === 'Completed'
+              latestJobVersion.status === 'Completed' ||
+              latestJobVersion.status === 'Failed'
             ) {
               await dispatch(
-                VisionJobUpdateV1({
+                VisionJobUpdate({
                   job: latestJobVersion,
                   fileIds,
                   modelType,
