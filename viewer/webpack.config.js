@@ -34,17 +34,16 @@ module.exports = env => {
     // Internals is not part of prod builds
     entry: development
       ? {
-        index: './index.ts',
-        tools: './tools.ts',
-        'extensions/datasource': './extensions/datasource.ts',
-        internals: './internals.ts'
-      }
-    :
-    {
-        index: './index.ts',
-        tools: './tools.ts',
-        'extensions/datasource': './extensions/datasource.ts'
-    },
+          index: './index.ts',
+          tools: './tools.ts',
+          'extensions/datasource': './extensions/datasource.ts',
+          internals: './internals.ts'
+        }
+      : {
+          index: './index.ts',
+          tools: './tools.ts',
+          'extensions/datasource': './extensions/datasource.ts'
+        },
     target: 'web',
     resolve: {
       fallback: {
@@ -108,11 +107,11 @@ module.exports = env => {
       publicPath: publicPathViewer,
       path: path.resolve(__dirname, 'dist'),
       sourceMapFilename: '[name].map',
-        globalObject: `(typeof self !== 'undefined' ? self : this)`,
-        library: {
-            name: '@cognite/reveal',
-            type: 'umd'
-        }
+      globalObject: `(typeof self !== 'undefined' ? self : this)`,
+      library: {
+        name: '@cognite/reveal',
+        type: 'umd'
+      }
     },
     devtool: development ? 'inline-source-map' : 'source-map',
     watchOptions: {

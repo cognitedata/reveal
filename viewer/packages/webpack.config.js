@@ -73,9 +73,11 @@ module.exports = env => {
 
     devtool: 'inline-source-map',
 
-    plugins: [new HtmlWebpackPlugin({ title: require(path.resolve(env.dir, './package.json')).name }),
-              new webpack.ProvidePlugin({
-                process: 'process/browser'
-              })]
+    plugins: [
+      new HtmlWebpackPlugin({ title: require(path.resolve(env.dir, './package.json')).name }),
+      new webpack.ProvidePlugin({
+        process: 'process/browser'
+      })
+    ]
   };
 };
