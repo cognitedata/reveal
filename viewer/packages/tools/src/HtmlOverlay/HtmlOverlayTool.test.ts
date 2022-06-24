@@ -113,6 +113,26 @@ describe(HtmlOverlayTool.name, () => {
     expect(behindFarPlaneElement.style.visibility).toBe('hidden');
   });
 
+  test('visible() hides or unhides elements in the overlay', () => {
+    const helper = new HtmlOverlayTool(viewer);
+    const htmlElement = document.createElement('div');
+    htmlElement.style.position = 'absolute';
+    const position = new THREE.Vector3(0, 0, 0.5);
+
+    helper.add(htmlElement, position);
+    helper.forceUpdate();
+
+    expect(htmlElement.style.visibility).toBe('visible');
+
+    helper.visible(false);
+    helper.forceUpdate();
+    expect(htmlElement.style.visibility).toBe('hidden');
+
+    helper.visible(true);
+    helper.forceUpdate();
+    expect(htmlElement.style.visibility).toBe('visible');
+  });
+
   test('Triggers position update callback', () => {
     // Arrange
     const helper = new HtmlOverlayTool(viewer);
