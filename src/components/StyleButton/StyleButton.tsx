@@ -31,7 +31,11 @@ export const StyleButton = ({
       type="ghost"
       icon={styleType}
       style={{
-        height: 20,
+        height: 28,
+        width: 28,
+        borderRadius: 6,
+        fontSize: 12.25,
+        padding: 7.87,
         backgroundColor: styleColor,
         color: 'white',
         opacity: disabled ? `0.4` : `1`,
