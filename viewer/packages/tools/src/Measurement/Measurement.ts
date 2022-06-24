@@ -20,6 +20,7 @@ export class Measurement {
   private readonly _domElement: HTMLElement;
   private readonly _camera: THREE.Camera;
   private readonly _htmlOverlay: HtmlOverlayTool;
+  private _labelElement: HTMLDivElement | null;
   private readonly _axesHtmlOverlay: HtmlOverlayTool;
   private readonly _axesLabelElement: HTMLDivElement[];
   private _axesLabelOpacity: string;
@@ -37,6 +38,7 @@ export class Measurement {
     this._line = new MeasurementLine(this._options);
     this._measurementLabel = new MeasurementLabels();
     this._htmlOverlay = overlay;
+    this._labelElement = null;
     this._axesHtmlOverlay = new HtmlOverlayTool(viewer, this._overlayOptions);
     this._axesLabelElement = [];
     this._axesLabelOpacity = '0.0';
@@ -76,7 +78,7 @@ export class Measurement {
       this._line.getMeasuredDistance()
     );
     //Add the measurement label.
-    this.addLabel(this._line.getMidPointOnLine(), distanceValue);
+    this._labelElement = this.addLabel(this._line.getMidPointOnLine(), distanceValue);
 
     // if (this._options?.axisComponents) {
     this.addAxisMeasurement();
@@ -99,8 +101,8 @@ export class Measurement {
       this._viewer.removeObject3D(this._lineMesh);
     }
 
-    if (this._htmlOverlay) {
-      this._htmlOverlay.clear();
+    if (this._htmlOverlay && this._labelElement) {
+      this._htmlOverlay.remove(this._labelElement!);
     }
 
     //Remove Axes lines & labels

@@ -10,7 +10,7 @@ import { BucketGrid2D } from './BucketGrid2D';
 import { MetricsLogger } from '@reveal/metrics';
 import { DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
 import { assertNever, worldToViewportCoordinates } from '@reveal/utilities';
-import debounce from 'lodash/debounce';
+// import debounce from 'lodash/debounce';
 import { Cognite3DViewer } from '@reveal/api';
 
 /**
@@ -148,7 +148,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     position2D: new THREE.Vector2()
   };
 
-  private readonly scheduleUpdate: () => void;
+  // private readonly scheduleUpdate: () => void;
 
   private get viewerDomElement(): HTMLElement {
     return this._viewer.domElement;
@@ -172,7 +172,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     this._viewer.on('sceneRendered', this._onSceneRenderedHandler);
     this._viewer.on('disposed', this._onViewerDisposedHandler);
 
-    this.scheduleUpdate = debounce(() => this.forceUpdate(), 20);
+    // this.scheduleUpdate = debounce(() => this.forceUpdate(), 20);
 
     MetricsLogger.trackCreateTool('HtmlOverlayTool');
   }
@@ -233,7 +233,8 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     };
     this._htmlOverlays.set(htmlElement, element);
 
-    this.scheduleUpdate();
+    // this.scheduleUpdate();
+    this.forceUpdate();
 
     if (options.positionUpdatedCallback) {
       options.positionUpdatedCallback(htmlElement, new THREE.Vector2(), position3D, 0, []);

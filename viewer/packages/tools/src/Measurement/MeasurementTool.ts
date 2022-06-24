@@ -109,6 +109,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     });
     this._measurements.splice(0);
     this._currentMeasurementIndex = -1;
+    this._htmlOverlay.clear();
   }
 
   /**
@@ -170,7 +171,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    */
   dispose(): void {
     this.removeAllMeasurement();
-    this._htmlOverlay.clear();
+    this._htmlOverlay.dispose();
     super.dispose();
   }
 
