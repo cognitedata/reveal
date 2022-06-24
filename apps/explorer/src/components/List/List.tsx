@@ -1,5 +1,6 @@
 import { IconType } from '@cognite/cogs.js';
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import { ListStyles, SectionWrapper, SectionTitle } from './elements';
 import { ListItem } from './ListItem';
@@ -9,6 +10,7 @@ export interface ListData {
   name: string;
   iconSrc?: IconType;
   description?: string;
+  handleClick?: () => void;
 }
 
 export interface Props {
@@ -28,12 +30,14 @@ export const List: React.FC<Props> = ({ items }) => {
         <SectionWrapper key={section}>
           <SectionTitle level={2}>{section}</SectionTitle>
           {items[section].map((item) => (
-            <ListItem
-              key={item.id}
-              iconSrc={item.iconSrc ? item.iconSrc : defaultIcons[section]}
-              mainText={item.name}
-              subText={item.description ? item.description : ''}
-            />
+            <Link key={item.name} to={`/home?toType=${section}&to=${item.id}`}>
+              <ListItem
+                iconSrc={item.iconSrc ? item.iconSrc : defaultIcons[section]}
+                mainText={item.name}
+                subText={item.description ? item.description : ''}
+                handleClick={item.handleClick}
+              />
+            </Link>
           ))}
         </SectionWrapper>
       ))}

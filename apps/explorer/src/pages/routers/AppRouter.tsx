@@ -19,6 +19,7 @@ export const AppRouter = () => {
         <Route path={PAGES.LOGOUT} render={() => <Logout />} />
         <Route path={PAGES.SEARCH} render={() => <Search />} />
         <Route path={PAGES.PROFILE} render={() => <Profile />} />
+        <Route path={PAGES.NOT_FOUND} render={() => <NotFoundPage />} />
 
         <Redirect from="" to={PAGES.HOME} />
         <Redirect from="/" to={PAGES.HOME} />

@@ -782,3 +782,10 @@ export const useSearchPeopleRoomsQuery = <
     >(SearchPeopleRoomsDocument, variables),
     options
   );
+
+useSearchPeopleRoomsQuery.getKey = (
+  variables?: SearchPeopleRoomsQueryVariables
+) =>
+  variables === undefined
+    ? ['searchPeopleRooms']
+    : ['searchPeopleRooms', variables];

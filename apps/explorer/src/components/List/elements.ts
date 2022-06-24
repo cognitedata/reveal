@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { Body } from '@cognite/cogs.js';
 
 export const ListStyles = styled.div`
-  margin: 0 ${sizes.medium};
   display: flex;
   flex-direction: column;
 `;

@@ -16,6 +16,7 @@ export const SearchPeopleRoomsQuery = gql`
       items {
         externalId
         name
+        nodeId
         description
       }
     }

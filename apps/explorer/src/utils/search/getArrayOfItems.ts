@@ -3,7 +3,7 @@ import { SearchPeopleRoomsQueryTypeGenerated } from 'graphql/generated';
 import { SearchDataFormat } from './types';
 
 export const getArrayOfItems = (
-  searchResults: SearchPeopleRoomsQueryTypeGenerated | undefined,
+  searchResults: SearchPeopleRoomsQueryTypeGenerated,
   filterSections?: string[] | undefined
 ) => {
   const items: SearchDataFormat[] = [];

@@ -46,6 +46,7 @@ export const updateStyledNodes = async (
       myNodes.updateSet(
         new IndexSet(new NumericRange(intersection.treeIndex, 1))
       );
+
       return intersection.treeIndex;
     }
     return undefined;

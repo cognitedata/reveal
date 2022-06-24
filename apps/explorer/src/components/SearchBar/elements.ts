@@ -5,10 +5,12 @@ import { sizes } from 'styles/layout';
 export const SearchInputWrapper = styled.div`
   width: 100%;
   display: flex;
-  border: 3px solid #d9d9d9;
+  border: 3px solid #f5f5f5;
   border-radius: 6px;
   padding: 10px 7px;
+  line-height: normal;
   color: #1e1e1e;
+  background: #f5f5f5;
 `;
 
 export const SearchInput = styled.input`
@@ -18,6 +20,7 @@ export const SearchInput = styled.input`
   width: 100%;
   padding: 1px 5px;
   border-radius: 6px;
+  background: #f5f5f5;
 `;
 
 export const SearchButton = styled(Button)`

@@ -1,15 +1,15 @@
 import GlobalStyles from 'global-styles';
 import sidecar from 'utils/sidecar';
-import { Container } from '@cognite/react-container';
+import { ContainerWithoutI18N } from '@cognite/react-container';
 import { AppRouter } from 'pages/routers/AppRouter';
 
 const App = () => (
-  <Container sidecar={sidecar}>
+  <ContainerWithoutI18N sidecar={sidecar}>
     <>
       <GlobalStyles />
       <AppRouter />
     </>
-  </Container>
+  </ContainerWithoutI18N>
 );
 
 export default App;

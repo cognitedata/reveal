@@ -1,40 +1,43 @@
-import styled from 'styled-components';
-import { sizes } from 'styles/layout';
-import layers from 'utils/zindex';
-import { Title } from '@cognite/cogs.js';
+import { IconType } from '@cognite/cogs.js';
+import { useState } from 'react';
 
-export interface Position {
-  locationX: number;
-  locationY: number;
+import { EditPopupContent, PopupContent } from './PopupContent';
+import { Container, Content } from './elements';
+
+export interface Props {
+  mainText: string;
+  subText: string;
+  labels: string[];
+  disableRoute?: boolean;
+  iconType?: IconType;
 }
 
-interface Props {
-  itemData: string;
-}
+export const Popup: React.FC<Props> = ({ mainText, subText, ...rest }) => {
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [mainTextValue, setMainTextValue] = useState(mainText);
+  const [subTextValue, setSubTextValue] = useState(subText);
 
-const Container = styled.div`
-  z-index: ${layers.MAXIMUM};
-  position: absolute;
-  width: 100%;
-  bottom: ${sizes.medium};
-  left: 0;
-  display: flex;
-  justify-content: center;
-`;
-
-const Content = styled.div`
-  width: 85%;
-  min-height: 200px;
-  padding: ${sizes.small} ${sizes.medium};
-  background: #ffffff;
-  border-radius: ${sizes.medium};
-`;
-
-export const Popup: React.FC<Props> = ({ itemData }) => {
+  const handleEdit = () => setIsEditMode(!isEditMode);
   return (
     <Container>
       <Content className="z-2">
-        <Title level={3}>{itemData}</Title>
+        {isEditMode ? (
+          <EditPopupContent
+            handleSubTextChange={(e) => setSubTextValue(e.target.value)}
+            handleMainTextChange={(e) => setMainTextValue(e.target.value)}
+            handleEdit={handleEdit}
+            mainText={mainTextValue}
+            subText={subTextValue}
+            {...rest}
+          />
+        ) : (
+          <PopupContent
+            mainText={mainTextValue}
+            subText={subTextValue}
+            handleEdit={handleEdit}
+            {...rest}
+          />
+        )}
       </Content>
     </Container>
   );

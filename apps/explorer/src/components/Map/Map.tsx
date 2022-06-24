@@ -14,15 +14,20 @@ const fullStyle = { width: '100%', height: '100%' };
 interface Props {
   client: CogniteClient;
   model: AddModelOptions;
+  nodeInfo:
+    | {
+        externalId: string;
+        name?: string | undefined | null;
+        description?: string | undefined | null;
+      }
+    | undefined
+    | null;
 }
-const Map: React.FC<Props> = ({ client, model }) => {
+
+const Map: React.FC<Props> = ({ client, model, nodeInfo }) => {
   const viewer = React.useRef<Cognite3DViewer>();
-  const [treeIndex, setTreeIndex] = React.useState<number>();
-  const indexes: Record<number, string> = {
-    2438: 'DMVP room',
-    2436: 'Cylinder',
-    2445: 'Pentagon',
-  };
+  // Need to work on connecting this with nodeId
+  const [_treeIndex, setTreeIndex] = React.useState<number>();
 
   const handleClick = async (
     event: { offsetX: any; offsetY: any },
@@ -49,13 +54,17 @@ const Map: React.FC<Props> = ({ client, model }) => {
     };
 
     main();
-  }, [client]);
+  }, []);
 
   return (
     <div style={fullStyle}>
       <div id="reveal-map" style={fullStyle} />
-      {treeIndex && indexes[treeIndex] ? (
-        <Popup itemData={indexes[treeIndex]} />
+      {nodeInfo ? (
+        <Popup
+          mainText={nodeInfo.name as string}
+          subText={nodeInfo.description as string}
+          labels={[]}
+        />
       ) : null}
     </div>
   );

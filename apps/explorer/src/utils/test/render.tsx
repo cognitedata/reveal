@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import { QueryClientWrapper } from '__mocks/queryClientWrapper';
 // Here is where our custom render is being defined, so we don't need this check
 import { render, RenderOptions } from '@testing-library/react';
 import { I18nContainer } from '@cognite/react-i18n';
@@ -12,7 +13,9 @@ const testRenderer = (
   // providers, or anything else you might want.
   const component = (
     <I18nContainer>
-      <BrowserRouter>{ui}</BrowserRouter>
+      <QueryClientWrapper>
+        <BrowserRouter>{ui}</BrowserRouter>
+      </QueryClientWrapper>
     </I18nContainer>
   );
 

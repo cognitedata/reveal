@@ -11,6 +11,7 @@ generates:
       - typescript-operations
       - typescript-react-query
     config:
+      exposeQueryKeys: true
+      fetcher: utils/graphqlFetcher#graphqlFetcher
       operationResultSuffix: TypeGenerated
       skipTypename: true
-      fetcher: utils/graphqlFetcher#graphqlFetcher
