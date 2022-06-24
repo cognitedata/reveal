@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import React, { useEffect, useRef } from 'react';
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three';
 import * as reveal from '@cognite/reveal/internals';
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';

@@ -4,7 +4,7 @@
 
 import { Cognite3DViewer } from '@cognite/reveal';
 import React from 'react';
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three';
 import { registerVisualTest } from '../../../visual_tests';
 
 import { Cognite3DTestViewer } from '../Cognite3DTestViewer';
@@ -13,7 +13,7 @@ function DefaultCognite3DViewerTestPageV8() {
   const modelUrl = 'primitives_v8';
 
   return <Cognite3DTestViewer modelUrls={[modelUrl]} initializeCallback={(viewer:Cognite3DViewer) => {
-    viewer.cameraManager.setCameraState({position: new THREE.Vector3(30,10,50), 
+    viewer.cameraManager.setCameraState({position: new THREE.Vector3(30,10,50),
       target: new THREE.Vector3()});
   }} />;
 }

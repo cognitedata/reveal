@@ -6,7 +6,7 @@ import React, { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 import CameraControls from 'camera-controls';
 import * as reveal from '@cognite/reveal/internals';
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three';
 import dat from 'dat.gui';
 import { createSDKFromEnvironment, getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';

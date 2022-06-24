@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimationLoopHandler } from '../../utils/AnimationLoopHandler';
 import { getParamsFromURL } from '../../utils/example-helpers';
-import { PotreePointColorType, THREE } from '@cognite/reveal';
+import { PotreePointColorType } from '@cognite/reveal';
+import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { resizeRendererToDisplaySize } from '../../utils/sceneHelpers';
 import { CanvasWrapper } from '../../components/styled';
@@ -154,10 +155,10 @@ export function TestViewer(props: Props) {
           'cad',
           modelIdentifier
         );
-        
+
         sceneHandler.addCadModel(model, (model as CadNode).cadModelIdentifier);
       }
-      
+
       let cameraConfig = getCameraConfig(model);
 
       let camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(

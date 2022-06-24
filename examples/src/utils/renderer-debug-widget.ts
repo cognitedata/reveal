@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three';
 import * as reveal from '@cognite/reveal/internals';
 import dat from 'dat.gui';
 
@@ -136,7 +136,7 @@ export function createRendererDebugWidget(
   controls.push(
     sectorsGui.add(sceneInfo.quads, 'meshCount').name('Loaded quads')
   );
-  
+
   // Details about different geometries
   const primitivesGui = gui.addFolder('Primitives');
   controls.push(

@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three';
 import { BoundingBoxClipper } from '@cognite/reveal';
 import { TestEnvCad, TestViewer } from '../TestViewer';
 import { registerVisualTest } from '../../../visual_tests';

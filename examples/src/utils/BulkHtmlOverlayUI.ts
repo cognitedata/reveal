@@ -1,4 +1,4 @@
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three';
 import { Cognite3DModel, Cognite3DViewer, DefaultNodeAppearance, IndexSet, NodeAppearance, NumericRange, TreeIndexNodeCollection } from '@cognite/reveal';
 import { HtmlOverlayTool } from '@cognite/reveal/tools';
 import { CogniteClient } from '@cognite/sdk/dist/src';
@@ -95,7 +95,7 @@ export class BulkHtmlOverlayUI {
     };
     return htmlElement;
   }
-  
+
   private createCompositeOverlay(text: string, elementData: OverlayUserdata[]): HTMLElement {
     const htmlElement = createOverlay(text);
     htmlElement.onclick = () => {

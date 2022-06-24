@@ -1,4 +1,4 @@
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three';
 import { AddModelOptions, Cognite3DModel, Cognite3DViewer, CogniteModelBase, CognitePointCloudModel, ViewerState } from "@cognite/reveal";
 
 import * as dat from 'dat.gui';
@@ -87,13 +87,13 @@ export class ModelUi {
     const modelState = urlParams.get('modelState');
     if (modelState !== null) {
       await this.restoreModelState(modelState);
-    } 
+    }
   }
 
   private saveModelStateToUrl() {
     const state = this._viewer.getViewState();
     const modelState = { models: state.models };
-    
+
     const url = new URL(window.location.href);
     url.searchParams.set('modelState', JSON.stringify(modelState));
     // Update URL without reloading

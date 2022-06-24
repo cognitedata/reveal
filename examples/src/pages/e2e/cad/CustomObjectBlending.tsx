@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Cognite3DModel, Cognite3DViewer, DefaultNodeAppearance, NumericRange, THREE, TreeIndexNodeCollection } from '@cognite/reveal';
+import { Cognite3DModel, Cognite3DViewer, DefaultNodeAppearance, NumericRange, TreeIndexNodeCollection } from '@cognite/reveal';
+import * as THREE from 'three';
 import { registerVisualTest } from '../../../visual_tests';
 import { Cognite3DTestViewer } from '../Cognite3DTestViewer';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
@@ -14,7 +15,7 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
  */
 function CustomObjectBlending() {
   const modelUrl = 'primitives';
-  
+
   return <Cognite3DTestViewer modelUrls={[modelUrl]} initializeCallback={(viewer:Cognite3DViewer) => {
     viewer.renderer.setClearColor(new THREE.Color(0.1, 0.2, 0.3), 0.5);
     viewer.domElement.style.backgroundColor = "#777777";
@@ -29,14 +30,14 @@ function CustomObjectBlending() {
         depthTest: true
       })
     );
-  
+
     customBox.position.set(0, 0, -15);
     viewer.addObject3D(customBox);
 
     const customBox2 = new THREE.Mesh(
       new THREE.BoxGeometry(5, 10, 20),
       new THREE.MeshBasicMaterial({ color: new THREE.Color(1, 0, 0) }));
-  
+
     customBox2.position.set(10, 0, -15);
     viewer.addObject3D(customBox2);
 
@@ -48,7 +49,7 @@ function CustomObjectBlending() {
         opacity: 0.4
       })
     );
-  
+
     customBox3.position.set(20, 0, -15);
     viewer.addObject3D(customBox3);
 

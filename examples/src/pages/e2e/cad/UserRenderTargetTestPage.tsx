@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three';
 import React from 'react';
 import { TestEnvCad, TestViewer } from '../TestViewer';
 import { registerVisualTest } from '../../../visual_tests';
@@ -34,11 +34,11 @@ function UserRenderTargetTestPage() {
 
           in vec3 position;
           in vec2 uv;
-          
+
           out vec2 vUv;
-          
+
           const mat4 unitOrthographicProjection = mat4(1., 0., 0., 0., 0., 1., 0., 0., 0., 0., -1., 0., 0., 0., 0., 1.);
-          
+
           void main() {
               vUv = uv;
               gl_Position = unitOrthographicProjection * modelMatrix * vec4(position, 1.0);
@@ -51,7 +51,7 @@ function UserRenderTargetTestPage() {
           uniform sampler2D tDiffuse;
           uniform sampler2D tDepth;
 
-          in vec2 vUv; 
+          in vec2 vUv;
 
           out vec4 color;
 

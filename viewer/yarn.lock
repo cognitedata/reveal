@@ -760,7 +760,7 @@ __metadata:
     rxjs: 7.5.5
     shx: 0.3.4
     skmeans: 0.11.3
-    three: 0.141.0
+    three: 0.140.2
     ts-jest: 27.1.5
     ts-loader: ^9.3.0
     tsc-alias: 1.6.11
@@ -776,6 +776,7 @@ __metadata:
   peerDependencies:
     "@cognite/sdk": ^5.0.0 || ^6.0.0 || ^7.0.0
     "@cognite/sdk-core": ^4.1.0
+    three: 0.140.2
   languageName: unknown
   linkType: soft
 
@@ -10662,10 +10663,10 @@ resolve@^1.9.0:
   languageName: node
   linkType: hard
 
-"three@npm:0.141.0":
-  version: 0.141.0
-  resolution: "three@npm:0.141.0"
-  checksum: d161350b5134f2db616c7081d625c84235a1d50658b9f9c6ffe94143ddb77944b1c1b6831ad0be00037f8c744c8c60ee8d740ea4d48844b54f4525ee73a2d44f
+"three@npm:0.140.2":
+  version: 0.140.2
+  resolution: "three@npm:0.140.2"
+  checksum: 67b2733c4177ba0555a16a99e833340586d7a5b1dc4ac2ce7a376c55542cbc6acf72d785ce55b887597551bcf6e209213bcacb0b2c990db66f56ba4991601acb
   languageName: node
   linkType: hard
 

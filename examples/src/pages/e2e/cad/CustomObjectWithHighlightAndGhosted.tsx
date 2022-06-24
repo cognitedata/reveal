@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@cognite/reveal';
 import { TestEnvCad, TestViewer } from '../TestViewer';
 import { registerVisualTest } from '../../../visual_tests';
@@ -30,7 +30,7 @@ function CustomObjectWithHighlightAndGhosted() {
         return {
           cameraConfig: {
             position: new THREE.Vector3(9, 3.4, -12),
-            target: new THREE.Vector3(12, 0, -5), 
+            target: new THREE.Vector3(12, 0, -5),
           },
         };
       }}

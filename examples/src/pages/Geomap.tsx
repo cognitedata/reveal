@@ -5,7 +5,7 @@
 import React, { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 import { createSDKFromEnvironment } from '../utils/example-helpers';
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
 import {
@@ -13,7 +13,7 @@ import {
   Cognite3DViewer,
   Cognite3DModel,
   CognitePointCloudModel,
-  PotreePointColorType, 
+  PotreePointColorType,
   PotreePointShape,
   TreeIndexNodeCollection,
   IndexSet

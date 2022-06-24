@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three';
 import { Cognite3DModel, Cognite3DViewer, DefaultNodeAppearance, IndexSet, TreeIndexNodeCollection } from '@cognite/reveal';
 import { registerVisualTest } from '../../../visual_tests';
 import { Cognite3DTestViewer } from '../Cognite3DTestViewer';
@@ -22,7 +22,7 @@ function createFirstTreeIndicesSet(nodeCount: number): IndexSet {
   for (let i = 0; i < nodeCount / 2; i++) {
     indexSet.add(i);
   }
-  
+
   return indexSet;
 }
 
@@ -48,7 +48,7 @@ function ReassignNodeStyle() {
     const firstIndicesNodeCollection = new TreeIndexNodeCollection(firstTreeIndicesSet);
 
     model.assignStyledNodeCollection(alternatingNodeCollection, DefaultNodeAppearance.Highlighted);
-    
+
     model.assignStyledNodeCollection(firstIndicesNodeCollection, DefaultNodeAppearance.Ghosted);
     model.assignStyledNodeCollection(invertedNodeCollection, DefaultNodeAppearance.Default);
 
@@ -56,11 +56,11 @@ function ReassignNodeStyle() {
   }
 
   return (
-    <Cognite3DTestViewer 
+    <Cognite3DTestViewer
       modelUrls={['primitives']}
-      cadModelAddedCallback={handleModelAdded} 
+      cadModelAddedCallback={handleModelAdded}
       initializeCallback={(viewer: Cognite3DViewer) => {
-        viewer.cameraManager.setCameraState({position: new THREE.Vector3(30,10,50), 
+        viewer.cameraManager.setCameraState({position: new THREE.Vector3(30,10,50),
           target: new THREE.Vector3()});
       }}/>
   );

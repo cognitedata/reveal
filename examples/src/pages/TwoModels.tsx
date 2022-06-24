@@ -4,7 +4,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three';
 
 import CameraControls from 'camera-controls';
 import { createSDKFromEnvironment, getParamsFromURL } from '../utils/example-helpers';
@@ -70,7 +70,7 @@ export function TwoModels() {
         throw new Error(
           'Need to provide either project & modelId2/revisionId2 OR modelUrl2 as query parameters'
         );
-      }      
+      }
       sceneHandler.addCadModel(model2, model2.cadModelIdentifier);
 
       const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,

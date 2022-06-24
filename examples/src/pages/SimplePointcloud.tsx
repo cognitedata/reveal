@@ -5,7 +5,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { CanvasWrapper, Loader } from '../components/styled'
 
-import { PotreePointColorType, PotreePointShape, PotreePointSizeType, THREE } from '@cognite/reveal';
+import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from '@cognite/reveal';
+import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
 
 import CameraControls from 'camera-controls';

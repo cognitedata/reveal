@@ -4,7 +4,7 @@
 
 import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
 import {
@@ -363,7 +363,7 @@ export function Migration() {
       viewer.renderer.setPixelRatio(window.devicePixelRatio);
 
       viewer.on('click', async (event) => {
-        const { offsetX, offsetY } = event; 
+        const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
         const start = performance.now();
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);

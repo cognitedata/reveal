@@ -1,4 +1,4 @@
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import { CameraManager, CameraManagerHelper, CameraState, CameraChangeDelegate } from '@cognite/reveal';
@@ -29,9 +29,9 @@ export class CustomCameraManager implements CameraManager {
         if (state.rotation && state.target) throw new Error("Can't set both rotation and target");
         const position = state.position ?? this._camera.position;
         const rotation = state.rotation ?? this._camera.quaternion;
-        const target = state.target ?? ( state.rotation ? 
+        const target = state.target ?? ( state.rotation ?
             CameraManagerHelper.calculateNewTargetFromRotation(
-                this._camera, state.rotation, this._controls.target) : 
+                this._camera, state.rotation, this._controls.target) :
             this._controls.target);
 
         this._camera.position.copy(position);

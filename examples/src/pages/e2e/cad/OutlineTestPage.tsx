@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three';
 
 import { Cognite3DModel, NumericRange, IndexSet, TreeIndexNodeCollection, NodeOutlineColor, Cognite3DViewer } from '@cognite/reveal';
 import { registerVisualTest } from '../../../visual_tests';
@@ -13,7 +13,7 @@ function OutlineTestPage() {
 
   function initializeViewer(viewer: Cognite3DViewer) {
     viewer.setBackgroundColor(new THREE.Color('lightGray'));
-    viewer.cameraManager.setCameraState({position: new THREE.Vector3(31.63, 6.50, -12.18), 
+    viewer.cameraManager.setCameraState({position: new THREE.Vector3(31.63, 6.50, -12.18),
       target: new THREE.Vector3(21.04, 0.53, -11.88)});
   }
 
@@ -23,11 +23,11 @@ function OutlineTestPage() {
       const indexes = new IndexSet();
       indexes.addRange(new NumericRange(nodesPerColor*color, 10));
       const nodes = new TreeIndexNodeCollection(indexes);
-      model.assignStyledNodeCollection(nodes, { outlineColor: color as NodeOutlineColor});  
+      model.assignStyledNodeCollection(nodes, { outlineColor: color as NodeOutlineColor});
     }
   }
-  
-  return <Cognite3DTestViewer modelUrls={[modelUrl]} 
+
+  return <Cognite3DTestViewer modelUrls={[modelUrl]}
             fitCameraToModel={false}
             initializeCallback={initializeViewer}
             cadModelAddedCallback={styleModel}/>;

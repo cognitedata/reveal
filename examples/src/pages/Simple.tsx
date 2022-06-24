@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { getParamsFromURL, createSDKFromEnvironment } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
@@ -14,6 +14,9 @@ import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
 import { suggestCameraConfig } from '../utils/cameraConfig';
 import { LoadingState, RevealManager, SceneHandler } from '@cognite/reveal/internals';
+
+
+console.log("THREE = ", THREE);
 
 CameraControls.install({ THREE });
 
