@@ -33,6 +33,7 @@ const nameToAclTypeMap = {
   transformations: 'transformationsAcl',
   extractionpipelines: 'extractionPipelinesAcl',
   extractionruns: 'extractionRunsAcl',
+  extractionconfigs: 'extractionConfigsAcl',
   labels: 'labelsAcl',
   seismic: 'seismicAcl',
   relationships: 'relationshipsAcl',
@@ -64,6 +65,7 @@ const getCapabilityNameTranslationKey = {
   transformations: 'transformations',
   extractionpipelines: 'extraction-pipelines',
   extractionruns: 'extraction-runs',
+  extractionconfigs: 'extraction-configs',
   entitymatching: 'entity-matching',
   documentpipelines: 'document-pipelines',
   filepipelines: 'file-pipelines',
@@ -107,6 +109,7 @@ const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
       items: [
         'extractionpipelines',
         'extractionruns',
+        'extractionconfigs',
         'digitaltwin',
         'functions',
         'transformations',
@@ -144,6 +147,7 @@ export const capabilityDescriptions = {
   transformations: 'capability-desc-transformations',
   extractionpipelines: 'capability-desc-extractionpipelines',
   extractionruns: 'capability-desc-extractionruns',
+  extractionconfigs: 'capability-desc-extractionconfigs',
   labels: 'capability-desc-labels',
   seismic: 'capability-desc-seismic',
   digitaltwin: 'capability-desc-digitaltwin',
@@ -373,6 +377,7 @@ export const getCapabilityScopes = (
     case 'extractionpipelines':
       return ['datasetScope', 'idScope', 'all'];
     case 'extractionruns':
+    case 'extractionconfigs':
       return ['datasetScope', 'extractionPipelineScope', 'all'];
     case 'securitycategories':
       return ['idscope', 'all']; // ... idscope (lowercase s) are different
