@@ -25,7 +25,7 @@
   "scripts": {
     "build": "yarn run clean && webpack --env development=true",
     "build:watch": "yarn run clean && webpack --env development=true --watch",
-    "build:prod": "yarn run clean && webpack --env",
+    "build:prod": "yarn run clean && webpack",
     "mkdist": "shx mkdir -p dist && shx cp README.md LICENSE dist",
     "clean": "shx rm -rf dist/ && yarn run mkdist",
     "retarget-types": "tsc-alias -p tsconfig.webpack.json -v true",
