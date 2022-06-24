@@ -1,4 +1,4 @@
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { Tooltip } from '@cognite/cogs.js';
 import {
   StyledButton,
@@ -6,13 +6,13 @@ import {
   StyledTopBar,
   StyledTopBarLeft,
   StyledTopBarRight,
+  StyledTitle,
+  StyledFlex,
 } from './elements';
+import useSelector from '@platypus-app/hooks/useSelector';
 
 export const NavigationDataModel = () => {
-  const { dataModelExternalId } = useParams<{
-    dataModelExternalId: string;
-  }>();
-
+  const dataModelName = useSelector((state) => state.dataModel.dataModel?.name);
   const history = useHistory();
 
   const renderTopBarRight = () => {
@@ -28,14 +28,18 @@ export const NavigationDataModel = () => {
   const renderTitleButton = () => {
     return (
       <StyledTopBarLeft>
-        <StyledTitleButton
-          icon="ArrowLeft"
-          iconPlacement="left"
-          aria-label="Go Back"
-          onClick={() => history.push('/data-models')}
-        >
-          {dataModelExternalId}
-        </StyledTitleButton>
+        <StyledFlex alignItems="center">
+          <Tooltip content="Go Back to data model list page">
+            <StyledTitleButton
+              variant="ghost"
+              icon="ArrowLeft"
+              iconPlacement="left"
+              aria-label="Go Back to data model list page"
+              onClick={() => history.push('/data-models')}
+            />
+          </Tooltip>
+          <StyledTitle level="2">{dataModelName}</StyledTitle>
+        </StyledFlex>
       </StyledTopBarLeft>
     );
   };
