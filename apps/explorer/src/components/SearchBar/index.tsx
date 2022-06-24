@@ -1,1 +1,2 @@
-export { SearchBar, NavigateToSearchButton } from './SearchBar';
+export { SearchBar } from './SearchBar';
+export { NavigateToSearchButton } from './NavigateToSearchButton';

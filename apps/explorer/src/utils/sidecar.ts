@@ -70,9 +70,10 @@ type ExplorerConfig = SidecarConfig;
   disableIntercom: true,
   enableUserManagement: false,
   disableLegacyLogin: true,
+  disableInternalMetrics: true,
   ...((window as any).__cogniteSidecar || {}),
   reactQueryDevtools: {
-    disabled: true,
+    disabled: false,
   },
 } as ExplorerConfig;
 
