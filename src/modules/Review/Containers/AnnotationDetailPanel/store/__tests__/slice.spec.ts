@@ -1,19 +1,19 @@
+import { CDFAnnotationTypeEnum } from 'src/api/annotation/types';
 import reducer, {
   annotationDetailPanelInitialState,
   AnnotationDetailPanelState,
-  selectCategory,
+  selectAnnotationCategory,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
-import { Categories } from 'src/modules/Review/types';
 
 describe('Test AnnotationDetailPanel reducer', () => {
   const state: AnnotationDetailPanelState = {
-    categories: {
-      [Categories.Asset]: { selected: true },
+    annotationCategories: {
+      [CDFAnnotationTypeEnum.ImagesAssetLink]: { selected: true },
     },
   };
   const stateWithTextCategory: AnnotationDetailPanelState = {
-    categories: {
-      [Categories.Text]: { selected: true },
+    annotationCategories: {
+      [CDFAnnotationTypeEnum.ImagesTextRegion]: { selected: true },
     },
   };
 
@@ -23,20 +23,30 @@ describe('Test AnnotationDetailPanel reducer', () => {
     );
   });
 
-  describe('Test selectCategory reducer', () => {
+  describe('Test selectAnnotationCategory reducer', () => {
     test('should select the category', () => {
       expect(
         reducer(
           annotationDetailPanelInitialState,
-          selectCategory({ category: Categories.Asset, selected: true })
+          selectAnnotationCategory({
+            annotationType: CDFAnnotationTypeEnum.ImagesAssetLink,
+            selected: true,
+          })
         )
-      ).toEqual({ categories: { [Categories.Asset]: { selected: true } } });
+      ).toEqual({
+        annotationCategories: {
+          [CDFAnnotationTypeEnum.ImagesAssetLink]: { selected: true },
+        },
+      });
     });
     test('should remove the category', () => {
       expect(
         reducer(
           state,
-          selectCategory({ category: Categories.Asset, selected: false })
+          selectAnnotationCategory({
+            annotationType: CDFAnnotationTypeEnum.ImagesAssetLink,
+            selected: false,
+          })
         )
       ).toEqual(annotationDetailPanelInitialState);
     });
@@ -44,7 +54,10 @@ describe('Test AnnotationDetailPanel reducer', () => {
       expect(
         reducer(
           state,
-          selectCategory({ category: Categories.Text, selected: true })
+          selectAnnotationCategory({
+            annotationType: CDFAnnotationTypeEnum.ImagesTextRegion,
+            selected: true,
+          })
         )
       ).toEqual(stateWithTextCategory);
     });
@@ -52,7 +65,10 @@ describe('Test AnnotationDetailPanel reducer', () => {
       expect(
         reducer(
           state,
-          selectCategory({ category: Categories.Asset, selected: true })
+          selectAnnotationCategory({
+            annotationType: CDFAnnotationTypeEnum.ImagesAssetLink,
+            selected: true,
+          })
         )
       ).toEqual(state);
     });
@@ -60,7 +76,10 @@ describe('Test AnnotationDetailPanel reducer', () => {
       expect(
         reducer(
           state,
-          selectCategory({ category: Categories.Text, selected: false })
+          selectAnnotationCategory({
+            annotationType: CDFAnnotationTypeEnum.ImagesTextRegion,
+            selected: false,
+          })
         )
       ).toEqual(state);
     });

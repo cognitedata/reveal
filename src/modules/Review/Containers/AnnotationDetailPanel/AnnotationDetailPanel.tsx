@@ -8,18 +8,13 @@ import {
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import styled from 'styled-components';
 import { RootState } from 'src/store/rootReducer';
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { FileInfo } from '@cognite/sdk';
 import { generateNodeTree } from 'src/modules/Review/Containers/AnnotationDetailPanel/utils/generateNodeTree';
-import { Categories, VisionReviewAnnotation } from 'src/modules/Review/types';
-import {
-  ReviewVisionAnnotationRow,
-  ReviewAssetLinkAnnotationRow,
-  VirtualizedReviewAnnotations,
-} from 'src/modules/Review/Containers/AnnotationDetailPanel/components';
+import { VisionReviewAnnotation } from 'src/modules/Review/types';
+import { VirtualizedReviewAnnotations } from 'src/modules/Review/Containers/AnnotationDetailPanel/components';
 import { AnnotationDetailPanelHotKeys } from 'src/modules/Review/Containers/AnnotationDetailPanel/AnnotationDetailPanelHotKeys';
-import { selectCategory } from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
+import { selectAnnotationCategory } from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
 import {
   CDFAnnotationTypeEnum,
   ImageKeypointCollection,
@@ -48,13 +43,21 @@ import {
   AnnotationDetailPanelRowDataBase,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
 import { selectTempKeypointCollection } from 'src/modules/Review/store/annotatorWrapper/selectors';
+import {
+  annotationCategoryTitle,
+  annotationDetectionModelType,
+  annotationObjectsName,
+  annotationRowComponent,
+  annotationTypeFromCategoryTitle,
+} from 'src/modules/Review/Containers/AnnotationDetailPanel/utils';
 
 export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
   const { file } = props;
 
   const dispatch = useDispatch();
-  const categoryState = useSelector(
-    (state: RootState) => state.annotationDetailPanelReducer.categories
+  const annotationCategoryState = useSelector(
+    (state: RootState) =>
+      state.annotationDetailPanelReducer.annotationCategories
   );
 
   // when set virtualized tree component will use this to automatically scroll to position
@@ -188,9 +191,16 @@ export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
           if (nextState) {
             dispatch(selectCollection(id));
           }
-        } else if (Object.values(Categories).includes(id as Categories)) {
+        } else if (
+          Object.values(annotationCategoryTitle).includes(id as string)
+        ) {
           dispatch(
-            selectCategory({ category: id as Categories, selected: nextState })
+            selectAnnotationCategory({
+              annotationType: annotationTypeFromCategoryTitle[
+                id
+              ] as CDFAnnotationTypeEnum,
+              selected: nextState,
+            })
           );
         } else if (nextState) {
           dispatch(selectAnnotation(+id));
@@ -221,67 +231,41 @@ export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
     ]
   );
 
-  // todo: map categories to annotation types from a functions and remove these hardcoded categories - VIS-803
+  const getReviewAnnotations = (annotationType: CDFAnnotationTypeEnum) => {
+    switch (annotationType) {
+      case CDFAnnotationTypeEnum.ImagesObjectDetection:
+        return imagesObjectReviewAnnotations;
+      case CDFAnnotationTypeEnum.ImagesTextRegion:
+        return imagesTextRegionReviewAnnotations;
+      case CDFAnnotationTypeEnum.ImagesAssetLink:
+        return imagesAssetLinkReviewAnnotations;
+      case CDFAnnotationTypeEnum.ImagesKeypointCollection:
+        return imagesKeypointCollectionReviewAnnotations;
+      case CDFAnnotationTypeEnum.ImagesClassification:
+        return imagesClassificationReviewAnnotations;
+      default:
+        throw new Error(`Got unknown annotation type ${annotationType}`);
+    }
+  };
+
   const categoryRowDataList: AnnotationDetailPanelRowDataBase<AnnotationDetailPanelAnnotationType>[] =
     useMemo(() => {
       // items in common section will be passed down to child items
-      const rowData = [
-        {
-          title: Categories.Asset,
-          selected: !!categoryState[Categories.Asset]?.selected,
-          emptyPlaceholder: 'No assets detected or manually added',
-          callbacks: ReviewCallbacks,
-          common: {
-            reviewAnnotations: imagesAssetLinkReviewAnnotations,
-            mode: VisionDetectionModelType.TagDetection,
-            component: ReviewAssetLinkAnnotationRow as React.FC,
-          },
-        },
-        {
-          title: Categories.Object,
-          selected: !!categoryState[Categories.Object]?.selected,
-          emptyPlaceholder: 'No objects detected or manually added',
-          callbacks: ReviewCallbacks,
-          common: {
-            reviewAnnotations: imagesObjectReviewAnnotations,
-            mode: VisionDetectionModelType.ObjectDetection,
-            component: ReviewVisionAnnotationRow as React.FC,
-          },
-        },
-        {
-          title: Categories.Text,
-          selected: !!categoryState[Categories.Text]?.selected,
-          emptyPlaceholder: 'No text or objects detected or manually added',
-          callbacks: ReviewCallbacks,
-          common: {
-            reviewAnnotations: imagesTextRegionReviewAnnotations,
-            mode: VisionDetectionModelType.OCR,
-            component: ReviewVisionAnnotationRow as React.FC,
-          },
-        },
-        {
-          title: Categories.KeypointCollections,
-          selected: !!categoryState[Categories.KeypointCollections]?.selected,
-          emptyPlaceholder: 'No keypoints detected or manually added',
-          callbacks: ReviewCallbacks,
-          common: {
-            reviewAnnotations: imagesKeypointCollectionReviewAnnotations,
-            mode: VisionDetectionModelType.ObjectDetection,
-            component: ReviewVisionAnnotationRow as React.FC,
-          },
-        },
-        {
-          title: Categories.Classifications,
-          selected: !!categoryState[Categories.Classifications]?.selected,
-          emptyPlaceholder: 'No classifications detected or manually added',
-          callbacks: ReviewCallbacks,
-          common: {
-            reviewAnnotations: imagesClassificationReviewAnnotations,
-            mode: VisionDetectionModelType.ObjectDetection,
-            component: ReviewVisionAnnotationRow as React.FC,
-          },
-        },
-      ];
+      const rowData = Object.values(CDFAnnotationTypeEnum).map(
+        (annotationType) => {
+          return {
+            title: annotationCategoryTitle[annotationType],
+            selected: !!annotationCategoryState[annotationType]?.selected,
+            emptyPlaceholder: `No ${annotationObjectsName[annotationType]} detected or manually added`,
+            callbacks: ReviewCallbacks,
+            common: {
+              reviewAnnotations: getReviewAnnotations(annotationType),
+              mode: annotationDetectionModelType[annotationType],
+              component: annotationRowComponent[annotationType] as React.FC,
+            },
+          };
+        }
+      );
 
       // filters categories of empty annotations
       return rowData
@@ -297,7 +281,7 @@ export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
       mode,
       isKeypoint,
       imagesKeypointCollectionReviewAnnotations,
-      categoryState,
+      annotationCategoryState,
     ]);
 
   const rootNodeArr = useMemo(

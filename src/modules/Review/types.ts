@@ -70,17 +70,6 @@ export type VisionOptionType<T> = OptionType<T> & {
 export type Tool = typeof tools[keyof typeof tools];
 
 /**
- * @deprecated Its usage can likely be replaced by checking the type of `VisionAnnotationDataType`
- */
-export enum Categories {
-  Asset = 'Asset tags',
-  Object = 'Objects',
-  Text = 'Text',
-  KeypointCollections = 'Keypoint collections',
-  Classifications = 'Classification tags',
-}
-
-/**
  * New Vision Review Types
  */
 

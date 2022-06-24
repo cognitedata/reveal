@@ -11,7 +11,6 @@ import {
   selectAnnotation,
   setScrollToId,
 } from 'src/modules/Review/store/reviewSlice';
-import { Categories } from 'src/modules/Review/types';
 import {
   getActiveNode,
   getActiveNodeIndexFromArray,
@@ -28,7 +27,7 @@ import {
   TreeNode,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { selectCategory } from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
+import { selectAnnotationCategory } from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
 import { HotKeys } from 'src/constants/HotKeys';
 import { Modal } from 'antd';
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
@@ -106,9 +105,9 @@ export const AnnotationDetailPanelHotKeys = ({
     batch(() => {
       dispatch(deselectAllSelectionsReviewPage());
       if (isAnnotationTypeRowData(node.additionalData)) {
-        dispatch(
-          selectCategory({ category: id as Categories, selected: true })
-        );
+        const { annotationType } =
+          node.additionalData.common.reviewAnnotations[0].annotation;
+        dispatch(selectAnnotationCategory({ annotationType, selected: true }));
       } else if (isVisionReviewAnnotationRowData(node.additionalData)) {
         if (
           isVisionReviewImageKeypointRowData(node.additionalData) && // if this is current Collection
