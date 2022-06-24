@@ -6,6 +6,7 @@
   "defaultCommandTimeout": 10000,
   "pageLoadTimeout": 120000,
   "responseTimeout": 120000,
+  "requestTimeout": 10000,
   "env": {
     "BASE_URL": "https://localhost:3000",
     "CLUSTER": "bluefield",

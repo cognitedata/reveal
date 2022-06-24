@@ -7,6 +7,7 @@ import {
   WATER_DEPTH,
   KB_ELEVATION,
 } from '../../../src/pages/authorized/search/well/content/constants';
+import { interceptCoreNetworkRequests } from '../../support/commands/helpers';
 import { STATIC_WELL_1 } from '../../support/constants';
 import { SOURCE_FILTER } from '../../support/selectors/wells.selectors';
 
@@ -15,9 +16,11 @@ describe('Wells: result_table', () => {
     cy.deleteAllFavorites();
     cy.deleteAllSavedSearches();
     cy.addWaitForWdlResources('sources', 'GET', 'getSources');
+    const coreRequests = interceptCoreNetworkRequests();
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
+    cy.wait(coreRequests);
   });
 
   const createFavorite = (name: string) => {

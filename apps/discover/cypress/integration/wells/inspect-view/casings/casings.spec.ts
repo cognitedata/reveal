@@ -2,6 +2,8 @@ import { NO_RESULTS_TEXT } from '../../../../../src/components/EmptyState/consta
 import { UserPreferredUnit } from '../../../../../src/constants/units';
 import { DATA_AVAILABILITY } from '../../../../../src/modules/wellSearch/constantsSidebarFilters';
 import { TAB_NAMES } from '../../../../../src/pages/authorized/search/well/inspect/constants';
+import { interceptCoreNetworkRequests } from '../../../../support/commands/helpers';
+import { WELLS_SEARCH_ALIAS } from '../../../../support/interceptions';
 
 const DATA_AVAILABILITY_CASINGS = 'Casings';
 const DATA_AVAILABILITY_NPT = 'NPT events';
@@ -80,32 +82,32 @@ describe('Wells: casings buttons', () => {
 
 describe('Casings: Table view', () => {
   before(() => {
-    cy.addWaitForWdlResources('search', 'POST', 'searchWells');
+    const coreRequests = interceptCoreNetworkRequests();
+    cy.addWaitForWdlResources('casings/list', 'POST', 'casingsList');
+    cy.addWaitForWdlResources('npt/list', 'POST', 'nptList');
+    cy.addWaitForWdlResources('nds/list', 'POST', 'ndsList');
 
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
+    cy.wait(coreRequests);
+
     cy.selectCategory('Wells');
 
     cy.log(`click on ${DATA_AVAILABILITY} filter section`);
     cy.clickOnFilterCategory(DATA_AVAILABILITY);
 
-    cy.log(`select ${DATA_AVAILABILITY_NPT} from side bar filters`);
-    cy.validateSelect(
-      DATA_AVAILABILITY,
-      [DATA_AVAILABILITY_NPT],
-      DATA_AVAILABILITY_NPT
+    cy.log(
+      `select ${DATA_AVAILABILITY_NPT} and ${DATA_AVAILABILITY_CASINGS} from side bar filters`
     );
-
-    cy.log(`select ${DATA_AVAILABILITY_CASINGS} from side bar filters`);
     cy.validateSelect(
       DATA_AVAILABILITY,
-      [DATA_AVAILABILITY_CASINGS],
-      DATA_AVAILABILITY_CASINGS
+      [DATA_AVAILABILITY_NPT, DATA_AVAILABILITY_CASINGS],
+      [DATA_AVAILABILITY_NPT, DATA_AVAILABILITY_CASINGS]
     );
 
     cy.log('select all rows');
-    cy.wait('@searchWells');
+    cy.wait(`@${WELLS_SEARCH_ALIAS}`);
     cy.toggleSelectAllRows();
     cy.openInspectView();
 
@@ -115,6 +117,10 @@ describe('Casings: Table view', () => {
 
   it('Should be able to filter results by Well/Wellbore', () => {
     cy.log('Click on `Table` button');
+    cy.wait('@casingsList');
+    cy.wait('@nptList');
+    cy.wait('@ndsList');
+
     cy.contains('Table').click({ force: true });
 
     cy.log('filter results by well');

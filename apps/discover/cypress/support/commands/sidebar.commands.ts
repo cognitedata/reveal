@@ -1,5 +1,3 @@
-const SELECT_TEXT = 'Select...';
-
 Cypress.Commands.add(
   'validateSelect',
   (filter: string, toValidate: string[], toSelect?: string) => {
@@ -22,7 +20,6 @@ Cypress.Commands.add(
       .siblings()
       .first()
       .should('be.visible')
-      .contains(SELECT_TEXT)
       .click();
 
     cy.log('Check select has right values');
@@ -37,10 +34,19 @@ Cypress.Commands.add(
     });
 
     if (toSelect) {
-      cy.findByText(toSelect)
-        .scrollIntoView()
-        .should('be.visible')
-        .click({ waitForAnimations: true });
+      if (Array.isArray(toSelect)) {
+        toSelect.forEach((text) => {
+          cy.findByText(text)
+            .scrollIntoView()
+            .should('be.visible')
+            .click({ waitForAnimations: true });
+        });
+      } else {
+        cy.findByText(toSelect)
+          .scrollIntoView()
+          .should('be.visible')
+          .click({ waitForAnimations: true });
+      }
     }
 
     cy.log(`Close ${filter} select list`);
@@ -97,7 +103,11 @@ Cypress.Commands.add('clickOnNthFilterWrapper', (nth: number) => {
 });
 
 export interface SidebarCommands {
-  validateSelect(filter: string, values: string[], toSelect?: string): void;
+  validateSelect(
+    filter: string,
+    values: string[],
+    toSelect?: string | string[]
+  ): void;
   validateCheck(filter: string, values: string[], toSelect?: string): void;
   clickOnFilterCategory(filter: string): void;
   selectItemFromDropdownFilterCategory(
