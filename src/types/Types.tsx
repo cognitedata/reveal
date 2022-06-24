@@ -44,6 +44,7 @@ export interface CogFunction extends CogFunctionUpload {
   createdTime: number;
   status: 'Queued' | 'Deploying' | 'Ready' | 'Failed';
   error?: Error;
+  runtimeVersion?: string;
 }
 
 export interface Error {
