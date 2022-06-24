@@ -130,7 +130,7 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
           label="Input data"
           validateStatus={canParseInputData(inputData) ? 'success' : 'error'}
           help={helpMessage}
-          hasFeedback={Boolean(inputData)}
+          hasFeedback={!!inputData && inputData.length > 0}
         >
           <Input.TextArea
             rows={4}
