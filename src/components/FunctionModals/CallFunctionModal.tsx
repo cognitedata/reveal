@@ -77,9 +77,15 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
   const JSONCheckMessage = !canParseInputData(inputData)
     ? 'Input data must be a valid JSON object'
     : validJSONMessage;
-  const helpMessage = inputData
-    ? JSONCheckMessage
-    : 'Secrets or other confidential information should not be passed via the data object. There is a dedicated secrets object in the request body to "Create functions" for this purpose.';
+  const helpMessage = inputData ? (
+    JSONCheckMessage
+  ) : (
+    <span>
+      <b>Warning: </b>Secrets or other confidential information should not be
+      passed via the data object. There is a dedicated secrets object in the
+      request body to &quot;Create functions&quot; for this purpose.
+    </span>
+  );
 
   const handleInputDataChange = (evt: { target: { value: string } }) => {
     setInputData(evt.target.value);
