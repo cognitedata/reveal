@@ -241,7 +241,10 @@ export const DataModelPage = () => {
       setMode(SchemaEditorMode.Edit);
     };
     const onDiscardClick = () => {
-      setMode(SchemaEditorMode.View);
+      // if there is no published version yet, stay in edit mode
+      if (schemas.length > 0) {
+        setMode(SchemaEditorMode.View);
+      }
       setIsDirty(false);
       setCurrentType(null);
       removeLocalDraft(draft);
