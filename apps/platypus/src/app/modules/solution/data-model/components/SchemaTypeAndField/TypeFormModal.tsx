@@ -1,7 +1,10 @@
-import { Input } from '@cognite/cogs.js';
+import { Input, InputProps } from '@cognite/cogs.js';
 import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { DataModelTypeDefsType } from '@platypus/platypus-core';
+import {
+  DataModelTypeDefsType,
+  DataModelTypeNameValidator,
+} from '@platypus/platypus-core';
 import { useController, useForm, SubmitHandler } from 'react-hook-form';
 
 type FormInput = {
@@ -37,13 +40,26 @@ export const TypeFormModal = ({
     control,
     reset,
   } = useForm<FormInput>({
-    reValidateMode: 'onBlur',
+    mode: 'onChange',
+    reValidateMode: 'onChange',
   });
+  const typeNameValidator = new DataModelTypeNameValidator();
   const validateTypeNameIsUnique = (value: string): string | true => {
     if (existingTypes.some((type) => type.name === value)) {
       return t('not_unique_error', `Type '${value}' already exists`);
     }
     return true;
+  };
+
+  const validateTypeNameHasValidChars = (value: string): string | true => {
+    const validationResult = typeNameValidator.validate('Type name', value);
+    return (
+      validationResult.valid ||
+      t(
+        'invalid_name_error',
+        validationResult.errors['Type name'] || 'Invalid type name'
+      )
+    );
   };
 
   const { field } = useController({
@@ -52,7 +68,7 @@ export const TypeFormModal = ({
     name: 'typeName',
     rules: {
       required: 'This field is required',
-      validate: validateTypeNameIsUnique,
+      validate: { validateTypeNameHasValidChars, validateTypeNameIsUnique },
     },
   });
 
@@ -75,7 +91,7 @@ export const TypeFormModal = ({
       onCancel={closeModal}
     >
       <Input
-        {...field}
+        {...(field as Partial<InputProps>)}
         ref={null}
         error={errors.typeName?.message}
         title="Type name"

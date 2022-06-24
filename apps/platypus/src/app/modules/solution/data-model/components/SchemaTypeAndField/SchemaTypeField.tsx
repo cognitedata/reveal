@@ -21,6 +21,7 @@ export interface SchemaTypeFieldProps {
   onFieldUpdated: (field: Partial<UpdateDataModelFieldDTO>) => void;
   onFieldRemoved: (field: DataModelTypeDefsField) => void;
 }
+
 export const SchemaTypeField = ({
   field,
   builtInTypes,
