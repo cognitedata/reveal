@@ -75,6 +75,38 @@ describe('Cognite3DViewer', () => {
 
     expect(disposedListener).toBeCalledTimes(1);
   });
+
+  test('dispose removes and disposes all models', async () => {
+    // Arrange
+    const outputs = {
+      items: [
+        {
+          format: 'reveal-directory',
+          version: 8,
+          blobId: 1
+        }
+      ]
+    };
+    nock(/.*/)
+      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
+      .get(/.*\/outputs/)
+      .twice() // the first one goes to determine model type
+      .reply(200, outputs);
+    nock(/.*/)
+      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
+      .get(/.*\/scene.json/)
+      .reply(200, sceneJson);
+
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const model = await viewer.addModel({ modelId: 1, revisionId: 2 });
+    const disposeSpy = jest.spyOn(model, 'dispose');
+
+    viewer.dispose();
+
+    expect(viewer.models).toBeEmpty();
+    expect(disposeSpy).toBeCalledTimes(1);
+  });
+
   test('on cameraChange triggers when position and target is changed', () => {
     // Arrange
     const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = jest.fn();
