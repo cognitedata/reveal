@@ -126,7 +126,7 @@
     "eslint-plugin-lodash": "7.4.0",
     "eslint-plugin-prettier": "4.0.0",
     "eslint-plugin-storybook": "0.5.12",
-    "eslint-plugin-testing-library": "5.0.5",
+    "eslint-plugin-testing-library": "5.5.1",
     "husky": "7.0.4",
     "jest-environment-jsdom-sixteen": "2.0.0",
     "jest-junit": "13.2.0",
