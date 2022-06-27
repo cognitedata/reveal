@@ -1,14 +1,17 @@
 import { DATA_SOURCE } from '../../../../src/modules/wellSearch/constantsSidebarFilters';
 import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/constants';
+import { interceptCoreNetworkRequests } from '../../../support/commands/helpers';
 
 describe('Wells: Casings', () => {
   beforeEach(() => {
+    const coreRequests = interceptCoreNetworkRequests();
     cy.addWaitForWdlResources('sources', 'GET', 'getSources');
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
     cy.selectCategory('Wells');
     cy.wait('@getSources');
+    cy.wait(coreRequests);
   });
 
   it('allows us to inspect bad and good casings for wellbores', () => {
