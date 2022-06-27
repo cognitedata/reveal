@@ -33,11 +33,12 @@ import { Modal } from 'antd';
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import { FileInfo } from '@cognite/sdk';
 import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
-import { Status } from 'src/api/annotation/types';
+import { CDFAnnotationTypeEnum, Status } from 'src/api/annotation/types';
 import {
   keypointSelectStatusChange,
   selectCollection,
 } from 'src/modules/Review/store/annotatorWrapper/slice';
+import { annotationTypeFromCategoryTitle } from 'src/modules/Review/Containers/AnnotationDetailPanel/utils';
 
 export const AnnotationDetailPanelHotKeys = ({
   scrollId,
@@ -105,8 +106,9 @@ export const AnnotationDetailPanelHotKeys = ({
     batch(() => {
       dispatch(deselectAllSelectionsReviewPage());
       if (isAnnotationTypeRowData(node.additionalData)) {
-        const { annotationType } =
-          node.additionalData.common.reviewAnnotations[0].annotation;
+        const annotationType = annotationTypeFromCategoryTitle[
+          node.id
+        ] as CDFAnnotationTypeEnum;
         dispatch(selectAnnotationCategory({ annotationType, selected: true }));
       } else if (isVisionReviewAnnotationRowData(node.additionalData)) {
         if (
