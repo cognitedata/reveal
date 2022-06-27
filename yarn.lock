@@ -2718,10 +2718,10 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@6.19.0":
-  version "6.19.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-6.19.0.tgz#3531513aa352991efd9988844e800c75ae0833b1"
-  integrity sha512-nOAjK9jOGkGA7UtrJ5ywsCqHEz+MiVYcfJv0DWxL1GDZkjautJET99bculhI6+xqB+PAhRSHTkp6viJ9NwHE7Q==
+"@cognite/cogs.js@^6.9.1":
+  version "6.14.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-6.14.0.tgz#6f68f77f1b4a1d0c8c7ddcef7499f6a07443fd68"
+  integrity sha512-kpg4X3NCql54MIBs2uX0cHi0NKmKo3ffZ1iHptjNZgvLSSD2avwszRJJXf94ziiavLfvYeTNUhG5jkklYhLJEQ==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.4.3"
@@ -2747,10 +2747,10 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@^6.9.1":
-  version "6.14.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-6.14.0.tgz#6f68f77f1b4a1d0c8c7ddcef7499f6a07443fd68"
-  integrity sha512-kpg4X3NCql54MIBs2uX0cHi0NKmKo3ffZ1iHptjNZgvLSSD2avwszRJJXf94ziiavLfvYeTNUhG5jkklYhLJEQ==
+"@cognite/cogs.js@^7.0.2":
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-7.0.2.tgz#1a95bbb877d23d685104e6f27b5d80c2b676a036"
+  integrity sha512-bLMKGs5xm0tiR39LbySvM7Lor+NMy515kUXUmUh+WdzrbbBLlV4lknOrAf3UfQYMwkJCc0yEQtxLmY/KJypj3g==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.4.3"

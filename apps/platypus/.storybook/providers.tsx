@@ -8,6 +8,8 @@ import { rootInjector } from '../src/app/di';
 import { CogniteClient } from '@cognite/sdk';
 import config from '@platypus-app/config/config';
 import { setCogniteSDKClient } from '../src/environments/cogniteSdk';
+import { QueryClientProvider } from 'react-query';
+import { queryClient } from '../src/app/queryClient';
 
 export default makeDecorator({
   name: 'withAppProviders',
@@ -23,6 +25,8 @@ export default makeDecorator({
       appId: config.APP_APP_ID,
     });
     cogniteClient.setBaseUrl(window.location.origin);
+    cogniteClient.setProject('mock');
+
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     cogniteClient.initAPIs();
@@ -30,11 +34,13 @@ export default makeDecorator({
     setCogniteSDKClient(cogniteClient!);
 
     return (
-      <ContainerProvider container={rootInjector}>
-        <AppProviders store={store as any} tenant="">
-          {story(context)}
-        </AppProviders>
-      </ContainerProvider>
+      <QueryClientProvider client={queryClient}>
+        <ContainerProvider container={rootInjector}>
+          <AppProviders store={store as any} tenant="">
+            {story(context)}
+          </AppProviders>
+        </ContainerProvider>
+      </QueryClientProvider>
     );
   },
 });

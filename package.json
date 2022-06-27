@@ -8,7 +8,7 @@
     "@cognite/cdf-sdk-singleton": "^0.8.2",
     "@cognite/cdf-ui-cli": "^1.1.1",
     "@cognite/cdf-utilities": "^1.4.6",
-    "@cognite/cogs.js": "6.19.0",
+    "@cognite/cogs.js": "^7.0.2",
     "@cognite/react-container": "^3.0.1",
     "@cognite/react-feature-flags": "^1.0.1",
     "@cognite/sdk-v6": "npm:@cognite/sdk@6.1.1",
