@@ -41,6 +41,7 @@ export class MeasurementLine {
     this._material = new LineMaterial({
       color: this._options.color,
       linewidth: this._options.lineWidth,
+      worldUnits: false,
       depthTest: false,
       transparent: true,
       opacity: 1
@@ -56,6 +57,18 @@ export class MeasurementLine {
     };
 
     return mesh;
+  }
+
+  updateLineWidth(position: THREE.Vector3): void {
+    const linePosition = this.getMidPointOnLine();
+    const cameraLineDistance = position.distanceTo(linePosition);
+    if (cameraLineDistance > 25.0 && this._material?.uniforms['worldUnits'].value != 1) {
+      this._material?.uniforms['worldUnits'].value = 1;
+      this._material?.setValues({ linewidth: 1.0 });
+    } else if (cameraLineDistance < 25.0 && this._material?.uniforms['worldUnits'].value != 0) {
+      this._material?.uniforms['worldUnits'].value = 0;
+      this._material?.setValues({ linewidth: this._options.lineWidth });
+    }
   }
 
   /**

@@ -53,6 +53,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private readonly _handleonPointerClick = this.onPointerClick.bind(this);
   private readonly _handleonPointerMove = this.onPointerMove.bind(this);
   private readonly _handleDefaultOptions = this.defaultOptions.bind(this);
+  private readonly _handleCameraChange = this.cameraChanged.bind(this);
 
   constructor(viewer: Cognite3DViewer, options?: MeasurementOptions) {
     super();
@@ -154,6 +155,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    */
   private setupEventHandling() {
     this._viewer.on('click', this._handleonPointerClick);
+    this._viewer.on('cameraChange', this._handleCameraChange);
   }
 
   /**
@@ -197,6 +199,12 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    */
   private defaultOptions(): MeasurementLabelData | undefined {
     return this._measurements[this._currentMeasurementIndex].setDefaultOptions();
+  }
+
+  private cameraChanged(): void {
+    this._measurements.forEach(measurement => {
+      measurement.updateLineWidth(this._viewer.cameraManager.getCameraState());
+    });
   }
 
   /**

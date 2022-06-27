@@ -53,7 +53,7 @@ export class MeasurementUi {
   }
 
   private addGUI() {
-    this._guiController.push(this._gui.add(this.state, 'lineWidth', 2, 25, 1).name('Line Width').onFinishChange(linewidth => {
+    this._guiController.push(this._gui.add(this.state, 'lineWidth', 0.001, 25, 0.001).name('Line Width').onFinishChange(linewidth => {
       this.state.lineWidth = linewidth;
       this.setMeasurementLineOptions();
     }));

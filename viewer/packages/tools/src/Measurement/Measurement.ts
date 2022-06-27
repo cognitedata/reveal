@@ -3,6 +3,7 @@
  */
 
 import { Cognite3DViewer, Intersection } from '@reveal/api';
+import { CameraState } from '@reveal/camera-manager';
 import * as THREE from 'three';
 import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
 import { MeasurementLabels } from './MeasurementLabels';
@@ -108,6 +109,10 @@ export class Measurement {
    */
   getMesh(): THREE.Mesh | null {
     return this._lineMesh;
+  }
+
+  updateLineWidth(cameraState: CameraState): void {
+    this._line.updateLineWidth(cameraState.position!);
   }
 
   /**
