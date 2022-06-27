@@ -84,7 +84,7 @@ export const SchemaTypeField = ({
         <Input
           data-cy="schema-type-field"
           fullWidth
-          autoFocus
+          autoFocus={!fieldName}
           value={fieldName}
           disabled={disabled}
           onClick={(event) => event.currentTarget.select()}
