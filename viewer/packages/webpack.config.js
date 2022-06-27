@@ -28,10 +28,15 @@ module.exports = env => {
 
     devServer: {
       host: 'localhost',
-      static: {
-        directory: path.resolve(__dirname, env.dir + '/app'),
-        watch: true
-      },
+      static: [
+        {
+          directory: path.resolve(__dirname, env.dir + '/app')
+        },
+        {
+          directory: path.resolve(__dirname, '../../examples/public'),
+          watch: false
+        }
+      ],
       allowedHosts: 'all',
       server: 'https'
     },
