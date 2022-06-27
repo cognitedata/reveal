@@ -1,0 +1,25 @@
+export const customLabelCreatableOptions = [
+  { value: 'Tag No.', label: 'Tag No.' },
+  { value: 'Service', label: 'Service' },
+  { value: 'Manufacturer', label: 'Manufacturer' },
+  { value: 'Model', label: 'Model' },
+  { value: 'Size & Type', label: 'Size & Type' },
+  { value: 'Supplier', label: 'Supplier' },
+  { value: 'Liquid', label: 'Liquid' },
+  { value: 'Pump efficiency %', label: 'Pump efficiency %' },
+  { value: 'Performance Curve', label: 'Performance Curve' },
+  { value: 'Minimum safe flow', label: 'Minimum safe flow' },
+  { value: 'Speed', label: 'Speed' },
+  { value: 'NPSH required', label: 'NPSH required' },
+  { value: 'Rated power', label: 'Rated power' },
+  {
+    value: 'Maximum kW with rated impeller',
+    label: 'Maximum kW with rated impeller',
+  },
+  {
+    value: 'Maximum head with rated impeller (m)',
+    label: 'Maximum head with rated impeller (m)',
+  },
+  { value: 'Max. continuous flow m3/h', label: 'Max. continuous flow m3/h' },
+  { value: 'Driver rating', label: 'Driver rating' },
+];
