@@ -434,7 +434,7 @@ describe('Wells sidebar filters', () => {
       npt: {
         duration: {
           min: 4,
-          max: 9,
+          max: 10,
           unit: 'hour',
         },
         exists: true,
@@ -453,7 +453,7 @@ describe('Wells sidebar filters', () => {
       npt: {
         duration: {
           min: 4,
-          max: 9,
+          max: 10,
           unit: 'hour',
         },
         nptCodes: {
@@ -476,7 +476,7 @@ describe('Wells sidebar filters', () => {
         },
         duration: {
           min: 4,
-          max: 9,
+          max: 10,
           unit: 'hour',
         },
         nptCodes: {
