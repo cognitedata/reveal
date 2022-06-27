@@ -20,7 +20,7 @@ export const KeyboardShortcutModalContent = () => {
             </Shortcut>
             <Shortcut>
               <Body level={3}>Move right in image carousal</Body>
-              <Icon type="ArrowForward" size={12} />
+              <Icon type="ArrowRight" size={12} />
             </Shortcut>
             <Separator />
             <Shortcut>

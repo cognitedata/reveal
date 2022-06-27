@@ -1,9 +1,10 @@
 import React from 'react';
-import { Body, Input, Select, Title } from '@cognite/cogs.js';
+import { Body, Select, Title } from '@cognite/cogs.js';
 import { AutoMLModelType } from 'src/api/vision/autoML/types';
 import { MAX_AUTOML_MODEL_NAME_LENGTH } from 'src/api/vision/autoML/constants';
 
 import styled from 'styled-components';
+import { Input } from 'antd';
 
 type SelectOption = {
   label: any;
@@ -35,7 +36,6 @@ export const ModelTrainingSettings = (props: {
         </Body>
         <Input
           value={modelName}
-          fullWidth
           placeholder="Add model name"
           onChange={(event) => {
             const { value } = event.target;

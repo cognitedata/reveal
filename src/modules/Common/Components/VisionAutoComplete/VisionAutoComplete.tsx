@@ -60,7 +60,7 @@ export const VisionAutoComplete = ({
                     <CreateNewLabelBtn
                       className="create-pred-lbl-btn"
                       type="primary"
-                      icon="PlusCompact"
+                      icon="Add"
                       size="small"
                       onClick={() =>
                         onClickCreateNew &&

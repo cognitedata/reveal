@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Body, Icon, Input } from '@cognite/cogs.js';
+import { Body, Icon } from '@cognite/cogs.js';
 import React, { ReactText } from 'react';
 import { CopyableText } from 'src/modules/FileDetails/Components/FileMetadata/CopyableText';
 import {
@@ -10,6 +10,7 @@ import {
 import { Label } from '@cognite/sdk';
 import useIsFieldSavePending from 'src/store/hooks/useIsFieldSavePending';
 import { VisionFileDetailKey } from 'src/modules/FileDetails/Components/FileMetadata/Types';
+import { Input } from 'antd';
 
 const FieldViewContainer = styled.div`
   margin-bottom: 14px;
@@ -43,7 +44,7 @@ const Loader = (props: { loading: boolean }) => {
   if (props.loading) {
     return (
       <FlexContainer className="loader-container">
-        {props.loading && <Icon type="Loading" style={{ color: '#4a67fb' }} />}
+        {props.loading && <Icon type="Loader" style={{ color: '#4a67fb' }} />}
       </FlexContainer>
     );
   }
@@ -53,6 +54,7 @@ const Loader = (props: { loading: boolean }) => {
 export const FileDetailFieldView = (props: {
   id: VisionFileDetailKey;
   title: string;
+  // eslint-disable-next-line react/no-unused-prop-types
   placeholder?: string;
   value?: ReactText;
   copyable?: boolean;
@@ -85,8 +87,6 @@ export const FileDetailFieldView = (props: {
           {props.editable ? (
             <FieldViewInputContainer>
               <Input
-                size="default"
-                fullWidth
                 placeholder={props?.placeholder || NOT_SET_PLACEHOLDER}
                 value={props.value || ''}
                 onInput={onInput}

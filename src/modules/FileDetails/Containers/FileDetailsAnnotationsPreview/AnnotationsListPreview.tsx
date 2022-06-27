@@ -39,7 +39,7 @@ export const AnnotationsListPreview = ({
                 <Icon
                   type={
                     text === 'person'
-                      ? 'Personrounded'
+                      ? 'User'
                       : (AnnotationTypeIconMap[
                           annotation.annotationType
                         ] as AllIconTypes)

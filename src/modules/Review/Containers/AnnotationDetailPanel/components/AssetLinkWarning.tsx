@@ -61,7 +61,7 @@ export const AssetLinkWarning = ({
               placement="top"
               content={<span>{AssetWarnMessages[warningStatus]}</span>}
             >
-              <Icon type="WarningStroke" />
+              <Icon type="Warning" />
             </Tooltip>
           </IconContainer>
           {children}

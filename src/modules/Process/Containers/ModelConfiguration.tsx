@@ -134,7 +134,7 @@ export const ModelConfiguration = (props: {
 
   const addCustomModelOption = {
     label: (
-      <StyledButton icon="PlusCompact" type="ghost">
+      <StyledButton icon="Add" type="ghost">
         Add custom model
       </StyledButton>
     ),

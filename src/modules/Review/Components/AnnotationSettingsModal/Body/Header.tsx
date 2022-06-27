@@ -26,7 +26,7 @@ export const Header = ({
       <Button
         type="secondary"
         size="small"
-        icon="PlusCompact"
+        icon="Add"
         onClick={onClickNew}
         disabled={!!disabledMessage}
       >

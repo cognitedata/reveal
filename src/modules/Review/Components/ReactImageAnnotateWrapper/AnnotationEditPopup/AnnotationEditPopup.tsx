@@ -302,7 +302,7 @@ export const AnnotationEditPopup = ({
                 >
                   <Button
                     size="small"
-                    icon="Trash"
+                    icon="Delete"
                     disabled={!alreadyCreated || isKeypoint}
                   >
                     Delete
@@ -322,7 +322,7 @@ export const AnnotationEditPopup = ({
                   <Button
                     className="annotation-submit-btn"
                     type="primary"
-                    icon="PlusCompact"
+                    icon="Add"
                     size="small"
                     onClick={handleOnCreate}
                     disabled={disabledCreationOrUpdate}

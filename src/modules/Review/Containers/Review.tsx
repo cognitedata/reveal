@@ -34,7 +34,7 @@ const DeleteButton = (props: {
       <Button
         type="ghost-danger"
         loading={props.isDeleteInProgress}
-        icon="Trash"
+        icon="Delete"
       >
         Delete file
       </Button>
@@ -153,7 +153,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
                       style={{ background: 'white' }}
                       onClick={onBackButtonClick}
                     >
-                      <Icon type="ChevronLeftCompact" />
+                      <Icon type="ChevronLeftSmall" />
                       Back
                     </Button>
                   ) : (

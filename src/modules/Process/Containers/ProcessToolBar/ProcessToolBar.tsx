@@ -187,7 +187,7 @@ export const ProcessToolBar = () => {
             </Button>
             <Button
               type="tertiary"
-              icon="AddToList"
+              icon="Add"
               disabled={disableAddFiles}
               onClick={() =>
                 dispatch(setSelectFromExploreModalVisibility(true))

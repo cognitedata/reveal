@@ -86,7 +86,7 @@ export function AnnotationsBadgePopoverContent(
         showTag &&
         row({
           title: 'Assets',
-          icon: 'ResourceAssets',
+          icon: 'Assets',
           backgroundColor: '#F4DAF8',
           color: '#C945DB',
           count: badgeCounts.assets,
@@ -95,7 +95,7 @@ export function AnnotationsBadgePopoverContent(
         showText &&
         row({
           title: 'Text',
-          icon: 'TextScan',
+          icon: 'String',
           backgroundColor: '#F0FCF8',
           color: '#00665C',
           count: badgeCounts.text,
@@ -105,7 +105,7 @@ export function AnnotationsBadgePopoverContent(
         showGdpr &&
         row({
           title: 'People',
-          icon: 'Personrounded',
+          icon: 'User',
           backgroundColor: '#D3F7FB',
           color: '#1AA3C1',
           count: badgeCounts.gdpr,

@@ -146,7 +146,7 @@ export const Shapes = ({
               <DeleteButtonColorBoxWrapper>
                 {shape.unsaved && (
                   <Button
-                    icon="Trash"
+                    icon="Delete"
                     onClick={() => deleteUnsavedShape(shape.shapeName)}
                     size="small"
                     type="ghost-danger"
@@ -184,7 +184,7 @@ export const Shapes = ({
               />
             </>
             <Button
-              icon="Trash"
+              icon="Delete"
               onClick={() => deleteShape(key)}
               size="small"
               type="ghost-danger"

@@ -45,11 +45,7 @@ export const MetadataTableToolBar = ({
       >
         {editMode ? 'Finish Editing' : 'Edit table'}
       </StyledButton>
-      <StyledButton
-        type="ghost"
-        icon="PlusCompact"
-        onClick={handleAddMetadataRow}
-      >
+      <StyledButton type="ghost" icon="Add" onClick={handleAddMetadataRow}>
         Add row
       </StyledButton>
     </TableToolBar>

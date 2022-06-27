@@ -115,7 +115,7 @@ export const AutoMLModelPage = (props: {
               <Dropdown visible={!hideDropDown} content={MenuContent}>
                 <Button
                   type="primary"
-                  icon="ChevronDownCompact"
+                  icon="ChevronDownSmall"
                   aria-label="dropdown button"
                   disabled={
                     props.model.status !== 'Completed' || props.downloadingModel
@@ -136,7 +136,7 @@ export const AutoMLModelPage = (props: {
               >
                 <Button
                   type="ghost-danger"
-                  icon="Trash"
+                  icon="Delete"
                   disabled={deleteDisabled}
                   loading={!isFetched}
                 >
@@ -151,7 +151,7 @@ export const AutoMLModelPage = (props: {
       ) : props.isLoadingJob ? (
         <LoadingMessageContainer>
           Retrieving model data. This may take a few seconds...
-          <Icon data-testid="model-page-loading" type="Loading" />
+          <Icon data-testid="model-page-loading" type="Loader" />
         </LoadingMessageContainer>
       ) : (
         <StyledTitle data-testid="model-page-placeholder" level={4}>

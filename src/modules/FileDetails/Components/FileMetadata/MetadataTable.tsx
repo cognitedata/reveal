@@ -1,6 +1,6 @@
 import { fileMetaDataEdit } from 'src/modules/FileDetails/slice';
 import styled from 'styled-components';
-import { Input, Title } from '@cognite/cogs.js';
+import { Title } from '@cognite/cogs.js';
 import React, { ChangeEvent, ReactText, useEffect } from 'react';
 import { TableWrapper } from 'src/modules/Common/Components/FileTable/FileTableWrapper';
 import ReactBaseTable, {
@@ -17,6 +17,7 @@ import exifIcon from 'src/assets/exifIcon.svg';
 import { TableDataItem } from 'src/modules/Common/types';
 import { ExifIcon } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
 import { keyGenerator } from 'src/utils/keyGenerator/keyGenerator';
+import { Input } from 'antd';
 
 type TableProps = Omit<Omit<BaseTableProps<TableDataItem>, 'width'>, 'height'>;
 
@@ -67,12 +68,7 @@ const EditableCell = (cellProps: CellProps) => {
   };
   if (cellProps.column.editMode) {
     return (
-      <Input
-        type="text"
-        value={cellProps.cellData}
-        fullWidth
-        onChange={handleChange}
-      />
+      <Input type="text" value={cellProps.cellData} onChange={handleChange} />
     );
   }
   return (

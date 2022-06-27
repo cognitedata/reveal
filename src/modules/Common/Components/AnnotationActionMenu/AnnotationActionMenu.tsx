@@ -29,7 +29,7 @@ export const AnnotationActionMenu = ({
         content="Are you sure you want to permanently delete this annotation?"
       >
         <Menu.Item disabled={disabled}>
-          <Icon type="Trash" style={{ marginRight: '17px' }} />
+          <Icon type="Delete" style={{ marginRight: '17px' }} />
           Delete annotation
         </Menu.Item>
       </Popconfirm>
@@ -39,7 +39,7 @@ export const AnnotationActionMenu = ({
     <Dropdown content={MenuContent}>
       <Button
         type="ghost"
-        icon="MoreOverflowEllipsisHorizontal"
+        icon="EllipsisHorizontal"
         aria-label="dropdown button"
       />
     </Dropdown>

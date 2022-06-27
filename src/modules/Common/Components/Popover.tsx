@@ -7,7 +7,6 @@ interface PopoverProps {
   children: TooltipProps['children'];
   content: React.ReactNode;
   placement?: TooltipProps['placement'];
-  trigger?: string;
   mouseEnterDelay?: number;
 }
 
@@ -15,13 +14,11 @@ export const Popover = ({
   content,
   children,
   placement,
-  trigger = 'hover',
   mouseEnterDelay = 0.1,
 }: PopoverProps) => (
   <StyledTooltip
     placement={placement || 'right'}
     delay={mouseEnterDelay}
-    trigger={trigger}
     maxWidth="auto"
     interactive={false}
     hideOnClick

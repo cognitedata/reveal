@@ -6,8 +6,8 @@ import {
 } from 'src/constants/Colors';
 
 export const AnnotationTypeIconMap: { [key: string]: string } = {
-  [CDFAnnotationTypeEnum.ImagesTextRegion]: 'TextScan',
-  [CDFAnnotationTypeEnum.ImagesAssetLink]: 'ResourceAssets',
+  [CDFAnnotationTypeEnum.ImagesTextRegion]: 'String',
+  [CDFAnnotationTypeEnum.ImagesAssetLink]: 'Assets',
   [CDFAnnotationTypeEnum.ImagesObjectDetection]: 'Scan',
   [CDFAnnotationTypeEnum.ImagesKeypointCollection]: 'Scan',
   [CDFAnnotationTypeEnum.ImagesClassification]: 'Scan',

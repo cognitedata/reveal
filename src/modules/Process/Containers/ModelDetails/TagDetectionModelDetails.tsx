@@ -34,7 +34,7 @@ export const description = () => {
 export const badge = (modelName: string, hideText: boolean = false) => {
   return (
     <Button
-      icon="ResourceAssets"
+      icon="Assets"
       size="small"
       style={{
         backgroundColor: ColorsTagDetection.backgroundColor,

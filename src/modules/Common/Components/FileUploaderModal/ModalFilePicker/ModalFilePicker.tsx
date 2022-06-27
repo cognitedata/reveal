@@ -59,7 +59,7 @@ export function ModalFilePicker({
                 <FilePickerButtonsContainer>
                   <Button
                     style={{ marginRight: 16 }}
-                    icon="FolderLine"
+                    icon="Folder"
                     type="tertiary"
                     onClick={openSelectDirectoryDialogue}
                   >

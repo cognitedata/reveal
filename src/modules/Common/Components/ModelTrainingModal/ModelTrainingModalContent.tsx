@@ -118,7 +118,7 @@ export const ModelTrainingModalContent = ({
         <RightFooter>
           <Button
             type="tertiary"
-            icon="XLarge"
+            icon="CloseLarge"
             data-testid="cancel-button"
             onClick={handleOnClose}
           >

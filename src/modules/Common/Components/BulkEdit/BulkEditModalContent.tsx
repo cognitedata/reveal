@@ -171,11 +171,17 @@ export const BulkEditModalContent = ({
     })();
   }, [selectedBulkEditOption, unsavedAssetIds?.addedAssetIds]);
 
-  const handleBulkEditOptionChange = (option: BulkEditOptionType) => {
-    if (errors[option.label]) {
-      notification.error({ ...errors[option.label] });
+  const handleBulkEditOptionChange = (value: {
+    label: string;
+    text: string;
+  }) => {
+    if (errors[value.label]) {
+      notification.error({ ...errors[value.label] });
     } else {
-      setSelectedBulkEditOption(option);
+      const option = bulkEditOptions.find((item) => item.label === value.label);
+      if (option) {
+        setSelectedBulkEditOption(option);
+      }
       // Reset unsaved panel state when bulk edit option state has changed
       setBulkEditUnsaved({});
     }
@@ -191,9 +197,15 @@ export const BulkEditModalContent = ({
           <Body level={2}>Select bulk action</Body>
           <div style={{ width: '255px' }}>
             <Select
-              value={selectedBulkEditOption}
+              value={{
+                label: selectedBulkEditOption.label,
+                value: selectedBulkEditOption.value,
+              }}
               onChange={handleBulkEditOptionChange}
-              options={bulkEditOptions}
+              options={bulkEditOptions.map((item) => ({
+                value: item.value,
+                label: item.label,
+              }))}
               closeMenuOnSelect
             />
           </div>
@@ -219,7 +231,7 @@ export const BulkEditModalContent = ({
       </BodyContainer>
       <Footer>
         <RightFooter>
-          <Button type="ghost-danger" icon="XLarge" onClick={onCancel}>
+          <Button type="ghost-danger" icon="CloseLarge" onClick={onCancel}>
             Cancel
           </Button>
           <Tooltip

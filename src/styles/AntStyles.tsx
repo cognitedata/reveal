@@ -158,7 +158,7 @@ Dropdown.defaultProp = {
   getPopupContainer: getContainer,
 };
 
-Spin.setDefaultIndicator(<Icon type="Loading" />);
+Spin.setDefaultIndicator(<Icon type="Loader" />);
 
 export default function AntStyles(props: { children: React.Node }) {
   useEffect(() => {

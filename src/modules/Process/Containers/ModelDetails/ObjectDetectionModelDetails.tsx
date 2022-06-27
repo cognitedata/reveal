@@ -2,7 +2,6 @@ import {
   Button,
   Detail,
   Icon,
-  Input,
   PrimaryTooltip,
   Row,
   Title,
@@ -14,6 +13,7 @@ import { setUnsavedDetectionModelSettings } from 'src/modules/Process/store/slic
 import { RootState } from 'src/store/rootReducer';
 import { ColorsObjectDetection } from 'src/constants/Colors';
 import ObjectDetectionIllustration from 'src/assets/visualDescriptions/ObjectDetectionIllustration.svg';
+import { InputNumber } from 'antd';
 import {
   ColorBox,
   NameContainer,
@@ -109,16 +109,19 @@ export const content = (modelIndex: number) => {
                         }
                         step={0.05}
                       />
-                      <Input
+                      <InputNumber
                         type="number"
-                        size="large"
-                        width={80}
                         min={0.4}
                         max={1}
                         step={0.05}
                         value={params.threshold}
-                        setValue={onThresholdChange}
-                        style={{ height: '40px', MozAppearance: 'textfield' }}
+                        onChange={onThresholdChange}
+                        // TODO: switch back to the Input component in cogs.js once the issue in
+                        // https://cognitedata.slack.com/archives/C011E10CW2F/p1655890641506019?thread_ts=1655888255.471469&cid=C011E10CW2F
+                        // is resolved
+                        // size="large"
+                        // width={80}
+                        // style={{ height: '40px', MozAppearance: 'textfield' }}
                       />
                     </Row>
                   </th>

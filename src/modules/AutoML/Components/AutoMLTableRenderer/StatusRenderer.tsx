@@ -12,7 +12,7 @@ export const StatusRenderer = ({
   return status ? (
     <AutoMLStatusBadge status={status} errorMessage={errorMessage} />
   ) : (
-    <StyledIcon type="Loading" />
+    <StyledIcon type="Loader" />
   );
 };
 

@@ -101,7 +101,7 @@ export const BulkActionMenu = ({
       )}
       {visionAutoMLEnabled && onTrainModel && (
         <Menu.Item onClick={onTrainModel} disabled={!count}>
-          <Icon type="PlusCompact" style={{ marginRight: 17 }} />
+          <Icon type="Network" style={{ marginRight: 17 }} />
           <Detail strong>Train Model {count}</Detail>
         </Menu.Item>
       )}
@@ -133,7 +133,7 @@ export const BulkActionMenu = ({
               processingFiles !== undefined ? !count || processingFiles : !count
             }
           >
-            <Icon type="Trash" style={{ marginRight: 17 }} />
+            <Icon type="Delete" style={{ marginRight: 17 }} />
             <Detail strong style={{ color: 'inherit' }}>
               Delete {count}
             </Detail>
@@ -148,7 +148,7 @@ export const BulkActionMenu = ({
       <Dropdown content={MenuContent}>
         <Button
           type="primary"
-          icon="ChevronDownCompact"
+          icon="ChevronDownSmall"
           aria-label="dropdown button"
           disabled={!count || bulkActionInProgress}
           iconPlacement="right"

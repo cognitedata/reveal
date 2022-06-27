@@ -30,7 +30,7 @@ export const description = () => {
 export const badge = (modelName: string, hideText: boolean = false) => {
   return (
     <Button
-      icon="TextScan"
+      icon="String"
       size="small"
       style={{
         backgroundColor: ColorsOCR.backgroundColor,

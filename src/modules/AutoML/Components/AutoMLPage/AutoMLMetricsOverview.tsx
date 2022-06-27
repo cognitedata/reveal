@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import { Body, Icon, Input, PrimaryTooltip, Title } from '@cognite/cogs.js';
+import { Body, Icon, PrimaryTooltip, Slider, Title } from '@cognite/cogs.js';
 import React, { useState } from 'react';
 import {
   AutoMLMetrics,
@@ -9,6 +9,7 @@ import {
 import { dateformat, getDateDiff } from 'src/utils/DateUtils';
 import styled from 'styled-components';
 import { AutoMLStatusBadge } from 'src/modules/AutoML/Components/AutoMLStatusBadge';
+import { InputNumber } from 'antd';
 
 export const getPrecisionAndRecall = (
   threshold: number,
@@ -74,29 +75,33 @@ export const AutoMLMetricsOverview = (props: { model?: AutoMLTrainingJob }) => {
                 <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
               </PrimaryTooltip>
             </Body>
-            <ModelDataContainer style={{ paddingBottom: '10px' }}>
-              <Input
-                type="range"
+            <ModelDataContainer
+              style={{ paddingBottom: '10px', alignItems: 'center' }}
+            >
+              <Slider
                 min={0}
                 max={100}
                 value={currentThreshold}
-                onChange={(e) => onThresholdChange(parseFloat(e.target.value))}
+                onChange={(value) => onThresholdChange(value)}
                 step={10}
-                style={{ flex: 1, padding: 0, marginRight: '10px' }}
               />
-              <Input
+              <InputNumber
+                style={{ marginLeft: '10px' }}
                 type="number"
-                size="small"
-                width={70}
                 min={0}
                 max={100}
                 step={10}
                 value={currentThreshold}
-                setValue={onThresholdChange}
-                style={{
-                  MozAppearance: 'textfield',
-                  alignContent: 'center',
-                }}
+                onChange={onThresholdChange}
+                // TODO: switch back to the Input component in cogs.js once the issue in
+                // https://cognitedata.slack.com/archives/C011E10CW2F/p1655890641506019?thread_ts=1655888255.471469&cid=C011E10CW2F
+                // is resolved
+                // width={70}
+                // size="small"
+                // style={{
+                //   MozAppearance: 'textfield',
+                //   alignContent: 'center',
+                // }}
               />
             </ModelDataContainer>
 

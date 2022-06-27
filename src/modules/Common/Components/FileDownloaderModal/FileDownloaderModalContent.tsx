@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import moment from 'moment';
 import { FileLink, IdEither } from '@cognite/sdk';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { Dropdown, Menu, Title, Button, Body, Radio } from '@cognite/cogs.js';
+import { Title, Body, Radio, Select } from '@cognite/cogs.js';
 import { saveAs } from 'file-saver';
 import { STATUS } from 'src/modules/Common/Components/FileUploaderModal/enums';
 import styled from 'styled-components';
@@ -31,15 +31,17 @@ export const FileDownloaderModalContent = ({
 }: FileDownloaderModalProps) => {
   const [currentAnnotationFileFormat, setCurrentAnnotationFileFormat] =
     useState<AnnotationFileFormat>(AnnotationFileFormat.CSV);
+
   const [currentAnnotationChoice, setCurrentAnnotationChoice] =
     useState<AnnotationChoice>(AnnotationChoice.VerifiedAndUnreviewed);
+
   const [currentFileChoice, setCurrentFileChoice] = useState<DownloadChoice>(
     DownloadChoice.Files
   );
+
   const [downloadStatus, setDownloadStatus] = useState<STATUS>(
     STATUS.READY_TO_START
   );
-  const [hideDropDown, setHideDropDown] = useState<boolean>(true);
   const [downloadedMessage, setDownloadedMessage] = useState<string>('0%');
   const selectAnnotationsForFileIds = useMemo(
     makeSelectAnnotationsForFileIds,
@@ -181,16 +183,6 @@ export const FileDownloaderModalContent = ({
     }
   };
 
-  // TODO: Add cancel download
-  //   const { confirm } = Modal;
-  //   const stopDownload = () => {
-  //     confirm({
-  //       title: 'Do you want to cancel the download?',
-  //       content: 'If you cancel, the file upload will be cancelled!',
-  //       onOk: () => {},
-  //     });
-  //   };
-
   const onDownloadStart = () => {
     if (fileIds) {
       setDownloadStatus(STATUS.STARTED);
@@ -204,62 +196,42 @@ export const FileDownloaderModalContent = ({
     downloadedMessage
   );
 
-  const FileMenuContent = (
-    <Menu
-      style={{
-        color: 'black' /* typpy styles make color to be white here ... */,
-      }}
-    >
-      <Menu.Item
-        onClick={() => {
-          setCurrentFileChoice(DownloadChoice.Files);
-          setHideDropDown(true);
-        }}
-        disabled={false}
-      >
-        Files: {DownloadChoice.Files}
-      </Menu.Item>
+  const fileSelectOptions = [
+    { label: `Files: ${DownloadChoice.Files}`, value: DownloadChoice.Files },
+    {
+      label: `Files: ${DownloadChoice.Annotations}`,
+      value: DownloadChoice.Annotations,
+    },
+    {
+      label: `Files: ${DownloadChoice.FilesAndAnnotations}`,
+      value: DownloadChoice.FilesAndAnnotations,
+    },
+  ];
 
-      <Menu.Item
-        onClick={() => {
-          setCurrentFileChoice(DownloadChoice.Annotations);
-          setHideDropDown(true);
-        }}
-        disabled={false}
-      >
-        Files: {DownloadChoice.Annotations}
-      </Menu.Item>
-      <Menu.Item
-        onClick={() => {
-          setCurrentFileChoice(DownloadChoice.FilesAndAnnotations);
-          setHideDropDown(true);
-        }}
-      >
-        Files: {DownloadChoice.FilesAndAnnotations}
-      </Menu.Item>
-    </Menu>
-  );
+  const annotationSelectOptions = [
+    {
+      label: `As: ${AnnotationFileFormat.CSV}`,
+      value: AnnotationFileFormat.CSV,
+    },
+    {
+      label: `As: ${AnnotationFileFormat.COCO}`,
+      value: AnnotationFileFormat.COCO,
+    },
+  ];
 
-  const AnnotationMenuContent = (
-    <Menu
-      style={{
-        color: 'black' /* typpy styles make color to be white here ... */,
-      }}
-    >
-      <Menu.Item
-        onClick={() => setCurrentAnnotationFileFormat(AnnotationFileFormat.CSV)}
-      >
-        As: {AnnotationFileFormat.CSV}
-      </Menu.Item>
-      <Menu.Item
-        onClick={() =>
-          setCurrentAnnotationFileFormat(AnnotationFileFormat.COCO)
-        }
-      >
-        As: {AnnotationFileFormat.COCO}
-      </Menu.Item>
-    </Menu>
-  );
+  const onFileOptionChange = (option: {
+    label: string;
+    value: DownloadChoice;
+  }) => {
+    setCurrentFileChoice(option.value);
+  };
+
+  const onAnnotationOptionChange = (option: {
+    label: string;
+    value: AnnotationFileFormat;
+  }) => {
+    setCurrentAnnotationFileFormat(option.value);
+  };
 
   const handleAnnotationRadioButton = (e?: string) => {
     if (e === AnnotationChoice.VerifiedAndUnreviewed) {
@@ -282,7 +254,9 @@ export const FileDownloaderModalContent = ({
             currentAnnotationChoice === AnnotationChoice.VerifiedAndUnreviewed
           }
           disabled={currentFileChoice === DownloadChoice.Files}
-          onChange={(isChecked, e) => handleAnnotationRadioButton(e)}
+          onChange={(isChecked: any, e: string) =>
+            handleAnnotationRadioButton(e)
+          }
           style={{ paddingTop: '10px' }}
         >
           {AnnotationChoice.VerifiedAndUnreviewed}
@@ -293,7 +267,9 @@ export const FileDownloaderModalContent = ({
           value={AnnotationChoice.OnlyRejected}
           checked={currentAnnotationChoice === AnnotationChoice.OnlyRejected}
           disabled={currentFileChoice === DownloadChoice.Files}
-          onChange={(isChecked, e) => handleAnnotationRadioButton(e)}
+          onChange={(isChecked: any, e: string) =>
+            handleAnnotationRadioButton(e)
+          }
         >
           {AnnotationChoice.OnlyRejected}
         </Radio>
@@ -303,7 +279,9 @@ export const FileDownloaderModalContent = ({
           value={AnnotationChoice.All}
           checked={currentAnnotationChoice === AnnotationChoice.All}
           disabled={currentFileChoice === DownloadChoice.Files}
-          onChange={(isChecked, e) => handleAnnotationRadioButton(e)}
+          onChange={(isChecked: any, e: string) =>
+            handleAnnotationRadioButton(e)
+          }
         >
           {AnnotationChoice.All}
         </Radio>
@@ -321,41 +299,37 @@ export const FileDownloaderModalContent = ({
           {fileIds.length} files selected for download
         </Text>
         <Title level={5}>Download files </Title>
-        <Dropdown content={FileMenuContent} visible={!hideDropDown}>
-          <Button
-            type="tertiary"
-            // type="ghost"
-            aria-label="dropdown file selection"
-            icon="ChevronDownCompact"
-            iconPlacement="right"
-            onClick={() => {
-              setHideDropDown(false);
+        <SelectContainer>
+          <Select
+            value={{
+              label: `Files: ${currentFileChoice}`,
+              text: currentFileChoice,
             }}
-          >
-            <Body level={2} style={{ color: '#8C8C8C' }}>
-              Files: {currentFileChoice}
-            </Body>
-          </Button>
-        </Dropdown>
+            onChange={onFileOptionChange}
+            options={fileSelectOptions}
+            closeMenuOnSelect
+            disableTyping
+            isMulti={false}
+          />
+        </SelectContainer>
 
         <Title level={5} style={{ paddingTop: '17px' }}>
           Download annotations
         </Title>
-
-        <Dropdown content={AnnotationMenuContent}>
-          <Button
-            type="tertiary"
-            aria-label="dropdown file selection"
-            icon="ChevronDownCompact"
-            iconPlacement="right"
+        <SelectContainer>
+          <Select
+            value={{
+              label: `As: ${currentAnnotationFileFormat}`,
+              text: currentAnnotationFileFormat,
+            }}
+            onChange={onAnnotationOptionChange}
+            options={annotationSelectOptions}
+            isMulti={false}
+            closeMenuOnSelect
+            disableTyping
             disabled={currentFileChoice === DownloadChoice.Files}
-          >
-            <Body level={2} style={{ color: '#8C8C8C' }}>
-              As: {currentAnnotationFileFormat}
-            </Body>
-          </Button>
-        </Dropdown>
-
+          />
+        </SelectContainer>
         <AnnotationRadio />
         <Footer>
           {CancelButton}
@@ -374,6 +348,10 @@ const DownloadContainer = styled.div`
 
 const Text = styled(Body)`
   color: #8c8c8c;
+`;
+
+const SelectContainer = styled.div`
+  width: 400px;
 `;
 
 const Footer = styled.div`

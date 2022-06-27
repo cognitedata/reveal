@@ -12,7 +12,7 @@ export const DateRenderer = ({
   return createdTime ? (
     <>{dateformat(new Date(createdTime))}</>
   ) : (
-    <StyledIcon type="Loading" />
+    <StyledIcon type="Loader" />
   );
 };
 

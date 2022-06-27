@@ -60,7 +60,7 @@ export function SelectAllHeaderRenderer({
       <Dropdown content={MenuContent}>
         <Button
           type="ghost"
-          icon="ChevronDownCompact"
+          icon="ChevronDownSmall"
           aria-label="dropdown button"
         />
       </Dropdown>

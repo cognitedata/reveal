@@ -135,7 +135,7 @@ export const AutoMLModelList = (props: {
       ) : props.modelList && props.modelList.length === 0 ? (
         <StyledBody data-testid="no-model-msg">No models found</StyledBody>
       ) : (
-        <StyledIcon data-testid="loading-animation-icon" type="Loading" />
+        <StyledIcon data-testid="loading-animation-icon" type="Loader" />
       )}
     </Container>
   );

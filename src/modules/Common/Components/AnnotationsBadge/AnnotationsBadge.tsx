@@ -9,19 +9,19 @@ import { showBadge, showGDPRBadge } from './utils';
 
 const setBadge = (count: number, statuses?: AnnotationStatuses) => {
   if (statuses?.status === 'Running') {
-    return <Icon type="Loading" />;
+    return <Icon type="Loader" />;
   }
   if (statuses?.status === 'Failed') {
     if (statuses?.error) {
       return (
         <Tooltip placement="bottom" content={statuses.error}>
           <span style={{ width: '100px' }}>
-            <Icon type="ErrorStroked" />
+            <Icon type="Error" />
           </span>
         </Tooltip>
       );
     }
-    return <Icon type="ErrorStroked" />;
+    return <Icon type="Error" />;
   }
 
   if (count !== undefined && statuses?.status !== 'Queued') {
@@ -49,7 +49,7 @@ export function AnnotationsBadge(
     <>
       {badgeCounts.assets !== undefined && showTag && (
         <Button
-          icon="ResourceAssets"
+          icon="Assets"
           size="small"
           style={{
             marginRight: '5px',
@@ -63,7 +63,7 @@ export function AnnotationsBadge(
       )}
       {badgeCounts.text !== undefined && showText && (
         <Button
-          icon="TextScan"
+          icon="String"
           size="small"
           style={{
             marginRight: '5px',
@@ -91,7 +91,7 @@ export function AnnotationsBadge(
       )}
       {badgeCounts.gdpr !== undefined && showGdpr && (
         <Button
-          icon="Personrounded"
+          icon="User"
           size="small"
           style={{
             backgroundColor: '#D3F7FB',

@@ -44,7 +44,7 @@ export default function NoAccessPage({
           size="default"
           variant="default"
           type="ghost"
-          icon="ArrowBack"
+          icon="ArrowLeft"
           iconPlacement="left"
           href={NavLinks.HomeLink}
         >

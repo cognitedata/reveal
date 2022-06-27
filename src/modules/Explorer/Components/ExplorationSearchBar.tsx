@@ -1,5 +1,5 @@
+import { Input } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { Input } from '@cognite/cogs.js';
 import { useDebounce } from 'use-debounce';
 
 export const ExplorationSearchBar = (props: {
@@ -16,18 +16,18 @@ export const ExplorationSearchBar = (props: {
   return (
     <Input
       size="large"
-      variant="noBorder"
-      fullWidth
+      // variant="noBorder"
+      // fullWidth
       style={{
         border: '2px solid #D9D9D9',
         borderRadius: '6px',
         background: 'transparent',
       }}
-      icon="Search"
+      // icon="Search"
       placeholder="Search..."
       onChange={(e) => setText(e.target.value)}
       value={text}
-      clearable={{ callback: () => setText(''), labelText: 'clear' }}
+      // clearable={{ callback: () => setText(''), labelText: 'clear' }}
     />
   );
 };

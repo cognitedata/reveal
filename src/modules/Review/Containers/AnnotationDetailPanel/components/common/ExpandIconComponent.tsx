@@ -11,7 +11,7 @@ export const ExpandIconComponent = ({ isActive }: { isActive: boolean }) => {
   return (
     <IconContainer>
       <Icon
-        type="ChevronDownCompact"
+        type="ChevronDownSmall"
         style={{
           transition: 'transform .2s',
           transform: `rotate(${isActive ? 0 : -180}deg)`,

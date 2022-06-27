@@ -60,7 +60,7 @@ export class ToastUtils {
       return (
         <WarningToastContainer>
           <WarnIconContainer>
-            <Icon type="WarningStroke" style={{ width: 25 }} />
+            <Icon type="Warning" style={{ width: 25 }} />
           </WarnIconContainer>
           <div>
             <h3>{title}</h3>

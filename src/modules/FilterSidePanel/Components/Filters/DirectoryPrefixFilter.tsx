@@ -138,7 +138,7 @@ export const DirectoryPrefixFilter = ({
         />
       </StringFilterContainer>
       <BackButton
-        icon="ChevronLeftCompact"
+        icon="ChevronLeftSmall"
         onClick={() => {
           setParentSelected(true);
           setDirectoryPrefix(

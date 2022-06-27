@@ -52,12 +52,12 @@ export const getUploadControls = (
       break;
     case STATUS.STARTED:
       UploadButton = (
-        <Button type="primary" icon="Loading">
+        <Button type="primary" icon="Loader">
           Uploading files
         </Button>
       );
       CancelButton = (
-        <Button type="danger" icon="XLarge" onClick={onUploadStop}>
+        <Button type="danger" icon="CloseLarge" onClick={onUploadStop}>
           Cancel upload
         </Button>
       );

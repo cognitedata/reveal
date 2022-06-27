@@ -47,7 +47,7 @@ export const AnnotationActionMenuExtended = ({
         }
       >
         <Menu.Item>
-          <Icon type="Trash" style={{ marginRight: '17px' }} />
+          <Icon type="Delete" style={{ marginRight: '17px' }} />
           {deleteMenuText || 'Delete annotation'}
         </Menu.Item>
       </Popconfirm>
@@ -61,7 +61,7 @@ export const AnnotationActionMenuExtended = ({
     <Dropdown content={MenuContent}>
       <StyledButton
         type="ghost"
-        icon="MoreOverflowEllipsisHorizontal"
+        icon="EllipsisHorizontal"
         aria-label="dropdown button"
         onClick={handleClick}
       />

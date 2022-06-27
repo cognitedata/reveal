@@ -43,7 +43,7 @@ export function FileListItem({ file, onRemove }: FileListItemProps) {
       <div className="sizeAndStatus">
         <FileStatusColumn file={file} />
         {file.status !== 'done' && (
-          <IconRemove type="XCompact" onClick={() => onRemove(file)} />
+          <IconRemove type="Close" onClick={() => onRemove(file)} />
         )}
       </div>
     </FileListItemContainer>

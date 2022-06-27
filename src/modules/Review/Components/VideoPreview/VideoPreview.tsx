@@ -28,7 +28,7 @@ type FilePreviewProps = {
 const LoaderView = () => {
   return (
     <LoaderContainer>
-      <Icon type="Loading" />
+      <Icon type="Loader" />
     </LoaderContainer>
   );
 };

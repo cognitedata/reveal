@@ -31,13 +31,13 @@ export const getDownloadControls = (
       break;
     case STATUS.STARTED:
       DownloadButton = (
-        <Button type="primary" icon="Loading">
+        <Button type="primary" icon="Loader">
           {`Downloading (${downloadMessage})`}
         </Button>
       );
       // TODO: fix cancel
       // CancelButton = (
-      //   <Button type="danger" icon="XLarge" onClick={onDownloadStop}>
+      //   <Button type="danger" icon="CloseLarge" onClick={onDownloadStop}>
       //     Cancel upload
       //   </Button>
       // );

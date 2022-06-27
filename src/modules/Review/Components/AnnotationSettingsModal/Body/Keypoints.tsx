@@ -205,7 +205,7 @@ export const Keypoints = ({
                     <ColorBox color={keypointCollection.color} />
                     {keypointCollection.unsaved && (
                       <Button
-                        icon="Trash"
+                        icon="Delete"
                         onClick={() =>
                           deleteUnsavedKeypointCollection(
                             keypointCollection.collectionName
@@ -271,7 +271,7 @@ export const Keypoints = ({
                       }}
                     />
                     <Button
-                      icon="Trash"
+                      icon="Delete"
                       onClick={() => setNewKeypoints(undefined)}
                       size="small"
                       type="ghost-danger"
@@ -303,7 +303,7 @@ export const Keypoints = ({
                       }}
                     />
                     <Button
-                      icon="Trash"
+                      icon="Delete"
                       onClick={() => onDeleteKeypoint(index)}
                       size="small"
                       type="ghost-danger"
@@ -315,7 +315,7 @@ export const Keypoints = ({
                   <Button
                     type="secondary"
                     size="small"
-                    icon="PlusCompact"
+                    icon="Add"
                     onClick={addNewKeypoint}
                   >
                     Add Point

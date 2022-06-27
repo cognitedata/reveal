@@ -42,7 +42,7 @@ export const ActionMenu = ({
       onClick={handleClick}
     >
       <Menu.Item onClick={handleFileDetails}>
-        <Icon type="ResourceDocuments" style={{ marginRight: '17px' }} />
+        <Icon type="Document" style={{ marginRight: '17px' }} />
         File details
         {showExifIcon && (
           <Tooltip content="Geolocated">
@@ -65,7 +65,7 @@ export const ActionMenu = ({
         content="Are you sure you want to permanently delete this file?"
       >
         <Menu.Item disabled={reviewDisabled}>
-          <Icon type="Trash" style={{ marginRight: '17px' }} />
+          <Icon type="Delete" style={{ marginRight: '17px' }} />
           Delete
         </Menu.Item>
       </Popconfirm>
@@ -76,7 +76,7 @@ export const ActionMenu = ({
       <Button
         type={(buttonType as ButtonType) || 'ghost'}
         variant={buttonType ? 'inverted' : 'default'}
-        icon="MoreOverflowEllipsisHorizontal"
+        icon="EllipsisHorizontal"
         aria-label="dropdown button"
         onClick={handleClick}
         disabled={actionDisabled}

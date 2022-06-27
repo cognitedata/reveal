@@ -78,8 +78,8 @@ export const ModelTypeStyleMap = {
   [VisionDetectionModelType.CustomModel]: ColorsObjectDetection, // custom models are regarded as object detection models
 };
 export const ModelTypeIconMap: { [key: number]: string } = {
-  [VisionDetectionModelType.OCR]: 'TextScan',
-  [VisionDetectionModelType.TagDetection]: 'ResourceAssets',
+  [VisionDetectionModelType.OCR]: 'String',
+  [VisionDetectionModelType.TagDetection]: 'Assets',
   [VisionDetectionModelType.ObjectDetection]: 'Scan',
   [VisionDetectionModelType.GaugeReader]: 'Scan',
   [VisionDetectionModelType.CustomModel]: 'Scan',
@@ -132,7 +132,7 @@ export class AnnotationUtilsV1 {
     modelType: VisionDetectionModelType;
   }) => {
     return annotation.text === 'person'
-      ? 'Personrounded'
+      ? 'User'
       : (ModelTypeIconMap[annotation.modelType] as AllIconTypes);
   };
 

@@ -135,7 +135,7 @@ export function DetectionModelSelect({
   const addCustomModelOption = {
     label: (
       <StyledButton
-        icon="PlusLarge"
+        icon="AddLarge"
         onClick={handleCustomModelCreate}
         type="ghost"
       >

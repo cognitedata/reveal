@@ -69,7 +69,7 @@ export const ExploreModalContent = ({
         >
           <Button
             type="primary"
-            icon="AddToList"
+            icon="Add"
             onClick={onUseFiles}
             disabled={!count || !inLimit}
           >

@@ -22,7 +22,6 @@ export const AnnotationsBadgePopover = (
     return (
       <Popover
         placement="bottom"
-        trigger="mouseenter click"
         content={AnnotationsBadgePopoverContent(
           annotationCounts,
           annotationStatuses

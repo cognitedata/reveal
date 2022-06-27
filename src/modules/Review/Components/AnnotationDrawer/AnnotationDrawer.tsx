@@ -48,7 +48,7 @@ export const AnnotationDrawer = (props: {
             <DrawerFooterButtonRow>
               <Button
                 type="primary"
-                icon="PlusCompact"
+                icon="Add"
                 onClick={props.onCreate}
                 disabled={props.disableFooterButtons}
               >
@@ -56,7 +56,7 @@ export const AnnotationDrawer = (props: {
               </Button>
               <DrawerDeleteButton
                 type="danger"
-                icon="Trash"
+                icon="Delete"
                 onClick={props.onDelete}
                 disabled={props.disableFooterButtons}
                 aria-label="delete drawer content"

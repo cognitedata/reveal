@@ -137,7 +137,7 @@ export const ThumbnailCarousel = ({
         className="prev-button"
       >
         <NavigateLeft>
-          <Icon type="ChevronLeftMicro" />
+          <Icon type="ChevronLeftSmall" />
         </NavigateLeft>
       </NavigateLeftButton>
       <NavigateRightButton
@@ -145,7 +145,7 @@ export const ThumbnailCarousel = ({
         className="next-button"
       >
         <NavigateRight>
-          <Icon type="ChevronRightMicro" />
+          <Icon type="ChevronRightSmall" />
         </NavigateRight>
       </NavigateRightButton>
       <Swiper
