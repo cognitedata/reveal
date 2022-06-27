@@ -19,7 +19,7 @@ export const FileReaderComp = ({
         onRead(readEvent.target?.result);
       }
     };
-  }, []);
+  }, [onRead]);
 
   const onChange = (event: React.SyntheticEvent<HTMLInputElement>) => {
     const file = head(event.currentTarget.files);

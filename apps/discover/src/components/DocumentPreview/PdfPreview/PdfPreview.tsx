@@ -63,7 +63,7 @@ export const PdfPreview: React.FC<Props> = ({
     if (documentId) {
       loadPdf();
     }
-  }, [documentId]);
+  }, [documentId, startTimer, onSuccess, onError]);
 
   return (
     <PdfPreviewContainer>

@@ -41,10 +41,13 @@ export const NumericRangeDropdown: React.FC<NumericRangeDropdownProps> = ({
     100
   );
 
-  const handleNumericRangeChange = useCallback((values: number[]) => {
-    setValues(values);
-    debounceChange(values);
-  }, []);
+  const handleNumericRangeChange = useCallback(
+    (values: number[]) => {
+      setValues(values);
+      debounceChange(values);
+    },
+    [debounceChange]
+  );
 
   const [min, max] = values;
 
@@ -59,7 +62,7 @@ export const NumericRangeDropdown: React.FC<NumericRangeDropdownProps> = ({
         />
       </Menu>
     );
-  }, [range, selectedRange, values]);
+  }, [range, values, config?.width, handleNumericRangeChange]);
 
   return (
     <FullWidth>

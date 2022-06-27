@@ -50,7 +50,14 @@ const LegendWithColorConfig = ({
           </Checkbox>
         );
       }),
-    [legendCheckboxState]
+    [
+      legendCheckboxState,
+      colors,
+      defaultColor,
+      getInfoIcon,
+      id,
+      onChangeLegendCheckbox,
+    ]
   );
 
   const LegendContent = (

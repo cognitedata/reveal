@@ -59,7 +59,7 @@ export const NumericRangeFilter: React.FC<Props> = ({
     } else {
       setFastMinMax([selectedMin, selectedMax]);
     }
-  }, [selectedValues]);
+  }, [selectedValues, selectedMax, selectedMin]);
 
   const debouncedSearch = useDebounce((from: number, to: number) => {
     onValueChange([from, to]);

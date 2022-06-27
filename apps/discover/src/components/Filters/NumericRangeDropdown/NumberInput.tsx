@@ -30,7 +30,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
       if (newValue > max) return onChange(max);
       return onChange(newValue);
     },
-    [range]
+    [max, min, onChange]
   );
 
   const handleOnBlur = useCallback(() => setInputValue(value), [value]);

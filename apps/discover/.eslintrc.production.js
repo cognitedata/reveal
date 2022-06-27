@@ -56,6 +56,8 @@ module.exports = {
     'testing-library/prefer-presence-queries': ['error'],
     'react/no-unstable-nested-components': ['error'],
     'react-hooks/rules-of-hooks': ['error'],
+    //  Fixing elint issues in different PR's rule can uncomment when all issues are fixed
+    // 'react-hooks/exhaustive-deps': ['error'],
     'testing-library/prefer-query-by-disappearance': ['error'],
     'import/no-anonymous-default-export': ['error'],
     'unicode-bom': ['error'],

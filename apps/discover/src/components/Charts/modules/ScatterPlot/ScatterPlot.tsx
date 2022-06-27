@@ -82,7 +82,7 @@ export const ScatterPlot = <T extends DataObject<T>>({
 
   const xAxisTicks = useMemo(
     () => (xAxis.ticks || DEFAULT_X_AXIS_TICKS) + zoomFactor,
-    [zoomFactor]
+    [zoomFactor, xAxis.ticks]
   );
   const yAxisTicks = yAxis.ticks || getCalculatedYAxisTicks<T>(data, yAccessor);
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import * as d3Axis from 'd3-axis';
 import { select } from 'd3-selection';
@@ -21,9 +21,7 @@ export const Axis = ({
 }: AxisProps) => {
   const axisRef = useRef<SVGGElement>(null);
 
-  useEffect(() => renderAxis(), [placement, scale, tickSize, translate]);
-
-  const renderAxis = () => {
+  const renderAxis = useCallback(() => {
     const axisType = `axis${placement}`;
     const axis = get(d3Axis, axisType)();
 
@@ -37,7 +35,21 @@ export const Axis = ({
 
       select(axisRef.current).call(axis);
     }
-  };
+  }, [
+    placement,
+    scale,
+    hideAxisTicks,
+    tickPadding,
+    ticks,
+    hideAxisLabels,
+    tickSize,
+    formatAxisLabel,
+  ]);
+
+  useEffect(
+    () => renderAxis(),
+    [placement, scale, tickSize, translate, renderAxis]
+  );
 
   return (
     <g

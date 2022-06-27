@@ -100,19 +100,22 @@ export const StackedBarChart = <T extends DataObject<T>>({
 
   const xAxisTicks = useMemo(
     () => (xAxis.ticks || DEFAULT_X_AXIS_TICKS) + zoomFactor,
-    [zoomFactor]
+    [zoomFactor, xAxis.ticks]
   );
 
-  const handleSelectBar = useCallback((key: string, index: number) => {
-    if (onSelectBar) {
-      onSelectBar({
-        key,
-        index,
-        data: initialGroupedData[key],
-        groupedData: initialGroupedData,
-      });
-    }
-  }, []);
+  const handleSelectBar = useCallback(
+    (key: string, index: number) => {
+      if (onSelectBar) {
+        onSelectBar({
+          key,
+          index,
+          data: initialGroupedData[key],
+          groupedData: initialGroupedData,
+        });
+      }
+    },
+    [initialGroupedData, onSelectBar]
+  );
 
   const renderChartData = () => (
     <Bars

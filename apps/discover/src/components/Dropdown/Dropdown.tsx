@@ -35,7 +35,7 @@ export const Dropdown = ({
         setDropdownVisible(false);
       }
     },
-    [setDropdownVisible, onClickOutside]
+    [setDropdownVisible, onClickOutside, hideOnSelect]
   );
 
   return (

@@ -41,5 +41,5 @@ export const FavoriteMenuItem: React.FC<Props> = ({
         <MiddleEllipsis value={favoriteName} fixedLength={25} />
       </MenuItemWrapper>
     );
-  }, [isFavored, loading, favoriteContent]);
+  }, [isFavored, loading, favoriteContent, favoriteName, onItemClicked]);
 };

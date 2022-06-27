@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
@@ -85,33 +91,36 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
     );
   }, [selectedOptions]);
 
-  const handleSetSelectedOptions = (
-    selectedOptions: Record<
-      Category,
-      OptionType<MultiSelectOptionType>[] | undefined
-    >
-  ) => {
-    if (!selectedOptionsProp) {
-      setSelectedOptions(selectedOptions);
-    }
-    onValueChange(selectedOptions);
-  };
+  const handleSetSelectedOptions = useCallback(
+    (
+      selectedOptions: Record<
+        Category,
+        OptionType<MultiSelectOptionType>[] | undefined
+      >
+    ) => {
+      if (!selectedOptionsProp) {
+        setSelectedOptions(selectedOptions);
+      }
+      onValueChange(selectedOptions);
+    },
+    [setSelectedOptions, onValueChange, selectedOptionsProp]
+  );
 
-  const handleValueChange = ({
-    category,
-    options,
-  }: CategorizedOptionType<MultiSelectOptionType>) => {
-    const updatedSelectedOptions = {
-      ...selectedOptions,
-      [category]: options,
-    };
+  const handleValueChange = useCallback(
+    ({ category, options }: CategorizedOptionType<MultiSelectOptionType>) => {
+      const updatedSelectedOptions = {
+        ...selectedOptions,
+        [category]: options,
+      };
 
-    if (isUndefined(options)) {
-      unset(updatedSelectedOptions, category);
-    }
+      if (isUndefined(options)) {
+        unset(updatedSelectedOptions, category);
+      }
 
-    handleSetSelectedOptions(updatedSelectedOptions);
-  };
+      handleSetSelectedOptions(updatedSelectedOptions);
+    },
+    [handleSetSelectedOptions, selectedOptions]
+  );
 
   const handleSelectAll = (isSelected: boolean) => {
     if (isSelected) {
@@ -157,25 +166,29 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
     );
   }, [selectedOptions]);
 
-  const OptionsContent = (
-    <>
-      {SelectAllOption}
-      {options.map(({ category, options }) => {
-        return (
-          <OptionsCategory
-            key={category}
-            category={category}
-            options={options}
-            selectedOptions={selectedOptions[category]}
-            onValueChange={handleValueChange}
-          />
-        );
-      })}
-    </>
+  const OptionsContent = useMemo(
+    () => (
+      <>
+        {SelectAllOption}
+        {options.map(({ category, options }) => {
+          return (
+            <OptionsCategory
+              key={category}
+              category={category}
+              options={options}
+              selectedOptions={selectedOptions[category]}
+              onValueChange={handleValueChange}
+            />
+          );
+        })}
+      </>
+    ),
+    [SelectAllOption, handleValueChange, options, selectedOptions]
   );
 
-  const NoOptionsContent = (
-    <NoOptionsWrapper>{NO_OPTIONS_TEXT}</NoOptionsWrapper>
+  const NoOptionsContent = useMemo(
+    () => <NoOptionsWrapper>{NO_OPTIONS_TEXT}</NoOptionsWrapper>,
+    []
   );
 
   const dropdownContent = useMemo(
@@ -184,7 +197,7 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
         {optionsCount ? OptionsContent : NoOptionsContent}
       </DropdownContent>
     ),
-    [optionsCount, selectedOptionsCount, selectedOptions, dropdownWidth]
+    [optionsCount, dropdownWidth, NoOptionsContent, OptionsContent]
   );
 
   const dropdownIcon = useMemo(
