@@ -1,3 +1,7 @@
+## 6.0.1 June 24 2022
+
+- Move refreshPage declaration up to fix an issue when redirecting back after a login error
+
 ## 6.0.0-rc-1 May 25 2022
 
 - moving mixpanel and frontend metrics inside the provider, to initialize add a prop called `getMixpanelSettings` with a function that returns `mixpanelProps`.

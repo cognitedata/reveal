@@ -71,6 +71,10 @@ const RawContainer: React.FC<Props> = ({
     storage.init({ tenant: initialTenant, appName: applicationId });
   }, [initialTenant, applicationId]);
 
+  const refreshPage = () => {
+    window.location.assign('/');
+  };
+
   const projectFlow = getProjectSpecificFlow(initialTenantOrApiKeyTenant);
   const configuration: Configuration = {
     auth: {
@@ -123,10 +127,6 @@ const RawContainer: React.FC<Props> = ({
     // document.location.reload();
     return <Loader />;
   }
-
-  const refreshPage = () => {
-    window.location.assign('/');
-  };
 
   return (
     <ConditionalLoopDetector disabled={disableLoopDetector}>
