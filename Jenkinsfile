@@ -30,7 +30,7 @@ static final String PR_COMMENT_MARKER = '[pr-server]\n'
 static final String VERSIONING_STRATEGY = 'multi-branch'
 environment = versioning.getEnv(versioningStrategy: VERSIONING_STRATEGY)
 
-static final String NODE_VERSION = 'node:12'
+static final String NODE_VERSION = 'node:14'
 
 static final Map<String, String> CONTEXTS = [
   checkout: 'continuous-integration/jenkins/checkout',
@@ -63,7 +63,7 @@ String appEnv() {
   return appEnv
 }
 
-def scmVars = {};
+def scmVars = { };
 
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {

@@ -1,7 +1,7 @@
 name: Code Quality
 on:
   push:
-    branches: [ master, main, release-*, staging ]
+    branches: [master, main, release-*, staging]
   pull_request:
     types:
       - opened
@@ -10,10 +10,9 @@ on:
       - ready_for_review
 
 jobs:
-  code-quality:
-    name: Code Quality
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
-    if: ${{ !github.event.pull_request.draft }}
     steps:
       - name: Check out
         uses: actions/checkout@v3
@@ -28,16 +27,75 @@ jobs:
           registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
-        # Ignore scripts because they can steal the token
         run: yarn install --ignore-scripts --frozen-lockfile
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
 
       - name: Linting
         run: yarn lint
+  tests:
+    name: Tests
+    needs: lint
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-type: ["unit", "storybook"]
+    steps:
+      - name: Check out
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "14.x"
+          cache: yarn
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: yarn install --ignore-scripts --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
 
       - name: Unit Tests
+        if: ${{matrix.test-type == 'unit'}}
         run: yarn test:ci
+
+      - name: Install Playwright
+        if: ${{matrix.test-type == 'storybook'}}
+        run: npx playwright install --with-deps chromium
+
+      - name: Storybook Tests
+        if: ${{matrix.test-type == 'storybook'}}
+        run: yarn test-storybook:ci
+
+      - name: Upload Coverage Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-${{ matrix.test-type }}
+          path: coverage/
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: ${{matrix.test-type == 'unit' && always() }}
+        with:
+          files: "**/junit.xml"
+  publish-coverage-results:
+    name: Publish Coverage Results
+    needs: tests
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
+      contents: read
+      issues: read
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: coverage
 
       - name: Upload Coverage Reports
         uses: codecov/codecov-action@v3
@@ -46,9 +104,3 @@ jobs:
           directory: ./coverage
           flags: unittests
           fail_ci_if_error: true
-
-      - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        if: always()
-        with:
-          files: '**/junit.xml'

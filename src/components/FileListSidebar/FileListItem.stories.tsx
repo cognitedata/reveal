@@ -48,3 +48,12 @@ Error.args = {
   isActive: false,
   isError: true,
 };
+
+export const UndefinedTest = Template.bind({});
+
+UndefinedTest.args = {
+  ...Default.args,
+  preview: <></>,
+  isActive: undefined,
+  isError: undefined,
+};

@@ -1,3 +1,5 @@
+import { expect } from '@storybook/jest';
+import { userEvent, waitFor, within } from '@storybook/testing-library';
 import { DocumentIcon, Icon } from '@cognite/cogs.js';
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
@@ -23,11 +25,17 @@ Default.args = {
     .fill(1)
     .map((_el, index) => ({
       id: index,
-      name: 'Test_file_name.pdf',
+      name: `Test_file_name_${index}.pdf`,
       active: index === 2,
       error: false,
       preview: <img src={preview} alt="PDF Preview" />,
     })),
+};
+
+Default.play = async ({ args, canvasElement }) => {
+  const canvas = within(canvasElement);
+  await userEvent.click(canvas.getByText('Test_file_name_0.pdf'));
+  await waitFor(() => expect(args.onFileClick).toHaveBeenCalled());
 };
 
 export const ListLoading = Template.bind({});
