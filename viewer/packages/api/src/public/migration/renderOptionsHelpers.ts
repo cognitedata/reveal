@@ -139,7 +139,7 @@ function restrictSsaoOptionBasedOnDevice(
 
     case 'disabled':
     case undefined:
-      return ssaoQualityHint;
+      return 'disabled';
 
     default:
       assertNever(ssaoQualityHint);
