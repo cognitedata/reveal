@@ -56,16 +56,7 @@ export const FileFilters = ({
           })
         }
       />
-      <BooleanFilter
-        title="Is uploaded"
-        value={filter.uploaded}
-        setValue={newValue =>
-          setFilter({
-            ...filter,
-            uploaded: newValue,
-          })
-        }
-      />
+
       <DateFilter
         title="Uploaded Time"
         value={filter.uploadedTime}
