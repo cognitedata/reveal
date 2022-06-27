@@ -62,7 +62,7 @@ function LinkedAssetsSidebar({
       <LinkedAssetList>
         {assets.map((asset) => (
           <LinkedAsset
-            key={asset.asset.id}
+            key={asset.asset?.id}
             asset={asset.asset}
             timeseries={asset.timeseries}
             highlight={highlight}

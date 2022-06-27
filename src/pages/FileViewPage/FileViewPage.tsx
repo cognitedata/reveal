@@ -9,7 +9,6 @@ import styled from 'styled-components/macro';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import Layers from 'utils/z-index';
-import AssetSearchHit from 'components/SearchResultTable/AssetSearchHit';
 import { trackUsage } from 'services/metrics';
 import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
 import { useTranslations } from 'hooks/translations';
@@ -20,6 +19,7 @@ import { calculationSummaries } from 'models/calculation-results/selectors';
 import { useInitializedChart } from 'pages/ChartViewPage/hooks';
 import { useParams } from 'react-router-dom';
 import { chartSources } from 'models/chart/selectors';
+import ConnectedLinkedAssetsSidebar from 'containers/LinkedAssetsSidebar/ConnectedLinkedAssetsSidebar';
 
 const FileViewPage = () => {
   const { chartId, assetId } =
@@ -147,29 +147,11 @@ const FileViewPage = () => {
         </SplitPaneLayout>
       </FileViewerContainer>
       {showLinkedAssets && (
-        <FileSidebar style={{ width: '30%' }}>
-          <Header>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <Title level={4}>{t['Linked assets']}</Title>
-              <Button
-                type="ghost"
-                icon="Close"
-                onClick={() => setShowLinkedAssets(false)}
-              />
-            </div>
-          </Header>
-          <LinkedAssetList>
-            {linkedAssets.map((linkedAsset) => (
-              <AssetSearchHit key={linkedAsset.id} asset={linkedAsset} />
-            ))}
-          </LinkedAssetList>
-        </FileSidebar>
+        <ConnectedLinkedAssetsSidebar
+          chartId={chart.id}
+          onClose={() => setShowLinkedAssets(false)}
+          assets={linkedAssets}
+        />
       )}
     </FileViewContainer>
   );
@@ -189,13 +171,6 @@ const FileSidebar = styled.div`
   border-right: 1px solid var(--cogs-greyscale-grey3);
   display: flex;
   flex-direction: column;
-`;
-
-const LinkedAssetList = styled.div`
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-  padding: 5px;
 `;
 
 const FileViewerContainer = styled.div`

@@ -2,7 +2,6 @@ import { Icon, Button, Colors } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
 import { removeIllegalCharacters } from 'utils/text';
 import { ComponentProps } from 'react';
-import { Skeleton } from 'antd';
 import { AssetItem } from './elements/AssetItem';
 import { ExactMatchLabel } from './elements/ExactMatchLabel';
 import { TSList } from './elements/TSList';
@@ -13,16 +12,19 @@ import { Description } from './elements/Description';
 import { Right } from './elements/Right';
 import { PnidButtonContainer } from './elements/PnidButtonContainer';
 import TimeSeriesResultItem from './TimeSeriesResultItem';
+import LoadingLinkedAsset from './LoadingLinkedAsset';
 
 type Props = {
-  asset: {
-    id: number;
-    name: string;
-    description?: string;
-    totalTimeSeries: number;
-    isExact?: boolean;
-    hasDocuments: boolean;
-  };
+  asset:
+    | {
+        id: number;
+        name: string;
+        description?: string;
+        totalTimeSeries: number;
+        isExact?: boolean;
+        hasDocuments: boolean;
+      }
+    | undefined;
   loading: boolean;
   timeseries: {
     id: number;
@@ -30,6 +32,8 @@ type Props = {
     description: string;
     externalId: string;
     checked: boolean;
+    disabled?: boolean;
+    checkboxTooltip?: string;
     isExact?: boolean;
     isStep: boolean;
     sparkline: ComponentProps<typeof TimeSeriesResultItem>['sparkline'];
@@ -61,26 +65,25 @@ export default function LinkedAsset({
   exactMatchLabel = 'Exact match on external id',
   viewAllLabel = 'View all',
 }: Props) {
+  if (loading) return <LoadingLinkedAsset />;
+  if (!asset) throw new Error('Asset must be present!');
+
   return (
     <AssetItem outline={asset.isExact}>
       <Row>
         <InfoContainer>
           <ResourceNameWrapper>
             <Icon type="Assets" size={14} style={{ marginRight: 5 }} />
-            {loading ? (
-              <Skeleton.Button active block />
-            ) : (
-              <Highlighter
-                highlightStyle={{
-                  backgroundColor: Colors['yellow-4'].alpha(0.4),
-                }}
-                searchWords={removeIllegalCharacters(highlight).split(' ')}
-                textToHighlight={asset.name}
-                className="cogs-anchor"
-                onClick={() => onAssetClick(asset.id)}
-                style={{ cursor: 'pointer' }}
-              />
-            )}
+            <Highlighter
+              highlightStyle={{
+                backgroundColor: Colors['yellow-4'].alpha(0.4),
+              }}
+              searchWords={removeIllegalCharacters(highlight).split(' ')}
+              textToHighlight={asset.name}
+              className="cogs-anchor"
+              onClick={() => onAssetClick(asset.id)}
+              style={{ cursor: 'pointer' }}
+            />
           </ResourceNameWrapper>
           <Description>
             {highlight && asset.description ? (
@@ -130,6 +133,8 @@ export default function LinkedAsset({
               description,
               externalId,
               checked,
+              disabled,
+              checkboxTooltip,
               sparkline,
               isExact,
               isStep,
@@ -140,10 +145,13 @@ export default function LinkedAsset({
                 description={description}
                 externalId={externalId}
                 checked={checked}
+                disabled={disabled}
+                checkboxTooltip={checkboxTooltip}
                 sparkline={sparkline}
                 isExact={isExact}
                 highlight={highlight}
                 onCheckboxClick={() =>
+                  !disabled &&
                   onTimeSeriesClick({
                     id,
                     assetId: asset.id,

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Button, Checkbox, Colors, Icon } from '@cognite/cogs.js';
+import { Button, Checkbox, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
 import { removeIllegalCharacters } from 'utils/text';
 import Sparkline from 'components/PlotlyChart/Sparkline/Sparkline';
@@ -17,6 +17,8 @@ type Props = {
   highlight?: string;
   onCheckboxClick: MouseEventHandler<HTMLLabelElement>;
   checked: boolean;
+  disabled?: boolean;
+  checkboxTooltip?: string;
   isExact?: boolean;
   exactMatchlabel: string;
   loading: boolean;
@@ -30,6 +32,8 @@ export default function TimeSeriesResultItem({
   highlight = '',
   onCheckboxClick,
   checked,
+  disabled = false,
+  checkboxTooltip = '',
   isExact = false,
   exactMatchlabel = 'Exact match on external id',
   loading,
@@ -38,14 +42,17 @@ export default function TimeSeriesResultItem({
     <TSItem outline={isExact}>
       <Row>
         <div>
-          <Checkbox
-            onClick={(e) => {
-              e.preventDefault();
-              onCheckboxClick(e);
-            }}
-            name={externalId}
-            checked={checked}
-          />
+          <Tooltip content={checkboxTooltip} disabled={!checkboxTooltip}>
+            <Checkbox
+              onClick={(e) => {
+                e.preventDefault();
+                onCheckboxClick(e);
+              }}
+              name={externalId}
+              checked={checked}
+              disabled={disabled}
+            />
+          </Tooltip>
         </div>
         <ContentContainer fullWidth={false}>
           <ResourceContainer>
