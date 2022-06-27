@@ -2,7 +2,10 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { testRenderer } from '__test-utils/renderer';
 
-import { ACTION_MESSAGE, NO_DEFINITION } from '../../../events/Npt/constants';
+import {
+  ACTION_MESSAGE,
+  NO_DEFINITION,
+} from '../../../nptEvents/components/constants';
 import { NptEventCodeList } from '../NptEventCodeList';
 
 describe('NptEventCodeList', () => {

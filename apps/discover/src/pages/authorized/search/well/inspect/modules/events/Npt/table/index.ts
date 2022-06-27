@@ -1,1 +1,0 @@
-export { NPTTable } from './NPTTable';

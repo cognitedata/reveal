@@ -2,9 +2,9 @@ import { getCodeDefinition } from 'domain/wells/npt/internal/selectors/getCodeDe
 import { adaptNptEventsToListView } from 'domain/wells/npt/internal/transformers/adaptNptEventsToListView';
 import { NptInternal } from 'domain/wells/npt/internal/types';
 
-import { NptCodeDefinition } from '../../events/Npt/NptCodeDefinition';
-import { IconStyles } from '../../events/Npt/table/elements';
-import { NptCodeDefinitionType } from '../../events/Npt/types';
+import { NptCodeDefinition } from '../../nptEvents/components/NptCodeDefinition';
+import { IconStyles } from '../../nptEvents/Table/elements';
+import { NptCodeDefinitionType } from '../../nptEvents/types';
 
 import { EventsCodeCount, EventsCodeName, EventsCodeRow } from './elements';
 

@@ -1,3 +1,5 @@
+import { useNptDefinitions } from 'domain/wells/npt/internal/hooks/useNptDefinitions';
+
 import React, { useCallback, useState, useRef } from 'react';
 
 import isString from 'lodash/isString';
@@ -15,7 +17,6 @@ import { SelectedWellboreDataContainer, Separator } from './elements';
 import { NPTDurationGraph } from './NPTDurationGraph';
 import { NPTEventsGraph } from './NPTEventsGraph';
 import { NPTEventsTable } from './NPTEventsTable';
-import { useDataLayer } from './useDataLayer';
 
 interface Props {
   data: NptView[];
@@ -39,7 +40,7 @@ export const SelectedWellboreNptView: React.FC<Props> = React.memo(
   }) => {
     const [chartRendering, setChartRendering] = useState<boolean>(false);
     const chartData = useRef<NptView[]>(EMPTY_ARRAY);
-    const { nptCodeDefinitions } = useDataLayer();
+    const { nptCodeDefinitions } = useNptDefinitions();
 
     const currentWellboreName = getWellboreName(selectedWellbore);
 

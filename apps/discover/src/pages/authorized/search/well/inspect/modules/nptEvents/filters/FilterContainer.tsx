@@ -1,3 +1,5 @@
+import { NptInternal } from 'domain/wells/npt/internal/types';
+
 import React, { useEffect } from 'react';
 import { batch, useDispatch } from 'react-redux';
 
@@ -5,11 +7,10 @@ import { Row, Col } from '@cognite/cogs.js';
 
 import { useDeepMemo } from 'hooks/useDeep';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
-import { NPTEvent } from 'modules/wellSearch/types';
-import { getNPTFilterOptions } from 'modules/wellSearch/utils/events';
 import { nptDataMapToMultiSelect } from 'modules/wellSearch/utils/npt';
 
 import { NptCodeDefinitionType, NptCodeDetailsDefinitionType } from '../types';
+import { getNptFilterOptions } from '../utils/getNptFilterOptions';
 
 import { NPTCodeFilter } from './NPTCodeFilter';
 import { NPTDetailCodeFilter } from './NPTDetailCodeFilter';
@@ -17,17 +18,17 @@ import { NPTDurationFilter } from './NPTDurationFilter';
 import { NPTFilterByName } from './NPTFilterByName';
 
 export const FilterContainer: React.FC<{
-  events: NPTEvent[];
+  data: NptInternal[];
   isVisible: boolean;
   nptCodeDefinitions?: NptCodeDefinitionType;
   nptDetailCodeDefinitions?: NptCodeDetailsDefinitionType;
 }> = React.memo(
-  ({ events, isVisible, nptCodeDefinitions, nptDetailCodeDefinitions }) => {
+  ({ data, isVisible, nptCodeDefinitions, nptDetailCodeDefinitions }) => {
     const dispatch = useDispatch();
 
     const { minMaxDuration, nptCodes, nptDetailCodes } = useDeepMemo(
-      () => getNPTFilterOptions(events),
-      [events]
+      () => getNptFilterOptions(data),
+      [data]
     );
 
     const processedNptCodes = nptDataMapToMultiSelect(

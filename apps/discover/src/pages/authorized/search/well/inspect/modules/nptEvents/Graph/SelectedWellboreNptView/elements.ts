@@ -1,42 +1,16 @@
 import { CSSProperties } from 'react';
 
 import styled from 'styled-components/macro';
-import layers from 'utils/zindex';
 
 import { Body } from '@cognite/cogs.js';
 
-import { FlexColumn, FlexRow, sizes } from 'styles/layout';
-
-export const NavigationPanelContainer = styled(FlexRow)`
-  background: var(--cogs-bg-accent);
-  padding: ${sizes.normal};
-  margin-bottom: ${sizes.normal};
-  align-items: center;
-  z-index: ${layers.TOP_BAR};
-`;
+import { FlexColumn, sizes } from 'styles/layout';
 
 export const SelectedWellboreDataContainer = styled.div`
   overflow: auto;
   height: 100%;
   padding: ${sizes.normal};
   padding-top: 0;
-`;
-
-export const DetailsContainer = styled(FlexColumn)`
-  margin-left: ${sizes.small};
-  width: 100%;
-`;
-
-export const WellboreName = styled(Body)`
-  font-weight: 600;
-  font-size: 16px;
-  color: var(--cogs-text-primary);
-`;
-
-export const WellName = styled(Body)`
-  font-weight: 500;
-  font-size: 12px;
-  color: var(--cogs-text-hint);
 `;
 
 export const ChartWrapper = styled.div`

@@ -1,3 +1,8 @@
+import { useNdsEventsForCasings } from 'domain/wells/nds/internal/hooks/useNdsEventsForCasings';
+import { filterNdsByMeasuredDepth } from 'domain/wells/nds/internal/selectors/filterNdsByMeasuredDepth';
+import { useNptEventsForCasings } from 'domain/wells/npt/internal/hooks/useNptEventsForCasings';
+import { filterNptByMeasuredDepth } from 'domain/wells/npt/internal/selectors/filterNptByMeasuredDepth';
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
 import { getWellboreName } from 'domain/wells/wellbore/internal/selectors/getWellboreName';
 import { getWellboreTitle } from 'domain/wells/wellbore/internal/selectors/getWellboreTitle';
 import { Wellbore } from 'domain/wells/wellbore/internal/types';
@@ -12,10 +17,6 @@ import { Checkbox, SegmentedControl } from '@cognite/cogs.js';
 
 import { BaseButton } from 'components/Buttons';
 import {
-  useNdsEventsForCasings,
-  useNptEventsForCasings,
-} from 'modules/wellSearch/selectors';
-import {
   MeasurementChartDataV3 as MeasurementChartData,
   MeasurementTypeV3,
   WellboreId,
@@ -24,7 +25,6 @@ import { ChartV2 } from 'pages/authorized/search/well/inspect/modules/common/Cha
 import CurveColorCode from 'pages/authorized/search/well/inspect/modules/common/ChartV2/CurveColorCode';
 
 import EventsByDepth from '../../common/Events/EventsByDepth';
-import { filterNdsByDepth, filterNptByDepth } from '../../common/Events/utils';
 import { filterByChartType, filterByMainChartType } from '../utils';
 
 import {
@@ -87,16 +87,21 @@ export const WellCentricCard: React.FC<Props> = ({
   const fitChart = head(filterByChartType(chartData, [MeasurementTypeV3.FIT]));
   const lotChart = head(filterByChartType(chartData, [MeasurementTypeV3.LOT]));
 
-  const { isLoading: isNptLoading, events } = useNptEventsForCasings();
+  const wellboreIds = useWellInspectSelectedWellboreIds();
+
+  const { isLoading: isNptLoading, data: nptEvents } = useNptEventsForCasings({
+    wellboreIds,
+  });
   const validNptEvents = useMemo(
-    () => filterNptByDepth(events[wellbore.id], minDepth, maxDepth),
-    [events, wellbore.id, minDepth, maxDepth]
+    () => filterNptByMeasuredDepth(nptEvents[wellbore.id], minDepth, maxDepth),
+    [nptEvents, wellbore.id, minDepth, maxDepth]
   );
 
-  const { isLoading: isNdsLoading, events: ndsEvents } =
-    useNdsEventsForCasings();
+  const { isLoading: isNdsLoading, data: ndsEvents } = useNdsEventsForCasings({
+    wellboreIds,
+  });
   const validNdsEvents = useMemo(
-    () => filterNdsByDepth(ndsEvents[wellbore.id], minDepth, maxDepth),
+    () => filterNdsByMeasuredDepth(ndsEvents[wellbore.id], minDepth, maxDepth),
     [minDepth, maxDepth, ndsEvents]
   );
 

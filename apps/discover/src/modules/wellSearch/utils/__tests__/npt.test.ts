@@ -5,7 +5,7 @@ import {
   ACTION_MESSAGE,
   DEFINITION,
   NO_DEFINITION,
-} from 'pages/authorized/search/well/inspect/modules/events/Npt/constants';
+} from 'pages/authorized/search/well/inspect/modules/nptEvents/components/constants';
 
 import { nptDataMapToMultiSelect } from '../npt';
 

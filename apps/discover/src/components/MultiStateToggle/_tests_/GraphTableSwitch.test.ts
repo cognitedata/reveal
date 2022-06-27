@@ -1,7 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react';
 
 import { testRenderer } from '__test-utils/renderer';
-import { VIEW_MODES } from 'pages/authorized/search/well/inspect/modules/events/Npt/constants';
+import { ViewModes } from 'pages/authorized/search/common/types';
 
 import { MultiStateToggle, Props } from '../MultiStateToggle';
 
@@ -9,7 +9,7 @@ const onChange = jest.fn();
 
 const props: Props = {
   activeOption: 'Graph',
-  options: VIEW_MODES,
+  options: ViewModes,
   onChange,
 };
 
@@ -28,15 +28,15 @@ describe('Graph Table Switch', () => {
 
   it(`should display switch buttons`, async () => {
     await defaultTestInit();
-    expect(await screen.findByText(VIEW_MODES.Graph)).toBeInTheDocument();
-    expect(await screen.findByText(VIEW_MODES.Table)).toBeInTheDocument();
+    expect(await screen.findByText(ViewModes.Graph)).toBeInTheDocument();
+    expect(await screen.findByText(ViewModes.Table)).toBeInTheDocument();
   });
 
   it(`should fire callback on change`, async () => {
     await defaultTestInit();
-    fireEvent.click(await screen.findByText(VIEW_MODES.Graph));
-    expect(onChange).toHaveBeenCalledWith(VIEW_MODES.Graph);
-    fireEvent.click(await screen.findByText(VIEW_MODES.Table));
-    expect(onChange).toHaveBeenCalledWith(VIEW_MODES.Table);
+    fireEvent.click(await screen.findByText(ViewModes.Graph));
+    expect(onChange).toHaveBeenCalledWith(ViewModes.Graph);
+    fireEvent.click(await screen.findByText(ViewModes.Table));
+    expect(onChange).toHaveBeenCalledWith(ViewModes.Table);
   });
 });

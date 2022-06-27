@@ -27,7 +27,6 @@ import { NdsFilterWrapper } from '../elements';
 
 import { getDataLayer } from './dataLayer';
 import FilterContainer from './FilterContainer';
-import { useGetNdsTableColumns } from './hooks/useHelpers';
 
 const tableOptions = {
   flex: false,
@@ -45,7 +44,11 @@ export const EventsNds: React.FC = () => {
     LOG_EVENTS_NDS,
     LOG_WELLS_EVENTS_NDS_NAMESPACE
   );
-  const columns = useGetNdsTableColumns();
+
+  /**
+   * This is old stuff and will be removed. So don't worry about this.
+   */
+  const columns: unknown[] = [];
 
   const { events, isLoading } = useNdsEventsForTable();
   const ndsEvents = getDataLayer(events);

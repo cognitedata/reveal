@@ -4,25 +4,10 @@ import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
 
 import { mockCogniteEvent } from '__test-utils/fixtures/events';
-import { mockNpt, mockNptEvents } from '__test-utils/fixtures/npt';
 import { mockedWellStateFixture } from '__test-utils/fixtures/well';
-import { FEET } from 'constants/units';
-import {
-  UNKNOWN_NPT_CODE,
-  UNKNOWN_NPT_DETAIL_CODE,
-} from 'modules/wellSearch/constants';
-import {
-  CogniteEventV3ish,
-  WellboreNPTEventsMap,
-} from 'modules/wellSearch/types';
+import { CogniteEventV3ish } from 'modules/wellSearch/types';
 
-import {
-  getWellbore,
-  mapWellInfo,
-  mapWellInfoToNPTEvents,
-  getNPTFilterOptions,
-  getFilteredNPTEvents,
-} from '../events';
+import { getWellbore, mapWellInfo } from '../events';
 
 describe('Events utils', () => {
   it(`should map well informations to events`, () => {
@@ -65,55 +50,5 @@ describe('Events utils', () => {
 
     const resultedWellbore = getWellbore(mockCogniteEvent, wellbores);
     expect(resultedWellbore?.id).toEqual('759155409324883');
-  });
-
-  it(`should map well informations to npt events`, () => {
-    const events: WellboreNPTEventsMap = {
-      759155409324993: [mockNpt],
-    };
-
-    const results = mapWellInfoToNPTEvents(
-      events,
-      mockedWellStateFixture.wellSearch.wells,
-      FEET
-    );
-    expect(results).toEqual([
-      {
-        ...mockNpt,
-        ...{
-          measuredDepth: undefined,
-          nptCode: UNKNOWN_NPT_CODE,
-          nptCodeDetail: UNKNOWN_NPT_DETAIL_CODE,
-          wellName: '16/1',
-          wellboreId: '759155409324993',
-          wellboreName: 'wellbore A',
-          nptCodeColor: '#BFBFBF',
-        },
-      },
-    ]);
-  });
-
-  it(`should return unique npt filter options`, () => {
-    const results = getNPTFilterOptions(mockNptEvents);
-    expect(results).toEqual({
-      minMaxDuration: [0, 100],
-      nptCodes: ['CODEA', 'CODEB'],
-      nptDetailCodes: ['DETAILCODEA', 'DETAILCODEB'],
-    });
-  });
-
-  it(`should return filtered npt events`, () => {
-    const searchPhrase = 'WELL_A';
-    const duration = [0, 100];
-    const nptCode = ['CODEA'];
-    const nptDetailCode = ['DETAILCODEA'];
-
-    const results = getFilteredNPTEvents(mockNptEvents, {
-      searchPhrase,
-      duration,
-      nptCode,
-      nptDetailCode,
-    });
-    expect(results).toEqual([mockNptEvents[0]]);
   });
 });

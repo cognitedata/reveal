@@ -274,10 +274,6 @@ export type WellboreEventsMap = {
   [key: string]: CogniteEventV3ish[];
 };
 
-export type WellboreNPTEventsMap = {
-  [key: string]: NPT[];
-};
-
 type SequenceItem = number | string | null;
 interface SequenceColumnBasicInfo {
   name?: string;

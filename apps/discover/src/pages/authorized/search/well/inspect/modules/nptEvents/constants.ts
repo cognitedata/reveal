@@ -1,3 +1,5 @@
+import { ViewModes } from 'pages/authorized/search/common/types';
+
 export const accessors = {
   WELL_NAME: 'wellName',
   WELLBORE_NAME: 'wellboreName',
@@ -14,9 +16,4 @@ export const accessors = {
   SUBTYPE: 'subtype',
 };
 
-export const VIEW_MODES = {
-  Graph: 'Graph',
-  Table: 'Table',
-} as const;
-
-export const DEFAULT_ACTIVE_VIEW_MODE = VIEW_MODES.Graph;
+export const DEFAULT_ACTIVE_VIEW_MODE = ViewModes.Graph;

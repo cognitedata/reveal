@@ -3,12 +3,12 @@ import React, { useRef, useState } from 'react';
 import EmptyState from 'components/EmptyState';
 import { SearchBox } from 'components/Filters';
 import { MultiStateToggle } from 'components/MultiStateToggle';
+import { ViewModes } from 'pages/authorized/search/common/types';
 import { FlexGrow } from 'styles/layout';
 
 import { Separator } from '../../elements';
 import { ScrollButtons } from '../common/ScrollButtons';
-import { DEFAULT_ACTIVE_VIEW_MODE, VIEW_MODES } from '../events/Npt/constants';
-import { ViewModes } from '../events/Npt/types';
+import { DEFAULT_ACTIVE_VIEW_MODE } from '../nptEvents/constants';
 
 import {
   DEFAULT_ACTIVE_SIDE_MODE,
@@ -41,11 +41,11 @@ export const Casing: React.FC = () => {
       <TopBarWrapper>
         <MultiStateToggle<ViewModes>
           activeOption={viewMode}
-          options={VIEW_MODES}
+          options={ViewModes}
           onChange={setViewMode}
         />
 
-        {viewMode === VIEW_MODES.Graph && (
+        {viewMode === ViewModes.Graph && (
           <MultiStateToggle<SideModes>
             activeOption={activeSideMode}
             options={SideModes}
@@ -53,7 +53,7 @@ export const Casing: React.FC = () => {
           />
         )}
 
-        {viewMode === VIEW_MODES.Table && (
+        {viewMode === ViewModes.Table && (
           <>
             <Separator />
             <SearchBoxWrapper>
@@ -68,12 +68,12 @@ export const Casing: React.FC = () => {
 
         <FlexGrow />
 
-        {viewMode === VIEW_MODES.Graph && (
+        {viewMode === ViewModes.Graph && (
           <ScrollButtons scrollRef={scrollRef} />
         )}
       </TopBarWrapper>
 
-      {viewMode === VIEW_MODES.Graph && (
+      {viewMode === ViewModes.Graph && (
         <CasingsGraph
           data={data}
           scrollRef={scrollRef}
@@ -83,7 +83,7 @@ export const Casing: React.FC = () => {
         />
       )}
 
-      {viewMode === VIEW_MODES.Table && (
+      {viewMode === ViewModes.Table && (
         <CasingsTable data={data} searchPhrase={searchPhrase} />
       )}
     </>

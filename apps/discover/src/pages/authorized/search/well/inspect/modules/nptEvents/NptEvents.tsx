@@ -3,21 +3,19 @@ import React, { useCallback, useState } from 'react';
 import { Loading, WhiteLoaderOverlay } from 'components/Loading';
 import { MultiStateToggle } from 'components/MultiStateToggle';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
-import { useNptEvents } from 'modules/wellSearch/selectors';
+import { ViewModes } from 'pages/authorized/search/common/types';
 
 import { Separator } from '../../elements';
 
-import { VIEW_MODES, DEFAULT_ACTIVE_VIEW_MODE } from './constants';
+import { DEFAULT_ACTIVE_VIEW_MODE } from './constants';
 import { NptEventsDataControlArea } from './elements';
 import { FilterContainer } from './filters';
 import { NptGraph, SelectedWellboreNptView } from './Graph';
 import { SelectedWellbore } from './Graph/types';
 import { useNptData } from './hooks/useNptData';
 import { NptTable } from './Table';
-import { ViewModes } from './types';
 
 export const NPTEvents: React.FC = () => {
-  const { events } = useNptEvents();
   const { isLoading, data, nptCodeDefinitions, nptDetailCodeDefinitions } =
     useNptData();
 
@@ -30,8 +28,8 @@ export const NPTEvents: React.FC = () => {
   const [selectedWellboreViewLoading, setSelectedWellboreViewLoading] =
     useState<boolean>(false);
 
-  const isGraphViewModeActive = activeViewMode === VIEW_MODES.Graph;
-  const isTableViewModeActive = activeViewMode === VIEW_MODES.Table;
+  const isGraphViewModeActive = activeViewMode === ViewModes.Graph;
+  const isTableViewModeActive = activeViewMode === ViewModes.Table;
 
   const handleSelectNptGraphBar = useCallback(
     (selectedWellbore: SelectedWellbore) => {
@@ -53,14 +51,14 @@ export const NPTEvents: React.FC = () => {
       <NptEventsDataControlArea>
         <MultiStateToggle<ViewModes>
           activeOption={activeViewMode}
-          options={VIEW_MODES}
+          options={ViewModes}
           onChange={setActiveViewMode}
         />
 
         {isTableViewModeActive && <Separator />}
 
         <FilterContainer
-          events={events}
+          data={data}
           isVisible={isTableViewModeActive}
           nptCodeDefinitions={nptCodeDefinitions}
           nptDetailCodeDefinitions={nptDetailCodeDefinitions}

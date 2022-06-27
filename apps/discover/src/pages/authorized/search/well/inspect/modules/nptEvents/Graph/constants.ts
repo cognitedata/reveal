@@ -1,9 +1,9 @@
 import { StackedBarChartOptions } from 'components/Charts/modules/StackedBarChart';
 import { ColorConfig } from 'components/Charts/types';
 import { DEFAULT_NPT_COLOR } from 'modules/wellSearch/constants';
-import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../constants';
+import { NptView } from '../types';
 
 export const NO_NPT_DATA_COLOR = '#00000010';
 
@@ -18,7 +18,7 @@ export const NO_DATA_AMONG_SELECTED_NPT_CODES_TEXT =
 export const NO_DATA_TEXT = 'No data';
 
 export const NPT_GRAPH_COMMON_OPTIONS: Partial<
-  StackedBarChartOptions<NPTEvent>
+  StackedBarChartOptions<NptView>
 > = {
   fixXValuesToDecimalPlaces: 3,
   noDataAmongSelectedCheckboxesText: NO_DATA_AMONG_SELECTED_NPT_CODES_TEXT,
