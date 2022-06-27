@@ -5,6 +5,7 @@ export const DOCUMENTS_SEARCH_ALIAS = 'documentsSearch';
 export const WELLS_SEARCH_ALIAS = 'wellsSearch';
 export const GEO_STREAMING_ALIAS = 'geoStreaming';
 export const WELL_GEOMETRIES_ALIAS = 'wellGeometries';
+export const FAVORITES = 'getFavorites';
 
 /**
  * INTERCEPTIONS
@@ -35,4 +36,11 @@ export const interceptWellGeometries = () => {
     url: '**/well/geometry',
     method: 'GET',
   }).as(WELL_GEOMETRIES_ALIAS);
+};
+
+export const interceptFavorites = () => {
+  cy.intercept({
+    url: '**/favorites',
+    method: 'GET',
+  }).as(FAVORITES);
 };

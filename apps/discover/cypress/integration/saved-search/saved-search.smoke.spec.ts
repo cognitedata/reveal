@@ -1,3 +1,5 @@
+import { interceptFavorites, FAVORITES } from '../../support/interceptions';
+
 describe('saved search', () => {
   const savedSearchName = `Saved search ${Date.now()}`;
 
@@ -33,6 +35,7 @@ describe('saved search', () => {
   });
 
   it('should share saved search', () => {
+    interceptFavorites();
     cy.performSearch('Test');
     cy.clickSavedSearchButton();
     cy.createNewSavedSearch(savedSearchName);
@@ -43,7 +46,7 @@ describe('saved search', () => {
     cy.checkSavedSearchShareModal(1);
     cy.typeOnShareModal('{downArrow}{enter}');
     cy.clickShareButtonOnModal();
-
+    cy.wait(`@${FAVORITES}`);
     cy.checkSavedSearchShareModal(2);
     cy.clickNthRemoveShareButton(0);
     cy.checkSavedSearchShareModal(1);
