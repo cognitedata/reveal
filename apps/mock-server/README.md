@@ -425,3 +425,12 @@ module.exports = (req, res, next) => {
   next()
 }
 ```
+
+
+# Https
+
+You can run the mock server with HTTPS and then have support for HTTP2
+
+```
+cdf-mock-server --secure=true
+```

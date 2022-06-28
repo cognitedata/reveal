@@ -1,11 +1,15 @@
 #!/usr/bin/env node
+import * as spdy from 'spdy';
 import { getArgs } from './cli/cli-args';
+import * as fs from 'fs';
+import * as cors from 'cors';
 
 import { createMockServer } from './app/mock-server';
 import cdfMiddleware from './app/middlewares/cdf-middleware';
 
 // hardcoded for now, should be loaded from file
 import { loadConfig, loadMockData } from './cli/loader';
+import * as path from 'path';
 const TENANT = process.env.NODE_ENV || 'mock';
 const server = createMockServer();
 
@@ -18,9 +22,14 @@ const mockData = loadMockData(dbPath);
 const mockDataInitalState = JSON.parse(JSON.stringify(mockData));
 const mockServerConfig = args.config ? loadConfig(args.config) : null;
 
-const baseUrl =
-  TENANT === 'testcafe' ? 'http://localhost:11111' : 'http://localhost:' + PORT;
+const secure = !!args.secure;
 
+const baseUrl =
+  TENANT === 'testcafe'
+    ? 'http://localhost:11111'
+    : `${secure ? 'https' : 'http'}://localhost:` + PORT;
+
+server.use(cors());
 const cdfMiddlewares = cdfMiddleware(
   mockData,
   mockServerConfig,
@@ -54,7 +63,22 @@ server.get('/login/status', (req, res) => {
   });
 });
 
-server.listen(PORT, () => {
+const spdyServer = spdy.createServer(
+  {
+    cert: secure
+      ? fs.readFileSync(path.join(__dirname, './cert/server.crt'))
+      : undefined,
+    key: secure
+      ? fs.readFileSync(path.join(__dirname, './cert/server.key'))
+      : undefined,
+    spdy: {
+      plain: !secure,
+      protocols: ['h2', 'http/1.1'],
+    },
+  },
+  server
+);
+spdyServer.listen(PORT, () => {
   console.log(
     `JSON Server is running for tenant - ${TENANT} on baseURL: ${baseUrl}`
   );

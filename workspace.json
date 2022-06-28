@@ -213,7 +213,8 @@
             "tsConfig": "apps/mock-server/tsconfig.app.json",
             "assets": [
               "apps/mock-server/src/assets",
-              "apps/mock-server/src/static"
+              "apps/mock-server/src/static",
+              "apps/mock-server/src/cert"
             ],
             "generatePackageJson": true,
             "additionalEntryPoints": [

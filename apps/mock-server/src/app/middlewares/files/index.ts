@@ -75,15 +75,15 @@ export default function (db: CdfMockDatabase, config: CdfApiConfig) {
 
     const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
 
-    res.status(200).jsonp(
-      filesRes.map((file) => ({
+    res.status(200).jsonp({
+      items: filesRes.map((file) => ({
         id: file.id,
         downloadUrl: fullUrl.replace(
           /downloadlink/gim,
           'gcs_proxy/cognitedata-file-storage/' + file.id
         ),
-      }))
-    );
+      })),
+    });
   });
 
   return filesApiRouter;
