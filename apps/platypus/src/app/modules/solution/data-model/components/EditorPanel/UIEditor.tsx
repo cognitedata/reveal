@@ -217,7 +217,7 @@ export function UIEditor({
               style={{
                 alignSelf: 'flex-start',
                 marginBottom: '8px',
-                marginLeft: '8px',
+                marginLeft: '16px',
                 padding: '4px 8px 4px 8px',
               }}
               onClick={onFieldCreate}

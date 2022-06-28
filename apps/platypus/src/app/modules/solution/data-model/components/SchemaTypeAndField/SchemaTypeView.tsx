@@ -25,7 +25,7 @@ export const SchemaTypeView = ({
         />
         <Title level="5">{currentType.name}</Title>
       </Flex>
-      {children}
+      <div style={{ marginTop: '10px' }}>{children}</div>
     </div>
   );
 };
