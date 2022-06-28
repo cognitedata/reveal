@@ -1,20 +1,23 @@
-import { Button, Title, TopBar } from '@cognite/cogs.js';
+import { Body, Button, Flex, Title } from '@cognite/cogs.js';
 import { HtmlElementProps } from '@platypus-app/types';
 import { useHistory } from 'react-router-dom';
-import { StyledTopBar } from './elements';
 
+export enum Size {
+  SMALL = 'SMALL',
+  LARGE = 'LARGE',
+}
 export interface ToolbarProps extends HtmlElementProps<HTMLElement> {
-  titleLevel?: number;
   backPathname?: string;
   behindTitle?: React.ReactNode;
+  size?: Size;
 }
 
 export const PageToolbar = ({
   children,
   title,
-  titleLevel = 5,
   backPathname,
   behindTitle,
+  size = Size.LARGE,
 }: ToolbarProps) => {
   const history = useHistory();
   const onBackRouteClick = () => {
@@ -24,8 +27,17 @@ export const PageToolbar = ({
   };
 
   return (
-    <StyledTopBar>
-      <TopBar.Left>
+    <Flex
+      justifyContent="space-between"
+      alignItems="center"
+      style={{
+        borderBottom: '1px solid var(--cogs-border-default)',
+        flexShrink: 0,
+        height: size === Size.LARGE ? '56px' : '40px',
+        padding: size === Size.LARGE ? '0 16px' : '0 10px 0 16px',
+      }}
+    >
+      <Flex alignItems="center">
         {backPathname && (
           <Button
             icon="ChevronLeft"
@@ -35,19 +47,19 @@ export const PageToolbar = ({
             }}
           />
         )}
-        <Title data-cy="page-title" level={titleLevel}>
-          {title}
-        </Title>
-        {behindTitle && <div>{behindTitle}</div>}
-      </TopBar.Left>
-      {children && <TopBar.Right>{children}</TopBar.Right>}
-    </StyledTopBar>
-  );
-};
+        {size === Size.LARGE ? (
+          <Title data-cy="page-title" level={5}>
+            {title}
+          </Title>
+        ) : (
+          <Body level={2} data-cy="page-title" strong>
+            {title}
+          </Body>
+        )}
 
-PageToolbar.Tools = ({
-  children,
-  ...rest
-}: HtmlElementProps<HTMLDivElement>) => {
-  return <TopBar.Right {...rest}>{children}</TopBar.Right>;
+        {behindTitle && <div>{behindTitle}</div>}
+      </Flex>
+      {children && <Flex alignItems="center">{children}</Flex>}
+    </Flex>
+  );
 };

@@ -23,7 +23,10 @@ import { SchemaEditorMode } from '../types';
 import { BreakingChangesModal } from '../components/BreakingChangesModal';
 import { EditorPanel } from '../components/EditorPanel';
 import { DataModelHeader } from '../components/DataModelHeader';
-import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
+import {
+  PageToolbar,
+  Size,
+} from '@platypus-app/components/PageToolbar/PageToolbar';
 import { SchemaVisualizer } from '@platypus-app/components/SchemaVisualizer/SchemaVisualizer';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
@@ -341,7 +344,7 @@ export const DataModelPage = () => {
                 >
                   <PageToolbar
                     title={t('preview_title', 'Preview')}
-                    titleLevel={6}
+                    size={Size.SMALL}
                   />
                   <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
                     <SchemaVisualizer

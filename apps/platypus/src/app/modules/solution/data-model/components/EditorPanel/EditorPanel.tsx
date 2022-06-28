@@ -1,7 +1,10 @@
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import React, { Suspense, useState, useEffect } from 'react';
 import { SegmentedControl } from '@cognite/cogs.js';
-import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
+import {
+  PageToolbar,
+  Size,
+} from '@platypus-app/components/PageToolbar/PageToolbar';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { SchemaEditorMode } from '../../types';
@@ -57,10 +60,11 @@ export const EditorPanel = (props: EditorPanelProps) => {
         overflow: 'hidden',
       }}
     >
-      <PageToolbar title={t('editor_title', 'Editor')} titleLevel={6}>
+      <PageToolbar title={t('editor_title', 'Editor')} size={Size.SMALL}>
         <SegmentedControl
           currentKey={currentView}
           onButtonClicked={setCurrentView}
+          size="small"
         >
           <SegmentedControl.Button
             key="code"
@@ -69,7 +73,7 @@ export const EditorPanel = (props: EditorPanelProps) => {
           />
           <SegmentedControl.Button
             key="ui"
-            icon="DataTable"
+            icon="TableViewSmall"
             aria-label="UI editor"
           />
         </SegmentedControl>

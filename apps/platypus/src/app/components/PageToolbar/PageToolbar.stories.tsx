@@ -1,8 +1,7 @@
 import React from 'react';
 import { Story } from '@storybook/react';
-import { PageToolbar } from './PageToolbar';
+import { PageToolbar, Size } from './PageToolbar';
 import { Button } from '@cognite/cogs.js';
-// import { mockComplexGraphqlModel } from '../../mocks/graphqlModels';
 
 export default {
   title: 'Basic components/PageToolbar',
@@ -47,4 +46,15 @@ export const WithTools = TemplateWithTools.bind({});
 
 WithTools.args = {
   title: 'Data model',
+};
+
+const TemplateWithSmallSize: Story<Parameters<typeof PageToolbar>[0]> = (
+  args
+) => <PageToolbar {...args} />;
+
+export const WithSmallSize = TemplateWithSmallSize.bind({});
+
+WithSmallSize.args = {
+  title: 'Data model',
+  size: Size.SMALL,
 };

@@ -49,7 +49,7 @@ export const DataModelHeader = (props: DataModelHeaderProps) => {
           </SelectorWrapper>
         }
       >
-        <PageToolbar.Tools>{props.children}</PageToolbar.Tools>
+        {props.children}
       </PageToolbar>
     </div>
   );
