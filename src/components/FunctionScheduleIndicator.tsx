@@ -5,15 +5,11 @@ import { useSchedules } from 'utils/hooks';
 
 type Props = {
   id?: number;
-  externalId?: string;
 };
-export default function FunctionScheduleIndicator({ id, externalId }: Props) {
+export default function FunctionScheduleIndicator({ id }: Props) {
   const { data: scheduleResponse } = useSchedules();
 
-  const schedules =
-    scheduleResponse?.filter(
-      s => s.functionExternalId === externalId || s.functionId === id
-    ) || [];
+  const schedules = scheduleResponse?.filter(s => s.functionId === id) || [];
 
   if (schedules.length > 0) {
     return (
