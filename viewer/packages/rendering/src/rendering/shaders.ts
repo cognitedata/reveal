@@ -93,6 +93,11 @@ export const blitShaders = {
   vertex: glsl(require('../glsl/post-processing/unit-orthographic-passthrough.vert').default)
 };
 
+export const depthBlendBlitShaders = {
+  fragment: glsl(require('../glsl/post-processing/depthBlendBlit.frag').default),
+  vertex: glsl(require('../glsl/post-processing/unit-orthographic-passthrough.vert').default)
+};
+
 /**
  * Shaders use to estimate how many pixels a sector covers on screen.
  */
