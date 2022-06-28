@@ -53,7 +53,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private readonly _handleonPointerClick = this.onPointerClick.bind(this);
   private readonly _handleonPointerMove = this.onPointerMove.bind(this);
   private readonly _handleDefaultOptions = this.defaultOptions.bind(this);
-  private readonly _handleCameraChange = this.cameraChanged.bind(this);
 
   constructor(viewer: Cognite3DViewer, options?: MeasurementOptions) {
     super();
@@ -92,7 +91,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Removes a measurement from the Cognite3DViewer.
    * @param measurement Measurement mesh to be removed from @Cognite3DViewer.
    */
-  removeMeasurement(measurement: THREE.Mesh): void {
+  removeMeasurement(measurement: THREE.Group): void {
     const index = this._measurements.findIndex(obj => obj.getMesh() === measurement);
     if (index > -1) {
       this._measurements[index].removeMeasurement();
@@ -116,11 +115,12 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Get all measurement objects from the Cognite3DViewer.
    * @returns Group of all measurements in the Cognite3DViewer.
    */
-  getAllMeasurement(): THREE.Mesh[] {
-    const measurementGroups: THREE.Mesh[] = [];
+  getAllMeasurement(): THREE.Group[] | null {
+    const measurementGroups: THREE.Group[] = [];
     this._measurements.forEach(measurement => {
       const meshGrp = measurement.getMesh();
       if (meshGrp) {
+        //Send only one line mesh as a group
         measurementGroups.push(meshGrp);
       }
     });
@@ -128,13 +128,23 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   /**
+   * Sets the visiblity of labels in the Measurement.
+   * @param enable
+   */
+  showMeasurementLabels(enable: boolean): void {
+    if (this._htmlOverlay) {
+      this._htmlOverlay.visible(enable);
+    }
+  }
+
+  /**
    * Sets Measurement line width and color with @options value.
    * @param options MeasurementOptions to set line width and color.
-   * @param meshObject Measurement mesh object to edit line width and color.
+   * @param meshGroup Measurement mesh object to edit line width and color.
    */
-  setLineOptions(options: MeasurementOptions, meshObject?: THREE.Mesh): void {
-    if (meshObject) {
-      const measurement = this._measurements.find(measurement => measurement.getMesh() === meshObject);
+  setLineOptions(options: MeasurementOptions, meshGroup?: THREE.Group): void {
+    if (meshGroup) {
+      const measurement = this._measurements.find(measurement => measurement.getMesh() === meshGroup);
       measurement?.setLineOptions(options);
       this._viewer.requestRedraw();
     }
@@ -155,7 +165,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    */
   private setupEventHandling() {
     this._viewer.on('click', this._handleonPointerClick);
-    this._viewer.on('cameraChange', this._handleCameraChange);
   }
 
   /**
@@ -199,12 +208,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    */
   private defaultOptions(): MeasurementLabelData | undefined {
     return this._measurements[this._currentMeasurementIndex].setDefaultOptions();
-  }
-
-  private cameraChanged(): void {
-    this._measurements.forEach(measurement => {
-      measurement.updateLineWidth(this._viewer.cameraManager.getCameraState());
-    });
   }
 
   /**

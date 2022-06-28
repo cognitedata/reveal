@@ -11,7 +11,7 @@ export class MeasurementUi {
   private _gui: dat.GUI;
   private _guiController: any[];
   private _measurementObjectControllerUi: any[];
-  private _selectedObject: Line2 | null;
+  private _selectedObject: THREE.Group | null;
   private _storedMaterial: LineMaterial;
 
   private state = {
@@ -78,10 +78,11 @@ export class MeasurementUi {
   }
 
   private setMeasurementLineOptions() {
-    // @ts-ignore: Object is possibly 'null'.
-    this._measurementTool.setLineOptions(this.state, this._selectedObject as THREE.Mesh);
-    if (this._selectedObject) {
-      this._storedMaterial.copy(this._selectedObject.material as THREE.Material);
+    this._measurementTool.setLineOptions(this.state, this._selectedObject as THREE.Group);
+    if (this._selectedObject?.children.length! > 1) {
+      //Reset back the opacity back to normal after change
+      (this._selectedObject?.children[0] as Line2).material.opacity = 1.0;
+      this._storedMaterial.copy((this._selectedObject?.children[0] as Line2).material as THREE.Material);
     }
   }
 
@@ -98,12 +99,14 @@ export class MeasurementUi {
       this.removeMeasurementObjectUI();
     }
     const objects = {
-      select: (mesh: Line2) => {
+      select: (meshGroup: THREE.Group) => {
         this.reset();
-        this._selectedObject = mesh;
-        const material = mesh.material as LineMaterial;
-        this._storedMaterial.copy(material);
-        material.color.set(new THREE.Color('white'));
+        this._selectedObject = meshGroup;
+        this._selectedObject.children.forEach(lineMesh => {
+          const material = (lineMesh as Line2).material as LineMaterial;
+          this._storedMaterial.copy(material);
+          material.opacity = 0.15;
+        });
         this._viewer.requestRedraw();
       },
       delete: () => {
@@ -119,11 +122,11 @@ export class MeasurementUi {
     };
     let count = 0;
     const measurementsObjects = this._measurementTool.getAllMeasurement();
-    if (measurementsObjects.length > 0) {
+    if (measurementsObjects!.length > 0) {
 
-      measurementsObjects.forEach((mesh: any) => {
+      measurementsObjects!.forEach((meshGroup: any) => {
         count++;
-        this._measurementObjectControllerUi.push(this._gui.add({select: objects.select.bind(this, mesh)}, 'select').name('mesh' + count.toString()));
+        this._measurementObjectControllerUi.push(this._gui.add({select: objects.select.bind(this, meshGroup)}, 'select').name('mesh' + count.toString()));
       });
       this._measurementObjectControllerUi.push(this._gui.add(objects, 'delete').name('Remove selected measurement'));
       this._measurementObjectControllerUi.push(this._gui.add(objects, 'deleteAll').name('Remove All measurement'));
@@ -138,9 +141,12 @@ export class MeasurementUi {
   }
 
   reset() {
-    if (this._selectedObject) {
-      this._selectedObject.material.color.set(this._storedMaterial.color);
-      this._selectedObject = new Line2();
+    if (this._selectedObject?.children?.length! > 1) {
+      this._selectedObject?.children.forEach(mesh => {
+        (mesh as Line2).material.opacity = 1.0;
+        mesh = new Line2();
+      });
+
       this._viewer.requestRedraw();
     }
   }

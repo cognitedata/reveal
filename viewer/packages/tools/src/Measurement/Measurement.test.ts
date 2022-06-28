@@ -68,14 +68,20 @@ describe(Measurement.name, () => {
     const event = new MouseEvent('mousemove', { screenX: 1, screenY: 1 });
     measurement.startMeasurement(intersection);
 
-    let points = measurement.getMesh()?.geometry.getAttribute('instanceEnd').array;
+    let meshGroup = measurement.getMesh();
+    let mesh = meshGroup?.children[0] as THREE.Mesh;
+
+    let points = mesh.geometry.getAttribute('instanceEnd').array;
     let endPoint = new THREE.Vector3(points![3], points![4], points![5]);
 
     expect(endPoint).toEqual(intersection.point);
 
     measurement.update(event);
 
-    points = measurement.getMesh()?.geometry.getAttribute('instanceEnd').array;
+    meshGroup = measurement.getMesh();
+    mesh = meshGroup?.children[0] as THREE.Mesh;
+
+    points = mesh.geometry.getAttribute('instanceEnd').array;;
     endPoint = new THREE.Vector3(points![3], points![4], points![5]);
 
     expect(endPoint).not.toEqual(intersection.point);
