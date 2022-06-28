@@ -18,6 +18,7 @@ import {
   MALData,
   MSData,
   DataElementType,
+  DataElementConfig,
 } from 'scarlet/types';
 import { getDataElementConfig, parseDate } from 'scarlet/utils';
 
@@ -121,12 +122,17 @@ const getEquipmentElements = (
         msDetection
       );
 
+      const filteredDetections = filterDetections(
+        detections,
+        dataElementConfig
+      );
+
       return {
         ...equipmentStateElement,
         id: equipmentStateElement?.id || uuid(),
         key,
         origin: DataElementOrigin.EQUIPMENT,
-        detections,
+        detections: filteredDetections,
         state: equipmentStateElement?.state ?? DataElementState.PENDING,
         config: dataElementConfig,
       } as DataElement;
@@ -235,6 +241,14 @@ const mergeDetections = (
   return detections;
 };
 
+const filterDetections = (
+  detections: Detection[],
+  dataElementConfig: DataElementConfig
+) =>
+  detections.filter((detection) =>
+    dataElementConfig.formula ? detection.type !== DetectionType.SCANNER : true
+  );
+
 const getEquipmentComponents = (
   equipmentType: EquipmentType,
   config: EquipmentConfig,
@@ -333,6 +347,9 @@ const getEquipmentComponents = (
       const dataElementConfig = config.componentElements[dataElement.key];
 
       if (!dataElementConfig) return;
+
+      // ignore scanner detections if calculate elem
+      if (dataElementConfig.formula) return;
 
       const isScannerDetectionAvailable = dataElement.detections.some(
         (detection) => detection.type === DetectionType.SCANNER
