@@ -15,7 +15,6 @@ import FunctionStatus from 'components/FunctionStatus';
 type Props = {
   id: number;
   name: string;
-  externalId?: string;
 };
 
 const PullRight = styled('div')`
@@ -25,12 +24,12 @@ const Center = styled('div')`
   text-align: center;
 `;
 
-export default function FunctionPanelHeader({ id, externalId, name }: Props) {
+export default function FunctionPanelHeader({ id, name }: Props) {
   return (
     <Row type="flex" justify="space-between" align="middle">
       <Col span={14}>
         {name}
-        <FunctionScheduleIndicator externalId={externalId} id={id} />
+        <FunctionScheduleIndicator id={id} />
       </Col>
       <Col span={2}>
         <Center>

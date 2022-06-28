@@ -187,13 +187,7 @@ function Functions() {
                     return (
                       <Panel
                         key={id}
-                        header={
-                          <FunctionPanelHeader
-                            id={id}
-                            name={name}
-                            externalId={externalId}
-                          />
-                        }
+                        header={<FunctionPanelHeader id={id} name={name} />}
                       >
                         <FunctionPanelContent
                           id={id}
