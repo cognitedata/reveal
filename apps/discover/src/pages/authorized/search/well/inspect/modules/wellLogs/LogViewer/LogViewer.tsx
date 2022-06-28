@@ -21,7 +21,7 @@ import Log from './Log/Log';
 
 interface LogViewerProps {
   wellLog: WellLog;
-  wellLogRowData: DepthMeasurementData;
+  wellLogRowData: DepthMeasurementData | undefined;
   events?: NdsInternal[];
   domainMap: DomainMap;
   setDomainList: (domainList: DomainListItem[]) => void;
@@ -65,7 +65,7 @@ export const LogViewer: React.FC<LogViewerProps> = ({
     );
   }, [wellLogsData, domainMap]);
 
-  if (isEmpty(wellLogRowData.columns)) {
+  if (!wellLogRowData || isEmpty(wellLogRowData?.columns)) {
     return (
       <LogsMessageWrapper>
         <EmptyState emptyTitle="Logs Not Found" />

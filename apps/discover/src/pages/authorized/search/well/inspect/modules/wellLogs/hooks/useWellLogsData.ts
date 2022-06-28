@@ -21,11 +21,13 @@ const CURVE_BREAK_POINTS = [0, CURVE_DEFAULT_INVALID_VALUE];
  */
 const CURVE_BREAK_TUPLET = [0, null] as unknown as Tuplet;
 
-export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
+export const useWellLogsData = (
+  wellLogRowData: DepthMeasurementData | undefined
+) => {
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   return useDeepMemo(() => {
-    if (isEmpty(wellLogRowData?.rows)) {
+    if (!wellLogRowData || isEmpty(wellLogRowData?.rows)) {
       return EMPTY_OBJECT as LogData;
     }
 
