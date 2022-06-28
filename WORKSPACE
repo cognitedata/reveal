@@ -3,11 +3,6 @@
 workspace(
     # How this workspace would be referenced with absolute labels from another workspace
     name = "applications",
-    # Map the npm bazel workspaces to the node_modules directories.
-    # This lets Bazel use the sane node_modules as other local tooling.
-    managed_directories = {
-        "@npm": ["node_modules"],
-    },
 )
 
 # Install the nodejs "bootstrap" package
@@ -16,8 +11,8 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file"
 
 http_archive(
     name = "build_bazel_rules_nodejs",
-    sha256 = "d63ecec7192394f5cc4ad95a115f8a6c9de55c60d56c1f08da79c306355e4654",
-    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/4.6.1/rules_nodejs-4.6.1.tar.gz"],
+    sha256 = "6f15d75f9e99c19d9291ff8e64e4eb594a6b7d25517760a75ad3621a7a48c2df",
+    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/4.7.0/rules_nodejs-4.7.0.tar.gz"],
 )
 
 load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories", "yarn_install")
@@ -25,8 +20,8 @@ load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories", "yarn_install
 # Controls which version of NodeJS and Yarn to use. For more information, check
 # https://bazelbuild.github.io/rules_nodejs/install.html
 node_repositories(
-    node_version = "14.17.6",
-    yarn_version = "1.22.4",
+    node_version = "16.10.0",
+    yarn_version = "1.22.17",
 )
 
 # The yarn_install rule runs yarn anytime the package.json or yarn.lock file changes.

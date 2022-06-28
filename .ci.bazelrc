@@ -9,6 +9,9 @@ build --action_env=GOOGLE_APPLICATION_CREDENTIALS
 
 run --remote_download_toplevel
 
-# Limit the number of parallel jobs in CI to avoid getting OOM-killed
-build --jobs=3
+# Limit the resources in CI to avoid getting OOM-killed
+build --local_ram_resources=12288
+build --local_cpu_resources=12
+build --jobs=8
 test --jobs=3
+startup --host_jvm_args="-Xmx12288M"

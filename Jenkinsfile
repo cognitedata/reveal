@@ -179,7 +179,7 @@ pods {
       }
       bazel.dockerAuth()
       container('bazel') {
-        sh('cp .ci.bazelrc ~/.bazelrc')
+        sh('cp .ci.bazelrc .user.bazelrc')
         sh('cd /var/run && ln -s /var/run/docker/docker.sock')
         sh(label: 'Set up NPM', script: 'cp /npm-credentials/npm-public-credentials.txt ~/.npmrc')
         // For cloning Blazier and fetching master
@@ -196,7 +196,7 @@ pods {
     if (env.BRANCH_NAME == 'master' && params.NIGHTLY) {
       stageWithNotify('Nightly tests', CONTEXTS.bazelTests) {
         container('bazel') {
-          sh(label: 'bazel test discover', script: 'bazel --bazelrc=.ci.bazelrc test //apps/discover/... --test_tag_filters=nightly')
+          sh(label: 'bazel test discover', script: 'bazel test //apps/discover/... --test_tag_filters=nightly')
         }
       }
       return
@@ -204,17 +204,17 @@ pods {
 
     stageWithNotify('Bazel build', CONTEXTS.bazelBuild) {
       container('bazel') {
-        sh(label: 'bazel build //...', script: 'bazel --bazelrc=.ci.bazelrc build //...')
+        sh(label: 'bazel build //...', script: 'bazel build //...')
       }
     }
 
     stageWithNotify('Bazel test', CONTEXTS.bazelTests) {
       container('bazel') {
-        sh(label: 'lint bazel files', script: 'bazel --bazelrc=.ci.bazelrc run //:buildifier_check')
+        sh(label: 'lint bazel files', script: 'bazel run //:buildifier_check')
         if (isProduction || (!isPullRequest && env.BRANCH_NAME.startsWith('release-'))) {
-          sh(label: 'bazel test //...', script: 'bazel --bazelrc=.ci.bazelrc test //... --test_tag_filters=-ignore_test_in_cd,-nightly')
+          sh(label: 'bazel test //...', script: 'bazel test //... --test_tag_filters=-ignore_test_in_cd,-nightly')
         } else {
-          sh(label: 'bazel test //...', script: 'bazel --bazelrc=.ci.bazelrc test //... --test_tag_filters=-nightly')
+          sh(label: 'bazel test //...', script: 'bazel test //... --test_tag_filters=-nightly')
         }
 
         // Bazel stores test outputs as zip files
