@@ -81,7 +81,7 @@ describe(Measurement.name, () => {
     meshGroup = measurement.getMesh();
     mesh = meshGroup?.children[0] as THREE.Mesh;
 
-    points = mesh.geometry.getAttribute('instanceEnd').array;;
+    points = mesh.geometry.getAttribute('instanceEnd').array;
     endPoint = new THREE.Vector3(points![3], points![4], points![5]);
 
     expect(endPoint).not.toEqual(intersection.point);
