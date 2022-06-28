@@ -24,4 +24,6 @@ export default {
     process.env.SENTRY_PROJECT_NAME ||
     process.env.NX_SENTRY_PROJECT_NAME ||
     'platypus',
+  MIXER_API_GROUP_NAME: 'schema',
+  DMS_API_GROUP_NAME: 'datamodelstorage',
 };

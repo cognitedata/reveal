@@ -16,7 +16,10 @@ export const responseMiddleware = (req, res, next) => {
     return;
   }
 
-  if (endpointEnding && req.method === 'GET') {
+  if (
+    req.method === 'GET' &&
+    (endpointEnding || !Object.keys(req.body).length)
+  ) {
     transformGetRequest(req, res);
   } else if (
     ((req.method === 'POST' || req.method === 'PUT') &&
