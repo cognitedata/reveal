@@ -19,7 +19,6 @@ import {
 import { SpudDateLimits, WaterDepthLimits } from '@cognite/sdk-wells-v2';
 
 import { FEET, UserPreferredUnit } from 'constants/units';
-import { convertToClosestInteger } from 'pages/authorized/search/well/inspect/modules/events/common';
 
 const DEFAULT_MIN_LIMIT = 0;
 const DEFAULT_MAX_LIMIT = 0;
@@ -88,6 +87,26 @@ export const convertObject = <Item>(object: Item) => {
     get: () => clonedObj,
   };
   return allFunctions;
+};
+
+export const convertToClosestInteger = <Item>(
+  event: Item,
+  accessors: string[]
+) => {
+  const copiedEvent = { ...event };
+  accessors.forEach((accessor) => {
+    const numValue = Number(get(event, accessor));
+    if (Number.isNaN(numValue)) {
+      set(copiedEvent as unknown as Record<string, unknown>, accessor, '');
+    } else {
+      set(
+        copiedEvent as unknown as Record<string, unknown>,
+        accessor,
+        numValue.toFixed(0)
+      );
+    }
+  });
+  return copiedEvent;
 };
 
 export const getWaterDepthLimitsInUnit = (

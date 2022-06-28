@@ -16,14 +16,6 @@ import { FEET, UserPreferredUnit } from 'constants/units';
 import { TRAJECTORY_COLUMN_NAME_MAP } from '../service/sequence/constants';
 import { Sequence, TrajectoryRow, TrajectoryRows } from '../types';
 
-export const getExistColumns = (
-  sequence: Sequence,
-  columns: ProjectConfigWellsTrajectoryColumns[]
-) => {
-  const trajColNames = sequence.columns.map((col) => col.name);
-  return columns.filter((col) => trajColNames.includes(col.name));
-};
-
 export const mapWellInfo = (
   trajectories: Sequence[],
   wells: Well[]

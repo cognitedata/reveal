@@ -24,8 +24,7 @@ export const normalizeNpt = (
     nptCode: nptCode || UNKNOWN_NPT_CODE,
     nptCodeDetail: nptCodeDetail || UNKNOWN_NPT_DETAIL_CODE,
     nptCodeColor: nptCode ? nptCodeColorMap[nptCode] : DEFAULT_NPT_COLOR,
-    measuredDepth: measuredDepth
-      ? convertDistance(measuredDepth, userPreferredUnit)
-      : undefined,
+    measuredDepth:
+      measuredDepth && convertDistance(measuredDepth, userPreferredUnit),
   };
 };

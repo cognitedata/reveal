@@ -8,7 +8,7 @@ import { Nds } from '@cognite/sdk-wells-v3';
 
 import { EVENT_PER_PAGE } from '../constants';
 
-export const getAllNdsEvents = async ({
+export const getNdsEvents = async ({
   wellboreIds,
   options,
 }: GetAllInspectDataProps) => {

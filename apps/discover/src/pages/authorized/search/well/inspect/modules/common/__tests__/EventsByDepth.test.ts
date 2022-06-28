@@ -1,12 +1,12 @@
 import { screen } from '@testing-library/react';
 
-import { mockNdsV2Events } from '__test-utils/fixtures/nds';
+import { mockNdsEvents } from '__test-utils/fixtures/nds';
 import { mockNptEvents } from '__test-utils/fixtures/npt';
 import { testRenderer } from '__test-utils/renderer';
 
 import EventsByDepth, { Props } from '../Events/EventsByDepth';
 
-const ndsEvents = mockNdsV2Events();
+const ndsEvents = mockNdsEvents;
 const nptEvents = mockNptEvents;
 
 const props = {

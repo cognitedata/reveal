@@ -5,7 +5,7 @@ import { Dictionary } from '@reduxjs/toolkit';
 import { PlotData } from 'plotly.js';
 
 import { ProjectConfigWellsTrajectoryColumns } from '@cognite/discover-api-types';
-import { Sequence as DefaultSequence, Asset, CogniteEvent } from '@cognite/sdk';
+import { Sequence as DefaultSequence, Asset } from '@cognite/sdk';
 // TODO(PP-2998): Remove well sdk v2 usage in NPT
 import { NPT, WellFilter } from '@cognite/sdk-wells-v2';
 import {
@@ -270,10 +270,6 @@ export type FilterConfigMap = {
   [key: number]: FilterConfig;
 };
 
-export type WellboreEventsMap = {
-  [key: string]: CogniteEventV3ish[];
-};
-
 type SequenceItem = number | string | null;
 interface SequenceColumnBasicInfo {
   name?: string;
@@ -318,17 +314,6 @@ export interface NPTEvent extends NPT {
   wellboreName?: string;
   nptCodeColor: string;
 }
-
-export interface NDSEvent extends CogniteEventV3ish {
-  wellboreId: string;
-  wellName?: string;
-  wellboreName?: string;
-  riskType: string;
-}
-
-export type CogniteEventV3ish = Omit<CogniteEvent, 'assetIds'> & {
-  assetIds?: WellboreId[];
-};
 
 export interface FilterValues {
   id: number;

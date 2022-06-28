@@ -1,4 +1,3 @@
-import flatten from 'lodash/flatten';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 
@@ -7,9 +6,6 @@ import {
   SpudDateLimits as SpudDateLimitsV2,
   WellFilter as WellFilterV2,
   PolygonFilter as PolygonFilterV2,
-  NPTFilter as NPTFilterV2,
-  NPTItems as NPTItemsV2,
-  NPT as NPTV2,
   LengthUnitEnum,
 } from '@cognite/sdk-wells-v2';
 import { DoubleWithUnit } from '@cognite/sdk-wells-v2/dist/src/client/model/DoubleWithUnit';
@@ -26,11 +22,6 @@ import {
   ContainsAllOrAny,
   ContainsAllOrAnyInt,
   Identifier,
-  WellItems,
-  Wellbore as WellboreV3,
-  NptFilter as NPTFilterV3,
-  NptItems as NPTItemsV3,
-  Npt as NPTV3,
   DurationRange,
   SummaryCount,
   AngleUnitEnum,
@@ -230,44 +221,6 @@ export const toIdentifier = (id: number | string): Identifier => {
 
 export const toIdentifierItems = (items: Identifier[]) => {
   return { items };
-};
-
-export const extractWellboresFromWells = (response: WellItems) => {
-  return flatten(
-    response.items.map((item) => item.wellbores || ([] as WellboreV3[]))
-  );
-};
-
-export type NPTFilterV2WithV3WellboreIds = Omit<NPTFilterV2, 'wellboreIds'> & {
-  wellboreIds?: string[];
-};
-export const mapV2toV3NPTFilter = (
-  nptFilter: NPTFilterV2WithV3WellboreIds
-): NPTFilterV3 => {
-  return {
-    measuredDepth: nptFilter.measuredDepth,
-    duration: mapDoubleRangeToDurationRange(nptFilter.duration),
-    nptCode: toPropertyFilter(nptFilter.nptCodes),
-    nptCodeDetail: toPropertyFilter(nptFilter.nptCodeDetails),
-    wellboreIds: nptFilter.wellboreIds?.map(toIdentifier),
-  };
-};
-
-export const mapV3ToV2NPTItems = (nptItems: NPTItemsV3): NPTItemsV2 => {
-  return {
-    ...nptItems,
-    items: nptItems.items.map(mapV3ToV2NPT),
-  };
-};
-
-export const mapV3ToV2NPT = (npt: NPTV3): NPTV2 => {
-  return {
-    ...npt,
-    parentExternalId: npt.wellboreAssetExternalId,
-    parentType: '',
-    sourceEventExternalId: npt.source.eventExternalId,
-    source: npt.source.sourceName,
-  };
 };
 
 export const mapDoubleRangeToDurationRange = (

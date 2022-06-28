@@ -10,7 +10,7 @@ import { useArrayCache } from 'hooks/useArrayCache';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
 import { ERROR_LOADING_NDS_EVENTS_ERROR } from '../../service/constants';
-import { getAllNdsEvents } from '../../service/network/getAllNdsEvents';
+import { getNdsEvents } from '../../service/network/getNdsEvents';
 
 export const useNdsEventsQuery = ({ wellboreIds }: AllCursorsProps) => {
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
@@ -19,7 +19,7 @@ export const useNdsEventsQuery = ({ wellboreIds }: AllCursorsProps) => {
     key: [...WELL_QUERY_KEY.NDS_EVENTS_CACHE, userPreferredUnit],
     items: new Set(wellboreIds),
     fetchAction: (wellboreIds, options) =>
-      getAllNdsEvents({ wellboreIds, options })
+      getNdsEvents({ wellboreIds, options })
         .then((nds) =>
           nds.map((rawNds) => normalizeNds(rawNds, userPreferredUnit))
         )

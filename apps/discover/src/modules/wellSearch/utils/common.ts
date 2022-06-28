@@ -7,18 +7,12 @@ import {
   TrajectoryData,
   WellboreExternalAssetIdMap,
   MeasurementV3,
-  CogniteEventV3ish,
   Sequence,
 } from '../types';
 
 export const trimCachedData = (
   data: {
-    [key: string]:
-      | Sequence[]
-      | CogniteEventV3ish[]
-      | TrajectoryData[]
-      | ExternalEvent[]
-      | NPT[];
+    [key: string]: Sequence[] | TrajectoryData[] | ExternalEvent[] | NPT[];
   },
   wellboreIds: Wellbore['id'][]
 ) => {
@@ -80,6 +74,3 @@ export const getWellboreExternalAssetIdReverseMap = (
     {} as { [key: string]: string }
   );
 };
-
-export const mapLogType = (sequences: Sequence[], logType: string) =>
-  sequences.map((sequence) => ({ ...sequence, logType }));

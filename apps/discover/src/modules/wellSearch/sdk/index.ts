@@ -5,12 +5,9 @@ import {
 
 import {
   mapSummaryCountsToStringArray,
-  mapV2toV3NPTFilter,
-  mapV3ToV2NPTItems,
   mapV3ToV2SourceItems,
   mapV3ToV2SpudDateLimits,
   mapV3ToV2WellsWaterDepthLimits,
-  NPTFilterV2WithV3WellboreIds,
 } from './utils';
 
 export { authenticateWellSDK };
@@ -101,22 +98,4 @@ export const getNDSRiskTypes = () => {
   return getWellSDKClient()
     .summaries.ndsRiskTypes()
     .then(mapSummaryCountsToStringArray);
-};
-
-export const getNPTItems = ({
-  filter,
-  cursor,
-  limit,
-}: {
-  filter: NPTFilterV2WithV3WellboreIds;
-  cursor?: string;
-  limit?: number;
-}) => {
-  return getWellSDKClient()
-    .npt.list({
-      filter: mapV2toV3NPTFilter(filter),
-      cursor,
-      limit,
-    })
-    .then(mapV3ToV2NPTItems);
 };
