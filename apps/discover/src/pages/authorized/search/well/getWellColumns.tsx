@@ -1,5 +1,6 @@
 import { getSpudDateDisplay } from 'domain/wells/well/internal/selectors/getSpudDateDisplay';
 import { getSpudDateTableSort } from 'domain/wells/well/internal/selectors/getSpudDateSort';
+import { getWaterDepthSort } from 'domain/wells/well/internal/selectors/getWaterDepthSort';
 import { wellFieldTitles } from 'domain/wells/well/internal/titles';
 import { Well } from 'domain/wells/well/internal/types';
 import { DogLegSeverityUnit } from 'domain/wells/wellbore/internal/types';
@@ -65,6 +66,7 @@ export const getWellColumns = (
       accessor: 'waterDepth.value',
       width: '170px',
       order: 4,
+      sortType: getWaterDepthSort,
     },
     blockname: {
       Header: BLOCK_NAME,
