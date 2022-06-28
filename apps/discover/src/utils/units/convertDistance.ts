@@ -8,7 +8,7 @@ import { changeUnitTo } from '.';
 import { ConvertedDistance } from './constants';
 import { getSafeUnit } from './getSafeUnit';
 
-type DistanceType = {
+export type DistanceType = {
   value: number;
   unit: DistanceUnitEnum | Distance;
 };

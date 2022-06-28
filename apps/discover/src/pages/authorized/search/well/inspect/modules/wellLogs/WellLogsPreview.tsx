@@ -1,6 +1,9 @@
 import { useWellLogsRowDataKeyBySource } from 'domain/wells/log/internal/transformers/useWellLogsRowDataSelectors';
+import { useNdsEventsQuery } from 'domain/wells/nds/internal/queries/useNdsEventsQuery';
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
+import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 import uniqueId from 'lodash/uniqueId';
@@ -11,7 +14,6 @@ import { Dropdown, Menu } from '@cognite/cogs.js';
 import { ExpandButton } from 'components/Buttons';
 import { Loading } from 'components/Loading';
 import { useTranslation } from 'hooks/useTranslation';
-import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 
 import { ModuleFilterDropdownWrapper } from '../common/elements';
 
@@ -32,16 +34,23 @@ export const WellLogsPreview: React.FC<{ wellLogs: WellLog[] }> = ({
   const [domainList, setDomainList] = useState<DomainListItem[]>([]);
   const { t } = useTranslation();
 
+  const wellboreIds = useWellInspectSelectedWellboreIds();
+
   const { data: wellLogsRowData, isLoading: isWellLogsRowDataLoading } =
     useWellLogsRowDataKeyBySource(
       selectedWellLog ? [selectedWellLog.source.sequenceExternalId] : []
     );
 
-  const { data: ndsEventsData, isLoading: isNdsEventsDataLoading } =
-    useNdsEventsQuery();
+  const { data: ndsData, isLoading: isNdsEventsDataLoading } =
+    useNdsEventsQuery({ wellboreIds });
 
-  const isNoData = !selectedWellLog || !wellLogsRowData || !ndsEventsData;
+  const isNoData = !selectedWellLog || !wellLogsRowData || !ndsData;
   const isLoading = isWellLogsRowDataLoading || isNdsEventsDataLoading;
+
+  const groupedNdsData = useMemo(
+    () => groupByWellbore(ndsData || []),
+    [ndsData]
+  );
 
   if (!selectedWellLog && !isEmpty(wellLogs)) {
     setSelectedWellLog(wellLogs[0]);
@@ -90,7 +99,7 @@ export const WellLogsPreview: React.FC<{ wellLogs: WellLog[] }> = ({
       <LogViewer
         wellLog={selectedWellLog}
         wellLogRowData={wellLogsRowData[source.sequenceExternalId]}
-        events={ndsEventsData[wellboreMatchingId]}
+        events={groupedNdsData[wellboreMatchingId]}
         domainMap={domainMap}
         setDomainList={setDomainList}
       />

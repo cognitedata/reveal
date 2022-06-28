@@ -1,4 +1,7 @@
-import { NdsInternal } from 'domain/wells/nds/internal/types';
+import {
+  NdsInternal,
+  NdsInternalWithTvd,
+} from 'domain/wells/nds/internal/types';
 import { getTvdForMd } from 'domain/wells/trajectory/internal/transformers/getTvdForMd';
 import { TrueVerticalDepthsDataLayer } from 'domain/wells/trajectory/internal/types';
 
@@ -6,19 +9,17 @@ import isUndefined from 'lodash/isUndefined';
 import { Fixed } from 'utils/number';
 import { adaptToConvertedDistance } from 'utils/units/adaptToConvertedDistance';
 
-import { NdsView } from '../types';
-
-export const processNdsTvdData = (
+export const mergeNdsTvdData = (
   nds: NdsInternal,
   trueVerticalDepths?: TrueVerticalDepthsDataLayer
-) => {
-  const tvdData: Partial<NdsView> = {};
+): NdsInternalWithTvd => {
+  const tvdData: Partial<NdsInternalWithTvd> = {};
 
   if (!trueVerticalDepths) {
-    return tvdData;
+    return nds;
   }
 
-  const { holeStart, holeEnd } = nds.original;
+  const { holeStart, holeEnd } = nds;
 
   const { unit } = trueVerticalDepths.trueVerticalDepthUnit;
 
@@ -46,5 +47,8 @@ export const processNdsTvdData = (
     }
   }
 
-  return tvdData;
+  return {
+    ...nds,
+    ...tvdData,
+  };
 };

@@ -1,17 +1,14 @@
-import get from 'lodash/get';
-
-import { CogniteEventV3ish } from 'modules/wellSearch/types';
+import { NdsInternal } from 'domain/wells/nds/internal/types';
 
 export const isEventsOverlap = (
-  parentEvent: CogniteEventV3ish,
-  childEvent: CogniteEventV3ish
+  parentEvent: NdsInternal,
+  childEvent: NdsInternal
 ) => {
   return (
-    parentEvent.id !== childEvent.id &&
-    get(parentEvent, 'metadata.name') === get(childEvent, 'metadata.name') &&
-    Number(get(parentEvent, 'metadata.md_hole_start')) >=
-      Number(get(childEvent, 'metadata.md_hole_start')) &&
-    Number(get(parentEvent, 'metadata.md_hole_end')) <=
-      Number(get(childEvent, 'metadata.md_hole_end'))
+    parentEvent.wellboreMatchingId !== childEvent.wellboreMatchingId &&
+    parentEvent.riskType === childEvent.riskType &&
+    Number(parentEvent.holeStart?.value) >=
+      Number(childEvent.holeStart?.value) &&
+    Number(parentEvent.holeEnd?.value) <= Number(childEvent.holeEnd?.value)
   );
 };

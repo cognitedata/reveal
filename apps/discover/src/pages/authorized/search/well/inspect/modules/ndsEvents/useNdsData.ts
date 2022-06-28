@@ -1,6 +1,5 @@
+import { useNdsWithTvdData } from 'domain/wells/nds/internal/hooks/useNdsWithTvdData';
 import { useNdsAggregatesSummaryQuery } from 'domain/wells/nds/internal/queries/useNdsAggregatesSummaryQuery';
-import { useNdsEventsQuery } from 'domain/wells/nds/internal/queries/useNdsEventsQuery';
-import { useNdsTvdDataQuery } from 'domain/wells/nds/internal/queries/useNdsTvdDataQuery';
 import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
 import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores';
 
@@ -17,21 +16,11 @@ export const useNdsData = () => {
   const wellboreMatchingIdMap = keyBy(wellbores, 'matchingId');
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
-  const { data: ndsData, isLoading } = useNdsEventsQuery({
+  const { data: ndsData, isLoading } = useNdsWithTvdData({
     wellboreIds,
   });
 
   const { data: ndsAggregates } = useNdsAggregatesSummaryQuery(wellboreIds);
-
-  const originalNdsData = useDeepMemo(() => {
-    if (!ndsData) {
-      return [];
-    }
-    return ndsData.map(({ original }) => original);
-  }, [ndsData]);
-
-  const { data: tvdData, isLoading: isTvdLoading } =
-    useNdsTvdDataQuery(originalNdsData);
 
   const processedData = useDeepMemo(() => {
     if (!ndsData) {
@@ -42,12 +31,12 @@ export const useNdsData = () => {
       const { wellboreMatchingId } = nds;
       const wellbore = wellboreMatchingIdMap[wellboreMatchingId];
 
-      return processNdsData(nds, wellbore, tvdData[wellboreMatchingId]);
+      return processNdsData(nds, wellbore);
     });
-  }, [ndsData, tvdData, userPreferredUnit]);
+  }, [ndsData, userPreferredUnit]);
 
   return {
-    isLoading: isLoading || isTvdLoading,
+    isLoading,
     data: processedData,
     ndsAggregates: ndsAggregates || {},
   };

@@ -1,23 +1,21 @@
 import { useCasingSchematicsQuery } from 'domain/wells/casings/internal/queries/useCasingSchematicsQuery';
 import { sortCasingAssembliesByMDBase } from 'domain/wells/casings/internal/transformers/sortCasingAssembliesByMDBase';
 import { useWellLogsWithRowData } from 'domain/wells/log/internal/queries/useWellLogsWithRowData';
+import { useNdsWithTvdData } from 'domain/wells/nds/internal/hooks/useNdsWithTvdData';
 import { useNptEventsQuery } from 'domain/wells/npt/internal/queries/useNptEventsQuery';
 import { useTrajectoriesQuery } from 'domain/wells/trajectory/internal/queries/useTrajectoriesQuery';
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
 import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
 
 import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
 
-import isArray from 'lodash/isArray';
+import pickBy from 'lodash/pickBy';
 
 import { ThreeDee } from 'components/3d';
 import EmptyState from 'components/EmptyState';
 import { LOADING_SUB_TEXT } from 'components/EmptyState/constants';
 import { StoreState } from 'core/types';
-import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
-import { CogniteEventV3ish } from 'modules/wellSearch/types';
 import { keyBySource } from 'modules/wellSearch/utils/groupBySource';
 import { groupByWellbore } from 'modules/wellSearch/utils/groupByWellbore';
 
@@ -26,14 +24,15 @@ const ThreeDeeEmptyStateLoader: React.FC = () => {
 };
 
 type Props = ReturnType<typeof mapStateToProps>;
-const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
+const ThreeDeePreview: React.FC<Props> = ({ wellboreIds }: Props) => {
   const { data: config } = useWellConfig();
   const wells = useWellInspectSelectedWells();
-  const wellboreIds = useWellInspectSelectedWellboreIds();
 
   const { data: casingData, isLoading: casingLoading } =
     useCasingSchematicsQuery({ wellboreIds });
-  const { data: ndsData, isLoading: ndsLoading } = useNdsEventsQuery();
+  const { data: ndsEvents, isLoading: ndsLoading } = useNdsWithTvdData({
+    wellboreIds,
+  });
   const { data: nptEvents, isLoading: nptLoading } = useNptEventsQuery({
     wellboreIds,
   });
@@ -42,8 +41,6 @@ const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
     trajectoryRows,
     isLoading: trajectoriesLoading,
   } = useTrajectoriesQuery();
-
-  const ndsEvents: CogniteEventV3ish[] = [];
 
   /**
    * ************PP-2693************
@@ -72,12 +69,6 @@ const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
     return <ThreeDeeEmptyStateLoader />;
   }
 
-  Object.keys(selectedWellboreIds).forEach((wbid) => {
-    if (ndsData && isArray(ndsData[wbid])) {
-      ndsEvents.push(...ndsData[wbid]);
-    }
-  });
-
   return (
     <ThreeDee
       wells={wells}
@@ -97,7 +88,7 @@ const ThreeDeePreview: React.FC<Props> = ({ selectedWellboreIds }: Props) => {
  * Had to use redux connect method instead selector hooks to bind state with component to avoid recursively initiating the 3D component.
  */
 const mapStateToProps = (state: StoreState) => ({
-  selectedWellboreIds: state.wellInspect.selectedWellboreIds,
+  wellboreIds: Object.keys(pickBy(state.wellInspect.selectedWellboreIds)),
 });
 
 export default connect(mapStateToProps)(ThreeDeePreview);

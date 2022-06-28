@@ -1,6 +1,10 @@
+import { NdsInternal } from 'domain/wells/nds/internal/types';
+
 import React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
+
+import { DepthMeasurementData } from '@cognite/sdk-wells-v3';
 
 import EmptyState from 'components/EmptyState';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
@@ -8,16 +12,25 @@ import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { LogsMessageWrapper } from '../elements';
 import { useEventsData } from '../hooks/useEventsData';
 import { useWellLogsData } from '../hooks/useWellLogsData';
+import { WellLog } from '../types';
 
-import { LogViewerProps } from './DomainFilter/types';
+import { DomainListItem, DomainMap } from './DomainFilter/types';
 import { LogHolder } from './elements';
 import { LogData as LogViewerData } from './Log/interfaces';
 import Log from './Log/Log';
 
+interface LogViewerProps {
+  wellLog: WellLog;
+  wellLogRowData: DepthMeasurementData;
+  events?: NdsInternal[];
+  domainMap: DomainMap;
+  setDomainList: (domainList: DomainListItem[]) => void;
+}
+
 export const LogViewer: React.FC<LogViewerProps> = ({
   wellLog,
   wellLogRowData,
-  events,
+  events = [],
   domainMap,
   setDomainList,
 }) => {

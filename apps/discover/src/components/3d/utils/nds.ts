@@ -1,63 +1,53 @@
-import { unsafeChangeUnitTo } from 'utils/units';
+import { NdsInternalWithTvd } from 'domain/wells/nds/internal/types';
+
+import { convertDistance } from 'utils/units/convertDistance';
 
 import { INds } from '@cognite/node-visualizer';
 
-import { CogniteEventV3ish } from 'modules/wellSearch/types';
+import { FEET } from 'constants/units';
 
-export const mapNDSTo3D = (eventsMap: CogniteEventV3ish[]): Partial<INds>[] => {
-  return eventsMap.map((event) => {
-    const metaData = event.metadata;
-    if (!metaData) {
-      return {
-        ...event,
-        assetIds: (event.assetIds || []).map(String),
-      };
-    }
+export const mapNDSTo3D = (
+  ndsEvents: NdsInternalWithTvd[]
+): Partial<INds>[] => {
+  return ndsEvents.map((nds) => {
+    const {
+      wellboreAssetExternalId,
+      source,
+      holeDiameter,
+      holeStart,
+      holeEnd,
+      holeStartTvd,
+      holeEndTvd,
+    } = nds;
+
     /**
      * N-vid is making a mess with event positioning when provided with units other than ft.
      */
-    const diameterHole = unsafeChangeUnitTo(
-      Number(metaData.diameter_hole),
-      metaData.diameter_hole_unit,
-      'ft'
-    );
-    const mdHoleStart = unsafeChangeUnitTo(
-      Number(metaData.md_hole_start),
-      metaData.md_hole_start_unit,
-      'ft'
-    );
-    const mdHoleEnd = unsafeChangeUnitTo(
-      Number(metaData.md_hole_end),
-      metaData.md_hole_end_unit,
-      'ft'
-    );
-    const tvdOffsetHoleStart = unsafeChangeUnitTo(
-      Number(metaData.md_hole_start),
-      metaData.md_hole_start_unit,
-      'ft'
-    );
-    const tvdOffsetHoleEnd = unsafeChangeUnitTo(
-      Number(metaData.tvd_offset_hole_end),
-      metaData.tvd_offset_hole_end_unit,
-      'ft'
-    );
+    const diameterHole = holeDiameter && convertDistance(holeDiameter, FEET);
+
+    const mdHoleStart = holeStart && convertDistance(holeStart, FEET);
+
+    const mdHoleEnd = holeEnd && convertDistance(holeEnd, FEET);
+
+    const tvdHoleStart = holeStartTvd && convertDistance(holeStartTvd, FEET);
+
+    const tvdHoleEnd = holeEndTvd && convertDistance(holeEndTvd, FEET);
+
     return {
-      ...event,
-      assetIds: (event.assetIds || []).map(String),
+      ...nds,
+      source: source.sourceName,
+      assetIds: [wellboreAssetExternalId],
       metadata: {
-        ...event.metadata,
-        diameter_hole: diameterHole ? String(diameterHole) : '',
-        diameter_hole_unit: 'ft',
-        md_hole_start: mdHoleStart ? String(mdHoleStart) : '',
-        md_hole_start_unit: 'ft',
-        md_hole_end: mdHoleEnd ? String(mdHoleEnd) : '',
-        md_hole_end_unit: 'ft',
-        tvd_offset_hole_start: tvdOffsetHoleStart
-          ? String(tvdOffsetHoleStart)
-          : '',
-        tvd_offset_hole_start_unit: 'ft',
-        tvd_offset_hole_end: tvdOffsetHoleEnd ? String(tvdOffsetHoleEnd) : '',
-        tvd_offset_hole_end_unit: 'ft',
+        diameter_hole: diameterHole ? String(diameterHole.value) : '',
+        diameter_hole_unit: FEET,
+        md_hole_start: mdHoleStart ? String(mdHoleStart.value) : '',
+        md_hole_start_unit: FEET,
+        md_hole_end: mdHoleEnd ? String(mdHoleEnd.value) : '',
+        md_hole_end_unit: FEET,
+        tvd_offset_hole_start: tvdHoleStart ? String(tvdHoleStart.value) : '',
+        tvd_offset_hole_start_unit: FEET,
+        tvd_offset_hole_end: tvdHoleEnd ? String(tvdHoleEnd.value) : '',
+        tvd_offset_hole_end_unit: FEET,
       },
     };
   });

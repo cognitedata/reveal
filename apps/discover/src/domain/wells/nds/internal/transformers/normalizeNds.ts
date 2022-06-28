@@ -18,6 +18,5 @@ export const normalizeNds = (
       .changeUnits(getNdsUnitChangeAccessors(userPreferredUnit))
       .toClosestInteger(getNdsAccessorsToFixedDecimal())
       .get(),
-    original: rawNds,
   };
 };

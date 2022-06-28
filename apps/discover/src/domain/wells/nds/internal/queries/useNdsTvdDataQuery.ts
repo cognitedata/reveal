@@ -6,8 +6,9 @@ import { Nds } from '@cognite/sdk-wells-v3';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
 import { getInterpolateRequests } from '../../service/utils/getInterpolateRequests';
+import { NdsInternal } from '../types';
 
-export const useNdsTvdDataQuery = (ndsData: Nds[]) => {
+export const useNdsTvdDataQuery = (ndsData: Nds[] | NdsInternal[]) => {
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   const interpolateRequests = getInterpolateRequests(

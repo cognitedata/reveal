@@ -1,7 +1,12 @@
+import { ConvertedDistance } from 'utils/units/constants';
+
 import { Nds, NdsAggregate } from '@cognite/sdk-wells-v3';
 
-export interface NdsInternal extends Nds {
-  original: Nds;
+export type NdsInternal = Nds;
+
+export interface NdsInternalWithTvd extends NdsInternal {
+  holeStartTvd?: ConvertedDistance;
+  holeEndTvd?: ConvertedDistance;
 }
 
 export type NdsAggregatesInternal = Record<

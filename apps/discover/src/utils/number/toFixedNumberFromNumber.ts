@@ -4,5 +4,5 @@ export const toFixedNumberFromNumber = (
   value: number,
   decimalPlaces = Fixed.ThreeDecimals
 ): number => {
-  return Number(value.toFixed(decimalPlaces));
+  return Number(Number(value).toFixed(decimalPlaces));
 };

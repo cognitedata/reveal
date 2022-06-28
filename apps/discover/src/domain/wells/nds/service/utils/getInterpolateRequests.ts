@@ -12,8 +12,10 @@ import {
 
 import { UserPreferredUnit } from 'constants/units';
 
+import { NdsInternal } from '../../internal/types';
+
 export const getInterpolateRequests = (
-  ndsData: Nds[],
+  ndsData: Nds[] | NdsInternal[],
   userPreferredUnit?: UserPreferredUnit
 ): TrajectoryInterpolationRequest[] => {
   const groupedNdsData = groupByWellbore(ndsData);
