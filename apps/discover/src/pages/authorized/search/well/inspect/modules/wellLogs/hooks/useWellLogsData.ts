@@ -25,7 +25,7 @@ export const useWellLogsData = (wellLogRowData: DepthMeasurementData) => {
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   return useDeepMemo(() => {
-    if (isEmpty(wellLogRowData.rows)) {
+    if (isEmpty(wellLogRowData?.rows)) {
       return EMPTY_OBJECT as LogData;
     }
 
