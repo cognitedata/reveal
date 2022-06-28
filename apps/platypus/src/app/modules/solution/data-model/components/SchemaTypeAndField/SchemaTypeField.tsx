@@ -138,16 +138,18 @@ export const SchemaTypeField = ({
         </div>
         <div>
           {isFirstField && <EmptyLabel />}
-          <Button
-            icon="Delete"
-            aria-label="Delete field"
-            type="ghost"
-            disabled={disabled}
-            onClick={(e) => {
-              e.preventDefault();
-              onFieldRemoved(field);
-            }}
-          />
+          {!disabled && (
+            <Button
+              icon="Delete"
+              aria-label="Delete field"
+              type="ghost"
+              disabled={disabled}
+              onClick={(e) => {
+                e.preventDefault();
+                onFieldRemoved(field);
+              }}
+            />
+          )}
         </div>
       </Flex>
     </Flex>

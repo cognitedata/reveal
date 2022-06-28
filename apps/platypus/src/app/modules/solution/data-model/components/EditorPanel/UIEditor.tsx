@@ -206,24 +206,26 @@ export function UIEditor({
                 }
               />
             ))}
-            <Button
-              icon="Add"
-              iconPlacement="left"
-              aria-label={t('add_field', 'Add field')}
-              type="ghost"
-              disabled={
-                disabled || currentType.fields.some((field) => !field.name)
-              }
-              style={{
-                alignSelf: 'flex-start',
-                marginBottom: '8px',
-                marginLeft: '16px',
-                padding: '4px 8px 4px 8px',
-              }}
-              onClick={onFieldCreate}
-            >
-              {t('add_field', 'Add field')}
-            </Button>
+            {!disabled && (
+              <Button
+                icon="Add"
+                iconPlacement="left"
+                aria-label={t('add_field', 'Add field')}
+                type="ghost"
+                disabled={
+                  disabled || currentType.fields.some((field) => !field.name)
+                }
+                style={{
+                  alignSelf: 'flex-start',
+                  marginBottom: '8px',
+                  marginLeft: '8px',
+                  padding: '4px 8px 4px 8px',
+                }}
+                onClick={onFieldCreate}
+              >
+                {t('add_field', 'Add field')}
+              </Button>
+            )}
           </Flex>
         </SchemaTypeView>
       ) : (
