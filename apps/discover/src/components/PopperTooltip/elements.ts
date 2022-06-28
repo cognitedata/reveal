@@ -19,7 +19,8 @@ export const TooltipWrapper = styled.span`
     font-family: inherit;
     font-size: 12px;
     transition: opacity 1s ease-in-out;
-    z-index: ${layers.TOOLTIP};
+    position: relative;
+    z-index: ${layers.MAXIMUM};
   }
 
   .tooltip-container[data-popper-interactive='false'] {

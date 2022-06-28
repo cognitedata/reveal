@@ -1,4 +1,4 @@
-import { normalizeNds } from 'domain/wells/nds/internal/transformers/normalizeNds';
+import { normalizeAllNds } from 'domain/wells/nds/internal/transformers/normalizeAllNds';
 import { NdsInternal } from 'domain/wells/nds/internal/types';
 import { AllCursorsProps } from 'domain/wells/types';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
@@ -20,9 +20,9 @@ export const useNdsEventsQuery = ({ wellboreIds }: AllCursorsProps) => {
     items: new Set(wellboreIds),
     fetchAction: (wellboreIds, options) =>
       getNdsEvents({ wellboreIds, options })
-        .then((nds) =>
-          nds.map((rawNds) => normalizeNds(rawNds, userPreferredUnit))
-        )
+        .then((nds) => {
+          return normalizeAllNds(nds, userPreferredUnit);
+        })
         .then(groupByWellbore)
         .catch((error) =>
           handleServiceError(error, {}, ERROR_LOADING_NDS_EVENTS_ERROR)

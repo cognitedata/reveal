@@ -1,9 +1,6 @@
 import { AllCursorsProps } from 'domain/wells/types';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
-import compact from 'lodash/compact';
-import map from 'lodash/map';
-import { colorize } from 'utils/colorize';
 import { handleServiceError } from 'utils/errors';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
@@ -12,8 +9,7 @@ import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
 import { ERROR_LOADING_NPT_EVENTS_ERROR } from '../../service/constants';
 import { getNptEvents } from '../../service/network/getNptEvents';
-import { PREDEFINED_NPT_COLORS } from '../constants';
-import { normalizeNpt } from '../transformers/normalizeNpt';
+import { normalizeAllNpt } from '../transformers/normalizeAllNpt';
 import { NptInternal } from '../types';
 
 export const useNptEventsQuery = ({ wellboreIds }: AllCursorsProps) => {
@@ -25,12 +21,7 @@ export const useNptEventsQuery = ({ wellboreIds }: AllCursorsProps) => {
     fetchAction: (wellboreIds, options) =>
       getNptEvents({ wellboreIds, options })
         .then((npt) => {
-          const nptCodes = compact(map(npt, 'nptCode'));
-          const nptCodeColorMap = colorize(nptCodes, PREDEFINED_NPT_COLORS);
-
-          return npt.map((rawNpt) =>
-            normalizeNpt(rawNpt, userPreferredUnit, nptCodeColorMap)
-          );
+          return normalizeAllNpt(npt, userPreferredUnit);
         })
         .then(groupByWellbore)
         .catch((error) =>

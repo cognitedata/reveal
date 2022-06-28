@@ -3,6 +3,8 @@ import { NptInternal } from 'domain/wells/npt/internal/types';
 
 import React from 'react';
 
+import { EventTabs } from '../../measurements/wellCentricView/constants';
+
 import NdsEventsColumn from './NdsEventsColumn';
 import NptEventsColumn from './NptEventsColumn';
 
@@ -13,6 +15,7 @@ export type Props = {
   isNptEventsLoading?: boolean;
   isNdsEventsLoading?: boolean;
   scaleLineGap?: number;
+  view?: EventTabs;
 };
 
 const EventsByDepth: React.FC<Props> = ({
@@ -22,6 +25,7 @@ const EventsByDepth: React.FC<Props> = ({
   isNptEventsLoading,
   isNdsEventsLoading,
   scaleLineGap,
+  view,
 }: Props) => {
   return (
     <>
@@ -30,12 +34,14 @@ const EventsByDepth: React.FC<Props> = ({
         events={nptEvents}
         isEventsLoading={isNptEventsLoading}
         scaleLineGap={scaleLineGap}
+        view={view}
       />
       <NdsEventsColumn
         scaleBlocks={scaleBlocks}
         events={ndsEvents}
         isEventsLoading={isNdsEventsLoading}
         scaleLineGap={scaleLineGap}
+        view={view}
       />
     </>
   );

@@ -7,6 +7,7 @@ export interface NdsInternal
   holeDiameter?: ConvertedDistance;
   holeStart?: ConvertedDistance;
   holeEnd?: ConvertedDistance;
+  ndsCodeColor: string;
 }
 
 export interface NdsInternalWithTvd extends NdsInternal {

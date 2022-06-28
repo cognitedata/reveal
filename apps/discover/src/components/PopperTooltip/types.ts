@@ -6,4 +6,5 @@ export interface TooltipProps extends Config {
   options?: PopperOptions;
   disabled?: boolean;
   children?: ReactNode;
+  hideArrow?: boolean;
 }

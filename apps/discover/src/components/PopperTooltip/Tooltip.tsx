@@ -16,6 +16,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   content,
   options,
   disabled,
+  hideArrow,
   ...config
 }) => {
   const {
@@ -54,7 +55,9 @@ export const Tooltip: React.FC<TooltipProps> = ({
         >
           <span>{content}</span>
 
-          <div {...getArrowProps({ className: 'tooltip-arrow' })} />
+          {!hideArrow && (
+            <div {...getArrowProps({ className: 'tooltip-arrow' })} />
+          )}
         </div>
       )}
     </TooltipWrapper>

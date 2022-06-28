@@ -6,6 +6,8 @@ import isEmpty from 'lodash/isEmpty';
 
 import EmptyState from 'components/EmptyState';
 
+import { EventTabs } from '../../measurements/wellCentricView/constants';
+
 import { NPT_COLUMN_TITLE } from './constants';
 import {
   BodyColumn,
@@ -18,12 +20,14 @@ import {
   EmptyStateWrapper,
 } from './elements';
 import NptEventsBadge from './NptEventsBadge';
+import { NptEventsScatterView } from './NptEventsScatterView';
 
 export type Props = {
   scaleBlocks: number[];
   events: NptInternal[];
   isEventsLoading?: boolean;
   scaleLineGap?: number;
+  view?: EventTabs;
 };
 
 export const EMPTY_STATE_TEXT = 'This wellbore has no NPT events data';
@@ -34,6 +38,7 @@ const NptEventsColumn: React.FC<Props> = ({
   events,
   isEventsLoading,
   scaleLineGap,
+  view,
 }: Props) => {
   const blockElements = useMemo(() => {
     const lastEvents = events.filter(
@@ -52,11 +57,21 @@ const NptEventsColumn: React.FC<Props> = ({
               (!index || event.measuredDepth.value >= scaleBlocks[index - 1])
           );
 
+          const renderContent = () => {
+            if (isEmpty(blockEvents)) {
+              return null;
+            }
+
+            if (view === EventTabs.scatter) {
+              return <NptEventsScatterView events={blockEvents} />;
+            }
+
+            return <NptEventsBadge events={blockEvents} />;
+          };
+
           return (
             <ScaleLine gap={scaleLineGap} key={row}>
-              {!isEmpty(blockEvents) ? (
-                <NptEventsBadge events={blockEvents} />
-              ) : null}
+              {renderContent()}
             </ScaleLine>
           );
         })}
@@ -68,7 +83,7 @@ const NptEventsColumn: React.FC<Props> = ({
         ) : null}
       </>
     );
-  }, [scaleBlocks, events]);
+  }, [scaleBlocks, events, view]);
 
   return (
     <BodyColumn width={150}>

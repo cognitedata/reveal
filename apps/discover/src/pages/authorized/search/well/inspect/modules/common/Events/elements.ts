@@ -66,11 +66,12 @@ export const DepthMeasurementScale = styled(FlexColumn)`
   position: absolute;
   top: 0;
   left: 0;
-  overflow: hidden;
+  /* overflow: hidden; */
 `;
 
 export const ScaleLine = styled(Flex)`
   min-height: ${(props: { gap?: number }) => props.gap || SCALE_BLOCK_HEIGHT}px;
+  max-height: ${(props: { gap?: number }) => props.gap || SCALE_BLOCK_HEIGHT}px;
   height: auto;
   width: 100%;
   border-bottom: 1px solid var(--cogs-greyscale-grey3);

@@ -27,6 +27,7 @@ import CurveColorCode from 'pages/authorized/search/well/inspect/modules/common/
 import EventsByDepth from '../../common/Events/EventsByDepth';
 import { filterByChartType, filterByMainChartType } from '../utils';
 
+import { EventTabs } from './constants';
 import {
   Content,
   CurveIndicator,
@@ -45,11 +46,6 @@ type AxisNames = {
   y: string;
   x2?: string;
 };
-
-enum EventTabs {
-  'cluster' = 'cluster',
-  'scatter' = 'scatter',
-}
 
 export type Props = {
   wellbore: Wellbore;
@@ -71,7 +67,9 @@ export const WellCentricCard: React.FC<Props> = ({
   const scaleRef = useRef<HTMLElement | null>(null);
   const legendsHolderRef = React.useRef<HTMLDivElement>(null);
 
-  const [currentTab, setCurrentTab] = useState<EventTabs>(EventTabs.cluster);
+  const wellboreIds = useWellInspectSelectedWellboreIds();
+
+  const [currentTab, setCurrentTab] = useState<EventTabs>(EventTabs.scatter);
 
   const [scaleGap, setScaleGap] = useState(50);
   const [scaleBlocks, setScaleBlocks] = useState<number[]>([]);
@@ -81,13 +79,11 @@ export const WellCentricCard: React.FC<Props> = ({
     useState<boolean>(false);
 
   const [[minDepth, maxDepth], setDepthRange] = useState<[number, number]>([
-    0, 0,
+    0, 10,
   ]);
 
   const fitChart = head(filterByChartType(chartData, [MeasurementTypeV3.FIT]));
   const lotChart = head(filterByChartType(chartData, [MeasurementTypeV3.LOT]));
-
-  const wellboreIds = useWellInspectSelectedWellboreIds();
 
   const { isLoading: isNptLoading, data: nptEvents } = useNptEventsForCasings({
     wellboreIds,
@@ -169,6 +165,7 @@ export const WellCentricCard: React.FC<Props> = ({
           isNptEventsLoading={isNptLoading}
           scaleBlocks={scaleBlocks}
           scaleLineGap={scaleGap}
+          view={currentTab}
         />
       </Content>
 

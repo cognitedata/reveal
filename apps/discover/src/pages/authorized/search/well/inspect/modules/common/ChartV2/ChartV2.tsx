@@ -5,6 +5,8 @@ import { LayoutAxis } from 'plotly.js';
 
 import { Loader } from '@cognite/cogs.js';
 
+import { useDebounce } from 'hooks/useDebounce';
+
 import {
   BodyColumnHeaderLegend,
   BodyColumnHeaderWrapper,
@@ -139,18 +141,21 @@ const ChartV2 = React.forwardRef(
       dragmode: 'pan',
     };
 
-    const handleRelayoutChange = (event: Plotly.PlotRelayoutEvent) => {
-      const minY = event['yaxis.range[1]'] || 0;
-      const maxY = event['yaxis.range[0]'] || 0;
-      onMinMaxChange?.(minY, maxY);
-    };
+    const handleRelayoutChange = useDebounce(
+      (event: Plotly.PlotRelayoutEvent) => {
+        const minY = event['yaxis.range[1]'] || 0;
+        const maxY = event['yaxis.range[0]'] || 0;
+        onMinMaxChange?.(minY, maxY);
+      },
+      1000
+    );
 
-    const handleUpdate = (_figure: Figure, graph: HTMLElement) => {
+    const handleUpdate = useDebounce((_figure: Figure, graph: HTMLElement) => {
       const gap = calculateYTicksGap(graph);
       const visibleYValues = findVisibleYTicksValues(graph);
 
       onLayoutChange?.(gap, visibleYValues);
-    };
+    }, 1000);
 
     const handleInitialization = (figure: Figure, graph: HTMLElement) => {
       const [maxY, minY] = (figure.layout.yaxis?.range || [0, 0]) as [

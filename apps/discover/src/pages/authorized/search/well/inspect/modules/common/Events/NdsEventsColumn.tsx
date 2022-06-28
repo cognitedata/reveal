@@ -6,6 +6,8 @@ import isEmpty from 'lodash/isEmpty';
 
 import EmptyState from 'components/EmptyState';
 
+import { EventTabs } from '../../measurements/wellCentricView/constants';
+
 import { NDS_COLUMN_TITLE } from './constants';
 import {
   BodyColumn,
@@ -18,12 +20,14 @@ import {
   EmptyStateWrapper,
 } from './elements';
 import NdsEventsBadge from './NdsEventsBadge';
+import { NdsEventsScatterView } from './NdsEventsScatterView';
 
 export type Props = {
   scaleBlocks: number[];
   events: NdsInternal[];
   isEventsLoading?: boolean;
   scaleLineGap?: number;
+  view?: EventTabs;
 };
 
 export const EMPTY_STATE_TEXT = 'This wellbore has no NDS events data';
@@ -34,6 +38,7 @@ const NdsEventsColumn: React.FC<Props> = ({
   events,
   isEventsLoading,
   scaleLineGap,
+  view,
 }: Props) => {
   const blockElements = useMemo(() => {
     const lastEvents = events.filter(
@@ -51,9 +56,21 @@ const NdsEventsColumn: React.FC<Props> = ({
               (!index || holeStart.value >= scaleBlocks[index - 1])
           );
 
+          const renderContent = () => {
+            if (isEmpty(blockEvents)) {
+              return null;
+            }
+
+            if (view === EventTabs.scatter) {
+              return <NdsEventsScatterView events={blockEvents} />;
+            }
+
+            return <NdsEventsBadge events={blockEvents} />;
+          };
+
           return (
             <ScaleLine key={row} gap={scaleLineGap}>
-              {!isEmpty(blockEvents) && <NdsEventsBadge events={blockEvents} />}
+              {renderContent()}
             </ScaleLine>
           );
         })}
