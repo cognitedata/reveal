@@ -38,8 +38,8 @@ const SEARCH_QUERY = 'Discover';
 const checkRequestContainsFilter = (expectedFilter: unknown) => {
   cy.wait(`@${WELLS_SEARCH_ALIAS}`)
     .its('request.body.filter')
-    .should((body) => {
-      return assert.deepNestedInclude(body, expectedFilter);
+    .should((filter) => {
+      return assert.deepNestedInclude(filter, expectedFilter);
     });
 };
 

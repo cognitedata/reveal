@@ -25,7 +25,7 @@ describe('Three-dee component', () => {
             category: DATA_SOURCE,
             subCategory: DATA_SOURCE,
             value: {
-              name: WELL_SOURCE_WITH_ALL,
+              name: 'ophiuchus',
               type: 'select',
             },
           },
