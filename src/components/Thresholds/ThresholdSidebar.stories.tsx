@@ -242,6 +242,5 @@ All.args = {
     ],
     version: 1,
   },
-  visible: true,
   onClose: () => {},
 };

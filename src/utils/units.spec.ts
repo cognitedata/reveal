@@ -3,9 +3,9 @@ import { ChartThreshold } from 'models/chart/types';
 import {
   convertThresholdUnits,
   convertUnits,
-  convertValue,
   getUnitConvertedDatapointsSummary,
 } from './units';
+import { convertValue } from '../models/charts/units/utils/convertValue';
 
 describe('convertUnits', () => {
   it('should convert units successfully (double data points)', () => {

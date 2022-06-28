@@ -1,19 +1,6 @@
 import { useCallback, useEffect } from 'react';
-import dayjs from 'dayjs';
-import { useChart, useUpdateChart } from 'hooks/charts-storage';
-import {
-  ChartWorkflowV2,
-  Chart,
-  ChartTimeSeries,
-  ChartWorkflow,
-} from 'models/chart/types';
-import {
-  updateChartDateRange,
-  updateWorkflowsFromV1toV2,
-  updateWorkflowsToSupportVersions,
-} from 'models/chart/updates';
+import { Chart, ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import chartAtom from 'models/chart/atom';
-import { useFilePicker } from 'use-file-picker';
 import { useSDK } from '@cognite/sdk-provider';
 import { useDebounce } from 'use-debounce';
 import { useQuery } from 'react-query';
@@ -33,135 +20,13 @@ import {
 import { getHash } from 'utils/hash';
 import { usePrevious } from 'react-use';
 import { useRecoilState } from 'recoil';
-import { useOperations } from 'models/operations/atom';
 
-export const useInitializedChart = (chartId: string) => {
-  /**
-   * Get stored chart
-   */
-  const { data: originalChart, isError, isFetched } = useChart(chartId);
-
-  /**
-   * Get local chart context
-   */
-  const [chart, setChart] = useRecoilState(chartAtom);
-
-  /**
-   * Method for updating storage value of chart
-   */
-  const { mutate: updateChart } = useUpdateChart();
-
-  /**
-   * Get all available operations (needed for migration)
-   */
-  const [, , operations] = useOperations();
-
-  /**
-   * Initialize local chart atom
-   */
-  useEffect(() => {
-    if ((chart && chart.id === chartId) || !originalChart) {
-      return;
-    }
-
-    if (!operations || !operations.length) {
-      return;
-    }
-
-    /**
-     * Fallback date range to default 1M if saved dates are not valid
-     */
-    const dateFrom = Date.parse(originalChart.dateFrom!)
-      ? originalChart.dateFrom!
-      : dayjs().subtract(1, 'M').toISOString();
-    const dateTo = Date.parse(originalChart.dateTo!)
-      ? originalChart.dateTo!
-      : dayjs().toISOString();
-
-    const updatedChart = [originalChart]
-      .map((_chart) => updateChartDateRange(_chart, dateFrom, dateTo))
-      /**
-       * Convert/migrate workflows using @cognite/connect to the format supported by React Flow (v2)
-       */
-      .map((_chart) => updateWorkflowsFromV1toV2(_chart, operations))
-      /**
-       * Convert/migrate from v2 format to v3 (toolFunction -> selectedOperation, functionData -> parameterValues, etc...)
-       */
-      .map((_chart) => updateWorkflowsToSupportVersions(_chart))[0];
-
-    /**
-     * Add chart to local state atom
-     */
-    setChart(updatedChart);
-  }, [originalChart, chart, chartId, setChart, operations]);
-
-  /**
-   * Sync local chart atom to storage
-   */
-  useEffect(() => {
-    if (chart) {
-      updateChart(chart);
-    }
-  }, [chart, updateChart]);
-
-  /**
-   * Consolidate loading states
-   */
-  const isLoading = !isFetched || (isFetched && originalChart && !chart);
-
-  /**
-   * Envelope
-   */
-  return { data: chart, isLoading, isError };
-};
-
-export const useUploadCalculations = ({
-  onSuccess,
-  onError,
-}: {
-  onSuccess: (calculations: ChartWorkflowV2[]) => void;
-  onError: (error: Error) => void;
-}) => {
-  /**
-   * File upload handling
-   */
-  const [openFileSelector, { filesContent, loading }] = useFilePicker({
-    accept: '.json',
-    readAs: 'Text',
-  });
-
-  const handleImportCalculations = useCallback(
-    (string) => {
-      let calculations: ChartWorkflowV2[] = [];
-      try {
-        calculations = JSON.parse(string);
-      } catch (err) {
-        onError(err as Error);
-      }
-      onSuccess(calculations);
-    },
-    [onSuccess, onError]
-  );
-
-  useEffect(() => {
-    if (loading) {
-      return;
-    }
-    if (!filesContent.length) {
-      return;
-    }
-    handleImportCalculations(filesContent[0].content);
-  }, [filesContent, loading, handleImportCalculations]);
-
-  return openFileSelector;
-};
-
-export const useStatistics = (
+export default function useStatistics(
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined,
   dateFrom: string,
   dateTo: string,
   enabled: boolean = true
-) => {
+) {
   const sdk = useSDK();
   const statisticsCall = sourceItem?.statisticsCalls?.[0];
   const [, setChart] = useRecoilState(chartAtom);
@@ -190,6 +55,7 @@ export const useStatistics = (
       return waitForStatisticsToFinish(sdk, String(statisticsCall?.callId));
     },
     enabled: !!statisticsCall?.callId,
+    refetchOnWindowFocus: false,
   });
 
   const { data: statisticsData } = useQuery({
@@ -198,6 +64,7 @@ export const useStatistics = (
     retry: true,
     retryDelay: 1000,
     enabled: callStatus?.status === StatusStatusEnum.Success,
+    refetchOnWindowFocus: false,
   });
 
   const { results: statistics } = statisticsData || {};
@@ -337,5 +204,10 @@ export const useStatistics = (
       ? StatusStatusEnum.Running
       : callStatus?.status;
 
-  return { results: statisticsData?.results, status };
-};
+  return {
+    results: statisticsData?.results,
+    error: callStatusError,
+    loading: isFetchingCallStatus,
+    status,
+  };
+}

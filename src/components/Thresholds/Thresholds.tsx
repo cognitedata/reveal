@@ -8,7 +8,7 @@ import ThresholdItem from 'components/Thresholds/ThresholdItem';
 import { Button, Collapse } from '@cognite/cogs.js';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
 import { ExpandIcon, ThresholdCollapse } from 'components/Thresholds/elements';
-import { Container } from 'components/DetailsSidebar/elements';
+import { Container } from '../Common/SidebarElements';
 
 interface Props
   extends Omit<ComponentProps<typeof ThresholdItem>, 'threshold'> {

@@ -33,7 +33,6 @@ import chartAtom from 'models/chart/atom';
 import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
 import { useTranslations } from 'hooks/translations';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';
-import DetailsSidebar from 'components/DetailsSidebar/DetailsSidebar';
 import ThresholdSidebar from 'components/Thresholds/ThresholdSidebar';
 import SearchSidebar from 'components/Search/SearchSidebar';
 import { getEntryColor } from 'utils/colors';
@@ -55,10 +54,10 @@ import {
 import { TimeseriesCollectionEffects } from 'effects/timeseries';
 import { CalculationCollectionEffects } from 'effects/calculations';
 import { flow } from 'lodash';
-import { getUnitConverter } from 'utils/units';
+import { getUnitConverter } from 'models/charts/units/utils/getUnitConverter';
 import { timeseriesSummaries } from 'models/timeseries-results/selectors';
-
 import { isProduction } from 'utils/environment';
+import ConnectedDetailsSidebar from 'components/DetailsSidebar/ConnectedDetailsSidebar';
 import { currentDateRangeLocale } from 'config/locale';
 import { chartSources } from 'models/chart/selectors';
 import ChartViewPageAppBar from 'pages/ChartViewPage/ChartViewPageAppBar';
@@ -72,11 +71,7 @@ import {
   TopPaneWrapper,
 } from './elements';
 import ChartViewHeader from './ChartViewHeader';
-import {
-  useInitializedChart,
-  useStatistics,
-  useUploadCalculations,
-} from './hooks';
+import { useInitializedChart, useUploadCalculations } from './hooks';
 
 type ChartViewProps = {
   chartId: string;
@@ -150,9 +145,7 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
     'NodeEditor'
   );
 
-  const [selectedSourceId, setSelectedSourceId] = useState<
-    string | undefined
-  >();
+  const [selectedSourceId, setSelectedSourceId] = useState('');
 
   const [showSearch, setShowSearch] = useState(false);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
@@ -223,7 +216,7 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
     stopTimer('NodeEditor.ViewTime');
   }, []);
 
-  const handleSourceClick = useCallback((sourceId?: string) => {
+  const handleSourceClick = useCallback((sourceId: string = '') => {
     setSelectedSourceId(sourceId);
   }, []);
 
@@ -233,10 +226,15 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
       const showMenu = isSameSource ? !showContextMenu : true;
       setShowContextMenu(showMenu);
       setShowThresholdMenu(false);
-      setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
     },
     [selectedSourceId, showContextMenu]
   );
+
+  const handleCloseContextMenu = useCallback(() => {
+    setShowContextMenu(false);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
+  }, []);
 
   const handleThresholdClick = useCallback(
     (sourceId?: string) => {
@@ -244,26 +242,21 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
       const showMenu = isSameSource ? !showThresholdMenu : true;
       setShowThresholdMenu(showMenu);
       setShowContextMenu(false);
-      setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
     },
     [selectedSourceId, showThresholdMenu]
   );
 
-  const handleCloseContextMenu = useCallback(() => {
-    setShowContextMenu(false);
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
-  }, []);
-
   const handleCloseThresholdMenu = useCallback(() => {
     setShowThresholdMenu(false);
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
   }, []);
 
   const handleCloseSearch = useCallback(() => {
     setShowSearch(false);
     setQuery('');
     trackUsage('ChartView.CloseSearch');
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
   }, [setQuery]);
 
   const handleMoveSource = useCallback(
@@ -300,7 +293,7 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
   const handleOpenSearch = useCallback(() => {
     setShowSearch(true);
     trackUsage('ChartView.OpenSearch');
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
   }, [setShowSearch]);
 
   const handleSettingsToggle = useCallback(
@@ -385,16 +378,6 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
    * Get source item currently active
    */
   const selectedSourceItem = sources.find((s) => s.id === selectedSourceId);
-
-  /**
-   * Statistics results (for active item)
-   */
-  const { results: statisticsResult, status: statisticsStatus } = useStatistics(
-    selectedSourceItem,
-    chart?.dateFrom || new Date().toISOString(),
-    chart?.dateTo || new Date().toISOString(),
-    showContextMenu
-  );
 
   const handleUpdateChartSource = useCallback(
     (sourceId: string, diff: Partial<ChartTimeSeries | ChartWorkflow>) =>
@@ -668,18 +651,15 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
             </SplitPaneLayout>
           </ChartContainer>
         </ContentWrapper>
-        {showContextMenu && (
-          <DetailsSidebar
-            visible={showContextMenu}
+        {showContextMenu && selectedSourceItem && (
+          <ConnectedDetailsSidebar
+            source={selectedSourceItem}
             onClose={handleCloseContextMenu}
-            sourceItem={selectedSourceItem}
-            statisticsResult={statisticsResult}
-            statisticsStatus={statisticsStatus}
           />
         )}
+
         {showThresholdMenu && (
           <ThresholdSidebar
-            visible={showThresholdMenu}
             onClose={handleCloseThresholdMenu}
             updateChart={setChart}
             chart={chart}

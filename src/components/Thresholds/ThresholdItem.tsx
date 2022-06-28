@@ -19,7 +19,7 @@ import {
   ChartWorkflow,
 } from 'models/chart/types';
 import convertMSToDisplay from 'utils/date';
-import { getUnitConverter } from 'utils/units';
+import { getUnitConverter } from 'models/charts/units/utils/getUnitConverter';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import { isThresholdValid } from 'utils/threshold';
 import {

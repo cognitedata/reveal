@@ -1,13 +1,10 @@
 import { useState } from 'react';
 import styled from 'styled-components/macro';
 import { Body, Icon } from '@cognite/cogs.js';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { Asset, DataSet, Timeseries } from '@cognite/sdk';
-import { useFusionLink } from './utils';
 
 type MetadataItemProps = {
   label: string;
-  value?: any;
+  value: any;
   copyable?: boolean;
   link?: string;
   fallbackText: string;
@@ -48,62 +45,6 @@ export const MetadataItem = ({
         <em>{fallbackText}</em>
       )}
     </MetadataItemContainer>
-  );
-};
-
-export const DataSetItem = ({
-  timeseries,
-  label = 'Data set',
-  fallbackText = 'Not set',
-}: {
-  timeseries?: Timeseries;
-  label: string;
-  fallbackText: string;
-}) => {
-  const { data: dataSet } = useCdfItem<DataSet>(
-    'datasets',
-    { id: timeseries?.dataSetId! },
-    {
-      enabled: Number.isFinite(timeseries?.dataSetId),
-    }
-  );
-  const link = useFusionLink(`/data-sets/data-set/${timeseries?.dataSetId}`);
-
-  return (
-    <MetadataItem
-      fallbackText={fallbackText}
-      label={label}
-      value={dataSet?.name}
-      link={link}
-    />
-  );
-};
-
-export const LinkedAssetItem = ({
-  timeseries,
-  label = 'Equipment Tag',
-  fallbackText = 'Not set',
-}: {
-  timeseries?: Timeseries;
-  label: string;
-  fallbackText: string;
-}) => {
-  const { data: asset } = useCdfItem<Asset>(
-    'assets',
-    { id: timeseries?.assetId! },
-    {
-      enabled: Number.isFinite(timeseries?.assetId),
-    }
-  );
-  const link = useFusionLink(`/explore/asset/${timeseries?.assetId}`);
-
-  return (
-    <MetadataItem
-      fallbackText={fallbackText}
-      label={label}
-      value={asset?.name}
-      link={link}
-    />
   );
 };
 

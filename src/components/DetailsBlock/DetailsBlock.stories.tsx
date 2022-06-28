@@ -5,11 +5,13 @@ import DetailsBlock from './DetailsBlock';
 
 export default {
   component: DetailsBlock,
-  title: 'Components/Common/DetailsBlock',
+  title: 'Components/Details Sidebar/DetailsBlock',
 } as Meta;
 
 const Template: Story<ComponentProps<typeof DetailsBlock>> = (args) => (
-  <DetailsBlock {...args} />
+  <div style={{ maxWidth: '25rem' }}>
+    <DetailsBlock {...args} />
+  </div>
 );
 
 export const EmptyBlock = Template.bind({});

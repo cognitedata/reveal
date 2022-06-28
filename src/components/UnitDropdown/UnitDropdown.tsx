@@ -1,9 +1,10 @@
 import { CSSProperties, useState } from 'react';
 import styled from 'styled-components/macro';
 import { Menu, Button, Dropdown } from '@cognite/cogs.js';
-import { units, UnitTypes } from 'utils/units';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
+import units from 'models/charts/units/data/units';
+import { UnitTypes } from 'models/charts/units/types/UnitTypes';
 
 type UnitDropdownProps = {
   open?: boolean;

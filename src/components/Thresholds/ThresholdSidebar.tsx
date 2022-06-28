@@ -41,7 +41,6 @@ type OptionType = {
 };
 
 type Props = {
-  visible: boolean;
   onClose: () => void;
   chart: Chart;
   updateChart: (update: (c: Chart | undefined) => Chart) => void;
@@ -49,7 +48,6 @@ type Props = {
 };
 
 const ThresholdSidebar: FunctionComponent<Props> = ({
-  visible,
   onClose,
   chart,
   updateChart,
@@ -145,7 +143,7 @@ const ThresholdSidebar: FunctionComponent<Props> = ({
   }, [chart, updateChart]);
 
   return (
-    <Sidebar visible={visible}>
+    <Sidebar>
       <TopContainer>
         <TopContainerTitle>{t.Thresholds}</TopContainerTitle>
         <TopContainerAside>

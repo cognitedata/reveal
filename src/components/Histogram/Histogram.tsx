@@ -1,45 +1,44 @@
-/* eslint camelcase: 0 */
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist';
-import { StatisticsResultResults } from '@cognite/calculation-backend';
-import { getUnitConverter } from 'utils/units';
-import { formatValueForDisplay } from 'utils/numbers';
+import { Skeleton } from 'antd';
+import { Flex } from '@cognite/cogs.js';
 
 const Plot = createPlotlyComponent(Plotly);
 
 type HistogramProps = {
-  data?: StatisticsResultResults['histogram'];
-  unit?: string;
-  preferredUnit?: string;
-  unitLabel?: string;
+  loading: boolean;
+  data: { rangeStart: number; rangeEnd: number; quantity: number }[];
+  unit: string | undefined;
   noDataText?: string;
 };
 
 export const Histogram = ({
+  loading,
   data,
   unit,
-  preferredUnit,
-  unitLabel,
-  noDataText = 'No histogram data available',
+  noDataText = 'No data available',
 }: HistogramProps) => {
-  if (!data || !data.length) {
-    return <span>{noDataText}</span>;
-  }
+  const size = { width: 392, height: 260 };
+  if (loading) return <Skeleton.Image style={size} />;
 
-  const convertUnit = getUnitConverter(unit, preferredUnit);
+  if (!data || !data.length) {
+    return (
+      <Flex style={{ ...size }} alignItems="center" justifyContent="center">
+        {noDataText}
+      </Flex>
+    );
+  }
 
   return (
     <Plot
       data={[
         {
           type: 'bar',
-          x: data.map(({ range_start = NaN }) => range_start).map(convertUnit),
-          y: data.map(({ quantity = NaN }) => quantity),
+          x: data.map(({ rangeStart }) => rangeStart),
+          y: data.map(({ quantity }) => quantity),
           hovertext: data.map(
-            ({ quantity = NaN, range_start = NaN, range_end = NaN }) =>
-              `${quantity} between ${formatValueForDisplay(
-                convertUnit(range_start)
-              )} and ${formatValueForDisplay(convertUnit(range_end))}`
+            ({ quantity, rangeStart, rangeEnd }) =>
+              `${quantity} between ${rangeStart} and ${rangeEnd}`
           ),
           hoverinfo: 'text',
           hoverlabel: {
@@ -51,21 +50,14 @@ export const Histogram = ({
         },
       ]}
       layout={{
-        width: 300,
-        height: 260,
+        ...size,
         bargap: 0,
         margin: { l: 40, r: 5, t: 0, b: 70 },
         xaxis: {
-          tickvals: data
-            .map(({ range_start = NaN }) => range_start)
-            .map(convertUnit)
-            .map((x) => formatValueForDisplay(x)),
+          tickvals: data.map(({ rangeStart }) => rangeStart),
           ticks: 'outside',
           tickangle: 45,
-          title: {
-            text: unitLabel,
-            standoff: 60,
-          },
+          title: { text: unit, standoff: 60 },
         },
         yaxis: {
           ticks: 'outside',
