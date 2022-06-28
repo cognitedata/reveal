@@ -34,6 +34,7 @@ describe('useClearDocumentFilters hook', () => {
       filters: {
         documents: {
           facets: {
+            authors: [],
             fileCategory: [],
             labels: [],
             lastcreated: [],

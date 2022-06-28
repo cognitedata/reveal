@@ -21,9 +21,16 @@ export const documentFacetsStructure: DocumentsFacets = {
   lastmodified: [],
   lastcreated: [],
   pageCount: [],
+  authors: [],
 };
 
 export type DateRange = {
   min?: number;
   max?: number;
+};
+
+export type AuthorItem = {
+  label: string;
+  value: string;
+  documentCount: number;
 };

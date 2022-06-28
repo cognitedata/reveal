@@ -109,7 +109,8 @@ export type DocumentQueryFacetsNames =
   | 'fileCategory'
   | 'lastcreated'
   | 'lastmodified'
-  | 'pageCount';
+  | 'pageCount'
+  | 'authors';
 
 // officialy facets for unstructured search
 export type DocumentQueryFacets = Record<AggregateNames, DocumentQueryFacet[]>;
@@ -152,6 +153,7 @@ export interface DocumentsFacets {
   lastcreated: string[];
   location: string[];
   pageCount: string[];
+  authors: string[];
 }
 
 export type DocumentFacet = keyof DocumentsFacets;
@@ -178,6 +180,7 @@ export enum DocumentFilterCategoryTitles {
   lastmodified = 'Last Modified',
   lastcreated = 'Created',
   pageCount = 'Page Count',
+  authors = 'Author',
 }
 
 export type FacetsCounts = {

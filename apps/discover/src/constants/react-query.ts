@@ -12,6 +12,7 @@ export const DOCUMENT_LABELS_QUERY_KEY = 'labels';
 export const DOCUMENT_CATEGORIES_QUERY_KEY = ['documents', 'categories'];
 export const DOCUMENT_TYPES_QUERY_KEY = ['documents', 'types'];
 export const DOCUMENTS_BY_IDS_QUERY_KEY = ['documents'];
+export const DOCUMENT_AUTHORS_QUERY_KEY = ['documents', 'authors'];
 
 const USER = 'user';
 export const USER_KEY = {

@@ -35,6 +35,7 @@ export const getEmptyAppliedFilterType = (
       lastcreated: [],
       location: [],
       pageCount: [],
+      authors: [],
     },
     seismic: {},
     wells: {},

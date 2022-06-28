@@ -81,6 +81,8 @@ export const getSearchQuery = (query: SearchQueryFull) => {
 
   const pageCount = query.facets.pageCount || [];
 
+  const authorFacets = query.facets.authors || [];
+
   // eg: pdf, image
   if (!isEmpty(fileCategoryFacets)) {
     appendFilter({
@@ -153,6 +155,15 @@ export const getSearchQuery = (query: SearchQueryFull) => {
         property: [PAGE_COUNT_KEY],
         gte: pageCountFilters.min,
         lte: pageCountFilters.max,
+      },
+    });
+  }
+
+  if (!isEmpty(authorFacets)) {
+    appendFilter({
+      in: {
+        property: ['author'],
+        values: authorFacets,
       },
     });
   }

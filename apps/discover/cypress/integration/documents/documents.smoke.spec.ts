@@ -1,4 +1,9 @@
 import { EXPAND_MAP_TEXT } from '../../../src/pages/authorized/search/map/constants';
+import {
+  DOCUMENTS_AGGREGATE_ALIAS,
+  interceptDocumentsAggregate,
+} from '../../support/interceptions';
+import { interceptCoreNetworkRequests } from '../../support/commands/helpers';
 import { PROJECT } from '../../app.constants';
 
 const QUERY_DUPLICATED_FILENAME = 'Volve_Well_Summary_15_9-19.pdf';
@@ -8,9 +13,12 @@ export const filename = '15_9_19_A_1980_01_01';
 
 describe('Documents', () => {
   beforeEach(() => {
+    const coreRequests = interceptCoreNetworkRequests();
+
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
+    cy.wait(coreRequests);
   });
 
   it('Show expanded metadata on row click', () => {
@@ -42,6 +50,8 @@ describe('Documents', () => {
       method: 'GET',
     }).as('getCategories');
 
+    interceptDocumentsAggregate();
+
     cy.log('Check that no search phrase or filter is applied on load');
     cy.findByTestId('main-search-input')
       .find('div.cogs-select__placeholder')
@@ -54,6 +64,27 @@ describe('Documents', () => {
         cy.contains('Documents').should('be.visible').click();
       });
     cy.wait('@getCategories');
+
+    cy.wait(`@${DOCUMENTS_AGGREGATE_ALIAS}`).then((interception) => {
+      cy.log('Should show Author Filter');
+      cy.contains('Author').should('be.visible').click();
+      cy.log(
+        'Should show Author Filter with options and the ability to select them'
+      );
+
+      const firstCheckboxLabel = interception.response.body.items[0].values[0];
+      cy.log(`Attempting to select ${firstCheckboxLabel}`);
+
+      cy.validateSelect('Author', [firstCheckboxLabel], firstCheckboxLabel);
+      cy.log(
+        'Verifying if the author selection was made by checking the documents'
+      );
+      cy.findAllByText(`Author: ${firstCheckboxLabel}`).should(
+        'have.length',
+        1
+      );
+      cy.findByTestId('clear-all-filter-button').click();
+    });
 
     cy.log('Open all categories and check that all checkboxes are unchecked');
     cy.contains('Source').click({ force: true });
@@ -105,10 +136,7 @@ describe('Documents', () => {
       .should('be.visible')
       .click();
 
-    cy.findAllByTestId('filter-checkbox-label')
-      .contains(SOURCE_DRIVE)
-      .should('be.visible')
-      .click();
+    cy.findAllByTestId('filter-checkbox-label').contains(SOURCE_DRIVE).click();
 
     cy.log('Apply Date Range filter');
     cy.contains('Date Range').click();
@@ -153,7 +181,7 @@ describe('Documents', () => {
     cy.log('Remove all filter by pressing "Clear all" filter tag');
     cy.clearAllFilters();
     cy.log('Check that no filter tags exist');
-    cy.findByTestId('document-filter-container')
+    cy.findAllByTestId('document-filter-container')
       .findAllByTestId('filter-tag')
       .should('not.exist');
     cy.findAllByTestId('table-row').should('have.length.greaterThan', 10);

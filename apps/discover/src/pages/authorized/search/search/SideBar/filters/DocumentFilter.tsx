@@ -13,6 +13,7 @@ import {
   DateRangeFilter,
   SourceFilter,
   PageCountFilter,
+  AuthorFilter,
 } from './document';
 import { TITLE, CATEGORY } from './document/constants';
 import { DocumentServiceWrapper } from './document/DocumentServiceWrapper';
@@ -45,6 +46,11 @@ export const DocumentFilter = () => {
             <DateRangeFilter />
             <PageCountFilter
               title={DocumentFilterCategoryTitles.pageCount}
+              data={pageCount}
+              category={CATEGORY}
+            />
+            <AuthorFilter
+              title={DocumentFilterCategoryTitles.authors}
               data={pageCount}
               category={CATEGORY}
             />
