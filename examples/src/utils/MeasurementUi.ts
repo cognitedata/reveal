@@ -144,8 +144,8 @@ export class MeasurementUi {
     if (this._selectedObject?.children?.length! > 1) {
       this._selectedObject?.children.forEach(mesh => {
         (mesh as Line2).material.opacity = 1.0;
-        mesh = new Line2();
       });
+      this._selectedObject?.clear();
 
       this._viewer.requestRedraw();
     }
