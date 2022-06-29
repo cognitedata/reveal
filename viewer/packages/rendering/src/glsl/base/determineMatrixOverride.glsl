@@ -5,19 +5,13 @@ mat4 determineMatrixOverride(
   vec2 transformOverrideTextureSize, 
   sampler2D transformOverrideTexture
 ) {
-
-    treeIndex = floor(treeIndex + 0.5);
     float dataTextureWidth = treeIndexTextureSize.x;
     float dataTextureHeight = treeIndexTextureSize.y;
 
-    float xTreeIndexTextureCoord = mod(treeIndex, dataTextureWidth);
-    float yTreeIndexTextureCoord = floor(treeIndex / dataTextureWidth);
+    int xTreeIndexTextureCoord = int(mod(treeIndex, dataTextureWidth));
+    int yTreeIndexTextureCoord = int(floor(treeIndex / dataTextureWidth));
 
-    vec2 indexUV = vec2((xTreeIndexTextureCoord + 0.5) / dataTextureWidth, (yTreeIndexTextureCoord + 0.5) / dataTextureHeight);
-
-    vec3 indexTexel = texture(transformOverrideIndexTexture, indexUV).rgb;
-
-    float index = floor(indexTexel.r * 256.0) * 65536.0  + floor(indexTexel.g * 256.0) * 256.0 + floor(indexTexel.b * 256.0);
+    float index = texelFetch(transformOverrideIndexTexture, ivec2(xTreeIndexTextureCoord, yTreeIndexTextureCoord), 0).r;
     
     if(index == 0.0){
       return mat4(
@@ -28,7 +22,7 @@ mat4 determineMatrixOverride(
       );
     }
 
-    index = index - 1.0;
+    index -= 1.0;
 
     float matrixElements[12];
 
