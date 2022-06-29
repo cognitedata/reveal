@@ -8,7 +8,6 @@ import { RootState } from 'src/store/rootReducer';
 import isEqual from 'lodash-es/isEqual';
 import { VisionFileDetails } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import { updateFileInfoField } from 'src/store/thunks/Files/updateFileInfoField';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFileV1 } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFileV1';
 import styled from 'styled-components';
 import {
   metadataEditMode,
@@ -72,15 +71,6 @@ export const FileDetails = ({
     }
   };
 
-  const onAnnotationDeleteClick = (annotationId: number) => {
-    dispatch(
-      DeleteAnnotationsAndHandleLinkedAssetsOfFileV1({
-        annotationIds: [annotationId],
-        showWarnings: true,
-      })
-    );
-  };
-
   return (
     <Container>
       <CloseButtonRow>
@@ -112,13 +102,12 @@ export const FileDetails = ({
             <Tabs.Pane
               title="Annotations"
               key="context"
-              style={{ overflow: 'hidden' }}
+              style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
             >
-              {fileDetails?.id && (
+              {fileDetails && (
                 <FileDetailsAnnotationsPreview
                   fileInfo={fileDetails}
                   onReviewClick={onReview}
-                  onAnnotationDeleteClick={onAnnotationDeleteClick}
                 />
               )}
             </Tabs.Pane>
