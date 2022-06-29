@@ -147,7 +147,7 @@ async function loadSectors(
           geometryBoundingBox: undefined,
           children: [],
           estimatedRenderCost: 0
-        },
+        } as any,
         levelOfDetail: 2,
         geometryClipBox: null
       });
