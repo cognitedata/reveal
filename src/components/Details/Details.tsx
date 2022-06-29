@@ -1,7 +1,7 @@
 import React from 'react';
 import Typography from 'antd/lib/typography';
 import styled from 'styled-components';
-import { Body, Colors, Icon, A } from '@cognite/cogs.js';
+import { Body, Colors, Icon, A, toast } from '@cognite/cogs.js';
 import { List } from 'antd';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { convertResourceType, ResourceType } from 'types';
@@ -49,7 +49,15 @@ export const DetailsTabItem = ({
       <Value
         copyable={
           !!value && copyable
-            ? { icon: <Icon type="Copy" />, tooltips: false }
+            ? {
+                icon: (
+                  <Icon
+                    onClick={() => toast.success('Copied to clipboard')}
+                    type="Copy"
+                  />
+                ),
+                tooltips: false,
+              }
             : false
         }
       >
