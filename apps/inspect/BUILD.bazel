@@ -219,7 +219,6 @@ vite_build(
     ],
     env = {
         "INLINE_RUNTIME_CHUNK": "false",
-        "NODE_OPTIONS": "--max_old_space_size=4096",
     },
     output_dir = True,
 )

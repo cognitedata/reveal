@@ -23,7 +23,7 @@
     "prettier:bazel-fix": "bazel run :prettier_test -- --write",
     "update-helpers": "bazel run :generate_package_json_helpers",
     "storybook": "../../node_modules/.bin/start-storybook -p 6006",
-    "storybook:bazel": "ibazel run :start-storybook",
+    "storybook:bazel": "bazel run :start-storybook",
     "build-storybook": "../../node_modules/.bin/build-storybook",
     "build-storybook:bazel": "bazel build :storybook-static",
     "deploy": "cd ../.. && ./scripts/deploy.sh digital-cockpit"

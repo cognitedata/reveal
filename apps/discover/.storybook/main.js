@@ -71,7 +71,7 @@ module.exports = {
     };
     config.build = {
       // sourcemap: true,
-      outDir: 'storybook-static/tmp',
+      outDir: 'storybook-static-tmp/tmp',
       commonjsOptions: {
         include: [],
       },

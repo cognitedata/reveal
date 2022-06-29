@@ -3,6 +3,7 @@ load("@npm//@bazel/typescript:index.bzl", "ts_project")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
 load("@npm//@storybook/react:index.bzl", "build_storybook", "start_storybook")
 load("@npm//vite:index.bzl", "vite")
+load("//rules/vite:vite_build.bzl", "vite_build")
 load("//rules/test:jest.bzl", "jest_test")
 load("@npm//jest:index.bzl", "jest")
 load("@npm//cypress:index.bzl", "cypress")
@@ -13,7 +14,6 @@ load("//rules/publish:publish_storybook.bzl", "publish_storybook")
 load("@npm//@bazel/cypress:index.bzl", "cypress_web_test")
 load("//rules/build_sed:build_sed.bzl", "build_sed")
 load("//rules/storybook:move_assets.bzl", "move_assets")
-load("//rules/vite:vite_build.bzl", "vite_build")
 
 # Filename conventions described at
 # https://create-react-app.dev/docs/running-tests#filename-conventions
@@ -218,7 +218,6 @@ vite_build(
     ],
     env = {
         "INLINE_RUNTIME_CHUNK": "false",
-        "NODE_OPTIONS": "--max_old_space_size=4096",
     },
     output_dir = True,
 )
@@ -384,10 +383,12 @@ copy_to_bin(
 build_storybook(
     # Note: If you want to change the name make sure you pass that value with -o into args
     # https://storybook.js.org/docs/react/api/cli-options
-    name = "storybook-static",
+    name = "storybook-static-tmp",
     args = [
         # Suppress verbose build output
         "--quiet",
+        "-o",
+        "storybook-static-tmp",
     ],
     chdir = "$(RULEDIR)",
     data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
@@ -403,9 +404,9 @@ build_storybook(
 )
 
 move_assets(
-    name = "storybook-static-final",
-    out_dir = "storybook-static-final",
-    src_dir = ":storybook-static",
+    name = "storybook-static",
+    out_dir = "storybook-static",
+    src_dir = ":storybook-static-tmp",
     tmp_dir = "tmp",
 )
 

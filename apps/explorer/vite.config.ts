@@ -1,5 +1,5 @@
 import react from '@vitejs/plugin-react';
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig, loadEnv, splitVendorChunkPlugin } from 'vite';
 import macrosPlugin from 'vite-plugin-babel-macros';
 import svgr from 'vite-plugin-svgr';
 import tsConfigPaths from 'vite-tsconfig-paths';
@@ -40,12 +40,13 @@ export default defineConfig(({ command }) => {
       }),
       svgr(),
       macrosPlugin(),
+      splitVendorChunkPlugin(),
     ],
     resolve: {
       dedupe: ['react', 'react-dom'],
       preserveSymlinks: true,
     },
-    base: command === 'build' ? 'PUBLIC_URL_VALUE/' : '/',
+    base: command === 'build' ? '/PUBLIC_URL_VALUE/' : '/',
     define: {
       ...define,
       'process.env': env,

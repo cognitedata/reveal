@@ -3,7 +3,7 @@
   "version": "0.13.0",
   "private": true,
   "scripts": {
-    "start": "ibazel run :start",
+    "start": "bazel run :start",
     "build": "bazel build :build_sed",
     "build:manual": "../../node_modules/.bin/vite build",
     "test": "bazel run :jest -- ",
@@ -22,7 +22,7 @@
     "prettier:bazel": "bazel test :prettier_test",
     "prettier:bazel-fix": "bazel run :prettier_test -- --write",
     "storybook": "../../node_modules/.bin/start-storybook -p 6006",
-    "storybook:bazel": "ibazel run :start-storybook",
+    "storybook:bazel": "bazel run :start-storybook",
     "build-storybook": "../../node_modules/.bin/build-storybook",
     "build-storybook:bazel": "bazel build :storybook-static-final",
     "update-helpers": "bazel run :generate_package_json_helpers",

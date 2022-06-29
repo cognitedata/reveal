@@ -23,12 +23,16 @@
         "name": "typescript-styled-plugin"
       }
     ]
-  }
-  // "include": [
-  //   "**/src/**/*",
-  //   "**/.storybook/**/*",
-  //   "./.eslintrc.production.js",
-  //   "./.eslintrc.js",
-  //   "public/sidecar.js"
-  // ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.js",
+    ".storybook/**/*",
+    ".storybook-dev/**/*",
+    "public/sidecar.js",
+    ".eslintrc.js",
+    ".eslintrc.production.js"
+  ],
+  "exclude": ["node_modules", "build", "dist"]
 }

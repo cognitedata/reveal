@@ -14,7 +14,7 @@
     "eslint:bazel-fix": "bazel run :eslint_test -- --fix",
     "prettier:bazel": "bazel test :prettier_test",
     "prettier:bazel-fix": "bazel run :prettier_test -- --write",
-    "storybook:bazel": "ibazel run :start-storybook",
+    "storybook:bazel": "bazel run :start-storybook",
     "build-storybook:bazel": "bazel build :storybook-static-final",
     "e2e:start-idp": "./scripts/start-fake-idp.sh",
     "cypress:run-live": "./scripts/cypress-run-live.sh",

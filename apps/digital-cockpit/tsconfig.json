@@ -6,6 +6,14 @@
     "module": "esnext",
     "types": ["vite/client", "jest", "@testing-library/jest-dom"]
   },
-  // "include": ["src"],
-  "exclude": ["node_modules", "build"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".storybook/**/*",
+    ".storybook-dev/**/*",
+    "public/sidecar.js",
+    ".eslintrc.js",
+    ".eslintrc.production.js"
+  ],
+  "exclude": ["node_modules", "build", "dist"]
 }

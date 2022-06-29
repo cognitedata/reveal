@@ -19,7 +19,7 @@
     "prettier:fix": "../../node_modules/.bin/prettier --config ../../.prettierrc.js --write -l 'src/**/*.{js,ts,tsx}'",
     "prettier:bazel": "bazel test :prettier_test",
     "prettier:bazel-fix": "bazel run :prettier_test -- --write",
-    "storybook": "ibazel run :start-storybook",
+    "storybook": "bazel run :start-storybook",
     "build-storybook": "bazel build :storybook-static-final",
     "e2e:start-idp": "./scripts/start-fake-idp.sh",
     "cypress:run-live": "./scripts/cypress-run-live.sh",

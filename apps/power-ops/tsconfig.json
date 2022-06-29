@@ -10,7 +10,10 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     ".storybook/**/*",
-    ".storybook-dev/**/*"
+    ".storybook-dev/**/*",
+    "public/sidecar.js",
+    ".eslintrc.js",
+    ".eslintrc.production.js"
   ],
   "exclude": ["node_modules", "build", "dist"]
 }

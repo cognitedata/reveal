@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig, loadEnv, splitVendorChunkPlugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import tsConfigPaths from 'vite-tsconfig-paths';
 import svgr from 'vite-plugin-svgr';
@@ -6,7 +6,13 @@ import macrosPlugin from 'vite-plugin-babel-macros';
 
 export default defineConfig(({ command }) => {
   let env = {};
+  const baseConfig: Record<string, unknown> = {};
   if (command === 'serve') {
+    baseConfig.server = {
+      fs: {
+        allow: ['../..'],
+      },
+    };
     env = {
       NODE_ENV: 'development',
       ...loadEnv('development', process.cwd(), 'REACT_APP_'),
@@ -20,6 +26,7 @@ export default defineConfig(({ command }) => {
     };
   }
   return {
+    ...baseConfig,
     plugins: [
       react(),
       tsConfigPaths({
@@ -28,8 +35,13 @@ export default defineConfig(({ command }) => {
       }),
       svgr(),
       macrosPlugin(),
+      splitVendorChunkPlugin(),
     ],
-    base: command === 'build' ? '/PUBLIC_URL_VALUE' : '/',
+    resolve: {
+      dedupe: ['react', 'react-dom'],
+      preserveSymlinks: true,
+    },
+    base: command === 'build' ? '/PUBLIC_URL_VALUE/' : '/',
     define: {
       'process.env': env,
     },
@@ -38,6 +50,7 @@ export default defineConfig(({ command }) => {
       commonjsOptions: {
         include: [],
       },
+      rollupOptions: { treeshake: false },
     },
   };
 });

@@ -19,7 +19,7 @@
     "start:a": "REACT_APP_CLUSTER=azure-dev ./scripts/start.sh",
     "start:bp": "REACT_APP_CLUSTER=bp-northeurope ./scripts/start.sh",
     "start:idp": "./scripts/startIdP.sh",
-    "storybook": "ibazel run :start-storybook",
+    "storybook": "bazel run :start-storybook",
     "build-storybook": "bazel build :storybook-static",
     "test": "bazel run :jest -- ",
     "test:debug": "yarn test --runInBand",

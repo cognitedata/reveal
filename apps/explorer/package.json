@@ -20,7 +20,7 @@
     "prettier": "bazel test :prettier_test",
     "prettier:bazel-fix": "bazel run :prettier_test -- --write",
     "storybook:old": "../../node_modules/.bin/start-storybook -p 6006",
-    "storybook": "ibazel run :start-storybook",
+    "storybook": "bazel run :start-storybook",
     "build-storybook:old": "../../node_modules/.bin/build-storybook",
     "build-storybook": "bazel build :storybook-static",
     "e2e:start-idp": "./scripts/start-fake-idp.sh",

@@ -14,7 +14,7 @@ function cleanup {
 
 trap cleanup EXIT
 
-ibazel run :start
+bazel run :start
 
 EXIT_CODE=$?
 

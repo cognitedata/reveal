@@ -11,10 +11,11 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    ".storybook/**/*.js",
-    ".storybook/**/*.jsx",
+    ".storybook/**/*",
+    ".storybook-dev/**/*",
+    "public/sidecar.js",
     ".eslintrc.js",
     ".eslintrc.production.js"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "build", "dist"]
 }
