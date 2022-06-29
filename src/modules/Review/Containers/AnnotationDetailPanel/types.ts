@@ -3,8 +3,10 @@ import { FixedSizeNodeData } from 'react-vtree';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { FileInfo } from '@cognite/sdk';
 import {
+  PredefinedKeypoint,
   ReviewKeypoint,
   Selectable,
+  TempKeypointCollection,
   VisionReviewAnnotation,
 } from 'src/modules/Review/types';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
@@ -29,6 +31,7 @@ export type AnnotationDetailPanelCommonProps = {
   >;
   color?: string;
   index?: number;
+  tempKeypointCollection: TempKeypointCollection | null;
 };
 
 export type AnnotationDetailPanelReviewCallbacks = {
@@ -55,6 +58,7 @@ export type AnnotationDetailPanelRowData = AnnotationDetailPanelRowDataBase<
   | AnnotationDetailPanelAnnotationType
   | VisionReviewAnnotation<VisionAnnotationDataType>
   | ReviewKeypoint
+  | PredefinedKeypoint
 >;
 
 // Tree Node Types
