@@ -7,8 +7,10 @@ import { WellboreNdsAggregatesSummary } from '../types';
 
 const ORPHAN_SUBTYPES = 'ORPHAN_SUBTYPES';
 
-export const mergeNdsAggregates = (ndsAggregateRows: NdsAggregateRow[]) => {
-  return ndsAggregateRows.reduce((merged, ndsAggregateRow) => {
+export const mergeNdsAggregates = (
+  ndsAggregateRows: NdsAggregateRow[] | undefined
+) => {
+  return (ndsAggregateRows || []).reduce((merged, ndsAggregateRow) => {
     return mergeUniqueArray(merged, mergeNdsAggregateRow(ndsAggregateRow));
   }, {} as WellboreNdsAggregatesSummary);
 };
