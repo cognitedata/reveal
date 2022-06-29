@@ -231,7 +231,6 @@ export class MeasurementLine {
     });
     const axisLineMesh = new Line2(axisLine, axesLineMaterial);
     axisLineMesh.computeLineDistances();
-    axisLineMesh.visible = false;
     axisLineMesh.onBeforeRender = () => {
       axesLineMaterial?.resolution.set(window.innerWidth, window.innerHeight);
     };

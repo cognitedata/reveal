@@ -23,7 +23,6 @@ export class Measurement {
   private _labelElement: HTMLDivElement | null;
   private readonly _axesHtmlOverlay: HtmlOverlayTool;
   private readonly _axesLabelElement: HTMLDivElement[];
-  private _axesLabelOpacity: string;
 
   private readonly _handleLabelClustering = this.createCombineClusterElement.bind(this);
   private readonly _overlayOptions: HtmlOverlayToolOptions = {
@@ -41,7 +40,6 @@ export class Measurement {
     this._labelElement = null;
     this._axesHtmlOverlay = new HtmlOverlayTool(viewer, this._overlayOptions);
     this._axesLabelElement = [];
-    this._axesLabelOpacity = '0.0';
     this._domElement = this._viewer.domElement;
     this._camera = this._viewer.getCamera();
   }
@@ -152,7 +150,8 @@ export class Measurement {
       });
     }
 
-    this._axesLabelOpacity = (options.axesComponents === true ? 1.0 : 0.0).toString();
+    // this._axesLabelOpacity = (options.axesComponents === true ? 1.0 : 0.0).toString();
+    this._axesHtmlOverlay.visible(options.axesComponents!);
   }
 
   /**
@@ -191,12 +190,7 @@ export class Measurement {
 
   private createAxesLabels(position: THREE.Vector3, label: string) {
     const element = this._measurementLabel.createLabel(label);
-    const options = {
-      positionUpdatedCallback: (element: HTMLElement) => {
-        element.style.opacity = this._axesLabelOpacity;
-      }
-    };
-    this._axesHtmlOverlay.add(element, position, options);
+    this._axesHtmlOverlay.add(element, position);
 
     return element;
   }
@@ -230,10 +224,6 @@ export class Measurement {
    * @returns HTMLElement.
    */
   private createCombineClusterElement(): HTMLElement {
-    //TODO: Change the logic to check if axes component are disabled. - Pramod
-    if (this._axesHtmlOverlay.elements[0].element.style.opacity === '0') {
-      return this._axesHtmlOverlay.elements[0].element;
-    }
     const combineElement = document.createElement('div');
     combineElement.className = MeasurementLabels.stylesId;
     combineElement.innerHTML = svg;

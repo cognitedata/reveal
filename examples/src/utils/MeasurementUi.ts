@@ -19,7 +19,7 @@ export class MeasurementUi {
     lineWidth: 2.0,
     color: 0x00FFFF,
     allMeasurement: false,
-    axesComponents: false
+    axesComponents: true
   };
 
   private measurement = {
