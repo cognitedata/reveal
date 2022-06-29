@@ -5,8 +5,7 @@
 import React, { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 
-import { THREE } from '@cognite/reveal';
-import * as reveal from '@cognite/reveal/internals';
+import { PotreePointColorType, PotreePointShape, THREE } from '@cognite/reveal';
 
 import CameraControls from 'camera-controls';
 import dat, { GUI } from 'dat.gui';
@@ -21,6 +20,7 @@ import { getParamsFromURL, createSDKFromEnvironment } from '../utils/example-hel
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
 import { suggestCameraConfig } from '../utils/cameraConfig';
+import { CadNode, CdfModelIdentifier, LocalModelIdentifier, PotreeGroupWrapper, PotreeNodeWrapper, SceneHandler } from '@cognite/reveal/internals';
 
 CameraControls.install({ THREE });
 
@@ -40,9 +40,9 @@ function getPointCloudParams() {
 
 function initializeGui(
   gui: GUI,
-  cadNode: reveal.CadNode,
-  pcGroup: reveal.PotreeGroupWrapper,
-  pcNode: reveal.PotreeNodeWrapper,
+  cadNode: CadNode,
+  pcGroup: PotreeGroupWrapper,
+  pcNode: PotreeNodeWrapper,
   handleSettingsChangedCb: () => void
 ): RenderOptions {
   gui
@@ -79,15 +79,15 @@ function initializeGui(
   pcGui.add(pcNode, 'pointSize', 0, 10).onChange(handleSettingsChangedCb);
   pcGui
     .add(pcNode, 'pointColorType', {
-      Rgb: reveal.PotreePointColorType.Rgb,
-      Depth: reveal.PotreePointColorType.Depth,
-      Height: reveal.PotreePointColorType.Height,
-      PointIndex: reveal.PotreePointColorType.PointIndex,
-      LevelOfDetail: reveal.PotreePointColorType.LevelOfDetail,
-      Classification: reveal.PotreePointColorType.Classification,
+      Rgb: PotreePointColorType.Rgb,
+      Depth: PotreePointColorType.Depth,
+      Height: PotreePointColorType.Height,
+      PointIndex: PotreePointColorType.PointIndex,
+      LevelOfDetail: PotreePointColorType.LevelOfDetail,
+      Classification: PotreePointColorType.Classification,
     })
     .onChange((valueAsString: string) => {
-      const value: reveal.PotreePointColorType = parseInt(
+      const value: PotreePointColorType = parseInt(
         valueAsString,
         10
       );
@@ -96,11 +96,11 @@ function initializeGui(
     });
   pcGui
     .add(pcNode, 'pointShape', {
-      Circle: reveal.PotreePointShape.Circle,
-      Square: reveal.PotreePointShape.Square,
+      Circle: PotreePointShape.Circle,
+      Square: PotreePointShape.Square,
     })
     .onChange((valueAsString: string) => {
-      const value: reveal.PotreePointShape = parseInt(
+      const value: PotreePointShape = parseInt(
         valueAsString,
         10
       );
@@ -138,7 +138,7 @@ export function SectorWithPointcloud() {
                                      getToken: async () => 'dummy' });
       }
 
-      const sceneHandler = new reveal.SceneHandler();
+      const sceneHandler = new SceneHandler();
 
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current!,
@@ -151,10 +151,10 @@ export function SectorWithPointcloud() {
 
       let pointCloud
       if (pointCloudModelRevision) {
-        const modelIdentifier = new reveal.CdfModelIdentifier(pointCloudModelRevision.modelId, pointCloudModelRevision.revisionId);
+        const modelIdentifier = new CdfModelIdentifier(pointCloudModelRevision.modelId, pointCloudModelRevision.revisionId);
         pointCloud = await revealManager.addModel('pointcloud', modelIdentifier);
       } else if (pointCloudUrl) {
-        const modelIdentifier = new reveal.LocalModelIdentifier(pointCloudUrl.fileName!);
+        const modelIdentifier = new LocalModelIdentifier(pointCloudUrl.fileName!);
         pointCloud = await revealManager.addModel('pointcloud', modelIdentifier);
       } else {
         throw new Error(

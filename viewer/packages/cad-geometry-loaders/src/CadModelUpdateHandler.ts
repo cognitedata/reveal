@@ -6,7 +6,6 @@ import * as THREE from 'three';
 
 import { assertNever } from '@reveal/utilities';
 import { ConsumedSector } from '@reveal/cad-parsers';
-import { CadNode } from '@reveal/rendering';
 
 import { Subject, Observable, combineLatest, asyncScheduler, BehaviorSubject } from 'rxjs';
 import { scan, share, startWith, auditTime, filter, map, observeOn, mergeMap } from 'rxjs/operators';
@@ -20,6 +19,7 @@ import { SectorLoader } from './sector/SectorLoader';
 import { CadModelBudget, defaultCadModelBudget } from './CadModelBudget';
 import { DetermineSectorsPayload, SectorLoadingSpent } from './sector/culling/types';
 import { ModelStateHandler } from './sector/ModelStateHandler';
+import { CadNode } from '@reveal/cad-model';
 
 const notLoadingState: LoadingState = { isLoading: false, itemsLoaded: 0, itemsRequested: 0, itemsCulled: 0 };
 
@@ -37,7 +37,7 @@ export class CadModelUpdateHandler {
   private readonly _budgetSubject: Subject<CadModelBudget> = new Subject();
   private readonly _progressSubject: Subject<LoadingState> = new BehaviorSubject<LoadingState>(notLoadingState);
 
-  private _updateObservable: Observable<ConsumedSector>;
+  private _updateObservable: Observable<ConsumedSector> | undefined;
 
   constructor(sectorCuller: SectorCuller, continuousModelStreaming = false) {
     this._sectorCuller = sectorCuller;
@@ -160,7 +160,7 @@ export class CadModelUpdateHandler {
   }
 
   consumedSectorObservable(): Observable<ConsumedSector> {
-    return this._updateObservable.pipe(share());
+    return this._updateObservable!.pipe(share());
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {

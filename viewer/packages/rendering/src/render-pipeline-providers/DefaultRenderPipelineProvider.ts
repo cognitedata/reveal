@@ -7,7 +7,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { RenderPass } from '../RenderPass';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
-import { createFullScreenTriangleMesh, createRenderTarget } from '../utilities/renderUtilities';
+import { createFullScreenTriangleMesh, createRenderTarget, hasStyledNodes } from '../utilities/renderUtilities';
 import { RenderTargetData } from './types';
 import { AntiAliasingMode, defaultRenderOptions, RenderOptions } from '../rendering/types';
 import { CadGeometryRenderPipelineProvider } from './CadGeometryRenderPipelineProvider';
@@ -25,19 +25,21 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   }[];
   private readonly _customObjects: THREE.Object3D[];
   private readonly _autoResizeOutputTarget: boolean;
-  private readonly _outputRenderTarget: THREE.WebGLRenderTarget;
+  private readonly _outputRenderTarget: THREE.WebGLRenderTarget | null;
   private readonly _cadGeometryRenderPipeline: CadGeometryRenderPipelineProvider;
   private readonly _postProcessingRenderPipeline: PostProcessingPass;
   private readonly _ssaoPass: SSAOPass;
   private readonly _blitToScreenMaterial: THREE.RawShaderMaterial;
   private readonly _blitToScreenMesh: THREE.Mesh;
-  private _rendererStateHelper: WebGLRendererStateHelper;
+  private readonly _materialManager: CadMaterialManager;
+  private _rendererStateHelper: WebGLRendererStateHelper | undefined;
 
   set renderOptions(renderOptions: RenderOptions) {
     const { ssaoRenderParameters } = renderOptions;
     this._ssaoPass.ssaoParameters = ssaoRenderParameters ?? defaultRenderOptions.ssaoRenderParameters;
 
-    const shouldAddFxaa = AntiAliasingMode[renderOptions.antiAliasing] === AntiAliasingMode[AntiAliasingMode.FXAA];
+    const shouldAddFxaa =
+      AntiAliasingMode[renderOptions.antiAliasing ?? AntiAliasingMode.NoAA] === AntiAliasingMode[AntiAliasingMode.FXAA];
     const hasFxaa = this._blitToScreenMaterial.defines.FXAA ?? false;
 
     if (shouldAddFxaa === hasFxaa) {
@@ -62,6 +64,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
       autoSize?: boolean;
     }
   ) {
+    this._materialManager = materialManager;
     this._cadScene = sceneHandler.scene;
     this._autoResizeOutputTarget = outputRenderTarget?.autoSize ?? true;
     this._outputRenderTarget = outputRenderTarget?.target ?? null;
@@ -115,17 +118,24 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
     this.pipelineSetup(renderer);
 
+    const modelIdentifiers = this._cadModels.map(cadModel => cadModel.modelIdentifier);
+    const hasStyling = hasStyledNodes(modelIdentifiers, this._materialManager);
+
     try {
       yield* this._cadGeometryRenderPipeline.pipeline(renderer);
 
       renderer.setRenderTarget(this._renderTargetData.ssaoRenderTarget);
-      renderer.setClearColor('#FFFFFF');
-      renderer.setClearAlpha(1.0);
-      yield this._ssaoPass;
+      renderer.setClearColor('#FFFFFF', 1.0);
+      renderer.clear();
 
+      if (this.shouldRenderSsao(hasStyling.back)) {
+        yield this._ssaoPass;
+      }
+
+      this._postProcessingRenderPipeline.updateRenderObjectsVisability(hasStyling);
       renderer.setRenderTarget(this._renderTargetData.postProcessingRenderTarget);
-      this._rendererStateHelper.resetState();
-      this._rendererStateHelper.autoClear = true;
+      this._rendererStateHelper!.resetState();
+      this._rendererStateHelper!.autoClear = true;
       yield this._postProcessingRenderPipeline;
 
       renderer.setRenderTarget(this._outputRenderTarget);
@@ -136,7 +146,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
         }
       };
     } finally {
-      this._rendererStateHelper.resetState();
+      this._rendererStateHelper!.resetState();
     }
   }
 
@@ -167,7 +177,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
 
   private updateRenderTargetSizes(renderer: THREE.WebGLRenderer): void {
     const renderSize = new THREE.Vector2();
-    renderer.getSize(renderSize);
+    renderer.getDrawingBufferSize(renderSize);
 
     const { x: width, y: height } = renderSize;
 
@@ -183,5 +193,12 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
     if (this._outputRenderTarget !== null && this._autoResizeOutputTarget) {
       this._outputRenderTarget.setSize(width, height);
     }
+  }
+
+  private shouldRenderSsao(hasBackStyling: boolean): boolean {
+    const ssaoSampleSize =
+      this.renderOptions?.ssaoRenderParameters?.sampleSize ?? defaultRenderOptions.ssaoRenderParameters.sampleSize;
+
+    return ssaoSampleSize > 0 && hasBackStyling;
   }
 }

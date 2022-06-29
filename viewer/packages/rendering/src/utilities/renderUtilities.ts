@@ -7,8 +7,8 @@ import { createRenderTriangle } from '@reveal/utilities';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { RenderMode } from '../rendering/RenderMode';
 import { CogniteColors, RevealColors } from './types';
-import { BlendOptions, BlitEffect, BlitOptions, ThreeUniforms } from '../render-passes/types';
-import { blitShaders } from '../rendering/shaders';
+import { BlendOptions, BlitEffect, BlitOptions, DepthBlendBlitOptions, ThreeUniforms } from '../render-passes/types';
+import { blitShaders, depthBlendBlitShaders } from '../rendering/shaders';
 import { NodeOutlineColor } from '@reveal/cad-styling';
 
 export const unitOrthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
@@ -31,15 +31,43 @@ export function createRenderTarget(width = 1, height = 1, multiSampleCount = 1):
   return renderTarget;
 }
 
-export function getBlitMaterial(options: BlitOptions): THREE.RawShaderMaterial {
-  const { texture, effect, depthTexture, blendOptions, overrideAlpha, ssaoTexture, writeColor, edges, outline } =
-    options;
+export function getDepthBlendBlitMaterial(options: DepthBlendBlitOptions): THREE.RawShaderMaterial {
+  const { texture, depthTexture, blendTexture, blendDepthTexture, blendFactor, outline, overrideAlpha } = options;
 
-  const uniforms = {
+  const uniforms: ThreeUniforms = {
+    tDiffuse: { value: texture },
+    tDepth: { value: depthTexture },
+    tBlendDiffuse: { value: blendTexture },
+    tBlendDepth: { value: blendDepthTexture },
+    blendFactor: { value: blendFactor }
+  };
+
+  const defines: Record<string, boolean> = {};
+  setAlphaOverride(overrideAlpha, uniforms, defines);
+
+  if (outline ?? false) {
+    defines['OUTLINE'] = true;
+    uniforms['tOutlineColors'] = { value: createOutlineColorTexture() };
+  }
+
+  return new THREE.RawShaderMaterial({
+    vertexShader: depthBlendBlitShaders.vertex,
+    fragmentShader: depthBlendBlitShaders.fragment,
+    uniforms,
+    glslVersion: THREE.GLSL3,
+    defines,
+    depthTest: false
+  });
+}
+
+export function getBlitMaterial(options: BlitOptions): THREE.RawShaderMaterial {
+  const { texture, effect, depthTexture, blendOptions, overrideAlpha, ssaoTexture, edges, outline } = options;
+
+  const uniforms: ThreeUniforms = {
     tDiffuse: { value: texture }
   };
 
-  const defines = {};
+  const defines: Record<string, boolean> = {};
   const depthTest = setDepthTestOptions(depthTexture, uniforms, defines);
   setAlphaOverride(overrideAlpha, uniforms, defines);
   setBlitEffect(effect, defines);
@@ -67,7 +95,6 @@ export function getBlitMaterial(options: BlitOptions): THREE.RawShaderMaterial {
     glslVersion: THREE.GLSL3,
     defines,
     depthTest,
-    colorWrite: writeColor ?? true,
     ...initializedBlendOptions
   });
 }
@@ -93,7 +120,7 @@ function setOutlineColor(outlineTextureData: Uint8ClampedArray, colorIndex: numb
   outlineTextureData[4 * colorIndex + 3] = 255;
 }
 
-function setDepthTestOptions(depthTexture: THREE.DepthTexture, uniforms: ThreeUniforms, defines: any) {
+function setDepthTestOptions(depthTexture: THREE.DepthTexture | undefined, uniforms: ThreeUniforms, defines: any) {
   if (depthTexture === undefined) {
     return false;
   }
@@ -104,7 +131,7 @@ function setDepthTestOptions(depthTexture: THREE.DepthTexture, uniforms: ThreeUn
   return true;
 }
 
-function setAlphaOverride(overrideAlpha: number, uniforms: ThreeUniforms, defines: any) {
+function setAlphaOverride(overrideAlpha: number | undefined, uniforms: ThreeUniforms, defines: any) {
   if (overrideAlpha === undefined) {
     return;
   }
@@ -112,7 +139,7 @@ function setAlphaOverride(overrideAlpha: number, uniforms: ThreeUniforms, define
   defines['ALPHA'] = true;
 }
 
-function setBlitEffect(effect: BlitEffect, defines: any) {
+function setBlitEffect(effect: BlitEffect | undefined, defines: any) {
   const blitEffect = effect ?? BlitEffect.None;
   if (blitEffect === BlitEffect.GaussianBlur) {
     defines['GAUSSIAN_BLUR'] = true;
@@ -121,13 +148,21 @@ function setBlitEffect(effect: BlitEffect, defines: any) {
   }
 }
 
-function initializeBlendingOptions(blendOptions: BlendOptions) {
+function initializeBlendingOptions(blendOptions: BlendOptions | undefined) {
   const blending = blendOptions !== undefined ? THREE.CustomBlending : THREE.NormalBlending;
   const blendDst = blendOptions?.blendDestination ?? THREE.OneMinusSrcAlphaFactor;
   const blendSrc = blendOptions?.blendSource ?? THREE.SrcAlphaFactor;
-  const blendSrcAlpha = blendOptions?.blendSourceAlpha ?? null; // Uses blendSrc value if null
-  const blendDstAlpha = blendOptions?.blendDestinationAlpha ?? null; // Uses blendDst value if null
-  return { blending, blendDst, blendSrc, blendSrcAlpha, blendDstAlpha };
+  const blendSrcAlpha = blendOptions?.blendSourceAlpha ?? null; // Uses blendSrc value if undefined
+  const blendDstAlpha = blendOptions?.blendDestinationAlpha ?? null; // Uses blendDst value if undefined
+  return {
+    blending,
+    blendDst,
+    blendSrc,
+    // TODO 2022-05-28 larsmoa: @types/three@0.140.0 wrongly defines these as type 'number | undefined', while
+    // the correct type is 'number | null' (https://threejs.org/docs/index.html?q=Material#api/en/materials/Material.blendSrcAlpha)
+    blendSrcAlpha: blendSrcAlpha as number | undefined,
+    blendDstAlpha: blendDstAlpha as number | undefined
+  };
 }
 
 export enum RenderLayer {
@@ -149,6 +184,28 @@ export function setupCadModelsGeometryLayers(
 
 export function getLayerMask(renderLayer: number): number {
   return ((1 << renderLayer) | 0) >>> 0;
+}
+
+export function hasStyledNodes(
+  modelIdentifiers: string[],
+  materialManager: CadMaterialManager
+): { back: boolean; inFront: boolean; ghost: boolean } {
+  const totalBackIndices = modelIdentifiers.reduce(
+    (sum, modelIdentifier) => sum + materialManager.getModelBackTreeIndices(modelIdentifier).count,
+    0
+  );
+
+  const totalInFrontIndices = modelIdentifiers.reduce(
+    (sum, modelIdentifier) => sum + materialManager.getModelInFrontTreeIndices(modelIdentifier).count,
+    0
+  );
+
+  const totalGhostIndices = modelIdentifiers.reduce(
+    (sum, modelIdentifier) => sum + materialManager.getModelGhostedTreeIndices(modelIdentifier).count,
+    0
+  );
+
+  return { back: totalBackIndices > 0, ghost: totalGhostIndices > 0, inFront: totalInFrontIndices > 0 };
 }
 
 function setModelRenderLayers(

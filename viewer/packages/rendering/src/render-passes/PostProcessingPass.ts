@@ -5,7 +5,13 @@
 import * as THREE from 'three';
 import { transparentBlendOptions } from './types';
 import { RenderPass } from '../RenderPass';
-import { createFullScreenTriangleMesh, getBlitMaterial, getLayerMask, RenderLayer } from '../utilities/renderUtilities';
+import {
+  createFullScreenTriangleMesh,
+  getBlitMaterial,
+  getDepthBlendBlitMaterial,
+  getLayerMask,
+  RenderLayer
+} from '../utilities/renderUtilities';
 import { PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
 
 /**
@@ -18,21 +24,14 @@ export class PostProcessingPass implements RenderPass {
   private readonly _scene: THREE.Scene;
   private readonly _postProcessingObjects: THREE.Mesh[];
 
+  public updateRenderObjectsVisability(hasStyling: { back: boolean; inFront: boolean; ghost: boolean }): void {
+    this._postProcessingObjects[0].visible = hasStyling.back;
+    this._postProcessingObjects[1].visible = hasStyling.ghost;
+    this._postProcessingObjects[2].visible = hasStyling.inFront;
+  }
+
   constructor(scene: THREE.Scene, postProcessingPipelineOptions: PostProcessingPipelineOptions) {
     this._scene = scene;
-
-    const inFrontEarlyZBlitMaterial = getBlitMaterial({
-      texture: postProcessingPipelineOptions.inFront.texture,
-      depthTexture: postProcessingPipelineOptions.inFront.depthTexture,
-      overrideAlpha: 1.0,
-      writeColor: false
-    });
-
-    // Fills the depth buffer with infront objects
-    // to prevent infront objects to blend with other objects
-    // that are behind
-    const inFrontEarlyZBlitObject = createFullScreenTriangleMesh(inFrontEarlyZBlitMaterial);
-    inFrontEarlyZBlitObject.renderOrder = -2;
 
     const backBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.back.texture,
@@ -45,6 +44,7 @@ export class PostProcessingPass implements RenderPass {
 
     // Normal un-styled opaque geometry
     const backBlitObject = createFullScreenTriangleMesh(backBlitMaterial);
+    backBlitObject.name = 'Back Styling';
     backBlitObject.renderOrder = -1;
 
     const ghostBlitMaterial = getBlitMaterial({
@@ -55,25 +55,29 @@ export class PostProcessingPass implements RenderPass {
 
     // Ghosted geometry
     const ghostBlitObject = createFullScreenTriangleMesh(ghostBlitMaterial);
+    ghostBlitObject.name = 'Ghost Styling';
     ghostBlitObject.renderOrder = 1;
 
-    const inFrontBlitMaterial = getBlitMaterial({
+    const inFrontBlitMaterial = getDepthBlendBlitMaterial({
       texture: postProcessingPipelineOptions.inFront.texture,
-      blendOptions: transparentBlendOptions,
-      overrideAlpha: 0.5,
+      depthTexture: postProcessingPipelineOptions.inFront.depthTexture,
+      blendTexture: postProcessingPipelineOptions.back.texture,
+      blendDepthTexture: postProcessingPipelineOptions.back.depthTexture,
+      blendFactor: 0.5,
+      overrideAlpha: 1.0,
       outline: true
     });
 
     //In front geometry
     const inFrontBlitObject = createFullScreenTriangleMesh(inFrontBlitMaterial);
+    inFrontBlitObject.name = 'In-front Styling';
     inFrontBlitObject.renderOrder = 2;
 
-    this._scene.add(inFrontEarlyZBlitObject);
     this._scene.add(backBlitObject);
     this._scene.add(ghostBlitObject);
     this._scene.add(inFrontBlitObject);
 
-    this._postProcessingObjects = [inFrontEarlyZBlitObject, backBlitObject, ghostBlitObject, inFrontBlitObject];
+    this._postProcessingObjects = [backBlitObject, ghostBlitObject, inFrontBlitObject];
   }
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {

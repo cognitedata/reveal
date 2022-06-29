@@ -17,8 +17,8 @@ import {
   AbsolutePosition,
   RelativePosition
 } from './types';
-import { Cognite3DViewer } from '@reveal/core';
 import { MetricsLogger } from '@reveal/metrics';
+import { Cognite3DViewer } from '@reveal/api';
 
 export class AxisViewTool extends Cognite3DViewerToolBase {
   private readonly _layoutConfig: Required<AxisBoxConfig>;
@@ -373,12 +373,15 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
           tex: { value: this.getFaceTexture(faceConfig, this._layoutConfig.size) }
         },
         depthTest: false,
-        glslVersion: THREE.GLSL3
+        glslVersion: THREE.GLSL3,
+        // Even if this isn't transparent, we want ThreeJS to draw the object
+        // after transparent objects so its correctly blended
+        transparent: true
       })
     );
 
     face.frustumCulled = false;
-    face.renderOrder = 1;
+    face.renderOrder = 1000; // Draw last (i.e. on top)
 
     face.position.copy(position.multiplyScalar(0.5 * this._boxFaceGeometry.parameters.width));
     face.lookAt(position.multiplyScalar(2));

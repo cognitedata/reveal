@@ -1,27 +1,28 @@
-import { Cognite3DViewer, CognitePointCloudModel, PotreePointColorType, PotreePointShape } from "@cognite/reveal";
+import { Cognite3DViewer, CognitePointCloudModel, PotreePointColorType, PotreePointShape, PotreePointSizeType } from "@cognite/reveal";
 import * as dat from 'dat.gui';
 
 export class PointCloudUi {
-  constructor(viewer: Cognite3DViewer, ui: dat.GUI) {
-    const pointCloudParams = {
-      pointSize: 0.15,
+  private readonly _viewer: Cognite3DViewer;
+  private readonly _params =
+    {
+      pointSize: 1.0,
+      pointSizeType: PotreePointSizeType.Adaptive,
       budget: 2_000_000,
       pointColorType: PotreePointColorType.Rgb,
       pointShape: PotreePointShape.Circle,
-      apply: () => {
-        viewer.pointCloudBudget = { numberOfPoints: pointCloudParams.budget };
-        const pointCloudModels = viewer.models.filter(model => model.type === 'pointcloud').map(x => x as CognitePointCloudModel);
-        pointCloudModels.forEach(model => {
-          model.pointSize = pointCloudParams.pointSize;
-          model.pointColorType = pointCloudParams.pointColorType;
-          model.pointShape = pointCloudParams.pointShape;
-        });
-      }
     };
 
-    ui.add(pointCloudParams, 'budget', 0, 20_000_000, 100_000).onFinishChange(() => pointCloudParams.apply());
-    ui.add(pointCloudParams, 'pointSize', 0, 2, 0.025).onFinishChange(() => pointCloudParams.apply());
-    ui.add(pointCloudParams, 'pointColorType', {
+  constructor(viewer: Cognite3DViewer, ui: dat.GUI) {
+    this._viewer = viewer;
+
+    ui.add(this._params, 'budget', 0, 20_000_000, 100_000).onChange(() => this.applyToAllModels());
+    ui.add(this._params, 'pointSize', 0, 2, 0.025).onChange(() => this.applyToAllModels());
+    ui.add(this._params, 'pointSizeType', { 
+      Adaptive: PotreePointSizeType.Adaptive, 
+      Attenuated: PotreePointSizeType.Attenuated, 
+      Fixed: PotreePointSizeType.Fixed 
+    }).onChange(() => this.applyToAllModels());
+    ui.add(this._params, 'pointColorType', {
       Rgb: PotreePointColorType.Rgb,
       Depth: PotreePointColorType.Depth,
       Height: PotreePointColorType.Height,
@@ -29,16 +30,27 @@ export class PointCloudUi {
       LevelOfDetail: PotreePointColorType.LevelOfDetail,
       Classification: PotreePointColorType.Classification,
       Intensity: PotreePointColorType.Intensity,
-    }).onFinishChange(valueStr => {
-      pointCloudParams.pointColorType = parseInt(valueStr, 10);
-      pointCloudParams.apply()
+    }).onChange(valueStr => {
+      this._params.pointColorType = parseInt(valueStr, 10);
+      this.applyToAllModels()
     });
-    ui.add(pointCloudParams, 'pointShape', {
+    ui.add(this._params, 'pointShape', {
       Circle: PotreePointShape.Circle,
       Square: PotreePointShape.Square
-    }).onFinishChange(valueStr => {
-      pointCloudParams.pointShape = parseInt(valueStr, 10);
-      pointCloudParams.apply()
+    }).onChange(valueStr => {
+      this._params.pointShape = parseInt(valueStr, 10);
+      this.applyToAllModels()
+    });
+  }
+
+  applyToAllModels() {
+    this._viewer.pointCloudBudget = { numberOfPoints: this._params.budget };
+    const pointCloudModels = this._viewer.models.filter(model => model.type === 'pointcloud').map(x => x as CognitePointCloudModel);
+    pointCloudModels.forEach(model => {
+      model.pointSize = this._params.pointSize;
+      model.pointSizeType = this._params.pointSizeType;
+      model.pointColorType = this._params.pointColorType;
+      model.pointShape = this._params.pointShape;
     });
   }
 }

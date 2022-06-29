@@ -6,8 +6,8 @@ import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { LatLongPosition, MapConfig } from './MapConfig';
 import { Geomap } from './Geomap';
 
-import { Cognite3DViewer } from '@reveal/core';
 import { MetricsLogger } from '@reveal/metrics';
+import { Cognite3DViewer } from '@reveal/api';
 
 /**
  * The `GeomapTool` is a geolocation for the models and allow the user to place them on the maps.
@@ -22,7 +22,7 @@ export class GeomapTool extends Cognite3DViewerToolBase {
     this._viewer = viewer;
     this._maps = new Geomap(this._viewer, config);
 
-    MetricsLogger.trackCreateTool('AxisViewTool');
+    MetricsLogger.trackCreateTool('GeomapTool');
   }
 
   /**

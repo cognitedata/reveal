@@ -24,7 +24,7 @@ import {
   ModelIdentifier,
   ModelMetadataProvider
 } from '../../modeldata-api';
-import { CadManager } from '../../cad-model/src/CadManager';
+import { CadManager } from '../../cad-geometry-loaders/src/CadManager';
 import { NumericRange, revealEnv, SceneHandler } from '@reveal/utilities';
 import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
 import { CadModelUpdateHandler, defaultDesktopCadModelBudget } from '../../cad-geometry-loaders';
@@ -58,6 +58,7 @@ async function init() {
   const cadModelUpdateHandler = new CadModelUpdateHandler(new ByScreenSizeSectorCuller(), false);
 
   const renderer = new THREE.WebGLRenderer();
+  renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setClearColor(guiData.clearColor);
   renderer.setClearAlpha(guiData.clearAlpha);
@@ -68,7 +69,6 @@ async function init() {
   pointCloudManager.pointBudget = 1_000_000;
   const cadManager = new CadManager(materialManager, cadModelFactory, cadModelUpdateHandler);
   cadManager.budget = defaultDesktopCadModelBudget;
-  // const customObjects: THREE.Object3D[] = [];
 
   const modelOutputs = (await metadataProvider.getModelOutputs(modelIdentifier)).map(outputs => outputs.format);
 
@@ -117,15 +117,22 @@ async function init() {
   renderOptions.multiSampleCountHint = 4;
 
   const pipelineExecutor = new StepPipelineExecutor(renderer);
-  pipelineExecutor.numberOfSteps = guiData.steps;
 
   let defaultRenderPipeline = new DefaultRenderPipelineProvider(materialManager, sceneHandler, defaultRenderOptions);
-  gui.add(guiData, 'steps', 1, pipelineExecutor.calcNumSteps(defaultRenderPipeline), 1).onChange(async () => {
+
+  setTimeout(() => {
+    guiData.steps = pipelineExecutor.calcNumSteps(defaultRenderPipeline);
     pipelineExecutor.numberOfSteps = guiData.steps;
-    renderer.setClearColor(guiData.clearColor);
-    renderer.setClearAlpha(guiData.clearAlpha);
-    needsRedraw = true;
-  });
+  }, 1000);
+
+  const stepController = gui
+    .add(guiData, 'steps', 1, pipelineExecutor.calcNumSteps(defaultRenderPipeline), 1)
+    .onChange(async () => {
+      pipelineExecutor.numberOfSteps = guiData.steps;
+      renderer.setClearColor(guiData.clearColor);
+      renderer.setClearAlpha(guiData.clearAlpha);
+      needsRedraw = true;
+    });
 
   const stats = gui.addFolder('frame stats');
   const drawCallController = stats.add(guiData, 'drawCalls');
@@ -166,6 +173,7 @@ async function init() {
   const updateRenderOptions = async () => {
     defaultRenderPipeline.dispose();
     defaultRenderPipeline = new DefaultRenderPipelineProvider(materialManager, sceneHandler, renderOptions);
+
     needsRedraw = true;
   };
 
@@ -231,6 +239,11 @@ async function init() {
         timings.push(pipelineExecutor.timings[pipelineExecutor.timings.length - 1]);
       }
     }
+
+    const numberOfSteps = pipelineExecutor.calcNumSteps(defaultRenderPipeline);
+    stepController.max(numberOfSteps);
+    guiData.steps = Math.min(numberOfSteps, guiData.steps);
+    stepController.updateDisplay();
   };
 
   const animate = () => {
@@ -271,7 +284,7 @@ function fitCameraToBoundingBox(
   controls.target.copy(target);
 }
 
-async function createModelProviders(urlParams): Promise<{
+async function createModelProviders(urlParams: URLSearchParams): Promise<{
   metadataProvider: ModelMetadataProvider;
   dataProvider: ModelDataProvider;
   modelIdentifier: ModelIdentifier;

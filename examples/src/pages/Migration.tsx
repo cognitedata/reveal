@@ -181,6 +181,7 @@ export function Migration() {
           new BulkHtmlOverlayUI(gui.addFolder(`Node tagging #${modelUi.cadModels.length}`), viewer, model, client);
         } else if (model instanceof CognitePointCloudModel) {
           new PointCloudClassificationFilterUI(gui.addFolder(`Class filter #${modelUi.pointCloudModels.length}`), model);
+          pointCloudUi.applyToAllModels();
         }
       }
       const modelUi = new ModelUi(gui.addFolder('Models'), viewer, handleModelAdded);
@@ -295,7 +296,7 @@ export function Migration() {
 
       const clippingUi = new ClippingUI(gui.addFolder('Clipping'), planes => viewer.setClippingPlanes(planes));
       new CameraUI(viewer, gui.addFolder('Camera'));
-      new PointCloudUi(viewer, gui.addFolder('Point clouds'));
+      const pointCloudUi = new PointCloudUi(viewer, gui.addFolder('Point clouds'));
       await modelUi.restoreModelsFromUrl();
 
       let expandTool: ExplodedViewTool | null;
@@ -357,19 +358,21 @@ export function Migration() {
         cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), changeCameraTargetOnClick: value });
       });
 
-      const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client);
+      const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client, viewer);
+
+      viewer.renderer.setPixelRatio(window.devicePixelRatio);
 
       viewer.on('click', async (event) => {
         const { offsetX, offsetY } = event; 
         console.log('2D coordinates', event);
+        const start = performance.now();
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {
-          console.log(intersection);
           switch (intersection.type) {
             case 'cad':
               {
                 const { treeIndex, point } = intersection;
-                console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
+                console.log(`Clicked node with treeIndex ${treeIndex} at`, point, `took ${(performance.now() - start).toFixed(1)} ms`);
 
                 inspectNodeUi.inspectNode(intersection.model, treeIndex);
               }

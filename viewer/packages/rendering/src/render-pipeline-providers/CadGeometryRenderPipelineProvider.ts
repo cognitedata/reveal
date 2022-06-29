@@ -10,7 +10,7 @@ import { RenderMode } from '../rendering/RenderMode';
 import { RenderOptions } from '../rendering/types';
 import { RenderPass } from '../RenderPass';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
-import { createRenderTarget, setupCadModelsGeometryLayers } from '../utilities/renderUtilities';
+import { createRenderTarget, hasStyledNodes, setupCadModelsGeometryLayers } from '../utilities/renderUtilities';
 import { CadGeometryRenderTargets } from './types';
 
 type CadGeometryRenderPasses = {
@@ -27,7 +27,7 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
     modelIdentifier: string;
   }[];
   private readonly _materialManager: CadMaterialManager;
-  private _rendererStateHelper: WebGLRendererStateHelper;
+  private _rendererStateHelper: WebGLRendererStateHelper | undefined;
 
   get cadGeometryRenderTargets(): CadGeometryRenderTargets {
     return this._cadGeometryRenderTargets;
@@ -46,16 +46,25 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
     this.pipelineSetup(renderer);
 
     try {
-      renderer.setRenderTarget(this._cadGeometryRenderTargets.back);
-      yield this._cadGeometryRenderPasses.back;
+      const modelIdentifiers = this._cadModels.map(cadModel => cadModel.modelIdentifier);
+      const shouldRenderPasses = hasStyledNodes(modelIdentifiers, this._materialManager);
 
-      renderer.setRenderTarget(this._cadGeometryRenderTargets.ghost);
-      yield this._cadGeometryRenderPasses.ghost;
+      if (shouldRenderPasses.back) {
+        renderer.setRenderTarget(this._cadGeometryRenderTargets.back);
+        yield this._cadGeometryRenderPasses.back;
+      }
 
-      renderer.setRenderTarget(this._cadGeometryRenderTargets.inFront);
-      yield this._cadGeometryRenderPasses.inFront;
+      if (shouldRenderPasses.ghost) {
+        renderer.setRenderTarget(this._cadGeometryRenderTargets.ghost);
+        yield this._cadGeometryRenderPasses.ghost;
+      }
+
+      if (shouldRenderPasses.inFront) {
+        renderer.setRenderTarget(this._cadGeometryRenderTargets.inFront);
+        yield this._cadGeometryRenderPasses.inFront;
+      }
     } finally {
-      this._rendererStateHelper.resetState();
+      this._rendererStateHelper!.resetState();
     }
   }
 
@@ -93,7 +102,7 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
 
   private updateRenderTargetSizes(renderer: THREE.WebGLRenderer): void {
     const renderSize = new THREE.Vector2();
-    renderer.getSize(renderSize);
+    renderer.getDrawingBufferSize(renderSize);
 
     const { x: width, y: height } = renderSize;
 
