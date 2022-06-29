@@ -23,7 +23,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@azure/msal-browser": "^2.21.0",
-    "@cognite/reveal": "../viewer/dist",
+    "@cognite/reveal": "link:../viewer/dist",
     "@cognite/sdk": "link:../viewer/node_modules/@cognite/sdk",
     "camera-controls": "^1.25.1",
     "dat.gui": "^0.7.7",
