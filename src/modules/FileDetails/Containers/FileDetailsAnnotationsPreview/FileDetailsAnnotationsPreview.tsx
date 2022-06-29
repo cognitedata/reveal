@@ -29,7 +29,7 @@ export const FileDetailsAnnotationsPreview = ({
 
   return (
     <Container>
-      <ThumbnailContainer>
+      <ThumbnailContainer className="image">
         <Thumbnail
           fileInfo={fileInfo} // TODO: only show in table view
         />
