@@ -71,6 +71,7 @@ yarn test someDirectory                             # Run tests from a specific 
 yarn test ./some/file.test.ts -t "Name of a test"   # Run a specific test from a file
 yarn test:debug                                     # Run tests in band
 yarn test:coverage                                  # Run tests with coverage report
+yarn test:preview                                   # View failed tests in Chrome! (run this command in a new terminal first)
 ```
 
 ## Running E2E tests manually

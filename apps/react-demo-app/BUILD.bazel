@@ -111,6 +111,7 @@ DEV_DEPENDENCIES = [
     "@npm//eslint-config-react-app",
     "@npm//express",
     "@npm//sinon",
+    "@npm//jest-preview",
 ]
 
 # Mappings for absolute imports from baseUrl @unused

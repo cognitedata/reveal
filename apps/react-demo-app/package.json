@@ -8,6 +8,7 @@
     "test": "bazel run :jest -- ",
     "test:debug": "yarn test --runInBand",
     "test:coverage": "yarn test --collectCoverage",
+    "test:preview": "../../node_modules/.bin/jest-preview",
     "lint": "../../node_modules/.bin/concurrently \"yarn prettier\" \"yarn eslint\"",
     "lint:bazel": "bazel test :eslint_test :prettier_test",
     "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}' 'public/index.html'",

@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom/extend-expect';
 import '@testing-library/jest-dom';
 import fetchMock from 'jest-fetch-mock';
+import { jestPreviewConfigure } from 'jest-preview';
 import isUndefined from 'lodash/isUndefined';
 
 import * as mocks from '@cognite/metrics/dist/mocks';
@@ -31,6 +32,8 @@ jest.mock('@cognite/react-i18n', () => {
 });
 
 configureLocalStorageMock();
+
+jestPreviewConfigure({ autoPreview: true });
 
 if (isUndefined(window.URL.createObjectURL)) {
   Object.defineProperty(window.URL, 'createObjectURL', { value: jest.fn() });

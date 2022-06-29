@@ -4,5 +4,7 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom/extend-expect';
 import * as mocks from '@cognite/metrics/dist/mocks';
+import { jestPreviewConfigure } from 'jest-preview';
 
 jest.mock('@cognite/metrics', () => mocks);
+jestPreviewConfigure({ autoPreview: true });

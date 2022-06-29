@@ -196,6 +196,7 @@ DEV_DEPENDENCIES = [
     "@npm//eslint-plugin-react-hooks",
     "@npm//eslint-plugin-react",
     "@npm//fetch-mock",
+    "@npm//jest-preview",
     "@npm//redux-mock-store",
 ]
 
