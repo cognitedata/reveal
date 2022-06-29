@@ -10,6 +10,7 @@ import {
   isVisionReviewAnnotationRowData,
   isAnnotationTypeRowData,
   isVisionReviewImageKeypointCollection,
+  isVisionReviewImageKeypointRowData,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/utils/nodeTreeUtils';
 import {
   ReviewVisionAnnotationTypeRow,
@@ -18,10 +19,12 @@ import {
 
 import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
+  PredefinedKeypoint,
   ReviewKeypoint,
   VisionReviewAnnotation,
 } from 'src/modules/Review/types';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
+import { PredefinedKeypointRow } from 'src/modules/Review/Containers/AnnotationDetailPanel/components/PredefinedKeypointRow';
 
 /**
  * Recursive method that generates a node tree structure using the annotation hierarchy:
@@ -49,13 +52,12 @@ export const generateNodeTree = (
       component: ReviewVisionAnnotationTypeRow as FC<
         VirtualizedTreeRowProps<AnnotationDetailPanelRowData>
       >,
-      children: common.reviewAnnotations.map(
-        (reviewAnnotation: VisionReviewAnnotation<VisionAnnotationDataType>) =>
-          generateNodeTree({
-            ...reviewAnnotation,
-            common: { ...common, color: reviewAnnotation.color },
-            callbacks,
-          })
+      children: common.reviewAnnotations.map((reviewAnnotation) =>
+        generateNodeTree({
+          ...reviewAnnotation,
+          common: { ...common, color: reviewAnnotation.color },
+          callbacks,
+        })
       ),
       // check if the annotation type header, annotations within or any keypoints within an annotation
       // in case of keypoint collections, are selected.
@@ -98,14 +100,31 @@ export const generateNodeTree = (
     if (isVisionReviewImageKeypointCollection(reviewAnnotation)) {
       return {
         ...data,
-        children: reviewAnnotation.annotation.keypoints.map(
-          (reviewImageKeypoint, index) =>
+        children: reviewAnnotation.annotation.keypoints
+          .map((reviewImageKeypoint, index) =>
             generateNodeTree({
               ...reviewImageKeypoint,
-              common: { ...common, index, color: reviewAnnotation.color },
+              common: { ...common, index, color: reviewAnnotation.color }, // keypoint index and color is passed as common attributes
               callbacks,
             })
-        ),
+          )
+          .concat(
+            common.tempKeypointCollection?.id === reviewAnnotation.annotation.id
+              ? common.tempKeypointCollection.remainingKeypoints.map(
+                  (predefinedKeypoint, index) =>
+                    generateNodeTree({
+                      ...predefinedKeypoint,
+                      common: {
+                        ...common,
+                        index:
+                          index + reviewAnnotation.annotation.keypoints.length,
+                        color: reviewAnnotation.color,
+                      }, // keypoint index and color is passed as common attributes
+                      callbacks,
+                    })
+                )
+              : []
+          ),
       };
     }
 
@@ -113,20 +132,42 @@ export const generateNodeTree = (
   }
 
   /**
-   * If row data does not have type `AnnotationDetailPanelAnnotationType` or `VisionReviewAnnotation<VisionAnnotationDataType>`
-   * it must be `ReviewKeypoint`. The keypoint is added as a node leaf in the tree.
+   * If row data is the type of AnnotationDetailPanelRowDataBase<ReviewKeypoint>
    *
    * @see `AnnotationDetailPanelRowData` definition
    */
-  const reviewImageKeypoint =
-    rowData as AnnotationDetailPanelRowDataBase<ReviewKeypoint>;
+  if (isVisionReviewImageKeypointRowData(rowData)) {
+    const reviewImageKeypoint =
+      rowData as AnnotationDetailPanelRowDataBase<ReviewKeypoint>;
+    return {
+      id: reviewImageKeypoint.id.toString(),
+      name: reviewImageKeypoint.keypoint.label,
+      component: ReviewKeypointRow as FC<
+        VirtualizedTreeRowProps<AnnotationDetailPanelRowData>
+      >,
+      openByDefault: reviewImageKeypoint.selected,
+      children: [],
+      additionalData: rowData,
+    };
+  }
+
+  /**
+   * If row data does not have type `AnnotationDetailPanelAnnotationType`, `VisionReviewAnnotation<VisionAnnotationDataType>`
+   * or`ReviewKeypoint` it must be 'PredefinedKeypoint'. This predefined keypoint is added as a node leaf in the tree as sub node
+   * of a `VisionReviewAnnotation<ImageKeypointCollection>`
+   *
+   * @see `AnnotationDetailPanelRowData` definition
+   */
+
+  const remainingPredefinedKeypoint =
+    rowData as AnnotationDetailPanelRowDataBase<PredefinedKeypoint>;
   return {
-    id: reviewImageKeypoint.id.toString(),
-    name: reviewImageKeypoint.keypoint.label,
-    component: ReviewKeypointRow as FC<
+    id: remainingPredefinedKeypoint.caption,
+    name: remainingPredefinedKeypoint.caption,
+    component: PredefinedKeypointRow as FC<
       VirtualizedTreeRowProps<AnnotationDetailPanelRowData>
     >,
-    openByDefault: reviewImageKeypoint.selected,
+    openByDefault: true,
     children: [],
     additionalData: rowData,
   };
@@ -143,7 +184,7 @@ const isAnyKeypointChildSelected = (
 ) => {
   return (
     isVisionReviewImageKeypointCollection(reviewAnnotation) &&
-    !!reviewAnnotation.annotation.keypoints.some(
+    reviewAnnotation.annotation.keypoints.some(
       (reviewImageKeypoint) => reviewImageKeypoint.selected
     )
   );

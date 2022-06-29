@@ -262,6 +262,7 @@ export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
               reviewAnnotations: getReviewAnnotations(annotationType),
               mode: annotationDetectionModelType[annotationType],
               component: annotationRowComponent[annotationType] as React.FC,
+              tempKeypointCollection,
             },
           };
         }

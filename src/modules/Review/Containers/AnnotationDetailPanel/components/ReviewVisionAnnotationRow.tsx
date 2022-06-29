@@ -23,22 +23,22 @@ export const ReviewVisionAnnotationRow = ({
 >) => {
   const {
     callbacks: { onSelect, onVisibilityChange, onApproveStateChange, onDelete },
-    ...visionReviewImageKeypointRowData
+    ...visionReviewAnnotationRowData
   } = additionalData;
 
   const renderContent = () => {
     // collapse icon appears for KeypointAnnotations
     if (
-      visionReviewImageKeypointRowData.annotation.annotationType ===
+      visionReviewAnnotationRowData.annotation.annotationType ===
       CDFAnnotationTypeEnum.ImagesKeypointCollection
     ) {
       return (
         <PanelHeader>
           <ExpandIconComponent
-            isActive={visionReviewImageKeypointRowData.selected}
+            isActive={visionReviewAnnotationRowData.selected}
           />
           <AnnotationTableRow
-            reviewAnnotation={visionReviewImageKeypointRowData}
+            reviewAnnotation={visionReviewAnnotationRowData}
             onSelect={onSelect}
             onDelete={onDelete}
             onApprove={onApproveStateChange}
@@ -50,7 +50,7 @@ export const ReviewVisionAnnotationRow = ({
     }
     return (
       <AnnotationTableRow
-        reviewAnnotation={visionReviewImageKeypointRowData}
+        reviewAnnotation={visionReviewAnnotationRowData}
         onSelect={onSelect}
         onDelete={onDelete}
         onApprove={onApproveStateChange}
@@ -62,8 +62,8 @@ export const ReviewVisionAnnotationRow = ({
 
   return (
     <KeyboardShortCutSelectable
-      id={visionReviewImageKeypointRowData.annotation.id}
-      selected={visionReviewImageKeypointRowData.selected}
+      id={visionReviewAnnotationRowData.annotation.id}
+      selected={visionReviewAnnotationRowData.selected}
     >
       <SidePanelRow>{renderContent()}</SidePanelRow>
     </KeyboardShortCutSelectable>
