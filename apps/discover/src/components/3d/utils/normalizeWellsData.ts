@@ -17,7 +17,6 @@ export const normalizeWellsData = (wellsData: WellsData): BPDataOptions => {
   const {
     wells = [],
     trajectories = [],
-    trajectoryData = [],
     casings = [],
     ndsEvents = [],
     nptEvents = [],
@@ -36,7 +35,7 @@ export const normalizeWellsData = (wellsData: WellsData): BPDataOptions => {
     wells: mapWellsTo3D(wells),
     wellBores: mapWellboresTo3D(wells),
     trajectories: mapTrajectoriesTo3D(trajectories),
-    trajectoryData: mapTrajectoryDataTo3D(trajectoryData),
+    trajectoryData: mapTrajectoryDataTo3D(trajectories),
     casings: mapCasingsTo3D(wellbores, casings),
     ndsEvents: mapNDSTo3D(ndsEvents),
     nptEvents: mapNPTTo3D(nptEvents),

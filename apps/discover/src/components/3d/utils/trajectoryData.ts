@@ -1,21 +1,27 @@
+import { TrajectoryDataInternal } from 'domain/wells/trajectory/internal/types';
+
+import head from 'lodash/head';
+
 import { ITrajectoryRows } from '@cognite/node-visualizer';
 
-import { TrajectoryRows } from 'modules/wellSearch/types';
-
 export const mapTrajectoryDataTo3D = (
-  trajectoryData: TrajectoryRows[]
+  trajectoryData: TrajectoryDataInternal[]
 ): ITrajectoryRows[] =>
-  trajectoryData.map((data) => {
+  trajectoryData.map(({ wellboreMatchingId, source, rows: rowsOriginal }) => {
+    const columns = Object.keys(head(rowsOriginal) || {}).map((name) => ({
+      name,
+      valueType: 'DOUBLE',
+    }));
+
+    const rows = rowsOriginal.map((row, index) => ({
+      rowNumber: index + 1,
+      values: Object.values(row),
+    }));
+
     return {
-      ...data,
-      id: String(data.id),
-      columns: data.columns.map((column) => {
-        return {
-          ...column,
-          // these should not be optional from project config!
-          name: column.name || '',
-          valueType: column.valueType || '',
-        };
-      }),
+      id: wellboreMatchingId,
+      externalId: source.sequenceExternalId,
+      columns,
+      rows,
     };
   });

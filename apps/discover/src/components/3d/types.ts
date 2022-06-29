@@ -1,11 +1,10 @@
 import { CasingSchematicInternal } from 'domain/wells/casings/internal/types';
 import { NdsInternalWithTvd } from 'domain/wells/nds/internal/types';
 import { NptInternal } from 'domain/wells/npt/internal/types';
+import { TrajectoryWithData } from 'domain/wells/trajectory/internal/types';
 import { Well } from 'domain/wells/well/internal/types';
 
 import { DepthMeasurement, DepthMeasurementData } from '@cognite/sdk-wells-v3';
-
-import { Sequence, TrajectoryRows } from 'modules/wellSearch/types';
 
 export interface ThreeDeeProps extends WellsData {
   fileId?: string;
@@ -13,8 +12,7 @@ export interface ThreeDeeProps extends WellsData {
 
 export interface WellsData {
   wells?: Well[];
-  trajectories?: Sequence[];
-  trajectoryData?: TrajectoryRows[];
+  trajectories?: TrajectoryWithData[];
   casings?: CasingSchematicInternal[];
   ndsEvents?: NdsInternalWithTvd[];
   nptEvents?: NptInternal[];

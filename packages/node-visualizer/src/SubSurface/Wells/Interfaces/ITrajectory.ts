@@ -67,11 +67,11 @@ export interface ITrajectoryColumn {
 }
 
 // Note: the first TrajectoryColumns we will have will be
-// { "name":"inclination" , "valueType":"DOUBLE"}
-// { "name":"md" ,          "valueType":"DOUBLE" }
-// { "name":"tvd" ,         "valueType":"DOUBLE" }
-// { "name":"x_offset" ,    "valueType":"DOUBLE" }
-// { "name":"y_offset" ,    "valueType":"DOUBLE" }
+// { "name":"inclination" ,       "valueType":"DOUBLE"}
+// { "name":"measuredDepth" ,     "valueType":"DOUBLE" }
+// { "name":"trueVerticalDepth" , "valueType":"DOUBLE" }
+// { "name":"eastOffset" ,        "valueType":"DOUBLE" }
+// { "name":"northOffset" ,       "valueType":"DOUBLE" }
 
 export interface ITrajectory {
   id: TrajectoryId;

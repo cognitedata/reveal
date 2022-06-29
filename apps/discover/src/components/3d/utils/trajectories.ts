@@ -1,15 +1,17 @@
+import { TrajectoryInternal } from 'domain/wells/trajectory/internal/types';
+
 import { ITrajectory } from '@cognite/node-visualizer';
 
-import { Sequence } from 'modules/wellSearch/types';
-
 export const mapTrajectoriesTo3D = (
-  trajectories: Sequence[]
+  trajectories: TrajectoryInternal[]
 ): Partial<ITrajectory>[] =>
-  trajectories.map((trajectory) => {
-    return {
-      ...trajectory,
-      id: String(trajectory.id) || '',
-      assetId: String(trajectory.assetId) || '',
-      externalId: trajectory.externalId || '',
-    };
-  });
+  trajectories.map(
+    ({ wellboreMatchingId, wellboreAssetExternalId, source }) => {
+      return {
+        id: wellboreMatchingId,
+        assetId: wellboreAssetExternalId,
+        externalId: source.sequenceExternalId,
+        name: source.sourceName,
+      };
+    }
+  );

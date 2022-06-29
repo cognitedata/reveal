@@ -43,12 +43,12 @@ export class WellTrajectoryNodeCreator {
       console.warn('NodeVisualizer: No trajectory available for well');
       return null;
     }
-    const mdIndex = getIndex(trajectoryDataColumnIndices.md);
+    const mdIndex = getIndex(trajectoryDataColumnIndices.measuredDepth);
     const azimuthIndex = getIndex(trajectoryDataColumnIndices.azimuth);
     const inclinationIndex = getIndex(trajectoryDataColumnIndices.inclination);
-    const tvdIndex = getIndex(trajectoryDataColumnIndices.tvd);
-    const xOffsetIndex = getIndex(trajectoryDataColumnIndices.x_offset);
-    const yOffsetIndex = getIndex(trajectoryDataColumnIndices.y_offset);
+    const tvdIndex = getIndex(trajectoryDataColumnIndices.trueVerticalDepth);
+    const xOffsetIndex = getIndex(trajectoryDataColumnIndices.eastOffset);
+    const yOffsetIndex = getIndex(trajectoryDataColumnIndices.northOffset);
 
     const trajectory = new WellTrajectory();
 

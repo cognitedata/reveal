@@ -180,8 +180,8 @@ export const bpTrajectories = [
         lastUpdatedTime: '2020-10-21T22:48:31.782Z',
       },
       {
-        name: 'md',
-        externalId: 'md',
+        name: 'measuredDepth',
+        externalId: 'measuredDepth',
         valueType: 'DOUBLE',
         metadata: {
           unit: 'ft',
@@ -190,8 +190,8 @@ export const bpTrajectories = [
         lastUpdatedTime: '2020-10-21T22:48:31.782Z',
       },
       {
-        name: 'tvd',
-        externalId: 'tvd',
+        name: 'trueVerticalDepth',
+        externalId: 'trueVerticalDepth',
         valueType: 'DOUBLE',
         metadata: {
           unit: 'ft',
@@ -200,8 +200,8 @@ export const bpTrajectories = [
         lastUpdatedTime: '2020-10-21T22:48:31.782Z',
       },
       {
-        name: 'x_offset',
-        externalId: 'x_offset',
+        name: 'eastOffset',
+        externalId: 'eastOffset',
         valueType: 'DOUBLE',
         metadata: {
           unit: 'ft',
@@ -210,8 +210,8 @@ export const bpTrajectories = [
         lastUpdatedTime: '2020-10-21T22:48:31.782Z',
       },
       {
-        name: 'y_offset',
-        externalId: 'y_offset',
+        name: 'northOffset',
+        externalId: 'northOffset',
         valueType: 'DOUBLE',
         metadata: {
           unit: 'ft',
@@ -376,8 +376,8 @@ export const bpTrajectories = [
         lastUpdatedTime: '2020-10-21T22:48:31.782Z',
       },
       {
-        name: 'equivalent_departure',
-        externalId: 'equivalent_departure',
+        name: 'equivalentDeparture',
+        externalId: 'equivalentDeparture',
         valueType: 'DOUBLE',
         metadata: {
           unit: 'ft',
@@ -399,9 +399,9 @@ export const bpTrajectoryData = [
     externalId: 'dqnroDJPLP-lQkHf2B85T-BPi31',
     columns: [
       {
-        externalId: 'md',
+        externalId: 'measuredDepth',
         valueType: 'DOUBLE',
-        name: 'md',
+        name: 'measuredDepth',
       },
       {
         externalId: 'azimuth',
@@ -414,24 +414,24 @@ export const bpTrajectoryData = [
         name: 'inclination',
       },
       {
-        externalId: 'tvd',
+        externalId: 'trueVerticalDepth',
         valueType: 'DOUBLE',
-        name: 'tvd',
+        name: 'trueVerticalDepth',
       },
       {
-        externalId: 'x_offset',
+        externalId: 'eastOffset',
         valueType: 'DOUBLE',
-        name: 'x_offset',
+        name: 'eastOffset',
       },
       {
-        externalId: 'y_offset',
+        externalId: 'northOffset',
         valueType: 'DOUBLE',
-        name: 'y_offset',
+        name: 'northOffset',
       },
       {
-        externalId: 'equivalent_departure',
+        externalId: 'equivalentDeparture',
         valueType: 'DOUBLE',
-        name: 'equivalent_departure',
+        name: 'equivalentDeparture',
       },
     ],
     rows: [

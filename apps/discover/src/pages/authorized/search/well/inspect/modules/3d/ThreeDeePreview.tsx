@@ -3,7 +3,7 @@ import { sortCasingAssembliesByMDBase } from 'domain/wells/casings/internal/tran
 import { useWellLogsWithRowData } from 'domain/wells/log/internal/queries/useWellLogsWithRowData';
 import { useNdsWithTvdData } from 'domain/wells/nds/internal/hooks/useNdsWithTvdData';
 import { useNptEventsQuery } from 'domain/wells/npt/internal/queries/useNptEventsQuery';
-import { useTrajectoriesQuery } from 'domain/wells/trajectory0/internal/queries/useTrajectoriesQuery';
+import { useTrajectoriesWithData } from 'domain/wells/trajectory/internal/hooks/useTrajectoriesWithData';
 import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
 
 import React, { useMemo } from 'react';
@@ -36,11 +36,10 @@ const ThreeDeePreview: React.FC<Props> = ({ wellboreIds }: Props) => {
   const { data: nptEvents, isLoading: nptLoading } = useNptEventsQuery({
     wellboreIds,
   });
-  const {
-    trajectories,
-    trajectoryRows,
-    isLoading: trajectoriesLoading,
-  } = useTrajectoriesQuery();
+  const { data: trajectories, isLoading: trajectoriesLoading } =
+    useTrajectoriesWithData({
+      wellboreIds,
+    });
 
   /**
    * ************PP-2693************
@@ -73,7 +72,6 @@ const ThreeDeePreview: React.FC<Props> = ({ wellboreIds }: Props) => {
     <ThreeDee
       wells={wells}
       trajectories={trajectories}
-      trajectoryData={trajectoryRows}
       casings={casings}
       ndsEvents={ndsEvents}
       nptEvents={nptEvents}

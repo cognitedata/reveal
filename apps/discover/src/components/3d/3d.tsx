@@ -23,7 +23,6 @@ import { normalizeWellsData } from './utils/normalizeWellsData';
 const ThreeDee: React.FC<ThreeDeeProps> = ({
   wells,
   trajectories,
-  trajectoryData,
   ndsEvents,
   nptEvents,
   casings,
@@ -51,7 +50,6 @@ const ThreeDee: React.FC<ThreeDeeProps> = ({
         normalizeWellsData({
           wells,
           trajectories,
-          trajectoryData,
           casings,
           wellLogs,
           wellLogsRowData,

@@ -8,11 +8,11 @@
  */
 
 // Note: the first TrajectoryColumns we will have will be
-// { "name":"inclination" , "valueType":"DOUBLE"}
-// { "name":"md" ,          "valueType":"DOUBLE" }
-// { "name":"tvd" ,         "valueType":"DOUBLE" }
-// { "name":"x_offset" ,    "valueType":"DOUBLE" }
-// { "name":"y_offset" ,    "valueType":"DOUBLE" }
+// { "name":"inclination" ,       "valueType":"DOUBLE"}
+// { "name":"measuredDepth" ,     "valueType":"DOUBLE" }
+// { "name":"trueVerticalDepth" , "valueType":"DOUBLE" }
+// { "name":"eastOffset" ,        "valueType":"DOUBLE" }
+// { "name":"northOffset" ,       "valueType":"DOUBLE" }
 
 export interface ITrajectoryColumnR {
   name: string;
@@ -26,12 +26,12 @@ export interface ITrajectoryRow {
 }
 
 export interface ITrajectoryColumnIndices {
-  md?: number;
-  tvd?: number;
+  measuredDepth?: number;
+  trueVerticalDepth?: number;
   azimuth?: number;
   inclination?: number;
-  x_offset?: number;
-  y_offset?: number;
+  eastOffset?: number;
+  northOffset?: number;
 }
 
 // note: the size of the TrajectoryRows "columns" array is identical to the size of the TrajectoryRow "values" array

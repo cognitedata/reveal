@@ -161,8 +161,8 @@ export const trajectory = {
       lastUpdatedTime: '2020-06-19T17:10:06.732Z',
     },
     {
-      name: 'md',
-      externalId: 'md',
+      name: 'measuredDepth',
+      externalId: 'measuredDepth',
       valueType: 'DOUBLE',
       metadata: {
         unit: 'ft',
@@ -181,8 +181,8 @@ export const trajectory = {
       lastUpdatedTime: '2020-06-19T17:10:06.732Z',
     },
     {
-      name: 'x_offset',
-      externalId: 'x_offset',
+      name: 'eastOffset',
+      externalId: 'eastOffset',
       valueType: 'DOUBLE',
       metadata: {
         unit: 'ft',
@@ -191,8 +191,8 @@ export const trajectory = {
       lastUpdatedTime: '2020-06-19T17:10:06.732Z',
     },
     {
-      name: 'y_offset',
-      externalId: 'y_offset',
+      name: 'northOffset',
+      externalId: 'northOffset',
       valueType: 'DOUBLE',
       metadata: {
         unit: 'ft',
@@ -367,9 +367,9 @@ export const trajectoryData = {
   externalId: 'trajectory_external_id',
   columns: [
     {
-      externalId: 'md',
+      externalId: 'measuredDepth',
       valueType: 'DOUBLE',
-      name: 'md',
+      name: 'measuredDepth',
     },
     {
       externalId: 'azimuth',
@@ -387,14 +387,14 @@ export const trajectoryData = {
       name: 'tvd',
     },
     {
-      externalId: 'x_offset',
+      externalId: 'eastOffset',
       valueType: 'DOUBLE',
-      name: 'x_offset',
+      name: 'eastOffset',
     },
     {
-      externalId: 'y_offset',
+      externalId: 'northOffset',
       valueType: 'DOUBLE',
-      name: 'y_offset',
+      name: 'northOffset',
     },
   ],
   rows: [
