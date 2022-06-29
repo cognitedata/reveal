@@ -1,0 +1,32 @@
+{
+  "name": "@cognite/react-map",
+  "version": "0.0.1",
+  "source": "src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "typings": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/applications.git",
+    "directory": "packages/react-map"
+  },
+  "homepage": "https://github.com/cognitedata/applications/tree/master/packages/react-map",
+  "license": "UNLICENSED",
+  "author": "Cognite AS",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bazel build :react-map",
+    "test": "../../node_modules/.bin/jest",
+    "test:watch": "yarn test --watchAll",
+    "test:bazel": "bazel test :jest_test",
+    "test:bazel-run": "ibazel run :jest --",
+    "lint": "bazel test :eslint_test :prettier_test",
+    "eslint": "bazel test :eslint_test",
+    "eslint:fix": "bazel run :eslint_test -- --fix",
+    "prettier": "bazel test :prettier_test",
+    "prettier:fix": "bazel run :prettier_test -- --write",
+    "update-helpers": "bazel run :generate_package_json_helpers"
+  }
+}

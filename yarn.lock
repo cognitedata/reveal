@@ -8414,12 +8414,27 @@
   resolved "https://registry.yarnpkg.com/@types/long/-/long-4.0.1.tgz#459c65fa1867dafe6a8f322c4c51695663cc55e9"
   integrity sha512-5tXH6Bx/kNGd3MgffdmP4dy2Z+G4eaXw0SE81Tq3BNadtnMR5/ySMzX4SLEzHJzSmPNn4HIdpQsBvXMUykr58w==
 
+"@types/mapbox-gl@*":
+  version "2.7.3"
+  resolved "https://registry.yarnpkg.com/@types/mapbox-gl/-/mapbox-gl-2.7.3.tgz#d75049251f1cb5f5a5453d6c20ffb9d2de6cbd75"
+  integrity sha512-XdveeJptNNZw7ZoeiAJ2/dupNtWaV6qpBG/SOFEpQNQAc+oiO6qUznX85n+W1XbLeD8SVRVfVORKuR+I4CHDZw==
+  dependencies:
+    "@types/geojson" "*"
+
 "@types/mapbox@1.6.41":
   version "1.6.41"
   resolved "https://registry.yarnpkg.com/@types/mapbox/-/mapbox-1.6.41.tgz#57acac7237228aa74a00ba8637db892d65da3470"
   integrity sha512-mR7KWdMShsI9c/HcBjLKDq0DFT2FcgxkC7tGmLehDtUdNVdvvDTlgWBZkZxY7e/Dd5wkrExUjIlNu4LUHOAUzg==
   dependencies:
     "@types/leaflet" "^0"
+
+"@types/mapbox__mapbox-gl-draw@^1.2.4":
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/@types/mapbox__mapbox-gl-draw/-/mapbox__mapbox-gl-draw-1.2.4.tgz#55c010e2313740fed4aaa3392d8a04fb988554cd"
+  integrity sha512-/pDo3pq6wqC9lt3/4XwuBe4jasLFWQDFbQ7ruDr5/ulxZGIxu7xMTVIomgpUF1/uUMI2OsedLG5L5RhjHebNdw==
+  dependencies:
+    "@types/geojson" "*"
+    "@types/mapbox-gl" "*"
 
 "@types/maplibre-gl@^1.13.1":
   version "1.14.0"
