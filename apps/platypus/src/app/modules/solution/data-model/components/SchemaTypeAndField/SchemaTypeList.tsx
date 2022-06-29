@@ -76,7 +76,7 @@ export const SchemaTypeList = ({
         onOk={deleteSchemaType}
       />
       <Header>
-        <Title level={4} style={{ paddingLeft: 16, marginTop: 24 }}>
+        <Title level={5} style={{ paddingLeft: 16, marginTop: 24 }}>
           {t('type_title', 'Types')}
         </Title>
       </Header>
