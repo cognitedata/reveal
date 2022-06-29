@@ -1559,7 +1559,6 @@
 
 "@cognite/reveal@link:../viewer/dist":
   version "0.0.0"
-  uid ""
 
 "@cognite/sdk-1.x@npm:@cognite/sdk@^3.4.0":
   version "3.5.2"
@@ -1623,7 +1622,6 @@
 
 "@cognite/sdk@link:../viewer/node_modules/@cognite/sdk":
   version "0.0.0"
-  uid ""
 
 "@cognite/three-combo-controls@^1.4.3":
   version "1.4.3"
@@ -11891,10 +11889,10 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==
 
-typedoc-plugin-markdown@3.12.1:
-  version "3.12.1"
-  resolved "https://registry.yarnpkg.com/typedoc-plugin-markdown/-/typedoc-plugin-markdown-3.12.1.tgz#2a33ca0018bdd7ed512e29960d3eb344ecb65f4a"
-  integrity sha512-gMntJq7+JlGJZ5sVjrkzO/rG2dsmNBbWk5ZkcKvYu6QOeBwGcK5tzEyS0aqnFTJj9GCHCB+brAnTuKtAyotNwA==
+typedoc-plugin-markdown@3.13.1:
+  version "3.13.1"
+  resolved "https://registry.yarnpkg.com/typedoc-plugin-markdown/-/typedoc-plugin-markdown-3.13.1.tgz#f4bca4bf8c5a48d8c7f1b44071e64028d223a1e0"
+  integrity sha512-Gx7pmvFNXAxbE9N2MuQNi5RwMVSH9lPxDBAaBNftaZ+ZzMO8YkDwir6aoXcWNq50qgG/eTs5CiKvLe33OVm2iQ==
   dependencies:
     handlebars "^4.7.7"
 
