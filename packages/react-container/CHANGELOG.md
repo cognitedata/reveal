@@ -1,3 +1,9 @@
+## 6.0.2 June 24 2022
+
+- react-project-selector version bump
+
+> Fix users redirected to OIDC when trying to use legacy login in some situations.
+
 ## 6.0.1 June 24 2022
 
 - Move refreshPage declaration up to fix an issue when redirecting back after a login error

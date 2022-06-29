@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { saveFlow } from '@cognite/auth-utils';
 
 import LoginContext from '../../context';
 import { Box } from '../common';
@@ -19,6 +20,7 @@ const SignInWithProjectName = () => {
   const { login, isLoading, isError } = useLoginWithProjectName(move);
 
   const doLogin = () => {
+    saveFlow('COGNITE_AUTH');
     login({ projectName, env: specifyCluster ? cluster : undefined });
   };
 
