@@ -10,7 +10,7 @@ import { MeasurementOptions } from './types';
 
 export class MeasurementLine {
   private _geometry: LineGeometry | null;
-  private _material: LineMaterial | null;
+  private readonly _material: LineMaterial[];
   private _position: Float32Array;
   private _axisDistance: THREE.Vector3;
   private _xAxisMidPoint: THREE.Vector3;
@@ -26,7 +26,7 @@ export class MeasurementLine {
     this._yAxisMidPoint = new THREE.Vector3();
     this._zAxisMidPoint = new THREE.Vector3();
     this._geometry = null;
-    this._material = null;
+    this._material = [];
     this._options = { ...options };
   }
 
@@ -35,7 +35,7 @@ export class MeasurementLine {
    * @param point Point from where the line will be generated.
    * @param distanceToCamera Distance to camera from the @point
    */
-  startLine(point: THREE.Vector3, distanceToCamera: number): THREE.Mesh {
+  startLine(point: THREE.Vector3, distanceToCamera: number): THREE.Group {
     this._position[0] = this._position[3] = point.x;
     this._position[1] = this._position[4] = point.y;
     this._position[2] = this._position[5] = point.z;
@@ -45,24 +45,52 @@ export class MeasurementLine {
     this._geometry = new LineGeometry();
     this._geometry.setPositions(this._position);
 
-    this._material = new LineMaterial({
-      color: this._options.color,
-      linewidth: this._options.lineWidth,
-      depthTest: false,
-      transparent: true,
-      opacity: 1
-    });
+    //Adaptive Line width
+    this._material.push(
+      new LineMaterial({
+        color: this._options.color,
+        linewidth: this._options.lineWidth! * 0.1,
+        worldUnits: true,
+        depthTest: false,
+        transparent: true,
+        opacity: 1
+      })
+    );
 
-    const mesh = new Line2(this._geometry, this._material);
+    //Fixed line Width. TODO: Remove the magic number for line width & relate it with model?
+    this._material.push(
+      new LineMaterial({
+        color: this._options.color,
+        linewidth: 2,
+        worldUnits: false,
+        depthTest: false,
+        transparent: true,
+        opacity: 1
+      })
+    );
+
+    const mesh = new Line2(this._geometry, this._material[0]);
     //Assign bounding sphere & box for the line to support raycasting.
     mesh.computeLineDistances();
-    //Make sure line are rendered in-front of other objects
+    //Make sure line are rendered in-front of other objects.
     mesh.renderOrder = 1;
     mesh.onBeforeRender = () => {
-      this._material?.resolution.set(window.innerWidth, window.innerHeight);
+      this._material[0].resolution = new THREE.Vector2(window.innerWidth, window.innerHeight);
     };
 
-    return mesh;
+    //Fixed line width when camera is zoom out or far away from the line.
+    const meshSecondary = new Line2(this._geometry, this._material[1]);
+    meshSecondary.computeLineDistances();
+    meshSecondary.renderOrder = 1;
+    meshSecondary.onBeforeRender = () => {
+      this._material[1].resolution = new THREE.Vector2(window.innerWidth, window.innerHeight);
+    };
+
+    const meshGroup = new THREE.Group();
+    meshGroup.add(mesh);
+    meshGroup.add(meshSecondary);
+
+    return meshGroup;
   }
 
   /**
@@ -81,12 +109,8 @@ export class MeasurementLine {
     endPoint?: THREE.Vector3
   ): void {
     const position = new THREE.Vector3();
-    //Check if measurement is ended.
-    if (endPoint) {
-      position.copy(endPoint);
-      this._material?.color.set(new THREE.Color(this._options.color));
-      this._material?.setValues({ opacity: 1.0 });
-    } else {
+    //Check if measurement is not ended.
+    if (!endPoint) {
       //Get position based on the mouse pointer X and Y value.
       const mouse = new THREE.Vector2();
       mouse.x = (offsetX / domElement.clientWidth) * 2 - 1;
@@ -105,8 +129,12 @@ export class MeasurementLine {
       //Note: Using the initial/start point as reference for ray to emit till that distance from camera.
       ray.at(this._distanceToCamera, position);
       //Add transparent color when dragging to make other 3D objects visible for users
-      this._material?.color.set(new THREE.Color(this._options.color));
-      this._material?.setValues({ opacity: 0.5 });
+      this._material[0].opacity = 0.5;
+      this._material[1].opacity = 0.5;
+    } else {
+      position.copy(endPoint);
+      this._material[0].opacity = 1.0;
+      this._material[1].opacity = 1.0;
     }
 
     this._position[3] = position.x;
@@ -124,9 +152,11 @@ export class MeasurementLine {
     this._options.lineWidth = options?.lineWidth ?? this._options.lineWidth;
     this._options.color = options?.color ?? this._options.color;
     //Apply for current line.
-    if (this._material) {
-      this._material?.setValues({ linewidth: this._options.lineWidth });
-      this._material?.color.set(new THREE.Color(this._options.color));
+    if (this._material.length > 1) {
+      this._material[0].linewidth = this._options.lineWidth! * 0.1;
+      this._material[1].linewidth = 2;
+      this._material[0].color.set(new THREE.Color(this._options.color));
+      this._material[1].color.set(new THREE.Color(this._options.color));
     }
   }
 
@@ -162,10 +192,12 @@ export class MeasurementLine {
       this._geometry.dispose();
       this._geometry = null;
     }
-    if (this._material) {
-      this._material.dispose();
-      this._material = null;
+    if (this._material.length > 1) {
+      this._material.forEach(material => {
+        material.dispose();
+      });
     }
+    this._material.splice(0);
   }
 
   /**

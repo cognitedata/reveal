@@ -14,8 +14,8 @@ export class Measurement {
   private readonly _viewer: Cognite3DViewer;
   private readonly _measurementLabel: MeasurementLabels;
   private readonly _line: MeasurementLine;
-  private _lineMesh: THREE.Mesh | null;
   private _axesMesh: THREE.Mesh[];
+  private _lineMesh: THREE.Group | null;
   private readonly _options: MeasurementOptions | undefined;
   private readonly _domElement: HTMLElement;
   private readonly _camera: THREE.Camera;
@@ -52,7 +52,7 @@ export class Measurement {
     //Clear the line objects if exists for new line.
     this._line.clearObjects();
     this._lineMesh = this._line.startLine(intersection.point, intersection.distanceToCamera);
-    this._viewer.addObject3D(this._lineMesh);
+    this._viewer.addObject3D(this._lineMesh!);
   }
 
   /**
@@ -135,7 +135,7 @@ export class Measurement {
    * Get all the line meshes in the measurement.
    * @returns Array of line meshes.
    */
-  getMesh(): THREE.Mesh | null {
+  getMesh(): THREE.Group | null {
     return this._lineMesh;
   }
 

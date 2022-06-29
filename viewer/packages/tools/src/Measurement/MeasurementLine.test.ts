@@ -22,7 +22,8 @@ describe(MeasurementLine.name, () => {
 
   test('Generate line geometry and mesh', () => {
     const position = new THREE.Vector3();
-    const mesh = line.startLine(position, 0);
+    const meshGroup = line.startLine(position, 0);
+    const mesh = meshGroup.children[0] as THREE.Mesh;
 
     expect(mesh.geometry).not.toBeNull();
     expect(mesh.material).not.toBeNull();
@@ -35,14 +36,16 @@ describe(MeasurementLine.name, () => {
   });
 
   test('update the line end point', () => {
-    const position = new THREE.Vector3(100, 100, 100);
-    const mesh = line.startLine(new THREE.Vector3(), 0);
+    let position = new THREE.Vector3();
+    const meshGroup = line.startLine(position, 0);
+    const mesh = meshGroup.children[0] as THREE.Mesh;
 
     let points = mesh.geometry.getAttribute('instanceStart').array;
     let endPoint = new THREE.Vector3(points[3], points[4], points[5]);
 
     expect(endPoint).toEqual(new THREE.Vector3());
 
+    position = new THREE.Vector3(100, 100, 100);
     line.updateLine(0, 0, domElement, camera, position);
 
     points = mesh.geometry.getAttribute('instanceStart').array;
@@ -90,7 +93,8 @@ describe(MeasurementLine.name, () => {
 
   test('Clear line geometry and material', () => {
     const position = new THREE.Vector3();
-    const mesh = line.startLine(position, 0);
+    const meshGroup = line.startLine(position, 0);
+    const mesh = meshGroup.children[0] as THREE.Mesh;
 
     expect(mesh.geometry).not.toBeNull();
     expect(mesh.material).not.toBeNull();
@@ -99,6 +103,6 @@ describe(MeasurementLine.name, () => {
     line.clearObjects();
 
     expect((line as any)._geometry).toBeNull();
-    expect((line as any)._material).toBeNull();
+    expect((line as any)._material.length).toBe(0);
   });
 });
