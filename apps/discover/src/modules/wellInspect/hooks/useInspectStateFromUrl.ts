@@ -27,7 +27,7 @@ export const useInspectStateFromUrl = () => {
     });
 
     if (searchParams) {
-      history.push({
+      history.replace({
         search: searchParams,
       });
     }
