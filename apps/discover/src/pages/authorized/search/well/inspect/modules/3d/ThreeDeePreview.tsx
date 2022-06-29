@@ -3,7 +3,7 @@ import { sortCasingAssembliesByMDBase } from 'domain/wells/casings/internal/tran
 import { useWellLogsWithRowData } from 'domain/wells/log/internal/queries/useWellLogsWithRowData';
 import { useNdsWithTvdData } from 'domain/wells/nds/internal/hooks/useNdsWithTvdData';
 import { useNptEventsQuery } from 'domain/wells/npt/internal/queries/useNptEventsQuery';
-import { useTrajectoriesQuery } from 'domain/wells/trajectory/internal/queries/useTrajectoriesQuery';
+import { useTrajectoriesQuery } from 'domain/wells/trajectory0/internal/queries/useTrajectoriesQuery';
 import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
 
 import React, { useMemo } from 'react';

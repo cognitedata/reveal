@@ -1,13 +1,13 @@
-import { useTrajectoriesMetadataQuery } from 'domain/wells/trajectory/internal/queries/useTrajectoriesMetadataQuery';
+import { useTrajectoriesMetadataQuery } from 'domain/wells/trajectory0/internal/queries/useTrajectoriesMetadataQuery';
 import {
   getMd,
   getMdUnit,
-} from 'domain/wells/trajectory/internal/selectors/getMd';
-import { getTrajectoryForWellbore } from 'domain/wells/trajectory/internal/selectors/getTrajectoryForWellbore';
+} from 'domain/wells/trajectory0/internal/selectors/getMd';
+import { getTrajectoryForWellbore } from 'domain/wells/trajectory0/internal/selectors/getTrajectoryForWellbore';
 import {
   getTvd,
   getTvdUnit,
-} from 'domain/wells/trajectory/internal/selectors/getTvd';
+} from 'domain/wells/trajectory0/internal/selectors/getTvd';
 import { getWaterDepth } from 'domain/wells/well/internal/selectors/getWaterDepth';
 import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
 

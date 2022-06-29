@@ -1,4 +1,4 @@
-import { getAllTrajectories } from 'domain/wells/trajectory/service/network/getAllTrajectories';
+import { getAllTrajectories } from 'domain/wells/trajectory0/service/network/getAllTrajectories';
 
 import { Trajectory } from '@cognite/sdk-wells-v3';
 

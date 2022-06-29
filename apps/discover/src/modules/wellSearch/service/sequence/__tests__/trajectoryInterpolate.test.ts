@@ -4,7 +4,7 @@ import {
   getDummyTrueVerticalDepths,
   getTVDForMD,
   ResponseItemType,
-} from '../../../../../domain/wells/trajectory/service/network/trajectoryInterpolate';
+} from '../../../../../domain/wells/trajectory0/service/network/trajectoryInterpolate';
 
 const mockResponseItems: ResponseItemType[] = [
   {

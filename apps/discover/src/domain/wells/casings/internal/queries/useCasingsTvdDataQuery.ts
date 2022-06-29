@@ -1,5 +1,5 @@
-import { useInterpolateTvdQuery } from 'domain/wells/trajectory/internal/queries/useInterpolateTvdQuery';
-import { getKeyedTvdData } from 'domain/wells/trajectory/internal/utils/getKeyedTvdData';
+import { useInterpolateTvdQuery } from 'domain/wells/trajectory0/internal/queries/useInterpolateTvdQuery';
+import { getKeyedTvdData } from 'domain/wells/trajectory0/internal/utils/getKeyedTvdData';
 
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 

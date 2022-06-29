@@ -85,6 +85,7 @@ export const WELL_QUERY_KEY = {
   TRAJECTORIES: [WELLS, 'trajectories'],
   TRAJECTORIES_LIST: [WELLS, 'trajectories', 'list'],
   TRAJECTORIES_CACHE: [WELLS, 'trajectories', 'cache'],
+  TRAJECTORIES_DATA_CACHE: [WELLS, 'trajectoriesData', 'cache'],
   TRAJECTORIES_INTERPOLATE: [WELLS, 'trajectories', 'interpolate'],
   NDS_EVENTS: [WELLS, 'nds', 'old'],
   NDS_EVENTS_CACHE: [WELLS, 'nds', 'cache'],

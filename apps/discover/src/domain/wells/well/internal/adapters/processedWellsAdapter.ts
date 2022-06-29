@@ -1,5 +1,5 @@
-import { adaptTrajectoryDataToWellbores } from 'domain/wells/trajectory/internal/adapters/adaptTrajectoryDataToWellbores';
-import { TrajectoryData } from 'domain/wells/trajectory/service/types';
+import { adaptTrajectoryDataToWellbores } from 'domain/wells/trajectory0/internal/adapters/adaptTrajectoryDataToWellbores';
+import { TrajectoryData } from 'domain/wells/trajectory0/service/types';
 import { Well } from 'domain/wells/well/internal/types';
 
 import { UserPreferredUnit } from 'constants/units';

@@ -1,3 +1,8 @@
-import { Trajectory } from '@cognite/sdk-wells-v3/dist/src';
+import { TrajectoryDataRequest } from '@cognite/sdk-wells-v3';
 
-export type TrajectoryData = Trajectory;
+import { UserPreferredUnit } from 'constants/units';
+
+export interface TrajectoriesDataRequest {
+  sequenceExternalIds: Set<TrajectoryDataRequest['sequenceExternalId']>;
+  unit?: UserPreferredUnit;
+}

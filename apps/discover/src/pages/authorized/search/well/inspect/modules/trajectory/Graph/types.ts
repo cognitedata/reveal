@@ -4,14 +4,11 @@ import { SequenceColumn } from '@cognite/sdk';
 
 import { UserPreferredUnit } from 'constants/units';
 import { DataError, Errors } from 'modules/inspectTabs/types';
-import {
-  Sequence,
-  TrajectoryRow,
-  TrajectoryRows,
-} from 'modules/wellSearch/types';
+import { TrajectoryRow, TrajectoryRows } from 'modules/wellSearch/types';
 import { ChartDataConfig } from 'tenants/types';
 
 import { Data } from '../../common/Chart/types';
+import { TrajectoryView } from '../types';
 
 export type AddData = {
   row: TrajectoryRow;
@@ -22,9 +19,8 @@ export type AddData = {
   normalizeColumns?: Record<string, string>;
 };
 
-export interface Trajectory2DProps {
-  selectedTrajectoryData: (TrajectoryRows | undefined)[];
-  selectedTrajectories: Sequence[];
+export interface TrajectoryGraphProps {
+  data: TrajectoryView[];
 }
 
 export interface TrajectoryChartProps {

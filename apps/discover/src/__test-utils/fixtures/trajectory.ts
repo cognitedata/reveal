@@ -11,7 +11,7 @@ import { Sequence, TrajectoryRows } from 'modules/wellSearch/types';
 import {
   DimensionType,
   ThreeDCoordinate,
-} from 'pages/authorized/search/well/inspect/modules/trajectory/Trajectory2D/types';
+} from 'pages/authorized/search/well/inspect/modules/trajectory/Graph/types';
 
 import { createdAndLastUpdatedTime } from './log';
 

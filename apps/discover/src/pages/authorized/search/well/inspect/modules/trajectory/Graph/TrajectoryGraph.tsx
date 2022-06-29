@@ -5,23 +5,23 @@ import isEmpty from 'lodash/isEmpty';
 
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 import { useDeepMemo } from 'hooks/useDeep';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 
 import { FullSizedTrajectoryView, TrajectoryGrid } from '../elements';
+import { TrajectoryView } from '../types';
+import { adaptToChartDataList } from '../utils/adaptToChartDataList';
 
 import { TrajectoryChart } from './TrajectoryChart';
-import { TrajectoryChartProps, Trajectory2DProps } from './types';
-import { generateChartData } from './utils/generateChartData';
+import { TrajectoryChartProps } from './types';
 
-export const Trajectory2D: React.FC<Trajectory2DProps> = ({
-  selectedTrajectoryData,
-  selectedTrajectories,
-}) => {
+export interface TrajectoryGraphProps {
+  data: TrajectoryView[];
+}
+
+export const TrajectoryGraph: React.FC<TrajectoryGraphProps> = ({ data }) => {
   const dispatch = useDispatch();
   const { data: config } = useWellConfig();
-  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   const [expandedChart, setExpandedChart] = useState<TrajectoryChartProps>();
   const [autosizeGridView, setAutosizeGridView] = useState<boolean>(true);
@@ -46,21 +46,8 @@ export const Trajectory2D: React.FC<Trajectory2DProps> = ({
   );
 
   const { data: charts, errors } = useDeepMemo(
-    () =>
-      generateChartData(
-        selectedTrajectoryData,
-        selectedTrajectories,
-        chartConfigs,
-        userPreferredUnit,
-        config?.trajectory?.normalizeColumns
-      ),
-    [
-      selectedTrajectoryData,
-      selectedTrajectories,
-      chartConfigs,
-      userPreferredUnit,
-      config?.trajectory?.normalizeColumns,
-    ]
+    () => adaptToChartDataList(data, chartConfigs),
+    [data, chartConfigs]
   );
 
   useEffect(() => {
@@ -107,7 +94,7 @@ export const Trajectory2D: React.FC<Trajectory2DProps> = ({
     <>
       <NoUnmountShowHide show={!expandedChart} fullHeight>
         <TrajectoryGrid>
-          {(charts || []).map((data, index) => (
+          {charts.map((data, index) => (
             <TrajectoryChart
               // eslint-disable-next-line react/no-array-index-key
               key={`chart_${index}`}

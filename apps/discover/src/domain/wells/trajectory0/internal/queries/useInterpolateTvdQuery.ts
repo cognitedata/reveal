@@ -1,5 +1,5 @@
-import { normalizeTvd } from 'domain/wells/trajectory/internal/transformers/normalizeTvd';
-import { GroupedTvdData } from 'domain/wells/trajectory/internal/types';
+import { normalizeTvd } from 'domain/wells/trajectory0/internal/transformers/normalizeTvd';
+import { GroupedTvdData } from 'domain/wells/trajectory0/internal/types';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
 import { useQuery } from 'react-query';

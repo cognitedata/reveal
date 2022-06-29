@@ -2,8 +2,8 @@ import {
   NdsInternal,
   NdsInternalWithTvd,
 } from 'domain/wells/nds/internal/types';
-import { getTvdForMd } from 'domain/wells/trajectory/internal/transformers/getTvdForMd';
-import { TrueVerticalDepthsDataLayer } from 'domain/wells/trajectory/internal/types';
+import { getTvdForMd } from 'domain/wells/trajectory0/internal/transformers/getTvdForMd';
+import { TrueVerticalDepthsDataLayer } from 'domain/wells/trajectory0/internal/types';
 
 import isUndefined from 'lodash/isUndefined';
 import { Fixed } from 'utils/number';

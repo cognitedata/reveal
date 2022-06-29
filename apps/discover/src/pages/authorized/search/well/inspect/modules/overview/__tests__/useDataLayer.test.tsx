@@ -1,7 +1,7 @@
 import 'domain/wells/__mocks/setupWellsMockSDK';
 import { getMockConfigGet } from 'domain/projectConfig/service/__mocks/getMockConfigGet';
 import { getMockUserMe } from 'domain/userManagementService/service/__mocks/getMockUserMe';
-import { getMockTrajectoriesList } from 'domain/wells/trajectory/service/__mocks/getMockWellTrajectories';
+import { getMockTrajectoriesList } from 'domain/wells/trajectory0/service/__mocks/getMockWellTrajectories';
 import { getMockWellsById } from 'domain/wells/well/service/__mocks/getMockWellsById';
 
 import { screen } from '@testing-library/react';
