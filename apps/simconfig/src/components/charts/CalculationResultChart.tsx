@@ -77,7 +77,9 @@ export function CalculationResultChart({
     id: Math.random(),
     plot: Plot.LineRegular({
       label: column,
-      data: data.map((it) => ({ x: it[xAxisColumn], y: it[column] })),
+      data: data
+        .map((it) => ({ x: it[xAxisColumn], y: it[column] }))
+        .sort((dataPointA, dataPointB) => dataPointA.x - dataPointB.x),
       curve,
       color: palette[index],
       width: 1.25,

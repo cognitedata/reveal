@@ -7,7 +7,7 @@ import { ParentSizeModern } from '@visx/responsive';
 import styled from 'styled-components/macro';
 
 import type { OptionType } from '@cognite/cogs.js';
-import { Button, Collapse, Skeleton, toast } from '@cognite/cogs.js';
+import { Button, Collapse, Graphic, Skeleton, toast } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import type { CogniteEvent } from '@cognite/sdk';
 import type { CalculationRunMetadata } from '@cognite/simconfig-api-sdk/rtk';
@@ -35,6 +35,7 @@ export function CalculationRunDetails() {
   const [state, dispatch] = useReducer<
     Reducer<CalculationRunState, CalculationRunAction>
   >(calculationRunReducer, getCalculationRunInitialState());
+  console.log('initial state: ', state);
 
   useEffect(() => {
     async function loadCalculation() {
@@ -163,9 +164,9 @@ export function CalculationRunDetails() {
     void loadCalculation();
   }, [client, runId, state.isChartEnabled]);
 
-  const chart = useMemo(
-    () =>
-      state.data.length ? (
+  const chart = useMemo(() => {
+    if (state.data.length && state.axisColumns?.y) {
+      return (
         <ParentSizeModern>
           {({ width, height }) => (
             <CalculationResultChart
@@ -179,11 +180,19 @@ export function CalculationRunDetails() {
             />
           )}
         </ParentSizeModern>
-      ) : (
-        <Skeleton.Rectangle height="300px" />
-      ),
-    [state]
-  );
+      );
+    }
+
+    if (!state.isChartEnabled) {
+      return <Skeleton.Rectangle height="300px" />;
+    }
+    return (
+      <NoResultContainer>
+        <Graphic type="Search" />
+        <p>No data available.</p>
+      </NoResultContainer>
+    );
+  }, [state]);
 
   if (!state.run || !state.run.metadata) {
     return (
@@ -411,6 +420,13 @@ const CalculationHeader = styled.header`
     display: flex;
     align-items: center;
   }
+`;
+
+const NoResultContainer = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 const CalculationDetails = styled.div`
