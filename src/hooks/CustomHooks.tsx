@@ -6,7 +6,7 @@ import queryString from 'query-string';
 import { IdEither } from '@cognite/sdk';
 import { extractUniqueIds } from 'utils/idUtils';
 import { SdkResourceType, useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { unionBy } from 'lodash';
+import unionBy from 'lodash/unionBy';
 
 export function usePrevious<T>(value: T) {
   const ref = useRef<T>();
@@ -45,7 +45,6 @@ interface UseDisclosureProps {
  * @param props {isOpen:Boolean}
  * @returns
  */
-
 export const useDisclosure = (props?: UseDisclosureProps) => {
   const [isOpen, setIsOpen] = useState(false || !!props?.isOpen);
 

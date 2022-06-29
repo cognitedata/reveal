@@ -1,6 +1,6 @@
 import React from 'react';
 import { Icon, Button, Tooltip } from '@cognite/cogs.js';
-import { Row, Col } from 'antd';
+import { Row, Col, Badge } from 'antd';
 import { ResourceType } from 'types';
 import { ResourceFilterProps, SetResourceFilterProps } from 'CommonProps';
 import {
@@ -12,13 +12,23 @@ import {
 } from 'components';
 import { lightGrey } from 'utils/Colors';
 import styled from 'styled-components';
+import {
+  getSelectedFilter,
+  countByFilter,
+  FiltersWithResourceType,
+  FilterType,
+} from 'utils/FilterCountUtils';
 
 const TRANSITION_TIME = 200;
+interface IFilterIcon {
+  filter: FilterType;
+}
 
-type FilterProps = Required<ResourceFilterProps> &
+export type FilterProps = Required<ResourceFilterProps> &
   SetResourceFilterProps & {
     resourceType: ResourceType;
   };
+
 const Filters = ({
   resourceType,
   assetFilter,
@@ -65,6 +75,19 @@ const Filters = ({
   }
 };
 
+const FilterIconWithCount = ({ filter }: IFilterIcon) => {
+  const filterCount = countByFilter(filter);
+  if (filterCount !== 0) {
+    return (
+      <Badge count={filterCount}>
+        <Icon type="Filter" />
+      </Badge>
+    );
+  }
+
+  return <Icon type="Filter" />;
+};
+
 export const SearchFilters = ({
   visible = true,
   allowHide = true,
@@ -86,61 +109,68 @@ export const SearchFilters = ({
   allowHide?: boolean;
   closeFilters?: () => void;
 } & Required<ResourceFilterProps> &
-  SetResourceFilterProps) => (
-  <div
-    style={{
-      display: 'flex',
-      flex: '0 1 auto',
-      flexDirection: 'column',
-      width: visible ? 260 : 0,
-      marginLeft: 1,
-      borderRight: `1px solid ${lightGrey}`,
-      visibility: visible ? 'visible' : 'hidden',
-      transition: `visibility 0s linear ${TRANSITION_TIME}ms, width ${TRANSITION_TIME}ms ease`,
-    }}
-  >
-    {visible && (
-      <>
-        <HeaderRow align="middle" justify="center">
-          <IconCol flex="none">
-            <Icon type="Filter" />
-          </IconCol>
-          <Col flex="auto">Filters</Col>
-          {allowHide && (
-            <Col flex="none">
-              <HideFiltersTooltip content="Hide">
-                <Button icon="PanelLeft" type="ghost" onClick={closeFilters} />
-              </HideFiltersTooltip>
-            </Col>
-          )}
-        </HeaderRow>
-        <div
-          style={{
-            paddingLeft: 1,
-            paddingRight: 16,
-            paddingBottom: 16,
-            overflow: 'auto',
-            height: '100%',
-          }}
-        >
-          <Filters
-            resourceType={resourceType}
-            assetFilter={assetFilter}
-            setAssetFilter={setAssetFilter}
-            timeseriesFilter={timeseriesFilter}
-            setTimeseriesFilter={setTimeseriesFilter}
-            sequenceFilter={sequenceFilter}
-            setSequenceFilter={setSequenceFilter}
-            eventFilter={eventFilter}
-            setEventFilter={setEventFilter}
-            fileFilter={fileFilter}
-            setFileFilter={setFileFilter}
-          />
-        </div>
-      </>
-    )}
-  </div>
-);
+  SetResourceFilterProps) => {
+  const selectedFilter = getSelectedFilter({
+    resourceType,
+    assetFilter,
+    timeseriesFilter,
+    sequenceFilter,
+    eventFilter,
+    fileFilter,
+  } as FiltersWithResourceType);
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flex: '0 1 auto',
+        flexDirection: 'column',
+        width: visible ? 260 : 0,
+        marginLeft: 1,
+        borderRight: `1px solid ${lightGrey}`,
+        visibility: visible ? 'visible' : 'hidden',
+        transition: `visibility 0s linear ${TRANSITION_TIME}ms, width ${TRANSITION_TIME}ms ease`,
+      }}
+    >
+      {visible && (
+        <>
+          <HeaderRow align="middle" justify="center">
+            <IconCol flex="none">
+              <FilterIconWithCount filter={selectedFilter} />
+            </IconCol>
+            <Col flex="auto">Filters</Col>
+            {allowHide && (
+              <Col flex="none">
+                <HideFiltersTooltip content="Hide">
+                  <Button
+                    icon="PanelLeft"
+                    type="ghost"
+                    onClick={closeFilters}
+                  />
+                </HideFiltersTooltip>
+              </Col>
+            )}
+          </HeaderRow>
+          <StyledFilters>
+            <Filters
+              resourceType={resourceType}
+              assetFilter={assetFilter}
+              setAssetFilter={setAssetFilter}
+              timeseriesFilter={timeseriesFilter}
+              setTimeseriesFilter={setTimeseriesFilter}
+              sequenceFilter={sequenceFilter}
+              setSequenceFilter={setSequenceFilter}
+              eventFilter={eventFilter}
+              setEventFilter={setEventFilter}
+              fileFilter={fileFilter}
+              setFileFilter={setFileFilter}
+            />
+          </StyledFilters>
+        </>
+      )}
+    </div>
+  );
+};
 
 const IconCol = styled(Col)`
   margin-right: 16px;
@@ -158,4 +188,12 @@ const HeaderRow = styled(Row)`
 
 const HideFiltersTooltip = styled(Tooltip)`
   margin-bottom: 8px;
+`;
+
+const StyledFilters = styled.div`
+  padding-left: 1px;
+  padding-right: 16px;
+  padding-bottom: 16px;
+  overflow: auto;
+  height: 100%;
 `;
