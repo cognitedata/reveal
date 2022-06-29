@@ -17,7 +17,8 @@ export class MeasurementUi {
   private state = {
     lineWidth: 2.0,
     color: 0x00FFFF,
-    allMeasurement: false
+    allMeasurement: false,
+    showAllMeasurementLabels: true
   };
 
   private measurement = {
@@ -64,6 +65,10 @@ export class MeasurementUi {
     this._guiController.push(this._gui.add(this.state, 'allMeasurement').name('Show all Measurement').onChange(allMeasurement => {
       this.state.allMeasurement = allMeasurement;
       this.measurementObjectsUI(allMeasurement);
+    }));
+    this._guiController.push(this._gui.add(this.state, 'showAllMeasurementLabels').name('Show Measurement Labels').onChange(showAllMeasurementLabels => {
+      this.state.showAllMeasurementLabels = showAllMeasurementLabels;
+      this._measurementTool.showMeasurementLabels(showAllMeasurementLabels);
     }));
   }
 
