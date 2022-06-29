@@ -140,9 +140,7 @@ const ListView: React.FC<Props> = ({
         <Actions
           set={original}
           handleOpenModal={handleOpenModal}
-          showEditButton={_isOwner}
-          showDeleteButton={_isOwner}
-          showShareButton={_isOwner}
+          isFavoriteOwner={_isOwner}
         />
         <CommentButton
           size="default"
@@ -152,6 +150,7 @@ const ListView: React.FC<Props> = ({
               targetType: COMMENT_NAMESPACE.favorite,
             })
           }
+          toggled={commentTarget?.id === original.id}
         />
       </>
     );

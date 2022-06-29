@@ -9,6 +9,7 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import isEmpty from 'lodash/isEmpty';
+import isEqual from 'lodash/isEqual';
 
 import { CommentTarget, SetCommentTarget } from '@cognite/react-comments';
 
@@ -55,6 +56,11 @@ export const FavoriteContent: React.FC<Props> = ({
   React.useEffect(() => {
     return () => setCommentTarget(undefined);
   }, []);
+
+  const setComment = (target: CommentTarget | undefined) => {
+    const value = isEqual(target, commentTarget) ? undefined : target;
+    setCommentTarget(value);
+  };
 
   const { isOwner } = useIsOwner();
 
@@ -111,7 +117,8 @@ export const FavoriteContent: React.FC<Props> = ({
               handleOpenModal={handleOpenModal}
               sets={favoriteSets || []}
               isOwner={isOwner}
-              setCommentTarget={setCommentTarget}
+              setCommentTarget={setComment}
+              commentTarget={commentTarget}
             />
           ) : (
             <ListView
@@ -119,7 +126,7 @@ export const FavoriteContent: React.FC<Props> = ({
               handleOpenModal={handleOpenModal}
               sets={favoriteSets || []}
               isOwner={isOwner}
-              setCommentTarget={setCommentTarget}
+              setCommentTarget={setComment}
               commentTarget={commentTarget}
             />
           )}

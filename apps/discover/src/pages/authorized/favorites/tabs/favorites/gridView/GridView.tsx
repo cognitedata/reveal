@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { CommentTarget } from '@cognite/comment-service-types';
 import { SetCommentTarget } from '@cognite/react-comments';
 
 import { FavoriteSummary } from 'modules/favorite/types';
@@ -16,6 +17,7 @@ interface Props {
   handleNavigateFavoriteSet: (item: FavoriteSummary) => void;
   isOwner: (userId: string) => boolean;
   setCommentTarget: SetCommentTarget;
+  commentTarget?: CommentTarget;
 }
 
 export const GridView: React.FC<Props> = ({
@@ -24,6 +26,7 @@ export const GridView: React.FC<Props> = ({
   sets,
   setCommentTarget,
   isOwner,
+  commentTarget,
 }) => {
   return (
     <Container>
@@ -37,6 +40,7 @@ export const GridView: React.FC<Props> = ({
               onClick={handleNavigateFavoriteSet}
               handleOpenModal={handleOpenModal}
               setCommentTarget={setCommentTarget}
+              isCommentTarget={commentTarget?.id === favorite.id}
             />
           );
         })}

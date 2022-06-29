@@ -18,17 +18,13 @@ import { ModalType } from './types';
 
 interface Props {
   set: FavoriteSummary;
-  showShareButton: boolean;
-  showEditButton: boolean;
-  showDeleteButton: boolean;
+  isFavoriteOwner: boolean;
   handleOpenModal: (modal: ModalType, set: FavoriteSummary) => void;
 }
 
 const Actions: React.FC<Props> = ({
   set,
-  showShareButton,
-  showEditButton,
-  showDeleteButton,
+  isFavoriteOwner,
   handleOpenModal,
 }) => {
   const openModal = (modal: ModalType) => {
@@ -49,24 +45,18 @@ const Actions: React.FC<Props> = ({
               >
                 {DUPLICATE_FAVORITE_CARD_BUTTON}
               </Dropdown.Item>
-              {showEditButton && (
-                <Dropdown.Item
-                  onClick={() => openModal(EDIT_FAVORITE_CARD_BUTTON)}
-                >
-                  {EDIT_FAVORITE_CARD_BUTTON}
-                </Dropdown.Item>
-              )}
-
-              {showShareButton && (
-                <Dropdown.Item
-                  onClick={() => openModal(SHARE_FAVORITE_CARD_BUTTON)}
-                >
-                  {SHARE_FAVORITE_CARD_BUTTON}
-                </Dropdown.Item>
-              )}
-
-              {showDeleteButton && (
+              {isFavoriteOwner && (
                 <>
+                  <Dropdown.Item
+                    onClick={() => openModal(EDIT_FAVORITE_CARD_BUTTON)}
+                  >
+                    {EDIT_FAVORITE_CARD_BUTTON}
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => openModal(SHARE_FAVORITE_CARD_BUTTON)}
+                  >
+                    {SHARE_FAVORITE_CARD_BUTTON}
+                  </Dropdown.Item>
                   <Dropdown.Divider />
                   <DangerButton
                     onClick={() => openModal(DELETE_FAVORITE_CARD_BUTTON)}

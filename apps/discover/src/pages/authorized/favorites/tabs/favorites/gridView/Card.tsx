@@ -36,6 +36,7 @@ export interface Props {
   handleOpenModal: (modal: ModalType, set: FavoriteSummary) => void;
   isFavoriteSetOwner: boolean;
   setCommentTarget: SetCommentTarget;
+  isCommentTarget?: boolean;
 }
 
 export const FavouriteCard: React.FC<Props> = ({
@@ -44,6 +45,7 @@ export const FavouriteCard: React.FC<Props> = ({
   setCommentTarget,
   handleOpenModal,
   isFavoriteSetOwner,
+  isCommentTarget,
 }) => {
   const metrics = useGlobalMetrics('favorites');
   const { t } = useTranslation('Favorites');
@@ -87,13 +89,12 @@ export const FavouriteCard: React.FC<Props> = ({
                   targetType: COMMENT_NAMESPACE.favorite,
                 })
               }
+              toggled={isCommentTarget}
             />
             <Actions
               set={favorite}
               handleOpenModal={handleOpenModal}
-              showEditButton={isFavoriteSetOwner}
-              showDeleteButton={isFavoriteSetOwner}
-              showShareButton={isFavoriteSetOwner}
+              isFavoriteOwner={isFavoriteSetOwner}
             />
           </>
         )
