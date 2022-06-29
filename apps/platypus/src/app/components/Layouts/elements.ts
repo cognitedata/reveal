@@ -79,7 +79,7 @@ export const SplitPanel = styled.div`
 
   .divider {
     height: 100%;
-    border: 1px solid #ccc;
+    border-right: 1px solid #ccc;
   }
 
   .split-panel-content {
