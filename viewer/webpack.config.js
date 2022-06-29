@@ -41,11 +41,15 @@ module.exports = env => {
         }
       : {
           index: './index.ts',
-          'extensions/datasource': './extensions/datasource.ts',
-          tools: './tools.ts'
+          tools: './tools.ts',
+          'extensions/datasource': './extensions/datasource.ts'
         },
     target: 'web',
     resolve: {
+      fallback: {
+        fs: false,
+        path: require.resolve('path-browserify')
+      },
       extensions: ['.tsx', '.ts', '.js'],
       symlinks: true
     },
@@ -104,18 +108,15 @@ module.exports = env => {
       path: path.resolve(__dirname, 'dist'),
       sourceMapFilename: '[name].map',
       globalObject: `(typeof self !== 'undefined' ? self : this)`,
-      libraryTarget: 'umd'
+      library: {
+        name: '@cognite/reveal',
+        type: 'umd'
+      }
     },
     devtool: development ? 'inline-source-map' : 'source-map',
     watchOptions: {
       aggregateTimeout: 1500,
-      ignored: [/node_modules/]
-    },
-    optimization: {
-      usedExports: true
-    },
-    node: {
-      fs: 'empty'
+      ignored: /node_modules/
     },
     plugins: [
       new copyPkgJsonPlugin({
