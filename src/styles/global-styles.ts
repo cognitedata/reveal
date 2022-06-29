@@ -40,6 +40,11 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
   .ant-descriptions-row pre {
     margin: 0;
   }
+
+  pre {
+	  white-space: pre-wrap;
+	  word-wrap: break-word;
+  }
 `;
 
 export default GlobalStyle;
