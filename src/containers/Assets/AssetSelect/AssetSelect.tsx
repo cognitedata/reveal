@@ -5,7 +5,7 @@ import {
   useSearch,
   useList,
 } from '@cognite/sdk-react-query-hooks';
-import { useDebounce } from 'use-debounce/lib';
+import { useDebounce } from 'use-debounce';
 import { Select } from 'components';
 import { Props, OptionTypeBase } from 'react-select';
 
