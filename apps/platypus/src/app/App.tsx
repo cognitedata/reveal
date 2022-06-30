@@ -8,7 +8,6 @@ import Routes from './Routes';
 import { getTenant } from './utils/tenant-utils';
 import { QueryClientProvider } from 'react-query';
 import { queryClient } from './queryClient';
-import NoAccessWrapper from './components/NoAccessPage/NoAccessWrapper';
 
 // Globally defined global
 // GraphiQL package needs this to be run correctly
@@ -21,13 +20,11 @@ function App() {
       <ContainerProvider container={rootInjector}>
         <ToastContainer />
         <StyledWrapper>
-          <NoAccessWrapper>
-            <Router basename={tenant}>
-              <StyledPage>
-                <Routes />
-              </StyledPage>
-            </Router>
-          </NoAccessWrapper>
+          <Router basename={tenant}>
+            <StyledPage>
+              <Routes />
+            </StyledPage>
+          </Router>
         </StyledWrapper>
       </ContainerProvider>
     </QueryClientProvider>

@@ -7,7 +7,6 @@ export const config = {
     'files',
     'templategroups',
     'templates',
-    'groups',
   ],
   builtInTypes: {
     Asset: 'assets',
