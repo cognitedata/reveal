@@ -708,7 +708,7 @@ __metadata:
     "@types/jsdom": 16.2.14
     "@types/lodash": 4.14.182
     "@types/mixpanel-browser": 2.38.0
-    "@types/node": 16.11.41
+    "@types/node": 16.11.42
     "@types/offscreencanvas": 2019.7.0
     "@types/proj4": ^2.5.2
     "@types/random-seed": 0.3.3
@@ -729,7 +729,7 @@ __metadata:
     eslint-plugin-header: 3.1.1
     eslint-plugin-jsdoc: 39.3.3
     eslint-plugin-lodash: 7.4.0
-    eslint-plugin-prettier: 4.1.0
+    eslint-plugin-prettier: 4.2.1
     eslint-plugin-unused-imports: 2.0.0
     file-loader: 6.2.0
     geo-three: 0.0.17
@@ -768,7 +768,7 @@ __metadata:
     webpack: ^5.73.0
     webpack-bundle-analyzer: ^4.5.0
     webpack-cli: ^4.10.0
-    webpack-dev-server: ^4.9.2
+    webpack-dev-server: 4.9.3
     webpack-log: ^3.0.2
     webpack-node-externals: ^3.0.0
     whatwg-fetch: 3.6.2
@@ -1744,10 +1744,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:16.11.41":
-  version: 16.11.41
-  resolution: "@types/node@npm:16.11.41"
-  checksum: 808e4d65757bb13cf25e88dfa4e65880efef06652b04baecb051eb90cf090dda9812aa3505b31e963a48041eed7dbe0fc59c44c7c5e117da952ff951bf3a584a
+"@types/node@npm:16.11.42":
+  version: 16.11.42
+  resolution: "@types/node@npm:16.11.42"
+  checksum: a1746910cf27c9e8597805556c943bde5e630c5c4e03bdd2513ccd7fe5fce1ed912f51f5d0ce5dcda0583e5539177f76ad35a19caa9525307d7a722aa9962631
   languageName: node
   linkType: hard
 
@@ -4259,10 +4259,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"connect-history-api-fallback@npm:^1.6.0":
-  version: 1.6.0
-  resolution: "connect-history-api-fallback@npm:1.6.0"
-  checksum: 804ca2be28c999032ecd37a9f71405e5d7b7a4b3defcebbe41077bb8c5a0a150d7b59f51dcc33b2de30bc7e217a31d10f8cfad27e8e74c2fc7655eeba82d6e7e
+"connect-history-api-fallback@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "connect-history-api-fallback@npm:2.0.0"
+  checksum: dc5368690f4a5c413889792f8df70d5941ca9da44523cde3f87af0745faee5ee16afb8195434550f0504726642734f2683d6c07f8b460f828a12c45fbd4c9a68
   languageName: node
   linkType: hard
 
@@ -5114,9 +5114,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-prettier@npm:4.1.0":
-  version: 4.1.0
-  resolution: "eslint-plugin-prettier@npm:4.1.0"
+"eslint-plugin-prettier@npm:4.2.1":
+  version: 4.2.1
+  resolution: "eslint-plugin-prettier@npm:4.2.1"
   dependencies:
     prettier-linter-helpers: ^1.0.0
   peerDependencies:
@@ -5125,7 +5125,7 @@ __metadata:
   peerDependenciesMeta:
     eslint-config-prettier:
       optional: true
-  checksum: 3f731b9988383851f1a42bd67a093461886fc56dc5d0ca4c72bdd0755dc0f843faedde843c1812710a75782a9711096aad22b6140fe7d6f996cc4a672c8b3643
+  checksum: b9e839d2334ad8ec7a5589c5cb0f219bded260839a857d7a486997f9870e95106aa59b8756ff3f37202085ebab658de382b0267cae44c3a7f0eb0bcc03a4f6d6
   languageName: node
   linkType: hard
 
@@ -11355,9 +11355,9 @@ typescript@4.7.4:
   languageName: node
   linkType: hard
 
-"webpack-dev-server@npm:^4.9.2":
-  version: 4.9.2
-  resolution: "webpack-dev-server@npm:4.9.2"
+"webpack-dev-server@npm:4.9.3":
+  version: 4.9.3
+  resolution: "webpack-dev-server@npm:4.9.3"
   dependencies:
     "@types/bonjour": ^3.5.9
     "@types/connect-history-api-fallback": ^1.3.5
@@ -11371,7 +11371,7 @@ typescript@4.7.4:
     chokidar: ^3.5.3
     colorette: ^2.0.10
     compression: ^1.7.4
-    connect-history-api-fallback: ^1.6.0
+    connect-history-api-fallback: ^2.0.0
     default-gateway: ^6.0.3
     express: ^4.17.3
     graceful-fs: ^4.2.6
@@ -11395,7 +11395,7 @@ typescript@4.7.4:
       optional: true
   bin:
     webpack-dev-server: bin/webpack-dev-server.js
-  checksum: 201e28445f59df55a31728885defe5bf5ae7880fa1dd563f370131794f8c02fd63fcd51bbca67a34f0df232e83b5f883d452d2b0ed1954eb257d574c0c76b46d
+  checksum: 845f2cc8e79a348ee7b17080eef9b332c675540888e0bc97ec6b62174882aca7995eaa7a3f49cfdd9af186da22f2f335fd03cb3c55cd49e387c8a3dc59700d66
   languageName: node
   linkType: hard
 
