@@ -35,7 +35,7 @@ export class MeasurementUi {
       // 1 meters = 3.281 feet
       const distanceInFeet = distance * 3.281;
       return { distance: distanceInFeet, units: 'ft'};
-     }, axesComponents: false});
+     }, axesComponents: true});
     this._gui = ui.addFolder('Types');
     this._guiController = [];
     this._measurementObjectControllerUi = [];
@@ -146,7 +146,7 @@ export class MeasurementUi {
         count++;
         const measurementGui = this._gui.addFolder('Measurement ' + count.toString());
         this._subFolders.push(measurementGui);
-        this._measurementObjectControllerUi.push(this._gui.add({select: objects.select.bind(this, meshGroup)}, 'select').name('mesh' + count.toString()));
+        this._measurementObjectControllerUi.push(measurementGui.add({select: objects.select.bind(this, meshGroup)}, 'select').name('mesh' + count.toString()));
         this._measurementObjectControllerUi.push(measurementGui.add({delete: objects.delete.bind(this, meshGroup)}, 'delete').name('delete'));
         this._measurementObjectControllerUi.push(measurementGui.add({axesComponent: objects.axesComponent.bind(this, meshGroup)}, 'axesComponent').name('axesComponent'));
       });

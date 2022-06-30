@@ -78,9 +78,7 @@ export class Measurement {
     //Add the measurement label.
     this._labelElement = this.addLabel(this._line.getMidPointOnLine(), distanceValue);
 
-    // if (this._options?.axisComponents) {
     this.addAxisMeasurement();
-    // }
   }
 
   /**
@@ -185,6 +183,7 @@ export class Measurement {
         this._viewer.addObject3D(mesh);
       });
       this.addAxisLabels();
+      this.showAxesComponent(this._options!);
     }
   }
 

@@ -135,7 +135,13 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   showMeasurementLabels(enable: boolean): void {
     if (this._htmlOverlay) {
       this._htmlOverlay.visible(enable);
+      this._options = {
+        changeMeasurementLabelMetrics: this._options?.changeMeasurementLabelMetrics,
+        ...this._options,
+        axesComponents: enable
+      };
     }
+    this.showAllAxesComponent(this._options!);
   }
 
   /**
