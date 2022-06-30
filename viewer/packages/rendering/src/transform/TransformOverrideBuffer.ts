@@ -97,14 +97,16 @@ export class TransformOverrideBuffer {
     newTextureBuffer.set(this._textureBuffer);
 
     const newDataTexture = new THREE.DataTexture(
-      this._textureBuffer,
-      this._textureBuffer.length,
+      newTextureBuffer,
+      newTextureBuffer.length,
       1,
       THREE.RedFormat,
       THREE.FloatType
     );
 
-    for (let i = currentTextureBufferLength; i < currentTextureBufferLength * 2; i++) {
+    const currentLastMatrixIndex = currentTextureBufferLength / TransformOverrideBuffer.NUMBER_OF_ELEMENTS_PER_MATRIX;
+
+    for (let i = currentLastMatrixIndex; i < currentLastMatrixIndex * 2; i++) {
       this._unusedIndices.push(i);
     }
 

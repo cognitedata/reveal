@@ -17,7 +17,7 @@ export class NodeTransformTextureBuilder {
   private readonly _transformOverrideIndexBufferView: Float32Array;
 
   constructor(treeIndexCount: number, transformProvider: NodeTransformProvider) {
-    const { dataTexture, bufferView } = allocateTransformOverrideTexture(treeIndexCount);
+    const { dataTexture, bufferView } = allocateTransformOverrideIndexTexture(treeIndexCount);
     this._transformOverrideIndexTexture = dataTexture;
     this._transformOverrideIndexBufferView = bufferView;
     this._transformOverrideBuffer = new TransformOverrideBuffer(this.handleNewTransformTexture.bind(this));
@@ -83,7 +83,7 @@ export class NodeTransformTextureBuilder {
   }
 }
 
-function allocateTransformOverrideTexture(treeIndexCount: number): {
+function allocateTransformOverrideIndexTexture(treeIndexCount: number): {
   dataTexture: THREE.DataTexture;
   bufferView: Float32Array;
 } {
