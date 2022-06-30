@@ -13,6 +13,8 @@ import {
   ResourceSelector,
 } from '../context';
 
+const UNSPLASH_URL = 'https://unsplash.it/300/400';
+
 export const ResourcePreviewContextFunctions = (_: ResourcePreviewObserver) =>
   null;
 export const ResourcePreviewPropsFunctions = (_: ResourcePreviewProps) => null;
@@ -26,7 +28,7 @@ export const ResourceSelectorPropsFunctions: React.FC<OpenSelectorProps> = (
 export const sdkMock = {
   get: async (query: string) => {
     if (query.includes('icon')) {
-      const reponse = await fetch('//unsplash.it/300/400');
+      const reponse = await fetch(UNSPLASH_URL);
       const arrayBuffer = await reponse.arrayBuffer();
       return arrayBuffer;
     }
@@ -96,7 +98,7 @@ export const sdkMock = {
     ],
   },
   files: {
-    getDownloadUrls: async () => [{ downloadUrl: '//unsplash.it/300/300' }],
+    getDownloadUrls: async () => [{ downloadUrl: UNSPLASH_URL }],
   },
   datapoints: {
     retrieve: async () => datapoints.items,
@@ -106,4 +108,5 @@ export const sdkMock = {
 export const Container = styled.div`
   padding: 20px;
   display: flex;
+  height: 100%;
 `;

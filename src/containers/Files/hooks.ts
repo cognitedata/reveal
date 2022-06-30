@@ -50,7 +50,7 @@ export const useAnnotations = (fileId: number) => {
 
   // To Get only the annotation of resource type assets
   const eventsWithAsset = totalEvents.filter(
-    item => item.metadata?.CDF_ANNOTATION_resource_type
+    item => item.metadata?.CDF_ANNOTATION_resource_type === 'assets'
   );
 
   const uniqueAssetsIdSet = new Set<number>();

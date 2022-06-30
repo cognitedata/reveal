@@ -7,7 +7,7 @@ import {
   convertCogniteAnnotationToIAnnotation,
 } from '@cognite/react-picture-annotation';
 import { Loader } from 'components';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import {
   isFilePreviewable,
   readablePreviewableFileTypes,
@@ -41,6 +41,10 @@ export const FilePreview = ({
     ProposedCogniteAnnotation[]
   >([]);
 
+  const [zoomedAnnotation, setZoomedAnnotation] = useState<
+    CogniteAnnotation | undefined
+  >();
+
   useEffect(() => {
     setPendingAnnotations([]);
   }, [fileId]);
@@ -49,6 +53,9 @@ export const FilePreview = ({
       setPendingAnnotations([]);
     }
   }, [creatable]);
+
+  // Arbitrary number to set zoom scale
+  const SCALE = 0.8;
 
   const { data: file, isFetched: fileFetched } = useCdfItem<FileInfo>('files', {
     id: fileId,
@@ -90,9 +97,16 @@ export const FilePreview = ({
     );
   }
 
+  const handleAnnotationSelectedFromDoc = (
+    annotation: (CogniteAnnotation | ProposedCogniteAnnotation)[]
+  ) => {
+    const selectedAnnotation = annotation[0];
+    setZoomedAnnotation(selectedAnnotation as CogniteAnnotation | undefined);
+  };
+
   return (
-    <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-      <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+    <StyledFilePreviewWrapper>
+      <StyledWrapper>
         <CogniteFileViewer.FileViewer
           file={file}
           creatable={creatable}
@@ -102,6 +116,10 @@ export const FilePreview = ({
           )}
           hoverable
           hideDownload
+          onAnnotationSelected={handleAnnotationSelectedFromDoc}
+          zoomOnAnnotation={
+            zoomedAnnotation && { annotation: zoomedAnnotation, scale: SCALE }
+          }
           renderAnnotation={(annotation, isAnnotationSelected) => {
             const iAnnotation = convertCogniteAnnotationToIAnnotation(
               annotation,
@@ -122,18 +140,35 @@ export const FilePreview = ({
             onUpdate: () => false,
           }}
         />
-      </div>
+      </StyledWrapper>
       <AnnotationPreviewSidebar
         file={file}
         setPendingAnnotations={setPendingAnnotations}
+        setZoomedAnnotation={setZoomedAnnotation}
         contextualization={contextualization}
         onItemClicked={onItemClicked}
         annotations={allAnnotations}
         fileIcon={fileIcon}
       />
-    </div>
+    </StyledFilePreviewWrapper>
   );
 };
+
+const commonStyling = css`
+  flex: 1;
+  overflow: hidden;
+  height: 100%;
+`;
+
+const StyledWrapper = styled.div`
+  ${commonStyling}
+  position: relative;
+`;
+
+const StyledFilePreviewWrapper = styled.div`
+  display: flex;
+  ${commonStyling}
+`;
 
 const CenteredPlaceholder = styled.div`
   justify-content: center;

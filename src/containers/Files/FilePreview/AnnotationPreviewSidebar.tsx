@@ -14,6 +14,7 @@ import {
   useSelectedAnnotations,
   ProposedCogniteAnnotation,
   useExtractFromCanvas,
+  useZoomControls,
 } from '@cognite/react-picture-annotation';
 import { Divider, InfoGrid, InfoCell } from 'components';
 import { Dropdown, Pagination, Spin } from 'antd';
@@ -60,6 +61,9 @@ type Props = {
   setPendingAnnotations: React.Dispatch<
     React.SetStateAction<ProposedCogniteAnnotation[]>
   >;
+  setZoomedAnnotation: (
+    zoomedAnnotation: CogniteAnnotation | undefined
+  ) => void;
   annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
   fileIcon?: React.ReactNode;
 };
@@ -74,6 +78,7 @@ interface AnnotationModalStateProps {
 const AnnotationPreviewSidebar = ({
   file,
   setPendingAnnotations,
+  setZoomedAnnotation,
   contextualization,
   onItemClicked,
   annotations,
@@ -93,13 +98,14 @@ const AnnotationPreviewSidebar = ({
     });
 
   const [editing, setEditing] = useState<boolean>(false);
-  const [currentIndex, setCurrentIndex] = useState<number>(3);
+  const [currentIndex, setCurrentIndex] = useState<number>(3); // why 3?
   const [viewingAnnotations, setViewingAnnotations] = useState<
     'assets' | 'files' | undefined
   >();
 
   const { selectedAnnotations = [], setSelectedAnnotations } =
     useSelectedAnnotations();
+  const { reset } = useZoomControls();
 
   const selectedAnnotation = selectedAnnotations?.length
     ? selectedAnnotations[currentIndex || 0]
@@ -408,6 +414,7 @@ const AnnotationPreviewSidebar = ({
               <Button
                 icon="ArrowLeft"
                 onClick={() => {
+                  reset?.();
                   setViewingAnnotations(
                     apiType === 'assets' || apiType === 'files'
                       ? apiType
@@ -428,7 +435,14 @@ const AnnotationPreviewSidebar = ({
                 <Dropdown overlay={menuOptions}>
                   <Icon type="EllipsisVertical" />
                 </Dropdown>
-                <Button icon="Close" type="ghost" onClick={onClose} />
+                <Button
+                  icon="Close"
+                  type="ghost"
+                  onClick={() => {
+                    reset?.();
+                    onClose();
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -532,7 +546,10 @@ const AnnotationPreviewSidebar = ({
           header={
             <Header
               annotation={selectedAnnotation}
-              onClose={() => setSelectedAnnotations([])}
+              onClose={() => {
+                setSelectedAnnotations([]);
+                reset?.();
+              }}
             />
           }
           footer={
@@ -583,6 +600,7 @@ const AnnotationPreviewSidebar = ({
       approveAnnotations={approveAnnotations}
       viewingAnnotations={viewingAnnotations}
       setViewingAnnotations={setViewingAnnotations}
+      setZoomedAnnotation={setZoomedAnnotation}
     />
   );
 };

@@ -246,8 +246,8 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
     }
 
     if (isError || !data) {
-      // eslint-disable-next-line no-console
       if (error) {
+        // eslint-disable-next-line no-console
         console.error(error);
       }
       setAssetNodesById(prevState => ({
@@ -471,6 +471,7 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
 
     // eslint-disable-next-line @typescript-eslint/no-shadow
     const rootNodes = mapAssetNodeToTreeNode(rootIds);
+    // eslint-disable-next-line no-console
     console.log('roots', rootNodes);
 
     return (

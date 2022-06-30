@@ -15,6 +15,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import {
   ProposedCogniteAnnotation,
   useSelectedAnnotations,
+  useZoomControls,
 } from '@cognite/react-picture-annotation';
 import { AppContext } from 'context/AppContext';
 import AnnotationsList from 'components/AnnotationsList';
@@ -30,6 +31,9 @@ interface FilePreviewSidebarProps {
   approveAnnotations: (updatePatch: CogniteAnnotationPatch[]) => void;
   viewingAnnotations?: 'assets' | 'files';
   setViewingAnnotations: (type: 'assets' | 'files' | undefined) => void;
+  setZoomedAnnotation: (
+    zoomedAnnotation: CogniteAnnotation | undefined
+  ) => void;
 }
 
 const FilePreviewSidebar = ({
@@ -39,12 +43,14 @@ const FilePreviewSidebar = ({
   approveAnnotations,
   viewingAnnotations,
   setViewingAnnotations,
+  setZoomedAnnotation,
 }: FilePreviewSidebarProps) => {
   const sdk = useSDK();
   const context = useContext(AppContext);
   const email = context?.userInfo?.email || 'UNKNOWN';
 
   const { setSelectedAnnotations } = useSelectedAnnotations();
+  const { reset } = useZoomControls();
 
   const { onApproveFile } = useReviewFile(file?.id);
 
@@ -73,6 +79,12 @@ const FilePreviewSidebar = ({
     onClose();
   };
 
+  const handleGoBack = () => {
+    setViewingAnnotations(undefined);
+    setZoomedAnnotation(undefined);
+    reset?.();
+  };
+
   if (viewingAnnotations) {
     return (
       <AnnotationsList
@@ -82,7 +94,8 @@ const FilePreviewSidebar = ({
             : an.resourceType === 'file'
         )}
         type={viewingAnnotations}
-        goBack={() => setViewingAnnotations(undefined)}
+        goBack={handleGoBack}
+        setZoomedAnnotation={setZoomedAnnotation}
       />
     );
   }

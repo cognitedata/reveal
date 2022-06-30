@@ -15,6 +15,7 @@ import { ResourceIcons } from 'components';
 import {
   ProposedCogniteAnnotation,
   useSelectedAnnotations,
+  useZoomControls,
 } from '@cognite/react-picture-annotation';
 import capitalize from 'lodash/capitalize';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
@@ -24,6 +25,7 @@ interface AnnotationsListProps {
   annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
   type: 'assets' | 'files';
   goBack: () => void;
+  setZoomedAnnotation: (zoomedAnnotation: CogniteAnnotation) => void;
 }
 
 type AnnotationType = 'pending' | 'approved' | 'all';
@@ -32,11 +34,13 @@ const AnnotationsList = ({
   annotations,
   type,
   goBack,
+  setZoomedAnnotation,
 }: AnnotationsListProps) => {
   const [filterType, setFilterType] = useState<AnnotationType>('all');
   const [filteredList, setFilteredList] = useState<
     Array<CogniteAnnotation | ProposedCogniteAnnotation>
   >([]);
+  const { reset } = useZoomControls();
 
   const set = new Set<number>();
   filteredList.forEach(({ resourceId = 0 }) => {
@@ -84,6 +88,12 @@ const AnnotationsList = ({
     annotation: CogniteAnnotation | ProposedCogniteAnnotation
   ) => {
     setSelectedAnnotations([annotation]);
+    setZoomedAnnotation(annotation as CogniteAnnotation);
+  };
+
+  const handleGoBack = () => {
+    reset?.();
+    goBack();
   };
 
   const AnnotationItem = ({
@@ -129,7 +139,7 @@ const AnnotationsList = ({
         <Flex direction="row" style={{ flex: '0 0 auto' }}>
           <Button
             icon="ArrowLeft"
-            onClick={goBack}
+            onClick={handleGoBack}
             style={{ color: 'black', marginTop: '-7px' }}
             type="ghost"
           />
