@@ -197,24 +197,29 @@ export class Measurement {
   private addAxisLabels() {
     if (this._measurementLabel) {
       const axisDistanceValues = this._line.getAxisDistances();
-      this._axesLabelElement.push(
-        this.createAxesLabels(
-          this._line.getAxisMidPoints()[0],
-          this.getMeasurementLabelValue(this._options!.changeMeasurementLabelMetrics!, Math.abs(axisDistanceValues.x))
-        )
+      const xAxesLabelElement = this.createAxesLabels(
+        this._line.getAxisMidPoints()[0],
+        this.getMeasurementLabelValue(this._options!.changeMeasurementLabelMetrics!, Math.abs(axisDistanceValues.x))
       );
-      this._axesLabelElement.push(
-        this.createAxesLabels(
-          this._line.getAxisMidPoints()[1],
-          this.getMeasurementLabelValue(this._options!.changeMeasurementLabelMetrics!, Math.abs(axisDistanceValues.y))
-        )
+      xAxesLabelElement.style.background = 'rgb(0 255 0 / 0.5)';
+      xAxesLabelElement.style.fontSize = '12px';
+      this._axesLabelElement.push(xAxesLabelElement);
+
+      const yAxesLabelElement = this.createAxesLabels(
+        this._line.getAxisMidPoints()[1],
+        this.getMeasurementLabelValue(this._options!.changeMeasurementLabelMetrics!, Math.abs(axisDistanceValues.y))
       );
-      this._axesLabelElement.push(
-        this.createAxesLabels(
-          this._line.getAxisMidPoints()[2],
-          this.getMeasurementLabelValue(this._options!.changeMeasurementLabelMetrics!, Math.abs(axisDistanceValues.z))
-        )
+      yAxesLabelElement.style.background = 'rgb(0 0 255 / 0.5)';
+      yAxesLabelElement.style.fontSize = '12px';
+      this._axesLabelElement.push(yAxesLabelElement);
+
+      const zAxesLabelElement = this.createAxesLabels(
+        this._line.getAxisMidPoints()[2],
+        this.getMeasurementLabelValue(this._options!.changeMeasurementLabelMetrics!, Math.abs(axisDistanceValues.z))
       );
+      zAxesLabelElement.style.background = 'rgb(255 0 0 / 0.5)';
+      zAxesLabelElement.style.fontSize = '12px';
+      this._axesLabelElement.push(zAxesLabelElement);
     }
   }
 

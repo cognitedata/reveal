@@ -20,26 +20,3 @@
   font-style: normal;
   font-weight: 500;
 }
-
-.reveal-measurement-label-axis {
-	position: absolute;
-
-  /* Anchor to the center of the element and ignore events */
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  touch-action: none;
-  user-select: none;
-  border-radius: 6px;
-
-  /* Make it look nice */
-  padding: 8px;
-  color: #555;
-  background: #232323da;
-  border: #ffffff22 solid 1px;
-  overflow: hidden;
-
-  /*Font - fallback to generic font if Inter not available*/
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 200;
-}
