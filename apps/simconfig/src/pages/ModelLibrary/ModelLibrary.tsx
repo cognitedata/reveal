@@ -37,16 +37,17 @@ export function ModelLibrary() {
   );
 
   const [isModelFileDeleted, setIsModelFileDeleted] = useState<boolean>(false);
-
   const {
     data: modelFiles,
-    isFetching: isFetchingModelFiles,
-    refetch,
-  } = useGetModelFileListQuery({
-    project,
-    labelIds: selectedLabels.map((label) => label.value).join(','),
-  });
-
+    isLoading: isLoadingModelFiles,
+    refetch: refetchModelFiles,
+  } = useGetModelFileListQuery(
+    {
+      project,
+      labelIds: selectedLabels.map((label) => label.value).join(','),
+    },
+    { refetchOnMountOrArgChange: true }
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -59,53 +60,61 @@ export function ModelLibrary() {
 
   const modelFileList = useMemo(
     () =>
-      (modelFiles?.modelFileList ?? []).filter((modelFile) => {
-        if (modelNameFilter) {
-          return modelFile.name.toLowerCase().includes(modelNameFilter);
-        }
-        return true;
-      }),
+      (modelFiles?.modelFileList ?? []).filter((modelFile) =>
+        modelNameFilter
+          ? modelFile.name.toLowerCase().includes(modelNameFilter)
+          : true
+      ),
     [modelFiles?.modelFileList, modelNameFilter]
   );
 
   const deleteHandleOnModelLibrary = () => {
-    setIsModelFileDeleted(true);
+    setIsModelFileDeleted(false);
+    navigate({
+      to: '/model-library/',
+      replace: true,
+    });
   };
 
-  if (isFetchingModelFiles && !isModelFileDeleted) {
+  if (isLoadingModelFiles && !isModelFileDeleted) {
     return <Skeleton.List lines={5} />;
   }
 
-  if ((!modelName || isModelFileDeleted) && modelFileList.length > 0) {
-    const firstFile = modelFileList[isModelFileDeleted ? 1 : 0];
-
-    if (isModelFileDeleted) {
-      navigate({
-        to: '/model-library/',
-        replace: true,
-      });
-      setIsModelFileDeleted(false);
-      refetch();
-    } else {
-      navigate({
-        to: `/model-library/models/${encodeURIComponent(
-          firstFile.source
-        )}/${encodeURIComponent(firstFile.metadata.modelName)}`,
-        replace: true,
-      });
-    }
+  if (!modelName && modelFileList.length > 0) {
+    const firstFile = modelFileList[0];
+    navigate({
+      to: `/model-library/models/${encodeURIComponent(
+        firstFile.source
+      )}/${encodeURIComponent(firstFile.metadata.modelName)}`,
+      replace: true,
+    });
   }
 
   return (
     <ModelLibraryContainer data-cy="model-library-container">
       <ModelLibrarySidebar>
+        <div className="new-model">
+          <Link to="/model-library/new-model">
+            <Button
+              icon="Add"
+              type="secondary"
+              block
+              onClick={() => {
+                trackUsage(TRACKING_EVENTS.NEW_MODEL, { simulator });
+              }}
+            >
+              New model
+            </Button>
+          </Link>
+        </div>
         <div className="header">
+          <span className="header-title">Search models</span>
           <div className="form">
             <Input
               icon="Search"
               maxLength={64}
               name="modelName"
-              placeholder="Search models"
+              placeholder="Filter by model name..."
               size="small"
               title=""
               fullWidth
@@ -120,20 +129,6 @@ export function ModelLibrary() {
               />
             )}
           </div>
-          <div className="new-model">
-            <Link to="/model-library/new-model">
-              <Button
-                icon="Add"
-                type="primary"
-                block
-                onClick={() => {
-                  trackUsage(TRACKING_EVENTS.NEW_MODEL, { simulator });
-                }}
-              >
-                New model
-              </Button>
-            </Link>
-          </div>
         </div>
         <div className="model-list">
           <ModelList modelFiles={modelFileList} />
@@ -144,6 +139,7 @@ export function ModelLibrary() {
           modelLibraryDeleteHandler={deleteHandleOnModelLibrary}
           modelName={modelName}
           project={project}
+          refetchModelFiles={refetchModelFiles}
           simulator={simulator}
         />
       </ModelLibraryContent>
@@ -163,10 +159,13 @@ const ModelLibrarySidebar = styled.aside`
   flex: 0 1 auto;
   min-width: 400px;
   max-width: 400px;
+  border-right: 1px solid #dddddd;
   .header {
-    background: var(--cogs-greyscale-grey1);
-    padding: 0 24px;
-    box-shadow: 0 0 2px var(--cogs-greyscale-grey5);
+    padding: 16px 24px 0px 24px;
+    .header-title {
+      font-weight: 600;
+      font-size: 18px;
+    }
     .form {
       font-size: var(--cogs-detail-font-size);
       .cogs-icon {
@@ -178,7 +177,9 @@ const ModelLibrarySidebar = styled.aside`
     }
   }
   .new-model {
-    margin-bottom: 12px;
+    padding: 20px 24px;
+    background: var(--cogs-greyscale-grey1);
+    width: 100%;
   }
   .model-list {
     padding: 24px;

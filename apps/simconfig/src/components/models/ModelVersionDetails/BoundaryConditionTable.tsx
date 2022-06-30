@@ -38,48 +38,50 @@ export function BoundaryConditionTable({
         ({ variableName, displayUnit, current, previous }, index) => (
           <div className="entry" key={variableName}>
             <div className="label">{variableName}</div>
-            <CopyValue
-              tooltip={
-                <React.Fragment key={`${variableName}-copy-value`}>
-                  Copy raw value to clipboard: <code>{current}</code>
-                </React.Fragment>
-              }
-              value={current}
-            />
-            <div className="change">
-              <Tooltip
-                content={
-                  <>
-                    Previous value:{' '}
-                    {previous ? getFormattedSciNumber(previous) : 'n/a'}
-                  </>
+            <div className="boundary-conditions">
+              <CopyValue
+                tooltip={
+                  <React.Fragment key={`${variableName}-copy-value`}>
+                    Copy raw value to clipboard: <code>{current}</code>
+                  </React.Fragment>
                 }
-                // eslint-disable-next-line react/no-array-index-key
-                key={index}
+                value={current}
+              />
+              <div className="change">
+                <Tooltip
+                  content={
+                    <>
+                      Previous value:{' '}
+                      {previous ? getFormattedSciNumber(previous) : 'n/a'}
+                    </>
+                  }
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={index}
+                >
+                  <>
+                    {previous && previous > current ? (
+                      <span className="lower" key={variableName}>
+                        ▾
+                      </span>
+                    ) : null}
+                    {previous && current > previous ? (
+                      <span className="higher" key={variableName}>
+                        ▴
+                      </span>
+                    ) : null}
+                  </>
+                </Tooltip>
+              </div>
+              <div
+                className={classNames('value', {
+                  'higher-value': previous && previous < current,
+                  'lower-value': previous && previous > current,
+                })}
               >
-                <>
-                  {previous && previous > current ? (
-                    <span className="lower" key={variableName}>
-                      ▾
-                    </span>
-                  ) : null}
-                  {previous && current > previous ? (
-                    <span className="higher" key={variableName}>
-                      ▴
-                    </span>
-                  ) : null}
-                </>
-              </Tooltip>
+                <span>{getFormattedSciNumber(current)}</span>
+              </div>
+              <div className="unit">{displayUnit}</div>
             </div>
-            <div
-              className={classNames('value', {
-                'higher-value': previous && previous < current,
-                'lower-value': previous && previous > current,
-              })}
-            >
-              <span>{getFormattedSciNumber(current)}</span>
-            </div>
-            <div className="unit">{displayUnit}</div>
           </div>
         )
       )}
@@ -90,27 +92,36 @@ export function BoundaryConditionTable({
 const BoundaryConditionsTableContainer = styled.div`
   --columns-repeat: 2;
   display: grid;
-  grid-template-columns: repeat(var(--columns-repeat), 3fr 0fr auto auto 1fr);
+  grid-template-columns: 1fr 1fr 1fr;
   grid-gap: 6px;
-  align-items: baseline;
+  padding-left: 20px;
   .entry {
-    display: contents;
-    & > div {
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
+    margin-top: 20px;
+  }
+  .boundary-conditions {
+    margin-top: 8px;
+    display: flex;
+    align-self: center;
+    align-items: baseline;
+    margin-left: -4px;
   }
   .change {
     overflow: visible !important;
   }
+  .label {
+    font-weight: 500;
+  }
+  .label,
   .value {
-    text-align: right;
+    color: #000000;
+  }
+  .value {
     overflow: visible;
   }
   .unit {
     opacity: 0.7;
     font-size: var(--cogs-detail-font-size);
+    margin-left: 5px;
   }
   .higher,
   .lower {
@@ -136,4 +147,5 @@ const ProcessingStatus = styled(Label)`
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 16px;
 `;

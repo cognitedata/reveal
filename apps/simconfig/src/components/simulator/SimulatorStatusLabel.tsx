@@ -10,12 +10,14 @@ import { HEARTBEAT_TIMEOUT_SECONDS } from 'components/simulator/constants';
 interface SimulatorStatusCellProps {
   simulator: SimulatorInstance;
   title?: string;
+  isMain?: boolean | false;
   onMenuBar?: boolean;
 }
 
 export function SimulatorStatusLabel({
   simulator,
   title,
+  isMain,
   onMenuBar = true,
 }: SimulatorStatusCellProps) {
   const isSimulatorAvailable = isAfter(
@@ -26,11 +28,11 @@ export function SimulatorStatusLabel({
   const statusDisplayTitle = isSimulatorAvailable ? 'Available' : 'Unavailable';
 
   return (
-    <SimulatorStatusLabelContainer>
+    <SimulatorStatusLabelContainer isMain={isMain}>
       <Label
         className={classNames({ 'cogs-label--is-interactive': title })}
         icon={isSimulatorAvailable ? 'CheckmarkAlternative' : 'Warning'}
-        size="small"
+        size={!isMain ? 'small' : undefined}
         variant={isSimulatorAvailable ? 'success' : 'danger'}
       >
         {onMenuBar ? title : statusDisplayTitle}
@@ -39,8 +41,15 @@ export function SimulatorStatusLabel({
   );
 }
 
-const SimulatorStatusLabelContainer = styled.div`
+const SimulatorStatusLabelContainer = styled.div<
+  Omit<SimulatorStatusCellProps, 'simulator' | 'title'>
+>`
   .cogs-label {
-    column-gap: 6px;
+    column-gap: 5px;
+    ${(props) =>
+      props.isMain && {
+        height: 28,
+        fontSize: 13,
+      }};
   }
 `;

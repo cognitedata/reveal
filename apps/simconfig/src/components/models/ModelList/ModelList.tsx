@@ -2,6 +2,7 @@ import { Link } from 'react-location';
 
 import styled from 'styled-components/macro';
 
+import { Graphic } from '@cognite/cogs.js';
 import type { ModelFile } from '@cognite/simconfig-api-sdk/rtk';
 
 import { hashCode } from 'utils/stringUtils';
@@ -12,6 +13,15 @@ interface ModelListProps {
 }
 
 export function ModelList({ modelFiles, className }: ModelListProps) {
+  if (!modelFiles.length) {
+    return (
+      <EmptyState>
+        <Graphic type="Search" />
+        <span>No models found.</span>
+      </EmptyState>
+    );
+  }
+
   return (
     <ModelListElement className={className}>
       {modelFiles.map((modelFile) => (
@@ -112,5 +122,15 @@ const SimulatorIcon = styled.span<SimulatorIconProps>`
     &::after {
       color: var(--cogs-white);
     }
+  }
+`;
+
+const EmptyState = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  span {
+    margin-top: 1em;
   }
 `;

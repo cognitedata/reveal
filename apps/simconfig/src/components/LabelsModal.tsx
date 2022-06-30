@@ -37,7 +37,11 @@ export function LabelsModal({ isOpen, setOpen }: LabelsModalProps) {
 
   return (
     <Modal
+      closeIcon={false}
       footer={null}
+      style={{
+        padding: 8,
+      }}
       visible={isOpen}
       onCancel={() => {
         setOpen(false);
@@ -50,6 +54,7 @@ export function LabelsModal({ isOpen, setOpen }: LabelsModalProps) {
           placeholder="Filter"
           value={searchTerm}
           autoFocus
+          fullWidth
           onChange={(ev) => {
             setSearchTerm(ev.target.value);
           }}
@@ -92,7 +97,7 @@ const LabelsModalContainer = styled.div`
   margin-top: 15px;
   .cogs-input,
   .create-label-button {
-    width: 360px;
+    width: 100%;
   }
   .create-label-button {
     margin-top: 16px;
@@ -102,6 +107,7 @@ const LabelsModalContainer = styled.div`
 const LabelsListDropdown = styled.ul`
   list-style: none;
   padding: 0;
+  margin-bottom: 0px !important;
   margin-top: 0.75em;
   overflow: scroll;
   max-height: 385px;
@@ -111,7 +117,9 @@ const LabelsListDropdown = styled.ul`
   }
   li {
     border: 0.5px solid var(--cogs-greyscale-grey4);
-    margin-bottom: 0.5em;
+    &:not(:last-child) {
+      margin-bottom: 0.5em;
+    }
     border-radius: 2px;
     div {
       padding-left: 0.5em;

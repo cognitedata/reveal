@@ -37,9 +37,8 @@ export function CopyValue({
 
 const CopyValueButton = styled(Button)`
   height: auto !important;
-  padding: 3px !important;
   transition: all 0.3s linear;
-  color: ${Colors.black.fade(0.7).toString()}!important;
+  color: ${Colors.black.fade(0.1).toString()}!important;
   &:hover {
     color: ${Colors.black.fade(0.2).toString()}!important;
   }

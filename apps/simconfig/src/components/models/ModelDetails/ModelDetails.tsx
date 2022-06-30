@@ -35,6 +35,7 @@ interface ModelDetailsProps {
   project: string;
   modelName: string;
   simulator?: Simulator;
+  refetchModelFiles: () => void;
   modelLibraryDeleteHandler?: () => void;
 }
 
@@ -42,6 +43,7 @@ export function ModelDetails({
   project,
   modelName,
   simulator = 'UNKNOWN',
+  refetchModelFiles,
   modelLibraryDeleteHandler,
 }: ModelDetailsProps) {
   const {
@@ -70,15 +72,11 @@ export function ModelDetails({
   const [shouldShowDeleteConfirmModal, setShouldShowDeleteConfirmModal] =
     useState<boolean>(false);
   const [deletedModels, setDeletedModels] = useState<ExternalId[]>([]);
-
-  const {
-    data: modelFile,
-    isFetching: isFetchingModelFile,
-    refetch: refetchModelFile,
-  } = useGetModelFileQuery(
-    { project, modelName, simulator },
-    { skip: simulator === 'UNKNOWN' }
-  );
+  const { data: modelFile, isFetching: isFetchingModelFile } =
+    useGetModelFileQuery(
+      { project, modelName, simulator },
+      { skip: simulator === 'UNKNOWN', refetchOnMountOrArgChange: true }
+    );
 
   const [deleteModelFile, { isSuccess: isDeleteModelSuccess }] =
     useDeleteModelFileMutation();
@@ -90,11 +88,7 @@ export function ModelDetails({
       modelName: decodeURI(modelName),
       simulator,
     });
-
-    return () => {
-      refetchModelFile();
-    };
-  }, [modelName, simulator, refetchModelFile]);
+  }, [modelName, simulator]);
 
   useEffect(() => {
     if (isDeleteModelSuccess && modelLibraryDeleteHandler) {
@@ -114,6 +108,17 @@ export function ModelDetails({
     }
   };
 
+  const isDeletionInProgress = useMemo(() => {
+    if (!modelFile) {
+      return false;
+    }
+    return (
+      (Boolean(modelFile.deletionStatus) &&
+        !modelFile.deletionStatus?.erroredResources?.length) ||
+      deletedModels.includes(modelFile.externalId)
+    );
+  }, [modelFile, deletedModels]);
+
   if (!isFetchingModelFile && !modelFile) {
     // Uninitialized state
     return null;
@@ -129,24 +134,7 @@ export function ModelDetails({
   }
 
   const extraContent: Record<string, JSX.Element | undefined> = {
-    'model-versions': (
-      <Link to="../new-version">
-        <Button
-          icon="Add"
-          size="small"
-          type="tertiary"
-          onClick={() => {
-            trackUsage(TRACKING_EVENTS.NEW_MODEL_VERSION, {
-              simulator,
-              modelName: decodeURI(modelName),
-            });
-          }}
-        >
-          New version
-        </Button>
-      </Link>
-    ),
-    'calculations': (
+    calculations: (
       <SegmentedControl
         currentKey={showCalculations}
         size="small"
@@ -164,62 +152,86 @@ export function ModelDetails({
 
   return (
     <ModelDetailsContainer>
-      <div className="metadata">
-        <h2>
-          <strong>{modelFile.metadata.modelName}</strong>
-        </h2>
-        <ul>
-          <li>
-            <Icon size={12} type="OutputData" />
-            {definitions?.type.simulator[modelFile.metadata.simulator]}
-          </li>
-          <li>
-            <Icon size={12} type="Wrench" />
-            {definitions?.type.unitSystem[modelFile.metadata.unitSystem]}
-          </li>
-          <li>
-            {isDeleteEnabled ? (
-              <Dropdown
-                content={
-                  <Menu>
-                    <Menu.Item
-                      onClick={() => {
-                        setShouldShowDeleteConfirmModal(true);
-                      }}
-                    >
-                      <Icon type="Delete" /> Delete Model
-                    </Menu.Item>
-                  </Menu>
-                }
-              >
-                <Button
-                  aria-label="Actions"
-                  icon="EllipsisHorizontal"
-                  size="small"
-                />
-              </Dropdown>
+      <div className="header">
+        <div className="metadata">
+          <ul>
+            <li>{definitions?.type.simulator[modelFile.metadata.simulator]}</li>
+            <li>
+              {definitions?.type.unitSystem[modelFile.metadata.unitSystem]}
+            </li>
+            {modelFile.metadata.modelType && (
+              <li>{definitions?.type.model[modelFile.metadata.modelType]}</li>
+            )}
+            {!isDeletionInProgress && (
+              <li>
+                {isDeleteEnabled ? (
+                  <Dropdown
+                    content={
+                      <Menu>
+                        <Menu.Item
+                          onClick={() => {
+                            setShouldShowDeleteConfirmModal(true);
+                          }}
+                        >
+                          <Icon type="Delete" /> Delete Model
+                        </Menu.Item>
+                      </Menu>
+                    }
+                  >
+                    <Button
+                      aria-label="Actions"
+                      icon="EllipsisHorizontal"
+                      size="small"
+                    />
+                  </Dropdown>
+                ) : undefined}
+              </li>
+            )}
+            {isDeletionInProgress ? (
+              <li>
+                <Label size="medium" variant="danger">
+                  <Icon type="Loader" />
+                  &nbsp;&nbsp; Deletion in progress
+                </Label>
+              </li>
             ) : undefined}
-          </li>
-          {(Boolean(modelFile.deletionStatus) &&
-            !modelFile.deletionStatus?.erroredResources?.length) ||
-          deletedModels.includes(modelFile.externalId) ? (
-            <li>
-              <Label size="medium" variant="danger">
-                <Icon type="Loader" />
-                &nbsp;&nbsp; Deletion in progress
-              </Label>
-            </li>
-          ) : undefined}
-          {modelFile.deletionStatus?.erroredResources?.length ? (
-            <li>
-              <Label size="large" variant="danger">
-                Partial deleted model, some of the resources are not deleted
-              </Label>
-            </li>
-          ) : undefined}
-        </ul>
+            {modelFile.deletionStatus?.erroredResources?.length ? (
+              <li>
+                <Label size="large" variant="danger">
+                  Partial deleted model, some of the resources are not deleted
+                </Label>
+              </li>
+            ) : undefined}
+          </ul>
+          <h2>
+            <strong>{modelFile.metadata.modelName}</strong>
+          </h2>
+        </div>
+        {!(selectedTab === 'new-version') && (
+          <Link to="../new-version">
+            <Button
+              className="new-version-btn"
+              icon="Add"
+              size="large"
+              type="primary"
+              onClick={() => {
+                trackUsage(TRACKING_EVENTS.NEW_MODEL_VERSION, {
+                  simulator,
+                  modelName: decodeURI(modelName),
+                });
+              }}
+            >
+              New version
+            </Button>
+          </Link>
+        )}
       </div>
-      {isLabelsEnabled && <ModelLabels modelFile={modelFile} />}
+      {isLabelsEnabled && (
+        <ModelLabels
+          modelFile={modelFile}
+          refetchModelFiles={refetchModelFiles}
+        />
+      )}
       <Tabs
         activeKey={selectedTab}
         tabBarExtraContent={extraContent[selectedTab] ?? null}
@@ -235,7 +247,7 @@ export function ModelDetails({
           key="model-versions"
           tab={
             <>
-              <Icon type="DataSource" /> Model versions
+              <Icon type="History" /> Model versions
             </>
           }
         >
@@ -301,29 +313,47 @@ const ModelDetailsContainer = styled.main`
   flex: 1 1 auto;
   overflow: auto;
   padding: 24px 0 0 24px;
-  .metadata {
-    margin-bottom: 12px;
+  .header {
     display: flex;
-    align-items: baseline;
-    gap: 12px;
-    h2 {
-      margin: 0;
+    justify-content: space-between;
+    padding-right: 20px;
+    .new-version-btn {
+      width: 225px;
     }
-    ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
+    .metadata {
+      margin-bottom: 12px;
+
       align-items: baseline;
       gap: 12px;
-      font-size: var(--cogs-detail-font-size);
-      li {
+      h2 {
+        margin: 0;
+        font-size: 36px;
+      }
+      ul {
+        list-style: none;
+        margin: 0;
+        font-weight: bold;
+        padding: 0;
         display: flex;
         align-items: center;
-        gap: 6px;
+        // gap: 12px;
+        font-size: 10px;
+        li {
+          margin: 0;
+          padding: 0;
+          text-transform: uppercase;
+          &:not(:last-child) {
+            &::after {
+              content: '•';
+              margin-left: 5px;
+              margin-right: 5px;
+            }
+          }
+        }
       }
     }
   }
+
   .rc-tabs-nav {
     margin: 0 0 12px 0;
   }

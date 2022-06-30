@@ -65,6 +65,7 @@ export function SimulatorStatus() {
             <SimulatorStatusLabel
               simulator={simulator}
               title={simulator.simulator}
+              isMain
             />
           </SimulatorTooltip>
         </div>

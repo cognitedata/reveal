@@ -25,13 +25,17 @@ import { LabelsModal } from '../../LabelsModal';
 
 interface ModelLabelsProps {
   modelFile: ModelFile;
+  refetchModelFiles: () => void;
 }
 
-export function ModelLabels({ modelFile }: ModelLabelsProps) {
+export function ModelLabels({
+  modelFile,
+  refetchModelFiles,
+}: ModelLabelsProps) {
   const project = useSelector(selectProject);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isOpen, setOpen] = useState<boolean>(false);
-  const [updateModelLabels] = useUpdateModelFileLabelsMutation();
+  const [updateModelLabels, { isSuccess }] = useUpdateModelFileLabelsMutation();
   const [createLabel] = useCreateLabelMutation();
   const [searchTerm, setSearchTerm] = useState<string>('');
   const modelName = modelFile.name;
@@ -68,6 +72,12 @@ export function ModelLabels({ modelFile }: ModelLabelsProps) {
         : []
     );
   }, [modelFile, labelsList]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      refetchModelFiles();
+    }
+  }, [isSuccess, refetchModelFiles]);
 
   const update = async (labels: { label: string; value: string }[]) => {
     setSelectedLabels(labels);
@@ -115,7 +125,7 @@ export function ModelLabels({ modelFile }: ModelLabelsProps) {
           selectedLabels.map((label) => (
             <LabelItem key={label.value}>
               {' '}
-              {label.label}
+              <span className="label-name">{label.label}</span>
               <Icon
                 className="remove-label-icon"
                 type="Close"
@@ -227,13 +237,16 @@ const LabelsLine = styled.div`
   align-content: center;
   align-self: center;
   vertical-align: center;
+
+  span:not(:first-child) {
+    margin-left: 8px;
+  }
 `;
 
 const LabelItem = styled(Label)`
   margin-bottom: 1em;
   color: #396bd7;
   height: 28px;
-  margin-left: 8px;
   background-color: rgba(64, 120, 240, 0.1);
   transition: background-color 0.25s;
   font-size: 13px;
@@ -244,12 +257,16 @@ const LabelItem = styled(Label)`
     cursor: pointer;
     margin-left: 9.5px;
   }
+  .label-name {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `;
 
 const AddLabelButton = styled(Button)`
   color: #4a67fb;
   border: 0;
-  margin-left: 8px;
   height: 28px;
 `;
 

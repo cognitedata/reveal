@@ -184,7 +184,7 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
                 >
                   <Button
                     icon="Info"
-                    type="ghost"
+                    type="link"
                     onClick={() => {
                       setIsAdditionMetaInfoTooltipEnabled(true);
                     }}
@@ -201,6 +201,7 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
                 disabled={!boundaryConditions?.chartsUrl}
                 href={boundaryConditions?.chartsUrl}
                 icon="LineChart"
+                size="small"
                 target="_blank"
                 type="tertiary"
               >
@@ -212,7 +213,8 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
                 disabled={isModelFileDownloading}
                 icon="Download"
                 loading={isModelFileDownloading}
-                type="tertiary"
+                size="small"
+                type="primary"
                 onClick={onDownloadClicked}
               >
                 Download
