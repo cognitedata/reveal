@@ -87,6 +87,10 @@ export const visualTests: VisualTest[] = [
     category: 'cad'
   },
   {
+    testKey: 'nodeTransform',
+    category: 'cad'
+  },
+  {
     testKey: 'highlight-with-default-ghosting',
     category: 'cad'
   }
