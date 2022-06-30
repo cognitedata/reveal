@@ -35,7 +35,6 @@ export function CalculationRunDetails() {
   const [state, dispatch] = useReducer<
     Reducer<CalculationRunState, CalculationRunAction>
   >(calculationRunReducer, getCalculationRunInitialState());
-  console.log('initial state: ', state);
 
   useEffect(() => {
     async function loadCalculation() {

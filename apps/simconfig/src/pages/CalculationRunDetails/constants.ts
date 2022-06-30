@@ -40,14 +40,14 @@ export const calculationSchema: CalculationSchema = {
     calcType: 'ChokeDp',
     calcName: 'Rate by Choke Performance',
     xAxis: {
-      column: 'Gas Rate',
-      unitType: 'GasRate',
-      unit: 'MMscf/day',
-    },
-    yAxis: {
-      columns: ['Outlet Pressure'],
+      column: 'Outlet Pressure',
       unitType: 'Pressure',
       unit: 'psig',
+    },
+    yAxis: {
+      columns: ['Gas Rate'],
+      unitType: 'GasRate',
+      unit: 'MMscf/day',
     },
   },
   'VLP': {
