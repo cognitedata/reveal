@@ -1,9 +1,9 @@
-import { SearchPeopleRoomsQueryTypeGenerated } from 'graphql/generated';
+import { GetSearchDataQueryTypeGenerated } from 'graphql/generated';
 
 import { SearchDataFormat } from './types';
 
 export const getArrayOfItems = (
-  searchResults: SearchPeopleRoomsQueryTypeGenerated,
+  searchResults: GetSearchDataQueryTypeGenerated,
   filterSections?: string[] | undefined
 ) => {
   const items: SearchDataFormat[] = [];
@@ -11,7 +11,7 @@ export const getArrayOfItems = (
 
   const sections = Object.keys(searchResults).filter((section) =>
     filterSections ? filterSections.indexOf(section) > -1 : true
-  ) as Array<keyof SearchPeopleRoomsQueryTypeGenerated>;
+  ) as Array<keyof GetSearchDataQueryTypeGenerated>;
 
   sections.forEach((section) => {
     const sectionItems = searchResults[section]?.items || [];

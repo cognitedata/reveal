@@ -1,13 +1,16 @@
-import { PAGES } from 'pages/routers/constants';
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { SearchModal } from 'components/SearchModal';
+import React, { useState } from 'react';
 
 import { SearchButton } from './elements';
 
 export const NavigateToSearchButton: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
   return (
-    <Link to={PAGES.SEARCH}>
-      <SearchButton icon="Search">What are you looking for?</SearchButton>
-    </Link>
+    <>
+      <SearchModal isOpen={isOpen} handleClose={() => setIsOpen(!isOpen)} />
+      <SearchButton onClick={() => setIsOpen(true)} icon="Search">
+        What are you looking for?
+      </SearchButton>
+    </>
   );
 };

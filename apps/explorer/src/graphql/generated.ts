@@ -742,17 +742,19 @@ export type _TimestampCondition = {
   lte?: InputMaybe<Scalars['Timestamp']>;
 };
 
-export type SearchPeopleRoomsQueryVariables = Exact<{
-  personFilter?: InputMaybe<_ListPersonFilter>;
+export type GetMapDataQueryVariables = Exact<{
+  equipmentFilter?: InputMaybe<_ListEquipmentFilter>;
   roomFilter?: InputMaybe<_ListRoomFilter>;
 }>;
 
-export type SearchPeopleRoomsQueryTypeGenerated = {
-  people?: {
+export type GetMapDataQueryTypeGenerated = {
+  equipment?: {
     items: Array<{
       externalId: string;
       name?: string | null;
-      description?: string | null;
+      type?: string | null;
+      nodeId?: any | null;
+      person?: { externalId: string; name?: string | null } | null;
     } | null>;
   } | null;
   rooms?: {
@@ -761,17 +763,59 @@ export type SearchPeopleRoomsQueryTypeGenerated = {
       name?: string | null;
       nodeId?: any | null;
       description?: string | null;
+      isBookable?: boolean | null;
+      type?: string | null;
     } | null>;
   } | null;
 };
 
-export const SearchPeopleRoomsDocument = `
-    query searchPeopleRooms($personFilter: _ListPersonFilter, $roomFilter: _ListRoomFilter) {
-  people: listPerson(first: 15, filter: $personFilter) {
+export type GetSearchDataQueryVariables = Exact<{
+  personFilter?: InputMaybe<_ListPersonFilter>;
+  roomFilter?: InputMaybe<_ListRoomFilter>;
+}>;
+
+export type GetSearchDataQueryTypeGenerated = {
+  people?: {
+    items: Array<{
+      externalId: string;
+      name?: string | null;
+      slackId?: string | null;
+      desk?: { name?: string | null; externalId: string } | null;
+    } | null>;
+  } | null;
+  rooms?: {
+    items: Array<{
+      externalId: string;
+      name?: string | null;
+      nodeId?: any | null;
+      description?: string | null;
+      isBookable?: boolean | null;
+    } | null>;
+  } | null;
+};
+
+export type ListPeopleWithNoEquipmentQueryVariables = Exact<{
+  [key: string]: never;
+}>;
+
+export type ListPeopleWithNoEquipmentQueryTypeGenerated = {
+  people?: {
+    items: Array<{ externalId: string; name?: string | null } | null>;
+  } | null;
+};
+
+export const GetMapDataDocument = `
+    query getMapData($equipmentFilter: _ListEquipmentFilter, $roomFilter: _ListRoomFilter) {
+  equipment: listEquipment(first: 15, filter: $equipmentFilter) {
     items {
       externalId
       name
-      description: slackId
+      type
+      nodeId
+      person {
+        externalId
+        name
+      }
     }
   }
   rooms: listRoom(first: 15, filter: $roomFilter) {
@@ -780,31 +824,107 @@ export const SearchPeopleRoomsDocument = `
       name
       nodeId
       description
+      isBookable
+      type
     }
   }
 }
     `;
-export const useSearchPeopleRoomsQuery = <
-  TData = SearchPeopleRoomsQueryTypeGenerated,
+export const useGetMapDataQuery = <
+  TData = GetMapDataQueryTypeGenerated,
   TError = unknown
 >(
-  variables?: SearchPeopleRoomsQueryVariables,
-  options?: UseQueryOptions<SearchPeopleRoomsQueryTypeGenerated, TError, TData>
+  variables?: GetMapDataQueryVariables,
+  options?: UseQueryOptions<GetMapDataQueryTypeGenerated, TError, TData>
 ) =>
-  useQuery<SearchPeopleRoomsQueryTypeGenerated, TError, TData>(
-    variables === undefined
-      ? ['searchPeopleRooms']
-      : ['searchPeopleRooms', variables],
-    graphqlFetcher<
-      SearchPeopleRoomsQueryTypeGenerated,
-      SearchPeopleRoomsQueryVariables
-    >(SearchPeopleRoomsDocument, variables),
+  useQuery<GetMapDataQueryTypeGenerated, TError, TData>(
+    variables === undefined ? ['getMapData'] : ['getMapData', variables],
+    graphqlFetcher<GetMapDataQueryTypeGenerated, GetMapDataQueryVariables>(
+      GetMapDataDocument,
+      variables
+    ),
     options
   );
 
-useSearchPeopleRoomsQuery.getKey = (
-  variables?: SearchPeopleRoomsQueryVariables
+useGetMapDataQuery.getKey = (variables?: GetMapDataQueryVariables) =>
+  variables === undefined ? ['getMapData'] : ['getMapData', variables];
+export const GetSearchDataDocument = `
+    query getSearchData($personFilter: _ListPersonFilter, $roomFilter: _ListRoomFilter) {
+  people: listPerson(first: 15, filter: $personFilter) {
+    items {
+      externalId
+      name
+      slackId
+      desk {
+        name
+        externalId
+      }
+    }
+  }
+  rooms: listRoom(first: 15, filter: $roomFilter) {
+    items {
+      externalId
+      name
+      nodeId
+      description
+      isBookable
+    }
+  }
+}
+    `;
+export const useGetSearchDataQuery = <
+  TData = GetSearchDataQueryTypeGenerated,
+  TError = unknown
+>(
+  variables?: GetSearchDataQueryVariables,
+  options?: UseQueryOptions<GetSearchDataQueryTypeGenerated, TError, TData>
+) =>
+  useQuery<GetSearchDataQueryTypeGenerated, TError, TData>(
+    variables === undefined ? ['getSearchData'] : ['getSearchData', variables],
+    graphqlFetcher<
+      GetSearchDataQueryTypeGenerated,
+      GetSearchDataQueryVariables
+    >(GetSearchDataDocument, variables),
+    options
+  );
+
+useGetSearchDataQuery.getKey = (variables?: GetSearchDataQueryVariables) =>
+  variables === undefined ? ['getSearchData'] : ['getSearchData', variables];
+export const ListPeopleWithNoEquipmentDocument = `
+    query listPeopleWithNoEquipment {
+  people: listPerson(filter: {desk: {externalId: {isNull: true}}}) {
+    items {
+      externalId
+      name
+    }
+  }
+}
+    `;
+export const useListPeopleWithNoEquipmentQuery = <
+  TData = ListPeopleWithNoEquipmentQueryTypeGenerated,
+  TError = unknown
+>(
+  variables?: ListPeopleWithNoEquipmentQueryVariables,
+  options?: UseQueryOptions<
+    ListPeopleWithNoEquipmentQueryTypeGenerated,
+    TError,
+    TData
+  >
+) =>
+  useQuery<ListPeopleWithNoEquipmentQueryTypeGenerated, TError, TData>(
+    variables === undefined
+      ? ['listPeopleWithNoEquipment']
+      : ['listPeopleWithNoEquipment', variables],
+    graphqlFetcher<
+      ListPeopleWithNoEquipmentQueryTypeGenerated,
+      ListPeopleWithNoEquipmentQueryVariables
+    >(ListPeopleWithNoEquipmentDocument, variables),
+    options
+  );
+
+useListPeopleWithNoEquipmentQuery.getKey = (
+  variables?: ListPeopleWithNoEquipmentQueryVariables
 ) =>
   variables === undefined
-    ? ['searchPeopleRooms']
-    : ['searchPeopleRooms', variables];
+    ? ['listPeopleWithNoEquipment']
+    : ['listPeopleWithNoEquipment', variables];

@@ -1,52 +1,70 @@
-import { AvatarButton } from 'components/AvatarButton';
-import { AbsoluteHeader } from 'components/Header';
-import { Popup } from 'components/Map/Popup';
-import { NavigateToSearchButton } from 'components/SearchBar';
 import { useGetURLSearchParams } from 'hooks/useGetURLSearchParams';
-import { PAGES } from 'pages/routers/constants';
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { SearchPeopleRoomsQueryTypeGenerated } from 'graphql/generated';
+import {
+  GetSearchDataQueryTypeGenerated,
+  useGetMapDataQuery,
+  useGetSearchDataQuery,
+} from 'graphql/generated';
 import { getDataFromMap, getDataFromSearch } from 'utils/map';
+import { RoomPopup } from 'components/Map/RoomPopup';
+import { EquipmentPopup } from 'components/Map/EquipmentPopup';
+import { PersonPopup } from 'components/Map/PersonPopup';
+import { useQueryClient } from 'react-query';
+import { BlankPopup } from 'components/Map/Popup/BlankPopup';
 
-const renderLeftHeader = () => <NavigateToSearchButton />;
+import { DefaultView } from './Views/DefaultView';
 
-export const MapOverlay: React.FC<{
-  data: SearchPeopleRoomsQueryTypeGenerated;
-}> = ({ data }) => {
+export const DATA_TYPES: { [key: string]: string } = {
+  PERSON: 'people',
+  ROOM: 'rooms',
+  EQUIPMENT: 'equipment',
+};
+
+export const MapOverlay: React.FC = () => {
   const urlSearchParams = useGetURLSearchParams();
+  const { data, error, isLoading } = useGetMapDataQuery();
+  const queryClient = useQueryClient();
+  const searchQueryKey = useGetSearchDataQuery.getKey();
+  const searchData =
+    queryClient.getQueryData<GetSearchDataQueryTypeGenerated>(searchQueryKey) ||
+    {};
   const to = urlSearchParams.get('to') || '';
   const from = urlSearchParams.get('from') || '';
+
+  if (error) return <div> {error as string}</div>;
+  if (isLoading) return <div>Loading</div>;
 
   // break into separate components later
   if (to && from) {
     return <div> ROUTING VIEW </div>;
   }
   if (to) {
-    const toType = urlSearchParams.get('toType') || '';
+    let toType = urlSearchParams.get('toType') || '';
     let destData;
-    if (!toType) destData = getDataFromMap(data, to);
-    else
+    if (!toType) {
+      const { key, item } = getDataFromMap(data || {}, to);
+      destData = item;
+      toType = key;
+    } else {
       destData = getDataFromSearch(
-        data,
+        searchData,
         to,
-        toType as keyof SearchPeopleRoomsQueryTypeGenerated
+        toType as keyof GetSearchDataQueryTypeGenerated
       );
+    }
 
-    return (
-      <Popup
-        mainText={destData?.name || ''}
-        subText={destData?.description || ''}
-        labels={[]}
-      />
-    );
+    // try object routing?
+    switch (toType) {
+      case DATA_TYPES.PERSON:
+        return <PersonPopup data={destData} />;
+      case DATA_TYPES.ROOM:
+        return <RoomPopup data={destData} />;
+      case DATA_TYPES.EQUIPMENT:
+        return <EquipmentPopup data={destData} />;
+      default:
+        return <BlankPopup />;
+    }
   }
 
-  return (
-    <AbsoluteHeader Left={renderLeftHeader}>
-      <Link to={PAGES.PROFILE}>
-        <AvatarButton />
-      </Link>
-    </AbsoluteHeader>
-  );
+  return <DefaultView />;
 };

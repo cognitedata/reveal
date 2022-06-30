@@ -2,7 +2,7 @@ import { createLayers } from '@cognite/z-index';
 
 const LAYERS = [
   'MAXIMUM',
-
+  'HEADER',
   //
   // things closer to here are shown on TOP (ie: have high z-index)
   //

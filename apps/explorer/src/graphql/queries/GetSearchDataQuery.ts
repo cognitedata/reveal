@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request';
 
-export const SearchPeopleRoomsQuery = gql`
-  query searchPeopleRooms(
+export const GetSearchDataQuery = gql`
+  query getSearchData(
     $personFilter: _ListPersonFilter
     $roomFilter: _ListRoomFilter
   ) {
@@ -9,7 +9,11 @@ export const SearchPeopleRoomsQuery = gql`
       items {
         externalId
         name
-        description: slackId
+        slackId
+        desk {
+          name
+          externalId
+        }
       }
     }
     rooms: listRoom(first: 15, filter: $roomFilter) {
@@ -18,6 +22,7 @@ export const SearchPeopleRoomsQuery = gql`
         name
         nodeId
         description
+        isBookable
       }
     }
   }

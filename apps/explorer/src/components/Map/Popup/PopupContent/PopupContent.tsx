@@ -1,55 +1,53 @@
-import {
-  Button,
-  Detail,
-  Flex,
-  Icon,
-  IconType,
-  Label,
-  Title,
-} from '@cognite/cogs.js';
+import { Button, Flex, Label } from '@cognite/cogs.js';
+import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
-import { TextWrapper } from '../elements';
+import {
+  FullWidthContainer,
+  ButtonWithMargin,
+  DivWithMarginBottom,
+  FlexColumnSpaceAround,
+  FlexSpaceBetween,
+} from '../elements';
 
 interface Props {
-  mainText: string;
-  subText: string;
   labels: string[];
-  iconType?: IconType;
   disableRoute?: boolean;
-  handleEdit: () => void;
+  handleEdit?: () => void;
+  Icon: ReactNode;
 }
 
 export const PopupContent: React.FC<Props> = ({
-  iconType = 'Cube',
-  mainText,
-  subText,
   labels,
   disableRoute = false,
   handleEdit,
+  children,
+  Icon,
 }) => {
   return (
-    <Flex
-      direction="column"
-      justifyContent="space-around"
-      style={{ height: '100%' }}
-    >
-      <div>
-        <Flex justifyContent="space-between" style={{ marginBottom: '5%' }}>
-          <div style={{ width: '100%' }}>
-            <Icon size={54} type={iconType} />
-            <TextWrapper>
-              <Title level={3}>{mainText}</Title>
-              <Detail>{subText}</Detail>
-            </TextWrapper>
+    <FlexColumnSpaceAround>
+      <DivWithMarginBottom>
+        <FlexSpaceBetween>
+          {Icon}
+          <div>
+            {handleEdit && (
+              <Button
+                aria-label="Edit information"
+                icon="Edit"
+                onClick={handleEdit}
+              />
+            )}
+            <Link to="/home">
+              <ButtonWithMargin
+                type="ghost"
+                icon="Close"
+                aria-label="close-popup"
+              />
+            </Link>
           </div>
-          <Button icon="Edit" onClick={handleEdit} />
-          <Link to="/home">
-            <Button type="ghost" icon="Close" style={{ marginLeft: '4px' }} />
-          </Link>
-        </Flex>
-      </div>
-
+        </FlexSpaceBetween>
+        <FullWidthContainer>{children}</FullWidthContainer>
+      </DivWithMarginBottom>
       <Flex gap={6}>
         {labels.map((label) => (
           <Label variant="unknown" key={label}>
@@ -62,6 +60,6 @@ export const PopupContent: React.FC<Props> = ({
           Directions
         </Button>
       </Flex>
-    </Flex>
+    </FlexColumnSpaceAround>
   );
 };

@@ -1,21 +1,11 @@
 import { HeaderLeft, StyledAbsoluteHeader } from '../elements';
 
-export interface Props {
-  Left?: () => JSX.Element | null;
+export interface CompoundComponent {
+  Left: React.FC;
 }
 
-export const AbsoluteHeader: React.FC<React.PropsWithChildren<Props>> = ({
-  children,
-  Left,
-}) => {
-  return (
-    <StyledAbsoluteHeader>
-      {Left && (
-        <HeaderLeft>
-          <Left />
-        </HeaderLeft>
-      )}
-      {children}
-    </StyledAbsoluteHeader>
-  );
+export const AbsoluteHeader: React.FC<React.PropsWithChildren<unknown>> &
+  CompoundComponent = ({ children }) => {
+  return <StyledAbsoluteHeader>{children}</StyledAbsoluteHeader>;
 };
+AbsoluteHeader.Left = HeaderLeft;

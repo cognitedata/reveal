@@ -1,6 +1,5 @@
 import { Icon, IconType } from '@cognite/cogs.js';
 import React from 'react';
-import { NavigateBack } from 'components/NavigateBack/NavigateBack';
 
 import { SearchInput, SearchInputWrapper } from './elements';
 
@@ -9,7 +8,8 @@ interface Props {
   icon?: IconType;
   placeholder: string;
   query: string;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleClose?: () => void;
 }
 
 export const SearchBar: React.FC<Props> = ({
@@ -18,12 +18,11 @@ export const SearchBar: React.FC<Props> = ({
   placeholder,
   query,
   handleChange,
+  handleClose,
 }) => {
   const iconDisplay =
     icon === 'ArrowLeft' ? (
-      <NavigateBack>
-        <Icon type={icon} />
-      </NavigateBack>
+      <Icon style={{ cursor: 'pointer' }} onClick={handleClose} type={icon} />
     ) : (
       <Icon type={icon} />
     );

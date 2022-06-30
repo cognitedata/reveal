@@ -1,10 +1,12 @@
 import { updateNode } from 'domain/node/service/network/updateNode';
 
-import { Building, Room, Equipment, Person } from 'graphql/generated';
+import { Building } from 'graphql/generated';
 import { useMutation } from 'react-query';
 import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
-type Updateable = Building | Equipment | Room | Person;
+import { EquipmentMutate, PersonMutate, RoomMutate } from '../types';
+
+type Updateable = Building | EquipmentMutate | RoomMutate | PersonMutate;
 
 export const useNodeMutate = () => {
   const client = getCogniteSDKClient();

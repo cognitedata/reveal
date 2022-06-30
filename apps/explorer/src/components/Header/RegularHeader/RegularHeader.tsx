@@ -1,21 +1,12 @@
 import { HeaderLeft, StyledRegularHeader } from '../elements';
 
-export interface Props {
-  Left?: () => JSX.Element | null;
+export interface CompoundComponent {
+  Left: React.FC;
 }
 
-export const RegularHeader: React.FC<React.PropsWithChildren<Props>> = ({
-  children,
-  Left,
-}) => {
-  return (
-    <StyledRegularHeader>
-      {Left && (
-        <HeaderLeft>
-          <Left />
-        </HeaderLeft>
-      )}
-      {children}
-    </StyledRegularHeader>
-  );
+export const RegularHeader: React.FC<React.PropsWithChildren<unknown>> &
+  CompoundComponent = ({ children }) => {
+  return <StyledRegularHeader>{children}</StyledRegularHeader>;
 };
+
+RegularHeader.Left = HeaderLeft;

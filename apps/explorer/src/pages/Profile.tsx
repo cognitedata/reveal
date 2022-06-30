@@ -1,4 +1,4 @@
-import { usePersonMutate } from 'domain/node/internal/actions/usePersonMutate';
+import { useProfileMutate } from 'domain/node/internal/actions/person/useProfileMutate';
 import { usePersonSelector } from 'domain/node/internal/selectors/usePersonSelector';
 import { useUserInfoQuery } from 'domain/userManagementService/internal/queries/useUserInfoQuery';
 
@@ -20,7 +20,7 @@ export const SubmitButton = styled(Button)`
 
 export const ProfileContent = () => {
   const [name, setName] = React.useState<string>('');
-  const updatePerson = usePersonMutate();
+  const updatePerson = useProfileMutate();
   const { data, isFetched } = useUserInfoQuery();
   const existingPerson = usePersonSelector({ externalId: data?.id });
 

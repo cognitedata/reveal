@@ -29,6 +29,7 @@
     "cypress:ci": "bazel test :cypress_test",
     "update-helpers": "bazel run :generate_package_json_helpers",
     "deploy": "cd ../.. && ./scripts/deploy.sh explorer",
+    "graphql:codegen_init": "python3 scripts/graphql_codegen_init.py -s https://bluefield.cognitedata.com/api/v1/projects/discover-test-bluefield/schema/api/demo/1/graphql -d './src/graphql/queries/*.ts' -o ./src/graphql/generated.ts -y ./resources/schema/codegen.yaml",
     "graphql:generate": "../../node_modules/.bin/graphql-codegen --config=./resources/schema/codegen.yaml"
   },
   "jest": {

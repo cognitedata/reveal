@@ -1,20 +1,27 @@
-import { SearchPeopleRoomsQueryTypeGenerated } from 'graphql/generated';
+import { DATA_TYPES } from 'components/MapOverlay/MapOverlay';
+import {
+  Equipment,
+  GetMapDataQueryTypeGenerated,
+  Room,
+} from 'graphql/generated';
 
+interface ReturnType {
+  key: string;
+  item: Partial<Room> | Partial<Equipment> | undefined;
+}
 export const getDataFromMap = (
-  data: SearchPeopleRoomsQueryTypeGenerated,
+  data: GetMapDataQueryTypeGenerated,
   to: string
-) => {
-  const keys = Object.keys(data);
+): ReturnType => {
+  const roomItem = data.rooms?.items.find((item: any) => {
+    return String(item.nodeId) === to;
+  });
+  if (roomItem) return { key: DATA_TYPES.ROOM, item: roomItem };
 
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i] as keyof SearchPeopleRoomsQueryTypeGenerated;
-    const item = data[key]?.items.find((item: any) => {
-      if (item.nodeId) return String(item.nodeId) === to;
-      return false;
-    });
+  const equipmentItem = data.equipment?.items.find((item: any) => {
+    return String(item.nodeId) === to;
+  });
 
-    if (item) return item;
-  }
-
-  return undefined;
+  if (equipmentItem) return { key: DATA_TYPES.EQUIPMENT, item: equipmentItem };
+  return { key: '', item: undefined };
 };

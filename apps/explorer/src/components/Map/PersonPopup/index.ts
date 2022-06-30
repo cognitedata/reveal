@@ -1,0 +1,1 @@
+export { PersonPopup } from './PersonPopup';

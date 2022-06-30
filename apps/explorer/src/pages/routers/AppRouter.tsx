@@ -1,7 +1,6 @@
 import { Switch, Redirect, Route } from 'react-router-dom';
 import { NotFoundPage } from 'pages/NotFoundPage';
 import { Home } from 'pages/Home';
-import { Search } from 'pages/Search';
 import { Profile } from 'pages/Profile';
 import { Logout } from '@cognite/react-container';
 import { usePageSettings } from 'hooks/usePageSettings';
@@ -17,7 +16,6 @@ export const AppRouter = () => {
       <Switch>
         <Route path={PAGES.HOME} render={() => <Home />} />
         <Route path={PAGES.LOGOUT} render={() => <Logout />} />
-        <Route path={PAGES.SEARCH} render={() => <Search />} />
         <Route path={PAGES.PROFILE} render={() => <Profile />} />
         <Route path={PAGES.NOT_FOUND} render={() => <NotFoundPage />} />
 

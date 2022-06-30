@@ -5,7 +5,6 @@ import {
 } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 import { updateStyledNodes } from 'utils/map/updateStyledNodes';
 
 const fullStyle = { width: '100%', height: '100%' };
@@ -13,12 +12,12 @@ const fullStyle = { width: '100%', height: '100%' };
 interface Props {
   client: CogniteClient;
   model: AddModelOptions;
+  setDestination: (treeNodeId: number | undefined) => void;
 }
 
-const Map: React.FC<Props> = ({ client, model }) => {
+const Map: React.FC<Props> = ({ client, model, setDestination }) => {
   const viewer = React.useRef<Cognite3DViewer>();
   // Need to work on connecting this with nodeId
-  const history = useHistory();
   const [_treeIndex, setTreeIndex] = React.useState<number>();
 
   const handleClick = async (
@@ -30,10 +29,8 @@ const Map: React.FC<Props> = ({ client, model }) => {
       event,
       model
     );
-    const url = new URL(window.location.href);
-    url.searchParams.set('to', String(newTreeNodeId));
-    history.push(`?to=${newTreeNodeId}`);
 
+    setDestination(newTreeNodeId);
     setTreeIndex(newTreeIndex);
   };
 

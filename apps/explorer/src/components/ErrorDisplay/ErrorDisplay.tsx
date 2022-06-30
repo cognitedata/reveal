@@ -7,15 +7,16 @@ import { Link } from 'react-router-dom';
 
 import { ErrorBody, ErrorHeader, MarginWrapper } from './elements';
 
-const renderLeftHeader = () => <NavigateToSearchButton />;
-
 export const ErrorDisplay: React.FC<React.PropsWithChildren<unknown>> = ({
   children,
 }) => {
   return (
     <>
       <MarginWrapper>
-        <RegularHeader Left={renderLeftHeader}>
+        <RegularHeader>
+          <RegularHeader.Left>
+            <NavigateToSearchButton />
+          </RegularHeader.Left>
           <Link to={PAGES.PROFILE}>
             <AvatarButton />
           </Link>

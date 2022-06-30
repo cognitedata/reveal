@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import layers from 'utils/zindex';
 
 const baseHeaderStyles = `
-  z-index: ${layers.MAXIMUM};
+  z-index: ${layers.HEADER};
   gap: ${sizes.small};
   justify-content: space-around;
   align-items: center;
