@@ -1,11 +1,8 @@
 import React from 'react';
-
 import times from 'lodash/times';
 import styled from 'styled-components/macro';
-
+import Text from 'src/modules/Common/Components/Skeleton/layouts/Text';
 import { sizes } from 'src/modules/Common/Components/Skeleton/layout';
-
-import Skeleton from 'src/modules/Common/Components/Skeleton/index';
 
 interface Props {
   lines?: number;
@@ -24,7 +21,7 @@ const ListItem = styled.div`
   display: flex;
   align-items: center;
 
-  &::last-of-type {
+  &:last-of-type {
     border-bottom: none;
   }
 `;
@@ -41,7 +38,7 @@ const List: React.FC<Props> = ({ lines = 1, borders }: Props) => {
     <div role="table">
       {times(lines).map((count) => (
         <ListItem borders={borders} key={`skeleton-${count}`}>
-          <Skeleton.Text currentLine={count} isOnlyLine />
+          <Text currentLine={count} isOnlyLine />
         </ListItem>
       ))}
     </div>

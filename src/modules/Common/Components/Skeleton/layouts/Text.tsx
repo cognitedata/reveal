@@ -1,6 +1,5 @@
 import React from 'react';
-
-import { Base } from 'src/modules/Common/Components/Skeleton/index';
+import { Rectangle } from 'src/modules/Common/Components/Skeleton/elements';
 
 export interface Props {
   currentLine?: number;
@@ -15,7 +14,7 @@ export interface Props {
  * @param {Number} isOnlyLine - should be true rendering only one line
  * @example <Skeleton.Text currentLine={3} isLastLine />
  */
-export const Text: React.FC<Props> = ({
+const Text: React.FC<Props> = ({
   isOnlyLine,
   currentLine = 0,
   isLastLine,
@@ -35,7 +34,7 @@ export const Text: React.FC<Props> = ({
     width = `${(0.3 + lengths[currentLine] * 0.6) * 100}%`;
   }
 
-  return <Base.Rectangle role="row" width={width} />;
+  return <Rectangle role="row" width={width} />;
 };
 
 export default Text;

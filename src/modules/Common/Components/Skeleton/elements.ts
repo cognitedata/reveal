@@ -1,8 +1,6 @@
 import styled, { keyframes } from 'styled-components/macro';
-
-import { Looped } from 'src/modules/Common/Components/Skeleton/transition';
-
 import { RectangleProps, CircleProps } from './types';
+import { Looped } from './transition';
 
 const gradientSize = '640px';
 
@@ -12,7 +10,7 @@ const skeletonLoaderKeyframes = keyframes`
 `;
 
 const Base = styled.div`
-  ${Looped}
+  ${Looped};
   display: inline-block;
   animation-duration: 3s;
   animation-name: ${skeletonLoaderKeyframes};
