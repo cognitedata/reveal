@@ -19,7 +19,8 @@ export class MeasurementUi {
     lineWidth: 2.0,
     color: 0x00FFFF,
     allMeasurement: false,
-    axesComponents: true
+    axesComponents: true,
+    showAllMeasurementLabels: true
   };
 
   private measurement = {
@@ -71,6 +72,10 @@ export class MeasurementUi {
     this._guiController.push(this._gui.add(this.state, 'axesComponents').name('Show all axes component').onChange(axesComponents => {
       this.state.axesComponents = axesComponents;
       this._measurementTool.showAllAxesComponent(this.state);
+    }));
+    this._guiController.push(this._gui.add(this.state, 'showAllMeasurementLabels').name('Show Measurement Labels').onChange(showAllMeasurementLabels => {
+      this.state.showAllMeasurementLabels = showAllMeasurementLabels;
+      this._measurementTool.showMeasurementLabels(showAllMeasurementLabels);
     }));
   }
 

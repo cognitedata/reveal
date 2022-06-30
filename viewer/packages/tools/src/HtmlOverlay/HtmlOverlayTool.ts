@@ -283,6 +283,8 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     this._compositeOverlays.forEach(element => {
       element.style.visibility = visible;
     });
+    //update the elements when visibilty is back to show overlay.
+    this.forceUpdate();
   }
 
   /**

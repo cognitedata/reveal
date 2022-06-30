@@ -157,7 +157,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * @param options MeasurementOptions to enable or disable axes component for the measurement.
    * @param meshObject Measurement mesh object to enable/disable axes component.
    */
-  showAxesComponent(options: MeasurementOptions, meshObject?: THREE.Mesh): void {
+  showAxesComponent(options: MeasurementOptions, meshObject?: THREE.Group): void {
     if (meshObject) {
       const measurement = this._measurements.find(measurement => measurement.getMesh() === meshObject);
       measurement?.showAxesComponent(options);
