@@ -7,6 +7,7 @@ import * as THREE from 'three';
 export class TransformOverrideBuffer {
   private static readonly MIN_NUMBER_OF_TREE_INDICES = 16;
   private static readonly NUMBER_OF_ELEMENTS_PER_MATRIX = 16;
+  private static readonly NUMBER_OF_ROWS_PER_MATRIX = 4;
 
   private _dataTexture: THREE.DataTexture;
   private _textureBuffer: Float32Array;
@@ -71,7 +72,9 @@ export class TransformOverrideBuffer {
 
     for (let i = 0; i < TransformOverrideBuffer.NUMBER_OF_ELEMENTS_PER_MATRIX; i++) {
       const byteIndex = matrixIndex * TransformOverrideBuffer.NUMBER_OF_ELEMENTS_PER_MATRIX + i;
-      const rowMajorMatrixIndex = (i % 4) * 4 + Math.floor(i / 4);
+      const rowMajorMatrixIndex =
+        (i % TransformOverrideBuffer.NUMBER_OF_ROWS_PER_MATRIX) * TransformOverrideBuffer.NUMBER_OF_ROWS_PER_MATRIX +
+        Math.floor(i / TransformOverrideBuffer.NUMBER_OF_ROWS_PER_MATRIX);
       this._textureBuffer[byteIndex] = transformBuffer[rowMajorMatrixIndex];
     }
 
