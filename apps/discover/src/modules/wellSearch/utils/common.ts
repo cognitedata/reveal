@@ -1,34 +1,6 @@
 import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
-import { ExternalEvent } from '@cognite/sdk';
-import { NPT } from '@cognite/sdk-wells-v2';
-
-import {
-  TrajectoryData,
-  WellboreExternalAssetIdMap,
-  MeasurementV3,
-  Sequence,
-} from '../types';
-
-export const trimCachedData = (
-  data: {
-    [key: string]: Sequence[] | TrajectoryData[] | ExternalEvent[] | NPT[];
-  },
-  wellboreIds: Wellbore['id'][]
-) => {
-  const newIds: Wellbore['id'][] = [];
-  const trimmedData = wellboreIds.reduce((results, wellboreId) => {
-    if (data[wellboreId]) {
-      return { ...results, [wellboreId]: data[wellboreId] };
-    }
-    newIds.push(wellboreId);
-    return results;
-  }, {} as typeof data);
-  return {
-    trimmedData,
-    newIds,
-  };
-};
+import { WellboreExternalAssetIdMap, MeasurementV3 } from '../types';
 
 /**
  * Matching id based function to use with sdk v2 types

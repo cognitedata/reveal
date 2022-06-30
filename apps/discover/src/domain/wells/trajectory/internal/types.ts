@@ -1,3 +1,5 @@
+import { Wellbore } from 'domain/wells/wellbore/internal/types';
+
 import { Angle, Distance } from 'convert-units';
 
 import {
@@ -5,6 +7,7 @@ import {
   DoglegSeverityUnit,
   Trajectory,
   TrajectoryData,
+  TrueVerticalDepths,
 } from '@cognite/sdk-wells-v3';
 
 export interface TrajectoryInternal
@@ -42,3 +45,17 @@ export interface DoglegSeverityUnitInternal
   angleUnit: Angle;
   distanceUnit: Distance;
 }
+
+export interface TrueVerticalDepthsDataLayer extends TrueVerticalDepths {
+  mdTvdMap: Record<number, number>;
+}
+
+export type KeyedTvdData = Record<
+  Wellbore['matchingId'],
+  TrueVerticalDepthsDataLayer
+>;
+
+export type GroupedTvdData = Record<
+  Wellbore['matchingId'],
+  TrueVerticalDepthsDataLayer[]
+>;

@@ -1,4 +1,4 @@
-import { useTrajectoriesMetadataQuery } from 'domain/wells/trajectory0/internal/queries/useTrajectoriesMetadataQuery';
+import { useTrajectoriesQuery } from 'domain/wells/trajectory/internal/queries/useTrajectoriesQuery';
 import { useWellSearchResultQuery } from 'domain/wells/well/internal/queries/useWellSearchResultQuery';
 import { getWellboreIdsList } from 'domain/wells/wellbore/internal/transformers/getWellboreIdsList';
 
@@ -39,7 +39,6 @@ import { useFilterBarIsOpen } from 'modules/sidebar/selectors';
 import { Modules, CategoryTypes } from 'modules/sidebar/types';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useIsWellConfigEnabled } from 'modules/wellSearch/hooks/useWellConfig';
-import { WellboreId } from 'modules/wellSearch/types';
 
 import {
   DOCUMENT_TAB_TITLE_KEY,
@@ -101,8 +100,8 @@ export const Search: React.FC = () => {
 
   const documentResultCount = useDocumentResultCount();
   const { data: wellsData } = useWellSearchResultQuery();
-  const wellboreIdList: WellboreId[] = getWellboreIdsList(wellsData?.wells);
-  const { data: trajectories } = useTrajectoriesMetadataQuery(wellboreIdList);
+  const wellboreIds = getWellboreIdsList(wellsData?.wells);
+  const { data: trajectories } = useTrajectoriesQuery({ wellboreIds });
 
   const wellInspectMode = location.pathname.includes(
     navigation.SEARCH_WELLS_INSPECT

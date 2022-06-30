@@ -5,6 +5,8 @@ import { useNdsWithTvdData } from 'domain/wells/nds/internal/hooks/useNdsWithTvd
 import { useNptEventsQuery } from 'domain/wells/npt/internal/queries/useNptEventsQuery';
 import { useTrajectoriesWithData } from 'domain/wells/trajectory/internal/hooks/useTrajectoriesWithData';
 import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
+import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
+import { keyBySequence } from 'domain/wells/wellbore/internal/transformers/keyBySequence';
 
 import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
@@ -16,8 +18,6 @@ import EmptyState from 'components/EmptyState';
 import { LOADING_SUB_TEXT } from 'components/EmptyState/constants';
 import { StoreState } from 'core/types';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
-import { keyBySource } from 'modules/wellSearch/utils/groupBySource';
-import { groupByWellbore } from 'modules/wellSearch/utils/groupByWellbore';
 
 const ThreeDeeEmptyStateLoader: React.FC = () => {
   return <EmptyState isLoading loadingSubtitle={LOADING_SUB_TEXT} />;
@@ -76,7 +76,7 @@ const ThreeDeePreview: React.FC<Props> = ({ wellboreIds }: Props) => {
       ndsEvents={ndsEvents}
       nptEvents={nptEvents}
       wellLogs={wellLogs.length ? groupByWellbore(wellLogs) : undefined}
-      wellLogsRowData={keyBySource(wellLogsRowData)}
+      wellLogsRowData={keyBySequence(wellLogsRowData)}
     />
   );
 };

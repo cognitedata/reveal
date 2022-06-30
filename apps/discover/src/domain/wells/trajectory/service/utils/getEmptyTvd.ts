@@ -1,6 +1,6 @@
 import { DistanceUnitEnum, TrueVerticalDepths } from '@cognite/sdk-wells-v3';
 
-import { ResponseItemType } from '../trajectory0/types';
+import { ResponseItemType } from '../types';
 
 export const getEmptyTvd = (
   responseItems: ResponseItemType[]

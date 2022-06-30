@@ -5,11 +5,15 @@ import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 
 import { Chart } from '../../common/Chart';
-import { ChartProps } from '../../common/Chart/types';
-import { TrajectoryChildGrid } from '../elements';
+import { ChartProps, Data } from '../../common/Chart/types';
+import { getChartVizDataConfig } from '../utils/getChartVizDataConfig';
 
-import { TrajectoryChartProps } from './types';
-import { getChartVizDataConfig } from './utils/getChartVizDataConfig';
+import { TrajectoryChildGrid } from './elements';
+
+export interface TrajectoryChartProps {
+  data: Data;
+  index: number;
+}
 
 export const TrajectoryChart: React.FC<
   TrajectoryChartProps & Partial<ChartProps>

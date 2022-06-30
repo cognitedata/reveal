@@ -153,6 +153,11 @@ describe('Three-dee component', () => {
     cy.findByRole('button', { name: 'Proceed' }).should('be.visible').click();
 
     cy.log('checking the number of rows that loaded');
-    cy.findAllByRole('rowgroup').should('have.length', 4);
+    /**
+     * NOTE: this long timeout here is because of the longer time 3D view could take to load
+     * when many wellbores are selected.
+     * That's why we show a warning also.
+     */
+    cy.findAllByRole('rowgroup', { timeout: 200000 }).should('be.visible');
   });
 });

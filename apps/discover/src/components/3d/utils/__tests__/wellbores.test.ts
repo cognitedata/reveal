@@ -18,6 +18,7 @@ describe('mapWellboresTo3D', () => {
       {
         description: 'wellbore B desc',
         id: '759155409324883',
+        matchingId: '759155409324883',
         metadata: {
           bh_x_coordinate: '',
           bh_y_coordinate: '',
@@ -42,6 +43,7 @@ describe('mapWellboresTo3D', () => {
         },
         name: 'wellbore A',
         id: '759155409324993',
+        matchingId: '759155409324993',
         externalId: 'Wellbore A:759155409324993',
         wellId: '1234',
         wellMatchingId: '1234',

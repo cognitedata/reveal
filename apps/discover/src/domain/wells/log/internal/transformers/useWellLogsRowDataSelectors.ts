@@ -1,4 +1,4 @@
-import { keyBySource } from 'modules/wellSearch/utils/groupBySource';
+import { keyBySequence } from 'domain/wells/wellbore/internal/transformers/keyBySequence';
 
 import { useWellLogsRowDataQuery } from '../queries/useWellLogsRowDataQuery';
 
@@ -9,6 +9,6 @@ export const useWellLogsRowDataKeyBySource = (
 
   return {
     ...rest,
-    data: data ? keyBySource(data) : {},
+    data: data ? keyBySequence(data) : {},
   };
 };

@@ -1,11 +1,10 @@
 import { getCasingSchematics } from 'domain/wells/casings/service/network/getCasingSchematics';
+import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
 import { CasingSchematic } from '@cognite/sdk-wells-v3';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useArrayCache } from 'hooks/useArrayCache';
-
-import { groupByWellbore } from '../utils/groupByWellbore';
 
 import { AllCursorsProps } from './useAllNdsCursorsQuery';
 

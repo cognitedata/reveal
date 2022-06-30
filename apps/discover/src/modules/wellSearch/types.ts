@@ -1,10 +1,8 @@
 import { Well } from 'domain/wells/well/internal/types';
 import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
-import { Dictionary } from '@reduxjs/toolkit';
 import { PlotData } from 'plotly.js';
 
-import { ProjectConfigWellsTrajectoryColumns } from '@cognite/discover-api-types';
 import { Sequence as DefaultSequence, Asset } from '@cognite/sdk';
 // TODO(PP-2998): Remove well sdk v2 usage in NPT
 import { NPT, WellFilter } from '@cognite/sdk-wells-v2';
@@ -39,11 +37,9 @@ export const WELL_SET_SELECTED_COLUMN = 'WELL_SET_SELECTED_COLUMN';
 
 // well state:
 
-export type EventsType = 'nds' | 'npt';
 export type LogTypes = 'logs' | 'logsFrmTops';
 export type AssetTypes = 'digitalRocks';
 export type GrainAnalysisTypes = 'gpart';
-export type DictionaryType<T> = Dictionary<T>;
 
 export interface WellState {
   selectedWellIds: TableResults;
@@ -58,28 +54,6 @@ export interface WellState {
 export interface Sequence extends Omit<DefaultSequence, 'assetId'> {
   wellboreId?: WellboreId;
   assetId?: AssetSource['assetExternalId'];
-}
-
-export interface TrajectoryColumnR {
-  name: string;
-  externalId?: string;
-  valueType: string;
-}
-export interface TrajectoryRow {
-  rowNumber: number;
-  values: number[];
-}
-export interface TrajectoryData {
-  sequence: Sequence;
-  rowData?: TrajectoryRows;
-}
-
-export interface TrajectoryRows {
-  id: number;
-  wellboreId: WellboreId;
-  externalId: string;
-  columns: ProjectConfigWellsTrajectoryColumns[];
-  rows: TrajectoryRow[];
 }
 
 export interface WellboreDigitalRockSamples {
@@ -157,18 +131,6 @@ export interface WellResult {
   error?: Error;
 }
 
-export interface WellSequence {
-  name: string;
-  id: number;
-  metadata: WellSequenceMetadata;
-}
-
-interface WellSequenceMetadata {
-  subtype: string;
-  type: string;
-  source: string;
-  fileType: string;
-}
 export type WellId = string;
 export type WellboreId = string;
 
@@ -290,23 +252,9 @@ export type WellboreIdMap = {
   [key: WellboreId]: string;
 };
 
-export type WellboreAssetIdMap = {
-  [key: WellboreId]: string;
-};
-
 export type WellboreExternalAssetIdMap = {
   [key: string]: string;
 };
-
-export type WellboreExternalIdMap = {
-  [key: string]: string;
-};
-
-export type WellboreSourceExternalIdMap = {
-  [key: WellboreId]: string;
-};
-
-export type IdWellboreMap = Record<string, Wellbore>;
 
 export interface NPTEvent extends NPT {
   wellboreId: string;
@@ -370,10 +318,6 @@ export enum WdlMeasurementType {
   FRACTURE_PRESSURE_POST_DRILL_MEAN = 'fracture pressure post drill mean',
   LOT = 'fit equivalent mud weight',
   FIT = 'lot equivalent mud weight',
-}
-
-export interface Measurement extends Sequence {
-  rows?: SequenceRow[];
 }
 
 /**

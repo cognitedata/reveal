@@ -1,7 +1,7 @@
 import { formatOutsideDiameter } from 'domain/wells/casings/internal/transformers/formatOutsideDiameter';
 import { CasingAssemblyInternal } from 'domain/wells/casings/internal/types';
 import { isLiner } from 'domain/wells/casings/internal/utils/isLiner';
-import { TrueVerticalDepthsDataLayer } from 'domain/wells/trajectory0/internal/types';
+import { TrueVerticalDepthsDataLayer } from 'domain/wells/trajectory/internal/types';
 
 import { CasingAssemblyView } from '../types';
 

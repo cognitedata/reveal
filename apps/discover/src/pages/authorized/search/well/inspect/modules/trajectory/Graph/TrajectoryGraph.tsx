@@ -8,12 +8,11 @@ import { useDeepMemo } from 'hooks/useDeep';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 
-import { FullSizedTrajectoryView, TrajectoryGrid } from '../elements';
 import { TrajectoryView } from '../types';
 import { adaptToChartDataList } from '../utils/adaptToChartDataList';
 
-import { TrajectoryChart } from './TrajectoryChart';
-import { TrajectoryChartProps } from './types';
+import { FullSizedTrajectoryView, TrajectoryGrid } from './elements';
+import { TrajectoryChart, TrajectoryChartProps } from './TrajectoryChart';
 
 export interface TrajectoryGraphProps {
   data: TrajectoryView[];

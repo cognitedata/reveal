@@ -1,11 +1,11 @@
 import { getMeasurementLogs } from 'domain/wells/measurements/service/network/getMeasurementLogs';
+import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
 import { DepthMeasurement } from '@cognite/sdk-wells-v3';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useArrayCache } from 'hooks/useArrayCache';
 import { WellboreId } from 'modules/wellSearch/types';
-import { groupByWellbore } from 'modules/wellSearch/utils/groupByWellbore';
 
 export const useWellLogsQuery = (wellboreIds: WellboreId[] = []) => {
   return useArrayCache<DepthMeasurement>({

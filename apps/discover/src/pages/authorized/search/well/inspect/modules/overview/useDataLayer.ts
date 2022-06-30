@@ -1,15 +1,8 @@
-import { useTrajectoriesMetadataQuery } from 'domain/wells/trajectory0/internal/queries/useTrajectoriesMetadataQuery';
-import {
-  getMd,
-  getMdUnit,
-} from 'domain/wells/trajectory0/internal/selectors/getMd';
-import { getTrajectoryForWellbore } from 'domain/wells/trajectory0/internal/selectors/getTrajectoryForWellbore';
-import {
-  getTvd,
-  getTvdUnit,
-} from 'domain/wells/trajectory0/internal/selectors/getTvd';
+import { useTrajectoriesQuery } from 'domain/wells/trajectory/internal/queries/useTrajectoriesQuery';
 import { getWaterDepth } from 'domain/wells/well/internal/selectors/getWaterDepth';
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
 import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
+import { keyByWellbore } from 'domain/wells/wellbore/internal/transformers/keyByWellbore';
 
 import { useMemo } from 'react';
 
@@ -22,7 +15,15 @@ export const useDataLayer = () => {
   const wells = useWellInspectSelectedWells();
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
-  const { data: trajectories, isLoading } = useTrajectoriesMetadataQuery();
+  const wellboreIds = useWellInspectSelectedWellboreIds();
+  const { data: trajectories = [], isLoading } = useTrajectoriesQuery({
+    wellboreIds,
+  });
+
+  const keyedTrajectories = useMemo(
+    () => keyByWellbore(trajectories),
+    [trajectories]
+  );
 
   return useMemo(() => {
     if (isLoading) {
@@ -46,18 +47,15 @@ export const useDataLayer = () => {
             waterDepth: getWaterDepth(well, userPreferredUnit),
           };
 
-          if (trajectories) {
-            const trajectory = getTrajectoryForWellbore(
-              trajectories,
-              wellbore.id
-            );
+          const trajectory = keyedTrajectories[wellbore.matchingId];
 
-            if (trajectory) {
-              overView.md = String(getMd(trajectory, userPreferredUnit));
-              overView.mdUnit = getMdUnit();
-              overView.tvd = String(getTvd(trajectory, userPreferredUnit));
-              overView.tvdUnit = getTvdUnit();
-            }
+          if (trajectory) {
+            const { maxMeasuredDepth, maxTrueVerticalDepth } = trajectory;
+
+            overView.md = String(maxMeasuredDepth);
+            overView.mdUnit = userPreferredUnit;
+            overView.tvd = String(maxTrueVerticalDepth);
+            overView.tvdUnit = userPreferredUnit;
           }
 
           return overView;

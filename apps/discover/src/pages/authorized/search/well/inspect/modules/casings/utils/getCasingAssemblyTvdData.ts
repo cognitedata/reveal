@@ -1,6 +1,6 @@
 import { CasingAssemblyInternal } from 'domain/wells/casings/internal/types';
-import { getTvdForMd } from 'domain/wells/trajectory0/internal/transformers/getTvdForMd';
-import { TrueVerticalDepthsDataLayer } from 'domain/wells/trajectory0/internal/types';
+import { getTvdForMd } from 'domain/wells/trajectory/internal/selectors/getTvdForMd';
+import { TrueVerticalDepthsDataLayer } from 'domain/wells/trajectory/internal/types';
 
 import isUndefined from 'lodash/isUndefined';
 import { Fixed } from 'utils/number';

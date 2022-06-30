@@ -2,7 +2,7 @@ import { sortCasingAssembliesByMDBase } from 'domain/wells/casings/internal/tran
 import { CasingSchematicInternal } from 'domain/wells/casings/internal/types';
 import { NdsInternal } from 'domain/wells/nds/internal/types';
 import { NptInternal } from 'domain/wells/npt/internal/types';
-import { KeyedTvdData } from 'domain/wells/trajectory0/internal/types';
+import { KeyedTvdData } from 'domain/wells/trajectory/internal/types';
 import { getWaterDepth } from 'domain/wells/well/internal/selectors/getWaterDepth';
 import { Well } from 'domain/wells/well/internal/types';
 import { getRkbLevel } from 'domain/wells/wellbore/internal/selectors/getRkbLevel';

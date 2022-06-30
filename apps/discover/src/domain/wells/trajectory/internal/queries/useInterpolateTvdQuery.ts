@@ -1,5 +1,3 @@
-import { normalizeTvd } from 'domain/wells/trajectory0/internal/transformers/normalizeTvd';
-import { GroupedTvdData } from 'domain/wells/trajectory0/internal/types';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
 import { useQuery } from 'react-query';
@@ -12,7 +10,9 @@ import { WELL_QUERY_KEY } from 'constants/react-query';
 
 import { SOMETHING_WENT_WRONG_FETCHING_TVD } from '../../constants';
 import { getInterpolateTvd } from '../../service/network/getInterpolateTvd';
-import { ResponseItemType } from '../../types';
+import { ResponseItemType } from '../../service/types';
+import { normalizeTvd } from '../transformers/normalizeTvd';
+import { GroupedTvdData } from '../types';
 
 export const useInterpolateTvdQuery = (
   responseItems: ResponseItemType[],

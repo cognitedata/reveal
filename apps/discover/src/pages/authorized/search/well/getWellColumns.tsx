@@ -1,9 +1,9 @@
+import { DoglegSeverityUnitInternal } from 'domain/wells/trajectory/internal/types';
 import { getSpudDateDisplay } from 'domain/wells/well/internal/selectors/getSpudDateDisplay';
 import { getSpudDateTableSort } from 'domain/wells/well/internal/selectors/getSpudDateSort';
 import { getWaterDepthSort } from 'domain/wells/well/internal/selectors/getWaterDepthSort';
 import { wellFieldTitles } from 'domain/wells/well/internal/titles';
 import { Well } from 'domain/wells/well/internal/types';
-import { DogLegSeverityUnit } from 'domain/wells/wellbore/internal/types';
 
 import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 import { ColumnMap } from 'modules/documentSearch/utils/getAvailableColumns';
@@ -29,7 +29,7 @@ export type Field = {
 
 export const getWellColumns = (
   userPreferredUnit = '',
-  doglegUnit?: DogLegSeverityUnit
+  doglegUnit?: DoglegSeverityUnitInternal
 ): ColumnMap<Well> => {
   return {
     wellname: {
