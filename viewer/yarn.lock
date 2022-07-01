@@ -1385,6 +1385,7 @@ __metadata:
   resolution: "@reveal/sector-loader@workspace:packages/sector-loader"
   dependencies:
     "@reveal/cad-parsers": "workspace:*"
+    "@reveal/logger": "workspace:*"
     "@reveal/metrics": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/rendering": "workspace:*"
