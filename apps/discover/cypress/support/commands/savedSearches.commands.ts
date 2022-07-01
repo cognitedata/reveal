@@ -141,7 +141,7 @@ const typeOnShareModal = (input: string) => {
 
 const clickShareButtonOnModal = () => {
   cy.intercept({
-    url: '**/savedSearches',
+    url: '**/savedSearches/*',
     method: 'GET',
   }).as('shareSavedSearch');
   cy.log('Click share button on share modal');
