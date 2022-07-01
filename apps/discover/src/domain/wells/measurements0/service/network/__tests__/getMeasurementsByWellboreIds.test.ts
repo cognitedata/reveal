@@ -1,5 +1,5 @@
 import 'domain/wells/__mocks/setupWellsMockSDK';
-import { getMockDepthMeasurementDataRejectAll } from 'domain/wells/measurements/service/__mocks/getMockDepthMeasurementDataRejectAll';
+import { getMockDepthMeasurementDataRejectAll } from 'domain/wells/measurements0/service/__mocks/getMockDepthMeasurementDataRejectAll';
 
 import flatten from 'lodash/flatten';
 import { setupServer } from 'msw/node';

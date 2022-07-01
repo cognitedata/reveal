@@ -1,4 +1,4 @@
-import { useMeasurementsQuery } from 'domain/wells/measurements/internal/queries/useMeasurementsQuery';
+import { useMeasurementsQuery } from 'domain/wells/measurements0/internal/queries/useMeasurementsQuery';
 
 import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 

@@ -1,4 +1,4 @@
-import { useMeasurementsQuery } from 'domain/wells/measurements/internal/queries/useMeasurementsQuery';
+import { useMeasurementsQuery } from 'domain/wells/measurements0/internal/queries/useMeasurementsQuery';
 
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';

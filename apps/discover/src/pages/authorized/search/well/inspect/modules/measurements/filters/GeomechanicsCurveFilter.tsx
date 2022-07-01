@@ -1,4 +1,4 @@
-import { useGeomechanicsFilterOptions } from 'domain/wells/measurements/internal/hooks/useGeomechanicsFilterOptions';
+import { useGeomechanicsFilterOptions } from 'domain/wells/measurements0/internal/hooks/useGeomechanicsFilterOptions';
 
 import React from 'react';
 

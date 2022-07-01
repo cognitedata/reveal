@@ -1,4 +1,4 @@
-import { GraphTrackEnum } from 'domain/wells/measurements/constants';
+import { GraphTrackEnum } from 'domain/wells/measurements0/constants';
 
 import compact from 'lodash/compact';
 import isEmpty from 'lodash/isEmpty';

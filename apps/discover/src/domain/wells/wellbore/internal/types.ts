@@ -1,7 +1,9 @@
 import { DoglegSeverityInternal } from 'domain/wells/trajectory/internal/types';
 
+import { Distance } from 'convert-units';
+
 import { Wellbore as WellboreV2 } from '@cognite/sdk-wells-v2';
-import { Wellbore as WellboreV3 } from '@cognite/sdk-wells-v3';
+import { Datum, Wellbore as WellboreV3 } from '@cognite/sdk-wells-v3';
 
 export interface Wellbore
   extends Omit<WellboreV2, 'id' | 'wellId' | 'sourceWellbores'>,
@@ -20,4 +22,8 @@ export interface Wellbore
   maxMeasuredDepth?: number;
   maxTrueVerticalDepth?: number;
   maxDoglegSeverity?: DoglegSeverityInternal;
+}
+
+export interface DatumInternal extends Omit<Datum, 'unit'> {
+  unit: Distance;
 }

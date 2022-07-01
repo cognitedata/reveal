@@ -1,4 +1,4 @@
-import { getMeasurementLogs } from 'domain/wells/measurements/service/network/getMeasurementLogs';
+import { getMeasurementLogs } from 'domain/wells/measurements0/service/network/getMeasurementLogs';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
 import { DepthMeasurement } from '@cognite/sdk-wells-v3';

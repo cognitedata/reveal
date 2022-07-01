@@ -1,7 +1,7 @@
 import {
   MEASUREMENT_TYPES_FILTER,
   SEQUENCES_PER_PAGE,
-} from 'domain/wells/measurements/service/network/getMeasurementLogsData';
+} from 'domain/wells/measurements0/service/network/getMeasurementLogsData';
 import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 
 import { fetchAllCursors, FetchOptions } from 'utils/fetchAllCursors';

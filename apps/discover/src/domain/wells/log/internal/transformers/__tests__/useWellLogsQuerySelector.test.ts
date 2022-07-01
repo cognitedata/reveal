@@ -1,6 +1,6 @@
 import 'domain/wells/__mocks/setupWellsMockSDK';
 import { getMockConfigGet } from 'domain/projectConfig/service/__mocks/getMockConfigGet';
-import { getMockDepthMeasurements } from 'domain/wells/measurements/service/__mocks/getMockDepthMeasurements';
+import { getMockDepthMeasurements } from 'domain/wells/measurements0/service/__mocks/getMockDepthMeasurements';
 import { getMockWellsById } from 'domain/wells/well/service/__mocks/getMockWellsById';
 
 import { renderHook } from '@testing-library/react-hooks';

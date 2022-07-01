@@ -1,4 +1,4 @@
-import { useMeasurementsQuery } from 'domain/wells/measurements/internal/queries/useMeasurementsQuery';
+import { useMeasurementsQuery } from 'domain/wells/measurements0/internal/queries/useMeasurementsQuery';
 import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
 import React, { useEffect, useMemo, useState } from 'react';

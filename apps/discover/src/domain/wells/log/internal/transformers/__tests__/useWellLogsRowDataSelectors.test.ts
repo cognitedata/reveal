@@ -1,5 +1,5 @@
 import 'domain/wells/__mocks/setupWellsMockSDK';
-import { getMockDepthMeasurementData } from 'domain/wells/measurements/service/__mocks/getMockDepthMeasurementData';
+import { getMockDepthMeasurementData } from 'domain/wells/measurements0/service/__mocks/getMockDepthMeasurementData';
 
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';

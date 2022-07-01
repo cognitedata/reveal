@@ -1,4 +1,4 @@
-import { useMeasurementsQuery } from 'domain/wells/measurements/internal/queries/useMeasurementsQuery';
+import { useMeasurementsQuery } from 'domain/wells/measurements0/internal/queries/useMeasurementsQuery';
 import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
