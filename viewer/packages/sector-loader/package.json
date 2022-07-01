@@ -9,11 +9,13 @@
   },
   "dependencies": {
     "@reveal/cad-parsers": "workspace:*",
-    "@reveal/logger": "workspace:*",
     "@reveal/metrics": "workspace:*",
     "@reveal/modeldata-api": "workspace:*",
     "@reveal/rendering": "workspace:*",
     "@reveal/sector-parser": "workspace:*",
     "@reveal/utilities": "workspace:*"
+  },
+  "devDependencies": {
+    "@reveal/logger": "workspace:*"
   }
 }
