@@ -11,6 +11,7 @@ import {
   AnnotationSourceV1,
   AnnotationTypeV1,
   UnsavedAnnotation,
+  AnnotationStatus,
 } from 'src/api/annotation/types';
 import {
   ColorsObjectDetection,
@@ -31,16 +32,6 @@ import {
   isAssetLinkedAnnotation,
   isKeyPointAnnotation,
 } from 'src/api/annotation/typeGuards';
-
-/**
- * @deprecated Use Status instead
- */
-export enum AnnotationStatus {
-  Verified = 'verified',
-  Rejected = 'rejected',
-  Deleted = 'deleted', // todo: remove this once this is not needed
-  Unhandled = 'unhandled',
-}
 
 export type KeypointItem = Required<PredefinedKeypoint> & {
   id: string;

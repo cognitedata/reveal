@@ -6,7 +6,6 @@ import {
 } from '@cognite/sdk';
 import { AnnotationRegion } from 'src/api/vision/detectionModels/types';
 import { PredefinedKeypoint } from 'src/modules/Review/types';
-import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 // Constants
 export enum RegionShape {
@@ -164,7 +163,11 @@ export type CDFAnnotationV2<Type> = AnnotatedResourceId & {
   data: Type;
   linkedResourceType: 'file' | 'asset';
 };
-// Annotation API types
+// Annotation API V1 types
+
+/**
+ * @deprecated type of Annotation V1 api
+ */
 export type AnnotationTypeV1 =
   | 'vision/ocr'
   | 'vision/tagdetection'
@@ -174,8 +177,14 @@ export type AnnotationTypeV1 =
   | 'user_defined'
   | 'CDF_ANNOTATION_TEMPLATE';
 
+/**
+ * @deprecated type of Annotation V1 api
+ */
 export type AnnotationSourceV1 = 'context_api' | 'user';
 
+/**
+ * @deprecated type of Annotation V1 api
+ */
 export type AnnotationMetadataV1 = Partial<AnnotationAttributes> & {
   keypoint?: boolean;
   keypoints?: PredefinedKeypoint[];
@@ -183,6 +192,9 @@ export type AnnotationMetadataV1 = Partial<AnnotationAttributes> & {
   confidence?: number;
 };
 
+/**
+ * @deprecated type of Annotation V1 api
+ */
 interface CDFBaseAnnotationV1 {
   text: string;
   data?: AnnotationMetadataV1;
@@ -198,14 +210,33 @@ interface CDFBaseAnnotationV1 {
   lastUpdatedTime: number;
 }
 
+/**
+ * @deprecated Use Status instead
+ */
+export enum AnnotationStatus {
+  Verified = 'verified',
+  Rejected = 'rejected',
+  Deleted = 'deleted', // todo: remove this once this is not needed
+  Unhandled = 'unhandled',
+}
+
+/**
+ * @deprecated type of Annotation V1 api
+ */
 export interface CDFLinkedAnnotationV1 extends CDFBaseAnnotationV1 {
   linkedResourceId?: number;
   linkedResourceExternalId?: string;
   linkedResourceType?: 'asset' | 'file';
 }
 
+/**
+ * @deprecated type of Annotation V1 api
+ */
 export type CDFAnnotationV1 = CDFLinkedAnnotationV1;
 
+/**
+ * @deprecated type of Annotation V1 api
+ */
 export interface AnnotationListRequest {
   limit?: number;
   cursor?: string;
@@ -221,6 +252,9 @@ export interface AnnotationListRequest {
   > & { annotatedResourceIds?: IdEither[]; linkedResourceIds: IdEither[] };
 }
 
+/**
+ * @deprecated type of Annotation V1 api
+ */
 export type UnsavedAnnotation = Omit<
   CDFAnnotationV1,
   'id' | 'createdTime' | 'lastUpdatedTime' | 'status'
@@ -229,11 +263,21 @@ export type UnsavedAnnotation = Omit<
   status?: AnnotationStatus;
 };
 
+/**
+ * @deprecated type of Annotation V1 api
+ */
 export interface AnnotationCreateRequest {
   items: UnsavedAnnotation[];
 }
 
+/**
+ * @deprecated type of Annotation V1 api
+ */
 type annotationUpdateField<T> = { set: any } | { setNull: true } | T;
+
+/**
+ * @deprecated type of Annotation V1 api
+ */
 export interface AnnotationUpdateRequest {
   items: {
     id: number;

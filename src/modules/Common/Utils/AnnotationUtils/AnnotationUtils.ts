@@ -26,13 +26,13 @@ import {
 } from 'src/modules/Common/types/typeGuards';
 
 export const getAnnotationLabelOrText = (
-  annotation: VisionAnnotation<VisionAnnotationDataType>
+  data: VisionAnnotationDataType
 ): string =>
-  (annotation as ImageClassification).label ||
-  (annotation as ImageObjectDetection).label ||
-  (annotation as ImageKeypointCollection).label ||
-  (annotation as ImageExtractedText).text ||
-  (annotation as ImageAssetLink).text;
+  (data as ImageClassification).label ||
+  (data as ImageObjectDetection).label ||
+  (data as ImageKeypointCollection).label ||
+  (data as ImageExtractedText).text ||
+  (data as ImageAssetLink).text;
 
 export const filterAnnotations = ({
   annotations,
@@ -208,4 +208,25 @@ export const generateKeypointId = (
 
 export const createUniqueNumericId = (): number => {
   return Date.now();
+};
+
+export const calculateBadgeCountsDifferences = (
+  allCounts: AnnotationsBadgeCounts,
+  subsetCounts: AnnotationsBadgeCounts
+) => {
+  const diff = allCounts;
+  diff.gdpr -= subsetCounts.gdpr;
+  diff.assets -= subsetCounts.assets;
+  diff.text -= subsetCounts.text;
+  diff.objects -= subsetCounts.objects;
+  // Clamp the counts in case we have any negative values
+  // Also, check that the counts are not falsy.
+  diff.gdpr = Math.max(diff.gdpr, 0) || 0;
+  diff.assets = Math.max(diff.assets, 0) || 0;
+  diff.text = Math.max(diff.text, 0) || 0;
+  diff.objects = Math.max(diff.objects, 0) || 0;
+  // TODO: find a way to re-compute mostFrequentObjects without passing the
+  // annotations as parameter ot this function
+  diff.mostFrequentObject = undefined;
+  return diff;
 };

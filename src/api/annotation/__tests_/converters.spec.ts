@@ -1,4 +1,5 @@
 import {
+  AnnotationStatus,
   CDFAnnotationTypeEnum,
   CDFAnnotationV1,
   ImageAssetLink,
@@ -23,10 +24,6 @@ import {
 } from 'src/api/annotation/converters';
 import { mockAnnotationList } from 'src/__test-utils/fixtures/annotationsV1';
 import {
-  AnnotationStatus,
-  KeypointItem,
-} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import {
   VisionImageAssetLinkAnnotation,
   VisionImageExtractedTextAnnotation,
   VisionImageKeypointCollectionAnnotation,
@@ -34,6 +31,7 @@ import {
 } from 'src/modules/Common/types';
 import { getDummyAnnotation } from 'src/__test-utils/annotations';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
+import { KeypointItem } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 describe('Test convertCDFAnnotationV1ToImageClassification', () => {
   test('Missing text', () => {

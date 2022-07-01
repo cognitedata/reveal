@@ -1,5 +1,6 @@
 import {
   AnnotatedResourceId,
+  AnnotationStatus,
   CDFAnnotationType,
   CDFAnnotationTypeEnum,
   CDFAnnotationV1,
@@ -33,7 +34,6 @@ import {
   AnnotationPayload,
   AnnotationStatus as sdkAnnotationStatus,
 } from '@cognite/sdk-playground';
-import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   validBoundingBox,
   validImageAssetLink,

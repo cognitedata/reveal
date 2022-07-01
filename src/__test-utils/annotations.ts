@@ -1,5 +1,4 @@
 import {
-  AnnotationStatus,
   AnnotationUtilsV1,
   ModelTypeAnnotationTypeMap,
 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
@@ -10,6 +9,7 @@ import {
 } from 'src/api/vision/detectionModels/types';
 import {
   AnnotationMetadataV1,
+  AnnotationStatus,
   AnnotationTypeV1,
   Keypoint,
   Point,
@@ -24,6 +24,9 @@ import {
 } from 'src/modules/Review/types';
 import { getDummyImageKeypointCollectionAnnotation } from './getDummyAnnotations';
 
+/**
+ * @deprecated method of Annotation V1 api
+ */
 export const getDummyAnnotation = (
   id?: number,
   modelType?: number,
