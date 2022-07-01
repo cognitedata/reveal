@@ -36,10 +36,6 @@ export interface ZippableItem {
   blob: Promise<any>;
 }
 
-export async function zipAndDownload(docs: DocumentType[]) {
-  return getDocumentContentForZipping(docs).then(makeZip).then(downloadFile);
-}
-
 export async function zipAndDownloadDocumentsByIds(documentIds: number[]) {
   const documentsMetaData = getFileMetadataByIds(documentIds);
   const resultList = getSignedUrls(documentIds.map((d) => d.toString()));
@@ -87,10 +83,6 @@ export async function zipFavoritesAndDownload(documents: DocumentType[]) {
     .then(downloadFile);
 }
 
-const getIdListForInspect = (docs: DocumentType[]) => {
-  return docs.map((doc: DocumentType) => doc.id);
-};
-
 export const getFavoriteContentForZipping = async (
   documents: DocumentType[]
 ) => {
@@ -112,43 +104,14 @@ export const getFavoriteContentForZipping = async (
       return [
         ...results,
         {
-          blob: fetch(signedUrlInfo?.downloadUrl).then((docContent) => {
-            return docContent.blob();
-          }),
+          blob: fetch(JSON.stringify(signedUrlInfo?.downloadUrl))
+            .then((docContent) => {
+              return docContent.blob();
+            })
+            .catch((error) => {
+              console.error(error);
+            }),
           filename: content.doc.filename,
-        },
-      ];
-    }
-    return results;
-  }, [] as ZippableItem[]);
-
-  return documentsWithFetchingContent;
-};
-
-export const getDocumentContentForZipping = async (docs: DocumentType[]) => {
-  const idList = getIdListForInspect(docs);
-  if (idList.length === 0) {
-    return Promise.reject(new Error('No files to download'));
-  }
-  const resultList = await getSignedUrls(idList);
-
-  // make a list of the document urls to fetch from
-  const documentsWithFetchingContent = docs.reduce((results, doc) => {
-    // get the filename
-    const signedUrlInfo = getDocIdFromSignedUrlResponse(
-      resultList,
-      doc.id,
-      doc?.externalId
-    );
-
-    if (signedUrlInfo?.downloadUrl && doc.doc.filename) {
-      return [
-        ...results,
-        {
-          blob: fetch(signedUrlInfo?.downloadUrl).then((docContent) =>
-            docContent.blob()
-          ),
-          filename: doc.doc.filename,
         },
       ];
     }

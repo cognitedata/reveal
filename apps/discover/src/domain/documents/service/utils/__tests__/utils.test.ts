@@ -22,11 +22,8 @@ import {
 import * as getTemporaryPreviewLink from '../../network/getTemporaryPreviewLink';
 import {
   getDocIdFromSignedUrlResponse,
-  zipAndDownload,
-  zipAndDownloadDocumentsByIds,
   zipFavoritesAndDownload,
   getFavoriteContentForZipping,
-  getDocumentContentForZipping,
   downloadFile,
   downloadFileFromUrl,
   openDocumentPreviewInNewTab,
@@ -40,9 +37,7 @@ jest.mock('file-saver', () => ({
 const filename = 'document.pdf';
 const documents = [getMockDocument({}, { filename })];
 
-// TODO(PP-2980): fix and re-enable this file
-// eslint-disable-next-line jest/no-disabled-tests
-describe.skip('documentPreview -> utils', () => {
+describe('documentPreview -> utils', () => {
   const mockServer = setupServer(
     getMockFilesDownloadLink({
       items: documents.map((document) => ({
@@ -70,27 +65,6 @@ describe.skip('documentPreview -> utils', () => {
 
       await downloadFileFromUrl('12345');
       expect(openSpy).toBeCalledTimes(1);
-    });
-  });
-
-  describe('getDocumentContentForZipping', () => {
-    it('should throw error as expected', async () => {
-      await expect(getDocumentContentForZipping([])).rejects.toThrowError(
-        'No files to download'
-      );
-    });
-
-    it('should return a not null result', () => {
-      expect(getDocumentContentForZipping(documents)).toBeTruthy();
-    });
-
-    it('should return result as expected', async () => {
-      const documentContentForZipping = await getDocumentContentForZipping(
-        documents
-      );
-      expect(documentContentForZipping).toEqual([
-        { blob: Promise.resolve({}), filename },
-      ]);
     });
   });
 
@@ -159,24 +133,6 @@ describe.skip('documentPreview -> utils', () => {
     it('should return empty document url for empty Uint8Array array', () => {
       const bufferArr = new ArrayBuffer(12000);
       expect(bufferDataToImageUrl(bufferArr)).toBeFalsy();
-    });
-  });
-
-  describe('zipAndDownload', () => {
-    it('should throw error when document is null', async () => {
-      await expect(zipAndDownload([])).rejects.toThrowError();
-    });
-  });
-
-  describe('zipAndDownloadDocumentsByIds', () => {
-    it('should throw error as expected', async () => {
-      await expect(zipAndDownloadDocumentsByIds([])).rejects.toThrowError(
-        'No files to download'
-      );
-    });
-
-    it('should return a not null result', () => {
-      expect(zipAndDownloadDocumentsByIds([12345])).toBeTruthy();
     });
   });
 
