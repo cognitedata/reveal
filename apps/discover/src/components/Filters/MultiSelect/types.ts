@@ -27,6 +27,7 @@ export type MultiSelectOptionObject = {
   value: MultiSelectOptionValue;
   count?: number;
   helpText?: string | JSX.Element;
+  checkboxColor?: string;
 };
 
 export type MultiSelectOptionType =

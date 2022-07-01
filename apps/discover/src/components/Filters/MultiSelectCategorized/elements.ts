@@ -34,6 +34,10 @@ export const OptionWrapper = styled(CategoryWrapper)`
   width: calc(100% - ${OPTION_INDENTATION});
 `;
 
+export const OptionSubWrapper = styled(CategoryWrapper)`
+  width: 100%;
+`;
+
 export const NoOptionsWrapper = styled(Menu.Item)`
   justify-content: center;
   color: var(--cogs-text-icon--muted);

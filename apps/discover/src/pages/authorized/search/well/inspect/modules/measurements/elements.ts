@@ -24,4 +24,13 @@ export const MeasurementsTopBar = styled(FlexRow)`
   position: sticky;
   top: 0;
   z-index: ${layers.FILTER_BOX};
+
+  & > * {
+    margin-left: 4px;
+  }
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: flex-end;
 `;

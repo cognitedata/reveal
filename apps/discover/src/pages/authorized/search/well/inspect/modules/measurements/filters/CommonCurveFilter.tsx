@@ -16,6 +16,10 @@ export interface Props {
   grouped?: boolean;
 }
 
+const renderEmpty = () => (
+  <EmptyState emptySubtitle="Sorry, but we couldn’t find anything based on your search" />
+);
+
 export const CommonCurveFilter: React.FC<Props> = ({
   title,
   selected,
@@ -27,17 +31,12 @@ export const CommonCurveFilter: React.FC<Props> = ({
 
   const total = grouped ? (options[0] || {}).options?.length : options.length;
 
-  const renderEmpty = () => (
-    <EmptyState emptySubtitle="Sorry, but we couldn’t find anything based on your search" />
-  );
-
   return (
     <DropdownWrapper>
       <Select<DepthMeasurementColumn>
         isMulti
-        theme="grey"
         title={title}
-        SelectAllLabel="All"
+        selectAllLabel="All"
         placeholder="Search"
         value={selectedOptions}
         onChange={(options: OptionType<DepthMeasurementColumn>[]) => {
@@ -49,7 +48,7 @@ export const CommonCurveFilter: React.FC<Props> = ({
         }}
         options={options}
         enableSelectAll
-        showCustomCheckbox
+        showCheckbox
         placeholderSelectElement={`${selected.length} / ${total}`}
         noOptionsMessage={renderEmpty}
       />

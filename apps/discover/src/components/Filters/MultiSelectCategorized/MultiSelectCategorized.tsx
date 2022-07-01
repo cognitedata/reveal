@@ -47,6 +47,7 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
   selectAllLabel = DEFAULT_SELECT_ALL_LABEL,
   extraLabels = {},
   width,
+  viewMode,
 }) => {
   const multiSelectCategorizedRef = useRef<HTMLElement>(null);
 
@@ -176,6 +177,7 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
               key={category}
               category={category}
               options={options}
+              viewMode={viewMode}
               selectedOptions={selectedOptions[category]}
               onValueChange={handleValueChange}
             />
@@ -183,7 +185,7 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
         })}
       </>
     ),
-    [SelectAllOption, handleValueChange, options, selectedOptions]
+    [SelectAllOption, handleValueChange, options, selectedOptions, viewMode]
   );
 
   const NoOptionsContent = useMemo(

@@ -56,6 +56,10 @@ describe('WellCentricCard Tests', () => {
         x: X_AXIS,
         y: Y_AXIS,
       },
+      filters: {
+        nptEvents: {},
+        ndsEvents: {},
+      },
       selected: true,
       onToggle,
     });

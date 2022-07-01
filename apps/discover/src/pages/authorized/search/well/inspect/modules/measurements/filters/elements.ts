@@ -9,8 +9,11 @@ import {
 import { Flex, FlexColumn, sizes } from 'styles/layout';
 
 export const DropdownWrapper = styled(Flex)`
-  min-width: 256px;
+  min-width: 200px;
   .cogs-select {
+    .cogs-select__control {
+      border: 2px solid var(--cogs-greyscale-grey4) !important;
+    }
     width: 100%;
     > * .cogs-select__menu {
       padding: ${sizes.small};

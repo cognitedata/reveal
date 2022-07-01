@@ -1,4 +1,5 @@
 import isEmpty from 'lodash/isEmpty';
+import { colorize } from 'utils/colorize';
 
 import { OptionType } from '@cognite/cogs.js';
 import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
@@ -9,6 +10,18 @@ export const mapCurvesToOptions = (
   curves: DepthMeasurementColumn[]
 ): OptionType<DepthMeasurementColumn>[] =>
   curves.map((column) => ({ value: column, label: column.columnExternalId }));
+
+export const mapEventsToOptions = (
+  events: Record<string, string[]>
+): OptionType<string>[] => {
+  const eventsColorMap = colorize(events.values);
+
+  return events?.map((event) => {
+    const checkboxColor = eventsColorMap[event];
+
+    return { value: event, label: event, checkboxColor };
+  });
+};
 
 export const mapStringCurvesToOptions = (
   curves: string[]

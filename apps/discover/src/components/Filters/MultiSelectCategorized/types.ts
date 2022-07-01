@@ -14,6 +14,8 @@ export type PossibleOptionsType =
   | MultiSelectCategorizedOption[]
   | MultiSelectCategorizedOptionMap;
 
+type MultiSelectCategorizedViewMode = 'indent' | 'submenu';
+
 export interface MultiSelectCategorizedProps {
   title: string;
   onValueChange: (
@@ -26,6 +28,7 @@ export interface MultiSelectCategorizedProps {
   selectAllLabel?: string;
   extraLabels?: ExtraLabels;
   width?: number;
+  viewMode?: MultiSelectCategorizedViewMode;
 }
 
 export interface OptionsCategoryProps<ValueType>
@@ -35,6 +38,7 @@ export interface OptionsCategoryProps<ValueType>
     category,
     options,
   }: CategorizedOptionType<ValueType>) => void;
+  viewMode?: MultiSelectCategorizedViewMode;
 }
 
 export interface MultiSelectCategorizedOption {
@@ -46,3 +50,14 @@ export interface CategorizedOptionType<ValueType> {
   category: string;
   options: OptionType<ValueType>[] | undefined;
 }
+
+export type DropdownViewOption = Omit<
+  OptionsCategoryProps<MultiSelectOptionType>,
+  'onValueChange'
+> & {
+  onChangeOption: (
+    option: OptionType<MultiSelectOptionType>,
+    isSelected: boolean
+  ) => void;
+  onChangeCategory: (isSelected: boolean) => void;
+};

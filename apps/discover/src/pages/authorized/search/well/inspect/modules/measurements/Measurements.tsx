@@ -10,6 +10,7 @@ import { PerfMetrics } from '@cognite/metrics';
 import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
 import { NoDataAvailable } from 'components/Charts/common/NoDataAvailable';
+import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 import { Loading } from 'components/Loading';
 import {
   PerformanceMetricsObserver,
@@ -26,6 +27,8 @@ import {
 } from './constants';
 import CurveCentricView from './curveCentricView/CurveCentricView';
 import { MeasurementsTopBar, MeasurementsWrapper } from './elements';
+import { EventNdsFilter } from './filters/EventNdsFilter';
+import { EventNptFilter } from './filters/EventNptFilter';
 import { GeomechanicsCurveFilter } from './filters/GeomechanicsCurveFilter';
 import { OtherFilter } from './filters/OtherFilter';
 import { PPFGCurveFilter } from './filters/PPFGCurveFilter';
@@ -42,9 +45,16 @@ export const MeasurementsComponent: React.FC = () => {
   >([]);
   const [ppfgCurves, setPPFGCurves] = useState<DepthMeasurementColumn[]>([]);
   const [otherTypes, setOtherTypes] = useState<DepthMeasurementColumn[]>([]);
+  const [nptEvents, setNptEvents] = useState<MultiSelectCategorizedOptionMap>(
+    {}
+  );
+  const [ndsEvents, setNdsEvents] = useState<MultiSelectCategorizedOptionMap>(
+    {}
+  );
   const [pressureUnit, setPressureUnit] = useState<PressureUnit>(
     DEFAULT_PRESSURE_UNIT
   );
+
   const [measurementReference, setMeasurementReference] =
     useState<DepthMeasurementUnit>(DEFAULT_MEASUREMENTS_REFERENCE);
 
@@ -76,6 +86,8 @@ export const MeasurementsComponent: React.FC = () => {
           onChange={setGeomechanicsCurves}
         />
         <PPFGCurveFilter selectedCurves={ppfgCurves} onChange={setPPFGCurves} />
+        <EventNptFilter selectedEvents={nptEvents} onChange={setNptEvents} />
+        <EventNdsFilter selectedEvents={ndsEvents} onChange={setNdsEvents} />
         <OtherFilter selectedCurves={otherTypes} onChange={setOtherTypes} />
         <UnitSelector
           unit={pressureUnit}
@@ -92,6 +104,8 @@ export const MeasurementsComponent: React.FC = () => {
           otherTypes={otherTypes}
           pressureUnit={pressureUnit}
           measurementReference={measurementReference}
+          nptEvents={nptEvents}
+          ndsEvents={ndsEvents}
         />
       ) : (
         <CurveCentricView

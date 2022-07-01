@@ -1,5 +1,8 @@
 import get from 'lodash/get';
 import isArray from 'lodash/isArray';
+import { toBooleanMap } from 'utils/booleanMap';
+
+import { OptionType } from '@cognite/cogs.js';
 
 import { ExtraLabels } from '../interfaces';
 import {
@@ -25,11 +28,13 @@ export const getProcessedOptions = (
           const value = getValueFromOption(option);
           const label = [value, extraLabels[value]].filter(Boolean).join(' ');
           const helpText = get(option, 'helpText');
+          const checkboxColor = get(option, 'checkboxColor');
 
           return {
             label,
-            value: option,
+            value,
             helpText,
+            checkboxColor,
           };
         }),
       };
@@ -62,3 +67,20 @@ export const getMultiSelectCategorizedOptions = (
   }
   return adaptToMultiSelectCategorizedOptions(options);
 };
+
+export const selectionMap = (
+  selectedOptions: OptionType<MultiSelectOptionType>[] | undefined
+) =>
+  toBooleanMap(
+    (selectedOptions || []).map((option) => {
+      if (typeof option === 'string') {
+        return option;
+      }
+
+      if (option?.value && typeof option?.value === 'string') {
+        return option.value;
+      }
+
+      return option.label;
+    })
+  );

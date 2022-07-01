@@ -1,7 +1,9 @@
 import { useNdsEventsForCasings } from 'domain/wells/nds/internal/hooks/useNdsEventsForCasings';
 import { filterNdsByMeasuredDepth } from 'domain/wells/nds/internal/selectors/filterNdsByMeasuredDepth';
+import { filterNdsBySelectedEvents } from 'domain/wells/nds/internal/selectors/filterNdsBySelectedEvents';
 import { useNptEventsForCasings } from 'domain/wells/npt/internal/hooks/useNptEventsForCasings';
 import { filterNptByMeasuredDepth } from 'domain/wells/npt/internal/selectors/filterNptByMeasuredDepth';
+import { filterNptBySelectedEvents } from 'domain/wells/npt/internal/selectors/filterNptBySelectedEvents';
 import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
 import { getWellboreName } from 'domain/wells/wellbore/internal/selectors/getWellboreName';
 import { getWellboreTitle } from 'domain/wells/wellbore/internal/selectors/getWellboreTitle';
@@ -16,6 +18,7 @@ import { v4 as uuid } from 'uuid';
 import { Checkbox, SegmentedControl } from '@cognite/cogs.js';
 
 import { BaseButton } from 'components/Buttons';
+import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 import {
   MeasurementChartDataV3 as MeasurementChartData,
   MeasurementTypeV3,
@@ -52,6 +55,10 @@ export type Props = {
   chartData: MeasurementChartData[];
   axisNames: AxisNames;
   selected: boolean;
+  filters: {
+    nptEvents: MultiSelectCategorizedOptionMap;
+    ndsEvents: MultiSelectCategorizedOptionMap;
+  };
   onToggle: (id: WellboreId) => void;
 };
 
@@ -62,6 +69,7 @@ export const WellCentricCard: React.FC<Props> = ({
   chartData,
   axisNames,
   selected,
+  filters,
   onToggle,
 }) => {
   const scaleRef = useRef<HTMLElement | null>(null);
@@ -69,7 +77,7 @@ export const WellCentricCard: React.FC<Props> = ({
 
   const wellboreIds = useWellInspectSelectedWellboreIds();
 
-  const [currentTab, setCurrentTab] = useState<EventTabs>(EventTabs.scatter);
+  const [currentTab, setCurrentTab] = useState<EventTabs>(EventTabs.cluster);
 
   const [scaleGap, setScaleGap] = useState(50);
   const [scaleBlocks, setScaleBlocks] = useState<number[]>([]);
@@ -88,18 +96,38 @@ export const WellCentricCard: React.FC<Props> = ({
   const { isLoading: isNptLoading, data: nptEvents } = useNptEventsForCasings({
     wellboreIds,
   });
-  const validNptEvents = useMemo(
-    () => filterNptByMeasuredDepth(nptEvents[wellbore.id], minDepth, maxDepth),
-    [nptEvents, wellbore.id, minDepth, maxDepth]
-  );
+  const validNptEvents = useMemo(() => {
+    const eventsByDepth = filterNptByMeasuredDepth(
+      nptEvents[wellbore.id],
+      minDepth,
+      maxDepth
+    );
+
+    const eventsByFilter = filterNptBySelectedEvents(
+      eventsByDepth,
+      filters.nptEvents
+    );
+
+    return eventsByFilter;
+  }, [nptEvents, wellbore.id, minDepth, maxDepth, filters.nptEvents]);
 
   const { isLoading: isNdsLoading, data: ndsEvents } = useNdsEventsForCasings({
     wellboreIds,
   });
-  const validNdsEvents = useMemo(
-    () => filterNdsByMeasuredDepth(ndsEvents[wellbore.id], minDepth, maxDepth),
-    [minDepth, maxDepth, ndsEvents]
-  );
+  const validNdsEvents = useMemo(() => {
+    const eventsByDepth = filterNdsByMeasuredDepth(
+      ndsEvents[wellbore.id],
+      minDepth,
+      maxDepth
+    );
+
+    const eventsByFilter = filterNdsBySelectedEvents(
+      eventsByDepth,
+      filters.ndsEvents
+    );
+
+    return eventsByFilter;
+  }, [minDepth, maxDepth, ndsEvents, filters.ndsEvents]);
 
   useEffect(() => {
     setDisplayShowAllButton(

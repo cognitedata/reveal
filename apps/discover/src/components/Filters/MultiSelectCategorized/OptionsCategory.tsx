@@ -1,102 +1,68 @@
 import React from 'react';
 
-import isEmpty from 'lodash/isEmpty';
-import { toBooleanMap } from 'utils/booleanMap';
-
-import { Checkbox, OptionType } from '@cognite/cogs.js';
+import { OptionType } from '@cognite/cogs.js';
 
 import { MultiSelectOptionType } from '../MultiSelect/types';
 
-import {
-  CategoryWrapper,
-  OptionWrapper,
-  OptionsCategoryWrapper,
-} from './elements';
 import { OptionsCategoryProps } from './types';
+import { DropdownIndentOptions } from './views/DropdownIndentOptions';
+import { DropdownMenuOptions } from './views/DropdownMenuOptions';
 
 export const OptionsCategory: React.FC<
   OptionsCategoryProps<MultiSelectOptionType>
-> = React.memo(({ category, options, selectedOptions, onValueChange }) => {
-  const selectionMap = toBooleanMap(
-    (selectedOptions || []).map((option) => {
-      if (typeof option === 'string') {
-        return option;
-      }
+> = React.memo(
+  ({ category, options, selectedOptions, onValueChange, viewMode }) => {
+    const handleChangeCategory = (isSelected: boolean) => {
+      onValueChange({
+        category,
+        options: isSelected ? options : undefined,
+      });
+    };
 
-      if (option?.value && typeof option?.value === 'string') {
-        return option.value;
-      }
+    const handleChangeOption = (
+      option: OptionType<MultiSelectOptionType>,
+      isSelected: boolean
+    ) => {
+      const updatedSelectedOptions = isSelected
+        ? [...(selectedOptions || []), option]
+        : (selectedOptions || []).filter((selectedOption) => {
+            if (typeof selectedOption === 'string') {
+              return selectedOption !== option.value;
+            }
 
-      return option.label;
-    })
-  );
+            return selectedOption?.value
+              ? selectedOption?.value !== option.value
+              : selectedOption?.label !== option.label;
+          });
 
-  const handleChangeCategory = (isSelected: boolean) => {
-    onValueChange({
-      category,
-      options: isSelected ? options : undefined,
-    });
-  };
+      onValueChange({
+        category,
+        options: updatedSelectedOptions.length
+          ? updatedSelectedOptions
+          : undefined,
+      });
+    };
 
-  const handleChangeOption = (
-    option: OptionType<MultiSelectOptionType>,
-    isSelected: boolean
-  ) => {
-    const updatedSelectedOptions = isSelected
-      ? [...(selectedOptions || []), option]
-      : (selectedOptions || []).filter((selectedOption) => {
-          if (typeof selectedOption === 'string') {
-            return selectedOption !== option.value;
-          }
+    if (viewMode === 'submenu') {
+      return (
+        <DropdownMenuOptions
+          options={options}
+          category={category}
+          selectedOptions={selectedOptions}
+          onChangeOption={handleChangeOption}
+          onChangeCategory={handleChangeCategory}
+        />
+      );
+    }
 
-          return selectedOption?.value
-            ? selectedOption?.value !== option.value
-            : selectedOption?.label !== option.label;
-        });
-
-    onValueChange({
-      category,
-      options: updatedSelectedOptions.length
-        ? updatedSelectedOptions
-        : undefined,
-    });
-  };
-
-  const isAnySelected = !isEmpty(selectedOptions);
-  const isAllSelected =
-    (selectedOptions && selectedOptions.length) === options?.length;
-
-  return (
-    <OptionsCategoryWrapper>
-      <CategoryWrapper>
-        <Checkbox
-          name={category}
-          indeterminate={isAnySelected && !isAllSelected}
-          checked={isAllSelected || isAnySelected}
-          onChange={handleChangeCategory}
-        >
-          {category}
-        </Checkbox>
-      </CategoryWrapper>
-
-      {(options || []).map((option) => {
-        const { label } = option;
-        const name = `${category}-${label}`;
-
-        return (
-          <OptionWrapper key={name}>
-            <Checkbox
-              name={name}
-              checked={Boolean(selectionMap[label])}
-              onChange={(isSelected: boolean) =>
-                handleChangeOption(option, isSelected)
-              }
-            >
-              {label}
-            </Checkbox>
-          </OptionWrapper>
-        );
-      })}
-    </OptionsCategoryWrapper>
-  );
-});
+    return (
+      <DropdownIndentOptions
+        options={options}
+        category={category}
+        selectedOptions={selectedOptions}
+        onChangeOption={handleChangeOption}
+        onChangeCategory={handleChangeCategory}
+      />
+    );
+  }
+);

@@ -10,6 +10,7 @@ import uniqBy from 'lodash/uniqBy';
 import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
 import { NoDataAvailable } from 'components/Charts/common/NoDataAvailable';
+import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 import { Loading } from 'components/Loading';
 import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
@@ -33,6 +34,8 @@ export type Props = {
   otherTypes: DepthMeasurementColumn[];
   pressureUnit: PressureUnit;
   measurementReference: DepthMeasurementUnit;
+  nptEvents: MultiSelectCategorizedOptionMap;
+  ndsEvents: MultiSelectCategorizedOptionMap;
 };
 
 export const WellCentricView: React.FC<Props> = ({
@@ -41,6 +44,8 @@ export const WellCentricView: React.FC<Props> = ({
   otherTypes,
   pressureUnit,
   measurementReference,
+  nptEvents,
+  ndsEvents,
 }) => {
   const dispatch = useDispatch();
 
@@ -99,6 +104,7 @@ export const WellCentricView: React.FC<Props> = ({
           wellbore={row.wellbore}
           key={row.wellbore.id}
           chartData={row.chartData}
+          filters={{ nptEvents, ndsEvents }}
           axisNames={{
             x: `Pressure (${pressureUnit.toLowerCase()})`,
             x2: 'Angle (deg)',
@@ -107,7 +113,14 @@ export const WellCentricView: React.FC<Props> = ({
           onToggle={onToggle}
         />
       )),
-    [wellboreChartData, selectedWellboresMap]
+    [
+      wellboreChartData,
+      selectedWellboresMap,
+      nptEvents,
+      ndsEvents,
+      pressureUnit,
+      userPreferredUnit,
+    ]
   );
 
   const selectedWellbores = useMemo(
