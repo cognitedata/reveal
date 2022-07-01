@@ -44,7 +44,7 @@ export const FileDetailsAnnotationsPreview = ({
       >
         Review annotations
       </Button>
-      <AnnotationDetailPanel file={fileInfo} />
+      <AnnotationDetailPanel file={fileInfo} showEditOptions={false} />
     </Container>
   );
 };

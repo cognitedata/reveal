@@ -16,6 +16,7 @@ import { CDFAnnotationTypeEnum } from 'src/api/annotation/types';
 
 export const ReviewVisionAnnotationRow = ({
   additionalData,
+  showEditOptions,
 }: VirtualizedTreeRowProps<
   AnnotationDetailPanelRowDataBase<
     VisionReviewAnnotation<VisionAnnotationDataType>
@@ -44,6 +45,7 @@ export const ReviewVisionAnnotationRow = ({
             onApprove={onApproveStateChange}
             onVisibilityChange={onVisibilityChange}
             showColorCircle={false}
+            showEditOptions={showEditOptions}
           />
         </PanelHeader>
       );
@@ -56,6 +58,7 @@ export const ReviewVisionAnnotationRow = ({
         onApprove={onApproveStateChange}
         onVisibilityChange={onVisibilityChange}
         showColorCircle
+        showEditOptions={showEditOptions}
       />
     );
   };
