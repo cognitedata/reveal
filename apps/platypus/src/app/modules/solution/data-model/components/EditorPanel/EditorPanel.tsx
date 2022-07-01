@@ -37,7 +37,6 @@ export const EditorPanel = (props: EditorPanelProps) => {
   const dataModelTypeDefsBuilder = useInjection(
     TOKENS.dataModelTypeDefsBuilderService
   );
-
   useEffect(() => {
     async function getOptions() {
       const builtInTypesResponse =

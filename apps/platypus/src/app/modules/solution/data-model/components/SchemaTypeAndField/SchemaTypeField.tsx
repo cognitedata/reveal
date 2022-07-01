@@ -4,13 +4,15 @@ import {
   DataModelTypeDefsField,
   UpdateDataModelFieldDTO,
 } from '@platypus/platypus-core';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { TypeSelect } from './TypeSelect';
 import { SolutionDataModelFieldNameValidator } from '@platypus/platypus-core';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import debounce from 'lodash/debounce';
 import { v4 } from 'uuid';
+import useSelector from '@platypus-app/hooks/useSelector';
+import { useSolution } from '@platypus-app/modules/solution/hooks/useSolution';
 export interface SchemaTypeFieldProps {
   index: number;
   field: DataModelTypeDefsField;
@@ -34,9 +36,21 @@ export const SchemaTypeField = ({
 }: SchemaTypeFieldProps) => {
   const [fieldName, setFieldname] = useState(field.name);
   const { t } = useTranslation('UiEditorTypeField');
-  const [error, setError] = useState('');
   const nameValidator = new SolutionDataModelFieldNameValidator();
+  const error = useSelector(
+    (state) => state.dataModel.typeFieldErrors[field.name]
+  );
+  const { setDataModelFieldErrors } = useSolution();
+  const setError = useCallback(
+    (message: string) => setDataModelFieldErrors(field.name, message),
+    [field.name, setDataModelFieldErrors]
+  );
 
+  useEffect(() => {
+    return () => {
+      setError('');
+    };
+  }, [setError]);
   const fieldNameDebounced = useCallback(
     debounce((value: string) => {
       const isSameFieldPresent = typeFieldNames.some(

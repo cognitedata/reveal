@@ -27,9 +27,18 @@ export const useSolution = () => {
     [dispatch]
   );
 
+  const setDataModelFieldErrors = useCallback(
+    (fieldName: string, message: string) => {
+      dispatch(
+        solutionActions.setTypeFieldErrors({ fieldName, error: message })
+      );
+    },
+    [dispatch]
+  );
   return {
     updateSchema,
     insertSchema,
     selectVersion,
+    setDataModelFieldErrors,
   };
 };

@@ -44,6 +44,7 @@ export const DataModelPage = () => {
     dataModel,
     versions: schemas,
     selectedVersion: selectedReduxSchema,
+    typeFieldErrors,
   } = useSelector<DataModelState>((state) => state.dataModel);
   const [mode, setMode] = useState<SchemaEditorMode>(
     schemas.length ? SchemaEditorMode.View : SchemaEditorMode.Edit
@@ -280,7 +281,8 @@ export const DataModelPage = () => {
               (!isDirty &&
                 selectedSchema.status !== DataModelVersionStatus.DRAFT) ||
               !projectSchema ||
-              selectedReduxSchema.schema === projectSchema
+              selectedReduxSchema.schema === projectSchema ||
+              Object.keys(typeFieldErrors).length !== 0
             }
           >
             {t('publish', 'Publish')}
@@ -310,7 +312,7 @@ export const DataModelPage = () => {
             solutionId={dataModel!.id}
             editorMode={mode}
             schemas={getRemoteAndLocalSchemas(schemas)}
-            draftSaved={isDirty}
+            draftSaved={isDirty && Object.keys(typeFieldErrors).length === 0}
             selectSchema={onSelectedSchemaChanged}
             selectedSchema={selectedSchema!}
           >

@@ -13,6 +13,7 @@ const initialState = {
     createdTime: Date.now(),
     lastUpdatedTime: Date.now(),
   } as DataModelVersion,
+  typeFieldErrors: {} as { [key: string]: string },
   versions: [] as DataModelVersion[],
 };
 
@@ -52,6 +53,16 @@ const dataModelSlice = createSlice({
     },
     insertVersion: (state, action: PayloadAction<DataModelVersion>) => {
       state.versions = [action.payload, ...state.versions];
+    },
+    setTypeFieldErrors: (
+      state,
+      action: PayloadAction<{ fieldName: string; error: string }>
+    ) => {
+      if (action.payload.error === '') {
+        delete state.typeFieldErrors[action.payload.fieldName];
+      } else {
+        state.typeFieldErrors[action.payload.fieldName] = action.payload.error;
+      }
     },
   },
 });
