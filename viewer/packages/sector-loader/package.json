@@ -14,5 +14,8 @@
     "@reveal/rendering": "workspace:*",
     "@reveal/sector-parser": "workspace:*",
     "@reveal/utilities": "workspace:*"
+  },
+  "devDependencies": {
+    "@reveal/logger": "workspace:*"
   }
 }
