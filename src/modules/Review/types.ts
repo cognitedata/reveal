@@ -2,10 +2,6 @@ import { OptionType } from '@cognite/cogs.js';
 import { ReactText } from 'react';
 import { tools } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/Tools';
 import {
-  AnnotationStatus,
-  KeypointItem,
-} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import {
   UnsavedVisionAnnotation,
   VisionAnnotation,
   VisionAnnotationDataType,
@@ -15,16 +11,6 @@ import {
   Keypoint,
   Status,
 } from 'src/api/annotation/types';
-
-/** @deprecated */
-export type LegacyKeypointItemCollection = {
-  id: string;
-  keypoints: KeypointItem[];
-  name: string;
-  show: boolean;
-  status: AnnotationStatus;
-  selected: boolean;
-};
 
 export type PredefinedShape = {
   shapeName: string;
