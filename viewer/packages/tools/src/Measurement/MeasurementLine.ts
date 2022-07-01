@@ -38,11 +38,11 @@ export class MeasurementLine {
     this._geometry = new LineGeometry();
     this._geometry.setPositions(this._position);
 
-    //Adaptive Line width
+    //Adaptive Line width & line width is multipled with scale factor due to adaptive calculation in shaders.
     this._material.push(
       new LineMaterial({
         color: this._options.color,
-        linewidth: this._options.lineWidth! * 0.1,
+        linewidth: this._options.lineWidth! * 0.01,
         worldUnits: true,
         depthTest: false,
         transparent: true,
@@ -146,7 +146,7 @@ export class MeasurementLine {
     this._options.color = options?.color ?? this._options.color;
     //Apply for current line.
     if (this._material.length > 1) {
-      this._material[0].linewidth = this._options.lineWidth! * 0.1;
+      this._material[0].linewidth = this._options.lineWidth! * 0.01;
       this._material[1].linewidth = 2;
       this._material[0].color.set(new THREE.Color(this._options.color));
       this._material[1].color.set(new THREE.Color(this._options.color));
