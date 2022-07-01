@@ -85,7 +85,6 @@ describe('Admin Settings', () => {
 
     fireEvent.click(screen.getByText('Admin Settings'));
     expect(screen.getByText('Feedback')).toBeInTheDocument();
-    expect(screen.getByText('Layers')).toBeInTheDocument();
     expect(screen.getByText('Project Configuration')).toBeInTheDocument();
     expect(screen.getByText('Code Definitions')).toBeInTheDocument();
   });

@@ -15,7 +15,6 @@ import {
   adminMenuMap,
   ADMIN_CODE_DEFINITIONS_LINK_TEXT_KEY,
   ADMIN_FEEDBACK_LINK_TEXT_KEY,
-  ADMIN_LAYERS_LINK_TEXT_KEY,
   ADMIN_PROJECT_CONFIG_LINK_TEXT_KEY,
   PATHNAMES,
 } from './constants';
@@ -61,14 +60,6 @@ export const AdminSettings: React.FC<Props> = ({
       configKey: 'feedback',
       onClick: () => {
         handleNavigation(navigation.ADMIN_FEEDBACK, PATHNAMES.ADMIN);
-      },
-    },
-    {
-      key: 'ADMIN/LAYERS',
-      configKey: 'layers',
-      name: t(ADMIN_LAYERS_LINK_TEXT_KEY) as string,
-      onClick: () => {
-        handleNavigation(navigation.ADMIN_LAYERS, PATHNAMES.ADMIN);
       },
     },
     {

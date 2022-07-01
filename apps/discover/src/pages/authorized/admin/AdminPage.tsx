@@ -8,7 +8,6 @@ import { ProtectedRoute } from '../../../core';
 
 import { CodeDefinitions } from './codeDefinitions/CodeDefinitions';
 import FeedbackPage from './feedback';
-import LayerPage from './layers';
 import { ProjectConfig } from './projectConfig';
 
 const AdminPage = () => {
@@ -26,13 +25,6 @@ const AdminPage = () => {
         returnPath="/"
         path={navigation.ADMIN_FEEDBACK}
         render={() => <FeedbackPage />}
-      />
-
-      <ProtectedRoute
-        isAuthenticated={isAuthenticated}
-        returnPath="/"
-        path={navigation.ADMIN_LAYERS}
-        render={() => <LayerPage />}
       />
 
       <ProtectedRoute
