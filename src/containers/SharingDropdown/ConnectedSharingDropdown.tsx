@@ -3,7 +3,7 @@ import { useIsChartOwner } from 'hooks/user';
 import chartAtom from 'models/charts/charts/atoms/atom';
 import { useRecoilState } from 'recoil';
 import { trackUsage } from 'services/metrics';
-import SharingDropdown from './SharingDropdown';
+import SharingDropdown from '../../components/SharingDropdown/SharingDropdown';
 
 const ConnectedSharingDropdown = () => {
   const [chart, setChart] = useRecoilState(chartAtom);

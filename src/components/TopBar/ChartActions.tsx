@@ -19,7 +19,7 @@ import useScreenshot from 'use-screenshot-hook';
 import CSVModal from 'components/DownloadDropdown/CSVModal';
 import { isProduction } from 'utils/environment';
 import { currentDateRangeLocale } from 'config/locale';
-import ConnectedSharingDropdown from 'components/SharingDropdown/ConnectedSharingDropdown';
+import ConnectedSharingDropdown from 'containers/SharingDropdown/ConnectedSharingDropdown';
 import {
   duplicate,
   updateChartDateRange,

@@ -1,48 +1,48 @@
-import { Body, Button, Title } from '@cognite/cogs.js';
+import { Body, Title } from '@cognite/cogs.js';
 import { FileSidebar } from 'components/LinkedAssetsSidebar/elements/FileSidebar';
 import { Header } from 'components/LinkedAssetsSidebar/elements/Header';
-import { ComponentProps, MouseEventHandler } from 'react';
+import { ComponentProps } from 'react';
 import { FileList } from './FileList';
 
 type Props = {
-  onClose: MouseEventHandler<HTMLButtonElement>;
   onFileClick: ComponentProps<typeof FileList>['onFileClick'];
   asset: {
     name: string;
-    description: string;
+    description: string | undefined;
   };
   files: {
     list: ComponentProps<typeof FileList>['files'];
     isLoading: boolean;
     isError: boolean;
   };
-  closeButtonText: string;
+  translations?: ComponentProps<typeof FileList>['translations'];
 };
 
 const FileListSidebar = ({
-  onClose,
-  closeButtonText = 'Back to chart',
   asset,
   files,
   onFileClick,
+  translations,
 }: Props) => {
   return (
     <FileSidebar>
       <Header>
-        <Button icon="ArrowLeft" style={{ marginBottom: 20 }} onClick={onClose}>
-          {closeButtonText}
-        </Button>
         <Title level={4}>{asset.name}</Title>
-        <Body level={2}>{asset.description}</Body>
+        {asset.description && <Body level={2}>{asset.description}</Body>}
       </Header>
       <FileList
         files={files.list}
         onFileClick={onFileClick}
         isLoading={files.isLoading}
         isError={files.isError}
+        translations={translations}
       />
     </FileSidebar>
   );
 };
+
+FileListSidebar.defaultTranslations = FileList.defaultTranslations;
+FileListSidebar.translationNamespace = FileList.translationNamespace;
+FileListSidebar.translationKeys = FileList.translationKeys;
 
 export default FileListSidebar;

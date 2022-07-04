@@ -2,7 +2,7 @@ import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useNavigate } from 'hooks/navigation';
 import { useComponentTranslations } from 'hooks/translations';
 import { useIntercom } from 'react-use-intercom';
-import AppBar from './AppBar';
+import AppBar from '../../components/AppBar/AppBar';
 
 const ConnectedAppBar = () => {
   const { data: user } = useUserInfo();

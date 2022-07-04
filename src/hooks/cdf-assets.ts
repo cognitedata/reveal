@@ -2,19 +2,6 @@ import { useSDK } from '@cognite/sdk-provider';
 import { Asset, Timeseries } from '@cognite/sdk';
 import { useQuery } from 'react-query';
 
-export const useAsset = (id?: number) => {
-  const sdk = useSDK();
-
-  return useQuery<Asset>(
-    ['asset', id],
-    async () => {
-      const assets = await sdk.assets.retrieve([{ id: id! }]);
-      return assets[0];
-    },
-    { enabled: !!id }
-  );
-};
-
 export const useRootAssets = () => {
   const sdk = useSDK();
 

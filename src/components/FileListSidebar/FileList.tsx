@@ -1,7 +1,7 @@
 import { Icon, Infobox } from '@cognite/cogs.js';
 import { ReactNode } from 'react';
 import styled from 'styled-components/macro';
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import { FileListItem } from './FileListItem';
 
 const defaultTranslations = makeDefaultTranslations(
@@ -73,7 +73,8 @@ export const FileList = ({
 };
 
 FileList.defaultTranslations = defaultTranslations;
-FileList.translationsNamespace = 'FileList';
+FileList.translationKeys = translationKeys(defaultTranslations);
+FileList.translationNamespace = 'FileList';
 
 const ListWrapper = styled.div`
   height: 100%;

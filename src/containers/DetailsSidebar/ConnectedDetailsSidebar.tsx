@@ -7,7 +7,7 @@ import {
   ChartWorkflow,
 } from 'models/charts/charts/types/types';
 import useDetailsSidebar from 'models/charts/details-sidebar/hooks/useDetailsSidebar';
-import DetailsSidebar from './DetailsSidebar';
+import DetailsSidebar from '../../components/DetailsSidebar/DetailsSidebar';
 
 type Props = {
   /** The source selected in the source table */

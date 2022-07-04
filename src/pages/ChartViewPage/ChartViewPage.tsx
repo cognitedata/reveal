@@ -46,11 +46,12 @@ import { flow } from 'lodash';
 import { getUnitConverter } from 'models/charts/units/utils/getUnitConverter';
 import { timeseriesSummaries } from 'models/charts/timeseries-results/selectors';
 import { isProduction } from 'utils/environment';
-import ConnectedDetailsSidebar from 'components/DetailsSidebar/ConnectedDetailsSidebar';
+import ConnectedDetailsSidebar from 'containers/DetailsSidebar/ConnectedDetailsSidebar';
 import { currentDateRangeLocale } from 'config/locale';
 import { chartSources } from 'models/charts/charts/atom-selectors/selectors';
 import ChartViewPageAppBar from 'pages/ChartViewPage/ChartViewPageAppBar';
 import PageTitle from 'components/PageTitle/PageTitle';
+import useInitializedChart from 'models/charts/chart/hooks/useInitializedChart';
 import {
   addWorkflow,
   addWorkflows,
@@ -71,7 +72,7 @@ import {
   TopPaneWrapper,
 } from './elements';
 import ChartViewHeader from './ChartViewHeader';
-import { useInitializedChart, useUploadCalculations } from './hooks';
+import { useUploadCalculations } from './hooks';
 
 type ChartViewProps = {
   chartId: string;

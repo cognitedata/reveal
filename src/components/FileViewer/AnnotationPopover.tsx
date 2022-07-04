@@ -1,7 +1,8 @@
 import { CogniteAnnotation } from '@cognite/annotations';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import { Body, Checkbox, Icon, Menu, Overline, Title } from '@cognite/cogs.js';
-import { useAsset, useAssetTimeseries } from 'hooks/cdf-assets';
+import { useAssetTimeseries } from 'hooks/cdf-assets';
+import { useAsset } from 'models/cdf/assets/queries/useAsset';
 import styled from 'styled-components/macro';
 import { TimeseriesChart } from '@cognite/data-exploration';
 import dayjs from 'dayjs';
