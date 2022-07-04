@@ -2,6 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
+import * as THREE from 'three';
+
 import { RawStylableObject, StylableObject, rawToStylableObject } from '../../styling/StylableObject';
 
 import { parseEpt, EptInputData } from './parseEpt';
@@ -31,6 +33,11 @@ export type ParseCommand = {
 
 ctx.onmessage = function (event: MessageEvent<ICommand>) {
   const command = event.data as ICommand;
+  const box = new THREE.Box3();
+  box.expandByPoint(new THREE.Vector3(0, 0, 0));
+  box.expandByPoint(new THREE.Vector3(1, -1, 1));
+  console.log("[worker] Three box = ", box);
+
 
   switch (command.type) {
     case 'objects':
