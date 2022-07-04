@@ -10,6 +10,7 @@ import { WorkerPool } from '../utils/WorkerPool';
 import { ILoader } from './ILoader';
 import { ModelDataProvider } from '@reveal/modeldata-api';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
+
 import * as EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
 
 import { ParsedEptData, EptInputData } from '../workers/parseEpt';
