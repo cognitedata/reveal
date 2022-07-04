@@ -6,7 +6,6 @@ import { THREE } from '@cognite/reveal';
 import CameraControls from 'camera-controls';
 import { getParamsFromURL, createSDKFromEnvironment } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
-import * as reveal from '@cognite/reveal/internals';
 import React, { useEffect, useRef, useState } from 'react';
 import { CanvasWrapper, Loader } from '../components/styled';
 import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
@@ -14,15 +13,16 @@ import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
 import { suggestCameraConfig } from '../utils/cameraConfig';
+import { LoadingState, RevealManager, SceneHandler } from '@cognite/reveal/internals';
 
 CameraControls.install({ THREE });
 
 export function Simple() {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ isLoading: false, itemsLoaded: 0, itemsRequested: 0, itemsCulled: 0 });
+  const [loadingState, setLoadingState] = useState<LoadingState>({ isLoading: false, itemsLoaded: 0, itemsRequested: 0, itemsCulled: 0 });
 
   useEffect(() => {
-    let revealManager: reveal.RevealManager;
+    let revealManager: RevealManager;
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     async function main() {
       if (!canvas.current) {
@@ -50,7 +50,7 @@ export function Simple() {
       renderer.setClearColor('#444');
       renderer.setPixelRatio(window.devicePixelRatio);
 
-      const sceneHandler = new reveal.SceneHandler();
+      const sceneHandler = new SceneHandler();
       const { revealManager, model } = await createManagerAndLoadModel(client, renderer, sceneHandler, 'cad', modelRevision, modelUrl);
       sceneHandler.addCadModel(model, model.cadModelIdentifier)
       revealManager.on('loadingStateChanged', setLoadingState);

@@ -7,11 +7,11 @@ import * as THREE from 'three';
 import { CadMaterialManager } from '@reveal/rendering';
 import { IntersectInput } from '@reveal/model-base';
 
-import { createGlContext } from '../../../../test-utilities';
 import { PickingHandler } from './PickingHandler';
 import { It, Mock } from 'moq.ts';
 import { SceneHandler } from '@reveal/utilities';
 import { CadNode } from '../wrappers/CadNode';
+import { createGlContext } from '../../../../test-utilities';
 
 describe(PickingHandler.name, () => {
   let pickingHandler: PickingHandler;
@@ -38,13 +38,13 @@ describe(PickingHandler.name, () => {
     pickingHandler = new PickingHandler(renderer, materialManagerMock.object(), new SceneHandler());
   });
 
-  test('no nodes, returns empty array', () => {
-    const intersections = pickingHandler.intersectCadNodes([], input);
+  test('no nodes, returns empty array', async () => {
+    const intersections = await pickingHandler.intersectCadNodes([], input);
     expect(intersections).toBeEmpty();
   });
 
-  test('single node that does not intersect, returns empty array', () => {
-    const intersections = pickingHandler.intersectCadNodes([cadNode], input);
+  test('single node that does not intersect, returns empty array', async () => {
+    const intersections = await pickingHandler.intersectCadNodes([cadNode], input);
     expect(intersections).toBeEmpty();
   });
 });

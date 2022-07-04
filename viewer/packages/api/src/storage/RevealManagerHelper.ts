@@ -4,10 +4,9 @@
 import * as THREE from 'three';
 
 import { AddModelOptions } from '../public/migration/types';
-import { createRevealManager } from '../public/createRevealManager';
+import { createCdfRevealManager, createLocalRevealManager, createRevealManager } from '../public/createRevealManager';
+import { RevealManager } from '../public/RevealManager';
 import { RevealOptions } from '../public/types';
-
-import { createCdfRevealManager, createLocalRevealManager, PointCloudNode, RevealManager } from '../internals';
 
 import { CdfModelIdentifier, LocalModelIdentifier } from '@reveal/modeldata-api';
 import { DataSource } from '@reveal/data-source';
@@ -16,6 +15,7 @@ import { assertNever, SceneHandler } from '@reveal/utilities';
 import { CogniteClient } from '@cognite/sdk';
 import { CadNode } from '@reveal/cad-model';
 import { CogniteClientPlayground } from '@cognite/sdk-playground';
+import { PointCloudNode } from '@reveal/pointclouds';
 
 /**
  * Helper for {@link RevealManager} for creating a uniform interface for

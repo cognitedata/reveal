@@ -6,13 +6,12 @@ import * as THREE from 'three';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
 import { ViewStateHelper } from './ViewStateHelper';
 
-import { createGlContext, mockClientAuthentication } from '../../../test-utilities';
+import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
 
 import { CogniteClient } from '@cognite/sdk';
 
 describe(ViewStateHelper.name, () => {
   let viewer: Cognite3DViewer;
-  let helper: ViewStateHelper;
 
   beforeEach(() => {
     const sdk = new CogniteClient({ appId: 'reveal.test', project: 'dummy', getToken: async () => 'dummy' });
@@ -22,7 +21,6 @@ describe(ViewStateHelper.name, () => {
     renderer.render = jest.fn();
 
     viewer = new Cognite3DViewer({ sdk, renderer });
-    helper = new ViewStateHelper(viewer, sdk);
   });
 
   test('setState() resets camera and clipping to initial state', () => {
