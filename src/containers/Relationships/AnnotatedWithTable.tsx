@@ -54,7 +54,7 @@ export const AnnotatedWithTable = ({
     data: items = [],
     isLoading: itemsLoading,
     isError: itemsError,
-  } = useUniqueCdfItems<FileInfo>('files', ids, false);
+  } = useUniqueCdfItems<FileInfo>('files', ids, true);
 
   if (isError || itemsError) {
     return <Alert type="warning" message="Error fetching files" />;
