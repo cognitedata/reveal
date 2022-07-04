@@ -35,6 +35,7 @@ Inside of the data model folders, is recommended to have some subfolders to orga
 - `services` - Functions that performs operations in the source systems. Calling firebase/calculation backend/etc through the SDK are examples
 - `utils` - Utility functions using in the code. Small operations like doing a lookup search or indexing so you don't repeat yourself should be on this folder.
 - `types` - Types commonly used in different files
+- `mocks` - Mocks for the data models
 
 ## General Guidelines
 

@@ -1,6 +1,6 @@
 import { Meta, Story } from '@storybook/react';
 import { ReactFlowProvider } from 'react-flow-renderer';
-import { fullListOfOperations } from 'models/calculation-backend/operations/mocks';
+import { fullListOfOperations } from 'models/calculation-backend/operations/mocks/mocks';
 import { ComponentProps } from 'react';
 import ReactFlowNodeEditorContainer from './ReactFlowNodeEditorContainer';
 import { defaultTranslations } from '../translations';

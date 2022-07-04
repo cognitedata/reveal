@@ -21,8 +21,8 @@ import { getHash } from 'utils/hash';
 import { calculateGranularity } from 'utils/timeseries';
 import { useDebounce } from 'use-debounce';
 import { isEqual } from 'lodash';
-import { useOperations } from 'models/calculation-backend/operations/atom';
 import { updateWorkflow } from 'models/charts/charts/selectors/updates';
+import useOperations from 'models/calculation-backend/operations/queries/useOperations';
 
 export function CalculationCollectionEffects() {
   const [chart] = useRecoilState(chartAtom);
@@ -46,7 +46,7 @@ function CalculationEffects({ calculation }: { calculation: ChartWorkflowV2 }) {
   const [chart, mutate] = useRecoilState(chartAtom);
   const { id, enabled, calls } = calculation;
   const call = [...(calls || [])].sort((c) => c.callDate)[0];
-  const [, , operations] = useOperations();
+  const { data: operations } = useOperations();
   const [refetchInterval, setRefetchInterval] = useState<number | false>(2000);
 
   const steps = useMemo(

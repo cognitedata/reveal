@@ -8,7 +8,7 @@ import {
 } from 'models/charts/charts/selectors/updates';
 import chartAtom from 'models/charts/charts/atoms/atom';
 import { useRecoilState } from 'recoil';
-import { useOperations } from 'models/calculation-backend/operations/atom';
+import useOperations from 'models/calculation-backend/operations/queries/useOperations';
 
 const useInitializedChart = (chartId: string) => {
   /**
@@ -29,7 +29,7 @@ const useInitializedChart = (chartId: string) => {
   /**
    * Get all available operations (needed for migration)
    */
-  const [, , operations] = useOperations();
+  const { data: operations } = useOperations();
 
   /**
    * Initialize local chart atom
