@@ -2,7 +2,8 @@
   "branches": [
     "master",
     "alpha",
-    "beta"
+    "beta",
+    { "name": "prerelease-*", "prerelease": true}
   ],
   "plugins": [
     [

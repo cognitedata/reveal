@@ -76,3 +76,9 @@ We use [semantic-release](https://github.com/semantic-release/semantic-release) 
 | `fix`, `docs`, `chore`, `refactor` | `fix(AssetPreview): make assetId selectable` | [Patch] Fix Release | x.x.1 |
 | `feat`, `style` | `feat(MetadataTable): enable sorting` | [Minor] Feature Release | x.1.x |
 | `feat`, `fix`, `style`, `chore`, `refactor` | `feat(Table)!: implement new interface` | [Major] Breaking Release | 1.x.x |
+
+### Releasing a test version
+
+For the cases where testing a work-in-progress version of the library with the subapp is necessary, prerelease versions can be published to npm.
+
+Provided commits in the branch follow the conventional commit format above, creating a PR on a branch with `prerelease-` prefix will trigger the test version release. This version can then be used to create a second PR in the subapp repo.
