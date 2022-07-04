@@ -2,7 +2,9 @@
  * Copyright 2022 Cognite AS
  */
 
-import { RawStylableObject, rawToStylableObject } from '../../styling/StylableObject';
+import * as THREE from 'three';
+
+import { RawStylableObject, StylableObject, rawToStylableObject } from '../../styling/StylableObject';
 
 import { parseEpt, EptInputData, ParsedEptData } from './parseEpt';
 import { Vec3 } from '../../styling/shapes/linalg';
