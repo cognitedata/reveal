@@ -24,8 +24,17 @@ export type BlitOptions = {
   ssaoTexture?: THREE.Texture;
   blendOptions?: BlendOptions;
   overrideAlpha?: number;
-  writeColor?: boolean;
   edges?: boolean;
+  outline?: boolean;
+};
+
+export type DepthBlendBlitOptions = {
+  texture: THREE.Texture;
+  depthTexture: THREE.DepthTexture;
+  blendTexture: THREE.Texture;
+  blendDepthTexture: THREE.Texture;
+  blendFactor: number;
+  overrideAlpha?: number;
   outline?: boolean;
 };
 
@@ -34,13 +43,6 @@ export const transparentBlendOptions: BlendOptions = {
   blendSource: THREE.SrcAlphaFactor,
   blendDestinationAlpha: THREE.OneFactor,
   blendSourceAlpha: THREE.OneMinusDstAlphaFactor
-};
-
-export const alphaMaskBlendOptions: BlendOptions = {
-  blendDestination: THREE.SrcAlphaFactor,
-  blendSource: THREE.ZeroFactor,
-  blendDestinationAlpha: THREE.OneFactor,
-  blendSourceAlpha: THREE.ZeroFactor
 };
 
 export type ThreeUniforms = {
