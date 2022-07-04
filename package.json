@@ -11,6 +11,7 @@
     "dedup": "yarn-deduplicate",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}' 'public/index.html'",
     "lint:fix": "yarn lint --fix",
+    "lint:sarif": "eslint 'src/**/*.{js,jsx,ts,tsx}' 'public/index.html' --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif",
     "postinstall": "yarn dedup",
     "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,jsx,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
     "start": "react-scripts start",
@@ -88,6 +89,7 @@
   "devDependencies": {
     "@cognite/eslint-config": "1.6.1",
     "@cognite/eslint-plugin": "1.4.0",
+    "@microsoft/eslint-formatter-sarif": "^3.0.0",
     "@storybook/addon-actions": "6.5.3",
     "@storybook/addon-essentials": "6.5.3",
     "@storybook/addon-interactions": "^6.5.9",
