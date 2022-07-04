@@ -27,7 +27,8 @@ import {
 import { ChartV2 } from 'pages/authorized/search/well/inspect/modules/common/ChartV2';
 import CurveColorCode from 'pages/authorized/search/well/inspect/modules/common/ChartV2/CurveColorCode';
 
-import EventsByDepth from '../../common/Events/EventsByDepth';
+import { ChartProps } from '../../common/ChartV2/ChartV2';
+import EventsByDepthForChart from '../../common/ChartV2/EventsByDepthForChart';
 import { filterByChartType, filterByMainChartType } from '../utils';
 
 import { EventTabs } from './constants';
@@ -63,6 +64,10 @@ export type Props = {
 };
 
 const LEGEND_HOLDER_SHOW_ALL_HEIGHT = 16;
+
+const axisAutoRange: ChartProps['axisAutorange'] = {
+  y: 'reversed',
+};
 
 export const WellCentricCard: React.FC<Props> = ({
   wellbore,
@@ -172,9 +177,8 @@ export const WellCentricCard: React.FC<Props> = ({
         <ChartV2
           data={chartData}
           axisNames={axisNames}
-          axisAutorange={{
-            y: 'reversed',
-          }}
+          axisAutorange={axisAutoRange}
+          adaptiveChart
           height={600}
           title="Geomechanics & PPFG"
           autosize
@@ -186,7 +190,7 @@ export const WellCentricCard: React.FC<Props> = ({
           }}
         />
 
-        <EventsByDepth
+        <EventsByDepthForChart
           ndsEvents={validNdsEvents}
           nptEvents={validNptEvents}
           isNdsEventsLoading={isNdsLoading}

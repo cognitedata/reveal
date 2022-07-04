@@ -11,6 +11,7 @@ import { ChartV2 } from 'pages/authorized/search/well/inspect/modules/common/Cha
 import CurveColorCode from 'pages/authorized/search/well/inspect/modules/common/ChartV2/CurveColorCode';
 import { FlexColumn, FlexRow } from 'styles/layout';
 
+import { ChartProps } from '../../../common/ChartV2/ChartV2';
 import { filterByChartType, filterByMainChartType } from '../../utils';
 
 import {
@@ -34,6 +35,10 @@ export type Props = {
 };
 
 const FOOTER_MIN_HEIGHT = 32;
+
+const axisAutorange: ChartProps['axisAutorange'] = {
+  y: 'reversed',
+};
 
 export const CompareViewCard: React.FC<Props> = ({
   title,
@@ -69,9 +74,7 @@ export const CompareViewCard: React.FC<Props> = ({
       <ChartV2
         data={chartData}
         axisNames={axisNames}
-        axisAutorange={{
-          y: 'reversed',
-        }}
+        axisAutorange={axisAutorange}
         title={title}
         autosize
       />

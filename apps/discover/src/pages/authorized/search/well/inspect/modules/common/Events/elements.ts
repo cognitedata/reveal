@@ -61,17 +61,17 @@ export const BodyColumnBody = styled(Flex)`
 `;
 
 export const DepthMeasurementScale = styled(FlexColumn)`
-  height: 100%;
+  height: 80%;
   width: 100%;
   position: absolute;
   top: 0;
   left: 0;
-  /* overflow: hidden; */
+  /* overflow: hidden; This was messing up the scale depth in PPFG&Geo, reach out to Deep if you need to reenable this :) */
 `;
 
 export const ScaleLine = styled(Flex)`
-  min-height: ${(props: { gap?: number }) => props.gap || SCALE_BLOCK_HEIGHT}px;
-  max-height: ${(props: { gap?: number }) => props.gap || SCALE_BLOCK_HEIGHT}px;
+  min-height: ${SCALE_BLOCK_HEIGHT}px;
+  max-height: ${SCALE_BLOCK_HEIGHT}px;
   height: auto;
   width: 100%;
   border-bottom: 1px solid var(--cogs-greyscale-grey3);

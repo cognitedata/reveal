@@ -10,6 +10,8 @@ import {
 } from 'modules/wellSearch/types';
 import { ChartV2 } from 'pages/authorized/search/well/inspect/modules/common/ChartV2';
 
+import { ChartProps } from '../../common/ChartV2/ChartV2';
+
 import { GEOMECHANICS_CRUVES_TITLE, PPFG_CURVES_TITLE } from './constants';
 import { SubHeader, Wrapper } from './elements';
 
@@ -23,6 +25,10 @@ export type Props = {
   chartData: MeasurementChartData[];
   axisNames: AxisNames;
   measurementType: MeasurementType;
+};
+
+const axisAutorange: ChartProps['axisAutorange'] = {
+  y: 'reversed',
 };
 
 export const CurveCentricCard: React.FC<Props> = ({
@@ -48,9 +54,7 @@ export const CurveCentricCard: React.FC<Props> = ({
       <ChartV2
         data={chartData}
         axisNames={axisNames}
-        axisAutorange={{
-          y: 'reversed',
-        }}
+        axisAutorange={axisAutorange}
         title={
           isOtherType ? measurementType.toUpperCase() : chartData[0].name || ''
         }

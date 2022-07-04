@@ -35,3 +35,14 @@ export const minMax = (array: number[]): [number, number] => {
     [Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]
   );
 };
+
+/**
+ * Returns both maximum and minimum value of an array.
+ * Returned as an array [maximum, minimum] respectively.
+ */
+export const maxMin = (array: number[]): [number, number] => {
+  return array.reduce(
+    ([max, min], value) => [Math.max(max, value), Math.min(min, value)],
+    [Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY]
+  );
+};

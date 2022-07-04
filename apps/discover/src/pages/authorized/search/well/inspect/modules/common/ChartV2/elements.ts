@@ -3,6 +3,9 @@ import layers from 'utils/zindex';
 
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
+import { SCALE_BLOCK_HEIGHT } from '../Events/constants';
+import { DepthMeasurementScale, ScaleLine } from '../Events/elements';
+
 export const ToolbarWrapper = styled.div`
   position: relative;
   top: -5px;
@@ -189,4 +192,13 @@ export const DetailcardBlockContent = styled(Flex)`
   line-height: var(--cogs-b3-line-height);
   letter-spacing: -2.5e-5em;
   color: var(--cogs-greyscale-grey9);
+`;
+
+export const ScaleLineForChart = styled(ScaleLine)`
+  min-height: ${(props: { gap?: number }) => props.gap || SCALE_BLOCK_HEIGHT}px;
+  max-height: ${(props: { gap?: number }) => props.gap || SCALE_BLOCK_HEIGHT}px;
+`;
+
+export const DepthMeasurementScaleForChart = styled(DepthMeasurementScale)`
+  margin-top: 46px;
 `;

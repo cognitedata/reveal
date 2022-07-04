@@ -26,7 +26,6 @@ export type Props = {
   scaleBlocks: number[];
   events: NdsInternal[];
   isEventsLoading?: boolean;
-  scaleLineGap?: number;
   view?: EventTabs;
 };
 
@@ -37,7 +36,6 @@ const NdsEventsColumn: React.FC<Props> = ({
   scaleBlocks,
   events,
   isEventsLoading,
-  scaleLineGap,
   view,
 }: Props) => {
   const blockElements = useMemo(() => {
@@ -68,11 +66,7 @@ const NdsEventsColumn: React.FC<Props> = ({
             return <NdsEventsBadge events={blockEvents} />;
           };
 
-          return (
-            <ScaleLine key={row} gap={scaleLineGap}>
-              {renderContent()}
-            </ScaleLine>
-          );
+          return <ScaleLine key={row}>{renderContent()}</ScaleLine>;
         })}
 
         {!isEmpty(lastEvents) && (

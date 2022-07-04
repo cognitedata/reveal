@@ -1,4 +1,4 @@
-import { NptInternal } from 'domain/wells/npt/internal/types';
+import { NdsInternal } from 'domain/wells/nds/internal/types';
 
 import React, { useMemo } from 'react';
 
@@ -7,52 +7,46 @@ import isEmpty from 'lodash/isEmpty';
 import EmptyState from 'components/EmptyState';
 
 import { EventTabs } from '../../measurements/wellCentricView/constants';
-
-import { NPT_COLUMN_TITLE } from './constants';
+import { NDS_COLUMN_TITLE } from '../Events/constants';
 import {
   BodyColumn,
   BodyColumnHeaderWrapper,
   BodyColumnMainHeader,
   BodyColumnBody,
-  ScaleLine,
-  DepthMeasurementScale,
   EmptyStateWrapper,
-  LastScaleBlock,
-} from './elements';
-import NptEventsBadge from './NptEventsBadge';
-import { NptEventsScatterView } from './NptEventsScatterView';
+} from '../Events/elements';
+import NdsEventsBadge from '../Events/NdsEventsBadge';
+import { NdsEventsScatterView } from '../Events/NdsEventsScatterView';
+
+import { DepthMeasurementScaleForChart, ScaleLineForChart } from './elements';
 
 export type Props = {
   scaleBlocks: number[];
-  events: NptInternal[];
+  events: NdsInternal[];
   isEventsLoading?: boolean;
+  scaleLineGap?: number;
   view?: EventTabs;
 };
 
-export const EMPTY_STATE_TEXT = 'This wellbore has no NPT events data';
+export const EMPTY_STATE_TEXT = 'This wellbore has no NDS events data';
 export const LOADING_TEXT = 'Loading';
 
-const NptEventsColumn: React.FC<Props> = ({
+export const NdsEventsColumnForChart: React.FC<Props> = ({
   scaleBlocks,
   events,
   isEventsLoading,
+  scaleLineGap,
   view,
 }: Props) => {
   const blockElements = useMemo(() => {
-    const lastEvents = events.filter(
-      (event) =>
-        event.measuredDepth &&
-        event.measuredDepth?.value >= scaleBlocks[scaleBlocks.length - 1]
-    );
-
     return (
       <>
         {scaleBlocks.map((row, index) => {
           const blockEvents = events.filter(
-            (event) =>
-              event.measuredDepth &&
-              event.measuredDepth?.value < row &&
-              (!index || event.measuredDepth.value >= scaleBlocks[index - 1])
+            ({ holeStart }) =>
+              holeStart &&
+              holeStart.value >= row &&
+              holeStart.value < scaleBlocks[index + 1]
           );
 
           const renderContent = () => {
@@ -61,28 +55,30 @@ const NptEventsColumn: React.FC<Props> = ({
             }
 
             if (view === EventTabs.scatter) {
-              return <NptEventsScatterView events={blockEvents} />;
+              return <NdsEventsScatterView events={blockEvents} />;
             }
 
-            return <NptEventsBadge events={blockEvents} />;
+            return <NdsEventsBadge events={blockEvents} />;
           };
 
-          return <ScaleLine key={row}>{renderContent()}</ScaleLine>;
-        })}
+          if (index === scaleBlocks.length - 1) {
+            return null;
+          }
 
-        {!isEmpty(lastEvents) ? (
-          <LastScaleBlock>
-            <NptEventsBadge events={lastEvents} />
-          </LastScaleBlock>
-        ) : null}
+          return (
+            <ScaleLineForChart key={row} gap={scaleLineGap}>
+              {renderContent()}
+            </ScaleLineForChart>
+          );
+        })}
       </>
     );
-  }, [scaleBlocks, events, view]);
+  }, [scaleBlocks, events]);
 
   return (
     <BodyColumn width={150}>
       <BodyColumnHeaderWrapper>
-        <BodyColumnMainHeader>{NPT_COLUMN_TITLE}</BodyColumnMainHeader>
+        <BodyColumnMainHeader>{NDS_COLUMN_TITLE}</BodyColumnMainHeader>
       </BodyColumnHeaderWrapper>
       <BodyColumnBody>
         {(isEventsLoading || isEmpty(events)) && (
@@ -95,11 +91,11 @@ const NptEventsColumn: React.FC<Props> = ({
           </EmptyStateWrapper>
         )}
         {!isEventsLoading && !isEmpty(events) && (
-          <DepthMeasurementScale>{blockElements}</DepthMeasurementScale>
+          <DepthMeasurementScaleForChart>
+            {blockElements}
+          </DepthMeasurementScaleForChart>
         )}
       </BodyColumnBody>
     </BodyColumn>
   );
 };
-
-export default NptEventsColumn;

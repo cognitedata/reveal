@@ -1,7 +1,8 @@
 import React, { useMemo, useRef, useState } from 'react';
 import Plot, { Figure } from 'react-plotly.js';
 
-import { LayoutAxis } from 'plotly.js';
+import { Datum, LayoutAxis } from 'plotly.js';
+import { maxMin, minMax } from 'utils/number';
 
 import { Loader } from '@cognite/cogs.js';
 
@@ -45,9 +46,14 @@ export type ChartProps = {
   height?: number;
   onMinMaxChange?: (minY: number, maxY: number) => void;
   onLayoutChange?: (height: number, lines: number[]) => void;
+  /** scales the graph to match with events by depth */
+  adaptiveChart?: boolean;
 };
 
 const chartStyles = { display: 'flex !important' };
+
+const DEFAULT_GRAPH_Y_VIEWPORT = [100, 0];
+const DEFAULT_GRAPH_X_VIEWPORT = [0, 10];
 
 const ChartV2 = React.forwardRef(
   (
@@ -63,36 +69,56 @@ const ChartV2 = React.forwardRef(
       height,
       onMinMaxChange,
       onLayoutChange,
+      adaptiveChart,
     }: ChartProps,
     ref
   ) => {
     const [detailCardData, setDetailCardData] =
       useState<Plotly.PlotMouseEvent>();
 
+    const [yRange, setYRange] = useState<[number, number]>(
+      maxMin(data?.[0]?.y || DEFAULT_GRAPH_Y_VIEWPORT)
+    );
+    const [xRange, setXRange] = useState<[Datum, Datum]>(
+      minMax(data?.[0]?.x || DEFAULT_GRAPH_X_VIEWPORT)
+    );
+
     // Typing this anything besides 'any', causes a mismatch in LegacyRef for Plotly (investigate this the future).
     const chartRef = useRef<any>();
-    const axisConfigs: AxisConfig = {
-      xaxis: {
-        autorange: axisAutorange?.x,
-        ticksuffix: axisTicksuffixes?.x,
-        title: {
-          text: axisNames?.x || 'x Axis',
+    const axisConfigs: AxisConfig = React.useMemo(
+      () => ({
+        xaxis: {
+          autorange: adaptiveChart ? false : axisAutorange?.x,
+          ticksuffix: axisTicksuffixes?.x,
+          title: {
+            text: axisNames?.x || 'x Axis',
+          },
+          range: adaptiveChart ? xRange : undefined,
+          spikemode: 'across',
+          spikethickness: 1,
+          tickformat: 'digit',
         },
-        spikemode: 'across',
-        spikethickness: 1,
-        tickformat: 'digit',
-      },
-      yaxis: {
-        autorange: axisAutorange?.y,
-        ticksuffix: axisTicksuffixes?.y,
-        title: {
-          text: axisNames?.y || 'Y Axis',
+        yaxis: {
+          autorange: adaptiveChart ? false : axisAutorange?.y,
+          ticksuffix: axisTicksuffixes?.y,
+          title: {
+            text: axisNames?.y || 'Y Axis',
+          },
+          range: adaptiveChart ? yRange : undefined,
+          spikemode: 'across',
+          spikethickness: 1,
+          tickformat: 'digit',
         },
-        spikemode: 'across',
-        spikethickness: 1,
-        tickformat: 'digit',
-      },
-    };
+      }),
+      [
+        axisTicksuffixes,
+        axisAutorange,
+        axisNames,
+        yRange,
+        adaptiveChart,
+        xRange,
+      ]
+    );
 
     if (axisNames?.x2) {
       axisConfigs.xaxis2 = {
@@ -111,51 +137,84 @@ const ChartV2 = React.forwardRef(
       };
     }
 
-    const layout: Partial<Plotly.Layout> = {
-      legend: { orientation: 'v' },
-      // title: {
-      //   text: title,
-      // },
-      showlegend: showLegend,
-      autosize,
-      scene: {
-        xaxis: {
-          title: axisNames?.x || 'x Axis',
-          autorange: axisAutorange?.x,
+    const layout: Partial<Plotly.Layout> = React.useMemo(
+      () => ({
+        legend: { orientation: 'v' },
+        // title: {
+        //   text: title,
+        // },
+        showlegend: showLegend,
+        autosize,
+        scene: {
+          xaxis: {
+            title: axisNames?.x || 'x Axis',
+            autorange: axisAutorange?.x,
+          },
+          yaxis: {
+            title: axisNames?.y || 'y Axis',
+            // autorange: axisAutorange?.y,
+          },
+          zaxis: {
+            title: axisNames?.z || 'z Axis',
+            autorange: axisAutorange?.z,
+          },
         },
-        yaxis: {
-          title: axisNames?.y || 'y Axis',
-          autorange: axisAutorange?.y,
+        ...axisConfigs,
+        hovermode,
+        height,
+        margin: {
+          t: 45,
+          r: 16,
+          l: 60,
+          b: 35,
         },
-        zaxis: { title: axisNames?.z || 'z Axis', autorange: axisAutorange?.z },
-      },
-      ...axisConfigs,
-      hovermode,
-      height,
-      margin: {
-        t: 45,
-        r: 16,
-        l: 60,
-        b: 35,
-      },
-      dragmode: 'pan',
-    };
+        dragmode: 'pan',
+      }),
+      [
+        axisConfigs,
+        hovermode,
+        height,
+        axisNames,
+        axisAutorange,
+        autosize,
+        showLegend,
+      ]
+    );
 
     const handleRelayoutChange = useDebounce(
       (event: Plotly.PlotRelayoutEvent) => {
         const minY = event['yaxis.range[1]'] || 0;
         const maxY = event['yaxis.range[0]'] || 0;
+
         onMinMaxChange?.(minY, maxY);
       },
       1000
     );
 
-    const handleUpdate = useDebounce((_figure: Figure, graph: HTMLElement) => {
+    const handleUpdate = useDebounce((figure: Figure, graph: HTMLElement) => {
       const gap = calculateYTicksGap(graph);
       const visibleYValues = findVisibleYTicksValues(graph);
 
+      // Change the graph position to match the events by depth column.
+      if (adaptiveChart) {
+        const [max, min] = maxMin(visibleYValues);
+
+        setYRange((prevState) => {
+          const [prevMax, prevMin] = prevState;
+          if (prevMax !== max && prevMin !== min) {
+            return [max, min];
+          }
+
+          return prevState;
+        });
+
+        if (figure.layout?.xaxis?.range) {
+          setXRange(figure.layout.xaxis.range as [Datum, Datum]);
+        }
+      }
+
       onLayoutChange?.(gap, visibleYValues);
-    }, 1000);
+    }, 100);
 
     const handleInitialization = (figure: Figure, graph: HTMLElement) => {
       const [maxY, minY] = (figure.layout.yaxis?.range || [0, 0]) as [
@@ -203,7 +262,7 @@ const ChartV2 = React.forwardRef(
           }}
         />
       ),
-      [data]
+      [data, layout]
     );
 
     return (

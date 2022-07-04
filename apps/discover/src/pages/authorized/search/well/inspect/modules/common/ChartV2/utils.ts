@@ -34,7 +34,8 @@ export const findVisibleYTicksValues = (graph: HTMLElement) => {
   const yTickLabelElements = Array.from(graph.getElementsByClassName('ytick'));
 
   const ticks = yTickLabelElements.map((labelElement) => {
-    return Number(labelElement.textContent);
+    // Plotly is using a '-' char which is not parseable for the "Number" function
+    return Number(labelElement.textContent?.replace('−', '-'));
   });
 
   const sortedTicks = sortByNumberAscending(ticks);
@@ -59,6 +60,6 @@ export const calculateYTicksGap = (graph: HTMLElement) => {
   const sortedLines = sortByNumberAscending(lines);
 
   // Using second and third line, as I suspect the first line are outside the plotly grid (thus, not giving valid values) in calculations
-  const [_firstLine, secondLine, thirdLine] = sortedLines;
-  return thirdLine - secondLine;
+  const [firstLine, secondLine] = sortedLines;
+  return secondLine - firstLine;
 };

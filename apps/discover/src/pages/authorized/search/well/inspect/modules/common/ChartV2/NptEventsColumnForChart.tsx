@@ -7,52 +7,46 @@ import isEmpty from 'lodash/isEmpty';
 import EmptyState from 'components/EmptyState';
 
 import { EventTabs } from '../../measurements/wellCentricView/constants';
-
-import { NPT_COLUMN_TITLE } from './constants';
+import { NPT_COLUMN_TITLE } from '../Events/constants';
 import {
   BodyColumn,
   BodyColumnHeaderWrapper,
   BodyColumnMainHeader,
   BodyColumnBody,
-  ScaleLine,
-  DepthMeasurementScale,
   EmptyStateWrapper,
-  LastScaleBlock,
-} from './elements';
-import NptEventsBadge from './NptEventsBadge';
-import { NptEventsScatterView } from './NptEventsScatterView';
+} from '../Events/elements';
+import NptEventsBadge from '../Events/NptEventsBadge';
+import { NptEventsScatterView } from '../Events/NptEventsScatterView';
+
+import { DepthMeasurementScaleForChart, ScaleLineForChart } from './elements';
 
 export type Props = {
   scaleBlocks: number[];
   events: NptInternal[];
   isEventsLoading?: boolean;
+  scaleLineGap?: number;
   view?: EventTabs;
 };
 
 export const EMPTY_STATE_TEXT = 'This wellbore has no NPT events data';
 export const LOADING_TEXT = 'Loading';
 
-const NptEventsColumn: React.FC<Props> = ({
+export const NptEventsColumnForChart: React.FC<Props> = ({
   scaleBlocks,
   events,
   isEventsLoading,
+  scaleLineGap,
   view,
 }: Props) => {
   const blockElements = useMemo(() => {
-    const lastEvents = events.filter(
-      (event) =>
-        event.measuredDepth &&
-        event.measuredDepth?.value >= scaleBlocks[scaleBlocks.length - 1]
-    );
-
     return (
       <>
         {scaleBlocks.map((row, index) => {
           const blockEvents = events.filter(
             (event) =>
               event.measuredDepth &&
-              event.measuredDepth?.value < row &&
-              (!index || event.measuredDepth.value >= scaleBlocks[index - 1])
+              event.measuredDepth?.value >= row &&
+              event.measuredDepth.value < scaleBlocks[index + 1]
           );
 
           const renderContent = () => {
@@ -67,14 +61,16 @@ const NptEventsColumn: React.FC<Props> = ({
             return <NptEventsBadge events={blockEvents} />;
           };
 
-          return <ScaleLine key={row}>{renderContent()}</ScaleLine>;
-        })}
+          if (index === scaleBlocks.length - 1) {
+            return null;
+          }
 
-        {!isEmpty(lastEvents) ? (
-          <LastScaleBlock>
-            <NptEventsBadge events={lastEvents} />
-          </LastScaleBlock>
-        ) : null}
+          return (
+            <ScaleLineForChart gap={scaleLineGap} key={row}>
+              {renderContent()}
+            </ScaleLineForChart>
+          );
+        })}
       </>
     );
   }, [scaleBlocks, events, view]);
@@ -95,11 +91,11 @@ const NptEventsColumn: React.FC<Props> = ({
           </EmptyStateWrapper>
         )}
         {!isEventsLoading && !isEmpty(events) && (
-          <DepthMeasurementScale>{blockElements}</DepthMeasurementScale>
+          <DepthMeasurementScaleForChart>
+            {blockElements}
+          </DepthMeasurementScaleForChart>
         )}
       </BodyColumnBody>
     </BodyColumn>
   );
 };
-
-export default NptEventsColumn;
