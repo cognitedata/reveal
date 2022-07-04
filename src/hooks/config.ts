@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { CLUSTER_KEY } from 'utils/constants';
-import { isProduction } from 'utils/environment';
+import { isProduction } from 'models/charts/config/utils/environment';
 import { getProject } from 'utils/tenant';
 import { useSearchParam } from './navigation';
 

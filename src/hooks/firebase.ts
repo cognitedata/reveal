@@ -1,12 +1,12 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
 import { getFlow } from '@cognite/auth-utils';
-import config from 'config/config';
 import {
   fetchFirebaseEnvironment,
   fetchFirebaseToken,
   initializeFirebase,
 } from 'services/firebase';
+import Config from 'models/charts/config/classes/Config';
 import { useAppsApiBaseUrl, useCluster, useProject } from './config';
 
 const cacheOption = {
@@ -28,14 +28,14 @@ export const useFirebaseInit = (enabled: boolean) => {
         sdk,
         url,
         project,
-        config.firebaseAppName,
+        Config.firebaseAppName,
         flow
       );
       const env = await fetchFirebaseEnvironment(
         sdk,
         project,
         url,
-        config.firebaseAppName
+        Config.firebaseAppName
       );
       await initializeFirebase(env!, token!);
     },

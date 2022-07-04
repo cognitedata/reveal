@@ -17,7 +17,7 @@ import {
 } from 'utils/charts';
 import useScreenshot from 'use-screenshot-hook';
 import CSVModal from 'components/DownloadDropdown/CSVModal';
-import { isProduction } from 'utils/environment';
+import { isProduction } from 'models/charts/config/utils/environment';
 import { currentDateRangeLocale } from 'config/locale';
 import ConnectedSharingDropdown from 'containers/SharingDropdown/ConnectedSharingDropdown';
 import {

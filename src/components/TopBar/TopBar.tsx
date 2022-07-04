@@ -7,9 +7,9 @@ import { useRecoilState } from 'recoil';
 import chartAtom from 'models/charts/charts/atoms/atom';
 import { useTranslations } from 'hooks/translations';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
-import config from 'config/config';
 import { useIntercom } from 'react-use-intercom';
 import { useCallback } from 'react';
+import Config from 'models/charts/config/classes/Config';
 import { ChartActions } from './ChartActions';
 
 const TopBarWrapper = () => {
@@ -94,7 +94,7 @@ const TopBarWrapper = () => {
                 menu: (
                   <Menu>
                     <Menu.Item
-                      href={config.cogniteHubGroupUrl}
+                      href={Config.cogniteHubGroupUrl}
                       style={{ color: 'var(--cogs-text-color)' }}
                       // @ts-ignore
                       target="_blank"
@@ -102,7 +102,7 @@ const TopBarWrapper = () => {
                       {t['Early Adopter Group on Cognite Hub']}
                     </Menu.Item>
                     <Menu.Item
-                      href={config.privacyPolicyUrl}
+                      href={Config.privacyPolicyUrl}
                       style={{ color: 'var(--cogs-text-color)' }}
                       // @ts-ignore
                       target="_blank"
@@ -111,7 +111,7 @@ const TopBarWrapper = () => {
                     </Menu.Item>
                     <Menu.Item onClick={showIntercom}>{t.Feedback}</Menu.Item>
                     <Menu.Footer>
-                      v {config.version.substring(0, 7)}
+                      v {Config.version.substring(0, 7)}
                     </Menu.Footer>
                   </Menu>
                 ),

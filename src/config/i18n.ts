@@ -6,10 +6,14 @@ import ChainedBackend from 'i18next-chained-backend';
 import LocizeBackend from 'i18next-locize-backend';
 import LocalStorageBackend from 'i18next-localstorage-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import { isDevelopment, isPR, isProduction } from 'utils/environment';
-import config from 'config/config';
+import {
+  isDevelopment,
+  isPR,
+  isProduction,
+} from 'models/charts/config/utils/environment';
+import Config from 'models/charts/config/classes/Config';
 
-if (!config.locizeProjectId) throw new Error('Locize is not configured!');
+if (!Config.locizeProjectId) throw new Error('Locize is not configured!');
 
 const reactOptions = {
   bindI18n: 'languageChanged editorSaved',
@@ -26,8 +30,8 @@ const fallbacks = {
 };
 
 const locizeOptions = {
-  projectId: config.locizeProjectId,
-  apiKey: isDevelopment || isPR ? config.locizeApiKey : undefined,
+  projectId: Config.locizeProjectId,
+  apiKey: isDevelopment || isPR ? Config.locizeApiKey : undefined,
   referenceLng: 'en',
   version: isProduction ? 'production' : 'latest',
   allowedAddOrUpdateHosts: ['localhost'],

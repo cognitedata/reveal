@@ -18,8 +18,8 @@ import { azureInfo, loginStatus } from 'services/user-info';
 import * as Sentry from '@sentry/react';
 import { useCluster, useProject } from 'hooks/config';
 import ErrorToast from 'components/ErrorToast/ErrorToast';
-import config from 'config/config';
 import mixpanel from 'mixpanel-browser';
+import Config from 'models/charts/config/classes/Config';
 import ConnectedAppBar from 'containers/AppBar/ConnectedAppBar';
 import { UserInfo } from 'models/charts/charts/types/types';
 import TenantSelectorView from './TenantSelector/TenantSelector';
@@ -56,7 +56,7 @@ const identifyUser = (
   azureADTenant?: string
 ) => {
   if (user) {
-    if (config.mixpanelToken) {
+    if (Config.mixpanelToken) {
       mixpanel.identify(user.email || user.displayName || user.id);
       mixpanel.people.set({ $name: user.displayName, $email: user.email });
       mixpanel.people.union('Projects', project);
@@ -105,7 +105,7 @@ const AppRoutes = () => {
             setInitializing(true);
             sdk
               .loginWithOAuth({
-                clientId: config.azureAppId,
+                clientId: Config.azureAppId,
                 cluster: cluster || 'api',
                 tenantId: options?.directory,
                 signInType: {

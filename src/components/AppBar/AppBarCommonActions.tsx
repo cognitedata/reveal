@@ -1,5 +1,5 @@
 import { Avatar, Icon, Menu, TopBar } from '@cognite/cogs.js';
-import config from 'config/config';
+import Config from 'models/charts/config/classes/Config';
 import { MouseEventHandler } from 'react';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 
@@ -44,7 +44,7 @@ function AppBarCommonActions({
           menu: (
             <Menu>
               <Menu.Item
-                href={config.cogniteHubGroupUrl}
+                href={Config.cogniteHubGroupUrl}
                 style={{
                   color: 'var(--cogs-text-color)',
                 }} // @ts-ignore Cogs does not have the correct typing for this element
@@ -53,7 +53,7 @@ function AppBarCommonActions({
                 {t['Early Adopter Group on Cognite Hub']}
               </Menu.Item>
               <Menu.Item
-                href={config.privacyPolicyUrl}
+                href={Config.privacyPolicyUrl}
                 style={{
                   color: 'var(--cogs-text-color)',
                 }} // @ts-ignore Cogs does not have the correct typing for this element
@@ -62,7 +62,7 @@ function AppBarCommonActions({
                 {t['Privacy policy']}
               </Menu.Item>
               <Menu.Item onClick={onFeedbackClick}>{t.Feedback}</Menu.Item>
-              <Menu.Footer>v {config.version.substring(0, 7)}</Menu.Footer>
+              <Menu.Footer>v {Config.version.substring(0, 7)}</Menu.Footer>
             </Menu>
           ),
         },

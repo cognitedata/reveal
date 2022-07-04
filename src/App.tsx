@@ -4,7 +4,6 @@ import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { ToastContainer } from '@cognite/cogs.js';
 import { RecoilRoot } from 'recoil';
-import config from 'config/config';
 import { IntercomProvider } from 'react-use-intercom';
 
 import 'antd/dist/antd.css';
@@ -17,22 +16,23 @@ import 'services/metrics';
 import * as Sentry from '@sentry/react';
 import { Integrations } from '@sentry/tracing';
 import SentryRRWeb from '@sentry/rrweb';
-import { isDevelopment } from 'utils/environment';
+import { isDevelopment } from 'models/charts/config/utils/environment';
 import { createBrowserHistory } from 'history';
 import { getSDK } from 'utils/cdf-sdk';
+import Config from 'models/charts/config/classes/Config';
 import Routes from './pages/Routes';
 
-if (!isDevelopment && !config.sentryDSN) {
+if (!isDevelopment && !Config.sentryDSN) {
   throw new Error('SENTRY DSN is not present!');
 }
 
 const history = createBrowserHistory();
 
-if (config.sentryDSN && !isDevelopment) {
+if (Config.sentryDSN && !isDevelopment) {
   Sentry.init({
-    dsn: config.sentryDSN,
-    release: config.version,
-    environment: config.environment,
+    dsn: Config.sentryDSN,
+    release: Config.version,
+    environment: Config.environment,
     integrations: [
       new Integrations.BrowserTracing({
         routingInstrumentation: Sentry.reactRouterV5Instrumentation(history),
@@ -65,7 +65,7 @@ export default function RootApp() {
     <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>} showDialog>
       <QueryClientProvider client={queryClient}>
         <IntercomProvider
-          appId={config.intercomAppId}
+          appId={Config.intercomAppId}
           autoBoot
           initializeDelay={1000}
           autoBootProps={{

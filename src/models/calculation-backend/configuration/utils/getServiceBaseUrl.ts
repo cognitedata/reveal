@@ -1,4 +1,4 @@
-import { isProduction } from 'utils/environment';
+import { isProduction } from 'models/charts/config/utils/environment';
 
 export default function getServiceBaseUrl(cluster?: string) {
   const stagingPart = isProduction ? '' : 'staging';

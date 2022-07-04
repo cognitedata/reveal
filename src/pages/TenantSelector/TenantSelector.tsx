@@ -1,7 +1,7 @@
 import TenantSelector, { Background } from '@cognite/cdf-hub-tenant-selector';
-import config from 'config/config';
 import { useCluster } from 'hooks/config';
-import { isProduction } from 'utils/environment';
+import Config from 'models/charts/config/classes/Config';
+import { isProduction } from 'models/charts/config/utils/environment';
 
 const clusters = [
   {
@@ -40,8 +40,8 @@ export default function TenantSelectorView() {
   return (
     <Background>
       <TenantSelector
-        appName={config.appName}
-        clientId={config.azureAppId}
+        appName={Config.appName}
+        clientId={Config.azureAppId}
         clusters={clusters}
         cluster={cluster || ''}
         setCluster={setCluster}

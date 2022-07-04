@@ -13,8 +13,7 @@ import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
 import { useEffect, useState } from 'react';
-import { isProduction } from 'utils/environment';
-import config from 'config/config';
+import { isProduction } from 'models/charts/config/utils/environment';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import dayjs from 'dayjs';
@@ -28,6 +27,7 @@ import {
   currentStartPageLayout,
 } from 'config/startPagePreference';
 import PageTitle from 'components/PageTitle/PageTitle';
+import Config from 'models/charts/config/classes/Config';
 
 const UserProfileWrap = styled(Flex)`
   width: 100%;
@@ -186,7 +186,7 @@ const UserProfile = () => {
               {t.Logout}
             </Button>
             <p className="tags">
-              {t['Cognite Charts Version']} {config.version.substring(0, 7)}
+              {t['Cognite Charts Version']} {Config.version.substring(0, 7)}
             </p>
           </article>
         </UserProfileWrap>
