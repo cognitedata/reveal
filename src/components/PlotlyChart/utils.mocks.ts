@@ -4,9 +4,9 @@ import {
   ChartWorkflow,
   Interpolation,
   LineStyle,
-} from 'models/chart/types';
-import { TimeseriesEntry } from 'models/timeseries-results/types';
-import { WorkflowState } from 'models/calculation-results/types';
+} from 'models/charts/charts/types/types';
+import { TimeseriesEntry } from 'models/charts/timeseries-results/types';
+import { WorkflowState } from 'models/calculation-backend/calculation-results/types';
 import { SeriesData } from './utils';
 
 export const seriesDataExample1: SeriesData[] = [

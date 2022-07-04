@@ -1,6 +1,6 @@
 import { selector } from 'recoil';
-import chartAtom from './atom';
-import { ChartTimeSeries, ChartWorkflow } from './types';
+import chartAtom from '../atoms/atom';
+import { ChartTimeSeries, ChartWorkflow } from '../types/types';
 
 export const chartSources = selector({
   key: 'chartSources',

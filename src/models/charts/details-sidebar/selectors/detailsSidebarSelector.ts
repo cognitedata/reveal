@@ -3,7 +3,10 @@ import DetailsSidebar from 'components/DetailsSidebar/DetailsSidebar';
 import dayjs from 'dayjs';
 import assetLink from 'models/cdf/assets/utils/assetLink';
 import datasetLink from 'models/cdf/datasets/utils/datasetLink';
-import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import {
+  ChartTimeSeries,
+  ChartWorkflow,
+} from 'models/charts/charts/types/types';
 import { ComponentProps } from 'react';
 
 type OutputType = ComponentProps<typeof DetailsSidebar>['source'];

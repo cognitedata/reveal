@@ -2,8 +2,8 @@ import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useUpdateChart } from 'hooks/charts-storage';
 import usePlotlyPropsPreview from 'hooks/usePlotlyPropsPreview';
 import { filter, orderBy } from 'lodash';
-import { Chart } from 'models/chart/types';
-import { duplicate } from 'models/chart/updates';
+import { duplicate } from 'models/charts/charts/selectors/updates';
+import { Chart } from 'models/charts/charts/types/types';
 import useDeleteMyChart from '../mutations/useDeleteMyChart';
 import useMyCharts from '../queries/useMyCharts';
 

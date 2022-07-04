@@ -20,7 +20,7 @@ import { useCluster, useProject } from 'hooks/config';
 import ErrorToast from 'components/ErrorToast/ErrorToast';
 import config from 'config/config';
 import mixpanel from 'mixpanel-browser';
-import { UserInfo } from 'models/chart/types';
+import { UserInfo } from 'models/charts/charts/types/types';
 import ConnectedAppBar from 'components/AppBar/ConnectedAppBar';
 import TenantSelectorView from './TenantSelector/TenantSelector';
 import UserProfile from './UserProfile/UserProfile';

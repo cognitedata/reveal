@@ -3,11 +3,10 @@ import styled from 'styled-components/macro';
 import { Button, Popconfirm, toast, Tooltip } from '@cognite/cogs.js';
 import { useNavigate } from 'hooks/navigation';
 import { useDeleteChart, useUpdateChart } from 'hooks/charts-storage';
-import { duplicate, updateChartDateRange } from 'models/chart/updates';
 import { trackUsage } from 'services/metrics';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useRecoilState } from 'recoil';
-import chartAtom from 'models/chart/atom';
+import chartAtom from 'models/charts/charts/atoms/atom';
 import DownloadDropdown from 'components/DownloadDropdown/DownloadDropdown';
 import { useTranslations } from 'hooks/translations';
 import { useIsChartOwner } from 'hooks/user';
@@ -21,6 +20,10 @@ import CSVModal from 'components/DownloadDropdown/CSVModal';
 import { isProduction } from 'utils/environment';
 import { currentDateRangeLocale } from 'config/locale';
 import ConnectedSharingDropdown from 'components/SharingDropdown/ConnectedSharingDropdown';
+import {
+  duplicate,
+  updateChartDateRange,
+} from 'models/charts/charts/selectors/updates';
 
 export const ChartActions = () => {
   const { t } = useTranslations(

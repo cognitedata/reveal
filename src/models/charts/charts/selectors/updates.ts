@@ -10,7 +10,7 @@ import {
   SourceCollectionData,
   StorableNode,
   UserInfo,
-} from 'models/chart/types';
+} from 'models/charts/charts/types/types';
 import { getEntryColor } from 'utils/colors';
 import dayjs from 'dayjs';
 import {

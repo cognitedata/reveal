@@ -4,7 +4,7 @@ import AppBarRight from 'components/AppBar/AppBarRight';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
 import dayjs from 'dayjs';
 import { useNavigate } from 'hooks/navigation';
-import chartAtom from 'models/chart/atom';
+import chartAtom from 'models/charts/charts/atoms/atom';
 import { useRecoilState } from 'recoil';
 import { ChartActions } from '../../components/TopBar/ChartActions';
 

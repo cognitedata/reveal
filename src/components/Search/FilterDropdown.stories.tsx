@@ -3,7 +3,7 @@ import { Meta, Story } from '@storybook/react';
 import {
   rootAssetsMissingExternalIdMock,
   rootAssetsMock,
-} from 'models/facility/mocks';
+} from 'models/charts/root-asset/mocks';
 import FilterDropdown from './FilterDropdown';
 
 export default {

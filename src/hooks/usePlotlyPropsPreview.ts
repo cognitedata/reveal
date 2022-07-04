@@ -1,6 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { availableWorkflows } from 'models/calculation-results/selectors';
-import { Chart } from 'models/chart/types';
+import { availableWorkflows } from 'models/calculation-backend/calculation-results/atom-selectors/selectors';
+import { Chart } from 'models/charts/charts/types/types';
 import { useMemo } from 'react';
 import { useQueries } from 'react-query';
 import { useRecoilValue } from 'recoil';

@@ -4,7 +4,7 @@ import { useNavigate } from 'hooks/navigation';
 import styled from 'styled-components/macro';
 import dayjs from 'dayjs';
 import { useRecoilState } from 'recoil';
-import chartAtom from 'models/chart/atom';
+import chartAtom from 'models/charts/charts/atoms/atom';
 import { useTranslations } from 'hooks/translations';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
 import config from 'config/config';

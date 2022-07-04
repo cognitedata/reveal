@@ -1,7 +1,7 @@
 import { useNavigate } from 'hooks/navigation';
 import { useComponentTranslations } from 'hooks/translations';
-import useMyChartsList from 'models/charts/hooks/useMyChartsList';
-import usePublicChartsList from 'models/charts/hooks/usePublicChartsList';
+import useMyChartsList from 'models/charts/my-charts/hooks/useMyChartsList';
+import usePublicChartsList from 'models/charts/public-charts/hooks/usePublicChartsList';
 import { ComponentProps } from 'react';
 import { trackUsage } from 'services/metrics';
 import ChartList from '../ChartList';

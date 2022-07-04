@@ -6,13 +6,8 @@ import {
   Chart,
   ChartTimeSeries,
   ChartWorkflow,
-} from 'models/chart/types';
-import {
-  updateChartDateRange,
-  updateWorkflowsFromV1toV2,
-  updateWorkflowsToSupportVersions,
-} from 'models/chart/updates';
-import chartAtom from 'models/chart/atom';
+} from 'models/charts/charts/types/types';
+import chartAtom from 'models/charts/charts/atoms/atom';
 import { useFilePicker } from 'use-file-picker';
 import { useSDK } from '@cognite/sdk-provider';
 import { useDebounce } from 'use-debounce';
@@ -33,7 +28,12 @@ import {
 import { getHash } from 'utils/hash';
 import { usePrevious } from 'react-use';
 import { useRecoilState } from 'recoil';
-import { useOperations } from 'models/operations/atom';
+import { useOperations } from 'models/calculation-backend/operations/atom';
+import {
+  updateChartDateRange,
+  updateWorkflowsFromV1toV2,
+  updateWorkflowsToSupportVersions,
+} from 'models/charts/charts/selectors/updates';
 
 export const useInitializedChart = (chartId: string) => {
   /**

@@ -1,6 +1,10 @@
 import { useCallback, useEffect } from 'react';
-import { Chart, ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
-import chartAtom from 'models/chart/atom';
+import {
+  Chart,
+  ChartTimeSeries,
+  ChartWorkflow,
+} from 'models/charts/charts/types/types';
+import chartAtom from 'models/charts/charts/atoms/atom';
 import { useSDK } from '@cognite/sdk-provider';
 import { useDebounce } from 'use-debounce';
 import { useQuery } from 'react-query';

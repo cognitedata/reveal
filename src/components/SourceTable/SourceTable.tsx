@@ -2,12 +2,15 @@
  * Source Table
  */
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import {
+  ChartTimeSeries,
+  ChartWorkflow,
+} from 'models/charts/charts/types/types';
 import SourceRows from 'components/SourceTable/SourceRows';
 import { Modes } from 'pages/types';
 import { ComponentProps, useCallback } from 'react';
-import { TimeseriesEntry } from 'models/timeseries-results/types';
-import { WorkflowState } from 'models/calculation-results/types';
+import { TimeseriesEntry } from 'models/charts/timeseries-results/types';
+import { WorkflowState } from 'models/calculation-backend/calculation-results/types';
 import { SourceTableWrapper, Table } from './elements';
 import { SourceTableHeader } from './SourceTableHeader';
 import TimeSeriesRows from './TimeSeriesRows';

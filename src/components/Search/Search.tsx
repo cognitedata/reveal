@@ -28,7 +28,7 @@ import EmptyResult, {
 } from 'components/Search/EmptyResult';
 import { useRootAssets } from 'hooks/cdf-assets';
 import { useRecoilState } from 'recoil';
-import { facilityAtom } from 'models/facility/atom';
+import { facilityAtom } from 'models/charts/root-asset/atoms/atom';
 import FilterDropdown from './FilterDropdown';
 
 export type SearchFilter = {

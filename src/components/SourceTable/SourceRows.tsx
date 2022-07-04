@@ -1,9 +1,12 @@
 import { memo, ComponentProps } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import {
+  ChartTimeSeries,
+  ChartWorkflow,
+} from 'models/charts/charts/types/types';
 import { useTranslations } from 'hooks/translations';
-import { TimeseriesEntry } from 'models/timeseries-results/types';
-import { WorkflowState } from 'models/calculation-results/types';
+import { TimeseriesEntry } from 'models/charts/timeseries-results/types';
+import { WorkflowState } from 'models/calculation-backend/calculation-results/types';
 import TimeSeriesRow from './TimeSeriesRow';
 import WorkflowRow from './WorkflowRow';
 

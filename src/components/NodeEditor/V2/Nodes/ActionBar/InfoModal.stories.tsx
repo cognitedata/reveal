@@ -1,6 +1,6 @@
 import { Button } from '@cognite/cogs.js';
 import { ComponentMeta, Story } from '@storybook/react';
-import { fullListOfOperations } from 'models/operations/mocks';
+import { fullListOfOperations } from 'models/calculation-backend/operations/mocks';
 import { ComponentProps, useState } from 'react';
 import InfoModal from './InfoModal';
 

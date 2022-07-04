@@ -2,7 +2,10 @@
  * SourceTable StoryBook
  */
 import { Meta, Story } from '@storybook/react';
-import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import {
+  ChartTimeSeries,
+  ChartWorkflow,
+} from 'models/charts/charts/types/types';
 import { ComponentProps } from 'react';
 import { DatapointsSummary } from 'utils/units';
 import { CogniteClient } from '@cognite/sdk';

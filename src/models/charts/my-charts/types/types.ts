@@ -1,5 +1,5 @@
 import PlotlyChart from 'components/PlotlyChart/PlotlyChart';
-import { Chart } from 'models/chart/types';
+import { Chart } from 'models/charts/charts/types/types';
 import { ComponentProps } from 'react';
 
 export type ChartItem = {

@@ -2,13 +2,13 @@ import { Timeseries } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { AxisUpdate } from 'components/PlotlyChart/utils';
 import { useAddToRecentLocalStorage } from 'hooks/recently-used';
-import chartAtom from 'models/chart/atom';
+import chartAtom from 'models/charts/charts/atoms/atom';
 import {
-  removeTimeseries,
-  convertTSToChartTS,
   addTimeseries,
+  convertTSToChartTS,
+  removeTimeseries,
   updateSourceAxisForChart,
-} from 'models/chart/updates';
+} from 'models/charts/charts/selectors/updates';
 import { useRecoilState } from 'recoil';
 import { calculateDefaultYAxis } from 'utils/axis';
 

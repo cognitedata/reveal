@@ -1,5 +1,5 @@
 import { DatapointAggregate, DoubleDatapoint } from '@cognite/sdk';
-import { ChartThreshold } from 'models/chart/types';
+import { ChartThreshold } from 'models/charts/charts/types/types';
 import {
   convertThresholdUnits,
   convertUnits,

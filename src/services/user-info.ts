@@ -1,5 +1,5 @@
 import { CogniteClient } from '@cognite/sdk';
-import { UserInfo } from 'models/chart/types';
+import { UserInfo } from 'models/charts/charts/types/types';
 
 export const loginStatus = async (sdk: CogniteClient) => {
   const status = await sdk.login.status();

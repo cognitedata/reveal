@@ -4,7 +4,7 @@ import {
   StringDatapoint,
 } from '@cognite/sdk';
 import { hasRawPoints } from 'components/PlotlyChart/utils';
-import { ChartThreshold } from 'models/chart/types';
+import { ChartThreshold } from 'models/charts/charts/types/types';
 import { conversions } from '../models/charts/units/data/conversions';
 import { getUnitConverter } from '../models/charts/units/utils/getUnitConverter';
 

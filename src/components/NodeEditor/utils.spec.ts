@@ -2,8 +2,8 @@ import {
   ComputationStep,
   TimeSeriesInputTypeEnum,
 } from '@cognite/calculation-backend';
-import { ChartTimeSeries } from 'models/chart/types';
-import { fullListOfOperations } from 'models/operations/mocks';
+import { ChartTimeSeries } from 'models/charts/charts/types/types';
+import { fullListOfOperations } from 'models/calculation-backend/operations/mocks';
 import {
   getOperationsGroupedByCategory,
   resolveTimeseriesSourceInSteps,

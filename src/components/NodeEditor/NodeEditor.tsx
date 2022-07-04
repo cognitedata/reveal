@@ -1,5 +1,4 @@
-import { Chart, ChartWorkflowV2 } from 'models/chart/types';
-import { updateWorkflow } from 'models/chart/updates';
+import { Chart, ChartWorkflowV2 } from 'models/charts/charts/types/types';
 import { useCallback, useEffect, useMemo } from 'react';
 import { ReactFlowProvider } from 'react-flow-renderer';
 import { Icon, toast } from '@cognite/cogs.js';
@@ -7,7 +6,8 @@ import { SetterOrUpdater } from 'recoil';
 import ErrorToast from 'components/ErrorToast/ErrorToast';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useIsChartOwner } from 'hooks/user';
-import { useOperations } from 'models/operations/atom';
+import { useOperations } from 'models/calculation-backend/operations/atom';
+import { updateWorkflow } from 'models/charts/charts/selectors/updates';
 import { SourceOption } from './V2/types';
 import { getSourceOption, getSourcesFromChart } from './utils';
 import ReactFlowNodeEditorContainer from './V2/ReactFlowNodeEditorContainer';

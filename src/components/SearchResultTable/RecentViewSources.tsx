@@ -7,7 +7,7 @@ import { useCdfItems } from 'hooks/cognite-functions';
 import { useQueryClient } from 'react-query';
 import { useRecoilState } from 'recoil';
 import { useAddRemoveTimeseries } from 'components/Search/hooks';
-import chartAtom from 'models/chart/atom';
+import chartAtom from 'models/charts/charts/atoms/atom';
 import { trackUsage } from 'services/metrics';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';

@@ -1,5 +1,5 @@
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
-import { Chart } from 'models/chart/types';
+import { Chart } from 'models/charts/charts/types/types';
 
 export const useIsChartOwner = (chart?: Chart) => {
   const { data: login } = useUserInfo();

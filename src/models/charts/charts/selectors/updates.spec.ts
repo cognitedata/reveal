@@ -1,4 +1,4 @@
-import { fullListOfOperations } from 'models/operations/mocks';
+import { fullListOfOperations } from 'models/calculation-backend/operations/mocks';
 import { v4 as uuidv4 } from 'uuid';
 import {
   Chart,
@@ -6,7 +6,7 @@ import {
   ChartWorkflow,
   ChartThreshold,
   ChartWorkflowV2,
-} from './types';
+} from '../types/types';
 import {
   addTimeseries,
   addWorkflow,

@@ -11,7 +11,7 @@ import {
 import dayjs from 'dayjs';
 
 import { range, last } from 'lodash';
-import { ChartTimeSeries } from 'models/chart/types';
+import { ChartTimeSeries } from 'models/charts/charts/types/types';
 import { pAll } from 'utils/helpers';
 import { calculateGranularity, getGranularityInMS } from 'utils/timeseries';
 

@@ -2,14 +2,14 @@ import { CogniteClient, DatapointsMultiQuery } from '@cognite/sdk';
 import dayjs from 'dayjs';
 import { calculateGranularity } from 'utils/timeseries';
 import { ComponentProps } from 'react';
-import { Chart } from 'models/chart/types';
+import { Chart } from 'models/charts/charts/types/types';
 import {
   cleanTimeseriesCollection,
   cleanWorkflowCollection,
 } from 'components/PlotlyChart/utils';
 import PlotlyChart from 'components/PlotlyChart/PlotlyChart';
-import { WorkflowState } from 'models/calculation-results/types';
-import { TimeseriesEntry } from 'models/timeseries-results/types';
+import { WorkflowState } from 'models/calculation-backend/calculation-results/types';
+import { TimeseriesEntry } from 'models/charts/timeseries-results/types';
 
 const fetchPlotlyPropsPreview = async (
   chart: Chart | undefined = undefined,

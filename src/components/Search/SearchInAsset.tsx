@@ -18,7 +18,7 @@ import {
 import TimeseriesSearchResultItem from 'components/SearchResultTable/TimeseriesSearchResultItem';
 import { useAsset } from 'hooks/cdf-assets';
 import { useSearchParam } from 'hooks/navigation';
-import chartAtom from 'models/chart/atom';
+import chartAtom from 'models/charts/charts/atoms/atom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRecoilState } from 'recoil';
 import { trackUsage } from 'services/metrics';

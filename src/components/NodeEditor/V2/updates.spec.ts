@@ -1,4 +1,4 @@
-import { ChartWorkflowV2 } from 'models/chart/types';
+import { ChartWorkflowV2 } from 'models/charts/charts/types/types';
 import { updateFlowSettings, updateWorkflowName } from './updates';
 
 describe('updateWorkflowName', () => {

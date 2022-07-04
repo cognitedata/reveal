@@ -1,7 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
-import { Chart } from 'models/chart/types';
+import { Chart } from 'models/charts/charts/types/types';
 import { uniqBy } from 'lodash';
 
 const charts = (project: string) => {

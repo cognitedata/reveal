@@ -1,5 +1,5 @@
 import { atom, useRecoilState } from 'recoil';
-import { Chart } from './types';
+import { Chart } from '../types/types';
 
 const chartAtom = atom<Chart | undefined>({
   key: 'chartAtom',

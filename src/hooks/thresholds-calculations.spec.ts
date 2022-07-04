@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react-hooks';
-import { Chart, ChartThreshold } from 'models/chart/types';
+import { Chart, ChartThreshold } from 'models/charts/charts/types/types';
 
 import useThresholdsResults, {
   thresholdParameters,
@@ -37,8 +37,8 @@ jest.mock('hooks/calculation-backend', () => ({
   },
 }));
 
-jest.mock('models/chart/atom', () => ({
-  ...jest.requireActual('models/chart/atom'),
+jest.mock('models/charts/charts/atoms/atom', () => ({
+  ...jest.requireActual('models/charts/charts/atoms/atom'),
   useChartAtom: () => {
     const id = '816711a7-25a3-48a3-a7e1-822e35a515sa';
     const chart: Chart = {

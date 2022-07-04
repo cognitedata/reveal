@@ -2,20 +2,24 @@ import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import dayjs from 'dayjs';
 import { useProject } from 'hooks/config';
 import { useQuery, useQueryClient } from 'react-query';
-import { fetchPublicCharts } from 'services/charts-storage';
-import { ChartItem } from '../types';
+import { fetchUserCharts } from 'services/charts-storage';
+import { ChartItem } from '../types/types';
 
-const usePublicCharts = () => {
-  const { data: { id } = {} } = useUserInfo();
-  const project = useProject();
+const useMyCharts = () => {
+  const { data: { id, email } = {} } = useUserInfo();
   const queryClient = useQueryClient();
+  const project = useProject();
 
   return useQuery(
-    ['charts', 'publicCharts'],
-    async () => fetchPublicCharts(project),
+    ['charts', 'myCharts'],
+    async () => {
+      if (!id) return [];
+      return fetchUserCharts(project, id, email);
+    },
     {
       enabled: !!id,
       refetchOnWindowFocus: false,
+      staleTime: 60 * 60 * 1000, // One hour
       select: (charts) =>
         charts.map((chart): ChartItem => {
           const plotlyProps = queryClient.getQueryData<
@@ -35,4 +39,4 @@ const usePublicCharts = () => {
   );
 };
 
-export default usePublicCharts;
+export default useMyCharts;

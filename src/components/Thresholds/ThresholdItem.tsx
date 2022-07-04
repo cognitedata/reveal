@@ -17,7 +17,7 @@ import {
   ChartThresholdEventFilter,
   ChartTimeSeries,
   ChartWorkflow,
-} from 'models/chart/types';
+} from 'models/charts/charts/types/types';
 import convertMSToDisplay from 'utils/date';
 import { getUnitConverter } from 'models/charts/units/utils/getUnitConverter';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';

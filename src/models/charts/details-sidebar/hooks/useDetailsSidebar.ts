@@ -5,7 +5,10 @@ import useCdfAsset from 'models/calculation-backend/metadata/queries/useCdfAsset
 import useCdfDataset from 'models/calculation-backend/metadata/queries/useCdfDataset';
 import useCdfTimeseries from 'models/calculation-backend/metadata/queries/useCdfTimeseries';
 import useStatistics from 'models/calculation-backend/statistics/queries/useStatistics';
-import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import {
+  ChartTimeSeries,
+  ChartWorkflow,
+} from 'models/charts/charts/types/types';
 import { useInitializedChart } from 'pages/ChartViewPage/hooks';
 import { ComponentProps } from 'react';
 import { useParams } from 'react-router-dom';

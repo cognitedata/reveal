@@ -3,7 +3,7 @@ import {
   ChartThreshold,
   ChartTimeSeries,
   ChartWorkflow,
-} from 'models/chart/types';
+} from 'models/charts/charts/types/types';
 import ThresholdItem from 'components/Thresholds/ThresholdItem';
 import { Button, Collapse } from '@cognite/cogs.js';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';

@@ -12,7 +12,7 @@ import { trackUsage } from 'services/metrics';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import { useComponentTranslations } from 'hooks/translations';
 import { OpenInCharts } from 'components/OpenInCharts/OpenInCharts';
-import useCreateChart from 'models/charts/mutations/useCreateChart';
+import useCreateChart from 'models/charts/charts/mutations/useCreateChart';
 import { useNavigate } from 'hooks/navigation';
 import MyChartsList from 'components/ChartList/MyChartsList/MyChartsList';
 import PublicChartsList from 'components/ChartList/PublicChartsList/PublicChartsList';

@@ -1,5 +1,8 @@
 import { addMinutes } from 'date-fns';
-import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import {
+  ChartTimeSeries,
+  ChartWorkflow,
+} from 'models/charts/charts/types/types';
 import {
   getYaxisUpdatesFromEventData,
   getXaxisUpdateFromEventData,

@@ -1,6 +1,6 @@
 import { useComponentTranslations } from 'hooks/translations';
 import { useIsChartOwner } from 'hooks/user';
-import chartAtom from 'models/chart/atom';
+import chartAtom from 'models/charts/charts/atoms/atom';
 import { useRecoilState } from 'recoil';
 import { trackUsage } from 'services/metrics';
 import SharingDropdown from './SharingDropdown';

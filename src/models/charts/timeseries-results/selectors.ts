@@ -1,5 +1,5 @@
-import chartAtom from 'models/chart/atom';
-import { Chart } from 'models/chart/types';
+import chartAtom from 'models/charts/charts/atoms/atom';
+import { Chart } from 'models/charts/charts/types/types';
 import { selector } from 'recoil';
 import { getUnitConvertedDatapointsSummary } from 'utils/units';
 import { timeseriesAtom } from './atom';

@@ -13,12 +13,12 @@ import { trackUsage } from 'services/metrics';
 import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
 import { useTranslations } from 'hooks/translations';
 import SourceTable from 'components/SourceTable/SourceTable';
-import { timeseriesSummaries } from 'models/timeseries-results/selectors';
+import { timeseriesSummaries } from 'models/charts/timeseries-results/selectors';
 import { useRecoilValue } from 'recoil';
-import { calculationSummaries } from 'models/calculation-results/selectors';
+import { calculationSummaries } from 'models/calculation-backend/calculation-results/atom-selectors/selectors';
 import { useInitializedChart } from 'pages/ChartViewPage/hooks';
 import { useParams } from 'react-router-dom';
-import { chartSources } from 'models/chart/selectors';
+import { chartSources } from 'models/charts/charts/atom-selectors/selectors';
 import ConnectedLinkedAssetsSidebar from 'containers/LinkedAssetsSidebar/ConnectedLinkedAssetsSidebar';
 
 const FileViewPage = () => {

@@ -1,4 +1,4 @@
-import { Interpolation, LineStyle } from 'models/chart/types';
+import { Interpolation, LineStyle } from 'models/charts/charts/types/types';
 
 export const plotExamplePropsWithAggregatedData = {
   dateFrom: '2022-04-17T12:02:26.010Z',

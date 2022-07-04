@@ -1,4 +1,4 @@
-import { ChartThreshold } from 'models/chart/types';
+import { ChartThreshold } from 'models/charts/charts/types/types';
 /**
  * Valid Threshold
  * ===================================

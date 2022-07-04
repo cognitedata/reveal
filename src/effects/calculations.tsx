@@ -11,18 +11,18 @@ import {
   useCalculationStatus,
   useCreateCalculation,
 } from 'hooks/calculation-backend';
-import { workflowsAtom } from 'models/calculation-results/atom';
-import chartAtom from 'models/chart/atom';
-import { ChartWorkflowV2 } from 'models/chart/types';
+import { workflowsAtom } from 'models/calculation-backend/calculation-results/atoms/atom';
+import chartAtom from 'models/charts/charts/atoms/atom';
+import { ChartWorkflowV2 } from 'models/charts/charts/types/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { CHART_POINTS_PER_SERIES } from 'utils/constants';
 import { getHash } from 'utils/hash';
 import { calculateGranularity } from 'utils/timeseries';
 import { useDebounce } from 'use-debounce';
-import { updateWorkflow } from 'models/chart/updates';
 import { isEqual } from 'lodash';
-import { useOperations } from 'models/operations/atom';
+import { useOperations } from 'models/calculation-backend/operations/atom';
+import { updateWorkflow } from 'models/charts/charts/selectors/updates';
 
 export function CalculationCollectionEffects() {
   const [chart] = useRecoilState(chartAtom);

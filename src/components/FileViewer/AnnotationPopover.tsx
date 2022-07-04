@@ -7,7 +7,7 @@ import { TimeseriesChart } from '@cognite/data-exploration';
 import dayjs from 'dayjs';
 import { trackUsage } from 'services/metrics';
 import { useRecoilState } from 'recoil';
-import chartAtom from 'models/chart/atom';
+import chartAtom from 'models/charts/charts/atoms/atom';
 import { useAddRemoveTimeseries } from 'components/Search/hooks';
 
 export const AnnotationPopover = ({

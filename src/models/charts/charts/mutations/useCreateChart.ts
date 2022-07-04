@@ -1,7 +1,7 @@
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import dayjs from 'dayjs';
 import { useProject } from 'hooks/config';
-import { Chart } from 'models/chart/types';
+import { Chart } from 'models/charts/charts/types/types';
 import { useMutation } from 'react-query';
 import { createChart } from 'services/charts-storage';
 import { v4 } from 'uuid';

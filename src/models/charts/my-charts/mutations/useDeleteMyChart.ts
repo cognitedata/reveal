@@ -1,7 +1,7 @@
 import { toast } from '@cognite/cogs.js';
 import { useProject } from 'hooks/config';
 import { useTranslations } from 'hooks/translations';
-import { Chart } from 'models/chart/types';
+import { Chart } from 'models/charts/charts/types/types';
 import { useMutation, useQueryClient } from 'react-query';
 import { deleteChart } from 'services/charts-storage';
 

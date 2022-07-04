@@ -1,6 +1,9 @@
 import { StatisticsResultResults } from '@cognite/calculation-backend';
 import DetailsSidebar from 'components/DetailsSidebar/DetailsSidebar';
-import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import {
+  ChartTimeSeries,
+  ChartWorkflow,
+} from 'models/charts/charts/types/types';
 import getDisplayUnit from 'models/charts/units/utils/getDisplayUnit';
 import { ComponentProps } from 'react';
 import { getUnitConverter } from 'models/charts/units/utils/getUnitConverter';

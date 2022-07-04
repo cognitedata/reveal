@@ -9,7 +9,7 @@ import { useAddRemoveTimeseries } from 'components/Search/hooks';
 import EmptyResult, {
   defaultTranslations as emptyResultDefaultTranslations,
 } from 'components/Search/EmptyResult';
-import chartAtom from 'models/chart/atom';
+import chartAtom from 'models/charts/charts/atoms/atom';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
 import { SearchFilter } from 'components/Search/Search';

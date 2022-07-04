@@ -2,7 +2,10 @@ import { useState } from 'react';
 import MetadataPanel from 'components/MetadataPanel/MetadataPanel';
 import { useComponentTranslations } from 'hooks/translations';
 import StatisticsPanel from 'components/StatisticsPanel/StatisticsPanel';
-import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import {
+  ChartTimeSeries,
+  ChartWorkflow,
+} from 'models/charts/charts/types/types';
 import useDetailsSidebar from 'models/charts/details-sidebar/hooks/useDetailsSidebar';
 import DetailsSidebar from './DetailsSidebar';
 

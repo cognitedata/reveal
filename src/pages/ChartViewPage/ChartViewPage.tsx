@@ -12,24 +12,13 @@ import {
   ChartTimeSeries,
   ChartWorkflow,
   ChartWorkflowV2,
-} from 'models/chart/types';
+} from 'models/charts/charts/types/types';
 import { useSearchParam } from 'hooks/navigation';
 import { SEARCH_KEY } from 'utils/constants';
 import { startTimer, stopTimer, trackUsage } from 'services/metrics';
 import { Modes } from 'pages/types';
-import {
-  addWorkflow,
-  addWorkflows,
-  duplicateWorkflow,
-  initializeSourceCollection,
-  removeSource,
-  updateChartDateRange,
-  updateChartSource,
-  updateSourceCollectionOrder,
-  updateVisibilityForAllSources,
-} from 'models/chart/updates';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import chartAtom from 'models/chart/atom';
+import chartAtom from 'models/charts/charts/atoms/atom';
 import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
 import { useTranslations } from 'hooks/translations';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';
@@ -46,22 +35,33 @@ import {
 } from 'components/NodeEditor/V2/types';
 
 import SourceTable from 'components/SourceTable/SourceTable';
-import { timeseriesAtom } from 'models/timeseries-results/atom';
+import { timeseriesAtom } from 'models/charts/timeseries-results/atom';
 import {
   availableWorkflows,
   calculationSummaries,
-} from 'models/calculation-results/selectors';
+} from 'models/calculation-backend/calculation-results/atom-selectors/selectors';
 import { TimeseriesCollectionEffects } from 'effects/timeseries';
 import { CalculationCollectionEffects } from 'effects/calculations';
 import { flow } from 'lodash';
 import { getUnitConverter } from 'models/charts/units/utils/getUnitConverter';
-import { timeseriesSummaries } from 'models/timeseries-results/selectors';
+import { timeseriesSummaries } from 'models/charts/timeseries-results/selectors';
 import { isProduction } from 'utils/environment';
 import ConnectedDetailsSidebar from 'components/DetailsSidebar/ConnectedDetailsSidebar';
 import { currentDateRangeLocale } from 'config/locale';
-import { chartSources } from 'models/chart/selectors';
+import { chartSources } from 'models/charts/charts/atom-selectors/selectors';
 import ChartViewPageAppBar from 'pages/ChartViewPage/ChartViewPageAppBar';
 import PageTitle from 'components/PageTitle/PageTitle';
+import {
+  addWorkflow,
+  addWorkflows,
+  duplicateWorkflow,
+  initializeSourceCollection,
+  removeSource,
+  updateChartDateRange,
+  updateChartSource,
+  updateSourceCollectionOrder,
+  updateVisibilityForAllSources,
+} from 'models/charts/charts/selectors/updates';
 import {
   BottomPaneWrapper,
   ChartContainer,
