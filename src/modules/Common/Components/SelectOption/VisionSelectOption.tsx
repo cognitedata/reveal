@@ -33,7 +33,7 @@ const CustomOptionContainer = styled.div`
   display: grid;
   grid-template-columns: 20px 1fr;
   grid-template-rows: 100%;
-  grid-column-gap: 16px;
+  grid-column-gap: 10px;
   place-items: center start;
 `;
 
