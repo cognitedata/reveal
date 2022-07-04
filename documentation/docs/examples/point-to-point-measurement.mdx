@@ -9,14 +9,9 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 The `MeasurementTool` is a measuring tool for point to point distance with the 3D objects.
 This can be achieved by selecting a point on the 3D Object and drag the pointer to the destined point to get measurement of the distance.
-The tools default measurement is in "Meters" as supported in Reveal, but the tool provides user to customise the measuring units
-based on their convinience.
+The tools default measurement is in meters, but the tool provides user to customise the measuring units.
 
 The tool provides ability to change measuring line width & color.
-
-:::note
-The tool supports only point to point measurement
-:::
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
@@ -58,14 +53,14 @@ measurementTool.setLineOptions(lineOptions);
 ```
 
 It's also possible to apply custom label content for the measurment.
-The tool provides option of custom callback for the users. 'MeasurementOptions.changeMeasurementLabelMetrics` can be
-used to trigger custom operation like change the measuring units to feet. 
+The tool provides option of custom callback for the users. `MeasurementOptions.changeMeasurementLabelMetrics` can be
+used to trigger custom operation like changing the measuring units to feet:
 
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
 const measurementTool = new MeasurementTool(viewer, {changeMeasurementLabelMetrics: (distance) => {
-      // 1 meters = 3.281 feet
+      // 1 meter = 3.281 feet
       const distanceInFeet = distance * 3.281;
       return { distance: distanceInFeet, units: 'ft'};
      }});
@@ -86,7 +81,7 @@ measurementTool.enterMeasurementMode();
 const measurements = measurementTool.getAllMeasurement();
 ```
 
-### Remove Measurement
+### Remove measurement
 To remove a measurement from the viewer, we have `MeasurementTool.removeMeasurement(measurement: THREE.Mesh)`
   - 'measurement` : Measurement mesh to be removed.
 
