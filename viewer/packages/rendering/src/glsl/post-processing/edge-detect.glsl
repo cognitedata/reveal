@@ -28,7 +28,7 @@ float edgeDetectionFilter(sampler2D baseTexture) {
 	/* fetch the 3x3 neighbourhood and use the RGB vector's length as intensity value */
   I[0][0] = length(texelFetch(baseTexture, fragCoord + ivec2(-1, -1), 0).rgb);
   I[0][1] = length(texelFetch(baseTexture, fragCoord + ivec2(-1, 0), 0).rgb);
-  I[0][2] = length(texelFetch(baseTexture, fragCoord + ivec2(1, 1), 0).rgb);
+  I[0][2] = length(texelFetch(baseTexture, fragCoord + ivec2(-1, 1), 0).rgb);
   I[1][0] = length(texelFetch(baseTexture, fragCoord + ivec2(0, -1), 0).rgb);
   I[1][1] = length(texelFetch(baseTexture, fragCoord + ivec2(0, 0), 0).rgb);
   I[1][2] = length(texelFetch(baseTexture, fragCoord + ivec2(0, 1), 0).rgb);
