@@ -20,6 +20,7 @@ import { AssetLinkWarning } from './AssetLinkWarning';
  */
 export const ReviewAssetLinkAnnotationRow = ({
   additionalData,
+  showEditOptions,
 }: VirtualizedTreeRowProps<
   AnnotationDetailPanelRowDataBase<
     VisionReviewAnnotation<VisionAnnotationDataType>
@@ -59,6 +60,7 @@ export const ReviewAssetLinkAnnotationRow = ({
             onApprove={onApproveStateChange}
             onVisibilityChange={onVisibilityChange}
             showColorCircle
+            showEditOptions={showEditOptions}
           />
         </AssetLinkSidePanelRow>
       </AssetLinkWarning>

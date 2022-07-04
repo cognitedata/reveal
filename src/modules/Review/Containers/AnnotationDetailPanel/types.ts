@@ -93,4 +93,4 @@ export type VirtualizedTreeRowProps<T> = {
   nestingLevel: number;
   childItems: TreeNode<T>[];
   additionalData: T;
-};
+} & { showEditOptions: boolean };

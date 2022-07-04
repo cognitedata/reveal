@@ -42,9 +42,11 @@ const getNodeData = <T,>(
 export const VirtualizedReviewAnnotations = <T,>({
   rootNodeArr,
   scrollId,
+  showEditOptions,
 }: {
   rootNodeArr: TreeNode<T>[];
   scrollId?: string;
+  showEditOptions: boolean;
 }) => {
   const treeRef = useRef<any>(null);
 
@@ -112,6 +114,7 @@ export const VirtualizedReviewAnnotations = <T,>({
             nestingLevel,
             childItems: children,
             additionalData,
+            showEditOptions,
           },
           style
         )}

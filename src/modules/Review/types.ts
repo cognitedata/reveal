@@ -59,6 +59,7 @@ export type AnnotationTableRowProps = {
   onVisibilityChange: (id: number) => void;
   onApprove: (id: number, status: Status) => void;
   showColorCircle?: boolean;
+  showEditOptions: boolean;
   expandByDefault?: boolean;
 };
 
