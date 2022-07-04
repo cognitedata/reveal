@@ -77,7 +77,6 @@ export const DataModelPage = () => {
     setProjectSchema(changedSchema.schema);
     setIsDirty(false);
     setCurrentType(null);
-    // removeLocalDraft(draft);
     selectVersion(changedSchema.version);
     setSelectedSchema(changedSchema);
     setMode(
@@ -212,23 +211,13 @@ export const DataModelPage = () => {
   const onSchemaChanged = useCallback(
     (schemaString) => {
       setProjectSchema(schemaString);
-      if (
-        schemaString &&
-        ((selectedSchema && selectedSchema.schema !== schemaString) ||
-          !selectedSchema)
-      ) {
-        setIsDirty(true);
+      setIsDirty(selectedSchema.schema !== schemaString);
 
-        if (selectedSchema.status === DataModelVersionStatus.DRAFT) {
-          setLocalDraft({
-            ...selectedSchema,
-            schema: schemaString,
-            status: DataModelVersionStatus.DRAFT,
-          });
-        }
-      } else if (selectedSchema && selectedSchema.schema === schemaString) {
-        setIsDirty(false);
-      }
+      setLocalDraft({
+        ...selectedSchema,
+        schema: schemaString,
+        status: DataModelVersionStatus.DRAFT,
+      });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedSchema]
@@ -260,17 +249,16 @@ export const DataModelPage = () => {
     if (mode === SchemaEditorMode.Edit) {
       return (
         <div data-cy="data-model-toolbar-actions" style={{ display: 'flex' }}>
-          {selectedSchema.status === DataModelVersionStatus.DRAFT &&
-            projectSchema && (
-              <DiscardButton
-                type="secondary"
-                data-cy="discard-btn"
-                onClick={onDiscardClick}
-                style={{ marginRight: '10px' }}
-              >
-                {t('discard_changes', 'Discard changes')}
-              </DiscardButton>
-            )}
+          {selectedSchema.status === DataModelVersionStatus.DRAFT && (
+            <DiscardButton
+              type="secondary"
+              data-cy="discard-btn"
+              onClick={onDiscardClick}
+              style={{ marginRight: '10px' }}
+            >
+              {t('discard_changes', 'Discard changes')}
+            </DiscardButton>
+          )}
 
           <Button
             type="primary"

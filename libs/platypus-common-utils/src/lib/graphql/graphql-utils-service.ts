@@ -160,7 +160,8 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
 
   generateSdl(): string {
     this.createIfEmpty();
-    return this.schemaAst!.toSDLString();
+    const sdl = this.schemaAst!.toSDLString();
+    return sdl === '\n' ? '' : sdl;
   }
 
   private toSolutionDataModelType(type: ObjectTypeApi): DataModelTypeDefsType {

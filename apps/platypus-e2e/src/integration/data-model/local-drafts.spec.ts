@@ -18,6 +18,47 @@ describe('Data Model Page - Local Drafts', () => {
     cy.getBySel('type-list-item-Currency').should('be.visible');
   });
 
+  it('clears the draft when user removes all types from a published data model', () => {
+    const typeNames = ['Post', 'User', 'Comment'];
+    cy.getBySel('edit-schema-btn').should('be.visible').click();
+    typeNames.forEach((typeName) => {
+      cy.deleteDataModelType(typeName);
+    });
+
+    // No types are present after page refresh
+    cy.reload();
+    cy.getBySel('schema-version-select')
+      .click()
+      .contains('Local draft')
+      .click();
+    typeNames.forEach((typeName) => {
+      cy.getBySel(`type-list-item-${typeName}`).should('not.exist');
+    });
+
+    // Discard button should still be visible when schema is empty
+    cy.getBySel('discard-btn').should('be.visible');
+  });
+
+  it('clears the draft when user removes all types from an unpublished data model', () => {
+    // Create new data model
+    cy.visit('/');
+    cy.getBySel('create-data-model-btn').click();
+    cy.getBySel('input-data-model-name').type('cypress-test');
+    cy.getBySel('modal-ok-button').click();
+
+    // Add and then remove a type
+    cy.get('[aria-label="Add type"]').click();
+    cy.getBySel('type-name-input').should('be.visible').type('Person');
+    cy.getBySel('modal-ok-button').should('be.visible').click();
+    cy.getBySel('type-view-back-button').should('be.visible').click();
+    cy.deleteDataModelType('Person');
+
+    // After refreshing, the draft should not contain the Person type
+    cy.reload();
+    cy.getBySel('type-list-item-Person').should('not.exist');
+    cy.getBySel('editor_panel').contains('Unable to parse').should('not.exist');
+  });
+
   it('persists unpublished changes after navigating away and back', () => {
     cy.addDataModelType('Currency');
     cy.ensureCurrentVersionIsDraft();

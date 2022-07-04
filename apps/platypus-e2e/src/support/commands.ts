@@ -26,6 +26,7 @@ declare namespace Cypress {
     clickQueryExplorerExecuteQuery(): void;
     assertQueryExplorerResult(expectedResult: any, timeout?: number): void;
     addDataModelType(typeName: string): void;
+    deleteDataModelType(typeName: string): void;
     editDataModelTypeFieldName(
       typeName: string,
       fieldName: string,
@@ -110,6 +111,12 @@ Cypress.Commands.add('addDataModelType', (typeName: string) => {
   const typeSelector = `div#${typeName}.node`;
   // Wait for visualizer to be updated with new type before reloading page
   cy.get(typeSelector).should('be.visible');
+});
+
+Cypress.Commands.add('deleteDataModelType', (typeName: string) => {
+  cy.get(`[aria-label="Additional actions for ${typeName}"]`).click();
+  cy.get('button').contains('Delete type').should('be.visible').click();
+  cy.getBySel('modal-ok-button').should('contain', 'Delete Type').click();
 });
 
 Cypress.Commands.add('ensureCurrentVersionIsDraft', () => {

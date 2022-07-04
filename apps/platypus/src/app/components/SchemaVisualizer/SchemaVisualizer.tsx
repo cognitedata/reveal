@@ -58,6 +58,12 @@ export const SchemaVisualizer = React.memo(
     const graphRef = useRef<GraphFns | null>(null);
 
     const schemaTypes = useMemo(() => {
+      if (!graphQLSchemaString) {
+        setIsError(false);
+        setIsLoaded(true);
+        return [];
+      }
+
       try {
         const { definitions } = parse(graphQLSchemaString || '');
         setIsError(false);

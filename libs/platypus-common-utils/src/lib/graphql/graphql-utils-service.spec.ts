@@ -193,4 +193,11 @@ describe('GraphQlUtilsServiceTest', () => {
 
     expect(service.hasTypeField('Post', 'title')).toEqual(false);
   });
+
+  it('should return empty string as SDL when all types are removed', () => {
+    const service = createInstance();
+    service.addType('Person');
+    service.removeType('Person');
+    expect(service.generateSdl()).toBe('');
+  });
 });
