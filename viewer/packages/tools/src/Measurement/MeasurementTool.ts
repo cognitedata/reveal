@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import { MeasurementOptions, MeasurementLabelData } from './types';
 import { Measurement } from './Measurement';
 import { HtmlOverlayTool, HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOverlayTool';
-import svg from '!!raw-loader!./styles/ruler.svg';
+import rulerSvg from './styles/ruler.svg';
 import { MeasurementLabels } from './MeasurementLabels';
 
 /**
@@ -217,7 +217,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private createCombineClusterElement() {
     const combineElement = document.createElement('div');
     combineElement.className = MeasurementLabels.stylesId;
-    combineElement.innerHTML = svg;
+    combineElement.innerHTML = rulerSvg;
 
     return combineElement;
   }
