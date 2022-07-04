@@ -68,9 +68,10 @@ export const SchemaTypeField = ({
     (e: React.FormEvent<HTMLInputElement>) => {
       e.preventDefault();
 
-      const { value } = e.currentTarget;
+      let { value } = e.currentTarget;
 
       setFieldname(value);
+      value = value.trimEnd();
 
       const validationResult = nameValidator.validate('name', value);
       setError(validationResult.valid ? '' : validationResult.errors['name']);
