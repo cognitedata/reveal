@@ -104,7 +104,7 @@
     "@testing-library/react": "11.2.7",
     "@testing-library/react-hooks": "8.0.0",
     "@types/file-saver": "2.0.5",
-    "@types/jest": "27.4.1",
+    "@types/jest": "27.5.2",
     "@types/lodash": "4.14.182",
     "@types/mixpanel-browser": "2.38.0",
     "@types/plotly.js": "1.54.20",
