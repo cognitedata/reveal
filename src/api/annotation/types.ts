@@ -7,6 +7,7 @@ import {
 import { AnnotationRegion } from 'src/api/vision/detectionModels/types';
 import { PredefinedKeypoint } from 'src/modules/Review/types';
 import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import { AnnotationStatus as CDFAnnotationStatus } from '@cognite/sdk-playground';
 
 // Constants
 export enum RegionShape {
@@ -127,12 +128,6 @@ export type ImageAssetLink = TextRegion &
 export type ImageKeypointCollection = ImageClassification & {
   keypoints: Keypoint[];
 };
-
-// Annotation API V2 types todo: remove this and import correct type from @cognite/sdk when v2 becomes available
-export type CDFAnnotationStatus =
-  | `${Status.Suggested}`
-  | `${Status.Approved}`
-  | `${Status.Rejected}`;
 
 export enum CDFAnnotationTypeEnum {
   ImagesObjectDetection = 'images.ObjectDetection',
