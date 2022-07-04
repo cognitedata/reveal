@@ -22,6 +22,7 @@ import mixpanel from 'mixpanel-browser';
 import Config from 'models/charts/config/classes/Config';
 import ConnectedAppBar from 'containers/AppBar/ConnectedAppBar';
 import { UserInfo } from 'models/charts/charts/types/types';
+import Login from 'models/charts/login/classes/Login';
 import TenantSelectorView from './TenantSelector/TenantSelector';
 import UserProfile from './UserProfile/UserProfile';
 import ChartListPage from './ChartListPage/ChartListPage';
@@ -116,14 +117,9 @@ const AppRoutes = () => {
                 if (!gotToken) {
                   const wasAuthenticated = await sdk.authenticate();
                   const azureADToken = await sdk.getAzureADAccessToken();
-                  if (azureADToken)
-                    localStorage.setItem(
-                      '@cognite/charts/azureAdToken',
-                      azureADToken
-                    );
+                  if (azureADToken) Login.accessToken = azureADToken;
                   const cdfToken = await sdk.getCDFToken();
-                  if (cdfToken)
-                    localStorage.setItem('@cognite/charts/cdfToken', cdfToken);
+                  if (cdfToken) Login.cdfToken = cdfToken;
                   setAuthenticated(wasAuthenticated);
                   sdk.setProject(project);
                   if (wasAuthenticated) {
@@ -137,14 +133,9 @@ const AppRoutes = () => {
                   setAuthenticated(true);
                   sdk.setProject(project);
                   const azureADToken = await sdk.getAzureADAccessToken();
-                  if (azureADToken)
-                    localStorage.setItem(
-                      '@cognite/charts/azureAdToken',
-                      azureADToken
-                    );
+                  if (azureADToken) Login.accessToken = azureADToken;
                   const cdfToken = await sdk.getCDFToken();
-                  if (cdfToken)
-                    localStorage.setItem('@cognite/charts/cdfToken', cdfToken);
+                  if (cdfToken) Login.cdfToken = cdfToken;
                   setInitializing(false);
                 }
               });
@@ -166,8 +157,7 @@ const AppRoutes = () => {
               .then(async (wasAuthenticated) => {
                 setAuthenticated(wasAuthenticated);
                 const token = await sdk.getCDFToken();
-                if (token)
-                  localStorage.setItem('@cognite/charts/cdfToken', token);
+                if (token) Login.cdfToken = token;
                 if (wasAuthenticated) {
                   const login = await loginStatus(sdk);
                   identifyUser(login, project, cluster);

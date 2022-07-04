@@ -18,12 +18,12 @@ import {
 import useScreenshot from 'use-screenshot-hook';
 import CSVModal from 'components/DownloadDropdown/CSVModal';
 import { isProduction } from 'models/charts/config/utils/environment';
-import { currentDateRangeLocale } from 'config/locale';
 import ConnectedSharingDropdown from 'containers/SharingDropdown/ConnectedSharingDropdown';
 import {
   duplicate,
   updateChartDateRange,
 } from 'models/charts/charts/selectors/updates';
+import Locale from 'models/charts/user-preferences/classes/Locale';
 
 export const ChartActions = () => {
   const { t } = useTranslations(
@@ -202,7 +202,7 @@ export const ChartActions = () => {
         dateFrom={new Date(chart.dateFrom)}
         dateTo={new Date(chart.dateTo)}
         onDateChange={handleDateChange}
-        locale={currentDateRangeLocale()}
+        locale={Locale.currentDateFnsLocale}
       />
     </div>
   );

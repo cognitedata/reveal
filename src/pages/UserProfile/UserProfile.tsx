@@ -10,24 +10,20 @@ import {
   Select,
 } from '@cognite/cogs.js';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
 import { useEffect, useState } from 'react';
-import { isProduction } from 'models/charts/config/utils/environment';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import dayjs from 'dayjs';
-import {
-  availableLocales,
-  changeDayJSLocale,
-  currentLocale,
-} from 'config/locale';
-import {
-  changeStartPageLayout,
-  currentStartPageLayout,
-} from 'config/startPagePreference';
 import PageTitle from 'components/PageTitle/PageTitle';
+import Locale from 'models/charts/user-preferences/classes/Locale';
+import I18N from 'models/charts/user-preferences/classes/I18N';
 import Config from 'models/charts/config/classes/Config';
+import UserPreferences from 'models/charts/user-preferences/classes/UserPreferences';
+import { pick } from 'lodash';
+import { parseJwt } from 'models/charts/login/utils/parseJwt';
+import Login from 'models/charts/login/classes/Login';
 
 const UserProfileWrap = styled(Flex)`
   width: 100%;
@@ -77,38 +73,6 @@ const LangAreaWrap = styled(Flex)`
   }
 `;
 
-const fallbackOptions = [
-  { value: 'en', label: 'English' },
-  { value: 'ja', label: '日本' },
-];
-
-type LocizeLanguages = Record<
-  string,
-  {
-    name: string;
-    nativeName: string;
-    isReferenceLanguage: boolean;
-    translated: {
-      latest: number;
-    };
-  }
->;
-
-function parseJwt(token: string | null) {
-  if (!token) return '';
-  const base64Url = token.split('.')[1];
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  const jsonPayload = decodeURIComponent(
-    window
-      .atob(base64)
-      .split('')
-      .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
-      .join('')
-  );
-
-  return JSON.stringify(JSON.parse(jsonPayload), null, 2);
-}
-
 const defaultTranslations = makeDefaultTranslations(
   'Charts User settings',
   'Logout',
@@ -125,42 +89,35 @@ const defaultTranslations = makeDefaultTranslations(
 );
 
 const UserProfile = () => {
-  const [availableLanguages, setAvailableLanguages] = useState(fallbackOptions);
-  const [locale, setLocale] = useState(currentLocale);
+  const [availableLanguages, setAvailableLanguages] = useState(
+    I18N.initialOptions
+  );
+  const [locale, setLocale] = useState(() => Locale.currentOption);
 
-  const { i18n, ready } = useTranslation(undefined, { useSuspense: false });
+  const { ready: translationsReady } = useTranslation(undefined, {
+    useSuspense: false,
+  });
   const t = {
     ...defaultTranslations,
-    ...useTranslations(Object.keys(defaultTranslations), 'UserProfile').t,
+    ...useTranslations(translationKeys(defaultTranslations), 'UserProfile').t,
   };
   const { data: user } = useUserInfo();
 
   useEffect(() => {
-    if (ready) {
-      const backend = isProduction
-        ? i18n.services.backendConnector.backend.backends[1]
-        : i18n.services.backendConnector.backend.backends[0];
-      backend.getLanguages((err: any, languages: LocizeLanguages) => {
-        if (err) return;
-        setAvailableLanguages(
-          Object.keys(languages).map((key) => ({
-            value: key,
-            label: languages[key].nativeName,
-          }))
-        );
-      });
+    if (translationsReady) {
+      I18N.fetchAvailableLanguages().then((options) =>
+        setAvailableLanguages(options)
+      );
     }
-  }, [ready, i18n.services.backendConnector.backend.backends]);
+  }, [translationsReady]);
 
-  const startPageLayoutOptions = [
-    { label: t.List, value: 'list' as const },
-    { label: t.Grid, value: 'grid' as const },
-  ];
-  const [startPageLayout, setStartPageLayout] = useState(
-    () =>
-      startPageLayoutOptions.find(
-        (o) => o.value === currentStartPageLayout()
-      ) ?? startPageLayoutOptions[0]
+  const pageLayoutTranslations = pick(t, ['Grid', 'List']);
+  const startPageLayoutOptions = UserPreferences.startPageLayoutOptions(
+    pageLayoutTranslations
+  );
+
+  const [startPageLayout, setStartPageLayout] = useState(() =>
+    UserPreferences.startPageLayoutOption(pageLayoutTranslations)
   );
 
   return (
@@ -197,17 +154,17 @@ const UserProfile = () => {
           </article>
           <article className="lang-col">
             <Select
-              disabled={!ready}
+              disabled={!translationsReady}
               value={
-                ready
+                translationsReady
                   ? availableLanguages.find(
-                      (option) => option.value === i18n.language
+                      (option) => option.value === I18N.currentLanguage
                     )
                   : availableLanguages[0]
               }
-              icon={ready ? '' : 'Loader'}
-              onChange={(option: typeof availableLanguages[0]) =>
-                i18n.changeLanguage(option.value)
+              icon={translationsReady ? '' : 'Loader'}
+              onChange={(option: typeof availableLanguages[number]) =>
+                I18N.changeLanguage(option.value)
               }
               options={availableLanguages}
             />
@@ -230,10 +187,10 @@ const UserProfile = () => {
                 <Select
                   value={locale}
                   onChange={(option: typeof locale) => {
-                    changeDayJSLocale(option.value);
+                    Locale.setLocale(option.value);
                     setLocale(option);
                   }}
-                  options={availableLocales}
+                  options={Locale.options}
                 />
               </div>
               <div>
@@ -252,7 +209,7 @@ const UserProfile = () => {
                 <Select
                   value={startPageLayout}
                   onChange={(option: typeof startPageLayoutOptions[number]) => {
-                    changeStartPageLayout(option.value);
+                    UserPreferences.startPageLayout = option.value;
                     setStartPageLayout(option);
                   }}
                   options={startPageLayoutOptions}
@@ -271,17 +228,11 @@ const UserProfile = () => {
               {JSON.stringify(firebase.auth()?.currentUser ?? {}, null, 2)}
             </pre>
             <Display level={3}>Firebase Token Information</Display>
-            <pre>
-              {parseJwt(localStorage.getItem('@cognite/charts/firebaseToken'))}
-            </pre>
+            <pre>{parseJwt(Login.firebaseToken)}</pre>
             <Display level={3}>CDF Token Information</Display>
-            <pre>
-              {parseJwt(localStorage.getItem('@cognite/charts/cdfToken'))}
-            </pre>
+            <pre>{parseJwt(Login.cdfToken)}</pre>
             <Display level={3}>Azure AD Token Information</Display>
-            <pre>
-              {parseJwt(localStorage.getItem('@cognite/charts/azureAdToken'))}
-            </pre>
+            <pre>{parseJwt(Login.accessToken)}</pre>
           </Collapse.Panel>
         </Collapse>
       </div>

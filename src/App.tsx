@@ -5,11 +5,11 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { ToastContainer } from '@cognite/cogs.js';
 import { RecoilRoot } from 'recoil';
 import { IntercomProvider } from 'react-use-intercom';
+import Locale from 'models/charts/user-preferences/classes/Locale';
+import I18N from 'models/charts/user-preferences/classes/I18N';
 
 import 'antd/dist/antd.css';
 import '@cognite/cogs.js/dist/cogs.css';
-import './config/i18n';
-import './config/locale';
 import 'services/metrics';
 
 // START SENTRY CODE
@@ -45,6 +45,9 @@ if (Config.sentryDSN && !isDevelopment) {
 }
 
 // END SENTRY CODE
+
+I18N.initialize();
+Locale.initialize();
 
 const queryClient = new QueryClient({
   defaultOptions: {

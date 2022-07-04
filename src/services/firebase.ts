@@ -2,6 +2,7 @@ import { CogniteClient } from '@cognite/sdk';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
+import Login from 'models/charts/login/classes/Login';
 
 type LoginToFirebaseResponse = {
   firebaseToken: string;
@@ -48,7 +49,7 @@ export const fetchFirebaseToken = (
       const {
         data: { firebaseToken: nextFirebaseToken },
       } = result;
-      localStorage.setItem('@cognite/charts/firebaseToken', nextFirebaseToken);
+      Login.firebaseToken = nextFirebaseToken;
       return nextFirebaseToken as string;
     });
 };

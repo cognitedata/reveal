@@ -16,7 +16,7 @@ import useCreateChart from 'models/charts/charts/mutations/useCreateChart';
 import { useNavigate } from 'hooks/navigation';
 import MyChartsList from 'components/ChartList/MyChartsList/MyChartsList';
 import PublicChartsList from 'components/ChartList/PublicChartsList/PublicChartsList';
-import { currentStartPageLayout } from 'config/startPagePreference';
+import UserPreferences from 'models/charts/user-preferences/classes/UserPreferences';
 
 const defaultTranslations = makeDefaultTranslations(
   'Name',
@@ -40,7 +40,7 @@ const ChartListPage = () => {
     useCreateChart();
   const [activeTab, setActiveTab] = useState<'mine' | 'public'>('mine');
   const [viewOption, setViewOption] = useState<'list' | 'grid'>(
-    currentStartPageLayout
+    UserPreferences.startPageLayout
   );
   const [searchTerm, setSearchTerm] = useState('');
   const t = useComponentTranslations({

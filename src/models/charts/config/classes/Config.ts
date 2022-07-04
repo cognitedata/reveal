@@ -17,8 +17,7 @@ interface LocalStorageItems {
   locale: 'en' | 'en-gb' | 'nb' | 'ja';
   accessToken: string;
   firebaseToken: string;
-  companyName: string;
-  cogniteApiUrl: string;
+  cdfToken: string;
 }
 
 export default class Config {
@@ -56,10 +55,11 @@ export default class Config {
     Key extends keyof LocalStorageItems,
     ReturnNullValue extends LocalStorageItems[Key] | undefined
   >(key: Key, returnIfNull?: ReturnNullValue) {
-    return (localStorage.getItem(this.LS_PREFIX + key) ??
-      returnIfNull) as ReturnNullValue extends LocalStorageItems[Key]
+    type ReturnType = ReturnNullValue extends LocalStorageItems[Key]
       ? LocalStorageItems[Key]
       : undefined;
+    return (localStorage.getItem(this.LS_PREFIX + key) ??
+      returnIfNull) as ReturnType;
   }
 
   static lsSave<Key extends keyof LocalStorageItems>(

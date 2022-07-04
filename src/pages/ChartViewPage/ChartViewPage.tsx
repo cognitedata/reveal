@@ -45,8 +45,8 @@ import { CalculationCollectionEffects } from 'effects/calculations';
 import { flow } from 'lodash';
 import { getUnitConverter } from 'models/charts/units/utils/getUnitConverter';
 import { timeseriesSummaries } from 'models/charts/timeseries-results/selectors';
+import { isProduction } from 'models/charts/config/utils/environment';
 import ConnectedDetailsSidebar from 'containers/DetailsSidebar/ConnectedDetailsSidebar';
-import { currentDateRangeLocale } from 'config/locale';
 import { chartSources } from 'models/charts/charts/atom-selectors/selectors';
 import ChartViewPageAppBar from 'pages/ChartViewPage/ChartViewPageAppBar';
 import PageTitle from 'components/PageTitle/PageTitle';
@@ -61,7 +61,7 @@ import {
   updateSourceCollectionOrder,
   updateVisibilityForAllSources,
 } from 'models/charts/charts/selectors/updates';
-import { isProduction } from 'models/charts/config/utils/environment';
+import Locale from 'models/charts/user-preferences/classes/Locale';
 import useInitializedChart from 'models/charts/chart/hooks/useInitializedChart';
 import {
   BottomPaneWrapper,
@@ -591,7 +591,7 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
             handleSettingsToggle={handleSettingsToggle}
             handleDateChange={handleDateChange}
             translations={ChartViewHeaderTranslations}
-            locale={currentDateRangeLocale()}
+            locale={Locale.currentDateFnsLocale}
           />
           <ChartContainer>
             <SplitPaneLayout defaultSize={200}>
