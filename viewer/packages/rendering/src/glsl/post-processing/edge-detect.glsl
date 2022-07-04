@@ -24,23 +24,48 @@ float edgeDetectionFilter(sampler2D baseTexture) {
 	G[8] = g8;
 
 	mat3 I;
-	float cnv[9];
 
 	/* fetch the 3x3 neighbourhood and use the RGB vector's length as intensity value */
-	for (int i=0; i<3; i++) {
-		for (int j=0; j<3; j++) {
-			I[i][j] = length(texelFetch(baseTexture, fragCoord + ivec2(i - 1, j - 1), 0).rgb);
-		}
-	}
+  I[0][0] = length(texelFetch(baseTexture, fragCoord + ivec2(-1, -1), 0).rgb);
+  I[0][1] = length(texelFetch(baseTexture, fragCoord + ivec2(-1, 0), 0).rgb);
+  I[0][2] = length(texelFetch(baseTexture, fragCoord + ivec2(-1, 1), 0).rgb);
+  I[1][0] = length(texelFetch(baseTexture, fragCoord + ivec2(0, -1), 0).rgb);
+  I[1][1] = length(texelFetch(baseTexture, fragCoord + ivec2(0, 0), 0).rgb);
+  I[1][2] = length(texelFetch(baseTexture, fragCoord + ivec2(0, 1), 0).rgb);
+  I[2][0] = length(texelFetch(baseTexture, fragCoord + ivec2(1, -1), 0).rgb);
+  I[2][1] = length(texelFetch(baseTexture, fragCoord + ivec2(1, 0), 0).rgb);
+  I[2][2] = length(texelFetch(baseTexture, fragCoord + ivec2(1, 1), 0).rgb);
 
-	/* calculate the convolution values for all the masks */
-	for (int i=0; i<9; i++) {
-		float dp3 = dot(G[i][0], I[0]) + dot(G[i][1], I[1]) + dot(G[i][2], I[2]);
-		cnv[i] = dp3 * dp3;
-	}
+  float dp0 = dot(G[0][0], I[0]) + dot(G[0][1], I[1]) + dot(G[0][2], I[2]);
+  float cnv0 = dp0 * dp0;
+  
+  float dp1 = dot(G[1][0], I[0]) + dot(G[1][1], I[1]) + dot(G[1][2], I[2]);
+  float cnv1 = dp1 * dp1;
+  
+  float dp2 = dot(G[2][0], I[0]) + dot(G[2][1], I[1]) + dot(G[2][2], I[2]);
+  float cnv2 = dp2 * dp2;
+  
+  float dp3 = dot(G[3][0], I[0]) + dot(G[3][1], I[1]) + dot(G[3][2], I[2]);
+  float cnv3 = dp3 * dp3;
+  
+  float dp4 = dot(G[4][0], I[0]) + dot(G[4][1], I[1]) + dot(G[4][2], I[2]);
+  float cnv4 = dp4 * dp4;
+  
+  float dp5 = dot(G[5][0], I[0]) + dot(G[5][1], I[1]) + dot(G[5][2], I[2]);
+  float cnv5 = dp5 * dp5;
+  
+  float dp6 = dot(G[6][0], I[0]) + dot(G[6][1], I[1]) + dot(G[6][2], I[2]);
+  float cnv6 = dp6 * dp6;
+  
+  float dp7 = dot(G[7][0], I[0]) + dot(G[7][1], I[1]) + dot(G[7][2], I[2]);
+  float cnv7 = dp7 * dp7;
+  
+  float dp8 = dot(G[8][0], I[0]) + dot(G[8][1], I[1]) + dot(G[8][2], I[2]);
+  float cnv8 = dp8 * dp8;
 
-	float M = (cnv[0] + cnv[1]) + (cnv[2] + cnv[3]);
-	float S = (cnv[4] + cnv[5]) + (cnv[6] + cnv[7]) + (cnv[8] + M);
+
+	float M = (cnv0 + cnv1) + (cnv2 + cnv3);
+	float S = (cnv4 + cnv5) + (cnv6 + cnv7) + (cnv8 + M);
 
   return sqrt(M/S);
 }
