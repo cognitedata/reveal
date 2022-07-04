@@ -4603,10 +4603,10 @@
   dependencies:
     "@types/plotly.js" "*"
 
-"@types/plotly.js@*", "@types/plotly.js@1.54.20":
-  version "1.54.20"
-  resolved "https://registry.yarnpkg.com/@types/plotly.js/-/plotly.js-1.54.20.tgz#88fd8500f4860eb7590cb38366fa098618cc68df"
-  integrity sha512-vqiqq5chr72QoApD+6Hu52iuBvT5/po/sdVF74IBnacQV6J1MjH9OeFZ3GFDwKLF24xT++FMkEGAWcgVMwg2YQ==
+"@types/plotly.js@*", "@types/plotly.js@1.54.22":
+  version "1.54.22"
+  resolved "https://registry.yarnpkg.com/@types/plotly.js/-/plotly.js-1.54.22.tgz#001b9cfafc5e0bdf133bc6ab6e30ff0af39e584d"
+  integrity sha512-/xL9++eA7VnIIZqNQOw6sZ7DtEmfoHj5rAD2CjU2LCOqem/BxTA1KlpdUWEHOiou6za4HKnM+Nvho3jTBPYJ/w==
   dependencies:
     "@types/d3" "^3"
 
