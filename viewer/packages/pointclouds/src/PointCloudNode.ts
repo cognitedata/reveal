@@ -10,7 +10,7 @@ import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { WellKnownAsprsPointClassCodes } from './types';
 import { createPointClassKey } from './createPointClassKey';
 
-import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from './potree-three-loader';
+import { PickPoint, PotreePointColorType, PotreePointShape, PotreePointSizeType } from './potree-three-loader';
 
 import { PointCloudAppearance } from './styling/PointCloudAppearance';
 import { StylablePointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
@@ -102,6 +102,16 @@ export class PointCloudNode extends THREE.Group {
     this.requestRedraw();
   }
 
+  /**
+   * GPU-based picking allowing to get point data based on ray directing from the camera.
+   * @param renderer Renderer object used for Reveal rendereing.
+   * @param camera Camera object used for Reveal rendering.
+   * @param ray Ray representing the direction for picking.
+   * @returns Picked point data.
+   */
+  pick(renderer: THREE.WebGLRenderer, camera: THREE.Camera, ray: THREE.Ray): PickPoint | null {
+    return this._potreeNode.pick(renderer, camera, ray);
+  }
   /**
    * Sets a visible filter on points of a given class.
    * @param pointClass ASPRS classification class code. Either one of the well known

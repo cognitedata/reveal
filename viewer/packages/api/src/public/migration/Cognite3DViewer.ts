@@ -32,15 +32,20 @@ import {
   CognitePointCloudModel
 } from '@reveal/pointclouds';
 
-import { AddModelOptions, Cognite3DViewerOptions, Intersection, CadModelBudget } from './types';
-import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
+import {
+  AddModelOptions,
+  Cognite3DViewerOptions,
+  Intersection,
+  CadModelBudget,
+  IntersectionFromPixelOptions,
+  CadIntersection
+} from './types';
 import RenderController from './RenderController';
 import { RevealManager } from '../RevealManager';
 import { RevealOptions } from '../types';
 
 import { Spinner } from '../../utilities/Spinner';
 
-import { CadIntersection, IntersectionFromPixelOptions } from '../..';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
@@ -304,7 +309,7 @@ export class Cognite3DViewer {
    * Returns reveal version installed.
    */
   getVersion(): string {
-    return process.env.VERSION;
+    return process.env.VERSION!;
   }
 
   /**
@@ -595,7 +600,7 @@ export class Cognite3DViewer {
    */
   async addPointCloudModel(options: AddModelOptions): Promise<CognitePointCloudModel> {
     if (options.geometryFilter) {
-      throw new NotSupportedInMigrationWrapperError('geometryFilter is not supported for point clouds');
+      throw new Error('geometryFilter is not supported for point clouds');
     }
 
     const { modelId, revisionId } = options;
@@ -1019,6 +1024,21 @@ export class Cognite3DViewer {
    *   );
    * ```
    */
+  async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
+  /**
+   * @deprecated Since 3.1 options argument have no effect.
+   * */
+  async getIntersectionFromPixel(
+    offsetX: number,
+    offsetY: number,
+    options: IntersectionFromPixelOptions
+  ): Promise<null | Intersection>;
+  /**
+   * @obvious
+   * @param offsetX
+   * @param offsetY
+   * @param options
+   */
   async getIntersectionFromPixel(
     offsetX: number,
     offsetY: number,
@@ -1041,7 +1061,7 @@ export class Cognite3DViewer {
       clippingPlanes: this.getClippingPlanes(),
       domElement: this.renderer.domElement
     };
-    const cadResults = this._pickingHandler.intersectCadNodes(cadNodes, input);
+    const cadResults = await this._pickingHandler.intersectCadNodes(cadNodes, input);
     const pointCloudResults = intersectPointClouds(pointCloudNodes, input, options?.pointIntersectionThreshold);
 
     const intersections: Intersection[] = [];
@@ -1186,6 +1206,7 @@ export class Cognite3DViewer {
     const maxTextureSize = 1.4e6;
 
     const rendererSize = this.renderer.getSize(new THREE.Vector2());
+    const devicePixelRatio = this.renderer.getPixelRatio();
     const rendererPixelWidth = rendererSize.width;
     const rendererPixelHeight = rendererSize.height;
 
@@ -1197,8 +1218,8 @@ export class Cognite3DViewer {
 
     const scale = clientTextureSize > maxTextureSize ? Math.sqrt(maxTextureSize / clientTextureSize) : 1;
 
-    const width = clientWidth * scale;
-    const height = clientHeight * scale;
+    let width = clientWidth * scale;
+    let height = clientHeight * scale;
 
     const maxError = 0.1; // pixels
     const isOptimalSize =
@@ -1207,6 +1228,11 @@ export class Cognite3DViewer {
     if (isOptimalSize) {
       return false;
     }
+
+    // This needs to be done such that users don't unintentionally bypass the
+    // resolution cap by setting a high device pixel ratio
+    width /= devicePixelRatio;
+    height /= devicePixelRatio;
 
     adjustCamera(this.camera, width, height);
     this.renderer.setSize(width, height);

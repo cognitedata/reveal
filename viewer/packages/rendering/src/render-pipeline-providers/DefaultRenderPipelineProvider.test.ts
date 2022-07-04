@@ -24,7 +24,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
       .returns(0)
       .setup(p => p.setClearColor(It.IsAny(), It.IsAny()))
       .returns()
-      .setup(p => p.getSize(It.IsAny()))
+      .setup(p => p.getDrawingBufferSize(It.IsAny()))
       .returns(new THREE.Vector2())
       .setup(p => p.setRenderTarget(It.IsAny()))
       .returns()

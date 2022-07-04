@@ -5,8 +5,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { CanvasWrapper, Loader } from '../components/styled'
 
-import { THREE } from '@cognite/reveal';
-import * as reveal from '@cognite/reveal/internals';
+import { PotreePointColorType, PotreePointShape, PotreePointSizeType, THREE } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
 
 import CameraControls from 'camera-controls';
@@ -15,14 +14,15 @@ import { createSDKFromEnvironment, getParamsFromURL } from '../utils/example-hel
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { ClippingUI } from '../utils/ClippingUI';
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
+import { LoadingState, PointCloudNode, RevealManager, SceneHandler } from '@cognite/reveal/internals';
 
 CameraControls.install({ THREE });
 
 class RevealManagerUpdater {
 
-  private _revealManager: reveal.RevealManager;
+  private _revealManager: RevealManager;
 
-  constructor(revealManager: reveal.RevealManager) {
+  constructor(revealManager: RevealManager) {
     this._revealManager = revealManager;
   }
 
@@ -37,7 +37,7 @@ class RevealManagerUpdater {
 
 function initializeGui(
   gui: GUI,
-  node: reveal.PointCloudNode,
+  node: PointCloudNode,
   revealManagerUpdater: RevealManagerUpdater,
   handleSettingsChangedCb: () => void
 ) {
@@ -46,15 +46,15 @@ function initializeGui(
   gui.add(node, 'pointSize', 0, 10).onChange(handleSettingsChangedCb);
   gui
     .add(node, 'pointColorType', {
-      Rgb: reveal.PotreePointColorType.Rgb,
-      Depth: reveal.PotreePointColorType.Depth,
-      Height: reveal.PotreePointColorType.Height,
-      PointIndex: reveal.PotreePointColorType.PointIndex,
-      LevelOfDetail: reveal.PotreePointColorType.LevelOfDetail,
-      Classification: reveal.PotreePointColorType.Classification,
+      Rgb: PotreePointColorType.Rgb,
+      Depth: PotreePointColorType.Depth,
+      Height: PotreePointColorType.Height,
+      PointIndex: PotreePointColorType.PointIndex,
+      LevelOfDetail: PotreePointColorType.LevelOfDetail,
+      Classification: PotreePointColorType.Classification,
     })
     .onChange((valueAsString: string) => {
-      const value: reveal.PotreePointColorType = parseInt(
+      const value: PotreePointColorType = parseInt(
         valueAsString,
         10
       );
@@ -63,11 +63,11 @@ function initializeGui(
     });
   gui
     .add(node, 'pointShape', {
-      Circle: reveal.PotreePointShape.Circle,
-      Square: reveal.PotreePointShape.Square,
+      Circle: PotreePointShape.Circle,
+      Square: PotreePointShape.Square,
     })
     .onChange((valueAsString: string) => {
-      const value: reveal.PotreePointShape = parseInt(
+      const value: PotreePointShape = parseInt(
         valueAsString,
         10
       );
@@ -75,17 +75,17 @@ function initializeGui(
       handleSettingsChangedCb();
     });
   gui.add(node, 'pointSizeType', {
-    Adaptive: reveal.PotreePointSizeType.Adaptive,
-    Fixed: reveal.PotreePointSizeType.Fixed
+    Adaptive: PotreePointSizeType.Adaptive,
+    Fixed: PotreePointSizeType.Fixed
   })
 }
 
 export function SimplePointcloud() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ isLoading: false, itemsLoaded: 0, itemsRequested: 0, itemsCulled: 0 });
+  const [loadingState, setLoadingState] = useState<LoadingState>({ isLoading: false, itemsLoaded: 0, itemsRequested: 0, itemsCulled: 0 });
 
   useEffect(() => {
-    let revealManager: reveal.RevealManager;
+    let revealManager: RevealManager;
     if (!canvasRef.current) {
       return
     }
@@ -106,7 +106,7 @@ export function SimplePointcloud() {
                                      getToken: async () => 'dummy' });
       }
 
-      const sceneHandler = new reveal.SceneHandler();
+      const sceneHandler = new SceneHandler();
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current!,
       });

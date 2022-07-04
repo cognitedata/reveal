@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { assertNever, EventTrigger } from '@reveal/core/utilities';
+import { assertNever, EventTrigger } from '@reveal/utilities';
 
 /**
  * Base class for tools attaching to a {@see Cognite3DViewer}.

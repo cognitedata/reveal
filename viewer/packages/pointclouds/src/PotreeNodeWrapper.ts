@@ -6,7 +6,13 @@ import * as THREE from 'three';
 
 export type PotreeClassification = { [pointClass: number]: { x: number; y: number; z: number; w: number } };
 
-import { PointCloudOctree, PotreePointColorType, PotreePointShape, IClassification } from './potree-three-loader';
+import {
+  PointCloudOctree,
+  PotreePointColorType,
+  PotreePointShape,
+  IClassification,
+  PickPoint
+} from './potree-three-loader';
 import { WellKnownAsprsPointClassCodes } from './types';
 
 import { createPointClassKey } from './createPointClassKey';
@@ -26,7 +32,6 @@ export class PotreeNodeWrapper {
   private readonly _classification: IClassification = {} as IClassification;
 
   private readonly _annotations: PointCloudObjectAnnotation[];
-  private readonly _annotationIdToIndexMap: Map<number, number>;
 
   get needsRedraw(): boolean {
     return this._needsRedraw;
@@ -39,7 +44,6 @@ export class PotreeNodeWrapper {
     this.pointShape = PotreePointShape.Circle;
     this._classification = octree.material.classification;
     this._annotations = annotationsInfo?.annotations ?? [];
-    this._annotationIdToIndexMap = annotationsInfo?.annotationIdToIndexMap ?? new Map();
   }
 
   get pointSize(): number {
@@ -91,6 +95,10 @@ export class PotreeNodeWrapper {
 
   get stylableObjects(): PointCloudObjectAnnotation[] {
     return this._annotations;
+  }
+
+  pick(renderer: THREE.WebGLRenderer, camera: THREE.Camera, ray: THREE.Ray): PickPoint | null {
+    return this.octree.pick(renderer, camera, ray, { pickWindowSize: 20 });
   }
 
   setObjectStyle(styledCollection: StylablePointCloudObjectCollection): void {

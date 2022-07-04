@@ -58,6 +58,7 @@ async function init() {
   const cadModelUpdateHandler = new CadModelUpdateHandler(new ByScreenSizeSectorCuller(), false);
 
   const renderer = new THREE.WebGLRenderer();
+  renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setClearColor(guiData.clearColor);
   renderer.setClearAlpha(guiData.clearAlpha);
