@@ -27,7 +27,6 @@ module.exports = env => {
     },
 
     devServer: {
-      host: 'localhost',
       static: [
         {
           directory: path.resolve(__dirname, env.dir + '/app')
