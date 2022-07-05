@@ -17,6 +17,10 @@ module.exports = env => {
       filename: 'index.js'
     },
 
+    experiments: {
+      topLevelAwait: true
+    },
+
     resolve: {
       fallback: {
         fs: false,
@@ -71,9 +75,6 @@ module.exports = env => {
           use: ['raw-loader', 'glslify-loader']
         }
       ]
-    },
-    watchOptions: {
-      poll: 1000
     },
 
     devtool: 'inline-source-map',

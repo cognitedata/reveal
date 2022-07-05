@@ -15,22 +15,21 @@ export abstract class SimpleVisualTestFixture {
 
     this._renderer = new THREE.WebGLRenderer();
     this._renderer.setSize(window.innerWidth, window.innerHeight);
-
-    const grid = new THREE.GridHelper(30, 40);
-    grid.position.set(14, -1, -14);
-    this._scene.add(grid);
+    document.body.appendChild(this._renderer.domElement);
+    document.body.style.margin = '0px 0px 0px 0px';
+    this._renderer.domElement.style.backgroundColor = '#000000';
   }
 
   public async run(): Promise<void> {
-    await this.setup();
+    (window as any).camera = this._perspectiveCamera;
+
+    await this.setup(this._renderer, this._scene, this._perspectiveCamera);
     this.render();
   }
 
-  abstract setup(): Promise<void>;
+  abstract setup(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera): Promise<void>;
 
   render(): void {
-    requestAnimationFrame(() => {
-      this._renderer.render(this._scene, this._perspectiveCamera);
-    });
+    this._renderer.render(this._scene, this._perspectiveCamera);
   }
 }
