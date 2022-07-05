@@ -97,9 +97,9 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
   /**
    * Removes a measurement from the Cognite3DViewer.
-   * @param measurement Measurement mesh to be removed from @Cognite3DViewer.
+   * @param _measurement Measurement mesh to be removed from @Cognite3DViewer.
    */
-  removeMeasurement(measurement: THREE.Group): void {
+  removeMeasurement(_measurement: THREE.Group): void {
     // TODO 2022-07-05 larsmoa: Implement
     throw new Error('Not implemented');
   }
