@@ -106,7 +106,7 @@ export class PotreeNodeWrapper {
     return this.octree.pick(renderer, camera, ray, { pickWindowSize: 20 });
   }
 
-  setObjectStyle(styledCollection: StylablePointCloudObjectCollection): void {
+  assignObjectStyle(styledCollection: StylablePointCloudObjectCollection): void {
     this.octree.material.objectAppearanceTexture.assignStyledObjectSet(styledCollection);
     this._needsRedraw = true;
   }

@@ -182,7 +182,7 @@ export class PointCloudNode extends THREE.Group {
   }
 
   assignStyledPointCloudObjectCollection(styledCollection: StylablePointCloudObjectCollection): void {
-    this._potreeNode.setObjectStyle(styledCollection);
+    this._potreeNode.assignObjectStyle(styledCollection);
   }
 
   removeAllStyledPointCloudOjects(): void {
