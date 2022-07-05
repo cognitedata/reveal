@@ -174,7 +174,7 @@ export class PointCloudNode extends THREE.Group {
   }
 
   get defaultAppearance(): PointCloudAppearance {
-    return this._potreeNode.octree.material.objectAppearanceTexture.defaultAppearance;
+    return this._potreeNode.defaultAppearance;
   }
 
   set defaultAppearance(appearance: PointCloudAppearance) {

@@ -22,6 +22,7 @@ import {
   PointCloudObjectAnnotation,
   PointCloudObjectAnnotationsWithIndexMap
 } from './annotationTypes';
+import { PointCloudAppearance } from './styling/PointCloudAppearance';
 
 /**
  * Wrapper around `Potree.PointCloudOctree` with some convenience functions.
@@ -95,6 +96,10 @@ export class PotreeNodeWrapper {
 
   get stylableObjects(): PointCloudObjectAnnotation[] {
     return this._annotations;
+  }
+
+  get defaultAppearance(): PointCloudAppearance {
+    return this.octree.material.objectAppearanceTexture.defaultAppearance;
   }
 
   pick(renderer: THREE.WebGLRenderer, camera: THREE.Camera, ray: THREE.Ray): PickPoint | null {
