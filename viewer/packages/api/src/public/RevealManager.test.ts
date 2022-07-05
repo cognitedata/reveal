@@ -91,6 +91,6 @@ describe('RevealManager', () => {
     manager.update(camera);
     jest.advanceTimersByTime(10000);
 
-    expect(loadingStateChangedCb).toBeCalledTimes(1);
+    expect(loadingStateChangedCb).toBeCalledTimes(0);
   });
 });
