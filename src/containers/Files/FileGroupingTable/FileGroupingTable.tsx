@@ -6,8 +6,10 @@ import { FileInfo } from '@cognite/sdk';
 
 const FileGroupingTable = ({
   parentResource,
+  onItemClicked,
 }: {
   parentResource?: ResourceItem;
+  onItemClicked: (file: any) => void;
 }) => {
   const { data: fileData } = useList<FileInfo>('files', {
     limit: 1000,
@@ -36,7 +38,9 @@ const FileGroupingTable = ({
       };
     }) ?? [];
 
-  return <DocumentTable docs={modifiedData} />;
+  return (
+    <DocumentTable docs={modifiedData} handleDocumentClick={onItemClicked} />
+  );
 };
 
 export default FileGroupingTable;

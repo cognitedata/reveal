@@ -82,7 +82,12 @@ export const FileSearchResults = ({
               );
 
             if (currentView === 'tree')
-              return <FileGroupingTable parentResource={parentResource} />;
+              return (
+                <FileGroupingTable
+                  parentResource={parentResource}
+                  onItemClicked={file => onClick(file)}
+                />
+              );
             return (
               <FileTable
                 {...props}
