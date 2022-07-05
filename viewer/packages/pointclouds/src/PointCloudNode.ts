@@ -97,11 +97,6 @@ export class PointCloudNode extends THREE.Group {
     this._potreeNode.pointShape = value;
   }
 
-  setObjectStyle(styledCollection: StylablePointCloudObjectCollection): void {
-    this.potreeNode.setObjectStyle(styledCollection);
-    this.requestRedraw();
-  }
-
   /**
    * GPU-based picking allowing to get point data based on ray directing from the camera.
    * @param renderer Renderer object used for Reveal rendereing.
