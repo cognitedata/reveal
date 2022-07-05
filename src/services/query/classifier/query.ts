@@ -1,5 +1,6 @@
+import { DocumentsClassifier } from '@cognite/sdk-playground';
 import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from 'react-query';
+import { useInfiniteQuery, useQuery } from 'react-query';
 import { composeClassifierTrainingSets } from 'src/services/compose';
 import { CLASSIFIER_KEYS } from 'src/services/constants';
 import React from 'react';
@@ -24,11 +25,29 @@ export const useClassifierManageTrainingSetsQuery = (disabled = false) => {
 export const useDocumentsClassifiersQuery = () => {
   const sdk = useSDK();
 
-  const { data = [], ...rest } = useQuery(CLASSIFIER_KEYS.classifiers(), () =>
-    fetchDocumentClassifiers(sdk)
+  const queryResults = useInfiniteQuery(
+    CLASSIFIER_KEYS.classifiers(),
+    ({ pageParam }) => fetchDocumentClassifiers(sdk, pageParam),
+    {
+      getNextPageParam: (lastPage) => {
+        return lastPage?.nextCursor;
+      },
+    }
   );
 
-  return { data, ...rest };
+  const data = queryResults.data?.pages.reduce<DocumentsClassifier[]>(
+    (result, page) => {
+      const items = page.items;
+      return [...result, ...items];
+    },
+    []
+  );
+
+  return {
+    data,
+    isLoading: queryResults.isLoading,
+    fetchNextPage: queryResults.fetchNextPage,
+  };
 };
 
 export const useDocumentsClassifierByIdQuery = (id?: number) => {

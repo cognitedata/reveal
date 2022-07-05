@@ -27,13 +27,19 @@ export const createDocumentClassifier = (
     });
 };
 
-export const fetchDocumentClassifiers = (sdk: CogniteClient) => {
+export const fetchDocumentClassifiers = (
+  sdk: CogniteClient,
+  cursor?: string
+) => {
+  let url = `/api/playground/projects/${sdk.project}/documents/classifiers`;
+  if (cursor !== undefined) {
+    url += `?cursor=${cursor}`;
+  }
+
   return sdk
-    .get<ListResponse<Classifier[]>>(
-      `/api/playground/projects/${sdk.project}/documents/classifiers`
-    )
+    .get<ListResponse<Classifier[]>>(url)
     .then((result) => {
-      return result.data.items;
+      return result.data;
     })
     .catch((error) => {
       throw error;
