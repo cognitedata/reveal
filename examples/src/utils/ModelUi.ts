@@ -136,7 +136,7 @@ export class ModelUi {
       this._onModelAdded(model);
     } catch (e) {
       console.error(e);
-      alert(`ModelID is invalid or is not supported`);
+      alert(`ModelID is invalid, is not supported or you are not authorized (${e})`);
     }
   }
 
