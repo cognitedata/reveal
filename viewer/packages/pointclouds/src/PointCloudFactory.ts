@@ -79,7 +79,7 @@ export class PointCloudFactory {
     const { modelBaseUrl } = modelMetadata;
 
     let annotationInfo = {
-      annotations: [] as PointCloudObjectAnnotation[],
+      annotations: new Array<PointCloudObjectAnnotation>(),
       annotationIdToIndexMap: new Map<number, number>()
     };
 
