@@ -22,7 +22,7 @@ export class MeasurementLine {
     //Adaptive Line width & line width is multipled with scale factor due to adaptive calculation in shaders.
     this._adaptiveWidthLineMaterial = new LineMaterial({
       color: lineColor,
-      lineWidth,
+      linewidth: lineWidth,
       worldUnits: true,
       depthTest: false,
       transparent: true,
@@ -32,7 +32,7 @@ export class MeasurementLine {
     //Fixed line Width.
     this._fixedWidthLineMaterial = new LineMaterial({
       color: lineColor,
-      lineWidth: 2, // TODO 2022-07-05 larsmoa: Should this be variable?
+      linewidth: 2, // TODO 2022-07-05 larsmoa: Should this be variable?
       worldUnits: false,
       depthTest: false,
       transparent: true,
