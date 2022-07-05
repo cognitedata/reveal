@@ -6,21 +6,66 @@ import * as THREE from 'three';
 import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
 import { Line2 } from 'three/examples/jsm/lines/Line2';
-import { MeasurementOptions } from './types';
 
 export class MeasurementLine {
   private _geometry: LineGeometry | null;
-  private readonly _material: LineMaterial[];
+  private readonly _meshes: THREE.Group;
+  private readonly _fixedWidthLineMaterial: LineMaterial;
+  private readonly _adaptiveWidthLineMaterial: LineMaterial;
   private _position: Float32Array;
   private _distanceToCamera: number = 0;
 
-  private _options: MeasurementOptions;
-
-  constructor(options: MeasurementOptions) {
+  constructor(lineWidth: number, lineColor: number) {
     this._position = new Float32Array(6);
     this._geometry = null;
-    this._material = [];
-    this._options = { ...options };
+
+    //Adaptive Line width & line width is multipled with scale factor due to adaptive calculation in shaders.
+    this._adaptiveWidthLineMaterial = new LineMaterial({
+      color: lineColor,
+      lineWidth,
+      worldUnits: true,
+      depthTest: false,
+      transparent: true,
+      opacity: 1
+    });
+
+    //Fixed line Width.
+    this._fixedWidthLineMaterial = new LineMaterial({
+      color: lineColor,
+      lineWidth: 2, // TODO 2022-07-05 larsmoa: Should this be variable?
+      worldUnits: false,
+      depthTest: false,
+      transparent: true,
+      opacity: 1
+    });
+
+    this._meshes = new THREE.Group();
+    this._meshes.name = 'Measurement';
+
+    const onBeforeRenderTrigger = new THREE.Mesh(new THREE.BufferGeometry());
+    onBeforeRenderTrigger.name = 'onBeforeRenderTrigger trigger (no geometry)';
+    onBeforeRenderTrigger.frustumCulled = false;
+    onBeforeRenderTrigger.onBeforeRender = renderer => {
+      const { width, height } = renderer.domElement.getBoundingClientRect();
+      this._adaptiveWidthLineMaterial.resolution = this._fixedWidthLineMaterial.resolution = new THREE.Vector2(
+        width,
+        height
+      );
+    };
+    this._meshes.add(onBeforeRenderTrigger);
+  }
+
+  dispose(): void {
+    if (this._geometry !== null) {
+      this._geometry.dispose();
+    }
+    this._meshes.clear();
+    this._adaptiveWidthLineMaterial.dispose();
+    this._fixedWidthLineMaterial.dispose();
+  }
+
+  get meshes(): THREE.Group {
+    return this._meshes;
   }
 
   /**
@@ -28,7 +73,7 @@ export class MeasurementLine {
    * @param point Point from where the line will be generated.
    * @param distanceToCamera Distance to camera from the @point
    */
-  startLine(point: THREE.Vector3, distanceToCamera: number): THREE.Group {
+  startLine(point: THREE.Vector3, distanceToCamera: number): void {
     this._position[0] = this._position[3] = point.x;
     this._position[1] = this._position[4] = point.y;
     this._position[2] = this._position[5] = point.z;
@@ -38,52 +83,19 @@ export class MeasurementLine {
     this._geometry = new LineGeometry();
     this._geometry.setPositions(this._position);
 
-    //Adaptive Line width & line width is multipled with scale factor due to adaptive calculation in shaders.
-    this._material.push(
-      new LineMaterial({
-        color: this._options.color,
-        linewidth: this._options.lineWidth! * 0.01,
-        worldUnits: true,
-        depthTest: false,
-        transparent: true,
-        opacity: 1
-      })
-    );
-
-    //Fixed line Width. TODO: Remove the magic number for line width & relate it with model?
-    this._material.push(
-      new LineMaterial({
-        color: this._options.color,
-        linewidth: 2,
-        worldUnits: false,
-        depthTest: false,
-        transparent: true,
-        opacity: 1
-      })
-    );
-
-    const mesh = new Line2(this._geometry, this._material[0]);
+    const adaptiveMesh = new Line2(this._geometry, this._adaptiveWidthLineMaterial);
     //Assign bounding sphere & box for the line to support raycasting.
-    mesh.computeLineDistances();
+    adaptiveMesh.computeLineDistances();
     //Make sure line are rendered in-front of other objects.
-    mesh.renderOrder = 1;
-    mesh.onBeforeRender = () => {
-      this._material[0].resolution = new THREE.Vector2(window.innerWidth, window.innerHeight);
-    };
+    adaptiveMesh.renderOrder = 100;
 
     //Fixed line width when camera is zoom out or far away from the line.
-    const meshSecondary = new Line2(this._geometry, this._material[1]);
-    meshSecondary.computeLineDistances();
-    meshSecondary.renderOrder = 1;
-    meshSecondary.onBeforeRender = () => {
-      this._material[1].resolution = new THREE.Vector2(window.innerWidth, window.innerHeight);
-    };
+    const fixedMesh = new Line2(this._geometry, this._fixedWidthLineMaterial);
+    fixedMesh.computeLineDistances();
+    fixedMesh.renderOrder = 100;
 
-    const meshGroup = new THREE.Group();
-    meshGroup.add(mesh);
-    meshGroup.add(meshSecondary);
-
-    return meshGroup;
+    this._meshes.add(adaptiveMesh);
+    this._meshes.add(fixedMesh);
   }
 
   /**
@@ -121,13 +133,8 @@ export class MeasurementLine {
       ray.direction.copy(direction);
       //Note: Using the initial/start point as reference for ray to emit till that distance from camera.
       ray.at(this._distanceToCamera, position);
-      //Add transparent color when dragging to make other 3D objects visible for users
-      this._material[0].opacity = 0.5;
-      this._material[1].opacity = 0.5;
     } else {
       position.copy(endPoint);
-      this._material[0].opacity = 1.0;
-      this._material[1].opacity = 1.0;
     }
 
     this._position[3] = position.x;
@@ -135,22 +142,6 @@ export class MeasurementLine {
     this._position[5] = position.z;
     //Update the line geometry end point.
     this._geometry?.setPositions(this._position);
-  }
-
-  /**
-   * Sets Measurement line width and color with @options value.
-   * @param options MeasurementLineOptions to set line width and color.
-   */
-  setOptions(options: MeasurementOptions): void {
-    this._options.lineWidth = options?.lineWidth ?? this._options.lineWidth;
-    this._options.color = options?.color ?? this._options.color;
-    //Apply for current line.
-    if (this._material.length > 1) {
-      this._material[0].linewidth = this._options.lineWidth! * 0.01;
-      this._material[1].linewidth = 2;
-      this._material[0].color.set(new THREE.Color(this._options.color));
-      this._material[1].color.set(new THREE.Color(this._options.color));
-    }
   }
 
   /**
@@ -175,21 +166,5 @@ export class MeasurementLine {
     direction = direction.normalize().multiplyScalar(length * 0.5);
 
     return startPoint.clone().add(direction);
-  }
-
-  /**
-   * Clear all line objects geometry & material.
-   */
-  clearObjects(): void {
-    if (this._geometry) {
-      this._geometry.dispose();
-      this._geometry = null;
-    }
-    if (this._material.length > 1) {
-      this._material.forEach(material => {
-        material.dispose();
-      });
-    }
-    this._material.splice(0);
   }
 }

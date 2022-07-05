@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Cognite3DViewer, Intersection } from '@reveal/api';
+import assert from 'assert';
 import * as THREE from 'three';
 import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
 import { MeasurementLabels } from './MeasurementLabels';
@@ -10,53 +10,66 @@ import { MeasurementLine } from './MeasurementLine';
 import { MeasurementOptions } from './types';
 
 export class Measurement {
-  private readonly _viewer: Cognite3DViewer;
   private readonly _measurementLabel: MeasurementLabels;
-  private readonly _line: MeasurementLine;
-  private _lineMesh: THREE.Group | null;
+  private _line: MeasurementLine | null = null;
   private readonly _options: Required<MeasurementOptions>;
   private readonly _domElement: HTMLElement;
   private readonly _camera: THREE.Camera;
+  private readonly _meshGroup: THREE.Group;
   private readonly _htmlOverlay: HtmlOverlayTool;
-  private _labelElement: HTMLDivElement | null;
+  private _labelElement: HTMLDivElement | null = null;
 
-  constructor(viewer: Cognite3DViewer, options: Required<MeasurementOptions>, overlay: HtmlOverlayTool) {
-    this._viewer = viewer;
+  constructor(
+    viewerDomElement: HTMLElement,
+    camera: THREE.Camera,
+    meshGroup: THREE.Group,
+    options: Required<MeasurementOptions>,
+    overlay: HtmlOverlayTool
+  ) {
     this._options = options;
-    this._lineMesh = null;
-    this._line = new MeasurementLine(this._options);
     this._measurementLabel = new MeasurementLabels();
     this._htmlOverlay = overlay;
-    this._labelElement = null;
-    this._domElement = this._viewer.domElement;
-    this._camera = this._viewer.getCamera();
+    this._domElement = viewerDomElement;
+    this._camera = camera;
+    this._meshGroup = meshGroup;
   }
 
   /**
    * Start the measurement.
-   * @param intersection Intersection Object containing point & camera distance.
+   * @param point World position to start measurement operation from.
    */
-  startMeasurement(intersection: Intersection): void {
-    //Clear the line objects if exists for new line.
-    this._line.clearObjects();
-    this._lineMesh = this._line.startLine(intersection.point, intersection.distanceToCamera);
-    this._viewer.addObject3D(this._lineMesh!);
+  startMeasurement(point: THREE.Vector3): void {
+    assert(this._line === null, 'Already measuring');
+
+    const distanceToCamera = this._camera.getWorldPosition(new THREE.Vector3()).distanceTo(point);
+    const lineWidth = this.determineLineWidthFromOptions();
+    const lineColor = this.determineLineColorFromOptions();
+    this._line = new MeasurementLine(lineWidth, lineColor);
+    this._line.startLine(point, distanceToCamera);
+    this._meshGroup.add(this._line.meshes);
   }
 
   /**
-   * Update the measurement line.
-   * @param event Mouse Event.
+   * Update the measurement line to end at the provided mouse coordinates
+   * @param mouseEvent Mouse coordinates relative to the canvas DOM element.
    */
-  update(event: any): void {
-    const { offsetX, offsetY } = event;
+  update(mouseEvent: { offsetX: number; offsetY: number }): void {
+    if (this._line === null) {
+      throw new Error('Not currently measuring, call startMeasurement() first');
+    }
+    const { offsetX, offsetY } = mouseEvent;
     this._line.updateLine(offsetX, offsetY, this._domElement, this._camera);
   }
 
   /**
    * End the measurement.
-   * @param point Point at which measuring line ends.
+   * @param point World position at which measuring line ends.
    */
   endMeasurement(point: THREE.Vector3): void {
+    if (this._line === null) {
+      throw new Error('Not currently measuring, call startMeasurement() first');
+    }
+
     const { distanceToLabelCallback } = this._options;
     //Update the line with final end point.
     this._line.updateLine(0, 0, this._domElement, this._camera, point);
@@ -68,37 +81,27 @@ export class Measurement {
   /**
    * Clear the measurement line objects.
    */
-  clearObjects(): void {
-    this._line.clearObjects();
+  dispose(): void {
+    if (this._line !== null) {
+      this.removeMeasurement();
+      this._line.dispose();
+      this._line = null;
+    }
   }
 
   /**
    * Remove the measurement.
    */
   removeMeasurement(): void {
-    if (this._lineMesh) {
-      this._viewer.removeObject3D(this._lineMesh);
+    if (this._line === null) {
+      throw new Error('Not currently measuring, call startMeasurement() first');
     }
+
+    this._meshGroup.remove(this._line.meshes);
 
     if (this._htmlOverlay && this._labelElement) {
-      this._htmlOverlay.remove(this._labelElement!);
+      this._htmlOverlay.remove(this._labelElement);
     }
-  }
-
-  /**
-   * Sets Measurement line width and color with @options value.
-   * @param options MeasurementLineOptions to set line width and color.
-   */
-  setLineOptions(options: MeasurementOptions): void {
-    this._line.setOptions(options);
-  }
-
-  /**
-   * Get all the line meshes in the measurement.
-   * @returns Array of line meshes.
-   */
-  getMesh(): THREE.Group | null {
-    return this._lineMesh;
   }
 
   /**
@@ -111,5 +114,14 @@ export class Measurement {
     const labelElement = this._measurementLabel.createLabel(label);
     this._htmlOverlay.add(labelElement, position);
     return labelElement;
+  }
+
+  private determineLineWidthFromOptions(): number {
+    return this._options.lineWidth * 0.01;
+  }
+
+  // TODO 2022-07-05 larsmoa: Return proper color
+  private determineLineColorFromOptions(): number {
+    return this._options.color;
   }
 }

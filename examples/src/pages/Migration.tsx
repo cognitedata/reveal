@@ -388,12 +388,9 @@ export function Migration() {
               break;
           }
         }
-
-        measurementTool.reset();
       });
 
       new AxisViewTool(viewer);
-
     }
 
     function showBoundsForAllGeometries(model: Cognite3DModel) {

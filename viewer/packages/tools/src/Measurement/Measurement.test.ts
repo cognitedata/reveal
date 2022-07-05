@@ -11,11 +11,9 @@ import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
 import { Measurement } from './Measurement';
 
 describe(Measurement.name, () => {
-  let viewer: Cognite3DViewer;
-  let canvasContainer: HTMLElement;
-  let domSize: { height: number; width: number };
   let measurement: Measurement;
   let overlay: HtmlOverlayTool;
+  let meshGroup: THREE.Group;
   const intersection: Intersection = {
     type: 'cad',
     model: createCadModel(1, 2, 3, 3),
@@ -36,11 +34,11 @@ describe(Measurement.name, () => {
     const renderer = new THREE.WebGLRenderer({ context });
     renderer.render = jest.fn();
 
-    domSize = { height: 480, width: 640 };
-    canvasContainer = document.createElement('div');
+    const domSize = { height: 480, width: 640 };
+    const canvasContainer = document.createElement('div');
     canvasContainer.style.width = `${domSize.width}px`;
     canvasContainer.style.height = `${domSize.height}px`;
-    viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer });
+    const viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer });
 
     const options: Required<MeasurementOptions> = {
       distanceToLabelCallback: (distanceInMeters: number) => `${(distanceInMeters * 10).toFixed(2)} dm`,
@@ -53,70 +51,26 @@ describe(Measurement.name, () => {
     const position = new THREE.Vector3();
     overlay.add(htmlElement, position);
 
-    measurement = new Measurement(viewer, options, overlay);
+    meshGroup = new THREE.Group();
+    measurement = new Measurement(canvasContainer, viewer.getCamera(), meshGroup, options, overlay);
   });
 
-  test('Start measurement line mesh', () => {
-    const addObject3DSpyOn = jest.spyOn(viewer, 'addObject3D');
-
-    expect(measurement.getMesh()).toBeNull();
-    measurement.startMeasurement(intersection);
-
-    expect(measurement.getMesh()).not.toBeNull();
-    expect(addObject3DSpyOn).toBeCalledTimes(1);
+  test('startMeasurement() adds mesh to group', () => {
+    const addSpy = jest.spyOn(meshGroup, 'add');
+    measurement.startMeasurement(new THREE.Vector3(0, 1, 2));
+    expect(addSpy).toBeCalledTimes(1);
   });
 
-  test('Update the measurement line mesh', () => {
+  test('update() fails if called before startMeasurement()', () => {
     const event = new MouseEvent('mousemove', { screenX: 1, screenY: 1 });
-    measurement.startMeasurement(intersection);
-
-    let meshGroup = measurement.getMesh();
-    let mesh = meshGroup?.children[0] as THREE.Mesh;
-
-    let points = mesh.geometry.getAttribute('instanceEnd').array;
-    let endPoint = new THREE.Vector3(points![3], points![4], points![5]);
-
-    expect(endPoint).toEqual(intersection.point);
-
-    measurement.update(event);
-
-    meshGroup = measurement.getMesh();
-    mesh = meshGroup?.children[0] as THREE.Mesh;
-
-    points = mesh.geometry.getAttribute('instanceEnd').array;
-    endPoint = new THREE.Vector3(points![3], points![4], points![5]);
-
-    expect(endPoint).not.toEqual(intersection.point);
+    expect(() => measurement.update(event)).toThrowError();
   });
 
-  test('Remove the measurement objects line mesh & sphere meshes', () => {
-    const removeObject3DSpyOn = jest.spyOn(viewer, 'removeObject3D');
-    measurement.startMeasurement(intersection);
-
-    expect(measurement.getMesh()).not.toBeNull();
-
+  test('removeMeasurement() removes mesh group group', () => {
+    const removeObject3DSpyOn = jest.spyOn(meshGroup, 'remove');
+    measurement.startMeasurement(new THREE.Vector3(1, 1, 1));
     measurement.removeMeasurement();
 
-    expect(removeObject3DSpyOn).toBeCalledTimes(1);
-  });
-
-  test('Set measurement line width & color', () => {
-    const lineOptions = {
-      lineWidth: 1.0,
-      color: 0xff0000
-    };
-
-    measurement.setLineOptions(lineOptions);
-
-    expect((measurement as any)._line._options.lineWidth).toEqual(1.0);
-    expect((measurement as any)._line._options.color).toEqual(0xff0000);
-  });
-
-  test('Get measurement line mesh', () => {
-    expect(measurement.getMesh()).toBeNull();
-
-    measurement.startMeasurement(intersection);
-
-    expect(measurement.getMesh()).toEqual((measurement as any)._lineMesh);
+    expect(removeObject3DSpyOn).toHaveBeenCalledTimes(1);
   });
 });

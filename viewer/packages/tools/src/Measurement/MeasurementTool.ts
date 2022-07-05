@@ -10,6 +10,7 @@ import { Measurement } from './Measurement';
 import { HtmlOverlayTool, HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOverlayTool';
 import rulerSvg from './styles/ruler.svg';
 import { MeasurementLabels } from './MeasurementLabels';
+import assert from 'assert';
 
 /**
  * Enables {@see Cognite3DViewer} to perform a point to point measurement.
@@ -39,19 +40,21 @@ import { MeasurementLabels } from './MeasurementLabels';
 ```
  */
 export class MeasurementTool extends Cognite3DViewerToolBase {
-  private readonly _viewer: Cognite3DViewer;
-  private readonly _measurements: Measurement[];
   private _options: Required<MeasurementOptions>;
+
+  private readonly _viewer: Cognite3DViewer;
+  private readonly _geometryGroup = new THREE.Group();
+  private readonly _measurements: Measurement[];
   private _currentMeasurementIndex: number;
-  private _measurementActive: boolean;
   private readonly _htmlOverlay: HtmlOverlayTool;
+
   private readonly _handleLabelClustering = this.createCombineClusterElement.bind(this);
+  private readonly _handlePointerClick = this.onPointerClick.bind(this);
+  private readonly _handlePointerMove = this.onPointerMove.bind(this);
+
   private readonly _overlayOptions: HtmlOverlayToolOptions = {
     clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback: this._handleLabelClustering }
   };
-
-  private readonly _handleonPointerClick = this.onPointerClick.bind(this);
-  private readonly _handleonPointerMove = this.onPointerMove.bind(this);
 
   private static readonly defaultLineOptions: Required<MeasurementOptions> = {
     distanceToLabelCallback: d => MeasurementTool.metersLabelCallback(d),
@@ -69,7 +72,9 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._measurements = [];
     this._htmlOverlay = new HtmlOverlayTool(this._viewer, this._overlayOptions);
     this._currentMeasurementIndex = -1;
-    this._measurementActive = false;
+
+    this._geometryGroup.name = MeasurementTool.name;
+    this._viewer.addObject3D(this._geometryGroup);
   }
 
   /**
@@ -85,7 +90,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   exitMeasurementMode(): void {
     //clear all mesh, geometry & event handling.
     this._measurements.forEach(measurement => {
-      measurement.clearObjects();
+      measurement.dispose();
     });
     this.removeEventHandling();
   }
@@ -95,12 +100,8 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * @param measurement Measurement mesh to be removed from @Cognite3DViewer.
    */
   removeMeasurement(measurement: THREE.Group): void {
-    const index = this._measurements.findIndex(obj => obj.getMesh() === measurement);
-    if (index > -1) {
-      this._measurements[index].removeMeasurement();
-      this._measurements.splice(index, 1);
-      this._currentMeasurementIndex--;
-    }
+    // TODO 2022-07-05 larsmoa: Implement
+    throw new Error('Not implemented');
   }
 
   /**
@@ -112,22 +113,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     });
     this._measurements.splice(0);
     this._currentMeasurementIndex = -1;
-  }
-
-  /**
-   * Get all measurement objects from the Cognite3DViewer.
-   * @returns Group of all measurements in the Cognite3DViewer.
-   */
-  getAllMeasurement(): THREE.Group[] {
-    const measurementGroups: THREE.Group[] = [];
-    this._measurements.forEach(measurement => {
-      const meshGrp = measurement.getMesh();
-      if (meshGrp) {
-        //Send only one line mesh as a group
-        measurementGroups.push(meshGrp);
-      }
-    });
-    return measurementGroups;
   }
 
   /**
@@ -143,14 +128,8 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   /**
    * Sets Measurement line width and color with @options value.
    * @param options MeasurementOptions to set line width and color.
-   * @param meshGroup Measurement mesh object to edit line width and color.
    */
-  setLineOptions(options: MeasurementOptions, meshGroup?: THREE.Group): void {
-    if (meshGroup) {
-      const measurement = this._measurements.find(measurement => measurement.getMesh() === meshGroup);
-      measurement?.setLineOptions(options);
-      this._viewer.requestRedraw();
-    }
+  setLineOptions(options: MeasurementOptions): void {
     // TODO 2022-07-05 larsmoa: WTF - clean up. Allowing setting options and then ignoring one of the options
     this._options = {
       ...MeasurementTool.defaultLineOptions,
@@ -172,14 +151,14 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Set input handling.
    */
   private setupEventHandling() {
-    this._viewer.on('click', this._handleonPointerClick);
+    this._viewer.on('click', this._handlePointerClick);
   }
 
   /**
    * Remove input handling.
    */
   private removeEventHandling() {
-    this._viewer.off('click', this._handleonPointerClick);
+    this._viewer.off('click', this._handlePointerClick);
   }
 
   private async onPointerClick(event: any): Promise<void> {
@@ -191,21 +170,27 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       return;
     }
 
-    if (!this._measurementActive) {
-      this._measurements.push(new Measurement(this._viewer, this._options!, this._htmlOverlay));
-      this._currentMeasurementIndex++;
-      this._viewer.domElement.addEventListener('mousemove', this._handleonPointerMove);
-      this._measurements[this._currentMeasurementIndex].startMeasurement(intersection);
-      this._measurementActive = true;
+    const measurementActive = this._currentMeasurementIndex !== -1;
+
+    if (!measurementActive) {
+      const camera = this._viewer.getCamera();
+      const domElement = this._viewer.domElement;
+      this._measurements.push(
+        new Measurement(domElement, camera, this._geometryGroup, this._options!, this._htmlOverlay)
+      );
+      this._currentMeasurementIndex = this._measurements.length - 1;
+      this._viewer.domElement.addEventListener('mousemove', this._handlePointerMove);
+      this._measurements[this._currentMeasurementIndex].startMeasurement(intersection.point);
     } else {
       this._measurements[this._currentMeasurementIndex].endMeasurement(intersection.point);
-      this._viewer.domElement.removeEventListener('mousemove', this._handleonPointerMove);
-      this._measurementActive = false;
+      this._currentMeasurementIndex = -1;
+      this._viewer.domElement.removeEventListener('mousemove', this._handlePointerMove);
     }
     this._viewer.requestRedraw();
   }
 
-  private onPointerMove(event: any) {
+  private onPointerMove(event: { offsetX: number; offsetY: number }) {
+    assert(this._currentMeasurementIndex !== -1);
     this._measurements[this._currentMeasurementIndex].update(event);
     this._viewer.requestRedraw();
   }
