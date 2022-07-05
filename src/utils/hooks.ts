@@ -59,7 +59,9 @@ export const useSchedules = (config?: QueryConfig<Schedule[], unknown>) =>
     [allSchedulesKey],
     () =>
       sdk
-        .get(`/api/playground/projects/${getProject()}/functions/schedules`)
+        .get(`/api/playground/projects/${getProject()}/functions/schedules`, {
+          params: { limit: 1000 },
+        })
         .then(r => r.data?.items),
     config
   );
