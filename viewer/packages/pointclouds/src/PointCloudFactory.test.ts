@@ -38,9 +38,9 @@ const sdkMock = new Mock<CogniteClient>()
 
         Object.assign(promise, { autoPagingToArray: async (_arg: { limit: number }) => (await promise).items });
         return promise as any;
-      }).object()
+      })
+      .object()
   );
-
 
 const potreeMock = new Mock<Potree>()
   .setup(p => p.loadPointCloud)
@@ -51,7 +51,7 @@ const potreeMock = new Mock<Potree>()
         .returns(new Mock<PointCloudMaterial>().object())
         .object()
     )
-          );
+  );
 
 describe(PointCloudFactory.name, () => {
   let factory: PointCloudFactory;
@@ -65,7 +65,6 @@ describe(PointCloudFactory.name, () => {
   });
 
   test('contains right annotation IDs for annotations provided by SDK', async () => {
-
     const expectedIds = [123, 124];
 
     const gottenIds = model.stylableObjects.map(obj => obj.annotationId);
@@ -75,9 +74,14 @@ describe(PointCloudFactory.name, () => {
   });
 
   test('contains right geometries for annotations provided by SDK', async () => {
-
-    const expectedContainedPoints: [number, number, number][] = [[-0.03, 0.1, -500], [0.4, -0.4, 0]];
-    const expectedUncontainedPoints: [number, number, number][] = [[1, 1, 1], [300, 300, 300]];
+    const expectedContainedPoints: [number, number, number][] = [
+      [-0.03, 0.1, -500],
+      [0.4, -0.4, 0]
+    ];
+    const expectedUncontainedPoints: [number, number, number][] = [
+      [1, 1, 1],
+      [300, 300, 300]
+    ];
 
     const shapes = model.stylableObjects.map(obj => obj.stylableObject.shape);
 

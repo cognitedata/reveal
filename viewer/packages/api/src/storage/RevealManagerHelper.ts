@@ -78,7 +78,7 @@ export class RevealManagerHelper {
     renderer: THREE.WebGLRenderer,
     sceneHandler: SceneHandler,
     revealOptions: RevealOptions,
-    sdkClient: CogniteClient,
+    sdkClient: CogniteClient
   ): RevealManagerHelper {
     const revealManager = createCdfRevealManager(sdkClient, renderer, sceneHandler, revealOptions, sdkClient);
     return new RevealManagerHelper('cdf', revealManager);

@@ -17,11 +17,7 @@ import { WellKnownAsprsPointClassCodes } from './types';
 
 import { createPointClassKey } from './createPointClassKey';
 import { StylablePointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
-import {
-  AnnotationMetadata,
-  PointCloudObjectAnnotation,
-  PointCloudObjectAnnotationsWithIndexMap
-} from './annotationTypes';
+import { AnnotationMetadata, PointCloudObjectAnnotation } from './annotationTypes';
 import { PointCloudAppearance } from './styling/PointCloudAppearance';
 
 /**
