@@ -1,5 +1,3 @@
-import { eq } from 'lodash';
-
 const getResultsTable = (tableDataTestId?: string) => {
   return tableDataTestId ? cy.findByTestId(tableDataTestId) : cy;
 };
@@ -8,7 +6,7 @@ const toggleSelectAllRows = (tableDataTestId?: string) => {
   cy.getResultsTable(tableDataTestId)
     .findByTitle('Toggle All Rows Selected')
     .should('be.visible')
-    .click();
+    .click({ force: true });
 };
 
 const checkIfAllRowsSelected = (selected = true, tableDataTestId?: string) => {

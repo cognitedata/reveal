@@ -1,4 +1,13 @@
-import { PROJECT } from '../../app.constants';
+import {
+  DOCUMENTS_SEARCH_ALIAS,
+  DUPLICATE_FAVORITE_ALIAS,
+  GET_FAVORITES_ALIAS,
+  interceptDocumentsSearch,
+  interceptDuplicateFavorite,
+  interceptGetFavorites,
+  interceptWellsByIds,
+  WELLS_BY_IDS_ALIAS,
+} from '../../support/interceptions';
 
 describe('Duplicate Favorites', () => {
   const favoriteToDuplicate = `favorite to duplicate, ${Date.now()}`;
@@ -21,36 +30,40 @@ describe('Duplicate Favorites', () => {
       },
     });
 
+    interceptGetFavorites();
+    interceptDocumentsSearch();
+    interceptWellsByIds();
+    interceptDuplicateFavorite();
+
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
     goToFavoritesPage();
+    cy.wait(`@${GET_FAVORITES_ALIAS}`);
   });
 
   it('can be done from favorites list', () => {
-    cy.intercept({
-      url: `/${PROJECT}/favorites/duplicate/*`,
-      method: 'POST',
-    }).as('duplicateFavorite');
-
-    cy.intercept({
-      url: `/${PROJECT}/favorites`,
-      method: 'GET',
-    }).as('getFavorites');
-
     cy.log('Duplicate favorite');
     cy.findByTestId(`favorite-card-${favoriteToDuplicate}`)
       .findByLabelText('More options')
       .click();
 
-    cy.findByRole('button', { name: 'Duplicate' }).click({ force: true });
+    cy.findByTestId(`dropdown-menu-${favoriteToDuplicate}`).should(
+      'be.visible'
+    );
+
+    cy.findByTestId(`dropdown-menu-${favoriteToDuplicate}`)
+      .findByRole('button', { name: 'Duplicate' })
+      .click({ force: true });
     cy.findByRole('button', { name: 'Cancel' }).click();
 
     cy.findByTestId(`favorite-card-${favoriteToDuplicate}`)
       .findByLabelText('More options')
       .click();
 
-    cy.findByRole('button', { name: 'Duplicate' }).click({ force: true });
+    cy.findByTestId(`dropdown-menu-${favoriteToDuplicate}`)
+      .findByRole('button', { name: 'Duplicate' })
+      .click({ force: true });
     cy.findByLabelText('Name')
       .as('nameInput')
       .should('have.value', `${favoriteToDuplicate} (Duplicate)`);
@@ -59,11 +72,15 @@ describe('Duplicate Favorites', () => {
     cy.findByLabelText('Description').type('With some description');
     cy.findByRole('button', { name: 'Create' }).click();
 
-    cy.wait('@duplicateFavorite');
-    cy.wait('@getFavorites');
+    cy.wait(`@${DUPLICATE_FAVORITE_ALIAS}`)
+      .its('response.statusCode')
+      .should('eq', 200);
+    cy.wait(`@${GET_FAVORITES_ALIAS}`);
 
     cy.log('check that favorite is created with content');
-    cy.findByText('Duplicated favorite').should('be.visible').click();
+    cy.findByTitle('Duplicated favorite').should('be.visible').click();
+    cy.wait(`@${DOCUMENTS_SEARCH_ALIAS}`);
+    cy.wait(`@${WELLS_BY_IDS_ALIAS}`);
     cy.findByRole('tab', {
       name: /documents 1/i,
     }).should('be.visible');

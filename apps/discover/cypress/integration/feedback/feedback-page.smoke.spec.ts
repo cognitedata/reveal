@@ -1,5 +1,3 @@
-import { EXPAND_SEARCH_RESULTS_TEXT } from '../../../src/pages/authorized/search/map/constants';
-
 describe('Feedback', () => {
   describe('Normal User', () => {
     before(() => {
@@ -165,7 +163,7 @@ describe('Feedback', () => {
       cy.openGeneralFeedbackModal('', false);
 
       cy.log('See if modal opens from Well Inspect page');
-      cy.findByText(EXPAND_SEARCH_RESULTS_TEXT).click();
+      cy.expandResultTable();
       cy.goToTab('Wells');
       cy.selectFirstWellInResults();
       cy.openInspectView();

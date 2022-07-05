@@ -5,8 +5,10 @@ import {
   GEO_STREAMING_ALIAS,
   interceptDocumentsSearch,
   interceptGeoStreaming,
+  interceptMapboxRequests,
   interceptWellGeometries,
   interceptWellsSearch,
+  MAPBOX_REQUESTS_ALIAS,
   WELL_GEOMETRIES_ALIAS,
   WELLS_SEARCH_ALIAS,
 } from '../interceptions';
@@ -134,11 +136,13 @@ export const interceptCoreNetworkRequests = (): string[] => {
   interceptWellsSearch();
   interceptGeoStreaming();
   interceptWellGeometries();
+  interceptMapboxRequests();
 
   return [
     `@${DOCUMENTS_SEARCH_ALIAS}`,
     `@${WELLS_SEARCH_ALIAS}`,
     `@${GEO_STREAMING_ALIAS}`,
     `@${WELL_GEOMETRIES_ALIAS}`,
+    `@${MAPBOX_REQUESTS_ALIAS}`,
   ];
 };

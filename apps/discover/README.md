@@ -413,7 +413,7 @@ The deployment is handle by our CI/CD pipeline and is described in the infrastru
 
 ## Environment variables - (note: generally config should be stored in Sidecar)
 
-Optional: Add your own local .env file named .env.local to override files when doing local development (it's ignored by git in .gitignore).
+Optional: Add your own local .env file named `.env.development.local` to override files when doing local development (it's ignored by git in .gitignore).
 
 Here is a short description of the fields in the .env file.
 

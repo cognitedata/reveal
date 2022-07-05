@@ -5,14 +5,17 @@ import {
   WARNING_MODAL_EXPLANATION,
   WARNING_MODAL_QUESTION,
 } from '../../../../src/pages/authorized/search/well/inspect/constants';
+import { interceptCoreNetworkRequests } from '../../../support/commands/helpers';
 import { WELL_SOURCE_WITH_ALL } from '../../../support/constants';
 
 describe('Three-dee component', () => {
   beforeEach(() => {
+    const coreRequests = interceptCoreNetworkRequests();
     cy.addWaitForWdlResources('sources', 'GET', 'getSources');
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
+    cy.wait(coreRequests);
   });
 
   it('should render log filter, wells and wellbores correctly', () => {

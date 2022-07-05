@@ -1,4 +1,4 @@
-import { EXPAND_SEARCH_RESULTS_TEXT } from '../../../src/pages/authorized/search/map/constants';
+import { interceptCoreNetworkRequests } from '../../support/commands/helpers';
 import {
   STATIC_LOCATION_DOCUMENT,
   STATIC_LOCATION_WELL,
@@ -12,11 +12,12 @@ const testPoints = [
 
 describe('Map', () => {
   before(() => {
+    const coreRequests = interceptCoreNetworkRequests();
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
 
-    cy.wait(2000); // give the map time to render
+    cy.wait(coreRequests);
   });
 
   describe('Polygon search', () => {
@@ -106,8 +107,7 @@ describe('Map', () => {
       cy.checkLayersMenuButtonIsVisible();
       cy.checkZoomControlsAreVisible();
 
-      cy.log('expand search results');
-      cy.findByText(EXPAND_SEARCH_RESULTS_TEXT).click();
+      cy.expandResultTable();
 
       cy.checkPolygonButtonIsNotVisible();
       cy.checkMapInputIsNotVisible();

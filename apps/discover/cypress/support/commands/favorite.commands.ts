@@ -45,18 +45,10 @@ const goToFavoritesPage = () => {
   cy.url().should('include', '/favorites');
 };
 
-const interceptFavorites = (method: string, alias: string) => {
-  cy.intercept({
-    url: `**/favorites`,
-    method,
-  }).as(alias);
-};
-
 Cypress.Commands.add('listFavorites', getAllFavorites);
 Cypress.Commands.add('createFavorite', createFavorite);
 Cypress.Commands.add('deleteAllFavorites', deleteAllFavorites);
 Cypress.Commands.add('goToFavoritesPage', goToFavoritesPage);
-Cypress.Commands.add('interceptFavorites', interceptFavorites);
 
 export interface FavoriteCommands {
   listFavorites(): Cypress.Chainable<Cypress.Response<[]>>;
@@ -66,5 +58,4 @@ export interface FavoriteCommands {
   ): Cypress.Chainable<Cypress.Response<string>>;
   deleteAllFavorites(isAdmin?: boolean): void;
   goToFavoritesPage(): void;
-  interceptFavorites(method: string, alias: string): void;
 }

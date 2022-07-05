@@ -2,43 +2,37 @@ import { RESET_TO_DEFAULT_BUTTON_TEXT } from '../../../../../src/components/Char
 import { NO_RESULTS_TEXT } from '../../../../../src/components/EmptyState/constants';
 import { DATA_AVAILABILITY } from '../../../../../src/modules/wellSearch/constantsSidebarFilters';
 import { TAB_NAMES } from '../../../../../src/pages/authorized/search/well/inspect/constants';
+import { interceptCoreNetworkRequests } from '../../../../support/commands/helpers';
+import { WELLS_SEARCH_ALIAS } from '../../../../support/interceptions';
 
 const DATA_AVAILABILITY_NPT = 'NPT events';
 
 describe('Wells: NPT Events Graph view', () => {
   beforeEach(() => {
+    const coreRequests = interceptCoreNetworkRequests();
     cy.addWaitForWdlResources('npt/list', 'POST', 'getNptList');
 
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
+    cy.wait(coreRequests);
 
-    cy.log('Perform empty search');
-    cy.performSearch('');
+    cy.selectCategory('Wells');
+    cy.clickOnFilterCategory(DATA_AVAILABILITY);
 
-    cy.goToTab('Wells');
-
-    cy.performWellsSearch({
-      search: {
-        filters: [
-          {
-            category: DATA_AVAILABILITY,
-            subCategory: DATA_AVAILABILITY,
-            value: {
-              name: DATA_AVAILABILITY_NPT,
-              type: 'select',
-            },
-          },
-        ],
-      },
-      select: 'ALL',
-    });
-
+    cy.log('Checking source values');
+    cy.validateSelect(
+      DATA_AVAILABILITY,
+      [DATA_AVAILABILITY_NPT],
+      DATA_AVAILABILITY_NPT
+    );
+    cy.wait(`@${WELLS_SEARCH_ALIAS}`);
+    cy.toggleSelectAllRows('well-result-table');
     cy.openInspectView();
-
     cy.goToWellsInspectTab(TAB_NAMES.NPT_EVENTS);
-
-    cy.wait('@getNptList');
+    cy.findByTestId('loading-container').should('exist');
+    cy.wait(['@getNptList']);
+    cy.findByTestId('loading-container').should('not.exist');
   });
 
   it('should be able to open single wellbore view', () => {
@@ -48,7 +42,7 @@ describe('Wells: NPT Events Graph view', () => {
     cy.log('click on first bar label');
     cy.findAllByTestId('bar-label').first().click();
 
-    cy.log('npt durstion graph should visible');
+    cy.log('npt duration graph should be visible');
     cy.findAllByTestId('selected-wellbore-npt-duration-graph').should(
       'be.visible'
     );
@@ -70,40 +64,46 @@ describe('Wells: NPT Events Graph view', () => {
     cy.isButtonEnabled('previous-wellbore', 'aria-label');
 
     cy.log('click on back button');
-    cy.getButton('Go back', 'aria-label')
-      .eq(1)
-      .should('be.visible')
-      .click({ force: true });
+    cy.getButton('Go back', 'aria-label').eq(1).should('be.visible').click();
   });
 
   it('verify chart zoom in, zoom out & reset button', () => {
     cy.log('zoom out & reset buttons should be disabled by default');
-    cy.isButtonDisabled('ZoomOut', 'aria-label');
-    cy.isButtonDisabled('ResetZoom', 'aria-label');
+    cy.findByTestId('npt-events-graph')
+      .findByLabelText('ZoomOut')
+      .as('ZoomOutButton')
+      .should('be.disabled');
+    cy.findByTestId('npt-events-graph')
+      .findByLabelText('ResetZoom')
+      .as('ResetZoomButton')
+      .should('be.disabled');
 
     cy.log('click on zoom in button');
-    cy.getButton('ZoomIn', 'aria-label').eq(0).click({ force: true });
+    cy.findByTestId('npt-events-graph')
+      .findByLabelText('ZoomIn')
+      .as('ZoomInButton')
+      .click();
 
     cy.log('zoom out & reset buttons should be enabled');
-    cy.getButton('ZoomOut', 'aria-label').eq(0).should('not.be.disabled');
-    cy.getButton('ResetZoom', 'aria-label').eq(0).should('not.be.disabled');
+    cy.get('@ZoomInButton').should('not.be.disabled');
+    cy.get('@ResetZoomButton').should('not.be.disabled');
 
     cy.log('Click on zoom out button');
-    cy.getButton('ZoomOut', 'aria-label').eq(0).click({ force: true });
+    cy.get('@ZoomOutButton').click();
 
     cy.log('zoom out & reset buttons should be disabled');
-    cy.getButton('ZoomOut', 'aria-label').eq(0).should('be.disabled');
-    cy.getButton('ResetZoom', 'aria-label').eq(0).should('be.disabled');
+    cy.get('@ZoomOutButton').should('be.disabled');
+    cy.get('@ResetZoomButton').should('be.disabled');
 
     cy.log('click on zoom in button');
-    cy.getButton('ZoomIn', 'aria-label').eq(0).click({ force: true });
+    cy.get('@ZoomInButton').click();
 
     cy.log('click on reset button');
-    cy.getButton('ResetZoom', 'aria-label').eq(0).click({ force: true });
+    cy.get('@ResetZoomButton').click();
 
     cy.log('zoom out & reset buttons should be disabled');
-    cy.getButton('ZoomOut', 'aria-label').eq(0).should('be.disabled');
-    cy.getButton('ResetZoom', 'aria-label').eq(0).should('be.disabled');
+    cy.get('@ZoomOutButton').should('be.disabled');
+    cy.get('@ResetZoomButton').should('be.disabled');
   });
 
   it('should be able to deselect all the NPT Codes', () => {
@@ -124,14 +124,13 @@ describe('Wells: NPT Events Graph view', () => {
 describe('Wells: NPT Events Table view', () => {
   beforeEach(() => {
     cy.addWaitForWdlResources('npt/list', 'POST', 'getNptList');
-
+    const coreRequests = interceptCoreNetworkRequests();
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
+    cy.wait(coreRequests);
 
-    cy.log('Perform empty search');
-    cy.performSearch('');
-
+    cy.expandResultTable();
     cy.goToTab('Wells');
 
     cy.performWellsSearch({
@@ -147,8 +146,10 @@ describe('Wells: NPT Events Table view', () => {
           },
         ],
       },
-      select: 'ALL',
     });
+
+    cy.wait(`@${WELLS_SEARCH_ALIAS}`);
+    cy.toggleSelectAllRows('well-result-table');
 
     cy.openInspectView();
 

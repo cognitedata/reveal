@@ -1,10 +1,11 @@
 import { EXPAND_MAP_TEXT } from '../../../src/pages/authorized/search/map/constants';
+import { PROJECT } from '../../app.constants';
+import { interceptCoreNetworkRequests } from '../../support/commands/helpers';
 import {
   DOCUMENTS_AGGREGATE_ALIAS,
+  DOCUMENTS_SEARCH_ALIAS,
   interceptDocumentsAggregate,
 } from '../../support/interceptions';
-import { interceptCoreNetworkRequests } from '../../support/commands/helpers';
-import { PROJECT } from '../../app.constants';
 
 const QUERY_DUPLICATED_FILENAME = 'Volve_Well_Summary_15_9-19.pdf';
 const SOURCE_DRIVE = 'volve';
@@ -14,7 +15,7 @@ export const filename = '15_9_19_A_1980_01_01';
 describe('Documents', () => {
   beforeEach(() => {
     const coreRequests = interceptCoreNetworkRequests();
-
+    cy.log('Trigger e2e');
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
@@ -24,6 +25,7 @@ describe('Documents', () => {
   it('Show expanded metadata on row click', () => {
     cy.log('Search for duplicate document');
     cy.performSearch(QUERY_DUPLICATED_FILENAME);
+    cy.wait(`@${DOCUMENTS_SEARCH_ALIAS}`);
     cy.findAllByTestId('table-cell')
       .contains(`${QUERY_DUPLICATED_FILENAME} (2)`)
       .first()

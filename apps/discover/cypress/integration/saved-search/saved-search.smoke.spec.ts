@@ -1,4 +1,19 @@
-import { interceptFavorites, FAVORITES } from '../../support/interceptions';
+import { USER_PREFIX } from '../../app.constants';
+import {
+  DOCUMENTS_SEARCH_ALIAS,
+  GET_SAVED_SEARCHES_ALIAS,
+  interceptDocumentsSearch,
+  interceptGetFavorites,
+  interceptGetSavedSearches,
+  interceptRemoveShareSavedSearches,
+  interceptShareSavedSearches,
+  interceptUsersSearch,
+  interceptWellsSearch,
+  REMOVE_SHARE_SAVED_SEARCHES_ALIAS,
+  SHARE_SAVED_SEARCHES_ALIAS,
+  USERS_SEARCH_ALIAS,
+  WELLS_SEARCH_ALIAS,
+} from '../../support/interceptions';
 
 describe('saved search', () => {
   const savedSearchName = `Saved search ${Date.now()}`;
@@ -35,20 +50,44 @@ describe('saved search', () => {
   });
 
   it('should share saved search', () => {
-    interceptFavorites();
+    interceptGetFavorites();
+    interceptDocumentsSearch();
+    interceptWellsSearch();
+    interceptGetSavedSearches();
+    interceptUsersSearch();
+    interceptShareSavedSearches();
+    interceptRemoveShareSavedSearches();
+
     cy.performSearch('Test');
+    cy.wait(`@${DOCUMENTS_SEARCH_ALIAS}`);
+    cy.wait(`@${WELLS_SEARCH_ALIAS}`);
+
     cy.clickSavedSearchButton();
     cy.createNewSavedSearch(savedSearchName);
     cy.goToSavedSearches();
+    cy.wait(`@${GET_SAVED_SEARCHES_ALIAS}`);
 
     cy.clickNthRowMoreOptionButton(0);
     cy.clickTableShareButton();
+    cy.wait(`@${USERS_SEARCH_ALIAS}`);
     cy.checkSavedSearchShareModal(1);
-    cy.typeOnShareModal('{downArrow}{enter}');
-    cy.clickShareButtonOnModal();
-    cy.wait(`@${FAVORITES}`);
+    cy.typeOnShareModal(Cypress.env('REACT_APP_E2E_USER'));
+    cy.wait(`@${USERS_SEARCH_ALIAS}`);
+    cy.findByTestId('shared-user-autocomplete')
+      .findByText(`Admin User ${USER_PREFIX.toUpperCase()}`)
+      .click();
+
+    cy.findByTestId('shared-user-input')
+      .findByText(`Admin User ${USER_PREFIX.toUpperCase()}`)
+      .should('be.visible');
+
+    cy.findByTestId('share-with-user-btn').should('be.visible').click();
+    cy.wait(`@${SHARE_SAVED_SEARCHES_ALIAS}`);
+    cy.wait(`@${GET_SAVED_SEARCHES_ALIAS}`);
+
     cy.checkSavedSearchShareModal(2);
     cy.clickNthRemoveShareButton(0);
+    cy.wait(`@${REMOVE_SHARE_SAVED_SEARCHES_ALIAS}`);
     cy.checkSavedSearchShareModal(1);
   });
 

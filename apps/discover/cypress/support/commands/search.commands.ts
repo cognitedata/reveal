@@ -1,4 +1,5 @@
 import { NO_RESULTS_TEXT } from '../../../src/components/EmptyState/constants';
+import { EXPAND_SEARCH_RESULTS_TEXT } from '../../../src/pages/authorized/search/map/constants';
 
 Cypress.Commands.add('goToTab', (tab: 'Documents' | 'Wells' | 'Seismic') => {
   cy.log(`Go to ${tab} tab`);
@@ -87,7 +88,8 @@ Cypress.Commands.add(
     if (select) {
       if (select === 'ALL') {
         cy.log('Select all wells');
-        cy.findByTitle('Toggle All Rows Selected')
+        cy.findByTestId('well-result-table')
+          .findByTitle('Toggle All Rows Selected')
           .should('be.visible')
           .click({ force: true });
         return;
@@ -112,6 +114,11 @@ Cypress.Commands.add(
     // if (unselect) {}
   }
 );
+
+Cypress.Commands.add('expandResultTable', () => {
+  cy.log('expand search results');
+  cy.findByText(EXPAND_SEARCH_RESULTS_TEXT).click();
+});
 
 type WellSearch = {
   search?: {
@@ -146,4 +153,5 @@ export interface SearchCommands {
   performWellsSearch(search: WellSearch): void;
   goToTab(tab: 'Documents' | 'Wells' | 'Seismic'): void;
   selectCategory(category: 'Documents' | 'Wells' | 'Seismic'): void;
+  expandResultTable(): void;
 }

@@ -1,36 +1,26 @@
 import { DATA_SOURCE } from '../../../../src/modules/wellSearch/constantsSidebarFilters';
 import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/constants';
+import { interceptCoreNetworkRequests } from '../../../support/commands/helpers';
+import { WELLS_SEARCH_ALIAS } from '../../../support/interceptions';
 import { NPT_EVENTS_SOURCE } from '../../../support/selectors/wells.selectors';
 
 describe('Wells: NPT Events', () => {
   beforeEach(() => {
+    const coreRequests = interceptCoreNetworkRequests();
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
+    cy.wait(coreRequests);
 
-    cy.log('Perform empty search');
-    cy.performSearch('');
-
-    cy.goToTab('Wells');
+    cy.selectCategory('Wells');
   });
 
   it('allow us to see NPT data in different views', () => {
-    cy.performWellsSearch({
-      search: {
-        filters: [
-          {
-            category: DATA_SOURCE,
-            subCategory: DATA_SOURCE,
-            value: {
-              name: NPT_EVENTS_SOURCE,
-              type: 'select',
-            },
-          },
-        ],
-      },
-      select: 'ALL',
-    });
+    cy.clickOnFilterCategory(DATA_SOURCE);
+    cy.validateSelect(DATA_SOURCE, [NPT_EVENTS_SOURCE], NPT_EVENTS_SOURCE);
 
+    cy.wait(`@${WELLS_SEARCH_ALIAS}`);
+    cy.toggleSelectAllRows('well-result-table');
     cy.openInspectView(2);
 
     cy.goToWellsInspectTab(TAB_NAMES.NPT_EVENTS);

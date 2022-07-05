@@ -36,13 +36,13 @@ Cypress.Commands.add(
     if (toSelect) {
       if (Array.isArray(toSelect)) {
         toSelect.forEach((text) => {
-          cy.findByText(text)
+          cy.contains(new RegExp(`^${text}$`, 'g'))
             .scrollIntoView()
             .should('be.visible')
             .click({ waitForAnimations: true });
         });
       } else {
-        cy.findByText(toSelect)
+        cy.contains(new RegExp(`^${toSelect}$`, 'g'))
           .scrollIntoView()
           .should('be.visible')
           .click({ waitForAnimations: true });

@@ -28,7 +28,6 @@ import { interceptCoreNetworkRequests } from '../../support/commands/helpers';
 import { WELLS_SEARCH_ALIAS } from '../../support/interceptions';
 import { SOURCE_FILTER } from '../../support/selectors/wells.selectors';
 
-const SELECT_TEXT = 'Select...';
 const DATA_AVAILABILITY_SELECT = 'Trajectories';
 const MEASUREMENT_SELECT = 'salinity';
 const NPT_CODE_SELECT = 'CEMT';
@@ -428,12 +427,14 @@ describe('Wells sidebar filters', () => {
       .should('be.visible')
       .click()
       .should('be.visible')
-      .type('{rightarrow}{rightarrow}{rightarrow}{rightarrow}');
+      .type('{rightarrow}{rightarrow}', {
+        force: true,
+      });
 
     checkRequestContainsFilter({
       npt: {
         duration: {
-          min: 4,
+          min: 2,
           max: 10,
           unit: 'hour',
         },
@@ -442,17 +443,11 @@ describe('Wells sidebar filters', () => {
     });
 
     cy.log(`Check visibility and expand ${NPT_CODE} filter`);
-    cy.findAllByTestId('filter-item-wrapper')
-      .eq(1)
-      .should('exist')
-      .as('nptCode');
-    cy.get('@nptCode').contains(NPT_CODE);
-    cy.get('@nptCode').contains(SELECT_TEXT).should('be.visible').click();
-    cy.findByText(NPT_CODE_SELECT).click();
+    cy.validateSelect(NPT_CODE, [NPT_CODE_SELECT], NPT_CODE_SELECT);
     checkRequestContainsFilter({
       npt: {
         duration: {
-          min: 4,
+          min: 2,
           max: 10,
           unit: 'hour',
         },
@@ -465,17 +460,18 @@ describe('Wells sidebar filters', () => {
 
     cy.log(`Check visibility and expand ${NPT_DETAIL_CODE} filter`);
 
-    cy.findAllByTestId('filter-item-wrapper').eq(2).as('nptDetailCode');
-    cy.get('@nptDetailCode').contains(NPT_DETAIL_CODE);
-    cy.get('@nptDetailCode').contains(SELECT_TEXT).click();
-    cy.findByText(NPT_DETAILS_CODE_SELECT).click();
+    cy.validateSelect(
+      NPT_DETAIL_CODE,
+      [NPT_DETAILS_CODE_SELECT],
+      NPT_DETAILS_CODE_SELECT
+    );
     checkRequestContainsFilter({
       npt: {
         nptCodeDetails: {
           containsAll: [NPT_DETAILS_CODE_SELECT],
         },
         duration: {
-          min: 4,
+          min: 2,
           max: 10,
           unit: 'hour',
         },

@@ -139,16 +139,6 @@ const typeOnShareModal = (input: string) => {
     .type(input);
 };
 
-const clickShareButtonOnModal = () => {
-  cy.intercept({
-    url: '**/savedSearches/*',
-    method: 'GET',
-  }).as('shareSavedSearch');
-  cy.log('Click share button on share modal');
-  cy.findByTestId('share-with-user-btn').should('be.visible').click();
-  cy.wait('@shareSavedSearch', { requestTimeout: 10000 });
-};
-
 const clickNthRemoveShareButton = (nth: number) => {
   cy.log(`Remove ${nth} shared search`);
   cy.findAllByTestId('shared-user-remove-btn').eq(nth).click();
@@ -200,7 +190,6 @@ Cypress.Commands.add('checkDeletePopupMessage', checkDeletePopupMessage);
 Cypress.Commands.add('clickTableShareButton', clickTableShareButton);
 Cypress.Commands.add('checkSavedSearchShareModal', checkSavedSearchShareModal);
 Cypress.Commands.add('typeOnShareModal', typeOnShareModal);
-Cypress.Commands.add('clickShareButtonOnModal', clickShareButtonOnModal);
 Cypress.Commands.add('clickNthRemoveShareButton', clickNthRemoveShareButton);
 
 // Comment
@@ -228,7 +217,6 @@ export interface SavedSearchCommands {
   clickTableShareButton(): void;
   checkSavedSearchShareModal(sharedNumber: number): void;
   typeOnShareModal(input: string): void;
-  clickShareButtonOnModal(): void;
   clickNthRemoveShareButton(nth: number): void;
   clickCommentButtonAndCheck(): void;
   clickNthRowViewButton(nth: number): void;

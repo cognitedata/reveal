@@ -1,6 +1,4 @@
-import { useTrajectoriesQuery } from 'domain/wells/trajectory/internal/queries/useTrajectoriesQuery';
 import { useWellSearchResultQuery } from 'domain/wells/well/internal/queries/useWellSearchResultQuery';
-import { getWellboreIdsList } from 'domain/wells/wellbore/internal/transformers/getWellboreIdsList';
 
 import React, { useMemo, useEffect, useCallback, useRef } from 'react';
 import { batch, useDispatch } from 'react-redux';
@@ -100,8 +98,6 @@ export const Search: React.FC = () => {
 
   const documentResultCount = useDocumentResultCount();
   const { data: wellsData } = useWellSearchResultQuery();
-  const wellboreIds = getWellboreIdsList(wellsData?.wells);
-  const { data: trajectories } = useTrajectoriesQuery({ wellboreIds });
 
   const wellInspectMode = location.pathname.includes(
     navigation.SEARCH_WELLS_INSPECT
@@ -322,7 +318,6 @@ export const Search: React.FC = () => {
       selectedItem,
       showSearchResults,
       wellsData?.totalWells,
-      trajectories,
     ]
   );
 

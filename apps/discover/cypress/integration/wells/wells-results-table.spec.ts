@@ -9,6 +9,11 @@ import {
 } from '../../../src/pages/authorized/search/well/content/constants';
 import { interceptCoreNetworkRequests } from '../../support/commands/helpers';
 import { STATIC_WELL_1 } from '../../support/constants';
+import {
+  interceptPutSavedSearches,
+  PUT_SAVED_SEARCHES_ALIAS,
+  WELLS_SEARCH_ALIAS,
+} from '../../support/interceptions';
 import { SOURCE_FILTER } from '../../support/selectors/wells.selectors';
 
 describe('Wells: result_table', () => {
@@ -23,15 +28,10 @@ describe('Wells: result_table', () => {
     cy.wait(coreRequests);
   });
 
-  const createFavorite = (name: string) => {
-    cy.findByLabelText('Name').type(name);
-    cy.findByLabelText('Description').type('Some description');
-    cy.findByRole('button', { name: 'Create' }).click();
-  };
-
   it('Should be able to add search result into a saved search', () => {
+    interceptPutSavedSearches();
     const savedSearchName = `Test saved search`;
-    cy.performSearch('');
+    cy.expandResultTable();
     cy.goToTab('Wells');
     cy.selectFirstWellInResults();
 
@@ -43,6 +43,7 @@ describe('Wells: result_table', () => {
 
     cy.log(`Should be able to create a saved search`);
     cy.createNewSavedSearch(savedSearchName);
+    cy.wait(`@${PUT_SAVED_SEARCHES_ALIAS}`);
     cy.findByText('Saved search added').should('be.visible');
 
     cy.log(`navigate to saved search tab`);
@@ -65,19 +66,10 @@ describe('Wells: result_table', () => {
   });
 
   it('Should be able to add searched result in to a existing favorite folder', () => {
-    const favoriteName = `Test favorite`;
+    const favoriteName = `Test favorite ${Date.now()}`;
+    cy.createFavorite({ name: favoriteName });
 
-    cy.log('create new favorite');
-    cy.goToFavoritesPage();
-    cy.log('Create a new Favorite Set by pressing the "Create set" button');
-    cy.findByLabelText('Plus').should('be.visible').click();
-    cy.findByText('Create new set').should('be.visible');
-    createFavorite(favoriteName);
-
-    cy.log('navigate to search tab');
-    cy.findByRole('tab', { name: 'Search' }).click();
-
-    cy.performSearch('');
+    cy.expandResultTable();
     cy.goToTab('Wells');
     cy.selectFirstWellInResults();
 
@@ -111,7 +103,7 @@ describe('Wells: result_table', () => {
   });
 
   it('Measurement unit changes should apply to "water depth" & "KB elevation" column', () => {
-    cy.performSearch('');
+    cy.expandResultTable();
     cy.goToTab('Wells');
 
     cy.log('click on settings button');
@@ -166,7 +158,7 @@ describe('Wells: result_table', () => {
   });
 
   it('Should be able to load more items in result table', () => {
-    cy.performSearch('');
+    cy.expandResultTable();
     cy.goToTab('Wells');
 
     cy.findAllByTestId('table-row')
@@ -186,21 +178,22 @@ describe('Wells: result_table', () => {
   });
 
   it('Should be able to clear all the filters by clicking `clear all` button', () => {
-    cy.performSearch('');
-    cy.goToTab('Wells');
-    cy.wait('@getSources');
     cy.addWaitForWdlResources(
       'trajectories/list',
       'POST',
       'getTrajectoriesList'
     );
 
+    cy.expandResultTable();
+    cy.goToTab('Wells');
+    cy.wait('@getTrajectoriesList');
+    cy.wait('@getSources');
+
     cy.log('click on source filter section');
     cy.clickOnFilterCategory(DATA_SOURCE);
 
     cy.log('Checking source values');
     cy.validateSelect(DATA_SOURCE, [SOURCE_FILTER], SOURCE_FILTER);
-    cy.wait('@getTrajectoriesList');
 
     cy.log('Minimize source section');
     cy.clickOnFilterCategory(DATA_SOURCE);
@@ -218,6 +211,7 @@ describe('Wells: result_table', () => {
 
   it('Should be able to navigate overview page by clicking `view` buttons for both wells and wellbores', () => {
     cy.performSearch(STATIC_WELL_1);
+    cy.wait(`@${WELLS_SEARCH_ALIAS}`);
     cy.goToTab('Wells');
 
     cy.log('hover on well row');

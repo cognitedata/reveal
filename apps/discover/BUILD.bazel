@@ -236,6 +236,7 @@ eslint_config(
 
 eslint_test(
     name = "eslint_test",
+    timeout = "long",
     data = SOURCES + TESTS_AND_STORYBOOK + [
         ":tsconfig.json",
         "//:tsconfig.json",
@@ -556,7 +557,6 @@ cypress_web_test(
     templated_args = [
         "--spec \"apps/discover/cypress/integration/**/*.smoke.*\"",
         "--config " +
-        "retries=2," +
         "supportFile=./apps/discover/cypress/support," +
         "integrationFolder=./apps/discover/cypress/integration," +
         "pluginsFile=./apps/discover/cypress/plugin.js," +

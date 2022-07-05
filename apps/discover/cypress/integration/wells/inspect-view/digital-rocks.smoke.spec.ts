@@ -1,11 +1,15 @@
 import { DATA_SOURCE } from '../../../../src/modules/wellSearch/constantsSidebarFilters';
 import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/constants';
+import { interceptCoreNetworkRequests } from '../../../support/commands/helpers';
+import { WELLS_SEARCH_ALIAS } from '../../../support/interceptions';
 
 describe('Wells: DigitalRocks', () => {
   before(() => {
+    const coreRequests = interceptCoreNetworkRequests();
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
+    cy.wait(coreRequests);
   });
 
   it('allows us to inspect digital rocks, samples and grain partitions', () => {
@@ -25,6 +29,7 @@ describe('Wells: DigitalRocks', () => {
       },
     });
 
+    cy.wait(`@${WELLS_SEARCH_ALIAS}`);
     cy.log('Inspect first well in table');
     cy.findByTestId('well-result-table')
       .findAllByTestId('table-row')

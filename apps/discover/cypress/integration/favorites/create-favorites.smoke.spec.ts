@@ -1,10 +1,22 @@
 import { CREATE_NEW_SET } from '../../../src/components/AddToFavoriteSetMenu/constants';
+import { interceptCoreNetworkRequests } from '../../support/commands/helpers';
+import {
+  GET_FAVORITES_ALIAS,
+  interceptGetFavorites,
+  interceptPostFavorites,
+  POST_FAVORITES_ALIAS,
+} from '../../support/interceptions';
 
 describe('Creating Favorites', () => {
   beforeEach(() => {
+    const coreRequests = interceptCoreNetworkRequests();
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
+    cy.wait(coreRequests);
+    cy.expandResultTable();
+    interceptGetFavorites();
+    interceptPostFavorites();
   });
 
   const createFavorite = (name: string) => {
@@ -64,8 +76,6 @@ describe('Creating Favorites', () => {
 
   describe('Document results page', () => {
     it('Create favorite from Document results hover on item', () => {
-      cy.performSearch('');
-
       cy.findByTestId('doc-result-table')
         .findAllByTestId('table-row')
         .first()
@@ -85,13 +95,14 @@ describe('Creating Favorites', () => {
 
       const favoriteName = `Favorite from DocumentResult hover, ${Date.now()}`;
       createFavorite(favoriteName);
+      cy.wait(`@${POST_FAVORITES_ALIAS}`);
+      cy.wait(`@${GET_FAVORITES_ALIAS}`);
       cy.goToFavoritesPage();
       checkFavoriteIsCreated(favoriteName);
       checkFavoriteContainsDocument(favoriteName);
     });
 
     it('Create favorite from Document results bulk actions', () => {
-      cy.performSearch('');
       cy.findByTestId('doc-result-table')
         .findAllByTestId('table-row')
         .first()
@@ -109,6 +120,8 @@ describe('Creating Favorites', () => {
       clickCreateNewSetButton();
 
       createFavorite(favoriteName);
+      cy.wait(`@${POST_FAVORITES_ALIAS}`);
+      cy.wait(`@${GET_FAVORITES_ALIAS}`);
       cy.goToFavoritesPage();
       checkFavoriteIsCreated(favoriteName);
       checkFavoriteContainsDocument(favoriteName);
@@ -117,7 +130,6 @@ describe('Creating Favorites', () => {
 
   describe('Well results page', () => {
     it('Create favorite from Well results hover on well', () => {
-      cy.performSearch('');
       cy.goToTab('Wells');
 
       cy.findByTestId('well-result-table')
@@ -139,13 +151,14 @@ describe('Creating Favorites', () => {
 
       const favoriteName = `Favorite from WellResult hover well, ${Date.now()}`;
       createFavorite(favoriteName);
+      cy.wait(`@${POST_FAVORITES_ALIAS}`);
+      cy.wait(`@${GET_FAVORITES_ALIAS}`);
       cy.goToFavoritesPage();
       checkFavoriteIsCreated(favoriteName);
       checkFavoriteContainsWell(favoriteName);
     });
 
     it('Create favorite from Well results hover on wellbore', () => {
-      cy.performSearch('');
       cy.goToTab('Wells');
 
       cy.findByTestId('well-result-table')
@@ -169,13 +182,14 @@ describe('Creating Favorites', () => {
 
       const favoriteName = `Favorite from WellResult hover wellbore, ${Date.now()}`;
       createFavorite(favoriteName);
+      cy.wait(`@${POST_FAVORITES_ALIAS}`);
+      cy.wait(`@${GET_FAVORITES_ALIAS}`);
       cy.goToFavoritesPage();
       checkFavoriteIsCreated(favoriteName);
       checkFavoriteContainsWell(favoriteName);
     });
 
     it('Create favorite from Well results bulk actions', () => {
-      cy.performSearch('');
       cy.goToTab('Wells');
 
       cy.findByTestId('well-result-table')
@@ -193,6 +207,8 @@ describe('Creating Favorites', () => {
 
       const favoriteName = `Favorite from WellResult bulk actions, ${Date.now()}`;
       createFavorite(favoriteName);
+      cy.wait(`@${POST_FAVORITES_ALIAS}`);
+      cy.wait(`@${GET_FAVORITES_ALIAS}`);
       cy.goToFavoritesPage();
       checkFavoriteIsCreated(favoriteName);
       checkFavoriteContainsWell(favoriteName);
