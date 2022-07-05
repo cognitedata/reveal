@@ -19,17 +19,17 @@ import { BoxPrimitive } from './annotationTypes';
 import { Potree } from './potree-three-loader';
 import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
 
-import { CogniteClientPlayground } from '@cognite/sdk-playground';
+import { CogniteClient } from '@cognite/sdk';
 
 import * as THREE from 'three';
 
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
-  private readonly _sdkPlayground: CogniteClientPlayground | undefined;
+  private readonly _sdkClient: CogniteClient | undefined;
 
-  constructor(potreeInstance: Potree, sdkPlayground?: CogniteClientPlayground | undefined) {
+  constructor(potreeInstance: Potree, sdkClient?: CogniteClient | undefined) {
     this._potreeInstance = potreeInstance;
-    this._sdkPlayground = sdkPlayground;
+    this._sdkClient = sdkClient;
   }
 
   get potreeInstance(): Potree {
@@ -51,7 +51,7 @@ export class PointCloudFactory {
   }
 
   private async getAnnotations(modelIdentifier: CdfModelIdentifier): Promise<CdfPointCloudObjectAnnotation[]> {
-    const modelAnnotations = await this._sdkPlayground!.annotations.list({
+    const modelAnnotations = await this._sdkClient!.annotations.list({
       filter: {
         // @ts-ignore
         annotatedResourceType: 'threedmodel',
@@ -83,7 +83,7 @@ export class PointCloudFactory {
       annotationIdToIndexMap: new Map<number, number>()
     };
 
-    if (this._sdkPlayground) {
+    if (this._sdkClient) {
       const annotations = await this.getAnnotations(modelIdentifier as CdfModelIdentifier);
       annotationInfo = annotationsToObjectInfo(annotations);
     }

@@ -9,7 +9,7 @@ import { PointCloudFactory } from './PointCloudFactory';
 import * as THREE from 'three';
 
 import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
-import { CogniteClientPlayground } from '@cognite/sdk-playground';
+import { CogniteClient } from '@cognite/sdk';
 import { Potree } from './potree-three-loader';
 
 export function createPointCloudManager(
@@ -17,10 +17,10 @@ export function createPointCloudManager(
   modelDataProvider: ModelDataProvider,
   scene: THREE.Scene,
   renderer: THREE.WebGLRenderer,
-  sdkPlayground?: CogniteClientPlayground | undefined
+  sdkClient?: CogniteClient | undefined
 ): PointCloudManager {
   const metadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataProvider);
   const potreeInstance = new Potree(modelDataProvider);
-  const modelFactory = new PointCloudFactory(potreeInstance, sdkPlayground);
+  const modelFactory = new PointCloudFactory(potreeInstance, sdkClient);
   return new PointCloudManager(metadataRepository, modelFactory, scene, renderer);
 }

@@ -464,7 +464,7 @@
   version "0.0.0"
   uid ""
 
-"@cognite/sdk-core@^4.4.0", "@cognite/sdk-core@^4.5.0":
+"@cognite/sdk-core@^4.5.0":
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.5.0.tgz#d93c128f552aed124128345adc8f35ce1cbba3a5"
   integrity sha512-HwurP2XfkTQcPgKI5R+90i5vpRNI2EyZf7Qvvauw5VCXmn7iOgOgEJD1BaXCmP/Oz280VySPBwhSLih/6Ffbvg==
@@ -474,14 +474,6 @@
     lodash "^4.17.11"
     query-string "^5.1.1"
     url "^0.11.0"
-
-"@cognite/sdk-playground@link:../viewer/node_modules/@cognite/sdk-playground":
-  version "0.0.0"
-  uid ""
-
-"@cognite/sdk@^7.6.1":
-  version "0.0.0"
-  uid ""
 
 "@cognite/sdk@link:../viewer/node_modules/@cognite/sdk":
   version "0.0.0"

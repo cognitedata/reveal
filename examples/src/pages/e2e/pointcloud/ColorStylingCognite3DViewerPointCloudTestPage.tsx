@@ -11,16 +11,16 @@ import {
   AnnotationListStylableObjectCollection,
   CognitePointCloudModel
 } from '@cognite/reveal';
+import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DTestViewer } from '../Cognite3DTestViewer';
-import { CogniteClientPlayground } from '@cognite/sdk-playground';
 
 import { Mock } from 'moq.ts';
 
 function ColorStylingCognite3DViewerPointCloudTestPage() {
   const modelUrl = 'pointcloud-bunny';
-  const sdkPlaygroundMock = new Mock<CogniteClientPlayground>()
+  const sdkMock = new Mock<CogniteClient>()
     .setup(p => p.annotations)
-    .returns(new Mock<CogniteClientPlayground['annotations']>()
+    .returns(new Mock<CogniteClient['annotations']>()
       .setup(a => a.list)
       .returns(() => {
         const promise = Promise.resolve({ items: [{ id: 123, data: { region: [
@@ -33,7 +33,7 @@ function ColorStylingCognite3DViewerPointCloudTestPage() {
     );
 
   const viewerOptions: Partial<Cognite3DViewerOptions> = {
-    sdkPlayground: sdkPlaygroundMock.object()
+    sdk: sdkMock.object()
   };
 
   return <Cognite3DTestViewer modelUrls={[modelUrl]} pointCloudModelAddedCallback={(model: CognitePointCloudModel) => {

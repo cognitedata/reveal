@@ -4,7 +4,7 @@
 
 import { PointCloudFactory } from './PointCloudFactory';
 
-import { CogniteClientPlayground } from '@cognite/sdk-playground';
+import { CogniteClient } from '@cognite/sdk';
 
 import { Mock } from 'moq.ts';
 import { PointCloudMetadata } from './PointCloudMetadata';
@@ -12,10 +12,10 @@ import { Potree, PointCloudOctree, PointCloudMaterial } from './potree-three-loa
 
 describe(PointCloudFactory.name, () => {
   test('contains right annotation IDs for annotations provided by SDK', async () => {
-    const sdkPlaygroundMock = new Mock<CogniteClientPlayground>()
+    const sdkMock = new Mock<CogniteClient>()
       .setup(p => p.annotations)
       .returns(
-        new Mock<CogniteClientPlayground['annotations']>()
+        new Mock<CogniteClient['annotations']>()
           .setup(a => a.list)
           .returns(() => {
             const promise = Promise.resolve({
@@ -54,7 +54,7 @@ describe(PointCloudFactory.name, () => {
         )
       );
 
-    const factory = new PointCloudFactory(potreeMock.object(), sdkPlaygroundMock.object());
+    const factory = new PointCloudFactory(potreeMock.object(), sdkMock.object());
 
     const model = await factory.createModel({ revealInternalId: Symbol() }, {
       modelBaseUrl: 'dummy-url'
