@@ -9,60 +9,92 @@ import { CogniteClient } from '@cognite/sdk';
 import { Mock } from 'moq.ts';
 import { PointCloudMetadata } from './PointCloudMetadata';
 import { Potree, PointCloudOctree, PointCloudMaterial } from './potree-three-loader';
+import { PotreeNodeWrapper } from './PotreeNodeWrapper';
+
+const dummyAnnotationsResponse = {
+  items: [
+    {
+      id: 123,
+      data: {
+        region: [{ cylinder: { centerA: [-0.03, 0.1, -1000], centerB: [-0.03, 0.1, 1000], radius: 0.04 } }]
+      }
+    },
+    {
+      id: 124,
+      data: {
+        region: [{ box: { matrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1] } }]
+      }
+    }
+  ]
+};
+
+const sdkMock = new Mock<CogniteClient>()
+  .setup(p => p.annotations)
+  .returns(
+    new Mock<CogniteClient['annotations']>()
+      .setup(a => a.list)
+      .returns(() => {
+        const promise = Promise.resolve(dummyAnnotationsResponse);
+
+        Object.assign(promise, { autoPagingToArray: async (_arg: { limit: number }) => (await promise).items });
+        return promise as any;
+      }).object()
+  );
+
+
+const potreeMock = new Mock<Potree>()
+  .setup(p => p.loadPointCloud)
+  .returns(() =>
+    Promise.resolve(
+      new Mock<PointCloudOctree>()
+        .setup(p => p.material)
+        .returns(new Mock<PointCloudMaterial>().object())
+        .object()
+    )
+          );
 
 describe(PointCloudFactory.name, () => {
-  test('contains right annotation IDs for annotations provided by SDK', async () => {
-    const sdkMock = new Mock<CogniteClient>()
-      .setup(p => p.annotations)
-      .returns(
-        new Mock<CogniteClient['annotations']>()
-          .setup(a => a.list)
-          .returns(() => {
-            const promise = Promise.resolve({
-              items: [
-                {
-                  id: 123,
-                  data: {
-                    region: [{ cylinder: { centerA: [-0.03, 0.1, -1000], centerB: [-0.03, 0.1, 1000], radius: 0.04 } }]
-                  }
-                },
-                {
-                  id: 124,
-                  data: {
-                    region: [{ box: { matrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1] } }]
-                  }
-                }
-              ]
-            });
+  let factory: PointCloudFactory;
+  let model: PotreeNodeWrapper;
 
-            Object.assign(promise, { autoPagingToArray: async (_arg: { limit: number }) => (await promise).items });
-            return promise as any;
-          })
-          .object()
-      );
-
-    const expectedIds = [123, 124];
-
-    const potreeMock = new Mock<Potree>()
-      .setup(p => p.loadPointCloud)
-      .returns(() =>
-        Promise.resolve(
-          new Mock<PointCloudOctree>()
-            .setup(p => p.material)
-            .returns(new Mock<PointCloudMaterial>().object())
-            .object()
-        )
-      );
-
-    const factory = new PointCloudFactory(potreeMock.object(), sdkMock.object());
-
-    const model = await factory.createModel({ revealInternalId: Symbol() }, {
+  beforeEach(async () => {
+    factory = new PointCloudFactory(potreeMock.object(), sdkMock.object());
+    model = await factory.createModel({ revealInternalId: Symbol() }, {
       modelBaseUrl: 'dummy-url'
     } as PointCloudMetadata);
+  });
+
+  test('contains right annotation IDs for annotations provided by SDK', async () => {
+
+    const expectedIds = [123, 124];
 
     const gottenIds = model.stylableObjects.map(obj => obj.annotationId);
 
     expect(gottenIds.length).toEqual(expectedIds.length);
     expect(gottenIds).toContainAllValues(expectedIds);
+  });
+
+  test('contains right geometries for annotations provided by SDK', async () => {
+
+    const expectedContainedPoints: [number, number, number][] = [[-0.03, 0.1, -500], [0.4, -0.4, 0]];
+    const expectedUncontainedPoints: [number, number, number][] = [[1, 1, 1], [300, 300, 300]];
+
+    const shapes = model.stylableObjects.map(obj => obj.stylableObject.shape);
+
+    function containedInAnyShape(p: [number, number, number]): boolean {
+      let contained = false;
+      for (const shape of shapes) {
+        contained ||= shape.containsPoint(p);
+      }
+      return contained;
+    }
+
+    for (const expectedContainedPoint of expectedContainedPoints) {
+      expect(containedInAnyShape(expectedContainedPoint)).toBeTrue();
+    }
+
+    for (const expectedUncontainedPoint of expectedUncontainedPoints) {
+      expect(containedInAnyShape(expectedUncontainedPoint)).toBeFalse();
+    }
   });
 });
