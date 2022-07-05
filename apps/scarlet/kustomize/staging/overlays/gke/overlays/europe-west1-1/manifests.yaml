@@ -1,0 +1,36 @@
+---
+apiVersion: getambassador.io/v2
+kind: Host
+metadata:
+  annotations:
+    external-dns.ambassador-service: ambassador-apps.apps
+  labels:
+    app: scarlet
+    team: apps
+  name: scarlet
+spec:
+  hostname: scarlet.app.staging.cogniteapp.com
+---
+apiVersion: getambassador.io/v2
+kind: Mapping
+metadata:
+  labels:
+    app: scarlet
+    team: apps
+  name: scarlet
+spec:
+  host: scarlet.app.staging.cogniteapp.com
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scarlet
+spec:
+  template:
+    spec:
+      containers:
+        - image: eu.gcr.io/cognitedata/apps/scarlet-staging
+          name: scarlet
+          env:
+            - name: URL_PREFIX
+              value: scarlet.app.staging

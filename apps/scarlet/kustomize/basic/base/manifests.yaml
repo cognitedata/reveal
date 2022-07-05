@@ -1,0 +1,113 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: scarlet
+  labels:
+    team: apps
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: scarlet
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scarlet
+  labels:
+    app: scarlet
+    team: apps
+  annotations:
+    strategy.spinnaker.io/use-source-capacity: 'true'
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: scarlet
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: 'true'
+      labels:
+        app: scarlet
+        team: apps
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - image: eu.gcr.io/cognitedata/apps/scarlet
+          name: scarlet
+          imagePullPolicy: Always
+          env:
+            - name: URL_PREFIX
+              value: scarlet.app.${account}
+          ports:
+            - containerPort: 80
+              name: http
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          livenessProbe:
+            httpGet:
+              path: /scarlet/configMap.json
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /scarlet/configMap.json
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 10
+---
+apiVersion: getambassador.io/v2
+kind: Host
+metadata:
+  annotations:
+    external-dns.ambassador-service: ambassador-apps.apps
+  labels:
+    app: scarlet
+    team: apps
+  name: scarlet
+spec:
+  acmeProvider:
+    authority: none
+  ambassador_id: ambassador-apps
+  hostname: scarlet.app.${account}.cogniteapp.com
+  tlsSecret:
+    name: apps-certificate-cogniteapp-com-secret
+---
+apiVersion: getambassador.io/v2
+kind: Mapping
+metadata:
+  labels:
+    app: scarlet
+    team: apps
+  name: scarlet
+spec:
+  add_response_headers:
+    Strict-Transport-Security: max-age=31536000
+  ambassador_id: ambassador-apps
+  host: scarlet.app.${account}.cogniteapp.com
+  prefix: /
+  rewrite: ''
+  service: scarlet
+  timeout_ms: 30000
