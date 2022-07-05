@@ -5,21 +5,13 @@
 /**
  * Custom callback for users to change measurement label content.
  */
-export type MeasurementLabelUpdateDelegate = (distance: number) => MeasurementLabelData | undefined;
+export type DistanceToLabelDelegate = (distanceInMeters: number) => string;
 
 /**
  * Measurment tool option with user custom callback, line width & color.
  */
 export type MeasurementOptions = {
-  changeMeasurementLabelMetrics?: MeasurementLabelUpdateDelegate | undefined;
+  distanceToLabelCallback?: DistanceToLabelDelegate | undefined;
   lineWidth?: number;
   color?: number;
-};
-
-/**
- * Measurement data the user can change for the label.
- */
-export type MeasurementLabelData = {
-  distance?: number;
-  units: string;
 };

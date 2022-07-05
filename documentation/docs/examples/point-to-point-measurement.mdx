@@ -53,16 +53,15 @@ measurementTool.setLineOptions(lineOptions);
 ```
 
 It's also possible to apply custom label content for the measurment.
-The tool provides option of custom callback for the users. `MeasurementOptions.changeMeasurementLabelMetrics` can be
+The tool provides option of custom callback for the users. `MeasurementOptions.distanceToLabelCallback` can be
 used to trigger custom operation like changing the measuring units to feet:
 
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
-const measurementTool = new MeasurementTool(viewer, {changeMeasurementLabelMetrics: (distance) => {
+const measurementTool = new MeasurementTool(viewer, {distanceToLabelCallback: (distanceInMeters) => {
       // 1 meter = 3.281 feet
-      const distanceInFeet = distance * 3.281;
-      return { distance: distanceInFeet, units: 'ft'};
+      return `${(distanceInMeters * 3.281).toFixed(2)} ft`;
      }});
 measurementTool.enterMeasurementMode();
 ```

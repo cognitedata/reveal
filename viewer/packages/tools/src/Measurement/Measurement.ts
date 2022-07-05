@@ -7,21 +7,20 @@ import * as THREE from 'three';
 import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
 import { MeasurementLabels } from './MeasurementLabels';
 import { MeasurementLine } from './MeasurementLine';
-import { MeasurementOptions, MeasurementLabelUpdateDelegate, MeasurementLabelData } from './types';
+import { MeasurementOptions } from './types';
 
 export class Measurement {
   private readonly _viewer: Cognite3DViewer;
   private readonly _measurementLabel: MeasurementLabels;
   private readonly _line: MeasurementLine;
   private _lineMesh: THREE.Group | null;
-  private readonly _options: MeasurementOptions | undefined;
-  private _distanceValue: string;
+  private readonly _options: Required<MeasurementOptions>;
   private readonly _domElement: HTMLElement;
   private readonly _camera: THREE.Camera;
   private readonly _htmlOverlay: HtmlOverlayTool;
   private _labelElement: HTMLDivElement | null;
 
-  constructor(viewer: Cognite3DViewer, options: MeasurementOptions, overlay: HtmlOverlayTool) {
+  constructor(viewer: Cognite3DViewer, options: Required<MeasurementOptions>, overlay: HtmlOverlayTool) {
     this._viewer = viewer;
     this._options = options;
     this._lineMesh = null;
@@ -31,7 +30,6 @@ export class Measurement {
     this._labelElement = null;
     this._domElement = this._viewer.domElement;
     this._camera = this._viewer.getCamera();
-    this._distanceValue = '';
   }
 
   /**
@@ -59,11 +57,12 @@ export class Measurement {
    * @param point Point at which measuring line ends.
    */
   endMeasurement(point: THREE.Vector3): void {
+    const { distanceToLabelCallback } = this._options;
     //Update the line with final end point.
     this._line.updateLine(0, 0, this._domElement, this._camera, point);
-    this.setMeasurementLabelValue(this._options!.changeMeasurementLabelMetrics!);
+    const label = distanceToLabelCallback(this._line.getMeasuredDistance());
     //Add the measurement label.
-    this._labelElement = this.addLabel(this._line.getMidPointOnLine(), this._distanceValue);
+    this._labelElement = this.addLabel(this._line.getMidPointOnLine(), label);
   }
 
   /**
@@ -95,28 +94,11 @@ export class Measurement {
   }
 
   /**
-   * Set the default measured label values with units & distance.
-   * @returns Label data with distance and units.
-   */
-  setDefaultOptions(): MeasurementLabelData {
-    return { distance: this._line.getMeasuredDistance(), units: 'm' };
-  }
-
-  /**
    * Get all the line meshes in the measurement.
    * @returns Array of line meshes.
    */
   getMesh(): THREE.Group | null {
     return this._lineMesh;
-  }
-
-  /**
-   * Set the measurement data.
-   * @param options Callback function which get user value to be added into label.
-   */
-  private setMeasurementLabelValue(options: MeasurementLabelUpdateDelegate) {
-    const measurementLabelData = options(this._line.getMeasuredDistance());
-    this._distanceValue = measurementLabelData?.distance?.toFixed(2) + ' ' + measurementLabelData?.units;
   }
 
   /**

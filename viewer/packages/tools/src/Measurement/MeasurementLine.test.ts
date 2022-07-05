@@ -12,9 +12,7 @@ describe(MeasurementLine.name, () => {
 
   beforeEach(() => {
     line = new MeasurementLine({
-      changeMeasurementLabelMetrics: (distance: number) => {
-        return { distance: distance * 2.0, units: 'ft' };
-      }
+      distanceToLabelCallback: (distanceInMeters: number) => `${distanceInMeters} m`
     });
     domElement = document.createElement('div');
     camera = new THREE.Camera();

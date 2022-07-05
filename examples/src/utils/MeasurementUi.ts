@@ -29,10 +29,9 @@ export class MeasurementUi {
     this._viewer = viewer;
     this._selectedObject = null;
     this._storedMaterial = new LineMaterial();
-    this._measurementTool = new MeasurementTool(this._viewer, {changeMeasurementLabelMetrics: (distance: number) => {
+    this._measurementTool = new MeasurementTool(this._viewer, { distanceToLabelCallback: (distanceInMeters: number) => {
       // 1 meters = 3.281 feet
-      const distanceInFeet = distance * 3.281;
-      return { distance: distanceInFeet, units: 'ft'};
+      return `${(distanceInMeters * 3.281).toFixed(2)} ft`;
      }});
     this._gui = ui.addFolder('Types');
     this._guiController = [];

@@ -4,6 +4,7 @@
 
 import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer, Intersection } from '@reveal/api';
+import { MeasurementOptions } from 'dist/tools';
 import * as THREE from 'three';
 import { createGlContext, mockClientAuthentication, createCadModel } from '../../../../test-utilities';
 import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
@@ -29,6 +30,7 @@ describe(Measurement.name, () => {
       project: 'dummy',
       getToken: async () => 'dummy'
     });
+
     mockClientAuthentication(sdk);
     const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
     const renderer = new THREE.WebGLRenderer({ context });
@@ -40,10 +42,10 @@ describe(Measurement.name, () => {
     canvasContainer.style.height = `${domSize.height}px`;
     viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer });
 
-    const options = {
-      changeMeasurementLabelMetrics: (distance: number) => {
-        return { distance: distance * 2.0, units: 'ft' };
-      }
+    const options: Required<MeasurementOptions> = {
+      distanceToLabelCallback: (distanceInMeters: number) => `${(distanceInMeters * 10).toFixed(2)} dm`,
+      color: 0x00ff00,
+      lineWidth: 2
     };
     overlay = new HtmlOverlayTool(viewer);
     const htmlElement = document.createElement('div');

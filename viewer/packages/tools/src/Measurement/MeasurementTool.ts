@@ -5,7 +5,7 @@
 import { Cognite3DViewer } from '@reveal/api';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import * as THREE from 'three';
-import { MeasurementOptions, MeasurementLabelData } from './types';
+import { MeasurementOptions } from './types';
 import { Measurement } from './Measurement';
 import { HtmlOverlayTool, HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOverlayTool';
 import rulerSvg from './styles/ruler.svg';
@@ -41,7 +41,7 @@ import { MeasurementLabels } from './MeasurementLabels';
 export class MeasurementTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
   private readonly _measurements: Measurement[];
-  private _options: MeasurementOptions | undefined;
+  private _options: Required<MeasurementOptions>;
   private _currentMeasurementIndex: number;
   private _measurementActive: boolean;
   private readonly _htmlOverlay: HtmlOverlayTool;
@@ -52,15 +52,18 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
   private readonly _handleonPointerClick = this.onPointerClick.bind(this);
   private readonly _handleonPointerMove = this.onPointerMove.bind(this);
-  private readonly _handleDefaultOptions = this.defaultOptions.bind(this);
+
+  private static readonly defaultLineOptions: Required<MeasurementOptions> = {
+    distanceToLabelCallback: d => MeasurementTool.metersLabelCallback(d),
+    lineWidth: 2.0,
+    color: 0x00ffff
+  };
 
   constructor(viewer: Cognite3DViewer, options?: MeasurementOptions) {
     super();
     this._viewer = viewer;
     this._options = {
-      changeMeasurementLabelMetrics: this._handleDefaultOptions,
-      lineWidth: 2.0,
-      color: 0x00ffff,
+      ...MeasurementTool.defaultLineOptions,
       ...options
     };
     this._measurements = [];
@@ -115,7 +118,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Get all measurement objects from the Cognite3DViewer.
    * @returns Group of all measurements in the Cognite3DViewer.
    */
-  getAllMeasurement(): THREE.Group[] | null {
+  getAllMeasurement(): THREE.Group[] {
     const measurementGroups: THREE.Group[] = [];
     this._measurements.forEach(measurement => {
       const meshGrp = measurement.getMesh();
@@ -148,7 +151,12 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       measurement?.setLineOptions(options);
       this._viewer.requestRedraw();
     }
-    this._options = { changeMeasurementLabelMetrics: this._options?.changeMeasurementLabelMetrics, ...options };
+    // TODO 2022-07-05 larsmoa: WTF - clean up. Allowing setting options and then ignoring one of the options
+    this._options = {
+      ...MeasurementTool.defaultLineOptions,
+      distanceToLabelCallback: this._options.distanceToLabelCallback,
+      ...options
+    };
   }
 
   /**
@@ -203,22 +211,20 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Function for callback to set default measuring units for the labels.
-   * @returns Returns default label data with meter units.
-   */
-  private defaultOptions(): MeasurementLabelData | undefined {
-    return this._measurements[this._currentMeasurementIndex].setDefaultOptions();
-  }
-
-  /**
    * Create and return combine ruler icon as HTMLDivElement.
    * @returns HTMLDivElement.
    */
   private createCombineClusterElement() {
+    // TODO 2022-07-05 larsmoa: Move all ownership of labels here - currently responsibility is split
+    // between several classes which is *bad*
     const combineElement = document.createElement('div');
     combineElement.className = MeasurementLabels.stylesId;
     combineElement.innerHTML = rulerSvg;
 
     return combineElement;
+  }
+
+  private static metersLabelCallback(distanceInMeters: number): string {
+    return `${distanceInMeters.toFixed(2)} m`;
   }
 }
